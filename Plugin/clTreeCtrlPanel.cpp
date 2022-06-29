@@ -115,6 +115,17 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
         menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
+        menu.AppendSeparator();
+        menu.Append(XRCID("copy-path"), _("Copy path"));
+        menu.Bind(
+            wxEVT_MENU,
+            [this, cd](wxCommandEvent& event) {
+                event.Skip();
+                CHECK_PTR_RET(cd);
+                ::CopyToClipboard(cd->GetPath());
+                clGetManager()->SetStatusMessage(_("Path copied to clipboard"));
+            },
+            XRCID("copy-path"));
 
         if(IsTopLevelFolder(item)) {
             menu.AppendSeparator();
@@ -159,6 +170,17 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
         menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
+        menu.AppendSeparator();
+        menu.Append(XRCID("copy-path"), _("Copy path"));
+        menu.Bind(
+            wxEVT_MENU,
+            [this, cd](wxCommandEvent& event) {
+                event.Skip();
+                CHECK_PTR_RET(cd);
+                ::CopyToClipboard(cd->GetPath());
+                clGetManager()->SetStatusMessage(_("Path copied to clipboard"));
+            },
+            XRCID("copy-path"));
 
         // Now that we added the basic menu, let the plugin
         // adjust it

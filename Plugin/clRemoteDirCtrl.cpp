@@ -85,8 +85,10 @@ bool clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
     clRemoteDirCtrlItemData* cd = new clRemoteDirCtrlItemData(path);
     cd->SetFolder();
 
-    wxTreeItemId root = m_treeCtrl->AddRoot(
-        path, clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
+    // only display the dir name not its full path
+    wxTreeItemId root =
+        m_treeCtrl->AddRoot(wxFileName(path, wxEmptyString).GetDirs().Last(),
+                            clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
     return true;
@@ -282,6 +284,19 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
             },
             XRCID("delete-file"));
     }
+    // common
+    menu.AppendSeparator();
+    menu.Append(XRCID("copy-path"), _("Copy path"));
+    menu.Bind(
+        wxEVT_MENU,
+        [this, item](wxCommandEvent& event) {
+            event.Skip();
+            auto cd = GetItemData(item);
+            CHECK_PTR_RET(cd);
+            ::CopyToClipboard(cd->GetFullPath());
+            clGetManager()->SetStatusMessage(_("Path copied to clipboard"));
+        },
+        XRCID("copy-path"));
     // let others know that we are about to show the context menu for this control
     clContextMenuEvent menuEvent(cd->IsFolder() ? wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING
                                                 : wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING);

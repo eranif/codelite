@@ -261,10 +261,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
              DESTINATION
                   ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
 
-        file(COPY ${CL_SRC_ROOT}/tools/macOS/clangd
-             DESTINATION
-                  ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-
         ## folders
         install(
             DIRECTORY ${CL_SRC_ROOT}/Runtime/plugins/resources
@@ -327,7 +323,3 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
 #                        ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite)
     endif()
 endmacro()
-
-
-
-

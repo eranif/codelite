@@ -214,8 +214,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
 void DebugAdapterClient::UnPlug()
 {
     wxDELETE(m_breakpointsHelper);
-
-    DestroyUI();
+    //DestroyUI();
     DebuggerMgr::Get().UnregisterDebuggers(m_shortName);
 
     // UI events
@@ -1095,6 +1094,7 @@ bool DebugAdapterClient::LaunchProcess(const DapEntry& dap_server)
                                             IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole,
                                             wxEmptyString, &env_list);
     }
+    m_dap_server->SetHardKill(true);
     return m_dap_server != nullptr;
 }
 

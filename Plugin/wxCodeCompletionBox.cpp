@@ -58,8 +58,10 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     clColours colours;
     colours.InitFromColour(bgColour);
     const auto& prop = lexer->GetProperty(SEL_TEXT_ATTR_ID);
-    colours.SetSelItemBgColourNoFocus(prop.GetBgColour());
-    colours.SetSelItemTextColourNoFocus(prop.GetFgColour());
+    colours.SetSelItemBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    colours.SetSelItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour());
+    colours.SetSelItemTextColourNoFocus(colours.GetSelItemTextColour());
 
     SetBackgroundColour(colours.GetBorderColour());
     m_mainPanel->SetBackgroundColour(colours.GetBorderColour());

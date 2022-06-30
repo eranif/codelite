@@ -8,6 +8,7 @@
 #include "dap/dap.hpp"
 
 #include <unordered_set>
+class DebugAdapterClient;
 
 // variable items client data
 struct VariableClientData : public wxTreeItemData {
@@ -63,7 +64,7 @@ struct FrameOrThreadClientData : public wxTreeItemData {
 
 class DAPMainView : public DAPMainViewBase
 {
-    dap::Client* m_client = nullptr;
+    DebugAdapterClient* m_plugin = nullptr;
 
     // the variables displayed in the view are owned by this frame Id
     int m_scopesFrameId = wxNOT_FOUND;
@@ -87,7 +88,7 @@ protected:
     void Clear();
 
 public:
-    DAPMainView(wxWindow* parent, dap::Client* client, clModuleLogger& log);
+    DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log);
     virtual ~DAPMainView();
 
     void UpdateThreads(int activeThreadId, dap::ThreadsResponse* response);

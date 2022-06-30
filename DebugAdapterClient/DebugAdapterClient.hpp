@@ -82,7 +82,6 @@ private:
     void StartAndConnectToDapServer(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
                                     const wxString& working_directory, const clEnvList_t& env);
     bool LaunchProcess(const DapEntry& dap_entry);
-    void LoadFile(const dap::Source& sourceId, int line_number);
     void RefreshBreakpointsView();
 
     /// stop the dap server if it is running and send DEBUG_STOP event
@@ -172,10 +171,14 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBar* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBar* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void UnPlug() override;
+
+    // expose these API calls to the views can use it
+    dap::Client& GetClient() { return m_client; }
+    void LoadFile(const dap::Source& sourceId, int line_number);
 };
 
 #endif // LLDBDebuggerPlugin

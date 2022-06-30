@@ -1,11 +1,12 @@
 #include "DAPMainView.h"
 
+#include "DebugAdapterClient.hpp"
 #include "globals.h"
 #include "macros.h"
 
-DAPMainView::DAPMainView(wxWindow* parent, dap::Client* client, clModuleLogger& log)
+DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log)
     : DAPMainViewBase(parent)
-    , m_client(client)
+    , m_plugin(plugin)
     , LOG(log)
 {
     m_threadsTree->SetTreeStyle(m_threadsTree->GetTreeStyle() | wxTR_HIDE_ROOT);
@@ -139,7 +140,7 @@ void DAPMainView::UpdateScopes(int frameId, dap::ScopesResponse* response)
                 m_variablesTree->AppendItem(item, "<dummy>");
 
                 wxString scope_name = scope.name.Lower();
-                if(scope_name.Contains("locals")) {
+                if(scope_name == "locals" || scope_name == "local") {
                     m_variablesTree->Expand(item);
                     m_variablesTree->DeleteChildren(item);
                 }
@@ -168,7 +169,7 @@ void DAPMainView::UpdateScopes(int frameId, dap::ScopesResponse* response)
 
     for(int refId : items_to_refresh) {
         if(refId != wxNOT_FOUND) {
-            m_client->GetChildrenVariables(refId);
+            m_plugin->GetClient().GetChildrenVariables(refId);
         }
     }
 }
@@ -215,7 +216,7 @@ void DAPMainView::OnScopeItemExpanding(wxTreeEvent& event)
         m_variablesTree->AppendItem(item, _("Loading..."));
     }
     m_variablesTree->Commit();
-    m_client->GetChildrenVariables(GetVariableId(event.GetItem()));
+    m_plugin->GetClient().GetChildrenVariables(GetVariableId(event.GetItem()));
 }
 
 wxTreeItemId DAPMainView::FindThreadNode(int threadId)
@@ -235,11 +236,14 @@ wxTreeItemId DAPMainView::FindThreadNode(int threadId)
 
 void DAPMainView::OnFrameItemSelected(wxTreeEvent& event)
 {
-    int frame_id = GetFrameId(event.GetItem());
-    if(frame_id == wxNOT_FOUND) {
+    auto cd = GetFrameClientData(event.GetItem());
+    if(!cd || !cd->IsFrame() || cd->GetId() == wxNOT_FOUND) {
         return;
     }
-    m_client->GetScopes(frame_id);
+    m_plugin->GetClient().GetScopes(cd->GetId());
+
+    // open the file correspondend to the frame ID
+    m_plugin->LoadFile(cd->frame_info.source, cd->frame_info.line - 1);
 }
 
 void DAPMainView::OnThreadItemExpanding(wxTreeEvent& event)
@@ -253,7 +257,7 @@ void DAPMainView::OnThreadItemExpanding(wxTreeEvent& event)
         m_threadsTree->DeleteChildren(item);
         m_threadsTree->AppendItem(item, _("Loading..."));
     }
-    m_client->GetFrames(GetThreadId(event.GetItem()));
+    m_plugin->GetClient().GetFrames(GetThreadId(event.GetItem()));
 }
 
 int DAPMainView::GetVariableId(const wxTreeItemId& item)
@@ -293,7 +297,7 @@ int DAPMainView::GetFrameId(const wxTreeItemId& item)
 
 std::unordered_set<int> DAPMainView::GetExpandedThreads()
 {
-    std::unordered_set<int> result = { m_client->GetActiveThreadId() };
+    std::unordered_set<int> result = { m_plugin->GetClient().GetActiveThreadId() };
     wxTreeItemIdValue cookie;
     wxTreeItemId root = m_threadsTree->GetRootItem();
     auto curitem = m_threadsTree->GetFirstChild(root, cookie);

@@ -578,7 +578,7 @@ void DebugAdapterClient::InitializeUI()
 {
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     if(!m_threadsView) {
-        m_threadsView = new DAPMainView(parent, &m_client, LOG);
+        m_threadsView = new DAPMainView(parent, this, LOG);
         m_mgr->GetDockingManager()->AddPane(m_threadsView, wxAuiPaneInfo()
                                                                .MinSize(300, 300)
                                                                .Layer(10)

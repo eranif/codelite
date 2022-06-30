@@ -3,15 +3,6 @@
 #include "globals.h"
 #include "macros.h"
 
-struct VariableClientData : public wxTreeItemData {
-    int reference = wxNOT_FOUND;
-    VariableClientData(int ref)
-        : reference(ref)
-    {
-    }
-    virtual ~VariableClientData() {}
-};
-
 DAPMainView::DAPMainView(wxWindow* parent, dap::Client* client, clModuleLogger& log)
     : DAPMainViewBase(parent)
     , m_client(client)
@@ -25,6 +16,7 @@ DAPMainView::DAPMainView(wxWindow* parent, dap::Client* client, clModuleLogger& 
     m_threadsTree->AddHeader(_("Source")); // The thread/frame name
     m_threadsTree->AddRoot(_("Threads"));
     m_threadsTree->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPMainView::OnThreadItemExpanding, this);
+    m_threadsTree->Bind(wxEVT_TREE_SEL_CHANGED, &DAPMainView::OnFrameItemSelected, this);
 
     m_variablesTree->SetTreeStyle(m_variablesTree->GetTreeStyle() | wxTR_HIDE_ROOT);
     m_variablesTree->SetShowHeader(true);
@@ -50,7 +42,7 @@ void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* respon
     wxTreeItemIdValue cookie;
     auto curitem = m_threadsTree->GetFirstChild(root, cookie);
     while(curitem.IsOk()) {
-        M.insert({ ::wxStringToInt(m_threadsTree->GetItemText(curitem, 0), -1), curitem });
+        M.insert({ GetThreadId(curitem), curitem });
         curitem = m_threadsTree->GetNextChild(root, cookie);
     }
 
@@ -59,7 +51,8 @@ void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* respon
         wxTreeItemId item;
         if(M.count(thread.id) == 0) {
             // new thread, add it
-            item = m_threadsTree->AppendItem(root, wxString() << thread.id);
+            item = m_threadsTree->AppendItem(root, wxString() << thread.id, -1, -1,
+                                             new FrameClientData(thread.id, FrameOrThread::THREAD));
             // add a dummy child, so will get the ">" button
             m_threadsTree->AppendItem(item, "<dummy>");
         } else {
@@ -81,19 +74,37 @@ void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* respon
     m_threadsTree->Commit();
 }
 
-wxTreeItemId DAPMainView::FindThreadNode(int threadId)
+void DAPMainView::UpdateFrames(int threadId, dap::StackTraceResponse* response)
 {
-    wxTreeItemId root = m_threadsTree->GetRootItem();
-    wxTreeItemIdValue cookie;
-    auto curitem = m_threadsTree->GetFirstChild(root, cookie);
-    while(curitem.IsOk()) {
-        int cur_thread_id = ::wxStringToInt(m_threadsTree->GetItemText(curitem, 0), -1);
-        if(cur_thread_id == threadId) {
-            return curitem;
-        }
-        curitem = m_threadsTree->GetNextChild(root, cookie);
+    // locate the row
+    m_threadsTree->Begin();
+    wxTreeItemId parent = FindThreadNode(threadId);
+    if(!parent.IsOk()) {
+        return;
     }
-    return wxTreeItemId(nullptr);
+
+    if(m_threadsTree->ItemHasChildren(parent)) {
+        m_threadsTree->DeleteChildren(parent);
+    }
+
+    // append the stack frame
+    for(const auto& frame : response->stackFrames) {
+        wxTreeItemId frame_item = m_threadsTree->AppendItem(parent, wxString() << frame.id, -1, -1,
+                                                            new FrameClientData(frame.id, FrameOrThread::FRAME));
+
+        wxString source;
+        if(!frame.source.path.empty()) {
+            source = frame.source.path;
+        } else {
+            source = frame.source.name;
+        }
+
+        m_threadsTree->SetItemText(frame_item, source, 1);
+        m_threadsTree->SetItemText(frame_item, wxString() << frame.line, 2);
+        m_threadsTree->SetItemText(frame_item, frame.name, 3);
+    }
+    m_threadsTree->Commit();
+    m_threadsTree->Expand(parent);
 }
 
 void DAPMainView::UpdateScopes(int frameId, dap::ScopesResponse* response)
@@ -122,10 +133,16 @@ void DAPMainView::UpdateScopes(int frameId, dap::ScopesResponse* response)
         if(current_scopes.count(scope.name) == 0) {
             // new scope
             auto item = m_variablesTree->AppendItem(root, scope.name);
-            m_variablesTree->SetItemData(item, new VariableClientData(scope.variablesReference));
+            m_variablesTree->SetItemData(item, new VariableClientData(scope.variablesReference, wxEmptyString));
             if(scope.variablesReference > 0) {
                 // it has children
                 m_variablesTree->AppendItem(item, "<dummy>");
+
+                wxString scope_name = scope.name.Lower();
+                if(scope_name.Contains("locals")) {
+                    m_variablesTree->Expand(item);
+                    m_variablesTree->DeleteChildren(item);
+                }
             }
         } else {
             // remove it
@@ -138,6 +155,22 @@ void DAPMainView::UpdateScopes(int frameId, dap::ScopesResponse* response)
         m_variablesTree->Delete(vt.second);
     }
     m_variablesTree->Commit();
+
+    // check which top level entry is expanded and update it
+    curitem = m_variablesTree->GetFirstChild(root, cookie);
+    std::unordered_set<int> items_to_refresh;
+    while(curitem.IsOk()) {
+        if(m_variablesTree->IsExpanded(curitem)) {
+            items_to_refresh.insert(GetVariableId(curitem));
+        }
+        curitem = m_variablesTree->GetNextChild(root, cookie);
+    }
+
+    for(int refId : items_to_refresh) {
+        if(refId != wxNOT_FOUND) {
+            m_client->GetChildrenVariables(refId);
+        }
+    }
 }
 
 void DAPMainView::UpdateVariables(int parentRef, dap::VariablesResponse* response)
@@ -151,47 +184,22 @@ void DAPMainView::UpdateVariables(int parentRef, dap::VariablesResponse* respons
 
     for(const auto& variable : response->variables) {
         auto child = m_variablesTree->AppendItem(parent_item, variable.name);
-        m_variablesTree->SetItemText(child, variable.value, 1);
+
+        wxString value = variable.value;
+        if(value.length() > 200) {
+            value = value.Mid(0, 200);
+            value << "... [truncated]";
+        }
+
+        m_variablesTree->SetItemText(child, value, 1);
         m_variablesTree->SetItemText(child, variable.type, 2);
-        m_variablesTree->SetItemData(child, new VariableClientData(variable.variablesReference));
+        m_variablesTree->SetItemData(child, new VariableClientData(variable.variablesReference, variable.value));
         if(variable.variablesReference > 0) {
             // has children
             m_variablesTree->AppendItem(child, "<dummy>");
         }
     }
     m_variablesTree->Commit();
-}
-
-void DAPMainView::UpdateFrames(int threadId, dap::StackTraceResponse* response)
-{
-    // locate the row
-    m_threadsTree->Begin();
-    wxTreeItemId parent = FindThreadNode(threadId);
-    if(!parent.IsOk()) {
-        return;
-    }
-
-    if(m_threadsTree->ItemHasChildren(parent)) {
-        m_threadsTree->DeleteChildren(parent);
-    }
-
-    // append the stack frame
-    for(const auto& frame : response->stackFrames) {
-        wxTreeItemId frame_item = m_threadsTree->AppendItem(parent, wxString() << frame.id);
-
-        wxString source;
-        if(!frame.source.path.empty()) {
-            source = frame.source.path;
-        } else {
-            source = frame.source.name;
-        }
-
-        m_threadsTree->SetItemText(frame_item, source, 1);
-        m_threadsTree->SetItemText(frame_item, wxString() << frame.line, 2);
-        m_threadsTree->SetItemText(frame_item, frame.name, 3);
-    }
-    m_threadsTree->Commit();
-    m_threadsTree->Expand(parent);
 }
 
 void DAPMainView::OnScopeItemExpanding(wxTreeEvent& event)
@@ -207,9 +215,31 @@ void DAPMainView::OnScopeItemExpanding(wxTreeEvent& event)
         m_variablesTree->AppendItem(item, _("Loading..."));
     }
     m_variablesTree->Commit();
+    m_client->GetChildrenVariables(GetVariableId(event.GetItem()));
+}
 
-    // delete the children and request for backtrace
-    m_client->GetChildrenVariables(GetVariableId(item));
+wxTreeItemId DAPMainView::FindThreadNode(int threadId)
+{
+    wxTreeItemId root = m_threadsTree->GetRootItem();
+    wxTreeItemIdValue cookie;
+    auto curitem = m_threadsTree->GetFirstChild(root, cookie);
+    while(curitem.IsOk()) {
+        int cur_thread_id = ::wxStringToInt(m_threadsTree->GetItemText(curitem, 0), -1);
+        if(cur_thread_id == threadId) {
+            return curitem;
+        }
+        curitem = m_threadsTree->GetNextChild(root, cookie);
+    }
+    return wxTreeItemId(nullptr);
+}
+
+void DAPMainView::OnFrameItemSelected(wxTreeEvent& event)
+{
+    int frame_id = GetFrameId(event.GetItem());
+    if(frame_id == wxNOT_FOUND) {
+        return;
+    }
+    m_client->GetScopes(frame_id);
 }
 
 void DAPMainView::OnThreadItemExpanding(wxTreeEvent& event)
@@ -223,29 +253,42 @@ void DAPMainView::OnThreadItemExpanding(wxTreeEvent& event)
         m_threadsTree->DeleteChildren(item);
         m_threadsTree->AppendItem(item, _("Loading..."));
     }
-
-    // delete the children and request for backtrace
-    m_client->GetFrames(GetThreadId(item));
+    m_client->GetFrames(GetThreadId(event.GetItem()));
 }
 
 int DAPMainView::GetVariableId(const wxTreeItemId& item)
 {
-    if(!item.IsOk()) {
+    auto cd = GetVariableClientData(item);
+    if(!cd) {
         return wxNOT_FOUND;
     }
-    VariableClientData* cd = dynamic_cast<VariableClientData*>(m_variablesTree->GetItemData(item));
-    if(cd) {
-        return cd->reference;
-    }
-    return wxNOT_FOUND;
+    return cd->reference;
 }
 
 int DAPMainView::GetThreadId(const wxTreeItemId& item)
 {
-    if(!item.IsOk()) {
+    auto cd = GetFrameClientData(item);
+    if(!cd) {
         return wxNOT_FOUND;
     }
-    return wxStringToInt(m_threadsTree->GetItemText(item), wxNOT_FOUND);
+
+    if(cd->IsThread()) {
+        return cd->id;
+    }
+    return wxNOT_FOUND;
+}
+
+int DAPMainView::GetFrameId(const wxTreeItemId& item)
+{
+    auto cd = GetFrameClientData(item);
+    if(!cd) {
+        return wxNOT_FOUND;
+    }
+
+    if(cd->IsFrame()) {
+        return cd->id;
+    }
+    return wxNOT_FOUND;
 }
 
 std::unordered_set<int> DAPMainView::GetExpandedThreads()
@@ -256,8 +299,10 @@ std::unordered_set<int> DAPMainView::GetExpandedThreads()
     auto curitem = m_threadsTree->GetFirstChild(root, cookie);
     while(curitem.IsOk()) {
         if(m_threadsTree->IsExpanded(curitem)) {
-            int cur_thread_id = ::wxStringToInt(m_threadsTree->GetItemText(curitem, 0), -1);
-            result.insert(cur_thread_id);
+            int cur_thread_id = GetThreadId(curitem);
+            if(cur_thread_id != wxNOT_FOUND) {
+                result.insert(cur_thread_id);
+            }
         }
         curitem = m_threadsTree->GetNextChild(root, cookie);
     }
@@ -297,4 +342,18 @@ void DAPMainView::Clear()
 {
     m_variablesTree->DeleteAllItems();
     m_threadsTree->DeleteAllItems();
+}
+
+FrameClientData* DAPMainView::GetFrameClientData(const wxTreeItemId& item)
+{
+    CHECK_ITEM_RET_NULL(item);
+    FrameClientData* cd = dynamic_cast<FrameClientData*>(m_threadsTree->GetItemData(item));
+    return cd;
+}
+
+VariableClientData* DAPMainView::GetVariableClientData(const wxTreeItemId& item)
+{
+    CHECK_ITEM_RET_NULL(item);
+    VariableClientData* cd = dynamic_cast<VariableClientData*>(m_variablesTree->GetItemData(item));
+    return cd;
 }

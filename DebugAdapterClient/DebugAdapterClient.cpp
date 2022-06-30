@@ -214,7 +214,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
 void DebugAdapterClient::UnPlug()
 {
     wxDELETE(m_breakpointsHelper);
-    //DestroyUI();
+    // DestroyUI();
     DebuggerMgr::Get().UnregisterDebuggers(m_shortName);
 
     // UI events
@@ -580,9 +580,9 @@ void DebugAdapterClient::InitializeUI()
     if(!m_threadsView) {
         m_threadsView = new DAPMainView(parent, &m_client, LOG);
         m_mgr->GetDockingManager()->AddPane(m_threadsView, wxAuiPaneInfo()
-                                                               .MinSize(200, 200)
+                                                               .MinSize(300, 300)
                                                                .Layer(10)
-                                                               .Right()
+                                                               .Bottom()
                                                                .Position(1)
                                                                .CloseButton()
                                                                .Caption(DAP_MAIN_VIEW)
@@ -591,8 +591,8 @@ void DebugAdapterClient::InitializeUI()
     if(!m_breakpointsView) {
         m_breakpointsView = new DAPBreakpointsView(parent);
         m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo()
-                                                                   .MinSize(200, 200)
-                                                                   .Layer(10)
+                                                                   .MinSize(300, 300)
+                                                                   .Layer(5)
                                                                    .Right()
                                                                    .Position(2)
                                                                    .CloseButton()
@@ -949,10 +949,6 @@ void DebugAdapterClient::OnDapStoppedEvent(DAPEvent& event)
 
     dap::StoppedEvent* stopped_data = event.GetDapEvent()->As<dap::StoppedEvent>();
     if(stopped_data) {
-        LOG_DEBUG(LOG) << "Stopped reason:" << stopped_data->reason << endl;
-        LOG_DEBUG(LOG) << "All threads stopped:" << stopped_data->allThreadsStopped << endl;
-        LOG_DEBUG(LOG) << "Stopped thread ID:" << stopped_data->threadId
-                       << "(active thread ID:" << m_client.GetActiveThreadId() << ")" << endl;
         m_client.GetThreads();
     }
 }

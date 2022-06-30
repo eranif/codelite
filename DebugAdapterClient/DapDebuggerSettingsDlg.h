@@ -11,6 +11,8 @@ class DapDebuggerSettingsDlg : public DapDebuggerSettingsDlgBase
 protected:
     void OnScan(wxCommandEvent& event);
     void OnNew(wxCommandEvent& event);
+    void OnDelete(wxCommandEvent& event);
+    void OnItemsUI(wxUpdateUIEvent& event);
 
 public:
     DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsStore& store);

@@ -1576,6 +1576,7 @@ void clTreeCtrl::Commit()
     for(const auto& item : items) {
         DoUpdateHeader(item);
     }
+
     UpdateScrollBar();
     Refresh();
 }

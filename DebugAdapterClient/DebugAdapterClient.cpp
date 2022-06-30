@@ -25,7 +25,10 @@
 
 #include "DebugAdapterClient.hpp"
 
+#include "DAPBreakpointsView.h"
 #include "DAPMainView.h"
+#include "DAPOutputView.h"
+#include "DAPTextView.h"
 #include "DapDebuggerSettingsDlg.h"
 #include "DapLoggingHelper.hpp"
 #include "StringUtils.h"
@@ -64,6 +67,8 @@ constexpr bool IS_WINDOWS = false;
 
 const wxString DAP_MAIN_VIEW = _("Thread, stacks & variables");
 const wxString DAP_BREAKPOINTS_VIEW = _("Breakpoints");
+const wxString DAP_OUTPUT_VIEW = _("Output");
+
 const wxString DAP_MESSAGE_BOX_TITLE = "CodeLite - Debug Adapter Client";
 
 // Reusing gdb ids so global debugger menu and accelerators work.
@@ -209,6 +214,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
                   this);
     m_client.Bind(wxEVT_DAP_LOG_EVENT, &DebugAdapterClient::OnDapLog, this);
     m_client.Bind(wxEVT_DAP_BREAKPOINT_EVENT, &DebugAdapterClient::OnDapBreakpointEvent, this);
+    m_client.Bind(wxEVT_DAP_OUTPUT_EVENT, &DebugAdapterClient::OnDapOutputEvent, this);
 }
 
 void DebugAdapterClient::UnPlug()
@@ -271,6 +277,7 @@ void DebugAdapterClient::UnPlug()
                     this);
     m_client.Unbind(wxEVT_DAP_LOG_EVENT, &DebugAdapterClient::OnDapLog, this);
     m_client.Unbind(wxEVT_DAP_BREAKPOINT_EVENT, &DebugAdapterClient::OnDapBreakpointEvent, this);
+    m_client.Unbind(wxEVT_DAP_OUTPUT_EVENT, &DebugAdapterClient::OnDapOutputEvent, this);
 }
 
 DebugAdapterClient::~DebugAdapterClient() {}
@@ -515,6 +522,7 @@ void DebugAdapterClient::LoadPerspective()
     // Make sure that all the panes are visible
     ShowPane(DAP_MAIN_VIEW, true);
     ShowPane(DAP_BREAKPOINTS_VIEW, true);
+    ShowPane(DAP_OUTPUT_VIEW, true);
 
     // Hide the output pane
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane("Output View");
@@ -561,6 +569,15 @@ void DebugAdapterClient::DestroyUI()
         m_breakpointsView = nullptr;
     }
 
+    if(m_outputView) {
+        wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(DAP_OUTPUT_VIEW);
+        if(pi.IsOk()) {
+            m_mgr->GetDockingManager()->DetachPane(m_outputView);
+        }
+        m_outputView->Destroy();
+        m_outputView = nullptr;
+    }
+
     if(m_textView) {
         int index = clGetManager()->GetMainNotebook()->FindPage(m_textView);
         if(index != wxNOT_FOUND) {
@@ -589,7 +606,7 @@ void DebugAdapterClient::InitializeUI()
                                                                .Name(DAP_MAIN_VIEW));
     }
     if(!m_breakpointsView) {
-        m_breakpointsView = new DAPBreakpointsView(parent);
+        m_breakpointsView = new DAPBreakpointsView(parent, this);
         m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo()
                                                                    .MinSize(300, 300)
                                                                    .Layer(5)
@@ -598,6 +615,17 @@ void DebugAdapterClient::InitializeUI()
                                                                    .CloseButton()
                                                                    .Caption(DAP_BREAKPOINTS_VIEW)
                                                                    .Name(DAP_BREAKPOINTS_VIEW));
+    }
+    if(!m_outputView) {
+        m_outputView = new DAPOutputView(parent);
+        m_mgr->GetDockingManager()->AddPane(m_outputView, wxAuiPaneInfo()
+                                                              .MinSize(300, 300)
+                                                              .Layer(5)
+                                                              .Right()
+                                                              .Position(2)
+                                                              .CloseButton()
+                                                              .Caption(DAP_OUTPUT_VIEW)
+                                                              .Name(DAP_OUTPUT_VIEW));
     }
     if(!m_textView) {
         m_textView = new DAPTextView(clGetManager()->GetMainNotebook());
@@ -894,6 +922,13 @@ void DebugAdapterClient::OnDapLog(DAPEvent& event)
 {
     event.Skip();
     LOG_DEBUG(LOG) << event.GetString() << endl;
+}
+
+void DebugAdapterClient::OnDapOutputEvent(DAPEvent& event)
+{
+    if(m_outputView) {
+        m_outputView->AddOutputEvent(event.GetDapEvent()->As<dap::OutputEvent>());
+    }
 }
 
 void DebugAdapterClient::OnDapLaunchResponse(DAPEvent& event)

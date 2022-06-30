@@ -6,11 +6,29 @@
 #include "dap/dap.hpp"
 
 #include <unordered_set>
+class DebugAdapterClient;
+
+struct BreakpointClientData {
+    dap::Breakpoint m_breapoint;
+    BreakpointClientData(const dap::Breakpoint& breakpoint)
+        : m_breapoint(breakpoint)
+    {
+    }
+    ~BreakpointClientData() {}
+};
 
 class DAPBreakpointsView : public DAPBreakpointsViewBase
 {
+    DebugAdapterClient* m_plugin = nullptr;
+
+private:
+    BreakpointClientData* GetItemData(const wxDataViewItem& item);
+
+protected:
+    void OnBreakpointActivated(wxDataViewEvent& item);
+
 public:
-    DAPBreakpointsView(wxWindow* parent);
+    DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin);
     virtual ~DAPBreakpointsView();
 
     /**

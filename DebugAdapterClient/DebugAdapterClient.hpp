@@ -27,7 +27,6 @@
 #define __LLDBDebugger__
 
 #include "BreakpointsHelper.hpp"
-#include "DAPBreakpointsView.h"
 #include "DAPTextView.h"
 #include "DebugSession.hpp"
 #include "RunInTerminalHelper.hpp"
@@ -44,6 +43,8 @@
 #include <wx/stc/stc.h>
 
 class DAPMainView;
+class DAPOutputView;
+class DAPBreakpointsView;
 class IProcess;
 
 class DebugAdapterClient : public IPlugin
@@ -64,6 +65,7 @@ class DebugAdapterClient : public IPlugin
     DAPMainView* m_threadsView = nullptr;
     DAPBreakpointsView* m_breakpointsView = nullptr;
     DAPTextView* m_textView = nullptr;
+    DAPOutputView* m_outputView = nullptr;
 
     bool m_raisOnBpHit;
     bool m_isPerspectiveLoaded;
@@ -166,6 +168,7 @@ protected:
     void OnDapLog(DAPEvent& event);
     void OnDapScopesResponse(DAPEvent& event);
     void OnDapVariablesResponse(DAPEvent& event);
+    void OnDapOutputEvent(DAPEvent& event);
 
 public:
     //--------------------------------------------

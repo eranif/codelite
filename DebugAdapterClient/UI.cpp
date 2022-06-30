@@ -228,3 +228,26 @@ DAPTextViewBase::DAPTextViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
 }
 
 DAPTextViewBase::~DAPTextViewBase() {}
+
+DAPOutputViewBase::DAPOutputViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                     long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer270 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer270);
+
+    SetName(wxT("DAPOutputViewBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+}
+
+DAPOutputViewBase::~DAPOutputViewBase() {}

@@ -658,7 +658,11 @@ void DebugAdapterClient::DoCleanup()
         if(bp.file.empty()) {
             continue;
         }
+
         auto editor = clGetManager()->FindEditor(bp.file);
+        if(!editor) {
+            continue;
+        }
         editor->SetBreakpointMarker(bp.lineno - 1);
     }
 }

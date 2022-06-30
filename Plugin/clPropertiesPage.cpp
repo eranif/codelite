@@ -283,10 +283,14 @@ void clPropertiesPage::ShowColourPicker(size_t line, const wxColour& colour)
 
 void clPropertiesPage::ShowTextEditor(size_t line, const wxString& text)
 {
-    wxString new_text = ::clGetStringFromUser(text, wxGetTopLevelParent(this));
-    if(new_text.empty() || new_text == text) {
+    // use EditDlg directly and not clGetTextFromUser() method
+    // since empty string is a valid value
+    EditDlg dlg(wxGetTopLevelParent(this), text);
+    if(dlg.ShowModal() != wxID_OK) {
         return;
     }
+
+    wxString new_text = dlg.GetText();
 
     // update the cell value
     clDataViewTextWithButton c(new_text, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);

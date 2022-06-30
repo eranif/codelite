@@ -2,9 +2,10 @@ Debug Adapter Client
 ---
 
 
-Breakpoints management:
-
 - Allow user to set function breakpoint from the UI
-- Double click / activating bp should open the relevant source file
-- SessionBreakpoints::update_or_insert():
-    "changed" event should be more "smart" (only update the fields: verified and path, but don't replace valid path with empty string)
+- Handle Module event and print it in the "Output" tab
+- Add tooltip support
+- Add "CanInteract" support to the vairous views (either by disabling the views, or by clearing them) + hide the debugger marker
+- Write documentation for this plugin (with an example for how to configure lldb-vscode on MSW / Ubuntu)
+- Settings dialog - remove the "scan" button and instead add a "help" button that opens the docs page
+- Do the same for the LSP (add link to the docs page)

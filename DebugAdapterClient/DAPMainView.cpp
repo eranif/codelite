@@ -51,8 +51,8 @@ void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* respon
         wxTreeItemId item;
         if(M.count(thread.id) == 0) {
             // new thread, add it
-            item = m_threadsTree->AppendItem(root, wxString() << thread.id, -1, -1,
-                                             new FrameClientData(thread.id, FrameOrThread::THREAD));
+            item =
+                m_threadsTree->AppendItem(root, wxString() << thread.id, -1, -1, new FrameOrThreadClientData(thread));
             // add a dummy child, so will get the ">" button
             m_threadsTree->AppendItem(item, "<dummy>");
         } else {
@@ -89,8 +89,8 @@ void DAPMainView::UpdateFrames(int threadId, dap::StackTraceResponse* response)
 
     // append the stack frame
     for(const auto& frame : response->stackFrames) {
-        wxTreeItemId frame_item = m_threadsTree->AppendItem(parent, wxString() << frame.id, -1, -1,
-                                                            new FrameClientData(frame.id, FrameOrThread::FRAME));
+        wxTreeItemId frame_item =
+            m_threadsTree->AppendItem(parent, wxString() << frame.id, -1, -1, new FrameOrThreadClientData(frame));
 
         wxString source;
         if(!frame.source.path.empty()) {
@@ -273,7 +273,7 @@ int DAPMainView::GetThreadId(const wxTreeItemId& item)
     }
 
     if(cd->IsThread()) {
-        return cd->id;
+        return cd->GetId();
     }
     return wxNOT_FOUND;
 }
@@ -286,7 +286,7 @@ int DAPMainView::GetFrameId(const wxTreeItemId& item)
     }
 
     if(cd->IsFrame()) {
-        return cd->id;
+        return cd->GetId();
     }
     return wxNOT_FOUND;
 }
@@ -344,10 +344,10 @@ void DAPMainView::Clear()
     m_threadsTree->DeleteAllItems();
 }
 
-FrameClientData* DAPMainView::GetFrameClientData(const wxTreeItemId& item)
+FrameOrThreadClientData* DAPMainView::GetFrameClientData(const wxTreeItemId& item)
 {
     CHECK_ITEM_RET_NULL(item);
-    FrameClientData* cd = dynamic_cast<FrameClientData*>(m_threadsTree->GetItemData(item));
+    FrameOrThreadClientData* cd = dynamic_cast<FrameOrThreadClientData*>(m_threadsTree->GetItemData(item));
     return cd;
 }
 

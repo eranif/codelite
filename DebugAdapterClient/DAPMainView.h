@@ -27,19 +27,36 @@ enum class FrameOrThread {
 };
 
 // every entry in the threads tree has this item data
-struct FrameClientData : public wxTreeItemData {
-    int id = wxNOT_FOUND;
+struct FrameOrThreadClientData : public wxTreeItemData {
     FrameOrThread type;
-    wxString value; // untrucated value
-    FrameClientData(int frame_or_thread_id, FrameOrThread t)
-        : id(frame_or_thread_id)
-        , type(t)
+    dap::StackFrame frame_info;
+    dap::Thread thread_info;
+
+    FrameOrThreadClientData(const dap::StackFrame& frameInfo)
+        : type(FrameOrThread::FRAME)
+        , frame_info(frameInfo)
     {
     }
-    virtual ~FrameClientData() {}
+
+    FrameOrThreadClientData(const dap::Thread& threadInfo)
+        : type(FrameOrThread::THREAD)
+        , thread_info(threadInfo)
+    {
+    }
+
+    virtual ~FrameOrThreadClientData() {}
 
     bool IsFrame() const { return type == FrameOrThread::FRAME; }
     bool IsThread() const { return type == FrameOrThread::THREAD; }
+
+    int GetId() const
+    {
+        if(IsFrame()) {
+            return frame_info.id;
+        } else {
+            return thread_info.id;
+        }
+    }
 };
 
 /// --------------------------------------------------------------------
@@ -57,7 +74,7 @@ protected:
     wxTreeItemId FindThreadNode(int threadId);
     wxTreeItemId FindVariableNode(int refId);
 
-    FrameClientData* GetFrameClientData(const wxTreeItemId& item);
+    FrameOrThreadClientData* GetFrameClientData(const wxTreeItemId& item);
     VariableClientData* GetVariableClientData(const wxTreeItemId& item);
 
     int GetThreadId(const wxTreeItemId& item);

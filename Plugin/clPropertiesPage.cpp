@@ -32,7 +32,6 @@ clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
     m_view->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &clPropertiesPage::OnValueChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
     GetSizer()->Layout();
-    Begin();
 }
 
 clPropertiesPage::~clPropertiesPage()

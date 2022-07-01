@@ -6,6 +6,8 @@
 #include "imanager.h"
 #include "windowattrmanager.h"
 
+#include <wx/msgdlg.h>
+
 DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsStore& store)
     : DapDebuggerSettingsDlgBase(parent)
     , m_store(store)

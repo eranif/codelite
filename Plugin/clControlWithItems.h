@@ -86,6 +86,7 @@ protected:
     std::unique_ptr<clControlWithItemsRowRenderer> m_customRenderer;
     wxFont m_defaultFont = wxNullFont;
     bool m_recalcColumnWidthOnPaint = true;
+    bool m_disableView = false;
 
 protected:
     void DoInitialize();
@@ -114,6 +115,12 @@ public:
 
     virtual void SetDefaultFont(const wxFont& font);
     virtual wxFont GetDefaultFont() const;
+
+    /**
+     * @brief give the view a "disabled" look and feel
+     */
+    void SetDisabled(bool b);
+    bool IsDisabled() const { return m_disableView; }
 
     /**
      * @brief set a custom renderer to draw the rows for this control

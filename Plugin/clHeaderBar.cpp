@@ -108,6 +108,11 @@ void clHeaderBar::Render(wxDC& dc, const clColours& colours)
     // Set the DC origin to reflect the h-scrollbar
     clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
     dc.SetDeviceOrigin(-parent->GetFirstColumn(), 0);
+    if(parent->IsDisabled()) {
+        _colours.SetItemTextColour(_colours.GetGrayText());
+        _colours.SetSelItemTextColour(_colours.GetGrayText());
+    }
+
     for(size_t i = 0; i < size(); ++i) {
         bool is_last = (i == (size() - 1));
         Item(i).Render(dc, _colours, m_flags);

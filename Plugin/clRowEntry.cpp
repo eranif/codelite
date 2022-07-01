@@ -538,9 +538,9 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     wxRect selectionRect = rowRect;
     wxPoint deviceOrigin = dc.GetDeviceOrigin();
     selectionRect.SetX(-deviceOrigin.x);
-    if(IsSelected()) {
+    if(IsSelected() && !m_tree->IsDisabled()) {
         DrawSimpleSelection(win, dc, selectionRect, colours);
-    } else if(IsHovered()) {
+    } else if(IsHovered() && !m_tree->IsDisabled()) {
         draw_selection(dc, selectionRect, colours.GetHoverBgColour(), colours.GetHoverBgColour());
     } else if(colours.GetItemBgColour().IsOk()) {
         draw_selection(dc, selectionRect, colours.GetItemBgColour(), colours.GetItemBgColour(), 0.0);
@@ -556,12 +556,19 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             f = cell.GetFont();
         }
 
-        if(cell.GetTextColour().IsOk()) {
+        if(m_tree->IsDisabled()) {
+            // if the tree is disabled, use a gray text to draw the text
+            colours.SetItemTextColour(colours.GetGrayText());
+            colours.SetSelItemTextColour(colours.GetGrayText());
+
+        } else if(cell.GetTextColour().IsOk()) {
             colours.SetItemTextColour(cell.GetTextColour());
         }
+
         if(cell.GetBgColour().IsOk()) {
             colours.SetItemBgColour(cell.GetBgColour());
         }
+
         dc.SetFont(f);
         wxColour buttonColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour();
         wxRect cellRect = GetCellRect(i);

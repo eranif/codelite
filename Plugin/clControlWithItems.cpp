@@ -685,3 +685,9 @@ bool clSearchText::Matches(const wxString& findWhat, size_t col, const wxString&
     }
     return false;
 }
+
+void clControlWithItems::SetDisabled(bool b)
+{
+    m_disableView = b;
+    Refresh();
+}

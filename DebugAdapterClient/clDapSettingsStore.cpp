@@ -10,6 +10,7 @@ JSONItem DapEntry::To() const
     json.addProperty("connection_string", m_connection_string);
     json.addProperty("environment", m_environment);
     json.addProperty("flags", m_flags);
+    json.addProperty("env_format", (int)m_envFormat);
     return json;
 }
 
@@ -20,6 +21,7 @@ void DapEntry::From(const JSONItem& json)
     m_connection_string = json["connection_string"].toString();
     m_environment = json["environment"].toString();
     m_flags = json["flags"].toSize_t(m_flags);
+    m_envFormat = (dap::EnvFormat)json["env_format"].toInt((int)dap::EnvFormat::LIST);
 }
 
 //////////////////////////////////////////////////////////////

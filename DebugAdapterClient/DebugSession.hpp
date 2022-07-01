@@ -28,6 +28,18 @@ struct DebugSession {
         environment.clear();
         dap_server = {};
     }
+
+    dap::Environment MakeEnvironment()
+    {
+        dap::Environment dap_env;
+        dap_env.format = dap_server.GetEnvFormat();
+        if(dap_env.format != dap::EnvFormat::NONE) {
+            for(const auto& p : environment) {
+                dap_env.vars.insert({ p.first, p.second });
+            }
+        }
+        return dap_env;
+    }
 };
 
 #endif // DEBUG_SESSION_HPP

@@ -32,7 +32,6 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     AddHeader(_("General"));
     AddProperty(_("Command"), m_entry.GetCommand(), UPDATE_TEXT_CB(SetCommand));
     AddProperty(_("Connection string"), m_entry.GetConnectionString(), UPDATE_TEXT_CB(SetConnectionString));
-    AddProperty(_("Environment"), m_entry.GetEnvironment(), UPDATE_TEXT_CB(SetEnvironment));
 
     AddHeader(_("File path options"));
     AddProperty(_("Use relative paths"), m_entry.UseRelativePath(), UPDATE_BOOL_CB(SetUseRelativePath));
@@ -40,6 +39,40 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
 #ifdef __WXMSW__
     AddProperty(_("Use volume"), m_entry.UseVolume(), UPDATE_BOOL_CB(SetUseVolume));
 #endif
+
+    AddHeader(_("Environment variables"));
+    AddProperty(_("Server environment"), m_entry.GetEnvironment(), UPDATE_TEXT_CB(SetEnvironment));
+
+    const std::vector<wxString> format_choices = { "List", "Dictionary", "None" };
+    int sel = wxNOT_FOUND;
+    switch(m_entry.GetEnvFormat()) {
+    case dap::EnvFormat::LIST:
+        sel = 0;
+        break;
+    case dap::EnvFormat::DICTIONARY:
+        sel = 1;
+        break;
+    case dap::EnvFormat::NONE:
+        sel = 2;
+        break;
+    }
+
+    AddProperty(_("Environment format"), format_choices, sel, [this](const wxString& label, const wxAny& value) {
+        wxUnusedVar(label);
+        wxString value_str;
+        if(value.GetAs(&value_str)) {
+            DapEntry d;
+            m_store.Get(m_entry.GetName(), &d);
+            if(value_str == "List") {
+                d.SetEnvFormat(dap::EnvFormat::LIST);
+            } else if(value_str == "Dictionary") {
+                d.SetEnvFormat(dap::EnvFormat::DICTIONARY);
+            } else {
+                d.SetEnvFormat(dap::EnvFormat::NONE);
+            }
+            m_store.Set(d);
+        }
+    });
 }
 
 DapSettingsPage::~DapSettingsPage() {}

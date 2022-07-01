@@ -852,7 +852,7 @@ void DebugAdapterClient::OnDapInitializeResponse(DAPEvent& event)
     // FIXME: apply the environment here
     auto v = m_session.command;
     LOG_DEBUG(LOG) << "Calling Launch() with command:" << v << endl;
-    m_client.Launch(std::move(v), m_session.working_directory);
+    m_client.Launch(std::move(v), m_session.working_directory, m_session.MakeEnvironment());
 }
 
 /// DAP server responded to our `initialize` request

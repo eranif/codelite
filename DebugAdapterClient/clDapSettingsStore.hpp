@@ -2,6 +2,7 @@
 #define CLDAPSETTINGSSTORE_HPP
 
 #include "JSON.h"
+#include "dap/dap.hpp"
 #include "wxStringHash.h"
 
 #include <map>
@@ -24,6 +25,7 @@ class DapEntry
     wxString m_connection_string;
     wxString m_environment;
     size_t m_flags = (size_t)DapPathFormat::PATH_NATIVE; // bitset of DapPathFormats
+    dap::EnvFormat m_envFormat = dap::EnvFormat::LIST;
 
 private:
     void SetFlag(DapPathFormat flag, bool b)
@@ -40,6 +42,9 @@ private:
 public:
     DapEntry() {}
     ~DapEntry() {}
+
+    void SetEnvFormat(const dap::EnvFormat& envFormat) { this->m_envFormat = envFormat; }
+    dap::EnvFormat GetEnvFormat() const { return m_envFormat; }
 
     void SetCommand(const wxString& command) { this->m_command = command; }
     void SetName(const wxString& name) { this->m_name = name; }

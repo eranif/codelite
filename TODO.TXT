@@ -2,8 +2,6 @@ Debug Adapter Client
 ---
 
 
-- Update the Launch() method to accept environment variables
-- Update the Dap Settings dialog to allow the user to choose the env format (LIST, DICTIONARY, NONE)
 - Allow user to set function breakpoint from the UI
 - Handle Module event and print it in the "Output" tab
 - Add tooltip support

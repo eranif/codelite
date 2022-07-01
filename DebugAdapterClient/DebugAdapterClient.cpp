@@ -54,6 +54,10 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
+#if USE_SFTP
+#include "sftp_settings.h"
+#endif
+
 static DebugAdapterClient* thePlugin = NULL;
 
 namespace
@@ -399,6 +403,7 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
     wxString exepath;
     wxString args;
     clEnvList_t env;
+    wxString ssh_account;
 
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         // standard C++ workspace
@@ -446,7 +451,10 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
     }
 
     // start the debugger
-    StartAndConnectToDapServer(dap_server, exepath, args, working_directory, env);
+    if(!InitialiseSession(dap_server, exepath, args, working_directory, ssh_account, env)) {
+        return;
+    }
+    StartAndConnectToDapServer();
 }
 
 void DebugAdapterClient::OnDebugNext(clDebugEvent& event)
@@ -739,152 +747,38 @@ void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event) { CHECK_IS_DAP_CONN
 
 void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
 {
-#if 0
-    if(!DoInitializeDebugger(event, true,
-                             clDebuggerTerminalPOSIX::MakeExeTitle(event.GetExecutableName(), event.GetArguments()))) {
+    if(!IsDebuggerOwnedByPlugin(event.GetDebuggerName())) {
+        event.Skip();
         return;
     }
 
-    LLDBConnectReturnObject retObj;
-    LLDBSettings settings;
-    settings.Load();
-    if(m_connector.Connect(retObj, settings, 5)) {
+    // ours to handle
+    event.Skip(false);
+    const wxString& exe_to_debug = event.GetExecutableName();
+    const wxString& working_dir = event.GetWorkingDirectory();
+    const wxString& args = event.GetArguments();
 
-        // Apply the environment
-        EnvSetter env;
+    // fetch the requested debugger details
+    DapEntry dap_server;
+    m_dap_store.Get(event.GetDebuggerName(), &dap_server);
 
-        // Get list of breakpoints and add them ( we will apply them later on )
-        clDebuggerBreakpoint::Vec_t gdbBps;
-        m_mgr->GetAllBreakpoints(gdbBps);
-
-        // remove all breakpoints from previous session
-        m_connector.DeleteAllBreakpoints();
-
-        // apply the serialized breakpoints
-        // In 'Quick Debug' we stop on main
-        m_connector.AddBreakpoint("main");
-        m_connector.AddBreakpoints(gdbBps);
-
-        // Setup pivot folder if needed
-        SetupPivotFolder(retObj);
-
-        LLDBCommand startCommand;
-        startCommand.FillEnvFromMemory();
-        startCommand.SetExecutable(event.GetExecutableName());
-        startCommand.SetCommandArguments(event.GetArguments());
-        startCommand.SetWorkingDirectory(event.GetWorkingDirectory());
-        startCommand.SetStartupCommands(event.GetStartupCommands());
-        startCommand.SetRedirectTTY(m_debuggerTerminal.GetTty());
-        m_connector.Start(startCommand);
-
-    } else {
-        // Failed to connect, notify and perform cleanup
-        DoCleanup();
-        wxString message;
-        message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
-        ::wxMessageBox(message, DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTER);
+    auto env = PrepareEnvForFileSystemWorkspace(dap_server, !event.IsSSHDebugging());
+    if(!InitialiseSession(dap_server, exe_to_debug, args, working_dir, event.GetSshAccount(), env)) {
         return;
     }
-#endif
+    StartAndConnectToDapServer();
 }
 
 void DebugAdapterClient::OnDebugCoreFile(clDebugEvent& event)
 {
     // FIXME
-#if 0
-    if(event.GetDebuggerName() != LLDB_DEBUGGER_NAME) {
-        event.Skip();
-        return;
-    }
-
-#ifdef __WXMSW__
-    ::wxMessageBox(_("Debug core file with LLDB is not supported under Windows"), DAP_MESSAGE_BOX_TITLE,
-                   wxOK | wxCENTER | wxICON_WARNING);
-    return;
-#endif
-
-    if(!DoInitializeDebugger(event, false, clDebuggerTerminalPOSIX::MakeCoreTitle(event.GetCoreFile()))) {
-        return;
-    }
-
-    LLDBConnectReturnObject retObj;
-    LLDBSettings settings;
-    settings.Load();
-
-    if(m_connector.Connect(retObj, settings, 5)) {
-
-        // Apply the environment
-        EnvSetter env;
-
-        // remove all breakpoints from previous session
-        m_connector.DeleteAllBreakpoints();
-
-        LLDBCommand startCommand;
-        startCommand.FillEnvFromMemory();
-        startCommand.SetCommandType(kCommandDebugCoreFile);
-        startCommand.SetExecutable(event.GetExecutableName());
-        startCommand.SetCorefile(event.GetCoreFile());
-        startCommand.SetWorkingDirectory(event.GetWorkingDirectory());
-        startCommand.SetRedirectTTY(m_debuggerTerminal.GetTty());
-        m_connector.OpenCoreFile(startCommand);
-    } else {
-        // Failed to connect, notify and perform cleanup
-        DoCleanup();
-        wxString message;
-        message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
-        ::wxMessageBox(message, DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTER);
-        return;
-    }
-#endif
+    event.Skip();
 }
 
 void DebugAdapterClient::OnDebugAttachToProcess(clDebugEvent& event)
 {
-#if 0
-    if(event.GetDebuggerName() != LLDB_DEBUGGER_NAME) {
-        event.Skip();
-        return;
-    }
-
-#ifdef __WXMSW__
-    ::wxMessageBox(_("Attach to process with LLDB is not supported under Windows"), DAP_MESSAGE_BOX_TITLE,
-                   wxOK | wxCENTER | wxICON_WARNING);
-    return;
-#endif
-
-    if(!DoInitializeDebugger(event, true, clDebuggerTerminalPOSIX::MakePidTitle(event.GetInt())))
-        return;
-
-    LLDBConnectReturnObject retObj;
-    LLDBSettings settings;
-    settings.Load();
-
-    if(m_connector.Connect(retObj, settings, 5)) {
-
-        // Apply the environment
-        EnvSetter env;
-
-        // remove all breakpoints from previous session
-        m_connector.DeleteAllBreakpoints();
-        LLDBSettings settings;
-        settings.Load();
-
-        // Attach to the process
-        LLDBCommand command;
-        command.SetCommandType(kCommandAttachProcess);
-        command.SetProcessID(event.GetInt());
-        command.SetSettings(settings);
-        m_connector.AttachProcessWithPID(command);
-
-    } else {
-        // Failed to connect, notify and perform cleanup
-        DoCleanup();
-        wxString message;
-        message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
-        ::wxMessageBox(message, DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTER);
-        return;
-    }
-#endif
+    // FIXME
+    event.Skip();
 }
 
 void DebugAdapterClient::OnDebugDeleteAllBreakpoints(clDebugEvent& event)
@@ -1112,16 +1006,16 @@ void DebugAdapterClient::OnDapRunInTerminal(DAPEvent& event)
 
 void DebugAdapterClient::RefreshBreakpointsMarkersForEditor(IEditor* editor) { CHECK_PTR_RET(editor); }
 
-bool DebugAdapterClient::LaunchProcess(const DapEntry& dap_server)
+bool DebugAdapterClient::LaunchDAPServer()
 {
     wxDELETE(m_dap_server);
-
-    if(dap_server.IsRemote()) {
+    const DapEntry& dap_server = m_session.dap_server;
+    if(m_session.debug_over_ssh) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
         m_dap_server = ::CreateAsyncProcess(this, dap_server.GetCommand(),
                                             IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
-                                            wxEmptyString, &env_list, dap_server.GetSshAccount());
+                                            wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName());
     } else {
         // launch local process
         auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
@@ -1133,20 +1027,43 @@ bool DebugAdapterClient::LaunchProcess(const DapEntry& dap_server)
     return m_dap_server != nullptr;
 }
 
-void DebugAdapterClient::StartAndConnectToDapServer(const DapEntry& dap_server, const wxString& exepath,
-                                                    const wxString& args, const wxString& working_directory,
-                                                    const clEnvList_t& env)
+bool DebugAdapterClient::InitialiseSession(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
+                                           const wxString& working_directory, const wxString& ssh_account,
+                                           const clEnvList_t& env)
 {
-    // Reset the client
-    m_client.Reset();
-    LOG_DEBUG(LOG) << "Connecting to dap-server:" << dap_server.GetName() << endl;
-    LOG_DEBUG(LOG) << "exepath:" << exepath << endl;
-    LOG_DEBUG(LOG) << "args:" << args << endl;
-    LOG_DEBUG(LOG) << "working_directory:" << working_directory << endl;
-    LOG_DEBUG(LOG) << "env:" << to_string_array(env) << endl;
+    m_session.Clear();
+    m_session.dap_server = dap_server;
+    wxArrayString command_array = StringUtils::BuildArgv(args);
+    command_array.Insert(exepath, 0);
+    m_session.command = { command_array.begin(), command_array.end() };
+    m_session.working_directory = working_directory;
+    m_session.environment = env;
+    m_session.debug_over_ssh = !ssh_account.empty();
 
-    // first, launch the process
-    if(!LaunchProcess(dap_server)) {
+#if USE_SFTP
+    if(m_session.debug_over_ssh) {
+        m_session.ssh_acount = SSHAccountInfo::LoadAccount(ssh_account);
+        if(m_session.ssh_acount.GetAccountName().empty()) {
+            LOG_ERROR(LOG) << "failed to load ssh account:" << ssh_account << endl;
+            m_session.Clear();
+            return false;
+        }
+    }
+#endif
+
+    return true;
+}
+
+void DebugAdapterClient::StartAndConnectToDapServer()
+{
+    m_client.Reset();
+    LOG_DEBUG(LOG) << "Connecting to dap-server:" << m_session.dap_server.GetName() << endl;
+    LOG_DEBUG(LOG) << "exepath:" << m_session.command << endl;
+    LOG_DEBUG(LOG) << "working_directory:" << m_session.working_directory << endl;
+    LOG_DEBUG(LOG) << "env:" << to_string_array(m_session.environment) << endl;
+
+    // start the dap server (for the current session)
+    if(!LaunchDAPServer()) {
         return;
     }
 
@@ -1156,26 +1073,12 @@ void DebugAdapterClient::StartAndConnectToDapServer(const DapEntry& dap_server, 
     // This is useful when the user wishes to use stdin/out for communicating with
     // the dap and not over socket
     dap::SocketTransport* transport = new dap::SocketTransport();
-    if(!transport->Connect(dap_server.GetConnectionString(), 10)) {
+    if(!transport->Connect(m_session.dap_server.GetConnectionString(), 10)) {
         wxMessageBox("Failed to connect to DAP server", DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTRE);
         wxDELETE(transport);
         m_client.Reset();
         return;
     }
-    m_session.Clear();
-    wxArrayString command_array = StringUtils::BuildArgv(args);
-    command_array.Insert(exepath, 0);
-    m_session.command = { command_array.begin(), command_array.end() };
-    if(m_session.command.empty()) {
-        wxMessageBox(_("Can't debug an empty command!"), DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTRE);
-        DoCleanup();
-        return;
-    }
-
-    m_session.working_directory = working_directory;
-    m_session.environment = env;
-    m_session.dap_server = dap_server;
-
     wxDELETE(m_breakpointsHelper);
     m_breakpointsHelper = new BreakpointsHelper(m_client, m_session, LOG);
 
@@ -1269,7 +1172,7 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
         file_to_load = NormaliseReceivedPath(file_to_load);
         LOG_DEBUG(LOG) << "Normalised form:" << file_to_load << endl;
 
-        if(m_session.dap_server.IsRemote()) {
+        if(m_session.debug_over_ssh) {
             clGetManager()->SetStatusMessage(_("ERROR: (dap) loading remote file over SSH is not supported yet"));
             return;
         } else {
@@ -1310,4 +1213,22 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
             m_textView->SetMarker(line_number);
         });
     }
+}
+
+clEnvList_t DebugAdapterClient::PrepareEnvForFileSystemWorkspace(const DapEntry& dap_server, bool resolve_vars)
+{
+    clEnvList_t envlist = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        auto conf = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
+        if(conf) {
+            auto workspace_env = StringUtils::BuildEnvFromString(conf->GetEnvironment());
+            envlist.insert(envlist.end(), workspace_env.begin(), workspace_env.end());
+        }
+    }
+
+    if(resolve_vars) {
+        EnvSetter setter; // apply global variables
+        envlist = StringUtils::ResolveEnvList(envlist);
+    }
+    return envlist;
 }

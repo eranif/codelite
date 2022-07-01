@@ -1,4 +1,5 @@
 #include "BreakpointsHelper.hpp"
+
 #include "event_notifier.h"
 
 #include <algorithm>
@@ -166,11 +167,11 @@ wxString BreakpointsHelper::NormalisePathForSend(const wxString& path) const
     const auto& dap = m_session.dap_server;
 
     // attempt to make it fullpath
-    if(fn.IsRelative()) {
+    if(fn.IsRelative() && !dap.UseRelativePath()) {
         fn.MakeAbsolute(m_session.working_directory);
     }
 
-    if(dap.IsRemote() || dap.IsUsingUnixPath()) {
+    if(!dap.UseVolume()) {
         // no volume
         fn.SetVolume(wxEmptyString);
     }

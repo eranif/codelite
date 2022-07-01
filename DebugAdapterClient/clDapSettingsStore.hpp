@@ -7,16 +7,14 @@
 #include <map>
 #include <wx/filename.h>
 
-enum class DapEntryFlag : size_t {
-    // linux path: no volume, always forward slash
-    USE_LINUX_PATHS = (1 << 0),
-    // implies: USE_LINUX_PATHS
-    REMOTE_OVER_SSH = (1 << 1),
+enum class DapPathFormat : size_t {
+    PATH_NATIVE = 0,
     // relative path: file name only
-    USE_RELATIVE_PATH = (1 << 2),
-    // forward slash. on windows, we include the volume
-    // e.g. C:/path/to/file
-    USE_FORWARD_SLASH = (1 << 3),
+    PATH_RELATIVE = (1 << 0),
+    // forward slash, always
+    PATH_FORWARD_SLASH = (1 << 1),
+    // MSW: use volume in path
+    PATH_NO_VOLUME = (1 << 2),
 };
 
 class DapEntry
@@ -25,11 +23,10 @@ class DapEntry
     wxString m_name;
     wxString m_connection_string;
     wxString m_environment;
-    wxString m_ssh_account;
-    size_t m_flags = (size_t)DapEntryFlag::USE_RELATIVE_PATH; // bitset of DapEntryFlags
+    size_t m_flags = (size_t)DapPathFormat::PATH_NATIVE; // bitset of DapPathFormats
 
 private:
-    void SetFlag(DapEntryFlag flag, bool b)
+    void SetFlag(DapPathFormat flag, bool b)
     {
         if(b) {
             m_flags |= (size_t)flag;
@@ -38,7 +35,7 @@ private:
         }
     }
 
-    bool HasFlag(DapEntryFlag flag) const { return m_flags & (size_t)flag; }
+    bool HasFlag(DapPathFormat flag) const { return m_flags & (size_t)flag; }
 
 public:
     DapEntry() {}
@@ -47,26 +44,25 @@ public:
     void SetCommand(const wxString& command) { this->m_command = command; }
     void SetName(const wxString& name) { this->m_name = name; }
     void SetConnectionString(const wxString& connection_string) { this->m_connection_string = connection_string; }
-    void SetRemote(bool b) { SetFlag(DapEntryFlag::REMOTE_OVER_SSH, b); }
-    void SetSshAccount(const wxString& name) { this->m_ssh_account = name; }
 
     const wxString& GetCommand() const { return m_command; }
     const wxString& GetName() const { return m_name; }
     const wxString& GetConnectionString() const { return m_connection_string; }
-    bool IsRemote() const { return HasFlag(DapEntryFlag::REMOTE_OVER_SSH); }
-    const wxString& GetSshAccount() const { return m_ssh_account; }
 
     void SetEnvironment(const wxString& environment) { this->m_environment = environment; }
     const wxString& GetEnvironment() const { return m_environment; }
 
-    void SetUseUnixPath(bool b) { SetFlag(DapEntryFlag::USE_LINUX_PATHS, b); }
-    bool IsUsingUnixPath() const { return HasFlag(DapEntryFlag::USE_LINUX_PATHS); }
+    void SetUseVolume(bool b) { SetFlag(DapPathFormat::PATH_NO_VOLUME, !b); }
+    bool UseVolume() const { return !HasFlag(DapPathFormat::PATH_NO_VOLUME); }
 
-    void SetUseRelativePath(bool b) { SetFlag(DapEntryFlag::USE_RELATIVE_PATH, b); }
-    bool UseRelativePath() const { return HasFlag(DapEntryFlag::USE_RELATIVE_PATH); }
+    void SetUseRelativePath(bool b) { SetFlag(DapPathFormat::PATH_RELATIVE, b); }
+    bool UseRelativePath() const { return HasFlag(DapPathFormat::PATH_RELATIVE); }
 
-    void SetUseForwardSlash(bool b) { SetFlag(DapEntryFlag::USE_FORWARD_SLASH, b); }
-    bool UseForwardSlash() const { return HasFlag(DapEntryFlag::USE_FORWARD_SLASH); }
+    void SetUseForwardSlash(bool b) { SetFlag(DapPathFormat::PATH_FORWARD_SLASH, b); }
+    bool UseForwardSlash() const { return HasFlag(DapPathFormat::PATH_FORWARD_SLASH); }
+
+    bool IsUsingNativePath() const { return m_flags == 0; }
+    void SetUseNativePath() { m_flags = 0; }
 
     JSONItem To() const;
     void From(const JSONItem& json);

@@ -21,7 +21,11 @@ clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_view = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                  wxDV_ROW_LINES | wxDV_NO_HEADER | wxDV_COLUMN_WIDTH_NEVER_SHRINKS);
+                                  wxDV_NO_HEADER | wxDV_COLUMN_WIDTH_NEVER_SHRINKS);
+
+    // remove the wxTR_ROW_LINES style (this is the underlying style in clTreeCtrl
+    // the controls the zebra line colouring
+    m_view->SetTreeStyle(m_view->GetTreeStyle() & ~wxTR_ROW_LINES);
 
     GetSizer()->Add(m_view, wxSizerFlags(1).Expand());
     m_view->AppendTextColumn(_("Property Name"));

@@ -81,10 +81,13 @@ private:
     void ShowPane(const wxString& paneName, bool show);
     void ClearDebuggerMarker();
     void DoCleanup();
-    void StartAndConnectToDapServer(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
-                                    const wxString& working_directory, const clEnvList_t& env);
-    bool LaunchProcess(const DapEntry& dap_entry);
+    void StartAndConnectToDapServer();
+    bool LaunchDAPServer();
     void RefreshBreakpointsView();
+    bool InitialiseSession(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
+                           const wxString& working_directory, const wxString& ssh_account, const clEnvList_t& env);
+
+    clEnvList_t PrepareEnvForFileSystemWorkspace(const DapEntry& dap_server, bool resolve_vars);
 
     /// stop the dap server if it is running and send DEBUG_STOP event
     void StopProcess();

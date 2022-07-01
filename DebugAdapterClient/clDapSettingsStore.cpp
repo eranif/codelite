@@ -10,7 +10,6 @@ JSONItem DapEntry::To() const
     json.addProperty("connection_string", m_connection_string);
     json.addProperty("environment", m_environment);
     json.addProperty("flags", m_flags);
-    json.addProperty("ssh_account", m_ssh_account);
     return json;
 }
 
@@ -21,7 +20,6 @@ void DapEntry::From(const JSONItem& json)
     m_connection_string = json["connection_string"].toString();
     m_environment = json["environment"].toString();
     m_flags = json["flags"].toSize_t(m_flags);
-    m_ssh_account = json["ssh_account"].toString();
 }
 
 //////////////////////////////////////////////////////////////

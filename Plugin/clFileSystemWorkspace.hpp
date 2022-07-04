@@ -49,12 +49,6 @@ protected:
     clEnvList_t GetEnvList();
     CompilerPtr GetCompiler();
 
-    /**
-     * @brief return the executable to run + args + working directory
-     * this method also expands all macros/env variables
-     */
-    void GetExecutable(wxString& exe, wxString& args, wxString& wd);
-
     //===--------------------------
     // Event handlers
     //===--------------------------
@@ -112,6 +106,12 @@ public:
     wxFileName GetProjectFileName(const wxString& projectName) const override;
     void SetProjectActive(const wxString& project) override;
     wxString GetDebuggerName() const override;
+
+    /**
+     * @brief return the executable to run + args + working directory
+     * this method also expands all macros/env variables
+     */
+    void GetExecutable(wxString& exe, wxString& args, wxString& wd);
 
     virtual wxString GetExcludeFolders() const;
     clFileSystemWorkspace(bool dummy);

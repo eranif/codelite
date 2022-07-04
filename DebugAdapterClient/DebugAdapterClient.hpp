@@ -149,8 +149,6 @@ protected:
     void OnDebugShowCursor(clDebugEvent& event);
 
     void OnBuildStarting(clBuildEvent& event);
-    void OnRunToCursor(wxCommandEvent& event);
-    void OnJumpToCursor(wxCommandEvent& event);
 
     void OnAddWatch(wxCommandEvent& event);
     void OnProcessOutput(clProcessEvent& event);

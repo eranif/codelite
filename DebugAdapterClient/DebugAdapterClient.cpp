@@ -191,11 +191,6 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_SHOW_CURSOR, &DebugAdapterClient::OnDebugShowCursor, this);
     wxTheApp->Bind(wxEVT_MENU, &DebugAdapterClient::OnSettings, this, XRCID("lldb_settings"));
 
-    EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnRunToCursor, this,
-                               lldbRunToCursorContextMenuId);
-    EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnJumpToCursor, this,
-                               lldbJumpToCursorContextMenuId);
-
     wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnAddWatch, this, lldbAddWatchContextMenuId);
     wxTheApp->Bind(wxEVT_IDLE, &DebugAdapterClient::OnIdle, this);
     dap::Initialize(); // register all dap objects
@@ -258,11 +253,6 @@ void DebugAdapterClient::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT_INST, &DebugAdapterClient::OnDebugNextInst, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_SHOW_CURSOR, &DebugAdapterClient::OnDebugShowCursor, this);
     wxTheApp->Unbind(wxEVT_MENU, &DebugAdapterClient::OnSettings, this, XRCID("lldb_settings"));
-
-    EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnRunToCursor, this,
-                                 lldbRunToCursorContextMenuId);
-    EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnJumpToCursor, this,
-                                 lldbJumpToCursorContextMenuId);
 
     // Dap events
     m_client.Unbind(wxEVT_DAP_INITIALIZE_RESPONSE, &DebugAdapterClient::OnDapInitializeResponse, this);
@@ -372,8 +362,6 @@ void DebugAdapterClient::RefreshBreakpointsView()
 void DebugAdapterClient::OnDebugContinue(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-    event.Skip();
-
     // call continue
     m_client.Continue();
     LOG_DEBUG(LOG) << "Sending 'continue' command" << endl;
@@ -382,14 +370,16 @@ void DebugAdapterClient::OnDebugContinue(clDebugEvent& event)
 void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
 {
     if(m_client.IsConnected()) {
-        // already running, do nothing
+        // already running - assume "continue"
+        OnDebugContinue(event);
         return;
     }
+
     LOG_DEBUG(LOG) << "debug-start event is called for debugger:" << event.GetDebuggerName() << endl;
 
     if(!IsDebuggerOwnedByPlugin(event.GetDebuggerName())) {
         event.Skip();
-        LOG_DEBUG(LOG) << "Skipping" << endl;
+        LOG_DEBUG(LOG) << "Not a dap debugger (" << event.GetDebuggerName() << ")" << endl;
         return;
     }
 
@@ -407,7 +397,9 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
     wxString ssh_account;
 
     if(clCxxWorkspaceST::Get()->IsOpen()) {
+        //
         // standard C++ workspace
+        //
         ProjectPtr project = clCxxWorkspaceST::Get()->GetProject(event.GetProjectName());
         if(!project) {
             ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(),
@@ -448,7 +440,30 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
         }
         exepath = fn.GetFullPath();
     } else if(clFileSystemWorkspace::Get().IsOpen()) {
-        LOG_SYSTEM(LOG) << "File System workspace is not yet supported" << endl;
+        //
+        // Handle file system workspace
+        //
+        auto conf = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
+        if(!conf) {
+            LOG_ERROR(LOG) << "No active configuration found!" << endl;
+            return;
+        }
+
+        auto workspace = clWorkspaceManager::Get().GetWorkspace();
+        bool is_remote = workspace->IsRemote();
+        ssh_account = workspace->GetSshAccount();
+
+        clFileSystemWorkspace::Get().GetExecutable(exepath, args, working_directory);
+        if(is_remote) {
+            env = StringUtils::BuildEnvFromString(conf->GetEnvironment());
+        } else {
+            env = StringUtils::ResolveEnvList(conf->GetEnvironment());
+            wxFileName fnExepath(exepath);
+            if(fnExepath.IsRelative()) {
+                fnExepath.MakeAbsolute(workspace->GetFileName().GetPath());
+            }
+            exepath = fnExepath.GetFullPath();
+        }
     }
 
     // start the debugger
@@ -715,18 +730,6 @@ void DebugAdapterClient::OnAddWatch(wxCommandEvent& event)
     // FIXME
 }
 
-void DebugAdapterClient::OnRunToCursor(wxCommandEvent& event)
-{
-    CHECK_IS_DAP_CONNECTED();
-    // FIXME
-}
-
-void DebugAdapterClient::OnJumpToCursor(wxCommandEvent& event)
-{
-    CHECK_IS_DAP_CONNECTED();
-    // FIXME
-}
-
 void DebugAdapterClient::OnSettings(wxCommandEvent& event)
 {
     event.Skip();
@@ -755,9 +758,22 @@ void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
 
     // ours to handle
     event.Skip(false);
-    const wxString& exe_to_debug = event.GetExecutableName();
+    wxString exe_to_debug = event.GetExecutableName();
     const wxString& working_dir = event.GetWorkingDirectory();
     const wxString& args = event.GetArguments();
+
+    wxFileName fnExepath(exe_to_debug);
+    if(fnExepath.IsRelative()) {
+        fnExepath.MakeAbsolute(clFileSystemWorkspace::Get().IsOpen()
+                                   ? clFileSystemWorkspace::Get().GetFileName().GetPath()
+                                   : wxEmptyString);
+    }
+
+#ifdef __WXMSW__
+    fnExepath.SetExt("exe");
+#endif
+
+    exe_to_debug = fnExepath.GetFullPath();
 
     // fetch the requested debugger details
     DapEntry dap_server;
@@ -797,7 +813,7 @@ void DebugAdapterClient::OnDebugVOID(clDebugEvent& event) { CHECK_IS_DAP_CONNECT
 void DebugAdapterClient::OnDebugNextInst(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-    // FIXME
+    m_client.Next(wxNOT_FOUND, dap::SteppingGranularity::INSTRUCTION);
 }
 
 void DebugAdapterClient::OnDebugShowCursor(clDebugEvent& event)

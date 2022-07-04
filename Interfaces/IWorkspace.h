@@ -131,6 +131,15 @@ public:
      * @brief return list of projects for this workspace
      */
     virtual wxArrayString GetWorkspaceProjects() const = 0;
+
+    /**
+     * @brief returm true if this workspace is a remote one
+     */
+    virtual bool IsRemote() const { return false; }
+    /**
+     * @brief return the ssh account used by this workspace
+     */
+    virtual wxString GetSshAccount() const { return ""; }
 };
 
 #endif // IWORKSPACE_H

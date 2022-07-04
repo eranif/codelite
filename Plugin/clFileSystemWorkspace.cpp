@@ -920,7 +920,7 @@ void clFileSystemWorkspace::FileSystemUpdated() { CacheFiles(true); }
 
 void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 {
-    if(!IsOpen()) {
+    if(!IsOpen() || (event.GetDebuggerName() != "GNU gdb debugger")) {
         event.Skip();
         return;
     }
@@ -971,6 +971,7 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
     // Fire "starting" event
     clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+    eventStarting.SetDebuggerName(GetConfig()->GetDebugger());
     eventStarting.SetClientData(&session_info);
     if(EventNotifier::Get()->ProcessEvent(eventStarting)) {
         return;

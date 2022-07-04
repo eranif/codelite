@@ -73,6 +73,7 @@ void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
 {
     clTabRenderer::FinaliseBackground(parent, dc, clientRect, activeTabRect, colours, style);
 
+#ifndef __WXMAC__
     wxColour active_tab_colour;
     wxColour bg_colour;
     GetTabColours(colours, style, &active_tab_colour, &bg_colour);
@@ -81,7 +82,6 @@ void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
     dc.SetPen(active_tab_colour);
     dc.SetBrush(active_tab_colour);
     dc.DrawRectangle(top_rect);
-
     // draw line on the sides of the active tab
     wxPen bottom_pen = active_tab_colour.ChangeLightness(BOTTOM_PEN_LIGHNTESS);
     dc.SetPen(bottom_pen);
@@ -94,6 +94,7 @@ void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
     wxPoint left_2 = { activeTabRect.GetRight() + offset, top_rect.GetBottom() };
     wxPoint right_2 = { top_rect.GetRight(), top_rect.GetBottom() };
     DRAW_LINE(left_2, right_2);
+#endif
 }
 
 void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,

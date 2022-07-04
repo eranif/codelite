@@ -8,6 +8,8 @@
 #include "dap/dap.hpp"
 
 #include <unordered_set>
+
+class wxTimer;
 class DebugAdapterClient;
 
 // variable items client data
@@ -65,7 +67,7 @@ struct FrameOrThreadClientData : public wxTreeItemData {
 class DAPMainView : public DAPMainViewBase
 {
     DebugAdapterClient* m_plugin = nullptr;
-
+    wxTimer* m_timer = nullptr;
     // the variables displayed in the view are owned by this frame Id
     int m_scopesFrameId = wxNOT_FOUND;
 
@@ -78,6 +80,7 @@ protected:
     FrameOrThreadClientData* GetFrameClientData(const wxTreeItemId& item);
     VariableClientData* GetVariableClientData(const wxTreeItemId& item);
 
+    void OnTimerCheckCanInteract(wxTimerEvent& event);
     int GetThreadId(const wxTreeItemId& item);
     int GetVariableId(const wxTreeItemId& item);
     int GetFrameId(const wxTreeItemId& item);
@@ -99,5 +102,8 @@ public:
      * @brief return list of thread-id that are expanded in the UI
      */
     std::unordered_set<int> GetExpandedThreads();
+
+    void SetDisabled(bool b);
+    bool IsDisabled() const;
 };
 #endif // DAPMAINVIEW_H

@@ -155,6 +155,7 @@ protected:
     void OnAddWatch(wxCommandEvent& event);
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
+    void OnIdle(wxIdleEvent& event);
 
     // DAP events
     void OnDapExited(DAPEvent& event);

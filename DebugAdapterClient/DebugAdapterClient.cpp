@@ -197,7 +197,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
                                lldbJumpToCursorContextMenuId);
 
     wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnAddWatch, this, lldbAddWatchContextMenuId);
-
+    wxTheApp->Bind(wxEVT_IDLE, &DebugAdapterClient::OnIdle, this);
     dap::Initialize(); // register all dap objects
 
     m_client.SetWantsLogEvents(true);
@@ -224,6 +224,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
 void DebugAdapterClient::UnPlug()
 {
     wxDELETE(m_breakpointsHelper);
+    wxTheApp->Unbind(wxEVT_IDLE, &DebugAdapterClient::OnIdle, this);
     // DestroyUI();
     DebuggerMgr::Get().UnregisterDebuggers(m_shortName);
 
@@ -1231,4 +1232,14 @@ clEnvList_t DebugAdapterClient::PrepareEnvForFileSystemWorkspace(const DapEntry&
         envlist = StringUtils::ResolveEnvList(envlist);
     }
     return envlist;
+}
+
+void DebugAdapterClient::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_client.IsConnected());
+
+    if(!m_client.CanInteract()) {
+        ClearDebuggerMarker();
+    }
 }

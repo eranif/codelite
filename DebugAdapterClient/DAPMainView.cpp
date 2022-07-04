@@ -9,6 +9,9 @@ DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleL
     , m_plugin(plugin)
     , LOG(log)
 {
+    m_timer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &DAPMainView::OnTimerCheckCanInteract, this);
+
     m_threadsTree->SetTreeStyle(m_threadsTree->GetTreeStyle() | wxTR_HIDE_ROOT);
     m_threadsTree->SetShowHeader(true);
     m_threadsTree->AddHeader(_("ID"));     // The thread/frame ID
@@ -26,9 +29,15 @@ DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleL
     m_variablesTree->AddHeader(_("Type"));
     m_variablesTree->AddRoot(_("Scopes"));
     m_variablesTree->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPMainView::OnScopeItemExpanding, this);
+    m_timer->Start(250);
 }
 
-DAPMainView::~DAPMainView() {}
+DAPMainView::~DAPMainView()
+{
+    Unbind(wxEVT_TIMER, &DAPMainView::OnTimerCheckCanInteract, this);
+    m_timer->Stop();
+    wxDELETE(m_timer);
+}
 
 void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* response)
 {
@@ -360,4 +369,34 @@ VariableClientData* DAPMainView::GetVariableClientData(const wxTreeItemId& item)
     CHECK_ITEM_RET_NULL(item);
     VariableClientData* cd = dynamic_cast<VariableClientData*>(m_variablesTree->GetItemData(item));
     return cd;
+}
+
+void DAPMainView::SetDisabled(bool b)
+{
+    m_variablesTree->SetDisabled(b);
+    m_variablesTree->Refresh();
+
+    m_threadsTree->SetDisabled(b);
+    m_threadsTree->Refresh();
+}
+
+// we only need to check on view
+bool DAPMainView::IsDisabled() const { return m_variablesTree->IsDisabled(); }
+
+void DAPMainView::OnTimerCheckCanInteract(wxTimerEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_plugin->GetClient().IsConnected());
+
+    if(!m_plugin->GetClient().CanInteract()) {
+        if(!IsDisabled()) {
+            LOG_DEBUG(LOG) << "Setting view to disabled - TRUE" << endl;
+            SetDisabled(true);
+        }
+    } else {
+        if(IsDisabled()) {
+            LOG_DEBUG(LOG) << "Setting view to disabled - FALSE" << endl;
+            SetDisabled(false);
+        }
+    }
 }

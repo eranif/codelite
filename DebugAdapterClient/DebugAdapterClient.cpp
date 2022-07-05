@@ -764,9 +764,11 @@ void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
 
     wxFileName fnExepath(exe_to_debug);
     if(fnExepath.IsRelative()) {
-        fnExepath.MakeAbsolute(clFileSystemWorkspace::Get().IsOpen()
-                                   ? clFileSystemWorkspace::Get().GetFileName().GetPath()
-                                   : wxEmptyString);
+        wxString cwd;
+        if(clFileSystemWorkspace::Get().IsOpen()) {
+            cwd = clFileSystemWorkspace::Get().GetFileName().GetPath();
+        }
+        fnExepath.MakeAbsolute(cwd);
     }
 
 #ifdef __WXMSW__

@@ -8,6 +8,7 @@
 #include "dap/dap.hpp"
 
 #include <unordered_set>
+#include <wx/timer.h>
 
 class wxTimer;
 class DebugAdapterClient;

@@ -1017,7 +1017,8 @@ void DebugAdapterClient::OnDapSetSourceBreakpointResponse(DAPEvent& event)
     CHECK_PTR_RET(resp);
 
     // delete all breakpoints associated with the reported file
-    m_sessionBreakpoints.delete_by_paths(resp->breakpoints);
+    LOG_DEBUG(LOG) << "Deleting session breakpoints for file:" << resp->originSource << endl;
+    m_sessionBreakpoints.delete_by_path(resp->originSource);
 
     for(const auto& bp : resp->breakpoints) {
         m_sessionBreakpoints.update_or_insert(bp);

@@ -16,14 +16,12 @@
 class BreakpointsHelper : public wxEvtHandler
 {
     std::unordered_map<wxString, clDebuggerBreakpoint::Vec_t> m_ui_breakpoints;
-    std::unordered_map<int, dap::Breakpoint> m_session_breakpoints;
     dap::Client& m_client;
     const DebugSession& m_session;
     clModuleLogger& LOG;
 
 protected:
     void OnToggleBreakpoint(clDebugEvent& event);
-
     wxString NormalisePathForSend(const wxString& path) const;
 
 public:

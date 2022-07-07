@@ -120,17 +120,24 @@ void BreakpointsHelper::ApplyBreakpoints(const wxString& path)
 
     dap_source_breakpoints.reserve(m_ui_breakpoints.size());
     dap_function_breakpoints.reserve(m_ui_breakpoints.size());
+
     for(const auto& vt : m_ui_breakpoints) {
-        for(const auto& bp : vt.second) {
-            if(!is_source_breakpoint(bp)) {
-                continue;
-            }
-            if(path.empty() || path == bp.file) {
-                // all breakpoints
-                if(dap_source_breakpoints.count(bp.file) == 0) {
-                    dap_source_breakpoints.insert({ bp.file, {} });
+        if(vt.second.empty()) {
+            // no breakpoints for this source file, we need to pass an empty array to dap
+            dap_source_breakpoints.insert({ vt.first, {} });
+
+        } else {
+            for(const auto& bp : vt.second) {
+                if(!is_source_breakpoint(bp)) {
+                    continue;
                 }
-                dap_source_breakpoints[bp.file].push_back(to_dap_source_bp(bp));
+                if(path.empty() || path == bp.file) {
+                    // all breakpoints
+                    if(dap_source_breakpoints.count(bp.file) == 0) {
+                        dap_source_breakpoints.insert({ bp.file, {} });
+                    }
+                    dap_source_breakpoints[bp.file].push_back(to_dap_source_bp(bp));
+                }
             }
         }
     }

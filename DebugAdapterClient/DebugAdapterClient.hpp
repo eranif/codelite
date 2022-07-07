@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __LLDBDebugger__
-#define __LLDBDebugger__
+#ifndef DAP_DEBUGGER_CLIENT_HPP
+#define DAP_DEBUGGER_CLIENT_HPP
 
 #include "BreakpointsHelper.hpp"
 #include "DAPTextView.h"
@@ -104,7 +104,9 @@ private:
      * is owned by this plugin
      */
     bool IsDebuggerOwnedByPlugin(const wxString& name) const;
-
+    
+    void DestroyTooltip();
+    
 public:
     DebugAdapterClient(IManager* manager);
     ~DebugAdapterClient();

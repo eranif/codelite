@@ -1,25 +1,52 @@
 #include "DAPTooltip.hpp"
 
+#include "clResizableTooltip.h" // wxEVT_TOOLTIP_DESTROY
+#include "clSystemSettings.h"
+#include "drawingutils.h"
+#include "event_notifier.h"
 #include "macros.h"
 
-DAPTooltip::DAPTooltip(wxWindow* parent, dap::Client* client, const wxString& expression, const wxString& result,
-                       const wxString& type, int variableReference)
-    : clResizableTooltip(parent)
+#include <wx/dcclient.h>
+#include <wx/sizer.h>
+
+#ifdef __WXMSW__
+#define BORDER_STYLE wxBORDER_SIMPLE
+#else
+#define BORDER_STYLE wxBORDER_THEME
+#endif
+
+DAPTooltip::DAPTooltip(dap::Client* client, const wxString& expression, const wxString& result, const wxString& type,
+                       int variableReference)
+    : wxPopupWindow(EventNotifier::Get()->TopFrame())
     , m_client(client)
 {
-    GetTreeCtrl()->AddHeader(_("Result"));
-    GetTreeCtrl()->AddHeader(_("Type"));
-    GetTreeCtrl()->SetShowHeader(false);
+    wxClientDC dc(this);
+    dc.SetFont(DrawingUtils::GetDefaultGuiFont());
+    wxSize sz = dc.GetTextExtent("Tp");
+    sz.SetWidth(sz.GetWidth() * 50);   // 50 chars width
+    sz.SetHeight(sz.GetHeight() * 15); // 10 lines
+
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    m_ctrl = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, sz, BORDER_STYLE);
+    GetSizer()->Add(m_ctrl, 1, wxEXPAND);
+
+    m_ctrl->AddHeader(_("Result"));
+    m_ctrl->AddHeader(_("Type"));
+    m_ctrl->SetShowHeader(false);
 
     wxString root_text;
     root_text << expression << " = " << result;
-    auto root = GetTreeCtrl()->AddRoot(root_text, -1, -1, new TooltipItemData(variableReference));
-    GetTreeCtrl()->SetItemText(root, type, 1);
+    auto root = m_ctrl->AddRoot(root_text, -1, -1, new TooltipItemData(variableReference));
+    m_ctrl->SetItemText(root, type, 1);
+    m_ctrl->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPTooltip::OnItemExpanding, this);
+    m_ctrl->Bind(wxEVT_KEY_DOWN, &DAPTooltip::OnKeyDown, this);
 
     if(variableReference > 0) {
         // we have children
-        GetTreeCtrl()->AppendItem(GetTreeCtrl()->GetRootItem(), "<dummy>");
+        m_ctrl->AppendItem(m_ctrl->GetRootItem(), "<dummy>");
     }
+    GetSizer()->Fit(this);
+    m_ctrl->CallAfter(&clThemedTreeCtrl::SelectItem, m_ctrl->GetRootItem(), true);
 }
 
 DAPTooltip::~DAPTooltip() {}
@@ -29,20 +56,20 @@ void DAPTooltip::OnItemExpanding(wxTreeEvent& event)
     event.Skip();
     auto item = event.GetItem();
     CHECK_ITEM_RET(item);
-    CHECK_COND_RET(GetTreeCtrl()->ItemHasChildren(item));
+    CHECK_COND_RET(m_ctrl->ItemHasChildren(item));
 
     wxTreeItemIdValue cookie;
-    auto child = GetTreeCtrl()->GetFirstChild(item, cookie);
+    auto child = m_ctrl->GetFirstChild(item, cookie);
     CHECK_ITEM_RET(child);
 
-    wxString text = GetTreeCtrl()->GetItemText(child);
+    wxString text = m_ctrl->GetItemText(child);
     if(text != "<dummy>") {
         // already evaluated
         return;
     }
 
     // remove the fake children
-    GetTreeCtrl()->DeleteChildren(item);
+    m_ctrl->DeleteChildren(item);
 
     auto cd = GetItemData(item);
     CHECK_COND_RET(cd->refId != wxNOT_FOUND);
@@ -57,7 +84,7 @@ TooltipItemData* DAPTooltip::GetItemData(const wxTreeItemId& item)
         return nullptr;
     }
 
-    auto ptr = GetTreeCtrl()->GetItemData(item);
+    auto ptr = m_ctrl->GetItemData(item);
     CHECK_PTR_RET_NULL(ptr);
 
     return dynamic_cast<TooltipItemData*>(ptr);
@@ -76,12 +103,22 @@ void DAPTooltip::UpdateChildren(int varId, dap::VariablesResponse* response)
     for(auto var : response->variables) {
         wxString display_text;
         display_text << var.name << " = " << var.value;
-        auto child = GetTreeCtrl()->AppendItem(item, display_text, -1, -1, new TooltipItemData(var.variablesReference));
-        GetTreeCtrl()->SetItemText(child, var.type, 1);
+        auto child = m_ctrl->AppendItem(item, display_text, -1, -1, new TooltipItemData(var.variablesReference));
+        m_ctrl->SetItemText(child, var.type, 1);
 
         if(var.variablesReference > 0) {
-            GetTreeCtrl()->AppendItem(child, "<dummy>");
+            m_ctrl->AppendItem(child, "<dummy>");
         }
     }
-    GetTreeCtrl()->Expand(item);
+    m_ctrl->Expand(item);
+}
+
+void DAPTooltip::OnKeyDown(wxKeyEvent& event)
+{
+    event.Skip();
+    if(event.GetKeyCode() == WXK_ESCAPE) {
+        //  Cancel this tip
+        clCommandEvent destroyEvent(wxEVT_TOOLTIP_DESTROY);
+        EventNotifier::Get()->AddPendingEvent(destroyEvent);
+    }
 }

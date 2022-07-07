@@ -36,6 +36,7 @@
 #include "asyncprocess.h"
 #include "bookmark_manager.h"
 #include "clFileSystemWorkspace.hpp"
+#include "clResizableTooltip.h"
 #include "clWorkspaceManager.h"
 #include "clcommandlineparser.h"
 #include "console_frame.h"
@@ -614,7 +615,7 @@ void DebugAdapterClient::DestroyUI()
         m_textView = nullptr;
     }
 
-    wxDELETE(m_tooltip);
+    DestroyTooltip();
     ClearDebuggerMarker();
     m_mgr->GetDockingManager()->Update();
 }
@@ -754,7 +755,7 @@ void DebugAdapterClient::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-    wxDELETE(m_tooltip);
+    DestroyTooltip();
 
     wxString word = event.GetString();
     int frame_id = m_threadsView->GetCurrentFrameId();
@@ -769,16 +770,16 @@ void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event)
 
             auto editor = clGetManager()->GetActiveEditor();
             CHECK_PTR_RET(editor);
-            m_tooltip = new DAPTooltip(editor->GetCtrl(), &m_client, word, result, type, variablesReference);
-            m_tooltip->ShowTip();
+            m_tooltip = new DAPTooltip(&m_client, word, result, type, variablesReference);
+            m_tooltip->Move(::wxGetMousePosition());
+            m_tooltip->Show();
         });
 }
 
 void DebugAdapterClient::OnDestroyTip(clCommandEvent& event)
 {
     event.Skip();
-    CHECK_PTR_RET(m_tooltip);
-    wxDELETE(m_tooltip);
+    DestroyTooltip();
 }
 
 void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
@@ -1299,4 +1300,12 @@ void DebugAdapterClient::OnIdle(wxIdleEvent& event)
     if(!m_client.CanInteract()) {
         ClearDebuggerMarker();
     }
+}
+
+void DebugAdapterClient::DestroyTooltip()
+{
+    LOG_DEBUG(LOG) << "Destroying tooltip..." << endl;
+    CHECK_PTR_RET(m_tooltip);
+    LOG_DEBUG(LOG) << "Destroying tooltip...hiding tooltip" << endl;
+    wxDELETE(m_tooltip);
 }

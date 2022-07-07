@@ -3694,6 +3694,11 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         // If any key is pressed, but the CONTROL key hide the
         // debugger tip
         ManagerST::Get()->GetDebuggerTip()->HideDialog();
+
+        // Destroy any floating tooltips out there
+        clCommandEvent destroyEvent(wxEVT_TOOLTIP_DESTROY);
+        EventNotifier::Get()->AddPendingEvent(destroyEvent);
+
         escapeUsed = true;
 
     } else if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() && keyIsControl) {
@@ -3714,6 +3719,10 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
 
     // let the context process it as well
     if(event.GetKeyCode() == WXK_ESCAPE) {
+
+        // Destroy any floating tooltips out there
+        clCommandEvent destroyEvent(wxEVT_TOOLTIP_DESTROY);
+        EventNotifier::Get()->AddPendingEvent(destroyEvent);
 
         // if we are in fullscreen mode, hitting ESC will disable this
         wxFrame* mainframe = EventNotifier::Get()->TopFrame();

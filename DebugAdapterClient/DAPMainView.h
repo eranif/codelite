@@ -35,6 +35,7 @@ struct FrameOrThreadClientData : public wxTreeItemData {
     FrameOrThread type;
     dap::StackFrame frame_info;
     dap::Thread thread_info;
+    bool loaded = false;
 
     FrameOrThreadClientData(const dap::StackFrame& frameInfo)
         : type(FrameOrThread::FRAME)

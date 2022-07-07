@@ -47,40 +47,24 @@ void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* respon
     }
 
     // build a map that matches thread-id -> wxTreeItemId
-    std::unordered_map<int, wxTreeItemId> M;
     wxTreeItemId root = m_threadsTree->GetRootItem();
-    wxTreeItemIdValue cookie;
-    auto curitem = m_threadsTree->GetFirstChild(root, cookie);
-    while(curitem.IsOk()) {
-        M.insert({ GetThreadId(curitem), curitem });
-        curitem = m_threadsTree->GetNextChild(root, cookie);
-    }
 
     m_threadsTree->Begin();
+    m_threadsTree->DeleteChildren(root);
+
     for(const auto& thread : response->threads) {
-        wxTreeItemId item;
-        if(M.count(thread.id) == 0) {
-            // new thread, add it
-            item =
-                m_threadsTree->AppendItem(root, wxString() << thread.id, -1, -1, new FrameOrThreadClientData(thread));
-            // add a dummy child, so will get the ">" button
-            m_threadsTree->AppendItem(item, "<dummy>");
-        } else {
-            item = M[thread.id];
-            M.erase(thread.id); // remove it
-        }
+        // new thread, add it
+        wxTreeItemId item =
+            m_threadsTree->AppendItem(root, wxString() << thread.id, -1, -1, new FrameOrThreadClientData(thread));
+
+        // add a dummy child, so will get the ">" button
+        m_threadsTree->AppendItem(item, "<dummy>");
         if(thread.id == activeThreadId) {
             m_threadsTree->SetItemBold(item, true, 0);
             m_threadsTree->SetItemBold(item, true, 1);
         }
         m_threadsTree->SetItemText(item, thread.name, 1);
     }
-
-    // remove any item left in the Map
-    for(const auto& vt : M) {
-        m_threadsTree->Delete(vt.second);
-    }
-    M.clear();
     m_threadsTree->Commit();
 }
 
@@ -95,6 +79,12 @@ void DAPMainView::UpdateFrames(int threadId, dap::StackTraceResponse* response)
 
     if(m_threadsTree->ItemHasChildren(parent)) {
         m_threadsTree->DeleteChildren(parent);
+    }
+
+    // mark the parent as loaded
+    auto cd = GetFrameClientData(parent);
+    if(cd) {
+        cd->loaded = true;
     }
 
     // append the stack frame
@@ -262,6 +252,11 @@ void DAPMainView::DoThreadExpanding(const wxTreeItemId& item)
     auto cd = GetFrameClientData(item);
     CHECK_PTR_RET(cd);
     CHECK_COND_RET(cd->IsThread());
+
+    // if this item already loaded, avoid calling the debugger
+    if(cd->loaded) {
+        return;
+    }
 
     if(m_threadsTree->ItemHasChildren(item)) {
         m_threadsTree->DeleteChildren(item);

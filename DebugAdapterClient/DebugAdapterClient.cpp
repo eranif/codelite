@@ -848,7 +848,7 @@ void DebugAdapterClient::OnDebugVOID(clDebugEvent& event) { CHECK_IS_DAP_CONNECT
 void DebugAdapterClient::OnDebugNextInst(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-    m_client.Next(wxNOT_FOUND, dap::SteppingGranularity::INSTRUCTION);
+    m_client.Next(wxNOT_FOUND, true, dap::SteppingGranularity::INSTRUCTION);
 }
 
 void DebugAdapterClient::OnDebugShowCursor(clDebugEvent& event)
@@ -932,6 +932,7 @@ void DebugAdapterClient::OnDapStoppedEvent(DAPEvent& event)
         m_session.need_to_set_breakpoints = false;
     }
 
+    LOG_DEBUG(LOG) << " *** DAP Stopped Event *** " << endl;
     dap::StoppedEvent* stopped_data = event.GetDapEvent()->As<dap::StoppedEvent>();
     if(stopped_data) {
         m_client.GetThreads();
@@ -946,10 +947,9 @@ void DebugAdapterClient::OnDapThreadsResponse(DAPEvent& event)
     CHECK_PTR_RET(response);
 
     m_threadsView->UpdateThreads(m_client.GetActiveThreadId(), response);
-    auto threads_to_update = m_threadsView->GetExpandedThreads();
-    for(int thread_id : threads_to_update) {
-        m_client.GetFrames(thread_id);
-    }
+
+    // get the frames for the active thread
+    m_client.GetFrames();
 }
 
 void DebugAdapterClient::OnDapStackTraceResponse(DAPEvent& event)
@@ -1304,8 +1304,6 @@ void DebugAdapterClient::OnIdle(wxIdleEvent& event)
 
 void DebugAdapterClient::DestroyTooltip()
 {
-    LOG_DEBUG(LOG) << "Destroying tooltip..." << endl;
     CHECK_PTR_RET(m_tooltip);
-    LOG_DEBUG(LOG) << "Destroying tooltip...hiding tooltip" << endl;
     wxDELETE(m_tooltip);
 }

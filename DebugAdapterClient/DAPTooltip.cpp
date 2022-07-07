@@ -9,7 +9,7 @@
 #include <wx/dcclient.h>
 #include <wx/sizer.h>
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__WXMAC__)
 #define BORDER_STYLE wxBORDER_SIMPLE
 #else
 #define BORDER_STYLE wxBORDER_THEME

@@ -6,3 +6,6 @@ Debug Adapter Client
 - Write documentation for this plugin (with an example for how to configure lldb-vscode on MSW / Ubuntu)
 - Settings dialog - remove the "scan" button and instead add a "help" button that opens the docs page
 - Do the same for the LSP (add link to the docs page)
+- Add context menu for:
+    - copying backtrace: per thread, all threads
+    - copy variable value

@@ -35,8 +35,9 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
 
     AddHeader(_("File path options"));
     AddProperty(_("Use relative paths"), m_entry.UseRelativePath(), UPDATE_BOOL_CB(SetUseRelativePath));
-    AddProperty(_("Use forward slash"), m_entry.UseForwardSlash(), UPDATE_BOOL_CB(SetUseForwardSlash));
+
 #ifdef __WXMSW__
+    AddProperty(_("Use forward slash"), m_entry.UseForwardSlash(), UPDATE_BOOL_CB(SetUseForwardSlash));
     AddProperty(_("Use volume"), m_entry.UseVolume(), UPDATE_BOOL_CB(SetUseVolume));
 #endif
 

@@ -1,7 +1,7 @@
 Debug Adapter Client
 ---
 
-- Settings dialog - implement the "scan" button
+- Auto scan for dap servers on startup
 - Add a "help" button that opens the docs page
 - Allow user to set function breakpoint from the UI
 - Handle Module event and print it in the "Output" tab

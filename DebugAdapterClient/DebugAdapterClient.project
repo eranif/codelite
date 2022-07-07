@@ -56,6 +56,8 @@
   <Dependencies/>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">
+      <File Name="DapLocator.cpp"/>
+      <File Name="DapLocator.hpp"/>
       <File Name="SessionBreakpoints.cpp"/>
       <File Name="SessionBreakpoints.hpp"/>
       <File Name="DebugSession.hpp"/>

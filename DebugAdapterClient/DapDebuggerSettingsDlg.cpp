@@ -1,5 +1,6 @@
 #include "DapDebuggerSettingsDlg.h"
 
+#include "DapLocator.hpp"
 #include "DapSettingsPage.hpp"
 #include "bitmap_loader.h"
 #include "globals.h"
@@ -27,16 +28,22 @@ DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsSt
     m_toolbar->Bind(wxEVT_TOOL, &DapDebuggerSettingsDlg::OnDelete, this, wxID_DELETE);
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DapDebuggerSettingsDlg::OnItemsUI, this, wxID_DELETE);
 
-    const auto& entries = m_store.GetEntries();
-    for(const auto& vt : entries) {
-        m_notebook->AddPage(new DapSettingsPage(m_notebook, m_store, vt.second), vt.first);
-    }
+    Initialise();
 
     ::clSetDialogSizeAndPosition(this, 0.25);
     WindowAttrManager::Load(this);
 }
 
 DapDebuggerSettingsDlg::~DapDebuggerSettingsDlg() { m_store.Store(); }
+
+void DapDebuggerSettingsDlg::Initialise()
+{
+    m_notebook->DeleteAllPages();
+    const auto& entries = m_store.GetEntries();
+    for(const auto& vt : entries) {
+        m_notebook->AddPage(new DapSettingsPage(m_notebook, m_store, vt.second), vt.first);
+    }
+}
 
 void DapDebuggerSettingsDlg::OnItemsUI(wxUpdateUIEvent& event) { event.Enable(m_notebook->GetPageCount() > 0); }
 
@@ -60,8 +67,22 @@ void DapDebuggerSettingsDlg::OnDelete(wxCommandEvent& event)
 
 void DapDebuggerSettingsDlg::OnScan(wxCommandEvent& event)
 {
+    if(::wxMessageBox(_("Are you sure you want to scan for dap servers? (this will override your current settings)"),
+                      "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) != wxYES) {
+        return;
+    }
+
     wxUnusedVar(event);
-    // FIXME
+    DapLocator locator;
+    std::vector<DapEntry> entries;
+    if(locator.Locate(&entries) == 0) {
+        return;
+    }
+    m_store.Clear();
+    for(const auto& entry : entries) {
+        m_store.Set(entry);
+    }
+    Initialise();
 }
 
 void DapDebuggerSettingsDlg::OnNew(wxCommandEvent& event)

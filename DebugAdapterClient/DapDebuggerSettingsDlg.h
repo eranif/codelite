@@ -14,6 +14,9 @@ protected:
     void OnDelete(wxCommandEvent& event);
     void OnItemsUI(wxUpdateUIEvent& event);
 
+private:
+    void Initialise();
+
 public:
     DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsStore& store);
     virtual ~DapDebuggerSettingsDlg();

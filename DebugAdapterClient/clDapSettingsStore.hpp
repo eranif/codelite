@@ -78,9 +78,6 @@ class clDapSettingsStore
     std::map<wxString, DapEntry> m_entries;
     wxFileName m_filepath;
 
-private:
-    void Clear();
-
 public:
     clDapSettingsStore();
     ~clDapSettingsStore();
@@ -93,6 +90,7 @@ public:
     bool Set(const DapEntry& entry);
     bool Delete(const wxString& name);
     const std::map<wxString, DapEntry>& GetEntries() const { return m_entries; }
+    void Clear();
 };
 
 #endif // CLDAPSETTINGSSTORE_HPP

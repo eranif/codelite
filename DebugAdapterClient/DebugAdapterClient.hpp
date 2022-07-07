@@ -44,6 +44,7 @@
 
 class DAPMainView;
 class DAPOutputView;
+class DAPTooltip;
 class DAPBreakpointsView;
 class IProcess;
 
@@ -66,6 +67,7 @@ class DebugAdapterClient : public IPlugin
     DAPBreakpointsView* m_breakpointsView = nullptr;
     DAPTextView* m_textView = nullptr;
     DAPOutputView* m_outputView = nullptr;
+    DAPTooltip* m_tooltip = nullptr;
 
     bool m_raisOnBpHit;
     bool m_isPerspectiveLoaded;
@@ -149,6 +151,7 @@ protected:
     void OnDebugShowCursor(clDebugEvent& event);
 
     void OnBuildStarting(clBuildEvent& event);
+    void OnDestroyTip(clCommandEvent& event);
 
     void OnAddWatch(wxCommandEvent& event);
     void OnProcessOutput(clProcessEvent& event);

@@ -1,11 +1,12 @@
 #include "NodeDebuggerTooltip.h"
+
+#include "JSON.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
 #include "PropertyDescriptor.h"
 #include "RemoteObject.h"
 #include "cl_config.h"
 #include "event_notifier.h"
-#include "JSON.h"
 
 class NodeTreeItemData : public wxTreeItemData
 {
@@ -45,7 +46,9 @@ void NodeDebuggerTooltip::Show(nSerializableObject::Ptr_t remoteObject)
 
     // Set the value in a different column
     m_treeCtrl->SetItemText(m_treeCtrl->GetRootItem(), preview, 1);
-    if(ro->HasChildren()) { m_treeCtrl->AppendItem(m_treeCtrl->GetRootItem(), "<dummy>"); }
+    if(ro->HasChildren()) {
+        m_treeCtrl->AppendItem(m_treeCtrl->GetRootItem(), "<dummy>");
+    }
     clResizableTooltip::ShowTip();
 }
 
@@ -71,14 +74,18 @@ void NodeDebuggerTooltip::OnItemExpanding(wxTreeEvent& event)
 wxString NodeDebuggerTooltip::GetObjectId(const wxTreeItemId& item) const
 {
     NodeTreeItemData* d = dynamic_cast<NodeTreeItemData*>(m_treeCtrl->GetItemData(item));
-    if(!d) { return ""; }
+    if(!d) {
+        return "";
+    }
     return d->GetData();
 }
 
 void NodeDebuggerTooltip::OnObjectProperties(clDebugEvent& event)
 {
     wxString objectId = event.GetStartupCommands();
-    if(m_pendingItems.count(objectId) == 0) { return; }
+    if(m_pendingItems.count(objectId) == 0) {
+        return;
+    }
     wxTreeItemId item = m_pendingItems[objectId];
     m_pendingItems.erase(objectId);
 
@@ -92,7 +99,9 @@ void NodeDebuggerTooltip::OnObjectProperties(clDebugEvent& event)
         JSONItem prop = prop_arr.arrayItem(i);
         PropertyDescriptor propDesc;
         propDesc.FromJSON(prop);
-        if(!propDesc.IsEmpty()) { propVec.push_back(propDesc); }
+        if(!propDesc.IsEmpty()) {
+            propVec.push_back(propDesc);
+        }
     }
 
     m_treeCtrl->DeleteChildren(item);
@@ -101,6 +110,8 @@ void NodeDebuggerTooltip::OnObjectProperties(clDebugEvent& event)
         wxTreeItemId child = m_treeCtrl->AppendItem(item, prop.GetName());
         m_treeCtrl->SetItemText(child, prop.GetTextPreview(), 1);
         m_treeCtrl->SetItemData(child, new NodeTreeItemData(prop.GetValue().GetObjectId()));
-        if(prop.HasChildren()) { m_treeCtrl->AppendItem(child, "<dummy>"); }
+        if(prop.HasChildren()) {
+            m_treeCtrl->AppendItem(child, "<dummy>");
+        }
     }
 }

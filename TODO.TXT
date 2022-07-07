@@ -3,7 +3,6 @@ Debug Adapter Client
 
 - Allow user to set function breakpoint from the UI
 - Handle Module event and print it in the "Output" tab
-- Add tooltip support
 - Write documentation for this plugin (with an example for how to configure lldb-vscode on MSW / Ubuntu)
 - Settings dialog - remove the "scan" button and instead add a "help" button that opens the docs page
 - Do the same for the LSP (add link to the docs page)

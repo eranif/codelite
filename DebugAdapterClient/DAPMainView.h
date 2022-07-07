@@ -106,5 +106,7 @@ public:
 
     void SetDisabled(bool b);
     bool IsDisabled() const;
+
+    int GetCurrentFrameId() const { return m_scopesFrameId; }
 };
 #endif // DAPMAINVIEW_H

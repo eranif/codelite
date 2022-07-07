@@ -29,6 +29,7 @@
 #include "DAPMainView.h"
 #include "DAPOutputView.h"
 #include "DAPTextView.h"
+#include "DAPTooltip.hpp"
 #include "DapDebuggerSettingsDlg.h"
 #include "DapLoggingHelper.hpp"
 #include "StringUtils.h"
@@ -80,21 +81,21 @@ const int lldbRunToCursorContextMenuId = XRCID("dbg_run_to_cursor");
 const int lldbJumpToCursorContextMenuId = XRCID("dbg_jump_cursor");
 const int lldbAddWatchContextMenuId = XRCID("lldb_add_watch");
 
-#if 0
-wxString GetWatchWord(IEditor& editor)
+namespace
 {
-    auto word = editor.GetSelection();
-    if(word.IsEmpty()) {
-        word = editor.GetWordAtCaret();
+    wxString GetWatchWord(IEditor* editor)
+    {
+        CHECK_PTR_RET_EMPTY_STRING(editor);
+        auto word = editor->GetSelection();
+        if(word.IsEmpty()) {
+            word = editor->GetWordAtCaret();
+        }
+
+        // Remove leading and trailing whitespace.
+        word.Trim(true).Trim(false);
+        return word;
     }
-
-    // Remove leading and trailing whitespace.
-    word.Trim(true);
-    word.Trim(false);
-
-    return word;
-}
-#endif
+} // namespace
 
 std::vector<wxString> to_string_array(const clEnvList_t& env_list)
 {
@@ -177,6 +178,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &DebugAdapterClient::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_EXPR_TOOLTIP, &DebugAdapterClient::OnDebugTooltip, this);
     EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &DebugAdapterClient::OnDebugQuickDebug, this);
+    EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &DebugAdapterClient::OnDestroyTip, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CORE_FILE, &DebugAdapterClient::OnDebugCoreFile, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, &DebugAdapterClient::OnDebugDeleteAllBreakpoints,
                                this);
@@ -241,6 +243,7 @@ void DebugAdapterClient::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &DebugAdapterClient::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_EXPR_TOOLTIP, &DebugAdapterClient::OnDebugTooltip, this);
     EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG, &DebugAdapterClient::OnDebugQuickDebug, this);
+    EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &DebugAdapterClient::OnDestroyTip, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CORE_FILE, &DebugAdapterClient::OnDebugCoreFile, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, &DebugAdapterClient::OnDebugDeleteAllBreakpoints,
                                  this);
@@ -611,6 +614,7 @@ void DebugAdapterClient::DestroyUI()
         m_textView = nullptr;
     }
 
+    wxDELETE(m_tooltip);
     ClearDebuggerMarker();
     m_mgr->GetDockingManager()->Update();
 }
@@ -747,7 +751,35 @@ void DebugAdapterClient::OnSettings(wxCommandEvent& event)
 
 void DebugAdapterClient::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
-void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event) { CHECK_IS_DAP_CONNECTED(); }
+void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event)
+{
+    CHECK_IS_DAP_CONNECTED();
+    wxDELETE(m_tooltip);
+
+    wxString word = event.GetString();
+    int frame_id = m_threadsView->GetCurrentFrameId();
+
+    m_client.EvaluateExpression(
+        word, frame_id, dap::EvaluateContext::HOVER,
+        [this, word](bool success, const wxString& result, const wxString& type, int variablesReference) {
+            if(!success) {
+                clGetManager()->SetStatusMessage(_("Failed to evaluate expression: ") + word);
+                return;
+            }
+
+            auto editor = clGetManager()->GetActiveEditor();
+            CHECK_PTR_RET(editor);
+            m_tooltip = new DAPTooltip(editor->GetCtrl(), &m_client, word, result, type, variablesReference);
+            m_tooltip->ShowTip();
+        });
+}
+
+void DebugAdapterClient::OnDestroyTip(clCommandEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_tooltip);
+    wxDELETE(m_tooltip);
+}
 
 void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
 {
@@ -954,7 +986,14 @@ void DebugAdapterClient::OnDapVariablesResponse(DAPEvent& event)
     auto response = event.GetDapResponse()->As<dap::VariablesResponse>();
     CHECK_PTR_RET(response);
     CHECK_PTR_RET(m_threadsView);
-    m_threadsView->UpdateVariables(response->refId, response);
+    if(response->context == dap::EvaluateContext::HOVER) {
+        if(m_tooltip) {
+            m_tooltip->UpdateChildren(response->refId, response);
+        }
+    } else {
+        // assume its the variables view
+        m_threadsView->UpdateVariables(response->refId, response);
+    }
 }
 
 void DebugAdapterClient::OnDapSetFunctionBreakpointResponse(DAPEvent& event)

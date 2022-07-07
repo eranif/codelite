@@ -3672,11 +3672,16 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         wxPoint pt = ScreenToClient(wxGetMousePosition());
         int pos = PositionFromPointClose(pt.x, pt.y);
         if(pos != wxNOT_FOUND) {
-            wxString wordAtMouse = GetWordAtPosition(pos, false);
-            if(!wordAtMouse.IsEmpty()) {
-                // clLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
+            // try the selection first
+            wxString word = GetSelectedText();
+            if(word.empty()) {
+                // pick the word next to the cursor
+                word = GetWordAtPosition(pos, false);
+            }
+
+            if(!word.IsEmpty()) {
                 clDebugEvent tipEvent(wxEVT_DBG_EXPR_TOOLTIP);
-                tipEvent.SetString(wordAtMouse);
+                tipEvent.SetString(word);
                 if(EventNotifier::Get()->ProcessEvent(tipEvent)) {
                     return;
                 }

@@ -21,7 +21,7 @@ DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleL
     m_threadsTree->AddRoot(_("Threads"));
     m_threadsTree->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPMainView::OnThreadItemExpanding, this);
     m_threadsTree->Bind(wxEVT_TREE_SEL_CHANGED, &DAPMainView::OnFrameItemSelected, this);
-
+    m_threadsTree->Bind(wxEVT_TREE_ITEM_MENU, &DAPMainView::OnThreadsListMenu, this);
     m_variablesTree->SetTreeStyle(m_variablesTree->GetTreeStyle() | wxTR_HIDE_ROOT);
     m_variablesTree->SetShowHeader(true);
     m_variablesTree->AddHeader(_("Name"));
@@ -255,18 +255,25 @@ void DAPMainView::OnFrameItemSelected(wxTreeEvent& event)
     m_plugin->LoadFile(cd->frame_info.source, cd->frame_info.line - 1);
 }
 
-void DAPMainView::OnThreadItemExpanding(wxTreeEvent& event)
+void DAPMainView::DoThreadExpanding(const wxTreeItemId& item)
 {
-    event.Skip();
-    wxTreeItemId item = event.GetItem();
     CHECK_ITEM_RET(item);
 
-    wxTreeItemIdValue cookie;
+    auto cd = GetFrameClientData(item);
+    CHECK_PTR_RET(cd);
+    CHECK_COND_RET(cd->IsThread());
+
     if(m_threadsTree->ItemHasChildren(item)) {
         m_threadsTree->DeleteChildren(item);
         m_threadsTree->AppendItem(item, _("Loading..."));
     }
-    m_plugin->GetClient().GetFrames(GetThreadId(event.GetItem()));
+    m_plugin->GetClient().GetFrames(cd->GetId());
+}
+
+void DAPMainView::OnThreadItemExpanding(wxTreeEvent& event)
+{
+    event.Skip();
+    DoThreadExpanding(event.GetItem());
 }
 
 int DAPMainView::GetVariableId(const wxTreeItemId& item)
@@ -390,13 +397,114 @@ void DAPMainView::OnTimerCheckCanInteract(wxTimerEvent& event)
 
     if(!m_plugin->GetClient().CanInteract()) {
         if(!IsDisabled()) {
-            LOG_DEBUG(LOG) << "Setting view to disabled - TRUE" << endl;
             SetDisabled(true);
         }
     } else {
         if(IsDisabled()) {
-            LOG_DEBUG(LOG) << "Setting view to disabled - FALSE" << endl;
             SetDisabled(false);
         }
     }
+}
+
+bool DAPMainView::DoCopyBacktrace(const wxTreeItemId& item, wxString* content)
+{
+    auto cd = GetFrameClientData(item);
+    CHECK_PTR_RET_FALSE(cd);
+    auto thread_item = item;
+    if(cd->IsFrame()) {
+        thread_item = m_threadsTree->GetItemParent(item);
+    }
+    cd = GetFrameClientData(thread_item);
+    CHECK_PTR_RET_FALSE(cd);
+    CHECK_COND_RET_FALSE(cd->IsThread());
+
+    wxString backtrace;
+
+    backtrace << cd->thread_info.id << " " << cd->thread_info.name << "\n";
+    wxTreeItemIdValue cookie;
+    auto child = m_variablesTree->GetFirstChild(thread_item, cookie);
+    while(child.IsOk()) {
+        cd = GetFrameClientData(child);
+        if(!cd || !cd->IsFrame()) {
+            return false;
+        }
+        for(size_t i = 0; i < 4; ++i) {
+            backtrace << m_variablesTree->GetItemText(child, i) << ",";
+        }
+        backtrace.RemoveLast(); // the trailing comma
+        backtrace << "\n";
+        child = m_variablesTree->GetNextChild(thread_item, cookie);
+    }
+    content->swap(backtrace);
+    return true;
+}
+
+void DAPMainView::OnThreadsListMenu(wxTreeEvent& event)
+{
+    CHECK_ITEM_RET(event.GetItem());
+    auto item = event.GetItem();
+
+    auto cd = GetFrameClientData(item);
+    CHECK_PTR_RET(cd);
+
+    wxMenu menu;
+    menu.Append(XRCID("expand_all_threads"), _("Expand all threads"));
+    menu.AppendSeparator();
+    menu.Append(XRCID("copy_all_threads_backtrace"), _("Copy all"));
+    if(cd->IsFrame()) {
+        menu.Append(XRCID("copy_current_threads_backtrace"), _("Copy this thread backtrace"));
+        menu.Bind(
+            wxEVT_MENU,
+            [this, item](wxCommandEvent& e) {
+                wxUnusedVar(e);
+                wxString bt;
+                DoCopyBacktrace(item, &bt);
+                ::CopyToClipboard(bt);
+            },
+            XRCID("copy_current_threads_backtrace"));
+    }
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            wxTreeItemIdValue cookie;
+            auto root = m_threadsTree->GetRootItem();
+            auto child = m_threadsTree->GetFirstChild(root, cookie);
+            m_threadsTree->Begin();
+            while(child.IsOk()) {
+                DoThreadExpanding(child);
+                child = m_threadsTree->GetNextChild(root, cookie);
+            }
+            m_threadsTree->Commit();
+        },
+        XRCID("expand_all_threads"));
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            wxArrayString backtraces;
+            wxTreeItemIdValue cookie;
+            auto root = m_threadsTree->GetRootItem();
+            auto child = m_threadsTree->GetFirstChild(root, cookie);
+            while(child.IsOk()) {
+                if(m_threadsTree->IsExpanded(child)) {
+                    backtraces.emplace_back();
+                    auto& bt = backtraces.back();
+                    DoCopyBacktrace(child, &bt);
+                }
+                child = m_threadsTree->GetNextChild(root, cookie);
+            }
+
+            wxString str;
+            for(auto& bt : backtraces) {
+                bt.Trim();
+                str << bt << "\n\n";
+            }
+
+            str.RemoveLast();
+            ::CopyToClipboard(str);
+        },
+        XRCID("copy_all_threads_backtrace"));
+    m_threadsTree->PopupMenu(&menu);
 }

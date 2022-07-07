@@ -86,8 +86,11 @@ protected:
     int GetVariableId(const wxTreeItemId& item);
     int GetFrameId(const wxTreeItemId& item);
 
+    void DoThreadExpanding(const wxTreeItemId& item);
+    bool DoCopyBacktrace(const wxTreeItemId& item, wxString* content);
     void OnThreadItemExpanding(wxTreeEvent& event);
     void OnFrameItemSelected(wxTreeEvent& event);
+    void OnThreadsListMenu(wxTreeEvent& event);
     void OnScopeItemExpanding(wxTreeEvent& event);
     void Clear();
 

@@ -31,6 +31,7 @@
 #include "DAPTextView.h"
 #include "DAPTooltip.hpp"
 #include "DapDebuggerSettingsDlg.h"
+#include "DapLocator.hpp"
 #include "DapLoggingHelper.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -744,13 +745,28 @@ void DebugAdapterClient::OnSettings(wxCommandEvent& event)
         return;
     }
     m_dap_store = store;
-    m_dap_store.Store();
+    m_dap_store.Save();
 
     // refresh the list of debuggers we are registering by this plugin
     RegisterDebuggers();
 }
 
-void DebugAdapterClient::OnInitDone(wxCommandEvent& event) { event.Skip(); }
+void DebugAdapterClient::OnInitDone(wxCommandEvent& event)
+{
+    event.Skip();
+    if(!m_dap_store.empty()) {
+        return;
+    }
+    // this seems like a good time to scan for available debuggers
+    DapLocator locator;
+    std::vector<DapEntry> entries;
+    if(locator.Locate(&entries) > 0) {
+        m_dap_store.Set(entries);
+        m_dap_store.Save();
+        LOG_SYSTEM(LOG) << "Found and configured" << entries.size() << "dap servers" << endl;
+        RegisterDebuggers();
+    }
+}
 
 void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event)
 {

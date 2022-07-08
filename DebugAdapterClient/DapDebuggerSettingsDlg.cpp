@@ -34,7 +34,7 @@ DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsSt
     WindowAttrManager::Load(this);
 }
 
-DapDebuggerSettingsDlg::~DapDebuggerSettingsDlg() { m_store.Store(); }
+DapDebuggerSettingsDlg::~DapDebuggerSettingsDlg() { m_store.Save(); }
 
 void DapDebuggerSettingsDlg::Initialise()
 {

@@ -83,14 +83,29 @@ public:
     ~clDapSettingsStore();
 
     void Load(const wxFileName& file);
-    void Store();
+    void Save();
     bool IsEmpty() const { return m_entries.empty(); }
     bool Get(const wxString& name, DapEntry* entry) const;
     bool Contains(const wxString& name) const;
     bool Set(const DapEntry& entry);
+
+    /**
+     * @brief replace all entries with this list
+     * @param entries
+     */
+    void Set(const std::vector<DapEntry>& entries);
+
+    /**
+     * @brief update the list. If a dap server already exists with the same name
+     * it will be replaced
+     */
+    void Update(const std::vector<DapEntry>& entries);
+
     bool Delete(const wxString& name);
     const std::map<wxString, DapEntry>& GetEntries() const { return m_entries; }
     void Clear();
+    bool empty() const { return IsEmpty(); }
+    size_t size() const { return m_entries.size(); }
 };
 
 #endif // CLDAPSETTINGSSTORE_HPP

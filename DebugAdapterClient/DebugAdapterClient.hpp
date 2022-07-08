@@ -104,9 +104,9 @@ private:
      * is owned by this plugin
      */
     bool IsDebuggerOwnedByPlugin(const wxString& name) const;
-    
+
     void DestroyTooltip();
-    
+
 public:
     DebugAdapterClient(IManager* manager);
     ~DebugAdapterClient();
@@ -130,6 +130,7 @@ protected:
     void OnSettings(wxCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
     void OnFileLoaded(clCommandEvent& event);
+    void OnPageClosing(wxNotifyEvent& event);
 
     // UI debugger events
     void OnDebugStart(clDebugEvent& event);

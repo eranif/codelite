@@ -218,6 +218,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     m_client.Bind(wxEVT_DAP_LOG_EVENT, &DebugAdapterClient::OnDapLog, this);
     m_client.Bind(wxEVT_DAP_BREAKPOINT_EVENT, &DebugAdapterClient::OnDapBreakpointEvent, this);
     m_client.Bind(wxEVT_DAP_OUTPUT_EVENT, &DebugAdapterClient::OnDapOutputEvent, this);
+    EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &DebugAdapterClient::OnPageClosing, this);
 }
 
 void DebugAdapterClient::UnPlug()
@@ -278,6 +279,7 @@ void DebugAdapterClient::UnPlug()
     m_client.Unbind(wxEVT_DAP_LOG_EVENT, &DebugAdapterClient::OnDapLog, this);
     m_client.Unbind(wxEVT_DAP_BREAKPOINT_EVENT, &DebugAdapterClient::OnDapBreakpointEvent, this);
     m_client.Unbind(wxEVT_DAP_OUTPUT_EVENT, &DebugAdapterClient::OnDapOutputEvent, this);
+    EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &DebugAdapterClient::OnPageClosing, this);
 }
 
 DebugAdapterClient::~DebugAdapterClient() {}
@@ -665,8 +667,8 @@ void DebugAdapterClient::InitializeUI()
 
 void DebugAdapterClient::DoCleanup()
 {
-    ClearDebuggerMarker();
     m_client.Reset();
+    ClearDebuggerMarker();
     m_raisOnBpHit = false;
     StopProcess();
     m_session.Clear();
@@ -1323,4 +1325,15 @@ void DebugAdapterClient::DestroyTooltip()
 {
     CHECK_PTR_RET(m_tooltip);
     wxDELETE(m_tooltip);
+}
+
+void DebugAdapterClient::OnPageClosing(wxNotifyEvent& event)
+{
+    event.Skip();
+    if(!m_client.IsConnected())
+        return;
+    // do not allow the user to close our text view control while debugging is active
+    if(m_textView && m_textView == event.GetClientData()) {
+        event.Veto();
+    }
 }

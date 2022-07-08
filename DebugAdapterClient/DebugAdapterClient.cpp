@@ -633,7 +633,7 @@ void DebugAdapterClient::InitializeUI()
                                                                .Layer(10)
                                                                .Bottom()
                                                                .Position(1)
-                                                               .CloseButton()
+                                                               .CloseButton(false)
                                                                .Caption(DAP_MAIN_VIEW)
                                                                .Name(DAP_MAIN_VIEW));
     }
@@ -644,7 +644,7 @@ void DebugAdapterClient::InitializeUI()
                                                                    .Layer(5)
                                                                    .Right()
                                                                    .Position(2)
-                                                                   .CloseButton()
+                                                                   .CloseButton(false)
                                                                    .Caption(DAP_BREAKPOINTS_VIEW)
                                                                    .Name(DAP_BREAKPOINTS_VIEW));
     }
@@ -653,9 +653,9 @@ void DebugAdapterClient::InitializeUI()
         m_mgr->GetDockingManager()->AddPane(m_outputView, wxAuiPaneInfo()
                                                               .MinSize(300, 300)
                                                               .Layer(5)
-                                                              .Right()
+                                                              .Left()
                                                               .Position(2)
-                                                              .CloseButton()
+                                                              .CloseButton(false)
                                                               .Caption(DAP_OUTPUT_VIEW)
                                                               .Name(DAP_OUTPUT_VIEW));
     }

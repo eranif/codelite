@@ -3024,6 +3024,11 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
         // 1. A non C++ workspace is opened - so we initiate the debugger start command
         // 2. User wishes to run QuickDebug// Let the plugin know that we are about to start debugging
         clDebugEvent dbgEvent(wxEVT_DBG_UI_START);
+
+        // if a workspace is opened (other than the CxxWorkspace) set the debugger name
+        if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            dbgEvent.SetDebuggerName(clWorkspaceManager::Get().GetWorkspace()->GetDebuggerName());
+        }
         if(EventNotifier::Get()->ProcessEvent(dbgEvent)) {
 
             // set the debugger features

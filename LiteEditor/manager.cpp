@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "manager.h"
 
+#include "BreakpointsView.hpp"
 #include "BuildTab.hpp"
 #include "CompilersModifiedDlg.h"
 #include "DebuggerCallstackView.h"
@@ -33,7 +34,6 @@
 #include "app.h"
 #include "asyncprocess.h"
 #include "attachdbgprocdlg.h"
-#include "BreakpointsView.hpp"
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "clConsoleBase.h"
@@ -1953,17 +1953,12 @@ void Manager::DbgStart(long attachPid)
         // Start debugger ( when attachPid != -1 it means we are attaching to process )
         // Let the plugin know that we are about to start debugging
         clDebugEvent dbgEvent(wxEVT_DBG_UI_START);
-        ProjectPtr activeProject = clCxxWorkspaceST::Get()->GetActiveProject();
-        if(activeProject) {
-            dbgEvent.SetProjectName(activeProject->GetName());
-            BuildConfigPtr buildConfig = activeProject->GetBuildConfiguration();
-            if(buildConfig) {
-                dbgEvent.SetDebuggerName(buildConfig->GetDebuggerType());
-                dbgEvent.SetConfigurationName(buildConfig->GetName());
-            }
+        if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            dbgEvent.SetDebuggerName(clWorkspaceManager::Get().GetWorkspace()->GetDebuggerName());
         }
-        if(EventNotifier::Get()->ProcessEvent(dbgEvent))
+        if(EventNotifier::Get()->ProcessEvent(dbgEvent)) {
             return;
+        }
     }
 
 #if defined(__WXGTK__)

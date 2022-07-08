@@ -7,12 +7,14 @@
 
 class DAPOutputView : public DAPOutputViewBase
 {
+protected:
     clTerminalViewCtrl* m_ctrl = nullptr;
+
+protected:
+    void OnMenu(wxDataViewEvent& event);
 
 public:
     DAPOutputView(wxWindow* parent);
     virtual ~DAPOutputView();
-
-    void AddOutputEvent(dap::OutputEvent* event);
 };
 #endif // DAPOUTPUTVIEW_H

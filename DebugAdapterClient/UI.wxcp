@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	270,
+		"m_objCounter":	272,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafternz79PnInitBitmapResources",
 		"m_bitmapsFile":	"UI_lldbdebugger_bitmaps.cpp",

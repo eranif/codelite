@@ -43,8 +43,9 @@
 #include <wx/stc/stc.h>
 
 class DAPMainView;
-class DAPOutputView;
 class DAPTooltip;
+class DAPConsoleOutput;
+class DAPModuleView;
 class DAPBreakpointsView;
 class IProcess;
 
@@ -66,7 +67,8 @@ class DebugAdapterClient : public IPlugin
     DAPMainView* m_threadsView = nullptr;
     DAPBreakpointsView* m_breakpointsView = nullptr;
     DAPTextView* m_textView = nullptr;
-    DAPOutputView* m_outputView = nullptr;
+    DAPConsoleOutput* m_consoleView = nullptr;
+    DAPModuleView* m_moduleView = nullptr;
     DAPTooltip* m_tooltip = nullptr;
 
     bool m_raisOnBpHit;
@@ -177,6 +179,7 @@ protected:
     void OnDapScopesResponse(DAPEvent& event);
     void OnDapVariablesResponse(DAPEvent& event);
     void OnDapOutputEvent(DAPEvent& event);
+    void OnDapModuleEvent(DAPEvent& event);
 
 public:
     //--------------------------------------------

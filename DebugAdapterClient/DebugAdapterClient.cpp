@@ -26,8 +26,9 @@
 #include "DebugAdapterClient.hpp"
 
 #include "DAPBreakpointsView.h"
+#include "DAPConsoleOutput.hpp"
 #include "DAPMainView.h"
-#include "DAPOutputView.h"
+#include "DAPModuleView.h"
 #include "DAPTextView.h"
 #include "DAPTooltip.hpp"
 #include "DapDebuggerSettingsDlg.h"
@@ -75,6 +76,7 @@ constexpr bool IS_WINDOWS = false;
 const wxString DAP_MAIN_VIEW = _("Thread, stacks & variables");
 const wxString DAP_BREAKPOINTS_VIEW = _("Breakpoints");
 const wxString DAP_OUTPUT_VIEW = _("Output");
+const wxString DAP_MODULE_VIEW = _("Module");
 
 const wxString DAP_MESSAGE_BOX_TITLE = "CodeLite - Debug Adapter Client";
 
@@ -218,6 +220,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     m_client.Bind(wxEVT_DAP_LOG_EVENT, &DebugAdapterClient::OnDapLog, this);
     m_client.Bind(wxEVT_DAP_BREAKPOINT_EVENT, &DebugAdapterClient::OnDapBreakpointEvent, this);
     m_client.Bind(wxEVT_DAP_OUTPUT_EVENT, &DebugAdapterClient::OnDapOutputEvent, this);
+    m_client.Bind(wxEVT_DAP_MODULE_EVENT, &DebugAdapterClient::OnDapModuleEvent, this);
     EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &DebugAdapterClient::OnPageClosing, this);
 }
 
@@ -279,6 +282,7 @@ void DebugAdapterClient::UnPlug()
     m_client.Unbind(wxEVT_DAP_LOG_EVENT, &DebugAdapterClient::OnDapLog, this);
     m_client.Unbind(wxEVT_DAP_BREAKPOINT_EVENT, &DebugAdapterClient::OnDapBreakpointEvent, this);
     m_client.Unbind(wxEVT_DAP_OUTPUT_EVENT, &DebugAdapterClient::OnDapOutputEvent, this);
+    m_client.Unbind(wxEVT_DAP_MODULE_EVENT, &DebugAdapterClient::OnDapModuleEvent, this);
     EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &DebugAdapterClient::OnPageClosing, this);
 }
 
@@ -555,6 +559,7 @@ void DebugAdapterClient::LoadPerspective()
     ShowPane(DAP_MAIN_VIEW, true);
     ShowPane(DAP_BREAKPOINTS_VIEW, true);
     ShowPane(DAP_OUTPUT_VIEW, true);
+    ShowPane(DAP_MODULE_VIEW, true);
 
     // Hide the output pane
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane("Output View");
@@ -601,13 +606,22 @@ void DebugAdapterClient::DestroyUI()
         m_breakpointsView = nullptr;
     }
 
-    if(m_outputView) {
+    if(m_consoleView) {
         wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(DAP_OUTPUT_VIEW);
         if(pi.IsOk()) {
-            m_mgr->GetDockingManager()->DetachPane(m_outputView);
+            m_mgr->GetDockingManager()->DetachPane(m_consoleView);
         }
-        m_outputView->Destroy();
-        m_outputView = nullptr;
+        m_consoleView->Destroy();
+        m_consoleView = nullptr;
+    }
+
+    if(m_moduleView) {
+        wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(DAP_MODULE_VIEW);
+        if(pi.IsOk()) {
+            m_mgr->GetDockingManager()->DetachPane(m_moduleView);
+        }
+        m_moduleView->Destroy();
+        m_moduleView = nullptr;
     }
 
     if(m_textView) {
@@ -649,17 +663,30 @@ void DebugAdapterClient::InitializeUI()
                                                                    .Caption(DAP_BREAKPOINTS_VIEW)
                                                                    .Name(DAP_BREAKPOINTS_VIEW));
     }
-    if(!m_outputView) {
-        m_outputView = new DAPOutputView(parent);
-        m_mgr->GetDockingManager()->AddPane(m_outputView, wxAuiPaneInfo()
+    if(!m_consoleView) {
+        m_consoleView = new DAPConsoleOutput(parent);
+        m_mgr->GetDockingManager()->AddPane(m_consoleView, wxAuiPaneInfo()
+                                                               .MinSize(300, 300)
+                                                               .Layer(5)
+                                                               .Left()
+                                                               .Position(2)
+                                                               .CloseButton(false)
+                                                               .Caption(DAP_OUTPUT_VIEW)
+                                                               .Name(DAP_OUTPUT_VIEW));
+    }
+
+    if(!m_moduleView) {
+        m_moduleView = new DAPModuleView(parent);
+        m_mgr->GetDockingManager()->AddPane(m_moduleView, wxAuiPaneInfo()
                                                               .MinSize(300, 300)
                                                               .Layer(5)
                                                               .Left()
-                                                              .Position(2)
+                                                              .Position(3)
                                                               .CloseButton(false)
-                                                              .Caption(DAP_OUTPUT_VIEW)
-                                                              .Name(DAP_OUTPUT_VIEW));
+                                                              .Caption(DAP_MODULE_VIEW)
+                                                              .Name(DAP_MODULE_VIEW));
     }
+
     if(!m_textView) {
         m_textView = new DAPTextView(clGetManager()->GetMainNotebook());
         clGetManager()->GetMainNotebook()->AddPage(m_textView, _("Debug Adapter Client"), true);
@@ -895,8 +922,17 @@ void DebugAdapterClient::OnDapLog(DAPEvent& event)
 
 void DebugAdapterClient::OnDapOutputEvent(DAPEvent& event)
 {
-    if(m_outputView) {
-        m_outputView->AddOutputEvent(event.GetDapEvent()->As<dap::OutputEvent>());
+    LOG_DEBUG(LOG) << "Received output event" << endl;
+    if(m_consoleView) {
+        m_consoleView->AddOutputEvent(event.GetDapEvent()->As<dap::OutputEvent>());
+    }
+}
+
+void DebugAdapterClient::OnDapModuleEvent(DAPEvent& event)
+{
+    LOG_DEBUG(LOG) << "Received module event" << endl;
+    if(m_moduleView) {
+        m_moduleView->AddModuleEvent(event.GetDapEvent()->As<dap::ModuleEvent>());
     }
 }
 

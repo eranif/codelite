@@ -75,6 +75,10 @@
       <File Name="DebugAdapterClient.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="UI">
+      <File Name="DAPConsoleOutput.cpp"/>
+      <File Name="DAPConsoleOutput.hpp"/>
+      <File Name="DAPModuleView.cpp"/>
+      <File Name="DAPModuleView.h"/>
       <File Name="DAPTooltip.cpp"/>
       <File Name="DAPTooltip.hpp"/>
       <File Name="DAPOutputView.cpp"/>

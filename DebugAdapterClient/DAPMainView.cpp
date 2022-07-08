@@ -484,7 +484,7 @@ void DAPMainView::OnThreadsListMenu(wxTreeEvent& event)
             auto child = m_threadsTree->GetFirstChild(root, cookie);
             while(child.IsOk()) {
                 if(m_threadsTree->IsExpanded(child)) {
-                    backtraces.emplace_back();
+                    backtraces.push_back({});
                     auto& bt = backtraces.back();
                     DoCopyBacktrace(child, &bt);
                 }

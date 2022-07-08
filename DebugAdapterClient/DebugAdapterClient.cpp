@@ -407,11 +407,12 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
         //
         // standard C++ workspace
         //
-        ProjectPtr project = clCxxWorkspaceST::Get()->GetProject(event.GetProjectName());
+        ProjectPtr project = clCxxWorkspaceST::Get()->GetActiveProject();
         if(!project) {
-            ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(),
+            ::wxMessageBox(wxString() << _("Could not locate project: ")
+                                      << clCxxWorkspaceST::Get()->GetActiveProjectName(),
                            DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTER);
-            LOG_ERROR(LOG) << "unable to locate project:" << event.GetProjectName() << endl;
+            LOG_ERROR(LOG) << "unable to locate project:" << clCxxWorkspaceST::Get()->GetActiveProjectName() << endl;
             return;
         }
 

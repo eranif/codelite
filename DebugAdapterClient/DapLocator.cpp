@@ -46,7 +46,7 @@ void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
 
     names.Add(get_exe_name("lldb-vscode")); // the obvious name
     for(size_t i = 30; i >= 10; --i) {
-        names.Add(get_exe_name("lldb-vscode"), i);
+        names.Add(get_exe_name("lldb-vscode", i));
     }
 
     wxString path;

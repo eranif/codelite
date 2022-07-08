@@ -1,5 +1,6 @@
 #include "DAPOutputView.h"
 
+#include "StringUtils.h"
 #include "globals.h"
 #include "macros.h"
 
@@ -40,6 +41,7 @@ void DAPOutputView::OnMenu(wxDataViewEvent& event)
 
             for(size_t i = 0; i < selections.size(); ++i) {
                 wxString line = m_ctrl->GetItemText(selections[i]);
+                StringUtils::StripTerminalColouring(line, line);
                 content << line << "\n";
             }
             content.RemoveLast();

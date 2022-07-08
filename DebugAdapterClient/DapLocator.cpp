@@ -36,6 +36,8 @@ void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
     // set these paths before the PATH env
     paths.Add(R"(C:\msys64\clang64\bin")");
     paths.Add(R"(C:\msys64\mingw64\bin")");
+#elif defined(__WXMAC__)
+    paths.Add("/opt/homebrew/opt/llvm/bin");
 #endif
     paths.AddEnvList("PATH");
 

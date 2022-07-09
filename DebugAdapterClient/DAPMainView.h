@@ -92,6 +92,7 @@ protected:
     void OnThreadItemExpanding(wxTreeEvent& event);
     void OnFrameItemSelected(wxTreeEvent& event);
     void OnThreadsListMenu(wxTreeEvent& event);
+    void OnVariablesMenu(wxTreeEvent& event);
     void OnScopeItemExpanding(wxTreeEvent& event);
     void Clear();
 

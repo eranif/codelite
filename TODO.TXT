@@ -4,5 +4,8 @@ Debug Adapter Client
 - Add a "help" button that opens the docs page
 - Allow user to set function breakpoint from the UI
 - Write documentation for this plugin (with an example for how to configure lldb-vscode on MSW / Ubuntu)
-- Add context menu for:
-    - copy variable value
+
+others:
+----
+
+"Tabs" pane -> use different colour to mark modified editors

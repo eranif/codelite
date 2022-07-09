@@ -22,6 +22,7 @@ DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleL
     m_threadsTree->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPMainView::OnThreadItemExpanding, this);
     m_threadsTree->Bind(wxEVT_TREE_SEL_CHANGED, &DAPMainView::OnFrameItemSelected, this);
     m_threadsTree->Bind(wxEVT_TREE_ITEM_MENU, &DAPMainView::OnThreadsListMenu, this);
+
     m_variablesTree->SetTreeStyle(m_variablesTree->GetTreeStyle() | wxTR_HIDE_ROOT);
     m_variablesTree->SetShowHeader(true);
     m_variablesTree->AddHeader(_("Name"));
@@ -29,6 +30,7 @@ DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleL
     m_variablesTree->AddHeader(_("Type"));
     m_variablesTree->AddRoot(_("Scopes"));
     m_variablesTree->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPMainView::OnScopeItemExpanding, this);
+    m_variablesTree->Bind(wxEVT_TREE_ITEM_MENU, &DAPMainView::OnVariablesMenu, this);
     m_timer->Start(250);
 }
 
@@ -432,6 +434,26 @@ bool DAPMainView::DoCopyBacktrace(const wxTreeItemId& item, wxString* content)
     }
     content->swap(backtrace);
     return true;
+}
+
+void DAPMainView::OnVariablesMenu(wxTreeEvent& event)
+{
+    CHECK_ITEM_RET(event.GetItem());
+    auto item = event.GetItem();
+
+    auto cd = GetVariableClientData(item);
+    CHECK_PTR_RET(cd);
+
+    wxMenu menu;
+    menu.Append(wxID_COPY);
+    menu.Bind(
+        wxEVT_MENU,
+        [cd](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            ::CopyToClipboard(cd->value);
+        },
+        wxID_COPY);
+    m_variablesTree->PopupMenu(&menu);
 }
 
 void DAPMainView::OnThreadsListMenu(wxTreeEvent& event)

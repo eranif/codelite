@@ -4,6 +4,8 @@
 #include "UIBreakpoint.hpp"
 #include "dap/dap.hpp"
 
+#include <unordered_map>
+
 DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin)
     : DAPBreakpointsViewBase(parent)
     , m_plugin(plugin)
@@ -24,12 +26,30 @@ DAPBreakpointsView::~DAPBreakpointsView()
 
 void DAPBreakpointsView::RefreshView(const SessionBreakpoints& breakpoints)
 {
+    // keep the previous breakpoints
+    std::unordered_map<int, dap::Breakpoint> old_breakpoints;
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        auto cd = GetItemData(m_dvListCtrl->RowToItem(i));
+        if(!cd || cd->m_breapoint.id <= 0) {
+            continue;
+        }
+        old_breakpoints.insert({ cd->m_breapoint.id, cd->m_breapoint });
+    }
+
     m_dvListCtrl->Begin();
     m_dvListCtrl->DeleteAllItems();
 
-    for(const auto& bp : breakpoints.get_breakpoints()) {
+    for(auto bp : breakpoints.get_breakpoints()) {
 
-        wxString path = bp.source.path;
+        wxString& path = bp.source.path;
+        if(path.empty()) {
+            // use the path from the previous time we saw it
+            if(old_breakpoints.count(bp.id)) {
+                path = old_breakpoints[bp.id].source.path;
+            }
+        }
+
+        // still empty?
         if(path.empty()) {
             if(!bp.source.name.empty()) {
                 path = bp.source.name;
@@ -41,7 +61,7 @@ void DAPBreakpointsView::RefreshView(const SessionBreakpoints& breakpoints)
         wxVector<wxVariant> cols;
         cols.reserve(m_dvListCtrl->GetHeader()->GetCount());
         cols.push_back(wxString() << bp.id);
-        cols.push_back(bp.verified ? wxString("YES") : wxString("NO"));
+        cols.push_back(bp.verified ? wxString(wxT("\u2713")) : wxString(wxT("\u2715")));
         cols.push_back(path);
         cols.push_back(wxString() << bp.line);
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new BreakpointClientData(bp));

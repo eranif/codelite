@@ -1703,10 +1703,12 @@ void MainBook::ShowQuickBarToolBar(bool s)
 void MainBook::SetPageTitle(wxWindow* page, const wxFileName& filename, bool modified)
 {
     SetPageTitle(page, CreateLabel(filename, modified));
+#if !CL_USE_NATIVEBOOK
     int index = m_book->GetPageIndex(page);
     if(index != wxNOT_FOUND) {
         m_book->SetPageModified(index, modified);
     }
+#endif
 }
 
 wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const

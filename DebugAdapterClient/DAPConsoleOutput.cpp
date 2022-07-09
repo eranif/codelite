@@ -7,7 +7,7 @@
 #include <wx/tokenzr.h>
 
 DAPConsoleOutput::DAPConsoleOutput(wxWindow* parent)
-    : DAPOutputView(parent)
+    : DAPTerminalCtrlView(parent)
 {
 }
 

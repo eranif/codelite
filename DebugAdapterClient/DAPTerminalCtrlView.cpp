@@ -1,4 +1,4 @@
-#include "DAPOutputView.h"
+#include "DAPTerminalCtrlView.h"
 
 #include "StringUtils.h"
 #include "globals.h"
@@ -7,17 +7,17 @@
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
-DAPOutputView::DAPOutputView(wxWindow* parent)
+DAPTerminalCtrlView::DAPTerminalCtrlView(wxWindow* parent)
     : DAPOutputViewBase(parent)
 {
     m_ctrl = new clTerminalViewCtrl(this);
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
-    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &DAPOutputView::OnMenu, this);
+    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &DAPTerminalCtrlView::OnMenu, this);
 }
 
-DAPOutputView::~DAPOutputView() {}
+DAPTerminalCtrlView::~DAPTerminalCtrlView() {}
 
-void DAPOutputView::OnMenu(wxDataViewEvent& event)
+void DAPTerminalCtrlView::OnMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
     menu.Append(wxID_CLEAR);

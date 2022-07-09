@@ -1,12 +1,12 @@
 #ifndef DAPMODULEVIEW_H
 #define DAPMODULEVIEW_H
 
-#include "DAPOutputView.h"
+#include "DAPTerminalCtrlView.h"
 #include "UI.h"
 #include "clTerminalViewCtrl.hpp"
 #include "dap/dap.hpp"
 
-class DAPModuleView : public DAPOutputView
+class DAPModuleView : public DAPTerminalCtrlView
 {
     clTerminalViewCtrl* m_ctrl = nullptr;
 

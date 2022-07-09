@@ -1,7 +1,7 @@
 #include "DAPModuleView.h"
 
 DAPModuleView::DAPModuleView(wxWindow* parent)
-    : DAPOutputView(parent)
+    : DAPTerminalCtrlView(parent)
 {
 }
 

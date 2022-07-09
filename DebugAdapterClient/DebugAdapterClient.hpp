@@ -27,6 +27,7 @@
 #define DAP_DEBUGGER_CLIENT_HPP
 
 #include "BreakpointsHelper.hpp"
+#include "DAPOutputPane.hpp"
 #include "DAPTextView.h"
 #include "DebugSession.hpp"
 #include "RunInTerminalHelper.hpp"
@@ -67,8 +68,7 @@ class DebugAdapterClient : public IPlugin
     DAPMainView* m_threadsView = nullptr;
     DAPBreakpointsView* m_breakpointsView = nullptr;
     DAPTextView* m_textView = nullptr;
-    DAPConsoleOutput* m_consoleView = nullptr;
-    DAPModuleView* m_moduleView = nullptr;
+    DAPOutputPane* m_outputView = nullptr;
     DAPTooltip* m_tooltip = nullptr;
 
     bool m_raisOnBpHit;

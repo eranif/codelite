@@ -1,9 +1,9 @@
 #ifndef DAPCONSOLEOUTPUT_HPP
 #define DAPCONSOLEOUTPUT_HPP
 
-#include "DAPOutputView.h"
+#include "DAPTerminalCtrlView.h"
 
-class DAPConsoleOutput : public DAPOutputView
+class DAPConsoleOutput : public DAPTerminalCtrlView
 {
 public:
     DAPConsoleOutput(wxWindow* parent);

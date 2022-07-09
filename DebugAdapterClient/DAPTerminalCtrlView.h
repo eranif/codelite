@@ -5,7 +5,7 @@
 #include "clTerminalViewCtrl.hpp"
 #include "dap/dap.hpp"
 
-class DAPOutputView : public DAPOutputViewBase
+class DAPTerminalCtrlView : public DAPOutputViewBase
 {
 protected:
     clTerminalViewCtrl* m_ctrl = nullptr;
@@ -14,7 +14,7 @@ protected:
     void OnMenu(wxDataViewEvent& event);
 
 public:
-    DAPOutputView(wxWindow* parent);
-    virtual ~DAPOutputView();
+    DAPTerminalCtrlView(wxWindow* parent);
+    virtual ~DAPTerminalCtrlView();
 };
 #endif // DAPOUTPUTVIEW_H

@@ -41,9 +41,9 @@ void DAPBreakpointsView::RefreshView(const SessionBreakpoints& breakpoints)
         wxVector<wxVariant> cols;
         cols.reserve(m_dvListCtrl->GetHeader()->GetCount());
         cols.push_back(wxString() << bp.id);
+        cols.push_back(bp.verified ? wxString("YES") : wxString("NO"));
         cols.push_back(path);
         cols.push_back(wxString() << bp.line);
-        cols.push_back(bp.verified ? wxString("YES") : wxString("NO"));
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new BreakpointClientData(bp));
     }
     m_dvListCtrl->Commit();

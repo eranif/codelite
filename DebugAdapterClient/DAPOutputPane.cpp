@@ -8,7 +8,7 @@ DAPOutputPane::DAPOutputPane(wxWindow* parent)
     : wxPanel(parent)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_notebook = new Notebook(this);
+    m_notebook = new Notebook(this, wxID_ANY);
     GetSizer()->Add(m_notebook, 1, wxEXPAND);
 
     m_consoleTab = new DAPConsoleOutput(m_notebook);

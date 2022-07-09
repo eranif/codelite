@@ -91,7 +91,8 @@ public:
      * @brief draw a close button
      */
     static void DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
-                            const wxColour& bgColouur, eButtonState state);
+                            const wxColour& bgColouur, eButtonState state,
+                            const wxString& unicode_symbol = wxT("\u2715"));
 
     /**
      * @brief draw a close button

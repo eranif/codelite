@@ -101,7 +101,7 @@ void clFileSystemWorkspaceDlg::OnDeleteConfig(wxCommandEvent& event)
     wxString message;
     message << _("Choosing 'Yes' will delete workspace configuration '") << m_notebook->GetPageText(sel) << "'\n";
     message << _("Continue?");
-    if(::wxMessageBox(message, "Confirm", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, this) != wxYES) {
+    if(::wxMessageBox(message, "Confirm", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING, this) != wxYES) {
         return;
     }
 

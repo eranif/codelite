@@ -1169,7 +1169,7 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
                     _("\nThis won't be a problem on Linux, but it may be on other, case-insensitive platforms"));
                 wxString msg3(_("\n\nAdd the file anyway?"));
                 int ans = wxMessageBox(msg1 + msg2 + msg3, _("Possible name-clash"),
-                                       wxICON_QUESTION | wxYES_NO | wxCANCEL, clMainFrame::Get());
+                                       wxICON_WARNING | wxYES_NO | wxCANCEL, clMainFrame::Get());
                 if(ans == wxYES) {
                     actualAdded.Add(file);
                 } else if(ans == wxCANCEL) {
@@ -2839,7 +2839,7 @@ void Manager::CompileFile(const wxString& projectName, const wxString& fileName,
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr && dbgr->IsRunning()) {
         if(wxMessageBox(_("This would terminate the current debug session, continue?"), _("Confirm"),
-                        wxICON_QUESTION | wxYES_NO | wxCANCEL) != wxYES)
+                        wxICON_WARNING | wxYES_NO | wxCANCEL) != wxYES)
             return;
         DbgStop();
     }
@@ -2890,7 +2890,7 @@ void Manager::DoBuildProject(const QueueCommand& buildInfo)
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr && dbgr->IsRunning()) {
         if(wxMessageBox(_("This would terminate the current debug session, continue?"), _("Confirm"),
-                        wxICON_QUESTION | wxYES_NO | wxCANCEL) != wxYES)
+                        wxICON_WARNING | wxYES_NO | wxCANCEL) != wxYES)
             return;
         DbgStop();
     }
@@ -2928,7 +2928,7 @@ void Manager::DoCustomBuild(const QueueCommand& buildInfo)
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr && dbgr->IsRunning()) {
         if(wxMessageBox(_("This would terminate the current debug session, continue?"), _("Confirm"),
-                        wxICON_QUESTION | wxYES_NO | wxCANCEL) != wxYES)
+                        wxICON_WARNING | wxYES_NO | wxCANCEL) != wxYES)
             return;
         DbgStop();
     }

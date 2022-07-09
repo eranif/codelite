@@ -78,7 +78,6 @@
 #include "stringhighlighterjob.h"
 #include "stringsearcher.h"
 #include "tags_options_data.h"
-#include "wx/stc/stc.h"
 #include "wxCodeCompletionBoxManager.h"
 
 #include <algorithm>
@@ -91,6 +90,7 @@
 #include <wx/printdlg.h>
 #include <wx/regex.h>
 #include <wx/richtooltip.h> // wxRichToolTip
+#include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
 #include <wx/wxcrt.h>
 
@@ -4854,11 +4854,12 @@ void clEditor::OnChange(wxStyledTextEvent& event)
     event.Skip();
     ++m_modificationCount;
 
-    bool isCoalesceStart = event.GetModificationType() & wxSTC_STARTACTION;
-    bool isInsert = event.GetModificationType() & wxSTC_MOD_INSERTTEXT;
-    bool isDelete = event.GetModificationType() & wxSTC_MOD_DELETETEXT;
-    bool isUndo = event.GetModificationType() & wxSTC_PERFORMED_UNDO;
-    bool isRedo = event.GetModificationType() & wxSTC_PERFORMED_REDO;
+    int modification_flags = event.GetModificationType();
+    bool isCoalesceStart = modification_flags & wxSTC_STARTACTION;
+    bool isInsert = modification_flags & wxSTC_MOD_INSERTTEXT;
+    bool isDelete = modification_flags & wxSTC_MOD_DELETETEXT;
+    bool isUndo = modification_flags & wxSTC_PERFORMED_UNDO;
+    bool isRedo = modification_flags & wxSTC_PERFORMED_REDO;
 
     int newLineCount = GetLineCount();
     if(m_lastLineCount != newLineCount) {
@@ -4877,9 +4878,11 @@ void clEditor::OnChange(wxStyledTextEvent& event)
     }
 
     // Notify about this editor being changed
-    clCommandEvent eventMod(wxEVT_EDITOR_MODIFIED);
-    eventMod.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-    EventNotifier::Get()->QueueEvent(eventMod.Clone());
+    if(GetModify()) {
+        clCommandEvent eventMod(wxEVT_EDITOR_MODIFIED);
+        eventMod.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+        EventNotifier::Get()->QueueEvent(eventMod.Clone());
+    }
 
     if((m_autoAddNormalBraces && !m_disableSmartIndent) || GetOptions()->GetAutoCompleteDoubleQuotes()) {
         if((event.GetModificationType() & wxSTC_MOD_BEFOREDELETE) &&
@@ -5476,7 +5479,6 @@ void clEditor::DoUpdateTLWTitle(bool raise)
 {
     // ensure that the top level window parent of this editor is 'Raised'
     wxWindow* tlw = ::wxGetTopLevelParent(this);
-    // if(tlw && raise) { tlw->Raise(); }
 
     if(!IsDetached()) {
         clMainFrame::Get()->SetFrameTitle(this);
@@ -5489,7 +5491,7 @@ void clEditor::DoUpdateTLWTitle(bool raise)
             title << CLRealPath(GetFileName().GetFullPath());
         }
         if(GetModify()) {
-            title.Prepend("*");
+            title.Prepend(wxT(" \u25CF "));
         }
         tlw->SetLabel(title);
     }

@@ -103,7 +103,7 @@ bool BuildSettingsDialog::CreateNewCompiler(const wxString& name, const wxString
 
 bool BuildSettingsDialog::DeleteCompiler(const wxString& name)
 {
-    if(wxMessageBox(_("Remove Compiler?"), _("Confirm"), wxYES_NO | wxICON_QUESTION) == wxYES) {
+    if(wxMessageBox(_("Remove Compiler?"), _("Confirm"), wxYES_NO | wxICON_WARNING) == wxYES) {
         BuildSettingsConfigST::Get()->DeleteCompiler(name);
         return true;
     }

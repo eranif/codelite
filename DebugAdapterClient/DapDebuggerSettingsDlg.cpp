@@ -56,7 +56,7 @@ void DapDebuggerSettingsDlg::OnDelete(wxCommandEvent& event)
     }
 
     wxString name = m_notebook->GetPageText(sel);
-    if(::wxMessageBox(_("Delete '") + name + "'", "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION,
+    if(::wxMessageBox(_("Delete '") + name + "'", "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING,
                       this) != wxYES) {
         return;
     }
@@ -68,7 +68,7 @@ void DapDebuggerSettingsDlg::OnDelete(wxCommandEvent& event)
 void DapDebuggerSettingsDlg::OnScan(wxCommandEvent& event)
 {
     if(::wxMessageBox(_("Are you sure you want to scan for dap servers? (this will override your current settings)"),
-                      "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) != wxYES) {
+                      "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING) != wxYES) {
         return;
     }
 

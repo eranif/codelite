@@ -4095,7 +4095,7 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
 {
     wxString title;
     if(editor && editor->GetModify()) {
-        title << "*";
+        title << wxT(" \u25CF ");
     }
 
     wxString pattern = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));

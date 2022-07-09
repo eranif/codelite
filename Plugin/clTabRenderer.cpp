@@ -136,6 +136,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     int X_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->xSpacer : 10;
     bool using_bold_font = m_tabCtrl ? m_tabCtrl->GetArt()->IsUseBoldFont() : false;
 
+    wxDCFontChanger font_changer(dc);
     wxFont font = clTabRenderer::GetTabFont(using_bold_font);
     dc.SetFont(font);
 
@@ -312,8 +313,20 @@ void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo
     wxRect buttonRect = wxRect(tabInfo.m_bmpCloseX + tabInfo.GetRect().GetX(),
                                tabInfo.m_bmpCloseY + tabInfo.GetRect().GetY(), X_BUTTON_SIZE, X_BUTTON_SIZE);
     buttonRect = buttonRect.CenterIn(tabInfo.GetRect(), wxVERTICAL);
-    DrawingUtils::DrawButtonX(dc, win, buttonRect, colours.activeTabTextColour,
-                              tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour, state);
+
+    wxColour text_colour = colours.activeTabTextColour;
+    wxString unicode_symbol = wxT("\u2715");
+    if(tabInfo.IsModified()) {
+        // instead of drawing the standard X we draw
+        // a round circele marked in RED indicating that this
+        // tab is modified
+        text_colour = colours.markerColour;
+        unicode_symbol = wxT("\u25CF");
+    }
+
+    DrawingUtils::DrawButtonX(dc, win, buttonRect, text_colour,
+                              tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour, state,
+                              unicode_symbol);
 }
 
 void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)

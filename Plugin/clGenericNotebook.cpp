@@ -412,7 +412,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     clTabInfo::Ptr_t activeTab;
     for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
-        clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
+        clTabInfo::Ptr_t tab = m_visibleTabs[i];
         if(tab->IsActive() && !activeTab) {
             activeTab = tab;
         }
@@ -1480,4 +1480,24 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
         m_notebook->InsertPage(where, movingPage, label, true, bmp);
     }
     return true;
+}
+
+void clTabCtrl::SetPageModified(size_t page, bool modified)
+{
+    clTabInfo::Ptr_t tab = GetTabInfo(page);
+    if(!tab) {
+        return;
+    }
+
+    tab->m_isModified = modified;
+    Refresh();
+}
+
+bool clTabCtrl::IsModified(size_t page) const
+{
+    clTabInfo::Ptr_t tab = GetTabInfo(page);
+    if(!tab) {
+        return false;
+    }
+    return tab->IsModified();
 }

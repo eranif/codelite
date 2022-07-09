@@ -441,7 +441,7 @@ void clRemoteDirCtrl::DoDelete(const wxTreeItemId& item)
 
     wxString message;
     message << _("Are you sure you want to delete the selected items?");
-    if(::wxMessageBox(message, "Confirm", wxYES_NO | wxCANCEL | wxICON_QUESTION) != wxYES) {
+    if(::wxMessageBox(message, "Confirm", wxYES_NO | wxCANCEL | wxICON_WARNING) != wxYES) {
         return;
     }
 

@@ -148,6 +148,7 @@ public:
     int m_height;
     int m_vTabsWidth;
     int m_textWidth;
+    bool m_isModified = false;
     eButtonState m_xButtonState = eButtonState::kNormal;
 
 public:
@@ -190,6 +191,7 @@ public:
     const wxBitmap& GetBitmap(int index, bool disabled) const;
     bool HasDisableBitmap() const;
     bool HasBitmap() const;
+    bool IsModified() const { return m_isModified; }
 };
 
 class WXDLLIMPEXP_SDK clTabRenderer

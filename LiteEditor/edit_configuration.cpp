@@ -42,9 +42,9 @@
 #endif // WX_PRECOMP
 
 #include "edit_configuration.h"
+#include "macros.h"
 #include "manager.h"
 #include "project_settings.h"
-#include "macros.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -74,7 +74,8 @@ EditConfigurationDialog::EditConfigurationDialog(wxWindow* parent, const wxStrin
             bldConf = settings->GetNextBuildConfiguration(cookie);
         }
     }
-    if(m_configurationsList->GetCount() > 0) m_configurationsList->SetSelection(0);
+    if(m_configurationsList->GetCount() > 0)
+        m_configurationsList->SetSelection(0);
 
     wxBoxSizer* bSizer18;
     bSizer18 = new wxBoxSizer(wxVERTICAL);
@@ -132,7 +133,8 @@ void EditConfigurationDialog::RenameConfiguration(const wxString& oldName, const
                 m_configurationsList->Append(bldConf->GetName());
                 bldConf = settings->GetNextBuildConfiguration(cookie);
             }
-            if(m_configurationsList->GetCount() > 0) m_configurationsList->SetSelection(0);
+            if(m_configurationsList->GetCount() > 0)
+                m_configurationsList->SetSelection(0);
         }
     }
 }
@@ -159,7 +161,9 @@ void EditConfigurationDialog::OnButtonRename(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString oldName = m_configurationsList->GetStringSelection();
-    if(oldName.IsEmpty()) { return; }
+    if(oldName.IsEmpty()) {
+        return;
+    }
     wxTextEntryDialog* dlg = new wxTextEntryDialog(this, _("Enter New Name:"), _("Rename"), oldName);
     dlg->SetTextValidator(wxFILTER_ASCII);
 
@@ -173,15 +177,18 @@ void EditConfigurationDialog::OnButtonDelete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString selection = m_configurationsList->GetStringSelection();
-    if(selection.IsEmpty()) { return; }
+    if(selection.IsEmpty()) {
+        return;
+    }
     wxString msg(_("Remove configuration '"));
     msg << selection << _("' ?");
-    if(wxMessageBox(msg, _("Confirm"), wxYES_NO | wxCANCEL | wxICON_QUESTION) == wxYES) {
+    if(wxMessageBox(msg, _("Confirm"), wxYES_NO | wxCANCEL | wxICON_WARNING) == wxYES) {
         ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
         if(settings) {
             settings->RemoveConfiguration(selection);
             m_configurationsList->Delete(m_configurationsList->GetSelection());
-            if(m_configurationsList->GetCount() > 0) m_configurationsList->SetSelection(0);
+            if(m_configurationsList->GetCount() > 0)
+                m_configurationsList->SetSelection(0);
 
             // save changes
             ManagerST::Get()->SetProjectSettings(m_projectName, settings);

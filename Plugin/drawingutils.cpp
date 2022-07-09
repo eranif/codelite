@@ -608,19 +608,18 @@ wxColour DrawingUtils::GetButtonBgColour() { return clSystemSettings::GetColour(
 wxColour DrawingUtils::GetButtonTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
 
 void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
-                               const wxColour& bgColouur, eButtonState state)
+                               const wxColour& bgColouur, eButtonState state, const wxString& unicode_symbol)
 {
     // Calculate the circle radius:
     wxColour bg_colour = bgColouur;
     bool is_dark = IsDark(bg_colour);
-    wxColour xColour = is_dark ? wxColour(*wxWHITE).ChangeLightness(90) : wxColour(*wxBLACK).ChangeLightness(120);
+    wxColour xColour = penColour;
     bool drawBackground = false;
     switch(state) {
     case eButtonState::kNormal:
         break;
     case eButtonState::kDisabled:
         drawBackground = false;
-        xColour = wxColour("GRAY");
         break;
     case eButtonState::kHover:
         drawBackground = true;
@@ -644,16 +643,15 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
         dc.DrawRectangle(bgRect);
     }
 
-    const wxString symbol = wxT("\u2715");
     wxDCFontChanger font_changer(dc);
     wxDCTextColourChanger font_colour_changer(dc, xColour);
     wxFont font = GetDefaultGuiFont();
     font.SetWeight(wxFONTWEIGHT_BOLD);
     dc.SetFont(font);
 
-    xrect = dc.GetTextExtent(symbol);
+    xrect = dc.GetTextExtent(unicode_symbol);
     xrect = xrect.CenterIn(bgRect);
-    dc.DrawText(symbol, xrect.GetTopLeft());
+    dc.DrawText(unicode_symbol, xrect.GetTopLeft());
 }
 
 void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,

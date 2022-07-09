@@ -137,6 +137,12 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
+
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_MODIFIED, &MainBook::OnEditorModified, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &MainBook::OnEditorSaved, this);
+    // we handle a "load file" as if the file was saved
+    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &MainBook::OnEditorSaved, this);
+
     Bind(wxEVT_IDLE, &MainBook::OnIdle, this);
 }
 
@@ -167,6 +173,10 @@ MainBook::~MainBook()
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_MODIFIED, &MainBook::OnEditorModified, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &MainBook::OnEditorSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &MainBook::OnEditorSaved, this);
+
     Unbind(wxEVT_IDLE, &MainBook::OnIdle, this);
     if(m_findBar) {
         EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &MainBook::OnAllEditorClosed, this);
@@ -279,7 +289,7 @@ bool MainBook::AskUserToSave(clEditor* editor)
     // unsaved changes
     wxString msg;
     msg << _("Save changes to '") << editor->GetFileName().GetFullName() << wxT("' ?");
-    long style = wxYES_NO;
+    long style = wxYES_NO | wxICON_WARNING;
     if(!ManagerST::Get()->IsShutdownInProgress()) {
         style |= wxCANCEL;
     }
@@ -421,14 +431,14 @@ void MainBook::GetAllEditors(clEditor::Vec_t& editors, size_t flags)
     }
 }
 
-clEditor* MainBook::FindEditor(const wxString& fileName)
+int MainBook::FindEditorIndexByFullPath(const wxString& fullpath)
 {
-    wxString unixStyleFile(fileName);
+    wxString unixStyleFile(fullpath);
 #ifdef __WXMSW__
     unixStyleFile.Replace(wxT("\\"), wxT("/"));
 #endif
     // On gtk either fileName or the editor filepath (or both) may be (or their paths contain) symlinks
-    wxString fileNameDest = CLRealPath(fileName);
+    wxString fileNameDest = CLRealPath(fullpath);
 
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
@@ -441,29 +451,38 @@ clEditor* MainBook::FindEditor(const wxString& fileName)
 
 #ifndef __WXMSW__
             // On Unix files are case sensitive
-            if(nativeFile.Cmp(fileName) == 0 || unixStyleFile.Cmp(fileName) == 0 ||
+            if(nativeFile.Cmp(fullpath) == 0 || unixStyleFile.Cmp(fullpath) == 0 ||
                unixStyleFile.Cmp(fileNameDest) == 0)
 #else
             // Compare in no case sensitive manner
-            if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0 ||
+            if(nativeFile.CmpNoCase(fullpath) == 0 || unixStyleFile.CmpNoCase(fullpath) == 0 ||
                unixStyleFile.CmpNoCase(fileNameDest) == 0)
 #endif
             {
-                return editor;
+                return i;
             }
 
 #if defined(__WXGTK__)
             // Try again, dereferencing the editor fpath
             wxString editorDest = CLRealPath(unixStyleFile);
-            if(editorDest.Cmp(fileName) == 0 || editorDest.Cmp(fileNameDest) == 0) {
-                return editor;
+            if(editorDest.Cmp(fullpath) == 0 || editorDest.Cmp(fileNameDest) == 0) {
+                return i;
             }
 #endif
             // still no luck? try the remotepath
-            if(editor->GetRemotePathOrLocal() == fileName) {
-                return editor;
+            if(editor->GetRemotePathOrLocal() == fullpath) {
+                return i;
             }
         }
+    }
+    return wxNOT_FOUND;
+}
+
+clEditor* MainBook::FindEditor(const wxString& fileName)
+{
+    int index = FindEditorIndexByFullPath(fileName);
+    if(index != wxNOT_FOUND) {
+        return dynamic_cast<clEditor*>(m_book->GetPage(index));
     }
 
     // try the detached editors
@@ -473,7 +492,7 @@ clEditor* MainBook::FindEditor(const wxString& fileName)
             return (*iter)->GetEditor();
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 wxWindow* MainBook::FindPage(const wxString& text)
@@ -996,7 +1015,6 @@ void MainBook::SetPageTitle(wxWindow* page, const wxString& name)
 {
     int selection = m_book->GetPageIndex(page);
     if(selection != wxNOT_FOUND) {
-        // clEditor *editor = dynamic_cast<clEditor*>(page);
         m_book->SetPageText(selection, name);
     }
 }
@@ -1685,6 +1703,10 @@ void MainBook::ShowQuickBarToolBar(bool s)
 void MainBook::SetPageTitle(wxWindow* page, const wxFileName& filename, bool modified)
 {
     SetPageTitle(page, CreateLabel(filename, modified));
+    int index = m_book->GetPageIndex(page);
+    if(index != wxNOT_FOUND) {
+        m_book->SetPageModified(index, modified);
+    }
 }
 
 wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
@@ -1693,9 +1715,14 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
     if(fn.GetDirCount() && EditorConfigST::Get()->GetOptions()->IsTabShowPath()) {
         label.Prepend(fn.GetDirs().Last() + wxFileName::GetPathSeparator());
     }
+
+#if CL_USE_NATIVEBOOK
     if(modified) {
-        label.Prepend("*");
+        label.Prepend(wxT("\u25CF"));
     }
+#else
+    wxUnusedVar(modified);
+#endif
     return label;
 }
 
@@ -1780,4 +1807,30 @@ void MainBook::OnIdle(wxIdleEvent& event)
     CHECK_PTR_RET(editor);
 
     execute_callbacks_for_file(CLRealPath(editor->GetFileName().GetFullPath()));
+}
+
+void MainBook::OnEditorModified(clCommandEvent& event)
+{
+    event.Skip();
+#if !CL_USE_NATIVEBOOK
+    int index = FindEditorIndexByFullPath(event.GetFileName());
+    CHECK_COND_RET(index != wxNOT_FOUND);
+
+    auto editor = FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+    m_book->SetPageModified(index, editor->GetModify());
+#endif
+}
+
+void MainBook::OnEditorSaved(clCommandEvent& event)
+{
+    event.Skip();
+#if !CL_USE_NATIVEBOOK
+    int index = FindEditorIndexByFullPath(event.GetFileName());
+    CHECK_COND_RET(index != wxNOT_FOUND);
+
+    auto editor = FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+    m_book->SetPageModified(index, editor->GetModify());
+#endif
 }

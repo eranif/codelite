@@ -91,6 +91,8 @@ private:
     void OnPageChanged(wxBookCtrlEvent& e);
     void OnClosePage(wxBookCtrlEvent& e);
     void OnPageChanging(wxBookCtrlEvent& e);
+    void OnEditorModified(clCommandEvent& event);
+    void OnEditorSaved(clCommandEvent& event);
     void OnProjectFileAdded(clCommandEvent& e);
     void OnProjectFileRemoved(clCommandEvent& e);
     void OnWorkspaceLoaded(clWorkspaceEvent& e);
@@ -131,6 +133,8 @@ private:
     void push_callback(std::function<void(IEditor*)>&& callback, const wxString& fullpath);
     void execute_callbacks_for_file(const wxString& fullpath);
     bool has_callbacks(const wxString& fullpath) const;
+
+    int FindEditorIndexByFullPath(const wxString& fullpath);
 
 public:
     MainBook(wxWindow* parent);

@@ -72,29 +72,6 @@ void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
                                               const wxRect& activeTabRect, const clTabColours& colours, size_t style)
 {
     clTabRenderer::FinaliseBackground(parent, dc, clientRect, activeTabRect, colours, style);
-
-#ifndef __WXMAC__
-    wxColour active_tab_colour;
-    wxColour bg_colour;
-    GetTabColours(colours, style, &active_tab_colour, &bg_colour);
-    wxRect top_rect = clientRect;
-    top_rect.SetHeight(4);
-    dc.SetPen(active_tab_colour);
-    dc.SetBrush(active_tab_colour);
-    dc.DrawRectangle(top_rect);
-    // draw line on the sides of the active tab
-    wxPen bottom_pen = active_tab_colour.ChangeLightness(BOTTOM_PEN_LIGHNTESS);
-    dc.SetPen(bottom_pen);
-
-    int offset = DrawingUtils::IsDark(active_tab_colour) ? 1 : 0;
-    wxPoint left_1 = { top_rect.GetLeft(), top_rect.GetBottom() };
-    wxPoint right_1 = { activeTabRect.GetLeft() - offset, top_rect.GetBottom() };
-    DRAW_LINE(left_1, right_1);
-
-    wxPoint left_2 = { activeTabRect.GetRight() + offset, top_rect.GetBottom() };
-    wxPoint right_2 = { top_rect.GetRight(), top_rect.GetBottom() };
-    DRAW_LINE(left_2, right_2);
-#endif
 }
 
 void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,
@@ -139,6 +116,8 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
 {
     wxRect tabRect = tabInfo.GetRect();
     clTabColours colours = colors;
+
+    wxDCTextColourChanger text_colour_changer(dc);
 
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
     wxColour bgColour, activeTabBgColour;
@@ -197,6 +176,15 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
 
     wxFont font = GetTabFont(tabInfo.IsActive() && IsUseBoldFont());
     wxColour text_colour = is_dark ? bgColour.ChangeLightness(170) : bgColour.ChangeLightness(30);
+
+    // use distinct colour to mark modified tabs
+    bool has_close_button = (style & kNotebook_CloseButtonOnActiveTab);
+    if(!has_close_button && tabInfo.IsModified()) {
+        // no close button, and a modified tab: use different colour for drawing
+        // the tab label
+        text_colour = colours.markerColour;
+    }
+
     fontDC.SetTextForeground(text_colour);
     wxDCFontChanger font_changer(fontDC, font);
 
@@ -205,7 +193,7 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
     textRect.SetX(tabInfo.m_textX + rr.GetX());
     fontDC.DrawText(label, textRect.GetTopLeft());
 
-    if(style & kNotebook_CloseButtonOnActiveTab) {
+    if(has_close_button) {
         // use the adjusted tab rect and not the original one passed to us
         clTabInfo tab_info = tabInfo;
         tab_info.SetRect(tabRect);

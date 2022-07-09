@@ -23,7 +23,8 @@ protected:
 public:
     clTerminalViewCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize, long style = wxDV_MULTIPLE | wxDV_NO_HEADER);
-    ~clTerminalViewCtrl();
+    virtual ~clTerminalViewCtrl();
+
     /**
      * @brief Add line of text, with optionally user data
      */
@@ -39,4 +40,5 @@ public:
     void SetDefaultFont(const wxFont& font) override;
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINALVIEWCTRL_LINE_ADDED, clCommandEvent);
 #endif // CLTERMINALVIEWCTRL_HPP

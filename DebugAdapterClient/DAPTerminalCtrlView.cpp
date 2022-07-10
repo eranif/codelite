@@ -20,8 +20,16 @@ DAPTerminalCtrlView::~DAPTerminalCtrlView() {}
 void DAPTerminalCtrlView::OnMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
-    menu.Append(wxID_CLEAR);
-    menu.Append(wxID_COPY);
+    menu.Append(XRCID("clear_view_content"), _("Clear"));
+    menu.Append(XRCID("copy_view_content"), _("Copy"));
+
+    menu.Bind(
+        wxEVT_UPDATE_UI,
+        [this](wxUpdateUIEvent& e) {
+            // if we have a selection, enable the copy
+            e.Enable(m_ctrl->GetSelectedItemsCount() > 0);
+        },
+        XRCID("copy_view_content"));
 
     menu.Bind(
         wxEVT_MENU,
@@ -43,14 +51,14 @@ void DAPTerminalCtrlView::OnMenu(wxDataViewEvent& event)
             content.RemoveLast();
             ::CopyToClipboard(content);
         },
-        wxID_COPY);
+        XRCID("copy_view_content"));
     menu.Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& e) {
             wxUnusedVar(e);
             m_ctrl->DeleteAllItems();
         },
-        wxID_CLEAR);
+        XRCID("clear_view_content"));
 
     m_ctrl->PopupMenu(&menu);
 }

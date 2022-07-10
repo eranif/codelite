@@ -18,17 +18,7 @@ LSPClangdDetector::~LSPClangdDetector() {}
 
 bool LSPClangdDetector::DoLocate()
 {
-#if defined(__WXMSW__)
-    // Try the installation folder first
-    wxFileName clangdExe(clStandardPaths::Get().GetExecutablePath());
-    clangdExe.AppendDir("lsp");
-    clangdExe.SetName("clangd");
-    if(clangdExe.FileExists() && clangdExe.IsFileExecutable()) {
-        ConfigureFile(clangdExe);
-        return true;
-    }
-
-#elif defined(__WXGTK__) || defined(__WXMAC__)
+#if defined(__WXGTK__)
     // try the obvious name first: "clangd"
     wxFileName fnClangdExe("/usr/bin", "clangd");
     if(fnClangdExe.FileExists()) {
@@ -45,42 +35,25 @@ bool LSPClangdDetector::DoLocate()
             return true;
         }
     }
-#endif
-    CompilerLocatorCLANG locator;
-    wxFileName fnClangd;
-#if defined(__WXMSW__)
-    fnClangd.SetExt("exe");
+#else // macOS / Windows
+    wxPathList paths;
+#ifdef __WXMAC__
+    paths.Add("/opt/homebrew/opt/llvm/bin");
+#else
+    // Try the installation folder first
+    wxFileName install_dir(clStandardPaths::Get().GetExecutablePath());
+    install_dir.AppendDir("lsp");
+    paths.Add(install_dir.GetPath());
 #endif
 
-    if(locator.Locate()) {
-        static wxRegEx reClangd("clangd([0-9\\-]*)", wxRE_DEFAULT);
-        const auto& compilers = locator.GetCompilers();
-        if(compilers.empty()) {
-            return false;
-        }
-
-        for(const auto& compiler : compilers) {
-            wxFileName cxx = compiler->GetTool("CXX");
-            if(!cxx.IsOk()) {
-                continue;
-            }
-            clFilesScanner scanner;
-            clFilesScanner::EntryData::Vec_t files;
-            if(scanner.ScanNoRecurse(cxx.GetPath(), files, "clangd*")) {
-                // Check for the existence of clangd
-                for(const auto& d : files) {
-                    if(!(d.flags & clFilesScanner::kIsFile)) {
-                        continue;
-                    }
-                    fnClangd = d.fullpath;
-                    clDEBUG() << "==> Found" << fnClangd;
-                    ConfigureFile(fnClangd);
-                    // Stop at the first match
-                    return true;
-                }
-            }
-        }
+    paths.AddEnvList("PATH");
+    wxString path = paths.FindAbsoluteValidPath("clangd");
+    if(!path.empty()) {
+        clSYSTEM() << "Found clangd ==>" << path << endl;
+        ConfigureFile(path);
+        return true;
     }
+#endif
     return false;
 }
 

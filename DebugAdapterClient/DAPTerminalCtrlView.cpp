@@ -24,10 +24,6 @@ void DAPTerminalCtrlView::OnMenu(wxDataViewEvent& event)
     menu.Append(wxID_COPY);
 
     menu.Bind(
-        wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(!m_ctrl->IsEmpty()); }, wxID_CLEAR);
-    menu.Bind(
-        wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(m_ctrl->GetSelectedItemsCount() > 0); }, wxID_COPY);
-    menu.Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& e) {
             wxUnusedVar(e);

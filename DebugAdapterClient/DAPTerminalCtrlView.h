@@ -2,19 +2,27 @@
 #define DAPOUTPUTVIEW_H
 
 #include "UI.h"
+#include "clModuleLogger.hpp"
 #include "clTerminalViewCtrl.hpp"
 #include "dap/dap.hpp"
 
-class DAPTerminalCtrlView : public DAPOutputViewBase
+#include <wx/stc/stc.h>
+
+class DAPTerminalCtrlView : public wxPanel
 {
 protected:
-    clTerminalViewCtrl* m_ctrl = nullptr;
+    clModuleLogger& LOG;
+    wxStyledTextCtrl* m_ctrl = nullptr;
 
 protected:
-    void OnMenu(wxDataViewEvent& event);
+    void OnThemeChanged(clCommandEvent& event);
+    void ApplyTheme();
 
 public:
-    DAPTerminalCtrlView(wxWindow* parent);
+    DAPTerminalCtrlView(wxWindow* parent, clModuleLogger& log);
     virtual ~DAPTerminalCtrlView();
+
+    void AppendLine(const wxString& line);
+    void ScrollToEnd();
 };
 #endif // DAPOUTPUTVIEW_H

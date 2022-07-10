@@ -653,7 +653,7 @@ void DebugAdapterClient::InitializeUI()
                                                                    .Name(DAP_BREAKPOINTS_VIEW));
     }
     if(!m_outputView) {
-        m_outputView = new DAPOutputPane(parent);
+        m_outputView = new DAPOutputPane(parent, LOG);
         m_mgr->GetDockingManager()->AddPane(m_outputView, wxAuiPaneInfo()
                                                               .MinSize(300, 300)
                                                               .Layer(5)
@@ -908,6 +908,7 @@ void DebugAdapterClient::OnDapOutputEvent(DAPEvent& event)
 void DebugAdapterClient::OnDapModuleEvent(DAPEvent& event)
 {
     LOG_DEBUG(LOG) << "Received module event" << endl;
+    CHECK_IS_DAP_CONNECTED();
     if(m_outputView) {
         m_outputView->AddEvent(event.GetDapEvent()->As<dap::ModuleEvent>());
     }
@@ -1116,7 +1117,7 @@ bool DebugAdapterClient::LaunchDAPServer()
                                             wxEmptyString, &env_list);
     }
     m_dap_server->SetHardKill(true);
-    return m_dap_server != nullptr;
+    return m_dap_server;
 }
 
 bool DebugAdapterClient::InitialiseSession(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
@@ -1279,7 +1280,9 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
                 DAPTextView::SetMarker(editor->GetCtrl(), line_number);
             };
             clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), callback);
-            m_textView->ClearMarker();
+            if(m_textView) {
+                m_textView->ClearMarker();
+            }
         }
 
     } else {

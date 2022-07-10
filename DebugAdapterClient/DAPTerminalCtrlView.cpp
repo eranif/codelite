@@ -1,64 +1,52 @@
 #include "DAPTerminalCtrlView.h"
 
+#include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
+#include "clSystemSettings.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "macros.h"
 
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
-DAPTerminalCtrlView::DAPTerminalCtrlView(wxWindow* parent)
-    : DAPOutputViewBase(parent)
+DAPTerminalCtrlView::DAPTerminalCtrlView(wxWindow* parent, clModuleLogger& log)
+    : wxPanel(parent)
+    , LOG(log)
 {
-    m_ctrl = new clTerminalViewCtrl(this);
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+
+    m_ctrl = new wxStyledTextCtrl(this);
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
-    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &DAPTerminalCtrlView::OnMenu, this);
+    ApplyTheme();
+
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &DAPTerminalCtrlView::OnThemeChanged, this);
 }
 
-DAPTerminalCtrlView::~DAPTerminalCtrlView() {}
-
-void DAPTerminalCtrlView::OnMenu(wxDataViewEvent& event)
+DAPTerminalCtrlView::~DAPTerminalCtrlView()
 {
-    wxMenu menu;
-    menu.Append(XRCID("clear_view_content"), _("Clear"));
-    menu.Append(XRCID("copy_view_content"), _("Copy"));
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &DAPTerminalCtrlView::OnThemeChanged, this);
+}
 
-    menu.Bind(
-        wxEVT_UPDATE_UI,
-        [this](wxUpdateUIEvent& e) {
-            // if we have a selection, enable the copy
-            e.Enable(m_ctrl->GetSelectedItemsCount() > 0);
-        },
-        XRCID("copy_view_content"));
+void DAPTerminalCtrlView::OnThemeChanged(clCommandEvent& event)
+{
+    event.Skip();
+    ApplyTheme();
+}
 
-    menu.Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent& e) {
-            wxUnusedVar(e);
-            wxString content;
-            wxDataViewItemArray selections;
-            m_ctrl->GetSelections(selections);
+void DAPTerminalCtrlView::ApplyTheme()
+{
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    lexer->ApplySystemColours(m_ctrl);
+}
 
-            if(selections.empty()) {
-                return;
-            }
+void DAPTerminalCtrlView::AppendLine(const wxString& line) { m_ctrl->AppendText(line + "\n"); }
 
-            for(size_t i = 0; i < selections.size(); ++i) {
-                wxString line = m_ctrl->GetItemText(selections[i]);
-                StringUtils::StripTerminalColouring(line, line);
-                content << line << "\n";
-            }
-            content.RemoveLast();
-            ::CopyToClipboard(content);
-        },
-        XRCID("copy_view_content"));
-    menu.Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent& e) {
-            wxUnusedVar(e);
-            m_ctrl->DeleteAllItems();
-        },
-        XRCID("clear_view_content"));
-
-    m_ctrl->PopupMenu(&menu);
+void DAPTerminalCtrlView::ScrollToEnd()
+{
+    int lastPos = m_ctrl->GetLastPosition();
+    m_ctrl->SetCurrentPos(lastPos);
+    m_ctrl->SetSelectionStart(lastPos);
+    m_ctrl->SetSelectionEnd(lastPos);
+    m_ctrl->ScrollToEnd();
 }

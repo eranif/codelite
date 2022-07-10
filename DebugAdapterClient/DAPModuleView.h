@@ -14,7 +14,7 @@ protected:
     void OnMenu(wxDataViewEvent& event);
 
 public:
-    DAPModuleView(wxWindow* parent);
+    DAPModuleView(wxWindow* parent, clModuleLogger& log);
     virtual ~DAPModuleView();
 
     void AddModuleEvent(dap::ModuleEvent* event);

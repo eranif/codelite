@@ -1,7 +1,7 @@
 #include "DAPModuleView.h"
 
-DAPModuleView::DAPModuleView(wxWindow* parent)
-    : DAPTerminalCtrlView(parent)
+DAPModuleView::DAPModuleView(wxWindow* parent, clModuleLogger& log)
+    : DAPTerminalCtrlView(parent, log)
 {
 }
 
@@ -9,23 +9,13 @@ DAPModuleView::~DAPModuleView() {}
 
 void DAPModuleView::AddModuleEvent(dap::ModuleEvent* event)
 {
+    LOG_DEBUG(LOG) << "Adding module event..." << endl;
     CHECK_PTR_RET(event);
-    auto& builder = m_ctrl->GetBuilder(true);
+    CHECK_PTR_RET(m_ctrl);
+
     wxString line;
-
-    line << event->module.id << " " << event->module.name;
-    builder.Add(line, eAsciiColours::NORMAL_TEXT);
-
-    if(event->reason == "new") {
-        builder.Add(" NEW", eAsciiColours::GREEN);
-    } else if(event->reason == "changed") {
-        builder.Add(" CHANGED", eAsciiColours::YELLOW);
-    } else if(event->reason == "removed") {
-        builder.Add(" REMOVED", eAsciiColours::GRAY);
-    } else {
-        builder.Add(" " + event->reason.Upper(), eAsciiColours::NORMAL_TEXT);
-    }
-
-    builder.Add(" " + event->module.path, eAsciiColours::NORMAL_TEXT);
-    m_ctrl->AddLine(builder.GetString(), false);
+    line << event->module.id << " " << event->module.name << " " << event->reason.Upper() << " " + event->module.path;
+    ScrollToEnd();
+    AppendLine(line);
+    ScrollToEnd();
 }

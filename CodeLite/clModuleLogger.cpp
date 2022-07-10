@@ -50,6 +50,9 @@ wxString clModuleLogger::Prefix()
 
     wxString msStr = wxString::Format(wxT("%03d"), ms);
     prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
+    // add the thread ID
+    prefix << wxT(" T:") << wxThread::GetCurrentId();
+
     switch(m_current_log_level) {
     case FileLogger::System:
         prefix << wxT(" SYSTEM]");

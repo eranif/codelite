@@ -45,7 +45,7 @@ nav:
         - Rust: plugins/rust.md
     - Debugging:
         - gdb: debuggers/gdb.md
-        - lldb: debuggers/lldb.md
+        - Debug Adapter Client (dap): plugins/dap.md
         - XDebug (PHP): debuggers/xdebug.md
         - Node.js: debuggers/nodejs.md
         - Quick Debug: debuggers/quick_debug.md

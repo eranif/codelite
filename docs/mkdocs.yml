@@ -31,6 +31,7 @@ nav:
         - C/C++: code_completion/cxx.md
     - Plugins:
         - Language Server Protocol: plugins/lsp.md
+        - Debug Adapter Client: plugins/dap.md
         - CMake: plugins/cmake.md
         - SFTP: plugins/sftp.md
         - SnipWiz: plugins/snipwiz.md

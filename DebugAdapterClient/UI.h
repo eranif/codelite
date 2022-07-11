@@ -112,14 +112,4 @@ public:
     virtual ~DAPTextViewBase();
 };
 
-class DAPOutputViewBase : public wxPanel
-{
-protected:
-protected:
-public:
-    DAPOutputViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                      const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
-    virtual ~DAPOutputViewBase();
-};
-
 #endif

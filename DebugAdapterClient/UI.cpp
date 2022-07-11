@@ -154,7 +154,7 @@ DAPBreakpointsViewBase::DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id, 
 
     boxSizer264->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
+    m_dvListCtrl->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
     m_dvListCtrl->AppendTextColumn(_("Verified"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
     m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
     m_dvListCtrl->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
@@ -228,26 +228,3 @@ DAPTextViewBase::DAPTextViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
 }
 
 DAPTextViewBase::~DAPTextViewBase() {}
-
-DAPOutputViewBase::DAPOutputViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                     long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafternz79PnInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* boxSizer270 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer270);
-
-    SetName(wxT("DAPOutputViewBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
-}
-
-DAPOutputViewBase::~DAPOutputViewBase() {}

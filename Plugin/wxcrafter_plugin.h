@@ -169,7 +169,7 @@ public:
     wxPanel* GetPanel161() { return m_panel161; }
     NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Tab"),
                               const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 200),
-                              long style = wxRESIZE_BORDER);
+                              long style = wxCAPTION | wxRESIZE_BORDER | wxCLOSE_BOX);
     virtual ~NotebookNavigationDlgBase();
 };
 

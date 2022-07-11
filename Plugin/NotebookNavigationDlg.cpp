@@ -95,15 +95,14 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 
 NotebookNavigationDlg::~NotebookNavigationDlg()
 {
-    wxTheApp->Unbind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
-    wxTheApp->Unbind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
+    m_dvListCtrl->Unbind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
+    m_dvListCtrl->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
+    m_dvListCtrl->Unbind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
 
-    clDEBUG() << "NotebookNavigationDlg::~NotebookNavigationDlg" << endl;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
-        TabData* d = (TabData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
-        wxDELETE(d);
-    }
-    m_dvListCtrl->DeleteAllItems();
+    m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
+        TabData* cd = (TabData*)d;
+        wxDELETE(cd);
+    });
 }
 
 void NotebookNavigationDlg::CloseDialog()
@@ -125,29 +124,29 @@ void NotebookNavigationDlg::FinalizeCtor()
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
     }
 
-    m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
-
     SetMinClientSize(wxSize(500, 300));
 #ifdef __WXOSX__
     SetSize(wxSize(500, 300));
 #endif
     CentreOnParent();
 
-    wxTheApp->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
-    wxTheApp->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
-    m_dvListCtrl->SetFocus();
+    m_dvListCtrl->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
+    m_dvListCtrl->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
+    m_dvListCtrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
+
+    m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
 }
 
 void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 {
 #ifdef __WXOSX__
-    if(event.GetUnicodeKey() == WXK_ESCAPE) {
+    if(event.GetKeyCode() == WXK_ESCAPE) {
         CallAfter(&NotebookNavigationDlg::CloseDialog);
     } else {
         event.Skip();
     }
 #else
-    if((event.GetUnicodeKey() == WXK_TAB) && (event.CmdDown() && event.ShiftDown())) {
+    if((event.GetKeyCode() == WXK_TAB) && (event.CmdDown() && event.ShiftDown())) {
         // Navigate Up
         wxDataViewItem item = m_dvListCtrl->GetSelection();
         if(item.IsOk()) {
@@ -166,7 +165,7 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
                 m_dvListCtrl->EnsureVisible(item);
             }
         }
-    } else if((event.GetUnicodeKey() == WXK_TAB) && event.CmdDown()) {
+    } else if((event.GetKeyCode() == WXK_TAB) && event.CmdDown()) {
         // Navigate Down
         wxDataViewItem item = m_dvListCtrl->GetSelection();
         if(item.IsOk()) {
@@ -192,7 +191,6 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 
 void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
 {
-    clDEBUG() << "NotebookNavigationDlg::OnKeyUp" << endl;
 #ifdef __WXOSX__
     event.Skip();
 #else

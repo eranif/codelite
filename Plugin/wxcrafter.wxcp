@@ -2752,7 +2752,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxRESIZE_BORDER"],
+			"m_styles":	["wxCAPTION", "wxRESIZE_BORDER", "wxCLOSE_BOX"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",

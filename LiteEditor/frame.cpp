@@ -1095,10 +1095,17 @@ void clMainFrame::AddKeyboardAccelerators()
                                          { "advance_settings", _("Build Settings...") },
                                          { "debuger_settings", _("GDB Settings...") },
                                          { "tags_options", _("Code Completion...") } });
+#ifdef __WXMAC__
+    mgr->AddAccelerator(_("Tab"), { { "wxEVT_BOOK_NAV_NEXT", _("Switch to Next Tab"), "F6" },
+                                    { "wxEVT_BOOK_NAV_PREV", _("Switch to Previous Tab"), "Shift-F6" },
+                                    { "wxEVT_BOOK_MOVE_TAB_LEFT", _("Move Tab Left"), "Ctrl-PGUP" },
+                                    { "wxEVT_BOOK_MOVE_TAB_RIGHT", _("Move Tab Right"), "Ctrl-PGDN" } });
+#else
     mgr->AddAccelerator(_("Tab"), { { "wxEVT_BOOK_NAV_NEXT", _("Switch to Next Tab"), "Ctrl-Shift-TAB" },
                                     { "wxEVT_BOOK_NAV_PREV", _("Switch to Previous Tab"), "Ctrl-TAB" },
                                     { "wxEVT_BOOK_MOVE_TAB_LEFT", _("Move Tab Left"), "Ctrl-Shift-PGUP" },
                                     { "wxEVT_BOOK_MOVE_TAB_RIGHT", _("Move Tab Right"), "Ctrl-Shift-PGDN" } });
+#endif
     mgr->AddAccelerator(_("View"), { { "word_wrap", _("Word Wrap") },
                                      { "toggle_fold", _("Toggle Current Fold"), "Alt-RIGHT" },
                                      { "fold_all", _("Toggle All Folds") },

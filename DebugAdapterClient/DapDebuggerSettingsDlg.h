@@ -12,6 +12,7 @@ protected:
     void OnScan(wxCommandEvent& event);
     void OnNew(wxCommandEvent& event);
     void OnDelete(wxCommandEvent& event);
+    void OnOpenHelpDocs(wxCommandEvent& event);
     void OnItemsUI(wxUpdateUIEvent& event);
 
 private:

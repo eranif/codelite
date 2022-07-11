@@ -1,7 +1,6 @@
 Debug Adapter Client
 ---
 
-- Add a "help" button that opens the docs page
 - Allow user to set function breakpoint from the UI
 
 others:

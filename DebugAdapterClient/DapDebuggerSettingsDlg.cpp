@@ -19,6 +19,7 @@ DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsSt
     m_toolbar->AddTool(wxID_DELETE, _("Delete"), image_list->Add("clean"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_FIND, _("Scan"), image_list->Add("find"));
+    m_toolbar->AddTool(wxID_HELP, _("Help"), image_list->Add("help"));
     m_toolbar->AssignBitmaps(image_list);
 
     m_toolbar->Realize();
@@ -26,6 +27,7 @@ DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsSt
     m_toolbar->Bind(wxEVT_TOOL, &DapDebuggerSettingsDlg::OnNew, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &DapDebuggerSettingsDlg::OnScan, this, wxID_FIND);
     m_toolbar->Bind(wxEVT_TOOL, &DapDebuggerSettingsDlg::OnDelete, this, wxID_DELETE);
+    m_toolbar->Bind(wxEVT_TOOL, &DapDebuggerSettingsDlg::OnOpenHelpDocs, this, wxID_HELP);
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DapDebuggerSettingsDlg::OnItemsUI, this, wxID_DELETE);
 
     Initialise();
@@ -46,6 +48,12 @@ void DapDebuggerSettingsDlg::Initialise()
 }
 
 void DapDebuggerSettingsDlg::OnItemsUI(wxUpdateUIEvent& event) { event.Enable(m_notebook->GetPageCount() > 0); }
+
+void DapDebuggerSettingsDlg::OnOpenHelpDocs(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    ::wxLaunchDefaultBrowser("https://docs.codelite.org/plugins/dap");
+}
 
 void DapDebuggerSettingsDlg::OnDelete(wxCommandEvent& event)
 {

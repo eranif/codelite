@@ -4,6 +4,7 @@
 #include "clSystemSettings.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include "macros.h"
 
 #include <wx/dcclient.h>
@@ -36,10 +37,11 @@ DAPTooltip::DAPTooltip(dap::Client* client, const wxString& expression, const wx
 
     wxString root_text;
     root_text << expression << " = " << result;
-    auto root = m_ctrl->AddRoot(root_text, -1, -1, new TooltipItemData(variableReference));
+    auto root = m_ctrl->AddRoot(root_text, -1, -1, new TooltipItemData(variableReference, result));
     m_ctrl->SetItemText(root, type, 1);
     m_ctrl->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPTooltip::OnItemExpanding, this);
     m_ctrl->Bind(wxEVT_KEY_DOWN, &DAPTooltip::OnKeyDown, this);
+    m_ctrl->Bind(wxEVT_TREE_ITEM_MENU, &DAPTooltip::OnMenu, this);
 
     if(variableReference > 0) {
         // we have children
@@ -50,6 +52,25 @@ DAPTooltip::DAPTooltip(dap::Client* client, const wxString& expression, const wx
 }
 
 DAPTooltip::~DAPTooltip() {}
+
+void DAPTooltip::OnMenu(wxTreeEvent& event)
+{
+    auto item = event.GetItem();
+    CHECK_ITEM_RET(item);
+
+    wxMenu menu;
+    menu.Append(XRCID("dap_copy_var_value"), _("Copy"));
+    menu.Bind(
+        wxEVT_MENU,
+        [this, item](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            auto cd = GetItemData(item);
+            CHECK_PTR_RET(cd);
+            ::CopyToClipboard(cd->value);
+        },
+        XRCID("dap_copy_var_value"));
+    m_ctrl->PopupMenu(&menu);
+}
 
 void DAPTooltip::OnItemExpanding(wxTreeEvent& event)
 {
@@ -103,7 +124,8 @@ void DAPTooltip::UpdateChildren(int varId, dap::VariablesResponse* response)
     for(auto var : response->variables) {
         wxString display_text;
         display_text << var.name << " = " << var.value;
-        auto child = m_ctrl->AppendItem(item, display_text, -1, -1, new TooltipItemData(var.variablesReference));
+        auto child =
+            m_ctrl->AppendItem(item, display_text, -1, -1, new TooltipItemData(var.variablesReference, var.value));
         m_ctrl->SetItemText(child, var.type, 1);
 
         if(var.variablesReference > 0) {

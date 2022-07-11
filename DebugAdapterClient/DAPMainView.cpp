@@ -445,14 +445,14 @@ void DAPMainView::OnVariablesMenu(wxTreeEvent& event)
     CHECK_PTR_RET(cd);
 
     wxMenu menu;
-    menu.Append(wxID_COPY);
+    menu.Append(XRCID("dap_copy_var_value"), _("Copy"));
     menu.Bind(
         wxEVT_MENU,
         [cd](wxCommandEvent& e) {
             wxUnusedVar(e);
             ::CopyToClipboard(cd->value);
         },
-        wxID_COPY);
+        XRCID("dap_copy_var_value"));
     m_variablesTree->PopupMenu(&menu);
 }
 

@@ -9,8 +9,10 @@
 
 struct TooltipItemData : public wxTreeItemData {
     int refId = wxNOT_FOUND;
-    TooltipItemData(int id)
+    wxString value;
+    TooltipItemData(int id, const wxString& v)
         : refId(id)
+        , value(v)
     {
     }
     virtual ~TooltipItemData() {}
@@ -24,6 +26,7 @@ class DAPTooltip : public wxPopupWindow
 
 protected:
     void OnItemExpanding(wxTreeEvent& event);
+    void OnMenu(wxTreeEvent& event);
     void OnKeyDown(wxKeyEvent& event);
 
 private:

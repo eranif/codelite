@@ -4,6 +4,7 @@
 #include "bitmap_loader.h"
 #include "file_logger.h"
 #include "globals.h"
+#include "windowattrmanager.h"
 
 #include <algorithm>
 #include <imanager.h>
@@ -135,6 +136,7 @@ void NotebookNavigationDlg::FinalizeCtor()
     m_dvListCtrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
 
     m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
+    WindowAttrManager::Load(this);
 }
 
 void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)

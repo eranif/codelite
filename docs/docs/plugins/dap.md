@@ -1,9 +1,9 @@
-## What is Debug Adapter Client?
+## What is the Debug Adapter Client?
 ---
 
-This plugin implements the DAP protocol for allowing CodeLite to communicate with third party debuggers
+This plugin implements the DAP protocol, which allows CodeLite to communicate with third party debuggers.
 
-from the [dap website][1]:
+From the [dap website][1]:
 
 Adding a debugger for a new language to an IDE or editor is not only a significant effort, but it is also frustrating that
 this effort can not be easily amortized over multiple development tools, as each tool uses different APIs for implementing the same feature.
@@ -21,8 +21,8 @@ The Debug Adapter Protocol is a win for both debugger providers and tooling vend
 ## Install Debug Adapters
 ---
 
-CodeLite does not install any debug adapter, this needs to be done manually.
-You can visit [microsoft implementation page][2] to see the full list.
+CodeLite does not install any debug adapter; this needs to be done manually.
+Visit the [microsoft implementation page][2] to see the full list.
 
 === "lldb-vscode"
     **Windows**
@@ -33,8 +33,8 @@ You can visit [microsoft implementation page][2] to see the full list.
 
     **Linux**
 
-    Most linux distros offer `lldb-vscode` in their repository. For example, under `Ubuntu 20.04`
-    you can install it by typing (you can install a newer version if available, the newer, the better):
+    Most linux distros offer `lldb-vscode` in their repository. For example, in `Ubuntu 20.04`
+    you can install it by typing (you can install a newer version if available; the newer, the better):
 
     `sudo apt update && sudo apt install lldb-12`
 
@@ -49,9 +49,9 @@ Once installed, go to:
 
 - `Settings` &#8594; `Debug Adapter Client`
 - Click on the magnifier button
-- Click `Ok`
+- Click `OK`
 
-if followed the instructions, CodeLite should be able to pick `lldb-vscode` and configure it.
+If you followed those instructions, CodeLite should be able to locate `lldb-vscode` and configure it.
 
 ## The configuration dialog
 ---
@@ -61,12 +61,12 @@ The configuration dialog is minimal and contains the following fields:
 | Property | Description |
 |------------------|-------------|
 | Command | the debug adapter server execution command line |
-| Connection string | an example for such connectin string: `tcp://127.0.0.1:12345`|
+| Connection string | For example: `tcp://127.0.0.1:12345`|
 | Use relative paths| CodeLite will pass and convert files paths into relative paths before sending them to the dap|
 | Use forward slash | (Windows only) Always use forward `/` slash |
 | Use volume | (Windows only) include the volume part of the file path |
-| Server environment | before launching the dap, apply this environment variables (in the form of `NAME=VALUE`)|
-| Environment format | The server environment variables format, can be `List` or `Dictionary`, depends on the dap|
+| Server environment | Before launching the dap, apply these environment variables (in the `NAME=VALUE` format)|
+| Environment format | The format for environment variables to provide to the server, which will pass them to the debuggee. The format might be `List` or `Dictionary`, depending on the dap. e.g.<br/>  { "FOO": "1", "BAR": "baz"} $launch_debuggee<br/> or <br/> FOO=1 BAR=baz $launch_debuggee|
 
 ## Using dap instead of the built-in debuggers
 ---
@@ -74,16 +74,16 @@ The configuration dialog is minimal and contains the following fields:
 ### Default C++ workspace
 ---
 
-- Open the project settings
-- Select the `General` tab
-- Under the `Debugger` section, click on the drop down control and chaneg the debugger
+- Open the project settings.
+- Select the `General` tab.
+- Under the `Debugger` section, click on the drop-down control and change the debugger.
 
 ### File system workspace
 ---
 
-- Open the workspace settings
-- Select the `General` tab
-- Change the debugger from the `Debugger` drop down control
+- Open the workspace settings.
+- Select the `General` tab.
+- Choose a debugger from the `Debugger` drop-down control.
 
 
  [1]: https://microsoft.github.io/debug-adapter-protocol/

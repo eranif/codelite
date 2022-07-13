@@ -80,6 +80,7 @@ void DapDebuggerSettingsDlg::OnScan(wxCommandEvent& event)
         return;
     }
 
+    wxBusyCursor bc;
     wxUnusedVar(event);
     DapLocator locator;
     std::vector<DapEntry> entries;

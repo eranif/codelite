@@ -1,9 +1,6 @@
 Debug Adapter Client
 ---
 
-- When scanning for python, add 2 debuggers:
-    - debugpy | file
-    - debugpy | module
 - Allow user to set function breakpoint from the UI
 - Update the docs on how to install `debugpy`: `pip install --upgrade debugpy`
 

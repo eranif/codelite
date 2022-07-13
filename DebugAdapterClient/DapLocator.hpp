@@ -9,6 +9,7 @@ class DapLocator
 {
 private:
     void find_lldb_vscode(std::vector<DapEntry>* entries);
+    void find_debugpy(std::vector<DapEntry>* entries);
 
 public:
     DapLocator();

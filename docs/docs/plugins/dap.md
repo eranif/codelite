@@ -26,7 +26,7 @@ Visit the [microsoft implementation page][2] to see the full list.
 
 ### lldb-vscode
 
-    A wrapper for the `lldb` debugger that implements the Debug Adapter Protocol
+A wrapper for the `lldb` debugger that implements the Debug Adapter Protocol
 
 === "Windows"
     - Setup a [MSYS2 working environment][3]
@@ -46,6 +46,8 @@ Visit the [microsoft implementation page][2] to see the full list.
 
     `brew install llvm`
 
+----
+
 ### debugpy
 
 [debugpy][4] is a debugger for Python that implements of the Debug Adapter Protocol for Python 3.
@@ -59,6 +61,8 @@ Installing `debugpy` is done using `pip`:
 pip install --upgrade pip
 pip install --upgrade debugpy
 ```
+
+----
 
 Once installed, go to:
 
@@ -81,7 +85,7 @@ The configuration dialog is minimal and contains the following fields:
 | Use forward slash | (Windows only) Always use forward `/` slash |
 | Use volume | (Windows only) include the volume part of the file path |
 | Server environment | Before launching the dap, apply these environment variables (in the `NAME=VALUE` format)|
-| Environment format | The format for environment variables to provide to the server, which will pass them to the debuggee. The format might be `List` or `Dictionary`, depending on the dap. e.g.<br/>  { "FOO": "1", "BAR": "baz"} $launch_debuggee<br/> or <br/> FOO=1 BAR=baz $launch_debuggee|
+| Environment format | The format for environment variables to provide to the server, which will pass them to the debuggee. The format might be `List` or `Dictionary`, depending on the dap. e.g.<br/>  `{ "FOO": "1", "BAR": "baz"} $launch_debuggee`<br/> or <br/> `FOO=1 BAR=baz $launch_debuggee`|
 
 ## Using dap instead of the built-in debuggers
 ---

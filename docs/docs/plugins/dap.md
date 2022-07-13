@@ -24,26 +24,41 @@ The Debug Adapter Protocol is a win for both debugger providers and tooling vend
 CodeLite does not install any debug adapter; this needs to be done manually.
 Visit the [microsoft implementation page][2] to see the full list.
 
-=== "lldb-vscode"
-    **Windows**
+### lldb-vscode
 
+    A wrapper for the `lldb` debugger that implements the Debug Adapter Protocol
+
+=== "Windows"
     - Setup a [MSYS2 working environment][3]
     - Open `MSYS2` terminal and type: `pacman -S mingw-w64-clang-x86_64-toolchain`
     - You should now have `lldb-vscode` installed under `/clang64/bin/lldb-vsocde`
 
-    **Linux**
+=== "Linux"
 
     Most linux distros offer `lldb-vscode` in their repository. For example, in `Ubuntu 20.04`
     you can install it by typing (you can install a newer version if available; the newer, the better):
 
     `sudo apt update && sudo apt install lldb-12`
 
-    **macOS**
+=== "macOS"
 
     `lldb-vscode` is installed using `brew`:
 
     `brew install llvm`
 
+### debugpy
+
+[debugpy][4] is a debugger for Python that implements of the Debug Adapter Protocol for Python 3.
+You can read more about it [here][5]
+
+**Installation (all platforms)**
+
+Installing `debugpy` is done using `pip`:
+
+```bash
+pip install --upgrade pip
+pip install --upgrade debugpy
+```
 
 Once installed, go to:
 
@@ -71,7 +86,7 @@ The configuration dialog is minimal and contains the following fields:
 ## Using dap instead of the built-in debuggers
 ---
 
-### Default C++ workspace
+### `C++` workspace
 ---
 
 - Open the project settings.
@@ -89,4 +104,5 @@ The configuration dialog is minimal and contains the following fields:
  [1]: https://microsoft.github.io/debug-adapter-protocol/
  [2]: https://microsoft.github.io/debug-adapter-protocol/implementors/adapters/
  [3]: /build/mingw_builds/#prepare-a-working-environment
-
+ [4]: https://github.com/microsoft/debugpy
+ [5]: https://github.com/microsoft/debugpy/blob/main/doc/Subprocess%20debugging.md

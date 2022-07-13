@@ -17,6 +17,7 @@ struct DebugSession {
     bool debug_over_ssh = false;
     SSHAccountInfo ssh_acount;
     DapEntry dap_server;
+    int m_pid = wxNOT_FOUND; // when attaching to process, this holds the process ID
 
     void Clear()
     {
@@ -27,6 +28,7 @@ struct DebugSession {
         command.clear();
         environment.clear();
         dap_server = {};
+        m_pid = wxNOT_FOUND;
     }
 
     dap::Environment MakeEnvironment()

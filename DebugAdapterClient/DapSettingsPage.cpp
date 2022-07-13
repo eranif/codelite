@@ -33,6 +33,23 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     AddProperty(_("Command"), m_entry.GetCommand(), UPDATE_TEXT_CB(SetCommand));
     AddProperty(_("Connection string"), m_entry.GetConnectionString(), UPDATE_TEXT_CB(SetConnectionString));
 
+    const std::vector<wxString> launch_choices = { "Launch", "Attach" };
+    wxString launch_type = entry.GetLaunchType() == DapLaunchType::LAUNCH ? "Launch" : "Attach";
+    AddProperty(_("Launch type"), launch_choices, launch_type, [this](const wxString& label, const wxAny& value) {
+        wxUnusedVar(label);
+        wxString value_str;
+        if(value.GetAs(&value_str)) {
+            DapEntry d;
+            m_store.Get(m_entry.GetName(), &d);
+            if(value_str == "Launch") {
+                d.SetLaunchType(DapLaunchType::LAUNCH);
+            } else {
+                d.SetLaunchType(DapLaunchType::ATTACH);
+            }
+            m_store.Set(d);
+        }
+    });
+
     AddHeader(_("File path options"));
     AddProperty(_("Use relative paths"), m_entry.UseRelativePath(), UPDATE_BOOL_CB(SetUseRelativePath));
 

@@ -11,6 +11,7 @@ JSONItem DapEntry::To() const
     json.addProperty("environment", m_environment);
     json.addProperty("flags", m_flags);
     json.addProperty("env_format", (int)m_envFormat);
+    json.addProperty("launch_type", (int)m_launch_type);
     return json;
 }
 
@@ -22,6 +23,7 @@ void DapEntry::From(const JSONItem& json)
     m_environment = json["environment"].toString();
     m_flags = json["flags"].toSize_t(m_flags);
     m_envFormat = (dap::EnvFormat)json["env_format"].toInt((int)dap::EnvFormat::LIST);
+    m_launch_type = (DapLaunchType)json["launch_type"].toInt((int)m_launch_type);
 }
 
 //////////////////////////////////////////////////////////////

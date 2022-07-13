@@ -79,6 +79,8 @@ class DebugAdapterClient : public IPlugin
     friend class LLDBTooltip;
 
 private:
+    wxString ReplacePlaceholders(const wxString& str) const;
+
     void DestroyUI();
     void InitializeUI();
     void LoadPerspective();

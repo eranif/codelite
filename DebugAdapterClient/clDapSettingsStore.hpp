@@ -18,6 +18,11 @@ enum class DapPathFormat : size_t {
     PATH_NO_VOLUME = (1 << 2),
 };
 
+enum class DapLaunchType {
+    LAUNCH = 0,
+    ATTACH,
+};
+
 class DapEntry
 {
     wxString m_command;
@@ -26,6 +31,7 @@ class DapEntry
     wxString m_environment;
     size_t m_flags = (size_t)DapPathFormat::PATH_NATIVE; // bitset of DapPathFormats
     dap::EnvFormat m_envFormat = dap::EnvFormat::LIST;
+    DapLaunchType m_launch_type = DapLaunchType::LAUNCH;
 
 private:
     void SetFlag(DapPathFormat flag, bool b)
@@ -68,6 +74,9 @@ public:
 
     bool IsUsingNativePath() const { return m_flags == 0; }
     void SetUseNativePath() { m_flags = 0; }
+
+    DapLaunchType GetLaunchType() const { return m_launch_type; }
+    void SetLaunchType(DapLaunchType type) { m_launch_type = type; }
 
     JSONItem To() const;
     void From(const JSONItem& json);

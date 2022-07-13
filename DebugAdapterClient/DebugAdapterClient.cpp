@@ -937,7 +937,14 @@ void DebugAdapterClient::OnDapInitializeResponse(DAPEvent& event)
     // FIXME: apply the environment here
     auto v = m_session.command;
     LOG_DEBUG(LOG) << "Calling Launch() with command:" << v << endl;
-    m_client.Launch(std::move(v), m_session.working_directory, m_session.MakeEnvironment());
+    if(m_session.dap_server.GetLaunchType() == DapLaunchType::LAUNCH) {
+        m_client.Launch(std::move(v), m_session.working_directory, m_session.MakeEnvironment());
+
+    } else {
+        auto v = m_session.command;
+        v.erase(v.begin()); // remove the exe and pass just the arguments
+        m_client.Attach(m_session.m_pid, v);
+    }
 }
 
 /// DAP server responded to our `initialize` request
@@ -1103,16 +1110,17 @@ bool DebugAdapterClient::LaunchDAPServer()
 {
     wxDELETE(m_dap_server);
     const DapEntry& dap_server = m_session.dap_server;
+    wxString command = ReplacePlaceholders(dap_server.GetCommand());
     if(m_session.debug_over_ssh) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
-        m_dap_server = ::CreateAsyncProcess(this, dap_server.GetCommand(),
-                                            IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
-                                            wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName());
+        m_dap_server =
+            ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
+                                 wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName());
     } else {
         // launch local process
         auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
-        m_dap_server = ::CreateAsyncProcess(this, dap_server.GetCommand(),
+        m_dap_server = ::CreateAsyncProcess(this, command,
                                             IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole,
                                             wxEmptyString, &env_list);
     }
@@ -1353,4 +1361,14 @@ void DebugAdapterClient::OnPageClosing(wxNotifyEvent& event)
     if(m_textView && m_textView == event.GetClientData()) {
         event.Veto();
     }
+}
+
+wxString DebugAdapterClient::ReplacePlaceholders(const wxString& str) const
+{
+    wxString project_name;
+    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        project_name = clWorkspaceManager::Get().GetWorkspace()->GetActiveProjectName();
+    }
+
+    return MacroManager::Instance()->Expand(str, clGetManager(), project_name);
 }

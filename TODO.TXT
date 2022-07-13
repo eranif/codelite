@@ -2,7 +2,7 @@ Debug Adapter Client
 ---
 
 - Allow user to set function breakpoint from the UI
-- Update the docs on how to install `debugpy`: `pip install --upgrade debugpy`
+- Macro manager: add new macro: $(ProgramFile) (expands to the full path of the program to run)
 
 others:
 ----

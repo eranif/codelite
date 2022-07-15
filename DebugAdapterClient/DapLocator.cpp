@@ -153,10 +153,10 @@ void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
         if(line.Contains("debugpy")) {
             wxFileName python_exe = path;
             python_exe.SetFullName("python");
-            auto entry = create_entry("debugpy", 12345,
-                                      { python_exe.GetFullPath(), "-m", "debugpy", "--listen", "12345",
-                                        "--wait-for-client", "$(CurrentFileFullPath)" },
-                                      DapLaunchType::ATTACH);
+            auto entry = create_entry(
+                "debugpy", 12345,
+                { python_exe.GetFullPath(), "-m", "debugpy", "--listen", "12345", "--wait-for-client", "$(Program)" },
+                DapLaunchType::ATTACH);
             entry.SetUseNativePath();
             entries->push_back(entry);
             return;

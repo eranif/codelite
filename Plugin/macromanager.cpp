@@ -266,10 +266,6 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                     prjRunWd = bldConf->GetWorkingDirectory();
                 }
 
-                if(!program_to_run.empty()) {
-                    expandedString.Replace("$(Program)", program_to_run);
-                }
-
                 expandedString.Replace("$(ProjectWorkingDirectory)", prjBuildWd);
                 expandedString.Replace("$(ProjectRunWorkingDirectory)", prjRunWd);
                 expandedString.Replace("$(ProjectPath)", proj->GetFileName().GetPath());
@@ -324,6 +320,10 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                     expandedString.Replace("$(ProjectFilesAbs)", proj->GetFilesAsString(true));
                 }
             }
+        }
+
+        if(!program_to_run.empty()) {
+            expandedString.Replace("$(Program)", program_to_run);
         }
 
         if(manager) {

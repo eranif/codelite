@@ -1111,6 +1111,8 @@ bool DebugAdapterClient::LaunchDAPServer()
     wxDELETE(m_dap_server);
     const DapEntry& dap_server = m_session.dap_server;
     wxString command = ReplacePlaceholders(dap_server.GetCommand());
+
+    LOG_DEBUG(LOG) << "starting dap with command:" << command << endl;
     if(m_session.debug_over_ssh) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
@@ -1370,5 +1372,6 @@ wxString DebugAdapterClient::ReplacePlaceholders(const wxString& str) const
         project_name = clWorkspaceManager::Get().GetWorkspace()->GetActiveProjectName();
     }
 
-    return MacroManager::Instance()->Expand(str, clGetManager(), project_name);
+    wxString command = MacroManager::Instance()->Expand(str, clGetManager(), project_name);
+    return command;
 }

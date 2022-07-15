@@ -174,6 +174,7 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
     "CurrentFileFullName",
     "CurrentSelection",
     "CurrentSelectionRange",
+    "Program",
     "User",
     "Date",
     "CodeLitePath",
@@ -214,6 +215,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
     wxString wspName;
     wxString wspConfig;
     wxString wspPath;
+    wxString program_to_run;
 
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         wspName = clCxxWorkspaceST::Get()->GetName();
@@ -256,6 +258,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                     expandedString.Replace("$(ProjectOutputFile)", bldConf->GetOutputFileName());
                     // An alias
                     expandedString.Replace("$(OutputFile)", bldConf->GetOutputFileName());
+                    expandedString.Replace("$(Program)", bldConf->GetCommand());
 
                     // When custom build project, use the working directory set in the
                     // custom build tab, otherwise use the project file's path

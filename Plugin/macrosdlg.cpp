@@ -27,6 +27,7 @@
 
 #include "globals.h"
 #include "ieditor.h"
+#include "macromanager.h"
 
 #include <wx/app.h>
 #include <wx/clipbrd.h>
@@ -102,6 +103,7 @@ void MacrosDlg::Initialize()
         AddMacro("`expression`", _("backticks: evaluates the expression inside the backticks into a string"));
         AddMacro("$(OutputDirectory)", _("The directory part of $(OutputFile)"));
         AddMacro("$(OutputFile)", _("The output file"));
+        AddMacro("$(Program)", _("The program to run"));
         break;
 
     case MacrosCompiler:
@@ -164,11 +166,8 @@ void MacrosDlg::AddMacro(const wxString& name, const wxString& desc)
 
     // Only fill third column if we can and may expand the macros
     if(m_project && m_editor && name != "$(ProjectFiles)" && name != "$(ProjectFilesAbs)") {
-        wxString value = ExpandVariables(name, m_project, m_editor);
+        wxString value = MacroManager::Instance()->Expand(name, clGetManager(), m_project->GetName());
         SetColumnText(m_listCtrlMacros, row, 2, value);
-
-    } else {
-        // No third column here... don't fill it or we get an assertion
     }
 }
 
@@ -178,17 +177,7 @@ void MacrosDlg::OnCopy(wxCommandEvent& e)
 {
     if(m_item != wxNOT_FOUND) {
         wxString value = GetColumnText(m_listCtrlMacros, m_item, 0);
-#if wxUSE_CLIPBOARD
-        if(wxTheClipboard->Open()) {
-            wxTheClipboard->UsePrimarySelection(false);
-            if(!wxTheClipboard->SetData(new wxTextDataObject(value))) {
-                // wxPrintf("Failed to insert data %s to clipboard", textToCopy.GetData());
-            }
-            wxTheClipboard->Close();
-        } else {
-            wxPrintf("Failed to open the clipboard");
-        }
-#endif
+        ::CopyToClipboard(value);
     }
     m_item = wxNOT_FOUND;
 }

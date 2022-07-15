@@ -116,10 +116,6 @@ protected:
     wxButton* m_button243;
     wxStaticText* m_staticText113;
     clThemedSTC* m_textCtrlArgs;
-    wxStaticText* m_staticText125;
-    clThemedChoice* m_choiceCompiler;
-    wxStaticText* m_staticText179;
-    clThemedChoice* m_choiceDebuggers;
     wxStaticText* m_staticText35;
     wxTextCtrl* m_textCtrlFileExt;
     wxStaticText* m_staticText187;
@@ -128,11 +124,15 @@ protected:
     wxTextCtrl* m_textCtrlExcludePaths;
     wxButton* m_button213;
     wxPanel* m_panelBuild;
+    wxStaticText* m_staticText125;
+    clThemedChoice* m_choiceCompiler;
     clThemedListCtrl* m_dvListCtrlTargets;
     wxButton* m_buttonNew;
     wxButton* m_buttonEdit;
     wxButton* m_buttonDelete;
     wxPanel* Debugger;
+    wxStaticText* m_staticText179;
+    clThemedChoice* m_choiceDebuggers;
     wxStaticText* m_staticText256;
     wxTextCtrl* m_textCtrlDebugger;
     wxButton* m_button262;
@@ -178,10 +178,6 @@ public:
     wxButton* GetButton243() { return m_button243; }
     wxStaticText* GetStaticText113() { return m_staticText113; }
     clThemedSTC* GetTextCtrlArgs() { return m_textCtrlArgs; }
-    wxStaticText* GetStaticText125() { return m_staticText125; }
-    clThemedChoice* GetChoiceCompiler() { return m_choiceCompiler; }
-    wxStaticText* GetStaticText179() { return m_staticText179; }
-    clThemedChoice* GetChoiceDebuggers() { return m_choiceDebuggers; }
     wxStaticText* GetStaticText35() { return m_staticText35; }
     wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
     wxStaticText* GetStaticText187() { return m_staticText187; }
@@ -190,11 +186,15 @@ public:
     wxTextCtrl* GetTextCtrlExcludePaths() { return m_textCtrlExcludePaths; }
     wxButton* GetButton213() { return m_button213; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
+    wxStaticText* GetStaticText125() { return m_staticText125; }
+    clThemedChoice* GetChoiceCompiler() { return m_choiceCompiler; }
     clThemedListCtrl* GetDvListCtrlTargets() { return m_dvListCtrlTargets; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonEdit() { return m_buttonEdit; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
     wxPanel* GetPanelBuild() { return m_panelBuild; }
+    wxStaticText* GetStaticText179() { return m_staticText179; }
+    clThemedChoice* GetChoiceDebuggers() { return m_choiceDebuggers; }
     wxStaticText* GetStaticText256() { return m_staticText256; }
     wxTextCtrl* GetTextCtrlDebugger() { return m_textCtrlDebugger; }
     wxButton* GetButton262() { return m_button262; }

@@ -77,34 +77,24 @@ clFileSystemWorkspaceDlgBase::clFileSystemWorkspaceDlgBase(wxWindow* parent, wxW
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnNewConfig),
-                         NULL, this);
-    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteConfig), NULL, this);
-    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteConfigUI),
-                            NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnOK), NULL,
-                        this);
+    m_buttonNew->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFileSystemWorkspaceDlgBase::OnNewConfig, this);
+    m_buttonDelete->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFileSystemWorkspaceDlgBase::OnDeleteConfig, this);
+    m_buttonDelete->Bind(wxEVT_UPDATE_UI, &clFileSystemWorkspaceDlgBase::OnDeleteConfigUI, this);
+    m_buttonOK->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFileSystemWorkspaceDlgBase::OnOK, this);
 }
 
 clFileSystemWorkspaceDlgBase::~clFileSystemWorkspaceDlgBase()
 {
-    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnNewConfig), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteConfig), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteConfigUI),
-                               NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnOK),
-                           NULL, this);
+    m_buttonNew->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFileSystemWorkspaceDlgBase::OnNewConfig, this);
+    m_buttonDelete->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFileSystemWorkspaceDlgBase::OnDeleteConfig, this);
+    m_buttonDelete->Unbind(wxEVT_UPDATE_UI, &clFileSystemWorkspaceDlgBase::OnDeleteConfigUI, this);
+    m_buttonOK->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFileSystemWorkspaceDlgBase::OnOK, this);
 }
 
 BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -207,21 +197,16 @@ BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button54->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTargetDlgBase::OnOK_UI), NULL, this);
+    m_button54->Bind(wxEVT_UPDATE_UI, &BuildTargetDlgBase::OnOK_UI, this);
 }
 
-BuildTargetDlgBase::~BuildTargetDlgBase()
-{
-    m_button54->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTargetDlgBase::OnOK_UI), NULL, this);
-}
+BuildTargetDlgBase::~BuildTargetDlgBase() { m_button54->Unbind(wxEVT_UPDATE_UI, &BuildTargetDlgBase::OnOK_UI, this); }
 
 FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
@@ -252,7 +237,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer33->AddGrowableRow(2);
     m_panelGeneral->SetSizer(flexGridSizer33);
 
-    m_staticText109 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Executable:"), wxDefaultPosition,
+    m_staticText109 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Program:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
 
     flexGridSizer33->Add(m_staticText109, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -342,30 +327,6 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer33->Add(m_textCtrlArgs, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText125 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Tool chain:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
-    m_staticText125->SetToolTip(_("Select the toolchain to use"));
-
-    flexGridSizer33->Add(m_staticText125, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceCompilerArr;
-    m_choiceCompiler = new clThemedChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
-                                          wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceCompilerArr, 0);
-    m_choiceCompiler->SetToolTip(_("Select the toolchain to use"));
-
-    flexGridSizer33->Add(m_choiceCompiler, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText179 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Debugger:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
-
-    flexGridSizer33->Add(m_staticText179, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceDebuggersArr;
-    m_choiceDebuggers = new clThemedChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
-                                           wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceDebuggersArr, 0);
-
-    flexGridSizer33->Add(m_choiceDebuggers, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     m_staticText35 = new wxStaticText(m_panelGeneral, wxID_ANY, _("File extensions:"), wxDefaultPosition,
                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_staticText35->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
@@ -428,6 +389,26 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_panelBuild->SetSizer(boxSizer30);
 
+    wxFlexGridSizer* flexGridSizer270 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer270->SetFlexibleDirection(wxBOTH);
+    flexGridSizer270->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer270->AddGrowableCol(1);
+
+    boxSizer30->Add(flexGridSizer270, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText125 = new wxStaticText(m_panelBuild, wxID_ANY, _("Tool chain:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelBuild, wxSize(-1, -1)), 0);
+    m_staticText125->SetToolTip(_("Select the toolchain to use"));
+
+    flexGridSizer270->Add(m_staticText125, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceCompilerArr;
+    m_choiceCompiler = new clThemedChoice(m_panelBuild, wxID_ANY, wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelBuild, wxSize(-1, -1)), m_choiceCompilerArr, 0);
+    m_choiceCompiler->SetToolTip(_("Select the toolchain to use"));
+
+    flexGridSizer270->Add(m_choiceCompiler, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer38 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer30->Add(boxSizer38, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -468,15 +449,31 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer263 = new wxBoxSizer(wxVERTICAL);
     Debugger->SetSizer(boxSizer263);
 
-    wxBoxSizer* boxSizer258 = new wxBoxSizer(wxHORIZONTAL);
+    wxFlexGridSizer* flexGridSizer271 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer271->SetFlexibleDirection(wxBOTH);
+    flexGridSizer271->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer271->AddGrowableCol(1);
 
-    boxSizer263->Add(boxSizer258, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer263->Add(flexGridSizer271, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText179 = new wxStaticText(Debugger, wxID_ANY, _("Debugger:"), wxDefaultPosition,
+                                       wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
+
+    flexGridSizer271->Add(m_staticText179, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceDebuggersArr;
+    m_choiceDebuggers = new clThemedChoice(Debugger, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(Debugger, wxSize(-1, -1)),
+                                           m_choiceDebuggersArr, 0);
+
+    flexGridSizer271->Add(m_choiceDebuggers, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer271->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     m_staticText256 = new wxStaticText(Debugger, wxID_ANY, _("Debugger path:"), wxDefaultPosition,
                                        wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
     m_staticText256->SetToolTip(_("Path to debugger executable\nLeave empty to use the defaults"));
 
-    boxSizer258->Add(m_staticText256, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer271->Add(m_staticText256, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlDebugger =
         new wxTextCtrl(Debugger, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
@@ -485,12 +482,12 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_textCtrlDebugger->SetHint(wxT(""));
 #endif
 
-    boxSizer258->Add(m_textCtrlDebugger, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer271->Add(m_textCtrlDebugger, 1, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_button262 = new wxButton(Debugger, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(Debugger, wxSize(-1, -1)),
                                wxBU_EXACTFIT);
 
-    boxSizer258->Add(m_button262, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer271->Add(m_button262, 0, wxALL, WXC_FROM_DIP(5));
 
     m_staticText265 = new wxStaticText(Debugger, wxID_ANY, _("Startup commands:"), wxDefaultPosition,
                                        wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
@@ -540,7 +537,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     m_panelCodeCompletion =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelCodeCompletion, _("Code Completion"), false);
+    m_notebook->AddPage(m_panelCodeCompletion, _("compile_flags.txt"), false);
 
     wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
     m_panelCodeCompletion->SetSizer(boxSizer22);
@@ -713,71 +710,44 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_button241->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnBrowseExec), NULL,
-                         this);
-    m_button243->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnBrowseWD), NULL, this);
-    m_button213->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditExcludePaths),
-                         NULL, this);
-    m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                 wxDataViewEventHandler(FSConfigPageBase::OnTargetActivated), NULL, this);
-    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnNewTarget), NULL,
-                         this);
-    m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditTarget), NULL,
-                          this);
-    m_buttonEdit->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEditTargetUI), NULL, this);
-    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
-                            this);
-    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
-    m_button262->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnBrowseForGDB), NULL,
-                         this);
-    m_checkBoxEnableRemote->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEnableRemoteUI), NULL,
-                                    this);
-    m_choiceSSHAccount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
-                                this);
-    m_choiceSSHAccount->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                wxCommandEventHandler(FSConfigPageBase::OnSSHAccountChoice), NULL, this);
-    m_textCtrlRemoteFolder->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
-                                    this);
-    m_button169->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL, this);
-    m_button169->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnSSHBrowse), NULL,
-                         this);
-    m_checkBoxRemoteBuild->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
-                                   this);
+    m_button241->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnBrowseExec, this);
+    m_button243->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnBrowseWD, this);
+    m_button213->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnEditExcludePaths, this);
+    m_dvListCtrlTargets->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &FSConfigPageBase::OnTargetActivated, this);
+    m_buttonNew->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnNewTarget, this);
+    m_buttonEdit->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnEditTarget, this);
+    m_buttonEdit->Bind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnEditTargetUI, this);
+    m_buttonDelete->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnDelete, this);
+    m_buttonDelete->Bind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnDeleteUI, this);
+    m_button262->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnBrowseForGDB, this);
+    m_checkBoxEnableRemote->Bind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnEnableRemoteUI, this);
+    m_choiceSSHAccount->Bind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnRemoteEnabledUI, this);
+    m_choiceSSHAccount->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &FSConfigPageBase::OnSSHAccountChoice, this);
+    m_textCtrlRemoteFolder->Bind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnRemoteEnabledUI, this);
+    m_button169->Bind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnRemoteEnabledUI, this);
+    m_button169->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnSSHBrowse, this);
+    m_checkBoxRemoteBuild->Bind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnRemoteEnabledUI, this);
 }
 
 FSConfigPageBase::~FSConfigPageBase()
 {
-    m_button241->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnBrowseExec), NULL,
-                            this);
-    m_button243->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnBrowseWD), NULL,
-                            this);
-    m_button213->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditExcludePaths),
-                            NULL, this);
-    m_dvListCtrlTargets->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                    wxDataViewEventHandler(FSConfigPageBase::OnTargetActivated), NULL, this);
-    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnNewTarget), NULL,
-                            this);
-    m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditTarget), NULL,
-                             this);
-    m_buttonEdit->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEditTargetUI), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
-                               this);
-    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
-    m_button262->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnBrowseForGDB), NULL,
-                            this);
-    m_checkBoxEnableRemote->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEnableRemoteUI),
-                                       NULL, this);
-    m_choiceSSHAccount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
-                                   this);
-    m_choiceSSHAccount->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                   wxCommandEventHandler(FSConfigPageBase::OnSSHAccountChoice), NULL, this);
-    m_textCtrlRemoteFolder->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI),
-                                       NULL, this);
-    m_button169->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL, this);
-    m_button169->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnSSHBrowse), NULL,
-                            this);
-    m_checkBoxRemoteBuild->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI),
-                                      NULL, this);
+    m_button241->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnBrowseExec, this);
+    m_button243->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnBrowseWD, this);
+    m_button213->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnEditExcludePaths, this);
+    m_dvListCtrlTargets->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &FSConfigPageBase::OnTargetActivated, this);
+    m_buttonNew->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnNewTarget, this);
+    m_buttonEdit->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnEditTarget, this);
+    m_buttonEdit->Unbind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnEditTargetUI, this);
+    m_buttonDelete->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnDelete, this);
+    m_buttonDelete->Unbind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnDeleteUI, this);
+    m_button262->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnBrowseForGDB, this);
+    m_checkBoxEnableRemote->Unbind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnEnableRemoteUI, this);
+    m_choiceSSHAccount->Unbind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnRemoteEnabledUI, this);
+    m_choiceSSHAccount->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &FSConfigPageBase::OnSSHAccountChoice, this);
+    m_textCtrlRemoteFolder->Unbind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnRemoteEnabledUI, this);
+    m_button169->Unbind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnRemoteEnabledUI, this);
+    m_button169->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FSConfigPageBase::OnSSHBrowse, this);
+    m_checkBoxRemoteBuild->Unbind(wxEVT_UPDATE_UI, &FSConfigPageBase::OnRemoteEnabledUI, this);
 }
 
 NewFileSystemWorkspaceDialogBase::NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id,
@@ -848,26 +818,20 @@ NewFileSystemWorkspaceDialogBase::NewFileSystemWorkspaceDialogBase(wxWindow* par
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED,
-                             wxFileDirPickerEventHandler(NewFileSystemWorkspaceDialogBase::OnDirSelected), NULL, this);
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFileSystemWorkspaceDialogBase::OnOKUI), NULL, this);
+    m_dirPickerPath->Bind(wxEVT_COMMAND_DIRPICKER_CHANGED, &NewFileSystemWorkspaceDialogBase::OnDirSelected, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &NewFileSystemWorkspaceDialogBase::OnOKUI, this);
 }
 
 NewFileSystemWorkspaceDialogBase::~NewFileSystemWorkspaceDialogBase()
 {
-    m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED,
-                                wxFileDirPickerEventHandler(NewFileSystemWorkspaceDialogBase::OnDirSelected), NULL,
-                                this);
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFileSystemWorkspaceDialogBase::OnOKUI), NULL,
-                           this);
+    m_dirPickerPath->Unbind(wxEVT_COMMAND_DIRPICKER_CHANGED, &NewFileSystemWorkspaceDialogBase::OnDirSelected, this);
+    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &NewFileSystemWorkspaceDialogBase::OnOKUI, this);
 }
 
 clFSWNewConfigDlgBase::clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -937,18 +901,16 @@ clFSWNewConfigDlgBase::clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id, co
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button225->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFSWNewConfigDlgBase::OnOKUI), NULL, this);
+    m_button225->Bind(wxEVT_UPDATE_UI, &clFSWNewConfigDlgBase::OnOKUI, this);
 }
 
 clFSWNewConfigDlgBase::~clFSWNewConfigDlgBase()
 {
-    m_button225->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFSWNewConfigDlgBase::OnOKUI), NULL, this);
+    m_button225->Unbind(wxEVT_UPDATE_UI, &clFSWNewConfigDlgBase::OnOKUI, this);
 }

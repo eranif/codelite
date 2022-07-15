@@ -2,16 +2,11 @@ Debug Adapter Client
 ---
 
 - Allow user to set function breakpoint from the UI
-- Macro manager: add new macro: $(ProgramFile) (expands to the full path of the program to run)
 
 others:
 ----
 
-- fsw: move the "Tool chain" dropdown to the "Build" tab
-- fsw: remove the "Debug" startup commands tab completely
 - fsw: add interperter entry
-- fsw: rename "Executable" to "File to run"
-- fsw: rename: Code completion -> compile_flags.txt
 
 Open Windows View:
 ---

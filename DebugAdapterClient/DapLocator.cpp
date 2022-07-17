@@ -70,7 +70,7 @@ DapEntry create_entry(const wxString& name, int port, const std::vector<wxString
 
 void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
 {
-    wxPathList paths;
+    wxArrayString paths;
 #ifdef __WXMSW__
     // set these paths before the PATH env
     paths.Add(R"(C:\msys64\clang64\bin")");
@@ -78,30 +78,20 @@ void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
 #elif defined(__WXMAC__)
     paths.Add("/opt/homebrew/opt/llvm/bin");
 #endif
-    paths.AddEnvList("PATH");
 
-    wxArrayString names;
-    names.reserve(30);
+    wxArrayString suffix;
+    suffix.reserve(30);
 
-    names.Add(get_exe_name("lldb-vscode")); // the obvious name
-    for(size_t i = 30; i >= 10; --i) {
-        names.Add(get_exe_name("lldb-vscode", i));
+    for(size_t i = 25; i >= 10; --i) {
+        suffix.Add(wxString() << "-" << i);
     }
 
-    wxString path;
-    for(const auto& name : names) {
-        path = paths.FindAbsoluteValidPath(name);
-        if(!path.empty()) {
-            break;
-        }
-    }
-
-    if(path.empty()) {
+    wxFileName path;
+    if(!FileUtils::FindExe("lldb-vscode", path, paths, suffix))
         return;
-    }
 
     // construct DapEntry
-    auto entry = create_entry("lldb-vscode", 12345, { path, "--port", "12345" }, DapLaunchType::LAUNCH);
+    auto entry = create_entry("lldb-vscode", 12345, { path.GetFullPath(), "--port", "12345" }, DapLaunchType::LAUNCH);
     entry.SetEnvFormat(dap::EnvFormat::LIST);
     entries->push_back(entry);
 }
@@ -109,37 +99,25 @@ void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
 void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
 {
     // locate pip first
-    wxPathList paths;
+    wxArrayString paths;
 
 #ifdef __WXMSW__
     // set this paths before the PATH env
     paths.Add(R"(C:\msys64\mingw64\bin")");
 #endif
-    paths.AddEnvList("PATH");
 
-    // add homebrew after PATH
 #if defined(__WXMAC__)
     paths.Add("/opt/homebrew/bin");
 #endif
 
-    wxArrayString names;
-    names.Add(get_exe_name("pip3"));
-    names.Add(get_exe_name("pip"));
-
-    wxString path;
-    for(const auto& name : names) {
-        path = paths.FindAbsoluteValidPath(name);
-        if(!path.empty()) {
-            break;
-        }
-    }
-
-    if(path.empty()) {
+    wxFileName path;
+    wxArrayString suffix;
+    suffix.Add("3"); // pip3
+    if(!FileUtils::FindExe("pip", path, paths, suffix))
         return;
-    }
 
     // we got pip
-    std::vector<wxString> cmd = { path, "list" };
+    std::vector<wxString> cmd = { path.GetFullPath(), "list" };
     IProcess::Ptr_t proc(::CreateAsyncProcess(nullptr, cmd, IProcessCreateDefault | IProcessCreateSync));
     if(!proc) {
         return;
@@ -153,10 +131,10 @@ void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
         if(line.Contains("debugpy")) {
             wxFileName python_exe = path;
             python_exe.SetFullName("python");
-            auto entry = create_entry(
-                "debugpy", 12345,
-                { python_exe.GetFullPath(), "-m", "debugpy", "--listen", "12345", "--wait-for-client", "$(Program)" },
-                DapLaunchType::ATTACH);
+            auto entry = create_entry("debugpy", 12345,
+                                      { python_exe.GetFullPath(), "-m", "debugpy", "--listen", "12345",
+                                        "--wait-for-client", "$(CurrentFileFullPath)" },
+                                      DapLaunchType::ATTACH);
             entry.SetUseNativePath();
             entries->push_back(entry);
             return;

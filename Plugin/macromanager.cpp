@@ -172,6 +172,7 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
     "CurrentFilePath",
     "CurrentFileExt",
     "CurrentFileFullName",
+    "CurrentFileFullPath",
     "CurrentSelection",
     "CurrentSelectionRange",
     "Program",

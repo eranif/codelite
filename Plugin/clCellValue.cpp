@@ -22,7 +22,7 @@ clCellValue::clCellValue(bool bValue, const wxString& label, int bmpIndex, int b
 clCellValue::~clCellValue() {}
 
 clCellValue::clCellValue(const char* ptext, int bmpIndex, int bmpOpenIndex)
-    : clCellValue(wxString(ptext), bmpIndex, bmpOpenIndex)
+    : clCellValue(ptext ? wxString(ptext) : wxString(), bmpIndex, bmpOpenIndex)
 {
 }
 

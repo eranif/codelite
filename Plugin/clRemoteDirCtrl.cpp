@@ -19,6 +19,12 @@
 wxDEFINE_EVENT(wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING, clContextMenuEvent);
 wxDEFINE_EVENT(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, clContextMenuEvent);
 
+namespace
+{
+// we dont use FileUtis::IsHidden since it checks for local file existance on windows
+bool is_hidden(const wxString& name) { return !name.empty() && name[0] == '.'; }
+} // namespace
+
 clRemoteDirCtrl::clRemoteDirCtrl(wxWindow* parent)
     : wxPanel(parent)
 {
@@ -86,9 +92,15 @@ bool clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
     cd->SetFolder();
 
     // only display the dir name not its full path
-    wxTreeItemId root =
-        m_treeCtrl->AddRoot(wxFileName(path, wxEmptyString).GetDirs().Last(),
-                            clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
+    wxString displayString = path.AfterLast('/');
+    displayString.Trim();
+
+    if(displayString.empty()) {
+        displayString = path;
+    }
+
+    wxTreeItemId root = m_treeCtrl->AddRoot(
+        displayString, clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
     return true;
@@ -128,6 +140,7 @@ void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
     for(auto entry : entries) {
         if(entry->GetName() == "." || entry->GetName() == "..")
             continue;
+
         // determine the icon index
         int imgIdx = wxNOT_FOUND;
         int expandImgIDx = wxNOT_FOUND;
@@ -153,6 +166,11 @@ void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
             imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText);
         }
 
+        bool isHidden = is_hidden(entry->GetName());
+        if(isHidden) {
+            imgIdx = expandImgIDx = wxNOT_FOUND;
+        }
+
         wxString path;
         path << cd->GetFullPath() << "/" << entry->GetName();
         while(path.Replace("//", "/")) {}
@@ -171,9 +189,15 @@ void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
         }
 
         wxTreeItemId child = m_treeCtrl->AppendItem(item, entry->GetName(), imgIdx, expandImgIDx, childClientData);
+
         // if its type folder, add a fake child item
         if(entry->IsFolder()) {
             m_treeCtrl->AppendItem(child, "<dummy>");
+        }
+
+        if(isHidden) {
+            // a hidden item, use a disabled colour
+            m_treeCtrl->SetItemTextColour(child, m_treeCtrl->GetColours().GetGrayText());
         }
     }
 }

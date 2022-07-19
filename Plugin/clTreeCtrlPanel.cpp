@@ -341,11 +341,25 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
     if(imgIdx == wxNOT_FOUND) {
         imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeText);
     }
-    wxTreeItemId fileItem = GetTreeCtrl()->AppendItem(parent, filename.GetFullName(), imgIdx, imgIdx, cd);
+
+    wxString fullname = filename.GetFullName();
+    bool isHidden = FileUtils::IsHidden(fullname);
+    if(isHidden) {
+        imgIdx = wxNOT_FOUND;
+    }
+    wxTreeItemId fileItem = GetTreeCtrl()->AppendItem(parent, fullname, imgIdx, imgIdx, cd);
+
     // Add this entry to the index
     if(parentData->GetIndex()) {
         parentData->GetIndex()->Add(filename.GetFullName(), fileItem);
     }
+
+    // use gray text for hidden items
+    if(isHidden) {
+        // a hidden item, use a disabled colour
+        GetTreeCtrl()->SetItemTextColour(fileItem, GetTreeCtrl()->GetColours().GetGrayText());
+    }
+
     return fileItem;
 }
 
@@ -383,7 +397,17 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
 
     int imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeFolder);
     int imgOpenedIDx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+    bool isHiddenFolder = FileUtils::IsHidden(displayName);
+    if(isHiddenFolder) {
+        imgOpenedIDx = imgIdx = wxNOT_FOUND;
+    }
     wxTreeItemId itemFolder = GetTreeCtrl()->AppendItem(parent, displayName, imgIdx, imgOpenedIDx, cd);
+
+    // use gray text for hidden items
+    if(isHiddenFolder) {
+        // a hidden item, use a disabled colour
+        GetTreeCtrl()->SetItemTextColour(itemFolder, GetTreeCtrl()->GetColours().GetGrayText());
+    }
 
     // Add this entry to the index
     if(parentData->GetIndex()) {

@@ -25,6 +25,28 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
+namespace
+{
+bool should_colour_item_in_gray(clTreeCtrlData* entry)
+{
+    if(!entry)
+        return false;
+
+    if(FileUtils::IsHidden(entry->GetPath()))
+        return true;
+
+    if(entry->IsFolder()) {
+        // folders with CMakeCache.txt are build folders and are treated
+        // as non interesting folders
+        wxFileName cmake_cache(entry->GetPath(), "CMakeCache.txt");
+        if(cmake_cache.FileExists()) {
+            return true;
+        }
+    }
+    return false;
+}
+} // namespace
+
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
     , m_newfileTemplate("Untitled.txt")
@@ -337,16 +359,13 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
     clTreeCtrlData* cd = new clTreeCtrlData(clTreeCtrlData::kFile);
     cd->SetPath(filename.GetFullPath());
 
-    int imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(filename.GetFullName());
+    bool isHidden = should_colour_item_in_gray(cd);
+    int imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(filename.GetFullName(), isHidden);
     if(imgIdx == wxNOT_FOUND) {
-        imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeText);
+        imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeText, isHidden);
     }
 
     wxString fullname = filename.GetFullName();
-    bool isHidden = FileUtils::IsHidden(fullname);
-    if(isHidden) {
-        imgIdx = wxNOT_FOUND;
-    }
     wxTreeItemId fileItem = GetTreeCtrl()->AppendItem(parent, fullname, imgIdx, imgIdx, cd);
 
     // Add this entry to the index
@@ -395,12 +414,10 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
         }
     }
 
-    int imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeFolder);
-    int imgOpenedIDx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
-    bool isHiddenFolder = FileUtils::IsHidden(displayName);
-    if(isHiddenFolder) {
-        imgOpenedIDx = imgIdx = wxNOT_FOUND;
-    }
+    bool isHiddenFolder = should_colour_item_in_gray(cd);
+    int imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeFolder, isHiddenFolder);
+    int imgOpenedIDx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeFolderExpanded, isHiddenFolder);
+
     wxTreeItemId itemFolder = GetTreeCtrl()->AppendItem(parent, displayName, imgIdx, imgOpenedIDx, cd);
 
     // use gray text for hidden items

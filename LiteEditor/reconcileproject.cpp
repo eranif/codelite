@@ -328,7 +328,7 @@ void ReconcileProjectDlg::DoFindFiles()
 
 wxBitmap ReconcileProjectDlg::GetBitmap(const wxString& filename) const
 {
-    return clGetManager()->GetStdIcons()->GetBitmapForFile(filename);
+    return clGetManager()->GetStdIcons()->GetBitmapForFile(filename, false);
 }
 
 void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)

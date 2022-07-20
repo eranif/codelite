@@ -129,7 +129,7 @@ int WelcomePage::DoGetPopupMenuSelection(clThemedButton* btn, const wxArrayStrin
 
     for(size_t i = 0; i < strings.GetCount(); ++i) {
 
-        wxBitmap bmp = loader->GetBitmapForFile("a.txt");
+        wxBitmap bmp = loader->GetBitmapForFile("a.txt", false);
         wxString filename = strings.Item(i);
         if(filename.Find("@") != wxNOT_FOUND) {
             filename = filename.AfterFirst('@');
@@ -141,7 +141,7 @@ int WelcomePage::DoGetPopupMenuSelection(clThemedButton* btn, const wxArrayStrin
             // Don't show non existing files in the menu
             continue;
         }
-        bmp = loader->GetBitmapForFile(filename);
+        bmp = loader->GetBitmapForFile(filename, false);
         wxMenuItem* item = new wxMenuItem(&menu, wxID_ANY, strings.Item(i));
         item->SetBitmap(bmp);
         m_idToName.insert(std::make_pair(item->GetId(), strings.Item(i)));

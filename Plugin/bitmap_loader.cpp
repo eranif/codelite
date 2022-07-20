@@ -69,9 +69,12 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     return wxNullBitmap;
 }
 
-int BitmapLoader::GetMimeImageId(int type) { return GetMimeBitmaps().GetIndex(type); }
+int BitmapLoader::GetMimeImageId(int type, bool disabled) { return GetMimeBitmaps().GetIndex(type, disabled); }
 
-int BitmapLoader::GetMimeImageId(const wxString& filename) { return GetMimeBitmaps().GetIndex(filename); }
+int BitmapLoader::GetMimeImageId(const wxString& filename, bool disabled)
+{
+    return GetMimeBitmaps().GetIndex(filename, disabled);
+}
 
 wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 {
@@ -251,13 +254,14 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enumerator", bitmap_size), kEnumerator);
         m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/cpp_keyword", bitmap_size), kCxxKeyword);
         m_mimeBitmaps.AddBitmap(LoadBitmap("sort", bitmap_size), kSort);
+        m_mimeBitmaps.Finalise(); // combine the disabled and non disabled bitmaps
     }
 }
 
-const wxBitmap& BitmapLoader::GetBitmapForFile(const wxString& filename) const
+const wxBitmap& BitmapLoader::GetBitmapForFile(const wxString& filename, bool disabled) const
 {
     FileExtManager::FileType ft = FileExtManager::GetType(filename, FileExtManager::TypeText);
-    return m_mimeBitmaps.GetBitmap(ft);
+    return m_mimeBitmaps.GetBitmap(ft, disabled);
 }
 
 //===---------------------------
@@ -268,24 +272,38 @@ clMimeBitmaps::clMimeBitmaps() {}
 
 clMimeBitmaps::~clMimeBitmaps() {}
 
-int clMimeBitmaps::GetIndex(int type) const
+int clMimeBitmaps::GetIndex(int type, bool disabled) const
 {
     if(m_fileIndexMap.count(type) == 0) {
         return wxNOT_FOUND;
     }
-    return m_fileIndexMap.at(type);
+    int offset = 0;
+    if(disabled) {
+        offset += m_disabled_bitmaps.size();
+    }
+
+    int index = m_fileIndexMap.at(type);
+    index += offset;
+    if(index >= m_bitmaps.size()) {
+        index -= offset;
+    }
+    return index;
 }
 
-int clMimeBitmaps::GetIndex(const wxString& filename) const
+int clMimeBitmaps::GetIndex(const wxString& filename, bool disabled) const
 {
     FileExtManager::Init();
     int ft = FileExtManager::GetType(filename, FileExtManager::TypeText);
-    return GetIndex(ft);
+    return GetIndex(ft, disabled);
 }
 
 void clMimeBitmaps::AddBitmap(const wxBitmap& bitmap, int type)
 {
     m_bitmaps.push_back(bitmap);
+
+    // add a disable item as well
+    m_disabled_bitmaps.push_back(DrawingUtils::CreateDisabledBitmap(bitmap));
+
     int index = (m_bitmaps.size() - 1);
     m_fileIndexMap.insert({ type, index });
 }
@@ -296,12 +314,28 @@ void clMimeBitmaps::Clear()
     m_fileIndexMap.clear();
 }
 
-const wxBitmap& clMimeBitmaps::GetBitmap(int type) const
+void clMimeBitmaps::Finalise()
+{
+    std::vector<wxBitmap> all;
+    all.reserve(m_bitmaps.size() * 2);
+    all.insert(all.end(), m_bitmaps.begin(), m_bitmaps.end());
+    all.insert(all.end(), m_disabled_bitmaps.begin(), m_disabled_bitmaps.end());
+    m_bitmaps.swap(all);
+}
+
+const wxBitmap& clMimeBitmaps::GetBitmap(int type, bool disabled) const
 {
     int index = GetIndex(type);
     if(index == wxNOT_FOUND) {
         static wxBitmap emptyBitmap;
         return emptyBitmap;
+    }
+    if(disabled) {
+        index += m_disabled_bitmaps.size();
+        if(index >= m_bitmaps.size()) {
+            // caller did not call "Finalise"
+            index -= m_disabled_bitmaps.size();
+        }
     }
     return m_bitmaps.at(index);
 }

@@ -16,7 +16,7 @@ protected:
 protected:
     void OnCommentSelection(wxCommandEvent& event);
     void OnCommentLine(wxCommandEvent& event);
-    void AutoIndent(const wxChar& ch);
+    void AutoIndent(const wxChar& ch) override;
 
 public:
     ContextPython();

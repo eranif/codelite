@@ -50,6 +50,7 @@ class WXDLLIMPEXP_SDK clMimeBitmaps
     /// Maps between image-id : index in the list
     std::unordered_map<int, int> m_fileIndexMap;
     std::vector<wxBitmap> m_bitmaps;
+    std::vector<wxBitmap> m_disabled_bitmaps;
 
 public:
     clMimeBitmaps();
@@ -58,17 +59,20 @@ public:
     /**
      * @brief return the bitmap index that matches a given file type
      */
-    int GetIndex(int type) const;
+    int GetIndex(int type, bool disabled = false) const;
     /**
      * @brief return the bitmap index that matches the given filename
      */
-    int GetIndex(const wxString& filename) const;
-    const wxBitmap& GetBitmap(int type) const;
+    int GetIndex(const wxString& filename, bool disabled = false) const;
+    const wxBitmap& GetBitmap(int type, bool disabled) const;
     void AddBitmap(const wxBitmap& bitmap, int type);
     void Clear();
     bool IsEmpty() const { return m_bitmaps.empty(); }
     std::vector<wxBitmap>& GetBitmaps() { return m_bitmaps; }
     const std::vector<wxBitmap>& GetBitmaps() const { return m_bitmaps; }
+
+    // call this in order to merge the disabled and active bitmap lists
+    void Finalise();
 };
 
 class WXDLLIMPEXP_SDK clBitmaps;
@@ -174,24 +178,24 @@ public:
     /**
      * @brief return the image associated with a filename
      */
-    const wxBitmap& GetBitmapForFile(const wxFileName& filename) const
+    const wxBitmap& GetBitmapForFile(const wxFileName& filename, bool disabled) const
     {
-        return GetBitmapForFile(filename.GetFullName());
+        return GetBitmapForFile(filename.GetFullName(), disabled);
     }
-    const wxBitmap& GetBitmapForFile(const wxString& filename) const;
+    const wxBitmap& GetBitmapForFile(const wxString& filename, bool disabled) const;
 
     /**
      * @brief return the image index in the image list prepared by GetStandardMimeBitmapListPtr()
      * @return wxNOT_FOUND if no match is found, the index otherwise
      */
-    int GetMimeImageId(const wxString& filename);
+    int GetMimeImageId(const wxString& filename, bool disabled = false);
 
     /**
      * @brief return the image index in the image list prepared by GetStandardMimeBitmapListPtr()
      * @return wxNOT_FOUND if no match is found, the index otherwise
      */
-    int GetMimeImageId(int type);
-    int GetImageIndex(int type) { return GetMimeImageId(type); }
+    int GetMimeImageId(int type, bool disabled = false);
+    int GetImageIndex(int type, bool disabled = false) { return GetMimeImageId(type, disabled); }
 
 protected:
     void CreateMimeList();

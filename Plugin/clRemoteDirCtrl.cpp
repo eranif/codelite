@@ -142,33 +142,30 @@ void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
             continue;
 
         // determine the icon index
+        bool isHidden = is_hidden(entry->GetName());
         int imgIdx = wxNOT_FOUND;
         int expandImgIDx = wxNOT_FOUND;
         if(entry->IsFolder()) {
-            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
-            expandImgIDx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder, isHidden);
+            expandImgIDx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded, isHidden);
         } else if(entry->IsFile()) {
-            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(entry->GetName());
+            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(entry->GetName(), isHidden);
         }
 
         if(entry->IsSymlink()) {
             if(entry->IsFile()) {
-                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFileSymlink);
+                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFileSymlink, isHidden);
 
             } else {
-                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlink);
-                expandImgIDx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlinkExpanded);
+                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlink, isHidden);
+                expandImgIDx =
+                    clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlinkExpanded, isHidden);
             }
         }
 
         // default bitmap
         if(imgIdx == wxNOT_FOUND) {
-            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText);
-        }
-
-        bool isHidden = is_hidden(entry->GetName());
-        if(isHidden) {
-            imgIdx = expandImgIDx = wxNOT_FOUND;
+            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText, isHidden);
         }
 
         wxString path;

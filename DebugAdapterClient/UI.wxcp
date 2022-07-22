@@ -1274,7 +1274,7 @@
 									"m_properties":	[{
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"Verified"
+											"m_value":	"?"
 										}, {
 											"type":	"string",
 											"m_label":	"Width:",

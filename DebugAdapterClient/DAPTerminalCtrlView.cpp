@@ -16,7 +16,7 @@ DAPTerminalCtrlView::DAPTerminalCtrlView(wxWindow* parent, clModuleLogger& log)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    m_ctrl = new wxStyledTextCtrl(this);
+    m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     ApplyTheme();
 
@@ -38,6 +38,7 @@ void DAPTerminalCtrlView::ApplyTheme()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     lexer->ApplySystemColours(m_ctrl);
+    MSWSetWindowDarkTheme(m_ctrl);
 }
 
 void DAPTerminalCtrlView::AppendLine(const wxString& line) { m_ctrl->AppendText(line + "\n"); }

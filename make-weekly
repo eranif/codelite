@@ -5,6 +5,7 @@ curdir=`pwd`
 
 # Clear old installers
 os_name=`uname -s`
+arch=`uname -m`
 upload_file="no"
 build_gtk3="no"
 wx_config_gtk3_path=""
@@ -97,10 +98,11 @@ if [ ${os_name} == "Darwin" ]; then
     cmake -DCMAKE_BUILD_TYPE=Release ..
     make -j${cpu_count} && make install
     if [ "${upload_file}" == "yes" ]; then
-        tar cvfz codelite.app.tar.gz codelite.app/*
-        scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
+        tar cvfz codelite-${arch}.app.tar.gz codelite.app/*
+        scp codelite-${arch}.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
 else
     linux_build_codelite build-release
     linux_build_wxcrafter build-release-wxcrafter
 fi
+

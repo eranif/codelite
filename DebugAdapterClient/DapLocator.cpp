@@ -1,6 +1,7 @@
 #include "DapLocator.hpp"
 
 #include "asyncprocess.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "processreaderthread.h"
 #include "procutils.h"
@@ -73,18 +74,19 @@ void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
     wxArrayString paths;
 #ifdef __WXMSW__
     // set these paths before the PATH env
-    paths.Add(R"(C:\msys64\clang64\bin")");
-    paths.Add(R"(C:\msys64\mingw64\bin")");
+    paths.Add(R"(C:\msys64\clang64\bin)");
+    paths.Add(R"(C:\msys64\mingw64\bin)");
 #elif defined(__WXMAC__)
     paths.Add("/opt/homebrew/opt/llvm/bin");
 #endif
 
     wxArrayString suffix;
+#ifdef __WXGTK__
     suffix.reserve(30);
-
     for(size_t i = 25; i >= 10; --i) {
         suffix.Add(wxString() << "-" << i);
     }
+#endif
 
     wxFileName path;
     if(!FileUtils::FindExe("lldb-vscode", path, paths, suffix))
@@ -103,7 +105,7 @@ void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
 
 #ifdef __WXMSW__
     // set this paths before the PATH env
-    paths.Add(R"(C:\msys64\mingw64\bin")");
+    paths.Add(R"(C:\msys64\mingw64\bin)");
 #endif
 
 #if defined(__WXMAC__)

@@ -21,6 +21,25 @@ size_t DapLocator::Locate(std::vector<DapEntry>* entries)
 
 namespace
 {
+wxString command_grep(const std::vector<wxString>& cmd, const wxString& find_what)
+{
+    IProcess::Ptr_t proc(::CreateAsyncProcess(nullptr, cmd, IProcessCreateDefault | IProcessCreateSync));
+    if(!proc) {
+        return wxEmptyString;
+    }
+
+    wxString output;
+    proc->WaitForTerminate(output);
+    auto lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+    for(wxString& line : lines) {
+        line.Trim();
+        if(line.Contains(find_what)) {
+            return line;
+        }
+    }
+    return wxEmptyString;
+}
+
 wxString wrap_string(const wxString& str)
 {
     wxString s = str;
@@ -77,7 +96,14 @@ void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
     paths.Add(R"(C:\msys64\clang64\bin)");
     paths.Add(R"(C:\msys64\mingw64\bin)");
 #elif defined(__WXMAC__)
+    // add default homebrew location
     paths.Add("/opt/homebrew/opt/llvm/bin");
+
+    // query brew for lldb-vscode
+    wxString fullpath = command_grep({ "brew", "list", "llvm" }, "lldb-vscode");
+    if(!fullpath.empty()) {
+        paths.Add(wxFileName(fullpath).GetPath());
+    }
 #endif
 
     wxArrayString suffix;
@@ -112,34 +138,26 @@ void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
     paths.Add("/opt/homebrew/bin");
 #endif
 
+    // search for pip3 first
     wxFileName path;
-    wxArrayString suffix;
-    suffix.Add("3"); // pip3
-    if(!FileUtils::FindExe("pip", path, paths, suffix))
-        return;
-
-    // we got pip
-    std::vector<wxString> cmd = { path.GetFullPath(), "list" };
-    IProcess::Ptr_t proc(::CreateAsyncProcess(nullptr, cmd, IProcessCreateDefault | IProcessCreateSync));
-    if(!proc) {
-        return;
-    }
-
-    wxString output;
-    proc->WaitForTerminate(output);
-    auto lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
-    for(auto& line : lines) {
-        line.Trim().Trim(false);
-        if(line.Contains("debugpy")) {
-            wxFileName python_exe = path;
-            python_exe.SetFullName("python");
-            auto entry = create_entry("debugpy", 12345,
-                                      { python_exe.GetFullPath(), "-m", "debugpy", "--listen", "12345",
-                                        "--wait-for-client", "$(CurrentFileFullPath)" },
-                                      DapLaunchType::ATTACH);
-            entry.SetUseNativePath();
-            entries->push_back(entry);
+    if(!FileUtils::FindExe("pip3", path, paths, {})) {
+        if(!FileUtils::FindExe("pip", path, paths, {})) {
             return;
         }
     }
+
+    // we got pip
+    wxString line = command_grep({ path.GetFullPath(), "list" }, "debugpy");
+    if(line.empty())
+        return;
+
+    // we have a match
+    wxFileName python_exe = path;
+    python_exe.SetFullName("python");
+    auto entry = create_entry("debugpy", 12345,
+                              { python_exe.GetFullPath(), "-m", "debugpy", "--listen", "12345", "--wait-for-client",
+                                "$(CurrentFileFullPath)" },
+                              DapLaunchType::ATTACH);
+    entry.SetUseNativePath();
+    entries->push_back(entry);
 }

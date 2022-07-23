@@ -33,11 +33,7 @@ clDapSettingsStore::clDapSettingsStore() {}
 
 clDapSettingsStore::~clDapSettingsStore() {}
 
-void clDapSettingsStore::Clear()
-{
-    m_entries.clear();
-    m_filepath.Clear();
-}
+void clDapSettingsStore::Clear() { m_entries.clear(); }
 
 void clDapSettingsStore::Load(const wxFileName& file)
 {
@@ -48,7 +44,6 @@ void clDapSettingsStore::Load(const wxFileName& file)
         wxFileName::Mkdir(file.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         FileUtils::WriteFileContent(file, "[]");
     }
-    m_filepath = file;
 
     JSON root(file);
     if(!root.isOk()) {
@@ -64,9 +59,9 @@ void clDapSettingsStore::Load(const wxFileName& file)
     }
 }
 
-void clDapSettingsStore::Save()
+void clDapSettingsStore::Save(const wxFileName& path)
 {
-    if(!m_filepath.IsOk()) {
+    if(!path.IsOk()) {
         return;
     }
     JSON root(cJSON_Array);
@@ -74,7 +69,7 @@ void clDapSettingsStore::Save()
         root.toElement().arrayAppend(vt.second.To());
     }
 
-    root.save(m_filepath);
+    root.save(path);
 }
 
 bool clDapSettingsStore::Get(const wxString& name, DapEntry* entry) const

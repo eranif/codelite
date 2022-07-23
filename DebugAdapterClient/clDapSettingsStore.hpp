@@ -85,14 +85,13 @@ public:
 class clDapSettingsStore
 {
     std::map<wxString, DapEntry> m_entries;
-    wxFileName m_filepath;
 
 public:
     clDapSettingsStore();
     ~clDapSettingsStore();
 
     void Load(const wxFileName& file);
-    void Save();
+    void Save(const wxFileName& file);
     bool IsEmpty() const { return m_entries.empty(); }
     bool Get(const wxString& name, DapEntry* entry) const;
     bool Contains(const wxString& name) const;

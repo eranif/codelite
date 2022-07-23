@@ -84,21 +84,18 @@ const int lldbRunToCursorContextMenuId = XRCID("dbg_run_to_cursor");
 const int lldbJumpToCursorContextMenuId = XRCID("dbg_jump_cursor");
 const int lldbAddWatchContextMenuId = XRCID("lldb_add_watch");
 
-namespace
+wxString GetWatchWord(IEditor* editor)
 {
-    wxString GetWatchWord(IEditor* editor)
-    {
-        CHECK_PTR_RET_EMPTY_STRING(editor);
-        auto word = editor->GetSelection();
-        if(word.IsEmpty()) {
-            word = editor->GetWordAtCaret();
-        }
-
-        // Remove leading and trailing whitespace.
-        word.Trim(true).Trim(false);
-        return word;
+    CHECK_PTR_RET_EMPTY_STRING(editor);
+    auto word = editor->GetSelection();
+    if(word.IsEmpty()) {
+        word = editor->GetWordAtCaret();
     }
-} // namespace
+
+    // Remove leading and trailing whitespace.
+    word.Trim(true).Trim(false);
+    return word;
+}
 
 std::vector<wxString> to_string_array(const clEnvList_t& env_list)
 {
@@ -108,6 +105,13 @@ std::vector<wxString> to_string_array(const clEnvList_t& env_list)
         arr.emplace_back(vt.first + "=" + vt.second);
     }
     return arr;
+}
+
+wxString get_dap_settings_file()
+{
+    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "debug-adapter-client.conf");
+    fn.AppendDir("config");
+    return fn.GetFullPath();
 }
 
 } // namespace
@@ -154,9 +158,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     m_shortName = wxT("DebugAdapterClient");
 
     // load settings
-    wxFileName configuration_file(clStandardPaths::Get().GetUserDataDir(), "debug-adapter-client.conf");
-    configuration_file.AppendDir("config");
-    m_dap_store.Load(configuration_file);
+    m_dap_store.Load(get_dap_settings_file());
 
     RegisterDebuggers();
 
@@ -752,7 +754,7 @@ void DebugAdapterClient::OnSettings(wxCommandEvent& event)
         return;
     }
     m_dap_store = store;
-    m_dap_store.Save();
+    m_dap_store.Save(get_dap_settings_file());
 
     // refresh the list of debuggers we are registering by this plugin
     RegisterDebuggers();
@@ -769,7 +771,7 @@ void DebugAdapterClient::OnInitDone(wxCommandEvent& event)
     std::vector<DapEntry> entries;
     if(locator.Locate(&entries) > 0) {
         m_dap_store.Set(entries);
-        m_dap_store.Save();
+        m_dap_store.Save(get_dap_settings_file());
         LOG_SYSTEM(LOG) << "Found and configured" << entries.size() << "dap servers" << endl;
         RegisterDebuggers();
     }

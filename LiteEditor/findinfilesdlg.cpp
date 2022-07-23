@@ -165,6 +165,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wx
     // Fit the initial size and set it as the default minimum size
     GetSizer()->Fit(this);
     SetMinSize(GetSize());
+    WindowAttrManager::Load(this);
 }
 
 FindInFilesDialog::~FindInFilesDialog() { BuildFindReplaceData(); }

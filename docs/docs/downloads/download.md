@@ -23,7 +23,11 @@ Since version `16.1.0`, CodeLite installation method is by using [`brew`][9]
 
 ```bash
 brew tap eranif/codelite
+brew uninstall --cask codelite-official
 brew install --cask codelite-official
+
+# in order to avoid macOS errors about "damaged app can't be opened"...
+xattr -cr /Applications/codelite.app/
 ```
 
 - CodeLite should now be installed under `/Applications/CodeLite.app`

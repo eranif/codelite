@@ -33,6 +33,7 @@
 #include "imanager.h"
 #include "macros.h"
 #include "pluginmanager.h"
+#include "ColoursAndFontsManager.h"
 
 #include <algorithm>
 #include <wx/clntdata.h>

@@ -12508,7 +12508,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -12686,7 +12686,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -12864,7 +12864,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -13042,7 +13042,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -13220,7 +13220,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -13398,7 +13398,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -13576,7 +13576,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -13754,7 +13754,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -13932,7 +13932,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -14110,7 +14110,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -14288,7 +14288,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -14466,7 +14466,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -14644,7 +14644,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -14822,7 +14822,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -15000,7 +15000,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -15178,7 +15178,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -15356,7 +15356,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -15534,7 +15534,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -15712,7 +15712,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -15890,7 +15890,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -16068,7 +16068,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -16246,7 +16246,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -16424,7 +16424,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -16602,7 +16602,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -16780,7 +16780,7 @@
   "KeyWords2": "",
   "KeyWords3": "",
   "KeyWords4": "",
-  "Extensions": "*.yml;*.yaml",
+  "Extensions": "*.yml;*.yaml;.clangd",
   "SubstyleBase": -1,
   "WordSet": [{
     "index": -1,
@@ -141430,7 +141430,7 @@
     "Name": "Line Added",
     "Flags": 2,
     "FontDesc": "",
-    "Colour": "DARK GREEN",
+    "Colour": "rgb(0, 128, 64)",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -141584,7 +141584,7 @@
     "Name": "Line Added",
     "Flags": 2,
     "FontDesc": "",
-    "Colour": "DARK GREEN",
+    "Colour": "rgb(0, 128, 64)",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -141738,7 +141738,7 @@
     "Name": "Line Added",
     "Flags": 2,
     "FontDesc": "",
-    "Colour": "DARK GREEN",
+    "Colour": "rgb(0, 128, 64)",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -142662,7 +142662,7 @@
     "Name": "Line Added",
     "Flags": 2,
     "FontDesc": "",
-    "Colour": "DARK GREEN",
+    "Colour": "rgb(0, 128, 64)",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -143124,7 +143124,7 @@
     "Name": "Line Added",
     "Flags": 2,
     "FontDesc": "",
-    "Colour": "DARK GREEN",
+    "Colour": "rgb(0, 128, 64)",
     "BgColour": "#F5F5F5",
     "Size": -1
    }, {
@@ -144818,7 +144818,7 @@
     "Name": "Line Added",
     "Flags": 2,
     "FontDesc": "",
-    "Colour": "DARK GREEN",
+    "Colour": "rgb(0, 128, 64)",
     "BgColour": "#faf1dc",
     "Size": -1
    }, {

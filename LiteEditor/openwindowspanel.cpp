@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "openwindowspanel.h"
+
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
 #include "cl_config.h"
@@ -30,8 +32,8 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
-#include "openwindowspanel.h"
 #include "pluginmanager.h"
+
 #include <algorithm>
 #include <wx/clntdata.h>
 #include <wx/filename.h>
@@ -100,6 +102,7 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     m_toolbar->ToggleTool(XRCID("TabsSortTool"), cfg.Read(kConfigTabsPaneSortAlphabetically, true));
 
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(OpenWindowsPanel::OnInitDone), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, &OpenWindowsPanel::OnThemeChanged, this);
     Bind(wxEVT_IDLE, &OpenWindowsPanel::OnIdle, this);
 }
 
@@ -107,6 +110,7 @@ OpenWindowsPanel::~OpenWindowsPanel()
 {
     m_toolbar->Unbind(wxEVT_TOOL, &OpenWindowsPanel::OnSortItems, this, wxID_SORT_ASCENDING);
     m_toolbar->Unbind(wxEVT_UPDATE_UI, &OpenWindowsPanel::OnSortItemsUpdateUI, this, wxID_SORT_ASCENDING);
+    EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &OpenWindowsPanel::OnThemeChanged, this);
 
     // clear list now, or wxGTK seems to crash on exit
     Clear();
@@ -332,17 +336,23 @@ void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
 void OpenWindowsPanel::AppendEditor(const clTab& tab)
 {
     TabClientData* data = new TabClientData(tab);
-    wxVariant value = PrepareValue(tab);
+    bool is_modified = false;
+    wxVariant value = PrepareValue(tab, &is_modified);
 
     // the row index is the same as the row count (before we add the new entry)
     int itemIndex = m_dvListCtrl->GetItemCount();
 
     wxVector<wxVariant> cols;
     cols.push_back(value);
-    m_dvListCtrl->AppendItem(cols, (wxUIntPtr)data);
+    auto item = m_dvListCtrl->AppendItem(cols, (wxUIntPtr)data);
     if(tab.isFile) {
         m_editors.insert({ tab.filename.GetFullPath(), m_dvListCtrl->RowToItem(itemIndex) });
     }
+
+    bool saved_before = false;
+    auto editor = clGetManager()->FindEditor(tab.filename.GetFullPath());
+    saved_before = editor && editor->GetCtrl()->CanUndo();
+    MarkItemModified(item, is_modified, saved_before);
 }
 
 wxString OpenWindowsPanel::GetEditorPath(wxDataViewItem item)
@@ -445,7 +455,7 @@ void OpenWindowsPanel::OnEditorModified(clCommandEvent& event)
         return;
     IEditor* editor = m_mgr->FindEditor(event.GetFileName());
     if(editor) {
-        DoMarkModify(event.GetFileName(), editor->IsEditorModified());
+        DoMarkModify(editor, event.GetFileName(), editor->IsEditorModified());
     }
 }
 
@@ -454,28 +464,36 @@ void OpenWindowsPanel::OnEditorSaved(clCommandEvent& event)
     event.Skip();
     if(!m_initDone)
         return;
-    DoMarkModify(event.GetFileName(), false);
+
+    DoMarkModify(clGetManager()->FindEditor(event.GetFileName()), event.GetFileName(), false);
 }
 
-void OpenWindowsPanel::DoMarkModify(const wxString& filename, bool b)
+void OpenWindowsPanel::DoMarkModify(IEditor* editor, const wxString& filename, bool b)
 {
     std::map<wxString, wxDataViewItem>::iterator iter = m_editors.find(filename);
     if(iter == m_editors.end())
         return;
+
     wxDataViewItem item = iter->second;
 
     wxBitmap bmp;
     TabClientData* cd = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
     const clTab& tab = cd->tab;
-    wxVariant value = PrepareValue(tab);
+    bool is_modified = false;
+    wxVariant value = PrepareValue(tab, &is_modified);
     m_dvListCtrl->SetValue(value, m_dvListCtrl->ItemToRow(item), 0);
+
+    // if we can do "undo" -> the file was saved
+    MarkItemModified(item, is_modified, editor && editor->GetCtrl()->CanUndo());
     m_dvListCtrl->Refresh();
 }
 
-wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
+wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab, bool* isModified)
 {
     wxString title;
     wxStyledTextCtrl* editor(NULL);
+    *isModified = false;
+
     if(tab.isFile) {
         const wxFileName& fn = tab.filename;
         if(fn.GetDirCount() && EditorConfigST::Get()->GetOptions()->IsTabShowPath()) {
@@ -494,6 +512,7 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
     FileExtManager::FileType ft = FileExtManager::GetType(title, FileExtManager::TypeText);
     int imgId = clGetManager()->GetStdIcons()->GetMimeImageId(ft);
     if(editor && editor->GetModify()) {
+        *isModified = true;
         title.Prepend("*");
     }
 
@@ -512,4 +531,27 @@ void OpenWindowsPanel::OnWorkspaceClosing(clWorkspaceEvent& event)
     event.Skip();
     Clear();
     m_workspaceClosing = true;
+}
+
+void OpenWindowsPanel::MarkItemModified(const wxDataViewItem& item, bool b, bool saved_before)
+{
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("diff");
+    const auto& colours = m_dvListCtrl->GetColours();
+    if(b) {
+        m_dvListCtrl->SetItemTextColour(item, lexer->GetProperty(wxSTC_DIFF_DELETED).GetFgColour());
+    } else {
+        wxColour item_colour = colours.GetItemTextColour();
+        if(saved_before) {
+            item_colour = lexer->GetProperty(wxSTC_DIFF_ADDED).GetFgColour();
+        }
+        m_dvListCtrl->SetItemTextColour(item, item_colour);
+    }
+}
+
+void OpenWindowsPanel::OnThemeChanged(clCommandEvent& event)
+{
+    event.Skip();
+    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    PopulateView();
+    m_dvListCtrl->Refresh();
 }

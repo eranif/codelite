@@ -23,7 +23,7 @@ LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& theme_file)
         AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "#80FF80", m_editor.bg_colour, true);
     } else {
         AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "RED", m_editor.bg_colour, true);
-        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "DARK GREEN", m_editor.bg_colour, true);
+        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "rgb(0, 128, 64)", m_editor.bg_colour, true);
     }
     FinalizeImport(lexer);
     return lexer;

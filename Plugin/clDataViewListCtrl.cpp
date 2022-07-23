@@ -117,7 +117,7 @@ clDataViewListCtrl::~clDataViewListCtrl()
     Unbind(wxEVT_TREE_ITEM_VALUE_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
 }
 
-void clDataViewListCtrl::AppendItem(const wxVector<wxVariant>& values, wxUIntPtr data)
+wxDataViewItem clDataViewListCtrl::AppendItem(const wxVector<wxVariant>& values, wxUIntPtr data)
 {
     wxTreeItemId item = clTreeCtrl::AppendItem(GetRootItem(), "", -1, -1, nullptr);
     clRowEntry* child = m_model.ToPtr(item);
@@ -129,6 +129,7 @@ void clDataViewListCtrl::AppendItem(const wxVector<wxVariant>& values, wxUIntPtr
         DoSetCellValue(child, i, v);
     }
     UpdateScrollBar();
+    return DV_ITEM(item);
 }
 
 wxDataViewColumn* clDataViewListCtrl::AppendIconTextColumn(const wxString& label, wxDataViewCellMode mode, int width,

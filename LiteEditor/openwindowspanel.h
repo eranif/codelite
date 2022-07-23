@@ -30,6 +30,7 @@
 #include "cl_command_event.h"
 #include "imanager.h"
 #include "openwindowspanelbase.h"
+
 #include <map>
 
 class clToolBar;
@@ -56,8 +57,10 @@ protected:
     void AppendEditor(const clTab& tab);
     void Clear();
     void PopulateView();
-    void DoMarkModify(const wxString& filename, bool b);
-    wxVariant PrepareValue(const clTab& tab);
+    void DoMarkModify(IEditor* editor, const wxString& filename, bool b);
+    wxVariant PrepareValue(const clTab& tab, bool* isModified);
+    void MarkItemModified(const wxDataViewItem& item, bool b, bool saved_before);
+    void OnThemeChanged(clCommandEvent& event);
 
 protected:
     virtual void OnMenu(wxDataViewEvent& event);

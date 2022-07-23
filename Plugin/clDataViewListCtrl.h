@@ -120,7 +120,7 @@ public:
     wxDataViewItem InsertItem(const wxDataViewItem& previous, const wxString& text, int image = -1, int selImage = -1,
                               wxUIntPtr data = 0);
 
-    void AppendItem(const wxVector<wxVariant>& values, wxUIntPtr data = 0);
+    wxDataViewItem AppendItem(const wxVector<wxVariant>& values, wxUIntPtr data = 0);
 
     wxDataViewColumn* AppendIconTextColumn(const wxString& label, wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT,
                                            int width = -1, wxAlignment align = wxALIGN_LEFT,

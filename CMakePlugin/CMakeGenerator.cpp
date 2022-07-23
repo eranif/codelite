@@ -48,10 +48,12 @@
 /* ************************************************************************ */
 
 // Declarations
-#include "CMakeBuilder.h"
 #include "CMakeGenerator.h"
+
+#include "CMakeBuilder.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
+
 #include <algorithm>
 
 // wxWidgets
@@ -70,7 +72,9 @@
 #define CMAKELISTS_USER_CODE_3_PREFIX "#{{{{ User Code 3"
 #define CMAKELISTS_USER_CODE_END "#}}}}"
 
-static wxArrayString wxArrayUniqueMerge(const wxArrayString& arr1, const wxArrayString& arr2)
+namespace
+{
+wxArrayString wxArrayUniqueMerge(const wxArrayString& arr1, const wxArrayString& arr2)
 {
     wxArrayString outArr;
     for(size_t i = 0; i < arr1.size(); ++i) {
@@ -86,6 +90,7 @@ static wxArrayString wxArrayUniqueMerge(const wxArrayString& arr1, const wxArray
     }
     return outArr;
 }
+} // namespace
 
 CMakeGenerator::CMakeGenerator()
     : m_counter(0)
@@ -168,7 +173,8 @@ bool CMakeGenerator::Generate(ProjectPtr p)
 
     // Print project name
     mainProjectContent << CODELITE_CMAKE_PREFIX << "\n\n";
-    mainProjectContent << "cmake_minimum_required(VERSION 2.8.11)\n\n";
+    mainProjectContent << "cmake_minimum_required(VERSION 3.0)\n";
+    mainProjectContent << "enable_language(CXX C ASM)\n";
     mainProjectContent << "# Project name\n";
     mainProjectContent << "project(" << p->GetName() << ")\n\n";
 
@@ -270,7 +276,12 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     if(!buildConf)
         return "";
 
-    wxArrayString cppSources, cSources, resourceFiles;
+    wxArrayString cppSources, cSources, resourceFiles, asmSources;
+    cppSources.reserve(allFiles.size());
+    cSources.reserve(allFiles.size());
+    resourceFiles.reserve(allFiles.size());
+    asmSources.reserve(allFiles.size());
+
     std::for_each(allFiles.begin(), allFiles.end(), [&](const Project::FilesMap_t::value_type& vt) {
         clProjectFile::Ptr_t file = vt.second;
         if(!file->IsExcludeFromConfiguration(buildConf->GetName())) {
@@ -279,12 +290,15 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             wxString file_name;
             file_name << "${CMAKE_CURRENT_LIST_DIR}/" << file->GetFilenameRelpath();
             file_name.Replace("\\", "/");
-            if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeSourceC) {
+            wxString fullname = fn.GetFullName();
+            if(FileExtManager::GetType(fullname) == FileExtManager::TypeSourceC) {
                 cSources.Add(file_name);
-            } else if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeSourceCpp) {
+            } else if(FileExtManager::GetType(fullname) == FileExtManager::TypeSourceCpp) {
                 cppSources.Add(file_name);
-            } else if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeResource) {
+            } else if(FileExtManager::GetType(fullname) == FileExtManager::TypeResource) {
                 resourceFiles.Add(file_name);
+            } else if(FileExtManager::GetType(fullname) == FileExtManager::TypeAsm) {
+                asmSources.Add(file_name);
             }
         }
     });
@@ -509,6 +523,15 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             content << "    )\n";
             content << "endif(WIN32)\n\n";
         }
+
+        if(!asmSources.IsEmpty()) {
+            content << "# Define the ASM sources\n";
+            content << "set ( ASM_SRCS\n";
+            for(size_t i = 0; i < asmSources.GetCount(); ++i) {
+                content << "    " << asmSources.Item(i) << "\n";
+            }
+            content << ")\n\n";
+        }
     }
 
     // Add CXX compiler options
@@ -550,15 +573,16 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     {
         wxString type = buildConf->GetProjectType();
         if(type == PROJECT_TYPE_EXECUTABLE) {
-            content << "add_executable(" << project->GetName() << " ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})\n";
+            content << "add_executable(" << project->GetName() << " ${RC_SRCS} ${CXX_SRCS} ${C_SRCS} ${ASM_SRCS})\n";
             content << "target_link_libraries(" << project->GetName() << " ${LINK_OPTIONS})\n\n";
 
         } else if(type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
-            content << "add_library(" << project->GetName() << " SHARED ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})\n";
+            content << "add_library(" << project->GetName()
+                    << " SHARED ${RC_SRCS} ${CXX_SRCS} ${C_SRCS} ${ASM_SRCS})\n";
             content << "target_link_libraries(" << project->GetName() << " ${LINK_OPTIONS})\n\n";
 
         } else {
-            content << "add_library(" << project->GetName() << " ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})\n\n";
+            content << "add_library(" << project->GetName() << " ${RC_SRCS} ${CXX_SRCS} ${C_SRCS} ${ASM_SRCS})\n\n";
         }
     }
 
@@ -705,7 +729,8 @@ wxString CMakeGenerator::Prefix(ProjectPtr project)
     wxString content;
 
     content << CODELITE_CMAKE_PREFIX << "\n\n";
-    content << "cmake_minimum_required(VERSION 2.8.11)\n\n";
+    content << "cmake_minimum_required(VERSION 3.0)\n";
+    content << "enable_language(CXX C ASM)\n\n";
 
     // Print project name
     content << "project(" << project->GetName() << ")\n\n";

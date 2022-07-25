@@ -785,9 +785,9 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
     wxColour text_colour = GetTextColour(col);
     if(!text_colour.IsOk()) {
         if(IsSelected()) {
-            text_colour = colours.GetItemTextColour();
-        } else {
             text_colour = colours.GetSelItemTextColour();
+        } else {
+            text_colour = colours.GetItemTextColour();
         }
     }
 

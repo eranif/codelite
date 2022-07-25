@@ -28,38 +28,41 @@
 
 #include "clThemedButton.h"
 #include "wxcrafter.h"
+
 #include <map>
+
+enum class WorkspaceType {
+    LOCAL,
+    REMOTE,
+};
+
+struct WelcomePageItemData : public wxTreeItemData {
+    WorkspaceType type = WorkspaceType::LOCAL;
+    wxString path;
+    wxString account; // for remote workspaces
+    WelcomePageItemData() {}
+    virtual ~WelcomePageItemData() {}
+};
 
 class WelcomePage : public WelcomePageBase
 {
-    typedef std::map<int, wxString> IntStringMap_t;
-    IntStringMap_t m_idToName;
-    clThemedButton* m_cmdLnkBtnNewWorkspace = nullptr;
-    clThemedButton* m_cmdLnkBtnNewProject = nullptr;
-    clThemedButton* m_cmdLnkBtnWorkspaces = nullptr;
-    clThemedButton* m_cmdLnkBtnFilesMenu = nullptr;
-    clThemedButton* m_cmdLnkBtnForum = nullptr;
-    clThemedButton* m_cmdLnkBtnWiki = nullptr;
-
 protected:
-    virtual void OnOpenWorkspace(wxCommandEvent& event);
-    virtual void OnNewWorkspace(wxCommandEvent& event);
-    virtual void OnRecentFileUI(wxUpdateUIEvent& event);
-    virtual void OnRecentProjectUI(wxUpdateUIEvent& event);
-    int DoGetPopupMenuSelection(clThemedButton* btn, const wxArrayString& strings, const wxString& menuTitle);
-    void DoOpenFile(const wxString& filename);
-    void AddButtons();
+    void OnNewWorkspace(wxCommandEvent& event) override;
+    void OnOpenWorkspace(wxCommandEvent& event) override;
+    void OnGitHHub(wxCommandEvent& event) override;
+    void OnGitter(wxCommandEvent& event) override;
+    void OnWorkspaceActivated(wxTreeEvent& event) override;
+    void InitialiseUI();
+    WelcomePageItemData* GetWorkspaceItemData(const wxTreeItemId& item);
+    void OpenLocalWorkspace(WelcomePageItemData* cd);
+    void OpenRemoteWorkspace(WelcomePageItemData* cd);
 
 public:
     WelcomePage(wxWindow* parent);
     virtual ~WelcomePage();
 
 protected:
-    virtual void OnShowFileseMenu(wxCommandEvent& event);
-    virtual void OnShowWorkspaceMenu(wxCommandEvent& event);
-    virtual void OnSize(wxSizeEvent& event);
-    virtual void OnOpenForums(wxCommandEvent& event);
-    virtual void OnOpenWiki(wxCommandEvent& event);
+    void OnSize(wxSizeEvent& event) override;
     void OnThemeChanged(clCommandEvent& e);
 };
 #endif // WELCOMEPAGE_H

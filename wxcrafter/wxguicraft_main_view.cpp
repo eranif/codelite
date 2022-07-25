@@ -2830,8 +2830,8 @@ void GUICraftMainPanel::OnRename(wxCommandEvent& event)
 
         wxString msg;
         msg << _("Rename '") << itemData->m_wxcWidget->GetName() << _("'");
-        wxString new_name = ::wxGetTextFromUser(_("Enter the new name:"), msg, itemData->m_wxcWidget->GetName());
-        if(new_name.IsEmpty()) {
+        wxString new_name = ::wxGetTextFromUser(_("Enter the new name:"), msg, itemData->m_wxcWidget->GetName(), this);
+        if(new_name.empty()) {
             return;
         }
 

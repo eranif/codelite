@@ -538,6 +538,12 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     wxRect selectionRect = rowRect;
     wxPoint deviceOrigin = dc.GetDeviceOrigin();
     selectionRect.SetX(-deviceOrigin.x);
+
+    // set a base colour for the item
+    dc.SetBrush(colours.GetItemBgColour());
+    dc.SetPen(colours.GetItemBgColour());
+    dc.DrawRectangle(rowRect);
+
     if(IsSelected() && !m_tree->IsDisabled()) {
         DrawSimpleSelection(win, dc, selectionRect, colours);
     } else if(IsHovered() && !m_tree->IsDisabled()) {
@@ -773,30 +779,20 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
                                   size_t col)
 {
     wxUnusedVar(win);
-    wxUnusedVar(col);
 
-    // fix multiline text
-#ifdef __WXMSW__
-    if(m_tree->IsNativeTheme()) {
-        dc.SetTextForeground(colours.GetItemTextColour());
-        dc.DrawText(text, x, y);
-    } else {
-        if(!IsSelected()) {
-            dc.SetTextForeground(colours.GetItemTextColour());
+    wxDCTextColourChanger changer(dc);
+    // select the default text colour
+    wxColour text_colour = GetTextColour(col);
+    if(!text_colour.IsOk()) {
+        if(IsSelected()) {
+            text_colour = colours.GetItemTextColour();
         } else {
-            dc.SetTextForeground(win->HasFocus() ? colours.GetSelItemTextColour()
-                                                 : colours.GetSelItemTextColourNoFocus());
+            text_colour = colours.GetSelItemTextColour();
         }
-        dc.DrawText(text, x, y);
     }
-#else
-    if(!IsSelected()) {
-        dc.SetTextForeground(colours.GetItemTextColour());
-    } else {
-        dc.SetTextForeground(win->HasFocus() ? colours.GetSelItemTextColour() : colours.GetSelItemTextColourNoFocus());
-    }
+
+    dc.SetTextForeground(text_colour);
     dc.DrawText(text, x, y);
-#endif
 }
 
 size_t clRowEntry::GetChildrenCount(bool recurse) const

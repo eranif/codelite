@@ -183,37 +183,46 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer149 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer149);
 
-    m_scrollWin247 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(600, 600)),
-                                          wxHSCROLL | wxVSCROLL);
-    m_scrollWin247->SetScrollRate(5, 5);
+    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer149->Add(m_scrollWin247, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer149->Add(m_mainPanel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer249 = new wxBoxSizer(wxVERTICAL);
-    m_scrollWin247->SetSizer(boxSizer249);
+    wxBoxSizer* boxSizer631 = new wxBoxSizer(wxVERTICAL);
+    m_mainPanel->SetSizer(boxSizer631);
 
-    m_panel191 = new wxPanel(m_scrollWin247, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_scrollWin247, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
+    m_dvTreeCtrlWorkspaces =
+        new clThemedTreeCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, 200)),
+                             wxTR_DEFAULT_STYLE | wxBORDER_SIMPLE);
 
-    boxSizer249->Add(m_panel191, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer631->Add(m_dvTreeCtrlWorkspaces, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
-    m_panel191->SetSizer(boxSizer195);
+    wxFlexGridSizer* flexGridSizer637 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer637->SetFlexibleDirection(wxBOTH);
+    flexGridSizer637->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer637->AddGrowableCol(0);
+    flexGridSizer637->AddGrowableCol(1);
 
-    wxBoxSizer* boxSizer585 = new wxBoxSizer(wxVERTICAL);
+    boxSizer631->Add(flexGridSizer637, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer195->Add(boxSizer585, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    m_button640 = new clThemedButton(m_mainPanel, wxID_ANY, _("Open workspace..."), wxDefaultPosition,
+                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
-    m_staticBitmap = new wxStaticBitmap(m_panel191, wxID_ANY, wxNullBitmap, wxDefaultPosition,
-                                        wxDLG_UNIT(m_panel191, wxSize(-1, -1)), 0);
+    flexGridSizer637->Add(m_button640, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer585->Add(m_staticBitmap, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    m_button641 = new clThemedButton(m_mainPanel, wxID_ANY, _("New workspace..."), wxDefaultPosition,
+                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
-    gridSizer629 = new wxGridSizer(0, 2, 0, 0);
+    flexGridSizer637->Add(m_button641, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer585->Add(gridSizer629, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    m_button639 = new clThemedButton(m_mainPanel, wxID_ANY, _("Open GitHub project page"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
-    boxSizer195->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer637->Add(m_button639, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button638 = new clThemedButton(m_mainPanel, wxID_ANY, _("Gitter - join the chat"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+
+    flexGridSizer637->Add(m_button638, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("WelcomePageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -222,9 +231,22 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     }
     // Connect events
     this->Bind(wxEVT_SIZE, &WelcomePageBase::OnSize, this);
+    m_dvTreeCtrlWorkspaces->Bind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &WelcomePageBase::OnWorkspaceActivated, this);
+    m_button640->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnOpenWorkspace, this);
+    m_button641->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnNewWorkspace, this);
+    m_button639->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnGitHHub, this);
+    m_button638->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnGitter, this);
 }
 
-WelcomePageBase::~WelcomePageBase() { this->Unbind(wxEVT_SIZE, &WelcomePageBase::OnSize, this); }
+WelcomePageBase::~WelcomePageBase()
+{
+    this->Unbind(wxEVT_SIZE, &WelcomePageBase::OnSize, this);
+    m_dvTreeCtrlWorkspaces->Unbind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &WelcomePageBase::OnWorkspaceActivated, this);
+    m_button640->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnOpenWorkspace, this);
+    m_button641->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnNewWorkspace, this);
+    m_button639->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnGitHHub, this);
+    m_button638->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnGitter, this);
+}
 
 WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)

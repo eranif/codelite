@@ -27,19 +27,20 @@
 #include "clThemedListCtrl.h"
 #include <wx/button.h>
 #include <wx/filepicker.h>
-#include <wx/scrolwin.h>
-#include <wx/statbmp.h>
+#include <wx/treectrl.h>
+#include "clThemedTreeCtrl.h"
+#include "clThemedButton.h"
 #include <wx/simplebook.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
 #include "clConfigurationSelectionCtrl.h"
 #include "clThemedSplitterWindow.h"
-#include <wx/treectrl.h>
 #include "fileview.h"
 #include <wx/frame.h>
 #include <wx/menu.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/statbmp.h>
 #include <wx/bannerwindow.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -141,18 +142,28 @@ public:
 class WelcomePageBase : public wxPanel
 {
 protected:
-    wxScrolledWindow* m_scrollWin247;
-    wxPanel* m_panel191;
-    wxStaticBitmap* m_staticBitmap;
-    wxGridSizer* gridSizer629;
+    wxPanel* m_mainPanel;
+    clThemedTreeCtrl* m_dvTreeCtrlWorkspaces;
+    clThemedButton* m_button640;
+    clThemedButton* m_button641;
+    clThemedButton* m_button639;
+    clThemedButton* m_button638;
 
 protected:
     virtual void OnSize(wxSizeEvent& event) { event.Skip(); }
+    virtual void OnWorkspaceActivated(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnOpenWorkspace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNewWorkspace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnGitHHub(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnGitter(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticBitmap* GetStaticBitmap() { return m_staticBitmap; }
-    wxPanel* GetPanel191() { return m_panel191; }
-    wxScrolledWindow* GetScrollWin247() { return m_scrollWin247; }
+    clThemedTreeCtrl* GetDvTreeCtrlWorkspaces() { return m_dvTreeCtrlWorkspaces; }
+    clThemedButton* GetButton640() { return m_button640; }
+    clThemedButton* GetButton641() { return m_button641; }
+    clThemedButton* GetButton639() { return m_button639; }
+    clThemedButton* GetButton638() { return m_button638; }
+    wxPanel* GetMainPanel() { return m_mainPanel; }
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~WelcomePageBase();

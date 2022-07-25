@@ -33,6 +33,7 @@
 #include "fileextmanager.h"
 #include "frame.h"
 #include "globals.h"
+#include "macros.h"
 #include "manager.h"
 #include "plugin.h"
 #include "pluginmanager.h"
@@ -45,18 +46,30 @@ WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    GetPanel191()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    AddButtons();
+    GetMainPanel()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 
-    m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 32));
-    m_staticBitmap->Hide();
     GetSizer()->Fit(this);
-
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &WelcomePage::OnThemeChanged, this);
 
+    m_dvTreeCtrlWorkspaces->AddHeader(_("Name"));
+    m_dvTreeCtrlWorkspaces->AddHeader(_("Type"));
+    m_dvTreeCtrlWorkspaces->AddHeader(_("Path"));
+
+    long curstyle = m_dvTreeCtrlWorkspaces->GetTreeStyle();
+    curstyle |= wxTR_HIDE_ROOT;
+    //    curstyle &= ~wxTR_ROW_LINES;
+
+    m_dvTreeCtrlWorkspaces->SetTreeStyle(curstyle);
+    m_dvTreeCtrlWorkspaces->SetShowHeader(true);
+    m_dvTreeCtrlWorkspaces->AddRoot(_("Workspaces"));
+
+    InitialiseUI();
 #if CL_USE_NATIVEBOOK
     Show();
 #endif
+    GetSizer()->Layout();
+    // set the focus to the tree
+    m_dvTreeCtrlWorkspaces->CallAfter(&clTreeCtrl::SetFocus);
 }
 
 WelcomePage::~WelcomePage()
@@ -64,194 +77,133 @@ WelcomePage::~WelcomePage()
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &WelcomePage::OnThemeChanged, this);
 }
 
-void WelcomePage::OnOpenForums(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    ::wxLaunchDefaultBrowser("https://forums.codelite.org/");
-}
-
-void WelcomePage::OnOpenWiki(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    ::wxLaunchDefaultBrowser("https://docs.codelite.org");
-}
-
-void WelcomePage::OnSize(wxSizeEvent& event)
-{
-    event.Skip();
-    m_staticBitmap->Refresh();
-}
-
-void WelcomePage::OnShowFileseMenu(wxCommandEvent& event)
-{
-    wxArrayString recentFiles;
-    clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(recentFiles);
-
-    int id = DoGetPopupMenuSelection(m_cmdLnkBtnFilesMenu, recentFiles, _("Select file to open"));
-    if(id != wxID_NONE) {
-        CallAfter(&WelcomePage::DoOpenFile, m_idToName[id]);
-    }
-}
-
-void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
-{
-    wxArrayString files;
-    ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
-    //  files.Sort();
-
-    wxArrayString recentWorkspaces;
-    for(size_t i = 0; i < files.size(); ++i) {
-        wxFileName fn(files.Item(i));
-        recentWorkspaces.Add(fn.GetName() + " @ " + fn.GetFullPath());
-    }
-
-    int id = DoGetPopupMenuSelection(m_cmdLnkBtnWorkspaces, recentWorkspaces, _("Open workspace"));
-    if(id != wxID_NONE) {
-        wxString filename = m_idToName[id];
-        filename = filename.AfterFirst('@');
-        filename.Trim().Trim(false);
-
-        // post an event to the main frame requesting a workspace open
-        wxCommandEvent evtOpenworkspace(wxEVT_COMMAND_MENU_SELECTED, XRCID("switch_to_workspace"));
-        evtOpenworkspace.SetString(filename);
-        evtOpenworkspace.SetEventObject(clMainFrame::Get());
-        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
-    }
-}
-
-int WelcomePage::DoGetPopupMenuSelection(clThemedButton* btn, const wxArrayString& strings, const wxString& menuTitle)
-{
-    BitmapLoader* loader = PluginManager::Get()->GetStdIcons();
-
-    m_idToName.clear();
-    wxUnusedVar(menuTitle);
-    wxMenu menu;
-
-    for(size_t i = 0; i < strings.GetCount(); ++i) {
-
-        wxBitmap bmp = loader->GetBitmapForFile("a.txt", false);
-        wxString filename = strings.Item(i);
-        if(filename.Find("@") != wxNOT_FOUND) {
-            filename = filename.AfterFirst('@');
-        }
-        filename.Trim().Trim(false);
-
-        // Ensure that the file exists...
-        if(!wxFileName(filename).Exists()) {
-            // Don't show non existing files in the menu
-            continue;
-        }
-        bmp = loader->GetBitmapForFile(filename, false);
-        wxMenuItem* item = new wxMenuItem(&menu, wxID_ANY, strings.Item(i));
-        item->SetBitmap(bmp);
-        m_idToName.insert(std::make_pair(item->GetId(), strings.Item(i)));
-        menu.Append(item);
-    }
-
-    // get the best position to show the menu
-    wxPoint pos = btn->GetPosition();
-    pos = m_scrollWin247->CalcScrolledPosition(pos);
-
-    pos.y += btn->GetSize().y;
-#ifdef __WXGTK__
-    pos.y += 5;
-    pos.x += 5;
-#elif defined(__WXMAC__)
-    pos.y += 10;
-    pos.x += 10;
-#else // MSW
-    pos.y += 5;
-    pos.x += 5;
-#endif
-    return GetPopupMenuSelectionFromUser(menu, pos);
-}
-
-void WelcomePage::OnRecentFileUI(wxUpdateUIEvent& event)
-{
-    wxArrayString files;
-    clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(files);
-    event.Enable(!files.IsEmpty());
-}
-
-void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
-{
-    wxArrayString files;
-    ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
-    event.Enable(!files.IsEmpty());
-}
+void WelcomePage::OnSize(wxSizeEvent& event) { event.Skip(); }
 
 void WelcomePage::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    GetPanel191()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    GetMainPanel()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    GetDvTreeCtrlWorkspaces()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     Refresh();
 }
 
 void WelcomePage::OnNewWorkspace(wxCommandEvent& event)
 {
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_workspace"));
+    wxCommandEvent e(wxEVT_MENU, XRCID("new_workspace"));
     e.SetEventObject(clMainFrame::Get());
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
+
 void WelcomePage::OnOpenWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("switch_to_workspace"));
+    wxCommandEvent e(wxEVT_MENU, XRCID("switch_to_workspace"));
     e.SetEventObject(clMainFrame::Get());
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
 
-void WelcomePage::DoOpenFile(const wxString& filename) { clMainFrame::Get()->GetMainBook()->OpenFile(filename); }
+// void WelcomePage::DoOpenFile(const wxString& filename) { clMainFrame::Get()->GetMainBook()->OpenFile(filename); }
 
-void WelcomePage::AddButtons()
+void WelcomePage::InitialiseUI()
 {
-    m_cmdLnkBtnNewWorkspace = new clThemedButton(m_panel191, wxID_ANY, _("New Workspace"), _("Create a new workspace"),
-                                                 wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnNewWorkspace->SetToolTip(_("Create a new workspace"));
+    m_dvTreeCtrlWorkspaces->Begin();
+    m_dvTreeCtrlWorkspaces->DeleteChildren(m_dvTreeCtrlWorkspaces->GetRootItem());
 
-    gridSizer629->Add(m_cmdLnkBtnNewWorkspace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-    m_cmdLnkBtnNewWorkspace->SetMinSize(wxSize(-1, 50));
+    // get the recently opened workspaces (local)
+    wxArrayString files;
+    ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
 
-    m_cmdLnkBtnNewProject =
-        new clThemedButton(m_panel191, wxID_ANY, _("Open Workspace"), _("Open an existing workspace"),
-                           wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnNewProject->SetToolTip(_("Click to create a new project.\nIf NO workspace is open, it will auto create "
-                                        "a workspace before creating the project"));
+    // TODO: fire event here to collect other workspaces as well
+    auto locals = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(),
+                                                     _("Recently opened local workspaces"));
+    for(const wxString& filepath : files) {
+        wxFileName fn(filepath);
+        wxString workspace_type;
+        switch(FileExtManager::GetType(fn.GetFullPath())) {
+        case FileExtManager::TypeWorkspaceFileSystem:
+            workspace_type = _("File System");
+            break;
+        case FileExtManager::TypeWorkspaceDocker:
+            workspace_type = _("Docker");
+            break;
+        case FileExtManager::TypeWorkspaceNodeJS:
+            workspace_type = _("NodeJS");
+            break;
+        case FileExtManager::TypeWorkspacePHP:
+            workspace_type = _("PHP");
+            break;
+        case FileExtManager::TypeWorkspace:
+            workspace_type = _("C/C++");
+            break;
+        default:
+            workspace_type = _("Other");
+            break;
+        }
 
-    gridSizer629->Add(m_cmdLnkBtnNewProject, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+        auto cd = new WelcomePageItemData();
+        cd->type = WorkspaceType::LOCAL;
+        cd->path = fn.GetFullPath();
+        auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(locals, fn.GetName(), wxNOT_FOUND, wxNOT_FOUND, cd);
+        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, workspace_type, 1);
+        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, filepath, 2);
+    }
+    m_dvTreeCtrlWorkspaces->Expand(locals);
+    size_t line_count = m_dvTreeCtrlWorkspaces->GetChildrenCount(m_dvTreeCtrlWorkspaces->GetRootItem());
+    if(line_count > 10) {
+        line_count = 10;
+    }
 
-    m_cmdLnkBtnWorkspaces =
-        new clThemedButton(m_panel191, wxID_ANY, _("Recent workspaces"), _("Open a recently used workspace"),
-                           wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnWorkspaces->SetToolTip(_("Open a workspace from a list of recently opened workspaces"));
+    size_t height = (line_count + 4) * m_dvTreeCtrlWorkspaces->GetLineHeight();
+    m_dvTreeCtrlWorkspaces->SetSize(wxSize(-1, height));
+    m_dvTreeCtrlWorkspaces->Commit();
+}
 
-    gridSizer629->Add(m_cmdLnkBtnWorkspaces, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+void WelcomePage::OnWorkspaceActivated(wxTreeEvent& event)
+{
+    event.Skip();
+    auto cd = GetWorkspaceItemData(event.GetItem());
+    CHECK_PTR_RET(cd);
 
-    m_cmdLnkBtnFilesMenu = new clThemedButton(m_panel191, wxID_ANY, _("Recent files"), _("Open a recently opened file"),
-                                              wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnFilesMenu->SetToolTip(_("Open a file from the recently opened files list"));
+    switch(cd->type) {
+    case WorkspaceType::LOCAL:
+        OpenLocalWorkspace(cd);
+        break;
+    case WorkspaceType::REMOTE:
+        // TODO...
+        break;
+    }
+}
 
-    gridSizer629->Add(m_cmdLnkBtnFilesMenu, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+WelcomePageItemData* WelcomePage::GetWorkspaceItemData(const wxTreeItemId& item)
+{
+    CHECK_ITEM_RET_NULL(item);
 
-    m_cmdLnkBtnForum = new clThemedButton(m_panel191, wxID_ANY, _("Forums"), _("Visit our forums"), wxDefaultPosition,
-                                          wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnForum->SetToolTip(_("Click to open a web browser in CodeLite's forums"));
+    auto cd = m_dvTreeCtrlWorkspaces->GetItemData(item);
+    CHECK_PTR_RET_NULL(cd);
 
-    gridSizer629->Add(m_cmdLnkBtnForum, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    return dynamic_cast<WelcomePageItemData*>(cd);
+}
 
-    m_cmdLnkBtnWiki = new clThemedButton(m_panel191, wxID_ANY, _("Docs"), _("Browse the documentation"),
-                                         wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnWiki->SetToolTip(_("Click to open a web browser in CodeLite's documentation page"));
+void WelcomePage::OpenLocalWorkspace(WelcomePageItemData* cd)
+{
+    // post an event to the main frame requesting a workspace open
+    wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("switch_to_workspace"));
+    evtOpenworkspace.SetString(cd->path);
+    evtOpenworkspace.SetEventObject(clMainFrame::Get());
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
+}
 
-    gridSizer629->Add(m_cmdLnkBtnWiki, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+void WelcomePage::OpenRemoteWorkspace(WelcomePageItemData* cd) { wxUnusedVar(cd); }
 
-    m_cmdLnkBtnNewWorkspace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePage::OnNewWorkspace, this);
-    m_cmdLnkBtnNewProject->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePage::OnOpenWorkspace, this);
-    m_cmdLnkBtnWorkspaces->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePage::OnShowWorkspaceMenu, this);
-    m_cmdLnkBtnWorkspaces->Bind(wxEVT_UPDATE_UI, &WelcomePage::OnRecentProjectUI, this);
-    m_cmdLnkBtnFilesMenu->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePage::OnShowFileseMenu, this);
-    m_cmdLnkBtnFilesMenu->Bind(wxEVT_UPDATE_UI, &WelcomePage::OnRecentFileUI, this);
-    m_cmdLnkBtnForum->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePage::OnOpenForums, this);
-    m_cmdLnkBtnWiki->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePage::OnOpenWiki, this);
+void WelcomePage::OnGitHHub(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxLaunchDefaultBrowser("https://github.com/eranif/codelite");
+}
+
+void WelcomePage::OnGitter(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxLaunchDefaultBrowser("https://gitter.im/eranif/codelite");
 }

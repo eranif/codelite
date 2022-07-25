@@ -2988,7 +2988,7 @@ void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent& event)
     }
 }
 
-void clMainFrame::CreateWelcomePage() { GetMainBook()->RegisterWelcomePage(nullptr); }
+void clMainFrame::CreateWelcomePage() { GetMainBook()->InitWelcomePage(); }
 
 void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {

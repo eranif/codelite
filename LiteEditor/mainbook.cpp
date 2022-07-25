@@ -1603,9 +1603,8 @@ void MainBook::DoShowTabLabelContextMenu()
     wxDELETE(contextMenu);
 }
 
-void MainBook::RegisterWelcomePage(wxWindow* welcomePage)
+void MainBook::InitWelcomePage()
 {
-    wxUnusedVar(welcomePage);
     m_welcomePage = GetOrCreateWelcomePage();
     ShowWelcomePage(true);
 }
@@ -1621,6 +1620,8 @@ void MainBook::ShowWelcomePage(bool show)
     if(show) {
         GetSizer()->Show(m_book, false);
         GetSizer()->Show(m_welcomePage, true);
+        m_welcomePage->GetDvTreeCtrlWorkspaces()->CallAfter(&clTreeCtrl::SetFocus);
+
     } else {
         GetSizer()->Show(m_book, true);
         GetSizer()->Show(m_welcomePage, false);
@@ -1730,7 +1731,7 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 
 int MainBook::GetBitmapIndexOrAdd(const wxString& name) { return m_book->GetBitmaps()->Add(name); }
 
-wxWindow* MainBook::GetOrCreateWelcomePage()
+WelcomePage* MainBook::GetOrCreateWelcomePage()
 {
     if(m_welcomePage == nullptr) {
         m_welcomePage = new WelcomePage(this);

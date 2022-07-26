@@ -27,9 +27,9 @@
 #include "clThemedListCtrl.h"
 #include <wx/button.h>
 #include <wx/filepicker.h>
+#include <wx/stattext.h>
 #include <wx/treectrl.h>
 #include "clThemedTreeCtrl.h"
-#include "clThemedButton.h"
 #include <wx/simplebook.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
@@ -38,7 +38,6 @@
 #include "fileview.h"
 #include <wx/frame.h>
 #include <wx/menu.h>
-#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/statbmp.h>
 #include <wx/bannerwindow.h>
@@ -143,26 +142,17 @@ class WelcomePageBase : public wxPanel
 {
 protected:
     wxPanel* m_mainPanel;
+    wxGridSizer* buttons_sizer;
+    wxStaticText* m_staticText0;
     clThemedTreeCtrl* m_dvTreeCtrlWorkspaces;
-    clThemedButton* m_button640;
-    clThemedButton* m_button641;
-    clThemedButton* m_button639;
-    clThemedButton* m_button638;
 
 protected:
     virtual void OnSize(wxSizeEvent& event) { event.Skip(); }
     virtual void OnWorkspaceActivated(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnOpenWorkspace(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnNewWorkspace(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnGitHHub(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnGitter(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText0() { return m_staticText0; }
     clThemedTreeCtrl* GetDvTreeCtrlWorkspaces() { return m_dvTreeCtrlWorkspaces; }
-    clThemedButton* GetButton640() { return m_button640; }
-    clThemedButton* GetButton641() { return m_button641; }
-    clThemedButton* GetButton639() { return m_button639; }
-    clThemedButton* GetButton638() { return m_button638; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);

@@ -190,39 +190,33 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer631 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer631);
 
+    wxFlexGridSizer* flexGridSizer658 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer658->SetFlexibleDirection(wxBOTH);
+    flexGridSizer658->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer658->AddGrowableCol(0);
+    flexGridSizer658->AddGrowableCol(2);
+
+    boxSizer631->Add(flexGridSizer658, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer658->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    buttons_sizer = new wxGridSizer(0, 2, 0, 0);
+
+    flexGridSizer658->Add(buttons_sizer, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer658->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText0 = new wxStaticText(m_mainPanel, wxID_ANY, _("Recently opened workspaces:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+
+    boxSizer631->Add(m_staticText0, 0, wxBOTTOM, WXC_FROM_DIP(5));
+
     m_dvTreeCtrlWorkspaces =
         new clThemedTreeCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, 200)),
                              wxTR_DEFAULT_STYLE | wxBORDER_SIMPLE);
+    m_dvTreeCtrlWorkspaces->SetFocus();
 
-    boxSizer631->Add(m_dvTreeCtrlWorkspaces, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxFlexGridSizer* flexGridSizer637 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer637->SetFlexibleDirection(wxBOTH);
-    flexGridSizer637->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer637->AddGrowableCol(0);
-    flexGridSizer637->AddGrowableCol(1);
-
-    boxSizer631->Add(flexGridSizer637, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button640 = new clThemedButton(m_mainPanel, wxID_ANY, _("Open workspace..."), wxDefaultPosition,
-                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
-
-    flexGridSizer637->Add(m_button640, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button641 = new clThemedButton(m_mainPanel, wxID_ANY, _("New workspace..."), wxDefaultPosition,
-                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
-
-    flexGridSizer637->Add(m_button641, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button639 = new clThemedButton(m_mainPanel, wxID_ANY, _("Open GitHub project page"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
-
-    flexGridSizer637->Add(m_button639, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button638 = new clThemedButton(m_mainPanel, wxID_ANY, _("Gitter - join the chat"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
-
-    flexGridSizer637->Add(m_button638, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer631->Add(m_dvTreeCtrlWorkspaces, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("WelcomePageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -232,20 +226,12 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     // Connect events
     this->Bind(wxEVT_SIZE, &WelcomePageBase::OnSize, this);
     m_dvTreeCtrlWorkspaces->Bind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &WelcomePageBase::OnWorkspaceActivated, this);
-    m_button640->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnOpenWorkspace, this);
-    m_button641->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnNewWorkspace, this);
-    m_button639->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnGitHHub, this);
-    m_button638->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnGitter, this);
 }
 
 WelcomePageBase::~WelcomePageBase()
 {
     this->Unbind(wxEVT_SIZE, &WelcomePageBase::OnSize, this);
     m_dvTreeCtrlWorkspaces->Unbind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &WelcomePageBase::OnWorkspaceActivated, this);
-    m_button640->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnOpenWorkspace, this);
-    m_button641->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnNewWorkspace, this);
-    m_button639->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnGitHHub, this);
-    m_button638->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &WelcomePageBase::OnGitter, this);
 }
 
 WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

@@ -46,13 +46,18 @@ struct WelcomePageItemData : public wxTreeItemData {
 
 class WelcomePage : public WelcomePageBase
 {
+    clThemedButton* m_buttonGithub = nullptr;
+    clThemedButton* m_buttonNewWorkspace = nullptr;
+    clThemedButton* m_buttonOpenWorkspace = nullptr;
+    clThemedButton* m_buttonGitter = nullptr;
+
 protected:
-    void OnNewWorkspace(wxCommandEvent& event) override;
-    void OnOpenWorkspace(wxCommandEvent& event) override;
-    void OnGitHHub(wxCommandEvent& event) override;
-    void OnGitter(wxCommandEvent& event) override;
+    void OnNewWorkspace(wxCommandEvent& event);
+    void OnOpenWorkspace(wxCommandEvent& event);
+    void OnGitHHub(wxCommandEvent& event);
+    void OnGitter(wxCommandEvent& event);
     void OnWorkspaceActivated(wxTreeEvent& event) override;
-    void InitialiseUI();
+    void UpdateRecentWorkspaces();
     WelcomePageItemData* GetWorkspaceItemData(const wxTreeItemId& item);
     void OpenLocalWorkspace(WelcomePageItemData* cd);
     void OpenRemoteWorkspace(WelcomePageItemData* cd);
@@ -60,6 +65,7 @@ protected:
 public:
     WelcomePage(wxWindow* parent);
     virtual ~WelcomePage();
+    bool Show(bool show = true) override;
 
 protected:
     void OnSize(wxSizeEvent& event) override;

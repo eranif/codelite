@@ -33,6 +33,7 @@
 #include "fileextmanager.h"
 #include "frame.h"
 #include "globals.h"
+#include "imanager.h"
 #include "macros.h"
 #include "manager.h"
 #include "plugin.h"
@@ -49,7 +50,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
     GetMainPanel()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 
     GetSizer()->Fit(this);
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &WelcomePage::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, &WelcomePage::OnThemeChanged, this);
 
     m_dvTreeCtrlWorkspaces->AddHeader(_("Name"));
     m_dvTreeCtrlWorkspaces->AddHeader(_("Type"));
@@ -60,10 +61,33 @@ WelcomePage::WelcomePage(wxWindow* parent)
     //    curstyle &= ~wxTR_ROW_LINES;
 
     m_dvTreeCtrlWorkspaces->SetTreeStyle(curstyle);
-    m_dvTreeCtrlWorkspaces->SetShowHeader(true);
+    m_dvTreeCtrlWorkspaces->SetShowHeader(false);
     m_dvTreeCtrlWorkspaces->AddRoot(_("Workspaces"));
 
-    InitialiseUI();
+    m_dvTreeCtrlWorkspaces->SetSortFunction(nullptr);
+
+    // create the buttons
+    m_buttonOpenWorkspace = new clThemedButton(m_mainPanel, wxID_ANY, _("Open"), _("Open an existing workspace"),
+                                               wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
+    m_buttonNewWorkspace = new clThemedButton(m_mainPanel, wxID_ANY, _("New"), _("Create a new workspace"),
+                                              wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
+    m_buttonGithub = new clThemedButton(m_mainPanel, wxID_ANY, _("GitHub"), _("Visit our GitHub project page"),
+                                        wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
+    m_buttonGitter = new clThemedButton(m_mainPanel, wxID_ANY, _("Gitter"), _("Join the chat!"), wxDefaultPosition,
+                                        wxDefaultSize, wxBU_LEFT);
+
+    // events
+    m_buttonOpenWorkspace->Bind(wxEVT_BUTTON, &WelcomePage::OnOpenWorkspace, this);
+    m_buttonNewWorkspace->Bind(wxEVT_BUTTON, &WelcomePage::OnNewWorkspace, this);
+    m_buttonGithub->Bind(wxEVT_BUTTON, &WelcomePage::OnGitHHub, this);
+    m_buttonGitter->Bind(wxEVT_BUTTON, &WelcomePage::OnGitter, this);
+
+    buttons_sizer->Add(m_buttonOpenWorkspace, wxSizerFlags(0).Expand().Border(wxALL, 5));
+    buttons_sizer->Add(m_buttonNewWorkspace, wxSizerFlags(0).Expand().Border(wxALL, 5));
+    buttons_sizer->Add(m_buttonGithub, wxSizerFlags(0).Expand().Border(wxALL, 5));
+    buttons_sizer->Add(m_buttonGitter, wxSizerFlags(0).Expand().Border(wxALL, 5));
+
+    UpdateRecentWorkspaces();
 #if CL_USE_NATIVEBOOK
     Show();
 #endif
@@ -85,6 +109,7 @@ void WelcomePage::OnThemeChanged(clCommandEvent& e)
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetMainPanel()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetDvTreeCtrlWorkspaces()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    m_staticText0->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
     Refresh();
 }
 
@@ -105,7 +130,7 @@ void WelcomePage::OnOpenWorkspace(wxCommandEvent& event)
 
 // void WelcomePage::DoOpenFile(const wxString& filename) { clMainFrame::Get()->GetMainBook()->OpenFile(filename); }
 
-void WelcomePage::InitialiseUI()
+void WelcomePage::UpdateRecentWorkspaces()
 {
     m_dvTreeCtrlWorkspaces->Begin();
     m_dvTreeCtrlWorkspaces->DeleteChildren(m_dvTreeCtrlWorkspaces->GetRootItem());
@@ -206,4 +231,10 @@ void WelcomePage::OnGitter(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxLaunchDefaultBrowser("https://gitter.im/eranif/codelite");
+}
+
+bool WelcomePage::Show(bool show)
+{
+    UpdateRecentWorkspaces();
+    return wxPanel::Show(show);
 }

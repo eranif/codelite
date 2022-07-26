@@ -7,6 +7,7 @@ wxDEFINE_EVENT(wxEVT_EDITOR_CONFIG_CHANGED, wxCommandEvent);
 
 // workspace loading related event
 wxDEFINE_EVENT(wxEVT_WORKSPACE_LOADED, clWorkspaceEvent);
+wxDEFINE_EVENT(wxEVT_WORKSPACE_PLUGIN_OPEN, clWorkspaceEvent);
 wxDEFINE_EVENT(wxEVT_WORKSPACE_RELOAD_STARTED, clWorkspaceEvent);
 wxDEFINE_EVENT(wxEVT_WORKSPACE_RELOAD_ENDED, clWorkspaceEvent);
 wxDEFINE_EVENT(wxEVT_WORKSPACE_CLOSED, clWorkspaceEvent);

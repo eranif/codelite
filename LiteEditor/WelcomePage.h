@@ -31,13 +31,13 @@
 
 #include <map>
 
-enum class WorkspaceType {
-    LOCAL,
-    REMOTE,
+enum class WorkspaceSource {
+    BUILTIN,
+    PLUGIN,
 };
 
 struct WelcomePageItemData : public wxTreeItemData {
-    WorkspaceType type = WorkspaceType::LOCAL;
+    WorkspaceSource type = WorkspaceSource::BUILTIN;
     wxString path;
     wxString account; // for remote workspaces
     WelcomePageItemData() {}
@@ -59,8 +59,8 @@ protected:
     void OnWorkspaceActivated(wxTreeEvent& event) override;
     void UpdateRecentWorkspaces();
     WelcomePageItemData* GetWorkspaceItemData(const wxTreeItemId& item);
-    void OpenLocalWorkspace(WelcomePageItemData* cd);
-    void OpenRemoteWorkspace(WelcomePageItemData* cd);
+    void OpenBuiltinWorkspace(WelcomePageItemData* cd);
+    void OpenPluginWorkspace(WelcomePageItemData* cd);
 
 public:
     WelcomePage(wxWindow* parent);

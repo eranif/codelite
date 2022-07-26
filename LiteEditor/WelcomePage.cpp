@@ -39,6 +39,7 @@
 #include "plugin.h"
 #include "pluginmanager.h"
 #include "window_locker.h"
+#include "wxStringHash.h"
 
 #include <wx/arrstr.h>
 #include <wx/clntdata.h>
@@ -139,6 +140,10 @@ void WelcomePage::UpdateRecentWorkspaces()
     wxArrayString files;
     ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
 
+    // request workspaces from the plugins
+    clRecentWorkspaceEvent other_workspaces_event{ wxEVT_RECENT_WORKSPACE };
+    EventNotifier::Get()->ProcessEvent(other_workspaces_event);
+
     // TODO: fire event here to collect other workspaces as well
     auto locals = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(),
                                                      _("Recently opened local workspaces"));
@@ -167,20 +172,44 @@ void WelcomePage::UpdateRecentWorkspaces()
         }
 
         auto cd = new WelcomePageItemData();
-        cd->type = WorkspaceType::LOCAL;
+        cd->type = WorkspaceSource::BUILTIN;
         cd->path = fn.GetFullPath();
         auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(locals, fn.GetName(), wxNOT_FOUND, wxNOT_FOUND, cd);
         m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, workspace_type, 1);
         m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, filepath, 2);
     }
     m_dvTreeCtrlWorkspaces->Expand(locals);
-    size_t line_count = m_dvTreeCtrlWorkspaces->GetChildrenCount(m_dvTreeCtrlWorkspaces->GetRootItem());
-    if(line_count > 10) {
-        line_count = 10;
+
+    // add the plugin base workspaces
+    auto other_workspaces = other_workspaces_event.GetWorkspaces();
+    std::unordered_map<wxString, std::vector<RecentWorkspace>> M;
+    for(const auto& e : other_workspaces) {
+        if(M.count(e.m_category) == 0) {
+            M.insert({ e.m_category, {} });
+        }
+        M[e.m_category].push_back(e);
     }
 
-    size_t height = (line_count + 4) * m_dvTreeCtrlWorkspaces->GetLineHeight();
-    m_dvTreeCtrlWorkspaces->SetSize(wxSize(-1, height));
+    for(const auto& vt : M) {
+        const wxString& category = vt.first;
+        auto parent_item = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(), category);
+        for(const auto& w : vt.second) {
+            auto cd = new WelcomePageItemData();
+            cd->path = w.path;
+            cd->account = w.m_account;
+            cd->type = WorkspaceSource::PLUGIN;
+
+            wxString name = cd->path;
+            name.Replace("\\", "/");
+            name = name.AfterLast('/');
+            name = name.BeforeLast('.');
+
+            auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(parent_item, name, wxNOT_FOUND, wxNOT_FOUND, cd);
+            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, _("Other"), 1);
+            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, w.path, 2);
+        }
+        m_dvTreeCtrlWorkspaces->Expand(parent_item);
+    }
     m_dvTreeCtrlWorkspaces->Commit();
 }
 
@@ -191,11 +220,11 @@ void WelcomePage::OnWorkspaceActivated(wxTreeEvent& event)
     CHECK_PTR_RET(cd);
 
     switch(cd->type) {
-    case WorkspaceType::LOCAL:
-        OpenLocalWorkspace(cd);
+    case WorkspaceSource::BUILTIN:
+        OpenBuiltinWorkspace(cd);
         break;
-    case WorkspaceType::REMOTE:
-        // TODO...
+    case WorkspaceSource::PLUGIN:
+        OpenPluginWorkspace(cd);
         break;
     }
 }
@@ -210,7 +239,7 @@ WelcomePageItemData* WelcomePage::GetWorkspaceItemData(const wxTreeItemId& item)
     return dynamic_cast<WelcomePageItemData*>(cd);
 }
 
-void WelcomePage::OpenLocalWorkspace(WelcomePageItemData* cd)
+void WelcomePage::OpenBuiltinWorkspace(WelcomePageItemData* cd)
 {
     // post an event to the main frame requesting a workspace open
     wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("switch_to_workspace"));
@@ -219,7 +248,14 @@ void WelcomePage::OpenLocalWorkspace(WelcomePageItemData* cd)
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
 }
 
-void WelcomePage::OpenRemoteWorkspace(WelcomePageItemData* cd) { wxUnusedVar(cd); }
+void WelcomePage::OpenPluginWorkspace(WelcomePageItemData* cd)
+{
+    clWorkspaceEvent open_event{ wxEVT_WORKSPACE_PLUGIN_OPEN };
+    open_event.SetIsRemote(!cd->account.empty());
+    open_event.SetFileName(cd->path);
+    open_event.SetRemoteAccount(cd->account);
+    EventNotifier::Get()->AddPendingEvent(open_event);
+}
 
 void WelcomePage::OnGitHHub(wxCommandEvent& event)
 {

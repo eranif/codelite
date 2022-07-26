@@ -23,9 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "NewFileSystemWorkspaceDialog.h"
-#include "RemotyWorkspace.hpp"
 #include "RemotyPlugin.hpp"
+
+#include "NewFileSystemWorkspaceDialog.h"
+#include "RemotyConfig.hpp"
+#include "RemotyWorkspace.hpp"
 #include "asyncprocess.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
@@ -34,6 +36,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
+
 #include <wx/msgdlg.h>
 
 static RemotyPlugin* thePlugin = NULL;
@@ -66,6 +69,8 @@ RemotyPlugin::RemotyPlugin(IManager* manager)
     m_shortName = "Remoty";
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &RemotyPlugin::OnFolderContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyPlugin::OnNewWorkspace, this);
+    EventNotifier::Get()->Bind(wxEVT_RECENT_WORKSPACE, &RemotyPlugin::OnRecentWorkspaces, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_PLUGIN_OPEN, &RemotyPlugin::OnPluginOpenWorkspace, this);
     clWorkspaceManager::Get().RegisterWorkspace(new RemotyWorkspace(true));
     m_workspace = new RemotyWorkspace();
 }
@@ -87,6 +92,8 @@ void RemotyPlugin::UnPlug()
     wxDELETE(m_workspace);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &RemotyPlugin::OnFolderContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyPlugin::OnNewWorkspace, this);
+    EventNotifier::Get()->Unbind(wxEVT_RECENT_WORKSPACE, &RemotyPlugin::OnRecentWorkspaces, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_PLUGIN_OPEN, &RemotyPlugin::OnPluginOpenWorkspace, this);
 }
 
 void RemotyPlugin::OnFolderContextMenu(clContextMenuEvent& event) { event.Skip(); }
@@ -97,4 +104,29 @@ void RemotyPlugin::OnNewWorkspace(clCommandEvent& e)
     if(e.GetString() == WORKSPACE_TYPE_NAME) {
         e.Skip(false);
     }
+}
+
+void RemotyPlugin::OnRecentWorkspaces(clRecentWorkspaceEvent& event)
+{
+    event.Skip();
+    RemotyConfig config;
+    for(const auto& recent_workspace : config.GetRecentWorkspaces()) {
+        RecentWorkspace rw;
+        rw.path = recent_workspace.path;
+        rw.m_account = recent_workspace.account;
+        rw.m_category = _("Remoty / File System");
+        event.GetWorkspaces().push_back(rw);
+    }
+}
+
+void RemotyPlugin::OnPluginOpenWorkspace(clWorkspaceEvent& event)
+{
+    event.Skip();
+    if(!event.IsRemote()) {
+        return;
+    }
+
+    // ours
+    event.Skip(false);
+    m_workspace->OpenWorkspace(event.GetFileName(), event.GetRemoteAccount());
 }

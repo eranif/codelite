@@ -43,8 +43,9 @@ public:
 
 protected:
     void OnFolderContextMenu(clContextMenuEvent& event);
-    void OnWorkspaceFileCreated(clFileSystemEvent& event);
     void OnNewWorkspace(clCommandEvent& e);
+    void OnRecentWorkspaces(clRecentWorkspaceEvent& event);
+    void OnPluginOpenWorkspace(clWorkspaceEvent& event);
 
 public:
     //--------------------------------------------

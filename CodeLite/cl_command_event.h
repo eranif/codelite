@@ -243,6 +243,34 @@ public:
 typedef void (wxEvtHandler::*clSourceControlEventFunction)(clSourceControlEvent&);
 #define clSourceControlEventHandler(func) wxEVENT_HANDLER_CAST(clSourceControlEventFunction, func)
 
+/// Source control event
+struct WXDLLIMPEXP_CL RecentWorkspace {
+    wxString m_category;
+    wxString m_account; // for remote workspaces, which account does this workspace belongs to
+    wxString m_name;
+    wxString path;
+};
+
+class WXDLLIMPEXP_CL clRecentWorkspaceEvent : public clCommandEvent
+{
+protected:
+    std::vector<RecentWorkspace> m_workspaces;
+
+public:
+    clRecentWorkspaceEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clRecentWorkspaceEvent(const clRecentWorkspaceEvent& event);
+    clRecentWorkspaceEvent& operator=(const clRecentWorkspaceEvent& src);
+    virtual ~clRecentWorkspaceEvent();
+    virtual wxEvent* Clone() const;
+
+    void SetWorkspaces(const std::vector<RecentWorkspace>& workspaces) { this->m_workspaces = workspaces; }
+    const std::vector<RecentWorkspace>& GetWorkspaces() const { return m_workspaces; }
+    std::vector<RecentWorkspace>& GetWorkspaces() { return m_workspaces; }
+};
+
+typedef void (wxEvtHandler::*clRecentWorkspaceEventFunction)(clRecentWorkspaceEvent&);
+#define clRecentWorkspaceEventHandler(func) wxEVENT_HANDLER_CAST(clRecentWorkspaceEventFunction, func)
+
 /// a clCodeCompletionEvent
 class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
 {

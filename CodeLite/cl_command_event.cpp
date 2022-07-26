@@ -510,6 +510,31 @@ clSourceControlEvent& clSourceControlEvent::operator=(const clSourceControlEvent
     return *this;
 }
 
+// --------------------------------------------------------------
+// Recent workspace event
+// --------------------------------------------------------------
+clRecentWorkspaceEvent::clRecentWorkspaceEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clRecentWorkspaceEvent::clRecentWorkspaceEvent(const clRecentWorkspaceEvent& event) { *this = event; }
+
+clRecentWorkspaceEvent::~clRecentWorkspaceEvent() {}
+
+wxEvent* clRecentWorkspaceEvent::Clone() const { return new clRecentWorkspaceEvent(*this); }
+
+clRecentWorkspaceEvent& clRecentWorkspaceEvent::operator=(const clRecentWorkspaceEvent& src)
+{
+    if(this == &src) {
+        return *this;
+    }
+
+    clCommandEvent::operator=(src);
+    m_workspaces = src.m_workspaces;
+    return *this;
+}
+
 ///----------------------------------------------------------------------------------
 /// clLanguageServerEvent
 ///----------------------------------------------------------------------------------

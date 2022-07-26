@@ -221,3 +221,4 @@ wxDEFINE_EVENT(wxEVT_LSP_ENABLE_SERVER, clLanguageServerEvent);
 wxDEFINE_EVENT(wxEVT_LSP_DISABLE_SERVER, clLanguageServerEvent);
 wxDEFINE_EVENT(wxEVT_DOWNLOAD_FILE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_OPEN_FILE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_RECENT_WORKSPACE, clRecentWorkspaceEvent);

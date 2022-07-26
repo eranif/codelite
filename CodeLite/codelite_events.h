@@ -977,4 +977,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DOWNLOAD_FILE, clCommandEvent);
 // This event is usually sent when a the file name is not a local file
 // Input: event.GetFileName()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_OPEN_FILE, clCommandEvent);
+
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_RECENT_WORKSPACE, clRecentWorkspaceEvent);
 #endif // CODELITE_EVENTS_H

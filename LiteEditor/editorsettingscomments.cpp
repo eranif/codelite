@@ -52,14 +52,8 @@ EditorSettingsComments::EditorSettingsComments(wxWindow* parent, OptionsConfigPt
                 });
 
     AddHeader(_("Code navigation shortcut is: Mouse left button and:"));
-    size_t flags = m_options->GetOptions();
-    if(!(flags & (OptionsConfig::Opt_NavKey_Alt | OptionsConfig::Opt_NavKey_Control))) {
-        flags = OptionsConfig::Opt_NavKey_Alt |
-                OptionsConfig::Opt_NavKey_Control; // force the least-instrusive meta key default
-    }
-
-    bool use_alt = flags & OptionsConfig::Opt_NavKey_Alt;
-    bool use_ctrl = flags & OptionsConfig::Opt_NavKey_Control;
+    bool use_alt = m_options->HasOption(OptionsConfig::Opt_NavKey_Alt);
+    bool use_ctrl = m_options->HasOption(OptionsConfig::Opt_NavKey_Control);
     AddProperty(_("Control Key"), use_ctrl, UPDATE_OPTION_CB(Opt_NavKey_Control));
     AddProperty(_("Alt Key"), use_alt, UPDATE_OPTION_CB(Opt_NavKey_Alt));
 

@@ -712,9 +712,9 @@ void clEditor::SetProperties()
         SetHighlightGuide(0);
     }
 
-    SetVirtualSpaceOptions(options->GetOptions() & OptionsConfig::Opt_AllowCaretAfterEndOfLine ? 2 : 1);
-    SetCaretStyle(options->GetOptions() & OptionsConfig::Opt_UseBlockCaret ? wxSTC_CARETSTYLE_BLOCK
-                                                                           : wxSTC_CARETSTYLE_LINE);
+    SetVirtualSpaceOptions(options->HasOption(OptionsConfig::Opt_AllowCaretAfterEndOfLine) ? 2 : 1);
+    SetCaretStyle(options->HasOption(OptionsConfig::Opt_UseBlockCaret) ? wxSTC_CARETSTYLE_BLOCK
+                                                                       : wxSTC_CARETSTYLE_LINE);
     SetWrapMode(options->GetWordWrap() ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
     SetViewWhiteSpace(options->GetShowWhitspaces());
     SetMouseDwellTime(500);
@@ -5398,11 +5398,11 @@ void clEditor::OnKeyUp(wxKeyEvent& event)
 size_t clEditor::GetCodeNavModifier()
 {
     size_t mod = wxMOD_NONE;
-    if(GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt)
+    if(GetOptions()->HasOption(OptionsConfig::Opt_NavKey_Alt))
         mod |= wxMOD_ALT;
-    if(GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control)
+    if(GetOptions()->HasOption(OptionsConfig::Opt_NavKey_Control))
         mod |= wxMOD_CONTROL;
-    if(GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Shift)
+    if(GetOptions()->HasOption(OptionsConfig::Opt_NavKey_Shift))
         mod |= wxMOD_ALT;
     return mod;
 }

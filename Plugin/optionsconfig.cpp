@@ -121,19 +121,18 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_preferredLocale(wxT("en_US"))
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
-    , m_options(Opt_AutoCompleteCurlyBraces | Opt_NavKey_Shift | Opt_FoldHighlightActiveBlock | Opt_TabStyleMinimal)
-    , m_options2(0)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
-#ifdef __WXOSX__
     , m_nbTabHeight(nbTabHt_Medium)
-#else
-    , m_nbTabHeight(nbTabHt_Tall)
-#endif
     , m_webSearchPrefix(wxT("https://www.google.com/search?q="))
     , m_smartParen(true)
 {
+    m_options.set(Opt_AutoCompleteCurlyBraces);
+    m_options.set(Opt_NavKey_Shift);
+    m_options.set(Opt_FoldHighlightActiveBlock);
+    m_options.set(Opt_TabStyleMinimal);
+
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
     // set the default font name to be wxFONTENCODING_UTF8
@@ -215,8 +214,11 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_preferredLocale = XmlUtils::ReadString(node, wxT("m_preferredLocale"), m_preferredLocale);
         m_useLocale = XmlUtils::ReadBool(node, wxT("m_useLocale"), m_useLocale);
         m_trimOnlyModifiedLines = XmlUtils::ReadBool(node, wxT("m_trimOnlyModifiedLines"), m_trimOnlyModifiedLines);
-        m_options = XmlUtils::ReadLong(node, wxT("m_options"), m_options);
-        m_options2 = XmlUtils::ReadLong(node, wxT("m_options2"), m_options2);
+
+        wxString options;
+        if(XmlUtils::ReadStringIfExists(node, "options_bits", options)) {
+            m_options.from_string(options);
+        }
         m_debuggerMarkerLine = XmlUtils::ReadString(node, wxT("m_debuggerMarkerLine"),
                                                     m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
         m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
@@ -365,16 +367,8 @@ wxXmlNode* OptionsConfig::ToXml() const
     tmp = wxFontMapper::GetEncodingName(m_fileFontEncoding);
     n->AddAttribute(wxT("FileFontEncoding"), tmp);
 
-    tmp.Clear();
-    tmp << m_options;
-    n->AddAttribute(wxT("m_options"), tmp);
-
-    tmp.Clear();
-    tmp << m_options2;
-    n->AddAttribute(wxT("m_options2"), tmp);
-
+    n->AddAttribute(wxT("options_bits"), m_options.to_string());
     n->AddAttribute(wxT("m_webSearchPrefix"), m_webSearchPrefix);
-
     return n;
 }
 
@@ -511,3 +505,6 @@ bool OptionsConfig::IsTabColourMatchesTheme() const
     return !HasOption(Opt_TabColourPersistent);
 #endif
 }
+
+void OptionsConfig::EnableOption(size_t flag, bool b) { m_options.set(flag, b); }
+bool OptionsConfig::HasOption(size_t flag) const { return m_options.test(flag); }

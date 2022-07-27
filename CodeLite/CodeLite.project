@@ -141,6 +141,8 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="clBitset.cpp"/>
+    <File Name="clBitset.hpp"/>
     <File Name="UIBreakpoint.cpp"/>
     <File Name="UIBreakpoint.hpp"/>
     <File Name="clModuleLogger.hpp"/>

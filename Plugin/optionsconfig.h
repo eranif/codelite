@@ -26,6 +26,7 @@
 #ifndef OPTIONS_CONFIG_H
 #define OPTIONS_CONFIG_H
 
+#include "clBitset.hpp"
 #include "clEditorConfig.h"
 #include "codelite_exports.h"
 #include "configuration_object.h"
@@ -38,46 +39,43 @@ class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 {
 public:
     enum {
-        Opt_Unused10 = (1 << 0),
-        Opt_Unused11 = (1 << 1),
-        Opt_Unused12 = (1 << 2),
-        Opt_AutoCompleteCurlyBraces = (1 << 3),
-        Opt_AutoCompleteNormalBraces = (1 << 4),
-        Opt_SmartAddFiles = (1 << 5),
-        Opt_IconSet_FreshFarm = (1 << 6),
-        Opt_TabStyleTRAPEZOID = (1 << 7),
-        Opt_IconSet_Classic = (1 << 8),
-        Opt_AutoCompleteDoubleQuotes = (1 << 9),
-        Opt_NavKey_Shift = (1 << 31), // (Not actively used for 5 years so it should be safe to change it to 1<<31...)
-        Opt_NavKey_Alt = (1 << 11),
-        Opt_NavKey_Control = (1 << 12),
-        Opt_IconSet_Classic_Dark = (1 << 13),
-        Opt_Mark_Debugger_Line = (1 << 14),
-        Opt_TabNoXButton = (1 << 15),
-        Opt_TabColourPersistent = (1 << 16),
-        Opt_TabColourDark = (1 << 17),
-        Opt_Use_CodeLite_Terminal = (1 << 18),
-        Opt_Unused14 = (1 << 19),
-        Opt_Unused15 = (1 << 20),
-        Opt_AllowCaretAfterEndOfLine = (1 << 21),
-        Opt_HideDockingWindowCaption = (1 << 22),
-        Opt_WrapQuotes = (1 << 23),
-        Opt_WrapBrackets = (1 << 24),
-        Opt_WrapCmdWithDoubleQuotes = (1 << 25),
-        Opt_FoldHighlightActiveBlock = (1 << 26),
-        Opt_EnsureCaptionsVisible = (1 << 27),
-        Opt_DisableMouseCtrlZoom = (1 << 28),
-        Opt_UseBlockCaret = (1 << 29),
-        Opt_TabStyleMinimal = (1 << 30),
-        Opt_TabNoPath = (1 << 10), // 1<<10 was previously the Opt_NavKey_Shift value
-    };
-
-    enum {
-        Opt2_MouseScrollSwitchTabs = (1 << 0),
-        Opt2_SortTabsDropdownAlphabetically = (1 << 1),
-        Opt2_PlaceNavBarAtTheTop = (1 << 2),
-        Opt2_DisableCtrlTabForTabSwitching = (1 << 3),
-        Opt2_SortNavBarDropdown = (1 << 4),
+        Opt_Unused10,
+        Opt_Unused11,
+        Opt_Unused12,
+        Opt_AutoCompleteCurlyBraces,
+        Opt_AutoCompleteNormalBraces,
+        Opt_SmartAddFiles,
+        Opt_IconSet_FreshFarm,
+        Opt_TabStyleTRAPEZOID,
+        Opt_IconSet_Classic,
+        Opt_AutoCompleteDoubleQuotes,
+        Opt_NavKey_Shift,
+        Opt_NavKey_Alt,
+        Opt_NavKey_Control,
+        Opt_IconSet_Classic_Dark,
+        Opt_Mark_Debugger_Line,
+        Opt_TabNoXButton,
+        Opt_TabColourPersistent,
+        Opt_TabColourDark,
+        Opt_Use_CodeLite_Terminal,
+        Opt_Unused14,
+        Opt_Unused15,
+        Opt_AllowCaretAfterEndOfLine,
+        Opt_HideDockingWindowCaption,
+        Opt_WrapQuotes,
+        Opt_WrapBrackets,
+        Opt_WrapCmdWithDoubleQuotes,
+        Opt_FoldHighlightActiveBlock,
+        Opt_EnsureCaptionsVisible,
+        Opt_DisableMouseCtrlZoom,
+        Opt_UseBlockCaret,
+        Opt_TabStyleMinimal,
+        Opt_TabNoPath,
+        Opt2_MouseScrollSwitchTabs,
+        Opt2_SortTabsDropdownAlphabetically,
+        Opt2_PlaceNavBarAtTheTop,
+        Opt2_DisableCtrlTabForTabSwitching,
+        Opt2_SortNavBarDropdown,
     };
 
     enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
@@ -149,8 +147,7 @@ protected:
     wxString m_preferredLocale;
     bool m_useLocale;
     bool m_trimOnlyModifiedLines;
-    size_t m_options;
-    size_t m_options2;
+    clBitset m_options;
     wxColour m_debuggerMarkerLine;
     wxDirection m_workspaceTabsDirection; // Up/Down/Left/Right
     wxDirection m_outputTabsDirection;    // Up/Down
@@ -164,26 +161,8 @@ protected:
 
 public:
     // Helpers
-    void EnableOption(size_t flag, bool b)
-    {
-        if(b) {
-            m_options |= flag;
-        } else {
-            m_options &= ~flag;
-        }
-    }
-
-    bool HasOption(size_t flag) const { return m_options & flag; }
-    void EnableOption2(size_t flag, bool b)
-    {
-        if(b) {
-            m_options2 |= flag;
-        } else {
-            m_options2 &= ~flag;
-        }
-    }
-
-    bool HasOption2(size_t flag) const { return m_options2 & flag; }
+    void EnableOption(size_t flag, bool b);
+    bool HasOption(size_t flag) const;
 
 public:
     OptionsConfig() {}
@@ -215,19 +194,16 @@ public:
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
     void SetTabShowPath(bool b) { EnableOption(Opt_TabNoPath, !b); }
     bool IsTabShowPath() const { return !HasOption(Opt_TabNoPath); }
-    bool IsMouseScrollSwitchTabs() const { return HasOption2(Opt2_MouseScrollSwitchTabs); }
-    void SetMouseScrollSwitchTabs(bool b) { EnableOption2(Opt2_MouseScrollSwitchTabs, b); }
-    bool IsSortTabsDropdownAlphabetically() const { return HasOption2(Opt2_SortTabsDropdownAlphabetically); }
-    void SetSortTabsDropdownAlphabetically(bool b) { EnableOption2(Opt2_SortTabsDropdownAlphabetically, b); }
-    bool IsNavBarTop() const { return HasOption2(Opt2_PlaceNavBarAtTheTop); }
-    void SetNavBarTop(bool b) { EnableOption2(Opt2_PlaceNavBarAtTheTop, b); }
-    bool IsCtrlTabEnabled() const { return !HasOption2(Opt2_DisableCtrlTabForTabSwitching); }
-    void SetCtrlTabEnabled(bool b) { EnableOption2(Opt2_DisableCtrlTabForTabSwitching, !b); }
-    bool IsSortNavBarDropdown() const { return HasOption2(Opt2_SortNavBarDropdown); }
-    void SetSortNavBarDropdown(bool b) { EnableOption2(Opt2_SortNavBarDropdown, b); }
-
-    void SetOptions(size_t options) { this->m_options = options; }
-    size_t GetOptions() const { return m_options; }
+    bool IsMouseScrollSwitchTabs() const { return HasOption(Opt2_MouseScrollSwitchTabs); }
+    void SetMouseScrollSwitchTabs(bool b) { EnableOption(Opt2_MouseScrollSwitchTabs, b); }
+    bool IsSortTabsDropdownAlphabetically() const { return HasOption(Opt2_SortTabsDropdownAlphabetically); }
+    void SetSortTabsDropdownAlphabetically(bool b) { EnableOption(Opt2_SortTabsDropdownAlphabetically, b); }
+    bool IsNavBarTop() const { return HasOption(Opt2_PlaceNavBarAtTheTop); }
+    void SetNavBarTop(bool b) { EnableOption(Opt2_PlaceNavBarAtTheTop, b); }
+    bool IsCtrlTabEnabled() const { return !HasOption(Opt2_DisableCtrlTabForTabSwitching); }
+    void SetCtrlTabEnabled(bool b) { EnableOption(Opt2_DisableCtrlTabForTabSwitching, !b); }
+    bool IsSortNavBarDropdown() const { return HasOption(Opt2_SortNavBarDropdown); }
+    void SetSortNavBarDropdown(bool b) { EnableOption(Opt2_SortNavBarDropdown, b); }
     void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) { this->m_trimOnlyModifiedLines = trimOnlyModifiedLines; }
     bool GetTrimOnlyModifiedLines() const { return m_trimOnlyModifiedLines; }
     void SetPreferredLocale(const wxString& preferredLocale) { this->m_preferredLocale = preferredLocale; }

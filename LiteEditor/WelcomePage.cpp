@@ -59,7 +59,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
 
     long curstyle = m_dvTreeCtrlWorkspaces->GetTreeStyle();
     curstyle |= wxTR_HIDE_ROOT;
-    //    curstyle &= ~wxTR_ROW_LINES;
+    curstyle &= ~wxTR_FULL_ROW_HIGHLIGHT;
 
     m_dvTreeCtrlWorkspaces->SetTreeStyle(curstyle);
     m_dvTreeCtrlWorkspaces->SetShowHeader(false);

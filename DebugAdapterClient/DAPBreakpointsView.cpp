@@ -85,3 +85,30 @@ void DAPBreakpointsView::OnBreakpointActivated(wxDataViewEvent& event)
 
     m_plugin->LoadFile(cd->m_breapoint.source, cd->m_breapoint.line - 1);
 }
+
+void DAPBreakpointsView::OnBreakpointsContextMenu(wxDataViewEvent& event)
+{
+    wxMenu menu;
+    menu.Append(XRCID("dap-new-function-breakpoint"), _("New function breakppoint"));
+    menu.Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            wxString funcname = clGetTextFromUser(_("Set breakpoint in function"), _("Function name"));
+            if(funcname.empty()) {
+                return;
+            }
+
+            dap::FunctionBreakpoint new_bp;
+            new_bp.name = funcname;
+            auto iter = std::find_if(m_functionBreakpoints.begin(), m_functionBreakpoints.end(),
+                                     [&funcname](const dap::FunctionBreakpoint& bp) { return bp.name == funcname; });
+            if(iter != m_functionBreakpoints.end()) {
+                return;
+            }
+            m_functionBreakpoints.push_back(new_bp);
+            m_plugin->GetClient().SetFunctionBreakpoints(m_functionBreakpoints);
+        },
+        XRCID("dap-new-function-breakpoint"));
+    m_dvListCtrl->PopupMenu(&menu);
+}

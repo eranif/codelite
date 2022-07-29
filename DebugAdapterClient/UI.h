@@ -92,6 +92,8 @@ protected:
     clThemedListCtrl* m_dvListCtrl;
 
 protected:
+    virtual void OnBreakpointsContextMenu(wxDataViewEvent& event) { event.Skip(); }
+
 public:
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

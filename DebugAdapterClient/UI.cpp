@@ -164,9 +164,16 @@ DAPBreakpointsViewBase::DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id, 
     if(GetSizer()) {
         GetSizer()->Fit(this);
     }
+    // Connect events
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &DAPBreakpointsViewBase::OnBreakpointsContextMenu,
+                       this);
 }
 
-DAPBreakpointsViewBase::~DAPBreakpointsViewBase() {}
+DAPBreakpointsViewBase::~DAPBreakpointsViewBase()
+{
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &DAPBreakpointsViewBase::OnBreakpointsContextMenu,
+                         this);
+}
 
 DAPTextViewBase::DAPTextViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)

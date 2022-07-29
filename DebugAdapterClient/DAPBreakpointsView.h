@@ -20,11 +20,13 @@ struct BreakpointClientData {
 class DAPBreakpointsView : public DAPBreakpointsViewBase
 {
     DebugAdapterClient* m_plugin = nullptr;
+    std::vector<dap::FunctionBreakpoint> m_functionBreakpoints;
 
 private:
     BreakpointClientData* GetItemData(const wxDataViewItem& item);
 
 protected:
+    virtual void OnBreakpointsContextMenu(wxDataViewEvent& event);
     void OnBreakpointActivated(wxDataViewEvent& item);
 
 public:

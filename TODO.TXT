@@ -1,8 +1,6 @@
 Debug Adapter Client
 ---
 
-- Allow user to set function breakpoint from the UI
-
 others:
 ----
 

@@ -1,0 +1,20 @@
+name: Bug Report
+description: File a bug report
+title: "[Feature Request]: "
+labels: ["Feature"]
+assignees:
+  - eranif
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request report!
+  - type: textarea
+    id: feature-desc
+    attributes:
+      label: Describe your idea in details
+      description: Feature request description
+      placeholder: Feature request description
+      value: ""
+    validations:
+      required: true

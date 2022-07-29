@@ -27,6 +27,7 @@
 #include "clThemedListCtrl.h"
 #include <wx/button.h>
 #include <wx/filepicker.h>
+#include "clThemedSplitterWindow.h"
 #include <wx/stattext.h>
 #include <wx/treectrl.h>
 #include "clThemedTreeCtrl.h"
@@ -34,7 +35,6 @@
 #include <wx/toolbar.h>
 #include "clToolBar.h"
 #include "clConfigurationSelectionCtrl.h"
-#include "clThemedSplitterWindow.h"
 #include "fileview.h"
 #include <wx/frame.h>
 #include <wx/menu.h>
@@ -141,8 +141,10 @@ public:
 class WelcomePageBase : public wxPanel
 {
 protected:
-    wxPanel* m_mainPanel;
+    clThemedSplitterWindow* m_mainPanel;
+    wxPanel* m_buttonsPage;
     wxGridSizer* buttons_sizer;
+    wxPanel* m_listPage;
     wxStaticText* m_staticText0;
     clThemedTreeCtrl* m_dvTreeCtrlWorkspaces;
 
@@ -151,9 +153,11 @@ protected:
     virtual void OnWorkspaceActivated(wxTreeEvent& event) { event.Skip(); }
 
 public:
+    wxPanel* GetButtonsPage() { return m_buttonsPage; }
     wxStaticText* GetStaticText0() { return m_staticText0; }
     clThemedTreeCtrl* GetDvTreeCtrlWorkspaces() { return m_dvTreeCtrlWorkspaces; }
-    wxPanel* GetMainPanel() { return m_mainPanel; }
+    wxPanel* GetListPage() { return m_listPage; }
+    clThemedSplitterWindow* GetMainPanel() { return m_mainPanel; }
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~WelcomePageBase();

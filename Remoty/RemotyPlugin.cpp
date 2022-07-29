@@ -114,7 +114,7 @@ void RemotyPlugin::OnRecentWorkspaces(clRecentWorkspaceEvent& event)
         RecentWorkspace rw;
         rw.path = recent_workspace.path;
         rw.m_account = recent_workspace.account;
-        rw.m_category = _("Remoty / File System");
+        rw.m_category = _("Remoty plugin");
         event.GetWorkspaces().push_back(rw);
     }
 }

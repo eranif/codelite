@@ -183,12 +183,18 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer149 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer149);
 
-    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_mainPanel =
+        new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_3D);
+    m_mainPanel->SetSashGravity(0.5);
+    m_mainPanel->SetMinimumPaneSize(10);
 
     boxSizer149->Add(m_mainPanel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer631 = new wxBoxSizer(wxVERTICAL);
-    m_mainPanel->SetSizer(boxSizer631);
+    m_buttonsPage =
+        new wxPanel(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    wxBoxSizer* boxSizer665 = new wxBoxSizer(wxVERTICAL);
+    m_buttonsPage->SetSizer(boxSizer665);
 
     wxFlexGridSizer* flexGridSizer658 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer658->SetFlexibleDirection(wxBOTH);
@@ -196,7 +202,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     flexGridSizer658->AddGrowableCol(0);
     flexGridSizer658->AddGrowableCol(2);
 
-    boxSizer631->Add(flexGridSizer658, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer665->Add(flexGridSizer658, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     flexGridSizer658->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -206,17 +212,24 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     flexGridSizer658->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText0 = new wxStaticText(m_mainPanel, wxID_ANY, _("Recently opened workspaces:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+    m_listPage =
+        new wxPanel(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_mainPanel->SplitHorizontally(m_buttonsPage, m_listPage, 0);
 
-    boxSizer631->Add(m_staticText0, 0, wxBOTTOM, WXC_FROM_DIP(5));
+    wxBoxSizer* boxSizer666 = new wxBoxSizer(wxVERTICAL);
+    m_listPage->SetSizer(boxSizer666);
+
+    m_staticText0 = new wxStaticText(m_listPage, wxID_ANY, _("Recently opened workspaces"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_listPage, wxSize(-1, -1)), 0);
+
+    boxSizer666->Add(m_staticText0, 0, wxBOTTOM, WXC_FROM_DIP(5));
 
     m_dvTreeCtrlWorkspaces =
-        new clThemedTreeCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, 200)),
+        new clThemedTreeCtrl(m_listPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_listPage, wxSize(-1, 200)),
                              wxTR_DEFAULT_STYLE | wxBORDER_SIMPLE);
     m_dvTreeCtrlWorkspaces->SetFocus();
 
-    boxSizer631->Add(m_dvTreeCtrlWorkspaces, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer666->Add(m_dvTreeCtrlWorkspaces, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("WelcomePageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

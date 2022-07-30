@@ -149,6 +149,12 @@ DAPBreakpointsViewBase::DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer264 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer264);
 
+    m_toolbar =
+        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer264->Add(m_toolbar, 0, 0, WXC_FROM_DIP(5));
+
     m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                         wxDV_ROW_LINES | wxDV_SINGLE);
 

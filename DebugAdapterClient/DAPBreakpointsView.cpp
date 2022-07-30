@@ -4,7 +4,9 @@
 #include "UIBreakpoint.hpp"
 #include "dap/dap.hpp"
 
+#include <algorithm>
 #include <unordered_map>
+#include <wx/msgdlg.h>
 
 DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin)
     : DAPBreakpointsViewBase(parent)
@@ -13,6 +15,15 @@ DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plu
     m_dvListCtrl->SetSortFunction(
         [](const clRowEntry* a, const clRowEntry* b) { return a->GetLabel().CmpNoCase(b->GetLabel()); });
     m_dvListCtrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &DAPBreakpointsView::OnBreakpointActivated, this);
+    clBitmapList* bitmaps = new clBitmapList;
+    m_toolbar->AddTool(XRCID("dap-new-source-breakpoint"), _("New source breakpoint"), bitmaps->Add("file_new"));
+    m_toolbar->AddTool(XRCID("dap-new-function-breakpoint"), _("New function breakpoint"), bitmaps->Add("json"));
+    m_toolbar->AssignBitmaps(bitmaps);
+    m_toolbar->Realize();
+
+    m_toolbar->Bind(wxEVT_TOOL, &DAPBreakpointsView::OnNewFunctionBreakpoint, this,
+                    XRCID("dap-new-function-breakpoint"));
+    m_toolbar->Bind(wxEVT_TOOL, &DAPBreakpointsView::OnNewSourceBreakpoint, this, XRCID("dap-new-source-breakpoint"));
 }
 
 DAPBreakpointsView::~DAPBreakpointsView()
@@ -90,25 +101,56 @@ void DAPBreakpointsView::OnBreakpointsContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
     menu.Append(XRCID("dap-new-function-breakpoint"), _("New function breakppoint"));
-    menu.Bind(
-        wxEVT_MENU,
-        [&](wxCommandEvent& e) {
-            wxUnusedVar(e);
-            wxString funcname = clGetTextFromUser(_("Set breakpoint in function"), _("Function name"));
-            if(funcname.empty()) {
-                return;
-            }
-
-            dap::FunctionBreakpoint new_bp;
-            new_bp.name = funcname;
-            auto iter = std::find_if(m_functionBreakpoints.begin(), m_functionBreakpoints.end(),
-                                     [&funcname](const dap::FunctionBreakpoint& bp) { return bp.name == funcname; });
-            if(iter != m_functionBreakpoints.end()) {
-                return;
-            }
-            m_functionBreakpoints.push_back(new_bp);
-            m_plugin->GetClient().SetFunctionBreakpoints(m_functionBreakpoints);
-        },
-        XRCID("dap-new-function-breakpoint"));
+    menu.Bind(wxEVT_MENU, &DAPBreakpointsView::OnNewFunctionBreakpoint, this, XRCID("dap-new-function-breakpoint"));
     m_dvListCtrl->PopupMenu(&menu);
+}
+
+void DAPBreakpointsView::OnNewFunctionBreakpoint(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString funcname = clGetTextFromUser(_("Set breakpoint in function"), _("Function name"));
+    if(funcname.empty()) {
+        return;
+    }
+
+    dap::FunctionBreakpoint new_bp;
+    new_bp.name = funcname;
+    auto iter = std::find_if(m_functionBreakpoints.begin(), m_functionBreakpoints.end(),
+                             [&funcname](const dap::FunctionBreakpoint& bp) { return bp.name == funcname; });
+    if(iter != m_functionBreakpoints.end()) {
+        return;
+    }
+    m_functionBreakpoints.push_back(new_bp);
+    m_plugin->GetClient().SetFunctionBreakpoints(m_functionBreakpoints);
+}
+
+void DAPBreakpointsView::OnNewSourceBreakpoint(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString location = clGetTextFromUser(_("Set breakpoint in source file"), _("Location (source:line)"));
+    if(location.empty()) {
+        return;
+    }
+
+    wxString source;
+    long line_numner;
+    source = location.BeforeFirst(':');
+    if(!location.AfterLast(':').ToCLong(&line_numner)) {
+        wxMessageBox(_("Invalid line number"), "CodeLite", wxOK | wxICON_ERROR | wxOK_DEFAULT);
+        return;
+    }
+
+    // get all breakpoints for the requested source file
+    std::vector<dap::SourceBreakpoint> source_breakpoints;
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        auto cd = GetItemData(m_dvListCtrl->RowToItem(i));
+        if(!cd) {
+            continue;
+        }
+        if(cd->m_breapoint.source.path == source) {
+            source_breakpoints.push_back({ cd->m_breapoint.line, "" });
+        }
+    }
+    source_breakpoints.push_back({ line_numner, "" });
+    m_plugin->GetClient().SetBreakpointsFile(source, source_breakpoints);
 }

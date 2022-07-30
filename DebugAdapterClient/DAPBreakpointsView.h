@@ -28,6 +28,8 @@ private:
 protected:
     virtual void OnBreakpointsContextMenu(wxDataViewEvent& event);
     void OnBreakpointActivated(wxDataViewEvent& item);
+    void OnNewFunctionBreakpoint(wxCommandEvent& event);
+    void OnNewSourceBreakpoint(wxCommandEvent& event);
 
 public:
     DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin);

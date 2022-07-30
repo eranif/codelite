@@ -89,12 +89,14 @@ public:
 class DAPBreakpointsViewBase : public wxPanel
 {
 protected:
+    clToolBar* m_toolbar;
     clThemedListCtrl* m_dvListCtrl;
 
 protected:
     virtual void OnBreakpointsContextMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
+    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);

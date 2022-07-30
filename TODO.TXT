@@ -1,6 +1,8 @@
 Debug Adapter Client
 ---
 
+- Add watches
+
 others:
 ----
 

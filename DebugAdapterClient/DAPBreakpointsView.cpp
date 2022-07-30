@@ -24,6 +24,14 @@ DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plu
     m_toolbar->Bind(wxEVT_TOOL, &DAPBreakpointsView::OnNewFunctionBreakpoint, this,
                     XRCID("dap-new-function-breakpoint"));
     m_toolbar->Bind(wxEVT_TOOL, &DAPBreakpointsView::OnNewSourceBreakpoint, this, XRCID("dap-new-source-breakpoint"));
+
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Enable(m_plugin->GetClient().CanInteract()); },
+        XRCID("dap-new-function-breakpoint"));
+
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Enable(m_plugin->GetClient().CanInteract()); },
+        XRCID("dap-new-source-breakpoint"));
 }
 
 DAPBreakpointsView::~DAPBreakpointsView()

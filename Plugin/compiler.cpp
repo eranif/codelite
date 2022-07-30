@@ -592,7 +592,7 @@ void Compiler::AddCompilerOption(const wxString& name, const wxString& desc)
     option.help = desc;
     option.name = name;
     m_compilerOptions.erase(name);
-    m_compilerOptions.insert(std::make_pair(name, option));
+    m_compilerOptions.insert({ name, option });
 }
 
 void Compiler::AddLinkerOption(const wxString& name, const wxString& desc)
@@ -601,7 +601,7 @@ void Compiler::AddLinkerOption(const wxString& name, const wxString& desc)
     option.help = desc;
     option.name = name;
     m_linkerOptions.erase(name);
-    m_linkerOptions.insert(std::make_pair(name, option));
+    m_linkerOptions.insert({ name, option });
 }
 
 void Compiler::AddCompilerLinkerOption(const wxString& name, const wxString& desc)
@@ -640,7 +640,8 @@ void Compiler::AddDefaultGnuCompilerOptions()
     AddCompilerOption("-Wzero-as-null-pointer-constant", "Warn if '0' is used as a null pointer constant");
     AddCompilerOption("-Wnon-virtual-dtor", "Warn if a class has virtual functions but no virtual destructor");
     AddCompilerOption("-Winline", "Warn if an inline function can not be inlined");
-    AddCompilerOption("-Wmissing-declarations", "Warn if a global function definition does not have a forward declaration");
+    AddCompilerOption("-Wmissing-declarations",
+                      "Warn if a global function definition does not have a forward declaration");
     AddCompilerOption("-Wundef", "Warn if an undefined macro is evaluated in an '#if' directive");
     AddCompilerOption("-Wredundant-decls", "Warn if there are redundant declarations in the same scope");
     AddCompilerOption("-Wfloat-equal", "Warn about floating point equality/inequality comparisons");
@@ -656,6 +657,11 @@ void Compiler::AddDefaultGnuCompilerOptions()
     AddCompilerOption("-fexpensive-optimizations", "Expensive optimizations");
     AddCompilerOption("-fopenmp", "Enable OpenMP (compilation)");
     AddCompilerOption("-g", "Produce debugging information");
+    AddCompilerOption("-gdwarf-2", "Generate source-level debug information with dwarf version 2");
+    AddCompilerOption("-gdwarf-3", "Generate source-level debug information with dwarf version 3");
+    AddCompilerOption("-gdwarf-4", "Generate source-level debug information with dwarf version 4");
+    AddCompilerOption("-gdwarf-5", "Generate source-level debug information with dwarf version 5");
+    AddCompilerOption("-fstandalone-debug", "(Clang) Emit full debug info for all types used by the program");
     AddCompilerOption("-Og", "Optimize debugging information");
     AddCompilerOption("-pedantic", "Enable warnings demanded by strict ISO C and ISO C++");
     AddCompilerOption("-pedantic-errors", "Treat as errors the warnings demanded by strict ISO C and ISO C++");
@@ -694,7 +700,8 @@ void Compiler::AddDefaultGnuCompilerLinkerOptions()
     // Compiler and Linker options
     AddCompilerLinkerOption("-m32", "Target x86 (32bit)");
     AddCompilerLinkerOption("-m64", "Target x86_64 (64bit)");
-    AddCompilerLinkerOption("-flto", "Link-Time Optimization (Eliminates duplicate template functions and unused code)");
+    AddCompilerLinkerOption("-flto",
+                            "Link-Time Optimization (Eliminates duplicate template functions and unused code)");
 }
 
 wxArrayString Compiler::GetDefaultIncludePaths()

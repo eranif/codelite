@@ -1141,9 +1141,17 @@ bool DebugAdapterClient::InitialiseSession(const DapEntry& dap_server, const wxS
     wxArrayString command_array = StringUtils::BuildArgv(args);
     command_array.Insert(exepath, 0);
     m_session.command = { command_array.begin(), command_array.end() };
-    m_session.working_directory = working_directory;
-    m_session.environment = env;
     m_session.debug_over_ssh = !ssh_account.empty();
+
+    if(!m_session.debug_over_ssh) {
+        // only add the working directory if it exists
+        if(wxFileName::DirExists(working_directory)) {
+            m_session.working_directory = working_directory;
+        }
+    } else {
+        m_session.working_directory = working_directory;
+    }
+    m_session.environment = env;
 
 #if USE_SFTP
     if(m_session.debug_over_ssh) {

@@ -159,6 +159,6 @@ void DAPBreakpointsView::OnNewSourceBreakpoint(wxCommandEvent& event)
             source_breakpoints.push_back({ cd->m_breapoint.line, "" });
         }
     }
-    source_breakpoints.push_back({ line_numner, "" });
+    source_breakpoints.push_back({ static_cast<int>(line_numner), "" });
     m_plugin->GetClient().SetBreakpointsFile(source, source_breakpoints);
 }

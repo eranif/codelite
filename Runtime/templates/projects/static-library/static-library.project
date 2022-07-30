@@ -17,7 +17,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++, ar)
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-gdwarf-2" C_Options="-gdwarf-2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="" Required="yes"/>

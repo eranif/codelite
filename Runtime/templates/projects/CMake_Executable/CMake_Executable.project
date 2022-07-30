@@ -19,7 +19,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug_Linux" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-gdwarf-2;-O0;-Wall" C_Options="-gdwarf-2;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="" Required="yes"/>
@@ -59,7 +59,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Debug_Windows" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-gdwarf-2;-O0;-Wall" C_Options="-gdwarf-2;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="" Required="yes"/>
@@ -99,7 +99,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release_Linux" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-gdwarf-2;-O0;-Wall" C_Options="-gdwarf-2;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="" Required="yes"/>
@@ -139,7 +139,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release_Windows" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-gdwarf-2;-O0;-Wall" C_Options="-gdwarf-2;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="" Required="yes"/>

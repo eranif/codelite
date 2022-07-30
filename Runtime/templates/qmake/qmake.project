@@ -11,7 +11,7 @@
   <Dependencies/>
   <Settings Type="$(TYPE)">
     <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="$(TYPE)" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g" Required="yes">
+      <Compiler Options="-gdwarf-2" Required="yes">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="" Required="yes"/>

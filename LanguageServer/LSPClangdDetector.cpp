@@ -5,31 +5,10 @@
 #include "clFilesCollector.h"
 #include "file_logger.h"
 #include "globals.h"
+#include "procutils.h"
 
 #include <wx/filename.h>
 #include <wx/regex.h>
-
-namespace
-{
-wxString command_grep(const std::vector<wxString>& cmd, const wxString& find_what)
-{
-    IProcess::Ptr_t proc(::CreateAsyncProcess(nullptr, cmd, IProcessCreateDefault | IProcessCreateSync));
-    if(!proc) {
-        return wxEmptyString;
-    }
-
-    wxString output;
-    proc->WaitForTerminate(output);
-    auto lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
-    for(wxString& line : lines) {
-        line.Trim();
-        if(line.Contains(find_what)) {
-            return line;
-        }
-    }
-    return wxEmptyString;
-}
-} // namespace
 
 LSPClangdDetector::LSPClangdDetector()
     : LSPDetector("clangd")
@@ -60,11 +39,10 @@ bool LSPClangdDetector::DoLocate()
 #else // macOS / Windows
     wxPathList paths;
 #ifdef __WXMAC__
-    wxString fullpath = command_grep({ "brew", "list", "llvm" }, "clangd");
+    wxString fullpath = ProcUtils::GrepCommandOutput({ "brew", "list", "llvm" }, "clangd");
     if(!fullpath.empty()) {
         paths.Add(wxFileName(fullpath).GetPath());
     }
-
     paths.Add("/opt/homebrew/opt/llvm/bin");
 #else
     // Try the installation folder first
@@ -91,7 +69,7 @@ void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
     command << clangdExe.GetFullPath();
     ::WrapWithQuotes(command);
 
-    command << " -limit-results=500 -header-insertion-decorators=0";
+    command << " -limit-results=500 -header-insertion-decorators=0 --compile-commands-dir=$(WorkspacePath)";
     SetCommand(command);
     // Add support for the languages
     GetLangugaes().Add("c");

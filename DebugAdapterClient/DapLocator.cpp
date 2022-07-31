@@ -21,25 +21,6 @@ size_t DapLocator::Locate(std::vector<DapEntry>* entries)
 
 namespace
 {
-wxString command_grep(const std::vector<wxString>& cmd, const wxString& find_what)
-{
-    IProcess::Ptr_t proc(::CreateAsyncProcess(nullptr, cmd, IProcessCreateDefault | IProcessCreateSync));
-    if(!proc) {
-        return wxEmptyString;
-    }
-
-    wxString output;
-    proc->WaitForTerminate(output);
-    auto lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
-    for(wxString& line : lines) {
-        line.Trim();
-        if(line.Contains(find_what)) {
-            return line;
-        }
-    }
-    return wxEmptyString;
-}
-
 wxString wrap_string(const wxString& str)
 {
     wxString s = str;
@@ -100,7 +81,7 @@ void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
     paths.Add("/opt/homebrew/opt/llvm/bin");
 
     // query brew for lldb-vscode
-    wxString fullpath = command_grep({ "brew", "list", "llvm" }, "lldb-vscode");
+    wxString fullpath = ProcUtils::GrepCommandOutput({ "brew", "list", "llvm" }, "lldb-vscode");
     if(!fullpath.empty()) {
         paths.Add(wxFileName(fullpath).GetPath());
     }
@@ -147,7 +128,7 @@ void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
     }
 
     // we got pip
-    wxString line = command_grep({ path.GetFullPath(), "list" }, "debugpy");
+    wxString line = ProcUtils::GrepCommandOutput({ path.GetFullPath(), "list" }, "debugpy");
     if(line.empty())
         return;
 

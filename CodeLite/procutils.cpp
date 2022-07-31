@@ -614,3 +614,22 @@ wxString ProcUtils::SafeExecuteCommand(const wxString& command)
     }
     return strOut;
 }
+
+wxString ProcUtils::GrepCommandOutput(const std::vector<wxString>& cmd, const wxString& find_what)
+{
+    IProcess::Ptr_t proc(::CreateAsyncProcess(nullptr, cmd, IProcessCreateDefault | IProcessCreateSync));
+    if(!proc) {
+        return wxEmptyString;
+    }
+
+    wxString output;
+    proc->WaitForTerminate(output);
+    auto lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+    for(wxString& line : lines) {
+        line.Trim();
+        if(line.Contains(find_what)) {
+            return line;
+        }
+    }
+    return wxEmptyString;
+}

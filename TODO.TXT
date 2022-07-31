@@ -2,13 +2,12 @@ Debug Adapter Client
 ---
 
 - Add watches
+- Update wx-config to generate:
+    - -gdwarf-2
+    - remove `-mthreads` for non gcc compilers
 
 others:
 ----
 
 - fsw: add interperter entry
-
-Open Windows View:
----
-
-- Use different colour to mark modified editors
+- standard c++ project: remove the code completion page

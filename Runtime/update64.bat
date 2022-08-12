@@ -35,16 +35,12 @@ xcopy %RUNTIME_DIR%\*.html "%TARGET_DIR%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\codelite-bitmaps-dark.zip "%TARGET_DIR%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\codelite-bitmaps-light.zip "%TARGET_DIR%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\locale\* "%TARGET_DIR%\CodeLite\locale\" /E /I /H /Y /EXCLUDE:excludes
-xcopy %LIB_DIR%\libdatabaselayersqlite*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
-xcopy %LIB_DIR%\libwxshapeframework*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 IF EXIST %RUNTIME_DIR%\wxgui.zip ( copy wxgui.zip "%TARGET_DIR%\CodeLite\" )
 IF EXIST %RUNTIME_DIR%\PHP.zip ( copy PHP.zip "%TARGET_DIR%\CodeLite\" )
 xcopy %LIB_DIR%\*.dll "%TARGET_DIR%\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
 
 if "%WXWIN%" == "" GOTO OTHERS
-xcopy %WXWIN%\lib\gcc_x64_dll\wxmsw*u_*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
-xcopy %WXWIN%\lib\gcc_x64_dll\wxbase*u_*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
-:: xcopy %WXWIN%\lib\gcc_dll\wxrc.exe "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy %WXWIN%\lib\clang_x64_dll\wxmsw*u_*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
 if "%COPY_WXC_RESOURCES%" == "1" (copy ..\wxcrafter\wxcrafter.accelerators  "%TARGET_DIR%\CodeLite\plugins\resources" )
 

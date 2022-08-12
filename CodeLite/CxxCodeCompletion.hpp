@@ -105,7 +105,7 @@ public:
 
 class WXDLLIMPEXP_CL CxxCodeCompletion
 {
-    friend class TemplateManager;
+    friend struct TemplateManager;
 
 private:
     struct __local {

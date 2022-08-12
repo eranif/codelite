@@ -62,16 +62,14 @@
     <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SDK">
-    <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
     <Project Name="hunspell" Path="SpellChecker/hunspell/hunspell.project" Active="No"/>
     <Project Name="Interfaces" Path="Interfaces/Interfaces.project" Active="No"/>
     <Project Name="libCodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
     <Project Name="PCH" Path="PCH/PCH.project" Active="No"/>
     <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
     <Project Name="sqlite3" Path="sqlite3/sqlite3.project" Active="No"/>
-    <Project Name="wxshapeframework" Path="sdk/wxshapeframework/wxshapeframework.project" Active="No"/>
     <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
-    <Project Name="dapcxx" Path="wxdap/dap/dapcxx.project"/>
+    <Project Name="dapcxx" Path="wxdap/dap/dapcxx.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UnitTests">
     <VirtualDirectory Name="PHP">
@@ -111,7 +109,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Cscope" ConfigName="Win_x86_Release"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
       <Project Name="DatabaseExplorer" ConfigName="Win_x86_Release"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x86_Release"/>
       <Project Name="DebuggerGDB" ConfigName="Win_x86_Release"/>
       <Project Name="Docker" ConfigName="Win_x86_Release"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x86_Release"/>
@@ -151,7 +148,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxcLib" ConfigName="Release"/>
       <Project Name="wxcrafter" ConfigName="Win_x86_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_launcher" ConfigName="Win_x86_Release"/>
@@ -174,7 +170,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
       <Project Name="WordCompletion" ConfigName="ReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="Win_x86_Release"/>
@@ -202,7 +197,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="git" ConfigName="DebugUnicode"/>
       <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
-      <Project Name="databaselayer_sqlite" ConfigName="DebugUnicode"/>
       <Project Name="DatabaseExplorer" ConfigName="DebugUnicode"/>
       <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
       <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
@@ -294,7 +288,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x86_Release"/>
       <Project Name="git" ConfigName="Win_x86_Release"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="libCodeLite" ConfigName="CMake_Debug"/>
@@ -304,7 +297,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
       <Project Name="wxcLib" ConfigName="Release"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="EOSWiki" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_launcher" ConfigName="Debug"/>
@@ -327,7 +319,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
       <Project Name="UnitTestPP" ConfigName="Win_x86_Release"/>
       <Project Name="Subversion2" ConfigName="Win_x86_Release"/>
@@ -345,7 +336,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="git" ConfigName="DebugUnicode"/>
       <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
-      <Project Name="databaselayer_sqlite" ConfigName="DebugUnicode"/>
       <Project Name="DatabaseExplorer" ConfigName="DebugUnicode"/>
       <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
       <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
@@ -404,7 +394,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
       <Project Name="UnitTestPP" ConfigName="Win_x86_Release"/>
       <Project Name="Tweaks" ConfigName="DebugUnicode"/>
@@ -423,7 +412,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="git" ConfigName="DebugUnicode"/>
       <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
-      <Project Name="databaselayer_sqlite" ConfigName="DebugUnicode"/>
       <Project Name="DatabaseExplorer" ConfigName="DebugUnicode"/>
       <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
       <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
@@ -479,9 +467,10 @@ WXCFG=gcc_dll\mswu</Environment>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release">
       <Environment>WXWIN=C:/msys64/home/eran/root
-WXCFG=gcc_x64_dll/mswu&#xD;
+WXCFG=clang_x64_dll/mswu&#xD;
 SSH_HOME=C:/msys64/home/eran/root&#xD;
-MINGW64_HOME=C:/msys64/mingw64</Environment>
+MINGW64_HOME=C:/msys64/mingw64&#xD;
+CXXFLAGS=$(CXXFLAGS) -Wno-overloaded-virtual $(Preprocessors)</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
@@ -506,7 +495,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="ctagsdlib" ConfigName="Release"/>
       <Project Name="dapcxx" ConfigName="Release"/>
       <Project Name="DatabaseExplorer" ConfigName="Win_x64_Release"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Release"/>
       <Project Name="DebuggerGDB" ConfigName="Win_x64_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Release"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Release"/>
@@ -548,7 +536,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="wxcLib" ConfigName="Win_x64_Release"/>
       <Project Name="wxcrafter" ConfigName="Win_x64_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
@@ -581,7 +568,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
       <Project Name="dapcxx" ConfigName="Debug"/>
       <Project Name="DatabaseExplorer" ConfigName="Win_x64_Debug"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Debug"/>
       <Project Name="DebuggerGDB" ConfigName="Win_x64_Debug"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
@@ -623,7 +609,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="wxcLib" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="Win_x64_Debug"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Debug"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
@@ -672,7 +657,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Release"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Release"/>
       <Project Name="git" ConfigName="Win_x64_Release"/>
       <Project Name="hunspell" ConfigName="Win_x64_Release"/>
       <Project Name="libCodeLite" ConfigName="Win_x64_Release"/>
@@ -680,7 +664,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="snipwiz" ConfigName="Win_x64_Release"/>
       <Project Name="sqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
@@ -748,7 +731,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Release"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Release"/>
       <Project Name="git" ConfigName="Win_x64_Release"/>
       <Project Name="hunspell" ConfigName="Win_x64_Release"/>
       <Project Name="libCodeLite" ConfigName="Win_x64_Release"/>
@@ -756,7 +738,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="snipwiz" ConfigName="Win_x64_Release"/>
       <Project Name="sqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
@@ -824,7 +805,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Release"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Release"/>
       <Project Name="git" ConfigName="Win_x64_Release"/>
       <Project Name="hunspell" ConfigName="Win_x64_Release"/>
       <Project Name="libCodeLite" ConfigName="Win_x64_Release"/>
@@ -832,7 +812,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="snipwiz" ConfigName="Win_x64_Release"/>
       <Project Name="sqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
@@ -904,7 +883,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Debug"/>
       <Project Name="git" ConfigName="Win_x64_Debug"/>
       <Project Name="hunspell" ConfigName="Win_x64_Debug"/>
       <Project Name="libCodeLite" ConfigName="Win_x64_Debug"/>
@@ -912,7 +890,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="snipwiz" ConfigName="Win_x64_Debug"/>
       <Project Name="sqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Debug"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>

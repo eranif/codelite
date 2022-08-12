@@ -11,9 +11,7 @@ aaaaa ICON "res/codelite-logo.ico"
 
 // this is not always needed but doesn't hurt (except making the executable
 // very slightly larger): this file contains the standard icons, cursors, ...
-#if !defined(__llvm__)
 #include "wx/msw/wx.rc"
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Version information

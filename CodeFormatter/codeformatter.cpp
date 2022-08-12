@@ -25,6 +25,7 @@
 #include "codeformatter.h"
 
 #include "JSON.h"
+#include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clEditorConfig.h"
 #include "clEditorStateLocker.h"
@@ -69,8 +70,7 @@ FormatOptions CodeFormatter::m_options;
         continue;                       \
     }
 
-extern "C" char* STDCALL AStyleMain(const char* pSourceIn, const char* pOptions,
-                                    void(STDCALL* fpError)(int, const char*), char*(STDCALL* fpAlloc)(unsigned long));
+#include "astyle_main.h"
 
 //------------------------------------------------------------------------
 // Astyle functions required by AStyleLib
@@ -578,17 +578,20 @@ void CodeFormatter::DoFormatWithAstyle(wxString& content, const bool& appendEOL)
     int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
     options << (useTabs && tabWidth == indentWidth ? " -t" : " -s") << indentWidth;
 
-    char* textOut = AStyleMain(_C(content), _C(options), ASErrorHandler, ASMemoryAlloc);
+    auto c_content = StringUtils::ToStdString(content);
+    auto c_options = StringUtils::ToStdString(options);
+
+    char* textOut = AStyleMain((const char*)c_content.c_str(), (const char*)c_options.c_str());
     content.clear();
     if(textOut) {
         content = _U(textOut);
         content.Trim();
-        delete[] textOut;
-    }
-    if(content.IsEmpty() || !appendEOL) {
-        return;
+        free(textOut);
     }
 
+    if(content.empty() || !appendEOL) {
+        return;
+    }
     content << DoGetGlobalEOLString();
 }
 

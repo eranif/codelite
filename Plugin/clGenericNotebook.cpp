@@ -1,11 +1,20 @@
 #include "clGenericNotebook.hpp"
 
+#include "ColoursAndFontsManager.h"
 #include "JSON.h"
 #include "clColours.h"
 #include "clSystemSettings.h"
 #include "clTabRendererMinimal.hpp"
+#include "cl_command_event.h"
 #include "codelite_events.h"
+#include "drawingutils.h"
+#include "editor_config.h"
 #include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "imanager.h"
+#include "lexer_configuration.h"
+#include "wxStringHash.h"
 
 #include <algorithm>
 #include <wx/app.h>
@@ -19,24 +28,6 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
-
-#if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
-#define CL_BUILD 1
-#endif
-
-#if CL_BUILD
-#include "ColoursAndFontsManager.h"
-#include "cl_command_event.h"
-#include "codelite_events.h"
-#include "drawingutils.h"
-#include "editor_config.h"
-#include "event_notifier.h"
-#include "file_logger.h"
-#include "globals.h"
-#include "imanager.h"
-#include "lexer_configuration.h"
-#endif
-#include "wxStringHash.h"
 
 namespace
 {

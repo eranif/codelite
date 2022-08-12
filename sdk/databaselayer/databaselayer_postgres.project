@@ -67,7 +67,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="DebugUnicode" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags  --unicode=yes);" C_Options="-g;$(shell wx-config --cxxflags  --unicode=yes);" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-gdwarf-2;-fstandalone-debug;$(shell wx-config --cxxflags  --unicode=yes);" C_Options="-gdwarf-2;-fstandalone-debug;$(shell wx-config --cxxflags  --unicode=yes);" Required="yes" PreCompiledHeader="">
         <IncludePath Value="include/wx/dblayer/include"/>
         <Preprocessor Value="WXMAKINGDLL_DATABASELAYER"/>
       </Compiler>
@@ -127,7 +127,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes );-g" C_Options="$(shell wx-config --cxxflags --unicode=yes );-g" Required="yes" PreCompiledHeader="">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes );-gdwarf-2;-fstandalone-debug" C_Options="$(shell wx-config --cxxflags --unicode=yes );-gdwarf-2;-fstandalone-debug" Required="yes" PreCompiledHeader="">
         <IncludePath Value="include/wx/dblayer/include"/>
         <Preprocessor Value="WXMAKINGDLL_DATABASELAYER"/>
       </Compiler>
@@ -159,7 +159,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebug_29" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes );-g" C_Options="$(shell wx-config --cxxflags --unicode=yes );-g" Required="yes" PreCompiledHeader="">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes );-gdwarf-2;-fstandalone-debug" C_Options="$(shell wx-config --cxxflags --unicode=yes );-gdwarf-2;-fstandalone-debug" Required="yes" PreCompiledHeader="">
         <IncludePath Value="include/wx/dblayer/include"/>
         <Preprocessor Value="WXMAKINGDLL_DATABASELAYER"/>
       </Compiler>

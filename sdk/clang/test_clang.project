@@ -16,7 +16,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-gdwarf-2;-fstandalone-debug" C_Options="-gdwarf-2;-fstandalone-debug" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="include"/>
       </Compiler>
       <Linker Options="" Required="yes">
@@ -57,7 +57,7 @@ LIBCLANG_TIMING=1
       </Completion>
     </Configuration>
     <Configuration Name="Linux_32" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-gdwarf-2;-fstandalone-debug" C_Options="-gdwarf-2;-fstandalone-debug" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="include"/>
       </Compiler>
       <Linker Options="" Required="yes">
@@ -100,7 +100,7 @@ LD_LIBRARY_PATH=/usr/lib/codelite;$(LD_LIBRARY_PATH)
       </Completion>
     </Configuration>
     <Configuration Name="Linux_64" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-gdwarf-2;-fstandalone-debug" C_Options="-gdwarf-2;-fstandalone-debug" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="include"/>
       </Compiler>
       <Linker Options="" Required="yes">

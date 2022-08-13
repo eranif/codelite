@@ -28,11 +28,6 @@ Visit the [microsoft implementation page][2] to see the full list.
 
 A wrapper for the `lldb` debugger that implements the Debug Adapter Protocol
 
-=== "Windows"
-    - Setup a [MSYS2 working environment][3]
-    - Open `MSYS2` terminal and type: `pacman -S mingw-w64-clang-x86_64-toolchain`
-    - You should now have `lldb-vscode` installed under `/clang64/bin/lldb-vsocde`
-
 === "Linux"
 
     Most linux distros offer `lldb-vscode` in their repository. For example, in `Ubuntu 20.04`
@@ -45,6 +40,17 @@ A wrapper for the `lldb` debugger that implements the Debug Adapter Protocol
     `lldb-vscode` is installed using `brew`:
 
     `brew install llvm`
+
+=== "Windows"
+    - Setup a [MSYS2 working environment][3]
+    - Open `MSYS2` terminal and type:
+
+    ```
+    pacman -Sy  mingw-w64-clang-x86_64-toolchain \
+                mingw-w64-clang-x86_64-python3 \
+                mingw-w64-clang-x86_64-libffi
+    ```
+    - You should now have `lldb-vscode` installed under `/clang64/bin/lldb-vsocde`
 
 ----
 

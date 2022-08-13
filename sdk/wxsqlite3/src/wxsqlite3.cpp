@@ -10,6 +10,10 @@
 
 /// \file wxsqlite3.cpp Implementation of the wxSQLite3 class
 
+#if defined(__GNUG__) && !defined(__APPLE__) && !defined(_WIN32)
+#pragma implementation "wxsqlite3.h"
+#endif
+
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 

@@ -16,7 +16,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O0;-Wall;$(shell wx-config --cflags);-gdwarf-2;-fstandalone-debug" C_Options="-gdwarf-2;-fstandalone-debug;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-O0;-Wall;$(shell wx-config --cflags);-g;-fstandalone-debug" C_Options="-g;-fstandalone-debug;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../Plugin"/>

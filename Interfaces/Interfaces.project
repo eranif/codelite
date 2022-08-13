@@ -53,7 +53,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Common" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug" C_Options="-gdwarf-2;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-fstandalone-debug" C_Options="-g;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="-O0" Required="yes">
@@ -95,7 +95,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug" C_Options="-gdwarf-2;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-fstandalone-debug" C_Options="-g;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="-O0" Required="yes">
@@ -137,7 +137,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug;`wx-config --cflags`" C_Options="-gdwarf-2;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-fstandalone-debug;`wx-config --cflags`" C_Options="-g;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
       </Compiler>

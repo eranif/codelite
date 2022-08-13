@@ -16,7 +16,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug" C_Options="-gdwarf-2;-fstandalone-debug" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-g;-fstandalone-debug" C_Options="-g;-fstandalone-debug" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="" Required="yes"/>

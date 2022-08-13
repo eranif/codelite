@@ -52,7 +52,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="MinGW 4.8.1 - Single Job" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cflags)" C_Options="-gdwarf-2;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cflags)" C_Options="-g;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <IncludePath Value="../../../CodeLite"/>
         <Preprocessor Value="WXMAKINGDLL_CL"/>

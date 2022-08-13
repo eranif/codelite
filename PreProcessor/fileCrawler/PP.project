@@ -25,7 +25,7 @@
   <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cflags --unicode=yes --debug=no);-gdwarf-2;-fstandalone-debug" Required="yes" PreCompiledHeader="">
+      <Compiler Options="$(shell wx-config --cflags --unicode=yes --debug=no);-g;-fstandalone-debug" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs --unicode=yes --debug=no)" Required="yes"/>

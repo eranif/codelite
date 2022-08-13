@@ -51,7 +51,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags)  " C_Options="-gdwarf-2;-fstandalone-debug;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags)  " C_Options="-g;-fstandalone-debug;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs) " Required="yes"/>
@@ -92,7 +92,7 @@ $(WorkspacePath)/../CodeLite/SocketAPI</SearchPaths>
       </Completion>
     </Configuration>
     <Configuration Name="Debug_Windows" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug -Wall;$(shell wx-config --cflags )" C_Options="-gdwarf-2;-fstandalone-debug -Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-fstandalone-debug -Wall;$(shell wx-config --cflags )" C_Options="-g;-fstandalone-debug -Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>

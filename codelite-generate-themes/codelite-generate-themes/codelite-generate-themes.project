@@ -35,7 +35,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes  )" C_Options="-gdwarf-2;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes  )" Assembler="" Required="yes" PreCompiledHeader="my_pch.hpp" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-g;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes  )" C_Options="-g;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes  )" Assembler="" Required="yes" PreCompiledHeader="my_pch.hpp" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="$(CL_HOME)\Plugin"/>
         <IncludePath Value="$(CL_HOME)\\CodeLite"/>
       </Compiler>
@@ -80,7 +80,7 @@ PATH=$(CL_HOME)\build-Win_x64_Debug\lib;$PATH]]>
       </Completion>
     </Configuration>
     <Configuration Name="Debug_Linux" CompilerType="GCC-10" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-gdwarf-2;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes  );`pkg-config  --cflags gtk+-3.0`" C_Options="" Assembler="" Required="yes" PreCompiledHeader="my_pch.hpp" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-g;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes  );`pkg-config  --cflags gtk+-3.0`" C_Options="" Assembler="" Required="yes" PreCompiledHeader="my_pch.hpp" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="../../Plugin"/>
         <IncludePath Value="../../CodeLite"/>
       </Compiler>

@@ -17,13 +17,17 @@ pacman -Sy mingw-w64-x86_64-toolchain           \
            mingw64/mingw-w64-x86_64-python      \
            git                                  \
            openssh                              \
+           mingw-w64-clang-x86_64-toolchain     \
+           mingw-w64-clang-x86_64-python3       \
+           mingw-w64-clang-x86_64-libffi        \
            unzip
 ```
 
-- Next, still in the `MSYS2` terminal, Add the `/mingw64/bin` to your `~/.bashrc` and `source` it:
+- Next, still in the `MSYS2` terminal, Add the `/mingw64/bin` & `/clang64/bin` to your `~/.bashrc` and `source` it:
 
 ```bash
-echo "export PATH=/mingw64/bin:\$PATH" >> ~/.bashrc
+echo 'export PATH=/mingw64/bin:$PATH' >> ~/.bashrc
+echo 'export PATH=/clang64/bin:$PATH' >> ~/.bashrc
 . ~/.bashrc
 ```
 

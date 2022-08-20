@@ -81,7 +81,7 @@ void BreakpointsHelper::OnToggleBreakpoint(clDebugEvent& event)
 {
     // this instance only exists while an active debug session is running
     // during such a session, we capture all the UI breakpoints adding/deleting
-    event.Skip(false);
+    event.Skip();
     LOG_DEBUG(LOG) << "Toggle breakpoint called for:" << event.GetFileName() << ":" << event.GetLineNumber() << endl;
     if(m_ui_breakpoints.count(event.GetFileName()) == 0) {
         m_ui_breakpoints.insert({ event.GetFileName(), {} });

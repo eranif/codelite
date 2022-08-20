@@ -544,7 +544,7 @@ CXXFLAGS=$(CXXFLAGS) -Wno-overloaded-virtual $(Preprocessors)</Environment>
 WXCFG=clang_x64_dll/mswu&#xD;
 SSH_HOME=C:/msys64/home/eran/root&#xD;
 MINGW64_HOME=C:/msys64/mingw64&#xD;
-CXXFLAGS=$(CXXFLAGS) -Wno-overloaded-virtual $(Preprocessors)</Environment>
+CXXFLAGS=$(CXXFLAGS) -Wno-overloaded-virtual -Wno-unused-private-field $(Preprocessors)</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>

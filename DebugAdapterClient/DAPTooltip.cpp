@@ -1,5 +1,6 @@
 #include "DAPTooltip.hpp"
 
+#include "DAPVariableListCtrl.hpp"
 #include "clResizableTooltip.h" // wxEVT_TOOLTIP_DESTROY
 #include "clSystemSettings.h"
 #include "drawingutils.h"
@@ -10,129 +11,31 @@
 #include <wx/dcclient.h>
 #include <wx/sizer.h>
 
-#if defined(__WXMSW__) || defined(__WXMAC__)
-#define BORDER_STYLE wxBORDER_SIMPLE
-#else
-#define BORDER_STYLE wxBORDER_THEME
-#endif
-
 DAPTooltip::DAPTooltip(dap::Client* client, const wxString& expression, const wxString& result, const wxString& type,
                        int variableReference)
     : wxPopupWindow(EventNotifier::Get()->TopFrame())
     , m_client(client)
 {
+    // set a reasonable size for the tooltip
     wxClientDC dc(this);
     dc.SetFont(DrawingUtils::GetDefaultGuiFont());
     wxSize sz = dc.GetTextExtent("Tp");
-    sz.SetWidth(sz.GetWidth() * 50);   // 50 chars width
-    sz.SetHeight(sz.GetHeight() * 15); // 10 lines
+    sz.SetWidth(sz.GetWidth() * 80);   // 50 chars width
+    sz.SetHeight(sz.GetHeight() * 20); // 10 lines
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_ctrl = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, sz, BORDER_STYLE);
-    GetSizer()->Add(m_ctrl, 1, wxEXPAND);
-
-    m_ctrl->AddHeader(_("Result"));
-    m_ctrl->AddHeader(_("Type"));
-    m_ctrl->SetShowHeader(false);
-
-    wxString root_text;
-    root_text << expression << " = " << result;
-    auto root = m_ctrl->AddRoot(root_text, -1, -1, new TooltipItemData(variableReference, result));
-    m_ctrl->SetItemText(root, type, 1);
-    m_ctrl->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPTooltip::OnItemExpanding, this);
-    m_ctrl->Bind(wxEVT_KEY_DOWN, &DAPTooltip::OnKeyDown, this);
-    m_ctrl->Bind(wxEVT_TREE_ITEM_MENU, &DAPTooltip::OnMenu, this);
-
-    if(variableReference > 0) {
-        // we have children
-        m_ctrl->AppendItem(m_ctrl->GetRootItem(), "<dummy>");
-    }
+    m_list = new DAPVariableListCtrl(this, client, dap::EvaluateContext::HOVER, wxID_ANY, wxDefaultPosition, sz);
+    GetSizer()->Add(m_list, 1, wxEXPAND);
+    m_list->AddWatch(expression, result, type, variableReference);
+    m_list->Bind(wxEVT_KEY_DOWN, &DAPTooltip::OnKeyDown, this);
     GetSizer()->Fit(this);
-    m_ctrl->CallAfter(&clThemedTreeCtrl::SelectItem, m_ctrl->GetRootItem(), true);
 }
 
 DAPTooltip::~DAPTooltip() {}
 
-void DAPTooltip::OnMenu(wxTreeEvent& event)
-{
-    auto item = event.GetItem();
-    CHECK_ITEM_RET(item);
-
-    wxMenu menu;
-    menu.Append(XRCID("dap_copy_var_value"), _("Copy"));
-    menu.Bind(
-        wxEVT_MENU,
-        [this, item](wxCommandEvent& e) {
-            wxUnusedVar(e);
-            auto cd = GetItemData(item);
-            CHECK_PTR_RET(cd);
-            ::CopyToClipboard(cd->value);
-        },
-        XRCID("dap_copy_var_value"));
-    m_ctrl->PopupMenu(&menu);
-}
-
-void DAPTooltip::OnItemExpanding(wxTreeEvent& event)
-{
-    event.Skip();
-    auto item = event.GetItem();
-    CHECK_ITEM_RET(item);
-    CHECK_COND_RET(m_ctrl->ItemHasChildren(item));
-
-    wxTreeItemIdValue cookie;
-    auto child = m_ctrl->GetFirstChild(item, cookie);
-    CHECK_ITEM_RET(child);
-
-    wxString text = m_ctrl->GetItemText(child);
-    if(text != "<dummy>") {
-        // already evaluated
-        return;
-    }
-
-    // remove the fake children
-    m_ctrl->DeleteChildren(item);
-
-    auto cd = GetItemData(item);
-    CHECK_COND_RET(cd->refId != wxNOT_FOUND);
-
-    m_client->GetChildrenVariables(cd->refId, dap::EvaluateContext::HOVER);
-    m_pending_items.insert({ cd->refId, item });
-}
-
-TooltipItemData* DAPTooltip::GetItemData(const wxTreeItemId& item)
-{
-    if(!item) {
-        return nullptr;
-    }
-
-    auto ptr = m_ctrl->GetItemData(item);
-    CHECK_PTR_RET_NULL(ptr);
-
-    return dynamic_cast<TooltipItemData*>(ptr);
-}
-
 void DAPTooltip::UpdateChildren(int varId, dap::VariablesResponse* response)
 {
-    if(m_pending_items.count(varId) == 0) {
-        return;
-    }
-
-    wxTreeItemId item = m_pending_items[varId];
-    m_pending_items.erase(varId);
-
-    // update the tree
-    for(auto var : response->variables) {
-        wxString display_text;
-        display_text << var.name << " = " << var.value;
-        auto child =
-            m_ctrl->AppendItem(item, display_text, -1, -1, new TooltipItemData(var.variablesReference, var.value));
-        m_ctrl->SetItemText(child, var.type, 1);
-
-        if(var.variablesReference > 0) {
-            m_ctrl->AppendItem(child, "<dummy>");
-        }
-    }
-    m_ctrl->Expand(item);
+    m_list->UpdateChildren(varId, response);
 }
 
 void DAPTooltip::OnKeyDown(wxKeyEvent& event)

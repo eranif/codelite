@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "project_settings_dlg.h"
+
 #include "AddOptionsDialog.h"
 #include "addoptioncheckdlg.h"
 #include "build_settings_config.h"
@@ -41,10 +43,8 @@
 #include "plugin.h"
 #include "pluginmanager.h"
 #include "precompiled_header.h"
-#include "project_settings_dlg.h"
 #include "ps_build_events_page.h"
 #include "ps_compiler_page.h"
-#include "ps_completion_page.h"
 #include "ps_custom_build_page.h"
 #include "ps_custom_makefile_rules_page.h"
 #include "ps_debugger_page.h"
@@ -117,7 +117,7 @@ void ProjectSettingsDlg::BuildTree()
     m_treebook->AddSubPage(new PSCustomBuildPage(m_treebook, m_projectName, this), _("Custom Build"));
     m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this), _("Custom Makefile Rules"));
 
-    m_treebook->AddPage(new PSCompletionPage(m_treebook, this), _("Code Completion"));
+    /*m_treebook->AddPage(new PSCompletionPage(m_treebook, this), _("Code Completion"));*/
     m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this, gp), _("Global Settings"));
 }
 
@@ -391,7 +391,7 @@ void ProjectSettingsDlg::OnPageChanged(wxTreebookEvent& event)
 
         if(!page || dynamic_cast<PSCustomBuildPage*>(page) || dynamic_cast<PSGeneralPage*>(page) ||
            dynamic_cast<PSBuildEventsPage*>(page) || dynamic_cast<PSEnvironmentPage*>(page) ||
-           dynamic_cast<PSDebuggerPage*>(page) || dynamic_cast<PSCompletionPage*>(page)) {
+           dynamic_cast<PSDebuggerPage*>(page) /* || dynamic_cast<PSCompletionPage*>(page)*/) {
             ShowCustomProjectMessage(false);
 
         } else {

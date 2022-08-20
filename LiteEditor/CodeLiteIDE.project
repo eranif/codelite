@@ -338,8 +338,6 @@
       <File Name="ps_resources_page.cpp"/>
       <File Name="ps_build_events_page.cpp"/>
       <File Name="ps_build_events_page.h"/>
-      <File Name="ps_completion_page.cpp"/>
-      <File Name="ps_completion_page.h"/>
       <File Name="ProjectCustomBuildTragetDlg.h"/>
       <File Name="ProjectCustomBuildTragetDlg.cpp"/>
     </VirtualDirectory>

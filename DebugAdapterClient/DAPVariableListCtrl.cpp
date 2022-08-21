@@ -3,6 +3,8 @@
 #include "globals.h"
 #include "macros.h"
 
+#include <wx/xrc/xmlres.h>
+
 #if defined(__WXMSW__) || defined(__WXMAC__)
 #define BORDER_STYLE wxBORDER_SIMPLE
 #else

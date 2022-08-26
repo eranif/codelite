@@ -1,7 +1,8 @@
 Debug Adapter Client
 ---
 
-- Add watches
+- support attach to process
+- supprot debugging core
 
 others:
 ----

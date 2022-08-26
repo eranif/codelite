@@ -116,4 +116,17 @@ public:
     virtual ~DAPTextViewBase();
 };
 
+class DAPWatchesViewBase : public wxPanel
+{
+protected:
+    clToolBar* m_toolbar;
+
+protected:
+public:
+    clToolBar* GetToolbar() { return m_toolbar; }
+    DAPWatchesViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    virtual ~DAPWatchesViewBase();
+};
+
 #endif

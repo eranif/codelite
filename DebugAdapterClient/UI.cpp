@@ -241,3 +241,32 @@ DAPTextViewBase::DAPTextViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
 }
 
 DAPTextViewBase::~DAPTextViewBase() {}
+
+DAPWatchesViewBase::DAPWatchesViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                       long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer275 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer275);
+
+    m_toolbar =
+        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer275->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    SetName(wxT("DAPWatchesViewBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+}
+
+DAPWatchesViewBase::~DAPWatchesViewBase() {}

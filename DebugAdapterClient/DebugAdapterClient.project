@@ -75,6 +75,8 @@
       <File Name="DebugAdapterClient.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="UI">
+      <File Name="DAPWatchesView.cpp"/>
+      <File Name="DAPWatchesView.h"/>
       <File Name="DAPVariableListCtrl.cpp"/>
       <File Name="DAPVariableListCtrl.hpp"/>
       <File Name="DAPOutputPane.cpp"/>

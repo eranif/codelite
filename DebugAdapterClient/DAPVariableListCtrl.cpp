@@ -13,7 +13,7 @@
 
 DAPVariableListCtrl::DAPVariableListCtrl(wxWindow* parent, dap::Client* client, dap::EvaluateContext dapContext,
                                          wxWindowID id, const wxPoint& pos, const wxSize& size)
-    : clThemedTreeCtrl(parent, id, pos, size, BORDER_STYLE | wxTR_HIDE_ROOT)
+    : clThemedTreeCtrl(parent, id, pos, size, BORDER_STYLE | wxTR_HIDE_ROOT | wxTR_MULTIPLE)
     , m_client(client)
     , m_dapContext(dapContext)
 {

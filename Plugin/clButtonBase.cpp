@@ -24,7 +24,7 @@
 #if defined(__WXMSW__) || defined(__WXGTK__)
 #define BUTTON_RADIUS 0.0
 #else
-#define BUTTON_RADIUS 3.0
+#define BUTTON_RADIUS 0.0
 #endif
 
 #if defined(__WXMSW__) || defined(__WXMAC__)

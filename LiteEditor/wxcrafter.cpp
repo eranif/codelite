@@ -222,7 +222,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_staticText0 = new wxStaticText(m_listPage, wxID_ANY, _("Recently opened workspaces"), wxDefaultPosition,
                                      wxDLG_UNIT(m_listPage, wxSize(-1, -1)), 0);
 
-    boxSizer666->Add(m_staticText0, 0, wxBOTTOM, WXC_FROM_DIP(5));
+    boxSizer666->Add(m_staticText0, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
     m_dvTreeCtrlWorkspaces =
         new clThemedTreeCtrl(m_listPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_listPage, wxSize(-1, 200)),

@@ -362,7 +362,7 @@ void Manager::CreateWorkspace(const wxString& name, const wxString& path)
 {
 
     // make sure that the workspace pane is visible
-    ShowWorkspacePane(clMainFrame::Get()->GetWorkspaceTab()->GetCaption());
+    //ShowWorkspacePane(clMainFrame::Get()->GetWorkspaceTab()->GetCaption());
 
     wxString errMsg;
     bool res = clCxxWorkspaceST::Get()->CreateWorkspace(name, path, errMsg);

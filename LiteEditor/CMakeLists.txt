@@ -228,8 +228,7 @@ if(NOT APPLE)
 
         file(GLOB wxfilepaths ${WX_LIBS_ALL})
         file(GLOB libssh_lib_list "${LIBSSH_LIB}*")
-        message("-- will copy ${libssh_lib_list}")
-        install(FILES ${wxfilepaths} ${libssh_lib_list} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
+        install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
     endif()
 
     if ( USE_CLANG AND MINGW )
@@ -239,11 +238,11 @@ else() # !APPLE
     install(TARGETS codelite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS PERMISSIONS ${EXE_PERM})
     CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite)
     install(FILES ${CL_SRC_ROOT}/Runtime/OpenTerm DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport PERMISSIONS ${EXE_PERM})
-    
-    install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png 
+
+    install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/images)
 
-    install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png 
+    install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/images
             RENAME splashscreen.png)
 

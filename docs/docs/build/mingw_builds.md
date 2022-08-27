@@ -26,10 +26,14 @@ pacman -Sy mingw-w64-x86_64-toolchain           \
 - Next, still in the `MSYS2` terminal, Add the `/mingw64/bin` & `/clang64/bin` to your `~/.bashrc` and `source` it:
 
 ```bash
-echo 'export PATH=/mingw64/bin:$PATH' >> ~/.bashrc
-echo 'export PATH=/clang64/bin:$PATH' >> ~/.bashrc
-. ~/.bashrc
+echo 'export PATH=/mingw64/bin:$PATH' >> ~/.$(basename $SHELL)rc
+echo 'export PATH=/clang64/bin:$PATH' >> ~/.$(basename $SHELL)rc
+. ~/.$(basename $SHELL)rc
 ```
+
+!!! IMPORTANT
+    `/clang64/bin` MUST come before `/mingw64/bin` in the `$PATH` environment variable
+    This to make sure that CodeLite is built with `/clang64/bin/clang++`
 
 - If you choose to work with `CMD`, create a script with the following content, name it `MinGW.bat` and place it on your desktop:
 

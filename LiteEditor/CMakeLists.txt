@@ -227,7 +227,6 @@ if(NOT APPLE)
         endforeach()
 
         file(GLOB wxfilepaths ${WX_LIBS_ALL})
-        file(GLOB libssh_lib_list "${LIBSSH_LIB}*")
         install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
     endif()
 

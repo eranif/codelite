@@ -4988,21 +4988,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
     // Set the manager flags
-    unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING;
-
-    int dockingStyle = EditorConfigST::Get()->GetOptions()->GetDockingStyle();
-    switch(dockingStyle) {
-    case 0: // Transparent hint
-        auiMgrFlags |= wxAUI_MGR_TRANSPARENT_HINT;
-        break;
-    case 1: // Rectangle
-        auiMgrFlags |= wxAUI_MGR_RECTANGLE_HINT;
-        break;
-    case 2: // Venetians blinds hint
-        auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
-        break;
-    }
-    auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
+    unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_LIVE_RESIZE;
     m_mgr.SetFlags(auiMgrFlags);
 }
 

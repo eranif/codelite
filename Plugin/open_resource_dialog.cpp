@@ -149,6 +149,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_checkBoxFiles->SetValue(showFiles);
     m_checkBoxShowSymbols->SetValue(showSymbols);
     ::clSetDialogBestSizeAndPosition(this);
+    CenterOnParent();
 }
 
 OpenResourceDialog::~OpenResourceDialog()

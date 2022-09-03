@@ -23,6 +23,7 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
     : LSPOutlineViewDlgBase(parent)
 {
     clSetDialogBestSizeAndPosition(this);
+    CenterOnParent();
     DoInitialise();
 }
 

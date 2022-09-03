@@ -25,7 +25,7 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("placeholder"));
     m_dvListCtrl->SetBitmaps(&m_bitmaps);
     ::clSetDialogBestSizeAndPosition(this);
-    CenterOnScreen();
+    CenterOnParent();
 }
 
 GotoAnythingDlg::~GotoAnythingDlg()

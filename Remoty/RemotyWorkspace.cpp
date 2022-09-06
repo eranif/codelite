@@ -46,8 +46,9 @@
 
 namespace
 {
-static const char* CONTEXT_BUILDER = "builder";
-static const char* CONTEXT_FINDER = "finder";
+const char* CONTEXT_FINDER = "finder";
+const char* CONTEXT_BUILDER = "builder";
+constexpr int MAX_LOAD_WORKSPACE_RETRIES = 3;
 
 const wxString DEFAULT_CODELITE_REMOTE_JSON = R"EOF({
  "Language Server Plugin": {
@@ -511,22 +512,32 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     // Load the account
     auto ssh_account = SSHAccountInfo::LoadAccount(account);
 
-    if(ssh_account.GetAccountName().IsEmpty()) {
+    if(ssh_account.GetAccountName().empty()) {
         ::wxMessageBox(_("Could not find a matching SSH account to load the workspace!"), "CodeLite",
                        wxICON_ERROR | wxCENTER);
         return;
     }
 
     wxBusyCursor bc;
-    // first: attempt to download the workspace file and store it locally
-    auto localFile = clSFTPManager::Get().Download(file_path, account);
-    if(!localFile.IsOk()) {
-        ::wxMessageBox(_("Failed to download remote workspace file!\n") + clSFTPManager::Get().GetLastError(),
-                       "CodeLite", wxICON_ERROR | wxCENTER);
-        return;
+    wxFileName localFile;
+    for(size_t i = 0; i < MAX_LOAD_WORKSPACE_RETRIES; ++i) {
+        // first: attempt to download the workspace file and store it locally
+        localFile = clSFTPManager::Get().Download(file_path, account);
+        if(localFile.IsOk()) {
+            break;
+        }
+
+        // check if we can do another retry
+        if((i + 1) >= MAX_LOAD_WORKSPACE_RETRIES) {
+            // retries exhausted
+            ::wxMessageBox(_("Failed to download remote workspace file!\n") + clSFTPManager::Get().GetLastError(),
+                           "CodeLite", wxICON_ERROR | wxCENTER);
+            return;
+        }
+        clGetManager()->SetStatusMessage(_("Retrying to load workspace..."));
     }
 
-    wxFileName userSettings(clStandardPaths::Get().GetUserDataDir(), localFile.GetFullName());
+    wxFileName userSettings{ clStandardPaths::Get().GetUserDataDir(), localFile.GetFullName() };
     userSettings.AppendDir("Remoty");
     userSettings.AppendDir("LocalWorkspaces");
     userSettings.Mkdir(wxPATH_MKDIR_FULL);

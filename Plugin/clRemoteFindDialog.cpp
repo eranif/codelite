@@ -8,13 +8,15 @@
 #include "wx/arrstr.h"
 #include "wx/tokenzr.h"
 
-#define INVALID_POS ((size_t)-1)
-
-static const wxString defaultFileTypes = "*.cpp;*.c;*.hpp;*.h;*.txt;*.py;*.php;*.yml;Makefile";
+namespace
+{
+constexpr size_t INVALID_POS = ((size_t)-1);
+const wxString defaultFileTypes = "*.cpp;*.c;*.hpp;*.h;*.txt;*.py;*.php;*.yml;Makefile";
 enum eSearchFlags {
     kWholeWord = (1 << 0),
     kCaseSearch = (1 << 1),
 };
+} // namespace
 
 struct clRemoteFindDialogData {
     wxArrayString find_what_arr;
@@ -65,6 +67,7 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     m_checkBoxCase->SetValue(data.flags & kCaseSearch);
     m_checkBoxWholeWord->SetValue(data.flags & kWholeWord);
     m_comboBoxFindWhat->GetTextCtrl()->SelectAll();
+    CenterOnParent();
 }
 
 clRemoteFindDialog::~clRemoteFindDialog()

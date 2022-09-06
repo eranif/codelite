@@ -178,7 +178,7 @@ void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
     wxString rootpath = m_workspace->GetRemoteWorkspaceFile();
     rootpath = rootpath.BeforeLast('/'); // only the path
 
-    clRemoteFindDialog dlg(nullptr, m_workspace->GetAccount().GetAccountName(), rootpath);
+    clRemoteFindDialog dlg(EventNotifier::Get()->TopFrame(), m_workspace->GetAccount().GetAccountName(), rootpath);
     auto editor = ::clGetManager()->GetActiveEditor();
     if(editor && (editor->GetSelectionStart() != editor->GetSelectionEnd())) {
         dlg.SetFindWhat(editor->GetCtrl()->GetSelectedText());

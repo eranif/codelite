@@ -4745,6 +4745,11 @@ void clMainFrame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e) { CHECK_SHUTDOWN(); }
 
 void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
 {
+    // sanity
+    if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        return;
+    }
+
     // Determine the search type
     // Let the plugins a chance before we handle this event
     wxCommandEvent eventOpenResource(wxEVT_CMD_OPEN_RESOURCE, GetId());

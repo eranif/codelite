@@ -129,7 +129,6 @@ void NotebookNavigationDlg::FinalizeCtor()
 #ifdef __WXOSX__
     SetSize(wxSize(500, 300));
 #endif
-    CentreOnParent();
 
     m_dvListCtrl->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
     m_dvListCtrl->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
@@ -137,6 +136,7 @@ void NotebookNavigationDlg::FinalizeCtor()
 
     m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
     WindowAttrManager::Load(this);
+    CentreOnParent();
 }
 
 void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)

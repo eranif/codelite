@@ -102,7 +102,6 @@
 #include "language.h"
 #include "localstable.h"
 #include "macros.h"
-#include "manage_perspective_dlg.h"
 #include "manager.h"
 #include "menumanager.h"
 #include "navigationmanager.h"
@@ -119,7 +118,6 @@
 #include "quickfindbar.h"
 #include "renamesymboldlg.h"
 #include "replaceinfilespanel.h"
-#include "save_perspective_as_dlg.h"
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "singleinstancethreadjob.h"
@@ -588,14 +586,6 @@ EVT_MENU(XRCID("wxID_REPORT_BUG"), clMainFrame::OnReportIssue)
 EVT_MENU(XRCID("check_for_update"), clMainFrame::OnCheckForUpdate)
 EVT_MENU(XRCID("run_setup_wizard"), clMainFrame::OnRunSetupWizard)
 
-//-------------------------------------------------------
-// Perspective menu
-//-------------------------------------------------------
-EVT_MENU_RANGE(PERSPECTIVE_FIRST_MENU_ID, PERSPECTIVE_LAST_MENU_ID, clMainFrame::OnChangePerspective)
-EVT_UPDATE_UI_RANGE(PERSPECTIVE_FIRST_MENU_ID, PERSPECTIVE_LAST_MENU_ID, clMainFrame::OnChangePerspectiveUI)
-EVT_MENU(XRCID("manage_perspectives"), clMainFrame::OnManagePerspectives)
-EVT_MENU(XRCID("save_current_layout"), clMainFrame::OnSaveLayoutAsPerspective)
-
 //-----------------------------------------------------------------
 // Toolbar
 //-----------------------------------------------------------------
@@ -674,8 +664,6 @@ EVT_HTML_LINK_CLICKED(wxID_ANY, clMainFrame::OnLinkClicked)
 EVT_MENU(XRCID("link_action"), clMainFrame::OnStartPageEvent)
 
 EVT_COMMAND(wxID_ANY, wxEVT_ACTIVATE_EDITOR, clMainFrame::OnActivateEditor)
-
-EVT_COMMAND(wxID_ANY, wxEVT_REFRESH_PERSPECTIVE_MENU, clMainFrame::OnRefreshPerspectiveMenu)
 EVT_MENU(XRCID("goto_codelite_download_url"), clMainFrame::OnGotoCodeLiteDownloadPage)
 
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, clMainFrame::OnNewVersionAvailable)
@@ -1248,7 +1236,6 @@ void clMainFrame::CreateGUIControls()
 
     // Set up dynamic parts of menu.
     CreateRecentlyOpenedWorkspacesMenu();
-    DoUpdatePerspectiveMenu();
 
     // Connect to Edit menu, so that its labelled-state submenu can be added on the fly when necessary
     wxMenu* editmenu = NULL;
@@ -4795,23 +4782,6 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnDatabaseUpgradeInternally(wxCommandEvent& e)
-{
-    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
-    this->AddPendingEvent(evt);
-}
-
-// Due to differnet schema versions, the database was truncated by the
-// TagsManager, prompt the user
-void clMainFrame::OnDatabaseUpgrade(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    // turn ON the retag-required flag and perform it in the OnTimer() callback
-    // this is to allow codelite to update paths if needed *before* the retag is taking place
-    // (CC paths will be updated if needed in the OnTimer() callback)
-    m_workspaceRetagIsRequired = true;
-}
-
 void clMainFrame::OnCheckForUpdate(wxCommandEvent& e)
 {
     if(!m_webUpdate) {
@@ -5124,62 +5094,6 @@ bool clMainFrame::IsWorkspaceViewFlagEnabled(int flag)
     long flags = View_Show_Default;
     flags = EditorConfigST::Get()->GetInteger("view_workspace_view", flags);
     return (flags & flag);
-}
-
-void clMainFrame::DoUpdatePerspectiveMenu()
-{
-    // Locate the "perspective_menu"
-    int pos = GetMainMenuBar()->FindMenu(_("Perspective"));
-    if(pos == wxNOT_FOUND) {
-        clWARNING() << "Could not find menu: Perspective" << endl;
-        return;
-    }
-
-    wxMenu* m = new wxMenu;
-    wxArrayString perspectives = ManagerST::Get()->GetPerspectiveManager().GetAllPerspectives();
-    for(size_t i = 0; i < perspectives.GetCount(); i++) {
-        wxString name = perspectives.Item(i);
-        int menu_id = ManagerST::Get()->GetPerspectiveManager().MenuIdFromName(name);
-        m->Append(menu_id, name, wxEmptyString, wxITEM_CHECK);
-    }
-    m->AppendSeparator();
-    m->Append(XRCID("manage_perspectives"), _("Manage Perspectives..."));
-    m->Append(XRCID("save_current_layout"), _("Save Current Layout As..."));
-    m->Append(XRCID("restore_layout"), _("Reset..."));
-
-    wxMenu* old_menu = GetMainMenuBar()->Replace(pos, m, _("Perspective"));
-    wxDELETE(old_menu);
-}
-
-// Perspective management
-void clMainFrame::OnChangePerspective(wxCommandEvent& e)
-{
-    ManagerST::Get()->GetPerspectiveManager().LoadPerspectiveByMenuId(e.GetId());
-}
-
-void clMainFrame::OnManagePerspectives(wxCommandEvent& e)
-{
-    ManagePerspectivesDlg dlg(this);
-    dlg.ShowModal();
-    DoUpdatePerspectiveMenu();
-}
-
-void clMainFrame::OnSaveLayoutAsPerspective(wxCommandEvent& e)
-{
-    SavePerspectiveDlg dlg(this);
-    if(dlg.ShowModal() == wxID_OK && !dlg.GetPerspectiveName().IsEmpty()) {
-        ManagerST::Get()->GetPerspectiveManager().SavePerspective(dlg.GetPerspectiveName());
-    }
-}
-
-void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e) { DoUpdatePerspectiveMenu(); }
-
-void clMainFrame::OnChangePerspectiveUI(wxUpdateUIEvent& e)
-{
-    wxString active = ManagerST::Get()->GetPerspectiveManager().GetActive();
-    wxString itemName = ManagerST::Get()->GetPerspectiveManager().NameFromMenuId(e.GetId());
-
-    e.Check(active.CmpNoCase(itemName) == 0);
 }
 
 void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event) { event.Enable(true); }

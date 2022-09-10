@@ -329,39 +329,6 @@
                 <checkable>1</checkable>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <!--
-            <object class="wxMenu" name="toolbars_menu">
-                <label>Tool&amp;bars</label>
-                <style>wxMENU_TEAROFF</style>
-                <object class="wxMenuItem" name="show_std_toolbar">
-                    <label>Standard ToolBar</label>
-                    <checkable>1</checkable>
-                </object>
-                <object class="wxMenuItem" name="show_search_toolbar">
-                    <label>Search ToolBar</label>
-                    <checkable>1</checkable>
-                </object>
-                <object class="wxMenuItem" name="show_build_toolbar">
-                    <label>Build ToolBar</label>
-                    <checkable>1</checkable>
-                </object>
-                <object class="wxMenuItem" name="show_debug_toolbar">
-                    <label>Debug ToolBar</label>
-                    <checkable>1</checkable>
-                </object>
-                <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-                <object class="wxMenuItem" name="toogle_main_toolbars">
-                    <label>Show/hide main toolbars</label>
-                    <checkable>0</checkable>
-                </object>
-                <object class="wxMenuItem" name="toogle_plugin_toolbars">
-                    <label>Show/hide all plugin toolbars</label>
-                    <checkable>0</checkable>
-                </object>
-                <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
--->
             <object class="wxMenuItem" name="toggle_panes">
                 <label>&amp;Toggle All Panes</label>
             </object>
@@ -381,6 +348,10 @@
             <object class="wxMenuItem" name="show_menu_bar">
                 <label>Show Menu Bar</label>
                 <checkable>1</checkable>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="restore_layout">
+                <label>Restore Layout</label>
             </object>
         </object>
         <object class="wxMenu" name="search_menu">
@@ -695,20 +666,6 @@
                 <label>&amp;Manage Plugins...</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        </object>
-        <object class="wxMenu" name="perspective_menu">
-            <label>Pe&amp;rspective</label>
-            <style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="manage_perspectives">
-                <label>Manage Perspectives...</label>
-            </object>
-            <object class="wxMenuItem" name="save_current_layout">
-                <label>Save Current Layout As...</label>
-            </object>
-            <object class="wxMenuItem" name="restore_layout">
-                <label>Reset...</label>
-            </object>
         </object>
         <object class="wxMenu" name="settings_menu">
             <label>Settin&amp;gs</label>
@@ -1114,6 +1071,8 @@
             </object>
         </object>
     </object>    //File explorer
+
+
 
 
 

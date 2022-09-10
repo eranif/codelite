@@ -69,20 +69,9 @@ public:
 
     bool IsDefaultActive() const;
     void LoadPerspective(const wxString& name = wxT(""));
-    void LoadPerspectiveByMenuId(int id);
     void SavePerspective(const wxString& name = wxT(""), bool notify = true);
     void SavePerspectiveIfNotExists(const wxString& name);
-
-    wxArrayString GetAllPerspectives();
     void DeleteAllPerspectives();
-    void ClearIds();
-    int MenuIdFromName(const wxString& name);
-    wxString NameFromMenuId(int id);
-    void Rename(const wxString& old, const wxString& new_name);
-    void Delete(const wxString& name);
-
-    int FirstMenuId() const { return PERSPECTIVE_FIRST_MENU_ID; }
-    int LastMenuId() const { return PERSPECTIVE_LAST_MENU_ID; }
 };
 
 #endif // PERSPECTIVEMANAGER_H

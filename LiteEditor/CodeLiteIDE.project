@@ -435,8 +435,6 @@
     <File Name="filechecklistbase.h"/>
     <File Name="quickfindbarbase.h"/>
     <File Name="quickfindbarbase.cpp"/>
-    <File Name="save_perspective_as_dlg.cpp"/>
-    <File Name="save_perspective_as_dlg.h"/>
     <File Name="quickfindbarbase_liteeditor_bitmaps.cpp"/>
     <File Name="DefaultWorkspacePage.h"/>
     <File Name="DefaultWorkspacePage.cpp"/>
@@ -501,8 +499,6 @@
     <File Name="perspectivemanager.cpp"/>
     <File Name="manageperspectivesbasedlg.cpp"/>
     <File Name="manageperspectivesbasedlg.h"/>
-    <File Name="manage_perspective_dlg.h"/>
-    <File Name="manage_perspective_dlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="../InnoSetup/codelite64_php_mingw.iss"/>

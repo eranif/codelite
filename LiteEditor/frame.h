@@ -400,7 +400,6 @@ private:
     void CreateWelcomePage();
     bool ReloadExternallyModifiedProjectFiles();
     void DoEnableWorkspaceViewFlag(bool enable, int flag);
-    void DoUpdatePerspectiveMenu();
     bool IsWorkspaceViewFlagEnabled(int flag);
     /**
      * @brief show the startup wizard
@@ -561,11 +560,6 @@ protected:
     void OnThemeChanged(wxCommandEvent& e);
     void OnEnvironmentVariablesModified(clCommandEvent& e);
 
-    // handle symbol tree events
-    void OnDatabaseUpgrade(wxCommandEvent& e);
-    void OnDatabaseUpgradeInternally(wxCommandEvent& e);
-    void OnRefreshPerspectiveMenu(wxCommandEvent& e);
-
     void OnRecentFile(wxCommandEvent& event);
     void OnRecentWorkspace(wxCommandEvent& event);
     void OnBackwardForward(wxCommandEvent& event);
@@ -616,12 +610,6 @@ protected:
     void OnCleanWorkspaceUI(wxUpdateUIEvent& e);
     void OnReBuildWorkspace(wxCommandEvent& e);
     void OnReBuildWorkspaceUI(wxUpdateUIEvent& e);
-
-    // Perspectives management
-    void OnChangePerspective(wxCommandEvent& e);
-    void OnChangePerspectiveUI(wxUpdateUIEvent& e);
-    void OnManagePerspectives(wxCommandEvent& e);
-    void OnSaveLayoutAsPerspective(wxCommandEvent& e);
 
     // EOL
     void OnConvertEol(wxCommandEvent& e);

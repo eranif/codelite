@@ -45,7 +45,6 @@ PerspectiveManager::PerspectiveManager()
     if(active.IsEmpty() == false) {
         m_active = active;
     }
-    ClearIds();
 }
 
 PerspectiveManager::~PerspectiveManager() { DisconnectEvents(); }
@@ -113,71 +112,6 @@ void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
         wxCommandEvent evt(wxEVT_REFRESH_PERSPECTIVE_MENU);
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);
     }
-}
-
-wxArrayString PerspectiveManager::GetAllPerspectives()
-{
-    wxArrayString files, perspectives;
-    wxDir::GetAllFiles(clStandardPaths::Get().GetUserDataDir() + wxT("/config/"), &files, wxT("*.layout"));
-
-    for(size_t i = 0; i < files.GetCount(); i++) {
-        wxFileName fn(files.Item(i));
-        wxString name = fn.GetFullName();
-        perspectives.Add(name);
-    }
-    return perspectives;
-}
-
-void PerspectiveManager::ClearIds()
-{
-    m_menuIdToName.clear();
-    m_nextId = FirstMenuId();
-}
-
-int PerspectiveManager::MenuIdFromName(const wxString& name)
-{
-    std::map<wxString, int>::iterator iter = m_menuIdToName.find(name);
-    if(iter == m_menuIdToName.end()) {
-        m_menuIdToName[name] = ++m_nextId;
-        return m_menuIdToName[name];
-    }
-    return iter->second;
-}
-
-wxString PerspectiveManager::NameFromMenuId(int id)
-{
-    std::map<wxString, int>::iterator iter = m_menuIdToName.begin();
-    for(; iter != m_menuIdToName.end(); iter++) {
-        if(iter->second == id) {
-            return iter->first;
-        }
-    }
-    return wxT("");
-}
-
-void PerspectiveManager::LoadPerspectiveByMenuId(int id)
-{
-    wxString name = NameFromMenuId(id);
-    if(name.IsEmpty())
-        return;
-
-    LoadPerspective(name);
-}
-
-void PerspectiveManager::Delete(const wxString& name)
-{
-    wxLogNull noLog;
-    wxString path = DoGetPathFromName(name);
-    clRemoveFile(path);
-}
-
-void PerspectiveManager::Rename(const wxString& old, const wxString& new_name)
-{
-    wxString oldPath = DoGetPathFromName(old);
-    wxString newPath = DoGetPathFromName(new_name);
-
-    wxLogNull noLog;
-    wxRename(oldPath, newPath);
 }
 
 wxString PerspectiveManager::DoGetPathFromName(const wxString& name)
@@ -277,36 +211,6 @@ void PerspectiveManager::ToggleOutputPane(bool hide)
 
     pane_info.Show(!hide);
     m_aui->Update();
-    //    if(hide && pane_info.IsShown()) {
-    //        pane_info.Hide();
-    //    } else if(!hide && !pane_info.IsShown()) {
-    //
-    //    }
-    //    m_aui->Update();
-    //    if(hide && pane_info.IsShown()) {
-    //    } else {
-    //
-    //    }
-    //    if(pane_info.IsOk() && !pane_info.IsShown()) {
-    //        // keep the last perspective where the output view
-    //        // was visible
-    //        m_buildPerspective = m_aui->SavePerspective();
-    //    }
-    //
-    //    if(pane_info.IsOk() && hide && pane_info.IsShown()) {
-    //        pane_info.Hide();
-    //        m_aui->Update();
-    //
-    //    } else if(pane_info.IsOk() && !hide && !pane_info.IsShown()) {
-    //        if(!m_buildPerspective.IsEmpty()) {
-    //            m_aui->LoadPerspective(m_buildPerspective, true);
-    //
-    //        } else {
-    //            // Else just show it
-    //            pane_info.Show();
-    //            m_aui->Update();
-    //        }
-    //    }
 }
 
 void PerspectiveManager::DisconnectEvents()

@@ -1249,6 +1249,7 @@ void DebugAdapterClient::StartAndConnectToDapServer()
 
     // Fire CodeLite IDE event indicating that a debug session started
     clDebugEvent cl_event{ wxEVT_DEBUG_STARTED };
+    cl_event.SetDebuggerName(m_session.dap_server.GetName());
     EventNotifier::Get()->AddPendingEvent(cl_event);
 
     // construct new client with the transport

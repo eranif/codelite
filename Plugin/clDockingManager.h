@@ -35,8 +35,6 @@ class WXDLLIMPEXP_SDK clDockingManager : public wxAuiManager
 {
 protected:
     void OnRender(wxAuiManagerEvent& event);
-    void OnButtonClicked(wxAuiManagerEvent& event);
-    void OnAuiPaneActivated(wxAuiManagerEvent& e);
 
 public:
     clDockingManager();

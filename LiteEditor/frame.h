@@ -610,7 +610,6 @@ protected:
     void OnCloseTabsToTheRight(wxCommandEvent& e);
     void OnWorkspaceMenuUI(wxUpdateUIEvent& e);
     void OnUpdateBuildRefactorIndexBar(wxCommandEvent& e);
-    void OnUpdateNumberOfBuildProcesses(wxCommandEvent& e);
     void OnBuildWorkspace(wxCommandEvent& e);
     void OnBuildWorkspaceUI(wxUpdateUIEvent& e);
     void OnCleanWorkspace(wxCommandEvent& e);
@@ -663,7 +662,6 @@ protected:
     void OnFindResourceXXX(wxCommandEvent& e);
     void OnShowActiveProjectSettings(wxCommandEvent& e);
     void OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e);
-    void OnLoadPerspective(wxCommandEvent& e);
     void OnWorkspaceSettings(wxCommandEvent& e);
     void OnWorkspaceEditorPreferences(wxCommandEvent& e);
     void OnSetActivePoject(wxCommandEvent& e);

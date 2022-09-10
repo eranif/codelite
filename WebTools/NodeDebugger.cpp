@@ -264,18 +264,6 @@ void NodeDebugger::OnProcessOutput(clProcessEvent& event)
 void NodeDebugger::StartDebugger(const wxString& command, const wxString& command_args,
                                  const wxString& workingDirectory)
 {
-#if 0
-    if(::wxMessageBox(_("The old debugger protocol is not supported by your current Node.js version.\nWould you "
-                        "CodeLite to a CLI debug session for you in a terminal?"),
-                      _("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT,
-                      EventNotifier::Get()->TopFrame()) == wxYES) {
-        clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
-        console->SetWorkingDirectory(workingDirectory);
-        console->SetCommand(command, command_args);
-        console->SetTerminalNeeded(true);
-        console->Start();
-    }
-#else
     if(m_socket.IsConnected()) {
         clDEBUG() << "An instance of the debugger is already running";
         return;
@@ -302,9 +290,9 @@ void NodeDebugger::StartDebugger(const wxString& command, const wxString& comman
     if(one_liner.Contains("inspect")) {
         // Fire CodeLite IDE event indicating that a debug session started
         clDebugEvent cl_event(wxEVT_DEBUG_STARTED);
+        cl_event.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
         EventNotifier::Get()->AddPendingEvent(cl_event);
     }
-#endif
 }
 
 bool NodeDebugger::IsCanInteract() const { return m_process && m_canInteract; }

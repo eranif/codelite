@@ -676,7 +676,6 @@ EVT_MENU(XRCID("link_action"), clMainFrame::OnStartPageEvent)
 EVT_COMMAND(wxID_ANY, wxEVT_ACTIVATE_EDITOR, clMainFrame::OnActivateEditor)
 
 EVT_COMMAND(wxID_ANY, wxEVT_REFRESH_PERSPECTIVE_MENU, clMainFrame::OnRefreshPerspectiveMenu)
-EVT_MENU(XRCID("update_num_builders_count"), clMainFrame::OnUpdateNumberOfBuildProcesses)
 EVT_MENU(XRCID("goto_codelite_download_url"), clMainFrame::OnGotoCodeLiteDownloadPage)
 
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, clMainFrame::OnNewVersionAvailable)
@@ -684,7 +683,6 @@ EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, clMainFrame::OnNewVersionAvail
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_CHECK_ERROR, clMainFrame::OnVersionCheckError)
 
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE, clMainFrame::OnNewDetachedPane)
-EVT_COMMAND(wxID_ANY, wxEVT_LOAD_PERSPECTIVE, clMainFrame::OnLoadPerspective)
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, clMainFrame::OnDestroyDetachedPane)
 END_EVENT_TABLE()
 
@@ -3363,12 +3361,17 @@ void clMainFrame::CompleteInitialization()
     // Connect some system events
     m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(clMainFrame::OnDockablePaneClosed), NULL, this);
 
+    // Use the main frame size to determine the best size height & width
+    wxRect frameSize = GetClientRect();
+    int bestHeight = frameSize.GetHeight() / 4;
+    int bestWidth = frameSize.GetWidth() / 5;
+
     m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
                                        .CaptionVisible(true)
                                        .Name(m_workspacePane->GetCaption())
                                        .Caption(m_workspacePane->GetCaption())
                                        .Left()
-                                       .MinSize(200, -1)
+                                       .BestSize(bestWidth, -1)
                                        .Layer(1)
                                        .Position(0)
                                        .CloseButton(true));
@@ -3381,6 +3384,7 @@ void clMainFrame::CompleteInitialization()
                                       .Layer(1)
                                       .Position(1)
                                       .CloseButton(true)
+                                      .BestSize(-1, bestHeight)
                                       .Hide());
 
     m_mgr.AddPane(m_outputPane, wxAuiPaneInfo()
@@ -3391,8 +3395,9 @@ void clMainFrame::CompleteInitialization()
                                     .Layer(1)
                                     .Position(0)
                                     .Show(false)
-                                    .BestSize(wxSize(wxNOT_FOUND, 400)));
+                                    .BestSize(-1, bestHeight));
     UpdateAUI();
+    m_defaultLayout = m_mgr.SavePerspective();
     Layout();
     SelectBestEnvSet();
 
@@ -3511,9 +3516,6 @@ void clMainFrame::CompleteInitialization()
 
     // SendSizeEvent();
     StartTimer();
-
-    // Keep the current layout before loading the perspective from the disk
-    m_defaultLayout = m_mgr.SavePerspective();
 
     // Save the current layout as the "Default" layout (unless we already got one ...)
     ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
@@ -4837,28 +4839,6 @@ void clMainFrame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
 
 void clMainFrame::StartTimer() { m_timer->Start(1000, true); }
 
-void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
-{
-    wxString file;
-    file << clStandardPaths::Get().GetUserDataDir() << "/config/codelite.layout";
-
-    wxFileName oldLayoutFile(file);
-    if(oldLayoutFile.FileExists(file)) {
-        clRemoveFile(oldLayoutFile.GetFullPath());
-        wxCommandEvent eventRestoreLayout(wxEVT_COMMAND_MENU_SELECTED, XRCID("restore_layout"));
-        eventRestoreLayout.SetEventObject(this);
-        GetEventHandler()->ProcessEvent(eventRestoreLayout);
-
-    } else {
-        ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
-
-        // Update the current perspective
-        if(ManagerST::Get()->GetPerspectiveManager().IsDefaultActive()) {
-            ManagerST::Get()->GetPerspectiveManager().SavePerspective();
-        }
-    }
-}
-
 void clMainFrame::SelectBestEnvSet()
 {
     ///////////////////////////////////////////////////
@@ -4922,20 +4902,6 @@ void clMainFrame::SelectBestEnvSet()
     DebuggerConfigTool::Get()->WriteObject("DebuggerCommands", &preDefTypeMap);
 }
 
-void clMainFrame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
-{
-    int cpus = wxThread::GetCPUCount();
-    BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig("Default");
-    if(bs && cpus != wxNOT_FOUND) {
-        wxString jobs;
-        jobs << cpus;
-
-        bs->SetToolJobs(jobs);
-        BuildSettingsConfigST::Get()->SetBuildSystem(bs);
-        clLogMessage("Info: setting number of concurrent builder jobs to " + jobs);
-    }
-}
-
 void clMainFrame::OnWorkspaceEditorPreferences(wxCommandEvent& e)
 {
     GetWorkspaceTab()->GetFileView()->GetEventHandler()->ProcessEvent(e);
@@ -4967,12 +4933,12 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
     clWindowUpdateLocker locker(this);
 #endif
 
-    clLogMessage("Restoring layout");
+    clDEBUG() << "Restoring layout" << endl;
 
     // Close all docking panes
     wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
 
-    for(size_t i = 0; i < panes.GetCount(); i++) {
+    for(size_t i = 0; i < panes.GetCount(); ++i) {
         // make sure that the caption is visible
         panes.Item(i).CaptionVisible(true);
         wxAuiPaneInfo& p = panes.Item(i);
@@ -4988,12 +4954,8 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
     }
 
     ManagerST::Get()->GetPerspectiveManager().DeleteAllPerspectives();
-
     m_mgr.LoadPerspective(m_defaultLayout, false);
-    UpdateAUI();
-
-    // Save the current layout as the 'Default' layout
-    ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
+    m_mgr.Update();
 }
 
 void clMainFrame::SetAUIManagerFlags()

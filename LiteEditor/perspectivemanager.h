@@ -27,6 +27,7 @@
 #define PERSPECTIVEMANAGER_H
 
 #include "precompiled_header.h"
+
 #include <map>
 #include <wx/arrstr.h>
 #include <wx/aui/framemanager.h>
@@ -63,14 +64,8 @@ public:
     void DisconnectEvents();
 
     void ToggleOutputPane(bool hide);
-    void SetActive(const wxString& active)
-    {
-        this->m_active = active;
-    }
-    const wxString& GetActive() const
-    {
-        return m_active;
-    }
+    void SetActive(const wxString& active) { this->m_active = active; }
+    const wxString& GetActive() const { return m_active; }
 
     bool IsDefaultActive() const;
     void LoadPerspective(const wxString& name = wxT(""));
@@ -86,14 +81,8 @@ public:
     void Rename(const wxString& old, const wxString& new_name);
     void Delete(const wxString& name);
 
-    int FirstMenuId() const
-    {
-        return PERSPECTIVE_FIRST_MENU_ID;
-    }
-    int LastMenuId() const
-    {
-        return PERSPECTIVE_LAST_MENU_ID;
-    }
+    int FirstMenuId() const { return PERSPECTIVE_FIRST_MENU_ID; }
+    int LastMenuId() const { return PERSPECTIVE_LAST_MENU_ID; }
 };
 
 #endif // PERSPECTIVEMANAGER_H

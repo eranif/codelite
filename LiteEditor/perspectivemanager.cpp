@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "perspectivemanager.h"
+
 #include "debuggerpane.h"
 #include "editor_config.h"
 #include "fileutils.h"
 #include "frame.h"
 #include "globals.h"
-#include "perspectivemanager.h"
+
 #include <wx/aui/framemanager.h>
 #include <wx/stdpaths.h>
 
@@ -46,10 +48,7 @@ PerspectiveManager::PerspectiveManager()
     ClearIds();
 }
 
-PerspectiveManager::~PerspectiveManager()
-{
-    DisconnectEvents();
-}
+PerspectiveManager::~PerspectiveManager() { DisconnectEvents(); }
 
 void PerspectiveManager::DeleteAllPerspectives()
 {
@@ -203,10 +202,7 @@ void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
     }
 }
 
-bool PerspectiveManager::IsDefaultActive() const
-{
-    return GetActive().CmpNoCase(NORMAL_LAYOUT) == 0;
-}
+bool PerspectiveManager::IsDefaultActive() const { return GetActive().CmpNoCase(NORMAL_LAYOUT) == 0; }
 
 void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
 {

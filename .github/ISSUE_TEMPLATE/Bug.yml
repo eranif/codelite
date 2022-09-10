@@ -44,6 +44,12 @@ body:
     validations:
       required: true
   - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Please provide a detailed steps for reproducing this bug
+      render: text
+  - type: textarea
     id: logs
     attributes:
       label: Relevant log output

@@ -1146,7 +1146,10 @@ void clMainFrame::AddKeyboardAccelerators()
 }
 
 clMainFrame* clMainFrame::Get() { return m_theFrame; }
-static int GetBestXButtonSize(wxWindow* win)
+
+namespace
+{
+int GetBestXButtonSize(wxWindow* win)
 {
     wxUnusedVar(win);
     static bool once = true;
@@ -1162,6 +1165,7 @@ static int GetBestXButtonSize(wxWindow* win)
     }
     return buttonSize;
 }
+} // namespace
 
 void clMainFrame::CreateGUIControls()
 {
@@ -1285,7 +1289,9 @@ void clMainFrame::CreateGUIControls()
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
         e.Skip();
+#ifndef __WXMAC__
         container->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+#endif
     });
 
     container->SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -6126,11 +6132,13 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     // update the bitmap as well
     m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines"));
 #endif
-    // SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+
+#ifndef __WXMAC__
     m_mainPanel->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_debuggerPane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_outputPane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_workspacePane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+#endif
 }
 
 void clMainFrame::DoSysColoursChanged() { MSWSetWindowDarkTheme(this); }

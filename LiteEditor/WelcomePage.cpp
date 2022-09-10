@@ -47,8 +47,10 @@
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
+#ifndef __WXMAC__
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetMainPanel()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+#endif
 
     GetSizer()->Fit(this);
     EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, &WelcomePage::OnThemeChanged, this);
@@ -109,12 +111,14 @@ void WelcomePage::OnSize(wxSizeEvent& event) { event.Skip(); }
 void WelcomePage::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
+#ifndef __WXMAC__
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetMainPanel()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetDvTreeCtrlWorkspaces()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetDvTreeCtrlWorkspaces()->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_staticText0->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
     Refresh();
+#endif
 }
 
 void WelcomePage::OnNewWorkspace(wxCommandEvent& event)

@@ -14,7 +14,7 @@ clThemedSplitterWindow::clThemedSplitterWindow(wxWindow* parent, wxWindowID id, 
 
 clThemedSplitterWindow::~clThemedSplitterWindow()
 {
-#ifndef __WXGTK__
+#if defined(__WXMSW__)
     Unbind(wxEVT_PAINT, &clThemedSplitterWindow::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &clThemedSplitterWindow::OnEraseBg, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedSplitterWindow::OnSysColoursChanged, this);
@@ -29,7 +29,7 @@ bool clThemedSplitterWindow::Create(wxWindow* parent, wxWindowID id, const wxPoi
     if(!res) {
         return false;
     }
-#ifndef __WXGTK__
+#if defined(__WXMSW__)
     Bind(wxEVT_PAINT, &clThemedSplitterWindow::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clThemedSplitterWindow::OnEraseBg, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedSplitterWindow::OnSysColoursChanged, this);
@@ -65,7 +65,7 @@ void clThemedSplitterWindow::OnSysColoursChanged(clCommandEvent& event)
 
 void clThemedSplitterWindow::DrawSash(wxDC& dc)
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined(__WXMAC__)
     wxSplitterWindow::DrawSash(dc);
 #else
     wxUnusedVar(dc);

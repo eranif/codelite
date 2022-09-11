@@ -1,6 +1,10 @@
 # Install Rust
 ---
 
+=== "Windows / MSYS2 - (recommended)"
+    - Prepare a working [MSYS2 environment][2]
+    - Open `MSYS2` termial and type: `pacman -S mingw-w64-clang-x86_64-rust`
+
 === "Windows"
     - Download installer for Windows from [here][1]
     - Launch the installer and answer the questions as described below:
@@ -17,8 +21,10 @@
 
     ![2](images/rust-win-2.png)
 
+
 === "Linux / macOS"
     - Download installer for Windows from [here][1]
     - Accept all the defaults by hitting ++enter++
 
  [1]: https://rustup.rs/
+ [2]: /build/mingw_builds/#prepare-a-working-environment

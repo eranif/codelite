@@ -620,7 +620,11 @@ bool CodeLiteApp::OnInit()
         // versions
         wxString preferredLocalename = EditorConfigST::Get()->GetOptions()->GetPreferredLocale();
         if(!preferredLocalename.IsEmpty()) {
-            const wxLanguageInfo* info = wxLocale::FindLanguageInfo(preferredLocalename);
+            wxString localeToFind = preferredLocalename.BeforeFirst(':');
+            if(localeToFind.IsEmpty()) {
+                localeToFind << preferredLocalename;
+            }
+            const wxLanguageInfo* info = wxLocale::FindLanguageInfo(localeToFind);
             if(info) {
                 preferredLocale = info->Language;
                 if(preferredLocale == wxLANGUAGE_UNKNOWN) {

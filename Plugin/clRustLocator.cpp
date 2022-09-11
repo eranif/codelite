@@ -1,5 +1,6 @@
 #include "clRustLocator.hpp"
 
+#include "MSYS2.hpp"
 #include "fileutils.h"
 
 #include <wx/arrstr.h>
@@ -15,21 +16,25 @@ bool clRustLocator::Locate()
     wxString toolname = "cargo";
 #ifdef __WXMSW__
     // try common paths
-    ::wxGetEnv("USERPROFILE", &homedir);
-    wxFileName cargo_dir{ homedir, wxEmptyString };
-    cargo_dir.AppendDir(".cargo");
-    std::vector<wxString> vpaths = { "C:\\msys2\\clang64\\bin", "C:\\msys64\\clang64\\bin", "C:\\msys64\\mingw64\\bin",
-                                     "C:\\msys2\\mingw64\\bin", cargo_dir.GetPath() + "\\bin" };
+    wxString msyspath;
+    if(!MSYS2::FindInstallDir(&msyspath)) {
+        return false;
+    }
+
+    std::vector<wxString> vpaths = { msyspath + "\\clang64\\bin", msyspath + "\\mingw64\\bin" };
+
     wxArrayString paths;
     paths.reserve(vpaths.size());
     for(const auto& path : vpaths) {
         paths.Add(path);
     }
 
+    // locate cargo.exe
     wxFileName tool_exe;
     if(!FileUtils::FindExe(toolname, tool_exe, paths)) {
         return false;
     }
+
     m_binDir = tool_exe.GetPath();
     return true;
 #else

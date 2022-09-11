@@ -1,6 +1,7 @@
 #include "LSPClangdDetector.hpp"
 
 #include "CompilerLocatorCLANG.h"
+#include "MSYS2.hpp"
 #include "asyncprocess.h"
 #include "clFilesCollector.h"
 #include "file_logger.h"
@@ -38,6 +39,8 @@ bool LSPClangdDetector::DoLocate()
     }
 #else // macOS / Windows
     wxPathList paths;
+    wxString clangd_exe = "clangd";
+
 #ifdef __WXMAC__
     wxString fullpath = ProcUtils::GrepCommandOutput({ "brew", "list", "llvm" }, "clangd");
     if(!fullpath.empty()) {
@@ -45,14 +48,27 @@ bool LSPClangdDetector::DoLocate()
     }
     paths.Add("/opt/homebrew/opt/llvm/bin");
 #else
-    // Try the installation folder first
+    // add msys2 paths
+    wxString msyspath;
+    if(MSYS2::FindInstallDir(&msyspath)) {
+        clDEBUG() << "searching for clangd in MSYS paths" << endl;
+        clDEBUG() << msyspath + R"(\clang64\bin)" << endl;
+        clDEBUG() << msyspath + R"(\mingw64\bin)" << endl;
+
+        paths.Add(msyspath + R"(\clang64\bin)");
+        paths.Add(msyspath + R"(\mingw64\bin)");
+    }
+
+    // on windows, we are also providing our own clangd
     wxFileName install_dir(clStandardPaths::Get().GetExecutablePath());
     install_dir.AppendDir("lsp");
     paths.Add(install_dir.GetPath());
+    clangd_exe << ".exe";
 #endif
 
     paths.AddEnvList("PATH");
-    wxString path = paths.FindAbsoluteValidPath("clangd");
+
+    wxString path = paths.FindAbsoluteValidPath(clangd_exe);
     if(!path.empty()) {
         clSYSTEM() << "Found clangd ==>" << path << endl;
         ConfigureFile(path);

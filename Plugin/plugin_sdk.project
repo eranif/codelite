@@ -369,6 +369,8 @@
     <File Name="clStrings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
+    <File Name="MSYS2.cpp"/>
+    <File Name="MSYS2.hpp"/>
     <File Name="mdparser.hpp"/>
     <File Name="mdparser.cpp"/>
     <File Name="clFileCache.cpp"/>

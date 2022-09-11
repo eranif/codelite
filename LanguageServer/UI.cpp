@@ -124,6 +124,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
         wxCrafterCbL3wsInitBitmapResources();
         bBitmapLoaded = true;
     }
+    this->Hide();
 
     wxBoxSizer* boxSizer31 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer31);

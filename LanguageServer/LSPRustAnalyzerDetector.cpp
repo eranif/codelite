@@ -1,9 +1,12 @@
 #include "LSPRustAnalyzerDetector.hpp"
+
+#include "MSYS2.hpp"
 #include "asyncprocess.h"
 #include "clRustup.hpp"
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
+
 #include <wx/tokenzr.h>
 
 LSPRustAnalyzerDetector::LSPRustAnalyzerDetector()
@@ -15,15 +18,31 @@ LSPRustAnalyzerDetector::~LSPRustAnalyzerDetector() {}
 
 bool LSPRustAnalyzerDetector::DoLocate()
 {
-    clRustup rustup;
-    wxString anaylzer_path;
-    if(!rustup.FindExecutable("rust-analyzer", &anaylzer_path)) {
+    wxString analyzer_path;
+#ifdef __WXMSW__
+    wxString homedir;
+    if(!MSYS2::FindHomeDir(&homedir)) {
         return false;
     }
 
+    wxFileName ra{ homedir, "rust-analyzer.exe" };
+    ra.AppendDir(".cargo");
+    ra.AppendDir("bin");
+    if(!ra.FileExists()) {
+        return false;
+    }
+    analyzer_path = ra.GetFullPath();
+
+#else
+    clRustup rustup;
+    if(!rustup.FindExecutable("rust-analyzer", &analyzer_path)) {
+        return false;
+    }
+#endif
+
     // we check for the binary in both
     wxString command;
-    command << anaylzer_path;
+    command << analyzer_path;
     ::WrapWithQuotes(command);
     SetCommand(command);
 

@@ -88,10 +88,15 @@ select the ones you are interested in and then [configure them in CodeLite][14]
             rustup update
             rustup +nightly component add rust-src rust-analyzer-preview
             ```
-        - On `Windows`:
-            ```batch
-            %USERPROFILE%\.cargo\bin\rustup update
-            %USERPROFILE%\.cargo\bin\rustup +nightly component add rust-src rust-analyzer-preview
+        - On `Windows`, we build it from sources. Open `MSYS2` terminal and type:
+
+            ```bash
+            cd ~
+            git clone https://github.com/rust-lang/rust-analyzer.git
+            cd rust-analyzer
+            cargo build --release \
+                && mkdir -p ~/.cargo/bin \
+                && cp target/release/rust-analyzer.exe target/release/rust-analyzer-proc-macro-srv.exe ~/.cargo/bin
             ```
 
     You should now have `rust-analyzer` installed under `rustup` local folder, for example, under `Linux` or `macOS`,

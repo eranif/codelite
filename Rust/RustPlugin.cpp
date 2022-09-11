@@ -128,11 +128,25 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
             clWARNING() << "Failed to load file:" << workspaceFile << endl;
             return;
         }
+
+        wxString cargo_exe = "cargo";
+#ifdef __WXMSW__
+        clRustLocator rust_locator;
+        if(rust_locator.Locate()) {
+            cargo_exe = rust_locator.GetRustTool("cargo");
+            ::WrapWithQuotes(cargo_exe);
+        }
+#endif
+
         auto debug = settings.GetConfig("Debug");
         if(debug) {
             clDEBUG() << "Setting project preferences..." << endl;
-            debug->SetBuildTargets({ { "build", "cargo build" }, { "clean", "cargo clean" } });
-            debug->SetExecutable("./target/debug/" + name);
+            debug->SetBuildTargets({ { "build", cargo_exe + " build" }, { "clean", cargo_exe + " clean" } });
+            wxFileName target_exe(workspaceFile.GetPath() + "/target/debug/" + name);
+#ifdef __WXMSW__
+            target_exe.SetExt("exe");
+#endif
+            debug->SetExecutable(target_exe.GetFullPath());
             debug->SetFileExtensions(debug->GetFileExtensions() + ";*.rs;*.toml");
 
             // set the environment variable to point to rust-gdb

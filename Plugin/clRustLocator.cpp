@@ -16,12 +16,12 @@ bool clRustLocator::Locate()
 #ifdef __WXMSW__
     // try common paths
     ::wxGetEnv("USERPROFILE", &homedir);
-    wxFileName cargo_dir(homedir, wxEmptyString);
+    wxFileName cargo_dir{ homedir, wxEmptyString };
     cargo_dir.AppendDir(".cargo");
-    std::vector<wxString> vpaths = { "C:\\msys64\\mingw64\\bin", "C:\\msys2\\mingw64\\bin",
-                                     cargo_dir.GetPath() + "\\bin" };
+    std::vector<wxString> vpaths = { "C:\\msys2\\clang64\\bin", "C:\\msys64\\clang64\\bin", "C:\\msys64\\mingw64\\bin",
+                                     "C:\\msys2\\mingw64\\bin", cargo_dir.GetPath() + "\\bin" };
     wxArrayString paths;
-    paths.reserve(3);
+    paths.reserve(vpaths.size());
     for(const auto& path : vpaths) {
         paths.Add(path);
     }

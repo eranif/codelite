@@ -27,6 +27,7 @@
 #define PERSPECTIVEMANAGER_H
 
 #include "precompiled_header.h"
+#include "wxStringHash.h"
 
 #include <map>
 #include <wx/arrstr.h>
@@ -43,23 +44,33 @@ extern wxString NORMAL_LAYOUT;
 class PerspectiveManager : public wxEvtHandler
 {
 protected:
-    std::map<wxString, int> m_menuIdToName;
+    std::unordered_map<wxString, int> m_menuIdToName;
+    std::unordered_map<wxString, wxString> m_perspectives;
     int m_nextId;
     wxString m_active;
     wxString m_buildPerspective;
-    wxAuiManager* m_aui;
+    wxAuiManager* m_aui = nullptr;
 
 protected:
-    wxString DoGetPathFromName(const wxString& name);
+    /**
+     * @brief read the perspective from cache first, and then try to load it from the disk
+     * if it does not exist
+     */
+    bool GetPerspective(const wxString& name, wxString* perspective) const;
+    void SetPerspectiveToCache(const wxString& name, const wxString& content);
+
+    wxString DoGetPathFromName(const wxString& name) const;
     void DoEnsureDebuggerPanesAreVisible();
     void DoShowPane(const wxString& panename, bool show, bool& needUpdate);
     // Event handlers
     void OnPaneClosing(wxAuiManagerEvent& event);
+    void OnAuiRender(wxAuiManagerEvent& event);
 
 public:
     PerspectiveManager();
     virtual ~PerspectiveManager();
 
+    void FlushCacheToDisk();
     void ConnectEvents(wxAuiManager* mgr);
     void DisconnectEvents();
 

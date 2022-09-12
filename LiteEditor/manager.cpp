@@ -362,7 +362,7 @@ void Manager::CreateWorkspace(const wxString& name, const wxString& path)
 {
 
     // make sure that the workspace pane is visible
-    //ShowWorkspacePane(clMainFrame::Get()->GetWorkspaceTab()->GetCaption());
+    // ShowWorkspacePane(clMainFrame::Get()->GetWorkspaceTab()->GetCaption());
 
     wxString errMsg;
     bool res = clCxxWorkspaceST::Get()->CreateWorkspace(name, path, errMsg);
@@ -2277,27 +2277,10 @@ void Manager::DbgStart(long attachPid)
         // debugging local target
         dbgr->Run(args, wxEmptyString);
     }
-
     GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
-
-    // Hide the "Debugger Console" pane since we dont need it anymore
-    wxAuiManager& aui = clMainFrame::Get()->GetDockingManager();
-    wxAuiPaneInfo& pi = aui.GetPane(wxT("Debugger Console"));
-    if(pi.IsOk() && pi.IsShown()) {
-        pi.Hide();
-        aui.Update();
-    }
 }
 
-void Manager::OnDebuggerStopping(clDebugEvent& event)
-{
-    event.Skip();
-    clDEBUG() << "Debugger stopping..." << clEndl;
-    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    wxUnusedVar(dbgr);
-    // Store the current layout as "Debug" layout
-    GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
-}
+void Manager::OnDebuggerStopping(clDebugEvent& event) { event.Skip(); }
 
 void Manager::OnDebuggerStopped(clDebugEvent& event)
 {

@@ -71,36 +71,17 @@ void PerspectiveManager::DeleteAllPerspectives()
 
 void PerspectiveManager::LoadPerspective(const wxString& name)
 {
-    wxString pname = name;
-    if(pname.IsEmpty()) {
-        pname = m_active;
-    }
-
+    m_active = name;
     wxString content;
     if(GetPerspective(name, &content)) {
         clMainFrame::Get()->GetDockingManager().LoadPerspective(content);
-        m_active = pname;
+        m_active = name;
         EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
+    }
 
-        if(pname == DEBUG_LAYOUT) {
-            DoEnsureDebuggerPanesAreVisible();
-        }
-
-    } else {
-        if(pname == DEBUG_LAYOUT) {
-            DoEnsureDebuggerPanesAreVisible();
-
-            SavePerspective(pname);
-            m_active = pname;
-            EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
-
-        } else if(pname == NORMAL_LAYOUT) {
-            // Requested to load the Normal layout but we got no such layout
-            // Make the current one the default layout
-            SavePerspective(NORMAL_LAYOUT);
-            m_active = NORMAL_LAYOUT;
-            EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
-        }
+    // in case we are loading the debugger perspective, ensure that the debugger panes are visible
+    if(name == DEBUG_LAYOUT) {
+        DoEnsureDebuggerPanesAreVisible();
     }
 }
 

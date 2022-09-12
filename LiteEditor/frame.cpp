@@ -197,8 +197,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 EVT_IDLE(clMainFrame::OnIdle)
 EVT_CLOSE(clMainFrame::OnClose)
 EVT_TIMER(FrameTimerId, clMainFrame::OnTimer)
-//  EVT_AUI_RENDER(Frame::OnAuiManagerRender)
-//  EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
 //---------------------------------------------------
 // File menu
@@ -3951,22 +3949,6 @@ void clMainFrame::OnDestroyDetachedPane(wxCommandEvent& e)
         pane->Destroy();
         m_mgr.Update();
     }
-}
-
-void clMainFrame::OnAuiManagerRender(wxAuiManagerEvent& e)
-{
-    wxAuiManager* mgr = e.GetManager();
-    wxAuiPaneInfoArray& panes = mgr->GetAllPanes();
-
-    wxAcceleratorTable* accelTable = GetAcceleratorTable();
-    if(accelTable != NULL) {
-        for(size_t i = 0; i < panes.GetCount(); i++) {
-            if(panes[i].frame != NULL) {
-                panes[i].frame->SetAcceleratorTable(*accelTable);
-            }
-        }
-    }
-    e.Skip();
 }
 
 void clMainFrame::OnDockablePaneClosed(wxAuiManagerEvent& e)

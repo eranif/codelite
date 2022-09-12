@@ -619,7 +619,6 @@ protected:
     void OnViewDisplayEOL_UI(wxUpdateUIEvent& e);
 
     // Docking windows events
-    void OnAuiManagerRender(wxAuiManagerEvent& e);
     void OnDockablePaneClosed(wxAuiManagerEvent& e);
     void OnViewPane(wxCommandEvent& event);
     void OnViewPaneUI(wxUpdateUIEvent& event);

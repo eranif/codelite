@@ -92,10 +92,14 @@ void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
         pname = GetActive();
     }
 
-    SetPerspectiveToCache(name, clMainFrame::Get()->GetDockingManager().SavePerspective());
+    SetPerspectiveToCache(name, clGetManager()->GetDockingManager()->SavePerspective());
+    bool save_required = (m_active != pname);
     m_active = pname;
 
-    EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
+    if(save_required) {
+        EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
+    }
+
     if(notify) {
         wxCommandEvent evt(wxEVT_REFRESH_PERSPECTIVE_MENU);
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);

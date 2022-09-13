@@ -54,6 +54,7 @@ nav:
         - wxWidgets 3.1.6: wxWidgets/repo316.md
         - wxWidgets 3.1.7: wxWidgets/repo317.md
         - wxWidgets 3.2.0: wxWidgets/repo320.md
+        - wxWidgets 3.2.1: wxWidgets/repo321.md
     - Misc:
         - Local Preferences: misc/local_preferences.md
         - Sync Project with File System: misc/reconcile_project.md

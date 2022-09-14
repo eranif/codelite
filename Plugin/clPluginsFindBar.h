@@ -161,6 +161,7 @@ public:
 
     wxString GetFindWhat() const { return m_textCtrlFind->GetValue(); }
     void SetFindWhat(const wxString& findwhat) { m_textCtrlFind->ChangeValue(findwhat); }
+    virtual bool HasFocus() const;
 };
 
 #endif // __quickfindbar__

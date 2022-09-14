@@ -119,7 +119,7 @@ void clDiffFrame::OnClose(wxCommandEvent& event)
 void clDiffFrame::OnCharHook(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.GetKeyCode() == WXK_ESCAPE) {
+    if(event.GetKeyCode() == WXK_ESCAPE && !m_diffView->HasFindBarFocus()) {
         Close();
     }
 }

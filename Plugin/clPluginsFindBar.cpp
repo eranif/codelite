@@ -98,7 +98,7 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     m_toolbar->SetMiniToolBar(true);
 
     clBitmapList* bitmaps = new clBitmapList;
-    m_toolbar->AddTool(wxID_CLOSE, _("Close"), bitmaps->Add("file_close"), _("Close"), wxITEM_NORMAL);
+    m_toolbar->AddTool(ID_TOOL_CLOSE, _("Close"), bitmaps->Add("file_close"), _("Close"), wxITEM_NORMAL);
     m_toolbar->AddSeparator();
     m_matchesFound = new wxStaticText(m_toolbar, wxID_ANY, "", wxDefaultPosition, wxSize(250, -1),
                                       wxST_NO_AUTORESIZE | wxALIGN_LEFT);
@@ -113,7 +113,7 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     m_toolbar->AssignBitmaps(bitmaps);
 
     m_toolbar->Realize();
-    m_toolbar->Bind(wxEVT_TOOL, &clPluginsFindBar::OnHide, this, wxID_CLOSE);
+    m_toolbar->Bind(wxEVT_TOOL, &clPluginsFindBar::OnHide, this, ID_TOOL_CLOSE);
     m_toolbar->Bind(
         wxEVT_TOOL,
         [&](wxCommandEvent& e) {
@@ -1237,4 +1237,16 @@ void clPluginsFindBar::OnPaint(wxPaintEvent& e)
     dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
     dc.SetPen(clSystemSettings::GetDefaultPanelColour());
     dc.DrawRectangle(GetClientRect());
+}
+
+bool clPluginsFindBar::HasFocus() const
+{
+    wxWindow* win = wxWindow::FindFocus();
+    return win == m_textCtrlFind
+        || win == m_buttonFind
+        || win == m_buttonFindPrev
+        || win == m_buttonFindAll
+        || win == m_textCtrlReplace
+        || win == m_buttonReplace
+        || win == m_buttonReplaceAll;
 }

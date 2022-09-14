@@ -442,6 +442,10 @@ void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
 
     // Trigger a non full reparse
     Parse(false);
+
+    clDEBUG() << "Sending wxEVT_WORKSPACE_FILES_SCANNED event..." << endl;
+    clWorkspaceEvent event_scan{ wxEVT_WORKSPACE_FILES_SCANNED };
+    EventNotifier::Get()->ProcessEvent(event_scan);
 }
 
 void clFileSystemWorkspace::OnParseWorkspace(wxCommandEvent& event)

@@ -28,6 +28,7 @@
 #include "open_resource_dialog.h"
 #include "processreaderthread.h"
 #include "shell_command.h"
+#include "wxStringHash.h"
 
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
@@ -1011,15 +1012,33 @@ void RemotyWorkspace::OnCodeLiteRemoteListFilesDone(clCommandEvent& event)
     wxString message;
     message << _("Remote file system scan completed. Found: ") << m_workspaceFiles.size() << _(" files");
     clGetManager()->SetStatusMessage(message);
+
+    // notify that scan is completed
+    clDEBUG() << "Sending wxEVT_WORKSPACE_FILES_SCANNED event..." << endl;
+    clWorkspaceEvent event_scan{ wxEVT_WORKSPACE_FILES_SCANNED };
+    EventNotifier::Get()->ProcessEvent(event_scan);
 }
 
 void RemotyWorkspace::ScanForWorkspaceFiles()
 {
     wxString root_dir = GetRemoteWorkingDir();
     wxString file_extensions = GetSettings().GetSelectedConfig()->GetFileExtensions();
-
     file_extensions.Replace("*", "");
+
+    auto files_exts = ::wxStringTokenize(file_extensions, ";,", wxTOKEN_STRTOK);
+    std::unordered_set<wxString> S{ files_exts.begin(), files_exts.end() };
+
+    // common file extensions
+    S.insert(".txt");
+    S.insert(".toml");
+    S.insert("Rakefile");
+
+    file_extensions.clear();
+    for(const auto& s : S) {
+        file_extensions << s << ";";
+    }
     m_workspaceFiles.clear();
+
     // use the finder codelite-remote
     m_codeliteRemoteFinder.ListFiles(root_dir, file_extensions);
 }

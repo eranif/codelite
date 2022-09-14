@@ -23,10 +23,10 @@
 #include "macromanager.h"
 #include "macros.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "wxStringHash.h"
 
 #include <algorithm>
 #include <thread>
-#include <unordered_set>
 #include <wx/arrstr.h>
 #include <wx/stc/stc.h>
 
@@ -50,7 +50,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
                                &LanguageServerCluster::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
-
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &LanguageServerCluster::OnWorkspaceScanCompleted, this);
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -75,7 +75,7 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerCluster::OnActiveEditorChanged, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_FILES_SCANNED, &LanguageServerCluster::OnWorkspaceScanCompleted, this);
     EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                  &LanguageServerCluster::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
@@ -877,7 +877,33 @@ void LanguageServerCluster::DiscoverWorkspaceType()
         return;
     }
 
-    LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
+    // try to determine the workspace type by checking
+    // for common files
+    wxStringSet_t S;
+    S.reserve(files.size());
+
+    for(const auto& str : files) {
+        wxFileName fn(str);
+        S.insert(fn.GetFullName());
+    }
+
+    if(S.count("Cargo.toml")) {
+        LanguageServerProtocol::workspace_file_type = FileExtManager::TypeRust;
+        clDEBUG() << "*** LSP: workspace type is set to Rust (found Cargo.toml)" << endl;
+
+    } else if(S.count("Rakefile")) {
+        LanguageServerProtocol::workspace_file_type = FileExtManager::TypeRuby;
+        clDEBUG() << "*** LSP: workspace type is set to Ruby (found Rakefile)" << endl;
+
+    } else if(S.count("CMakeLists.txt")) {
+        LanguageServerProtocol::workspace_file_type = FileExtManager::TypeSourceCpp;
+        clDEBUG() << "*** LSP: workspace type is set to C++ (found CMakeLists.txt)" << endl;
+    }
+
+    if(LanguageServerProtocol::workspace_file_type != FileExtManager::TypeOther) {
+        return;
+    }
+
     std::thread thr(
         [=](const wxArrayString& files, wxEvtHandler* owner) {
             // create a table for all the known file types
@@ -965,4 +991,14 @@ void LanguageServerCluster::UpdateNavigationBar()
         scopes.push_back(scope_entry);
     }
     clGetManager()->GetNavigationBar()->SetScopes(fullpath, scopes);
+}
+
+void LanguageServerCluster::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
+{
+    event.Skip();
+    clDEBUG() << "==> LanguageServerCluster: workspace file scanned completed." << endl;
+
+    LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
+    DiscoverWorkspaceType();
+    Reload();
 }

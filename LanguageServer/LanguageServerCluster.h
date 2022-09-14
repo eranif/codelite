@@ -75,6 +75,8 @@ protected:
     void OnOpenResource(wxCommandEvent& event);
     void OnEditorClosed(clCommandEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
+    void OnWorkspaceScanCompleted(clWorkspaceEvent& event);
+
     wxString GetEditorFilePath(IEditor* editor) const;
     /**
      * @brief find an editor either by local or remote path

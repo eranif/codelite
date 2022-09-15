@@ -40,6 +40,7 @@
 #include "clFileSystemWorkspace.hpp"
 #include "clPrintout.h"
 #include "clResizableTooltip.h"
+#include "clSFTPManager.hpp"
 #include "clSTCLineKeeper.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
@@ -2602,10 +2603,14 @@ size_t clEditor::SearchFlags(const FindReplaceData& data)
 {
     size_t flags = 0;
     size_t wxflags = data.GetFlags();
-    wxflags& wxFRD_MATCHWHOLEWORD ? flags |= wxSD_MATCHWHOLEWORD : flags = flags;
-    wxflags& wxFRD_MATCHCASE ? flags |= wxSD_MATCHCASE : flags = flags;
-    wxflags& wxFRD_REGULAREXPRESSION ? flags |= wxSD_REGULAREXPRESSION : flags = flags;
-    wxflags& wxFRD_SEARCHUP ? flags |= wxSD_SEARCH_BACKWARD : flags = flags;
+    if(wxflags & wxFRD_MATCHWHOLEWORD)
+        flags |= wxSD_MATCHWHOLEWORD;
+    if(wxflags & wxFRD_MATCHCASE)
+        flags |= wxSD_MATCHCASE;
+    if(wxflags & wxFRD_REGULAREXPRESSION)
+        flags |= wxSD_REGULAREXPRESSION;
+    if(wxflags & wxFRD_SEARCHUP)
+        flags |= wxSD_SEARCH_BACKWARD;
     return flags;
 }
 
@@ -4492,7 +4497,9 @@ int clEditor::GetEOLByContent()
 
     size_t first_eol_pos(0);
     pos2 < pos1 ? first_eol_pos = pos2 : first_eol_pos = pos1;
-    pos3 < first_eol_pos ? first_eol_pos = pos3 : first_eol_pos = first_eol_pos;
+    if(pos3 < first_eol_pos) {
+        first_eol_pos = pos3;
+    }
 
     // get the EOL at first_eol_pos
     wxChar ch = SafeGetChar(first_eol_pos);
@@ -6150,11 +6157,27 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     clEditorStateLocker stateLocker(GetCtrl());
 
     wxString text;
-
-    // Read the file we currently support:
-    // BOM, Auto-Detect encoding & User defined encoding
+    bool file_read = false;
     m_fileBom.Clear();
-    ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
+
+#if USE_SFTP
+    if(IsRemoteFile()) {
+        wxMemoryBuffer content;
+        if(!clSFTPManager::Get().AwaitReadFile(GetRemotePath(), GetRemoteData()->GetAccountName(), &content)) {
+            wxMessageBox(_("Faild to reload remote file:" + GetRemotePath()), "CodeLite",
+                         wxICON_WARNING | wxCENTRE | wxOK);
+            return;
+        }
+        text = wxString((const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen());
+        file_read = true;
+    }
+#endif
+
+    if(!file_read) {
+        // Read the file we currently support:
+        // BOM, Auto-Detect encoding & User defined encoding
+        ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
+    }
 
     SetText(text);
     // clear the modified lines

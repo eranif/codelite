@@ -22,9 +22,11 @@ Since version `16.1.0`, CodeLite installation method is by using [`brew`][9]
 - Open `Terminal.app` and type:
 
 ```bash
+# we need this part since we bring our own libssh bound to version 0.9.6
+brew unlink libssh
+
 brew tap eranif/codelite
-brew uninstall --cask codelite-official
-brew install --cask codelite-official
+brew reinstall --cask codelite-official
 
 # in order to avoid macOS errors about "damaged app can't be opened"...
 xattr -cr /Applications/codelite.app/

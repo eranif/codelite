@@ -56,6 +56,7 @@ protected:
      * @brief read file from the remote target. Once the file is read, an event is fired
      */
     void DoAsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink);
+    bool DoSyncReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content);
     void StartWorkerThread();
     void StopWorkerThread();
     void OnSaveCompleted(clCommandEvent& e);
@@ -129,7 +130,15 @@ public:
      * @param accountName the account name to use
      * @param sink callback object for completion
      */
-    void AsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink = nullptr);
+    void AsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink);
+
+    /**
+     * @brief read file content. this function is async
+     * @param remotePath file path on the remote machine
+     * @param accountName the account name to use
+     * @param sink callback object for completion
+     */
+    bool AwaitReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content);
 
     /**
      * @brief save file remotely. this function is sync

@@ -239,9 +239,49 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     return editor;
 }
 
+bool clSFTPManager::DoSyncReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content)
+{
+    clDEBUG() << "SFTP Manager: reading file (sync):" << remotePath << "for account:" << accountName << endl;
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    CHECK_PTR_RET_FALSE(conn);
+
+    std::promise<wxMemoryBuffer*> read_promise;
+    auto future = read_promise.get_future();
+
+    auto read_func = [&read_promise, remotePath, conn, accountName]() {
+        // read the file content
+        SFTPAttribute::Ptr_t fileAttr;
+        wxMemoryBuffer* buffer = new wxMemoryBuffer;
+        try {
+            // read the file content
+            fileAttr = conn->Read(remotePath, *buffer);
+            wxUnusedVar(fileAttr);
+            read_promise.set_value(buffer);
+
+        } catch(clException& e) {
+            clERROR() << "Failed to read remote file:" << remotePath << "." << e.What();
+            wxDELETE(buffer);
+            read_promise.set_value(nullptr);
+        }
+    };
+
+    // queue the task and wait for the response
+    m_q.push_back(std::move(read_func));
+    auto buffer = future.get();
+    if(!buffer) {
+        return false;
+    }
+
+    // convert the memory buffer to string and return true
+    size_t len = buffer->GetDataLen();
+    content->AppendData(buffer->release(), len);
+    wxDELETE(buffer);
+    return true;
+}
+
 void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink)
 {
-    clDEBUG() << "SFTP Manager: reading file:" << remotePath << "for account:" << accountName << endl;
+    clDEBUG() << "SFTP Manager: reading file (async):" << remotePath << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);
     CHECK_PTR_RET(conn);
 
@@ -293,41 +333,22 @@ bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& l
         }
     }
 
-    // prepare the download work
-    std::promise<bool> download_promise;
-    auto future = download_promise.get_future();
-    auto download_func = [&download_promise, localPath, remotePath, conn]() {
-        // build the local file path
-        wxMemoryBuffer buffer;
-        SFTPAttribute::Ptr_t fileAttr;
-        try {
-            fileAttr = conn->Read(remotePath, buffer);
-            wxUnusedVar(fileAttr);
-
-            // write the content in the local file
-            wxLogNull noLog;
-            wxFFile fp(localPath, "w+b");
-            if(fp.IsOpened()) {
-                fp.Write(buffer.GetData(), buffer.GetDataLen());
-                fp.Close();
-                download_promise.set_value(true);
-            } else {
-                download_promise.set_value(false);
-            }
-        } catch(clException& e) {
-            clERROR() << "Failed to open file:" << remotePath << "." << e.What();
-            download_promise.set_value(false);
-        }
-    };
-    m_q.push_back(std::move(download_func));
-
-    // Wait for the worker thread to complete
-    bool res = future.get();
-    if(!res) {
+    wxMemoryBuffer file_content;
+    if(!DoSyncReadFile(remotePath, accountName, &file_content)) {
         return false;
     }
 
-    // remember this file as ours
+    {
+        wxLogNull no_log;
+        wxFFile fp(localPath, "w+b");
+        if(!fp.IsOpened()) {
+            clERROR() << "failed to open local file:" << localPath << "for write" << endl;
+            return false;
+        }
+        fp.Write(file_content.GetData(), file_content.GetDataLen());
+    }
+
+    // mark this file as ours
     saved_file info;
     info.account_name = accountName;
     info.local_path = localPath;
@@ -812,6 +833,11 @@ size_t clSFTPManager::GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connectio
 void clSFTPManager::AsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink)
 {
     DoAsyncReadFile(remotePath, accountName, sink);
+}
+
+bool clSFTPManager::AwaitReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content)
+{
+    return DoSyncReadFile(remotePath, accountName, content);
 }
 
 #endif

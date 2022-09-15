@@ -37,6 +37,7 @@ protected:
     wxString m_newRemoteFile;
     int m_selectionStart = wxNOT_FOUND;
     int m_selectionEnd = wxNOT_FOUND;
+    wxString m_content;
 
 public:
     clSFTPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -58,6 +59,8 @@ public:
     void SetSelectionStart(int selectionStart) { this->m_selectionStart = selectionStart; }
     int GetSelectionEnd() const { return m_selectionEnd; }
     int GetSelectionStart() const { return m_selectionStart; }
+    void SetContent(const wxString& content) { this->m_content = content; }
+    const wxString& GetContent() const { return m_content; }
 };
 
 typedef void (wxEvtHandler::*clSFTPEventFunction)(clSFTPEvent&);
@@ -69,4 +72,5 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_DELETE_FILE, clSFTPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_OPEN_FILE, clSFTPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_SESSION_OPENED, clSFTPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_SESSION_CLOSED, clSFTPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_READ, clSFTPEvent);
 #endif // CLSFTPEVENT_H

@@ -939,8 +939,6 @@ void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
         return;
     }
     CHECK_EVENT(event);
-
-    const wxString& ext = editor->GetFileName().GetExt();
     std::vector<wxString> exts;
 
     // replace the file extension

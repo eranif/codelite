@@ -2,6 +2,7 @@
 #include "clSFTPManager.hpp"
 
 #include "SFTPClientData.hpp"
+#include "StringUtils.h"
 #include "clSFTPEvent.h"
 #include "clTempFile.hpp"
 #include "cl_command_event.h"
@@ -238,6 +239,36 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     return editor;
 }
 
+void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink)
+{
+    clDEBUG() << "SFTP Manager: reading file:" << remotePath << "for account:" << accountName << endl;
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    CHECK_PTR_RET(conn);
+
+    auto read_func = [remotePath, conn, accountName, sink]() {
+        // build the local file path
+        SFTPAttribute::Ptr_t fileAttr;
+        try {
+            // read the file content
+            wxMemoryBuffer buffer;
+            fileAttr = conn->Read(remotePath, buffer);
+            wxUnusedVar(fileAttr);
+
+            // convert to string and fire an event
+            wxString content((const char*)buffer.GetData(), buffer.GetDataLen());
+            clSFTPEvent event_read{ wxEVT_SFTP_FILE_READ };
+            event_read.SetAccount(accountName);
+            event_read.SetRemoteFile(remotePath);
+            event_read.SetContent(content);
+            sink->QueueEvent(event_read.Clone());
+
+        } catch(clException& e) {
+            clERROR() << "Failed to read remote file:" << remotePath << "." << e.What();
+        }
+    };
+    m_q.push_back(std::move(read_func));
+}
+
 bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName)
 {
     // Open it
@@ -271,6 +302,7 @@ bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& l
         SFTPAttribute::Ptr_t fileAttr;
         try {
             fileAttr = conn->Read(remotePath, buffer);
+            wxUnusedVar(fileAttr);
 
             // write the content in the local file
             wxLogNull noLog;
@@ -725,16 +757,16 @@ void clSFTPManager::StartWorkerThread()
     }
 
     m_worker_thread = new std::thread(
-    [](SyncQueue<std::function<void()>>& Q, std::atomic_bool& shutdown) {
-        while(!shutdown.load()) {
-            auto work_func = Q.pop_front();
-            if(work_func == nullptr) {
-                continue;
+        [](SyncQueue<std::function<void()>>& Q, std::atomic_bool& shutdown) {
+            while(!shutdown.load()) {
+                auto work_func = Q.pop_front();
+                if(work_func == nullptr) {
+                    continue;
+                }
+                work_func();
             }
-            work_func();
-        }
-    },
-    std::ref(m_q), std::ref(m_shutdown));
+        },
+        std::ref(m_q), std::ref(m_shutdown));
 }
 
 void clSFTPManager::OnSaveCompleted(clCommandEvent& e)
@@ -775,6 +807,11 @@ size_t clSFTPManager::GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connectio
         connections.push_back(conn);
     }
     return connections.size();
+}
+
+void clSFTPManager::AsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink)
+{
+    DoAsyncReadFile(remotePath, accountName, sink);
 }
 
 #endif

@@ -52,6 +52,10 @@ protected:
     SFTPClientData* GetSFTPClientData(IEditor* editor);
     void OnTimer(wxTimerEvent& event);
     bool DoSyncDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName);
+    /**
+     * @brief read file from the remote target. Once the file is read, an event is fired
+     */
+    void DoAsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink);
     void StartWorkerThread();
     void StopWorkerThread();
     void OnSaveCompleted(clCommandEvent& e);
@@ -113,10 +117,19 @@ public:
      * @param content of the file
      * @param remotePath file path on the remote machine
      * @param accountName the account name to use
-     * @param sink callback object for save file events
+     * @param sink callback object for save file events.
+     * @event wxEVT_SFTP_FILE_READ event
      */
     void AsyncWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName,
                         wxEvtHandler* sink = nullptr);
+
+    /**
+     * @brief read file content. this function is async
+     * @param remotePath file path on the remote machine
+     * @param accountName the account name to use
+     * @param sink callback object for completion
+     */
+    void AsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink = nullptr);
 
     /**
      * @brief save file remotely. this function is sync

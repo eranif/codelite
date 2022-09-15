@@ -6,6 +6,7 @@ wxDEFINE_EVENT(wxEVT_SFTP_DELETE_FILE, clSFTPEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_OPEN_FILE, clSFTPEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_SESSION_OPENED, clSFTPEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_SESSION_CLOSED, clSFTPEvent);
+wxDEFINE_EVENT(wxEVT_SFTP_FILE_READ, clSFTPEvent);
 
 clSFTPEvent::~clSFTPEvent() {}
 
@@ -26,5 +27,6 @@ clSFTPEvent& clSFTPEvent::operator=(const clSFTPEvent& src)
     m_newRemoteFile = src.m_newRemoteFile;
     m_selectionEnd = src.m_selectionEnd;
     m_selectionStart = src.m_selectionStart;
+    m_content = src.m_content;
     return *this;
 }

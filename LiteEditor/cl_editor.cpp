@@ -6160,23 +6160,26 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     bool file_read = false;
     m_fileBom.Clear();
 
+    {
+        wxBusyCursor bc; // io operation tends to be lengthy
 #if USE_SFTP
-    if(IsRemoteFile()) {
-        wxMemoryBuffer content;
-        if(!clSFTPManager::Get().AwaitReadFile(GetRemotePath(), GetRemoteData()->GetAccountName(), &content)) {
-            wxMessageBox(_("Faild to reload remote file:" + GetRemotePath()), "CodeLite",
-                         wxICON_WARNING | wxCENTRE | wxOK);
-            return;
+        if(IsRemoteFile()) {
+            wxMemoryBuffer content;
+            if(!clSFTPManager::Get().AwaitReadFile(GetRemotePath(), GetRemoteData()->GetAccountName(), &content)) {
+                wxMessageBox(_("Faild to reload remote file:" + GetRemotePath()), "CodeLite",
+                             wxICON_WARNING | wxCENTRE | wxOK);
+                return;
+            }
+            text = wxString((const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen());
+            file_read = true;
         }
-        text = wxString((const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen());
-        file_read = true;
-    }
 #endif
 
-    if(!file_read) {
-        // Read the file we currently support:
-        // BOM, Auto-Detect encoding & User defined encoding
-        ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
+        if(!file_read) {
+            // Read the file we currently support:
+            // BOM, Auto-Detect encoding & User defined encoding
+            ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
+        }
     }
 
     SetText(text);

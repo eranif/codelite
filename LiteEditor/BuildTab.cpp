@@ -26,6 +26,7 @@ struct LineClientData {
     wxString project_name;
     Compiler::PatternMatch match_pattern;
     wxString message;
+    wxString toolchain;
 };
 
 } // namespace
@@ -194,6 +195,7 @@ void BuildTab::ProcessBuffer(bool last_line)
             // Note: its OK to pass null here
             if(m) {
                 // set the line project name
+                m->toolchain = m_activeCompiler->GetName();
                 m->project_name = GetCurrentProjectName();
             }
             m_view->AppendItem(line, wxNOT_FOUND, wxNOT_FOUND, (wxUIntPtr)m.release());
@@ -272,16 +274,18 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
             // if we resolved it now, open the file there is no point in searching this file
             // in m_buildInfoPerFile since the key on this map is kept as full name
             int line_number = cd->match_pattern.line_number;
+            line_number -= 1;
+
             int column = cd->match_pattern.column != wxNOT_FOUND ? cd->match_pattern.column - 1 : wxNOT_FOUND;
             auto cb = [=](IEditor* editor) {
                 editor->GetCtrl()->ClearSelections();
                 // compilers report line numbers starting from `1`
                 // our editor sees line numbers starting from `0`
-                editor->CenterLine(line_number - 1, column);
+                editor->CenterLine(line_number, column);
                 if(cd->match_pattern.sev == Compiler::kSevError) {
-                    editor->SetErrorMarker(line_number - 1, cd->message);
+                    editor->SetErrorMarker(line_number, cd->message);
                 } else {
-                    editor->SetWarningMarker(line_number - 1, cd->message);
+                    editor->SetWarningMarker(line_number, cd->message);
                 }
                 editor->SetActive();
             };

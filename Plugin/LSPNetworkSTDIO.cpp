@@ -116,7 +116,18 @@ void LSPNetworkSTDIO::DoStartLocalProcess()
         }
 #endif
     }
-    m_server->Start(args);
+    try {
+        m_server->Start(args);
+
+    } catch(clException& e) {
+        clERROR() << "failed to execute LSP proceess with args:" << args << endl;
+        clERROR() << e.What() << endl;
+        clCommandEvent eventError(wxEVT_LSP_NET_ERROR);
+        eventError.SetString(e.What());
+        AddPendingEvent(eventError);
+        return;
+    }
+
     clCommandEvent evtReady(wxEVT_LSP_NET_CONNECTED);
     AddPendingEvent(evtReady);
 

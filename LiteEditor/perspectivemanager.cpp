@@ -276,6 +276,6 @@ void PerspectiveManager::FlushCacheToDisk()
 
         wxString path = DoGetPathFromName(name);
         FileUtils::WriteFileContent(path, value);
-        clSYSTEM() << "Saving perspective:" << name << "to file:" << path << endl;
+        clDEBUG() << "Saving perspective:" << name << "to file:" << path << endl;
     }
 }

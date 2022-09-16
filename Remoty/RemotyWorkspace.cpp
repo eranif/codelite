@@ -455,7 +455,10 @@ void RemotyWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
     clGetManager()->GetStatusBar()->SetStatusText(_("Downloading file: ") + filename);
     auto editor = clSFTPManager::Get().OpenFile(filename, m_account.GetAccountName());
     if(editor) {
-        editor->CenterLine(line_number);
+        // the compiler report line numbers from 1
+        // clEditor start counting lines from 0
+        // hence the -1
+        editor->CenterLine(line_number - 1);
     }
 }
 

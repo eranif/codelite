@@ -67,7 +67,7 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnCommitHistory, this, XRCID("ID_HISTORY"));
     m_editEventsHandlerCommitStc.Reset(new clEditEventsHandler(m_stcCommitMessage));
     m_editEventsHandlerDiffStc.Reset(new clEditEventsHandler(m_stcDiff));
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(this);
     CentreOnParent();
 
     // set the focus to the text control

@@ -26,6 +26,7 @@
 #include <wx/arrstr.h>
 #include <wx/imaglist.h>
 #include <wx/stc/stc.h>
+#include "clThemedSTC.hpp"
 #include <wx/combobox.h>
 #include <wx/slider.h>
 #include "clThemedTextCtrl.hpp"
@@ -96,11 +97,11 @@ protected:
     wxStaticText* m_staticText495;
     wxNotebook* m_notebook164;
     wxPanel* m_panelCommand;
-    wxStyledTextCtrl* m_stcCommand;
+    clThemedSTC* m_stcCommand;
     wxPanel* m_panelEnvironment;
-    wxStyledTextCtrl* m_stcEnvironment;
+    clThemedSTC* m_stcEnvironment;
     wxPanel* m_panelInitOptions;
-    wxStyledTextCtrl* m_stcInitOptions;
+    clThemedSTC* m_stcInitOptions;
     wxStaticText* m_staticText579;
     wxTextCtrl* m_textCtrlWD;
     wxButton* m_button1153;
@@ -126,11 +127,11 @@ public:
     wxCheckBox* GetCheckBoxRemoteServer() { return m_checkBoxRemoteServer; }
     wxChoice* GetChoiceSSHAccounts() { return m_choiceSSHAccounts; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
-    wxStyledTextCtrl* GetStcCommand() { return m_stcCommand; }
+    clThemedSTC* GetStcCommand() { return m_stcCommand; }
     wxPanel* GetPanelCommand() { return m_panelCommand; }
-    wxStyledTextCtrl* GetStcEnvironment() { return m_stcEnvironment; }
+    clThemedSTC* GetStcEnvironment() { return m_stcEnvironment; }
     wxPanel* GetPanelEnvironment() { return m_panelEnvironment; }
-    wxStyledTextCtrl* GetStcInitOptions() { return m_stcInitOptions; }
+    clThemedSTC* GetStcInitOptions() { return m_stcInitOptions; }
     wxPanel* GetPanelInitOptions() { return m_panelInitOptions; }
     wxNotebook* GetNotebook164() { return m_notebook164; }
     wxStaticText* GetStaticText579() { return m_staticText579; }

@@ -198,8 +198,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer168 = new wxBoxSizer(wxVERTICAL);
     m_panelCommand->SetSizer(boxSizer168);
 
-    m_stcCommand = new wxStyledTextCtrl(m_panelCommand, wxID_ANY, wxDefaultPosition,
-                                        wxDLG_UNIT(m_panelCommand, wxSize(-1, 40)), wxBORDER_NONE);
+    m_stcCommand = new clThemedSTC(m_panelCommand, wxID_ANY, wxDefaultPosition,
+                                   wxDLG_UNIT(m_panelCommand, wxSize(-1, 40)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcCommand->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCommand->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -244,8 +244,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer178 = new wxBoxSizer(wxVERTICAL);
     m_panelEnvironment->SetSizer(boxSizer178);
 
-    m_stcEnvironment = new wxStyledTextCtrl(m_panelEnvironment, wxID_ANY, wxDefaultPosition,
-                                            wxDLG_UNIT(m_panelEnvironment, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcEnvironment = new clThemedSTC(m_panelEnvironment, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelEnvironment, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcEnvironment->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcEnvironment->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -290,8 +290,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer1682 = new wxBoxSizer(wxVERTICAL);
     m_panelInitOptions->SetSizer(boxSizer1682);
 
-    m_stcInitOptions = new wxStyledTextCtrl(m_panelInitOptions, wxID_ANY, wxDefaultPosition,
-                                            wxDLG_UNIT(m_panelInitOptions, wxSize(-1, 40)), wxBORDER_NONE);
+    m_stcInitOptions = new clThemedSTC(m_panelInitOptions, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelInitOptions, wxSize(-1, 40)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcInitOptions->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcInitOptions->SetMarginMask(4, wxSTC_MASK_FOLDERS);

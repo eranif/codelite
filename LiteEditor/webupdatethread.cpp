@@ -36,8 +36,6 @@ wxDEFINE_EVENT(wxEVT_CMD_NEW_VERSION_AVAILABLE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CMD_VERSION_UPTODATE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CMD_VERSION_CHECK_ERROR, wxCommandEvent);
 
-static const size_t DLBUFSIZE = 4096;
-
 struct CodeLiteVersion {
     wxString m_os;
     wxString m_codename;

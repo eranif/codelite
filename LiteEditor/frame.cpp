@@ -3391,7 +3391,7 @@ void clMainFrame::CompleteInitialization()
     GetOutputPane()->ApplySavedTabOrder(false);
 
     ManagerST::Get()->GetPerspectiveManager().ConnectEvents(&m_mgr);
-
+    ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     wxCommandEvent evt(wxEVT_CL_THEME_CHANGED);
     EventNotifier::Get()->AddPendingEvent(evt);
 

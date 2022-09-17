@@ -83,6 +83,7 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
     if(name == DEBUG_LAYOUT) {
         DoEnsureDebuggerPanesAreVisible();
     }
+    clGetManager()->GetDockingManager()->Update();
 }
 
 void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
@@ -92,7 +93,8 @@ void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
         pname = GetActive();
     }
 
-    SetPerspectiveToCache(name, clGetManager()->GetDockingManager()->SavePerspective());
+    wxString currentLayout = clGetManager()->GetDockingManager()->SavePerspective();
+    SetPerspectiveToCache(name, currentLayout);
     bool save_required = (m_active != pname);
     m_active = pname;
 

@@ -2029,7 +2029,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="codelite-dbg.exe" IntermediateDirectory="" Command="$(WorkspacePath)/Runtime/codelite-dbg.exe" CommandArguments="-b .  --with-plugins DebugAdapterClient" UseSeparateDebugArgs="no" DebugArguments="-b . --with-plugins DebugAdapterClient" WorkingDirectory="$(WorkspacePath)/Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="codelite-dbg.exe" IntermediateDirectory="" Command="$(WorkspacePath)/Runtime/codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --with-plugins DebugAdapterClient" WorkingDirectory="$(WorkspacePath)/Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="Default" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=$WXWIN\lib\clang_x64_dll;$(PATH)]]>

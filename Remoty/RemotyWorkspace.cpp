@@ -151,6 +151,9 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
     EventNotifier::Get()->Bind(wxEVT_DOWNLOAD_FILE, &RemotyWorkspace::OnDownloadFile, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_STOP_SEARCH, &RemotyWorkspace::OnStopFindInFiles, this);
+
+    EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspace::OnSftpSaveSuccess, this);
+    EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &RemotyWorkspace::OnSftpSaveError, this);
     // codelite-remote events
 
     // finder
@@ -193,6 +196,8 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &RemotyWorkspace::OnRun, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &RemotyWorkspace::OnStop, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_FIND_MATCHING_PAIR, &RemotyWorkspace::OnFindSwapped, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspace::OnSftpSaveSuccess, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &RemotyWorkspace::OnSftpSaveError, this);
 
     Unbind(wxEVT_TERMINAL_EXIT, &RemotyWorkspace::OnExecProcessTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_FILE_SELECTED, &RemotyWorkspace::OnOpenResourceFile, this);
@@ -1350,4 +1355,22 @@ wxString RemotyWorkspace::GetDebuggerName() const
     } else {
         return wxEmptyString;
     }
+}
+
+void RemotyWorkspace::OnSftpSaveError(clCommandEvent& event)
+{
+    event.Skip();
+    if(!IsOpened()) {
+        return;
+    }
+    ::wxMessageBox(_("Failed to save file: ") + event.GetFileName(), "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+}
+
+void RemotyWorkspace::OnSftpSaveSuccess(clCommandEvent& event)
+{
+    event.Skip();
+    if(!IsOpened()) {
+        return;
+    }
+    clGetManager()->SetStatusMessage(_("Remote file: ") + event.GetFileName() + _(" successfully saved"));
 }

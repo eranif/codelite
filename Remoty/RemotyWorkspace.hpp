@@ -10,6 +10,7 @@
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clRemoteFinderHelper.hpp"
 #include "clRemoteTerminal.hpp"
+#include "clSFTPEvent.h"
 #include "cl_command_event.h"
 #include "ieditor.h"
 #include "ssh_account_info.h"
@@ -83,6 +84,9 @@ protected:
     void OnLSPOpenFile(LSPEvent& event);
     void OnDownloadFile(clCommandEvent& event);
     void OnStopFindInFiles(clFindInFilesEvent& event);
+
+    void OnSftpSaveError(clCommandEvent& event);
+    void OnSftpSaveSuccess(clCommandEvent& event);
 
     // keep the LSPs state as it were before we added our remote ones
     // and disable them

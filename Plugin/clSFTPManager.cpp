@@ -420,7 +420,7 @@ bool clSFTPManager::DoSyncSaveFile(const wxString& localPath, const wxString& re
 void clSFTPManager::AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
                                   wxEvtHandler* sink)
 {
-    DoAsyncSaveFile(localPath, remotePath, accountName, false, sink);
+    DoAsyncSaveFile(localPath, remotePath, accountName, false, sink == nullptr ? this : sink);
 }
 
 void clSFTPManager::OnFileSaved(clCommandEvent& event)
@@ -792,7 +792,7 @@ void clSFTPManager::StartWorkerThread()
 
 void clSFTPManager::OnSaveCompleted(clCommandEvent& e)
 {
-    clGetManager()->SetStatusMessage(e.GetFileName() + _(" saved"), 3);
+    clGetManager()->SetStatusMessage("SFTP: " + e.GetFileName() + _(" saved"), 3);
 }
 
 void clSFTPManager::OnSaveError(clCommandEvent& e)

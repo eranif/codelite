@@ -137,7 +137,7 @@ BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer56->Add(m_staticText62, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
 
-    m_textCtrlValue = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_textCtrlValue = new clThemedSTC(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_textCtrlValue->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_textCtrlValue->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -495,8 +495,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer263->Add(m_staticText265, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_stcCommands =
-        new wxStyledTextCtrl(Debugger, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
+    m_stcCommands = new clThemedSTC(Debugger, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_stcCommands->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCommands->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -550,8 +549,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer22->Add(m_staticText26, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_stcCCFlags = new wxStyledTextCtrl(m_panelCodeCompletion, wxID_ANY, wxDefaultPosition,
-                                        wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
+    m_stcCCFlags = new clThemedSTC(m_panelCodeCompletion, wxID_ANY, wxDefaultPosition,
+                                   wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_stcCCFlags->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCCFlags->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -601,7 +600,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer117->Add(m_staticText119, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_stcEnv = new wxStyledTextCtrl(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
+    m_stcEnv = new clThemedSTC(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_stcEnv->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcEnv->SetMarginMask(4, wxSTC_MASK_FOLDERS);

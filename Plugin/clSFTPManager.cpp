@@ -799,7 +799,10 @@ void clSFTPManager::OnSaveError(clCommandEvent& e)
 {
     m_lastError.clear();
     m_lastError << "SaveError: " << e.GetString();
-    clERROR() << m_lastError << endl;
+    clWARNING() << m_lastError << endl;
+    wxString errormsg = _("SFTP error: failed to save file. ") + e.GetString();
+    errormsg.Trim();
+    clGetManager()->GetStatusBar()->SetMessage(errormsg);
 }
 
 bool clSFTPManager::IsRemoteFile(const wxString& filepath, wxString* account, wxString* remote_path) const

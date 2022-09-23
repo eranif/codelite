@@ -57,7 +57,7 @@ clRemoteDirCtrl::clRemoteDirCtrl(wxWindow* parent)
         // same kind
         return (a->GetFullName().CmpNoCase(b->GetFullName()) < 0);
     };
-    m_treeCtrl->SetSortFunction(SortFunc);
+    m_treeCtrl->SetSortFunction(std::move(SortFunc));
 }
 
 clRemoteDirCtrl::~clRemoteDirCtrl()
@@ -345,7 +345,11 @@ void clRemoteDirCtrl::DoOpenItem(const wxTreeItemId& item, eDownloadAction actio
 
     switch(action) {
     case kOpenInCodeLite:
-        clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
+        if(clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account) == nullptr) {
+            // Failed to load the file, notify the user
+            ::wxMessageBox(_("Failed to load file: ") + cd->GetFullPath(), "CodeLite", wxICON_WARNING | wxOK | wxCENTER,
+                           EventNotifier::Get()->TopFrame());
+        }
         break;
     case kOpenInExplorer: {
         auto editor = clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);

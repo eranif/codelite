@@ -44,7 +44,6 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
         wxPersistenceManager::Get().Register(win);
     }
 
-#ifndef __WXGTK__
     // restore the object (size and position)
     // note that we do not do this linux due to bug
     // the on some DE, the restored window gets
@@ -52,7 +51,6 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
     if(wxPersistenceManager::Get().Find(win)) {
         wxPersistenceManager::Get().Restore(win);
     }
-#endif
 
     DoLoad(win, win->GetName(), 0);
 }

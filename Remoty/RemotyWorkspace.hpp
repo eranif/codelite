@@ -156,6 +156,8 @@ public:
     bool IsBuildSupported() const override;
     bool IsProjectSupported() const override;
     wxString GetDebuggerName() const override;
+    bool IsRemote() const override { return true; }
+    wxString GetSshAccount() const override;
 
     /**
      * @brief return the remote workspace directory (on the remote machine)

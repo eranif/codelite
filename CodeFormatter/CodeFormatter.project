@@ -44,6 +44,24 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="Formatters">
+    <File Name="fmtXmlLint.cpp"/>
+    <File Name="fmtXmlLint.hpp"/>
+    <File Name="fmtJQ.cpp"/>
+    <File Name="fmtJQ.hpp"/>
+    <File Name="CodeFormatterManager.cpp"/>
+    <File Name="CodeFormatterManager.hpp"/>
+    <File Name="fmtPHPCBF.cpp"/>
+    <File Name="fmtPHPCBF.hpp"/>
+    <File Name="fmtPHPCSFixer.cpp"/>
+    <File Name="fmtPHPCSFixer.hpp"/>
+    <File Name="fmtClangFormat.cpp"/>
+    <File Name="fmtClangFormat.hpp"/>
+    <File Name="GenericFormatter.cpp"/>
+    <File Name="GenericFormatter.hpp"/>
+    <File Name="SourceFormatterBase.cpp"/>
+    <File Name="SourceFormatterBase.hpp"/>
+  </VirtualDirectory>
   <Reconciliation>
     <Regexes/>
     <Excludepaths/>
@@ -63,17 +81,6 @@
   <VirtualDirectory Name="Header Files">
     <File Name="codeformatter.h"/>
     <File Name="formatoptions.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="AStyle">
-    <File Name="astyle_main.cpp"/>
-    <File Name="ASBeautifier.cpp"/>
-    <File Name="ASEnhancer.cpp"/>
-    <File Name="ASFormatter.cpp"/>
-    <File Name="ASResource.cpp"/>
-    <File Name="astyle.h"/>
-    <File Name="astyle_main.h"/>
-    <File Name="ASLocalizer.cpp"/>
-    <File Name="ASLocalizer.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
     <File Name="codeformatterdlg.h"/>

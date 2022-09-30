@@ -55,3 +55,23 @@ bool MSYS2::FindHomeDir(wxString* homedir)
     *homedir = static_home_dir;
     return !static_home_dir.empty();
 }
+
+bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
+{
+    wxString msyspath;
+    if(!FindInstallDir(&msyspath)) {
+        return false;
+    }
+
+    wxArrayString paths_to_try;
+    paths_to_try.Add(msyspath + R"(\clang64\bin\)" + command + ".exe");
+    paths_to_try.Add(msyspath + R"(\mingw64\bin\)" + command + ".exe");
+    paths_to_try.Add(msyspath + R"(\usr\bin\)" + command + ".exe");
+    for(const auto& path : paths_to_try) {
+        if(wxFileName::FileExists(path)) {
+            *command_fullpath = path;
+            return true;
+        }
+    }
+    return false;
+}

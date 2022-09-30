@@ -3,6 +3,7 @@
 
 #include "codelite_exports.h"
 #include "fileutils.h"
+
 #include <wx/filename.h>
 #include <wx/string.h>
 
@@ -12,7 +13,12 @@ class WXDLLIMPEXP_CL clTempFile
     bool m_deleteOnDestruct = true;
 
 public:
+    /// create a file in the default temp folder using the default values
     clTempFile(const wxString& ext = "txt");
+
+    /// create a temp file in the provided folder using the given extension
+    clTempFile(const wxString& folder, const wxString& ext);
+
     ~clTempFile();
     /**
      * @brief wite content to the temp file

@@ -369,8 +369,6 @@
     <File Name="clStrings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
-    <File Name="MSYS2.cpp"/>
-    <File Name="MSYS2.hpp"/>
     <File Name="mdparser.hpp"/>
     <File Name="mdparser.cpp"/>
     <File Name="clFileCache.cpp"/>
@@ -662,7 +660,6 @@
     <File Name="VirtualDirectoryColour.h"/>
     <File Name="VirtualDirectoryColour.cpp"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="JobQueue"/>
   <Dependencies/>
   <VirtualDirectory Name="BrowsingRecords">
     <File Name="navigationmanager.h"/>

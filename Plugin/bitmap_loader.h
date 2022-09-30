@@ -36,13 +36,6 @@
 #include <wx/filename.h>
 #include <wx/imaglist.h>
 
-namespace std
-{
-template <> struct hash<FileExtManager::FileType> {
-    size_t operator()(const FileExtManager::FileType& t) const { return hash<int>{}((int)t); }
-};
-} // namespace std
-
 class WXDLLIMPEXP_SDK clMimeBitmaps
 {
     /// Maps between image-id : index in the list
@@ -151,7 +144,7 @@ protected:
     wxFileName m_zipPath;
     std::unordered_map<wxString, wxBitmap> m_toolbarsBitmaps;
     std::unordered_map<wxString, wxString> m_manifest;
-    std::unordered_map<FileExtManager::FileType, int> m_fileIndexMap;
+    std::unordered_map<int, int> m_fileIndexMap;
     bool m_bMapPopulated;
     size_t m_toolbarIconSize;
     clMimeBitmaps m_mimeBitmaps;

@@ -29,6 +29,8 @@ enum class CellType {
     TEXT_OPTIONS = 4,
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SELECTION_CHANGING, wxDataViewEvent);
+
 /**
  * @brief a thin wrapper around clTreeCtrl which provides basic compatiblity API (such as adding columns)
  * This is mainly for code generators like wxCrafter

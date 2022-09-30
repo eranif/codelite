@@ -22,62 +22,35 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __codeformatterdlg__
-#define __codeformatterdlg__
+#ifndef __CODEFORMATTERDLG__
+#define __CODEFORMATTERDLG__
 
+#include "CodeFormatterManager.hpp"
 #include "codeformatterdlgbase.h"
-#include "formatoptions.h"
 
 class IManager;
 class CodeFormatter;
 
 class CodeFormatterDlg : public CodeFormatterBaseDlg
 {
-    FormatOptions& m_options;
-    CodeFormatter* m_cf;
-    wxString m_cppSampleCode;
-    wxString m_phpSampleCode;
-    bool m_isDirty;
-    IManager* m_mgr;
+    bool m_isDirty = false;
+    CodeFormatterManager& m_formatter_manager;
 
 protected:
-    virtual void OnChoiceJSON(wxCommandEvent& event);
-    virtual void OnChoiceJavaScript(wxCommandEvent& event);
-    virtual void OnChoiceXML(wxCommandEvent& event);
-    virtual void OnChoiceRust(wxCommandEvent& event);
-    virtual void OnExportClangFormatFile(wxCommandEvent& event);
-    virtual void UpdatePreviewUI(wxNotebookEvent& event);
-    virtual void OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event);
-    virtual void OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event);
-    virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event);
-    virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event);
-    virtual void OnFormatOnSave(wxCommandEvent& event);
-    virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event);
-    virtual void OnPgmgrclangPgChanged(wxPropertyGridEvent& event);
-    virtual void OnPgmgrphpPgChanged(wxPropertyGridEvent& event);
-    virtual void OnApply(wxCommandEvent& event);
-    virtual void OnCustomAstyleFlags(wxCommandEvent& event);
-    virtual void OnApplyUI(wxUpdateUIEvent& event);
+    void OnRevert(wxCommandEvent& event);
+    void OnEnabled(wxCommandEvent& event);
+    void OnSelectionChanged(wxDataViewEvent& event);
+    void OnSelectionChanging(wxDataViewEvent& event);
     void OnOK(wxCommandEvent& e);
-    void OnHelp(wxCommandEvent& e);
     void InitDialog();
-    void UpdatePreview();
-    void UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxString& text);
-    void UpdateClangBraceWrapProps();
+    void OnExportFile(wxCommandEvent& event);
+    bool IsDirty() const;
+
+    void Save();
 
 public:
-    /** Constructor */
-    CodeFormatterDlg(wxWindow* parent,
-        IManager* mgr,
-        CodeFormatter* cf,
-        FormatOptions& options,
-        const wxString& cppSampleCode,
-        const wxString& phpSampleCode);
+    CodeFormatterDlg(wxWindow* parent, CodeFormatterManager& mgr);
     virtual ~CodeFormatterDlg();
-    FormatOptions GetOptions() const
-    {
-        return m_options;
-    }
 };
 
-#endif // __codeformatterdlg__
+#endif // __CODEFORMATTERDLG__

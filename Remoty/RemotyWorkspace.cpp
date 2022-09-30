@@ -1374,3 +1374,5 @@ void RemotyWorkspace::OnSftpSaveSuccess(clCommandEvent& event)
     }
     clGetManager()->SetStatusMessage(_("Remote file: ") + event.GetFileName() + _(" successfully saved"));
 }
+
+wxString RemotyWorkspace::GetSshAccount() const { return GetAccount().GetAccountName(); }

@@ -9,7 +9,7 @@ clThemedSTC::clThemedSTC(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     m_editEventsHandler.Reset(new clEditEventsHandler(this));
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if(lex) {
-        lex->Apply(this);
+        lex->ApplySystemColours(this);
     }
 }
 
@@ -22,7 +22,7 @@ bool clThemedSTC::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     if(res) {
         LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
         if(lex) {
-            lex->Apply(this);
+            lex->ApplySystemColours(this);
         }
     }
     return res;

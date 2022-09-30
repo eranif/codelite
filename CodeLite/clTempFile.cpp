@@ -8,6 +8,11 @@ clTempFile::clTempFile(const wxString& ext)
     m_filename = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "cltmp", ext);
 }
 
+clTempFile::clTempFile(const wxString& folder, const wxString& ext)
+{
+    m_filename = FileUtils::CreateTempFileName(folder, "cltmp", ext);
+}
+
 clTempFile::~clTempFile()
 {
     if(m_deleteOnDestruct) {

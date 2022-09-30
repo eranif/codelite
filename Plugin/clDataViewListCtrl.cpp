@@ -31,6 +31,7 @@ wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_ACTION_BUTTON, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CHOICE, wxDataViewEvent);
+wxDEFINE_EVENT(wxEVT_DATAVIEW_SELECTION_CHANGING, wxDataViewEvent);
 
 std::unordered_map<int, int> clDataViewListCtrl::m_stylesMap;
 
@@ -98,6 +99,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
     Bind(wxEVT_TREE_BEGIN_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_END_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
+    Bind(wxEVT_TREE_SEL_CHANGING, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_ITEM_ACTIVATED, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_ITEM_MENU, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_SEARCH_TEXT, &clDataViewListCtrl::OnConvertEvent, this);
@@ -112,6 +114,7 @@ clDataViewListCtrl::~clDataViewListCtrl()
     Unbind(wxEVT_TREE_ACTIONBUTTON_CLICKED, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_END_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
+    Unbind(wxEVT_TREE_SEL_CHANGING, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_ITEM_ACTIVATED, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_ITEM_MENU, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_ITEM_VALUE_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
@@ -184,6 +187,8 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
         type = wxEVT_DATAVIEW_ITEM_DROP;
     } else if(event.GetEventType() == wxEVT_TREE_SEL_CHANGED) {
         type = wxEVT_DATAVIEW_SELECTION_CHANGED;
+    } else if(event.GetEventType() == wxEVT_TREE_SEL_CHANGING) {
+        type = wxEVT_DATAVIEW_SELECTION_CHANGING;
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_ACTIVATED) {
         type = wxEVT_DATAVIEW_ITEM_ACTIVATED;
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_MENU) {

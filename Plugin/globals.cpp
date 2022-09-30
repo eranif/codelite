@@ -1900,9 +1900,10 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
     }
     return expression;
 }
+
 wxString& WrapWithQuotes(wxString& str)
 {
-    if(str.Contains(" ")) {
+    if(!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
         str.Prepend("\"").Append("\"");
     }
     return str;

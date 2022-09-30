@@ -194,6 +194,9 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
     "LibraryPath",
     "ResourcePath",
     "LinkLibraries",
+    "SSH_AccountName",
+    "SSH_Host",
+    "SSH_User",
 };
 } // namespace
 
@@ -207,7 +210,6 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
 {
     wxString expandedString(expression);
     clCxxWorkspace* workspace = nullptr;
-    // IWorkspace* workspace = clWorkspaceManager::Get().IsWorkspaceOpened();
 
     if(!manager) {
         manager = clGetManager();
@@ -217,6 +219,20 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
     wxString wspConfig;
     wxString wspPath;
     wxString program_to_run;
+
+    // ssh macros
+    wxString ssh_host;
+    wxString account_name;
+    wxString ssh_user;
+
+    auto w = clWorkspaceManager::Get().GetWorkspace();
+    if(w && w->IsRemote()) {
+        wxString ssh_account = w->GetSshAccount();
+        auto account = SSHAccountInfo::LoadAccount(ssh_account);
+        ssh_host = account.GetHost();
+        account_name = ssh_account;
+        ssh_user = account.GetUsername();
+    }
 
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         wspName = clCxxWorkspaceST::Get()->GetName();
@@ -242,6 +258,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         expandedString.Replace("$(WorkspaceName)", wspName);
         expandedString.Replace("$(WorkspaceConfiguration)", wspConfig);
         expandedString.Replace("$(WorkspacePath)", wspPath);
+
         if(workspace) {
             ProjectPtr proj = workspace->GetProject(project);
             if(proj) {
@@ -330,7 +347,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         if(manager) {
             IEditor* editor = manager->GetActiveEditor();
             if(editor) {
-                wxFileName fn(editor->GetFileName());
+                wxFileName fn(editor->GetRemotePathOrLocal());
 
                 expandedString.Replace("$(CurrentFileName)", fn.GetName());
 
@@ -357,6 +374,11 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         wxDateTime now = wxDateTime::Now();
         expandedString.Replace("$(User)", wxGetUserName());
         expandedString.Replace("$(Date)", now.FormatDate());
+
+        // ssh related
+        expandedString.Replace("$(SSH_AccountName)", account_name);
+        expandedString.Replace("$(SSH_Host)", ssh_host);
+        expandedString.Replace("$(SSH_User)", ssh_user);
 
         if(manager && applyEnv) {
             expandedString.Replace("$(CodeLitePath)", manager->GetInstallDirectory());

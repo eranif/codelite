@@ -1,5 +1,6 @@
 #include "GenericFormatter.hpp"
 
+#include "Platform.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clCodeLiteRemoteProcess.hpp"
@@ -177,4 +178,11 @@ void GenericFormatter::SetCommand(const std::vector<wxString>& command) { SetCom
 void GenericFormatter::SetRemoteCommand(const std::vector<wxString>& command)
 {
     SetRemoteCommand(to_wx_array(command));
+}
+
+wxString GenericFormatter::GetSSHCommand() const
+{
+    wxString ssh_exe = "ssh";
+    PLATFORM::Which("ssh", &ssh_exe);
+    return ssh_exe;
 }

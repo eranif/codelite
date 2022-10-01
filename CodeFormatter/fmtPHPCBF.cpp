@@ -11,7 +11,7 @@ fmtPHPCBF::fmtPHPCBF()
     SetEnabled(false);
 
     wxString php_exe = "php";
-    Platform::Which("php", &php_exe);
+    PLATFORM::Which("php", &php_exe);
     SetCommand({ php_exe, "vendor/bin/phpcbf", "-q", "$(CurrentFileFullPath)" });
 
     // remote command
@@ -20,7 +20,7 @@ fmtPHPCBF::fmtPHPCBF()
         remote_command << "cd " << GetWorkingDirectory() << " && ";
     }
     remote_command << "php vendor/bin/phpcbf -q $(CurrentFileFullPath)\"";
-    SetRemoteCommand({ "ssh", "$(SSH_User)@$(SSH_Host)", remote_command });
+    SetRemoteCommand({ GetSSHCommand(), "$(SSH_User)@$(SSH_Host)", remote_command });
 }
 
 fmtPHPCBF::~fmtPHPCBF() {}

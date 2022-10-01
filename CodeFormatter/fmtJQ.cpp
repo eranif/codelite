@@ -14,7 +14,7 @@ fmtJQ::fmtJQ()
     SetDescription(_("commandline JSON processor"));
 
     wxString jq_exe = "jq";
-    Platform::Which("jq", &jq_exe);
+    PLATFORM::Which("jq", &jq_exe);
 
     SetCommand({ jq_exe, ".", "-S", "$(CurrentFileFullPath)" });
 
@@ -24,7 +24,7 @@ fmtJQ::fmtJQ()
         remote_command << "cd " << GetWorkingDirectory() << " && ";
     }
     remote_command << "jq . -S $(CurrentFileFullPath)\"";
-    SetRemoteCommand({ "ssh", "$(SSH_User)@$(SSH_Host)", remote_command });
+    SetRemoteCommand({ GetSSHCommand(), "$(SSH_User)@$(SSH_Host)", remote_command });
 }
 
 fmtJQ::~fmtJQ() {}

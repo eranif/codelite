@@ -185,8 +185,7 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
 
     if(f->IsInlineFormatter()) {
         // reload the current editor
-        wxCommandEvent reload_file_event{ XRCID("refresh_file") };
-        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(reload_file_event);
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
     } else {
         clEditorStateLocker locker{ editor->GetCtrl() };
         editor->GetCtrl()->SetText(output);
@@ -212,8 +211,7 @@ bool CodeFormatter::DoFormatString(const wxString& content, const wxString& file
 void CodeFormatter::ReloadCurrentEditor()
 {
     // reload the current editor
-    wxCommandEvent reload_file_event{ XRCID("refresh_file") };
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(reload_file_event);
+    EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 }
 
 bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format)

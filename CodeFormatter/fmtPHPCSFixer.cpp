@@ -13,7 +13,7 @@ fmtPHPCSFixer::fmtPHPCSFixer()
     SetConfigFilepath("$(WorkspacePath)/.php-cs-fixer.dist.php");
 
     wxString php_exe = "php";
-    Platform::Which("php", &php_exe);
+    PLATFORM::Which("php", &php_exe);
     SetCommand({ php_exe, "tools/php-cs-fixer/vendor/bin/php-cs-fixer", "fix", "--quiet", "$(CurrentFileFullPath)" });
 
     // remote command
@@ -22,7 +22,7 @@ fmtPHPCSFixer::fmtPHPCSFixer()
         remote_command << "cd " << GetWorkingDirectory() << " && ";
     }
     remote_command << "php tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --quiet $(CurrentFileFullPath)\"";
-    SetRemoteCommand({ "ssh", "$(SSH_User)@$(SSH_Host)", remote_command });
+    SetRemoteCommand({ GetSSHCommand(), "$(SSH_User)@$(SSH_Host)", remote_command });
 }
 
 fmtPHPCSFixer::~fmtPHPCSFixer() {}

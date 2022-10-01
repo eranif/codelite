@@ -173,6 +173,7 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
     "CurrentFileExt",
     "CurrentFileFullName",
     "CurrentFileFullPath",
+    "CurrentFileRelPath",
     "CurrentSelection",
     "CurrentSelectionRange",
     "Program",
@@ -355,10 +356,20 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                 expandedString.Replace("$(CurrentFileName)", fn.GetName());
 
                 wxString fpath(fn.GetPath());
+
+                // build the relative path
+                wxString rel_path = fn.GetFullPath();
+                if(w) {
+                    wxFileName _f(fn);
+                    _f.MakeRelativeTo(w->GetDir());
+                    rel_path = _f.GetFullPath(w->IsRemote() ? wxPATH_UNIX : wxPATH_NATIVE);
+                }
+
                 fpath.Replace("\\", "/");
                 expandedString.Replace("$(CurrentFilePath)", fpath);
                 expandedString.Replace("$(CurrentFileExt)", fn.GetExt());
                 expandedString.Replace("$(CurrentFileFullName)", fn.GetFullName());
+                expandedString.Replace("$(CurrentFileRelPath)", rel_path);
 
                 wxString ffullpath(fn.GetFullPath());
                 ffullpath.Replace("\\", "/");

@@ -5,9 +5,9 @@
 
 #ifdef __WXMSW__
 #include "MSYS2.hpp"
-typedef MSYS2 Platform;
+typedef MSYS2 PLATFORM;
 #else
 #include "LINUX.hpp"
-typedef LINUX Platform;
+typedef LINUX PLATFORM;
 #endif
 #endif // PLATFORM__HPP

@@ -6,6 +6,7 @@
 #include "fmtJQ.hpp"
 #include "fmtPHPCBF.hpp"
 #include "fmtPHPCSFixer.hpp"
+#include "fmtRustfmt.hpp"
 #include "fmtXmlLint.hpp"
 
 #include <wx/filename.h>
@@ -35,6 +36,7 @@ void CodeFormatterManager::initialize_defaults()
     push_back(new fmtPHPCSFixer);
     push_back(new fmtJQ);
     push_back(new fmtXmlLint);
+    push_back(new fmtRustfmt);
 }
 
 void CodeFormatterManager::push_back(GenericFormatter* formatter)

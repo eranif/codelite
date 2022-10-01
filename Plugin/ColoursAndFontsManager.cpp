@@ -75,6 +75,22 @@ void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
     as_str = ::wxJoin(extensions, ';');
     lexer->SetFileSpec(as_str);
 }
+
+void RemoveFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
+{
+    wxString spec = lexer->GetFileSpec();
+    wxString as_str;
+    auto extensions = ::wxStringTokenize(spec, ";,", wxTOKEN_STRTOK);
+    int where = extensions.Index(extension);
+
+    if(where == wxNOT_FOUND) {
+        return;
+    }
+
+    extensions.RemoveAt(where);
+    as_str = ::wxJoin(extensions, ';');
+    lexer->SetFileSpec(as_str);
+}
 } // namespace
 
 class clCommandEvent;
@@ -890,6 +906,15 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     // .clangd is of type "yaml"
     if(lexer->GetName() == "yaml") {
         AddFileExtension(lexer, ".clangd");
+    }
+
+    if(lexer->GetName() == "fortran") {
+        RemoveFileExtension(lexer, "*f");
+        AddFileExtension(lexer, "*.f");
+    }
+
+    if(lexer->GetName() == "json") {
+        AddFileExtension(lexer, "*.conf");
     }
 
     // Upgrade the lexer colours

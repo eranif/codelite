@@ -233,7 +233,21 @@ bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format
         return false;
     }
 
-    ReloadCurrentEditor();
+    auto editor = clGetManager()->FindEditor(fileName);
+    if(editor) {
+        if(f->IsInlineFormatter()) {
+            // need to update the file itself
+            editor->ReloadFromDisk(true);
+        } else {
+            clEditorStateLocker locker{ editor->GetCtrl() };
+            editor->GetCtrl()->SetText(output);
+        }
+    } else {
+        // the file is not opened in the CodeLite
+        if(wxFileExists(fileName)) {
+            FileUtils::WriteFileContent(fileName, output);
+        }
+    }
     return true;
 }
 

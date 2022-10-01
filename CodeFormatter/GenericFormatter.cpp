@@ -40,6 +40,44 @@ wxArrayString to_wx_array(const std::vector<wxString>& arr)
     }
     return wxarr;
 }
+
+wxString replace_macros(const wxString& expression, const wxString& filepath)
+{
+    wxString wsp_dir;
+    bool is_remote = false;
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if(workspace) {
+        is_remote = workspace->IsRemote();
+        wsp_dir = workspace->GetDir();
+    }
+
+    // replace file macros
+    wxString filepath_relative;
+    wxString fullname;
+    wxString filedir;
+    wxString fullpath = filepath;
+
+    wxFileName fn{ filepath };
+    if(!wsp_dir.empty()) {
+        fn.MakeRelativeTo(wsp_dir);
+    }
+
+    filepath_relative = fn.GetFullPath(is_remote ? wxPATH_UNIX : wxPATH_NATIVE);
+    fullname = fn.GetFullName();
+    filedir = fn.GetPath(is_remote ? wxPATH_UNIX : wxPATH_NATIVE);
+
+    EnvSetter env;
+    wxString tmp_expr = expression;
+    tmp_expr.Replace("$(CurrentFileName)", fn.GetName());
+    tmp_expr.Replace("$(CurrentFilePath)", filedir);
+    tmp_expr.Replace("$(CurrentFileExt)", fn.GetExt());
+    tmp_expr.Replace("$(CurrentFileFullName)", fullname);
+    tmp_expr.Replace("$(CurrentFileFullPath)", fullpath);
+    tmp_expr.Replace("$(CurrentFileRelPath)", filepath_relative);
+
+    wxString resolved = MacroManager::Instance()->Expand(tmp_expr, clGetManager(), wxEmptyString, wxEmptyString);
+    return resolved;
+}
 } // namespace
 
 GenericFormatter::GenericFormatter() { SetWorkingDirectory("$(WorkspacePath)"); }
@@ -69,13 +107,8 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager
     // Create a copy
     wxString cmd = GetRemoteCommandAsString();
 
-    wxString file = filepath;
-    cmd.Replace("$(CurrentFileFullPath)", WrapWithQuotes(file));
-
-    // apply the environment
-    EnvSetter env;
-    cmd = MacroManager::Instance()->Expand(cmd, clGetManager(), wxEmptyString, wxEmptyString);
-    wxString wd = MacroManager::Instance()->Expand(GetWorkingDirectory(), clGetManager(), wxEmptyString, wxEmptyString);
+    cmd = replace_macros(cmd, filepath);
+    wxString wd = replace_macros(GetWorkingDirectory(), filepath);
 
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;
@@ -102,13 +135,8 @@ bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::File
     // Create a copy
     wxString cmd = GetCommandAsString();
 
-    wxString file = filepath;
-    cmd.Replace("$(CurrentFileFullPath)", WrapWithQuotes(file));
-
-    // apply the environment
-    EnvSetter env;
-    cmd = MacroManager::Instance()->Expand(cmd, clGetManager(), wxEmptyString, wxEmptyString);
-    wxString wd = MacroManager::Instance()->Expand(GetWorkingDirectory(), clGetManager(), wxEmptyString, wxEmptyString);
+    cmd = replace_macros(cmd, filepath);
+    wxString wd = replace_macros(GetWorkingDirectory(), filepath);
 
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;

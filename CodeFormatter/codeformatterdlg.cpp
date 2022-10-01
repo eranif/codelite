@@ -78,10 +78,12 @@ wxArrayString to_wx_array(const wxString& command)
             continue;
         }
 
-        auto argv = StringUtils::BuildArgv(line);
-        for(const auto& arg : argv) {
-            command_array.push_back(arg);
+        int count = 0;
+        auto argv = StringUtils::BuildArgv(line, count);
+        for(int i = 0; i < count; ++i) {
+            command_array.push_back(argv[i]);
         }
+        StringUtils::FreeArgv(argv, count);
     }
     return command_array;
 }

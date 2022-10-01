@@ -22,6 +22,12 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
     wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
     paths.Insert("/opt/homebrew/bin", 0);
     paths.Insert("/usr/local/bin", 0);
+    wxString homedir;
+    if(FindHomeDir(&homedir)) {
+        homedir << "/.cargo/bin";
+        paths.Insert(homedir, 0);
+    }
+
     for(auto path : paths) {
         path << "/" << command;
         if(wxFileName::FileExists(path)) {

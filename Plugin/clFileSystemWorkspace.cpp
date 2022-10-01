@@ -344,8 +344,8 @@ void clFileSystemWorkspace::DoOpen()
 
     // Notify that the a new workspace is loaded
     clWorkspaceEvent event(wxEVT_WORKSPACE_LOADED);
-    event.SetString(GetDir());
-    event.SetFileName(GetDir());
+    event.SetString(GetFileName());
+    event.SetFileName(GetFileName());
     EventNotifier::Get()->AddPendingEvent(event);
 
     // Update the build configurations button

@@ -12,7 +12,7 @@ fmtRustfmt::fmtRustfmt()
     SetConfigFilepath("$(WorkspacePath)/.rustfmt.toml");
 
     // local command
-    wxString rustfmt_exe;
+    wxString rustfmt_exe = "rustfmt";
     PLATFORM::Which("rustfmt", &rustfmt_exe);
     SetCommand({ rustfmt_exe, "$(CurrentFileRelPath)" });
 

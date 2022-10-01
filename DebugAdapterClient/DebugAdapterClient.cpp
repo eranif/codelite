@@ -475,7 +475,7 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
             env = StringUtils::ResolveEnvList(conf->GetEnvironment());
             wxFileName fnExepath(exepath);
             if(fnExepath.IsRelative()) {
-                fnExepath.MakeAbsolute(workspace->GetFileName().GetPath());
+                fnExepath.MakeAbsolute(workspace->GetDir());
             }
             exepath = fnExepath.GetFullPath();
         }
@@ -849,7 +849,7 @@ void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
     if(fnExepath.IsRelative()) {
         wxString cwd;
         if(clFileSystemWorkspace::Get().IsOpen()) {
-            cwd = clFileSystemWorkspace::Get().GetFileName().GetPath();
+            cwd = clFileSystemWorkspace::Get().GetDir();
         }
         fnExepath.MakeAbsolute(cwd);
     }

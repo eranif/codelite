@@ -49,7 +49,7 @@ struct PHPLocation {
 };
 
 class IManager;
-class ResourceItem;
+struct ResourceItem;
 class PHPCodeCompletion : public ServiceProvider
 {
 public:

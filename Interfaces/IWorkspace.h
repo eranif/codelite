@@ -54,9 +54,14 @@ public:
     virtual wxString GetName() const = 0;
 
     /**
-     * @brief return the project file
+     * @brief return the workspace file full path
      */
-    virtual wxFileName GetFileName() const = 0;
+    virtual wxString GetFileName() const = 0;
+
+    /**
+     * @brief return the workspace directory
+     */
+    virtual wxString GetDir() const = 0;
 
     /**
      * @brief set the workspace type

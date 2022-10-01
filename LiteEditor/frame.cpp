@@ -5561,7 +5561,7 @@ void clMainFrame::OnCopyFilePathRelativeToWorkspace(wxCommandEvent& event)
     CHECK_COND_RET(clWorkspaceManager::Get().IsWorkspaceOpened());
 
     wxFileName fn(editor->GetFileName());
-    fn.MakeRelativeTo(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
+    fn.MakeRelativeTo(clWorkspaceManager::Get().GetWorkspace()->GetDir());
 
     ::CopyToClipboard(fn.GetFullPath());
 }

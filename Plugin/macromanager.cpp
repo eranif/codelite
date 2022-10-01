@@ -239,7 +239,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         wspConfig = clCxxWorkspaceST::Get()->GetSelectedConfig()
                         ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName()
                         : wxString();
-        wspPath = clCxxWorkspaceST::Get()->GetFileName().GetPath();
+        wspPath = clCxxWorkspaceST::Get()->GetDir();
         workspace = clCxxWorkspaceST::Get();
     } else if(clFileSystemWorkspace::Get().IsOpen()) {
         wspName = clFileSystemWorkspace::Get().GetName();
@@ -247,7 +247,10 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
             program_to_run = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()->GetExecutable();
             wspConfig = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()->GetName();
         }
-        wspPath = clFileSystemWorkspace::Get().GetFileName().GetPath();
+        wspPath = clFileSystemWorkspace::Get().GetDir();
+    } else if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        wspPath = clWorkspaceManager::Get().GetWorkspace()->GetDir();
+        wspName = clWorkspaceManager::Get().GetWorkspace()->GetName();
     }
 
     size_t retries = 0;

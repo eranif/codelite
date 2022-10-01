@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "code_completion_manager.h"
+
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "ServiceProviderManager.h"
@@ -46,6 +47,7 @@
 #include "tags_options_data.h"
 #include "wxCodeCompletionBox.h"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <algorithm>
 #include <vector>
 
@@ -210,7 +212,7 @@ void CodeCompletionManager::DoProcessCompileCommands()
 
     // Create a thread that will process the current workspace folder and search for any compile_commands.json file
     m_compileCommandsThread = new std::thread(&CodeCompletionManager::ThreadProcessCompileCommandsEntry, this,
-                                              clCxxWorkspaceST::Get()->GetFileName().GetPath());
+                                              clCxxWorkspaceST::Get()->GetDir());
 }
 
 void CodeCompletionManager::ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder)

@@ -456,7 +456,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
                 return;
             }
 
-            wxFileName fn(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath(), wxEmptyString);
+            wxFileName fn(clWorkspaceManager::Get().GetWorkspace()->GetDir(), wxEmptyString);
             fn.AppendDir(".ctagsd");
             fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
@@ -521,7 +521,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     if(clWorkspaceManager::Get().GetWorkspace() && entry.IsAutoRestart() && !entry.IsRemoteLSP()) {
         // we have an opened workspace. if the workspace has a root directory, let's use it
         // otherwise, default to the LSP value
-        wxString path = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
+        wxString path = clWorkspaceManager::Get().GetWorkspace()->GetDir();
         rootDir = path.empty() ? entry.GetWorkingDirectory() : path;
     } else {
         // Remote LSP will set the *remote* working directory in the configuration

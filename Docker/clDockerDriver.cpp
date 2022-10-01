@@ -1,7 +1,8 @@
+#include "clDockerDriver.h"
+
 #include "DockerOutputPane.h"
 #include "asyncprocess.h"
 #include "clConsoleBase.h"
-#include "clDockerDriver.h"
 #include "clDockerEvents.h"
 #include "clDockerSettings.h"
 #include "clDockerWorkspace.h"
@@ -13,6 +14,7 @@
 #include "imanager.h"
 #include "processreaderthread.h"
 #include "wxterminal.h"
+
 #include <wx/msgdlg.h>
 
 clDockerDriver::clDockerDriver(Docker* plugin)
@@ -238,7 +240,7 @@ void clDockerDriver::AttachTerminal(const wxArrayString& names)
     for(size_t i = 0; i < names.size(); ++i) {
         wxString message;
         command << " exec -i " << names.Item(i) << " /bin/bash -i";
-        FileUtils::OpenTerminal(clDockerWorkspace::Get()->GetFileName().GetPath(), command);
+        FileUtils::OpenTerminal(clDockerWorkspace::Get()->GetDir(), command);
     }
 }
 

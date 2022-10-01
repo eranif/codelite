@@ -90,7 +90,8 @@ RemotyWorkspace::RemotyWorkspace(bool dummy)
 
 RemotyWorkspace::~RemotyWorkspace() { UnbindEvents(); }
 
-wxFileName RemotyWorkspace::GetFileName() const { return {}; }
+wxString RemotyWorkspace::GetFileName() const { return m_remoteWorkspaceFile; }
+wxString RemotyWorkspace::GetDir() const { return GetFileName().BeforeLast('/'); }
 
 wxString RemotyWorkspace::GetFilesMask() const { return clFileSystemWorkspace::Get().GetFilesMask(); }
 
@@ -739,7 +740,7 @@ void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
 
     exe = conf->GetExecutable();
     args = conf->GetArgs();
-    wd = conf->GetWorkingDirectory().IsEmpty() ? GetFileName().GetPath() : conf->GetWorkingDirectory();
+    wd = conf->GetWorkingDirectory().IsEmpty() ? GetDir() : conf->GetWorkingDirectory();
 }
 
 void RemotyWorkspace::DoConfigureLSP(const LSPParams& lsp)

@@ -162,7 +162,8 @@ public:
     /**
      * @brief as defined by IWorkspace
      */
-    wxFileName GetFileName() const override { return GetFilename(); }
+    wxString GetFileName() const override { return GetFilename().GetFullPath(); }
+    wxString GetDir() const override { return GetFilename().GetPath(); }
     void SetFolders(const wxArrayString& folders) { this->m_folders = folders; }
     const wxArrayString& GetFolders() const { return m_folders; }
     wxArrayString& GetFolders() { return m_folders; }

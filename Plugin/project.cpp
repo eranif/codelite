@@ -2066,7 +2066,7 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
         GetWorkspace()->GetLocalWorkspace()->GetParserMacros(macrosStr);
 
         // Loop over the workspace parser paths, fix them and add the to the list of paths
-        wxString workspacePath = GetWorkspace()->GetFileName().GetPath();
+        wxString workspacePath = GetWorkspace()->GetDir();
         ProcessIncludes(workspacePaths, workspacePath, cookie, pathsVec);
 
         // Add the compiler paths

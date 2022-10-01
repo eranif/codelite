@@ -312,7 +312,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
                 continue;
             }
             // Add the workspace folder
-            rootDirs.Add(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
+            rootDirs.Add(clWorkspaceManager::Get().GetWorkspace()->GetDir());
 
         } else if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) || (rootDir == SEARCH_IN_WORKSPACE)) {
             if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {

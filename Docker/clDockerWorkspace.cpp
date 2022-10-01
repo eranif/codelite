@@ -1,4 +1,5 @@
 #include "clDockerWorkspace.h"
+
 #include "NewDockerWorkspaceDlg.h"
 #include "clDockerWorkspaceView.h"
 #include "clWorkspaceManager.h"
@@ -9,6 +10,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "tags_options_data.h"
+
 #include <imanager.h>
 #include <wx/msgdlg.h>
 
@@ -57,7 +59,8 @@ clDockerWorkspace::~clDockerWorkspace()
 
 wxString clDockerWorkspace::GetActiveProjectName() const { return ""; }
 
-wxFileName clDockerWorkspace::GetFileName() const { return m_filename; }
+wxString clDockerWorkspace::GetFileName() const { return m_filename.GetFullPath(); }
+wxString clDockerWorkspace::GetDir() const { return m_filename.GetPath(); }
 
 wxString clDockerWorkspace::GetFilesMask() const { return "Dockerfile;docker-compose.yml;*.txt"; }
 

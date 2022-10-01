@@ -3,6 +3,7 @@
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clCodeLiteRemoteProcess.hpp"
+#include "clDirChanger.hpp"
 #include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
@@ -10,6 +11,7 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "macromanager.h"
+#include "procutils.h"
 #include "workspace.h"
 
 namespace
@@ -76,13 +78,10 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager
 
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;
-    IProcess::Ptr_t p(::CreateSyncProcess(cmd, IProcessCreateDefault, wd));
-    if(!p) {
-        clWARNING() << "failed to start formatter process:" << cmd << endl;
-        return false;
-    }
 
-    p->WaitForTerminate(*output);
+    clDirChanger changer{ wd };
+    *output = ::wxShellExec(cmd, wxEmptyString);
+
     clDEBUG1() << "Formatter output (remote):" << endl;
     clDEBUG1() << *output << endl;
 
@@ -112,13 +111,10 @@ bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::File
 
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;
-    IProcess::Ptr_t p(::CreateSyncProcess(cmd, IProcessCreateDefault, wd));
-    if(!p) {
-        clWARNING() << "failed to start formatter process:" << cmd << endl;
-        return false;
-    }
 
-    p->WaitForTerminate(*output);
+    clDirChanger changer{ wd };
+    *output = ::wxShellExec(cmd, wxEmptyString);
+
     clDEBUG1() << "Formatter output:" << endl;
     clDEBUG1() << *output << endl;
 

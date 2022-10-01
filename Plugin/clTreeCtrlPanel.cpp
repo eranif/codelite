@@ -141,7 +141,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Append(XRCID("copy-path"), _("Copy path"));
         menu.Bind(
             wxEVT_MENU,
-            [this, cd](wxCommandEvent& event) {
+            [cd](wxCommandEvent& event) {
                 event.Skip();
                 CHECK_PTR_RET(cd);
                 ::CopyToClipboard(cd->GetPath());
@@ -196,7 +196,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Append(XRCID("copy-path"), _("Copy path"));
         menu.Bind(
             wxEVT_MENU,
-            [this, cd](wxCommandEvent& event) {
+            [cd](wxCommandEvent& event) {
                 event.Skip();
                 CHECK_PTR_RET(cd);
                 ::CopyToClipboard(cd->GetPath());

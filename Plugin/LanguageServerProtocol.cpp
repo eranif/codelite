@@ -657,9 +657,8 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
     // some LSPs will crash if we path an empty root folder
     wxString root_uri = m_rootFolder;
     if(root_uri.empty()) {
-        root_uri = clWorkspaceManager::Get().IsWorkspaceOpened()
-                       ? clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath()
-                       : clStandardPaths::Get().GetTempDir();
+        root_uri = clWorkspaceManager::Get().IsWorkspaceOpened() ? clWorkspaceManager::Get().GetWorkspace()->GetDir()
+                                                                 : clStandardPaths::Get().GetTempDir();
     }
     req->As<LSP::InitializeRequest>()->SetRootUri(root_uri);
     req->As<LSP::InitializeRequest>()->SetInitOptions(m_initOptions);

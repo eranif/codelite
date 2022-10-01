@@ -172,10 +172,16 @@ public:
      * @brief return the currently opened workspace filename
      */
     const wxFileName& GetFilename() const { return m_workspaceFile; }
+
     /**
      * @brief as defined in IWorkspace
      */
-    wxFileName GetFileName() const override { return GetFilename(); }
+    wxString GetFileName() const override { return GetFilename().GetFullPath(); }
+
+    /**
+     * @brief return the workspace directory
+     */
+    wxString GetDir() const override { return GetFilename().GetPath(); }
 
     /**
      * @brief return the workspace name

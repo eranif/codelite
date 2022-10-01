@@ -306,7 +306,7 @@ void clFileSystemWorkspaceView::OnExcludePath(wxCommandEvent& event)
         for(wxString folder : m_selectedFolders) {
             // Make it relative to the workspace
             wxFileName fn(folder, "dummy");
-            fn.MakeRelativeTo(clFileSystemWorkspace::Get().GetFileName().GetPath());
+            fn.MakeRelativeTo(clFileSystemWorkspace::Get().GetDir());
             folder = fn.GetPath();
             if(S.count(folder) == 0) {
                 S.insert(folder);

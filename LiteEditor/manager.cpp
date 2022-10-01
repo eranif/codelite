@@ -1035,7 +1035,7 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
     if(type == TagsManager::Retag_Quick) {
         TagsManagerST::Get()->ParseWorkspaceIncremental();
     } else {
-        TagsManagerST::Get()->ParseWorkspaceFull(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
+        TagsManagerST::Get()->ParseWorkspaceFull(clWorkspaceManager::Get().GetWorkspace()->GetDir());
     }
 }
 

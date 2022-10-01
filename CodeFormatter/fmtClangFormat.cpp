@@ -17,7 +17,12 @@ fmtClangFormat::fmtClangFormat()
     SetCommand({ clang_format_exe, "$(CurrentFileFullPath)" });
 
     // remote command
-    SetRemoteCommand({ "ssh", "$(SSH_User)@$(SSH_Host)", "clang-format", "$(CurrentFileFullPath)" });
+    wxString remote_command = "\"";
+    if(!GetWorkingDirectory().empty()) {
+        remote_command << "cd " << GetWorkingDirectory() << " && ";
+    }
+    remote_command << "clang-format $(CurrentFileFullPath)\"";
+    SetRemoteCommand({ "ssh", "$(SSH_User)@$(SSH_Host)", remote_command });
 }
 
 fmtClangFormat::~fmtClangFormat() {}

@@ -183,7 +183,9 @@ public:
      */
     void CreateCompileFlags() const;
 
-    wxFileName GetFileName() const override { return GetWorkspaceFileName(); }
+    wxString GetFileName() const override { return GetWorkspaceFileName().GetFullPath(); }
+    wxString GetDir() const override { return GetWorkspaceFileName().GetPath(); }
+
     void SetStartupDir(const wxString& startupDir) { this->m_startupDir = startupDir; }
     const wxString& GetStartupDir() const { return m_startupDir; }
 

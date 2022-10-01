@@ -146,7 +146,8 @@ protected:
 public:
     // IWorkspace
     wxString GetActiveProjectName() const override { return wxEmptyString; }
-    wxFileName GetFileName() const override;
+    wxString GetFileName() const override;
+    wxString GetDir() const override;
     wxString GetFilesMask() const override;
     wxFileName GetProjectFileName(const wxString& projectName) const override;
     void GetProjectFiles(const wxString& projectName, wxArrayString& files) const override;

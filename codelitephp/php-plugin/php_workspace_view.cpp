@@ -437,7 +437,7 @@ void PHPWorkspaceView::LoadWorkspaceView()
 
     ItemData* data = new ItemData(ItemData::Kind_Workspace);
     data->SetFile(PHPWorkspace::Get()->GetFilename().GetFullPath());
-    data->SetFolderPath(PHPWorkspace::Get()->GetFileName().GetPath());
+    data->SetFolderPath(PHPWorkspace::Get()->GetDir());
 
     wxTreeItemId root =
         m_treeCtrlView->AddRoot(workspaceName, bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()),

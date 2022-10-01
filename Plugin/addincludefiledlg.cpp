@@ -146,7 +146,7 @@ void AddIncludeFileDlg::UpdateLineToAdd()
         rest.Remove(0, 1);
     }
 
-    wxString workspaceDir = clCxxWorkspaceST::Get()->GetFileName().GetPath();
+    wxString workspaceDir = clCxxWorkspaceST::Get()->GetDir();
     bool isSystemHeader = !m_fullpath.StartsWith(workspaceDir);
 
     wxString delimopen = isSystemHeader ? "<" : "\"";

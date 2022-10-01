@@ -180,9 +180,4 @@ void GenericFormatter::SetRemoteCommand(const std::vector<wxString>& command)
     SetRemoteCommand(to_wx_array(command));
 }
 
-wxString GenericFormatter::GetSSHCommand() const
-{
-    wxString ssh_exe = "ssh";
-    PLATFORM::Which("ssh", &ssh_exe);
-    return ssh_exe;
-}
+bool GenericFormatter::GetSSHCommand(wxString* ssh_exe) const { return PLATFORM::Which("ssh", ssh_exe); }

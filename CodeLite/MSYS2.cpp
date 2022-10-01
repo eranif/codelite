@@ -1,5 +1,8 @@
 #include "MSYS2.hpp"
 
+#include <wx/arrstr.h>
+#include <wx/tokenzr.h>
+
 namespace
 {
 bool install_dir_checked = false;
@@ -63,11 +66,16 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
         return false;
     }
 
-    wxArrayString paths_to_try;
-    paths_to_try.Add(msyspath + R"(\clang64\bin\)" + command + ".exe");
-    paths_to_try.Add(msyspath + R"(\mingw64\bin\)" + command + ".exe");
-    paths_to_try.Add(msyspath + R"(\usr\bin\)" + command + ".exe");
-    for(const auto& path : paths_to_try) {
+    wxString pathenv;
+    wxGetEnv("PATH", &pathenv);
+    wxArrayString paths_to_try = ::wxStringTokenize(pathenv, ";", wxTOKEN_STRTOK);
+
+    paths_to_try.Insert(msyspath + R"(\usr\bin)", 0);
+    paths_to_try.Insert(msyspath + R"(\mingw64\bin)", 0);
+    paths_to_try.Insert(msyspath + R"(\clang64\bin)", 0);
+
+    for(auto path : paths_to_try) {
+        path << "\\" << command << ".exe";
         if(wxFileName::FileExists(path)) {
             *command_fullpath = path;
             return true;

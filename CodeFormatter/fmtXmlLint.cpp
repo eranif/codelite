@@ -13,12 +13,15 @@ fmtXmlLint::fmtXmlLint()
     SetCommand({ xml_lint_exe, "--format", "$(CurrentFileFullPath)" });
 
     // remote command
-    wxString remote_command = "\"";
-    if(!GetWorkingDirectory().empty()) {
-        remote_command << "cd " << GetWorkingDirectory() << " && ";
+    wxString ssh_exe;
+    if(GetSSHCommand(&ssh_exe)) {
+        wxString remote_command = "\"";
+        if(!GetWorkingDirectory().empty()) {
+            remote_command << "cd " << GetWorkingDirectory() << " && ";
+        }
+        remote_command << "xmllint --format $(CurrentFileFullPath)\"";
+        SetRemoteCommand({ ssh_exe, "$(SSH_User)@$(SSH_Host)", remote_command });
     }
-    remote_command << "xmllint --format $(CurrentFileFullPath)\"";
-    SetRemoteCommand({ GetSSHCommand(), "$(SSH_User)@$(SSH_Host)", remote_command });
 }
 
 fmtXmlLint::~fmtXmlLint() {}

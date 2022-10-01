@@ -164,19 +164,17 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     }
 
     // When an inline formatter is used, prompt the user to save the file before
-    if(f->IsInlineFormatter() && editor->IsEditorModified()) {
-        ::wxMessageBox(_("File is modified. Please save your changes first"), "CodeLite",
-                       wxOK | wxCENTRE | wxICON_WARNING);
-        return false;
+    if(editor->IsEditorModified()) {
+        editor->Save();
     }
 
     wxString output;
-    wxString remote_path = editor->GetRemotePathOrLocal();
+    wxString file_path = editor->GetRemotePathOrLocal();
     bool res = false;
     if(is_remote) {
-        res = f->FormatRemoteFile(remote_path, FileExtManager::GetType(remote_path), &output);
+        res = f->FormatRemoteFile(file_path, FileExtManager::GetType(file_path), &output);
     } else {
-        res = f->FormatFile(remote_path, FileExtManager::GetType(remote_path), &output);
+        res = f->FormatFile(file_path, FileExtManager::GetType(file_path), &output);
     }
 
     if(!res) {
@@ -185,7 +183,7 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
 
     if(f->IsInlineFormatter()) {
         // reload the current editor
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+        editor->ReloadFromDisk(true);
     } else {
         clEditorStateLocker locker{ editor->GetCtrl() };
         editor->GetCtrl()->SetText(output);
@@ -211,7 +209,8 @@ bool CodeFormatter::DoFormatString(const wxString& content, const wxString& file
 void CodeFormatter::ReloadCurrentEditor()
 {
     // reload the current editor
-    EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+    wxCommandEvent reload_event{ wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT };
+    EventNotifier::Get()->ProcessEvent(reload_event);
 }
 
 bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format)

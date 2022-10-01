@@ -3,6 +3,9 @@ Debug Adapter Client
 
 - support attach to process
 - supprot debugging core
+- Delete all breakpoints
 
 others:
 ----
+
+- Formatter: batch formatting is broken

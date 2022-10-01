@@ -1640,36 +1640,38 @@ void clEditor::DefineMarker(int marker, int markerType, wxColor fore, wxColor ba
 
 bool clEditor::SaveFile()
 {
-    if(this->GetModify()) {
-        if(GetFileName().FileExists() == false) {
-            return SaveFileAs();
+    if(!this->GetModify()) {
+        return true;
+    }
+
+    if(!GetFileName().FileExists()) {
+        return SaveFileAs();
+    }
+
+    // first save the file content
+    if(!SaveToFile(m_fileName))
+        return false;
+
+    // if we managed to save the file, remove the 'read only' attribute
+    clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this);
+
+    // Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles call
+    m_deltas->OnFileSaved();
+
+    if(::clIsCxxWorkspaceOpened()) {
+
+        // clear cached file, this function does nothing if the file is not cached
+        TagsManagerST::Get()->ClearCachedFile(CLRealPath(GetFileName().GetFullPath()));
+
+        //
+        if(ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()) {
+            return true;
         }
 
-        // first save the file content
-        if(!SaveToFile(m_fileName))
-            return false;
-
-        // if we managed to save the file, remove the 'read only' attribute
-        clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this);
-
-        // Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles call
-        m_deltas->OnFileSaved();
-
-        if(::clIsCxxWorkspaceOpened()) {
-
-            // clear cached file, this function does nothing if the file is not cached
-            TagsManagerST::Get()->ClearCachedFile(CLRealPath(GetFileName().GetFullPath()));
-
-            //
-            if(ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()) {
-                return true;
-            }
-
-            if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) {
-                return true;
-            }
-            m_context->RetagFile();
+        if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) {
+            return true;
         }
+        m_context->RetagFile();
     }
     return true;
 }
@@ -1788,8 +1790,8 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     if((buf.length() == 0) && !theText.IsEmpty()) {
         // something went wrong in the conversion process
         wxString errmsg;
-        errmsg << _(
-            "File text conversion failed!\nCheck your file font encoding from\nSettings | Preferences | Misc | Locale");
+        errmsg << _("File text conversion failed!\nCheck your file font encoding from\nSettings | Preferences | "
+                    "Misc | Locale");
         wxMessageBox(errmsg, "CodeLite", wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
         return false;
     }

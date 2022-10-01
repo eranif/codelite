@@ -18,7 +18,7 @@ public:
     GenericFormatter();
     virtual ~GenericFormatter();
 
-    wxString GetSSHCommand() const;
+    bool GetSSHCommand(wxString* ssh_exe) const;
 
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON() const override;

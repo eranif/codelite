@@ -17,12 +17,15 @@ fmtClangFormat::fmtClangFormat()
     SetCommand({ clang_format_exe, "$(CurrentFileRelPath)" });
 
     // remote command
-    wxString remote_command = "\"";
-    if(!GetWorkingDirectory().empty()) {
-        remote_command << "cd " << GetWorkingDirectory() << " && ";
+    wxString ssh_exe;
+    if(GetSSHCommand(&ssh_exe)) {
+        wxString remote_command = "\"";
+        if(!GetWorkingDirectory().empty()) {
+            remote_command << "cd " << GetWorkingDirectory() << " && ";
+        }
+        remote_command << "clang-format $(CurrentFileRelPath)\"";
+        SetRemoteCommand({ ssh_exe, "$(SSH_User)@$(SSH_Host)", remote_command });
     }
-    remote_command << "clang-format $(CurrentFileRelPath)\"";
-    SetRemoteCommand({ GetSSHCommand(), "$(SSH_User)@$(SSH_Host)", remote_command });
 }
 
 fmtClangFormat::~fmtClangFormat() {}

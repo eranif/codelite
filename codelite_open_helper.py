@@ -28,7 +28,7 @@ try:
     s.connect(('127.0.0.1', codelite_port))
     body = json.dumps({ "args" : filenames_to_open })
     header = str(len(body)).zfill(10)
-    s.send(header + body)
+    s.send((header + body).encode('utf-8'))
     s.close()
     exit(0) # Success!
 except socket.error as serr:

@@ -11,7 +11,11 @@ bool LINUX::FindInstallDir(wxString* installpath)
 
 bool LINUX::FindHomeDir(wxString* homedir)
 {
+#ifdef __WXMAC__
+    *homedir << "/Users/" << ::wxGetUserId();
+#else
     *homedir << "/home/" << ::wxGetUserId();
+#endif
     return true;
 }
 

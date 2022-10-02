@@ -25,9 +25,6 @@
 #include <wx/font.h>
 #include <wx/stc/stc.h>
 
-static int SCROLLBAR_WIDTH = 12;
-static int BOX_WIDTH = 800 + SCROLLBAR_WIDTH;
-
 wxCodeCompletionBox::BmpVec_t wxCodeCompletionBox::m_defaultBitmaps;
 thread_local bool strip_html_tags = false;
 
@@ -57,7 +54,6 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     // bool isDark = DrawingUtils::IsDark(bgColour);
     clColours colours;
     colours.InitFromColour(bgColour);
-    const auto& prop = lexer->GetProperty(SEL_TEXT_ATTR_ID);
     colours.SetSelItemBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     colours.SetSelItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
     colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour());

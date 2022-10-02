@@ -566,6 +566,8 @@
       <File Name="clEditorBar.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
+      <File Name="SelectFileTypesDialog.cpp"/>
+      <File Name="SelectFileTypesDialog.hpp"/>
       <File Name="clPluginsFindBar.cpp"/>
       <File Name="clPluginsFindBar.h"/>
       <File Name="quickfindbarbase.wxcp"/>
@@ -697,12 +699,14 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="wxcrafter">
+    <File Name="SelectFileTypesDialogBase.wxcp"/>
     <File Name="clFileSystemWorkspaceDlgBase.wxcp"/>
     <File Name="NewProjectDialogBase.wxcp"/>
     <File Name="DiffUI.wxcp"/>
     <File Name="clResizableTooltipBase.wxcp"/>
     <File Name="clAboutDialogBase.wxcp"/>
     <VirtualDirectory Name="resources">
+      <File Name="SelectFileTypesDialogBase_plugin_bitmaps.cpp"/>
       <File Name="AddIncludeFile_liteeditor_bitmaps.cpp"/>
       <File Name="clFileSystemWorkspaceDlgBase_plugin_bitmaps.cpp"/>
       <File Name="quickfindbarbase_bitmaps.cpp"/>
@@ -726,6 +730,8 @@
       <File Name="GotoAnythingBaseUI_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <File Name="SelectFileTypesDialogBase.cpp"/>
+      <File Name="SelectFileTypesDialogBase.hpp"/>
       <File Name="clFileSystemWorkspaceDlgBase.cpp"/>
       <File Name="clFileSystemWorkspaceDlgBase.h"/>
       <File Name="NewProjectDialogBase.cpp"/>

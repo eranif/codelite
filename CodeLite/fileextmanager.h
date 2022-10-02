@@ -162,6 +162,12 @@ public:
         return GetTypeFromExtension(wxFileName(filename));
     }
     static FileExtManager::FileType GetTypeFromExtension(const wxFileName& filename);
+
+    /**
+     * @brief return map of all supported file types
+     * the returned map contains pairs of file extension -> FileType enumerator
+     */
+    static std::unordered_map<wxString, FileExtManager::FileType> GetAllSupportedFileTypes();
 };
 
 #endif // __fileextmanager__

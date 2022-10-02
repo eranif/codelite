@@ -10,7 +10,6 @@
 
 namespace
 {
-constexpr size_t INVALID_POS = ((size_t)-1);
 const wxString defaultFileTypes = "*.cpp;*.c;*.hpp;*.h;*.txt;*.py;*.php;*.yml;Makefile";
 enum eSearchFlags {
     kWholeWord = (1 << 0),

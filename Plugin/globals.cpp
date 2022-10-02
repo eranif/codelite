@@ -2308,3 +2308,9 @@ bool clIsWaylandSession()
     return false;
 #endif
 }
+
+bool clShowFileTypeSelectionDialog(wxWindow* parent, const std::vector<FileExtManager::FileType>& initial_selection,
+                                   std::vector<FileExtManager::FileType>* selected)
+{
+    return false;
+}

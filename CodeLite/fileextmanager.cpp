@@ -209,6 +209,11 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher("#include[ \t]+[\\<\"]", TypeSourceCpp));
     }
 }
+std::unordered_map<wxString, FileExtManager::FileType> FileExtManager::GetAllSupportedFileTypes()
+{
+    Init();
+    return m_map;
+}
 
 FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileExtManager::FileType defaultType)
 {

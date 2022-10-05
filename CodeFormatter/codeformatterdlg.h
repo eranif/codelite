@@ -37,6 +37,8 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
     CodeFormatterManager& m_formatter_manager;
 
 protected:
+    void OnInplaceEdit(wxCommandEvent& event);
+    void OnSelectFileTypes(wxCommandEvent& event);
     void OnRevert(wxCommandEvent& event);
     void OnEnabled(wxCommandEvent& event);
     void OnSelectionChanged(wxDataViewEvent& event);
@@ -45,7 +47,6 @@ protected:
     void InitDialog();
     void OnExportFile(wxCommandEvent& event);
     bool IsDirty() const;
-
     void Save();
 
 public:

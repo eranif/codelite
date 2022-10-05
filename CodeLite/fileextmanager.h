@@ -168,6 +168,12 @@ public:
      * the returned map contains pairs of file extension -> FileType enumerator
      */
     static std::unordered_map<wxString, FileExtManager::FileType> GetAllSupportedFileTypes();
+    /**
+     * @brief return map of file types grouped by languages
+     */
+    static std::unordered_map<wxString, std::vector<FileExtManager::FileType>> GetLanguageBundles();
+
+    static wxString GetLanguageFromType(FileExtManager::FileType file_type);
 };
 
 #endif // __fileextmanager__

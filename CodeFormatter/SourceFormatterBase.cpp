@@ -1,15 +1,15 @@
 #include "SourceFormatterBase.hpp"
 
+#include "macros.h"
+#include "wxStringHash.h"
+
 SourceFormatterBase::SourceFormatterBase() {}
 
 SourceFormatterBase::~SourceFormatterBase() {}
 
 void SourceFormatterBase::FromJSON(const JSONItem& json)
 {
-    auto types = json["file_types"].toIntArray();
-    for(auto type : types) {
-        m_extensions.insert((FileExtManager::FileType)type);
-    }
+    m_languages = json["languages"].toArrayString();
     m_flags = json["flags"].toSize_t((size_t)FormatterFlags::ENABLED);
     m_configFile = json["config_file"].toString();
     m_name = json["name"].toString();
@@ -19,17 +19,34 @@ void SourceFormatterBase::FromJSON(const JSONItem& json)
 JSONItem SourceFormatterBase::ToJSON() const
 {
     JSONItem ele = JSONItem::createObject(GetName());
-
-    std::vector<int> types;
-    types.reserve(m_extensions.size());
-    for(auto type : m_extensions) {
-        types.push_back((int)type);
-    }
-
-    ele.addProperty("file_types", types);
+    ele.addProperty("languages", m_languages);
     ele.addProperty("flags", m_flags);
     ele.addProperty("config_file", m_configFile);
     ele.addProperty("name", m_name);
     ele.addProperty("description", m_description);
     return ele;
+}
+
+bool SourceFormatterBase::CanHandle(FileExtManager::FileType file_type) const
+{
+    wxString lang = FileExtManager::GetLanguageFromType(file_type);
+    return !lang.empty() && m_languages.Index(lang) != wxNOT_FOUND;
+}
+
+void SourceFormatterBase::SetFileTypes(const std::vector<FileExtManager::FileType>& types)
+{
+    wxStringSet_t langs;
+    for(auto type : types) {
+        wxString lang = FileExtManager::GetLanguageFromType(type);
+        if(lang.empty()) {
+            continue;
+        }
+        langs.insert(lang);
+    }
+
+    m_languages.clear();
+    m_languages.reserve(langs.size());
+    for(const auto& lang : langs) {
+        m_languages.Add(lang);
+    }
 }

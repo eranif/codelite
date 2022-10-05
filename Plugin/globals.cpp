@@ -25,6 +25,7 @@
 #include "globals.h"
 
 #include "ColoursAndFontsManager.h"
+#include "SelectFileTypesDialog.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clConsoleBase.h"
@@ -2309,8 +2310,14 @@ bool clIsWaylandSession()
 #endif
 }
 
-bool clShowFileTypeSelectionDialog(wxWindow* parent, const std::vector<FileExtManager::FileType>& initial_selection,
-                                   std::vector<FileExtManager::FileType>* selected)
+bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initial_selection, wxArrayString* selected)
 {
-    return false;
+    SelectFileTypesDialog dlg(parent, initial_selection);
+    if(dlg.ShowModal() != wxID_OK) {
+        return false;
+    }
+
+    auto res = dlg.GetValue();
+    selected->swap(res);
+    return true;
 }

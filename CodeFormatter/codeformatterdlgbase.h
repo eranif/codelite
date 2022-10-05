@@ -22,11 +22,11 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include "clThemedTextCtrl.hpp"
+#include <wx/button.h>
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
-#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -55,11 +55,15 @@ protected:
     wxCheckBox* m_checkBoxEnabled;
     wxStaticText* m_staticText368;
     clThemedTextCtrl* m_textCtrlWD;
+    wxStaticText* m_staticText383;
+    clThemedTextCtrl* m_textCtrlFileTypes;
+    wxButton* m_button386;
     wxNotebook* m_notebook375;
     wxPanel* m_panel376;
     clThemedSTC* m_stcCommand;
     wxPanel* m_panel377;
     clThemedSTC* m_stcRemoteCommand;
+    wxCheckBox* m_checkBoxInline;
     wxButton* m_button_ok;
     wxButton* m_button_cancel;
     wxButton* m_button_revert;
@@ -67,6 +71,8 @@ protected:
 protected:
     virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnEnabled(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSelectFileTypes(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInplaceEdit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRevert(wxCommandEvent& event) { event.Skip(); }
 
@@ -75,11 +81,15 @@ public:
     wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
     wxStaticText* GetStaticText368() { return m_staticText368; }
     clThemedTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }
+    wxStaticText* GetStaticText383() { return m_staticText383; }
+    clThemedTextCtrl* GetTextCtrlFileTypes() { return m_textCtrlFileTypes; }
+    wxButton* GetButton386() { return m_button386; }
     clThemedSTC* GetStcCommand() { return m_stcCommand; }
     wxPanel* GetPanel376() { return m_panel376; }
     clThemedSTC* GetStcRemoteCommand() { return m_stcRemoteCommand; }
     wxPanel* GetPanel377() { return m_panel377; }
     wxNotebook* GetNotebook375() { return m_notebook375; }
+    wxCheckBox* GetCheckBoxInline() { return m_checkBoxInline; }
     wxButton* GetButton_ok() { return m_button_ok; }
     wxButton* GetButton_cancel() { return m_button_cancel; }
     wxButton* GetButton_revert() { return m_button_revert; }

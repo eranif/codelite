@@ -80,7 +80,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
-					"m_value":	"Select file types"
+					"m_value":	"Select language:"
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
@@ -329,7 +329,13 @@
 													"m_label":	"Show Search Button",
 													"m_value":	true
 												}],
-											"m_events":	[],
+											"m_events":	[{
+													"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
+													"m_eventClass":	"wxCommandEvent",
+													"m_functionNameAndSignature":	"OnSearch(wxCommandEvent& event)",
+													"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
+													"m_noBody":	false
+												}],
 											"m_children":	[]
 										}, {
 											"m_type":	4469,

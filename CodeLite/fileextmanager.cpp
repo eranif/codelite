@@ -67,6 +67,8 @@ struct Matcher {
 namespace
 {
 std::unordered_map<wxString, FileExtManager::FileType> m_map;
+std::unordered_map<wxString, std::vector<FileExtManager::FileType>> m_language_bundle;
+std::unordered_map<int, wxString> m_file_type_to_lang;
 std::vector<Matcher> m_matchers;
 bool init_done = false;
 }; // namespace
@@ -81,8 +83,8 @@ void FileExtManager::Init()
         m_map[wxT("c++")] = TypeSourceCpp;
         m_map[wxT("as")] = TypeSourceCpp;  // AngelScript files are handled as C++ source files in CodeLite
         m_map[wxT("ino")] = TypeSourceCpp; // Arduino sketches
-        m_map[wxT("c")] = TypeSourceC;
 
+        m_map[wxT("c")] = TypeSourceC;
         m_map[wxT("h")] = TypeHeader;
         m_map[wxT("hpp")] = TypeHeader;
         m_map[wxT("hxx")] = TypeHeader;
@@ -94,7 +96,9 @@ void FileExtManager::Init()
         m_map[wxT("res")] = TypeResource;
 
         m_map[wxT("y")] = TypeYacc;
+
         m_map[wxT("l")] = TypeLex;
+
         m_map[wxT("ui")] = TypeQtForm;
         m_map[wxT("qrc")] = TypeQtResource;
         m_map[wxT("qml")] = TypeJS;
@@ -102,6 +106,7 @@ void FileExtManager::Init()
         m_map[wxT("project")] = TypeProject;
         m_map[wxT("workspace")] = TypeWorkspace;
         m_map[wxT("fbp")] = TypeFormbuilder;
+
         m_map[wxT("cdp")] = TypeCodedesigner;
         m_map[wxT("erd")] = TypeErd;
 
@@ -186,6 +191,30 @@ void FileExtManager::Init()
         m_map["rb"] = TypeRuby;
         m_map["md"] = TypeMarkdown;
 
+        m_language_bundle.insert({ "C/C++", { TypeSourceCpp, TypeSourceC, TypeHeader } });
+        m_language_bundle.insert({ "Windows resource files", { TypeResource } });
+        m_language_bundle.insert({ "Yacc", { TypeYacc } });
+        m_language_bundle.insert({ "Lex", { TypeLex } });
+        m_language_bundle.insert({ "Xml", { TypeProject, TypeWorkspace, TypeXml, TypeXRC, TypeSvg, TypeFormbuilder } });
+        m_language_bundle.insert({ "Yaml", { TypeYAML } });
+        m_language_bundle.insert({ "Json",
+                                   { TypeJSON, TypeWorkspaceFileSystem, TypeWxCrafter, TypeWorkspaceDocker,
+                                     TypeWorkspaceNodeJS, TypeWorkspacePHP } });
+        m_language_bundle.insert({ "Rust", { TypeRust } });
+        m_language_bundle.insert({ "Ruby", { TypeRuby } });
+        m_language_bundle.insert({ "Shell script", { TypeShellScript } });
+        m_language_bundle.insert({ "Java", { TypeJava } });
+        m_language_bundle.insert({ "Javascript/Typescript", { TypeJS } });
+        m_language_bundle.insert({ "Python", { TypePython } });
+        m_language_bundle.insert({ "PHP", { TypePhp } });
+
+        // build the reverse search table: file type -> language
+        for(auto vt : m_language_bundle) {
+            for(auto t : vt.second) {
+                m_file_type_to_lang.insert({ (int)t, vt.first });
+            }
+        }
+
         // Initialize regexes:
         m_matchers.push_back(Matcher("#[ \t]*!(.*?)sh", TypeShellScript));
         m_matchers.push_back(Matcher("#[ \t]*!(.*?)python", TypePython));
@@ -213,6 +242,12 @@ std::unordered_map<wxString, FileExtManager::FileType> FileExtManager::GetAllSup
 {
     Init();
     return m_map;
+}
+
+std::unordered_map<wxString, std::vector<FileExtManager::FileType>> FileExtManager::GetLanguageBundles()
+{
+    Init();
+    return m_language_bundle;
 }
 
 FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileExtManager::FileType defaultType)
@@ -353,4 +388,13 @@ bool FileExtManager::IsSymlinkFolder(const wxString& filename)
 {
     return wxFileName::Exists(filename, wxFILE_EXISTS_NO_FOLLOW | wxFILE_EXISTS_SYMLINK) &&
            wxFileName::DirExists(filename);
+}
+
+wxString FileExtManager::GetLanguageFromType(FileExtManager::FileType file_type)
+{
+    if(m_file_type_to_lang.count((int)file_type) == 0) {
+        return wxEmptyString;
+    }
+
+    return m_file_type_to_lang.find((int)file_type)->second;
 }

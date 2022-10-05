@@ -49,13 +49,15 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
+    virtual void OnSearch(wxCommandEvent& event) { event.Skip(); }
+
 public:
     wxSearchCtrl* GetSearchCtrl() { return m_searchCtrl; }
     clThemedOrderedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel6() { return m_panel6; }
-    SelectFileTypesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                              const wxString& title = _("Select file types"), const wxPoint& pos = wxDefaultPosition,
-                              const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE);
+    SelectFileTypesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select language:"),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~SelectFileTypesDialogBase();
 };
 

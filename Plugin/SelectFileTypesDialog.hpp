@@ -9,20 +9,23 @@
 
 class WXDLLIMPEXP_SDK SelectFileTypesDialog : public SelectFileTypesDialogBase
 {
-    std::unordered_map<wxString, FileExtManager::FileType> m_all;
+    std::unordered_map<wxString, std::vector<FileExtManager::FileType>> m_all;
 
 private:
-    void InitializeList();
+    void InitializeList(const wxArrayString& selected_items);
     void Search(const wxString& filter);
 
 public:
-    SelectFileTypesDialog(wxWindow* parent);
+    SelectFileTypesDialog(wxWindow* parent, const wxArrayString& initial_selection);
     virtual ~SelectFileTypesDialog();
 
     /**
      * @brief return the selected items
      */
-    std::unordered_map<wxString, FileExtManager::FileType> GetValue() const;
+    wxArrayString GetValue() const;
+
+protected:
+    void OnSearch(wxCommandEvent& event) override;
 };
 
 #endif // SELECTFILETYPESDIALOG_HPP

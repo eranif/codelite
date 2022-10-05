@@ -56,10 +56,17 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 
     boxSizer364->Add(m_checkBoxEnabled, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_staticText368 = new wxStaticText(m_panel358, wxID_ANY, _("Working directory:"), wxDefaultPosition,
+    wxFlexGridSizer* flexGridSizer382 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer382->SetFlexibleDirection(wxBOTH);
+    flexGridSizer382->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer382->AddGrowableCol(1);
+
+    boxSizer364->Add(flexGridSizer382, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText368 = new wxStaticText(m_panel358, wxID_ANY, _("Working dir:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
 
-    boxSizer364->Add(m_staticText368, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer382->Add(m_staticText368, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlWD = new clThemedTextCtrl(m_panel358, wxID_ANY, wxT(""), wxDefaultPosition,
                                         wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
@@ -67,7 +74,27 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_textCtrlWD->SetHint(wxT(""));
 #endif
 
-    boxSizer364->Add(m_textCtrlWD, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer382->Add(m_textCtrlWD, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer382->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText383 = new wxStaticText(m_panel358, wxID_ANY, _("Languages:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
+
+    flexGridSizer382->Add(m_staticText383, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlFileTypes = new clThemedTextCtrl(m_panel358, wxID_ANY, wxT(""), wxDefaultPosition,
+                                               wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlFileTypes->SetHint(wxT(""));
+#endif
+
+    flexGridSizer382->Add(m_textCtrlFileTypes, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button386 = new wxButton(m_panel358, wxID_ANY, _("..."), wxDefaultPosition,
+                               wxDLG_UNIT(m_panel358, wxSize(-1, -1)), wxBU_EXACTFIT);
+
+    flexGridSizer382->Add(m_button386, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_notebook375 =
         new wxNotebook(m_panel358, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel358, wxSize(-1, -1)), wxBK_DEFAULT);
@@ -167,6 +194,14 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 
     boxSizer379->Add(m_stcRemoteCommand, 1, wxEXPAND, WXC_FROM_DIP(5));
 
+    m_checkBoxInline = new wxCheckBox(m_panel358, wxID_ANY, _("Inplace edit"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
+    m_checkBoxInline->SetValue(false);
+    m_checkBoxInline->SetToolTip(
+        _("Inplace formatters modify the source file directly instead of\nprinting the formatted output to stdout"));
+
+    boxSizer364->Add(m_checkBoxInline, 0, wxALL, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer371 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer359->Add(boxSizer371, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
@@ -214,6 +249,8 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     // Connect events
     m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &CodeFormatterBaseDlg::OnSelectionChanged, this);
     m_checkBoxEnabled->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CodeFormatterBaseDlg::OnEnabled, this);
+    m_button386->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnSelectFileTypes, this);
+    m_checkBoxInline->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CodeFormatterBaseDlg::OnInplaceEdit, this);
     m_button_ok->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnOK, this);
     m_button_revert->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnRevert, this);
 }
@@ -222,6 +259,8 @@ CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 {
     m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &CodeFormatterBaseDlg::OnSelectionChanged, this);
     m_checkBoxEnabled->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CodeFormatterBaseDlg::OnEnabled, this);
+    m_button386->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnSelectFileTypes, this);
+    m_checkBoxInline->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CodeFormatterBaseDlg::OnInplaceEdit, this);
     m_button_ok->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnOK, this);
     m_button_revert->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnRevert, this);
 }

@@ -74,6 +74,11 @@ SelectFileTypesDialogBase::SelectFileTypesDialogBase(wxWindow* parent, wxWindowI
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
+    // Connect events
+    m_searchCtrl->Bind(wxEVT_COMMAND_TEXT_UPDATED, &SelectFileTypesDialogBase::OnSearch, this);
 }
 
-SelectFileTypesDialogBase::~SelectFileTypesDialogBase() {}
+SelectFileTypesDialogBase::~SelectFileTypesDialogBase()
+{
+    m_searchCtrl->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &SelectFileTypesDialogBase::OnSearch, this);
+}

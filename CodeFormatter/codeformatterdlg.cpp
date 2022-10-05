@@ -36,19 +36,10 @@
 
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
+#include <wx/tokenzr.h>
 
 namespace
 {
-wxString astyleHelpUrl(wxT("http://astyle.sourceforge.net/astyle.html"));
-wxString clangFormatHelpUrl(wxT("http://clang.llvm.org/docs/ClangFormatStyleOptions.html"));
-wxString phpFormatHelpUrl(wxT("https://github.com/FriendsOfPHP/PHP-CS-Fixer"));
-wxString rustfmtHelpUrl(wxT("https://rust-lang.github.io/rustfmt"));
-
-constexpr int ID_ASTYLE_HELP = 1309;
-constexpr int ID_CLANG_FORMAST_HELP = 1310;
-constexpr int ID_PHP_FORMAST_HELP = 1311;
-constexpr int ID_RUSTFMT_HELP = 1312;
-
 wxString to_wx_string(const wxArrayString& command_arr, const wxString& desc)
 {
     wxString command;
@@ -138,6 +129,8 @@ void CodeFormatterDlg::Save()
     f->SetWorkingDirectory(m_textCtrlWD->GetValue());
     f->SetCommand(to_wx_array(m_stcCommand->GetText()));
     f->SetRemoteCommand(to_wx_array(m_stcRemoteCommand->GetText()));
+    f->SetLanguages(wxStringTokenize(m_textCtrlFileTypes->GetValue(), ";", wxTOKEN_STRTOK));
+    f->SetInlineFormatter(m_checkBoxInline->IsChecked());
     m_isDirty = false;
 }
 
@@ -163,8 +156,14 @@ void CodeFormatterDlg::OnSelectionChanged(wxDataViewEvent& event)
     m_textCtrlWD->SetValue(formatter->GetWorkingDirectory());
     m_textCtrlWD->EmptyUndoBuffer();
 
+    m_textCtrlFileTypes->SetEditable(true);
+    m_textCtrlFileTypes->SetValue(wxJoin(formatter->GetLanguages(), ';'));
+    m_textCtrlFileTypes->EmptyUndoBuffer();
+    m_textCtrlFileTypes->SetEditable(false);
+
     // enabled?
     m_checkBoxEnabled->SetValue(formatter->IsEnabled());
+    m_checkBoxInline->SetValue(formatter->IsInlineFormatter());
     m_isDirty = false;
 
     m_stcCommand->CallAfter(&wxStyledTextCtrl::SetFocus);
@@ -172,7 +171,8 @@ void CodeFormatterDlg::OnSelectionChanged(wxDataViewEvent& event)
 
 bool CodeFormatterDlg::IsDirty() const
 {
-    return m_isDirty || m_stcCommand->CanUndo() || m_textCtrlWD->CanUndo() || m_stcRemoteCommand->CanUndo();
+    return m_isDirty || m_stcCommand->CanUndo() || m_textCtrlWD->CanUndo() || m_stcRemoteCommand->CanUndo() ||
+           m_textCtrlFileTypes->CanUndo();
 }
 
 void CodeFormatterDlg::OnEnabled(wxCommandEvent& event)
@@ -196,4 +196,24 @@ void CodeFormatterDlg::OnRevert(wxCommandEvent& event)
     }
     m_formatter_manager.RestoreDefaults();
     InitDialog();
+}
+
+void CodeFormatterDlg::OnSelectFileTypes(wxCommandEvent& event)
+{
+    wxArrayString selected;
+
+    wxString cur = m_textCtrlFileTypes->GetValue();
+    wxArrayString initial = wxStringTokenize(cur, ";", wxTOKEN_STRTOK);
+    if(!::clShowFileTypeSelectionDialog(this, initial, &selected)) {
+        return;
+    }
+
+    wxString value = wxJoin(selected, ';');
+    m_textCtrlFileTypes->ChangeValue(value);
+}
+
+void CodeFormatterDlg::OnInplaceEdit(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_isDirty = true;
 }

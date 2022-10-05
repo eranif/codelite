@@ -3,11 +3,11 @@
 #include "globals.h"
 #include "windowattrmanager.h"
 
-SelectFileTypesDialog::SelectFileTypesDialog(wxWindow* parent)
+SelectFileTypesDialog::SelectFileTypesDialog(wxWindow* parent, const wxArrayString& initial_selection)
     : SelectFileTypesDialogBase(parent)
 {
-    m_all = FileExtManager::GetAllSupportedFileTypes();
-    InitializeList();
+    m_all = FileExtManager::GetLanguageBundles();
+    InitializeList(initial_selection);
 
     // set the initial size
     clSetSmallDialogBestSizeAndPosition(this);
@@ -23,43 +23,53 @@ SelectFileTypesDialog::SelectFileTypesDialog(wxWindow* parent)
 
 SelectFileTypesDialog::~SelectFileTypesDialog() {}
 
-void SelectFileTypesDialog::InitializeList()
+void SelectFileTypesDialog::InitializeList(const wxArrayString& selected_items)
 {
-    m_dvListCtrl->Begin();
+    m_dvListCtrl->DeleteAllItems();
     wxVector<wxVariant> cols;
     for(const auto& vt : m_all) {
         // include this entry
-        clDataViewCheckbox item(false, wxNOT_FOUND, vt.first);
+        clDataViewCheckbox item(selected_items.Index(vt.first) != wxNOT_FOUND, wxNOT_FOUND, vt.first);
         wxVariant v;
         v << item;
         cols.push_back(v);
         m_dvListCtrl->AppendItem(cols);
+        cols.clear();
     }
-    m_dvListCtrl->Commit();
 }
 
 void SelectFileTypesDialog::Search(const wxString& filter)
 {
+    if(filter.empty()) {
+        return;
+    }
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
-        wxString text = m_dvListCtrl->GetItemText(m_dvListCtrl->RowToItem(i));
+        auto item = m_dvListCtrl->RowToItem(i);
+        wxString text = m_dvListCtrl->GetItemText(item);
         if(text.Contains(filter)) {
             m_dvListCtrl->SelectRow(i);
+            m_dvListCtrl->EnsureVisible(item);
             break;
         }
     }
 }
 
-std::unordered_map<wxString, FileExtManager::FileType> SelectFileTypesDialog::GetValue() const
+wxArrayString SelectFileTypesDialog::GetValue() const
 {
     // collect checked items
-    std::unordered_map<wxString, FileExtManager::FileType> result;
+    wxArrayString result;
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         auto item = m_dvListCtrl->RowToItem(i);
-        wxString text = m_dvListCtrl->GetItemText(item);
-        if(m_dvListCtrl->IsItemChecked(item) && m_all.count(text)) {
-            auto entry = m_all.find(text);
-            result.insert({ entry->first, entry->second });
+        if(m_dvListCtrl->IsItemChecked(item)) {
+            wxString text = m_dvListCtrl->GetItemText(item);
+            result.Add(text);
         }
     }
     return result;
+}
+
+void SelectFileTypesDialog::OnSearch(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    Search(m_searchCtrl->GetValue());
 }

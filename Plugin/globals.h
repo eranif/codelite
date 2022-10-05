@@ -27,10 +27,13 @@
 
 #include "clThemedMenuBar.hpp"
 #include "codelite_exports.h"
+#include "fileextmanager.h"
 #include "macros.h"
 #include "window_locker.h"
 #include "workspace.h"
 
+#include <unordered_map>
+#include <vector>
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/brush.h>
@@ -669,4 +672,10 @@ WXDLLIMPEXP_SDK bool clIsCxxWorkspaceOpened();
  */
 WXDLLIMPEXP_SDK bool clIsWaylandSession();
 
+/**
+ * @brief get list of file types from the user
+ */
+WXDLLIMPEXP_SDK bool clShowFileTypeSelectionDialog(wxWindow* parent,
+                                                   const wxArrayString& initial_selection,
+                                                   wxArrayString* selected);
 #endif // GLOBALS_H

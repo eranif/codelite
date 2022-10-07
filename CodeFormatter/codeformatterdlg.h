@@ -26,6 +26,7 @@
 #define __CODEFORMATTERDLG__
 
 #include "CodeFormatterManager.hpp"
+#include "FormatterPage.hpp"
 #include "codeformatterdlgbase.h"
 
 class IManager;
@@ -35,19 +36,15 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
 {
     bool m_isDirty = false;
     CodeFormatterManager& m_formatter_manager;
+    FormatterPage* m_page = nullptr;
 
 protected:
-    void OnInplaceEdit(wxCommandEvent& event);
     void OnSelectFileTypes(wxCommandEvent& event);
     void OnRevert(wxCommandEvent& event);
-    void OnEnabled(wxCommandEvent& event);
     void OnSelectionChanged(wxDataViewEvent& event);
     void OnSelectionChanging(wxDataViewEvent& event);
     void OnOK(wxCommandEvent& e);
     void InitDialog();
-    void OnExportFile(wxCommandEvent& event);
-    bool IsDirty() const;
-    void Save();
 
 public:
     CodeFormatterDlg(wxWindow* parent, CodeFormatterManager& mgr);

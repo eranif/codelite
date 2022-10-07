@@ -28,208 +28,48 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizerMain = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerMain);
 
-    m_panel358 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    bSizerMain->Add(m_panel358, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizerMain->Add(m_mainPanel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer359 = new wxBoxSizer(wxVERTICAL);
-    m_panel358->SetSizer(boxSizer359);
+    m_mainPanel->SetSizer(boxSizer359);
 
     wxBoxSizer* boxSizer360 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer359->Add(boxSizer360, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl =
-        new clThemedOrderedListCtrl(m_panel358, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel358, wxSize(-1, -1)),
+        new clThemedOrderedListCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)),
                                     wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
     boxSizer360->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl->AppendTextColumn(_("name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
-    wxBoxSizer* boxSizer364 = new wxBoxSizer(wxVERTICAL);
+    boxSizerFormatter = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer360->Add(boxSizer364, 3, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxEnabled = new wxCheckBox(m_panel358, wxID_ANY, _("Enabled"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
-    m_checkBoxEnabled->SetValue(false);
-
-    boxSizer364->Add(m_checkBoxEnabled, 0, wxALL, WXC_FROM_DIP(5));
-
-    wxFlexGridSizer* flexGridSizer382 = new wxFlexGridSizer(0, 3, 0, 0);
-    flexGridSizer382->SetFlexibleDirection(wxBOTH);
-    flexGridSizer382->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer382->AddGrowableCol(1);
-
-    boxSizer364->Add(flexGridSizer382, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText368 = new wxStaticText(m_panel358, wxID_ANY, _("Working dir:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
-
-    flexGridSizer382->Add(m_staticText368, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlWD = new clThemedTextCtrl(m_panel358, wxID_ANY, wxT(""), wxDefaultPosition,
-                                        wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlWD->SetHint(wxT(""));
-#endif
-
-    flexGridSizer382->Add(m_textCtrlWD, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    flexGridSizer382->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_staticText383 = new wxStaticText(m_panel358, wxID_ANY, _("Languages:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
-
-    flexGridSizer382->Add(m_staticText383, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlFileTypes = new clThemedTextCtrl(m_panel358, wxID_ANY, wxT(""), wxDefaultPosition,
-                                               wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlFileTypes->SetHint(wxT(""));
-#endif
-
-    flexGridSizer382->Add(m_textCtrlFileTypes, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button386 = new wxButton(m_panel358, wxID_ANY, _("..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_panel358, wxSize(-1, -1)), wxBU_EXACTFIT);
-
-    flexGridSizer382->Add(m_button386, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_notebook375 =
-        new wxNotebook(m_panel358, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel358, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebook375->SetName(wxT("m_notebook375"));
-
-    boxSizer364->Add(m_notebook375, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panel376 = new wxPanel(m_notebook375, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook375, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
-    m_notebook375->AddPage(m_panel376, _("Local"), false);
-
-    wxBoxSizer* boxSizer378 = new wxBoxSizer(wxVERTICAL);
-    m_panel376->SetSizer(boxSizer378);
-
-    m_stcCommand = new clThemedSTC(m_panel376, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel376, wxSize(-1, -1)), 0);
-    m_stcCommand->SetFocus();
-    // Configure the fold margin
-    m_stcCommand->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_stcCommand->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_stcCommand->SetMarginSensitive(4, true);
-    m_stcCommand->SetMarginWidth(4, 0);
-
-    // Configure the tracker margin
-    m_stcCommand->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_stcCommand->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_stcCommand->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_stcCommand->SetMarginWidth(2, 0);
-    m_stcCommand->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    m_stcCommand->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcCommand->SetMarginWidth(0, 0);
-
-    // Configure the line symbol margin
-    m_stcCommand->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stcCommand->SetMarginMask(3, 0);
-    m_stcCommand->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_stcCommand->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_stcCommand->StyleClearAll();
-    m_stcCommand->SetWrapMode(0);
-    m_stcCommand->SetIndentationGuides(0);
-    m_stcCommand->SetKeyWords(0, wxT(""));
-    m_stcCommand->SetKeyWords(1, wxT(""));
-    m_stcCommand->SetKeyWords(2, wxT(""));
-    m_stcCommand->SetKeyWords(3, wxT(""));
-    m_stcCommand->SetKeyWords(4, wxT(""));
-
-    boxSizer378->Add(m_stcCommand, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panel377 = new wxPanel(m_notebook375, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook375, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
-    m_notebook375->AddPage(m_panel377, _("Remote"), false);
-
-    wxBoxSizer* boxSizer379 = new wxBoxSizer(wxVERTICAL);
-    m_panel377->SetSizer(boxSizer379);
-
-    m_stcRemoteCommand =
-        new clThemedSTC(m_panel377, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel377, wxSize(-1, -1)), 0);
-    // Configure the fold margin
-    m_stcRemoteCommand->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_stcRemoteCommand->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_stcRemoteCommand->SetMarginSensitive(4, true);
-    m_stcRemoteCommand->SetMarginWidth(4, 0);
-
-    // Configure the tracker margin
-    m_stcRemoteCommand->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_stcRemoteCommand->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_stcRemoteCommand->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_stcRemoteCommand->SetMarginWidth(2, 0);
-    m_stcRemoteCommand->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    m_stcRemoteCommand->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcRemoteCommand->SetMarginWidth(0, 0);
-
-    // Configure the line symbol margin
-    m_stcRemoteCommand->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stcRemoteCommand->SetMarginMask(3, 0);
-    m_stcRemoteCommand->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_stcRemoteCommand->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_stcRemoteCommand->StyleClearAll();
-    m_stcRemoteCommand->SetWrapMode(0);
-    m_stcRemoteCommand->SetIndentationGuides(0);
-    m_stcRemoteCommand->SetKeyWords(0, wxT(""));
-    m_stcRemoteCommand->SetKeyWords(1, wxT(""));
-    m_stcRemoteCommand->SetKeyWords(2, wxT(""));
-    m_stcRemoteCommand->SetKeyWords(3, wxT(""));
-    m_stcRemoteCommand->SetKeyWords(4, wxT(""));
-
-    boxSizer379->Add(m_stcRemoteCommand, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxInline = new wxCheckBox(m_panel358, wxID_ANY, _("Inplace edit"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
-    m_checkBoxInline->SetValue(false);
-    m_checkBoxInline->SetToolTip(
-        _("Inplace formatters modify the source file directly instead of\nprinting the formatted output to stdout"));
-
-    boxSizer364->Add(m_checkBoxInline, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer360->Add(boxSizerFormatter, 3, wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer371 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer359->Add(boxSizer371, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
     m_button_ok =
-        new wxButton(m_panel358, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
+        new wxButton(m_mainPanel, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
     m_button_ok->SetDefault();
 
     boxSizer371->Add(m_button_ok, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_button_cancel = new wxButton(m_panel358, wxID_CANCEL, _("Cancel"), wxDefaultPosition,
-                                   wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
+    m_button_cancel = new wxButton(m_mainPanel, wxID_CANCEL, _("Cancel"), wxDefaultPosition,
+                                   wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
     boxSizer371->Add(m_button_cancel, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_button_revert = new wxButton(m_panel358, wxID_REVERT, _("Defaults"), wxDefaultPosition,
-                                   wxDLG_UNIT(m_panel358, wxSize(-1, -1)), 0);
+    m_button_revert = new wxButton(m_mainPanel, wxID_REVERT, _("Defaults"), wxDefaultPosition,
+                                   wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
     m_button_revert->SetToolTip(_("Revert all changes and load factory defaults"));
 
     boxSizer371->Add(m_button_revert, 0, wxALL, WXC_FROM_DIP(5));
-
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook375)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook375);
-    } else {
-        wxPersistenceManager::Get().Restore(m_notebook375);
-    }
-#endif
 
     SetName(wxT("CodeFormatterBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -248,9 +88,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     }
     // Connect events
     m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &CodeFormatterBaseDlg::OnSelectionChanged, this);
-    m_checkBoxEnabled->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CodeFormatterBaseDlg::OnEnabled, this);
-    m_button386->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnSelectFileTypes, this);
-    m_checkBoxInline->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CodeFormatterBaseDlg::OnInplaceEdit, this);
     m_button_ok->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnOK, this);
     m_button_revert->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnRevert, this);
 }
@@ -258,9 +95,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 {
     m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &CodeFormatterBaseDlg::OnSelectionChanged, this);
-    m_checkBoxEnabled->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CodeFormatterBaseDlg::OnEnabled, this);
-    m_button386->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnSelectFileTypes, this);
-    m_checkBoxInline->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CodeFormatterBaseDlg::OnInplaceEdit, this);
     m_button_ok->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnOK, this);
     m_button_revert->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnRevert, this);
 }

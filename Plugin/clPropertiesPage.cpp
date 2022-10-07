@@ -6,6 +6,7 @@
 #include "clThemedListCtrl.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include "macros.h"
 
 #include <wx/colordlg.h>
@@ -181,6 +182,22 @@ void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxStrin
     UpdateLastLineData(LineKind::DIR_PICKER, path, move(update_cb));
 }
 
+void clPropertiesPage::AddPropertyLanguagePicker(const wxString& label, const wxArrayString& langs,
+                                                 clPropertiesPage::Callback_t update_cb)
+{
+    wxVector<wxVariant> cols;
+    cols.push_back(label);
+
+    // horizontal 3 dots symbol
+    wxString languages_str = wxJoin(langs, ';');
+    clDataViewTextWithButton c(languages_str, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    wxVariant v;
+    v << c;
+    cols.push_back(v);
+    m_view->AppendItem(cols);
+    UpdateLastLineData(LineKind::LANGUAGE_PICKER, languages_str, move(update_cb));
+}
+
 void clPropertiesPage::AddPropertyButton(const wxString& label, const wxString& button_label,
                                          clPropertiesPage::Callback_t update_cb)
 {
@@ -241,6 +258,13 @@ void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
         if(!data->value.GetAs(&path))
             return;
         ShowFilePicker(row, path);
+        break;
+    }
+    case LineKind::LANGUAGE_PICKER: {
+        wxString curlangs;
+        if(!data->value.GetAs(&curlangs))
+            return;
+        ShowLanguagePicker(row, curlangs);
         break;
     }
     case LineKind::DIR_PICKER: {
@@ -354,6 +378,26 @@ void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
     v << c;
     m_view->SetValue(v, line, 1);
     UpdateLineData(line, LineKind::DIR_PICKER, new_path, nullptr);
+    // call the user callback for this change
+    NotifyChange(line);
+    SetModified();
+}
+
+void clPropertiesPage::ShowLanguagePicker(size_t line, const wxString& langs)
+{
+    wxArrayString selected;
+    if(!::clShowFileTypeSelectionDialog(wxGetTopLevelParent(this), wxStringTokenize(langs, ";", wxTOKEN_STRTOK),
+                                        &selected)) {
+        return;
+    }
+
+    // update the view
+    wxString new_label = wxJoin(selected, ';');
+    clDataViewTextWithButton c(new_label, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    wxVariant v;
+    v << c;
+    m_view->SetValue(v, line, 1);
+    UpdateLineData(line, LineKind::LANGUAGE_PICKER, new_label, nullptr);
     // call the user callback for this change
     NotifyChange(line);
     SetModified();
@@ -496,3 +540,12 @@ void clPropertiesPage::NotifyChange(size_t line)
 void clPropertiesPage::Finalize() { m_view->Commit(); }
 
 void clPropertiesPage::Begin() { m_view->Begin(); }
+
+void clPropertiesPage::Clear()
+{
+    CHECK_PTR_RET(m_view);
+    m_view->DeleteAllItems();
+    m_isModified = false;
+    m_header_rows.clear();
+    m_lines.clear();
+}

@@ -85,6 +85,8 @@
     <File Name="formatoptions.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
+    <File Name="FormatterPage.cpp"/>
+    <File Name="FormatterPage.hpp"/>
     <File Name="codeformatterdlg.h"/>
     <File Name="codeformatterdlg.cpp"/>
   </VirtualDirectory>

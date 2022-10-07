@@ -26,6 +26,7 @@ enum class LineKind {
     DIR_PICKER,
     INTEGER,
     BUTTON,
+    LANGUAGE_PICKER,
 };
 
 struct WXDLLIMPEXP_SDK LineData {
@@ -58,6 +59,7 @@ protected:
 
     // Helpers
     void ShowColourPicker(size_t line, const wxColour& colour);
+    void ShowLanguagePicker(size_t line, const wxString& langs);
     void ShowTextEditor(size_t line, const wxString& text);
     void ShowStringSelectionMenu(size_t line, const wxArrayString& options);
     void ShowFilePicker(size_t line, const wxString& path);
@@ -98,7 +100,7 @@ protected:
 
 public:
     clPropertiesPage(wxWindow* parent, wxWindowID id = wxID_ANY);
-    ~clPropertiesPage();
+    virtual ~clPropertiesPage();
 
     void AddProperty(const wxString& label, const wxArrayString& choices, size_t sel,
                      clPropertiesPage::Callback_t update_cb);
@@ -124,6 +126,8 @@ public:
 
     void AddPropertyFilePicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
     void AddPropertyDirPicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
+    void AddPropertyLanguagePicker(const wxString& label, const wxArrayString& langs,
+                                   clPropertiesPage::Callback_t update_cb);
     void AddPropertyButton(const wxString& label, const wxString& button_label, clPropertiesPage::Callback_t update_cb);
     void AddHeader(const wxString& label);
 
@@ -139,6 +143,11 @@ public:
      * once done, call `Finalize`
      */
     void Begin();
+
+    /**
+     * @brief clear the view and discard all caches
+     */
+    virtual void Clear();
 };
 
 #endif // CLPROPERTIESPAGE_HPP

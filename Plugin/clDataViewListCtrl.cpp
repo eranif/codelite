@@ -190,7 +190,14 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
     } else if(event.GetEventType() == wxEVT_TREE_SEL_CHANGING) {
         type = wxEVT_DATAVIEW_SELECTION_CHANGING;
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_ACTIVATED) {
+        // we user hit ENTER or d-clicked on an entry in the list
+        // if the current line has action button, covnert this event
+        // into action button event
         type = wxEVT_DATAVIEW_ITEM_ACTIVATED;
+        auto entry = m_model.ToPtr(event.GetItem());
+        if(entry && entry->HasButton(1)) {
+            type = wxEVT_DATAVIEW_ACTION_BUTTON;
+        }
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_MENU) {
         type = wxEVT_DATAVIEW_ITEM_CONTEXT_MENU;
     } else if(event.GetEventType() == wxEVT_TREE_SEARCH_TEXT) {

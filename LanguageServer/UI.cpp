@@ -132,7 +132,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     flexGridSizer432->SetFlexibleDirection(wxBOTH);
     flexGridSizer432->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer432->AddGrowableCol(1);
-    flexGridSizer432->AddGrowableRow(3);
+    flexGridSizer432->AddGrowableRow(2);
 
     boxSizer31->Add(flexGridSizer432, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -158,48 +158,13 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(m_textCtrlName, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    flexGridSizer432->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer184 = new wxBoxSizer(wxHORIZONTAL);
-
-    flexGridSizer432->Add(boxSizer184, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxRemoteServer =
-        new wxCheckBox(this, wxID_ANY, _("Remote Server"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxRemoteServer->SetValue(false);
-
-    boxSizer184->Add(m_checkBoxRemoteServer, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceSSHAccountsArr;
-    m_choiceSSHAccounts =
-        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceSSHAccountsArr, 0);
-
-    boxSizer184->Add(m_choiceSSHAccounts, 1, wxALL, WXC_FROM_DIP(5));
-
     m_staticText495 =
-        new wxStaticText(this, wxID_ANY, _("Options:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+        new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_staticText495->SetToolTip(_("The language server executable"));
 
     flexGridSizer432->Add(m_staticText495, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer162 = new wxBoxSizer(wxVERTICAL);
-
-    flexGridSizer432->Add(boxSizer162, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_notebook164 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebook164->SetName(wxT("m_notebook164"));
-
-    boxSizer162->Add(m_notebook164, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panelCommand = new wxPanel(m_notebook164, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook164, wxSize(-1, -1)),
-                                 wxTAB_TRAVERSAL);
-    m_notebook164->AddPage(m_panelCommand, _("Command"), true);
-
-    wxBoxSizer* boxSizer168 = new wxBoxSizer(wxVERTICAL);
-    m_panelCommand->SetSizer(boxSizer168);
-
-    m_stcCommand = new clThemedSTC(m_panelCommand, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_panelCommand, wxSize(-1, 40)), wxBORDER_NONE);
+    m_stcCommand = new clThemedSTC(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 40)), 0);
     // Configure the fold margin
     m_stcCommand->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCommand->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -235,7 +200,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     m_stcCommand->SetKeyWords(3, wxT(""));
     m_stcCommand->SetKeyWords(4, wxT(""));
 
-    boxSizer168->Add(m_stcCommand, 1, wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer432->Add(m_stcCommand, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText579 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition,
                                        wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -333,7 +298,6 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_choiceSSHAccounts->Bind(wxEVT_UPDATE_UI, &LanguageServerPageBase::OnRemoteServerUI, this);
     m_stcCommand->Bind(wxEVT_UPDATE_UI, &LanguageServerPageBase::OnCommandUI, this);
     m_button1153->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerPageBase::OnBrowseWD, this);
     m_button115->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerPageBase::OnSuggestLanguages, this);
@@ -341,7 +305,6 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
 LanguageServerPageBase::~LanguageServerPageBase()
 {
-    m_choiceSSHAccounts->Unbind(wxEVT_UPDATE_UI, &LanguageServerPageBase::OnRemoteServerUI, this);
     m_stcCommand->Unbind(wxEVT_UPDATE_UI, &LanguageServerPageBase::OnCommandUI, this);
     m_button1153->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerPageBase::OnBrowseWD, this);
     m_button115->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerPageBase::OnSuggestLanguages, this);

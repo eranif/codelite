@@ -1,6 +1,7 @@
 #ifndef LANGUAGESERVERCLUSTER_H
 #define LANGUAGESERVERCLUSTER_H
 
+#include "CodeLiteRemoteHelper.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LanguageServerEntry.h"
@@ -29,6 +30,7 @@ class LanguageServerCluster : public wxEvtHandler
     std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
     LanguageServerPlugin* m_plugin = nullptr;
     LSPOutlineViewDlg* m_quick_outline_dlg = nullptr;
+    std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
 
 public:
     typedef wxSharedPtr<LanguageServerCluster> Ptr_t;

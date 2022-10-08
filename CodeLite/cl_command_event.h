@@ -860,7 +860,6 @@ class WXDLLIMPEXP_CL clLanguageServerEvent : public clCommandEvent
 public:
     enum eFlags {
         kEnabled = (1 << 0),
-        kSSHEnabled = (1 << 1),
         kDisaplyDiags = (1 << 2),
     };
 
@@ -878,7 +877,6 @@ protected:
     wxString m_lspName;
     wxString m_lspCommand;
     size_t m_flags = 0;
-    wxString m_sshAccount;
     size_t m_priority = 50;
     wxString m_connectionString;
     clEnvList_t m_enviroment;
@@ -900,7 +898,6 @@ public:
     void SetLspCommand(const wxString& lspCommand) { this->m_lspCommand = lspCommand; }
     void SetLspName(const wxString& lspName) { this->m_lspName = lspName; }
     void SetPriority(size_t priority) { this->m_priority = priority; }
-    void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }
     const wxString& GetConnectionString() const { return m_connectionString; }
     size_t GetFlags() const { return m_flags; }
     const wxString& GetInitOptions() const { return m_initOptions; }
@@ -908,7 +905,6 @@ public:
     const wxString& GetLspCommand() const { return m_lspCommand; }
     const wxString& GetLspName() const { return m_lspName; }
     size_t GetPriority() const { return m_priority; }
-    const wxString& GetSshAccount() const { return m_sshAccount; }
     void SetAction(const eAction& action) { this->m_action = action; }
     const eAction& GetAction() const { return m_action; }
     void SetRootUri(const wxString& rootUri) { this->m_rootUri = rootUri; }

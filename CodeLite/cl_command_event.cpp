@@ -556,7 +556,6 @@ clLanguageServerEvent& clLanguageServerEvent::operator=(const clLanguageServerEv
     m_lspName = src.m_lspName;
     m_lspCommand = src.m_lspCommand;
     m_flags = src.m_flags;
-    m_sshAccount = src.m_sshAccount;
     m_priority = src.m_priority;
     m_connectionString = src.m_connectionString;
     m_enviroment = src.m_enviroment;

@@ -63,9 +63,6 @@ public:
     virtual ~RemotyWorkspace();
 
 protected:
-    void ConfigureLsp(const JSONItem& output);
-    void DoConfigureLSP(const LSPParams& lsp);
-
     void BindEvents();
     void UnbindEvents();
     void Initialise();
@@ -88,19 +85,11 @@ protected:
     void OnSftpSaveError(clCommandEvent& event);
     void OnSftpSaveSuccess(clCommandEvent& event);
 
-    // keep the LSPs state as it were before we added our remote ones
-    // and disable them
-    void LSPStoreAndDisableCurrent();
-    // restore the LSPs state
-    void LSPRestore();
-
     /// codelite-remote exec handlers
     void DoProcessBuildOutput(const wxString& output, bool is_completed);
 
     /// open a workspace file
     void DoOpen(const wxString& path, const wxString& account);
-
-    void DeleteLspEntries();
     void OnCodeLiteRemoteTerminated(clCommandEvent& event);
 
     IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
@@ -128,18 +117,11 @@ protected:
     void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
     void OnCodeLiteRemoteFindDone(clFindInFilesEvent& event);
 
-    void OnCodeLiteRemoteListLSPsOutputDone(clCommandEvent& event);
-    void OnCodeLiteRemoteListLSPsOutput(clCommandEvent& event);
-
     void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
     void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);
 
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
-    /**
-     * @brief scan for remote lsps and configure them
-     */
-    void ScanForLSPs();
 
     void RestoreSession();
 

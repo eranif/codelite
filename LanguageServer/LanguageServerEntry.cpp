@@ -1,6 +1,7 @@
 #include "LanguageServerEntry.h"
 
 #include "LanguageServerProtocol.h"
+#include "StringUtils.h"
 #include "globals.h"
 
 LanguageServerEntry::LanguageServerEntry()
@@ -21,8 +22,6 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_connectionString = json.namedObject("connectionString").toString("stdio");
     m_priority = json.namedObject("priority").toInt(m_priority);
     m_disaplayDiagnostics = json.namedObject("displayDiagnostics").toBool(m_disaplayDiagnostics); // defaults to true
-    m_remoteLSP = json["remoteLSP"].toBool(m_remoteLSP);
-    m_sshAccount = json["sshAccount"].toString(m_sshAccount);
 
     // we no longer are using exepath + args, instead a single "command" is used
     wxString commandDefault = m_exepath;
@@ -48,8 +47,6 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("priority", m_priority);
     json.addProperty("displayDiagnostics", m_disaplayDiagnostics);
     json.addProperty("command", m_command);
-    json.addProperty("remoteLSP", m_remoteLSP);
-    json.addProperty("sshAccount", m_sshAccount);
     return json;
 }
 
@@ -77,4 +74,17 @@ bool LanguageServerEntry::IsAutoRestart() const
     wxString command = GetCommand();
     command.Trim().Trim(false);
     return !command.IsEmpty();
+}
+
+wxString LanguageServerEntry::GetCommand(bool pretty) const
+{
+    auto cmd_arr = StringUtils::BuildCommandArrayFromString(m_command);
+    return StringUtils::BuildCommandStringFromArray(cmd_arr,
+                                                    pretty ? StringUtils::WITH_COMMENT_PREFIX : StringUtils::ONE_LINER);
+}
+
+void LanguageServerEntry::SetCommand(const wxString& command)
+{
+    auto cmd_arr = StringUtils::BuildCommandArrayFromString(command);
+    m_command = StringUtils::BuildCommandStringFromArray(cmd_arr);
 }

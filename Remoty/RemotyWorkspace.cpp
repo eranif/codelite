@@ -28,6 +28,7 @@
 #include "macros.h"
 #include "open_resource_dialog.h"
 #include "processreaderthread.h"
+#include "sample_codelite_remote_json.cpp"
 #include "shell_command.h"
 #include "wxStringHash.h"
 
@@ -51,30 +52,6 @@ namespace
 const char* CONTEXT_FINDER = "finder";
 const char* CONTEXT_BUILDER = "builder";
 constexpr int MAX_LOAD_WORKSPACE_RETRIES = 3;
-
-const wxString DEFAULT_CODELITE_REMOTE_JSON = R"EOF({
- "Language Server Plugin": {
-  "servers": [{
-    "name": "clangd",
-    "command": "/usr/bin/clangd -limit-results=500 -header-insertion-decorators=1",
-    "languages": ["c", "cpp"],
-    "priority": 90,
-    "working_directory": "",
-    "env": []
-   }, {
-    "name": "python",
-    "command": "python3 -m pylsp",
-    "languages": ["python"],
-    "priority": 90,
-    "working_directory": "",
-    "env": [{
-        "name": "PYTHONPATH",
-        "value": ".:$PYTHONPATH"
-    }]
-   }]
- }
-}
-)EOF";
 } // namespace
 
 RemotyWorkspace::RemotyWorkspace()

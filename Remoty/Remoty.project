@@ -27,6 +27,7 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="sample_codelite_remote_json.cpp"/>
     <File Name="RemotyConfig.cpp"/>
     <File Name="RemotyConfig.hpp"/>
     <File Name="clRemoteTerminal.cpp"/>

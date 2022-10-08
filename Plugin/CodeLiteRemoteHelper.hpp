@@ -16,14 +16,13 @@ class WXDLLIMPEXP_SDK CodeLiteRemoteHelper : public wxEvtHandler
     wxString m_workspacePath;
     wxString m_remoteAccount;
     wxString m_ssh_exe;
-    wxString m_codeliteRemoteJSONContent;
     std::unordered_map<wxString, JSON*> m_plugins_configs;
 
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
 #if USE_SFTP
-    void ProcessCodeLiteRemoteJSON();
+    void ProcessCodeLiteRemoteJSON(const wxString& filepath);
 #endif
     void Clear();
 
@@ -49,7 +48,8 @@ public:
     /**
      * @brief wrap a command in ssh user@host "command" + add environment variables if available
      */
-    bool BuildRemoteCommand(const wxString& command, const clEnvList_t& envlist, wxString* out_cmmand) const;
+    bool BuildRemoteCommand(const wxString& command, const clEnvList_t& envlist, const wxString& remote_wd,
+                            wxString* out_cmmand) const;
 };
 
 #endif // CODELITEREMOTEHELPER_HPP

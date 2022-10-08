@@ -585,7 +585,8 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         wxString remote_command = json_get_server_config_command(root, entry.GetName());
         working_directory = json_get_server_config_working_directory(root, entry.GetName());
         auto env_list = json_get_server_config_env(root, entry.GetName());
-        if(remote_command.empty() || !m_remoteHelper->BuildRemoteCommand(remote_command, env_list, &command)) {
+        if(remote_command.empty() ||
+           !m_remoteHelper->BuildRemoteCommand(remote_command, env_list, working_directory, &command)) {
             clWARNING() << "LSP: failed to build remote command for server:" << entry.GetName() << endl;
             return;
         }

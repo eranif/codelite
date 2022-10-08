@@ -15,17 +15,6 @@ fmtRustfmt::fmtRustfmt()
     wxString rustfmt_exe = "rustfmt";
     PLATFORM::Which("rustfmt", &rustfmt_exe);
     SetCommand({ rustfmt_exe, "--edition", "2021", "$(CurrentFileRelPath)" });
-
-    // remote command
-    wxString ssh_exe;
-    if(GetSSHCommand(&ssh_exe)) {
-        wxString remote_command = "\"";
-        if(!GetWorkingDirectory().empty()) {
-            remote_command << "cd " << GetWorkingDirectory() << " && ";
-        }
-        remote_command << "rustfmt --edition 2021 $(CurrentFileRelPath)\"";
-        SetRemoteCommand({ ssh_exe, "$(SSH_User)@$(SSH_Host)", remote_command });
-    }
 }
 
 fmtRustfmt::~fmtRustfmt() {}

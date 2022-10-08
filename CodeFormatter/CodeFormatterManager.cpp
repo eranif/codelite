@@ -116,3 +116,10 @@ void CodeFormatterManager::RestoreDefaults()
     clear();
     initialize_defaults();
 }
+
+void CodeFormatterManager::ClearRemoteCommands()
+{
+    for(auto f : m_formatters) {
+        f->SetRemoteCommand(wxEmptyString);
+    }
+}

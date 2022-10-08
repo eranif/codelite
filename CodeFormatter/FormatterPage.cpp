@@ -48,11 +48,7 @@ void FormatterPage::Load(std::shared_ptr<GenericFormatter> formatter)
     AddProperty(_("Inplace edit"), m_cur_formatter->IsInlineFormatter(), UPDATE_BOOL_CB(SetInlineFormatter));
     AddProperty(_("Working directory"), m_cur_formatter->GetWorkingDirectory(), UPDATE_TEXT_CB(SetWorkingDirectory));
     AddPropertyLanguagePicker(_("Supported languages"), m_cur_formatter->GetLanguages(), UPDATE_LANGS_CB());
-
-    AddHeader(_("Commands"));
-    AddProperty(_("Local"), m_cur_formatter->GetCommandWithComments(), UPDATE_TEXT_CB(SetCommandFromString));
-    AddProperty(_("Remote"), m_cur_formatter->GetRemoteCommandWithComments(),
-                UPDATE_TEXT_CB(SetRemoteCommandFromString));
+    AddProperty(_("Command"), m_cur_formatter->GetCommandWithComments(), UPDATE_TEXT_CB(SetCommandFromString));
 }
 
 void FormatterPage::Clear()

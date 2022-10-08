@@ -55,10 +55,31 @@
 #include <wx/progdlg.h>
 #include <wx/xrc/xmlres.h>
 
-static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
+namespace
+{
+int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
 //------------------------------------------------------------------------
-static CodeFormatter* theFormatter = NULL;
+CodeFormatter* theFormatter = NULL;
+
+JSONItem json_get_formatter_object(JSON* root, const wxString& formatter_name)
+{
+    auto json = root->toElement();
+    if(!json.hasNamedObject("tools")) {
+        return JSONItem{ nullptr };
+    }
+    auto servers = json["tools"];
+    int count = servers.arraySize();
+    for(int i = 0; i < count; ++i) {
+        auto tool = servers[i];
+        if(tool["name"].toString() != formatter_name) {
+            continue;
+        }
+        return tool;
+    }
+    return JSONItem{ nullptr };
+}
+} // namespace
 
 // Allocate the code formatter on the heap, it will be freed by
 // the application
@@ -86,6 +107,7 @@ CodeFormatter::CodeFormatter(IManager* manager)
     : IPlugin(manager)
 {
     m_manager.Load();
+    m_remoteHelper.reset(new CodeLiteRemoteHelper);
 
     m_longName = _("Source Code Formatter");
     m_shortName = _("Source Code Formatter");
@@ -97,6 +119,8 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FORMAT_FILE, &CodeFormatter::OnFormatFile, this);
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, &CodeFormatter::OnBeforeFileSave, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &CodeFormatter::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CodeFormatter::OnWorkspaceClosed, this);
 
     clKeyboardManager::Get()->AddAccelerator(
         _("Source Code Formatter"),
@@ -413,3 +437,45 @@ void CodeFormatter::BatchFormat(const std::vector<wxString>& files, bool silent)
 void CodeFormatter::OnBeforeFileSave(clCommandEvent& e) { e.Skip(); }
 
 void CodeFormatter::OnScanFilesCompleted(const std::vector<wxString>& files) { BatchFormat(files, false); }
+
+void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
+{
+    e.Skip();
+    m_remoteHelper->ProcessEvent(e);
+    auto config = m_remoteHelper->GetPluginConfig("Source Code Formatter");
+
+    // reset the remote commands from the previous workspace
+    m_manager.ClearRemoteCommands();
+
+    if(!config) {
+        return;
+    }
+
+    wxArrayString all_tools;
+    m_manager.GetAllNames(&all_tools);
+
+    // update the formatters with the remote command template
+    // note: we do not replace macros here since some of them
+    // might change per activation (e.g. $(CurrentFileRelPath))
+    for(size_t i = 0; i < all_tools.size(); ++i) {
+        const wxString& tool_name = all_tools[i];
+        auto json = json_get_formatter_object(config, tool_name);
+        if(!json.isOk() || (m_manager.GetFormatterByName(tool_name) == nullptr)) {
+            continue;
+        }
+
+        wxString cmd = json["command"].toString();
+        wxString wd = json["working_directory"].toString();
+
+        wxString remote_cmd;
+        if(m_remoteHelper->BuildRemoteCommand(cmd, {}, wd, &remote_cmd)) {
+            m_manager.GetFormatterByName(tool_name)->SetRemoteCommand(remote_cmd);
+        }
+    }
+}
+
+void CodeFormatter::OnWorkspaceClosed(clWorkspaceEvent& e)
+{
+    e.Skip();
+    m_remoteHelper->ProcessEvent(e);
+}

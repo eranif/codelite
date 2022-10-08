@@ -17,17 +17,6 @@ fmtJQ::fmtJQ()
     PLATFORM::Which("jq", &jq_exe);
 
     SetCommand({ jq_exe, ".", "-S", "$(CurrentFileFullPath)" });
-
-    // remote command
-    wxString ssh_exe;
-    if(GetSSHCommand(&ssh_exe)) {
-        wxString remote_command = "\"";
-        if(!GetWorkingDirectory().empty()) {
-            remote_command << "cd " << GetWorkingDirectory() << " && ";
-        }
-        remote_command << "jq . -S $(CurrentFileFullPath)\"";
-        SetRemoteCommand({ ssh_exe, "$(SSH_User)@$(SSH_Host)", remote_command });
-    }
 }
 
 fmtJQ::~fmtJQ() {}

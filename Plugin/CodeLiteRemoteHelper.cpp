@@ -12,6 +12,8 @@
 #include "clSFTPManager.hpp"
 #endif
 
+thread_local wxString m_codeliteRemoteJSONContent;
+
 CodeLiteRemoteHelper::CodeLiteRemoteHelper()
 {
     Bind(wxEVT_WORKSPACE_LOADED, &CodeLiteRemoteHelper::OnWorkspaceLoaded, this);
@@ -43,7 +45,7 @@ void CodeLiteRemoteHelper::OnWorkspaceLoaded(clWorkspaceEvent& event)
     }
     m_remoteAccount = event.GetRemoteAccount();
 
-    if(m_isRemoteLoaded) {
+    if(m_isRemoteLoaded && m_codeliteRemoteJSONContent.empty()) {
         // load codelite-remote.json file
         wxString codelite_remote_json_path = m_workspacePath + "/.codelite/codelite-remote.json";
 #if USE_SFTP
@@ -51,7 +53,7 @@ void CodeLiteRemoteHelper::OnWorkspaceLoaded(clWorkspaceEvent& event)
         if(clSFTPManager::Get().AwaitReadFile(codelite_remote_json_path, m_remoteAccount, &membuf)) {
             wxString content((const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen());
             m_codeliteRemoteJSONContent.swap(content);
-            ProcessCodeLiteRemoteJSON();
+            ProcessCodeLiteRemoteJSON(codelite_remote_json_path);
         }
 #endif
     }
@@ -86,7 +88,7 @@ void CodeLiteRemoteHelper::Clear()
 }
 
 bool CodeLiteRemoteHelper::BuildRemoteCommand(const wxString& command, const clEnvList_t& envlist,
-                                              wxString* out_cmmand) const
+                                              const wxString& remote_wd, wxString* out_cmmand) const
 {
     if(m_ssh_exe.empty()) {
         return false;
@@ -102,13 +104,26 @@ bool CodeLiteRemoteHelper::BuildRemoteCommand(const wxString& command, const clE
     }
 
     wxString cmd;
-    cmd << m_ssh_exe << " $(SSH_User)@$(SSH_Host) \"cd $(WorkspacePath) && " << envstr << " " << command << "\"";
+    wxString wd = remote_wd.empty() ? "$(WorkspacePath)" : remote_wd;
+    cmd << m_ssh_exe << " $(SSH_User)@$(SSH_Host) \"cd " << wd << " && " << envstr << " " << command << "\"";
     *out_cmmand = MacroManager::Instance()->Expand(cmd, clGetManager(), wxEmptyString);
     return true;
 }
 
 #if USE_SFTP
-void CodeLiteRemoteHelper::ProcessCodeLiteRemoteJSON()
+namespace
+{
+void add_formatter_tool(JSONItem& tools_arr, const wxString& name, const wxString& command, const wxString& wd)
+{
+    auto tool = JSONItem::createObject();
+    tool.addProperty("name", name);
+    tool.addProperty("command", command);
+    tool.addProperty("working_directory", wd);
+    tools_arr.arrayAppend(tool);
+}
+} // namespace
+
+void CodeLiteRemoteHelper::ProcessCodeLiteRemoteJSON(const wxString& filepath)
 {
     JSON root(m_codeliteRemoteJSONContent);
     if(!root.isOk()) {
@@ -116,6 +131,25 @@ void CodeLiteRemoteHelper::ProcessCodeLiteRemoteJSON()
     }
 
     auto json = root.toElement();
+    {
+        // upgrade code: ensure that source code formatter
+        // entries exist
+        if(!json.hasNamedObject("Source Code Formatter")) {
+            // missing the newly added "Source Code Formatter" section
+            // add the default entry
+            auto json_code_formatter = json.AddObject("Source Code Formatter");
+            auto tools_arr = json_code_formatter.AddArray("tools");
+            add_formatter_tool(tools_arr, "jq", "jq . -S $(CurrentFileRelPath)", "$(WorkspacePath)");
+            add_formatter_tool(tools_arr, "clang-format", "clang-format $(CurrentFileRelPath)", "$(WorkspacePath)");
+            add_formatter_tool(tools_arr, "xmllint", "xmllint --format $(CurrentFileRelPath)", "$(WorkspacePath)");
+            add_formatter_tool(tools_arr, "rustfmt", "rustfmt --edition 2021 $(CurrentFileRelPath)",
+                               "$(WorkspacePath)");
+
+            // store the file
+            clSFTPManager::Get().AsyncWriteFile(json.format(), filepath, m_remoteAccount);
+        }
+    }
+
     auto child = json.firstChild();
     while(child.isOk()) {
         wxString plugin_name = child.getName();

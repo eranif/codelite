@@ -33,6 +33,9 @@ public:
 
     // discard all the settings and load the defaults
     void RestoreDefaults();
+
+    /// Remove all remote commands set in the formatters
+    void ClearRemoteCommands();
 };
 
 #endif // CODEFORMATTERMANAGER_HPP

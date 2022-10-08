@@ -11,14 +11,12 @@
 class GenericFormatter : public SourceFormatterBase
 {
     wxArrayString m_command;
-    wxArrayString m_remote_command;
+    wxString m_remote_command;
     wxString m_workingDirectory;
 
 public:
     GenericFormatter();
     virtual ~GenericFormatter();
-
-    bool GetSSHCommand(wxString* ssh_exe) const;
 
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON() const override;
@@ -29,6 +27,7 @@ public:
                           wxString* output) const override;
 
     bool CanHandleRemoteFile() const { return !m_remote_command.empty(); }
+    void SetRemoteCommand(const wxString& cmd);
 
     /**
      * @brief format `content`
@@ -42,20 +41,14 @@ public:
     void SetCommand(const std::vector<wxString>& command);
     void SetCommandFromString(const wxString& command);
 
-    void SetRemoteCommand(const wxArrayString& command) { this->m_remote_command = command; }
-    void SetRemoteCommand(const std::vector<wxString>& command);
-    void SetRemoteCommandFromString(const wxString& command);
-
     const wxArrayString& GetCommand() const { return m_command; }
     wxString GetCommandAsString() const;
 
-    const wxArrayString& GetRemoteCommand() const { return m_remote_command; }
-    wxString GetRemoteCommandAsString() const;
+    const wxString& GetRemoteCommand() const { return m_remote_command; }
 
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 
-    wxString GetRemoteCommandWithComments() const;
     wxString GetCommandWithComments() const;
 };
 

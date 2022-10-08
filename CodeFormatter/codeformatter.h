@@ -26,13 +26,17 @@
 #define CODEFORMATTER_H
 
 #include "CodeFormatterManager.hpp"
+#include "CodeLiteRemoteHelper.hpp"
 #include "cl_command_event.h"
 #include "fileextmanager.h"
 #include "plugin.h"
 
+#include <memory>
+
 class CodeFormatter : public IPlugin
 {
     CodeFormatterManager m_manager;
+    std::shared_ptr<CodeLiteRemoteHelper> m_remoteHelper;
 
 protected:
     wxString m_selectedFolder;
@@ -43,6 +47,8 @@ private:
     bool DoFormatEditor(IEditor* editor);
     void OnScanFilesCompleted(const std::vector<wxString>& files);
     void ReloadCurrentEditor();
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
 
 public:
     /**

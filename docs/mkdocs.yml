@@ -25,10 +25,10 @@ nav:
     - Workspace:
         - C/C++: workspaces/default.md
         - File System Workspace: workspaces/file_system.md
+        - Remote File System Workspace: /plugins/remoty
         - PHP (via plugin): workspaces/php.md
         - Node.js (via plugin): workspaces/nodejs.md
-    - Code Completion:
-        - C/C++: code_completion/cxx.md
+    - Code Completion: code_completion/cxx.md
     - Plugins:
         - Language Server Protocol: plugins/lsp.md
         - Debug Adapter Client: plugins/dap.md

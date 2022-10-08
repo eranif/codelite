@@ -16,9 +16,12 @@ the local machine
     * Make sure you have a [working MSYS2 environment][3]
     * From the main menu bar: open `Settings` &#8594; `Environment Variables`
     * Add the following line: `PATH=C:\msys64\mingw64\bin;$PATH`
+    * Ensure you have a working `ssh` command line and its in your `PATH`
+    * You are able to SSH to the remote machine **without password** (only via keys)
 
 === "Linux / macOS"
     * Make sure your have `/usr/bin/ssh` in your `PATH` (should be by default)
+    * You are able to SSH to the remote machine **without password** (only via keys)
 
 ### Remote machine
 
@@ -38,101 +41,96 @@ the local machine
 Creating a new workspace is similar to creating a File System Workspace, the difference is that
 the folder is located on the remote machine.
 
-## Configuring Code Completion
+## Remote configuration - `codelite-remote.json`
 ---
 
-CodeLite launches [Language Servers][5] on the remote machine as described in the `codelite-remote.json`
-configuration file.
+CodeLite uses a special file `WORKSPACE_PATH/.codelite/codelite-remote.json` to configure remote tools for the following plugins:
 
-### `codelite-remote.json` file
----
+- [Language Servers Plugin][5] - all the LSP entries are placed under the `Language Server Plugin` property
+- [Source Code Formatter Plugin][9] - all the tools are placed under the `Source Code Formatter` property
 
-By default, `codelite-remote` process will search for a configuration file under `WORKSPACE_PATH/.codelite/codelite-remote.json`, if no
-configuration file is found, it will search for it under `$HOME/.codelite/codelite-remote.json`, if still no match, it will create an empty configuration
-file and work with it.
+If this file does not exist for you, you can create a skeleton file by:
 
-To get started, you can create a global configuration file `$HOME/.codelite/`:
-
-- Open a terminal on your remote machine, or connect to it via SSH
-- Type:
-
-```bash
-mkdir -p ~/.codelite/
-touch ~/.codelite/codelite-remote.json
-```
-
-- Add [Language Servers][5] entries so you will end up with `~/.codelite/codelite-remote.json` that looks similar to this:
-
-```json
-    {
-     "Language Server Plugin": {
-      "servers": [{
-        "name": "clangd",
-        "command": "clangd -limit-results=500 -header-insertion-decorators=0",
-        "languages": ["c", "cpp"],
-        "priority": 90,
-        "working_directory": "",
-        "env": []
-       }, {
-        "name": "python",
-        "command": "python3 -m pylsp",
-        "languages": ["python"],
-        "priority": 80,
-        "working_directory": "",
-        "env": []
-       }]
-     }
-    }
-```
-
-- Modify the `command` field in the above example, to match the actual paths installed on your machine
-- Add / remove more `server` entries
+- Right click on the top level folder in the tree view
+- Choose `Edit codelite-remote.json`
+- Edit the file (update the commands, delete unwanted entries etc)
 - Save the file
-- If your language server requires environment variables, use the `env` property using the following format:
+- CodeLite will prompt to you reload the workspcae, accept the offer
+
+The skeleton file looks like this:
 
 ```json
 {
-    ...
-    "env" : [{
-        "name": "PATH",
-        "value": "/some/path/bin:$PATH"
-    }, {
-        "name": "LD_LIBRARY_PATH",
-        "value": "/some/path/lib:$LD_LIBRARY_PATH"
-    }]
-    ...
+  "Language Server Plugin": {
+    "servers": [
+      {
+        "command": "/usr/bin/clangd -limit-results=500 -header-insertion-decorators=1",
+        "env": [],
+        "name": "clangd",
+        "working_directory": "$(WorkspacePath)"
+      },
+      {
+        "command": "rust-analyzer",
+        "env": [],
+        "name": "rust-analyzer",
+        "working_directory": "$(WorkspacePath)"
+      },
+      {
+        "command": "python3 -m pylsp",
+        "env": [
+          {
+            "name": "PYTHONPATH",
+            "value": ".:$PYTHONPATH"
+          }
+        ],
+        "name": "python",
+        "working_directory": "$(WorkspacePath)"
+      }
+    ]
+  },
+  "Source Code Formatter": {
+    "tools": [
+      {
+        "command": "jq . -S $(CurrentFileRelPath)",
+        "name": "jq",
+        "working_directory": "$(WorkspacePath)"
+      },
+      {
+        "command": "clang-format $(CurrentFileRelPath)",
+        "name": "clang-format",
+        "working_directory": "$(WorkspacePath)"
+      },
+      {
+        "command": "xmllint --format $(CurrentFileRelPath)",
+        "name": "xmllint",
+        "working_directory": "$(WorkspacePath)"
+      },
+      {
+        "command": "rustfmt --edition 2021 $(CurrentFileRelPath)",
+        "name": "rustfmt",
+        "working_directory": "$(WorkspacePath)"
+      }
+    ]
+  }
 }
 ```
 
-!!! Note
-    Whenever you modify your `$HOME/.codelite/codelite-remote.json` file,
-    remember to reload your workspace in CodeLite (Right click on the top workspace folder -> Reload Workspace)
+!!! Important
+    Each entry in the file: `codelite-remote.json` **MUST** match a configuration entry in your UI
+    Entries that do not have a matching UI entry are ignored
 
-!!! Note
-    The following code block contains the complete list of supported languages known to CodeLite:
+    e.g. if you add a language server entry named `clangd`, you must have an entry named `clangd`
+    defined under `Plugins` &#8594; `Language Server` &#8594; `Settings...`
 
-```json
-    {
-        "bat",        "bibtex",     "clojure",     "coffeescript",  "c",
-        "cpp",        "csharp",     "css",         "diff",          "dart",
-        "dockerfile", "fsharp",     "git-commit",  "git-rebase",    "go",
-        "groovy",     "handlebars", "html",        "ini",           "java",
-        "javascript", "json",       "latex",       "less",          "lua",
-        "makefile",   "markdown",   "objective-c", "objective-cpp", "perl and perl6",
-        "php",        "powershell", "jade",        "python",        "r",
-        "razor",      "ruby",       "rust",        "scss",          "sass",
-        "scala",      "shaderlab",  "shellscript", "sql",           "swift",
-        "typescript", "tex",        "vb",          "xml",           "xsl",
-        "yaml"
-    };
-```
+    The same applies for the `Source Code Formatter` entries
 
 ## Supported features
 ---
 
-The current features are supported by `Remoty`
+The current features supported by `Remoty`
 
 - [Code completion][8]
+- [Source code formatting][9]
 - Find in files
 - Remote building
 - Executing target on the remote machine
@@ -144,7 +142,7 @@ The current features are supported by `Remoty`
 ---
 
 Under the hood, CodeLite uploads to the remote machine a python script `codelite-remote`
-This script is a mini proxy server capable of executing commands on behalf of CodeLite
+This script serves as a proxy server capable of executing commands on behalf of CodeLite
 
 For example, running `ps -ef|grep codelite-remote` on the remote machine will output this:
 
@@ -164,3 +162,4 @@ eran     17248    10  0 16:47 pts/0    00:00:00 grep --color=auto codelite-remot
  [6]: /plugins/lsp/#install-clangd-c
  [7]: /plugins/lsp/#install-pylsp-python
  [8]: /plugins/remoty/#configuring-code-completion
+ [9]: /plugins/codeformatter

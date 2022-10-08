@@ -13,40 +13,37 @@ Once integrated, you can format your code using a single key stroke, by default 
 Each supported tool contains the following details:
 
 - `Enabled` flag
-- `Inline editing`
+- `Inplace edit`
 - `Working directory`
-- `Local command`
-- `Remote command`
+- `Command`
 
-## `Enabled`
+### `Enabled`
 
 This is a self explanatory - is this formatter enabled or disabled?
 
-## `Inline editing`
+### `Inplace edit`
 
-Some formatters do not print the formatted output to `stdout` but rather are updating the source file directly.
+Some formatters do not print the formatted output to `stdout` but instead are editing the source file directly.
 This check box marks a formatter as such. It is needed internally by CodeLite
 
-## `Working directory`
+### `Working directory`
 
 CodeLite executes the formatter from this directory. If not provided, CodeLite uses the workspace root folder
+It is recommended to set the working directory to `$(WorkspacePath)`
 
-## `Local command`
+### `Command`
 
-When working on a local workspace (i.e. a workspace that exists on your local machine), CodeLite executes the command
-set in this field
+The command to execute. Macros are allowed here
+You may place each command on a separate line or separated by space. Lines starting with `#` are considered as comments and are ignored.
+Empty lines are also ignored
 
-## `Remote command`
+## Integration with remote workspace
+---
 
-When working on a remote workspace (i.e. a workspace that exists on a different machine using [Remoty][1]), CodeLite executes the command
-set in this field
-
-
-!!! Note
-    For both the `Local command` & `Remote command` CodeLite ignores lines that:
-    (1) Are starting with the `#` sign, (2) Are empty
-
+Once a remote workspace is loaded (e.g. via [Remoty][1] plugin), the plugin replaces the commands defined in the UI
+with the commands taken from [`codelite-remote.json`][2] configuration file.
 
 
  [1]: /plugins/remoty
+ [2]: /plugins/remoty/#remote-configuration-codelite-remotejson
 

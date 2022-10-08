@@ -13,6 +13,7 @@
 #if USE_SFTP
 #include "sftp_settings.h"
 #endif
+#include "StringUtils.h"
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
@@ -20,11 +21,12 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if(lex) {
         lex->ApplySystemColours(m_stcCommand);
-        lex->ApplySystemColours(m_stcEnvironment);
     }
     m_textCtrlName->SetValue(data.GetName());
     m_textCtrlWD->SetValue(data.GetWorkingDirectory());
-    m_stcCommand->SetText(data.GetCommand());
+
+    auto cmd_arr = StringUtils::BuildCommandArrayFromString(data.GetCommand());
+    m_stcCommand->SetText(StringUtils::BuildCommandStringFromArray(cmd_arr, StringUtils::WITH_COMMENT_PREFIX));
     m_checkBoxEnabled->SetValue(data.IsEnabled());
     const wxArrayString& langs = data.GetLanguages();
     wxString languages = wxJoin(langs, ';');
@@ -33,17 +35,7 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     m_checkBoxDiagnostics->SetValue(data.IsDisaplayDiagnostics());
     m_sliderPriority->SetValue(data.GetPriority());
     m_checkBoxRemoteServer->SetValue(data.IsRemoteLSP());
-
     InitialiseSSH(data);
-    const auto& env = data.GetEnv();
-    if(!env.empty()) {
-        wxString envString;
-        for(const auto& env_entry : env) {
-            envString << env_entry.first << "=" << env_entry.second << "\n";
-        }
-        envString.RemoveLast();
-        m_stcEnvironment->SetText(envString);
-    }
 }
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent)
@@ -52,7 +44,6 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent)
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if(lex) {
         lex->ApplySystemColours(m_stcCommand);
-        lex->ApplySystemColours(m_stcEnvironment);
     }
     InitialiseSSH({});
 }
@@ -61,9 +52,11 @@ LanguageServerPage::~LanguageServerPage() {}
 
 LanguageServerEntry LanguageServerPage::GetData() const
 {
+    // build the command
+    wxArrayString cmd_arr = StringUtils::BuildCommandArrayFromString(m_stcCommand->GetText());
     LanguageServerEntry d;
     d.SetName(m_textCtrlName->GetValue());
-    d.SetCommand(m_stcCommand->GetText().Trim().Trim(false));
+    d.SetCommand(StringUtils::BuildCommandStringFromArray(cmd_arr));
     d.SetWorkingDirectory(m_textCtrlWD->GetValue());
     d.SetLanguages(GetLanguages());
     d.SetEnabled(m_checkBoxEnabled->IsChecked());
@@ -72,25 +65,6 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
     d.SetSshAccount(m_choiceSSHAccounts->GetStringSelection());
     d.SetRemoteLSP(m_checkBoxRemoteServer->IsChecked());
-
-    // Store the environment
-    clEnvList_t envList;
-    wxArrayString env_lines = wxStringTokenize(m_stcEnvironment->GetText(), "\n", wxTOKEN_STRTOK);
-    for(auto& line : env_lines) {
-        TrimString(line);
-        if(line.empty()) {
-            continue;
-        }
-        wxString env_name = line.BeforeFirst('=');
-        wxString env_value = line.AfterFirst('=');
-        TrimString(env_name);
-        TrimString(env_value);
-        if(env_name.empty() || env_lines.empty()) {
-            continue;
-        }
-        envList.push_back({ env_name, env_value });
-    }
-    d.SetEnv(envList);
     return d;
 }
 

@@ -237,52 +237,6 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     boxSizer168->Add(m_stcCommand, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelEnvironment = new wxPanel(m_notebook164, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_notebook164, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook164->AddPage(m_panelEnvironment, _("Environment"), false);
-
-    wxBoxSizer* boxSizer178 = new wxBoxSizer(wxVERTICAL);
-    m_panelEnvironment->SetSizer(boxSizer178);
-
-    m_stcEnvironment = new clThemedSTC(m_panelEnvironment, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelEnvironment, wxSize(-1, -1)), wxBORDER_NONE);
-    // Configure the fold margin
-    m_stcEnvironment->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_stcEnvironment->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_stcEnvironment->SetMarginSensitive(4, true);
-    m_stcEnvironment->SetMarginWidth(4, 0);
-
-    // Configure the tracker margin
-    m_stcEnvironment->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_stcEnvironment->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_stcEnvironment->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_stcEnvironment->SetMarginWidth(2, 0);
-    m_stcEnvironment->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    m_stcEnvironment->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcEnvironment->SetMarginWidth(0, 0);
-
-    // Configure the line symbol margin
-    m_stcEnvironment->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stcEnvironment->SetMarginMask(3, 0);
-    m_stcEnvironment->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_stcEnvironment->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_stcEnvironment->StyleClearAll();
-    m_stcEnvironment->SetWrapMode(0);
-    m_stcEnvironment->SetIndentationGuides(0);
-    m_stcEnvironment->SetKeyWords(0, wxT(""));
-    m_stcEnvironment->SetKeyWords(1, wxT(""));
-    m_stcEnvironment->SetKeyWords(2, wxT(""));
-    m_stcEnvironment->SetKeyWords(3, wxT(""));
-    m_stcEnvironment->SetKeyWords(4, wxT(""));
-
-    boxSizer178->Add(m_stcEnvironment, 1, wxEXPAND, WXC_FROM_DIP(5));
-
     m_staticText579 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition,
                                        wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_staticText579->SetToolTip(_("Set the language server working directory"));

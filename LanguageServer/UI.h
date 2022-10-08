@@ -98,8 +98,6 @@ protected:
     wxNotebook* m_notebook164;
     wxPanel* m_panelCommand;
     clThemedSTC* m_stcCommand;
-    wxPanel* m_panelEnvironment;
-    clThemedSTC* m_stcEnvironment;
     wxStaticText* m_staticText579;
     wxTextCtrl* m_textCtrlWD;
     wxButton* m_button1153;
@@ -127,8 +125,6 @@ public:
     wxStaticText* GetStaticText495() { return m_staticText495; }
     clThemedSTC* GetStcCommand() { return m_stcCommand; }
     wxPanel* GetPanelCommand() { return m_panelCommand; }
-    clThemedSTC* GetStcEnvironment() { return m_stcEnvironment; }
-    wxPanel* GetPanelEnvironment() { return m_panelEnvironment; }
     wxNotebook* GetNotebook164() { return m_notebook164; }
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }

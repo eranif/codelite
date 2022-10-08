@@ -35,9 +35,9 @@ public:
 
 public:
     void StartServer(const LanguageServerEntry& entry);
-
-    void RestartServer(const wxString& name);
     void StartServer(const wxString& entry);
+    void RestartServer(const wxString& name);
+
     void StopServer(const wxString& entry);
     void DeleteServer(const wxString& name);
 

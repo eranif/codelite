@@ -552,7 +552,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     startup_info.SetFlags(flags);
     startup_info.SetWorkingDirectory(entry.GetWorkingDirectory());
     startup_info.SetAccountName(entry.GetSshAccount());
-    lsp->Start(startup_info, entry.GetEnv(), wxEmptyString, rootDir, entry.GetLanguages());
+    lsp->Start(startup_info, {}, wxEmptyString, rootDir, entry.GetLanguages());
     m_servers.insert({ entry.GetName(), lsp });
 }
 

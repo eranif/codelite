@@ -22,7 +22,6 @@ class LanguageServerEntry
     int m_priority = 50;
     bool m_disaplayDiagnostics = true;
     wxString m_command;
-    clEnvList_t m_env;
     bool m_remoteLSP = false;
     wxString m_sshAccount;
 
@@ -89,8 +88,6 @@ public:
     const wxString& GetName() const { return m_name; }
     eNetworkType GetNetType() const;
     bool IsAutoRestart() const;
-    const clEnvList_t& GetEnv() const { return m_env; }
-    void SetEnv(const clEnvList_t& env) { this->m_env = env; }
     void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }
     const wxString& GetSshAccount() const { return m_sshAccount; }
     void SetRemoteLSP(bool remoteLSP) { this->m_remoteLSP = remoteLSP; }

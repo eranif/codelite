@@ -50,7 +50,6 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     }
 
     m_command = json.namedObject("command").toString(commandDefault);
-    m_initOptions = json["initOptions"].toString();
 }
 
 JSONItem LanguageServerEntry::ToJSON() const
@@ -66,7 +65,6 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("priority", m_priority);
     json.addProperty("displayDiagnostics", m_disaplayDiagnostics);
     json.addProperty("command", m_command);
-    json.addProperty("initOptions", m_initOptions);
     json.addProperty("remoteLSP", m_remoteLSP);
     json.addProperty("sshAccount", m_sshAccount);
 

@@ -358,7 +358,6 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
     pentry->SetCommand(event.GetLspCommand());
     pentry->SetDisaplayDiagnostics(event.GetFlags() & clLanguageServerEvent::kDisaplyDiags);
     pentry->SetConnectionString(event.GetConnectionString());
-    pentry->SetInitOptions(event.GetInitOptions());
     pentry->SetEnabled(event.GetFlags() & clLanguageServerEvent::kEnabled);
     pentry->SetRemoteLSP(event.GetFlags() & clLanguageServerEvent::kSSHEnabled);
     pentry->SetSshAccount(event.GetSshAccount());

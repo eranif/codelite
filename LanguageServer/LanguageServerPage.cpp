@@ -1,7 +1,9 @@
-#include "ColoursAndFontsManager.h"
 #include "LanguageServerPage.h"
+
+#include "ColoursAndFontsManager.h"
 #include "LanguageServerProtocol.h"
 #include "globals.h"
+
 #include <algorithm>
 #include <macros.h>
 #include <wx/choicdlg.h>
@@ -17,14 +19,12 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
 {
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if(lex) {
-        lex->Apply(m_stcCommand);
-        lex->Apply(m_stcInitOptions);
-        lex->Apply(m_stcEnvironment);
+        lex->ApplySystemColours(m_stcCommand);
+        lex->ApplySystemColours(m_stcEnvironment);
     }
     m_textCtrlName->SetValue(data.GetName());
     m_textCtrlWD->SetValue(data.GetWorkingDirectory());
     m_stcCommand->SetText(data.GetCommand());
-    m_stcInitOptions->SetText(data.GetInitOptions());
     m_checkBoxEnabled->SetValue(data.IsEnabled());
     const wxArrayString& langs = data.GetLanguages();
     wxString languages = wxJoin(langs, ';');
@@ -51,8 +51,8 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent)
 {
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if(lex) {
-        lex->Apply(m_stcCommand);
-        lex->Apply(m_stcInitOptions);
+        lex->ApplySystemColours(m_stcCommand);
+        lex->ApplySystemColours(m_stcEnvironment);
     }
     InitialiseSSH({});
 }
@@ -70,7 +70,6 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetConnectionString(m_comboBoxConnection->GetValue());
     d.SetPriority(m_sliderPriority->GetValue());
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
-    d.SetInitOptions(m_stcInitOptions->GetText().Trim().Trim(false));
     d.SetSshAccount(m_choiceSSHAccounts->GetStringSelection());
     d.SetRemoteLSP(m_checkBoxRemoteServer->IsChecked());
 

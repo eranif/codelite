@@ -79,42 +79,10 @@ wxString replace_macros(const wxString& expression, const wxString& filepath)
     return resolved;
 }
 
-wxArrayString command_from_string(const wxString& command)
-{
-    wxArrayString lines = ::wxStringTokenize(command, "\n", wxTOKEN_STRTOK);
-
-    wxArrayString command_array;
-    command_array.reserve(lines.size());
-
-    for(auto& line : lines) {
-        line.Trim().Trim(false);
-        if(line.StartsWith("#") || line.IsEmpty()) {
-            continue;
-        }
-
-        int count = 0;
-        auto argv = StringUtils::BuildArgv(line, count);
-        for(int i = 0; i < count; ++i) {
-            command_array.push_back(argv[i]);
-        }
-        StringUtils::FreeArgv(argv, count);
-    }
-    return command_array;
-}
-
 wxString get_command_with_desc(const wxArrayString& command_arr, const wxString& desc)
 {
-    wxString command;
-    command << "# " << desc << "\n";
-    command << "# Command to execute:\n";
-    command << "\n";
-
-    for(size_t i = 0; i < command_arr.size(); ++i) {
-        if(i > 0) {
-            command << "  ";
-        }
-        command << command_arr[i] << "\n";
-    }
+    wxString command = StringUtils::BuildCommandStringFromArray(command_arr, StringUtils::WITH_COMMENT_PREFIX);
+    command.Prepend(wxString() << "# " << desc << "\n");
     return command;
 }
 } // namespace
@@ -249,11 +217,14 @@ void GenericFormatter::SetRemoteCommand(const std::vector<wxString>& command)
 
 bool GenericFormatter::GetSSHCommand(wxString* ssh_exe) const { return PLATFORM::Which("ssh", ssh_exe); }
 
-void GenericFormatter::SetCommandFromString(const wxString& command) { SetCommand(command_from_string(command)); }
+void GenericFormatter::SetCommandFromString(const wxString& command)
+{
+    SetCommand(StringUtils::BuildCommandArrayFromString(command));
+}
 
 void GenericFormatter::SetRemoteCommandFromString(const wxString& command)
 {
-    SetRemoteCommand(command_from_string(command));
+    SetRemoteCommand(StringUtils::BuildCommandArrayFromString(command));
 }
 
 wxString GenericFormatter::GetRemoteCommandWithComments() const

@@ -34,6 +34,15 @@
 class WXDLLIMPEXP_CL StringUtils
 {
 public:
+    enum BuildCommandFlags {
+        // build a command using only space as the delimiter
+        ONE_LINER = (1 << 0),
+
+        // include a comment block before the command
+        WITH_COMMENT_PREFIX = (1 << 1),
+    };
+
+public:
     /**
      * @brief convert string into std::string
      */
@@ -80,6 +89,22 @@ public:
      */
     static clEnvList_t ResolveEnvList(const clEnvList_t& env_list);
     static clEnvList_t ResolveEnvList(const wxString& envstr);
+
+    /**
+     * @brief accept command as input string and break it into array of commands
+     * the input string can span on multiple lines or use space as the delimiter
+     * (or both)
+     * Empty lines and lines starting with "#" are ignored
+     */
+    static wxArrayString BuildCommandArrayFromString(const wxString& command);
+
+    /**
+     * @brief build command string from array of commands
+     * @param command the command array
+     * @param flags see `StringUtils::BuildCommandFlags`
+     */
+    static wxString BuildCommandStringFromArray(const wxArrayString& command_arr,
+                                                size_t flags = BuildCommandFlags::ONE_LINER);
 };
 
 #endif // STRINGUTILS_H

@@ -431,3 +431,52 @@ clEnvList_t StringUtils::ResolveEnvList(const wxString& envstr)
     auto source_list = BuildEnvFromString(envstr);
     return ResolveEnvList(source_list);
 }
+
+wxArrayString StringUtils::BuildCommandArrayFromString(const wxString& command)
+{
+    wxArrayString lines = ::wxStringTokenize(command, "\n", wxTOKEN_STRTOK);
+
+    wxArrayString command_array;
+    command_array.reserve(lines.size());
+
+    for(auto& line : lines) {
+        line.Trim().Trim(false);
+        if(line.StartsWith("#") || line.IsEmpty()) {
+            continue;
+        }
+
+        line = line.BeforeFirst('#'); // remove trailing comment
+
+        int count = 0;
+        auto argv = BuildArgv(line, count);
+        for(int i = 0; i < count; ++i) {
+            command_array.push_back(argv[i]);
+        }
+        StringUtils::FreeArgv(argv, count);
+    }
+    return command_array;
+}
+
+wxString StringUtils::BuildCommandStringFromArray(const wxArrayString& command_arr, size_t flags)
+{
+    wxString command;
+
+    bool span_multiple_lines = !(flags & ONE_LINER);
+    bool include_comment_block = (flags & WITH_COMMENT_PREFIX);
+
+    if(span_multiple_lines && include_comment_block) {
+        command << "# Command to execute:\n";
+        command << "\n";
+    }
+
+    const wxString SPACE = span_multiple_lines ? "  " : " ";
+    const wxString COMMAND_SEPARATOR = span_multiple_lines ? "\n" : " ";
+
+    for(size_t i = 0; i < command_arr.size(); ++i) {
+        if(i > 0) {
+            command << SPACE;
+        }
+        command << command_arr[i] << COMMAND_SEPARATOR;
+    }
+    return command;
+}

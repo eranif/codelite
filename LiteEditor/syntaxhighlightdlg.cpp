@@ -715,7 +715,7 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
 void SyntaxHighlightDlg::OnLoadEclipseThemeWebsite(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    ::wxLaunchDefaultBrowser("http://eclipsecolorthemes.org/");
+    ::wxLaunchDefaultBrowser("https://eclipse-color-themes.web.app/");
 }
 
 void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)

@@ -10,7 +10,7 @@ import logging
 # global configuration object
 configuration = {}
 
-#----------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------
 # Sample usage:
 #
 #   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
@@ -25,14 +25,16 @@ configuration = {}
 # Command line usage:
 #   python3 codelite-remote.py --context builder
 #
-#----------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------
 
 ##------------------------------
 ## Helper string finder
 ##------------------------------
 class string_finder:
     def __init__(self, find_what: str, ignore_case, whole_word):
-        self.word_chars = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_")
+        self.word_chars = set(
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_"
+        )
         self.find_what = find_what
         self.ignore_case = ignore_case
         self.whole_word = whole_word
@@ -68,11 +70,14 @@ class string_finder:
 
     def get_match_position(self):
         return self.where
+
+
 ##------------------------------
 ## Helper string finder - end
 ##------------------------------
 def print_message_terminator():
     print(">>codelite-remote-msg-end<<")
+
 
 def _load_config_file(filepath):
     """
@@ -97,6 +102,7 @@ def _load_config_file(filepath):
 
     return False
 
+
 def _create_empty_config_file_if_not_exists(directory):
     """
     create empty configuration file with a given path
@@ -109,7 +115,7 @@ def _create_empty_config_file_if_not_exists(directory):
     logging.info("creating empty configuration file: {}".format(config_file))
     try:
         # Create the directory in the path
-        os.makedirs(directory, exist_ok = True)
+        os.makedirs(directory, exist_ok=True)
         logging.info("successfully created directory {}".format(directory))
     except OSError as error:
         logging.debug("directory {} already exists".format(directory))
@@ -117,6 +123,7 @@ def _create_empty_config_file_if_not_exists(directory):
     fp = open(config_file, "w")
     fp.write("{}")
     fp.close()
+
 
 def load_configuration():
     # We first try to load the configuration file for the current workspace
@@ -136,11 +143,12 @@ def load_configuration():
         config_loaded = _load_config_file(global_config_file)
     return config_loaded
 
+
 def _get_list_of_files(cmd):
     """
     helper method to on_find_files - return list of files as array
     """
-    root_dir = cmd['root_dir']
+    root_dir = cmd["root_dir"]
     root_dir = os.path.expanduser(root_dir)
     root_dir = os.path.expandvars(root_dir)
     if not os.path.isdir(root_dir):
@@ -149,7 +157,7 @@ def _get_list_of_files(cmd):
 
     # build the extension tuple
     exts_set = set()
-    for ext in cmd['file_extensions']:
+    for ext in cmd["file_extensions"]:
         exts_set.add(ext)
 
     files_arr = []
@@ -161,6 +169,7 @@ def _get_list_of_files(cmd):
                 files_arr.append(os.path.join(root, file))
     return files_arr
 
+
 def write_file(cmd):
     try:
         fp = open(cmd["path"], "w")
@@ -170,6 +179,7 @@ def write_file(cmd):
         logging.error("write_file error: {}".format(e))
     print_message_terminator()
 
+
 def on_exec(cmd):
     """
     Execute command and print its output
@@ -177,21 +187,23 @@ def on_exec(cmd):
     # preare the environment
     try:
         env_dict = dict(os.environ.copy())
-        user_env = cmd['env']
+        user_env = cmd["env"]
         for env_entry in user_env:
-            name = env_entry['name']
-            value = env_entry['value']
+            name = env_entry["name"]
+            value = env_entry["value"]
             if env_dict.get(name, -1) == -1:
                 env_dict[name] = value
             else:
                 env_dict[name] = "{}:{}".format(value, env_dict[name])
-        working_directory = os.path.expanduser(cmd['wd'])
+        working_directory = os.path.expanduser(cmd["wd"])
         working_directory = os.path.expandvars(working_directory)
-        completed_proc = subprocess.run(args=cmd['cmd'],
-                                        cwd=working_directory,
-                                        shell=True,
-                                        env=env_dict,
-                                        stdin=subprocess.PIPE)
+        completed_proc = subprocess.run(
+            args=cmd["cmd"],
+            cwd=working_directory,
+            shell=True,
+            env=env_dict,
+            stdin=subprocess.PIPE,
+        )
     except Exception as e:
         logging.error("on_exe error: {}".format(e))
         try:
@@ -201,6 +213,7 @@ def on_exec(cmd):
             pass
     # always print the terminating message
     print_message_terminator()
+
 
 def on_find_files(cmd):
     """
@@ -215,6 +228,7 @@ def on_find_files(cmd):
         print(file)
     print_message_terminator()
 
+
 def on_find_in_files(cmd):
     """
     Find list of files with a given extension and from a given root directory
@@ -224,17 +238,15 @@ def on_find_in_files(cmd):
     {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite", "find_what":"wxStringSet_t"}
     """
     files_arr = _get_list_of_files(cmd)
-    find_what = cmd['find_what']
+    find_what = cmd["find_what"]
     return_obj = []
 
     # search flags
-    whole_word = cmd['whole_word']
-    ignore_case = cmd['icase']
+    whole_word = cmd["whole_word"]
+    ignore_case = cmd["icase"]
 
     # first line contains the number of files scanned
-    files_scanned = {
-        "files_scanned": len(files_arr)
-    }
+    files_scanned = {"files_scanned": len(files_arr)}
     print(json.dumps(files_scanned))
 
     finder = string_finder(find_what, ignore_case, whole_word)
@@ -252,31 +264,28 @@ def on_find_in_files(cmd):
                 while finder.find_next():
                     start_pos = finder.get_match_position()
                     end_pos = start_pos + len(find_what)
-                    matches.append({
-                        "start": start_pos,
-                        "end": end_pos
-                    })
+                    matches.append({"start": start_pos, "end": end_pos})
                 # if we found matches for this line,
                 # add them to the "entries"
                 if len(matches) > 0:
                     for match in matches:
-                        entries.append({
-                            "ln": line_number,
-                            "start": match['start'],
-                            "end": match['end'],
-                            "pattern": line
-                        })
+                        entries.append(
+                            {
+                                "ln": line_number,
+                                "start": match["start"],
+                                "end": match["end"],
+                                "pattern": line,
+                            }
+                        )
             # add this file to the return object
             if len(entries) > 0:
-                reply = {
-                    "file": file,
-                    "matches": entries
-                }
+                reply = {"file": file, "matches": entries}
                 print(json.dumps(reply))
         except UnicodeDecodeError as e:
             logging.error("decoding error in file {}".format(file))
             pass
     print_message_terminator()
+
 
 def locate_in_path(name, path, versions_arr, ext):
     """
@@ -309,10 +318,14 @@ def locate_in_path(name, path, versions_arr, ext):
         return fullpath
     return ""
 
+
 def on_list_lsps(lsps_array):
     # use the global configuration file
     global configuration
-    if "Language Server Plugin" in configuration and "servers" in configuration["Language Server Plugin"]:
+    if (
+        "Language Server Plugin" in configuration
+        and "servers" in configuration["Language Server Plugin"]
+    ):
         # print the servers array
         print(json.dumps(configuration["Language Server Plugin"]["servers"]))
     else:
@@ -320,18 +333,19 @@ def on_list_lsps(lsps_array):
         print("[]")
     print_message_terminator()
 
+
 def on_find_path(cmd):
     """
     find a directory or a file with a given name
     if the path does not exist, check the parent folder until we hit root /
     """
-    path = cmd['path']
+    path = cmd["path"]
     path = os.path.expanduser(path)
     path = os.path.expandvars(path)
 
     # check for this folder and start going up
     dir_part, dir_name = os.path.split(path)
-    dirs = dir_part.split('/')
+    dirs = dir_part.split("/")
 
     while len(dirs) > 0:
         fullpath = "{}/{}".format("/".join(dirs), dir_name)
@@ -344,13 +358,14 @@ def on_find_path(cmd):
         dirs.pop(len(dirs) - 1)
     print_message_terminator()
 
+
 def locate(cmd):
     """
     attempt to locate file with possible version number
     """
 
     # {"command": "locate", "path": "/c/LLVM/bin", "name": "clangd", "ext": "exe", "versions": ["15","14"]}
-    path = cmd['path']
+    path = cmd["path"]
     path = os.path.expanduser(path)
     path = os.path.expandvars(path)
 
@@ -358,11 +373,11 @@ def locate(cmd):
     path = "{}{}{}".format(path, os.path.pathsep, os.path.expandvars("$PATH"))
 
     paths = path.split(os.path.pathsep)
-    name = cmd['name']
-    ext = cmd['ext']
-    versions_arr = cmd['versions']
+    name = cmd["name"]
+    ext = cmd["ext"]
+    versions_arr = cmd["versions"]
 
-    logging.debug("locate: searching for: {}, using paths: {}".format(name, paths));
+    logging.debug("locate: searching for: {}, using paths: {}".format(name, paths))
     for p in paths:
         fullpath = locate_in_path(name, p, versions_arr, ext)
         if len(fullpath) > 0:
@@ -372,12 +387,15 @@ def locate(cmd):
     logging.debug("locate: No match found :(")
     print_message_terminator()
 
+
 def main_loop():
     """
     accept input from the user and process the command
     """
-    parser = argparse.ArgumentParser(description='codelite-remote helper')
-    parser.add_argument('--context', dest='context', help='execution context string', required=True)
+    parser = argparse.ArgumentParser(description="codelite-remote helper")
+    parser.add_argument(
+        "--context", dest="context", help="execution context string", required=True
+    )
     args = parser.parse_args()
 
     # load the configruration file
@@ -386,9 +404,13 @@ def main_loop():
     log_file = "{}/codelite-remote.{}.log".format(curdir, args.context.lower())
 
     # configure the log module
-    logging.basicConfig(filename=log_file,
-                        format="%(asctime)s: {}: %(levelname)s: %(message)s".format(args.context.upper()),
-                        level=logging.ERROR)
+    logging.basicConfig(
+        filename=log_file,
+        format="%(asctime)s: {}: %(levelname)s: %(message)s".format(
+            args.context.upper()
+        ),
+        level=logging.ERROR,
+    )
     logging.info("started")
     logging.info("current working directory is set to: {}".format(curdir))
 
@@ -402,7 +424,7 @@ def main_loop():
         "write_file": write_file,
         "locate": locate,
         "find_path": on_find_path,
-        "list_lsps" : on_list_lsps,
+        "list_lsps": on_list_lsps,
     }
 
     logging.info("codelite-remote started")
@@ -416,16 +438,16 @@ def main_loop():
                 exit(0)
 
             if len(text) == 0:
-                continue;
+                continue
 
             # split the command line by spaces
             logging.info("processing command: {}".format(text))
             command = json.loads(text)
-            func = handlers.get(command['command'], None)
+            func = handlers.get(command["command"], None)
             if func is not None:
                 func(command)
             else:
-                logging.error("unknown command '{}'".format(command['command']))
+                logging.error("unknown command '{}'".format(command["command"]))
         except Exception as e:
             error_count += 1
             logging.warning(e)
@@ -434,8 +456,10 @@ def main_loop():
                 exit(1)
                 break
 
+
 def main():
     main_loop()
+
 
 if __name__ == "__main__":
     main()

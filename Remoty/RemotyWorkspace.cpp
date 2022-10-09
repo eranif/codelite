@@ -523,26 +523,6 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     m_localWorkspaceFile = localFile.GetFullPath();
     m_localUserWorkspaceFile = userSettings.GetFullPath();
 
-    // If the user has .clang-format file, download it as well and place it next to the root download folder
-    wxString remoteClangFormatFile = file_path;
-    remoteClangFormatFile = remoteClangFormatFile.BeforeLast('/');
-    remoteClangFormatFile << "/.clang-format";
-
-    // Construct the local file path
-    wxFileName localClangFormatFile = clSFTP::GetLocalFileName(ssh_account, remoteClangFormatFile, true);
-    bool hasClangFormatFile = clSFTPManager::Get().IsFileExists(remoteClangFormatFile, ssh_account);
-    if(hasClangFormatFile) {
-        localClangFormatFile = clSFTPManager::Get().Download(remoteClangFormatFile, ssh_account.GetAccountName(),
-                                                             localClangFormatFile.GetFullPath());
-        if(localClangFormatFile.IsOk() && localClangFormatFile.FileExists()) {
-            clGetManager()->SetStatusMessage(_("Downloaded .clang-format file"));
-        } else {
-            ::wxMessageBox(_("Failed to download file: ") + remoteClangFormatFile + "\n" +
-                               clSFTPManager::Get().GetLastError(),
-                           "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
-        }
-    }
-
     wxString fixed_path = file_path;
     fixed_path.Replace("\\", "/");
     wxString workspacePath = GetRemoteWorkingDir();

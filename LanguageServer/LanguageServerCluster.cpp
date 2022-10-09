@@ -437,7 +437,7 @@ void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)
 
     crash_info.times++;              // increase the restart counter
     crash_info.last_crash = curtime; // remember when the crash occured
-    if(crash_info.times > 10) {
+    if(crash_info.times > 3) {
         clWARNING() << "Too many restart failures for LSP:" << event.GetServerName() << ". Will not restart it again"
                     << clEndl;
         return;
@@ -606,9 +606,12 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
     clDEBUG() << "Starting lsp:";
     clDEBUG() << "Connection string:" << entry.GetConnectionString();
+
+    working_directory = MacroManager::Instance()->ExpandFileMacros(working_directory, wxEmptyString);
+
     if(entry.IsAutoRestart()) {
         clDEBUG() << "lspCommand:" << lspCommand;
-        clDEBUG() << "entry.GetWorkingDirectory():" << entry.GetWorkingDirectory();
+        clDEBUG() << "entry.GetWorkingDirectory():" << working_directory;
     }
     clDEBUG() << "working_directory:" << working_directory;
     clDEBUG() << "entry.GetLanguages():" << entry.GetLanguages();

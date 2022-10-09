@@ -1,8 +1,10 @@
 #include "ChildProcess.h"
+
 #include "cl_exception.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "processreaderthread.h"
+
 #include <asyncprocess.h>
 
 #if !USE_IPROCESS
@@ -26,15 +28,16 @@ ChildProcess::~ChildProcess()
 #endif
 }
 
-static wxString& wrap_with_quotes(wxString& str)
+namespace
 {
-    if(str.Contains(" ")) {
-        // since we are going to convert this into a string, we need to escape all backslashes
-        str.Replace("\\", "\\\\");
+wxString& wrap_with_quotes(wxString& str)
+{
+    if(!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
         str.Prepend("\"").Append("\"");
     }
     return str;
 }
+} // namespace
 
 void ChildProcess::Start(const wxArrayString& args)
 {

@@ -100,12 +100,13 @@ bool CodeLiteRemoteHelper::BuildRemoteCommand(const wxString& command, const clE
         for(const auto& p : envlist) {
             envstr << p.first << "=" << p.second << " ";
         }
-        envstr.RemoveLast();
     }
+    wxString ssh_command = m_ssh_exe;
+    ssh_command << " -o ServerAliveInterval=10 -o StrictHostKeyChecking=no";
 
     wxString cmd;
     wxString wd = remote_wd.empty() ? "$(WorkspacePath)" : remote_wd;
-    cmd << m_ssh_exe << " $(SSH_User)@$(SSH_Host) \"cd " << wd << " && " << envstr << " " << command << "\"";
+    cmd << ssh_command << " $(SSH_User)@$(SSH_Host) \"cd " << wd << " && " << envstr << command << "\"";
     *out_cmmand = MacroManager::Instance()->Expand(cmd, clGetManager(), wxEmptyString);
     return true;
 }

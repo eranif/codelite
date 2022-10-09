@@ -13,6 +13,15 @@ select the ones you are interested in and then [configure them in CodeLite][14]
     `clangd` is the LSP implementation from the `clang` for `C/C++/Objective-C` team. It provide a compiler level completion with an unmatched accuracy.
     Visit the [project home page][7]
 
+    **All**
+
+    `clangd` relies on a file named `compile_commands.json` or `compile_flags.txt`. When using CodeLite default C++ workspace
+    CodeLite can generate this file for the current workspace:
+
+    1. From the menu bar: `Settings` &#8594; `Code Completion ...`
+    2. Select the option `Generate compile_commands.json file`
+    3. Build your project
+
     **Windows**
 
     On Windows, CodeLite comes with a pre built binary of `clangd` configured and installed.

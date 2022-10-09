@@ -6,7 +6,6 @@
 #include "LanguageServerEntry.h"
 #include "LanguageServerPage.h"
 #include "NewLanguageServerDlg.h"
-#include "clPythonLocator.hpp"
 #include "globals.h"
 
 #include <vector>

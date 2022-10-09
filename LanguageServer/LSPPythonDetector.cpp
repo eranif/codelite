@@ -1,8 +1,11 @@
 #include "LSPPythonDetector.hpp"
+
+#include "Platform.hpp"
 #include "asyncprocess.h"
-#include "clPythonLocator.hpp"
 #include "globals.h"
+#include "procutils.h"
 #include "wx/filename.h"
+
 #include <cstdlib>
 
 LSPPythonDetector::LSPPythonDetector()
@@ -14,41 +17,24 @@ LSPPythonDetector::~LSPPythonDetector() {}
 
 bool LSPPythonDetector::DoLocate()
 {
-    clPythonLocator locator;
-    if(!locator.Locate()) {
+    wxString pip;
+    wxString python;
+    if(!PLATFORM::Which("pip", &pip) || !PLATFORM::Which("python", &python)) {
         return false;
     }
-
-    const wxString& pythonExe = locator.GetPython();
-    const wxString& pip = locator.GetPip();
 
     // Check if python-language-server is installed
-    wxFileName fnPython(pip);
-    wxString command;
-    command << pip;
-    ::WrapWithQuotes(command);
-
-    command << " list";
-
-    IProcess::Ptr_t proc(::CreateSyncProcess(command, IProcessCreateDefault, fnPython.GetPath()));
-    if(!proc) {
-        return false;
-    }
-
-    wxString output;
-    proc->WaitForTerminate(output);
-
-    if(!output.Contains("python-lsp-server")) {
+    wxString output = ProcUtils::GrepCommandOutput({ pip, "list" }, "python-lsp-server");
+    if(output.empty()) {
+        // Not installed
         return false;
     }
 
     // We have it installed
+    wxString command;
+    ::WrapWithQuotes(python);
 
-    command.Clear();
-    command << pythonExe;
-    ::WrapWithQuotes(command);
-
-    command << " -m pylsp";
+    command << python << " -m pylsp";
     SetCommand(command);
     // Add support for the languages
     GetLangugaes().Add("python");

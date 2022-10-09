@@ -67,7 +67,7 @@ select the ones you are interested in and then [configure them in CodeLite][14]
     On Windows / MSYS2, use this command:
 
     ```bash
-    pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-pip mingw-w64-x86_64-python-ujson
+    pacman -S mingw-w64-clang-x86_64-python mingw-w64-clang-x86_64-python-pip mingw-w64-clang-x86_64-python-ujson
     pip install python-lsp-server
     ```
 

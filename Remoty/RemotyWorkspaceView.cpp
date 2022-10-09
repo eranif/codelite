@@ -36,7 +36,7 @@ RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* work
     m_tree->Bind(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnFileContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &RemotyWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_OPEN_MATCH, &RemotyWorkspaceView::OnOpenFindInFilesMatch, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &RemotyWorkspaceView::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspaceView::OnRemoteFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &RemotyWorkspaceView::OnWorkspaceLoaded, this);
 }
 
@@ -46,7 +46,7 @@ RemotyWorkspaceView::~RemotyWorkspaceView()
     m_tree->Unbind(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnFileContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &RemotyWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_OPEN_MATCH, &RemotyWorkspaceView::OnOpenFindInFilesMatch, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &RemotyWorkspaceView::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspaceView::OnRemoteFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &RemotyWorkspaceView::OnWorkspaceLoaded, this);
 }
 
@@ -248,17 +248,19 @@ void RemotyWorkspaceView::DoCloseWorkspace()
     EventNotifier::Get()->ProcessEvent(e);
 }
 
-void RemotyWorkspaceView::OnFileSaved(clCommandEvent& event)
+void RemotyWorkspaceView::OnRemoteFileSaved(clCommandEvent& event)
 {
     event.Skip();
     if(!m_workspace->IsOpened())
         return;
 
+    clGetManager()->SetStatusMessage(_("Remote file: ") + event.GetFileName() + _(" saved!"));
+
     const wxString& filename = event.GetFileName();
     bool is_codelite_remote_json = filename.EndsWith("codelite-remote.json");
     IEditor* editor = clGetManager()->FindEditor(filename);
 
-    auto cd = GetClientSFTPData(editor);
+    auto cd = editor->GetRemoteData();
     CHECK_PTR_RET(cd);
 
     if(is_codelite_remote_json && cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
@@ -275,24 +277,12 @@ void RemotyWorkspaceView::OnFileSaved(clCommandEvent& event)
     }
 }
 
-SFTPClientData* RemotyWorkspaceView::GetClientSFTPData(IEditor* editor) const
-{
-    CHECK_PTR_RET_NULL(editor);
-
-    auto clientData = editor->GetClientData("sftp");
-    CHECK_PTR_RET_NULL(clientData);
-
-    SFTPClientData* cd = dynamic_cast<SFTPClientData*>(clientData);
-    CHECK_PTR_RET_NULL(cd);
-    return cd;
-}
-
 wxString RemotyWorkspaceView::GetRemotePathIsOwnedByWorkspace(IEditor* editor) const
 {
     if(!m_workspace->IsOpened())
         return wxEmptyString;
 
-    auto cd = GetClientSFTPData(editor);
+    auto cd = editor->GetRemoteData();
     if(!cd) {
         return wxEmptyString;
     }

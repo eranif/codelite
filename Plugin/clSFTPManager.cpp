@@ -433,8 +433,9 @@ void clSFTPManager::OnFileSaved(clCommandEvent& event)
     const wxString& filename = event.GetString();
     auto editor = clGetManager()->FindEditor(filename);
     CHECK_PTR_RET(editor);
+    CHECK_PTR_RET(editor->IsRemoteFile());
 
-    auto cd = GetSFTPClientData(editor);
+    auto cd = editor->GetRemoteData();
     CHECK_PTR_RET(cd);
 
     auto conn_info = GetConnectionPair(cd->GetAccountName());

@@ -23,7 +23,7 @@ protected:
     void OnFileContextMenu(clContextMenuEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenFindInFilesMatch(clFindInFilesEvent& event);
-    void OnFileSaved(clCommandEvent& event);
+    void OnRemoteFileSaved(clCommandEvent& event);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
 
     void SetBuildConfiguration(const wxString& config);
@@ -32,7 +32,6 @@ protected:
     void DoCloseWorkspace();
     void DoReloadWorkspace();
 
-    SFTPClientData* GetClientSFTPData(IEditor* editor) const;
     wxString GetRemotePathIsOwnedByWorkspace(IEditor* editor) const;
     size_t GetWorkspaceRemoteFilesOpened(wxArrayString* paths) const;
 

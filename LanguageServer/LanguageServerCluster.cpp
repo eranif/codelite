@@ -573,6 +573,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
     wxString command;
     wxString working_directory;
+    wxString project;
     if(m_remoteHelper->IsRemoteWorkspaceOpened()) {
         // remote workspace
         // read the commands from the codelite-remote.json file (the m_remoteHelper does that for us)
@@ -593,7 +594,6 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     } else {
         // local workspace
         command = entry.GetCommand();
-        wxString project;
         if(clCxxWorkspaceST::Get()->IsOpen()) {
             project = clCxxWorkspaceST::Get()->GetActiveProjectName();
         }
@@ -601,13 +601,14 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         working_directory = entry.GetWorkingDirectory();
     }
 
+    // Expand the working directory (which is later used as the rootUri)
+    working_directory = MacroManager::Instance()->Expand(working_directory, clGetManager(), project);
+
     wxArrayString lspCommand;
     lspCommand = StringUtils::BuildCommandArrayFromString(command);
 
     clDEBUG() << "Starting lsp:";
     clDEBUG() << "Connection string:" << entry.GetConnectionString();
-
-    working_directory = MacroManager::Instance()->ExpandFileMacros(working_directory, wxEmptyString);
 
     if(entry.IsAutoRestart()) {
         clDEBUG() << "lspCommand:" << lspCommand;

@@ -49,6 +49,7 @@ private:
     void ReloadCurrentEditor();
     void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
+    void OnFileSaved(clCommandEvent& e);
 
 public:
     /**
@@ -75,7 +76,6 @@ public:
     void OnFormatFile(clSourceFormatEvent& e);
     void OnFormatFiles(wxCommandEvent& e);
     void OnFormatProject(wxCommandEvent& e);
-    void OnBeforeFileSave(clCommandEvent& e);
 };
 
 #endif // CODEFORMATTER_H

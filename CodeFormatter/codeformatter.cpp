@@ -119,7 +119,7 @@ CodeFormatter::CodeFormatter(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_FORMAT_STRING, &CodeFormatter::OnFormatString, this);
     EventNotifier::Get()->Bind(wxEVT_FORMAT_FILE, &CodeFormatter::OnFormatFile, this);
-    EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, &CodeFormatter::OnBeforeFileSave, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &CodeFormatter::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &CodeFormatter::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CodeFormatter::OnWorkspaceClosed, this);
@@ -183,6 +183,8 @@ void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
 bool CodeFormatter::DoFormatEditor(IEditor* editor)
 {
     // sanity
+    CHECK_PTR_RET_FALSE(editor);
+
     bool is_remote = editor->IsRemoteFile();
     auto f = m_manager.GetFormatter(editor->GetRemotePathOrLocal());
     if(!f) {
@@ -337,7 +339,7 @@ void CodeFormatter::UnPlug()
 
     EventNotifier::Get()->Unbind(wxEVT_FORMAT_STRING, &CodeFormatter::OnFormatString, this);
     EventNotifier::Get()->Unbind(wxEVT_FORMAT_FILE, &CodeFormatter::OnFormatFile, this);
-    EventNotifier::Get()->Unbind(wxEVT_BEFORE_EDITOR_SAVE, &CodeFormatter::OnBeforeFileSave, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &CodeFormatter::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
 }
 
@@ -444,8 +446,6 @@ void CodeFormatter::BatchFormat(const std::vector<wxString>& files, bool silent)
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 }
 
-void CodeFormatter::OnBeforeFileSave(clCommandEvent& e) { e.Skip(); }
-
 void CodeFormatter::OnScanFilesCompleted(const std::vector<wxString>& files) { BatchFormat(files, false); }
 
 void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
@@ -488,4 +488,50 @@ void CodeFormatter::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     m_remoteHelper->ProcessEvent(e);
+}
+
+void CodeFormatter::OnFileSaved(clCommandEvent& e)
+{
+    // keep track on files that caused "OnSave" because of this method
+    static std::unordered_map<wxString, size_t> ignore_map;
+    e.Skip();
+
+    // Check that we can handle this file
+    auto f = m_manager.GetFormatter(e.GetFileName());
+    CHECK_PTR_RET(f);
+
+    // is format required?
+    if(!f->IsFormatOnSave()) {
+        return;
+    }
+
+    // did we cause the OnSave event?
+    const wxString& filepath = e.GetFileName();
+    if(ignore_map.count(filepath)) {
+        // we caused this event, reduce the file reference count
+        // and return
+        ignore_map[filepath] -= 1;
+        if(ignore_map[filepath] == 0) {
+            ignore_map.erase(filepath);
+        }
+        return;
+    }
+
+    // Find the editor and format it
+    auto editor = clGetManager()->FindEditor(filepath);
+    CHECK_PTR_RET(editor);
+
+    if(DoFormatEditor(editor)) {
+        // save the file
+        if(editor->IsEditorModified()) {
+            if(editor->Save()) {
+                // mark this file as the cause for the save
+                if(ignore_map.count(filepath)) {
+                    ignore_map[filepath] += 1;
+                } else {
+                    ignore_map[filepath] = 1;
+                }
+            }
+        }
+    }
 }

@@ -14,11 +14,16 @@
 enum class FormatterFlags {
     // Is this formatter enabled?
     ENABLED = (1 << 0),
+
     // The formatter support file config (e.g. `.clang-format`)
     HAS_FILE_CONFIG = (1 << 1),
+
     // Indicate that this formatter fixes the file inline
     // and reload should take place after a successful formatting
     INPLACE_EDIT = (1 << 2),
+
+    // trigger a formatting after saving the file
+    FORMAT_ON_SAVE = (1 << 3),
 };
 
 #define __HAS_FLAG(flags, bit) (flags & (size_t)bit)
@@ -61,6 +66,9 @@ public:
 
     bool IsEnabled() const { return HasFlag(FormatterFlags::ENABLED); }
     void SetEnabled(bool b) { SetFlag(FormatterFlags::ENABLED, b); }
+
+    bool IsFormatOnSave() const { return HasFlag(FormatterFlags::FORMAT_ON_SAVE); }
+    void SetFormatOnSave(bool b) { SetFlag(FormatterFlags::FORMAT_ON_SAVE, b); }
 
     void SetInplaceFormatter(bool b) { SetFlag(FormatterFlags::INPLACE_EDIT, b); }
     bool IsInplaceFormatter() const { return HasFlag(FormatterFlags::INPLACE_EDIT); }

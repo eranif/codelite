@@ -10,32 +10,15 @@ Once integrated, you can format your code using a single key stroke, by default 
 ## Tool configurations
 ---
 
-Each supported tool contains the following details:
+Each supported tool contains the following properties:
 
-- `Enabled` flag
-- `Inplace edit`
-- `Working directory`
-- `Command`
-
-### `Enabled`
-
-This is a self explanatory - is this formatter enabled or disabled?
-
-### `Inplace edit`
-
-Some formatters do not print the formatted output to `stdout` but instead are editing the source file directly.
-This check box marks a formatter as such. It is needed internally by CodeLite
-
-### `Working directory`
-
-CodeLite executes the formatter from this directory. If not provided, CodeLite uses the workspace root folder
-It is recommended to set the working directory to `$(WorkspacePath)`
-
-### `Command`
-
-The command to execute. Macros are allowed here
-You may place each command on a separate line or separated by space. Lines starting with `#` are considered as comments and are ignored.
-Empty lines are also ignored
+Property name | Description
+--------------|------------
+`Enabled` | controls whether the formatter is enabled or not
+`Inplace edit` | tells CodeLite whether the formatter outputs the fixed source to stdout, or edit the file directly
+`Format on save?` | enable this if you want to format files automatically after saving them
+`Working directory` | CodeLite executes the formatter from this directory. [Macros][3] are allowed. By default CodeLite uses `$(WorkspacePath)`
+`Command` | the command to execute. [Macros][3] are allowed
 
 ## Integration with remote workspace
 ---
@@ -76,4 +59,5 @@ with the commands taken from [`codelite-remote.json`][2] configuration file.
 
  [1]: /plugins/remoty
  [2]: /plugins/remoty/#remote-configuration-codelite-remotejson
+ [3]: /settings/macros
 

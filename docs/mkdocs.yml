@@ -22,6 +22,7 @@ nav:
         - Keyboard shortcuts: settings/keyboard_shortcuts.md
         - Build Settings: settings/build_settings.md
         - Environment Variables: settings/environment_variables.md
+        - Macros: /settings/macros
     - Workspace:
         - C/C++: workspaces/default.md
         - File System Workspace: workspaces/file_system.md

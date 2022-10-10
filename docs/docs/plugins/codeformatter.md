@@ -44,6 +44,36 @@ Once a remote workspace is loaded (e.g. via [Remoty][1] plugin), the plugin repl
 with the commands taken from [`codelite-remote.json`][2] configuration file.
 
 
+## Installing tools
+---
+
+=== "Windows"
+    Language | Tool name | Command to install
+    --------|-------------|-----------------------
+    C/C++ | clang-format| `pacman -Sy mingw-w64-clang-x86_64-clang-tools-extra`
+    JSON | jq| `pacman -Sy mingw-w64-clang-x86_64-jq`
+    Python | black | `pip install black --upgrade`
+    Rust | rustfmt | `pacman -Sy mingw-w64-clang-x86_64-rust`
+    Xml | xmllint | `pacman -Sy mingw-w64-clang-x86_64-libxml2`
+
+=== "Ubuntu"
+    Language | Tool name | Command to install
+    --------|-------------|-----------------------
+    C/C++ | clang-format| `sudo apt-get install clang-tools-12`
+    JSON | jq| `sudo apt-get install jq`
+    Python | black | `pip install black --upgrade`
+    Rust | rustfmt | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+    Xml | xmllint | `sudo apt-get install libxml2-utils`
+
+=== "macOS"
+    Language | Tool name | Command to install
+    --------|-------------|-----------------------
+    C/C++ | clang-format| `brew install llvm`
+    JSON | jq| `brew install jq`
+    Python | black | `pip install black --upgrade`
+    Rust | rustfmt | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+    Xml | xmllint | Already installed
+
  [1]: /plugins/remoty
  [2]: /plugins/remoty/#remote-configuration-codelite-remotejson
 

@@ -13,7 +13,9 @@ fmtRustfmt::fmtRustfmt()
 
     // local command
     wxString rustfmt_exe = "rustfmt";
-    PLATFORM::Which("rustfmt", &rustfmt_exe);
+    if(!PLATFORM::Which("rustfmt", &rustfmt_exe)) {
+        SetEnabled(false);
+    }
     SetCommand({ rustfmt_exe, "--edition", "2021", "$(CurrentFileRelPath)" });
 }
 

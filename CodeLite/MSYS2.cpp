@@ -1,5 +1,7 @@
 #include "MSYS2.hpp"
 
+#include "PlatformCommon.hpp"
+
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
@@ -82,4 +84,9 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
         }
     }
     return false;
+}
+
+bool MSYS2::WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath)
+{
+    return PlatformCommon::WhichWithVersion(command, versions, command_fullpath);
 }

@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="libCodeLite" Version="11000">
-  <VirtualDirectory Name="Platform">
-    <File Name="Platform.hpp"/>
-    <File Name="LINUX.cpp"/>
-    <File Name="LINUX.hpp"/>
-    <File Name="MSYS2.hpp"/>
-    <File Name="MSYS2.cpp"/>
-  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00100001N0011CMake_Debug0000000000000001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>
@@ -51,6 +44,15 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="Platform">
+    <File Name="PlatformCommon.cpp"/>
+    <File Name="PlatformCommon.hpp"/>
+    <File Name="Platform.hpp"/>
+    <File Name="LINUX.cpp"/>
+    <File Name="LINUX.hpp"/>
+    <File Name="MSYS2.hpp"/>
+    <File Name="MSYS2.cpp"/>
+  </VirtualDirectory>
   <Reconciliation>
     <Regexes/>
     <Excludepaths/>

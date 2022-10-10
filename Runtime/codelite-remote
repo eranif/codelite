@@ -55,7 +55,10 @@ class string_finder:
         # check the char left and right to the match
         if start_pos > 0 and self.line[start_pos - 1] in self.word_chars:
             return False
-        elif end_pos < (len(self.line) - 1) and self.line[end_pos] in self.word_chars:
+        elif (
+            end_pos < (len(self.line) - 1)
+            and self.line[end_pos] in self.word_chars
+        ):
             return False
         return True
 
@@ -66,7 +69,9 @@ class string_finder:
         else:
             # store the last position for next iteration
             self.last_pos = self.where + len(self.find_what)
-            return self.is_whole_word(self.where, self.where + len(self.find_what))
+            return self.is_whole_word(
+                self.where, self.where + len(self.find_what)
+            )
 
     def get_match_position(self):
         return self.where
@@ -94,7 +99,9 @@ def _load_config_file(filepath):
     try:
         global configuration
         configuration = json.loads(config_content)
-        logging.info("successfully loaded configuration file: {}".format(filepath))
+        logging.info(
+            "successfully loaded configuration file: {}".format(filepath)
+        )
         return True
     except json.decoder.JSONDecodeError as e:
         logging.error("Failed to load configuration file: {}".format(filepath))
@@ -252,7 +259,9 @@ def on_find_in_files(cmd):
     finder = string_finder(find_what, ignore_case, whole_word)
     for file in files_arr:
         try:
-            lines = open(file=file, mode="r", encoding="utf-8").read().splitlines()
+            lines = (
+                open(file=file, mode="r", encoding="utf-8").read().splitlines()
+            )
             line_number = 0
             entries = []
             for line in lines:
@@ -377,7 +386,9 @@ def locate(cmd):
     ext = cmd["ext"]
     versions_arr = cmd["versions"]
 
-    logging.debug("locate: searching for: {}, using paths: {}".format(name, paths))
+    logging.debug(
+        "locate: searching for: {}, using paths: {}".format(name, paths)
+    )
     for p in paths:
         fullpath = locate_in_path(name, p, versions_arr, ext)
         if len(fullpath) > 0:
@@ -394,7 +405,10 @@ def main_loop():
     """
     parser = argparse.ArgumentParser(description="codelite-remote helper")
     parser.add_argument(
-        "--context", dest="context", help="execution context string", required=True
+        "--context",
+        dest="context",
+        help="execution context string",
+        required=True,
     )
     args = parser.parse_args()
 

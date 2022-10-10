@@ -1,5 +1,7 @@
 #include "LINUX.hpp"
 
+#include "PlatformCommon.hpp"
+
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
@@ -40,4 +42,9 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
         }
     }
     return false;
+}
+
+bool LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath)
+{
+    return PlatformCommon::WhichWithVersion(command, versions, command_fullpath);
 }

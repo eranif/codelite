@@ -13,7 +13,9 @@ fmtClangFormat::fmtClangFormat()
 
     // local command
     wxString clang_format_exe;
-    PLATFORM::Which("clang-format", &clang_format_exe);
+    if(!PLATFORM::WhichWithVersion("clang-format", { 20, 19, 18, 17, 16, 15, 14, 13, 12 }, &clang_format_exe)) {
+        SetEnabled(false);
+    }
     SetCommand({ clang_format_exe, "$(CurrentFileRelPath)" });
 }
 

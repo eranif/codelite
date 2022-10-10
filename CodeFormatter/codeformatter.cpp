@@ -208,6 +208,11 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     if(f->IsInlineFormatter()) {
         // reload the current editor
         editor->ReloadFromDisk(true);
+
+        // since the file was modified outside of the IDE, we need to notify CodeLite
+        // we do this by firing a "file saved" event
+        EventNotifier::Get()->PostFileSavedEvent(editor->GetRemotePathOrLocal());
+
     } else {
         clEditorStateLocker locker{ editor->GetCtrl() };
         editor->GetCtrl()->SetText(output);

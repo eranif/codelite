@@ -23,8 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "codelite_events.h"
 #include "event_notifier.h"
+
+#include "codelite_events.h"
+
 #include <wx/app.h>
 
 static EventNotifier* eventNotifier = NULL;
@@ -89,7 +91,8 @@ void EventNotifier::PostFileSavedEvent(const wxString& filename)
 {
     if(_eventsDiabled)
         return;
-    clCommandEvent event(wxEVT_FILE_SAVED);
+
+    clCommandEvent event{ wxEVT_FILE_SAVED };
     event.SetString(filename);
     event.SetFileName(filename);
     AddPendingEvent(event);

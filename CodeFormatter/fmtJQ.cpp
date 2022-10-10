@@ -14,9 +14,7 @@ fmtJQ::fmtJQ()
     SetDescription(_("commandline JSON processor"));
 
     wxString jq_exe = "jq";
-    if(!PLATFORM::Which("jq", &jq_exe)) {
-        SetEnabled(false);
-    }
+    PLATFORM::Which("jq", &jq_exe);
     SetCommand({ jq_exe, ".", "-S", "$(CurrentFileFullPath)" });
 }
 

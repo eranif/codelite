@@ -8,7 +8,6 @@ fmtPHPCSFixer::fmtPHPCSFixer()
     SetFileTypes({ FileExtManager::TypePhp });
     SetDescription(_("The PHP Coding Standards Fixer"));
     SetInlineFormatter(true);
-    SetHasConfigFile(true);
     SetEnabled(false);
     SetConfigFilepath("$(WorkspacePath)/.php-cs-fixer.dist.php");
 

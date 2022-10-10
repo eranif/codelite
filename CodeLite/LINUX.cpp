@@ -5,6 +5,29 @@
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
+thread_local wxString RUST_TOOLCHAIN_BIN;
+thread_local bool rust_toolchain_scanned = false;
+
+namespace
+{
+/// Locate rustup bin folder
+/// the path is set to:
+/// $HOME/.rustup/toolchains/TOOLCHAIN-NAME/bin
+bool get_rustup_bin_folder(wxString* rustup_bin_dir)
+{
+    if(rust_toolchain_scanned) {
+        *rustup_bin_dir = RUST_TOOLCHAIN_BIN;
+        return !RUST_TOOLCHAIN_BIN.empty();
+    }
+
+    PlatformCommon::FindRustupToolchainBinDir(&RUST_TOOLCHAIN_BIN);
+    rust_toolchain_scanned = true;
+
+    // call this method again, this time rust_toolchain_scanned is set to true
+    return get_rustup_bin_folder(rustup_bin_dir);
+}
+} // namespace
+
 bool LINUX::FindInstallDir(wxString* installpath)
 {
     *installpath = "/";
@@ -23,15 +46,30 @@ bool LINUX::FindHomeDir(wxString* homedir)
 
 bool LINUX::Which(const wxString& command, wxString* command_fullpath)
 {
+    wxString HOME;
+    FindHomeDir(&HOME);
+
     wxString pathenv;
     wxGetEnv("PATH", &pathenv);
     wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
-    paths.Insert("/opt/homebrew/bin", 0);
     paths.Insert("/usr/local/bin", 0);
-    wxString homedir;
-    if(FindHomeDir(&homedir)) {
-        homedir << "/.cargo/bin";
-        paths.Insert(homedir, 0);
+
+#ifdef __WXMAC__
+    // macOS only
+    paths.Insert("/opt/homebrew/bin", 0);
+#endif
+
+#ifdef __WXGTK__
+    paths.Insert(wxString() << HOME << "/.local/bin", 0);
+#endif
+
+    // cargo
+    paths.Insert(wxString() << HOME << "/.cargo/bin", 0);
+
+    // rustup
+    wxString rustup_bin_folder;
+    if(get_rustup_bin_folder(&rustup_bin_folder)) {
+        paths.Insert(rustup_bin_folder, 0);
     }
 
     for(auto path : paths) {

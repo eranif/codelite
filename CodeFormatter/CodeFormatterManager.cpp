@@ -2,6 +2,7 @@
 
 #include "JSON.h"
 #include "cl_standard_paths.h"
+#include "fmtBlack.hpp"
 #include "fmtClangFormat.hpp"
 #include "fmtJQ.hpp"
 #include "fmtPHPCBF.hpp"
@@ -37,6 +38,7 @@ void CodeFormatterManager::initialize_defaults()
     push_back(new fmtJQ);
     push_back(new fmtXmlLint);
     push_back(new fmtRustfmt);
+    push_back(new fmtBlack);
 }
 
 void CodeFormatterManager::push_back(GenericFormatter* formatter)

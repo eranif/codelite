@@ -59,7 +59,6 @@ public:
     bool CanHandle(FileExtManager::FileType file_type) const;
     bool IsEnabled() const { return HasFlag(FormatterFlags::ENABLED); }
     bool IsConfigFileSuppoerted() const { return HasFlag(FormatterFlags::HAS_FILE_CONFIG); }
-    void SetHasConfigFile(bool b) { SetFlag(FormatterFlags::HAS_FILE_CONFIG, b); }
     void SetEnabled(bool b) { SetFlag(FormatterFlags::ENABLED, b); }
     void SetInlineFormatter(bool b) { SetFlag(FormatterFlags::INLINE_FORMATTER, b); }
     bool IsInlineFormatter() const { return HasFlag(FormatterFlags::INLINE_FORMATTER); }
@@ -75,7 +74,7 @@ public:
     void SetLanguages(const wxArrayString& langs) { m_languages = langs; }
     const wxArrayString& GetLanguages() const { return m_languages; }
 
-    void SetConfigFilepath(const wxString& filepath) { this->m_configFile = filepath; }
+    void SetConfigFilepath(const wxString& filepath);
     const wxString& GetConfigFilepath() const { return m_configFile; }
 
     void SetName(const wxString& name) { this->m_name = name; }

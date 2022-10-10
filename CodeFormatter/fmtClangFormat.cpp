@@ -8,14 +8,11 @@ fmtClangFormat::fmtClangFormat()
     SetFileTypes({ FileExtManager::TypeSourceCpp, FileExtManager::TypeSourceC, FileExtManager::TypeHeader,
                    FileExtManager::TypeJava, FileExtManager::TypeJS });
     SetDescription(_("A tool to format C/C++/Java/JavaScript/JSON/Objective-C/Protobuf/C# code"));
-    SetHasConfigFile(true);
     SetConfigFilepath("$(WorkspacePath)/.clang-format");
 
     // local command
     wxString clang_format_exe;
-    if(!PLATFORM::WhichWithVersion("clang-format", { 20, 19, 18, 17, 16, 15, 14, 13, 12 }, &clang_format_exe)) {
-        SetEnabled(false);
-    }
+    PLATFORM::WhichWithVersion("clang-format", { 20, 19, 18, 17, 16, 15, 14, 13, 12 }, &clang_format_exe);
     SetCommand({ clang_format_exe, "$(CurrentFileRelPath)" });
 }
 

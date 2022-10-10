@@ -50,3 +50,9 @@ void SourceFormatterBase::SetFileTypes(const std::vector<FileExtManager::FileTyp
         m_languages.Add(lang);
     }
 }
+
+void SourceFormatterBase::SetConfigFilepath(const wxString& filepath)
+{
+    m_configFile = filepath;
+    SetFlag(FormatterFlags::HAS_FILE_CONFIG, !m_configFile.empty());
+}

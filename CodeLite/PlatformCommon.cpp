@@ -12,7 +12,7 @@ bool PlatformCommon::WhichWithVersion(const wxString& command, const std::vector
 {
     std::vector<int> sorted_versions = versions;
 
-    // sort the numbers in ascending order
+    // sort the numbers in descending order
     std::sort(sorted_versions.begin(), sorted_versions.end(), [](int a, int b) { return b < a; });
 
     wxArrayString names;

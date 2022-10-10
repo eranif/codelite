@@ -4,15 +4,21 @@
 #include "file_logger.h"
 #include "procutils.h"
 
+#include <algorithm>
 #include <wx/arrstr.h>
 
 bool PlatformCommon::WhichWithVersion(const wxString& command, const std::vector<int>& versions,
                                       wxString* command_fullpath)
 {
-    wxArrayString names;
-    names.reserve(versions.size() + 1);
+    std::vector<int> sorted_versions = versions;
 
-    for(auto ver : versions) {
+    // sort the numbers in ascending order
+    std::sort(sorted_versions.begin(), sorted_versions.end(), [](int a, int b) { return b < a; });
+
+    wxArrayString names;
+    names.reserve(sorted_versions.size() + 1);
+
+    for(auto ver : sorted_versions) {
         names.Add(wxString() << command << "-" << ver);
     }
     names.Add(command);

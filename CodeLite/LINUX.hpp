@@ -1,6 +1,9 @@
 #ifndef LINUX_HPP
 #define LINUX_HPP
 
+#include <vector>
+#include <wx/string.h>
+
 class LINUX
 {
 public:

@@ -18,7 +18,7 @@ enum class FormatterFlags {
     HAS_FILE_CONFIG = (1 << 1),
     // Indicate that this formatter fixes the file inline
     // and reload should take place after a successful formatting
-    INLINE_FORMATTER = (1 << 2),
+    INPLACE_EDIT = (1 << 2),
 };
 
 #define __HAS_FLAG(flags, bit) (flags & (size_t)bit)
@@ -57,11 +57,13 @@ public:
      * @brief can this formatter handle `file_type`?
      */
     bool CanHandle(FileExtManager::FileType file_type) const;
-    bool IsEnabled() const { return HasFlag(FormatterFlags::ENABLED); }
     bool IsConfigFileSuppoerted() const { return HasFlag(FormatterFlags::HAS_FILE_CONFIG); }
+
+    bool IsEnabled() const { return HasFlag(FormatterFlags::ENABLED); }
     void SetEnabled(bool b) { SetFlag(FormatterFlags::ENABLED, b); }
-    void SetInlineFormatter(bool b) { SetFlag(FormatterFlags::INLINE_FORMATTER, b); }
-    bool IsInlineFormatter() const { return HasFlag(FormatterFlags::INLINE_FORMATTER); }
+
+    void SetInplaceFormatter(bool b) { SetFlag(FormatterFlags::INPLACE_EDIT, b); }
+    bool IsInplaceFormatter() const { return HasFlag(FormatterFlags::INPLACE_EDIT); }
 
     virtual bool FormatFile(const wxFileName& file_path, FileExtManager::FileType file_type,
                             wxString* output) const = 0;

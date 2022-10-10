@@ -94,7 +94,7 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager
     clDEBUG1() << "Formatter output (remote):" << endl;
     clDEBUG1() << *output << endl;
 
-    if(IsInlineFormatter()) {
+    if(IsInplaceFormatter()) {
         // the formatted output is not written to stdout, so clear it
         output->clear();
     }
@@ -122,7 +122,7 @@ bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::File
     clDEBUG1() << "Formatter output:" << endl;
     clDEBUG1() << *output << endl;
 
-    if(IsInlineFormatter()) {
+    if(IsInplaceFormatter()) {
         // the formatted output is not written to stdout, so clear it
         output->clear();
     }
@@ -151,7 +151,7 @@ bool GenericFormatter::FormatString(const wxString& content, const wxString& ful
         return false;
     }
 
-    if(IsInlineFormatter()) {
+    if(IsInplaceFormatter()) {
         // read the content of the temp file and return it
         output->clear();
         return FileUtils::ReadFileContent(tmpfile.GetFullPath(), *output);

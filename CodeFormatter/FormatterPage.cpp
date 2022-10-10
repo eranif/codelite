@@ -45,7 +45,7 @@ void FormatterPage::Load(std::shared_ptr<GenericFormatter> formatter)
 
     AddHeader(_("General"));
     AddProperty(_("Enabled"), m_cur_formatter->IsEnabled(), UPDATE_BOOL_CB(SetEnabled));
-    AddProperty(_("Inplace edit"), m_cur_formatter->IsInlineFormatter(), UPDATE_BOOL_CB(SetInlineFormatter));
+    AddProperty(_("Inplace edit"), m_cur_formatter->IsInplaceFormatter(), UPDATE_BOOL_CB(SetInplaceFormatter));
     AddProperty(_("Working directory"), m_cur_formatter->GetWorkingDirectory(), UPDATE_TEXT_CB(SetWorkingDirectory));
     AddPropertyLanguagePicker(_("Supported languages"), m_cur_formatter->GetLanguages(), UPDATE_LANGS_CB());
     AddProperty(_("Command"), m_cur_formatter->GetCommandWithComments(), UPDATE_TEXT_CB(SetCommandFromString));

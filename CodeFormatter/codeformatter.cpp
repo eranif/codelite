@@ -205,7 +205,7 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
         return false;
     }
 
-    if(f->IsInlineFormatter()) {
+    if(f->IsInplaceFormatter()) {
         // reload the current editor
         editor->ReloadFromDisk(true);
 
@@ -264,7 +264,7 @@ bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format
 
     auto editor = clGetManager()->FindEditor(fileName);
     if(editor) {
-        if(f->IsInlineFormatter()) {
+        if(f->IsInplaceFormatter()) {
             // need to update the file itself
             editor->ReloadFromDisk(true);
         } else {

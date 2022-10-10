@@ -116,6 +116,7 @@ bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::File
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;
 
+    wxBusyCursor bc;
     clDirChanger changer{ wd };
     *output = ::wxShellExec(cmd, wxEmptyString);
 

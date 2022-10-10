@@ -168,6 +168,7 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &GitPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_MODIFIED_EXTERNALLY, &GitPlugin::OnFileModifiedExternally, this);
 
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
@@ -383,6 +384,7 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CREATED, &GitPlugin::OnFileCreated, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_MODIFIED_EXTERNALLY, &GitPlugin::OnFileModifiedExternally, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &GitPlugin::OnUpdateNavBar, this);
 
     EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_PUSHED, &GitPlugin::OnGitActionDone, this);
@@ -467,10 +469,10 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 void GitPlugin::DoSetRepoPath(const wxString& repo_path)
 {
     if(repo_path.empty()) {
-        if(!m_userEnteredRepositoryDirectory.empty())  {
+        if(!m_userEnteredRepositoryDirectory.empty()) {
             m_repositoryDirectory = m_userEnteredRepositoryDirectory;
         } else {
-        m_repositoryDirectory = FindRepositoryRoot(GetDirFromPath(m_workspace_file));
+            m_repositoryDirectory = FindRepositoryRoot(GetDirFromPath(m_workspace_file));
         }
     } else {
         m_repositoryDirectory = repo_path;
@@ -487,15 +489,16 @@ void GitPlugin::DoSetRepoPath(const wxString& repo_path)
 void GitPlugin::OnSettings(wxCommandEvent& e)
 {
     wxString projectNameHash;
-     if(!m_isRemoteWorkspace) {
+    if(!m_isRemoteWorkspace) {
         wxString workspaceName = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetName();
         wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
         if(!workspaceName.empty() && !projectName.empty()) {
             projectNameHash << workspaceName << '-' << projectName;
         }
-     }
+    }
 
-    GitSettingsDlg dlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory, m_userEnteredRepositoryDirectory, projectNameHash);
+    GitSettingsDlg dlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory, m_userEnteredRepositoryDirectory,
+                       projectNameHash);
     int retValue = dlg.ShowModal();
 
     if(retValue == wxID_OK || retValue == wxID_REFRESH) {
@@ -505,7 +508,7 @@ void GitPlugin::OnSettings(wxCommandEvent& e)
             m_repositoryDirectory = m_userEnteredRepositoryDirectory;
             DoSetRepoPath(m_repositoryDirectory);
             CallAfter(&GitPlugin::DoRefreshView, false);
-    }
+        }
         // update the paths
         clConfig conf("git.conf");
         GitEntry data;
@@ -921,14 +924,24 @@ void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
     ProcessGitActionQueue();
 }
 
-void GitPlugin::OnFileSaved(clCommandEvent& e)
+void GitPlugin::OnFileModifiedExternally(clFileSystemEvent& e)
 {
     e.Skip();
+    DoAnyFileModified();
+}
+
+void GitPlugin::DoAnyFileModified()
+{
     DoLoadBlameInfo(true);
     gitAction ga(gitListModified, wxT(""));
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
     RefreshFileListView();
+}
+void GitPlugin::OnFileSaved(clCommandEvent& e)
+{
+    e.Skip();
+    DoAnyFileModified();
 }
 
 void GitPlugin::OnFilesAddedToProject(clCommandEvent& e)
@@ -1806,10 +1819,10 @@ void GitPlugin::InitDefaults()
 
     if(IsWorkspaceOpened()) {
         m_repositoryDirectory = GetRepositoryPath();
-        
+
         // Load any unusual git-repo path
         wxString projectNameHash, UserEnteredRepoPath;
-         if(!m_isRemoteWorkspace) {
+        if(!m_isRemoteWorkspace) {
             wxString workspaceName = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetName();
             wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
             if(!workspaceName.empty() && !projectName.empty()) {
@@ -1817,7 +1830,7 @@ void GitPlugin::InitDefaults()
                 m_userEnteredRepositoryDirectory = data.GetProjectUserEnteredRepoPath(projectNameHash);
                 m_repositoryDirectory = m_userEnteredRepositoryDirectory;
             }
-         }
+        }
     } else {
         DoCleanup();
     }
@@ -2640,7 +2653,7 @@ void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
 
     // Load any unusual git-repo path
     wxString projectNameHash;
-     if(!m_isRemoteWorkspace) {
+    if(!m_isRemoteWorkspace) {
         wxString workspaceName = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetName();
         wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
         if(!workspaceName.empty() && !projectName.empty()) {
@@ -2650,7 +2663,7 @@ void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
             conf.ReadItem(&data);
             m_userEnteredRepositoryDirectory = data.GetProjectUserEnteredRepoPath(projectNameHash);
         }
-     }
+    }
 
     DoSetRepoPath(m_userEnteredRepositoryDirectory);
 }

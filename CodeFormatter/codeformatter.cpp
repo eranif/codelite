@@ -29,11 +29,13 @@
 #include "asyncprocess.h"
 #include "clEditorConfig.h"
 #include "clEditorStateLocker.h"
+#include "clFileSystemEvent.h"
 #include "clFilesCollector.h"
 #include "clKeyboardManager.h"
 #include "clSTCLineKeeper.h"
 #include "clWorkspaceManager.h"
 #include "codeformatterdlg.h"
+#include "codelite_events.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -210,8 +212,11 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
         editor->ReloadFromDisk(true);
 
         // since the file was modified outside of the IDE, we need to notify CodeLite
-        // we do this by firing a "file saved" event
-        EventNotifier::Get()->PostFileSavedEvent(editor->GetRemotePathOrLocal());
+        // we do this by firing a wxEVT_FILE_MODIFIED_EXTERNALLY event
+        clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
+        event_modified.SetPath(editor->GetRemotePathOrLocal());
+        event_modified.SetIsRemoteFile(editor->IsRemoteFile());
+        EventNotifier::Get()->AddPendingEvent(event_modified);
 
     } else {
         clEditorStateLocker locker{ editor->GetCtrl() };

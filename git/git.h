@@ -223,6 +223,7 @@ private:
     void DoRecoverFromGitCommandError(bool clear_queue = true);
     void DoLoadBlameInfo(bool clearCache);
     void DoUpdateBlameInfo(const wxString& info, const wxString& fullpath);
+    void DoAnyFileModified();
     DECLARE_EVENT_TABLE()
 
     // Event handlers
@@ -236,6 +237,7 @@ private:
     void OnReplaceInFiles(clFileSystemEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
     void OnFileSaved(clCommandEvent& e);
+    void OnFileModifiedExternally(clFileSystemEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);
     void OnWorkspaceLoaded(clWorkspaceEvent& e);

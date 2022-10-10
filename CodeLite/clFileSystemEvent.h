@@ -30,10 +30,27 @@
 
 class WXDLLIMPEXP_CL clFileSystemEvent : public clCommandEvent
 {
+    enum clFileSystemEventFlags {
+        IS_REMOTE = (1 << 0),
+    };
+
 protected:
     wxString m_path;
     wxString m_newpath;
     wxArrayString m_paths;
+    size_t m_flags = 0;
+
+protected:
+    void SetBit(bool b, size_t bit)
+    {
+        if(b) {
+            m_flags |= bit;
+        } else {
+            m_flags &= ~bit;
+        }
+    }
+
+    bool HasBit(size_t bit) const { return m_flags & bit; }
 
 public:
     clFileSystemEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -49,6 +66,9 @@ public:
     void SetPaths(const wxArrayString& paths) { this->m_paths = paths; }
     const wxArrayString& GetPaths() const { return m_paths; }
     wxArrayString& GetPaths() { return m_paths; }
+
+    void SetIsRemoteFile(bool remote) { SetBit(IS_REMOTE, remote); };
+    bool IsRemoteFile() const { return HasBit(IS_REMOTE); }
 };
 
 typedef void (wxEvtHandler::*clFileSystemEventFunction)(clFileSystemEvent&);

@@ -3,7 +3,10 @@
 #include "PlatformCommon.hpp"
 
 #include <wx/arrstr.h>
+#include <wx/filename.h>
+#include <wx/string.h>
 #include <wx/tokenzr.h>
+#include <wx/utils.h>
 
 thread_local wxString RUST_TOOLCHAIN_BIN;
 thread_local bool rust_toolchain_scanned = false;

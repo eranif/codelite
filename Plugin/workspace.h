@@ -507,6 +507,11 @@ public:
      */
     size_t GetExcludeFilesForConfig(std::vector<wxString>& files, const wxString& workspaceConfigName = "");
 
+    /**
+     * @brief return the workspce environment
+     */
+    clEnvList_t GetEnvironment() const override;
+
 private:
     /**
      * Do the actual add project

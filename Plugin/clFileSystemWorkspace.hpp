@@ -107,6 +107,7 @@ public:
     wxFileName GetProjectFileName(const wxString& projectName) const override;
     void SetProjectActive(const wxString& project) override;
     wxString GetDebuggerName() const override;
+    clEnvList_t GetEnvironment() const override;
 
     /**
      * @brief return the executable to run + args + working directory

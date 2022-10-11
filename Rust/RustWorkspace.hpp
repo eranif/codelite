@@ -24,6 +24,7 @@ public:
     wxString GetName() const override;
     void SetProjectActive(const wxString& name) override;
     wxString GetDebuggerName() const override;
+    clEnvList_t GetEnvironment() const override;
 };
 
 #endif // RUSTWORKSPACE_HPP

@@ -37,3 +37,5 @@ wxString RustWorkspace::GetName() const { return clFileSystemWorkspace::Get().Ge
 void RustWorkspace::SetProjectActive(const wxString& name) { wxUnusedVar(name); }
 
 wxString RustWorkspace::GetDebuggerName() const { return clFileSystemWorkspace::Get().GetDebuggerName(); }
+
+clEnvList_t RustWorkspace::GetEnvironment() const { return clFileSystemWorkspace::Get().GetEnvironment(); }

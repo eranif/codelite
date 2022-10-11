@@ -1176,3 +1176,14 @@ wxString clFileSystemWorkspace::GetDebuggerName() const
         return wxEmptyString;
     }
 }
+
+clEnvList_t clFileSystemWorkspace::GetEnvironment() const
+{
+    clEnvList_t env_list;
+    auto config = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
+    if(config) {
+        const wxString& envstr = config->GetEnvironment();
+        env_list = StringUtils::BuildEnvFromString(envstr);
+    }
+    return env_list;
+}

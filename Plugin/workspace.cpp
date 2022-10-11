@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "workspace.h"
 
+#include "StringUtils.h"
 #include "build_settings_config.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
@@ -1683,4 +1684,15 @@ wxString clCxxWorkspace::GetDebuggerName() const
         return wxEmptyString;
     }
     return build_conf->GetDebuggerType();
+}
+
+clEnvList_t clCxxWorkspace::GetEnvironment() const
+{
+    clEnvList_t env_list;
+    auto active_project = GetActiveProject();
+    if(active_project && active_project->GetBuildConfiguration()) {
+        const wxString& envstr = active_project->GetBuildConfiguration()->GetEnvvars();
+        env_list = StringUtils::BuildEnvFromString(envstr);
+    }
+    return env_list;
 }

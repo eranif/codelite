@@ -26,6 +26,8 @@
 #ifndef IWORKSPACE_H
 #define IWORKSPACE_H
 
+#include "asyncprocess.h"
+
 #include <list>
 #include <wx/event.h>
 #include <wx/filename.h>
@@ -145,6 +147,11 @@ public:
      * @brief return the ssh account used by this workspace
      */
     virtual wxString GetSshAccount() const { return ""; }
+
+    /**
+     * @brief return the environment for the workspace
+     */
+    virtual clEnvList_t GetEnvironment() const { return {}; }
 };
 
 #endif // IWORKSPACE_H

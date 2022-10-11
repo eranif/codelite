@@ -36,6 +36,7 @@ bool get_rustup_bin_folder(wxString* rustup_bin_dir)
     return get_rustup_bin_folder(rustup_bin_dir);
 }
 
+#ifndef __WXMSW__
 /// Homebrew install formulas in a specific location, this function
 /// attempts to discover this location
 bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxString* install_path)
@@ -71,7 +72,7 @@ bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxStri
     clDEBUG() << "Using cellar path:" << *install_path << endl;
     return true;
 }
-
+#endif
 } // namespace
 
 bool LINUX::FindInstallDir(wxString* installpath)

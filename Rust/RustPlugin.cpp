@@ -28,6 +28,7 @@
 #include "CargoToml.hpp"
 #include "CompilerLocatorRustc.hpp"
 #include "NewFileSystemWorkspaceDialog.h"
+#include "Platform.hpp"
 #include "RustWorkspace.hpp"
 #include "asyncprocess.h"
 #include "build_settings_config.h"
@@ -141,14 +142,17 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
         auto debug = settings.GetConfig("Debug");
         if(debug) {
             clDEBUG() << "Setting project preferences..." << endl;
-            debug->SetBuildTargets({ { "build", cargo_exe + " build" }, { "clean", cargo_exe + " clean" } });
+            debug->SetBuildTargets({ { "build", cargo_exe + " build --color always" },
+                                     { "clean", cargo_exe + " clean --color always" },
+                                     { "tests", cargo_exe + " test --color always" },
+                                     { "clippy", cargo_exe + " clippy --color always" } });
             wxFileName target_exe(workspaceFile.GetPath() + "/target/debug/" + name);
 #ifdef __WXMSW__
             target_exe.SetExt("exe");
 #endif
             debug->SetExecutable(target_exe.GetFullPath());
             debug->SetFileExtensions(debug->GetFileExtensions() + ";*.rs;*.toml");
-
+            debug->SetCompiler("rustc");
             // set the environment variable to point to rust-gdb
             wxString env_str;
 #if !defined(__WXMSW__)
@@ -220,14 +224,16 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
         }
 
         EnvSetter env;
-        wxFileName cargo;
-        if(!::clFindExecutable("cargo", cargo)) {
+        wxString cargo_exe;
+        if(!PLATFORM::Which("cargo", &cargo_exe)) {
             wxMessageBox(_("Could not locate cargo in your PATH"), "CodeLite", wxICON_ERROR | wxCENTRE);
             return;
         }
 
+        ::WrapWithQuotes(cargo_exe);
+
         wxString command;
-        command << "cargo new " << dlg.GetWorkspaceName();
+        command << cargo_exe << " new " << dlg.GetWorkspaceName();
         IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole,
                                                     dlg.GetWorkspacePath()));
         if(!process) {
@@ -240,7 +246,8 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
         wxFileName cargoToml(dlg.GetWorkspacePath(), "Cargo.toml");
         cargoToml.AppendDir(dlg.GetWorkspaceName());
         if(cargoToml.FileExists()) {
-            // we successfully created a new cargo workspace, now, load it (using the standard file system workspace)
+            // we successfully created a new cargo workspace, now, load it (using the standard file system
+            // workspace)
             clFileSystemWorkspace::Get().New(cargoToml.GetPath(), cargoToml.GetDirs().Last());
         }
     }

@@ -7,6 +7,7 @@
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
 #include "clEditorBar.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clSFTPEvent.h"
 #include "clSelectSymbolDialog.h"
 #include "clWorkspaceManager.h"
@@ -627,7 +628,31 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     startup_info.SetLspServerCommand(lspCommand);
     startup_info.SetFlags(flags);
     startup_info.SetWorkingDirectory(working_directory);
-    lsp->Start(startup_info, {}, wxEmptyString, working_directory, entry.GetLanguages());
+
+    // TODO: this code should be moved to IWorkspace::GetEnvironment
+    clEnvList_t env_list;
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        auto config = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
+        if(config) {
+            const wxString& envstr = config->GetEnvironment();
+            env_list = StringUtils::BuildEnvFromString(envstr);
+        }
+    } else if(clCxxWorkspaceST::Get()->IsOpen()) {
+        auto active_project = clCxxWorkspaceST::Get()->GetActiveProject();
+        if(active_project && active_project->GetBuildConfiguration()) {
+            const wxString& envstr = active_project->GetBuildConfiguration()->GetEnvvars();
+            env_list = StringUtils::BuildEnvFromString(envstr);
+        }
+    }
+
+    if(!env_list.empty()) {
+        clDEBUG() << "Creating LSP with env:" << endl;
+        for(const auto& p : env_list) {
+            clDEBUG() << p.first << "=" << p.second << endl;
+        }
+    }
+
+    lsp->Start(startup_info, env_list, wxEmptyString, working_directory, entry.GetLanguages());
     m_servers.insert({ entry.GetName(), lsp });
 }
 

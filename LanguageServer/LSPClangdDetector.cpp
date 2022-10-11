@@ -26,7 +26,7 @@ bool LSPClangdDetector::DoLocate()
         return false;
     }
 
-    clSYSTEM() << "Found clangd ==>" << path << endl;
+    clDEBUG() << "Found clangd ==>" << path << endl;
     ConfigureFile(path);
     return true;
 }

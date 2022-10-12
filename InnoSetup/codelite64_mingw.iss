@@ -33,7 +33,7 @@ UninstallDisplayIcon={app}\codelite.exe,0
 #define MINGW_DIR "C:\msys64\clang64\bin"
 #define CLANG_DIR "C:\LLVM\bin"
 #define BUILD_BIN_DIR "C:\src\codelite\build-Win_x64_Release\bin"
-#define WX_CONFIG_DIR "C:\msys64\home\eran\devl\wx-config-msys2\bin"
+#define WX_CONFIG_DIR "C:\msys64\home\eran\devl\wx-config-msys2\build-Release\bin"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -75,7 +75,7 @@ Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw32u_clang.dll"; DestDir: "{app}"; Flags
 Source: "{#MINGW_DIR}\libc++.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MINGW_DIR}\libunwind.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MINGW_DIR}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
-                                     
+
 ;; ---- Binaries needed by CodeLite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\config\codelite.xml.default"; DestDir: "{app}\config";

@@ -129,7 +129,6 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\ContinuousBuild.dll"; DestDir: "{app}\
 Source: "{#CODELITE_ROOT}\Runtime\plugins\Copyright.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\CppChecker.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\Cscope.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\plugins\DatabaseExplorer.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\ExternalTools.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\git.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\Gizmos.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;

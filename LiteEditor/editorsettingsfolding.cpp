@@ -30,8 +30,8 @@
 EditorSettingsFolding::EditorSettingsFolding(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)
 {
-    const vector<wxString> fold_styles = { wxT("Simple"), wxT("Arrows"), wxT("Flatten Tree Square Headers"),
-                                           wxT("Flatten Tree Circular Headers") };
+    const std::vector<wxString> fold_styles = { wxT("Simple"), wxT("Arrows"), wxT("Flatten Tree Square Headers"),
+                                                wxT("Flatten Tree Circular Headers") };
 
     AddHeader(_("Folding"));
     AddProperty(_("Show folding margin"), m_options->GetDisplayFoldMargin(), UPDATE_BOOL_CB(SetDisplayFoldMargin));

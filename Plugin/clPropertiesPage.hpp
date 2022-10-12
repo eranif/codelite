@@ -15,7 +15,6 @@
 #include <wx/panel.h>
 #include <wx/window.h>
 
-using namespace std;
 enum class LineKind {
     UNKNOWN,
     COLOUR,
@@ -32,7 +31,7 @@ enum class LineKind {
 struct WXDLLIMPEXP_SDK LineData {
     LineKind line_kind = LineKind::UNKNOWN;
     wxAny value;
-    function<void(const wxString&, const wxAny&)> callback = nullptr;
+    std::function<void(const wxString&, const wxAny&)> callback = nullptr;
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_MODIFIED, clCommandEvent);
@@ -41,13 +40,13 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_SAVED, clCommand
 class WXDLLIMPEXP_SDK clPropertiesPage : public wxPanel
 {
     clThemedListCtrl* m_view = nullptr;
-    vector<size_t> m_header_rows;
+    std::vector<size_t> m_header_rows;
     bool m_theme_event_connected = false;
-    unordered_map<size_t, LineData> m_lines;
+    std::unordered_map<size_t, LineData> m_lines;
     bool m_isModified = false;
 
 public:
-    typedef function<void(const wxString&, const wxAny&)> Callback_t;
+    typedef std::function<void(const wxString&, const wxAny&)> Callback_t;
 
 protected:
     void OnActionButton(wxDataViewEvent& e);
@@ -82,7 +81,7 @@ protected:
         d.value = data;
         d.line_kind = kind;
         if(update_cb != nullptr) {
-            d.callback = move(update_cb);
+            d.callback = std::move(update_cb);
         }
     }
 
@@ -104,9 +103,9 @@ public:
 
     void AddProperty(const wxString& label, const wxArrayString& choices, size_t sel,
                      clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, const vector<wxString>& choices, size_t sel,
+    void AddProperty(const wxString& label, const std::vector<wxString>& choices, size_t sel,
                      clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, const vector<wxString>& choices, const wxString& selection,
+    void AddProperty(const wxString& label, const std::vector<wxString>& choices, const wxString& selection,
                      clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, const wxArrayString& choices, const wxString& selection,
                      clPropertiesPage::Callback_t update_cb);
@@ -115,13 +114,13 @@ public:
     void AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, const char* value, clPropertiesPage::Callback_t update_cb)
     {
-        AddProperty(label, wxString(value), move(update_cb));
+        AddProperty(label, wxString(value), std::move(update_cb));
     }
     void AddProperty(const wxString& label, const wxColour& value, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, long value, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, int value, clPropertiesPage::Callback_t update_cb)
     {
-        AddProperty(label, (long)value, move(update_cb));
+        AddProperty(label, (long)value, std::move(update_cb));
     }
 
     void AddPropertyFilePicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);

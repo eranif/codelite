@@ -107,11 +107,11 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
 
     AddHeader(_("Log"));
 
-    vector<wxString> log_levels = { FileLogger::GetVerbosityAsString(FileLogger::System),
-                                    FileLogger::GetVerbosityAsString(FileLogger::Error),
-                                    FileLogger::GetVerbosityAsString(FileLogger::Warning),
-                                    FileLogger::GetVerbosityAsString(FileLogger::Dbg),
-                                    FileLogger::GetVerbosityAsString(FileLogger::Developer) };
+    std::vector<wxString> log_levels = { FileLogger::GetVerbosityAsString(FileLogger::System),
+                                         FileLogger::GetVerbosityAsString(FileLogger::Error),
+                                         FileLogger::GetVerbosityAsString(FileLogger::Warning),
+                                         FileLogger::GetVerbosityAsString(FileLogger::Dbg),
+                                         FileLogger::GetVerbosityAsString(FileLogger::Developer) };
 
     int cur_log = clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error);
 

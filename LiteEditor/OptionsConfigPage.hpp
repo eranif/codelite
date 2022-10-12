@@ -40,7 +40,7 @@
     }
 
 #define UPDATE_CLCONFIG_BOOL_CB(PropertyName)                \
-    [this](const wxString& label, const wxAny& value) {      \
+    [](const wxString& label, const wxAny& value) {          \
         wxUnusedVar(label);                                  \
         bool value_bool = false;                             \
         if(value.GetAs(&value_bool)) {                       \
@@ -49,7 +49,7 @@
     }
 
 #define UPDATE_CLCONFIG_INT_CB(PropertyName)                 \
-    [this](const wxString& label, const wxAny& value) {      \
+    [](const wxString& label, const wxAny& value) {          \
         wxUnusedVar(label);                                  \
         int value_long = false;                              \
         if(value.GetAs(&value_long)) {                       \
@@ -58,7 +58,7 @@
     }
 
 #define UPDATE_CLCONFIG_TEXT_CB(PropertyName)               \
-    [this](const wxString& label, const wxAny& value) {     \
+    [](const wxString& label, const wxAny& value) {         \
         wxUnusedVar(label);                                 \
         wxString value_str;                                 \
         if(value.GetAs(&value_str)) {                       \

@@ -59,10 +59,10 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& c
     if(index == wxString::npos) {
         index = 0;
     }
-    AddProperty(label, choices, static_cast<int>(index), move(update_cb));
+    AddProperty(label, choices, static_cast<int>(index), std::move(update_cb));
 }
 
-void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>& choices, size_t sel,
+void clPropertiesPage::AddProperty(const wxString& label, const std::vector<wxString>& choices, size_t sel,
                                    clPropertiesPage::Callback_t update_cb)
 {
     wxArrayString arr;
@@ -70,18 +70,18 @@ void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>
     for(const auto& s : choices) {
         arr.Add(s);
     }
-    AddProperty(label, arr, sel, move(update_cb));
+    AddProperty(label, arr, sel, std::move(update_cb));
 }
 
-void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>& choices, const wxString& selection,
-                                   clPropertiesPage::Callback_t update_cb)
+void clPropertiesPage::AddProperty(const wxString& label, const std::vector<wxString>& choices,
+                                   const wxString& selection, clPropertiesPage::Callback_t update_cb)
 {
     wxArrayString arr;
     arr.reserve(choices.size());
     for(const auto& s : choices) {
         arr.Add(s);
     }
-    AddProperty(label, arr, selection, move(update_cb));
+    AddProperty(label, arr, selection, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& choices, size_t sel,
@@ -96,7 +96,7 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& c
     v << choice;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::CHOICE, choices, move(update_cb));
+    UpdateLastLineData(LineKind::CHOICE, choices, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, bool checked, clPropertiesPage::Callback_t update_cb)
@@ -109,7 +109,7 @@ void clPropertiesPage::AddProperty(const wxString& label, bool checked, clProper
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::CHECKBOX, checked, move(update_cb));
+    UpdateLastLineData(LineKind::CHECKBOX, checked, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, long value, clPropertiesPage::Callback_t update_cb)
@@ -122,7 +122,7 @@ void clPropertiesPage::AddProperty(const wxString& label, long value, clProperti
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::INTEGER, value, move(update_cb));
+    UpdateLastLineData(LineKind::INTEGER, value, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb)
@@ -136,7 +136,7 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxString& value,
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::TEXT_EDIT, value, move(update_cb));
+    UpdateLastLineData(LineKind::TEXT_EDIT, value, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxColour& value, clPropertiesPage::Callback_t update_cb)
@@ -149,7 +149,7 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxColour& value,
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::COLOUR, value, move(update_cb));
+    UpdateLastLineData(LineKind::COLOUR, value, std::move(update_cb));
 }
 
 void clPropertiesPage::AddPropertyFilePicker(const wxString& label, const wxString& path,
@@ -164,7 +164,7 @@ void clPropertiesPage::AddPropertyFilePicker(const wxString& label, const wxStri
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::FILE_PICKER, path, move(update_cb));
+    UpdateLastLineData(LineKind::FILE_PICKER, path, std::move(update_cb));
 }
 
 void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxString& path,
@@ -179,7 +179,7 @@ void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxStrin
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::DIR_PICKER, path, move(update_cb));
+    UpdateLastLineData(LineKind::DIR_PICKER, path, std::move(update_cb));
 }
 
 void clPropertiesPage::AddPropertyLanguagePicker(const wxString& label, const wxArrayString& langs,
@@ -195,7 +195,7 @@ void clPropertiesPage::AddPropertyLanguagePicker(const wxString& label, const wx
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::LANGUAGE_PICKER, languages_str, move(update_cb));
+    UpdateLastLineData(LineKind::LANGUAGE_PICKER, languages_str, std::move(update_cb));
 }
 
 void clPropertiesPage::AddPropertyButton(const wxString& label, const wxString& button_label,
@@ -210,7 +210,7 @@ void clPropertiesPage::AddPropertyButton(const wxString& label, const wxString& 
     v << button;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    UpdateLastLineData(LineKind::BUTTON, nullptr, move(update_cb));
+    UpdateLastLineData(LineKind::BUTTON, nullptr, std::move(update_cb));
 }
 
 void clPropertiesPage::AddHeader(const wxString& label)

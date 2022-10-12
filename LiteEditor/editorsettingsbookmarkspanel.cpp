@@ -35,8 +35,8 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel(wxWindow* parent, Opt
                 UPDATE_BOOL_CB(SetDisplayBookmarkMargin));
 
     AddHeader(_("Bookmarks"));
-    const vector<wxString> UnlocalisedShapes = { wxT("Small Rectangle"), wxT("Rounded Rectangle"), wxT("Circle"),
-                                                 wxT("Small Arrow"), wxT("Bookmark") };
+    const std::vector<wxString> UnlocalisedShapes = { wxT("Small Rectangle"), wxT("Rounded Rectangle"), wxT("Circle"),
+                                                      wxT("Small Arrow"), wxT("Bookmark") };
 
     AddProperty(_("Shape"), UnlocalisedShapes, m_options->GetBookmarkShape(), UPDATE_TEXT_CB(SetBookmarkShape));
 
@@ -65,7 +65,7 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel(wxWindow* parent, Opt
 
     AddHeader(_("Highlight matches"));
     AddProperty(_("Colour"), wxColour(EditorConfigST::Get()->GetString(wxT("WordHighlightColour"))),
-                [this](const wxString&, const wxAny& value) {
+                [](const wxString&, const wxAny& value) {
                     wxColour colour_value;
                     if(value.GetAs(&colour_value)) {
                         EditorConfigST::Get()->SetString(wxT("WordHighlightColour"),

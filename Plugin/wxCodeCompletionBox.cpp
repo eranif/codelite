@@ -68,8 +68,6 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_list->SetRendererType(eRendererType::RENDERER_DIRECT2D);
     m_list->SetColours(colours);
     m_list->SetDefaultFont(m_ccFont);
-    // m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
-    m_list->SetTreeStyle(m_list->GetTreeStyle() | wxTR_FULL_ROW_HIGHLIGHT);
 
     // Calculate a suitable completion dialog width
     {

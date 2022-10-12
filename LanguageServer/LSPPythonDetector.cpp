@@ -2,6 +2,7 @@
 
 #include "Platform.hpp"
 #include "asyncprocess.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "procutils.h"
 #include "wx/filename.h"
@@ -17,14 +18,15 @@ LSPPythonDetector::~LSPPythonDetector() {}
 
 bool LSPPythonDetector::DoLocate()
 {
-    wxString pip;
     wxString python;
-    if(!PLATFORM::Which("pip", &pip) || !PLATFORM::Which("python", &python)) {
+
+    // locate python3
+    if(!PLATFORM::Which("python", &python) && !PLATFORM::Which("python3", &python)) {
         return false;
     }
 
     // Check if python-language-server is installed
-    wxString output = ProcUtils::GrepCommandOutput({ pip, "list" }, "python-lsp-server");
+    wxString output = ProcUtils::GrepCommandOutput({ python, "-m", "pip", "list" }, "python-lsp-server");
     if(output.empty()) {
         // Not installed
         return false;

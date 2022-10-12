@@ -96,36 +96,59 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
     wxString HOME;
     FindHomeDir(&HOME);
 
-    wxString pathenv;
-    wxGetEnv("PATH", &pathenv);
-    wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
-    paths.Insert("/usr/local/bin", 0);
+    wxArrayString special_paths;
 
 #ifdef __WXMAC__
     // macOS only
-    paths.Insert("/opt/homebrew/bin", 0);
+    special_paths.Add("/opt/homebrew/bin");
 #endif
 
 #ifdef __WXGTK__
-    paths.Insert(wxString() << HOME << "/.local/bin", 0);
+    special_paths.Add(wxString() << HOME << "/.local/bin");
 #endif
 
     // cargo
-    paths.Insert(wxString() << HOME << "/.cargo/bin", 0);
+    special_paths.Add(wxString() << HOME << "/.cargo/bin");
 
     // rustup
     wxString rustup_bin_folder;
     if(get_rustup_bin_folder(&rustup_bin_folder)) {
-        paths.Insert(rustup_bin_folder, 0);
+        special_paths.Add(rustup_bin_folder);
     }
+
+    // /usr/local/bin is not always in the PATH, so add it
+    special_paths.Add("/usr/local/bin");
+
+    // common paths: read the env PATH and append the other paths to it
+    // so common paths found ENV:PATH will come first
+    wxString pathenv;
+    ::wxGetEnv("PATH", &pathenv);
+    wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
+
+    // append the special paths to the end
+    paths.insert(paths.end(), special_paths.begin(), special_paths.end());
 
 #ifdef __WXMAC__
     // llvm is placed under a special location
+    // if we find it, we place it first
     wxString llvm_path;
     if(macos_find_homebrew_cellar_path_for_formula("llvm", &llvm_path)) {
         paths.Insert(llvm_path + "/bin", 0);
     }
 #endif
+
+    // remove duplicate entries
+    wxStringSet_t S;
+    wxArrayString unique_paths;
+    unique_paths.reserve(paths.size());
+    for(const auto& path : paths) {
+        if(S.count(path) == 0) {
+            S.insert(path);
+            unique_paths.Add(path);
+        }
+    }
+
+    paths.swap(unique_paths);
 
     for(auto path : paths) {
         path << "/" << command;

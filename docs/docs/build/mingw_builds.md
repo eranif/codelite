@@ -6,49 +6,12 @@ This page contains tips for building various components using `MinGW` for Window
 ## Prepare a working environment
 ---
 
-- Download and install [MSYS2][2], set the installation folder to `C:\msys64`
-- Open `MSYS2` terminal, and install the following packages:
-
-```bash
-pacman -Sy mingw-w64-x86_64-toolchain           \
-           mingw-w64-x86_64-cmake               \
-           mingw-w64-x86_64-gdb                 \
-           mingw64/mingw-w64-x86_64-python-pip  \
-           mingw64/mingw-w64-x86_64-python      \
-           git                                  \
-           openssh                              \
-           mingw-w64-clang-x86_64-toolchain     \
-           mingw-w64-clang-x86_64-python3       \
-           mingw-w64-clang-x86_64-libffi        \
-           unzip
-```
-
-- Next, still in the `MSYS2` terminal, Add the `/mingw64/bin` & `/clang64/bin` to your `~/.bashrc` and `source` it:
-
-```bash
-echo 'export PATH=/mingw64/bin:$PATH' >> ~/.$(basename $SHELL)rc
-echo 'export PATH=/clang64/bin:$PATH' >> ~/.$(basename $SHELL)rc
-. ~/.$(basename $SHELL)rc
-```
-
-!!! IMPORTANT
-    `/clang64/bin` MUST come before `/mingw64/bin` in the `$PATH` environment variable
-    This to make sure that CodeLite is built with `/clang64/bin/clang++`
-
-- If you choose to work with `CMD`, create a script with the following content, name it `MinGW.bat` and place it on your desktop:
-
-```batch
-@echo off
-title [64 bit] MinGW CMD Shell
-set PATH=C:\msys64\mingw64\bin;C:\msys64\usr\bin;%PATH%
-set PATH=C:\Program Files\CodeLite;%PATH%
-cmd
-```
+Before you start, make sure you have a [proper MSYS2 environment][2]
 
 ## Building `zlib`
 ---
 
-- Setup a [working environment][7] as described above if you hadn't done this before
+- Setup a [proper MSYS2 environment][2] if you hadn't done this before
 - Open `MSYS2` terminal, and type:
 
 ```batch
@@ -114,9 +77,8 @@ mingw32-make.exe -j$(nproc) install
 **Congratulations!** you should now have all libraries built and installed under: `$HOME/root`
 
 [1]: https://www.zlib.net/zlib1211.zip
-[2]: https://www.msys2.org/#installation
+[2]: /getting_started/windows
 [3]: https://www.openssl.org/source/
 [4]: https://strawberryperl.com/
 [5]: #building-zlib
 [6]: #building-openssl
-[7]: #prepare-a-working-environment

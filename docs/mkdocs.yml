@@ -12,11 +12,12 @@ nav:
             - CodeLite 14.0: downloads/oldDownloads/Repositories14.md
             - CodeLite 13.0: downloads/oldDownloads/Repositories13.md
             - CodeLite 12.0: downloads/oldDownloads/Repositories12.md
-    - Build:
-        - wxWidgets: build/build_wx_widgets.md
-        - CodeLite: build/build_from_sources.md
-        - MinGW: build/mingw_builds.md
-    - Quick Start: hello_world.md
+    - Getting started: 
+        - Prepare your environment:
+            - Windows: getting_started/windows.md
+            - Linux: getting_started/linux.md
+            - macOS: getting_started/macos.md
+        - Hello World: hello_world.md
     - Settings:
         - Look and feel: settings/colours_and_fonts.md
         - Keyboard shortcuts: settings/keyboard_shortcuts.md
@@ -51,6 +52,10 @@ nav:
         - XDebug (PHP): debuggers/xdebug.md
         - Node.js: debuggers/nodejs.md
         - Quick Debug: debuggers/quick_debug.md
+    - Build:
+        - wxWidgets: build/build_wx_widgets.md
+        - CodeLite: build/build_from_sources.md
+        - MinGW: build/mingw_builds.md
     - wxWidgets:
         - wxWidgets 3.1.5: wxWidgets/repo315.md
         - wxWidgets 3.1.6: wxWidgets/repo316.md

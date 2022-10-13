@@ -15,6 +15,7 @@
 #include "procutils.h"
 #include "workspace.h"
 
+#include <thread>
 namespace
 {
 wxString join_array(const wxArrayString& arr)
@@ -54,6 +55,39 @@ wxString get_command_with_desc(const wxArrayString& command_arr, const wxString&
     command.Prepend(wxString() << "# " << desc << "\n");
     return command;
 }
+
+/**
+ * @brief format source file using background thread, when the formatting is done, fire an event to the sink object
+ */
+void thread_format(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
+                   wxEvtHandler* sink)
+{
+    std::thread thr([cmd, wd, filepath, inplace_formatter, sink]() {
+        // save the current directory
+        clDirChanger cd{ wd };
+        wxString output = ::wxShellExec(cmd, wxEmptyString);
+
+        // notify the sink that formatting is done
+        clSourceFormatEvent event{ inplace_formatter ? wxEVT_FORMAT_INPLACE_COMPELTED : wxEVT_FORMAT_COMPELTED };
+        event.SetFormattedString(inplace_formatter ? wxEmptyString : output);
+        event.SetFileName(filepath);
+        sink->QueueEvent(event.Clone());
+    });
+    thr.detach();
+}
+
+void sync_format(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output)
+{
+    // save the current directory
+    clDirChanger cd{ wd };
+    *output = ::wxShellExec(cmd, wxEmptyString);
+
+    // notify the sink that formatting is done
+    if(inplace_formatter) {
+        output->clear();
+    }
+}
+
 } // namespace
 
 GenericFormatter::GenericFormatter() { SetWorkingDirectory("$(WorkspacePath)"); }
@@ -62,14 +96,39 @@ GenericFormatter::~GenericFormatter() {}
 
 wxString GenericFormatter::GetCommandAsString() const { return join_array(m_command); }
 
-bool GenericFormatter::FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type,
-                                  wxString* output) const
+bool GenericFormatter::DoFormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink,
+                                    wxString* output) const
 {
-    return FormatFile(filepath.GetFullPath(), file_type, output);
+    if(!CanHandle(file_type)) {
+        return false;
+    }
+
+    // Create a copy
+    wxString cmd = GetCommandAsString();
+
+    cmd = replace_macros(cmd, filepath);
+    wxString wd = replace_macros(GetWorkingDirectory(), filepath);
+
+    clDEBUG() << "Working dir:" << wd << endl;
+    clDEBUG() << "Calling:" << cmd << endl;
+
+    wxBusyCursor bc;
+    if(sink) {
+        thread_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
+    } else {
+        sync_format(cmd, wd, IsInplaceFormatter(), output);
+    }
+    return true;
+}
+
+bool GenericFormatter::FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type,
+                                  wxEvtHandler* sink) const
+{
+    return FormatFile(filepath.GetFullPath(), file_type, sink);
 }
 
 bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager::FileType file_type,
-                                        wxString* output) const
+                                        wxEvtHandler* sink) const
 {
     if(!CanHandle(file_type)) {
         return false;
@@ -88,46 +147,14 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;
 
-    clDirChanger changer{ wd };
-    *output = ::wxShellExec(cmd, wxEmptyString);
-
-    clDEBUG1() << "Formatter output (remote):" << endl;
-    clDEBUG1() << *output << endl;
-
-    if(IsInplaceFormatter()) {
-        // the formatted output is not written to stdout, so clear it
-        output->clear();
-    }
+    thread_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
     return true;
 }
 
-bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxString* output) const
+bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::FileType file_type,
+                                  wxEvtHandler* sink) const
 {
-    if(!CanHandle(file_type)) {
-        return false;
-    }
-
-    // Create a copy
-    wxString cmd = GetCommandAsString();
-
-    cmd = replace_macros(cmd, filepath);
-    wxString wd = replace_macros(GetWorkingDirectory(), filepath);
-
-    clDEBUG() << "Working dir:" << wd << endl;
-    clDEBUG() << "Calling:" << cmd << endl;
-
-    wxBusyCursor bc;
-    clDirChanger changer{ wd };
-    *output = ::wxShellExec(cmd, wxEmptyString);
-
-    clDEBUG1() << "Formatter output:" << endl;
-    clDEBUG1() << *output << endl;
-
-    if(IsInplaceFormatter()) {
-        // the formatted output is not written to stdout, so clear it
-        output->clear();
-    }
-    return true;
+    return DoFormatFile(filepath, file_type, sink, nullptr);
 }
 
 bool GenericFormatter::FormatString(const wxString& content, const wxString& fullpath, wxString* output) const
@@ -148,13 +175,12 @@ bool GenericFormatter::FormatString(const wxString& content, const wxString& ful
         return false;
     }
 
-    if(!FormatFile(tmpfile.GetFullPath(), file_type, output)) {
+    if(!DoFormatFile(tmpfile.GetFullPath(), file_type, nullptr, output)) {
         return false;
     }
 
     if(IsInplaceFormatter()) {
         // read the content of the temp file and return it
-        output->clear();
         return FileUtils::ReadFileContent(tmpfile.GetFullPath(), *output);
     }
     return true;

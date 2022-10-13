@@ -59,6 +59,7 @@
 
 namespace
 {
+
 int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
 //------------------------------------------------------------------------
@@ -80,6 +81,43 @@ JSONItem json_get_formatter_object(JSON* root, const wxString& formatter_name)
         return tool;
     }
     return JSONItem{ nullptr };
+}
+} // namespace
+
+namespace
+{
+thread_local std::unordered_map<wxString, size_t> ignore_map;
+bool dec_save_count_if_needed(const wxString& filepath)
+{
+    if(ignore_map.count(filepath) == 0) {
+        return false;
+    }
+
+    clSYSTEM() << "reducing save count for file:" << filepath << endl;
+    // we caused this event, reduce the file reference count
+    // and return
+    ignore_map[filepath] -= 1;
+    if(ignore_map[filepath] == 0) {
+        ignore_map.erase(filepath);
+    }
+    return true;
+}
+
+void inc_save_count(const wxString& filepath)
+{
+    if(ignore_map.count(filepath)) {
+        ignore_map[filepath] += 1;
+    } else {
+        ignore_map[filepath] = 1;
+    }
+}
+
+size_t get_save_count(const wxString& filepath)
+{
+    if(ignore_map.count(filepath) == 0) {
+        return 0;
+    }
+    return ignore_map[filepath];
 }
 } // namespace
 
@@ -123,6 +161,9 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &CodeFormatter::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CodeFormatter::OnWorkspaceClosed, this);
+
+    Bind(wxEVT_FORMAT_INPLACE_COMPELTED, &CodeFormatter::OnInplaceFormatCompleted, this);
+    Bind(wxEVT_FORMAT_COMPELTED, &CodeFormatter::OnFormatCompleted, this);
 
     clKeyboardManager::Get()->AddAccelerator(
         _("Source Code Formatter"),
@@ -174,9 +215,7 @@ void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
     }
 
     // get the editor that requires formatting
-    if(!editor) {
-        return;
-    }
+    CHECK_PTR_RET(editor);
     DoFormatEditor(editor);
 }
 
@@ -191,41 +230,14 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
         return false;
     }
 
-    // When an inline formatter is used, prompt the user to save the file before
-    if(editor->IsEditorModified()) {
-        editor->Save();
-    }
-
     wxString output;
     wxString file_path = editor->GetRemotePathOrLocal();
     bool res = false;
     if(is_remote) {
-        res = f->FormatRemoteFile(file_path, FileExtManager::GetType(file_path), &output);
+        return f->FormatRemoteFile(file_path, FileExtManager::GetType(file_path), this);
     } else {
-        res = f->FormatFile(file_path, FileExtManager::GetType(file_path), &output);
+        return f->FormatFile(file_path, FileExtManager::GetType(file_path), this);
     }
-
-    if(!res) {
-        return false;
-    }
-
-    if(f->IsInplaceFormatter()) {
-        // reload the current editor
-        editor->ReloadFromDisk(true);
-
-        // since the file was modified outside of the IDE, we need to notify CodeLite
-        // we do this by firing a wxEVT_FILE_MODIFIED_EXTERNALLY event
-        clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
-        event_modified.SetPath(editor->GetRemotePathOrLocal());
-        event_modified.SetIsRemoteFile(editor->IsRemoteFile());
-        EventNotifier::Get()->AddPendingEvent(event_modified);
-
-    } else {
-        clEditorStateLocker locker{ editor->GetCtrl() };
-        editor->GetCtrl()->SetText(output);
-        m_mgr->SetStatusMessage(_("Done"), 0);
-    }
-    return true;
 }
 
 bool CodeFormatter::DoFormatString(const wxString& content, const wxString& fileName, wxString* output)
@@ -257,34 +269,11 @@ bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format
         return false;
     }
 
-    wxString output;
-    bool ok = false;
     if(is_remote_format) {
-        ok = f->FormatRemoteFile(fileName, FileExtManager::GetType(fileName), &output);
+        return f->FormatRemoteFile(fileName, FileExtManager::GetType(fileName), this);
     } else {
-        ok = f->FormatFile(fileName, FileExtManager::GetType(fileName), &output);
+        return f->FormatFile(fileName, FileExtManager::GetType(fileName), this);
     }
-
-    if(!ok) {
-        return false;
-    }
-
-    auto editor = clGetManager()->FindEditor(fileName);
-    if(editor) {
-        if(f->IsInplaceFormatter()) {
-            // need to update the file itself
-            editor->ReloadFromDisk(true);
-        } else {
-            clEditorStateLocker locker{ editor->GetCtrl() };
-            editor->GetCtrl()->SetText(output);
-        }
-    } else {
-        // the file is not opened in the CodeLite
-        if(wxFileExists(fileName)) {
-            FileUtils::WriteFileContent(fileName, output);
-        }
-    }
-    return true;
 }
 
 void CodeFormatter::OnSettings(wxCommandEvent& e)
@@ -341,6 +330,9 @@ void CodeFormatter::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FORMAT_FILE, &CodeFormatter::OnFormatFile, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &CodeFormatter::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
+
+    Unbind(wxEVT_FORMAT_INPLACE_COMPELTED, &CodeFormatter::OnInplaceFormatCompleted, this);
+    Unbind(wxEVT_FORMAT_COMPELTED, &CodeFormatter::OnFormatCompleted, this);
 }
 
 IManager* CodeFormatter::GetManager() { return m_mgr; }
@@ -493,12 +485,17 @@ void CodeFormatter::OnWorkspaceClosed(clWorkspaceEvent& e)
 void CodeFormatter::OnFileSaved(clCommandEvent& e)
 {
     // keep track on files that caused "OnSave" because of this method
-    static std::unordered_map<wxString, size_t> ignore_map;
+    const wxString& filepath = e.GetFileName();
+
     e.Skip();
 
     // Check that we can handle this file
     auto f = m_manager.GetFormatter(e.GetFileName());
     CHECK_PTR_RET(f);
+
+    // Find the editor and format it
+    auto editor = clGetManager()->FindEditor(filepath);
+    CHECK_PTR_RET(editor);
 
     // is format required?
     if(!f->IsFormatOnSave()) {
@@ -506,32 +503,59 @@ void CodeFormatter::OnFileSaved(clCommandEvent& e)
     }
 
     // did we cause the OnSave event?
-    const wxString& filepath = e.GetFileName();
-    if(ignore_map.count(filepath)) {
-        // we caused this event, reduce the file reference count
-        // and return
-        ignore_map[filepath] -= 1;
-        if(ignore_map[filepath] == 0) {
-            ignore_map.erase(filepath);
-        }
+    clSYSTEM() << "Format-On-Save:" << filepath << endl;
+    if(dec_save_count_if_needed(filepath)) {
         return;
     }
 
-    // Find the editor and format it
-    auto editor = clGetManager()->FindEditor(filepath);
-    CHECK_PTR_RET(editor);
+    clSYSTEM() << "Formatting..." << endl;
+    if(!DoFormatEditor(editor)) {
+        return;
+    }
+    clSYSTEM() << "Formatting...done" << endl;
+}
 
-    if(DoFormatEditor(editor)) {
-        // save the file
-        if(editor->IsEditorModified()) {
-            if(editor->Save()) {
-                // mark this file as the cause for the save
-                if(ignore_map.count(filepath)) {
-                    ignore_map[filepath] += 1;
-                } else {
-                    ignore_map[filepath] = 1;
-                }
-            }
+void CodeFormatter::OnFormatCompleted(clSourceFormatEvent& event)
+{
+    event.Skip();
+    const wxString& filepath = event.GetFileName();
+    auto editor = clGetManager()->FindEditor(filepath);
+
+    if(editor) {
+        editor->GetCtrl()->BeginUndoAction();
+        clEditorStateLocker locker{ editor->GetCtrl() };
+        editor->GetCtrl()->SetText(event.GetFormattedString());
+        editor->GetCtrl()->EndUndoAction();
+        m_mgr->SetStatusMessage(_("Done"), 0);
+
+        if(editor->IsEditorModified() /* it should be.. */) {
+            // need to set the editor back to "saved" status
+            editor->Save();
+            inc_save_count(filepath);
+        }
+    } else {
+        // no editor is opened, update the file content
+        if(wxFileExists(filepath)) {
+            FileUtils::WriteFileContent(filepath, event.GetFormattedString());
         }
     }
+}
+
+void CodeFormatter::OnInplaceFormatCompleted(clSourceFormatEvent& event)
+{
+    event.Skip();
+    const wxString& filepath = event.GetFileName();
+    auto editor = clGetManager()->FindEditor(filepath);
+
+    if(editor) {
+        // need to update the file itself
+        editor->ReloadFromDisk(true);
+    }
+
+    // since the file was modified outside of the IDE, we need to notify CodeLite
+    // we do this by firing a wxEVT_FILE_MODIFIED_EXTERNALLY event
+    clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
+    event_modified.SetPath(filepath);
+    event_modified.SetIsRemoteFile(!wxFileName::FileExists(filepath));
+    EventNotifier::Get()->AddPendingEvent(event_modified);
 }

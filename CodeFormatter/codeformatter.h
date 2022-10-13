@@ -51,6 +51,9 @@ private:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnFileSaved(clCommandEvent& e);
 
+    void OnFormatCompleted(clSourceFormatEvent& event);
+    void OnInplaceFormatCompleted(clSourceFormatEvent& event);
+
 public:
     /**
      * @brief format list of files

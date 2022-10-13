@@ -14,6 +14,10 @@ class GenericFormatter : public SourceFormatterBase
     wxString m_remote_command;
     wxString m_workingDirectory;
 
+protected:
+    bool DoFormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink,
+                      wxString* output) const;
+
 public:
     GenericFormatter();
     virtual ~GenericFormatter();
@@ -21,10 +25,10 @@ public:
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON() const override;
 
-    bool FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type, wxString* output) const override;
-    bool FormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxString* output) const override;
+    bool FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) const override;
+    bool FormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) const override;
     bool FormatRemoteFile(const wxString& filepath, FileExtManager::FileType file_type,
-                          wxString* output) const override;
+                          wxEvtHandler* sink) const override;
 
     bool CanHandleRemoteFile() const { return !m_remote_command.empty(); }
     void SetRemoteCommand(const wxString& cmd);

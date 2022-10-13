@@ -2,11 +2,13 @@
 #define SOURCEFORMATTERBASE_HPP
 
 #include "JSON.h"
+#include "cl_command_event.h"
 #include "fileextmanager.h"
 #include "macros.h"
 #include "wxStringHash.h"
 
 #include <vector>
+#include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/string.h>
 
@@ -29,6 +31,9 @@ enum class FormatterFlags {
 #define __HAS_FLAG(flags, bit) (flags & (size_t)bit)
 #define __SET_FLAG(flags, bit) (flags |= (size_t)bit)
 #define __UNSET_FLAG(flags, bit) (flags &= ~(size_t)bit)
+
+wxDECLARE_EVENT(wxEVT_FORMAT_COMPELTED, clSourceFormatEvent);
+wxDECLARE_EVENT(wxEVT_FORMAT_INPLACE_COMPELTED, clSourceFormatEvent);
 
 class SourceFormatterBase
 {
@@ -74,10 +79,11 @@ public:
     bool IsInplaceFormatter() const { return HasFlag(FormatterFlags::INPLACE_EDIT); }
 
     virtual bool FormatFile(const wxFileName& file_path, FileExtManager::FileType file_type,
-                            wxString* output) const = 0;
-    virtual bool FormatFile(const wxString& file_path, FileExtManager::FileType file_type, wxString* output) const = 0;
+                            wxEvtHandler* sink) const = 0;
+    virtual bool FormatFile(const wxString& file_path, FileExtManager::FileType file_type,
+                            wxEvtHandler* sink) const = 0;
     virtual bool FormatRemoteFile(const wxString& file_path, FileExtManager::FileType file_type,
-                                  wxString* output) const = 0;
+                                  wxEvtHandler* sink) const = 0;
     virtual bool FormatString(const wxString& content, const wxString& fullpath, wxString* output) const = 0;
 
     void SetFileTypes(const std::vector<FileExtManager::FileType>& types);

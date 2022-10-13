@@ -18,10 +18,11 @@ bool PlatformCommon::WhichWithVersion(const wxString& command, const std::vector
     wxArrayString names;
     names.reserve(sorted_versions.size() + 1);
 
+    // executable without number should come first
+    names.Add(command);
     for(auto ver : sorted_versions) {
         names.Add(wxString() << command << "-" << ver);
     }
-    names.Add(command);
     for(const wxString& name : names) {
         if(PLATFORM::Which(name, command_fullpath)) {
             return true;

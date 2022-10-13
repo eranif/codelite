@@ -105,6 +105,10 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
 
 #ifdef __WXGTK__
     special_paths.Add(wxString() << HOME << "/.local/bin");
+    // linux also supports homebrew
+    if(wxFileName::DirExists("/home/linuxbrew/.linuxbrew/bin")) {
+        special_paths.Add("/home/linuxbrew/.linuxbrew/bin");
+    }
 #endif
 
     // cargo

@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Formatters">
+    <File Name="fmtYQ.cpp"/>
+    <File Name="fmtYQ.hpp"/>
     <File Name="fmtBlack.cpp"/>
     <File Name="fmtBlack.hpp"/>
     <File Name="fmtRustfmt.cpp"/>

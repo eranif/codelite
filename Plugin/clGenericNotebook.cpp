@@ -359,9 +359,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     PrepareDC(gcdc);
 
     wxRect clientRect(GetClientRect());
-    if(clientRect.width <= 3)
-        return;
-    if(clientRect.height <= 3)
+    if(clientRect.width <= 3 || clientRect.height <= 3)
         return;
 
     wxRect rect(GetClientRect());
@@ -427,27 +425,15 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 {
-    int majorDimension = 0;
-    if(IsVerticalTabs() && GetStyle() & kNotebook_ShowFileListButton) {
-        majorDimension = 2;
-    }
-
+    int xx = 0;
     wxRect clientRect = GetClientRect();
     for(size_t i = 0; i < tabs.size(); ++i) {
-        clTabInfo::Ptr_t tab = tabs.at(i);
-        if(IsVerticalTabs()) {
-            tab->GetRect().SetX(0);
-            tab->GetRect().SetY(majorDimension);
-            tab->GetRect().SetWidth(clientRect.GetWidth());
-            tab->GetRect().SetHeight(tab->GetHeight());
-            majorDimension += tab->GetHeight();
-        } else {
-            tab->GetRect().SetX(majorDimension);
-            tab->GetRect().SetY(0);
-            tab->GetRect().SetWidth(tab->GetWidth());
-            tab->GetRect().SetHeight(clientRect.GetHeight());
-            majorDimension += tab->GetWidth() - GetArt()->overlapWidth;
-        }
+        clTabInfo::Ptr_t tab = tabs[i];
+        tab->GetRect().SetX(xx);
+        tab->GetRect().SetY(0);
+        tab->GetRect().SetWidth(tab->GetWidth());
+        tab->GetRect().SetHeight(clientRect.GetHeight());
+        xx += tab->GetWidth();
     }
 }
 
@@ -586,19 +572,13 @@ clTabInfo::Ptr_t clTabCtrl::GetTabInfo(wxWindow* page)
 bool clTabCtrl::SetPageText(size_t page, const wxString& text)
 {
     clTabInfo::Ptr_t tab = GetTabInfo(page);
-    if(!tab)
+    if(!tab) {
         return false;
-
-    int oldWidth = tab->GetWidth();
+    }
     tab->SetLabel(text, GetStyle());
-    int newWidth = tab->GetWidth();
-    int diff = (newWidth - oldWidth);
 
-    // Update the width of the tabs from the current tab by "diff"
-    DoUpdateXCoordFromPage(tab->GetWindow(), diff);
-
-    // Redraw the tab control
-    Refresh();
+    // trigger an "on-size" event
+    PostSizeEventToParent();
     return true;
 }
 

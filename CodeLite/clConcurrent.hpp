@@ -3,6 +3,7 @@
 
 #include "codelite_exports.h"
 
+#include <atomic>
 #include <functional>
 #include <thread>
 #include <vector>

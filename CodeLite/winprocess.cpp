@@ -25,6 +25,7 @@
 #include "winprocess.h"
 #ifdef __WXMSW__
 #include "wx/filefn.h"
+
 #include <memory>
 
 /*static*/
@@ -34,7 +35,9 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxS
     BOOL fSuccess;
 
     wxString wd(workingDir);
-    if(workingDir.IsEmpty()) { wd = wxGetCwd(); }
+    if(workingDir.IsEmpty()) {
+        wd = wxGetCwd();
+    }
 
     // Set the bInheritHandle flag so pipe handles are inherited.
     saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -211,7 +214,8 @@ bool WinProcess::Write(const wxString& buff)
     SetNamedPipeHandleState(hChildStdinWrDup, &dwMode, NULL,
                             NULL); // Timeout of 30 seconds
     DWORD dwWritten;
-    if(!WriteFile(hChildStdinWrDup, chBuf, (unsigned long)strlen(chBuf), &dwWritten, NULL)) return false;
+    if(!WriteFile(hChildStdinWrDup, chBuf, (unsigned long)strlen(chBuf), &dwWritten, NULL))
+        return false;
     return true;
 }
 
@@ -219,14 +223,16 @@ bool WinProcess::IsAlive()
 {
     DWORD dwExitCode;
     if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
-        if(dwExitCode == STILL_ACTIVE) return true;
+        if(dwExitCode == STILL_ACTIVE)
+            return true;
     }
     return false;
 }
 
 void WinProcess::Cleanup()
 {
-    if(IsAlive()) TerminateProcess(piProcInfo.hProcess, 255);
+    if(IsAlive())
+        TerminateProcess(piProcInfo.hProcess, 255);
 
     CloseHandle(hChildStdinRd);
     CloseHandle(hChildStdoutWr);

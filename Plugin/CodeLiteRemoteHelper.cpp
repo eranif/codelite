@@ -141,10 +141,12 @@ void CodeLiteRemoteHelper::ProcessCodeLiteRemoteJSON(const wxString& filepath)
             auto json_code_formatter = json.AddObject("Source Code Formatter");
             auto tools_arr = json_code_formatter.AddArray("tools");
             add_formatter_tool(tools_arr, "jq", "jq . -S $(CurrentFileRelPath)", "$(WorkspacePath)");
+            add_formatter_tool(tools_arr, "yq", "yq . $(CurrentFileRelPath)", "$(WorkspacePath)");
             add_formatter_tool(tools_arr, "clang-format", "clang-format $(CurrentFileRelPath)", "$(WorkspacePath)");
             add_formatter_tool(tools_arr, "xmllint", "xmllint --format $(CurrentFileRelPath)", "$(WorkspacePath)");
             add_formatter_tool(tools_arr, "rustfmt", "rustfmt --edition 2021 $(CurrentFileRelPath)",
                                "$(WorkspacePath)");
+            add_formatter_tool(tools_arr, "black", "black --line-length 80 $(CurrentFileRelPath)", "$(WorkspacePath)");
 
             // store the file
             clSFTPManager::Get().AsyncWriteFile(json.format(), filepath, m_remoteAccount);

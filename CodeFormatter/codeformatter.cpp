@@ -32,6 +32,7 @@
 #include "clFileSystemEvent.h"
 #include "clFilesCollector.h"
 #include "clKeyboardManager.h"
+#include "clSFTPManager.hpp"
 #include "clSTCLineKeeper.h"
 #include "clWorkspaceManager.h"
 #include "codeformatterdlg.h"
@@ -106,14 +107,6 @@ void inc_save_count(const wxString& filepath)
     } else {
         ignore_map[filepath] = 1;
     }
-}
-
-size_t get_save_count(const wxString& filepath)
-{
-    if(ignore_map.count(filepath) == 0) {
-        return 0;
-    }
-    return ignore_map[filepath];
 }
 } // namespace
 
@@ -234,7 +227,6 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
         inc_save_count(file_path);
     }
 
-    bool res = false;
     if(is_remote) {
         return f->FormatRemoteFile(file_path, FileExtManager::GetType(file_path), this);
     } else {
@@ -487,7 +479,6 @@ void CodeFormatter::OnFileSaved(clCommandEvent& e)
 {
     // keep track on files that caused "OnSave" because of this method
     const wxString& filepath = e.GetFileName();
-
     e.Skip();
 
     // Check that we can handle this file

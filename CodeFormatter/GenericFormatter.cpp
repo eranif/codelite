@@ -17,6 +17,7 @@
 
 #include <sstream>
 #include <thread>
+#include <wx/msgdlg.h>
 
 namespace
 {
@@ -58,58 +59,43 @@ wxString get_command_with_desc(const wxArrayString& command_arr, const wxString&
     return command;
 }
 
-void sync_format(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output)
+bool sync_format(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output)
 {
     // save the current directory
     clDirChanger cd{ wd };
-    *output = ::wxShellExec(cmd, wxEmptyString);
-
-    // notify the sink that formatting is done
+    EnvSetter es(NULL, NULL, wxEmptyString, wxEmptyString);
+    bool res = ProcUtils::ShellExecSync(cmd, output) == 0;
     if(inplace_formatter) {
         output->clear();
     }
+    return res;
 }
-
 } // namespace
 
 GenericFormatter::GenericFormatter()
 {
     SetWorkingDirectory("$(WorkspacePath)");
-    m_concurrent.set_pool_size(5);
+    Bind(wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, &GenericFormatter::OnAsyncShellProcessTerminated, this);
 }
 
-GenericFormatter::~GenericFormatter() { m_concurrent.shutdown(); }
+GenericFormatter::~GenericFormatter()
+{
+    Unbind(wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, &GenericFormatter::OnAsyncShellProcessTerminated, this);
+}
 
 wxString GenericFormatter::GetCommandAsString() const { return join_array(m_command); }
 
 /**
  * @brief format source file using background thread, when the formatting is done, fire an event to the sink object
  */
-void GenericFormatter::thread_format(const wxString& cmd, const wxString& wd, const wxString& filepath,
-                                     bool inplace_formatter, wxEvtHandler* sink)
+void GenericFormatter::async_format(const wxString& cmd, const wxString& wd, const wxString& filepath,
+                                    bool inplace_formatter, wxEvtHandler* sink)
 {
-    // ensure the pool is running
-    if(!m_concurrent.is_running()) {
-        m_concurrent.run();
+    clDirChanger cd{ wd };
+    long pid = wxNOT_FOUND;
+    if(ProcUtils::ShellExecAsync(cmd, &pid, this)) {
+        m_pid_commands.insert({ pid, CommandMetadata{ cmd, filepath, sink } });
     }
-
-    auto format_callback = [cmd, wd, filepath, inplace_formatter, sink]() {
-        // save the current directory
-        std::stringstream ss;
-        ss << std::this_thread::get_id();
-
-        clDirChanger cd{ wd };
-        clDEBUG() << "worker thread #" << ss.str() << "foramtting file:" << filepath << endl;
-        wxString output = ::wxShellExec(cmd, wxEmptyString);
-        clDEBUG() << "worker thread #" << ss.str() << "foramtting file:" << filepath << ".. done" << endl;
-
-        // notify the sink that formatting is done
-        clSourceFormatEvent event{ inplace_formatter ? wxEVT_FORMAT_INPLACE_COMPELTED : wxEVT_FORMAT_COMPELTED };
-        event.SetFormattedString(inplace_formatter ? "" : output);
-        event.SetFileName(filepath);
-        sink->QueueEvent(event.Clone());
-    };
-    m_concurrent.queue(std::move(format_callback));
 }
 
 bool GenericFormatter::DoFormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink,
@@ -130,11 +116,11 @@ bool GenericFormatter::DoFormatFile(const wxString& filepath, FileExtManager::Fi
 
     wxBusyCursor bc;
     if(sink) {
-        thread_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
+        async_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
+        return true;
     } else {
-        sync_format(cmd, wd, IsInplaceFormatter(), output);
+        return sync_format(cmd, wd, IsInplaceFormatter(), output);
     }
-    return true;
 }
 
 bool GenericFormatter::FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink)
@@ -162,7 +148,7 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;
 
-    thread_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
+    async_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
     return true;
 }
 
@@ -225,3 +211,34 @@ void GenericFormatter::SetCommandFromString(const wxString& command)
 wxString GenericFormatter::GetCommandWithComments() const { return get_command_with_desc(m_command, m_description); }
 
 void GenericFormatter::SetRemoteCommand(const wxString& cmd) { m_remote_command = cmd; }
+
+void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
+{
+    event.Skip();
+    if(m_pid_commands.count(event.GetPid()) == 0) {
+        clWARNING() << "Could not find command for process:" << event.GetPid() << endl;
+        return;
+    }
+
+    // remove the entry from the map
+    auto command_data = m_pid_commands[event.GetPid()];
+    m_pid_commands.erase(event.GetPid());
+
+    if(event.GetExitCode() != 0) {
+        wxString errmsg;
+        errmsg << _("Failed to format file: ") << command_data.m_filepath << "\n";
+        errmsg << _("Process: ") << command_data.m_command << "\n";
+        errmsg << _("Exit code: ") << event.GetExitCode() << "\n";
+        ::wxMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+        return;
+    }
+
+    // notify the sink that formatting is done
+    if(command_data.m_sink) {
+        clSourceFormatEvent format_completed_event{ IsInplaceFormatter() ? wxEVT_FORMAT_INPLACE_COMPELTED
+                                                                         : wxEVT_FORMAT_COMPELTED };
+        format_completed_event.SetFormattedString(IsInplaceFormatter() ? "" : event.GetOutput());
+        format_completed_event.SetFileName(command_data.m_filepath);
+        command_data.m_sink->QueueEvent(format_completed_event.Clone());
+    }
+}

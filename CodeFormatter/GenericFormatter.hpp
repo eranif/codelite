@@ -3,10 +3,25 @@
 
 #include "SourceFormatterBase.hpp"
 #include "clCodeLiteRemoteProcess.hpp"
-#include "clConcurrent.hpp"
+#include "procutils.h"
 
+#include <unordered_map>
 #include <vector>
 #include <wx/arrstr.h>
+
+struct CommandMetadata {
+    wxString m_command;
+    wxString m_filepath;
+    wxEvtHandler* m_sink = nullptr;
+
+    CommandMetadata() {}
+    CommandMetadata(const wxString& command, const wxString& filepath, wxEvtHandler* sink)
+        : m_command(command)
+        , m_filepath(filepath)
+        , m_sink(sink)
+    {
+    }
+};
 
 /// A formatter based on a simple command execution
 class GenericFormatter : public SourceFormatterBase
@@ -14,13 +29,15 @@ class GenericFormatter : public SourceFormatterBase
     wxArrayString m_command;
     wxString m_remote_command;
     wxString m_workingDirectory;
-    clConcurrent m_concurrent;
+    std::unordered_map<long, CommandMetadata> m_pid_commands;
 
 protected:
     bool DoFormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink,
                       wxString* output);
-    void thread_format(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
-                       wxEvtHandler* sink);
+    void async_format(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
+                      wxEvtHandler* sink);
+
+    void OnAsyncShellProcessTerminated(clShellProcessEvent& event);
 
 public:
     GenericFormatter();

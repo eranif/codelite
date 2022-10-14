@@ -32,8 +32,11 @@
 #endif
 
 #include "asyncprocess.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "processreaderthread.h"
 #include "procutils.h"
 #include "winprocess.h"
 #include "wx/tokenzr.h"
@@ -53,28 +56,31 @@
 
 #endif
 
-static wxString WrapWithShell(const wxString& cmd)
+//-------------------------------------------------------------------
+// clShellProcessEvent
+//-------------------------------------------------------------------
+wxDEFINE_EVENT(wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, clShellProcessEvent);
+clShellProcessEvent::clShellProcessEvent(const clShellProcessEvent& event) { *this = event; }
+
+clShellProcessEvent::clShellProcessEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
 {
-    wxString command;
-#ifdef __WXMSW__
-    wxChar* shell = wxGetenv(wxT("COMSPEC"));
-    if(!shell)
-        shell = (wxChar*)wxT("CMD.EXE");
-    command << shell << wxT(" /C ");
-    if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
-        command << "\"" << cmd << "\"";
-    } else {
-        command << cmd;
-    }
-#else
-    command << wxT("/bin/sh -c '");
-    wxString tmpcmd = cmd;
-    // escape any single quoutes
-    tmpcmd.Replace("'", "\\'");
-    command << tmpcmd << wxT("'");
-#endif
-    return command;
 }
+
+clShellProcessEvent::~clShellProcessEvent() {}
+
+clShellProcessEvent& clShellProcessEvent::operator=(const clShellProcessEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_pid = src.m_pid;
+    m_exitCode = src.m_exitCode;
+    m_output = src.m_output;
+    return *this;
+}
+
+//-------------------------------------------------------------------
+// clShellProcessEvent
+//-------------------------------------------------------------------
 
 ProcUtils::ProcUtils() {}
 
@@ -155,7 +161,7 @@ PidVec_t ProcUtils::PS(const wxString& name)
     PID_COL = 0;
     MIN_COLUMNS_NUMBER = 5;
 #endif
-    command = WrapWithShell(command);
+    command = WrapInShell(command);
 
     wxString processOutput;
     IProcess::Ptr_t p(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
@@ -632,4 +638,96 @@ wxString ProcUtils::GrepCommandOutput(const std::vector<wxString>& cmd, const wx
         }
     }
     return wxEmptyString;
+}
+
+namespace
+{
+class ProcessHelper : public wxProcess
+{
+    wxEvtHandler* m_handler = nullptr;
+    wxString m_output_file;
+    wxString m_process_output;
+
+private:
+    void ReadOutput()
+    {
+        FileUtils::Deleter d{ m_output_file };
+        FileUtils::ReadFileContent(m_output_file, m_process_output);
+    }
+
+public:
+    ProcessHelper(wxEvtHandler* sink, const wxString& output_file)
+        : m_handler(sink)
+        , m_output_file(output_file)
+    {
+    }
+    virtual ~ProcessHelper() {}
+
+    // Notify about the process termination
+    void OnTerminate(int pid, int status) override
+    {
+        if(status == 0) {
+            ReadOutput();
+        }
+
+        clShellProcessEvent event_terminated{ wxEVT_SHELL_ASYNC_PROCESS_TERMINATED };
+        event_terminated.SetPid(pid);
+        event_terminated.SetExitCode(status);
+        event_terminated.SetOutput(m_process_output);
+        m_handler->QueueEvent(event_terminated.Clone());
+        delete this;
+    }
+};
+} // namespace
+
+bool ProcUtils::ShellExecAsync(const wxString& command, long* pid, wxEvtHandler* sink)
+{
+    wxString filename = wxFileName::CreateTempFileName("clTempFile");
+    wxString theCommand = wxString::Format("%s > \"%s\" 2>&1", command, filename);
+    WrapInShell(theCommand);
+    long rc = ::wxExecute(theCommand, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE, new ProcessHelper(sink, filename), nullptr);
+    if(rc > 0) {
+        *pid = rc;
+    }
+    return rc > 0;
+}
+
+int ProcUtils::ShellExecSync(const wxString& command, wxString* output)
+{
+    wxString filename = wxFileName::CreateTempFileName("clTempFile");
+    wxString theCommand = wxString::Format("%s > \"%s\" 2>&1", command, filename);
+    WrapInShell(theCommand);
+
+    wxArrayString out;
+    wxArrayString err;
+    int exit_code = ::wxExecute(theCommand, out, err, wxEXEC_SYNC | wxEXEC_HIDE_CONSOLE);
+
+    // read the process output and return it
+    FileUtils::Deleter d{ filename };
+    FileUtils::ReadFileContent(filename, *output);
+    return exit_code;
+}
+
+wxString& ProcUtils::WrapInShell(wxString& cmd)
+{
+    wxString command;
+#ifdef __WXMSW__
+    wxString shell = wxGetenv("COMSPEC");
+    if(shell.IsEmpty()) {
+        shell = "CMD.EXE";
+    }
+    command << shell << " /C ";
+    if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
+        command << "\"" << cmd << "\"";
+    } else {
+        command << cmd;
+    }
+#else
+    command << "/bin/sh -c '";
+    // escape any single quoutes
+    cmd.Replace("'", "\\'");
+    command << cmd << "'";
+#endif
+    cmd.swap(command);
+    return cmd;
 }

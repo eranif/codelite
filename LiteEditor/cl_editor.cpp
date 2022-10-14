@@ -95,7 +95,7 @@
 #include <wx/wupdlock.h>
 #include <wx/wxcrt.h>
 
-//#include "clFileOrFolderDropTarget.h"
+// #include "clFileOrFolderDropTarget.h"
 
 #if wxUSE_PRINTING_ARCHITECTURE
 #include "wx/paper.h"
@@ -1721,7 +1721,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     {
         // Notify about file being saved
         clCommandEvent beforeSaveEvent(wxEVT_BEFORE_EDITOR_SAVE);
-        beforeSaveEvent.SetFileName(fileName.GetFullPath());
+        beforeSaveEvent.SetFileName(GetRemotePathOrLocal());
         EventNotifier::Get()->ProcessEvent(beforeSaveEvent);
 
         if(!beforeSaveEvent.IsAllowed()) {
@@ -1863,7 +1863,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     }
 
     // Fire a wxEVT_FILE_SAVED event
-    EventNotifier::Get()->PostFileSavedEvent(fileName.GetFullPath());
+    EventNotifier::Get()->PostFileSavedEvent(GetRemotePathOrLocal());
     return true;
 }
 

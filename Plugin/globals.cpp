@@ -1212,41 +1212,7 @@ wxString wxImplode(const wxArrayString& arr, const wxString& glue)
     return str;
 }
 
-wxString wxShellExec(const wxString& cmd, const wxString& projectName)
-{
-    wxString filename = wxFileName::CreateTempFileName("clTempFile");
-    wxString theCommand = wxString::Format("%s > \"%s\" 2>&1", cmd.c_str(), filename.c_str());
-    WrapInShell(theCommand);
-
-    wxArrayString dummy;
-    EnvSetter es(NULL, NULL, projectName, wxEmptyString);
-    theCommand = EnvironmentConfig::Instance()->ExpandVariables(theCommand, false);
-    ProcUtils::SafeExecuteCommand(theCommand, dummy);
-
-    wxString content;
-    wxFFile fp(filename, "r");
-    if(fp.IsOpened()) {
-        fp.ReadAll(&content);
-    }
-    fp.Close();
-    clRemoveFile(filename);
-    return content;
-}
-
-bool wxIsFileSymlink(const wxFileName& filename)
-{
-#ifdef __WXMSW__
-    return false;
-#else
-    wxCharBuffer cb = filename.GetFullPath().mb_str(wxConvUTF8).data();
-    struct stat stat_buff;
-    // use lstat() otherwise, stat() will follow the actual file
-    if(::lstat(cb.data(), &stat_buff) < 0) {
-        return false;
-    }
-    return S_ISLNK(stat_buff.st_mode);
-#endif
-}
+bool wxIsFileSymlink(const wxFileName& filename) { return FileUtils::IsSymlink(filename); }
 
 wxFileName wxReadLink(const wxFileName& filename)
 {

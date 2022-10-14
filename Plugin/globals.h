@@ -319,11 +319,6 @@ WXDLLIMPEXP_SDK bool MakeRelativeIfSensible(wxFileName& fn, const wxString& refe
 WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString& arr, const wxString& glue = "\n");
 
 /**
- * @brief executes a command under the proper shell and return string as the output
- */
-WXDLLIMPEXP_SDK wxString wxShellExec(const wxString& cmd, const wxString& projectName);
-
-/**
  * @class StringManager
  * @brief Stores unlocalised strings for serialisation, while managing localised ones in the gui
  */
@@ -675,7 +670,6 @@ WXDLLIMPEXP_SDK bool clIsWaylandSession();
 /**
  * @brief get list of file types from the user
  */
-WXDLLIMPEXP_SDK bool clShowFileTypeSelectionDialog(wxWindow* parent,
-                                                   const wxArrayString& initial_selection,
+WXDLLIMPEXP_SDK bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initial_selection,
                                                    wxArrayString* selected);
 #endif // GLOBALS_H

@@ -74,7 +74,9 @@ bool write_file_content(const wxFileName& fn, const wxString& content, const wxM
     }
 }
 
+#ifndef __WXMSW__
 const char ELF_STR[] = { 0x7f, 'E', 'L', 'F' };
+#endif
 } // namespace
 
 void FileUtils::OpenFileExplorer(const wxString& path)

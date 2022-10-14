@@ -35,7 +35,7 @@ enum class FormatterFlags {
 wxDECLARE_EVENT(wxEVT_FORMAT_COMPELTED, clSourceFormatEvent);
 wxDECLARE_EVENT(wxEVT_FORMAT_INPLACE_COMPELTED, clSourceFormatEvent);
 
-class SourceFormatterBase
+class SourceFormatterBase : public wxEvtHandler
 {
 protected:
     wxArrayString m_languages;

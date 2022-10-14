@@ -78,10 +78,9 @@ public:
     void SetInplaceFormatter(bool b) { SetFlag(FormatterFlags::INPLACE_EDIT, b); }
     bool IsInplaceFormatter() const { return HasFlag(FormatterFlags::INPLACE_EDIT); }
 
-    virtual bool FormatFile(const wxFileName& file_path, FileExtManager::FileType file_type, wxEvtHandler* sink) = 0;
-    virtual bool FormatFile(const wxString& file_path, FileExtManager::FileType file_type, wxEvtHandler* sink) = 0;
-    virtual bool FormatRemoteFile(const wxString& file_path, FileExtManager::FileType file_type,
-                                  wxEvtHandler* sink) = 0;
+    virtual bool FormatFile(const wxFileName& file_path, wxEvtHandler* sink) = 0;
+    virtual bool FormatFile(const wxString& file_path, wxEvtHandler* sink) = 0;
+    virtual bool FormatRemoteFile(const wxString& file_path, wxEvtHandler* sink) = 0;
     virtual bool FormatString(const wxString& content, const wxString& fullpath, wxString* output) = 0;
 
     void SetFileTypes(const std::vector<FileExtManager::FileType>& types);

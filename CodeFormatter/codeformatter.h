@@ -42,6 +42,8 @@ protected:
     wxString m_selectedFolder;
 
 private:
+    std::shared_ptr<GenericFormatter> FindFormatter(const wxString& filepath,
+                                                    const wxString& content = wxEmptyString) const;
     bool DoFormatFile(const wxString& fileName, bool is_remote_format);
     bool DoFormatString(const wxString& content, const wxString& fileName, wxString* output);
     bool DoFormatEditor(IEditor* editor);

@@ -207,13 +207,36 @@ void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
     CHECK_PTR_RET(editor);
     DoFormatEditor(editor);
 }
+std::shared_ptr<GenericFormatter> CodeFormatter::FindFormatter(const wxString& filepath, const wxString& content) const
+{
+    if(wxFileName(filepath).GetExt().IsEmpty()) {
+        // detect by content
+        if(!content.empty()) {
+            // we got content, use it
+            return m_manager.GetFormatterByContent(content);
+        } else if(wxFileName::FileExists(filepath)) {
+            // No content provided, but the file is a local file
+            // read the content and try again
+            wxString buffer;
+            if(FileUtils::ReadBufferFromFile(filepath, buffer, 4000)) {
+                return m_manager.GetFormatterByContent(content);
+            }
+        }
+    } else {
+        // extension
+        return m_manager.GetFormatter(filepath);
+    }
+
+    // if we reached here, we could not determine the proper formatter to use
+    return nullptr;
+}
 
 bool CodeFormatter::DoFormatEditor(IEditor* editor)
 {
     // sanity
     CHECK_PTR_RET_FALSE(editor);
     bool is_remote = editor->IsRemoteFile();
-    auto f = m_manager.GetFormatter(editor->GetRemotePathOrLocal());
+    auto f = FindFormatter(editor->GetRemotePathOrLocal(), editor->GetEditorText());
     if(!f) {
         return false;
     }
@@ -228,9 +251,9 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     }
 
     if(is_remote) {
-        return f->FormatRemoteFile(file_path, FileExtManager::GetType(file_path), this);
+        return f->FormatRemoteFile(file_path, this);
     } else {
-        return f->FormatFile(file_path, FileExtManager::GetType(file_path), this);
+        return f->FormatFile(file_path, this);
     }
 }
 
@@ -240,7 +263,7 @@ bool CodeFormatter::DoFormatString(const wxString& content, const wxString& file
         return false;
     }
 
-    auto formatter = m_manager.GetFormatter(fileName);
+    auto formatter = FindFormatter(fileName, content);
     if(!formatter) {
         clDEBUG() << "Could not find suitable formatter for file:" << fileName << endl;
         return false;
@@ -257,16 +280,16 @@ void CodeFormatter::ReloadCurrentEditor()
 
 bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format)
 {
-    auto f = m_manager.GetFormatter(fileName);
+    auto f = FindFormatter(fileName);
     if(!f) {
         clDEBUG() << "Could not find suitable formatter for file:" << fileName << endl;
         return false;
     }
 
     if(is_remote_format) {
-        return f->FormatRemoteFile(fileName, FileExtManager::GetType(fileName), this);
+        return f->FormatRemoteFile(fileName, this);
     } else {
-        return f->FormatFile(fileName, FileExtManager::GetType(fileName), this);
+        return f->FormatFile(fileName, this);
     }
 }
 
@@ -482,7 +505,7 @@ void CodeFormatter::OnFileSaved(clCommandEvent& e)
     e.Skip();
 
     // Check that we can handle this file
-    auto f = m_manager.GetFormatter(e.GetFileName());
+    auto f = FindFormatter(e.GetFileName());
     CHECK_PTR_RET(f);
 
     // Find the editor and format it

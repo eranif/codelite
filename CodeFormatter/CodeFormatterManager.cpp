@@ -2,6 +2,7 @@
 
 #include "JSON.h"
 #include "cl_standard_paths.h"
+#include "file_logger.h"
 #include "fmtBlack.hpp"
 #include "fmtClangFormat.hpp"
 #include "fmtJQ.hpp"
@@ -115,6 +116,21 @@ bool CodeFormatterManager::CanFormat(const wxString& filepath) const
     return false;
 }
 
+bool CodeFormatterManager::CanFormatByContent(const wxString& content) const
+{
+    FileExtManager::FileType file_type;
+    if(!FileExtManager::GetContentType(content, file_type)) {
+        return false;
+    }
+
+    for(auto f : m_formatters) {
+        if(f->IsEnabled() && f->CanHandle(file_type)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void CodeFormatterManager::RestoreDefaults()
 {
     clear();
@@ -126,4 +142,19 @@ void CodeFormatterManager::ClearRemoteCommands()
     for(auto f : m_formatters) {
         f->SetRemoteCommand(wxEmptyString);
     }
+}
+
+std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatterByContent(const wxString& content) const
+{
+    FileExtManager::FileType type;
+    if(!FileExtManager::GetContentType(content, type)) {
+        return nullptr;
+    }
+
+    for(auto f : m_formatters) {
+        if(f->IsEnabled() && f->CanHandle(type)) {
+            return f;
+        }
+    }
+    return nullptr;
 }

@@ -643,7 +643,7 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
             return eParseThreadCallbackRC::RC_SUCCESS;
         };
         clDEBUG() << "Pushing parse request to worker thread" << endl;
-        m_parse_thread.queue_parse_request(move(buffer_parse_task));
+        m_parse_thread.queue_parse_request(std::move(buffer_parse_task));
 
         // parse the files included by this file
         if(!new_includes.empty()) {
@@ -654,7 +654,7 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
                 clDEBUG() << "on_did_change(): parsing header files ... Success" << endl;
                 return eParseThreadCallbackRC::RC_SUCCESS;
             };
-            m_parse_thread.queue_parse_request(move(headers_parse_task));
+            m_parse_thread.queue_parse_request(std::move(headers_parse_task));
         }
     } else {
         clDEBUG() << "No real change detected. Will not re-parse the file" << endl;
@@ -887,7 +887,7 @@ void ProtocolHandler::on_did_save(std::unique_ptr<JSON>&& msg, Channel::ptr_t ch
         return eParseThreadCallbackRC::RC_SUCCESS;
     };
 
-    m_parse_thread.queue_parse_request(move(task));
+    m_parse_thread.queue_parse_request(std::move(task));
     TagsManagerST::Get()->GetDatabase()->ClearCache();
 
     // clear the cached "using namespace"
@@ -1230,7 +1230,7 @@ void ProtocolHandler::on_hover(std::unique_ptr<JSON>&& msg, Channel::ptr_t chann
     clDEBUG1() << json.format() << endl;
 
     std::vector<TagEntryPtr> tags;
-    do_find_definition_tags(move(msg), channel, true, tags, nullptr);
+    do_find_definition_tags(std::move(msg), channel, true, tags, nullptr);
 
     // format tip from tag
     std::vector<TagEntryPtr> function_tag_arr;
@@ -1427,7 +1427,7 @@ void ProtocolHandler::do_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     std::vector<TagEntryPtr> tags;
     wxString file_match;
     size_t id = msg->toElement()["id"].toSize_t();
-    do_find_definition_tags(move(msg), channel, try_definition_first, tags, &file_match);
+    do_find_definition_tags(std::move(msg), channel, try_definition_first, tags, &file_match);
 
     // build the result
     JSON root(cJSON_Object);
@@ -1471,12 +1471,12 @@ void ProtocolHandler::do_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
 
 void ProtocolHandler::on_declaration(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
-    do_definition(move(msg), channel, false);
+    do_definition(std::move(msg), channel, false);
 }
 
 void ProtocolHandler::on_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
-    do_definition(move(msg), channel, true);
+    do_definition(std::move(msg), channel, true);
 }
 
 wxArrayString ProtocolHandler::FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const

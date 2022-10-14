@@ -32,8 +32,7 @@ class GenericFormatter : public SourceFormatterBase
     std::unordered_map<long, CommandMetadata> m_pid_commands;
 
 protected:
-    bool DoFormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink,
-                      wxString* output);
+    bool DoFormatFile(const wxString& filepath, wxEvtHandler* sink, wxString* output);
     void async_format(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
                       wxEvtHandler* sink);
 
@@ -46,9 +45,9 @@ public:
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON() const override;
 
-    bool FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) override;
-    bool FormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) override;
-    bool FormatRemoteFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) override;
+    bool FormatFile(const wxFileName& filepath, wxEvtHandler* sink) override;
+    bool FormatFile(const wxString& filepath, wxEvtHandler* sink) override;
+    bool FormatRemoteFile(const wxString& filepath, wxEvtHandler* sink) override;
     bool FormatString(const wxString& content, const wxString& fullpath, wxString* output) override;
 
     bool CanHandleRemoteFile() const { return !m_remote_command.empty(); }

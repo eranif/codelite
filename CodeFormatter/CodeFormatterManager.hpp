@@ -22,10 +22,13 @@ public:
 
     std::shared_ptr<GenericFormatter> GetFormatter(const wxString& filepath) const;
     std::shared_ptr<GenericFormatter> GetFormatterByName(const wxString& name) const;
+    std::shared_ptr<GenericFormatter> GetFormatterByContent(const wxString& content) const;
     size_t GetAllNames(wxArrayString* names) const;
 
     // do we have a formatter that can handle `filepath`?
     bool CanFormat(const wxString& filepath) const;
+    // can we format this content?
+    bool CanFormatByContent(const wxString& content) const;
 
     // serialization API
     void Load();

@@ -98,13 +98,8 @@ void GenericFormatter::async_format(const wxString& cmd, const wxString& wd, con
     }
 }
 
-bool GenericFormatter::DoFormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink,
-                                    wxString* output)
+bool GenericFormatter::DoFormatFile(const wxString& filepath, wxEvtHandler* sink, wxString* output)
 {
-    if(!CanHandle(file_type)) {
-        return false;
-    }
-
     // Create a copy
     wxString cmd = GetCommandAsString();
 
@@ -123,18 +118,13 @@ bool GenericFormatter::DoFormatFile(const wxString& filepath, FileExtManager::Fi
     }
 }
 
-bool GenericFormatter::FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink)
+bool GenericFormatter::FormatFile(const wxFileName& filepath, wxEvtHandler* sink)
 {
-    return FormatFile(filepath.GetFullPath(), file_type, sink);
+    return FormatFile(filepath.GetFullPath(), sink);
 }
 
-bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager::FileType file_type,
-                                        wxEvtHandler* sink)
+bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* sink)
 {
-    if(!CanHandle(file_type)) {
-        return false;
-    }
-
     if(!CanHandleRemoteFile()) {
         return false;
     }
@@ -152,9 +142,9 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager
     return true;
 }
 
-bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink)
+bool GenericFormatter::FormatFile(const wxString& filepath, wxEvtHandler* sink)
 {
-    return DoFormatFile(filepath, file_type, sink, nullptr);
+    return DoFormatFile(filepath, sink, nullptr);
 }
 
 bool GenericFormatter::FormatString(const wxString& content, const wxString& fullpath, wxString* output)
@@ -175,7 +165,7 @@ bool GenericFormatter::FormatString(const wxString& content, const wxString& ful
         return false;
     }
 
-    if(!DoFormatFile(tmpfile.GetFullPath(), file_type, nullptr, output)) {
+    if(!DoFormatFile(tmpfile.GetFullPath(), nullptr, output)) {
         return false;
     }
 

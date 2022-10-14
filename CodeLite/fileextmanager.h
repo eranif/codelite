@@ -153,6 +153,10 @@ public:
      * @brief attempt to autodetect the file type by examining its content
      */
     static bool AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType);
+    /**
+     * @brief given input string, return the content type
+     */
+    static bool GetContentType(const wxString& string_content, FileExtManager::FileType& fileType);
 
     /**
      * @brief return the file type only by checking its extension

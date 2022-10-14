@@ -38,15 +38,17 @@ with the commands taken from [`codelite-remote.json`][2] configuration file.
     Python | black | `pip install black --upgrade`
     Rust | rustfmt | `pacman -Sy mingw-w64-clang-x86_64-rust`
     Xml | xmllint | `pacman -Sy mingw-w64-clang-x86_64-libxml2`
+    Yaml | yq | `wget https://github.com/mikefarah/yq/releases/download/v4.28.1/yq_windows_amd64.exe|mv yq_windows_amd64.exe /usr/bin/yq.exe`
 
 === "Ubuntu"
     Language | Tool name | Command to install
     --------|-------------|-----------------------
-    C/C++ | clang-format| `sudo apt-get install clang-tools-12`
+    C/C++ | clang-format| `brew install llvm`
     JSON | jq| `sudo apt-get install jq`
     Python | black | `pip install black --upgrade`
     Rust | rustfmt | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
     Xml | xmllint | `sudo apt-get install libxml2-utils`
+    Yaml | yq | `brew install yq`
 
 === "macOS"
     Language | Tool name | Command to install
@@ -56,6 +58,7 @@ with the commands taken from [`codelite-remote.json`][2] configuration file.
     Python | black | `pip install black --upgrade`
     Rust | rustfmt | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
     Xml | xmllint | Already installed
+    Yaml | yq | `brew install yq`
 
  [1]: /plugins/remoty
  [2]: /plugins/remoty/#remote-configuration-codelite-remotejson

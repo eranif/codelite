@@ -17,9 +17,7 @@ pacman -Sy git                                  \
            mingw-w64-clang-x86_64-python3       \
            mingw-w64-clang-x86_64-cmake         \
            mingw-w64-clang-x86_64-libffi        \
-           # JSON file formatter                \
            mingw-w64-clang-x86_64-jq            \
-           # xml formatter                      \
            mingw-w64-clang-x86_64-libxml2       \
            unzip
 ```
@@ -62,11 +60,18 @@ rm -f /tmp/get-pip.py
 # Python code completion provider
 /clang64/bin/python3 -m pip install python-lsp-server --upgrade
 
-# Python formatter tool 
+# Python formatter tool
 /clang64/bin/python3 -m pip install black --upgrade
 
 # Python debugger
 /clang64/bin/python3 -m pip install debugpy --upgrade
+```
+
+### Rust
+
+```bash
+# installs cargo, rustfmt, clippy etc
+pacman -S mingw-w64-clang-x86_64-rust
 ```
 
 [2]: https://www.msys2.org/#installation

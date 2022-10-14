@@ -105,7 +105,7 @@ void GenericFormatter::thread_format(const wxString& cmd, const wxString& wd, co
 
         // notify the sink that formatting is done
         clSourceFormatEvent event{ inplace_formatter ? wxEVT_FORMAT_INPLACE_COMPELTED : wxEVT_FORMAT_COMPELTED };
-        event.SetFormattedString(inplace_formatter ? wxEmptyString : output);
+        event.SetFormattedString(inplace_formatter ? "" : output);
         event.SetFileName(filepath);
         sink->QueueEvent(event.Clone());
     };

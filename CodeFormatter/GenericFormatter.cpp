@@ -11,6 +11,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "imanager.h"
 #include "macromanager.h"
 #include "procutils.h"
 #include "workspace.h"
@@ -216,10 +217,8 @@ void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
 
     if(event.GetExitCode() != 0) {
         wxString errmsg;
-        errmsg << _("Failed to format file: ") << command_data.m_filepath << "\n";
-        errmsg << _("Process: ") << command_data.m_command << "\n";
-        errmsg << _("Exit code: ") << event.GetExitCode() << "\n";
-        ::wxMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+        errmsg << wxT("\u26A0") << _(" format error. Process exit code: ") << event.GetExitCode();
+        clGetManager()->SetStatusMessage(errmsg, 3);
         return;
     }
 

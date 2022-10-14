@@ -78,13 +78,11 @@ public:
     void SetInplaceFormatter(bool b) { SetFlag(FormatterFlags::INPLACE_EDIT, b); }
     bool IsInplaceFormatter() const { return HasFlag(FormatterFlags::INPLACE_EDIT); }
 
-    virtual bool FormatFile(const wxFileName& file_path, FileExtManager::FileType file_type,
-                            wxEvtHandler* sink) const = 0;
-    virtual bool FormatFile(const wxString& file_path, FileExtManager::FileType file_type,
-                            wxEvtHandler* sink) const = 0;
+    virtual bool FormatFile(const wxFileName& file_path, FileExtManager::FileType file_type, wxEvtHandler* sink) = 0;
+    virtual bool FormatFile(const wxString& file_path, FileExtManager::FileType file_type, wxEvtHandler* sink) = 0;
     virtual bool FormatRemoteFile(const wxString& file_path, FileExtManager::FileType file_type,
-                                  wxEvtHandler* sink) const = 0;
-    virtual bool FormatString(const wxString& content, const wxString& fullpath, wxString* output) const = 0;
+                                  wxEvtHandler* sink) = 0;
+    virtual bool FormatString(const wxString& content, const wxString& fullpath, wxString* output) = 0;
 
     void SetFileTypes(const std::vector<FileExtManager::FileType>& types);
     void SetLanguages(const wxArrayString& langs) { m_languages = langs; }

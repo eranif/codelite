@@ -15,7 +15,9 @@
 #include "procutils.h"
 #include "workspace.h"
 
+#include <sstream>
 #include <thread>
+
 namespace
 {
 wxString join_array(const wxArrayString& arr)
@@ -56,26 +58,6 @@ wxString get_command_with_desc(const wxArrayString& command_arr, const wxString&
     return command;
 }
 
-/**
- * @brief format source file using background thread, when the formatting is done, fire an event to the sink object
- */
-void thread_format(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
-                   wxEvtHandler* sink)
-{
-    std::thread thr([cmd, wd, filepath, inplace_formatter, sink]() {
-        // save the current directory
-        clDirChanger cd{ wd };
-        wxString output = ::wxShellExec(cmd, wxEmptyString);
-
-        // notify the sink that formatting is done
-        clSourceFormatEvent event{ inplace_formatter ? wxEVT_FORMAT_INPLACE_COMPELTED : wxEVT_FORMAT_COMPELTED };
-        event.SetFormattedString(inplace_formatter ? wxEmptyString : output);
-        event.SetFileName(filepath);
-        sink->QueueEvent(event.Clone());
-    });
-    thr.detach();
-}
-
 void sync_format(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output)
 {
     // save the current directory
@@ -90,14 +72,48 @@ void sync_format(const wxString& cmd, const wxString& wd, bool inplace_formatter
 
 } // namespace
 
-GenericFormatter::GenericFormatter() { SetWorkingDirectory("$(WorkspacePath)"); }
+GenericFormatter::GenericFormatter()
+{
+    SetWorkingDirectory("$(WorkspacePath)");
+    m_concurrent.set_pool_size(5);
+}
 
-GenericFormatter::~GenericFormatter() {}
+GenericFormatter::~GenericFormatter() { m_concurrent.shutdown(); }
 
 wxString GenericFormatter::GetCommandAsString() const { return join_array(m_command); }
 
+/**
+ * @brief format source file using background thread, when the formatting is done, fire an event to the sink object
+ */
+void GenericFormatter::thread_format(const wxString& cmd, const wxString& wd, const wxString& filepath,
+                                     bool inplace_formatter, wxEvtHandler* sink)
+{
+    // ensure the pool is running
+    if(!m_concurrent.is_running()) {
+        m_concurrent.run();
+    }
+
+    auto format_callback = [cmd, wd, filepath, inplace_formatter, sink]() {
+        // save the current directory
+        std::stringstream ss;
+        ss << std::this_thread::get_id();
+
+        clDirChanger cd{ wd };
+        clDEBUG() << "worker thread #" << ss.str() << "foramtting file:" << filepath << endl;
+        wxString output = ::wxShellExec(cmd, wxEmptyString);
+        clDEBUG() << "worker thread #" << ss.str() << "foramtting file:" << filepath << ".. done" << endl;
+
+        // notify the sink that formatting is done
+        clSourceFormatEvent event{ inplace_formatter ? wxEVT_FORMAT_INPLACE_COMPELTED : wxEVT_FORMAT_COMPELTED };
+        event.SetFormattedString(inplace_formatter ? wxEmptyString : output);
+        event.SetFileName(filepath);
+        sink->QueueEvent(event.Clone());
+    };
+    m_concurrent.queue(std::move(format_callback));
+}
+
 bool GenericFormatter::DoFormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink,
-                                    wxString* output) const
+                                    wxString* output)
 {
     if(!CanHandle(file_type)) {
         return false;
@@ -121,14 +137,13 @@ bool GenericFormatter::DoFormatFile(const wxString& filepath, FileExtManager::Fi
     return true;
 }
 
-bool GenericFormatter::FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type,
-                                  wxEvtHandler* sink) const
+bool GenericFormatter::FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink)
 {
     return FormatFile(filepath.GetFullPath(), file_type, sink);
 }
 
 bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager::FileType file_type,
-                                        wxEvtHandler* sink) const
+                                        wxEvtHandler* sink)
 {
     if(!CanHandle(file_type)) {
         return false;
@@ -151,13 +166,12 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, FileExtManager
     return true;
 }
 
-bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::FileType file_type,
-                                  wxEvtHandler* sink) const
+bool GenericFormatter::FormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink)
 {
     return DoFormatFile(filepath, file_type, sink, nullptr);
 }
 
-bool GenericFormatter::FormatString(const wxString& content, const wxString& fullpath, wxString* output) const
+bool GenericFormatter::FormatString(const wxString& content, const wxString& fullpath, wxString* output)
 {
     auto file_type = FileExtManager::GetType(fullpath);
     if(!CanHandle(file_type)) {

@@ -150,6 +150,8 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="clConcurrent.cpp"/>
+    <File Name="clConcurrent.hpp"/>
     <File Name="clVersionString.hpp"/>
     <File Name="clVersionString.cpp"/>
     <File Name="clBitset.cpp"/>

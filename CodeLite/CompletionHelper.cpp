@@ -953,7 +953,6 @@ bool CompletionHelper::is_include_statement(const wxString& f_content, wxString*
     }
 
     wxString line = f_content.Mid(i);
-    clDEBUG() << "Checking line:" << line << "for #include statement..." << endl;
     return is_line_include_statement(line, file_name, suffix);
 }
 

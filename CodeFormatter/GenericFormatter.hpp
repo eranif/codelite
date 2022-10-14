@@ -3,6 +3,7 @@
 
 #include "SourceFormatterBase.hpp"
 #include "clCodeLiteRemoteProcess.hpp"
+#include "clConcurrent.hpp"
 
 #include <vector>
 #include <wx/arrstr.h>
@@ -13,10 +14,13 @@ class GenericFormatter : public SourceFormatterBase
     wxArrayString m_command;
     wxString m_remote_command;
     wxString m_workingDirectory;
+    clConcurrent m_concurrent;
 
 protected:
     bool DoFormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink,
-                      wxString* output) const;
+                      wxString* output);
+    void thread_format(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
+                       wxEvtHandler* sink);
 
 public:
     GenericFormatter();
@@ -25,21 +29,13 @@ public:
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON() const override;
 
-    bool FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) const override;
-    bool FormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) const override;
-    bool FormatRemoteFile(const wxString& filepath, FileExtManager::FileType file_type,
-                          wxEvtHandler* sink) const override;
+    bool FormatFile(const wxFileName& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) override;
+    bool FormatFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) override;
+    bool FormatRemoteFile(const wxString& filepath, FileExtManager::FileType file_type, wxEvtHandler* sink) override;
+    bool FormatString(const wxString& content, const wxString& fullpath, wxString* output) override;
 
     bool CanHandleRemoteFile() const { return !m_remote_command.empty(); }
     void SetRemoteCommand(const wxString& cmd);
-
-    /**
-     * @brief format `content`
-     * @param content string to format
-     * @param fullpath the content's fullpath. the formatter uses this to determine the content type
-     * @param output [out]
-     */
-    bool FormatString(const wxString& content, const wxString& fullpath, wxString* output) const override;
 
     void SetCommand(const wxArrayString& command) { this->m_command = command; }
     void SetCommand(const std::vector<wxString>& command);

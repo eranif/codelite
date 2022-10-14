@@ -90,7 +90,6 @@ bool dec_save_count_if_needed(const wxString& filepath)
         return false;
     }
 
-    clSYSTEM() << "reducing save count for file:" << filepath << endl;
     // we caused this event, reduce the file reference count
     // and return
     ignore_map[filepath] -= 1;
@@ -220,7 +219,6 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
 {
     // sanity
     CHECK_PTR_RET_FALSE(editor);
-
     bool is_remote = editor->IsRemoteFile();
     auto f = m_manager.GetFormatter(editor->GetRemotePathOrLocal());
     if(!f) {
@@ -229,6 +227,13 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
 
     wxString output;
     wxString file_path = editor->GetRemotePathOrLocal();
+
+    // save the file formatting it
+    if(editor->IsEditorModified()) {
+        editor->Save();
+        inc_save_count(file_path);
+    }
+
     bool res = false;
     if(is_remote) {
         return f->FormatRemoteFile(file_path, FileExtManager::GetType(file_path), this);
@@ -409,28 +414,27 @@ void CodeFormatter::BatchFormat(const std::vector<wxString>& files, bool silent)
         return;
     }
 
-    wxProgressDialog* dlg = nullptr;
     if(!silent) {
         wxString msg;
         msg << _("You are about to beautify ") << files.size() << _(" files\nContinue?");
         if(wxYES != ::wxMessageBox(msg, _("Source Code Formatter"), wxYES_NO | wxCANCEL | wxCENTER)) {
             return;
         }
-
-        dlg = new wxProgressDialog(_("Source Code Formatter"), _("Formatting files..."), (int)files.size(),
-                                   m_mgr->GetTheApp()->GetTopWindow());
     }
+
     for(size_t i = 0; i < files.size(); ++i) {
         wxString msg;
-        msg << "[ " << i << " / " << files.size() << " ] " << files[i];
-        if(dlg) {
-            dlg->Update(i, msg);
+        msg << "Formatting file: " << (i + 1) << "/" << files.size() << " " << files[i];
+        if(!silent) {
+            clGetManager()->SetStatusMessage(msg, 1);
+            wxSafeYield();
         }
         DoFormatFile(files[i], false);
     }
 
-    if(dlg) {
-        dlg->Destroy();
+    if(!silent) {
+        clGetManager()->SetStatusMessage(wxString() << _("Successfully formatted ") << files.size() << _(" files"), 3);
+        wxSafeYield();
     }
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 }
@@ -500,16 +504,13 @@ void CodeFormatter::OnFileSaved(clCommandEvent& e)
     }
 
     // did we cause the OnSave event?
-    clSYSTEM() << "Format-On-Save:" << filepath << endl;
     if(dec_save_count_if_needed(filepath)) {
         return;
     }
 
-    clSYSTEM() << "Formatting..." << endl;
     if(!DoFormatEditor(editor)) {
         return;
     }
-    clSYSTEM() << "Formatting...done" << endl;
 }
 
 void CodeFormatter::OnFormatCompleted(clSourceFormatEvent& event)

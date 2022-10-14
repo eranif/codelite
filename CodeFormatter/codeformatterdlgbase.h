@@ -35,8 +35,8 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-#include "formatoptions.h"
 #include "PHPFormatterBuffer.h"
+
 // clang-format on
 
 class CodeFormatterBaseDlg : public wxDialog

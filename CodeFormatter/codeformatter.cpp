@@ -82,10 +82,7 @@ JSONItem json_get_formatter_object(JSON* root, const wxString& formatter_name)
     }
     return JSONItem{ nullptr };
 }
-} // namespace
 
-namespace
-{
 thread_local std::unordered_map<wxString, size_t> ignore_map;
 bool dec_save_count_if_needed(const wxString& filepath)
 {

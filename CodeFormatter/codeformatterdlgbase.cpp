@@ -7,7 +7,6 @@
 #include "codeformatterdlgbase.h"
 
 #include "PHPFormatterBuffer.h"
-#include "formatoptions.h"
 
 // Declare the bitmap loading function
 extern void wxCrafterGgLOZbInitBitmapResources();

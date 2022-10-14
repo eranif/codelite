@@ -75,16 +75,10 @@
     </Extensions>
     <Topleveldir>../CodeFormatter</Topleveldir>
   </Reconciliation>
-  <VirtualDirectory Name="Source Files">
-    <File Name="codeformatter.cpp"/>
-    <File Name="formatoptions.cpp"/>
-    <File Name="clClangFormatLocator.h"/>
-    <File Name="clClangFormatLocator.cpp"/>
-    <File Name="CMakeLists.txt"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="Header Files">
+  <VirtualDirectory Name="src">
     <File Name="codeformatter.h"/>
-    <File Name="formatoptions.h"/>
+    <File Name="codeformatter.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
     <File Name="FormatterPage.cpp"/>

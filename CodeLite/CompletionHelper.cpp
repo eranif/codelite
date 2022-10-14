@@ -9,7 +9,7 @@
 
 namespace
 {
-#define PREPEND_STRING(tokn) expression.insert(expression.begin(), text)
+#define PREPEND_STRING(tokn) expression.insert(expression.begin(), tokn)
 #define MAX_TIP_LINE_SIZE 200
 
 bool is_word_char(wxChar ch)
@@ -113,7 +113,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             if(depth == 0) {
                 cont = false;
             } else {
-                PREPEND_STRING(t);
+                PREPEND_STRING(text);
                 depth--;
             }
             break;
@@ -123,7 +123,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             if(depth == 0 && LAST_TOKEN_IS(T_IDENTIFIER)) {
                 cont = false;
             } else {
-                PREPEND_STRING(t);
+                PREPEND_STRING(text);
                 depth++;
             }
             break;
@@ -131,7 +131,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             if(depth == 0) {
                 cont = false;
             } else {
-                PREPEND_STRING(t);
+                PREPEND_STRING(text);
                 depth++;
             }
             break;
@@ -169,7 +169,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             if(depth == 0) {
                 cont = false;
             } else {
-                PREPEND_STRING(t);
+                PREPEND_STRING(text);
             }
             break;
         case T_IDENTIFIER:
@@ -178,7 +178,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
                 cont = false;
                 break;
             } else {
-                PREPEND_STRING(t);
+                PREPEND_STRING(text);
             }
             break;
         case T_ALIGNAS:
@@ -302,7 +302,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             if(depth <= 0) {
                 cont = false;
             } else {
-                PREPEND_STRING(t);
+                PREPEND_STRING(text);
             }
             break;
         case T_CONST_CAST:
@@ -310,7 +310,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
         case T_REINTERPRET_CAST:
         case T_STATIC_CAST:
         default:
-            PREPEND_STRING(t);
+            PREPEND_STRING(text);
             break;
         }
         types.push_back(type);

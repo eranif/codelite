@@ -81,11 +81,10 @@ CompilersDetectorManager::~CompilersDetectorManager() {}
 
 bool CompilersDetectorManager::Locate()
 {
-    wxBusyInfo bi(_("Searching for installed compilers..."));
-
     // Apply the enviroment before searching for compilers
     // Some of the locators are relying on PATH environment
     // variable (e.g. MinGW)
+    wxBusyCursor bc;
     EnvSetter env;
     m_compilersFound.clear();
     wxStringSet_t S;

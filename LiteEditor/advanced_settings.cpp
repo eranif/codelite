@@ -230,6 +230,7 @@ void BuildSettingsDialog::OnAddExistingCompiler()
 
 void BuildSettingsDialog::OnScanAndSuggestCompilers()
 {
+    // this might be a length operation
     if(m_compilersDetector.Locate()) {
         CallAfter(&BuildSettingsDialog::OnCompilersDetected, m_compilersDetector.GetCompilersFound());
     }

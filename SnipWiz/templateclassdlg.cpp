@@ -209,7 +209,6 @@ void TemplateClassDlg::OnGenerateUI(wxUpdateUIEvent& event)
     // list of conditions for generation
     bool has_name = !m_textCtrlClassName->GetValue().empty();
     bool has_header_name = !m_textCtrlHeaderFile->GetValue().empty();
-    bool has_impl_name = !m_textCtrlCppFile->GetValue().empty();
     bool has_template = m_comboxCurrentTemplate->GetSelection() != wxNOT_FOUND;
     bool has_path = !m_textCtrlFilePath->GetValue().empty();
     bool has_vd_path = !m_textCtrlVD->GetValue().empty();

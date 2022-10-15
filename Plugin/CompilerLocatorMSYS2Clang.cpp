@@ -62,7 +62,7 @@ CompilerPtr CompilerLocatorMSYS2Clang::Locate(const wxString& folder)
     wxFileName clangxx = GetFileName(folder, "clang++");
     wxFileName ar = GetFileName(folder, "ar");
     wxFileName as = GetFileName(folder, "as");
-    wxFileName make = GetFileName(folder, "make");
+    wxFileName make = GetFileName(folder, "mingw32-make");
     wxFileName windres = GetFileName(folder, "windres");
     wxFileName mkdir = GetFileName(folder, "mkdir");
     wxFileName gdb = GetFileName(folder, "gdb");

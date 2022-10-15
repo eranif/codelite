@@ -6,7 +6,7 @@
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
   <Settings Type="Executable">
-    <Configuration Name="DebugUnicode" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="">
+    <Configuration Name="DebugUnicode" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="">
       <General OutputFile="$(IntermediateDirectory)/File2Hex" IntermediateDirectory="./DebugUnicode" Command="./File2Hex" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;-fstandalone-debug;$(shell wx-config --cxxflags --unicode=yes )">
         <Preprocessor Value="__WX__"/>
@@ -29,7 +29,7 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable">
+    <Configuration Name="ReleaseUnicode" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable">
       <General OutputFile="../Runtime/File2Hex" IntermediateDirectory="./ReleaseUnicode" Command="./File2Hex" CommandArguments="about.html contributers.h" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2">
         <Preprocessor Value="__WX__"/>

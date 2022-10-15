@@ -45,7 +45,7 @@
     <File Name="src/Win32/TimeHelpers.h"/>
   </VirtualDirectory>
   <Settings Type="Static Library">
-    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Static Library">
+    <Configuration Name="Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Static Library">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;-fstandalone-debug">
         <IncludePath Value="."/>
@@ -72,7 +72,7 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Static Library">
+    <Configuration Name="Release" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Static Library">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>

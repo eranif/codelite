@@ -19,7 +19,7 @@
   <Dependencies Name="Release"/>
   <Dependencies Name="Debug"/>
   <Settings Type="Executable">
-    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-fstandalone-debug" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
       </Compiler>

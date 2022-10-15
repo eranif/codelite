@@ -686,8 +686,8 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         cell.SetButtonRect(wxRect());
         if(cell.HasButton()) {
             // draw the drop down arrow. Make it aligned to the right
-            wxRect button_rect(cellRect.GetTopRight().x - rowRect.GetHeight(), rowRect.GetY(), rowRect.GetHeight(),
-                               rowRect.GetHeight());
+            textXOffset += X_SPACER;
+            wxRect button_rect(textXOffset, rowRect.GetY(), rowRect.GetHeight(), rowRect.GetHeight());
             button_rect = button_rect.CenterIn(rowRect, wxVERTICAL);
             // Draw a button with the unicode symbol in it
             if(IsSelected()) {

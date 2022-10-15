@@ -7,6 +7,7 @@ fmtRustfmt::fmtRustfmt()
     SetName("rustfmt");
     SetFileTypes({ FileExtManager::TypeRust });
     SetDescription(_("Format Rust code"));
+    SetShortDescription(_("Rust formatter"));
     SetInplaceFormatter(true);
     SetConfigFilepath("$(WorkspacePath)/.rustfmt.toml");
 

@@ -12,6 +12,7 @@ fmtYQ::fmtYQ()
     SetFileTypes({ FileExtManager::TypeYAML });
 
     SetDescription(_("commandline YAML processor"));
+    SetShortDescription(_("Yaml formatter"));
 
     wxString yq_exe = "yq";
     ThePlatform->Which("yq", &yq_exe);

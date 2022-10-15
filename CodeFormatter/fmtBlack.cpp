@@ -7,6 +7,7 @@ fmtBlack::fmtBlack()
     SetName("black");
     SetFileTypes({ FileExtManager::TypePython });
     SetDescription(_("The uncompromising python code formatter"));
+    SetShortDescription(_("black - a python formatter"));
     SetConfigFilepath(wxEmptyString);
     SetInplaceFormatter(true);
 

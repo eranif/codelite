@@ -7,6 +7,7 @@ fmtPHPCBF::fmtPHPCBF()
     SetName("PHPCBF");
     SetFileTypes({ FileExtManager::TypePhp });
     SetDescription(_("PHP Code Beautifier and Fixer"));
+    SetShortDescription(_("PHP formatter"));
     SetInplaceFormatter(true);
     SetEnabled(false);
 

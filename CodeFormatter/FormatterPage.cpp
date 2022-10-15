@@ -43,7 +43,7 @@ void FormatterPage::Load(std::shared_ptr<GenericFormatter> formatter)
     CHECK_PTR_RET(formatter);
     m_cur_formatter = formatter;
 
-    AddHeader(_("General"));
+    AddHeader(m_cur_formatter->GetShortDescription());
     AddProperty(_("Enabled"), m_cur_formatter->IsEnabled(), UPDATE_BOOL_CB(SetEnabled));
     AddProperty(_("Format on save?"), m_cur_formatter->IsFormatOnSave(), UPDATE_BOOL_CB(SetFormatOnSave));
     AddProperty(_("Inplace edit"), m_cur_formatter->IsInplaceFormatter(), UPDATE_BOOL_CB(SetInplaceFormatter));

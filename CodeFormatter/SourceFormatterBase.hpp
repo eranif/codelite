@@ -43,6 +43,7 @@ protected:
     wxString m_configFile;
     wxString m_name;
     wxString m_description;
+    wxString m_shortDescription;
 
 protected:
     void SetFlag(FormatterFlags flag, bool set)
@@ -95,6 +96,9 @@ public:
 
     void SetDescription(const wxString& description) { this->m_description = description; }
     const wxString& GetDescription() const { return m_description; }
+
+    void SetShortDescription(const wxString& shortDescription) { this->m_shortDescription = shortDescription; }
+    const wxString& GetShortDescription() const { return m_shortDescription; }
 };
 
 #endif // SOURCEFORMATTERBASE_HPP

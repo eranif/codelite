@@ -12,6 +12,7 @@ fmtJQ::fmtJQ()
                    FileExtManager::TypeWorkspaceNodeJS, FileExtManager::TypeWorkspacePHP });
 
     SetDescription(_("commandline JSON processor"));
+    SetShortDescription(_("jq - a json formatter"));
 
     wxString jq_exe = "jq";
     ThePlatform->Which("jq", &jq_exe);

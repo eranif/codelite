@@ -210,10 +210,10 @@ class WXDLLIMPEXP_SDK wxCustomStatusBar : public wxStatusBar
 {
     wxCustomStatusBarArt::Ptr_t m_art;
     wxCustomStatusBarField::Vect_t m_fields;
-    wxString m_text;
+    std::vector<std::pair<wxString, time_t>> m_text; // stack of messages:ttl to display
     wxString m_lastArtNameUsedForPaint;
     wxCustomStatusBarField::Ptr_t m_mainText;
-    wxTimer* m_timer;
+    wxTimer* m_timer = nullptr;
 
 protected:
     size_t DoGetFieldsWidth();
@@ -225,6 +225,7 @@ protected:
     void OnMouseMotion(wxMouseEvent& event);
     void OnTimer(wxTimerEvent& event);
     wxRect DoGetMainFieldRect();
+    void UpdateMainTextField();
 
 public:
     /**
@@ -256,12 +257,13 @@ public:
     /**
      * @brief return the main status bar area text message
      */
-    const wxString& GetText() const { return m_text; }
+    const wxString& GetText() const;
 
     /**
      * @brief clear the main text
      */
     void ClearText();
+
     /**
      * @brief return pointer to the field at given index
      * if index is out of bounds, return NULL

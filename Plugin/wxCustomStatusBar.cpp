@@ -209,7 +209,6 @@ wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style
     : wxStatusBar(parent, id, style)
     , m_art(new wxCustomStatusBarArt("Dark"))
     , m_mainText(new wxCustomStatusBarFieldText(this, 0))
-    , m_timer(NULL)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTextAlignment(wxALIGN_LEFT);
@@ -220,10 +219,16 @@ wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style
     Bind(wxEVT_MOTION, &wxCustomStatusBar::OnMouseMotion, this);
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &wxCustomStatusBar::OnTimer, this, m_timer->GetId());
+
+    // 1 second event interval
+    m_timer->Start(1000);
 }
 
 wxCustomStatusBar::~wxCustomStatusBar()
 {
+    // unbind the timer before we delete it
+    Unbind(wxEVT_TIMER, &wxCustomStatusBar::OnTimer, this, m_timer->GetId());
+
     m_timer->Stop();
     wxDELETE(m_timer);
 
@@ -275,7 +280,7 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     dc.SetClippingRegion(mainRect);
     m_mainText->SetRect(mainRect);
     m_mainText->Render(dc, mainRect, m_art);
-    m_mainText->SetTooltip(m_text);
+    m_mainText->SetTooltip(GetText());
     dc.DestroyClippingRegion();
 
     //===----------------------
@@ -315,9 +320,6 @@ void wxCustomStatusBar::RemoveField(size_t index)
     if(index >= m_fields.size())
         return;
     m_fields.erase(m_fields.begin() + index);
-    if(m_timer->IsRunning()) {
-        m_timer->Stop();
-    }
     Refresh();
 }
 
@@ -339,35 +341,44 @@ void wxCustomStatusBar::OnLeftDown(wxMouseEvent& event)
 
 void wxCustomStatusBar::ClearText()
 {
-    m_text.Clear();
-    if(m_timer->IsRunning()) {
-        m_timer->Stop();
-    }
+    m_text.clear();
     Refresh();
 }
 
-void wxCustomStatusBar::SetText(const wxString& message, int secondsToLive)
+void wxCustomStatusBar::UpdateMainTextField()
 {
-    // Stop any timer
-    if(m_timer->IsRunning()) {
-        m_timer->Stop();
-    }
-
-    m_text = message;
-    SetToolTip(message);
-
     // Make sure we draw only when the "art" objects are in sync with the field
     // and with the bar itself
     wxRect mainRect = DoGetMainFieldRect();
 
     // update the rect
     m_mainText->SetRect(mainRect);
-    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetText(m_text);
-    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTooltip(m_text);
+    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetText(GetText());
+    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTooltip(GetText());
+}
 
-    if(secondsToLive != wxNOT_FOUND) {
-        m_timer->Start(secondsToLive * 1000, true);
+void wxCustomStatusBar::SetText(const wxString& message, int secondsToLive)
+{
+    if(message.empty()) {
+        // passing an empty string suggets that we want to clear the text field completely
+        ClearText();
+        return;
     }
+
+    if(secondsToLive < 0) {
+        secondsToLive = 1; // default to 1 second message
+    } else if(secondsToLive == 0) {
+        secondsToLive = 5; // this is how forever looks like
+    }
+
+    m_text.push_back({ message, time(nullptr) + secondsToLive });
+
+#ifndef __WXMAC__
+    // for some reason, macos tooltips are shown in the middle of the screen :)
+    SetToolTip(message);
+#endif
+
+    UpdateMainTextField();
 }
 
 void wxCustomStatusBar::OnMouseMotion(wxMouseEvent& event)
@@ -425,6 +436,34 @@ wxRect wxCustomStatusBar::DoGetMainFieldRect()
     return mainRect;
 }
 
-void wxCustomStatusBar::OnTimer(wxTimerEvent& event) { SetText(""); }
+void wxCustomStatusBar::OnTimer(wxTimerEvent& event)
+{
+    event.Skip();
+
+    time_t current_timestamp = time(nullptr);
+
+    // filter expired items from the list and display the back() of the queue
+    // find the best text to display
+    decltype(m_text) filtered_queue;
+    for(const auto& entry : m_text) {
+        if(entry.second > current_timestamp) {
+            // we keep this entry
+            filtered_queue.push_back(entry);
+        }
+    }
+    m_text.swap(filtered_queue);
+
+    // this will use the back of the stack as the display item
+    UpdateMainTextField();
+}
 
 bool wxCustomStatusBarField::HitTest(const wxPoint& point) const { return m_rect.Contains(point); }
+
+thread_local wxString EMPTY_STRING;
+const wxString& wxCustomStatusBar::GetText() const
+{
+    if(m_text.empty()) {
+        return EMPTY_STRING;
+    }
+    return m_text.back().first;
+}

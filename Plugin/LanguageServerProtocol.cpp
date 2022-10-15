@@ -940,11 +940,11 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
         // Get the URI
         clDEBUG1() << GetLogPrefix() << "Received diagnostic message";
         wxString fn = FileUtils::FilePathFromURI(response.GetDiagnosticsUri());
-#ifndef __WXOSX__
+
         // Don't show this message on macOS as it appears in the middle of the screen...
         clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << " parsing of file: " << fn << " is completed",
                                          1);
-#endif
+
         std::vector<LSP::Diagnostic> diags = response.GetDiagnostics();
         if(!diags.empty() && IsDisaplayDiagnostics()) {
             // report the diagnostics

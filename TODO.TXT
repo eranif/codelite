@@ -6,3 +6,11 @@ Debug Adapter Client
 
 others:
 ----
+
+Source code formatter:
+----
+
+Status bar:
+----
+
+

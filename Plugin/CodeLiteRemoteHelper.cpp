@@ -18,7 +18,7 @@ CodeLiteRemoteHelper::CodeLiteRemoteHelper()
 {
     Bind(wxEVT_WORKSPACE_LOADED, &CodeLiteRemoteHelper::OnWorkspaceLoaded, this);
     Bind(wxEVT_WORKSPACE_CLOSED, &CodeLiteRemoteHelper::OnWorkspaceClosed, this);
-    if(PLATFORM::Which("ssh", &m_ssh_exe)) {
+    if(ThePlatform->Which("ssh", &m_ssh_exe)) {
         ::WrapWithQuotes(m_ssh_exe);
     }
 }

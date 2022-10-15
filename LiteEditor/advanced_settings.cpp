@@ -154,6 +154,7 @@ void BuildSettingsDialog::OnCompilersDetected(const ICompilerLocator::CompilerVe
 
         auto conf = BuildSettingsConfigST::Get();
         conf->BeginBatch();
+        conf->DeleteAllCompilers(false);
         for(auto compiler : selected_compilers) {
             if(conf->IsCompilerExist(compiler->GetName())) {
                 conf->DeleteCompiler(compiler->GetName());

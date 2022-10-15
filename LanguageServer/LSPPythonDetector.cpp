@@ -21,7 +21,7 @@ bool LSPPythonDetector::DoLocate()
     wxString python;
 
     // locate python3
-    if(!PLATFORM::Which("python", &python) && !PLATFORM::Which("python3", &python)) {
+    if(!ThePlatform->Which("python", &python) && !ThePlatform->Which("python3", &python)) {
         return false;
     }
 

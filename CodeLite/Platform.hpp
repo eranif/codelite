@@ -5,9 +5,9 @@
 
 #ifdef __WXMSW__
 #include "MSYS2.hpp"
-typedef MSYS2 PLATFORM;
+#define ThePlatform MSYS2::Get()
 #else
 #include "LINUX.hpp"
-typedef LINUX PLATFORM;
+#define ThePlatform LINUX::Get()
 #endif
 #endif // PLATFORM__HPP

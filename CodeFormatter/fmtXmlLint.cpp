@@ -9,7 +9,7 @@ fmtXmlLint::fmtXmlLint()
     SetDescription(_("xmllint - command line XML tool"));
 
     wxString xml_lint_exe;
-    PLATFORM::Which("xmllint", &xml_lint_exe);
+    ThePlatform->Which("xmllint", &xml_lint_exe);
     SetCommand({ xml_lint_exe, "--format", "$(CurrentFileFullPath)" });
 }
 

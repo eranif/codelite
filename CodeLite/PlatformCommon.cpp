@@ -1,6 +1,5 @@
 #include "PlatformCommon.hpp"
 
-#include "Platform.hpp"
 #include "file_logger.h"
 #include "procutils.h"
 
@@ -24,7 +23,7 @@ bool PlatformCommon::WhichWithVersion(const wxString& command, const std::vector
         names.Add(wxString() << command << "-" << ver);
     }
     for(const wxString& name : names) {
-        if(PLATFORM::Which(name, command_fullpath)) {
+        if(Which(name, command_fullpath)) {
             return true;
         }
     }
@@ -40,7 +39,7 @@ bool PlatformCommon::FindRustupToolchainBinDir(wxString* rustup_bin_dir)
     return false;
 #else
     wxString homedir;
-    PLATFORM::FindHomeDir(&homedir);
+    FindHomeDir(&homedir);
 
     wxString rustup_exe;
     rustup_exe << homedir << "/.cargo/bin/rustup";

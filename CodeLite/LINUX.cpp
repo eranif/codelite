@@ -14,29 +14,9 @@
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 
-thread_local wxString RUST_TOOLCHAIN_BIN;
-thread_local bool rust_toolchain_scanned = false;
-
 namespace
 {
-/// Locate rustup bin folder
-/// the path is set to:
-/// $HOME/.rustup/toolchains/TOOLCHAIN-NAME/bin
-bool get_rustup_bin_folder(wxString* rustup_bin_dir)
-{
-    if(rust_toolchain_scanned) {
-        *rustup_bin_dir = RUST_TOOLCHAIN_BIN;
-        return !RUST_TOOLCHAIN_BIN.empty();
-    }
-
-    PlatformCommon::FindRustupToolchainBinDir(&RUST_TOOLCHAIN_BIN);
-    rust_toolchain_scanned = true;
-
-    // call this method again, this time rust_toolchain_scanned is set to true
-    return get_rustup_bin_folder(rustup_bin_dir);
-}
-
-#ifndef __WXMSW__
+#ifdef __WXMAC__
 /// Homebrew install formulas in a specific location, this function
 /// attempts to discover this location
 bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxString* install_path)
@@ -74,6 +54,23 @@ bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxStri
 }
 #endif
 } // namespace
+
+/// Locate rustup bin folder
+/// the path is set to:
+/// $HOME/.rustup/toolchains/TOOLCHAIN-NAME/bin
+bool LINUX::get_rustup_bin_folder(wxString* rustup_bin_dir)
+{
+    if(rust_toolchain_scanned) {
+        *rustup_bin_dir = RUST_TOOLCHAIN_BIN;
+        return !RUST_TOOLCHAIN_BIN.empty();
+    }
+
+    FindRustupToolchainBinDir(&RUST_TOOLCHAIN_BIN);
+    rust_toolchain_scanned = true;
+
+    // call this method again, this time rust_toolchain_scanned is set to true
+    return get_rustup_bin_folder(rustup_bin_dir);
+}
 
 bool LINUX::FindInstallDir(wxString* installpath)
 {
@@ -125,9 +122,12 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
 
     // common paths: read the env PATH and append the other paths to it
     // so common paths found ENV:PATH will come first
-    wxString pathenv;
-    ::wxGetEnv("PATH", &pathenv);
-    wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
+    wxArrayString paths;
+    if(m_flags & SEARCH_PATH_ENV) {
+        wxString pathenv;
+        ::wxGetEnv("PATH", &pathenv);
+        paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
+    }
 
     // append the special paths to the end
     paths.insert(paths.end(), special_paths.begin(), special_paths.end());
@@ -168,3 +168,9 @@ bool LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& ve
 {
     return PlatformCommon::WhichWithVersion(command, versions, command_fullpath);
 }
+
+namespace
+{
+thread_local LINUX instance;
+}
+LINUX* LINUX::Get() { return &instance; }

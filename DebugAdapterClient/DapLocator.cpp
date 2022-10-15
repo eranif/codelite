@@ -74,7 +74,7 @@ void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
 {
     wxArrayString paths;
     wxString lldb_vscode;
-    if(!PLATFORM::Which("lldb-vscode", &lldb_vscode)) {
+    if(!ThePlatform->Which("lldb-vscode", &lldb_vscode)) {
         return;
     }
 
@@ -90,7 +90,7 @@ void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
     wxString python;
 
     // locate python3
-    if(!PLATFORM::Which("python", &python) && !PLATFORM::Which("python3", &python)) {
+    if(!ThePlatform->Which("python", &python) && !ThePlatform->Which("python3", &python)) {
         return;
     }
 

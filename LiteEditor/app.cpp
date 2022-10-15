@@ -57,12 +57,11 @@
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
-#include <CompilerLocatorMinGW.h>
 #include <wx/imagjpeg.h>
 #include <wx/persist.h>
 #include <wx/regex.h>
 
-//#define __PERFORMANCE
+// #define __PERFORMANCE
 #include "performance.h"
 
 //////////////////////////////////////////////

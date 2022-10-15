@@ -1,38 +1,27 @@
 #include "MSYS2.hpp"
 
-#include "PlatformCommon.hpp"
-
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
-namespace
-{
-bool install_dir_checked = false;
-wxString static_install_dir;
-
-bool home_dir_checked = false;
-wxString static_home_dir;
-} // namespace
-
 bool MSYS2::FindInstallDir(wxString* msyspath)
 {
-    if(install_dir_checked) {
-        *msyspath = static_install_dir;
-        return !static_install_dir.empty();
+    if(m_checked_for_install_dir) {
+        *msyspath = m_install_dir;
+        return !m_install_dir.empty();
     }
 
-    install_dir_checked = true;
+    m_checked_for_install_dir = true;
 
     // try common paths
     std::vector<wxString> vpaths = { R"(C:\msys64)", R"(C:\msys2)", R"(C:\msys)" };
     for(const wxString& path : vpaths) {
         if(wxFileName::DirExists(path)) {
-            static_install_dir = path;
-            *msyspath = static_install_dir;
+            m_install_dir = path;
+            *msyspath = m_install_dir;
             break;
         }
     }
-    return !static_install_dir.empty();
+    return !m_install_dir.empty();
 }
 
 bool MSYS2::FindHomeDir(wxString* homedir)
@@ -42,23 +31,23 @@ bool MSYS2::FindHomeDir(wxString* homedir)
         return false;
     }
 
-    if(home_dir_checked) {
-        *homedir = static_home_dir;
-        return !static_home_dir.empty();
+    if(m_checked_for_home_dir) {
+        *homedir = m_home_dir;
+        return !m_home_dir.empty();
     }
 
-    home_dir_checked = true;
+    m_checked_for_home_dir = true;
 
     wxFileName cargo_dir{ msyspath, wxEmptyString };
     cargo_dir.AppendDir("home");
     cargo_dir.AppendDir(::wxGetUserId());
 
     if(cargo_dir.DirExists()) {
-        static_home_dir = cargo_dir.GetPath();
+        m_home_dir = cargo_dir.GetPath();
     }
 
-    *homedir = static_home_dir;
-    return !static_home_dir.empty();
+    *homedir = m_home_dir;
+    return !m_home_dir.empty();
 }
 
 bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
@@ -68,13 +57,18 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
         return false;
     }
 
-    wxString pathenv;
-    wxGetEnv("PATH", &pathenv);
-    wxArrayString paths_to_try = ::wxStringTokenize(pathenv, ";", wxTOKEN_STRTOK);
+    wxArrayString paths_to_try;
 
-    paths_to_try.Insert(msyspath + R"(\usr\bin)", 0);
-    paths_to_try.Insert(msyspath + R"(\mingw64\bin)", 0);
-    paths_to_try.Insert(msyspath + R"(\clang64\bin)", 0);
+    // include PATH environment variable?
+    if(m_flags & SEARCH_PATH_ENV) {
+        wxString pathenv;
+        wxGetEnv("PATH", &pathenv);
+        paths_to_try = ::wxStringTokenize(pathenv, ";", wxTOKEN_STRTOK);
+    }
+
+    for(const auto& root : m_chroots) {
+        paths_to_try.Insert(msyspath + root + R"(\bin)", 0);
+    }
 
     for(auto path : paths_to_try) {
         path << "\\" << command << ".exe";
@@ -89,4 +83,28 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
 bool MSYS2::WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath)
 {
     return PlatformCommon::WhichWithVersion(command, versions, command_fullpath);
+}
+
+void MSYS2::SetChroot(const wxString& chroot)
+{
+    m_chroots.clear();
+    m_chroots.Add(chroot);
+
+    // exclude PATH from the search path
+    m_flags &= ~SEARCH_PATH_ENV;
+}
+
+namespace
+{
+thread_local MSYS2 instance;
+}
+
+MSYS2* MSYS2::Get() { return &instance; }
+
+MSYS2::MSYS2()
+{
+    // last entry -> most important (reverse order)
+    m_chroots.Add(R"(\usr)");
+    m_chroots.Add(R"(\mingw64)");
+    m_chroots.Add(R"(\clang64)");
 }

@@ -826,6 +826,8 @@
     <File Name="clPatch.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Compilers">
+    <File Name="CompilerLocatorMSYS2Clang.cpp"/>
+    <File Name="CompilerLocatorMSYS2Clang.hpp"/>
     <File Name="CompilerLocatorRustc.cpp"/>
     <File Name="CompilerLocatorRustc.hpp"/>
     <File Name="CompilerLocatorMSYS2.cpp"/>
@@ -834,8 +836,6 @@
     <File Name="CompilerLocatorEosCDT.h"/>
     <File Name="ICompilerLocator.h"/>
     <File Name="ICompilerLocator.cpp"/>
-    <File Name="CompilerLocatorMinGW.h"/>
-    <File Name="CompilerLocatorMinGW.cpp"/>
     <File Name="CompilersDetectorManager.h"/>
     <File Name="CompilersDetectorManager.cpp"/>
     <File Name="CompilerLocatorGCC.h"/>

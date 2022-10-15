@@ -1,4 +1,4 @@
-#include "CompilerLocatorMSYS2.hpp"
+#include "CompilerLocatorMSYS2Clang.hpp"
 
 #include "GCCMetadata.hpp"
 #include "Platform.hpp"
@@ -9,57 +9,57 @@
 // --------------------------------------------------
 // --------------------------------------------------
 
-CompilerLocatorMSYS2Usr::CompilerLocatorMSYS2Usr()
+CompilerLocatorMSYS2ClangUsr::CompilerLocatorMSYS2ClangUsr()
 {
     m_repository = "";
     m_msys2.SetChroot("\\usr");
 }
-CompilerLocatorMSYS2Usr::~CompilerLocatorMSYS2Usr() {}
+CompilerLocatorMSYS2ClangUsr::~CompilerLocatorMSYS2ClangUsr() {}
 
-CompilerLocatorMSYS2Mingw64::CompilerLocatorMSYS2Mingw64()
+CompilerLocatorMSYS2ClangMingw64::CompilerLocatorMSYS2ClangMingw64()
 {
     m_repository = "mingw64";
     m_msys2.SetChroot("\\mingw64");
 }
 
-CompilerLocatorMSYS2Mingw64::~CompilerLocatorMSYS2Mingw64() {}
+CompilerLocatorMSYS2ClangMingw64::~CompilerLocatorMSYS2ClangMingw64() {}
 
-CompilerLocatorMSYS2Clang64::CompilerLocatorMSYS2Clang64()
+CompilerLocatorMSYS2ClangClang64::CompilerLocatorMSYS2ClangClang64()
 {
     m_repository = "clang64";
     m_msys2.SetChroot("\\clang64");
 }
-CompilerLocatorMSYS2Clang64::~CompilerLocatorMSYS2Clang64() {}
+CompilerLocatorMSYS2ClangClang64::~CompilerLocatorMSYS2ClangClang64() {}
 
 // --------------------------------------------------
 // --------------------------------------------------
 
-CompilerLocatorMSYS2::CompilerLocatorMSYS2() {}
+CompilerLocatorMSYS2Clang::CompilerLocatorMSYS2Clang() {}
 
-CompilerLocatorMSYS2::~CompilerLocatorMSYS2() {}
+CompilerLocatorMSYS2Clang::~CompilerLocatorMSYS2Clang() {}
 
-bool CompilerLocatorMSYS2::Locate()
+bool CompilerLocatorMSYS2Clang::Locate()
 {
     m_compilers.clear();
 
     // try some defaults
-    wxString gcc_exe;
-    if(!m_msys2.Which("gcc", &gcc_exe)) {
+    wxString clang_exe;
+    if(!m_msys2.Which("clang", &clang_exe)) {
         return false;
     }
 
-    auto compiler = Locate(wxFileName(gcc_exe).GetPath());
+    auto compiler = Locate(wxFileName(clang_exe).GetPath());
     if(compiler) {
         m_compilers.push_back(compiler);
     }
     return !m_compilers.empty();
 }
 
-CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
+CompilerPtr CompilerLocatorMSYS2Clang::Locate(const wxString& folder)
 {
     // check for g++
-    wxFileName gcc = GetFileName(folder, "gcc");
-    wxFileName gxx = GetFileName(folder, "g++");
+    wxFileName clang = GetFileName(folder, "clang");
+    wxFileName clangxx = GetFileName(folder, "clang++");
     wxFileName ar = GetFileName(folder, "ar");
     wxFileName as = GetFileName(folder, "as");
     wxFileName make = GetFileName(folder, "make");
@@ -67,8 +67,8 @@ CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
     wxFileName mkdir = GetFileName(folder, "mkdir");
     wxFileName gdb = GetFileName(folder, "gdb");
 
-    // make sure that both gcc & g++ exist
-    if(!(gcc.FileExists() && gxx.FileExists())) {
+    // make sure that both clang & g++ exist
+    if(!(clang.FileExists() && clangxx.FileExists())) {
         return nullptr;
     }
 
@@ -77,23 +77,23 @@ CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
     if(!basename.empty()) {
         basename << "/";
     }
-    basename << "gcc";
+    basename << "clang";
     GCCMetadata cmd(basename);
 
-    cmd.Load(gcc.GetFullPath(), folder);
+    cmd.Load(clang.GetFullPath(), folder);
 
     // create new compiler
     CompilerPtr compiler(new Compiler(nullptr));
     compiler->SetName(cmd.GetName());
-    compiler->SetCompilerFamily(COMPILER_FAMILY_MSYS2);
+    compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
     compiler->SetInstallationPath(folder);
 
     // add the tools
-    compiler->SetTool("CXX", gxx.GetFullPath());
-    compiler->SetTool("CC", gcc.GetFullPath());
+    compiler->SetTool("CXX", clangxx.GetFullPath());
+    compiler->SetTool("CC", clang.GetFullPath());
     compiler->SetTool("AR", ar.GetFullPath());
-    compiler->SetTool("LinkerName", gxx.GetFullPath());
-    compiler->SetTool("SharedObjectLinkerName", gxx.GetFullPath() + " -shared -fPIC");
+    compiler->SetTool("LinkerName", clangxx.GetFullPath());
+    compiler->SetTool("SharedObjectLinkerName", clangxx.GetFullPath() + " -shared -fPIC");
     compiler->SetTool("AS", as.GetFullPath());
 
     size_t cpu_count = wxThread::GetCPUCount();
@@ -103,9 +103,9 @@ CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
     return compiler;
 }
 
-void CompilerLocatorMSYS2::AddTool(const wxString& tool_name, const wxString& value) {}
+void CompilerLocatorMSYS2Clang::AddTool(const wxString& tool_name, const wxString& value) {}
 
-wxFileName CompilerLocatorMSYS2::GetFileName(const wxString& bin_dir, const wxString& fullname) const
+wxFileName CompilerLocatorMSYS2Clang::GetFileName(const wxString& bin_dir, const wxString& fullname) const
 {
     wxFileName tool(bin_dir, fullname);
     tool.SetExt("exe");

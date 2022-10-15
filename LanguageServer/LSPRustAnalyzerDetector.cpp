@@ -19,7 +19,7 @@ LSPRustAnalyzerDetector::~LSPRustAnalyzerDetector() {}
 bool LSPRustAnalyzerDetector::DoLocate()
 {
     wxString analyzer_path;
-    if(!PLATFORM::Which("rust-analyzer", &analyzer_path)) {
+    if(!ThePlatform->Which("rust-analyzer", &analyzer_path)) {
         return false;
     }
 

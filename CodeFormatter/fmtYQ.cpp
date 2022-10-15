@@ -14,7 +14,7 @@ fmtYQ::fmtYQ()
     SetDescription(_("commandline YAML processor"));
 
     wxString yq_exe = "yq";
-    PLATFORM::Which("yq", &yq_exe);
+    ThePlatform->Which("yq", &yq_exe);
     SetCommand({ yq_exe, ".", "$(CurrentFileFullPath)" });
 }
 

@@ -225,7 +225,7 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
 
         EnvSetter env;
         wxString cargo_exe;
-        if(!PLATFORM::Which("cargo", &cargo_exe)) {
+        if(!ThePlatform->Which("cargo", &cargo_exe)) {
             wxMessageBox(_("Could not locate cargo in your PATH"), "CodeLite", wxICON_ERROR | wxCENTRE);
             return;
         }

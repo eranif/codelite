@@ -32,7 +32,7 @@
 #include "CompilerLocatorGCC.h"
 #include "CompilerLocatorMSVC.h"
 #include "CompilerLocatorMSYS2.hpp"
-#include "CompilerLocatorMinGW.h"
+#include "CompilerLocatorMSYS2Clang.hpp"
 #include "CompilerLocatorRustc.hpp"
 #include "GCCMetadata.hpp"
 #include "JSON.h"
@@ -53,11 +53,14 @@
 CompilersDetectorManager::CompilersDetectorManager()
 {
 #ifdef __WXMSW__
-    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMinGW()));
-    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSVC()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCygwin()));
-    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2Usr()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2Clang64()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2Mingw64()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2ClangUsr()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2ClangClang64()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2ClangMingw64()));
 
 #elif defined(__WXGTK__)
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorGCC()));

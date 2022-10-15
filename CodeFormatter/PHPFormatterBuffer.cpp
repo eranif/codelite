@@ -1,5 +1,7 @@
 #include "PHPFormatterBuffer.h"
+
 #include "PHPScannerTokens.h"
+
 #include <wx/tokenzr.h>
 
 struct PHPScannerCollectWhitespace {
@@ -142,7 +144,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             m_buffer << token.Text();
 
             if(m_options.flags & kPFF_VerticalArrays && token.type == '(' && m_lastToken.type == kPHP_T_ARRAY &&
-                m_parenDepth == 1) {
+               m_parenDepth == 1) {
                 ProcessArray('(', ')');
             }
 
@@ -270,7 +272,7 @@ void PHPFormatterBuffer::UnIndent()
         m_buffer.RemoveLast();
 
     } else if(!IsUseTabs() && (m_buffer.length() >= m_options.indentSize) &&
-        m_buffer.Mid(m_buffer.length() - m_options.indentSize) == wxString(' ', m_options.indentSize)) {
+              m_buffer.Mid(m_buffer.length() - m_options.indentSize) == wxString(' ', m_options.indentSize)) {
         m_buffer.RemoveLast(m_options.indentSize);
     }
 }
@@ -372,7 +374,7 @@ void PHPFormatterBuffer::format()
                     phpLexerToken lastToken = m_sequence->at(m_sequence->size() - 1);
                     // The following tokens are usually followed by an open brace
                     if(lastToken.type == kPHP_T_IF || lastToken.type == kPHP_T_FOR || lastToken.type == kPHP_T_ELSEIF ||
-                        lastToken.type == kPHP_T_FOREACH || lastToken.type == kPHP_T_WHILE) {
+                       lastToken.type == kPHP_T_FOREACH || lastToken.type == kPHP_T_WHILE) {
                         // Peek at the next char
                         if(PeekToken(nextToken)) {
                             if(nextToken.type != '{' && !nextToken.IsAnyComment()) {
@@ -494,8 +496,8 @@ void PHPFormatterBuffer::ProcessArray(int openParen, int closingChar)
                 m_buffer << whitespace;
 
             } else if(token.type == '(' || token.type == ')' || token.type == kPHP_T_OBJECT_OPERATOR ||
-                token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM || token.type == kPHP_T_NS_SEPARATOR ||
-                token.type == kPHP_T_VARIABLE || token.type == '[' || token.type == ']') {
+                      token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM || token.type == kPHP_T_NS_SEPARATOR ||
+                      token.type == kPHP_T_VARIABLE || token.type == '[' || token.type == ']') {
                 RemoveLastSpace();
                 m_buffer << token.Text();
 

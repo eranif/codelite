@@ -23,10 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editor_config.h"
 #include "gitCommitListDlg.h"
-#include "gitentry.h"
-#include "windowattrmanager.h"
 
 #include "GitDiffOutputParser.h"
 #include "asyncprocess.h"
@@ -38,6 +35,8 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "processreaderthread.h"
+#include "windowattrmanager.h"
+
 #include <wx/tokenzr.h>
 
 static int ID_COPY_COMMIT_HASH = wxNewId();
@@ -58,8 +57,6 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
         lex->Apply(m_stcDiff, true);
     }
 
-    LexerConf::Ptr_t textLex = EditorConfigST::Get()->GetLexer("text");
-    textLex->Apply(m_stcCommitMessage, true);
     m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH, wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard), NULL, this);
     m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT, wxEVT_COMMAND_MENU_SELECTED,

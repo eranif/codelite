@@ -340,8 +340,8 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
 
     bSizer13->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition,
-                                              wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcCommitMessage =
+        new clThemedSTC(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxBORDER_NONE);
     m_stcCommitMessage->SetFocus();
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -586,8 +586,8 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer218->Add(m_staticText220, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_stcCommitMessage = new wxStyledTextCtrl(m_splitterPage799, wxID_ANY, wxDefaultPosition,
-                                              wxDLG_UNIT(m_splitterPage799, wxSize(-1, -1)), wxBORDER_THEME);
+    m_stcCommitMessage = new clThemedSTC(m_splitterPage799, wxID_ANY, wxDefaultPosition,
+                                         wxDLG_UNIT(m_splitterPage799, wxSize(-1, -1)), wxBORDER_THEME);
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCommitMessage->SetMarginMask(4, wxSTC_MASK_FOLDERS);

@@ -30,6 +30,7 @@
 #include <wx/stc/stc.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
+#include "clThemedSTC.hpp"
 #include <wx/srchctrl.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
@@ -143,7 +144,7 @@ protected:
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_panel4;
     clToolBar* m_toolbar;
-    wxStyledTextCtrl* m_stcCommitMessage;
+    clThemedSTC* m_stcCommitMessage;
     wxCheckBox* m_checkBoxAmend;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
@@ -161,7 +162,7 @@ public:
     clThemedSplitterWindow* GetSplitterInner() { return m_splitterInner; }
     wxPanel* GetPanel3() { return m_panel3; }
     clToolBar* GetToolbar() { return m_toolbar; }
-    wxStyledTextCtrl* GetStcCommitMessage() { return m_stcCommitMessage; }
+    clThemedSTC* GetStcCommitMessage() { return m_stcCommitMessage; }
     wxCheckBox* GetCheckBoxAmend() { return m_checkBoxAmend; }
     wxPanel* GetPanel4() { return m_panel4; }
     clThemedSplitterWindow* GetSplitterMain() { return m_splitterMain; }
@@ -194,7 +195,7 @@ protected:
     wxListBox* m_fileListBox;
     wxPanel* m_splitterPage799;
     wxStaticText* m_staticText220;
-    wxStyledTextCtrl* m_stcCommitMessage;
+    clThemedSTC* m_stcCommitMessage;
     wxPanel* m_splitterPage182;
     wxStaticText* m_staticText217;
     wxStyledTextCtrl* m_stcDiff;
@@ -224,7 +225,7 @@ public:
     wxListBox* GetFileListBox() { return m_fileListBox; }
     wxPanel* GetSplitterPage795() { return m_splitterPage795; }
     wxStaticText* GetStaticText220() { return m_staticText220; }
-    wxStyledTextCtrl* GetStcCommitMessage() { return m_stcCommitMessage; }
+    clThemedSTC* GetStcCommitMessage() { return m_stcCommitMessage; }
     wxPanel* GetSplitterPage799() { return m_splitterPage799; }
     clThemedSplitterWindow* GetSplitter791() { return m_splitter791; }
     wxPanel* GetSplitterPage785() { return m_splitterPage785; }

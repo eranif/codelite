@@ -61,11 +61,8 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     m_toolbar->AddTool(XRCID("ID_CHECKALL"), _("Toggle files"), images->Add("check-all"));
     m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"), images->Add("history"));
     m_toolbar->Realize();
-    LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
-    lex->Apply(m_stcCommitMessage);
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnToggleCheckAll, this, XRCID("ID_CHECKALL"));
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnCommitHistory, this, XRCID("ID_HISTORY"));
-    m_editEventsHandlerCommitStc.Reset(new clEditEventsHandler(m_stcCommitMessage));
     m_editEventsHandlerDiffStc.Reset(new clEditEventsHandler(m_stcDiff));
     ::clSetDialogBestSizeAndPosition(this);
     CentreOnParent();

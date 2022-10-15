@@ -27,6 +27,7 @@
 #define PHPFORMATTERBUFFER_H
 
 #include "PhpLexerAPI.h"
+
 #include <stack>
 #include <wx/string.h>
 
@@ -42,10 +43,8 @@ enum ePHPFormatterFlags {
     kPFF_VerticalArrays = (1 << 9),
     kPFF_BreakAfterStringConcatentation = (1 << 10),
     kPFF_Defaults = kPFF_BreakBeforeFunction | kPFF_BreakBeforeWhile | kPFF_BreakBeforeIf | kPFF_BreakBeforeForeach |
-        kPFF_ElseOnSameLineAsClosingCurlyBrace |
-        kPFF_VerticalArrays |
-        kPFF_BreakAfterStringConcatentation |
-        kPFF_BreakBeforeClass,
+                    kPFF_ElseOnSameLineAsClosingCurlyBrace | kPFF_VerticalArrays | kPFF_BreakAfterStringConcatentation |
+                    kPFF_BreakBeforeClass,
 };
 
 struct PHPFormatterOptions {
@@ -104,10 +103,7 @@ protected:
     /**
      * @brief indent using tabs?
      */
-    bool IsUseTabs() const
-    {
-        return m_options.flags & kPFF_UseTabs;
-    }
+    bool IsUseTabs() const { return m_options.flags & kPFF_UseTabs; }
 
     /**
      * @brief insert a new line before the current statement
@@ -179,10 +175,7 @@ public:
      */
     void format();
 
-    const wxString& GetBuffer() const
-    {
-        return m_buffer;
-    }
+    const wxString& GetBuffer() const { return m_buffer; }
 };
 
 #endif // PHPFORMATTERBUFFER_H

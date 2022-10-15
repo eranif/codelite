@@ -48,7 +48,6 @@ class GitCommitDlg : public GitCommitDlgBase
     wxString m_workingDir;
     wxStringMap_t m_diffMap;
     bool m_toggleChecks;
-    clEditEventsHandler::Ptr_t m_editEventsHandlerCommitStc;
     clEditEventsHandler::Ptr_t m_editEventsHandlerDiffStc;
     wxString m_previousCommitMessage;
     wxArrayString m_history;

@@ -17,6 +17,7 @@ void SourceFormatterBase::FromJSON(const JSONItem& json)
     m_configFile = json["config_file"].toString();
     m_name = json["name"].toString();
     m_description = json["description"].toString();
+    m_shortDescription = json["short_description"].toString();
 }
 
 JSONItem SourceFormatterBase::ToJSON() const
@@ -27,6 +28,7 @@ JSONItem SourceFormatterBase::ToJSON() const
     ele.addProperty("config_file", m_configFile);
     ele.addProperty("name", m_name);
     ele.addProperty("description", m_description);
+    ele.addProperty("short_description", m_shortDescription);
     return ele;
 }
 

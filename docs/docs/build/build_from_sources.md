@@ -53,6 +53,13 @@ git submodule update --init
  sudo make install
 ```
 
+- To uninstall CodeLite:
+
+```bash
+cd build-release # cd to the build directory
+sudo xargs rm -vf < install_manifest.txt
+```
+
 ----------
 
 ## macOS
@@ -97,14 +104,14 @@ source $HOME/.$(basename $SHELL)rc
 
  - Next step is to [Build wxWidgets from sources][9]
  - Finally, Build CodeLite:
- 
+
 ```bash
     mkdir -p $HOME/src
     cd $HOME/src
     git clone https://github.com/eranif/codelite.git
     cd codelite
     git submodule update --init
-    
+
     # build CodeLite release configuration
     mkdir build-release
     cd build-release

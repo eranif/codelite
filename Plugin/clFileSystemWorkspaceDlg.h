@@ -18,9 +18,10 @@ public:
     bool IsUseRemoteBrowsing() const { return m_useRemoteBrowsing; }
 
 protected:
-    virtual void OnDeleteConfig(wxCommandEvent& event);
-    virtual void OnDeleteConfigUI(wxUpdateUIEvent& event);
-    virtual void OnNewConfig(wxCommandEvent& event);
-    virtual void OnOK(wxCommandEvent& event);
+    void OnDeleteConfig(wxCommandEvent& event) override;
+    void OnDeleteConfigUI(wxUpdateUIEvent& event) override;
+    void OnNewConfig(wxCommandEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
+    void SelectConfig(const wxString& config);
 };
 #endif // CLFILESYSTEMWORKSPACEDLG_H

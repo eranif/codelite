@@ -16,6 +16,7 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent, clFileSyste
     : clFileSystemWorkspaceDlgBase(parent)
     , m_settings(settings)
 {
+    Hide();
     if(m_settings == nullptr) {
         m_settings = &clFileSystemWorkspace::Get().GetSettings();
         m_usingGlobalSettings = true;
@@ -23,7 +24,6 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent, clFileSyste
         m_usingGlobalSettings = false;
     }
 
-    wxWindowUpdateLocker locker(this);
     const auto& configsMap = m_settings->GetConfigsMap();
     clFileSystemWorkspaceConfig::Ptr_t conf = m_settings->GetSelectedConfig();
     wxString selConf;
@@ -32,12 +32,25 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent, clFileSyste
     }
     for(const auto& vt : configsMap) {
         FSConfigPage* page = new FSConfigPage(m_notebook, vt.second, m_usingGlobalSettings);
-        m_notebook->AddPage(page, vt.second->GetName(), (selConf == vt.first));
+        m_notebook->AddPage(page, vt.second->GetName(), false);
+    }
+
+    if(!selConf.empty()) {
+        CallAfter(&clFileSystemWorkspaceDlg::SelectConfig, selConf);
     }
     ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 clFileSystemWorkspaceDlg::~clFileSystemWorkspaceDlg() {}
+
+void clFileSystemWorkspaceDlg::SelectConfig(const wxString& config)
+{
+    for(size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
+        if(m_notebook->GetPageText(i) == config) {
+            m_notebook->SetSelection(i);
+        }
+    }
+}
 
 void clFileSystemWorkspaceDlg::OnOK(wxCommandEvent& event)
 {

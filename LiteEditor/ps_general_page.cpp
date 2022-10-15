@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ps_general_page.h"
+
 #include "build_settings_config.h"
 #include "builder.h"
 #include "buildmanager.h"
@@ -32,7 +33,9 @@
 #include "manager.h"
 #include "project.h"
 #include "project_settings_dlg.h"
+
 #include <algorithm>
+#include <vector>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/regex.h>
@@ -98,10 +101,23 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     wxString cmpType = buildConf->GetCompilerType();
     BuildSettingsConfigCookie cookie;
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+
+    std::vector<wxString> compiler_names;
+    compiler_names.reserve(10);
+
+    // build the compiler list + sort it
     while(cmp) {
-        choices.Add(cmp->GetName());
+        compiler_names.push_back(cmp->GetName());
         cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
     }
+
+    std::sort(compiler_names.begin(), compiler_names.end(),
+              [](const wxString& a, const wxString& b) { return a.CmpNoCase(b) < 0; });
+
+    for(const wxString& name: compiler_names) {
+        choices.Add(name);
+    }
+
     m_pgPropCompiler->SetChoices(choices);
     sel = choices.Index(buildConf->GetCompiler()->GetName());
     if(sel != wxNOT_FOUND) {

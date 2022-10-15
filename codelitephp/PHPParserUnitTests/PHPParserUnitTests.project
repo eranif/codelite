@@ -162,7 +162,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cflags --debug=no);" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../PHPParser"/>
         <IncludePath Value="."/>
@@ -257,7 +257,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cflags );-g;-fstandalone-debug" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../PHPParser"/>
         <IncludePath Value="."/>
@@ -311,7 +311,7 @@ PATH=C:\src\codelite\lib\gcc_lib;$WXWIN\lib\gcc_dll;$PATH]]>
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Release" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Release" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-std=c++11;-Wall;$(shell wx-config --cflags --debug=no)" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../PHPParser"/>
         <IncludePath Value="."/>

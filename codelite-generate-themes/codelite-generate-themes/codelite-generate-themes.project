@@ -34,7 +34,7 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes  )" C_Options="-g;-fstandalone-debug;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes  )" Assembler="" Required="yes" PreCompiledHeader="my_pch.hpp" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="$(CL_HOME)\Plugin"/>
         <IncludePath Value="$(CL_HOME)\\CodeLite"/>
@@ -124,7 +124,7 @@ LD_LIBRARY_PATH=$CL_LIB_DIR:LD_LIBRARY_PATH]]>
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" Assembler="" Required="yes" PreCompiledHeader="my_pch.hpp" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="$(CL_HOME)\Plugin"/>
         <IncludePath Value="$(CL_HOME)\\CodeLite"/>

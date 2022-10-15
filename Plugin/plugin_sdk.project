@@ -1024,7 +1024,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-fstandalone-debug;-Wall;$(shell wx-config --cxxflags  --unicode=yes);-Winvalid-pch" C_Options="-Wall;-g;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="libplugin_dbg_pch.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
@@ -1077,7 +1077,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Release" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Release" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="libplugin_pch.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>

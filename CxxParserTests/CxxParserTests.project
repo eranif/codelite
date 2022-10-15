@@ -24,7 +24,7 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-fstandalone-debug;-O0;-std=c++11;-Wall;$(shell wx-config --cxxflags)" C_Options="-g;-fstandalone-debug;-O0" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="$(CODELITE_DIR)/CodeLite"/>
         <IncludePath Value="$(CODELITE_DIR)/sdk/wxsqlite3/include"/>
@@ -113,7 +113,7 @@ CODELITE_DIR=..\]]>
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-fstandalone-debug;-O0;-std=c++11;-Wall;$(shell wx-config --cxxflags)" C_Options="-g;-fstandalone-debug;-O0" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="$(CODELITE_DIR)/CodeLite"/>
         <IncludePath Value="$(CODELITE_DIR)/sdk/wxsqlite3/include"/>

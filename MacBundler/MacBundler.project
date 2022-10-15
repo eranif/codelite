@@ -138,7 +138,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-fstandalone-debug;$(shell wx-config --cxxflags --unicode=yes )" C_Options="-g;-fstandalone-debug;$(shell wx-config --cxxflags --unicode=yes )" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -193,7 +193,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Release" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Release" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>

@@ -128,7 +128,7 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Win_x64_Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes );-g;-fstandalone-debug" C_Options="$(shell wx-config --cxxflags --unicode=yes );-g;-fstandalone-debug" Required="yes" PreCompiledHeader="">
         <IncludePath Value="include/wx/dblayer/include"/>
         <Preprocessor Value="WXMAKINGDLL_DATABASELAYER"/>

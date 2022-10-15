@@ -2001,7 +2001,7 @@ resources.cpp: resources.xrc
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Debug" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Debug" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-fstandalone-debug;-Wall;$(shell wx-config  --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="codelite_pch_dbg.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
@@ -2069,7 +2069,7 @@ resources.cpp: resources.xrc
         <SearchPaths>../sdk/clang/include</SearchPaths>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Debug_No_Plugins" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Debug_No_Plugins" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-fstandalone-debug;-Wall;$(shell wx-config  --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
@@ -2131,7 +2131,7 @@ resources.cpp: resources.xrc
         <SearchPaths>../sdk/clang/include</SearchPaths>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Release" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Release" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --debug=no --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="codelite_pch.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
@@ -2192,7 +2192,7 @@ resources.cpp: resources.xrc
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x64_Release_PHP" CompilerType="CLANG 64bit ( MSYS2 64bit, clang64 )" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x64_Release_PHP" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-std=c++11;$(shell wx-config --debug=no --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>

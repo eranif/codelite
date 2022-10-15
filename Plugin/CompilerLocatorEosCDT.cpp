@@ -1,5 +1,6 @@
 #include "CompilerLocatorEosCDT.h"
 
+#include "file_logger.h"
 #include "globals.h"
 
 #include <algorithm>
@@ -12,6 +13,7 @@ CompilerLocatorEosCDT::~CompilerLocatorEosCDT() {}
 
 bool CompilerLocatorEosCDT::Locate()
 {
+    clDEBUG() << "CompilerLocatorEosCDT locate..." << endl;
     std::vector<wxString> possiblePaths{ "/usr/bin", "/usr/local/bin" };
     std::for_each(possiblePaths.begin(), possiblePaths.end(), [&](const wxString& path) {
         wxString foundPath;
@@ -19,6 +21,7 @@ bool CompilerLocatorEosCDT::Locate()
             m_compilers.push_back(CreateCompiler(foundPath));
         }
     });
+    clDEBUG() << "CompilerLocatorEosCDT locate...done" << endl;
     return !m_compilers.empty();
 }
 

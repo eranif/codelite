@@ -25,6 +25,7 @@
 
 #include "CompilerLocatorCrossGCC.h"
 
+#include "clFilesCollector.h"
 #include "file_logger.h"
 #include "procutils.h"
 
@@ -45,7 +46,6 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
         m_compilers.clear();
     }
 
-    wxArrayString matches;
     wxFileName fnFolder(folder, "");
 
     // We collect "*-gcc" files
@@ -54,17 +54,25 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
     pattern << ".exe";
 #endif
 
-    int count = wxDir::GetAllFiles(fnFolder.GetPath(), &matches, pattern, wxDIR_FILES);
+    clFilesScanner scanner;
+    clFilesScanner::EntryData::Vec_t results;
+    size_t count = scanner.ScanNoRecurse(fnFolder.GetPath(), results, pattern);
     if(count == 0) {
         // try to see if we have a 'bin' folder under 'folder'
         fnFolder.AppendDir("bin");
-        if(wxDir::Exists(fnFolder.GetPath())) {
-            count = wxDir::GetAllFiles(fnFolder.GetPath(), &matches, pattern, wxDIR_FILES);
+        if(wxFileName::DirExists(fnFolder.GetPath())) {
+            count = scanner.ScanNoRecurse(fnFolder.GetPath(), results, pattern);
         }
     }
 
     if(count == 0)
-        return NULL;
+        return nullptr;
+
+    wxArrayString matches;
+    matches.reserve(results.size());
+    for(const auto& entry : results) {
+        matches.Add(entry.fullpath);
+    }
 
     for(int i = 0; i < count; ++i) {
 #ifndef __WXMSW__

@@ -90,40 +90,32 @@ bool CompilerLocatorCLANG::Locate()
     }
 #endif
 
-    // POSIX locate
-    static wxRegEx reClang("clang([0-9\\-]*)", wxRE_DEFAULT);
-
     // Locate CLANG under all the locations under PATH variable
     // Search the entire path locations and get all files that matches the pattern 'clang*'
     wxArrayString paths = GetPaths();
     clFilesScanner scanner;
     clFilesScanner::EntryData::Vec_t outputFiles, tmpFiles;
     for(const wxString& path : paths) {
-        if(scanner.ScanNoRecurse(path, tmpFiles, "clang*")) {
+        if(scanner.ScanNoRecurse(path, tmpFiles, "clang")) {
             outputFiles.insert(outputFiles.end(), tmpFiles.begin(), tmpFiles.end());
         }
     }
 
-    wxStringMap_t map;
+    wxStringSet_t set;
     for(const auto& d : outputFiles) {
         if(d.flags & clFilesScanner::kIsFile) {
             wxFileName clang(d.fullpath);
-            wxString fullname = clang.GetFullName();
-            if(reClang.IsValid() && reClang.Matches(fullname)) {
-                wxString acceptableName = "clang" + reClang.GetMatch(fullname, 1);
-                if(fullname == acceptableName) {
-                    // keep unique paths only + the suffix
-                    map.insert({ d.fullpath, reClang.GetMatch(fullname, 1) });
-                }
+            if(clang.GetFullName() == "clang") {
+                // keep all the paths were we found clang
+                set.insert(clang.GetPath());
             }
         }
     }
 
-    clDEBUG() << "Scan completed. Found" << map.size() << "compilers" << endl;
+    clDEBUG() << "Scan completed. Found" << set.size() << "compilers" << endl;
 
-    for(const auto& vt : map) {
-        wxFileName clang(vt.first);
-        AddCompiler(clang.GetPath(), "", vt.second);
+    for(const auto& path : set) {
+        AddCompiler(path, wxEmptyString, wxEmptyString);
     }
     clDEBUG() << "Locate completed!" << endl;
     return true;
@@ -250,7 +242,13 @@ wxString CompilerLocatorCLANG::GetClangVersion(const wxString& clangBinary)
 wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
 {
     wxString fullname;
+    wxString version_string = ProcUtils::GrepCommandOutput({ clangBinary, "--version" }, "version");
+    version_string = version_string.AfterLast(' ');
+    version_string.Trim().Trim(false);
     fullname = wxFileName(clangBinary).GetFullName().Capitalize();
+    if(!version_string.empty()) {
+        fullname << "-" << version_string;
+    }
     return fullname;
 }
 

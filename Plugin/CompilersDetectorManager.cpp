@@ -39,6 +39,7 @@
 #include "build_settings_config.h"
 #include "cl_config.h"
 #include "environmentconfig.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "macros.h"
 
@@ -88,6 +89,8 @@ bool CompilersDetectorManager::Locate()
     EnvSetter env;
     m_compilersFound.clear();
     wxStringSet_t S;
+
+    clDEBUG() << "scanning for compilers..." << endl;
     for(auto locator : m_detectors) {
         if(locator->Locate()) {
             for(auto compiler : locator->GetCompilers()) {
@@ -112,6 +115,8 @@ bool CompilersDetectorManager::Locate()
     for(auto compiler : m_compilersFound) {
         MSWFixClangToolChain(compiler, m_compilersFound);
     }
+
+    clDEBUG() << "scanning for compilers...completed" << endl;
     return !m_compilersFound.empty();
 }
 

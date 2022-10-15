@@ -91,7 +91,7 @@ CompilerPtr CompilerLocatorMSYS2Clang::Locate(const wxString& folder)
     // add the tools
     compiler->SetTool("CXX", clangxx.GetFullPath());
     compiler->SetTool("CC", clang.GetFullPath());
-    compiler->SetTool("AR", ar.GetFullPath());
+    compiler->SetTool("AR", ar.GetFullPath() + " -r");
     compiler->SetTool("LinkerName", clangxx.GetFullPath());
     compiler->SetTool("SharedObjectLinkerName", clangxx.GetFullPath() + " -shared -fPIC");
     compiler->SetTool("AS", as.GetFullPath());

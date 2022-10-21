@@ -48,7 +48,7 @@ echo "Verison       : ${version}"
 cd $curdir
 echo "Pulling CodeLite changes..."
 echo `pwd`
-git pull --rebase
+git pull --rebase --recurse-submodules
 if [ $? -ne 0 ]; then
     exit $?
 fi

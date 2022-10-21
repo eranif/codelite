@@ -13,7 +13,6 @@ echo "Root dir is set to $(pwd)"
 # Clear old installers
 os_name=`uname -s`
 arch=`uname -m`
-upload_file="no"
 
 os_name=`uname -s`
 echo rm -f $curdir/build-release/codelite.app.tar.gz
@@ -29,14 +28,6 @@ fi
 for i in "$@"
 do
     case $i in
-    --upload)
-        upload_file="yes"
-        shift
-        ;;
-    --cpu-count=*)
-        cpu_count="${i#*=}"
-        shift
-        ;;
     --version=*)
         version="${i#*=}"
         shift
@@ -51,7 +42,6 @@ fi
 
 echo "Platform      : ${os_name}"
 echo "CPU count     : ${cpu_count}"
-echo "Upload binary : ${upload_file}"
 echo "Verison       : ${version}"
 
 # Update our source tree

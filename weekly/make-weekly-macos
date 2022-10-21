@@ -12,12 +12,10 @@ echo "Signing the app (requires sudo access):"
 sudo codesign --deep -fs codelite-self-signed  codelite.app
 echo "Signing the app..done"
 
-if [ "${upload_file}" == "yes" ]; then
-    package_file=codelite-${arch}.app.tar.gz
-    upload_path="/var/www/html/downloads/codelite/${version}"
-    ssh root@codelite.org "mkdir -p ${upload_path}"
-    tar cvfz ${package_file} codelite.app/*
-    scp ${package_file} root@codelite.org:${upload_path}
-    ssh root@codelite.org \
-        "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
-fi
+package_file=codelite-${arch}.app.tar.gz
+upload_path="/var/www/html/downloads/codelite/${version}"
+ssh root@codelite.org "mkdir -p ${upload_path}"
+tar cvfz ${package_file} codelite.app/*
+scp ${package_file} root@codelite.org:${upload_path}
+ssh root@codelite.org \
+    "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"

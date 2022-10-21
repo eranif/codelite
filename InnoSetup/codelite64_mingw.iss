@@ -57,18 +57,6 @@ Source: "{#BUILD_BIN_DIR}\codelite-exec.exe"; DestDir: "{app}"; Flags: ignorever
 Source: "{#BUILD_BIN_DIR}\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ;
 
 ;; ---- wxWidgets DLLs
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxbase316u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxbase316u_net_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxbase316u_xml_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_adv_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_aui_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_core_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_html_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_propgrid_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_richtext_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_stc_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_xrc_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;; Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw316u_ribbon_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw32u_clang.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- MinGW64 Dlls

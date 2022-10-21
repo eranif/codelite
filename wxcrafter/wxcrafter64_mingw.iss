@@ -29,8 +29,7 @@ UninstallDisplayIcon={app}\wxcrafter.exe,0
 #define CODELITE_ROOT "C:\src\codelite"
 #define WXWIN "C:\msys64\home\eran\root"
 #define MSYS2_DIR "C:\msys64\usr\bin"
-#define MINGW_DIR "C:\msys64\mingw64\bin"
-#define CLANG_DIR "C:\LLVM\bin"
+#define MINGW_DIR "C:\msys64\clang64\bin"
 #define BUILD_BIN_DIR "C:\src\codelite\wxcrafter\build-Release_Standalone\bin"
 #define WX_CONFIG_DIR "C:\msys64\home\eran\devl\wx-config-msys2\bin"
 #define MINGW_INSTALL_DIR "C:\msys64\home\eran\root"
@@ -58,11 +57,11 @@ Source: "{#BUILD_BIN_DIR}\wxcrafter.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_stc_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
 ;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_xrc_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
 ;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_ribbon_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw32u_clang.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- MinGW64 Dlls
-Source: "{#MINGW_DIR}\libgcc_s_seh-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MINGW_DIR}\libstdc++-6.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#MINGW_DIR}\libc++.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#MINGW_DIR}\libunwind.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MINGW_DIR}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- Binaries

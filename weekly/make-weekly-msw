@@ -2,10 +2,9 @@
 
 . $(dirname $(readlink -f $0))/make-weekly-common
 
-cd InnoSetup
-
 # package CodeLite
 function package_codelite() {
+    cd $ROOT_DIR/InnoSetup
     echo "Packaing CodeLite installer..."
     "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" codelite64_mingw.iss > build.log
     echo "Packaging CodeLite installer... done"
@@ -22,10 +21,10 @@ function package_codelite() {
     scp "${package_file}" root@codelite.org:${upload_path}
     ssh root@codelite.org \
         "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
-    cd $curdir
 }
 
 function package_wxcrafter() {
+    cd $ROOT_DIR/wxcrafter
     echo "Packaing wxCrafter installer..."
     "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" wxcrafter64_mingw.iss > build.log
     echo "Packaging wxCrafter installer... done"
@@ -42,7 +41,6 @@ function package_wxcrafter() {
     scp "${package_file}" root@codelite.org:${upload_path}
     ssh root@codelite.org \
         "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
-    cd $curdir
 }
 
 package_codelite

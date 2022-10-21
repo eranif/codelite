@@ -27,13 +27,13 @@
 #define CLSSH_H
 
 #if USE_SFTP
-#include <memory>
-
 #include "clSSHAgent.hpp"
 #include "cl_command_event.h"
 #include "cl_exception.h"
 #include "codelite_exports.h"
+
 #include <errno.h>
+#include <memory>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
@@ -80,14 +80,8 @@ public:
     clSSH();
     virtual ~clSSH();
 
-    bool IsConnected() const
-    {
-        return m_connected;
-    }
-    bool IsCommandRunning() const
-    {
-        return m_channel != NULL;
-    }
+    bool IsConnected() const { return m_connected; }
+    bool IsCommandRunning() const { return m_channel != NULL; }
 
     /**
      * @brief send a message that should be ignored. This is useful for implemeting keep-alive
@@ -120,6 +114,11 @@ public:
     bool LoginPassword(bool throwExc = true);
 
     /**
+     * @brief login using ssh_userauth_none()
+     */
+    bool LoginAuthNone(bool throwExc = true);
+
+    /**
      * @brief login using public key
      * @return true if we managed to login
      * @throw clException incase something really bad happened
@@ -149,44 +148,17 @@ public:
      */
     void ExecuteShellCommand(wxEvtHandler* owner, const wxString& command);
 
-    SSHSession_t GetSession()
-    {
-        return m_session;
-    }
+    SSHSession_t GetSession() { return m_session; }
 
-    void SetPassword(const wxString& password)
-    {
-        this->m_password = password;
-    }
-    void SetPort(int port)
-    {
-        this->m_port = port;
-    }
+    void SetPassword(const wxString& password) { this->m_password = password; }
+    void SetPort(int port) { this->m_port = port; }
 
-    const wxString& GetPassword() const
-    {
-        return m_password;
-    }
-    int GetPort() const
-    {
-        return m_port;
-    }
-    void SetHost(const wxString& host)
-    {
-        this->m_host = host;
-    }
-    void SetUsername(const wxString& username)
-    {
-        this->m_username = username;
-    }
-    const wxString& GetHost() const
-    {
-        return m_host;
-    }
-    const wxString& GetUsername() const
-    {
-        return m_username;
-    }
+    const wxString& GetPassword() const { return m_password; }
+    int GetPort() const { return m_port; }
+    void SetHost(const wxString& host) { this->m_host = host; }
+    void SetUsername(const wxString& username) { this->m_username = username; }
+    const wxString& GetHost() const { return m_host; }
+    const wxString& GetUsername() const { return m_username; }
 };
 #endif // USE_SFTP
 #endif // CLSSH_H

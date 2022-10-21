@@ -26,6 +26,7 @@
 #if USE_SFTP
 #include "StringUtils.h"
 #include "file_logger.h"
+
 #include <wx/string.h>
 #include <wx/textdlg.h>
 #include <wx/thread.h>
@@ -34,6 +35,7 @@
 #include "wx/msw/winundef.h"
 #endif
 #include "cl_ssh.h"
+
 #include <libssh/libssh.h>
 
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
@@ -188,6 +190,24 @@ void clSSH::AcceptServerAuthentication()
     }                           \
     return false;
 
+bool clSSH::LoginAuthNone(bool throwExc)
+{
+    clDEBUG() << "Trying to ssh using `ssh_userauth_none`" << endl;
+    if(!m_session) {
+        THROW_OR_FALSE("NULL SSH session");
+    }
+
+    int rc;
+    // interactive keyboard method failed, try another method
+    auto username = StringUtils::ToStdString(GetUsername());
+    rc = ssh_userauth_none(m_session, username.c_str());
+    if(rc == SSH_AUTH_SUCCESS) {
+        return true;
+    }
+    THROW_OR_FALSE(_("ssh_userauth_none failed"));
+    return false;
+}
+
 bool clSSH::LoginPassword(bool throwExc)
 {
     if(!m_session) {
@@ -299,27 +319,28 @@ void clSSH::Login()
     std::string username = StringUtils::ToStdString(GetUsername());
     ssh_options_set(m_session, SSH_OPTIONS_USER, username.c_str());
 
-    // Try the following 3 methods in order
-    // if non succeeded, this function will throw an exception
+    // Try all the known methods
+    std::vector<decltype(&clSSH::LoginPublicKey)> methods;
+    methods.reserve(4);
 
-    try {
-        LoginPublicKey();
+    methods.push_back(&clSSH::LoginPublicKey);
+    methods.push_back(&clSSH::LoginPassword);
+    methods.push_back(&clSSH::LoginInteractiveKBD);
+    methods.push_back(&clSSH::LoginAuthNone);
 
-    } catch(clException& e) {
-        clDEBUG() << "LoginPublicKey failed:" << e.What();
+    bool authenticated = false;
+    for(auto func : methods) {
         try {
-            LoginPassword();
-
-        } catch(clException& e2) {
-            clDEBUG() << "LoginPassword failed:" << e2.What();
-            try {
-                LoginInteractiveKBD();
-
-            } catch(clException& e3) {
-                clDEBUG() << "LoginInteractiveKBD failed:" << e3.What();
-                throw;
-            }
+            (this->*func)(true);
+        } catch(clException& e) {
+            clDEBUG() << "failed to authenticate." << e.What() << endl;
+            continue;
         }
+        authenticated = true;
+        break;
+    }
+    if(!authenticated) {
+        throw clException("Unable to login to server");
     }
 }
 

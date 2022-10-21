@@ -49,7 +49,7 @@ Note that the CodeLite packages incorporate the required wxWidgets libraries (`w
 Of course you can if you wish, and you'll need to do so to build apps against wxWidgets.
 CodeLite doesn't (yet) require wx3.1 though, and you can still build your own against wx3.0.x if you prefer.
 
-Ubuntu `16.04` (`xenial`) and later have official CodeLite packages. Therefore, to avoid a name-clash, our CodeLite packages have `unofficial` appended to the name
+Ubuntu `16.04` (`xenial`) and later have official CodeLite packages. Therefore, to avoid a name-clash, our CodeLite packages have `unofficial` appended to the name.
 
 To download CodeLite for Debian based systems (Debian / Mint / Ubuntu etc):
 
@@ -117,6 +117,8 @@ CodeLite 9.1 or later, and debian stretch has 10.0. This is very welcome, but cr
 Therefore, starting with CodeLite 9.2, our debian packages have `unofficial` added to the version e.g. `codelite_16.0-1unofficial.bullseye_amd64.deb`
 
 This allows you to select which to install using apt (or aptitude or synaptic).
+
+Update: ubuntu `22.10` (kinetic) has official CodeLite 16.0 packages, so there is no need for unofficial ones.
 
 ### CodeLite RPMs
 ---

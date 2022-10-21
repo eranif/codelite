@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Keep the current folder
+curdir=`pwd`
+
+# find the root dir
+while [ ! -d ".git" ]; do
+    cd ..
+done
+
+echo "Root dir is set to $(pwd)"
+
+# Clear old installers
+os_name=`uname -s`
+arch=`uname -m`
+upload_file="no"
+
+os_name=`uname -s`
+echo rm -f $curdir/build-release/codelite.app.tar.gz
+rm -f $curdir/build-release/codelite.app.tar.gz
+
+if [[ "$arch" -eq "Darwin" ]]; then
+    cpu_count=`sysctl -n hw.ncpu`
+else
+    cpu_count=`nproc`
+fi
+
+## parse the command line arguments and over defaults
+for i in "$@"
+do
+    case $i in
+    --upload)
+        upload_file="yes"
+        shift
+        ;;
+    --cpu-count=*)
+        cpu_count="${i#*=}"
+        shift
+        ;;
+    --version=*)
+        version="${i#*=}"
+        shift
+        ;;
+    esac
+done
+
+if [ -z ${version} ]; then
+    echo -e "ERROR: please provide version. e.g. --version=16.5.0"
+    exit 1
+fi
+
+echo "Platform      : ${os_name}"
+echo "CPU count     : ${cpu_count}"
+echo "Upload binary : ${upload_file}"
+echo "Verison       : ${version}"
+
+# Update our source tree
+cd $curdir
+echo "Pulling CodeLite changes..."
+echo `pwd`
+git pull --rebase
+if [ $? -ne 0 ]; then
+    exit $?
+fi
+
+cd $curdir
+ORIG_PATH=$PATH
+ORIG_LDPATH=$LD_LIBRARY_PATH
+ROOT_DIR=$(pwd)
+
+upload_path="/var/www/html/downloads/codelite/${version}"

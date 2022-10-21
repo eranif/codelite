@@ -1,0 +1,37 @@
+#!/bin/bash
+
+. $(dirname $(readlink -f $0))/make-weekly-common
+
+linux_build_codelite() {
+    cd $ROOT_DIR
+    mkdir -p build-release
+    rm -fr *.deb
+    cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+    make -j${cpu_count} package
+    package_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+    upload_path="/var/www/html/downloads/codelite/${version}"
+    ssh root@codelite.org "mkdir -p ${upload_path}"
+    scp ${package_file} root@codelite.org:${upload_path}
+    ssh root@codelite.org \
+        "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
+    cd $curdir
+}
+
+linux_build_wxcrafter() {
+    cd $ROOT_DIR
+    mkdir -p build-release-wxcrafter
+    rm -fr *.deb
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXC_APP=1 -Wno-dev
+    make -j${cpu_count} package
+    rm -f *Unspecified.deb
+    package_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+    upload_path="/var/www/html/downloads/wxcrafter/${version}"
+    ssh root@codelite.org "mkdir -p ${upload_path}"
+    scp ${package_file} root@codelite.org:${upload_path}
+    ssh root@codelite.org \
+        "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
+    cd $curdir
+}
+
+linux_build_codelite
+linux_build_wxcrafter

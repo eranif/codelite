@@ -4,7 +4,9 @@
 ## Preface
 ---
 
-This page is for the stable release, wx3.2.0. The CodeLite packages for Linux now use wxWidgets >=3.1. As wx3.2.0 is newly released, few current (July 2022) distro versions will supply it. I've therefore built 3.2.0 packages for the commonest ones.
+This page is for the stable release, wx3.2.0. The CodeLite packages for Linux now use wxWidgets >=3.1. As wx3.2.0 is newly released, few current (July 2022) distro versions will supply it. I've therefore built 3.2.0 packages for the commonest ones
+
+Update: ubuntu 22.10 has official wx3.2.0 packages.
 
 ## Fetching CodeLite keys
 ---

@@ -18,10 +18,10 @@ os_name=`uname -s`
 echo rm -f $curdir/build-release/codelite.app.tar.gz
 rm -f $curdir/build-release/codelite.app.tar.gz
 
-if [[ "$arch" -eq "Darwin" ]]; then
-    cpu_count=`sysctl -n hw.ncpu`
-else
-    cpu_count=`nproc`
+if [[ "$os_name" == "Darwin" ]]; then
+    cpu_count=$(sysctl -n hw.ncpu)
+elif [[ "$os_name" == "Linux" ]]; then
+    cpu_count=$(nproc)
 fi
 
 ## parse the command line arguments and over defaults

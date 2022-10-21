@@ -5,6 +5,7 @@
 linux_build_codelite() {
     cd $ROOT_DIR
     mkdir -p build-release
+    cd build-release
     rm -fr *.deb
     cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
     make -j${cpu_count} package
@@ -20,6 +21,7 @@ linux_build_codelite() {
 linux_build_wxcrafter() {
     cd $ROOT_DIR
     mkdir -p build-release-wxcrafter
+    cd build-release-wxcrafter
     rm -fr *.deb
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXC_APP=1 -Wno-dev
     make -j${cpu_count} package

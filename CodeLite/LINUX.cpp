@@ -22,6 +22,10 @@ namespace
 bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxString* install_path)
 {
     wxString cellar_path = "/opt/homebrew/Cellar";
+    if (!wxFileName::DirExists(cellar_path)) {
+        cellar_path = "/usr/local/Cellar";
+    }
+    
     cellar_path << "/" << formula;
 
     if(!wxFileName::DirExists(cellar_path)) {

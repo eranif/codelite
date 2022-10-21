@@ -5,20 +5,45 @@
 cd InnoSetup
 
 # package CodeLite
-echo "Packaing CodeLite installer..."
-"/c/Program Files (x86)/Inno Setup 6/ISCC.exe" codelite64_mingw.iss > build.log
-echo "Packaging CodeLite installer... done"
-package_file=$(tail -1 build.log)
-package_file=$(basename "${package_file}")
+function package_codelite() {
+    echo "Packaing CodeLite installer..."
+    "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" codelite64_mingw.iss > build.log
+    echo "Packaging CodeLite installer... done"
+    package_file=$(tail -1 build.log)
+    package_file=$(basename "${package_file}")
 
-echo "Output file => ${package_file}"
+    echo "Output file => ${package_file}"
 
-# cd to the location where our output file exists
-cd $ROOT_DIR/InnoSetup/output
+    # cd to the location where our output file exists
+    cd $ROOT_DIR/InnoSetup/output
 
-upload_path="/var/www/html/downloads/codelite/${version}"
-ssh root@codelite.org "mkdir -p ${upload_path}"
-scp "${package_file}" root@codelite.org:${upload_path}
-ssh root@codelite.org \
-    "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
-cd $curdir
+    upload_path="/var/www/html/downloads/codelite/${version}"
+    ssh root@codelite.org "mkdir -p ${upload_path}"
+    scp "${package_file}" root@codelite.org:${upload_path}
+    ssh root@codelite.org \
+        "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
+    cd $curdir
+}
+
+function package_wxcrafter() {
+    echo "Packaing wxCrafter installer..."
+    "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" wxcrafter64_mingw.iss > build.log
+    echo "Packaging wxCrafter installer... done"
+    package_file=$(tail -1 build.log)
+    package_file=$(basename "${package_file}")
+
+    echo "Output file => ${package_file}"
+
+    # cd to the location where our output file exists
+    cd $ROOT_DIR/InnoSetup/output
+
+    upload_path="/var/www/html/downloads/wxcrafter/${version}"
+    ssh root@codelite.org "mkdir -p ${upload_path}"
+    scp "${package_file}" root@codelite.org:${upload_path}
+    ssh root@codelite.org \
+        "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
+    cd $curdir
+}
+
+package_codelite
+package_wxcrafter

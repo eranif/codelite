@@ -345,11 +345,7 @@ void clRemoteDirCtrl::DoOpenItem(const wxTreeItemId& item, eDownloadAction actio
 
     switch(action) {
     case kOpenInCodeLite:
-        if(clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account) == nullptr) {
-            // Failed to load the file, notify the user
-            ::wxMessageBox(_("Failed to load file: ") + cd->GetFullPath(), "CodeLite", wxICON_WARNING | wxOK | wxCENTER,
-                           EventNotifier::Get()->TopFrame());
-        }
+        clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
         break;
     case kOpenInExplorer: {
         auto editor = clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);

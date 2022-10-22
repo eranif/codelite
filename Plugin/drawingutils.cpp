@@ -623,7 +623,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
         break;
     case eButtonState::kHover:
         drawBackground = true;
-        bg_colour = is_dark ? bg_colour.ChangeLightness(105) : bg_colour.ChangeLightness(95);
+        bg_colour = is_dark ? bg_colour.ChangeLightness(110) : bg_colour.ChangeLightness(90);
         break;
     case eButtonState::kPressed:
         drawBackground = true;

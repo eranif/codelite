@@ -244,6 +244,13 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Bind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
+
+    // call refresh when leaving the window
+    Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& e) {
+        e.Skip();
+        Refresh();
+    });
+
     SetStyle(m_style);
     m_colours.UpdateColours(m_style);
 
@@ -795,20 +802,11 @@ void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, eDi
         clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
         wxRect r(tab->GetRect());
         if(r.Contains(pt)) {
-            if(IsVerticalTabs()) {
-                if(pt.y > ((r.GetHeight() / 2) + r.GetY())) {
-                    // the point is on the RIGHT side
-                    align = eDirection::kUp;
-                } else {
-                    align = eDirection::kDown;
-                }
+            if(pt.x > ((r.GetWidth() / 2) + r.GetX())) {
+                // the point is on the RIGHT side
+                align = eDirection::kRight;
             } else {
-                if(pt.x > ((r.GetWidth() / 2) + r.GetX())) {
-                    // the point is on the RIGHT side
-                    align = eDirection::kRight;
-                } else {
-                    align = eDirection::kLeft;
-                }
+                align = eDirection::kLeft;
             }
             tabHit = i;
             realPosition = DoGetPageIndex(tab->GetWindow());

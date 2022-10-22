@@ -16,8 +16,8 @@ aaaaa ICON "res/codelite-logo.ico"
 ///////////////////////////////////////////////////////////////////////////////
 // Version information
 VS_VERSION_INFO    VERSIONINFO
-FILEVERSION      16,6,0,0
-PRODUCTVERSION   16,6,0,0
+FILEVERSION      16,7,0,0
+PRODUCTVERSION   16,7,0,0
 FILEFLAGSMASK    0x3fL // VS_FFI_FILEFLAGSMASK
 FILEFLAGS        0x0L  // final version
 FILEOS           VOS_NT_WINDOWS32
@@ -31,14 +31,14 @@ FILESUBTYPE      VFT2_UNKNOWN { // not used
             VALUE "CompanyName",      "Eran Ifrah"
             VALUE "Developer",        "Eran Ifrah"
             VALUE "FileDescription",  "CodeLite, an Open Source cross platform C,C++,Rust,Python,PHP and Node.js IDE"
-            VALUE "FileVersion",      "16.6.0"
+            VALUE "FileVersion",      "16.7.0"
             VALUE "InternalName",     "CodeLite"
             VALUE "LegalCopyright",   "Copyright (C) 2007-2022 Eran Ifrah"
             VALUE "LegalTrademarks",  "All rights reserved."
             VALUE "OriginalFilename", "codelite.exe"
             VALUE "PrivateBuild",     ""
             VALUE "ProductName",      "CodeLite"
-            VALUE "ProductVersion",   "16.5.0 (64BIT)"
+            VALUE "ProductVersion",   "16.7.0 (64BIT)"
             VALUE "SpecialBuild",     ""
             VALUE "Support",          "https://forums.codelite.org"
             VALUE "Users",            "Unlimited."

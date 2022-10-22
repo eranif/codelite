@@ -399,6 +399,15 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     UpdateVisibleTabs();
     gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - m_chevronRect.GetWidth(), clientRect.height);
 
+    // check if the mouse is over a visible tab
+    int tabHit, realPos;
+    eDirection align;
+    auto mousePos = GetParent()->ScreenToClient(::wxGetMousePosition());
+    TestPoint(mousePos, realPos, tabHit, align);
+
+    wxUnusedVar(realPos);
+    wxUnusedVar(align);
+
     clTabInfo::Ptr_t activeTab;
     for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
         clTabInfo::Ptr_t tab = m_visibleTabs[i];
@@ -408,7 +417,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         clTabColours* pColours = &m_colours;
         clTabColours user_colours;
-        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style, tab->m_xButtonState);
+
+        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style,
+                    tabHit == i ? eButtonState::kHover : eButtonState::kNormal, tab->m_xButtonState);
     }
 
     if(!activeTab) {
@@ -417,7 +428,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     // Redraw the active tab
-    m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, activeTab->m_xButtonState);
+    m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, eButtonState::kNormal,
+                activeTab->m_xButtonState);
     gcdc.DestroyClippingRegion();
 
     m_art->FinaliseBackground(this, gcdc, clientRect, activeTab->GetRect(), m_colours, m_style);

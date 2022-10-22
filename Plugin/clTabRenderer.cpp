@@ -156,12 +156,13 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     m_bmpX = wxNOT_FOUND;
     m_bmpY = wxNOT_FOUND;
 
-    if(HasBitmap()) {
-        const wxBitmap& bmp = m_tabCtrl->GetBitmaps()->Get(m_bitmap, false);
-        m_bmpX = m_width;
-        m_width += bmp.GetScaledWidth();
-        m_bmpY = ((m_height - bmp.GetScaledHeight()) / 2);
-        m_width += X_spacer;
+    // x button
+    wxRect xrect;
+    if((style & kNotebook_CloseButtonOnActiveTab)) {
+        xrect = wxRect(m_width, 0, X_BUTTON_SIZE, X_BUTTON_SIZE);
+        m_bmpCloseX = xrect.GetX();
+        m_bmpCloseY = 0; // we will fix this later
+        m_width += xrect.GetWidth() + m_tabCtrl->FromDIP(5);
     }
 
     // Text
@@ -171,13 +172,12 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     m_textWidth = sz.x;
     m_width += X_spacer;
 
-    // x button
-    wxRect xrect;
-    if((style & kNotebook_CloseButtonOnActiveTab)) {
-        xrect = wxRect(m_width, 0, X_BUTTON_SIZE, X_BUTTON_SIZE);
-        m_bmpCloseX = xrect.GetX();
-        m_bmpCloseY = 0; // we will fix this later
-        m_width += xrect.GetWidth() + m_tabCtrl->FromDIP(5);
+    if(HasBitmap()) {
+        const wxBitmap& bmp = m_tabCtrl->GetBitmaps()->Get(m_bitmap, false);
+        m_bmpX = m_width;
+        m_width += bmp.GetScaledWidth();
+        m_bmpY = ((m_height - bmp.GetScaledHeight()) / 2);
+        m_width += X_spacer;
     }
 
     // Update the rect width

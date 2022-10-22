@@ -25,7 +25,7 @@ constexpr int BOTTOM_PEN_LIGHNTESS = 80;
 constexpr int SIDE_PEN_LIGHNTESS_WHEN_DARK = 115;
 constexpr int SIDE_PEN_LIGHNTESS_WHEN_LIGHT = 70;
 #else
-constexpr int BOTTOM_PEN_LIGHNTESS = 40;
+constexpr int BOTTOM_PEN_LIGHNTESS = 80;
 constexpr int SIDE_PEN_LIGHNTESS_WHEN_DARK = 115;
 constexpr int SIDE_PEN_LIGHNTESS_WHEN_LIGHT = 80;
 #endif
@@ -63,9 +63,10 @@ void clTabRendererMinimal::InitLightColours(clTabColours& colours, const wxColou
 }
 
 void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
-                                const clTabColours& colors, size_t style, eButtonState buttonState)
+                                const clTabColours& colors, size_t style, eButtonState tabState,
+                                eButtonState xButtonState)
 {
-    DoDraw(parent, dc, fontDC, tabInfo, colors, style, buttonState);
+    DoDraw(parent, dc, fontDC, tabInfo, colors, style, tabState, xButtonState);
 }
 
 void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
@@ -112,7 +113,8 @@ wxColour clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const 
 }
 
 wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
-                                    const clTabColours& colors, size_t style, eButtonState buttonState)
+                                    const clTabColours& colors, size_t style, eButtonState tabState,
+                                    eButtonState xButtonState)
 {
     wxRect tabRect = tabInfo.GetRect();
     clTabColours colours = colors;
@@ -132,8 +134,17 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
     // we use the visible tab for centering text
     wxRect visibleTab = tabRect;
 
+    wxColour brush_colour = tabInfo.IsActive() ? activeTabBgColour : bgColour;
+    switch(tabState) {
+    case eButtonState::kHover:
+        brush_colour = brush_colour.ChangeLightness(is_dark ? 105 : 95);
+        break;
+    default:
+        break;
+    }
+
     dc.SetPen(tabInfo.IsActive() ? activeTabBgColour : bgColour);
-    dc.SetBrush(tabInfo.IsActive() ? activeTabBgColour : bgColour);
+    dc.SetBrush(brush_colour);
     dc.DrawRoundedRectangle(tabRect, TAB_RADIUS);
 
     // Draw bitmap
@@ -201,7 +212,7 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
         c.activeTabBgColour = activeTabBgColour;
         c.inactiveTabBgColour = bgColour;
         c.activeTabTextColour = text_colour;
-        DrawButton(parent, dc, tab_info, c, buttonState);
+        DrawButton(parent, dc, tab_info, c, xButtonState);
     }
     return tabRect;
 }

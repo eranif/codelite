@@ -30,26 +30,27 @@ A wrapper for the `lldb` debugger that implements the Debug Adapter Protocol
 
 === "Linux"
 
-    Most linux distros offer `lldb-vscode` in their repository. For example, in `Ubuntu 20.04`
-    you can install it by typing (you can install a newer version if available; the newer, the better):
+    We recommend to install `lldb-vscode` via `brew` (yes, use `brew` on Linux!)
 
-    `sudo apt update && sudo apt install lldb-12`
+    - [Install brew for Linux][6]
+    - Run: `brew install llvm`
 
 === "macOS"
 
     `lldb-vscode` is installed using `brew`:
 
-    `brew install llvm`
+    - [Install brew for macOS][7]
+    - Run: `brew install llvm`
 
 === "Windows"
     - Setup a [MSYS2 working environment][3]
     - Open `MSYS2` terminal and type:
 
-    ```
+    ~~~
     pacman -Sy  mingw-w64-clang-x86_64-toolchain \
                 mingw-w64-clang-x86_64-python3 \
                 mingw-w64-clang-x86_64-libffi
-    ```
+    ~~~
     - You should now have `lldb-vscode` installed under `/clang64/bin/lldb-vsocde`
 
 ----
@@ -63,10 +64,10 @@ You can read more about it [here][5]
 
 Installing `debugpy` is done using `pip`:
 
-```bash
+~~~bash
 pip install --upgrade pip
 pip install --upgrade debugpy
-```
+~~~
 
 ----
 
@@ -113,6 +114,8 @@ The configuration dialog is minimal and contains the following fields:
 
  [1]: https://microsoft.github.io/debug-adapter-protocol/
  [2]: https://microsoft.github.io/debug-adapter-protocol/implementors/adapters/
- [3]: /build/mingw_builds/#prepare-a-working-environment
+ [3]: /getting_started/windows/#common
  [4]: https://github.com/microsoft/debugpy
  [5]: https://github.com/microsoft/debugpy/blob/main/doc/Subprocess%20debugging.md
+ [6]: /getting_started/linux/#optional-install-brew-for-linux
+ [7]: /getting_started/macos/#install-brew

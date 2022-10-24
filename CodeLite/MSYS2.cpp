@@ -1,5 +1,7 @@
 #include "MSYS2.hpp"
 
+#include "cl_standard_paths.h"
+
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
@@ -53,23 +55,29 @@ bool MSYS2::FindHomeDir(wxString* homedir)
 bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
 {
     wxString msyspath;
-    if(!FindInstallDir(&msyspath)) {
-        return false;
-    }
+    bool has_msys2 = FindInstallDir(&msyspath);
 
     wxArrayString paths_to_try;
 
-    // include PATH environment variable?
+    // next in order are is the PATH environment variable
     if(m_flags & SEARCH_PATH_ENV) {
         wxString pathenv;
         wxGetEnv("PATH", &pathenv);
         paths_to_try = ::wxStringTokenize(pathenv, ";", wxTOKEN_STRTOK);
     }
 
-    for(const auto& root : m_chroots) {
-        paths_to_try.Insert(msyspath + root + R"(\bin)", 0);
+    // add the executable path (this is how windows work: we first look at the executable path)
+    paths_to_try.Insert(wxFileName(clStandardPaths::Get().GetExecutablePath()).GetPath(), 0);
+
+    // if we have msys2 installed, add the bin folder (we place them at start)
+    if(has_msys2) {
+        for(const auto& root : m_chroots) {
+            paths_to_try.Insert(msyspath + root + R"(\bin)", 0);
+        }
     }
 
+    // at the point, the order of search is:
+    // MSYS2 -> Executable path -> PATH paths
     for(auto path : paths_to_try) {
         path << "\\" << command << ".exe";
         if(wxFileName::FileExists(path)) {

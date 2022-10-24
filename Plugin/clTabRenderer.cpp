@@ -28,20 +28,7 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
 {
     *bgColour = colours.tabAreaColour;
     *activeTabBgColour = colours.activeTabBgColour;
-#if 0
-    bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
-    // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
-    if(style & kNotebook_DynamicColours) {
-        auto editor = clGetManager()->GetActiveEditor();
-        if(editor) {
-            *activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
-            is_dark = DrawingUtils::IsDark(*activeTabBgColour);
-        }
-        *bgColour = activeTabBgColour->ChangeLightness(is_dark ? 120 : 80);
-    }
-#else
     wxUnusedVar(style);
-#endif
 }
 int X_BUTTON_SIZE = 20;
 void SetBestXButtonSize(wxWindow* win) { wxUnusedVar(win); }

@@ -24,7 +24,7 @@ select the ones you are interested in and then [configure them in CodeLite][14]
 
     **Windows**
 
-    On Windows, CodeLite comes with a pre built binary of `clangd` configured and installed.
+    Install `clangd` by install the recommended packages as [described here][15]
 
     ** Linux **
 
@@ -222,3 +222,4 @@ this way, after running `cmake`, you will get an up-to-date `compile_commands.js
 [12]: #manual-configuration
 [13]: /misc/install_rust
 [14]: #automatic-detection
+[15]: /getting_started/windows/#common

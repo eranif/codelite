@@ -248,6 +248,19 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     // call refresh when leaving the window
     Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& e) {
         e.Skip();
+        // reset the close button state
+        for(auto tab : m_tabs) {
+            tab->m_xButtonState = eButtonState::kNormal;
+        }
+        Refresh();
+    });
+
+    wxTheApp->Bind(wxEVT_ACTIVATE_APP, [this](wxActivateEvent& e) {
+        e.Skip();
+        // reset the close button state
+        for(auto tab : m_tabs) {
+            tab->m_xButtonState = eButtonState::kNormal;
+        }
         Refresh();
     });
 

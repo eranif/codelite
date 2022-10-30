@@ -35,20 +35,6 @@ class wxCheckBox;
 class wxButton;
 class wxStaticText;
 
-#define wxFRD_MATCHCASE (1 << 0)
-#define wxFRD_MATCHWHOLEWORD (1 << 1)
-#define wxFRD_REGULAREXPRESSION (1 << 2)
-#define wxFRD_SEARCHUP (1 << 3)
-#define wxFRD_WRAPSEARCH (1 << 4)
-#define wxFRD_SELECTIONONLY (1 << 5)
-#define wxFRD_DISPLAYSCOPE (1 << 6)
-#define wxFRD_SAVE_BEFORE_SEARCH (1 << 7)
-#define wxFRD_SKIP_COMMENTS (1 << 8)
-#define wxFRD_SKIP_STRINGS (1 << 9)
-#define wxFRD_COLOUR_COMMENTS (1 << 10)
-#define wxFRD_SEPARATETAB_DISPLAY (1 << 11)
-#define wxFRD_ENABLE_PIPE_SUPPORT (1 << 12)
-
 #define FIND_DLG 0
 #define REPLACE_DLG 1
 

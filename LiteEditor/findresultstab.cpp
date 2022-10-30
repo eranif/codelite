@@ -127,11 +127,6 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
     if(EventNotifier::Get()->ProcessEvent(eventFifShowing))
         return;
 
-    // Display the Find In Files dialog
-    FindReplaceData frd;
-    frd.SetName("FindInFilesData");
-    clConfig::Get().ReadItem(&frd);
-
     // Allocate the 'Find In Files' in an inner block
     // We do this because the 'FindReplaceData' will be updated upon the destruction of the dialog
     {
@@ -152,7 +147,7 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
         }
 
         // Prepare the fif dialog
-        FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), frd);
+        FindInFilesDialog dlg(EventNotifier::Get()->TopFrame());
         if(!fifPaths.IsEmpty()) {
             dlg.SetSearchPaths(fifPaths, !transientPaths.IsEmpty());
         }
@@ -165,13 +160,9 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
         if((dlg.ShowDialog() == wxID_OK) && sendDismissEvent) {
             // Notify about the dialog dismissal
             clFindInFilesEvent eventDismiss(wxEVT_FINDINFILES_DLG_DISMISSED);
-            eventDismiss.SetFileMask(frd.GetSelectedMask());
-            eventDismiss.SetPaths(frd.GetWhere());
             EventNotifier::Get()->ProcessEvent(eventDismiss);
         }
     }
-    // And we alway store the global find-in-files data (it keeps the 'find-what', 'replace with' fields, etc...)
-    clConfig::Get().WriteItem(&frd);
 }
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)

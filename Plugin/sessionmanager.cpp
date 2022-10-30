@@ -24,10 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "sessionmanager.h"
 
+#include "WorkspaceHelper.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_config.h"
 #include "cl_standard_paths.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "fileutils.h"
+#include "macros.h"
 #include "wx/ffile.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
@@ -35,6 +40,51 @@
 #include <memory>
 #include <wx/log.h>
 #include <wx/sstream.h>
+
+/// Find in files entries
+bool FindInFilesSession::From(const wxString& content)
+{
+    JSON root{ content };
+    if(!root.isOk()) {
+        return false;
+    }
+
+    auto json = root.toElement();
+    find_what_array = json["find_what_array"].toArrayString();
+    find_what = json["find_what"].toString();
+
+    replace_with_array = json["replace_with_array"].toArrayString();
+    replace_with = json["replace_with"].toString();
+
+    files = json["files"].toString();
+    files_array = json["files_array"].toArrayString();
+
+    where_array = json["where_array"].toArrayString();
+    where = json["where"].toString(where);
+
+    encoding = json["encoding"].toString(encoding);
+    flags = json["flags"].toSize_t(flags);
+    files_scanner_flags = json["files_scanner_flags"].toSize_t(files_scanner_flags);
+    return true;
+}
+
+wxString FindInFilesSession::Save() const
+{
+    JSON root{ cJSON_Object };
+    auto json = root.toElement();
+    json.addProperty("find_what_array", find_what_array);
+    json.addProperty("find_what", find_what);
+    json.addProperty("replace_with_array", replace_with_array);
+    json.addProperty("replace_with", replace_with);
+    json.addProperty("files_array", files_array);
+    json.addProperty("files", files);
+    json.addProperty("where_array", where_array);
+    json.addProperty("where", where);
+    json.addProperty("encoding", encoding);
+    json.addProperty("flags", flags);
+    json.addProperty("files_scanner_flags", files_scanner_flags);
+    return json.format();
+}
 
 // Session entry
 SessionEntry::SessionEntry() {}
@@ -95,7 +145,11 @@ SessionManager& SessionManager::Get()
     return theManager;
 }
 
-SessionManager::SessionManager() {}
+SessionManager::SessionManager()
+{
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &SessionManager::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &SessionManager::OnWorkspaceClosed, this);
+}
 
 SessionManager::~SessionManager() {}
 
@@ -241,26 +295,21 @@ wxString SessionManager::GetLastSession()
     return defaultSessionName;
 }
 
-void SessionManager::UpdateFindInFilesMaskForCurrentWorkspace(const wxString& mask)
+void SessionManager::SaveFindInFilesSession(const FindInFilesSession& session)
 {
-    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        wxFileName fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();
-        SessionEntry s;
-        if(GetSession(fn.GetFullPath(), s)) {
-            s.SetFindInFilesMask(mask);
-            Save(fn.GetFullPath(), s);
-        }
-    }
+    WorkspaceHelper helper;
+    CHECK_COND_RET(
+        helper.WritePrivateFile(clWorkspaceManager::Get().GetWorkspace(), "find-in-files.json", session.Save()));
 }
 
-wxString SessionManager::GetFindInFilesMaskForCurrentWorkspace()
+bool SessionManager::LoadFindInFilesSession(FindInFilesSession* session)
 {
-    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        wxFileName fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();
-        SessionEntry s;
-        if(GetSession(fn.GetFullPath(), s)) {
-            return s.GetFindInFilesMask();
-        }
-    }
-    return "";
+    WorkspaceHelper helper;
+    wxString content;
+    CHECK_COND_RET_FALSE(
+        helper.ReadPrivateFile(clWorkspaceManager::Get().GetWorkspace(), "find-in-files.json", &content));
+    return session->From(content);
 }
+
+void SessionManager::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
+void SessionManager::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }

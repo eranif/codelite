@@ -202,6 +202,7 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="WorkspaceHelper.cpp"/>
     <File Name="clLocaleManager.hpp"/>
     <File Name="clLocaleManager.cpp"/>
     <File Name="DefaultLexerJSON.cpp"/>
@@ -349,6 +350,7 @@
     <File Name="EnvironmentVariablesDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
+    <File Name="WorkspaceHelper.hpp"/>
     <File Name="async_executable_cmd.h"/>
     <File Name="buildmanager.h"/>
     <File Name="clean_request.h"/>

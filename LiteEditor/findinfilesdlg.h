@@ -29,10 +29,11 @@
 #include "findreplacedlg.h"
 #include "macros.h"
 #include "search_thread.h"
+#include "sessionmanager.h"
 
 class FindInFilesDialog : public FindInFilesDialogBase
 {
-    FindReplaceData& m_data;
+    FindInFilesSession m_data;
     wxArrayString m_pluginFileMask;
     bool m_transient = false;
     wxWindow* m_handler = nullptr;
@@ -77,10 +78,10 @@ protected:
 
     void OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event);
     size_t GetSearchFlags();
-    void BuildFindReplaceData();
+    void SaveFindReplaceData();
 
 public:
-    FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wxWindow* handler = nullptr);
+    FindInFilesDialog(wxWindow* parent, wxWindow* handler = nullptr);
     virtual ~FindInFilesDialog();
     void SetSearchPaths(const wxString& paths, bool transient = false);
     void SetFileMask(const wxString& mask);

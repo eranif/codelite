@@ -3,12 +3,15 @@
 
 #include "clThemedComboBox.hpp"
 #include "codelite_exports.h"
+#include "sessionmanager.h"
 #include "sftp_ui.h"
-#include "wx/arrstr.h"
+
+#include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK clRemoteFindDialog : public clRemoteFindDialogBase
 {
     wxString m_root_path;
+    FindInFilesSession m_data;
 
 protected:
     virtual void OnSearch(wxCommandEvent& event);

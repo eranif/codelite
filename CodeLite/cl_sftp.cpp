@@ -300,6 +300,9 @@ SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& bu
     wxInt64 bytesRead = 0;
     while(bytesLeft > 0) {
         wxInt64 nbytes = sftp_read(file, pBuffer, sizeof(pBuffer));
+        if(nbytes <= 0) {
+            break; // we will throw later
+        }
         bytesRead += nbytes;
         bytesLeft -= nbytes;
         buffer.AppendData(pBuffer, nbytes);

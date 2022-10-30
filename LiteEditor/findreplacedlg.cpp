@@ -26,6 +26,7 @@
 
 #include "editor_config.h"
 #include "macros.h"
+#include "sessionmanager.h"
 #include "windowattrmanager.h"
 
 #include <algorithm>

@@ -953,7 +953,11 @@ void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file
                                   bool whole_word, bool icase)
 {
     m_remoteFinder.SetCodeLiteRemote(&m_codeliteRemoteFinder);
-    m_remoteFinder.Search(root_dir, find_what, file_extensions, whole_word, icase);
+    wxString search_folder = root_dir;
+    if(search_folder == "<Workspace Folder>") {
+        search_folder = GetRemoteWorkingDir();
+    }
+    m_remoteFinder.Search(search_folder, find_what, file_extensions, whole_word, icase);
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event)

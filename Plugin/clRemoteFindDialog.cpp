@@ -4,28 +4,10 @@
 #include "clThemedTextCtrl.hpp"
 #include "cl_config.h"
 #include "globals.h"
+#include "sessionmanager.h"
 #include "ssh_account_info.h"
 #include "wx/arrstr.h"
 #include "wx/tokenzr.h"
-
-namespace
-{
-const wxString defaultFileTypes = "*.cpp;*.c;*.hpp;*.h;*.txt;*.py;*.php;*.yml;Makefile";
-enum eSearchFlags {
-    kWholeWord = (1 << 0),
-    kCaseSearch = (1 << 1),
-};
-} // namespace
-
-struct clRemoteFindDialogData {
-    wxArrayString find_what_arr;
-    wxString last_find_what;
-    wxArrayString where_arr;
-    wxString last_where;
-    wxArrayString file_types;
-    wxString last_file_types;
-    size_t flags = (kWholeWord | kCaseSearch);
-};
 
 clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account_name, const wxString& rootpath)
     : clRemoteFindDialogBase(parent)
@@ -44,73 +26,49 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     }
 
     // read the find what list
-    clRemoteFindDialogData data;
-    clConfig::Get().Read("remote_find_in_files", [&data](const JSONItem& item) -> void {
-        data.find_what_arr = item["find_what_arr"].toArrayString();
-        data.last_find_what = item["last_find_what"].toString();
-        data.where_arr = item["where_arr"].toArrayString();
-        data.last_where = item["last_where"].toString();
-        data.file_types = item["file_types"].toArrayString();
-        data.last_file_types = item["last_file_types"].toString();
-        data.flags = item["flags"].toSize_t();
-    });
+    SessionManager::Get().LoadFindInFilesSession(&m_data);
 
-    if(data.file_types.empty() && data.file_types.empty()) {
-        data.file_types.push_back(defaultFileTypes);
-        data.last_file_types = defaultFileTypes;
-    }
-
-    UpdateCombo(m_comboBoxFindWhat, data.find_what_arr, data.last_find_what);
-    UpdateCombo(m_comboBoxWhere, data.where_arr, data.last_where.empty() ? m_root_path : data.last_where);
-    UpdateCombo(m_comboBoxTypes, data.file_types, data.last_file_types);
-    m_checkBoxCase->SetValue(data.flags & kCaseSearch);
-    m_checkBoxWholeWord->SetValue(data.flags & kWholeWord);
+    UpdateCombo(m_comboBoxFindWhat, m_data.find_what_array, m_data.find_what);
+    UpdateCombo(m_comboBoxWhere, m_data.where_array, m_data.where);
+    UpdateCombo(m_comboBoxTypes, m_data.files_array, m_data.files);
+    m_checkBoxCase->SetValue(m_data.flags & wxFRD_MATCHCASE);
+    m_checkBoxWholeWord->SetValue(m_data.flags & wxFRD_MATCHWHOLEWORD);
     m_comboBoxFindWhat->GetTextCtrl()->SelectAll();
     CenterOnParent();
 }
 
 clRemoteFindDialog::~clRemoteFindDialog()
 {
-    clRemoteFindDialogData data;
-    data.find_what_arr = m_comboBoxFindWhat->GetStrings();
-    data.last_find_what = m_comboBoxFindWhat->GetStringSelection();
-    data.where_arr = m_comboBoxWhere->GetStrings();
-    data.last_where = m_comboBoxWhere->GetStringSelection();
-    data.file_types = m_comboBoxTypes->GetStrings();
-    data.last_file_types = m_comboBoxTypes->GetStringSelection();
-    data.flags = 0;
+    m_data.find_what_array = m_comboBoxFindWhat->GetStrings();
+    m_data.find_what = m_comboBoxFindWhat->GetStringSelection();
+    m_data.where_array = m_comboBoxWhere->GetStrings();
+    m_data.where = m_comboBoxWhere->GetStringSelection();
+    m_data.files_array = m_comboBoxTypes->GetStrings();
+    m_data.files = m_comboBoxTypes->GetStringSelection();
+    m_data.flags = 0;
     if(m_checkBoxCase->IsChecked()) {
-        data.flags |= kCaseSearch;
+        m_data.flags |= wxFRD_MATCHCASE;
     }
     if(m_checkBoxWholeWord->IsChecked()) {
-        data.flags |= kWholeWord;
+        m_data.flags |= wxFRD_MATCHWHOLEWORD;
     }
 
     // truncate the number of items we keep in the history
     static constexpr int max_size = 20;
-    if(data.where_arr.size() > max_size) {
-        data.where_arr.resize(max_size);
+    if(m_data.where_array.size() > max_size) {
+        m_data.where_array.resize(max_size);
     }
 
-    if(data.find_what_arr.size() > max_size) {
-        data.find_what_arr.resize(max_size);
+    if(m_data.find_what_array.size() > max_size) {
+        m_data.find_what_array.resize(max_size);
     }
 
-    if(data.file_types.size() > max_size) {
-        data.file_types.resize(max_size);
+    if(m_data.files_array.size() > max_size) {
+        m_data.files_array.resize(max_size);
     }
 
-    clConfig::Get().Write("remote_find_in_files", [&data]() -> JSONItem {
-        JSONItem item = JSONItem::createObject();
-        item.addProperty("find_what_arr", data.find_what_arr);
-        item.addProperty("last_find_what", data.last_find_what);
-        item.addProperty("where_arr", data.where_arr);
-        item.addProperty("last_where", data.last_where);
-        item.addProperty("file_types", data.file_types);
-        item.addProperty("last_file_types", data.last_file_types);
-        item.addProperty("flags", data.flags);
-        return item;
-    });
+    // store the find in files session
+    SessionManager::Get().SaveFindInFilesSession(m_data);
 }
 
 void clRemoteFindDialog::UpdateCombo(clThemedComboBox* cb, const wxArrayString& options, const wxString& lastSelection)

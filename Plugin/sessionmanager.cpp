@@ -56,7 +56,7 @@ bool FindInFilesSession::From(const wxString& content)
     replace_with_array = json["replace_with_array"].toArrayString();
     replace_with = json["replace_with"].toString();
 
-    files = json["files"].toString();
+    files = json["files"].toString(files);
     files_array = json["files_array"].toArrayString();
 
     where_array = json["where_array"].toArrayString();

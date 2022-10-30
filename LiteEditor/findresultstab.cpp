@@ -127,41 +127,14 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
     if(EventNotifier::Get()->ProcessEvent(eventFifShowing))
         return;
 
-    // Allocate the 'Find In Files' in an inner block
-    // We do this because the 'FindReplaceData' will be updated upon the destruction of the dialog
-    {
-        bool sendDismissEvent = true;
-        const wxString& mask = eventFifShowing.GetFileMask();
+    // Prepare the fif dialog
+    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame());
 
-        // plugins provided paths
-        const wxString& paths = eventFifShowing.GetPaths();
-
-        // transient paths take precedence over the normal paths. However, they are not persistent
-        // Usually these paths are given when the a tree view like control has focus and user selected folders in it
-        const wxString& transientPaths = eventFifShowing.GetTransientPaths();
-
-        wxString fifPaths = paths;
-        if(!transientPaths.IsEmpty()) {
-            fifPaths = transientPaths;
-            sendDismissEvent = false;
-        }
-
-        // Prepare the fif dialog
-        FindInFilesDialog dlg(EventNotifier::Get()->TopFrame());
-        if(!fifPaths.IsEmpty()) {
-            dlg.SetSearchPaths(fifPaths, !transientPaths.IsEmpty());
-        }
-
-        if(!mask.IsEmpty()) {
-            dlg.SetFileMask(mask);
-        }
-
-        // Show it
-        if((dlg.ShowDialog() == wxID_OK) && sendDismissEvent) {
-            // Notify about the dialog dismissal
-            clFindInFilesEvent eventDismiss(wxEVT_FINDINFILES_DLG_DISMISSED);
-            EventNotifier::Get()->ProcessEvent(eventDismiss);
-        }
+    // Show it
+    if(dlg.ShowDialog() == wxID_OK) {
+        // Notify about the dialog dismissal
+        clFindInFilesEvent eventDismiss(wxEVT_FINDINFILES_DLG_DISMISSED);
+        EventNotifier::Get()->ProcessEvent(eventDismiss);
     }
 }
 

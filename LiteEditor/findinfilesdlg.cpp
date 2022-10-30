@@ -55,31 +55,34 @@ const wxString RE_TODO = "(/[/\\*]+ *TODO)";
 const wxString RE_BUG = "(/[/\\*]+ *BUG)";
 const wxString RE_ATTN = "(/[/\\*]+ *ATTN)";
 const wxString RE_FIXME = "(/[/\\*]+ *FIXME)";
+
+wxArrayString& make_unique_array(wxArrayString& array)
+{
+    wxArrayString unique_arr;
+    unique_arr.reserve(array.size());
+    wxStringSet_t S;
+    for(const wxString& s : array) {
+        if(S.count(s) == 0) {
+            S.insert(s);
+            unique_arr.push_back(s);
+        }
+    }
+    unique_arr.swap(array);
+    return array;
+}
 } // namespace
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     : FindInFilesDialogBase(parent, wxID_ANY)
     , m_handler(handler)
 {
-    // Store the find-in-files data
+    // Load the find-in-files data
     SessionManager::Get().LoadFindInFilesSession(&m_data);
 
-    m_comboBoxWhere->Clear();
-    m_comboBoxWhere->Append(m_data.where_array);
-    m_comboBoxWhere->SetValue(m_data.where);
-    m_comboBoxWhere->AddCommand(wxID_CLEAR, _("Clear history"));
-    m_comboBoxWhere->Bind(
-        wxEVT_MENU,
-        [&](wxCommandEvent& e) {
-            wxUnusedVar(e);
-            m_comboBoxWhere->Clear();
-        },
-        wxID_CLEAR);
-
-    // Search for
+    // "Find"
     m_findString->AddCommand(wxID_CLEAR, _("Clear history"));
     m_findString->Clear();
-    m_findString->Append(m_data.find_what_array);
+    m_findString->Append(make_unique_array(m_data.find_what_array));
     m_findString->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
@@ -89,8 +92,10 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
         wxID_CLEAR);
 
     m_findString->SetValue(m_data.find_what);
+
+    // "Replace"
     m_replaceString->AddCommand(wxID_CLEAR, _("Clear history"));
-    m_replaceString->Append(m_data.replace_with_array);
+    m_replaceString->Append(make_unique_array(m_data.replace_with_array));
     m_replaceString->SetValue(m_data.replace_with);
     m_replaceString->Bind(
         wxEVT_MENU,
@@ -100,13 +105,28 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
         },
         wxID_CLEAR);
 
+    // "Files"
     m_fileTypes->AddCommand(wxID_CLEAR, _("Clear history"));
-    m_fileTypes->SetSelection(0);
+    m_fileTypes->Append(make_unique_array(m_data.files_array));
+    m_fileTypes->SetValue(m_data.files);
     m_fileTypes->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
             wxUnusedVar(e);
             m_fileTypes->Clear();
+        },
+        wxID_CLEAR);
+
+    // "Where"
+    m_comboBoxWhere->Clear();
+    m_comboBoxWhere->Append(make_unique_array(m_data.where_array));
+    m_comboBoxWhere->SetValue(m_data.where);
+    m_comboBoxWhere->AddCommand(wxID_CLEAR, _("Clear history"));
+    m_comboBoxWhere->Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            m_comboBoxWhere->Clear();
         },
         wxID_CLEAR);
 
@@ -167,35 +187,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
 
 FindInFilesDialog::~FindInFilesDialog() { SaveFindReplaceData(); }
 
-void FindInFilesDialog::DoSetFileMask()
-{
-    // Get the output
-    wxArrayString fileTypes = m_data.files_array;
-    wxArrayString::iterator iter = std::unique(fileTypes.begin(), fileTypes.end());
-
-    // remove the non unique parts
-    fileTypes.resize(std::distance(fileTypes.begin(), iter));
-
-    // Create a single mask array
-    m_fileTypes->Clear();
-
-    // Remove empty entries
-    wxArrayString tempMaskArr;
-    tempMaskArr.reserve(fileTypes.size());
-    std::for_each(fileTypes.begin(), fileTypes.end(), [&](wxString& item) {
-        item.Trim().Trim(false);
-        if(!item.IsEmpty()) {
-            tempMaskArr.Add(item);
-        }
-    });
-    fileTypes.swap(tempMaskArr);
-
-    if(!fileTypes.IsEmpty()) {
-        m_fileTypes->Append(fileTypes);
-        wxString selectedMask = m_data.files;
-        SetFileMask(selectedMask);
-    }
-}
+void FindInFilesDialog::DoSetFileMask() {}
 
 void FindInFilesDialog::DoSearchReplace()
 {

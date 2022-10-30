@@ -127,7 +127,7 @@ struct WXDLLIMPEXP_SDK FindInFilesSession {
     wxString replace_with;
 
     wxArrayString files_array;
-    wxString files;
+    wxString files = "*.cpp;*.cc;*.c;*.hpp;*.h;CMakeLists.txt;*.plist;*.rc";
 
     wxArrayString where_array;
     wxString where = "<Workspace Folder>";

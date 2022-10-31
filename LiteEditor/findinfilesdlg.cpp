@@ -61,7 +61,11 @@ wxArrayString& make_unique_array(wxArrayString& array)
     wxArrayString unique_arr;
     unique_arr.reserve(array.size());
     wxStringSet_t S;
-    for(const wxString& s : array) {
+    for(wxString& s : array) {
+        s.Trim().Trim(false);
+        if(s.empty()) {
+            continue;
+        }
         if(S.count(s) == 0) {
             S.insert(s);
             unique_arr.push_back(s);
@@ -466,6 +470,10 @@ int FindInFilesDialog::ShowDialog()
 void FindInFilesDialog::DoSaveSearchPaths()
 {
     m_data.where_array = m_comboBoxWhere->GetStrings();
+    int where = m_data.where_array.Index(m_comboBoxWhere->GetValue());
+    if(where != wxNOT_FOUND) {
+        m_data.where_array.RemoveAt(where);
+    }
     m_data.where_array.Insert(m_comboBoxWhere->GetValue(), 0);
 }
 

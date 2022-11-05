@@ -202,6 +202,6 @@ wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
 
 void CodeLiteDiff::OnNewDiffFolder(wxCommandEvent& e)
 {
-    DiffFoldersFrame dlg(EventNotifier::Get()->TopFrame());
-    dlg.ShowModal();
+    DiffFoldersFrame *dlg = new DiffFoldersFrame(EventNotifier::Get()->TopFrame());
+    dlg->Show();
 }

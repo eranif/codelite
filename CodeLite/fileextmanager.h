@@ -100,6 +100,7 @@ public:
         TypePatch,
         TypeJSON,
         TypeMarkdown,
+        TypeDart,
         TypeLast,
     };
 

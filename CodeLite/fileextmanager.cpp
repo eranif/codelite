@@ -190,6 +190,7 @@ void FileExtManager::Init()
 
         m_map["rb"] = TypeRuby;
         m_map["md"] = TypeMarkdown;
+        m_map["dart"] = TypeDart;
 
         m_language_bundle.insert({ "C/C++", { TypeSourceCpp, TypeSourceC, TypeHeader } });
         m_language_bundle.insert({ "Windows resource files", { TypeResource } });

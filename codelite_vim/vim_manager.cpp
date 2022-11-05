@@ -48,7 +48,7 @@ VimManager::~VimManager()
 void VimManager::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();                      // Always call Skip() so other plugins/core components will get this event
-    m_currentCommand.set_ctrl(m_ctrl); // Always keep the current editor. Even when disabled. Otherwise, when opening an
+    m_currentCommand.set_ctrl(clGetManager()->GetActiveEditor()->GetCtrl()); // Always keep the current editor. Even when disabled. Otherwise, when opening an
                                        // editor and *then* enabling the VIM plugin, it may lead to crashes
     if(!m_settings.IsEnabled()) return;
     IEditor* editor = clGetManager()->GetActiveEditor();

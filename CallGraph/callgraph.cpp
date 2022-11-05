@@ -91,7 +91,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     info.SetName(wxT("CallGraph"));
     info.SetDescription(_("Create application call graph from profiling information provided by gprof tool."));
     info.SetVersion(wxT("v1.1.0"));
-    info.EnableFlag(PluginInfo::kDisabledByDefault, true);
+    info.EnableFlag(PluginInfo::kNone, true);
     return &info;
 }
 

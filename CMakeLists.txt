@@ -710,6 +710,7 @@ else()
             message("-- Adding MacBundler...")
             add_subdirectory(MacBundler)
         endif()
+        add_subdirectory(CallGraph)
     endif(NOT NO_CORE_PLUGINS)
 
     # wxCrafter is not a core plugin so we include it we find the directory

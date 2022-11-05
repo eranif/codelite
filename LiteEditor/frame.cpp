@@ -146,6 +146,10 @@
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
 
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
+#endif
+
 //////////////////////////////////////////////////
 
 // from iconsextra.cpp:

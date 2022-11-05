@@ -59,7 +59,11 @@ DiffFoldersFrame::~DiffFoldersFrame()
     StopChecksumThread();
 }
 
-void DiffFoldersFrame::OnClose(wxCommandEvent& event) { EndModal(wxID_OK); }
+void DiffFoldersFrame::OnClose(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    Close();
+}
 
 void DiffFoldersFrame::OnNewCmparison(wxCommandEvent& event)
 {
@@ -306,6 +310,7 @@ void DiffFoldersFrame::DoOpenDiff(const wxDataViewItem& item)
     wxFileName fnLeft(leftFile);
     wxFileName fnRight(rightFile);
     clDiffFrame* diffFiles = new clDiffFrame(this, fnLeft, fnRight, false);
+    //diffFiles->MakeModal(true);
     diffFiles->Show();
 }
 

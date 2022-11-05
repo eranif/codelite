@@ -64,7 +64,7 @@ public:
     virtual ~DiffSelectFoldersBaseDlg();
 };
 
-class DiffFoldersBaseDlg : public wxDialog
+class DiffFoldersBaseDlg : public wxFrame
 {
 protected:
     wxPanel* m_panel4;
@@ -81,7 +81,7 @@ public:
     wxPanel* GetPanel4() { return m_panel4; }
     DiffFoldersBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Diff Folders"),
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
-                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+                       long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
     virtual ~DiffFoldersBaseDlg();
 };
 

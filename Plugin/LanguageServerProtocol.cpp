@@ -142,6 +142,8 @@ wxString LanguageServerProtocol::GetLanguageId(FileExtManager::FileType file_typ
         return "shellscript";
     case FileExtManager::TypeRuby:
         return "ruby";
+    case FileExtManager::TypeDart:
+        return "dart";
     default:
         return "";
     }

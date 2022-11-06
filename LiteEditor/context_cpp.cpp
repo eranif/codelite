@@ -1228,6 +1228,17 @@ void ContextCpp::OnKeyDown(wxKeyEvent& event)
         case WXK_DOWN:
             ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
             return;
+        default: {
+            int modifier_key = event.GetModifiers();
+            wxChar ch = event.GetUnicodeKey();
+            if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+                ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
+                return;
+            }  else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+                ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
+                return;
+            }
+        }
         }
     }
     event.Skip();

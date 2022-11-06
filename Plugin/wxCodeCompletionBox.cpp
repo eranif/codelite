@@ -529,7 +529,6 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
     case WXK_ALT:
     case WXK_WINDOWS_LEFT:
     case WXK_WINDOWS_RIGHT:
-    case WXK_CONTROL:
         DoDestroy();
         event.Skip();
         break;
@@ -540,9 +539,22 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
         InsertSelection();
         DoDestroy();
         break;
-    default:
-        event.Skip();
+    default: {
+        int modifier_key = event.GetModifiers();
+        wxChar ch = event.GetUnicodeKey();
+        if (modifier_key == wxMOD_CONTROL && ch == 'U') {
+            m_list->PageUp();
+        } else if (modifier_key == wxMOD_CONTROL && ch == 'D') {
+            m_list->PageDown();
+        } else if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+            m_list->LineDown();
+        }  else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+            m_list->LineUp();
+        } else {
+            event.Skip();
+        }
         break;
+    }
     }
 }
 

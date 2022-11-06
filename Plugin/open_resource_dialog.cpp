@@ -351,6 +351,22 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 
         // Set the focus back to the text control
         m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
+    } else {
+        int modifier_key = event.GetModifiers();
+        wxChar ch = event.GetUnicodeKey();
+        if (modifier_key == wxMOD_CONTROL && ch == 'U') {
+            GetDataview()->PageUp();
+            event.Skip(false);
+        } else if (modifier_key == wxMOD_CONTROL && ch == 'D') {
+            GetDataview()->PageDown();
+            event.Skip(false);
+        } else if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+            GetDataview()->LineDown();
+            event.Skip(false);
+        }  else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+            GetDataview()->LineUp();
+            event.Skip(false);
+        }
     }
 }
 

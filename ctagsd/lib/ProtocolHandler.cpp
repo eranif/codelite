@@ -315,7 +315,8 @@ std::vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const w
         while(!Q.empty()) {
             // pop the front of queue
             wxString file = Q.front();
-            Q.erase(Q.begin());
+            Q.front() = Q.back();
+            Q.pop_back();
 
             // sanity
             if(m_parsed_files_info.count(file) == 0 // no info for this file

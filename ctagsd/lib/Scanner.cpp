@@ -32,13 +32,15 @@ void Scanner::scan_buffer(const wxFileName& current_file, const wxString& conten
     while(tokenizer.NextToken(token)) {
         switch(token.GetType()) {
         case T_PP_INCLUDE_FILENAME: {
-            wxFileName fixed_path;
+            std::set<wxString> fixed_path;
             wxString include_line = fix_include_line(token.GetWXString());
             if(!include_line.empty() // valid include line
                && seen_includes.count(include_line) == 0 &&
-               IsFileExists(cur_file_dir, include_line, search_path, &fixed_path)) {
+               IsFileExists(cur_file_dir, include_line, search_path, fixed_path)) {
                 seen_includes.insert(include_line);
-                includes_set->insert(fixed_path.GetFullPath());
+                for (const auto& path: fixed_path) {
+                    includes_set->insert(path);
+                }
             }
         } break;
         case T_USING:
@@ -68,13 +70,13 @@ static wxString fix_separators_to_platform(const wxString& str)
 }
 
 bool Scanner::IsFileExists(const wxString& current_dir, const wxString& name, const wxArrayString& search_path,
-                           wxFileName* fixed_path)
+                           std::set<wxString>& fixed_path)
 {
     if(m_missing_includes.count(name))
         return false;
 
     if(m_matches.count(name)) {
-        *fixed_path = m_matches[name];
+        fixed_path = m_matches[name];
         return true;
     }
 
@@ -85,8 +87,7 @@ bool Scanner::IsFileExists(const wxString& current_dir, const wxString& name, co
     if(wxStat(fullpath, &buf) == 0) {
         wxFileName fn(fullpath);
         fn.MakeAbsolute();
-        *fixed_path = fn;
-        return true;
+        fixed_path.insert(fn.GetFullPath());
     }
 
     // try the search paths
@@ -95,14 +96,14 @@ bool Scanner::IsFileExists(const wxString& current_dir, const wxString& name, co
         fullpath = path + DIR_SEP + name;
         fullpath = fix_separators_to_platform(fullpath);
         if(wxStat(fullpath, &buf) == 0) {
-            wxFileName fn(fullpath);
-            fn.MakeAbsolute();
-            *fixed_path = fn;
-            m_matches.insert({ name, fn.GetFullPath() });
-            return true;
+            fixed_path.insert(fullpath);
         }
     }
-
+    if (!fixed_path.empty()) {
+        m_matches.insert({ name, fixed_path });
+        return true;
+    }
+    
     m_missing_includes.insert(name);
     return false;
 }

@@ -1742,10 +1742,11 @@ WelcomePage* MainBook::GetOrCreateWelcomePage()
 }
 
 clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(IEditor*)>&& callback)
-{
-    auto editor = FindEditor(file_name);
+{ 
+    wxString real_path = CLRealPath(file_name);
+    auto editor = FindEditor(real_path);
     if(editor) {
-        push_callback(std::move(callback), file_name);
+        push_callback(std::move(callback), real_path);
         bool is_active = GetActiveEditor() == editor;
         if(!is_active) {
             // make this file the active
@@ -1753,9 +1754,9 @@ clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(
             m_book->SetSelection(index);
         }
     } else {
-        editor = OpenFile(file_name);
+        editor = OpenFile(real_path);
         if(editor) {
-            push_callback(std::move(callback), file_name);
+            push_callback(std::move(callback), real_path);
         }
     }
     return editor;

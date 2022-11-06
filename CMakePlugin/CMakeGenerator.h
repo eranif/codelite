@@ -66,6 +66,8 @@
 class CMakeGenerator
 {
     size_t m_counter;
+    wxString m_userBlock01;
+    wxString m_userBlock02;
     wxString m_userBlock1;
     wxString m_userBlock2;
     wxString m_userBlock3;

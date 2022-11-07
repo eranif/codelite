@@ -1908,7 +1908,7 @@ wxString VimCommand::get_text_at_position(VimCommand::eTypeTextSearch typeTextTo
         break;
     case kFromPosToEndWord:
         start = pos;
-        end = m_ctrl->WordEndPosition(pos, true);
+        end = m_ctrl->WordEndPosition(pos, false);
         if(start == end) {
             end++;
         }

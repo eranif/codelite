@@ -1769,13 +1769,13 @@ clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(
     return editor;
 }
 
-void MainBook::push_callback(std::function<void(IEditor*)>&& callabck, const wxString& fullpath)
+void MainBook::push_callback(std::function<void(IEditor*)>&& callback, const wxString& fullpath)
 {
     // register a callback for this insert
     if(m_callbacksTable.count(fullpath) == 0) {
         m_callbacksTable.insert({ fullpath, {} });
     }
-    m_callbacksTable[fullpath].emplace_back(std::move(callabck));
+    m_callbacksTable[fullpath].emplace_back(std::move(callback));
 }
 
 bool MainBook::has_callbacks(const wxString& fullpath) const

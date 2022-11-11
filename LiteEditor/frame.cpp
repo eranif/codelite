@@ -818,7 +818,7 @@ void clMainFrame::Construct()
     /// keep the initial background colour
     startupBackgroundColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 
-#if defined(__WXGTK20__)
+#if 0
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
     // accelerator for the menu bar.  We don't want that.  There is
     // no sane way to turn this off, but we *can* get the same effect

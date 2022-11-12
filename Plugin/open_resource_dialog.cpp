@@ -333,8 +333,11 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
         return;
     }
 
-    if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP ||
-       event.GetKeyCode() == WXK_NUMPAD_DOWN) {
+    if (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP ||
+        event.GetKeyCode() == WXK_NUMPAD_UP || event.GetKeyCode() == WXK_NUMPAD_DOWN ||
+        event.GetKeyCode() == WXK_PAGEUP || event.GetKeyCode() == WXK_PAGEDOWN ||
+        event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_END)
+    {
         event.Skip(false);
 
         if(GetDataview()->GetSelectedItemsCount() == 0) {

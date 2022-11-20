@@ -127,7 +127,7 @@ There are rpms available for fedora 35 and 36, and openSUSE Leap 15.3:
 
 Distro	| x86_64 GTK+3
 --------|----------------
-fedora	| [`35`][5] [`36`][6]
+fedora	| [`35`][5] [`36`][6] [`37`][10]
 openSUSE |	[`15.3`][7] [`15.4`][8]
 
 
@@ -138,7 +138,7 @@ First tell rpm about the CodeLite public key. As superuser do:
  ```
 Then either download the required rpm and install it as usual, or download and install in one step; e.g.
 ```bash
-  rpm -Uvh https://repos.codelite.org/rpms-16.0/fedora/36/codelite-16.0-1.fc36.x86_64.rpm
+  rpm -Uvh https://repos.codelite.org/rpms-16.0/fedora/37/codelite-16.0-1.fc37.x86_64.rpm
 ```
 There are also source rpms for [fedora][2] and [OpenSUSE][3]
 
@@ -174,11 +174,12 @@ See [this page](./oldDownloads/Repositories15.md) for links to Linux packages fr
 As the above CodeLite 16.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](./oldDownloads/Repositories12.md).
 
 [1]: https://downloads.codelite.org
-[2]: https://repos.codelite.org/rpms-16.0/fedora/codelite-16.0-2.fc.src.rpm
+[2]: https://repos.codelite.org/rpms-16.0/fedora/codelite-16.0-3.fc.src.rpm
 [3]: https://repos.codelite.org/rpms-16.0/suse/codelite-16.0-1.suse.src.rpm
 [4]: https://aur.archlinux.org/packages/codelite/
 [5]: https://repos.codelite.org/rpms-16.0/fedora/35/codelite-16.0-1.fc35.x86_64.rpm
 [6]: https://repos.codelite.org/rpms-16.0/fedora/36/codelite-16.0-1.fc36.x86_64.rpm
+[10]: https://repos.codelite.org/rpms-16.0/fedora/37/codelite-16.0-1.fc37.x86_64.rpm
 [7]: https://repos.codelite.org/rpms-16.0/suse/15.3/codelite-16.0-1.suse.x86_64.rpm
 [8]: https://repos.codelite.org/rpms-16.0/suse/15.4/codelite-16.0-1.suse.x86_64.rpm
 [9]: https://brew.sh

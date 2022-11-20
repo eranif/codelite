@@ -575,6 +575,11 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     if(files.IsEmpty())
         return;
 
+    wxString workingDir = wxFileName(files.Item(0)).GetPath(wxPATH_UNIX);
+    if(!GetRepositoryPath().empty()) {
+        workingDir = GetRepositoryPath();
+    }
+    
     // Make the git console visible
     m_mgr->ShowOutputPane("Git");
 
@@ -582,8 +587,11 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
         // Pepare the command:
         // git add --no-pager
         wxString cmd = "show HEAD:";
-
-        wxString filenameEscaped = filename;
+        
+        wxFileName fn(filename);
+        fn.MakeRelativeTo(workingDir);
+        wxString filenameEscaped = fn.GetFullPath(wxPATH_UNIX);
+        
         ::WrapWithQuotes(filenameEscaped);
         cmd << filenameEscaped;
 

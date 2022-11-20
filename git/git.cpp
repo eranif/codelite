@@ -1476,7 +1476,10 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         // Dont manipulate the output if its a diff...
         m_commandOutput.Replace(wxT("\r"), wxT(""));
     }
-
+    if (ga.action == gitDiffRepoCommit && m_commandOutput.StartsWith(wxT("fatal"))) {
+        m_commandOutput.Clear();
+        DoExecuteCommandSync("diff --no-color --cached", &m_commandOutput);
+    }
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
         // Last action failed, clear queue
         clDEBUG1() << "[git]" << m_commandOutput << clEndl;
@@ -2473,7 +2476,7 @@ void GitPlugin::DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString&
     // Wrap the executable with quotes if needed
     command.Trim().Trim(false);
     ::WrapWithQuotes(command);
-    command << "--no-pager ";
+    command << " --no-pager ";
     m_commandProcessor =
         new clCommandProcessor(command + commands.at(0).baseCommand, workingDir, commands.at(0).processFlags);
     clCommandProcessor* cur = m_commandProcessor;
@@ -2555,6 +2558,9 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
     // 1. Get diff output
     wxString diff;
     bool res = DoExecuteCommandSync("diff --no-color HEAD", &diff, m_selectedFolder);
+    if (diff.empty()) {
+        DoExecuteCommandSync("diff --no-color --cached", &diff);
+    }
     if(!diff.IsEmpty()) {
         wxString commitArgs;
         DoShowCommitDialog(diff, commitArgs);

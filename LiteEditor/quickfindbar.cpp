@@ -771,7 +771,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     unsigned int utfLen = ::clUTF8Length(input_buffer.ToStdWstring().c_str(), input_buffer.length());
     isUTF8 = (utfLen != input_buffer.length());
 
-    if(!IsReplacementRegex() && !isUTF8) {
+    if(!(m_searchFlags & wxSTC_FIND_REGEXP) && !IsReplacementRegex() && !isUTF8) {
         // simple search, we can optimize it by applying the replacement on
         // a buffer instead of the editor
         replacements_done = DoReplaceInBuffer(target);

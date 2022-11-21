@@ -269,6 +269,7 @@ private:
     void OnGarbageColletion(wxCommandEvent& e);
     void OnOpenMSYSGit(wxCommandEvent& e);
     void OnActiveProjectChanged(clProjectSettingsEvent& event);
+    void OnFileCommitListSelected(wxCommandEvent& e);
     void OnFileGitBlame(wxCommandEvent& event);
     void OnAppActivated(wxCommandEvent& event);
     void OnUpdateNavBar(clCodeCompletionEvent& event);

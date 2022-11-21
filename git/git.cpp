@@ -184,6 +184,8 @@ GitPlugin::GitPlugin(IManager* manager)
                             NULL, this);
     m_eventHandler->Connect(XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
                             NULL, this);
+    m_eventHandler->Connect(XRCID("git_commit_list_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileCommitListSelected),
+                            NULL, this);
     m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
 
     // Respond to our own events
@@ -444,6 +446,9 @@ void GitPlugin::UnPlug()
                                wxCommandEventHandler(GitPlugin::OnFileResetSelected), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
                                NULL, this);
+    m_eventHandler->Disconnect(XRCID("git_commit_list_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileCommitListSelected),
+                            NULL, this);
+                            
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
     wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
@@ -2358,6 +2363,10 @@ void GitPlugin::OnFileMenu(clContextMenuEvent& event)
     item->SetBitmap(bmps->LoadBitmap("diff"));
     menu->Append(item);
 
+    item = new wxMenuItem(menu, XRCID("git_commit_list_file"), _("Show file Log"));
+    item->SetBitmap(bmps->LoadBitmap("tasks"));
+    menu->Append(item);
+    
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("git_blame_file"), _("Show Git Blame"));
     item->SetBitmap(bmps->LoadBitmap("finger"));
@@ -2711,6 +2720,27 @@ void GitPlugin::OnFileGitBlame(wxCommandEvent& event)
     fn.MakeRelativeTo(CLRealPath(m_repositoryDirectory));
 
     DoGitBlame(fn.GetFullPath());
+}
+
+void GitPlugin::OnFileCommitListSelected(wxCommandEvent& e)
+{
+    // Sanity
+    if(m_filesSelected.IsEmpty() || m_repositoryDirectory.empty())
+        return;
+
+    // We need to be symlink-aware here on Linux, so use CLRealPath
+    wxString realfilepath = CLRealPath(m_filesSelected.Item(0));
+    wxFileName fn(realfilepath);
+    fn.MakeRelativeTo(CLRealPath(m_repositoryDirectory));
+
+    if(!m_commitListDlg) {
+        m_commitListDlg = new GitCommitListDlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory, this);
+    }
+    m_commitListDlg->GetComboExtraArgs()->SetValue(wxT(" -- ") + fn.GetFullPath());
+    
+    gitAction ga(gitCommitList, wxT(" -- ") + fn.GetFullPath());
+    m_gitActionQueue.push_back(ga);
+    ProcessGitActionQueue();
 }
 
 void GitPlugin::DisplayMessage(const wxString& message) const

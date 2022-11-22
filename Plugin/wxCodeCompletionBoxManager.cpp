@@ -98,7 +98,7 @@ bool CheckCtrlPosition(wxStyledTextCtrl* ctrl, int startPos)
     // if the box is about to be shown on a different line or near a whitespace
     // return false
     int start_pos = startPos == wxNOT_FOUND ? ctrl->GetCurrentPos() : startPos;
-    if(start_pos <= 0 || start_pos >= ctrl->GetLastPosition()) {
+    if(start_pos <= 0 || start_pos > ctrl->GetLastPosition()) {
         return false;
     }
     int prev_char = ctrl->GetCharAt(ctrl->PositionBefore(start_pos));

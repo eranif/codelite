@@ -982,6 +982,9 @@ void DebugAdapterClient::OnDapInitializedEvent(DAPEvent& event)
     m_session.need_to_set_breakpoints = true;
     m_client.SetFunctionBreakpoints({ main_bp });
 
+    if(m_breakpointsHelper) {
+        m_breakpointsHelper->ApplyBreakpoints(wxEmptyString);
+    }
     // place all breakpoints
     m_client.ConfigurationDone();
 }

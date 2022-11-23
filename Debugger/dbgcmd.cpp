@@ -112,7 +112,12 @@ template <typename T> wxString get_file_name(const T& node)
     wxString file_name;
     if(!node["fullname"].value.empty()) {
         file_name = node["fullname"].value;
-    }
+    } else if (!node["pending"].value.empty()) {
+        file_name = node["pending"].value;
+        if (file_name.AfterLast(':').IsNumber()) {
+            file_name = file_name.BeforeLast(':');
+        }
+    } 
     // in case file is using cygwin path -> change it to Windows style
     file_name = clFileName::FromCygwin(file_name);
     return file_name;

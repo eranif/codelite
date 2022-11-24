@@ -559,6 +559,11 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     open_event.SetWorkspaceType(GetWorkspaceType());
     EventNotifier::Get()->AddPendingEvent(open_event);
 
+    // update the remote workspace list
+    RemotyConfig config;
+    RemoteWorkspaceInfo wi{ m_account.GetAccountName(), m_remoteWorkspaceFile };
+    config.UpdateRecentWorkspaces(wi);
+
     CallAfter(&RemotyWorkspace::RestoreSession);
 }
 

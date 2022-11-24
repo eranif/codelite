@@ -16,7 +16,7 @@ fmtJQ::fmtJQ()
 
     wxString jq_exe = "jq";
     ThePlatform->Which("jq", &jq_exe);
-    SetCommand({ jq_exe, ".", "-S", "$(CurrentFileFullPath)" });
+    SetCommand({ jq_exe, ".", "-S", R"#("$(CurrentFileRelPath)")#" });
 }
 
 fmtJQ::~fmtJQ() {}

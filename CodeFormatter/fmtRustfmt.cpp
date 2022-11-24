@@ -14,7 +14,7 @@ fmtRustfmt::fmtRustfmt()
     // local command
     wxString rustfmt_exe = "rustfmt";
     ThePlatform->Which("rustfmt", &rustfmt_exe);
-    SetCommand({ rustfmt_exe, "--edition", "2021", "$(CurrentFileRelPath)" });
+    SetCommand({ rustfmt_exe, "--edition", "2021", R"#("$(CurrentFileRelPath)")#" });
 }
 
 fmtRustfmt::~fmtRustfmt() {}

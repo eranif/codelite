@@ -13,7 +13,7 @@ fmtPHPCBF::fmtPHPCBF()
 
     wxString php_exe = "php";
     ThePlatform->Which("php", &php_exe);
-    SetCommand({ php_exe, "$(WorkspacePath)/vendor/bin/phpcbf", "-q", "$(CurrentFileFullPath)" });
+    SetCommand({ php_exe, "$(WorkspacePath)/vendor/bin/phpcbf", "-q", R"#("$(CurrentFileRelPath)")#" });
 }
 
 fmtPHPCBF::~fmtPHPCBF() {}

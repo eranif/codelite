@@ -10,7 +10,7 @@ fmtXmlLint::fmtXmlLint()
     SetShortDescription(_("Xml formatter"));
     wxString xml_lint_exe;
     ThePlatform->Which("xmllint", &xml_lint_exe);
-    SetCommand({ xml_lint_exe, "--format", "$(CurrentFileFullPath)" });
+    SetCommand({ xml_lint_exe, "--format", R"#("$(CurrentFileRelPath)")#" });
 }
 
 fmtXmlLint::~fmtXmlLint() {}

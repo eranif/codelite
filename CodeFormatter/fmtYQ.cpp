@@ -16,7 +16,7 @@ fmtYQ::fmtYQ()
 
     wxString yq_exe = "yq";
     ThePlatform->Which("yq", &yq_exe);
-    SetCommand({ yq_exe, ".", "$(CurrentFileFullPath)" });
+    SetCommand({ yq_exe, ".", R"#("$(CurrentFileRelPath)")#" });
 }
 
 fmtYQ::~fmtYQ() {}

@@ -91,7 +91,7 @@ wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 
 namespace
 {
-const wxString valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_.>@$:";
+const wxString valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_.>@$:/";
 
 bool CheckCtrlPosition(wxStyledTextCtrl* ctrl, int startPos)
 {

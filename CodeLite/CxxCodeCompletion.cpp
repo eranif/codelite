@@ -1407,7 +1407,12 @@ size_t CxxCodeCompletion::get_file_completions(const wxString& user_typed, std::
     }
     wxArrayString files_arr;
     m_lookup->GetFilesForCC(user_typed, files_arr);
-
+    
+    wxString prefix;
+    if (user_typed.find('/') != user_typed.npos) {
+        prefix = user_typed.BeforeLast('/').append('/');
+    }
+    
     files.reserve(files_arr.size());
     for(const wxString& file : files_arr) {
         // exclude source file
@@ -1420,7 +1425,11 @@ size_t CxxCodeCompletion::get_file_completions(const wxString& user_typed, std::
         wxString display_name = file + suffix;
         tag->SetKind("file");
         tag->SetName(display_name); // display name
-        display_name = display_name.AfterLast('/');
+        if (display_name.StartsWith(prefix)) {
+            display_name = display_name.substr(prefix.length());
+        } else {
+            display_name = display_name.AfterLast('/');
+        }
         tag->SetPattern(display_name); // insert text
         tag->SetLine(-1);
         files.push_back(tag);

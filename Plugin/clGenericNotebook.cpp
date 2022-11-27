@@ -255,20 +255,22 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
         Refresh();
     });
 
-    wxTheApp->Bind(wxEVT_ACTIVATE_APP, [this](wxActivateEvent& e) {
-        e.Skip();
-        // reset the close button state
-        for(auto tab : m_tabs) {
-            tab->m_xButtonState = eButtonState::kNormal;
-        }
-        Refresh();
-    });
+    wxTheApp->Bind(wxEVT_ACTIVATE_APP, &clTabCtrl::OnActivateApp, this);
 
     SetStyle(m_style);
     m_colours.UpdateColours(m_style);
 
     // The history object
     m_history.reset(new clTabHistory());
+}
+
+void clTabCtrl::OnActivateApp(wxActivateEvent& e)
+{
+    e.Skip(); // reset the close button state
+    for(auto tab : m_tabs) {
+        tab->m_xButtonState = eButtonState::kNormal;
+    }
+    Refresh();
 }
 
 void clTabCtrl::DoSetBestSize()
@@ -358,6 +360,7 @@ clTabCtrl::~clTabCtrl()
     Unbind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Unbind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
     Unbind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
+    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clTabCtrl::OnActivateApp, this);
     wxDELETE(m_bitmaps);
 }
 

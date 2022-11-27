@@ -79,6 +79,7 @@ protected:
     void PositionFilelistButton();
 
 protected:
+    void OnActivateApp(wxActivateEvent& e);
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
     void OnSize(wxSizeEvent& event);

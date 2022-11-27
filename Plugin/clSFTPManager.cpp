@@ -375,7 +375,7 @@ void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& r
                 sink->AddPendingEvent(success_event);
             }
         } catch(clException& e) {
-            clERROR() << "Failed to write file:" << remotePath << "." << e.What();
+            clERROR() << "(AsyncSaveFile): Failed to write file:" << remotePath << "." << e.What();
             clCommandEvent fail_event(wxEVT_SFTP_ASYNC_SAVE_ERROR);
             fail_event.SetFileName(remotePath);
             fail_event.SetString(e.What());
@@ -420,6 +420,7 @@ bool clSFTPManager::DoSyncSaveFile(const wxString& localPath, const wxString& re
 void clSFTPManager::AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
                                   wxEvtHandler* sink)
 {
+    clDEBUG() << "(AsyncSaveFile):" << remotePath << "for account" << accountName << endl;
     DoAsyncSaveFile(localPath, remotePath, accountName, false, sink == nullptr ? this : sink);
 }
 

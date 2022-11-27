@@ -631,7 +631,7 @@ wxString FileUtils::RealPath(const wxString& filepath)
 {
 #if defined(__WXGTK__) || defined(__WXOSX__)
     if(!filepath.empty()) {
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__WXOSX__)
         wxStructStat stbuff;
         if((::wxLstat(filepath, &stbuff) != 0) || !S_ISLNK(stbuff.st_mode)) {
             return filepath;

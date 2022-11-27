@@ -437,41 +437,48 @@ int MainBook::FindEditorIndexByFullPath(const wxString& fullpath)
 #ifdef __WXMSW__
     unixStyleFile.Replace(wxT("\\"), wxT("/"));
 #endif
+
+#ifdef __WXGTK__
     // On gtk either fileName or the editor filepath (or both) may be (or their paths contain) symlinks
     wxString fileNameDest = CLRealPath(fullpath);
+#endif
 
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
         if(editor) {
-            wxString unixStyleFile(CLRealPath(editor->GetFileName().GetFullPath()));
-            wxString nativeFile(unixStyleFile);
+            // are we a remote path?
+            if(editor->IsRemoteFile()) {
+                if(editor->GetRemoteData()->GetRemotePath() == fullpath ||
+                   editor->GetRemoteData()->GetLocalPath() == fullpath) {
+                    return i;
+                }
+            } else {
+                // local path
+                wxString unixStyleFile(CLRealPath(editor->GetFileName().GetFullPath()));
+                wxString nativeFile(unixStyleFile);
 #ifdef __WXMSW__
-            unixStyleFile.Replace(wxT("\\"), wxT("/"));
+                unixStyleFile.Replace(wxT("\\"), wxT("/"));
 #endif
 
-#ifndef __WXMSW__
-            // On Unix files are case sensitive
-            if(nativeFile.Cmp(fullpath) == 0 || unixStyleFile.Cmp(fullpath) == 0 ||
-               unixStyleFile.Cmp(fileNameDest) == 0)
+#ifdef __WXGTK__
+                // On Unix files are case sensitive
+                if(nativeFile.Cmp(fullpath) == 0 || unixStyleFile.Cmp(fullpath) == 0 ||
+                   unixStyleFile.Cmp(fileNameDest) == 0)
 #else
-            // Compare in no case sensitive manner
-            if(nativeFile.CmpNoCase(fullpath) == 0 || unixStyleFile.CmpNoCase(fullpath) == 0 ||
-               unixStyleFile.CmpNoCase(fileNameDest) == 0)
+                // Compare in no case sensitive manner
+                if(nativeFile.CmpNoCase(fullpath) == 0 || unixStyleFile.CmpNoCase(fullpath) == 0)
 #endif
-            {
-                return i;
-            }
+                {
+                    return i;
+                }
 
 #if defined(__WXGTK__)
-            // Try again, dereferencing the editor fpath
-            wxString editorDest = CLRealPath(unixStyleFile);
-            if(editorDest.Cmp(fullpath) == 0 || editorDest.Cmp(fileNameDest) == 0) {
-                return i;
-            }
+                // Try again, dereferencing the editor fpath
+                wxString editorDest = CLRealPath(unixStyleFile);
+                if(editorDest.Cmp(fullpath) == 0 || editorDest.Cmp(fileNameDest) == 0) {
+                    return i;
+                }
 #endif
-            // still no luck? try the remotepath
-            if(editor->GetRemotePathOrLocal() == fullpath) {
-                return i;
             }
         }
     }
@@ -806,8 +813,8 @@ void MainBook::ReloadExternallyModified(bool prompt)
             // unless it gets changed again
             editors[i]->SetEditorLastModifiedTime(diskTime);
 
-            // A last check: see if the content of the file has actually changed. This avoids unnecessary reload offers
-            // after e.g. git stash
+            // A last check: see if the content of the file has actually changed. This avoids unnecessary reload
+            // offers after e.g. git stash
             if(!CompareFileWithString(editors[i]->GetFileName().GetFullPath(), editors[i]->GetText())) {
                 files.push_back(std::make_pair(editors[i]->GetFileName(), !editors[i]->GetModify()));
                 editors[n++] = editors[i];

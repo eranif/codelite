@@ -330,7 +330,6 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
-    clDEBUG1() << "Using file content to determine its type. File:" << filename << endl;
     wxString fileContent;
     if(!FileUtils::ReadBufferFromFile(filename, fileContent, 1024)) {
         clWARNING() << "Failed to read file's content" << endl;

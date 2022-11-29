@@ -44,6 +44,26 @@
 #include <wx/arrstr.h>
 #include <wx/clntdata.h>
 
+namespace
+{
+void get_caption_colours(wxColour* bg_colour, wxColour* text_colour)
+{
+#ifdef __WXGTK__
+    wxColour base_bg_colour = clSystemSettings::GetDefaultPanelColour();
+    if(DrawingUtils::IsDark(*bg_colour)) {
+        *text_colour = wxColour(*wxWHITE).ChangeLightness(80);
+        *bg_colour = base_bg_colour.ChangeLightness(50);
+    } else {
+        *text_colour = wxColour(*wxBLACK).ChangeLightness(120);
+        *bg_colour = wxColour("#9CC0E7"); // Pale Cerulean
+    }
+#else
+    *bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+    *text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+#endif
+}
+} // namespace
+
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
@@ -100,9 +120,12 @@ WelcomePage::WelcomePage(wxWindow* parent)
     // set the focus to the tree
     m_dvTreeCtrlWorkspaces->CallAfter(&clTreeCtrl::SetFocus);
 
-    m_panelList->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    m_panelList->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-    m_staticText0->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    wxColour bg_colour, text_colour;
+    get_caption_colours(&bg_colour, &text_colour);
+
+    m_panelList->SetBackgroundColour(bg_colour);
+    m_panelList->SetForegroundColour(text_colour);
+    m_staticText0->SetForegroundColour(text_colour);
 }
 
 WelcomePage::~WelcomePage()
@@ -115,9 +138,12 @@ void WelcomePage::OnSize(wxSizeEvent& event) { event.Skip(); }
 void WelcomePage::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
-    m_panelList->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    m_panelList->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-    m_staticText0->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    wxColour bg_colour, text_colour;
+    get_caption_colours(&bg_colour, &text_colour);
+
+    m_panelList->SetBackgroundColour(bg_colour);
+    m_panelList->SetForegroundColour(text_colour);
+    m_staticText0->SetForegroundColour(text_colour);
 
 #ifndef __WXMAC__
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());

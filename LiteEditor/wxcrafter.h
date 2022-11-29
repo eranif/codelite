@@ -145,6 +145,7 @@ protected:
     wxPanel* m_buttonsPage;
     wxGridSizer* buttons_sizer;
     wxPanel* m_listPage;
+    wxPanel* m_panelList;
     wxStaticText* m_staticText0;
     clThemedTreeCtrl* m_dvTreeCtrlWorkspaces;
 
@@ -156,6 +157,7 @@ public:
     wxPanel* GetButtonsPage() { return m_buttonsPage; }
     wxStaticText* GetStaticText0() { return m_staticText0; }
     clThemedTreeCtrl* GetDvTreeCtrlWorkspaces() { return m_dvTreeCtrlWorkspaces; }
+    wxPanel* GetPanelList() { return m_panelList; }
     wxPanel* GetListPage() { return m_listPage; }
     clThemedSplitterWindow* GetMainPanel() { return m_mainPanel; }
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

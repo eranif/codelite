@@ -99,6 +99,10 @@ WelcomePage::WelcomePage(wxWindow* parent)
     GetSizer()->Layout();
     // set the focus to the tree
     m_dvTreeCtrlWorkspaces->CallAfter(&clTreeCtrl::SetFocus);
+
+    m_panelList->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    m_panelList->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    m_staticText0->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
 }
 
 WelcomePage::~WelcomePage()
@@ -111,12 +115,15 @@ void WelcomePage::OnSize(wxSizeEvent& event) { event.Skip(); }
 void WelcomePage::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
+    m_panelList->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    m_panelList->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    m_staticText0->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+
 #ifndef __WXMAC__
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetMainPanel()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetDvTreeCtrlWorkspaces()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetDvTreeCtrlWorkspaces()->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
-    m_staticText0->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
     Refresh();
 #endif
 }

@@ -23,8 +23,7 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
 
     clBitmapList* images = GetToolBar()->GetBitmaps();
     GetToolBar()->AddTool(wxID_PREFERENCES, _("Settings"), images->Add("cog"), "", wxITEM_NORMAL);
-    GetToolBar()->AddTool(XRCID("fsw_refresh_current_folder"), _("Refresh"), images->Add("file_reload"), "",
-                          wxITEM_NORMAL);
+    GetToolBar()->AddTool(XRCID("fsw_refresh_view"), _("Refresh View"), images->Add("file_reload"), "", wxITEM_NORMAL);
 
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
     GetToolBar()->AddSeparator();
@@ -40,8 +39,8 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
                                  wxITEM_NORMAL);
 
     // these events are connected using the App object (to support keyboard shortcuts)
-    wxTheApp->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnRefresh, this, XRCID("fsw_refresh_current_folder"));
-    wxTheApp->Bind(wxEVT_UPDATE_UI, &clFileSystemWorkspaceView::OnRefreshUI, this, XRCID("fsw_refresh_current_folder"));
+    wxTheApp->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnRefreshView, this, XRCID("fsw_refresh_view"));
+    wxTheApp->Bind(wxEVT_UPDATE_UI, &clFileSystemWorkspaceView::OnRefreshViewUI, this, XRCID("fsw_refresh_view"));
 
     GetToolBar()->Realize();
 
@@ -171,9 +170,12 @@ void clFileSystemWorkspaceView::OnShowConfigsMenu(wxCommandEvent& event)
     m_buttonConfigs->ShowMenu(menu);
 }
 
-void clFileSystemWorkspaceView::OnRefresh(wxCommandEvent& event)
+void clFileSystemWorkspaceView::OnRefreshView(wxCommandEvent& event)
 {
-    clTreeCtrlPanel::OnRefresh(event);
+    wxUnusedVar(event);
+    // refresh the entire view
+    clTreeCtrlPanel::RefreshTree();
+    // notify update
     clFileSystemWorkspace::Get().FileSystemUpdated();
 }
 
@@ -325,7 +327,7 @@ void clFileSystemWorkspaceView::OnThemeChanged(clCommandEvent& event)
     Refresh();
 }
 
-void clFileSystemWorkspaceView::OnRefreshUI(wxUpdateUIEvent& event)
+void clFileSystemWorkspaceView::OnRefreshViewUI(wxUpdateUIEvent& event)
 {
     event.Enable(clFileSystemWorkspace::Get().IsOpen());
 }

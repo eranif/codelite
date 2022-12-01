@@ -25,8 +25,8 @@ protected:
     void OnAddIncludePath(wxCommandEvent& event);
     void OnCreateCompileFlagsFile(wxCommandEvent& event);
     void OnShowConfigsMenu(wxCommandEvent& event);
-    void OnRefresh(wxCommandEvent& event);
-    void OnRefreshUI(wxUpdateUIEvent& event);
+    void OnRefreshView(wxCommandEvent& event);
+    void OnRefreshViewUI(wxUpdateUIEvent& event);
     void OnBuildStarted(clBuildEvent& event);
     void OnBuildEnded(clBuildEvent& event);
     void OnProgramStarted(clExecuteEvent& event);

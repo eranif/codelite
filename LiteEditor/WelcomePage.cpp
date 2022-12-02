@@ -48,19 +48,8 @@ namespace
 {
 void get_caption_colours(wxColour* bg_colour, wxColour* text_colour)
 {
-#ifdef __WXGTK__
-    wxColour base_bg_colour = clSystemSettings::GetDefaultPanelColour();
-    if(DrawingUtils::IsDark(*bg_colour)) {
-        *text_colour = wxColour(*wxWHITE).ChangeLightness(80);
-        *bg_colour = base_bg_colour.ChangeLightness(50);
-    } else {
-        *text_colour = wxColour(*wxBLACK).ChangeLightness(120);
-        *bg_colour = wxColour("#9CC0E7"); // Pale Cerulean
-    }
-#else
     *bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     *text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-#endif
 }
 } // namespace
 

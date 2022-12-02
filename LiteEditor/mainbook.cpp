@@ -1446,10 +1446,11 @@ void MainBook::ShowNavigationDialog()
         return;
     }
 
-    NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), m_book);
-    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
-        m_book->SetSelection(dlg.GetSelection());
+    NotebookNavigationDlg *dlg = new NotebookNavigationDlg(EventNotifier::Get()->TopFrame(), m_book);
+    if(dlg->ShowModal() == wxID_OK && dlg->GetSelection() != wxNOT_FOUND) {
+        m_book->SetSelection(dlg->GetSelection());
     }
+    wxDELETE(dlg);
 }
 
 void MainBook::MovePage(bool movePageRight)

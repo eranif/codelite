@@ -108,7 +108,7 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
 
 void NotebookNavigationDlg::CloseDialog()
 {
-    clDEBUG() << "NotebookNavigationDlg::CloseDialog" << endl;
+    clDEBUG1() << "NotebookNavigationDlg::CloseDialog" << endl;
     wxDataViewItem selection = m_dvListCtrl->GetSelection();
     if(selection.IsOk()) {
         TabData* d = (TabData*)m_dvListCtrl->GetItemData(selection);
@@ -141,13 +141,6 @@ void NotebookNavigationDlg::FinalizeCtor()
 
 void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 {
-#ifdef __WXOSX__
-    if(event.GetKeyCode() == WXK_ESCAPE) {
-        CallAfter(&NotebookNavigationDlg::CloseDialog);
-    } else {
-        event.Skip();
-    }
-#else
     if((event.GetKeyCode() == WXK_TAB) && (event.CmdDown() && event.ShiftDown())) {
         // Navigate Up
         wxDataViewItem item = m_dvListCtrl->GetSelection();
@@ -188,25 +181,21 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
     } else {
         event.Skip();
     }
-#endif
 }
 
 void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
 {
-#ifdef __WXOSX__
-    event.Skip();
-#else
-    if(event.GetKeyCode() == WXK_CONTROL) {
+    // if CTRL key is down, dismiss the dialog
+    if(!wxGetKeyState(WXK_CONTROL)) {
         CloseDialog();
     } else {
         event.Skip();
     }
-#endif
 }
 
 void NotebookNavigationDlg::OnItemActivated(wxDataViewEvent& event)
 {
     event.Skip();
-    clDEBUG() << "NotebookNavigationDlg::OnItemActivated" << endl;
+    clDEBUG1() << "NotebookNavigationDlg::OnItemActivated" << endl;
     CloseDialog();
 }

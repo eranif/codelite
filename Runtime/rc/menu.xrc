@@ -431,19 +431,6 @@
           <label>Remove &amp;All Bookmarks</label>
         </object>
       </object>
-      <!-- Tabs -->
-      <object class="wxMenu" name="wxID_ANY">
-        <label>Tabs</label>
-        <object class="wxMenuItem" name="wxEVT_BOOK_NAV_PREV">
-          <label>Show Recent Tabs Dialog</label>
-        </object>
-        <object class="wxMenuItem" name="wxEVT_BOOK_MOVE_TAB_LEFT">
-          <label>Move Tab Left</label>
-        </object>
-        <object class="wxMenuItem" name="wxEVT_BOOK_MOVE_TAB_RIGHT">
-          <label>Move Tab Right</label>
-        </object>
-      </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenuItem" name="grep_current_file">
         <label>Grep Selection in the Current File</label>

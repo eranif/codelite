@@ -105,7 +105,7 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
     m_dvListCtrl->Unbind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
 #endif
     m_dvListCtrl->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
-    wxTheApp->Unbind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
+    m_dvListCtrl->Unbind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
 
     m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
         TabData* cd = (TabData*)d;

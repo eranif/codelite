@@ -909,25 +909,10 @@ void CodeLiteApp::MSWReadRegistry()
 
 wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxString& requiredVersion)
 {
-    wxString defaultMenuFile = installDirectory + wxFileName::GetPathSeparator() + wxT("rc") +
-                               wxFileName::GetPathSeparator() + wxT("menu.xrc");
-    wxFileName menuFile(clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("rc") +
-                        wxFileName::GetPathSeparator() + wxT("menu.xrc"));
-    if(menuFile.FileExists()) {
-        // if we find the user's file menu, check that it has the required version
-        {
-            wxLogNull noLog;
-            wxXmlDocument doc;
-            if(doc.Load(menuFile.GetFullPath())) {
-                wxString version = doc.GetRoot()->GetAttribute(wxT("version"), wxT("1.0"));
-                if(version != requiredVersion) {
-                    return defaultMenuFile;
-                }
-            }
-        }
-        return menuFile.GetFullPath();
-    }
-    return defaultMenuFile;
+    wxUnusedVar(requiredVersion);
+    wxFileName menu_xrc{ installDirectory, "menu.xrc" };
+    menu_xrc.AppendDir("rc");
+    return menu_xrc.GetFullPath();
 }
 
 void CodeLiteApp::DoCopyGdbPrinters()

@@ -535,8 +535,10 @@ void clKeyboardShortcut::FromString(const wxString& accelString)
     }
 }
 
-wxString clKeyboardShortcut::ToString() const
+wxString clKeyboardShortcut::to_string(bool for_ui) const
 {
+    wxUnusedVar(for_ui);
+
     // An accelerator must contain a key code
     if(!IsOk()) {
         return "";
@@ -544,11 +546,24 @@ wxString clKeyboardShortcut::ToString() const
 
     wxString str;
     if(m_control_type == WXK_CONTROL) {
+#ifdef __WXMAC__
+        if(for_ui) {
+            str << "Cmd-";
+
+        } else {
+            str << "Ctrl-";
+        }
+#else
         str << "Ctrl-";
+#endif
 
     } else if(m_control_type == WXK_RAW_CONTROL) {
 #ifdef __WXMAC__
-        str << "RawCtrl-";
+        if(for_ui) {
+            str << "Ctrl-";
+        } else {
+            str << "RawCtrl-";
+        }
 #else
         str << "Ctrl-";
 #endif
@@ -563,3 +578,6 @@ wxString clKeyboardShortcut::ToString() const
     str << m_keyCode;
     return str;
 }
+
+wxString clKeyboardShortcut::ToString() const { return to_string(false); }
+wxString clKeyboardShortcut::DisplayString() const { return to_string(true); }

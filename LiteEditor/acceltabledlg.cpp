@@ -101,7 +101,7 @@ void AccelTableDlg::PopulateTable(const wxString& filter)
         AccelItemData* itemData = std::get<2>(entry);
 
         wxVector<wxVariant> cols;
-        cols.push_back(shortcut.ToString());
+        cols.push_back(shortcut.DisplayString());
         cols.push_back(desc);
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)itemData);
     }

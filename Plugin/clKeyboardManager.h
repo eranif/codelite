@@ -52,6 +52,9 @@ class WXDLLIMPEXP_SDK clKeyboardShortcut
      */
     wxArrayString Tokenize(const wxString& accelString) const;
 
+protected:
+    wxString to_string(bool for_ui) const;
+
 public:
     clKeyboardShortcut() {}
     explicit clKeyboardShortcut(wxKeyCode ctrl, bool alt, bool shift, const wxString& keyCode)
@@ -112,6 +115,9 @@ public:
      * @brief return a string representation of this accelerator
      */
     wxString ToString() const;
+
+    /// Similar to `ToString` but convert `rawctrl` & `ctrl` into `Ctrl` & `Cmd` accordingly
+    wxString DisplayString() const;
 
     using Vec_t = std::vector<clKeyboardShortcut>;
     using Set_t = std::set<clKeyboardShortcut>;

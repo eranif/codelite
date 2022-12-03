@@ -117,9 +117,18 @@ void NewKeyShortcutDlg::Initialise(const clKeyboardShortcut& accel)
     m_staticTextAction->SetLabel(m_mid.action);
     m_textCtrl1->ChangeValue(accel.GetKeyCode());
 
+#ifdef __WXMAC__
     m_checkBoxAlt->SetValue(accel.GetAlt());
-    m_checkBoxCtrl->SetValue(accel.GetCtrl());
+    m_checkBoxCtrl->SetValue(accel.GetControl() == WXK_RAW_CONTROL); // Control, always control
+    m_checkBoxCmd->SetValue(accel.GetControl() == WXK_CONTROL);      // CMD or Control
     m_checkBoxShift->SetValue(accel.GetShift());
+#else
+    m_checkBoxCmd->SetValue(false);
+    m_checkBoxCmd->Enable(false);
+    m_checkBoxAlt->SetValue(accel.GetAlt());
+    m_checkBoxCtrl->SetValue(accel.GetControl() == WXK_CONTROL); // Control, always control
+    m_checkBoxShift->SetValue(accel.GetShift());
+#endif
 }
 
 void NewKeyShortcutDlg::OnKeyDown(wxKeyEvent& event)
@@ -176,8 +185,22 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent& e) const
 
 clKeyboardShortcut NewKeyShortcutDlg::GetAccel() const
 {
-    return { m_checkBoxCtrl->IsChecked(), m_checkBoxAlt->IsChecked(), m_checkBoxShift->IsChecked(),
-             m_textCtrl1->GetValue() };
+#ifdef __WXMAC__
+    wxKeyCode ctrl = WXK_NONE;
+    if(m_checkBoxCmd->IsChecked()) {
+        ctrl = WXK_CONTROL;
+    } else if(m_checkBoxCtrl->IsChecked()) {
+        ctrl = WXK_RAW_CONTROL;
+    }
+    clKeyboardShortcut shortcut(ctrl, m_checkBoxAlt->IsChecked(), m_checkBoxShift->IsChecked(),
+                                m_textCtrl1->GetValue());
+    return shortcut;
+#else
+    wxKeyCode ctrl = m_checkBoxCtrl->IsChecked() ? WXK_CONTROL : WXK_NONE;
+    clKeyboardShortcut shortcut(ctrl, m_checkBoxAlt->IsChecked(), m_checkBoxShift->IsChecked(),
+                                m_textCtrl1->GetValue());
+    return shortcut;
+#endif
 }
 
 void NewKeyShortcutDlg::OnClear(wxCommandEvent& event)

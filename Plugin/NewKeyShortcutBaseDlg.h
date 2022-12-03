@@ -4,29 +4,41 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_PLUGIN_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
-#define CODELITE_PLUGIN_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
+#ifndef _CODELITE_PLUGIN_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
+#define _CODELITE_PLUGIN_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
 
-#include <wx/artprov.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
+// clang-format off
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/panel.h>
-#include <wx/settings.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/statline.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include <wx/checkbox.h>
+#include <wx/button.h>
+#include <wx/statline.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
 #include "codelite_exports.h"
+// clang-format on
 
 class WXDLLIMPEXP_SDK NewKeyShortcutBaseDlg : public wxDialog
 {
@@ -43,6 +55,7 @@ protected:
     wxTextCtrl* m_textCtrl1;
     wxStaticText* m_staticText12;
     wxCheckBox* m_checkBoxCtrl;
+    wxCheckBox* m_checkBoxCmd;
     wxCheckBox* m_checkBoxAlt;
     wxCheckBox* m_checkBoxShift;
     wxButton* m_buttonClear;
@@ -65,6 +78,7 @@ public:
     wxTextCtrl* GetTextCtrl1() { return m_textCtrl1; }
     wxStaticText* GetStaticText12() { return m_staticText12; }
     wxCheckBox* GetCheckBoxCtrl() { return m_checkBoxCtrl; }
+    wxCheckBox* GetCheckBoxCmd() { return m_checkBoxCmd; }
     wxCheckBox* GetCheckBoxAlt() { return m_checkBoxAlt; }
     wxCheckBox* GetCheckBoxShift() { return m_checkBoxShift; }
     wxButton* GetButtonClear() { return m_buttonClear; }

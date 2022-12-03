@@ -1750,7 +1750,7 @@ WelcomePage* MainBook::GetOrCreateWelcomePage()
 }
 
 clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(IEditor*)>&& callback)
-{ 
+{
     wxString real_path = CLRealPath(file_name);
     auto editor = FindEditor(real_path);
     if(editor) {

@@ -440,8 +440,8 @@ MenuItemDataMap_t clKeyboardManager::DoLoadAccelerators(const wxFileName& filena
 
 bool clKeyboardShortcut::operator==(const clKeyboardShortcut& rhs) const
 {
-    return this->GetCtrl() == rhs.GetCtrl() && this->GetAlt() == rhs.GetAlt() && this->GetShift() == rhs.GetShift() &&
-           this->GetKeyCode() == rhs.GetKeyCode();
+    return this->GetControl() == rhs.GetControl() && this->GetAlt() == rhs.GetAlt() &&
+           this->GetShift() == rhs.GetShift() && this->GetKeyCode() == rhs.GetKeyCode();
 }
 
 bool clKeyboardShortcut::operator<(const clKeyboardShortcut& rhs) const
@@ -452,8 +452,8 @@ bool clKeyboardShortcut::operator<(const clKeyboardShortcut& rhs) const
     if(this->GetAlt() != rhs.GetAlt()) {
         return this->GetAlt() < rhs.GetAlt();
     }
-    if(this->GetCtrl() != rhs.GetCtrl()) {
-        return this->GetCtrl() < rhs.GetCtrl();
+    if(this->GetControl() != rhs.GetControl()) {
+        return this->GetControl() < rhs.GetControl();
     }
     return this->GetKeyCode() < rhs.GetKeyCode();
 }
@@ -462,7 +462,7 @@ bool clKeyboardShortcut::IsOk() const { return !m_keyCode.IsEmpty(); }
 
 void clKeyboardShortcut::Clear()
 {
-    m_ctrl = false;
+    m_control_type = WXK_NONE;
     m_alt = false;
     m_shift = false;
     m_keyCode.Clear();
@@ -511,15 +511,24 @@ void clKeyboardShortcut::FromString(const wxString& accelString)
     wxArrayString tokens = Tokenize(accelString);
     for(size_t i = 0; i < tokens.GetCount(); ++i) {
         wxString token = tokens.Item(i);
-        if(token.IsSameAs("ctrl", false)) {
-            m_ctrl = true;
+        if(token.IsSameAs("rawctrl", false)) {
+            // WXK_RAW_CONTROL == WXK_CONTROL on non macOS
+            m_control_type = WXK_RAW_CONTROL;
             ++i;
+
+        } else if(token.IsSameAs("ctrl", false)) {
+            // CMD or Control
+            m_control_type = WXK_CONTROL;
+            ++i;
+
         } else if(token.IsSameAs("alt", false)) {
             m_alt = true;
             ++i;
+
         } else if(token.IsSameAs("shift", false)) {
             m_shift = true;
             ++i;
+
         } else {
             m_keyCode = token.MakeUpper();
         }
@@ -534,9 +543,17 @@ wxString clKeyboardShortcut::ToString() const
     }
 
     wxString str;
-    if(m_ctrl) {
+    if(m_control_type == WXK_CONTROL) {
         str << "Ctrl-";
+
+    } else if(m_control_type == WXK_RAW_CONTROL) {
+#ifdef __WXMAC__
+        str << "RawCtrl-";
+#else
+        str << "Ctrl-";
+#endif
     }
+
     if(m_alt) {
         str << "Alt-";
     }

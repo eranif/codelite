@@ -42,7 +42,7 @@
 
 class WXDLLIMPEXP_SDK clKeyboardShortcut
 {
-    bool m_ctrl = false;
+    wxKeyCode m_control_type = WXK_NONE;
     bool m_alt = false;
     bool m_shift = false;
     wxString m_keyCode;
@@ -54,8 +54,8 @@ class WXDLLIMPEXP_SDK clKeyboardShortcut
 
 public:
     clKeyboardShortcut() {}
-    clKeyboardShortcut(bool ctrl, bool alt, bool shift, const wxString& keyCode)
-        : m_ctrl(ctrl)
+    explicit clKeyboardShortcut(wxKeyCode ctrl, bool alt, bool shift, const wxString& keyCode)
+        : m_control_type(ctrl)
         , m_alt(alt)
         , m_shift(shift)
         , m_keyCode(keyCode)
@@ -70,9 +70,16 @@ public:
     clKeyboardShortcut& operator=(const char* accelString) = delete;
     clKeyboardShortcut& operator=(const wxString& accelString) = delete;
 
-    bool GetCtrl() const { return IsOk() && m_ctrl; }
+    /// The control key code (can be WXK_CONTROL, WXK_RAW_CONTROL or WXK_NONE)
+    wxKeyCode GetControl() const { return m_control_type; }
+
+    /// Is the Alt key part of the accelerator?
     bool GetAlt() const { return IsOk() && m_alt; }
+
+    /// Is the Shift key part of the accelerator?
     bool GetShift() const { return IsOk() && m_shift; }
+
+    /// The accelerator key code (e.g. 'C')
     const wxString& GetKeyCode() const { return m_keyCode; }
 
     /**

@@ -102,11 +102,6 @@ NewKeyShortcutDlg::NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid)
     : NewKeyShortcutBaseDlg(parent)
     , m_mid(mid)
 {
-#ifdef __WXOSX__
-    m_checkBoxCtrl->SetLabel("Cmd");
-#else
-    m_checkBoxCtrl->SetLabel("Ctrl");
-#endif
     CentreOnParent();
     GetSizer()->Fit(this);
     Initialise(mid.accel);

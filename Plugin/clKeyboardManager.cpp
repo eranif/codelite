@@ -23,8 +23,7 @@ wxDEFINE_EVENT(wxEVT_KEYBOARD_ACCEL_INIT_DONE, clCommandEvent);
 
 clKeyboardManager::clKeyboardManager()
 {
-    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnStartupCompleted), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clKeyboardManager::OnStartupCompleted, this);
 
     // A-Z
     for(size_t i = 65; i < 91; ++i) {
@@ -103,8 +102,7 @@ clKeyboardManager::clKeyboardManager()
 clKeyboardManager::~clKeyboardManager()
 {
     Save();
-    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnStartupCompleted),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clKeyboardManager::OnStartupCompleted, this);
 }
 
 static clKeyboardManager* m_mgr = NULL;
@@ -228,19 +226,7 @@ void clKeyboardManager::Initialize()
     clDEBUG() << "Keyboard manager: Initializing keyboard manager" << endl;
     // Load old format
     clKeyboardBindingConfig config;
-    if(!config.Exists()) {
-        clDEBUG() << "Keyboard manager: No configurtion found - importing old settings" << endl;
-        // Decide which file we want to load, take the user settings file first
-        wxFileName fnOldSettings(clStandardPaths::Get().GetUserDataDir(), "accelerators.conf");
-        fnOldSettings.AppendDir("config");
-        if(fnOldSettings.Exists()) {
-            // Apply the old settings to the menus
-            m_accelTable = DoLoadAccelerators(fnOldSettings);
-
-            wxLogNull noLog;
-            clRemoveFile(fnOldSettings.GetFullPath());
-        }
-    } else {
+    if(config.Exists()) {
         config.Load();
         m_accelTable = config.GetBindings();
     }

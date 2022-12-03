@@ -5,6 +5,11 @@
 
 #include <wx/filename.h>
 
+namespace
+{
+constexpr int BINDING_VERSION = 100;
+}
+
 clKeyboardBindingConfig::clKeyboardBindingConfig() {}
 
 clKeyboardBindingConfig::~clKeyboardBindingConfig() {}
@@ -19,9 +24,25 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
 
     m_bindings.clear();
     JSON root(fn);
+    if(!root.isOk()) {
+        return *this;
+    }
+
+    // Check the version
+    auto root_item = root.toElement();
+    if(!root_item.isOk() || !root_item.hasNamedObject("version")) {
+        return *this;
+    }
+
+    auto version = root_item["version"].toInt();
+    if(version != BINDING_VERSION) {
+        // delete this file and return
+        FileUtils::Deleter d{ fn };
+        return *this;
+    }
 
     {
-        JSONItem menus = root.toElement().namedObject("menus");
+        JSONItem menus = root_item.namedObject("menus");
         int arrSize = menus.arraySize();
         for(int i = 0; i < arrSize; ++i) {
             JSONItem item = menus.arrayItem(i);
@@ -41,6 +62,10 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
 {
     JSON root(cJSON_Object);
     JSONItem mainObj = root.toElement();
+
+    // set the version
+    mainObj.addProperty("version", BINDING_VERSION);
+
     JSONItem menuArr = JSONItem::createArray("menus");
     mainObj.append(menuArr);
     for(MenuItemDataMap_t::iterator iter = m_bindings.begin(); iter != m_bindings.end(); ++iter) {

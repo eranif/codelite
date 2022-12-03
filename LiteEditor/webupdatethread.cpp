@@ -23,18 +23,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "webupdatethread.h"
+
 #include "JSON.h"
 #include "autoversion.h"
 #include "file_logger.h"
 #include "precompiled_header.h"
 #include "procutils.h"
-#include "webupdatethread.h"
+
 #include <wx/tokenzr.h>
 #include <wx/url.h>
 
 wxDEFINE_EVENT(wxEVT_CMD_NEW_VERSION_AVAILABLE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CMD_VERSION_UPTODATE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CMD_VERSION_CHECK_ERROR, wxCommandEvent);
+
+namespace
+{
+const wxString CURRENT_CODELITE_VERSION = CODELITE_VERSION_STRING;
+} // namespace
 
 struct CodeLiteVersion {
     wxString m_os;
@@ -62,7 +69,7 @@ struct CodeLiteVersion {
      */
     bool IsNewer(const wxString& os, const wxString& codename, const wxString& arch) const
     {
-        wxString strVersionNumer = CODELITE_VERSION_STRING;
+        wxString strVersionNumer = CURRENT_CODELITE_VERSION;
         strVersionNumer.Replace(".", "");
         long nVersionNumber = -1;
         strVersionNumer.ToCLong(&nVersionNumber);
@@ -99,7 +106,7 @@ void WebUpdateJob::ParseFile()
     wxString os, arch, codename;
     GetPlatformDetails(os, codename, arch);
 
-    clDEBUG() << "Current platform details:" << os << "," << codename << "," << arch << "," << CODELITE_VERSION_STRING
+    clDEBUG() << "Current platform details:" << os << "," << codename << "," << arch << "," << CURRENT_CODELITE_VERSION
               << clEndl;
     JSON root(m_dataRead);
     JSONItem platforms = root.toElement().namedObject("platforms");
@@ -118,7 +125,7 @@ void WebUpdateJob::ParseFile()
             clDEBUG() << "A new version of CodeLite found" << clEndl;
             wxCommandEvent event(wxEVT_CMD_NEW_VERSION_AVAILABLE);
             event.SetClientData(new WebUpdateJobData("https://codelite.org/support.php", v.GetUrl(),
-                                                     CODELITE_VERSION_STRING, "", false, true));
+                                                     CURRENT_CODELITE_VERSION, "", false, true));
             m_parent->AddPendingEvent(event);
             return;
         }
@@ -136,15 +143,8 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
 #ifdef __WXMSW__
     os = "msw";
     codename = "Windows";
-#ifndef NDEBUG
-    os << "-dbg";
-#endif
-
-#ifdef _WIN64
     arch = "x86_64";
-#else
-    arch = "i386";
-#endif
+
 #elif defined(__WXOSX__)
     os = "osx";
     arch = "x86_64";

@@ -282,7 +282,7 @@ void clControlWithItems::RenderItems(wxDC& dc, long tree_style, const clRowEntry
             continue;
         }
         if(m_customRenderer) {
-            m_customRenderer->Render(this, dc, m_colours, i, curitem);
+            m_customRenderer->RenderItem(this, dc, m_colours, i, curitem);
         } else {
             curitem->Render(this, dc, m_colours, i, &GetSearch());
         }
@@ -302,7 +302,7 @@ void clControlWithItems::RenderItems(wxDC& dc, long tree_style, const clRowEntry
             clRowEntry fake_entry{ nullptr, false, wxEmptyString };
             fake_entry.SetRects(fake_entry_rect, {});
             if(m_customRenderer) {
-                m_customRenderer->RenderBackground(dc, tree_style, m_colours, row_index, &fake_entry);
+                m_customRenderer->RenderItemBackground(dc, tree_style, m_colours, row_index, &fake_entry);
 
             } else {
                 fake_entry.RenderBackground(dc, tree_style, m_colours, row_index);
@@ -366,15 +366,19 @@ void clControlWithItems::UpdateScrollBar()
 
 void clControlWithItems::Render(wxDC& dc)
 {
-    // draw the background on the entire client area
-    dc.SetPen(GetColours().GetBgColour());
-    dc.SetBrush(GetColours().GetBgColour());
-    dc.DrawRectangle(GetClientRect());
+    if(m_customRenderer) {
+        m_customRenderer->RenderBackground(dc, GetClientRect(), 0, GetColours());
+    } else {
+        // draw the background on the entire client area
+        dc.SetPen(GetColours().GetBgColour());
+        dc.SetBrush(GetColours().GetBgColour());
+        dc.DrawRectangle(GetClientRect());
 
-    // draw the background on the entire client area
-    dc.SetPen(GetColours().GetBgColour());
-    dc.SetBrush(GetColours().GetBgColour());
-    dc.DrawRectangle(GetClientArea());
+        // draw the background on the entire client area
+        dc.SetPen(GetColours().GetBgColour());
+        dc.SetBrush(GetColours().GetBgColour());
+        dc.DrawRectangle(GetClientArea());
+    }
 
     // Set the device origin to the X-offset
     dc.SetDeviceOrigin(-m_firstColumn, 0);

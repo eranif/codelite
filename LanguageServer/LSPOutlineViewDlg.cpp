@@ -178,15 +178,15 @@ void LSPOutlineViewDlg::OnKeyDown(wxKeyEvent& event)
     default: {
         int modifier_key = event.GetModifiers();
         wxChar ch = event.GetUnicodeKey();
-        if (modifier_key == wxMOD_CONTROL && ch == 'U') {
+        if(modifier_key == wxMOD_CONTROL && ch == 'U') {
             m_dvTreeCtrll->PageUp();
             DoFindNext();
-        } else if (modifier_key == wxMOD_CONTROL && ch == 'D') {
+        } else if(modifier_key == wxMOD_CONTROL && ch == 'D') {
             m_dvTreeCtrll->PageDown();
             DoFindPrev();
-        } else if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+        } else if(modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
             DoFindNext();
-        }  else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+        } else if(modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
             DoFindPrev();
         } else {
             event.Skip();

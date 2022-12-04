@@ -55,13 +55,18 @@ public:
      * The text, bitmap and other info that needs to be drawn are stored
      * in the `entry` field.
      */
-    virtual void Render(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) = 0;
+    virtual void RenderItem(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) = 0;
 
     /**
      * @brief draw the background of a given entry
      */
-    virtual void RenderBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index,
-                                  clRowEntry* entry) = 0;
+    virtual void RenderItemBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index,
+                                      clRowEntry* entry) = 0;
+
+    /**
+     * @brief render the list background
+     */
+    virtual void RenderBackground(wxDC& dc, const wxRect& rect, long tree_style, const clColours& colours) = 0;
 };
 
 class WXDLLIMPEXP_SDK clControlWithItems : public clScrolledPanel

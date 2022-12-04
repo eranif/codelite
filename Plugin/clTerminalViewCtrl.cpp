@@ -25,9 +25,16 @@ public:
 
     void SetFont(const wxFont& f) { this->m_font = f; }
 
+    void RenderBackground(wxDC& dc, const wxRect& rect, long tree_style, const clColours& colours) override
+    {
+        dc.SetBrush(colours.GetBgColour());
+        dc.SetPen(colours.GetBgColour());
+        dc.DrawRectangle(rect);
+    }
+
     /// just the draw the item background
-    void RenderBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index,
-                          clRowEntry* entry) override
+    void RenderItemBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index,
+                              clRowEntry* entry) override
     {
         wxUnusedVar(dc);
         wxUnusedVar(tree_style);
@@ -37,7 +44,7 @@ public:
     }
 
     /// render item background and all text and stuff
-    void Render(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) override
+    void RenderItem(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) override
     {
         wxUnusedVar(window);
 

@@ -4,9 +4,11 @@
 #include "codelite_exports.h"
 
 #include <wx/colour.h>
+#include "lexer_configuration.h"
 
 class WXDLLIMPEXP_SDK clColours
 {
+public:
     wxColour hoverBgColour;            // Background colour of an hovered item
     wxColour itemTextColour;           // item text colour
     wxColour itemBgColour;             // item bg colour
@@ -41,6 +43,7 @@ public:
     void InitDefaults();
     void InitFromColour(const wxColour& baseColour = wxColour());
     void InitDarkDefaults();
+    void FromLexer(LexerConf::Ptr_t lexer);
     void SetAlternateColour(const wxColour& alternateColour) { this->alternateColour = alternateColour; }
     void SetBgColour(const wxColour& bgColour) { this->bgColour = bgColour; }
     void SetButtonColour(const wxColour& buttonColour) { this->buttonColour = buttonColour; }

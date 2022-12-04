@@ -45,6 +45,10 @@ public:
         handler.Reset();
         handler.Parse(entry->GetLabel(0));
 
+        dc.SetBrush(colours.GetItemBgColour());
+        dc.SetPen(colours.GetItemBgColour());
+        dc.DrawRectangle(entry->GetItemRect());
+
         if(entry->IsSelected()) {
             dc.SetPen(colours.GetSelItemBgColour());
             dc.SetBrush(colours.GetSelItemBgColour());
@@ -52,7 +56,7 @@ public:
         }
 
         clRenderDefaultStyle ds;
-        ds.bg_colour = colours.GetBgColour();
+        ds.bg_colour = colours.GetItemBgColour();
         ds.fg_colour = colours.GetItemTextColour();
         ds.font = m_font;
         handler.Render(dc, ds, 0, entry->GetItemRect(), colours.IsLightTheme());
@@ -96,12 +100,13 @@ void clTerminalViewCtrl::ApplyStyle()
         if(!f.IsOk()) {
             f = lexer->GetFontForStyle(0, this);
         }
+
         r->SetFont(f);
         clDataViewListCtrl::SetDefaultFont(f);
 
+        // construct colours based on the current lexer
         clColours colours;
-        colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
-        colours.SetItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+        colours.FromLexer(lexer);
         SetColours(colours);
     }
 }

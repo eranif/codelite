@@ -49,6 +49,10 @@ void LSPOutlineViewDlg::DoInitialise()
     m_dvTreeCtrll->Begin();
     m_dvTreeCtrll->SetScrollToBottom(false);
 
+    clColours colours;
+    colours.FromLexer(lexer);
+    m_dvTreeCtrll->SetColours(colours);
+
     // build the tree
     wxColour class_colour = lexer->GetProperty(wxSTC_P_WORD2).GetFgColour();
     wxColour variable_colour = lexer->GetProperty(wxSTC_P_IDENTIFIER).GetFgColour();

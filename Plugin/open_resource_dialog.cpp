@@ -474,16 +474,16 @@ void OpenResourceDialog::GetLineAndColumnFromFilter(const wxString& filter, wxSt
     wxString tmpstr = filter;
     tmpstr.Replace("\\", "/");
 
-    wxString remainder = filter.AfterLast('/');
-    if(remainder.find(':') == wxString::npos) {
+    const size_t sep_last = tmpstr.Find('/', true);
+    const size_t col_first = tmpstr.find(':', sep_last);
+    if (col_first == wxNOT_FOUND) {
         return;
     }
 
-    auto parts = ::wxStringTokenize(remainder, ":", wxTOKEN_STRTOK);
-    // the first part is the name
-    modFilter = parts.Item(0);
-    parts.RemoveAt(0);
+    modFilter = tmpstr.substr(0, col_first);
+    wxString remainder = tmpstr.substr(col_first);
 
+    auto parts = ::wxStringTokenize(remainder, ":", wxTOKEN_STRTOK);
     if(!parts.empty()) {
         // line number
         parts.Item(0).ToCLong(&lineNumber);

@@ -91,10 +91,17 @@ public:
 
     void Parse(const wxString& buffer);
     void Reset();
+
     /**
      * @brief draw line using device context using rect as the bounding area
      */
     void Render(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect, bool isLightTheme);
+
+    /**
+     * @brief render line without style
+     */
+    void RenderNoStyle(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect,
+                       bool isLightTheme);
 
     size_t GetLineCount() const { return m_lines.size(); }
 };

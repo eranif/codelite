@@ -49,17 +49,23 @@ public:
         dc.SetPen(colours.GetItemBgColour());
         dc.DrawRectangle(entry->GetItemRect());
 
+        // initialise the default style
+        clRenderDefaultStyle ds;
+        ds.font = m_font;
+
         if(entry->IsSelected()) {
+            ds.bg_colour = colours.GetSelItemBgColour();
+            ds.fg_colour = colours.GetSelItemTextColour();
+
             dc.SetPen(colours.GetSelItemBgColour());
             dc.SetBrush(colours.GetSelItemBgColour());
             dc.DrawRectangle(entry->GetItemRect());
+            handler.RenderNoStyle(dc, ds, 0, entry->GetItemRect(), colours.IsLightTheme());
+        } else {
+            ds.bg_colour = colours.GetItemBgColour();
+            ds.fg_colour = colours.GetItemTextColour();
+            handler.Render(dc, ds, 0, entry->GetItemRect(), colours.IsLightTheme());
         }
-
-        clRenderDefaultStyle ds;
-        ds.bg_colour = colours.GetItemBgColour();
-        ds.fg_colour = colours.GetItemTextColour();
-        ds.font = m_font;
-        handler.Render(dc, ds, 0, entry->GetItemRect(), colours.IsLightTheme());
     }
 };
 } // namespace

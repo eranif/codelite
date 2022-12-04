@@ -5,6 +5,11 @@
 
 #include <wx/tokenzr.h>
 
+namespace
+{
+constexpr int X_MARGIN = 5;
+}
+
 clAnsiEscapeCodeHandler::clAnsiEscapeCodeHandler()
 {
     // Text colours
@@ -452,6 +457,44 @@ void clAnsiEscapeCodeHandler::EnsureCurrent()
     }
 }
 
+void clAnsiEscapeCodeHandler::RenderNoStyle(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line,
+                                            const wxRect& rect, bool isLightTheme)
+{
+    // find the line chunks
+    if(m_lines.count(line) == 0) {
+        return;
+    }
+
+    const auto& v = m_lines[line];
+
+    dc.SetFont(defaultStyle.font);
+    int text_height = dc.GetTextExtent("Tp").GetHeight();
+
+    wxRect tmpRect(0, 0, 20, text_height);
+    tmpRect = tmpRect.CenterIn(rect, wxVERTICAL);
+    dc.SetTextForeground(defaultStyle.fg_colour);
+    int yy = rect.y;
+    int xx = X_MARGIN;
+    dc.SetClippingRegion(rect);
+    for(size_t i : v) {
+        // ensure to restore the dont once we are done with this line
+        wxDCFontChanger font_changer(dc);
+        const auto& chunk = m_chunks[i];
+        if(chunk.is_text()) {
+            // draw the text
+            wxSize text_size = dc.GetTextExtent(chunk.d);
+            dc.DrawText(chunk.d, xx, yy);
+            xx += text_size.GetWidth();
+        }
+
+        // if this chunk was EOL, reset the style here
+        if(chunk.is_eol()) {
+            defaultStyle.ResetDC(dc);
+        }
+    }
+    dc.DestroyClippingRegion();
+}
+
 void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect,
                                      bool isLightTheme)
 {
@@ -480,7 +523,7 @@ void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defau
     dc.SetTextForeground(defaultStyle.fg_colour);
 
     int yy = rect.y;
-    int xx = 5;
+    int xx = X_MARGIN;
     dc.SetClippingRegion(rect);
     for(size_t i : v) {
         // ensure to restore the dont once we are done with this line

@@ -234,9 +234,11 @@ static void WaitForDebugger(int signo)
 
 IMPLEMENT_APP(CodeLiteApp)
 
-// BEGIN_EVENT_TABLE(CodeLiteApp, wxApp)
-//    EVT_ACTIVATE_APP(CodeLiteApp::OnAppAcitvated)
-// END_EVENT_TABLE()
+#ifdef __WXMAC__
+#define MENU_XRC "menu.macos.xrc"
+#else
+#define MENU_XRC "menu.xrc"
+#endif
 
 extern void InitXmlResource();
 CodeLiteApp::CodeLiteApp(void)
@@ -511,7 +513,7 @@ bool CodeLiteApp::OnInit()
     //    clStandardPaths::Get().SetDataDir(fnHomdDir.GetPath());
 
     // try to locate the menu/rc.xrc file
-    wxFileName fn(homeDir + wxT("/rc"), wxT("menu.xrc"));
+    wxFileName fn(homeDir + wxT("/rc"), MENU_XRC);
     if(!fn.FileExists()) {
         // we got wrong home directory
         wxFileName appFn(wxAppBase::argv[0]);
@@ -753,7 +755,6 @@ bool CodeLiteApp::CopySettings(const wxString& destDir, wxString& installPath)
     ///////////////////////////////////////////////////////////////////////////////////////////
     CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
     massCopy(installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
-    // wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
     wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
     wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
     wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
@@ -910,7 +911,7 @@ void CodeLiteApp::MSWReadRegistry()
 wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxString& requiredVersion)
 {
     wxUnusedVar(requiredVersion);
-    wxFileName menu_xrc{ installDirectory, "menu.xrc" };
+    wxFileName menu_xrc{ installDirectory, MENU_XRC };
     menu_xrc.AppendDir("rc");
     return menu_xrc.GetFullPath();
 }

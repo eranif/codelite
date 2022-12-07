@@ -27,6 +27,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "clStrings.h"
+#include "clSystemSettings.h"
 #include "cl_editor.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
@@ -88,7 +89,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
     UpdateStyle();
 
     // bind events
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &FindUsageTab::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &FindUsageTab::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &FindUsageTab::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_REFERENCES, &FindUsageTab::OnReferences, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_REFERENCES_INPROGRESS, &FindUsageTab::OnReferencesInProgress, this);
@@ -96,7 +97,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
 
 FindUsageTab::~FindUsageTab()
 {
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &FindUsageTab::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &FindUsageTab::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &FindUsageTab::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_REFERENCES, &FindUsageTab::OnReferences, this);
 
@@ -152,7 +153,7 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
     m_ctrl->Expand(m_ctrl->GetRootItem());
 }
 
-void FindUsageTab::OnThemeChanged(wxCommandEvent& e)
+void FindUsageTab::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
     UpdateStyle();
@@ -160,8 +161,14 @@ void FindUsageTab::OnThemeChanged(wxCommandEvent& e)
 
 void FindUsageTab::UpdateStyle()
 {
+    // construct colours based on the current lexer
+
     auto lexer = ColoursAndFontsManager::Get().GetLexer("c++");
     m_ctrl->SetDefaultFont(lexer->GetFontForStyle(0, this));
+
+    clColours lexer_colours;
+    lexer_colours.FromLexer(lexer);
+    m_ctrl->SetColours(lexer_colours);
 
     m_headerColour = lexer->GetProperty(wxSTC_C_GLOBALCLASS).GetFgColour();
 

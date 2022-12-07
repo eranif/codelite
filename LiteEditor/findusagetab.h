@@ -56,7 +56,7 @@ protected:
     void Clear();
     void OnClearAllUI(wxUpdateUIEvent& e);
     void OnClearAll(wxCommandEvent& e);
-    void OnThemeChanged(wxCommandEvent& e);
+    void OnThemeChanged(clCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnReferences(LSPEvent& event);
     void OnReferencesInProgress(LSPEvent& event);

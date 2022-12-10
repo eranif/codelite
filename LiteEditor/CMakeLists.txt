@@ -203,7 +203,7 @@ if(NOT APPLE)
         else()
 			# In recent fedoras, which do things with wx-config that might politely be described as 'strange',  wx-config doesn't emit -L/usr/lib64
 			#find_file( USRLIBSIXTYFOUR "libwx_baseu-3.1.so" "/usr/lib64" ) No, this can't cope with e.g. libwx_base2u, or 3.1.3<SomeGitVersion> and find_file doesn't do globs/regex
-			execute_process(COMMAND "find /usr/lib64/ -iname libwx_base*3.1*" OUTPUT_VARIABLE wxBASELIBDIR)
+			execute_process(COMMAND "find /usr/lib64/ -iname libwx_base*3.2*" OUTPUT_VARIABLE wxBASELIBDIR)
 			if ( NOT wxBASELIBDIR MATCHES ".*NOTFOUND" )
 				set(WX_LIBS_DIR "/usr/lib64")
 			else()

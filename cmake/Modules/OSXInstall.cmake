@@ -28,18 +28,18 @@ macro(CL_INSTALL_NAME_TOOL _findwhat_ _binary_)
 endmacro()
 
 macro(CL_OSX_COPY_BREW_LIB lib_full_path destination_folder)
-    if(APPLE)
-        # when using brew, the libraries are symlinked to ../Cellar/...
-        # we need to fix this by copying the real file and then creating a symbolic link
-        # in our directory
-
-        # what we want to do here is:
-        # alter the symlink libfoo.dylib -> ../Cellar/lib/libfoo.1.X.dylib
-        # into libfoo.dylib -> real-libfoo.dylib
-        execute_process(COMMAND basename ${lib_full_path} OUTPUT_VARIABLE __lib_basename OUTPUT_STRIP_TRAILING_WHITESPACE)
-        execute_process(COMMAND cp -L ${lib_full_path} ${destination_folder}/real-${__lib_basename})
-        execute_process(COMMAND /bin/sh -c "cd ${destination_folder} && ln -sf real-${__lib_basename} ${__lib_basename}")
-    endif()
+#    if(APPLE)
+#        # when using brew, the libraries are symlinked to ../Cellar/...
+#        # we need to fix this by copying the real file and then creating a symbolic link
+#        # in our directory
+#
+#        # what we want to do here is:
+#        # alter the symlink libfoo.dylib -> ../Cellar/lib/libfoo.1.X.dylib
+#        # into libfoo.dylib -> real-libfoo.dylib
+#        execute_process(COMMAND basename ${lib_full_path} OUTPUT_VARIABLE __lib_basename OUTPUT_STRIP_TRAILING_WHITESPACE)
+#        execute_process(COMMAND cp -L ${lib_full_path} ${destination_folder}/real-${__lib_basename})
+#        execute_process(COMMAND /bin/sh -c "cd ${destination_folder} && ln -sf real-${__lib_basename} ${__lib_basename}")
+#    endif()
 endmacro()
 
 macro(CL_OSX_FIND_BREW_LIB __lib_name LIB_OUTPUT_VARIABLE)
@@ -83,6 +83,22 @@ macro(CL_INSTALL_NAME_TOOL_EX _findwhat_ _replacewith_ _binary_)
     endif()
 endmacro()
 
+function(copy_extra_homebrew_libs)
+    execute_process(COMMAND cp -L "/opt/homebrew/opt/pcre2/lib/libpcre2-32.0.dylib"
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+    execute_process(COMMAND cp -L "/opt/homebrew/opt/libssh/lib/libssh.4.dylib"
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+    execute_process(COMMAND cp -L "/opt/homebrew/opt/hunspell/lib/libhunspell-1.7.0.dylib"
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+endfunction()
+
+function(fix_homebrew_paths)
+    file(GLOB WXLIBS_TO_FIX ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/libwx_osx*.dylib)
+    foreach(_WXLIB ${WXLIBS_TO_FIX})
+        CL_INSTALL_NAME_TOOL("homebrew" ${_WXLIB})
+    endforeach()
+endfunction()
+
 #------------------------------------------------------------------------------------
 # A useful macro that accepts the string
 # the search string and runs install_name_tool
@@ -97,7 +113,9 @@ macro(CL_INSTALL_NAME_TOOL_STD _binary_)
         CL_INSTALL_NAME_TOOL("libplugin" ${_binary_})
         CL_INSTALL_NAME_TOOL("libwxshapeframework" ${_binary_})
         CL_INSTALL_NAME_TOOL("libdatabaselayersqlite" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libdatabaselayersqlite" ${_binary_})
+        CL_INSTALL_NAME_TOOL("libpcre" ${_binary_})
+        CL_INSTALL_NAME_TOOL("libssh" ${_binary_})
+        CL_INSTALL_NAME_TOOL("libhunspell" ${_binary_})
     endif()
 endmacro()
 
@@ -219,6 +237,8 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/Resources)
 
+        copy_extra_homebrew_libs()
+
         file(COPY ${CL_SRC_ROOT}/codelite_terminal/icon.icns
             DESTINATION
             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/Resources)
@@ -244,6 +264,7 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         foreach(WXLIB ${WXLIBS})
             file(COPY ${WXLIB} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
         endforeach()
+        fix_homebrew_paths()
 
         foreach(WXLIB ${WXLIBS})
             file(COPY ${WXLIB} DESTINATION
@@ -317,9 +338,5 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         install(FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.mac
                 DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config
                 RENAME debuggers.xml.default)
-
-#        execute_process(COMMAND
-#                        install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib
-#                        ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite)
     endif()
 endmacro()

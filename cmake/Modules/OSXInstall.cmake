@@ -84,12 +84,21 @@ macro(CL_INSTALL_NAME_TOOL_EX _findwhat_ _replacewith_ _binary_)
 endmacro()
 
 function(copy_extra_homebrew_libs)
+    # first try to copy files from /usr/local/lib
+    execute_process(COMMAND cp -L "/usr/local/lib/libpcre2-32.0.dylib"
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+    execute_process(COMMAND cp -L "/usr/local/lib/libssh.4.dylib"
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+    execute_process(COMMAND cp -L "/usr/local/lib/libhunspell-1.7.0.dylib"
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+
+    # if these files also exists under /opt/homebrew -> use this path instead
     execute_process(COMMAND cp -L "/opt/homebrew/opt/pcre2/lib/libpcre2-32.0.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/opt/homebrew/opt/libssh/lib/libssh.4.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/opt/homebrew/opt/hunspell/lib/libhunspell-1.7.0.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
 endfunction()
 
 function(fix_homebrew_paths)
@@ -232,16 +241,8 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/cppcheck)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/dics)
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app)
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents)
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS)
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/Resources)
 
         copy_extra_homebrew_libs()
-
-        file(COPY ${CL_SRC_ROOT}/codelite_terminal/icon.icns
-            DESTINATION
-            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/Resources)
 
         file(COPY ${CL_SRC_ROOT}/bitmaps-light/osx/icon.icns
             DESTINATION
@@ -253,9 +254,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
 
         # Copy Info.plist
         file(COPY ${CL_SRC_ROOT}/Runtime/Info.plist DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents)
-        file(COPY ${CL_SRC_ROOT}/codelite_terminal/Info.plist
-            DESTINATION
-            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents)
 
         ## Copy external libraries into the bundle folder
         _FIND_WX_LIBRARIES()
@@ -265,11 +263,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
             file(COPY ${WXLIB} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
         endforeach()
         fix_homebrew_paths()
-
-        foreach(WXLIB ${WXLIBS})
-            file(COPY ${WXLIB} DESTINATION
-                ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS)
-        endforeach()
 
         ## Copy Terminal.app launcher script
         file(COPY ${CL_SRC_ROOT}/Runtime/osx-terminal.sh

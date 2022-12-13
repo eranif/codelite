@@ -475,7 +475,7 @@ void OpenResourceDialog::GetLineAndColumnFromFilter(const wxString& filter, wxSt
     tmpstr.Replace("\\", "/");
 
     const size_t sep_last = tmpstr.Find('/', true);
-    const size_t col_first = tmpstr.find(':', sep_last);
+    const size_t col_first = tmpstr.find(':', (sep_last == wxNOT_FOUND ? 0 : sep_last));
     if (col_first == wxNOT_FOUND) {
         return;
     }

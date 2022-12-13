@@ -335,8 +335,7 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 
     if (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP ||
         event.GetKeyCode() == WXK_NUMPAD_UP || event.GetKeyCode() == WXK_NUMPAD_DOWN ||
-        event.GetKeyCode() == WXK_PAGEUP || event.GetKeyCode() == WXK_PAGEDOWN ||
-        event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_END)
+        event.GetKeyCode() == WXK_PAGEUP || event.GetKeyCode() == WXK_PAGEDOWN)
     {
         event.Skip(false);
 

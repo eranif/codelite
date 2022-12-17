@@ -433,11 +433,6 @@ void MainBook::GetAllEditors(clEditor::Vec_t& editors, size_t flags)
 
 int MainBook::FindEditorIndexByFullPath(const wxString& fullpath)
 {
-    wxString unixStyleFile(fullpath);
-#ifdef __WXMSW__
-    unixStyleFile.Replace(wxT("\\"), wxT("/"));
-#endif
-
 #ifdef __WXGTK__
     // On gtk either fileName or the editor filepath (or both) may be (or their paths contain) symlinks
     wxString fileNameDest = CLRealPath(fullpath);

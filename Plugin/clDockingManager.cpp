@@ -15,8 +15,8 @@
 #define WORKSPACE_VIEW "Workspace View"
 #define OUTPUT_VIEW "Output View"
 
-clDockingManager::clDockingManager() { Bind(wxEVT_AUI_RENDER, &clDockingManager::OnRender, this); }
+clDockingManager::clDockingManager() {}
 
-clDockingManager::~clDockingManager() { Unbind(wxEVT_AUI_RENDER, &clDockingManager::OnRender, this); }
+clDockingManager::~clDockingManager() {}
 
 void clDockingManager::OnRender(wxAuiManagerEvent& event) { event.Skip(); }

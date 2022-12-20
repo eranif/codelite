@@ -256,6 +256,10 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         memDc.SelectObject(wxNullBitmap);
     }
     dc.DrawBitmap(bmp, rect.x, rect.y, true);
+
+    // we need this under GTK, otherwise, in some case (WSL/Windows) the caption does not
+    // get refreshed
+    window->Refresh();
 #endif
 }
 

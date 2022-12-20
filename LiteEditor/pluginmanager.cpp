@@ -44,6 +44,7 @@
 #include "file_logger.h"
 #include "fileexplorer.h"
 #include "fileview.h"
+#include "findinfilesdlg.h"
 #include "frame.h"
 #include "generalinfo.h"
 #include "language.h"
@@ -846,18 +847,29 @@ void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
 
 void PluginManager::OpenFindInFileForPath(const wxString& path)
 {
-    wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
     wxArrayString paths;
     paths.Add(path);
-    ff.SetClientData(new wxArrayString(paths));
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
+    OpenFindInFileForPaths(paths);
 }
 
 void PluginManager::OpenFindInFileForPaths(const wxArrayString& paths)
 {
-    wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
-    ff.SetClientData(new wxArrayString(paths));
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
+    // Fire the wxEVT_CMD_FIND_IN_FILES_SHOWING showing event
+    clFindInFilesEvent eventFifShowing(wxEVT_FINDINFILES_DLG_SHOWING);
+    if(EventNotifier::Get()->ProcessEvent(eventFifShowing))
+        return;
+
+    // Prepare the fif dialog
+    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame());
+    if(!paths.empty()) {
+        dlg.SetSearchPaths(wxJoin(paths, ';'), true);
+    }
+    // Show it
+    if(dlg.ShowDialog() == wxID_OK) {
+        // Notify about the dialog dismissal
+        clFindInFilesEvent eventDismiss(wxEVT_FINDINFILES_DLG_DISMISSED);
+        EventNotifier::Get()->ProcessEvent(eventDismiss);
+    }
 }
 
 void PluginManager::ShowOutputPane(const wxString& selectedWindow) { ManagerST::Get()->ShowOutputPane(selectedWindow); }

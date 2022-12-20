@@ -187,8 +187,8 @@ public:
     /**
      * @brief display message to the user using the info bar
      */
-    virtual void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
-                                const std::vector<std::pair<wxWindowID, wxString>>& buttons = {}) override;
+    void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
+                        const std::vector<std::pair<wxWindowID, wxString>>& buttons = {}) override;
 
     //------------------------------------
     // End of IManager interface

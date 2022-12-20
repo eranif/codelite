@@ -60,7 +60,6 @@ protected:
     virtual void OnReplace(wxCommandEvent& event);
     void DoSearch();
     void DoSearchReplace();
-    void DoSaveSearchPaths();
     SearchData DoGetSearchData();
     void DoSaveOpenFiles();
     void DoSetFileMask();

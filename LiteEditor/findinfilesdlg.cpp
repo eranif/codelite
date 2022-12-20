@@ -467,16 +467,6 @@ int FindInFilesDialog::ShowDialog()
     return wxDialog::ShowModal();
 }
 
-void FindInFilesDialog::DoSaveSearchPaths()
-{
-    m_data.where_array = m_comboBoxWhere->GetStrings();
-    int where = m_data.where_array.Index(m_comboBoxWhere->GetValue());
-    if(where != wxNOT_FOUND) {
-        m_data.where_array.RemoveAt(where);
-    }
-    m_data.where_array.Insert(m_comboBoxWhere->GetValue(), 0);
-}
-
 void FindInFilesDialog::DoSaveOpenFiles()
 {
     if(m_checkBoxSaveFilesBeforeSearching->IsChecked()) {
@@ -616,9 +606,11 @@ void FindInFilesDialog::SaveFindReplaceData()
     m_data.files_array = masks;
 
     // store the "Where"
-    wxArrayString where_arr = GetComboBoxStrings(m_comboBoxWhere);
-    m_data.where_array = where_arr;
-    m_data.where = m_comboBoxWhere->GetValue();
+    if(!m_transient) {
+        wxArrayString where_arr = GetComboBoxStrings(m_comboBoxWhere);
+        m_data.where_array = where_arr;
+        m_data.where = m_comboBoxWhere->GetValue();
+    }
 
     size_t search_flags = clFilesScanner::SF_DEFAULT;
     if(m_checkBoxFollowSymlinks->IsChecked()) {

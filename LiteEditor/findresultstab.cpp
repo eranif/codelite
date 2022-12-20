@@ -116,26 +116,13 @@ void FindResultsTab::Clear()
 
 void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
 {
+    wxUnusedVar(e);
     if(m_searchInProgress) {
         ::wxMessageBox(_("Another search is currently running, try again later"), _("CodeLite"),
                        wxICON_WARNING | wxOK | wxOK_DEFAULT);
         return;
     }
-
-    // Fire the wxEVT_CMD_FIND_IN_FILES_SHOWING showing event
-    clFindInFilesEvent eventFifShowing(wxEVT_FINDINFILES_DLG_SHOWING);
-    if(EventNotifier::Get()->ProcessEvent(eventFifShowing))
-        return;
-
-    // Prepare the fif dialog
-    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame());
-
-    // Show it
-    if(dlg.ShowDialog() == wxID_OK) {
-        // Notify about the dialog dismissal
-        clFindInFilesEvent eventDismiss(wxEVT_FINDINFILES_DLG_DISMISSED);
-        EventNotifier::Get()->ProcessEvent(eventDismiss);
-    }
+    clGetManager()->OpenFindInFileForPaths({});
 }
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)

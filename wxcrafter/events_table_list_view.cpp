@@ -12,7 +12,7 @@ static const wxEventType wxEVT_DV_SHOW_CONTEXT_MENU = wxNewEventType();
 static int ID_JUMP_TO_DECL = wxNewEventType();
 static int ID_JUMP_TO_IMPL = wxNewEventType();
 
-extern const wxEventType wxEVT_EVENTS_PROPERTIES_UPDATED;
+wxDECLARE_EVENT(wxEVT_EVENTS_PROPERTIES_UPDATED, wxCommandEvent);
 
 EventsTableListView::EventsTableListView(wxWindow* parent)
     : wxPropertyGridManager(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,

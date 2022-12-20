@@ -160,13 +160,13 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect,
                                wxAuiPaneInfo& pane)
 {
-    wxRect tmpRect;
-    window->PrepareDC(dc);
-
     if(!IsRectOK(dc, rect))
         return;
 
+    wxRect tmpRect;
 #if defined(__WXMAC__) || defined(__WXMSW__)
+    window->PrepareDC(dc);
+
     tmpRect = rect;
     tmpRect.Inflate(2);
 
@@ -256,10 +256,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         memDc.SelectObject(wxNullBitmap);
     }
     dc.DrawBitmap(bmp, rect.x, rect.y, true);
-
-    // we need this under GTK, otherwise, in some case (WSL/Windows) the caption does not
-    // get refreshed
-    window->Refresh();
 #endif
 }
 

@@ -111,10 +111,58 @@ typedef BOOL(WINAPI* ADMFW)(HWND window, BOOL allow);       // AllowDarkModeForW
 typedef void(WINAPI* FMT)();                                // FlushMenuThemes
 typedef HRESULT(WINAPI* DSWA)(HWND, DWORD, LPCVOID, DWORD); // DwmSetWindowAttribute
 
+#include "wx/module.h"
+
+namespace
+{
+
+// This function is documented, but we still load it dynamically to avoid
+// having to link with dwmapi.lib.
+typedef HRESULT(WINAPI* DwmSetWindowAttribute_t)(HWND, DWORD, const void*, DWORD);
+
+class wxDarkModeModule : public wxModule
+{
+public:
+    virtual bool OnInit() wxOVERRIDE { return true; }
+    virtual void OnExit() wxOVERRIDE
+    {
+        ms_pfnDwmSetWindowAttribute = (DwmSetWindowAttribute_t)-1;
+        ms_dllDWM.Unload();
+    }
+
+    static DwmSetWindowAttribute_t GetDwmSetWindowAttribute()
+    {
+        if(ms_pfnDwmSetWindowAttribute == (DwmSetWindowAttribute_t)-1) {
+            ms_dllDWM.Load(wxS("dwmapi.dll"), wxDL_VERBATIM | wxDL_QUIET);
+            wxDL_INIT_FUNC(ms_pfn, DwmSetWindowAttribute, ms_dllDWM);
+        }
+        return ms_pfnDwmSetWindowAttribute;
+    }
+
+private:
+    static wxDynamicLibrary ms_dllDWM;
+    static DwmSetWindowAttribute_t ms_pfnDwmSetWindowAttribute;
+
+    wxDECLARE_DYNAMIC_CLASS(wxDarkModeModule);
+};
+wxIMPLEMENT_DYNAMIC_CLASS(wxDarkModeModule, wxModule);
+
+wxDynamicLibrary wxDarkModeModule::ms_dllDWM;
+DwmSetWindowAttribute_t wxDarkModeModule::ms_pfnDwmSetWindowAttribute = (DwmSetWindowAttribute_t)-1;
+
+#define DWMWA_USE_IMMERSIVE_DARK_MODE 20
+} // namespace
+
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
     bool current_theme_is_dark = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
     static const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
+    BOOL useDarkMode = TRUE;
+    auto handle = win->GetHWND();
+    HRESULT hr = wxDarkModeModule::GetDwmSetWindowAttribute()(handle, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDarkMode,
+                                                              sizeof(useDarkMode));
+    wxUnusedVar(hr);
+
     if(huxtheme) {
         static const ADMFA _AllowDarkModeForApp = (ADMFA)GetProcAddress(huxtheme, MAKEINTRESOURCEA(135));
         static const ADMFW _AllowDarkModeForWindow = (ADMFW)GetProcAddress(huxtheme, MAKEINTRESOURCEA(133));

@@ -5,6 +5,7 @@
 
 #ifdef __WXMSW__
 #include <UxTheme.h>
+#include <unordered_set>
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE 20
 
@@ -57,10 +58,16 @@ void MSWDarkMode::SetDarkMode(wxWindow* win)
 
         // bfs the windows
         std::vector<wxWindow*> Q;
+        std::unordered_set<wxWindow*> V; // visited
         Q.push_back(win);
         while(!Q.empty()) {
             wxWindow* w = Q.front();
             Q.erase(Q.begin());
+
+            if(!V.insert(w).second) {
+                // already visited this window (how can this be true??)
+                continue;
+            }
 
             BOOL use_dark = current_theme_is_dark ? TRUE : FALSE;
             if(dynamic_cast<wxTextCtrl*>(w)) {

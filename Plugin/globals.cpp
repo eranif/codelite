@@ -88,6 +88,8 @@
 #include <wx/zipstrm.h>
 
 #ifdef __WXMSW__
+#include "MSWDarkMode.hpp"
+
 #include <UxTheme.h>
 #else
 #include <sys/wait.h>
@@ -104,192 +106,14 @@
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 
-#ifdef __WXMSW__
-
-typedef BOOL(WINAPI* ADMFA)(BOOL allow);                    // AllowDarkModeForApp
-typedef BOOL(WINAPI* ADMFW)(HWND window, BOOL allow);       // AllowDarkModeForWindow
-typedef void(WINAPI* FMT)();                                // FlushMenuThemes
-typedef HRESULT(WINAPI* DSWA)(HWND, DWORD, LPCVOID, DWORD); // DwmSetWindowAttribute
-
-#include "wx/module.h"
-
-namespace
-{
-
-// This function is documented, but we still load it dynamically to avoid
-// having to link with dwmapi.lib.
-typedef HRESULT(WINAPI* DwmSetWindowAttribute_t)(HWND, DWORD, const void*, DWORD);
-
-class wxDarkModeModule : public wxModule
-{
-public:
-    virtual bool OnInit() wxOVERRIDE { return true; }
-    virtual void OnExit() wxOVERRIDE
-    {
-        ms_pfnDwmSetWindowAttribute = (DwmSetWindowAttribute_t)-1;
-        ms_dllDWM.Unload();
-    }
-
-    static DwmSetWindowAttribute_t GetDwmSetWindowAttribute()
-    {
-        if(ms_pfnDwmSetWindowAttribute == (DwmSetWindowAttribute_t)-1) {
-            ms_dllDWM.Load(wxS("dwmapi.dll"), wxDL_VERBATIM | wxDL_QUIET);
-            wxDL_INIT_FUNC(ms_pfn, DwmSetWindowAttribute, ms_dllDWM);
-        }
-        return ms_pfnDwmSetWindowAttribute;
-    }
-
-private:
-    static wxDynamicLibrary ms_dllDWM;
-    static DwmSetWindowAttribute_t ms_pfnDwmSetWindowAttribute;
-
-    wxDECLARE_DYNAMIC_CLASS(wxDarkModeModule);
-};
-wxIMPLEMENT_DYNAMIC_CLASS(wxDarkModeModule, wxModule);
-
-wxDynamicLibrary wxDarkModeModule::ms_dllDWM;
-DwmSetWindowAttribute_t wxDarkModeModule::ms_pfnDwmSetWindowAttribute = (DwmSetWindowAttribute_t)-1;
-
-#define DWMWA_USE_IMMERSIVE_DARK_MODE 20
-} // namespace
-
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
-    bool current_theme_is_dark = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
-    static const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
-    BOOL useDarkMode = TRUE;
-    auto handle = win->GetHWND();
-    HRESULT hr = wxDarkModeModule::GetDwmSetWindowAttribute()(handle, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDarkMode,
-                                                              sizeof(useDarkMode));
-    wxUnusedVar(hr);
-
-    if(huxtheme) {
-        static const ADMFA _AllowDarkModeForApp = (ADMFA)GetProcAddress(huxtheme, MAKEINTRESOURCEA(135));
-        static const ADMFW _AllowDarkModeForWindow = (ADMFW)GetProcAddress(huxtheme, MAKEINTRESOURCEA(133));
-        static const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
-
-        if(_AllowDarkModeForApp && _AllowDarkModeForWindow) {
-            _AllowDarkModeForApp(current_theme_is_dark);
-
-            // bfs the windows
-            std::vector<wxWindow*> Q;
-            Q.push_back(win);
-            while(!Q.empty()) {
-                wxWindow* w = Q.front();
-                Q.erase(Q.begin());
-
-                bool use_dark = current_theme_is_dark;
-                if(dynamic_cast<wxTextCtrl*>(w)) {
-                    use_dark = false; // don't allow dark mode for text controls
-                }
-
-                _AllowDarkModeForWindow(w->GetHandle(), use_dark);
-                SetWindowTheme(w->GetHandle(), use_dark ? L"DarkMode_Explorer" : L"Explorer", NULL);
-
-                if(_FlushMenuThemes) {
-                    _FlushMenuThemes();
-                }
-
-                InvalidateRect(w->GetHandle(), nullptr, FALSE); // HACK
-                const auto& children = w->GetChildren();
-                for(auto c : children) {
-                    Q.push_back(c);
-                }
-            }
-        }
-    }
-}
-
+#ifdef __WXMSW__
+    MSWDarkMode::Get().SetDarkMode(win);
 #else
-void MSWSetWindowDarkTheme(wxWindow* win) { wxUnusedVar(win); }
+    wxUnusedVar(win);
 #endif
-
-// --------------------------------------------------------
-// Internal handler to handle queuing requests...
-// --------------------------------------------------------
-class clInternalEventHandlerData : public wxClientData
-{
-    wxObject* m_this;
-    clEventFunc_t m_funcPtr;
-    wxClientData* m_arg;
-
-public:
-    clInternalEventHandlerData(wxObject* instance, clEventFunc_t func, wxClientData* arg)
-        : m_this(instance)
-        , m_funcPtr(func)
-        , m_arg(arg)
-    {
-    }
-
-    clInternalEventHandlerData(wxObject* instance, clEventFunc_t func)
-        : m_this(instance)
-        , m_funcPtr(func)
-        , m_arg(NULL)
-    {
-    }
-
-    virtual ~clInternalEventHandlerData() { wxDELETE(m_arg); }
-
-    wxClientData* GetArg() const { return m_arg; }
-    clEventFunc_t GetFuncPtr() const { return m_funcPtr; }
-    wxObject* GetThis() { return m_this; }
-};
-
-class clInternalEventHandler : public wxEvtHandler
-{
-public:
-    clInternalEventHandler()
-    {
-        EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS,
-                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
-        EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS,
-                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
-    }
-
-    virtual ~clInternalEventHandler()
-    {
-        EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS,
-                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
-        EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS,
-                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
-    }
-
-    /**
-     * @brief Call 1 arguments function
-     */
-    void OnInternalEvent1(wxCommandEvent& e)
-    {
-        clInternalEventHandlerData* cd = reinterpret_cast<clInternalEventHandlerData*>(e.GetClientObject());
-        if(cd) {
-            wxObject* obj = cd->GetThis();
-            wxClientData* arg = cd->GetArg();
-            clEventFunc_t func = cd->GetFuncPtr();
-            (obj->*func)(arg);
-
-            delete cd;
-            e.SetClientObject(NULL);
-        }
-    }
-
-    /**
-     * @brief Call 0 arguments function
-     */
-    void OnInternalEvent0(wxCommandEvent& e)
-    {
-        clInternalEventHandlerData* cd = reinterpret_cast<clInternalEventHandlerData*>(e.GetClientObject());
-        if(cd) {
-            wxObject* obj = cd->GetThis();
-            clEventFunc_t func = cd->GetFuncPtr();
-            (obj->*func)(NULL);
-
-            delete cd;
-            e.SetClientObject(NULL);
-        }
-    }
-};
-
-// construct a global handler here
-clInternalEventHandler clEventHandlerHelper;
+}
 
 // --------------------------------------------------------
 // Internal handler to handle queuing requests... end
@@ -1626,22 +1450,6 @@ wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
     wxVariant v;
     v << ict;
     return v;
-}
-
-void PostCall(wxObject* instance, clEventFunc_t func, wxClientData* arg)
-{
-    clInternalEventHandlerData* cd = new clInternalEventHandlerData(instance, func, arg);
-    wxCommandEvent evt(wxEVT_COMMAND_CL_INTERNAL_1_ARGS);
-    evt.SetClientObject(cd);
-    EventNotifier::Get()->AddPendingEvent(evt);
-}
-
-void PostCall(wxObject* instance, clEventFunc_t func)
-{
-    clInternalEventHandlerData* cd = new clInternalEventHandlerData(instance, func);
-    wxCommandEvent evt(wxEVT_COMMAND_CL_INTERNAL_0_ARGS);
-    evt.SetClientObject(cd);
-    EventNotifier::Get()->AddPendingEvent(evt);
 }
 
 wxArrayString SplitString(const wxString& inString, bool trim)

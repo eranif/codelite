@@ -371,6 +371,8 @@
     <File Name="clStrings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
+    <File Name="MSWDarkMode.cpp"/>
+    <File Name="MSWDarkMode.hpp"/>
     <File Name="mdparser.hpp"/>
     <File Name="mdparser.cpp"/>
     <File Name="clFileCache.cpp"/>

@@ -3,7 +3,6 @@
 
 #include "clConsoleBase.h" // Base class: clConsoleBase
 
-class StartForDebugger;
 class WXDLLIMPEXP_CL clConsoleCMD : public clConsoleBase
 {
 public:
@@ -11,9 +10,9 @@ public:
     virtual ~clConsoleCMD();
 
 public:
-    virtual bool Start();
-    virtual bool StartForDebugger();
-    virtual wxString PrepareCommand();
+    bool Start() override;
+    bool StartForDebugger() override;
+    wxString PrepareCommand() override;
 };
 
 #endif // CLCONSOLECMD_H

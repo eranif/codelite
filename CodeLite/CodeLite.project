@@ -124,6 +124,8 @@
     <File Name="LSP/basic_types.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Console">
+    <File Name="clConsoleAlacritty.cpp"/>
+    <File Name="clConsoleAlacritty.hpp"/>
     <File Name="clConsoleCodeLiteTerminal.cpp"/>
     <File Name="clConsoleCodeLiteTerminal.h"/>
     <File Name="clConsoleRXVTerminal.h"/>

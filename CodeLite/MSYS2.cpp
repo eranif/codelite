@@ -76,6 +76,25 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
         }
     }
 
+    // cargo (MSYS2 path)
+    wxFileName cargo_msys_bin{msyspath, wxEmptyString};
+    cargo_msys_bin.AppendDir("home");
+    cargo_msys_bin.AppendDir(::wxGetUserId());
+    cargo_msys_bin.AppendDir(".cargo");
+    cargo_msys_bin.AppendDir("bin");
+    if(cargo_msys_bin.DirExists()) {
+        paths_to_try.Add(cargo_msys_bin.GetPath());
+    }
+
+    // cargo (Windows native path)
+    wxFileName cargo_bin{ clStandardPaths::Get().GetUserDataDir(), wxEmptyString };
+    cargo_bin.AppendDir(".cargo");
+    cargo_bin.AppendDir("bin");
+
+    if(cargo_bin.DirExists()) {
+        paths_to_try.Add(cargo_bin.GetPath());
+    }
+
     // at the point, the order of search is:
     // MSYS2 -> Executable path -> PATH paths
     for(auto path : paths_to_try) {

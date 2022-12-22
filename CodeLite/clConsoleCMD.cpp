@@ -1,15 +1,13 @@
 #include "clConsoleCMD.h"
+
 #include "dirsaver.h"
+
 #include <wx/filename.h>
 #include <wx/utils.h>
 
-clConsoleCMD::clConsoleCMD()
-{
-}
+clConsoleCMD::clConsoleCMD() {}
 
-clConsoleCMD::~clConsoleCMD()
-{
-}
+clConsoleCMD::~clConsoleCMD() {}
 
 bool clConsoleCMD::Start()
 {
@@ -21,10 +19,7 @@ bool clConsoleCMD::Start()
     return StartProcess(PrepareCommand());
 }
 
-bool clConsoleCMD::StartForDebugger()
-{
-    return false;
-}
+bool clConsoleCMD::StartForDebugger() { return false; }
 
 wxString clConsoleCMD::PrepareCommand()
 {

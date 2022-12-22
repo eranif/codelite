@@ -32,6 +32,7 @@ void MSWDarkMode::Initialise()
             (AllowDarkModeForApp_t)GetProcAddress(m_dllUxTheme.GetLibHandle(), MAKEINTRESOURCEA(135));
         m_pfnAllowDarkModeForWindow =
             (AllowDarkModeForWindow_t)GetProcAddress(m_dllUxTheme.GetLibHandle(), MAKEINTRESOURCEA(133));
+        m_pfnFlushMenuThemes = (FlushMenuThemes_t)GetProcAddress(m_dllUxTheme.GetLibHandle(), MAKEINTRESOURCEA(136));
     }
 }
 
@@ -43,7 +44,7 @@ MSWDarkMode& MSWDarkMode::Get()
 
 void MSWDarkMode::SetDarkMode(wxWindow* win)
 {
-    BOOL useDarkMode = TRUE;
+    BOOL useDarkMode = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour()) ? TRUE : FALSE;
     auto handle = win->GetHWND();
 
     if(m_pfnDwmSetWindowAttribute) {
@@ -59,6 +60,10 @@ void MSWDarkMode::SetDarkMode(wxWindow* win)
     if(m_pfnAllowDarkModeForWindow) {
         m_pfnAllowDarkModeForWindow(handle, useDarkMode);
         SetWindowThemeRecurse(win, useDarkMode);
+    }
+
+    if(m_pfnFlushMenuThemes) {
+        m_pfnFlushMenuThemes();
     }
 }
 

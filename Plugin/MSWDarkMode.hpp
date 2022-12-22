@@ -21,7 +21,6 @@ class WXDLLIMPEXP_SDK MSWDarkMode
     // functions
     AllowDarkModeForApp_t m_pfnAllowDarkModeForApp = nullptr;
     AllowDarkModeForWindow_t m_pfnAllowDarkModeForWindow = nullptr;
-    FlushMenuThemes_t m_pfnFlushMenuThemes = nullptr;
     DwmSetWindowAttribute_t m_pfnDwmSetWindowAttribute = nullptr;
 
 private:
@@ -29,6 +28,8 @@ private:
     ~MSWDarkMode();
 
     void Initialise();
+
+    void SetWindowThemeRecurse(wxWindow* win, BOOL useDarkMode);
 
 public:
     static MSWDarkMode& Get();

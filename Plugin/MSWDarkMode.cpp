@@ -6,6 +6,7 @@
 #ifdef __WXMSW__
 #include <UxTheme.h>
 #include <unordered_set>
+#include <wx/headerctrl.h>
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE 20
 
@@ -31,7 +32,6 @@ void MSWDarkMode::Initialise()
             (AllowDarkModeForApp_t)GetProcAddress(m_dllUxTheme.GetLibHandle(), MAKEINTRESOURCEA(135));
         m_pfnAllowDarkModeForWindow =
             (AllowDarkModeForWindow_t)GetProcAddress(m_dllUxTheme.GetLibHandle(), MAKEINTRESOURCEA(133));
-        m_pfnFlushMenuThemes = (FlushMenuThemes_t)GetProcAddress(m_dllUxTheme.GetLibHandle(), MAKEINTRESOURCEA(136));
     }
 }
 
@@ -43,8 +43,7 @@ MSWDarkMode& MSWDarkMode::Get()
 
 void MSWDarkMode::SetDarkMode(wxWindow* win)
 {
-    bool current_theme_is_dark = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
-    BOOL useDarkMode = current_theme_is_dark ? TRUE : FALSE;
+    BOOL useDarkMode = TRUE;
     auto handle = win->GetHWND();
 
     if(m_pfnDwmSetWindowAttribute) {
@@ -53,40 +52,25 @@ void MSWDarkMode::SetDarkMode(wxWindow* win)
         wxUnusedVar(hr);
     }
 
-    if(m_pfnAllowDarkModeForApp && m_pfnAllowDarkModeForWindow) {
+    if(m_pfnAllowDarkModeForWindow) {
         m_pfnAllowDarkModeForApp(useDarkMode);
+    }
 
-        // bfs the windows
-        std::vector<wxWindow*> Q;
-        std::unordered_set<wxWindow*> V; // visited
-        Q.push_back(win);
-        while(!Q.empty()) {
-            wxWindow* w = Q.front();
-            Q.erase(Q.begin());
+    if(m_pfnAllowDarkModeForApp) {
+        m_pfnAllowDarkModeForWindow(win->GetHandle(), useDarkMode);
+        SetWindowThemeRecurse(win, useDarkMode);
+    }
+}
 
-            if(!V.insert(w).second) {
-                // already visited this window (how can this be true??)
-                continue;
-            }
-
-            BOOL use_dark = current_theme_is_dark ? TRUE : FALSE;
-            if(dynamic_cast<wxTextCtrl*>(w)) {
-                use_dark = FALSE; // don't allow dark mode for text controls
-            }
-
-            m_pfnAllowDarkModeForWindow(w->GetHandle(), use_dark);
-            SetWindowTheme(w->GetHandle(), use_dark ? L"DarkMode_Explorer" : L"Explorer", nullptr);
-
-            if(m_pfnFlushMenuThemes) {
-                m_pfnFlushMenuThemes();
-            }
-
-            InvalidateRect(w->GetHandle(), nullptr, FALSE); // HACK
-            const auto& children = w->GetChildren();
-            for(auto c : children) {
-                Q.push_back(c);
-            }
-        }
+void MSWDarkMode::SetWindowThemeRecurse(wxWindow* win, BOOL useDarkMode)
+{
+    if(dynamic_cast<wxHeaderCtrlBase*>(win)) {
+        return;
+    }
+    SetWindowTheme(win->GetHWND(), useDarkMode ? L"DarkMode_Explorer" : L"Explorer", nullptr);
+    auto children = win->GetChildren();
+    for(auto child : children) {
+        SetWindowThemeRecurse(child, useDarkMode);
     }
 }
 #endif

@@ -52,12 +52,12 @@ void MSWDarkMode::SetDarkMode(wxWindow* win)
         wxUnusedVar(hr);
     }
 
-    if(m_pfnAllowDarkModeForWindow) {
+    if(m_pfnAllowDarkModeForApp) {
         m_pfnAllowDarkModeForApp(useDarkMode);
     }
 
-    if(m_pfnAllowDarkModeForApp) {
-        m_pfnAllowDarkModeForWindow(win->GetHandle(), useDarkMode);
+    if(m_pfnAllowDarkModeForWindow) {
+        m_pfnAllowDarkModeForWindow(handle, useDarkMode);
         SetWindowThemeRecurse(win, useDarkMode);
     }
 }

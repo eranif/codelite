@@ -17,9 +17,9 @@ done
 
 # build directory
 BUILD_DIR=build-release
-if [ ! -z $1 ]; do
+if [ ! -z $1 ]; then 
     BUILD_DIR=$1
-done
+fi
 
 # source the environment file
 . ${PWD}/${BUILD_DIR}/msys2-environment

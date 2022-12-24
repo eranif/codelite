@@ -3,9 +3,12 @@
 ## Windows
 ----
 
-- Prepare your working environment [as described here][10]
-- Build wxWidgets from sources. See build instructions [here][5]
-- Install extra libraries required by CodeLite:
+!!! Important
+    We only support `MSYS2` terminal
+
+- [Prepare your working environment][10]
+- [Build wxWidgets from sources][5]
+- Open `MSYS` terminal, and type:
 
 ```bash
 pacman -S mingw-w64-clang-x86_64-zlib       \
@@ -36,6 +39,13 @@ mkdir build-release
 cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN=$HOME/root
 mingw32-make -j$(nproc)
+```
+
+- To update your local installation, close CodeLite, open `MSYS2` terminal and type:
+
+```bash
+cd codelite
+Runtime/msw-update.sh
 ```
 
 ## Linux

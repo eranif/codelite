@@ -65,6 +65,7 @@ Source: "{#MINGW_DIR}\libsqlite3-0.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MINGW_DIR}\libssh.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MINGW_DIR}\zlib1.dll"; DestDir: "{app}\"; DestName: "zlib1.dll"; Flags: ignoreversion ;
 Source: "{#MINGW_DIR}\libcrypto-1_1-x64.dll"; DestDir: "{app}\"; DestName: "libcrypto-1_1-x64.dll"; Flags: ignoreversion ;
+Source: "{#MINGW_DIR}\libhunspell-1.7-0.dll"; DestDir: "{app}\"; DestName: "libcrypto-1_1-x64.dll"; Flags: ignoreversion ;
 
 ;; ---- Binaries needed by CodeLite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ;

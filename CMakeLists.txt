@@ -26,6 +26,7 @@ cmake_minimum_required(VERSION 3.16)
 ##      -DENABLE_SFTP=1|0                          // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support                   #
 ##      -DENABLE_LLDB=1|0                          // When set to 0 codelite won't try to build or link to the lldb debugger. Default is 1 on Unix platforms    #
 ##      -DPHP_BUILD=1|0                            // When set to 1, build CodeLite for PHP / WEB languages without any C++ plugins                             #
+##      -DWITH_WX_CONFIG=<fullpath>                // Full path for wx-config tool to use                                                                       #
 #################################################################################################################################################################
 
 if (NOT CMAKE_VERSION VERSION_LESS 3.1) # THIS MUST STAY AT THE TOP OF THE FILE
@@ -140,7 +141,7 @@ else (WITH_WX_CONFIG)
     set( CL_WX_CONFIG wx-config )
 endif()
 
-if (UNIX OR MINGW)
+if (UNIX)
     execute_process(COMMAND which ${CL_WX_CONFIG} OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
     if (NOT WX_TOOL)
         message(FATAL_ERROR
@@ -173,7 +174,7 @@ if (UNIX OR MINGW)
         string(SUBSTRING "${WX_GTK_VERSION}" "3" "1" GTK_VERSION)
         message("-- gtk version is: ${GTK_VERSION}")
     endif()
-endif (UNIX OR MINGW)
+endif()
 
 ########################################
 ## Override defaults with user input
@@ -289,7 +290,25 @@ if (UNIX AND NOT APPLE)
 endif (UNIX AND NOT APPLE)
 
 # find wxWidgets once
-find_package(wxWidgets COMPONENTS adv aui base core html propgrid xml xrc net stc ribbon richtext REQUIRED)
+if (MINGW)
+    if (NOT WXWIN)
+        message(FATAL_ERROR "Missing -DWXWIN=<wxWidgets/root/install/dir>")
+    endif()
+    if (NOT WXCFG)
+        set(WXCFG "clang_x64_dll/mswu")
+    endif()
+
+    message(STATUS "WXWIN is set to ${WXWIN}")
+    message(STATUS "WXCFG is set to ${WXCFG}")
+    
+    execute_process(COMMAND 
+        ${CL_WX_CONFIG} --cmake --prefix=${WXWIN} --wxcfg=${WXCFG} 
+        OUTPUT_VARIABLE wxWidgets_USE_FILE
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    message(STATUS "wxWidgets_USE_FILE is set to: ${wxWidgets_USE_FILE}")
+else()
+    find_package(wxWidgets COMPONENTS adv aui base core html propgrid xml xrc net stc ribbon richtext REQUIRED)
+endif()
 
 if (AUTOGEN_REVISION MATCHES 0)
     set ( MAKE_AUTOGEN_REVISION_STRING 0)

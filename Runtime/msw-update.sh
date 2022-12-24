@@ -15,8 +15,14 @@ while [ 1 ]; do
     fi
 done
 
+# build directory
+BUILD_DIR=build-release
+if [ ! -z $1 ]; do
+    BUILD_DIR=$1
+done
+
 # source the environment file
-. ${PWD}/build-release/msys2-environment
+. ${PWD}/${BUILD_DIR}/msys2-environment
 echo "-- WXIN is set to ${WXWIN}"
 
 INSTALL_DIR="/c/Program Files/CodeLite"
@@ -78,18 +84,18 @@ PLUGINS="
 
 # Copy the DLLs
 for exec in ${EXECUTABLES}; do
-    echo "-- cp ${PWD}/build-release/bin/$exec ${INSTALL_DIR}/${exec}"
-    cp ${PWD}/build-release/bin/$exec "${INSTALL_DIR}/${exec}"
+    echo "-- cp ${PWD}/${BUILD_DIR}/bin/$exec ${INSTALL_DIR}/${exec}"
+    cp ${PWD}/${BUILD_DIR}/bin/$exec "${INSTALL_DIR}/${exec}"
 done
 
 for dll in ${DLLS}; do
-    echo "-- cp ${PWD}/build-release/bin/$dll ${INSTALL_DIR}/${dll}"
-    cp ${PWD}/build-release/bin/$dll "${INSTALL_DIR}/${dll}"
+    echo "-- cp ${PWD}/${BUILD_DIR}/bin/$dll ${INSTALL_DIR}/${dll}"
+    cp ${PWD}/${BUILD_DIR}/bin/$dll "${INSTALL_DIR}/${dll}"
 done
 
 for plugin in ${PLUGINS}; do
-    echo "-- cp ${PWD}/build-release/bin/$plugin ${INSTALL_DIR}/${plugin}"
-    cp ${PWD}/build-release/bin/$plugin "${INSTALL_DIR}/${plugin}"
+    echo "-- cp ${PWD}/${BUILD_DIR}/bin/$plugin ${INSTALL_DIR}/${plugin}"
+    cp ${PWD}/${BUILD_DIR}/bin/$plugin "${INSTALL_DIR}/${plugin}"
 done
 
 # copy wxWidgets DLLs

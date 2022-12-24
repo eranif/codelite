@@ -17,7 +17,7 @@ done
 
 # build directory
 BUILD_DIR=build-release
-if [ ! -z $1 ]; then 
+if [ ! -z $1 ]; then
     BUILD_DIR=$1
 fi
 
@@ -94,8 +94,8 @@ for dll in ${DLLS}; do
 done
 
 for plugin in ${PLUGINS}; do
-    echo "-- cp ${PWD}/${BUILD_DIR}/bin/$plugin ${INSTALL_DIR}/${plugin}"
-    cp ${PWD}/${BUILD_DIR}/bin/$plugin "${INSTALL_DIR}/${plugin}"
+    echo "-- cp ${PWD}/${BUILD_DIR}/bin/$plugin ${INSTALL_DIR}/plugins/${plugin}"
+    cp ${PWD}/${BUILD_DIR}/bin/$plugin "${INSTALL_DIR}/plugins/${plugin}"
 done
 
 # copy wxWidgets DLLs

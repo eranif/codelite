@@ -808,3 +808,7 @@ elseif(APPLE)
     install(TARGETS ctags DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS PERMISSIONS ${EXE_PERM})
     CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-ctags)
 endif()
+
+if(MINGW)
+    write_file(${CMAKE_BINARY_DIR}/msys2-environment "export WXWIN=${WXWIN}")
+endif()

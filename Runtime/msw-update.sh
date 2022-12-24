@@ -15,6 +15,10 @@ while [ 1 ]; do
     fi
 done
 
+# source the environment file
+. ${PWD}/build-release/msys2-environment
+echo "-- WXIN is set to ${WXWIN}"
+
 INSTALL_DIR="/c/Program Files/CodeLite"
 EXECUTABLES="codelite.exe codelite-echo.exe
              ctagsd.exe codelite-make.exe
@@ -87,3 +91,8 @@ for plugin in ${PLUGINS}; do
     echo "-- cp ${PWD}/build-release/bin/$plugin ${INSTALL_DIR}/${plugin}"
     cp ${PWD}/build-release/bin/$plugin "${INSTALL_DIR}/${plugin}"
 done
+
+# copy wxWidgets DLLs
+echo "-- Copying wxWidgets DLLs..."
+echo cp -f ${WXWIN}/lib/clang_x64_dll/*.dll "${INSTALL_DIR}/"
+cp -f ${WXWIN}/lib/clang_x64_dll/*.dll "${INSTALL_DIR}/"

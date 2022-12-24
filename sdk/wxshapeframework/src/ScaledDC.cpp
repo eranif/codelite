@@ -7,7 +7,7 @@
  * License:   wxWidgets license (www.wxwidgets.org)
  * Notes:
  **************************************************************/
- 
+
 #include "wx_pch.h"
 
 #ifdef _DEBUG_MSVC
@@ -40,7 +40,7 @@ wxSFScaledDC::wxSFScaledDC( wxWindowDC *target, double scale)
 {
 	m_nScale = scale;
 	m_pTargetDC = target;
-	
+
 #if wxUSE_GRAPHICS_CONTEXT
     m_pGC = wxGraphicsContext::Create( *m_pTargetDC );
 	//m_pGC->Scale( scale, scale );
@@ -62,12 +62,12 @@ void wxSFScaledDC::InitGC()
 {
 #if wxUSE_GRAPHICS_CONTEXT
 	m_pGC->PushState();
-	
+
 	m_pGC->Scale( m_nScale, m_nScale );
-	
+
     /*m_pGC->SetPen( this->GetPen() );
     m_pGC->SetBrush( this->GetBrush() );
-	
+
     m_pGC->SetFont( this->GetFont(), this->GetTextForeground() );*/
 #endif
 }
@@ -78,7 +78,7 @@ void wxSFScaledDC::UninitGC()
     /*m_pGC->SetPen( wxNullPen );
     m_pGC->SetBrush( wxNullBrush );
     m_pGC->SetFont( wxNullFont, *wxBLACK );*/
-	
+
 	m_pGC->PopState();
 #endif
 }
@@ -110,7 +110,7 @@ bool wxSFScaledDC::CanGetTextExtent() const
 {
 	return m_pTargetDC->CanGetTextExtent();
 }
-void wxSFScaledDC::Clear() 
+void wxSFScaledDC::Clear()
 {
 	m_pTargetDC->Clear();
 }
@@ -133,19 +133,19 @@ void wxSFScaledDC::DoDrawArc(wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2, wxC
         #if wxUSE_GRAPHICS_CONTEXT
         InitGC();
 		wxGraphicsPath path = m_pGC->CreatePath();
-		
+
 		double dist, sang, eang;
-		
+
 		dist = wxSFCommonFcn::Distance( wxRealPoint(x2, y2), wxRealPoint(xc, yc) );
 		sang = acos( (x2 - xc) / dist ) + ( yc > y2 ? wxSF::PI : 0 );
-		
+
 		dist = wxSFCommonFcn::Distance( wxRealPoint(x1, y1), wxRealPoint(xc, yc) );
 		eang = acos( (x1 - xc) / dist ) + ( yc > y1 ? wxSF::PI : 0 );
-		
+
 		path.AddArc( xc, yc, dist, sang, eang, true );
-		
+
 		m_pGC->StrokePath( path );
-		
+
         UninitGC();
         #endif
     }
@@ -408,7 +408,7 @@ void wxSFScaledDC::DoDrawText(const wxString& text, wxCoord x, wxCoord y)
 
         if(font != wxNullFont)
         {
-			int scaledSize = int(font.GetPointSize()*m_nScale);			
+			int scaledSize = int(font.GetPointSize()*m_nScale);
             font.SetPointSize( scaledSize ? scaledSize : 1 );
             SetFont(font);
         }
@@ -424,10 +424,6 @@ bool wxSFScaledDC::DoFloodFill(wxCoord x, wxCoord y, const wxColour& col, int st
 wxBitmap wxSFScaledDC::DoGetAsBitmap(const wxRect *subrect) const
 {
 	return m_pTargetDC->GetAsBitmap( subrect );
-}
-void wxSFScaledDC::DoGetClippingBox(wxCoord* x, wxCoord* y, wxCoord* w, wxCoord* h) const
-{
-	m_pTargetDC->GetClippingBox( x, y, w, h );
 }
 void wxSFScaledDC::DoGetClippingRegion(wxCoord* x, wxCoord* y, wxCoord* w, wxCoord* h)
 {
@@ -468,14 +464,14 @@ void wxSFScaledDC::DoGetTextExtent(const wxString& string, wxCoord* x, wxCoord* 
 }
 void wxSFScaledDC::DoGradientFillConcentric(const wxRect& rect, const wxColour& initialColour, const wxColour& destColour, const wxPoint& circleCenter)
 {
-	wxRect updRct( rect.x * m_nScale, rect.y * m_nScale, rect.width * m_nScale, rect.height * m_nScale ); 
-	
+	wxRect updRct( rect.x * m_nScale, rect.y * m_nScale, rect.width * m_nScale, rect.height * m_nScale );
+
 	m_pTargetDC->GradientFillConcentric( updRct, initialColour, destColour, circleCenter);
 }
 void wxSFScaledDC::DoGradientFillLinear(const wxRect& rect, const wxColour& initialColour, const wxColour& destColour, wxDirection nDirection)
 {
 	wxRect updRct( rect.x * m_nScale, rect.y * m_nScale, rect.width * m_nScale, rect.height * m_nScale );
-	
+
 	m_pTargetDC->GradientFillLinear( updRct, initialColour, destColour, nDirection );
 }
 void wxSFScaledDC::DoSetClippingRegion(wxCoord x, wxCoord y, wxCoord width, wxCoord height)
@@ -564,11 +560,11 @@ const wxPen& wxSFScaledDC::GetPen() const
 }
 wxBitmap wxSFScaledDC::GetSelectedBitmap() const
 {
-	#ifndef __WXMAC__ 
-	return m_pTargetDC->GetSelectedBitmap(); 
-	#else 
-	return wxNullBitmap; 
-	#endif 
+	#ifndef __WXMAC__
+	return m_pTargetDC->GetSelectedBitmap();
+	#else
+	return wxNullBitmap;
+	#endif
 }
 const wxColour& wxSFScaledDC::GetTextBackground() const
 {

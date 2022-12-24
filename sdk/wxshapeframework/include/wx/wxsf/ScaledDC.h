@@ -32,7 +32,7 @@ class WXDLLIMPEXP_SF wxSFScaledDC : public wxDC {
 public:
 	wxSFScaledDC( wxWindowDC* target, double scale );
 	virtual ~wxSFScaledDC();
-	
+
 	// public member data accessors
 	/*!
      * \brief Set the global graphics scale.
@@ -119,7 +119,7 @@ protected:
 	/**
 	 * \brief Scale given value.
 	 * \param val Value to scale
-	 * \return Scaled value 
+	 * \return Scaled value
 	 */
     wxCoord Scale(wxCoord val){return (wxCoord)ceil((double)val*m_nScale);}
 
@@ -152,7 +152,6 @@ protected:
 	virtual void DoDrawText(const wxString& text, wxCoord x, wxCoord y);
 	virtual bool DoFloodFill(wxCoord x, wxCoord y, const wxColour& col, int style = wxFLOOD_SURFACE);
 	virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const;
-	virtual void DoGetClippingBox(wxCoord *x, wxCoord *y, wxCoord *w, wxCoord *h) const;
 	virtual void DoGetClippingRegion(wxCoord *x, wxCoord *y, wxCoord *w, wxCoord *h);
 	virtual void DoGetDeviceOrigin(wxCoord *x, wxCoord *y) const;
 	virtual void DoGetLogicalOrigin(wxCoord *x, wxCoord *y) const;
@@ -177,7 +176,7 @@ class wxSFDCImplWrapper : public wxDCImpl
 {
 public:
 	friend class wxSFScaledDC;
-	
+
 	wxSFDCImplWrapper( wxDCImpl *orig, double scale ) : wxDCImpl( orig->GetOwner() )
 	{
 		m_pOrig = orig;
@@ -317,9 +316,6 @@ public:
     // NB: this function works with device coordinates, not the logical ones!
     virtual void DoSetDeviceClippingRegion(const wxRegion& region) { m_pOrig->DoSetDeviceClippingRegion( region ); }
 
-    virtual void DoGetClippingBox(wxCoord *x, wxCoord *y,
-                                  wxCoord *w, wxCoord *h) const { m_pOrig->DoGetClippingBox( x, y, w, h ); }
-
     virtual void DestroyClippingRegion() { m_pOrig->DestroyClippingRegion(); }
 
 
@@ -342,7 +338,7 @@ public:
 
     virtual void SetLogicalScale(double x, double y) { m_pOrig->SetLogicalScale( x, y ); }
     virtual void GetLogicalScale(double *x, double *y) const { m_pOrig->GetLogicalScale( x, y ); }
-	
+
     virtual void SetLogicalOrigin(wxCoord x, wxCoord y) { m_pOrig->SetLogicalOrigin( x, y ); }
     virtual void DoGetLogicalOrigin(wxCoord *x, wxCoord *y) const { m_pOrig->DoGetLogicalOrigin( x, y); }
 
@@ -360,7 +356,7 @@ public:
     // the actual drawing API
 
     virtual bool DoFloodFill(wxCoord x, wxCoord y, const wxColour& col,
-                             wxFloodFillStyle style = wxFLOOD_SURFACE) 
+                             wxFloodFillStyle style = wxFLOOD_SURFACE)
 	{
 		return m_pOrig->DoFloodFill( ScaleCoord(x), ScaleCoord(y), col, style );
 	}
@@ -406,13 +402,13 @@ public:
 							ScaleCoord(x2), ScaleCoord(y2),
 							ScaleCoord(xc), ScaleCoord(yc) );
 	}
-						   
+
     virtual void DoDrawCheckMark(wxCoord x, wxCoord y,
                                  wxCoord width, wxCoord height)
 	{
 		m_pOrig->DoDrawCheckMark( ScaleCoord(x), ScaleCoord(y), ScaleCoord(width), ScaleCoord(height) );
 	}
-								 
+
     virtual void DoDrawEllipticArc(wxCoord x, wxCoord y, wxCoord w, wxCoord h,
                                    double sa, double ea)
 	{
@@ -423,14 +419,14 @@ public:
 	{
 		m_pOrig->DoDrawRectangle( ScaleCoord(x), ScaleCoord(y), ScaleCoord(width), ScaleCoord(height) );
 	}
-	
+
     virtual void DoDrawRoundedRectangle(wxCoord x, wxCoord y,
                                         wxCoord width, wxCoord height,
                                         double radius)
 	{
 		m_pOrig->DoDrawRoundedRectangle( ScaleCoord(x), ScaleCoord(y), ScaleCoord(width), ScaleCoord(height), radius*m_nScale );
 	}
-	
+
     virtual void DoDrawEllipse(wxCoord x, wxCoord y,
                                wxCoord width, wxCoord height)
 	{
@@ -446,7 +442,7 @@ public:
 	{
 		m_pOrig->DoDrawIcon( icon, ScaleCoord(x), ScaleCoord(y) );
 	}
-	
+
     virtual void DoDrawBitmap(const wxBitmap &bmp, wxCoord x, wxCoord y,
                               bool useMask = false)
 	{
@@ -463,12 +459,12 @@ public:
             font.SetPointSize(int(font.GetPointSize()*m_nScale));
             SetFont(font);
         }
-		
+
         m_pOrig->DoDrawText( text, ScaleCoord(x), ScaleCoord(y) );
 
         SetFont(prevfont);
 	}
-	
+
     virtual void DoDrawRotatedText(const wxString& text,
                                    wxCoord x, wxCoord y, double angle)
 	{
@@ -480,7 +476,7 @@ public:
             font.SetPointSize(int(font.GetPointSize()*m_nScale));
             SetFont(font);
         }
-		
+
 		m_pOrig->DoDrawRotatedText( text, ScaleCoord(x), ScaleCoord(y), angle );
 
         SetFont(prevfont);
@@ -522,7 +518,7 @@ public:
     virtual void DoDrawLines(int n, wxPoint points[],
 #else
     virtual void DoDrawLines(int n, const wxPoint points[],
-#endif	
+#endif
                              wxCoord xoffset, wxCoord yoffset )
 	{
         wxPoint *updPoints = new wxPoint[n];
@@ -537,13 +533,13 @@ public:
 
         delete [] updPoints;
 	}
-	
+
     virtual void DrawLines(const wxPointList *list,
                            wxCoord xoffset, wxCoord yoffset )
 	{
 		int i = 0;
 		wxPoint *pts = new wxPoint[list->GetCount()];
-		
+
 		wxPointList::compatibility_iterator node = list->GetFirst();
 		while( node )
 		{
@@ -551,9 +547,9 @@ public:
 			i++;
 			node = node->GetNext();
 		}
-		
+
 		wxSFDCImplWrapper::DoDrawLines( i, pts, xoffset, yoffset );
-		
+
 		delete [] pts;
 	}
 
@@ -577,7 +573,7 @@ public:
 
         delete [] updPoints;
 	}
-	
+
     virtual void DoDrawPolyPolygon(int n, const int count[], const wxPoint points[],
                                wxCoord xoffset, wxCoord yoffset,
                                wxPolygonFillMode fillStyle)
@@ -598,14 +594,14 @@ public:
 
         delete [] updPoints;
 	}
-							
+
     void DrawPolygon(const wxPointList *list,
                      wxCoord xoffset, wxCoord yoffset,
                      wxPolygonFillMode fillStyle )
 	{
 		int i = 0;
 		wxPoint *pts = new wxPoint[list->GetCount()];
-		
+
 		wxPointList::compatibility_iterator node = list->GetFirst();
 		while( node )
 		{
@@ -613,9 +609,9 @@ public:
 			i++;
 			node = node->GetNext();
 		}
-		
+
 		wxSFDCImplWrapper::DoDrawPolygon( i, pts, xoffset, yoffset, fillStyle );
-		
+
 		delete [] pts;
 	}
 
@@ -631,7 +627,7 @@ public:
 	{
 		wxPoint *pPt;
 		wxPointList updPoints;
-		
+
 		wxPointList::compatibility_iterator node = points->GetFirst();
 		while( node )
 		{
@@ -639,9 +635,9 @@ public:
 			updPoints.Append( new wxPoint( ScaleInt(pPt->x), ScaleInt(pPt->y)) );
 			node = node->GetNext();
 		}
-		
+
 		m_pOrig->DoDrawSpline( &updPoints );
-		
+
 		updPoints.DeleteContents( true );
 		updPoints.Clear();
 	}
@@ -654,7 +650,7 @@ public:
 
     virtual const wxBitmap& GetSelectedBitmap() const { return m_pOrig->GetSelectedBitmap(); }
     virtual wxBitmap& GetSelectedBitmap() { return m_pOrig->GetSelectedBitmap(); }
-	
+
     // ---------------------------------------------------------
     // wxPrinterDC Impl API
 
@@ -671,14 +667,14 @@ protected:
 	/**
 	 * \brief Scale given value.
 	 * \param val Value to scale
-	 * \return Scaled value 
+	 * \return Scaled value
 	 */
     wxCoord ScaleCoord(wxCoord val){return (wxCoord)ceil((double)val*m_nScale);}
-	
+
 	/**
 	 * \brief Scale given value.
 	 * \param val Value to scale
-	 * \return Scaled value 
+	 * \return Scaled value
 	 */
     wxCoord ScaleInt(int val){return (int)ceil((double)val*m_nScale);}
 };

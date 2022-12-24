@@ -270,7 +270,6 @@ Manager::Manager(void)
     , m_retagInProgress(false)
     , m_repositionEditor(true)
 {
-    m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
     Bind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
@@ -3226,8 +3225,6 @@ void Manager::DoRestartCodeLite()
     app->SetRestartCodeLite(true);
     app->SetRestartCommand(restartCodeLiteCommand, workingDirectory);
 }
-
-void Manager::SetCodeLiteLauncherPath(const wxString& path) { m_codeliteLauncher = path; }
 
 void Manager::OnRestart(clCommandEvent& event)
 {

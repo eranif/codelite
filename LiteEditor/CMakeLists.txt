@@ -66,16 +66,37 @@ if (UNIX)
     else ( )
         set(ADDITIONAL_LIBRARIES "-ldl")
     endif ( )
-else (UNIX)
-    ## Windows??
 endif (UNIX)
 
+if (MINGW)
+    set(LINKER_OPTIONS "-mwindows")
+endif()
+
 if(GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" libcodelite plugin ${ADDITIONAL_LIBRARIES})
+    target_link_libraries(codelite ${LINKER_OPTIONS}
+                          ${GTK2_LIBRARIES}
+                          ${wxWidgets_LIBRARIES}
+                          ${CLANG_LIBRARY}
+                          -L"${CL_LIBPATH}"
+                          libcodelite
+                          plugin
+                          ${ADDITIONAL_LIBRARIES})
 elseif (GTK3_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK3_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" libcodelite plugin ${ADDITIONAL_LIBRARIES})
+    target_link_libraries(codelite ${LINKER_OPTIONS}
+                          ${GTK3_LIBRARIES}
+                          ${wxWidgets_LIBRARIES}
+                          ${CLANG_LIBRARY}
+                          -L"${CL_LIBPATH}"
+                          libcodelite plugin
+                          ${ADDITIONAL_LIBRARIES})
 else()
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" libcodelite plugin ${ADDITIONAL_LIBRARIES})
+    target_link_libraries(codelite ${LINKER_OPTIONS}
+                          ${wxWidgets_LIBRARIES}
+                          ${CLANG_LIBRARY}
+                          -L"${CL_LIBPATH}"
+                          libcodelite
+                          plugin
+                          ${ADDITIONAL_LIBRARIES})
 endif()
 
 codelite_add_pch(codelite)
@@ -201,14 +222,14 @@ if(NOT APPLE)
         if (${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with -L/foo/bar
             string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" WX_LIBS_DIR ${WX_LIBSOUTPUT})
         else()
-			# In recent fedoras, which do things with wx-config that might politely be described as 'strange',  wx-config doesn't emit -L/usr/lib64
-			#find_file( USRLIBSIXTYFOUR "libwx_baseu-3.1.so" "/usr/lib64" ) No, this can't cope with e.g. libwx_base2u, or 3.1.3<SomeGitVersion> and find_file doesn't do globs/regex
-			execute_process(COMMAND "find /usr/lib64/ -iname libwx_base*3.2*" OUTPUT_VARIABLE wxBASELIBDIR)
-			if ( NOT wxBASELIBDIR MATCHES ".*NOTFOUND" )
-				set(WX_LIBS_DIR "/usr/lib64")
-			else()
-				set(WX_LIBS_DIR "/usr/lib") # ${WX_LIBS_DIR} will be empty for older, non multi-architecture, distro versions that still use /usr/lib
-			endif()
+            # In recent fedoras, which do things with wx-config that might politely be described as 'strange',  wx-config doesn't emit -L/usr/lib64
+            #find_file( USRLIBSIXTYFOUR "libwx_baseu-3.1.so" "/usr/lib64" ) No, this can't cope with e.g. libwx_base2u, or 3.1.3<SomeGitVersion> and find_file doesn't do globs/regex
+            execute_process(COMMAND "find /usr/lib64/ -iname libwx_base*3.2*" OUTPUT_VARIABLE wxBASELIBDIR)
+            if ( NOT wxBASELIBDIR MATCHES ".*NOTFOUND" )
+                set(WX_LIBS_DIR "/usr/lib64")
+            else()
+                set(WX_LIBS_DIR "/usr/lib") # ${WX_LIBS_DIR} will be empty for older, non multi-architecture, distro versions that still use /usr/lib
+            endif()
         endif()
         message("-- wxlibsdir is: ${WX_LIBS_DIR}")
 

@@ -27,15 +27,6 @@ message("-- Generating makefile for wxCrafter")
 # visual studio, and in our makefiles.
 project( ${PLUGIN_NAME} )
 
-if ( MINGW OR UNIX AND NOT APPLE )
-    set(__WX_COMPONENTS "std aui propgrid stc richtext ribbon")
-else ( MINGW OR UNIX AND NOT APPLE )
-    # Apple, monolithic build of wxWidgets
-    set(__WX_COMPONENTS "std")
-endif()
-
-
-
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 
@@ -60,25 +51,24 @@ endif()
 # Add RPATH
 ## When building an application, set the install library to the proper location
 ## which is now under /usr/lib/x86_64-linux-gnu/wxcrafter
-if ( WXC_APP )
-    set( WXC_INSTALL_LIBDIR "lib" )
-    if ( NOT PREFIX )
-        # If the caller hasn't set his own destination, install to a multi-arch lib dir if applicable
-        if (CMAKE_VERSION VERSION_GREATER 2.8.7 AND ( UNIX AND NOT APPLE ))
-            include (GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or whatever. Available since cmake 2.8.8
-            set( WXC_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
-        endif()
-    endif( NOT PREFIX )
-    set ( WXC_LIBS_DIR "${CL_PREFIX}/${WXC_INSTALL_LIBDIR}/${PLUGIN_NAME}")
-    set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
-else ( WXC_APP )
-
-if (NOT OFFICIAL_CL_BUILD)
-    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-endif(NOT OFFICIAL_CL_BUILD)
-
-endif ( WXC_APP )
-
+if (NOT MINGW)
+    if (WXC_APP)
+        set( WXC_INSTALL_LIBDIR "lib" )
+        if ( NOT PREFIX )
+            # If the caller hasn't set his own destination, install to a multi-arch lib dir if applicable
+            if (CMAKE_VERSION VERSION_GREATER 2.8.7 AND ( UNIX AND NOT APPLE ))
+                include (GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or whatever. Available since cmake 2.8.8
+                set( WXC_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
+            endif()
+        endif( NOT PREFIX )
+        set ( WXC_LIBS_DIR "${CL_PREFIX}/${WXC_INSTALL_LIBDIR}/${PLUGIN_NAME}")
+        set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
+    else ( WXC_APP )
+        if (NOT OFFICIAL_CL_BUILD)
+            set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+        endif(NOT OFFICIAL_CL_BUILD)
+    endif ( WXC_APP )
+endif()
 FILE(GLOB SRCS "*.cpp")
 if ( NOT WXC_APP )
 FILE(GLOB WXCLIB_SRCS "wxcLib/json_node.cpp" "wxcLib/cJSON.cpp" "wxcLib/wxc*.cpp")
@@ -127,11 +117,11 @@ else()
                           -lutil)
 endif()
 
-if ( NOT WXC_APP )
+if (NOT WXC_APP)
     ## wxCrafter as codelite's plugin
     CL_INSTALL_PLUGIN(${PLUGIN_NAME})
     CL_INSTALL_FILE_SHARED(${WXC_DIR}/wxgui.zip)
-else ()
+elseif(NOT MINGW)
     set(CPACK_DEB_COMPONENT_INSTALL 1)
     ## Installing an application
     install(TARGETS ${PLUGIN_NAME} DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM} COMPONENT standalone)
@@ -202,4 +192,6 @@ else ()
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libc6, libssh-4, libsqlite3-dev")
     INCLUDE(CPack)
-endif(NOT WXC_APP)
+endif()
+
+message(STATUS "wxCrafter - Done")

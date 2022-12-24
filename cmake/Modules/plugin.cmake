@@ -12,24 +12,10 @@ function( CL_PLUGIN PLUGIN_NAME )
     message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
     
     set ( PLUGIN_EXTRA_LIBS ${ARGV1} )
-    ##
-    ## Include wxWidgets
-    ##
-    if ( NOT UNIX )
-        ## Windows
-        set( MINGW 1 )
-        set( CMAKE_FIND_LIBRARY_PREFIXES lib)
-        set( CMAKE_FIND_LIBRARY_SUFFIXES .a .dll.a)
-        find_package(wxWidgets COMPONENTS std aui propgrid stc richtext ribbon REQUIRED)
-        
-    else( NOT UNIX )
-        if ( APPLE )
-            ## Under Apple, we only support monolithic build of wxWidgets
-            find_package(wxWidgets COMPONENTS std REQUIRED)
-        else ( APPLE )
-            find_package(wxWidgets COMPONENTS std aui propgrid stc richtext ribbon REQUIRED)
-        endif ( APPLE )
-    endif( NOT UNIX )
+    
+    if (NOT wxWidgets_USE_FILE)
+        message(FATAL_ERROR "Unable to locate wxWidgets")
+    endif()
 
     # wxWidgets include (this will do all the magic to configure everything)
     include( "${wxWidgets_USE_FILE}" )

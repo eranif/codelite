@@ -2,31 +2,45 @@
 cmake_minimum_required(VERSION 3.16)
 
 #################################################################################################################################################################
-##                                                                                                                                                              #
-## codelite IDE cmake file                                                                                                                                      #
-## Typical usage will be (build in release mode):                                                                                                               #
-##                                                                                                                                                              #
-## > mkdir build                                                                                                                                                #
-## > cd build                                                                                                                                                   #
-## > cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..                                                                                                    #
-## > make -jN                                                                                                                                                   #
-## > sudo make install                                                                                                                                          #
-##                                                                                                                                                              #
-## Optional command line arguments:                                                                                                                             #
-##                                                                                                                                                              #
-##      -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull // Build release, debug + optimisation or debug without optimisation (for others see the Cmake docs)         #
-##      -DCL_PREFIX="<some-prefix>"                // Installation prefix. The default on unix is /usr/                                                         #
-##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0           #
-##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                          #
-##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1               #
-##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                               #
-##      -DWITH_NATIVEBOOK=1|0                      // use native Notebook on GTK (otherwise, use the default custombook)                                        #
-##      -DWITH_WXPATH=<fullpath>                   // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/   #
-##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                  #
-##      -DENABLE_SFTP=1|0                          // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support                   #
-##      -DENABLE_LLDB=1|0                          // When set to 0 codelite won't try to build or link to the lldb debugger. Default is 1 on Unix platforms    #
-##      -DPHP_BUILD=1|0                            // When set to 1, build CodeLite for PHP / WEB languages without any C++ plugins                             #
-##      -DWITH_WX_CONFIG=<fullpath>                // Full path for wx-config tool to use                                                                       #
+##
+## CodeLite IDE cmake file
+## Typical usage will be (build in release mode):
+##
+## Linux / macOS:
+## -------------------
+## > mkdir build
+## > cd build
+## > cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+## > make -j$(nproc) install
+##
+## MSYS2
+## -------------------
+## > mkdir build-release
+## > cd build-release
+## > cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release .. -DWXWIN=C:/msys64/path/to/wx-dir
+## > make -j$(nproc)
+##
+## Optional command line arguments:
+##
+##      -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull  // Build release, debug + optimisation or debug without optimisation (for others see the Cmake docs)
+##      -DCL_PREFIX="<some-prefix>"                 // Installation prefix. The default on unix is /usr/
+##      -DCOPY_WX_LIBS=1|0                          // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0
+##      -DPREVENT_WX_ASSERTS=1|0                    // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0
+##      -DAUTOGEN_REVISION=1|0                      // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1
+##      -DWITH_PCH=1|0                              // Enable Pre Compiled Header?
+##      -DWITH_NATIVEBOOK=1|0                       // use native Notebook on GTK (otherwise, use the default custombook)
+##      -DWITH_WXPATH=<fullpath>                    // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/
+##      -DMAKE_DEB=1|0                              // When set to 1, you can use make package to create .deb file for codelite
+##      -DENABLE_SFTP=1|0                           // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support
+##      -DENABLE_LLDB=1|0                           // When set to 0 codelite won't try to build or link to the lldb debugger. Default is 1 on Unix platforms
+##      -DPHP_BUILD=1|0                             // When set to 1, build CodeLite for PHP / WEB languages without any C++ plugins
+##      -DWITH_WX_CONFIG=<fullpath>                 // Full path for wx-config tool to use
+##
+## Windows / MSYS options:
+##
+##      -DWXWIN=<fullpath>                          // Lcoation of wxWidgets library
+##                                                  // (see build instructions here: https://docs.codelite.org/build/build_wx_widgets/#windows)
+##      -DWITH_POSIX_LAYOUT                         // When building under Windows, install CodeLite using POSIX layout
 #################################################################################################################################################################
 
 if (NOT CMAKE_VERSION VERSION_LESS 3.1) # THIS MUST STAY AT THE TOP OF THE FILE
@@ -141,7 +155,7 @@ else (WITH_WX_CONFIG)
     set( CL_WX_CONFIG wx-config )
 endif()
 
-if (UNIX)
+if (UNIX AND NOT MINGW)
     execute_process(COMMAND which ${CL_WX_CONFIG} OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
     if (NOT WX_TOOL)
         message(FATAL_ERROR
@@ -300,9 +314,9 @@ if (MINGW)
 
     message(STATUS "WXWIN is set to ${WXWIN}")
     message(STATUS "WXCFG is set to ${WXCFG}")
-    
-    execute_process(COMMAND 
-        ${CL_WX_CONFIG} --cmake --prefix=${WXWIN} --wxcfg=${WXCFG} 
+
+    execute_process(COMMAND
+        ${CL_WX_CONFIG} --cmake --prefix=${WXWIN} --wxcfg=${WXCFG}
         OUTPUT_VARIABLE wxWidgets_USE_FILE
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     message(STATUS "wxWidgets_USE_FILE is set to: ${wxWidgets_USE_FILE}")
@@ -358,12 +372,14 @@ add_definitions(-DYY_NEVER_INTERACTIVE=1)
 add_definitions(-DwxUSE_GUI=1)
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 
-if (NOT MINGW)
+if(NOT MINGW)
     add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
     add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
 else()
-    add_definitions(-DNDEBUG)
-    add_definitions(-DUSE_POSIX_LAYOUT)
+    if(WITH_POSIX_LAYOUT)
+        add_definitions(-DNDEBUG)
+        add_definitions(-DUSE_POSIX_LAYOUT)
+    endif()
 endif()
 
 message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
@@ -688,6 +704,7 @@ else()
             add_subdirectory(CMakePlugin)
             add_subdirectory(cscope)
             add_subdirectory(EOSWiki)
+            add_subdirectory(ContinuousBuild)
         endif()
         add_subdirectory(AutoSave)
         add_subdirectory(CodeLiteDiff)
@@ -745,6 +762,13 @@ else()
         if(NOT APPLE)
             # exclude codelite-terminal on macOS
             add_subdirectory(codelite_terminal)
+        endif()
+        if(MINGW)
+            # codelite-exec
+            add_subdirectory(le_exec)
+
+            # makedirs
+            add_subdirectory(TestDir)
         endif()
         add_subdirectory(sdk/codelite_cppcheck)
         add_subdirectory(codelite_echo)

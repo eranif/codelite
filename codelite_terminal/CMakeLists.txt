@@ -1,8 +1,3 @@
-
-
-
-# Our project is called 'codelite' this is how it will be called in
-# visual studio, and in our makefiles.
 project(codelite-terminal)
 
 if ( UNIX OR MINGW AND NOT APPLE )
@@ -11,17 +6,7 @@ else ( UNIX AND NOT APPLE )
 
 endif ( UNIX OR MINGW AND NOT APPLE )
 
-# we need wxWidgets flags to be set only for the c++ files, so we do it like this
-# by setting the CMAKE_CXX_FLAGS
-if ( NOT MINGW )
-    execute_process(COMMAND ${CL_WX_CONFIG} --debug=no --cxxflags OUTPUT_VARIABLE WX_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-else ()
-    execute_process(COMMAND sh ${CL_WX_CONFIG} --debug=no --cxxflags OUTPUT_VARIABLE WX_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif ()
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WX_CXX_FLAGS}")
-
-add_definitions(-DNDEBUG)
-add_definitions(-DwxDEBUG_LEVEL=0)
+include(${wxWidgets_USE_FILE})
 
 # prepare list of files
 FILE(GLOB SRCS "*.cpp")
@@ -40,6 +25,10 @@ endif ( UNIX )
 include_directories(${CL_SRC_ROOT}/Interfaces)
 include_directories(${CL_SRC_ROOT}/CodeLite)
 include_directories(${CL_SRC_ROOT}/Plugin)
+
+if (MINGW)
+    set(LINKER_OPTIONS "-mwindows")
+endif()
 
 target_link_libraries(codelite-terminal ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${UTIL_LIB} libcodelite plugin)
 

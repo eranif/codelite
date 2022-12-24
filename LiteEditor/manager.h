@@ -106,7 +106,6 @@ protected:
     int m_frameLineno;
     std::list<QueueCommand> m_buildQueue;
     wxArrayString m_dbgWatchExpressions;
-    wxFileName m_codeliteLauncher;
     DisplayVariableDlg* m_watchDlg;
     bool m_retagInProgress;
     bool m_repositionEditor; // flag used for debugging, should editor be repositioned after user updates like "add
@@ -144,7 +143,6 @@ public:
     bool GetRepositionEditor() const { return m_repositionEditor; }
     void SetRepositionEditor(bool b) { m_repositionEditor = b; }
 
-    void SetCodeLiteLauncherPath(const wxString& path);
     void OnRestart(clCommandEvent& event);
     void OnCmdRestart(wxCommandEvent& event);
     void GenerateCompileCommands();

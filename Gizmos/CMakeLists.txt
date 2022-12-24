@@ -1,6 +1,3 @@
-
-
-
 # set the plugin name here
 set( PLUGIN_NAME "Wizards")
 

@@ -110,9 +110,9 @@ Source: "{#CODELITE_ROOT}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion;
 
 ; XML settings
 Source: "{#CODELITE_ROOT}\Runtime\lexers\*.json"; DestDir: "{app}\lexers\"; Flags: ignoreversion ;
-Source: "{#BUILD_BIN_DIR}\DebuggerGDB.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ;
 
 ; Copy the plugins (by name)
+Source: "{#BUILD_BIN_DIR}\DebuggerGDB.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ;
 Source: "{#BUILD_BIN_DIR}\abbreviation.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#BUILD_BIN_DIR}\CodeFormatter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#BUILD_BIN_DIR}\ContinuousBuild.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;

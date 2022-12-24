@@ -22,7 +22,8 @@ mkdir build-release
 cd build-release
 cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release                 \
          -DwxBUILD_DEBUG_LEVEL=0                                        \
-         -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1
+         -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1    \
+         -DCMAKE_INSTALL_PREFIX=$HOME/root
 mingw32-make -j$(nproc)
 ```
 

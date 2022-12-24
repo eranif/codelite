@@ -32,6 +32,8 @@ mingw32-make -j$(nproc)
 git clone https://github.com/eranif/codelite.git
 cd codelite
 git submodule update --init
+mkdir build-release
+cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN=$HOME/root
 mingw32-make -j$(nproc)
 ```

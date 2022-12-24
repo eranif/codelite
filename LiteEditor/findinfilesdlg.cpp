@@ -187,6 +187,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     SetMinSize(GetSize());
     WindowAttrManager::Load(this);
     CenterOnParent();
+    MSWSetWindowDarkTheme(this);
 }
 
 FindInFilesDialog::~FindInFilesDialog() { SaveFindReplaceData(); }

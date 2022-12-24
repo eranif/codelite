@@ -52,6 +52,7 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     : OptionsBaseDlg2(parent)
 {
     Initialize();
+    MSWSetWindowDarkTheme(this);
 }
 
 PreferencesDialog::~PreferencesDialog() {}

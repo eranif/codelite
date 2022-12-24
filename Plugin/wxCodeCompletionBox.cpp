@@ -36,6 +36,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_tipWindow(NULL)
     , m_flags(flags)
 {
+    MSWSetWindowDarkTheme(this);
     // Use the active editor's font (if any)
     wxColour bgColour;
     wxColour textColour;

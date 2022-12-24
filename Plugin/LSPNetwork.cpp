@@ -10,9 +10,7 @@ LSPNetwork::~LSPNetwork() {}
 
 wxString& LSPNetwork::wrap_with_quotes(wxString& str)
 {
-    if(str.Contains(" ")) {
-        // since we are going to convert this into a string, we need to escape all backslashes
-        str.Replace("\\", "\\\\");
+    if(!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
         str.Prepend("\"").Append("\"");
     }
     return str;

@@ -108,7 +108,7 @@ const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
-#ifdef __WXMSW__
+#if defined(__WXMSW__)
     MSWDarkMode::Get().SetDarkMode(win);
 #else
     wxUnusedVar(win);
@@ -962,7 +962,7 @@ bool IsCppKeyword(const wxString& word)
 
 void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 {
-#if defined(__WXMSW__) && defined(_WIN64)
+#if defined(__WXMSW__) && defined(_WIN64) && 0
     SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), NULL);
 #endif
 }

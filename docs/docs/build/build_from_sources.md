@@ -44,8 +44,13 @@ mingw32-make -j$(nproc)
 - To update your local installation, close CodeLite, open `MSYS2` terminal and type:
 
 ```bash
-cd codelite
-Runtime/msw-update.sh
+cd codelite/build-release
+../msw-update.sh
+
+# codelite is now installed under the "install" folder
+cd install
+
+./codelite
 ```
 
 ## Linux

@@ -96,7 +96,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 
 NotebookNavigationDlg::~NotebookNavigationDlg()
 {
-#ifdef __WXMAC__
+#if defined(__WXMSW__) || defined(__WXMAC__)
     UnregisterHotKey(XRCID("tab-next-entry"));
     UnregisterHotKey(XRCID("tab-prev-entry"));
     wxTheApp->Unbind(wxEVT_HOTKEY, &NotebookNavigationDlg::OnHotKeyNext, this, XRCID("tab-next-entry"));
@@ -137,7 +137,7 @@ void NotebookNavigationDlg::FinalizeCtor()
     SetSize(wxSize(500, 300));
 #endif
 
-#ifdef __WXMAC__
+#if defined(__WXMSW__) || defined(__WXMAC__)
     RegisterHotKey(XRCID("tab-next-entry"), wxMOD_RAW_CONTROL, WXK_TAB);
     RegisterHotKey(XRCID("tab-prev-entry"), wxMOD_RAW_CONTROL | wxMOD_SHIFT, WXK_TAB);
     wxTheApp->Bind(wxEVT_HOTKEY, &NotebookNavigationDlg::OnHotKeyNext, this, XRCID("tab-next-entry"));

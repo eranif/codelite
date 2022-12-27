@@ -44,7 +44,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "{#BUILD_RELEASE_BIN_DIR}\codelite.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-echo.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#BUILD_RELEASE_BIN_DIR}\ctagsd.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CODELITE_ROOT}\universal-ctags\win32\codelite-ctags.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#CODELITE_ROOT}\ctags\ctags.exe"; DestDir: "{app}\codelite-ctags.exe"; Flags: ignoreversion ;
 Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MSYS2_USR_BIN_DIR}\wx-config.exe"; DestDir: "{app}";

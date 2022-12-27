@@ -107,7 +107,7 @@ function copy_file() {
     cp -f ${source} ${target}
 }
 
-# Copy the DLLs
+# Copy the Executables & DLLs
 for exec in ${EXECUTABLES}; do
     copy_file ${PWD}/${BUILD_DIR}/bin/$exec "${INSTALL_DIR}/${exec}"
 done
@@ -141,3 +141,6 @@ copy_file ${PWD}/InnoSetup/license.txt ${INSTALL_DIR}/LICENSE
 
 # copy wxWidgets DLLs
 copy_file "${WXWIN}/lib/clang_x64_dll/*.dll" "${INSTALL_DIR}/"
+
+# Copy other executables (not created by our build system)
+copy_file ${PWD}/ctags/ctags.exe "${INSTALL_DIR}/codelite-ctags.exe"

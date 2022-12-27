@@ -1,5 +1,7 @@
 #include "clThemedMenuBar.hpp"
 
+#include "globals.h"
+
 #if !wxUSE_NATIVE_MENUBAR
 clThemedMenuBar::clThemedMenuBar() {}
 
@@ -18,5 +20,6 @@ void clThemedMenuBar::OnThemeChanged(clCommandEvent& event)
 {
     event.Skip();
     cl::ApplyTheme<clThemedMenuBar>(this);
+    ::MSWSetWindowDarkTheme(this);
 }
 #endif

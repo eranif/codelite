@@ -49,4 +49,8 @@ void clThemedTreeCtrl::OnThemeChanged(wxCommandEvent& event)
     ApplyTheme();
 }
 
-void clThemedTreeCtrl::ApplyTheme() { cl::ApplyTheme<clThemedTreeCtrl>(this); }
+void clThemedTreeCtrl::ApplyTheme()
+{
+    cl::ApplyTheme<clThemedTreeCtrl>(this);
+    ::MSWSetWindowDarkTheme(this);
+}

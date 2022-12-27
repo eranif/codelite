@@ -99,6 +99,12 @@ else()
                           ${ADDITIONAL_LIBRARIES})
 endif()
 
+if(MINGW)
+    add_custom_command(TARGET codelite
+                       PRE_BUILD
+                       COMMAND sh "-c" "cd ${CL_SRC_ROOT}/ctags && $(MAKE) -f mk_mingw.mak"
+                       COMMENT "Building ctags.exe...")
+endif()
 codelite_add_pch(codelite)
 
 ##################################################################

@@ -6,6 +6,7 @@
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include "lexer_configuration.h"
 
 #include <wx/settings.h>
@@ -39,7 +40,11 @@ void clThemedListCtrlBase::OnThemeChanged(wxCommandEvent& event)
     ApplyTheme();
 }
 
-void clThemedListCtrlBase::ApplyTheme() { cl::ApplyTheme<clThemedListCtrlBase>(this); }
+void clThemedListCtrlBase::ApplyTheme()
+{
+    cl::ApplyTheme<clThemedListCtrlBase>(this);
+    ::MSWSetWindowDarkTheme(this);
+}
 
 clThemedListCtrl::~clThemedListCtrl() {}
 

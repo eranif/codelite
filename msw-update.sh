@@ -1,5 +1,12 @@
 #!/bin/bash -e
 
+# build directory
+BUILD_DIR=$(basename $(pwd))
+if [ ! -z $1 ]; then
+    BUILD_DIR=$1
+    shift
+fi
+
 # locate the root folder
 PWD=$(pwd)
 while [ 1 ]; do
@@ -14,12 +21,6 @@ while [ 1 ]; do
         exit 1
     fi
 done
-
-# build directory
-BUILD_DIR=build-release
-if [ ! -z $1 ]; then
-    BUILD_DIR=$1
-fi
 
 # source the environment file
 . ${PWD}/${BUILD_DIR}/msys2-environment

@@ -515,6 +515,7 @@ clEditor::clEditor(wxWindow* parent)
                                   wxCommandEventHandler(clEditor::OnFileFormatStarting), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODEFORMATTER_INDENT_COMPLETED,
                                   wxCommandEventHandler(clEditor::OnFileFormatDone), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clEditor::OnColoursAndFontsUpdated, this);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnChangeActiveBookmarkType), this,
          XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
@@ -543,7 +544,7 @@ clEditor::~clEditor()
                                      wxCommandEventHandler(clEditor::OnFileFormatStarting), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODEFORMATTER_INDENT_COMPLETED,
                                      wxCommandEventHandler(clEditor::OnFileFormatDone), NULL, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clEditor::OnColoursAndFontsUpdated, this);
     Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnChangeActiveBookmarkType), this,
            XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
 
@@ -580,8 +581,8 @@ void clEditor::SetSyntaxHighlight(const wxString& lexerName)
     m_context->SetActive();
     m_context->ApplySettings();
 
-    UpdateColours();
     SetCurrentLineMarginStyle(GetCtrl());
+    CallAfter(&clEditor::UpdateColours);
 }
 
 void clEditor::SetSyntaxHighlight(bool bUpdateColors)
@@ -1393,27 +1394,9 @@ void clEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/
 {
     wxUnusedVar(forceDelay);
     DoEnsureCaretIsVisible(pos, preserveSelection);
-    // OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-    // if(forceDelay || (opts && opts->GetWordWrap())) {
-    //    // If the text may be word-wrapped, don't EnsureVisible immediately but from the
-    //    // paintevent handler, so that scintilla has time to take word-wrap into account
-    //    m_positionToEnsureVisible = pos;
-    //    m_preserveSelection = preserveSelection;
-    //} else {
-    //    DoEnsureCaretIsVisible(pos, preserveSelection);
-    //    m_positionToEnsureVisible = wxNOT_FOUND;
-    //}
 }
 
-void clEditor::OnScnPainted(wxStyledTextEvent& event)
-{
-    event.Skip();
-    if(m_positionToEnsureVisible == wxNOT_FOUND) {
-        return;
-    }
-    DoEnsureCaretIsVisible(m_positionToEnsureVisible, m_preserveSelection);
-    m_positionToEnsureVisible = wxNOT_FOUND;
-}
+void clEditor::OnScnPainted(wxStyledTextEvent& event) { event.Skip(); }
 
 void clEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 {
@@ -2706,8 +2689,7 @@ void clEditor::ToggleAllFoldsInSelection()
         // The caret will (surely) be inside the selection, and unless it was on the first line or an unfolded one,
         // it'll now be hidden
         // If so place it at the top, which will be visible. Unfortunately SetCaretAt() destroys the selection,
-        // and I can't find a way to preserve/reinstate it while still setting the caret. DoEnsureCaretIsVisible()
-        // also fails :(
+        // and I can't find a way to preserve/reinstate it while still setting the caret
         int caretline = LineFromPos(GetCurrentPos());
         if(!GetLineVisible(caretline)) {
             SetCaretAt(selStart);
@@ -6314,7 +6296,10 @@ void clEditor::UpdateLineNumberMarginWidth()
 {
     int newLineCount = GetLineCount();
     int newWidthCount = log10(newLineCount) + 2;
-    int size = FromDIP(newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"));
+    if(m_default_text_width == wxNOT_FOUND) {
+        UpdateDefaultTextWidth();
+    }
+    int size = FromDIP(newWidthCount * m_default_text_width);
     SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers() ? size : 0);
 }
 
@@ -6450,7 +6435,7 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
             SetKeywordLocals(flatStrLocals);
         }
     }
-    Colourise(0, wxSTC_INVALID_POSITION);
+    // Colourise(0, wxSTC_INVALID_POSITION);
 }
 
 int clEditor::GetColumnInChars(int pos)
@@ -6526,3 +6511,11 @@ void clEditor::SetBreakpointMarker(int line_number, const wxString& tooltip)
     MarkerAdd(line_number, smt_breakpoint);
     m_breakpoints_tooltips.insert({ line_number, tooltip });
 }
+
+void clEditor::OnColoursAndFontsUpdated(clCommandEvent& event)
+{
+    event.Skip();
+    UpdateDefaultTextWidth();
+}
+
+void clEditor::UpdateDefaultTextWidth() { m_default_text_width = TextWidth(wxSTC_STYLE_LINENUMBER, "X"); }

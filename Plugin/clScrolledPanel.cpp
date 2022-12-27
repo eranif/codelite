@@ -13,13 +13,17 @@
 #endif
 
 clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxWindow(parent, id, pos, size, style)
 {
+    clScrolledPanel::Create(parent, id, pos, size, style);
     DoInitialize();
 }
 
 bool clScrolledPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
+#if defined(__WXMSW__)
+    // avoid assert
+    style = wxBORDER_NONE;
+#endif
     if(!wxWindow::Create(parent, id, pos, size, style)) {
         return false;
     }

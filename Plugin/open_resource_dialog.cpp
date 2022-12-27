@@ -150,6 +150,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_checkBoxShowSymbols->SetValue(showSymbols);
     ::clSetDialogBestSizeAndPosition(this);
     CenterOnParent();
+    MSWSetWindowDarkTheme(this);
 }
 
 OpenResourceDialog::~OpenResourceDialog()
@@ -333,43 +334,35 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
         return;
     }
 
-    if (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP ||
-        event.GetKeyCode() == WXK_NUMPAD_UP || event.GetKeyCode() == WXK_NUMPAD_DOWN ||
-        event.GetKeyCode() == WXK_PAGEUP || event.GetKeyCode() == WXK_PAGEDOWN)
-    {
-        event.Skip(false);
+    wxChar ch = event.GetUnicodeKey();
+    wxChar key_code = event.GetKeyCode();
+    int modifier_key = event.GetModifiers();
+    bool control_down = (modifier_key == wxMOD_CONTROL);
+    bool line_down =
+        (key_code == WXK_DOWN) || (key_code == WXK_NUMPAD_DOWN) || (control_down && (ch == 'J' || ch == 'N'));
+    bool page_down = (key_code == WXK_PAGEDOWN) || (control_down && (ch == 'D'));
+    bool line_up = (key_code == WXK_UP) || (key_code == WXK_NUMPAD_UP) || (control_down && (ch == 'K' || ch == 'P'));
+    bool page_up = (key_code == WXK_PAGEUP) || (control_down && (ch == 'U'));
 
-        if(GetDataview()->GetSelectedItemsCount() == 0) {
-            // Just select the first entry
-            DoSelectItem(GetDataview()->RowToItem(0));
-        } else {
-            // fire char hook event to the DV control
-            // so it will handle the keyboard movement itself
-            wxKeyEvent charHook = event;
-            charHook.SetEventObject(m_dataview);
-            charHook.SetEventType(wxEVT_CHAR_HOOK);
-            GetDataview()->GetEventHandler()->ProcessEvent(charHook);
-        }
-
-        // Set the focus back to the text control
-        m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
+    event.Skip(false);
+    if(GetDataview()->GetSelectedItemsCount() == 0) {
+        // Just select the first entry
+        DoSelectItem(GetDataview()->RowToItem(0));
+        event.Skip();
     } else {
-        int modifier_key = event.GetModifiers();
-        wxChar ch = event.GetUnicodeKey();
-        if (modifier_key == wxMOD_CONTROL && ch == 'U') {
-            GetDataview()->PageUp();
-            event.Skip(false);
-        } else if (modifier_key == wxMOD_CONTROL && ch == 'D') {
-            GetDataview()->PageDown();
-            event.Skip(false);
-        } else if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+        if(line_down) {
             GetDataview()->LineDown();
-            event.Skip(false);
-        }  else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+        } else if(line_up) {
             GetDataview()->LineUp();
-            event.Skip(false);
+        } else if(page_down) {
+            GetDataview()->PageDown();
+        } else if(page_up) {
+            GetDataview()->PageUp();
+        } else {
+            event.Skip();
         }
     }
+    m_textCtrlResourceName->CallAfter(&clThemedTextCtrl::SetFocus);
 }
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
@@ -475,7 +468,7 @@ void OpenResourceDialog::GetLineAndColumnFromFilter(const wxString& filter, wxSt
 
     const size_t sep_last = tmpstr.Find('/', true);
     const size_t col_first = tmpstr.find(':', (sep_last == wxNOT_FOUND ? 0 : sep_last));
-    if (col_first == wxNOT_FOUND) {
+    if(col_first == wxNOT_FOUND) {
         return;
     }
 

@@ -292,7 +292,12 @@ void clMenuBar::SetMenuLabel(size_t pos, const wxString& label)
 void clMenuBar::OnPaint(wxPaintEvent& e)
 {
     wxUnusedVar(e);
+#if defined(__WXMSW__)
+    wxBufferedPaintDC abdc(this);
+#else
     wxAutoBufferedPaintDC abdc(this);
+#endif
+
     wxGCDC dc(abdc);
     PrepareDC(dc);
 

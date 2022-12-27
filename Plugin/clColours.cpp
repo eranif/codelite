@@ -28,7 +28,11 @@ void init_from_colour(clColours* colours, const wxColour& baseColour)
     bool is_dark = DrawingUtils::IsDark(baseColour);
     bool is_light = !is_dark;
     colours->bgColour = baseColour;
-    colours->itemTextColour = is_light ? wxColour("#212121") : wxColour("#FDFEFE");
+
+    // determine the text colour
+    colours->itemTextColour =
+        is_light ? wxColour(*wxBLACK).ChangeLightness(110) : wxColour(*wxWHITE).ChangeLightness(90);
+
     if(is_light) {
         colours->alternateColour = colours->bgColour.ChangeLightness(FACTOR_ALTROW_LIGHT);
         colours->hoverBgColour = colours->bgColour.ChangeLightness(110);

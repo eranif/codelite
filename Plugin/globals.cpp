@@ -108,7 +108,7 @@ const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
-#if defined(__WXMSW__)
+#if defined(__WXMSW__) && 0
     MSWDarkMode::Get().SetDarkMode(win);
 #else
     wxUnusedVar(win);

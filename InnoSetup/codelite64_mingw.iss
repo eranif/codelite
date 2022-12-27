@@ -54,7 +54,7 @@ Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-exec.exe"; DestDir: "{app}"; Flags: i
 Source: "{#BUILD_RELEASE_BIN_DIR}\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ;
 
 ;; ---- wxWidgets DLLs
-Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw32u_clang.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw330u_clang_x64_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- MinGW64 Dlls
 Source: "{#CLANG64_DIR}\libc++.dll"; DestDir: "{app}"; Flags: ignoreversion;

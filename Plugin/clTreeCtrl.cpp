@@ -192,11 +192,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
 
 #ifdef __WXMSW__
     wxDC* dc_ptr = nullptr;
-    if(m_renderer == eRendererType::RENDERER_DIRECT2D) {
-        dc_ptr = new wxPaintDC(this);
-    } else {
-        dc_ptr = new wxAutoBufferedPaintDC(this);
-    }
+    dc_ptr = new wxBufferedPaintDC(this);
 
     DCLocker locker(dc_ptr);
     PrepareDC(*dc_ptr);

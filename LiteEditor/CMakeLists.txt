@@ -102,8 +102,9 @@ endif()
 if(MINGW)
     add_custom_command(TARGET codelite
                        PRE_BUILD
-                       COMMAND sh "-c" "cd ${CL_SRC_ROOT}/ctags && $(MAKE) -f mk_mingw.mak"
-                       COMMENT "Building ctags.exe...")
+                       COMMAND cd "${CL_SRC_ROOT}/ctags" && "$(MAKE)" -f mk_mingw.mak
+                       COMMENT "Building ctags.exe..."
+                       VERBATIM)
 endif()
 codelite_add_pch(codelite)
 

@@ -810,5 +810,10 @@ elseif(APPLE)
 endif()
 
 if(MINGW)
+    # determine MSYS2 path
+    set(MSYS2_USR_BIN $ENV{WD})
+    string(REPLACE "\\usr\\bin" "" MSYS2_BASE "${MSYS2_USR_BIN}")
+    string(REPLACE "\\" "/" MSYS2_BASE "${MSYS2_BASE}")
     write_file(${CMAKE_BINARY_DIR}/msys2-environment "export WXWIN=${WXWIN}")
+    write_file(${CMAKE_BINARY_DIR}/msys2-environment "export MSYS2_HOME=${MSYS2_BASE}" APPEND)
 endif()

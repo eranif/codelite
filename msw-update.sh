@@ -25,7 +25,24 @@ fi
 . ${PWD}/${BUILD_DIR}/msys2-environment
 echo "-- WXIN is set to ${WXWIN}"
 
-INSTALL_DIR="/c/Program Files/CodeLite"
+INSTALL_DIR="${PWD}/${BUILD_DIR}/install/"
+mkdir -p ${INSTALL_DIR}
+mkdir -p ${INSTALL_DIR}/plugins
+mkdir -p ${INSTALL_DIR}/rc
+mkdir -p ${INSTALL_DIR}/config
+mkdir -p ${INSTALL_DIR}/lexers
+
+SYSTEM_DLLS="
+    libc++.dll
+    libcrypto-1_1-x64.dll
+    libhunspell-1.7-0.dll
+    libsqlite3-0.dll
+    libssh.dll
+    libunwind.dll
+    libwinpthread-1.dll
+    zlib1.dll
+"
+
 EXECUTABLES="codelite.exe codelite-echo.exe
              ctagsd.exe codelite-make.exe
              codelite-terminal.exe codelite_cppcheck.exe
@@ -38,6 +55,7 @@ DLLS="
     libplugin.dll
     libdatabaselayersqlite.dll
     libwxshapeframework.dll
+    libwxsqlite3.dll
 "
 
 PLUGINS="
@@ -82,23 +100,44 @@ PLUGINS="
     Remoty.dll
 "
 
+function copy_file() {
+    local source=$1
+    local target=$2
+    echo "-- Installing $source $target"
+    cp -f ${source} ${target}
+}
+
 # Copy the DLLs
 for exec in ${EXECUTABLES}; do
-    echo "-- cp ${PWD}/${BUILD_DIR}/bin/$exec ${INSTALL_DIR}/${exec}"
-    cp ${PWD}/${BUILD_DIR}/bin/$exec "${INSTALL_DIR}/${exec}"
+    copy_file ${PWD}/${BUILD_DIR}/bin/$exec "${INSTALL_DIR}/${exec}"
 done
 
 for dll in ${DLLS}; do
-    echo "-- cp ${PWD}/${BUILD_DIR}/bin/$dll ${INSTALL_DIR}/${dll}"
-    cp ${PWD}/${BUILD_DIR}/bin/$dll "${INSTALL_DIR}/${dll}"
+    copy_file ${PWD}/${BUILD_DIR}/bin/$dll "${INSTALL_DIR}/${dll}"
 done
 
 for plugin in ${PLUGINS}; do
-    echo "-- cp ${PWD}/${BUILD_DIR}/bin/$plugin ${INSTALL_DIR}/plugins/${plugin}"
-    cp ${PWD}/${BUILD_DIR}/bin/$plugin "${INSTALL_DIR}/plugins/${plugin}"
+    copy_file ${PWD}/${BUILD_DIR}/bin/$plugin "${INSTALL_DIR}/plugins/${plugin}"
 done
 
+for system_dll in ${SYSTEM_DLLS}; do
+    copy_file ${MSYS2_HOME}/clang64/bin/${system_dll} "${INSTALL_DIR}/${system_dll}"
+done
+
+# Copy configuration files
+copy_file ${PWD}/Runtime/config/build_settings.xml.default.win ${INSTALL_DIR}/config/build_settings.xml.default
+copy_file ${PWD}/Runtime/config/codelite.xml.default ${INSTALL_DIR}/config/codelite.xml.default
+copy_file ${PWD}/Runtime/rc/menu.xrc ${INSTALL_DIR}/rc
+copy_file ${PWD}/Runtime/lexers/lexers.json ${INSTALL_DIR}/lexers/lexers.json
+
+# Resource files
+copy_file ${PWD}/wxcrafter/wxgui.zip ${INSTALL_DIR}
+copy_file ${PWD}/Runtime/PHP.zip ${INSTALL_DIR}
+copy_file ${PWD}/Runtime/codelite-bitmaps-dark.zip ${INSTALL_DIR}
+copy_file ${PWD}/Runtime/codelite-bitmaps-light.zip ${INSTALL_DIR}
+
+# License file
+copy_file ${PWD}/InnoSetup/license.txt ${INSTALL_DIR}/LICENSE
+
 # copy wxWidgets DLLs
-echo "-- Copying wxWidgets DLLs..."
-echo cp -f ${WXWIN}/lib/clang_x64_dll/*.dll "${INSTALL_DIR}/"
-cp -f ${WXWIN}/lib/clang_x64_dll/*.dll "${INSTALL_DIR}/"
+copy_file "${WXWIN}/lib/clang_x64_dll/*.dll" "${INSTALL_DIR}/"

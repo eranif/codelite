@@ -334,7 +334,15 @@ bool CodeLiteApp::OnInit()
     }
     wxString newDataDir(wxEmptyString);
     if(m_parser.Found(wxT("d"), &newDataDir)) {
-        clStandardPaths::Get().SetUserDataDir(newDataDir);
+        // ensure that the data dir exists
+        wxFileName dd(newDataDir, wxEmptyString);
+        if(dd.IsRelative()) {
+            dd.MakeAbsolute();
+        }
+        if(!dd.DirExists()) {
+            dd.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        }
+        clStandardPaths::Get().SetUserDataDir(dd.GetFullPath());
     }
 
     // Init resources and add the PNG handler
@@ -414,14 +422,19 @@ bool CodeLiteApp::OnInit()
         SetPluginLoadPolicy(PP_FromList);
     }
 
-    wxString newBaseDir(wxEmptyString);
-    if(m_parser.Found(wxT("b"), &newBaseDir)) {
 #if defined(__WXMSW__)
-        homeDir = newBaseDir;
-#else
-        wxLogDebug("Ignoring the Windows-only --basedir option as not running Windows");
-#endif
+    wxString newBaseDir;
+    if(m_parser.Found(wxT("b"), &newBaseDir)) {
+        wxFileName bd(newBaseDir, wxEmptyString);
+        if(bd.IsRelative()) {
+            bd.MakeAbsolute();
+        }
+        homeDir = bd.GetPath();
+    } else {
+        homeDir = wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
     }
+    clStandardPaths::Get().SetDataDir(homeDir);
+#endif
 
     // Set the global log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging
     // CodeLite itself :/

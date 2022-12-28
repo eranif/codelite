@@ -1067,7 +1067,20 @@ const wxColour& clRowEntry::GetTextColour(size_t col) const
         static wxColour invalid_colour;
         return invalid_colour;
     }
-    return cell.GetTextColour();
+    const wxColour& colour = cell.GetTextColour();
+    if(!colour.IsOk()) {
+        // if one of our parent has a valid colour (or its parent.. or ...) __and__ our colour is invalid -> lets use
+        // our parent's colour
+        auto parent = GetParent();
+        while(parent) {
+            if(parent->GetColumn(col).IsOk() && parent->GetColumn(col).GetTextColour().IsOk()) {
+                return parent->GetColumn(col).GetTextColour();
+            }
+            parent = parent->GetParent();
+        }
+    }
+    // return the current cell colour
+    return colour;
 }
 
 wxRect clRowEntry::GetCellRect(size_t col) const

@@ -6296,6 +6296,11 @@ void clEditor::UpdateLineNumberMarginWidth()
 {
     int newLineCount = GetLineCount();
     int newWidthCount = log10(newLineCount) + 2;
+
+#if defined(__WXMSW__)
+    newWidthCount -= 1;
+#endif
+
     if(m_default_text_width == wxNOT_FOUND) {
         UpdateDefaultTextWidth();
     }

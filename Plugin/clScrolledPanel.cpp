@@ -22,7 +22,7 @@ bool clScrolledPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 {
 #if defined(__WXMSW__)
     // avoid assert
-    style = wxBORDER_NONE;
+    style = wxBORDER_SIMPLE;
 #endif
     if(!wxWindow::Create(parent, id, pos, size, style)) {
         return false;

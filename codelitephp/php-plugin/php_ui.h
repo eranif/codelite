@@ -40,6 +40,7 @@
 #include "Notebook.h"
 #include "clThemedTreeCtrl.h"
 #include <wx/notebook.h>
+#include "clThemedSTC.hpp"
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/simplebook.h>
@@ -415,11 +416,11 @@ class EvalPaneBase : public wxPanel
 protected:
     Notebook* m_notebook257;
     wxPanel* m_panel259;
-    wxStyledTextCtrl* m_stcOutput;
+    clThemedSTC* m_stcOutput;
     wxTextCtrl* m_textCtrlExpression;
     wxButton* m_buttonSend;
     wxPanel* m_panel261;
-    wxStyledTextCtrl* m_stcOutputXDebug;
+    clThemedSTC* m_stcOutputXDebug;
     wxTextCtrl* m_textCtrlExpressionXdebug;
     wxButton* m_buttonSendXdebug;
 
@@ -431,11 +432,11 @@ protected:
     virtual void OnSendXDebugCommandUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
+    clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxTextCtrl* GetTextCtrlExpression() { return m_textCtrlExpression; }
     wxButton* GetButtonSend() { return m_buttonSend; }
     wxPanel* GetPanel259() { return m_panel259; }
-    wxStyledTextCtrl* GetStcOutputXDebug() { return m_stcOutputXDebug; }
+    clThemedSTC* GetStcOutputXDebug() { return m_stcOutputXDebug; }
     wxTextCtrl* GetTextCtrlExpressionXdebug() { return m_textCtrlExpressionXdebug; }
     wxButton* GetButtonSendXdebug() { return m_buttonSendXdebug; }
     wxPanel* GetPanel261() { return m_panel261; }

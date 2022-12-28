@@ -17,7 +17,7 @@ wxBorder get_border_simple_theme_aware_bit()
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
     return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
 #else
-    return wxBORDER_SIMPLE;
+    return wxBORDER_DEFAULT;
 #endif
 } // DoGetBorderSimpleBit
 bool bBitmapLoaded = false;
@@ -1287,8 +1287,8 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     wxBoxSizer* boxSizer254 = new wxBoxSizer(wxVERTICAL);
     m_panel259->SetSizer(boxSizer254);
 
-    m_stcOutput = new wxStyledTextCtrl(m_panel259, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1, -1)),
-                                       wxBORDER_NONE);
+    m_stcOutput =
+        new clThemedSTC(m_panel259, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -1364,8 +1364,8 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     wxBoxSizer* boxSizer263 = new wxBoxSizer(wxVERTICAL);
     m_panel261->SetSizer(boxSizer263);
 
-    m_stcOutputXDebug = new wxStyledTextCtrl(m_panel261, wxID_ANY, wxDefaultPosition,
-                                             wxDLG_UNIT(m_panel261, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcOutputXDebug =
+        new clThemedSTC(m_panel261, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel261, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcOutputXDebug->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutputXDebug->SetMarginMask(4, wxSTC_MASK_FOLDERS);

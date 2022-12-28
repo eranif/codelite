@@ -175,11 +175,10 @@ public:
     wxPanel* GetPanel25() { return m_panel25; }
     wxCollapsiblePane* GetCollPane193() { return m_collPane193; }
     wxPanel* GetPanel171() { return m_panel171; }
-    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"),
-                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SyntaxHighlightBaseDlg();
 };
+
 
 class NewThemeDialogBase : public wxDialog
 {
@@ -205,9 +204,7 @@ public:
     wxChoice* GetChoiceLanguage() { return m_choiceLanguage; }
     wxStaticText* GetStaticText135() { return m_staticText135; }
     wxChoice* GetChoiceBaseTheme() { return m_choiceBaseTheme; }
-    NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewThemeDialogBase();
 };
 

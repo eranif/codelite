@@ -358,10 +358,6 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
-										}, {
-											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -522,10 +518,6 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
-										}, {
-											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -1179,10 +1171,6 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
-										}, {
-											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -1343,10 +1331,6 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
-										}, {
-											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -1511,10 +1495,6 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
-										}, {
-											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -1675,10 +1655,6 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
-										}, {
-											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -2184,10 +2160,6 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
-										}, {
-											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -7965,10 +7937,6 @@
 																					"m_value":	"0"
 																				}, {
 																					"type":	"bool",
-																					"m_label":	"Enable Spell Checking",
-																					"m_value":	false
-																				}, {
-																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
 																					"m_value":	false
 																				}, {
@@ -8229,10 +8197,6 @@
 																					"type":	"string",
 																					"m_label":	"Max Length:",
 																					"m_value":	"0"
-																				}, {
-																					"type":	"bool",
-																					"m_label":	"Enable Spell Checking",
-																					"m_value":	false
 																				}, {
 																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
@@ -8610,10 +8574,6 @@
 																					"m_value":	"0"
 																				}, {
 																					"type":	"bool",
-																					"m_label":	"Enable Spell Checking",
-																					"m_value":	false
-																				}, {
-																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
 																					"m_value":	false
 																				}, {
@@ -8801,10 +8761,6 @@
 																					"m_value":	"0"
 																				}, {
 																					"type":	"bool",
-																					"m_label":	"Enable Spell Checking",
-																					"m_value":	false
-																				}, {
-																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
 																					"m_value":	false
 																				}, {
@@ -8990,10 +8946,6 @@
 																					"type":	"string",
 																					"m_label":	"Max Length:",
 																					"m_value":	"0"
-																				}, {
-																					"type":	"bool",
-																					"m_label":	"Enable Spell Checking",
-																					"m_value":	false
 																				}, {
 																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
@@ -10005,10 +9957,6 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
-										}, {
-											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",

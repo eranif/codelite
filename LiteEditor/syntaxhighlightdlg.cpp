@@ -176,7 +176,7 @@ void SyntaxHighlightDlg::DoUpdatePreview()
         previewLexer->Apply(m_stcPreview, true);
         previewLexer->ApplyWordSet(m_stcPreview, LexerConf::WS_CLASS, "Demo std string");
         previewLexer->ApplyWordSet(m_stcPreview, LexerConf::WS_VARIABLES, "other m_integer m_str a_string");
-        previewLexer->ApplyWordSet(m_stcPreview, LexerConf::WS_FUNCTIONS, "CallMethod");
+        previewLexer->ApplyWordSet(m_stcPreview, LexerConf::WS_FUNCTIONS, "CallMethod GetPointer");
     }
 
     m_stcPreview->SetEditable(true);

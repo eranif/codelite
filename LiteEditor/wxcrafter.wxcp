@@ -4575,10 +4575,6 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
-										}, {
-											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	true
 										}, {

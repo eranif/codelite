@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxC3F25InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                                long style)
@@ -234,7 +246,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     m_dvTreeCtrlWorkspaces =
         new clThemedTreeCtrl(m_panelList, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelList, wxSize(-1, 200)),
-                             wxTR_DEFAULT_STYLE | wxBORDER_SIMPLE);
+                             wxTR_DEFAULT_STYLE | get_border_simple_theme_aware_bit());
     m_dvTreeCtrlWorkspaces->SetFocus();
 
     boxSizer668->Add(m_dvTreeCtrlWorkspaces, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -314,10 +326,10 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer621 = new wxBoxSizer(wxVERTICAL);
     m_splitterPagePinnedProjects->SetSizer(boxSizer621);
 
-    m_dvListCtrlPinnedProjects =
-        new clThemedListCtrl(m_splitterPagePinnedProjects, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPagePinnedProjects, wxSize(-1, 150)),
-                             wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE | wxBORDER_SIMPLE);
+    m_dvListCtrlPinnedProjects = new clThemedListCtrl(m_splitterPagePinnedProjects, wxID_ANY, wxDefaultPosition,
+                                                      wxDLG_UNIT(m_splitterPagePinnedProjects, wxSize(-1, 150)),
+                                                      wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE |
+                                                          get_border_simple_theme_aware_bit());
 
     boxSizer621->Add(m_dvListCtrlPinnedProjects, 1, wxEXPAND, WXC_FROM_DIP(5));
 

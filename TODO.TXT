@@ -7,3 +7,4 @@ Debug Adapter Client
 
 others:
 ----
+- Include Rust & Remoty with the default plugins

@@ -235,6 +235,10 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     });
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
+
+    // force font/colours udpate
+    clCommandEvent dummy;
+    OnSysColoursChanged(dummy);
 }
 
 GitConsole::~GitConsole()

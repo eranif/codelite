@@ -26,7 +26,7 @@ clCustomiseToolBarBaseDlg::clCustomiseToolBarBaseDlg(wxWindow* parent, wxWindowI
     this->SetSizer(boxSizer2);
 
     m_dvListCtrlItems = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(250, 200)),
-                                               wxDV_NO_HEADER | wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+                                               wxDV_NO_HEADER | wxDV_SINGLE | wxTRANSPARENT_WINDOW);
 
     boxSizer2->Add(m_dvListCtrlItems, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -56,20 +56,16 @@ clCustomiseToolBarBaseDlg::clCustomiseToolBarBaseDlg(wxWindow* parent, wxWindowI
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clCustomiseToolBarBaseDlg::OnOK), NULL,
-                       this);
+    m_button6->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clCustomiseToolBarBaseDlg::OnOK, this);
 }
 
 clCustomiseToolBarBaseDlg::~clCustomiseToolBarBaseDlg()
 {
-    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clCustomiseToolBarBaseDlg::OnOK), NULL,
-                          this);
+    m_button6->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clCustomiseToolBarBaseDlg::OnOK, this);
 }

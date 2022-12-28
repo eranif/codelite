@@ -150,6 +150,12 @@ wxString WX30_BLOCK_START();
  * @return
  */
 wxString WX31_BLOCK_START();
+/**
+ *
+ * @brief print wx3.3 preprocessor start condition
+ * @return
+ */
+wxString WX33_BLOCK_START();
 
 /**
  *
@@ -232,7 +238,7 @@ void GetProjectFiles(const wxString& projectName, wxStringSet_t& files);
 void FormatString(wxString& content, const wxFileName& filename);
 
 /**
- * @brief format 
+ * @brief format
  * @param content
  * @param filename
  */

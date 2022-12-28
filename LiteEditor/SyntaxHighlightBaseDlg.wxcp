@@ -1618,7 +1618,7 @@
 																	"border":	5,
 																	"gbSpan":	"1,1",
 																	"gbPosition":	"0,0",
-																	"m_styles":	["wxLB_SORT", "wxLB_SINGLE"],
+																	"m_styles":	["wxLB_SORT", "wxLB_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																	"m_properties":	[{
 																			"type":	"winid",
@@ -2832,7 +2832,7 @@
 																													"border":	5,
 																													"gbSpan":	",",
 																													"gbPosition":	",",
-																													"m_styles":	["wxLB_SORT", "wxLB_SINGLE"],
+																													"m_styles":	["wxLB_SORT", "wxLB_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 																													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																													"m_properties":	[{
 																															"type":	"winid",

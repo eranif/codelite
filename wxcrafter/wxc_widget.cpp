@@ -368,11 +368,14 @@ wxString wxcWidget::StyleFlags(const wxString& deafultStyle) const
         return subclassStyle;
 
     } else {
-        MapStyles_t::ConstIterator iter = m_styles.Begin();
-        for(; iter != m_styles.End(); iter++) {
-            wxString style_name = iter->second.style_name;
-            if(iter->second.is_set) {
-                s << style_name << "|";
+        for(auto style : m_styles) {
+            wxString style_name = style.second.style_name;
+            if(style.second.is_set) {
+                if(style_name == "wxBORDER_SIMPLE") {
+                    s << "get_border_simple_theme_aware_bit()|";
+                } else {
+                    s << style_name << "|";
+                }
             }
         }
 

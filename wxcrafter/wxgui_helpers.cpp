@@ -1137,6 +1137,13 @@ wxString wxCrafter::WX31_BLOCK_START()
     return code;
 }
 
+wxString wxCrafter::WX33_BLOCK_START()
+{
+    wxString code;
+    code << "#if wxVERSION_NUMBER >= 3300\n";
+    return code;
+}
+
 wxString wxCrafter::WX29_BLOCK_START()
 {
     wxString code;

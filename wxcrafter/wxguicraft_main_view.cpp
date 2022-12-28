@@ -72,6 +72,21 @@
 
 GUICraftMainPanel* GUICraftMainPanel::m_MainPanel = NULL;
 
+const wxString SIMPLE_BORDER_CODE = R"(
+namespace {
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit() {
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_SIMPLE;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
+
+)";
+
 static bool bManualSelection = false;
 
 #define MENU_ENTRY(id, label, bmpname)              \
@@ -3185,7 +3200,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
 
         cppPrefix << "// Declare the bitmap loading function\n";
         cppPrefix << wxcCodeGeneratorHelper::Get().GenerateExternCode() << "\n"; // Add the bitmap extern code
-        cppPrefix << "static bool bBitmapLoaded = false;\n\n";
+        cppPrefix << SIMPLE_BORDER_CODE;
 
         baseCpp.Prepend(cppPrefix);
         if(wxCrafter::IsTheSame(baseCpp, sourceFile) == false) {

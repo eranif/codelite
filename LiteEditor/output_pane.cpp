@@ -44,8 +44,8 @@
 #include <wx/dcbuffer.h>
 #include <wx/xrc/xmlres.h>
 
-OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250))
+OutputPane::OutputPane(wxWindow* parent, const wxString& caption, long style)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250), style)
     , m_caption(caption)
     , m_buildInProgress(false)
 {

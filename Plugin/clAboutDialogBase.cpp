@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxCA637InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_SIMPLE;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                      const wxSize& size, long style)
@@ -112,8 +124,9 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
     m_paneLicense->SetSizer(boxSizer18);
 
-    m_stcLicense = new wxStyledTextCtrl(m_paneLicense, wxID_ANY, wxDefaultPosition,
-                                        wxDLG_UNIT(m_paneLicense, wxSize(300, 200)), 0);
+    m_stcLicense =
+        new clThemedSTC(m_paneLicense, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_paneLicense, wxSize(300, 200)),
+                        wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcLicense->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLicense->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -158,8 +171,9 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panelCredits->SetSizer(boxSizer20);
 
-    m_stcCredits = new wxStyledTextCtrl(m_panelCredits, wxID_ANY, wxDefaultPosition,
-                                        wxDLG_UNIT(m_panelCredits, wxSize(-1, -1)), 0);
+    m_stcCredits =
+        new clThemedSTC(m_panelCredits, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCredits, wxSize(-1, -1)),
+                        wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcCredits->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCredits->SetMarginMask(4, wxSTC_MASK_FOLDERS);

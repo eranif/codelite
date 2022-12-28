@@ -65,11 +65,10 @@
 #undef GSocket
 #endif
 
-WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr)
+WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
     : m_caption(caption)
     , m_mgr(mgr)
 {
-    int style = wxTAB_TRAVERSAL;
     if(!wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)) {
         return;
     }
@@ -183,7 +182,7 @@ void WorkspacePane::CreateGUIControls()
     m_workspaceTab->GetView()->AddPage(m_explorer, _("File Explorer"), false);
 
     // Add the Open Windows Panel (Tabs)
-    //#ifndef __WXOSX__
+    // #ifndef __WXOSX__
     name = _("Tabs");
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
@@ -195,7 +194,7 @@ void WorkspacePane::CreateGUIControls()
     }
     m_tabs.insert(std::make_pair(name, Tab(name, m_openWindowsPane)));
     mgr->AddWorkspaceTab(name);
-    //#endif
+    // #endif
 
     // Add the Tabgroups tab
     name = _("Tabgroups");

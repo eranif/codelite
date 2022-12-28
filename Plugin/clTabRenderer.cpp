@@ -415,9 +415,9 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
     GetTabColours(colours, style, &active_tab_colour, &bg_colour);
     bool is_dark = DrawingUtils::IsDark(bg_colour);
     dc.SetPen(bg_colour.ChangeLightness(is_dark ? 60 : 80));
-    dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
-    dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetBottomLeft());
-    dc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
+    //dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
+    //dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetBottomLeft());
+    //dc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
 }
 
 void clTabRenderer::AdjustColours(clTabColours& colours, size_t style)

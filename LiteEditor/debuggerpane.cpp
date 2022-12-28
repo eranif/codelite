@@ -24,9 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "debuggerpane.h"
 
+#include "BreakpointsView.hpp"
 #include "DebuggerCallstackView.h"
 #include "DebuggerDisassemblyTab.h"
-#include "BreakpointsView.hpp"
 #include "codelite_events.h"
 #include "debugger.h"
 #include "debuggerasciiviewer.h"
@@ -59,8 +59,8 @@ const wxString DebuggerPane::DISASSEMBLY = wxTRANSLATE("Disassemble");
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
 
-DebuggerPane::DebuggerPane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
+DebuggerPane::DebuggerPane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300), style)
     , m_caption(caption)
     , m_initDone(false)
     , m_mgr(mgr)

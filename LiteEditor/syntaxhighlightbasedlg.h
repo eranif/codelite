@@ -25,6 +25,7 @@
 #include <wx/checkbox.h>
 #include <wx/fontpicker.h>
 #include <wx/stc/stc.h>
+#include "clThemedSTC.hpp"
 #include <wx/collpane.h>
 #include <wx/listbox.h>
 #include <wx/notebook.h>
@@ -66,7 +67,7 @@ protected:
     wxFontPickerCtrl* m_fontPickerGlobal;
     wxStaticText* m_staticText155;
     wxChoice* m_choiceGlobalTheme;
-    wxStyledTextCtrl* m_stcPreview;
+    clThemedSTC* m_stcPreview;
     wxCollapsiblePane* m_collPane193;
     wxListBox* m_listBox;
     wxPanel* m_panel25;
@@ -142,7 +143,7 @@ public:
     wxFontPickerCtrl* GetFontPickerGlobal() { return m_fontPickerGlobal; }
     wxStaticText* GetStaticText155() { return m_staticText155; }
     wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
-    wxStyledTextCtrl* GetStcPreview() { return m_stcPreview; }
+    clThemedSTC* GetStcPreview() { return m_stcPreview; }
     wxListBox* GetListBox() { return m_listBox; }
     wxStaticText* GetStaticText70() { return m_staticText70; }
     wxChoice* GetChoiceLexerThemes() { return m_choiceLexerThemes; }

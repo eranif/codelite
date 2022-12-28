@@ -24,11 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilerMainPage.h"
+
 #include "EditCmpTemplateDialog.h"
 #include "NewFileTemplateDialog.h"
 #include "advanced_settings.h"
 #include "compiler.h"
 #include "imanager.h"
+
 #include <EditDlg.h>
 #include <build_config.h>
 #include <build_settings_config.h>

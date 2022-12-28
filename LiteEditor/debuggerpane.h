@@ -25,10 +25,11 @@
 #ifndef DEBUGGERPANE_H
 #define DEBUGGERPANE_H
 
-#include "wx/panel.h"
 #include "Notebook.h"
-#include <wx/imaglist.h>
 #include "cl_config.h"
+#include "wx/panel.h"
+
+#include <wx/imaglist.h>
 
 class DebuggerCallstackView;
 class LocalsTable;
@@ -122,7 +123,7 @@ private:
     void OnSettingsChanged(wxCommandEvent& event);
 
 public:
-    DebuggerPane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr);
+    DebuggerPane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style);
     virtual ~DebuggerPane();
 
     // setters/getters

@@ -152,11 +152,19 @@
 
 //////////////////////////////////////////////////
 
-// from iconsextra.cpp:
-extern char* cubes_xpm[];
-extern unsigned char cubes_alpha[];
-static int FrameTimerId = wxNewId();
-thread_local wxStopWatch gStopWatch;
+namespace
+{
+int FrameTimerId = wxNewId();
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_NONE;
+#endif
+} // DoGetBorderSimpleBit
+} // namespace
 
 const wxEventType wxEVT_LOAD_PERSPECTIVE = XRCID("load_perspective");
 const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU = XRCID("refresh_perspective_menu");
@@ -1259,18 +1267,20 @@ void clMainFrame::CreateGUIControls()
     const wxString unusedCR(
         _("wxCrafter")); // One that would otherwise be untranslated; OT here, but it's a convenient place to put it
 
-    // Add the explorer pane
+    // Add the workspace pane
+    m_workspacePane =
+        new WorkspacePane(m_mainPanel, "Workspace View", &m_mgr, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
 
-    m_workspacePane = new WorkspacePane(m_mainPanel, "Workspace View", &m_mgr);
     RegisterDockWindow(XRCID("workspace_pane"), "Workspace View");
 
     // add the debugger locals tree, make it hidden by default
-    m_debuggerPane = new DebuggerPane(m_mainPanel, "Debugger", &m_mgr);
+    m_debuggerPane =
+        new DebuggerPane(m_mainPanel, "Debugger", &m_mgr, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
     RegisterDockWindow(XRCID("debugger_pane"), "Debugger");
 
     // Wrap the mainbook with a wxPanel
     // We do this so we can place the find bar under the main book
-    long container_style = wxBORDER_NONE | wxTAB_TRAVERSAL;
+    long container_style = get_border_simple_theme_aware_bit() | wxTAB_TRAVERSAL;
     wxPanel* container = new wxPanel(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, container_style);
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
@@ -1305,7 +1315,7 @@ void clMainFrame::CreateGUIControls()
     m_mgr.AddPane(container, wxAuiPaneInfo().Name("Editor").CenterPane().PaneBorder(true));
     CreateRecentlyOpenedFilesMenu();
 
-    m_outputPane = new OutputPane(m_mainPanel, "Output View");
+    m_outputPane = new OutputPane(m_mainPanel, "Output View", wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
     RegisterDockWindow(XRCID("output_pane"), "Output View");
 
     long show_nav = EditorConfigST::Get()->GetInteger("ShowNavBar", 0);

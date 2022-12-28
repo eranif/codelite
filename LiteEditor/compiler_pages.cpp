@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxCAD0CInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_SIMPLE;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                              const wxSize& size, long style)
@@ -79,19 +91,19 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("CompilerOptionDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent();
     } else {
         CentreOnScreen();
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 CompilerOptionDlgBase::~CompilerOptionDlgBase() {}
@@ -188,28 +200,26 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("CompilerPatternDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent();
     } else {
         CentreOnScreen();
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button231->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL,
-                         this);
+    m_button231->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerPatternDlgBase::OnSubmit, this);
 }
 
 CompilerPatternDlgBase::~CompilerPatternDlgBase()
 {
-    m_button231->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL,
-                            this);
+    m_button231->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerPatternDlgBase::OnSubmit, this);
 }
 
 NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -272,27 +282,24 @@ NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("NewCompilerDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewCompilerDlgBase::OnOkUI), NULL, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &NewCompilerDlgBase::OnOkUI, this);
 }
 
-NewCompilerDlgBase::~NewCompilerDlgBase()
-{
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewCompilerDlgBase::OnOkUI), NULL, this);
-}
+NewCompilerDlgBase::~NewCompilerDlgBase() { m_buttonOK->Unbind(wxEVT_UPDATE_UI, &NewCompilerDlgBase::OnOkUI, this); }
 
 CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                            long style)
@@ -318,8 +325,9 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     boxSizer114->Add(boxSizer220, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_listBoxCompilersArr;
-    m_listBoxCompilers = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(150, -1)),
-                                       m_listBoxCompilersArr, wxLB_SORT | wxLB_SINGLE);
+    m_listBoxCompilers =
+        new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(150, -1)), m_listBoxCompilersArr,
+                      wxLB_SORT | wxLB_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer220->Add(m_listBoxCompilers, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -341,7 +349,8 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrToolsIntArr);
     m_pgMgrTools =
         new wxPropertyGridManager(m_panelTools, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTools, wxSize(-1, -1)),
-                                  wxPG_DESCRIPTION | wxPG_HIDE_MARGIN | wxPG_BOLD_MODIFIED);
+                                  wxPG_DESCRIPTION | wxPG_HIDE_MARGIN | wxPG_BOLD_MODIFIED | wxTRANSPARENT_WINDOW |
+                                      get_border_simple_theme_aware_bit());
 
     boxSizer2->Add(m_pgMgrTools, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -417,7 +426,8 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_listErrPatterns =
         new wxListCtrl(m_panelPatterns, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)),
-                       wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+                       wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT | wxTRANSPARENT_WINDOW |
+                           get_border_simple_theme_aware_bit());
 
     bSizer25->Add(m_listErrPatterns, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -458,7 +468,8 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_listWarnPatterns =
         new wxListCtrl(m_panelPatterns, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)),
-                       wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+                       wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT | wxTRANSPARENT_WINDOW |
+                           get_border_simple_theme_aware_bit());
 
     bSizer251->Add(m_listWarnPatterns, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -502,7 +513,8 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_listCompilerOptions = new wxListCtrl(m_panelCompilerOptions, wxID_ANY, wxDefaultPosition,
                                            wxDLG_UNIT(m_panelCompilerOptions, wxSize(-1, -1)),
-                                           wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+                                           wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT |
+                                               wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     bSizer12_CmpOptions->Add(m_listCompilerOptions, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -539,7 +551,8 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_listLinkerOptions = new wxListCtrl(m_panelLinkerOptions, wxID_ANY, wxDefaultPosition,
                                          wxDLG_UNIT(m_panelLinkerOptions, wxSize(-1, -1)),
-                                         wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+                                         wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT |
+                                             wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     bSizer123->Add(m_listLinkerOptions, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -591,7 +604,8 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_dvListCtrlFileTemplates =
         new clThemedListCtrl(m_splitterPageFileTemplates, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPageFileTemplates, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+                             wxDLG_UNIT(m_splitterPageFileTemplates, wxSize(-1, -1)),
+                             wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer257->Add(m_dvListCtrlFileTemplates, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -632,7 +646,8 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_dvListCtrlLinkType =
         new clThemedListCtrl(m_splitterPageLinkerTemplates, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPageLinkerTemplates, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+                             wxDLG_UNIT(m_splitterPageLinkerTemplates, wxSize(-1, -1)),
+                             wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer271->Add(m_dvListCtrlLinkType, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -661,7 +676,8 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_listSwitches = new wxListCtrl(m_panelCompilerSwitches, wxID_ANY, wxDefaultPosition,
                                     wxDLG_UNIT(m_panelCompilerSwitches, wxSize(-1, -1)),
-                                    wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+                                    wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT | wxTRANSPARENT_WINDOW |
+                                        get_border_simple_theme_aware_bit());
 
     mainSizer->Add(m_listSwitches, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -822,181 +838,116 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("CompilerMainPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
-    m_listBoxCompilers->Connect(wxEVT_COMMAND_LISTBOX_SELECTED,
-                                wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
-    m_listBoxCompilers->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu),
-                                NULL, this);
-    m_pgMgrTools->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                          wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
-    m_pgMgrTools->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilerMainPageBase::OnValueChanged), NULL,
-                          this);
-    m_listErrPatterns->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                               wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
-    m_btnAddErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                wxCommandEventHandler(CompilerMainPageBase::OnBtnAddErrPattern), NULL, this);
-    m_btnDelErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                wxCommandEventHandler(CompilerMainPageBase::OnBtnDelErrPattern), NULL, this);
-    m_btnDelErrPattern->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI),
-                                NULL, this);
-    m_btnUpdateErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                   wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateErrPattern), NULL, this);
-    m_btnUpdateErrPattern->Connect(wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
-    m_listWarnPatterns->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                wxListEventHandler(CompilerMainPageBase::OnWarnItemActivated), NULL, this);
-    m_btnAddWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                 wxCommandEventHandler(CompilerMainPageBase::OnBtnAddWarnPattern), NULL, this);
-    m_btnDelWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                 wxCommandEventHandler(CompilerMainPageBase::OnBtnDelWarnPattern), NULL, this);
-    m_btnDelWarnPattern->Connect(wxEVT_UPDATE_UI,
-                                 wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
-    m_btnUpdateWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                    wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateWarnPattern), NULL, this);
-    m_btnUpdateWarnPattern->Connect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
-    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                   wxListEventHandler(CompilerMainPageBase::OnCompilerOptionActivated), NULL, this);
-    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
-                                   wxListEventHandler(CompilerMainPageBase::OnCompilerOptionDeSelected), NULL, this);
-    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
-                                   wxListEventHandler(CompilerMainPageBase::OnCompilerOptionSelected), NULL, this);
-    m_buttonCompilerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                    wxCommandEventHandler(CompilerMainPageBase::OnNewCompilerOption), NULL, this);
-    m_buttonDeleteCompilerOption->Connect(
-        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteCompilerOption), NULL, this);
-    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                 wxListEventHandler(CompilerMainPageBase::OnLinkerOptionActivated), NULL, this);
-    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
-                                 wxListEventHandler(CompilerMainPageBase::OnLinkerOptionDeSelected), NULL, this);
-    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
-                                 wxListEventHandler(CompilerMainPageBase::OnLinkerOptionSelected), NULL, this);
-    m_buttonLinkerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                  wxCommandEventHandler(CompilerMainPageBase::OnNewLinkerOption), NULL, this);
-    m_buttonDeleteLinkerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                        wxCommandEventHandler(CompilerMainPageBase::OnDeleteLinkerOption), NULL, this);
-    m_dvListCtrlFileTemplates->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                       wxDataViewEventHandler(CompilerMainPageBase::OnFileTypeActivated), NULL, this);
-    m_buttonNewFileType->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                 wxCommandEventHandler(CompilerMainPageBase::OnNewFileType), NULL, this);
-    m_buttonDeleteFileType->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                    wxCommandEventHandler(CompilerMainPageBase::OnDeleteFileType), NULL, this);
-    m_dvListCtrlLinkType->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                  wxDataViewEventHandler(CompilerMainPageBase::OnLinkLineActivated), NULL, this);
-    m_checkBoxReadObjectsFromFile->Connect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnLinkerUseFileInput), NULL, this);
-    m_listSwitches->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                            wxListEventHandler(CompilerMainPageBase::OnItemActivated), NULL, this);
-    m_listSwitches->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnItemSelected),
-                            NULL, this);
-    m_textCtrlGlobalIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                         wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_button67->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnEditIncludePaths),
-                        NULL, this);
-    m_textCtrlGlobalLibPath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                     wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_button69->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnEditLibraryPaths),
-                        NULL, this);
-    m_textObjectExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify),
-                                   NULL, this);
-    m_textDependExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify),
-                                   NULL, this);
-    m_textPreprocessExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                       wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxGenerateDependenciesFiles->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                                 wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxObjectNameSameAsFileName->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                                wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_listBoxCompilers->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &CompilerMainPageBase::OnCompilerSelected, this);
+    m_listBoxCompilers->Bind(wxEVT_CONTEXT_MENU, &CompilerMainPageBase::OnContextMenu, this);
+    m_pgMgrTools->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnCustomEditorButtonClicked, this);
+    m_pgMgrTools->Bind(wxEVT_PG_CHANGED, &CompilerMainPageBase::OnValueChanged, this);
+    m_listErrPatterns->Bind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnErrItemActivated, this);
+    m_btnAddErrPattern->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnAddErrPattern, this);
+    m_btnDelErrPattern->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnDelErrPattern, this);
+    m_btnDelErrPattern->Bind(wxEVT_UPDATE_UI, &CompilerMainPageBase::OnErrorPatternSelectedUI, this);
+    m_btnUpdateErrPattern->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnUpdateErrPattern, this);
+    m_btnUpdateErrPattern->Bind(wxEVT_UPDATE_UI, &CompilerMainPageBase::OnErrorPatternSelectedUI, this);
+    m_listWarnPatterns->Bind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnWarnItemActivated, this);
+    m_btnAddWarnPattern->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnAddWarnPattern, this);
+    m_btnDelWarnPattern->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnDelWarnPattern, this);
+    m_btnDelWarnPattern->Bind(wxEVT_UPDATE_UI, &CompilerMainPageBase::OnWarningPatternSelectedUI, this);
+    m_btnUpdateWarnPattern->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnUpdateWarnPattern, this);
+    m_btnUpdateWarnPattern->Bind(wxEVT_UPDATE_UI, &CompilerMainPageBase::OnWarningPatternSelectedUI, this);
+    m_listCompilerOptions->Bind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnCompilerOptionActivated,
+                                this);
+    m_listCompilerOptions->Bind(wxEVT_COMMAND_LIST_ITEM_DESELECTED, &CompilerMainPageBase::OnCompilerOptionDeSelected,
+                                this);
+    m_listCompilerOptions->Bind(wxEVT_COMMAND_LIST_ITEM_SELECTED, &CompilerMainPageBase::OnCompilerOptionSelected,
+                                this);
+    m_buttonCompilerOption->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnNewCompilerOption, this);
+    m_buttonDeleteCompilerOption->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnDeleteCompilerOption,
+                                       this);
+    m_listLinkerOptions->Bind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnLinkerOptionActivated, this);
+    m_listLinkerOptions->Bind(wxEVT_COMMAND_LIST_ITEM_DESELECTED, &CompilerMainPageBase::OnLinkerOptionDeSelected,
+                              this);
+    m_listLinkerOptions->Bind(wxEVT_COMMAND_LIST_ITEM_SELECTED, &CompilerMainPageBase::OnLinkerOptionSelected, this);
+    m_buttonLinkerOption->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnNewLinkerOption, this);
+    m_buttonDeleteLinkerOption->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnDeleteLinkerOption, this);
+    m_dvListCtrlFileTemplates->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &CompilerMainPageBase::OnFileTypeActivated,
+                                    this);
+    m_buttonNewFileType->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnNewFileType, this);
+    m_buttonDeleteFileType->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnDeleteFileType, this);
+    m_dvListCtrlLinkType->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &CompilerMainPageBase::OnLinkLineActivated, this);
+    m_checkBoxReadObjectsFromFile->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CompilerMainPageBase::OnLinkerUseFileInput,
+                                        this);
+    m_listSwitches->Bind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnItemActivated, this);
+    m_listSwitches->Bind(wxEVT_COMMAND_LIST_ITEM_SELECTED, &CompilerMainPageBase::OnItemSelected, this);
+    m_textCtrlGlobalIncludePath->Bind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_button67->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnEditIncludePaths, this);
+    m_textCtrlGlobalLibPath->Bind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_button69->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnEditLibraryPaths, this);
+    m_textObjectExtension->Bind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_textDependExtension->Bind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_textPreprocessExtension->Bind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_checkBoxGenerateDependenciesFiles->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CompilerMainPageBase::OnCmdModify, this);
+    m_checkBoxObjectNameSameAsFileName->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CompilerMainPageBase::OnCmdModify, this);
 }
 
 CompilerMainPageBase::~CompilerMainPageBase()
 {
-    m_listBoxCompilers->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED,
-                                   wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
-    m_listBoxCompilers->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu),
-                                   NULL, this);
-    m_pgMgrTools->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                             wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
-    m_pgMgrTools->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilerMainPageBase::OnValueChanged), NULL,
-                             this);
-    m_listErrPatterns->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                  wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
-    m_btnAddErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                   wxCommandEventHandler(CompilerMainPageBase::OnBtnAddErrPattern), NULL, this);
-    m_btnDelErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                   wxCommandEventHandler(CompilerMainPageBase::OnBtnDelErrPattern), NULL, this);
-    m_btnDelErrPattern->Disconnect(wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
-    m_btnUpdateErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                      wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateErrPattern), NULL, this);
-    m_btnUpdateErrPattern->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
-    m_listWarnPatterns->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                   wxListEventHandler(CompilerMainPageBase::OnWarnItemActivated), NULL, this);
-    m_btnAddWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                    wxCommandEventHandler(CompilerMainPageBase::OnBtnAddWarnPattern), NULL, this);
-    m_btnDelWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                    wxCommandEventHandler(CompilerMainPageBase::OnBtnDelWarnPattern), NULL, this);
-    m_btnDelWarnPattern->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
-    m_btnUpdateWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                       wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateWarnPattern), NULL, this);
-    m_btnUpdateWarnPattern->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
-    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                      wxListEventHandler(CompilerMainPageBase::OnCompilerOptionActivated), NULL, this);
-    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
-                                      wxListEventHandler(CompilerMainPageBase::OnCompilerOptionDeSelected), NULL, this);
-    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
-                                      wxListEventHandler(CompilerMainPageBase::OnCompilerOptionSelected), NULL, this);
-    m_buttonCompilerOption->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                       wxCommandEventHandler(CompilerMainPageBase::OnNewCompilerOption), NULL, this);
-    m_buttonDeleteCompilerOption->Disconnect(
-        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteCompilerOption), NULL, this);
-    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                    wxListEventHandler(CompilerMainPageBase::OnLinkerOptionActivated), NULL, this);
-    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
-                                    wxListEventHandler(CompilerMainPageBase::OnLinkerOptionDeSelected), NULL, this);
-    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
-                                    wxListEventHandler(CompilerMainPageBase::OnLinkerOptionSelected), NULL, this);
-    m_buttonLinkerOption->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                     wxCommandEventHandler(CompilerMainPageBase::OnNewLinkerOption), NULL, this);
-    m_buttonDeleteLinkerOption->Disconnect(
-        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteLinkerOption), NULL, this);
-    m_dvListCtrlFileTemplates->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                          wxDataViewEventHandler(CompilerMainPageBase::OnFileTypeActivated), NULL,
+    m_listBoxCompilers->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &CompilerMainPageBase::OnCompilerSelected, this);
+    m_listBoxCompilers->Unbind(wxEVT_CONTEXT_MENU, &CompilerMainPageBase::OnContextMenu, this);
+    m_pgMgrTools->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnCustomEditorButtonClicked, this);
+    m_pgMgrTools->Unbind(wxEVT_PG_CHANGED, &CompilerMainPageBase::OnValueChanged, this);
+    m_listErrPatterns->Unbind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnErrItemActivated, this);
+    m_btnAddErrPattern->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnAddErrPattern, this);
+    m_btnDelErrPattern->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnDelErrPattern, this);
+    m_btnDelErrPattern->Unbind(wxEVT_UPDATE_UI, &CompilerMainPageBase::OnErrorPatternSelectedUI, this);
+    m_btnUpdateErrPattern->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnUpdateErrPattern, this);
+    m_btnUpdateErrPattern->Unbind(wxEVT_UPDATE_UI, &CompilerMainPageBase::OnErrorPatternSelectedUI, this);
+    m_listWarnPatterns->Unbind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnWarnItemActivated, this);
+    m_btnAddWarnPattern->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnAddWarnPattern, this);
+    m_btnDelWarnPattern->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnDelWarnPattern, this);
+    m_btnDelWarnPattern->Unbind(wxEVT_UPDATE_UI, &CompilerMainPageBase::OnWarningPatternSelectedUI, this);
+    m_btnUpdateWarnPattern->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnBtnUpdateWarnPattern, this);
+    m_btnUpdateWarnPattern->Unbind(wxEVT_UPDATE_UI, &CompilerMainPageBase::OnWarningPatternSelectedUI, this);
+    m_listCompilerOptions->Unbind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnCompilerOptionActivated,
+                                  this);
+    m_listCompilerOptions->Unbind(wxEVT_COMMAND_LIST_ITEM_DESELECTED, &CompilerMainPageBase::OnCompilerOptionDeSelected,
+                                  this);
+    m_listCompilerOptions->Unbind(wxEVT_COMMAND_LIST_ITEM_SELECTED, &CompilerMainPageBase::OnCompilerOptionSelected,
+                                  this);
+    m_buttonCompilerOption->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnNewCompilerOption, this);
+    m_buttonDeleteCompilerOption->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnDeleteCompilerOption,
+                                         this);
+    m_listLinkerOptions->Unbind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnLinkerOptionActivated,
+                                this);
+    m_listLinkerOptions->Unbind(wxEVT_COMMAND_LIST_ITEM_DESELECTED, &CompilerMainPageBase::OnLinkerOptionDeSelected,
+                                this);
+    m_listLinkerOptions->Unbind(wxEVT_COMMAND_LIST_ITEM_SELECTED, &CompilerMainPageBase::OnLinkerOptionSelected, this);
+    m_buttonLinkerOption->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnNewLinkerOption, this);
+    m_buttonDeleteLinkerOption->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnDeleteLinkerOption, this);
+    m_dvListCtrlFileTemplates->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &CompilerMainPageBase::OnFileTypeActivated,
+                                      this);
+    m_buttonNewFileType->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnNewFileType, this);
+    m_buttonDeleteFileType->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnDeleteFileType, this);
+    m_dvListCtrlLinkType->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &CompilerMainPageBase::OnLinkLineActivated,
+                                 this);
+    m_checkBoxReadObjectsFromFile->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CompilerMainPageBase::OnLinkerUseFileInput,
                                           this);
-    m_buttonNewFileType->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                    wxCommandEventHandler(CompilerMainPageBase::OnNewFileType), NULL, this);
-    m_buttonDeleteFileType->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                       wxCommandEventHandler(CompilerMainPageBase::OnDeleteFileType), NULL, this);
-    m_dvListCtrlLinkType->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                     wxDataViewEventHandler(CompilerMainPageBase::OnLinkLineActivated), NULL, this);
-    m_checkBoxReadObjectsFromFile->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnLinkerUseFileInput), NULL, this);
-    m_listSwitches->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                               wxListEventHandler(CompilerMainPageBase::OnItemActivated), NULL, this);
-    m_listSwitches->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
-                               wxListEventHandler(CompilerMainPageBase::OnItemSelected), NULL, this);
-    m_textCtrlGlobalIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                            wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_button67->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                           wxCommandEventHandler(CompilerMainPageBase::OnEditIncludePaths), NULL, this);
-    m_textCtrlGlobalLibPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                        wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_button69->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                           wxCommandEventHandler(CompilerMainPageBase::OnEditLibraryPaths), NULL, this);
-    m_textObjectExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                      wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_textDependExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                      wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_textPreprocessExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                          wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxGenerateDependenciesFiles->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxObjectNameSameAsFileName->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_listSwitches->Unbind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &CompilerMainPageBase::OnItemActivated, this);
+    m_listSwitches->Unbind(wxEVT_COMMAND_LIST_ITEM_SELECTED, &CompilerMainPageBase::OnItemSelected, this);
+    m_textCtrlGlobalIncludePath->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_button67->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnEditIncludePaths, this);
+    m_textCtrlGlobalLibPath->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_button69->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CompilerMainPageBase::OnEditLibraryPaths, this);
+    m_textObjectExtension->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_textDependExtension->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_textPreprocessExtension->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &CompilerMainPageBase::OnCmdModify, this);
+    m_checkBoxGenerateDependenciesFiles->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CompilerMainPageBase::OnCmdModify,
+                                                this);
+    m_checkBoxObjectNameSameAsFileName->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CompilerMainPageBase::OnCmdModify,
+                                               this);
 }
 
 EditCmpTemplateDialogBase::EditCmpTemplateDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -1066,19 +1017,19 @@ EditCmpTemplateDialogBase::EditCmpTemplateDialogBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("EditCmpTemplateDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 EditCmpTemplateDialogBase::~EditCmpTemplateDialogBase() {}
@@ -1125,8 +1076,8 @@ NewFileTemplateDialogBase::NewFileTemplateDialogBase(wxWindow* parent, wxWindowI
     flexGridSizer299->Add(m_staticText305, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceFileTypeArr;
-    m_choiceFileTypeArr.Add(wxT("Source"));
-    m_choiceFileTypeArr.Add(wxT("Resource"));
+    m_choiceFileTypeArr.Add(_("Source"));
+    m_choiceFileTypeArr.Add(_("Resource"));
     m_choiceFileType =
         new clThemedChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceFileTypeArr, 0);
     m_choiceFileType->SetSelection(0);
@@ -1190,19 +1141,19 @@ NewFileTemplateDialogBase::NewFileTemplateDialogBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("NewFileTemplateDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 NewFileTemplateDialogBase::~NewFileTemplateDialogBase() {}

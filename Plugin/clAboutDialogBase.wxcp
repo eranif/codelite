@@ -1142,7 +1142,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	[],
+													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -1179,11 +1179,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	""
+															"m_value":	"clThemedSTC"
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	""
+															"m_value":	"clThemedSTC.hpp"
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",
@@ -1376,7 +1376,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	[],
+													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -1413,11 +1413,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	""
+															"m_value":	"clThemedSTC"
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	""
+															"m_value":	"clThemedSTC.hpp"
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",

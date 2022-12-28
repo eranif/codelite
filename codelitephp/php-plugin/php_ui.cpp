@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxCF01InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_SIMPLE;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                          const wxSize& size, long style)
@@ -40,13 +52,11 @@ QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 QuickOutlineDlgBase::~QuickOutlineDlgBase() {}
@@ -137,35 +147,26 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_textCtrlPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnFolderSelected),
-                            NULL, this);
-    m_button49->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL,
-                        this);
-    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated),
-                            NULL, this);
-    m_button687->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnOK), NULL, this);
-    m_button687->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPWorkspaceBaseDlg::OnOKUI), NULL, this);
+    m_textCtrlPath->Bind(wxEVT_COMMAND_TEXT_UPDATED, &NewPHPWorkspaceBaseDlg::OnFolderSelected, this);
+    m_button49->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewPHPWorkspaceBaseDlg::OnBrowse, this);
+    m_textCtrlName->Bind(wxEVT_COMMAND_TEXT_UPDATED, &NewPHPWorkspaceBaseDlg::OnNameUpdated, this);
+    m_button687->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewPHPWorkspaceBaseDlg::OnOK, this);
+    m_button687->Bind(wxEVT_UPDATE_UI, &NewPHPWorkspaceBaseDlg::OnOKUI, this);
 }
 
 NewPHPWorkspaceBaseDlg::~NewPHPWorkspaceBaseDlg()
 {
-    m_textCtrlPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                               wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnFolderSelected), NULL, this);
-    m_button49->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL,
-                           this);
-    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated),
-                               NULL, this);
-    m_button687->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnOK), NULL,
-                            this);
-    m_button687->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPWorkspaceBaseDlg::OnOKUI), NULL, this);
+    m_textCtrlPath->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &NewPHPWorkspaceBaseDlg::OnFolderSelected, this);
+    m_button49->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewPHPWorkspaceBaseDlg::OnBrowse, this);
+    m_textCtrlName->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &NewPHPWorkspaceBaseDlg::OnNameUpdated, this);
+    m_button687->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewPHPWorkspaceBaseDlg::OnOK, this);
+    m_button687->Unbind(wxEVT_UPDATE_UI, &NewPHPWorkspaceBaseDlg::OnOKUI, this);
 }
 
 NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -238,13 +239,11 @@ NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 NewFileDlgBase::~NewFileDlgBase() {}
@@ -278,8 +277,9 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
 
     bSizer10->Add(m_textCtrlFilter, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrl =
+        new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                             wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     bSizer10->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -301,32 +301,24 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_textCtrlFilter->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenResourceDlgBase::OnKeyDown), NULL, this);
-    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenResourceDlgBase::OnFilterText),
-                              NULL, this);
-    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OpenResourceDlgBase::OnFilterEnter), NULL,
-                              this);
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(OpenResourceDlgBase::OnDVItemActivated), NULL, this);
+    m_textCtrlFilter->Bind(wxEVT_KEY_DOWN, &OpenResourceDlgBase::OnKeyDown, this);
+    m_textCtrlFilter->Bind(wxEVT_COMMAND_TEXT_UPDATED, &OpenResourceDlgBase::OnFilterText, this);
+    m_textCtrlFilter->Bind(wxEVT_COMMAND_TEXT_ENTER, &OpenResourceDlgBase::OnFilterEnter, this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OpenResourceDlgBase::OnDVItemActivated, this);
 }
 
 OpenResourceDlgBase::~OpenResourceDlgBase()
 {
-    m_textCtrlFilter->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenResourceDlgBase::OnKeyDown), NULL, this);
-    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenResourceDlgBase::OnFilterText),
-                                 NULL, this);
-    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OpenResourceDlgBase::OnFilterEnter),
-                                 NULL, this);
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(OpenResourceDlgBase::OnDVItemActivated), NULL, this);
+    m_textCtrlFilter->Unbind(wxEVT_KEY_DOWN, &OpenResourceDlgBase::OnKeyDown, this);
+    m_textCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &OpenResourceDlgBase::OnFilterText, this);
+    m_textCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_ENTER, &OpenResourceDlgBase::OnFilterEnter, this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OpenResourceDlgBase::OnDVItemActivated, this);
 }
 
 PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -412,7 +404,8 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     bSizer18->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_stcIncludePaths =
-        new wxStyledTextCtrl(m_panel11, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
+        new wxStyledTextCtrl(m_panel11, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)),
+                             wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcIncludePaths->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcIncludePaths->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -479,7 +472,8 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     m_textCtrCClIncludePath =
         new wxTextCtrl(m_panel15, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)),
-                       wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxTE_MULTILINE | wxTE_DONTWRAP);
+                       wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxTE_MULTILINE | wxTE_DONTWRAP |
+                           wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     m_textCtrCClIncludePath->SetToolTip(
         _("Paths added here will only be used for code completion and NOT during runtime.\nIf you want to add search "
           "paths for runtime (CLI mode only), Use the 'PHP CLI' tab"));
@@ -581,32 +575,24 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_buttonBrowseIncludePath->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                       wxCommandEventHandler(PHPSettingsBaseDlg::OnBrowseForIncludePath), NULL, this);
-    m_button15->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnAddCCPath), NULL,
-                        this);
-    m_textCtrCClIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                     wxCommandEventHandler(PHPSettingsBaseDlg::OnUpdateApplyUI), NULL, this);
-    m_button9->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnOK), NULL, this);
+    m_buttonBrowseIncludePath->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPSettingsBaseDlg::OnBrowseForIncludePath, this);
+    m_button15->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPSettingsBaseDlg::OnAddCCPath, this);
+    m_textCtrCClIncludePath->Bind(wxEVT_COMMAND_TEXT_UPDATED, &PHPSettingsBaseDlg::OnUpdateApplyUI, this);
+    m_button9->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPSettingsBaseDlg::OnOK, this);
 }
 
 PHPSettingsBaseDlg::~PHPSettingsBaseDlg()
 {
-    m_buttonBrowseIncludePath->Disconnect(
-        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnBrowseForIncludePath), NULL, this);
-    m_button15->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnAddCCPath), NULL,
-                           this);
-    m_textCtrCClIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                        wxCommandEventHandler(PHPSettingsBaseDlg::OnUpdateApplyUI), NULL, this);
-    m_button9->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnOK), NULL, this);
+    m_buttonBrowseIncludePath->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPSettingsBaseDlg::OnBrowseForIncludePath, this);
+    m_button15->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPSettingsBaseDlg::OnAddCCPath, this);
+    m_textCtrCClIncludePath->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &PHPSettingsBaseDlg::OnUpdateApplyUI, this);
+    m_button9->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPSettingsBaseDlg::OnOK, this);
 }
 
 PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -975,97 +961,62 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_choicebook1->Connect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,
-                           wxChoicebookEventHandler(PHPProjectSettingsBase::OnPageChanged), NULL, this);
-    m_filePickerPHPExe->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
-                                wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPExecChanged), NULL, this);
-    m_filePickerPhpIni->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
-                                wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPIniSelected), NULL, this);
-    m_filePickerIndex->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
-                               wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnIndexFileSelected), NULL, this);
-    m_dirPickerWorkingDirectory->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED,
-                                         wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnWorkingDirectoryChanged),
-                                         NULL, this);
-    m_textCtrlProgramArgs->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                   wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_checkBoxPauseWhenExecutionEnds->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                              wxCommandEventHandler(PHPProjectSettingsBase::OnPauseWhenExeTerminates),
-                                              NULL, this);
-    m_textCtrlWebSiteURL->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                  wxCommandEventHandler(PHPProjectSettingsBase::OnProjectURLChanged), NULL, this);
-    m_checkBoxSystemBrowser->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                     wxCommandEventHandler(PHPProjectSettingsBase::OnUseSystemBrowser), NULL, this);
-    m_button17->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddIncludePath),
-                        NULL, this);
-    m_textCtrlPHPIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                      wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_pgMgrView->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PHPProjectSettingsBase::OnPgmgrviewPgChanged),
-                         NULL, this);
-    m_dvListCtrlFileMapping->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                     wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingMenu), NULL, this);
-    m_dvListCtrlFileMapping->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                     wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingItemActivated), NULL,
-                                     this);
-    m_button15->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddCCPath), NULL,
-                        this);
-    m_textCtrlCCIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                     wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_button12->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnOK), NULL, this);
-    m_button14->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnApply), NULL,
-                        this);
-    m_button14->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPProjectSettingsBase::OnApplyUI), NULL, this);
+    m_choicebook1->Bind(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, &PHPProjectSettingsBase::OnPageChanged, this);
+    m_filePickerPHPExe->Bind(wxEVT_COMMAND_FILEPICKER_CHANGED, &PHPProjectSettingsBase::OnPHPExecChanged, this);
+    m_filePickerPhpIni->Bind(wxEVT_COMMAND_FILEPICKER_CHANGED, &PHPProjectSettingsBase::OnPHPIniSelected, this);
+    m_filePickerIndex->Bind(wxEVT_COMMAND_FILEPICKER_CHANGED, &PHPProjectSettingsBase::OnIndexFileSelected, this);
+    m_dirPickerWorkingDirectory->Bind(wxEVT_COMMAND_DIRPICKER_CHANGED,
+                                      &PHPProjectSettingsBase::OnWorkingDirectoryChanged, this);
+    m_textCtrlProgramArgs->Bind(wxEVT_COMMAND_TEXT_UPDATED, &PHPProjectSettingsBase::OnUpdateApplyUI, this);
+    m_checkBoxPauseWhenExecutionEnds->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                           &PHPProjectSettingsBase::OnPauseWhenExeTerminates, this);
+    m_textCtrlWebSiteURL->Bind(wxEVT_COMMAND_TEXT_UPDATED, &PHPProjectSettingsBase::OnProjectURLChanged, this);
+    m_checkBoxSystemBrowser->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &PHPProjectSettingsBase::OnUseSystemBrowser, this);
+    m_button17->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPProjectSettingsBase::OnAddIncludePath, this);
+    m_textCtrlPHPIncludePath->Bind(wxEVT_COMMAND_TEXT_UPDATED, &PHPProjectSettingsBase::OnUpdateApplyUI, this);
+    m_pgMgrView->Bind(wxEVT_PG_CHANGED, &PHPProjectSettingsBase::OnPgmgrviewPgChanged, this);
+    m_dvListCtrlFileMapping->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &PHPProjectSettingsBase::OnFileMappingMenu,
+                                  this);
+    m_dvListCtrlFileMapping->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                  &PHPProjectSettingsBase::OnFileMappingItemActivated, this);
+    m_button15->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPProjectSettingsBase::OnAddCCPath, this);
+    m_textCtrlCCIncludePath->Bind(wxEVT_COMMAND_TEXT_UPDATED, &PHPProjectSettingsBase::OnUpdateApplyUI, this);
+    m_button12->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPProjectSettingsBase::OnOK, this);
+    m_button14->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPProjectSettingsBase::OnApply, this);
+    m_button14->Bind(wxEVT_UPDATE_UI, &PHPProjectSettingsBase::OnApplyUI, this);
 }
 
 PHPProjectSettingsBase::~PHPProjectSettingsBase()
 {
-    m_choicebook1->Disconnect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,
-                              wxChoicebookEventHandler(PHPProjectSettingsBase::OnPageChanged), NULL, this);
-    m_filePickerPHPExe->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
-                                   wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPExecChanged), NULL, this);
-    m_filePickerPhpIni->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
-                                   wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPIniSelected), NULL, this);
-    m_filePickerIndex->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
-                                  wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnIndexFileSelected), NULL, this);
-    m_dirPickerWorkingDirectory->Disconnect(
-        wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnWorkingDirectoryChanged),
-        NULL, this);
-    m_textCtrlProgramArgs->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                      wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_checkBoxPauseWhenExecutionEnds->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnPauseWhenExeTerminates), NULL,
-        this);
-    m_textCtrlWebSiteURL->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                     wxCommandEventHandler(PHPProjectSettingsBase::OnProjectURLChanged), NULL, this);
-    m_checkBoxSystemBrowser->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                        wxCommandEventHandler(PHPProjectSettingsBase::OnUseSystemBrowser), NULL, this);
-    m_button17->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                           wxCommandEventHandler(PHPProjectSettingsBase::OnAddIncludePath), NULL, this);
-    m_textCtrlPHPIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                         wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_pgMgrView->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PHPProjectSettingsBase::OnPgmgrviewPgChanged),
-                            NULL, this);
-    m_dvListCtrlFileMapping->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                        wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingMenu), NULL, this);
-    m_dvListCtrlFileMapping->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                        wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingItemActivated),
-                                        NULL, this);
-    m_button15->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddCCPath),
-                           NULL, this);
-    m_textCtrlCCIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                        wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_button12->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnOK), NULL,
-                           this);
-    m_button14->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnApply), NULL,
-                           this);
-    m_button14->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPProjectSettingsBase::OnApplyUI), NULL, this);
+    m_choicebook1->Unbind(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, &PHPProjectSettingsBase::OnPageChanged, this);
+    m_filePickerPHPExe->Unbind(wxEVT_COMMAND_FILEPICKER_CHANGED, &PHPProjectSettingsBase::OnPHPExecChanged, this);
+    m_filePickerPhpIni->Unbind(wxEVT_COMMAND_FILEPICKER_CHANGED, &PHPProjectSettingsBase::OnPHPIniSelected, this);
+    m_filePickerIndex->Unbind(wxEVT_COMMAND_FILEPICKER_CHANGED, &PHPProjectSettingsBase::OnIndexFileSelected, this);
+    m_dirPickerWorkingDirectory->Unbind(wxEVT_COMMAND_DIRPICKER_CHANGED,
+                                        &PHPProjectSettingsBase::OnWorkingDirectoryChanged, this);
+    m_textCtrlProgramArgs->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &PHPProjectSettingsBase::OnUpdateApplyUI, this);
+    m_checkBoxPauseWhenExecutionEnds->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                             &PHPProjectSettingsBase::OnPauseWhenExeTerminates, this);
+    m_textCtrlWebSiteURL->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &PHPProjectSettingsBase::OnProjectURLChanged, this);
+    m_checkBoxSystemBrowser->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &PHPProjectSettingsBase::OnUseSystemBrowser, this);
+    m_button17->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPProjectSettingsBase::OnAddIncludePath, this);
+    m_textCtrlPHPIncludePath->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &PHPProjectSettingsBase::OnUpdateApplyUI, this);
+    m_pgMgrView->Unbind(wxEVT_PG_CHANGED, &PHPProjectSettingsBase::OnPgmgrviewPgChanged, this);
+    m_dvListCtrlFileMapping->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                    &PHPProjectSettingsBase::OnFileMappingMenu, this);
+    m_dvListCtrlFileMapping->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                    &PHPProjectSettingsBase::OnFileMappingItemActivated, this);
+    m_button15->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPProjectSettingsBase::OnAddCCPath, this);
+    m_textCtrlCCIncludePath->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &PHPProjectSettingsBase::OnUpdateApplyUI, this);
+    m_button12->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPProjectSettingsBase::OnOK, this);
+    m_button14->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PHPProjectSettingsBase::OnApply, this);
+    m_button14->Unbind(wxEVT_UPDATE_UI, &PHPProjectSettingsBase::OnApplyUI, this);
 }
 
 FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -1136,21 +1087,16 @@ FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileMappingDlgBase::OnOkUI), NULL, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &FileMappingDlgBase::OnOkUI, this);
 }
 
-FileMappingDlgBase::~FileMappingDlgBase()
-{
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileMappingDlgBase::OnOkUI), NULL, this);
-}
+FileMappingDlgBase::~FileMappingDlgBase() { m_buttonOK->Unbind(wxEVT_UPDATE_UI, &FileMappingDlgBase::OnOkUI, this); }
 
 PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                            long style)
@@ -1190,17 +1136,14 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL, this);
-    m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                            wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
+    m_treeCtrlView->Bind(wxEVT_COMMAND_TREE_ITEM_MENU, &PHPWorkspaceViewBase::OnMenu, this);
+    m_treeCtrlView->Bind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &PHPWorkspaceViewBase::OnItemActivated, this);
 }
 
 PHPWorkspaceViewBase::~PHPWorkspaceViewBase()
 {
-    m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL,
-                               this);
-    m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                               wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
+    m_treeCtrlView->Unbind(wxEVT_COMMAND_TREE_ITEM_MENU, &PHPWorkspaceViewBase::OnMenu, this);
+    m_treeCtrlView->Unbind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &PHPWorkspaceViewBase::OnItemActivated, this);
 }
 
 PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -1275,23 +1218,20 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                    wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
-    m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                    wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
-    m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                     wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL, this);
+    m_dvListCtrlStackTrace->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &PHPDebugPaneBase::OnCallStackItemActivated,
+                                 this);
+    m_dvListCtrlStackTrace->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &PHPDebugPaneBase::OnCallStackMenu, this);
+    m_dvListCtrlBreakpoints->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &PHPDebugPaneBase::OnBreakpointItemActivated,
+                                  this);
 }
 
 PHPDebugPaneBase::~PHPDebugPaneBase()
 {
-    m_dvListCtrlStackTrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                       wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
-    m_dvListCtrlStackTrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                       wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
-    m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                        wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL,
-                                        this);
+    m_dvListCtrlStackTrace->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &PHPDebugPaneBase::OnCallStackItemActivated,
+                                   this);
+    m_dvListCtrlStackTrace->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &PHPDebugPaneBase::OnCallStackMenu, this);
+    m_dvListCtrlBreakpoints->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &PHPDebugPaneBase::OnBreakpointItemActivated,
+                                    this);
 }
 
 LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -1501,29 +1441,22 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnEnter), NULL, this);
-    m_buttonSend->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSend), NULL, this);
-    m_buttonSend->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendUI), NULL, this);
-    m_textCtrlExpressionXdebug->Connect(wxEVT_COMMAND_TEXT_ENTER,
-                                        wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
-    m_buttonSendXdebug->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand),
-                                NULL, this);
-    m_buttonSendXdebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendXDebugCommandUI), NULL,
-                                this);
+    m_textCtrlExpression->Bind(wxEVT_COMMAND_TEXT_ENTER, &EvalPaneBase::OnEnter, this);
+    m_buttonSend->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EvalPaneBase::OnSend, this);
+    m_buttonSend->Bind(wxEVT_UPDATE_UI, &EvalPaneBase::OnSendUI, this);
+    m_textCtrlExpressionXdebug->Bind(wxEVT_COMMAND_TEXT_ENTER, &EvalPaneBase::OnSendXDebugCommand, this);
+    m_buttonSendXdebug->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EvalPaneBase::OnSendXDebugCommand, this);
+    m_buttonSendXdebug->Bind(wxEVT_UPDATE_UI, &EvalPaneBase::OnSendXDebugCommandUI, this);
 }
 
 EvalPaneBase::~EvalPaneBase()
 {
-    m_textCtrlExpression->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnEnter), NULL,
-                                     this);
-    m_buttonSend->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSend), NULL, this);
-    m_buttonSend->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendUI), NULL, this);
-    m_textCtrlExpressionXdebug->Disconnect(wxEVT_COMMAND_TEXT_ENTER,
-                                           wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
-    m_buttonSendXdebug->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                   wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
-    m_buttonSendXdebug->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendXDebugCommandUI), NULL,
-                                   this);
+    m_textCtrlExpression->Unbind(wxEVT_COMMAND_TEXT_ENTER, &EvalPaneBase::OnEnter, this);
+    m_buttonSend->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &EvalPaneBase::OnSend, this);
+    m_buttonSend->Unbind(wxEVT_UPDATE_UI, &EvalPaneBase::OnSendUI, this);
+    m_textCtrlExpressionXdebug->Unbind(wxEVT_COMMAND_TEXT_ENTER, &EvalPaneBase::OnSendXDebugCommand, this);
+    m_buttonSendXdebug->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &EvalPaneBase::OnSendXDebugCommand, this);
+    m_buttonSendXdebug->Unbind(wxEVT_UPDATE_UI, &EvalPaneBase::OnSendXDebugCommandUI, this);
 }
 
 PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -1550,8 +1483,8 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     this->SetSizer(boxSizer359);
 
     wxArrayString m_choiceArr;
-    m_choiceArr.Add(wxT("Run / Debug URL"));
-    m_choiceArr.Add(wxT("Run / Debug with PHP command line"));
+    m_choiceArr.Add(_("Run / Debug URL"));
+    m_choiceArr.Add(_("Run / Debug with PHP command line"));
     m_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceArr, 0);
     m_choice->SetToolTip(_("Select the debugging method"));
     m_choice->SetSelection(0);
@@ -1661,32 +1594,24 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_choice->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged),
-                      NULL, this);
-    m_textCtrlScriptToDebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI),
-                                     NULL, this);
-    m_checkBoxDebugActiveEditor->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                         wxCommandEventHandler(PHPDebugStartDlgBase::OnUseActiveEditor), NULL, this);
-    m_button363->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnOkUI), NULL, this);
+    m_choice->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &PHPDebugStartDlgBase::OnDebugMethodChanged, this);
+    m_textCtrlScriptToDebug->Bind(wxEVT_UPDATE_UI, &PHPDebugStartDlgBase::OnScriptToDebugUI, this);
+    m_checkBoxDebugActiveEditor->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &PHPDebugStartDlgBase::OnUseActiveEditor, this);
+    m_button363->Bind(wxEVT_UPDATE_UI, &PHPDebugStartDlgBase::OnOkUI, this);
 }
 
 PHPDebugStartDlgBase::~PHPDebugStartDlgBase()
 {
-    m_choice->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                         wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
-    m_textCtrlScriptToDebug->Disconnect(wxEVT_UPDATE_UI,
-                                        wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
-    m_checkBoxDebugActiveEditor->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                            wxCommandEventHandler(PHPDebugStartDlgBase::OnUseActiveEditor), NULL, this);
-    m_button363->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnOkUI), NULL, this);
+    m_choice->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &PHPDebugStartDlgBase::OnDebugMethodChanged, this);
+    m_textCtrlScriptToDebug->Unbind(wxEVT_UPDATE_UI, &PHPDebugStartDlgBase::OnScriptToDebugUI, this);
+    m_checkBoxDebugActiveEditor->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &PHPDebugStartDlgBase::OnUseActiveEditor, this);
+    m_button363->Unbind(wxEVT_UPDATE_UI, &PHPDebugStartDlgBase::OnOkUI, this);
 }
 
 NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -1831,8 +1756,8 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     flexGridSizer3152->Add(m_staticText3173, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceProjectTypeArr;
-    m_choiceProjectTypeArr.Add(wxT("Run project as command line"));
-    m_choiceProjectTypeArr.Add(wxT("Run project as web site"));
+    m_choiceProjectTypeArr.Add(_("Run project as command line"));
+    m_choiceProjectTypeArr.Add(_("Run project as web site"));
     m_choiceProjectType = new wxChoice(m_wizardPageFinalize, wxID_ANY, wxDefaultPosition,
                                        wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1, -1)), m_choiceProjectTypeArr, 0);
     m_choiceProjectType->SetToolTip(_("Select the project type from the list"));
@@ -1923,42 +1848,30 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewPHPProjectWizardBase::OnFinish), NULL, this);
-    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL,
-                  this);
-    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated),
-                            NULL, this);
-    m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED,
-                             wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
-    m_checkBoxSeparateFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                      wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL,
-                                      this);
-    m_button651->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                         wxCommandEventHandler(NewPHPProjectWizardBase::OnBrowseForCCFolder), NULL, this);
+    this->Bind(wxEVT_WIZARD_FINISHED, &NewPHPProjectWizardBase::OnFinish, this);
+    this->Bind(wxEVT_WIZARD_PAGE_CHANGING, &NewPHPProjectWizardBase::OnPageChanging, this);
+    m_textCtrlName->Bind(wxEVT_COMMAND_TEXT_UPDATED, &NewPHPProjectWizardBase::OnNameUpdated, this);
+    m_dirPickerPath->Bind(wxEVT_COMMAND_DIRPICKER_CHANGED, &NewPHPProjectWizardBase::OnDirSelected, this);
+    m_checkBoxSeparateFolder->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &NewPHPProjectWizardBase::OnCheckSeparateFolder,
+                                   this);
+    m_button651->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewPHPProjectWizardBase::OnBrowseForCCFolder, this);
 }
 
 NewPHPProjectWizardBase::~NewPHPProjectWizardBase()
 {
-    this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewPHPProjectWizardBase::OnFinish), NULL, this);
-    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL,
-                     this);
-    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                               wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated), NULL, this);
-    m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED,
-                                wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
-    m_checkBoxSeparateFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                         wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL,
-                                         this);
-    m_button651->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(NewPHPProjectWizardBase::OnBrowseForCCFolder), NULL, this);
+    this->Unbind(wxEVT_WIZARD_FINISHED, &NewPHPProjectWizardBase::OnFinish, this);
+    this->Unbind(wxEVT_WIZARD_PAGE_CHANGING, &NewPHPProjectWizardBase::OnPageChanging, this);
+    m_textCtrlName->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &NewPHPProjectWizardBase::OnNameUpdated, this);
+    m_dirPickerPath->Unbind(wxEVT_COMMAND_DIRPICKER_CHANGED, &NewPHPProjectWizardBase::OnDirSelected, this);
+    m_checkBoxSeparateFolder->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &NewPHPProjectWizardBase::OnCheckSeparateFolder,
+                                     this);
+    m_button651->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewPHPProjectWizardBase::OnBrowseForCCFolder, this);
 }
 
 PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -2138,24 +2051,20 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnPageChanging), NULL,
-                  this);
-    this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnFinished), NULL, this);
+    this->Bind(wxEVT_WIZARD_PAGE_CHANGING, &PHPXDebugSetupWizardBase::OnPageChanging, this);
+    this->Bind(wxEVT_WIZARD_FINISHED, &PHPXDebugSetupWizardBase::OnFinished, this);
 }
 
 PHPXDebugSetupWizardBase::~PHPXDebugSetupWizardBase()
 {
-    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnPageChanging), NULL,
-                     this);
-    this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnFinished), NULL, this);
+    this->Unbind(wxEVT_WIZARD_PAGE_CHANGING, &PHPXDebugSetupWizardBase::OnPageChanging, this);
+    this->Unbind(wxEVT_WIZARD_FINISHED, &PHPXDebugSetupWizardBase::OnFinished, this);
 }
 
 PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -2232,13 +2141,11 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 PHPSettersGettersDialogBase::~PHPSettersGettersDialogBase() {}

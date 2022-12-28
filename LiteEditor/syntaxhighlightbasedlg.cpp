@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxCrafterqEa5vvInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_SIMPLE;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
                                                const wxPoint& pos, const wxSize& size, long style)
@@ -145,8 +157,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     fgSizer4->Add(m_choiceGlobalTheme, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcPreview =
-        new wxStyledTextCtrl(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, 150)), 0);
+    m_stcPreview = new clThemedSTC(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, 150)),
+                                   wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcPreview->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcPreview->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -186,7 +198,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_stcPreview->SetMinSize(wxSize(-1, 150));
 
     m_collPane193 = new wxCollapsiblePane(m_panel171, wxID_ANY, _("Customise colours per language"), wxDefaultPosition,
-                                          wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxTRANSPARENT_WINDOW);
+                                          wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
+                                          wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer173->Add(m_collPane193, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -194,9 +207,9 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_collPane193->GetPane()->SetSizer(boxSizer21);
 
     wxArrayString m_listBoxArr;
-    m_listBox =
-        new wxListBox(m_collPane193->GetPane(), wxID_ANY, wxDefaultPosition,
-                      wxDLG_UNIT(m_collPane193->GetPane(), wxSize(-1, -1)), m_listBoxArr, wxLB_SORT | wxLB_SINGLE);
+    m_listBox = new wxListBox(m_collPane193->GetPane(), wxID_ANY, wxDefaultPosition,
+                              wxDLG_UNIT(m_collPane193->GetPane(), wxSize(-1, -1)), m_listBoxArr,
+                              wxLB_SORT | wxLB_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer21->Add(m_listBox, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -294,9 +307,9 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     bSizer51->Add(bSizer8, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_propertiesArr;
-    m_properties =
-        new wxListBox(m_panelCustomize, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
-                      m_propertiesArr, wxLB_SORT | wxLB_SINGLE);
+    m_properties = new wxListBox(m_panelCustomize, wxID_ANY, wxDefaultPosition,
+                                 wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), m_propertiesArr,
+                                 wxLB_SORT | wxLB_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     bSizer8->Add(m_properties, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

@@ -108,7 +108,7 @@ public:
      * \param parent parent window for this pane
      * \param caption the caption
      */
-    OutputPane(wxWindow* parent, const wxString& caption);
+    OutputPane(wxWindow* parent, const wxString& caption, long style);
 
     /**
      * @brief save the tab order

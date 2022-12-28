@@ -1194,7 +1194,12 @@ void clMainFrame::CreateGUIControls()
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BUTTON_SIZE, GetBestXButtonSize(this));
+
+#if defined(__WXMSW__)
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
+#else
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
+#endif
 
     // add menu bar
 #if !wxUSE_NATIVE_MENUBAR
@@ -1265,7 +1270,8 @@ void clMainFrame::CreateGUIControls()
 
     // Wrap the mainbook with a wxPanel
     // We do this so we can place the find bar under the main book
-    wxPanel* container = new wxPanel(m_mainPanel);
+    long container_style = wxBORDER_NONE | wxTAB_TRAVERSAL;
+    wxPanel* container = new wxPanel(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, container_style);
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
         e.Skip();

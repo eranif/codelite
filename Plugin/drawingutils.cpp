@@ -398,12 +398,15 @@ wxBrush DrawingUtils::GetStippleBrush()
     wxMemoryDC memDC;
 #ifdef __WXMSW__
     wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxBitmap bmpStipple(3, 3);
+    wxColour lightPen = bgColour.ChangeLightness(105);
+    wxColour darkPen = clSystemSettings::Get().SelectLightDark(bgColour.ChangeLightness(95), *wxBLACK);
 #else
     wxColour bgColour = clSystemSettings::GetDefaultPanelColour();
-#endif
     wxBitmap bmpStipple(3, 3);
     wxColour lightPen = bgColour.ChangeLightness(105);
     wxColour darkPen = bgColour.ChangeLightness(95);
+#endif
 
     memDC.SelectObject(bmpStipple);
     memDC.SetBrush(bgColour);

@@ -22,7 +22,14 @@ bool clScrolledPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
 {
 #if defined(__WXMSW__)
     // avoid assert
-    style = wxBORDER_SIMPLE;
+    if(wxSystemSettings::GetAppearance().IsDark()) {
+        if(style & wxBORDER_STATIC) {
+            style &= ~wxBORDER_STATIC;
+        }
+    } else {
+        style &= ~wxBORDER_MASK;
+        style |= wxBORDER_STATIC;
+    }
 #endif
     if(!wxWindow::Create(parent, id, pos, size, style)) {
         return false;

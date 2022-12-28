@@ -17,17 +17,18 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
-#include <wx/notebook.h>
-#include <wx/imaglist.h>
 #include <wx/statbox.h>
-#include <wx/checkbox.h>
-#include <wx/clrpicker.h>
-#include <wx/stattext.h>
-#include <wx/fontpicker.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/stattext.h>
+#include <wx/clrpicker.h>
+#include <wx/checkbox.h>
+#include <wx/fontpicker.h>
 #include <wx/stc/stc.h>
+#include <wx/collpane.h>
 #include <wx/listbox.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
 #include <wx/textctrl.h>
 #include <wx/statline.h>
 #include <wx/button.h>
@@ -54,10 +55,7 @@ class SyntaxHighlightBaseDlg : public wxDialog
 protected:
     wxPanel* m_panel171;
     wxToolBar* m_toolbar;
-    wxNotebook* m_notebook;
-    wxPanel* m_panelGlobalColours;
-    wxCheckBox* m_cbUseCustomBaseColour;
-    wxColourPickerCtrl* m_colourPickerBaseColour;
+    wxChoice* m_choiceAppearance;
     wxStaticText* m_staticText9;
     wxColourPickerCtrl* m_colourPickerSelTextBgColour;
     wxStaticText* m_staticText94;
@@ -69,7 +67,7 @@ protected:
     wxStaticText* m_staticText155;
     wxChoice* m_choiceGlobalTheme;
     wxStyledTextCtrl* m_stcPreview;
-    wxPanel* m_panelSyntaxHighlight;
+    wxCollapsiblePane* m_collPane193;
     wxListBox* m_listBox;
     wxPanel* m_panel25;
     wxNotebook* m_notebook2;
@@ -105,10 +103,7 @@ protected:
     wxButton* m_buttonApply;
 
 protected:
-    virtual void OnUseCustomBaseColour(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseCustomBaseColourUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnUseCustomColourUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCustomBaseColourPIcked(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnCodeLiteAppearance(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelTextChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnUseCustomFgTextColour(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTextSelFgUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -136,8 +131,7 @@ protected:
 
 public:
     wxToolBar* GetToolbar() { return m_toolbar; }
-    wxCheckBox* GetCbUseCustomBaseColour() { return m_cbUseCustomBaseColour; }
-    wxColourPickerCtrl* GetColourPickerBaseColour() { return m_colourPickerBaseColour; }
+    wxChoice* GetChoiceAppearance() { return m_choiceAppearance; }
     wxStaticText* GetStaticText9() { return m_staticText9; }
     wxColourPickerCtrl* GetColourPickerSelTextBgColour() { return m_colourPickerSelTextBgColour; }
     wxStaticText* GetStaticText94() { return m_staticText94; }
@@ -149,7 +143,6 @@ public:
     wxStaticText* GetStaticText155() { return m_staticText155; }
     wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
     wxStyledTextCtrl* GetStcPreview() { return m_stcPreview; }
-    wxPanel* GetPanelGlobalColours() { return m_panelGlobalColours; }
     wxListBox* GetListBox() { return m_listBox; }
     wxStaticText* GetStaticText70() { return m_staticText70; }
     wxChoice* GetChoiceLexerThemes() { return m_choiceLexerThemes; }
@@ -179,8 +172,7 @@ public:
     wxPanel* GetPanelCustomize() { return m_panelCustomize; }
     wxNotebook* GetNotebook2() { return m_notebook2; }
     wxPanel* GetPanel25() { return m_panel25; }
-    wxPanel* GetPanelSyntaxHighlight() { return m_panelSyntaxHighlight; }
-    wxNotebook* GetNotebook() { return m_notebook; }
+    wxCollapsiblePane* GetCollPane193() { return m_collPane193; }
     wxPanel* GetPanel171() { return m_panel171; }
     SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"),
                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),

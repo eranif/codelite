@@ -8,13 +8,6 @@
 
 class WXDLLIMPEXP_SDK clThemedSplitterWindow : public wxSplitterWindow
 {
-protected:
-    void OnPaint(wxPaintEvent& event);
-    void OnEraseBg(wxEraseEvent& event);
-    void DoDrawSash(wxDC& dc);
-    void DrawSash(wxDC& dc);
-    void OnSysColoursChanged(clCommandEvent& event);
-
 public:
     clThemedSplitterWindow() {}
     clThemedSplitterWindow(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

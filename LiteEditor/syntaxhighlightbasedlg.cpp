@@ -47,51 +47,24 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     boxSizer173->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_notebook =
-        new wxNotebook(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebook->SetName(wxT("m_notebook"));
+    wxStaticBoxSizer* staticBoxSizer190 =
+        new wxStaticBoxSizer(new wxStaticBox(m_panel171, wxID_ANY, _("CodeLite appearance:")), wxVERTICAL);
 
-    boxSizer173->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer173->Add(staticBoxSizer190, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelGlobalColours =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_panelGlobalColours->SetToolTip(_("Set global colours and fonts"));
-    m_notebook->AddPage(m_panelGlobalColours, _("General"), true);
+    wxArrayString m_choiceAppearanceArr;
+    m_choiceAppearanceArr.Add(_("System default"));
+    m_choiceAppearanceArr.Add(_("Force dark"));
+    m_choiceAppearance = new wxChoice(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
+                                      m_choiceAppearanceArr, 0);
+    m_choiceAppearance->SetSelection(0);
 
-    wxBoxSizer* boxSizer82 = new wxBoxSizer(wxVERTICAL);
-    m_panelGlobalColours->SetSizer(boxSizer82);
-
-    wxStaticBoxSizer* staticBoxSizer179 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Editor Colours")), wxVERTICAL);
-
-    boxSizer82->Add(staticBoxSizer179, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxFlexGridSizer* flexGridSizer181 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer181->SetFlexibleDirection(wxBOTH);
-    flexGridSizer181->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer181->AddGrowableCol(1);
-
-    staticBoxSizer179->Add(flexGridSizer181, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_cbUseCustomBaseColour = new wxCheckBox(m_panelGlobalColours, wxID_ANY, _("Use custom base colour:"),
-                                             wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
-    m_cbUseCustomBaseColour->SetValue(true);
-
-    flexGridSizer181->Add(m_cbUseCustomBaseColour, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_colourPickerBaseColour =
-        new wxColourPickerCtrl(m_panelGlobalColours, wxID_ANY, *wxBLACK, wxDefaultPosition,
-                               wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), wxCLRP_DEFAULT_STYLE);
-    m_colourPickerBaseColour->SetToolTip(
-        _("By default, CodeLite uses the current desktop theme to build the colour for the various\ncontrols. You can "
-          "override this by choosing a different colour here"));
-
-    flexGridSizer181->Add(m_colourPickerBaseColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    staticBoxSizer190->Add(m_choiceAppearance, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer188 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Text Selection")), wxVERTICAL);
+        new wxStaticBoxSizer(new wxStaticBox(m_panel171, wxID_ANY, _("Text Selection")), wxVERTICAL);
 
-    boxSizer82->Add(staticBoxSizer188, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer173->Add(staticBoxSizer188, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer3->SetFlexibleDirection(wxBOTH);
@@ -100,47 +73,45 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     staticBoxSizer188->Add(fgSizer3, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText9 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Selected Text Background Colour:"),
-                                     wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+    m_staticText9 = new wxStaticText(m_panel171, wxID_ANY, _("Selected Text Background Colour:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
 
     fgSizer3->Add(m_staticText9, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_colourPickerSelTextBgColour =
-        new wxColourPickerCtrl(m_panelGlobalColours, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT),
-                               wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)),
-                               wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+    m_colourPickerSelTextBgColour = new wxColourPickerCtrl(
+        m_panel171, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT), wxDefaultPosition,
+        wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
 
     fgSizer3->Add(m_colourPickerSelTextBgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText94 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Use Custom Selection Foreground Colour:"),
-                                      wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+    m_staticText94 = new wxStaticText(m_panel171, wxID_ANY, _("Use Custom Selection Foreground Colour:"),
+                                      wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
 
     fgSizer3->Add(m_staticText94, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
 
-    m_checkBoxCustomSelectionFgColour = new wxCheckBox(m_panelGlobalColours, wxID_ANY, wxT(""), wxDefaultPosition,
-                                                       wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+    m_checkBoxCustomSelectionFgColour =
+        new wxCheckBox(m_panel171, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
     m_checkBoxCustomSelectionFgColour->SetValue(false);
     m_checkBoxCustomSelectionFgColour->SetToolTip(
         _("You can choose to override the default selection colouring by enabling this checkbox"));
 
     fgSizer3->Add(m_checkBoxCustomSelectionFgColour, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
-    m_staticText84 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Selected Text Foreground Colour:"),
-                                      wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+    m_staticText84 = new wxStaticText(m_panel171, wxID_ANY, _("Selected Text Foreground Colour:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
 
     fgSizer3->Add(m_staticText84, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_colourPickerSelTextFgColour =
-        new wxColourPickerCtrl(m_panelGlobalColours, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT),
-                               wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)),
-                               wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+    m_colourPickerSelTextFgColour = new wxColourPickerCtrl(
+        m_panel171, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT), wxDefaultPosition,
+        wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
 
     fgSizer3->Add(m_colourPickerSelTextFgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer182 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Syntax Highlight")), wxVERTICAL);
+        new wxStaticBoxSizer(new wxStaticBox(m_panel171, wxID_ANY, _("Syntax Highlight")), wxVERTICAL);
 
-    boxSizer82->Add(staticBoxSizer182, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer173->Add(staticBoxSizer182, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection(wxBOTH);
@@ -149,33 +120,33 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     staticBoxSizer182->Add(fgSizer4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText159 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Global font:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+    m_staticText159 = new wxStaticText(m_panel171, wxID_ANY, _("Global font:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
 
     fgSizer4->Add(m_staticText159, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_fontPickerGlobal = new wxFontPickerCtrl(m_panelGlobalColours, wxID_ANY, wxNullFont, wxDefaultPosition,
-                                              wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), wxFNTP_DEFAULT_STYLE);
+    m_fontPickerGlobal = new wxFontPickerCtrl(m_panel171, wxID_ANY, wxNullFont, wxDefaultPosition,
+                                              wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxFNTP_DEFAULT_STYLE);
     m_fontPickerGlobal->SetToolTip(_("Set a global font for all the  supported languages"));
 
     fgSizer4->Add(m_fontPickerGlobal, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText155 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Global theme:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+    m_staticText155 = new wxStaticText(m_panel171, wxID_ANY, _("Text theme:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
 
     fgSizer4->Add(m_staticText155, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceGlobalThemeArr;
-    m_choiceGlobalTheme = new wxChoice(m_panelGlobalColours, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), m_choiceGlobalThemeArr, 0);
+    m_choiceGlobalTheme = new wxChoice(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
+                                       m_choiceGlobalThemeArr, 0);
     m_choiceGlobalTheme->SetToolTip(
         _("Set a global theme for all the supported languages.\nIf the theme is not available for a given language, "
           "CodeLite will use the next available theme from\nthe same family"));
 
     fgSizer4->Add(m_choiceGlobalTheme, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcPreview = new wxStyledTextCtrl(m_panelGlobalColours, wxID_ANY, wxDefaultPosition,
-                                        wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, 150)), 0);
+    m_stcPreview =
+        new wxStyledTextCtrl(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, 150)), 0);
     // Configure the fold margin
     m_stcPreview->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcPreview->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -211,26 +182,26 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_stcPreview->SetKeyWords(3, wxT(""));
     m_stcPreview->SetKeyWords(4, wxT(""));
 
-    boxSizer82->Add(m_stcPreview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    staticBoxSizer182->Add(m_stcPreview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
     m_stcPreview->SetMinSize(wxSize(-1, 150));
 
-    m_panelSyntaxHighlight =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_panelSyntaxHighlight->SetToolTip(_("Customize your colours and font per language"));
-    m_notebook->AddPage(m_panelSyntaxHighlight, _("Customize"), false);
+    m_collPane193 = new wxCollapsiblePane(m_panel171, wxID_ANY, _("Customise colours per language"), wxDefaultPosition,
+                                          wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxTRANSPARENT_WINDOW);
+
+    boxSizer173->Add(m_collPane193, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer21 = new wxBoxSizer(wxHORIZONTAL);
-    m_panelSyntaxHighlight->SetSizer(boxSizer21);
+    m_collPane193->GetPane()->SetSizer(boxSizer21);
 
     wxArrayString m_listBoxArr;
     m_listBox =
-        new wxListBox(m_panelSyntaxHighlight, wxID_ANY, wxDefaultPosition,
-                      wxDLG_UNIT(m_panelSyntaxHighlight, wxSize(-1, -1)), m_listBoxArr, wxLB_SORT | wxLB_SINGLE);
+        new wxListBox(m_collPane193->GetPane(), wxID_ANY, wxDefaultPosition,
+                      wxDLG_UNIT(m_collPane193->GetPane(), wxSize(-1, -1)), m_listBoxArr, wxLB_SORT | wxLB_SINGLE);
 
     boxSizer21->Add(m_listBox, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel25 = new wxPanel(m_panelSyntaxHighlight, wxID_ANY, wxDefaultPosition,
-                            wxDLG_UNIT(m_panelSyntaxHighlight, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_panel25 = new wxPanel(m_collPane193->GetPane(), wxID_ANY, wxDefaultPosition,
+                            wxDLG_UNIT(m_collPane193->GetPane(), wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     boxSizer21->Add(m_panel25, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -432,13 +403,9 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     bSizer5->Add(m_button9, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
-
-    boxSizer173->Add(boxSizer19, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
     m_stdBtnSizer10 = new wxStdDialogButtonSizer();
 
-    boxSizer19->Add(m_stdBtnSizer10, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer173->Add(m_stdBtnSizer10, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
     m_buttonOk =
         new wxButton(m_panel171, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
@@ -465,147 +432,76 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    m_cbUseCustomBaseColour->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                     wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomBaseColour), NULL, this);
-    m_cbUseCustomBaseColour->Connect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomBaseColourUI), NULL, this);
-    m_colourPickerBaseColour->Connect(wxEVT_UPDATE_UI,
-                                      wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomColourUI), NULL, this);
-    m_colourPickerBaseColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                      wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnCustomBaseColourPIcked),
-                                      NULL, this);
-    m_colourPickerSelTextBgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                           wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextChanged), NULL,
-                                           this);
-    m_checkBoxCustomSelectionFgColour->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                               wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomFgTextColour),
-                                               NULL, this);
-    m_staticText84->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
-    m_colourPickerSelTextFgColour->Connect(wxEVT_UPDATE_UI,
-                                           wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
-    m_colourPickerSelTextFgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                           wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged), NULL,
-                                           this);
-    m_fontPickerGlobal->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                                wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
-    m_choiceGlobalTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
-    m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected),
-                       NULL, this);
-    m_choiceLexerThemes->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(SyntaxHighlightBaseDlg::OnThemeChanged), NULL, this);
-    m_globalFontPicker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                                wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);
-    m_globalBgColourPicker->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                    wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnColourChanged), NULL, this);
-    m_fileSpec->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnText), NULL, this);
-    m_properties->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnItemSelected),
-                          NULL, this);
-    m_fontPicker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                          wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);
-    m_colourPicker->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                            wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnColourChanged), NULL, this);
-    m_bgColourPicker->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                              wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnColourChanged), NULL, this);
-    m_eolFilled->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEolFilled),
-                         NULL, this);
-    m_styleWithinPreProcessor->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                       wxCommandEventHandler(SyntaxHighlightBaseDlg::OnStyleWithinPreprocessor), NULL,
-                                       this);
-    m_styleWithinPreProcessor->Connect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnStyleWithingPreProcessorUI), NULL, this);
-    m_button5->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                       wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton0), NULL, this);
-    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                       wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton1), NULL, this);
-    m_button7->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                       wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton2), NULL, this);
-    m_button8->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                       wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton3), NULL, this);
-    m_button9->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                       wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton4), NULL, this);
-    m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonOK), NULL,
-                        this);
-    m_buttonCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonCancel),
-                            NULL, this);
-    m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonApply),
-                           NULL, this);
-    m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnButtonApplyUI), NULL,
-                           this);
+    m_choiceAppearance->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnCodeLiteAppearance, this);
+    m_colourPickerSelTextBgColour->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextChanged,
+                                        this);
+    m_checkBoxCustomSelectionFgColour->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                            &SyntaxHighlightBaseDlg::OnUseCustomFgTextColour, this);
+    m_staticText84->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
+    m_colourPickerSelTextFgColour->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
+    m_colourPickerSelTextFgColour->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextFgChanged,
+                                        this);
+    m_fontPickerGlobal->Bind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnGlobalFontSelected, this);
+    m_choiceGlobalTheme->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnGlobalThemeSelected, this);
+    m_listBox->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnLexerSelected, this);
+    m_choiceLexerThemes->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnThemeChanged, this);
+    m_globalFontPicker->Bind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnFontChanged, this);
+    m_globalBgColourPicker->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
+    m_fileSpec->Bind(wxEVT_COMMAND_TEXT_UPDATED, &SyntaxHighlightBaseDlg::OnText, this);
+    m_properties->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnItemSelected, this);
+    m_fontPicker->Bind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnFontChanged, this);
+    m_colourPicker->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
+    m_bgColourPicker->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
+    m_eolFilled->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnEolFilled, this);
+    m_styleWithinPreProcessor->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnStyleWithinPreprocessor,
+                                    this);
+    m_styleWithinPreProcessor->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnStyleWithingPreProcessorUI, this);
+    m_button5->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton0, this);
+    m_button6->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton1, this);
+    m_button7->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton2, this);
+    m_button8->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton3, this);
+    m_button9->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton4, this);
+    m_buttonOk->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnButtonOK, this);
+    m_buttonCancel->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnButtonCancel, this);
+    m_buttonApply->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnButtonApply, this);
+    m_buttonApply->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnButtonApplyUI, this);
 }
 
 SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
 {
-    m_cbUseCustomBaseColour->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                        wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomBaseColour), NULL,
-                                        this);
-    m_cbUseCustomBaseColour->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomBaseColourUI), NULL, this);
-    m_colourPickerBaseColour->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomColourUI), NULL, this);
-    m_colourPickerBaseColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                         wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnCustomBaseColourPIcked),
-                                         NULL, this);
-    m_colourPickerSelTextBgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                              wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextChanged),
-                                              NULL, this);
-    m_checkBoxCustomSelectionFgColour->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomFgTextColour), NULL,
-        this);
-    m_staticText84->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL,
-                               this);
-    m_colourPickerSelTextFgColour->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
-    m_colourPickerSelTextFgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                              wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged),
-                                              NULL, this);
-    m_fontPickerGlobal->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                                   wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
-    m_choiceGlobalTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                    wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
-    m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED,
-                          wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected), NULL, this);
-    m_choiceLexerThemes->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                    wxCommandEventHandler(SyntaxHighlightBaseDlg::OnThemeChanged), NULL, this);
-    m_globalFontPicker->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                                   wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);
-    m_globalBgColourPicker->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                       wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnColourChanged), NULL, this);
-    m_fileSpec->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnText), NULL,
-                           this);
-    m_properties->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED,
-                             wxCommandEventHandler(SyntaxHighlightBaseDlg::OnItemSelected), NULL, this);
-    m_fontPicker->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                             wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);
-    m_colourPicker->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                               wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnColourChanged), NULL, this);
-    m_bgColourPicker->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                 wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnColourChanged), NULL, this);
-    m_eolFilled->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEolFilled),
-                            NULL, this);
-    m_styleWithinPreProcessor->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                          wxCommandEventHandler(SyntaxHighlightBaseDlg::OnStyleWithinPreprocessor),
-                                          NULL, this);
-    m_styleWithinPreProcessor->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnStyleWithingPreProcessorUI), NULL, this);
-    m_button5->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                          wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton0), NULL, this);
-    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                          wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton1), NULL, this);
-    m_button7->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                          wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton2), NULL, this);
-    m_button8->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                          wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton3), NULL, this);
-    m_button9->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                          wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton4), NULL, this);
-    m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonOK),
-                           NULL, this);
-    m_buttonCancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonCancel), NULL, this);
-    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                              wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonApply), NULL, this);
-    m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnButtonApplyUI), NULL,
-                              this);
+    m_choiceAppearance->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnCodeLiteAppearance, this);
+    m_colourPickerSelTextBgColour->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextChanged,
+                                          this);
+    m_checkBoxCustomSelectionFgColour->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                              &SyntaxHighlightBaseDlg::OnUseCustomFgTextColour, this);
+    m_staticText84->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
+    m_colourPickerSelTextFgColour->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
+    m_colourPickerSelTextFgColour->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED,
+                                          &SyntaxHighlightBaseDlg::OnSelTextFgChanged, this);
+    m_fontPickerGlobal->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnGlobalFontSelected, this);
+    m_choiceGlobalTheme->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnGlobalThemeSelected, this);
+    m_listBox->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnLexerSelected, this);
+    m_choiceLexerThemes->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnThemeChanged, this);
+    m_globalFontPicker->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnFontChanged, this);
+    m_globalBgColourPicker->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
+    m_fileSpec->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &SyntaxHighlightBaseDlg::OnText, this);
+    m_properties->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnItemSelected, this);
+    m_fontPicker->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnFontChanged, this);
+    m_colourPicker->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
+    m_bgColourPicker->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
+    m_eolFilled->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnEolFilled, this);
+    m_styleWithinPreProcessor->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                      &SyntaxHighlightBaseDlg::OnStyleWithinPreprocessor, this);
+    m_styleWithinPreProcessor->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnStyleWithingPreProcessorUI, this);
+    m_button5->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton0, this);
+    m_button6->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton1, this);
+    m_button7->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton2, this);
+    m_button8->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton3, this);
+    m_button9->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton4, this);
+    m_buttonOk->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnButtonOK, this);
+    m_buttonCancel->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnButtonCancel, this);
+    m_buttonApply->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnButtonApply, this);
+    m_buttonApply->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnButtonApplyUI, this);
 }
 
 NewThemeDialogBase::NewThemeDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -690,14 +586,12 @@ NewThemeDialogBase::NewThemeDialogBase(wxWindow* parent, wxWindowID id, const wx
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    m_choiceLanguage->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewThemeDialogBase::OnLexerSelected),
-                              NULL, this);
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewThemeDialogBase::OnOkUI), NULL, this);
+    m_choiceLanguage->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &NewThemeDialogBase::OnLexerSelected, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &NewThemeDialogBase::OnOkUI, this);
 }
 
 NewThemeDialogBase::~NewThemeDialogBase()
 {
-    m_choiceLanguage->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(NewThemeDialogBase::OnLexerSelected), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewThemeDialogBase::OnOkUI), NULL, this);
+    m_choiceLanguage->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &NewThemeDialogBase::OnLexerSelected, this);
+    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &NewThemeDialogBase::OnOkUI, this);
 }

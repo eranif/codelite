@@ -12,63 +12,18 @@ clThemedSplitterWindow::clThemedSplitterWindow(wxWindow* parent, wxWindowID id, 
     Create(parent, id, pos, size, style);
 }
 
-clThemedSplitterWindow::~clThemedSplitterWindow()
-{
-#if defined(__WXMSW__)
-    Unbind(wxEVT_PAINT, &clThemedSplitterWindow::OnPaint, this);
-    Unbind(wxEVT_ERASE_BACKGROUND, &clThemedSplitterWindow::OnEraseBg, this);
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedSplitterWindow::OnSysColoursChanged, this);
-#endif
-}
+clThemedSplitterWindow::~clThemedSplitterWindow() {}
 
 bool clThemedSplitterWindow::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                                     const wxString& name)
 {
-    wxUnusedVar(style);
-    bool res = wxSplitterWindow::Create(parent, id, pos, size, wxSP_LIVE_UPDATE | wxBORDER_NONE, name);
-    if(!res) {
-        return false;
+    style = wxSP_LIVE_UPDATE;
+#ifdef __WXMSW__
+    if(wxSystemSettings::GetAppearance().IsDark()) {
+        style |= wxSP_BORDER;
+    } else {
+        style |= wxBORDER_THEME;
     }
-#if defined(__WXMSW__)
-    Bind(wxEVT_PAINT, &clThemedSplitterWindow::OnPaint, this);
-    Bind(wxEVT_ERASE_BACKGROUND, &clThemedSplitterWindow::OnEraseBg, this);
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedSplitterWindow::OnSysColoursChanged, this);
 #endif
-    return res;
-}
-
-void clThemedSplitterWindow::OnPaint(wxPaintEvent& event)
-{
-    wxUnusedVar(event);
-    wxAutoBufferedPaintDC dc(this);
-    DoDrawSash(dc);
-}
-
-void clThemedSplitterWindow::OnEraseBg(wxEraseEvent& event) { wxUnusedVar(event); }
-
-void clThemedSplitterWindow::DoDrawSash(wxDC& dc)
-{
-    wxColour c = clSystemSettings::GetDefaultPanelColour();
-    c = c.ChangeLightness(DrawingUtils::IsDark(c) ? 115 : 85);
-
-    wxRect rect = GetClientRect();
-    dc.SetPen(c);
-    dc.SetBrush(c);
-    dc.DrawRectangle(rect);
-}
-
-void clThemedSplitterWindow::OnSysColoursChanged(clCommandEvent& event)
-{
-    event.Skip();
-    Refresh();
-}
-
-void clThemedSplitterWindow::DrawSash(wxDC& dc)
-{
-#if defined(__WXGTK__) || defined(__WXMAC__)
-    wxSplitterWindow::DrawSash(dc);
-#else
-    wxUnusedVar(dc);
-    Refresh();
-#endif
+    return wxSplitterWindow::Create(parent, id, pos, size, style, name);
 }

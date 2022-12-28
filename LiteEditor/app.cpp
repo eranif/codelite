@@ -356,6 +356,15 @@ bool CodeLiteApp::OnInit()
     wxImage::AddHandler(new wxGIFHandler);
     wxImage::AddHandler(new wxJPEGHandler);
 
+#if defined(__WXMSW__)
+    if(clConfig::Get().Read("CodeLiteAppearance", 0) == 1) {
+        // force dark
+        MSWEnableDarkMode(wxApp::DarkMode_Always);
+    } else {
+        MSWEnableDarkMode(wxApp::DarkMode_Auto);
+    }
+#endif
+
     bool show_splash = clConfig::Get().Read("ShowSplashScreen", true);
     if(show_splash) {
         wxBitmap bitmap;

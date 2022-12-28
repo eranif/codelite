@@ -7,7 +7,3 @@ Debug Adapter Client
 
 others:
 ----
-- Colours and fonts dialog: remove the custom colour option and only use system colour
-- Colours and fonts: when changes the theme to dark -> auto enable dark theme (prompt the user to change that)
-    and do the smae when light theme is selected
-- Bootstrap wizard: change IDE theme based on the selected editor theme

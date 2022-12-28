@@ -37,67 +37,57 @@ class wxChoice;
 class wxNotebook;
 class wxTreebook;
 
-enum eTheme {
-    kTHEME_UNKNOWN = -1,
-    kTHEME_DARK,
-    kTHEME_LIGHT,
-};
-
 /** Implementing SyntaxHighlightBaseDlg */
 class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
 {
-    bool m_isModified;
-    bool m_globalThemeChanged;
-    bool m_globalBgColourChanged;
-    static bool m_globalBgColourChangedTooltipShown;
+    bool m_isModified = false;
+    bool m_globalThemeChanged = false;
+    bool m_globalBgColourChanged = false;
+    bool m_promptForRestart = false;
     LexerConf::Ptr_t m_lexer;
-    eTheme m_initialTheme = kTHEME_UNKNOWN;
-    eTheme m_endingTheme = kTHEME_UNKNOWN;
-    bool m_useBaseColourInitial = false;
-    bool m_useBaseColourEnding = false;
 
 protected:
-    virtual void OnUseCustomBaseColourUI(wxUpdateUIEvent& event);
-    virtual void OnCustomBaseColourPIcked(wxColourPickerEvent& event);
-    virtual void OnUseCustomBaseColour(wxCommandEvent& event);
-    virtual void OnUseCustomColourUI(wxUpdateUIEvent& event);
-    virtual void OnGlobalFontSelected(wxFontPickerEvent& event);
-    virtual void OnGlobalThemeSelected(wxCommandEvent& event);
-    virtual void OnLoadEclipseThemeWebsite(wxCommandEvent& event);
-    virtual void OnImportEclipseTheme(wxCommandEvent& event);
-    virtual void OnRestoreDefaults(wxCommandEvent& event);
-    virtual void OnExportAll(wxCommandEvent& event);
-    virtual void OnToolExportAll(wxCommandEvent& event);
-    virtual void OnExportSelective(wxCommandEvent& event);
-    virtual void OnImport(wxCommandEvent& event);
-    virtual void OnNewTheme(wxCommandEvent& event);
-    virtual void OnSelTextFgChanged(wxColourPickerEvent& event);
-    virtual void OnUseCustomFgTextColour(wxCommandEvent& event);
-    virtual void OnTextSelFgUI(wxUpdateUIEvent& event);
-    virtual void OnButtonApplyUI(wxUpdateUIEvent& event);
-    virtual void OnLexerSelected(wxCommandEvent& event);
-    virtual void OnColourChanged(wxColourPickerEvent& event);
-    virtual void OnEditKeyWordsButton0(wxCommandEvent& event);
-    virtual void OnEditKeyWordsButton1(wxCommandEvent& event);
-    virtual void OnEditKeyWordsButton2(wxCommandEvent& event);
-    virtual void OnEditKeyWordsButton3(wxCommandEvent& event);
-    virtual void OnEditKeyWordsButton4(wxCommandEvent& event);
-    virtual void OnEolFilled(wxCommandEvent& event);
-    virtual void OnFontChanged(wxFontPickerEvent& event);
-    virtual void OnItemSelected(wxCommandEvent& event);
-    virtual void OnOutputViewColourChanged(wxColourPickerEvent& event);
-    virtual void OnSelTextChanged(wxColourPickerEvent& event);
-    virtual void OnStyleWithinPreprocessor(wxCommandEvent& event);
-    virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event);
-    virtual void OnText(wxCommandEvent& event);
+    // toolbar methods
+    void OnImportEclipseTheme(wxCommandEvent& event);
+    void OnRestoreDefaults(wxCommandEvent& event);
+    void OnExportAll(wxCommandEvent& event);
+    void OnToolExportAll(wxCommandEvent& event);
+    void OnExportSelective(wxCommandEvent& event);
+    void OnImport(wxCommandEvent& event);
+    void OnNewTheme(wxCommandEvent& event);
+
+    // other ui events
+    void OnCodeLiteAppearance(wxCommandEvent& event) override;
+    void OnGlobalFontSelected(wxFontPickerEvent& event) override;
+    void OnGlobalThemeSelected(wxCommandEvent& event) override;
+    void OnLoadEclipseThemeWebsite(wxCommandEvent& event);
+    void OnSelTextFgChanged(wxColourPickerEvent& event) override;
+    void OnUseCustomFgTextColour(wxCommandEvent& event) override;
+    void OnTextSelFgUI(wxUpdateUIEvent& event) override;
+    void OnButtonApplyUI(wxUpdateUIEvent& event) override;
+    void OnLexerSelected(wxCommandEvent& event) override;
+    void OnColourChanged(wxColourPickerEvent& event) override;
+    void OnEditKeyWordsButton0(wxCommandEvent& event) override;
+    void OnEditKeyWordsButton1(wxCommandEvent& event) override;
+    void OnEditKeyWordsButton2(wxCommandEvent& event) override;
+    void OnEditKeyWordsButton3(wxCommandEvent& event) override;
+    void OnEditKeyWordsButton4(wxCommandEvent& event) override;
+    void OnEolFilled(wxCommandEvent& event) override;
+    void OnFontChanged(wxFontPickerEvent& event) override;
+    void OnItemSelected(wxCommandEvent& event) override;
+    void OnOutputViewColourChanged(wxColourPickerEvent& event);
+    void OnSelTextChanged(wxColourPickerEvent& event) override;
+    void OnStyleWithinPreprocessor(wxCommandEvent& event) override;
+    void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event) override;
+    void OnText(wxCommandEvent& event) override;
 
     void DoFontChanged(StyleProperty& sp, const wxFont& font);
 
     // Handlers for SyntaxHighlightBaseDlg events.
-    void OnButtonOK(wxCommandEvent& event);
-    void OnButtonCancel(wxCommandEvent& event);
-    void OnButtonApply(wxCommandEvent& event);
-    void OnThemeChanged(wxCommandEvent& event);
+    void OnButtonOK(wxCommandEvent& event) override;
+    void OnButtonCancel(wxCommandEvent& event) override;
+    void OnButtonApply(wxCommandEvent& event) override;
+    void OnThemeChanged(wxCommandEvent& event) override;
 
     void LoadLexer(const wxString& themeName);
     void SaveChanges();
@@ -113,7 +103,6 @@ protected:
     void UpdateTextSelectionColours();
 
 public:
-    /** Constructor */
     SyntaxHighlightDlg(wxWindow* parent);
     virtual ~SyntaxHighlightDlg();
     bool IsRestartRequired() const;

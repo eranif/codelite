@@ -295,10 +295,13 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
 {
     wxUnusedVar(orientation);
     wxUnusedVar(window);
-
+#ifdef __WXMSW__
+    DrawingUtils::DrawStippleBackground(rect, dc);
+#else
     dc.SetPen(m_bgColour);
     dc.SetBrush(m_bgColour);
     dc.DrawRectangle(rect);
+#endif
 }
 
 void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)

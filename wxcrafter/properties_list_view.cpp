@@ -7,6 +7,7 @@
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 
+#include <unordered_set>
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
 #include <wx/propgrid/advprops.h>
@@ -14,7 +15,13 @@
 #include <wx/renderer.h>
 
 /////////////////////////////////////////////////////////////////////////
-static wxcPGChoiceAndButtonEditor* gChoiceButtonEditor = NULL;
+
+namespace
+{
+wxcPGChoiceAndButtonEditor* gChoiceButtonEditor = NULL;
+// a list of properties that if changed, there is no need to refresh the view
+std::unordered_set<wxString> DO_NOT_NOTIFY_SET = { PROP_SUBCLASS_INCLUDE, PROP_SUBCLASS_NAME, PROP_SUBCLASS_STYLE };
+} // namespace
 
 PropertiesListView::PropertiesListView(wxWindow* win)
     : wxPanel(win)
@@ -151,11 +158,6 @@ void PropertiesListView::Construct(wxcWidget* wb)
         if(pgProp) {
             pgProp->SetClientData(property);
         }
-    }
-
-    // If the 'Subclass' category is 'empty' i.e. there's no Class Name entry, collapse it
-    if(wb->GetProperty(_("Subclass")) && wb->PropertyString(PROP_SUBCLASS_NAME).empty()) {
-        m_pg->Collapse(_("Subclass"));
     }
     ::wxPGPropertyBooleanUseCheckbox(m_pg);
 }
@@ -328,13 +330,17 @@ void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
             } else {
                 pb->SetValue(pgp->GetValueAsString());
             }
-            // Notify about modifications
-            wxCommandEvent evt(wxEVT_PROPERTIES_MODIFIED);
-            if(pb->GetLabel() == PROP_NAME) {
-                evt.SetString(pgp->GetValueAsString());
-                evt.SetClientData(m_wxcWidget);
+
+            // we dont always want to notify about changes
+            if(DO_NOT_NOTIFY_SET.count(pb->GetLabel()) == 0) {
+                // Notify about modifications
+                wxCommandEvent evt(wxEVT_PROPERTIES_MODIFIED);
+                if(pb->GetLabel() == PROP_NAME) {
+                    evt.SetString(pgp->GetValueAsString());
+                    evt.SetClientData(m_wxcWidget);
+                }
+                EventNotifier::Get()->AddPendingEvent(evt);
             }
-            EventNotifier::Get()->AddPendingEvent(evt);
         }
     }
 }

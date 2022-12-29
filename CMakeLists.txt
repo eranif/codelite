@@ -685,7 +685,7 @@ add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
-if(UNIX)
+if(UNIX OR APPLE)
     add_subdirectory(ctags)
 endif()
 

@@ -22,7 +22,6 @@
 #include <wx/arrstr.h>
 #include <wx/stattext.h>
 #include <wx/clrpicker.h>
-#include <wx/checkbox.h>
 #include <wx/fontpicker.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
@@ -31,6 +30,7 @@
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/textctrl.h>
+#include <wx/checkbox.h>
 #include <wx/statline.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
@@ -59,8 +59,6 @@ protected:
     wxChoice* m_choiceAppearance;
     wxStaticText* m_staticText9;
     wxColourPickerCtrl* m_colourPickerSelTextBgColour;
-    wxStaticText* m_staticText94;
-    wxCheckBox* m_checkBoxCustomSelectionFgColour;
     wxStaticText* m_staticText84;
     wxColourPickerCtrl* m_colourPickerSelTextFgColour;
     wxStaticText* m_staticText159;
@@ -106,11 +104,11 @@ protected:
 protected:
     virtual void OnCodeLiteAppearance(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelTextChanged(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnUseCustomFgTextColour(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTextSelFgUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSelTextFgChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCollapse(wxCollapsiblePaneEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }
@@ -135,8 +133,6 @@ public:
     wxChoice* GetChoiceAppearance() { return m_choiceAppearance; }
     wxStaticText* GetStaticText9() { return m_staticText9; }
     wxColourPickerCtrl* GetColourPickerSelTextBgColour() { return m_colourPickerSelTextBgColour; }
-    wxStaticText* GetStaticText94() { return m_staticText94; }
-    wxCheckBox* GetCheckBoxCustomSelectionFgColour() { return m_checkBoxCustomSelectionFgColour; }
     wxStaticText* GetStaticText84() { return m_staticText84; }
     wxColourPickerCtrl* GetColourPickerSelTextFgColour() { return m_colourPickerSelTextFgColour; }
     wxStaticText* GetStaticText159() { return m_staticText159; }
@@ -175,10 +171,11 @@ public:
     wxPanel* GetPanel25() { return m_panel25; }
     wxCollapsiblePane* GetCollPane193() { return m_collPane193; }
     wxPanel* GetPanel171() { return m_panel171; }
-    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SyntaxHighlightBaseDlg();
 };
-
 
 class NewThemeDialogBase : public wxDialog
 {
@@ -204,7 +201,9 @@ public:
     wxChoice* GetChoiceLanguage() { return m_choiceLanguage; }
     wxStaticText* GetStaticText135() { return m_staticText135; }
     wxChoice* GetChoiceBaseTheme() { return m_choiceBaseTheme; }
-    NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewThemeDialogBase();
 };
 

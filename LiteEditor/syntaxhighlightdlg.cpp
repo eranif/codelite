@@ -131,10 +131,6 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
 
     m_isModified = true;
 
-    // for now, we only allow selection with fg colour
-    m_checkBoxCustomSelectionFgColour->SetValue(true);
-    m_checkBoxCustomSelectionFgColour->Enable(false);
-
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);
     auto images = clGetManager()->GetStdIcons();
@@ -162,7 +158,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
 #endif
     // Theme handling
 
-    ::clSetDialogBestSizeAndPosition(this);
+    GetSizer()->Fit(this);
     CentreOnParent();
 }
 
@@ -529,7 +525,6 @@ void SyntaxHighlightDlg::CreateLexerPage()
               << ", fg:" << selTextProperties.GetFgColour() << endl;
     m_colourPickerSelTextBgColour->SetColour(selTextProperties.GetBgColour());
     m_colourPickerSelTextFgColour->SetColour(selTextProperties.GetFgColour());
-    m_checkBoxCustomSelectionFgColour->SetValue(true);
 
     if(m_propertyList.empty()) {
         m_fontPicker->Enable(false);
@@ -577,14 +572,6 @@ void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(
 void SyntaxHighlightDlg::OnTextSelFgUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void SyntaxHighlightDlg::OnSelTextFgChanged(wxColourPickerEvent& event)
-{
-    CHECK_PTR_RET(m_lexer);
-    event.Skip();
-    m_isModified = true;
-    UpdateTextSelectionColours();
-}
-
-void SyntaxHighlightDlg::OnUseCustomFgTextColour(wxCommandEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
     event.Skip();
@@ -810,4 +797,11 @@ void SyntaxHighlightDlg::OnCodeLiteAppearance(wxCommandEvent& event)
 #else
     wxUnusedVar(event);
 #endif
+}
+
+void SyntaxHighlightDlg::OnCollapse(wxCollapsiblePaneEvent& event)
+{
+    event.Skip();
+    // re-center the dialog
+    CentreOnParent();
 }

@@ -57,12 +57,12 @@ protected:
     void OnNewTheme(wxCommandEvent& event);
 
     // other ui events
+    void OnCollapse(wxCollapsiblePaneEvent& event) override;
     void OnCodeLiteAppearance(wxCommandEvent& event) override;
     void OnGlobalFontSelected(wxFontPickerEvent& event) override;
     void OnGlobalThemeSelected(wxCommandEvent& event) override;
     void OnLoadEclipseThemeWebsite(wxCommandEvent& event);
     void OnSelTextFgChanged(wxColourPickerEvent& event) override;
-    void OnUseCustomFgTextColour(wxCommandEvent& event) override;
     void OnTextSelFgUI(wxUpdateUIEvent& event) override;
     void OnButtonApplyUI(wxUpdateUIEvent& event) override;
     void OnLexerSelected(wxCommandEvent& event) override;

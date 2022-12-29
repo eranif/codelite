@@ -74,7 +74,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     staticBoxSizer190->Add(m_choiceAppearance, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer188 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panel171, wxID_ANY, _("Text Selection")), wxVERTICAL);
+        new wxStaticBoxSizer(new wxStaticBox(m_panel171, wxID_ANY, _("Text selection")), wxVERTICAL);
 
     boxSizer173->Add(staticBoxSizer188, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -85,38 +85,25 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     staticBoxSizer188->Add(fgSizer3, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText9 = new wxStaticText(m_panel171, wxID_ANY, _("Selected Text Background Colour:"), wxDefaultPosition,
+    m_staticText9 = new wxStaticText(m_panel171, wxID_ANY, _("Background:"), wxDefaultPosition,
                                      wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
 
     fgSizer3->Add(m_staticText9, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_colourPickerSelTextBgColour = new wxColourPickerCtrl(
         m_panel171, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT), wxDefaultPosition,
-        wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+        wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxCLRP_SHOW_LABEL | wxCLRP_DEFAULT_STYLE);
 
     fgSizer3->Add(m_colourPickerSelTextBgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText94 = new wxStaticText(m_panel171, wxID_ANY, _("Use Custom Selection Foreground Colour:"),
-                                      wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
-
-    fgSizer3->Add(m_staticText94, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
-
-    m_checkBoxCustomSelectionFgColour =
-        new wxCheckBox(m_panel171, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
-    m_checkBoxCustomSelectionFgColour->SetValue(false);
-    m_checkBoxCustomSelectionFgColour->SetToolTip(
-        _("You can choose to override the default selection colouring by enabling this checkbox"));
-
-    fgSizer3->Add(m_checkBoxCustomSelectionFgColour, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(5));
-
-    m_staticText84 = new wxStaticText(m_panel171, wxID_ANY, _("Selected Text Foreground Colour:"), wxDefaultPosition,
+    m_staticText84 = new wxStaticText(m_panel171, wxID_ANY, _("Foreground:"), wxDefaultPosition,
                                       wxDLG_UNIT(m_panel171, wxSize(-1, -1)), 0);
 
     fgSizer3->Add(m_staticText84, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_colourPickerSelTextFgColour = new wxColourPickerCtrl(
         m_panel171, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT), wxDefaultPosition,
-        wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+        wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxCLRP_SHOW_LABEL | wxCLRP_DEFAULT_STYLE);
 
     fgSizer3->Add(m_colourPickerSelTextFgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -157,7 +144,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     fgSizer4->Add(m_choiceGlobalTheme, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcPreview = new clThemedSTC(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, 150)),
+    m_stcPreview = new clThemedSTC(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(250, 150)),
                                    wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcPreview->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -195,7 +182,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_stcPreview->SetKeyWords(4, wxT(""));
 
     staticBoxSizer182->Add(m_stcPreview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-    m_stcPreview->SetMinSize(wxSize(-1, 150));
+    m_stcPreview->SetMinSize(wxSize(250, 150));
 
     m_collPane193 = new wxCollapsiblePane(m_panel171, wxID_ANY, _("Customise colours per language"), wxDefaultPosition,
                                           wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
@@ -448,14 +435,13 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_choiceAppearance->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnCodeLiteAppearance, this);
     m_colourPickerSelTextBgColour->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextChanged,
                                         this);
-    m_checkBoxCustomSelectionFgColour->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                            &SyntaxHighlightBaseDlg::OnUseCustomFgTextColour, this);
     m_staticText84->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
     m_colourPickerSelTextFgColour->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
     m_colourPickerSelTextFgColour->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextFgChanged,
                                         this);
     m_fontPickerGlobal->Bind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnGlobalFontSelected, this);
     m_choiceGlobalTheme->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnGlobalThemeSelected, this);
+    m_collPane193->Bind(wxEVT_COMMAND_COLLPANE_CHANGED, &SyntaxHighlightBaseDlg::OnCollapse, this);
     m_listBox->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnLexerSelected, this);
     m_choiceLexerThemes->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnThemeChanged, this);
     m_globalFontPicker->Bind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnFontChanged, this);
@@ -485,14 +471,13 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_choiceAppearance->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnCodeLiteAppearance, this);
     m_colourPickerSelTextBgColour->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextChanged,
                                           this);
-    m_checkBoxCustomSelectionFgColour->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                              &SyntaxHighlightBaseDlg::OnUseCustomFgTextColour, this);
     m_staticText84->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
     m_colourPickerSelTextFgColour->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
     m_colourPickerSelTextFgColour->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED,
                                           &SyntaxHighlightBaseDlg::OnSelTextFgChanged, this);
     m_fontPickerGlobal->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnGlobalFontSelected, this);
     m_choiceGlobalTheme->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnGlobalThemeSelected, this);
+    m_collPane193->Unbind(wxEVT_COMMAND_COLLPANE_CHANGED, &SyntaxHighlightBaseDlg::OnCollapse, this);
     m_listBox->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnLexerSelected, this);
     m_choiceLexerThemes->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnThemeChanged, this);
     m_globalFontPicker->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnFontChanged, this);

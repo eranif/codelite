@@ -177,7 +177,7 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& acce
     std::vector<wxAcceleratorEntry> table;
 
     // Update menus. If a match is found remove it from the 'accel' table
-    clMenuBar* menuBar = clGetManager()->GetMenuBar();
+    auto menuBar = clGetManager()->GetMenuBar();
     if(!menuBar) {
         clDEBUG() << "No menu bar found!" << clEndl;
         return;

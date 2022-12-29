@@ -1,6 +1,5 @@
 #include "clCaptionBar.hpp"
 
-#include "clMenuBar.hpp"
 #include "drawingutils.h"
 #include "wx/defs.h"
 #ifdef __WINDOWS__          // __WINDOWS__ defined by wx/defs.h

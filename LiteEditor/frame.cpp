@@ -58,7 +58,6 @@
 #include "clLocaleManager.hpp"
 #include "clMainFrameHelper.h"
 #include "clSingleChoiceDialog.h"
-#include "clThemedMenuBar.hpp"
 #include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_dock_art.h"
@@ -937,7 +936,7 @@ void clMainFrame::PostConstruct()
     m_toolbarsSizer->Insert(0, m_toolbar, 0, wxEXPAND);
 
 #if !wxUSE_NATIVE_MENUBAR
-    GetSizer()->Insert(0, m_menuBar, 0, wxEXPAND);
+    GetSizer()->Insert(0, m_mainMenuBar, 0, wxEXPAND);
 #endif
 
     GetMainBook()->Show();
@@ -1110,7 +1109,9 @@ void clMainFrame::AddKeyboardAccelerators()
                                      { "show_nav_toolbar", _("Navigation Bar"), "Ctrl-Alt-N" },
                                      { "toggle_panes", _("Toggle All Panes"), "Ctrl-M" },
                                      { "distraction_free_mode", _("Toggle Minimal View"), "Ctrl-F11" },
+#ifdef __WXGTK__
                                      { "show_menu_bar", _("Show Menu Bar"), "Alt-`" },
+#endif
                                      { "hide_status_bar", _("Show Status Bar") },
                                      { "hide_tool_bar", _("Show Tool Bar"), "F1" } });
     mgr->AddAccelerator(_("View | Show Whitespace"),
@@ -1210,24 +1211,17 @@ void clMainFrame::CreateGUIControls()
 #endif
 
     // add menu bar
-#if !wxUSE_NATIVE_MENUBAR
-    // replace the menu bar with our customer menu bar
-    wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar("main_menu");
-    m_menuBar = new clThemedMenuBar(this, 0, nullptr, nullptr);
-    m_menuBar->Hide();
-    m_menuBar->FromMenuBar(mb);
-    SetMenuBar(nullptr);
-#else
-    m_menuBar = wxXmlResource::Get()->LoadMenuBar("main_menu");
-#ifdef __WXOSX__
+    m_mainMenuBar = wxXmlResource::Get()->LoadMenuBar("main_menu");
+#ifndef __WXGTK__
+    // remove the "Show menu bar"
     wxMenu* view = NULL;
-    wxMenuItem* item = m_menuBar->FindItem(XRCID("show_tabs_tab"), &view);
+    wxMenuItem* item = m_mainMenuBar->FindItem(XRCID("show_menu_bar"), &view);
     if(item && view) {
         view->Remove(item);
     }
 #endif
-    SetMenuBar(m_menuBar);
-#endif
+    SetMenuBar(m_mainMenuBar);
+
     bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
     DoShowMenuBar(showMenuBar);
 
@@ -5935,11 +5929,14 @@ void clMainFrame::OnInfobarButton(wxCommandEvent& event)
 
 void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
+#ifdef __WXGTK__
     bool currentState = clConfig::Get().Read(kConfigShowMenuBar, true);
     DoShowMenuBar(!currentState);
     GetSizer()->Layout();
     PostSizeEvent();
     clConfig::Get().Write(kConfigShowMenuBar, !currentState);
+#endif
 }
 
 void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event)

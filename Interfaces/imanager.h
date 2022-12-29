@@ -28,10 +28,8 @@
 
 #include "Notebook.h"
 #include "bitmap_loader.h"
-#include "clMenuBar.hpp"
 #include "clStatusBar.h"
 #include "clTab.h"
-#include "clThemedMenuBar.hpp"
 #include "debugger.h"
 #include "iconfigtool.h"
 #include "ieditor.h"
@@ -134,7 +132,7 @@ public:
 
     virtual clToolBar* GetToolBar() = 0;
 
-    virtual clMenuBar* GetMenuBar() = 0;
+    virtual wxMenuBar* GetMenuBar() = 0;
 
     /**
      * @brief show the output pane and if provided, select 'selectedWindow'

@@ -116,7 +116,7 @@ class clMainFrame : public wxFrame
     bool m_workspaceRetagIsRequired;
     bool m_loadLastSession;
     wxSizer* m_toolbarsSizer = nullptr;
-    clThemedMenuBar* m_menuBar;
+    wxMenuBar* m_mainMenuBar;
     wxMenu* m_bookmarksDropDownMenu;
     bool m_noSavePerspectivePrompt;
 
@@ -172,7 +172,7 @@ public:
      * @brief return the menu bar
      * @return
      */
-    clMenuBar* GetMainMenuBar() const { return m_menuBar; }
+    wxMenuBar* GetMainMenuBar() const { return m_mainMenuBar; }
 
     /**
      * @brief goto anything..

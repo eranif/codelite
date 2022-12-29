@@ -25,7 +25,6 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "clThemedMenuBar.hpp"
 #include "codelite_exports.h"
 #include "fileextmanager.h"
 #include "macros.h"

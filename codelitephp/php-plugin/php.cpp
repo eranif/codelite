@@ -498,7 +498,7 @@ void PhpPlugin::OnNewProject(clNewProjectEvent& e)
     }
 }
 
-void PhpPlugin::DoPlaceMenuBar(clMenuBar* menuBar)
+void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
 {
     // Add our menu bar
     wxMenu* phpMenuBarMenu = new wxMenu();

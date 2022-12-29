@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "macros.h"
 
+#include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 
 #if defined(__WXMSW__) || defined(__WXMAC__)

@@ -969,6 +969,8 @@ void LanguageServerCluster::DiscoverWorkspaceType()
     }
 
     wxArrayString files;
+    CHECK_PTR_RET(clWorkspaceManager::Get().GetWorkspace());
+
     clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
     if(files.empty()) {
         clWARNING() << "Workspace contains no files" << endl;

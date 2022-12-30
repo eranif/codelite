@@ -140,7 +140,7 @@ elseif(NOT MINGW)
     # Installing an application
     install(
         TARGETS ${PLUGIN_NAME}
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+        DESTINATION ${CL_INSTALL_BIN}
         PERMISSIONS ${EXE_PERM}
         COMPONENT standalone)
     install(

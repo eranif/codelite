@@ -63,7 +63,6 @@ protected:
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
 
     void OnFolderDropped(clCommandEvent& event);
-    void OnPaint(wxPaintEvent& event);
     void CreateGUIControls();
     void ConnectEvents();
 

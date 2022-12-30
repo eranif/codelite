@@ -60,9 +60,7 @@ target_link_libraries(${PLUGIN_NAME}
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
 
 set(EXE_PERM OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-if(NOT APPLE)
-    install(FILES ${CL_SRC_ROOT}/LanguageServer/codelite-lsp/codelite-lsp-helper DESTINATION ${CMAKE_INSTALL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-else()
+if(APPLE)
     install(FILES ${CL_SRC_ROOT}/LanguageServer/codelite-lsp/codelite-lsp-helper DESTINATION
             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/ PERMISSIONS ${EXE_PERM})
 endif()

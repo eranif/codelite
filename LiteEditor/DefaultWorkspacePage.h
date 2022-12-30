@@ -26,9 +26,9 @@
 #ifndef DEFAULTWORKSPACEPAGE_H
 #define DEFAULTWORKSPACEPAGE_H
 
-#include "wxcrafter.h"
-#include "cl_command_event.h"
 #include "clColours.h"
+#include "cl_command_event.h"
+#include "wxcrafter.h"
 
 class DefaultWorkspacePage : public DefaultWorkspacePageBase
 {
@@ -37,7 +37,6 @@ class DefaultWorkspacePage : public DefaultWorkspacePageBase
 protected:
     void OnFolderDropped(clCommandEvent& event);
     void DoDropFolders(const wxArrayString& folders);
-    void OnPaint(wxPaintEvent& event);
     void OnColoursChanged(clCommandEvent& event);
 
 public:

@@ -1,15 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 
-if(APPLE)
-    set( PLUGINS_DIR ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins)
-else()
-    set( PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
-endif()
-
 macro(CL_INSTALL_NAME_TOOL _findwhat_ _binary_)
     if(APPLE)
-        install(CODE
-            "
+        install(
+            CODE "
             execute_process(COMMAND /bin/sh -c \"otool -L ${_binary_} | grep ${_findwhat_} |grep -v executable_path \"
                              OUTPUT_VARIABLE RESULT1
                              OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -28,24 +22,25 @@ macro(CL_INSTALL_NAME_TOOL _findwhat_ _binary_)
 endmacro()
 
 macro(CL_OSX_COPY_BREW_LIB lib_full_path destination_folder)
-#    if(APPLE)
-#        # when using brew, the libraries are symlinked to ../Cellar/...
-#        # we need to fix this by copying the real file and then creating a symbolic link
-#        # in our directory
-#
-#        # what we want to do here is:
-#        # alter the symlink libfoo.dylib -> ../Cellar/lib/libfoo.1.X.dylib
-#        # into libfoo.dylib -> real-libfoo.dylib
-#        execute_process(COMMAND basename ${lib_full_path} OUTPUT_VARIABLE __lib_basename OUTPUT_STRIP_TRAILING_WHITESPACE)
-#        execute_process(COMMAND cp -L ${lib_full_path} ${destination_folder}/real-${__lib_basename})
-#        execute_process(COMMAND /bin/sh -c "cd ${destination_folder} && ln -sf real-${__lib_basename} ${__lib_basename}")
-#    endif()
+    #    if(APPLE)
+    #        # when using brew, the libraries are symlinked to ../Cellar/...
+    #        # we need to fix this by copying the real file and then creating a symbolic link
+    #        # in our directory
+    #
+    #        # what we want to do here is:
+    #        # alter the symlink libfoo.dylib -> ../Cellar/lib/libfoo.1.X.dylib
+    #        # into libfoo.dylib -> real-libfoo.dylib
+    #        execute_process(COMMAND basename ${lib_full_path} OUTPUT_VARIABLE __lib_basename OUTPUT_STRIP_TRAILING_WHITESPACE)
+    #        execute_process(COMMAND cp -L ${lib_full_path} ${destination_folder}/real-${__lib_basename})
+    #        execute_process(COMMAND /bin/sh -c "cd ${destination_folder} && ln -sf real-${__lib_basename} ${__lib_basename}")
+    #    endif()
 endmacro()
 
 macro(CL_OSX_FIND_BREW_LIB __lib_name LIB_OUTPUT_VARIABLE)
     if(APPLE)
         unset(${LIB_OUTPUT_VARIABLE} CACHE)
-        find_library(${LIB_OUTPUT_VARIABLE}
+        find_library(
+            ${LIB_OUTPUT_VARIABLE}
             NAMES ${__lib_name}
             HINTS ${BREW_PREFIX}/lib
             PATH_SUFFIXES lib)
@@ -55,7 +50,8 @@ endmacro()
 macro(CL_OSX_FIND_BREW_HEADER __header_name HEADER_OUTPUT_VARIABLE)
     if(APPLE)
         unset(${HEADER_OUTPUT_VARIABLE} CACHE)
-        find_path(${HEADER_OUTPUT_VARIABLE}
+        find_path(
+            ${HEADER_OUTPUT_VARIABLE}
             NAMES ${__header_name}
             HINTS ${BREW_PREFIX}/include
             PATH_SUFFIXES include)
@@ -64,8 +60,8 @@ endmacro()
 
 macro(CL_INSTALL_NAME_TOOL_EX _findwhat_ _replacewith_ _binary_)
     if(APPLE)
-        install(CODE
-            "
+        install(
+            CODE "
             execute_process(COMMAND /bin/sh -c \"otool -L ${_binary_} | grep ${_findwhat_} |grep -v executable_path \"
                              OUTPUT_VARIABLE RESULT1
                              OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -85,26 +81,26 @@ endmacro()
 
 function(copy_extra_homebrew_libs)
     # first try to copy files from /usr/local/lib
-    execute_process(COMMAND cp -L "/usr/local/lib/libpcre2-32.0.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
-    execute_process(COMMAND cp -L "/usr/local/lib/libssh.4.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+    execute_process(COMMAND cp -L "/usr/local/lib/libpcre2-32.0.dylib" ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
+                    ERROR_QUIET OUTPUT_QUIET)
+    execute_process(COMMAND cp -L "/usr/local/lib/libssh.4.dylib" ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
+                    ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/usr/local/lib/libhunspell-1.7.0.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+                            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
 
     # if these files also exists under /opt/homebrew -> use this path instead
     execute_process(COMMAND cp -L "/opt/homebrew/opt/pcre2/lib/libpcre2-32.0.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+                            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/opt/homebrew/opt/libssh/lib/libssh.4.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+                            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/opt/homebrew/opt/hunspell/lib/libhunspell-1.7.0.dylib"
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+                            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
 endfunction()
 
 function(fix_homebrew_paths)
     file(GLOB WXLIBS_TO_FIX ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/libwx_osx*.dylib)
     foreach(_WXLIB ${WXLIBS_TO_FIX})
-        CL_INSTALL_NAME_TOOL("homebrew" ${_WXLIB})
+        cl_install_name_tool("homebrew" ${_WXLIB})
     endforeach()
 endfunction()
 
@@ -115,30 +111,34 @@ endfunction()
 #------------------------------------------------------------------------------------
 macro(CL_INSTALL_NAME_TOOL_STD _binary_)
     if(APPLE)
-        CL_INSTALL_NAME_TOOL("libwx_" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libdapcxx" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libcodelite" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libwxsqlite" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libplugin" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libwxshapeframework" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libdatabaselayersqlite" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libpcre" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libssh" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libhunspell" ${_binary_})
+        cl_install_name_tool("libwx_" ${_binary_})
+        cl_install_name_tool("libdapcxx" ${_binary_})
+        cl_install_name_tool("libcodelite" ${_binary_})
+        cl_install_name_tool("libwxsqlite" ${_binary_})
+        cl_install_name_tool("libplugin" ${_binary_})
+        cl_install_name_tool("libwxshapeframework" ${_binary_})
+        cl_install_name_tool("libdatabaselayersqlite" ${_binary_})
+        cl_install_name_tool("libpcre" ${_binary_})
+        cl_install_name_tool("libssh" ${_binary_})
+        cl_install_name_tool("libhunspell" ${_binary_})
     endif()
 endmacro()
 
 macro(_FIND_WX_LIBRARIES)
     if(APPLE)
         if(NOT _WX_LIBS_DIR)
-            execute_process(COMMAND wx-config --libs OUTPUT_VARIABLE WX_LIBSOUTPUT OUTPUT_STRIP_TRAILING_WHITESPACE)
-            if (${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with -L/foo/bar
+            execute_process(
+                COMMAND wx-config --libs
+                OUTPUT_VARIABLE WX_LIBSOUTPUT
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+            if(${WX_LIBSOUTPUT} MATCHES "^-L.+"
+            )# In recent, multi-architecture, distro versions it'll start with -L/foo/bar
                 string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" _WX_LIBS_DIR ${WX_LIBSOUTPUT})
                 message("-- _WX_LIBS_DIR is set to ${_WX_LIBS_DIR}")
             endif()
             set(minusElPos -1)
             string(FIND ${WX_LIBSOUTPUT} "-l" minusElPos REVERSE)
-            MATH(EXPR minusElPos "${minusElPos}+2") # Skip the -l
+            math(EXPR minusElPos "${minusElPos}+2") # Skip the -l
             string(SUBSTRING ${WX_LIBSOUTPUT} ${minusElPos} -1 _WX_LIB_NAME)
             message("-- _WX_LIB_NAME is set to ${_WX_LIB_NAME}")
         endif()
@@ -146,18 +146,14 @@ macro(_FIND_WX_LIBRARIES)
 endmacro()
 
 # execute the macro once this file is included
-_FIND_WX_LIBRARIES()
+_find_wx_libraries()
 
 #--------------------------------------------------------------------
 # Install a file into
 # /usr/lib/codelite/share or codelite.app/Contents/SharedSupport
 #--------------------------------------------------------------------
 macro(CL_INSTALL_FILE_SHARED _filename_)
-    if(APPLE)
-        install(FILES ${_filename_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport)
-    else()
-        install(FILES ${_filename_} DESTINATION ${CL_PREFIX}/share/codelite)
-    endif()
+    install(FILES ${_filename_} DESTINATION ${CL_RESOURCES_DIR})
 endmacro()
 
 #------------------------------------
@@ -166,7 +162,7 @@ endmacro()
 macro(CL_INSTALL_PLUGIN _target_)
     if(APPLE)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins)
-        CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins/${_target_}.dylib)
+        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins/${_target_}.dylib)
     else()
         install(TARGETS ${_target_} DESTINATION ${PLUGINS_DIR})
     endif()
@@ -179,11 +175,11 @@ macro(CL_INSTALL_LIBRARY _target_)
     if(APPLE)
         set(__LIBNAME ${_target_})
         string(FIND ${__LIBNAME} "lib" LIBPREFIX_INDEX)
-        if ( LIBPREFIX_INDEX GREATER -1 )
+        if(LIBPREFIX_INDEX GREATER -1)
             set(__LIBNAME "lib${LIBPREFIX_INDEX}")
         endif()
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-        CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/${__LIBNAME})
+        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/${__LIBNAME})
     else()
         install(TARGETS ${_target_} DESTINATION ${PLUGINS_DIR})
     endif()
@@ -195,13 +191,23 @@ endmacro()
 macro(CL_INSTALL_EXECUTABLE _target_)
     if(APPLE)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-        CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/${_target_})
+        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/${_target_})
     else()
         # On non OSX, we place the non plugins next to the plugins
-        set (EXE_PERM OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+        set(EXE_PERM
+            OWNER_EXECUTE
+            OWNER_WRITE
+            OWNER_READ
+            GROUP_EXECUTE
+            GROUP_READ
+            WORLD_EXECUTE
+            WORLD_READ)
 
         # On non OSX, we place the non plugins next to the plugins
-        install(TARGETS ${_target_} DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+        install(
+            TARGETS ${_target_}
+            DESTINATION ${CL_INSTALL_BIN}
+            PERMISSIONS ${EXE_PERM})
     endif()
 endmacro()
 
@@ -212,7 +218,7 @@ macro(CL_INSTALL_DEBUGGER _target_)
     if(APPLE)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers)
         # now that the plugin is installed, run install_name_tool
-        CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers/${_target_}.dylib)
+        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers/${_target_}.dylib)
     else()
         install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR}/debuggers)
     endif()
@@ -245,18 +251,16 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         copy_extra_homebrew_libs()
 
         file(COPY ${CL_SRC_ROOT}/bitmaps-light/osx/icon.icns
-            DESTINATION
-            ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources)
+             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources)
 
         file(COPY ${CL_SRC_ROOT}/Runtime/cl_workspace.icns
-            DESTINATION
-            ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources)
+             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources)
 
         # Copy Info.plist
         file(COPY ${CL_SRC_ROOT}/Runtime/Info.plist DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents)
 
         ## Copy external libraries into the bundle folder
-        _FIND_WX_LIBRARIES()
+        _find_wx_libraries()
 
         file(GLOB WXLIBS ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}*.dylib)
         foreach(WXLIB ${WXLIBS})
@@ -265,15 +269,13 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         fix_homebrew_paths()
 
         ## Copy Terminal.app launcher script
-        file(COPY ${CL_SRC_ROOT}/Runtime/osx-terminal.sh
-             DESTINATION
-             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
-             FILE_PERMISSIONS ${EXE_PERM})
+        file(
+            COPY ${CL_SRC_ROOT}/Runtime/osx-terminal.sh
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
+            FILE_PERMISSIONS ${EXE_PERM})
 
         ## codelite-clang-format
-        file(COPY ${CL_SRC_ROOT}/tools/macOS/clang-format
-             DESTINATION
-                  ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
+        file(COPY ${CL_SRC_ROOT}/tools/macOS/clang-format DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
 
         ## folders
         install(
@@ -281,55 +283,51 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/
             USE_SOURCE_PERMISSIONS
             PATTERN ".svn" EXCLUDE
-            PATTERN ".git" EXCLUDE
-        )
+            PATTERN ".git" EXCLUDE)
 
         install(
-            DIRECTORY ${CL_SRC_ROOT}/Runtime/images
-                      ${CL_SRC_ROOT}/Runtime/gdb_printers
-                      ${CL_SRC_ROOT}/Runtime/src/
-                      ${CL_SRC_ROOT}/Runtime/lexers
-                      ${CL_SRC_ROOT}/Runtime/templates
-                      ${CL_SRC_ROOT}/Runtime/rc
+            DIRECTORY ${CL_SRC_ROOT}/Runtime/images ${CL_SRC_ROOT}/Runtime/gdb_printers ${CL_SRC_ROOT}/Runtime/src/
+                      ${CL_SRC_ROOT}/Runtime/lexers ${CL_SRC_ROOT}/Runtime/templates ${CL_SRC_ROOT}/Runtime/rc
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/
             USE_SOURCE_PERMISSIONS
             PATTERN ".svn" EXCLUDE
-            PATTERN ".git" EXCLUDE
-        )
+            PATTERN ".git" EXCLUDE)
 
         install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.layout.default
-                DESTINATION
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/codelite.layout)
+                DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/codelite.layout)
 
         install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.layout.default
-                DESTINATION
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/codelite.layout)
+                DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/codelite.layout)
 
-        install(DIRECTORY ${CL_SRC_ROOT}/sdk/codelite_cppcheck/cfg/
-                DESTINATION
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/cppcheck/
-                FILES_MATCHING PATTERN "*.cfg"
-                )
+        install(
+            DIRECTORY ${CL_SRC_ROOT}/sdk/codelite_cppcheck/cfg/
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/cppcheck/
+            FILES_MATCHING
+            PATTERN "*.cfg")
 
-        install(DIRECTORY ${CL_SRC_ROOT}/Runtime/ DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/
-                FILES_MATCHING PATTERN "*.zip")
+        install(
+            DIRECTORY ${CL_SRC_ROOT}/Runtime/
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/
+            FILES_MATCHING
+            PATTERN "*.zip")
 
-        install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default.mac
-                DESTINATION
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/
-                RENAME build_settings.xml.default)
+        install(
+            FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default.mac
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/
+            RENAME build_settings.xml.default)
 
         install(FILES ${CL_SRC_ROOT}/Runtime/config/plugins.xml.default
-                DESTINATION
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/)
+                DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/)
         install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport)
 
-        install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.mac
-                DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config
-                RENAME codelite.xml.default)
+        install(
+            FILES ${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.mac
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config
+            RENAME codelite.xml.default)
 
-        install(FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.mac
-                DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config
-                RENAME debuggers.xml.default)
+        install(
+            FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.mac
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config
+            RENAME debuggers.xml.default)
     endif()
 endmacro()

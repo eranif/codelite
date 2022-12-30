@@ -5,12 +5,7 @@ cmake_minimum_required(VERSION 3.0)
 #------------------------------------
 macro(codelite_install_script _script_)
     set (EXE_PERM OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-    if(APPLE)
-        install(FILES ${_script_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/ PERMISSIONS ${EXE_PERM})
-    else()
-        # On non OSX, we place the non plugins next to the plugins
-        install(FILES ${_script_} DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-    endif()
+    install(FILES ${_script_} DESTINATION ${CL_INSTALL_BIN} PERMISSIONS ${EXE_PERM})
 endmacro()
 
 function(get_distro_name DISTRO_NAME)
@@ -18,7 +13,7 @@ function(get_distro_name DISTRO_NAME)
                     OUTPUT_VARIABLE _DISTRO_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
     execute_process(COMMAND /bin/bash "-c" "cat /etc/os-release |grep VERSION_ID=|cut -d = -f 2"
                     OUTPUT_VARIABLE _VERSION_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
-    
+
     # clean the output
     string (REPLACE "\"" "" _DISTRO_ID "${_DISTRO_ID}")
     string (REPLACE "\"" "" _VERSION_ID "${_VERSION_ID}")
@@ -29,12 +24,12 @@ function(get_distro_name DISTRO_NAME)
     if (POS GREATER -1)
         set (${DISTRO_NAME} "fedora_${_VERSION_ID}" PARENT_SCOPE)
     endif()
-    
+
     string(FIND ${_DISTRO_ID} "ubuntu" POS)
     if (POS GREATER -1)
         set (${DISTRO_NAME} "${_DISTRO_ID}_${_VERSION_ID}" PARENT_SCOPE)
     endif()
-    
+
     string(FIND ${_DISTRO_ID} "debian" POS)
     if (POS GREATER -1)
         set (${DISTRO_NAME} "${_DISTRO_ID}_${_VERSION_ID}" PARENT_SCOPE)
@@ -89,7 +84,7 @@ set(PCH_HEADERS_LIST
     )
 macro(codelite_add_exported_pch _TARGET_)
     target_precompile_headers(
-        ${_TARGET_} 
+        ${_TARGET_}
     PUBLIC
         ${PCH_HEADERS_LIST}
     )
@@ -97,7 +92,7 @@ endmacro()
 
 macro(codelite_add_pch _TARGET_)
     target_precompile_headers(
-        ${_TARGET_} 
+        ${_TARGET_}
     PRIVATE
         ${PCH_HEADERS_LIST}
     )

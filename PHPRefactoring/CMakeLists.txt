@@ -60,14 +60,4 @@ target_link_libraries(${PLUGIN_NAME}
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
 
 # install the phprefactor.phar
-if(APPLE)
-    install(
-      FILES ${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar
-      DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport
-    )
-else()
-    install(
-      FILES ${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite
-    )
-endif()
+cl_install_file_shared(${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar)

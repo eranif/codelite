@@ -231,6 +231,33 @@ if(NOT MINGW)
     endif(NOT CL_PREFIX)
 endif()
 
+# Define the PLUGINS_DIR variable
+if(MINGW)
+    # MinGW
+    set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/plugins")
+    set(MINGW_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}")
+endif()
+
+if(APPLE)
+    set(PLUGINS_DIR ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins)
+    set(CL_INSTALL_BIN ${CMAKE_INSTALL_PREFIX}/codelite.app/Contents/MacOS)
+    set(CL_RESOURCES_DIR ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport)
+elseif(MINGW)
+    set(PLUGINS_DIR "${MINGW_INSTALL_PLUGINS_DIR}")
+    set(CL_INSTALL_BIN "${MINGW_INSTALL_BIN}")
+    set(CL_RESOURCES_DIR "${MINGW_INSTALL_BIN}")
+else()
+    # /usr/lib/codelite
+    set(PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
+    # /usr/bin
+    set(CL_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}/bin")
+    # /usr/share/codelite
+    set(CL_RESOURCES_DIR "${CMAKE_INSTALL_PREFIX}/share/codelite")
+endif()
+
+message(STATUS "CL_INSTALL_BIN is set to ${CL_INSTALL_BIN}")
+message(STATUS "PLUGINS_DIR is set to ${PLUGINS_DIR}")
+
 # Try to link-to or build lldb?
 if(UNIX)
     set(WITH_LLDB 1)

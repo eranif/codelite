@@ -1,10 +1,10 @@
 if(NOT APPLE)
     find_library(LIBHUNSPELL
                 # Fedora doesn't create a hunspell->hunspell-1.3 symlink, so explicitly look for (the current) full name
-                NAMES hunspell hunspell-1.3  hunspell-1.4 hunspell-1.5 hunspell-1.6 hunspell-1.7 
+                NAMES hunspell hunspell-1.3  hunspell-1.4 hunspell-1.5 hunspell-1.6 hunspell-1.7
                 HINTS /usr/lib /usr/lib/x86_64-linux-gnu/ /usr/lib64/ ${BREW_PREFIX}/lib
                 PATH_SUFFIXES lib)
-    
+
     find_path(  HUNSPELL_H
                 NAMES hunspell.h
                 HINTS
@@ -13,7 +13,7 @@ if(NOT APPLE)
                 /usr/include /usr/local/include /usr/include/hunspell /usr/local/include/hunspell ${BREW_PREFIX}/include
                 PATH_SUFFIXES include/hunspell include)
 else()
-    CL_OSX_FIND_BREW_LIB(libhunspell-1.7.0.dylib LIBHUNSPELL) 
+    CL_OSX_FIND_BREW_LIB(libhunspell-1.7.0.dylib LIBHUNSPELL)
     CL_OSX_FIND_BREW_HEADER(hunspell/hunspell.h HUNSPELL_H)
 endif()
 
@@ -87,22 +87,11 @@ else()
     CL_INSTALL_PLUGIN(${PLUGIN_NAME})
     CL_OSX_COPY_BREW_LIB(${LIBHUNSPELL} ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
 
-    if(APPLE)
-        install(
-          DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
-          DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport
-          USE_SOURCE_PERMISSIONS
-          PATTERN ".svn" EXCLUDE
-          PATTERN ".git" EXCLUDE
-        )
-
-    else()
-        install(
-          DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite
-          USE_SOURCE_PERMISSIONS
-          PATTERN ".svn" EXCLUDE
-          PATTERN ".git" EXCLUDE
-        )
-    endif()
+    install(
+      DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
+      DESTINATION ${CL_RESOURCES_DIR}
+      USE_SOURCE_PERMISSIONS
+      PATTERN ".svn" EXCLUDE
+      PATTERN ".git" EXCLUDE
+    )
 endif()

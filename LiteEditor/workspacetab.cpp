@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "workspacetab.h"
+
 #include "DefaultWorkspacePage.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButtonBase.h"
@@ -40,7 +42,7 @@
 #include "pluginmanager.h"
 #include "project_settings_dlg.h"
 #include "workspace_pane.h"
-#include "workspacetab.h"
+
 #include <algorithm>
 #include <wx/button.h>
 #include <wx/combobox.h>
@@ -62,9 +64,6 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
     , m_dlg(NULL)
     , m_view(NULL)
 {
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
-    m_panelCxx->SetBackgroundStyle(wxBG_STYLE_PAINT);
-
     long link = EditorConfigST::Get()->GetInteger(wxT("LinkWorkspaceViewToEditor"), 1);
     m_isLinkedToEditor = link ? true : false;
 
@@ -73,18 +72,6 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
     SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &WorkspaceTab::OnFolderDropped, this);
 
-    m_panelCxx->Bind(wxEVT_PAINT, [&](wxPaintEvent& e) {
-        wxAutoBufferedPaintDC dc(m_panelCxx);
-        dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
-        dc.SetPen(clSystemSettings::GetDefaultPanelColour());
-        dc.DrawRectangle(m_panelCxx->GetClientRect());
-    });
-
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [&](clCommandEvent& event) {
-        event.Skip();
-        Refresh();
-        m_panelCxx->Refresh();
-    });
     m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("project"));
     m_dvListCtrlPinnedProjects->SetBitmaps(&m_bitmaps);
 }
@@ -441,14 +428,6 @@ void WorkspaceTab::OnFolderDropped(clCommandEvent& event)
 {
     // pass it on to the tree view
     m_fileView->CallAfter(&FileViewTree::FolderDropped, event.GetStrings());
-}
-
-void WorkspaceTab::OnPaint(wxPaintEvent& event)
-{
-    wxAutoBufferedPaintDC dc(this);
-    dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
-    dc.SetPen(clSystemSettings::GetDefaultPanelColour());
-    dc.DrawRectangle(GetClientRect());
 }
 
 void WorkspaceTab::LoadCxxPinnedProjects()

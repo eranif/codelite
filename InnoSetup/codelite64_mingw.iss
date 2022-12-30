@@ -26,12 +26,7 @@ UninstallDisplayIcon={app}\codelite.exe,0
 ;;==================================
 ;; 64 bit setup
 ;;==================================
-#define CODELITE_ROOT "C:\msys64\home\eran\devl\codelite"
-#define WXWIN "C:\msys64\home\eran\root"
-#define MSYS2_USR_BIN_DIR "C:\msys64\usr\bin"
-#define CLANG64_DIR "C:\msys64\clang64\bin"
-#define WIN_LLVM_BIN_DIR "C:\LLVM\bin"
-#define BUILD_RELEASE_BIN_DIR "C:\msys64\home\eran\devl\codelite\build-release\bin"
+#define INSTALL_DIR "C:\msys64\home\eran\devl\codelite\build-release\install"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -41,135 +36,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-echo.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#BUILD_RELEASE_BIN_DIR}\ctagsd.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CODELITE_ROOT}\ctags\ctags.exe"; DestDir: "{app}\codelite-ctags.exe"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_USR_BIN_DIR}\wx-config.exe"; DestDir: "{app}";
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-cc.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite-exec.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-
-;; ---- wxWidgets DLLs
-Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw330u_clang_x64_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-
-;; ---- MinGW64 Dlls
-Source: "{#CLANG64_DIR}\libc++.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CLANG64_DIR}\libunwind.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CLANG64_DIR}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CLANG64_DIR}\libsqlite3-0.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CLANG64_DIR}\libssh.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CLANG64_DIR}\zlib1.dll"; DestDir: "{app}\"; DestName: "zlib1.dll"; Flags: ignoreversion ;
-Source: "{#CLANG64_DIR}\libcrypto-1_1-x64.dll"; DestDir: "{app}\"; DestName: "libcrypto-1_1-x64.dll"; Flags: ignoreversion ;
-Source: "{#CLANG64_DIR}\libhunspell-1.7-0.dll"; DestDir: "{app}\"; DestName: "libhunspell-1.7-0.dll"; Flags: ignoreversion ;
-
-;; ---- Binaries needed by CodeLite
-Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\config\codelite.xml.default"; DestDir: "{app}\config";
-Source: "{#CODELITE_ROOT}\Runtime\codelite-remote"; DestDir: "{app}";
-Source: "{#CODELITE_ROOT}\Runtime\rust-gdb.bat"; DestDir: "{app}";
-Source: "{#CODELITE_ROOT}\Runtime\config\plugins.xml.default"; DestDir: "{app}\config";
-Source: "{#CODELITE_ROOT}\Runtime\config\debuggers.xml.default"; DestDir: "{app}\config";
-Source: "{#CODELITE_ROOT}\Runtime\config\build_settings.xml.default.win"; DestDir: "{app}\config"; DestName: "build_settings.xml.default";
-Source: "{#CODELITE_ROOT}\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ;
-
-Source: "{#CODELITE_ROOT}\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\php.sample"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\config\codelite.layout.default"; DestDir: "{app}\config"; DestName: codelite.layout; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\sdk\codelite_cppcheck\cfg\*.cfg"; DestDir: "{app}\config\cppcheck"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs ;
-Source: "{#CODELITE_ROOT}\SpellChecker\dics\*"; DestDir: "{app}\dics"; Flags: recursesubdirs ;
-
-;; ------- Bin Utils ------------------
-Source: "{#MSYS2_USR_BIN_DIR}\rm.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_USR_BIN_DIR}\mkdir.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_USR_BIN_DIR}\cp.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_USR_BIN_DIR}\ls.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_USR_BIN_DIR}\mv.exe"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_USR_BIN_DIR}\msys-intl-8.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_USR_BIN_DIR}\msys-2.0.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_USR_BIN_DIR}\msys-iconv-2.dll"; DestDir: "{app}"; Flags: ignoreversion;
-
-; Copy clangd for Windows
-Source: "{#WIN_LLVM_BIN_DIR}\clangd.exe"; DestDir: "{app}/lsp"; Flags: ignoreversion;
-Source: "{#WIN_LLVM_BIN_DIR}\msvcp140.dll"; DestDir: "{app}/lsp"; Flags: ignoreversion;
-Source: "{#WIN_LLVM_BIN_DIR}\vcruntime140.dll"; DestDir: "{app}/lsp"; Flags: ignoreversion;
-Source: "{#WIN_LLVM_BIN_DIR}\vcruntime140_1.dll"; DestDir: "{app}/lsp"; Flags: ignoreversion;
-Source: "{#WIN_LLVM_BIN_DIR}\clang-format.exe"; DestDir: "{app}/"; Flags: ignoreversion;
-Source: "{#WIN_LLVM_BIN_DIR}\msvcp140.dll"; DestDir: "{app}/"; Flags: ignoreversion;
-Source: "{#WIN_LLVM_BIN_DIR}\vcruntime140.dll"; DestDir: "{app}/"; Flags: ignoreversion;
-Source: "{#WIN_LLVM_BIN_DIR}\vcruntime140_1.dll"; DestDir: "{app}/"; Flags: ignoreversion;
-
-; Override with Windows specific files
-Source: "{#CODELITE_ROOT}\Runtime\templates\projects\dynamic-library\dynamic-library.project.windows"; DestName: dynamic-library.project; DestDir: "{app}\templates\projects\dynamic-library"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\templates\projects\dynamic-library-wx-enabled\dynamic-library-wx-enabled.project.windows"; DestName: dynamic-library-wx-enabled.project; DestDir: "{app}\templates\projects\dynamic-library-wx-enabled"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion;
-
-; XML settings
-Source: "{#CODELITE_ROOT}\Runtime\lexers\*.json"; DestDir: "{app}\lexers\"; Flags: ignoreversion ;
-
-; Copy the plugins (by name)
-Source: "{#BUILD_RELEASE_BIN_DIR}\DebuggerGDB.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\abbreviation.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\CodeFormatter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\ContinuousBuild.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\Copyright.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\CppChecker.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\Cscope.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\ExternalTools.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\git.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\Wizards.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\Outline.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\snipwiz.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\QMakePlugin.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\Subversion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\UnitTestsPP.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\wxFormBuilder.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\ZoomNavigator.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\SFTP.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\CMakePlugin.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\CodeLiteDiff.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\DebugAdapterClient.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\wxcrafter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\WordCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\SpellCheck.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelitephp.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\WebTools.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\HelpPlugin.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\AutoSave.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\Tail.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\EditorConfigPlugin.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite_vim.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\PHPLint.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\PHPRefactoring.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\SmartCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\Docker.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\LanguageServer.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\EOSWiki.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\Rust.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-Source: "{#BUILD_RELEASE_BIN_DIR}\Remoty.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
-
-Source: "{#BUILD_RELEASE_BIN_DIR}\libwxsqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\codelite.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\libdapcxx.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#BUILD_RELEASE_BIN_DIR}\libplugin.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\libdatabaselayersqlite.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#BUILD_RELEASE_BIN_DIR}\libwxshapeframework.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\art\splashscreen@2x.png"; DestDir: "{app}\images\"; Flags: ignoreversion; DestName: splashscreen@2x.png;
-Source: "{#CODELITE_ROOT}\art\splashscreen@2x.png"; DestDir: "{app}\images\"; Flags: ignoreversion; DestName: splashscreen.png;
-Source: "{#CODELITE_ROOT}\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ;
-Source: "{#CODELITE_ROOT}\Runtime\gdb_printers\*"; DestDir: "{app}\gdb_printers"; Flags: recursesubdirs ;
-Source: "{#CODELITE_ROOT}\wxcrafter\wxgui.zip";  DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CODELITE_ROOT}\Runtime\PHP.zip";  DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#CODELITE_ROOT}\PHPRefactoring\phprefactor.phar";  DestDir: "{app}"; Flags: ignoreversion;
+; the INSTALL_DIR is created by `make install`
+Source: "{#INSTALL_DIR}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\codelite.exe"; WorkingDir: "{app}"

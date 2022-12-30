@@ -36,6 +36,20 @@ function(get_distro_name DISTRO_NAME)
     endif()
 endfunction()
 
+if(MINGW)
+    macro(msys_install_clang64_tool tool_name install_dir)
+        # locate the dependencies
+        execute_process(COMMAND sh -c "ldd /clang64/bin/${tool_name} | grep clang64|cut -d'=' -f2|cut -d' ' -f2|xargs cygpath -w"
+                        OUTPUT_VARIABLE TOOL_DEPS OUTPUT_STRIP_TRAILING_WHITESPACE)
+        string(REPLACE "\n" ";" TOOL_DEPS ${TOOL_DEPS})
+        list(APPEND TOOL_DEPS "${MSYS2_BASE}/clang64/bin/${tool_name}")
+        foreach(TOOL ${TOOL_DEPS})
+            string(REPLACE "\\" "/" TOOL "${TOOL}")
+            install(FILES "${TOOL}" DESTINATION ${install_dir})
+        endforeach()
+    endmacro()
+endif()
+
 set(PCH_HEADERS_LIST
     <wx/wxprec.h>
     <wx/app.h>

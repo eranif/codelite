@@ -105,8 +105,11 @@ if(MINGW)
         TARGET codelite
         PRE_BUILD
         COMMAND cd "${CL_SRC_ROOT}/ctags" && "$(MAKE)" -f mk_mingw.mak
-        COMMENT "Building codelite-ctags..."
-        VERBATIM)
+        COMMENT "Building codelite-ctags...")
+    install(
+        FILES ${CL_SRC_ROOT}/ctags/ctags.exe
+        DESTINATION ${CL_INSTALL_BIN}
+        RENAME codelite-ctags.exe)
 endif()
 
 codelite_add_pch(codelite)
@@ -242,7 +245,17 @@ if(NOT APPLE)
         install(
             CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/icon-theme.cache)"
         )
+    elseif(MINGW)
+        install(
+            FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
+            DESTINATION ${CL_INSTALL_BIN}/images
+            RENAME splashscreen.png)
+
+        install(
+            FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
+            DESTINATION ${CL_INSTALL_BIN}/images)
     endif()
+
     codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
 
     install(
@@ -256,7 +269,32 @@ if(NOT APPLE)
         DESTINATION ${CL_RESOURCES_DIR}
         USE_SOURCE_PERMISSIONS
         PATTERN ".svn" EXCLUDE
+        PATTERN "*.windows" EXCLUDE
+        PATTERN "dynamic-library.project" EXCLUDE
+        PATTERN "dynamic-library-wx-enabled.project" EXCLUDE
         PATTERN ".git" EXCLUDE)
+
+    if(MINGW)
+        # rename .windows files
+        install(
+            FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library/dynamic-library.project.windows
+            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library
+            RENAME dynamic-library.project)
+
+        install(
+            FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project.windows
+            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library-wx-enabled
+            RENAME dynamic-library-wx-enabled.project)
+    else()
+        # just install the missing files
+        install(
+            FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library/dynamic-library.project
+            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library)
+
+        install(
+            FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project
+            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library-wx-enabled)
+    endif()
 
     if(UNIX)
         install(

@@ -57,3 +57,7 @@ target_link_libraries(${PLUGIN_NAME}
                       )
 # Installation destination
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
+
+if(MINGW)
+    codelite_install_script(${CL_SRC_ROOT}/Runtime/rust-gdb.bat)
+endif()

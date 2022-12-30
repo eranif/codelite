@@ -64,3 +64,8 @@ if(APPLE)
     install(FILES ${CL_SRC_ROOT}/LanguageServer/codelite-lsp/codelite-lsp-helper DESTINATION
             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/ PERMISSIONS ${EXE_PERM})
 endif()
+
+if(MINGW)
+    # install clangd
+    msys_install_clang64_tool(clangd.exe ${CL_INSTALL_BIN})
+endif()

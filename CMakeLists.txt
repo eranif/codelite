@@ -51,6 +51,9 @@ project("CodeLite")
 if(MINGW)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
     set(CL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+    set(MSYS2_USR_BIN $ENV{WD})
+    string(REPLACE "\\usr\\bin" "" MSYS2_BASE "${MSYS2_USR_BIN}")
+    string(REPLACE "\\" "/" MSYS2_BASE "${MSYS2_BASE}")
 endif()
 
 # Generate compile_commands.json file for code completion
@@ -918,6 +921,7 @@ else()
 endif() # NOT WXC_APP
 
 if(UNIX AND NOT APPLE)
+    message(FATAL_ERROR "Shouldn't enter here")
     set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
     install(
         TARGETS ctags
@@ -934,9 +938,6 @@ endif()
 
 if(MINGW)
     # determine MSYS2 path
-    set(MSYS2_USR_BIN $ENV{WD})
-    string(REPLACE "\\usr\\bin" "" MSYS2_BASE "${MSYS2_USR_BIN}")
-    string(REPLACE "\\" "/" MSYS2_BASE "${MSYS2_BASE}")
     write_file(${CMAKE_BINARY_DIR}/msys2-environment "export WXWIN=${WXWIN}")
     write_file(${CMAKE_BINARY_DIR}/msys2-environment "export MSYS2_HOME=${MSYS2_BASE}" APPEND)
 
@@ -955,23 +956,69 @@ if(MINGW)
         libwinpthread-1.dll
         zlib1.dll)
 
-    list(APPEND WXWIDGETS_DLLS wxmsw330u_clang_x64_custom.dll)
-
     list(
         APPEND
-        CODELITE_RESOURCES
-        ${CMAKE_SOURCE_DIR}/Runtime/codelite-bitmaps-dark.zip
-        ${CMAKE_SOURCE_DIR}/Runtime/codelite-bitmaps-light.zip
-        ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip
-        ${CMAKE_SOURCE_DIR}/LICENSE)
+        MSYS2_CORE_FILES
+        msys-intl-8.dll
+        msys-2.0.dll
+        msys-iconv-2.dll
+        rm.exe
+        mkdir.exe
+        cp.exe
+        ls.exe
+        mv.exe)
+
+    list(APPEND WXWIDGETS_DLLS wxmsw330u_clang_x64_custom.dll)
+
+    list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/Runtime/codelite-bitmaps-dark.zip
+         ${CMAKE_SOURCE_DIR}/Runtime/codelite-bitmaps-light.zip ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip
+         ${CMAKE_SOURCE_DIR}/LICENSE)
 
     foreach(DLL ${SYSTEM_DLLS})
         install(FILES "${MSYS2_BASE}/clang64/bin/${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
     endforeach()
+
+    foreach(DLL ${MSYS2_CORE_FILES})
+        install(FILES "${MSYS2_BASE}/usr/bin/${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    endforeach()
+
     foreach(DLL ${WXWIDGETS_DLLS})
         install(FILES "${WXWIN}/lib/clang_x64_dll/${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
     endforeach()
+
     foreach(RESOURCE ${CODELITE_RESOURCES})
         install(FILES "${RESOURCE}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
     endforeach()
+endif()
+
+if(MINGW AND NOT WXC_APP)
+    # CodeLite only related installation
+    find_program(
+        INNO_SETUP_CMP
+        NAMES "ISCC" "ISCC.exe"
+        PATHS "c:/Program Files (x86)/Inno Setup 6")
+    if(NOT INNO_SETUP_CMP)
+        message(WARNING "** Could not locate ISCC compiler! **")
+    else()
+        message(STATUS "InnoSetup compiler is set to: ${INNO_SETUP_CMP}")
+        add_custom_target(
+            setup
+            COMMAND "${INNO_SETUP_CMP}" ${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss
+            WORKING_DIRECTORY "${CL_SRC_ROOT}/InnoSetup")
+    endif()
+elseif(MINGW AND WXC_APP)
+    # wxCrafter App
+    find_program(
+        INNO_SETUP_CMP
+        NAMES "ISCC" "ISCC.exe"
+        PATHS "c:/Program Files (x86)/Inno Setup 6")
+    if(NOT INNO_SETUP_CMP)
+        message(WARNING "** Could not locate ISCC compiler! **")
+    else()
+        message(STATUS "InnoSetup compiler is set to: ${INNO_SETUP_CMP}")
+        add_custom_target(
+            setup
+            COMMAND "${INNO_SETUP_CMP}" ${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss
+            WORKING_DIRECTORY "${CL_SRC_ROOT}/InnoSetup")
+    endif()
 endif()

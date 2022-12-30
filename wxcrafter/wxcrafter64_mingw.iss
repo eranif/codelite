@@ -26,13 +26,7 @@ UninstallDisplayIcon={app}\wxcrafter.exe,0
 ;;==================================
 ;; 64 bit setup
 ;;==================================
-#define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "C:\msys64\home\eran\root"
-#define MSYS2_DIR "C:\msys64\usr\bin"
-#define MINGW_DIR "C:\msys64\clang64\bin"
-#define BUILD_BIN_DIR "C:\src\codelite\wxcrafter\build-Release_Standalone\bin"
-#define WX_CONFIG_DIR "C:\msys64\home\eran\devl\wx-config-msys2\bin"
-#define MINGW_INSTALL_DIR "C:\msys64\home\eran\root"
+#define INSTALL_DIR "C:\msys64\home\eran\devl\codelite\build-release-wxcapp\install"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -42,56 +36,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#BUILD_BIN_DIR}\wxcrafter.exe"; DestDir: "{app}"; Flags: ignoreversion;
-
-;; ---- wxWidgets DLLs
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxbase316u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxbase316u_net_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxbase316u_xml_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_adv_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_aui_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_core_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_html_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_propgrid_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_richtext_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_stc_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_xrc_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-;;Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_ribbon_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\clang_x64_dll\wxmsw32u_clang.dll"; DestDir: "{app}"; Flags: ignoreversion;
-
-;; ---- MinGW64 Dlls
-Source: "{#MINGW_DIR}\libc++.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MINGW_DIR}\libunwind.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MINGW_DIR}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
-
-;; ---- Binaries
-Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\config\codelite.xml.default"; DestDir: "{app}\config";
-
-;; ------- Bin Utils ------------------
-Source: "{#MSYS2_DIR}\msys-intl-8.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_DIR}\msys-2.0.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#MSYS2_DIR}\msys-iconv-2.dll"; DestDir: "{app}"; Flags: ignoreversion;
-
-; Override with Windows specific files
-Source: "{#CODELITE_ROOT}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion;
-
-; XML settings
-Source: "{#CODELITE_ROOT}\Runtime\lexers\*.json"; DestDir: "{app}\lexers\"; Flags: ignoreversion ;
-
-; Copy core DLLs
-Source: "{#CODELITE_ROOT}\Runtime\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#MINGW_INSTALL_DIR}\bin\libssh.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ;
-Source: "{#MINGW_DIR}\zlib1.dll"; DestDir: "{app}\"; DestName: "zlib1.dll"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ;
-Source: "{#CODELITE_ROOT}\Runtime\wxgui.zip";  DestDir: "{app}"; Flags: ignoreversion;
+; the INSTALL_DIR is created by `make install`
+Source: "{#INSTALL_DIR}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
 
 [Icons]
 Name: "{group}\wxCrafter "; Filename: "{app}\wxcrafter.exe"; WorkingDir: "{app}"

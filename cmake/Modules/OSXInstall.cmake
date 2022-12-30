@@ -219,6 +219,8 @@ macro(CL_INSTALL_DEBUGGER _target_)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers)
         # now that the plugin is installed, run install_name_tool
         cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers/${_target_}.dylib)
+    elseif(MINGW)
+        install(TARGETS ${_target_} DESTINATION ${CL_INSTALL_BIN}/debuggers)
     else()
         install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR}/debuggers)
     endif()

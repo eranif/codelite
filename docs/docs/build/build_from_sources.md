@@ -38,18 +38,13 @@ git submodule update --init
 mkdir build-release
 cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN=$HOME/root
-mingw32-make -j$(nproc)
+mingw32-make -j$(nproc) install
 ```
 
-- To update your local installation, close CodeLite, open `MSYS2` terminal and type:
+- To run the new CodeLite:
 
 ```bash
-cd codelite/build-release
-../msw-update.sh
-
-# codelite is now installed under the "install" folder
-cd install
-
+cd build-release/install
 ./codelite
 ```
 

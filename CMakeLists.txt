@@ -921,7 +921,6 @@ else()
 endif() # NOT WXC_APP
 
 if(UNIX AND NOT APPLE)
-    message(FATAL_ERROR "Shouldn't enter here")
     set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
     install(
         TARGETS ctags

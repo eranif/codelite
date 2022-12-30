@@ -8,3 +8,4 @@ Debug Adapter Client
 others:
 ----
 - Include Rust & Remoty with the default plugins
+- Support code formatter for CMake (cmake-format) + update the docs on how to install it

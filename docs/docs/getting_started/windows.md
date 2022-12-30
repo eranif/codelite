@@ -29,17 +29,6 @@ echo 'export PATH=/clang64/bin:$PATH' >> ~/.$(basename $SHELL)rc
 . ~/.$(basename $SHELL)rc
 ```
 
-- If you choose to work with `CMD`, create a script with the following content, name it `MinGW.bat` and place it on your desktop:
-
-```batch
-@echo off
-title [64 bit] MinGW CMD Shell
-set PATH=C:\msys64\usr\bin;%PATH%
-set PATH=C:\msys64\clang64\bin;%PATH%
-set PATH=C:\Program Files\CodeLite;%PATH%
-cmd
-```
-
 ## Optional setup
 ---
 

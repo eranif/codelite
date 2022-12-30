@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxC2AC4InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                              const wxSize& size, long style)
@@ -39,7 +51,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_splitterMain =
         new wxSplitterWindow(m_MainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_MainPanel, wxSize(-1, -1)),
-                             wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+                             wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxTRANSPARENT_WINDOW);
     m_splitterMain->SetSashGravity(0);
     m_splitterMain->SetMinimumPaneSize(10);
 
@@ -320,7 +332,7 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
 
     m_mainSplitter = new wxSplitterWindow(m_panelRightSidebar, wxID_ANY, wxDefaultPosition,
                                           wxDLG_UNIT(m_panelRightSidebar, wxSize(-1, -1)),
-                                          wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+                                          wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxTRANSPARENT_WINDOW);
     m_mainSplitter->SetSashGravity(1);
     m_mainSplitter->SetMinimumPaneSize(10);
 
@@ -387,7 +399,8 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     m_cppPage->SetSizer(boxSizer19);
 
     m_textCtrlCppSource =
-        new wxStyledTextCtrl(m_cppPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_cppPage, wxSize(-1, -1)), 0);
+        new wxStyledTextCtrl(m_cppPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_cppPage, wxSize(-1, -1)),
+                             wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -454,7 +467,8 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     m_headerPage->SetSizer(boxSizer21);
 
     m_textCtrlHeaderSource =
-        new wxStyledTextCtrl(m_headerPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_headerPage, wxSize(-1, -1)), 0);
+        new wxStyledTextCtrl(m_headerPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_headerPage, wxSize(-1, -1)),
+                             wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -521,7 +535,8 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     m_xrcNBPage->SetSizer(boxSizer15);
 
     m_textCtrlXrc =
-        new wxStyledTextCtrl(m_xrcNBPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_xrcNBPage, wxSize(-1, -1)), 0);
+        new wxStyledTextCtrl(m_xrcNBPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_xrcNBPage, wxSize(-1, -1)),
+                             wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -733,7 +748,8 @@ EnterStringsDlgBase::EnterStringsDlgBase(wxWindow* parent, wxWindowID id, const 
 
     bSizer16->Add(m_staticTextMessage, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                 wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);

@@ -176,20 +176,10 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     m_longName = _("wxWidgets GUI Designer");
     m_shortName = "wxCrafter";
 
-    m_useFrame = true;
-    if(!m_useFrame) {
-
-        Notebook* book = m_mgr->GetWorkspacePaneNotebook();
-        m_treeView = new wxcTreeView(book, this);
-        wxcImages images;
-        book->AddPage(m_treeView, _("wxCrafter"), false);
-        m_mgr->AddWorkspaceTab(_("wxCrafter"));
-    } else {
 // will be initialized in the OnInitDone()
 #if STANDALONE_BUILD
-        DoInitDone();
+    DoInitDone();
 #endif
-    }
 
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &wxCrafterPlugin::OnToggleView, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(wxCrafterPlugin::OnInitDone), NULL, this);
@@ -1216,17 +1206,15 @@ void wxCrafterPlugin::DoInitDone(wxObject* obj)
     ColoursAndFontsManager::Get().Load();
 #endif
 
-    if(m_useFrame) {
-        m_mainFrame = new MainFrame(nullptr, m_serverMode);
+    m_mainFrame = new MainFrame(nullptr, m_serverMode);
 
-        m_treeView = new wxcTreeView(m_mainFrame->GetTreeParent(), this);
-        m_mainFrame->Add(m_treeView);
+    m_treeView = new wxcTreeView(m_mainFrame->GetTreeParent(), this);
+    m_mainFrame->Add(m_treeView);
 
-        m_mainPanel = new GUICraftMainPanel(m_mainFrame->GetDesignerParent(), this, m_treeView->GetTree());
-        m_mainFrame->Add(m_mainPanel);
-        m_mainFrame->Layout();
-        wxCrafter::SetTopFrame(m_mainFrame);
-    }
+    m_mainPanel = new GUICraftMainPanel(m_mainFrame->GetDesignerParent(), this, m_treeView->GetTree());
+    m_mainFrame->Add(m_mainPanel);
+    m_mainFrame->Layout();
+    wxCrafter::SetTopFrame(m_mainFrame);
 }
 
 void wxCrafterPlugin::OnProjectLoaded(wxCommandEvent& e) { e.Skip(); }

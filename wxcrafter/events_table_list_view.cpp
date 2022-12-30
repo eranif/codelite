@@ -1,22 +1,23 @@
 #include "events_table_list_view.h"
+
 #include "EventsEditorDlg.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
+
 #include <wx/wxcrtvararg.h>
 
-static wxString PLACE_HOLDER = "";
-static const wxEventType wxEVT_LV_RESTORE_PLACE_HOLDER = wxNewEventType();
-static const wxEventType wxEVT_DV_SHOW_CONTEXT_MENU = wxNewEventType();
-
-static int ID_JUMP_TO_DECL = wxNewEventType();
-static int ID_JUMP_TO_IMPL = wxNewEventType();
+namespace
+{
+wxString PLACE_HOLDER = "";
+}
 
 wxDECLARE_EVENT(wxEVT_EVENTS_PROPERTIES_UPDATED, wxCommandEvent);
 
 EventsTableListView::EventsTableListView(wxWindow* parent)
     : wxPropertyGridManager(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                            wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION)
+                            wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION |
+                                wxCrafter::GetControlBorder())
     , m_eventsDb(NULL)
 {
     Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsTableListView::OnPropertyChanged), NULL, this);
@@ -42,7 +43,8 @@ void EventsTableListView::Construct(EventsEditorPane* dlg, wxcWidget* control, c
 
         wxString eventName = cd.GetEventName();
         eventName.Trim().Trim(false);
-        if(eventName.IsEmpty()) continue;
+        if(eventName.IsEmpty())
+            continue;
 
         // Check to see if this event has a user defined function
         wxString fooname;

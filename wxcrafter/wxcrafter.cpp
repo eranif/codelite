@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxCA63InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 TextEditorBaseClass::TextEditorBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                          long style)
@@ -40,17 +52,16 @@ TextEditorBaseClass::TextEditorBaseClass(wxWindow* parent, wxWindowID id, const 
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_textCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TextEditorBaseClass::OnTextEnter), NULL, this);
-    m_textCtrl->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(TextEditorBaseClass::OnKillFocus), NULL, this);
-    m_textCtrl->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TextEditorBaseClass::OnKeyDown), NULL, this);
+    m_textCtrl->Bind(wxEVT_COMMAND_TEXT_ENTER, &TextEditorBaseClass::OnTextEnter, this);
+    m_textCtrl->Bind(wxEVT_KILL_FOCUS, &TextEditorBaseClass::OnKillFocus, this);
+    m_textCtrl->Bind(wxEVT_KEY_DOWN, &TextEditorBaseClass::OnKeyDown, this);
 }
 
 TextEditorBaseClass::~TextEditorBaseClass()
 {
-    m_textCtrl->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TextEditorBaseClass::OnTextEnter), NULL,
-                           this);
-    m_textCtrl->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(TextEditorBaseClass::OnKillFocus), NULL, this);
-    m_textCtrl->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(TextEditorBaseClass::OnKeyDown), NULL, this);
+    m_textCtrl->Unbind(wxEVT_COMMAND_TEXT_ENTER, &TextEditorBaseClass::OnTextEnter, this);
+    m_textCtrl->Unbind(wxEVT_KILL_FOCUS, &TextEditorBaseClass::OnKillFocus, this);
+    m_textCtrl->Unbind(wxEVT_KEY_DOWN, &TextEditorBaseClass::OnKeyDown, this);
 }
 
 FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -161,66 +172,41 @@ FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_checkBoxPreDefinedFont->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                      wxCommandEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFont), NULL, this);
-    m_choiceSystemFonts->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(FontPickerDlgBaseClass::OnSystemFontSelected), NULL, this);
-    m_choiceSystemFonts->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFontUI),
-                                 NULL, this);
-    m_checkBoxBold->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFontUI),
-                            NULL, this);
-    m_checkBoxBold->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                            wxCommandEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFont), NULL, this);
-    m_checkBoxItalic->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFontUI),
-                              NULL, this);
-    m_checkBoxItalic->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                              wxCommandEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFont), NULL, this);
-    m_checkBoxUnderlined->Connect(wxEVT_UPDATE_UI,
-                                  wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFontUI), NULL, this);
-    m_checkBoxUnderlined->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                  wxCommandEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFont), NULL, this);
-    m_checkBoxCustomFont->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                  wxCommandEventHandler(FontPickerDlgBaseClass::OnUseCustomFont), NULL, this);
-    m_fontPicker->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUseCustomFontUI), NULL,
-                          this);
-    m_fontPicker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                          wxFontPickerEventHandler(FontPickerDlgBaseClass::OnFontSelected), NULL, this);
+    m_checkBoxPreDefinedFont->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont, this);
+    m_choiceSystemFonts->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &FontPickerDlgBaseClass::OnSystemFontSelected, this);
+    m_choiceSystemFonts->Bind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
+    m_checkBoxBold->Bind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
+    m_checkBoxBold->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont, this);
+    m_checkBoxItalic->Bind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
+    m_checkBoxItalic->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont, this);
+    m_checkBoxUnderlined->Bind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
+    m_checkBoxUnderlined->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont, this);
+    m_checkBoxCustomFont->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUseCustomFont, this);
+    m_fontPicker->Bind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUseCustomFontUI, this);
+    m_fontPicker->Bind(wxEVT_COMMAND_FONTPICKER_CHANGED, &FontPickerDlgBaseClass::OnFontSelected, this);
 }
 
 FontPickerDlgBaseClass::~FontPickerDlgBaseClass()
 {
-    m_checkBoxPreDefinedFont->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFont), NULL, this);
-    m_choiceSystemFonts->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                    wxCommandEventHandler(FontPickerDlgBaseClass::OnSystemFontSelected), NULL, this);
-    m_choiceSystemFonts->Disconnect(wxEVT_UPDATE_UI,
-                                    wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFontUI), NULL, this);
-    m_checkBoxBold->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFontUI),
-                               NULL, this);
-    m_checkBoxBold->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                               wxCommandEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFont), NULL, this);
-    m_checkBoxItalic->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFontUI),
-                                 NULL, this);
-    m_checkBoxItalic->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                 wxCommandEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFont), NULL, this);
-    m_checkBoxUnderlined->Disconnect(wxEVT_UPDATE_UI,
-                                     wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFontUI), NULL, this);
-    m_checkBoxUnderlined->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                     wxCommandEventHandler(FontPickerDlgBaseClass::OnUsePreDefinedFont), NULL, this);
-    m_checkBoxCustomFont->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                     wxCommandEventHandler(FontPickerDlgBaseClass::OnUseCustomFont), NULL, this);
-    m_fontPicker->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FontPickerDlgBaseClass::OnUseCustomFontUI), NULL,
-                             this);
-    m_fontPicker->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                             wxFontPickerEventHandler(FontPickerDlgBaseClass::OnFontSelected), NULL, this);
+    m_checkBoxPreDefinedFont->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont,
+                                     this);
+    m_choiceSystemFonts->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &FontPickerDlgBaseClass::OnSystemFontSelected, this);
+    m_choiceSystemFonts->Unbind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
+    m_checkBoxBold->Unbind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
+    m_checkBoxBold->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont, this);
+    m_checkBoxItalic->Unbind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
+    m_checkBoxItalic->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont, this);
+    m_checkBoxUnderlined->Unbind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
+    m_checkBoxUnderlined->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont, this);
+    m_checkBoxCustomFont->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUseCustomFont, this);
+    m_fontPicker->Unbind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUseCustomFontUI, this);
+    m_fontPicker->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &FontPickerDlgBaseClass::OnFontSelected, this);
 }
 
 MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -298,13 +284,11 @@ MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 MessageDlgBaseClass::~MessageDlgBaseClass() {}
@@ -467,7 +451,7 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
     boxSizer98->Add(m_staticLine269, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panel107 = new wxPanel(m_wizardPageCpp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_wizardPageCpp, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL | wxBORDER_SIMPLE);
+                             wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
     m_panel107->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 
     boxSizer98->Add(m_panel107, 0, wxEXPAND | wxALL, WXC_FROM_DIP(5));
@@ -568,34 +552,24 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(DefineCustomControlWizardBaseClass::OnPageChanging),
-                  NULL, this);
-    m_button287->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                         wxCommandEventHandler(DefineCustomControlWizardBaseClass::OnNewEvent), NULL, this);
-    m_button289->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                         wxCommandEventHandler(DefineCustomControlWizardBaseClass::OnDeleteEvent), NULL, this);
-    m_button289->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DefineCustomControlWizardBaseClass::OnDeleteEventUI),
-                         NULL, this);
+    this->Bind(wxEVT_WIZARD_PAGE_CHANGING, &DefineCustomControlWizardBaseClass::OnPageChanging, this);
+    m_button287->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DefineCustomControlWizardBaseClass::OnNewEvent, this);
+    m_button289->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DefineCustomControlWizardBaseClass::OnDeleteEvent, this);
+    m_button289->Bind(wxEVT_UPDATE_UI, &DefineCustomControlWizardBaseClass::OnDeleteEventUI, this);
 }
 
 DefineCustomControlWizardBaseClass::~DefineCustomControlWizardBaseClass()
 {
-    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING,
-                     wxWizardEventHandler(DefineCustomControlWizardBaseClass::OnPageChanging), NULL, this);
-    m_button287->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(DefineCustomControlWizardBaseClass::OnNewEvent), NULL, this);
-    m_button289->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(DefineCustomControlWizardBaseClass::OnDeleteEvent), NULL, this);
-    m_button289->Disconnect(wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(DefineCustomControlWizardBaseClass::OnDeleteEventUI), NULL, this);
+    this->Unbind(wxEVT_WIZARD_PAGE_CHANGING, &DefineCustomControlWizardBaseClass::OnPageChanging, this);
+    m_button287->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DefineCustomControlWizardBaseClass::OnNewEvent, this);
+    m_button289->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DefineCustomControlWizardBaseClass::OnDeleteEvent, this);
+    m_button289->Unbind(wxEVT_UPDATE_UI, &DefineCustomControlWizardBaseClass::OnDeleteEventUI, this);
 }
 
 EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -685,8 +659,9 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
 
     flexGridSizer117->Add(m_textCtrlInstantiationLineTEXT, 0, wxALIGN_RIGHT | wxALIGN_TOP | wxALL, WXC_FROM_DIP(5));
 
-    m_textCtrlInstantiationLine = new wxTextCtrl(m_panel229, wxID_ANY, wxT(""), wxDefaultPosition,
-                                                 wxDLG_UNIT(m_panel229, wxSize(-1, -1)), wxTE_MULTILINE);
+    m_textCtrlInstantiationLine =
+        new wxTextCtrl(m_panel229, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel229, wxSize(-1, -1)),
+                       wxTE_MULTILINE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -766,60 +741,40 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_choiceControls->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
-                              wxCommandEventHandler(EditCustomControlDlgBaseClass::OnSelectControl), NULL, this);
-    m_textCtrlXRCClass->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                wxCommandEventHandler(EditCustomControlDlgBaseClass::OnControlModified), NULL, this);
-    m_textCtrlIncludeFile->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                   wxCommandEventHandler(EditCustomControlDlgBaseClass::OnControlModified), NULL, this);
-    m_textCtrlInstantiationLine->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                         wxCommandEventHandler(EditCustomControlDlgBaseClass::OnControlModified), NULL,
-                                         this);
-    m_dvListCtrlEvents->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE,
-                                wxDataViewEventHandler(EditCustomControlDlgBaseClass::OnEventEditDone), NULL, this);
-    m_buttonNewEvent->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                              wxCommandEventHandler(EditCustomControlDlgBaseClass::OnNewEvent), NULL, this);
-    m_buttonDeleteEvent->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                 wxCommandEventHandler(EditCustomControlDlgBaseClass::OnDeleteEvent), NULL, this);
-    m_buttonDeleteEvent->Connect(wxEVT_UPDATE_UI,
-                                 wxUpdateUIEventHandler(EditCustomControlDlgBaseClass::OnDeleteEventUI), NULL, this);
-    m_button114->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditCustomControlDlgBaseClass::OnSave),
-                         NULL, this);
-    m_button114->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditCustomControlDlgBaseClass::OnSaveUI), NULL, this);
+    m_choiceControls->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &EditCustomControlDlgBaseClass::OnSelectControl, this);
+    m_textCtrlXRCClass->Bind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
+    m_textCtrlIncludeFile->Bind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
+    m_textCtrlInstantiationLine->Bind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified,
+                                      this);
+    m_dvListCtrlEvents->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE, &EditCustomControlDlgBaseClass::OnEventEditDone,
+                             this);
+    m_buttonNewEvent->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnNewEvent, this);
+    m_buttonDeleteEvent->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnDeleteEvent, this);
+    m_buttonDeleteEvent->Bind(wxEVT_UPDATE_UI, &EditCustomControlDlgBaseClass::OnDeleteEventUI, this);
+    m_button114->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnSave, this);
+    m_button114->Bind(wxEVT_UPDATE_UI, &EditCustomControlDlgBaseClass::OnSaveUI, this);
 }
 
 EditCustomControlDlgBaseClass::~EditCustomControlDlgBaseClass()
 {
-    m_choiceControls->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(EditCustomControlDlgBaseClass::OnSelectControl), NULL, this);
-    m_textCtrlXRCClass->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                   wxCommandEventHandler(EditCustomControlDlgBaseClass::OnControlModified), NULL, this);
-    m_textCtrlIncludeFile->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                      wxCommandEventHandler(EditCustomControlDlgBaseClass::OnControlModified), NULL,
-                                      this);
-    m_textCtrlInstantiationLine->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                            wxCommandEventHandler(EditCustomControlDlgBaseClass::OnControlModified),
-                                            NULL, this);
-    m_dvListCtrlEvents->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE,
-                                   wxDataViewEventHandler(EditCustomControlDlgBaseClass::OnEventEditDone), NULL, this);
-    m_buttonNewEvent->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                 wxCommandEventHandler(EditCustomControlDlgBaseClass::OnNewEvent), NULL, this);
-    m_buttonDeleteEvent->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                    wxCommandEventHandler(EditCustomControlDlgBaseClass::OnDeleteEvent), NULL, this);
-    m_buttonDeleteEvent->Disconnect(wxEVT_UPDATE_UI,
-                                    wxUpdateUIEventHandler(EditCustomControlDlgBaseClass::OnDeleteEventUI), NULL, this);
-    m_button114->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditCustomControlDlgBaseClass::OnSave),
-                            NULL, this);
-    m_button114->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditCustomControlDlgBaseClass::OnSaveUI), NULL,
-                            this);
+    m_choiceControls->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &EditCustomControlDlgBaseClass::OnSelectControl, this);
+    m_textCtrlXRCClass->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
+    m_textCtrlIncludeFile->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
+    m_textCtrlInstantiationLine->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified,
+                                        this);
+    m_dvListCtrlEvents->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE,
+                               &EditCustomControlDlgBaseClass::OnEventEditDone, this);
+    m_buttonNewEvent->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnNewEvent, this);
+    m_buttonDeleteEvent->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnDeleteEvent, this);
+    m_buttonDeleteEvent->Unbind(wxEVT_UPDATE_UI, &EditCustomControlDlgBaseClass::OnDeleteEventUI, this);
+    m_button114->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnSave, this);
+    m_button114->Unbind(wxEVT_UPDATE_UI, &EditCustomControlDlgBaseClass::OnSaveUI, this);
 }
 
 ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -937,54 +892,34 @@ ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_filepathText->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                            wxCommandEventHandler(ImportDlgBaseClass::OnFileImportTextUpdated), NULL, this);
-    m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ImportDlgBaseClass::OnBrowse), NULL,
-                            this);
-    m_textName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(ImportDlgBaseClass::OnDestFilePathUpdated),
-                        NULL, this);
-    m_buttonFolder->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(ImportDlgBaseClass::OnBrowseForOutputFolder), NULL, this);
-    m_checkBoxAddToProject->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportDlgBaseClass::OnAddToProjectUI), NULL,
-                                    this);
-    m_staticText148->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportDlgBaseClass::OnAddFileToProjectUI), NULL,
-                             this);
-    m_textCtrl1VirtualFolder->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportDlgBaseClass::OnAddFileToProjectUI),
-                                      NULL, this);
-    m_buttonBrowseVD->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                              wxCommandEventHandler(ImportDlgBaseClass::OnBrowseForVirtualFolder), NULL, this);
-    m_buttonBrowseVD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportDlgBaseClass::OnAddFileToProjectUI), NULL,
-                              this);
+    m_filepathText->Bind(wxEVT_COMMAND_TEXT_UPDATED, &ImportDlgBaseClass::OnFileImportTextUpdated, this);
+    m_buttonBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ImportDlgBaseClass::OnBrowse, this);
+    m_textName->Bind(wxEVT_COMMAND_TEXT_UPDATED, &ImportDlgBaseClass::OnDestFilePathUpdated, this);
+    m_buttonFolder->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ImportDlgBaseClass::OnBrowseForOutputFolder, this);
+    m_checkBoxAddToProject->Bind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddToProjectUI, this);
+    m_staticText148->Bind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddFileToProjectUI, this);
+    m_textCtrl1VirtualFolder->Bind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddFileToProjectUI, this);
+    m_buttonBrowseVD->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ImportDlgBaseClass::OnBrowseForVirtualFolder, this);
+    m_buttonBrowseVD->Bind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddFileToProjectUI, this);
 }
 
 ImportDlgBaseClass::~ImportDlgBaseClass()
 {
-    m_filepathText->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                               wxCommandEventHandler(ImportDlgBaseClass::OnFileImportTextUpdated), NULL, this);
-    m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ImportDlgBaseClass::OnBrowse), NULL,
-                               this);
-    m_textName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(ImportDlgBaseClass::OnDestFilePathUpdated),
-                           NULL, this);
-    m_buttonFolder->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(ImportDlgBaseClass::OnBrowseForOutputFolder), NULL, this);
-    m_checkBoxAddToProject->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportDlgBaseClass::OnAddToProjectUI),
-                                       NULL, this);
-    m_staticText148->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportDlgBaseClass::OnAddFileToProjectUI), NULL,
-                                this);
-    m_textCtrl1VirtualFolder->Disconnect(wxEVT_UPDATE_UI,
-                                         wxUpdateUIEventHandler(ImportDlgBaseClass::OnAddFileToProjectUI), NULL, this);
-    m_buttonBrowseVD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                 wxCommandEventHandler(ImportDlgBaseClass::OnBrowseForVirtualFolder), NULL, this);
-    m_buttonBrowseVD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportDlgBaseClass::OnAddFileToProjectUI),
-                                 NULL, this);
+    m_filepathText->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &ImportDlgBaseClass::OnFileImportTextUpdated, this);
+    m_buttonBrowse->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ImportDlgBaseClass::OnBrowse, this);
+    m_textName->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &ImportDlgBaseClass::OnDestFilePathUpdated, this);
+    m_buttonFolder->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ImportDlgBaseClass::OnBrowseForOutputFolder, this);
+    m_checkBoxAddToProject->Unbind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddToProjectUI, this);
+    m_staticText148->Unbind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddFileToProjectUI, this);
+    m_textCtrl1VirtualFolder->Unbind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddFileToProjectUI, this);
+    m_buttonBrowseVD->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ImportDlgBaseClass::OnBrowseForVirtualFolder, this);
+    m_buttonBrowseVD->Unbind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddFileToProjectUI, this);
 }
 
 wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -1020,7 +955,7 @@ wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, cons
     boxSizer155->Add(m_button426, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_splitter347 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxTRANSPARENT_WINDOW);
     m_splitter347->SetSashGravity(0.5);
     m_splitter347->SetMinimumPaneSize(10);
 
@@ -1050,47 +985,30 @@ wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, cons
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_comboBoxFiles->Connect(wxEVT_COMMAND_COMBOBOX_SELECTED,
-                             wxCommandEventHandler(wxcTreeViewBaseClass::OnWxcpFileSelected), NULL, this);
-    m_comboBoxFiles->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(wxcTreeViewBaseClass::OnWorkspaceOpenUI), NULL,
-                             this);
-    m_comboBoxFiles->Connect(wxEVT_COMMAND_TEXT_ENTER,
-                             wxCommandEventHandler(wxcTreeViewBaseClass::OnWxcpComboxTextEnter), NULL, this);
-    m_button426->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(wxcTreeViewBaseClass::OnRefreshWxcpFiles),
-                         NULL, this);
-    m_button426->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(wxcTreeViewBaseClass::OnWorkspaceOpenUI), NULL, this);
-    m_splitter347->Connect(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED,
-                           wxSplitterEventHandler(wxcTreeViewBaseClass::OnSashPositionChanged), NULL, this);
-    m_treeControls->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(wxcTreeViewBaseClass::OnItemSelected),
-                            NULL, this);
-    m_treeControls->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(wxcTreeViewBaseClass::OnItemSelected),
-                            NULL, this);
-    m_treeControls->Connect(wxEVT_COMMAND_TREE_END_LABEL_EDIT,
-                            wxTreeEventHandler(wxcTreeViewBaseClass::OnItemLabelEditEnd), NULL, this);
-    m_treeControls->Connect(wxEVT_CHAR, wxKeyEventHandler(wxcTreeViewBaseClass::OnChar), NULL, this);
+    m_comboBoxFiles->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED, &wxcTreeViewBaseClass::OnWxcpFileSelected, this);
+    m_comboBoxFiles->Bind(wxEVT_UPDATE_UI, &wxcTreeViewBaseClass::OnWorkspaceOpenUI, this);
+    m_comboBoxFiles->Bind(wxEVT_COMMAND_TEXT_ENTER, &wxcTreeViewBaseClass::OnWxcpComboxTextEnter, this);
+    m_button426->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &wxcTreeViewBaseClass::OnRefreshWxcpFiles, this);
+    m_button426->Bind(wxEVT_UPDATE_UI, &wxcTreeViewBaseClass::OnWorkspaceOpenUI, this);
+    m_splitter347->Bind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED, &wxcTreeViewBaseClass::OnSashPositionChanged, this);
+    m_treeControls->Bind(wxEVT_COMMAND_TREE_SEL_CHANGED, &wxcTreeViewBaseClass::OnItemSelected, this);
+    m_treeControls->Bind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &wxcTreeViewBaseClass::OnItemSelected, this);
+    m_treeControls->Bind(wxEVT_COMMAND_TREE_END_LABEL_EDIT, &wxcTreeViewBaseClass::OnItemLabelEditEnd, this);
+    m_treeControls->Bind(wxEVT_CHAR, &wxcTreeViewBaseClass::OnChar, this);
 }
 
 wxcTreeViewBaseClass::~wxcTreeViewBaseClass()
 {
-    m_comboBoxFiles->Disconnect(wxEVT_COMMAND_COMBOBOX_SELECTED,
-                                wxCommandEventHandler(wxcTreeViewBaseClass::OnWxcpFileSelected), NULL, this);
-    m_comboBoxFiles->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(wxcTreeViewBaseClass::OnWorkspaceOpenUI), NULL,
-                                this);
-    m_comboBoxFiles->Disconnect(wxEVT_COMMAND_TEXT_ENTER,
-                                wxCommandEventHandler(wxcTreeViewBaseClass::OnWxcpComboxTextEnter), NULL, this);
-    m_button426->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(wxcTreeViewBaseClass::OnRefreshWxcpFiles), NULL, this);
-    m_button426->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(wxcTreeViewBaseClass::OnWorkspaceOpenUI), NULL,
-                            this);
-    m_splitter347->Disconnect(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED,
-                              wxSplitterEventHandler(wxcTreeViewBaseClass::OnSashPositionChanged), NULL, this);
-    m_treeControls->Disconnect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(wxcTreeViewBaseClass::OnItemSelected),
-                               NULL, this);
-    m_treeControls->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                               wxTreeEventHandler(wxcTreeViewBaseClass::OnItemSelected), NULL, this);
-    m_treeControls->Disconnect(wxEVT_COMMAND_TREE_END_LABEL_EDIT,
-                               wxTreeEventHandler(wxcTreeViewBaseClass::OnItemLabelEditEnd), NULL, this);
-    m_treeControls->Disconnect(wxEVT_CHAR, wxKeyEventHandler(wxcTreeViewBaseClass::OnChar), NULL, this);
+    m_comboBoxFiles->Unbind(wxEVT_COMMAND_COMBOBOX_SELECTED, &wxcTreeViewBaseClass::OnWxcpFileSelected, this);
+    m_comboBoxFiles->Unbind(wxEVT_UPDATE_UI, &wxcTreeViewBaseClass::OnWorkspaceOpenUI, this);
+    m_comboBoxFiles->Unbind(wxEVT_COMMAND_TEXT_ENTER, &wxcTreeViewBaseClass::OnWxcpComboxTextEnter, this);
+    m_button426->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &wxcTreeViewBaseClass::OnRefreshWxcpFiles, this);
+    m_button426->Unbind(wxEVT_UPDATE_UI, &wxcTreeViewBaseClass::OnWorkspaceOpenUI, this);
+    m_splitter347->Unbind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED, &wxcTreeViewBaseClass::OnSashPositionChanged, this);
+    m_treeControls->Unbind(wxEVT_COMMAND_TREE_SEL_CHANGED, &wxcTreeViewBaseClass::OnItemSelected, this);
+    m_treeControls->Unbind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &wxcTreeViewBaseClass::OnItemSelected, this);
+    m_treeControls->Unbind(wxEVT_COMMAND_TREE_END_LABEL_EDIT, &wxcTreeViewBaseClass::OnItemLabelEditEnd, this);
+    m_treeControls->Unbind(wxEVT_CHAR, &wxcTreeViewBaseClass::OnChar, this);
 }
 
 DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -1117,7 +1035,8 @@ DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(wxWindow* paren
     boxSizer158->Add(m_staticText167, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
     m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxDV_ROW_LINES | wxDV_SINGLE);
+                                          wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW |
+                                              get_border_simple_theme_aware_bit());
 
     boxSizer158->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -1149,30 +1068,24 @@ DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(wxWindow* paren
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
-                          wxDataViewEventHandler(DeleteCustomControlDlgBaseClass::OnItemValueChanged), NULL, this);
-    m_button163->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                         wxCommandEventHandler(DeleteCustomControlDlgBaseClass::OnDeleteControls), NULL, this);
-    m_button163->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DeleteCustomControlDlgBaseClass::OnDeleteUI), NULL,
-                         this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, &DeleteCustomControlDlgBaseClass::OnItemValueChanged,
+                       this);
+    m_button163->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DeleteCustomControlDlgBaseClass::OnDeleteControls, this);
+    m_button163->Bind(wxEVT_UPDATE_UI, &DeleteCustomControlDlgBaseClass::OnDeleteUI, this);
 }
 
 DeleteCustomControlDlgBaseClass::~DeleteCustomControlDlgBaseClass()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
-                             wxDataViewEventHandler(DeleteCustomControlDlgBaseClass::OnItemValueChanged), NULL, this);
-    m_button163->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(DeleteCustomControlDlgBaseClass::OnDeleteControls), NULL, this);
-    m_button163->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DeleteCustomControlDlgBaseClass::OnDeleteUI), NULL,
-                            this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
+                         &DeleteCustomControlDlgBaseClass::OnItemValueChanged, this);
+    m_button163->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DeleteCustomControlDlgBaseClass::OnDeleteControls, this);
+    m_button163->Unbind(wxEVT_UPDATE_UI, &DeleteCustomControlDlgBaseClass::OnDeleteUI, this);
 }
 
 wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -1271,21 +1184,16 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    this->Connect(wxEVT_SIZE, wxSizeEventHandler(wxcAboutDlgBaseClass::OnSize), NULL, this);
+    this->Bind(wxEVT_SIZE, &wxcAboutDlgBaseClass::OnSize, this);
 }
 
-wxcAboutDlgBaseClass::~wxcAboutDlgBaseClass()
-{
-    this->Disconnect(wxEVT_SIZE, wxSizeEventHandler(wxcAboutDlgBaseClass::OnSize), NULL, this);
-}
+wxcAboutDlgBaseClass::~wxcAboutDlgBaseClass() { this->Unbind(wxEVT_SIZE, &wxcAboutDlgBaseClass::OnSize, this); }
 
 NewCustomEventBaseDlg::NewCustomEventBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                              const wxSize& size, long style)
@@ -1360,13 +1268,11 @@ NewCustomEventBaseDlg::NewCustomEventBaseDlg(wxWindow* parent, wxWindowID id, co
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 NewCustomEventBaseDlg::~NewCustomEventBaseDlg() {}
@@ -1523,70 +1429,44 @@ BitmapSelectorDlgBase::BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id, co
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_checkBoxSelectFile->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                  wxCommandEventHandler(BitmapSelectorDlgBase::OnUseFilePicker), NULL, this);
-    m_textCtrlFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnSelectBitmapUI), NULL,
-                            this);
-    m_buttonBrowseBitmap->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                  wxCommandEventHandler(BitmapSelectorDlgBase::OnBrowseFile), NULL, this);
-    m_buttonBrowseBitmap->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnSelectBitmapUI),
-                                  NULL, this);
-    m_checkBoxConvertToRelativePath->Connect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnSelectBitmapUI), NULL, this);
-    m_checkBoxConvertToRelativePath->Connect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(BitmapSelectorDlgBase::OnUseRelativePaths), NULL, this);
-    m_checkBoxArtProvider->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                   wxCommandEventHandler(BitmapSelectorDlgBase::OnUserArtProvider), NULL, this);
-    m_staticText315->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI), NULL,
-                             this);
-    m_choiceArtID->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI), NULL,
-                           this);
-    m_staticText319->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI), NULL,
-                             this);
-    m_choiceArtClientID->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI),
-                                 NULL, this);
-    m_staticTextHInt->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI), NULL,
-                              this);
-    m_choiceSize->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI), NULL,
-                          this);
+    m_checkBoxSelectFile->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseFilePicker, this);
+    m_textCtrlFile->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
+    m_buttonBrowseBitmap->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &BitmapSelectorDlgBase::OnBrowseFile, this);
+    m_buttonBrowseBitmap->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
+    m_checkBoxConvertToRelativePath->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
+    m_checkBoxConvertToRelativePath->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseRelativePaths,
+                                          this);
+    m_checkBoxArtProvider->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUserArtProvider, this);
+    m_staticText315->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_choiceArtID->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_staticText319->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_choiceArtClientID->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_staticTextHInt->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_choiceSize->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
 }
 
 BitmapSelectorDlgBase::~BitmapSelectorDlgBase()
 {
-    m_checkBoxSelectFile->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                     wxCommandEventHandler(BitmapSelectorDlgBase::OnUseFilePicker), NULL, this);
-    m_textCtrlFile->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnSelectBitmapUI), NULL,
-                               this);
-    m_buttonBrowseBitmap->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                     wxCommandEventHandler(BitmapSelectorDlgBase::OnBrowseFile), NULL, this);
-    m_buttonBrowseBitmap->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnSelectBitmapUI),
-                                     NULL, this);
-    m_checkBoxConvertToRelativePath->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnSelectBitmapUI), NULL, this);
-    m_checkBoxConvertToRelativePath->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(BitmapSelectorDlgBase::OnUseRelativePaths), NULL, this);
-    m_checkBoxArtProvider->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                      wxCommandEventHandler(BitmapSelectorDlgBase::OnUserArtProvider), NULL, this);
-    m_staticText315->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI),
-                                NULL, this);
-    m_choiceArtID->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI), NULL,
-                              this);
-    m_staticText319->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI),
-                                NULL, this);
-    m_choiceArtClientID->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI),
-                                    NULL, this);
-    m_staticTextHInt->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI),
-                                 NULL, this);
-    m_choiceSize->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BitmapSelectorDlgBase::OnUserArtPorviderUI), NULL,
-                             this);
+    m_checkBoxSelectFile->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseFilePicker, this);
+    m_textCtrlFile->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
+    m_buttonBrowseBitmap->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &BitmapSelectorDlgBase::OnBrowseFile, this);
+    m_buttonBrowseBitmap->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
+    m_checkBoxConvertToRelativePath->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
+    m_checkBoxConvertToRelativePath->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseRelativePaths,
+                                            this);
+    m_checkBoxArtProvider->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUserArtProvider, this);
+    m_staticText315->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_choiceArtID->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_staticText319->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_choiceArtClientID->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_staticTextHInt->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_choiceSize->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
 }
 
 EventsEditorPaneBase::EventsEditorPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -1748,24 +1628,20 @@ DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id, const 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_textInheritedName->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(DuplicateTLWBaseDlg::OnInheritedNameFocus), NULL,
-                                 this);
-    m_textFilename->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(DuplicateTLWBaseDlg::OnFilenameFocus), NULL, this);
+    m_textInheritedName->Bind(wxEVT_SET_FOCUS, &DuplicateTLWBaseDlg::OnInheritedNameFocus, this);
+    m_textFilename->Bind(wxEVT_SET_FOCUS, &DuplicateTLWBaseDlg::OnFilenameFocus, this);
 }
 
 DuplicateTLWBaseDlg::~DuplicateTLWBaseDlg()
 {
-    m_textInheritedName->Disconnect(wxEVT_SET_FOCUS, wxFocusEventHandler(DuplicateTLWBaseDlg::OnInheritedNameFocus),
-                                    NULL, this);
-    m_textFilename->Disconnect(wxEVT_SET_FOCUS, wxFocusEventHandler(DuplicateTLWBaseDlg::OnFilenameFocus), NULL, this);
+    m_textInheritedName->Unbind(wxEVT_SET_FOCUS, &DuplicateTLWBaseDlg::OnInheritedNameFocus, this);
+    m_textFilename->Unbind(wxEVT_SET_FOCUS, &DuplicateTLWBaseDlg::OnFilenameFocus, this);
 }
 
 BmpTextSelectorDlgBase::BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -1787,7 +1663,8 @@ BmpTextSelectorDlgBase::BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id, 
     boxSizer390->Add(boxSizer379, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 200)),
-                                          wxDV_ROW_LINES | wxDV_SINGLE);
+                                          wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW |
+                                              get_border_simple_theme_aware_bit());
 
     boxSizer379->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -1833,38 +1710,28 @@ BmpTextSelectorDlgBase::BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id, 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(BmpTextSelectorDlgBase::OnItemActivated), NULL, this);
-    m_button392->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BmpTextSelectorDlgBase::OnNew), NULL,
-                         this);
-    m_button394->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BmpTextSelectorDlgBase::OnEdit), NULL,
-                         this);
-    m_button394->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BmpTextSelectorDlgBase::OnEditUI), NULL, this);
-    m_button396->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BmpTextSelectorDlgBase::OnDelete), NULL,
-                         this);
-    m_button396->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BmpTextSelectorDlgBase::OnDeleteUI), NULL, this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &BmpTextSelectorDlgBase::OnItemActivated, this);
+    m_button392->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &BmpTextSelectorDlgBase::OnNew, this);
+    m_button394->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &BmpTextSelectorDlgBase::OnEdit, this);
+    m_button394->Bind(wxEVT_UPDATE_UI, &BmpTextSelectorDlgBase::OnEditUI, this);
+    m_button396->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &BmpTextSelectorDlgBase::OnDelete, this);
+    m_button396->Bind(wxEVT_UPDATE_UI, &BmpTextSelectorDlgBase::OnDeleteUI, this);
 }
 
 BmpTextSelectorDlgBase::~BmpTextSelectorDlgBase()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(BmpTextSelectorDlgBase::OnItemActivated), NULL, this);
-    m_button392->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BmpTextSelectorDlgBase::OnNew), NULL,
-                            this);
-    m_button394->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BmpTextSelectorDlgBase::OnEdit), NULL,
-                            this);
-    m_button394->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BmpTextSelectorDlgBase::OnEditUI), NULL, this);
-    m_button396->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BmpTextSelectorDlgBase::OnDelete), NULL,
-                            this);
-    m_button396->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BmpTextSelectorDlgBase::OnDeleteUI), NULL, this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &BmpTextSelectorDlgBase::OnItemActivated, this);
+    m_button392->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &BmpTextSelectorDlgBase::OnNew, this);
+    m_button394->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &BmpTextSelectorDlgBase::OnEdit, this);
+    m_button394->Unbind(wxEVT_UPDATE_UI, &BmpTextSelectorDlgBase::OnEditUI, this);
+    m_button396->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &BmpTextSelectorDlgBase::OnDelete, this);
+    m_button396->Unbind(wxEVT_UPDATE_UI, &BmpTextSelectorDlgBase::OnDeleteUI, this);
 }
 
 SingleBitmapAndTextDlgBase::SingleBitmapAndTextDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -1940,22 +1807,18 @@ SingleBitmapAndTextDlgBase::SingleBitmapAndTextDlgBase(wxWindow* parent, wxWindo
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button416->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                         wxCommandEventHandler(SingleBitmapAndTextDlgBase::OnSelectBitmap), NULL, this);
-    m_button404->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SingleBitmapAndTextDlgBase::OnOKUI), NULL, this);
+    m_button416->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SingleBitmapAndTextDlgBase::OnSelectBitmap, this);
+    m_button404->Bind(wxEVT_UPDATE_UI, &SingleBitmapAndTextDlgBase::OnOKUI, this);
 }
 
 SingleBitmapAndTextDlgBase::~SingleBitmapAndTextDlgBase()
 {
-    m_button416->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(SingleBitmapAndTextDlgBase::OnSelectBitmap), NULL, this);
-    m_button404->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SingleBitmapAndTextDlgBase::OnOKUI), NULL, this);
+    m_button416->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SingleBitmapAndTextDlgBase::OnSelectBitmap, this);
+    m_button404->Unbind(wxEVT_UPDATE_UI, &SingleBitmapAndTextDlgBase::OnOKUI, this);
 }

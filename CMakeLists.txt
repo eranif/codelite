@@ -165,13 +165,10 @@ if (UNIX AND NOT MINGW)
         # cmake find_package() will try env var WX_CONFIG as wx-config tool path before checking its builtin hardcoded naming conbinations for wx-config tool
         set( ENV{WX_CONFIG} ${WX_TOOL} )
         execute_process(COMMAND sh ${WX_TOOL} --version OUTPUT_VARIABLE WX_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-        string(SUBSTRING "${WX_VERSION}" "0" "1" wxMAJOR_VERSION)
-        string(SUBSTRING "${WX_VERSION}" "2" "1" wxMINOR_VERSION)
-        string(SUBSTRING "${WX_VERSION}" "4" "1" wxRELEASE_NUMBER)
-        if ( wxMAJOR_VERSION LESS 3 )
-        message(FATAL_ERROR
-"\nI'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-3.0.0"
-             )
+        if("${WX_VERSION}" VERSION_LESS "3.1.6")
+            message(FATAL_ERROR
+                "I'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-3.0.0"
+            )
         endif()
         if (MINGW)
           execute_process(COMMAND sh ${WX_TOOL} --debug=no --rescomp OUTPUT_VARIABLE WX_RC_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)

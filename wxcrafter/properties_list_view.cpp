@@ -24,14 +24,16 @@ std::unordered_set<wxString> DO_NOT_NOTIFY_SET = { PROP_SUBCLASS_INCLUDE, PROP_S
 } // namespace
 
 PropertiesListView::PropertiesListView(wxWindow* win)
-    : wxPanel(win)
+    : wxPanel(win, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCrafter::GetControlBorder() | wxTAB_TRAVERSAL)
     , m_wxcWidget(NULL)
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
 
     m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                        wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION);
+                                        wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION |
+                                            wxCrafter::GetControlBorder());
+
     m_pg = m_pgMgr->GetGrid();
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PropertiesListView::OnCellChanged), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGING, wxPropertyGridEventHandler(PropertiesListView::OnCellChanging), NULL, this);

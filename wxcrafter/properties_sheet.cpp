@@ -1,4 +1,5 @@
 #include "properties_sheet.h"
+
 #include "choice_property.h"
 #include "color_property.h"
 #include "file_picker_ctrl.h"
@@ -8,6 +9,7 @@
 #include "virtual_folder_picker_ctrl.h"
 #include "winid_property.h"
 #include "wxguicraft_main_view.h"
+
 #include <event_notifier.h>
 #include <wx/app.h>
 #include <wx/checkbox.h>
@@ -18,7 +20,8 @@
 #include <wx/wupdlock.h>
 
 PropertiesSheet::PropertiesSheet(wxWindow* parent)
-    : PropertiesSheetBase(parent)
+    : PropertiesSheetBase(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                          wxCrafter::GetControlBorder() | wxTAB_TRAVERSAL)
 {
     GetSizer()->Clear(true);
     m_table = new PropertiesListView(this);

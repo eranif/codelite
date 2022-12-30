@@ -30,7 +30,9 @@
 #include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
 
-static wxFont GetSystemFont(const wxString& name)
+namespace
+{
+wxFont GetSystemFont(const wxString& name)
 {
     // name is in the format of name,style,weight,underlined
     if(!name.IsEmpty()) {
@@ -137,6 +139,16 @@ wxFontWeight StringToFontWeight(const wxString& str)
     }
 
     return weight;
+}
+} // namespace
+
+wxBorder wxCrafter::GetControlBorder()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
 }
 
 wxSize wxCrafter::DecodeSize(const wxString& strSize)

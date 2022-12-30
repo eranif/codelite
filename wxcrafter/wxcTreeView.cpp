@@ -10,6 +10,7 @@
 #include "wxcrafter.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
+#include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 
 #include <wx/aui/auibar.h>
@@ -22,7 +23,8 @@ EVT_UPDATE_UI(ID_OPEN_WXGUI_PROJECT, wxcTreeView::OnOpenUI)
 END_EVENT_TABLE()
 
 wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
-    : wxcTreeViewBaseClass(parent)
+    : wxcTreeViewBaseClass(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                           wxCrafter::GetControlBorder() | wxTAB_TRAVERSAL)
     , m_plugin(plugin)
     , m_loadingProject(false)
 {

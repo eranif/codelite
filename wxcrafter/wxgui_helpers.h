@@ -7,10 +7,11 @@
 #include <vector>
 #include <wx/colour.h>
 #include <wx/filename.h>
+#include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/settings.h>
 #include <wx/string.h>
 #include <wx/tokenzr.h>
-#include <wx/frame.h>
 
 #define ITEM_NORMAL wxT("normal")
 #define ITEM_RADIO wxT("radio")
@@ -18,7 +19,6 @@
 #define ITEM_SPACE wxT("space")
 #define ITEM_SEPARATOR wxT("separator")
 #define ITEM_DROPDOWN wxT("dropdown")
-//#define ITEM_AUILABEL  wxT("label") Not currently needed
 
 class wxXmlNode;
 
@@ -35,6 +35,7 @@ enum TOOL_TYPE {
     TOOL_TYPE_AUILABEL         // AuiToolbar only
 };
 
+wxBorder GetControlBorder();
 wxSize DecodeSize(const wxString& strSize);
 wxString EncodeSize(const wxSize& size);
 wxString GetSizeAsDlgUnits(const wxSize& size, const wxString& parent);

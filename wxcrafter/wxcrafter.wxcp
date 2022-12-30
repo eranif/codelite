@@ -127,6 +127,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -211,6 +215,10 @@
 									"m_value":	"0"
 								}, {
 									"type":	"bool",
+									"m_label":	"Enable Spell Checking",
+									"m_value":	false
+								}, {
+									"type":	"bool",
 									"m_label":	"Auto Complete Directories:",
 									"m_value":	false
 								}, {
@@ -221,21 +229,18 @@
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 									"m_eventClass":	"wxCommandEvent",
-									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnTextEnter(wxCommandEvent& event)",
 									"m_description":	"Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
 									"m_noBody":	false
 								}, {
 									"m_eventName":	"wxEVT_KILL_FOCUS",
 									"m_eventClass":	"wxFocusEvent",
-									"m_eventHandler":	"wxFocusEventHandler",
 									"m_functionNameAndSignature":	"OnKillFocus(wxFocusEvent& event)",
 									"m_description":	"Process a wxEVT_KILL_FOCUS event",
 									"m_noBody":	false
 								}, {
 									"m_eventName":	"wxEVT_KEY_DOWN",
 									"m_eventClass":	"wxKeyEvent",
-									"m_eventHandler":	"wxKeyEventHandler",
 									"m_functionNameAndSignature":	"OnKeyDown(wxKeyEvent& event)",
 									"m_description":	"Process a wxEVT_KEY_DOWN event (any key has been pressed)",
 									"m_noBody":	false
@@ -375,6 +380,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -401,6 +410,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -488,7 +501,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnUsePreDefinedFont(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 											"m_noBody":	false
@@ -570,14 +582,12 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_CHOICE_SELECTED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnSystemFontSelected(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnUsePreDefinedFontUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -603,6 +613,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -686,14 +700,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUsePreDefinedFontUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnUsePreDefinedFont(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 													"m_noBody":	false
@@ -775,14 +787,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUsePreDefinedFontUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnUsePreDefinedFont(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 													"m_noBody":	false
@@ -864,14 +874,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUsePreDefinedFontUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnUsePreDefinedFont(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 													"m_noBody":	false
@@ -899,6 +907,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -986,7 +998,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnUseCustomFont(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 											"m_noBody":	false
@@ -1060,14 +1071,12 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnUseCustomFontUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_COMMAND_FONTPICKER_CHANGED",
 											"m_eventClass":	"wxFontPickerEvent",
-											"m_eventHandler":	"wxFontPickerEventHandler",
 											"m_functionNameAndSignature":	"OnFontSelected(wxFontPickerEvent& event)",
 											"m_description":	"Generated whenever the selected font changes.",
 											"m_noBody":	false
@@ -1094,6 +1103,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -1220,6 +1233,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -1538,6 +1555,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -1630,6 +1651,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -1728,6 +1753,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -2205,7 +2234,6 @@
 			"m_events":	[{
 					"m_eventName":	"wxEVT_WIZARD_PAGE_CHANGING",
 					"m_eventClass":	"wxWizardEvent",
-					"m_eventHandler":	"wxWizardEventHandler",
 					"m_functionNameAndSignature":	"OnPageChanging(wxWizardEvent& event)",
 					"m_description":	"The page is being changed (this event can be vetoed).",
 					"m_noBody":	false
@@ -2300,6 +2328,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -2469,6 +2501,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -2648,6 +2684,10 @@
 													"m_value":	"0"
 												}, {
 													"type":	"bool",
+													"m_label":	"Enable Spell Checking",
+													"m_value":	false
+												}, {
+													"type":	"bool",
 													"m_label":	"Auto Complete Directories:",
 													"m_value":	false
 												}, {
@@ -2810,6 +2850,10 @@
 													"m_value":	"0"
 												}, {
 													"type":	"bool",
+													"m_label":	"Enable Spell Checking",
+													"m_value":	false
+												}, {
+													"type":	"bool",
 													"m_label":	"Auto Complete Directories:",
 													"m_value":	false
 												}, {
@@ -2912,6 +2956,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -3081,6 +3129,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -3260,6 +3312,10 @@
 													"m_value":	"0"
 												}, {
 													"type":	"bool",
+													"m_label":	"Enable Spell Checking",
+													"m_value":	false
+												}, {
+													"type":	"bool",
 													"m_label":	"Auto Complete Directories:",
 													"m_value":	false
 												}, {
@@ -3362,6 +3418,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -3598,6 +3658,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -3759,6 +3823,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -3860,6 +3928,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -4029,6 +4101,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -4208,6 +4284,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -4303,7 +4383,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnNewEvent(wxCommandEvent& event)",
 															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 															"m_noBody":	false
@@ -4398,14 +4477,12 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnDeleteEvent(wxCommandEvent& event)",
 															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnDeleteEventUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -4548,6 +4625,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -4630,7 +4711,6 @@
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_CHOICE_SELECTED",
 									"m_eventClass":	"wxCommandEvent",
-									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnSelectControl(wxCommandEvent& event)",
 									"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
 									"m_noBody":	false
@@ -4804,6 +4884,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"# Columns:",
@@ -4983,6 +5067,10 @@
 															"m_value":	"0"
 														}, {
 															"type":	"bool",
+															"m_label":	"Enable Spell Checking",
+															"m_value":	false
+														}, {
+															"type":	"bool",
 															"m_label":	"Auto Complete Directories:",
 															"m_value":	false
 														}, {
@@ -4993,7 +5081,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnControlModified(wxCommandEvent& event)",
 															"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
 															"m_noBody":	false
@@ -5152,6 +5239,10 @@
 															"m_value":	"0"
 														}, {
 															"type":	"bool",
+															"m_label":	"Enable Spell Checking",
+															"m_value":	false
+														}, {
+															"type":	"bool",
 															"m_label":	"Auto Complete Directories:",
 															"m_value":	false
 														}, {
@@ -5162,7 +5253,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnControlModified(wxCommandEvent& event)",
 															"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
 															"m_noBody":	false
@@ -5249,7 +5339,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxTE_MULTILINE"],
+													"m_styles":	["wxTE_MULTILINE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -5321,6 +5411,10 @@
 															"m_value":	"0"
 														}, {
 															"type":	"bool",
+															"m_label":	"Enable Spell Checking",
+															"m_value":	false
+														}, {
+															"type":	"bool",
 															"m_label":	"Auto Complete Directories:",
 															"m_value":	false
 														}, {
@@ -5331,7 +5425,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnControlModified(wxCommandEvent& event)",
 															"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
 															"m_noBody":	false
@@ -5442,6 +5535,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -5468,6 +5565,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -5543,7 +5644,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE",
 																	"m_eventClass":	"wxDataViewEvent",
-																	"m_eventHandler":	"wxDataViewEventHandler",
 																	"m_functionNameAndSignature":	"OnEventEditDone(wxDataViewEvent& event)",
 																	"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE event",
 																	"m_noBody":	false
@@ -5654,6 +5754,10 @@
 																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
+																}, {
 																	"type":	"choice",
 																	"m_label":	"Orientation:",
 																	"m_selection":	0,
@@ -5749,7 +5853,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnNewEvent(wxCommandEvent& event)",
 																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 																			"m_noBody":	false
@@ -5844,14 +5947,12 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnDeleteEvent(wxCommandEvent& event)",
 																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 																			"m_noBody":	false
 																		}, {
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnDeleteEventUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5882,6 +5983,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -5978,14 +6083,12 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnSave(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnSaveUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -6214,6 +6317,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -6240,6 +6347,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -6419,6 +6530,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -6429,7 +6544,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnFileImportTextUpdated(wxCommandEvent& event)",
 											"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
 											"m_noBody":	false
@@ -6524,7 +6638,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnBrowse(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
@@ -6683,6 +6796,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -6693,7 +6810,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnDestFilePathUpdated(wxCommandEvent& event)",
 											"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
 											"m_noBody":	false
@@ -6788,7 +6904,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnBrowseForOutputFolder(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
@@ -6889,7 +7004,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnAddToProjectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -6990,7 +7104,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnAddFileToProjectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -7074,6 +7187,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -7084,7 +7201,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnAddFileToProjectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -7179,14 +7295,12 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnBrowseForVirtualFolder(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnAddFileToProjectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -7520,6 +7634,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -7546,6 +7664,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -7637,21 +7759,18 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_COMBOBOX_SELECTED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnWxcpFileSelected(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is selected. Note that calling GetValue returns the new value of selection.",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnWorkspaceOpenUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnWxcpComboxTextEnter(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
 											"m_noBody":	false
@@ -7746,14 +7865,12 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnRefreshWxcpFiles(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnWorkspaceOpenUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -7766,7 +7883,7 @@
 							"border":	2,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
+							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxTRANSPARENT_WINDOW"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -7845,7 +7962,6 @@
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED",
 									"m_eventClass":	" wxSplitterEvent",
-									"m_eventHandler":	" wxSplitterEventHandler",
 									"m_functionNameAndSignature":	"OnSashPositionChanged( wxSplitterEvent& event)",
 									"m_description":	"The sash position was changed",
 									"m_noBody":	false
@@ -7937,6 +8053,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -8011,28 +8131,24 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TREE_SEL_CHANGED",
 															"m_eventClass":	"wxTreeEvent",
-															"m_eventHandler":	"wxTreeEventHandler",
 															"m_functionNameAndSignature":	"OnItemSelected(wxTreeEvent& event)",
 															"m_description":	"Selection has changed.",
 															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_COMMAND_TREE_ITEM_ACTIVATED",
 															"m_eventClass":	"wxTreeEvent",
-															"m_eventHandler":	"wxTreeEventHandler",
 															"m_functionNameAndSignature":	"OnItemSelected(wxTreeEvent& event)",
 															"m_description":	"An item has been activated (e.g. double clicked).",
 															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_COMMAND_TREE_END_LABEL_EDIT",
 															"m_eventClass":	"wxTreeEvent",
-															"m_eventHandler":	"wxTreeEventHandler",
 															"m_functionNameAndSignature":	"OnItemLabelEditEnd(wxTreeEvent& event)",
 															"m_description":	"The user has finished editing a label. This can be prevented by calling Veto().",
 															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_CHAR",
 															"m_eventClass":	"wxKeyEvent",
-															"m_eventHandler":	"wxKeyEventHandler",
 															"m_functionNameAndSignature":	"OnChar(wxKeyEvent& event)",
 															"m_description":	"Process a wxEVT_CHAR event",
 															"m_noBody":	false
@@ -8126,6 +8242,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -8270,6 +8390,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -8357,7 +8481,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
+							"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -8419,7 +8543,6 @@
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED",
 									"m_eventClass":	"wxDataViewEvent",
-									"m_eventHandler":	"wxDataViewEventHandler",
 									"m_functionNameAndSignature":	"OnItemValueChanged(wxDataViewEvent& event)",
 									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED event",
 									"m_noBody":	false
@@ -8530,6 +8653,10 @@
 									"m_label":	"Style:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	1,
@@ -8625,14 +8752,12 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnDeleteControls(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnDeleteUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -8842,7 +8967,6 @@
 			"m_events":	[{
 					"m_eventName":	"wxEVT_SIZE",
 					"m_eventClass":	"wxSizeEvent",
-					"m_eventHandler":	"wxSizeEventHandler",
 					"m_functionNameAndSignature":	"OnSize(wxSizeEvent& event)",
 					"m_description":	"Process a wxEVT_SIZE event",
 					"m_noBody":	false
@@ -8867,6 +8991,10 @@
 							"type":	"string",
 							"m_label":	"Style:",
 							"m_value":	""
+						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -9043,6 +9171,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -9069,6 +9201,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -9100,6 +9236,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -9523,6 +9663,10 @@
 									"m_label":	"Style:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	1,
@@ -9752,6 +9896,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -9778,6 +9926,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -9957,6 +10109,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -10119,6 +10275,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -10149,6 +10309,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -10467,6 +10631,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -10493,6 +10661,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -10580,7 +10752,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnUseFilePicker(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 											"m_noBody":	false
@@ -10606,6 +10777,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -10633,6 +10808,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -10718,6 +10897,10 @@
 															"m_value":	"0"
 														}, {
 															"type":	"bool",
+															"m_label":	"Enable Spell Checking",
+															"m_value":	false
+														}, {
+															"type":	"bool",
 															"m_label":	"Auto Complete Directories:",
 															"m_value":	false
 														}, {
@@ -10728,7 +10911,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnSelectBitmapUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -10823,14 +11005,12 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnBrowseFile(wxCommandEvent& event)",
 															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnSelectBitmapUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -10913,14 +11093,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnSelectBitmapUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnUseRelativePaths(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 													"m_noBody":	false
@@ -10948,6 +11126,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -11035,7 +11217,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnUserArtProvider(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 											"m_noBody":	false
@@ -11061,6 +11242,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -11163,7 +11348,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -11245,7 +11429,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -11327,7 +11510,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -11409,7 +11591,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -11491,7 +11672,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -11573,7 +11753,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -11620,6 +11799,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -11914,6 +12097,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -12164,6 +12351,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -12176,7 +12367,7 @@
 													"border":	0,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	[],
+													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -12343,6 +12534,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -12355,7 +12550,7 @@
 													"border":	0,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	[],
+													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -12554,6 +12749,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -12580,6 +12779,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -12683,6 +12886,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -12860,6 +13067,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -13062,6 +13273,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -13072,7 +13287,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_SET_FOCUS",
 											"m_eventClass":	"wxFocusEvent",
-											"m_eventHandler":	"wxFocusEventHandler",
 											"m_functionNameAndSignature":	"OnInheritedNameFocus(wxFocusEvent& event)",
 											"m_description":	"Process a wxEVT_SET_FOCUS event",
 											"m_noBody":	false
@@ -13231,6 +13445,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -13241,7 +13459,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_SET_FOCUS",
 											"m_eventClass":	"wxFocusEvent",
-											"m_eventHandler":	"wxFocusEventHandler",
 											"m_functionNameAndSignature":	"OnFilenameFocus(wxFocusEvent& event)",
 											"m_description":	"Process a wxEVT_SET_FOCUS event",
 											"m_noBody":	false
@@ -13268,6 +13485,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -13586,6 +13807,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -13613,6 +13838,10 @@
 									"m_label":	"Style:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	1,
@@ -13625,7 +13854,7 @@
 									"border":	5,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
+									"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -13687,7 +13916,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
 											"m_eventClass":	"wxDataViewEvent",
-											"m_eventHandler":	"wxDataViewEventHandler",
 											"m_functionNameAndSignature":	"OnItemActivated(wxDataViewEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
 											"m_noBody":	false
@@ -13798,6 +14026,10 @@
 											"m_label":	"Style:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
+										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
 											"m_selection":	0,
@@ -13893,7 +14125,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnNew(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 													"m_noBody":	false
@@ -13988,14 +14219,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnEdit(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnEditUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -14090,14 +14319,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnDelete(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnDeleteUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -14362,6 +14589,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -14388,6 +14619,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -14565,6 +14800,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -14748,6 +14987,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -14846,7 +15089,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnSelectBitmap(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
@@ -14948,7 +15190,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false

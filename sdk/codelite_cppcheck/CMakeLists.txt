@@ -22,7 +22,7 @@ FILE(GLOB SRCS "cli/*.cpp" "lib/*.cpp" "externals/*/*.cpp")
 # which (at least for Linux) is _not_ the correct location. So we have to set an alternative place, and tell it at *compile-time*.
 # AFAICT you can't just add an env var at run-time :/
 if ( UNIX AND NOT APPLE )
-    add_definitions(-DCFGDIR=\"${CL_PREFIX}/share/codelite/config/cfg\")
+    add_definitions(-DCFGDIR=\"${CMAKE_INSTALL_PREFIX}/share/codelite/config/cfg\")
     if (CYGWIN)
         add_definitions(-D_GNU_SOURCE)
     endif (CYGWIN)
@@ -39,7 +39,7 @@ CL_INSTALL_EXECUTABLE(codelite_cppcheck)
 if(NOT APPLE)
     install(
           DIRECTORY ${CL_SRC_ROOT}/sdk/codelite_cppcheck/cfg
-          DESTINATION ${CL_PREFIX}/share/codelite/config
+          DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/config
           USE_SOURCE_PERMISSIONS
           PATTERN ".svn" EXCLUDE
           PATTERN ".git" EXCLUDE

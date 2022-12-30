@@ -99,7 +99,7 @@ else()
     else()
         install(
           DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
-          DESTINATION ${CL_PREFIX}/share/codelite
+          DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite
           USE_SOURCE_PERMISSIONS
           PATTERN ".svn" EXCLUDE
           PATTERN ".git" EXCLUDE

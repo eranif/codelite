@@ -117,88 +117,88 @@ codelite_add_pch(codelite)
 set (EXE_PERM OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
 
 if(NOT APPLE)
-    install(FILES ${CL_SRC_ROOT}/codelite_open_helper.py DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+    install(FILES ${CL_SRC_ROOT}/codelite_open_helper.py DESTINATION ${CMAKE_INSTALL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 endif()
 
 if(NOT APPLE)
-    install(TARGETS codelite DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+    install(TARGETS codelite DESTINATION ${CMAKE_INSTALL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
     if (UNIX)
-        install(FILES ${CL_SRC_ROOT}/Runtime/codelite_exec DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-        install(FILES ${CL_SRC_ROOT}/Runtime/codelite_fix_files DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-        install(FILES ${CL_SRC_ROOT}/Runtime/codelite_kill_children DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-        install(FILES ${CL_SRC_ROOT}/Runtime/codelite_xterm DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+        install(FILES ${CL_SRC_ROOT}/Runtime/codelite_exec DESTINATION ${CMAKE_INSTALL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+        install(FILES ${CL_SRC_ROOT}/Runtime/codelite_fix_files DESTINATION ${CMAKE_INSTALL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+        install(FILES ${CL_SRC_ROOT}/Runtime/codelite_kill_children DESTINATION ${CMAKE_INSTALL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+        install(FILES ${CL_SRC_ROOT}/Runtime/codelite_xterm DESTINATION ${CMAKE_INSTALL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
     endif (UNIX)
 
     ## codelite icons
-    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip DESTINATION ${CL_PREFIX}/share/codelite)
-    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip DESTINATION ${CL_PREFIX}/share/codelite)
+    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite)
+    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite)
 
     ## License file
-    install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CL_PREFIX}/share/codelite)
+    install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite)
 
     ## Manual pages
     if(UNIX AND NOT APPLE)
-        install(DIRECTORY ${CL_SRC_ROOT}/Runtime/man1 DESTINATION ${CL_PREFIX}/share/man)
+        install(DIRECTORY ${CL_SRC_ROOT}/Runtime/man1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man)
     endif()
 
     ## Copy default configuration files
     install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default
-            DESTINATION ${CL_PREFIX}/share/codelite/config)
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/config)
     install(FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.gtk DESTINATION
-            ${CL_PREFIX}/share/codelite/config
+            ${CMAKE_INSTALL_PREFIX}/share/codelite/config
             RENAME debuggers.xml.default)
     install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk
-            DESTINATION ${CL_PREFIX}/share/codelite/config
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/config
             RENAME codelite.xml.default)
 
     ## Create application launcher, copy application icon to standard location
     if ( UNIX AND NOT APPLE )
-        install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CL_PREFIX}/share/applications)
+        install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
         ## Install icons
 
         ## 32x32
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo@2x.png
-                DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32@2x/apps
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32@2x/apps
                 RENAME codelite.png)
 
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo.png
-                DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32/apps
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps
                 RENAME codelite.png)
         ## 64x64
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo@2x.png
-                DESTINATION ${CL_PREFIX}/share/icons/hicolor/64x64@2x/apps
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/64x64@2x/apps
                 RENAME codelite.png)
 
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo.png
-                DESTINATION ${CL_PREFIX}/share/icons/hicolor/64x64/apps
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/64x64/apps
                 RENAME codelite.png)
 
         ## 128x128
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo@2x.png
-                DESTINATION ${CL_PREFIX}/share/icons/hicolor/128x128@2x/apps
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128@2x/apps
                 RENAME codelite.png)
 
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo.png
-                DESTINATION ${CL_PREFIX}/share/icons/hicolor/128x128/apps
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128/apps
                 RENAME codelite.png)
         ## 256x256
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo@2x.png
-                DESTINATION ${CL_PREFIX}/share/icons/hicolor/256x256@2x/apps
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256@2x/apps
                 RENAME codelite.png)
 
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo.png
-                DESTINATION ${CL_PREFIX}/share/icons/hicolor/256x256/apps
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps
                 RENAME codelite.png)
 
         install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
-                DESTINATION ${CL_PREFIX}/share/codelite/images
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/images
                 RENAME splashscreen.png)
 
         install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
-                DESTINATION ${CL_PREFIX}/share/codelite/images)
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/images)
 
         # Clear the icon cache if exists
-        install(CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
+        install(CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
     endif (  UNIX AND NOT APPLE )
     codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
 
@@ -210,7 +210,7 @@ if(NOT APPLE)
                   ${CL_SRC_ROOT}/Runtime/templates
                   ${CL_SRC_ROOT}/Runtime/rc
                   ${CL_SRC_ROOT}/Runtime/plugins/resources
-        DESTINATION ${CL_PREFIX}/share/codelite
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite
         USE_SOURCE_PERMISSIONS
         PATTERN ".svn" EXCLUDE
         PATTERN ".git" EXCLUDE
@@ -218,7 +218,7 @@ if(NOT APPLE)
 
     install(
         DIRECTORY ${CL_SRC_ROOT}/translations/
-        DESTINATION ${CL_PREFIX}/share/locale
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/locale
         USE_SOURCE_PERMISSIONS
         FILES_MATCHING PATTERN "codelite.mo"
     )
@@ -256,7 +256,7 @@ if(NOT APPLE)
         endforeach()
 
         file(GLOB wxfilepaths ${WX_LIBS_ALL})
-        install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
+        install(FILES ${wxfilepaths} DESTINATION ${CMAKE_INSTALL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
     endif()
 
     if ( USE_CLANG AND MINGW )

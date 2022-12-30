@@ -68,6 +68,6 @@ if(APPLE)
 else()
     install(
       FILES ${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar
-      DESTINATION ${CL_PREFIX}/share/codelite
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite
     )
 endif()

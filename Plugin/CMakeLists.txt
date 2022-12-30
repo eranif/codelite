@@ -4,106 +4,124 @@ project(plugin)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 
-
 # wxWidgets include (this will do all the magic to configure everything)
-include( "${wxWidgets_USE_FILE}" )
+include("${wxWidgets_USE_FILE}")
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
+include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
+                    "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
 
 ## Macros
 if(WIN32)
     add_definitions(-DWXMAKINGDLL_SDK)
 endif(WIN32)
 
-if ( USE_PCH AND NOT MINGW )
+if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
 endif()
 
-
-if (UNIX AND NOT APPLE)
-    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
+if(UNIX AND NOT APPLE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
-if ( APPLE )
+if(APPLE)
     add_definitions(-fPIC)
 endif()
 
 ## On UNIX we require GTK
-if (UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
 
-    if (GTK_VERSION EQUAL 3)
+    if(GTK_VERSION EQUAL 3)
         set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
         set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
         find_package(GTK3)
         set(CMAKE_MODULE_PATH ${OLD_CMAKE_MODULE_PATH}) # Reset, else the official path isn't used again :/
-        if (GTK3_FOUND)
+        if(GTK3_FOUND)
             include_directories(${GTK3_INCLUDE_DIRS})
-        else (GTK3_FOUND)
+        else(GTK3_FOUND)
             message(FATAL_ERROR "Could not locate GTK.")
-        endif (GTK3_FOUND)
+        endif(GTK3_FOUND)
     else()
         find_package(GTK2)
-        if (GTK2_FOUND)
+        if(GTK2_FOUND)
             include_directories(${GTK2_INCLUDE_DIRS})
-        else (GTK2_FOUND)
+        else(GTK2_FOUND)
             message(FATAL_ERROR "Could not locate GTK.")
-        endif (GTK2_FOUND)
+        endif(GTK2_FOUND)
     endif()
 
-endif (UNIX AND NOT APPLE)
+endif(UNIX AND NOT APPLE)
 
 # Additional libraries for UNIX-like systems
-set( ADDITIONAL_LIBRARIES "" )
+set(ADDITIONAL_LIBRARIES "")
 
-if (UNIX)
-    if ( IS_FREEBSD )
+if(UNIX)
+    if(IS_FREEBSD)
         set(ADDITIONAL_LIBRARIES "-lkvm")
-    elseif ( IS_NETBSD )
+    elseif(IS_NETBSD)
         set(ADDITIONAL_LIBRARIES "-lutil")
-    elseif ( UNIX AND NOT APPLE )
+    elseif(UNIX AND NOT APPLE)
         set(ADDITIONAL_LIBRARIES "-ldl -lutil -lgobject-2.0")
-    else ( )
+    else()
         set(ADDITIONAL_LIBRARIES "-ldl")
-    endif ( )
-elseif (WIN32)
+    endif()
+elseif(WIN32)
     set(ADDITIONAL_LIBRARIES "-luxtheme")
-endif ( )
+endif()
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 
 # Add RPATH
 if(NOT MINGW AND WXC_APP)
-    string( REPLACE "codelite" "wxcrafter" WXC_LIBS_DIR ${PLUGINS_DIR})
-    set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
-    message( "-- libplugin.so is using RPATH set to ${WXC_LIBS_DIR}")
+    string(REPLACE "codelite" "wxcrafter" WXC_LIBS_DIR ${PLUGINS_DIR})
+    set(LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
+    message("-- libplugin.so is using RPATH set to ${WXC_LIBS_DIR}")
 endif()
 
-FILE(GLOB SRCS "*.cpp")
+file(GLOB SRCS "*.cpp")
 
 # Define the output
 add_library(plugin SHARED ${SRCS})
 
 if(GTK2_FOUND)
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" libcodelite)
-elseif (GTK3_FOUND)
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${GTK3_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" libcodelite)
+    target_link_libraries(
+        plugin
+        ${LINKER_OPTIONS}
+        ${ADDITIONAL_LIBRARIES}
+        ${GTK2_LIBRARIES}
+        ${wxWidgets_LIBRARIES}
+        -L"${CL_LIBPATH}"
+        libcodelite)
+elseif(GTK3_FOUND)
+    target_link_libraries(
+        plugin
+        ${LINKER_OPTIONS}
+        ${ADDITIONAL_LIBRARIES}
+        ${GTK3_LIBRARIES}
+        ${wxWidgets_LIBRARIES}
+        -L"${CL_LIBPATH}"
+        libcodelite)
 else()
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" libcodelite)
+    target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}"
+                          libcodelite)
 endif()
 
 codelite_add_pch(plugin)
 
-if (NOT MINGW)
+if(NOT MINGW)
     if(APPLE)
         install(TARGETS plugin DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-        CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/libplugin.dylib)
+        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/libplugin.dylib)
     else()
         install(TARGETS plugin DESTINATION ${PLUGINS_DIR})
     endif()
-else ()
-    install(TARGETS plugin RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
+else()
+    install(
+        TARGETS plugin
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()

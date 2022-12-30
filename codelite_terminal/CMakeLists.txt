@@ -64,6 +64,6 @@ if(APPLE)
     CL_INSTALL_NAME_TOOL_EX("libplugin" "@executable_path"
                 ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/codelite-terminal)
 else()
-    install(TARGETS codelite-terminal DESTINATION ${CL_PREFIX}/bin)
+    install(TARGETS codelite-terminal DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 endif()
 add_dependencies(codelite-terminal plugin)

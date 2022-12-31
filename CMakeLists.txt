@@ -991,6 +991,9 @@ if(MINGW)
 endif()
 
 if(MINGW AND NOT WXC_APP)
+    # configure the innosetup file
+    configure_file(${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss.in ${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss)
+
     # CodeLite only related installation
     find_program(
         INNO_SETUP_CMP

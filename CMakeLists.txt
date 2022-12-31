@@ -243,7 +243,7 @@ endif()
 
 if(APPLE)
     set(PLUGINS_DIR ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins)
-    set(CL_INSTALL_BIN ${CMAKE_INSTALL_PREFIX}/codelite.app/Contents/MacOS)
+    set(CL_INSTALL_BIN ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
     set(CL_RESOURCES_DIR ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport)
 elseif(MINGW)
     set(PLUGINS_DIR "${MINGW_INSTALL_PLUGINS_DIR}")

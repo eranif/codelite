@@ -401,7 +401,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Label:",
-															"m_value":	"CodeLite IDE, an open source, C/C++/Rust/Python/PHP and JavaScript IDE"
+															"m_value":	"CodeLite, a free, open source, C/C++/Rust/Pytho/PHP and JavaScript IDE"
 														}, {
 															"type":	"string",
 															"m_label":	"Wrap:",
@@ -698,7 +698,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Label:",
-																					"m_value":	"2007 - 2022, by Eran Ifrah"
+																					"m_value":	"2007 - 2023, by Eran Ifrah"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Wrap:",

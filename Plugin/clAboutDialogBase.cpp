@@ -17,7 +17,7 @@ wxBorder get_border_simple_theme_aware_bit()
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
     return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
 #else
-    return wxBORDER_SIMPLE;
+    return wxBORDER_DEFAULT;
 #endif
 } // DoGetBorderSimpleBit
 bool bBitmapLoaded = false;
@@ -50,7 +50,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     m_panelAbout->SetSizer(boxSizer16);
 
     m_staticTextTitle = new wxStaticText(m_panelAbout, wxID_ANY,
-                                         _("CodeLite IDE, an open source, C/C++/Rust/Python/PHP and JavaScript IDE"),
+                                         _("CodeLite, a free, open source, C/C++/Rust/Pytho/PHP and JavaScript IDE"),
                                          wxDefaultPosition, wxDLG_UNIT(m_panelAbout, wxSize(-1, -1)), 0);
     wxFont m_staticTextTitleFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextTitleFont.SetStyle(wxFONTSTYLE_ITALIC);
@@ -81,7 +81,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     flexGridSizer32->Add(m_staticText34, 0, wxRIGHT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2022, by Eran Ifrah"), wxDefaultPosition,
+    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2023, by Eran Ifrah"), wxDefaultPosition,
                                             wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
 
     flexGridSizer32->Add(m_staticTextSubtitle, 0, wxLEFT | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));

@@ -23,12 +23,8 @@ DefaultWorkspacePage::DefaultWorkspacePage(wxWindow* parent)
         bg = clConfig::Get().Read("BaseColour", bg);
         m_colours.InitFromColour(bg);
     }
-    m_staticText523->SetBackgroundColour(m_colours.GetBgColour());
-    m_staticText523->SetForegroundColour(m_colours.GetItemTextColour());
 
     SetDropTarget(new clFileOrFolderDropTarget(this));
-    m_staticText523->SetBackgroundColour(m_colours.GetBgColour());
-    m_staticText523->SetForegroundColour(m_colours.GetItemTextColour());
     SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     m_staticBitmap521->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &DefaultWorkspacePage::OnFolderDropped, this);
@@ -56,13 +52,5 @@ void DefaultWorkspacePage::DoDropFolders(const wxArrayString& folders)
 void DefaultWorkspacePage::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    wxColour bg = clSystemSettings::GetDefaultPanelColour();
-    m_colours.InitFromColour(bg);
-    bool useCustom = clConfig::Get().Read("UseCustomBaseColour", false);
-    if(useCustom) {
-        bg = clConfig::Get().Read("BaseColour", bg);
-        m_colours.InitFromColour(bg);
-    }
-    m_staticText523->SetBackgroundColour(m_colours.GetBgColour());
-    m_staticText523->SetForegroundColour(m_colours.GetItemTextColour());
+    m_colours.InitDefaults();
 }

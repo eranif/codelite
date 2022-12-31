@@ -1,5 +1,6 @@
 #include "clSystemSettings.h"
 
+#include "ColoursAndFontsManager.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
@@ -221,3 +222,11 @@ void clSystemSettings::OnAppActivated(wxActivateEvent& event)
 }
 
 void clSystemSettings::SampleColoursFromControls() {}
+
+bool clSystemSettings::IsLexerThemeDark()
+{
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    return lexer && lexer->IsDark();
+}
+
+bool clSystemSettings::IsDark() { return DrawingUtils::IsDark(GetDefaultPanelColour()); }

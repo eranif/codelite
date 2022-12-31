@@ -16,9 +16,12 @@
 #include <wx/wupdlock.h>
 #include <wxStringHash.h>
 
-static wxArrayString GetMiscPlugins()
+namespace
 {
-    static wxArrayString miscPlugins;
+
+wxArrayString miscPlugins;
+wxArrayString GetMiscPlugins()
+{
     if(miscPlugins.empty()) {
         miscPlugins.push_back("AutoSave");
         miscPlugins.push_back("CodeLite Vim");
@@ -36,50 +39,51 @@ static wxArrayString GetMiscPlugins()
     return miscPlugins;
 }
 
-static const wxArrayString& GetBasePlugins()
+wxArrayString basePlugins;
+const wxArrayString& GetBasePlugins()
 {
-    static wxArrayString basePlugins;
     if(basePlugins.empty()) {
         basePlugins.push_back("Source Code Formatter");
         basePlugins.push_back("EditorConfig");
         basePlugins.push_back("LanguageServerPlugin");
+        basePlugins.push_back("DebugAdapterClient");
         basePlugins.push_back("Outline");
         basePlugins.push_back("SFTP");
+        basePlugins.push_back("Remoty");
         basePlugins.push_back("Git");
         basePlugins.push_back("Word Completion");
         basePlugins.push_back("Diff Plugin");
         basePlugins.push_back("SmartCompletion");
+        basePlugins.push_back("Rust");
     }
     return basePlugins;
 }
 
-static const wxArrayString& GetCxxPlugins()
+wxArrayString cxxPlugins;
+const wxArrayString& GetCxxPlugins()
 {
-    static wxArrayString cxxPlugins;
     if(cxxPlugins.empty()) {
         cxxPlugins.insert(cxxPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
-        cxxPlugins.push_back("LLDBDebuggerPlugin");
         cxxPlugins.push_back("Wizards");
         cxxPlugins.push_back("wxcrafter");
     }
     return cxxPlugins;
 }
 
-static const wxArrayString& GetEOSWikiPlugins()
+wxArrayString eosPlugins;
+const wxArrayString& GetEOSWikiPlugins()
 {
-    static wxArrayString eosPlugins;
     if(eosPlugins.empty()) {
         eosPlugins.insert(eosPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
-        eosPlugins.push_back("LLDBDebuggerPlugin");
         eosPlugins.push_back("Wizards");
         eosPlugins.push_back("EOSWiki");
     }
     return eosPlugins;
 }
 
-static const wxArrayString& GetWebPlugins()
+wxArrayString webPlugins;
+const wxArrayString& GetWebPlugins()
 {
-    static wxArrayString webPlugins;
     if(webPlugins.empty()) {
         webPlugins.insert(webPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
         webPlugins.push_back("WebTools");
@@ -90,9 +94,9 @@ static const wxArrayString& GetWebPlugins()
     return webPlugins;
 }
 
-static const wxArrayString& GetAllPlugins()
+wxArrayString allPlugins;
+const wxArrayString& GetAllPlugins()
 {
-    static wxArrayString allPlugins;
     if(allPlugins.empty()) {
         WX_APPEND_ARRAY(allPlugins, GetBasePlugins());
         WX_APPEND_ARRAY(allPlugins, GetCxxPlugins());
@@ -102,6 +106,24 @@ static const wxArrayString& GetAllPlugins()
     }
     return allPlugins;
 }
+const wxString SAMPLE_TEXT = R"(class Demo {
+private:
+    std::string m_str;
+    int m_integer;
+
+public:
+    /**
+     * Creates a new demo.
+     * @param o The object
+     */
+    Demo(const Demo &other) {
+        // Initialise with Zero
+        int number = 0;
+        m_str = other.m_str;
+        m_integer = other.m_integer;
+    }
+};)";
+} // namespace
 
 class clBootstrapWizardPluginData : public wxClientData
 {
@@ -130,24 +152,6 @@ public:
 #define DARK_THEME "Atom One-Dark"
 #define NO_SO_LIGHT_THEME "Roboticket"
 #define LIGHT_THEME "Atom One Light"
-
-const wxString sampleText = "class Demo {\n"
-                            "private:\n"
-                            "    std::string m_str;\n"
-                            "    int m_integer;\n"
-                            "    \n"
-                            "public:\n"
-                            "    /**\n"
-                            "     * Creates a new demo.\n"
-                            "     * @param o The object\n"
-                            "     */\n"
-                            "    Demo(const Demo &other) {\n"
-                            "        // Initialise with Zero\n"
-                            "        int number = 0;\n"
-                            "        m_str = other.m_str;\n"
-                            "        m_integer = other.m_integer;\n"
-                            "    }\n"
-                            "};";
 
 clBootstrapWizard::clBootstrapWizard(wxWindow* parent, bool firstTime)
     : clBoostrapWizardBase(parent)
@@ -259,6 +263,11 @@ clBootstrapData clBootstrapWizard::GetData()
     clBootstrapData data;
     data.compilers = m_compilers;
     data.selectedTheme = m_selectedTheme;
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text", m_selectedTheme);
+    if(lexer) {
+        data.forceDarkAppearance = lexer->IsDark();
+    }
+
     data.useTabs = (m_radioBoxSpacesVsTabs->GetSelection() == 1);
     data.whitespaceVisibility = m_radioBoxWhitespaceVisibility->GetSelection();
     return data;
@@ -332,7 +341,7 @@ void clBootstrapWizard::DoUpdatePreview(const wxString& themeName)
     }
 
     m_stc24->SetEditable(true);
-    m_stc24->SetText(sampleText);
+    m_stc24->SetText(SAMPLE_TEXT);
     m_stc24->HideSelection(true);
     m_stc24->SetEditable(false);
     ::clRecalculateSTCHScrollBar(m_stc24);

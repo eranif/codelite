@@ -34,9 +34,10 @@
 class WXDLLIMPEXP_SDK clBootstrapData
 {
 public:
-    wxString selectedTheme;
-    int whitespaceVisibility;
-    bool useTabs;
+    wxString selectedTheme = wxEmptyString;
+    int whitespaceVisibility = true;
+    bool useTabs = false;
+    bool forceDarkAppearance = false;
     ICompilerLocator::CompilerVec_t compilers;
 };
 

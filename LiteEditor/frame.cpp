@@ -1557,6 +1557,10 @@ bool clMainFrame::StartSetupWizard(bool firstTime)
             options->SetShowWhitspaces(data.whitespaceVisibility);
             EditorConfigST::Get()->SetOptions(options);
 
+#ifdef __WXMSW__
+            clConfig::Get().Write("CodeLiteAppearance", data.forceDarkAppearance ? 1 : 0);
+#endif
+
             // Update the theme
             ColoursAndFontsManager::Get().SetTheme(data.selectedTheme);
             ColoursAndFontsManager::Get().Save();

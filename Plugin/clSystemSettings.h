@@ -46,6 +46,9 @@ public:
      * @brief return the colours used internally
      */
     static const clColours& GetColours() { return m_customColours; }
+
+    static bool IsLexerThemeDark();
+    static bool IsDark();
 };
 
 #endif // CLSYSTEMSETTINGS_H

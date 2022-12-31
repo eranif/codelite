@@ -77,7 +77,9 @@ clColours::clColours() {}
 
 void clColours::InitDefaults()
 {
-    InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX));
+    wxColour base_colour = clSystemSettings::Get().IsDark() ? wxColour(*wxBLACK).ChangeLightness(105) : *wxWHITE;
+    InitFromColour(base_colour);
+
     itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
     selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT);
 }

@@ -26,7 +26,7 @@ UninstallDisplayIcon={app}\wxcrafter.exe,0
 ;;==================================
 ;; 64 bit setup
 ;;==================================
-#define INSTALL_DIR "C:\msys64\home\eran\devl\codelite\build-release-wxcapp\install"
+#define INSTALL_DIR "@CL_INSTALL_BIN@"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -37,7 +37,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 ; the INSTALL_DIR is created by `make install`
-Source: "{#INSTALL_DIR}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
+Source: "{#INSTALL_DIR}\*"; Excludes: "*.a"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
 
 [Icons]
 Name: "{group}\wxCrafter "; Filename: "{app}\wxcrafter.exe"; WorkingDir: "{app}"

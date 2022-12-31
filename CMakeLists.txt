@@ -7,22 +7,22 @@ cmake_minimum_required(VERSION 3.16)
 #
 # Linux / macOS:
 # -------------------
-# ```
+# ~~~
 # mkdir build
 # cd build
 # cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 # make -j$(nproc) install
-# ```
+# ~~~
 #
 # MSYS2
 # -------------------
 #
-# ```
+# ~~~
 # mkdir build-release
 # cd build-release
 # cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release .. -DWXWIN=C:/msys64/path/to/wx-dir
 # make -j$(nproc)
-# ```
+# ~~~
 #
 # Optional command line arguments:
 #
@@ -1009,6 +1009,9 @@ if(MINGW AND NOT WXC_APP)
             WORKING_DIRECTORY "${CL_SRC_ROOT}/InnoSetup")
     endif()
 elseif(MINGW AND WXC_APP)
+    # configure the innosetup file
+    configure_file(${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss.in ${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss)
+
     # wxCrafter App
     find_program(
         INNO_SETUP_CMP

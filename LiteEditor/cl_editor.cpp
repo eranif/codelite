@@ -6294,17 +6294,20 @@ int clEditor::GetFirstNonWhitespacePos(bool backward)
 
 void clEditor::UpdateLineNumberMarginWidth()
 {
-    int newLineCount = GetLineCount();
-    int newWidthCount = log10(newLineCount) + 2;
+    int new_width = log10(GetLineCount()) + 1;
 
-#if defined(__WXMSW__)
-    newWidthCount -= 1;
+#ifndef __WXMSW__
+    new_width += 1;
+#else
+    if(new_width <= 2) {
+        new_width += 1;
+    }
 #endif
 
     if(m_default_text_width == wxNOT_FOUND) {
         UpdateDefaultTextWidth();
     }
-    int size = FromDIP(newWidthCount * m_default_text_width);
+    int size = FromDIP(new_width * m_default_text_width);
     SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers() ? size : 0);
 }
 

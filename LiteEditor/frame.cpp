@@ -159,6 +159,8 @@ wxBorder get_border_simple_theme_aware_bit()
 {
 #ifdef __WXMAC__
     return wxBORDER_SIMPLE;
+#elif defined(__WXGTK__)
+    return wxBORDER_STATIC;
 #else
     return clSystemSettings::Get().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
 #endif

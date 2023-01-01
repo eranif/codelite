@@ -3858,7 +3858,7 @@ BrowseRecord clEditor::CreateBrowseRecord()
     record.project = GetProject();
     record.firstLineInView = GetFirstVisibleLine();
     record.column = GetColumn(GetCurrentPosition());
-    record.ssh_account = IsRemoteFile() ? GetRemoteData()->GetAccountName() : wxEmptyString;
+    record.ssh_account = IsRemoteFile() ? GetRemoteData()->GetAccountName() : wxString();
     return record;
 }
 

@@ -54,7 +54,13 @@ if(MINGW)
     set(MSYS2_USR_BIN $ENV{WD})
     string(REPLACE "\\usr\\bin" "" MSYS2_BASE "${MSYS2_USR_BIN}")
     string(REPLACE "\\" "/" MSYS2_BASE "${MSYS2_BASE}")
+elseif(UNIX AND NOT APPLE)
+    if(CL_PREFIX)
+        set(CMAKE_INSTALL_PREFIX "${CL_PREFIX}")
+    endif()
+    set(CL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 endif()
+message(STATUS "CMAKE_INSTALL_PREFIX is set to ${CMAKE_INSTALL_PREFIX}")
 
 # Generate compile_commands.json file for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)

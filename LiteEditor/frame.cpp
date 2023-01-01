@@ -157,10 +157,10 @@ int FrameTimerId = wxNewId();
 // return the wxBORDER_SIMPLE that matches the current application theme
 wxBorder get_border_simple_theme_aware_bit()
 {
-#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
-    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#ifdef __WXMAC__
+    return wxBORDER_SIMPLE;
 #else
-    return wxBORDER_NONE;
+    return clSystemSettings::Get().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
 #endif
 } // DoGetBorderSimpleBit
 } // namespace

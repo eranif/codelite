@@ -3854,10 +3854,11 @@ BrowseRecord clEditor::CreateBrowseRecord()
     // Remember this position before skipping to the next one
     BrowseRecord record;
     record.lineno = LineFromPosition(GetCurrentPos()); // scintilla counts from zero, while tagentry from 1
-    record.filename = CLRealPath(GetFileName().GetFullPath());
+    record.filename = GetRemotePathOrLocal();
     record.project = GetProject();
     record.firstLineInView = GetFirstVisibleLine();
     record.column = GetColumn(GetCurrentPosition());
+    record.ssh_account = IsRemoteFile() ? GetRemoteData()->GetAccountName() : wxEmptyString;
     return record;
 }
 

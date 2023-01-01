@@ -199,7 +199,7 @@ void OpenResourceDialog::DoPopulateList()
     Clear();
     wxString name = m_textCtrlResourceName->GetValue();
     name.Trim().Trim(false);
-    if(name.IsEmpty()) {
+    if(name.empty()) {
         return;
     }
 
@@ -275,7 +275,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
         return;
     }
 
-    if(!m_userFilters.IsEmpty()) {
+    if(!m_userFilters.empty()) {
 
         std::unordered_multimap<wxString, wxString>::iterator iter = m_files.begin();
         const int maxFileSize = 100;

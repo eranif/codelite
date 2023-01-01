@@ -973,7 +973,7 @@ if(MINGW)
         ls.exe
         mv.exe)
 
-    list(APPEND WXWIDGETS_DLLS wxmsw330u_clang_x64_custom.dll)
+    list(APPEND WXWIDGETS_DLLS wxmsw330u_clang_custom.dll)
 
     list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/Runtime/codelite-bitmaps-dark.zip
          ${CMAKE_SOURCE_DIR}/Runtime/codelite-bitmaps-light.zip ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip
@@ -1006,7 +1006,8 @@ if(MINGW AND NOT WXC_APP)
         NAMES "ISCC" "ISCC.exe"
         PATHS "c:/Program Files (x86)/Inno Setup 6")
     if(NOT INNO_SETUP_CMP)
-        message(WARNING "** Could not locate ISCC compiler! **")
+        message(WARNING "\n** Could not locate ISCC compiler! \"setup\" target is not created **")
+        message(WARNING "\n** You can install InnoSetup compiler from here: https://jrsoftware.org/ **\n")
     else()
         message(STATUS "InnoSetup compiler is set to: ${INNO_SETUP_CMP}")
         add_custom_target(

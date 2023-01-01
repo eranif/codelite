@@ -2,6 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
+WizardStyle=modern
 AppName=wxCrafter
 AppVerName=wxCrafter
 AppPublisher=Eran Ifrah

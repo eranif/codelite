@@ -1765,7 +1765,7 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     FileUtils::ReadFileContent(license, fileContent);
     info.SetLicence(fileContent);
     info.SetName(_("CodeLite IDE"));
-    info.SetDescription(_("CodeLite, a free, open source, C/C++/Rust/Pytho/PHP and JavaScript IDE"));
+    info.SetDescription(_("CodeLite, a free, open source, C/C++/Rust/Python/PHP and JavaScript IDE"));
 
     wxBitmap iconBmp = clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 64);
     if(iconBmp.IsOk()) {

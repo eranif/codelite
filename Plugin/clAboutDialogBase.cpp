@@ -50,7 +50,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     m_panelAbout->SetSizer(boxSizer16);
 
     m_staticTextTitle = new wxStaticText(m_panelAbout, wxID_ANY,
-                                         _("CodeLite, a free, open source, C/C++/Rust/Pytho/PHP and JavaScript IDE"),
+                                         _("CodeLite, a free, open source, C/C++/Rust/Python/PHP and JavaScript IDE"),
                                          wxDefaultPosition, wxDLG_UNIT(m_panelAbout, wxSize(-1, -1)), 0);
     wxFont m_staticTextTitleFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextTitleFont.SetStyle(wxFONTSTYLE_ITALIC);

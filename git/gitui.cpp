@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxCrafterpca4kKInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                        const wxSize& size, long style)
@@ -274,9 +286,9 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer11);
 
-    m_dvListCtrlFiles =
-        new clThemedOrderedListCtrl(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
-                                    wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrlFiles = new clThemedOrderedListCtrl(
+        m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
+        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     bSizer11->Add(m_dvListCtrlFiles, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -290,7 +302,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_panel2->SetSizer(bSizer9);
 
     m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1, -1)),
-                                     wxBORDER_NONE);
+                                     wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcDiff->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -340,8 +352,8 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
 
     bSizer13->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcCommitMessage =
-        new clThemedSTC(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcCommitMessage = new clThemedSTC(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)),
+                                         wxTRANSPARENT_WINDOW | wxBORDER_NONE | get_border_simple_theme_aware_bit());
     m_stcCommitMessage->SetFocus();
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -529,9 +541,9 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
 
     flexGridSizer800->Add(m_checkBoxIgnoreCase, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_dvListCtrlCommitList =
-        new clThemedListCtrl(m_splitterPage781, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPage781, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrlCommitList = new clThemedListCtrl(
+        m_splitterPage781, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage781, wxSize(-1, -1)),
+        wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer787->Add(m_dvListCtrlCommitList, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -569,8 +581,9 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     boxSizer208->Add(m_staticText210, 0, wxALL, WXC_FROM_DIP(5));
 
     wxArrayString m_fileListBoxArr;
-    m_fileListBox = new wxListBox(m_splitterPage795, wxID_ANY, wxDefaultPosition,
-                                  wxDLG_UNIT(m_splitterPage795, wxSize(-1, -1)), m_fileListBoxArr, 0);
+    m_fileListBox =
+        new wxListBox(m_splitterPage795, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage795, wxSize(-1, -1)),
+                      m_fileListBoxArr, wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer208->Add(m_fileListBox, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -586,8 +599,9 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer218->Add(m_staticText220, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_stcCommitMessage = new clThemedSTC(m_splitterPage799, wxID_ANY, wxDefaultPosition,
-                                         wxDLG_UNIT(m_splitterPage799, wxSize(-1, -1)), wxBORDER_THEME);
+    m_stcCommitMessage =
+        new clThemedSTC(m_splitterPage799, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage799, wxSize(-1, -1)),
+                        wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCommitMessage->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -638,7 +652,8 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     boxSizer184->Add(m_staticText217, 0, wxALL, WXC_FROM_DIP(5));
 
     m_stcDiff = new wxStyledTextCtrl(m_splitterPage182, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_splitterPage182, wxSize(-1, -1)), wxBORDER_THEME);
+                                     wxDLG_UNIT(m_splitterPage182, wxSize(-1, -1)),
+                                     wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcDiff->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -765,8 +780,9 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     boxSizer62->Add(m_staticText68, 0, wxALL, WXC_FROM_DIP(5));
 
     wxArrayString m_fileListBoxArr;
-    m_fileListBox = new wxListBox(m_splitterPageFiles, wxID_ANY, wxDefaultPosition,
-                                  wxDLG_UNIT(m_splitterPageFiles, wxSize(-1, -1)), m_fileListBoxArr, 0);
+    m_fileListBox =
+        new wxListBox(m_splitterPageFiles, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageFiles, wxSize(-1, -1)),
+                      m_fileListBoxArr, wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer62->Add(m_fileListBox, 1, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -1952,9 +1968,9 @@ GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString
     boxSizer565->Add(m_clToolbarAltered, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_checkListBoxChangedArr;
-    m_checkListBoxChanged =
-        new wxCheckListBox(m_panel759, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel759, wxSize(-1, -1)),
-                           m_checkListBoxChangedArr, wxLB_SINGLE);
+    m_checkListBoxChanged = new wxCheckListBox(
+        m_panel759, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel759, wxSize(-1, -1)), m_checkListBoxChangedArr,
+        wxLB_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     m_checkListBoxChanged->SetToolTip(_("These are the files that are altered. Select which you want to reset."));
 
     boxSizer565->Add(m_checkListBoxChanged, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -1976,7 +1992,8 @@ GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
     wxArrayString m_checkListBoxNewArr;
     m_checkListBoxNew = new wxCheckListBox(m_panel759, wxID_ANY, wxDefaultPosition,
-                                           wxDLG_UNIT(m_panel759, wxSize(-1, -1)), m_checkListBoxNewArr, wxLB_SINGLE);
+                                           wxDLG_UNIT(m_panel759, wxSize(-1, -1)), m_checkListBoxNewArr,
+                                           wxLB_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
     m_checkListBoxNew->SetToolTip(_("These are the files that have been added. Select which you want to remove."));
 
     boxSizer5651->Add(m_checkListBoxNew, 1, wxEXPAND, WXC_FROM_DIP(5));

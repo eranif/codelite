@@ -483,6 +483,6 @@ void wxCrafterpca4kKInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._bitmaps-light_24-debugger_restart@2x.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._bitmaps-light_24-forward.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._bitmaps-light_24-forward@2x.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$C__src_codelite_git_gitui_git_bitmaps.xrc"), xml_res_file_8, xml_res_size_8, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$C__src_codelite_git_gitui_git_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$C__msys64_home_eran_devl_codelite_git_gitui_git_bitmaps.xrc"), xml_res_file_8, xml_res_size_8, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$C__msys64_home_eran_devl_codelite_git_gitui_git_bitmaps.xrc"));
 }

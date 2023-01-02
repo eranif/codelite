@@ -5091,8 +5091,10 @@ void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
 void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
 {
     if(clCxxWorkspaceST::Get()->IsOpen()) {
-        menu->Append(XRCID("build_active_project_only"), _("Project Only - Build"));
-        menu->Append(XRCID("clean_active_project_only"), _("Project Only - Clean"));
+        menu->Append(XRCID("build_active_project"), _("Build"));
+        menu->AppendSeparator();
+        menu->Append(XRCID("build_active_project_only"), _("Project Only ") + L"\u2192" + _(" Build"));
+        menu->Append(XRCID("clean_active_project_only"), _("Project Only ") + L"\u2192" + _(" Clean"));
 
         // build the menu and show it
         BuildConfigPtr bldcfg =

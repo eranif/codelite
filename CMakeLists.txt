@@ -48,6 +48,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # ######################################################################################################################
 project("CodeLite")
 
+if(UNIX AND NOT APPLE)
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        # user did not pass -DCMAKE_INSTALL_PREFIX and this is the first time
+        # we are executing cmake, the default is set to /usr/local
+        # and we do not want that..
+        set(CMAKE_INSTALL_PREFIX "/usr" CACHE ON "Insall prefix" FORCE)
+    endif()
+endif()
+
 if(MINGW)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
     set(CL_PREFIX "${CMAKE_INSTALL_PREFIX}")
@@ -56,10 +65,14 @@ if(MINGW)
     string(REPLACE "\\" "/" MSYS2_BASE "${MSYS2_BASE}")
 elseif(UNIX AND NOT APPLE)
     if(CL_PREFIX)
+        # user provided CL_PREFIX -> use it instead of CMAKE_INSTALL_PREFIX
         set(CMAKE_INSTALL_PREFIX "${CL_PREFIX}")
+    else()
+        # update CL_PREFIX to CMAKE_INSTALL_PREFIX
+        set(CL_PREFIX "${CMAKE_INSTALL_PREFIX}")
     endif()
-    set(CL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 endif()
+
 message(STATUS "CMAKE_INSTALL_PREFIX is set to ${CMAKE_INSTALL_PREFIX}")
 
 # Generate compile_commands.json file for code completion

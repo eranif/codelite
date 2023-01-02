@@ -1464,7 +1464,7 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     // create the standard toolbar
     //----------------------------------------------
     long style = wxTB_FLAT | wxTB_NODIVIDER;
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__WXGTK__)
     style |= wxTB_LEFT | wxTB_VERTICAL;
 #endif
 

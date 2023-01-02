@@ -347,7 +347,7 @@
         <checkable>1</checkable>
       </object>
       <object class="wxMenuItem" name="hide_tool_bar">
-        <label>Show Tool Bar</label>
+        <label>Show Plugins Toolbar</label>
         <checkable>1</checkable>
       </object>
       <object class="wxMenuItem" name="show_menu_bar">

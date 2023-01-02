@@ -1529,7 +1529,9 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->AddSpacer();
     m_toolbar->Realize();
 
+#if !wxUSE_NATIVE_TOOLBAR
     m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
+#endif
 }
 
 bool clMainFrame::StartSetupWizard(bool firstTime)
@@ -3482,6 +3484,7 @@ void clMainFrame::CompleteInitialization()
         }
     }
 
+#if !wxUSE_NATIVE_TOOLBAR
     auto& buttons = m_toolbar->GetButtons();
     for(size_t i = 0; i < hiddenItems.size(); ++i) {
         const wxString& label = hiddenItems.Item(i);
@@ -3491,6 +3494,7 @@ void clMainFrame::CompleteInitialization()
             (*iter)->Show(false);
         }
     }
+#endif
 
     // Prompt the user to adjust his colours
     bool colourAdjusted = clConfig::Get().Read("ColoursAdjusted", false);
@@ -5902,6 +5906,7 @@ void clMainFrame::OnFindWordAtCaretPrev(wxCommandEvent& event)
 
 void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event)
 {
+#if !wxUSE_NATIVE_TOOLBAR
     clCustomiseToolBarDlg dlg(this, m_toolbar);
     if(dlg.ShowModal() != wxID_OK) {
         return;
@@ -5917,6 +5922,7 @@ void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event)
         }
     }
     clConfig::Get().Write("ToolBarHiddenItems", hiddenItems);
+#endif
 }
 
 void clMainFrame::OnInfobarButton(wxCommandEvent& event)

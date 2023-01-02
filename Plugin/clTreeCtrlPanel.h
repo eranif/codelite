@@ -55,7 +55,7 @@ protected:
     wxString m_newfileTemplate;
     size_t m_newfileTemplateHighlightLen = 0;
     int m_options = (kShowHiddenFiles | kShowHiddenFolders | kLinkToEditor);
-    clEnhancedToolBar* m_toolbar = nullptr;
+    clToolBar* m_toolbar = nullptr;
     wxString m_excludeFilePatterns;
 
 protected:
@@ -72,7 +72,7 @@ public:
     /**
      * @brief getter for the toolbar
      */
-    clEnhancedToolBar* GetToolBar() { return m_toolbar; }
+    clToolBar* GetToolBar() { return m_toolbar; }
 
     /**
      * @brief set the tree options

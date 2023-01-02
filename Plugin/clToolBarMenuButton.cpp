@@ -1,5 +1,5 @@
 #include "clToolBarMenuButton.h"
-
+#if !wxUSE_NATIVE_TOOLBAR
 clToolBarMenuButton::clToolBarMenuButton(clToolBar* parent, wxWindowID winid, size_t bmpId, const wxString& label)
     : clToolBarButtonBase(parent, winid, bmpId, label, kHasMenu)
 {
@@ -34,3 +34,4 @@ wxSize clToolBarMenuButton::CalculateSize(wxDC& dc) const
     sz.x += sz.GetHeight(); // the button width is the as the height of the button
     return sz;
 }
+#endif // #if !wxUSE_NATIVE_TOOLBAR

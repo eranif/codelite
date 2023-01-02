@@ -197,7 +197,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     // did the page closed before the search ended?
     AppendLine(summary->GetMessage() + wxT("\n"));
 
-    if(m_tb->FindById(XRCID("scroll_on_output")) && m_tb->FindById(XRCID("scroll_on_output"))->IsChecked()) {
+    if(m_tb->FindById(XRCID("scroll_on_output")) && m_tb->FindById(XRCID("scroll_on_output"))->IsToggled()) {
         m_sci->GotoLine(0);
     }
 
@@ -456,7 +456,7 @@ void FindResultsTab::OnRecentSearches(wxCommandEvent& e)
         ++counter;
     });
 
-    clToolBarButtonBase* button = m_tb->FindById(e.GetId());
+    auto button = m_tb->FindById(e.GetId());
     CHECK_PTR_RET(button);
 
     menu.AppendSeparator();

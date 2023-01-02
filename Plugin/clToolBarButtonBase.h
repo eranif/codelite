@@ -2,7 +2,7 @@
 #define CLTOOLBARBUTTONBASE_H
 
 #include "clToolBar.h"
-
+#if !wxUSE_NATIVE_TOOLBAR
 #include <wx/bitmap.h>
 #include <wx/dc.h>
 #include <wx/settings.h>
@@ -116,6 +116,7 @@ public:
     void ClearRenderFlags() { m_renderFlags = 0; }
     const wxRect& GetButtonRect() const { return m_buttonRect; }
     bool IsChecked() const { return (m_flags & kChecked); }
+    bool IsToggled() const { return IsChecked(); }
     void Check(bool b)
     {
         EnableFlag(kChecked, b);
@@ -138,5 +139,5 @@ public:
 
     template <typename T> T* Cast() { return dynamic_cast<T*>(this); }
 };
-
+#endif // #if !wxUSE_NATIVE_TOOLBAR
 #endif // CLTOOLBARBUTTONBASE_H

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "openwindowspanel.h"
 
+#include "ColoursAndFontsManager.h"
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
 #include "cl_config.h"
@@ -33,7 +34,6 @@
 #include "imanager.h"
 #include "macros.h"
 #include "pluginmanager.h"
-#include "ColoursAndFontsManager.h"
 
 #include <algorithm>
 #include <wx/clntdata.h>
@@ -46,25 +46,6 @@ BEGIN_EVENT_TABLE(OpenWindowsPanel, OpenWindowsPanelBase)
 EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)
 EVT_MENU(XRCID("wxID_SAVE_SELECTED"), OpenWindowsPanel::OnSaveSelectedFiles)
 END_EVENT_TABLE()
-
-struct TabSorter {
-    bool operator()(const clTab& t1, const clTab& t2)
-    {
-        wxString file1, file2;
-        if(t1.isFile) {
-            file1 = t1.filename.GetFullName().Lower();
-        } else {
-            file1 = t1.text;
-        }
-
-        if(t2.isFile) {
-            file2 = t2.filename.GetFullName().Lower();
-        } else {
-            file2 = t2.text;
-        }
-        return file1.CmpNoCase(file2) < 0;
-    }
-};
 
 struct TabClientData : public wxClientData {
     clTab tab;
@@ -92,7 +73,7 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_toolbar = new clToolBar(this);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), images->Add("sort"), "", wxITEM_CHECK);
+    m_toolbar->AddToggleButton(wxID_SORT_ASCENDING, images->Add("sort"), _("Sort"));
     m_toolbar->Realize();
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 
@@ -250,7 +231,8 @@ void OpenWindowsPanel::DoSelectItem(IEditor* editor)
 
 void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
 {
-    if(event.IsChecked()) {
+    m_sortItems = event.IsChecked();
+    if(m_sortItems) {
         SortAlphabetically();
     } else {
         SortByEditorOrder();
@@ -262,7 +244,11 @@ void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
     clConfig::Get().Write(kConfigTabsPaneSortAlphabetically, event.IsChecked());
 }
 
-void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->GetItemCount()); }
+void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dvListCtrl->GetItemCount());
+    event.Check(m_sortItems);
+}
 
 void OpenWindowsPanel::SortAlphabetically()
 {
@@ -271,10 +257,14 @@ void OpenWindowsPanel::SortAlphabetically()
     m_mgr->GetAllTabs(tabs);
 
     // Sort editors
-    std::sort(tabs.begin(), tabs.end(), TabSorter());
+    std::sort(tabs.begin(), tabs.end(), [&](const clTab& t1, const clTab& t2) {
+        wxString file1 = GetDisplayName(t1);
+        wxString file2 = GetDisplayName(t2);
+        return file1.CmpNoCase(file2) < 0;
+    });
     Clear();
 
-    clTab::Vec_t::iterator iter = tabs.begin();
+    auto iter = tabs.begin();
     for(; iter != tabs.end(); ++iter) {
         AppendEditor(*iter);
     }
@@ -375,7 +365,7 @@ void OpenWindowsPanel::Clear()
 
 void OpenWindowsPanel::PopulateView()
 {
-    if(m_toolbar->FindById(wxID_SORT_ASCENDING)->IsChecked()) {
+    if(m_sortItems) {
         SortAlphabetically();
     } else {
         SortByEditorOrder();
@@ -492,22 +482,15 @@ void OpenWindowsPanel::DoMarkModify(IEditor* editor, const wxString& filename, b
 wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab, bool* isModified)
 {
     wxString title;
-    wxStyledTextCtrl* editor(NULL);
+    wxStyledTextCtrl* editor = nullptr;
     *isModified = false;
+    title = GetDisplayName(tab);
 
     if(tab.isFile) {
-        const wxFileName& fn = tab.filename;
-        if(fn.GetDirCount() && EditorConfigST::Get()->GetOptions()->IsTabShowPath()) {
-            title = fn.GetDirs().Last() + wxFileName::GetPathSeparator() + fn.GetFullName();
-        } else {
-            title = tab.filename.GetFullName();
-        }
-        IEditor* i_editor = clGetManager()->FindEditor(tab.filename.GetFullPath());
+        auto i_editor = clGetManager()->FindEditor(tab.filename.GetFullPath());
         if(i_editor) {
             editor = i_editor->GetCtrl();
         }
-    } else {
-        title = tab.text;
     }
 
     FileExtManager::FileType ft = FileExtManager::GetType(title, FileExtManager::TypeText);
@@ -555,4 +538,20 @@ void OpenWindowsPanel::OnThemeChanged(clCommandEvent& event)
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     PopulateView();
     m_dvListCtrl->Refresh();
+}
+
+wxString OpenWindowsPanel::GetDisplayName(const clTab& tab) const
+{
+    wxString title;
+    if(tab.isFile) {
+        const wxFileName& fn = tab.filename;
+        if(fn.GetDirCount() && EditorConfigST::Get()->GetOptions()->IsTabShowPath()) {
+            title = fn.GetDirs().Last() + wxFileName::GetPathSeparator() + fn.GetFullName();
+        } else {
+            title = tab.filename.GetFullName();
+        }
+    } else {
+        title = tab.text;
+    }
+    return title;
 }

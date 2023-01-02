@@ -539,26 +539,12 @@ void WorkspaceTab::OnBuildStarted(clBuildEvent& event)
 {
     event.Skip();
     m_buildInProgress = true;
-    auto button = m_toolbar580->FindById(XRCID("ID_BUILD_PROJECT"));
-    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
-    if(button) {
-        button->SetBitmapIndex(images->Add("stop"));
-        button->SetLabel(_("Stop Current Build"));
-        m_toolbar580->Refresh();
-    }
 }
 
 void WorkspaceTab::OnBuildEnded(clBuildEvent& event)
 {
     event.Skip();
     m_buildInProgress = false;
-    auto button = m_toolbar580->FindById(XRCID("ID_BUILD_PROJECT"));
-    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
-    if(button) {
-        button->SetBitmapIndex(images->Add("build"));
-        button->SetLabel(_("Build Active Project"));
-        m_toolbar580->Refresh();
-    }
 }
 
 void WorkspaceTab::OnBuildActiveProject(wxCommandEvent& event)
@@ -603,24 +589,10 @@ void WorkspaceTab::OnProgramStarted(clExecuteEvent& event)
 {
     event.Skip();
     m_runInProgress = true;
-    auto button = m_toolbar580->FindById(XRCID("ID_EXECUTE_NO_DEBUG"));
-    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
-    if(button) {
-        button->SetBitmapIndex(images->Add("stop"));
-        button->SetLabel(_("Stop running program"));
-        m_toolbar580->Refresh();
-    }
 }
 
 void WorkspaceTab::OnProgramStopped(clExecuteEvent& event)
 {
     event.Skip();
     m_runInProgress = false;
-    auto button = m_toolbar580->FindById(XRCID("ID_EXECUTE_NO_DEBUG"));
-    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
-    if(button) {
-        button->SetBitmapIndex(images->Add("execute"));
-        button->SetLabel(_("Run active project"));
-        m_toolbar580->Refresh();
-    }
 }

@@ -66,6 +66,7 @@ protected:
     void OnOpenTerminalMenu(wxCommandEvent& event);
     void OnOpenTerminalUI(wxUpdateUIEvent& event);
     void OnConnection(wxCommandEvent& event);
+    void OnConnectionUI(wxUpdateUIEvent& event);
     void OnChoiceAccount(wxCommandEvent& event);
     void OnChoiceAccountUI(wxUpdateUIEvent& event);
     void OnGotoLocation(wxCommandEvent& event);

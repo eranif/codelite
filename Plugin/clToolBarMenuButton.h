@@ -3,6 +3,7 @@
 
 #include "clToolBarButtonBase.h"
 
+#if !wxUSE_NATIVE_TOOLBAR
 class WXDLLIMPEXP_SDK clToolBarMenuButton : public clToolBarButtonBase
 {
 public:
@@ -12,5 +13,5 @@ public:
 public:
     virtual wxSize CalculateSize(wxDC& dc) const;
 };
-
+#endif //#if !wxUSE_NATIVE_TOOLBAR
 #endif // CLTOOLBARMENUBUTTON_H

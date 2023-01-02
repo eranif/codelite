@@ -44,6 +44,7 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     bool m_workspaceClosing;
     bool m_workspaceOpened;
     clToolBar* m_toolbar;
+    bool m_sortItems = false;
 
 protected:
     wxString GetEditorPath(wxDataViewItem item);
@@ -59,6 +60,7 @@ protected:
     void PopulateView();
     void DoMarkModify(IEditor* editor, const wxString& filename, bool b);
     wxVariant PrepareValue(const clTab& tab, bool* isModified);
+    wxString GetDisplayName(const clTab& tab) const;
     void MarkItemModified(const wxDataViewItem& item, bool b, bool saved_before);
     void OnThemeChanged(clCommandEvent& event);
 

@@ -55,12 +55,11 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     ::MSWSetNativeTheme(GetTreeCtrl());
     GetTreeCtrl()->SetFont(DrawingUtils::GetDefaultGuiFont());
 
-    m_toolbar = new clEnhancedToolBar(this);
+    m_toolbar = new clToolBar(this);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
-    clBitmapList* images = new clBitmapList;
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(XRCID("link_editor"), _("Link Editor"), images->Add("link_editor"), "", wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("collapse_folders"), _("Fold Tree"), images->Add("fold"), "", wxITEM_NORMAL);
-    m_toolbar->AssignBitmaps(images);
 
     Bind(
         wxEVT_TOOL,

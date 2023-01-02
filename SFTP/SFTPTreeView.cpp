@@ -23,13 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "SFTPTreeView.h"
+
 #include "SFTPBookmark.h"
 #include "SFTPGrep.h"
 #include "SFTPManageBookmarkDlg.h"
 #include "SFTPQuickConnectDlg.h"
 #include "SFTPSettingsDialog.h"
 #include "SFTPStatusPage.h"
-#include "SFTPTreeView.h"
 #include "SFTPUploadDialog.h"
 #include "SSHAccountManagerDlg.h"
 #include "bitmap_loader.h"
@@ -47,6 +48,7 @@
 #include "sftp_settings.h"
 #include "sftp_worker_thread.h"
 #include "ssh_account_info.h"
+
 #include <algorithm>
 #include <vector>
 #include <wx/busyinfo.h>
@@ -80,15 +82,21 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(XRCID("ID_OPEN_ACCOUNT_MANAGER"), _("Open account manager..."), images->Add("folder-users"));
-    m_toolbar->AddTool(XRCID("ID_SFTP_CONNECT"), _("Disconnected. Click to connect"), images->Add("disconnected"));
+    m_toolbar->AddTool(XRCID("ID_SFTP_CONNECT"), _("Disconnected. Click to connect"), images->Add("disconnected"),
+                       wxEmptyString, wxITEM_CHECK);
+#if !wxUSE_NATIVE_TOOLBAR
     m_toolbar->AddTool(XRCID("ID_ADD_BOOKMARK"), _("Add Bookmark"), images->Add("bookmark"), "", wxITEM_DROPDOWN);
+#endif
     m_toolbar->AddTool(XRCID("ID_SSH_OPEN_TERMINAL"), _("Open Terminal"), images->Add("console"), "", wxITEM_DROPDOWN);
     m_toolbar->Realize();
 
     // Bind the toolbar events
     m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnOpenAccountManager, this, XRCID("ID_OPEN_ACCOUNT_MANAGER"));
     m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnConnection, this, XRCID("ID_SFTP_CONNECT"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPTreeView::OnConnectionUI, this, XRCID("ID_SFTP_CONNECT"));
+#if !wxUSE_NATIVE_TOOLBAR
     m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnAddBookmark, this, XRCID("ID_ADD_BOOKMARK"));
+#endif
     m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPTreeView::OnAddBookmarkUI, this, XRCID("ID_ADD_BOOKMARK"));
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &SFTPTreeView::OnAddBookmarkMenu, this, XRCID("ID_ADD_BOOKMARK"));
     m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnOpenTerminal, this, XRCID("ID_SSH_OPEN_TERMINAL"));
@@ -136,6 +144,8 @@ void SFTPTreeView::OnDisconnectUI(wxUpdateUIEvent& event) { event.Enable(m_view-
 
 void SFTPTreeView::OnAddBookmarkMenu(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
+#if !wxUSE_NATIVE_TOOLBAR
     // Show the menu
     const wxArrayString& bookmarks = m_account.GetBookmarks();
     wxMenu menu;
@@ -146,7 +156,6 @@ void SFTPTreeView::OnAddBookmarkMenu(wxCommandEvent& event)
     }
     menu.AppendSeparator();
     menu.Append(ID_SFTP_BOOKMARK_SETTINGS, _("Manage bookmarks..."));
-
     int sel = m_toolbar->GetMenuSelectionFromUser(XRCID("ID_ADD_BOOKMARK"), &menu);
     if((sel >= ID_SFTP_BOOKMARK_FIRST) && (sel <= ID_SFTP_BOOKMARK_LAST)) {
         // A bookmark was selected
@@ -156,6 +165,7 @@ void SFTPTreeView::OnAddBookmarkMenu(wxCommandEvent& event)
         // Bookmark settings
         CallAfter(&SFTPTreeView::ManageBookmarks);
     }
+#endif
 }
 
 void SFTPTreeView::OnAddBookmark(wxCommandEvent& event)
@@ -201,24 +211,15 @@ void SFTPTreeView::ManageBookmarks()
 void SFTPTreeView::OnChoiceAccount(wxCommandEvent& event) { event.Skip(); }
 void SFTPTreeView::OnChoiceAccountUI(wxUpdateUIEvent& event) { event.Enable(!m_view->IsConnected()); }
 
+void SFTPTreeView::OnConnectionUI(wxUpdateUIEvent& event) { event.Check(m_view->IsConnected()); }
+
 void SFTPTreeView::OnConnection(wxCommandEvent& event)
 {
-    clToolBarButtonBase* button = m_toolbar->FindById(XRCID("ID_SFTP_CONNECT"));
-    CHECK_PTR_RET(button);
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     if(m_view->IsConnected()) {
         // Disconnect
         DoCloseSession();
-        // Update toobar image
-        button->SetBitmapIndex(images->Add("disconnected"));
-        button->SetLabel(_("Disconnected. Click to connect"));
     } else {
         DoOpenSession();
-        if(m_view->IsConnected()) {
-            // Update toobar image
-            button->SetBitmapIndex(images->Add("connected"));
-            button->SetLabel(_("Connected. Click to disconnect"));
-        }
     }
 }
 

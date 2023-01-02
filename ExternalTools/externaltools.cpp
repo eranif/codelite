@@ -229,10 +229,7 @@ void ExternalToolsPlugin::DoRecreateToolbar()
                 }
             }
         }
-        clToolBarButton* button =
-            new clToolBarButton(toolbar, wxXmlResource::GetXRCID(ti.GetId()), bmp_index, ti.GetName());
-        toolbar->InsertAfter(where, button);
-        where = button->GetId();
+        toolbar->AddTool(wxXmlResource::GetXRCID(ti.GetId()), ti.GetName(), bmp_index);
     }
     toolbar->Realize();
 }

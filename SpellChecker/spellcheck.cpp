@@ -44,6 +44,7 @@
 #include "macros.h"
 #include "scGlobals.h"
 #include "workspace.h"
+#include "wxCustomControls.hpp"
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -413,14 +414,18 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
 void SpellCheck::SetCheckContinuous(bool value)
 {
     m_options.SetCheckContinuous(value);
-    clToolBarButtonBase* btn = clGetManager()->GetToolBar()->FindById(XRCID(s_contCheckID.ToUTF8()));
+    auto btn = clGetManager()->GetToolBar()->FindById(XRCID(s_contCheckID.ToUTF8()));
 
     if(value) {
         m_pLastEditor = nullptr;
         m_timer.Start(PARSE_TIME);
 
         if(btn) {
+#if wxUSE_NATIVE_TOOLBAR
+            btn->Toggle(true);
+#else
             btn->Check(true);
+#endif
             clGetManager()->GetToolBar()->Refresh();
         }
     } else {
@@ -428,7 +433,11 @@ void SpellCheck::SetCheckContinuous(bool value)
             m_timer.Stop();
         }
         if(btn) {
+#if wxUSE_NATIVE_TOOLBAR
+            btn->Toggle(false);
+#else
             btn->Check(false);
+#endif
             clGetManager()->GetToolBar()->Refresh();
         }
     }

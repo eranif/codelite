@@ -4,6 +4,7 @@
 #include "clToolBarButtonBase.h"
 #include "codelite_exports.h"
 
+#if !wxUSE_NATIVE_TOOLBAR
 class clToolBar;
 class WXDLLIMPEXP_SDK clToolBarStretchableSpace : public clToolBarButtonBase
 {
@@ -19,5 +20,5 @@ public:
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
 };
-
+#endif // #if !wxUSE_NATIVE_TOOLBAR
 #endif // CLTOOLBARSTRETCHABLESPACE_H

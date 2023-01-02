@@ -16,12 +16,86 @@
 #include "globals.h"
 
 #include <algorithm>
+#include <wx/bmpbndl.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
 #include <wx/log.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
+
+#if wxUSE_NATIVE_TOOLBAR
+clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
+                     const wxString& name)
+    : wxToolBar(parent, winid, pos, size, style, name)
+{
+}
+
+clToolBar::~clToolBar() {}
+
+wxToolBarToolBase* clToolBar::AddTool(wxWindowID id, const wxString& label, size_t bitmapIndex,
+                                      const wxString& helpString, wxItemKind kind)
+{
+    if(m_bitmaps && bitmapIndex < m_bitmaps->size()) {
+        auto normal_bmp = m_bitmaps->Get(bitmapIndex, false);
+        auto disabled_bmp = m_bitmaps->Get(bitmapIndex, true);
+        return wxToolBar::AddTool(id, label, normal_bmp, disabled_bmp, kind);
+    } else {
+        return wxToolBar::AddTool(id, label, wxNullBitmap, wxNullBitmap, kind);
+    }
+}
+
+int clToolBar::GetMenuSelectionFromUser(wxWindowID buttonID, wxMenu* menu)
+{
+    wxUnusedVar(buttonID);
+    return wxWindow::GetPopupMenuSelectionFromUser(*menu);
+}
+
+const wxBitmap& clToolBar::GetBitmap(size_t index) const
+{
+    wxASSERT_MSG(m_bitmaps, "No bitmaps !?");
+    return m_bitmaps->Get(index, false);
+}
+
+void clToolBar::SetBitmaps(clBitmapList* bitmaps)
+{
+    if(m_bitmaps && m_ownedBitmaps) {
+        wxDELETE(m_bitmaps);
+    }
+    m_ownedBitmaps = false;
+    m_bitmaps = bitmaps;
+}
+
+void clToolBar::AssignBitmaps(clBitmapList* bitmaps)
+{
+    if(m_bitmaps && m_ownedBitmaps) {
+        wxDELETE(m_bitmaps);
+    }
+    m_ownedBitmaps = true;
+    m_bitmaps = bitmaps;
+}
+
+clBitmapList* clToolBar::GetBitmapsCreateIfNeeded()
+{
+    if(m_bitmaps) {
+        return m_bitmaps;
+    }
+    m_ownedBitmaps = true;
+    m_bitmaps = new clBitmapList;
+    return m_bitmaps;
+}
+
+void clToolBar::ShowMenuForButton(wxWindowID buttonID, wxMenu* menu)
+{
+    // sanity
+    auto tool = FindById(buttonID);
+    CHECK_PTR_RET(tool);
+
+    // popup menu
+    PopupMenu(menu);
+}
+
+#else
 
 wxDEFINE_EVENT(wxEVT_TOOLBAR_CUSTOMISE, wxCommandEvent);
 clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
@@ -720,3 +794,4 @@ clBitmapList* clToolBar::GetBitmapsCreateIfNeeded()
     m_bitmaps = new clBitmapList;
     return m_bitmaps;
 }
+#endif // USE_NATIVE_TOOLBAR

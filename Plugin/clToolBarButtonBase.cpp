@@ -2,7 +2,7 @@
 
 #include "clToolBar.h"
 #include "drawingutils.h"
-
+#if !wxUSE_NATIVE_TOOLBAR
 // -----------------------------------------------
 // Button base
 // -----------------------------------------------
@@ -119,3 +119,4 @@ void clToolBarButtonBase::SetMenu(wxMenu* menu)
 }
 
 const wxBitmap& clToolBarButtonBase::GetBitmap() const { return m_toolbar->GetBitmap(m_bmpId); }
+#endif // #if !wxUSE_NATIVE_TOOLBAR

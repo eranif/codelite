@@ -2,6 +2,7 @@
 
 #include "drawingutils.h"
 
+#if !wxUSE_NATIVE_TOOLBAR
 clToolBarControl::clToolBarControl(clToolBar* parent, wxWindow* control)
     : clToolBarButtonBase(parent, wxID_ANY, INVALID_BITMAP_ID, "", kControl)
     , m_ctrl(control)
@@ -31,3 +32,4 @@ void clToolBarControl::Render(wxDC& dc, const wxRect& rect)
         m_ctrl->Show();
     }
 }
+#endif // #if wxUSE_NATIVE_TOOLBAR

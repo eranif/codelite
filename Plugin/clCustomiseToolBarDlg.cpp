@@ -1,5 +1,5 @@
 #include "clCustomiseToolBarDlg.h"
-
+#if !wxUSE_NATIVE_TOOLBAR
 #include "bitmap_loader.h"
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
@@ -44,3 +44,4 @@ void clCustomiseToolBarDlg::OnOK(wxCommandEvent& event)
         button->Show(val.GetBool());
     }
 }
+#endif // #if !wxUSE_NATIVE_TOOLBAR

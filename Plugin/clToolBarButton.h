@@ -2,7 +2,10 @@
 #define CLTOOLBARBUTTON_H
 
 #include "clToolBarButtonBase.h" // Base class: clToolBarButtonBase
+#include "wxCustomControls.hpp"
 
+
+#if !wxUSE_NATIVE_TOOLBAR
 class WXDLLIMPEXP_SDK clToolBarButton : public clToolBarButtonBase
 {
 public:
@@ -13,5 +16,5 @@ public:
 public:
     virtual wxSize CalculateSize(wxDC& dc) const;
 };
-
+#endif
 #endif // CLTOOLBARBUTTON_H

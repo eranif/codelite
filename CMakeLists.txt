@@ -188,7 +188,7 @@ if(UNIX AND NOT MINGW)
         if("${WX_VERSION}" VERSION_LESS "3.1.6")
             message(
                 FATAL_ERROR
-                    "I'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-3.0.0"
+                    "I'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-3.1.6"
             )
         endif()
         if(MINGW)

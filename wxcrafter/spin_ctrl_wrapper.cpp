@@ -1,9 +1,11 @@
 #include "spin_ctrl_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "string_property.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
 #include <wx/spinctrl.h>
 
 SpinCtrlWrapper::SpinCtrlWrapper()
@@ -55,7 +57,12 @@ void SpinCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     int imin, imax, val;
     EnsureSaneValues(min, max, imin, imax, val);
 
-    text << XRCPrefix() << XRCStyle() << XRCSize() << XRCCommonAttributes() << wxT("<value>")
+    // build the xrc prefix. notice that we don't use the "subclass" property
+    // see: https://github.com/eranif/codelite/issues/3054
+    wxString xrc_prefix;
+    xrc_prefix << "<object class=\"" << GetWxClassName() << "\" name=\"" << wxCrafter::XMLEncode(GetName()) << "\">";
+
+    text << xrc_prefix << XRCStyle() << XRCSize() << XRCCommonAttributes() << wxT("<value>")
          << wxCrafter::XMLEncode(wxCrafter::ToString(val)) << wxT("</value>") << wxT("<min>")
          << wxCrafter::XMLEncode(min) << wxT("</min>") << wxT("<max>") << wxCrafter::XMLEncode(max) << wxT("</max>")
          << XRCSuffix();

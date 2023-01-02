@@ -470,7 +470,6 @@ EVT_MENU(XRCID("execute_no_debug"), clMainFrame::OnExecuteNoDebug)
 EVT_MENU(XRCID("stop_executed_program"), clMainFrame::OnStopExecutedProgram)
 EVT_MENU(XRCID("build_active_project"), clMainFrame::OnBuildProject)
 EVT_MENU(XRCID("build_active_project_only"), clMainFrame::OnBuildProjectOnly)
-EVT_TOOL_DROPDOWN(XRCID("build_active_project"), clMainFrame::OnShowBuildMenu)
 EVT_MENU(XRCID("compile_active_file"), clMainFrame::OnCompileFile)
 EVT_MENU(XRCID("compile_active_file_project"), clMainFrame::OnCompileFileProject)
 EVT_MENU(XRCID("clean_active_project"), clMainFrame::OnCleanProject)
@@ -1447,12 +1446,27 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
     // Don't skip if there's no active editor/toolbar, otherwise a stale menu will show
 }
 
+namespace
+{
+void add_main_toolbar_item(wxToolBar* tb, const wxString& xrcstr, const wxString& label, const wxString& bmpname,
+                           int toolsize)
+{
+    int toolid = wxXmlResource::GetXRCID(xrcstr);
+    const wxBitmap& bmp = clGetManager()->GetStdIcons()->LoadBitmap(bmpname, toolsize);
+    wxBitmap disabled_bmp = DrawingUtils::CreateDisabledBitmap(bmp);
+    tb->AddTool(toolid, label, bmp, disabled_bmp, wxITEM_NORMAL, label, label);
+}
+} // namespace
+
 void clMainFrame::DoCreateToolBar(int toolSize)
 {
     //----------------------------------------------
     // create the standard toolbar
     //----------------------------------------------
-    long style = wxTB_FLAT | wxTB_NODIVIDER | wxTB_HORZ_LAYOUT;
+    long style = wxTB_FLAT | wxTB_NODIVIDER;
+#ifdef __WXMSW__
+    style |= wxTB_LEFT | wxTB_VERTICAL;
+#endif
 
     // Create the plugins toolbar, emty by default
     m_pluginsToolbar = new clToolBarGeneric(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -1461,7 +1475,9 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     const int ID_TOOLBAR = 500;
     SetToolBar(nullptr);
     m_mainToolbar = CreateToolBar(style, ID_TOOLBAR);
-#ifdef __WXMAC__
+#if defined(__WXMSW__)
+    toolSize = 24;
+#elif defined(__WXMAC__)
     toolSize = 24;
 #endif
 
@@ -1469,69 +1485,29 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     m_mainToolbar->SetToolBitmapSize(FromDIP(tools_size));
 
     auto loader = clGetManager()->GetStdIcons();
-    m_mainToolbar->AddTool(XRCID("new_file"), _("New"), loader->LoadBitmap("file_new", toolSize), _("New File"));
-    m_mainToolbar->AddTool(XRCID("open_file"), _("Open"), loader->LoadBitmap("file_open", toolSize), _("Open File"));
-    //    m_mainToolbar->AddTool(XRCID("refresh_file"), _("Reload"), loader->LoadBitmap("file_reload", toolSize),
-    //                           _("Reload File"));
-    //    m_mainToolbar->AddTool(XRCID("save_file"), _("Save"), loader->LoadBitmap("file_save", toolSize), _("Save"));
-    //    m_mainToolbar->AddTool(XRCID("save_all"), _("Save All"), loader->LoadBitmap("file_save_all", toolSize),
-    //                           _("Save All"));
-    //    m_mainToolbar->AddTool(XRCID("close_file"), _("Close"), loader->LoadBitmap("file_close", toolSize),
-    //                           _("Close File"));
-    //    m_mainToolbar->AddSeparator();
-    //    m_mainToolbar->AddTool(wxID_CUT, _("Cut"), loader->LoadBitmap("cut", toolSize), _("Cut"));
-    //    m_mainToolbar->AddTool(wxID_COPY, _("Copy"), loader->LoadBitmap("copy", toolSize), _("Copy"));
-    //    m_mainToolbar->AddTool(wxID_PASTE, _("Paste"), loader->LoadBitmap("paste", toolSize), _("Paste"));
-    //    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), loader->LoadBitmap("undo", toolSize), _("Undo"),
-    //    wxITEM_DROPDOWN); m_mainToolbar->AddTool(wxID_REDO, _("Redo"), loader->LoadBitmap("redo", toolSize),
-    //    _("Redo"), wxITEM_DROPDOWN);
-    m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(XRCID("id_backward"), _("Backward"), loader->LoadBitmap("back", toolSize), _("Backward"));
-    m_mainToolbar->AddTool(XRCID("id_forward"), _("Forward"), loader->LoadBitmap("forward", toolSize), _("Forward"));
+
+    add_main_toolbar_item(m_mainToolbar, "new_file", _("New file"), "file_new", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "open_file", _("Open file"), "file_open", toolSize);
     m_mainToolbar->AddSeparator();
 
-    //----------------------------------------------
-    // create the search toolbar
-    //----------------------------------------------
-    //    m_mainToolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), loader->LoadBitmap("bookmark",
-    //    toolSize),
-    //                           _("Toggle Bookmark"), wxITEM_DROPDOWN);
-    //    m_mainToolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
-    //    m_mainToolbar->AddTool(XRCID("id_find"), _("Find"), loader->LoadBitmap("find", toolSize), _("Find"));
-    //    m_mainToolbar->AddTool(XRCID("id_replace"), _("Replace"), loader->LoadBitmap("find_and_replace", toolSize),
-    //                           _("Replace"));
-    //    m_mainToolbar->AddTool(XRCID("find_in_files"), _("Find In Files"), loader->LoadBitmap("find_in_files",
-    //    toolSize),
-    //                           _("Find In Files"));
-    //    m_mainToolbar->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"),
-    //                           loader->LoadBitmap("open_resource", toolSize), _("Find Resource In Workspace"));
-
-    //    auto markBmp = loader->LoadBitmap("mark_word", toolSize);
-    //    m_mainToolbar->AddTool(XRCID("highlight_word"), _("Highlight Word"), markBmp, markBmp.ConvertToDisabled(),
-    //                           wxITEM_CHECK);
-    //    m_mainToolbar->ToggleTool(XRCID("highlight_word"), m_highlightWord);
-    // m_mainToolbar->AddSeparator();
+    add_main_toolbar_item(m_mainToolbar, "id_backward", _("Backward"), "back", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "id_forward", _("Forward"), "forward", toolSize);
+    m_mainToolbar->AddSeparator();
 
     //----------------------------------------------
     // create the build toolbar
     //----------------------------------------------
-    m_mainToolbar->AddTool(XRCID("build_active_project"), _("Build Active Project"),
-                           loader->LoadBitmap("build", toolSize), _("Build Active Project"), wxITEM_DROPDOWN);
-    m_mainToolbar->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"),
-                           loader->LoadBitmap("stop", toolSize), _("Stop Current Build"));
-    m_mainToolbar->AddTool(XRCID("clean_active_project"), _("Clean Active Project"),
-                           loader->LoadBitmap("clean", toolSize), _("Clean Active Project"));
+    add_main_toolbar_item(m_mainToolbar, "build_active_project_menu", _("Build Active Project"), "build", toolSize);
+    m_mainToolbar->Bind(wxEVT_TOOL, &clMainFrame::OnShowBuildMenu, this, XRCID("build_active_project_menu"));
+
+    add_main_toolbar_item(m_mainToolbar, "stop_active_project_build", _("Stop Current Build"), "stop", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "clean_active_project", _("Clean Active Project"), "clean", toolSize);
     m_mainToolbar->AddSeparator();
 
     // debugger
-    m_mainToolbar->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), loader->LoadBitmap("execute", toolSize),
-                           _("Run Active Project"));
-    m_mainToolbar->AddTool(XRCID("stop_executed_program"), _("Stop Running Program"),
-                           loader->LoadBitmap("execute_stop", toolSize), _("Stop Running Program"));
-    m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
-                           loader->LoadBitmap("start-debugger", toolSize), _("Start or Continue debugger"));
-    m_mainToolbar->AddSeparator();
+    add_main_toolbar_item(m_mainToolbar, "execute_no_debug", _("Run Active Project"), "execute", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "stop_executed_program", _("Stop Running Program"), "execute_stop", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "start_debugger", _("Start or Continue debugger"), "start-debugger", toolSize);
     m_mainToolbar->Realize();
 
     // plugins toolbar
@@ -5098,20 +5074,18 @@ void clMainFrame::OnLoadSession(wxCommandEvent& e)
 void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
 {
     // Show the build menu
-    clToolBarNative* toolbar = dynamic_cast<clToolBarNative*>(e.GetEventObject());
-    CHECK_PTR_RET(toolbar);
     wxMenu menu;
 
     // let the plugins build a different menu
     clContextMenuEvent evt(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING);
-    evt.SetEventObject(toolbar);
+    evt.SetEventObject(m_mainToolbar);
     evt.SetMenu(&menu);
     if(!EventNotifier::Get()->ProcessEvent(evt)) {
         DoCreateBuildDropDownMenu(&menu);
     }
 
     // show the menu
-    toolbar->ShowMenuForButton(XRCID("build_active_project"), &menu);
+    m_mainToolbar->PopupMenu(&menu);
 }
 
 void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)

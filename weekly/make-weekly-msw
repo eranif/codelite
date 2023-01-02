@@ -31,7 +31,7 @@ function build_wxcrafter() {
     cd $ROOT_DIR
     mkdir -p build-release-wxcapp
     cd build-release-wxcapp
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXWIN=$HOME/root -G"MinGW Makefiles"
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXWIN=$HOME/root -G"MinGW Makefiles" -DWXC_APP=1
     mingw32-make -j${cpu_count} install
 }
 

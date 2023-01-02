@@ -121,7 +121,7 @@ void ZoomNavigator::UnPlug()
     zoompane->Destroy();
 }
 
-void ZoomNavigator::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void ZoomNavigator::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void ZoomNavigator::CreatePluginMenu(wxMenu* pluginsMenu)
 {

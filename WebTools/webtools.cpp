@@ -109,7 +109,7 @@ WebTools::WebTools(IManager* manager)
 
 WebTools::~WebTools() { NodeJSWorkspace::Free(); }
 
-void WebTools::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void WebTools::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void WebTools::CreatePluginMenu(wxMenu* pluginsMenu)
 {

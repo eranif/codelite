@@ -100,7 +100,7 @@ void Tweaks::UnPlug()
 
 Tweaks::~Tweaks() {}
 
-void Tweaks::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void Tweaks::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void Tweaks::CreatePluginMenu(wxMenu* pluginsMenu)
 {

@@ -33,6 +33,7 @@
 #include "clInfoBar.h"
 #include "clMainFrameHelper.h"
 #include "clStatusBar.h"
+#include "clToolBar.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "cl_process.h"
@@ -61,7 +62,6 @@
 // forward decls
 class OnSysColoursChanged;
 class DebuggerToolBar;
-class clToolBar;
 class WebUpdateJob;
 class CodeLiteApp;
 class clSingleInstanceThread;
@@ -140,7 +140,7 @@ class clMainFrame : public wxFrame
     wxPrintDialogData m_printDlgData;
     clMainFrameHelper::Ptr_t m_frameHelper;
     WebUpdateJob* m_webUpdate;
-    clToolBar* m_toolbar;
+    clToolBarNative* m_toolbar;
     DebuggerToolBar* m_debuggerToolbar = nullptr;
     clInfoBar* m_infoBar = nullptr;
 #if !wxUSE_NATIVE_CAPTION
@@ -427,7 +427,7 @@ private:
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
-    clToolBar* GetMainToolBar() const { return m_toolbar; }
+    clToolBarNative* GetMainToolBar() const { return m_toolbar; }
     void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID);
 
 protected:

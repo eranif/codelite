@@ -27,22 +27,17 @@
 #define SQLCOMMANDPANEL_H
 
 #include "GUI.h" // Base class: _SqlCommandPanel
+#include "IDbAdapter.h"
 #include "clEditorEditEventsHandler.h"
+#include "clToolBar.h"
+
+#include <map>
+#include <wx/dblayer/include/DatabaseErrorCodes.h>
 #include <wx/dblayer/include/DatabaseLayer.h>
 #include <wx/dblayer/include/DatabaseLayerException.h>
 #include <wx/wx.h>
 
-//#ifdef DBL_USE_MYSQL
-//#include <wx/dblayer/include/MysqlDatabaseLayer.h>
-//#endif
-
-#include "IDbAdapter.h"
-#include <wx/dblayer/include/DatabaseErrorCodes.h>
-
-#include <map>
-
 // ----------------------------------------------------------------
-class clToolBar;
 class ColumnInfo
 {
     int m_type;
@@ -87,7 +82,7 @@ protected:
     std::map<std::pair<int, int>, wxString> m_gridValues;
     ColumnInfo::Vector_t m_colsMetaData;
     clEditEventsHandler::Ptr_t m_editHelper;
-    clToolBar* m_toolbar;
+    clToolBarGeneric* m_toolbar;
 
 protected:
     bool IsBlobColumn(const wxString& str);

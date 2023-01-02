@@ -27,13 +27,13 @@
 
 #include "clEditorEditEventsHandler.h"
 #include "clTerminalHistory.h"
+#include "clToolBar.h"
 #include "quickfindbarbase.h"
 
 #include <codelite_exports.h>
 #include <wx/combobox.h>
 #include <wx/panel.h>
 
-class clToolBar;
 class wxStyledTextCtrl;
 
 class WXDLLIMPEXP_SDK clPluginsFindBar : public QuickFindBarBase

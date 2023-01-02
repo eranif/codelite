@@ -1,6 +1,6 @@
 #include "clToolBarSpacer.h"
-#if !wxUSE_NATIVE_TOOLBAR
-clToolBarSpacer::clToolBarSpacer(clToolBar* parent)
+
+clToolBarSpacer::clToolBarSpacer(clToolBarGeneric* parent)
     : clToolBarButtonBase(parent, wxID_SEPARATOR, INVALID_BITMAP_ID, "", kDisabled | kSpacer)
 {
 }
@@ -14,4 +14,3 @@ void clToolBarSpacer::Render(wxDC& dc, const wxRect& rect)
     wxUnusedVar(dc);
     wxUnusedVar(rect);
 }
-#endif // #if !wxUSE_NATIVE_TOOLBAR

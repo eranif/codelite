@@ -200,7 +200,7 @@ public:
      *
      * @return Codelite tool bar or NULL.
      */
-    void CreateToolBar(clToolBar* toolbar);
+    void CreateToolBar(clToolBarNative* toolbar);
 
     /**
      * @brief Creates a menu for plugin.

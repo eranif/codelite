@@ -27,13 +27,13 @@
 
 #include "Notebook.h"
 #include "bitmap_loader.h"
+#include "clToolBar.h"
 #include "cl_command_event.h"
 #include "imanager.h"
 #include "openwindowspanelbase.h"
 
 #include <map>
 
-class clToolBar;
 class IEditor;
 class OpenWindowsPanel : public OpenWindowsPanelBase
 {
@@ -43,7 +43,7 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     std::map<wxString, wxDataViewItem> m_editors;
     bool m_workspaceClosing;
     bool m_workspaceOpened;
-    clToolBar* m_toolbar;
+    clToolBarGeneric* m_toolbar;
     bool m_sortItems = false;
 
 protected:

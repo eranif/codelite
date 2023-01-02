@@ -169,7 +169,7 @@ void SpellCheck::Init()
     m_topWin->Bind(wxEVT_MENU, &SpellCheck::OnIgnoreWord, this, SPC_IGNORE_WORD);
 }
 // ------------------------------------------------------------
-void SpellCheck::CreateToolBar(clToolBar* toolbar)
+void SpellCheck::CreateToolBar(clToolBarNative* toolbar)
 {
     int size = m_mgr->GetToolbarIconSize();
     auto images = toolbar->GetBitmapsCreateIfNeeded();

@@ -40,7 +40,7 @@ AutoSave::AutoSave(IManager* manager)
 
 AutoSave::~AutoSave() {}
 
-void AutoSave::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void AutoSave::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void AutoSave::CreatePluginMenu(wxMenu* pluginsMenu)
 {

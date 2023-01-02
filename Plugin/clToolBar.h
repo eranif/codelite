@@ -17,16 +17,16 @@
 
 class clToolBarButtonBase;
 #if wxUSE_NATIVE_TOOLBAR
-class WXDLLIMPEXP_SDK clToolBar : public wxToolBar
+class WXDLLIMPEXP_SDK clToolBarNative : public wxToolBar
 {
     clBitmapList* m_bitmaps = nullptr;
     bool m_ownedBitmaps = false;
 
 public:
-    clToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-              const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
-              const wxString& name = "clToolBar");
-    virtual ~clToolBar();
+    clToolBarNative(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
+                    const wxString& name = "clToolBarNative");
+    virtual ~clToolBarNative();
     void SetMiniToolBar(bool) {}
     wxToolBarToolBase* AddTool(wxWindowID id, const wxString& label, size_t bitmapIndex,
                                const wxString& helpString = "", wxItemKind kind = wxITEM_NORMAL);
@@ -76,9 +76,9 @@ public:
     void SetGroupSpacing(int) {}
     void EnableCustomisation(bool) {}
 };
+#endif
 
-#else
-class WXDLLIMPEXP_SDK clToolBar : public wxPanel
+class WXDLLIMPEXP_SDK clToolBarGeneric : public wxPanel
 {
 public:
     typedef std::vector<clToolBarButtonBase*> ToolVect_t;
@@ -119,14 +119,14 @@ protected:
     wxRect CalculateRect(wxDC& dc) const;
     void DoShowOverflowMenu();
     void PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const wxRect& rect);
-    void RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc, bool isLastGroup);
+    void RenderGroup(int& xx, const clToolBarGeneric::ToolVect_t& G, wxDC& gcdc, bool isLastGroup);
     void OnColoursChanged(clCommandEvent& event);
 
 public:
-    clToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-              const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
-              const wxString& name = "clToolBar");
-    virtual ~clToolBar();
+    clToolBarGeneric(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
+                     const wxString& name = "clToolBarGeneric");
+    virtual ~clToolBarGeneric();
 
     const wxBitmap& GetBitmap(size_t index) const;
 
@@ -277,5 +277,12 @@ public:
     bool DeleteTool(wxWindowID id) { return DeleteById(id); }
 };
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TOOLBAR_CUSTOMISE, wxCommandEvent);
+
+#if !wxUSE_NATIVE_TOOLBAR
+// use the generic version, always
+typedef clToolBarGeneric clToolBar;
+typedef clToolBarGeneric clToolBarNative;
+#else
+typedef clToolBarGeneric clToolBar;
 #endif
 #endif // CLTOOLBAR_H

@@ -7,8 +7,7 @@
 
 #include <unordered_map>
 
-#if !wxUSE_NATIVE_TOOLBAR
-class WXDLLIMPEXP_SDK clEnhancedToolBar : public clToolBar
+class WXDLLIMPEXP_SDK clEnhancedToolBar : public clToolBarGeneric
 {
 public:
     struct Button {
@@ -57,5 +56,4 @@ public:
      */
     void SetButtonAction(wxWindowID buttonId, wxWindowID actionID);
 };
-#endif // wxUSE_NATIVE_TOOLBAR
 #endif // CLENHANCEDTOOLBAR_HPP

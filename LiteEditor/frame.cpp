@@ -1464,7 +1464,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     long style = wxTB_FLAT;
     style |= wxTB_NODIVIDER;
 
-    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_toolbar = new clToolBarNative(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_toolbar->Hide();
 
     m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
@@ -1635,7 +1635,6 @@ void clMainFrame::OnTBUnRedo(wxCommandEvent& event)
 bool clMainFrame::IsEditorEvent(wxEvent& event)
 {
     // If the event came from the toolbar, return true
-    // if(dynamic_cast<clToolBar*>(event.GetEventObject())) { return true; }
 
 #ifdef __WXGTK__
     MainBook* mainBook = GetMainBook();
@@ -5117,8 +5116,20 @@ void clMainFrame::OnLoadSession(wxCommandEvent& e)
 void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
 {
     // Show the build menu
-    clToolBar* toolbar = dynamic_cast<clToolBar*>(e.GetEventObject());
-    ShowBuildMenu(toolbar, XRCID("build_active_project"));
+    clToolBarNative* toolbar = dynamic_cast<clToolBarNative*>(e.GetEventObject());
+    CHECK_PTR_RET(toolbar);
+    wxMenu menu;
+
+    // let the plugins build a different menu
+    clContextMenuEvent evt(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING);
+    evt.SetEventObject(toolbar);
+    evt.SetMenu(&menu);
+    if(!EventNotifier::Get()->ProcessEvent(evt)) {
+        DoCreateBuildDropDownMenu(&menu);
+    }
+
+    // show the menu
+    toolbar->ShowMenuForButton(XRCID("build_active_project"), &menu);
 }
 
 void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)

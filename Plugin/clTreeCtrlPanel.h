@@ -30,13 +30,13 @@
 #include "clEnhancedToolBar.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileViwerTreeCtrl.h"
+#include "clToolBar.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "wxcrafter_plugin.h"
 
 #include <imanager.h>
 
-class clToolBar;
 class clTreeCtrlPanelDefaultPage;
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
 {

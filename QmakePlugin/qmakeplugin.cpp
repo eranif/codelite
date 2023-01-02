@@ -100,7 +100,7 @@ QMakePlugin::QMakePlugin(IManager* manager)
 
 QMakePlugin::~QMakePlugin() { delete m_conf; }
 
-void QMakePlugin::CreateToolBar(clToolBar* toolbar)
+void QMakePlugin::CreateToolBar(clToolBarNative* toolbar)
 {
     // Support both toolbars icon size
     int size = m_mgr->GetToolbarIconSize();

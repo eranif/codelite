@@ -25,13 +25,15 @@
 
 #ifndef GITCONSOLE_H
 #define GITCONSOLE_H
+
 #include "bitmap_loader.h"
 #include "clGenericSTCStyler.h"
+#include "clToolBar.h"
 #include "clWorkspaceEvent.hpp"
 #include "gitui.h"
+
 #include <wx/dataview.h>
 
-class clToolBar;
 class GitPlugin;
 class GitConsole : public GitConsoleBase
 {

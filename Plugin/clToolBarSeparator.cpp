@@ -1,6 +1,6 @@
 #include "clToolBarSeparator.h"
-#if !wxUSE_NATIVE_TOOLBAR
-clToolBarSeparator::clToolBarSeparator(clToolBar* parent)
+
+clToolBarSeparator::clToolBarSeparator(clToolBarGeneric* parent)
     : clToolBarButtonBase(parent, wxID_SEPARATOR, INVALID_BITMAP_ID, "", kDisabled | kSeparator)
 {
 }
@@ -22,4 +22,3 @@ void clToolBarSeparator::Render(wxDC& dc, const wxRect& rect)
     dc.SetPen(c.ChangeLightness(150));
     dc.DrawLine(xx, rect.GetY() + 2, xx, rect.GetY() + rect.GetHeight() - 2);
 }
-#endif // #if !wxUSE_NATIVE_TOOLBAR

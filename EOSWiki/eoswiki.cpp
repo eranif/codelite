@@ -48,7 +48,7 @@ EOSWiki::EOSWiki(IManager* manager)
 
 EOSWiki::~EOSWiki() {}
 
-void EOSWiki::CreateToolBar(clToolBar* toolbar)
+void EOSWiki::CreateToolBar(clToolBarNative* toolbar)
 {
     // You can add items to the main toolbar here
     wxUnusedVar(toolbar);

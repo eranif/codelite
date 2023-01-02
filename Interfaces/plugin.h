@@ -138,7 +138,7 @@ public:
      * When CodeLite loads all the plugins, this function is called.
      * \param toolbar
      */
-    virtual void CreateToolBar(clToolBar* toolbar) = 0;
+    virtual void CreateToolBar(clToolBarNative* toolbar) = 0;
 
     /**
      * Every plugin can place a sub menu in the 'Plugins' Menu at the menu bar

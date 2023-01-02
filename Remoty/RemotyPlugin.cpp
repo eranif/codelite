@@ -77,7 +77,7 @@ RemotyPlugin::RemotyPlugin(IManager* manager)
 
 RemotyPlugin::~RemotyPlugin() {}
 
-void RemotyPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void RemotyPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void RemotyPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
 

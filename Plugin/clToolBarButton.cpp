@@ -1,6 +1,6 @@
 #include "clToolBarButton.h"
-#if !wxUSE_NATIVE_TOOLBAR
-clToolBarButton::clToolBarButton(clToolBar* parent, wxWindowID winid, size_t bitmapId, const wxString& label)
+
+clToolBarButton::clToolBarButton(clToolBarGeneric* parent, wxWindowID winid, size_t bitmapId, const wxString& label)
     : clToolBarButtonBase(parent, winid, bitmapId, label)
 {
 }
@@ -31,4 +31,3 @@ wxSize clToolBarButton::CalculateSize(wxDC& dc) const
     sz.y += (2 * m_toolbar->GetYSpacer());
     return sz;
 }
-#endif // #if !wxUSE_NATIVE_TOOLBAR

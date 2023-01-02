@@ -1,12 +1,15 @@
 #include "php_project_settings_data.h"
+
+#include "clToolBar.h"
+#include "globals.h"
 #include "php_configuration_data.h"
+#include "php_utils.h"
 #include "php_workspace.h"
-#include <wx/tokenzr.h>
+
 #include <map>
 #include <set>
+#include <wx/tokenzr.h>
 #include <wx/uri.h>
-#include "php_utils.h"
-#include "globals.h"
 
 PHPProjectSettingsData::PHPProjectSettingsData()
     : m_runAs(0)
@@ -128,8 +131,7 @@ void PHPProjectSettingsData::MergeWithGlobalSettings()
     m_ccIncludePath = ::wxJoin(cc_paths, '\n');
 }
 
-wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath,
-                                              bool useUrlScheme,
+wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath, bool useUrlScheme,
                                               const wxStringMap_t& additionalMapping) const
 {
     wxFileName fnSource(sourcePath);
@@ -144,8 +146,7 @@ wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath,
             sourceFullPath.Remove(0, iter->first.length());
             sourceFullPath.Prepend(iter->second + "/");
             sourceFullPath.Replace("\\", "/");
-            while(sourceFullPath.Replace("//", "/")) {
-            }
+            while(sourceFullPath.Replace("//", "/")) {}
 
             if(useUrlScheme) {
                 sourceFullPath = ::FileNameToURI(sourceFullPath);
@@ -155,10 +156,10 @@ wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath,
     }
 
     if(useUrlScheme) {
-        
+
         wxString asUrlScheme = sourcePath;
         asUrlScheme.Replace("\\", "/");
-        
+
         while(asUrlScheme.Replace("//", "/"))
             ;
 

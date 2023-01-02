@@ -214,7 +214,7 @@ GitPlugin::GitPlugin(IManager* manager)
 
 GitPlugin::~GitPlugin() { wxDELETE(m_gitBlameDlg); }
 
-void GitPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void GitPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {

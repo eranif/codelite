@@ -3,10 +3,9 @@
 #include "clToolBarButtonBase.h"
 #include "file_logger.h"
 
-#if !wxUSE_NATIVE_TOOLBAR
 clEnhancedToolBar::clEnhancedToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size,
                                      long style, const wxString& name)
-    : clToolBar(parent, winid, pos, size, style, name)
+    : clToolBarGeneric(parent, winid, pos, size, style, name)
 {
 }
 
@@ -65,4 +64,3 @@ void clEnhancedToolBar::SetButtonAction(wxWindowID buttonId, wxWindowID actionID
     clDEBUG1() << "toolbar button changed state to" << btn->label;
     Refresh();
 }
-#endif

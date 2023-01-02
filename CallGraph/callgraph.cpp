@@ -141,7 +141,7 @@ void CallGraph::LogFn(wxString s)
 
 //-----------------------------------------------------------------------------
 
-void CallGraph::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void CallGraph::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 //-----------------------------------------------------------------------------
 void CallGraph::CreatePluginMenu(wxMenu* pluginsMenu)

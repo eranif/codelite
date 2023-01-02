@@ -222,7 +222,7 @@ Subversion2::Subversion2(IManager* manager)
 
 Subversion2::~Subversion2() {}
 
-void Subversion2::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void Subversion2::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void Subversion2::CreatePluginMenu(wxMenu* pluginsMenu)
 {

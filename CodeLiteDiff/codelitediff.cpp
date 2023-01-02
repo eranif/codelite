@@ -79,7 +79,7 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
 
 CodeLiteDiff::~CodeLiteDiff() {}
 
-void CodeLiteDiff::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void CodeLiteDiff::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void CodeLiteDiff::CreatePluginMenu(wxMenu* pluginsMenu)
 {

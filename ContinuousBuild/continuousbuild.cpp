@@ -95,7 +95,7 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 
 ContinuousBuild::~ContinuousBuild() {}
 
-void ContinuousBuild::CreateToolBar(clToolBar* toolbar)
+void ContinuousBuild::CreateToolBar(clToolBarNative* toolbar)
 {
     // Create the toolbar to be used by the plugin
     wxUnusedVar(toolbar);

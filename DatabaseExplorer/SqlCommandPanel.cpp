@@ -99,7 +99,7 @@ SQLCommandPanel::SQLCommandPanel(wxWindow* parent, IDbAdapter* dbAdapter, const 
         GetEventHandler()->AddPendingEvent(event);
     }
 
-    m_toolbar = new clToolBar(this);
+    m_toolbar = new clToolBarGeneric(this);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(wxID_OPEN, _("Load SQL Script"), images->Add("file_open"));
     m_toolbar->AddTool(wxID_EXECUTE, _("Execute SQL"), images->Add("execute"));

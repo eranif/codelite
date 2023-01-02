@@ -2,14 +2,13 @@
 #define CLCUSTOMISETOOLBARDLG_H
 
 #include "ToolBarUI.h"
+#include "clToolBar.h"
 #include "wxCustomControls.hpp"
 
 #include <codelite_exports.h>
 #include <vector>
 
 #if !wxUSE_NATIVE_TOOLBAR
-class clToolBarButtonBase;
-class clToolBar;
 class WXDLLIMPEXP_SDK clCustomiseToolBarDlg : public clCustomiseToolBarBaseDlg
 {
     clToolBar* m_toolbar;

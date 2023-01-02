@@ -6,12 +6,13 @@
 #include "clEditorEditEventsHandler.h"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWatcher.h"
+#include "clToolBar.h"
+
 #include <map>
 #include <vector>
 #include <wx/filename.h>
 
 class TailFrame;
-class clToolBar;
 class Tail;
 class TailPanel : public TailPanelBase
 {
@@ -22,7 +23,7 @@ class TailPanel : public TailPanelBase
     std::map<int, wxString> m_recentItemsMap;
     Tail* m_plugin;
     bool m_isDetached;
-    clToolBar* m_toolbar;
+    clToolBarGeneric* m_toolbar;
     TailFrame* m_frame;
 
 protected:
@@ -54,7 +55,7 @@ public:
 
     void SetFrame(TailFrame* frame) { this->m_frame = frame; }
     TailFrame* GetFrame() { return m_frame; }
-    
+
     /**
      * @brief duplicate the settings from src into this tail panel
      */

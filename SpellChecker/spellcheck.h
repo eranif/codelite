@@ -57,7 +57,7 @@ public:
     // --------------------------------------------
     // Abstract methods
     // --------------------------------------------
-    virtual void CreateToolBar(clToolBar* toolbar) override;
+    virtual void CreateToolBar(clToolBarNative* toolbar) override;
     virtual void CreatePluginMenu(wxMenu* pluginsMenu) override;
     virtual void UnPlug() override;
 

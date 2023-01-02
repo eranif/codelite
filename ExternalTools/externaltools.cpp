@@ -116,7 +116,7 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
 
 ExternalToolsPlugin::~ExternalToolsPlugin() {}
 
-void ExternalToolsPlugin::CreateToolBar(clToolBar* toolbar)
+void ExternalToolsPlugin::CreateToolBar(clToolBarNative* toolbar)
 {
     // support both toolbars icon size
     auto images = toolbar->GetBitmapsCreateIfNeeded();
@@ -190,7 +190,7 @@ void ExternalToolsPlugin::DoRecreateToolbar()
 
     std::vector<ToolInfo> tools = m_externalTools.GetTools();
     std::sort(tools.begin(), tools.end(), DecSort());
-    clToolBar* toolbar = clGetManager()->GetToolBar();
+    auto toolbar = clGetManager()->GetToolBar();
     auto images = toolbar->GetBitmapsCreateIfNeeded();
     size_t cogIndex = images->Add("cog");
 

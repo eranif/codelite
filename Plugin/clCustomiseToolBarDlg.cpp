@@ -1,4 +1,7 @@
 #include "clCustomiseToolBarDlg.h"
+
+#include "wxCustomControls.hpp"
+
 #if !wxUSE_NATIVE_TOOLBAR
 #include "bitmap_loader.h"
 #include "clToolBar.h"

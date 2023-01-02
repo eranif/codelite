@@ -152,7 +152,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 
 DatabaseExplorer::~DatabaseExplorer() { wxSFAutoLayout::CleanUp(); }
 
-void DatabaseExplorer::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void DatabaseExplorer::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
 {

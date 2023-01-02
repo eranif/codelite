@@ -285,7 +285,7 @@ bool CMakePlugin::IsPaneDetached() const
 
 /* ************************************************************************ */
 
-void CMakePlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void CMakePlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 /* ************************************************************************ */
 

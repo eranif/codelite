@@ -2,11 +2,11 @@
 
 #include "clToolBar.h"
 #include "drawingutils.h"
-#if !wxUSE_NATIVE_TOOLBAR
+
 // -----------------------------------------------
 // Button base
 // -----------------------------------------------
-clToolBarButtonBase::clToolBarButtonBase(clToolBar* parent, wxWindowID id, int bmpId, const wxString& label,
+clToolBarButtonBase::clToolBarButtonBase(clToolBarGeneric* parent, wxWindowID id, int bmpId, const wxString& label,
                                          size_t flags)
     : m_toolbar(parent)
     , m_id(id)
@@ -35,7 +35,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     wxColour penColour;
     wxColour buttonColour;
 
-    const wxColour bgColour = DrawingUtils::GetMenuBarBgColour(m_toolbar->HasFlag(clToolBar::kMiniToolBar));
+    const wxColour bgColour = DrawingUtils::GetMenuBarBgColour(m_toolbar->HasFlag(clToolBarGeneric::kMiniToolBar));
     bool isdark = DrawingUtils::IsDark(bgColour);
     if(IsEnabled() && (IsPressed() || IsChecked())) {
         wxColour pressBgColour = isdark ? bgColour.ChangeLightness(110) : bgColour.ChangeLightness(80);
@@ -119,4 +119,3 @@ void clToolBarButtonBase::SetMenu(wxMenu* menu)
 }
 
 const wxBitmap& clToolBarButtonBase::GetBitmap() const { return m_toolbar->GetBitmap(m_bmpId); }
-#endif // #if !wxUSE_NATIVE_TOOLBAR

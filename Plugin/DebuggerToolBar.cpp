@@ -32,7 +32,7 @@ DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
     // Debugger floating toolbar
     // The rest of the debugger buttons will go to a separate floating toolbar
     //===-----------------------------------------------------------------------------
-    m_tb = new clToolBar(mainPanel);
+    m_tb = new clToolBarGeneric(mainPanel);
     m_tb->SetMiniToolBar(true);
 
     clBitmapList* images = new clBitmapList;

@@ -38,7 +38,7 @@
 #include "project.h"
 #include "queuecommand.h"
 #include "wx/treectrl.h"
-
+#include "clToolBar.h"
 #include <vector>
 #include <wx/aui/framemanager.h>
 
@@ -55,7 +55,6 @@ class BuildSettingsConfig;
 class NavMgr;
 class IMacroManager;
 class wxAuiManager;
-class clToolBar;
 
 //--------------------------
 // Auxulary class
@@ -130,8 +129,10 @@ public:
         }
     }
 
-    virtual clToolBar* GetToolBar() = 0;
+    /// return CodeLite's main toolbar
+    virtual clToolBarNative* GetToolBar() = 0;
 
+    /// Return applicaion menu bar
     virtual wxMenuBar* GetMenuBar() = 0;
 
     /**

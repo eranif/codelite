@@ -91,7 +91,7 @@ wxFormBuilder::wxFormBuilder(IManager* manager)
 
 wxFormBuilder::~wxFormBuilder() {}
 
-void wxFormBuilder::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void wxFormBuilder::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void wxFormBuilder::CreatePluginMenu(wxMenu* pluginsMenu)
 {

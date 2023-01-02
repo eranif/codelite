@@ -26,11 +26,11 @@
 #define __outputtabwindow__
 
 #include "clFindResultsStyler.h"
+#include "clToolBar.h"
 
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
 
-class clToolBar;
 class wxBoxSizer;
 
 class QuickFindBar;

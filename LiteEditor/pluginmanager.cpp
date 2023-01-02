@@ -943,7 +943,7 @@ bool PluginManager::CloseEditor(IEditor* editor, bool prompt)
 
 clEditorBar* PluginManager::GetNavigationBar() { return clMainFrame::Get()->GetMainBook()->GetEditorBar(); }
 
-clToolBar* PluginManager::GetToolBar() { return clMainFrame::Get()->GetMainToolBar(); }
+clToolBarNative* PluginManager::GetToolBar() { return clMainFrame::Get()->GetMainToolBar(); }
 
 void PluginManager::DisplayMessage(const wxString& message, int flags,
                                    const std::vector<std::pair<wxWindowID, wxString>>& buttons)

@@ -120,7 +120,7 @@ MemCheckPlugin::~MemCheckPlugin()
     wxDELETE(m_settings);
 }
 
-void MemCheckPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void MemCheckPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void MemCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {

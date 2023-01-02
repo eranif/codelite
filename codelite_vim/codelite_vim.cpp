@@ -47,7 +47,7 @@ CodeliteVim::CodeliteVim(IManager* manager)
 
 CodeliteVim::~CodeliteVim() {}
 
-void CodeliteVim::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void CodeliteVim::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void CodeliteVim::CreatePluginMenu(wxMenu* pluginsMenu)
 {

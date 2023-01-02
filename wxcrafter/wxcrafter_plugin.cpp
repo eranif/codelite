@@ -371,7 +371,7 @@ void wxCrafterPlugin::UnPlug()
     // wxModule::CleanUpModules();
 }
 
-void wxCrafterPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void wxCrafterPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void wxCrafterPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {

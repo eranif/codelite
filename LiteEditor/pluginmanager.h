@@ -25,6 +25,7 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
+#include "clToolBar.h"
 #include "debugger.h"
 #include "dynamiclibrary.h"
 #include "plugin.h"
@@ -38,7 +39,6 @@
 #include <wx/string.h>
 #include <wx/treectrl.h>
 
-class clToolBar;
 class clEditorBar;
 class wxBookCtrlBase;
 class EnvironmentConfig;
@@ -85,7 +85,7 @@ public:
     //------------------------------------
     void EnableClangCodeCompletion(bool b) override;
     IEditor* GetActiveEditor() override;
-    clToolBar* GetToolBar() override;
+    clToolBarNative* GetToolBar() override;
     wxMenuBar* GetMenuBar() override;
     IConfigTool* GetConfigTool() override;
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type) override;

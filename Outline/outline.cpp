@@ -101,7 +101,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
 
 SymbolViewPlugin::~SymbolViewPlugin() { thePlugin = NULL; }
 
-void SymbolViewPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void SymbolViewPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void SymbolViewPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
 

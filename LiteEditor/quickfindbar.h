@@ -27,6 +27,7 @@
 
 #include "clEditorEditEventsHandler.h"
 #include "clTerminalHistory.h"
+#include "clToolBar.h"
 #include "quickfindbarbase.h"
 
 #include <vector>
@@ -34,7 +35,6 @@
 #include <wx/panel.h>
 
 class wxStaticText;
-class clToolBar;
 class wxStyledTextCtrl;
 
 struct TargetRange {

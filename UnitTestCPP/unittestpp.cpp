@@ -117,7 +117,7 @@ UnitTestPP::UnitTestPP(IManager* manager)
 
 UnitTestPP::~UnitTestPP() {}
 
-void UnitTestPP::CreateToolBar(clToolBar* toolbar)
+void UnitTestPP::CreateToolBar(clToolBarNative* toolbar)
 {
     int size = m_mgr->GetToolbarIconSize();
 

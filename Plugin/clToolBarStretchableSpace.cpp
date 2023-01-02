@@ -2,8 +2,8 @@
 
 #include "clSystemSettings.h"
 #include "drawingutils.h"
-#if !wxUSE_NATIVE_TOOLBAR
-clToolBarStretchableSpace::clToolBarStretchableSpace(clToolBar* parent)
+
+clToolBarStretchableSpace::clToolBarStretchableSpace(clToolBarGeneric* parent)
     : clToolBarButtonBase(parent, wxID_SEPARATOR, INVALID_BITMAP_ID, "", kDisabled | kStretchalbeSpace)
 {
 }
@@ -26,4 +26,3 @@ void clToolBarStretchableSpace::Render(wxDC& dc, const wxRect& rect)
     dc.SetBrush(colour);
     dc.DrawRectangle(rect);
 }
-#endif // #if !wxUSE_NATIVE_TOOLBAR

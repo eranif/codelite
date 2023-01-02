@@ -26,6 +26,7 @@
 #ifndef UNREDOBASE_H
 #define UNREDOBASE_H
 
+#include "clToolBar.h"
 #include "codelite_exports.h"
 
 #include <vector>
@@ -35,7 +36,6 @@
 #include <wx/gdicmn.h>
 #include <wx/sharedptr.h>
 
-class clToolBar;
 enum CLC_types { CLC_insert, CLC_delete, CLC_unknown };
 
 class WXDLLIMPEXP_SDK CLCommand

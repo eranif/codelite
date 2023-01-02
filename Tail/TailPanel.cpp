@@ -234,7 +234,7 @@ void TailPanel::SetFrameTitle()
 
 void TailPanel::DoBuildToolbar()
 {
-    m_toolbar = new clToolBar(this);
+    m_toolbar = new clToolBarGeneric(this);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(XRCID("tail_open"), _("Open file"), images->Add("folder"), "", wxITEM_DROPDOWN);
     m_toolbar->AddTool(XRCID("tail_close"), _("Close file"), images->Add("file_close"));

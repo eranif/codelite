@@ -47,7 +47,7 @@ SmartCompletion::SmartCompletion(IManager* manager)
 
 SmartCompletion::~SmartCompletion() {}
 
-void SmartCompletion::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void SmartCompletion::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
 
 void SmartCompletion::CreatePluginMenu(wxMenu* pluginsMenu)
 {

@@ -90,7 +90,7 @@ RustPlugin::RustPlugin(IManager* manager)
 
 RustPlugin::~RustPlugin() {}
 
-void RustPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void RustPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void RustPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
 

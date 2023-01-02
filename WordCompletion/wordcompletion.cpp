@@ -61,7 +61,7 @@ WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
 
 WordCompletionPlugin::~WordCompletionPlugin() {}
 
-void WordCompletionPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void WordCompletionPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void WordCompletionPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {

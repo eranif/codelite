@@ -92,7 +92,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager* manager)
 
 AbbreviationPlugin::~AbbreviationPlugin() {}
 
-void AbbreviationPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void AbbreviationPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {

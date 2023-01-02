@@ -1,16 +1,14 @@
 #include "clCustomiseToolBarDlg.h"
 
-#include "wxCustomControls.hpp"
-
-#if !wxUSE_NATIVE_TOOLBAR
 #include "bitmap_loader.h"
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
 #include "editor_config.h"
 #include "globals.h"
 #include "optionsconfig.h"
+#include "wxCustomControls.hpp"
 
-clCustomiseToolBarDlg::clCustomiseToolBarDlg(wxWindow* parent, clToolBar* tb)
+clCustomiseToolBarDlg::clCustomiseToolBarDlg(wxWindow* parent, clToolBarGeneric* tb)
     : clCustomiseToolBarBaseDlg(parent)
     , m_toolbar(tb)
     , m_buttons(m_toolbar->GetButtons())
@@ -47,4 +45,3 @@ void clCustomiseToolBarDlg::OnOK(wxCommandEvent& event)
         button->Show(val.GetBool());
     }
 }
-#endif // #if !wxUSE_NATIVE_TOOLBAR

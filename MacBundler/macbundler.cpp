@@ -530,7 +530,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
     project->SetSettings(settings);
 }
 
-void MacBundler::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void MacBundler::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void MacBundler::CreatePluginMenu(wxMenu* pluginsMenu)
 {

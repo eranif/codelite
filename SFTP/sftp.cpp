@@ -161,7 +161,7 @@ SFTP::SFTP(IManager* manager)
 
 SFTP::~SFTP() {}
 
-void SFTP::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void SFTP::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void SFTP::CreatePluginMenu(wxMenu* pluginsMenu)
 {

@@ -161,7 +161,7 @@ CodeFormatter::CodeFormatter(IManager* manager)
 
 CodeFormatter::~CodeFormatter() {}
 
-void CodeFormatter::CreateToolBar(clToolBarNative* toolbar)
+void CodeFormatter::CreateToolBar(clToolBarGeneric* toolbar)
 {
     clBitmapList* images = toolbar->GetBitmapsCreateIfNeeded();
     toolbar->AddSpacer();

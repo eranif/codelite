@@ -56,7 +56,7 @@ PHPLint::PHPLint(IManager* manager)
 
 PHPLint::~PHPLint() {}
 
-void PHPLint::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void PHPLint::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void PHPLint::CreatePluginMenu(wxMenu* pluginsMenu)
 {

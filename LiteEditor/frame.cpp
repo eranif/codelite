@@ -709,7 +709,8 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_isWaylandSession(false)
 #endif
     , m_webUpdate(NULL)
-    , m_toolbar(NULL)
+    , m_mainToolbar(NULL)
+    , m_pluginsToolbar(NULL)
 {
     GeneralInfo inf;
     EditorConfigST::Get()->ReadObject("GeneralInfo", &inf);
@@ -792,10 +793,10 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
                                  wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
 
-    m_toolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
-    m_toolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
-    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
-    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
+    m_mainToolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
+    m_mainToolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
+    m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
+    m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL,
                                      this);
     wxDELETE(m_timer);
@@ -905,10 +906,10 @@ void clMainFrame::Construct()
     EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles,
                                this);
     EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
-    m_toolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
-    m_toolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
+    m_mainToolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
+    m_mainToolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
+    m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
+    m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
 
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
 
@@ -934,12 +935,12 @@ void clMainFrame::PostConstruct()
 {
     CreateWelcomePage();
 
-    // Place the toolbar and and menu bar
-    m_toolbarsSizer->Insert(0, m_toolbar, 0, wxEXPAND);
-
 #if !wxUSE_NATIVE_MENUBAR
     GetSizer()->Insert(0, m_mainMenuBar, 0, wxEXPAND);
 #endif
+
+    m_pluginsToolbar->Realize();
+    GetSizer()->Insert(0, m_pluginsToolbar, 0, wxEXPAND);
 
     GetMainBook()->Show();
     CallAfter(&clMainFrame::CompleteInitialization);
@@ -1230,10 +1231,6 @@ void clMainFrame::CreateGUIControls()
     // Layout the main panel ASAP
     m_mgr.Update();
 
-    // add the toolbars sizer
-    m_toolbarsSizer = new wxBoxSizer(wxVERTICAL);
-    GetSizer()->Add(m_toolbarsSizer, 0, wxEXPAND);
-
     // Create the status bar
     m_statusBar = new clStatusBar(this, PluginManager::Get());
     SetStatusBar(m_statusBar);
@@ -1345,17 +1342,17 @@ void clMainFrame::CreateGUIControls()
     // otherwise, we create a multiple toolbars using wxAUI toolbar if possible
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     if(options) {
-        CreateToolBar(options->GetIconsSize());
+        DoCreateToolBar(options->GetIconsSize());
         Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnNativeTBUnRedoDropdown, this, wxID_UNDO, wxID_REDO);
 
     } else {
-        CreateToolBar(16);
+        DoCreateToolBar(16);
     }
 
     // Connect the custom build target events range: !USE_AUI_TOOLBAR only
-    if(GetMainToolBar()) {
-        GetMainToolBar()->Connect(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, wxEVT_COMMAND_MENU_SELECTED,
-                                  wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
+    if(m_mainToolbar) {
+        m_mainToolbar->Connect(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
     }
 
     Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnChangeActiveBookmarkType), this,
@@ -1395,7 +1392,7 @@ void clMainFrame::DoShowToolbars(bool show, bool update)
     wxWindowUpdateLocker locker(this);
 #endif
 
-    m_toolbar->Show(show);
+    m_pluginsToolbar->Show(show);
     Layout();
 }
 
@@ -1428,7 +1425,7 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
 void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
 {
     clEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if(editor && GetMainToolBar()) {
+    if(editor && m_mainToolbar) {
         bool undoing = event.GetId() == wxID_UNDO;
         wxMenu* menu = new wxMenu;
         editor->GetCommandsProcessor().DoPopulateUnRedoMenu(*menu, undoing);
@@ -1444,94 +1441,102 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
             menu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem),
                        &editor->GetCommandsProcessor());
         }
-        GetMainToolBar()->SetDropdownMenu(event.GetId(), menu);
-
+        m_mainToolbar->SetDropdownMenu(event.GetId(), menu);
         event.Skip();
     }
     // Don't skip if there's no active editor/toolbar, otherwise a stale menu will show
 }
 
-void clMainFrame::CreateToolBar(int toolSize)
+void clMainFrame::DoCreateToolBar(int toolSize)
 {
     //----------------------------------------------
     // create the standard toolbar
     //----------------------------------------------
-    if(m_toolbar) {
-        m_toolbarsSizer->Detach(m_toolbar);
-        wxDELETE(m_toolbar);
-    }
+    long style = wxTB_FLAT | wxTB_NODIVIDER | wxTB_HORZ_LAYOUT;
 
-    long style = wxTB_FLAT;
-    style |= wxTB_NODIVIDER;
+    // Create the plugins toolbar, emty by default
+    m_pluginsToolbar = new clToolBarGeneric(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
-    m_toolbar = new clToolBarNative(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-    m_toolbar->Hide();
+    // the main tool
+    const int ID_TOOLBAR = 500;
+    SetToolBar(nullptr);
+    m_mainToolbar = CreateToolBar(style, ID_TOOLBAR);
+#ifdef __WXMAC__
+    toolSize = 24;
+#endif
 
-    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
-    m_toolbar->SetMiniToolBar(true); // We want main toolbar
-    m_toolbar->EnableCustomisation(true);
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(XRCID("new_file"), _("New"), images->Add("file_new", toolSize), _("New File"));
-    m_toolbar->AddTool(XRCID("open_file"), _("Open"), images->Add("file_open", toolSize), _("Open File"));
-    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload"), images->Add("file_reload", toolSize), _("Reload File"));
-    m_toolbar->AddTool(XRCID("save_file"), _("Save"), images->Add("file_save", toolSize), _("Save"));
-    m_toolbar->AddTool(XRCID("save_all"), _("Save All"), images->Add("file_save_all", toolSize), _("Save All"));
-    m_toolbar->AddTool(XRCID("close_file"), _("Close"), images->Add("file_close", toolSize), _("Close File"));
-    m_toolbar->AddSpacer();
-    m_toolbar->AddTool(wxID_CUT, _("Cut"), images->Add("cut", toolSize), _("Cut"));
-    m_toolbar->AddTool(wxID_COPY, _("Copy"), images->Add("copy", toolSize), _("Copy"));
-    m_toolbar->AddTool(wxID_PASTE, _("Paste"), images->Add("paste", toolSize), _("Paste"));
-    m_toolbar->AddTool(wxID_UNDO, _("Undo"), images->Add("undo", toolSize), _("Undo"), wxITEM_DROPDOWN);
-    m_toolbar->AddTool(wxID_REDO, _("Redo"), images->Add("redo", toolSize), _("Redo"), wxITEM_DROPDOWN);
-    m_toolbar->AddSpacer();
-    m_toolbar->AddTool(XRCID("id_backward"), _("Backward"), images->Add("back", toolSize), _("Backward"));
-    m_toolbar->AddTool(XRCID("id_forward"), _("Forward"), images->Add("forward", toolSize), _("Forward"));
-    m_toolbar->AddSpacer();
+    wxSize tools_size(toolSize, toolSize);
+    m_mainToolbar->SetToolBitmapSize(FromDIP(tools_size));
+
+    auto loader = clGetManager()->GetStdIcons();
+    m_mainToolbar->AddTool(XRCID("new_file"), _("New"), loader->LoadBitmap("file_new", toolSize), _("New File"));
+    m_mainToolbar->AddTool(XRCID("open_file"), _("Open"), loader->LoadBitmap("file_open", toolSize), _("Open File"));
+    //    m_mainToolbar->AddTool(XRCID("refresh_file"), _("Reload"), loader->LoadBitmap("file_reload", toolSize),
+    //                           _("Reload File"));
+    //    m_mainToolbar->AddTool(XRCID("save_file"), _("Save"), loader->LoadBitmap("file_save", toolSize), _("Save"));
+    //    m_mainToolbar->AddTool(XRCID("save_all"), _("Save All"), loader->LoadBitmap("file_save_all", toolSize),
+    //                           _("Save All"));
+    //    m_mainToolbar->AddTool(XRCID("close_file"), _("Close"), loader->LoadBitmap("file_close", toolSize),
+    //                           _("Close File"));
+    //    m_mainToolbar->AddSeparator();
+    //    m_mainToolbar->AddTool(wxID_CUT, _("Cut"), loader->LoadBitmap("cut", toolSize), _("Cut"));
+    //    m_mainToolbar->AddTool(wxID_COPY, _("Copy"), loader->LoadBitmap("copy", toolSize), _("Copy"));
+    //    m_mainToolbar->AddTool(wxID_PASTE, _("Paste"), loader->LoadBitmap("paste", toolSize), _("Paste"));
+    //    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), loader->LoadBitmap("undo", toolSize), _("Undo"),
+    //    wxITEM_DROPDOWN); m_mainToolbar->AddTool(wxID_REDO, _("Redo"), loader->LoadBitmap("redo", toolSize),
+    //    _("Redo"), wxITEM_DROPDOWN);
+    m_mainToolbar->AddSeparator();
+    m_mainToolbar->AddTool(XRCID("id_backward"), _("Backward"), loader->LoadBitmap("back", toolSize), _("Backward"));
+    m_mainToolbar->AddTool(XRCID("id_forward"), _("Forward"), loader->LoadBitmap("forward", toolSize), _("Forward"));
+    m_mainToolbar->AddSeparator();
 
     //----------------------------------------------
     // create the search toolbar
     //----------------------------------------------
-    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), images->Add("bookmark", toolSize),
-                       _("Toggle Bookmark"), wxITEM_DROPDOWN);
-    m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
-    m_toolbar->AddTool(XRCID("id_find"), _("Find"), images->Add("find", toolSize), _("Find"));
-    m_toolbar->AddTool(XRCID("id_replace"), _("Replace"), images->Add("find_and_replace", toolSize), _("Replace"));
-    m_toolbar->AddTool(XRCID("find_in_files"), _("Find In Files"), images->Add("find_in_files", toolSize),
-                       _("Find In Files"));
-    m_toolbar->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), images->Add("open_resource", toolSize),
-                       _("Find Resource In Workspace"));
-    m_toolbar->AddTool(XRCID("highlight_word"), _("Highlight Word"), images->Add("mark_word", toolSize),
-                       _("Highlight Matching Words"), wxITEM_CHECK);
-    m_toolbar->ToggleTool(XRCID("highlight_word"), m_highlightWord);
-    m_toolbar->AddSpacer();
+    //    m_mainToolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), loader->LoadBitmap("bookmark",
+    //    toolSize),
+    //                           _("Toggle Bookmark"), wxITEM_DROPDOWN);
+    //    m_mainToolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
+    //    m_mainToolbar->AddTool(XRCID("id_find"), _("Find"), loader->LoadBitmap("find", toolSize), _("Find"));
+    //    m_mainToolbar->AddTool(XRCID("id_replace"), _("Replace"), loader->LoadBitmap("find_and_replace", toolSize),
+    //                           _("Replace"));
+    //    m_mainToolbar->AddTool(XRCID("find_in_files"), _("Find In Files"), loader->LoadBitmap("find_in_files",
+    //    toolSize),
+    //                           _("Find In Files"));
+    //    m_mainToolbar->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"),
+    //                           loader->LoadBitmap("open_resource", toolSize), _("Find Resource In Workspace"));
+
+    //    auto markBmp = loader->LoadBitmap("mark_word", toolSize);
+    //    m_mainToolbar->AddTool(XRCID("highlight_word"), _("Highlight Word"), markBmp, markBmp.ConvertToDisabled(),
+    //                           wxITEM_CHECK);
+    //    m_mainToolbar->ToggleTool(XRCID("highlight_word"), m_highlightWord);
+    // m_mainToolbar->AddSeparator();
 
     //----------------------------------------------
     // create the build toolbar
     //----------------------------------------------
-    m_toolbar->AddTool(XRCID("build_active_project"), _("Build Active Project"), images->Add("build", toolSize),
-                       _("Build Active Project"), wxITEM_DROPDOWN);
-    m_toolbar->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"), images->Add("stop", toolSize),
-                       _("Stop Current Build"));
-    m_toolbar->AddTool(XRCID("clean_active_project"), _("Clean Active Project"), images->Add("clean", toolSize),
-                       _("Clean Active Project"));
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), images->Add("execute", toolSize),
-                       _("Run Active Project"));
-    m_toolbar->AddTool(XRCID("stop_executed_program"), _("Stop Running Program"), images->Add("execute_stop", toolSize),
-                       _("Stop Running Program"));
-    m_toolbar->AddSpacer();
+    m_mainToolbar->AddTool(XRCID("build_active_project"), _("Build Active Project"),
+                           loader->LoadBitmap("build", toolSize), _("Build Active Project"), wxITEM_DROPDOWN);
+    m_mainToolbar->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"),
+                           loader->LoadBitmap("stop", toolSize), _("Stop Current Build"));
+    m_mainToolbar->AddTool(XRCID("clean_active_project"), _("Clean Active Project"),
+                           loader->LoadBitmap("clean", toolSize), _("Clean Active Project"));
+    m_mainToolbar->AddSeparator();
 
-    //----------------------------------------------
-    // create the debugger toolbar
-    //----------------------------------------------
-    m_toolbar->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
-                       images->Add("start-debugger", toolSize), _("Start or Continue debugger"));
-    m_toolbar->AddSpacer();
-    m_toolbar->Realize();
+    // debugger
+    m_mainToolbar->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), loader->LoadBitmap("execute", toolSize),
+                           _("Run Active Project"));
+    m_mainToolbar->AddTool(XRCID("stop_executed_program"), _("Stop Running Program"),
+                           loader->LoadBitmap("execute_stop", toolSize), _("Stop Running Program"));
+    m_mainToolbar->AddSeparator();
+    m_mainToolbar->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
+                           loader->LoadBitmap("start-debugger", toolSize), _("Start or Continue debugger"));
+    m_mainToolbar->AddSeparator();
+    m_mainToolbar->Realize();
 
-#if !wxUSE_NATIVE_TOOLBAR
-    m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
-#endif
+    // plugins toolbar
+    m_pluginsToolbar->EnableCustomisation(true);
+    m_pluginsToolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
 
 bool clMainFrame::StartSetupWizard(bool firstTime)
@@ -2291,30 +2296,6 @@ void clMainFrame::RegisterDockWindow(int menuItemId, const wxString& name)
     m_panes[menuItemId] = name;
     Connect(menuItemId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnViewPane), NULL, this);
     Connect(menuItemId, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::OnViewPaneUI), NULL, this);
-}
-
-void clMainFrame::OnViewToolbar(wxCommandEvent& event)
-{
-    std::map<int, wxString>::iterator iter = m_toolbars.find(event.GetId());
-    if(iter != m_toolbars.end()) {
-        wxAuiPaneInfo& pane = m_mgr.GetPane(iter->second);
-        if(pane.IsOk() && pane.IsToolbar()) {
-            pane.Show(event.IsChecked());
-            m_mgr.Update();
-
-            // Update the current perspective
-            ManagerST::Get()->GetPerspectiveManager().SavePerspective();
-        }
-    }
-}
-
-void clMainFrame::OnViewToolbarUI(wxUpdateUIEvent& event)
-{
-    CHECK_SHUTDOWN();
-    std::map<int, wxString>::iterator iter = m_toolbars.find(event.GetId());
-    if(iter != m_toolbars.end()) {
-        ViewPaneUI(iter->second, event);
-    }
 }
 
 void clMainFrame::OnToggleMainTBars(wxCommandEvent& event)
@@ -3344,6 +3325,7 @@ void clMainFrame::CompleteInitialization()
 
     // Load the plugins
     PluginManager::Get()->Load();
+    m_pluginsToolbar->Realize();
 
 // Load debuggers (*must* be after the plugins)
 #ifdef USE_POSIX_LAYOUT
@@ -3483,8 +3465,7 @@ void clMainFrame::CompleteInitialization()
         }
     }
 
-#if !wxUSE_NATIVE_TOOLBAR
-    auto& buttons = m_toolbar->GetButtons();
+    auto& buttons = m_pluginsToolbar->GetButtons();
     for(size_t i = 0; i < hiddenItems.size(); ++i) {
         const wxString& label = hiddenItems.Item(i);
         auto iter = std::find_if(buttons.begin(), buttons.end(),
@@ -3493,7 +3474,6 @@ void clMainFrame::CompleteInitialization()
             (*iter)->Show(false);
         }
     }
-#endif
 
     // Prompt the user to adjust his colours
     bool colourAdjusted = clConfig::Get().Read("ColoursAdjusted", false);
@@ -3812,6 +3792,8 @@ void clMainFrame::OnConfigureAccelerators(wxCommandEvent& e)
 }
 
 void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e) { wxUnusedVar(e); }
+
+void clMainFrame::OnHighlightWordUI(wxUpdateUIEvent& event) { event.Check(m_highlightWord); }
 
 void clMainFrame::OnHighlightWord(wxCommandEvent& event)
 {
@@ -5344,8 +5326,8 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     ShowOrHideCaptions();
 
     // As the toolbar is showing, refresh in case the group spacing was changed
-    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
-    m_toolbar->Realize();
+    m_pluginsToolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
+    m_pluginsToolbar->Realize();
 
     clEditor::Vec_t editors;
     GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
@@ -5369,8 +5351,8 @@ void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(m_fram
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    DoShowToolbars(!m_toolbar->IsShown());
-    clConfig::Get().Write(kConfigShowToolBar, m_toolbar->IsShown());
+    DoShowToolbars(!m_pluginsToolbar->IsShown());
+    clConfig::Get().Write(kConfigShowToolBar, m_pluginsToolbar->IsShown());
 }
 
 void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event) { event.Check(m_frameHelper->IsToolbarShown()); }
@@ -5917,23 +5899,21 @@ void clMainFrame::OnFindWordAtCaretPrev(wxCommandEvent& event)
 
 void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event)
 {
-#if !wxUSE_NATIVE_TOOLBAR
-    clCustomiseToolBarDlg dlg(this, m_toolbar);
+    clCustomiseToolBarDlg dlg(this, m_pluginsToolbar);
     if(dlg.ShowModal() != wxID_OK) {
         return;
     }
-    m_toolbar->Realize();
-    m_toolbar->Refresh();
+    m_pluginsToolbar->Realize();
+    m_pluginsToolbar->Refresh();
 
     wxArrayString hiddenItems;
-    const std::vector<clToolBarButtonBase*>& buttons = m_toolbar->GetButtons();
+    const std::vector<clToolBarButtonBase*>& buttons = m_pluginsToolbar->GetButtons();
     for(size_t i = 0; i < buttons.size(); ++i) {
         if(buttons[i]->IsHidden() && !buttons[i]->IsSeparator()) {
             hiddenItems.Add(buttons[i]->GetLabel());
         }
     }
     clConfig::Get().Write("ToolBarHiddenItems", hiddenItems);
-#endif
 }
 
 void clMainFrame::OnInfobarButton(wxCommandEvent& event)

@@ -54,7 +54,7 @@ void Tail::OnInitDone(wxCommandEvent& event)
     clConfig::Get().Write("force-show-tail-tab", false);
 }
 
-void Tail::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void Tail::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void Tail::CreatePluginMenu(wxMenu* pluginsMenu) {}
 

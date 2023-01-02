@@ -100,7 +100,7 @@ Copyright::Copyright(IManager* manager)
 
 Copyright::~Copyright() {}
 
-void Copyright::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void Copyright::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void Copyright::CreatePluginMenu(wxMenu* pluginsMenu)
 {

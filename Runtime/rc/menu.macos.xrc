@@ -229,6 +229,11 @@
         <label>Trim T&amp;railing Spaces</label>
       </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+      <object class="wxMenuItem" name="highlight_word">
+        <label>Highlight selected word</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenuItem" name="match_brace">
         <label>Match &amp;Brace</label>
       </object>

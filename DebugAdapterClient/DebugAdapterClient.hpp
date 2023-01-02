@@ -189,7 +189,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    void CreateToolBar(clToolBarNative* toolbar) override;
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;

@@ -85,7 +85,7 @@ public:
     //------------------------------------
     void EnableClangCodeCompletion(bool b) override;
     IEditor* GetActiveEditor() override;
-    clToolBarNative* GetToolBar() override;
+    clToolBarGeneric* GetToolBar() override;
     wxMenuBar* GetMenuBar() override;
     IConfigTool* GetConfigTool() override;
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type) override;

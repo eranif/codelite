@@ -116,7 +116,7 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
 
 ExternalToolsPlugin::~ExternalToolsPlugin() {}
 
-void ExternalToolsPlugin::CreateToolBar(clToolBarNative* toolbar)
+void ExternalToolsPlugin::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // support both toolbars icon size
     auto images = toolbar->GetBitmapsCreateIfNeeded();

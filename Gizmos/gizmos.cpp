@@ -103,7 +103,7 @@ WizardsPlugin::WizardsPlugin(IManager* manager)
 
 WizardsPlugin::~WizardsPlugin() {}
 
-void WizardsPlugin::CreateToolBar(clToolBarNative* toolbar)
+void WizardsPlugin::CreateToolBar(clToolBarGeneric* toolbar)
 {
     wxUnusedVar(toolbar);
     // Connect the events to us

@@ -47,7 +47,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarNative* toolbar);
+    virtual void CreateToolBar(clToolBarGeneric* toolbar);
     /**
      * @brief Add plugin menu to the "Plugins" menu item in the menu bar
      */

@@ -30,6 +30,7 @@
 #include "bitmap_loader.h"
 #include "clStatusBar.h"
 #include "clTab.h"
+#include "clToolBar.h"
 #include "debugger.h"
 #include "iconfigtool.h"
 #include "ieditor.h"
@@ -38,7 +39,7 @@
 #include "project.h"
 #include "queuecommand.h"
 #include "wx/treectrl.h"
-#include "clToolBar.h"
+
 #include <vector>
 #include <wx/aui/framemanager.h>
 
@@ -129,8 +130,8 @@ public:
         }
     }
 
-    /// return CodeLite's main toolbar
-    virtual clToolBarNative* GetToolBar() = 0;
+    /// Return the plugins' toolbar managed by CodeLite
+    virtual clToolBarGeneric* GetToolBar() = 0;
 
     /// Return applicaion menu bar
     virtual wxMenuBar* GetMenuBar() = 0;

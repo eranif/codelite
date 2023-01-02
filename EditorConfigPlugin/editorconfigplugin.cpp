@@ -48,7 +48,7 @@ EditorConfigPlugin::EditorConfigPlugin(IManager* manager)
 
 EditorConfigPlugin::~EditorConfigPlugin() {}
 
-void EditorConfigPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void EditorConfigPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void EditorConfigPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {

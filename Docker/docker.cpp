@@ -54,7 +54,7 @@ Docker::Docker(IManager* manager)
 
 Docker::~Docker() {}
 
-void Docker::CreateToolBar(clToolBarNative* toolbar)
+void Docker::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // You can add items to the main toolbar here
     wxUnusedVar(toolbar);

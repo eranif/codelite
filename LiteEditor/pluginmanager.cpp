@@ -271,13 +271,12 @@ void PluginManager::Load()
             m_plugins[plugin->GetShortName()] = plugin;
 
             // Load the toolbar
-            plugin->CreateToolBar(GetToolBar());
+            plugin->CreateToolBar(clMainFrame::Get()->GetPluginsToolBar());
 
             // Keep the dynamic load library
             m_dl.push_back(dl);
         }
         clMainFrame::Get()->GetDockingManager().Update();
-        GetToolBar()->Realize();
 
         // Let the plugins plug their menu in the 'Plugins' menu at the menu bar
         // the create menu will be placed as a sub menu of the 'Plugin' menu
@@ -929,9 +928,9 @@ void PluginManager::ShowToolBar(bool show)
 
 bool PluginManager::IsToolBarShown() const
 {
-    if(clMainFrame::Get()->GetMainToolBar()) {
+    if(clMainFrame::Get()->GetPluginsToolBar()) {
         // we have native toolbar
-        return clMainFrame::Get()->GetMainToolBar()->IsShown();
+        return clMainFrame::Get()->GetPluginsToolBar()->IsShown();
     }
     return false;
 }
@@ -943,7 +942,7 @@ bool PluginManager::CloseEditor(IEditor* editor, bool prompt)
 
 clEditorBar* PluginManager::GetNavigationBar() { return clMainFrame::Get()->GetMainBook()->GetEditorBar(); }
 
-clToolBarNative* PluginManager::GetToolBar() { return clMainFrame::Get()->GetMainToolBar(); }
+clToolBarGeneric* PluginManager::GetToolBar() { return clMainFrame::Get()->GetPluginsToolBar(); }
 
 void PluginManager::DisplayMessage(const wxString& message, int flags,
                                    const std::vector<std::pair<wxWindowID, wxString>>& buttons)

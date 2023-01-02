@@ -169,7 +169,7 @@ void SpellCheck::Init()
     m_topWin->Bind(wxEVT_MENU, &SpellCheck::OnIgnoreWord, this, SPC_IGNORE_WORD);
 }
 // ------------------------------------------------------------
-void SpellCheck::CreateToolBar(clToolBarNative* toolbar)
+void SpellCheck::CreateToolBar(clToolBarGeneric* toolbar)
 {
     int size = m_mgr->GetToolbarIconSize();
     auto images = toolbar->GetBitmapsCreateIfNeeded();
@@ -421,11 +421,7 @@ void SpellCheck::SetCheckContinuous(bool value)
         m_timer.Start(PARSE_TIME);
 
         if(btn) {
-#if wxUSE_NATIVE_TOOLBAR
-            btn->Toggle(true);
-#else
             btn->Check(true);
-#endif
             clGetManager()->GetToolBar()->Refresh();
         }
     } else {
@@ -433,11 +429,7 @@ void SpellCheck::SetCheckContinuous(bool value)
             m_timer.Stop();
         }
         if(btn) {
-#if wxUSE_NATIVE_TOOLBAR
-            btn->Toggle(false);
-#else
             btn->Check(false);
-#endif
             clGetManager()->GetToolBar()->Refresh();
         }
     }

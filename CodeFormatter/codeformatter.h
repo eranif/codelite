@@ -65,7 +65,7 @@ public:
 
     CodeFormatter(IManager* manager);
     virtual ~CodeFormatter();
-    virtual void CreateToolBar(clToolBarNative* toolbar);
+    virtual void CreateToolBar(clToolBarGeneric* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();

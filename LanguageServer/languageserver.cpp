@@ -79,7 +79,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
 
-void LanguageServerPlugin::CreateToolBar(clToolBarNative* toolbar)
+void LanguageServerPlugin::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // You can add items to the main toolbar here
     wxUnusedVar(toolbar);

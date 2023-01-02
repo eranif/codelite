@@ -111,7 +111,7 @@ Cscope::Cscope(IManager* manager)
 
 Cscope::~Cscope() {}
 
-void Cscope::CreateToolBar(clToolBarNative* toolbar)
+void Cscope::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // support both toolbars icon size
     int size = m_mgr->GetToolbarIconSize();

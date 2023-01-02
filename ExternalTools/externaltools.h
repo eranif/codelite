@@ -36,7 +36,7 @@ class ExternalToolsPlugin : public IPlugin
     wxEvtHandler* topWin;
     wxMenu* m_parentMenu;
     ExternalToolsData m_externalTools;
-    
+
 protected:
     void OnSettings(wxCommandEvent& e);
     void OnShowRunningTools(wxCommandEvent& e);
@@ -54,7 +54,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarNative* toolbar);
+    virtual void CreateToolBar(clToolBarGeneric* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();

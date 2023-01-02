@@ -74,7 +74,7 @@ public:
      * @param parent
      * @return
      */
-    virtual void CreateToolBar(clToolBarNative* toolbar);
+    virtual void CreateToolBar(clToolBarGeneric* toolbar);
     /**
      * @brief Function create plugin menu for Call graph used in menu Plugins of Codelite.
      * @param pluginsMenu

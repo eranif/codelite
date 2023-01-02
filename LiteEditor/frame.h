@@ -105,7 +105,6 @@ class clMainFrame : public wxFrame
     DebuggerPane* m_debuggerPane;
     ePostBuildEndAction m_postBuildEndAction;
     GeneralInfo m_frameGeneralInfo;
-    std::map<int, wxString> m_toolbars;
     std::map<int, wxString> m_panes;
     wxMenu* m_cppMenu;
     bool m_highlightWord;
@@ -115,7 +114,6 @@ class clMainFrame : public wxFrame
     wxString m_defaultLayout;
     bool m_workspaceRetagIsRequired;
     bool m_loadLastSession;
-    wxSizer* m_toolbarsSizer = nullptr;
     wxMenuBar* m_mainMenuBar;
     wxMenu* m_bookmarksDropDownMenu;
     bool m_noSavePerspectivePrompt;
@@ -140,7 +138,8 @@ class clMainFrame : public wxFrame
     wxPrintDialogData m_printDlgData;
     clMainFrameHelper::Ptr_t m_frameHelper;
     WebUpdateJob* m_webUpdate;
-    clToolBarNative* m_toolbar;
+    wxToolBar* m_mainToolbar;
+    clToolBarGeneric* m_pluginsToolbar;
     DebuggerToolBar* m_debuggerToolbar = nullptr;
     clInfoBar* m_infoBar = nullptr;
 #if !wxUSE_NATIVE_CAPTION
@@ -393,7 +392,7 @@ private:
     void OnSplitSelectionUI(wxUpdateUIEvent& event);
 
     /// Toolbar management
-    void CreateToolBar(int toolSize);
+    void DoCreateToolBar(int toolSize);
     void ToggleToolBars(bool all);
     void ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event);
     void CreateRecentlyOpenedFilesMenu();
@@ -427,7 +426,7 @@ private:
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
-    clToolBarNative* GetMainToolBar() const { return m_toolbar; }
+    clToolBarGeneric* GetPluginsToolBar() const { return m_pluginsToolbar; }
     void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID);
 
 protected:
@@ -476,8 +475,6 @@ protected:
     void OnIncrementalSearch(wxCommandEvent& event);
     void OnIncrementalReplace(wxCommandEvent& event);
     void OnIncrementalSearchUI(wxUpdateUIEvent& event);
-    void OnViewToolbar(wxCommandEvent& event);
-    void OnViewToolbarUI(wxUpdateUIEvent& event);
     void OnPrint(wxCommandEvent& event);
     void OnPageSetup(wxCommandEvent& event);
     void OnRecentWorkspaceUI(wxUpdateUIEvent& e);
@@ -537,6 +534,7 @@ protected:
     void OnCopyFilePathOnly(wxCommandEvent& event);
     void OnCopyFileName(wxCommandEvent& event);
     void OnHighlightWord(wxCommandEvent& event);
+    void OnHighlightWordUI(wxUpdateUIEvent& event);
     void OnShowNavBar(wxCommandEvent& e);
     void OnShowNavBarUI(wxUpdateUIEvent& e);
     void OnOpenShellFromFilePath(wxCommandEvent& e);

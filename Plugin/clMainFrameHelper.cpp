@@ -15,7 +15,7 @@ clMainFrameHelper::clMainFrameHelper(clMainFrame* frame, clDockingManager* dockM
 
 clMainFrameHelper::~clMainFrameHelper() {}
 
-bool clMainFrameHelper::IsToolbarShown() const { return m_mainFrame && m_mainFrame->GetMainToolBar()->IsShown(); }
+bool clMainFrameHelper::IsToolbarShown() const { return m_mainFrame && m_mainFrame->GetPluginsToolBar()->IsShown(); }
 
 bool clMainFrameHelper::IsCaptionsVisible() const
 {

@@ -142,7 +142,7 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
 
 CppCheckPlugin::~CppCheckPlugin() {}
 
-void CppCheckPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void CppCheckPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void CppCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {

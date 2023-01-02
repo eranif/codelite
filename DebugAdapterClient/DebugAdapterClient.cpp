@@ -312,7 +312,7 @@ wxString DebugAdapterClient::GetFilenameForDisplay(const wxString& fileName) con
     }
 }
 
-void DebugAdapterClient::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void DebugAdapterClient::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void DebugAdapterClient::CreatePluginMenu(wxMenu* pluginsMenu)
 {

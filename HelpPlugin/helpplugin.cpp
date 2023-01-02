@@ -46,7 +46,7 @@ HelpPlugin::HelpPlugin(IManager* manager)
 
 HelpPlugin::~HelpPlugin() {}
 
-void HelpPlugin::CreateToolBar(clToolBarNative* toolbar) { wxUnusedVar(toolbar); }
+void HelpPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void HelpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {

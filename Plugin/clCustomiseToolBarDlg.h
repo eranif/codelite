@@ -8,18 +8,16 @@
 #include <codelite_exports.h>
 #include <vector>
 
-#if !wxUSE_NATIVE_TOOLBAR
 class WXDLLIMPEXP_SDK clCustomiseToolBarDlg : public clCustomiseToolBarBaseDlg
 {
-    clToolBar* m_toolbar;
+    clToolBarGeneric* m_toolbar;
     std::vector<clToolBarButtonBase*>& m_buttons;
 
 public:
-    clCustomiseToolBarDlg(wxWindow* parent, clToolBar* tb);
+    clCustomiseToolBarDlg(wxWindow* parent, clToolBarGeneric* tb);
     virtual ~clCustomiseToolBarDlg();
 
 protected:
     virtual void OnOK(wxCommandEvent& event);
 };
-#endif // #if !wxUSE_NATIVE_TOOLBAR
 #endif // CLCUSTOMISETOOLBARDLG_H

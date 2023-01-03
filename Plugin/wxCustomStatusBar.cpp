@@ -41,9 +41,8 @@ void wxCustomStatusBarArt::DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect)
 
 wxColour wxCustomStatusBarArt::GetBgColour() const
 {
-    wxColour c = clSystemSettings::GetDefaultPanelColour();
-    bool is_dark = DrawingUtils::IsDark(c);
-    return c.ChangeLightness(is_dark ? 115 : 85);
+    wxColour c = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    return c;
 }
 
 wxColour wxCustomStatusBarArt::GetPenColour() const { return GetBgColour(); }

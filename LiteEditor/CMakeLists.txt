@@ -278,22 +278,22 @@ if(NOT APPLE)
         # rename .windows files
         install(
             FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library/dynamic-library.project.windows
-            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library
+            DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library
             RENAME dynamic-library.project)
 
         install(
             FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project.windows
-            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library-wx-enabled
+            DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library-wx-enabled
             RENAME dynamic-library-wx-enabled.project)
     else()
         # just install the missing files
         install(
             FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library/dynamic-library.project
-            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library)
+            DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library)
 
         install(
             FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project
-            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library-wx-enabled)
+            DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library-wx-enabled)
     endif()
 
     if(UNIX)

@@ -342,14 +342,6 @@
         <checkable>1</checkable>
       </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-      <object class="wxMenuItem" name="hide_status_bar">
-        <label>Show Status Bar</label>
-        <checkable>1</checkable>
-      </object>
-      <object class="wxMenuItem" name="hide_tool_bar">
-        <label>Show Plugins Toolbar</label>
-        <checkable>1</checkable>
-      </object>
       <object class="wxMenu" name="wxID_ANY">
         <label>Main ToolBar Orientation</label>
         <object class="wxMenuItem" name="toolbar_top">
@@ -369,7 +361,14 @@
           <checkable>1</checkable>
         </object>
       </object>
-      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+      <object class="wxMenuItem" name="hide_status_bar">
+        <label>Show Status Bar</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="hide_tool_bar">
+        <label>Show Plugins Toolbar</label>
+        <checkable>1</checkable>
+      </object>
       <object class="wxMenuItem" name="show_menu_bar">
         <label>Show Menu Bar</label>
         <checkable>1</checkable>

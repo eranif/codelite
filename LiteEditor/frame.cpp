@@ -604,6 +604,7 @@ EVT_MENU(XRCID("run_setup_wizard"), clMainFrame::OnRunSetupWizard)
 EVT_MENU(XRCID("id_forward"), clMainFrame::OnBackwardForward)
 EVT_MENU(XRCID("id_backward"), clMainFrame::OnBackwardForward)
 EVT_MENU(XRCID("highlight_word"), clMainFrame::OnHighlightWord)
+EVT_UPDATE_UI(XRCID("highlight_word"), clMainFrame::OnHighlightWordUI)
 
 EVT_UPDATE_UI(XRCID("id_forward"), clMainFrame::OnBackwardForwardUI)
 EVT_UPDATE_UI(XRCID("id_backward"), clMainFrame::OnBackwardForwardUI)
@@ -846,7 +847,7 @@ void clMainFrame::Construct()
     // Pass the docking manager to the plugin-manager
     PluginManager::Get()->SetDockingManager(&m_mgr);
 
-    long value = EditorConfigST::Get()->GetInteger("highlight_word", 0);
+    long value = EditorConfigST::Get()->GetInteger("highlight_word", 1);
     m_highlightWord = (bool)value;
 
     // Initialize the frame helper
@@ -3784,11 +3785,11 @@ void clMainFrame::OnHighlightWordUI(wxUpdateUIEvent& event) { event.Check(m_high
 
 void clMainFrame::OnHighlightWord(wxCommandEvent& event)
 {
-    long highlightWord = EditorConfigST::Get()->GetInteger("highlight_word", 1);
+    m_highlightWord = event.IsChecked();
 
-    // Notify all open editors that word hight is checked
+    // Notify all open editors that word highlight is checked
     wxCommandEvent evtEnable(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT);
-    if(!highlightWord) {
+    if(m_highlightWord) {
         GetMainBook()->HighlightWord(true);
         EditorConfigST::Get()->SetInteger("highlight_word", 1);
         evtEnable.SetInt(1);

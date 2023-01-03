@@ -289,11 +289,11 @@ if(NOT APPLE)
         # just install the missing files
         install(
             FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library/dynamic-library.project
-            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library)
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/templates/projects/dynamic-library)
 
         install(
             FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project
-            DESTINATION ${CL_INSTALL_BIN}/templates/projects/dynamic-library-wx-enabled)
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/templates/projects/dynamic-library-wx-enabled)
     endif()
 
     if(UNIX)

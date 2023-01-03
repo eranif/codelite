@@ -189,14 +189,16 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 /**
  * @brief is the debugger running?
  */
-static bool IsDebuggerRunning()
+namespace
+{
+bool IsDebuggerRunning()
 {
     clDebugEvent eventIsRunning(wxEVT_DBG_IS_RUNNING);
     EventNotifier::Get()->ProcessEvent(eventIsRunning);
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     return (dbgr && dbgr->IsRunning()) || eventIsRunning.IsAnswer();
 }
-
+} // namespace
 //----------------------------------------------------------------
 // Our main frame
 //----------------------------------------------------------------
@@ -805,6 +807,16 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
 
+    Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceTop, this, XRCID("toolbar_top"));
+    Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceLeft, this, XRCID("toolbar_left"));
+    Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceBottom, this, XRCID("toolbar_bottom"));
+    Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceRight, this, XRCID("toolbar_right"));
+
+    Unbind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceTopUI, this, XRCID("toolbar_top"));
+    Unbind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceLeftUI, this, XRCID("toolbar_left"));
+    Unbind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceBottomUI, this, XRCID("toolbar_bottom"));
+    Unbind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceRightUI, this, XRCID("toolbar_right"));
+
     // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
     // on the stack of clMainFrame)
     ManagerST::Get()->GetPerspectiveManager().DisconnectEvents();
@@ -830,16 +842,6 @@ void clMainFrame::Construct()
 
     /// keep the initial background colour
     startupBackgroundColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-
-#if 0
-    // A rather ugly hack here.  GTK V2 insists that F10 should be the
-    // accelerator for the menu bar.  We don't want that.  There is
-    // no sane way to turn this off, but we *can* get the same effect
-    // by setting the "menu bar accelerator" property to the name of a
-    // function key that is apparently legal, but doesn't really exist.
-    // (Or if it does, it certainly isn't a key we use.)
-    gtk_settings_set_string_property(gtk_settings_get_default(), "gtk-menu-bar-accel", "F15", "foo");
-#endif
 
     // Pass the docking manager to the plugin-manager
     PluginManager::Get()->SetDockingManager(&m_mgr);
@@ -917,6 +919,17 @@ void clMainFrame::Construct()
     m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
+
+    Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceTop, this, XRCID("toolbar_top"));
+    Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceLeft, this, XRCID("toolbar_left"));
+    Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceBottom, this, XRCID("toolbar_bottom"));
+    Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceRight, this, XRCID("toolbar_right"));
+
+    Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceTopUI, this, XRCID("toolbar_top"));
+    Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceLeftUI, this, XRCID("toolbar_left"));
+    Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceBottomUI, this, XRCID("toolbar_bottom"));
+    Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceRightUI, this, XRCID("toolbar_right"));
+
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -1461,20 +1474,18 @@ void add_main_toolbar_item(wxToolBar* tb, const wxString& xrcstr, const wxString
 void clMainFrame::DoCreateToolBar(int toolSize)
 {
     //----------------------------------------------
-    // create the standard toolbar
+    // create the toolbars
     //----------------------------------------------
-    long style = wxTB_FLAT | wxTB_NODIVIDER;
-#if defined(__WXMSW__) || defined(__WXGTK__) || defined(__WXMAC__)
-    style |= wxTB_LEFT | wxTB_VERTICAL;
-#endif
+    m_mainToolbarStyle = clConfig::Get().Read("MainToolBarStyle", m_mainToolbarStyle);
 
     // Create the plugins toolbar, emty by default
-    m_pluginsToolbar = new clToolBarGeneric(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_pluginsToolbar =
+        new clToolBarGeneric(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_TOP | wxTB_NODIVIDER | wxTB_FLAT);
 
     // the main tool
     const int ID_TOOLBAR = 500;
     SetToolBar(nullptr);
-    m_mainToolbar = CreateToolBar(style, ID_TOOLBAR);
+    m_mainToolbar = CreateToolBar(m_mainToolbarStyle, ID_TOOLBAR);
 #if defined(__WXMSW__)
     toolSize = 24;
 #elif defined(__WXMAC__)
@@ -6016,3 +6027,49 @@ void clMainFrame::OnSetActivePojectUI(wxUpdateUIEvent& e)
         clWorkspaceManager::Get().IsWorkspaceOpened() && clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported();
     e.Enable(enable);
 }
+
+#define TB_POS_ALL (wxTB_TOP | wxTB_BOTTOM | wxTB_RIGHT | wxTB_LEFT)
+
+void clMainFrame::UpdateMainToolbarOrientation(int newOrientation)
+{
+    // check if we already have this style in the tool bar style
+    bool orientation_already_exists = (m_mainToolbarStyle & newOrientation);
+
+    m_mainToolbarStyle &= ~TB_POS_ALL;
+    m_mainToolbarStyle |= newOrientation;
+    if(!orientation_already_exists) {
+        DoSuggestRestart();
+    }
+
+    // store the new style
+    clConfig::Get().Write("MainToolBarStyle", m_mainToolbarStyle);
+}
+
+void clMainFrame::OnMainToolBarPlaceTop(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    UpdateMainToolbarOrientation(wxTB_TOP);
+}
+
+void clMainFrame::OnMainToolBarPlaceBottom(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    UpdateMainToolbarOrientation(wxTB_BOTTOM);
+}
+
+void clMainFrame::OnMainToolBarPlaceLeft(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    UpdateMainToolbarOrientation(wxTB_LEFT);
+}
+
+void clMainFrame::OnMainToolBarPlaceRight(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    UpdateMainToolbarOrientation(wxTB_RIGHT);
+}
+
+void clMainFrame::OnMainToolBarPlaceTopUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_TOP); }
+void clMainFrame::OnMainToolBarPlaceBottomUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_BOTTOM); }
+void clMainFrame::OnMainToolBarPlaceLeftUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_LEFT); }
+void clMainFrame::OnMainToolBarPlaceRightUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_RIGHT); }

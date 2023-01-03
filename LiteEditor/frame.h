@@ -145,6 +145,8 @@ class clMainFrame : public wxFrame
 #if !wxUSE_NATIVE_CAPTION
     clCaptionBar* m_captionBar = nullptr;
 #endif
+    // the main tool default style
+    int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER | wxTB_LEFT;
 
 public:
     static bool m_initCompleted;
@@ -158,6 +160,7 @@ protected:
     void DoShowMenuBar(bool show);
     void OnSysColoursChanged(clCommandEvent& event);
     void RestoreFrameSizeAndPosition();
+    void UpdateMainToolbarOrientation(int newOrientation);
 
 public:
     void Raise() override;
@@ -655,6 +658,15 @@ protected:
     // Clang
     void OnPchCacheStarted(wxCommandEvent& e);
     void OnPchCacheEnded(wxCommandEvent& e);
+
+    void OnMainToolBarPlaceTop(wxCommandEvent& event);
+    void OnMainToolBarPlaceTopUI(wxUpdateUIEvent& event);
+    void OnMainToolBarPlaceBottom(wxCommandEvent& event);
+    void OnMainToolBarPlaceBottomUI(wxUpdateUIEvent& event);
+    void OnMainToolBarPlaceLeft(wxCommandEvent& event);
+    void OnMainToolBarPlaceLeftUI(wxUpdateUIEvent& event);
+    void OnMainToolBarPlaceRight(wxCommandEvent& event);
+    void OnMainToolBarPlaceRightUI(wxUpdateUIEvent& event);
 
     // Misc
     void OnActivateEditor(wxCommandEvent& e);

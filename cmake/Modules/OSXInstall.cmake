@@ -169,23 +169,6 @@ macro(CL_INSTALL_PLUGIN _target_)
 endmacro()
 
 #------------------------------------
-# install a library (shared object, but not a plugin)
-#------------------------------------
-macro(CL_INSTALL_LIBRARY _target_)
-    if(APPLE)
-        set(__LIBNAME ${_target_})
-        string(FIND ${__LIBNAME} "lib" LIBPREFIX_INDEX)
-        if(LIBPREFIX_INDEX GREATER -1)
-            set(__LIBNAME "lib${LIBPREFIX_INDEX}")
-        endif()
-        install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/${__LIBNAME})
-    else()
-        install(TARGETS ${_target_} DESTINATION ${PLUGINS_DIR})
-    endif()
-endmacro()
-
-#------------------------------------
 # install an executable
 #------------------------------------
 macro(CL_INSTALL_EXECUTABLE _target_)

@@ -76,13 +76,4 @@ endif(WITH_MYSQL)
 add_library(databaselayersqlite SHARED ${SRCS} ${MYSQL_SRCS})
 target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${SQLite3_LIBRARIES})
 
-if(APPLE)
-    install(TARGETS databaselayersqlite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-    cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/libdatabaselayersqlite.dylib)
-else()
-    install(
-        TARGETS databaselayersqlite
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-endif()
+codelite_install_library_target(databaselayersqlite)

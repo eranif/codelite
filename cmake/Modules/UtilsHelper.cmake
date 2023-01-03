@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+include(OSXInstall)
+
 #------------------------------------
 # install script
 #------------------------------------
@@ -110,6 +114,22 @@ macro(codelite_add_pch _TARGET_)
     PRIVATE
         ${PCH_HEADERS_LIST}
     )
+endmacro()
+
+#------------------------------------
+# install a library (shared object, but not a plugin)
+#------------------------------------
+macro(codelite_install_library_target TARGET)
+    if(APPLE)
+        install(TARGETS ${TARGET} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
+        cl_install_name_tool_std("${CL_INSTALL_BIN}/lib${TARGET}.dylib")
+    elseif(MINGW)
+        # under windows (MinGW) we install libraries under the "bin" folder
+        install(TARGETS ${TARGET} DESTINATION "${CL_INSTALL_BIN}")
+    else()
+        # Under linux, we install libraries in the plugins directory
+        install(TARGETS ${TARGET} DESTINATION ${PLUGINS_DIR})
+    endif()
 endmacro()
 
 # Determine if we are running on Windows using MSYS2 shell or using MinGW tools (but not using MSYS)

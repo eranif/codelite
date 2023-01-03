@@ -37,9 +37,17 @@ target_link_libraries(${PLUGIN_NAME}
                       libcodelite
                       plugin
                       dapcxx)
+
 # Installation destination
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
-install(TARGETS dapcxx DESTINATION ${CL_INSTALL_BIN})
+
+if(MINGW)
+    install(TARGETS dapcxx DESTINATION ${CL_INSTALL_BIN})
+endif()
+
+if(UNIX AND NOT APPLE)
+    install(TARGETS dapcxx DESTINATION ${PLUGINS_DIR})
+endif()
 
 if(APPLE)
     CL_INSTALL_NAME_TOOL_STD(${CL_INSTALL_BIN}/libdapcxx.dylib)

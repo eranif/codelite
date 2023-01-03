@@ -53,7 +53,7 @@ if(UNIX AND NOT APPLE)
         # user did not pass -DCMAKE_INSTALL_PREFIX and this is the first time
         # we are executing cmake, the default is set to /usr/local
         # and we do not want that..
-        set(CMAKE_INSTALL_PREFIX "/usr" CACHE ON "Insall prefix" FORCE)
+        set(CMAKE_INSTALL_PREFIX "/usr" CACHE ON "Install prefix" FORCE)
     endif()
 endif()
 

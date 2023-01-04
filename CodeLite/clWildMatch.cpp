@@ -8,10 +8,8 @@ namespace
 {
 void split_mask(const wxString& maskString, std::vector<_Mask>& includeMask, std::vector<_Mask>& excludeMask)
 {
-    // wxString lcMask = maskString.Lower();
     wxArrayString masks = ::wxStringTokenize(maskString, ";,", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < masks.size(); ++i) {
-        wxString& mask = masks.Item(i);
+    for(wxString& mask : masks) {
         mask.Trim().Trim(false);
         // exclude mask starts with "!" or "-"
         if((mask[0] == '!') || (mask[0] == '-')) {
@@ -54,22 +52,30 @@ bool clFileExtensionMatcher::matches(const wxString& filename) const
 
 // clPathExcluder
 
+clPathExcluder::clPathExcluder(const wxArrayString& patterns)
+{
+    m_exclude_mask.reserve(patterns.size());
+    for(const auto& pattern : patterns) {
+        m_exclude_mask.push_back({ pattern, ::wxIsWild(pattern) });
+    }
+}
+
 clPathExcluder::clPathExcluder(const wxString& mask)
     : m_mask(mask)
 {
-    std::vector<_Mask> dummy;
-    split_mask(m_mask, m_exclude_mask, dummy);
+    std::vector<_Mask> includeMask;
+    split_mask(m_mask, includeMask, m_exclude_mask);
 }
 
 clPathExcluder::~clPathExcluder() {}
 
 bool clPathExcluder::is_exclude_path(const wxString& str) const
 {
-    if(m_mask.empty()) {
+    if(m_exclude_mask.empty()) {
         return false;
     }
 
-    for(const _Mask& d : m_exclude_mask) {
+    for(const auto& d : m_exclude_mask) {
         if((!d.is_wild && str.Contains(d.pattern)) ||    // use Contains match
            (d.is_wild && ::wxMatchWild(d.pattern, str))) // pattern matching
         {

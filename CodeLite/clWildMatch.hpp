@@ -38,6 +38,11 @@ class WXDLLIMPEXP_CL clPathExcluder
 
 public:
     clPathExcluder(const wxString& mask);
+    /**
+     * @brief construct an excluder from a a list of exclude pattern
+     */
+    clPathExcluder(const wxArrayString& patterns);
+
     ~clPathExcluder();
     bool is_exclude_path(const wxString& path) const;
 };

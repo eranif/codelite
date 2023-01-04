@@ -165,7 +165,7 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
     sw.Start();
 
     clFileExtensionMatcher ext_matcher{ data->GetExtensions() };
-    clPathExcluder path_excluder{ wxJoin(data->GetExcludePatterns(), ';') };
+    clPathExcluder path_excluder{ data->GetExcludePatterns() };
 
     wxStringSet_t visited_dirs;
     for(size_t i = 0; i < rootDirs.size(); ++i) {
@@ -183,7 +183,11 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
         // do not traverse into excluded directories or directories that
         // we already visited
         auto on_folder = [&](const wxString& fullpath) -> bool {
-            return visited_dirs.insert(fullpath).second && !path_excluder.is_exclude_path(fullpath);
+            return
+                // first time visiting this directory
+                visited_dirs.insert(fullpath).second &&
+                // is not excluded
+                !path_excluder.is_exclude_path(fullpath);
         };
 
         // make sure it's really a dir (not a fifo, etc.)

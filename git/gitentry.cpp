@@ -25,8 +25,10 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "GitLocator.h"
 #include "gitentry.h"
+
+#include "GitLocator.h"
+
 #include <wx/ffile.h>
 #include <wx/fileconf.h>
 #include <wx/msgdlg.h>
@@ -373,7 +375,7 @@ wxString GitEntry::GetProjectUserEnteredRepoPath(const wxString& nameHash)
     wxString repoPath;
     wxString projectName;
     wxString workspaceName = nameHash.BeforeFirst('-', &projectName);
-    
+
     if(workspaceName.empty() || projectName.empty())
         return "";
 
@@ -449,7 +451,10 @@ void GitCommandsEntries::ToJSON(JSONItem& arr) const
     arr.arrayAppend(obj);
 }
 
-const wxString GitWorkspace::GetProjectUserEnteredRepoPath(const wxString& projectName) { return m_userEnteredRepoPath[projectName]; }
+const wxString GitWorkspace::GetProjectUserEnteredRepoPath(const wxString& projectName)
+{
+    return m_userEnteredRepoPath[projectName];
+}
 
 void GitWorkspace::SetProjectUserEnteredRepoPath(const wxString& projectName, const wxString& userEnteredRepoPath)
 {

@@ -23,13 +23,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "gitSettingsDlg.h"
+
 #include "cl_config.h"
 #include "event_notifier.h"
-#include "gitSettingsDlg.h"
 #include "gitentry.h"
 #include "windowattrmanager.h"
 
-GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, const wxString& userEnteredRepoPath, const wxString& projectNameHash)
+GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, const wxString& userEnteredRepoPath,
+                               const wxString& projectNameHash)
     : GitSettingsDlgBase(parent)
     , m_userEnteredRepoPath(userEnteredRepoPath)
     , m_projectNameHash(projectNameHash)
@@ -43,7 +45,7 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, 
 
     m_checkBoxLog->SetValue(data.GetFlags() & GitEntry::Git_Verbose_Log);
     m_checkBoxTerminal->SetValue(data.GetFlags() & GitEntry::Git_Show_Terminal);
-    m_checkBoxShowBlameInStatusBar->SetValue(!(data.GetFlags() & GitEntry::Git_Hide_Blame_Status_Bar));
+    m_checkBoxShowBlameInStatusBar->SetValue(data.IsShowBlameInfoInStatusBar());
     GitEntry::GitProperties props = GitEntry::ReadGitProperties(localRepoPath);
 
     m_textCtrlGlobalEmail->ChangeValue(props.global_email);
@@ -71,8 +73,8 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     if(repopath.Right(5) == "/.git") {
         repopath.RemoveLast(5);
     }
-    
-    if (!m_projectNameHash.empty() && (repopath != m_userEnteredRepoPath) ){
+
+    if(!m_projectNameHash.empty() && (repopath != m_userEnteredRepoPath)) {
         m_userEnteredRepoPath = repopath;
         data.SetProjectUserEnteredRepoPath(repopath, m_projectNameHash);
         data.Save();
@@ -93,8 +95,8 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     if(m_checkBoxTerminal->IsChecked())
         flags |= GitEntry::Git_Show_Terminal;
 
-    if(!m_checkBoxShowBlameInStatusBar->IsChecked())
-        flags |= GitEntry::Git_Hide_Blame_Status_Bar;
+    if(m_checkBoxShowBlameInStatusBar->IsChecked())
+        flags |= GitEntry::Git_Show_Commit_Info;
 
     data.SetFlags(flags);
     data.Save();

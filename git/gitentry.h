@@ -35,6 +35,7 @@
 
 #include "cl_config.h"
 #include "wxStringHash.h"
+
 #include <map>
 #include <vector>
 #include <wx/colour.h>
@@ -159,7 +160,7 @@ public:
         Git_Verbose_Log = (1 << 0),
         Git_Show_Terminal = (1 << 1),
         Git_Colour_Tree_View = (1 << 2),
-        Git_Hide_Blame_Status_Bar = (1 << 3),
+        Git_Show_Commit_Info = (1 << 4),
     };
 
     struct GitProperties {
@@ -254,6 +255,6 @@ public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
 
-    bool IsShowBlameInfoInStatusBar() const { return !(m_flags & Git_Hide_Blame_Status_Bar); }
+    bool IsShowBlameInfoInStatusBar() const { return m_flags & Git_Show_Commit_Info; }
 };
 #endif

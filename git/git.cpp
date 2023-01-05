@@ -2797,7 +2797,7 @@ void GitPlugin::OnEditorChanged(wxCommandEvent& event)
 
 void GitPlugin::DoLoadBlameInfo(bool clearCache)
 {
-    if(m_configFlags & GitEntry::Git_Hide_Blame_Status_Bar)
+    if(!(m_configFlags & GitEntry::Git_Show_Commit_Info))
         return;
 
     if(!IsGitEnabled()) {
@@ -2854,7 +2854,7 @@ void GitPlugin::DoUpdateBlameInfo(const wxString& info, const wxString& fullpath
 void GitPlugin::OnUpdateNavBar(clCodeCompletionEvent& event)
 {
     event.Skip();
-    if(m_configFlags & GitEntry::Git_Hide_Blame_Status_Bar) {
+    if(!(m_configFlags & GitEntry::Git_Show_Commit_Info)) {
         return;
     }
 

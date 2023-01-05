@@ -79,8 +79,23 @@ void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
     wxPostEvent(destination, event);
 }
 
+namespace
+{
+wxBorder get_border_simple_theme_aware_bit()
+{
+#ifdef __WXMAC__
+    return wxBORDER_SIMPLE;
+#elif defined(__WXGTK__)
+    return wxBORDER_STATIC;
+#else
+    return clSystemSettings::Get().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#endif
+}
+} // namespace
+
 clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
-    : QuickFindBarBase(parent, id)
+    : QuickFindBarBase(parent, id, wxDefaultPosition, wxDefaultSize,
+                       wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit())
     , m_sci(NULL)
     , m_lastTextPtr(NULL)
     , m_eventsConnected(false)
@@ -183,7 +198,7 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
     // Bind(wxEVT_PAINT, &clPluginsFindBar::OnPaint, this);
-    Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
+    // Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
     GetSizer()->Fit(this);
     Layout();
 }
@@ -1242,11 +1257,6 @@ void clPluginsFindBar::OnPaint(wxPaintEvent& e)
 bool clPluginsFindBar::HasFocus() const
 {
     wxWindow* win = wxWindow::FindFocus();
-    return win == m_textCtrlFind
-        || win == m_buttonFind
-        || win == m_buttonFindPrev
-        || win == m_buttonFindAll
-        || win == m_textCtrlReplace
-        || win == m_buttonReplace
-        || win == m_buttonReplaceAll;
+    return win == m_textCtrlFind || win == m_buttonFind || win == m_buttonFindPrev || win == m_buttonFindAll ||
+           win == m_textCtrlReplace || win == m_buttonReplace || win == m_buttonReplaceAll;
 }

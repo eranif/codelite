@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxCrafteryhjh4ZInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
@@ -148,7 +160,7 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent, long 
     this->SetSizer(boxSizer60);
 
     m_panel71 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                            wxTAB_TRAVERSAL | wxBORDER_SIMPLE);
+                            wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
 
     boxSizer60->Add(m_panel71, 1, wxEXPAND, WXC_FROM_DIP(5));
 

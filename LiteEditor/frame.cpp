@@ -1313,7 +1313,7 @@ void clMainFrame::CreateGUIControls()
     container->GetSizer()->Add(m_infoBar, 0, wxEXPAND);
     QuickFindBar* findbar = new QuickFindBar(container);
     findbar->Hide();
-    container->GetSizer()->Add(findbar, 0, wxEXPAND);
+    container->GetSizer()->Add(findbar, 0, wxEXPAND | wxALL, 2);
     container->GetSizer()->Fit(container);
     m_mainBook->SetFindBar(findbar);
     m_mainBook->SetEditorBar(navbar);

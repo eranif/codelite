@@ -94,9 +94,21 @@ void CenterLine(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
     clEditor::CenterLinePreserveSelection(ctrl, line);
 }
 
+wxBorder get_border_simple_theme_aware_bit()
+{
+#ifdef __WXMAC__
+    return wxBORDER_SIMPLE;
+#elif defined(__WXGTK__)
+    return wxBORDER_STATIC;
+#else
+    return clSystemSettings::Get().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#endif
+}
 } // namespace
+
 QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
-    : QuickFindBarBase(parent, id)
+    : QuickFindBarBase(parent, id, wxDefaultPosition, wxDefaultSize,
+                       wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit())
     , m_sci(NULL)
     , m_lastTextPtr(NULL)
     , m_eventsConnected(false)
@@ -195,7 +207,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
     // Bind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
-    Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
+    // Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
     GetSizer()->Fit(this);
     Layout();
 }

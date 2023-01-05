@@ -54,7 +54,7 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     // Set a find control for this editor
     m_findBar = new QuickFindBar(m_mainPanel);
     m_findBar->SetEditor(editor);
-    m_mainPanel->GetSizer()->Add(m_findBar, 0, wxEXPAND | wxALL, 0);
+    m_mainPanel->GetSizer()->Add(m_findBar, 0, wxEXPAND | wxALL, 2);
     m_findBar->Hide();
     m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
 

@@ -288,6 +288,11 @@ public:
 
     typedef std::vector<clEditor*> Vec_t;
 
+    /**
+     * @brief return the last visible line on screen, taking folding into consideration
+     */
+    int GetLastVisibleLine() const;
+
     IManager* GetManager() { return m_mgr; }
 
     /**

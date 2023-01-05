@@ -4276,7 +4276,31 @@ void clEditor::OnDbgCustomWatch(wxCommandEvent& event)
     }
 }
 
-void clEditor::UpdateColours() { Colourise(0, wxSTC_INVALID_POSITION); }
+int clEditor::GetLastVisibleLine() const
+{
+    int max_lines = LinesOnScreen();
+    int first_line = GetFirstVisibleLine();
+    int end_line = first_line;
+    int last_line = GetLineCount();
+
+    int lines_collected = 0;
+    for(int i = first_line; i < last_line && lines_collected < max_lines; ++i) {
+        if(GetLineVisible(i)) {
+            // the line is visible - collect it
+            ++lines_collected;
+            end_line = i;
+        }
+    }
+    return end_line;
+}
+
+void clEditor::UpdateColours()
+{
+    // collect all the visible lines that can fit into the screen
+    int start_pos = PositionFromLine(GetFirstVisibleLine());
+    int end_pos = PositionFromLine(GetLastVisibleLine());
+    Colourise(start_pos, end_pos);
+}
 
 int clEditor::SafeGetChar(int pos)
 {
@@ -6173,7 +6197,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     m_modifiedLines.reserve(GetLineCount());
     std::fill(m_modifiedLines.begin(), m_modifiedLines.end(), LINE_NONE);
 
-    Colourise(0, wxNOT_FOUND);
+    UpdateColours();
 
     m_modifyTime = GetFileLastModifiedTime();
     SetSavePoint();
@@ -6421,13 +6445,10 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
             keywords_class = 1;
             keywords_variables = 3;
             break;
-
-#if wxCHECK_VERSION(3, 1, 2)
         case wxSTC_LEX_RUST:
             keywords_class = 3;
             keywords_variables = 4;
             break;
-#endif
         case wxSTC_LEX_PYTHON:
             keywords_variables = 1;
             break;

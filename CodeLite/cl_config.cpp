@@ -252,7 +252,7 @@ wxStringMap_t clConfig::MergeStringMaps(const wxStringMap_t& map1, const wxStrin
 void clConfig::Save()
 {
     if(m_root) {
-        clDEBUG1() << "Config file:" << m_filename << "saved!" << endl;
+        LOG_IF_TRACE { clDEBUG1() << "Config file:" << m_filename << "saved!" << endl; }
         m_root->save(m_filename);
     }
 }

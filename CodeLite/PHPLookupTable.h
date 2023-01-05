@@ -36,6 +36,7 @@
 #include "fileutils.h"
 #include "smart_ptr.h"
 #include "wx/wxsqlite3.h"
+
 #include <set>
 #include <unordered_set>
 #include <vector>
@@ -287,12 +288,12 @@ public:
     template <typename GoindDownFunc>
     void RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode, GoindDownFunc pFuncGoingDown,
                                  bool parseFuncBodies = true);
-    
+
     /**
      * @brief parse folder
      */
     void ParseFolder(const wxString& folder, const wxString& filemask, eUpdateMode updateMode);
-    
+
     /**
      * @brief delete all entries belonged to filename.
      * @param filename the file name
@@ -331,7 +332,9 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
         m_allClasses.clear(); // clear the cache
         m_db.Begin();
         for(size_t i = 0; i < files.GetCount(); ++i) {
-            if(pFuncGoingDown()) { break; }
+            if(pFuncGoingDown()) {
+                break;
+            }
             {
                 clParseEvent event(wxPHP_PARSE_PROGRESS);
                 event.SetTotalFiles(files.GetCount());
@@ -352,15 +355,21 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
                 } else {
                     time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
                     wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
-                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) { reParseNeeded = false; }
+                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
+                        reParseNeeded = false;
+                    }
                 }
             }
 
             // Ensure that the file exists
-            if(!fnFile.Exists()) { reParseNeeded = false; }
+            if(!fnFile.Exists()) {
+                reParseNeeded = false;
+            }
 
             // Parse only valid PHP files
-            if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) { reParseNeeded = false; }
+            if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) {
+                reParseNeeded = false;
+            }
 
             if(reParseNeeded) {
                 // For performance reaons, load the file into memory and then parse it
@@ -379,7 +388,11 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
         }
         m_db.Commit();
         long elapsedMs = sw.Time();
-        clDEBUG1() << _("PHP: parsed ") << files.GetCount() << " in " << elapsedMs << " milliseconds" << clEndl;
+
+        LOG_IF_TRACE
+        {
+            clDEBUG1() << _("PHP: parsed ") << files.GetCount() << " in " << elapsedMs << " milliseconds" << clEndl;
+        }
 
         {
             clParseEvent event(wxPHP_PARSE_ENDED);

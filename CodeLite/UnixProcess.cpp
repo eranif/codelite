@@ -136,7 +136,7 @@ bool UnixProcess::Write(int fd, const std::string& message, std::atomic_bool& sh
             tmp.erase(0, bytes);
         }
     }
-    clDEBUG1() << "Wrote message of size:" << message.length() << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Wrote message of size:" << message.length() << endl; }
     return tmp.empty();
 }
 

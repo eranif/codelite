@@ -1456,7 +1456,7 @@ void PHPLookupTable::ParseFolder(const wxString& folder, const wxString& filemas
                 clWARNING() << "PHP: Failed to read file:" << fnFile << "for parsing";
                 return;
             }
-            clDEBUG1() << "Parsing PHP file:" << fnFile;
+            LOG_IF_TRACE { clDEBUG1() << "Parsing PHP file:" << fnFile; }
             PHPSourceFile sourceFile(content, this);
             sourceFile.SetFilename(fnFile);
             sourceFile.SetParseFunctionBody(true);

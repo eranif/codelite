@@ -253,11 +253,14 @@ bool do_write(int fd, const wxMemoryBuffer& buffer)
 
     char* pdata = (char*)buffer.GetData();
     std::string str(pdata, bytes_left);
-    clDEBUG1() << "do_write() buffer:" << str << endl;
-    clDEBUG1() << "do_write() length:" << str.length() << endl;
+    LOG_IF_TRACE
+    {
+        clDEBUG1() << "do_write() buffer:" << str << endl;
+        clDEBUG1() << "do_write() length:" << str.length() << endl;
+    }
     while(bytes_left) {
         int bytes_sent = ::write(fd, (const char*)pdata, bytes_left);
-        clDEBUG1() << "::do_write() completed. number of bytes sent:" << bytes_sent << endl;
+        LOG_IF_TRACE { clDEBUG1() << "::do_write() completed. number of bytes sent:" << bytes_sent << endl; }
         if(bytes_sent <= 0) {
             return false;
         }
@@ -453,4 +456,4 @@ void UnixProcessImpl::Detach()
 
 void UnixProcessImpl::Signal(wxSignal sig) { wxKill(GetPid(), sig, NULL, wxKILL_CHILDREN); }
 
-#endif //#if defined(__WXMAC )||defined(__WXGTK__)
+#endif // #if defined(__WXMAC )||defined(__WXGTK__)

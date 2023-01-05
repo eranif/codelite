@@ -115,7 +115,7 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
 
 void NotebookNavigationDlg::CloseDialog()
 {
-    clDEBUG1() << "NotebookNavigationDlg::CloseDialog" << endl;
+    LOG_IF_TRACE { clDEBUG1() << "NotebookNavigationDlg::CloseDialog" << endl; }
     wxDataViewItem selection = m_dvListCtrl->GetSelection();
     if(selection.IsOk()) {
         TabData* d = (TabData*)m_dvListCtrl->GetItemData(selection);
@@ -179,7 +179,7 @@ void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
 void NotebookNavigationDlg::OnItemActivated(wxDataViewEvent& event)
 {
     event.Skip();
-    clDEBUG1() << "NotebookNavigationDlg::OnItemActivated" << endl;
+    LOG_IF_TRACE { clDEBUG1() << "NotebookNavigationDlg::OnItemActivated" << endl; }
     CloseDialog();
 }
 

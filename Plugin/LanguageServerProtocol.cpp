@@ -380,7 +380,7 @@ void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const wxString& fi
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
-        clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
+        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
 
         // send a semantic request
         return;
@@ -400,7 +400,7 @@ void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const wxString& fi
 void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
 {
     if(m_filesSent.count(filename) == 0) {
-        clDEBUG1() << GetLogPrefix() << "LanguageServerProtocol::FileClosed(): file" << filename << "is not opened";
+        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "LanguageServerProtocol::FileClosed(): file" << filename << "is not opened"; }
         return;
     }
 
@@ -415,7 +415,7 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const wxString& 
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
     if(!force_reparse && !IsFileChangedSinceLastParse(filename, fileContent)) {
-        clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
+        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
 
         // always send a semantic request
         // SendSemanticTokensRequest(editor);
@@ -491,7 +491,7 @@ wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "["
 
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
-    clDEBUG1() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl;
+    LOG_IF_TRACE { clDEBUG1() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl; }
     if(!IsInitialized()) {
         clDEBUG() << "OpenEditor: server is still not initialized. server:" << GetName()
                   << ", file:" << GetEditorFilePath(editor) << endl;
@@ -502,11 +502,11 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         wxString fileContent = editor->GetEditorText();
 
         if(m_filesSent.count(GetEditorFilePath(editor))) {
-            clDEBUG1() << "OpenEditor->SendChangeRequest called for:" << GetEditorFilePath(editor);
+            LOG_IF_TRACE { clDEBUG1() << "OpenEditor->SendChangeRequest called for:" << GetEditorFilePath(editor); }
             SendChangeRequest(editor, fileContent);
         } else {
             // If we are about to load a header file, also pass clangd the implementation(s) file
-            clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor);
+            LOG_IF_TRACE { clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor); }
             SendOpenRequest(editor, fileContent, GetLanguageId(editor));
         }
     }
@@ -692,7 +692,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
         if(!json) {
-            clDEBUG1() << "Unable to read JSON payload" << endl;
+            LOG_IF_TRACE { clDEBUG1() << "Unable to read JSON payload" << endl; }
             break;
         }
 
@@ -700,7 +700,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
         // check the message type
         wxString message_method = json_item["method"].toString();
         // clDEBUG1() << "-- LSP:" << json_item.format(false) << endl;
-        clDEBUG1() << "-- LSP: Message Method is:" << message_method << endl;
+        LOG_IF_TRACE { clDEBUG1() << "-- LSP: Message Method is:" << message_method << endl; }
 
         if(message_method == "window/logMessage" || message_method == "window/showMessage") {
             // log this message
@@ -794,7 +794,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
 {
     event.Skip();
 
-    clDEBUG1() << "LanguageServerProtocol::OnQuickOutline called" << endl;
+    LOG_IF_TRACE { clDEBUG1() << "LanguageServerProtocol::OnQuickOutline called" << endl; }
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
@@ -824,7 +824,7 @@ void LanguageServerProtocol::UpdateFileSent(const wxString& filename, const wxSt
 {
     wxString checksum = wxMD5::GetDigest(fileContent);
     m_filesSent.erase(filename);
-    clDEBUG1() << "Caching file:" << filename << "with checksum:" << checksum << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Caching file:" << filename << "with checksum:" << checksum << endl; }
     m_filesSent.insert({ filename, checksum });
 }
 
@@ -927,7 +927,7 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
 void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)
 {
     if(msg_ptr && msg_ptr->As<LSP::Request>()) {
-        clDEBUG1() << GetLogPrefix() << "received a response";
+        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "received a response"; }
         LSP::Request* preq = msg_ptr->As<LSP::Request>();
         if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
             clDEBUG1() << "Received a response for completion message ID#" << preq->GetId()
@@ -940,7 +940,7 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
 
     } else if(response.IsPushDiagnostics()) {
         // Get the URI
-        clDEBUG1() << GetLogPrefix() << "Received diagnostic message";
+        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "Received diagnostic message"; }
         wxString fn = FileUtils::FilePathFromURI(response.GetDiagnosticsUri());
 
         // Don't show this message on macOS as it appears in the middle of the screen...

@@ -253,7 +253,7 @@ wxString BuildTab::WrapLineInColour(const wxString& line, eAsciiColours colour, 
 
 void BuildTab::OnLineActivated(wxDataViewEvent& e)
 {
-    clDEBUG1() << "Build line double clicked" << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Build line double clicked" << endl; }
     auto cd = reinterpret_cast<LineClientData*>(m_view->GetItemData(e.GetItem()));
     CHECK_PTR_RET(cd);
 

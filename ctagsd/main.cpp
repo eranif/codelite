@@ -86,7 +86,7 @@ int main(int argc, char** argv)
             auto json = msg->toElement();
             wxString method = json["method"].toString();
             if(function_table.count(method) == 0) {
-                clDEBUG1() << "Received unsupported method:" << method << endl;
+                LOG_IF_TRACE { clDEBUG1() << "Received unsupported method:" << method << endl; }
                 protocol_handler.on_unsupported_message(move(msg), channel);
             } else {
                 auto& cb = function_table[method];

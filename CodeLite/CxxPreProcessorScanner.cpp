@@ -92,7 +92,7 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
                     clDEBUG() << "Exception caught:" << e.message << endl;
                 }
                 // make sure we always delete the scanner
-                clDEBUG1() << "<== Resuming parser on file:" << m_filename << clEndl;
+                LOG_IF_TRACE { clDEBUG1() << "<== Resuming parser on file:" << m_filename << clEndl; }
             }
             break;
         }

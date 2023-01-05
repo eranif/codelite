@@ -225,9 +225,9 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 int style_id = sp.GetId();
                 if(sp.IsSubstyle() && IsSubstyleSupported()) {
                     style_id = ctrl->GetSubStylesStart(GetSubStyleBase()) + sp.GetId();
-                    clDEBUG1() << "* Found Substyle" << endl;
-                    clDEBUG1() << "* Setting style:" << style_id << ". Is substyle?" << sp.IsSubstyle() << endl;
-                    clDEBUG1() << "* Parent style:" << sp.GetId() << endl;
+                    LOG_IF_TRACE { clDEBUG1() << "* Found Substyle" << endl; }
+                    LOG_IF_TRACE { clDEBUG1() << "* Setting style:" << style_id << ". Is substyle?" << sp.IsSubstyle() << endl; }
+                    LOG_IF_TRACE { clDEBUG1() << "* Parent style:" << sp.GetId() << endl; }
                 }
 
                 // always set the font
@@ -501,7 +501,7 @@ void LexerConf::ApplyWordSet(wxStyledTextCtrl* ctrl, eWordSetIndex index, const 
 
         // index is 0 based, substyles are 1 based
         int substyle_index = ctrl->GetSubStylesStart(GetSubStyleBase()) + word_set.index;
-        clDEBUG1() << "Substyle calculated index is:" << substyle_index << endl;
+        LOG_IF_TRACE { clDEBUG1() << "Substyle calculated index is:" << substyle_index << endl; }
         ctrl->SetIdentifiers(substyle_index, keywords);
     } else {
         // default

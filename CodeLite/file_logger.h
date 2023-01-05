@@ -268,9 +268,17 @@ template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
 // New API
 #define clDEBUG() FileLogger(FileLogger::Dbg) << FileLogger::Prefix(FileLogger::Dbg)
 #define clDEBUG1() FileLogger(FileLogger::Developer) << FileLogger::Prefix(FileLogger::Developer)
+
+// alias
+#define clTRACE() clDEBUG1()
+
 #define clERROR() FileLogger(FileLogger::Error) << FileLogger::Prefix(FileLogger::Error)
 #define clWARNING() FileLogger(FileLogger::Warning) << FileLogger::Prefix(FileLogger::Warning)
 #define clSYSTEM() FileLogger(FileLogger::System) << FileLogger::Prefix(FileLogger::System)
+
+#define LOG_IF_DEBUG if(FileLogger::CanLog(FileLogger::Dbg))
+#define LOG_IF_TRACE if(FileLogger::CanLog(FileLogger::Developer))
+#define LOG_IF_WARN if(FileLogger::CanLog(FileLogger::Developer))
 
 // A replacement for wxLogMessage
 #define clLogMessage(msg) clDEBUG() << msg

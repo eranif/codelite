@@ -100,7 +100,7 @@ void csManager::OnSearchThreadEneded(wxCommandEvent& event)
     wxDELETE(summary);
     wxString output = m_findInFilesMatches->toElement().format(GetConfig().IsPrettyJSON());
     std::cout << output << std::endl;
-    clDEBUG1() << output;
+    LOG_IF_TRACE { clDEBUG1() << output; }
     clDEBUG() << "Search completed";
     wxExit();
 }

@@ -1,8 +1,10 @@
 #include "clEditorConfig.h"
-#include <wx/tokenzr.h>
-#include "fileutils.h"
+
 #include "file_logger.h"
+#include "fileutils.h"
+
 #include <algorithm>
+#include <wx/tokenzr.h>
 
 clEditorConfig::clEditorConfig()
     : m_rootFileFound(false)
@@ -24,7 +26,8 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorC
         editorConfigFile.RemoveLastDir();
     }
 
-    if(!foundFile) return false;
+    if(!foundFile)
+        return false;
 
     wxString content;
     if(!FileUtils::ReadFileContent(editorConfigFile, content)) {
@@ -45,7 +48,8 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorC
 
         strLine.Trim().Trim(false);
 
-        if(strLine.IsEmpty()) continue;
+        if(strLine.IsEmpty())
+            continue;
 
         // Process the line
         if(strLine.StartsWith("[") && strLine.EndsWith("]")) {
@@ -59,7 +63,6 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorC
             ProcessDirective(strLine);
         }
     }
-    clDEBUG1() << "Using .editorconfig file:" << editorConfigFile << clEndl;
     return true;
 }
 
@@ -298,7 +301,8 @@ bool clEditorConfig::ReadUntil(wxChar delim, wxString& strLine, wxString& output
 bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfigSection& section)
 {
     wxFileName editorConfigFile;
-    if(!LoadForFile(filename, editorConfigFile)) return false;
+    if(!LoadForFile(filename, editorConfigFile))
+        return false;
     section = clEditorConfigSection();
     section.filename = editorConfigFile;
     bool match_found = false;
@@ -347,26 +351,29 @@ bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfi
 
 void clEditorConfigSection::PrintToLog()
 {
-    clDEBUG1() << ".editorconfig (" << filename << ") :" << clEndl;
-    if(IsCharsetSet()) {
-        clDEBUG1() << "charset:" << GetCharset() << clEndl;
-    }
-    if(IsIndentSizeSet()) {
-        clDEBUG1() << "indent_size:" << GetIndentSize() << clEndl;
-    }
-    if(IsIndentStyleSet()) {
-        clDEBUG1() << "indent_style:" << GetIndentStyle() << clEndl;
-    }
-    if(IsInsertFinalNewlineSet()) {
-        clDEBUG1() << "insert_final_newline:" << IsInsertFinalNewline() << clEndl;
-    }
-    if(IsSetEndOfLineSet()) {
-        clDEBUG1() << "end_of_line:" << GetEndOfLine() << clEndl;
-    }
-    if(IsTabWidthSet()) {
-        clDEBUG1() << "tab_width:" << GetTabWidth() << clEndl;
-    }
-    if(IsTrimTrailingWhitespaceSet()) {
-        clDEBUG1() << "trim_trailing_whitespace:" << IsTrimTrailingWhitespace() << clEndl;
+    LOG_IF_TRACE
+    {
+        clDEBUG1() << ".editorconfig (" << filename << ") :" << clEndl;
+        if(IsCharsetSet()) {
+            clDEBUG1() << "charset:" << GetCharset() << clEndl;
+        }
+        if(IsIndentSizeSet()) {
+            clDEBUG1() << "indent_size:" << GetIndentSize() << clEndl;
+        }
+        if(IsIndentStyleSet()) {
+            clDEBUG1() << "indent_style:" << GetIndentStyle() << clEndl;
+        }
+        if(IsInsertFinalNewlineSet()) {
+            clDEBUG1() << "insert_final_newline:" << IsInsertFinalNewline() << clEndl;
+        }
+        if(IsSetEndOfLineSet()) {
+            clDEBUG1() << "end_of_line:" << GetEndOfLine() << clEndl;
+        }
+        if(IsTabWidthSet()) {
+            clDEBUG1() << "tab_width:" << GetTabWidth() << clEndl;
+        }
+        if(IsTrimTrailingWhitespaceSet()) {
+            clDEBUG1() << "trim_trailing_whitespace:" << IsTrimTrailingWhitespace() << clEndl;
+        }
     }
 }

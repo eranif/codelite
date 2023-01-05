@@ -224,7 +224,7 @@ void NodeDebugger::OnProcessTerminated(clProcessEvent& event)
 
 void NodeDebugger::OnProcessOutput(clProcessEvent& event)
 {
-    clDEBUG1() << event.GetOutput();
+    LOG_IF_TRACE { clDEBUG1() << event.GetOutput(); }
     {
         clDebugEvent e(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE);
         e.SetString(event.GetOutput());

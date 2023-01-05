@@ -1,4 +1,5 @@
 #include "WorkspaceSymbolRequest.hpp"
+
 #include "LSPEvent.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -73,7 +74,7 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
         return;
     }
 
-    clDEBUG1() << result.format() << endl;
+    LOG_IF_TRACE { clDEBUG1() << result.format() << endl; }
     // only SymbolInformation has the `location` property
     // fire an event with all the symbols
     LSPEvent symbols_event{ wxEVT_LSP_WORKSPACE_SYMBOLS };
@@ -86,6 +87,6 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
         symbols.push_back(si);
     }
 
-    clDEBUG1() << symbols_event.GetSymbolsInformation() << endl;
+    LOG_IF_TRACE { clDEBUG1() << symbols_event.GetSymbolsInformation() << endl; }
     EventNotifier::Get()->QueueEvent(symbols_event.Clone());
 }

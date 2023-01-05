@@ -75,13 +75,13 @@ bool SvnCommand::Execute(const wxString& command, const wxString& workingDirecto
 void SvnCommand::OnProcessOutput(clProcessEvent& event)
 {
     m_output.Append(event.GetOutput());
-    clDEBUG1() << "Subversion:" << m_output << clEndl;
+    LOG_IF_TRACE { clDEBUG1() << "Subversion:" << m_output << clEndl; }
 }
 
 void SvnCommand::OnProcessTerminated(clProcessEvent& event)
 {
     if(m_handler) {
-        clDEBUG1() << "Subversion:" << m_output << clEndl;
+        LOG_IF_TRACE { clDEBUG1() << "Subversion:" << m_output << clEndl; }
         if(m_handler->TestLoginRequired(m_output)) {
             // re-issue the last command but this time with login dialog
             m_handler->GetPlugin()->GetConsole()->AppendText(_("Authentication failed. Retrying...\n"));

@@ -221,16 +221,19 @@ void ProtocolHandler::do_parse_chunk(ITagsStoragePtr db, const std::vector<wxStr
                                      const CTagsdSettings& settings)
 {
     std::vector<TagEntryPtr> tags;
-    clDEBUG() << "Parsing chunk (" << chunk_id << ") of" << file_list.size() << "files" << endl;
+    LOG_IF_DEBUG { clDEBUG() << "Parsing chunk (" << chunk_id << ") of" << file_list.size() << "files" << endl; }
     if(CTags::ParseFiles(file_list, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
         clDEBUG() << "0 tags generated. processed:" << file_list.size()
                   << "files. Indexer:" << settings.GetCodeliteIndexer() << endl;
         return;
     }
 
-    clDEBUG1() << "Success" << endl;
-    clDEBUG1() << "Updating symbols database..." << endl;
-    clDEBUG() << "Storing" << tags.size() << "tags" << endl;
+    LOG_IF_TRACE
+    {
+        clDEBUG1() << "Success" << endl;
+        clDEBUG1() << "Updating symbols database..." << endl;
+    }
+    LOG_IF_DEBUG { clDEBUG() << "Storing" << tags.size() << "tags" << endl; }
     db->Begin();
 
     time_t update_time = time(nullptr);
@@ -686,12 +689,15 @@ wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, in
         }
 
         text = helper.truncate_file_to_location(truncated_text, line, character, flag);
-        clDEBUG1() << "Minimized file into:" << endl;
-        clDEBUG1() << text << endl;
+        LOG_IF_TRACE
+        {
+            clDEBUG1() << "Minimized file into:" << endl;
+            clDEBUG1() << text << endl;
+        }
     } else {
         // use the entire file content
         text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character, flag);
-        clDEBUG1() << "Unable to minimize the buffer, using the complete buffer" << endl;
+        LOG_IF_TRACE { clDEBUG1() << "Unable to minimize the buffer, using the complete buffer" << endl; }
     }
     return text;
 }
@@ -735,50 +741,53 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
         clDEBUG() << "File Completion:" << filepath << endl;
         m_completer->get_file_completions(file_name, candidates, suffix);
     } else {
-        clDEBUG() << "  --> minimize_buffer() " << endl;
+        LOG_IF_DEBUG { clDEBUG() << "  --> minimize_buffer() " << endl; }
         wxString minimized_buffer = minimize_buffer(filepath, line, character, full_buffer);
-        clDEBUG() << "  <-- minimize_buffer() " << endl;
-
-        clDEBUG1() << "Success" << endl;
-        clDEBUG1() << "Getting expression..." << endl;
-        clDEBUG() << "  --> helper.get_expression() " << endl;
+        LOG_IF_DEBUG { clDEBUG() << "  <-- minimize_buffer() " << endl; }
+        LOG_IF_TRACE
+        {
+            clDEBUG1() << "Success" << endl;
+            clDEBUG1() << "Getting expression..." << endl;
+        }
+        LOG_IF_DEBUG { clDEBUG() << "  --> helper.get_expression() " << endl; }
         wxString expression = helper.get_expression(minimized_buffer, false, &last_word);
-        clDEBUG() << "  <-- helper.get_expression() " << endl;
-
-        clDEBUG1() << "Success" << endl;
-        clDEBUG() << "resolving expression:" << expression << endl;
-
+        LOG_IF_DEBUG { clDEBUG() << "  <-- helper.get_expression() " << endl; }
+        LOG_IF_TRACE { clDEBUG1() << "Success" << endl; }
+        LOG_IF_DEBUG { clDEBUG() << "resolving expression:" << expression << endl; }
         bool is_trigger_char =
             !expression.empty() && (expression.Last() == '>' || expression.Last() == ':' || expression.Last() == '.');
         bool is_function_calltip = !expression.empty() && expression.Last() == '(';
 
-        clDEBUG() << "  --> update_additional_scopes_for_file() " << endl;
+        LOG_IF_DEBUG { clDEBUG() << "  --> update_additional_scopes_for_file() " << endl; }
         std::vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
-        clDEBUG() << "  -<-- update_additional_scopes_for_file() " << endl;
+        LOG_IF_DEBUG { clDEBUG() << "  -<-- update_additional_scopes_for_file() " << endl; }
 
         if(is_trigger_char) {
             // ----------------------------------
             // code completion
             // ----------------------------------
-            clDEBUG() << "CodeComplete expression:" << expression << endl;
+            LOG_IF_DEBUG { clDEBUG() << "CodeComplete expression:" << expression << endl; }
             CxxRemainder remainder;
 
-            clDEBUG() << "  --> m_completer->set_text() " << endl;
+            LOG_IF_DEBUG { clDEBUG() << "  --> m_completer->set_text() " << endl; }
             m_completer->set_text(minimized_buffer, filepath, line);
-            clDEBUG() << "  <-- m_completer->set_text() " << endl;
+            LOG_IF_DEBUG { clDEBUG() << "  <-- m_completer->set_text() " << endl; }
 
-            clDEBUG() << "  <-- m_completer->code_complete() " << endl;
+            LOG_IF_DEBUG { clDEBUG() << "  <-- m_completer->code_complete() " << endl; }
             TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
-            clDEBUG() << "  <-- m_completer->code_complete() " << endl;
+            LOG_IF_DEBUG { clDEBUG() << "  <-- m_completer->code_complete() " << endl; }
 
             if(resolved) {
-                clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
-                clDEBUG() << "filter:" << remainder.filter << endl;
+                LOG_IF_DEBUG
+                {
+                    clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
+                    clDEBUG() << "filter:" << remainder.filter << endl;
+                }
                 m_completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates,
                                              visible_scopes);
             }
-            clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
-            clDEBUG1() << candidates << endl;
+            LOG_IF_DEBUG { clDEBUG() << "Number of completion entries:" << candidates.size() << endl; }
+            LOG_IF_TRACE { clDEBUG1() << candidates << endl; }
         } else if(is_function_calltip) {
             // TODO:
             // function calltip
@@ -918,7 +927,7 @@ void add_to_types_set(const wxString& name, wxStringSet_t& types, const wxString
 void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     JSONItem json = msg->toElement();
-    clDEBUG1() << json.format() << endl;
+    LOG_IF_TRACE { clDEBUG1() << json.format() << endl; }
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG() << "textDocument/semanticTokens/full: for file" << filepath << endl;
@@ -931,7 +940,7 @@ void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::p
     CTags::ParseLocals(filepath, m_filesOpened[filepath], m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(),
                        tags);
 
-    clDEBUG1() << "File tags:" << tags.size() << endl;
+    LOG_IF_TRACE { clDEBUG1() << "File tags:" << tags.size() << endl; }
     wxStringSet_t locals_set;
     wxStringSet_t types_set;
 
@@ -970,9 +979,9 @@ void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::p
         }
     }
 
-    clDEBUG1() << "The following semantic tokens were found:" << endl;
-    clDEBUG1() << "Locals:" << locals_set << endl;
-    clDEBUG1() << "Types:" << types_set << endl;
+    LOG_IF_TRACE { clDEBUG1() << "The following semantic tokens were found:" << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "Locals:" << locals_set << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "Types:" << types_set << endl; }
 
     const wxString& buffer = m_filesOpened[filepath];
 
@@ -1065,7 +1074,7 @@ void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::p
     clDEBUG() << "Found" << tokens_vec.size() << "semantic tokens" << endl;
     LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
     result.addProperty("data", encoding);
-    clDEBUG1() << response.format() << endl;
+    LOG_IF_TRACE { clDEBUG1() << response.format() << endl; }
     channel->write_reply(response);
 }
 
@@ -1102,7 +1111,7 @@ void ProtocolHandler::on_document_symbol(std::unique_ptr<JSON>&& msg, Channel::p
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
 
-    clDEBUG1() << json.format() << endl;
+    LOG_IF_TRACE { clDEBUG1() << json.format() << endl; }
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG() << "textDocument/documentSymbol: for file" << filepath << endl;
@@ -1149,10 +1158,10 @@ void ProtocolHandler::on_document_signature_help(std::unique_ptr<JSON>&& msg, Ch
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
 
-    clDEBUG1() << json.format() << endl;
+    LOG_IF_TRACE { clDEBUG1() << json.format() << endl; }
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
-    clDEBUG1() << "textDocument/signatureHelp: for file" << filepath << endl;
+    LOG_IF_TRACE { clDEBUG1() << "textDocument/signatureHelp: for file" << filepath << endl; }
 
     if(!ensure_file_content_exists(filepath, channel, id))
         return;
@@ -1228,7 +1237,7 @@ void ProtocolHandler::on_hover(std::unique_ptr<JSON>&& msg, Channel::ptr_t chann
 {
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
-    clDEBUG1() << json.format() << endl;
+    LOG_IF_TRACE { clDEBUG1() << json.format() << endl; }
 
     std::vector<TagEntryPtr> tags;
     do_find_definition_tags(std::move(msg), channel, true, tags, nullptr);
@@ -1366,7 +1375,7 @@ size_t ProtocolHandler::do_find_definition_tags(std::unique_ptr<JSON>&& msg, Cha
     size_t id = json["id"].toSize_t();
     tags.clear();
 
-    clDEBUG1() << json.format() << endl;
+    LOG_IF_TRACE { clDEBUG1() << json.format() << endl; }
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG() << "textDocument/definition: for file" << filepath << endl;
@@ -1404,7 +1413,7 @@ size_t ProtocolHandler::do_find_definition_tags(std::unique_ptr<JSON>&& msg, Cha
         clDEBUG() << "Found include file:" << *file_match << endl;
         for(const wxString& search_path : m_search_paths) {
             wxString full_path = search_path + "/" + *file_match;
-            clDEBUG1() << "Trying path:" << full_path << endl;
+            LOG_IF_TRACE { clDEBUG1() << "Trying path:" << full_path << endl; }
             wxFileName fn(full_path);
             fn.Normalize(wxPATH_NORM_ENV_VARS | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE);
             if(fn.FileExists()) {

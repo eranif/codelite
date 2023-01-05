@@ -69,7 +69,10 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
                           return a.GetLocation().GetRange().GetStart().GetLine() <
                                  b.GetLocation().GetRange().GetStart().GetLine();
                       });
-            clDEBUG1() << symbols << endl;
+
+            LOG_IF_TRACE {
+                clDEBUG1() << symbols << endl;
+            }
 
             // fire event per context
             if(context & CONTEXT_SEMANTIC_HIGHLIGHT) {

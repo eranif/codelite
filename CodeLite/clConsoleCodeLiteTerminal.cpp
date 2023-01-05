@@ -1,8 +1,10 @@
 #include "clConsoleCodeLiteTerminal.h"
+
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
+
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
@@ -127,7 +129,7 @@ bool clConsoleCodeLiteTerminal::StartForDebugger()
     wxString psCommand;
     psCommand << "ps -A -o pid,command";
     wxString psOutput = ProcUtils::SafeExecuteCommand(psCommand);
-    clDEBUG1() << "ps command output:\n" << psOutput;
+    LOG_IF_TRACE { clDEBUG1() << "ps command output:\n" << psOutput; }
     wxArrayString lines = ::wxStringTokenize(psOutput, "\n", wxTOKEN_STRTOK);
     for(size_t u = 0; u < lines.GetCount(); ++u) {
         wxString l = lines.Item(u);

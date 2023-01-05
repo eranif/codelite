@@ -484,7 +484,7 @@ void LanguageServerCluster::RestartServer(const wxString& name)
 void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 {
     if(!entry.IsEnabled()) {
-        clDEBUG1() << "LSP" << entry.GetName() << "is not enabled" << clEndl;
+        LOG_IF_TRACE { clDEBUG1() << "LSP" << entry.GetName() << "is not enabled" << clEndl; }
         return;
     }
 
@@ -494,7 +494,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         return;
     }
 
-    clDEBUG1() << "Connecting to LSP server:" << entry.GetName();
+    LOG_IF_TRACE { clDEBUG1() << "Connecting to LSP server:" << entry.GetName(); }
 
     if(!entry.IsValid()) {
         clWARNING() << "LSP Server" << entry.GetName()

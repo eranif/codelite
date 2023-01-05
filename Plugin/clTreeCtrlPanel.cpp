@@ -1143,7 +1143,7 @@ void clTreeCtrlPanel::OnRenameFolder(wxCommandEvent& event)
     wxFileName newFullPath(oldFullPath);
     newFullPath.RemoveLastDir();
     newFullPath.AppendDir(newName);
-    clDEBUG1() << "Renaming:" << oldFullPath.GetPath() << "->" << newFullPath.GetPath();
+    LOG_IF_TRACE { clDEBUG1() << "Renaming:" << oldFullPath.GetPath() << "->" << newFullPath.GetPath(); }
     if(::wxRename(oldFullPath.GetPath(), newFullPath.GetPath()) == 0) {
         // Rename was successful
         d->SetPath(newFullPath.GetPath());

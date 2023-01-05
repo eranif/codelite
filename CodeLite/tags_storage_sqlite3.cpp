@@ -348,12 +348,12 @@ void TagsStorageSQLite::SelectTagsByFile(const wxString& file, std::vector<TagEn
 
     wxString query;
     query << wxT("select * from tags where file='") << file << "' ";
-    //#ifdef __WXMSW__
-    //    // Under Windows, the file-crawler changes the file path
-    //    // to lowercase. However, the database matches the file name
-    //    // by case-sensitive
-    //    query << "COLLATE NOCASE ";
-    //#endif
+    // #ifdef __WXMSW__
+    //     // Under Windows, the file-crawler changes the file path
+    //     // to lowercase. However, the database matches the file name
+    //     // by case-sensitive
+    //     query << "COLLATE NOCASE ";
+    // #endif
     query << wxT("order by line asc");
     DoFetchTags(query, tags);
 }
@@ -625,7 +625,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         return;
     }
 
-    clDEBUG1() << "Fetching from disk:" << sql << clEndl;
+    LOG_IF_TRACE { clDEBUG1() << "Fetching from disk:" << sql << clEndl; }
     tags.reserve(1000);
 
     try {
@@ -641,10 +641,14 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         }
         ex_rs.Finalize();
     } catch(wxSQLite3Exception& e) {
-        clDEBUG() << "SQLite exception!" << endl;
-        clDEBUG() << e.GetMessage() << endl;
+        LOG_IF_DEBUG
+        {
+            clDEBUG() << "SQLite exception!" << endl;
+            clDEBUG() << e.GetMessage() << endl;
+        }
     }
-    clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << clEndl;
+
+    LOG_IF_TRACE { clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << clEndl; }
     if(GetUseCache()) {
         m_cache.Store(sql, tags);
     }
@@ -659,7 +663,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
     set_kinds.insert(kinds.begin(), kinds.end());
     tags.reserve(1000);
 
-    clDEBUG1() << "Fetching from disk:" << sql << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Fetching from disk:" << sql << endl; }
     try {
         wxSQLite3ResultSet ex_rs;
         ex_rs = Query(sql);
@@ -679,10 +683,13 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         ex_rs.Finalize();
 
     } catch(wxSQLite3Exception& e) {
-        clDEBUG() << e.GetMessage() << endl;
-        clDEBUG() << "SQLite exception!" << endl;
+        LOG_IF_DEBUG
+        {
+            clDEBUG() << e.GetMessage() << endl;
+            clDEBUG() << "SQLite exception!" << endl;
+        }
     }
-    clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << endl; }
     if(GetUseCache()) {
         m_cache.Store(sql, kinds, tags);
     }
@@ -1885,7 +1892,7 @@ void TagsStorageSQLite::GetTagsByPathAndKind(const wxString& path, std::vector<T
     // to avoid any kind of specialization, sort the entries by DBid
     sql << " order by ID asc";
     sql << " limit " << limit;
-    clDEBUG1() << "Running SQL:" << sql << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Running SQL:" << sql << endl; }
     DoFetchTags(sql, tags);
 }
 
@@ -1898,7 +1905,7 @@ TagEntryPtr TagsStorageSQLite::GetScope(const wxString& filename, int line_numbe
     sql << "select * from tags where file='" << filename << "' and line <= " << line_number
         << " and name NOT LIKE '__anon%' and KIND IN ('function', 'class', 'struct', 'namespace') order by line desc "
            "limit 1";
-    clDEBUG1() << "Running SQL:" << sql << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Running SQL:" << sql << endl; }
     std::vector<TagEntryPtr> tags;
     DoFetchTags(sql, tags);
 
@@ -1922,8 +1929,7 @@ size_t TagsStorageSQLite::GetFileScopedTags(const wxString& filepath, const wxSt
     if(!name.empty()) {
         sql << " and name like '" << name << "%'";
     }
-
-    clDEBUG1() << "Running SQL:" << sql << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Running SQL:" << sql << endl; }
     tags_1.reserve(100);
     DoFetchTags(sql, tags_1, kinds);
 
@@ -1934,8 +1940,7 @@ size_t TagsStorageSQLite::GetFileScopedTags(const wxString& filepath, const wxSt
     if(!name.empty()) {
         sql << " and name like '" << name << "%'";
     }
-
-    clDEBUG1() << "Running SQL:" << sql << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Running SQL:" << sql << endl; }
     tags_2.reserve(100);
     DoFetchTags(sql, tags_2);
 

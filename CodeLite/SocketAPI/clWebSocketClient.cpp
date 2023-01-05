@@ -12,6 +12,7 @@
 #define _WEBSOCKETPP_CPP11_THREAD_ 1
 
 #include "file_logger.h"
+
 #include <websocketpp/client.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
 
@@ -70,7 +71,7 @@ using websocketpp::lib::placeholders::_2;
 // This message handler will be invoked once for each incoming message
 static void on_ws_message(clWebSocketClient* c, websocketpp::connection_hdl hdl, message_ptr msg)
 {
-    clDEBUG1() << "<--" << msg->get_payload();
+    LOG_IF_TRACE { clDEBUG1() << "<--" << msg->get_payload(); }
     clCommandEvent event(wxEVT_WEBSOCKET_ONMESSAGE);
     event.SetString(msg->get_payload());
     event.SetEventObject(c);
@@ -79,7 +80,7 @@ static void on_ws_message(clWebSocketClient* c, websocketpp::connection_hdl hdl,
 
 static void on_ws_open_handler(clWebSocketClient* c, websocketpp::connection_hdl hdl)
 {
-    clDEBUG1() << "<-- Connected!";
+    LOG_IF_TRACE { clDEBUG1() << "<-- Connected!"; }
     c->SetConnectionHandle(hdl);
     clCommandEvent event(wxEVT_WEBSOCKET_CONNECTED);
     event.SetEventObject(c);
@@ -88,7 +89,7 @@ static void on_ws_open_handler(clWebSocketClient* c, websocketpp::connection_hdl
 
 static void on_ws_fail_handler(clWebSocketClient* c, websocketpp::connection_hdl hdl)
 {
-    clDEBUG1() << "<-- Error!";
+    LOG_IF_TRACE { clDEBUG1() << "<-- Error!"; }
     clCommandEvent event(wxEVT_WEBSOCKET_ERROR);
     event.SetEventObject(c);
     c->GetOwner()->AddPendingEvent(event);

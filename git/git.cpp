@@ -448,7 +448,7 @@ void GitPlugin::UnPlug()
                                NULL, this);
     m_eventHandler->Disconnect(XRCID("git_commit_list_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileCommitListSelected),
                             NULL, this);
-                            
+
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
     wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
@@ -584,7 +584,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     if(!GetRepositoryPath().empty()) {
         workingDir = GetRepositoryPath();
     }
-    
+
     // Make the git console visible
     m_mgr->ShowOutputPane("Git");
 
@@ -592,11 +592,11 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
         // Pepare the command:
         // git add --no-pager
         wxString cmd = "show HEAD:";
-        
+
         wxFileName fn(filename);
         fn.MakeRelativeTo(workingDir);
         wxString filenameEscaped = fn.GetFullPath(wxPATH_UNIX);
-        
+
         ::WrapWithQuotes(filenameEscaped);
         cmd << filenameEscaped;
 
@@ -1495,7 +1495,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     }
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
         // Last action failed, clear queue
-        clDEBUG1() << "[git]" << m_commandOutput << clEndl;
+        LOG_IF_TRACE { clDEBUG1() << "[git]" << m_commandOutput << clEndl; }
         static std::unordered_set<int> recoverableActions = { gitBlameSummary };
         DoRecoverFromGitCommandError(recoverableActions.count(ga.action) == 0);
         GetConsole()->ShowLog();
@@ -2366,7 +2366,7 @@ void GitPlugin::OnFileMenu(clContextMenuEvent& event)
     item = new wxMenuItem(menu, XRCID("git_commit_list_file"), _("Show file Log"));
     item->SetBitmap(bmps->LoadBitmap("tasks"));
     menu->Append(item);
-    
+
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("git_blame_file"), _("Show Git Blame"));
     item->SetBitmap(bmps->LoadBitmap("finger"));
@@ -2737,7 +2737,7 @@ void GitPlugin::OnFileCommitListSelected(wxCommandEvent& e)
         m_commitListDlg = new GitCommitListDlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory, this);
     }
     m_commitListDlg->GetComboExtraArgs()->SetValue(wxT(" -- ") + fn.GetFullPath());
-    
+
     gitAction ga(gitCommitList, wxT(" -- ") + fn.GetFullPath());
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
@@ -2862,11 +2862,11 @@ void GitPlugin::OnUpdateNavBar(clCodeCompletionEvent& event)
     CHECK_PTR_RET(editor);
 
     wxString fullpath = editor->GetRemotePathOrLocal();
-    clDEBUG1() << "Checking blame info for file:" << fullpath << clEndl;
+    LOG_IF_TRACE { clDEBUG1() << "Checking blame info for file:" << fullpath << clEndl; }
     auto where = m_blameMap.find(fullpath);
 
     if(where == m_blameMap.end()) {
-        clDEBUG1() << "Could not get git blame for file:" << fullpath << clEndl;
+        LOG_IF_TRACE { clDEBUG1() << "Could not get git blame for file:" << fullpath << clEndl; }
         clGetManager()->GetNavigationBar()->ClearLabel();
         return;
     }

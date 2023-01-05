@@ -170,11 +170,11 @@ void GCCMetadata::DoLoad(const wxString& tool, const wxString& rootDir, bool is_
     pp.Parse(cmpMacrosFile, kLexerOpt_CollectMacroValueNumbers);
     m_macros = pp.GetDefinitions();
 
-    clDEBUG1() << "GCC Metadata loaded for tool" << tool << endl;
-    clDEBUG1() << "Name:" << GetName() << endl;
-    clDEBUG1() << "Search paths:" << GetSearchPaths() << endl;
-    clDEBUG1() << "Macros:" << GetMacros() << endl;
-    clDEBUG1() << "Target:" << GetTarget() << endl;
+    LOG_IF_TRACE { clDEBUG1() << "GCC Metadata loaded for tool" << tool << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "Name:" << GetName() << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "Search paths:" << GetSearchPaths() << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "Macros:" << GetMacros() << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "Target:" << GetTarget() << endl; }
 }
 
 wxString GCCMetadata::RunCommand(const wxString& command, const wxString& working_directory, clEnvList_t* env)
@@ -185,7 +185,7 @@ wxString GCCMetadata::RunCommand(const wxString& command, const wxString& workin
     if(proc) {
         proc->WaitForTerminate(outputStr);
     }
-    clDEBUG1() << "Output is:" << outputStr << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Output is:" << outputStr << endl; }
     outputStr.Trim().Trim(false);
     return outputStr;
 }

@@ -52,7 +52,7 @@ bool ChannelSocket::write_reply(const wxString& message)
 
     // append the data
     s.append(cb.data(), cb.length());
-    clDEBUG1() << "Sending reply:" << s << endl;
+    LOG_IF_TRACE { clDEBUG1() << "Sending reply:" << s << endl; }
     client->Send(s);
     return true;
 }

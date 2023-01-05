@@ -1,4 +1,5 @@
 #include "GotoDeclarationRequest.h"
+
 #include "LSP/LSPEvent.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -20,7 +21,7 @@ LSP::GotoDeclarationRequest::~GotoDeclarationRequest() {}
 
 void LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
-    clDEBUG1() << "GotoDeclarationRequest::OnResponse() is called" << endl;
+    LOG_IF_TRACE { clDEBUG1() << "GotoDeclarationRequest::OnResponse() is called" << endl; }
     JSONItem result = response.Get("result");
     if(!result.isOk()) {
         return;
@@ -33,7 +34,7 @@ void LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& respons
         loc.FromJSON(result);
     }
 
-    clDEBUG1() << result.format() << endl;
+    LOG_IF_TRACE { clDEBUG1() << result.format() << endl; }
 
     if(!loc.GetPath().IsEmpty()) {
         if(m_for_add_missing_header) {

@@ -27,9 +27,11 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
     }
 
     std::vector<int> encoded_types;
-    clDEBUG() << "OnResponse for SemanticTokensRquest is called" << endl;
+    LOG_IF_TRACE { clTRACE() << "OnResponse for SemanticTokensRquest is called" << endl; }
+
     encoded_types = response["result"]["data"].toIntArray();
-    clDEBUG() << "Parsing semantic tokens array (" << encoded_types.size() << ")" << endl;
+
+    LOG_IF_TRACE { clTRACE() << "Parsing semantic tokens array (" << encoded_types.size() << ")" << endl; }
 
     // since this is CPU heavy processing, spawn a thread to do the job
     wxString filename = m_filename;
@@ -71,5 +73,5 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
     event.SetFileName(filename);
     event.SetServerName(GetServerName());
     owner->AddPendingEvent(event);
-    clDEBUG() << "Colouring file:" << filename << endl;
+    LOG_IF_DEBUG { clDEBUG() << "Colouring file:" << filename << endl; }
 }

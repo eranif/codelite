@@ -270,14 +270,14 @@ void IHunSpell::CheckCppSpelling()
 // ------------------------------------------------------------
 void IHunSpell::CheckSpelling()
 {
-    clDEBUG1() << "SpellChecker: checkSpelling is called" << endl;
+    LOG_IF_TRACE { clDEBUG1() << "SpellChecker: checkSpelling is called" << endl; }
     IEditor* pEditor = ::clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(pEditor);
     CHECK_COND_RET(InitEngine());
 
     // special handling for C++ files
     if(pEditor->GetLexerId() == wxSTC_LEX_CPP) {
-        clDEBUG1() << "SpellChecker: checkSpelling -> C++ is called" << endl;
+        LOG_IF_TRACE { clDEBUG1() << "SpellChecker: checkSpelling -> C++ is called" << endl; }
         CheckCppSpelling();
         return;
     }
@@ -293,7 +293,7 @@ void IHunSpell::CheckSpelling()
     m_pSpellDlg->SetPHs(this);
     wxStringTokenizer tkz(text, s_defDelimiters);
 
-    clDEBUG1() << "SpellChecker: checking file:" << pEditor->GetFileName() << endl;
+    LOG_IF_TRACE { clDEBUG1() << "SpellChecker: checking file:" << pEditor->GetFileName() << endl; }
     while(tkz.HasMoreTokens()) {
         wxString token = tkz.GetNextToken();
         int pos = tkz.GetPosition() - token.Len() - 1;
@@ -338,7 +338,7 @@ void IHunSpell::CheckSpelling()
             }
         }
     }
-    clDEBUG1() << "SpellChecker:: checking file:" << pEditor->GetFileName() << "is done" << endl;
+    LOG_IF_TRACE { clDEBUG1() << "SpellChecker:: checking file:" << pEditor->GetFileName() << "is done" << endl; }
     if(!m_pPlugIn->GetCheckContinuous()) {
         // clean up
         pEditor->ClearUserIndicators();

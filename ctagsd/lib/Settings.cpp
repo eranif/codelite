@@ -428,14 +428,14 @@ void CTagsdSettings::Load(const wxFileName& filepath)
         CreateDefault(filepath);
     }
 
-    clDEBUG1() << "search path...........:" << m_search_path << endl;
-    clDEBUG1() << "tokens................:" << m_tokens << endl;
-    clDEBUG1() << "types.................:" << m_types << endl;
-    clDEBUG1() << "file_mask.............:" << m_file_mask << endl;
-    clDEBUG1() << "codelite_indexer......:" << m_codelite_indexer << endl;
-    clDEBUG1() << "ignore_spec...........:" << m_ignore_spec << endl;
-    clDEBUG1() << "limit_results.........:" << m_limit_results << endl;
-    clDEBUG1() << "Settings dir is set to:" << m_settings_dir << endl;
+    LOG_IF_TRACE { clDEBUG1() << "search path...........:" << m_search_path << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "tokens................:" << m_tokens << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "types.................:" << m_types << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "file_mask.............:" << m_file_mask << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "codelite_indexer......:" << m_codelite_indexer << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "ignore_spec...........:" << m_ignore_spec << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "limit_results.........:" << m_limit_results << endl; }
+    LOG_IF_TRACE { clDEBUG1() << "Settings dir is set to:" << m_settings_dir << endl; }
 
     // conver the tokens to wxArrayString
     wxArrayString wxarr;

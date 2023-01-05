@@ -196,7 +196,7 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
     filename.Trim().Trim(false);
 
     clDEBUG() << "GitBlame is called for file:" << filename << clEndl;
-    clDEBUG1() << "GitBlame 'blame':\n" << blame << clEndl;
+    LOG_IF_TRACE { clDEBUG1() << "GitBlame 'blame':\n" << blame << clEndl; }
 
     // Set blame editor style and fonts
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(wxFileName(filename).GetFullName());

@@ -669,7 +669,7 @@ void DebugAdapterClient::InitializeUI()
     }
 
     if(!m_breakpointsView) {
-        m_breakpointsView = new DAPBreakpointsView(parent, this);
+        m_breakpointsView = new DAPBreakpointsView(parent, this, LOG);
         m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo()
                                                                    .MinSize(300, 300)
                                                                    .Layer(5)

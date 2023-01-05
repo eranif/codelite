@@ -3,6 +3,7 @@
 
 #include "SessionBreakpoints.hpp"
 #include "UI.h"
+#include "clModuleLogger.hpp"
 #include "dap/dap.hpp"
 
 #include <unordered_set>
@@ -21,6 +22,7 @@ class DAPBreakpointsView : public DAPBreakpointsViewBase
 {
     DebugAdapterClient* m_plugin = nullptr;
     std::vector<dap::FunctionBreakpoint> m_functionBreakpoints;
+    clModuleLogger& LOG;
 
 private:
     BreakpointClientData* GetItemData(const wxDataViewItem& item);
@@ -33,7 +35,7 @@ protected:
     void OnNewSourceBreakpoint(wxCommandEvent& event);
 
 public:
-    DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin);
+    DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log);
     virtual ~DAPBreakpointsView();
 
     /**

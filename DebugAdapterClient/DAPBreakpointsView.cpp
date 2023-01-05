@@ -8,9 +8,10 @@
 #include <unordered_map>
 #include <wx/msgdlg.h>
 
-DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin)
+DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log)
     : DAPBreakpointsViewBase(parent)
     , m_plugin(plugin)
+    , LOG(log)
 {
     m_dvListCtrl->SetSortFunction(
         [](const clRowEntry* a, const clRowEntry* b) { return a->GetLabel().CmpNoCase(b->GetLabel()); });
@@ -183,6 +184,8 @@ void DAPBreakpointsView::OnDeleteAllBreakpoints(wxCommandEvent& event)
         if(!cd) {
             continue;
         }
+        LOG_DEBUG(LOG) << "Will delete breakpoint:" << cd->m_breapoint.source.sourceReference << ","
+                       << cd->m_breapoint.source.path << endl;
         if(cd->m_breapoint.source.path.empty()) {
             continue;
         }
@@ -191,6 +194,7 @@ void DAPBreakpointsView::OnDeleteAllBreakpoints(wxCommandEvent& event)
     }
 
     for(const wxString& path : paths) {
+        LOG_DEBUG(LOG) << "Deleting breakpoints with path:" << path << endl;
         m_plugin->GetClient().SetBreakpointsFile(path, {});
     }
 }

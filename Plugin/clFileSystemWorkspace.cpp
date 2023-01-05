@@ -570,6 +570,7 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
     console->SetWaitWhenDone(true);
     console->SetSink(this);
     console->SetEnvironment(envList);
+    console->SetTerminalNeeded(true);
 
     if(console->Start()) {
         m_execPID = console->GetPid();

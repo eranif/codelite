@@ -1805,20 +1805,15 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
     if(endLine >= (ctrl->GetLineCount() - 1)) {
         endLine--;
     }
+
+    wxString text;
     for(int i = startLine; i <= endLine; i++) {
-        int visibleLine = (int)ctrl->DocLineFromVisible(i);      // get actual visible line, folding may offset lines
-        int endPosition = ctrl->GetLineEndPosition(visibleLine); // get character position from begin
-        int beginPosition = ctrl->PositionFromLine(visibleLine); // and end of line
-
-        wxPoint beginPos = ctrl->PointFromPosition(beginPosition);
-        wxPoint endPos = ctrl->PointFromPosition(endPosition);
-
-        int curLen = endPos.x - beginPos.x;
-
-        if(maxPixel < curLen) // If its the largest line yet
-            maxPixel = curLen;
+        int visibleLine = (int)ctrl->DocLineFromVisible(i); // get actual visible line, folding may offset lines
+        wxString line_text = ctrl->GetLine(visibleLine);
+        text = line_text.length() > text.length() ? line_text : text;
     }
 
+    maxPixel = ctrl->TextWidth(0, text);
     if(maxPixel == 0) {
         maxPixel++; // make sure maxPixel is valid
     }

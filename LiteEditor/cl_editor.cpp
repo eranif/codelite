@@ -135,17 +135,48 @@ bool clEditor::m_ccShowPrivateMembers = true;
 bool clEditor::m_ccShowItemsComments = true;
 bool clEditor::m_ccInitialized = false;
 
-wxPrintData* g_printData = NULL;
-wxPageSetupDialogData* g_pageSetupData = NULL;
-static int ID_OPEN_URL = wxNOT_FOUND;
-
 // This is needed for wxWidgets < 3.1
 #ifndef wxSTC_MARK_BOOKMARK
 #define wxSTC_MARK_BOOKMARK wxSTC_MARK_LEFTRECT
 #endif
 
+wxPrintData* g_printData = NULL;
+wxPageSetupDialogData* g_pageSetupData = NULL;
+static int ID_OPEN_URL = wxNOT_FOUND;
+
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
+namespace
+{
+
+void udpate_horizonal_scrollbar_width(wxStyledTextCtrl* ctrl, size_t char_width)
+{
+    // recalculate and set the length of horizontal scrollbar
+    int maxPixel = 0;
+    int startLine = ctrl->GetFirstVisibleLine();
+    int endLine = startLine + ctrl->LinesOnScreen();
+    if(endLine >= (ctrl->GetLineCount() - 1)) {
+        endLine--;
+    }
+
+    wxString text;
+    for(int i = startLine; i <= endLine; i++) {
+        int visibleLine = (int)ctrl->DocLineFromVisible(i); // get actual visible line, folding may offset lines
+        wxString line_text = ctrl->GetLine(visibleLine);
+        text = line_text.length() > text.length() ? line_text : text;
+    }
+
+    maxPixel = char_width * text.length();
+    if(maxPixel == 0) {
+        maxPixel++; // make sure maxPixel is valid
+    }
+
+    int currentLength = ctrl->GetScrollWidth(); // Get current scrollbar size
+    if(currentLength != maxPixel) {
+        // And if it is not the same, update it
+        ctrl->SetScrollWidth(maxPixel);
+    }
+}
 
 class clEditorDropTarget : public wxDropTarget
 {
@@ -275,9 +306,6 @@ public:
     wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) { return m_stc->DoDragOver(x, y, defResult); }
 };
 
-//=====================================================================
-namespace
-{
 bool IsWordChar(const wxChar& ch)
 {
     static wxStringSet_t wordsChar;
@@ -440,6 +468,7 @@ clEditor::clEditor(wxWindow* parent)
 
     MSWSetWindowDarkTheme(this);
 
+    Bind(wxEVT_IDLE, &clEditor::OnIdle, this);
     Bind(wxEVT_STC_CHARADDED, &clEditor::OnCharAdded, this);
     Bind(wxEVT_STC_MARGINCLICK, &clEditor::OnMarginClick, this);
     Bind(wxEVT_STC_CALLTIP_CLICK, &clEditor::OnCallTipClick, this);
@@ -469,6 +498,7 @@ clEditor::clEditor(wxWindow* parent)
     Bind(wxEVT_FRD_CLOSE, &clEditor::OnFindDialog, this);
     Bind(wxEVT_FRD_CLEARBOOKMARKS, &clEditor::OnFindDialog, this);
     Bind(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, &clEditor::OnRemoveMatchInidicator, this);
+
     Bind(wxEVT_STC_ZOOM, &clEditor::OnZoom, this);
     UpdateOptions();
     PreferencesChanged();
@@ -1418,6 +1448,8 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
 
+    m_scrollbar_recalc_is_required = true;
+
     // keep the last line we visited this method
     // (m_lastLine will be modified inside UpdateLineNumbers())
     int lastLine = m_lastLine;
@@ -1499,8 +1531,6 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     if(end >= pos && end < GetTextLength()) {
         IndicatorClearRange(end, GetTextLength() - end);
     }
-
-    RecalcHorizontalScrollbar();
 
     // get the current position
     if((curLine != lastLine)) {
@@ -2249,7 +2279,7 @@ bool clEditor::MatchBraceBack(const wxChar& chCloseBrace, const long& pos, long&
 void clEditor::RecalcHorizontalScrollbar()
 {
     if(m_autoAdjustHScrollbarWidth) {
-        ::clRecalculateSTCHScrollBar(this);
+        udpate_horizonal_scrollbar_width(this, m_default_text_width);
     }
 }
 
@@ -3595,14 +3625,14 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
     // +++++------------------------------------------------------
     wxString selectedText = GetSelectedText();
     if(!selectedText.IsEmpty() && !selectedText.Contains("\n")) {
-        static wxRegEx reUrl("https?://.*?", wxRE_ADVANCED);
-        if(reUrl.IsValid() && reUrl.Matches(selectText)) {
+        if(selectText.StartsWith("https://") || selectText.StartsWith("http://")) {
             // Offer to open the URL
             if(ID_OPEN_URL == wxNOT_FOUND) {
                 ID_OPEN_URL = ::wxNewId();
             }
+
             wxString text;
-            text << "Go to " << reUrl.GetMatch(selectText);
+            text << "Open: " << selectText;
             menu->PrependSeparator();
             menu->Prepend(ID_OPEN_URL, text);
             menu->Bind(wxEVT_MENU, &clEditor::OpenURL, this, ID_OPEN_URL);
@@ -4276,31 +4306,7 @@ void clEditor::OnDbgCustomWatch(wxCommandEvent& event)
     }
 }
 
-int clEditor::GetLastVisibleLine() const
-{
-    int max_lines = LinesOnScreen();
-    int first_line = GetFirstVisibleLine();
-    int end_line = first_line;
-    int last_line = GetLineCount();
-
-    int lines_collected = 0;
-    for(int i = first_line; i < last_line && lines_collected < max_lines; ++i) {
-        if(GetLineVisible(i)) {
-            // the line is visible - collect it
-            ++lines_collected;
-            end_line = i;
-        }
-    }
-    return end_line;
-}
-
-void clEditor::UpdateColours()
-{
-    // collect all the visible lines that can fit into the screen
-    int start_pos = PositionFromLine(GetFirstVisibleLine());
-    int end_pos = PositionFromLine(GetLastVisibleLine());
-    Colourise(start_pos, end_pos);
-}
+void clEditor::UpdateColours() { Colourise(0, wxSTC_INVALID_POSITION); }
 
 int clEditor::SafeGetChar(int pos)
 {
@@ -6197,7 +6203,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     m_modifiedLines.reserve(GetLineCount());
     std::fill(m_modifiedLines.begin(), m_modifiedLines.end(), LINE_NONE);
 
-    UpdateColours();
+    Colourise(0, wxNOT_FOUND);
 
     m_modifyTime = GetFileLastModifiedTime();
     SetSavePoint();
@@ -6445,10 +6451,13 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
             keywords_class = 1;
             keywords_variables = 3;
             break;
+
+#if wxCHECK_VERSION(3, 1, 2)
         case wxSTC_LEX_RUST:
             keywords_class = 3;
             keywords_variables = 4;
             break;
+#endif
         case wxSTC_LEX_PYTHON:
             keywords_variables = 1;
             break;
@@ -6549,3 +6558,12 @@ void clEditor::OnColoursAndFontsUpdated(clCommandEvent& event)
 }
 
 void clEditor::UpdateDefaultTextWidth() { m_default_text_width = TextWidth(wxSTC_STYLE_LINENUMBER, "X"); }
+
+void clEditor::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    if(m_scrollbar_recalc_is_required) {
+        m_scrollbar_recalc_is_required = false;
+        RecalcHorizontalScrollbar();
+    }
+}

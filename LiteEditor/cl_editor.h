@@ -280,6 +280,7 @@ protected:
     bool m_trackChanges = false;
     std::unordered_map<int, wxString> m_breakpoints_tooltips;
     size_t m_default_text_width = wxNOT_FOUND;
+    bool m_scrollbar_recalc_is_required = false;
 
 public:
     static bool m_ccShowPrivateMembers;
@@ -287,11 +288,6 @@ public:
     static bool m_ccInitialized;
 
     typedef std::vector<clEditor*> Vec_t;
-
-    /**
-     * @brief return the last visible line on screen, taking folding into consideration
-     */
-    int GetLastVisibleLine() const;
 
     IManager* GetManager() { return m_mgr; }
 
@@ -1157,6 +1153,7 @@ private:
     void UpdateDefaultTextWidth();
 
     // Event handlers
+    void OnIdle(wxIdleEvent& event);
     void OpenURL(wxCommandEvent& event);
     void OnHighlightWordChecked(wxCommandEvent& e);
     void OnRemoveMatchInidicator(wxCommandEvent& e);

@@ -176,7 +176,6 @@ macro(CL_INSTALL_EXECUTABLE _target_)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
         cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/${_target_})
     else()
-        # On non OSX, we place the non plugins next to the plugins
         set(EXE_PERM
             OWNER_EXECUTE
             OWNER_WRITE
@@ -186,7 +185,6 @@ macro(CL_INSTALL_EXECUTABLE _target_)
             WORLD_EXECUTE
             WORLD_READ)
 
-        # On non OSX, we place the non plugins next to the plugins
         install(
             TARGETS ${_target_}
             DESTINATION ${CL_INSTALL_BIN}

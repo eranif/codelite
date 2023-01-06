@@ -16,6 +16,19 @@ class MyAnsiCodeRenderer : public clControlWithItemsRowRenderer
     wxFont m_font;
     clDataViewListCtrl* m_ctrl = nullptr;
 
+private:
+    void DoRenderBackground(wxDC& dc, const wxRect& rect, const clColours& colours)
+    {
+        wxColour bg_colour = colours.GetBgColour();
+        if(clSystemSettings::IsDark() && DrawingUtils::IsDark(colours.GetBgColour())) {
+            bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
+        }
+
+        dc.SetBrush(bg_colour);
+        dc.SetPen(bg_colour);
+        dc.DrawRectangle(rect);
+    }
+
 public:
     MyAnsiCodeRenderer(clDataViewListCtrl* ctrl)
         : m_ctrl(ctrl)
@@ -27,9 +40,8 @@ public:
 
     void RenderBackground(wxDC& dc, const wxRect& rect, long tree_style, const clColours& colours) override
     {
-        dc.SetBrush(colours.GetBgColour());
-        dc.SetPen(colours.GetBgColour());
-        dc.DrawRectangle(rect);
+        wxUnusedVar(tree_style);
+        DoRenderBackground(dc, rect, colours);
     }
 
     /// just the draw the item background
@@ -52,9 +64,8 @@ public:
         handler.Reset();
         handler.Parse(entry->GetLabel(0));
 
-        dc.SetBrush(colours.GetItemBgColour());
-        dc.SetPen(colours.GetItemBgColour());
-        dc.DrawRectangle(entry->GetItemRect());
+        // draw item background
+        DoRenderBackground(dc, entry->GetItemRect(), colours);
 
         // initialise the default style
         clRenderDefaultStyle ds;

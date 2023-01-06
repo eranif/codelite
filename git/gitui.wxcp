@@ -12360,7 +12360,7 @@
 																					"border":	2,
 																					"gbSpan":	"1,1",
 																					"gbPosition":	"0,0",
-																					"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE"],
+																					"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 																					"m_sizerFlags":	["wxEXPAND"],
 																					"m_properties":	[{
 																							"type":	"winid",
@@ -13046,7 +13046,7 @@
 																					"border":	5,
 																					"gbSpan":	"1,1",
 																					"gbPosition":	"0,0",
-																					"m_styles":	["wxDV_NO_HEADER", "wxDV_SINGLE"],
+																					"m_styles":	["wxDV_NO_HEADER", "wxDV_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
 																					"m_sizerFlags":	["wxEXPAND"],
 																					"m_properties":	[{
 																							"type":	"winid",

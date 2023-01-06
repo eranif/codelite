@@ -1471,9 +1471,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer678 = new wxBoxSizer(wxVERTICAL);
     m_panel674->SetSizer(boxSizer678);
 
-    m_dvListCtrl =
-        new clThemedOrderedListCtrl(m_panel674, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel674, wxSize(-1, -1)),
-                                    wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dvListCtrl = new clThemedOrderedListCtrl(
+        m_panel674, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel674, wxSize(-1, -1)),
+        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer678->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
@@ -1516,8 +1516,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer729 = new wxBoxSizer(wxVERTICAL);
     m_panel_log->SetSizer(boxSizer729);
 
-    m_dvListCtrlLog = new clTerminalViewCtrl(m_panel_log, wxID_ANY, wxDefaultPosition,
-                                             wxDLG_UNIT(m_panel_log, wxSize(-1, -1)), wxDV_NO_HEADER | wxDV_SINGLE);
+    m_dvListCtrlLog = new clTerminalViewCtrl(
+        m_panel_log, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel_log, wxSize(-1, -1)),
+        wxDV_NO_HEADER | wxDV_SINGLE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
 
     boxSizer729->Add(m_dvListCtrlLog, 1, wxEXPAND, WXC_FROM_DIP(5));
 

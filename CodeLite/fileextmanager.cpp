@@ -208,6 +208,7 @@ void FileExtManager::Init()
         m_language_bundle.insert({ "Javascript/Typescript", { TypeJS } });
         m_language_bundle.insert({ "Python", { TypePython } });
         m_language_bundle.insert({ "PHP", { TypePhp } });
+        m_language_bundle.insert({ "CMake", { TypeCMake } });
 
         // build the reverse search table: file type -> language
         for(auto vt : m_language_bundle) {

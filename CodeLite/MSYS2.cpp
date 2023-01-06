@@ -2,9 +2,14 @@
 
 #include "cl_standard_paths.h"
 
+#include <functional>
 #include <wx/arrstr.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
+
+#ifdef __WXMSW__
+#include <wx/msw/registry.h>
+#endif
 
 bool MSYS2::FindInstallDir(wxString* msyspath)
 {
@@ -15,13 +20,35 @@ bool MSYS2::FindInstallDir(wxString* msyspath)
 
     m_checked_for_install_dir = true;
 
-    // try common paths
-    std::vector<wxString> vpaths = { R"(C:\msys64)", R"(C:\msys2)", R"(C:\msys)" };
-    for(const wxString& path : vpaths) {
-        if(wxFileName::DirExists(path)) {
-            m_install_dir = path;
-            *msyspath = m_install_dir;
+    wxString reg_install_path;
+#ifdef __WXMSW__
+    wxRegKey uninstall(wxRegKey::HKCU, R"(SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall)");
+    wxString appname;
+    long dummy;
+    bool cont = uninstall.GetFirstKey(appname, dummy);
+    while(cont) {
+        wxString display_name;
+        wxRegKey appkey(wxRegKey::HKCU, R"(SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\)" + appname);
+        if(appkey.QueryValue("DisplayName", display_name) && display_name == "MSYS2 64bit") {
+            appkey.QueryValue("InstallLocation", reg_install_path);
             break;
+        }
+        cont = uninstall.GetNextKey(appname, dummy);
+    }
+#endif
+
+    if(!reg_install_path.empty()) {
+        m_install_dir = reg_install_path;
+        *msyspath = m_install_dir;
+    } else {
+        // try common paths
+        std::vector<wxString> vpaths = { R"(C:\msys64)", R"(C:\msys2)", R"(C:\msys)" };
+        for(const wxString& path : vpaths) {
+            if(wxFileName::DirExists(path)) {
+                m_install_dir = path;
+                *msyspath = m_install_dir;
+                break;
+            }
         }
     }
     return !m_install_dir.empty();

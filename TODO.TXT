@@ -7,4 +7,3 @@ Debug Adapter Client
 
 others:
 ----
-- Support code formatter for CMake (cmake-format) + update the docs on how to install it

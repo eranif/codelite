@@ -20,6 +20,15 @@ Property name | Description
 `Working directory` | CodeLite executes the formatter from this directory. [Macros][3] are allowed. By default CodeLite uses `$(WorkspacePath)`
 `Command` | the command to execute. [Macros][3] are allowed
 
+## Upgrading CodeLite
+---
+
+New versions of CodeLite might introduce a new supported formatters.
+However, CodeLite will not override your local configuration, in order
+to enable any new formatter added by a more recent version of CodeLite, click
+the `Defaults` button in the `Options` dialog from:
+`Plugins → Source Code Formatter → Options...`
+
 ## Integration with remote workspace
 ---
 
@@ -39,6 +48,7 @@ with the commands taken from [`codelite-remote.json`][2] configuration file.
     Rust | rustfmt | `pacman -Sy mingw-w64-clang-x86_64-rust`
     Xml | xmllint | `pacman -Sy mingw-w64-clang-x86_64-libxml2`
     Yaml | yq | `wget https://github.com/mikefarah/yq/releases/download/v4.28.1/yq_windows_amd64.exe|mv yq_windows_amd64.exe /usr/bin/yq.exe`
+    CMake | cmake-format | `pip3 install cmake-format`
 
 === "Ubuntu"
     Language | Tool name | Command to install
@@ -49,6 +59,7 @@ with the commands taken from [`codelite-remote.json`][2] configuration file.
     Rust | rustfmt | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
     Xml | xmllint | `sudo apt-get install libxml2-utils`
     Yaml | yq | `brew install yq`
+    CMake | cmake-format | `pip3 install cmake-format`
 
 === "macOS"
     Language | Tool name | Command to install
@@ -59,6 +70,7 @@ with the commands taken from [`codelite-remote.json`][2] configuration file.
     Rust | rustfmt | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
     Xml | xmllint | Already installed
     Yaml | yq | `brew install yq`
+    CMake | cmake-format | `pip3 install cmake-format`
 
  [1]: /plugins/remoty
  [2]: /plugins/remoty/#remote-configuration-codelite-remotejson

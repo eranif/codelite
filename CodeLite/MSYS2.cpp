@@ -77,7 +77,7 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
     }
 
     // cargo (MSYS2 path)
-    wxFileName cargo_msys_bin{msyspath, wxEmptyString};
+    wxFileName cargo_msys_bin{ msyspath, wxEmptyString };
     cargo_msys_bin.AppendDir("home");
     cargo_msys_bin.AppendDir(::wxGetUserId());
     cargo_msys_bin.AppendDir(".cargo");
@@ -87,12 +87,23 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
     }
 
     // cargo (Windows native path)
+    // e.g. /c/users/eran/.cargo/bin
     wxFileName cargo_bin{ clStandardPaths::Get().GetUserDataDir(), wxEmptyString };
     cargo_bin.AppendDir(".cargo");
     cargo_bin.AppendDir("bin");
 
     if(cargo_bin.DirExists()) {
         paths_to_try.Add(cargo_bin.GetPath());
+    }
+
+    // local (Windows native path)
+    // e.g. /c/users/eran/.local/bin
+    wxFileName local_bin{ clStandardPaths::Get().GetUserDataDir(), wxEmptyString };
+    local_bin.AppendDir(".local");
+    local_bin.AppendDir("bin");
+
+    if(local_bin.DirExists()) {
+        paths_to_try.Add(local_bin.GetPath());
     }
 
     // at the point, the order of search is:

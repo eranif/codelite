@@ -4,6 +4,7 @@
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "fmtBlack.hpp"
+#include "fmtCMakeForamt.hpp"
 #include "fmtClangFormat.hpp"
 #include "fmtJQ.hpp"
 #include "fmtPHPCBF.hpp"
@@ -42,6 +43,7 @@ void CodeFormatterManager::initialize_defaults()
     push_back(new fmtRustfmt);
     push_back(new fmtBlack);
     push_back(new fmtYQ);
+    push_back(new fmtCMakeForamt);
 }
 
 void CodeFormatterManager::push_back(GenericFormatter* formatter)

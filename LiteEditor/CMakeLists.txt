@@ -1,5 +1,4 @@
-# Our project is called 'codelite' this is how it will be called in
-# visual studio, and in our makefiles.
+# Our project is called 'codelite' this is how it will be called in visual studio, and in our makefiles.
 project(codelite)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -34,6 +33,9 @@ if(USE_CLANG)
     add_definitions(-DHAS_LIBCLANG)
     include_directories(${CLANG_INCLUDE})
 endif(USE_CLANG)
+
+# configure version file, this needs to be done before we set the SRCS variable
+configure_file(${CMAKE_CURRENT_LIST_DIR}/autoversion.h.in ${CMAKE_CURRENT_LIST_DIR}/autoversion.h)
 
 file(GLOB SRCS "*.cpp")
 
@@ -114,11 +116,11 @@ endif()
 
 codelite_add_pch(codelite)
 
-##################################################################
-## Install
-##################################################################
+# ######################################################################################################################
+# Install
+# ######################################################################################################################
 
-## Copy binaries / scripts
+# Copy binaries / scripts
 set(EXE_PERM
     OWNER_EXECUTE
     OWNER_WRITE
@@ -141,17 +143,17 @@ if(NOT APPLE)
         DESTINATION ${CL_INSTALL_BIN}
         PERMISSIONS ${EXE_PERM})
 
-    ## codelite icons
+    # codelite icons
     install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip DESTINATION ${CL_RESOURCES_DIR})
     install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip DESTINATION ${CL_RESOURCES_DIR})
 
-    ## License file
+    # License file
     install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CL_RESOURCES_DIR})
 
-    ## Manual pages
+    # Manual pages
     install(DIRECTORY ${CL_SRC_ROOT}/Runtime/man1 DESTINATION ${CL_RESOURCES_DIR}/man)
 
-    ## Copy default configuration files
+    # Copy default configuration files
     install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default DESTINATION ${CL_RESOURCES_DIR}/config)
     install(
         FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.gtk
@@ -188,11 +190,11 @@ if(NOT APPLE)
             FILES ${CL_SRC_ROOT}/Runtime/codelite_xterm
             DESTINATION ${CL_INSTALL_BIN}
             PERMISSIONS ${EXE_PERM})
-        ## Create application launcher, copy application icon to standard location
+        # Create application launcher, copy application icon to standard location
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
-        ## Install icons
+        # Install icons
 
-        ## 32x32
+        # 32x32
         install(
             FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo@2x.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32@2x/apps
@@ -202,7 +204,7 @@ if(NOT APPLE)
             FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps
             RENAME codelite.png)
-        ## 64x64
+        # 64x64
         install(
             FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo@2x.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/64x64@2x/apps
@@ -213,7 +215,7 @@ if(NOT APPLE)
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/64x64/apps
             RENAME codelite.png)
 
-        ## 128x128
+        # 128x128
         install(
             FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo@2x.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128@2x/apps
@@ -223,7 +225,7 @@ if(NOT APPLE)
             FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128/apps
             RENAME codelite.png)
-        ## 256x256
+        # 256x256
         install(
             FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo@2x.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256@2x/apps
@@ -251,9 +253,7 @@ if(NOT APPLE)
             DESTINATION ${CL_INSTALL_BIN}/images
             RENAME splashscreen.png)
 
-        install(
-            FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
-            DESTINATION ${CL_INSTALL_BIN}/images)
+        install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png DESTINATION ${CL_INSTALL_BIN}/images)
     endif()
 
     codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
@@ -282,17 +282,18 @@ if(NOT APPLE)
             RENAME dynamic-library.project)
 
         install(
-            FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project.windows
+            FILES
+                ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project.windows
             DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library-wx-enabled
             RENAME dynamic-library-wx-enabled.project)
     else()
         # just install the missing files
-        install(
-            FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library/dynamic-library.project
-            DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library)
+        install(FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library/dynamic-library.project
+                DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library)
 
         install(
-            FILES ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project
+            FILES
+                ${CL_SRC_ROOT}/Runtime/templates/projects/dynamic-library-wx-enabled/dynamic-library-wx-enabled.project
             DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library-wx-enabled)
     endif()
 
@@ -311,19 +312,21 @@ if(NOT APPLE)
             OUTPUT_VARIABLE WX_LIBSOUTPUT
             OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-        if(${WX_LIBSOUTPUT} MATCHES "^-L.+"
-        )# In recent, multi-architecture, distro versions it'll start with -L/foo/bar
+        if(${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with
+                                             # -L/foo/bar
             string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" WX_LIBS_DIR ${WX_LIBSOUTPUT})
         else()
-            # In recent fedoras, which do things with wx-config that might politely be described as 'strange',  wx-config doesn't emit -L/usr/lib64
-            #find_file( USRLIBSIXTYFOUR "libwx_baseu-3.1.so" "/usr/lib64" ) No, this can't cope with e.g. libwx_base2u, or 3.1.3<SomeGitVersion> and find_file doesn't do globs/regex
+            # In recent fedoras, which do things with wx-config that might politely be described as 'strange', wx-config
+            # doesn't emit -L/usr/lib64 find_file( USRLIBSIXTYFOUR "libwx_baseu-3.1.so" "/usr/lib64" ) No, this can't
+            # cope with e.g. libwx_base2u, or 3.1.3<SomeGitVersion> and find_file doesn't do globs/regex
             execute_process(COMMAND "find /usr/lib64/ -iname libwx_base*3.2*" OUTPUT_VARIABLE wxBASELIBDIR)
             if(NOT wxBASELIBDIR MATCHES ".*NOTFOUND")
                 set(WX_LIBS_DIR "/usr/lib64")
             else()
                 set(WX_LIBS_DIR "/usr/lib")
 
-                # ${WX_LIBS_DIR} will be empty for older, non multi-architecture, distro versions that still use /usr/lib
+                # ${WX_LIBS_DIR} will be empty for older, non multi-architecture, distro versions that still use
+                # /usr/lib
             endif()
         endif()
         message("-- wxlibsdir is: ${WX_LIBS_DIR}")
@@ -336,13 +339,15 @@ if(NOT APPLE)
         string(REPLACE " " ";" WX_LIBS_ALL_LIST ${WX_LIBS_ALL_IN}) # the semicolons make the variable into a list
 
         foreach(ITEM ${WX_LIBS_ALL_LIST})
-            # We want to replace -l with lib. We also want to exclude imaginary libs called _all.so, which buggy wx-config scripts can invent
+            # We want to replace -l with lib. We also want to exclude imaginary libs called _all.so, which buggy
+            # wx-config scripts can invent
             if(${ITEM} MATCHES "-lwx_.+" AND NOT ${ITEM} MATCHES "-l.+_all.+")
                 string(REGEX REPLACE "^-l" "lib" LIBITEM ${ITEM})
-                # openSUSE have started to use libwx_gtk2u_xrc-suse.so instead of libwx_gtk2u_xrc-3.1, so allow for extra text there
+                # openSUSE have started to use libwx_gtk2u_xrc-suse.so instead of libwx_gtk2u_xrc-3.1, so allow for
+                # extra text there
                 string(REGEX REPLACE "(libwx_[a-z0-9._]+-)(.+)" "\\1*\\2" LIBITEMADJ ${LIBITEM})
-                list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEMADJ}*.so*
-                )# we need the terminal [.]so because the rpms contain both dynamic and static libs
+                list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEMADJ}*.so*) # we need the terminal [.]so because the rpms
+                                                                           # contain both dynamic and static libs
             endif()
         endforeach()
 

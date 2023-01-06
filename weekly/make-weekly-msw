@@ -2,21 +2,25 @@
 
 . $(dirname $(readlink -f $0))/make-weekly-common
 
+WXCRAFTER_BUILD_DIR=${ROOT_DIR}/build-release-wxcapp
+CODELITE_BUILD_DIR=${ROOT_DIR}/build-release
+
 # package CodeLite
 function build_codelite() {
-    cd $ROOT_DIR
-    mkdir -p build-release
-    cd build-release
+    mkdir -p ${CODELITE_BUILD_DIR}
+    cd ${CODELITE_BUILD_DIR}
+
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXWIN=$HOME/root -G"MinGW Makefiles"
     mingw32-make -j${cpu_count} install
 }
 
 function package_codelite() {
-    cd $ROOT_DIR/build-release
+    cd ${CODELITE_BUILD_DIR}
     mingw32-make -j${cpu_count} setup
 
     # cd to the location where our output file exists and upload it
-    cd ${ROOT_DIR}/InnoSetup/output
+    cd ${CODELITE_BUILD_DIR}/installer
+
     package_file=$(ls *codelite*.exe)
     echo "Uploading CodeLite installer ${package_file}"
     upload_path="/var/www/html/downloads/codelite/${version}"
@@ -28,19 +32,20 @@ function package_codelite() {
 
 # package wxCrafter
 function build_wxcrafter() {
-    cd $ROOT_DIR
-    mkdir -p build-release-wxcapp
-    cd build-release-wxcapp
+    mkdir -p ${WXCRAFTER_BUILD_DIR}
+    cd ${WXCRAFTER_BUILD_DIR}
+
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXWIN=$HOME/root -G"MinGW Makefiles" -DWXC_APP=1
     mingw32-make -j${cpu_count} install
 }
 
 function package_wxcrafter() {
-    cd $ROOT_DIR/build-release-wxcapp
+    cd ${WXCRAFTER_BUILD_DIR}
     mingw32-make -j${cpu_count} setup
 
     # cd to the location where our output file exists and upload it
-    cd ${ROOT_DIR}/InnoSetup/output
+    cd ${WXCRAFTER_BUILD_DIR}/installer
+
     package_file=$(ls *wxcrafter*.exe)
     echo "Uploading wxCrafter installer ${package_file}"
 
@@ -52,7 +57,8 @@ function package_wxcrafter() {
 }
 
 # clear old installers
-rm -fr ${ROOT_DIR}/InnoSetup/output/*.exe
+rm -fr ${WXCRAFTER_BUILD_DIR}/installer/
+rm -fr ${CODELITE_BUILD_DIR}/installer/
 
 build_codelite
 package_codelite

@@ -1114,17 +1114,12 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer176 = new wxBoxSizer(wxVERTICAL);
     m_panel174->SetSizer(boxSizer176);
 
-    wxStaticBoxSizer* staticBoxSizer184 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panel174, wxID_ANY, wxT("")), wxVERTICAL);
-
-    boxSizer176->Add(staticBoxSizer184, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     wxFlexGridSizer* flexGridSizer179 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer179->SetFlexibleDirection(wxBOTH);
     flexGridSizer179->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer179->AddGrowableCol(1);
 
-    staticBoxSizer184->Add(flexGridSizer179, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer176->Add(flexGridSizer179, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText182 = new wxStaticText(m_panel174, wxID_ANY, _("Version:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panel174, wxSize(-1, -1)), 0);
@@ -1156,6 +1151,52 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
                                            wxDefaultPosition, wxDLG_UNIT(m_panel174, wxSize(-1, -1)), 0);
 
     boxSizer176->Add(m_staticBitmap178, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel427 = new wxPanel(m_notebook173, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook173, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
+    m_notebook173->AddPage(m_panel427, _("License"), false);
+
+    wxBoxSizer* boxSizer428 = new wxBoxSizer(wxVERTICAL);
+    m_panel427->SetSizer(boxSizer428);
+
+    m_stcLicense =
+        new wxStyledTextCtrl(m_panel427, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel427, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_stcLicense->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcLicense->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcLicense->SetMarginSensitive(4, true);
+    m_stcLicense->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcLicense->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcLicense->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcLicense->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcLicense->SetMarginWidth(2, 0);
+    m_stcLicense->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcLicense->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcLicense->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcLicense->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcLicense->SetMarginMask(3, 0);
+    m_stcLicense->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcLicense->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcLicense->StyleClearAll();
+    m_stcLicense->SetWrapMode(0);
+    m_stcLicense->SetIndentationGuides(0);
+    m_stcLicense->SetKeyWords(0, wxT(""));
+    m_stcLicense->SetKeyWords(1, wxT(""));
+    m_stcLicense->SetKeyWords(2, wxT(""));
+    m_stcLicense->SetKeyWords(3, wxT(""));
+    m_stcLicense->SetKeyWords(4, wxT(""));
+
+    boxSizer428->Add(m_stcLicense, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer170 = new wxBoxSizer(wxHORIZONTAL);
 

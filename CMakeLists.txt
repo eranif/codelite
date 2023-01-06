@@ -50,10 +50,11 @@ project("CodeLite")
 
 if(UNIX AND NOT APPLE)
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-        # user did not pass -DCMAKE_INSTALL_PREFIX and this is the first time
-        # we are executing cmake, the default is set to /usr/local
-        # and we do not want that..
-        set(CMAKE_INSTALL_PREFIX "/usr" CACHE ON "Install prefix" FORCE)
+        # user did not pass -DCMAKE_INSTALL_PREFIX and this is the first time we are executing cmake, the default is set
+        # to /usr/local and we do not want that..
+        set(CMAKE_INSTALL_PREFIX
+            "/usr"
+            CACHE ON "Install prefix" FORCE)
     endif()
 endif()
 
@@ -74,18 +75,16 @@ elseif(UNIX AND NOT APPLE)
 endif()
 
 message(STATUS "CMAKE_INSTALL_PREFIX is set to ${CMAKE_INSTALL_PREFIX}")
+set(CODELITE_VERSION "17.0.0")
+
+# for now, we keep wxCrafter version to be the same as CodeLite version this allows for better support
+set(WXCRAFTER_VERSION ${CODELITE_VERSION})
 
 # Generate compile_commands.json file for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-
-if(CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
-    set(CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
-else()
-    set(CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
-endif()
+set(CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 find_package(SQLite3)
-
 include(UtilsHelper)
 
 if(NOT SQLite3_FOUND)
@@ -708,7 +707,7 @@ if(MAKE_DEB)
     endif()
     set(CPACK_GENERATOR "DEB")
     set(CPACK_PACKAGE_NAME "CodeLite")
-    set(CPACK_PACKAGE_VERSION "17.0.0-${GTKNAME}")
+    set(CPACK_PACKAGE_VERSION "${CODELITE_VERSION}-${GTKNAME}")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Eran Ifrah <eran@codelite.org>")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/Rust/Python/PHP/Node.js IDE (Integrated Development Environment)")
     set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
@@ -736,8 +735,8 @@ if(MAKE_RPM)
     set(CPACK_RPM_PACKAGE_REQUIRES "gcc, g++, git, sqlite, libssh, gtk3, cmake")
     set(CPACK_GENERATOR "RPM")
     set(CPACK_RPM_PACKAGE_NAME "CodeLite")
-    set(CPACK_RPM_FILE_NAME "CodeLite-17.0.0-x86_64.rpm")
-    set(CPACK_RPM_PACKAGE_VERSION "17.0.0-${GTKNAME}")
+    set(CPACK_RPM_FILE_NAME "CodeLite-${CODELITE_VERSION}-x86_64.rpm")
+    set(CPACK_RPM_PACKAGE_VERSION "${CODELITE_VERSION}-${GTKNAME}")
     set(CPACK_PACKAGE_CONTACT "Eran Ifrah <eran@codelite.org>")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/Rust/Python/PHP/Node.js IDE (Integrated Development Environment)")
     set(CPACK_PACKAGE_VENDOR "The CodeLite Team")
@@ -760,8 +759,8 @@ if(MAKE_RPM_SLIM)
     set(CPACK_RPM_PACKAGE_REQUIRES "gcc72, g++72, git, sqlite, gtk3, cmake")
     set(CPACK_GENERATOR "RPM")
     set(CPACK_RPM_PACKAGE_NAME "CodeLite")
-    set(CPACK_RPM_FILE_NAME "CodeLite-slim-17.0.0-gtk2-x86_64.rpm")
-    set(CPACK_RPM_PACKAGE_VERSION "17.0.0-${GTKNAME}")
+    set(CPACK_RPM_FILE_NAME "CodeLite-slim-${CODELITE_VERSION}-gtk2-x86_64.rpm")
+    set(CPACK_RPM_PACKAGE_VERSION "${CODELITE_VERSION}-${GTKNAME}")
     set(CPACK_PACKAGE_CONTACT "Eran Ifrah <eran@codelite.org>")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++ IDE (Integrated Development Environment)")
     set(CPACK_PACKAGE_VENDOR "Eran Ifrah")
@@ -1011,7 +1010,7 @@ endif()
 
 if(MINGW AND NOT WXC_APP)
     # configure the innosetup file
-    configure_file(${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss.in ${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss)
+    configure_file(${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss.in ${BUILD_DIRECTORY}/codelite64_mingw.iss)
 
     # CodeLite only related installation
     find_program(
@@ -1025,12 +1024,12 @@ if(MINGW AND NOT WXC_APP)
         message(STATUS "InnoSetup compiler is set to: ${INNO_SETUP_CMP}")
         add_custom_target(
             setup
-            COMMAND "${INNO_SETUP_CMP}" ${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss
+            COMMAND "${INNO_SETUP_CMP}" ${BUILD_DIRECTORY}/codelite64_mingw.iss
             WORKING_DIRECTORY "${CL_SRC_ROOT}/InnoSetup")
     endif()
 elseif(MINGW AND WXC_APP)
     # configure the innosetup file
-    configure_file(${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss.in ${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss)
+    configure_file(${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss.in ${BUILD_DIRECTORY}/wxcrafter64_mingw.iss)
 
     # wxCrafter App
     find_program(
@@ -1043,7 +1042,7 @@ elseif(MINGW AND WXC_APP)
         message(STATUS "InnoSetup compiler is set to: ${INNO_SETUP_CMP}")
         add_custom_target(
             setup
-            COMMAND "${INNO_SETUP_CMP}" ${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss
+            COMMAND "${INNO_SETUP_CMP}" ${BUILD_DIRECTORY}/wxcrafter64_mingw.iss
             WORKING_DIRECTORY "${CL_SRC_ROOT}/InnoSetup")
     endif()
 endif()

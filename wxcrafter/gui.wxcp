@@ -919,100 +919,6 @@
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
-											"m_winid":	"XRCID(\"hide_designer\")"
-										}, {
-											"type":	"string",
-											"m_label":	"Name:",
-											"m_value":	"m_menuItemHide"
-										}, {
-											"type":	"string",
-											"m_label":	"Label:",
-											"m_value":	"&Close"
-										}, {
-											"type":	"string",
-											"m_label":	"Shortcut:",
-											"m_value":	""
-										}, {
-											"type":	"string",
-											"m_label":	"Help String:",
-											"m_value":	"Hide the designer"
-										}, {
-											"type":	"bitmapPicker",
-											"m_label":	"Bitmap File:",
-											"m_path":	""
-										}, {
-											"type":	"choice",
-											"m_label":	"Kind:",
-											"m_selection":	0,
-											"m_options":	["normal", "checkable", "radio", "separator"]
-										}, {
-											"type":	"bool",
-											"m_label":	"Checked",
-											"m_value":	false
-										}],
-									"m_events":	[{
-											"m_eventName":	"wxEVT_COMMAND_MENU_SELECTED",
-											"m_eventClass":	"wxCommandEvent",
-											"m_functionNameAndSignature":	"OnHide(wxCommandEvent& event)",
-											"m_description":	"Menu item has been clicked",
-											"m_noBody":	false
-										}],
-									"m_children":	[]
-								}, {
-									"m_type":	4459,
-									"proportion":	0,
-									"border":	5,
-									"gbSpan":	"1,1",
-									"gbPosition":	"0,0",
-									"m_styles":	[],
-									"m_sizerFlags":	[],
-									"m_properties":	[{
-											"type":	"winid",
-											"m_label":	"ID:",
-											"m_winid":	"wxID_ANY"
-										}, {
-											"type":	"string",
-											"m_label":	"Name:",
-											"m_value":	"m_menuItemSep2"
-										}, {
-											"type":	"string",
-											"m_label":	"Label:",
-											"m_value":	"Item34"
-										}, {
-											"type":	"string",
-											"m_label":	"Shortcut:",
-											"m_value":	""
-										}, {
-											"type":	"string",
-											"m_label":	"Help String:",
-											"m_value":	""
-										}, {
-											"type":	"bitmapPicker",
-											"m_label":	"Bitmap File:",
-											"m_path":	""
-										}, {
-											"type":	"choice",
-											"m_label":	"Kind:",
-											"m_selection":	3,
-											"m_options":	["normal", "checkable", "radio", "separator"]
-										}, {
-											"type":	"bool",
-											"m_label":	"Checked",
-											"m_value":	false
-										}],
-									"m_events":	[],
-									"m_children":	[]
-								}, {
-									"m_type":	4459,
-									"proportion":	0,
-									"border":	5,
-									"gbSpan":	"1,1",
-									"gbPosition":	"0,0",
-									"m_styles":	[],
-									"m_sizerFlags":	[],
-									"m_properties":	[{
-											"type":	"winid",
-											"m_label":	"ID:",
 											"m_winid":	"ID_GENERATE_CODE"
 										}, {
 											"type":	"string",
@@ -1129,11 +1035,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_menuItemSeparator1"
+											"m_value":	"m_menuItemSep2"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"Item7"
+											"m_value":	"Item34"
 										}, {
 											"type":	"string",
 											"m_label":	"Shortcut:",
@@ -1169,23 +1075,23 @@
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
-											"m_winid":	"wxID_BACKWARD"
+											"m_winid":	"XRCID(\"hide_designer\")"
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_menuItemBackToCodelite"
+											"m_value":	"m_menuItemHide"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"Back to CodeLite"
+											"m_value":	"&Close"
 										}, {
 											"type":	"string",
 											"m_label":	"Shortcut:",
-											"m_value":	"Ctrl-Shift-F12"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
-											"m_value":	""
+											"m_value":	"Hide the designer"
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
@@ -1201,15 +1107,9 @@
 											"m_value":	false
 										}],
 									"m_events":	[{
-											"m_eventName":	"wxEVT_UPDATE_UI",
-											"m_eventClass":	"wxUpdateUIEvent",
-											"m_functionNameAndSignature":	"OnSwitchToCodeliteUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event",
-											"m_noBody":	false
-										}, {
 											"m_eventName":	"wxEVT_COMMAND_MENU_SELECTED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_functionNameAndSignature":	"OnSwitchToCodelite(wxCommandEvent& event)",
+											"m_functionNameAndSignature":	"OnHide(wxCommandEvent& event)",
 											"m_description":	"Menu item has been clicked",
 											"m_noBody":	false
 										}],

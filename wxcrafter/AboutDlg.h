@@ -10,6 +10,5 @@ public:
 
 protected:
     virtual void OnSize(wxSizeEvent& event);
-    void DoRefresh();
 };
 #endif // ABOUTDLG_H

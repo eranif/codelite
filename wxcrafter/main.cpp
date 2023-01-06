@@ -193,6 +193,7 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
 #if !STANDALONE_BUILD
     m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), images->Add("back"));
 #endif
+
     m_mainToolbar->AddTool(wxID_NEW, _("New Project"), images->Add("file_new"));
     m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), images->Add("file_open"), "", wxITEM_DROPDOWN);
     m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), images->Add("file_close"));

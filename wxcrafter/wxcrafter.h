@@ -35,6 +35,7 @@
 #include <wx/splitter.h>
 #include <wx/treectrl.h>
 #include "clTreeCtrl.h"
+#include <wx/stc/stc.h>
 #include "events_table_list_view.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -374,6 +375,8 @@ protected:
     wxStaticText* m_staticText_1;
     wxStaticText* m_staticTextBuildNumber;
     wxStaticBitmap* m_staticBitmap178;
+    wxPanel* m_panel427;
+    wxStyledTextCtrl* m_stcLicense;
     wxButton* m_button171;
 
 protected:
@@ -386,11 +389,13 @@ public:
     wxStaticText* GetStaticTextBuildNumber() { return m_staticTextBuildNumber; }
     wxStaticBitmap* GetStaticBitmap178() { return m_staticBitmap178; }
     wxPanel* GetPanel174() { return m_panel174; }
+    wxStyledTextCtrl* GetStcLicense() { return m_stcLicense; }
+    wxPanel* GetPanel427() { return m_panel427; }
     wxNotebook* GetNotebook173() { return m_notebook173; }
     wxButton* GetButton171() { return m_button171; }
     wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("About wxCrafter..."),
                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                         long style = wxDEFAULT_DIALOG_STYLE);
+                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxTRANSPARENT_WINDOW);
     virtual ~wxcAboutDlgBaseClass();
 };
 

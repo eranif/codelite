@@ -33,6 +33,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         wxC2AC4InitBitmapResources();
         bBitmapLoaded = true;
     }
+    this->Hide();
 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
@@ -88,12 +89,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_menuFile->AppendSeparator();
 
-    m_menuItemHide =
-        new wxMenuItem(m_menuFile, XRCID("hide_designer"), _("&Close"), _("Hide the designer"), wxITEM_NORMAL);
-    m_menuFile->Append(m_menuItemHide);
-
-    m_menuFile->AppendSeparator();
-
     m_menuItemGenerate =
         new wxMenuItem(m_menuFile, ID_GENERATE_CODE, _("Generate Code\tCtrl-G"), wxT(""), wxITEM_NORMAL);
     m_menuFile->Append(m_menuItemGenerate);
@@ -104,9 +99,9 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_menuFile->AppendSeparator();
 
-    m_menuItemBackToCodelite =
-        new wxMenuItem(m_menuFile, wxID_BACKWARD, _("Back to CodeLite\tCtrl-Shift-F12"), wxT(""), wxITEM_NORMAL);
-    m_menuFile->Append(m_menuItemBackToCodelite);
+    m_menuItemHide =
+        new wxMenuItem(m_menuFile, XRCID("hide_designer"), _("&Close"), _("Hide the designer"), wxITEM_NORMAL);
+    m_menuFile->Append(m_menuItemHide);
 
     m_menuView = new wxMenu();
     m_menuBar->Append(m_menuView, _("&View"));
@@ -222,15 +217,12 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnFileOpen, this, m_menuItemOpen->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnSave, this, m_menuItemSave->GetId());
     this->Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnSaveUI, this, m_menuItemSave->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnHide, this, m_menuItemHide->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnGenerateCode, this, m_menuItemGenerate->GetId());
     this->Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnGenerateCodeUI, this, m_menuItemGenerate->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnBatchGenerateCode, this,
                m_menuItemBatchGenerate->GetId());
     this->Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnBatchGenerateCodeUI, this, m_menuItemBatchGenerate->GetId());
-    this->Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnSwitchToCodeliteUI, this, m_menuItemBackToCodelite->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnSwitchToCodelite, this,
-               m_menuItemBackToCodelite->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnHide, this, m_menuItemHide->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnPreview, this, m_menuItemPreview->GetId());
     this->Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnPreviewUI, this, m_menuItemPreview->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnDeleteItem, this, m_menuItem74->GetId());
@@ -268,15 +260,12 @@ MainFrameBase::~MainFrameBase()
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnFileOpen, this, m_menuItemOpen->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnSave, this, m_menuItemSave->GetId());
     this->Unbind(wxEVT_UPDATE_UI, &MainFrameBase::OnSaveUI, this, m_menuItemSave->GetId());
-    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnHide, this, m_menuItemHide->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnGenerateCode, this, m_menuItemGenerate->GetId());
     this->Unbind(wxEVT_UPDATE_UI, &MainFrameBase::OnGenerateCodeUI, this, m_menuItemGenerate->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnBatchGenerateCode, this,
                  m_menuItemBatchGenerate->GetId());
     this->Unbind(wxEVT_UPDATE_UI, &MainFrameBase::OnBatchGenerateCodeUI, this, m_menuItemBatchGenerate->GetId());
-    this->Unbind(wxEVT_UPDATE_UI, &MainFrameBase::OnSwitchToCodeliteUI, this, m_menuItemBackToCodelite->GetId());
-    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnSwitchToCodelite, this,
-                 m_menuItemBackToCodelite->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnHide, this, m_menuItemHide->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnPreview, this, m_menuItemPreview->GetId());
     this->Unbind(wxEVT_UPDATE_UI, &MainFrameBase::OnPreviewUI, this, m_menuItemPreview->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnDeleteItem, this, m_menuItem74->GetId());

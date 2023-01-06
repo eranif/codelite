@@ -63,6 +63,10 @@ if(NOT MINGW)
         endif(NOT OFFICIAL_CL_BUILD)
     endif(WXC_APP)
 endif()
+
+# configure version file, this needs to be done before we set the SRCS variable
+configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in ${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp)
+
 file(GLOB SRCS "*.cpp")
 if(NOT WXC_APP)
     file(GLOB WXCLIB_SRCS "wxcLib/json_node.cpp" "wxcLib/cJSON.cpp" "wxcLib/wxc*.cpp")
@@ -76,9 +80,9 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/wxcLib")
 add_definitions(-fPIC)
 add_library(wxcLib STATIC ${WXCLIB_SRCS})
 
-set (RES_FILE "")
+set(RES_FILE "")
 # Define the output
-if (MINGW)
+if(MINGW)
     set(RES_FILES "resources/wxcapp_resources.rc")
 endif()
 

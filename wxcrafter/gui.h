@@ -81,12 +81,10 @@ protected:
     wxMenuItem* m_menuItemOpen;
     wxMenuItem* m_menuItemSave;
     wxMenuItem* m_menuItemSep1;
-    wxMenuItem* m_menuItemHide;
-    wxMenuItem* m_menuItemSep2;
     wxMenuItem* m_menuItemGenerate;
     wxMenuItem* m_menuItemBatchGenerate;
-    wxMenuItem* m_menuItemSeparator1;
-    wxMenuItem* m_menuItemBackToCodelite;
+    wxMenuItem* m_menuItemSep2;
+    wxMenuItem* m_menuItemHide;
     wxMenu* m_menuView;
     wxMenuItem* m_menuItemPreview;
     wxMenu* m_menuEdit;
@@ -123,13 +121,11 @@ protected:
     virtual void OnFileOpen(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnHide(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenerateCode(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenerateCodeUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBatchGenerateCode(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBatchGenerateCodeUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSwitchToCodeliteUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSwitchToCodelite(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnHide(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPreview(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPreviewUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDeleteItem(wxCommandEvent& event) { event.Skip(); }

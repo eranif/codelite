@@ -16,6 +16,9 @@ public:
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxSTCNameStr);
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxSTCNameStr);
+    clThemedSTC(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& defaultValue = wxEmptyString,
+                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0,
+                const wxString& name = wxSTCNameStr);
     virtual ~clThemedSTC();
 };
 

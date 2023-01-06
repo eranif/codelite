@@ -27,6 +27,7 @@
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include "clThemedComboBox.hpp"
+#include "clThemedTextCtrl.hpp"
 #include <wx/choice.h>
 #include "clThemedChoice.h"
 #include <wx/dataview.h>
@@ -112,16 +113,16 @@ protected:
     clThemedComboBox* m_comboBoxExecutable;
     wxButton* m_button241;
     wxStaticText* m_staticText191;
-    wxTextCtrl* m_textCtrlWD;
+    clThemedTextCtrl* m_textCtrlWD;
     wxButton* m_button243;
     wxStaticText* m_staticText113;
     clThemedSTC* m_textCtrlArgs;
     wxStaticText* m_staticText35;
-    wxTextCtrl* m_textCtrlFileExt;
+    clThemedTextCtrl* m_textCtrlFileExt;
     wxStaticText* m_staticText187;
-    wxTextCtrl* m_textCtrlExcludeFiles;
+    clThemedTextCtrl* m_textCtrlExcludeFiles;
     wxStaticText* m_staticText207;
-    wxTextCtrl* m_textCtrlExcludePaths;
+    clThemedTextCtrl* m_textCtrlExcludePaths;
     wxButton* m_button213;
     wxPanel* m_panelBuild;
     wxStaticText* m_staticText125;
@@ -174,16 +175,16 @@ public:
     clThemedComboBox* GetComboBoxExecutable() { return m_comboBoxExecutable; }
     wxButton* GetButton241() { return m_button241; }
     wxStaticText* GetStaticText191() { return m_staticText191; }
-    wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }
+    clThemedTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }
     wxButton* GetButton243() { return m_button243; }
     wxStaticText* GetStaticText113() { return m_staticText113; }
     clThemedSTC* GetTextCtrlArgs() { return m_textCtrlArgs; }
     wxStaticText* GetStaticText35() { return m_staticText35; }
-    wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
+    clThemedTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
     wxStaticText* GetStaticText187() { return m_staticText187; }
-    wxTextCtrl* GetTextCtrlExcludeFiles() { return m_textCtrlExcludeFiles; }
+    clThemedTextCtrl* GetTextCtrlExcludeFiles() { return m_textCtrlExcludeFiles; }
     wxStaticText* GetStaticText207() { return m_staticText207; }
-    wxTextCtrl* GetTextCtrlExcludePaths() { return m_textCtrlExcludePaths; }
+    clThemedTextCtrl* GetTextCtrlExcludePaths() { return m_textCtrlExcludePaths; }
     wxButton* GetButton213() { return m_button213; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     wxStaticText* GetStaticText125() { return m_staticText125; }

@@ -13,6 +13,21 @@ clThemedSTC::clThemedSTC(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     }
 }
 
+clThemedSTC::clThemedSTC(wxWindow* parent, wxWindowID id, const wxString& defaultValue, const wxPoint& pos,
+                         const wxSize& size, long style, const wxString& name)
+    : wxStyledTextCtrl(parent, id, pos, size, style, name)
+{
+    m_editEventsHandler.Reset(new clEditEventsHandler(this));
+    LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lex) {
+        lex->ApplySystemColours(this);
+    }
+
+    if(!defaultValue.empty()) {
+        SetText(defaultValue);
+    }
+}
+
 clThemedSTC::clThemedSTC() { m_editEventsHandler.Reset(nullptr); }
 
 bool clThemedSTC::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,

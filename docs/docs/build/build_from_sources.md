@@ -18,7 +18,7 @@ pacman -S mingw-w64-clang-x86_64-zlib       \
           mingw-w64-clang-x86_64-sqlite3
 ```
 
-- Build `wx-config.exe`:
+- Download and build `wx-config.exe` from sources:
 
 ```bash
 git clone https://github.com/eranif/wx-config-msys2.git
@@ -28,6 +28,12 @@ cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles"
 mingw32-make -j$(nproc)
 ```
+
+
+!!! Note:
+    To build CodeLite in debug mode, replace `CMake` argument from:
+    `-DCMAKE_BUILD_TYPE=Release` into `-DCMAKE_BUILD_TYPE=Debug`
+
 
 - Build CodeLite:
 

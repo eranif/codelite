@@ -3,6 +3,7 @@
 #include "cl_standard_paths.h"
 
 #include <wx/arrstr.h>
+#include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 
 bool MSYS2::FindInstallDir(wxString* msyspath)
@@ -88,7 +89,7 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
 
     // cargo (Windows native path)
     // e.g. /c/users/eran/.cargo/bin
-    wxFileName cargo_bin{ clStandardPaths::Get().GetUserDataDir(), wxEmptyString };
+    wxFileName cargo_bin{ ::wxGetHomeDir(), wxEmptyString };
     cargo_bin.AppendDir(".cargo");
     cargo_bin.AppendDir("bin");
 
@@ -98,7 +99,7 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
 
     // local (Windows native path)
     // e.g. /c/users/eran/.local/bin
-    wxFileName local_bin{ clStandardPaths::Get().GetUserDataDir(), wxEmptyString };
+    wxFileName local_bin{ ::wxGetHomeDir(), wxEmptyString };
     local_bin.AppendDir(".local");
     local_bin.AppendDir("bin");
 

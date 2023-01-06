@@ -1022,10 +1022,15 @@ if(MINGW AND NOT WXC_APP)
         message(WARNING "\n** You can install InnoSetup compiler from here: https://jrsoftware.org/ **\n")
     else()
         message(STATUS "InnoSetup compiler is set to: ${INNO_SETUP_CMP}")
+
+        # fake target that executes "install". we then use this target as the dependency for the `setup` target
+        add_custom_target(codelite-install COMMAND "${CMAKE_COMMAND}" --build "${BUILD_DIRECTORY}" --target install)
+
         add_custom_target(
             setup
             COMMAND "${INNO_SETUP_CMP}" ${BUILD_DIRECTORY}/codelite64_mingw.iss
-            WORKING_DIRECTORY "${CL_SRC_ROOT}/InnoSetup")
+            WORKING_DIRECTORY "${CL_SRC_ROOT}/InnoSetup"
+            DEPENDS codelite-install)
     endif()
 elseif(MINGW AND WXC_APP)
     # configure the innosetup file

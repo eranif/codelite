@@ -29,13 +29,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles"
 mingw32-make -j$(nproc)
 ```
 
-
-!!! Note:
-    To build CodeLite in debug mode, replace `CMake` argument from:
-    `-DCMAKE_BUILD_TYPE=Release` into `-DCMAKE_BUILD_TYPE=Debug`
-
-
-- Build CodeLite:
+- Build CodeLite (in `Release` mode):
 
 ```bash
 git clone https://github.com/eranif/codelite.git
@@ -46,6 +40,10 @@ cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN=$HOME/root
 mingw32-make -j$(nproc) install
 ```
+
+!!! Note
+    To build CodeLite in debug mode, replace `CMake` argument from:
+    `-DCMAKE_BUILD_TYPE=Release` into `-DCMAKE_BUILD_TYPE=Debug`
 
 - To run the new CodeLite:
 

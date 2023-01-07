@@ -95,7 +95,6 @@ wxcWidget::wxcWidget(int type)
     ADD_STYLE(wxFULL_REPAINT_ON_RESIZE, false);
     ADD_STYLE(wxWANTS_CHARS, false);
     ADD_STYLE(wxTAB_TRAVERSAL, false);
-    ADD_STYLE(wxTRANSPARENT_WINDOW, false);
     ADD_STYLE(wxBORDER_NONE, false);
     ADD_STYLE(wxCLIP_CHILDREN, false);
     ADD_STYLE(wxALWAYS_SHOW_SB, false);

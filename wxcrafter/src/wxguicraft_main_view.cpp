@@ -1203,6 +1203,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
 void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapper, const wxTreeItemId& parent,
                                     const wxTreeItemId& beforeItem, bool insertBefore)
 {
+    CHECK_PTR_RET(wrapper);
     int imgId = Allocator::Instance()->GetImageId(wrapper->GetType());
     wxTreeItemId item;
 

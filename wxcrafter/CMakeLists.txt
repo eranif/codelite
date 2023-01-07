@@ -65,17 +65,33 @@ if(NOT MINGW)
 endif()
 
 # configure version file, this needs to be done before we set the SRCS variable
-configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in ${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp)
+configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in ${CL_SRC_ROOT}/wxcrafter/src/wxcversion.cpp)
 
-file(GLOB SRCS "*.cpp")
+file(
+    GLOB
+    SRCS
+    "src/*.cpp"
+    "aui/*.cpp"
+    "controls/*.cpp"
+    "sizers/*.cpp"
+    "top_level_windows/*.cpp"
+    "xrc_handlers/*.cpp")
+
 if(NOT WXC_APP)
     file(GLOB WXCLIB_SRCS "wxcLib/json_node.cpp" "wxcLib/cJSON.cpp" "wxcLib/wxc*.cpp")
 else(NOT WXC_APP)
     file(GLOB WXCLIB_SRCS "wxcLib/*.cpp")
 endif(NOT WXC_APP)
 
-include_directories(${CMAKE_CURRENT_LIST_DIR})
-include_directories("${CMAKE_CURRENT_LIST_DIR}/wxcLib")
+include_directories(
+    "${CMAKE_CURRENT_LIST_DIR}"
+    "${CMAKE_CURRENT_LIST_DIR}/wxcLib"
+    "${CMAKE_CURRENT_LIST_DIR}/src"
+    "${CMAKE_CURRENT_LIST_DIR}/aui"
+    "${CMAKE_CURRENT_LIST_DIR}/controls"
+    "${CMAKE_CURRENT_LIST_DIR}/sizers"
+    "${CMAKE_CURRENT_LIST_DIR}/top_level_windows"
+    "${CMAKE_CURRENT_LIST_DIR}/xrc_handlers")
 
 add_definitions(-fPIC)
 add_library(wxcLib STATIC ${WXCLIB_SRCS})

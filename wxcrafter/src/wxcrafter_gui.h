@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_WXCRAFTER_WXCRAFTER_GUI_BASE_CLASSES_H
-#define _CODELITE_WXCRAFTER_WXCRAFTER_GUI_BASE_CLASSES_H
+#ifndef _WXCRAFTER_SRC_WXCRAFTER_GUI_BASE_CLASSES_H
+#define _WXCRAFTER_SRC_WXCRAFTER_GUI_BASE_CLASSES_H
 
 // clang-format off
 #include <wx/settings.h>
@@ -424,7 +424,7 @@ protected:
 public:
     wxStaticBitmap* GetStaticBitmap657() { return m_staticBitmap657; }
     OpenGLCanvasBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_SIMPLE);
+                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~OpenGLCanvasBase();
 };
 

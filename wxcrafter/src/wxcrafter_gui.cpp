@@ -11,7 +11,19 @@
 // Declare the bitmap loading function
 extern void wxCE1C8InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 ToolBoxPanelBaseClass::ToolBoxPanelBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                              long style)
@@ -1115,268 +1127,236 @@ ToolBoxPanelBaseClass::ToolBoxPanelBaseClass(wxWindow* parent, wxWindowID id, co
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_bmpButton85->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton83->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton84->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton170->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton282->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton291->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton283->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton88->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton89->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton169->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton221->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton222->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton252->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton253->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton224->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton277->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton149->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton150->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton151->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton159->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton158->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton174->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton160->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton161->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton162->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton163->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton164->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton225->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton679->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton267->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton268->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonGlCanvas->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                 this);
-    m_bmpButton70->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton71->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton74->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton72->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton73->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton75->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonTglBmpBtn->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                  this);
-    m_bmpButton78->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton79->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton80->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton92->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton93->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton94->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton95->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton112->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton135->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton251->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton115->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton116->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton687->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonListBox->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                this);
-    m_bmpButtonSimpleHtmlListBox->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                          NULL, this);
-    m_bmpButton126->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonRearrangeList->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                      this);
-    m_bmpButton127->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton128->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton129->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonActivityCtrl->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                     this);
-    m_bmpButton132->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton133->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton134->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton138->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton139->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton140->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton141->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton142->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton143->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonTimePickerCtrl->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                       NULL, this);
-    m_bmpButton144->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton145->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton250->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton230->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton231->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton234->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton232->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton238->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton243->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton239->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton359->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton242->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonRibbonBar->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                  this);
-    m_bmpButtonRibbonPage->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                   this);
-    m_bmpButton315->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton317->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton321->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton323->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton325->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton327->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonRbToolbar->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                  this);
-    m_bmpButtonRibbonTool->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                   this);
-    m_bmpButtonDropdownTool->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                     this);
-    m_bmpButtonRibbonHybridTool->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                         NULL, this);
-    m_bmpButtonRibbonToggleTool->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                         NULL, this);
-    m_bmpButton357->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonRibbonGallery->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                      this);
-    m_bmpButtonRibbonGalleryItem->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                          NULL, this);
-    m_bmpButton257->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton258->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton262->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton263->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton293->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton677->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton299->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton259->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton264->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton285->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton681->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton269->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton272->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton275->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton673->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
+    m_bmpButton85->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton83->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton84->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton170->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton282->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton291->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton283->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton88->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton89->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton169->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton221->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton222->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton252->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton253->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton224->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton277->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton149->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton150->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton151->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton159->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton158->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton174->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton160->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton161->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton162->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton163->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton164->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton225->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton679->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton267->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton268->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonGlCanvas->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton70->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton71->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton74->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton72->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton73->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton75->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonTglBmpBtn->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton78->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton79->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton80->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton92->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton93->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton94->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton95->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton112->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton135->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton251->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton115->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton116->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton687->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonListBox->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonSimpleHtmlListBox->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton126->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRearrangeList->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton127->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton128->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton129->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonActivityCtrl->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton132->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton133->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton134->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton138->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton139->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton140->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton141->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton142->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton143->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonTimePickerCtrl->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton144->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton145->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton250->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton230->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton231->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton234->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton232->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton238->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton243->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton239->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton359->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton242->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonBar->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonPage->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton315->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton317->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton321->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton323->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton325->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton327->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRbToolbar->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonTool->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonDropdownTool->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonHybridTool->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonToggleTool->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton357->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonGallery->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonGalleryItem->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton257->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton258->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton262->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton263->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton293->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton677->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton299->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton259->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton264->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton285->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton681->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton269->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton272->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton275->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton673->Bind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
 }
 
 ToolBoxPanelBaseClass::~ToolBoxPanelBaseClass()
 {
-    m_bmpButton85->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton83->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton84->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton170->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton282->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton291->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton283->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton88->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton89->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton169->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton221->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton222->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton252->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton253->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton224->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton277->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton149->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton150->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton151->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton159->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton158->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton174->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton160->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton161->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton162->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton163->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton164->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton225->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton679->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton267->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton268->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonGlCanvas->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                    this);
-    m_bmpButton70->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton71->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton74->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton72->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton73->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton75->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonTglBmpBtn->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                     this);
-    m_bmpButton78->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton79->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton80->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton92->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton93->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton94->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton95->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton112->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton135->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton251->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton115->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton116->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton687->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonListBox->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                   this);
-    m_bmpButtonSimpleHtmlListBox->Disconnect(wxEVT_UPDATE_UI,
-                                             wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton126->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonRearrangeList->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                         NULL, this);
-    m_bmpButton127->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton128->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton129->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonActivityCtrl->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                        NULL, this);
-    m_bmpButton132->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton133->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton134->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton138->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton139->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton140->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton141->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton142->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton143->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonTimePickerCtrl->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                          NULL, this);
-    m_bmpButton144->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton145->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton250->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton230->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton231->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton234->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton232->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton238->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton243->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton239->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton359->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton242->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonRibbonBar->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                     this);
-    m_bmpButtonRibbonPage->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                      this);
-    m_bmpButton315->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton317->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton321->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton323->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton325->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton327->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonRbToolbar->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                     this);
-    m_bmpButtonRibbonTool->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL,
-                                      this);
-    m_bmpButtonDropdownTool->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                        NULL, this);
-    m_bmpButtonRibbonHybridTool->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                            NULL, this);
-    m_bmpButtonRibbonToggleTool->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                            NULL, this);
-    m_bmpButton357->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButtonRibbonGallery->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI),
-                                         NULL, this);
-    m_bmpButtonRibbonGalleryItem->Disconnect(wxEVT_UPDATE_UI,
-                                             wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton257->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton258->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton262->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton263->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton293->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton677->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton299->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton259->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton264->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton285->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton681->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton269->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton272->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton275->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
-    m_bmpButton673->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
+    m_bmpButton85->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton83->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton84->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton170->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton282->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton291->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton283->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton88->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton89->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton169->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton221->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton222->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton252->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton253->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton224->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton277->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton149->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton150->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton151->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton159->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton158->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton174->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton160->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton161->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton162->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton163->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton164->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton225->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton679->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton267->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton268->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonGlCanvas->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton70->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton71->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton74->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton72->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton73->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton75->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonTglBmpBtn->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton78->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton79->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton80->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton92->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton93->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton94->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton95->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton112->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton135->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton251->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton115->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton116->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton687->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonListBox->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonSimpleHtmlListBox->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton126->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRearrangeList->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton127->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton128->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton129->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonActivityCtrl->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton132->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton133->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton134->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton138->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton139->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton140->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton141->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton142->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton143->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonTimePickerCtrl->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton144->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton145->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton250->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton230->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton231->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton234->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton232->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton238->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton243->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton239->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton359->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton242->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonBar->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonPage->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton315->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton317->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton321->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton323->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton325->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton327->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRbToolbar->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonTool->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonDropdownTool->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonHybridTool->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonToggleTool->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton357->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonGallery->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButtonRibbonGalleryItem->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton257->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton258->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton262->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton263->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton293->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton677->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton299->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton259->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton264->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton285->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton681->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton269->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton272->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton275->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
+    m_bmpButton673->Unbind(wxEVT_UPDATE_UI, &ToolBoxPanelBaseClass::OnControlUI, this);
 }
 
 NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -1402,7 +1382,7 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
     flexGridSizer195->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer195->AddGrowableCol(1);
 
-    boxSizer181->Add(flexGridSizer195, 0, wxEXPAND | wxALL, WXC_FROM_DIP(5));
+    boxSizer181->Add(flexGridSizer195, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText184 = new wxStaticText(m_wizardPageFormType, wxID_ANY, _("Select the form type:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_wizardPageFormType, wxSize(-1, -1)), 0);
@@ -1566,85 +1546,54 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewFormWizardBaseClass::OnFinishClicked), NULL, this);
-    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewFormWizardBaseClass::OnWizardPageChanging), NULL,
-                  this);
-    m_choiceFormType->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
-                              wxCommandEventHandler(NewFormWizardBaseClass::OnFormTypeSelected), NULL, this);
-    m_staticText->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnTitleUI), NULL, this);
-    m_textCtrlTitle->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnTitleUI), NULL, this);
-    m_staticText244->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
-                             this);
-    m_choiceWxcp->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
-                          this);
-    m_button701->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewFormWizardBaseClass::OnNewWxcpProject),
-                         NULL, this);
-    m_button699->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewFormWizardBaseClass::OnBrowseWxcpFile),
-                         NULL, this);
-    m_staticText287->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnInheritedClassNameUI),
-                             NULL, this);
-    m_textCtrlInheritedClassName->Connect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnInheritedClassNameUI), NULL, this);
-    m_textCtrlInheritedClassName->Connect(
-        wxEVT_SET_FOCUS, wxFocusEventHandler(NewFormWizardBaseClass::OnInheritedNameFocus), NULL, this);
-    m_staticText187->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnFilenameUI), NULL, this);
-    m_textCtrFileName->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnFilenameUI), NULL,
-                               this);
-    m_textCtrFileName->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(NewFormWizardBaseClass::OnFilenameFocus), NULL,
-                               this);
-    m_staticText206->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI), NULL, this);
-    m_textCtrlVirtualFolder->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI),
-                                     NULL, this);
-    m_bmpButton210->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(NewFormWizardBaseClass::OnSelectVirtualFolder), NULL, this);
-    m_bmpButton210->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI), NULL, this);
+    this->Bind(wxEVT_WIZARD_FINISHED, &NewFormWizardBaseClass::OnFinishClicked, this);
+    this->Bind(wxEVT_WIZARD_PAGE_CHANGING, &NewFormWizardBaseClass::OnWizardPageChanging, this);
+    m_choiceFormType->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &NewFormWizardBaseClass::OnFormTypeSelected, this);
+    m_staticText->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnTitleUI, this);
+    m_textCtrlTitle->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnTitleUI, this);
+    m_staticText244->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnStandloneAppUI, this);
+    m_choiceWxcp->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnStandloneAppUI, this);
+    m_button701->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewFormWizardBaseClass::OnNewWxcpProject, this);
+    m_button699->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewFormWizardBaseClass::OnBrowseWxcpFile, this);
+    m_staticText287->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnInheritedClassNameUI, this);
+    m_textCtrlInheritedClassName->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnInheritedClassNameUI, this);
+    m_textCtrlInheritedClassName->Bind(wxEVT_SET_FOCUS, &NewFormWizardBaseClass::OnInheritedNameFocus, this);
+    m_staticText187->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnFilenameUI, this);
+    m_textCtrFileName->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnFilenameUI, this);
+    m_textCtrFileName->Bind(wxEVT_SET_FOCUS, &NewFormWizardBaseClass::OnFilenameFocus, this);
+    m_staticText206->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnSelectVDUI, this);
+    m_textCtrlVirtualFolder->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnSelectVDUI, this);
+    m_bmpButton210->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewFormWizardBaseClass::OnSelectVirtualFolder, this);
+    m_bmpButton210->Bind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnSelectVDUI, this);
 }
 
 NewFormWizardBaseClass::~NewFormWizardBaseClass()
 {
-    this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewFormWizardBaseClass::OnFinishClicked), NULL, this);
-    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewFormWizardBaseClass::OnWizardPageChanging),
-                     NULL, this);
-    m_choiceFormType->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(NewFormWizardBaseClass::OnFormTypeSelected), NULL, this);
-    m_staticText->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnTitleUI), NULL, this);
-    m_textCtrlTitle->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnTitleUI), NULL, this);
-    m_staticText244->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
-                                this);
-    m_choiceWxcp->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
-                             this);
-    m_button701->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(NewFormWizardBaseClass::OnNewWxcpProject), NULL, this);
-    m_button699->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(NewFormWizardBaseClass::OnBrowseWxcpFile), NULL, this);
-    m_staticText287->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnInheritedClassNameUI),
-                                NULL, this);
-    m_textCtrlInheritedClassName->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnInheritedClassNameUI), NULL, this);
-    m_textCtrlInheritedClassName->Disconnect(
-        wxEVT_SET_FOCUS, wxFocusEventHandler(NewFormWizardBaseClass::OnInheritedNameFocus), NULL, this);
-    m_staticText187->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnFilenameUI), NULL,
-                                this);
-    m_textCtrFileName->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnFilenameUI), NULL,
-                                  this);
-    m_textCtrFileName->Disconnect(wxEVT_SET_FOCUS, wxFocusEventHandler(NewFormWizardBaseClass::OnFilenameFocus), NULL,
-                                  this);
-    m_staticText206->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI), NULL,
-                                this);
-    m_textCtrlVirtualFolder->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI),
-                                        NULL, this);
-    m_bmpButton210->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(NewFormWizardBaseClass::OnSelectVirtualFolder), NULL, this);
-    m_bmpButton210->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI), NULL,
-                               this);
+    this->Unbind(wxEVT_WIZARD_FINISHED, &NewFormWizardBaseClass::OnFinishClicked, this);
+    this->Unbind(wxEVT_WIZARD_PAGE_CHANGING, &NewFormWizardBaseClass::OnWizardPageChanging, this);
+    m_choiceFormType->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &NewFormWizardBaseClass::OnFormTypeSelected, this);
+    m_staticText->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnTitleUI, this);
+    m_textCtrlTitle->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnTitleUI, this);
+    m_staticText244->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnStandloneAppUI, this);
+    m_choiceWxcp->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnStandloneAppUI, this);
+    m_button701->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewFormWizardBaseClass::OnNewWxcpProject, this);
+    m_button699->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewFormWizardBaseClass::OnBrowseWxcpFile, this);
+    m_staticText287->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnInheritedClassNameUI, this);
+    m_textCtrlInheritedClassName->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnInheritedClassNameUI, this);
+    m_textCtrlInheritedClassName->Unbind(wxEVT_SET_FOCUS, &NewFormWizardBaseClass::OnInheritedNameFocus, this);
+    m_staticText187->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnFilenameUI, this);
+    m_textCtrFileName->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnFilenameUI, this);
+    m_textCtrFileName->Unbind(wxEVT_SET_FOCUS, &NewFormWizardBaseClass::OnFilenameFocus, this);
+    m_staticText206->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnSelectVDUI, this);
+    m_textCtrlVirtualFolder->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnSelectVDUI, this);
+    m_bmpButton210->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewFormWizardBaseClass::OnSelectVirtualFolder, this);
+    m_bmpButton210->Unbind(wxEVT_UPDATE_UI, &NewFormWizardBaseClass::OnSelectVDUI, this);
 }
 
 OpenGLCanvasBase::OpenGLCanvasBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -1675,14 +1624,14 @@ OpenGLCanvasBase::OpenGLCanvasBase(wxWindow* parent, wxWindowID id, const wxPoin
         GetSizer()->Fit(this);
     }
     // Connect events
-    this->Connect(wxEVT_SIZE, wxSizeEventHandler(OpenGLCanvasBase::OnSize), NULL, this);
-    this->Connect(wxEVT_MOVE, wxMoveEventHandler(OpenGLCanvasBase::OnMove), NULL, this);
+    this->Bind(wxEVT_SIZE, &OpenGLCanvasBase::OnSize, this);
+    this->Bind(wxEVT_MOVE, &OpenGLCanvasBase::OnMove, this);
 }
 
 OpenGLCanvasBase::~OpenGLCanvasBase()
 {
-    this->Disconnect(wxEVT_SIZE, wxSizeEventHandler(OpenGLCanvasBase::OnSize), NULL, this);
-    this->Disconnect(wxEVT_MOVE, wxMoveEventHandler(OpenGLCanvasBase::OnMove), NULL, this);
+    this->Unbind(wxEVT_SIZE, &OpenGLCanvasBase::OnSize, this);
+    this->Unbind(wxEVT_MOVE, &OpenGLCanvasBase::OnMove, this);
 }
 
 MediaCtrlBase::MediaCtrlBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

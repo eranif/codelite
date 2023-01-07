@@ -13316,7 +13316,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Choices:",
-													"m_value":	"wxFrame;wxDialog;wxWizard;wxPanel;wxImageList;wxPopupWindow;wxAuiToolBar;wxPreferencesEditor"
+													"m_value":	"wxFrame;wxDialog;wxWizard;wxPanel;wxImageList;wxPopupWindow;wxAuiToolBar"
 												}, {
 													"type":	"string",
 													"m_label":	"Selection:",
@@ -14885,7 +14885,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxTAB_TRAVERSAL", "wxTRANSPARENT_WINDOW"],
+			"m_styles":	["wxTAB_TRAVERSAL"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -15034,7 +15034,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxTRANSPARENT_WINDOW"],
+							"m_styles":	[],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
 							"m_properties":	[{
 									"type":	"winid",

@@ -1729,7 +1729,7 @@
 												}, {
 													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
-													"m_path":	"resources/info.png"
+													"m_path":	"../resources/info.png"
 												}],
 											"m_events":	[],
 											"m_children":	[]
@@ -2209,7 +2209,7 @@
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File:",
-					"m_path":	"resources/custom-control.png"
+					"m_path":	"../resources/custom-control.png"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -9599,7 +9599,7 @@
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"resources/wxc-logo.png"
+															"m_path":	"../resources/wxc-logo.png"
 														}],
 													"m_events":	[],
 													"m_children":	[]

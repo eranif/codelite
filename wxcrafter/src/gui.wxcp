@@ -7944,7 +7944,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"resources/button-close.png"
+							"m_path":	"../resources/button-close.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -7963,7 +7963,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"resources/button-min.png"
+							"m_path":	"../resources/button-min.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -7982,7 +7982,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"resources/button-max.png"
+							"m_path":	"../resources/button-max.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -8001,7 +8001,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"resources/wxc-logo-16.png"
+							"m_path":	"../resources/wxc-logo-16.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]

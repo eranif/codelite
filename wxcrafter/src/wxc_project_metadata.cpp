@@ -47,7 +47,8 @@ void wxcProjectMetadata::FromJSON(const JSONElement& json)
     if(headerFile.IsRelative()) {
         headerFile.MakeAbsolute(GetProjectPath());
     }
-    m_useHpp = !headerFile.FileExists();
+    wxString header_file = headerFile.GetFullPath();
+    m_useHpp = !wxFileName::FileExists(header_file);
 }
 
 JSONElement wxcProjectMetadata::ToJSON()

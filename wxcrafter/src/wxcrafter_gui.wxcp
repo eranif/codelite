@@ -6,7 +6,7 @@
 		"m_bitmapFunction":	"wxCE1C8InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_gui_wxcrafter_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
-		"m_outputFileName":	"",
+		"m_outputFileName":	"wxcrafter_gui",
 		"m_firstWindowId":	1000,
 		"m_useEnum":	false,
 		"m_useUnderscoreMacro":	true,
@@ -268,7 +268,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"resources\\wxdialog.png"
+											"m_path":	"../resources/wxdialog.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -427,7 +427,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxdialog.png"
+																	"m_path":	"../resources/wxdialog.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -508,7 +508,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxframe.png"
+																	"m_path":	"../resources/wxframe.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -589,7 +589,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxpanel.png"
+																	"m_path":	"../resources/wxpanel.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -670,7 +670,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxwizard.png"
+																	"m_path":	"../resources/wxwizard.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -869,7 +869,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wximglist.png"
+																	"m_path":	"../resources/wximglist.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -950,7 +950,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxpopupwindow.png"
+																	"m_path":	"../resources/wxpopupwindow.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1031,7 +1031,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxbitmap.png"
+																	"m_path":	"../resources/wxbitmap.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1119,7 +1119,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"resources\\wxflexgridsizer.png"
+											"m_path":	"../resources/wxflexgridsizer.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -1278,7 +1278,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxboxsizer_v.png"
+																	"m_path":	"../resources/wxboxsizer_v.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1359,7 +1359,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxflexgridsizer.png"
+																	"m_path":	"../resources/wxflexgridsizer.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1440,7 +1440,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxstaticboxsizer.png"
+																	"m_path":	"../resources/wxstaticboxsizer.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1521,7 +1521,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxgridsizer.png"
+																	"m_path":	"../resources/wxgridsizer.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1602,7 +1602,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxgridbagsizer.png"
+																	"m_path":	"../resources/wxgridbagsizer.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1683,7 +1683,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/stddlgbuttonsizer.png"
+																	"m_path":	"../resources/stddlgbuttonsizer.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1764,7 +1764,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxbutton.png"
+																	"m_path":	"../resources/wxbutton.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -1913,7 +1913,7 @@
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"resources\\spacer.png"
+															"m_path":	"../resources/spacer.png"
 														}, {
 															"type":	"bool",
 															"m_label":	"Default Button",
@@ -1994,7 +1994,7 @@
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"resources/wxauimgr.png"
+															"m_path":	"../resources/wxauimgr.png"
 														}, {
 															"type":	"bool",
 															"m_label":	"Default Button",
@@ -2081,7 +2081,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"resources\\wxnotebook.png"
+											"m_path":	"../resources/wxnotebook.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -2240,7 +2240,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxpanel.png"
+																	"m_path":	"../resources/wxpanel.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -2321,7 +2321,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxscrolledwindow.png"
+																	"m_path":	"../resources/wxscrolledwindow.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -2402,7 +2402,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxsplitterwindow.png"
+																	"m_path":	"../resources/wxsplitterwindow.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -2483,7 +2483,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxpanel.png"
+																	"m_path":	"../resources/wxpanel.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -2564,7 +2564,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\notebook-page.png"
+																	"m_path":	"../resources/notebook-page.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -2645,7 +2645,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxwizardpage.png"
+																	"m_path":	"../resources/wxwizardpage.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -2844,7 +2844,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxnotebook.png"
+																	"m_path":	"../resources/wxnotebook.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -2925,7 +2925,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxlistbook.png"
+																	"m_path":	"../resources/wxlistbook.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3006,7 +3006,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxchoicebook.png"
+																	"m_path":	"../resources/wxchoicebook.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3087,7 +3087,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxtreebook.png"
+																	"m_path":	"../resources/wxtreebook.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3168,7 +3168,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources\\wxtoolbook.png"
+																	"m_path":	"../resources/wxtoolbook.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3249,7 +3249,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxauinotebook.png"
+																	"m_path":	"../resources/wxauinotebook.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3330,7 +3330,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxsimplebook.png"
+																	"m_path":	"../resources/wxsimplebook.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3529,7 +3529,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxcollapsiblepane.png"
+																	"m_path":	"../resources/wxcollapsiblepane.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3610,7 +3610,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxpanel.png"
+																	"m_path":	"../resources/wxpanel.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3809,7 +3809,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxglcanvas.png"
+																	"m_path":	"../resources/wxglcanvas.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3897,7 +3897,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"resources\\wxbutton.png"
+											"m_path":	"../resources/wxbutton.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -4087,7 +4087,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxbutton.png"
+																			"m_path":	"../resources/wxbutton.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4168,7 +4168,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxbitmapbutton.png"
+																			"m_path":	"../resources/wxbitmapbutton.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4249,7 +4249,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxhyperlink.png"
+																			"m_path":	"../resources/wxhyperlink.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4330,7 +4330,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxtogglebutton.png"
+																			"m_path":	"../resources/wxtogglebutton.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4411,7 +4411,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxspinbutton.png"
+																			"m_path":	"../resources/wxspinbutton.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4492,7 +4492,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxspinctrl.png"
+																			"m_path":	"../resources/wxspinctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4573,7 +4573,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxbitmaptogglebutton.png"
+																			"m_path":	"../resources/wxbitmaptogglebutton.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4772,7 +4772,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxcheckbox.png"
+																			"m_path":	"../resources/wxcheckbox.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4853,7 +4853,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxradiobox.png"
+																			"m_path":	"../resources/wxradiobox.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4934,7 +4934,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxradiobutton.png"
+																			"m_path":	"../resources/wxradiobutton.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5133,7 +5133,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxstatictext.png"
+																			"m_path":	"../resources/wxstatictext.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5214,7 +5214,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxstaticline.png"
+																			"m_path":	"../resources/wxstaticline.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5295,7 +5295,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxtextctrl.png"
+																			"m_path":	"../resources/wxtextctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5376,7 +5376,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxrichtextctrl.png"
+																			"m_path":	"../resources/wxrichtextctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5457,7 +5457,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxbitmap.png"
+																			"m_path":	"../resources/wxbitmap.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5538,7 +5538,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxhtmlwindow.png"
+																			"m_path":	"../resources/wxhtmlwindow.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5619,7 +5619,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/stc.png"
+																			"m_path":	"../resources/stc.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5818,7 +5818,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxchoice.png"
+																			"m_path":	"../resources/wxchoice.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5899,7 +5899,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxcombobox.png"
+																			"m_path":	"../resources/wxcombobox.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -5980,7 +5980,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxbitmapcombobox.png"
+																			"m_path":	"../resources/wxbitmapcombobox.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6179,7 +6179,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxlistbox.png"
+																			"m_path":	"../resources/wxlistbox.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6260,7 +6260,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxhtmllistbox.png"
+																			"m_path":	"../resources/wxhtmllistbox.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6341,7 +6341,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxchecklistbox.png"
+																			"m_path":	"../resources/wxchecklistbox.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6422,7 +6422,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxrearrangelist.png"
+																			"m_path":	"../resources/wxrearrangelist.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6503,7 +6503,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxlistctrl.png"
+																			"m_path":	"../resources/wxlistctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6584,7 +6584,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxgrid.png"
+																			"m_path":	"../resources/wxgrid.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6665,7 +6665,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxtreectrl.png"
+																			"m_path":	"../resources/wxtreectrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6864,7 +6864,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxactivityindicator.png"
+																			"m_path":	"../resources/wxactivityindicator.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -6945,7 +6945,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxslider.png"
+																			"m_path":	"../resources/wxslider.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7026,7 +7026,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxgauge.png"
+																			"m_path":	"../resources/wxgauge.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7107,7 +7107,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxscrollbar.png"
+																			"m_path":	"../resources/wxscrollbar.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7306,7 +7306,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxsearchctrl.png"
+																			"m_path":	"../resources/wxsearchctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7387,7 +7387,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxcolourpicker.png"
+																			"m_path":	"../resources/wxcolourpicker.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7468,7 +7468,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxfontpickerctrl.png"
+																			"m_path":	"../resources/wxfontpickerctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7549,7 +7549,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxfilepickerctrl.png"
+																			"m_path":	"../resources/wxfilepickerctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7630,7 +7630,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxdirpickerctrl.png"
+																			"m_path":	"../resources/wxdirpickerctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7711,7 +7711,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxdatepickerctrl.png"
+																			"m_path":	"../resources/wxdatepickerctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7792,7 +7792,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxtimepickerctrl.png"
+																			"m_path":	"../resources/wxtimepickerctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7873,7 +7873,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxcalendarctrl.png"
+																			"m_path":	"../resources/wxcalendarctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -7954,7 +7954,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxgenericdirctrl.png"
+																			"m_path":	"../resources/wxgenericdirctrl.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8035,7 +8035,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/custom.png"
+																			"m_path":	"../resources/custom.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8124,7 +8124,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"resources/wxmenu.png"
+											"m_path":	"../resources/wxmenu.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -8314,7 +8314,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxmenubar.png"
+																			"m_path":	"../resources/wxmenubar.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8395,7 +8395,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxmenu.png"
+																			"m_path":	"../resources/wxmenu.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8476,7 +8476,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxsubmenu.png"
+																			"m_path":	"../resources/wxsubmenu.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8557,7 +8557,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxmenuitem.png"
+																			"m_path":	"../resources/wxmenuitem.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8756,7 +8756,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxtoolbar.png"
+																			"m_path":	"../resources/wxtoolbar.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8837,7 +8837,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxauitoolbar.png"
+																			"m_path":	"../resources/wxauitoolbar.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8918,7 +8918,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxmenuitem.png"
+																			"m_path":	"../resources/wxmenuitem.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -8999,7 +8999,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources/wxstaticline_v.png"
+																			"m_path":	"../resources/wxstaticline_v.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -9198,7 +9198,7 @@
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
-																			"m_path":	"resources\\wxstatusbar.png"
+																			"m_path":	"../resources/wxstatusbar.png"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -9287,7 +9287,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"resources/wxribbonbar.png"
+											"m_path":	"../resources/wxribbonbar.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -9446,7 +9446,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbonbar.png"
+																	"m_path":	"../resources/wxribbonbar.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -9527,7 +9527,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbonpage.png"
+																	"m_path":	"../resources/wxribbonpage.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -9608,7 +9608,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbonpanel.png"
+																	"m_path":	"../resources/wxribbonpanel.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -9807,7 +9807,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbonbuttonbar.png"
+																	"m_path":	"../resources/wxribbonbuttonbar.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -9888,7 +9888,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbonbutton.png"
+																	"m_path":	"../resources/wxribbonbutton.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -9969,7 +9969,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbonbutton_dropdown.png"
+																	"m_path":	"../resources/wxribbonbutton_dropdown.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10050,7 +10050,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbonbutton_hybrid.png"
+																	"m_path":	"../resources/wxribbonbutton_hybrid.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10131,7 +10131,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbonbutton_toggle.png"
+																	"m_path":	"../resources/wxribbonbutton_toggle.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10330,7 +10330,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxtoolbar.png"
+																	"m_path":	"../resources/wxtoolbar.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10411,7 +10411,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbontool.png"
+																	"m_path":	"../resources/wxribbontool.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10492,7 +10492,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbontool_dropdown.png"
+																	"m_path":	"../resources/wxribbontool_dropdown.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10573,7 +10573,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbontool_hybrid.png"
+																	"m_path":	"../resources/wxribbontool_hybrid.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10654,7 +10654,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbontool_toggle.png"
+																	"m_path":	"../resources/wxribbontool_toggle.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10735,7 +10735,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxstaticline.png"
+																	"m_path":	"../resources/wxstaticline.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -10934,7 +10934,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbongallery.png"
+																	"m_path":	"../resources/wxribbongallery.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -11015,7 +11015,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxribbongalleryitem.png"
+																	"m_path":	"../resources/wxribbongalleryitem.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -11262,7 +11262,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxdataviewlistctrl.png"
+																	"m_path":	"../resources/wxdataviewlistctrl.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -11343,7 +11343,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxdataviewtreectrl.png"
+																	"m_path":	"../resources/wxdataviewtreectrl.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -11424,7 +11424,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxdataviewctrl.png"
+																	"m_path":	"../resources/wxdataviewctrl.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -11505,7 +11505,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxcolumn.png"
+																	"m_path":	"../resources/wxcolumn.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -11704,7 +11704,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxpropertygridmanager.png"
+																	"m_path":	"../resources/wxpropertygridmanager.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -11785,7 +11785,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxtreelistctrl.png"
+																	"m_path":	"../resources/wxtreelistctrl.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -11866,7 +11866,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxpgproperty.png"
+																	"m_path":	"../resources/wxpgproperty.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12065,7 +12065,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxbannerwindow.png"
+																	"m_path":	"../resources/wxbannerwindow.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12146,7 +12146,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxcommandlinkbutton.png"
+																	"m_path":	"../resources/wxcommandlinkbutton.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12227,7 +12227,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxtimer.png"
+																	"m_path":	"../resources/wxtimer.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12308,7 +12308,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxtaskbaricon.png"
+																	"m_path":	"../resources/wxtaskbaricon.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12440,7 +12440,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxinfobar.png"
+																	"m_path":	"../resources/wxinfobar.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12521,7 +12521,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxbutton.png"
+																	"m_path":	"../resources/wxbutton.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12720,7 +12720,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxwebview.png"
+																	"m_path":	"../resources/wxwebview.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12795,7 +12795,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxanimationctrl.png"
+																	"m_path":	"../resources/wxanimationctrl.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12876,7 +12876,7 @@
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
-																	"m_path":	"resources/wxmediactrl-16.png"
+																	"m_path":	"../resources/wxmediactrl-16.png"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -12988,7 +12988,7 @@
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File:",
-					"m_path":	"resources\\new-form-wizard.png"
+					"m_path":	"../resources/new-form-wizard.png"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -13090,7 +13090,7 @@
 						}, {
 							"type":	"bitmapPicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"resources\\wizard_page1.png"
+							"m_path":	"../resources/wizard_page1.png"
 						}],
 					"m_events":	[],
 					"m_children":	[{
@@ -13131,7 +13131,7 @@
 									"gbSpan":	"",
 									"gbPosition":	"",
 									"m_styles":	[],
-									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"string",
 											"m_label":	"Minimum Size:",
@@ -13316,7 +13316,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Choices:",
-													"m_value":	"wxFrame;wxDialog;wxWizard;wxPanel;wxImageList;wxPopupWindow;wxAuiToolBar"
+													"m_value":	"wxFrame;wxDialog;wxWizard;wxPanel;wxImageList;wxPopupWindow;wxAuiToolBar;wxPreferencesEditor"
 												}, {
 													"type":	"string",
 													"m_label":	"Selection:",
@@ -13578,7 +13578,7 @@
 						}, {
 							"type":	"bitmapPicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"resources\\wizard_page2.png"
+							"m_path":	"../resources/wizard_page2.png"
 						}],
 					"m_events":	[],
 					"m_children":	[{
@@ -14854,7 +14854,7 @@
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"resources\\wxdirpickerctrl.png"
+															"m_path":	"../resources/wxdirpickerctrl.png"
 														}, {
 															"type":	"bool",
 															"m_label":	"Default Button",
@@ -14885,7 +14885,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxTAB_TRAVERSAL", "wxBORDER_SIMPLE"],
+			"m_styles":	["wxTAB_TRAVERSAL", "wxTRANSPARENT_WINDOW"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -15034,7 +15034,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	[],
+							"m_styles":	["wxTRANSPARENT_WINDOW"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -15095,7 +15095,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"resources/opengl-big.png"
+									"m_path":	"../resources/opengl-big.png"
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -15324,7 +15324,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"resources/wxmediactrl.png"
+									"m_path":	"../resources/wxmediactrl.png"
 								}],
 							"m_events":	[],
 							"m_children":	[]

@@ -1,4 +1,5 @@
 #include "clConfigurationSelectionCtrl.h"
+
 #include "bitmap_loader.h"
 #include "clThemedChoice.h"
 #include "cl_config.h"
@@ -17,7 +18,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
 {
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_choice = new clThemedChoice(this, wxID_ANY, pos, size, {});
+    m_choice = new wxChoice(this, wxID_ANY, pos, size, {});
     m_choice->Bind(wxEVT_CHOICE, &clConfigurationSelectionCtrl::OnChoice, this);
     GetSizer()->Add(m_choice, 1, wxEXPAND | wxALL, 5);
 
@@ -59,16 +60,12 @@ void clConfigurationSelectionCtrl::Update(const wxArrayString& projects, const w
 
 void clConfigurationSelectionCtrl::SetActiveConfiguration(const wxString& activeConfiguration)
 {
-    this->m_activeConfiguration = activeConfiguration;
-    m_choice->SetStringSelection(m_activeConfiguration); // this will ensure that the checkbox is placed correctly
-    // override the text to include the active project name
-    m_choice->SetText(wxString() << m_activeProject << " :: " << m_activeConfiguration);
-}
+    m_activeConfiguration = activeConfiguration;
 
-void clConfigurationSelectionCtrl::SetActiveProject(const wxString& activeProject)
-{
-    this->m_activeProject = activeProject;
-    m_choice->SetText(wxString() << m_activeProject << " :: " << m_activeConfiguration);
+    int where = m_choice->FindString(m_activeConfiguration);
+    if(where != wxNOT_FOUND) {
+        m_choice->SetSelection(where);
+    }
 }
 
 void clConfigurationSelectionCtrl::OnChoice(wxCommandEvent& event)
@@ -94,11 +91,16 @@ void clConfigurationSelectionCtrl::OnChoice(wxCommandEvent& event)
 
 void clConfigurationSelectionCtrl::Clear() {}
 
-void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& configurations)
+void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& configurations, const wxString& activeConfig)
 {
     m_configurations = configurations;
+    m_activeConfiguration = activeConfig;
     m_configurations.push_back(OPEN_CONFIG_MGR_STR);
     m_choice->Set(m_configurations);
+    int where = m_choice->FindString(m_activeConfiguration);
+    if(where != wxNOT_FOUND) {
+        m_choice->SetSelection(where);
+    }
 }
 
 void clConfigurationSelectionCtrl::OnWorkspaceLoaded(clWorkspaceEvent& event)
@@ -130,12 +132,7 @@ void clConfigurationSelectionCtrl::OnProjectRemoved(clCommandEvent& event)
     DoUpdateChoiceWithProjects();
 }
 
-void clConfigurationSelectionCtrl::DoUpdateChoiceWithProjects()
-{
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
-        SetActiveProject(ManagerST::Get()->GetActiveProjectName());
-    }
-}
+void clConfigurationSelectionCtrl::DoUpdateChoiceWithProjects() {}
 
 void clConfigurationSelectionCtrl::DoWorkspaceConfig()
 {
@@ -151,10 +148,8 @@ void clConfigurationSelectionCtrl::DoWorkspaceConfig()
     std::for_each(confs.begin(), confs.end(),
                   [&](WorkspaceConfigurationPtr conf) { configurations.push_back(conf->GetName()); });
 
-    SetConfigurations(configurations);
     wxString activeConfig = configurations.IsEmpty() ? "" : matrix->GetSelectedConfigurationName();
-    SetActiveConfiguration(activeConfig);
-
+    SetConfigurations(configurations, activeConfig);
     clMainFrame::Get()->SelectBestEnvSet();
 }
 
@@ -193,8 +188,4 @@ void clConfigurationSelectionCtrl::DoConfigChanged(const wxString& newConfigName
     ManagerST::Get()->UpdateParserPaths(true);
 }
 
-void clConfigurationSelectionCtrl::OnActiveProjectChanged(clProjectSettingsEvent& event)
-{
-    event.Skip();
-    SetActiveProject(event.GetProjectName());
-}
+void clConfigurationSelectionCtrl::OnActiveProjectChanged(clProjectSettingsEvent& event) { event.Skip(); }

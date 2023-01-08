@@ -3,19 +3,19 @@
 
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
+
 #include <wx/arrstr.h>
 #include <wx/panel.h>
 
 #define OPEN_CONFIG_MGR_STR _("Open Workspace Configuration Manager...")
 
-class clThemedChoice;
 class clConfigurationSelectionCtrl : public wxPanel
 {
     wxArrayString m_projects;
     wxArrayString m_configurations;
     wxString m_activeProject;
     wxString m_activeConfiguration;
-    clThemedChoice* m_choice = nullptr;
+    wxChoice* m_choice = nullptr;
 
 protected:
     void OnChoice(wxCommandEvent& event);
@@ -48,9 +48,8 @@ public:
     void Clear();
 
     void SetActiveConfiguration(const wxString& activeConfiguration);
-    void SetActiveProject(const wxString& activeProject);
-    void SetConfigurations(const wxArrayString& configurations);
-    void SetProjects(const wxArrayString& projects) { this->m_projects = projects; }
+    void SetConfigurations(const wxArrayString& configurations, const wxString& activeConfig);
+
     const wxString& GetActiveConfiguration() const { return m_activeConfiguration; }
     const wxString& GetActiveProject() const { return m_activeProject; }
     const wxArrayString& GetConfigurations() const { return m_configurations; }

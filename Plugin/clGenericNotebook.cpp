@@ -432,26 +432,29 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     wxUnusedVar(align);
 
     clTabInfo::Ptr_t activeTab;
+    int activeTabIndex = wxNOT_FOUND;
     for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
         clTabInfo::Ptr_t tab = m_visibleTabs[i];
         if(tab->IsActive() && !activeTab) {
             activeTab = tab;
+            activeTabIndex = i;
         }
 
         clTabColours* pColours = &m_colours;
         clTabColours user_colours;
 
-        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style,
+        m_art->Draw(this, gcdc, gcdc, *tab.get(), i, (*pColours), m_style,
                     tabHit == i ? eButtonState::kHover : eButtonState::kNormal, tab->m_xButtonState);
     }
 
     if(!activeTab) {
         m_tabs[0]->SetActive(true, GetStyle());
         activeTab = m_tabs[0]; // make the first tab, the default one
+        activeTabIndex = 0;
     }
 
     // Redraw the active tab
-    m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, eButtonState::kNormal,
+    m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabIndex, activeTabColours, m_style, eButtonState::kNormal,
                 activeTab->m_xButtonState);
     gcdc.DestroyClippingRegion();
 

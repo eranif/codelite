@@ -62,11 +62,11 @@ void clTabRendererMinimal::InitLightColours(clTabColours& colours, const wxColou
     wxUnusedVar(activeTabBGColour);
 }
 
-void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
+void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
                                 const clTabColours& colors, size_t style, eButtonState tabState,
                                 eButtonState xButtonState)
 {
-    DoDraw(parent, dc, fontDC, tabInfo, colors, style, tabState, xButtonState);
+    DoDraw(parent, dc, fontDC, tabInfo, tabIndex, colors, style, tabState, xButtonState);
 }
 
 void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
@@ -112,11 +112,18 @@ wxColour clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const 
     return bg_colour;
 }
 
-wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
+wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
                                     const clTabColours& colors, size_t style, eButtonState tabState,
                                     eButtonState xButtonState)
 {
     wxRect tabRect = tabInfo.GetRect();
+    if(tabIndex == 0) {
+        // the first tab: move it 1 pixel to the left
+        // so the left border is not drawn
+        tabRect.x -= 1;
+        tabRect.width += 1;
+    }
+
     clTabColours colours = colors;
 
     wxDCTextColourChanger text_colour_changer(dc);

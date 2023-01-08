@@ -221,8 +221,8 @@ protected:
 public:
     clTabRenderer(const wxString& name, const wxWindow* parent);
     virtual ~clTabRenderer() {}
-    virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
-                      size_t style, eButtonState tabState, eButtonState xButtonState) = 0;
+    virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
+                      const clTabColours& colours, size_t style, eButtonState tabState, eButtonState xButtonState) = 0;
     virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
 

@@ -27,7 +27,7 @@ void init_from_colour(clColours* colours, const wxColour& baseColour)
     }
     bool is_dark = DrawingUtils::IsDark(baseColour);
     bool is_light = !is_dark;
-    colours->bgColour = baseColour;
+    colours->bgColour = is_dark ? baseColour.ChangeLightness(107) : baseColour;
 
     // determine the text colour
     colours->itemTextColour =
@@ -111,30 +111,4 @@ void clColours::FromLexer(LexerConf::Ptr_t lexer)
     this->selItemTextColour = prop_selected_text.GetFgColour();
 }
 
-void clColours::InitFromColour(const wxColour& baseColour)
-{
-#ifdef __WXMAC__
-    bool is_dark = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
-    bgColour = clSystemSettings::GetDefaultPanelColour().ChangeLightness(
-        is_dark ? 110 : 90);                                          // background colour for the control
-    itemBgColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX); // item bg colour
-    itemTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
-    hoverBgColour = itemBgColour.ChangeLightness(90);
-    selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-    selItemTextColourNoFocus = selItemTextColour; // item bg colour
-    selItemBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-    selItemBgColourNoFocus = selItemBgColour;
-    buttonColour = itemTextColour;    // expand/collapse button colour
-    selbuttonColour = itemTextColour; // The colour of the button ("Expand") when on a selected row
-    alternateColour = bgColour.ChangeLightness(105);
-    headerBgColour = bgColour;
-    darkBorderColour = borderColour = headerVBorderColour = headerHBorderColour =
-        bgColour.ChangeLightness(80); // Header background colour
-    matchedItemText = *wxBLACK;       // Text colour for matched item (need the style wxTR_ENABLE_SEARCH)
-    matchedItemBgText = *wxYELLOW;
-    fillColour = bgColour;                                         // fill colour
-    grayText = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT); // Gray text
-#else
-    init_from_colour(this, baseColour);
-#endif
-}
+void clColours::InitFromColour(const wxColour& baseColour) { init_from_colour(this, baseColour); }

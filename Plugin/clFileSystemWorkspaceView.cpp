@@ -46,10 +46,9 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
 
     GetToolBar()->Realize();
 
-    m_buttonConfigs = new clThemedButton(this, wxID_ANY, wxEmptyString);
-    m_buttonConfigs->SetHasDropDownMenu(true);
-    m_buttonConfigs->Bind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
-    GetSizer()->Insert(0, m_buttonConfigs, 0, wxEXPAND | wxALL, 5);
+    m_choiceConfigs = new wxChoice(this, wxID_ANY);
+    m_choiceConfigs->Bind(wxEVT_CHOICE, &clFileSystemWorkspaceView::OnChoiceConfigSelected, this);
+    GetSizer()->Insert(0, m_choiceConfigs, 0, wxEXPAND | wxALL, 5);
 
     // Hide hidden folders and files
     m_options &= ~kShowHiddenFiles;
@@ -73,7 +72,7 @@ clFileSystemWorkspaceView::~clFileSystemWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &clFileSystemWorkspaceView::OnBuildEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_PROGRAM_STARTED, &clFileSystemWorkspaceView::OnProgramStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_PROGRAM_TERMINATED, &clFileSystemWorkspaceView::OnProgramStopped, this);
-    m_buttonConfigs->Unbind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
+    m_choiceConfigs->Unbind(wxEVT_CHOICE, &clFileSystemWorkspaceView::OnChoiceConfigSelected, this);
     GetToolBar()->Unbind(wxEVT_TOOL_DROPDOWN, &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown, this,
                          XRCID("build_active_project"));
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed,
@@ -149,25 +148,20 @@ void clFileSystemWorkspaceView::OnSettings(wxCommandEvent& event)
 void clFileSystemWorkspaceView::UpdateConfigs(const wxArrayString& configs, const wxString& selectedConfig)
 {
     m_configs = configs;
-    m_buttonConfigs->SetText(selectedConfig);
+    m_choiceConfigs->Set(configs);
+    m_choiceConfigs->SetStringSelection(selectedConfig);
 }
 
-void clFileSystemWorkspaceView::OnShowConfigsMenu(wxCommandEvent& event)
+void clFileSystemWorkspaceView::OnChoiceConfigSelected(wxCommandEvent& event)
 {
-    wxMenu menu;
-    for(const wxString& config : m_configs) {
-        int menuItemid = wxXmlResource::GetXRCID(config);
-        menu.Append(menuItemid, config, config, wxITEM_NORMAL);
-        menu.Bind(
-            wxEVT_MENU,
-            [=](wxCommandEvent& menuEvent) {
-                m_buttonConfigs->SetText(config);
-                clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
-                clFileSystemWorkspace::Get().Save(true);
-            },
-            menuItemid);
+    int sel = event.GetSelection();
+    if(sel == wxNOT_FOUND) {
+        return;
     }
-    m_buttonConfigs->ShowMenu(menu);
+
+    m_choiceConfigs->SetSelection(sel);
+    clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(m_choiceConfigs->GetStringSelection());
+    clFileSystemWorkspace::Get().Save(true);
 }
 
 void clFileSystemWorkspaceView::OnRefreshView(wxCommandEvent& event)

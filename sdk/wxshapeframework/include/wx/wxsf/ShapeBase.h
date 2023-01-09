@@ -794,7 +794,7 @@ public:
 	virtual void OnRightDoubleClick(const wxPoint& pos);
 
 	/*!
-	 * \brief Event handler called at the begining of the shape dragging process.
+	 * \brief Event handler called at the beginning of the shape dragging process.
 	 * The function can be overrided if necessary.
 	 *
 	 * The function is called by the framework (by the shape canvas).

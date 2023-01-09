@@ -507,7 +507,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
             doc.GetRoot()->RemoveChild(deps);
             delete deps;
 
-            // restart the search from the begining
+            // restart the search from the beginning
             deps = doc.GetRoot()->GetChildren();
 
         } else {

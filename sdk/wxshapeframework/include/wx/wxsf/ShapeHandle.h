@@ -76,7 +76,7 @@ public:
 	wxPoint GetDelta() const {return m_nCurrPos - m_nPrevPos;}
 	/*!
 	 * \brief Get current total handle delta (difference between current and starting position
-	 * stored at the begining of the dragging process).
+	 * stored at the beginning of the dragging process).
 	 * \return Total handle delta
 	 */
 	wxPoint GetTotalDelta() const {return m_nCurrPos - m_nStartPos;}

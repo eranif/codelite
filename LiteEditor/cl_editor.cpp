@@ -6181,7 +6181,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
         if(IsRemoteFile()) {
             wxMemoryBuffer content;
             if(!clSFTPManager::Get().AwaitReadFile(GetRemotePath(), GetRemoteData()->GetAccountName(), &content)) {
-                wxMessageBox(_("Faild to reload remote file:" + GetRemotePath()), "CodeLite",
+                wxMessageBox(_("Failed to reload remote file:" + GetRemotePath()), "CodeLite",
                              wxICON_WARNING | wxCENTRE | wxOK);
                 return;
             }

@@ -112,7 +112,7 @@ void DAPMainView::UpdateFrames(int threadId, dap::StackTraceResponse* response)
 void DAPMainView::UpdateScopes(int frameId, dap::ScopesResponse* response)
 {
     LOG_DEBUG(LOG) << "Current frame id:" << m_scopesFrameId << endl;
-    LOG_DEBUG(LOG) << "udpating scopes for frame:" << frameId << endl;
+    LOG_DEBUG(LOG) << "updating scopes for frame:" << frameId << endl;
     bool changed_frame = m_scopesFrameId != frameId;
     m_scopesFrameId = frameId;
 

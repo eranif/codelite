@@ -273,7 +273,7 @@ void LSPOutlineViewDlg::DoSelectionActivate()
     int sci_line = loc.GetRange().GetStart().GetLine();
     if(loc.GetRange().GetStart().GetLine() != loc.GetRange().GetEnd().GetLine()) {
         // different lines, don't select the entire function
-        // just place the caret at the begining of the function
+        // just place the caret at the beginning of the function
         int position = active_editor->PosFromLine(sci_line);  // start of line
         position += loc.GetRange().GetStart().GetCharacter(); // add the column
         active_editor->SetCaretAt(position);

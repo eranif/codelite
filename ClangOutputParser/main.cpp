@@ -20,7 +20,7 @@ char *loadFile(const char *fileName)
 	//read the whole file
 	fseek(fp, 0, SEEK_END);      //go to end
 	len = ftell(fp);             //get position at end (length)
-	fseek(fp, 0, SEEK_SET);      //go to begining
+	fseek(fp, 0, SEEK_SET);      //go to beginning
 	buf = (char *)malloc(len+1); //malloc buffer
 
 	//read into buffer

@@ -376,7 +376,7 @@ public:
     /**
      * return string containing a code section to be inserted into the document. By providing
      * decl which is not null, this function will split the generated code into two - decl & impl
-     * @param scope the current text from begining of the document up to the cursor pos, this
+     * @param scope the current text from beginning of the document up to the cursor pos, this
      *        string will be parsed by CodeLite to determine the current scope
      * @param data user's settings for the generation of the getters/setters
      * @param tags list of members to create setters/getters for them.

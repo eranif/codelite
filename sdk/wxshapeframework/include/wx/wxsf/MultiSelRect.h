@@ -28,7 +28,7 @@ public:
 
 	// public virtual functions
 	/*!
-     * \brief Event handler called at the begining of the shape handle dragging process.
+     * \brief Event handler called at the beginning of the shape handle dragging process.
 	 * The function can be overrided if neccessary.
 	 * \param handle Reference to dragged shape handle
 	 */

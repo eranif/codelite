@@ -475,7 +475,7 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
             int lineStartPos = ctrl->PositionFromLine(ctrl->GetCurrentLine());
             int lineEndPos = lineStartPos + ctrl->LineLength(ctrl->GetCurrentLine());
 
-            // Collect all whitespace from the begining of the line until the first non whitespace
+            // Collect all whitespace from the beginning of the line until the first non whitespace
             // character we find
             wxString whitespace;
             for(int i = lineStartPos; lineStartPos < lineEndPos; ++i) {

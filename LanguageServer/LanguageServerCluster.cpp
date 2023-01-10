@@ -607,7 +607,14 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
     wxArrayString lspCommand;
     lspCommand = StringUtils::BuildCommandArrayFromString(command);
-
+    
+    if(!lspCommand.empty() && !wxFileName::FileExists(lspCommand[0])) {
+        clERROR() << "Disabling lsp:" << entry.GetName() << endl;
+        clERROR() << lspCommand[0] << ". No such file" << endl;
+        LanguageServerConfig::Get().GetServer(entry.GetName()).SetEnabled(false);
+        LanguageServerConfig::Get().Save();
+        return;
+    }
     clDEBUG() << "Starting lsp:";
     clDEBUG() << "Connection string:" << entry.GetConnectionString();
 
@@ -642,8 +649,14 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         }
     }
 
-    lsp->Start(startup_info, env_list, wxEmptyString, working_directory, entry.GetLanguages());
-    m_servers.insert({ entry.GetName(), lsp });
+    if(lsp->Start(startup_info, env_list, wxEmptyString, working_directory, entry.GetLanguages())) {
+        m_servers.insert({ entry.GetName(), lsp });
+    } else {
+        clERROR() << "Failed to start language server:" << entry.GetName() << endl;
+        clERROR() << "Language Server:" << entry.GetName() << "has been disabled until the problem is fixed" << endl;
+        LanguageServerConfig::Get().GetServer(entry.GetName()).SetEnabled(false);
+        LanguageServerConfig::Get().Save();
+    }
 }
 
 void LanguageServerCluster::OnWorkspaceClosed(clWorkspaceEvent& event)

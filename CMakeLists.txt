@@ -945,19 +945,21 @@ else()
     cl_scan_for_plugins()
 endif() # NOT WXC_APP
 
-if(UNIX AND NOT APPLE)
-    set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
-    install(
-        TARGETS ctags
-        DESTINATION ${CL_PREFIX}/bin
-        PERMISSIONS ${EXE_PERM})
-elseif(APPLE)
-    set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
-    install(
-        TARGETS ctags
-        DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
-        PERMISSIONS ${EXE_PERM})
-    cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-ctags)
+if(NOT WXC_APP)
+    if(UNIX AND NOT APPLE)
+        set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
+        install(
+            TARGETS ctags
+            DESTINATION ${CL_PREFIX}/bin
+            PERMISSIONS ${EXE_PERM})
+    elseif(APPLE)
+        set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
+        install(
+            TARGETS ctags
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
+            PERMISSIONS ${EXE_PERM})
+        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-ctags)
+    endif()
 endif()
 
 if(MINGW)

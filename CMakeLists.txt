@@ -832,6 +832,13 @@ else()
     if(UNIX OR APPLE)
         add_subdirectory(ctags)
     endif()
+
+    if(MINGW)
+        # build wx-config for Windows
+        add_subdirectory(wx-config-msys2)
+        install(TARGETS wx-config DESTINATION ${CL_INSTALL_BIN})
+    endif()
+
     if(NOT NO_CORE_PLUGINS)
         add_subdirectory(abbreviation)
         if(NOT DISABLE_CXX)

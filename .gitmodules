@@ -4,3 +4,6 @@
 [submodule "wxdap"]
 	path = wxdap
 	url = https://github.com/eranif/dbgd
+[submodule "wx-config-msys2"]
+	path = wx-config-msys2
+	url = https://github.com/eranif/wx-config-msys2.git

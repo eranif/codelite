@@ -35,9 +35,10 @@ if(USE_CLANG)
 endif(USE_CLANG)
 
 # configure version file, this needs to be done before we set the SRCS variable
-configure_file(${CMAKE_CURRENT_LIST_DIR}/autoversion.h.in ${CMAKE_CURRENT_LIST_DIR}/autoversion.h)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/autoversion.h.in ${CMAKE_BINARY_DIR}/generated/autoversion.h)
 
 file(GLOB SRCS "*.cpp")
+include_directories("${CMAKE_BINARY_DIR}/generated")
 
 set(RES_FILE "")
 # Define the output

@@ -65,7 +65,7 @@ if(NOT MINGW)
 endif()
 
 # configure version file, this needs to be done before we set the SRCS variable
-configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in ${CL_SRC_ROOT}/wxcrafter/src/wxcversion.cpp)
+configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in ${CMAKE_BINARY_DIR}/generated/wxcversion.cpp)
 
 file(
     GLOB
@@ -75,7 +75,8 @@ file(
     "controls/*.cpp"
     "sizers/*.cpp"
     "top_level_windows/*.cpp"
-    "xrc_handlers/*.cpp")
+    "xrc_handlers/*.cpp"
+    "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
 
 if(NOT WXC_APP)
     file(GLOB WXCLIB_SRCS "wxcLib/json_node.cpp" "wxcLib/cJSON.cpp" "wxcLib/wxc*.cpp")
@@ -262,7 +263,7 @@ elseif(NOT MINGW)
 
     set(CPACK_GENERATOR "DEB")
     set(CPACK_PACKAGE_NAME "wxCrafter${GTKNAME}")
-    set(CPACK_PACKAGE_VERSION "3.0")
+    set(CPACK_PACKAGE_VERSION "${CODELITE_VERSION}")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Eran Ifrah <eran@codelite.org>")
     # required
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GUI Rad Tool for wxWidgets")

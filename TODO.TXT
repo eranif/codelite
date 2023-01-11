@@ -8,4 +8,3 @@ Debug Adapter Client
 others:
 ----
 
-** FIX: missing wx-config on Windows installations

@@ -70,8 +70,8 @@ nav:
       - Tips & Tricks: misc/tips_and_tricks.md
       - Install Rust: misc/install_rust.md
   - Release Notes:
-      - CodeLite v16.0.0: release_notes/v16_0_0.md
-      - CodeLite v17.0.0: release_notes/v17_0_0.md
+      - CodeLite v15.x - 16.0.0: release_notes/v16_0_0.md
+      - CodeLite v16.x - 17.0.0: release_notes/v17_0_0.md
 extra_css:
   - stylesheets/extra.css
 theme:

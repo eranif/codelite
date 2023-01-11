@@ -252,11 +252,14 @@ void clScrolledPanel::OnCharHook(wxKeyEvent& event)
     wxKeyEvent keyDown = event;
     keyDown.SetEventType(wxEVT_KEY_DOWN);
     if(DoKeyDown(keyDown)) {
+        // event was handled. Stop processing it
+        event.Skip(false);
         return;
     }
 
     // Always process the HOME/END buttons
     // The following can be processed only once
+    event.Skip(false);
     if(event.GetEventObject() == this) {
         if(event.GetKeyCode() == WXK_HOME) {
             ScrollRows(0, wxUP);
@@ -270,7 +273,13 @@ void clScrolledPanel::OnCharHook(wxKeyEvent& event)
             ScrollRows(GetPageSize(), wxUP);
         } else if(event.GetKeyCode() == WXK_PAGEDOWN) {
             ScrollRows(GetPageSize(), wxDOWN);
+        } else {
+            // propogate the event (i.e. we did not handle it here)
+            event.Skip();
         }
+    } else {
+        // propogate the event (i.e. we did not handle it here)
+        event.Skip();
     }
 }
 

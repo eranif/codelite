@@ -50,7 +50,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitCommitListDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitCommitListDlg::OnProcessTerminated, this);
-    Bind(wxEVT_CHAR_HOOK, &GitCommitListDlg::OnCharHook, this);
+    // Bind(wxEVT_CHAR_HOOK, &GitCommitListDlg::OnCharHook, this);
 
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
     if(lex) {
@@ -182,10 +182,13 @@ void GitCommitListDlg::DoLoadCommits(const wxString& filter)
     // hash @ subject @ author-name @ date
     wxArrayString gitList = wxStringTokenize(m_commitList, wxT("\n"), wxTOKEN_STRTOK);
     wxArrayString filters = wxStringTokenize(filter, " ");
+    wxVector<wxVariant> cols;
     for(unsigned i = 0; i < gitList.GetCount(); ++i) {
         wxArrayString gitCommit = ::wxStringTokenize(gitList[i], "@");
         if(gitCommit.GetCount() >= 4) {
-            wxVector<wxVariant> cols;
+            cols.clear();
+            cols.reserve(4);
+
             cols.push_back(gitCommit.Item(0));
             cols.push_back(gitCommit.Item(1));
             cols.push_back(gitCommit.Item(2));
@@ -267,6 +270,7 @@ wxString GitCommitListDlg::GetFilterString() const
 
 void GitCommitListDlg::OnNext(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
     m_skip += 100;
     // Check the cache first
     if(m_history.count(m_skip)) {
@@ -278,6 +282,7 @@ void GitCommitListDlg::OnNext(wxCommandEvent& event)
 
 void GitCommitListDlg::OnPrevious(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
     int skip = m_skip - 100;
     if(m_history.count(skip)) {
         m_skip -= 100;

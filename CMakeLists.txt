@@ -946,6 +946,9 @@ else()
 endif() # NOT WXC_APP
 
 if(NOT WXC_APP)
+    # building CodeLite, install the SVGs
+    codelite_install_svgs()
+
     if(UNIX AND NOT APPLE)
         set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
         install(

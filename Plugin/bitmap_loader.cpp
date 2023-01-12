@@ -376,7 +376,7 @@ void clBitmaps::Initialise()
 void clBitmaps::SysColoursChanged()
 {
     auto old_ptr = m_activeBitmaps;
-    bool isDark = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
+    bool isDark = clSystemSettings::IsDark();
     m_activeBitmaps = isDark ? m_darkBitmaps : m_lightBitmaps;
 
     if(old_ptr != m_activeBitmaps) {

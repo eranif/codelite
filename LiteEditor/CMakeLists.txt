@@ -144,10 +144,6 @@ if(NOT APPLE)
         DESTINATION ${CL_INSTALL_BIN}
         PERMISSIONS ${EXE_PERM})
 
-    # codelite icons
-    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip DESTINATION ${CL_RESOURCES_DIR})
-    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip DESTINATION ${CL_RESOURCES_DIR})
-
     # License file
     install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CL_RESOURCES_DIR})
 

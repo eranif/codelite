@@ -999,8 +999,7 @@ if(MINGW)
 
     list(APPEND WXWIDGETS_DLLS wxmsw330u_clang_custom.dll)
 
-    list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/Runtime/codelite-bitmaps-dark.zip
-         ${CMAKE_SOURCE_DIR}/Runtime/codelite-bitmaps-light.zip ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip
+    list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip
          ${CMAKE_SOURCE_DIR}/LICENSE)
 
     foreach(DLL ${SYSTEM_DLLS})

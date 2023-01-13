@@ -157,24 +157,19 @@ if(NOT WXC_APP)
     cl_install_file_shared(${WXC_DIR}/wxgui.zip)
 elseif(NOT MINGW)
     set(CPACK_DEB_COMPONENT_INSTALL 1)
+
     # Installing an application
     install(
         TARGETS ${PLUGIN_NAME}
         DESTINATION ${CL_INSTALL_BIN}
         PERMISSIONS ${EXE_PERM}
         COMPONENT standalone)
+
     install(
         FILES "${WXC_DIR}/wxgui.zip"
         DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${PLUGIN_NAME}
         COMPONENT standalone)
-    install(
-        FILES "${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip"
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${PLUGIN_NAME}
-        COMPONENT standalone)
-    install(
-        FILES "${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip"
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${PLUGIN_NAME}
-        COMPONENT standalone)
+
     install(
         FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblibcodelite.so"
         DESTINATION ${WXC_LIBS_DIR}

@@ -1510,7 +1510,10 @@ void clMainFrame::DoCreateToolBar(int toolSize)
 
     SetToolBar(nullptr);
     m_mainToolbar = CreateToolBar(m_mainToolbarStyle, ID_TOOLBAR);
+
+#if defined(__WXMAC__)
     m_mainToolbar->SetToolBitmapSize(wxSize(toolSize, toolSize));
+#endif
 
     add_main_toolbar_item(m_mainToolbar, "new_file", _("New file"), "file_new", toolSize);
     add_main_toolbar_item(m_mainToolbar, "open_file", _("Open file"), "file_open", toolSize);

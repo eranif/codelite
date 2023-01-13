@@ -215,22 +215,22 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("database", bitmap_size), kDatabase);
         m_mimeBitmaps.AddBitmap(LoadBitmap("db-column", bitmap_size), kColumn);
         m_mimeBitmaps.AddBitmap(LoadBitmap("globals", bitmap_size), kAngleBrackets);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/namespace", bitmap_size), kNamespace);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/class", bitmap_size), kClass);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/struct", bitmap_size), kStruct);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_public", bitmap_size), kFunctionPublic);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_protected", bitmap_size), kFunctionProtected);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_private", bitmap_size), kFunctionPrivate);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_public", bitmap_size), kMemberPublic);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_protected", bitmap_size), kMemberProtected);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_private", bitmap_size), kMemberPrivate);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/typedef", bitmap_size), kTypedef);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/macro", bitmap_size), kMacro);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enum", bitmap_size), kEnum);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enum", bitmap_size), kCEnum);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/macro", bitmap_size), kConstant);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enumerator", bitmap_size), kEnumerator);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/cpp_keyword", bitmap_size), kCxxKeyword);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("namespace", bitmap_size), kNamespace);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("class", bitmap_size), kClass);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("struct", bitmap_size), kStruct);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("function_public", bitmap_size), kFunctionPublic);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("function_protected", bitmap_size), kFunctionProtected);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("function_private", bitmap_size), kFunctionPrivate);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("member_public", bitmap_size), kMemberPublic);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("member_protected", bitmap_size), kMemberProtected);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("member_private", bitmap_size), kMemberPrivate);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("typedef", bitmap_size), kTypedef);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("macro", bitmap_size), kMacro);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("enum", bitmap_size), kEnum);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("enum", bitmap_size), kCEnum);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("macro", bitmap_size), kConstant);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("enumerator", bitmap_size), kEnumerator);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cpp_keyword", bitmap_size), kCxxKeyword);
         m_mimeBitmaps.AddBitmap(LoadBitmap("sort", bitmap_size), kSort);
         m_mimeBitmaps.Finalise(); // combine the disabled and non disabled bitmaps
     }

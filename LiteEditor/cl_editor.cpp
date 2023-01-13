@@ -6325,15 +6325,7 @@ int clEditor::GetFirstNonWhitespacePos(bool backward)
 
 void clEditor::UpdateLineNumberMarginWidth()
 {
-    int new_width = log10(GetLineCount()) + 1;
-
-#ifndef __WXMSW__
-    new_width += 1;
-#else
-    if(new_width <= 2) {
-        new_width += 1;
-    }
-#endif
+    int new_width = log10(GetLineCount()) + 2;
 
     if(m_default_text_width == wxNOT_FOUND) {
         UpdateDefaultTextWidth();

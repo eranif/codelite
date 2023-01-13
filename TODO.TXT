@@ -8,3 +8,7 @@ Debug Adapter Client
 others:
 ----
 
+- Find bar images are not loaded:
+    - regex
+    - whole-word
+    - case sensitive

@@ -136,11 +136,6 @@ void WorkspaceTab::CreateGUIControls()
                           _("Open selected project settings. If there is no project selected, open the parent project "
                             "of the selected item in the tree"),
                           images->Add("cog"));
-    m_toolbar580->AddSpacer();
-    m_toolbar580->AddTool(XRCID("ID_BUILD_PROJECT"), _("Build Active Project"), images->Add("build"),
-                          _("Build Active Project"), wxITEM_DROPDOWN);
-    m_toolbar580->AddTool(XRCID("ID_EXECUTE_NO_DEBUG"), _("Run Active Project"), images->Add("execute"),
-                          _("Run Active Project"));
     m_toolbar580->Realize();
 }
 

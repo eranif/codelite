@@ -145,8 +145,6 @@ protected:
     std::unordered_map<wxString, wxBitmap> m_toolbarsBitmaps;
     std::unordered_map<wxString, wxString> m_manifest;
     std::unordered_map<int, int> m_fileIndexMap;
-    bool m_bMapPopulated;
-    size_t m_toolbarIconSize;
     clMimeBitmaps m_mimeBitmaps;
 
 protected:
@@ -155,6 +153,8 @@ protected:
 private:
     BitmapLoader(bool darkTheme);
     virtual ~BitmapLoader();
+
+    void AddBitmapInternal(const wxBitmapBundle& bundle, const wxString& base_name);
 
 public:
     clMimeBitmaps& GetMimeBitmaps() { return m_mimeBitmaps; }
@@ -221,4 +221,4 @@ public:
     BitmapLoader* GetLoader();
     void SysColoursChanged();
 };
-#endif // BITMAP_LOADER_H
+#endif

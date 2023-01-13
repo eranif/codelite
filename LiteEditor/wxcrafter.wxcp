@@ -19,7 +19,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxWANTS_CHARS", "wxTAB_TRAVERSAL", "wxTRANSPARENT_WINDOW"],
+			"m_styles":	["wxWANTS_CHARS", "wxTAB_TRAVERSAL"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",

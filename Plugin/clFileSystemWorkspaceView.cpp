@@ -35,10 +35,6 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
 
     GetToolBar()->AddTool(XRCID("stop_active_project_build"), _("Stop current build"), images->Add("stop"),
                           wxEmptyString, wxITEM_NORMAL);
-    GetToolBar()->AddSeparator();
-
-    GetToolBar()->AddTool(XRCID("execute_no_debug"), _("Run program"), images->Add("execute"));
-    GetToolBar()->AddTool(XRCID("stop_executed_program"), _("Stop running program"), images->Add("stop"));
 
     // these events are connected using the App object (to support keyboard shortcuts)
     wxTheApp->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnRefreshView, this, XRCID("fsw_refresh_view"));

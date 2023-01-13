@@ -1462,12 +1462,24 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
 
 namespace
 {
+wxBitmap load_bitmap_from_bundle(const wxString& name, int toolsize, wxWindow* win)
+{
+    wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
+    svg_path.AppendDir("svgs");
+    svg_path.AppendDir(clSystemSettings::IsDark() ? "dark-theme" : "light-theme");
+    svg_path.SetFullName(name + ".svg");
+    auto bundle = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), wxSize(toolsize, toolsize));
+    return bundle.GetBitmapFor(win);
+}
+
 void add_main_toolbar_item(wxToolBar* tb, const wxString& xrcstr, const wxString& label, const wxString& bmpname,
                            int toolsize)
 {
-    int toolid = wxXmlResource::GetXRCID(xrcstr);
-    const wxBitmap& bmp = clGetManager()->GetStdIcons()->LoadBitmap(bmpname, toolsize);
+    // load the bitmap using the bundle
+    wxBitmap bmp = load_bitmap_from_bundle(bmpname, toolsize, tb);
     wxBitmap disabled_bmp = DrawingUtils::CreateDisabledBitmap(bmp);
+
+    int toolid = wxXmlResource::GetXRCID(xrcstr);
     tb->AddTool(toolid, label, bmp, disabled_bmp, wxITEM_NORMAL, label, label);
 }
 } // namespace
@@ -1485,18 +1497,14 @@ void clMainFrame::DoCreateToolBar(int toolSize)
 
     // the main tool
     const int ID_TOOLBAR = 500;
-    SetToolBar(nullptr);
-    m_mainToolbar = CreateToolBar(m_mainToolbarStyle, ID_TOOLBAR);
-#if defined(__WXMSW__)
+#if defined(__WXMSW__) || defined(__WXMAC__)
     toolSize = 24;
-#elif defined(__WXMAC__)
-    toolSize = 24;
+#else
+    toolSize = 16;
 #endif
 
-    wxSize tools_size(toolSize, toolSize);
-    m_mainToolbar->SetToolBitmapSize(FromDIP(tools_size));
-
-    auto loader = clGetManager()->GetStdIcons();
+    SetToolBar(nullptr);
+    m_mainToolbar = CreateToolBar(m_mainToolbarStyle, ID_TOOLBAR);
 
     add_main_toolbar_item(m_mainToolbar, "new_file", _("New file"), "file_new", toolSize);
     add_main_toolbar_item(m_mainToolbar, "open_file", _("Open file"), "file_open", toolSize);

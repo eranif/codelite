@@ -27,7 +27,6 @@
 // clang-format off
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
-#include "clBitmapOverlayCtrl.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"

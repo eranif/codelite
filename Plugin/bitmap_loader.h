@@ -193,11 +193,12 @@ protected:
 
 private:
     void Initialize(bool darkTheme);
-    static void SetActiveBitmaps();
-    void OnSysColoursChanged(clCommandEvent& event);
+    void LoadSVGFiles(bool darkTheme);
+    std::unordered_map<wxString, wxBitmapBundle>* GetBundles(bool darkTheme) const;
 
 public:
     const wxBitmap& LoadBitmap(const wxString& name, int requestedSize = 16);
+    bool GetIconBundle(const wxString& name, wxIconBundle* bundle);
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BITMAPS_UPDATED, clCommandEvent);

@@ -282,7 +282,7 @@ void clFilesScanner::ScanWithCallbacks(const wxString& rootFolder, std::function
                     continue;
                 }
 
-                if(on_folder_cb(fullpath)) {
+                if(on_folder_cb && on_folder_cb(fullpath)) {
                     // Traverse into this folder
                     wxString real_path = FileUtils::RealPath(fullpath);
                     if(Visited.insert(real_path).second) {
@@ -296,6 +296,8 @@ void clFilesScanner::ScanWithCallbacks(const wxString& rootFolder, std::function
         }
 
         // notify about this batch of files
-        on_file_cb(files);
+        if(on_file_cb) {
+            on_file_cb(files);
+        }
     }
 }

@@ -1,6 +1,3 @@
-#include "file_logger.h"
-
-#include <wx/settings.h>
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -25,8 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
 #include "bitmap_loader.h"
+
 #include "clBitmap.h"
 #include "clFilesCollector.h"
 #include "clSystemSettings.h"
@@ -40,12 +37,21 @@
 #include "optionsconfig.h"
 
 #include <algorithm>
+#include <unordered_map>
+#include <wx/app.h>
 #include <wx/dcscreen.h>
 #include <wx/dir.h>
 #include <wx/ffile.h>
 #include <wx/msgdlg.h>
+#include <wx/settings.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
+
+namespace
+{
+std::unordered_map<wxString, wxBitmapBundle> DARK_THEME_BMPBUNLES;
+std::unordered_map<wxString, wxBitmapBundle> LIGHT_THEME_BMPBUNLES;
+}; // namespace
 
 BitmapLoader::~BitmapLoader() {}
 
@@ -55,18 +61,22 @@ BitmapLoader::BitmapLoader(bool darkTheme)
     Initialize(darkTheme);
 }
 
+std::unordered_map<wxString, wxBitmapBundle>* BitmapLoader::GetBundles(bool darkTheme) const
+{
+    return darkTheme ? &DARK_THEME_BMPBUNLES : &LIGHT_THEME_BMPBUNLES;
+}
+
 const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize)
 {
     // try to load a new bitmap first
-    wxString newName;
-    newName << requestedSize << "-" << name.AfterLast('/');
+    wxUnusedVar(requestedSize);
+    wxString newName = name.AfterLast('/');
 
-    std::unordered_map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
-    if(iter != m_toolbarsBitmaps.end()) {
-        const wxBitmap& b = iter->second;
-        return b;
+    if(m_toolbarsBitmaps.count(newName) == 0) {
+        LOG_IF_WARN { clWARNING() << "requested image:" << newName << "does not exist" << endl; }
+        return wxNullBitmap;
     }
-    return wxNullBitmap;
+    return m_toolbarsBitmaps.find(newName)->second;
 }
 
 int BitmapLoader::GetMimeImageId(int type, bool disabled) { return GetMimeBitmaps().GetIndex(type, disabled); }
@@ -83,90 +93,57 @@ wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
     return icn;
 }
 
-#define DARK_ICONS _("Dark Theme Icons Set")
-#define LIGHT_ICONS _("Light Theme Icons Set")
+namespace
+{
+void add_bitmap(std::unordered_map<wxString, wxBitmap>& bitmaps, const wxBitmapBundle& bundle,
+                const wxString& base_name)
+{
+    wxBitmap bmp = bundle.GetBitmapFor(wxTheApp->GetTopWindow());
+    if(bmp.IsOk()) {
+        LOG_IF_DEBUG { clDEBUG() << "SVG:" << base_name << "successfully loaded" << endl; }
+        bitmaps.insert({ base_name, bmp });
+    }
+}
+} // namespace
+
+void BitmapLoader::LoadSVGFiles(bool darkTheme)
+{
+    // Load the bitmaps based on the current theme background colour
+    wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
+    svg_path.AppendDir("svgs");
+    svg_path.AppendDir(darkTheme ? "dark-theme" : "light-theme");
+
+    if(!svg_path.DirExists()) {
+        clWARNING() << "Unable to load SVG images. Broken installation" << endl;
+        return;
+    }
+    auto bitmap_bundle_cache = GetBundles(darkTheme);
+
+    // load the cache
+    if(bitmap_bundle_cache->empty()) {
+        clFilesScanner scanner;
+        clDEBUG() << "Loading SVG files from:" << svg_path.GetPath() << endl;
+        scanner.ScanWithCallbacks(svg_path.GetPath(), nullptr, [&](const wxArrayString& files) -> bool {
+            for(const wxString& filepath : files) {
+                auto bmpbundle = wxBitmapBundle::FromSVGFile(filepath, wxSize(16, 16));
+                if(bmpbundle.IsOk()) {
+                    bitmap_bundle_cache->insert({ wxFileName(filepath).GetName(), bmpbundle });
+                }
+            }
+            return true;
+        });
+    }
+}
 
 void BitmapLoader::Initialize(bool darkTheme)
 {
-    wxString zipname;
-    // Load the bitmaps based on the current theme background colour
-    wxFileName fnLight(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps-light.zip");
-    wxFileName fnDark(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps-dark.zip");
-    wxFileName fnNewZip = darkTheme ? fnDark : fnLight;
-
-    clDEBUG() << "Loading bitmap resources:" << fnLight << endl;
-    clDEBUG() << "Loading bitmap resources:" << fnDark << endl;
-
-#ifdef __WXOSX__
-    if(fnNewZip.FileExists()) {
-        clZipReader zip(fnNewZip);
-        wxFileName tmpdir("/tmp", "");
-        tmpdir.AppendDir("codelite-bitmaps");
-        tmpdir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        zip.ExtractAll(tmpdir.GetPath());
-        clFilesScanner scanner;
-        std::vector<wxFileName> V;
-        scanner.Scan(tmpdir.GetPath(), V, "*.png", wxEmptyString, wxEmptyString);
-        for(const wxFileName& fn : V) {
-            // the @2x are loaded on demand
-            if(fn.GetFullName().Contains("@2x")) {
-                continue;
-            }
-            wxString name = fn.GetName();
-            wxBitmap bmp;
-            if(bmp.LoadFile(fn.GetFullPath(), wxBITMAP_TYPE_PNG)) {
-                m_toolbarsBitmaps.erase(name);
-                m_toolbarsBitmaps.insert({ name, bmp });
-            }
-        }
-        tmpdir.Rmdir(wxPATH_RMDIR_FULL);
+    LoadSVGFiles(darkTheme);
+    auto bitmap_bundle_cache = GetBundles(darkTheme);
+    m_toolbarsBitmaps.clear();
+    for(const auto& vt : *bitmap_bundle_cache) {
+        add_bitmap(m_toolbarsBitmaps, vt.second, vt.first);
     }
-#else
-    if(fnNewZip.FileExists()) {
-        clZipReader zip(fnNewZip);
-        // Extract all images into this memory
-        std::unordered_map<wxString, clZipReader::Entry> buffers;
-        zip.ExtractAll(buffers);
 
-        std::function<bool(const wxString&, void**, size_t&)> fnGetHiResVersion = [&](const wxString& name,
-                                                                                      void** ppData, size_t& nLen) {
-            wxString key;
-            key << name << ".png";
-            if(buffers.count(key)) {
-                *ppData = buffers[key].buffer;
-                nLen = buffers[key].len;
-                return true;
-            }
-            return false;
-        };
-
-        for(const auto& entry : buffers) {
-            if(!entry.first.EndsWith(".png")) {
-                continue;
-            }
-
-            wxString name = wxFileName(entry.first).GetName();
-            clZipReader::Entry d = entry.second;
-            if(d.len && d.buffer) {
-                wxMemoryInputStream is(d.buffer, d.len);
-                clBitmap bmp;
-                if(bmp.LoadPNGFromMemory(name, is, fnGetHiResVersion)) {
-                    LOG_IF_TRACE { clDEBUG1() << "Adding new image:" << name << endl; }
-                    m_toolbarsBitmaps.erase(name);
-                    m_toolbarsBitmaps.insert({ name, bmp });
-                }
-            }
-        }
-
-        // Free the memory
-        for(const auto& entry : buffers) {
-            if(entry.second.buffer && entry.second.len) {
-                free(entry.second.buffer);
-            }
-        }
-        buffers.clear();
-    }
-#endif
     // Create the mime-list
     CreateMimeList();
 }
@@ -187,6 +164,7 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-c", bitmap_size), FileExtManager::TypeSourceC);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-cpp", bitmap_size), FileExtManager::TypeSourceCpp);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-h", bitmap_size), FileExtManager::TypeHeader);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-md", bitmap_size), FileExtManager::TypeMarkdown);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", bitmap_size), FileExtManager::TypeText);
         m_mimeBitmaps.AddBitmap(LoadBitmap("execute", bitmap_size), FileExtManager::TypeShellScript);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml", bitmap_size), FileExtManager::TypeXml);
@@ -552,4 +530,22 @@ const wxString& clBitmapList::GetBitmapName(size_t index) const
         return emptyString;
     }
     return where->second.name;
+}
+
+bool BitmapLoader::GetIconBundle(const wxString& name, wxIconBundle* bundle)
+{
+    LoadSVGFiles(clSystemSettings::IsDark());
+    auto bundles = GetBundles(clSystemSettings::IsDark());
+    if(bundles->count(name) == 0) {
+        return false;
+    }
+
+    const auto& bmp_bundle = bundles->find(name)->second;
+    std::array<int, 5> sizes = { 24, 32, 64, 128, 256 };
+    for(int size : sizes) {
+        size = wxTheApp->GetTopWindow()->FromDIP(size);
+        wxIcon icn = bmp_bundle.GetIcon(wxSize(size, size));
+        bundle->AddIcon(icn);
+    }
+    return true;
 }

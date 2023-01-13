@@ -127,6 +127,7 @@ void FileExtManager::Init()
         m_map[wxT("py")] = TypePython;
         m_map["json"] = TypeJSON;
         m_map["conf"] = TypeJSON; // CodeLite configuration files are marked as "conf"
+        m_map["md"] = TypeMarkdown;
 
         // Java file
         m_map[wxT("java")] = TypeJava;

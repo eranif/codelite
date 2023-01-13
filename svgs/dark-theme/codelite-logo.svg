@@ -11,7 +11,6 @@
    sodipodi:docname="codelite-logo.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -21,18 +20,6 @@
      id="title6123">CodeLite IDE Logo</title>
   <defs
      id="defs4">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient1469">
-      <stop
-         style="stop-color:#ac9393;stop-opacity:1"
-         offset="0"
-         id="stop1465" />
-      <stop
-         style="stop-color:#916f6f;stop-opacity:1"
-         offset="1"
-         id="stop1467" />
-    </linearGradient>
     <linearGradient
        id="linearGradient2065"
        inkscape:swatch="solid">
@@ -330,9 +317,9 @@
        inkscape:menu-tooltip="Sharpen edges and boundaries within the object, force=0.15"
        style="color-interpolation-filters:sRGB;"
        id="filter6190"
-       x="-0.38520376"
+       x="-0.3514204"
        y="-0.27592814"
-       width="1.7704075"
+       width="1.7028408"
        height="1.5518563">
       <feConvolveMatrix
          order="3 3"
@@ -389,15 +376,6 @@
          d="M0,0h1000v1024h-1000z"
          id="missing-glyph6196" />
     </font>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient1469"
-       id="linearGradient1463"
-       x1="14.625"
-       y1="1019.6747"
-       x2="14.625"
-       y2="1052.7997"
-       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -407,17 +385,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16"
-     inkscape:cx="28.8125"
-     inkscape:cy="17.21875"
+     inkscape:cx="3.78125"
+     inkscape:cy="19.5625"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:showpageshadow="false"
      inkscape:window-width="2113"
-     inkscape:window-height="1215"
-     inkscape:window-x="749"
-     inkscape:window-y="84"
+     inkscape:window-height="1272"
+     inkscape:window-x="584"
+     inkscape:window-y="53"
      inkscape:window-maximized="0"
      inkscape:pagecheckerboard="true"
      showborder="true"
@@ -454,7 +432,7 @@
      transform="translate(0,-1020.3622)"
      style="opacity:1">
     <rect
-       style="fill:url(#linearGradient1463);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.969697;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;opacity:1"
+       style="fill:#a05a2c;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.969697;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;opacity:1"
        id="rect5810"
        width="31.030304"
        height="31.030304"
@@ -472,24 +450,14 @@
          id="tspan5908"
          x="3.7792511"
          y="1048.8633"
-         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Calibri;-inkscape-font-specification:'Calibri Bold Italic';fill:#ffcc00;stroke:none;stroke-width:1;stroke-miterlimit:1;stroke-dasharray:none">C</tspan></text>
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer3"
-     inkscape:label="TEXT"
-     transform="translate(0,-480)">
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:598.95800781px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffcc00;fill-opacity:1;stroke:#000000;stroke-width:0.93027943;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4916)"
-       x="60.986771"
-       y="533.79242"
-       id="text4840"
-       transform="matrix(0.09332268,0,0,0.05697921,44.408633,470.52562)"><tspan
-         sodipodi:role="line"
-         id="tspan4838"
-         x="60.986771"
-         y="1080.24"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Iosevka;-inkscape-font-specification:Iosevka;fill:#ffcc00;stroke:#000000;stroke-width:0.93027943;stroke-miterlimit:4;stroke-dasharray:none" /></text>
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Calibri;-inkscape-font-specification:'Calibri Bold Italic';fill:#ffcc00;stroke:none;stroke-width:1;stroke-miterlimit:1;stroke-dasharray:none" /></text>
+    <path
+       d="m 17.222108,1024.3622 c 5.002647,0 7.583921,3.1709 7.583921,3.1709 l -1.781765,3.1449 c 0,0 -2.352843,-2.4489 -5.619411,-2.4489 -4.340196,0 -6.898627,3.6606 -6.898627,7.9656 0,4.4082 2.62696,8.3007 6.921471,8.3007 3.563529,0 5.962057,-2.9387 5.962057,-2.9387 l 1.96451,3.0419 c 0,0 -2.832548,3.7636 -8.08647,3.7636 -6.281862,0 -10.622058,-5.2588 -10.622058,-12.0901 0.022845,-6.7541 4.522941,-11.9099 10.576372,-11.9099 z"
+       fill="#1d88e5"
+       stroke="#1d88e5"
+       stroke-width="0.424665"
+       stroke-miterlimit="10"
+       id="path29620"
+       style="fill:#ffcc00;fill-opacity:1;stroke:#ffcc00;stroke-opacity:1;stroke-width:2.5;stroke-miterlimit:10;stroke-dasharray:none" />
   </g>
 </svg>

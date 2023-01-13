@@ -5568,17 +5568,10 @@ void clMainFrame::OnCopyFilePathRelativeToWorkspaceUI(wxUpdateUIEvent& event)
 
 void clMainFrame::InitializeLogo()
 {
-    BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
-    wxString baseLogoName = "codelite-logo";
     wxIconBundle app_icons;
-    std::array<int, 5> sizes = { 24, 32, 64, 128, 256 };
-    for(int size : sizes) {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap(baseLogoName, size);
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
+    if(PluginManager::Get()->GetStdIcons()->GetIconBundle("codelite-logo", &app_icons)) {
+        SetIcons(app_icons);
     }
-    SetIcons(app_icons);
 }
 
 void clMainFrame::OnDuplicateTab(wxCommandEvent& event)

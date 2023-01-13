@@ -27,7 +27,6 @@
 
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
-#include "clBitmapOverlayCtrl.h"
 #include "clSystemSettings.h"
 #include "cl_command_event.h"
 #include "cl_config.h"

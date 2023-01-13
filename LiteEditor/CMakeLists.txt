@@ -193,43 +193,43 @@ if(NOT APPLE)
 
         # 32x32
         install(
-            FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo@2x.png
+            FILES ${CL_SRC_ROOT}/svgs/logo/32-codelite-logo@2x.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32@2x/apps
             RENAME codelite.png)
 
         install(
-            FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo.png
+            FILES ${CL_SRC_ROOT}/svgs/logo/32-codelite-logo.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps
             RENAME codelite.png)
         # 64x64
         install(
-            FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo@2x.png
+            FILES ${CL_SRC_ROOT}/svgs/logo/64-codelite-logo@2x.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/64x64@2x/apps
             RENAME codelite.png)
 
         install(
-            FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo.png
+            FILES ${CL_SRC_ROOT}/svgs/logo/64-codelite-logo.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/64x64/apps
             RENAME codelite.png)
 
         # 128x128
         install(
-            FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo@2x.png
+            FILES ${CL_SRC_ROOT}/svgs/logo/128-codelite-logo@2x.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128@2x/apps
             RENAME codelite.png)
 
         install(
-            FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo.png
+            FILES ${CL_SRC_ROOT}/svgs/logo/128-codelite-logo.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128/apps
             RENAME codelite.png)
         # 256x256
         install(
-            FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo@2x.png
+            FILES ${CL_SRC_ROOT}/svgs/logo/256-codelite-logo@2x.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256@2x/apps
             RENAME codelite.png)
 
         install(
-            FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo.png
+            FILES ${CL_SRC_ROOT}/svgs/logo/256-codelite-logo.png
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps
             RENAME codelite.png)
 

@@ -37,6 +37,7 @@
 #include "optionsconfig.h"
 
 #include <algorithm>
+#include <array>
 #include <unordered_map>
 #include <wx/app.h>
 #include <wx/dcscreen.h>

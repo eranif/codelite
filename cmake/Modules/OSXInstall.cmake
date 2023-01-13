@@ -233,7 +233,7 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
 
         copy_extra_homebrew_libs()
 
-        file(COPY ${CL_SRC_ROOT}/bitmaps-light/osx/icon.icns
+        file(COPY ${CL_SRC_ROOT}/svgs/logo/osx/icon.icns
              DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources)
 
         file(COPY ${CL_SRC_ROOT}/Runtime/cl_workspace.icns

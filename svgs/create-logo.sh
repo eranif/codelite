@@ -66,7 +66,7 @@ fi
 cd logo
 
 if [ "${OS_NAME}" == "Darwin" ]; then
-    cd ${CL_HOME}/svgs/osx
+    cd ${CL_HOME}/svgs/logo/osx
     echo iconutil -c icns icon.iconset/
     iconutil -c icns icon.iconset/
 fi

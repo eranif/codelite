@@ -2,20 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="64"
    height="64"
    viewBox="0 0 16.933333 16.933334"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.1 r15371"
-   sodipodi:docname="function_private.svg">
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="function_public.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2">
     <inkscape:perspective
@@ -25,6 +25,20 @@
        inkscape:vp_z="1.4898507 : -2.1873469 : 0"
        inkscape:persp3d-origin="-54.746653 : 80.800265 : 1"
        id="perspective3713" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-0" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -34,8 +48,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-101.69439"
-     inkscape:cy="21.090291"
+     inkscape:cx="-107.3"
+     inkscape:cy="69.9"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -45,10 +59,10 @@
      inkscape:pagecheckerboard="false"
      showguides="true"
      inkscape:lockguides="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1311"
-     inkscape:window-x="1920"
-     inkscape:window-y="41"
+     inkscape:window-width="3440"
+     inkscape:window-height="1361"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -58,7 +72,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
@@ -79,19 +92,10 @@
      id="layer1"
      transform="translate(0,-280.06665)">
     <circle
-       style="opacity:1;fill:#dfd4dc;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.58796299;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#ff7f18;fill-opacity:1;fill-rule:evenodd;stroke:#ff7f18;stroke-width:0.79375001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path819-0"
        cx="8.4666672"
        cy="288.53333"
        r="7.9375" />
-    <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#5e2750;stroke-width:1.0583334;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect825"
-       width="7.9375"
-       height="1.9542211"
-       x="4.4979167"
-       y="287.55621"
-       ry="0.42333338"
-       rx="0.42333335" />
   </g>
 </svg>

@@ -25,6 +25,7 @@ class BuildTab : public wxPanel
     size_t m_warn_count = 0;
     bool m_buildInterrupted = false;
     wxString m_currentProjectName;
+    wxString m_currentRootDir;
 
 protected:
     void OnBuildStarted(clBuildEvent& e);
@@ -40,6 +41,7 @@ protected:
     void ProcessBuffer(bool last_line = false);
     void Cleanup();
     void ProcessBuildingProjectLine(const wxString& line);
+    bool ProcessCargoBuildLine(const wxString& line);
     const wxString& GetCurrentProjectName() const { return m_currentProjectName; }
     wxString WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font = false) const;
     void SaveBuildLog();

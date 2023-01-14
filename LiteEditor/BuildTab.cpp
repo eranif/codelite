@@ -24,6 +24,8 @@ namespace
 {
 struct LineClientData {
     wxString project_name;
+    // use this as the root folder for changing relative paths to abs. If empty, use the workspace path
+    wxString root_dir;
     Compiler::PatternMatch match_pattern;
     wxString message;
     wxString toolchain;
@@ -67,6 +69,8 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
 {
     e.Skip();
     m_buildInProgress = true;
+    m_currentRootDir.clear();
+    m_currentProjectName.clear();
 
     // clear all build markers
     IEditor::List_t all_editors;
@@ -135,6 +139,7 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
     EventNotifier::Get()->AddPendingEvent(build_ended_event);
 
     m_currentProjectName.clear();
+    m_currentRootDir.clear();
 }
 
 void BuildTab::ProcessBuffer(bool last_line)
@@ -156,13 +161,20 @@ void BuildTab::ProcessBuffer(bool last_line)
         if(line.Lower().Contains("entering directory") || line.Lower().Contains("leaving directory")) {
             line = WrapLineInColour(line, eAsciiColours::GRAY);
             m_view->AppendItem(line);
+
         } else if(line.Lower().Contains("building project")) {
             ProcessBuildingProjectLine(line);
             line = WrapLineInColour(line, eAsciiColours::NORMAL_TEXT, true);
             m_view->AppendItem(line);
+
+        } else if(m_activeCompiler && (m_activeCompiler->GetName() == "rustc") && line.Lower().Contains("compiling") &&
+                  ProcessCargoBuildLine(line)) {
+            m_view->AppendItem(line);
+
         } else {
             std::unique_ptr<LineClientData> m(new LineClientData);
             m->message = line;
+            m->root_dir = m_currentRootDir; // maybe empty string
 
             // remove the terminal ascii colouring escape code
             wxString modified_line;
@@ -260,6 +272,7 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
     // let the plugins a first chance in handling this line
     if(!cd->match_pattern.file_path.empty()) {
         clBuildEvent eventErrorClicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
+        eventErrorClicked.SetBuildDir(cd->root_dir); // can be empty
         eventErrorClicked.SetFileName(cd->match_pattern.file_path);
         eventErrorClicked.SetLineNumber(cd->match_pattern.line_number);
         eventErrorClicked.SetProjectName(cd->project_name);
@@ -446,6 +459,20 @@ wxString BuildTab::CreateSummaryLine()
         text << " ===";
     }
     return text;
+}
+
+bool BuildTab::ProcessCargoBuildLine(const wxString& line)
+{
+    // An example for such a line:
+    //  Compiling hello_rust v0.1.0 (C:\Users\eran\Documents\HelloRust\HelloRust\cargo-project)
+    static wxRegEx re_compiling{ R"#(Compiling[ \t]+.*?\((.*?)\))#" };
+    if(re_compiling.IsValid() && re_compiling.Matches(line)) {
+        m_currentRootDir = re_compiling.GetMatch(line, 1); // get the path
+        m_currentRootDir.Trim().Trim(false);
+        LOG_IF_DEBUG { clDEBUG() << "Rustc: current root dir is:" << m_currentRootDir << endl; }
+        return true;
+    }
+    return false;
 }
 
 void BuildTab::ProcessBuildingProjectLine(const wxString& line)

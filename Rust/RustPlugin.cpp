@@ -282,14 +282,23 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
 
     // build the file path:
     // the compiler report the file in relative path to the `Cargo.toml` file
-    if(!m_cargoTomlFile.FileExists()) {
-        event.Skip(true); // let others handle this
+    wxString basepath;
+    if(!event.GetBuildDir().empty()) {
+        basepath = event.GetBuildDir();
+    }
+
+    if(basepath.empty() && !m_cargoTomlFile.FileExists()) {
+        basepath = m_cargoTomlFile.GetPath();
+    }
+
+    if(basepath.empty()) {
+        // unable to determine the root folder
+        event.Skip();
         return;
     }
 
-    wxString strfile = m_cargoTomlFile.GetPath();
-    strfile << wxFILE_SEP_PATH << event.GetFileName();
-    wxFileName fnFile(strfile);
+    basepath << "/" << event.GetFileName();
+    wxFileName fnFile(basepath);
     if(!fnFile.FileExists()) {
         event.Skip(true); // let others handle this
         return;
@@ -370,11 +379,14 @@ void RustPlugin::OnWorkspaceLoaded(clWorkspaceEvent& event)
         } else {
             // We might placed our Cargo.toml in one of the children folers (1 level below)
             // check them
-            wxArrayString dirs;
-            wxDir::GetAllFiles(workspaceFile.GetPath(), &dirs, wxEmptyString, wxDIR_DIRS | wxDIR_NO_FOLLOW);
-            for(const auto& dir : dirs) {
-                cargo_toml = wxFileName(workspaceFile.GetPath(), "Cargo.toml");
-                cargo_toml.AppendDir(dir);
+            wxString workspace_path = workspaceFile.GetPath();
+            wxDir d;
+            d.Open(workspace_path);
+
+            wxString filename;
+            for(bool cont = d.GetFirst(&filename, wxEmptyString, wxDIR_DIRS); cont; cont = d.GetNext(&filename)) {
+                cargo_toml = wxFileName(workspace_path, "Cargo.toml");
+                cargo_toml.AppendDir(filename);
                 if(cargo_toml.FileExists()) {
                     m_cargoTomlFile = cargo_toml;
                     break;

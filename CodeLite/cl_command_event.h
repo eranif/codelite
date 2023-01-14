@@ -389,6 +389,7 @@ protected:
     bool m_cleanLog = true;
     size_t m_flags = 0;
     wxString m_toolchain;
+    wxString m_buildDir;
 
 public:
     clBuildEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -405,6 +406,9 @@ public:
             m_flags &= ~f;
         }
     }
+
+    void SetBuildDir(const wxString& buildDir) { this->m_buildDir = buildDir; }
+    const wxString& GetBuildDir() const { return m_buildDir; }
 
     void SetToolchain(const wxString& toolchain) { this->m_toolchain = toolchain; }
     const wxString& GetToolchain() const { return m_toolchain; }

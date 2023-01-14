@@ -405,15 +405,16 @@ void RemotyWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
     CHECK_EVENT(event);
     wxString filename = event.GetFileName();
     int line_number = event.GetLineNumber();
+    wxString basepath = event.GetBuildDir();
 
     clDEBUG() << "Remoty: attempting to open file:" << filename << endl;
 
     wxFileName fn(filename);
     if(fn.IsRelative(wxPATH_UNIX)) {
         // attempt to make it absolute
-        fn.MakeAbsolute(GetRemoteWorkingDir(), wxPATH_UNIX);
+        fn.MakeAbsolute(basepath.empty() ? GetRemoteWorkingDir() : basepath, wxPATH_UNIX);
         filename = fn.GetFullPath(wxPATH_UNIX);
-        clDEBUG() << "Remoty: file is relative, converting to fullpath:" << filename << endl;
+        LOG_IF_DEBUG { clDEBUG() << "Remoty: file is relative, converting to fullpath:" << filename << endl; }
     }
 
     // download the file

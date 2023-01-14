@@ -186,6 +186,7 @@ clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
     m_cleanLog = src.m_cleanLog;
     m_flags = src.m_flags;
     m_toolchain = src.m_toolchain;
+    m_buildDir = src.m_buildDir;
     return *this;
 }
 

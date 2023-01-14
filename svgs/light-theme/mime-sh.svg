@@ -3,7 +3,7 @@
    viewBox="0 0 100 100"
    version="1.1"
    id="svg9950"
-   sodipodi:docname="console.svg"
+   sodipodi:docname="mime-sh.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -33,5 +33,5 @@
      d="M31.7 30.5l-5.9 5.9 13.7 13.7-13.6 13.6 5.9 5.9 19.5-19.5-19.6-19.6zm18.9 33.7h23v9.5h-23v-9.5zM2.8 7.5v85h94.5v-85H2.8zm85 75.6H12.2V16.9h75.6v66.2z"
      fill="#bababa"
      id="path9948"
-     style="fill:#707070" />
+     style="fill:#a3a3a3" />
 </svg>

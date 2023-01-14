@@ -102,14 +102,8 @@ namespace
     void draw_item_selected_rect(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pen_colour,
                                  const wxColour& brush_colour, double radius = 0)
     {
-#ifdef __WXMSW__
-        wxDCClipper clip(dc, rect);
-        int flags = wxCONTROL_SELECTED | wxCONTROL_FOCUSED;
-        wxRendererNative::Get().DrawItemSelectionRect(win, dc, rect, flags);
-#else
         wxUnusedVar(win);
         draw_rectangle(dc, rect, pen_colour, brush_colour, radius);
-#endif
     }
 } // namespace
 
@@ -750,13 +744,7 @@ void clRowEntry::RenderText(wxWindow* win, wxDC& dc, const clColours& colours, c
             return;
         }
         dc.SetFont(m_tree->GetDefaultFont());
-#ifdef __WXMSW__
-        const wxColour& defaultTextColour =
-            m_tree->IsNativeTheme() ? colours.GetItemTextColour()
-                                    : (IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
-#else
         const wxColour& defaultTextColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour();
-#endif
         const wxColour& matchBgColour = colours.GetMatchedItemBgText();
         const wxColour& matchTextColour = colours.GetMatchedItemText();
         int xx = x;
@@ -802,12 +790,6 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
             text_colour = colours.GetItemTextColour();
         }
     }
-
-#ifdef __WXMSW__
-    if(!clSystemSettings::IsDark() && IsSelected()) {
-        text_colour = *wxBLACK;
-    }
-#endif
 
     dc.SetTextForeground(text_colour);
     dc.DrawText(text, x, y);

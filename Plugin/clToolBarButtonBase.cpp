@@ -2,6 +2,9 @@
 
 #include "clToolBar.h"
 #include "drawingutils.h"
+#include "file_logger.h"
+
+#include <wx/renderer.h>
 
 // -----------------------------------------------
 // Button base
@@ -107,7 +110,12 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
             dc.DrawLine(wxPoint(xx, m_buttonRect.GetY() + 2),
                         wxPoint(xx, m_buttonRect.GetY() + m_buttonRect.GetHeight() - 2));
         }
-        DrawingUtils::DrawDropDownArrow(m_toolbar, dc, m_dropDownArrowRect);
+
+        int flags = wxCONTROL_NONE;
+        if(!IsEnabled()) {
+            flags |= wxCONTROL_DISABLED;
+        }
+        DrawingUtils::DrawDropDownArrow(m_toolbar, dc, m_dropDownArrowRect, flags);
         xx += drop_down_button_width;
     }
 }

@@ -103,8 +103,10 @@ public:
     /**
      * @brief draw a drop down arrow
      * pass an invalid colour to let this function determine the best colour to use
+     * @param flags wxCONTROL_* flags
      */
-    static void DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour = wxColour());
+    static void DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, int flags,
+                                  const wxColour& colour = wxColour());
     /**
      * @brief draw colour picker. return the rectangle the contains the button part of the picker
      */

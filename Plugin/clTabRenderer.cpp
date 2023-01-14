@@ -324,7 +324,9 @@ void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, con
     } else {
         buttonColour = colours.tabAreaColour.ChangeLightness(50);
     }
-    DrawingUtils::DrawDropDownArrow(win, dc, rect, buttonColour);
+
+    int flags = wxCONTROL_NONE;
+    DrawingUtils::DrawDropDownArrow(win, dc, rect, flags, buttonColour);
 }
 
 int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
@@ -415,9 +417,9 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
     GetTabColours(colours, style, &active_tab_colour, &bg_colour);
     bool is_dark = DrawingUtils::IsDark(bg_colour);
     dc.SetPen(bg_colour.ChangeLightness(is_dark ? 60 : 80));
-    //dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
-    //dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetBottomLeft());
-    //dc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
+    // dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
+    // dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetBottomLeft());
+    // dc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
 }
 
 void clTabRenderer::AdjustColours(clTabColours& colours, size_t style)

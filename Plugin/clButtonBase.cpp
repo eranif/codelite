@@ -401,7 +401,14 @@ void clButtonBase::Render(wxDC& dc)
 
     if(HasDropDownMenu()) {
         // Draw an arrow
-        DrawingUtils::DrawDropDownArrow(this, dc, arrow_rect, textColour);
+        int flags = wxCONTROL_NONE;
+        if(isDisabled)
+            flags |= wxCONTROL_DISABLED;
+
+        if(HasFocus())
+            flags |= wxCONTROL_FOCUSED;
+
+        DrawingUtils::DrawDropDownArrow(this, dc, arrow_rect, flags, textColour);
     }
 
     if(HasFocus()) {

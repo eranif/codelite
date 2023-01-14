@@ -196,7 +196,7 @@ void clToolBarGeneric::OnPaint(wxPaintEvent& event)
 
     // If we have overflow buttons, draw an arrow to the right
     if(!m_overflowButtons.empty() || IsCustomisationEnabled()) {
-        DrawingUtils::DrawDropDownArrow(this, gcdc, chevronRect);
+        DrawingUtils::DrawDropDownArrow(this, gcdc, chevronRect, wxCONTROL_NONE);
         m_chevronRect = chevronRect;
     }
 

@@ -162,7 +162,7 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-h", 16), FileExtManager::TypeHeader);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-md", 16), FileExtManager::TypeMarkdown);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", 16), FileExtManager::TypeText);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("console", 16), FileExtManager::TypeShellScript);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-sh", 16), FileExtManager::TypeShellScript);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml", 16), FileExtManager::TypeXml);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", 16), FileExtManager::TypeErd);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-python", 16), FileExtManager::TypePython);

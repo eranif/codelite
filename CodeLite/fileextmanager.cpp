@@ -110,6 +110,7 @@ void FileExtManager::Init()
         m_map[wxT("cdp")] = TypeCodedesigner;
         m_map[wxT("erd")] = TypeErd;
 
+        m_map[wxT("phar")] = TypePhar;
         m_map[wxT("php")] = TypePhp;
         m_map[wxT("php5")] = TypePhp;
         m_map[wxT("inc")] = TypePhp;
@@ -136,12 +137,17 @@ void FileExtManager::Init()
         m_map[wxT("html")] = TypeHtml;
         m_map[wxT("htm")] = TypeHtml;
 
-        m_map[wxT("tar")] = TypeArchive;
+        m_map[wxT("tar")] = TypeTar;
         m_map[wxT("a")] = TypeArchive;
         m_map[wxT("lib")] = TypeArchive;
-        m_map[wxT("zip")] = TypeArchive;
-        m_map[wxT("rar")] = TypeArchive;
-        m_map[wxT("targz")] = TypeArchive;
+
+        // compressed files
+        m_map[wxT("zip")] = TypeZip;
+        m_map[wxT("rar")] = TypeZip;
+        m_map[wxT("targz")] = TypeZip;
+        m_map[wxT("gz")] = TypeZip;
+        m_map[wxT("bz2")] = TypeZip;
+        m_map[wxT("xz")] = TypeZip;
 
         m_map[wxT("dll")] = TypeDll;
         m_map[wxT("so")] = TypeDll;
@@ -153,9 +159,11 @@ void FileExtManager::Init()
         m_map[wxT("png")] = TypeBmp;
         m_map[wxT("ico")] = TypeBmp;
         m_map[wxT("xpm")] = TypeBmp;
+        m_map[wxT("gif")] = TypeBmp;
         m_map[wxT("svg")] = TypeSvg;
 
         m_map[wxT("mk")] = TypeMakefile;
+        m_map[wxT("m4")] = TypeMakefile;
 
         m_map[wxT("log")] = TypeText;
         m_map[wxT("txt")] = TypeText;
@@ -170,9 +178,9 @@ void FileExtManager::Init()
         m_map[wxT("xrc")] = TypeXRC;
 
         m_map[wxT("sql")] = TypeSQL;
-        m_map[wxT("sqlite")] = TypeSQL;
+        m_map[wxT("sqlite")] = TypeSLite;
         m_map[wxT("phpwsp")] = TypeWorkspacePHP;
-        m_map[wxT("phptags")] = TypeWorkspacePHPTags;
+        m_map[wxT("phptags")] = TypeDatabase;
 
         m_map["pro"] = TypeQMake;
         m_map["pri"] = TypeQMake;

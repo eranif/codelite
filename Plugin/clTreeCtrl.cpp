@@ -52,11 +52,7 @@ namespace
 void SetNativeThemeMSW(wxWindow* win)
 {
 #ifdef __WXMSW__
-#if CL_BUILD
-    ::MSWSetWindowDarkTheme(win);
-#else
-    SetWindowTheme((HWND)win->GetHWND(), wxT("Explorer"), NULL);
-#endif
+    SetWindowTheme(win->GetHWND(), L"Explorer", nullptr);
 #endif
 }
 

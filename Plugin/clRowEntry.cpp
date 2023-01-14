@@ -22,11 +22,11 @@
 #endif
 
 #ifdef __WXGTK__
-#define SELECTION_RECT_DEFLATE 1
+#define SELECTION_RECT_DEFLATE 0
 #elif defined(__WXMSW__)
-#define SELECTION_RECT_DEFLATE 2
+#define SELECTION_RECT_DEFLATE 0
 #else
-#define SELECTION_RECT_DEFLATE 3
+#define SELECTION_RECT_DEFLATE 0
 #endif
 
 namespace
@@ -85,8 +85,8 @@ wxString GetTextForRendering(const wxString& text)
 
 namespace
 {
-    void draw_selection(wxDC& dc, const wxRect& rect, const wxColour& pen_colour, const wxColour& brush_colour,
-                        double radius = 3.0)
+    void draw_rectangle(wxDC& dc, const wxRect& rect, const wxColour& pen_colour, const wxColour& brush_colour,
+                        double radius = 0)
     {
         wxBrush brush(brush_colour);
         wxPen pen(pen_colour);
@@ -98,6 +98,19 @@ namespace
         dc.SetBrush(brush);
         dc.DrawRoundedRectangle(rect, radius);
     }
+
+    void draw_item_selected_rect(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pen_colour,
+                                 const wxColour& brush_colour, double radius = 0)
+    {
+#ifdef __WXMSW__
+        wxDCClipper clip(dc, rect);
+        int flags = wxCONTROL_SELECTED | wxCONTROL_FOCUSED;
+        wxRendererNative::Get().DrawItemSelectionRect(win, dc, rect, flags);
+#else
+        wxUnusedVar(win);
+        draw_rectangle(dc, rect, pen_colour, brush_colour, radius);
+#endif
+    }
 } // namespace
 
 void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
@@ -106,7 +119,7 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
     wxRect r = rect;
     r.Deflate(SELECTION_RECT_DEFLATE);
     r = r.CenterIn(rect);
-    draw_selection(dc, r, colours.GetSelItemBgColour(), colours.GetSelItemBgColour());
+    draw_item_selected_rect(win, dc, r, colours.GetSelItemBgColour(), colours.GetSelItemBgColour());
 }
 
 void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clCellValue& cell)
@@ -127,27 +140,25 @@ int clRowEntry::X_SPACER = 5;
 int clRowEntry::Y_SPACER = 2;
 #endif
 
-// clang-format off
 #ifdef __WXMSW__
-#   define PEN_STYLE wxPENSTYLE_SHORT_DASH
-#   define IS_MSW 1
+#define PEN_STYLE wxPENSTYLE_SHORT_DASH
+#define IS_MSW 1
 #else
-#   define PEN_STYLE wxPENSTYLE_DOT
-#   define IS_MSW 0
+#define PEN_STYLE wxPENSTYLE_DOT
+#define IS_MSW 0
 #endif
 
 #ifdef __WXOSX__
-#   define IS_OSX 1
+#define IS_OSX 1
 #else
-#   define IS_OSX 0
+#define IS_OSX 0
 #endif
 
 #ifdef __WXGTK__
-#   define IS_GTK 1
+#define IS_GTK 1
 #else
-#   define IS_GTK 0
+#define IS_GTK 0
 #endif
-// clang-format on
 
 void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
@@ -513,7 +524,7 @@ void clRowEntry::RenderBackground(wxDC& dc, long tree_style, const clColours& c,
     wxRect selectionRect = rowRect;
     wxPoint deviceOrigin = dc.GetDeviceOrigin();
     selectionRect.SetX(-deviceOrigin.x);
-    draw_selection(dc, selectionRect, colours.GetItemBgColour(), colours.GetItemBgColour(), 0.0);
+    draw_rectangle(dc, selectionRect, colours.GetItemBgColour(), colours.GetItemBgColour(), 0.0);
 }
 
 void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index, clSearchText* searcher)
@@ -547,9 +558,9 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     if(IsSelected() && !m_tree->IsDisabled()) {
         DrawSimpleSelection(win, dc, selectionRect, colours);
     } else if(IsHovered() && !m_tree->IsDisabled()) {
-        draw_selection(dc, selectionRect, colours.GetHoverBgColour(), colours.GetHoverBgColour());
+        draw_rectangle(dc, selectionRect, colours.GetHoverBgColour(), colours.GetHoverBgColour());
     } else if(colours.GetItemBgColour().IsOk()) {
-        draw_selection(dc, selectionRect, colours.GetItemBgColour(), colours.GetItemBgColour(), 0.0);
+        draw_rectangle(dc, selectionRect, colours.GetItemBgColour(), colours.GetItemBgColour(), 0.0);
     }
 
     // Per cell drawings
@@ -779,8 +790,9 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
                                   size_t col)
 {
     wxUnusedVar(win);
-
     wxDCTextColourChanger changer(dc);
+
+    // fallback to the default
     // select the default text colour
     wxColour text_colour = GetTextColour(col);
     if(!text_colour.IsOk()) {
@@ -790,6 +802,12 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
             text_colour = colours.GetItemTextColour();
         }
     }
+
+#ifdef __WXMSW__
+    if(!clSystemSettings::IsDark() && IsSelected()) {
+        text_colour = *wxBLACK;
+    }
+#endif
 
     dc.SetTextForeground(text_colour);
     dc.DrawText(text, x, y);

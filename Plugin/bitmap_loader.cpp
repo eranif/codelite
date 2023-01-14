@@ -147,21 +147,22 @@ void BitmapLoader::Initialize(bool darkTheme)
 void BitmapLoader::CreateMimeList()
 {
     if(m_mimeBitmaps.IsEmpty()) {
-        m_mimeBitmaps.AddBitmap(LoadBitmap("console", 16), FileExtManager::TypeExe);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("executable", 16), FileExtManager::TypeExe);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-html", 16), FileExtManager::TypeHtml);
         m_mimeBitmaps.AddBitmap(LoadBitmap("archive", 16), FileExtManager::TypeArchive);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("zip", 16), FileExtManager::TypeZip);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-php", 16), FileExtManager::TypePhp);
         m_mimeBitmaps.AddBitmap(LoadBitmap("dll", 16), FileExtManager::TypeDll);
         m_mimeBitmaps.AddBitmap(LoadBitmap("blocks", 16), FileExtManager::TypeFormbuilder);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", 16), FileExtManager::TypeCodedesigner);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-bmp", 16), FileExtManager::TypeBmp);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cog", 16), FileExtManager::TypeMakefile);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mk", 16), FileExtManager::TypeMakefile);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-c", 16), FileExtManager::TypeSourceC);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-cpp", 16), FileExtManager::TypeSourceCpp);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-h", 16), FileExtManager::TypeHeader);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-md", 16), FileExtManager::TypeMarkdown);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", 16), FileExtManager::TypeText);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("execute", 16), FileExtManager::TypeShellScript);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("console", 16), FileExtManager::TypeShellScript);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml", 16), FileExtManager::TypeXml);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", 16), FileExtManager::TypeErd);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-python", 16), FileExtManager::TypePython);
@@ -176,8 +177,8 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("project-opened", 16), FileExtManager::TypeProjectExpanded);
         m_mimeBitmaps.AddBitmap(LoadBitmap("blocks", 16), FileExtManager::TypeWxCrafter);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml", 16), FileExtManager::TypeXRC);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("tools", 16), FileExtManager::TypeResource);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-sql", 16), FileExtManager::TypeSQL);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml", 16), FileExtManager::TypeResource);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("sql", 16), FileExtManager::TypeSQL);
         m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow", 16), FileExtManager::TypeFolder);
         m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-opened", 16), FileExtManager::TypeFolderExpanded);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-as", 16), FileExtManager::TypeAsm);
@@ -186,6 +187,7 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("docker", 16), FileExtManager::TypeDockerfile);
         m_mimeBitmaps.AddBitmap(LoadBitmap("yml", 16), FileExtManager::TypeYAML);
         m_mimeBitmaps.AddBitmap(LoadBitmap("database", 16), FileExtManager::TypeDatabase);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("sqlite", 16), FileExtManager::TypeSLite);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-svg", 16), FileExtManager::TypeSvg);
         m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow-opened", 16),
                                 FileExtManager::TypeWorkspaceFolderExpanded);
@@ -199,6 +201,8 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("patch", 16), FileExtManager::TypePatch);
         m_mimeBitmaps.AddBitmap(LoadBitmap("ruby", 16), FileExtManager::TypeRuby);
         m_mimeBitmaps.AddBitmap(LoadBitmap("json", 16), FileExtManager::TypeJSON);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("phar", 16), FileExtManager::TypePhar);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("dart", 16), FileExtManager::TypeDart);
 
         // Non mime bitmaps
         m_mimeBitmaps.AddBitmap(LoadBitmap("file_save", 16), kSave);

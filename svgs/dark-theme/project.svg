@@ -2,7 +2,7 @@
 <svg
    viewBox="0 0 100 100"
    version="1.1"
-   id="svg39029"
+   id="svg6"
    sodipodi:docname="project.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -10,9 +10,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs39033" />
+     id="defs10" />
   <sodipodi:namedview
-     id="namedview39031"
+     id="namedview8"
      pagecolor="#505050"
      bordercolor="#eeeeee"
      borderopacity="1"
@@ -21,22 +21,22 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="8.73"
-     inkscape:cx="50"
+     inkscape:cx="50.057274"
      inkscape:cy="50"
-     inkscape:window-width="1819"
+     inkscape:window-width="2023"
      inkscape:window-height="1111"
-     inkscape:window-x="1617"
-     inkscape:window-y="68"
+     inkscape:window-x="1191"
+     inkscape:window-y="89"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg39029" />
+     inkscape:current-layer="svg6" />
   <path
-     d="M39.5 11.4l10.7 13.5H23c-4.9 0-8.8 3.9-8.8 8.8v58.1H8.8C3.9 91.8 0 87.9 0 83V17c0-4.9 3.9-8.8 8.8-8.8h23.9c2.7 0 5.2 1.1 6.8 3.2z"
-     fill="#00efd1"
-     id="path39025"
-     style="fill:#6f7c91" />
+     d="M90 20H45L35 10H10C4.5 10 0 14.5 0 20v20h100V30c0-5.5-4.5-10-10-10z"
+     fill="#ffa000"
+     id="path2"
+     style="fill:#c2c2c2" />
   <path
-     d="M100 33.3V83c0 4.9-3.9 8.8-8.8 8.8H11.8V33.3c0-4.9 3.9-8.8 8.8-8.8h70.5c5 0 8.9 3.9 8.9 8.8z"
-     fill="#00acea"
-     id="path39027"
-     style="fill:#87aade" />
+     d="M90 20H10C4.5 20 0 24.5 0 30v50c0 5.5 4.5 10 10 10h80c5.5 0 10-4.5 10-10V30c0-5.5-4.5-10-10-10z"
+     fill="#ffca28"
+     id="path4"
+     style="fill:#adadad" />
 </svg>

@@ -1,8 +1,0 @@
-{
- "metadata": {
-  "version": "1.0",
-  "ide": "CodeLite",
-  "type": "php"
- },
- "projects": ["svgs.phprj"]
-}

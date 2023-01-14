@@ -62,6 +62,7 @@ public:
         TypeExe,
         TypeHtml,
         TypeArchive,
+        TypeZip,
         TypeDll,
         TypeBmp,
         TypeSvg,
@@ -101,6 +102,9 @@ public:
         TypeJSON,
         TypeMarkdown,
         TypeDart,
+        TypePhar,
+        TypeSLite,
+        TypeTar,
         TypeLast,
     };
 

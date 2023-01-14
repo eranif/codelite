@@ -21,7 +21,7 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="8.73"
-     inkscape:cx="50"
+     inkscape:cx="50.057274"
      inkscape:cy="50"
      inkscape:window-width="2023"
      inkscape:window-height="1111"
@@ -33,7 +33,7 @@
      d="M90 20H45L35 10H10C4.5 10 0 14.5 0 20v20h100V30c0-5.5-4.5-10-10-10z"
      fill="#ffa000"
      id="path2"
-     style="fill:#808080" />
+     style="fill:#c2c2c2" />
   <path
      d="M90 20H10C4.5 20 0 24.5 0 30v50c0 5.5 4.5 10 10 10h80c5.5 0 10-4.5 10-10V30c0-5.5-4.5-10-10-10z"
      fill="#ffca28"

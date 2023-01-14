@@ -1,109 +1,65 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="512"
-   height="512"
-   viewBox="0 0 512.00001 512.00001"
-   id="svg4144"
+   fill="#000000"
+   width="800px"
+   height="800px"
+   viewBox="-7 0 32 32"
    version="1.1"
-   inkscape:version="0.92.1 r15371"
-   sodipodi:docname="regular-expression.svg">
+   id="svg6"
+   sodipodi:docname="regular-expression.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
-     id="defs4146" />
+     id="defs10" />
   <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.8125"
-     inkscape:cx="-353.97237"
-     inkscape:cy="233.38611"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     id="namedview8"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
      showgrid="false"
-     units="px"
-     inkscape:showpageshadow="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1016"
-     inkscape:window-x="1920"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1" />
+     inkscape:zoom="1.09125"
+     inkscape:cx="400"
+     inkscape:cy="400"
+     inkscape:window-width="3440"
+     inkscape:window-height="1361"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <title
+     id="title2">asterisk</title>
+  <path
+     d="m 21.750466,14.155557 h -6.71711 l 5.523939,-5.5022662 c 0.353532,-0.352145 0.353532,-0.9243807 0,-1.3205439 -0.353532,-0.3521451 -0.928022,-0.3521451 -1.325745,0 L 13.70761,12.835013 V 6.1882754 c 0,-0.5282176 -0.397723,-0.9243808 -0.928021,-0.9243808 -0.530299,0 -0.928022,0.3961632 -0.928022,0.9243808 V 12.879032 L 6.3276274,7.3327469 c -0.3535321,-0.3521451 -0.9280218,-0.3521451 -1.3257454,0 -0.3535322,0.352145 -0.3535322,0.9243808 0,1.3205439 l 5.523939,5.5022662 H 3.897094 c -0.5302982,0 -0.9280218,0.396164 -0.9280218,0.924381 0,0.528218 0.3977236,0.924381 0.9280218,0.924381 h 6.71711 l -5.523939,5.502267 c -0.3535322,0.352145 -0.3535322,0.92438 0,1.320544 0.1767661,0.176072 0.3977237,0.264108 0.6628727,0.264108 0.2209576,0 0.4861067,-0.08804 0.6628728,-0.264108 L 11.93995,17.324863 v 6.690756 c 0,0.528218 0.397723,0.924381 0.928022,0.924381 0.530298,0 0.928021,-0.396163 0.928021,-0.924381 v -6.690756 l 5.52394,5.502267 c 0.176766,0.176072 0.397723,0.264108 0.662872,0.264108 0.220958,0 0.486107,-0.08804 0.662873,-0.264108 0.353532,-0.352145 0.353532,-0.924381 0,-1.320544 l -5.612322,-5.502267 h 6.71711 c 0.530298,0 0.928023,-0.396163 0.928023,-0.924381 0,-0.528217 -0.441916,-0.924381 -0.928023,-0.924381 z"
+     id="path4"
+     style="fill:#474747;stroke-width:1.10262" />
+  <ellipse
+     cx="-1.5383735"
+     cy="27.583046"
+     fill="#121923"
+     stroke="#121923"
+     stroke-width="1.9225"
+     id="circle2"
+     style="fill:#474747;stroke:#474747"
+     rx="2.3132331"
+     ry="2.4965093" />
   <metadata
-     id="metadata4149">
+     id="metadata827">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title>asterisk</dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-540.36216)">
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'PT Mono';-inkscape-font-specification:'PT Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#80667b;fill-opacity:1;stroke:#80667b;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       x="116"
-       y="724.36218"
-       id="text4692"><tspan
-         sodipodi:role="line"
-         id="tspan4694"
-         x="116"
-         y="724.36218"
-         style="font-size:40px;line-height:1.25;fill:#80667b;fill-opacity:1;stroke:#80667b;stroke-opacity:1;"> </tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'PT Mono';-inkscape-font-specification:'PT Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#80667b;fill-opacity:1;stroke:#80667b;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       x="254"
-       y="758.36218"
-       id="text4696"><tspan
-         sodipodi:role="line"
-         id="tspan4698"
-         x="254"
-         y="758.36218"
-         style="font-size:40px;line-height:1.25;fill:#80667b;fill-opacity:1;stroke:#80667b;stroke-opacity:1;"> </tspan></text>
-    <flowRoot
-       xml:space="preserve"
-       id="flowRoot4700"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:'PT Mono';-inkscape-font-specification:'PT Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#80667b;fill-opacity:1;stroke:#80667b;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       transform="translate(0,540.36216)"><flowRegion
-         id="flowRegion4702"
-         style="fill:#80667b;fill-opacity:1;stroke:#80667b;stroke-opacity:1;"><rect
-           id="rect4704"
-           width="190"
-           height="136"
-           x="184"
-           y="176"
-           style="fill:#80667b;fill-opacity:1;stroke:#80667b;stroke-opacity:1;" /></flowRegion><flowPara
-         id="flowPara4706"
-         style="font-size:40px;line-height:1.25;fill:#80667b;fill-opacity:1;stroke:#80667b;stroke-opacity:1;"> </flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       id="flowRoot4718"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:'PT Mono';-inkscape-font-specification:'PT Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#474747;fill-opacity:1;stroke:#474747;stroke-width:1.24831533;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
-       transform="matrix(9.8358162,0,0,12.25228,-466.2655,-66.797842)"><flowRegion
-         id="flowRegion4720"
-         style="fill:#474747;fill-opacity:1;stroke:#474747;stroke-opacity:1;"><rect
-           id="rect4722"
-           width="434"
-           height="393"
-           x="46"
-           y="45"
-           style="fill:#474747;fill-opacity:1;stroke:#474747;stroke-width:1.24831533;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;" /></flowRegion><flowPara
-         id="flowPara4724"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:'PT Mono';-inkscape-font-specification:'PT Mono';letter-spacing:0px;fill:#474747;fill-opacity:1;stroke:#474747;stroke-width:1.24831533;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;">.*</flowPara></flowRoot>  </g>
 </svg>

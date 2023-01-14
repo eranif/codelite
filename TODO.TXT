@@ -7,5 +7,3 @@ Debug Adapter Client
 
 others:
 ----
-- Find bar: place the toolbar on the right side
--

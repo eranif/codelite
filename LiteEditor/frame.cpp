@@ -1497,15 +1497,11 @@ void clMainFrame::DoCreateToolBar(int toolSize)
 
     // the main tool
     const int ID_TOOLBAR = 500;
-#if defined(__WXMSW__)
-    toolSize = 24;
-#elif defined(__WXMAC__)
-    toolSize = 24;
+    toolSize = 16;
+#if defined(__WXMAC__)
     if(m_mainToolbarStyle & wxTB_TOP) {
         toolSize = 64;
     }
-#else
-    toolSize = 16;
 #endif
 
     SetToolBar(nullptr);

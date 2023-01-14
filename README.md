@@ -1,5 +1,3 @@
-[![Build-macOS-latest Actions Status](https://github.com/eranif/codelite/workflows/build-macos-latest/badge.svg)](https://github.com/eranif/codelite/actions)
-[![Build-Ubuntu-latest Actions Status](https://github.com/eranif/codelite/workflows/build-ubuntu-latest/badge.svg)](https://github.com/eranif/codelite/actions)
 [![Join the chat at https://gitter.im/eranif/codelite](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eranif/codelite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 

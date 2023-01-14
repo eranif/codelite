@@ -115,7 +115,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         if(!IsEnabled()) {
             flags |= wxCONTROL_DISABLED;
         }
-        DrawingUtils::DrawDropDownArrow(m_toolbar, dc, m_dropDownArrowRect, flags);
+        DrawingUtils::DrawDropDownArrow(m_toolbar, dc, m_dropDownArrowRect, flags, textColour);
         xx += drop_down_button_width;
     }
 }

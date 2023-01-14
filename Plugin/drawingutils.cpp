@@ -727,12 +727,10 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     arrowRect = arrowRect.CenterIn(rect);
 
     wxColour buttonColour = colour;
-    bool is_dark = IsDark(colour);
-
     if(!buttonColour.IsOk()) {
-        // No colour provided, provide one
+        // No colour provided, provide one based on the system colours
         buttonColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        buttonColour = is_dark ? buttonColour.ChangeLightness(120) : buttonColour.ChangeLightness(80);
+        buttonColour = IsDark(colour) ? buttonColour.ChangeLightness(120) : buttonColour.ChangeLightness(80);
     }
 
     if(flags & wxCONTROL_DISABLED) {

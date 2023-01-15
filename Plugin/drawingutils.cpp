@@ -829,7 +829,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
         dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
         dc.SetPen(borderColour);
         dc.DrawRoundedRectangle(choiceRect, 3.0);
-        DrawDropDownArrow(win, dc, dropDownRect);
+        DrawDropDownArrow(win, dc, dropDownRect, wxCONTROL_NONE, wxNullColour);
     } else {
         wxRendererNative::Get().DrawChoice(win, dc, choiceRect, 0);
     }

@@ -281,6 +281,10 @@ protected:
     std::unordered_map<int, wxString> m_breakpoints_tooltips;
     size_t m_default_text_width = wxNOT_FOUND;
     bool m_scrollbar_recalc_is_required = false;
+    // we keep an integer that will check whether a CC needs to be triggered
+    // in the given location. This is done inside OnSciUpdateUI() method
+    // after the styles have been updated
+    int m_trigger_cc_at_pos = wxNOT_FOUND;
 
 public:
     static bool m_ccShowPrivateMembers;

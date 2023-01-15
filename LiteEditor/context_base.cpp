@@ -32,6 +32,7 @@
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "frame.h"
 #include "macros.h"
 #include "plugin.h"
@@ -182,21 +183,21 @@ int ContextBase::DoGetCalltipParamterIndex()
     return index;
 }
 
-void ContextBase::OnUserTypedXChars(const wxString& word)
+void ContextBase::OnUserTypedXChars(int pos)
 {
     // user typed more than X chars
     // trigger code complete event (as if the user typed ctrl-space)
     // if no one handles this event, fire a word completion event
-    if(IsCommentOrString(GetCtrl().GetCurrentPos())) {
+    if(IsCommentOrString(pos)) {
         return;
     }
 
     // Try to call code completion
     clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
-    ccEvt.SetInsideCommentOrString(IsCommentOrString(GetCtrl().GetCurrentPos()));
+    ccEvt.SetInsideCommentOrString(IsCommentOrString(pos));
     ccEvt.SetTriggerKind(LSP::CompletionItem::kTriggerKindInvoked);
     ccEvt.SetFileName(GetCtrl().GetFileName().GetFullPath());
-    ccEvt.SetWord(word);
+    ccEvt.SetWord(GetCtrl().GetWordAtPosition(pos));
 
     if(!ServiceProviderManager::Get().ProcessEvent(ccEvt)) {
         // This is ugly, since CodeLite should not be calling

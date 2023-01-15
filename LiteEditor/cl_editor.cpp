@@ -1394,18 +1394,14 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
 
     // Show the completion box if needed. canShowCompletionBox is set to false only if it was just dismissed
     // at the top of this function
-    if(IsCompletionBoxShown() == false && canShowCompletionBox) {
+    if(!IsCompletionBoxShown() && canShowCompletionBox) {
         // display the keywords completion box only if user typed more than 2
         // chars && the caret is placed at the end of that word
         long startPos = WordStartPosition(pos, true);
-        if(GetWordAtCaret().Len() >= 2 && pos - startPos >= 2) {
-            m_context->OnUserTypedXChars(GetWordAtCaret());
-        }
-
-        if(GetWordAtCaret().Len() == (size_t)TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() &&
-           pos - startPos >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen()) {
-            // We need to use here 'CallAfter' since the style is not updated until next Paint
-            CallAfter(&clEditor::CompleteWord, LSP::CompletionItem::kTriggerKindInvoked, false);
+        bool min_chars_typed = (pos - startPos) >= (TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen());
+        if((GetWordAtCaret().Len() >= 2) && min_chars_typed) {
+            // trigger the CC on the Paint event
+            m_trigger_cc_at_pos = GetCurrentPosition();
         }
     }
 
@@ -1521,8 +1517,15 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     if((m_statusBarFields & kShowSelectedChars) && selectionSize) {
         message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
     }
+
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
+
+    if(m_trigger_cc_at_pos > 0) {
+        // trigger CC
+        m_context->CallAfter(&ContextBase::OnUserTypedXChars, m_trigger_cc_at_pos - 1);
+        m_trigger_cc_at_pos = wxNOT_FOUND;
+    }
 
     SetIndicatorCurrent(MATCH_INDICATOR);
     IndicatorClearRange(0, pos);
@@ -1981,6 +1984,7 @@ void clEditor::CodeComplete(bool refreshingList)
         return; // Don't clobber the boxes..
 
     if(!refreshingList) {
+        clSYSTEM() << "clEditor::CodeComplete(): sending CC request" << endl;
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
         evt.SetPosition(GetCurrentPosition());
         evt.SetTriggerKind(LSP::CompletionItem::kTriggerCharacter);

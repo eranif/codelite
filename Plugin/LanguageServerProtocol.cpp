@@ -400,7 +400,10 @@ void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const wxString& fi
 void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
 {
     if(m_filesSent.count(filename) == 0) {
-        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "LanguageServerProtocol::FileClosed(): file" << filename << "is not opened"; }
+        LOG_IF_TRACE
+        {
+            clDEBUG1() << GetLogPrefix() << "LanguageServerProtocol::FileClosed(): file" << filename << "is not opened";
+        }
         return;
     }
 
@@ -416,9 +419,6 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const wxString& 
     wxString filename = GetEditorFilePath(editor);
     if(!force_reparse && !IsFileChangedSinceLastParse(filename, fileContent)) {
         LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
-
-        // always send a semantic request
-        // SendSemanticTokensRequest(editor);
         return;
     }
 
@@ -431,9 +431,6 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const wxString& 
 #endif
     UpdateFileSent(filename, fileContent);
     QueueMessage(req);
-
-    // always send a semantic request
-    // SendSemanticTokensRequest(editor);
 }
 
 void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fileContent)

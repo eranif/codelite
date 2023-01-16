@@ -1,7 +1,7 @@
 #include "NewLanguageServerDlg.h"
 
+#include "LSP/LanguageServerProtocol.h"
 #include "LanguageServerPage.h"
-#include "LanguageServerProtocol.h"
 #include "globals.h"
 
 #include <macros.h>

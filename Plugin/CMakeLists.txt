@@ -1,5 +1,4 @@
-# Our project is called 'plugin' this is how it will be called in
-# visual studio, and in our makefiles.
+# Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
 project(plugin)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -11,7 +10,7 @@ include("${wxWidgets_USE_FILE}")
 include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
                     "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
 
-## Macros
+# Macros
 if(WIN32)
     add_definitions(-DWXMAKINGDLL_SDK)
 endif(WIN32)
@@ -30,9 +29,8 @@ if(APPLE)
     add_definitions(-fPIC)
 endif()
 
-## On UNIX we require GTK
+# On UNIX we require GTK
 if(UNIX AND NOT APPLE)
-
     if(GTK_VERSION EQUAL 3)
         set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
         set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -81,7 +79,7 @@ if(NOT MINGW AND WXC_APP)
     message("-- libplugin.so is using RPATH set to ${WXC_LIBS_DIR}")
 endif()
 
-file(GLOB SRCS "*.cpp")
+file(GLOB SRCS "*.cpp" "LSP/*.cpp")
 
 # Define the output
 add_library(plugin SHARED ${SRCS})

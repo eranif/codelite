@@ -3,9 +3,9 @@
 
 #include "CodeLiteRemoteHelper.hpp"
 #include "LSP/LSPEvent.h"
+#include "LSP/LanguageServerProtocol.h"
 #include "LSP/basic_types.h"
 #include "LanguageServerEntry.h"
-#include "LanguageServerProtocol.h"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "entry.h"

@@ -14,14 +14,14 @@
 #include "LSP/InitializeRequest.h"
 #include "LSP/InitializedNotification.hpp"
 #include "LSP/LSPEvent.h"
+#include "LSP/LSPNetworkSTDIO.h"
+#include "LSP/LSPNetworkSocketClient.h"
 #include "LSP/Request.h"
 #include "LSP/ResponseError.h"
 #include "LSP/ResponseMessage.h"
 #include "LSP/SemanticTokensRquest.hpp"
 #include "LSP/SignatureHelpRequest.h"
 #include "LSP/WorkspaceSymbolRequest.hpp"
-#include "LSPNetworkSTDIO.h"
-#include "LSPNetworkSocketClient.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
@@ -190,11 +190,11 @@ bool LanguageServerProtocol::DoStart()
 {
     DoClear();
 
-    clDEBUG() << GetLogPrefix() << "Starting..." << endl;
-    clDEBUG() << GetLogPrefix() << "Command:" << m_startupInfo.GetLspServerCommand() << endl;
-    clDEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder << endl;
+    LSP_DEBUG() << GetLogPrefix() << "Starting..." << endl;
+    LSP_DEBUG() << GetLogPrefix() << "Command:" << m_startupInfo.GetLspServerCommand() << endl;
+    LSP_DEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder << endl;
     for(const wxString& lang : m_languages) {
-        clDEBUG() << GetLogPrefix() << "Language:" << lang << endl;
+        LSP_DEBUG() << GetLogPrefix() << "Language:" << lang << endl;
     }
     try {
         // apply global environment variables
@@ -422,13 +422,11 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const wxString& 
         return;
     }
 
-    clDEBUG() << GetLogPrefix() << "Sending ChangeRequest" << endl;
+    LSP_DEBUG() << GetLogPrefix() << "Sending ChangeRequest" << endl;
 
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
-#ifndef __WXOSX__
-    req->SetStatusMessage(wxString() << GetLogPrefix() << " re-parsing file: " << filename);
-#endif
+
     UpdateFileSent(filename, fileContent);
     QueueMessage(req);
 }
@@ -490,8 +488,8 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
     LOG_IF_TRACE { clDEBUG1() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl; }
     if(!IsInitialized()) {
-        clDEBUG() << "OpenEditor: server is still not initialized. server:" << GetName()
-                  << ", file:" << GetEditorFilePath(editor) << endl;
+        LSP_DEBUG() << "OpenEditor: server is still not initialized. server:" << GetName()
+                    << ", file:" << GetEditorFilePath(editor) << endl;
         return;
     }
 
@@ -588,12 +586,12 @@ void LanguageServerProtocol::ProcessQueue()
         return;
     }
     if(m_Queue.IsWaitingReponse()) {
-        clDEBUG() << "LSP is busy, will not send message";
+        LSP_DEBUG() << "LSP is busy, will not send message";
         return;
     }
     LSP::MessageWithParams::Ptr_t req = m_Queue.Get();
     if(!IsRunning()) {
-        clDEBUG() << GetLogPrefix() << "is down.";
+        LSP_DEBUG() << GetLogPrefix() << "is down.";
         return;
     }
 
@@ -619,11 +617,11 @@ void LanguageServerProtocol::CloseEditor(IEditor* editor)
 void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missing_header)
 {
     if(!IsDeclarationSupported()) {
-        clDEBUG() << GetLogPrefix() << "message `textDocument/declaration` is not supported" << endl;
+        LSP_DEBUG() << GetLogPrefix() << "message `textDocument/declaration` is not supported" << endl;
         return;
     }
 
-    clDEBUG() << GetLogPrefix() << "FindDeclaration() is called" << endl;
+    LSP_DEBUG() << GetLogPrefix() << "FindDeclaration() is called" << endl;
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
@@ -636,7 +634,7 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missi
     } else {
         SendChangeRequest(editor, fileContent);
     }
-    clDEBUG() << GetLogPrefix() << "Sending GotoDeclarationRequest" << endl;
+    LSP_DEBUG() << GetLogPrefix() << "Sending GotoDeclarationRequest" << endl;
     LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDeclarationRequest(
         GetEditorFilePath(editor), editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition()),
         for_add_missing_header));
@@ -661,7 +659,7 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
     }
     req->As<LSP::InitializeRequest>()->SetRootUri(root_uri);
     req->As<LSP::InitializeRequest>()->SetInitOptions(m_initOptions);
-    clDEBUG() << GetLogPrefix() << "Sending initialize request...";
+    LSP_DEBUG() << GetLogPrefix() << "Sending initialize request...";
 
     // Temporarly set the state to "kInitialized" so we can send out the "initialize" request
     m_state = kInitialized;
@@ -672,7 +670,7 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
 
 void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 {
-    clDEBUG() << GetLogPrefix() << "Socket error." << event.GetString();
+    LSP_DEBUG() << GetLogPrefix() << "Socket error." << event.GetString();
     DoClear();
     LSPEvent restartEvent(wxEVT_LSP_RESTART_NEEDED);
     restartEvent.SetServerName(GetName());
@@ -682,7 +680,7 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 {
     m_outputBuffer << event.GetString();
-    clDEBUG() << "Received data from LSP:" << m_outputBuffer.size() << "bytes" << endl;
+    LSP_DEBUG() << "Received data from LSP:" << m_outputBuffer.size() << "bytes" << endl;
 
     m_Queue.SetWaitingReponse(false);
     while(true) {
@@ -738,7 +736,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         m_semanticTokensTypes =
                             res["result"]["capabilities"]["semanticTokensProvider"]["legend"]["tokenTypes"]
                                 .toArrayString();
-                        clDEBUG() << GetLogPrefix() << "Server semantic tokens are:" << m_semanticTokensTypes << endl;
+                        LSP_DEBUG() << GetLogPrefix() << "Server semantic tokens are:" << m_semanticTokensTypes << endl;
                     }
 
                     CheckCapability(res, "documentSymbolProvider", "textDocument/documentSymbol");
@@ -747,21 +745,21 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     CheckCapability(res, "renameProvider", "textDocument/rename");
                     CheckCapability(res, "referencesProvider", "textDocument/references");
 
-                    clDEBUG() << GetLogPrefix() << "Sending InitializedNotification" << endl;
+                    LSP_DEBUG() << GetLogPrefix() << "Sending InitializedNotification" << endl;
 
                     LSP::InitializedNotification::Ptr_t initNotification =
                         LSP::MessageWithParams::MakeRequest(new LSP::InitializedNotification());
                     QueueMessage(initNotification);
 
                     // Send LSP::InitializedNotification to the server
-                    clDEBUG() << GetLogPrefix() << "initialization completed" << endl;
+                    LSP_DEBUG() << GetLogPrefix() << "initialization completed" << endl;
                     m_initializeRequestID = wxNOT_FOUND;
                     // Notify about this
                     LSPEvent initEvent(wxEVT_LSP_INITIALIZED);
                     initEvent.SetServerName(GetName());
                     m_owner->AddPendingEvent(initEvent);
                 } else {
-                    clDEBUG() << GetLogPrefix() << "Server not initialized. This message is ignored";
+                    LSP_DEBUG() << GetLogPrefix() << "Server not initialized. This message is ignored";
                 }
             }
         }
@@ -771,7 +769,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 
 void LanguageServerProtocol::Stop()
 {
-    clDEBUG() << GetLogPrefix() << "Going down";
+    LSP_DEBUG() << GetLogPrefix() << "Going down";
     m_network->Close();
 }
 
@@ -853,7 +851,7 @@ const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
 
 void LanguageServerProtocol::SendWorkspaceSymbolsRequest(const wxString& query_string)
 {
-    clDEBUG() << GetLogPrefix() << "Sending workspace symbol request" << endl;
+    LSP_DEBUG() << GetLogPrefix() << "Sending workspace symbol request" << endl;
     LSP::WorkspaceSymbolRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::WorkspaceSymbolRequest(query_string));
     QueueMessage(req);
@@ -864,19 +862,19 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
     CHECK_PTR_RET(editor);
     // check if this is implemented by the server
     if(IsSemanticTokensSupported()) {
-        clDEBUG() << GetLogPrefix() << "Sending semantic tokens request..." << endl;
+        LSP_DEBUG() << GetLogPrefix() << "Sending semantic tokens request..." << endl;
         LSP::DidChangeTextDocumentRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
         QueueMessage(req);
-        clDEBUG() << GetLogPrefix() << "Success" << endl;
+        LSP_DEBUG() << GetLogPrefix() << "Success" << endl;
         // send an extra call for document symbols
         // we will cache this later
-        clDEBUG() << GetLogPrefix() << "Sending document symbols request.." << endl;
+        LSP_DEBUG() << GetLogPrefix() << "Sending document symbols request.." << endl;
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
-        clDEBUG() << GetLogPrefix() << "Success" << endl;
+        LSP_DEBUG() << GetLogPrefix() << "Success" << endl;
 
     } else if(IsDocumentSymbolsSupported()) {
-        clDEBUG() << GetLogPrefix() << "Sending semantic tokens request (DocumentSymbols)" << endl;
+        LSP_DEBUG() << GetLogPrefix() << "Sending semantic tokens request (DocumentSymbols)" << endl;
         // Use DocumentSymbol instead
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT |
                                     LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
@@ -885,7 +883,7 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 
 void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)
 {
-    clDEBUG() << GetLogPrefix() << "received an error message:" << response.ToString() << endl;
+    LSP_DEBUG() << GetLogPrefix() << "received an error message:" << response.ToString() << endl;
     LSP::ResponseError errMsg(response.ToString());
     switch(errMsg.GetErrorCode()) {
     case LSP::ResponseError::kErrorCodeInternalError:
@@ -962,7 +960,7 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
 
 void LanguageServerProtocol::OnFindHeaderFile(clCodeCompletionEvent& event)
 {
-    clDEBUG() << GetLogPrefix() << "OnFindHeaderFile() is called" << endl;
+    LSP_DEBUG() << GetLogPrefix() << "OnFindHeaderFile() is called" << endl;
     event.Skip();
     IEditor* editor = ::clGetManager()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
@@ -990,7 +988,7 @@ void LanguageServerProtocol::FindReferences(IEditor* editor)
     CHECK_EXPECTED_RETURN(IsReferencesSupported(), true);
 
     // send "references" message
-    clDEBUG() << GetLogPrefix() << "Sending `find references` request" << endl;
+    LSP_DEBUG() << GetLogPrefix() << "Sending `find references` request" << endl;
 
     LSP::FindReferencesRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
         new LSP::FindReferencesRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),

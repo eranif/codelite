@@ -58,7 +58,7 @@ void LSPNetworkSocketClient::Send(const std::string& data)
     if(m_socket) {
         m_socket->Send(data);
     } else {
-        clDEBUG() << "LSP socket: no socket !?";
+        LSP_DEBUG() << "LSP socket: no socket !?";
     }
 }
 

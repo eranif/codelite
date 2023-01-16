@@ -1,6 +1,6 @@
 #include "LanguageServerEntry.h"
 
-#include "LanguageServerProtocol.h"
+#include "LSP/LanguageServerProtocol.h"
 #include "StringUtils.h"
 #include "globals.h"
 

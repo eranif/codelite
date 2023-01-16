@@ -3,8 +3,8 @@
 
 #include "LSP/DocumentSymbolsRequest.hpp"
 #include "LSP/IPathConverter.hpp"
+#include "LSP/LSPNetwork.h"
 #include "LSP/MessageWithParams.h"
-#include "LSPNetwork.h"
 #include "ServiceProvider.h"
 #include "SocketAPI/clSocketClientAsync.h"
 #include "asyncprocess.h"

@@ -1,7 +1,7 @@
 #include "LanguageServerPage.h"
 
 #include "ColoursAndFontsManager.h"
-#include "LanguageServerProtocol.h"
+#include "LSP/LanguageServerProtocol.h"
 #include "StringUtils.h"
 #include "globals.h"
 

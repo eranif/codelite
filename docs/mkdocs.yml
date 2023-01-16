@@ -7,6 +7,7 @@ nav:
   - Downloads:
       - Latest: downloads/download.md
       - Old Linux Repositories:
+          - CodeLite 16.0: downloads/oldDownloads/Repositories15.md
           - CodeLite 15.0: downloads/oldDownloads/Repositories15.md
           - CodeLite 14.0: downloads/oldDownloads/Repositories14.md
           - CodeLite 13.0: downloads/oldDownloads/Repositories13.md

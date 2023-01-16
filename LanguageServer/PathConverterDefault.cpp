@@ -1,9 +1,11 @@
 #include "PathConverterDefault.hpp"
+
 #include "SFTPClientData.hpp"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
+
 #include <imanager.h>
 #include <wx/filesys.h>
 #include <wx/regex.h>
@@ -58,7 +60,7 @@ LSP::FilePath PathConverterDefault::ConvertFrom(const wxString& path) const
 
 LSP::FilePath PathConverterDefault::ConvertTo(const wxString& path) const
 {
-    clDEBUG() << "Converting" << path;
+    LSP_DEBUG() << "Converting" << path;
     wxFileName fn(path);
 
     // Locate an editor with this file path and check to see if it is a remote file
@@ -66,12 +68,12 @@ LSP::FilePath PathConverterDefault::ConvertTo(const wxString& path) const
     if(editor && editor->IsRemoteFile()) {
         wxString url = editor->GetRemotePath();
         url.Prepend("file://");
-        clDEBUG() << path << "->" << url;
+        LSP_DEBUG() << path << "->" << url;
         return url;
     } else {
         // default behavior
         wxString url = wxFileSystem::FileNameToURL(fn);
-        clDEBUG() << path << "->" << url;
+        LSP_DEBUG() << path << "->" << url;
         return LSP::FilePath(url);
     }
 }

@@ -4,6 +4,7 @@
 #include "LanguageServerEntry.h"
 #include "asyncprocess.h"
 #include "wx/arrstr.h"
+
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 

@@ -1,15 +1,32 @@
 #include "LSP/basic_types.h"
 
 #include "JSON.h"
+#include "clModuleLogger.hpp"
+#include "cl_standard_paths.h"
 #include "file_logger.h"
 
 #include <wx/filesys.h>
 
-//===------------------------------------------------
-// Request
-//===------------------------------------------------
+// our logger object
+clModuleLogger LSP_LOG_HANDLER;
+
 namespace LSP
 {
+
+clModuleLogger& GetLogHandle() { return LSP_LOG_HANDLER; }
+
+void Initialise()
+{
+    static bool initialised = false;
+    if(initialised)
+        return;
+
+    wxFileName logfile_path{ clStandardPaths::Get().GetUserDataDir(), "lsp.log" };
+    logfile_path.AppendDir("logs");
+    logfile_path.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    LSP_LOG_HANDLER.Open(logfile_path);
+    initialised = true;
+}
 
 //===----------------------------------------------------------------------------------
 // TextDocumentIdentifier

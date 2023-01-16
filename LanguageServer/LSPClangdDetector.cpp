@@ -26,14 +26,14 @@ bool LSPClangdDetector::DoLocate()
         return false;
     }
 
-    clDEBUG() << "Found clangd ==>" << path << endl;
+    LSP_DEBUG() << "Found clangd ==>" << path << endl;
     ConfigureFile(path);
     return true;
 }
 
 void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
 {
-    clDEBUG() << "==> Found" << clangdExe;
+    LSP_DEBUG() << "==> Found" << clangdExe;
     wxString command;
     command << clangdExe.GetFullPath();
     ::WrapWithQuotes(command);

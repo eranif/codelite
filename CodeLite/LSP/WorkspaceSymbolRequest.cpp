@@ -6,15 +6,18 @@
 
 namespace
 {
-FileLogger& operator<<(FileLogger& logger, const std::vector<LSP::SymbolInformation>& symbols)
+clModuleLogger& operator<<(clModuleLogger& logger, const std::vector<LSP::SymbolInformation>& symbols)
 {
+    if(!logger.CanLog())
+        return logger;
+
     wxString s;
     s << "\n[\n";
     for(const LSP::SymbolInformation& d : symbols) {
         s << "  " << d.GetContainerName() << "." << d.GetName() << ",\n";
     }
     s << "]\n";
-    logger.Append(s, logger.GetRequestedLogLevel());
+    logger.Append(s);
     return logger;
 }
 } // namespace
@@ -59,11 +62,11 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
 
     auto result = response.Get("result");
     if(!result.isOk()) {
-        clWARNING() << "LSP::WorkspaceSymbolRequest::OnResponse(): invalid 'result' object";
+        LSP_WARNING() << "LSP::WorkspaceSymbolRequest::OnResponse(): invalid 'result' object";
         return;
     }
     if(!result.isArray()) {
-        clWARNING() << "workspace/symbol: expected array result" << endl;
+        LSP_WARNING() << "workspace/symbol: expected array result" << endl;
         return;
     }
 
@@ -74,7 +77,7 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
         return;
     }
 
-    LOG_IF_TRACE { clDEBUG1() << result.format() << endl; }
+    LOG_IF_TRACE { LSP_TRACE() << result.format() << endl; }
     // only SymbolInformation has the `location` property
     // fire an event with all the symbols
     LSPEvent symbols_event{ wxEVT_LSP_WORKSPACE_SYMBOLS };
@@ -87,6 +90,6 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
         symbols.push_back(si);
     }
 
-    LOG_IF_TRACE { clDEBUG1() << symbols_event.GetSymbolsInformation() << endl; }
+    LOG_IF_TRACE { LSP_TRACE() << symbols_event.GetSymbolsInformation() << endl; }
     EventNotifier::Get()->QueueEvent(symbols_event.Clone());
 }

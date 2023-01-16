@@ -2,6 +2,7 @@
 #define LSPCLANGDDETECTOR_HPP
 
 #include "LSPDetector.hpp"
+
 #include <wx/filename.h>
 
 class LSPClangdDetector : public LSPDetector

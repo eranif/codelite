@@ -2,6 +2,7 @@
 #define LSPDETECTORMANAGER_HPP
 
 #include "LSPDetector.hpp"
+
 #include <vector>
 
 class LSPDetectorManager

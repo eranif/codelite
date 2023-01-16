@@ -4,11 +4,23 @@
 #include "IPathConverter.hpp"
 #include "JSON.h"
 #include "JSONObject.h"
+#include "clModuleLogger.hpp"
 #include "codelite_exports.h"
 #include "fileutils.h"
 
 #include <vector>
 #include <wx/sharedptr.h>
+
+extern clModuleLogger LSP_LOG_HANDLER;
+
+// Helper macros to be used outside of this library
+#define LSP_LOG (LSP::GetLogHandle())
+
+#define LSP_DEBUG() LOG_DEBUG(LSP_LOG)
+#define LSP_TRACE() LOG_TRACE(LSP_LOG)
+#define LSP_ERROR() LOG_ERROR(LSP_LOG)
+#define LSP_WARNING() LOG_WARNING(LSP_LOG)
+#define LSP_SYSTEM() LOG_SYSTEM(LSP_LOG)
 
 namespace LSP
 {
@@ -602,5 +614,10 @@ public:
     const wxString& GetName() const { return name; }
 };
 
+/// Initialise the library
+WXDLLIMPEXP_CL void Initialise();
+
+/// Return the log handle of this library
+WXDLLIMPEXP_CL clModuleLogger& GetLogHandle();
 };     // namespace LSP
 #endif // JSONRPC_BASICTYPES_H

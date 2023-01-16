@@ -1,4 +1,5 @@
 #include "LSPDetectorManager.hpp"
+
 #include "LSPCTagsdDetector.hpp"
 #include "LSPClangdDetector.hpp"
 #include "LSPPythonDetector.hpp"
@@ -28,9 +29,9 @@ size_t LSPDetectorManager::Scan(std::vector<LSPDetector::Ptr_t>& matchers)
     EnvSetter env;
 
     for(LSPDetector::Ptr_t detector : m_detectors) {
-        clDEBUG() << "LSP detector: trying" << detector->GetName();
+        LSP_DEBUG() << "LSP detector: trying" << detector->GetName();
         if(detector->Locate()) {
-            clDEBUG() << "  ==> " << detector->GetName() << "found";
+            LSP_DEBUG() << "  ==> " << detector->GetName() << "found";
             matchers.push_back(detector);
         }
     }

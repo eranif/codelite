@@ -1,8 +1,8 @@
 #ifndef LANGUAGESERVERCONFIG_H
 #define LANGUAGESERVERCONFIG_H
 
-#include "cl_config.h"
 #include "LanguageServerEntry.h"
+#include "cl_config.h"
 
 class LanguageServerConfig : public clConfigItem
 {
@@ -50,14 +50,14 @@ public:
     }
     const LanguageServerEntry::Map_t& GetServers() const { return m_servers; }
     LanguageServerEntry::Map_t& GetServers() { return m_servers; }
-    
+
     LanguageServerEntry& GetServer(const wxString& name);
     const LanguageServerEntry& GetServer(const wxString& name) const;
     /**
      * @brief add server. erase an existing one with the same name
      */
     void AddServer(const LanguageServerEntry& server);
-    
+
     /**
      * @brief delete an existing server by name
      */

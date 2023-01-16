@@ -1,8 +1,9 @@
 #ifndef NEWLANGUAGESERVERDLG_H
 #define NEWLANGUAGESERVERDLG_H
 
-#include "UI.h"
 #include "LanguageServerEntry.h"
+#include "UI.h"
+
 #include <wx/arrstr.h>
 
 class LanguageServerPage;

@@ -75,6 +75,9 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_LSP_ENABLE_SERVER, &LanguageServerPlugin::OnLSPEnableServer, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_DISABLE_SERVER, &LanguageServerPlugin::OnLSPDisableServer, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerPlugin::OnWorkspaceClosed, this);
+
+    /// initialise the LSP library
+    LSP::Initialise();
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
@@ -164,20 +167,20 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
     }
 
     if(LanguageServerConfig::Get().GetServers().empty() || force) {
-        clDEBUG() << "Scanning..." << clEndl;
+        LSP_DEBUG() << "Scanning..." << endl;
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {
                 std::vector<LSPDetector::Ptr_t> matches;
                 LSPDetectorManager detector;
-                clDEBUG() << "***"
-                          << "Scanning for LSPs... ***" << clEndl;
+                LSP_DEBUG() << "***"
+                            << "Scanning for LSPs... ***" << endl;
                 if(detector.Scan(matches)) {
-                    clDEBUG() << "   ******"
-                              << "found!" << clEndl;
+                    LSP_DEBUG() << "   ******"
+                                << "found!" << endl;
                 }
-                clDEBUG() << "***"
-                          << "Scanning for LSPs... is done ***" << clEndl;
-                clDEBUG() << "*** Calling   ConfigureLSPs" << clEndl;
+                LSP_DEBUG() << "***"
+                            << "Scanning for LSPs... is done ***" << endl;
+                LSP_DEBUG() << "*** Calling   ConfigureLSPs" << endl;
                 plugin->CallAfter(&LanguageServerPlugin::ConfigureLSPs, matches);
             },
             this);
@@ -231,7 +234,7 @@ void LanguageServerPlugin::OnMenuFindReferences(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
-    clDEBUG() << "OnMenuFindReferences is called" << endl;
+    LSP_DEBUG() << "OnMenuFindReferences is called" << endl;
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -255,10 +258,10 @@ void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)
 {
-    clDEBUG() << "   ******"
-              << "ConfigureLSPs is called!" << clEndl;
+    LSP_DEBUG() << "   ******"
+                << "ConfigureLSPs is called!" << endl;
     if(lsps.empty()) {
-        clDEBUG() << "ConfigureLSPs: no LSPs found. Nothing to be done here" << clEndl;
+        LSP_DEBUG() << "ConfigureLSPs: no LSPs found. Nothing to be done here" << endl;
         return;
     }
 
@@ -274,20 +277,20 @@ void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& 
     bool force = !serversToRemove.IsEmpty();
     // remove all old entries
     for(const auto& name : serversToRemove) {
-        clSYSTEM() << "Removing broken LSP server:" << name << endl;
+        LSP_SYSTEM() << "Removing broken LSP server:" << name << endl;
         config.RemoveServer(name);
     }
 
-    clDEBUG() << "ConfigureLSPs: there are currently" << config.GetServers().size() << "LSPs configured" << clEndl;
+    LSP_DEBUG() << "ConfigureLSPs: there are currently" << config.GetServers().size() << "LSPs configured" << endl;
     if(config.GetServers().empty() || force) {
-        clDEBUG() << "No LSPs configured - auto configuring" << clEndl;
+        LSP_DEBUG() << "No LSPs configured - auto configuring" << endl;
         // Only if the user did not configure LSP before, we configure it for him
         for(auto lsp : lsps) {
             LanguageServerEntry entry;
             lsp->GetLanguageServerEntry(entry);
             entry.SetEnabled(true);
             config.AddServer(entry);
-            clDEBUG() << "Adding LSP:" << entry.GetName() << clEndl;
+            LSP_DEBUG() << "Adding LSP:" << entry.GetName() << endl;
         }
         config.SetEnabled(true);
         config.Save();
@@ -311,11 +314,11 @@ void LanguageServerPlugin::OnLSPStartAll(clLanguageServerEvent& event)
 
 void LanguageServerPlugin::OnLSPRestartAll(clLanguageServerEvent& event)
 {
-    clDEBUG() << "LSP: restarting all LSPs" << endl;
+    LSP_DEBUG() << "LSP: restarting all LSPs" << endl;
     CHECK_PTR_RET(m_servers);
     m_servers->StopAll();
     m_servers->StartAll();
-    clDEBUG() << "LSP: restarting all LSPs...done" << endl;
+    LSP_DEBUG() << "LSP: restarting all LSPs...done" << endl;
 }
 
 void LanguageServerPlugin::OnLSPStopOne(clLanguageServerEvent& event)
@@ -348,7 +351,7 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
 
     auto d = LanguageServerConfig::Get().GetServer(event.GetLspName());
     if(d.IsValid()) {
-        clDEBUG() << "an LSP with the same name:" << event.GetLspName() << "already exists. updating it" << endl;
+        LSP_DEBUG() << "an LSP with the same name:" << event.GetLspName() << "already exists. updating it" << endl;
         pentry = &d;
     }
 
@@ -367,9 +370,9 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
 void LanguageServerPlugin::OnLSPDelete(clLanguageServerEvent& event)
 {
     CHECK_PTR_RET(m_servers);
-    clDEBUG() << "Deleting server:" << event.GetLspName() << endl;
+    LSP_DEBUG() << "Deleting server:" << event.GetLspName() << endl;
     m_servers->DeleteServer(event.GetLspName());
-    clDEBUG() << "Success" << endl;
+    LSP_DEBUG() << "Success" << endl;
 }
 
 void LanguageServerPlugin::OnLSPShowSettingsDlg(clLanguageServerEvent& event)

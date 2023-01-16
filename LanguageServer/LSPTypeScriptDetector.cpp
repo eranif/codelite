@@ -1,4 +1,5 @@
 #include "LSPTypeScriptDetector.hpp"
+
 #include "NodeJSLocator.h"
 #include "clNodeJS.h"
 #include "fileutils.h"

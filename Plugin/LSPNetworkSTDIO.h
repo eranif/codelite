@@ -16,7 +16,6 @@ class LSPNetworkSTDIO : public LSPNetwork
 {
 protected:
     ChildProcess* m_server = nullptr;
-    wxFFile m_log;
 
 protected:
     void DoStartLocalProcess();

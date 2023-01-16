@@ -25,7 +25,7 @@ bool LSPCTagsdDetector::DoLocate()
 
 void LSPCTagsdDetector::ConfigureFile(const wxFileName& ctagsd_exe)
 {
-    clDEBUG() << "==> Found" << ctagsd_exe << endl;
+    LSP_DEBUG() << "==> Found" << ctagsd_exe << endl;
     wxString command;
     command << ctagsd_exe.GetFullPath();
     ::WrapWithQuotes(command);

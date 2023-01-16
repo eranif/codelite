@@ -2,6 +2,7 @@
 
 #include "ChildProcess.h"
 #include "JSON.h"
+#include "LSP/basic_types.h" // needed for the debugging macros
 #include "asyncprocess.h"
 #include "cl_exception.h"
 #include "clcommandlineparser.h"
@@ -15,17 +16,9 @@
 static const char separator_str[] = "\n************\n";
 static size_t separator_str_len = sizeof(separator_str) - 1;
 
-LSPNetworkSTDIO::LSPNetworkSTDIO()
-{
-    wxFileName logfile(clStandardPaths::Get().GetUserDataDir(), "codelite-lsp.log");
-    m_log.Open(logfile.GetFullPath(), "a+b");
-}
+LSPNetworkSTDIO::LSPNetworkSTDIO() { LSP::Initialise(); }
 
-LSPNetworkSTDIO::~LSPNetworkSTDIO()
-{
-    Close();
-    m_log.Close();
-}
+LSPNetworkSTDIO::~LSPNetworkSTDIO() { Close(); }
 
 void LSPNetworkSTDIO::Close() { wxDELETE(m_server); }
 
@@ -42,13 +35,9 @@ void LSPNetworkSTDIO::Send(const std::string& data)
 {
     if(m_server) {
         m_server->Write(data);
-        if(FileLogger::CanLog(FileLogger::Dbg)) {
-            m_log.Write(separator_str, separator_str_len);
-            m_log.Write(data.c_str(), data.length());
-            m_log.Flush();
-        }
+        LSP_DEBUG() << data << endl;
     } else {
-        clWARNING() << "LSPNetworkSTDIO: no process !?" << endl;
+        LSP_WARNING() << "LSPNetworkSTDIO: no process !?" << endl;
     }
 }
 
@@ -57,8 +46,8 @@ bool LSPNetworkSTDIO::IsConnected() const { return m_server != nullptr; }
 void LSPNetworkSTDIO::OnProcessTerminated(clProcessEvent& event)
 {
     wxDELETE(m_server);
-    clDEBUG() << "LSPNetworkSTDIO: program terminated:" << m_startupInfo.GetLspServerCommand() << endl;
-    clDEBUG() << "LSPNetworkSTDIO:" << event.GetString() << endl;
+    LSP_DEBUG() << "LSPNetworkSTDIO: program terminated:" << m_startupInfo.GetLspServerCommand() << endl;
+    LSP_DEBUG() << "LSPNetworkSTDIO:" << event.GetString() << endl;
     clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     AddPendingEvent(evt);
 }
@@ -69,22 +58,16 @@ void LSPNetworkSTDIO::OnProcessOutput(clProcessEvent& event)
     clCommandEvent evt(wxEVT_LSP_NET_DATA_READY);
     evt.SetString(dataRead);
 
-    if(FileLogger::CanLog(FileLogger::Dbg)) {
-        m_log.Write(separator_str, separator_str_len);
-        m_log.Write(dataRead);
-        m_log.Flush();
-    }
+    LSP_DEBUG() << dataRead << endl;
 
     AddPendingEvent(evt);
 }
 
 void LSPNetworkSTDIO::OnProcessStderr(clProcessEvent& event)
 {
-    if(FileLogger::CanLog(FileLogger::Dbg)) {
-        m_log.Write(wxString() << "[**STDERR**]");
-        m_log.Write(event.GetOutput());
-    }
+    LSP_DEBUG() << "[**STDERR**]" << event.GetOutput() << endl;
 }
+
 void LSPNetworkSTDIO::DoStartLocalProcess()
 {
     m_server = new ChildProcess();
@@ -110,11 +93,7 @@ void LSPNetworkSTDIO::DoStartLocalProcess()
 
     clCommandEvent evtReady(wxEVT_LSP_NET_CONNECTED);
     AddPendingEvent(evtReady);
-
-    if(FileLogger::CanLog(FileLogger::Dbg)) {
-        m_log.Write(wxString("\n\n  =============== Process Started ===============  \n\n"));
-        m_log.Flush();
-    }
+    LSP_DEBUG() << wxString("\n\n  =============== Process Started ===============  \n\n") << endl;
 }
 
 void LSPNetworkSTDIO::BindEvents()

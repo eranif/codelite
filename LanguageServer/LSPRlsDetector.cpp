@@ -1,6 +1,8 @@
 #include "LSPRlsDetector.hpp"
+
 #include "file_logger.h"
 #include "globals.h"
+
 #include <wx/filename.h>
 #include <wx/utils.h>
 
@@ -28,7 +30,7 @@ bool LSPRlsDetector::DoLocate()
         return false;
     }
 
-    clDEBUG() << "==> Found" << rls << endl;
+    LSP_DEBUG() << "==> Found" << rls << endl;
     wxString command;
     command << rls.GetFullPath();
     ::WrapWithQuotes(command);

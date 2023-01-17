@@ -56,6 +56,18 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
+namespace
+{
+wxString create_platform_filepath(const wxString& fullpath)
+{
+#ifdef __WXMSW__
+    return fullpath.Lower();
+#else
+    return fullpath;
+#endif
+}
+} // namespace
+
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
     , m_navBar(NULL)
@@ -1441,7 +1453,7 @@ void MainBook::ShowNavigationDialog()
         return;
     }
 
-    NotebookNavigationDlg *dlg = new NotebookNavigationDlg(EventNotifier::Get()->TopFrame(), m_book);
+    NotebookNavigationDlg* dlg = new NotebookNavigationDlg(EventNotifier::Get()->TopFrame(), m_book);
     if(dlg->ShowModal() == wxID_OK && dlg->GetSelection() != wxNOT_FOUND) {
         m_book->SetSelection(dlg->GetSelection());
     }
@@ -1768,29 +1780,32 @@ clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(
 void MainBook::push_callback(std::function<void(IEditor*)>&& callback, const wxString& fullpath)
 {
     // register a callback for this insert
-    if(m_callbacksTable.count(fullpath) == 0) {
-        m_callbacksTable.insert({ fullpath, {} });
+    wxString key = create_platform_filepath(fullpath);
+    if(m_callbacksTable.count(key) == 0) {
+        m_callbacksTable.insert({ key, {} });
     }
-    m_callbacksTable[fullpath].emplace_back(std::move(callback));
+    m_callbacksTable[key].emplace_back(std::move(callback));
 }
 
 bool MainBook::has_callbacks(const wxString& fullpath) const
 {
-    return !m_callbacksTable.empty() && (m_callbacksTable.count(fullpath) > 0);
+    wxString key = create_platform_filepath(fullpath);
+    return !m_callbacksTable.empty() && (m_callbacksTable.count(key) > 0);
 }
 
 void MainBook::execute_callbacks_for_file(const wxString& fullpath)
 {
-    if(!has_callbacks(fullpath)) {
+    wxString key = create_platform_filepath(fullpath);
+    if(!has_callbacks(key)) {
         return;
     }
 
-    auto& V = m_callbacksTable[fullpath];
+    auto& V = m_callbacksTable[key];
     if(V.empty()) {
         return; // cant really happen
     }
 
-    IEditor* editor = FindEditor(fullpath);
+    IEditor* editor = FindEditor(key);
     CHECK_PTR_RET(editor);
 
     for(auto& callback : V) {
@@ -1798,7 +1813,7 @@ void MainBook::execute_callbacks_for_file(const wxString& fullpath)
     }
 
     // remove the callbacks
-    m_callbacksTable.erase(fullpath);
+    m_callbacksTable.erase(key);
 }
 
 void MainBook::OnIdle(wxIdleEvent& event)

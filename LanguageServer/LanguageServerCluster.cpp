@@ -813,7 +813,9 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
     event.Skip();
     IEditor* editor = FindEditor(event);
     if(editor) {
+        // always clear old markers
         editor->DelAllCompilerMarkers();
+
         for(const LSP::Diagnostic& d : event.GetDiagnostics()) {
             // LSP uses 1 based line numbers
             editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), d.GetMessage());
@@ -930,6 +932,10 @@ void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
     LSP_DEBUG() << "LanguageServerCluster::OnDocumentSymbolsForHighlight called for file:" << event.GetFileName()
                 << endl;
     IEditor* editor = FindEditor(event.GetFileName());
+    if(!editor) {
+        LSP_WARNING() << "Unable to colour editor:" << event.GetFileName() << endl;
+        LSP_WARNING() << "Could not locate file" << endl;
+    }
     CHECK_PTR_RET(editor);
 
     const auto& symbols = event.GetSymbolsInformation();

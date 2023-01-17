@@ -71,75 +71,6 @@ public:
     const wxString& GetPath() const;
     const wxString& GetUrl() const;
 };
-//===----------------------------------------------------------------------------------
-// TextDocumentContentChangeEvent
-//===----------------------------------------------------------------------------------
-class WXDLLIMPEXP_CL TextDocumentContentChangeEvent : public Serializable
-{
-    wxString m_text;
-
-public:
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
-
-    TextDocumentContentChangeEvent() {}
-    TextDocumentContentChangeEvent(const wxString& text)
-        : m_text(text)
-    {
-    }
-    virtual ~TextDocumentContentChangeEvent() {}
-    TextDocumentContentChangeEvent& SetText(const wxString& text);
-    const wxString& GetText() const { return m_text; }
-};
-
-//===----------------------------------------------------------------------------------
-// TextDocumentIdentifier
-//===----------------------------------------------------------------------------------
-class WXDLLIMPEXP_CL TextDocumentIdentifier : public Serializable
-{
-    URI m_filename;
-
-public:
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
-
-    TextDocumentIdentifier() {}
-    TextDocumentIdentifier(const wxString& filename) { URI::FromString(filename, &m_filename); }
-
-    virtual ~TextDocumentIdentifier() {}
-    TextDocumentIdentifier& SetFilename(const wxString& filename)
-    {
-        URI::FromString(filename, &m_filename);
-        return *this;
-    }
-    const wxString& GetPath() const { return m_filename.GetPath(); }
-    const wxString& GetPathAsURI() const { return m_filename.GetUrl(); }
-};
-
-//===----------------------------------------------------------------------------------
-// VersionedTextDocumentIdentifier
-//===----------------------------------------------------------------------------------
-class WXDLLIMPEXP_CL VersionedTextDocumentIdentifier : public TextDocumentIdentifier
-{
-    int m_version = 1;
-
-public:
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
-
-    VersionedTextDocumentIdentifier() {}
-    VersionedTextDocumentIdentifier(int version)
-        : m_version(version)
-    {
-    }
-    virtual ~VersionedTextDocumentIdentifier() {}
-    VersionedTextDocumentIdentifier& SetVersion(int version)
-    {
-        this->m_version = version;
-        return *this;
-    }
-    int GetVersion() const { return m_version; }
-};
 
 //===----------------------------------------------------------------------------------
 // Position
@@ -223,6 +154,79 @@ public:
     const Position& GetEnd() const { return m_end; }
     const Position& GetStart() const { return m_start; }
     bool IsOk() const { return m_start.IsOk() && m_end.IsOk(); }
+};
+
+//===----------------------------------------------------------------------------------
+// TextDocumentContentChangeEvent
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL TextDocumentContentChangeEvent : public Serializable
+{
+    wxString m_text;
+    Range m_range; // Optional
+
+public:
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+
+    TextDocumentContentChangeEvent() {}
+    TextDocumentContentChangeEvent(const wxString& text)
+        : m_text(text)
+    {
+    }
+    virtual ~TextDocumentContentChangeEvent() {}
+    TextDocumentContentChangeEvent& SetText(const wxString& text);
+    const wxString& GetText() const { return m_text; }
+    const Range& GetRange() const { return m_range; }
+    void SetRange(const Range& range) { m_range = range; }
+};
+
+//===----------------------------------------------------------------------------------
+// TextDocumentIdentifier
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL TextDocumentIdentifier : public Serializable
+{
+    URI m_filename;
+
+public:
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+
+    TextDocumentIdentifier() {}
+    TextDocumentIdentifier(const wxString& filename) { URI::FromString(filename, &m_filename); }
+
+    virtual ~TextDocumentIdentifier() {}
+    TextDocumentIdentifier& SetFilename(const wxString& filename)
+    {
+        URI::FromString(filename, &m_filename);
+        return *this;
+    }
+    const wxString& GetPath() const { return m_filename.GetPath(); }
+    const wxString& GetPathAsURI() const { return m_filename.GetUrl(); }
+};
+
+//===----------------------------------------------------------------------------------
+// VersionedTextDocumentIdentifier
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL VersionedTextDocumentIdentifier : public TextDocumentIdentifier
+{
+    int m_version = 1;
+
+public:
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+
+    VersionedTextDocumentIdentifier() {}
+    VersionedTextDocumentIdentifier(int version)
+        : m_version(version)
+    {
+    }
+    virtual ~VersionedTextDocumentIdentifier() {}
+    VersionedTextDocumentIdentifier& SetVersion(int version)
+    {
+        this->m_version = version;
+        return *this;
+    }
+    int GetVersion() const { return m_version; }
 };
 
 //===----------------------------------------------------------------------------------

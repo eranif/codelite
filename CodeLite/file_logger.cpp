@@ -126,7 +126,10 @@ void FileLogger::SetVerbosity(const wxString& verbosity) { SetVerbosity(GetVerbo
 void FileLogger::OpenLog(const wxString& fullName, int verbosity)
 {
     m_logfile.Clear();
-    m_logfile << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
+    wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), fullName };
+    logfile.AppendDir("logs");
+    logfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    m_logfile = logfile.GetFullPath();
     m_verbosity = verbosity;
 }
 

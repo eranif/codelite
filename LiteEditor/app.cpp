@@ -31,6 +31,7 @@
 #include "SocketAPI/clSocketClient.h"
 #include "asyncprocess.h" // IProcess
 #include "autoversion.h"
+#include "clDTL.h"
 #include "clKeyboardManager.h"
 #include "clSystemSettings.h"
 #include "cl_config.h"
@@ -45,6 +46,7 @@
 #include "file_logger.h"
 #include "fileexplorer.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "frame.h"
 #include "globals.h"
 #include "macros.h"

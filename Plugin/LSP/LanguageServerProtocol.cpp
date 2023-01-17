@@ -80,7 +80,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
         m_network.reset(new LSPNetworkSocketClient());
         break;
     }
-    m_network->Bind(wxEVT_LSP_NET_DATA_READY, &LanguageServerProtocol::OnNetDataReady, this);
+    m_network->Bind(wxEVT_LSP_NET_DATA_READY, &LanguageServerProtocol::EventMainLoop, this);
     m_network->Bind(wxEVT_LSP_NET_ERROR, &LanguageServerProtocol::OnNetError, this);
     m_network->Bind(wxEVT_LSP_NET_CONNECTED, &LanguageServerProtocol::OnNetConnected, this);
 }
@@ -204,7 +204,7 @@ bool LanguageServerProtocol::DoStart()
         m_network->Open(m_startupInfo);
         return true;
     } catch(clException& e) {
-        clWARNING() << e.What();
+        LSP_WARNING() << e.What();
         return false;
     }
 }
@@ -238,7 +238,7 @@ bool LanguageServerProtocol::Start()
 
 void LanguageServerProtocol::DoClear()
 {
-    m_filesSent.clear();
+    m_filesTracker.clear();
     m_outputBuffer.clear();
     m_state = kUnInitialized;
     m_initializeRequestID = wxNOT_FOUND;
@@ -360,75 +360,71 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
     wxString filename = GetEditorFilePath(editor);
-    if(m_filesSent.count(filename) && editor->IsEditorModified()) {
-        // we already sent this file over, ask for change parse
-        wxString fileContent = editor->GetEditorText();
-        SendChangeRequest(editor, fileContent);
-
-    } else if(m_filesSent.count(filename) == 0) {
-        wxString fileContent = editor->GetEditorText();
-        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
-    }
+    wxString fileContent = editor->GetEditorText();
+    SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
     LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDefinitionRequest(
         GetEditorFilePath(editor), editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const wxString& fileContent, const wxString& languageId)
+void LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor, const wxString& fileContent,
+                                                     const wxString& languageId)
 {
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
-    if(!IsFileChangedSinceLastParse(filename, fileContent)) {
-        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
+
+    wxString preContent;
+    if(m_filesTracker.exists(filename) && m_filesTracker.get_last_content(filename, &preContent)) {
+        // we already did "open" for this, see if there are changes to report back to the language server
+        auto changes = m_filesTracker.changes_from(preContent, fileContent);
+        if(changes.empty()) {
+            // everything is up-to-date
+            LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
+            return;
+        }
+
+        LSP_DEBUG() << "Sending textDocument/didChange request" << endl;
+        // we have changes, send "change request" - by default we construct this request with a single
+        // "text" field -> the entire document
+        LSP::DidChangeTextDocumentRequest::Ptr_t req =
+            LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
+
+        // incremental changes are supported, send them
+        if(IsIncrementalChangeSupported()) {
+            // only send the changes
+            LSP_DEBUG() << "textDocument/didChange: using incremental changes:" << changes.size() << "changes" << endl;
+            req->GetParams()->As<LSP::DidChangeTextDocumentParams>()->SetContentChanges(changes);
+        } else {
+            LSP_DEBUG() << "textDocument/didChange: using full change request" << endl;
+        }
+        QueueMessage(req);
+
+    } else {
+        LSP_DEBUG() << "Sending textDocument/didOpen request" << endl;
+        // first time opening this file
+        LSP::DidOpenTextDocumentRequest::Ptr_t req =
+            LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
+        QueueMessage(req);
 
         // send a semantic request
-        return;
+        SendSemanticTokensRequest(editor);
     }
-    LSP::DidOpenTextDocumentRequest::Ptr_t req =
-        LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
-#ifndef __WXOSX__
-    req->SetStatusMessage(wxString() << GetLogPrefix() << " parsing file: " << filename);
-#endif
-    UpdateFileSent(filename, fileContent);
-    QueueMessage(req);
 
-    // send a semantic request
-    SendSemanticTokensRequest(editor);
+    // update the content for the file
+    m_filesTracker.update_content(filename, fileContent);
 }
 
 void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
 {
-    if(m_filesSent.count(filename) == 0) {
-        LOG_IF_TRACE
-        {
-            clDEBUG1() << GetLogPrefix() << "LanguageServerProtocol::FileClosed(): file" << filename << "is not opened";
-        }
+    if(!m_filesTracker.exists(filename)) {
         return;
     }
 
     LSP::DidCloseTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidCloseTextDocumentRequest(filename));
     QueueMessage(req);
-    m_filesSent.erase(filename);
-}
-
-void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const wxString& fileContent, bool force_reparse)
-{
-    CHECK_PTR_RET(editor);
-    wxString filename = GetEditorFilePath(editor);
-    if(!force_reparse && !IsFileChangedSinceLastParse(filename, fileContent)) {
-        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
-        return;
-    }
-
-    LSP_DEBUG() << GetLogPrefix() << "Sending ChangeRequest" << endl;
-
-    LSP::DidChangeTextDocumentRequest::Ptr_t req =
-        LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
-
-    UpdateFileSent(filename, fileContent);
-    QueueMessage(req);
+    m_filesTracker.erase(filename);
 }
 
 void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fileContent)
@@ -440,6 +436,10 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
         LSP::CompletionRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::DidSaveTextDocumentRequest(filename, fileContent));
         QueueMessage(req);
+
+        // update the tracking by removing the file
+        m_filesTracker.erase(filename);
+        SendSemanticTokensRequest(editor);
     }
 }
 
@@ -462,6 +462,9 @@ void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
     event.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
+
+    // starting fresh
+    m_filesTracker.erase(GetEditorFilePath(editor));
     OpenEditor(editor);
 }
 
@@ -469,6 +472,7 @@ void LanguageServerProtocol::OnFileClosed(clCommandEvent& event)
 {
     event.Skip();
     SendCloseRequest(event.GetFileName());
+    m_filesTracker.erase(event.GetFileName());
 }
 
 void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
@@ -486,7 +490,7 @@ wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "["
 
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
-    LOG_IF_TRACE { clDEBUG1() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl; }
+    LOG_IF_TRACE { LSP_TRACE() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl; }
     if(!IsInitialized()) {
         LSP_DEBUG() << "OpenEditor: server is still not initialized. server:" << GetName()
                     << ", file:" << GetEditorFilePath(editor) << endl;
@@ -495,15 +499,8 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
 
     if(editor && ShouldHandleFile(editor)) {
         wxString fileContent = editor->GetEditorText();
-
-        if(m_filesSent.count(GetEditorFilePath(editor))) {
-            LOG_IF_TRACE { clDEBUG1() << "OpenEditor->SendChangeRequest called for:" << GetEditorFilePath(editor); }
-            SendChangeRequest(editor, fileContent);
-        } else {
-            // If we are about to load a header file, also pass clangd the implementation(s) file
-            LOG_IF_TRACE { clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor); }
-            SendOpenRequest(editor, fileContent, GetLanguageId(editor));
-        }
+        SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
+        SendSemanticTokensRequest(editor);
     }
 }
 
@@ -514,21 +511,12 @@ void LanguageServerProtocol::FunctionHelp(IEditor* editor)
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
+    wxString fileContent = editor->GetEditorText();
+    SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
     const wxString& filename = GetEditorFilePath(editor);
-    if(m_filesSent.count(filename) && editor->IsEditorModified()) {
-        // we already sent this file over, ask for change parse
-        wxString fileContent = editor->GetEditorText();
-        SendChangeRequest(editor, fileContent);
-    } else if(m_filesSent.count(filename) == 0) {
-        wxString fileContent = editor->GetEditorText();
-        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
-    }
-
-    if(ShouldHandleFile(editor)) {
-        LSP::SignatureHelpRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::SignatureHelpRequest(
-            filename, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
-        QueueMessage(req);
-    }
+    LSP::SignatureHelpRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::SignatureHelpRequest(
+        filename, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
+    QueueMessage(req);
 }
 
 void LanguageServerProtocol::HoverTip(IEditor* editor)
@@ -539,14 +527,8 @@ void LanguageServerProtocol::HoverTip(IEditor* editor)
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxString& filename = GetEditorFilePath(editor);
-    if(m_filesSent.count(filename) && editor->IsEditorModified()) {
-        // we already sent this file over, ask for change parse
-        wxString fileContent = editor->GetEditorText();
-        SendChangeRequest(editor, fileContent);
-    } else if(m_filesSent.count(filename) == 0) {
-        wxString fileContent = editor->GetEditorText();
-        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
-    }
+    wxString fileContent = editor->GetEditorText();
+    SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
     if(ShouldHandleFile(editor)) {
         int pos = editor->GetPosAtMousePointer();
@@ -567,14 +549,8 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxString& filename = GetEditorFilePath(editor);
 
-    if(m_filesSent.count(filename) && editor->IsEditorModified()) {
-        wxString fileContent = editor->GetEditorText();
-        SendChangeRequest(editor, fileContent, true);
-
-    } else if(m_filesSent.count(filename) == 0) {
-        wxString fileContent = editor->GetEditorText();
-        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
-    }
+    wxString fileContent = editor->GetEditorText();
+    SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
     // Now request the for code completion
     SendCodeCompleteRequest(editor, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition()));
@@ -628,12 +604,8 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missi
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxString& filename = GetEditorFilePath(editor);
     wxString fileContent = editor->GetEditorText();
+    SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
-    if(m_filesSent.count(filename) == 0) {
-        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
-    } else {
-        SendChangeRequest(editor, fileContent);
-    }
     LSP_DEBUG() << GetLogPrefix() << "Sending GotoDeclarationRequest" << endl;
     LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDeclarationRequest(
         GetEditorFilePath(editor), editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition()),
@@ -677,7 +649,7 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
     m_owner->AddPendingEvent(restartEvent);
 }
 
-void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
+void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
 {
     m_outputBuffer << event.GetString();
     LSP_DEBUG() << "Received data from LSP:" << m_outputBuffer.size() << "bytes" << endl;
@@ -687,15 +659,15 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
         if(!json) {
-            LOG_IF_TRACE { clDEBUG1() << "Unable to read JSON payload" << endl; }
+            LOG_IF_TRACE { LSP_TRACE() << "Unable to read JSON payload" << endl; }
             break;
         }
 
         auto json_item = json->toElement();
         // check the message type
         wxString message_method = json_item["method"].toString();
-        // clDEBUG1() << "-- LSP:" << json_item.format(false) << endl;
-        LOG_IF_TRACE { clDEBUG1() << "-- LSP: Message Method is:" << message_method << endl; }
+        // LSP_TRACE() << "-- LSP:" << json_item.format(false) << endl;
+        LOG_IF_TRACE { LSP_TRACE() << "-- LSP: Message Method is:" << message_method << endl; }
 
         if(message_method == "window/logMessage" || message_method == "window/showMessage") {
             // log this message
@@ -744,6 +716,11 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     CheckCapability(res, "workspaceSymbolProvider", "workspace/symbol");
                     CheckCapability(res, "renameProvider", "textDocument/rename");
                     CheckCapability(res, "referencesProvider", "textDocument/references");
+                    // Check for textDocumentSync capability
+                    // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocumentSyncOptions
+                    if(res["result"]["capabilities"]["textDocumentSync"]["change"].toInt(wxNOT_FOUND) == 2) {
+                        m_incrementalChangeSupported = true;
+                    }
 
                     LSP_DEBUG() << GetLogPrefix() << "Sending InitializedNotification" << endl;
 
@@ -789,7 +766,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
 {
     event.Skip();
 
-    LOG_IF_TRACE { clDEBUG1() << "LanguageServerProtocol::OnQuickOutline called" << endl; }
+    LOG_IF_TRACE { LSP_TRACE() << "LanguageServerProtocol::OnQuickOutline called" << endl; }
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
@@ -813,23 +790,6 @@ void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_fla
     LSP::MessageWithParams::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename, context_flags));
     QueueMessage(req);
-}
-
-void LanguageServerProtocol::UpdateFileSent(const wxString& filename, const wxString& fileContent)
-{
-    wxString checksum = wxMD5::GetDigest(fileContent);
-    m_filesSent.erase(filename);
-    LOG_IF_TRACE { clDEBUG1() << "Caching file:" << filename << "with checksum:" << checksum << endl; }
-    m_filesSent.insert({ filename, checksum });
-}
-
-bool LanguageServerProtocol::IsFileChangedSinceLastParse(const wxString& filename, const wxString& fileContent) const
-{
-    if(m_filesSent.count(filename) == 0) {
-        return true;
-    }
-    wxString checksum = wxMD5::GetDigest(fileContent);
-    return m_filesSent.find(filename)->second != checksum;
 }
 
 wxString LanguageServerProtocol::GetEditorFilePath(IEditor* editor) const
@@ -860,24 +820,29 @@ void LanguageServerProtocol::SendWorkspaceSymbolsRequest(const wxString& query_s
 void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
+    wxString filepath = GetEditorFilePath(editor);
+    if(m_filesTracker.is_semantic_tokens_requested(filepath)) {
+        LOG_IF_TRACE
+        {
+            LSP_TRACE() << GetLogPrefix() << "already requested semantic tokens for file:" << filepath << endl;
+        }
+        return;
+    }
+
     // check if this is implemented by the server
     if(IsSemanticTokensSupported()) {
         LSP_DEBUG() << GetLogPrefix() << "Sending semantic tokens request..." << endl;
         LSP::DidChangeTextDocumentRequest::Ptr_t req =
-            LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
+            LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(filepath));
         QueueMessage(req);
         LSP_DEBUG() << GetLogPrefix() << "Success" << endl;
-        // send an extra call for document symbols
-        // we will cache this later
-        LSP_DEBUG() << GetLogPrefix() << "Sending document symbols request.." << endl;
-        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
-        LSP_DEBUG() << GetLogPrefix() << "Success" << endl;
+        m_filesTracker.add_flag(filepath, FILE_STATE_SEMANTIC_TOKENS_REQUESTED);
 
     } else if(IsDocumentSymbolsSupported()) {
         LSP_DEBUG() << GetLogPrefix() << "Sending semantic tokens request (DocumentSymbols)" << endl;
         // Use DocumentSymbol instead
-        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT |
-                                    LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
+        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT);
+        m_filesTracker.add_flag(filepath, FILE_STATE_SEMANTIC_TOKENS_REQUESTED);
     }
 }
 
@@ -922,12 +887,12 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
 void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)
 {
     if(msg_ptr && msg_ptr->As<LSP::Request>()) {
-        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "received a response"; }
+        LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "received a response"; }
         LSP::Request* preq = msg_ptr->As<LSP::Request>();
         if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
-            clDEBUG1() << "Received a response for completion message ID#" << preq->GetId()
-                       << ". However, a newer completion request with ID#" << m_lastCompletionRequestId
-                       << "was already sent. Dropping response";
+            LSP_TRACE() << "Received a response for completion message ID#" << preq->GetId()
+                        << ". However, a newer completion request with ID#" << m_lastCompletionRequestId
+                        << "was already sent. Dropping response";
             return;
         }
         preq->SetServerName(GetName());
@@ -935,7 +900,7 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
 
     } else if(response.IsPushDiagnostics()) {
         // Get the URI
-        LOG_IF_TRACE { clDEBUG1() << GetLogPrefix() << "Received diagnostic message"; }
+        LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "Received diagnostic message"; }
         wxString fn = FileUtils::FilePathFromURI(response.GetDiagnosticsUri());
 
         // Don't show this message on macOS as it appears in the middle of the screen...
@@ -1005,7 +970,8 @@ void LanguageServerProtocol::RenameSymbol(IEditor* editor) {}
 void LanguageServerProtocol::OnSemanticHighlights(clCodeCompletionEvent& event)
 {
     event.Skip();
-    IEditor* editor = ::clGetManager()->FindEditor(event.GetFileName());
+    IEditor* editor = event.GetFileName().empty() ? clGetManager()->GetActiveEditor()
+                                                  : clGetManager()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
 
     if(!ShouldHandleFile(editor)) {
@@ -1122,3 +1088,5 @@ bool LanguageServerProtocol::IsLanguageSupported(const wxString& lang) const { r
 bool LanguageServerProtocol::IsReferencesSupported() const { return IsCapabilitySupported("textDocument/references"); }
 
 bool LanguageServerProtocol::IsRenameSupported() const { return IsCapabilitySupported("textDocument/rename"); }
+
+bool LanguageServerProtocol::IsIncrementalChangeSupported() const { return m_incrementalChangeSupported; }

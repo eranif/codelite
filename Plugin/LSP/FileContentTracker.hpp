@@ -5,12 +5,27 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
+#include <map>
 #include <vector>
 #include <wx/string.h>
 
+enum FileStateFlags {
+    FILE_STATE_NONE = 0,
+    FILE_STATE_SEMANTIC_TOKENS_REQUESTED = (1 << 0),
+};
+
+struct WXDLLIMPEXP_SDK FileState {
+    size_t flags = FILE_STATE_NONE;
+    wxString content;
+    wxString file_path;
+};
+
 class WXDLLIMPEXP_SDK FileContentTracker
 {
-    wxStringMap_t m_files;
+    std::vector<FileState> m_files;
+
+private:
+    bool find(const wxString& filepath, FileState** state);
 
 public:
     FileContentTracker();
@@ -19,7 +34,7 @@ public:
     /**
      * @brief do we track `filepath`?
      */
-    bool exists(const wxString& filepath) const;
+    bool exists(const wxString& filepath);
     /**
      * @brief remove the file from the tracker
      * @param filepath
@@ -39,9 +54,11 @@ public:
     /**
      * @brief return the last seen content for filepath
      */
-    const wxString& get_last_content(const wxString& filepath) const;
-
+    bool get_last_content(const wxString& filepath, wxString* content);
     void clear() { m_files.clear(); }
+
+    bool is_semantic_tokens_requested(const wxString& filepath);
+    void add_flag(const wxString& filepath, size_t flag);
 };
 
 #endif // FILECONTENTTRACKER_HPP

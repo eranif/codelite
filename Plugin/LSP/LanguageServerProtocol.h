@@ -2,6 +2,7 @@
 #define LANGUAG_ESERVER_PROTOCOL_H
 
 #include "LSP/DocumentSymbolsRequest.hpp"
+#include "LSP/FileContentTracker.hpp"
 #include "LSP/IPathConverter.hpp"
 #include "LSP/LSPNetwork.h"
 #include "LSP/MessageWithParams.h"
@@ -58,7 +59,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     wxEvtHandler* m_owner = nullptr;
     LSPNetwork::Ptr_t m_network;
     wxString m_initOptions;
-    wxStringMap_t m_filesSent;
+    FileContentTracker m_filesTracker;
     wxStringSet_t m_languages;
     wxString m_outputBuffer;
     wxString m_rootFolder;
@@ -75,6 +76,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     int m_lastCompletionRequestId = wxNOT_FOUND;
     wxArrayString m_semanticTokensTypes;
     LSPOnConnectedCallback_t m_onServerStartedCallback = nullptr;
+    bool m_incrementalChangeSupported = false;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -83,7 +85,7 @@ public:
 protected:
     void OnNetConnected(clCommandEvent& event);
     void OnNetError(clCommandEvent& event);
-    void OnNetDataReady(clCommandEvent& event);
+    void EventMainLoop(clCommandEvent& event);
 
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);
@@ -114,8 +116,6 @@ protected:
     void ProcessQueue();
     static wxString GetLanguageId(IEditor* editor);
     static wxString GetLanguageId(FileExtManager::FileType file_type);
-    void UpdateFileSent(const wxString& filename, const wxString& fileContent);
-    bool IsFileChangedSinceLastParse(const wxString& filename, const wxString& fileContent) const;
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     IEditor* GetEditor(const clCodeCompletionEvent& event) const;
@@ -124,7 +124,7 @@ protected:
     /**
      * @brief notify about file open
      */
-    void SendOpenRequest(IEditor* editor, const wxString& fileContent, const wxString& languageId);
+    void SendOpenOrChangeRequest(IEditor* editor, const wxString& fileContent, const wxString& languageId);
 
     /**
      * @brief report a file-close notification
@@ -293,6 +293,7 @@ public:
     bool IsCapabilitySupported(const wxString& name) const;
     bool IsDocumentSymbolsSupported() const;
     bool IsSemanticTokensSupported() const;
+    bool IsIncrementalChangeSupported() const;
     bool IsDeclarationSupported() const;
     bool IsReferencesSupported() const;
     bool IsRenameSupported() const;

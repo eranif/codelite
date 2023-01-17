@@ -32,37 +32,40 @@
 #include <wx/filename.h>
 #include <wx/string.h>
 
-/**
- * @class clDTL
- * @brief Diff 2 files and return the result
- * @code
+enum class PatchAction {
+    INVALID,
+    ADD_LINE,
+    DELETE_LINE,
+};
 
-    // An example of using the clDTL class:
-    clDTL d;
-    d.Diff(filePath1, filePath2);
-    const clDTL::LineInfoVec_t &result  = d.GetResult();
+struct WXDLLIMPEXP_SDK PatchStep {
+    int line_number = 0;
+    PatchAction action = PatchAction::INVALID;
+    wxString content;
+    PatchStep(int l, PatchAction a, const wxString& s)
+        : line_number(l)
+        , action(a)
+        , content(s)
+    {
+    }
 
-    // Create 2 strings "left" and "right"
-    wxString leftContent, rightContent;
-    for(size_t i=0; i<result.size(); ++i) {
-        // format the lines
-        switch(result.at(i).m_type) {
-        case clDTL::LINE_ADDED:
-            leftContent  << "- \n";
-            rightContent << "+ " << result.at(i).m_line;
+    wxString to_string() const
+    {
+        wxString s;
+        switch(action) {
+        case PatchAction::DELETE_LINE:
+            s << "DEL line: " << line_number;
             break;
-        case clDTL::LINE_REMOVED:
-            leftContent  << "+ " << result.at(i).m_line;
-            rightContent << "- \n";
+        case PatchAction::ADD_LINE:
+            s << "ADD line: " << line_number << " " << content;
             break;
-        case clDTL::LINE_COMMON:
-            leftContent  << " " << result.at(i).m_line;
-            rightContent << " " << result.at(i).m_line;
+        default:
             break;
         }
+        return s;
     }
- * @endcode
- */
+};
+
 class WXDLLIMPEXP_SDK clDTL
 {
 public:
@@ -104,10 +107,16 @@ public:
      * When 2 files are identical, the result is empty
      */
     void Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode mode);
+    void DiffStrings(const wxString& before, const wxString& after, DiffMode mode);
 
     const LineInfoVec_t& GetResultLeft() const { return m_resultLeft; }
     const LineInfoVec_t& GetResultRight() const { return m_resultRight; }
     const SeqLinePair_t& GetSequences() const { return m_sequences; }
+
+    /**
+     * @brief create step actions to transform `before` -> `after`
+     */
+    std::vector<PatchStep> CreatePatch(const wxString& before, const wxString& after) const;
 };
 
 #endif // CLDTL_H

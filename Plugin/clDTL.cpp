@@ -26,6 +26,7 @@
 #include "clDTL.h"
 
 #include "dtl/dtl.hpp"
+#include "fileutils.h"
 
 #include <wx/ffile.h>
 #include <wx/tokenzr.h>
@@ -38,19 +39,13 @@ clDTL::~clDTL() {}
 void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode mode)
 {
     wxString leftFile, rightFile;
+    if(!FileUtils::ReadFileContent(fnLeft, leftFile) || !FileUtils::ReadFileContent(fnRight, rightFile))
+        return;
+    DiffStrings(leftFile, rightFile, mode);
+}
 
-    {
-        wxFFile fp1(fnLeft.GetFullPath(), "rb");
-        wxFFile fp2(fnRight.GetFullPath(), "rb");
-
-        if(!fp1.IsOpened() || !fp2.IsOpened())
-            return;
-
-        // Read the file content
-        fp1.ReadAll(&leftFile);
-        fp2.ReadAll(&rightFile);
-    }
-
+void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode mode)
+{
     m_resultLeft.clear();
     m_resultRight.clear();
     m_sequences.clear();
@@ -58,8 +53,8 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode m
     typedef wxString elem;
     typedef std::pair<elem, dtl::elemInfo> sesElem;
 
-    wxArrayString leftLines = wxStringTokenize(leftFile, "\n", wxTOKEN_RET_DELIMS);
-    wxArrayString rightLines = wxStringTokenize(rightFile, "\n", wxTOKEN_RET_DELIMS);
+    wxArrayString leftLines = wxStringTokenize(before, "\n", wxTOKEN_RET_DELIMS);
+    wxArrayString rightLines = wxStringTokenize(after, "\n", wxTOKEN_RET_DELIMS);
 
     std::vector<elem> leftLinesVec;
     std::vector<elem> rightLinesVec;
@@ -212,4 +207,45 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode m
             seqStartLine = wxNOT_FOUND;
         }
     }
+}
+
+std::vector<PatchStep> clDTL::CreatePatch(const wxString& before, const wxString& after) const
+{
+    typedef wxString elem;
+    typedef std::pair<elem, dtl::elemInfo> sesElem;
+
+    wxArrayString leftLines = wxStringTokenize(before, "\n", wxTOKEN_RET_DELIMS);
+    wxArrayString rightLines = wxStringTokenize(after, "\n", wxTOKEN_RET_DELIMS);
+
+    std::vector<elem> leftLinesVec;
+    std::vector<elem> rightLinesVec;
+    leftLinesVec.insert(leftLinesVec.end(), leftLines.begin(), leftLines.end());
+    rightLinesVec.insert(rightLinesVec.end(), rightLines.begin(), rightLines.end());
+
+    dtl::Diff<elem, std::vector<elem>> diff(leftLinesVec, rightLinesVec);
+    diff.onHuge();
+    diff.compose();
+
+    std::vector<sesElem> sesSeq = diff.getSes().getSequence();
+
+    int line = 0;
+    std::vector<PatchStep> steps;
+    steps.reserve(sesSeq.size() * 2);
+    for(auto sesIt = sesSeq.begin(); sesIt != sesSeq.end(); ++sesIt, ++line) {
+        switch(sesIt->second.type) {
+        case dtl::SES_ADD: {
+            steps.push_back({ line, PatchAction::ADD_LINE, sesIt->first });
+            break;
+        }
+        case dtl::SES_DELETE: {
+            steps.push_back({ line, PatchAction::DELETE_LINE, wxEmptyString });
+            --line;
+            break;
+        }
+        case dtl::SES_COMMON:
+        default:
+            break;
+        }
+    }
+    return steps;
 }

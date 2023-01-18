@@ -233,7 +233,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     m_panel203 = new wxPanel(m_notebook201, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook201, wxSize(-1, -1)),
                              wxTAB_TRAVERSAL);
-    m_notebook201->AddPage(m_panel203, _("Initi options"), false);
+    m_notebook201->AddPage(m_panel203, _("initializationOptions"), false);
 
     wxBoxSizer* boxSizer205 = new wxBoxSizer(wxVERTICAL);
     m_panel203->SetSizer(boxSizer205);

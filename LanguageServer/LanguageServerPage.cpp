@@ -59,7 +59,7 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetConnectionString(m_comboBoxConnection->GetValue());
     d.SetPriority(m_sliderPriority->GetValue());
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
-    d.SetInitOptions(m_stcInitOptions->GetValue());
+    d.SetInitOptions(m_stcInitOptions->GetText());
     return d;
 }
 

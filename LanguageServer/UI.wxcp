@@ -1880,7 +1880,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Label:",
-															"m_value":	"Initi options"
+															"m_value":	"initializationOptions"
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",

@@ -649,7 +649,8 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         }
     }
 
-    if(lsp->Start(startup_info, env_list, wxEmptyString, working_directory, entry.GetLanguages())) {
+    wxString init_options = entry.GetInitOptions();
+    if(lsp->Start(startup_info, env_list, init_options, working_directory, entry.GetLanguages())) {
         m_servers.insert({ entry.GetName(), lsp });
     } else {
         clERROR() << "Failed to start language server:" << entry.GetName() << endl;

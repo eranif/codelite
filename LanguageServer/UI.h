@@ -22,6 +22,7 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
+#include <wx/imaglist.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
 #include <wx/combobox.h>
@@ -91,7 +92,11 @@ protected:
     wxStaticText* m_staticText453;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText495;
+    wxNotebook* m_notebook201;
+    wxPanel* m_panel202;
     clThemedSTC* m_stcCommand;
+    wxPanel* m_panel203;
+    clThemedSTC* m_stcInitOptions;
     wxStaticText* m_staticText579;
     wxTextCtrl* m_textCtrlWD;
     wxButton* m_button1153;
@@ -115,6 +120,10 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
     clThemedSTC* GetStcCommand() { return m_stcCommand; }
+    wxPanel* GetPanel202() { return m_panel202; }
+    clThemedSTC* GetStcInitOptions() { return m_stcInitOptions; }
+    wxPanel* GetPanel203() { return m_panel203; }
+    wxNotebook* GetNotebook201() { return m_notebook201; }
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }
     wxButton* GetButton1153() { return m_button1153; }

@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxCrafterCbL3wsInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 LanguageServerSettingsDlgBase::LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                              const wxPoint& pos, const wxSize& size, long style)
@@ -164,7 +176,24 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(m_staticText495, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
 
-    m_stcCommand = new clThemedSTC(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 40)), 0);
+    wxBoxSizer* boxSizer200 = new wxBoxSizer(wxVERTICAL);
+
+    flexGridSizer432->Add(boxSizer200, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_notebook201 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook201->SetName(wxT("m_notebook201"));
+
+    boxSizer200->Add(m_notebook201, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel202 = new wxPanel(m_notebook201, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook201, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
+    m_notebook201->AddPage(m_panel202, _("Command"), false);
+
+    wxBoxSizer* boxSizer204 = new wxBoxSizer(wxVERTICAL);
+    m_panel202->SetSizer(boxSizer204);
+
+    m_stcCommand = new clThemedSTC(m_panel202, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel202, wxSize(-1, 40)),
+                                   get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcCommand->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCommand->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -200,7 +229,53 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     m_stcCommand->SetKeyWords(3, wxT(""));
     m_stcCommand->SetKeyWords(4, wxT(""));
 
-    flexGridSizer432->Add(m_stcCommand, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer204->Add(m_stcCommand, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel203 = new wxPanel(m_notebook201, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook201, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
+    m_notebook201->AddPage(m_panel203, _("Initi options"), false);
+
+    wxBoxSizer* boxSizer205 = new wxBoxSizer(wxVERTICAL);
+    m_panel203->SetSizer(boxSizer205);
+
+    m_stcInitOptions = new clThemedSTC(m_panel203, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel203, wxSize(-1, -1)),
+                                       get_border_simple_theme_aware_bit());
+    // Configure the fold margin
+    m_stcInitOptions->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcInitOptions->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcInitOptions->SetMarginSensitive(4, true);
+    m_stcInitOptions->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcInitOptions->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcInitOptions->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcInitOptions->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcInitOptions->SetMarginWidth(2, 0);
+    m_stcInitOptions->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcInitOptions->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcInitOptions->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcInitOptions->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcInitOptions->SetMarginMask(3, 0);
+    m_stcInitOptions->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcInitOptions->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcInitOptions->StyleClearAll();
+    m_stcInitOptions->SetWrapMode(0);
+    m_stcInitOptions->SetIndentationGuides(0);
+    m_stcInitOptions->SetKeyWords(0, wxT(""));
+    m_stcInitOptions->SetKeyWords(1, wxT(""));
+    m_stcInitOptions->SetKeyWords(2, wxT(""));
+    m_stcInitOptions->SetKeyWords(3, wxT(""));
+    m_stcInitOptions->SetKeyWords(4, wxT(""));
+
+    boxSizer205->Add(m_stcInitOptions, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText579 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition,
                                        wxDLG_UNIT(this, wxSize(-1, -1)), 0);

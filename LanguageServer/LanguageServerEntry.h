@@ -23,6 +23,7 @@ class LanguageServerEntry
     bool m_disaplayDiagnostics = true;
     wxString m_command;
     wxString m_remoteCommand;
+    wxString m_initOptions;
 
 public:
     // use 'map' to keep the items sorted by name
@@ -37,11 +38,15 @@ public:
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
+
     LanguageServerEntry();
-    virtual ~LanguageServerEntry();
+    ~LanguageServerEntry();
 
     void SetCommand(const wxString& command);
     wxString GetCommand(bool pretty = false) const;
+
+    void SetInitOptions(const wxString& initOptions);
+    wxString GetInitOptions() const;
 
     LanguageServerEntry& SetDisaplayDiagnostics(bool disaplayDiagnostics)
     {

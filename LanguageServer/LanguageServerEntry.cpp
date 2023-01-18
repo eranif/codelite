@@ -1,5 +1,6 @@
 #include "LanguageServerEntry.h"
 
+#include "JSON.h"
 #include "LSP/LanguageServerProtocol.h"
 #include "StringUtils.h"
 #include "globals.h"
@@ -22,6 +23,7 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_connectionString = json.namedObject("connectionString").toString("stdio");
     m_priority = json.namedObject("priority").toInt(m_priority);
     m_disaplayDiagnostics = json.namedObject("displayDiagnostics").toBool(m_disaplayDiagnostics); // defaults to true
+    m_initOptions = json["initOptions"].toString();
 
     // we no longer are using exepath + args, instead a single "command" is used
     wxString commandDefault = m_exepath;
@@ -47,6 +49,7 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("priority", m_priority);
     json.addProperty("displayDiagnostics", m_disaplayDiagnostics);
     json.addProperty("command", m_command);
+    json.addProperty("initOptions", m_initOptions);
     return json;
 }
 
@@ -88,3 +91,23 @@ void LanguageServerEntry::SetCommand(const wxString& command)
     auto cmd_arr = StringUtils::BuildCommandArrayFromString(command);
     m_command = StringUtils::BuildCommandStringFromArray(cmd_arr);
 }
+
+namespace
+{
+wxString format_json_str(const wxString& str, bool pretty)
+{
+    if(str.empty()) {
+        return wxEmptyString;
+    }
+
+    JSON root{ str };
+    if(!root.isOk()) {
+        return wxEmptyString;
+    }
+    return root.toElement().format(pretty);
+}
+} // namespace
+
+void LanguageServerEntry::SetInitOptions(const wxString& options) { m_initOptions = format_json_str(options, false); }
+
+wxString LanguageServerEntry::GetInitOptions() const { return format_json_str(m_initOptions, true); }

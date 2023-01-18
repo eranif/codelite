@@ -17,11 +17,15 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if(lex) {
         lex->ApplySystemColours(m_stcCommand);
+        lex->ApplySystemColours(m_stcInitOptions);
     }
+
     m_textCtrlName->SetValue(data.GetName());
     m_textCtrlWD->SetValue(data.GetWorkingDirectory());
 
     m_stcCommand->SetText(data.GetCommand(true));
+    m_stcInitOptions->SetText(data.GetInitOptions());
+
     m_checkBoxEnabled->SetValue(data.IsEnabled());
     const wxArrayString& langs = data.GetLanguages();
     wxString languages = wxJoin(langs, ';');
@@ -37,6 +41,7 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent)
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if(lex) {
         lex->ApplySystemColours(m_stcCommand);
+        lex->ApplySystemColours(m_stcInitOptions);
     }
 }
 
@@ -54,6 +59,7 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetConnectionString(m_comboBoxConnection->GetValue());
     d.SetPriority(m_sliderPriority->GetValue());
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
+    d.SetInitOptions(m_stcInitOptions->GetValue());
     return d;
 }
 

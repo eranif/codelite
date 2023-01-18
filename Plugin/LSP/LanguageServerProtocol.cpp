@@ -437,9 +437,6 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
             LSP::MessageWithParams::MakeRequest(new LSP::DidSaveTextDocumentRequest(filename, fileContent));
         QueueMessage(req);
 
-        // allow forcing semantic tokens colouring
-        m_filesTracker.remove_flag(filename, FILE_STATE_SEMANTIC_TOKENS_REQUESTED);
-
         // update the tracking by removing the file
         SendSemanticTokensRequest(editor);
     }
@@ -823,13 +820,6 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     wxString filepath = GetEditorFilePath(editor);
-    if(m_filesTracker.is_semantic_tokens_requested(filepath)) {
-        LOG_IF_TRACE
-        {
-            LSP_TRACE() << GetLogPrefix() << "already requested semantic tokens for file:" << filepath << endl;
-        }
-        return;
-    }
 
     // check if this is implemented by the server
     if(IsSemanticTokensSupported()) {
@@ -838,13 +828,11 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
             LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(filepath));
         QueueMessage(req);
         LSP_DEBUG() << GetLogPrefix() << "Success" << endl;
-        m_filesTracker.add_flag(filepath, FILE_STATE_SEMANTIC_TOKENS_REQUESTED);
 
     } else if(IsDocumentSymbolsSupported()) {
         LSP_DEBUG() << GetLogPrefix() << "Sending semantic tokens request (DocumentSymbols)" << endl;
         // Use DocumentSymbol instead
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT);
-        m_filesTracker.add_flag(filepath, FILE_STATE_SEMANTIC_TOKENS_REQUESTED);
     }
 }
 

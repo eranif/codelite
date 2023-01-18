@@ -7,5 +7,3 @@ Debug Adapter Client
 
 others:
 ----
-
-- With the recent change to send vector<TextDocumentContentChangeEvent> ctagsd is broken

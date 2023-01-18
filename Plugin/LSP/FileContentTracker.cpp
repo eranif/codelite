@@ -117,16 +117,6 @@ bool FileContentTracker::get_last_content(const wxString& filepath, wxString* co
     return false;
 }
 
-bool FileContentTracker::is_semantic_tokens_requested(const wxString& filepath)
-{
-    FileState* state = nullptr;
-    if(!find(filepath, &state)) {
-        return false;
-    } else {
-        return (state->flags & FILE_STATE_SEMANTIC_TOKENS_REQUESTED);
-    }
-}
-
 void FileContentTracker::add_flag(const wxString& filepath, size_t flag)
 {
     FileState* state = nullptr;

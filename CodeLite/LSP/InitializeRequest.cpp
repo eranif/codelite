@@ -1,4 +1,5 @@
 #include "InitializeRequest.h"
+
 #include <wx/filesys.h>
 
 LSP::InitializeRequest::InitializeRequest(const wxString& rootUri)
@@ -31,7 +32,7 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
         JSON initializationOptions(m_initOptions);
         if(initializationOptions.isOk()) {
             cJSON* pjson = initializationOptions.release();
-            json.addProperty(wxString("initializationOptions"), (cJSON*)pjson);
+            params.addProperty(wxString("initializationOptions"), (cJSON*)pjson);
         }
     }
 

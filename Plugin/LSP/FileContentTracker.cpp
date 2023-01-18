@@ -134,3 +134,11 @@ void FileContentTracker::add_flag(const wxString& filepath, size_t flag)
         state->flags |= flag;
     }
 }
+
+void FileContentTracker::remove_flag(const wxString& filepath, size_t flag)
+{
+    FileState* state = nullptr;
+    if(find(filepath, &state)) {
+        state->flags &= ~flag;
+    }
+}

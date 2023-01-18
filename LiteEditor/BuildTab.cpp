@@ -466,8 +466,11 @@ bool BuildTab::ProcessCargoBuildLine(const wxString& line)
     // An example for such a line:
     //  Compiling hello_rust v0.1.0 (C:\Users\eran\Documents\HelloRust\HelloRust\cargo-project)
     static wxRegEx re_compiling{ R"#(Compiling[ \t]+.*?\((.*?)\))#" };
-    if(re_compiling.IsValid() && re_compiling.Matches(line)) {
-        m_currentRootDir = re_compiling.GetMatch(line, 1); // get the path
+    wxString strippedLine;
+    StringUtils::StripTerminalColouring(line, strippedLine);
+
+    if(re_compiling.IsValid() && re_compiling.Matches(strippedLine)) {
+        m_currentRootDir = re_compiling.GetMatch(strippedLine, 1); // get the path
         m_currentRootDir.Trim().Trim(false);
         LOG_IF_DEBUG { clDEBUG() << "Rustc: current root dir is:" << m_currentRootDir << endl; }
         return true;

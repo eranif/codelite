@@ -437,8 +437,10 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
             LSP::MessageWithParams::MakeRequest(new LSP::DidSaveTextDocumentRequest(filename, fileContent));
         QueueMessage(req);
 
+        // allow forcing semantic tokens colouring
+        m_filesTracker.remove_flag(filename, FILE_STATE_SEMANTIC_TOKENS_REQUESTED);
+
         // update the tracking by removing the file
-        m_filesTracker.erase(filename);
         SendSemanticTokensRequest(editor);
     }
 }

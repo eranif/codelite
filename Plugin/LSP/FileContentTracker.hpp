@@ -59,6 +59,7 @@ public:
 
     bool is_semantic_tokens_requested(const wxString& filepath);
     void add_flag(const wxString& filepath, size_t flag);
+    void remove_flag(const wxString& filepath, size_t flag);
 };
 
 #endif // FILECONTENTTRACKER_HPP

@@ -480,3 +480,24 @@ wxString StringUtils::BuildCommandStringFromArray(const wxArrayString& command_a
     }
     return command;
 }
+
+wxString StringUtils::WrapWithDoubleQuotes(const wxString& str)
+{
+    if(str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
+        return "\"" + str + "\"";
+    }
+    return str;
+}
+
+wxString StringUtils::StripDoubleQuotes(const wxString& str)
+{
+    wxString s = str;
+    if(str.StartsWith("\"")) {
+        s.Remove(0, 1);
+    }
+
+    if(str.EndsWith("\"")) {
+        s.RemoveLast();
+    }
+    return s;
+}

@@ -105,6 +105,12 @@ public:
      */
     static wxString BuildCommandStringFromArray(const wxArrayString& command_arr,
                                                 size_t flags = BuildCommandFlags::ONE_LINER);
+
+    /// If string contains space, wrap it with double quotes
+    static wxString WrapWithDoubleQuotes(const wxString& str);
+
+    /// If a string is wrapped with double quoutes -> strip them
+    static wxString StripDoubleQuotes(const wxString& str);
 };
 
 #endif // STRINGUTILS_H

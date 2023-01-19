@@ -608,13 +608,17 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     wxArrayString lspCommand;
     lspCommand = StringUtils::BuildCommandArrayFromString(command);
 
-    if(!lspCommand.empty() && !wxFileName::FileExists(lspCommand[0])) {
-        clERROR() << "Disabling lsp:" << entry.GetName() << endl;
-        clERROR() << lspCommand[0] << ". No such file" << endl;
-        LanguageServerConfig::Get().GetServer(entry.GetName()).SetEnabled(false);
-        LanguageServerConfig::Get().Save();
-        return;
+    if(!lspCommand.empty()) {
+        wxString mainCommand = StringUtils::StripDoubleQuotes(lspCommand[0]);
+        if(!wxFileExists(mainCommand)) {
+            LSP_WARNING() << "Disabling lsp:" << entry.GetName() << endl;
+            LSP_WARNING() << lspCommand[0] << ". No such file" << endl;
+            LanguageServerConfig::Get().GetServer(entry.GetName()).SetEnabled(false);
+            LanguageServerConfig::Get().Save();
+            return;
+        }
     }
+
     LSP_DEBUG() << "Starting lsp:";
     LSP_DEBUG() << "Connection string:" << entry.GetConnectionString();
 

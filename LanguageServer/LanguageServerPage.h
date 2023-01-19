@@ -13,6 +13,7 @@ public:
 
     wxArrayString GetLanguages() const;
     LanguageServerEntry GetData() const;
+    bool ValidateData(wxString* message) const;
 
 protected:
     void OnBrowseWD(wxCommandEvent& event) override;

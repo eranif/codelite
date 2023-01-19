@@ -105,6 +105,7 @@ public:
     bool isString() const;
     bool isNumber() const;
     bool isArray() const;
+    bool isObject() const;
 
     wxString format(bool formatted = true) const;
     /**
@@ -165,10 +166,11 @@ public:
     JSONItem& addProperty(const wxString& name, cJSON* pjson);
     JSONItem& addProperty(const wxString& name, const wxFileName& filename);
     JSONItem& addProperty(const wxString& name, const std::vector<int>& arr_int);
-    template<class T = int>
-    typename std::enable_if<!std::is_same<wxVector<T>, std::vector<T>>::value,
-                            JSONItem&>::type addProperty(const wxString& name, const wxVector<T>& arr_int) {
-	return addProperty(name, std::vector<T>(arr_int.begin(), arr_int.end()));
+    template <class T = int>
+    typename std::enable_if<!std::is_same<wxVector<T>, std::vector<T>>::value, JSONItem&>::type
+    addProperty(const wxString& name, const wxVector<T>& arr_int)
+    {
+        return addProperty(name, std::vector<T>(arr_int.begin(), arr_int.end()));
     }
 
 #if wxUSE_GUI

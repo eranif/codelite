@@ -115,6 +115,7 @@ LanguageServerSettingsDlgBase::LanguageServerSettingsDlgBase(wxWindow* parent, w
     m_buttonDelete->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnDeleteLSP, this);
     m_buttonDelete->Bind(wxEVT_UPDATE_UI, &LanguageServerSettingsDlgBase::OnDeleteLSPUI, this);
     m_button6->Bind(wxEVT_UPDATE_UI, &LanguageServerSettingsDlgBase::OnOKUI, this);
+    m_button6->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnButtonOK, this);
 }
 
 LanguageServerSettingsDlgBase::~LanguageServerSettingsDlgBase()
@@ -124,6 +125,7 @@ LanguageServerSettingsDlgBase::~LanguageServerSettingsDlgBase()
     m_buttonDelete->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnDeleteLSP, this);
     m_buttonDelete->Unbind(wxEVT_UPDATE_UI, &LanguageServerSettingsDlgBase::OnDeleteLSPUI, this);
     m_button6->Unbind(wxEVT_UPDATE_UI, &LanguageServerSettingsDlgBase::OnOKUI, this);
+    m_button6->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnButtonOK, this);
 }
 
 LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,

@@ -12,6 +12,7 @@ public:
     void Save();
 
 protected:
+    virtual void OnButtonOK(wxCommandEvent& event);
     virtual void OnScan(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
     virtual void OnDeleteLSP(wxCommandEvent& event);

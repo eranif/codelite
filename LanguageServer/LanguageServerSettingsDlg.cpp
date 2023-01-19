@@ -116,3 +116,17 @@ void LanguageServerSettingsDlg::DoScan()
         }
     }
 }
+void LanguageServerSettingsDlg::OnButtonOK(wxCommandEvent& event)
+{
+    // validate the data
+    for(size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
+        LanguageServerPage* page = dynamic_cast<LanguageServerPage*>(m_notebook->GetPage(i));
+        wxString message;
+        if(!page->ValidateData(&message)) {
+            ::wxMessageBox(message, "CodeLite", wxOK | wxCENTRE | wxICON_WARNING, this);
+            event.Skip(false);
+            return;
+        }
+    }
+    event.Skip();
+}

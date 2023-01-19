@@ -1,6 +1,7 @@
 #include "LanguageServerPage.h"
 
 #include "ColoursAndFontsManager.h"
+#include "JSON.h"
 #include "LSP/LanguageServerProtocol.h"
 #include "StringUtils.h"
 #include "globals.h"
@@ -102,4 +103,27 @@ void LanguageServerPage::OnBrowseWD(wxCommandEvent& event)
     if(new_path.IsEmpty() == false) {
         m_textCtrlWD->SetValue(new_path);
     }
+}
+
+bool LanguageServerPage::ValidateData(wxString* message) const
+{
+    // check that the "initializationOptions" are in the correct form
+    wxString init_options = m_stcInitOptions->GetText();
+    init_options.Trim().Trim(false);
+
+    if(init_options.empty()) {
+        return true;
+    }
+
+    JSON root{ init_options };
+    if(!root.isOk()) {
+        (*message) << m_textCtrlName->GetValue() << ": invalid JSON input in `initializationOptions`";
+        return false;
+    }
+
+    if(!root.toElement().isObject()) {
+        (*message) << m_textCtrlName->GetValue() << ": `initializationOptions` must be a JSON object";
+        return false;
+    }
+    return true;
 }

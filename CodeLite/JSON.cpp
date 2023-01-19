@@ -684,6 +684,14 @@ bool JSONItem::isArray() const
     return m_json->type == cJSON_Array;
 }
 
+bool JSONItem::isObject() const
+{
+    if(!m_json) {
+        return false;
+    }
+    return m_json->type == cJSON_Object;
+}
+
 bool JSONItem::isNumber() const
 {
     if(!m_json) {

@@ -69,6 +69,7 @@ protected:
     virtual void OnDeleteLSP(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteLSPUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxCheckBox* GetCheckBoxEnable() { return m_checkBoxEnable; }

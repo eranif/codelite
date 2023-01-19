@@ -88,7 +88,7 @@ void* ProcessReaderThread::Entry()
                                 e.SetOutput(buff);
                                 e.SetOutputRaw(raw_buff);
                                 e.SetProcess(m_process);
-                                m_notifiedWindow->AddPendingEvent(e);
+                                m_notifiedWindow->QueueEvent(e.Clone());
                             }
                             if(!buffErr.IsEmpty() && m_notifiedWindow) {
                                 // we got some data, send event to parent
@@ -96,7 +96,7 @@ void* ProcessReaderThread::Entry()
                                 e.SetOutput(buffErr);
                                 e.SetOutputRaw(raw_buff_err);
                                 e.SetProcess(m_process);
-                                m_notifiedWindow->AddPendingEvent(e);
+                                m_notifiedWindow->QueueEvent(e.Clone());
                             }
                         }
                     }

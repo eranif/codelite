@@ -650,15 +650,27 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 
 void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
 {
-    m_outputBuffer << event.GetString();
-    LSP_DEBUG() << "Received data from LSP:" << m_outputBuffer.size() << "bytes" << endl;
+    m_outputBuffer.append(event.GetStringRaw());
+    LSP_DEBUG() << "Received data from LSP server of size:" << m_outputBuffer.size() << "bytes" << endl;
 
     m_Queue.SetWaitingReponse(false);
-    while(true) {
+    while(!m_outputBuffer.empty()) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
         if(!json) {
             LOG_IF_TRACE { LSP_TRACE() << "Unable to read JSON payload" << endl; }
+            // for debugging purposes,
+            // once we exceeded 1MB of data, something is broken...
+            // dump the output buffer into a file and continue
+            // we only dump 3 files per CodeLite session
+            static size_t dumps_count = 0;
+            if(dumps_count < 3 && (m_outputBuffer.size() > (1024 * 1024 * 1024))) {
+                dumps_count++;
+                auto tmp_filename = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "cl_lsp", "txt");
+                FileUtils::WriteFileContent(tmp_filename, m_outputBuffer);
+                LSP_SYSTEM() << "Output buffer exceeds 1MB (" << m_outputBuffer.size() << "Bytes)" << endl;
+                LSP_SYSTEM() << "Dumped m_outputBuffer into:" << tmp_filename.GetFullPath() << endl;
+            }
             break;
         }
 

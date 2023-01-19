@@ -27,7 +27,7 @@ public:
 // socket based channel
 class ChannelSocket : public Channel
 {
-    wxString m_buffer;
+    std::string m_buffer;
     wxString m_ip;
     int m_port = -1;
     clSocketBase::Ptr_t client;

@@ -443,7 +443,6 @@ clProcessEvent& clProcessEvent::operator=(const clProcessEvent& src)
     clCommandEvent::operator=(src);
     m_process = src.m_process;
     m_output = src.m_output;
-    m_output_raw = src.m_output_raw;
     return *this;
 }
 

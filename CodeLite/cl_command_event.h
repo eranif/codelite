@@ -631,7 +631,6 @@ class IProcess;
 class WXDLLIMPEXP_CL clProcessEvent : public clCommandEvent
 {
     wxString m_output;
-    std::string m_output_raw;
     IProcess* m_process;
 
 public:
@@ -642,10 +641,10 @@ public:
     virtual wxEvent* Clone() const { return new clProcessEvent(*this); }
 
     void SetOutput(const wxString& output) { this->m_output = output; }
-    void SetOutputRaw(const std::string& output) { this->m_output_raw = output; }
     void SetProcess(IProcess* process) { this->m_process = process; }
     const wxString& GetOutput() const { return m_output; }
-    const std::string& GetOutputRaw() const { return m_output_raw; }
+    void SetOutputRaw(const std::string& output) { SetStringRaw(output); }
+    const std::string& GetOutputRaw() const { return GetStringRaw(); }
     IProcess* GetProcess() { return m_process; }
 };
 

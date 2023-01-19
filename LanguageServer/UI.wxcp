@@ -940,12 +940,6 @@
 											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
-										}, {
-											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
-											"m_eventClass":	"wxCommandEvent",
-											"m_functionNameAndSignature":	"OnButtonOK(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -1886,7 +1880,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Label:",
-															"m_value":	"initializationOptions"
+															"m_value":	"Initi options"
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",

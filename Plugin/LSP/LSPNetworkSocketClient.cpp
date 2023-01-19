@@ -95,5 +95,6 @@ void LSPNetworkSocketClient::OnSocketData(clCommandEvent& event)
     const wxString& dataRead = event.GetString();
     clCommandEvent evt(wxEVT_LSP_NET_DATA_READY);
     evt.SetString(dataRead);
+    evt.SetStringRaw(dataRead.ToStdString());
     AddPendingEvent(evt);
 }

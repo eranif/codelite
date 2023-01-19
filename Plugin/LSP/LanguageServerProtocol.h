@@ -61,7 +61,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     wxString m_initOptions;
     FileContentTracker m_filesTracker;
     wxStringSet_t m_languages;
-    wxString m_outputBuffer;
+    std::string m_outputBuffer;
     wxString m_rootFolder;
     clEnvList_t m_env;
     LSPStartupInfo m_startupInfo;

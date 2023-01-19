@@ -69,10 +69,17 @@ public:
      * @brief set the file content (replacing it)
      */
     static bool WriteFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv = wxConvUTF8);
+
+    /**
+     * @brief write file content, raw buffer
+     */
+    static bool WriteFileContentRaw(const wxFileName& fn, const std::string& content);
+
     /**
      * @brief append content to end of the file
      */
     static bool AppendFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv = wxConvUTF8);
+
     /**
      * @brief open file explorer at given path
      */

@@ -198,6 +198,7 @@ void UnixProcess::StartReaderThread()
                 } else if(!content.empty()) {
                     clProcessEvent evt(wxEVT_ASYNC_PROCESS_OUTPUT);
                     evt.SetOutput(wxString() << content);
+                    evt.SetOutputRaw(content);
                     process->m_owner->AddPendingEvent(evt);
                 }
                 content.clear();
@@ -208,6 +209,7 @@ void UnixProcess::StartReaderThread()
                 } else if(!content.empty()) {
                     clProcessEvent evt(wxEVT_ASYNC_PROCESS_STDERR);
                     evt.SetOutput(wxString() << content);
+                    evt.SetOutputRaw(content);
                     process->m_owner->AddPendingEvent(evt);
                 }
             }

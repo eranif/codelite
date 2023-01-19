@@ -32,7 +32,7 @@ public:
      * @brief return the **first** JSON payload from the network buffer
      * @param network_buffer - network buffer (may contain multiple messages)
      */
-    static std::unique_ptr<JSON> GetJSONPayload(wxString& network_buffer);
+    static std::unique_ptr<JSON> GetJSONPayload(std::string& network_buffer);
 
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Message*>(this)); }
 };

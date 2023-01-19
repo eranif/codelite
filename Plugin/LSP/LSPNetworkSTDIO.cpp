@@ -35,9 +35,9 @@ void LSPNetworkSTDIO::Send(const std::string& data)
 {
     if(m_server) {
         m_server->Write(data);
-        LSP_DEBUG() << data << endl;
+        LSP_TRACE() << data << endl;
     } else {
-        LSP_WARNING() << "LSPNetworkSTDIO: no process !?" << endl;
+        LSP_WARNING() << "LSPNetworkSTDIO.Send(): no process !?" << endl;
     }
 }
 
@@ -47,7 +47,7 @@ void LSPNetworkSTDIO::OnProcessTerminated(clProcessEvent& event)
 {
     wxDELETE(m_server);
     LSP_DEBUG() << "LSPNetworkSTDIO: program terminated:" << m_startupInfo.GetLspServerCommand() << endl;
-    LSP_DEBUG() << "LSPNetworkSTDIO:" << event.GetString() << endl;
+    LSP_TRACE() << "LSPNetworkSTDIO:" << event.GetString() << endl;
     clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     AddPendingEvent(evt);
 }
@@ -55,17 +55,18 @@ void LSPNetworkSTDIO::OnProcessTerminated(clProcessEvent& event)
 void LSPNetworkSTDIO::OnProcessOutput(clProcessEvent& event)
 {
     const wxString& dataRead = event.GetOutput();
+    const std::string& dataReadRaw = event.GetOutputRaw();
     clCommandEvent evt(wxEVT_LSP_NET_DATA_READY);
     evt.SetString(dataRead);
+    evt.SetStringRaw(dataReadRaw);
 
-    LSP_DEBUG() << dataRead << endl;
-
+    LSP_TRACE() << dataRead << endl;
     AddPendingEvent(evt);
 }
 
 void LSPNetworkSTDIO::OnProcessStderr(clProcessEvent& event)
 {
-    LSP_DEBUG() << "[**STDERR**]" << event.GetOutput() << endl;
+    LSP_TRACE() << "[**STDERR**]" << event.GetOutput() << endl;
 }
 
 void LSPNetworkSTDIO::DoStartLocalProcess()

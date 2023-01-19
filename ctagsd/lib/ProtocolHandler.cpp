@@ -84,7 +84,8 @@ void filter_non_important_files(wxArrayString& files, const CTagsdSettings& sett
 {
     wxArrayString tmparr;
     tmparr.reserve(files.size());
-
+    
+    
     // filter non c/c++ files
     wxArrayString ignore_spec = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
     auto should_skip_file = [&](const wxString& file_full_path) -> bool {
@@ -318,8 +319,7 @@ std::vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const w
         while(!Q.empty()) {
             // pop the front of queue
             wxString file = Q.front();
-            Q.front() = Q.back();
-            Q.pop_back();
+            Q.erase(Q.begin());
 
             // sanity
             if(m_parsed_files_info.count(file) == 0 // no info for this file

@@ -151,7 +151,8 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     , m_isPerspectiveLoaded(false)
 {
     // setup custom logger for this module
-    wxFileName logfile(clStandardPaths::Get().GetUserDataDir(), "debug-adapter-client.log");
+    wxFileName logfile(clStandardPaths::Get().GetUserDataDir(), "dap.log");
+    logfile.AppendDir("logs");
 
     LOG.Open(logfile);
     LOG.SetCurrentLogLevel(FileLogger::Dbg);

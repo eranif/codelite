@@ -285,9 +285,9 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     wxString basepath;
     if(!event.GetBuildDir().empty()) {
         basepath = event.GetBuildDir();
-    }
-
-    if(basepath.empty() && !m_cargoTomlFile.FileExists()) {
+        clDEBUG() << "Build root dir is set to:" << event.GetBuildDir() << endl;
+    } else if(m_cargoTomlFile.FileExists()) {
+        clDEBUG() << "Build root dir is set to Cargo.toml path:" << m_cargoTomlFile.GetPath() << endl;
         basepath = m_cargoTomlFile.GetPath();
     }
 

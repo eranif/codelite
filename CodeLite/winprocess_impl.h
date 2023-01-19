@@ -30,6 +30,7 @@
 #include "asyncprocess.h"
 #include "codelite_exports.h"
 #include "wx/msw/wrapwin.h" // includes windows.h
+
 #include <thread>
 #include <unordered_set>
 #include <wx/string.h>
@@ -47,11 +48,11 @@ class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
 
 protected:
     void StartReaderThread();
-    bool DoReadFromPipe(HANDLE pipe, wxString& buff);
+    bool DoReadFromPipe(HANDLE pipe, wxString& buff, std::string& raw_buff);
 
 public:
     WinProcessImpl(wxEvtHandler* parent);
-    virtual ~WinProcessImpl();
+    ~WinProcessImpl() override;
 
     // Create process asynchronously and return a process object
     static IProcess* Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags = IProcessCreateDefault,
@@ -66,24 +67,24 @@ public:
      * @param buff check the buffer when true is returned
      * @return return true on success or timeout, flase otherwise, incase of false the reader thread will terminate
      */
-    virtual bool Read(wxString& buff, wxString& buffErr);
+    bool Read(wxString& buff, wxString& buffErr, std::string& raw_buff, std::string& raw_buff_err) override;
 
     // Write to the process stdin
-    virtual bool Write(const wxString& buff);
-    virtual bool Write(const std::string& buff);
-    virtual bool WriteRaw(const wxString& buff);
-    virtual bool WriteRaw(const std::string& buff);
-    virtual bool WriteToConsole(const wxString& buff);
+    bool Write(const wxString& buff) override;
+    bool Write(const std::string& buff) override;
+    bool WriteRaw(const wxString& buff) override;
+    bool WriteRaw(const std::string& buff) override;
+    bool WriteToConsole(const wxString& buff) override;
 
     // Return true if the process is still alive
-    virtual bool IsAlive();
+    bool IsAlive() override;
 
     // Clean the process resources and kill the process if it is
     // still alive
-    virtual void Cleanup();
-    virtual void Terminate();
-    virtual void Detach();
-    virtual void Signal(wxSignal sig);
+    void Cleanup() override;
+    void Terminate() override;
+    void Detach() override;
+    void Signal(wxSignal sig) override;
 
 private:
     // Creating process related handles

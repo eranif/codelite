@@ -435,12 +435,13 @@ WinProcessImpl::WinProcessImpl(wxEvtHandler* parent)
 
 WinProcessImpl::~WinProcessImpl() { Cleanup(); }
 
-bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
+bool WinProcessImpl::Read(wxString& buff, wxString& buffErr, std::string& raw_buff, std::string& raw_buff_err)
 {
-    DWORD le1(-1);
-    DWORD le2(-1);
-    buff.Clear();
-    buffErr.Clear();
+    DWORD le1 = wxNOT_FOUND;
+    DWORD le2 = wxNOT_FOUND;
+
+    buff.clear();
+    buffErr.clear();
 
     // Sanity
     if(!IsRedirect()) {
@@ -448,20 +449,29 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
     }
 
     // Read data from STDOUT and STDERR
-    if(!DoReadFromPipe(hChildStderrRdDup, ((m_flags & IProcessStderrEvent) ? buffErr : buff))) {
-        le2 = GetLastError();
+    if(m_flags & IProcessStderrEvent) {
+        // we want separate stderr events
+        if(!DoReadFromPipe(hChildStderrRdDup, buffErr, raw_buff_err)) {
+            le2 = GetLastError();
+        }
+    } else {
+        if(!DoReadFromPipe(hChildStderrRdDup, buff, raw_buff)) {
+            le2 = GetLastError();
+        }
     }
 
-    if(!DoReadFromPipe(hChildStdoutRdDup, buff)) {
+    // read stdout
+    if(!DoReadFromPipe(hChildStdoutRdDup, buff, raw_buff)) {
         le1 = GetLastError();
     }
+
     if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
         if(IsAlive()) {
             wxThread::Sleep(1);
             return true;
         }
     }
-    bool success = !buff.IsEmpty() || !buffErr.IsEmpty();
+    bool success = !buff.empty() || !buffErr.empty();
     if(!success) {
         DWORD dwExitCode;
         if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
@@ -564,7 +574,7 @@ void WinProcessImpl::StartReaderThread()
     m_thr->Start();
 }
 
-bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
+bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff, std::string& raw_buff)
 {
     DWORD dwRead = 0;
     DWORD dwMode;
@@ -581,6 +591,8 @@ bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
         if(bRes && (dwRead > 0)) {
             wxString tmpBuff;
             tmpBuff.reserve(dwRead * 2); // make enough room for the conversion
+            raw_buff.append(m_buffer, dwRead);
+
             // Success read
             tmpBuff = wxString(m_buffer, wxConvUTF8, dwRead);
             if(tmpBuff.IsEmpty() && dwRead > 0) {

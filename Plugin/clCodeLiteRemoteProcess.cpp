@@ -74,7 +74,10 @@ public:
     void Detach() override {}
 
     // Read from process stdout - return immediately if no data is available
-    bool Read(wxString& buff, wxString& buffErr) override { return false; }
+    bool Read(wxString& buff, wxString& buffErr, std::string& raw_buff, std::string& raw_buff_err) override
+    {
+        return false;
+    }
 
     // Write to the process stdin
     // This version add LF to the buffer
@@ -687,10 +690,11 @@ bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& work
 
     // read
     wxString buff_out, buff_err;
+    std::string raw_buff, raw_buff_err;
     m_outputRead.clear();
 
     wxString complete_output;
-    while(m_process->Read(buff_out, buff_err)) {
+    while(m_process->Read(buff_out, buff_err, raw_buff, raw_buff_err)) {
         m_outputRead << buff_out;
         size_t where = m_outputRead.find(msg_terminator);
         if(where == wxString::npos) {

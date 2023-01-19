@@ -55,6 +55,7 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_oldName = src.m_oldName;
     m_lineNumber = src.m_lineNumber;
     m_selected = src.m_selected;
+    m_stringRaw = src.m_stringRaw;
 
     // Copy wxCommandEvent members here
     m_eventType = src.m_eventType;
@@ -442,6 +443,7 @@ clProcessEvent& clProcessEvent::operator=(const clProcessEvent& src)
     clCommandEvent::operator=(src);
     m_process = src.m_process;
     m_output = src.m_output;
+    m_output_raw = src.m_output_raw;
     return *this;
 }
 

@@ -152,6 +152,7 @@ protected:
     bool m_allowed;
     int m_lineNumber;
     bool m_selected;
+    std::string m_stringRaw;
 
 public:
     clCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -219,6 +220,8 @@ public:
     const wxSharedPtr<wxClientData>& GetPtr() const { return m_ptr; }
     const wxArrayString& GetStrings() const { return m_strings; }
     wxArrayString& GetStrings() { return m_strings; }
+    const std::string& GetStringRaw() const { return m_stringRaw; }
+    void SetStringRaw(const std::string& str) { m_stringRaw = str; }
 };
 
 typedef void (wxEvtHandler::*clCommandEventFunction)(clCommandEvent&);
@@ -628,6 +631,7 @@ class IProcess;
 class WXDLLIMPEXP_CL clProcessEvent : public clCommandEvent
 {
     wxString m_output;
+    std::string m_output_raw;
     IProcess* m_process;
 
 public:
@@ -638,8 +642,10 @@ public:
     virtual wxEvent* Clone() const { return new clProcessEvent(*this); }
 
     void SetOutput(const wxString& output) { this->m_output = output; }
+    void SetOutputRaw(const std::string& output) { this->m_output_raw = output; }
     void SetProcess(IProcess* process) { this->m_process = process; }
     const wxString& GetOutput() const { return m_output; }
+    const std::string& GetOutputRaw() const { return m_output_raw; }
     IProcess* GetProcess() { return m_process; }
 };
 

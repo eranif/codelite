@@ -26,7 +26,7 @@
 class wxEvtHandler;
 class IProcess;
 
-//#include "asyncprocess.h"
+// #include "asyncprocess.h"
 #include "asyncprocess.h"
 
 #include "StringUtils.h"
@@ -316,7 +316,9 @@ void IProcess::WaitForTerminate(wxString& output)
     if(IsRedirect()) {
         wxString buff;
         wxString buffErr;
-        while(Read(buff, buffErr)) {
+        std::string raw_buff;
+        std::string raw_buff_err;
+        while(Read(buff, buffErr, raw_buff, raw_buff_err)) {
             output << buff;
             if(!buff.IsEmpty() && !buffErr.IsEmpty()) {
                 output << "\n";

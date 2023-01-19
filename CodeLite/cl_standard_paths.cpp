@@ -24,7 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_standard_paths.h"
+
+#include "fileutils.h"
+
 #include <wx/datetime.h>
+#include <wx/dir.h>
+#include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
@@ -59,6 +64,44 @@ clStandardPaths& clStandardPaths::Get()
     return codelitePaths;
 }
 
+#ifdef __WXMAC__
+namespace
+{
+void copy_directory(const wxString& from, const wxString& to)
+{
+    if(!wxDirExists(from)) {
+        return;
+    }
+
+    wxString source_dir = from;
+    wxString target_dir = to;
+    if(!source_dir.EndsWith("/")) {
+        source_dir << "/";
+    }
+
+    if(!target_dir.EndsWith("/")) {
+        target_dir << "/";
+    }
+
+    wxDir dir(source_dir);
+    wxString filename;
+    bool bla = dir.GetFirst(&filename);
+    if(bla) {
+        do {
+            if(wxDirExists(source_dir + filename)) {
+                // a directory
+                wxFileName::Mkdir(target_dir + filename, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+                copy_directory(source_dir + filename, target_dir + filename);
+            } else {
+                // a file, copy it
+                wxCopyFile(source_dir + filename, target_dir + filename);
+            }
+        } while(dir.GetNext(&filename));
+    }
+}
+} // namespace
+
+#endif
 wxString clStandardPaths::GetUserDataDir() const
 {
     // If the user has provided an alternative datadir, use it
@@ -67,21 +110,35 @@ wxString clStandardPaths::GetUserDataDir() const
     }
 
 #ifdef __WXGTK__
-
 #ifndef NDEBUG
-
     // Debug mode
     wxFileName fn(wxStandardPaths::Get().GetUserDataDir());
     fn.SetFullName(fn.GetFullName() + "-dbg");
     return fn.GetFullPath();
-
 #else
     // Release mode
     return wxStandardPaths::Get().GetUserDataDir();
-
 #endif
-#else // Windows / OSX
+#elif defined(__WXMSW__) // Windows / OSX
+    // %APPDATA%\CodeLite
     return wxStandardPaths::Get().GetUserDataDir();
+#else
+    // use ~/.codelite on macOS as well
+    wxFileName path{ wxGetHomeDir(), wxEmptyString };
+    path.AppendDir(".codelite");
+
+    // upgrade path
+    static bool upgrade_needed = true;
+    if(upgrade_needed) {
+        upgrade_needed = false;
+
+        if(wxFileName::DirExists(wxStandardPaths::Get().GetUserDataDir()) && !path.DirExists()) {
+            // we have an old setting directory but not a new one
+            // copy the content
+            copy_directory(wxStandardPaths::Get().GetUserDataDir(), path.GetPath());
+        }
+    }
+    return path.GetFullPath();
 #endif
 }
 

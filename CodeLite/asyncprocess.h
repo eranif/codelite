@@ -148,8 +148,9 @@ public:
     // to know about its termination
     virtual void Detach() = 0;
 
-    // Read from process stdout - return immediately if no data is available
-    virtual bool Read(wxString& buff, wxString& buffErr) = 0;
+    /// Read from process stdout - return immediately if no data is available
+    /// we return both converted buffer as string and the raw buffer (unconverted)
+    virtual bool Read(wxString& buff, wxString& buffErr, std::string& raw_buff, std::string& raw_buffErr) = 0;
 
     // Write to the process stdin
     // This version add LF to the buffer

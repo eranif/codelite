@@ -7,6 +7,4 @@ Debug Adapter Client
 
 others:
 ----
-- msw: use system sqlite3 instead of built-in one
-- remove all wxs code from CodeLite
 - cc box: display the tooltip window after a small delay

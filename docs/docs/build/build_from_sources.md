@@ -26,7 +26,7 @@ cd wx-config-msys2
 mkdir build-release
 cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles"
-mingw32-make -j$(nproc)
+mingw32-make -j$(nproc) install
 ```
 
 - Build CodeLite (in `Release` mode):

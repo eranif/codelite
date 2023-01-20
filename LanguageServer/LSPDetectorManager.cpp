@@ -3,7 +3,6 @@
 #include "LSPCTagsdDetector.hpp"
 #include "LSPClangdDetector.hpp"
 #include "LSPPythonDetector.hpp"
-#include "LSPRlsDetector.hpp"
 #include "LSPRustAnalyzerDetector.hpp"
 #include "LSPTypeScriptDetector.hpp"
 #include "LanguageServerConfig.h"
@@ -15,7 +14,6 @@ LSPDetectorManager::LSPDetectorManager()
 {
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPClangdDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPPythonDetector()));
-    m_detectors.push_back(LSPDetector::Ptr_t(new LSPRlsDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPRustAnalyzerDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPTypeScriptDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPCTagsdDetector()));

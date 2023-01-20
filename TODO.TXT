@@ -7,4 +7,4 @@ Debug Adapter Client
 
 others:
 ----
-- cc box: display the tooltip window after a small delay
+

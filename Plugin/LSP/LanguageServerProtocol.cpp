@@ -171,7 +171,7 @@ std::set<wxString> LanguageServerProtocol::GetSupportedLanguages()
              "razor",      "ruby",       "rust",        "scss",          "sass",
              "scala",      "shaderlab",  "shellscript", "sql",           "swift",
              "typescript", "tex",        "vb",          "xml",           "xsl",
-             "yaml" };
+             "cmake",      "yaml" };
 }
 
 void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
@@ -659,17 +659,21 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
         if(!json) {
             LOG_IF_TRACE { LSP_TRACE() << "Unable to read JSON payload" << endl; }
-            // for debugging purposes,
-            // once we exceeded 1MB of data, something is broken...
-            // dump the output buffer into a file and continue
-            // we only dump 3 files per CodeLite session
-            static size_t dumps_count = 0;
-            if(dumps_count < 3 && (m_outputBuffer.size() > (1024 * 1024 * 1024))) {
-                dumps_count++;
-                auto tmp_filename = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "cl_lsp", "txt");
-                FileUtils::WriteFileContent(tmp_filename, m_outputBuffer);
-                LSP_SYSTEM() << "Output buffer exceeds 1MB (" << m_outputBuffer.size() << "Bytes)" << endl;
-                LSP_SYSTEM() << "Dumped m_outputBuffer into:" << tmp_filename.GetFullPath() << endl;
+            LOG_IF_DEBUG
+            {
+                // for debugging purposes,
+                // once we exceeded 1MB of data, something is broken...
+                // dump the output buffer into a file and continue
+                // we only dump 3 files per CodeLite session
+                static size_t dumps_count = 0;
+                if(dumps_count < 3 && (m_outputBuffer.size() > (1024 * 1024 * 1024))) {
+                    dumps_count++;
+                    auto tmp_filename =
+                        FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "cl_lsp", "txt");
+                    FileUtils::WriteFileContent(tmp_filename, m_outputBuffer);
+                    LSP_SYSTEM() << "Output buffer exceeds 1MB (" << m_outputBuffer.size() << "Bytes)" << endl;
+                    LSP_SYSTEM() << "Dumped m_outputBuffer into:" << tmp_filename.GetFullPath() << endl;
+                }
             }
             break;
         }

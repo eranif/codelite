@@ -2,11 +2,11 @@
 #define __LanguageServerPlugin__
 
 #include "CompileCommandsGenerator.h"
-#include "LSPDetector.hpp"
 #include "LanguageServerCluster.h"
 #include "LanguageServerLogView.h"
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
+#include "detectors/LSPDetector.hpp"
 #include "plugin.h"
 
 class LanguageServerPlugin : public IPlugin

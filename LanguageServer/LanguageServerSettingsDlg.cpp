@@ -1,11 +1,11 @@
 #include "LanguageServerSettingsDlg.h"
 
-#include "LSPDetector.hpp"
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerEntry.h"
 #include "LanguageServerPage.h"
 #include "NewLanguageServerDlg.h"
+#include "detectors/LSPDetector.hpp"
 #include "globals.h"
 
 #include <vector>

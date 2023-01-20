@@ -1,7 +1,7 @@
 #ifndef LSPDETECTORMANAGER_HPP
 #define LSPDETECTORMANAGER_HPP
 
-#include "LSPDetector.hpp"
+#include "detectors/LSPDetector.hpp"
 
 #include <vector>
 

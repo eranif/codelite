@@ -1,4 +1,3 @@
-
 # set the plugin name here
 set(PLUGIN_NAME "LanguageServer")
 
@@ -12,7 +11,7 @@ include("${wxWidgets_USE_FILE}")
 
 # Include paths
 include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
-                    "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
+                    "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces" "${CL_SRC_ROOT}/LanguageServer")
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
@@ -33,7 +32,7 @@ if(APPLE)
     add_definitions(-fPIC)
 endif()
 
-file(GLOB SRCS "*.cpp")
+file(GLOB SRCS "*.cpp" "detectors/*.cpp")
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})

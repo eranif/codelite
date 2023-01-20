@@ -1654,7 +1654,7 @@
 														}, {
 															"type":	"bool",
 															"m_label":	"Selected",
-															"m_value":	false
+															"m_value":	true
 														}, {
 															"type":	"bool",
 															"m_label":	"Null Page",

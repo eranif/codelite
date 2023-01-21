@@ -38,6 +38,15 @@ struct SymbolClientData : public wxClientData {
     LSP::Location location;
 };
 
+bool compare_file_name(const wxString& a, const wxString& b)
+{
+#ifdef __WXMSW__
+    return a.CmpNoCase(b) == 0;
+#else
+    return a.Cmp(b) == 0;
+#endif
+}
+
 // JSON config helpers
 JSONItem json_get_server_config(JSON* root, const wxString& server_name)
 {
@@ -818,6 +827,7 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
     event.Skip();
     IEditor* editor = FindEditor(event);
     if(editor) {
+        LSP_DEBUG() << "Setting diagnostics for file:" << editor->GetRemotePathOrLocal() << endl;
         // always clear old markers
         editor->DelAllCompilerMarkers();
 
@@ -825,6 +835,8 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
             // LSP uses 1 based line numbers
             editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), d.GetMessage());
         }
+    } else {
+        LSP_DEBUG() << "Setting diagnostics: could not locate editor for file:" << event.GetFileName() << endl;
     }
 }
 
@@ -899,7 +911,8 @@ IEditor* LanguageServerCluster::FindEditor(const wxString& path) const
     IEditor::List_t all_editors;
     clGetManager()->GetAllEditors(all_editors);
     for(IEditor* editor : all_editors) {
-        if(editor->GetFileName().GetFullPath() == path || editor->GetRemotePath() == path) {
+        if(compare_file_name(editor->GetFileName().GetFullPath(), path) ||
+           compare_file_name(editor->GetRemotePath(), path)) {
             return editor;
         }
     }

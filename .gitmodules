@@ -3,7 +3,7 @@
 	url = https://github.com/eranif/ctags
 [submodule "wxdap"]
 	path = wxdap
-	url = https://github.com/eranif/dbgd
+	url = https://github.com/eranif/wxdap
 [submodule "wx-config-msys2"]
 	path = wx-config-msys2
 	url = https://github.com/eranif/wx-config-msys2.git

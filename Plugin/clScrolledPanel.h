@@ -147,7 +147,7 @@ public:
     /**
      * @brief scroll to set 'firstColumn' as the first column in the view
      */
-    virtual void ScollToColumn(int firstColumn) { wxUnusedVar(firstColumn); }
+    virtual void ScrollToColumn(int firstColumn) { wxUnusedVar(firstColumn); }
 
     /**
      * @brief called by the scrolled window whenver a key is down

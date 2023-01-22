@@ -208,7 +208,7 @@ public:
     clColours& GetColours() { return m_colours; }
 
     // Horizontal scrolling implementation
-    void ScollToColumn(int firstColumn);
+    void ScrollToColumn(int firstColumn);
     void ScrollColumns(int steps, wxDirection direction);
 
     //===-----------------------------------------

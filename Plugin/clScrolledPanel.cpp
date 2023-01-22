@@ -144,7 +144,7 @@ void clScrolledPanel::OnHScroll(wxScrollEvent& event)
     int newColumn = wxNOT_FOUND;
     if(event.GetEventType() == wxEVT_SCROLL_THUMBTRACK) {
         newColumn = event.GetPosition();
-        ScollToColumn(newColumn);
+        ScrollToColumn(newColumn);
 
     } else {
         int steps = wxNOT_FOUND;
@@ -211,7 +211,7 @@ void clScrolledPanel::OnVScroll(wxScrollEvent& event)
 
 #if !wxUSE_NATIVE_SCROLLBAR
 void clScrolledPanel::OnVCustomScroll(clScrollEvent& event) { ScrollToRow(event.GetPosition()); }
-void clScrolledPanel::OnHCustomScroll(clScrollEvent& event) { ScollToColumn(event.GetPosition()); }
+void clScrolledPanel::OnHCustomScroll(clScrollEvent& event) { ScrollToColumn(event.GetPosition()); }
 #endif
 
 void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSize, int pageSize)

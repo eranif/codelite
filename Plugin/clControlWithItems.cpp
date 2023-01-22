@@ -397,7 +397,7 @@ void clControlWithItems::OnSize(wxSizeEvent& event)
     Refresh();
 }
 
-void clControlWithItems::ScollToColumn(int firstColumn)
+void clControlWithItems::ScrollToColumn(int firstColumn)
 {
     m_firstColumn = firstColumn;
     UpdateScrollBar();

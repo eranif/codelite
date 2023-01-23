@@ -746,6 +746,10 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
         return;
     }
 
+    // horizontal scrolling using trackpad?
+    bool trackpad_horiz_scrolling = event.GetWheelAxis() == wxMOUSE_WHEEL_HORIZONTAL;
+
+    // we also are checking of the scroll was done while on top of the horizontal scrollbar
     wxPoint screenPos = wxGetMousePosition();
     bool hscrolling = false;
     if(GetHScrollBar() && GetHScrollBar()->IsShown()) {
@@ -753,10 +757,11 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
         hscrolling = hscroll.Contains(screenPos);
     }
 
-    if(hscrolling) {
+    if(hscrolling || trackpad_horiz_scrolling) {
         // horizontal
-        bool scrolling_right = !(event.GetWheelRotation() > 0);
-        ScrollColumns(5, scrolling_right ? wxRIGHT : wxLEFT);
+        bool scrolling_left = !(event.GetWheelRotation() > 0);
+        // do 10 steps otherwise it seems very slow...
+        ScrollColumns(10, scrolling_left ? wxLEFT : wxRIGHT);
         UpdateScrollBar();
     } else {
 

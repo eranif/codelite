@@ -26,9 +26,10 @@
 #ifndef CLSTANDARDPATHS_H
 #define CLSTANDARDPATHS_H
 
-#include <wx/string.h>
-#include "codelite_exports.h"
 #include "cl_defs.h"
+#include "codelite_exports.h"
+
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL clStandardPaths
 {
@@ -46,13 +47,13 @@ public:
      * @brief remove the temp directory and its content
      */
     void RemoveTempDir();
-    
+
     /**
      * @brief set an alternative data dir
      * The default data dir is set to the installation path on Windows or /usr/share/codelite on Linux systems
      */
     void SetDataDir(const wxString& dataDir) { this->m_dataDir = dataDir; }
-    
+
     /**
      * @brief return the user local data folder. Usually this is ~/.codelite or %APPDATA%\CodeLite
      * However, under Linux, this function will return ~/.codelite-dbg to avoid clobbering the release config
@@ -94,9 +95,10 @@ public:
     /**
      * @brief return the full path for an executable. This function
      * usually returns: GetBinFolder() + "/" + toolname + ".exe"
+     * @param unixStylePath the path returned is always using forward slash `/`
      * @note the .exe and "/" are platform dependant
      */
-    wxString GetBinaryFullPath(const wxString& toolname) const;
+    wxString GetBinaryFullPath(const wxString& toolname, bool unixStylePath = false) const;
 
     /**
      * @brief get CodeLite executale path

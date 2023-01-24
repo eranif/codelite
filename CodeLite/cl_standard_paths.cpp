@@ -180,14 +180,19 @@ wxString clStandardPaths::GetBinFolder() const
     return fnExe.GetPath();
 }
 
-wxString clStandardPaths::GetBinaryFullPath(const wxString& toolname) const
+wxString clStandardPaths::GetBinaryFullPath(const wxString& toolname, bool unixStylePath) const
 {
     wxFileName binary(GetBinFolder(), toolname);
     binary.SetExt(wxEmptyString);
 #ifdef __WXMSW__
     binary.SetExt("exe");
 #endif
-    return binary.GetFullPath();
+
+    wxString fullpath = binary.GetFullPath();
+    if(unixStylePath) {
+        fullpath.Replace("\\", "/");
+    }
+    return fullpath;
 }
 
 wxString clStandardPaths::GetLexersDir() const

@@ -50,6 +50,10 @@ public:
 
     void GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded = true) const;
     void GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded = true) const;
+
+    clRowEntry* GetNextVisibleItem(clRowEntry* from) const;
+    clRowEntry* GetPrevVisibleItem(clRowEntry* from) const;
+
     wxTreeItemId AddRoot(const wxString& text, int image, int selImage, wxTreeItemData* data);
     wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage,
                             wxTreeItemData* data);

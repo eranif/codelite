@@ -628,3 +628,19 @@ clRowEntry* clTreeCtrlModel::GetLastVisibleItem() const
     }
     return item;
 }
+
+clRowEntry* clTreeCtrlModel::GetNextVisibleItem(clRowEntry* from) const
+{
+    if(!from) {
+        return nullptr;
+    }
+    return from->GetNextVisibile();
+}
+
+clRowEntry* clTreeCtrlModel::GetPrevVisibleItem(clRowEntry* from) const
+{
+    if(!from) {
+        return nullptr;
+    }
+    return from->GetPrevVisibile();
+}

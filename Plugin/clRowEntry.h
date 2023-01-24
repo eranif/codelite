@@ -117,6 +117,8 @@ public:
     wxRect GetCellRect(size_t col = 0) const;
     clRowEntry* GetNext() const { return m_next; }
     clRowEntry* GetPrev() const { return m_prev; }
+    clRowEntry* GetPrevVisibile() const;
+    clRowEntry* GetNextVisibile() const;
     void SetNext(clRowEntry* next) { this->m_next = next; }
     void SetPrev(clRowEntry* prev) { this->m_prev = prev; }
     void SetHighlightInfo(const clMatchResult& info) { m_higlightInfo = info; }

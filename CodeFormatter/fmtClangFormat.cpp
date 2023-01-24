@@ -12,9 +12,11 @@ fmtClangFormat::fmtClangFormat()
     SetConfigFilepath("$(WorkspacePath)/.clang-format");
 
     // local command
-    wxString clang_format_exe;
-    ThePlatform->WhichWithVersion("clang-format", { 20, 19, 18, 17, 16, 15, 14, 13, 12 }, &clang_format_exe);
+    wxString clang_format_exe = "clang-format";
+    bool enabeld =
+        ThePlatform->WhichWithVersion("clang-format", { 20, 19, 18, 17, 16, 15, 14, 13, 12 }, &clang_format_exe);
     SetCommand({ clang_format_exe, R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(enabeld);
 }
 
 fmtClangFormat::~fmtClangFormat() {}

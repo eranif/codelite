@@ -15,8 +15,9 @@ fmtYQ::fmtYQ()
     SetShortDescription(_("Yaml formatter"));
 
     wxString yq_exe = "yq";
-    ThePlatform->Which("yq", &yq_exe);
+    bool enabeld = ThePlatform->Which("yq", &yq_exe);
     SetCommand({ yq_exe, ".", R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(enabeld);
 }
 
 fmtYQ::~fmtYQ() {}

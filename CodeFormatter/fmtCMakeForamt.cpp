@@ -12,9 +12,10 @@ fmtCMakeForamt::fmtCMakeForamt()
     SetInplaceFormatter(true);
 
     // local command
-    wxString cmake_format;
-    ThePlatform->Which("cmake-format", &cmake_format);
+    wxString cmake_format = "cmake-format";
+    bool enabeld = ThePlatform->Which("cmake-format", &cmake_format);
     SetCommand({ cmake_format, R"#(--line-width=120 --tab-size=4 -i "$(CurrentFileFullPath)")#" });
+    SetEnabled(enabeld);
 }
 
 fmtCMakeForamt::~fmtCMakeForamt() {}

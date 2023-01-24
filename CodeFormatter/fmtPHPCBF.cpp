@@ -12,8 +12,9 @@ fmtPHPCBF::fmtPHPCBF()
     SetEnabled(false);
 
     wxString php_exe = "php";
-    ThePlatform->Which("php", &php_exe);
+    bool enabeld = ThePlatform->Which("php", &php_exe);
     SetCommand({ php_exe, "$(WorkspacePath)/vendor/bin/phpcbf", "-q", R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(enabeld);
 }
 
 fmtPHPCBF::~fmtPHPCBF() {}

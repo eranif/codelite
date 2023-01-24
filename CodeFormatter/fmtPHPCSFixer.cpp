@@ -13,9 +13,10 @@ fmtPHPCSFixer::fmtPHPCSFixer()
     SetConfigFilepath("$(WorkspacePath)/.php-cs-fixer.dist.php");
 
     wxString php_exe = "php";
-    ThePlatform->Which("php", &php_exe);
+    bool enabeld = ThePlatform->Which("php", &php_exe);
     SetCommand({ php_exe, "$(WorkspacePath)/tools/php-cs-fixer/vendor/bin/php-cs-fixer", "fix", "--quiet",
                  R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(enabeld);
 }
 
 fmtPHPCSFixer::~fmtPHPCSFixer() {}

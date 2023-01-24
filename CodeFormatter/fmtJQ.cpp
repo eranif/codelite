@@ -15,8 +15,9 @@ fmtJQ::fmtJQ()
     SetShortDescription(_("jq - a json formatter"));
 
     wxString jq_exe = "jq";
-    ThePlatform->Which("jq", &jq_exe);
+    bool enabeld = ThePlatform->Which("jq", &jq_exe);
     SetCommand({ jq_exe, ".", "-S", R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(enabeld);
 }
 
 fmtJQ::~fmtJQ() {}

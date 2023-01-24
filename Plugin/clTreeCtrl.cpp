@@ -759,8 +759,9 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
 
     if(hscrolling || trackpad_horiz_scrolling) {
         // horizontal
+        bool scrolling_left = !(event.GetWheelRotation() > 0);
         // do 10 steps otherwise it seems very slow...
-        ScrollColumns(10, event.GetWheelRotation() > 0 ? wxRIGHT : wxLEFT);
+        ScrollColumns(10, scrolling_left ? wxLEFT : wxRIGHT);
         UpdateScrollBar();
     } else {
 
@@ -798,43 +799,21 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
         } else {
             return;
         }
-
-        // lets first build the list of items that are currently displayed on the screen
-        size_t lines_to_scroll = std::abs((double)lines);
-        size_t max_lines_on_screen = GetNumLineCanFitOnScreen();
-        items.reserve(max_lines_on_screen);
-        items.push_back(GetFirstItemOnScreen());
-        for(size_t i = 0; i < max_lines_on_screen; ++i) {
-            auto item = m_model.GetNextVisibleItem(items.back());
-            if(!item) {
-                break;
-            }
-            items.push_back(item);
-        }
-
         if(event.GetWheelRotation() > 0) { // Scrolling up
-            // start popping items from the back of list, while adding new ones at the top of the list
-            for(size_t i = 0; i < lines_to_scroll; ++i) {
-                auto item = m_model.GetPrevVisibleItem(items.front());
-                if(!item) {
-                    break;
-                }
-                items.pop_back();
-                items.insert(items.begin(), item);
+            m_model.GetPrevItems(GetFirstItemOnScreen(), std::abs((double)lines), items, false);
+            if(items.empty()) {
+                return;
             }
+            SetFirstItemOnScreen(items.front()); // first item
+            UpdateScrollBar();
         } else {
-            // start popping items from the start of list, while adding new ones at the back
-            for(size_t i = 0; i < lines_to_scroll; ++i) {
-                auto item = m_model.GetNextVisibleItem(items.back());
-                if(!item) {
-                    break;
-                }
-                items.erase(items.begin());
-                items.push_back(item);
+            m_model.GetNextItems(GetFirstItemOnScreen(), std::abs((double)lines), items, false);
+            if(items.empty()) {
+                return;
             }
+            SetFirstItemOnScreen(items.back()); // the last item
+            UpdateScrollBar();
         }
-        SetFirstItemOnScreen(items.front()); // set the first item to be disaplyed, and refresh the view
-        UpdateScrollBar();
     }
     Refresh();
 }
@@ -1051,7 +1030,7 @@ bool clTreeCtrl::IsItemFullyVisible(clRowEntry* item) const
     // since we mainly ensure visibility on the Y axis, we need to make sure that the client rect
     // has the same width as the item rect (incase of scrollbars, item rect will be wider)
     clientRect.SetWidth(wxMax(itemRect.GetWidth(), clientRect.GetWidth()));
-    return clientRect.Intersects(itemRect);
+    return clientRect.Contains(itemRect);
 }
 
 void clTreeCtrl::EnsureItemVisible(clRowEntry* item, bool fromTop)
@@ -1259,54 +1238,6 @@ void clTreeCtrl::ScrollToRow(int firstLine)
     wxYieldIfNeeded();
 #endif
 }
-namespace
-{
-/**
- * @brief return the next visible item that is at most
- * `steps` away from `d`
- * @return the next (steps away from `d`) visible item or null
- */
-clRowEntry* get_next_visible_item_with_distance(clRowEntry* d, size_t steps)
-{
-    if(steps == 0)
-        return d;
-
-    auto return_item = d->GetNextVisibile();
-    steps--;
-    while(steps && return_item) {
-        auto tmp = return_item->GetNextVisibile();
-        if(!tmp) {
-            break;
-        }
-        wxSwap(tmp, return_item);
-        steps--;
-    }
-    return return_item;
-}
-
-/**
- * @brief return the previous visible item that is at most
- * `steps` away from `d`
- * @return the previous (steps away from `d`) visible item or null
- */
-clRowEntry* get_prev_visible_item_with_distance(clRowEntry* d, size_t steps)
-{
-    if(steps == 0)
-        return d;
-
-    auto return_item = d->GetPrevVisibile();
-    steps--;
-    while(steps && return_item) {
-        auto tmp = return_item->GetPrevVisibile();
-        if(!tmp) {
-            break;
-        }
-        wxSwap(tmp, return_item);
-        steps--;
-    }
-    return return_item;
-}
-} // namespace
 
 void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
 {
@@ -1330,113 +1261,17 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
             }
             nextSelection = wxTreeItemId(node);
         }
-        if(::wxGetKeyState(WXK_SHIFT) && HasStyle(wxTR_MULTIPLE)) {
-            m_model.AddSelection(nextSelection);
-        } else {
-            SelectItem(nextSelection);
-        }
-        EnsureItemVisible(m_model.ToPtr(nextSelection), fromTop);
-
     } else {
-        // lets first build the list of items that are currently displayed on the screen
-        clRowEntry::Vec_t items;
-        size_t max_items_on_screen = GetNumLineCanFitOnScreen();
-        items.reserve(max_items_on_screen);
-        items.push_back(GetFirstItemOnScreen());
-        for(int i = 0; i < max_items_on_screen; ++i) {
-            auto item = m_model.GetNextVisibleItem(items.back());
-            if(!item) {
-                break;
-            }
-            items.push_back(item);
-        }
-
-        CHECK_COND_RET(!items.empty());
-
-        // items contains all the displayed items
-        // try to move up / down and see if we are still
-        auto current_selection = m_model.ToPtr(GetFocusedItem());
-        if(current_selection == nullptr) {
-            current_selection = items[0];
-        }
-
-        auto next_selection = current_selection;
-        if(direction == wxDOWN) {
-            next_selection = get_next_visible_item_with_distance(next_selection, steps);
-        } else {
-            next_selection = get_prev_visible_item_with_distance(next_selection, steps);
-        }
-        CHECK_PTR_RET(next_selection);
-
-        auto iter = std::find_if(items.begin(), items.end(), [&](clRowEntry* d) { return d == next_selection; });
-        if(iter == items.end()) {
-            // Check to see if next_selection is within the visible items
-            // slide the window until we hit the selection
-            if(direction == wxDOWN) {
-                auto last_item = items.back();
-                while(last_item) {
-                    auto new_last_item = last_item->GetNextVisibile();
-                    if(!new_last_item)
-                        break;
-                    items.erase(items.begin());
-                    items.push_back(new_last_item);
-                    last_item = new_last_item;
-                    if(last_item == next_selection)
-                        // the selection is now visible
-                        break;
-                }
-                CHECK_PTR_RET(last_item);
-
-                // try to push the bottom item a little bit to the view
-                if(items.size() >= max_items_on_screen) {
-                    items.erase(items.begin());
-                    auto new_last_item = last_item->GetNextVisibile();
-                    if(new_last_item) {
-                        items.push_back(new_last_item);
-                    }
-                }
-
-            } else {
-                auto first_item = items.front();
-                while(first_item) {
-                    auto new_first_item = first_item->GetPrevVisibile();
-                    if(!new_first_item)
-                        break;
-                    items.pop_back();
-                    items.insert(items.begin(), new_first_item);
-                    first_item = new_first_item;
-                    if(first_item == next_selection)
-                        // the selection is now visible
-                        break;
-                }
-                CHECK_PTR_RET(first_item);
-            }
-        } else {
-            if(direction == wxDOWN && *iter == items.back()) {
-                if(items.size() >= max_items_on_screen) {
-                    // the next selection is the last item on the list
-                    // manipulate the list a bit to ensure that our selection is NOT
-                    // the last item
-                    items.erase(items.begin());
-
-                    auto last_item = *(iter);
-                    auto new_last_item = last_item->GetNextVisibile();
-                    if(new_last_item) {
-                        items.push_back(new_last_item);
-                    }
-                }
-            }
-        }
-
-        nextSelection = wxTreeItemId(next_selection);
-        SetFirstItemOnScreen(items[0]);
-
-        if(::wxGetKeyState(WXK_SHIFT) && HasStyle(wxTR_MULTIPLE)) {
-            m_model.AddSelection(nextSelection);
-        } else {
-            SelectItem(nextSelection);
-        }
+        nextSelection = DoScrollLines(steps, direction == wxUP, GetFocusedItem(), false);
+        fromTop = (direction == wxUP);
     }
+
+    if(::wxGetKeyState(WXK_SHIFT) && HasStyle(wxTR_MULTIPLE)) {
+        m_model.AddSelection(nextSelection);
+    } else {
+        SelectItem(nextSelection);
+    }
+    EnsureItemVisible(m_model.ToPtr(nextSelection), fromTop);
 
     Refresh();
 #ifndef __WXGTK3__

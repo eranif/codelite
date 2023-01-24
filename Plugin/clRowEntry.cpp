@@ -320,35 +320,16 @@ void clRowEntry::GetNextItems(int count, clRowEntry::Vec_t& items, bool selfIncl
     if(!this->IsHidden() && selfIncluded) {
         items.push_back(this);
     }
-    clRowEntry* next = GetNextVisibile();
-    while(next && ((int)items.size() < count)) {
-        items.push_back(next);
-        next = next->GetNextVisibile();
-    }
-}
-
-clRowEntry* clRowEntry::GetNextVisibile() const
-{
     clRowEntry* next = GetNext();
     while(next) {
         if(next->IsVisible() && !next->IsHidden()) {
-            return next;
+            items.push_back(next);
+        }
+        if((int)items.size() == count) {
+            return;
         }
         next = next->GetNext();
     }
-    return nullptr;
-}
-
-clRowEntry* clRowEntry::GetPrevVisibile() const
-{
-    clRowEntry* prev = GetPrev();
-    while(prev) {
-        if(prev->IsVisible() && !prev->IsHidden()) {
-            return prev;
-        }
-        prev = prev->GetPrev();
-    }
-    return nullptr;
 }
 
 void clRowEntry::GetPrevItems(int count, clRowEntry::Vec_t& items, bool selfIncluded)
@@ -360,10 +341,15 @@ void clRowEntry::GetPrevItems(int count, clRowEntry::Vec_t& items, bool selfIncl
     if(!this->IsHidden() && selfIncluded) {
         items.insert(items.begin(), this);
     }
-    clRowEntry* prev = GetPrevVisibile();
-    while(prev && ((int)items.size() < count)) {
-        items.push_back(prev);
-        prev = prev->GetPrevVisibile();
+    clRowEntry* prev = GetPrev();
+    while(prev) {
+        if(prev->IsVisible() && !prev->IsHidden()) {
+            items.insert(items.begin(), prev);
+        }
+        if((int)items.size() == count) {
+            return;
+        }
+        prev = prev->GetPrev();
     }
 }
 

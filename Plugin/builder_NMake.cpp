@@ -1296,7 +1296,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
         text << "MakeDirCommand         =" << mkdirCommand << "\n";
     } else {
         text << "MakeDirCommand         ="
-             << "makedir"
+             << "mkdir -p"
              << "\n";
     }
 

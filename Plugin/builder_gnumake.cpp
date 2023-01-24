@@ -1232,13 +1232,8 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
     if(!mkdirCommand.IsEmpty()) {
         // use the compiler defined one
         text << wxT("MakeDirCommand         :=") << mkdirCommand << wxT("\n");
-
     } else {
-        if(OS_WINDOWS) {
-            text << wxT("MakeDirCommand         :=") << wxT("makedir") << wxT("\n");
-        } else {
-            text << wxT("MakeDirCommand         :=") << wxT("mkdir -p") << wxT("\n");
-        }
+        text << wxT("MakeDirCommand         :=") << wxT("mkdir -p") << wxT("\n");
     }
 
     wxString buildOpts = bldConf->GetCompileOptions();

@@ -132,12 +132,6 @@ public:
     static bool DrawStippleBackground(const wxRect& rect, wxDC& dc);
 
     /**
-     * @brief convert wxDC into wxGCDC. Return the a DC to work with.
-     * This function never fails
-     */
-    static wxDC& GetGCDC(wxDC& dc, wxGCDC& gdc);
-
-    /**
      * @brief Return true if the current theme dominant colour is dark
      */
     static bool IsThemeDark();

@@ -30,9 +30,6 @@ private:
     int m_thumbSize = 0;
     int m_rangeSize = 0;
 
-    wxBitmap m_tmpBmp;
-    wxMemoryDC* m_memDC = nullptr;
-    wxGCDC* m_gcdc = nullptr;
     bool m_showSBOnFocus = false;
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
@@ -92,7 +89,6 @@ public:
      * of its decendants)
      */
     void SetShowScrollBarOnFocus(bool b) { m_showSBOnFocus = b; }
-    wxDC& GetTempDC() const { return *m_gcdc; }
 
     /**
      * @brief return the number lines can fit into the page (vertically)

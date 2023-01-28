@@ -365,32 +365,6 @@ wxColour DrawingUtils::GetThemeTipBgColour()
 
 bool DrawingUtils::IsThemeDark() { return IsDark(GetThemeBgColour()); }
 
-wxDC& DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
-{
-    wxGraphicsRenderer* renderer = nullptr;
-#if defined(__WXGTK__)
-    renderer = wxGraphicsRenderer::GetCairoRenderer();
-#elif defined(__WXMSW__) && wxUSE_GRAPHICS_DIRECT2D
-    renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-#else
-    renderer = wxGraphicsRenderer::GetDefaultRenderer();
-#endif
-
-    wxGraphicsContext* context;
-    if(wxPaintDC* paintdc = wxDynamicCast(&dc, wxPaintDC)) {
-        context = renderer->CreateContext(*paintdc);
-
-    } else if(wxMemoryDC* memdc = wxDynamicCast(&dc, wxMemoryDC)) {
-        context = renderer->CreateContext(*memdc);
-
-    } else {
-        return dc;
-    }
-    context->SetAntialiasMode(wxANTIALIAS_DEFAULT);
-    gdc.SetGraphicsContext(context);
-    return gdc;
-}
-
 wxColour DrawingUtils::GetAUIPaneBGColour() { return GetPanelBgColour(); }
 
 wxBrush DrawingUtils::GetStippleBrush()

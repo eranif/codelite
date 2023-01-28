@@ -436,7 +436,10 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
         return;
     }
 
-    wxDC& dc = GetTempDC();
+    wxBitmap tmpBmp;
+    tmpBmp.CreateWithDIPSize(1, 1, GetDPIScaleFactor());
+    wxMemoryDC mem_dc{ tmpBmp };
+    wxGCDC dc{ mem_dc };
     dc.SetFont(GetDefaultFont());
 
     // Null row means: set the header bar to fit the column's label
@@ -460,7 +463,11 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
 
 wxSize clControlWithItems::GetTextSize(const wxString& label) const
 {
-    wxDC& dc = GetTempDC();
+    wxBitmap tmpBmp;
+    tmpBmp.CreateWithDIPSize(1, 1, GetDPIScaleFactor());
+    wxMemoryDC mem_dc{ tmpBmp };
+    wxGCDC dc{ mem_dc };
+
     wxFont font = GetDefaultFont();
     dc.SetFont(font);
     wxSize textSize = dc.GetTextExtent(label);
@@ -625,8 +632,6 @@ void clControlWithItems::SetCustomRenderer(clControlWithItemsRowRenderer* render
 void clControlWithItems::SetDefaultFont(const wxFont& font)
 {
     m_defaultFont = font;
-    // update the temp DC with the default font
-    GetTempDC().SetFont(font);
     if(m_viewHeader) {
         m_viewHeader->SetHeaderFont(GetDefaultFont());
     }

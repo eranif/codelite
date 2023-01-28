@@ -22,8 +22,6 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     DoPopulate(m_allEntries);
     CallAfter(&GotoAnythingDlg::UpdateLastSearch);
 
-    m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("placeholder"));
-    m_dvListCtrl->SetBitmaps(&m_bitmaps);
     ::clSetDialogBestSizeAndPosition(this);
     CenterOnParent();
 }
@@ -69,7 +67,7 @@ void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const 
     for(size_t i = 0; i < entries.size(); ++i) {
         const clGotoEntry& entry = entries[i];
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeBitmapIndexText(entry.GetDesc(), 0));
+        cols.push_back(wxT("\u2022 ") + entry.GetDesc());
         cols.push_back(entry.GetKeyboardShortcut());
         m_dvListCtrl->AppendItem(cols, indexes.empty() ? i : indexes[i]);
     }

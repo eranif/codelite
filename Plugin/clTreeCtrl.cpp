@@ -49,60 +49,8 @@ wxDEFINE_EVENT(wxEVT_TREE_ACTIONBUTTON_CLICKED, wxTreeEvent);
 
 namespace
 {
-void SetNativeThemeMSW(wxWindow* win)
-{
-#ifdef __WXMSW__
-    SetWindowTheme(win->GetHWND(), L"Explorer", nullptr);
-#endif
-}
-
-struct DCLocker {
-    wxDC* pdc = nullptr;
-    DCLocker(wxDC* d)
-        : pdc(d)
-    {
-    }
-    ~DCLocker() { wxDELETE(pdc); }
-};
-
-wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc, eRendererType t)
-{
-    wxGraphicsRenderer* renderer = nullptr;
-    switch(t) {
-    case eRendererType::RENDERER_DEFAULT:
-    case eRendererType::RENDERER_CAIRO:
-#if defined(__WXGTK__)
-        renderer = wxGraphicsRenderer::GetCairoRenderer();
-#else
-        renderer = wxGraphicsRenderer::GetDefaultRenderer();
-#endif
-        break;
-    case eRendererType::RENDERER_DIRECT2D:
-#if defined(__WXMSW__) && wxUSE_GRAPHICS_DIRECT2D
-        renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-#else
-        renderer = wxGraphicsRenderer::GetDefaultRenderer();
-#endif
-        break;
-    }
-
-    wxGraphicsContext* context;
-    if(wxPaintDC* paintdc = wxDynamicCast(&dc, wxPaintDC)) {
-        context = renderer->CreateContext(*paintdc);
-
-    } else if(wxMemoryDC* memdc = wxDynamicCast(&dc, wxMemoryDC)) {
-        context = renderer->CreateContext(*memdc);
-
-    } else {
-        return dc;
-    }
-    context->SetAntialiasMode(wxANTIALIAS_DEFAULT);
-    gdc.SetGraphicsContext(context);
-    return gdc;
-}
-
+void SetNativeThemeMSW(wxWindow* win) { wxUnusedVar(win); }
 bool ShouldDrawBorder(long style) { return style & wxBORDER_MASK; }
-
 } // namespace
 
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -135,8 +83,7 @@ void clTreeCtrl::UpdateLineHeight()
     wxBitmap bmp;
     bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
     wxMemoryDC memDC(bmp);
-    wxGCDC gcdc;
-    DrawingUtils::GetGCDC(memDC, gcdc);
+    wxGCDC gcdc(memDC);
 
     gcdc.SetFont(GetDefaultFont());
     wxSize textSize = gcdc.GetTextExtent("Tp");
@@ -187,13 +134,9 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     wxUnusedVar(event);
 
 #ifdef __WXMSW__
-    wxDC* dc_ptr = nullptr;
-    dc_ptr = new wxBufferedPaintDC(this);
-
-    DCLocker locker(dc_ptr);
-    PrepareDC(*dc_ptr);
-    wxGCDC gcdc;
-    wxDC& dc = CreateGCDC(*dc_ptr, gcdc, m_renderer);
+    wxBufferedPaintDC pdc(this);
+    PrepareDC(pdc);
+    wxGCDC dc(pdc);
 #elif defined(__WXMAC__)
     wxPaintDC pdc(this);
     PrepareDC(pdc);

@@ -134,8 +134,7 @@ void clThemedTextCtrl::ApplySettings()
     wxBitmap bmp;
     bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
     wxMemoryDC memDC(bmp);
-    wxGCDC gcdc;
-    DrawingUtils::GetGCDC(memDC, gcdc);
+    wxGCDC gcdc(memDC);
 
     gcdc.SetFont(lexer->GetFontForStyle(0, this));
     wxRect rect = gcdc.GetTextExtent("Tp");

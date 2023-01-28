@@ -143,11 +143,11 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
     wxPaintDC abdc(this);
-    wxGCDC gcdc;
-    wxDC& dc = DrawingUtils::GetGCDC(abdc, gcdc);
+    wxGCDC dc(abdc);
 
     PrepareDC(dc);
     Render(dc);
+
     m_lastPaintFlags = GetDrawingFlags();
 }
 

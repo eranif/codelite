@@ -159,9 +159,8 @@ clToolBarGeneric::~clToolBarGeneric()
 void clToolBarGeneric::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
-    wxGCDC gcdc;
     wxPaintDC dc(this);
-    DrawingUtils::GetGCDC(dc, gcdc);
+    wxGCDC gcdc(dc);
     PrepareDC(gcdc);
 
     m_overflowButtons.clear();

@@ -95,19 +95,10 @@ void clScrolledPanel::DoInitialize()
         }
     });
 #endif
-
-    // use scaling factor
-    m_tmpBmp.CreateWithDIPSize(1, 1, GetDPIScaleFactor());
-    m_memDC = new wxMemoryDC(m_tmpBmp);
-    m_gcdc = new wxGCDC();
-    DrawingUtils::GetGCDC(*m_memDC, *m_gcdc);
 }
 
 clScrolledPanel::~clScrolledPanel()
 {
-    // Destory the DCs in the reverse order of their creation
-    wxDELETE(m_gcdc);
-    wxDELETE(m_memDC);
 #if wxUSE_NATIVE_SCROLLBAR
     m_vsb->Unbind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_LINEDOWN, &clScrolledPanel::OnVScroll, this);

@@ -134,9 +134,11 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     wxUnusedVar(event);
 
 #ifdef __WXMSW__
-    wxBufferedPaintDC pdc(this);
+    wxPaintDC pdc(this);
     PrepareDC(pdc);
-    wxGCDC dc(pdc);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(pdc, gcdc);
+
 #elif defined(__WXMAC__)
     wxPaintDC pdc(this);
     PrepareDC(pdc);

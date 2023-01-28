@@ -134,10 +134,11 @@ void clThemedTextCtrl::ApplySettings()
     wxBitmap bmp;
     bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
     wxMemoryDC memDC(bmp);
-    wxGCDC gcdc(memDC);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(memDC, gcdc);
 
-    gcdc.SetFont(lexer->GetFontForStyle(0, this));
-    wxRect rect = gcdc.GetTextExtent("Tp");
+    dc.SetFont(lexer->GetFontForStyle(0, this));
+    wxRect rect = dc.GetTextExtent("Tp");
     rect.Inflate(1);
 
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button

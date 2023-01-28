@@ -887,3 +887,29 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     dc.DrawText(label, text_rect.GetTopLeft());
     return rect;
 }
+
+wxDC& DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
+{
+    wxGraphicsRenderer* renderer = nullptr;
+#if defined(__WXGTK__)
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
+#elif defined(__WXMSW__) && wxUSE_GRAPHICS_DIRECT2D
+    renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+#else
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
+
+    wxGraphicsContext* context;
+    if(wxPaintDC* paintdc = wxDynamicCast(&dc, wxPaintDC)) {
+        context = renderer->CreateContext(*paintdc);
+
+    } else if(wxMemoryDC* memdc = wxDynamicCast(&dc, wxMemoryDC)) {
+        context = renderer->CreateContext(*memdc);
+
+    } else {
+        return dc;
+    }
+    context->SetAntialiasMode(wxANTIALIAS_DEFAULT);
+    gdc.SetGraphicsContext(context);
+    return gdc;
+}

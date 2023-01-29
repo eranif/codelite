@@ -239,9 +239,9 @@ wxCustomStatusBar::~wxCustomStatusBar()
 
 void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
-    wxPaintDC abdc(this);
-    wxGCDC gcdc(abdc);
-    wxDC& dc = gcdc;
+    wxAutoBufferedPaintDC abdc(this);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(abdc, gcdc);
 
     PrepareDC(dc);
     wxRect rect = GetClientRect();

@@ -312,8 +312,8 @@ void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo
     }
 
 #ifdef __WXMAC__
-    buttonRect.y -= 1;
-    buttonRect.height += 1;
+    buttonRect.y -= 3;
+    buttonRect.height += 3;
 #endif
 
     DrawingUtils::DrawButtonX(dc, win, buttonRect, text_colour,

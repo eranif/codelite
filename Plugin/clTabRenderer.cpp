@@ -7,13 +7,11 @@
 #include "clTabRendererMinimal.hpp"
 #include "cl_config.h"
 #include "cl_defs.h"
-#include "cl_standard_paths.h"
 #include "editor_config.h"
 #include "globals.h"
 #include "macros.h"
 #include "wxStringHash.h"
 
-#include <wx/bmpbndl.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>
@@ -26,52 +24,6 @@
 
 namespace
 {
-
-wxBitmap bmp_close_button_dark_theme = wxNullBitmap;
-wxBitmap bmp_close_button_light_theme = wxNullBitmap;
-
-wxBitmap bmp_save_dark_theme = wxNullBitmap;
-wxBitmap bmp_save_light_theme = wxNullBitmap;
-
-/// Initialise the close button images
-void initialise_images(const wxSize& size, wxWindow* win)
-{
-    static bool once = true;
-    if(once) {
-        {
-            wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
-            svg_path.AppendDir("svgs");
-            svg_path.AppendDir("dark-theme");
-            svg_path.SetFullName("x-close.svg");
-            bmp_close_button_dark_theme = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), size).GetBitmapFor(win);
-        }
-        {
-            wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
-            svg_path.AppendDir("svgs");
-            svg_path.AppendDir("light-theme");
-            svg_path.SetFullName("x-close.svg");
-            bmp_close_button_light_theme = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), size).GetBitmapFor(win);
-        }
-
-        {
-            wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
-            svg_path.AppendDir("svgs");
-            svg_path.AppendDir("dark-theme");
-            svg_path.SetFullName("file_close.svg");
-            bmp_save_dark_theme = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), size).GetBitmapFor(win);
-        }
-        {
-            wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
-            svg_path.AppendDir("svgs");
-            svg_path.AppendDir("light-theme");
-            svg_path.SetFullName("file_close.svg");
-            bmp_save_light_theme = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), size).GetBitmapFor(win);
-        }
-
-        once = false;
-    }
-}
-
 void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTabBgColour, wxColour* bgColour)
 {
     *bgColour = colours.tabAreaColour;
@@ -347,31 +299,29 @@ void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo
     // Draw the X button
     wxRect buttonRect = wxRect(tabInfo.m_bmpCloseX + tabInfo.GetRect().GetX(),
                                tabInfo.m_bmpCloseY + tabInfo.GetRect().GetY(), X_BUTTON_SIZE, X_BUTTON_SIZE);
-
-    wxRect buttonRectBg = buttonRect;
-
-    buttonRect.Deflate(2);
     buttonRect = buttonRect.CenterIn(tabInfo.GetRect(), wxVERTICAL);
 
-    /// initialise the close buttons
-    initialise_images(buttonRect.GetSize(), win);
-
-    wxString unicode_symbol = wxT(" ");
-    wxBitmap* bmp = nullptr;
-    bmp = clSystemSettings::IsDark() ? &bmp_close_button_dark_theme : &bmp_close_button_light_theme;
-
+    wxColour text_colour = colours.activeTabTextColour;
+    wxString unicode_symbol = wxT("\u2715");
     if(tabInfo.IsModified()) {
-        bmp = clSystemSettings::IsDark() ? &bmp_save_dark_theme : &bmp_save_light_theme;
+        // instead of drawing the standard X we draw
+        // a round circele marked in RED indicating that this
+        // tab is modified
+        text_colour = *wxRED;
+        unicode_symbol = wxT("\u25CF");
     }
 
-    DrawingUtils::DrawButtonX(dc, win, buttonRectBg, colours.activeTabTextColour,
+#if defined(__WXMAC__)
+    buttonRect.y -= 3;
+    buttonRect.height += 3;
+
+#elif defined(__WXMSW__)
+    buttonRect.y -= 1;
+#endif
+
+    DrawingUtils::DrawButtonX(dc, win, buttonRect, text_colour,
                               tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour, state,
-                              wxT(" "));
-
-    /// draw the close button
-    if(bmp) {
-        dc.DrawBitmap(*bmp, buttonRect.GetTopLeft());
-    }
+                              unicode_symbol);
 }
 
 void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)

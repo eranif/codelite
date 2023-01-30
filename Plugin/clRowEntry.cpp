@@ -601,10 +601,19 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 }
 
                 buttonRect.Deflate((buttonRect.GetWidth() / 3), (buttonRect.GetHeight() / 3));
+                if(buttonRect.GetWidth() % 2 == 0) {
+                    buttonRect.width += 1;
+                }
+
+                if(buttonRect.GetHeight() % 2 == 0) {
+                    buttonRect.height += 1;
+                }
+
                 wxRect tribtn = buttonRect;
-                dc.SetPen(wxPen(buttonColour, 2));
+                const int PEN_WIDTH = 1;
+                dc.SetPen(wxPen(buttonColour, PEN_WIDTH));
                 if(IsExpanded()) {
-                    dc.SetPen(wxPen(buttonColour, 2));
+                    dc.SetPen(wxPen(buttonColour, PEN_WIDTH));
                     tribtn.SetHeight(tribtn.GetHeight() - tribtn.GetHeight() / 2);
                     tribtn = tribtn.CenterIn(assignedRectForButton);
                     wxPoint middleLeft = wxPoint((tribtn.GetLeft() + tribtn.GetWidth() / 2), tribtn.GetBottom());

@@ -143,10 +143,12 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     wxPaintDC pdc(this);
     PrepareDC(pdc);
     wxGCDC dc(pdc);
+
 #else
     wxAutoBufferedPaintDC pdc(this);
     PrepareDC(pdc);
     wxDC& dc = pdc;
+
 #endif
 
     // ------------------------------------------------

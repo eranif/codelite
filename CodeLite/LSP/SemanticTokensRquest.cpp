@@ -73,5 +73,9 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
     event.SetFileName(filename);
     event.SetServerName(GetServerName());
     owner->AddPendingEvent(event);
-    LOG_IF_DEBUG { LSP_DEBUG() << "Colouring file:" << filename << endl; }
+    LOG_IF_DEBUG
+    {
+        LSP_DEBUG() << "Colouring" << semantic_tokens.size() << "tokens" << endl;
+        LSP_DEBUG() << "Colouring file:" << filename << endl;
+    }
 }

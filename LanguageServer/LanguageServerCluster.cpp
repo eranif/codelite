@@ -420,8 +420,18 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     }
     LSP_DEBUG() << "Done" << endl;
 
+    // trim the strings, so we can rely on the below test (.empty())
+    method_str.Trim().Trim(false);
+    variabls_str.Trim().Trim(false);
+    method_str.Trim().Trim(false);
+
     LSP_DEBUG() << "Calling editor->SetSemanticTokens" << endl;
-    editor->SetSemanticTokens(classes_str, variabls_str, method_str, wxEmptyString);
+    if(!classes_str.empty() || !variabls_str.empty() || !method_str.empty()) {
+        // we got something to colour
+        editor->SetSemanticTokens(classes_str, variabls_str, method_str, wxEmptyString);
+    } else {
+        LSP_DEBUG() << "empty semantic tokens, leaving editor untouched" << endl;
+    }
     LSP_DEBUG() << "Success" << endl;
 }
 

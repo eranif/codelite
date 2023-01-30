@@ -311,6 +311,11 @@ void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo
         unicode_symbol = wxT("\u25CF");
     }
 
+#ifdef __WXMAC__
+    buttonRect.y -= 1;
+    buttonRect.height += 1;
+#endif
+
     DrawingUtils::DrawButtonX(dc, win, buttonRect, text_colour,
                               tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour, state,
                               unicode_symbol);

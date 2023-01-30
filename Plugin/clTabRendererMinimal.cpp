@@ -141,6 +141,11 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
     // we use the visible tab for centering text
     wxRect visibleTab = tabRect;
 
+#ifdef __WXMAC__
+    visibleTab.y -= 1;
+    visibleTab.height += 1;
+#endif
+
     wxColour brush_colour = tabInfo.IsActive() ? activeTabBgColour : bgColour;
     switch(tabState) {
     case eButtonState::kHover:

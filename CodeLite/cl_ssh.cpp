@@ -91,6 +91,34 @@ void clSSH::Connect(int seconds)
     ssh_options_set(m_session, SSH_OPTIONS_PORT, &m_port);
     ssh_options_set(m_session, SSH_OPTIONS_USER, user.c_str());
 
+    // set user options defined by environment variables
+    // SSH_OPTIONS_KEY_EXCHANGE: Set the key exchange method to be used (const char *, comma-separated list). ex:
+    // "ecdh-sha2-nistp256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1"
+    //
+    // SSH_OPTIONS_HOSTKEYS: Set the
+    // preferred server host key types (const char *, comma-separated list). ex: "ssh-rsa,ssh-dss,ecdh-sha2-nistp256"
+    //
+    // SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES:
+    // Set the preferred public key algorithms to be used for authentication (const char *, comma-separated list). ex:
+    // "ssh-rsa,rsa-sha2-256,ssh-dss,ecdh-sha2-nistp256"
+
+    wxString ssh_options_key_exchange;
+    wxString ssh_options_hostkeys;
+    wxString ssh_options_publickey_accepted_types;
+
+    if(::wxGetEnv("SSH_OPTIONS_KEY_EXCHANGE", &ssh_options_key_exchange)) {
+        ssh_options_set(m_session, SSH_OPTIONS_KEY_EXCHANGE, ssh_options_key_exchange.mb_str(wxConvUTF8).data());
+    }
+
+    if(::wxGetEnv("SSH_OPTIONS_HOSTKEYS", &ssh_options_hostkeys)) {
+        ssh_options_set(m_session, SSH_OPTIONS_HOSTKEYS, ssh_options_hostkeys.mb_str(wxConvUTF8).data());
+    }
+
+    if(::wxGetEnv("SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES", &ssh_options_publickey_accepted_types)) {
+        ssh_options_set(m_session, SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES,
+                        ssh_options_publickey_accepted_types.mb_str(wxConvUTF8).data());
+    }
+
     // Connect the session
     int retries = seconds * 100;
     if(retries < 0) {

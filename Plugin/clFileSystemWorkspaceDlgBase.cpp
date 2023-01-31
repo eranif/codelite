@@ -267,10 +267,10 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer238->Add(m_comboBoxExecutable, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_button241 = new wxButton(m_panelGeneral, wxID_ANY, _("..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button241 = new wxButton(m_panelGeneral, wxID_ANY, _("Browse"), wxDefaultPosition,
+                               wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
 
-    boxSizer238->Add(m_button241, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer238->Add(m_button241, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_staticText191 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Working directory:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
@@ -289,19 +289,18 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer239->Add(m_textCtrlWD, 1, wxALL, WXC_FROM_DIP(5));
 
-    m_button243 = new wxButton(m_panelGeneral, wxID_ANY, _("..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button243 = new wxButton(m_panelGeneral, wxID_ANY, _("Browse"), wxDefaultPosition,
+                               wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
 
-    boxSizer239->Add(m_button243, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer239->Add(m_button243, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_staticText113 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Arguments:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
 
     flexGridSizer33->Add(m_staticText113, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
 
-    m_textCtrlArgs =
-        new clThemedSTC(m_panelGeneral, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
-                        wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
+    m_textCtrlArgs = new clThemedSTC(m_panelGeneral, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_textCtrlArgs->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_textCtrlArgs->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -497,10 +496,10 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer271->Add(m_textCtrlDebugger, 1, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_button262 = new wxButton(Debugger, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(Debugger, wxSize(-1, -1)),
-                               wxBU_EXACTFIT);
+    m_button262 =
+        new wxButton(Debugger, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
 
-    flexGridSizer271->Add(m_button262, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer271->Add(m_button262, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_staticText265 = new wxStaticText(Debugger, wxID_ANY, _("Startup commands:"), wxDefaultPosition,
                                        wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
@@ -701,11 +700,11 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer155->Add(m_textCtrlRemoteFolder, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_button169 = new wxButton(m_panelRemote, wxID_ANY, _("..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button169 = new wxButton(m_panelRemote, wxID_ANY, _("Browse"), wxDefaultPosition,
+                               wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
     m_button169->SetToolTip(_("Browse for folder"));
 
-    flexGridSizer155->Add(m_button169, 0, wxALL | wxALIGN_TOP, WXC_FROM_DIP(5));
+    flexGridSizer155->Add(m_button169, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 

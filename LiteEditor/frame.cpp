@@ -158,7 +158,7 @@ int FrameTimerId = wxNewId();
 wxBorder get_border_simple_theme_aware_bit()
 {
 #ifdef __WXMAC__
-    return clSystemSettings::Get().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+    return clSystemSettings::Get().IsDark() ? wxBORDER_SIMPLE : wxBORDER_THEME;
 #elif defined(__WXGTK__)
     return wxBORDER_STATIC;
 #else
@@ -1484,11 +1484,20 @@ void add_main_toolbar_item(wxToolBar* tb, const wxString& xrcstr, const wxString
 }
 } // namespace
 
+#define TB_POS_ALL (wxTB_TOP | wxTB_BOTTOM | wxTB_RIGHT | wxTB_LEFT)
+
 void clMainFrame::DoCreateToolBar(int toolSize)
 {
     //----------------------------------------------
     // create the toolbars
     //----------------------------------------------
+
+#ifdef __WXMAC__
+    // By default, place it at the top
+    m_mainToolbarStyle &= ~TB_POS_ALL;
+    m_mainToolbarStyle |= wxTB_TOP;
+#endif
+
     m_mainToolbarStyle = clConfig::Get().Read("MainToolBarStyle", m_mainToolbarStyle);
 
     // Create the plugins toolbar, emty by default
@@ -1500,7 +1509,7 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     toolSize = 16;
 #if defined(__WXMAC__)
     if(m_mainToolbarStyle & wxTB_TOP) {
-        toolSize = 64;
+        toolSize = 48;
     }
 #endif
 
@@ -6034,8 +6043,6 @@ void clMainFrame::OnSetActivePojectUI(wxUpdateUIEvent& e)
         clWorkspaceManager::Get().IsWorkspaceOpened() && clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported();
     e.Enable(enable);
 }
-
-#define TB_POS_ALL (wxTB_TOP | wxTB_BOTTOM | wxTB_RIGHT | wxTB_LEFT)
 
 void clMainFrame::UpdateMainToolbarOrientation(int newOrientation)
 {

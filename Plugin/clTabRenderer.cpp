@@ -40,7 +40,7 @@ clTabColours::clTabColours() { UpdateColours(0); }
 void clTabColours::UpdateColours(size_t notebookStyle)
 {
     wxUnusedVar(notebookStyle);
-#ifdef __WXMAC__
+#if 0
     wxColour base_colour = clSystemSettings::GetDefaultPanelColour();
     bool is_dark = DrawingUtils::IsDark(base_colour);
 
@@ -419,15 +419,18 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
     wxUnusedVar(parent);
     wxUnusedVar(activeTabRect);
 
-    // top tabs
+#ifdef __WXMAC__
     wxColour bg_colour;
     wxColour active_tab_colour;
     GetTabColours(colours, style, &active_tab_colour, &bg_colour);
     bool is_dark = DrawingUtils::IsDark(bg_colour);
     dc.SetPen(bg_colour.ChangeLightness(is_dark ? 60 : 80));
-    // dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
-    // dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetBottomLeft());
-    // dc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
+    if(!(style & kNotebook_BottomTabs)) {
+        // top tabs
+        dc.DrawLine(clientRect.GetTopLeft(), activeTabRect.GetTopLeft());
+        dc.DrawLine(activeTabRect.GetTopRight(), clientRect.GetTopRight());
+    }
+#endif
 }
 
 void clTabRenderer::AdjustColours(clTabColours& colours, size_t style)

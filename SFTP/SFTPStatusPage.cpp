@@ -149,9 +149,10 @@ void SFTPStatusPage::OnSelectAll(wxCommandEvent& event)
 
 void SFTPStatusPage::OnFindOutput(clCommandEvent& event)
 {
-    clDEBUG() << event.GetString() << endl;
+    wxString str = wxString::FromUTF8(event.GetStringRaw());
+    clDEBUG() << str << endl;
     m_stcSearch->SetReadOnly(false);
-    m_stcSearch->AddText(event.GetString());
+    m_stcSearch->AddText(str);
     m_stcSearch->SetReadOnly(true);
     m_stcSearch->ScrollToEnd();
 }

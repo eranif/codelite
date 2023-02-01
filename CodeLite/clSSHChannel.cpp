@@ -1,10 +1,13 @@
-#include "StringUtils.h"
 #include "clSSHChannel.hpp"
+
+#include "StringUtils.h"
+
 #include <wx/msgqueue.h>
 #include <wx/regex.h>
 #if USE_SFTP
 #include "clJoinableThread.h"
 #include "cl_exception.h"
+
 #include <libssh/libssh.h>
 
 wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_ERROR, clCommandEvent);
@@ -26,7 +29,8 @@ class clSSHChannelReader : public clJoinableThread
 protected:
     bool ReadChannel(bool isStderr)
     {
-        int bytes = ssh_channel_poll_timeout(m_channel, 50, isStderr ? 1 : 0);
+        char buffer[1024];
+        int bytes = ssh_channel_read_timeout(m_channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 5);
         if(bytes == SSH_ERROR) {
             // an error
             clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
@@ -41,23 +45,13 @@ protected:
             // timeout
             return true;
         } else {
-            // there is something to read
-            char* buffer = new char[bytes + 1];
-            if(ssh_channel_read(m_channel, buffer, bytes, isStderr ? 1 : 0) != bytes) {
-                clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
-                m_handler->QueueEvent(event.Clone());
-                wxDELETEA(buffer);
-                return false;
-            } else {
-                buffer[bytes] = 0;
-                clCommandEvent event((isStderr && m_wantStderr) ? wxEVT_SSH_CHANNEL_READ_STDERR
-                                                                : wxEVT_SSH_CHANNEL_READ_OUTPUT);
-                event.SetString(wxString(buffer, wxConvUTF8));
-                m_handler->QueueEvent(event.Clone());
-                wxDELETEA(buffer);
-            }
+            buffer[bytes] = 0;
+            clCommandEvent event((isStderr && m_wantStderr) ? wxEVT_SSH_CHANNEL_READ_STDERR
+                                                            : wxEVT_SSH_CHANNEL_READ_OUTPUT);
+            event.SetStringRaw(buffer);
+            m_handler->QueueEvent(event.Clone());
+            return true;
         }
-        return true;
     }
 
 public:
@@ -74,114 +68,6 @@ public:
         while(!TestDestroy()) {
             // First, poll the channel
             if(!ReadChannel(false) || !ReadChannel(true)) {
-                break;
-            }
-        }
-        return NULL;
-    }
-};
-
-//===-------------------------------------------------------------
-// This thread is used when requesting an interactive shell
-//===-------------------------------------------------------------
-class clSSHChannelInteractiveThread : public clJoinableThread
-{
-    wxEvtHandler* m_handler;
-    SSHChannel_t m_channel;
-    wxMessageQueue<clSSHChannel::Message>& m_Queue;
-    char m_buffer[4096];
-    wxRegEx m_reTTY;
-    bool m_wantStderr = false;
-
-public:
-    clSSHChannelInteractiveThread(wxEvtHandler* handler, SSHChannel_t channel, wxMessageQueue<clSSHChannel::Message>& Q,
-                                  bool wantStderrEvents)
-        : m_handler(handler)
-        , m_channel(channel)
-        , m_Queue(Q)
-        , m_wantStderr(wantStderrEvents)
-    {
-        m_reTTY.Compile("tty=([a-z/0-9]+)");
-    }
-    virtual ~clSSHChannelInteractiveThread() {}
-
-protected:
-    bool ReadChannel(bool isStderr)
-    {
-        // First, poll the channel
-        m_buffer[0] = 0;
-        int bytes = ssh_channel_read_nonblocking(m_channel, m_buffer, sizeof(m_buffer) - 1, isStderr ? 1 : 0);
-        if(bytes == SSH_ERROR) {
-            // an error
-            clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
-            m_handler->QueueEvent(event.Clone());
-            return false;
-        } else if(bytes == 0) {
-            // 0 is a valid output
-            // but we need to check for EOF
-            if(ssh_channel_is_eof(m_channel)) {
-                clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
-                m_handler->QueueEvent(event.Clone());
-                return false;
-            } else {
-                // timeout occured
-                return true;
-            }
-        } else {
-            // we read something...
-            m_buffer[bytes] = 0;
-            wxString messageRead(m_buffer, wxConvUTF8);
-
-            // strip colours from the output
-            StringUtils::StripTerminalColouring(messageRead, messageRead);
-
-            if(m_reTTY.IsValid() && m_reTTY.Matches(messageRead)) {
-                wxString wholeMatch = m_reTTY.GetMatch(messageRead, 0);
-                clCommandEvent event(wxEVT_SSH_CHANNEL_PTY);
-                wxString tty = m_reTTY.GetMatch(messageRead, 1);
-                event.SetString(tty);
-                m_handler->QueueEvent(event.Clone());
-            }
-
-            if(!messageRead.IsEmpty()) {
-                clCommandEvent event((isStderr && m_wantStderr) ? wxEVT_SSH_CHANNEL_READ_STDERR
-                                                                : wxEVT_SSH_CHANNEL_READ_OUTPUT);
-                event.SetString(messageRead);
-                m_handler->QueueEvent(event.Clone());
-            }
-            return true;
-        }
-    }
-
-public:
-    void* Entry()
-    {
-        while(!TestDestroy()) {
-            if(!ReadChannel(false) || !ReadChannel(true)) {
-                break;
-            }
-
-            // Check if we got something to write
-            clSSHChannel::Message message;
-            bool write_error = false;
-            while(!write_error && (m_Queue.ReceiveTimeout(20, message) == wxMSGQUEUE_NO_ERROR)) {
-                if(!message.raw) {
-                    message.buffer.Trim().Trim(false);
-                    if(message.buffer.empty()) {
-                        continue;
-                    }
-                    message.buffer << "\n";
-                }
-                std::string pbuffer = message.buffer.mb_str(wxConvISO8859_1).data();
-                if(ssh_channel_write(m_channel, pbuffer.c_str(), pbuffer.length()) == SSH_ERROR) {
-                    clCommandEvent event(wxEVT_SSH_CHANNEL_WRITE_ERROR);
-                    m_handler->AddPendingEvent(event);
-                    write_error = true;
-                    break;
-                }
-                message = {};
-            }
-            if(write_error) {
                 break;
             }
         }
@@ -237,35 +123,6 @@ void clSSHChannel::Open()
         m_channel = NULL;
         throw clException(BuildError("Failed to open ssh channel"));
     }
-
-    // For an interactive channel, we also need pty
-    if(IsInteractive()) {
-        rc = ssh_channel_request_pty(m_channel);
-        if(rc != SSH_OK) {
-            ssh_channel_free(m_channel);
-            m_channel = NULL;
-            throw clException(BuildError("Failed to request pty"));
-        }
-
-        rc = ssh_channel_change_pty_size(m_channel, 1024, 24);
-        if(rc != SSH_OK) {
-            ssh_channel_free(m_channel);
-            m_channel = NULL;
-            throw clException(BuildError("Failed to change SSH pty size"));
-        }
-
-        rc = ssh_channel_request_shell(m_channel);
-        if(rc != SSH_OK) {
-            ssh_channel_free(m_channel);
-            m_channel = NULL;
-            throw clException(BuildError("Failed to request SSH shell"));
-        }
-        // Open the helper thread
-        m_thread = new clSSHChannelInteractiveThread(this, m_channel, m_Queue, m_wantStderr);
-        m_thread->Start();
-        // Ask for the tty
-        DoWrite("echo tty=`tty`", false);
-    }
 }
 
 void clSSHChannel::Close()
@@ -282,25 +139,20 @@ void clSSHChannel::Close()
 
 void clSSHChannel::Execute(const wxString& command)
 {
-    if(IsInteractive()) {
-        DoWrite(command, false);
-
-    } else {
-        // Sanity
-        if(m_thread) {
-            throw clException("Channel is busy");
-        }
-        if(!IsOpen()) {
-            throw clException("Channel is not opened");
-        }
-        int rc = ssh_channel_request_exec(m_channel, command.mb_str(wxConvUTF8).data());
-        if(rc != SSH_OK) {
-            Close();
-            throw clException(BuildError("Execute failed"));
-        }
-        m_thread = new clSSHChannelReader(this, m_channel, m_wantStderr);
-        m_thread->Start();
+    // Sanity
+    if(m_thread) {
+        throw clException("Channel is busy");
     }
+    if(!IsOpen()) {
+        throw clException("Channel is not opened");
+    }
+    int rc = ssh_channel_request_exec(m_channel, command.mb_str(wxConvUTF8).data());
+    if(rc != SSH_OK) {
+        Close();
+        throw clException(BuildError("Execute failed"));
+    }
+    m_thread = new clSSHChannelReader(this, m_channel, m_wantStderr);
+    m_thread->Start();
 }
 
 wxString clSSHChannel::BuildError(const wxString& prefix) const
@@ -310,28 +162,6 @@ wxString clSSHChannel::BuildError(const wxString& prefix) const
     }
     wxString errmsg = ssh_get_error(m_ssh->GetSession());
     return wxString() << prefix << ". " << errmsg;
-}
-
-void clSSHChannel::Write(const wxString& message)
-{
-    if(!IsInteractive()) {
-        throw clException("Write is only available for interactive ssh channels");
-    }
-    if(!IsOpen()) {
-        throw clException("Channel is not opened");
-    }
-    DoWrite(message, false);
-}
-
-void clSSHChannel::DoWrite(const wxString& buffer, bool raw)
-{
-    if(!IsInteractive()) {
-        throw clException("Write is only available for interactive ssh channels");
-    }
-
-    Message m;
-    m.raw = raw;
-    m_Queue.Post(m);
 }
 
 void clSSHChannel::OnReadError(clCommandEvent& event)
@@ -409,14 +239,4 @@ void clSSHChannel::SendSignal(wxSignal sig)
 
 void clSSHChannel::Detach() {}
 
-void clSSHChannel::WriteRaw(const wxString& message)
-{
-    if(!IsInteractive()) {
-        throw clException("Write is only available for interactive ssh channels");
-    }
-    if(!IsOpen()) {
-        throw clException("Channel is not opened");
-    }
-    DoWrite(message, true);
-}
 #endif

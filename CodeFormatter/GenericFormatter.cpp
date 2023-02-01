@@ -92,6 +92,14 @@ wxString GenericFormatter::GetCommandAsString() const { return join_array(m_comm
 void GenericFormatter::async_format(const wxString& cmd, const wxString& wd, const wxString& filepath,
                                     bool inplace_formatter, wxEvtHandler* sink)
 {
+#if 0
+    auto wsp = clWorkspaceManager::Get().GetWorkspace();
+    if(wsp && wsp->IsRemote()) {
+        m_remote_executor.startup(wsp->GetSshAccount());
+        m_remote_executor.try_execute(clRemoteExecutor::Cmd::from({ "ls", "-ltr" }, "$WRD", { { "WRD", "/tmp" } }));
+    }
+#endif
+
     clDirChanger cd{ wd };
     long pid = wxNOT_FOUND;
     if(ProcUtils::ShellExecAsync(cmd, &pid, this)) {

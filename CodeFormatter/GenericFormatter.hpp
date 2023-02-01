@@ -4,6 +4,7 @@
 #include "SourceFormatterBase.hpp"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "procutils.h"
+#include "ssh/cl_remote_executor.hpp"
 
 #include <unordered_map>
 #include <vector>
@@ -30,6 +31,10 @@ class GenericFormatter : public SourceFormatterBase
     wxString m_remote_command;
     wxString m_workingDirectory;
     std::unordered_map<long, CommandMetadata> m_pid_commands;
+
+#if USE_SFTP
+    clRemoteExecutor m_remote_executor;
+#endif
 
 protected:
     bool DoFormatFile(const wxString& filepath, wxEvtHandler* sink, wxString* output);

@@ -116,7 +116,8 @@ void ConsoleFrame::OnChannelReadError(clCommandEvent& event)
 
 void ConsoleFrame::OnChannelRead(clCommandEvent& event)
 {
-    m_terminal->AddTextRaw(event.GetString());
+    wxString str = wxString::FromUTF8(event.GetStringRaw());
+    m_terminal->AddTextRaw(str);
     m_terminal->CaretToEnd();
 }
 

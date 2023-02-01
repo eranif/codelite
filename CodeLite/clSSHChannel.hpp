@@ -3,8 +3,9 @@
 
 #if USE_SFTP
 
-#include "ssh/cl_ssh.h"
 #include "codelite_exports.h"
+#include "ssh/cl_ssh.h"
+
 #include <wx/msgqueue.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_READ_ERROR, clCommandEvent);
@@ -20,7 +21,6 @@ class WXDLLIMPEXP_CL clSSHChannel : public wxEvtHandler
 public:
     typedef wxSharedPtr<clSSHChannel> Ptr_t;
     enum eChannelType {
-        kInterativeMode,
         kRemoteCommand,
     };
 
@@ -77,21 +77,14 @@ public:
     void Execute(const wxString& command);
 
     /**
-     * @brief write message to the channel
-     */
-    void Write(const wxString& message);
-
-    /**
-     * @brief write the buffer as is
-     */
-    void WriteRaw(const wxString& message);
-
-    bool IsInteractive() const { return m_type == kInterativeMode; }
-
-    /**
      * @brief Send a signal to remote process
      */
     void SendSignal(wxSignal sig);
+
+    /**
+     * @brief return true if the channel is busy
+     */
+    bool IsBusy() const;
 
     /**
      * @brief detach from the remote process (this does not kill it)

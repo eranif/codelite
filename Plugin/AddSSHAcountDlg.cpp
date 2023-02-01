@@ -26,7 +26,7 @@
 #include "AddSSHAcountDlg.h"
 #if USE_SFTP
 #include "cl_exception.h"
-#include "cl_ssh.h"
+#include "ssh/cl_ssh.h"
 #include "windowattrmanager.h"
 
 #include <wx/msgdlg.h>

@@ -4,7 +4,7 @@
 #include "clDapSettingsStore.hpp"
 #include "dap/dap.hpp"
 #include "processreaderthread.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 #include <vector>
 #include <wx/string.h>

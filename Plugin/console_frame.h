@@ -28,8 +28,8 @@
 
 #include "clSSHChannel.hpp"
 #include "cl_command_event.h"
-#include "cl_ssh.h"
 #include "codelite_exports.h"
+#include "ssh/cl_ssh.h"
 #include "wxterminal.h"
 
 #include <wx/colour.h>

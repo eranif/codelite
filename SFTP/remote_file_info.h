@@ -26,11 +26,12 @@
 #ifndef REMOTEFILEINFO_H
 #define REMOTEFILEINFO_H
 
-#include "ssh_account_info.h"
-#include <wx/filename.h>
+#include "ssh/ssh_account_info.h"
+#include "wxStringHash.h"
+
 #include <map>
 #include <wx/clntdata.h>
-#include "wxStringHash.h"
+#include <wx/filename.h>
 
 class RemoteFileInfo : public wxClientData
 {

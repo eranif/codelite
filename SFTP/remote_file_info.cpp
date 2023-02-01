@@ -24,9 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "remote_file_info.h"
-#include <wx/stdpaths.h>
+
 #include "cl_standard_paths.h"
-#include "cl_sftp.h"
+#include "ssh/cl_sftp.h"
+
+#include <wx/stdpaths.h>
 
 RemoteFileInfo::RemoteFileInfo()
     : m_premissions(0)

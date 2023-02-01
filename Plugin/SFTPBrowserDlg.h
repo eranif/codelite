@@ -29,8 +29,8 @@
 #if USE_SFTP
 
 #include "bitmap_loader.h"
-#include "cl_sftp.h"
 #include "sftp_ui.h"
+#include "ssh/cl_sftp.h"
 
 class SFTPBrowserEntryClientData;
 class FloatingTextCtrl;

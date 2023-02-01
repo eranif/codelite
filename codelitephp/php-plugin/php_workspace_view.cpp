@@ -17,6 +17,7 @@
 #include "php_project_settings_dlg.h"
 #include "php_strings.h"
 #include "php_workspace.h"
+#include "ssh/ssh_account_info.h"
 #include "ssh_workspace_settings.h"
 #include "tree_item_data.h"
 
@@ -32,7 +33,6 @@
 #include <macros.h>
 #include <plugin.h>
 #include <sftp_settings.h>
-#include <ssh_account_info.h>
 #include <wx/busyinfo.h>
 #include <wx/filedlg.h>
 #include <wx/imaglist.h>

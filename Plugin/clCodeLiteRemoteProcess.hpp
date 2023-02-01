@@ -4,7 +4,7 @@
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 #include <deque>
 #include <functional>

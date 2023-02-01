@@ -32,7 +32,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "sftp_settings.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 #include "windowattrmanager.h"
 
 #include <wx/app.h>

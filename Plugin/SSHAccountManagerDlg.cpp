@@ -29,7 +29,7 @@
 #include "AddSSHAcountDlg.h"
 #include "globals.h"
 #include "sftp_settings.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 #include "windowattrmanager.h"
 
 #include <wx/msgdlg.h>

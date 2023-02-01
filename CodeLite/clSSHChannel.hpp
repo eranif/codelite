@@ -3,7 +3,7 @@
 
 #if USE_SFTP
 
-#include "cl_ssh.h"
+#include "ssh/cl_ssh.h"
 #include "codelite_exports.h"
 #include <wx/msgqueue.h>
 

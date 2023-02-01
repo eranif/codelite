@@ -29,7 +29,7 @@
 #if USE_SFTP
 
 #include "sftp_ui.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 class WXDLLIMPEXP_SDK AddSSHAcountDlg : public AddSSHAcountDlgBase
 {

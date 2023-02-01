@@ -15,7 +15,7 @@
 #include "imanager.h"
 #include "processreaderthread.h"
 #include "search_thread.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 #include "wx/event.h"
 #include "wx/tokenzr.h"
 #include "wx/wxcrt.h"

@@ -30,9 +30,10 @@
 #include "consolefinder.h"
 #include "debugger.h"
 #include "list"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 #include "wx/event.h"
 #include "wx/string.h"
+
 #include <wx/hashmap.h>
 
 #ifdef MSVC_VER

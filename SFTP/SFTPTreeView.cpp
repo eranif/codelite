@@ -47,7 +47,7 @@
 #include "sftp_item_comparator.hpp"
 #include "sftp_settings.h"
 #include "sftp_worker_thread.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 #include <algorithm>
 #include <vector>

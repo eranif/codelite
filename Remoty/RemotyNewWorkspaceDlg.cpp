@@ -1,6 +1,8 @@
 #include "RemotyNewWorkspaceDlg.h"
+
 #include "globals.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
+
 RemotyNewWorkspaceDlg::RemotyNewWorkspaceDlg(wxWindow* parent)
     : RemotyNewWorkspaceDlgBase(parent)
 {

@@ -28,7 +28,7 @@
 #if USE_SFTP
 
 #include "cl_config.h" // Base class: clConfigItem
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 class WXDLLIMPEXP_SDK SFTPSettings : public clConfigItem
 {

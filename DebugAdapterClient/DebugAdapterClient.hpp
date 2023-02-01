@@ -38,7 +38,7 @@
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
 #include "plugin.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 #include <vector>
 #include <wx/stc/stc.h>

@@ -34,7 +34,7 @@
 #include "clGotoEntry.h"
 #include "codelite_exports.h"
 #include "entry.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 
 #include <vector>

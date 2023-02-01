@@ -23,18 +23,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "quickdebugdlg.h"
+
 #include "ColoursAndFontsManager.h"
 #include "SFTPBrowserDlg.h"
-#include "cl_sftp.h"
 #include "codelite_events.h"
 #include "debuggermanager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
-#include "quickdebugdlg.h"
 #include "quickdebuginfo.h"
 #include "sftp_settings.h"
+#include "ssh/cl_sftp.h"
 #include "windowattrmanager.h"
+
 #include <wx/dirdlg.h>
 #include <wx/display.h>
 #include <wx/filedlg.h>

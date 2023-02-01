@@ -23,10 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "SFTPStatusPage.h"
-#include "cl_ssh.h"
-#include "sftp.h"
 #include "sftp_worker_thread.h"
+
+#include "SFTPStatusPage.h"
+#include "sftp.h"
+#include "ssh/cl_ssh.h"
+
 #include <libssh/sftp.h>
 #include <wx/ffile.h>
 

@@ -3,10 +3,10 @@
 #if USE_SFTP
 
 #include "clThemedTreeCtrl.h"
-#include "cl_sftp.h"
-#include "cl_ssh.h"
 #include "codelite_events.h"
-#include "ssh_account_info.h"
+#include "ssh/cl_sftp.h"
+#include "ssh/cl_ssh.h"
+#include "ssh/ssh_account_info.h"
 
 #include <wx/panel.h>
 

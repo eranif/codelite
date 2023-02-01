@@ -32,9 +32,10 @@
 #include "clRemoteDirCtrl.hpp"
 #include "clSSHChannel.hpp"
 #include "cl_command_event.h"
-#include "cl_sftp.h"
 #include "sftp_item_comparator.hpp"
-#include "ssh_account_info.h"
+#include "ssh/cl_sftp.h"
+#include "ssh/ssh_account_info.h"
+
 #include <vector>
 #include <wx/timer.h>
 

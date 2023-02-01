@@ -26,9 +26,9 @@
 #ifndef SFTPWRITERTHREAD_H
 #define SFTPWRITERTHREAD_H
 
-#include "cl_sftp.h"
 #include "remote_file_info.h"
-#include "ssh_account_info.h"
+#include "ssh/cl_sftp.h"
+#include "ssh/ssh_account_info.h"
 #include "worker_thread.h" // Base class: WorkerThread
 
 class SFTP;

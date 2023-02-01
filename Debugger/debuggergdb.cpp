@@ -39,7 +39,7 @@
 #include "globals.h"
 #include "processreaderthread.h"
 #include "procutils.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 #include <algorithm>
 #include <wx/ffile.h>

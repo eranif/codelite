@@ -3,8 +3,8 @@
 
 #if USE_SFTP
 #include "cl_command_event.h"
-#include "cl_sftp.h"
 #include "codelite_exports.h"
+#include "ssh/cl_sftp.h"
 #include "sync_queue.h"
 
 #include <atomic>

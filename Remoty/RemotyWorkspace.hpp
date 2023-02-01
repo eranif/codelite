@@ -13,12 +13,12 @@
 #include "clSFTPEvent.h"
 #include "cl_command_event.h"
 #include "ieditor.h"
-#include "ssh_account_info.h"
-#include "wx/event.h"
+#include "ssh/ssh_account_info.h"
 
 #include <deque>
 #include <functional>
 #include <wx/arrstr.h>
+#include <wx/event.h>
 
 #define WORKSPACE_TYPE_NAME "Remote over SSH"
 

@@ -1,7 +1,8 @@
 #ifndef SFTPQUICKCONNECTDLG_H
 #define SFTPQUICKCONNECTDLG_H
+
 #include "UI.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 class SFTPQuickConnectDlg : public SFTPQuickConnectBaseDlg
 {

@@ -1,5 +1,4 @@
-# Our project is called 'codelite' this is how it will be called in
-# visual studio, and in our makefiles.
+# Our project is called 'codelite' this is how it will be called in visual studio, and in our makefiles.
 project(libcodelite)
 
 # wxWidgets include (this will do all the magic to configure everything)
@@ -57,7 +56,8 @@ include_directories(
     "${CL_SRC_ROOT}/sdk/asio-1.12.1"
     "${CL_SRC_ROOT}/CodeLite"
     "${CL_SRC_ROOT}/PCH"
-    "${CL_SRC_ROOT}/Interfaces")
+    "${CL_SRC_ROOT}/Interfaces"
+    "${CL_SRC_ROOT}/codelite/ssh")
 
 set(ADDITIONAL_LIBRARIES "")
 
@@ -75,7 +75,7 @@ else(UNIX)
     set(ADDITIONAL_LIBRARIES "-lws2_32")
 endif(UNIX)
 
-## Macros
+# Macros
 if(WIN32)
     add_definitions(-DWXMAKINGDLL_CL)
 endif(WIN32)
@@ -103,7 +103,15 @@ if(NOT MINGW AND WXC_APP)
     set(LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
     message("-- libcodelite.so is using RPATH set to ${WXC_LIBS_DIR}")
 endif()
-file(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp" "LSP/*.cpp")
+
+file(
+    GLOB
+    SRCS
+    "*.cpp"
+    "../sdk/codelite_indexer/network/*.cpp"
+    "SocketAPI/*.cpp"
+    "LSP/*.cpp"
+    "ssh/*.cpp")
 
 # Define GTK libraries
 if(GTK2_FOUND)

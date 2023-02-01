@@ -2,7 +2,7 @@
 #define CLREMOTETERMINAL_HPP
 
 #include "cl_command_event.h"
-#include "ssh_account_info.h"
+#include "ssh/ssh_account_info.h"
 
 #include <memory>
 #include <wx/event.h>

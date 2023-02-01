@@ -4,7 +4,9 @@
 
 #include "asyncprocess.h"
 #include "clSSHChannel.hpp"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
+#include "procutils.h" // clShellProcessEvent
 #include "ssh/ssh_account_info.h"
 
 #include <vector>
@@ -29,8 +31,7 @@ public:
 private:
     clSSHChannel::Ptr_t m_channel;
     clSSH::Ptr_t m_ssh;
-    std::string m_stdout;
-    std::string m_stderr;
+    std::string m_output;
 
 protected:
     void OnChannelStdout(clCommandEvent& event);
@@ -50,12 +51,12 @@ public:
     void shutdown();
 
     /// try to find a free channel and execute our command
-    /// If succeeded, the output is returned in the form of 3 events:
+    /// If succeeded, the output is returned in the form of this event:
     ///
-    /// - wxEVT_ASYNC_PROCESS_OUTPUT
-    /// - wxEVT_ASYNC_PROCESS_STDERR
-    /// - wxEVT_ASYNC_PROCESS_TERMINATED
+    /// - wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED
     bool try_execute(const clRemoteExecutor::Cmd& cmd);
 };
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, clShellProcessEvent);
+
 #endif // CL_REMOTE_EXECUTOR_HPP
 #endif

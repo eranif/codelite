@@ -133,49 +133,37 @@ bool clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 
 void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)
 {
-    m_stdout.append(event.GetStringRaw());
-    LOG_DEBUG(LOG) << m_stdout << endl;
+    m_output.append(event.GetStringRaw());
+    LOG_DEBUG(LOG) << m_output << endl;
 }
 
 void clRemoteExecutor::OnChannelStderr(clCommandEvent& event)
 {
-    m_stderr.append(event.GetStringRaw());
-    LOG_DEBUG(LOG) << m_stderr << endl;
+    m_output.append(event.GetStringRaw());
+    LOG_DEBUG(LOG) << m_output << endl;
 }
 
 void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
 {
     LOG_DEBUG(LOG) << "remote command completed" << endl;
 
-    if(!m_stdout.empty()) {
-        clProcessEvent stdout_event{ wxEVT_ASYNC_PROCESS_OUTPUT };
-        stdout_event.SetStringRaw(m_stdout);
-        LOG_DEBUG(LOG) << "read remote stdout:" << endl;
-        LOG_DEBUG(LOG) << m_stdout << endl;
-        ProcessEvent(stdout_event);
-    }
+    clShellProcessEvent output_event{ wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED };
+    output_event.SetStringRaw(m_output);
+    output_event.SetExitCode(0);
+    ProcessEvent(output_event);
 
-    if(!m_stderr.empty()) {
-        clProcessEvent stderr_event{ wxEVT_ASYNC_PROCESS_STDERR };
-        stderr_event.SetStringRaw(m_stderr);
-        LOG_DEBUG(LOG) << "read remote stderr:" << endl;
-        LOG_DEBUG(LOG) << m_stderr << endl;
-        ProcessEvent(stderr_event);
-    }
-    m_stdout.clear();
-    m_stderr.clear();
+    m_output.clear();
     m_channel.reset();
-
-    clProcessEvent command_ended{ wxEVT_ASYNC_PROCESS_TERMINATED };
-    ProcessEvent(command_ended);
 }
 
 void clRemoteExecutor::OnChannelError(clCommandEvent& event)
 {
     wxUnusedVar(event);
-    clProcessEvent command_ended{ wxEVT_ASYNC_PROCESS_TERMINATED };
+    clShellProcessEvent command_ended{ wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED };
+    command_ended.SetExitCode(127);
     ProcessEvent(command_ended);
     m_channel.reset();
 }
 
+wxDEFINE_EVENT(wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, clShellProcessEvent);
 #endif // USE_SFTP

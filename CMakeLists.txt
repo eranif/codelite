@@ -48,6 +48,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # ######################################################################################################################
 project("CodeLite")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 if(UNIX AND NOT APPLE)
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         # user did not pass -DCMAKE_INSTALL_PREFIX and this is the first time we are executing cmake, the default is set
@@ -93,7 +97,10 @@ if(NOT SQLite3_FOUND)
     elseif(APPLE)
         message(FATAL_ERROR " **** Could not find sqlite3. Please install Sqlite3 via brew")
     elseif(MINGW)
-        message(FATAL_ERROR " **** Could not find sqlite3. Please install sqlite3 package: pacman -S mingw-w64-clang-x86_64-sqlite3")
+        message(
+            FATAL_ERROR
+                " **** Could not find sqlite3. Please install sqlite3 package: pacman -S mingw-w64-clang-x86_64-sqlite3"
+        )
     else()
         message(FATAL_ERROR " **** Could not find sqlite3. Plesae install sqlite3 development package")
     endif()
@@ -159,7 +166,7 @@ message("-- OS name ${OS_NAME}")
 
 if(APPLE)
     set(WX_COMPONENTS "std aui propgrid ribbon")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 else(APPLE)
     set(WX_COMPONENTS "std aui propgrid stc ribbon richtext")
 endif()
@@ -490,7 +497,6 @@ osx_make_bundle_directory()
 
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
 add_definitions(-DwxUSE_GUI=1)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 if(NOT MINGW)
     add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
@@ -1003,8 +1009,7 @@ if(MINGW)
 
     list(APPEND WXWIDGETS_DLLS wxmsw330u_clang_custom.dll)
 
-    list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip
-         ${CMAKE_SOURCE_DIR}/LICENSE)
+    list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip ${CMAKE_SOURCE_DIR}/LICENSE)
 
     foreach(DLL ${SYSTEM_DLLS})
         install(FILES "${MSYS2_BASE}/clang64/bin/${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")

@@ -1,3 +1,4 @@
+#include <wx/init.h>
 #include "tester.hpp"
 
 #include "clAnsiEscapeCodeColourBuilder.hpp"

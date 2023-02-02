@@ -1,3 +1,4 @@
+#include <wx/init.h>
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxCodeCompletion.hpp"
@@ -21,7 +22,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <unordered_set>
-#include <wx/init.h>
 #include <wx/log.h>
 #include <wxStringHash.h>
 

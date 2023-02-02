@@ -87,10 +87,10 @@ int main(int argc, char** argv)
             wxString method = json["method"].toString();
             if(function_table.count(method) == 0) {
                 LOG_IF_TRACE { clDEBUG1() << "Received unsupported method:" << method << endl; }
-                protocol_handler.on_unsupported_message(move(msg), channel);
+                protocol_handler.on_unsupported_message(std::move(msg), channel);
             } else {
                 auto& cb = function_table[method];
-                (protocol_handler.*cb)(move(msg), channel);
+                (protocol_handler.*cb)(std::move(msg), channel);
             }
         }
 

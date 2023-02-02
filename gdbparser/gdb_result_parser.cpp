@@ -488,9 +488,9 @@ void gdbParseRegisterNames( const std::string &in, std::vector<std::string>& nam
 int
 yyparse()
 {
-    register int yym, yyn, yystate;
+     int yym, yyn, yystate;
 #if YYDEBUG
-    register char *yys;
+     char *yys;
     extern char *getenv();
 
     if (yys = getenv("YYDEBUG"))

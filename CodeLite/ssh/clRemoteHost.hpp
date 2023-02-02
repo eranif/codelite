@@ -2,16 +2,25 @@
 #define CLREMOTEHOST_HPP
 
 #if USE_SFTP
+#include "asyncprocess.h"
 #include "clWorkspaceEvent.hpp"
 #include "cl_remote_executor.hpp"
 #include "codelite_exports.h"
+#include "processreaderthread.h"
 #include "procutils.h"
 
 #include <functional>
 #include <vector>
 #include <wx/event.h>
 
-typedef std::function<void(const std::string&)> execute_callback;
+enum class clRemoteCommandStatus {
+    STDOUT,
+    STDERR,
+    DONE,
+    DONE_WITH_ERROR,
+};
+
+typedef std::function<void(const std::string&, clRemoteCommandStatus)> execute_callback;
 
 class WXDLLIMPEXP_CL clRemoteHost : public wxEvtHandler
 {
@@ -27,7 +36,9 @@ private:
 protected:
     void OnWorkspaceOpened(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
-    void OnCommandCompleted(clShellProcessEvent& event);
+    void OnCommandCompleted(clProcessEvent& event);
+    void OnCommandStdout(clProcessEvent& event);
+    void OnCommandStderr(clProcessEvent& event);
     void DrainPendingCommands();
 
 public:

@@ -13,7 +13,6 @@ clModuleLogger REMOTE_LOG;
 namespace
 {
 bool once = true;
-const wxString TERMINATOR = "CODELITE_TERMINATOR";
 } // namespace
 
 clRemoteExecutor::clRemoteExecutor()
@@ -130,35 +129,35 @@ clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 
 void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)
 {
-    m_output.append(event.GetStringRaw());
-    LOG_DEBUG(REMOTE_LOG) << "output read:" << m_output.size() << endl;
+    clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_OUTPUT };
+    output_event.SetStringRaw(event.GetStringRaw());
+    LOG_DEBUG(REMOTE_LOG) << "stdout read:" << event.GetStringRaw().size() << "bytes" << endl;
+    ProcessEvent(output_event);
 }
 
 void clRemoteExecutor::OnChannelStderr(clCommandEvent& event)
 {
-    m_output.append(event.GetStringRaw());
-    LOG_DEBUG(REMOTE_LOG) << "output read:" << m_output.size() << endl;
+    clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_STDERR };
+    output_event.SetStringRaw(event.GetStringRaw());
+    LOG_DEBUG(REMOTE_LOG) << "stderr read:" << event.GetStringRaw().size() << "bytes" << endl;
+    ProcessEvent(output_event);
 }
 
 void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
 {
     LOG_DEBUG(REMOTE_LOG) << "remote channel closed" << endl;
 
-    clShellProcessEvent output_event{ wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED };
-    output_event.SetStringRaw(m_output);
-    output_event.SetExitCode(0);
+    clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_TERMINATED };
+    output_event.SetInt(event.GetInt());
     ProcessEvent(output_event);
-
-    m_output.clear();
 }
 
 void clRemoteExecutor::OnChannelError(clCommandEvent& event)
 {
     wxUnusedVar(event);
-    clShellProcessEvent command_ended{ wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED };
-    command_ended.SetExitCode(127);
+    clProcessEvent command_ended{ wxEVT_ASYNC_PROCESS_TERMINATED };
+    command_ended.SetInt(event.GetInt()); // exit code
     ProcessEvent(command_ended);
 }
 
-wxDEFINE_EVENT(wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, clShellProcessEvent);
 #endif // USE_SFTP

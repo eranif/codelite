@@ -14,14 +14,19 @@ clRemoteHost* ms_instance{ nullptr };
 
 clRemoteHost::clRemoteHost()
 {
-    m_executor.Bind(wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, &clRemoteHost::OnCommandCompleted, this);
+    m_executor.Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteHost::OnCommandStdout, this);
+    m_executor.Bind(wxEVT_ASYNC_PROCESS_STDERR, &clRemoteHost::OnCommandStderr, this);
+    m_executor.Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteHost::OnCommandCompleted, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clRemoteHost::OnWorkspaceOpened, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clRemoteHost::OnWorkspaceClosed, this);
 }
 
 clRemoteHost::~clRemoteHost()
 {
-    m_executor.Unbind(wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, &clRemoteHost::OnCommandCompleted, this);
+    m_executor.Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteHost::OnCommandStdout, this);
+    m_executor.Unbind(wxEVT_ASYNC_PROCESS_STDERR, &clRemoteHost::OnCommandStderr, this);
+    m_executor.Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteHost::OnCommandCompleted, this);
+
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clRemoteHost::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clRemoteHost::OnWorkspaceOpened, this);
     DrainPendingCommands();
@@ -86,16 +91,41 @@ void clRemoteHost::run_command_with_callback(const wxString& command, const wxSt
     run_command_with_callback(argv, wd, env, std::move(cb));
 }
 
-void clRemoteHost::OnCommandCompleted(clShellProcessEvent& event)
+void clRemoteHost::OnCommandStderr(clProcessEvent& event)
 {
     const std::string& output = event.GetStringRaw();
     if(m_callbacks.empty()) {
         LOG_WARNING(REMOTE_LOG) << "no callback found for command output" << endl;
         return;
     }
+    LOG_DEBUG(REMOTE_LOG) << "stderr:" << event.GetStringRaw().size() << "bytes" << endl;
+    // call the callback
+    m_callbacks.front().first(output, clRemoteCommandStatus::STDERR);
+}
+
+void clRemoteHost::OnCommandStdout(clProcessEvent& event)
+{
+    const std::string& output = event.GetStringRaw();
+    if(m_callbacks.empty()) {
+        LOG_WARNING(REMOTE_LOG) << "no callback found for command output" << endl;
+        return;
+    }
+    LOG_DEBUG(REMOTE_LOG) << "stdout:" << event.GetStringRaw().size() << "bytes" << endl;
+    // call the callback
+    m_callbacks.front().first(output, clRemoteCommandStatus::STDOUT);
+}
+
+void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
+{
+    if(m_callbacks.empty()) {
+        LOG_WARNING(REMOTE_LOG) << "no callback found for command output" << endl;
+        return;
+    }
 
     // call the callback and consume it from the queue
-    m_callbacks.front().first(output);
+    LOG_DEBUG(REMOTE_LOG) << "command completed. exit status:" << event.GetInt() << endl;
+    m_callbacks.front().first("", event.GetInt() == 0 ? clRemoteCommandStatus::DONE
+                                                      : clRemoteCommandStatus::DONE_WITH_ERROR);
     delete m_callbacks.front().second;
     m_callbacks.erase(m_callbacks.begin());
 }

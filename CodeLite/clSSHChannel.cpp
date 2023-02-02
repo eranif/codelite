@@ -46,33 +46,41 @@ class clSSHChannelReader : public clJoinableThread
 protected:
     bool ReadChannel(bool isStderr)
     {
-        char buffer[1024];
-        int bytes = ssh_channel_read_timeout(m_channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 5);
+        char buffer[4097];
+        int bytes = ssh_channel_read_timeout(m_channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 1);
         if(bytes == SSH_ERROR) {
             // an error
-            LOG_DEBUG(LOG) << "clSSHChannelReader: channel read error" << endl;
+            LOG_TRACE(LOG) << "clSSHChannelReader: channel read error" << endl;
+            int exit_code = ssh_channel_get_exit_status(m_channel);
             clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
+            event.SetInt(exit_code);
             m_handler->QueueEvent(event.Clone());
             return false;
         } else if(bytes == SSH_EOF) {
             // channel closed
-            LOG_DEBUG(LOG) << "clSSHChannelReader: channel read eof" << endl;
+            LOG_TRACE(LOG) << "clSSHChannelReader: channel read eof" << endl;
+            int exit_code = ssh_channel_get_exit_status(m_channel);
+
             clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
+            event.SetInt(exit_code);
             m_handler->QueueEvent(event.Clone());
             return false;
         } else if(bytes == 0) {
             // timeout
             if(ssh_channel_is_eof(m_channel)) {
-                LOG_DEBUG(LOG) << "clSSHChannelReader: channel eof detected" << endl;
+                LOG_TRACE(LOG) << "clSSHChannelReader: channel eof detected" << endl;
+                int exit_code = ssh_channel_get_exit_status(m_channel);
+
                 // send close event
                 clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
+                event.SetInt(exit_code);
                 m_handler->QueueEvent(event.Clone());
                 return false;
             } else {
                 return true;
             }
         } else {
-            LOG_DEBUG(LOG) << "clSSHChannelReader: read" << bytes << "bytes" << endl;
+            LOG_TRACE(LOG) << "clSSHChannelReader: read" << bytes << "bytes" << endl;
             buffer[bytes] = 0;
             clCommandEvent event((isStderr && m_wantStderr) ? wxEVT_SSH_CHANNEL_READ_STDERR
                                                             : wxEVT_SSH_CHANNEL_READ_OUTPUT);

@@ -30,7 +30,6 @@ public:
 
 private:
     clSSH::Ptr_t m_ssh;
-    std::string m_output;
 
 protected:
     void OnChannelStdout(clCommandEvent& event);
@@ -52,12 +51,12 @@ public:
     /// try to find a free channel and execute our command
     /// If succeeded, the output is returned in the form of this event:
     ///
-    /// - wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED
+    /// - wxEVT_ASYNC_PROCESS_OUTPUT
+    /// - wxEVT_ASYNC_PROCESS_STDERR
+    /// - wxEVT_ASYNC_PROCESS_TERMINATED (never contains output)
     ///
     /// Returns: the remote channel. The caller should delete it upon completion
     clSSHChannel* try_execute(const clRemoteExecutor::Cmd& cmd);
 };
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, clShellProcessEvent);
-
 #endif // CL_REMOTE_EXECUTOR_HPP
 #endif

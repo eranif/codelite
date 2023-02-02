@@ -29,7 +29,6 @@ public:
     };
 
 private:
-    clSSHChannel::Ptr_t m_channel;
     clSSH::Ptr_t m_ssh;
     std::string m_output;
 
@@ -54,7 +53,9 @@ public:
     /// If succeeded, the output is returned in the form of this event:
     ///
     /// - wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED
-    bool try_execute(const clRemoteExecutor::Cmd& cmd);
+    ///
+    /// Returns: the remote channel. The caller should delete it upon completion
+    clSSHChannel* try_execute(const clRemoteExecutor::Cmd& cmd);
 };
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, clShellProcessEvent);
 

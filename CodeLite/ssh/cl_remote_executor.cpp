@@ -9,9 +9,9 @@
 
 #include <thread>
 
+clModuleLogger REMOTE_LOG;
 namespace
 {
-clModuleLogger LOG;
 bool once = true;
 const wxString TERMINATOR = "CODELITE_TERMINATOR";
 } // namespace
@@ -21,7 +21,7 @@ clRemoteExecutor::clRemoteExecutor()
     if(once) {
         wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), "remote-executor.log" };
         logfile.AppendDir("logs");
-        LOG.Open(logfile.GetFullPath());
+        REMOTE_LOG.Open(logfile.GetFullPath());
         once = true;
     }
 
@@ -64,38 +64,32 @@ bool clRemoteExecutor::startup(const wxString& account_name)
         }
         m_ssh->Login();
     } catch(clException& e) {
-        LOG_ERROR(LOG) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
-                       << endl;
-        m_channel.reset(nullptr);
+        LOG_ERROR(REMOTE_LOG) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
+                              << endl;
         return false;
     }
     return true;
 }
 
-void clRemoteExecutor::shutdown()
-{
-    if(m_channel) {
-        m_channel->Close();
-        m_channel.reset(nullptr);
-        m_ssh.reset();
-    }
-}
+void clRemoteExecutor::shutdown() { m_ssh.reset(); }
 
-bool clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
+clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {
     wxString command;
     if(!m_ssh) {
-        LOG_WARNING(LOG) << "SSH session is not opened" << endl;
-        return false;
+        LOG_WARNING(REMOTE_LOG) << "SSH session is not opened" << endl;
+        return nullptr;
     }
 
     // open the channel
+    clSSHChannel* channel = nullptr;
     try {
-        m_channel.reset(new clSSHChannel(m_ssh, clSSHChannel::kRemoteCommand, this, true));
-        m_channel->Open();
+        channel = new clSSHChannel(m_ssh, clSSHChannel::kRemoteCommand, this, true);
+        channel->Open();
     } catch(clException& e) {
-        LOG_ERROR(LOG) << "failed to open channel." << e.What() << endl;
-        return false;
+        LOG_ERROR(REMOTE_LOG) << "failed to open channel." << e.What() << endl;
+        wxDELETE(channel);
+        return nullptr;
     }
 
     if(!cmd.env.empty()) {
@@ -117,35 +111,38 @@ bool clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
         command.RemoveLast();
     }
 
-    LOG_DEBUG(LOG) << "Executing command:" << command << endl;
+    LOG_DEBUG(REMOTE_LOG) << "Executing command:" << command << endl;
 
     // prepare the commands
 
     try {
-        m_channel->Execute(command);
-        LOG_DEBUG(LOG) << "Success" << endl;
-        return true;
+        channel->Execute(command);
+        LOG_DEBUG(REMOTE_LOG) << "Success" << endl;
+        return channel;
     } catch(clException& e) {
-        LOG_TRACE(LOG) << "channel is busy, try again later" << endl;
+        LOG_TRACE(REMOTE_LOG) << "failed to execute remote command." << command << "." << e.What() << endl;
+        wxDELETE(channel);
     }
-    return false;
+
+    // the channel will delete itself upon completion
+    return nullptr;
 }
 
 void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)
 {
     m_output.append(event.GetStringRaw());
-    LOG_DEBUG(LOG) << m_output << endl;
+    LOG_DEBUG(REMOTE_LOG) << m_output << endl;
 }
 
 void clRemoteExecutor::OnChannelStderr(clCommandEvent& event)
 {
     m_output.append(event.GetStringRaw());
-    LOG_DEBUG(LOG) << m_output << endl;
+    LOG_DEBUG(REMOTE_LOG) << m_output << endl;
 }
 
 void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
 {
-    LOG_DEBUG(LOG) << "remote command completed" << endl;
+    LOG_DEBUG(REMOTE_LOG) << "remote command completed" << endl;
 
     clShellProcessEvent output_event{ wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED };
     output_event.SetStringRaw(m_output);
@@ -153,7 +150,6 @@ void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
     ProcessEvent(output_event);
 
     m_output.clear();
-    m_channel.reset();
 }
 
 void clRemoteExecutor::OnChannelError(clCommandEvent& event)
@@ -162,7 +158,6 @@ void clRemoteExecutor::OnChannelError(clCommandEvent& event)
     clShellProcessEvent command_ended{ wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED };
     command_ended.SetExitCode(127);
     ProcessEvent(command_ended);
-    m_channel.reset();
 }
 
 wxDEFINE_EVENT(wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, clShellProcessEvent);

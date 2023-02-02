@@ -131,18 +131,18 @@ clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)
 {
     m_output.append(event.GetStringRaw());
-    LOG_DEBUG(REMOTE_LOG) << m_output << endl;
+    LOG_DEBUG(REMOTE_LOG) << "output read:" << m_output.size() << endl;
 }
 
 void clRemoteExecutor::OnChannelStderr(clCommandEvent& event)
 {
     m_output.append(event.GetStringRaw());
-    LOG_DEBUG(REMOTE_LOG) << m_output << endl;
+    LOG_DEBUG(REMOTE_LOG) << "output read:" << m_output.size() << endl;
 }
 
 void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
 {
-    LOG_DEBUG(REMOTE_LOG) << "remote command completed" << endl;
+    LOG_DEBUG(REMOTE_LOG) << "remote channel closed" << endl;
 
     clShellProcessEvent output_event{ wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED };
     output_event.SetStringRaw(m_output);

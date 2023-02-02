@@ -28,13 +28,13 @@ struct CommandMetadata {
 class GenericFormatter : public SourceFormatterBase
 {
     wxArrayString m_command;
-    wxString m_remote_command;
     wxString m_workingDirectory;
     std::unordered_map<long, CommandMetadata> m_pid_commands;
 
-#if USE_SFTP
-    clRemoteExecutor m_remote_executor;
-#endif
+    // remote execution
+    wxString m_remote_command;
+    clEnvList_t m_remote_env;
+    wxString m_remote_wd;
 
 protected:
     bool DoFormatFile(const wxString& filepath, wxEvtHandler* sink, wxString* output);
@@ -56,7 +56,7 @@ public:
     bool FormatString(const wxString& content, const wxString& fullpath, wxString* output) override;
 
     bool CanHandleRemoteFile() const { return !m_remote_command.empty(); }
-    void SetRemoteCommand(const wxString& cmd);
+    void SetRemoteCommand(const wxString& cmd, const wxString& remote_wd, const clEnvList_t& env);
 
     void SetCommand(const wxArrayString& command) { this->m_command = command; }
     void SetCommand(const std::vector<wxString>& command);

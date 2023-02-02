@@ -14,6 +14,7 @@
 #include "imanager.h"
 #include "macromanager.h"
 #include "procutils.h"
+#include "ssh/clRemoteHost.hpp"
 #include "workspace.h"
 
 #include <sstream>
@@ -139,7 +140,16 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* 
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;
 
-    async_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
+    bool inplace_edit = IsInplaceFormatter();
+
+    // Execute the command with a callback
+    clRemoteHost::Instance()->run_command_with_callback(cmd, wd, {}, [=](const std::string& output) {
+        clSourceFormatEvent format_completed_event{ inplace_edit ? wxEVT_FORMAT_INPLACE_COMPELTED
+                                                                 : wxEVT_FORMAT_COMPELTED };
+        format_completed_event.SetFormattedString(inplace_edit ? "" : wxString::FromUTF8(output));
+        format_completed_event.SetFileName(filepath);
+        sink->QueueEvent(format_completed_event.Clone());
+    });
     return true;
 }
 
@@ -201,7 +211,12 @@ void GenericFormatter::SetCommandFromString(const wxString& command)
 
 wxString GenericFormatter::GetCommandWithComments() const { return get_command_with_desc(m_command, m_description); }
 
-void GenericFormatter::SetRemoteCommand(const wxString& cmd) { m_remote_command = cmd; }
+void GenericFormatter::SetRemoteCommand(const wxString& cmd, const wxString& remote_wd, const clEnvList_t& env)
+{
+    m_remote_command = cmd;
+    m_remote_env = env;
+    m_remote_wd = remote_wd;
+}
 
 void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
 {

@@ -1,20 +1,29 @@
 #include "clRemoteHost.hpp"
 
+#include "StringUtils.h"
 #include "clModuleLogger.hpp"
+#include "event_notifier.h"
 
 #if USE_SFTP
 extern clModuleLogger REMOTE_LOG;
 
-clRemoteHost* clRemoteHost::ms_instance{ nullptr };
+namespace
+{
+clRemoteHost* ms_instance{ nullptr };
+}
 
 clRemoteHost::clRemoteHost()
 {
     m_executor.Bind(wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, &clRemoteHost::OnCommandCompleted, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clRemoteHost::OnWorkspaceOpened, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clRemoteHost::OnWorkspaceClosed, this);
 }
 
 clRemoteHost::~clRemoteHost()
 {
     m_executor.Unbind(wxEVT_SHELL_ASYNC_REMOTE_PROCESS_TERMINATED, &clRemoteHost::OnCommandCompleted, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clRemoteHost::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clRemoteHost::OnWorkspaceOpened, this);
     DrainPendingCommands();
 }
 
@@ -67,6 +76,14 @@ void clRemoteHost::run_command_with_callback(const std::vector<wxString>& comman
     if(channel) {
         m_callbacks.emplace_back(std::make_pair(std::move(cb), channel));
     }
+}
+
+void clRemoteHost::run_command_with_callback(const wxString& command, const wxString& wd, const clEnvList_t& env,
+                                             execute_callback&& cb)
+{
+    auto wxargv = StringUtils::BuildArgv(command);
+    std::vector<wxString> argv{ wxargv.begin(), wxargv.end() };
+    run_command_with_callback(argv, wd, env, std::move(cb));
 }
 
 void clRemoteHost::OnCommandCompleted(clShellProcessEvent& event)

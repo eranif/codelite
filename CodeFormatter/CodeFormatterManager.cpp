@@ -142,7 +142,7 @@ void CodeFormatterManager::RestoreDefaults()
 void CodeFormatterManager::ClearRemoteCommands()
 {
     for(auto f : m_formatters) {
-        f->SetRemoteCommand(wxEmptyString);
+        f->SetRemoteCommand(wxEmptyString, wxEmptyString, {});
     }
 }
 

@@ -42,6 +42,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "macromanager.h"
 #include "macros.h"
 #include "precompiled_header.h"
 #include "procutils.h"
@@ -486,9 +487,9 @@ void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
         wxString wd = json["working_directory"].toString();
 
         wxString remote_cmd;
-        if(m_remoteHelper->BuildRemoteCommand(cmd, {}, wd, &remote_cmd)) {
-            m_manager.GetFormatterByName(tool_name)->SetRemoteCommand(remote_cmd);
-        }
+        cmd = MacroManager::Instance()->Expand(cmd, clGetManager(), wxEmptyString);
+        wd = MacroManager::Instance()->Expand(wd, clGetManager(), wxEmptyString);
+        m_manager.GetFormatterByName(tool_name)->SetRemoteCommand(cmd, wd, {});
     }
 }
 

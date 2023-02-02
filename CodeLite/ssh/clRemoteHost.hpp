@@ -15,7 +15,6 @@ typedef std::function<void(const std::string&)> execute_callback;
 
 class WXDLLIMPEXP_CL clRemoteHost : public wxEvtHandler
 {
-    static clRemoteHost* ms_instance;
     clRemoteExecutor m_executor;
     std::vector<std::pair<execute_callback, clSSHChannel*>> m_callbacks;
 
@@ -35,13 +34,17 @@ public:
     static clRemoteHost* Instance();
     static void Release();
 
-private:
-    clRemoteHost();
-    virtual ~clRemoteHost();
-
     /// Execute a command with callback. we return the output as raw string (un-converted)
     void run_command_with_callback(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env,
                                    execute_callback&& cb);
+
+    /// An overloaded version
+    void run_command_with_callback(const wxString& command, const wxString& wd, const clEnvList_t& env,
+                                   execute_callback&& cb);
+
+private:
+    clRemoteHost();
+    virtual ~clRemoteHost();
 };
 #endif
 #endif // CLREMOTEHOST_HPP

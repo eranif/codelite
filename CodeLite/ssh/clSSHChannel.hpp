@@ -13,7 +13,7 @@ class clJoinableThread;
 class WXDLLIMPEXP_CL clSSHChannel : public wxEvtHandler
 {
 public:
-    typedef wxSharedPtr<clSSHChannel> Ptr_t;
+    typedef std::shared_ptr<clSSHChannel> Ptr_t;
     enum eChannelType {
         kRemoteCommand,
     };

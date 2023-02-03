@@ -26,6 +26,7 @@ class WXDLLIMPEXP_CL clRemoteHost : public wxEvtHandler
 {
     clRemoteExecutor m_executor;
     std::vector<std::pair<execute_callback, clSSHChannel*>> m_callbacks;
+    std::vector<IProcess::Ptr_t> m_interactiveProcesses;
 
 private:
     clRemoteHost(const clRemoteHost&) = delete;
@@ -52,6 +53,10 @@ public:
     /// An overloaded version
     void run_command_with_callback(const wxString& command, const wxString& wd, const clEnvList_t& env,
                                    execute_callback&& cb);
+
+    /// start an interactive remote process
+    IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent, const wxString& command, size_t flags,
+                                            const wxString& wd, const clEnvList_t& env = {});
 
 private:
     clRemoteHost();

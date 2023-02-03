@@ -70,7 +70,7 @@ bool clRemoteExecutor::startup(const wxString& account_name)
     return true;
 }
 
-void clRemoteExecutor::shutdown() { m_ssh.reset(); }
+void clRemoteExecutor::shutdown() { m_ssh = nullptr; }
 
 clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {

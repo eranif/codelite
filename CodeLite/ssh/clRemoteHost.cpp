@@ -2,10 +2,12 @@
 
 #include "StringUtils.h"
 #include "clModuleLogger.hpp"
+#include "clSSHInteractiveChannel.hpp"
 #include "event_notifier.h"
 
 #if USE_SFTP
-extern clModuleLogger REMOTE_LOG;
+
+INITIALISE_SSH_LOG(LOG, "Remote-Host");
 
 namespace
 {
@@ -71,6 +73,11 @@ void clRemoteHost::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     DrainPendingCommands();
+    for(auto proc : m_interactiveProcesses) {
+        // terminate the bg thread + close the channel
+        proc->Terminate();
+    }
+    m_interactiveProcesses.clear();
     m_executor.shutdown();
 }
 
@@ -95,10 +102,10 @@ void clRemoteHost::OnCommandStderr(clProcessEvent& event)
 {
     const std::string& output = event.GetStringRaw();
     if(m_callbacks.empty()) {
-        LOG_WARNING(REMOTE_LOG) << "no callback found for command output" << endl;
+        LOG_WARNING(LOG) << "no callback found for command output" << endl;
         return;
     }
-    LOG_DEBUG(REMOTE_LOG) << "stderr:" << event.GetStringRaw().size() << "bytes" << endl;
+    LOG_DEBUG(LOG) << "stderr:" << event.GetStringRaw().size() << "bytes" << endl;
     // call the callback
     m_callbacks.front().first(output, clRemoteCommandStatus::STDERR);
 }
@@ -107,10 +114,10 @@ void clRemoteHost::OnCommandStdout(clProcessEvent& event)
 {
     const std::string& output = event.GetStringRaw();
     if(m_callbacks.empty()) {
-        LOG_WARNING(REMOTE_LOG) << "no callback found for command output" << endl;
+        LOG_WARNING(LOG) << "no callback found for command output" << endl;
         return;
     }
-    LOG_DEBUG(REMOTE_LOG) << "stdout:" << event.GetStringRaw().size() << "bytes" << endl;
+    LOG_DEBUG(LOG) << "stdout:" << event.GetStringRaw().size() << "bytes" << endl;
     // call the callback
     m_callbacks.front().first(output, clRemoteCommandStatus::STDOUT);
 }
@@ -118,16 +125,36 @@ void clRemoteHost::OnCommandStdout(clProcessEvent& event)
 void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
 {
     if(m_callbacks.empty()) {
-        LOG_WARNING(REMOTE_LOG) << "no callback found for command output" << endl;
+        LOG_WARNING(LOG) << "no callback found for command output" << endl;
         return;
     }
 
     // call the callback and consume it from the queue
-    LOG_DEBUG(REMOTE_LOG) << "command completed. exit status:" << event.GetInt() << endl;
+    LOG_DEBUG(LOG) << "command completed. exit status:" << event.GetInt() << endl;
     m_callbacks.front().first("", event.GetInt() == 0 ? clRemoteCommandStatus::DONE
                                                       : clRemoteCommandStatus::DONE_WITH_ERROR);
     delete m_callbacks.front().second;
     m_callbacks.erase(m_callbacks.begin());
+}
+
+IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, const wxString& command, size_t flags,
+                                                      const wxString& wd, const clEnvList_t& env)
+{
+    if(!m_executor.GetSSHSession()) {
+        LOG_ERROR(LOG) << "no ssh session available" << endl;
+        return IProcess::Ptr_t{};
+    }
+
+    LOG_DEBUG(LOG) << "Launching remote process:" << command << endl;
+    auto wxargv = StringUtils::BuildArgv(command);
+    std::vector<wxString> argv{ wxargv.begin(), wxargv.end() };
+
+    IProcess::Ptr_t proc(clSSHInteractiveChannel::Create(parent, m_executor.GetSSHSession(), argv, flags, wd,
+                                                         env.empty() ? nullptr : &env));
+    if(proc) {
+        m_interactiveProcesses.push_back(proc);
+    }
+    return proc;
 }
 
 #endif // USE_SFTP

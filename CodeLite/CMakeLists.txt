@@ -57,7 +57,7 @@ include_directories(
     "${CL_SRC_ROOT}/CodeLite"
     "${CL_SRC_ROOT}/PCH"
     "${CL_SRC_ROOT}/Interfaces"
-    "${CL_SRC_ROOT}/codelite/ssh")
+    "${CL_SRC_ROOT}/CodeLite/ssh")
 
 set(ADDITIONAL_LIBRARIES "")
 

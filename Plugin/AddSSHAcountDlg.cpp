@@ -26,6 +26,7 @@
 #include "AddSSHAcountDlg.h"
 #if USE_SFTP
 #include "cl_exception.h"
+#include "environmentconfig.h"
 #include "ssh/cl_ssh.h"
 #include "windowattrmanager.h"
 
@@ -83,7 +84,8 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
 
     try {
         wxString message;
-        ssh->Connect();
+        EnvSetter env;
+        ssh->Open();
         if(!ssh->AuthenticateServer(message)) {
             if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
                 ssh->AcceptServerAuthentication();

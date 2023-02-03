@@ -26,6 +26,11 @@
 #ifndef CLSSH_H
 #define CLSSH_H
 
+// useful macro to initialise LOG handle to the "ssh.log" file
+#include "clModuleLogger.hpp"
+
+#define INITIALISE_SSH_LOG(LOG, MODULE_NAME) INITIALISE_MODULE_LOG(LOG, MODULE_NAME, "ssh.log")
+
 #if USE_SFTP
 #include "clSSHAgent.hpp"
 #include "cl_command_event.h"
@@ -91,7 +96,7 @@ public:
     /**
      * @brief connect to the remote server
      */
-    void Connect(int seconds = 10);
+    void Open(int seconds = 3);
 
     /**
      * @brief authenticate the server

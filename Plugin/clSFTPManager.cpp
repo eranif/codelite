@@ -7,6 +7,7 @@
 #include "clTempFile.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
+#include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -112,7 +113,8 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
 
     try {
         clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
-        ssh->Connect();
+        EnvSetter env;
+        ssh->Open();
         wxString message;
         if(!ssh->AuthenticateServer(message)) {
             if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {

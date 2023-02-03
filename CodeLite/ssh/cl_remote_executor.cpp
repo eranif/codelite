@@ -18,7 +18,7 @@ bool once = true;
 clRemoteExecutor::clRemoteExecutor()
 {
     if(once) {
-        wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), "remote-executor.log" };
+        wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), "ssh.log" };
         logfile.AppendDir("logs");
         REMOTE_LOG.Open(logfile.GetFullPath());
         once = true;
@@ -57,7 +57,7 @@ bool clRemoteExecutor::startup(const wxString& account_name)
         m_ssh.reset(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
         wxString message;
 
-        m_ssh->Connect();
+        m_ssh->Open();
         if(!m_ssh->AuthenticateServer(message)) {
             m_ssh->AcceptServerAuthentication();
         }

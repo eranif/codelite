@@ -16,10 +16,14 @@ class WXDLLIMPEXP_CL clModuleLogger
     int m_current_log_level = FileLogger::Error;
     wxString m_buffer;
     wxFileName m_logfile;
+    wxString m_module;
 
 public:
     clModuleLogger();
     ~clModuleLogger();
+
+    /// Set the module name
+    void SetModule(const wxString& name) { m_module = name; }
 
     /// used to check if an entry added using the current log level
     /// will eventually be logged (we check this against the global
@@ -240,5 +244,24 @@ template <typename T> clModuleLogger& operator<<(clModuleLogger& logger, const T
 #define LOG_WARNING(LOG) LOG.SetCurrentLogLevel(FileLogger::Warning) << LOG.Prefix()
 #define LOG_DEBUG(LOG) LOG.SetCurrentLogLevel(FileLogger::Dbg) << LOG.Prefix()
 #define LOG_TRACE(LOG) LOG.SetCurrentLogLevel(FileLogger::Developer) << LOG.Prefix()
+
+/// place this at the top of the C++ file you want to have custom logger
+#define INITIALISE_MODULE_LOG(LOG, MODULE_NAME, FILE_NAME)                                \
+    namespace                                                                             \
+    {                                                                                     \
+        thread_local clModuleLogger LOG;                                                  \
+        struct Init {                                                                     \
+            Init()                                                                        \
+            {                                                                             \
+                wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), FILE_NAME }; \
+                logfile.AppendDir("logs");                                                \
+                LOG.SetModule(MODULE_NAME);                                               \
+                LOG.Open(logfile.GetFullPath());                                          \
+            }                                                                             \
+        };                                                                                \
+                                                                                          \
+        /*Initialise our logger (once per thread)*/                                       \
+        thread_local Init init;                                                           \
+    }
 
 #endif // CLMODULELOGGER_HPP

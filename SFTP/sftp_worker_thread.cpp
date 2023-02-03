@@ -26,6 +26,7 @@
 #include "sftp_worker_thread.h"
 
 #include "SFTPStatusPage.h"
+#include "environmentconfig.h"
 #include "sftp.h"
 #include "ssh/cl_ssh.h"
 
@@ -179,7 +180,8 @@ void SFTPWorkerThread::DoConnect(SFTPThreadRequet* req)
         wxString message;
         DoReportStatusBarMessage(wxString() << _("Connecting to ") << accountName);
         DoReportMessage(accountName, "Connecting...", SFTPThreadMessage::STATUS_NONE);
-        ssh->Connect();
+        EnvSetter env;
+        ssh->Open();
         if(!ssh->AuthenticateServer(message)) {
             ssh->AcceptServerAuthentication();
         }

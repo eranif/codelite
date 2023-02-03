@@ -34,6 +34,7 @@
 #ifdef __WXMSW__
 #include "wx/msw/winundef.h"
 #endif
+#include "clEnvironment.hpp"
 #include "cl_ssh.h"
 
 #include <libssh/libssh.h>
@@ -72,7 +73,7 @@ clSSH::clSSH()
 
 clSSH::~clSSH() { Close(); }
 
-void clSSH::Connect(int seconds)
+void clSSH::Open(int seconds)
 {
     // Start ssh-agent before we attempt to connect
     m_sshAgent.reset(new clSSHAgent());

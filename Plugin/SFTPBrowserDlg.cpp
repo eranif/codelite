@@ -28,6 +28,7 @@
 #include "SFTPBrowserDlg.h"
 
 #include "SSHAccountManagerDlg.h"
+#include "environmentconfig.h"
 #include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
@@ -434,7 +435,8 @@ void SFTPBrowserDlg::DoBrowse()
     clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
     try {
         wxString message;
-        ssh->Connect();
+        EnvSetter env;
+        ssh->Open();
         if(!ssh->AuthenticateServer(message)) {
             if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
                 ssh->AcceptServerAuthentication();

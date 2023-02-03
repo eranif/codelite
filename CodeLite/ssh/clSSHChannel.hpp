@@ -3,17 +3,11 @@
 
 #if USE_SFTP
 
+#include "clSSHChannelCommon.hpp"
 #include "codelite_exports.h"
 #include "ssh/cl_ssh.h"
 
 #include <wx/msgqueue.h>
-
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_READ_ERROR, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_WRITE_ERROR, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_READ_OUTPUT, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_READ_STDERR, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_CLOSED, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_PTY, clCommandEvent);
 
 class clJoinableThread;
 class WXDLLIMPEXP_CL clSSHChannel : public wxEvtHandler

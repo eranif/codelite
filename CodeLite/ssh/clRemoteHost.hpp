@@ -58,6 +58,10 @@ public:
     IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent, const wxString& command, size_t flags,
                                             const wxString& wd, const clEnvList_t& env = {});
 
+    /// An overloaded version
+    IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent, const wxArrayString& command, size_t flags,
+                                            const wxString& wd, const clEnvList_t& env = {});
+
 private:
     clRemoteHost();
     virtual ~clRemoteHost();

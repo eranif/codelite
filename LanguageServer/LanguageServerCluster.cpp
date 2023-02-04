@@ -591,10 +591,12 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         lsp->SetStartedCallback(std::move(cb));
     }
 
+    bool is_remote = m_remoteHelper->IsRemoteWorkspaceOpened();
     wxString command;
     wxString working_directory;
     wxString project;
-    if(m_remoteHelper->IsRemoteWorkspaceOpened()) {
+    clEnvList_t env_list;
+    if(is_remote) {
         // remote workspace
         // read the commands from the codelite-remote.json file (the m_remoteHelper does that for us)
         JSON* root = m_remoteHelper->GetPluginConfig("Language Server Plugin");
@@ -603,14 +605,10 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             return;
         }
 
-        wxString remote_command = json_get_server_config_command(root, entry.GetName());
+        command = json_get_server_config_command(root, entry.GetName());
         working_directory = json_get_server_config_working_directory(root, entry.GetName());
-        auto env_list = json_get_server_config_env(root, entry.GetName());
-        if(remote_command.empty() ||
-           !m_remoteHelper->BuildRemoteCommand(remote_command, env_list, working_directory, &command)) {
-            LSP_WARNING() << "LSP: failed to build remote command for server:" << entry.GetName() << endl;
-            return;
-        }
+        working_directory = MacroManager::Instance()->Expand(working_directory, clGetManager(), wxEmptyString);
+        env_list = json_get_server_config_env(root, entry.GetName());
     } else {
         // local workspace
         command = entry.GetCommand();
@@ -627,7 +625,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     wxArrayString lspCommand;
     lspCommand = StringUtils::BuildCommandArrayFromString(command);
 
-    if(!lspCommand.empty()) {
+    if(!is_remote && !lspCommand.empty()) {
         wxString mainCommand = StringUtils::StripDoubleQuotes(lspCommand[0]);
         if(!wxFileExists(mainCommand)) {
             LSP_WARNING() << "Disabling lsp:" << entry.GetName() << endl;
@@ -638,8 +636,8 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         }
     }
 
-    LSP_DEBUG() << "Starting lsp:";
-    LSP_DEBUG() << "Connection string:" << entry.GetConnectionString();
+    LSP_DEBUG() << "Starting lsp:" << endl;
+    LSP_DEBUG() << "Connection string:" << entry.GetConnectionString() << endl;
 
     if(entry.IsAutoRestart()) {
         LSP_DEBUG() << "lspCommand:" << lspCommand;
@@ -653,22 +651,28 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         flags |= LSPStartupInfo::kAutoStart;
     }
 
+    if(is_remote) {
+        flags |= LSPStartupInfo::kRemoteLSP;
+    }
+
     LSPStartupInfo startup_info;
     startup_info.SetConnectioString(entry.GetConnectionString());
     startup_info.SetLspServerCommand(lspCommand);
     startup_info.SetFlags(flags);
     startup_info.SetWorkingDirectory(working_directory);
 
-    // apply the environment
-    clEnvList_t env_list;
-    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+    // build the environment
+    if(!is_remote && clWorkspaceManager::Get().IsWorkspaceOpened()) {
         env_list = clWorkspaceManager::Get().GetWorkspace()->GetEnvironment();
     }
 
-    if(!env_list.empty()) {
-        LSP_DEBUG() << "Creating LSP with env:" << endl;
-        for(const auto& p : env_list) {
-            LSP_DEBUG() << p.first << "=" << p.second << endl;
+    LOG_IF_DEBUG
+    {
+        if(!env_list.empty()) {
+            LSP_DEBUG() << "Creating LSP with env:" << endl;
+            for(const auto& p : env_list) {
+                LSP_DEBUG() << p.first << "=" << p.second << endl;
+            }
         }
     }
 

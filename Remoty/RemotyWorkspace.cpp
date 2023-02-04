@@ -12,6 +12,7 @@
 #include "clConsoleBase.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clRemoteFindDialog.h"
+#include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
@@ -558,6 +559,10 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     open_event.SetString(m_remoteWorkspaceFile);
     open_event.SetRemoteAccount(m_account.GetAccountName());
     open_event.SetWorkspaceType(GetWorkspaceType());
+
+    // we need this to be processed first
+    clRemoteHost::Instance()->ProcessEvent(open_event);
+
     EventNotifier::Get()->AddPendingEvent(open_event);
 
     // update the remote workspace list

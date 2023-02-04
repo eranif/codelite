@@ -53,6 +53,25 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
     std::thread* thr = new std::thread([channel, &Q, handler]() mutable {
         LOG_DEBUG(LOG) << "helper thread started" << endl;
         while(true) {
+            // Poll the channel for output
+            auto stdout_res = ssh::channel_read(channel, handler, false, true);
+            if(stdout_res == ssh::read_result::SSH_SUCCESS) {
+                // got something
+                continue;
+            }
+
+            auto stderrr_res = ssh::channel_read(channel, handler, true, true);
+            if(stderrr_res == ssh::read_result::SSH_SUCCESS) {
+                // got something
+                continue;
+            }
+
+            if(!ssh::result_ok(stdout_res) || !ssh::result_ok(stdout_res)) {
+                // error occured (but not timeout)
+                break;
+            }
+
+            // fall: timeout
             std::any msg;
             if(Q.ReceiveTimeout(1, msg) == wxMSGQUEUE_NO_ERROR) {
                 LOG_DEBUG(LOG) << "got request from the queue" << endl;
@@ -93,11 +112,6 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
                 } else {
                     LOG_WARNING(LOG) << "received unknown command." << msg.type().name() << endl;
                 }
-            }
-
-            // Poll the channel for output
-            if(!ssh::channel_read(channel, handler, false, true) || !ssh::channel_read(channel, handler, true, true)) {
-                break;
             }
         }
         LOG_DEBUG(LOG) << "helper thread is going down" << endl;
@@ -338,13 +352,15 @@ void clSSHInteractiveChannel::SuspendAsyncReads()
 
 void clSSHInteractiveChannel::OnChannelStdout(clCommandEvent& event)
 {
+    LOG_IF_DEBUG { LOG_DEBUG(LOG) << event.GetStringRaw() << endl; }
+
     if(!m_waiting) {
+        LOG_DEBUG(LOG) << "sending wxEVT_ASYNC_PROCESS_OUTPUT event" << endl;
         clProcessEvent event_stdout{ wxEVT_ASYNC_PROCESS_OUTPUT };
         event_stdout.SetProcess(nullptr);
         event_stdout.SetOutputRaw(event.GetStringRaw());
         event_stdout.SetOutput(event.GetStringRaw());
-        m_parent->AddPendingEvent(event_stdout);
-        LOG_DEBUG(LOG) << "stdout (active): `" << event.GetStringRaw() << "`" << endl;
+        AddPendingEvent(event_stdout);
     } else {
         std::string marker;
         marker.append(START_MARKER).append("\n");
@@ -365,7 +381,7 @@ void clSSHInteractiveChannel::OnChannelStdout(clCommandEvent& event)
                 event_stdout.SetProcess(nullptr);
                 event_stdout.SetOutputRaw(remainder);
                 event_stdout.SetOutput(remainder);
-                m_parent->AddPendingEvent(event_stdout);
+                AddPendingEvent(event_stdout);
                 LOG_DEBUG(LOG) << "stdout (active): `" << remainder << "`" << endl;
             }
             m_waitingBuffer.clear();
@@ -383,7 +399,7 @@ void clSSHInteractiveChannel::OnChannelStderr(clCommandEvent& event)
         event_stdout.SetProcess(nullptr);
         event_stdout.SetOutputRaw(event.GetStringRaw());
         event_stdout.SetOutput(event.GetStringRaw());
-        m_parent->AddPendingEvent(event_stdout);
+        AddPendingEvent(event_stdout);
         LOG_DEBUG(LOG) << "stderr (active): `" << event.GetStringRaw() << "`" << endl;
     } else {
         LOG_DEBUG(LOG) << "stderr (waiting): `" << event.GetStringRaw() << "`" << endl;
@@ -395,7 +411,7 @@ void clSSHInteractiveChannel::OnChannelClosed(clCommandEvent& event)
     if(!m_closeEventFired) {
         clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
         event_terminated.SetProcess(nullptr);
-        m_parent->AddPendingEvent(event_terminated);
+        AddPendingEvent(event_terminated);
         LOG_DEBUG(LOG) << "channel closed" << endl;
         m_closeEventFired = true;
     }
@@ -406,6 +422,6 @@ void clSSHInteractiveChannel::OnChannelError(clCommandEvent& event)
     LOG_DEBUG(LOG) << "channel error." << ssh_get_error(m_ssh->GetSession()) << endl;
     clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
     event_terminated.SetProcess(nullptr);
-    m_parent->AddPendingEvent(event_terminated);
+    AddPendingEvent(event_terminated);
 }
 #endif // USE_SFTP

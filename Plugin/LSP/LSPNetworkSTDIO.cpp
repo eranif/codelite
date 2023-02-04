@@ -13,9 +13,6 @@
 
 #include <sstream>
 
-static const char separator_str[] = "\n************\n";
-static size_t separator_str_len = sizeof(separator_str) - 1;
-
 LSPNetworkSTDIO::LSPNetworkSTDIO() { LSP::Initialise(); }
 
 LSPNetworkSTDIO::~LSPNetworkSTDIO() { Close(); }
@@ -35,7 +32,7 @@ void LSPNetworkSTDIO::Send(const std::string& data)
 {
     if(m_server) {
         m_server->Write(data);
-        LSP_TRACE() << data << endl;
+        LOG_IF_TRACE { LSP_TRACE() << data << endl; }
     } else {
         LSP_WARNING() << "LSPNetworkSTDIO.Send(): no process !?" << endl;
     }

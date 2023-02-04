@@ -8,22 +8,10 @@
 #include "ssh/ssh_account_info.h"
 
 #include <thread>
-
-clModuleLogger REMOTE_LOG;
-namespace
-{
-bool once = true;
-} // namespace
+INITIALISE_SSH_LOG(LOG, "clRemoteExecutor");
 
 clRemoteExecutor::clRemoteExecutor()
 {
-    if(once) {
-        wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), "ssh.log" };
-        logfile.AppendDir("logs");
-        REMOTE_LOG.Open(logfile.GetFullPath());
-        once = true;
-    }
-
     Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &clRemoteExecutor::OnChannelError, this);
     Bind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &clRemoteExecutor::OnChannelError, this);
     Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &clRemoteExecutor::OnChannelStdout, this);
@@ -43,12 +31,15 @@ clRemoteExecutor::~clRemoteExecutor()
 
 bool clRemoteExecutor::startup(const wxString& account_name)
 {
+    LOG_DEBUG(LOG) << "Initializing for account:" << account_name << endl;
     if(m_ssh) {
+        LOG_WARNING(LOG) << "startup called for an already initialised session. account:" << account_name << endl;
         return true;
     }
 
     auto account = SSHAccountInfo::LoadAccount(account_name);
     if(account.GetHost().empty()) {
+        LOG_WARNING(LOG) << "could not find account:" << account_name << endl;
         return false;
     }
 
@@ -63,10 +54,11 @@ bool clRemoteExecutor::startup(const wxString& account_name)
         }
         m_ssh->Login();
     } catch(clException& e) {
-        LOG_ERROR(REMOTE_LOG) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
-                              << endl;
+        LOG_ERROR(LOG) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
+                       << endl;
         return false;
     }
+    LOG_DEBUG(LOG) << "Initializing for account:" << account_name << "completed successfully" << endl;
     return true;
 }
 
@@ -75,7 +67,7 @@ void clRemoteExecutor::shutdown() { m_ssh = nullptr; }
 clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {
     if(!m_ssh) {
-        LOG_WARNING(REMOTE_LOG) << "SSH session is not opened" << endl;
+        LOG_WARNING(LOG) << "SSH session is not opened" << endl;
         return nullptr;
     }
 
@@ -85,22 +77,22 @@ clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
         channel = new clSSHChannel(m_ssh, clSSHChannel::kRemoteCommand, this, true);
         channel->Open();
     } catch(clException& e) {
-        LOG_ERROR(REMOTE_LOG) << "failed to open channel." << e.What() << endl;
+        LOG_ERROR(LOG) << "failed to open channel." << e.What() << endl;
         wxDELETE(channel);
         return nullptr;
     }
 
     wxString command = ssh::build_command(cmd.command, cmd.wd, cmd.env);
-    LOG_DEBUG(REMOTE_LOG) << "Executing command:" << command << endl;
+    LOG_DEBUG(LOG) << "Executing command:" << command << endl;
 
     // prepare the commands
 
     try {
         channel->Execute(command);
-        LOG_DEBUG(REMOTE_LOG) << "Success" << endl;
+        LOG_DEBUG(LOG) << "Success" << endl;
         return channel;
     } catch(clException& e) {
-        LOG_TRACE(REMOTE_LOG) << "failed to execute remote command." << command << "." << e.What() << endl;
+        LOG_TRACE(LOG) << "failed to execute remote command." << command << "." << e.What() << endl;
         wxDELETE(channel);
     }
 
@@ -112,7 +104,7 @@ void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)
 {
     clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_OUTPUT };
     output_event.SetStringRaw(event.GetStringRaw());
-    LOG_DEBUG(REMOTE_LOG) << "stdout read:" << event.GetStringRaw().size() << "bytes" << endl;
+    LOG_DEBUG(LOG) << "stdout read:" << event.GetStringRaw().size() << "bytes" << endl;
     ProcessEvent(output_event);
 }
 
@@ -120,13 +112,13 @@ void clRemoteExecutor::OnChannelStderr(clCommandEvent& event)
 {
     clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_STDERR };
     output_event.SetStringRaw(event.GetStringRaw());
-    LOG_DEBUG(REMOTE_LOG) << "stderr read:" << event.GetStringRaw().size() << "bytes" << endl;
+    LOG_DEBUG(LOG) << "stderr read:" << event.GetStringRaw().size() << "bytes" << endl;
     ProcessEvent(output_event);
 }
 
 void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
 {
-    LOG_DEBUG(REMOTE_LOG) << "remote channel closed" << endl;
+    LOG_DEBUG(LOG) << "remote channel closed" << endl;
 
     clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_TERMINATED };
     output_event.SetInt(event.GetInt());

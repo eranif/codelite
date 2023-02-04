@@ -1,6 +1,7 @@
 #ifndef LSP_STARTUPINFO_H
 #define LSP_STARTUPINFO_H
 
+#include "clEnvironment.hpp"
 #include "codelite_exports.h"
 
 #include <wx/arrstr.h>
@@ -22,6 +23,7 @@ protected:
     wxString m_workingDirectory;
     size_t m_flags = 0;
     wxString m_accountName;
+    clEnvList_t m_env;
 
 public:
     LSPStartupInfo& SetConnectioString(const wxString& connectioString)
@@ -44,6 +46,9 @@ public:
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
     void SetAccountName(const wxString& accountName) { this->m_accountName = accountName; }
     const wxString& GetAccountName() const { return m_accountName; }
+
+    void SetEnv(const clEnvList_t& env) { this->m_env = env; }
+    const clEnvList_t& GetEnv() const { return m_env; }
 
 public:
     LSPStartupInfo();

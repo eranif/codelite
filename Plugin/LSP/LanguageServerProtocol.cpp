@@ -14,6 +14,7 @@
 #include "LSP/InitializeRequest.h"
 #include "LSP/InitializedNotification.hpp"
 #include "LSP/LSPEvent.h"
+#include "LSP/LSPNetworkRemoteSTDIO.hpp"
 #include "LSP/LSPNetworkSTDIO.h"
 #include "LSP/LSPNetworkSocketClient.h"
 #include "LSP/Request.h"
@@ -74,7 +75,11 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     // Use sockets here
     switch(netType) {
     case eNetworkType::kStdio:
-        m_network.reset(new LSPNetworkSTDIO());
+        if(clWorkspaceManager::Get().GetWorkspace() && clWorkspaceManager::Get().GetWorkspace()->IsRemote()) {
+            m_network.reset(new LSPNetworkRemoteSTDIO());
+        } else {
+            m_network.reset(new LSPNetworkSTDIO());
+        }
         break;
     case eNetworkType::kTcpIP:
         m_network.reset(new LSPNetworkSocketClient());

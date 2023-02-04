@@ -19,8 +19,8 @@ clRemoteHost::clRemoteHost()
     m_executor.Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteHost::OnCommandStdout, this);
     m_executor.Bind(wxEVT_ASYNC_PROCESS_STDERR, &clRemoteHost::OnCommandStderr, this);
     m_executor.Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteHost::OnCommandCompleted, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clRemoteHost::OnWorkspaceOpened, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clRemoteHost::OnWorkspaceClosed, this);
+    Bind(wxEVT_WORKSPACE_LOADED, &clRemoteHost::OnWorkspaceOpened, this);
+    Bind(wxEVT_WORKSPACE_CLOSED, &clRemoteHost::OnWorkspaceClosed, this);
 }
 
 clRemoteHost::~clRemoteHost()
@@ -137,7 +137,7 @@ void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
     m_callbacks.erase(m_callbacks.begin());
 }
 
-IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, const wxString& command, size_t flags,
+IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, const wxArrayString& command, size_t flags,
                                                       const wxString& wd, const clEnvList_t& env)
 {
     if(!m_executor.GetSSHSession()) {
@@ -146,8 +146,7 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
     }
 
     LOG_DEBUG(LOG) << "Launching remote process:" << command << endl;
-    auto wxargv = StringUtils::BuildArgv(command);
-    std::vector<wxString> argv{ wxargv.begin(), wxargv.end() };
+    std::vector<wxString> argv{ command.begin(), command.end() };
 
     IProcess::Ptr_t proc(clSSHInteractiveChannel::Create(parent, m_executor.GetSSHSession(), argv, flags, wd,
                                                          env.empty() ? nullptr : &env));
@@ -155,6 +154,13 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
         m_interactiveProcesses.push_back(proc);
     }
     return proc;
+}
+
+IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, const wxString& command, size_t flags,
+                                                      const wxString& wd, const clEnvList_t& env)
+{
+    auto wxargv = StringUtils::BuildArgv(command);
+    return run_interactive_process(parent, wxargv, flags, wd, env);
 }
 
 #endif // USE_SFTP

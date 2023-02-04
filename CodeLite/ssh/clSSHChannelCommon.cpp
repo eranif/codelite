@@ -21,7 +21,7 @@ wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_PTY, clCommandEvent);
 
 namespace ssh
 {
-bool channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr)
+read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr)
 {
     char buffer[4097];
     int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 1);
@@ -32,7 +32,7 @@ bool channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bo
         clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
         event.SetInt(exit_code);
         handler->QueueEvent(event.Clone());
-        return false;
+        return read_result::SSH_IO_ERROR;
 
     } else if(bytes == SSH_EOF) {
         // channel closed
@@ -42,7 +42,7 @@ bool channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bo
         clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
         event.SetInt(exit_code);
         handler->QueueEvent(event.Clone());
-        return false;
+        return read_result::SSH_CONN_CLOSED;
 
     } else if(bytes == 0) {
         // timeout
@@ -54,10 +54,11 @@ bool channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bo
             clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
             event.SetInt(exit_code);
             handler->QueueEvent(event.Clone());
-            return false;
+            return read_result::SSH_CONN_CLOSED;
 
         } else {
-            return true;
+            // timeout
+            return read_result::SSH_TIMEOUT;
         }
     } else {
         LOG_TRACE(LOG) << "read" << bytes << "bytes" << endl;
@@ -65,7 +66,7 @@ bool channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bo
         clCommandEvent event((isStderr && wantStderr) ? wxEVT_SSH_CHANNEL_READ_STDERR : wxEVT_SSH_CHANNEL_READ_OUTPUT);
         event.SetStringRaw(buffer);
         handler->QueueEvent(event.Clone());
-        return true;
+        return read_result::SSH_SUCCESS;
     }
 }
 

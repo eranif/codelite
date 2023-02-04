@@ -60,11 +60,6 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
                 if(msg.type() == typeid(CmdShutdown)) {
                     // shutdown, terminate the channel
                     LOG_DEBUG(LOG) << "shutting down" << endl;
-
-                    // notify about this
-                    clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
-                    event.SetInt(0);
-                    handler->QueueEvent(event.Clone());
                     break;
 
                 } else if(msg.type() == typeid(CmdWrite)) {
@@ -189,7 +184,12 @@ clSSHInteractiveChannel::~clSSHInteractiveChannel()
     Cleanup();
 }
 
-void clSSHInteractiveChannel::Detach()
+void clSSHInteractiveChannel::Detach() { StopThread(); }
+
+bool clSSHInteractiveChannel::IsAlive() { return m_channel != nullptr; }
+void clSSHInteractiveChannel::Cleanup() { Terminate(); }
+
+void clSSHInteractiveChannel::StopThread()
 {
     if(m_thread) {
         // we just stop the reader thread
@@ -198,22 +198,18 @@ void clSSHInteractiveChannel::Detach()
 
         m_thread->join();
         wxDELETE(m_thread);
+
+        // notify about this (will only be done once)
+        clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
+        event.SetInt(0);
+        ProcessEvent(event);
     }
 }
-
-bool clSSHInteractiveChannel::IsAlive() { return m_channel != nullptr; }
-void clSSHInteractiveChannel::Cleanup() { Terminate(); }
 
 void clSSHInteractiveChannel::Terminate()
 {
     // stop the reader thread
-    if(m_thread) {
-        CmdShutdown shutdown;
-        m_queue.Post(shutdown);
-
-        m_thread->join();
-        wxDELETE(m_thread);
-    }
+    StopThread();
 
     if(m_channel) {
         ssh_channel_close(m_channel);
@@ -222,6 +218,10 @@ void clSSHInteractiveChannel::Terminate()
 
     m_channel = nullptr;
     m_queue.Clear();
+    m_closeEventFired = false;
+    m_waitingBuffer.clear();
+    m_waiting = true;
+    m_ssh = nullptr;
 }
 
 bool clSSHInteractiveChannel::Read(wxString& buff, wxString& buffErr, std::string& raw_buff, std::string& raw_buffErr)
@@ -392,10 +392,13 @@ void clSSHInteractiveChannel::OnChannelStderr(clCommandEvent& event)
 
 void clSSHInteractiveChannel::OnChannelClosed(clCommandEvent& event)
 {
-    clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
-    event_terminated.SetProcess(nullptr);
-    m_parent->AddPendingEvent(event_terminated);
-    LOG_DEBUG(LOG) << "channel closed" << endl;
+    if(!m_closeEventFired) {
+        clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
+        event_terminated.SetProcess(nullptr);
+        m_parent->AddPendingEvent(event_terminated);
+        LOG_DEBUG(LOG) << "channel closed" << endl;
+        m_closeEventFired = true;
+    }
 }
 
 void clSSHInteractiveChannel::OnChannelError(clCommandEvent& event)
@@ -405,5 +408,4 @@ void clSSHInteractiveChannel::OnChannelError(clCommandEvent& event)
     event_terminated.SetProcess(nullptr);
     m_parent->AddPendingEvent(event_terminated);
 }
-
 #endif // USE_SFTP

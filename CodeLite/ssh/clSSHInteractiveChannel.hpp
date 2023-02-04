@@ -22,9 +22,11 @@ class WXDLLIMPEXP_CL clSSHInteractiveChannel : public IProcess
     bool m_waiting = true;
     wxString m_waitingBuffer;
     std::thread* m_thread = nullptr;
+    bool m_closeEventFired = false;
 
 private:
     clSSHInteractiveChannel(wxEvtHandler* parent, clSSH::Ptr_t ssh, SSHChannel_t channel);
+    void StopThread();
 
     void OnChannelStdout(clCommandEvent& event);
     void OnChannelStderr(clCommandEvent& event);

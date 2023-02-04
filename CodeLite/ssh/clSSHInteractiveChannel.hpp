@@ -5,6 +5,7 @@
 #include "codelite_exports.h"
 
 #include <any>
+#include <thread>
 #include <vector>
 #include <wx/any.h>
 #include <wx/msgqueue.h>
@@ -18,15 +19,24 @@ class WXDLLIMPEXP_CL clSSHInteractiveChannel : public IProcess
     clSSH::Ptr_t m_ssh;
     SSHChannel_t m_channel = nullptr;
     wxMessageQueue<std::any> m_queue;
+    bool m_waiting = true;
+    wxString m_waitingBuffer;
+    std::thread* m_thread = nullptr;
 
 private:
     clSSHInteractiveChannel(wxEvtHandler* parent, clSSH::Ptr_t ssh, SSHChannel_t channel);
 
+    void OnChannelStdout(clCommandEvent& event);
+    void OnChannelStderr(clCommandEvent& event);
+    void OnChannelClosed(clCommandEvent& event);
+    void OnChannelError(clCommandEvent& event);
+
 public:
     virtual ~clSSHInteractiveChannel();
 
-    static clSSHInteractiveChannel* Create(wxEvtHandler* parent, clSSH::Ptr_t ssh, const std::vector<wxString>& args,
-                                           const wxString& workingDir, const clEnvList_t* env);
+    static clSSHInteractiveChannel::Ptr_t Create(wxEvtHandler* parent, clSSH::Ptr_t ssh,
+                                                 const std::vector<wxString>& args, size_t flags,
+                                                 const wxString& workingDir, const clEnvList_t* env);
 
     /// Stop notifying the parent window about input/output from the process
     /// this is useful when we wish to terminate the process onExit but we don't want

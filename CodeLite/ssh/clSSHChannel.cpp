@@ -19,7 +19,7 @@ class clSSHChannelReader : public clJoinableThread
     bool m_wantStderr = false;
 
 protected:
-    bool ReadChannel(bool isStderr) { return clSSHCHannelRead(m_channel, m_handler, isStderr, m_wantStderr); }
+    bool ReadChannel(bool isStderr) { return ssh::channel_read(m_channel, m_handler, isStderr, m_wantStderr); }
 
 public:
     clSSHChannelReader(wxEvtHandler* handler, SSHChannel_t channel, bool wantStderr)

@@ -74,7 +74,6 @@ void clRemoteExecutor::shutdown() { m_ssh = nullptr; }
 
 clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {
-    wxString command;
     if(!m_ssh) {
         LOG_WARNING(REMOTE_LOG) << "SSH session is not opened" << endl;
         return nullptr;
@@ -91,25 +90,7 @@ clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
         return nullptr;
     }
 
-    if(!cmd.env.empty()) {
-        // build each env in its own "export" statement
-        for(const auto& e : cmd.env) {
-            command << "export " << e.first << "=" << e.second << ";";
-        }
-    }
-
-    if(!cmd.wd.empty()) {
-        command << "cd " << StringUtils::WrapWithDoubleQuotes(cmd.wd) << " && ";
-    }
-
-    for(const wxString& c : cmd.command) {
-        command << StringUtils::WrapWithDoubleQuotes(c) << " ";
-    }
-
-    if(command.EndsWith(" ")) {
-        command.RemoveLast();
-    }
-
+    wxString command = ssh::build_command(cmd.command, cmd.wd, cmd.env);
     LOG_DEBUG(REMOTE_LOG) << "Executing command:" << command << endl;
 
     // prepare the commands

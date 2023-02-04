@@ -12,9 +12,16 @@ INITIALISE_SSH_LOG(LOG, "Channel Reader Helper");
 
 #include <libssh/libssh.h>
 
-namespace
+wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_ERROR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_WRITE_ERROR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_OUTPUT, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_STDERR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_CLOSED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_PTY, clCommandEvent);
+
+namespace ssh
 {
-bool read_from_channel(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr)
+bool channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr)
 {
     char buffer[4097];
     int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 1);
@@ -26,6 +33,7 @@ bool read_from_channel(SSHChannel_t channel, wxEvtHandler* handler, bool isStder
         event.SetInt(exit_code);
         handler->QueueEvent(event.Clone());
         return false;
+
     } else if(bytes == SSH_EOF) {
         // channel closed
         LOG_TRACE(LOG) << "channel read eof" << endl;
@@ -35,6 +43,7 @@ bool read_from_channel(SSHChannel_t channel, wxEvtHandler* handler, bool isStder
         event.SetInt(exit_code);
         handler->QueueEvent(event.Clone());
         return false;
+
     } else if(bytes == 0) {
         // timeout
         if(ssh_channel_is_eof(channel)) {
@@ -46,6 +55,7 @@ bool read_from_channel(SSHChannel_t channel, wxEvtHandler* handler, bool isStder
             event.SetInt(exit_code);
             handler->QueueEvent(event.Clone());
             return false;
+
         } else {
             return true;
         }
@@ -59,17 +69,28 @@ bool read_from_channel(SSHChannel_t channel, wxEvtHandler* handler, bool isStder
     }
 }
 
-} // namespace
-
-wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_ERROR, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_WRITE_ERROR, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_OUTPUT, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_STDERR, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_CLOSED, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_PTY, clCommandEvent);
-
-bool clSSHCHannelRead(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr)
+wxString build_command(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env)
 {
-    return read_from_channel(channel, handler, isStderr, wantStderr);
+    wxString cmd;
+    if(!env.empty()) {
+        // build each env in its own "export" statement
+        for(const auto& e : env) {
+            cmd << "export " << e.first << "=" << e.second << ";";
+        }
+    }
+
+    if(!wd.empty()) {
+        cmd << "cd " << StringUtils::WrapWithDoubleQuotes(wd) << " && ";
+    }
+
+    for(const wxString& c : command) {
+        cmd << StringUtils::WrapWithDoubleQuotes(c) << " ";
+    }
+
+    if(cmd.EndsWith(" ")) {
+        cmd.RemoveLast();
+    }
+    return cmd;
 }
+} // namespace ssh
 #endif

@@ -18,12 +18,6 @@ class clSSHChannelReader : public clJoinableThread
     SSHChannel_t m_channel;
     bool m_wantStderr = false;
 
-protected:
-    bool ReadChannel(bool isStderr)
-    {
-        return ssh::result_ok(ssh::channel_read(m_channel, m_handler, isStderr, m_wantStderr));
-    }
-
 public:
     clSSHChannelReader(wxEvtHandler* handler, SSHChannel_t channel, bool wantStderr)
         : m_handler(handler)
@@ -36,8 +30,21 @@ public:
     void* Entry()
     {
         while(!TestDestroy()) {
-            // First, poll the channel
-            if(!ReadChannel(false) || !ReadChannel(true)) {
+            // Poll the channel for output
+            auto stdout_res = ssh::channel_read(m_channel, m_handler, false, m_wantStderr);
+            if(stdout_res == ssh::read_result::SSH_SUCCESS) {
+                // got something
+                continue;
+            }
+
+            auto stderrr_res = ssh::channel_read(m_channel, m_handler, true, m_wantStderr);
+            if(stderrr_res == ssh::read_result::SSH_SUCCESS) {
+                // got something
+                continue;
+            }
+
+            if(!ssh::result_ok(stdout_res) || !ssh::result_ok(stdout_res)) {
+                // error occured (but not timeout)
                 break;
             }
         }

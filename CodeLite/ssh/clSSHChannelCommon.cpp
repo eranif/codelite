@@ -23,7 +23,8 @@ namespace ssh
 {
 read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr)
 {
-    char buffer[4097];
+    // read in chunks of 16KiB
+    char buffer[16384 + 1];
     int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 1);
     if(bytes == SSH_ERROR) {
         // an error

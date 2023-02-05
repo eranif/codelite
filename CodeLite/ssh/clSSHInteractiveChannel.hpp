@@ -4,7 +4,6 @@
 #include "asyncprocess.h" // IProcess
 #include "codelite_exports.h"
 
-#include <any>
 #include <thread>
 #include <vector>
 #include <wx/any.h>
@@ -12,13 +11,15 @@
 #include <wx/string.h>
 
 #if USE_SFTP
+
 #include "clSSHChannelCommon.hpp"
 #include "cl_ssh.h"
+
 class WXDLLIMPEXP_CL clSSHInteractiveChannel : public IProcess
 {
     clSSH::Ptr_t m_ssh;
     SSHChannel_t m_channel = nullptr;
-    wxMessageQueue<std::any> m_queue;
+    wxMessageQueue<wxAny> m_queue;
     bool m_waiting = true;
     wxString m_waitingBuffer;
     std::thread* m_thread = nullptr;

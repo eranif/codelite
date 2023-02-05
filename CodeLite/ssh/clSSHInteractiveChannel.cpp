@@ -44,7 +44,7 @@ struct CmdSignal {
     std::string signal_prefix;
 };
 
-std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wxMessageQueue<std::any>& Q)
+std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wxMessageQueue<wxAny>& Q)
 {
     LOG_DEBUG(LOG) << "start_helper_thread is called" << endl;
     // our helper thread
@@ -77,18 +77,21 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
             }
 
             // fall: timeout
-            std::any msg;
+            wxAny msg;
             if(Q.ReceiveTimeout(1, msg) == wxMSGQUEUE_NO_ERROR) {
                 LOG_DEBUG(LOG) << "got request from the queue" << endl;
                 // got a message
-                if(msg.type() == typeid(CmdShutdown)) {
+                if(msg.CheckType<CmdShutdown>()) {
                     // shutdown, terminate the channel
                     LOG_DEBUG(LOG) << "shutting down" << endl;
                     break;
 
-                } else if(msg.type() == typeid(CmdWrite)) {
+                } else if(msg.CheckType<CmdWrite>()) {
+
                     // write buffer to remote
-                    auto write_command = std::any_cast<CmdWrite>(msg);
+                    CmdWrite write_command;
+                    msg.GetAs(&write_command);
+
                     LOG_DEBUG(LOG) << "writing:" << write_command.content << endl;
                     int rc = ssh_channel_write(channel, write_command.content.c_str(), write_command.content.size());
                     if(rc != write_command.content.size()) {
@@ -100,9 +103,12 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
                         LOG_DEBUG(LOG) << "successfully written:" << write_command.content << "to ssh channel" << endl;
                     }
 
-                } else if(msg.type() == typeid(CmdSignal)) {
+                } else if(msg.CheckType<CmdSignal>()) {
                     // send signal
-                    auto cmd = std::any_cast<CmdSignal>(msg);
+                    // write buffer to remote
+                    CmdSignal cmd;
+                    msg.GetAs(&cmd);
+
                     LOG_DEBUG(LOG) << "sending signal:" << cmd.signal_prefix << endl;
                     int rc = ssh_channel_request_send_signal(channel, cmd.signal_prefix.c_str());
                     if(rc != SSH_OK) {
@@ -115,7 +121,7 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
                     }
 
                 } else {
-                    LOG_WARNING(LOG) << "received unknown command." << msg.type().name() << endl;
+                    LOG_WARNING(LOG) << "received unknown command." << endl;
                 }
             }
         }
@@ -379,12 +385,12 @@ void clSSHInteractiveChannel::OnChannelStdout(clCommandEvent& event)
             LOG_DEBUG(LOG) << "found the marker" << endl;
 
             // remove the marker from the input string
-            auto remainder = m_waitingBuffer.substr(where + marker.length());
+            wxString remainder = m_waitingBuffer.substr(where + marker.length());
             // fire an event with the remainder
             if(!remainder.empty()) {
                 clProcessEvent event_stdout{ wxEVT_ASYNC_PROCESS_OUTPUT };
                 event_stdout.SetProcess(nullptr);
-                event_stdout.SetOutputRaw(remainder);
+                event_stdout.SetOutputRaw(StringUtils::ToStdString(remainder));
                 event_stdout.SetOutput(remainder);
                 AddPendingEvent(event_stdout);
                 LOG_DEBUG(LOG) << "stdout (active): `" << remainder << "`" << endl;

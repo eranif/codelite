@@ -6,6 +6,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 
+#include <wx/any.h>
 #include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/xml/xml.h>
@@ -109,11 +110,14 @@ clEnvironment::clEnvironment(const clEnvList_t* envlist)
 clEnvironment::~clEnvironment()
 {
     for(const auto& p : m_old_env) {
-        if(!p.second.has_value()) {
+        if(p.second.IsNull()) {
             // remove this environment
             ::wxUnsetEnv(p.first);
         } else {
-            ::wxSetEnv(p.first, std::any_cast<wxString>(p.second));
+            wxString strvalue;
+            if(p.second.GetAs(&strvalue)) {
+                ::wxSetEnv(p.first, strvalue);
+            }
         }
     }
 }
@@ -133,7 +137,7 @@ void clEnvironment::ApplyFromList(const clEnvList_t* envlist)
         if(wxGetEnv(varname, &old_value)) {
             m_old_env.push_back({ varname, old_value });
         } else {
-            m_old_env.push_back({ varname, std::any{} });
+            m_old_env.push_back({ varname, wxAny{} });
         }
 
         for(const auto& p : vars) {

@@ -8,6 +8,7 @@
 #include "codelite_exports.h"
 #include "processreaderthread.h"
 #include "procutils.h"
+#include "ssh/ssh_account_info.h"
 
 #include <functional>
 #include <vector>
@@ -27,6 +28,8 @@ class WXDLLIMPEXP_CL clRemoteHost : public wxEvtHandler
     clRemoteExecutor m_executor;
     std::vector<std::pair<execute_callback, clSSHChannel*>> m_callbacks;
     std::vector<IProcess::Ptr_t> m_interactiveProcesses;
+    wxString m_activeAccount;
+    std::vector<clSSH::Ptr_t> m_sessions;
 
 private:
     clRemoteHost(const clRemoteHost&) = delete;
@@ -45,6 +48,12 @@ protected:
 public:
     static clRemoteHost* Instance();
     static void Release();
+
+    /// create or get a new ssh session
+    clSSH::Ptr_t GetSshSession();
+
+    /// put back the ssh_session into the queue
+    void AddSshSession(clSSH::Ptr_t ssh_session);
 
     /// Execute a command with callback. we return the output as raw string (un-converted)
     void run_command_with_callback(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env,

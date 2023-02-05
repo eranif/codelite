@@ -25,7 +25,7 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
         params.append(nullObj);
         (void)nullItem.release(); // dont delete it on destruction, it is now owned by 'params'
     } else {
-        params.addProperty("rootUri", wxFileSystem::FileNameToURL(GetRootUri()));
+        params.addProperty("rootUri", LSP::FileNameToURI(GetRootUri()));
     }
     if(!m_initOptions.empty()) {
         // Parse the JSON string and set it as the 'initializationOptions

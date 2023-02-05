@@ -29,7 +29,7 @@ public:
     };
 
 private:
-    clSSH::Ptr_t m_ssh;
+    wxString m_remoteAccount;
 
 protected:
     void OnChannelStdout(clCommandEvent& event);
@@ -57,8 +57,6 @@ public:
     ///
     /// Returns: the remote channel. The caller should delete it upon completion
     clSSHChannel* try_execute(const clRemoteExecutor::Cmd& cmd);
-
-    clSSH::Ptr_t GetSSHSession() const { return m_ssh; }
 };
 #endif // CL_REMOTE_EXECUTOR_HPP
 #endif

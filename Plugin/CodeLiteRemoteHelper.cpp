@@ -87,28 +87,11 @@ void CodeLiteRemoteHelper::Clear()
     m_plugins_configs.clear();
 }
 
-bool CodeLiteRemoteHelper::BuildRemoteCommand(const wxString& command, const clEnvList_t& envlist,
-                                              const wxString& remote_wd, wxString* out_cmmand) const
+wxString CodeLiteRemoteHelper::ReplaceMacros(const wxString& command) const
 {
-    if(m_ssh_exe.empty()) {
-        return false;
-    }
-
-    // build the enviroment string
-    wxString envstr;
-    if(!envlist.empty()) {
-        for(const auto& p : envlist) {
-            envstr << p.first << "=" << p.second << " ";
-        }
-    }
-    wxString ssh_command = m_ssh_exe;
-    ssh_command << " -o ServerAliveInterval=10 -o StrictHostKeyChecking=no";
-
-    wxString cmd;
-    wxString wd = remote_wd.empty() ? "$(WorkspacePath)" : remote_wd;
-    cmd << ssh_command << " $(SSH_User)@$(SSH_Host) \"cd " << wd << " && " << envstr << command << "\"";
-    *out_cmmand = MacroManager::Instance()->Expand(cmd, clGetManager(), wxEmptyString);
-    return true;
+    wxString fixed = command;
+    fixed.Replace("$(WorkspacePath)", m_workspacePath);
+    return fixed;
 }
 
 #if USE_SFTP

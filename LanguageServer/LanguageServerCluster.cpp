@@ -607,7 +607,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
         command = json_get_server_config_command(root, entry.GetName());
         working_directory = json_get_server_config_working_directory(root, entry.GetName());
-        working_directory = MacroManager::Instance()->Expand(working_directory, clGetManager(), wxEmptyString);
+        working_directory = m_remoteHelper->ReplaceMacros(working_directory);
         env_list = json_get_server_config_env(root, entry.GetName());
     } else {
         // local workspace
@@ -617,11 +617,10 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         }
         command = MacroManager::Instance()->Expand(command, clGetManager(), project);
         working_directory = entry.GetWorkingDirectory();
+        working_directory = MacroManager::Instance()->Expand(working_directory, clGetManager(), project);
     }
 
     // Expand the working directory (which is later used as the rootUri)
-    working_directory = MacroManager::Instance()->Expand(working_directory, clGetManager(), project);
-
     wxArrayString lspCommand;
     lspCommand = StringUtils::BuildCommandArrayFromString(command);
 

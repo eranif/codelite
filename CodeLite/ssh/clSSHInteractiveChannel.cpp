@@ -60,13 +60,18 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
                 continue;
             }
 
+            if(!ssh::result_ok(stdout_res)) {
+                // error occured (but not timeout)
+                break;
+            }
+
             auto stderrr_res = ssh::channel_read(channel, handler, true, true);
             if(stderrr_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
             }
 
-            if(!ssh::result_ok(stdout_res) || !ssh::result_ok(stdout_res)) {
+            if(!ssh::result_ok(stdout_res)) {
                 // error occured (but not timeout)
                 break;
             }

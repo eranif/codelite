@@ -5,6 +5,7 @@
 #include "clModuleLogger.hpp"
 #include "cl_standard_paths.h"
 #include "processreaderthread.h"
+#include "ssh/clRemoteHost.hpp"
 #include "ssh/ssh_account_info.h"
 
 #include <thread>
@@ -31,42 +32,16 @@ clRemoteExecutor::~clRemoteExecutor()
 
 bool clRemoteExecutor::startup(const wxString& account_name)
 {
-    LOG_DEBUG(LOG) << "Initializing for account:" << account_name << endl;
-    if(m_ssh) {
-        LOG_WARNING(LOG) << "startup called for an already initialised session. account:" << account_name << endl;
-        return true;
-    }
-
-    auto account = SSHAccountInfo::LoadAccount(account_name);
-    if(account.GetHost().empty()) {
-        LOG_WARNING(LOG) << "could not find account:" << account_name << endl;
-        return false;
-    }
-
-    /// open channel
-    try {
-        m_ssh.reset(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
-        wxString message;
-
-        m_ssh->Open();
-        if(!m_ssh->AuthenticateServer(message)) {
-            m_ssh->AcceptServerAuthentication();
-        }
-        m_ssh->Login();
-    } catch(clException& e) {
-        LOG_ERROR(LOG) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
-                       << endl;
-        return false;
-    }
-    LOG_DEBUG(LOG) << "Initializing for account:" << account_name << "completed successfully" << endl;
+    m_remoteAccount = account_name;
     return true;
 }
 
-void clRemoteExecutor::shutdown() { m_ssh = nullptr; }
+void clRemoteExecutor::shutdown() { m_remoteAccount.clear(); }
 
 clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {
-    if(!m_ssh) {
+    auto ssh_session = clRemoteHost::Instance()->GetSshSession();
+    if(!ssh_session) {
         LOG_WARNING(LOG) << "SSH session is not opened" << endl;
         return nullptr;
     }
@@ -74,7 +49,7 @@ clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
     // open the channel
     clSSHChannel* channel = nullptr;
     try {
-        channel = new clSSHChannel(m_ssh, clSSHChannel::kRemoteCommand, this, true);
+        channel = new clSSHChannel(ssh_session, clSSHChannel::kRemoteCommand, this, true);
         channel->Open();
     } catch(clException& e) {
         LOG_ERROR(LOG) << "failed to open channel." << e.What() << endl;

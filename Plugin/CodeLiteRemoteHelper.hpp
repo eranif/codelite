@@ -46,10 +46,9 @@ public:
     const wxString& GetRemoteAccount() const { return m_remoteAccount; }
 
     /**
-     * @brief wrap a command in ssh user@host "command" + add environment variables if available
+     * @brief replace remote macros
      */
-    bool BuildRemoteCommand(const wxString& command, const clEnvList_t& envlist, const wxString& remote_wd,
-                            wxString* out_cmmand) const;
+    wxString ReplaceMacros(const wxString& command) const;
 };
 
 #endif // CODELITEREMOTEHELPER_HPP

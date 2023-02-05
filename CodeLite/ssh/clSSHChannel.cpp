@@ -5,6 +5,7 @@
 #if USE_SFTP
 #include "clJoinableThread.h"
 #include "clModuleLogger.hpp"
+#include "clRemoteHost.hpp"
 #include "cl_exception.h"
 
 #include <libssh/libssh.h>
@@ -37,14 +38,19 @@ public:
                 continue;
             }
 
+            // if we got an error, do not attempt to read stderr
+            if(!ssh::result_ok(stdout_res)) {
+                break;
+            }
+
             auto stderrr_res = ssh::channel_read(m_channel, m_handler, true, m_wantStderr);
             if(stderrr_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
             }
 
-            if(!ssh::result_ok(stdout_res) || !ssh::result_ok(stdout_res)) {
-                // error occured (but not timeout)
+            if(!ssh::result_ok(stdout_res)) {
+                // error occured
                 break;
             }
         }
@@ -112,6 +118,12 @@ void clSSHChannel::Close()
         ssh_channel_free(m_channel);
         m_channel = NULL;
     }
+
+    // put back the ssh session
+    clRemoteHost::Instance()->AddSshSession(m_ssh);
+
+    // clear the local copy
+    m_ssh.reset();
 }
 
 void clSSHChannel::Execute(const wxString& command)

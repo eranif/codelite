@@ -621,6 +621,9 @@ public:
 /// Initialise the library
 WXDLLIMPEXP_CL void Initialise();
 
+/// convert native file path to URI
+WXDLLIMPEXP_CL wxString FileNameToURI(const wxString& filename);
+
 /// Return the log handle of this library
 WXDLLIMPEXP_CL clModuleLogger& GetLogHandle();
 };     // namespace LSP

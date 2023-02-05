@@ -15,6 +15,22 @@ namespace LSP
 
 clModuleLogger& GetLogHandle() { return LSP_LOG_HANDLER; }
 
+wxString FileNameToURI(const wxString& filename)
+{
+    wxString uri;
+#ifdef __WXMSW__
+    if(filename.StartsWith("/")) {
+        // linux format
+        uri << "file://" << filename;
+    } else {
+        uri << wxFileName::FileNameToURL(filename);
+    }
+#else
+    uri << "file://" << filename;
+#endif
+    return uri;
+}
+
 void Initialise()
 {
     static bool initialised = false;

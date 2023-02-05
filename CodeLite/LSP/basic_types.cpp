@@ -8,7 +8,7 @@
 #include <wx/filesys.h>
 
 // our logger object
-clModuleLogger LSP_LOG_HANDLER;
+INITIALISE_MODULE_LOG(LSP_LOG_HANDLER, "LSP", "lsp.log");
 
 namespace LSP
 {
@@ -31,18 +31,7 @@ wxString FileNameToURI(const wxString& filename)
     return uri;
 }
 
-void Initialise()
-{
-    static bool initialised = false;
-    if(initialised)
-        return;
-
-    wxFileName logfile_path{ clStandardPaths::Get().GetUserDataDir(), "lsp.log" };
-    logfile_path.AppendDir("logs");
-    logfile_path.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    LSP_LOG_HANDLER.Open(logfile_path);
-    initialised = true;
-}
+void Initialise() {}
 
 //===----------------------------------------------------------------------------------
 // TextDocumentIdentifier

@@ -29,7 +29,6 @@
 #include "CompilersModifiedDlg.h"
 #include "DebuggerCallstackView.h"
 #include "NewProjectDialog.h"
-#include "ServiceProviderManager.h"
 #include "WSImporter.h"
 #include "app.h"
 #include "asyncprocess.h"
@@ -340,7 +339,6 @@ Manager::~Manager(void)
 
     // free all plugins
     PluginManager::Get()->UnLoad();
-    ServiceProviderManager::Get().UnregisterAll();
     DebuggerMgr::Free();
     TagsManagerST::Free(); // it is important to release it *before* the TagsManager
     LanguageST::Free();

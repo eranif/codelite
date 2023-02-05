@@ -161,9 +161,7 @@ public:
         while(!thr->m_shutdown.load()) {
             std::string cstr;
             if(Q.ReceiveTimeout(50, cstr) == wxMSGQUEUE_NO_ERROR) {
-                if(WriteStdin(cstr, hStdin, thr->m_hProcess)) {
-                    LOG_IF_TRACE { clDEBUG1() << "Writer thread: wrote buffer of" << cstr.length() << "bytes"; }
-                }
+                WriteStdin(cstr, hStdin, thr->m_hProcess);
             }
         }
         LOG_IF_TRACE { clDEBUG1() << "Write thread going down"; }

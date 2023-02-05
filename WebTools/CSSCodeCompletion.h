@@ -26,16 +26,16 @@
 #ifndef CSSCODECOMPLETION_H
 #define CSSCODECOMPLETION_H
 
-#include "ServiceProvider.h"
 #include "cl_command_event.h"
 #include "smart_ptr.h"
+
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h> // Base class: wxEvtHandler
 
 class WebTools;
 class IEditor;
-class CSSCodeCompletion : public ServiceProvider
+class CSSCodeCompletion : public wxEvtHandler
 {
 public:
     typedef SmartPtr<CSSCodeCompletion> Ptr_t;

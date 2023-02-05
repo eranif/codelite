@@ -49,8 +49,7 @@ thread_local wxString emptyString;
 FileExtManager::FileType LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
-    : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
-    , m_name(name)
+    : m_name(name)
     , m_owner(owner)
 {
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
@@ -60,16 +59,17 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
 
-    Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
-    Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
-    Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
-    Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
-    Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
-    Bind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
-    Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
-    Bind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
-    Bind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
-    Bind(wxEVT_CC_JUMP_HYPER_LINK, &LanguageServerProtocol::OnQuickJump, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip,
+                               this);
+    EventNotifier::Get()->Bind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_JUMP_HYPER_LINK, &LanguageServerProtocol::OnQuickJump, this);
     EventNotifier::Get()->Bind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
 
     // Use sockets here
@@ -98,16 +98,17 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
-    Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
-    Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
-    Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
-    Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
-    Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
-    Unbind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
-    Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
-    Unbind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
-    Unbind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
-    Unbind(wxEVT_CC_JUMP_HYPER_LINK, &LanguageServerProtocol::OnQuickJump, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip,
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_JUMP_HYPER_LINK, &LanguageServerProtocol::OnQuickJump, this);
 
     EventNotifier::Get()->Unbind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
     DoClear();
@@ -259,13 +260,13 @@ bool LanguageServerProtocol::CanHandle(IEditor* editor) const
 {
     // use the local file path
     wxString lang = GetLanguageId(editor);
-    return m_languages.count(lang) != 0;
+    return IsRunning() && m_languages.count(lang) != 0;
 }
 
 bool LanguageServerProtocol::CanHandle(FileExtManager::FileType file_type) const
 {
     wxString lang = GetLanguageId(file_type);
-    return m_languages.count(lang) != 0;
+    return IsRunning() && m_languages.count(lang) != 0;
 }
 
 bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
@@ -273,8 +274,7 @@ bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
     // always use the local file path to determine the file path
     // this to ensure that we can open it in case we will need
     // to determine the file type based on its content
-    wxString lang = GetLanguageId(editor);
-    return (m_languages.count(lang) != 0);
+    return CanHandle(editor);
 }
 
 void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)

@@ -1,4 +1,5 @@
 #include "wordcompletion.h"
+
 #include "ColoursAndFontsManager.h"
 #include "WordCompletionDictionary.h"
 #include "WordCompletionSettingsDlg.h"
@@ -9,6 +10,7 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <wx/app.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
@@ -38,14 +40,16 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 // Helper
 WordCompleter::WordCompleter(WordCompletionPlugin* plugin)
-    : ServiceProvider("Words", eServiceType::kCodeCompletion)
-    , m_plugin(plugin)
+    : m_plugin(plugin)
 {
-    SetPriority(20);
-    Bind(wxEVT_CC_WORD_COMPLETE, &WordCompleter::OnWordComplete, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_WORD_COMPLETE, &WordCompleter::OnWordComplete, this);
 }
 
-WordCompleter::~WordCompleter() { Unbind(wxEVT_CC_WORD_COMPLETE, &WordCompleter::OnWordComplete, this); }
+WordCompleter::~WordCompleter()
+{
+    EventNotifier::Get()->Unbind(wxEVT_CC_WORD_COMPLETE, &WordCompleter::OnWordComplete, this);
+}
+
 void WordCompleter::OnWordComplete(clCodeCompletionEvent& event) { m_plugin->OnWordComplete(event); }
 
 WordCompletionPlugin::WordCompletionPlugin(IManager* manager)

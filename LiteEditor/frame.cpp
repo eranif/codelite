@@ -32,7 +32,6 @@
 #include "DebuggerToolBar.h"
 #include "GCCMetadata.hpp"
 #include "Notebook.h"
-#include "ServiceProviderManager.h"
 #include "SwitchToWorkspaceDlg.h"
 #include "WelcomePage.h"
 #include "acceltabledlg.h"
@@ -5786,7 +5785,7 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
     ccEvent.SetTriggerKind(LSP::CompletionItem::kTriggerUser);
     ccEvent.SetWord(stc->GetTextRange(start, curPos));
     ccEvent.SetFileName(editor->GetFileName().GetFullPath());
-    ServiceProviderManager::Get().ProcessEvent(ccEvent);
+    EventNotifier::Get()->ProcessEvent(ccEvent);
 
     const wxCodeCompletionBoxEntry::Vec_t& entries = ccEvent.GetEntries();
     if(entries.empty()) {

@@ -41,6 +41,5 @@ bool LSPPythonDetector::DoLocate()
     // Add support for the languages
     GetLangugaes().Add("python");
     SetConnectionString("stdio");
-    SetPriority(50);
     return true;
 }

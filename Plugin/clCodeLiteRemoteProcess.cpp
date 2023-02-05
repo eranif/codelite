@@ -468,7 +468,6 @@ bool clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& workin
 
     wxString command = item.format(false);
     m_process->Write(command + "\n");
-    LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnExecOutput, handler });

@@ -336,26 +336,3 @@ void AbbreviationPlugin::OnShowAbbvreviations(wxCommandEvent& e)
                                                             wxNOT_FOUND);
     }
 }
-
-// Helper
-// AbbreviationServiceProvider::AbbreviationServiceProvider(AbbreviationPlugin* plugin)
-//    : ServiceProvider("Abbreviations", eServiceType::kCodeCompletion)
-//    , m_plugin(plugin)
-//{
-//    SetPriority(10);
-//    Bind(wxEVT_CC_WORD_COMPLETE, &AbbreviationServiceProvider::OnWordComplete, this);
-//}
-//
-// AbbreviationServiceProvider::~AbbreviationServiceProvider()
-//{
-//    Unbind(wxEVT_CC_WORD_COMPLETE, &AbbreviationServiceProvider::OnWordComplete, this);
-//}
-//
-// void AbbreviationServiceProvider::OnWordComplete(clCodeCompletionEvent& event)
-//{
-//    event.Skip();
-//    if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerUser) {
-//        // user used Ctr-SPACE
-//        m_plugin->AddAbbreviations(event);
-//    }
-//}

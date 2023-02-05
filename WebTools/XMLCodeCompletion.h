@@ -26,16 +26,16 @@
 #ifndef XMLCODECOMPLETION_H
 #define XMLCODECOMPLETION_H
 
-#include "ServiceProvider.h"
 #include "cl_command_event.h"
 #include "macros.h"
 #include "smart_ptr.h"
+
 #include <vector>
 #include <wx/event.h>
 
 class WebTools;
 class IEditor;
-class XMLCodeCompletion : public ServiceProvider
+class XMLCodeCompletion : public wxEvtHandler
 {
 public:
     typedef SmartPtr<XMLCodeCompletion> Ptr_t;

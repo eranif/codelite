@@ -1,4 +1,5 @@
 #include "XMLCodeCompletion.h"
+
 #include "WebToolsConfig.h"
 #include "XMLBuffer.h"
 #include "codelite_events.h"
@@ -8,13 +9,13 @@
 #include "imanager.h"
 #include "webtools.h"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <wx/app.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
 XMLCodeCompletion::XMLCodeCompletion(WebTools* plugin)
-    : ServiceProvider("WebTools: XML", eServiceType::kCodeCompletion)
-    , m_completeReason(kNone)
+    : m_completeReason(kNone)
     , m_plugin(plugin)
 {
     PrepareHtmlCompletions();
@@ -23,13 +24,13 @@ XMLCodeCompletion::XMLCodeCompletion(WebTools* plugin)
     WebToolsConfig& conf = WebToolsConfig::Get();
     m_htmlCcEnabeld = conf.HasHtmlFlag(WebToolsConfig::kHtmlEnableCC);
     m_xmlCcEnabled = conf.HasXmlFlag(WebToolsConfig::kXmlEnableCC);
-    Bind(wxEVT_CC_CODE_COMPLETE, &XMLCodeCompletion::OnCodeComplete, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &XMLCodeCompletion::OnCodeComplete, this);
 }
 
 XMLCodeCompletion::~XMLCodeCompletion()
 {
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &XMLCodeCompletion::OnCodeCompleted, this);
-    Unbind(wxEVT_CC_CODE_COMPLETE, &XMLCodeCompletion::OnCodeComplete, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &XMLCodeCompletion::OnCodeComplete, this);
 }
 
 void XMLCodeCompletion::SuggestClosingTag(IEditor* editor, bool html)

@@ -36,6 +36,4 @@ void LSPCTagsdDetector::ConfigureFile(const wxFileName& ctagsd_exe)
     GetLangugaes().Add("c");
     GetLangugaes().Add("cpp");
     SetConnectionString("tcp://127.0.0.1:45634");
-    SetPriority(50);   // clangd takes precedence over ctagsd
-    SetEnabled(false); // for now, disable it
 }

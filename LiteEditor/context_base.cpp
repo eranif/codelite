@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "context_base.h"
 
-#include "ServiceProviderManager.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "commentconfigdata.h"
@@ -199,7 +198,7 @@ void ContextBase::OnUserTypedXChars(int pos)
     ccEvt.SetFileName(GetCtrl().GetFileName().GetFullPath());
     ccEvt.SetWord(GetCtrl().GetWordAtPosition(pos));
 
-    if(!ServiceProviderManager::Get().ProcessEvent(ccEvt)) {
+    if(!EventNotifier::Get()->ProcessEvent(ccEvt)) {
         // This is ugly, since CodeLite should not be calling
         // the plugins... we take comfort in the fact that it
         // merely fires an event and not calling it directly

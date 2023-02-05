@@ -65,59 +65,48 @@ struct _SAscendingSort {
 PHPCodeCompletion* PHPCodeCompletion::m_instance = NULL;
 
 PHPCodeCompletion::PHPCodeCompletion()
-    : ServiceProvider("PHP Plugin", eServiceType::kCodeCompletion)
-    , m_manager(NULL)
+    : m_manager(NULL)
     , m_typeInfoTooltip(NULL)
 {
-    EventNotifier::Get()->Connect(wxEVT_CMD_RETAG_WORKSPACE, wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CMD_RETAG_WORKSPACE_FULL,
-                                  wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE, &PHPCodeCompletion::OnRetagWorkspace, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &PHPCodeCompletion::OnRetagWorkspace, this);
 
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &PHPCodeCompletion::OnActiveEditorChanged, this);
-    EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompletionBoxDismissed), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_CC_GENERATE_DOXY_BLOCK,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &PHPCodeCompletion::OnCodeCompleteLangKeywords,
+                               this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED, &PHPCodeCompletion::OnCodeCompletionBoxDismissed,
+                               this);
+    EventNotifier::Get()->Bind(wxEVT_CC_GENERATE_DOXY_BLOCK, &PHPCodeCompletion::OnInsertDoxyBlock, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
 
     // code completion events
-    Bind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
-    Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
-    Bind(wxEVT_CC_TYPEINFO_TIP, &PHPCodeCompletion::OnTypeinfoTip, this);
-    Bind(wxEVT_CC_FIND_SYMBOL, &PHPCodeCompletion::OnFindSymbol, this);
-    Bind(wxEVT_CC_JUMP_HYPER_LINK, &PHPCodeCompletion::OnQuickJump, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_TYPEINFO_TIP, &PHPCodeCompletion::OnTypeinfoTip, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &PHPCodeCompletion::OnFindSymbol, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_JUMP_HYPER_LINK, &PHPCodeCompletion::OnQuickJump, this);
 }
 
 PHPCodeCompletion::~PHPCodeCompletion()
 {
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &PHPCodeCompletion::OnActiveEditorChanged, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_WORKSPACE,
-                                     wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_WORKSPACE_FULL,
-                                     wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE, &PHPCodeCompletion::OnRetagWorkspace, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &PHPCodeCompletion::OnRetagWorkspace, this);
 
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
-    EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompletionBoxDismissed),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CC_GENERATE_DOXY_BLOCK,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &PHPCodeCompletion::OnCodeCompleteLangKeywords,
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED, &PHPCodeCompletion::OnCodeCompletionBoxDismissed,
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_GENERATE_DOXY_BLOCK, &PHPCodeCompletion::OnInsertDoxyBlock, this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
     // code completion events
-    Unbind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
-    Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
-    Unbind(wxEVT_CC_TYPEINFO_TIP, &PHPCodeCompletion::OnTypeinfoTip, this);
-    Unbind(wxEVT_CC_FIND_SYMBOL, &PHPCodeCompletion::OnFindSymbol, this);
-    Unbind(wxEVT_CC_JUMP_HYPER_LINK, &PHPCodeCompletion::OnQuickJump, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_TYPEINFO_TIP, &PHPCodeCompletion::OnTypeinfoTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &PHPCodeCompletion::OnFindSymbol, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_JUMP_HYPER_LINK, &PHPCodeCompletion::OnQuickJump, this);
 }
 
 PHPCodeCompletion* PHPCodeCompletion::Instance()

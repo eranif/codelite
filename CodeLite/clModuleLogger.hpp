@@ -255,6 +255,7 @@ template <typename T> clModuleLogger& operator<<(clModuleLogger& logger, const T
             {                                                                             \
                 wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), FILE_NAME }; \
                 logfile.AppendDir("logs");                                                \
+                logfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);                        \
                 LOG.SetModule(MODULE_NAME);                                               \
                 LOG.Open(logfile.GetFullPath());                                          \
             }                                                                             \

@@ -25,7 +25,6 @@
 #include "open_resource_dialog.h"
 
 #include "ColoursAndFontsManager.h"
-#include "ServiceProviderManager.h"
 #include "bitmap_loader.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clWorkspaceManager.h"
@@ -229,9 +228,7 @@ void OpenResourceDialog::DoPopulateList()
     if(m_checkBoxShowSymbols->IsChecked() && (nLineNumber == -1)) {
         clCodeCompletionEvent workspace_symbols_event{ wxEVT_CC_WORKSPACE_SYMBOLS };
         workspace_symbols_event.SetString(name);
-
-        // CC events are using ServiceProviderManager
-        ServiceProviderManager::Get().ProcessEvent(workspace_symbols_event);
+        EventNotifier::Get()->ProcessEvent(workspace_symbols_event);
     }
 }
 

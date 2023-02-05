@@ -27,11 +27,7 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
     }
 
     std::vector<int> encoded_types;
-    LOG_IF_TRACE { clTRACE() << "OnResponse for SemanticTokensRquest is called" << endl; }
-
     encoded_types = response["result"]["data"].toIntArray();
-
-    LOG_IF_TRACE { clTRACE() << "Parsing semantic tokens array (" << encoded_types.size() << ")" << endl; }
 
     // since this is CPU heavy processing, spawn a thread to do the job
     wxString filename = m_filename;

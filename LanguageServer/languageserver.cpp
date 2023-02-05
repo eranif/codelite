@@ -4,7 +4,6 @@
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
-#include "ServiceProviderManager.h"
 #include "cl_standard_paths.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -253,7 +252,7 @@ void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
     clCodeCompletionEvent findEvent(wxEVT_CC_FIND_SYMBOL);
     findEvent.SetPosition(editor->GetCurrentPosition());
     findEvent.SetFileName(editor->GetFileName().GetFullPath());
-    ServiceProviderManager::Get().AddPendingEvent(findEvent);
+    EventNotifier::Get()->AddPendingEvent(findEvent);
 }
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)

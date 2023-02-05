@@ -27,7 +27,6 @@
 
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
-#include "ServiceProviderManager.h"
 #include "bitmap_loader.h"
 #include "cl_editor.h"
 #include "code_completion_api.h"
@@ -71,25 +70,18 @@ struct EditorDimmerDisabler {
 };
 
 CodeCompletionManager::CodeCompletionManager()
-    : ServiceProvider("BuiltIn C++ Code Completion", eServiceType::kCodeCompletion)
-    , m_options(CC_CTAGS_ENABLED)
+    : m_options(CC_CTAGS_ENABLED)
     , m_wordCompletionRefreshNeeded(false)
     , m_buildInProgress(false)
 {
-    SetPriority(75);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &CodeCompletionManager::OnBuildStarted, this);
     EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
 
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(CodeCompletionManager::OnFileSaved), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED,
-                                  wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
-                                  wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &CodeCompletionManager::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &CodeCompletionManager::OnFileLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CONFIG_CHANGED, &CodeCompletionManager::OnWorkspaceConfig, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_PROJ_SETTINGS_SAVED, &CodeCompletionManager::OnWorkspaceConfig, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CodeCompletionManager::OnWorkspaceClosed, this);
@@ -117,18 +109,13 @@ CodeCompletionManager::~CodeCompletionManager()
                                  &CodeCompletionManager::OnBlockCommentWordComplete, this);
 
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &CodeCompletionManager::OnBuildEnded, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &CodeCompletionManager::OnBuildStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                  &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(CodeCompletionManager::OnFileSaved), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED,
-                                     wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
-                                     wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &CodeCompletionManager::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &CodeCompletionManager::OnFileLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CONFIG_CHANGED, &CodeCompletionManager::OnWorkspaceConfig, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_PROJ_SETTINGS_SAVED, &CodeCompletionManager::OnWorkspaceConfig, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &CodeCompletionManager::OnWorkspaceClosed, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
     EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED,

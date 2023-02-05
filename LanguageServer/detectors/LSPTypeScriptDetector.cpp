@@ -41,6 +41,5 @@ bool LSPTypeScriptDetector::DoLocate()
     langs.Add("typescript");
     SetLangugaes(langs);
     SetConnectionString("stdio");
-    SetPriority(100);
     return true;
 }

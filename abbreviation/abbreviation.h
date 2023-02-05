@@ -28,26 +28,13 @@
 
 #include "cl_command_event.h"
 #include "plugin.h"
-#include "ServiceProvider.h"
 
 class AbbreviationPlugin;
-//class AbbreviationServiceProvider : public ServiceProvider
-//{
-//    AbbreviationPlugin* m_plugin = nullptr;
-//
-//protected:
-//    void OnWordComplete(clCodeCompletionEvent& event);
-//
-//public:
-//    AbbreviationServiceProvider(AbbreviationPlugin* plugin);
-//    virtual ~AbbreviationServiceProvider();
-//};
-
 class AbbreviationPlugin : public IPlugin
 {
     wxEvtHandler* m_topWindow;
     clConfig m_config;
-    //AbbreviationServiceProvider* m_helper = nullptr;
+    // AbbreviationServiceProvider* m_helper = nullptr;
 
     friend class AbbreviationServiceProvider;
 

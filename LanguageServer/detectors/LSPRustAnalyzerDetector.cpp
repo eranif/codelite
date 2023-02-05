@@ -32,6 +32,5 @@ bool LSPRustAnalyzerDetector::DoLocate()
     // Add support for the languages
     GetLangugaes().Add("rust");
     SetConnectionString("stdio");
-    SetPriority(100); // Give it a higher priority over the rls
     return true;
 }

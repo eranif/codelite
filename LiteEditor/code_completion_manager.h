@@ -28,15 +28,15 @@
 
 #include "CompileCommandsGenerator.h"
 #include "CxxPreProcessorCache.h"
-#include "ServiceProvider.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
+
 #include <thread>
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/string.h>
 
-class CodeCompletionManager : public ServiceProvider
+class CodeCompletionManager : public wxEvtHandler
 {
 protected:
     size_t m_options = 0;

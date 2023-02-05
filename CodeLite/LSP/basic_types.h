@@ -11,8 +11,6 @@
 #include <vector>
 #include <wx/sharedptr.h>
 
-extern clModuleLogger LSP_LOG_HANDLER;
-
 // Helper macros to be used outside of this library
 #define LSP_LOG (LSP::GetLogHandle())
 

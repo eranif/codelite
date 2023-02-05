@@ -6,7 +6,6 @@
 #include "LSP/IPathConverter.hpp"
 #include "LSP/LSPNetwork.h"
 #include "LSP/MessageWithParams.h"
-#include "ServiceProvider.h"
 #include "SocketAPI/clSocketClientAsync.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
@@ -48,7 +47,7 @@ public:
     bool IsWaitingReponse() const { return m_waitingReponse; }
 };
 
-class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
+class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
 {
     enum eState {
         kUnInitialized,

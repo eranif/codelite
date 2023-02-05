@@ -186,19 +186,13 @@ void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor* editor)
 {
-    LanguageServerProtocol::Ptr_t bestServer(nullptr);
     for(const auto& vt : m_servers) {
         const auto& thisServer = vt.second;
-        if(bestServer && thisServer->GetPriority() <= bestServer->GetPriority()) {
-            // this LSP has lower priority, skip
-            continue;
-        }
         if(thisServer->CanHandle(editor)) {
-            bestServer = thisServer;
+            return thisServer;
         }
     }
-
-    return bestServer;
+    return LanguageServerProtocol::Ptr_t{ nullptr };
 }
 
 void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
@@ -530,7 +524,6 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     }
 
     LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
-    lsp->SetPriority(entry.GetPriority());
     lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
 
     if(lsp->GetName() == "ctagsd") {
@@ -934,22 +927,13 @@ IEditor* LanguageServerCluster::FindEditor(const wxString& path) const
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const wxString& lang)
 {
-    LanguageServerProtocol::Ptr_t bestServer(nullptr);
     for(const auto& vt : m_servers) {
         const auto& thisServer = vt.second;
-        if(bestServer && thisServer->GetPriority() <= bestServer->GetPriority()) {
-            // this LSP has lower priority, skip
-            continue;
-        }
         if(thisServer->IsRunning() && thisServer->IsLanguageSupported(lang)) {
-            bestServer = thisServer;
+            return thisServer;
         }
     }
-
-    if(bestServer) {
-        LSP_DEBUG() << "Using server" << bestServer->GetName() << "for language" << lang << endl;
-    }
-    return bestServer;
+    return LanguageServerProtocol::Ptr_t{ nullptr };
 }
 
 void LanguageServerCluster::OnLogMessage(LSPEvent& event)

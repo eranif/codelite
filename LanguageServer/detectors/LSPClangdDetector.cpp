@@ -44,5 +44,4 @@ void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
     GetLangugaes().Add("c");
     GetLangugaes().Add("cpp");
     SetConnectionString("stdio");
-    SetPriority(90); // clangd should override the default cc engine
 }

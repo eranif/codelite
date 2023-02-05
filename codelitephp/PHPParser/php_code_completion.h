@@ -29,12 +29,12 @@
 #include "PHPEntityBase.h"
 #include "PHPExpression.h"
 #include "PHPLookupTable.h"
-#include "ServiceProvider.h"
 #include "cl_command_event.h"
 #include "ieditor.h"
 #include "php_event.h"
 #include "precompiled_header.h"
 #include "wxStringHash.h"
+
 #include <cc_box_tip_window.h>
 #include <cl_command_event.h>
 #include <smart_ptr.h>
@@ -50,7 +50,7 @@ struct PHPLocation {
 
 class IManager;
 struct ResourceItem;
-class PHPCodeCompletion : public ServiceProvider
+class PHPCodeCompletion : public wxEvtHandler
 {
 public:
     enum {

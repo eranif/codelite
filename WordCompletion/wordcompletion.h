@@ -26,7 +26,6 @@
 #ifndef __WordCompletion__
 #define __WordCompletion__
 
-#include "ServiceProvider.h"
 #include "UI.h"
 #include "WordCompletionRequestReply.h"
 #include "cl_command_event.h"
@@ -35,7 +34,7 @@
 
 class WordCompletionDictionary;
 class WordCompletionPlugin;
-class WordCompleter : public ServiceProvider
+class WordCompleter : public wxEvtHandler
 {
     WordCompletionPlugin* m_plugin = nullptr;
 

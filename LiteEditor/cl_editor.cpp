@@ -28,7 +28,6 @@
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
-#include "ServiceProviderManager.h"
 #include "StringUtils.h"
 #include "addincludefiledlg.h"
 #include "attribute_style.h"
@@ -1935,7 +1934,7 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
         evt.SetTriggerKind(triggerKind);
         evt.SetFileName(fullpath);
-        ServiceProviderManager::Get().AddPendingEvent(evt);
+        EventNotifier::Get()->AddPendingEvent(evt);
         return;
     } else {
         if(GetContext()->IsAtBlockComment()) {
@@ -1966,7 +1965,7 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
         evt.SetTriggerKind(triggerKind);
         evt.SetFileName(fullpath);
-        ServiceProviderManager::Get().AddPendingEvent(evt);
+        EventNotifier::Get()->AddPendingEvent(evt);
     }
 }
 
@@ -1989,7 +1988,7 @@ void clEditor::CodeComplete(bool refreshingList)
         evt.SetTriggerKind(LSP::CompletionItem::kTriggerCharacter);
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
         evt.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-        ServiceProviderManager::Get().AddPendingEvent(evt);
+        EventNotifier::Get()->AddPendingEvent(evt);
 
     } else {
         CompleteWord(LSP::CompletionItem::kTriggerCharacter);
@@ -2005,7 +2004,7 @@ void clEditor::FindDeclarationFile()
     event.SetPosition(GetCurrentPosition());
     event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
     event.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-    ServiceProviderManager::Get().ProcessEvent(event);
+    EventNotifier::Get()->ProcessEvent(event);
 }
 
 void clEditor::GotoDefinition()
@@ -2017,7 +2016,7 @@ void clEditor::GotoDefinition()
     event.SetPosition(GetCurrentPosition());
     event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
     event.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-    ServiceProviderManager::Get().ProcessEvent(event);
+    EventNotifier::Get()->ProcessEvent(event);
 }
 
 void clEditor::OnDwellStart(wxStyledTextEvent& event)
@@ -2085,7 +2084,7 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         evtTypeinfo.SetPosition(event.GetPosition());
         evtTypeinfo.SetInsideCommentOrString(m_context->IsCommentOrString(event.GetPosition()));
         evtTypeinfo.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-        if(ServiceProviderManager::Get().ProcessEvent(evtTypeinfo)) {
+        if(EventNotifier::Get()->ProcessEvent(evtTypeinfo)) {
             if(!evtTypeinfo.GetTooltip().IsEmpty()) {
                 DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip());
             }
@@ -3662,7 +3661,7 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
         evt.SetTriggerKind(LSP::CompletionItem::kTriggerUser);
         evt.SetFileName(GetFileName().GetFullPath());
-        ServiceProviderManager::Get().AddPendingEvent(evt);
+        EventNotifier::Get()->AddPendingEvent(evt);
     }
 
     m_prevSelectionInfo.Clear();
@@ -4570,7 +4569,7 @@ void clEditor::ShowFunctionTipFromCurrentPos()
         evt.SetPosition(pos);
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(pos));
         evt.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-        ServiceProviderManager::Get().ProcessEvent(evt);
+        EventNotifier::Get()->ProcessEvent(evt);
     }
 }
 
@@ -4663,7 +4662,7 @@ void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
         // Let the plugins handle it first
         clCodeCompletionEvent jump_event(wxEVT_CC_JUMP_HYPER_LINK);
         jump_event.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-        ServiceProviderManager::Get().ProcessEvent(jump_event);
+        EventNotifier::Get()->ProcessEvent(jump_event);
     }
 
     // clear the hyper link indicators

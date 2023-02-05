@@ -1,13 +1,16 @@
 #include "CSSCodeCompletion.h"
+
 #include "JSON.h"
 #include "codelite_events.h"
 #include "css.json"
+#include "event_notifier.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "webtools.h"
 #include "wxCodeCompletionBox.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <algorithm>
 #include <set>
 #include <wx/stc/stc.h>
@@ -15,8 +18,7 @@
 #include <wx/xrc/xmlres.h>
 
 CSSCodeCompletion::CSSCodeCompletion(WebTools* plugin)
-    : ServiceProvider("WebTools: CSS", eServiceType::kCodeCompletion)
-    , m_isEnabled(true)
+    : m_isEnabled(true)
     , m_plugin(plugin)
 {
     JSON root(CSS_JSON);
@@ -45,10 +47,13 @@ CSSCodeCompletion::CSSCodeCompletion(WebTools* plugin)
         m_entries.push_back(e);
     });
 
-    Bind(wxEVT_CC_CODE_COMPLETE, &CSSCodeCompletion::OnCodeComplete, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &CSSCodeCompletion::OnCodeComplete, this);
 }
 
-CSSCodeCompletion::~CSSCodeCompletion() { Unbind(wxEVT_CC_CODE_COMPLETE, &CSSCodeCompletion::OnCodeComplete, this); }
+CSSCodeCompletion::~CSSCodeCompletion()
+{
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &CSSCodeCompletion::OnCodeComplete, this);
+}
 
 void CSSCodeCompletion::CssCodeComplete(IEditor* editor)
 {

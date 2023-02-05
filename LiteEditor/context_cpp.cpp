@@ -31,7 +31,6 @@
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "SelectProjectsDlg.h"
-#include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
 #include "browse_record.h"
 #include "buildtabsettingsdata.h"
@@ -552,7 +551,7 @@ void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
     // fire "Find Symbol" event
     clCodeCompletionEvent definition_event{ wxEVT_CC_FIND_SYMBOL_DEFINITION };
     definition_event.SetFileName(rCtrl.GetFileName().GetFullPath());
-    ServiceProviderManager::Get().AddPendingEvent(definition_event);
+    EventNotifier::Get()->AddPendingEvent(definition_event);
 }
 
 void ContextCpp::RemoveMenuDynamicContent(wxMenu* menu)
@@ -680,7 +679,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
     clCodeCompletionEvent find_header_event(wxEVT_CC_FIND_HEADER_FILE);
     find_header_event.SetWord(word);
     find_header_event.SetFileName(GetCtrl().GetFileName().GetFullPath());
-    ServiceProviderManager::Get().ProcessEvent(find_header_event);
+    EventNotifier::Get()->ProcessEvent(find_header_event);
 }
 
 bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wxString* fileNameUpToCaret)
@@ -1249,7 +1248,7 @@ void ContextCpp::OnFindImpl(wxCommandEvent& event)
     wxUnusedVar(event);
     clCodeCompletionEvent event_definition(wxEVT_CC_FIND_SYMBOL_DEFINITION);
     event_definition.SetFileName(GetCtrl().GetFileName().GetFullPath());
-    ServiceProviderManager::Get().ProcessEvent(event_definition);
+    EventNotifier::Get()->ProcessEvent(event_definition);
 }
 
 void ContextCpp::OnFindDecl(wxCommandEvent& event)
@@ -1257,7 +1256,7 @@ void ContextCpp::OnFindDecl(wxCommandEvent& event)
     wxUnusedVar(event);
     clCodeCompletionEvent event_declaration(wxEVT_CC_FIND_SYMBOL_DECLARATION);
     event_declaration.SetFileName(GetCtrl().GetFileName().GetFullPath());
-    ServiceProviderManager::Get().ProcessEvent(event_declaration);
+    EventNotifier::Get()->ProcessEvent(event_declaration);
 }
 
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent& event)

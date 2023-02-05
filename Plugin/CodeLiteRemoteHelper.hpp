@@ -21,6 +21,7 @@ class WXDLLIMPEXP_SDK CodeLiteRemoteHelper : public wxEvtHandler
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
+
 #if USE_SFTP
     void ProcessCodeLiteRemoteJSON(const wxString& filepath);
 #endif

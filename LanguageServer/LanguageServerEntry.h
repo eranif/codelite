@@ -60,12 +60,6 @@ public:
         return *this;
     }
     const wxString& GetConnectionString() const { return m_connectionString; }
-    LanguageServerEntry& SetPriority(int priority)
-    {
-        this->m_priority = priority;
-        return *this;
-    }
-    int GetPriority() const { return m_priority; }
     LanguageServerEntry& SetEnabled(bool enabled)
     {
         this->m_enabled = enabled;

@@ -169,14 +169,14 @@ Command | &#10003;       | The LSP execution command. For example, for `clangd`,
 Working directory | - | Path to set before running the command
 Languages | &#10003; | Since CodeLite can have multiple LSP configured, you can associate each LSP with a language. CodeLite will use the proper LSP based on the current file's language. Use the `...` button to see a list of supported languages
 Connection string| &#10003; | Defines the protocol that CodeLite communicates with the LSP. Most of the LSP servers out there supporting the `stdio` protocol
-Priority | &#10003; | Defines this LSP priority compared to other LSPs for the same language, the higher the better
 Display diagnostics | - | When checked, CodeLite will display little red arrows next to potential code errors
 
-## Resolving conflicts - using the priority property
+## Resolving conflicts
 ---
 
-User can configure multiple language servers for the same coding language (e.g. `ctagsd` and `clangd` for `C++`)
-In order to decide which language server to use first, CodeLite uses the `Priority` property of the language server. The server with the highest value is used first
+It is allowed to configure multiple language servers for the same coding language (e.g. `ctagsd` and `clangd` for `C++`).
+But make sure you only have one enabled at at time
+
 
 ## CMake `clangd` / `ctagsd`
 ---

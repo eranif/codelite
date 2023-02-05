@@ -361,7 +361,6 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
     pentry->SetDisaplayDiagnostics(event.GetFlags() & clLanguageServerEvent::kDisaplyDiags);
     pentry->SetConnectionString(event.GetConnectionString());
     pentry->SetEnabled(event.GetFlags() & clLanguageServerEvent::kEnabled);
-    pentry->SetPriority(event.GetPriority());
     pentry->SetWorkingDirectory(event.GetRootUri());
     LanguageServerConfig::Get().AddServer(*pentry);
 }

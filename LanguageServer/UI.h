@@ -27,7 +27,6 @@
 #include "clThemedSTC.hpp"
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
-#include <wx/slider.h>
 #include "clThemedTextCtrl.hpp"
 #include <wx/dataview.h>
 #include "clTerminalViewCtrl.hpp"
@@ -106,8 +105,6 @@ protected:
     wxButton* m_button115;
     wxStaticText* m_staticText117;
     wxComboBox* m_comboBoxConnection;
-    wxStaticText* m_staticText125;
-    wxSlider* m_sliderPriority;
     wxCheckBox* m_checkBoxDiagnostics;
 
 protected:
@@ -133,8 +130,6 @@ public:
     wxButton* GetButton115() { return m_button115; }
     wxStaticText* GetStaticText117() { return m_staticText117; }
     wxComboBox* GetComboBoxConnection() { return m_comboBoxConnection; }
-    wxStaticText* GetStaticText125() { return m_staticText125; }
-    wxSlider* GetSliderPriority() { return m_sliderPriority; }
     wxCheckBox* GetCheckBoxDiagnostics() { return m_checkBoxDiagnostics; }
     LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);

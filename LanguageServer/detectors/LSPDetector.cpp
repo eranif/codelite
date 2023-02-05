@@ -14,7 +14,6 @@ void LSPDetector::GetLanguageServerEntry(LanguageServerEntry& entry)
     entry.SetEnabled(IsEnabled());
     entry.SetDisaplayDiagnostics(true);
     entry.SetConnectionString(GetConnectionString());
-    entry.SetPriority(GetPriority());
     entry.SetName(GetName());
 }
 

@@ -33,7 +33,6 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     this->m_textCtrlLanguages->SetValue(languages);
     this->m_comboBoxConnection->SetValue(data.GetConnectionString());
     m_checkBoxDiagnostics->SetValue(data.IsDisaplayDiagnostics());
-    m_sliderPriority->SetValue(data.GetPriority());
 }
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent)
@@ -58,7 +57,6 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetLanguages(GetLanguages());
     d.SetEnabled(m_checkBoxEnabled->IsChecked());
     d.SetConnectionString(m_comboBoxConnection->GetValue());
-    d.SetPriority(m_sliderPriority->GetValue());
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
     d.SetInitOptions(m_stcInitOptions->GetText());
     return d;

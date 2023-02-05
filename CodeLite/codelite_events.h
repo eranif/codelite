@@ -362,10 +362,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, cl
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_JUMP_HYPER_LINK, clCodeCompletionEvent);
 
 //===----------------------------------------------------------------------------------------------
-//===----------------------------------------------------------------------------------------------
-//      Below events are processed via the ServiceProviderManager class and NOT by EventNotifier!!
-//      To be able to receive them your handler must subclass ServiceProvider
-//===----------------------------------------------------------------------------------------------
+// CC events
 //===----------------------------------------------------------------------------------------------
 
 // Search the workspace for a symbol
@@ -413,9 +410,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_SEMANTICS_HIGHLIGHT, clCodeCom
 // event.SetString("get name") -> will match "get_name", "getname", "nameget" etc
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORKSPACE_SYMBOLS, clCodeCompletionEvent);
 
-//===----------------------------------------------------------------------------------------------
-//===----------------------------------------------------------------------------------------------
-//      END ServiceProviderManager events
 //===----------------------------------------------------------------------------------------------
 //===----------------------------------------------------------------------------------------------
 

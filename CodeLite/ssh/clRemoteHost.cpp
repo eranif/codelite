@@ -5,6 +5,8 @@
 #include "clSSHInteractiveChannel.hpp"
 #include "event_notifier.h"
 
+#include <wx/utils.h> // wxBusyCursor
+
 #if USE_SFTP
 
 INITIALISE_SSH_LOG(LOG, "Remote-Host");
@@ -90,6 +92,7 @@ clSSH::Ptr_t clRemoteHost::GetSshSession()
 {
     clSSH::Ptr_t ssh_sssion;
     if(m_sessions.empty()) {
+        wxBusyCursor bc;
         LOG_DEBUG(LOG) << "No ssh session in cache, will create new one" << endl;
         // create new session
         auto account = SSHAccountInfo::LoadAccount(m_activeAccount);

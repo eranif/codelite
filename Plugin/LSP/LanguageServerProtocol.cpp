@@ -496,7 +496,7 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
     LOG_IF_TRACE { LSP_TRACE() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl; }
     if(!IsInitialized()) {
-        LSP_DEBUG() << "OpenEditor: server is still not initialized. server:" << GetName()
+        LSP_TRACE() << "OpenEditor: server is still not initialized. server:" << GetName()
                     << ", file:" << GetEditorFilePath(editor) << endl;
         return;
     }

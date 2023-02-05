@@ -48,10 +48,6 @@ wxString clModuleLogger::Prefix()
     gettimeofday(&tim, NULL);
     int ms = (int)tim.tv_usec / 1000.0;
 
-    if(m_module.empty()) {
-        prefix << m_module << ": ";
-    }
-
     wxString msStr = wxString::Format(wxT("%03d"), ms);
     prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
     // add the thread ID
@@ -73,6 +69,10 @@ wxString clModuleLogger::Prefix()
     case FileLogger::Developer:
         prefix << wxT(" TRACE]");
         break;
+    }
+
+    if(!m_module.empty()) {
+        prefix << " " << m_module << ">";
     }
     return prefix;
 }

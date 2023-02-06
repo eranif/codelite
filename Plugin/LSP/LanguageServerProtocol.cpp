@@ -183,8 +183,15 @@ std::set<wxString> LanguageServerProtocol::GetSupportedLanguages()
 void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
 {
     if(!IsInitialized()) {
+        if(request->GetMethod() == "textDocument/semanticTokens/full" ||
+           request->GetMethod() == "textDocument/didOpen") {
+            // store the request for later processing
+            m_pendingQueue.Push(request);
+        }
         return;
     }
+
+    LSP_DEBUG() << "Sending" << request->GetMethod() << "request..." << endl;
     if(request->As<LSP::CompletionRequest>()) {
         m_lastCompletionRequestId = request->As<LSP::CompletionRequest>()->GetId();
     }
@@ -404,7 +411,6 @@ void LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor, const wxSt
             LSP_DEBUG() << "textDocument/didChange: using full change request" << endl;
         }
         QueueMessage(req);
-
     } else {
         LSP_DEBUG() << "Sending textDocument/didOpen request" << endl;
         // first time opening this file
@@ -438,6 +444,10 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
     // For now: report a change event
     wxString filename = GetEditorFilePath(editor);
     if(ShouldHandleFile(editor)) {
+        // before sending the save request, send a change request
+        LSP_DEBUG()<< "Flushing changes before save" << endl;
+        SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
+
         LSP::CompletionRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::DidSaveTextDocumentRequest(filename, fileContent));
         QueueMessage(req);
@@ -751,10 +761,15 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
                     // Send LSP::InitializedNotification to the server
                     LSP_DEBUG() << GetLogPrefix() << "initialization completed" << endl;
                     m_initializeRequestID = wxNOT_FOUND;
+
                     // Notify about this
                     LSPEvent initEvent(wxEVT_LSP_INITIALIZED);
                     initEvent.SetServerName(GetName());
                     m_owner->AddPendingEvent(initEvent);
+
+                    // Move the content of the pending queue into the main queue
+                    m_Queue.Move(m_pendingQueue);
+
                 } else {
                     LSP_DEBUG() << GetLogPrefix() << "Server not initialized. This message is ignored";
                 }
@@ -844,14 +859,11 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 
     // check if this is implemented by the server
     if(IsSemanticTokensSupported()) {
-        LSP_DEBUG() << GetLogPrefix() << "Sending semantic tokens request..." << endl;
         LSP::DidChangeTextDocumentRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(filepath));
         QueueMessage(req);
-        LSP_DEBUG() << GetLogPrefix() << "Success" << endl;
 
     } else if(IsDocumentSymbolsSupported()) {
-        LSP_DEBUG() << GetLogPrefix() << "Sending semantic tokens request (DocumentSymbols)" << endl;
         // Use DocumentSymbol instead
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT);
     }
@@ -907,11 +919,12 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
             return;
         }
         preq->SetServerName(GetName());
+        LSP_DEBUG() << "Processing response for request:" << preq->GetMethod() << endl;
         preq->OnResponse(response, m_owner);
 
     } else if(response.IsPushDiagnostics()) {
         // Get the URI
-        LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "Received diagnostic message"; }
+        LSP_DEBUG() << "Received diagnostic message" << endl;
         wxString fn = FileUtils::FilePathFromURI(response.GetDiagnosticsUri());
 
         // Don't show this message on macOS as it appears in the middle of the screen...
@@ -1062,6 +1075,17 @@ void LSPRequestMessageQueue::Clear()
     while(!m_Queue.empty()) {
         m_Queue.pop();
     }
+    SetWaitingReponse(false);
+    m_pendingReplyMessages.clear();
+}
+
+void LSPRequestMessageQueue::Move(LSPRequestMessageQueue& other)
+{
+    while(!other.m_Queue.empty()) {
+        m_Queue.push(other.m_Queue.front());
+        other.m_Queue.pop();
+    }
+
     SetWaitingReponse(false);
     m_pendingReplyMessages.clear();
 }

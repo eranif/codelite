@@ -45,6 +45,9 @@ public:
     bool IsEmpty() const { return m_Queue.empty(); }
     void SetWaitingReponse(bool waitingReponse) { this->m_waitingReponse = waitingReponse; }
     bool IsWaitingReponse() const { return m_waitingReponse; }
+
+    /// move the content of `other` into `this` while consuming the `other` queue
+    void Move(LSPRequestMessageQueue& other);
 };
 
 class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
@@ -70,6 +73,11 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
 
     // Parsing queue
     LSPRequestMessageQueue m_Queue;
+
+    // until the server is initialized, we store semantic-tokens/open requests here
+    // the rest is discarded
+    LSPRequestMessageQueue m_pendingQueue;
+
     wxStringSet_t m_providers;
     bool m_disaplayDiagnostics = true;
     int m_lastCompletionRequestId = wxNOT_FOUND;

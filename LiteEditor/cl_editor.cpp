@@ -6467,7 +6467,7 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
             SetKeywordLocals(flatStrLocals);
         }
     }
-    // Colourise(0, wxSTC_INVALID_POSITION);
+    Colourise(0, wxSTC_INVALID_POSITION);
 }
 
 int clEditor::GetColumnInChars(int pos)

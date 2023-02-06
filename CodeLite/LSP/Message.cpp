@@ -95,11 +95,14 @@ std::unique_ptr<JSON> LSP::Message::GetJSONPayload(std::string& network_buffer)
     // convert payload to wxString
     wxString json_str = wxString::FromUTF8(payload);
 
-    if(json_str.length() != payload.length()) {
-        LSP_DEBUG() << "UTF8 chars detected" << endl;
-        LSP_DEBUG() << "wx.length()=" << json_str.length() << endl;
-        LSP_DEBUG() << "c.length()=" << payload.length() << endl;
-        LSP_DEBUG() << HEADER_CONTENT_LENGTH << contentLength << endl;
+    LOG_IF_TRACE
+    {
+        if(json_str.length() != payload.length()) {
+            LSP_TRACE() << "UTF8 chars detected" << endl;
+            LSP_TRACE() << "wx.length()=" << json_str.length() << endl;
+            LSP_TRACE() << "c.length()=" << payload.length() << endl;
+            LSP_TRACE() << HEADER_CONTENT_LENGTH << contentLength << endl;
+        }
     }
 
     if(!json_str.EndsWith("}")) {

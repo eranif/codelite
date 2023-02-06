@@ -109,7 +109,7 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     // write the options into a file
     wxFileName ctags_options_file(clStandardPaths::Get().GetUserDataDir(),
                                   wxString() << "options-" << wxThread::GetCurrentId() << ".ctags");
-    //FileUtils::Deleter d{ ctags_options_file };
+    FileUtils::Deleter d{ ctags_options_file };
 
     wxString ctags_options_file_content;
     for(const wxString& option : options_arr) {

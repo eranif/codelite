@@ -2,10 +2,12 @@
 
 . $(dirname $(readlink -f $0))/make-weekly-common
 
+WXCRAFTER_BUILD_DIR=${CODELITE_HOME}/build-release-wxcapp
+CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release
+
 function linux_build_codelite() {
-    cd $ROOT_DIR
-    mkdir -p build-release
-    cd build-release
+    mkdir -p ${CODELITE_BUILD_DIR}
+    cd ${CODELITE_BUILD_DIR}
     rm -fr *.deb
     cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
     make -j${cpu_count} package
@@ -19,9 +21,8 @@ function linux_build_codelite() {
 }
 
 function linux_build_wxcrafter() {
-    cd $ROOT_DIR
-    mkdir -p build-release-wxcrafter
-    cd build-release-wxcrafter
+    mkdir -p ${WXCRAFTER_BUILD_DIR}
+    cd ${WXCRAFTER_BUILD_DIR}
     rm -fr *.deb
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXC_APP=1 -Wno-dev
     make -j${cpu_count} package

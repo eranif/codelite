@@ -8,19 +8,22 @@ while [ ! -d ".git" ]; do
     cd ..
 done
 
-echo "Root dir is set to $(pwd)"
+CODELITE_HOME=$(pwd)
+echo "-- CODELITE_HOME is set to ${CODELITE_HOME}"
 
 # Clear old installers
 os_name=`uname -s`
 arch=`uname -m`
 
 os_name=`uname -s`
-echo rm -f $curdir/build-release/codelite.app.tar.gz
-rm -f $curdir/build-release/codelite.app.tar.gz
 
 if [[ "$os_name" == "Darwin" ]]; then
     cpu_count=$(sysctl -n hw.ncpu)
+    echo rm -f $curdir/build-release/codelite.app.tar.gz
+    rm -f $curdir/build-release/codelite.app.tar.gz
 elif [[ "$os_name" == "Linux" ]]; then
+    cpu_count=$(nproc)
+elif [[ "$os_name" = *"MSYS_NT"* ]]; then
     cpu_count=$(nproc)
 fi
 
@@ -36,18 +39,17 @@ do
 done
 
 if [ -z ${version} ]; then
-    echo -e "ERROR: please provide version. e.g. --version=16.5.0"
+    echo -e "*** ERROR ***: please provide version. e.g. --version=16.5.0"
     exit 1
 fi
 
-echo "Platform      : ${os_name}"
-echo "CPU count     : ${cpu_count}"
-echo "Verison       : ${version}"
+echo "-- Platform      : ${os_name}"
+echo "-- CPU count     : ${cpu_count}"
+echo "-- Version       : ${version}"
 
 # Update our source tree
-cd $curdir
-echo "Pulling CodeLite changes..."
-echo `pwd`
+cd ${CODELITE_HOME}
+echo "-- Pulling CodeLite changes..."
 git pull --rebase --recurse-submodules
 if [ $? -ne 0 ]; then
     exit $?
@@ -56,6 +58,5 @@ fi
 cd $curdir
 ORIG_PATH=$PATH
 ORIG_LDPATH=$LD_LIBRARY_PATH
-ROOT_DIR=$(pwd)
 
 upload_path="/var/www/html/downloads/codelite/${version}"

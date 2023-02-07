@@ -2,27 +2,31 @@
 
 . $(dirname $(readlink -f $0))/make-weekly-common
 
-WXCRAFTER_BUILD_DIR=${ROOT_DIR}/build-release-wxcapp
-CODELITE_BUILD_DIR=${ROOT_DIR}/build-release
+WXCRAFTER_BUILD_DIR=${CODELITE_HOME}/build-release-wxcapp
+CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release
+
+echo "-- CodeLite build dir is: ${CODELITE_BUILD_DIR}"
 
 # package CodeLite
 function build_codelite() {
     mkdir -p ${CODELITE_BUILD_DIR}
     cd ${CODELITE_BUILD_DIR}
 
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXWIN=$HOME/root -G"MinGW Makefiles"
+    echo "-- Building CodeLite. PWD: ${CODELITE_BUILD_DIR}"
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DWXWIN=$HOME/root -G"MinGW Makefiles"
     mingw32-make -j${cpu_count} install
 }
 
 function package_codelite() {
     cd ${CODELITE_BUILD_DIR}
+    echo "-- Packaging CodeLite. PWD: ${CODELITE_BUILD_DIR}"
     mingw32-make -j${cpu_count} setup
 
     # cd to the location where our output file exists and upload it
     cd ${CODELITE_BUILD_DIR}/installer
 
     package_file=$(ls *codelite*.exe)
-    echo "Uploading CodeLite installer ${package_file}"
+    echo "-- Uploading CodeLite installer ${package_file}"
     upload_path="/var/www/html/downloads/codelite/${version}"
     ssh root@codelite.org "mkdir -p ${upload_path}"
     scp "${package_file}" root@codelite.org:${upload_path}
@@ -34,6 +38,7 @@ function package_codelite() {
 function build_wxcrafter() {
     mkdir -p ${WXCRAFTER_BUILD_DIR}
     cd ${WXCRAFTER_BUILD_DIR}
+    echo "-- Building wxCrafter. PWD: ${WXCRAFTER_BUILD_DIR}"
 
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXWIN=$HOME/root -G"MinGW Makefiles" -DWXC_APP=1
     mingw32-make -j${cpu_count} install
@@ -41,13 +46,14 @@ function build_wxcrafter() {
 
 function package_wxcrafter() {
     cd ${WXCRAFTER_BUILD_DIR}
-    mingw32-make -j${cpu_count} setup
+    echo "-- Packaging wxCrafter. PWD: ${CODELITE_BUILD_DIR}"
 
+    mingw32-make -j${cpu_count} setup
     # cd to the location where our output file exists and upload it
     cd ${WXCRAFTER_BUILD_DIR}/installer
 
     package_file=$(ls *wxcrafter*.exe)
-    echo "Uploading wxCrafter installer ${package_file}"
+    echo "-- Uploading wxCrafter installer ${package_file}"
 
     upload_path="/var/www/html/downloads/wxcrafter/${version}"
     ssh root@codelite.org "mkdir -p ${upload_path}"

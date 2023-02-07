@@ -1,9 +1,11 @@
 #!/bin/bash -e
 
 . $(dirname $(readlink -f $0))/make-weekly-common
+CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release
 
 # Build and upload
-cd build-release
+mkdir -p ${CODELITE_BUILD_DIR}
+cd ${CODELITE_BUILD_DIR}
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j${cpu_count} install
 

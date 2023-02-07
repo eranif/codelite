@@ -308,11 +308,13 @@ void LanguageServerPlugin::OnLSPStopAll(clLanguageServerEvent& event)
 void LanguageServerPlugin::OnLSPStartAll(clLanguageServerEvent& event)
 {
     CHECK_PTR_RET(m_servers);
+    wxBusyCursor bc;
     m_servers->StartAll();
 }
 
 void LanguageServerPlugin::OnLSPRestartAll(clLanguageServerEvent& event)
 {
+    wxBusyCursor bc;
     LSP_DEBUG() << "LSP: restarting all LSPs" << endl;
     CHECK_PTR_RET(m_servers);
     m_servers->StopAll();

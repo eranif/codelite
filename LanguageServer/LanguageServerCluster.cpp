@@ -174,6 +174,7 @@ LanguageServerCluster::~LanguageServerCluster()
 
 void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages)
 {
+    wxBusyCursor bc;
     StopAll(languages);
 
     // If we are not enabled, stop here

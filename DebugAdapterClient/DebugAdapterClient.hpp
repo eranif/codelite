@@ -57,7 +57,7 @@ class DebugAdapterClient : public IPlugin
     wxString m_defaultPerspective;
     DebugSession m_session;
     clDapSettingsStore m_dap_store;
-    IProcess* m_dap_server = nullptr;
+    IProcess::Ptr_t m_dap_server = nullptr;
     RunInTerminalHelper m_terminal_helper;
     wxFileName m_breakpointsFile;
     BreakpointsHelper* m_breakpointsHelper = nullptr;
@@ -90,7 +90,7 @@ private:
     void ClearDebuggerMarker();
     void DoCleanup();
     void StartAndConnectToDapServer();
-    bool LaunchDAPServer();
+    bool StartSocketDap();
     void RefreshBreakpointsView();
     bool InitialiseSession(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
                            const wxString& working_directory, const wxString& ssh_account, const clEnvList_t& env);

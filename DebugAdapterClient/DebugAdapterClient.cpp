@@ -41,6 +41,7 @@
 #include "clFileSystemWorkspace.hpp"
 #include "clResizableTooltip.h"
 #include "clWorkspaceManager.h"
+#include "cl_config.h"
 #include "clcommandlineparser.h"
 #include "console_frame.h"
 #include "debuggermanager.h"
@@ -155,7 +156,11 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     logfile.AppendDir("logs");
 
     LOG.Open(logfile);
+    LOG.SetModule("dap");
+
+    // even though set to DBG, the check is done against the global log verbosity
     LOG.SetCurrentLogLevel(FileLogger::Dbg);
+
     LOG_DEBUG(LOG) << "Debug Adapter Client startd" << endl;
     m_longName = _("Debug Adapter Client");
     m_shortName = wxT("DebugAdapterClient");
@@ -1159,9 +1164,9 @@ void DebugAdapterClient::UpdateWatches()
 
 void DebugAdapterClient::RefreshBreakpointsMarkersForEditor(IEditor* editor) { CHECK_PTR_RET(editor); }
 
-bool DebugAdapterClient::LaunchDAPServer()
+bool DebugAdapterClient::StartSocketDap()
 {
-    wxDELETE(m_dap_server);
+    m_dap_server.reset();
     const DapEntry& dap_server = m_session.dap_server;
     wxString command = ReplacePlaceholders(dap_server.GetCommand());
 
@@ -1169,18 +1174,18 @@ bool DebugAdapterClient::LaunchDAPServer()
     if(m_session.debug_over_ssh) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
-        m_dap_server =
-            ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
-                                 wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName());
+        m_dap_server.reset(::CreateAsyncProcess(this, command,
+                                                IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
+                                                wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName()));
     } else {
         // launch local process
         auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
-        m_dap_server = ::CreateAsyncProcess(this, command,
-                                            IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole,
-                                            wxEmptyString, &env_list);
+        m_dap_server.reset(::CreateAsyncProcess(
+            this, command, IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole, wxEmptyString,
+            &env_list));
     }
     m_dap_server->SetHardKill(true);
-    return m_dap_server;
+    return m_dap_server != nullptr;
 }
 
 bool DebugAdapterClient::InitialiseSession(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
@@ -1221,28 +1226,40 @@ bool DebugAdapterClient::InitialiseSession(const DapEntry& dap_server, const wxS
 void DebugAdapterClient::StartAndConnectToDapServer()
 {
     m_client.Reset();
+    m_dap_server.reset();
+
     LOG_DEBUG(LOG) << "Connecting to dap-server:" << m_session.dap_server.GetName() << endl;
     LOG_DEBUG(LOG) << "exepath:" << m_session.command << endl;
     LOG_DEBUG(LOG) << "working_directory:" << m_session.working_directory << endl;
     LOG_DEBUG(LOG) << "env:" << to_string_array(m_session.environment) << endl;
 
-    // start the dap server (for the current session)
-    if(!LaunchDAPServer()) {
+    dap::SocketTransport* transport = nullptr;
+    if(m_session.dap_server.GetConnectionString().CmpNoCase("stdio") == 0) {
+        // using stdio transport
+        LOG_WARNING(LOG) << "DAP with stdio is not supported" << endl;
         return;
+    } else {
+        // start the dap server (for the current session)
+        if(!StartSocketDap()) {
+            return;
+        }
+
+        wxBusyCursor cursor;
+        // For this demo, we use socket transport. But you may choose
+        // to write your own transport that implements the dap::Transport interface
+        // This is useful when the user wishes to use stdin/out for communicating with
+        // the dap and not over socket
+        transport = new dap::SocketTransport();
+        if(!transport->Connect(m_session.dap_server.GetConnectionString(), 10)) {
+            wxMessageBox("Failed to connect to DAP server using socket", DAP_MESSAGE_BOX_TITLE,
+                         wxICON_ERROR | wxOK | wxCENTRE);
+            wxDELETE(transport);
+            m_client.Reset();
+            m_dap_server.reset();
+            return;
+        }
     }
 
-    wxBusyCursor cursor;
-    // For this demo, we use socket transport. But you may choose
-    // to write your own transport that implements the dap::Transport interface
-    // This is useful when the user wishes to use stdin/out for communicating with
-    // the dap and not over socket
-    dap::SocketTransport* transport = new dap::SocketTransport();
-    if(!transport->Connect(m_session.dap_server.GetConnectionString(), 10)) {
-        wxMessageBox("Failed to connect to DAP server", DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTRE);
-        wxDELETE(transport);
-        m_client.Reset();
-        return;
-    }
     wxDELETE(m_breakpointsHelper);
     m_breakpointsHelper = new BreakpointsHelper(m_client, m_session, LOG);
 
@@ -1277,9 +1294,8 @@ void DebugAdapterClient::OnProcessOutput(clProcessEvent& event)
 void DebugAdapterClient::OnProcessTerminated(clProcessEvent& event)
 {
     wxUnusedVar(event);
-    wxDELETE(m_dap_server);
-
     m_client.Reset();
+    m_dap_server.reset();
 
     RestoreUI();
     LOG_DEBUG(LOG) << "dap-server terminated" << endl;

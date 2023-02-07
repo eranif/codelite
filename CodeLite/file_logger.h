@@ -47,10 +47,10 @@ public:
     enum { System = -1, Error = 0, Warning = 1, Dbg = 2, Developer = 3 };
 
 protected:
-    static int m_verbosity;
+    static int m_globalLogVerbosity;
     static wxString m_logfile;
-    int _requestedLogLevel;
-    FILE* m_fp;
+    int m_logEntryVersbosity;
+    FILE* m_fp = nullptr;
     wxString m_buffer;
     static std::unordered_map<wxThreadIdType, wxString> m_threads;
     static wxCriticalSection m_cs;
@@ -59,22 +59,23 @@ protected:
     static wxString GetCurrentThreadName();
 
 public:
-    FileLogger(int requestedVerbo);
+    // construct a file logger entry with a given verbosity
+    FileLogger(int verbosity);
     ~FileLogger();
 
-    FileLogger& SetRequestedLogLevel(int level)
+    FileLogger& SetLogEntryVerbosity(int verbosity)
     {
-        _requestedLogLevel = level;
+        m_logEntryVersbosity = verbosity;
         return *this;
     }
 
-    int GetRequestedLogLevel() const { return _requestedLogLevel; }
-    static int GetCurrentLogLevel() { return m_verbosity; }
+    int GetLogEntryVerbosity() const { return m_logEntryVersbosity; }
+    static int GetGlobalLogVerbosity() { return m_globalLogVerbosity; }
 
     /**
-     * @brief return true if log_level is lower than the currently set log level
+     * @brief return true if log_level is lower or equal to the global log verbosity
      */
-    static bool CanLog(int log_level) { return log_level <= GetCurrentLogLevel(); }
+    static bool CanLog(int verbo) { return verbo <= GetGlobalLogVerbosity(); }
 
     /**
      * @brief give a thread-id a unique name which will be displayed in log
@@ -94,21 +95,19 @@ public:
      * @param verbosity
      */
     void AddLogLine(const wxArrayString& arr, int verbosity);
-    static void SetVerbosity(int level);
-
-    // Set the verbosity as string
-    static void SetVerbosity(const wxString& verbosity);
 
     ///----------------------------------
-    /// Statics
+    /// log verbosity manipulation
     ///----------------------------------
+    static void SetGlobalLogVerbosity(int level);
+    static void SetGlobalLogVerbosity(const wxString& verbosity);
+    static int GetVerbosityAsNumber(const wxString& verbosity);
+    static wxString GetVerbosityAsString(int verbosity);
+
     /**
      * @brief open the log file
      */
     static void OpenLog(const wxString& fullName, int verbosity);
-    // Various util methods
-    static wxString GetVerbosityAsString(int verbosity);
-    static int GetVerbosityAsNumber(const wxString& verbosity);
 
     inline FileLogger& operator<<(FileLoggerFunction f)
     {
@@ -119,9 +118,10 @@ public:
     // special types printing
     inline FileLogger& operator<<(const std::vector<wxString>& arr)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
+
         if(!m_buffer.IsEmpty()) {
             m_buffer << " ";
         }
@@ -138,7 +138,7 @@ public:
 
     inline FileLogger& operator<<(const wxStringSet_t& S)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -157,7 +157,7 @@ public:
 
     inline FileLogger& operator<<(const wxStringMap_t& M)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -176,7 +176,7 @@ public:
 
     inline FileLogger& operator<<(const wxArrayString& arr)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         std::vector<wxString> v{ arr.begin(), arr.end() };
@@ -186,7 +186,7 @@ public:
 
     inline FileLogger& operator<<(const wxColour& colour)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
 
@@ -201,7 +201,7 @@ public:
      */
     inline FileLogger& operator<<(const wxString& str)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -216,7 +216,7 @@ public:
      */
     inline FileLogger& operator<<(const wxFileName& fn)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -231,7 +231,7 @@ public:
      */
     template <typename T> FileLogger& Append(const T& elem, int level)
     {
-        if(level > m_verbosity) {
+        if(level > m_globalLogVerbosity) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -261,15 +261,16 @@ inline FileLogger& endl(FileLogger& d)
 
 template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
 {
-    logger.Append(obj, logger.GetRequestedLogLevel());
+    if(FileLogger::CanLog(logger.GetLogEntryVerbosity()))
+        return logger;
+
+    logger.Append(obj, logger.GetLogEntryVerbosity());
     return logger;
 }
 
 // New API
 #define clDEBUG() FileLogger(FileLogger::Dbg) << FileLogger::Prefix(FileLogger::Dbg)
 #define clDEBUG1() FileLogger(FileLogger::Developer) << FileLogger::Prefix(FileLogger::Developer)
-
-// alias
 #define clTRACE() clDEBUG1()
 
 #define clERROR() FileLogger(FileLogger::Error) << FileLogger::Prefix(FileLogger::Error)

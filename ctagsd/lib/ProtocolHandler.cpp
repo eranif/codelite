@@ -39,7 +39,7 @@ FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
 {
     wxString s;
     s << tag.GetKind() << ", " << tag.GetDisplayName() << ", " << tag.GetPatternClean();
-    logger.Append(s, logger.GetRequestedLogLevel());
+    logger.Append(s, logger.GetLogEntryVerbosity());
     return logger;
 }
 
@@ -84,8 +84,7 @@ void filter_non_important_files(wxArrayString& files, const CTagsdSettings& sett
 {
     wxArrayString tmparr;
     tmparr.reserve(files.size());
-    
-    
+
     // filter non c/c++ files
     wxArrayString ignore_spec = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
     auto should_skip_file = [&](const wxString& file_full_path) -> bool {

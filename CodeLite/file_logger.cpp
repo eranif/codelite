@@ -34,13 +34,13 @@
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
 
-int FileLogger::m_verbosity = FileLogger::Error;
+int FileLogger::m_globalLogVerbosity = FileLogger::Error;
 wxString FileLogger::m_logfile;
 std::unordered_map<wxThreadIdType, wxString> FileLogger::m_threads;
 wxCriticalSection FileLogger::m_cs;
 
-FileLogger::FileLogger(int requestedVerbo)
-    : _requestedLogLevel(requestedVerbo)
+FileLogger::FileLogger(int verbosity)
+    : m_logEntryVersbosity(verbosity)
     , m_fp(nullptr)
 {
 }
@@ -53,27 +53,26 @@ FileLogger::~FileLogger()
 
 void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 {
-    if(msg.IsEmpty()) {
+    if(msg.IsEmpty() || !CanLog(verbosity)) {
         return;
     }
-    if((m_verbosity >= verbosity)) {
-        wxString formattedMsg = Prefix(verbosity);
-        formattedMsg << " " << msg;
-        formattedMsg.Trim().Trim(false);
-        formattedMsg << wxT("\n");
-        if(!m_buffer.empty() && (m_buffer.Last() != '\n')) {
-            m_buffer << "\n";
-        }
-        m_buffer << formattedMsg;
+
+    wxString formattedMsg = Prefix(verbosity);
+    formattedMsg << " " << msg;
+    formattedMsg.Trim().Trim(false);
+    formattedMsg << wxT("\n");
+    if(!m_buffer.empty() && (m_buffer.Last() != '\n')) {
+        m_buffer << "\n";
     }
+    m_buffer << formattedMsg;
 }
 
-void FileLogger::SetVerbosity(int level)
+void FileLogger::SetGlobalLogVerbosity(int level)
 {
     if(level > FileLogger::Warning) {
         clSYSTEM() << "Log verbosity is now set to:" << FileLogger::GetVerbosityAsString(level) << clEndl;
     }
-    m_verbosity = level;
+    m_globalLogVerbosity = level;
 }
 
 int FileLogger::GetVerbosityAsNumber(const wxString& verbosity)
@@ -121,7 +120,10 @@ wxString FileLogger::GetVerbosityAsString(int verbosity)
     }
 }
 
-void FileLogger::SetVerbosity(const wxString& verbosity) { SetVerbosity(GetVerbosityAsNumber(verbosity)); }
+void FileLogger::SetGlobalLogVerbosity(const wxString& verbosity)
+{
+    SetGlobalLogVerbosity(GetVerbosityAsNumber(verbosity));
+}
 
 void FileLogger::OpenLog(const wxString& fullName, int verbosity)
 {
@@ -130,7 +132,7 @@ void FileLogger::OpenLog(const wxString& fullName, int verbosity)
     logfile.AppendDir("logs");
     logfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_logfile = logfile.GetFullPath();
-    m_verbosity = verbosity;
+    SetGlobalLogVerbosity(verbosity);
 }
 
 void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
@@ -159,44 +161,44 @@ void FileLogger::Flush()
 
 wxString FileLogger::Prefix(int verbosity)
 {
-    if(verbosity <= m_verbosity) {
-        wxString prefix;
-        timeval tim;
-        gettimeofday(&tim, NULL);
-        int ms = (int)tim.tv_usec / 1000.0;
-
-        wxString msStr = wxString::Format(wxT("%03d"), ms);
-        prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
-        switch(verbosity) {
-        case System:
-            prefix << wxT(" SYS]");
-            break;
-
-        case Error:
-            prefix << wxT(" ERR]");
-            break;
-
-        case Warning:
-            prefix << wxT(" WRN]");
-            break;
-
-        case Dbg:
-            prefix << wxT(" DBG]");
-            break;
-
-        case Developer:
-            prefix << wxT(" DVL]");
-            break;
-        }
-
-        wxString thread_name = GetCurrentThreadName();
-        if(!thread_name.IsEmpty()) {
-            prefix << " [" << thread_name << "]";
-        }
-        return prefix;
-    } else {
+    if(!CanLog(verbosity)) {
         return wxEmptyString;
     }
+
+    wxString prefix;
+    timeval tim;
+    gettimeofday(&tim, NULL);
+    int ms = (int)tim.tv_usec / 1000.0;
+
+    wxString msStr = wxString::Format(wxT("%03d"), ms);
+    prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
+    switch(verbosity) {
+    case System:
+        prefix << wxT(" SYS]");
+        break;
+
+    case Error:
+        prefix << wxT(" ERR]");
+        break;
+
+    case Warning:
+        prefix << wxT(" WRN]");
+        break;
+
+    case Dbg:
+        prefix << wxT(" DBG]");
+        break;
+
+    case Developer:
+        prefix << wxT(" DVL]");
+        break;
+    }
+
+    wxString thread_name = GetCurrentThreadName();
+    if(!thread_name.IsEmpty()) {
+        prefix << " [" << thread_name << "]";
+    }
+    return prefix;
 }
 
 wxString FileLogger::GetCurrentThreadName()

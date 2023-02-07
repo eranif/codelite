@@ -286,7 +286,7 @@ void CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString
                           const wxString& workingDir, const clEnvList_t* env)
 {
     clEnvironment e(env);
-    CreateAsyncProcess(new __AsyncCallback(move(cb)), cmd, flags, workingDir, env, wxEmptyString);
+    CreateAsyncProcess(new __AsyncCallback(std::move(cb)), cmd, flags, workingDir, env, wxEmptyString);
 }
 
 IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& workingDir, const clEnvList_t* env)

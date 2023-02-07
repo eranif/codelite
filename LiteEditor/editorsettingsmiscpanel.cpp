@@ -120,7 +120,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
                     wxString str;
                     if(value.GetAs(&str)) {
                         clConfig::Get().Write(kConfigLogVerbosity, FileLogger::GetVerbosityAsNumber(str));
-                        FileLogger::SetVerbosity(FileLogger::GetVerbosityAsNumber(str));
+                        FileLogger::SetGlobalLogVerbosity(FileLogger::GetVerbosityAsNumber(str));
                     }
                 });
 #ifdef __WXGTK__

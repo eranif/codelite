@@ -33,6 +33,7 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include <memory>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>

@@ -18,7 +18,6 @@ fi
 
 codelite_ver="codelite-${HEAD}"
 temptarball="CL-"`git rev-parse HEAD`
-
 tmpdir="/tmp/"
 rm -f ${tmpdir}${temptarball}
 rm -fr ${tmpdir}${codelite_ver}
@@ -26,6 +25,15 @@ rm -fr ${tmpdir}${codelite_ver}
 # Create a temporary tarball and extract it
 git archive --format=tar --prefix=${codelite_ver}/ HEAD -o ${tmpdir}/${temptarball}
 (cd ${tmpdir} && tar -xf ${temptarball} && rm -f ${temptarball})
+
+## Now extract the git submodules into their subdir within the extracted tarball
+# The foreach command is recursive. Inside it, ${name} returns the current submodule's name.
+# The syntax is particular about escaping: it insists on /\${name} but otherwise it's ${foo} not \${foo}
+# The plan is to extract each submodule into its subdir of the previously-extracted /tmp/codelite-${codelite_ver}
+# (The mkdir is actually unnecessary as that subdir is already present, but better safe than sorry.)
+SubModPath="${tmpdir}${codelite_ver}"
+git submodule foreach  "SubModPath=\"${tmpdir}${codelite_ver}/\${name}\" &&  mkdir -p ${SubModPath}/\${name} &&  \
+                                        git archive  --format=tar  -o ${SubModPath}/\${name}/\${name}.tar HEAD && (cd ${SubModPath}/\${name} && tar -xf \${name}.tar && rm -f \${name}.tar ) "
 
 # Create an up-to-date LiteEditor/autoversion.cpp and copy it into the 'archive'
 $(./git-revision.sh)

@@ -1068,8 +1068,9 @@ void clEditor::SetProperties()
     bool isDarkTheme = (lexer && lexer->IsDark());
     wxColour indicator_colour = *wxRED;
     if(isDarkTheme) {
-        indicator_colour = *wxWHITE;
+        indicator_colour = wxColour("YELLOW");
     }
+
     SetUserIndicatorStyleAndColour(wxSTC_INDIC_SQUIGGLE, indicator_colour);
 
     wxColour col2(wxT("LIGHT BLUE"));
@@ -4607,7 +4608,8 @@ void clEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
 {
     IndicatorSetForeground(USER_INDICATOR, colour);
     IndicatorSetStyle(USER_INDICATOR, style);
-    IndicatorSetUnder(USER_INDICATOR, true);
+    IndicatorSetAlpha(USER_INDICATOR, 255);
+    IndicatorSetUnder(USER_INDICATOR, false);
 }
 
 int clEditor::GetLexerId() { return GetLexer(); }

@@ -840,6 +840,9 @@ add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
+# include the yaml-cpp directory
+include_directories("${CMAKE_SOURCE_DIR}/yaml-cpp/include")
+
 if(WXC_APP)
     add_subdirectory(wxcrafter)
 else()

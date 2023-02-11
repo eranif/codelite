@@ -40,6 +40,17 @@ public:
         return false;
     }
 
+    /// override this in the platform specific code
+    /// on macOS, application are usually placed under /Application
+    /// are are opened with the `open` command
+    virtual bool MacFindApp(const wxString& appname, wxString* command_fullpath, bool new_instance = true)
+    {
+        wxUnusedVar(appname);
+        wxUnusedVar(command_fullpath);
+        wxUnusedVar(new_instance);
+        return false;
+    }
+
     /**
      * @brief locate msys2 installation folder (e.g. C:/msys2)
      */

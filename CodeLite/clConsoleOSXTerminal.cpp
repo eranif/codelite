@@ -1,4 +1,5 @@
 #include "clConsoleOSXTerminal.h"
+
 #include "file_logger.h"
 #include "fileutils.h"
 
@@ -23,6 +24,7 @@ bool clConsoleOSXTerminal::StartForDebugger()
     SetRealPts(m_tty);
     return true;
 }
+
 wxString clConsoleOSXTerminal::PrepareCommand()
 {
     wxString commandToExecute;

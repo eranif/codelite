@@ -118,7 +118,7 @@ public:
     // special types printing
     inline FileLogger& operator<<(const std::vector<wxString>& arr)
     {
-        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
 
@@ -138,7 +138,7 @@ public:
 
     inline FileLogger& operator<<(const wxStringSet_t& S)
     {
-        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -157,7 +157,7 @@ public:
 
     inline FileLogger& operator<<(const wxStringMap_t& M)
     {
-        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -176,7 +176,7 @@ public:
 
     inline FileLogger& operator<<(const wxArrayString& arr)
     {
-        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         std::vector<wxString> v{ arr.begin(), arr.end() };
@@ -186,7 +186,7 @@ public:
 
     inline FileLogger& operator<<(const wxColour& colour)
     {
-        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
 
@@ -201,7 +201,7 @@ public:
      */
     inline FileLogger& operator<<(const wxString& str)
     {
-        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -216,7 +216,7 @@ public:
      */
     inline FileLogger& operator<<(const wxFileName& fn)
     {
-        if(FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -261,7 +261,7 @@ inline FileLogger& endl(FileLogger& d)
 
 template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
 {
-    if(FileLogger::CanLog(logger.GetLogEntryVerbosity()))
+    if(!FileLogger::CanLog(logger.GetLogEntryVerbosity()))
         return logger;
 
     logger.Append(obj, logger.GetLogEntryVerbosity());

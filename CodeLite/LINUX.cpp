@@ -1,6 +1,7 @@
 #include "LINUX.hpp"
 
 #include "PlatformCommon.hpp"
+#include "StringUtils.h"
 #include "clFilesCollector.h"
 #include "clVersionString.hpp"
 #include "file_logger.h"
@@ -22,10 +23,10 @@ namespace
 bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxString* install_path)
 {
     wxString cellar_path = "/opt/homebrew/Cellar";
-    if (!wxFileName::DirExists(cellar_path)) {
+    if(!wxFileName::DirExists(cellar_path)) {
         cellar_path = "/usr/local/Cellar";
     }
-    
+
     cellar_path << "/" << formula;
 
     if(!wxFileName::DirExists(cellar_path)) {
@@ -178,3 +179,22 @@ namespace
 thread_local LINUX instance;
 }
 LINUX* LINUX::Get() { return &instance; }
+
+bool LINUX::MacFindApp(const wxString& appname, wxString* command_fullpath, bool new_instance)
+{
+#ifdef __WXMAC__
+    wxFileName path{ "/Applications", wxEmptyString };
+    path.AppendDir(appname + ".app");
+
+    // search for app name
+    if(path.DirExists()) {
+        (*command_fullpath) << "/usr/bin/open ";
+        if(new_instance) {
+            (*command_fullpath) << "-n ";
+        }
+        (*command_fullpath) << StringUtils::WrapWithDoubleQuotes(path.GetPath());
+        return true;
+    }
+#endif
+    return false;
+}

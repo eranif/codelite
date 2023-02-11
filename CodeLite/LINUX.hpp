@@ -37,6 +37,10 @@ public:
      */
     bool Which(const wxString& command, wxString* command_fullpath) override;
 
+    /// on macOS, application are usually placed under /Application
+    /// are are opened with the `open` command
+    bool MacFindApp(const wxString& appname, wxString* command_fullpath, bool new_instance = true) override;
+
     /**
      * @brief some vendros deliver binaries with "-N" where N is the version number
      * this method attempts to search for command-<N>...command (in this order)

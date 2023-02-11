@@ -1,12 +1,10 @@
 # set the plugin name here
 set(PLUGIN_NAME "abbreviation")
 
-# Our project is called 'plugin' this is how it will be called in visual studio,
-# and in our makefiles.
+# Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
 project(${PLUGIN_NAME})
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is
-# mentioned before 'base'.
+# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
@@ -42,7 +40,6 @@ target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
 
 # Codelite plugins doesn't use the "lib" prefix.
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES}
-                      libcodelite plugin)
+target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin)
 # Installation destination
 cl_install_plugin(${PLUGIN_NAME})

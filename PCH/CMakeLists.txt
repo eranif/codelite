@@ -1,5 +1,4 @@
-# Our project is called 'codelite' this is how it will be called in visual
-# studio, and in our makefiles.
+# Our project is called 'codelite' this is how it will be called in visual studio, and in our makefiles.
 project(PCH)
 
 # wxWidgets include (this will do all the magic to configure everything)

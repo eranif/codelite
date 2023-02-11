@@ -1,4 +1,3 @@
-
 # Use the variable PROJECT_NAME for changing the target name
 set(PROJECT_NAME "HelloWorld")
 

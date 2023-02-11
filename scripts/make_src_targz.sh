@@ -38,7 +38,7 @@ cd ${tmpdir}
 
 # First for Linux
 GZIP="-9" tar cvzf ${curdir}/${codelite_ver}-gtk.src.tar.gz --exclude='*.exe' --exclude='*.dll' --exclude='*.dylib' ${codelite_ver}/*
-tar cv --xz -f ${curdir}/${codelite_ver}-gtk.src.tar.xz --exclude='*.exe' --exclude='*.dll' --exclude='*.dylib' ${codelite_ver}/* 
+tar cv --xz -f ${curdir}/${codelite_ver}-gtk.src.tar.xz --exclude='*.exe' --exclude='*.dll' --exclude='*.dylib' ${codelite_ver}/*
 
 # then for MSWin
 #tar cv --lzma -f ${curdir}/${codelite_ver}-win.src.tar.7z --exclude='*.so' --exclude='*.dylib' ${codelite_ver}/*

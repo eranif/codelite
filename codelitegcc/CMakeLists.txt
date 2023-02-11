@@ -1,6 +1,4 @@
-
-# Our project is called 'codelite' this is how it will be called in visual
-# studio, and in our makefiles.
+# Our project is called 'codelite' this is how it will be called in visual studio, and in our makefiles.
 project(codelite-cc)
 
 file(GLOB SRCS "*.cpp")

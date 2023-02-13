@@ -29,34 +29,24 @@ public:
     };
 
 private:
-    wxString m_remoteAccount;
+    std::unordered_set<clSSHChannel*> m_runningCommands;
+    friend class clSSHChannel;
 
-protected:
-    void OnChannelStdout(clCommandEvent& event);
-    void OnChannelStderr(clCommandEvent& event);
-    void OnChannelClosed(clCommandEvent& event);
-    void OnChannelError(clCommandEvent& event);
+    /// remove the channel from the tracking queue and delete it
+    /// this method is called by the clSSHChannel after it completes its execution
+    void Delete(clSSHChannel* channel);
 
 public:
     /// Create executor with default worker pool size
     clRemoteExecutor();
     virtual ~clRemoteExecutor();
 
-    /// establish the channels to the remote host
-    bool startup(const wxString& account_name);
-
     /// cancel the current command being executed and return
     void shutdown();
 
-    /// try to find a free channel and execute our command
-    /// If succeeded, the output is returned in the form of this event:
-    ///
-    /// - wxEVT_ASYNC_PROCESS_OUTPUT
-    /// - wxEVT_ASYNC_PROCESS_STDERR
-    /// - wxEVT_ASYNC_PROCESS_TERMINATED (never contains output)
-    ///
     /// Returns: the remote channel. The caller should delete it upon completion
-    clSSHChannel* try_execute(const clRemoteExecutor::Cmd& cmd);
+    // clSSHChannel* execute(const clRemoteExecutor::Cmd& cmd, const wxString& account);
+    void execute_with_callback(const clRemoteExecutor::Cmd& cmd, const wxString& account, execute_callback&& cb);
 };
 #endif // CL_REMOTE_EXECUTOR_HPP
 #endif

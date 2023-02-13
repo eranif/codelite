@@ -47,9 +47,9 @@ private:
     wxString m_localUserWorkspaceFile;
     clFileSystemWorkspaceSettings m_settings;
     clCodeLiteRemoteProcess m_codeliteRemoteBuilder;
-    clCodeLiteRemoteProcess m_codeliteRemoteFinder;
     long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
+    wxString m_findFilesOutput;
     wxArrayString m_workspaceFiles;
     clRemoteFinderHelper m_remoteFinder;
     bool m_buildInProgress = false;
@@ -113,12 +113,7 @@ protected:
     void OnCodeLiteRemoteBuildOutput(clProcessEvent& event);
     void OnCodeLiteRemoteBuildOutputDone(clProcessEvent& event);
 
-    // codelite-remote
-    void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
-    void OnCodeLiteRemoteFindDone(clFindInFilesEvent& event);
-
-    void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
-    void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);
+    void ListFilesOutput(const std::string& output, bool is_completed);
 
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;

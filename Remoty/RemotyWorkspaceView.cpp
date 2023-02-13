@@ -193,6 +193,13 @@ void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
                              dlg.IsIcase());
 }
 
+void RemotyWorkspaceView::ActiveEditorSetLocation(clFindInFilesEvent::Location loc)
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    editor->CenterLine(loc.line - 1);
+}
+
 void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
 {
     event.Skip();
@@ -210,17 +217,10 @@ void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
         editor = clSFTPManager::Get().OpenFile(match.file, m_workspace->GetAccount().GetAccountName());
     }
 
+    // Select it
     if(editor) {
-        // sci is 0 based line numbers
-        auto callback = [=](IEditor* peditor) {
-            peditor->GetCtrl()->ClearSelections();
-            int pos_start = peditor->PosFromLine(loc.line - 1) + loc.column_start;
-            int pos_end = peditor->PosFromLine(loc.line - 1) + loc.column_end;
-            peditor->GetCtrl()->SetSelection(pos_start, pos_end);
-            peditor->CenterLinePreserveSelection(loc.line);
-        };
-        // load the local file (or make it selected) and then focus on the matched line
-        clGetManager()->OpenFileAndAsyncExecute(editor->GetFileName().GetFullPath(), callback);
+        clGetManager()->SelectEditor(editor);
+        CallAfter(&RemotyWorkspaceView::ActiveEditorSetLocation, loc);
     }
 }
 

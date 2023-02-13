@@ -4,6 +4,7 @@
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "cJSON.h"
+#include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
 #include "cl_command_event.h"
 #include "environmentconfig.h"
@@ -358,34 +359,6 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListFilesOutput, nullptr });
 }
 
-void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
-                                     bool whole_word, bool icase)
-{
-    if(!m_process) {
-        return;
-    }
-
-    wxString exts = extensions;
-    exts.Replace("*", "");
-
-    // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "find");
-    item.addProperty("root_dir", root_dir);
-    item.addProperty("find_what", find_what);
-    item.addProperty("file_extensions", ::wxStringTokenize(exts, ",; |", wxTOKEN_STRTOK));
-    item.addProperty("icase", icase);
-    item.addProperty("whole_word", whole_word);
-
-    wxString command = item.format(false);
-    m_process->Write(command + "\n");
-    LOG_IF_TRACE { clDEBUG1() << command << endl; }
-
-    // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindOutput, nullptr });
-}
-
 void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name, const wxString& ext,
                                      const std::vector<wxString>& versions)
 {
@@ -589,64 +562,6 @@ void clCodeLiteRemoteProcess::OnLocateOutput(const wxString& output, bool is_com
 
     if(is_completed) {
         clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LOCATE_DONE);
-        AddPendingEvent(event_done);
-    }
-}
-
-void clCodeLiteRemoteProcess::OnFindOutput(const wxString& output, bool is_completed)
-{
-    wxArrayString files = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
-    if(files.empty()) {
-        return;
-    }
-
-    clFindInFilesEvent::Match::vec_t matches;
-    matches.reserve(files.size());
-    for(const wxString& file : files) {
-        JSON j(file);
-        if(!j.isOk()) {
-            continue;
-        }
-
-        auto file_matches = j.toElement();
-
-        if((m_fif_matches_count == 0) && (m_fif_files_scanned == 0) && file_matches.hasNamedObject("files_scanned")) {
-            m_fif_files_scanned = file_matches["files_scanned"].toSize_t();
-            continue;
-        }
-
-        clFindInFilesEvent::Match match;
-        match.file = file_matches["file"].toString();
-        auto json_locations = file_matches["matches"];
-        size_t loc_count = json_locations.arraySize();
-
-        // add the locations for this file
-        if(loc_count) {
-            match.locations.reserve(loc_count);
-            for(size_t j = 0; j < loc_count; j++) {
-                clFindInFilesEvent::Location loc;
-                auto json_loc = json_locations[j];
-                loc.line = json_loc["ln"].toSize_t();
-                loc.column_start = json_loc["start"].toSize_t();
-                loc.column_end = json_loc["end"].toSize_t();
-                loc.pattern = json_loc["pattern"].toString();
-                match.locations.push_back(loc);
-                m_fif_matches_count++;
-            }
-            // add the match
-            matches.push_back(match);
-        }
-    }
-
-    if(!matches.empty()) {
-        clFindInFilesEvent event(wxEVT_CODELITE_REMOTE_FIND_RESULTS);
-        event.SetMatches(matches);
-        AddPendingEvent(event);
-    }
-
-    if(is_completed) {
-        clFindInFilesEvent event_done(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE);
-        event_done.SetInt(m_fif_files_scanned);
         AddPendingEvent(event_done);
     }
 }

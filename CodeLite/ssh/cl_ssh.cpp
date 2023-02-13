@@ -475,9 +475,6 @@ void clSSH::DoConnectWithRetries(int retries)
     while(retries) {
         int rc = ssh_connect(m_session);
         if(rc == SSH_AGAIN) {
-            if(wxThread::IsMain()) {
-                ::wxSafeYield();
-            }
             wxThread::Sleep(10);
             --retries;
             continue;

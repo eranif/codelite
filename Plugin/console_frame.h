@@ -69,9 +69,6 @@ protected:
 
 public:
     ConsoleFrame(wxWindow* parent);
-#if USE_SFTP
-    ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh);
-#endif
     virtual ~ConsoleFrame();
     void Execute(const wxString& command, const wxString& wd);
 };

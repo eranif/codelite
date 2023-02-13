@@ -54,7 +54,7 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
         LOG_DEBUG(LOG) << "helper thread started" << endl;
         while(true) {
             // Poll the channel for output
-            auto stdout_res = ssh::channel_read(channel, handler, false, true);
+            auto stdout_res = ssh::channel_read(channel, handler, false, true, 1);
             if(stdout_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
@@ -65,7 +65,7 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
                 break;
             }
 
-            auto stderrr_res = ssh::channel_read(channel, handler, true, true);
+            auto stderrr_res = ssh::channel_read(channel, handler, true, true, 1);
             if(stderrr_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
@@ -210,7 +210,6 @@ clSSHInteractiveChannel::~clSSHInteractiveChannel()
 }
 
 void clSSHInteractiveChannel::Detach() { StopThread(); }
-
 bool clSSHInteractiveChannel::IsAlive() { return m_channel != nullptr; }
 void clSSHInteractiveChannel::Cleanup() { Terminate(); }
 

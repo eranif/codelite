@@ -136,17 +136,6 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &RemotyWorkspace::OnSftpSaveError, this);
     // codelite-remote events
 
-    // finder
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_RESTARTED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress,
-                                this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
-                                this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
-                                this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
-                                this);
-
     // builder
     m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
                                  this);
@@ -183,17 +172,6 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_DOWNLOAD_FILE, &RemotyWorkspace::OnDownloadFile, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_STOP_SEARCH, &RemotyWorkspace::OnStopFindInFiles, this);
     // codelite-remote events
-
-    // finder
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress,
-                                  this);
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
-                                  this);
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_RESTARTED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
-                                  this);
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE,
-                                  &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
 
     // builder
     m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
@@ -264,7 +242,6 @@ void RemotyWorkspace::DoClose(bool notify)
     m_localUserWorkspaceFile.clear();
 
     m_codeliteRemoteBuilder.Stop();
-    m_codeliteRemoteFinder.Stop();
 
     // and restart all the lsp_metadata_arr
     clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
@@ -548,10 +525,6 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
             "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
     }
 
-    RestartCodeLiteRemote(&m_codeliteRemoteBuilder, CONTEXT_BUILDER);
-    RestartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER);
-    ScanForWorkspaceFiles();
-
     // Notify that the a new workspace is loaded
     clWorkspaceEvent open_event(wxEVT_WORKSPACE_LOADED);
     open_event.SetIsRemote(true);
@@ -570,6 +543,8 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     RemoteWorkspaceInfo wi{ m_account.GetAccountName(), m_remoteWorkspaceFile };
     config.UpdateRecentWorkspaces(wi);
 
+    // scan for the workspace files
+    ScanForWorkspaceFiles();
     CallAfter(&RemotyWorkspace::RestoreSession);
 }
 
@@ -899,30 +874,36 @@ void RemotyWorkspace::RestartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const
     clDEBUG() << "Starting codelite-remote...(" << context << ") ... done" << endl;
 }
 
-void RemotyWorkspace::OnCodeLiteRemoteListFilesProgress(clCommandEvent& event)
+void RemotyWorkspace::ListFilesOutput(const std::string& output, bool is_completed)
 {
-    m_workspaceFiles.reserve(event.GetStrings().size() + m_workspaceFiles.size());
-    m_workspaceFiles.insert(m_workspaceFiles.end(), event.GetStrings().begin(), event.GetStrings().end());
-}
+    m_findFilesOutput << output;
+    if(is_completed) {
+        auto files = ::wxStringTokenize(m_findFilesOutput, "\n", wxTOKEN_STRTOK);
+        m_workspaceFiles.clear();
+        m_workspaceFiles.reserve(files.size());
+        for(auto& file : files) {
+            m_workspaceFiles.push_back(file.Trim().Trim(false));
+        }
 
-void RemotyWorkspace::OnCodeLiteRemoteListFilesDone(clCommandEvent& event)
-{
-    wxString message;
-    message << _("Remote file system scan completed. Found: ") << m_workspaceFiles.size() << _(" files");
-    clGetManager()->SetStatusMessage(message);
+        wxString message;
+        message << _("Remote file system scan completed. Found: ") << m_workspaceFiles.size() << _(" files");
+        clGetManager()->SetStatusMessage(message);
+        clDEBUG() << message << endl;
 
-    // notify that scan is completed
-    clDEBUG() << "Sending wxEVT_WORKSPACE_FILES_SCANNED event..." << endl;
-    clWorkspaceEvent event_scan{ wxEVT_WORKSPACE_FILES_SCANNED };
-    EventNotifier::Get()->ProcessEvent(event_scan);
+        // notify that scan is completed
+        clDEBUG() << "Sending wxEVT_WORKSPACE_FILES_SCANNED event..." << endl;
+        clWorkspaceEvent event_scan{ wxEVT_WORKSPACE_FILES_SCANNED };
+        EventNotifier::Get()->ProcessEvent(event_scan);
+        m_findFilesOutput.clear();
+    }
 }
 
 void RemotyWorkspace::ScanForWorkspaceFiles()
 {
-    wxString root_dir = GetRemoteWorkingDir();
-    wxString file_extensions = GetSettings().GetSelectedConfig()->GetFileExtensions();
-    file_extensions.Replace("*", "");
+    // find /home/eran/devl/codelite -type f \( -name "*.cpp" -o -name "*.hpp" \) |grep -v "build-*"
+    std::vector<wxString> command = { "find", GetRemoteWorkingDir(), "-type", "f", R"#(\()#" };
 
+    wxString file_extensions = GetSettings().GetSelectedConfig()->GetFileExtensions();
     auto files_exts = ::wxStringTokenize(file_extensions, ";,", wxTOKEN_STRTOK);
     std::unordered_set<wxString> S{ files_exts.begin(), files_exts.end() };
 
@@ -933,12 +914,30 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
 
     file_extensions.clear();
     for(const auto& s : S) {
-        file_extensions << s << ";";
+        command.push_back("-name");
+        command.push_back("\"" + s + "\"");
+        command.push_back("-o");
     }
-    m_workspaceFiles.clear();
 
-    // use the finder codelite-remote
-    m_codeliteRemoteFinder.ListFiles(root_dir, file_extensions);
+    if(command.back() == "-o") {
+        command.pop_back();
+    }
+    command.push_back(R"#(\))#");
+    command.push_back("|");
+    command.push_back("grep");
+    command.push_back("-E");
+    command.push_back("-v");
+    command.push_back(R"#("/build(.*?)/")#");
+    command.push_back("|");
+    command.push_back("grep");
+    command.push_back("-E");
+    command.push_back("-v");
+    command.push_back(R"#("/\.(.*?)/")#");
+    clRemoteHost::Instance()->run_command_with_callback(
+        command, GetRemoteWorkingDir(), {}, [this](const std::string& output, clRemoteCommandStatus status) {
+            this->ListFilesOutput(output, status == clRemoteCommandStatus::DONE ||
+                                              status == clRemoteCommandStatus::DONE_WITH_ERROR);
+        });
 }
 
 void RemotyWorkspace::OnOpenResourceFile(clCommandEvent& event)
@@ -963,22 +962,11 @@ void RemotyWorkspace::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
                                   bool whole_word, bool icase)
 {
-    m_remoteFinder.SetCodeLiteRemote(&m_codeliteRemoteFinder);
     wxString search_folder = root_dir;
     if(search_folder == "<Workspace Folder>") {
         search_folder = GetRemoteWorkingDir();
     }
     m_remoteFinder.Search(search_folder, find_what, file_extensions, whole_word, icase);
-}
-
-void RemotyWorkspace::OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event)
-{
-    m_remoteFinder.ProcessSearchOutput(event, false);
-}
-
-void RemotyWorkspace::OnCodeLiteRemoteFindDone(clFindInFilesEvent& event)
-{
-    m_remoteFinder.ProcessSearchOutput(event, true);
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteBuildOutput(clProcessEvent& event)
@@ -1114,8 +1102,8 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
 void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)
 {
     event.Skip();
-    if(IsOpened() && m_codeliteRemoteFinder.IsRunning()) {
-        RestartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER, true);
+    if(IsOpened()) {
+        // TODO: stop the search
         // send event notifying that the search has been cancelled
         m_remoteFinder.NotifySearchCancelled();
     }

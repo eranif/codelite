@@ -17,15 +17,14 @@ wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_WRITE_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_OUTPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_STDERR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_CLOSED, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_PTY, clCommandEvent);
 
 namespace ssh
 {
-read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr)
+read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr, long timeout_ms)
 {
     // read in chunks of 16KiB
     char buffer[16384 + 1];
-    int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 1);
+    int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, timeout_ms);
     if(bytes == SSH_ERROR) {
         // an error
         LOG_DEBUG(LOG) << "channel read error" << endl;

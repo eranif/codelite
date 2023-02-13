@@ -1004,7 +1004,7 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     m_workspace_file = e.GetString();
     m_isRemoteWorkspace = e.IsRemote();
     m_remoteWorkspaceAccount = e.GetRemoteAccount();
-    StartCodeLiteRemote();
+    //StartCodeLiteRemote();
     InitDefaults();
     RefreshFileListView();
 

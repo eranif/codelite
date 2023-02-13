@@ -12,3 +12,10 @@ others:
 - Allow importing themes from https://github.com/alacritty/alacritty-theme
 - git: support showing file revision history
 - dap: support stdio connection based
+
+
+Remoty:
+----
+
+- Git -> move it to use clRemoteHost
+- Builder -> move it to use clRemoteHost

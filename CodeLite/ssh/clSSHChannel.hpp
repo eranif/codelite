@@ -9,14 +9,20 @@
 
 #include <wx/msgqueue.h>
 
+enum class clRemoteCommandStatus {
+    STDOUT,
+    STDERR,
+    DONE,
+    DONE_WITH_ERROR,
+};
+
 class clJoinableThread;
+class clRemoteExecutor;
+typedef std::function<void(const std::string&, clRemoteCommandStatus)> execute_callback;
 class WXDLLIMPEXP_CL clSSHChannel : public wxEvtHandler
 {
 public:
     typedef std::shared_ptr<clSSHChannel> Ptr_t;
-    enum eChannelType {
-        kRemoteCommand,
-    };
 
 public:
     struct Message {
@@ -25,27 +31,28 @@ public:
     };
 
 protected:
+    clRemoteExecutor* m_parent = nullptr;
     clSSH::Ptr_t m_ssh;
     SSHChannel_t m_channel = nullptr;
     clJoinableThread* m_thread = nullptr;
     wxMessageQueue<Message> m_Queue;
-    wxEvtHandler* m_owner = nullptr;
-    eChannelType m_type = kRemoteCommand;
     bool m_wantStderr = false;
+    execute_callback m_callback = nullptr;
 
 protected:
     wxString BuildError(const wxString& prefix) const;
-    void DoWrite(const wxString& buffer, bool raw);
 
+    // translate from `wxEVT_SSH_CHANNEL_*` events into `clProcessEvent`
     void OnReadError(clCommandEvent& event);
     void OnWriteError(clCommandEvent& event);
     void OnReadOutput(clCommandEvent& event);
     void OnReadStderr(clCommandEvent& event);
     void OnChannelClosed(clCommandEvent& event);
-    void OnChannelPty(clCommandEvent& event);
+
+    void Destroy();
 
 public:
-    clSSHChannel(clSSH::Ptr_t ssh, clSSHChannel::eChannelType type, wxEvtHandler* owner, bool wantStderrEvents = false);
+    clSSHChannel(clRemoteExecutor* parent, clSSH::Ptr_t ssh, bool wantStderrEvents = false);
     virtual ~clSSHChannel();
 
     /**
@@ -55,9 +62,8 @@ public:
 
     /**
      * @brief Open the channel
-     * @throw clException
      */
-    void Open();
+    bool Open();
 
     /**
      * @brief close the channel
@@ -66,19 +72,15 @@ public:
 
     /**
      * @brief execute remote command
-     * The reply will be returned to 'sink' object in form of events
+     * if `cb` is provided, the channel will use it to deliver the output
+     * otherwise, standard `clProcessEvent` are used
      */
-    void Execute(const wxString& command);
+    bool Execute(const wxString& command, execute_callback&& cb = nullptr);
 
     /**
      * @brief Send a signal to remote process
      */
     void SendSignal(wxSignal sig);
-
-    /**
-     * @brief return true if the channel is busy
-     */
-    bool IsBusy() const;
 
     /**
      * @brief detach from the remote process (this does not kill it)

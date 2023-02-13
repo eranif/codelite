@@ -13,9 +13,12 @@ class WXDLLIMPEXP_SDK clRemoteFinderHelper
     wxStopWatch m_stopWatch;
     clCodeLiteRemoteProcess* m_codeliteRemote = nullptr;
     size_t m_matches_found = 0;
+    wxString m_findOutput;
+    size_t m_fif_matches_count = 0;
 
 protected:
     wxWindow* GetSearchTab();
+    void ProcessFindOutput(bool is_completed);
 
 public:
     clRemoteFinderHelper();

@@ -178,10 +178,12 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 
         wxString linenum = wxString::Format(wxT(" %5u: "), iter->GetLineNumber());
         AppendLine(linenum + text + wxT("\n"), false);
-        int indicatorStartPos = m_sci->PositionFromLine(lineno) + iter->GetColumn() + linenum.Length();
-        int indicatorLen = iter->GetLen();
-        m_indicators.emplace_back(indicatorStartPos);
-        m_sci->IndicatorFillRange(indicatorStartPos, indicatorLen);
+        if(iter->GetColumn() && linenum.length()) {
+            int indicatorStartPos = m_sci->PositionFromLine(lineno) + iter->GetColumn() + linenum.Length();
+            int indicatorLen = iter->GetLen();
+            m_indicators.emplace_back(indicatorStartPos);
+            m_sci->IndicatorFillRange(indicatorStartPos, indicatorLen);
+        }
     }
     ScrollToBottom();
     wxDELETE(res);

@@ -5,7 +5,6 @@
 #include "JSON.h"
 #include "LSP/LSPEvent.h"
 #include "asyncprocess.h"
-#include "clCodeLiteRemoteProcess.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clRemoteFinderHelper.hpp"
@@ -46,7 +45,6 @@ private:
     wxString m_localWorkspaceFile;
     wxString m_localUserWorkspaceFile;
     clFileSystemWorkspaceSettings m_settings;
-    clCodeLiteRemoteProcess m_codeliteRemoteBuilder;
     long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
     wxString m_findFilesOutput;
@@ -70,11 +68,6 @@ protected:
     void OnReloadWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void DoClose(bool notify);
-    /**
-     * @brief restart the remote process. If it is already running and `restart` is set to false
-     * do nothing. Otherwise, stop and start it again
-     */
-    void RestartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart = false);
     void OnOpenResourceFile(clCommandEvent& event);
     void OnShutdown(clCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
@@ -90,7 +83,6 @@ protected:
 
     /// open a workspace file
     void DoOpen(const wxString& path, const wxString& account);
-    void OnCodeLiteRemoteTerminated(clCommandEvent& event);
 
     IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
     wxString GetTargetCommand(const wxString& target) const;
@@ -110,8 +102,6 @@ protected:
     void OnIsProgramRunning(clExecuteEvent& event);
     void OnExecProcessTerminated(clProcessEvent& event);
     void OnFindSwapped(clFileSystemEvent& event);
-    void OnCodeLiteRemoteBuildOutput(clProcessEvent& event);
-    void OnCodeLiteRemoteBuildOutputDone(clProcessEvent& event);
 
     void ListFilesOutput(const std::string& output, bool is_completed);
 

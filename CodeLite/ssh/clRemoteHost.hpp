@@ -61,6 +61,9 @@ public:
     IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent, const wxArrayString& command, size_t flags,
                                             const wxString& wd, const clEnvList_t& env = {});
 
+    /// stop all running **non** interactive commands
+    void StopRunningCommands();
+
 private:
     clRemoteHost();
     virtual ~clRemoteHost();

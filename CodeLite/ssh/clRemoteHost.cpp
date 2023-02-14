@@ -158,4 +158,6 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
     return run_interactive_process(parent, wxargv, flags, wd, env);
 }
 
+void clRemoteHost::StopRunningCommands() { m_executor.shutdown(); }
+
 #endif // USE_SFTP

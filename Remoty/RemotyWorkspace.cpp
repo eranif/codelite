@@ -134,14 +134,6 @@ void RemotyWorkspace::BindEvents()
 
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspace::OnSftpSaveSuccess, this);
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &RemotyWorkspace::OnSftpSaveError, this);
-    // codelite-remote events
-
-    // builder
-    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
-                                 this);
-    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone,
-                                 this);
-    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_RESTARTED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
 }
 
 void RemotyWorkspace::UnbindEvents()
@@ -171,23 +163,7 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
     EventNotifier::Get()->Unbind(wxEVT_DOWNLOAD_FILE, &RemotyWorkspace::OnDownloadFile, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_STOP_SEARCH, &RemotyWorkspace::OnStopFindInFiles, this);
-    // codelite-remote events
-
-    // builder
-    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
-                                   this);
-    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone,
-                                   this);
-    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_RESTARTED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
     m_eventsConnected = false;
-}
-
-void RemotyWorkspace::OnCodeLiteRemoteTerminated(clCommandEvent& event)
-{
-    if(event.GetEventObject() == &m_codeliteRemoteBuilder) {
-        clWARNING() << "codelite-remote (builder) terminated" << endl;
-        m_buildInProgress = false;
-    }
 }
 
 void RemotyWorkspace::OnOpenWorkspace(clCommandEvent& event)
@@ -240,8 +216,6 @@ void RemotyWorkspace::DoClose(bool notify)
     m_remoteWorkspaceFile.clear();
     m_localWorkspaceFile.clear();
     m_localUserWorkspaceFile.clear();
-
-    m_codeliteRemoteBuilder.Stop();
 
     // and restart all the lsp_metadata_arr
     clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
@@ -313,7 +287,11 @@ void RemotyWorkspace::BuildTarget(const wxString& target)
 
     auto envlist = FileUtils::CreateEnvironment(conf->GetEnvironment());
     wxString working_dir = GetRemoteWorkingDir();
-    m_codeliteRemoteBuilder.Exec(cmd, working_dir, envlist);
+    clRemoteHost::Instance()->run_command_with_callback(
+        cmd, working_dir, envlist, [this](const std::string& output, clRemoteCommandStatus status) {
+            DoProcessBuildOutput(wxString::FromUTF8(output), status == clRemoteCommandStatus::DONE ||
+                                                                 status == clRemoteCommandStatus::DONE_WITH_ERROR);
+        });
     m_buildInProgress = true;
 
     // notify about starting build process.
@@ -337,17 +315,21 @@ void RemotyWorkspace::DoPrintBuildMessage(const wxString& message)
 void RemotyWorkspace::OnIsBuildInProgress(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    event.SetIsRunning(m_codeliteRemoteBuilder.IsRunning() && m_buildInProgress);
+    event.SetIsRunning(m_buildInProgress);
 }
 
 void RemotyWorkspace::OnStopBuild(clBuildEvent& event)
 {
+    event.Skip();
     CHECK_EVENT(event);
-    RestartCodeLiteRemote(&m_codeliteRemoteBuilder, m_codeliteRemoteBuilder.GetContext(), true);
+    clRemoteHost::Instance()->StopRunningCommands();
     m_buildInProgress = false;
 
     clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
     EventNotifier::Get()->AddPendingEvent(eventStopped);
+
+    clBuildEvent event_ended(wxEVT_BUILD_PROCESS_ENDED);
+    EventNotifier::Get()->AddPendingEvent(event_ended);
 }
 
 void RemotyWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
@@ -846,34 +828,6 @@ void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
     }
 }
 
-void RemotyWorkspace::RestartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart)
-{
-    CHECK_PTR_RET(proc);
-
-    // if running and restart is true, restart codelite-remote
-    if(proc->IsRunning() && restart) {
-        clDEBUG() << "Stopping codelite-remote..." << endl;
-        proc->Stop();
-    }
-
-    // make sure we are not running
-    if(proc->IsRunning()) {
-        clDEBUG() << "codelite-remote is already running" << endl;
-        return;
-    }
-
-    clDEBUG() << "Starting codelite-remote...(" << context << ") ..." << endl;
-
-    // upload codelite-remote script to the workspace folder
-    clSFTPManager::Get().NewFolder(GetRemoteWorkingDir() + "/.codelite", m_account);
-
-    wxString codelite_remote_script;
-    codelite_remote_script << GetRemoteWorkingDir() << "/.codelite/codelite-remote";
-    clDEBUG() << "Calling proc->StartInteractive(..," << codelite_remote_script << ",..)" << endl;
-    proc->StartInteractive(m_account, codelite_remote_script, context);
-    clDEBUG() << "Starting codelite-remote...(" << context << ") ... done" << endl;
-}
-
 void RemotyWorkspace::ListFilesOutput(const std::string& output, bool is_completed)
 {
     m_findFilesOutput << output;
@@ -969,17 +923,6 @@ void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file
     m_remoteFinder.Search(search_folder, find_what, file_extensions, whole_word, icase);
 }
 
-void RemotyWorkspace::OnCodeLiteRemoteBuildOutput(clProcessEvent& event)
-{
-    DoProcessBuildOutput(event.GetOutput(), false);
-}
-
-void RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone(clProcessEvent& event)
-{
-    DoProcessBuildOutput(event.GetOutput(), true);
-    m_buildInProgress = false;
-}
-
 void RemotyWorkspace::DoProcessBuildOutput(const wxString& output, bool is_completed)
 {
     if(!output.empty()) {
@@ -993,6 +936,7 @@ void RemotyWorkspace::DoProcessBuildOutput(const wxString& output, bool is_compl
         // Notify about build process started
         clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
         EventNotifier::Get()->AddPendingEvent(eventStopped);
+        m_buildInProgress = false;
     }
 }
 

@@ -1,7 +1,6 @@
 #ifndef CLREMOTEFINDERHELPER_HPP
 #define CLREMOTEFINDERHELPER_HPP
 
-#include "clCodeLiteRemoteProcess.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "wx/arrstr.h"
@@ -11,7 +10,6 @@
 class WXDLLIMPEXP_SDK clRemoteFinderHelper
 {
     wxStopWatch m_stopWatch;
-    clCodeLiteRemoteProcess* m_codeliteRemote = nullptr;
     size_t m_matches_found = 0;
     wxString m_findOutput;
     size_t m_fif_matches_count = 0;
@@ -24,13 +22,11 @@ public:
     clRemoteFinderHelper();
     ~clRemoteFinderHelper();
 
-    void SetCodeLiteRemote(clCodeLiteRemoteProcess* clr);
-
     /**
      * @brief convert find-in-files format into CodeLite's output tab view format
      * @param event
      */
-    void ProcessSearchOutput(const clFindInFilesEvent& event, bool is_completed);
+    void ProcessSearchOutput(const clFindInFilesEvent::Match::vec_t& matches, bool is_completed);
 
     /**
      * @brief execute a search

@@ -18,4 +18,3 @@ Remoty:
 ----
 
 - Git -> move it to use clRemoteHost
-- Builder -> move it to use clRemoteHost

@@ -19,9 +19,9 @@ clRemoteFinderHelper::clRemoteFinderHelper() {}
 
 clRemoteFinderHelper::~clRemoteFinderHelper() {}
 
-void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, bool is_completed)
+void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent::Match::vec_t& matches, bool is_completed)
 {
-    clDEBUG() << "Processing:" << event.GetMatches().size() << "match entries" << endl;
+    clDEBUG() << "Processing:" << matches.size() << "match entries" << endl;
     clDEBUG() << "is_completed?" << is_completed << endl;
 
     auto search_tab = GetSearchTab();
@@ -32,7 +32,6 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, 
 
     // process the output
     SearchResultList* resList = nullptr;
-    const auto& matches = event.GetMatches();
 
     if(!matches.empty()) {
         resList = new SearchResultList;
@@ -68,7 +67,7 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, 
         // set the total number of matches found
         summary->SetNumMatchesFound(m_matches_found);
         wxCommandEvent end_event(wxEVT_SEARCH_THREAD_SEARCHEND);
-        summary->SetNumFileScanned(event.GetInt());
+        summary->SetNumFileScanned(0);
         end_event.SetClientData(summary);
         search_tab->GetEventHandler()->AddPendingEvent(end_event);
 
@@ -119,14 +118,11 @@ void clRemoteFinderHelper::ProcessFindOutput(bool is_completed)
         }
 
         if(!matches.empty()) {
-            clFindInFilesEvent event(wxEVT_CODELITE_REMOTE_FIND_RESULTS);
-            event.SetMatches(matches);
-            ProcessSearchOutput(event, false);
+            ProcessSearchOutput(matches, false);
         }
     }
     if(is_completed) {
-        clFindInFilesEvent event_done(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE);
-        ProcessSearchOutput(event_done, true);
+        ProcessSearchOutput({}, true);
     }
 }
 
@@ -184,8 +180,6 @@ wxWindow* clRemoteFinderHelper::GetSearchTab()
     }
     return nullptr;
 }
-
-void clRemoteFinderHelper::SetCodeLiteRemote(clCodeLiteRemoteProcess* clr) { m_codeliteRemote = clr; }
 
 void clRemoteFinderHelper::NotifySearchCancelled()
 {

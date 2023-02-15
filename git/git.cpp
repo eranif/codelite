@@ -203,10 +203,6 @@ GitPlugin::GitPlugin(IManager* manager)
     m_tabToggler->SetOutputTabBmp(images->Add("git"));
 
     m_progressTimer.SetOwner(this);
-
-    m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
-    m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
-
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
@@ -459,10 +455,6 @@ void GitPlugin::UnPlug()
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStashPop, this, XRCID("git_stash_pop_folder"));
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitPlugin::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitPlugin::OnProcessTerminated, this);
-
-    m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
-    m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
-
     m_tabToggler.reset(NULL);
 }
 
@@ -980,20 +972,7 @@ void GitPlugin::ClearCodeLiteRemoteInfo()
 {
     m_isRemoteWorkspace = false;
     m_remoteWorkspaceAccount.clear();
-    m_remoteProcess.Stop();
     m_codeliteRemoteScriptPath.clear();
-}
-
-void GitPlugin::StartCodeLiteRemote()
-{
-    if(m_isRemoteWorkspace && !m_remoteWorkspaceAccount.empty()) {
-        wxString workspace_dir = GetDirFromPath(m_workspace_file);
-        wxString codelite_remote_script = workspace_dir + "/.codelite/codelite-remote";
-        m_remoteProcess.StartInteractive(m_remoteWorkspaceAccount, codelite_remote_script, "git");
-
-        // find the real git root folder
-        m_remoteProcess.FindPath(workspace_dir + "/.git");
-    }
 }
 
 void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
@@ -1005,7 +984,21 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     m_workspace_file = e.GetString();
     m_isRemoteWorkspace = e.IsRemote();
     m_remoteWorkspaceAccount = e.GetRemoteAccount();
-    // StartCodeLiteRemote();
+    // locate the remote workspace path
+    if(m_isRemoteWorkspace && !m_remoteWorkspaceAccount.empty()) {
+        clDEBUG() << "searching for git root directory" << endl;
+        wxString curpath = GetDirFromPath(m_workspace_file);
+        while(!curpath.empty() && (curpath != "/")) {
+            wxString gitdir = curpath + "/.git";
+            clDEBUG() << "Checking for:" << gitdir << endl;
+            if(clSFTPManager::Get().IsDirExists(gitdir, m_remoteWorkspaceAccount)) {
+                clDEBUG() << "Git path set to:" << curpath << endl;
+                DoSetRepoPath(curpath);
+                break;
+            }
+            curpath = curpath.BeforeLast('/');
+        }
+    }
     InitDefaults();
     RefreshFileListView();
 
@@ -1029,6 +1022,7 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     if(m_process) {
+        clDEBUG() << "process is already running..." << endl;
         return;
     }
 
@@ -1713,7 +1707,8 @@ bool GitPlugin::HandleErrorsOnRemoteRepo(const wxString& output) const
 void GitPlugin::OnProcessOutput(clProcessEvent& event)
 {
     wxString output = event.GetOutput();
-    auto process = event.GetProcess();
+    clDEBUG() << "git" << output << endl;
+
     gitAction ga;
     if(!m_gitActionQueue.empty()) {
         ga = m_gitActionQueue.front();
@@ -1731,7 +1726,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
 
     static std::unordered_set<int> exclude_commands = { gitDiffRepoCommit, gitDiffFile, gitCommitList,  gitDiffRepoShow,
                                                         gitBlame,          gitRevlist,  gitBlameSummary };
-    if(process && exclude_commands.count(ga.action) == 0) {
+    if(m_process && exclude_commands.count(ga.action) == 0) {
         if(HandleErrorsOnRemoteRepo(tmpOutput)) {
             return;
         }
@@ -1740,16 +1735,16 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
             // username is required
             wxString username = ::wxGetTextFromUser(output);
             if(username.IsEmpty()) {
-                process->Terminate();
+                m_process->Terminate();
             } else {
-                process->WriteToConsole(username);
+                m_process->WriteToConsole(username);
             }
 
         } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
-            process->Terminate();
+            m_process->Terminate();
 
         } else if(tmpOutput.Contains("*** please tell me who you are")) {
-            process->Terminate();
+            m_process->Terminate();
             GitUserEmailDialog userEmailDialog(EventNotifier::Get()->TopFrame());
             if(userEmailDialog.ShowModal() == wxID_OK) {
                 wxString username = userEmailDialog.GetUsername();
@@ -1775,21 +1770,20 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
             if(pass.IsEmpty()) {
 
                 // No point on continuing
-                process->Terminate();
+                m_process->Terminate();
 
             } else {
-
                 // write the password
-                process->WriteToConsole(pass);
+                m_process->WriteToConsole(pass);
             }
         } else if((tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) ||
                   tmpOutput.Contains("key fingerprint")) {
             if(::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"),
                               wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
-                process->WriteToConsole("yes");
+                m_process->WriteToConsole("yes");
 
             } else {
-                process->Terminate();
+                m_process->Terminate();
             }
         }
     }
@@ -2617,11 +2611,15 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandO
         git_command << command;
         GIT_MESSAGE(git_command);
         std::string out;
+        clDEBUG() << "running remote command:" << git_command << endl;
         if(!clRemoteHost::Instance()->run_command_sync(
                git_command, workingDir.empty() ? m_repositoryDirectory : workingDir, env, &out)) {
+            clWARNING() << "failed" << endl;
             commandOutput->clear();
             return false;
         }
+        clDEBUG() << "Success" << endl;
+        clDEBUG() << out << endl;
         *commandOutput = wxString::FromUTF8(out);
     }
 
@@ -2915,8 +2913,8 @@ IProcess::Ptr_t GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& co
             m_console->PrintPrompt();
         }
 
-        GIT_MESSAGE_IF(logMessage, command);
-        return IProcess::Ptr_t{ m_remoteProcess.CreateAsyncProcess(handler, command, working_directory, env) };
+        clDEBUG() << "git:" << command << endl;
+        return clRemoteHost::Instance()->run_process(handler, command, working_directory, env);
 
     } else {
         wxString command = m_pathGITExecutable;
@@ -2945,7 +2943,10 @@ void GitPlugin::AsyncRunGitWithCallback(const wxString& command_args, std::funct
 
         clEnvList_t env;
         GIT_MESSAGE_IF(logMessage, command);
-        m_remoteProcess.CreateAsyncProcessCB(command, std::move(callback), working_directory, env);
+        std::string output;
+        if(clRemoteHost::Instance()->run_command_sync(command_args, working_directory, {}, &output)) {
+            callback(wxString::FromUTF8(output));
+        }
     } else {
         wxString command = m_pathGITExecutable;
 
@@ -3004,21 +3005,6 @@ wxString GitPlugin::FindRepositoryRoot(const wxString& starting_dir) const
         fp.RemoveLastDir();
     }
     return starting_dir;
-}
-
-void GitPlugin::OnFindPath(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    if(event.GetEventType() == wxEVT_CODELITE_REMOTE_FINDPATH) {
-        if(!event.GetString().empty()) {
-            clDEBUG() << ".git folder found at:" << event.GetString() << endl;
-            wxString new_path = event.GetString();
-            new_path = new_path.BeforeLast('.');
-            clDEBUG() << "Setting repository path at:" << new_path << endl;
-            DoSetRepoPath(new_path);
-            RefreshFileListView();
-        }
-    }
 }
 
 void GitPlugin::OnSftpFileSaved(clCommandEvent& event)

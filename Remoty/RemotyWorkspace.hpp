@@ -84,7 +84,6 @@ protected:
     /// open a workspace file
     void DoOpen(const wxString& path, const wxString& account);
 
-    IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
     void GetExecutable(wxString& exe, wxString& args, wxString& wd);

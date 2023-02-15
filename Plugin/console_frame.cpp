@@ -75,22 +75,6 @@ void ConsoleFrame::CreateGUIControls()
 }
 
 #if USE_SFTP
-void ConsoleFrame::OnExecuteRemoteCommand(clCommandEvent& event)
-{
-    try {
-        if(m_channel->IsOpen()) {
-            return;
-        }
-        if(!m_channel->IsOpen()) {
-            m_channel->Open();
-        }
-        m_channel->Execute(event.GetString());
-
-    } catch(clException& e) {
-        m_terminal->AddTextWithEOL(e.What());
-    }
-}
-
 void ConsoleFrame::OnChannelReadError(clCommandEvent& event)
 {
     wxUnusedVar(event);

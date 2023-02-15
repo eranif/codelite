@@ -34,7 +34,6 @@
 #define __git__
 
 #include "asyncprocess.h"
-#include "clCodeLiteRemoteProcess.hpp"
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
 #include "gitentry.h"
@@ -180,11 +179,9 @@ class GitPlugin : public IPlugin
     wxString m_lastBlameMessage;
     bool m_isRemoteWorkspace = false;
     wxString m_remoteWorkspaceAccount;
-    clCodeLiteRemoteProcess m_remoteProcess;
     wxString m_codeliteRemoteScriptPath;
 
 private:
-    void StartCodeLiteRemote();
     void ClearCodeLiteRemoteInfo();
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
@@ -288,10 +285,6 @@ private:
     // Respond to local events
     void OnGitActionDone(clSourceControlEvent& event);
     bool HandleErrorsOnRemoteRepo(const wxString& output) const;
-
-    // Remote callbacks
-    void OnFindPath(clCommandEvent& event);
-
 public:
     GitPlugin(IManager* manager);
     virtual ~GitPlugin();

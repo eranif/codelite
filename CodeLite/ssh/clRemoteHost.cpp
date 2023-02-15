@@ -14,7 +14,93 @@ INITIALISE_SSH_LOG(LOG, "Remote-Host");
 namespace
 {
 clRemoteHost* ms_instance{ nullptr };
-}
+
+class clSSHChannelProcessAdapter : public IProcess
+{
+    clSSHChannel::Ptr_t m_channel = nullptr;
+
+public:
+    clSSHChannelProcessAdapter(wxEvtHandler* parent, clSSHChannel::Ptr_t channel)
+        : IProcess(parent)
+        , m_channel(channel)
+    {
+    }
+    // Stop notifying the parent window about input/output from the process
+    // this is useful when we wish to terminate the process onExit but we don't want
+    // to know about its termination
+    void Detach() override {}
+
+    /// Read from process stdout - return immediately if no data is available
+    /// we return both converted buffer as string and the raw buffer (unconverted)
+    bool Read(wxString& buff, wxString& buffErr, std::string& raw_buff, std::string& raw_buffErr) override
+    {
+        wxUnusedVar(buff);
+        wxUnusedVar(buffErr);
+        wxUnusedVar(raw_buff);
+        wxUnusedVar(raw_buffErr);
+        return false;
+    }
+
+    // Write to the process stdin
+    // This version add LF to the buffer
+    bool Write(const wxString& buff) override
+    {
+        wxUnusedVar(buff);
+        return false;
+    }
+
+    // ANSI version
+    // This version add LF to the buffer
+    bool Write(const std::string& buff) override
+    {
+        wxUnusedVar(buff);
+        return false;
+    }
+
+    // Write to the process stdin
+    bool WriteRaw(const wxString& buff) override
+    {
+        wxUnusedVar(buff);
+        return false;
+    }
+
+    // ANSI version
+    bool WriteRaw(const std::string& buff) override
+    {
+        wxUnusedVar(buff);
+        return false;
+    }
+
+    /**
+     * @brief this method is mostly needed on MSW where writing a password
+     * is done directly on the console buffer rather than its stdin
+     */
+    bool WriteToConsole(const wxString& buff) override
+    {
+        wxUnusedVar(buff);
+        return false;
+    }
+
+    // Return true if the process is still alive
+    bool IsAlive() override { return m_channel && m_channel->IsOpen(); }
+
+    // Clean the process resources and kill the process if it is
+    // still alive
+    void Cleanup() override {}
+
+    // Terminate the process. It is recommended to use this method
+    // so it will invoke the 'Cleaup' procedure and the process
+    // termination event will be sent out
+    void Terminate() override {}
+
+    void Signal(wxSignal sig) override
+    {
+        if(m_channel) {
+            m_channel->SendSignal(sig);
+        }
+    }
+};
+} // namespace
 
 clRemoteHost::clRemoteHost()
 {
@@ -171,6 +257,22 @@ bool clRemoteHost::run_command_sync(const wxString& command, const wxString& wd,
 {
     auto wxargv = StringUtils::BuildArgv(command);
     return run_command_sync(wxargv, wd, env, output);
+}
+
+IProcess::Ptr_t clRemoteHost::run_process(wxEvtHandler* parent, const wxString& command, const wxString& wd,
+                                          const clEnvList_t& env)
+{
+    auto wxargv = StringUtils::BuildArgv(command);
+    return run_process(parent, wxargv, wd, env);
+}
+
+IProcess::Ptr_t clRemoteHost::run_process(wxEvtHandler* parent, const std::vector<wxString>& command,
+                                          const wxString& wd, const clEnvList_t& env)
+{
+    clSSHChannel::Ptr_t channel{ m_executor.execute(clRemoteExecutor::Cmd::from(command, wd, env), m_activeAccount,
+                                                    parent) };
+    IProcess::Ptr_t adpter{ new clSSHChannelProcessAdapter{ parent, channel } };
+    return adpter;
 }
 
 #endif // USE_SFTP

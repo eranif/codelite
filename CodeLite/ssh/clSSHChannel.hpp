@@ -38,6 +38,7 @@ protected:
     wxMessageQueue<Message> m_Queue;
     bool m_wantStderr = false;
     execute_callback m_callback = nullptr;
+    wxEvtHandler* m_eventHandler = nullptr;
 
 protected:
     wxString BuildError(const wxString& prefix) const;
@@ -50,6 +51,7 @@ protected:
     void OnChannelClosed(clCommandEvent& event);
 
     void Destroy();
+    bool DoExecute(const wxString& command, execute_callback&& cb, wxEvtHandler* event_handler);
 
 public:
     clSSHChannel(clRemoteExecutor* parent, clSSH::Ptr_t ssh, bool wantStderrEvents = false);
@@ -75,7 +77,8 @@ public:
      * if `cb` is provided, the channel will use it to deliver the output
      * otherwise, standard `clProcessEvent` are used
      */
-    bool Execute(const wxString& command, execute_callback&& cb = nullptr);
+    bool Execute(const wxString& command, execute_callback&& cb);
+    bool Execute(const wxString& command, wxEvtHandler* event_handler);
 
     /// execute a command and returns its output.
     bool Execute(const wxString& command, std::string* output);

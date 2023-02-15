@@ -44,8 +44,9 @@ public:
     /// cancel the current command being executed and return
     void shutdown();
 
-    /// Returns: the remote channel. The caller should delete it upon completion
-    // clSSHChannel* execute(const clRemoteExecutor::Cmd& cmd, const wxString& account);
+    /// execute command, return the channel
+    clSSHChannel* execute(const clRemoteExecutor::Cmd& cmd, const wxString& account, wxEvtHandler* event_handler);
+
     void execute_with_callback(const clRemoteExecutor::Cmd& cmd, const wxString& account, execute_callback&& cb);
 
     /// Execute a command and waits for its output

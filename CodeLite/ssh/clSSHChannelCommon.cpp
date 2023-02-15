@@ -35,14 +35,14 @@ read_result channel_read_all(SSHChannel_t channel, std::string* out, bool is_std
             // channel closed
             int exit_code = ssh_channel_get_exit_status(channel);
             LOG_DEBUG(LOG) << "channel read eof. process exited with status code" << exit_code << endl;
-            return read_result::SSH_SUCCESS;
+            return read_result::SSH_CONN_CLOSED;
 
         } else if(bytes == 0) {
             // timeout
             if(ssh_channel_is_eof(channel)) {
                 int exit_code = ssh_channel_get_exit_status(channel);
                 LOG_DEBUG(LOG) << "channel eof detected. process exited with status code" << exit_code << endl;
-                return read_result::SSH_SUCCESS;
+                return read_result::SSH_CONN_CLOSED;
 
             } else {
                 // timeout
@@ -90,6 +90,14 @@ read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStd
             // send close event
             clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
             event.SetInt(exit_code);
+            handler->QueueEvent(event.Clone());
+            return read_result::SSH_CONN_CLOSED;
+
+        } else if(!ssh_channel_is_open(channel)) {
+            LOG_DEBUG(LOG) << "channel is closed" << endl;
+            // send close event
+            clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
+            event.SetInt(0);
             handler->QueueEvent(event.Clone());
             return read_result::SSH_CONN_CLOSED;
 

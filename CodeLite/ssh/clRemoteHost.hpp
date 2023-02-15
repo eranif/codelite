@@ -68,6 +68,14 @@ public:
     IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent, const wxArrayString& command, size_t flags,
                                             const wxString& wd, const clEnvList_t& env = {});
 
+    /// run command (without a shell), return the process
+    IProcess::Ptr_t run_process(wxEvtHandler* parent, const wxString& command, const wxString& wd,
+                                const clEnvList_t& env = {});
+
+    /// An overloaded version
+    IProcess::Ptr_t run_process(wxEvtHandler* parent, const std::vector<wxString>& command, const wxString& wd,
+                                const clEnvList_t& env = {});
+
     /// stop all running **non** interactive commands
     void StopRunningCommands();
 

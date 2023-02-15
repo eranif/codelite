@@ -8,7 +8,6 @@
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
-#include "clCodeLiteRemoteProcess.hpp"
 #include "clConsoleBase.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clRemoteFindDialog.h"
@@ -643,17 +642,6 @@ void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
     exe = conf->GetExecutable();
     args = conf->GetArgs();
     wd = conf->GetWorkingDirectory().IsEmpty() ? GetDir() : conf->GetWorkingDirectory();
-}
-
-IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool sync)
-{
-    wxString path = UploadScript(scriptContent);
-    std::vector<wxString> args = { "/bin/bash", path };
-    size_t flags = IProcessCreateDefault | IProcessCreateSSH;
-    if(sync) {
-        flags |= IProcessCreateSync;
-    }
-    return ::CreateAsyncProcess(this, args, flags, wxEmptyString, nullptr, m_account.GetAccountName());
 }
 
 wxString RemotyWorkspace::GetRemoteWorkingDir() const { return m_remoteWorkspaceFile.BeforeLast('/'); }

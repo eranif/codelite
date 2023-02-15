@@ -686,9 +686,9 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo&
     return future.get();
 }
 
-bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
+bool clSFTPManager::IsDirExists(const wxString& fullpath, const wxString& accountName)
 {
-    auto conn = GetConnectionPtrAddIfMissing(accountInfo.GetAccountName());
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
     CHECK_PTR_RET_FALSE(conn);
 
     // prepare the download work
@@ -705,6 +705,11 @@ bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& 
     };
     m_q.push_back(std::move(func));
     return future.get();
+}
+
+bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
+{
+    return IsDirExists(fullpath, accountInfo.GetAccountName());
 }
 
 wxFileName clSFTPManager::Download(const wxString& path, const wxString& accountName, const wxString& localFileName)

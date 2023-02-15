@@ -86,4 +86,33 @@ bool clRemoteExecutor::execute_command(const clRemoteExecutor::Cmd& cmd, const w
     LOG_DEBUG(EXECLOG) << "Success" << endl;
     return true;
 }
+
+clSSHChannel* clRemoteExecutor::execute(const clRemoteExecutor::Cmd& cmd, const wxString& account,
+                                        wxEvtHandler* event_handler)
+{
+    auto ssh_session = clRemoteHost::Instance()->GetSshSession();
+    if(!ssh_session) {
+        LOG_WARNING(EXECLOG) << "SSH session is not opened" << endl;
+        return nullptr;
+    }
+
+    // open the channel
+    clSSHChannel* channel = new clSSHChannel(this, ssh_session, true);
+    if(!channel->Open()) {
+        wxDELETE(channel);
+        return nullptr;
+    }
+
+    wxString command = ssh::build_command(cmd.command, cmd.wd, cmd.env);
+    LOG_DEBUG(EXECLOG) << "Executing command:" << command << endl;
+
+    // prepare the commands
+    if(!channel->Execute(command, event_handler)) {
+        wxDELETE(channel);
+        return nullptr;
+    }
+    LOG_DEBUG(EXECLOG) << "Success" << endl;
+    return channel;
+}
+
 #endif // USE_SFTP

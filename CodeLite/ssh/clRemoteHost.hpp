@@ -12,6 +12,7 @@
 
 #include <functional>
 #include <vector>
+#include <wx/arrstr.h>
 #include <wx/event.h>
 
 class WXDLLIMPEXP_CL clRemoteHost : public wxEvtHandler
@@ -49,7 +50,14 @@ public:
     bool run_command_sync(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env,
                           std::string* output);
 
-    /// Execute a command and returns its output
+    /// overloaded version
+    bool run_command_sync(const wxArrayString& command, const wxString& wd, const clEnvList_t& env, std::string* output)
+    {
+        std::vector<wxString> arr{ command.begin(), command.end() };
+        return run_command_sync(arr, wd, env, output);
+    }
+
+    /// overloaded version
     bool run_command_sync(const wxString& command, const wxString& wd, const clEnvList_t& env, std::string* output);
 
     /// Execute a command with callback. we return the output as raw string (un-converted)
@@ -75,6 +83,14 @@ public:
     /// An overloaded version
     IProcess::Ptr_t run_process(wxEvtHandler* parent, const std::vector<wxString>& command, const wxString& wd,
                                 const clEnvList_t& env = {});
+
+    /// An overloaded version
+    IProcess::Ptr_t run_process(wxEvtHandler* parent, const wxArrayString& command, const wxString& wd,
+                                const clEnvList_t& env = {})
+    {
+        std::vector<wxString> arr{ command.begin(), command.end() };
+        return run_process(parent, arr, wd, env);
+    }
 
     /// stop all running **non** interactive commands
     void StopRunningCommands();

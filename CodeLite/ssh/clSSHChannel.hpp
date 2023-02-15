@@ -77,6 +77,9 @@ public:
      */
     bool Execute(const wxString& command, execute_callback&& cb = nullptr);
 
+    /// execute a command and returns its output.
+    bool Execute(const wxString& command, std::string* output);
+
     /**
      * @brief Send a signal to remote process
      */

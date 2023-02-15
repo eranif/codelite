@@ -36,6 +36,7 @@
 #include "clCommandProcessor.h"
 #include "clDiffFrame.h"
 #include "clEditorBar.h"
+#include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
 #include "clStatusBar.h"
 #include "clTempFile.hpp"
@@ -184,8 +185,8 @@ GitPlugin::GitPlugin(IManager* manager)
                             NULL, this);
     m_eventHandler->Connect(XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
                             NULL, this);
-    m_eventHandler->Connect(XRCID("git_commit_list_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileCommitListSelected),
-                            NULL, this);
+    m_eventHandler->Connect(XRCID("git_commit_list_file"), wxEVT_MENU,
+                            wxCommandEventHandler(GitPlugin::OnFileCommitListSelected), NULL, this);
     m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
 
     // Respond to our own events
@@ -446,8 +447,8 @@ void GitPlugin::UnPlug()
                                wxCommandEventHandler(GitPlugin::OnFileResetSelected), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
                                NULL, this);
-    m_eventHandler->Disconnect(XRCID("git_commit_list_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileCommitListSelected),
-                            NULL, this);
+    m_eventHandler->Disconnect(XRCID("git_commit_list_file"), wxEVT_MENU,
+                               wxCommandEventHandler(GitPlugin::OnFileCommitListSelected), NULL, this);
 
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
@@ -1004,7 +1005,7 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     m_workspace_file = e.GetString();
     m_isRemoteWorkspace = e.IsRemote();
     m_remoteWorkspaceAccount = e.GetRemoteAccount();
-    //StartCodeLiteRemote();
+    // StartCodeLiteRemote();
     InitDefaults();
     RefreshFileListView();
 
@@ -1489,7 +1490,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         // Dont manipulate the output if its a diff...
         m_commandOutput.Replace(wxT("\r"), wxT(""));
     }
-    if (ga.action == gitDiffRepoCommit && m_commandOutput.StartsWith(wxT("fatal"))) {
+    if(ga.action == gitDiffRepoCommit && m_commandOutput.StartsWith(wxT("fatal"))) {
         m_commandOutput.Clear();
         DoExecuteCommandSync("diff --no-color --cached", &m_commandOutput);
     }
@@ -2575,7 +2576,7 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
     // 1. Get diff output
     wxString diff;
     bool res = DoExecuteCommandSync("diff --no-color HEAD", &diff, m_selectedFolder);
-    if (diff.empty()) {
+    if(diff.empty()) {
         DoExecuteCommandSync("diff --no-color --cached", &diff);
     }
     if(!diff.IsEmpty()) {
@@ -2615,11 +2616,13 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandO
         wxString git_command = "git --no-pager ";
         git_command << command;
         GIT_MESSAGE(git_command);
-        if(!m_remoteProcess.SyncExec(git_command, workingDir.empty() ? m_repositoryDirectory : workingDir, env,
-                                     commandOutput)) {
+        std::string out;
+        if(!clRemoteHost::Instance()->run_command_sync(
+               git_command, workingDir.empty() ? m_repositoryDirectory : workingDir, env, &out)) {
             commandOutput->clear();
             return false;
         }
+        *commandOutput = wxString::FromUTF8(out);
     }
 
     const wxString lcOutput = commandOutput->Lower();

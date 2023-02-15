@@ -141,6 +141,28 @@ void clSSHChannel::Close()
     m_ssh.reset();
 }
 
+bool clSSHChannel::Execute(const wxString& command, std::string* output)
+{
+    // Sanity
+    if(m_thread) {
+        LOG_WARNING(EXECLOG) << "Channel is busy" << endl;
+        return false;
+    }
+    if(!IsOpen()) {
+        LOG_WARNING(EXECLOG) << "Execute error: channel is not opened" << endl;
+        return false;
+    }
+    int rc = ssh_channel_request_exec(m_channel, command.mb_str(wxConvUTF8).data());
+    if(rc != SSH_OK) {
+        Close();
+        LOG_WARNING(EXECLOG) << BuildError("Execute failed") << endl;
+        return false;
+    }
+
+    // read everything
+    return ssh::result_ok(ssh::channel_read_all(m_channel, output, false));
+}
+
 bool clSSHChannel::Execute(const wxString& command, execute_callback&& cb)
 {
     // Sanity

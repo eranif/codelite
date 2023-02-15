@@ -160,4 +160,17 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
 
 void clRemoteHost::StopRunningCommands() { m_executor.shutdown(); }
 
+bool clRemoteHost::run_command_sync(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env,
+                                    std::string* output)
+{
+    return m_executor.execute_command(clRemoteExecutor::Cmd::from(command, wd, env), m_activeAccount, output);
+}
+
+bool clRemoteHost::run_command_sync(const wxString& command, const wxString& wd, const clEnvList_t& env,
+                                    std::string* output)
+{
+    auto wxargv = StringUtils::BuildArgv(command);
+    return run_command_sync(wxargv, wd, env, output);
+}
+
 #endif // USE_SFTP

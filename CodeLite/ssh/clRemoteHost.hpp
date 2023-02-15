@@ -45,6 +45,13 @@ public:
     /// put back the ssh_session into the queue
     void AddSshSession(clSSH::Ptr_t ssh_session);
 
+    /// Execute a command and returns its output
+    bool run_command_sync(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env,
+                          std::string* output);
+
+    /// Execute a command and returns its output
+    bool run_command_sync(const wxString& command, const wxString& wd, const clEnvList_t& env, std::string* output);
+
     /// Execute a command with callback. we return the output as raw string (un-converted)
     void run_command_with_callback(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env,
                                    execute_callback&& cb);

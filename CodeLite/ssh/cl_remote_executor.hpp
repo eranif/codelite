@@ -47,6 +47,9 @@ public:
     /// Returns: the remote channel. The caller should delete it upon completion
     // clSSHChannel* execute(const clRemoteExecutor::Cmd& cmd, const wxString& account);
     void execute_with_callback(const clRemoteExecutor::Cmd& cmd, const wxString& account, execute_callback&& cb);
+
+    /// Execute a command and waits for its output
+    bool execute_command(const clRemoteExecutor::Cmd& cmd, const wxString& account, std::string* output);
 };
 #endif // CL_REMOTE_EXECUTOR_HPP
 #endif

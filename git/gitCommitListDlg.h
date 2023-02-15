@@ -46,7 +46,7 @@ class GitCommitListDlg : public GitCommitListDlgBase
     wxStringMap_t m_diffMap;
     wxString m_workingDir;
     wxString m_commandOutput;
-    IProcess* m_process;
+    IProcess::Ptr_t m_process;
     wxString m_commitList;
     wxString m_Filter;
     int m_skip;

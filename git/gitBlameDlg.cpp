@@ -1,14 +1,16 @@
+#include "gitBlameDlg.h"
+
 #include "ColoursAndFontsManager.h"
 #include "GitDiffOutputParser.h"
 #include "asyncprocess.h"
 #include "editor_config.h"
 #include "file_logger.h"
 #include "git.h"
-#include "gitBlameDlg.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "processreaderthread.h"
 #include "windowattrmanager.h"
+
 #include <wx/bitmap.h>
 #include <wx/dcmemory.h>
 #include <wx/tokenzr.h>
@@ -442,7 +444,7 @@ void GitBlameDlg::OnChangeFile(wxCommandEvent& event)
 void GitBlameDlg::OnProcessTerminated(clProcessEvent& event)
 {
     wxUnusedVar(event);
-    wxDELETE(m_process);
+    m_process.reset();
 
     m_stcCommitMessage->SetEditable(true);
     m_stcDiff->SetEditable(true);

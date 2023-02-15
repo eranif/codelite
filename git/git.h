@@ -33,8 +33,6 @@
 #ifndef __git__
 #define __git__
 
-#include <wx/progdlg.h>
-
 #include "asyncprocess.h"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clTabTogglerHelper.h"
@@ -46,6 +44,7 @@
 #include "plugin.h"
 #include "processreaderthread.h"
 #include "project.h" // wxStringSet_t
+
 #include <map>
 #include <queue>
 #include <set>
@@ -161,7 +160,7 @@ class GitPlugin : public IPlugin
     wxString m_progressMessage;
     wxString m_commandOutput;
     bool m_bActionRequiresTreUpdate;
-    IProcess* m_process;
+    IProcess::Ptr_t m_process;
     wxEvtHandler* m_eventHandler;
     clToolBar* m_pluginToolbar;
     wxMenu* m_pluginMenu;
@@ -305,8 +304,8 @@ public:
     /**
      * @brief create git process and return the process handle
      */
-    IProcess* AsyncRunGit(wxEvtHandler* handler, const wxString& git_args, size_t create_flags,
-                          const wxString& working_directory, bool logMessage = false);
+    IProcess::Ptr_t AsyncRunGit(wxEvtHandler* handler, const wxString& git_args, size_t create_flags,
+                                const wxString& working_directory, bool logMessage = false);
     /**
      * @brief create a git process and direct the output to a callback
      */
@@ -330,7 +329,7 @@ public:
     void FetchNextCommits(int skip, const wxString& args);
 
     GitConsole* GetConsole() { return m_console; }
-    IProcess* GetProcess() { return m_process; }
+    IProcess::Ptr_t GetProcess() { return m_process; }
     clCommandProcessor* GetFolderProcess() { return m_commandProcessor; }
 
     IManager* GetManager() { return m_mgr; }

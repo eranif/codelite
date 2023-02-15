@@ -23,19 +23,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editor_config.h"
 #include "gitDiffDlg.h"
-#include "gitentry.h"
-#include "windowattrmanager.h"
 
 #include "GitDiffOutputParser.h"
 #include "asyncprocess.h"
 #include "cl_config.h"
+#include "editor_config.h"
 #include "git.h"
 #include "gitCommitEditor.h"
 #include "gitdiffchoosecommitishdlg.h"
+#include "gitentry.h"
 #include "globals.h"
 #include "processreaderthread.h"
+#include "windowattrmanager.h"
+
 #include <wx/tokenzr.h>
 
 BEGIN_EVENT_TABLE(GitDiffDlg, wxDialog)
@@ -162,8 +163,7 @@ void GitDiffDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.Append
 void GitDiffDlg::OnProcessTerminated(clProcessEvent& event)
 {
     wxUnusedVar(event);
-    wxDELETE(m_process);
-
+    m_process.reset();
     SetDiff(m_commandOutput);
 }
 

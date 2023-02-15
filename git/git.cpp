@@ -1481,6 +1481,7 @@ void GitPlugin::UpdateFileTree()
 
 void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 {
+    m_process.reset();
     HideProgress();
     if(m_gitActionQueue.empty())
         return;
@@ -1680,7 +1681,6 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     }
 
-    wxDELETE(m_process);
     m_commandOutput.Clear();
     m_gitActionQueue.pop_front();
 
@@ -2008,7 +2008,7 @@ void GitPlugin::DoCleanup()
     m_progressMessage.Clear();
     m_commandOutput.Clear();
     m_bActionRequiresTreUpdate = false;
-    wxDELETE(m_process);
+    m_process.reset();
     m_mgr->GetDockingManager()->GetPane(wxT("Workspace View")).Caption(wxT("Workspace View"));
     m_mgr->GetDockingManager()->Update();
     m_filesSelected.Clear();
@@ -2337,7 +2337,7 @@ void GitPlugin::DoRecoverFromGitCommandError(bool clear_queue)
             m_gitActionQueue.pop_front();
         }
     }
-    wxDELETE(m_process);
+    m_process.reset();
     m_commandOutput.Clear();
     if(!clear_queue) {
         ProcessGitActionQueue();
@@ -2903,8 +2903,8 @@ void GitPlugin::OnGitActionDone(clSourceControlEvent& event)
     DoLoadBlameInfo(false);
 }
 
-IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_args, size_t create_flags,
-                                 const wxString& working_directory, bool logMessage)
+IProcess::Ptr_t GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_args, size_t create_flags,
+                                       const wxString& working_directory, bool logMessage)
 {
     if(m_isRemoteWorkspace) {
         wxString command;
@@ -2916,7 +2916,7 @@ IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_
         }
 
         GIT_MESSAGE_IF(logMessage, command);
-        return m_remoteProcess.CreateAsyncProcess(handler, command, working_directory, env);
+        return IProcess::Ptr_t{ m_remoteProcess.CreateAsyncProcess(handler, command, working_directory, env) };
 
     } else {
         wxString command = m_pathGITExecutable;
@@ -2931,8 +2931,8 @@ IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_
         }
         GIT_MESSAGE_IF(logMessage, command);
 
-        auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell, working_directory);
-        return process;
+        return IProcess::Ptr_t{ ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell,
+                                                     working_directory) };
     }
 }
 

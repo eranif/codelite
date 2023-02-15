@@ -91,7 +91,7 @@ void GitCommitListDlg::OnChangeFile(wxCommandEvent& e)
 void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
 {
     wxUnusedVar(event);
-    wxDELETE(m_process);
+    m_process.reset();
 
     ClearAll(false);
 

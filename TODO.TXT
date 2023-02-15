@@ -17,4 +17,3 @@ others:
 Remoty:
 ----
 
-- Git -> move it to use clRemoteHost

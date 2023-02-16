@@ -49,21 +49,6 @@ ConsoleFrame::ConsoleFrame(wxWindow* parent)
     CreateGUIControls();
 }
 
-#if USE_SFTP
-ConsoleFrame::ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh)
-    : wxFrame(parent, wxID_ANY, _("Console"))
-    , m_ssh(ssh)
-{
-    CreateGUIControls();
-    m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &ConsoleFrame::OnExecuteRemoteCommand, this);
-    m_channel.reset(new clSSHChannel(m_ssh, this));
-    Bind(wxEVT_SSH_CHANNEL_CLOSED, &ConsoleFrame::OnChannelClosed, this);
-    Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &ConsoleFrame::OnChannelReadError, this);
-    Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &ConsoleFrame::OnChannelRead, this);
-    Bind(wxEVT_SSH_CHANNEL_PTY, &ConsoleFrame::OnChannelPty, this);
-}
-#endif
-
 ConsoleFrame::~ConsoleFrame()
 {
     m_terminal->Unbind(wxEVT_TERMINAL_EXIT_WHEN_DONE, &ConsoleFrame::OnExitWhenDone, this);
@@ -89,53 +74,6 @@ void ConsoleFrame::CreateGUIControls()
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_C, &ConsoleFrame::OnTerminalCtrlC, this);
 }
 
-#if USE_SFTP
-void ConsoleFrame::OnExecuteRemoteCommand(clCommandEvent& event)
-{
-    try {
-        if(m_channel->IsOpen()) {
-            return;
-        }
-        if(!m_channel->IsOpen()) {
-            m_channel->Open();
-        }
-        m_channel->Execute(event.GetString());
-
-    } catch(clException& e) {
-        m_terminal->AddTextWithEOL(e.What());
-    }
-}
-
-void ConsoleFrame::OnChannelReadError(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    m_terminal->AddTextRaw("\n");
-    m_terminal->CaretToEnd();
-    m_channel->Close();
-}
-
-void ConsoleFrame::OnChannelRead(clCommandEvent& event)
-{
-    wxString str = wxString::FromUTF8(event.GetStringRaw());
-    m_terminal->AddTextRaw(str);
-    m_terminal->CaretToEnd();
-}
-
-void ConsoleFrame::OnChannelClosed(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    m_terminal->AddTextRaw("\n");
-    m_terminal->CaretToEnd();
-    m_channel->Close();
-}
-
-void ConsoleFrame::OnChannelPty(clCommandEvent& event)
-{
-    m_terminal->AddTextRaw("TTY=" + event.GetString() + "\n");
-    m_terminal->CaretToEnd();
-}
-#endif
-
 void ConsoleFrame::Execute(const wxString& command, const wxString& wd) { m_terminal->Execute(command, true, wd); }
 
 void ConsoleFrame::OnExitWhenDone(clCommandEvent& event)
@@ -147,11 +85,4 @@ void ConsoleFrame::OnExitWhenDone(clCommandEvent& event)
 void ConsoleFrame::OnTerminalCtrlC(clCommandEvent& event)
 {
     event.Skip();
-#if USE_SFTP
-    if(m_channel->IsOpen()) {
-        m_channel->Close();
-        m_terminal->AddTextWithEOL(_("\nInterrupted"));
-        event.Skip(false); // No need for the default action
-    }
-#endif
 }

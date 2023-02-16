@@ -148,6 +148,8 @@ IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, wxEvtHandler* owner, con
 
     int rc = ssh_channel_request_exec(channel->m_channel, command.mb_str(wxConvUTF8).data());
     if(rc != SSH_OK) {
+        // mark the channel + ssh session as "broken"
+        channel->m_hadErrors = true;
         wxDELETE(channel);
         return nullptr;
     }

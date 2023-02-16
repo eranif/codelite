@@ -62,7 +62,8 @@ public:
 // The SSH channel
 //===-------------------------------------------------------------
 clSSHChannel::clSSHChannel(clSSH::Ptr_t ssh, wxEvtHandler* owner, bool wantStderrEvents)
-    : m_ssh(ssh)
+    : IProcess(owner)
+    , m_ssh(ssh)
     , m_owner(owner)
     , m_wantStderr(wantStderrEvents)
 {
@@ -168,7 +169,7 @@ void clSSHChannel::OnReadStderr(clCommandEvent& event) { m_owner->AddPendingEven
 void clSSHChannel::OnChannelClosed(clCommandEvent& event) { m_owner->AddPendingEvent(event); }
 void clSSHChannel::OnChannelPty(clCommandEvent& event) { m_owner->AddPendingEvent(event); }
 
-void clSSHChannel::SendSignal(wxSignal sig)
+void clSSHChannel::Signal(wxSignal sig)
 {
     if(!m_ssh) {
         throw clException("ssh session is not opened");

@@ -40,7 +40,7 @@ void clRemoteExecutor::shutdown() { m_remoteAccount.clear(); }
 
 clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {
-    auto ssh_session = clRemoteHost::Instance()->GetSshSession();
+    auto ssh_session = clRemoteHost::Instance()->TakeSession();
     if(!ssh_session) {
         LOG_WARNING(LOG) << "SSH session is not opened" << endl;
         return nullptr;

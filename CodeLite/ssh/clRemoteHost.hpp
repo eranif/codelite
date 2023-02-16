@@ -50,7 +50,10 @@ public:
     static void Release();
 
     /// create or get a new ssh session
-    clSSH::Ptr_t GetSshSession();
+    clSSH::Ptr_t TakeSession();
+
+    /// create a new ssh session
+    clSSH::Ptr_t CreateSession();
 
     /// put back the ssh_session into the queue
     void AddSshSession(clSSH::Ptr_t ssh_session);

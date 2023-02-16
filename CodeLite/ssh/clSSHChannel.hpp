@@ -134,12 +134,12 @@ public:
     /**
      * @brief Send a signal to remote process
      */
-    void Signal(wxSignal sig);
+    void Signal(wxSignal sig) override;
 
     /**
      * @brief detach from the remote process (this does not kill it)
      */
-    void Detach();
+    void Detach() override;
 };
 #endif
 #endif // CLSSHCHANNEL_H

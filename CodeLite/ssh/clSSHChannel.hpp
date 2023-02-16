@@ -14,9 +14,6 @@ class WXDLLIMPEXP_CL clSSHChannel : public wxEvtHandler
 {
 public:
     typedef std::shared_ptr<clSSHChannel> Ptr_t;
-    enum eChannelType {
-        kRemoteCommand,
-    };
 
 public:
     struct Message {
@@ -30,7 +27,6 @@ protected:
     clJoinableThread* m_thread = nullptr;
     wxMessageQueue<Message> m_Queue;
     wxEvtHandler* m_owner = nullptr;
-    eChannelType m_type = kRemoteCommand;
     bool m_wantStderr = false;
 
 protected:
@@ -45,7 +41,7 @@ protected:
     void OnChannelPty(clCommandEvent& event);
 
 public:
-    clSSHChannel(clSSH::Ptr_t ssh, clSSHChannel::eChannelType type, wxEvtHandler* owner, bool wantStderrEvents = false);
+    clSSHChannel(clSSH::Ptr_t ssh, wxEvtHandler* owner, bool wantStderrEvents = false);
     virtual ~clSSHChannel();
 
     /**
@@ -74,11 +70,6 @@ public:
      * @brief Send a signal to remote process
      */
     void SendSignal(wxSignal sig);
-
-    /**
-     * @brief return true if the channel is busy
-     */
-    bool IsBusy() const;
 
     /**
      * @brief detach from the remote process (this does not kill it)

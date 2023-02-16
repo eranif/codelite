@@ -49,7 +49,7 @@ clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
     // open the channel
     clSSHChannel* channel = nullptr;
     try {
-        channel = new clSSHChannel(ssh_session, clSSHChannel::kRemoteCommand, this, true);
+        channel = new clSSHChannel(ssh_session, this, true);
         channel->Open();
     } catch(clException& e) {
         LOG_ERROR(LOG) << "failed to open channel." << e.What() << endl;

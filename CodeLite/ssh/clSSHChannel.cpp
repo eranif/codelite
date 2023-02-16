@@ -61,11 +61,9 @@ public:
 //===-------------------------------------------------------------
 // The SSH channel
 //===-------------------------------------------------------------
-clSSHChannel::clSSHChannel(clSSH::Ptr_t ssh, clSSHChannel::eChannelType type, wxEvtHandler* owner,
-                           bool wantStderrEvents)
+clSSHChannel::clSSHChannel(clSSH::Ptr_t ssh, wxEvtHandler* owner, bool wantStderrEvents)
     : m_ssh(ssh)
     , m_owner(owner)
-    , m_type(type)
     , m_wantStderr(wantStderrEvents)
 {
     Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &clSSHChannel::OnReadError, this);

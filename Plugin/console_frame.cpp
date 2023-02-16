@@ -56,7 +56,7 @@ ConsoleFrame::ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh)
 {
     CreateGUIControls();
     m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &ConsoleFrame::OnExecuteRemoteCommand, this);
-    m_channel.reset(new clSSHChannel(m_ssh, clSSHChannel::kRemoteCommand, this));
+    m_channel.reset(new clSSHChannel(m_ssh, this));
     Bind(wxEVT_SSH_CHANNEL_CLOSED, &ConsoleFrame::OnChannelClosed, this);
     Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &ConsoleFrame::OnChannelReadError, this);
     Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &ConsoleFrame::OnChannelRead, this);

@@ -2,16 +2,27 @@
 
 #include "ColoursAndFontsManager.h"
 #include "JSON.h"
+#include "StringUtils.h"
+#include "clSystemSettings.h"
 #include "cl_standard_paths.h"
 #include "drawingutils.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "xmlutils.h"
+#include "yaml-cpp/node/node.h"
+#include "yaml-cpp/node/parse.h"
+#include "yaml-cpp/parser.h"
+#include "yaml-cpp/yaml.h"
 
+#include <sstream>
+#include <string>
 #include <wx/arrstr.h>
 #include <wx/colour.h>
+#include <wx/settings.h>
+#include <wx/stringimpl.h>
 #include <wx/tokenzr.h>
 
 namespace
@@ -26,6 +37,27 @@ void SetSelectionColour(bool is_dark_theme, ThemeImporterBase::Property& selecti
         selection.bg_colour = "#BDD8F2";
         selection.fg_colour = "#484848";
     }
+}
+
+bool alacritty_read_colour(const YAML::Node& node, const std::string& prop_name, wxString* value)
+{
+    if(!node[prop_name]) {
+        return false;
+    }
+    try {
+        wxString str = node[prop_name].as<std::string>();
+        str.Replace("0x", "#");
+
+        wxColour c{ str };
+        if(c.IsOk()) {
+            *value = str;
+            return true;
+        }
+    } catch(...) {
+        clDEBUG() << "exception thrown while searching for node[" << prop_name << "]" << endl;
+        return false;
+    }
+    return false;
 }
 } // namespace
 
@@ -52,6 +84,11 @@ LexerConf::Ptr_t ThemeImporterBase::InitializeImport(const wxFileName& theme_fil
     if(FileExtManager::GetType(theme_file.GetFullName()) == FileExtManager::TypeXml) {
         // Eclipse Theme XML format
         return ImportEclipseXML(theme_file, langName, langId);
+
+    } else if(FileExtManager::GetType(theme_file.GetFullName()) == FileExtManager::TypeYAML) {
+        // Alacritty theme
+        return ImportAlacrittyTheme(theme_file, langName, langId);
+
     } else {
         // VSCode
         return ImportVSCodeJSON(theme_file, langName, langId);
@@ -252,6 +289,95 @@ void ThemeImporterBase::GetVSCodeColour(const wxStringMap_t& scopes_to_colours_m
             colour.fg_colour = scopes_to_colours_map.find(scope)->second;
         }
     }
+}
+
+LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyTheme(const wxFileName& theme_file, const wxString& langName,
+                                                         int langId)
+{
+    clDEBUG() << "   > Importing Alacritty Theme (YAML) file:" << theme_file << ". Language:" << langName << endl;
+
+    std::string filename = StringUtils::ToStdString(theme_file.GetFullPath());
+    YAML::Node config = YAML::LoadFile(filename);
+
+    // sanity
+    if(config.IsNull()) {
+        return nullptr;
+    }
+
+    bool has_colors = config["colors"].IsDefined();
+    bool has_primary = config["colors"]["primary"].IsDefined();
+    bool has_bg = config["colors"]["primary"]["background"].IsDefined();
+    bool has_fg = config["colors"]["primary"]["foreground"].IsDefined();
+
+    if(!has_colors || !has_primary || !has_bg || !has_fg) {
+        // not a valid alacritty file
+        return nullptr;
+    }
+
+    // base colours
+    if(!alacritty_read_colour(config["colors"]["primary"], "background", &m_editor.bg_colour) ||
+       !alacritty_read_colour(config["colors"]["primary"], "foreground", &m_editor.fg_colour))
+        return nullptr;
+
+    m_isDarkTheme = DrawingUtils::IsDark(m_editor.bg_colour);
+
+    std::string colour_variant = m_isDarkTheme ? "bright" : "normal";
+    auto normal_colours = config["colors"][colour_variant];
+
+    wxString black;
+    wxString red;
+    wxString green;
+    wxString yellow;
+    wxString blue;
+    wxString magenta;
+    wxString cyan;
+    wxString white;
+    if(!alacritty_read_colour(normal_colours, "black", &black) || !alacritty_read_colour(normal_colours, "red", &red) ||
+       !alacritty_read_colour(normal_colours, "green", &green) ||
+       !alacritty_read_colour(normal_colours, "yellow", &yellow) ||
+       !alacritty_read_colour(normal_colours, "blue", &blue) ||
+       !alacritty_read_colour(normal_colours, "magenta", &magenta) ||
+       !alacritty_read_colour(normal_colours, "cyan", &cyan) ||
+       !alacritty_read_colour(normal_colours, "white", &white)) {
+        clDEBUG() << "failed to read basic colour" << endl;
+        return nullptr;
+    }
+
+    LexerConf::Ptr_t lexer(new LexerConf());
+
+    // reset everything to the m_editor
+    m_enum = m_lineNumber = m_lineNumberActive = m_selection = m_caret = m_singleLineComment = m_multiLineComment =
+        m_number = m_string = m_oper = m_keyword = m_klass = m_variable = m_javadoc = m_javadocKeyword = m_function =
+            m_field = m_editor;
+
+    m_caret.fg_colour = m_isDarkTheme ? "ORANGE" : "BLACK";
+    m_caret.bg_colour = m_editor.bg_colour;
+
+    m_lineNumber = m_editor;
+    m_lineNumberActive = m_lineNumber;
+    m_lineNumberActive.fg_colour = yellow;
+    SetSelectionColour(m_isDarkTheme, m_selection);
+
+    m_singleLineComment.fg_colour = "GREY";
+    m_multiLineComment.fg_colour = "DARK GREY";
+    m_number.fg_colour = magenta;
+    m_string.fg_colour = cyan;
+    m_oper = m_editor;
+    m_keyword.fg_colour = red;
+    m_klass.fg_colour = yellow;
+    m_variable.fg_colour = green;
+    m_function.fg_colour = blue;
+    m_javadoc = m_multiLineComment;
+    m_javadocKeyword.fg_colour = red;
+    m_field = m_variable;
+    m_enum.fg_colour = magenta;
+    lexer->SetUseCustomTextSelectionFgColour(false);
+    m_themeName = "Alacritty: " + theme_file.GetName();
+
+    // Add the lexer basic properties (laguage, file extensions, keywords, name)
+    AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
+    clDEBUG() << "theme imported:" << m_themeName << endl;
+    return lexer;
 }
 
 LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_file, const wxString& langName, int langId)

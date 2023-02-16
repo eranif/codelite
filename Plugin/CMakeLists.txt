@@ -7,8 +7,14 @@ project(plugin)
 include("${wxWidgets_USE_FILE}")
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
-                    "${CL_SRC_ROOT}/CodeLite/ssh" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
+include_directories(
+    "${CL_SRC_ROOT}/Plugin"
+    "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
+    "${CL_SRC_ROOT}/CodeLite"
+    "${CL_SRC_ROOT}/yaml-cpp/include"
+    "${CL_SRC_ROOT}/CodeLite/ssh"
+    "${CL_SRC_ROOT}/PCH"
+    "${CL_SRC_ROOT}/Interfaces")
 
 # Macros
 if(WIN32)
@@ -84,28 +90,17 @@ file(GLOB SRCS "*.cpp" "LSP/*.cpp")
 # Define the output
 add_library(plugin SHARED ${SRCS})
 
-if(GTK2_FOUND)
-    target_link_libraries(
-        plugin
-        ${LINKER_OPTIONS}
-        ${ADDITIONAL_LIBRARIES}
-        ${GTK2_LIBRARIES}
-        ${wxWidgets_LIBRARIES}
-        -L"${CL_LIBPATH}"
-        libcodelite)
-elseif(GTK3_FOUND)
-    target_link_libraries(
-        plugin
-        ${LINKER_OPTIONS}
-        ${ADDITIONAL_LIBRARIES}
-        ${GTK3_LIBRARIES}
-        ${wxWidgets_LIBRARIES}
-        -L"${CL_LIBPATH}"
-        libcodelite)
-else()
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}"
-                          libcodelite)
-endif()
+target_link_libraries(
+    plugin
+    yaml-cpp
+    ${LINKER_OPTIONS}
+    ${ADDITIONAL_LIBRARIES}
+    ${GTK3_LIBRARIES}
+    ${wxWidgets_LIBRARIES}
+    -L"${CL_LIBPATH}"
+    libcodelite)
+target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}"
+                      libcodelite)
 
 codelite_add_pch(plugin)
 

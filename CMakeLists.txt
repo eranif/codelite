@@ -841,7 +841,7 @@ add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
 # include the yaml-cpp directory
-include_directories("${CMAKE_SOURCE_DIR}/yaml-cpp/include")
+include_directories("${CL_SRC_ROOT}/yaml-cpp/include")
 
 if(WXC_APP)
     add_subdirectory(wxcrafter)

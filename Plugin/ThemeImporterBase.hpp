@@ -124,6 +124,7 @@ protected:
     void DoSetKeywords(wxString& wordset, const wxString& words);
     LexerConf::Ptr_t ImportEclipseXML(const wxFileName& theme_file, const wxString& langName, int langId);
     LexerConf::Ptr_t ImportVSCodeJSON(const wxFileName& theme_file, const wxString& langName, int langId);
+    LexerConf::Ptr_t ImportAlacrittyTheme(const wxFileName& theme_file, const wxString& langName, int langId);
     void GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map, const std::vector<wxString>& scopes,
                          Property& colour);
     void GetEditorVSCodeColour(JSONItem& colours, const wxString& bg_prop, const wxString& fg_prop, Property& colour);

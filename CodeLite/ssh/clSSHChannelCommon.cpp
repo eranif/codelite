@@ -17,51 +17,15 @@ wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_WRITE_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_OUTPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_STDERR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_CLOSED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_PTY, clCommandEvent);
 
 namespace ssh
 {
-read_result channel_read_all(SSHChannel_t channel, std::string* out, bool is_stderr)
-{
-    while(true) {
-        char buffer[4096 + 1];
-        int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, is_stderr ? 1 : 0, 5);
-        if(bytes == SSH_ERROR) {
-            // an error
-            int exit_code = ssh_channel_get_exit_status(channel);
-            LOG_DEBUG(LOG) << "channel read error. process exited with status code" << exit_code << endl;
-            return read_result::SSH_IO_ERROR;
-
-        } else if(bytes == SSH_EOF) {
-            // channel closed
-            int exit_code = ssh_channel_get_exit_status(channel);
-            LOG_DEBUG(LOG) << "channel read eof. process exited with status code" << exit_code << endl;
-            return read_result::SSH_CONN_CLOSED;
-
-        } else if(bytes == 0) {
-            // timeout
-            if(ssh_channel_is_eof(channel)) {
-                int exit_code = ssh_channel_get_exit_status(channel);
-                LOG_DEBUG(LOG) << "channel eof detected. process exited with status code" << exit_code << endl;
-                return read_result::SSH_CONN_CLOSED;
-
-            } else {
-                // timeout
-                continue;
-            }
-        } else {
-            LOG_DEBUG(LOG) << "read" << bytes << "bytes" << endl;
-            buffer[bytes] = 0;
-            out->append(buffer, bytes);
-            continue;
-        }
-    }
-}
-
-read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr, long timeout_ms)
+read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr)
 {
     // read in chunks of 16KiB
-    char buffer[4096 + 1];
-    int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, timeout_ms);
+    char buffer[16384 + 1];
+    int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 1);
     if(bytes == SSH_ERROR) {
         // an error
         LOG_DEBUG(LOG) << "channel read error" << endl;
@@ -90,14 +54,6 @@ read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStd
             // send close event
             clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
             event.SetInt(exit_code);
-            handler->QueueEvent(event.Clone());
-            return read_result::SSH_CONN_CLOSED;
-
-        } else if(!ssh_channel_is_open(channel)) {
-            LOG_DEBUG(LOG) << "channel is closed" << endl;
-            // send close event
-            clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
-            event.SetInt(0);
             handler->QueueEvent(event.Clone());
             return read_result::SSH_CONN_CLOSED;
 

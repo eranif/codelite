@@ -58,6 +58,7 @@ protected:
 protected:
     void CreateGUIControls();
 #if USE_SFTP
+    void OnExecuteRemoteCommand(clCommandEvent& event);
     void OnChannelReadError(clCommandEvent& event);
     void OnChannelRead(clCommandEvent& event);
     void OnChannelPty(clCommandEvent& event);
@@ -68,6 +69,9 @@ protected:
 
 public:
     ConsoleFrame(wxWindow* parent);
+#if USE_SFTP
+    ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh);
+#endif
     virtual ~ConsoleFrame();
     void Execute(const wxString& command, const wxString& wd);
 };

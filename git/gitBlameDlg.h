@@ -120,7 +120,7 @@ protected:
     int m_sashPositionH;
 
     wxString m_commandOutput;
-    IProcess::Ptr_t m_process;
+    IProcess* m_process;
 };
 
 class GitBlameSettingsDlg : public GitBlameSettingsDlgBase

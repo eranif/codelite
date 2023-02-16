@@ -36,7 +36,6 @@
 #include "clCommandProcessor.h"
 #include "clDiffFrame.h"
 #include "clEditorBar.h"
-#include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
 #include "clStatusBar.h"
 #include "clTempFile.hpp"
@@ -185,8 +184,8 @@ GitPlugin::GitPlugin(IManager* manager)
                             NULL, this);
     m_eventHandler->Connect(XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
                             NULL, this);
-    m_eventHandler->Connect(XRCID("git_commit_list_file"), wxEVT_MENU,
-                            wxCommandEventHandler(GitPlugin::OnFileCommitListSelected), NULL, this);
+    m_eventHandler->Connect(XRCID("git_commit_list_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileCommitListSelected),
+                            NULL, this);
     m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
 
     // Respond to our own events
@@ -203,6 +202,10 @@ GitPlugin::GitPlugin(IManager* manager)
     m_tabToggler->SetOutputTabBmp(images->Add("git"));
 
     m_progressTimer.SetOwner(this);
+
+    m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
+    m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
+
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
@@ -443,8 +446,8 @@ void GitPlugin::UnPlug()
                                wxCommandEventHandler(GitPlugin::OnFileResetSelected), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
                                NULL, this);
-    m_eventHandler->Disconnect(XRCID("git_commit_list_file"), wxEVT_MENU,
-                               wxCommandEventHandler(GitPlugin::OnFileCommitListSelected), NULL, this);
+    m_eventHandler->Disconnect(XRCID("git_commit_list_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileCommitListSelected),
+                            NULL, this);
 
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
@@ -455,6 +458,10 @@ void GitPlugin::UnPlug()
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStashPop, this, XRCID("git_stash_pop_folder"));
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitPlugin::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitPlugin::OnProcessTerminated, this);
+
+    m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
+    m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
+
     m_tabToggler.reset(NULL);
 }
 
@@ -972,7 +979,20 @@ void GitPlugin::ClearCodeLiteRemoteInfo()
 {
     m_isRemoteWorkspace = false;
     m_remoteWorkspaceAccount.clear();
+    m_remoteProcess.Stop();
     m_codeliteRemoteScriptPath.clear();
+}
+
+void GitPlugin::StartCodeLiteRemote()
+{
+    if(m_isRemoteWorkspace && !m_remoteWorkspaceAccount.empty()) {
+        wxString workspace_dir = GetDirFromPath(m_workspace_file);
+        wxString codelite_remote_script = workspace_dir + "/.codelite/codelite-remote";
+        m_remoteProcess.StartInteractive(m_remoteWorkspaceAccount, codelite_remote_script, "git");
+
+        // find the real git root folder
+        m_remoteProcess.FindPath(workspace_dir + "/.git");
+    }
 }
 
 void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
@@ -984,21 +1004,7 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     m_workspace_file = e.GetString();
     m_isRemoteWorkspace = e.IsRemote();
     m_remoteWorkspaceAccount = e.GetRemoteAccount();
-    // locate the remote workspace path
-    if(m_isRemoteWorkspace && !m_remoteWorkspaceAccount.empty()) {
-        clDEBUG() << "searching for git root directory" << endl;
-        wxString curpath = GetDirFromPath(m_workspace_file);
-        while(!curpath.empty() && (curpath != "/")) {
-            wxString gitdir = curpath + "/.git";
-            clDEBUG() << "Checking for:" << gitdir << endl;
-            if(clSFTPManager::Get().IsDirExists(gitdir, m_remoteWorkspaceAccount)) {
-                clDEBUG() << "Git path set to:" << curpath << endl;
-                DoSetRepoPath(curpath);
-                break;
-            }
-            curpath = curpath.BeforeLast('/');
-        }
-    }
+    StartCodeLiteRemote();
     InitDefaults();
     RefreshFileListView();
 
@@ -1022,7 +1028,6 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     if(m_process) {
-        clDEBUG() << "process is already running..." << endl;
         return;
     }
 
@@ -1475,7 +1480,6 @@ void GitPlugin::UpdateFileTree()
 
 void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 {
-    m_process.reset();
     HideProgress();
     if(m_gitActionQueue.empty())
         return;
@@ -1485,7 +1489,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         // Dont manipulate the output if its a diff...
         m_commandOutput.Replace(wxT("\r"), wxT(""));
     }
-    if(ga.action == gitDiffRepoCommit && m_commandOutput.StartsWith(wxT("fatal"))) {
+    if (ga.action == gitDiffRepoCommit && m_commandOutput.StartsWith(wxT("fatal"))) {
         m_commandOutput.Clear();
         DoExecuteCommandSync("diff --no-color --cached", &m_commandOutput);
     }
@@ -1675,6 +1679,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     }
 
+    wxDELETE(m_process);
     m_commandOutput.Clear();
     m_gitActionQueue.pop_front();
 
@@ -1707,8 +1712,7 @@ bool GitPlugin::HandleErrorsOnRemoteRepo(const wxString& output) const
 void GitPlugin::OnProcessOutput(clProcessEvent& event)
 {
     wxString output = event.GetOutput();
-    clDEBUG() << "git" << output << endl;
-
+    auto process = event.GetProcess();
     gitAction ga;
     if(!m_gitActionQueue.empty()) {
         ga = m_gitActionQueue.front();
@@ -1726,7 +1730,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
 
     static std::unordered_set<int> exclude_commands = { gitDiffRepoCommit, gitDiffFile, gitCommitList,  gitDiffRepoShow,
                                                         gitBlame,          gitRevlist,  gitBlameSummary };
-    if(m_process && exclude_commands.count(ga.action) == 0) {
+    if(process && exclude_commands.count(ga.action) == 0) {
         if(HandleErrorsOnRemoteRepo(tmpOutput)) {
             return;
         }
@@ -1735,16 +1739,16 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
             // username is required
             wxString username = ::wxGetTextFromUser(output);
             if(username.IsEmpty()) {
-                m_process->Terminate();
+                process->Terminate();
             } else {
-                m_process->WriteToConsole(username);
+                process->WriteToConsole(username);
             }
 
         } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
-            m_process->Terminate();
+            process->Terminate();
 
         } else if(tmpOutput.Contains("*** please tell me who you are")) {
-            m_process->Terminate();
+            process->Terminate();
             GitUserEmailDialog userEmailDialog(EventNotifier::Get()->TopFrame());
             if(userEmailDialog.ShowModal() == wxID_OK) {
                 wxString username = userEmailDialog.GetUsername();
@@ -1770,20 +1774,21 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
             if(pass.IsEmpty()) {
 
                 // No point on continuing
-                m_process->Terminate();
+                process->Terminate();
 
             } else {
+
                 // write the password
-                m_process->WriteToConsole(pass);
+                process->WriteToConsole(pass);
             }
         } else if((tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) ||
                   tmpOutput.Contains("key fingerprint")) {
             if(::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"),
                               wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
-                m_process->WriteToConsole("yes");
+                process->WriteToConsole("yes");
 
             } else {
-                m_process->Terminate();
+                process->Terminate();
             }
         }
     }
@@ -2002,7 +2007,7 @@ void GitPlugin::DoCleanup()
     m_progressMessage.Clear();
     m_commandOutput.Clear();
     m_bActionRequiresTreUpdate = false;
-    m_process.reset();
+    wxDELETE(m_process);
     m_mgr->GetDockingManager()->GetPane(wxT("Workspace View")).Caption(wxT("Workspace View"));
     m_mgr->GetDockingManager()->Update();
     m_filesSelected.Clear();
@@ -2331,7 +2336,7 @@ void GitPlugin::DoRecoverFromGitCommandError(bool clear_queue)
             m_gitActionQueue.pop_front();
         }
     }
-    m_process.reset();
+    wxDELETE(m_process);
     m_commandOutput.Clear();
     if(!clear_queue) {
         ProcessGitActionQueue();
@@ -2570,7 +2575,7 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
     // 1. Get diff output
     wxString diff;
     bool res = DoExecuteCommandSync("diff --no-color HEAD", &diff, m_selectedFolder);
-    if(diff.empty()) {
+    if (diff.empty()) {
         DoExecuteCommandSync("diff --no-color --cached", &diff);
     }
     if(!diff.IsEmpty()) {
@@ -2610,17 +2615,11 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandO
         wxString git_command = "git --no-pager ";
         git_command << command;
         GIT_MESSAGE(git_command);
-        std::string out;
-        clDEBUG() << "running remote command:" << git_command << endl;
-        if(!clRemoteHost::Instance()->run_command_sync(
-               git_command, workingDir.empty() ? m_repositoryDirectory : workingDir, env, &out)) {
-            clWARNING() << "failed" << endl;
+        if(!m_remoteProcess.SyncExec(git_command, workingDir.empty() ? m_repositoryDirectory : workingDir, env,
+                                     commandOutput)) {
             commandOutput->clear();
             return false;
         }
-        clDEBUG() << "Success" << endl;
-        clDEBUG() << out << endl;
-        *commandOutput = wxString::FromUTF8(out);
     }
 
     const wxString lcOutput = commandOutput->Lower();
@@ -2901,8 +2900,8 @@ void GitPlugin::OnGitActionDone(clSourceControlEvent& event)
     DoLoadBlameInfo(false);
 }
 
-IProcess::Ptr_t GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_args, size_t create_flags,
-                                       const wxString& working_directory, bool logMessage)
+IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_args, size_t create_flags,
+                                 const wxString& working_directory, bool logMessage)
 {
     if(m_isRemoteWorkspace) {
         wxString command;
@@ -2913,8 +2912,8 @@ IProcess::Ptr_t GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& co
             m_console->PrintPrompt();
         }
 
-        clDEBUG() << "git:" << command << endl;
-        return clRemoteHost::Instance()->run_process(handler, command, working_directory, env);
+        GIT_MESSAGE_IF(logMessage, command);
+        return m_remoteProcess.CreateAsyncProcess(handler, command, working_directory, env);
 
     } else {
         wxString command = m_pathGITExecutable;
@@ -2929,8 +2928,8 @@ IProcess::Ptr_t GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& co
         }
         GIT_MESSAGE_IF(logMessage, command);
 
-        return IProcess::Ptr_t{ ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell,
-                                                     working_directory) };
+        auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell, working_directory);
+        return process;
     }
 }
 
@@ -2943,10 +2942,7 @@ void GitPlugin::AsyncRunGitWithCallback(const wxString& command_args, std::funct
 
         clEnvList_t env;
         GIT_MESSAGE_IF(logMessage, command);
-        std::string output;
-        if(clRemoteHost::Instance()->run_command_sync(command_args, working_directory, {}, &output)) {
-            callback(wxString::FromUTF8(output));
-        }
+        m_remoteProcess.CreateAsyncProcessCB(command, std::move(callback), working_directory, env);
     } else {
         wxString command = m_pathGITExecutable;
 
@@ -3005,6 +3001,21 @@ wxString GitPlugin::FindRepositoryRoot(const wxString& starting_dir) const
         fp.RemoveLastDir();
     }
     return starting_dir;
+}
+
+void GitPlugin::OnFindPath(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(event.GetEventType() == wxEVT_CODELITE_REMOTE_FINDPATH) {
+        if(!event.GetString().empty()) {
+            clDEBUG() << ".git folder found at:" << event.GetString() << endl;
+            wxString new_path = event.GetString();
+            new_path = new_path.BeforeLast('.');
+            clDEBUG() << "Setting repository path at:" << new_path << endl;
+            DoSetRepoPath(new_path);
+            RefreshFileListView();
+        }
+    }
 }
 
 void GitPlugin::OnSftpFileSaved(clCommandEvent& event)

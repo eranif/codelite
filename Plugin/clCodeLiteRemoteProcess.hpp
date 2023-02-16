@@ -38,7 +38,6 @@ protected:
     wxString m_context;
     SSHAccountInfo m_account;
     wxString m_scriptPath;
-    wxString m_findOutput;
 
 protected:
     void OnProcessOutput(clProcessEvent& e);
@@ -51,6 +50,7 @@ protected:
     // prepare an event from list command output
     void OnListFilesOutput(const wxString& output, bool is_completed);
     void OnListLSPsOutput(const wxString& output, bool is_completed);
+    void OnFindOutput(const wxString& buffer, bool is_completed);
     void OnLocateOutput(const wxString& buffer, bool is_completed);
     void OnFindPathOutput(const wxString& buffer, bool is_completed);
     void OnExecOutput(const wxString& buffer, bool is_completed);
@@ -112,6 +112,11 @@ public:
      */
     void ListLSPs();
 
+    /**
+     * @brief find in files on a remote machine
+     */
+    void Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what, bool whole_word,
+                bool icase);
     /**
      * @brief execute a command on the remote machine
      */

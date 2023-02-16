@@ -1805,9 +1805,7 @@ void MainBook::execute_callbacks_for_file(const wxString& fullpath)
         return; // cant really happen
     }
 
-    // note that we use here the fullpath as provided
-    // and not the platform key
-    IEditor* editor = FindEditor(fullpath);
+    IEditor* editor = FindEditor(key);
     CHECK_PTR_RET(editor);
 
     for(auto& callback : V) {

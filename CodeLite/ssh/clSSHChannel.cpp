@@ -7,11 +7,8 @@
 #include "clModuleLogger.hpp"
 #include "clRemoteHost.hpp"
 #include "cl_exception.h"
-#include "cl_remote_executor.hpp"
 
-#include <chrono>
 #include <libssh/libssh.h>
-#include <thread>
 
 //===-------------------------------------------------------------
 // This thread is used when requesting a non interactive command
@@ -33,29 +30,20 @@ public:
 
     void* Entry()
     {
-        size_t successfull_consecutive_stdout_calls = 0;
         while(!TestDestroy()) {
             // Poll the channel for output
-            auto stdout_res = ssh::channel_read(m_channel, m_handler, false, m_wantStderr, 1);
+            auto stdout_res = ssh::channel_read(m_channel, m_handler, false, m_wantStderr);
             if(stdout_res == ssh::read_result::SSH_SUCCESS) {
-                ++successfull_consecutive_stdout_calls;
-                // got something, sleep a bit and let other process events as well
-                if(successfull_consecutive_stdout_calls == 2) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                    successfull_consecutive_stdout_calls = 0;
-                }
+                // got something
                 continue;
             }
-
-            // reset the consecutive calls counter
-            successfull_consecutive_stdout_calls = 0;
 
             // if we got an error, do not attempt to read stderr
             if(!ssh::result_ok(stdout_res)) {
                 break;
             }
 
-            auto stderrr_res = ssh::channel_read(m_channel, m_handler, true, m_wantStderr, 1);
+            auto stderrr_res = ssh::channel_read(m_channel, m_handler, true, m_wantStderr);
             if(stderrr_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
@@ -70,15 +58,14 @@ public:
     }
 };
 
-#include "clModuleLogger.hpp"
-INITIALISE_SSH_LOG(EXECLOG, "clSSHChannel");
-
 //===-------------------------------------------------------------
 // The SSH channel
 //===-------------------------------------------------------------
-clSSHChannel::clSSHChannel(clRemoteExecutor* parent, clSSH::Ptr_t ssh, bool wantStderrEvents)
-    : m_parent(parent)
-    , m_ssh(ssh)
+clSSHChannel::clSSHChannel(clSSH::Ptr_t ssh, clSSHChannel::eChannelType type, wxEvtHandler* owner,
+                           bool wantStderrEvents)
+    : m_ssh(ssh)
+    , m_owner(owner)
+    , m_type(type)
     , m_wantStderr(wantStderrEvents)
 {
     Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &clSSHChannel::OnReadError, this);
@@ -86,6 +73,7 @@ clSSHChannel::clSSHChannel(clRemoteExecutor* parent, clSSH::Ptr_t ssh, bool want
     Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &clSSHChannel::OnReadOutput, this);
     Bind(wxEVT_SSH_CHANNEL_READ_STDERR, &clSSHChannel::OnReadStderr, this);
     Bind(wxEVT_SSH_CHANNEL_CLOSED, &clSSHChannel::OnChannelClosed, this);
+    Bind(wxEVT_SSH_CHANNEL_PTY, &clSSHChannel::OnChannelPty, this);
 }
 
 clSSHChannel::~clSSHChannel()
@@ -95,32 +83,29 @@ clSSHChannel::~clSSHChannel()
     Unbind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &clSSHChannel::OnReadOutput, this);
     Unbind(wxEVT_SSH_CHANNEL_READ_STDERR, &clSSHChannel::OnReadStderr, this);
     Unbind(wxEVT_SSH_CHANNEL_CLOSED, &clSSHChannel::OnChannelClosed, this);
+    Unbind(wxEVT_SSH_CHANNEL_PTY, &clSSHChannel::OnChannelPty, this);
     Close();
 }
 
-bool clSSHChannel::Open()
+void clSSHChannel::Open()
 {
     if(IsOpen()) {
-        return false;
+        return;
     }
     if(!m_ssh) {
-        LOG_WARNING(EXECLOG) << "SSH is not opened" << endl;
-        return false;
+        throw clException("ssh session is not opened");
     }
     m_channel = ssh_channel_new(m_ssh->GetSession());
     if(!m_channel) {
-        LOG_WARNING(EXECLOG) << "Failed to allocte ssh channel" << endl;
-        return false;
+        throw clException(BuildError("Failed to allocte ssh channel"));
     }
 
     int rc = ssh_channel_open_session(m_channel);
     if(rc != SSH_OK) {
         ssh_channel_free(m_channel);
         m_channel = NULL;
-        LOG_WARNING(EXECLOG) << BuildError("Failed to open ssh channel") << endl;
-        return false;
+        throw clException(BuildError("Failed to open ssh channel"));
     }
-    return true;
 }
 
 void clSSHChannel::Close()
@@ -141,83 +126,22 @@ void clSSHChannel::Close()
     m_ssh.reset();
 }
 
-bool clSSHChannel::DoExecute(const wxString& command, execute_callback&& cb, wxEvtHandler* event_handler)
+void clSSHChannel::Execute(const wxString& command)
 {
-    m_eventHandler = nullptr;
-    m_callback = nullptr;
-
-    // sanity
-    if(event_handler == nullptr && cb == nullptr) {
-        return false;
-    }
-
-    if(event_handler != nullptr && cb != nullptr) {
-        return false;
-    }
-
     // Sanity
     if(m_thread) {
-        LOG_WARNING(EXECLOG) << "Channel is busy" << endl;
-        return false;
+        throw clException("Channel is busy");
     }
-
     if(!IsOpen()) {
-        LOG_WARNING(EXECLOG) << "Execute error: channel is not opened" << endl;
-        return false;
+        throw clException("Channel is not opened");
     }
-
     int rc = ssh_channel_request_exec(m_channel, command.mb_str(wxConvUTF8).data());
     if(rc != SSH_OK) {
         Close();
-        LOG_WARNING(EXECLOG) << BuildError("Execute failed") << endl;
-        return false;
+        throw clException(BuildError("Execute failed"));
     }
-
-    if(cb) {
-        m_callback = std::move(cb);
-    } else {
-        m_eventHandler = event_handler;
-    }
-
     m_thread = new clSSHChannelReader(this, m_channel, m_wantStderr);
     m_thread->Start();
-    return true;
-}
-
-bool clSSHChannel::Execute(const wxString& command, wxEvtHandler* event_handler)
-{
-    return DoExecute(command, nullptr, event_handler);
-}
-
-bool clSSHChannel::Execute(const wxString& command, std::string* output)
-{
-    m_eventHandler = nullptr;
-    m_callback = nullptr;
-
-    // Sanity
-    if(m_thread) {
-        LOG_WARNING(EXECLOG) << "Channel is busy" << endl;
-        return false;
-    }
-    if(!IsOpen()) {
-        LOG_WARNING(EXECLOG) << "Execute error: channel is not opened" << endl;
-        return false;
-    }
-    int rc = ssh_channel_request_exec(m_channel, command.mb_str(wxConvUTF8).data());
-    if(rc != SSH_OK) {
-        Close();
-        LOG_WARNING(EXECLOG) << BuildError("Execute failed") << endl;
-        return false;
-    }
-
-    // read everything
-    ssh::read_result error_code = ssh::channel_read_all(m_channel, output, false);
-    return error_code == ssh::read_result::SSH_CONN_CLOSED || error_code == ssh::read_result::SSH_SUCCESS;
-}
-
-bool clSSHChannel::Execute(const wxString& command, execute_callback&& cb)
-{
-    return DoExecute(command, std::move(cb), nullptr);
 }
 
 wxString clSSHChannel::BuildError(const wxString& prefix) const
@@ -231,79 +155,28 @@ wxString clSSHChannel::BuildError(const wxString& prefix) const
 
 void clSSHChannel::OnReadError(clCommandEvent& event)
 {
-    wxUnusedVar(event);
-    if(m_callback) {
-        m_callback("", clRemoteCommandStatus::DONE_WITH_ERROR);
-        CallAfter(&clSSHChannel::Destroy);
-    } else if(m_eventHandler) {
-        clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
-        event_terminated.SetProcess(nullptr);
-        m_eventHandler->AddPendingEvent(event_terminated);
-    }
+    event.SetString(BuildError("Read error"));
+    m_owner->AddPendingEvent(event);
 }
 
 void clSSHChannel::OnWriteError(clCommandEvent& event)
 {
-    wxUnusedVar(event);
-    if(m_callback) {
-        m_callback("", clRemoteCommandStatus::DONE_WITH_ERROR);
-        CallAfter(&clSSHChannel::Destroy);
-    } else if(m_eventHandler) {
-        clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
-        event_terminated.SetProcess(nullptr);
-        m_eventHandler->AddPendingEvent(event_terminated);
-    }
+    event.SetString(BuildError("Write error"));
+    m_owner->AddPendingEvent(event);
 }
 
-void clSSHChannel::OnReadOutput(clCommandEvent& event)
-{
-    if(m_callback) {
-        m_callback(event.GetStringRaw(), clRemoteCommandStatus::STDOUT);
-    } else if(m_eventHandler) {
-        clProcessEvent event_stdout{ wxEVT_ASYNC_PROCESS_OUTPUT };
-        event_stdout.SetProcess(nullptr);
-        event_stdout.SetOutputRaw(event.GetStringRaw());
-        event_stdout.SetOutput(event.GetStringRaw());
-        m_eventHandler->AddPendingEvent(event_stdout);
-    }
-}
-
-void clSSHChannel::OnReadStderr(clCommandEvent& event)
-{
-    if(m_callback) {
-        m_callback(event.GetStringRaw(), clRemoteCommandStatus::STDERR);
-    } else if(m_eventHandler) {
-        clProcessEvent event_stdout{ wxEVT_ASYNC_PROCESS_STDERR };
-        event_stdout.SetProcess(nullptr);
-        event_stdout.SetOutputRaw(event.GetStringRaw());
-        event_stdout.SetOutput(event.GetStringRaw());
-        m_eventHandler->AddPendingEvent(event_stdout);
-    }
-}
-
-void clSSHChannel::OnChannelClosed(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    if(m_callback) {
-        m_callback("", clRemoteCommandStatus::DONE);
-        CallAfter(&clSSHChannel::Destroy);
-    } else if(m_eventHandler) {
-        clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
-        event_terminated.SetProcess(nullptr);
-        m_eventHandler->AddPendingEvent(event_terminated);
-    }
-}
+void clSSHChannel::OnReadOutput(clCommandEvent& event) { m_owner->AddPendingEvent(event); }
+void clSSHChannel::OnReadStderr(clCommandEvent& event) { m_owner->AddPendingEvent(event); }
+void clSSHChannel::OnChannelClosed(clCommandEvent& event) { m_owner->AddPendingEvent(event); }
+void clSSHChannel::OnChannelPty(clCommandEvent& event) { m_owner->AddPendingEvent(event); }
 
 void clSSHChannel::SendSignal(wxSignal sig)
 {
     if(!m_ssh) {
-        LOG_WARNING(EXECLOG) << "SendSignal(): SSH is not opened" << endl;
-        return;
+        throw clException("ssh session is not opened");
     }
-
     if(!m_channel) {
-        LOG_WARNING(EXECLOG) << "SendSignal(): Channel is not opened" << endl;
-        return;
+        throw clException("ssh channel is not opened");
     }
 
     const char* prefix = nullptr;
@@ -344,24 +217,15 @@ void clSSHChannel::SendSignal(wxSignal sig)
     default:
         break;
     }
-
     if(!prefix) {
-        LOG_WARNING(EXECLOG) << "Requested to send an unknown signal:" << (int)sig << endl;
-        return;
+        throw clException("Requested to send an unknown signal");
     }
-
     int rc = ssh_channel_request_send_signal(m_channel, prefix);
     if(rc != SSH_OK) {
-        LOG_WARNING(EXECLOG) << "failed to send signal:" << prefix << BuildError("reason:") << endl;
+        throw clException(BuildError("Failed to send signal"));
     }
 }
 
 void clSSHChannel::Detach() {}
 
-void clSSHChannel::Destroy()
-{
-    if(m_parent) {
-        m_parent->Delete(this);
-    }
-}
 #endif

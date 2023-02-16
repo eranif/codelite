@@ -1,9 +1,7 @@
 #include "clRemoteFinderHelper.hpp"
 
 #include "Notebook.h"
-#include "StringUtils.h"
 #include "asyncprocess.h"
-#include "clRemoteHost.hpp"
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -19,11 +17,8 @@ clRemoteFinderHelper::clRemoteFinderHelper() {}
 
 clRemoteFinderHelper::~clRemoteFinderHelper() {}
 
-void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent::Match::vec_t& matches, bool is_completed)
+void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, bool is_completed)
 {
-    clDEBUG() << "Processing:" << matches.size() << "match entries" << endl;
-    clDEBUG() << "is_completed?" << is_completed << endl;
-
     auto search_tab = GetSearchTab();
     if(!search_tab) {
         clWARNING() << "clRemoteFinderHelper: search tab is hidden" << endl;
@@ -32,6 +27,7 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent::Match::
 
     // process the output
     SearchResultList* resList = nullptr;
+    const auto& matches = event.GetMatches();
 
     if(!matches.empty()) {
         resList = new SearchResultList;
@@ -67,7 +63,7 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent::Match::
         // set the total number of matches found
         summary->SetNumMatchesFound(m_matches_found);
         wxCommandEvent end_event(wxEVT_SEARCH_THREAD_SEARCHEND);
-        summary->SetNumFileScanned(0);
+        summary->SetNumFileScanned(event.GetInt());
         end_event.SetClientData(summary);
         search_tab->GetEventHandler()->AddPendingEvent(end_event);
 
@@ -76,90 +72,22 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent::Match::
     }
 }
 
-void clRemoteFinderHelper::ProcessFindOutput(bool is_completed)
-{
-    bool last_line_incomplete = !m_findOutput.EndsWith("\n");
-    wxArrayString files = ::wxStringTokenize(m_findOutput, "\n", wxTOKEN_STRTOK);
-    if(!files.empty()) {
-        m_findOutput.clear();
-        if(last_line_incomplete && !is_completed) {
-            // the last line is incomplete, keep it for next iteration
-            m_findOutput = files.back();
-            files.pop_back();
-        }
-
-        clFindInFilesEvent::Match::vec_t matches;
-        matches.reserve(files.size());
-        for(wxString& entry : files) {
-            wxString mod_line;
-            StringUtils::StripTerminalColouring(entry, mod_line);
-            /// mod_line => /home/eran/devl/codelite/Plugin/LSP/LSPNetworkRemoteSTDIO.cpp:39:    pattern
-            clFindInFilesEvent::Match match;
-            match.file = mod_line.BeforeFirst(':');
-            match.file.Trim().Trim(false);
-
-            /// mod_line => 39:    pattern
-            mod_line = mod_line.AfterFirst(':');
-            clFindInFilesEvent::Location location;
-            wxString line = mod_line.BeforeFirst(':');
-            line.Trim().Trim(false);
-            unsigned long line_number = 0;
-            if(line.ToULong(&line_number)) {
-                location.line = line_number;
-            } else {
-                clWARNING() << "failed to parse line number:" << line << endl;
-                continue;
-            }
-
-            location.pattern = mod_line.AfterFirst(':'); // the remainder is the matched pattern
-            match.locations.push_back(location);
-            matches.push_back(match);
-            m_fif_matches_count++;
-        }
-
-        if(!matches.empty()) {
-            ProcessSearchOutput(matches, false);
-        }
-    }
-    if(is_completed) {
-        ProcessSearchOutput({}, true);
-    }
-}
-
 void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions,
                                   bool whole_word, bool icase)
 {
+    // start ssh process
+    if(!m_codeliteRemote || !m_codeliteRemote->IsRunning()) {
+        return;
+    }
+    m_stopWatch.Start();
+    m_matches_found = 0;
+
     if(!GetSearchTab()) {
         clWARNING() << "clRemoteFinderHelper: search ignored, search tab is hidden" << endl;
         return;
     }
 
-    auto extarr = ::wxStringTokenize(fileExtensions, ",; |", wxTOKEN_STRTOK);
-    std::vector<wxString> grep_command = { "grep", "-r", "-n" };
-    if(icase) {
-        grep_command.push_back("-i");
-    }
-
-    if(whole_word) {
-        grep_command.push_back("-w");
-    }
-
-    for(const auto& ext : extarr) {
-        grep_command.push_back("--include=" + ext);
-    }
-    grep_command.push_back(findString);
-    grep_command.push_back(root_dir);
-
-    auto callback = [this](const std::string& str, clRemoteCommandStatus status) {
-        m_findOutput << wxString::FromUTF8(str);
-        ProcessFindOutput(status == clRemoteCommandStatus::DONE || status == clRemoteCommandStatus::DONE_WITH_ERROR);
-    };
-    m_findOutput.clear();
-    m_fif_matches_count = 0;
-    m_matches_found = 0;
-    m_stopWatch.Start();
-    clDEBUG() << "Running remote command:" << grep_command << endl;
-    clRemoteHost::Instance()->run_command_with_callback(grep_command, root_dir, {}, callback);
+    m_codeliteRemote->Search(root_dir, fileExtensions, findString, whole_word, icase);
 
     SearchData sd;
     sd.SetEncoding("UTF-8");
@@ -180,6 +108,8 @@ wxWindow* clRemoteFinderHelper::GetSearchTab()
     }
     return nullptr;
 }
+
+void clRemoteFinderHelper::SetCodeLiteRemote(clCodeLiteRemoteProcess* clr) { m_codeliteRemote = clr; }
 
 void clRemoteFinderHelper::NotifySearchCancelled()
 {

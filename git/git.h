@@ -33,7 +33,10 @@
 #ifndef __git__
 #define __git__
 
+#include <wx/progdlg.h>
+
 #include "asyncprocess.h"
+#include "clCodeLiteRemoteProcess.hpp"
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
 #include "gitentry.h"
@@ -43,7 +46,6 @@
 #include "plugin.h"
 #include "processreaderthread.h"
 #include "project.h" // wxStringSet_t
-
 #include <map>
 #include <queue>
 #include <set>
@@ -159,7 +161,7 @@ class GitPlugin : public IPlugin
     wxString m_progressMessage;
     wxString m_commandOutput;
     bool m_bActionRequiresTreUpdate;
-    IProcess::Ptr_t m_process;
+    IProcess* m_process;
     wxEvtHandler* m_eventHandler;
     clToolBar* m_pluginToolbar;
     wxMenu* m_pluginMenu;
@@ -179,9 +181,11 @@ class GitPlugin : public IPlugin
     wxString m_lastBlameMessage;
     bool m_isRemoteWorkspace = false;
     wxString m_remoteWorkspaceAccount;
+    clCodeLiteRemoteProcess m_remoteProcess;
     wxString m_codeliteRemoteScriptPath;
 
 private:
+    void StartCodeLiteRemote();
     void ClearCodeLiteRemoteInfo();
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
@@ -285,6 +289,10 @@ private:
     // Respond to local events
     void OnGitActionDone(clSourceControlEvent& event);
     bool HandleErrorsOnRemoteRepo(const wxString& output) const;
+
+    // Remote callbacks
+    void OnFindPath(clCommandEvent& event);
+
 public:
     GitPlugin(IManager* manager);
     virtual ~GitPlugin();
@@ -297,8 +305,8 @@ public:
     /**
      * @brief create git process and return the process handle
      */
-    IProcess::Ptr_t AsyncRunGit(wxEvtHandler* handler, const wxString& git_args, size_t create_flags,
-                                const wxString& working_directory, bool logMessage = false);
+    IProcess* AsyncRunGit(wxEvtHandler* handler, const wxString& git_args, size_t create_flags,
+                          const wxString& working_directory, bool logMessage = false);
     /**
      * @brief create a git process and direct the output to a callback
      */
@@ -322,7 +330,7 @@ public:
     void FetchNextCommits(int skip, const wxString& args);
 
     GitConsole* GetConsole() { return m_console; }
-    IProcess::Ptr_t GetProcess() { return m_process; }
+    IProcess* GetProcess() { return m_process; }
     clCommandProcessor* GetFolderProcess() { return m_commandProcessor; }
 
     IManager* GetManager() { return m_mgr; }

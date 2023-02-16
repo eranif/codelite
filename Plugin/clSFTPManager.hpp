@@ -208,9 +208,6 @@ public:
      */
     bool IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo);
 
-    /// overloaded version
-    bool IsDirExists(const wxString& fullpath, const wxString& accountName);
-
     /**
      * @brief return the remote path for a local file
      */

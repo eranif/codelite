@@ -561,9 +561,6 @@ public:
      */
     virtual IEditor* FindEditor(const wxString& filename) const = 0;
 
-    /// given an `editor`, select it
-    virtual void SelectEditor(IEditor* editor) = 0;
-
     /**
      * @brief enable/disable clang code completion
      */

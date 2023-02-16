@@ -229,7 +229,6 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     }
 
     // Open the file
-    clDEBUG() << "Find usage: opening file:" << item_data->location->GetPath() << endl;
     wxFileName fn(item_data->location->GetPath());
 
     // prepare the "after-file-is-loaded" callback
@@ -240,11 +239,9 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     };
 
     if(fn.FileExists()) {
-        clDEBUG() << "File exists" << endl;
         clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(callback));
 
     } else {
-        clDEBUG() << "File does not exist, trying plugins" << endl;
         // the file does not exist
         clCommandEvent open_file_event{ wxEVT_OPEN_FILE };
         open_file_event.SetFileName(item_data->location->GetPath());
@@ -254,7 +251,6 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
             event.Veto();
             return;
         }
-        clDEBUG() << "File is loaded, OpenFileAndAsyncExecute(" << open_file_event.GetFileName() << ")" << endl;
         clGetManager()->OpenFileAndAsyncExecute(open_file_event.GetFileName(), std::move(callback));
     }
 }

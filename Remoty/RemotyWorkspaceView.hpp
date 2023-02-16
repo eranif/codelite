@@ -34,7 +34,6 @@ protected:
 
     wxString GetRemotePathIsOwnedByWorkspace(IEditor* editor) const;
     size_t GetWorkspaceRemoteFilesOpened(wxArrayString* paths) const;
-    void ActiveEditorSetLocation(clFindInFilesEvent::Location loc);
 
 public:
     RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace);

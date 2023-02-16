@@ -49,7 +49,7 @@ class GitDiffDlg : public GitDiffDlgBase
     wxString m_commits; // Empty unless the ChooseCommits dialog is used
     wxString m_commandOutput;
     GitPlugin* m_plugin;
-    IProcess::Ptr_t m_process;
+    IProcess* m_process;
 
 public:
     GitDiffDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* plugin);

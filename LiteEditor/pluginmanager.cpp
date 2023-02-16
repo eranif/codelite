@@ -718,18 +718,6 @@ IEditor* PluginManager::FindEditor(const wxString& filename) const
     return clMainFrame::Get()->GetMainBook()->FindEditor(filename);
 }
 
-void PluginManager::SelectEditor(IEditor* editor)
-{
-    auto book = clMainFrame::Get()->GetMainBook();
-    size_t count = book->GetPageCount();
-    for(size_t i = 0; i < count; ++i) {
-        if(book->GetPage(i) == editor->GetCtrl()) {
-            book->SelectPage(book->GetPage(i));
-            break;
-        }
-    }
-}
-
 void PluginManager::EnableClangCodeCompletion(bool b) { wxUnusedVar(b); }
 
 size_t PluginManager::GetPageCount() const { return clMainFrame::Get()->GetMainBook()->GetPageCount(); }

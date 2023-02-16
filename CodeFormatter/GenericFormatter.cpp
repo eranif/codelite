@@ -3,6 +3,7 @@
 #include "Platform.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
+#include "clCodeLiteRemoteProcess.hpp"
 #include "clDirChanger.hpp"
 #include "clTempFile.hpp"
 #include "clWorkspaceManager.h"

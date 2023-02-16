@@ -2,6 +2,7 @@
 #define GENERICFORMATTER_HPP
 
 #include "SourceFormatterBase.hpp"
+#include "clCodeLiteRemoteProcess.hpp"
 #include "procutils.h"
 #include "ssh/cl_remote_executor.hpp"
 

@@ -26,7 +26,7 @@ typedef std::function<void(const std::string&, clRemoteCommandStatus)> execute_c
 class WXDLLIMPEXP_CL clRemoteHost : public wxEvtHandler
 {
     clRemoteExecutor m_executor;
-    std::vector<std::pair<execute_callback, clSSHChannel*>> m_callbacks;
+    std::vector<std::pair<execute_callback, IProcess::Ptr_t>> m_callbacks;
     std::vector<IProcess::Ptr_t> m_interactiveProcesses;
     wxString m_activeAccount;
     std::vector<clSSH::Ptr_t> m_sessions;

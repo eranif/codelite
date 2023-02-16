@@ -42,8 +42,22 @@ protected:
     void OnChannelClosed(clCommandEvent& event);
     void OnChannelPty(clCommandEvent& event);
 
-public:
+private:
+    /// use clSSHChannel::Execute static method
     clSSHChannel(clSSH::Ptr_t ssh, wxEvtHandler* owner, bool wantStderrEvents = false);
+
+    /**
+     * @brief Open the channel
+     * @throw clException
+     */
+    void Open();
+
+    /**
+     * @brief close the channel
+     */
+    void Close();
+
+public:
     virtual ~clSSHChannel();
 
     /// Read from process stdout - return immediately if no data is available
@@ -115,21 +129,10 @@ public:
     bool IsOpen() const { return m_channel != nullptr; }
 
     /**
-     * @brief Open the channel
-     * @throw clException
-     */
-    void Open();
-
-    /**
-     * @brief close the channel
-     */
-    void Close();
-
-    /**
      * @brief execute remote command
-     * The reply will be returned to 'sink' object in form of events
      */
-    void Execute(const wxString& command);
+    static IProcess::Ptr_t Execute(clSSH::Ptr_t ssh, wxEvtHandler* owner, const wxString& command,
+                                   bool wantStderr = false);
 
     /**
      * @brief Send a signal to remote process

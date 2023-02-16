@@ -36,15 +36,7 @@ clRemoteHost::~clRemoteHost()
     DrainPendingCommands();
 }
 
-void clRemoteHost::DrainPendingCommands()
-{
-    while(!m_callbacks.empty()) {
-        // terminate any pending commands
-        m_callbacks.back().second->Close();
-        delete m_callbacks.back().second;
-        m_callbacks.pop_back();
-    }
-}
+void clRemoteHost::DrainPendingCommands() { m_callbacks.clear(); }
 
 clRemoteHost* clRemoteHost::Instance()
 {
@@ -135,9 +127,9 @@ clSSH::Ptr_t clRemoteHost::CreateSession()
 void clRemoteHost::run_command_with_callback(const std::vector<wxString>& command, const wxString& wd,
                                              const clEnvList_t& env, execute_callback&& cb)
 {
-    clSSHChannel* channel = m_executor.try_execute(clRemoteExecutor::Cmd::from(command, wd, env));
-    if(channel) {
-        m_callbacks.emplace_back(std::make_pair(std::move(cb), channel));
+    auto proc = m_executor.try_execute(clRemoteExecutor::Cmd::from(command, wd, env));
+    if(proc) {
+        m_callbacks.emplace_back(std::make_pair(std::move(cb), proc));
     }
 }
 
@@ -184,7 +176,6 @@ void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
     LOG_DEBUG(LOG) << "command completed. exit status:" << event.GetInt() << endl;
     m_callbacks.front().first("", event.GetInt() == 0 ? clRemoteCommandStatus::DONE
                                                       : clRemoteCommandStatus::DONE_WITH_ERROR);
-    delete m_callbacks.front().second;
     m_callbacks.erase(m_callbacks.begin());
 }
 

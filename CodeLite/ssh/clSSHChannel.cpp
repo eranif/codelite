@@ -10,6 +10,8 @@
 
 #include <libssh/libssh.h>
 
+INITIALISE_SSH_LOG(LOG, "clSSHChannel");
+
 //===-------------------------------------------------------------
 // This thread is used when requesting a non interactive command
 //===-------------------------------------------------------------
@@ -125,22 +127,27 @@ void clSSHChannel::Close()
     m_ssh.reset();
 }
 
-void clSSHChannel::Execute(const wxString& command)
+IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, wxEvtHandler* owner, const wxString& command, bool wantStderr)
 {
-    // Sanity
-    if(m_thread) {
-        throw clException("Channel is busy");
+    clSSHChannel* channel = nullptr;
+    try {
+        channel = new clSSHChannel(ssh, owner, wantStderr);
+        channel->Open();
+    } catch(clException& e) {
+        LOG_ERROR(LOG) << "failed to open channel." << e.What() << endl;
+        wxDELETE(channel);
+        return nullptr;
     }
-    if(!IsOpen()) {
-        throw clException("Channel is not opened");
-    }
-    int rc = ssh_channel_request_exec(m_channel, command.mb_str(wxConvUTF8).data());
+
+    int rc = ssh_channel_request_exec(channel->m_channel, command.mb_str(wxConvUTF8).data());
     if(rc != SSH_OK) {
-        Close();
-        throw clException(BuildError("Execute failed"));
+        wxDELETE(channel);
+        return nullptr;
     }
-    m_thread = new clSSHChannelReader(this, m_channel, m_wantStderr);
-    m_thread->Start();
+
+    channel->m_thread = new clSSHChannelReader(channel, channel->m_channel, channel->m_wantStderr);
+    channel->m_thread->Start();
+    return IProcess::Ptr_t{ channel };
 }
 
 wxString clSSHChannel::BuildError(const wxString& prefix) const

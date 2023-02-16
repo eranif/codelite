@@ -56,7 +56,7 @@ public:
     /// - wxEVT_ASYNC_PROCESS_TERMINATED (never contains output)
     ///
     /// Returns: the remote channel. The caller should delete it upon completion
-    clSSHChannel* try_execute(const clRemoteExecutor::Cmd& cmd);
+    IProcess::Ptr_t try_execute(const clRemoteExecutor::Cmd& cmd);
 };
 #endif // CL_REMOTE_EXECUTOR_HPP
 #endif

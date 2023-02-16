@@ -38,7 +38,7 @@ bool clRemoteExecutor::startup(const wxString& account_name)
 
 void clRemoteExecutor::shutdown() { m_remoteAccount.clear(); }
 
-clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
+IProcess::Ptr_t clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {
     auto ssh_session = clRemoteHost::Instance()->TakeSession();
     if(!ssh_session) {
@@ -47,32 +47,13 @@ clSSHChannel* clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
     }
 
     // open the channel
-    clSSHChannel* channel = nullptr;
-    try {
-        channel = new clSSHChannel(ssh_session, this, true);
-        channel->Open();
-    } catch(clException& e) {
-        LOG_ERROR(LOG) << "failed to open channel." << e.What() << endl;
-        wxDELETE(channel);
+    wxString command = ssh::build_command(cmd.command, cmd.wd, cmd.env);
+    IProcess::Ptr_t proc = clSSHChannel::Execute(ssh_session, this, command, true);
+    if(!proc) {
+        LOG_ERROR(LOG) << "failed to start remote command:" << command << endl;
         return nullptr;
     }
-
-    wxString command = ssh::build_command(cmd.command, cmd.wd, cmd.env);
-    LOG_DEBUG(LOG) << "Executing command:" << command << endl;
-
-    // prepare the commands
-
-    try {
-        channel->Execute(command);
-        LOG_DEBUG(LOG) << "Success" << endl;
-        return channel;
-    } catch(clException& e) {
-        LOG_TRACE(LOG) << "failed to execute remote command." << command << "." << e.What() << endl;
-        wxDELETE(channel);
-    }
-
-    // the channel will delete itself upon completion
-    return nullptr;
+    return proc;
 }
 
 void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)

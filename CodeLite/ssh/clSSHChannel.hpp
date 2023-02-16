@@ -30,9 +30,10 @@ protected:
     wxMessageQueue<Message> m_Queue;
     wxEvtHandler* m_owner = nullptr;
     bool m_wantStderr = false;
-
+    bool m_hadErrors = false;
+    
 protected:
-    wxString BuildError(const wxString& prefix) const;
+    wxString BuildError(const wxString& prefix);
     void DoWrite(const wxString& buffer, bool raw);
 
     void OnReadError(clCommandEvent& event);

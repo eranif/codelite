@@ -85,12 +85,14 @@ void clSSH::Open(int seconds)
 
     ssh_set_blocking(m_session, 0);
     int verbosity = SSH_LOG_NOLOG;
+    int strict_check = 0;
     std::string host = StringUtils::ToStdString(m_host);
     std::string user = StringUtils::ToStdString(GetUsername());
     ssh_options_set(m_session, SSH_OPTIONS_HOST, host.c_str());
     ssh_options_set(m_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
     ssh_options_set(m_session, SSH_OPTIONS_PORT, &m_port);
     ssh_options_set(m_session, SSH_OPTIONS_USER, user.c_str());
+    ssh_options_set(m_session, SSH_OPTIONS_STRICTHOSTKEYCHECK, &strict_check);
 
     // set user options defined by environment variables
     // SSH_OPTIONS_KEY_EXCHANGE: Set the key exchange method to be used (const char *, comma-separated list). ex:

@@ -10,11 +10,13 @@
 
 #include <libssh/libssh.h>
 
-INITIALISE_SSH_LOG(LOG, "clSSHChannel");
-
 //===-------------------------------------------------------------
 // This thread is used when requesting a non interactive command
 //===-------------------------------------------------------------
+
+#include "clModuleLogger.hpp"
+INITIALISE_MODULE_LOG(LOG, "clSSHChannel", "ssh.log");
+
 class clSSHChannelReader : public clJoinableThread
 {
     wxEvtHandler* m_handler;
@@ -98,14 +100,14 @@ void clSSHChannel::Open()
     }
     m_channel = ssh_channel_new(m_ssh->GetSession());
     if(!m_channel) {
-        throw clException(BuildError("Failed to allocte ssh channel"));
+        throw clException(BuildError("ssh_channel_new error."));
     }
 
     int rc = ssh_channel_open_session(m_channel);
     if(rc != SSH_OK) {
         ssh_channel_free(m_channel);
         m_channel = NULL;
-        throw clException(BuildError("Failed to open ssh channel"));
+        throw clException(BuildError("ssh_channel_open_session error."));
     }
 }
 
@@ -120,9 +122,14 @@ void clSSHChannel::Close()
         m_channel = NULL;
     }
 
-    // put back the ssh session
-    clRemoteHost::Instance()->AddSshSession(m_ssh);
+    if(m_hadErrors) {
+        // log this
+        LOG_DEBUG(LOG) << "ssh session had errors. discarding it" << endl;
 
+    } else {
+        // put back the ssh session
+        clRemoteHost::Instance()->AddSshSession(m_ssh);
+    }
     // clear the local copy
     m_ssh.reset();
 }
@@ -150,11 +157,14 @@ IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, wxEvtHandler* owner, con
     return IProcess::Ptr_t{ channel };
 }
 
-wxString clSSHChannel::BuildError(const wxString& prefix) const
+wxString clSSHChannel::BuildError(const wxString& prefix)
 {
     if(!m_ssh) {
         return prefix;
     }
+
+    // if we reached here, it means we had errors - mark this channel as "errornous"
+    m_hadErrors = true;
     wxString errmsg = ssh_get_error(m_ssh->GetSession());
     return wxString() << prefix << ". " << errmsg;
 }

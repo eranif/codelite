@@ -59,6 +59,21 @@ bool alacritty_read_colour(const YAML::Node& node, const std::string& prop_name,
     }
     return false;
 }
+
+wxString adjust_colour(const wxString& col, bool is_dark)
+{
+    bool col_is_dark = DrawingUtils::IsDark(col);
+    if(is_dark && col_is_dark) {
+        // dark on dark
+        return wxColour(col).ChangeLightness(115).GetAsString(wxC2S_HTML_SYNTAX);
+    } else if(!is_dark && !col_is_dark) {
+        // bright on bright
+        return wxColour(col).ChangeLightness(85).GetAsString(wxC2S_HTML_SYNTAX);
+    } else {
+        // don't modify it
+        return col;
+    }
+}
 } // namespace
 
 ThemeImporterBase::ThemeImporterBase() {}
@@ -343,6 +358,15 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyTheme(const wxFileName& theme
         return nullptr;
     }
 
+    black = adjust_colour(black, m_isDarkTheme);
+    red = adjust_colour(red, m_isDarkTheme);
+    green = adjust_colour(green, m_isDarkTheme);
+    yellow = adjust_colour(yellow, m_isDarkTheme);
+    blue = adjust_colour(blue, m_isDarkTheme);
+    magenta = adjust_colour(magenta, m_isDarkTheme);
+    cyan = adjust_colour(cyan, m_isDarkTheme);
+    white = adjust_colour(white, m_isDarkTheme);
+
     LexerConf::Ptr_t lexer(new LexerConf());
 
     // reset everything to the m_editor
@@ -359,18 +383,19 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyTheme(const wxFileName& theme
     SetSelectionColour(m_isDarkTheme, m_selection);
 
     m_singleLineComment.fg_colour = "GREY";
-    m_multiLineComment.fg_colour = "DARK GREY";
-    m_number.fg_colour = magenta;
-    m_string.fg_colour = cyan;
+    m_multiLineComment.fg_colour = "GREY";
+    m_number.fg_colour = cyan;
+
+    m_string.fg_colour = green;
     m_oper = m_editor;
     m_keyword.fg_colour = red;
     m_klass.fg_colour = yellow;
-    m_variable.fg_colour = green;
+    m_variable.fg_colour = magenta;
     m_function.fg_colour = blue;
     m_javadoc = m_multiLineComment;
-    m_javadocKeyword.fg_colour = red;
+    m_javadocKeyword.fg_colour = yellow;
     m_field = m_variable;
-    m_enum.fg_colour = magenta;
+    m_enum.fg_colour = m_isDarkTheme ? "LIGHT GREY" : "GREY";
     lexer->SetUseCustomTextSelectionFgColour(false);
     m_themeName = "Alacritty: " + theme_file.GetName();
 

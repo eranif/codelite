@@ -401,15 +401,15 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyTheme(const wxFileName& theme
     m_number.fg_colour = cyan;
 
     m_string.fg_colour = green;
-    m_oper = m_editor;
-    m_keyword.fg_colour = red;
+    m_oper.fg_colour = m_editor.fg_colour;
+    m_keyword.fg_colour = magenta;
     m_klass.fg_colour = yellow;
-    m_variable.fg_colour = magenta;
+    m_variable.fg_colour = red;
     m_function.fg_colour = blue;
     m_javadoc = m_multiLineComment;
     m_javadocKeyword.fg_colour = yellow;
     m_field = m_variable;
-    m_enum.fg_colour = m_isDarkTheme ? "LIGHT GREY" : "GREY";
+    m_enum.fg_colour = cyan;
     lexer->SetUseCustomTextSelectionFgColour(false);
     m_themeName = "Alacritty: " + theme_file.GetName();
 

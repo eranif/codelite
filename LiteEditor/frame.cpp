@@ -1523,6 +1523,10 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     add_main_toolbar_item(m_mainToolbar, "open_file", _("Open file"), "file_open", toolSize);
     m_mainToolbar->AddSeparator();
 
+    add_main_toolbar_item(m_mainToolbar, "save_file", _("Save"), "file_save", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "save_all", _("Save All"), "file_save_all", toolSize);
+    m_mainToolbar->AddSeparator();
+
     add_main_toolbar_item(m_mainToolbar, "id_backward", _("Backward"), "back", toolSize);
     add_main_toolbar_item(m_mainToolbar, "id_forward", _("Forward"), "forward", toolSize);
     m_mainToolbar->AddSeparator();

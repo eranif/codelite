@@ -330,14 +330,27 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyTheme(const wxFileName& theme
     }
 
     // base colours
-    if(!alacritty_read_colour(config["colors"]["primary"], "background", &m_editor.bg_colour) ||
-       !alacritty_read_colour(config["colors"]["primary"], "foreground", &m_editor.fg_colour))
+    auto colors_node = config["colors"];
+    if(!alacritty_read_colour(colors_node["primary"], "background", &m_editor.bg_colour) ||
+       !alacritty_read_colour(colors_node["primary"], "foreground", &m_editor.fg_colour))
         return nullptr;
 
     m_isDarkTheme = DrawingUtils::IsDark(m_editor.bg_colour);
 
-    std::string colour_variant = m_isDarkTheme ? "bright" : "normal";
-    auto normal_colours = config["colors"][colour_variant];
+    // choose the colour variant. we assume that "normal" is always there
+    // and "bright" is optional. if "bright" is required but missing
+    // fallback to use "normal"
+    std::string colour_variant_name = m_isDarkTheme ? "bright" : "normal";
+    if(colour_variant_name == "bright" && !colors_node["bright"].IsDefined()) {
+        colour_variant_name = "normal";
+    }
+
+    // ensure that the variant selected exists
+    if(!colors_node[colour_variant_name].IsDefined()) {
+        return nullptr;
+    }
+
+    auto colours_variant_node = colors_node[colour_variant_name];
 
     wxString black;
     wxString red;
@@ -347,13 +360,14 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyTheme(const wxFileName& theme
     wxString magenta;
     wxString cyan;
     wxString white;
-    if(!alacritty_read_colour(normal_colours, "black", &black) || !alacritty_read_colour(normal_colours, "red", &red) ||
-       !alacritty_read_colour(normal_colours, "green", &green) ||
-       !alacritty_read_colour(normal_colours, "yellow", &yellow) ||
-       !alacritty_read_colour(normal_colours, "blue", &blue) ||
-       !alacritty_read_colour(normal_colours, "magenta", &magenta) ||
-       !alacritty_read_colour(normal_colours, "cyan", &cyan) ||
-       !alacritty_read_colour(normal_colours, "white", &white)) {
+    if(!alacritty_read_colour(colours_variant_node, "black", &black) ||
+       !alacritty_read_colour(colours_variant_node, "red", &red) ||
+       !alacritty_read_colour(colours_variant_node, "green", &green) ||
+       !alacritty_read_colour(colours_variant_node, "yellow", &yellow) ||
+       !alacritty_read_colour(colours_variant_node, "blue", &blue) ||
+       !alacritty_read_colour(colours_variant_node, "magenta", &magenta) ||
+       !alacritty_read_colour(colours_variant_node, "cyan", &cyan) ||
+       !alacritty_read_colour(colours_variant_node, "white", &white)) {
         clDEBUG() << "failed to read basic colour" << endl;
         return nullptr;
     }

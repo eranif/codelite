@@ -53,6 +53,7 @@
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/notebook.h>
+#include <wx/notifmsg.h>
 #include <wx/richtooltip.h>
 #include <wx/treebook.h>
 #include <wx/utils.h>
@@ -662,46 +663,55 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
 {
-    wxFileDialog selector(this, _("Select theme to import"), "", "",
-                          "VSCode JSON Theme (*.json)|*.json|Eclipse Theme Files (*.xml)|*.xml|Alacritty Theme "
-                          "(*.yaml)|*.yaml|Alacritty Theme (*.yml)|*.yml",
-                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog selector(
+        this, _("Select theme to import"), "", "",
+        "All Files (*.*)|*.*|VSCode JSON Theme (*.json)|*.json|Eclipse Theme Files (*.xml)|*.xml|Alacritty Theme "
+        "(*.yaml)|*.yaml|Alacritty Theme (*.yml)|*.yml",
+        wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if(selector.ShowModal() == wxID_OK) {
-
-        wxString path = selector.GetPath();
-        if(path.empty())
+        wxArrayString paths;
+        selector.GetPaths(paths);
+        if(paths.empty())
             return;
 
         wxBusyCursor bc;
-        wxString theme_name = ColoursAndFontsManager::Get().ImportEclipseTheme(path);
-        if(theme_name.empty()) {
-            ::wxMessageBox(_("Failed to import theme file: ") + path + _("\nInvalid file"), "CodeLite",
-                           wxICON_WARNING | wxOK | wxOK_DEFAULT, this);
-            return;
+        std::vector<wxString> themes_imported;
+        for(const auto& path : paths) {
+            wxString theme_name = ColoursAndFontsManager::Get().ImportEclipseTheme(path);
+            if(!theme_name.empty()) {
+                themes_imported.push_back(theme_name);
+            }
         }
 
         wxString message;
-        message << _("Theme : '") << theme_name << _("' imported successfully!");
-        ::wxMessageBox(message);
-
-        int pos = m_choiceGlobalTheme->Append(theme_name);
-        if(pos != wxNOT_FOUND) {
-            m_choiceGlobalTheme->SetSelection(pos);
+        if(themes_imported.empty()) {
+            message << _("Failed to import themes!");
+        } else {
+            message << _("Successfully imported ") << themes_imported.size() << " themes";
+            // apply the font by reseting the global font again
+            const wxFont& gFont = ColoursAndFontsManager::Get().GetGlobalFont();
+            if(gFont.IsOk()) {
+                ColoursAndFontsManager::Get().SetGlobalFont(
+                    gFont); // this will fix the newly imported themes to use the global font
+            }
         }
 
-        // Make this lexer the active one
-        LoadLexer(theme_name);
-        DoUpdatePreview();
+        wxNotificationMessage notif("CodeLite", message, nullptr,
+                                    themes_imported.empty() ? wxICON_WARNING : wxICON_INFORMATION);
+        notif.Show(5);
 
-        // Mark the dialg is modified and force a save
-        m_isModified = true;
-        SaveChanges();
+        if(!themes_imported.empty()) {
+            // Mark the dialg is modified and force a save+reload
+            m_isModified = true;
+            SaveChanges();
 
-        // Dismiss the dialog
-        EndModal(wxID_OK);
-        // and reload it
-        wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
-        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
+            // Dismiss the dialog
+            EndModal(wxID_OK);
+
+            // and reload it
+            wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
+            clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
+        }
     }
 }
 

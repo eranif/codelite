@@ -445,7 +445,7 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
     wxString filename = GetEditorFilePath(editor);
     if(ShouldHandleFile(editor)) {
         // before sending the save request, send a change request
-        LSP_DEBUG()<< "Flushing changes before save" << endl;
+        LSP_DEBUG() << "Flushing changes before save" << endl;
         SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
         LSP::CompletionRequest::Ptr_t req =
@@ -515,6 +515,9 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         wxString fileContent = editor->GetEditorText();
         SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
         SendSemanticTokensRequest(editor);
+        // cache symbols
+        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE |
+                                    LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
     }
 }
 

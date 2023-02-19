@@ -9,6 +9,7 @@ others:
 ----
 
 - clTreeCtrl: replace the current search with a panel that shows when clicking "/"
-- Allow importing themes from https://github.com/alacritty/alacritty-theme
 - git: support showing file revision history
 - dap: support stdio connection based
+- sftp save should be in sync with clRemoteHost
+

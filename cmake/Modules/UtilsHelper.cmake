@@ -96,17 +96,24 @@ function(get_distro_name DISTRO_NAME)
 endfunction()
 
 if(MINGW)
-    macro(msys_install_clang64_tool tool_name install_dir)
-        # locate the dependencies
+    macro(msys_list_deps __NAME__ OUT_LIST)
         execute_process(
-            COMMAND sh -c "ldd /clang64/bin/${tool_name} | grep clang64|cut -d'=' -f2|cut -d' ' -f2|xargs cygpath -w"
-            OUTPUT_VARIABLE TOOL_DEPS
+            COMMAND sh -c "/usr/bin/cygcheck ${__NAME__} |grep clang64|grep -v -w Found|grep -v ${__NAME__}"
+            OUTPUT_VARIABLE __dep_list
             OUTPUT_STRIP_TRAILING_WHITESPACE)
-        string(REPLACE "\n" ";" TOOL_DEPS ${TOOL_DEPS})
-        list(APPEND TOOL_DEPS "${MSYS2_BASE}/clang64/bin/${tool_name}")
-        foreach(TOOL ${TOOL_DEPS})
-            string(REPLACE "\\" "/" TOOL "${TOOL}")
-            install(FILES "${TOOL}" DESTINATION ${install_dir})
+        string(REPLACE "\n" ";" ${OUT_LIST} "${__dep_list}")
+        string(REPLACE " " "" ${OUT_LIST} "${${OUT_LIST}}")
+        string(REPLACE "\\" "/" ${OUT_LIST} "${${OUT_LIST}}")
+    endmacro()
+
+    macro(msys_install_clang64_tool tool_name install_dir)
+        msys_list_deps(${tool_name} CLANGD_DEPS)
+        # install the tool itself
+        install(FILES "${MSYS2_BASE}/clang64/bin/${tool_name}" DESTINATION ${install_dir})
+
+        # and all its dlls
+        foreach(DLL ${CLANGD_DEPS})
+            install(FILES "${DLL}" DESTINATION ${install_dir})
         endforeach()
     endmacro()
 endif()

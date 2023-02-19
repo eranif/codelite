@@ -986,19 +986,17 @@ if(MINGW)
     write_file(${CMAKE_BINARY_DIR}/msys2-environment "export MSYS2_HOME=${MSYS2_BASE}" APPEND)
 
     # install DLLs required by MinGW
+    msys_list_deps(libhunspell-1.7-0.dll LIBHUNSPELL_DEPS)
+    msys_list_deps(libssh.dll LIBSSH_DEPS)
 
-    # TODO: this part should be configurable / auto-detected
     list(
         APPEND
         SYSTEM_DLLS
         libc++.dll
-        libcrypto-1_1-x64.dll
-        libhunspell-1.7-0.dll
-        libsqlite3-0.dll
         libssh.dll
-        libunwind.dll
-        libwinpthread-1.dll
-        zlib1.dll)
+        libsqlite3-0.dll
+        libhunspell-1.7-0.dll
+        libunwind.dll)
 
     list(
         APPEND
@@ -1013,7 +1011,6 @@ if(MINGW)
         mv.exe)
 
     list(APPEND WXWIDGETS_DLLS wxmsw330u_clang_custom.dll)
-
     list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip ${CMAKE_SOURCE_DIR}/LICENSE)
 
     foreach(DLL ${SYSTEM_DLLS})
@@ -1031,6 +1028,16 @@ if(MINGW)
     foreach(RESOURCE ${CODELITE_RESOURCES})
         install(FILES "${RESOURCE}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
     endforeach()
+
+    # copy extra deps dlls
+    foreach(DLL ${LIBHUNSPELL_DEPS})
+        install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    endforeach()
+
+    foreach(DLL ${LIBSSH_DEPS})
+        install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    endforeach()
+
 endif()
 
 if(MINGW AND NOT WXC_APP)

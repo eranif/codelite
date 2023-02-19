@@ -107,7 +107,7 @@ if(MINGW)
     endmacro()
 
     macro(msys_install_clang64_tool tool_name install_dir)
-        msys_list_deps(${tool_name} CLANGD_DEPS)
+        msys_list_deps(${MSYS2_BASE}/clang64/bin/${tool_name} CLANGD_DEPS)
         # install the tool itself
         install(FILES "${MSYS2_BASE}/clang64/bin/${tool_name}" DESTINATION ${install_dir})
 

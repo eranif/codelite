@@ -986,8 +986,8 @@ if(MINGW)
     write_file(${CMAKE_BINARY_DIR}/msys2-environment "export MSYS2_HOME=${MSYS2_BASE}" APPEND)
 
     # install DLLs required by MinGW
-    msys_list_deps(libhunspell-1.7-0.dll LIBHUNSPELL_DEPS)
-    msys_list_deps(libssh.dll LIBSSH_DEPS)
+    msys_list_deps(${MSYS2_BASE}/clang64/bin/libhunspell-1.7-0.dll LIBHUNSPELL_DEPS)
+    msys_list_deps(${MSYS2_BASE}/clang64/bin/libssh.dll LIBSSH_DEPS)
 
     list(
         APPEND

@@ -3800,6 +3800,11 @@ void clEditor::OnFocusLost(wxFocusEvent& event)
     m_isFocused = false;
     event.Skip();
     UpdateLineNumbers();
+
+    // release the tooltip
+    DoCancelCalltip();
+    DoCancelCodeCompletionBox();
+
     if(HasCapture()) {
         ReleaseMouse();
     }

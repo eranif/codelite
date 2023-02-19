@@ -53,9 +53,10 @@ bool alacritty_read_colour(const YAML::Node& node, const std::string& prop_name,
             *value = str;
             return true;
         }
+    } catch(YAML::Exception& e) {
+        clDEBUG() << "exception thrown while searching for node[" << prop_name << "]." << e.msg << endl;
     } catch(...) {
         clDEBUG() << "exception thrown while searching for node[" << prop_name << "]" << endl;
-        return false;
     }
     return false;
 }
@@ -312,7 +313,18 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyTheme(const wxFileName& theme
     clDEBUG() << "   > Importing Alacritty Theme (YAML) file:" << theme_file << ". Language:" << langName << endl;
 
     std::string filename = StringUtils::ToStdString(theme_file.GetFullPath());
-    YAML::Node config = YAML::LoadFile(filename);
+
+    // load the file (this might throw)
+    YAML::Node config;
+    try {
+        config = YAML::LoadFile(filename);
+    } catch(YAML::Exception& e) {
+        clERROR() << "failed loading file:" << filename << "." << e.msg << endl;
+        return nullptr;
+    } catch(...) {
+        clERROR() << "failed loading file:" << filename << endl;
+        return nullptr;
+    }
 
     // sanity
     if(config.IsNull()) {

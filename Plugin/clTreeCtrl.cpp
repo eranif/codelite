@@ -1190,6 +1190,8 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
 {
     // Process the rest of the scrolling events here
     wxTreeItemId nextSelection;
+    CHECK_ITEM_RET(GetRootItem());
+
     bool fromTop = false;
     if(steps == 0) {
         // Top or Bottom
@@ -1203,7 +1205,7 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
         } else {
             // Find the last item, it does not matter if the root is hidden
             clRowEntry* node = m_model.ToPtr(GetRootItem());
-            while(node->GetLastChild()) {
+            while(node && node->GetLastChild()) {
                 node = node->GetLastChild();
             }
             nextSelection = wxTreeItemId(node);
@@ -1212,6 +1214,8 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
         nextSelection = DoScrollLines(steps, direction == wxUP, GetFocusedItem(), false);
         fromTop = (direction == wxUP);
     }
+
+    CHECK_ITEM_RET(nextSelection);
 
     if(::wxGetKeyState(WXK_SHIFT) && HasStyle(wxTR_MULTIPLE)) {
         m_model.AddSelection(nextSelection);

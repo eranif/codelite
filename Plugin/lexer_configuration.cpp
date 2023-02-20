@@ -130,8 +130,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 
     // turn off PP tracking/updating by default
     if(GetName() == "c++") {
-        // ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), "1");
-        // ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), "1");
+        ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), "0");
+        ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), "0");
     }
 
     if(GetName() == "scss") {

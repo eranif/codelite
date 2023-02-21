@@ -106,8 +106,8 @@ git submodule init
 git submodule update
 mkdir build-release
 cd build-release
-../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++11 -stdlib=libc++' CC=clang --disable-debug --disable-mediactrl
-make -j8
+cmake -DCMAKE_BUILD_TYPE=Release .. -DwxBUILD_MONOLITHIC=ON
+make -j10
 sudo make install
 ```
 

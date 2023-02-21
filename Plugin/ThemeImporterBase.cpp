@@ -209,7 +209,7 @@ void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
 
     AddProperty(lexer, "-1", "Fold Margin", m_editor);
     AddProperty(lexer, "-2", "Text Selection", m_selection);
-    AddProperty(lexer, "-3", "Caret Colour", IsDarkTheme() ? "white" : "black", m_editor.bg_colour);
+    AddProperty(lexer, "-3", "Caret Colour", m_caret);
     AddProperty(lexer, "-4", "Whitespace", whitespaceColour, m_editor.bg_colour);
     AddProperty(lexer, "38", "Calltip", m_editor);
     AddProperty(lexer, "33", "Line Numbers", m_lineNumber);
@@ -400,8 +400,22 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyTheme(const wxFileName& theme
         m_number = m_string = m_oper = m_keyword = m_klass = m_variable = m_javadoc = m_javadocKeyword = m_function =
             m_field = m_editor;
 
-    m_caret.fg_colour = m_isDarkTheme ? "ORANGE" : "BLACK";
     m_caret.bg_colour = m_editor.bg_colour;
+    m_caret.fg_colour.clear();
+
+    // read the caret colour from the configuration file
+    if(colors_node["cursor"].IsDefined()) {
+        // use this colour
+        wxString cursor_colour;
+        if(alacritty_read_colour(colors_node["cursor"], "cursor", &cursor_colour)) {
+            m_caret.fg_colour = cursor_colour;
+        }
+    }
+
+    // no cursor colour found? define one
+    if(m_caret.fg_colour.empty()) {
+        m_caret.fg_colour = m_isDarkTheme ? "ORANGE" : "BLACK";
+    }
 
     m_lineNumber = m_editor;
     m_lineNumberActive = m_lineNumber;

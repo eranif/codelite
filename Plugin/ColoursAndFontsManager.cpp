@@ -646,13 +646,6 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
         indentGuides.SetFgColour(defaultProp.GetBgColour());
         indentGuides.SetBgColour(defaultProp.GetBgColour());
     }
-
-    if(force || m_lexersVersion < 6) {
-        StyleProperty& caret = lexer->GetProperty(CARET_ATTR_ID);
-        if(lexer->IsDark()) {
-            caret.SetFgColour("rgb(255, 128, 0)");
-        }
-    }
 }
 
 void ColoursAndFontsManager::SetTheme(const wxString& themeName)

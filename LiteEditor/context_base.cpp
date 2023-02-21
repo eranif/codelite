@@ -89,7 +89,7 @@ void ContextBase::AutoIndent(const wxChar& ch)
     }
 }
 
-void ContextBase::DoApplySettings(LexerConf::Ptr_t lexPtr) { lexPtr->Apply(&GetCtrl()); }
+void ContextBase::DoApplySettings(LexerConf::Ptr_t lexPtr) { lexPtr->Apply(&GetCtrl(), true); }
 
 bool ContextBase::GetHyperlinkRange(int& start, int& end)
 {

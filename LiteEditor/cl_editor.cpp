@@ -602,7 +602,7 @@ void clEditor::SetSyntaxHighlight(const wxString& lexerName)
     // some of its settings)
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer(lexerName);
     if(lexer) {
-        lexer->Apply(this);
+        lexer->Apply(this, true);
     }
     SetProperties();
 

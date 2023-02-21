@@ -15,12 +15,8 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
     int startPos = ctrl->GetEndStyled();
     int endPos = e.GetPosition();
     wxString text = ctrl->GetTextRange(startPos, endPos);
-#if wxCHECK_VERSION(3, 1, 1) && !defined(__WXOSX__)
     // The scintilla syntax in wx3.1.1 changed
     ctrl->StartStyling(startPos);
-#else
-    ctrl->StartStyling(startPos, 0x1f);
-#endif
     size_t filenameStyleLen = 0;
     size_t lineNumberStyleLen = 0;
     size_t matchStyleLen = 0;

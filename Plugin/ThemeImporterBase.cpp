@@ -22,7 +22,6 @@
 #include <wx/arrstr.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/stringimpl.h>
 #include <wx/tokenzr.h>
 
 namespace

@@ -130,12 +130,8 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
     int startPos = ctrl->GetEndStyled();
     int endPos = e.GetPosition();
     wxString text = ctrl->GetTextRange(startPos, endPos);
-#if wxCHECK_VERSION(3, 1, 1) && !defined(__WXOSX__)
     // The scintilla syntax in wx3.1.1 changed
     ctrl->StartStyling(startPos);
-#else
-    ctrl->StartStyling(startPos, 0x1f);
-#endif
 
     wxString::const_iterator iter = text.begin();
     size_t headerStyleLen = 0;

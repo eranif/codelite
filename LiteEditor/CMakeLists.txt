@@ -395,3 +395,4 @@ if(MINGW)
     # include this file
     install(SCRIPT ${POST_INSTALL_SCRIPT})
 endif()
+

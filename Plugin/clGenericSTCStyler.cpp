@@ -26,12 +26,8 @@ void clGenericSTCStyler::OnStyleNeeded(wxStyledTextEvent& event)
     int endPos = event.GetPosition();
     wxString text = m_ctrl->GetTextRange(startPos, endPos);
 
-#if wxCHECK_VERSION(3, 1, 1) && !defined(__WXOSX__)
     // The scintilla syntax in wx3.1.1 changed
     m_ctrl->StartStyling(startPos);
-#else
-    m_ctrl->StartStyling(startPos, 0x1f);
-#endif
     wxString lineText;
     while(GetNextLine(text, lineText)) {
         text = text.Mid(lineText.length());

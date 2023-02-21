@@ -22,18 +22,14 @@ macro(CL_INSTALL_NAME_TOOL _findwhat_ _binary_)
 endmacro()
 
 macro(CL_OSX_COPY_BREW_LIB lib_full_path destination_folder)
-    #    if(APPLE)
-    #        # when using brew, the libraries are symlinked to ../Cellar/...
-    #        # we need to fix this by copying the real file and then creating a symbolic link
-    #        # in our directory
+    # if(APPLE) # when using brew, the libraries are symlinked to ../Cellar/... # we need to fix this by copying the
+    # real file and then creating a symbolic link # in our directory
     #
-    #        # what we want to do here is:
-    #        # alter the symlink libfoo.dylib -> ../Cellar/lib/libfoo.1.X.dylib
-    #        # into libfoo.dylib -> real-libfoo.dylib
-    #        execute_process(COMMAND basename ${lib_full_path} OUTPUT_VARIABLE __lib_basename OUTPUT_STRIP_TRAILING_WHITESPACE)
-    #        execute_process(COMMAND cp -L ${lib_full_path} ${destination_folder}/real-${__lib_basename})
-    #        execute_process(COMMAND /bin/sh -c "cd ${destination_folder} && ln -sf real-${__lib_basename} ${__lib_basename}")
-    #    endif()
+    # # what we want to do here is: # alter the symlink libfoo.dylib -> ../Cellar/lib/libfoo.1.X.dylib # into
+    # libfoo.dylib -> real-libfoo.dylib execute_process(COMMAND basename ${lib_full_path} OUTPUT_VARIABLE __lib_basename
+    # OUTPUT_STRIP_TRAILING_WHITESPACE) execute_process(COMMAND cp -L ${lib_full_path}
+    # ${destination_folder}/real-${__lib_basename}) execute_process(COMMAND /bin/sh -c "cd ${destination_folder} && ln
+    # -sf real-${__lib_basename} ${__lib_basename}") endif()
 endmacro()
 
 macro(CL_OSX_FIND_BREW_LIB __lib_name LIB_OUTPUT_VARIABLE)
@@ -81,34 +77,43 @@ endmacro()
 
 function(copy_extra_homebrew_libs)
     # first try to copy files from /usr/local/lib
-    execute_process(COMMAND cp -L "/usr/local/lib/libpcre2-32.0.dylib" ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
-                    ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/usr/local/lib/libssh.4.dylib" ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
                     ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/usr/local/lib/libhunspell-1.7.0.dylib"
                             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
 
     # if these files also exists under /opt/homebrew -> use this path instead
-    execute_process(COMMAND cp -L "/opt/homebrew/opt/pcre2/lib/libpcre2-32.0.dylib"
-                            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/opt/homebrew/opt/libssh/lib/libssh.4.dylib"
                             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/opt/homebrew/opt/hunspell/lib/libhunspell-1.7.0.dylib"
                             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
 endfunction()
 
-function(fix_homebrew_paths)
-    file(GLOB WXLIBS_TO_FIX ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/libwx_osx*.dylib)
+function(copy_lib_deps LIB_FULLPATH DEPS_PATTERN)
+    # first try to copy files from /usr/local/lib
+    execute_process(
+        COMMAND sh -c "otool -L ${LIB_FULLPATH} |grep ${DEPS_PATTERN}|cut -d '(' -f1"
+        OUTPUT_VARIABLE _HOMEBREW_DEPS
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REPLACE " " "" _HOMEBREW_DEPS ${_HOMEBREW_DEPS})
+    string(REPLACE "\t" "" _HOMEBREW_DEPS ${_HOMEBREW_DEPS})
+    string(REPLACE "\n" ";" _HOMEBREW_DEPS ${_HOMEBREW_DEPS})
+    foreach(DLL ${_HOMEBREW_DEPS})
+        message(STATUS "Copying ${DLL} into bundle/MacOS")
+        execute_process(COMMAND cp -L ${DLL} ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+    endforeach()
+endfunction()
+
+function(fix_homebrew_paths __pattern)
+    file(GLOB WXLIBS_TO_FIX ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/${__pattern})
     foreach(_WXLIB ${WXLIBS_TO_FIX})
         cl_install_name_tool("homebrew" ${_WXLIB})
     endforeach()
 endfunction()
 
-#------------------------------------------------------------------------------------
-# A useful macro that accepts the string
-# the search string and runs install_name_tool
-# to set it to the @executable_path
-#------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
+# A useful macro that accepts the string the search string and runs install_name_tool to set it to the @executable_path
+# ------------------------------------------------------------------------------------
 macro(CL_INSTALL_NAME_TOOL_STD _binary_)
     if(APPLE)
         cl_install_name_tool("libwx_" ${_binary_})
@@ -131,8 +136,8 @@ macro(_FIND_WX_LIBRARIES)
                 COMMAND wx-config --libs
                 OUTPUT_VARIABLE WX_LIBSOUTPUT
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
-            if(${WX_LIBSOUTPUT} MATCHES "^-L.+"
-            )# In recent, multi-architecture, distro versions it'll start with -L/foo/bar
+            if(${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with
+                                                 # -L/foo/bar
                 string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" _WX_LIBS_DIR ${WX_LIBSOUTPUT})
                 message("-- _WX_LIBS_DIR is set to ${_WX_LIBS_DIR}")
             endif()
@@ -148,17 +153,16 @@ endmacro()
 # execute the macro once this file is included
 _find_wx_libraries()
 
-#--------------------------------------------------------------------
-# Install a file into
-# /usr/lib/codelite/share or codelite.app/Contents/SharedSupport
-#--------------------------------------------------------------------
+# --------------------------------------------------------------------
+# Install a file into /usr/lib/codelite/share or codelite.app/Contents/SharedSupport
+# --------------------------------------------------------------------
 macro(CL_INSTALL_FILE_SHARED _filename_)
     install(FILES ${_filename_} DESTINATION ${CL_RESOURCES_DIR})
 endmacro()
 
-#------------------------------------
+# ------------------------------------
 # install a plugin
-#------------------------------------
+# ------------------------------------
 macro(CL_INSTALL_PLUGIN _target_)
     if(APPLE)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins)
@@ -168,9 +172,9 @@ macro(CL_INSTALL_PLUGIN _target_)
     endif()
 endmacro()
 
-#------------------------------------
+# ------------------------------------
 # install an executable
-#------------------------------------
+# ------------------------------------
 macro(CL_INSTALL_EXECUTABLE _target_)
     if(APPLE)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
@@ -192,9 +196,9 @@ macro(CL_INSTALL_EXECUTABLE _target_)
     endif()
 endmacro()
 
-#------------------------------------
+# ------------------------------------
 # install a debugger shared library
-#------------------------------------
+# ------------------------------------
 macro(CL_INSTALL_DEBUGGER _target_)
     if(APPLE)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers)
@@ -207,9 +211,9 @@ macro(CL_INSTALL_DEBUGGER _target_)
     endif()
 endmacro()
 
-#-------------------------------------------------
+# -------------------------------------------------
 # Prepare a skeleton bundle for CodeLite
-#-------------------------------------------------
+# -------------------------------------------------
 macro(OSX_MAKE_BUNDLE_DIRECTORY)
     if(APPLE)
         if(NOT CL_SRC_ROOT)
@@ -242,25 +246,29 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         # Copy Info.plist
         file(COPY ${CL_SRC_ROOT}/Runtime/Info.plist DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents)
 
-        ## Copy external libraries into the bundle folder
+        # Copy external libraries into the bundle folder
         _find_wx_libraries()
+
+        set(WX_DYLIB ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}.dylib)
+        message(STATUS "wxWidgets lib is: ${WX_DYLIB}")
+        copy_lib_deps(${WX_DYLIB} "homebrew")
 
         file(GLOB WXLIBS ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}*.dylib)
         foreach(WXLIB ${WXLIBS})
             file(COPY ${WXLIB} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
         endforeach()
-        fix_homebrew_paths()
+        fix_homebrew_paths("libwx_osx*.dylib")
 
-        ## Copy Terminal.app launcher script
+        # Copy Terminal.app launcher script
         file(
             COPY ${CL_SRC_ROOT}/Runtime/osx-terminal.sh
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
             FILE_PERMISSIONS ${EXE_PERM})
 
-        ## codelite-clang-format
+        # codelite-clang-format
         file(COPY ${CL_SRC_ROOT}/tools/macOS/clang-format DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
 
-        ## folders
+        # folders
         install(
             DIRECTORY ${CL_SRC_ROOT}/Runtime/plugins/resources
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/

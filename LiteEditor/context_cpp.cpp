@@ -1315,7 +1315,7 @@ void ContextCpp::OnDbgDwellEnd(wxStyledTextEvent& event)
 {
     wxUnusedVar(event);
     // remove the debugger indicator
-    GetCtrl().SetIndicatorCurrent(DEBUGGER_INDICATOR);
+    GetCtrl().SetIndicatorCurrent(INDICATOR_DEBUGGER);
     GetCtrl().IndicatorClearRange(0, GetCtrl().GetLength());
 }
 
@@ -1363,7 +1363,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
             word = ctrl.GetTextRange(sel_start, sel_end);
 
             // Mark the code we are going to try and show tip for
-            GetCtrl().SetIndicatorCurrent(DEBUGGER_INDICATOR);
+            GetCtrl().SetIndicatorCurrent(INDICATOR_DEBUGGER);
             GetCtrl().IndicatorFillRange(sel_start, sel_end - sel_start);
 
         } else {
@@ -1371,7 +1371,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
             word.Trim().Trim(false);
 
             // Mark the code we are going to try and show tip for
-            GetCtrl().SetIndicatorCurrent(DEBUGGER_INDICATOR);
+            GetCtrl().SetIndicatorCurrent(INDICATOR_DEBUGGER);
             GetCtrl().IndicatorFillRange(end - word.length(), word.Length());
         }
 

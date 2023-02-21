@@ -828,21 +828,13 @@ void clEditor::SetProperties()
     }
 
     // Separators
-#if wxCHECK_VERSION(3, 1, 0)
     SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_COLOUR);
     SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
     SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, FromDIP(1));
     wxColour bgColour = StyleGetBackground(0);
     SetMarginBackground(SYMBOLS_MARGIN_SEP_ID,
                         DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(120) : bgColour.ChangeLightness(60));
-#else
-    SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_FORE);
-    SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
-    // Show the separator margin only if the fold margin is hidden
-    // (otherwise the fold margin is the separator)
-    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID,
-                   (GetLexer() == wxSTC_LEX_CPP && FileExtManager::IsCxxFile(GetFileName())) ? FromDIP(1) : 0);
-#endif
+
     // Fold margin - allow only folder symbols to display
     SetMarginMask(FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);
 
@@ -939,7 +931,7 @@ void clEditor::SetProperties()
 
     // Bookmark
     int marker = wxSTC_MARK_BOOKMARK;
-    std::map<wxString, int>::iterator iter = ms_bookmarkShapes.find(options->GetBookmarkShape());
+    auto iter = ms_bookmarkShapes.find(options->GetBookmarkShape());
     if(iter != ms_bookmarkShapes.end()) {
         marker = iter->second;
     }
@@ -1047,7 +1039,9 @@ void clEditor::SetProperties()
     // Should we use spaces or tabs for indenting?
     // Usually we will ask the configuration, however
     // when using Makefile we _must_ use the TABS
-    SetUseTabs((GetContext()->GetName().Lower() == "makefile") ? true : options->GetIndentUsesTabs());
+    SetUseTabs(FileExtManager::GetType(GetFileName().GetFullName()) == FileExtManager::TypeMakefile
+                   ? true
+                   : options->GetIndentUsesTabs());
 
     size_t tabWidth = options->GetTabWidth();
     SetTabWidth(tabWidth);
@@ -1061,9 +1055,9 @@ void clEditor::SetProperties()
     SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);
 
     IndicatorSetUnder(1, true);
-    IndicatorSetUnder(HYPERLINK_INDICATOR, true);
-    IndicatorSetUnder(MATCH_INDICATOR, false);
-    IndicatorSetUnder(DEBUGGER_INDICATOR, true);
+    IndicatorSetUnder(INDICATOR_HYPERLINK, true);
+    IndicatorSetUnder(INDICATOR_MATCH, false);
+    IndicatorSetUnder(INDICATOR_DEBUGGER, true);
 
     bool isDarkTheme = (lexer && lexer->IsDark());
     wxColour indicator_colour = *wxRED;
@@ -1073,41 +1067,41 @@ void clEditor::SetProperties()
 
     SetUserIndicatorStyleAndColour(wxSTC_INDIC_SQUIGGLE, indicator_colour);
 
-    wxColour col2(wxT("LIGHT BLUE"));
+    wxColour col2{ *wxBLUE };
     wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
     if(val2.IsEmpty() == false) {
         col2 = wxColour(val2);
     }
 
     IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
-    IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
-    IndicatorSetForeground(MARKER_WORD_HIGHLIGHT, col2);
+    IndicatorSetUnder(INDICATOR_WORD_HIGHLIGHT, true);
+    IndicatorSetForeground(INDICATOR_WORD_HIGHLIGHT, col2);
     long alpha = EditorConfigST::Get()->GetInteger(wxT("WordHighlightAlpha"));
     if(alpha != wxNOT_FOUND) {
-        IndicatorSetAlpha(MARKER_WORD_HIGHLIGHT, alpha);
+        IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, alpha);
     }
 
-    IndicatorSetUnder(MARKER_FIND_BAR_WORD_HIGHLIGHT, true);
-    IndicatorSetStyle(MARKER_FIND_BAR_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
+    IndicatorSetUnder(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, true);
+    IndicatorSetStyle(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
 
-    IndicatorSetForeground(MARKER_FIND_BAR_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
+    IndicatorSetForeground(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
     if(alpha != wxNOT_FOUND) {
-        IndicatorSetAlpha(MARKER_FIND_BAR_WORD_HIGHLIGHT, alpha);
+        IndicatorSetAlpha(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, alpha);
     }
 
-    IndicatorSetUnder(MARKER_CONTEXT_WORD_HIGHLIGHT, true);
-    IndicatorSetStyle(MARKER_CONTEXT_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
-    IndicatorSetForeground(MARKER_CONTEXT_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
+    IndicatorSetUnder(INDICATOR_CONTEXT_WORD_HIGHLIGHT, true);
+    IndicatorSetStyle(INDICATOR_CONTEXT_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
+    IndicatorSetForeground(INDICATOR_CONTEXT_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
     if(alpha != wxNOT_FOUND) {
-        IndicatorSetAlpha(MARKER_CONTEXT_WORD_HIGHLIGHT, alpha);
+        IndicatorSetAlpha(INDICATOR_CONTEXT_WORD_HIGHLIGHT, alpha);
     }
 
-    IndicatorSetStyle(HYPERLINK_INDICATOR, wxSTC_INDIC_PLAIN);
-    IndicatorSetStyle(MATCH_INDICATOR, wxSTC_INDIC_BOX);
-    IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
+    IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
+    IndicatorSetStyle(INDICATOR_MATCH, wxSTC_INDIC_BOX);
+    IndicatorSetForeground(INDICATOR_MATCH, wxT("GREY"));
 
-    IndicatorSetStyle(DEBUGGER_INDICATOR, wxSTC_INDIC_BOX);
-    IndicatorSetForeground(DEBUGGER_INDICATOR, wxT("GREY"));
+    IndicatorSetStyle(INDICATOR_DEBUGGER, wxSTC_INDIC_BOX);
+    IndicatorSetForeground(INDICATOR_DEBUGGER, wxT("GREY"));
 
     CmdKeyClear(wxT('L'), wxSTC_KEYMOD_CTRL); // clear Ctrl+D because we use it for something else
 
@@ -1218,13 +1212,13 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
             // that someone is trying to type _don't_ than it's a burning desire to write _don''_
             if(event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
                 InsertText(pos, wxT("\""));
-                SetIndicatorCurrent(MATCH_INDICATOR);
+                SetIndicatorCurrent(INDICATOR_MATCH);
                 IndicatorFillRange(pos, 1);
                 bJustAddedIndicator = true;
 
             } else if(event.GetKey() == wxT('\'') && !m_context->IsCommentOrString(pos)) {
                 InsertText(pos, wxT("'"));
-                SetIndicatorCurrent(MATCH_INDICATOR);
+                SetIndicatorCurrent(INDICATOR_MATCH);
                 IndicatorFillRange(pos, 1);
                 bJustAddedIndicator = true;
             }
@@ -1233,7 +1227,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     //-------------------------------------
     // Smart quotes management
     //-------------------------------------
-    if(!bJustAddedIndicator && IndicatorValueAt(MATCH_INDICATOR, pos) && event.GetKey() == GetCharAt(pos)) {
+    if(!bJustAddedIndicator && IndicatorValueAt(INDICATOR_MATCH, pos) && event.GetKey() == GetCharAt(pos)) {
         CharRight();
         DeleteBack();
 
@@ -1377,7 +1371,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
             case '\n':
             case '\r':
                 InsertText(pos, matchChar);
-                SetIndicatorCurrent(MATCH_INDICATOR);
+                SetIndicatorCurrent(INDICATOR_MATCH);
                 // use grey colour rather than black, otherwise this indicator is invisible when using the
                 // black theme
                 IndicatorFillRange(pos, 1);
@@ -1385,7 +1379,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
             }
         } else if(matchChar != '}' && addClosingBrace) {
             InsertText(pos, matchChar);
-            SetIndicatorCurrent(MATCH_INDICATOR);
+            SetIndicatorCurrent(INDICATOR_MATCH);
             // use grey colour rather than black, otherwise this indicator is invisible when using the
             // black theme
             IndicatorFillRange(pos, 1);
@@ -1527,7 +1521,7 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
         m_trigger_cc_at_pos = wxNOT_FOUND;
     }
 
-    SetIndicatorCurrent(MATCH_INDICATOR);
+    SetIndicatorCurrent(INDICATOR_MATCH);
     IndicatorClearRange(0, pos);
 
     int end = PositionFromLine(curLine + 1);
@@ -2966,16 +2960,16 @@ void clEditor::DelAllMarkers(int which_type)
     SetIndicatorCurrent(1);
     IndicatorClearRange(0, GetLength());
 
-    SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+    SetIndicatorCurrent(INDICATOR_WORD_HIGHLIGHT);
     IndicatorClearRange(0, GetLength());
 
-    SetIndicatorCurrent(HYPERLINK_INDICATOR);
+    SetIndicatorCurrent(INDICATOR_HYPERLINK);
     IndicatorClearRange(0, GetLength());
 
-    SetIndicatorCurrent(DEBUGGER_INDICATOR);
+    SetIndicatorCurrent(INDICATOR_DEBUGGER);
     IndicatorClearRange(0, GetLength());
 
-    SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+    SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
     IndicatorClearRange(0, GetLength());
 
     // Notify about marker changes
@@ -3790,7 +3784,7 @@ void clEditor::OnLeaveWindow(wxMouseEvent& event)
     m_hyperLinkIndicatroStart = wxNOT_FOUND;
     m_hyperLinkIndicatroEnd = wxNOT_FOUND;
 
-    SetIndicatorCurrent(HYPERLINK_INDICATOR);
+    SetIndicatorCurrent(INDICATOR_HYPERLINK);
     IndicatorClearRange(0, GetLength());
     event.Skip();
 }
@@ -3839,7 +3833,7 @@ void clEditor::OnMotion(wxMouseEvent& event)
         m_hyperLinkIndicatroStart = wxNOT_FOUND;
         m_hyperLinkIndicatroEnd = wxNOT_FOUND;
 
-        SetIndicatorCurrent(HYPERLINK_INDICATOR);
+        SetIndicatorCurrent(INDICATOR_HYPERLINK);
         IndicatorClearRange(0, GetLength());
         DoMarkHyperlink(event, true);
     } else {
@@ -3853,7 +3847,7 @@ void clEditor::OnLeftDown(wxMouseEvent& event)
     wxDELETE(m_richTooltip);
 
     // Clear context word highlight
-    SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+    SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
     IndicatorClearRange(0, GetLength());
 
     // hide completion box
@@ -4463,7 +4457,7 @@ void clEditor::HighlightWord(bool highlight)
         DoHighlightWord();
 
     } else {
-        SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+        SetIndicatorCurrent(INDICATOR_WORD_HIGHLIGHT);
         IndicatorClearRange(0, GetLength());
         m_highlightedWordInfo.Clear();
     }
@@ -4589,13 +4583,13 @@ void clEditor::ReplaceSelection(const wxString& text) { wxStyledTextCtrl::Replac
 
 void clEditor::ClearUserIndicators()
 {
-    SetIndicatorCurrent(USER_INDICATOR);
+    SetIndicatorCurrent(INDICATOR_USER);
     IndicatorClearRange(0, GetLength());
 }
 
-int clEditor::GetUserIndicatorEnd(int pos) { return wxStyledTextCtrl::IndicatorEnd(USER_INDICATOR, pos); }
+int clEditor::GetUserIndicatorEnd(int pos) { return wxStyledTextCtrl::IndicatorEnd(INDICATOR_USER, pos); }
 
-int clEditor::GetUserIndicatorStart(int pos) { return wxStyledTextCtrl::IndicatorStart(USER_INDICATOR, pos); }
+int clEditor::GetUserIndicatorStart(int pos) { return wxStyledTextCtrl::IndicatorStart(INDICATOR_USER, pos); }
 
 void clEditor::SelectText(int startPos, int len)
 {
@@ -4605,16 +4599,16 @@ void clEditor::SelectText(int startPos, int len)
 
 void clEditor::SetUserIndicator(int startPos, int len)
 {
-    SetIndicatorCurrent(USER_INDICATOR);
+    SetIndicatorCurrent(INDICATOR_USER);
     IndicatorFillRange(startPos, len);
 }
 
 void clEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
 {
-    IndicatorSetForeground(USER_INDICATOR, colour);
-    IndicatorSetStyle(USER_INDICATOR, style);
-    IndicatorSetAlpha(USER_INDICATOR, 255);
-    IndicatorSetUnder(USER_INDICATOR, false);
+    IndicatorSetForeground(INDICATOR_USER, colour);
+    IndicatorSetStyle(INDICATOR_USER, style);
+    IndicatorSetAlpha(INDICATOR_USER, 255);
+    IndicatorSetUnder(INDICATOR_USER, false);
 }
 
 int clEditor::GetLexerId() { return GetLexer(); }
@@ -4634,14 +4628,14 @@ int clEditor::WordEndPos(int pos, bool onlyWordCharacters)
 void clEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
 {
     if(event.m_controlDown || isMiddle) {
-        SetIndicatorCurrent(HYPERLINK_INDICATOR);
+        SetIndicatorCurrent(INDICATOR_HYPERLINK);
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
 
         wxColour bgCol = StyleGetBackground(0);
         if(DrawingUtils::IsDark(bgCol)) {
-            IndicatorSetForeground(HYPERLINK_INDICATOR, *wxWHITE);
+            IndicatorSetForeground(INDICATOR_HYPERLINK, *wxWHITE);
         } else {
-            IndicatorSetForeground(HYPERLINK_INDICATOR, *wxBLUE);
+            IndicatorSetForeground(INDICATOR_HYPERLINK, *wxBLUE);
         }
 
         if(pos != wxSTC_INVALID_POSITION) {
@@ -4676,7 +4670,7 @@ void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
     m_hyperLinkIndicatroStart = wxNOT_FOUND;
     m_hyperLinkIndicatroEnd = wxNOT_FOUND;
 
-    SetIndicatorCurrent(HYPERLINK_INDICATOR);
+    SetIndicatorCurrent(INDICATOR_HYPERLINK);
     IndicatorClearRange(0, GetLength());
     event.Skip();
 }
@@ -5027,7 +5021,7 @@ void clEditor::OnChange(wxStyledTextEvent& event)
 void clEditor::OnRemoveMatchInidicator(wxCommandEvent& e)
 {
     // get the current indicator end range
-    if(IndicatorValueAt(MATCH_INDICATOR, e.GetInt()) == 1) {
+    if(IndicatorValueAt(INDICATOR_MATCH, e.GetInt()) == 1) {
         int curpos = GetCurrentPos();
         SetSelection(e.GetInt(), e.GetInt() + 1);
         ReplaceSelection(wxEmptyString);
@@ -5280,7 +5274,7 @@ void clEditor::HighlightWord(StringHighlightOutput* highlightOutput)
 {
     // the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
     const std::vector<std::pair<int, int>>& matches = highlightOutput->matches;
-    SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+    SetIndicatorCurrent(INDICATOR_WORD_HIGHLIGHT);
 
     // clear the old markers
     IndicatorClearRange(0, GetLength());
@@ -5415,12 +5409,12 @@ void clEditor::OnKeyUp(wxKeyEvent& event)
     if(event.GetKeyCode() == WXK_CONTROL || event.GetKeyCode() == WXK_SHIFT || event.GetKeyCode() == WXK_ALT) {
 
         // Clear hyperlink markers
-        SetIndicatorCurrent(HYPERLINK_INDICATOR);
+        SetIndicatorCurrent(INDICATOR_HYPERLINK);
         IndicatorClearRange(0, GetLength());
         m_hyperLinkIndicatroEnd = m_hyperLinkIndicatroStart = wxNOT_FOUND;
 
         // Clear debugger marker
-        SetIndicatorCurrent(DEBUGGER_INDICATOR);
+        SetIndicatorCurrent(INDICATOR_DEBUGGER);
         IndicatorClearRange(0, GetLength());
     }
     UpdateLineNumbers();

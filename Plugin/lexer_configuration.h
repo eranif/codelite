@@ -41,6 +41,14 @@
 #define ANNOTATION_STYLE_ERROR 211
 #define ANNOTATION_STYLE_CC_ERROR 212
 
+#define INDICATOR_DEBUGGER 11
+#define INDICATOR_MATCH 10
+#define INDICATOR_WORD_HIGHLIGHT 2
+#define INDICATOR_USER 3
+#define INDICATOR_HYPERLINK 4
+#define INDICATOR_FIND_BAR_WORD_HIGHLIGHT 5
+#define INDICATOR_CONTEXT_WORD_HIGHLIGHT 6
+
 struct WXDLLIMPEXP_SDK WordSetIndex {
     int index = wxNOT_FOUND;
     // when set to true, the `index` is the style to which we append substyles

@@ -83,7 +83,7 @@ void ContextGeneric::ProcessIdleActions()
         int startPos, endPos;
         wxString word = xmlHelper.GetXmlTagAt(ctrl.GetCurrentPosition(), startPos, endPos);
         if(word.IsEmpty()) {
-            ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+            ctrl.SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
             ctrl.IndicatorClearRange(0, ctrl.GetLength());
             return;
         }
@@ -108,7 +108,7 @@ void ContextGeneric::ProcessIdleActions()
                 word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);
                 if((closeTag == word) && (depth == 0)) {
                     // We got the closing brace
-                    ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+                    ctrl.SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
                     ctrl.IndicatorClearRange(0, ctrl.GetLength());
 
                     // Set the new markers
@@ -143,7 +143,7 @@ void ContextGeneric::ProcessIdleActions()
                 word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);
                 if(reOpenTag.Matches(word) && (depth == 0)) {
                     // We got the closing brace
-                    ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+                    ctrl.SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
                     ctrl.IndicatorClearRange(0, ctrl.GetLength());
 
                     // Set the new markers
@@ -161,7 +161,7 @@ void ContextGeneric::ProcessIdleActions()
         }
 
         // Clear the current selection
-        ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+        ctrl.SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
         ctrl.IndicatorClearRange(0, ctrl.GetLength());
     }
 }

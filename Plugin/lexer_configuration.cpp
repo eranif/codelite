@@ -278,17 +278,11 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetKeyWords(4, GetKeyWords(4));
     }
 
-    // by default indicators are set to be opaque rounded box
-    bool is_dark = DrawingUtils::IsDark(defaultStyle.GetBgColour());
-    if(is_dark) {
-        ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
-        ctrl->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
-    } else {
-        ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
-        ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
-    }
+    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_COMPOSITIONTHICK);
+    ctrl->IndicatorSetStyle(INDICATOR_WORD_HIGHLIGHT, wxSTC_INDIC_COMPOSITIONTHICK);
 
     wxColour default_bg_colour = defaultStyle.GetBgColour();
+    bool is_dark = DrawingUtils::IsDark(defaultStyle.GetBgColour());
     default_bg_colour = default_bg_colour.ChangeLightness(is_dark ? 105 : 95);
 
     ctrl->SetFoldMarginColour(true, default_bg_colour);

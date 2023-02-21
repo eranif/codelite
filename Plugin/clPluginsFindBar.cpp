@@ -50,7 +50,7 @@
 // clang-format on
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
-#define MARKER_FIND_BAR_WORD_HIGHLIGHT 5
+#define INDICATOR_FIND_BAR_WORD_HIGHLIGHT 5
 
 #define CHECK_FOCUS_WIN(evt)                            \
     {                                                   \
@@ -492,7 +492,7 @@ bool clPluginsFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
 
         if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
-            m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+            m_sci->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
             m_sci->IndicatorClearRange(0, m_sci->GetLength());
         }
     }
@@ -614,7 +614,7 @@ void clPluginsFindBar::DoSelectAll(bool addMarkers)
     clGetManager()->SetStatusMessage(wxEmptyString);
 
     if(addMarkers) {
-        m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+        m_sci->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
     }
 
@@ -697,9 +697,9 @@ void clPluginsFindBar::DoHighlightMatches(bool checked)
         m_sci->SetCurrentPos(0);
         m_sci->SetSelectionEnd(0);
         m_sci->SetSelectionStart(0);
-        m_sci->MarkerDeleteAll(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+        m_sci->MarkerDeleteAll(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
 
-        m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+        m_sci->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
 
         int found = 0;
@@ -708,7 +708,7 @@ void clPluginsFindBar::DoHighlightMatches(bool checked)
             if(m_sci->SearchNext(flags, findwhat) != wxNOT_FOUND) {
                 int selStart, selEnd;
                 m_sci->GetSelection(&selStart, &selEnd);
-                m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+                m_sci->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
                 m_sci->IndicatorFillRange(selStart, selEnd - selStart);
                 m_sci->MarkerAdd(m_sci->LineFromPosition(selStart), smt_find_bookmark);
 
@@ -732,13 +732,13 @@ void clPluginsFindBar::DoHighlightMatches(bool checked)
         m_matchesFound->SetLabel(matches);
 
     } else {
-        m_sci->MarkerDeleteAll(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+        m_sci->MarkerDeleteAll(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
 
         IEditor::List_t editors;
         clGetManager()->GetAllEditors(editors);
         std::for_each(editors.begin(), editors.end(), [&](IEditor* pEditor) {
             pEditor->GetCtrl()->MarkerDeleteAll(smt_find_bookmark);
-            pEditor->GetCtrl()->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+            pEditor->GetCtrl()->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
             pEditor->GetCtrl()->IndicatorClearRange(0, pEditor->GetCtrl()->GetLength());
         });
         m_matchesFound->SetLabel("");
@@ -1153,7 +1153,7 @@ bool clPluginsFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what,
 
     // Clear all search markers if desired
     if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
-        ctrl->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+        ctrl->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
         ctrl->IndicatorClearRange(0, ctrl->GetLength());
     }
 

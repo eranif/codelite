@@ -422,7 +422,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
 
         if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
-            m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+            m_sci->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
             m_sci->IndicatorClearRange(0, m_sci->GetLength());
         }
     }
@@ -618,11 +618,11 @@ void QuickFindBar::DoHighlightMatches(bool checked)
         m_sci->ClearSelections();
         editor->SetFindBookmarksActive(true);
         editor->DelAllMarkers(smt_find_bookmark);
-        m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+        m_sci->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
 
         for(const auto& match : matches) {
-            m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+            m_sci->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
             m_sci->IndicatorFillRange(match.start_pos, match.end_pos - match.start_pos);
             m_sci->MarkerAdd(m_sci->LineFromPosition(match.start_pos), smt_find_bookmark);
         }
@@ -639,7 +639,7 @@ void QuickFindBar::DoHighlightMatches(bool checked)
         clGetManager()->GetAllEditors(editors);
         std::for_each(editors.begin(), editors.end(), [&](IEditor* pEditor) {
             pEditor->GetCtrl()->MarkerDeleteAll(smt_find_bookmark);
-            pEditor->GetCtrl()->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+            pEditor->GetCtrl()->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
             pEditor->GetCtrl()->IndicatorClearRange(0, pEditor->GetCtrl()->GetLength());
         });
         clGetManager()->GetStatusBar()->SetMessage(wxEmptyString);

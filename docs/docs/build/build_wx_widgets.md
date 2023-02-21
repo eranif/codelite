@@ -106,7 +106,9 @@ git submodule init
 git submodule update
 mkdir build-release
 cd build-release
-cmake -DCMAKE_BUILD_TYPE=Release .. -DwxBUILD_MONOLITHIC=ON
+cmake .. -DCMAKE_BUILD_TYPE=Release                               \
+   -DwxBUILD_DEBUG_LEVEL=0                                        \
+   -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1    \
 make -j10
 sudo make install
 ```

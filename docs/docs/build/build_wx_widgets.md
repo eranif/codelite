@@ -106,9 +106,7 @@ git submodule init
 git submodule update
 mkdir build-release
 cd build-release
-cmake .. -DCMAKE_BUILD_TYPE=Release                               \
-   -DwxBUILD_DEBUG_LEVEL=0                                        \
-   -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1    
+../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++11 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl
 make -j10
 sudo make install
 ```

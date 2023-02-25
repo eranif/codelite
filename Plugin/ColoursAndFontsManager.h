@@ -52,12 +52,12 @@ class WXDLLIMPEXP_SDK ColoursAndFontsManager : public wxEvtHandler
     typedef std::unordered_map<wxString, ColoursAndFontsManager::Vec_t> Map_t;
 
 protected:
-    bool m_initialized;
+    bool m_initialized = false;
     ColoursAndFontsManager::Map_t m_lexersMap;
     ColoursAndFontsManager::Vec_t m_allLexers;
     wxString m_globalTheme;
     LexerConf::Ptr_t m_defaultLexer;
-    int m_lexersVersion;
+    int m_lexersVersion = wxNOT_FOUND;
     wxFont m_globalFont;
 
 private:
@@ -68,6 +68,20 @@ private:
     void Clear();
     wxFileName GetConfigFile() const;
     void LoadJSON(const wxFileName& path);
+    void LoadDb(const wxFileName& path);
+    bool IsBackupRequired() const;
+    void BackupUserOldJsonFileIfNeeded();
+    void LoadDefaultLexers();
+
+    /**
+     * @brief load lexers from lexers.json
+     */
+    void LoadLexersFromFile();
+
+    /**
+     * @brief load lexers from lexers.db
+     */
+    void LoadLexersFromDb();
 
 protected:
     void OnAdjustTheme(clCommandEvent& event);
@@ -180,11 +194,6 @@ public:
      * @brief import an eclipse theme into CodeLite, return its name
      */
     wxString ImportEclipseTheme(const wxString& theme_file);
-
-    /**
-     * @brief load lexers from lexers.json
-     */
-    void LoadLexersFromFile();
 
     /**
      * @brief set a unified theme for all lexers. If the requested theme is not available for a given lexer,

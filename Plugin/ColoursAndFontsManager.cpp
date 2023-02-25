@@ -133,8 +133,12 @@ void ColoursAndFontsManager::Load()
         }
     }
 
-    // Load the lexers
-    LoadLexersFromFile();
+    clSYSTEM() << "Loading lexers from configuration..." << endl;
+
+    // Load the lexers from the old format (json)
+    LoadLexersFromDb();
+
+    clSYSTEM() << "Success" << endl;
 
     // read the global font property
     m_globalFont = clConfig::Get().Read("GlobalThemeFont", FontUtils::GetDefaultMonospacedFont());
@@ -496,43 +500,50 @@ wxString ColoursAndFontsManager::ImportEclipseTheme(const wxString& theme_file)
     return wxEmptyString;
 }
 
-void ColoursAndFontsManager::LoadLexersFromFile()
+bool ColoursAndFontsManager::IsBackupRequired() const
 {
-    // User lexers
     wxFileName fnUserLexers(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
     fnUserLexers.AppendDir("lexers");
+    return (m_lexersVersion < 7) && fnUserLexers.FileExists();
+}
 
-    // Default installation lexers
-    wxFileName defaultLexersFileName(clStandardPaths::Get().GetDataDir(), "");
-
-    defaultLexersFileName.AppendDir("lexers");
-    defaultLexersFileName.SetFullName("lexers.json");
-
-    m_allLexers.clear();
-    m_lexersMap.clear();
-
-    if((m_lexersVersion < 7) && fnUserLexers.FileExists()) {
-        // an upgrade is needed
+void ColoursAndFontsManager::BackupUserOldJsonFileIfNeeded()
+{
+    if(IsBackupRequired()) {
+        wxFileName fnUserLexers(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
+        fnUserLexers.AppendDir("lexers");
         wxString user_settings = fnUserLexers.GetFullPath();
         fnUserLexers.SetFullName("lexers.json.orig");
         clSYSTEM() << "User's lexers.json file is too old, loading default settings" << endl;
         ::wxRenameFile(user_settings, fnUserLexers.GetFullPath());
+
+        // now: update the version number
         m_lexersVersion = LEXERS_VERSION;
         m_globalTheme = DEFAULT_THEME;
         SaveGlobalSettings(false);
     }
+}
 
-    if(!fnUserLexers.FileExists()) {
-        // Load default settings
-        LoadJSON(defaultLexersFileName);
+void ColoursAndFontsManager::LoadLexersFromFile()
+{
+    // User lexers
+    BackupUserOldJsonFileIfNeeded();
 
-        // Call save to create an initial user settings
-        Save();
+    // user lexers
+    wxFileName fnUserLexers(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
+    fnUserLexers.AppendDir("lexers");
 
-    } else {
-        // Load the user settings
-        LoadJSON(fnUserLexers);
-    }
+    // installation lexers
+    wxFileName fnInstallLexers(clStandardPaths::Get().GetDataDir(), "lexers.json");
+    fnInstallLexers.AppendDir("lexers");
+
+    m_allLexers.clear();
+    m_lexersMap.clear();
+
+    const auto& file_to_load = fnUserLexers.FileExists() ? fnUserLexers : fnInstallLexers;
+
+    // Load the user settings
+    LoadJSON(file_to_load);
 
     // Update lexers versions
     clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION);
@@ -1120,14 +1131,27 @@ wxFont ColoursAndFontsManager::GetFixedFont(bool small) const
     auto font = lexer->GetFontForStyle(0, EventNotifier::Get()->TopFrame());
 #ifndef __WXMAC__
     if(small) {
-#if wxCHECK_VERSION(3, 1, 2)
         font.SetFractionalPointSize(font.GetPointSize() * 0.9);
-#else
-        font.SetPointSize(font.GetPointSize() * 0.9);
-#endif
     }
 #else
     wxUnusedVar(small);
 #endif
     return font;
+}
+
+void ColoursAndFontsManager::LoadDb(const wxFileName& path)
+{
+    // loading themes from sqlite db
+    wxUnusedVar(path);
+}
+
+void ColoursAndFontsManager::LoadLexersFromDb()
+{
+    wxFileName db_file{ clStandardPaths::Get().GetUserDataDir(), "lexers.db" };
+    db_file.AppendDir("lexers");
+
+    if(!db_file.FileExists()) {
+        // load the lexers from the file
+        LoadLexersFromFile();
+    }
 }

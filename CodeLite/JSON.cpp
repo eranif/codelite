@@ -138,7 +138,7 @@ JSONItem::JSONItem(cJSON* json)
     : m_json(json)
 {
     if(m_json) {
-        m_name = wxString(m_json->string, wxConvUTF8);
+        m_name = m_json->string ? m_json->string : "";
         m_type = m_json->type;
     }
 }
@@ -256,15 +256,15 @@ void JSONItem::append(const JSONItem& element)
 
     switch(element.getType()) {
     case cJSON_False:
-        cJSON_AddFalseToObject(m_json, element.getName().mb_str(wxConvUTF8).data());
+        cJSON_AddFalseToObject(m_json, element.getName().c_str());
         break;
 
     case cJSON_True:
-        cJSON_AddTrueToObject(m_json, element.getName().mb_str(wxConvUTF8).data());
+        cJSON_AddTrueToObject(m_json, element.getName().c_str());
         break;
 
     case cJSON_NULL:
-        cJSON_AddNullToObject(m_json, element.getName().mb_str(wxConvUTF8).data());
+        cJSON_AddNullToObject(m_json, element.getName().c_str());
         break;
 
     case cJSON_Number:
@@ -469,7 +469,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, long value)
 JSONItem& JSONItem::addProperty(const wxString& name, const wxArrayString& arr)
 {
     JSONItem arrEle = JSONItem::createArray(name);
-    for(size_t i = 0; i < arr.GetCount(); i++) {
+    for(size_t i = 0; i < arr.size(); i++) {
         arrEle.arrayAppend(arr.Item(i));
     }
     append(arrEle);

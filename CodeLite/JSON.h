@@ -71,18 +71,12 @@ public:
     JSONItem firstChild();
     JSONItem nextChild();
 
-    void SetValueNumer(double valueNumer) { this->m_valueNumer = valueNumer; }
-    double GetValueNumer() const { return m_valueNumer; }
-
-    void SetValueString(const std::string& valueString) { this->m_valueString = valueString; }
-    const std::string& GetValueString() const { return m_valueString; }
-
     // Setters
     ////////////////////////////////////////////////
-    void setName(const wxString& m_name) { this->m_name = m_name; }
+    void setName(const std::string& m_name) { this->m_name = m_name; }
     void setType(int m_type) { this->m_type = m_type; }
     int getType() const { return m_type; }
-    wxString getName() const { return m_name; }
+    const std::string& getName() const { return m_name; }
 
     // Readers
     ////////////////////////////////////////////////

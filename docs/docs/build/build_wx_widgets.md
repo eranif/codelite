@@ -79,7 +79,7 @@ tar xvf wxWidgets-3.2.0.tar.bz2
 cd wxWidgets-3.2.0
 mkdir -p build-release
 cd build-release
-../configure --disable-debug_flag --with-gtk=3
+../configure --disable-debug_flag --with-gtk=3 --enable-stl
 make -j$(nproc) && sudo make install
 ```
 
@@ -106,7 +106,7 @@ git submodule init
 git submodule update
 mkdir build-release
 cd build-release
-../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++11 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl
+../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++11 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl --enable-stl
 make -j10
 sudo make install
 ```

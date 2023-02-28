@@ -40,6 +40,8 @@
 
 #include "procutils.h"
 
+extern char** environ;
+
 #include <errno.h>
 #include <signal.h>
 #include <string.h>
@@ -339,11 +341,17 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& ar
         // execute the process
         errno = 0;
         if(execvp(argv[0], argv) < 0) {
-            clERROR() << "execvp" << args << "error:" << strerror(errno) << clEndl;
+            wxString errmsg = strerror(errno);
+            clERROR() << "execvp" << args << "error:" << errmsg << endl;
+            // print the environment as well
+            clERROR() << "Dumping environment:" << endl;
+            for(char** scan = environ; *scan != nullptr; scan++) {
+                clERROR() << *scan << endl;
+            }
         }
 
         // if we got here, we failed...
-        exit(0);
+        exit(1);
 
     } else if(rc < 0) {
         // Error

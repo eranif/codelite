@@ -128,17 +128,25 @@ void clEnvironment::ApplyFromList(const clEnvList_t* envlist)
         return;
     }
 
+    std::unordered_set<wxString> V;
+
+    // keep track of the previous values
+    for(const auto& [varname, varvalue] : *envlist) {
+        const auto& [iter, succeeded] = V.insert(varname);
+        if(succeeded) {
+            wxString old_value;
+            if(wxGetEnv(varname, &old_value)) {
+                m_old_env.push_back({ varname, old_value });
+            } else {
+                m_old_env.push_back({ varname, wxAny{} });
+            }
+        }
+    }
+
     for(const auto& d : *envlist) {
         const wxString& varname = d.first;
         wxString varvalue = d.second;
         auto vars = FindVariablesInString(varvalue);
-
-        wxString old_value;
-        if(wxGetEnv(varname, &old_value)) {
-            m_old_env.push_back({ varname, old_value });
-        } else {
-            m_old_env.push_back({ varname, wxAny{} });
-        }
 
         for(const auto& p : vars) {
             // the variable name, e.g. "HOME"

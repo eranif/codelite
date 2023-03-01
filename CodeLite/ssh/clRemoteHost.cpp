@@ -55,12 +55,10 @@ void clRemoteHost::Release()
 void clRemoteHost::OnWorkspaceOpened(clWorkspaceEvent& event)
 {
     event.Skip();
-    m_executor.shutdown();
     m_activeAccount.clear();
     if(event.IsRemote()) {
         /// Initialise the remote host executor
         m_activeAccount = event.GetRemoteAccount();
-        m_executor.startup(event.GetRemoteAccount());
     }
 }
 
@@ -73,7 +71,6 @@ void clRemoteHost::OnWorkspaceClosed(clWorkspaceEvent& event)
         proc->Terminate();
     }
     m_interactiveProcesses.clear();
-    m_executor.shutdown();
     m_sessions.clear();
     m_activeAccount.clear();
 }

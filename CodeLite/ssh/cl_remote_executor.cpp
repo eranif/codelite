@@ -22,21 +22,12 @@ clRemoteExecutor::clRemoteExecutor()
 
 clRemoteExecutor::~clRemoteExecutor()
 {
-    shutdown();
     Unbind(wxEVT_SSH_CHANNEL_READ_ERROR, &clRemoteExecutor::OnChannelError, this);
     Unbind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &clRemoteExecutor::OnChannelError, this);
     Unbind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &clRemoteExecutor::OnChannelStdout, this);
     Unbind(wxEVT_SSH_CHANNEL_READ_STDERR, &clRemoteExecutor::OnChannelStderr, this);
     Unbind(wxEVT_SSH_CHANNEL_CLOSED, &clRemoteExecutor::OnChannelClosed, this);
 }
-
-bool clRemoteExecutor::startup(const wxString& account_name)
-{
-    m_remoteAccount = account_name;
-    return true;
-}
-
-void clRemoteExecutor::shutdown() { m_remoteAccount.clear(); }
 
 IProcess::Ptr_t clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {

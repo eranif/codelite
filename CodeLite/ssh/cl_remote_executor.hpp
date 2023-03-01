@@ -28,9 +28,6 @@ public:
         }
     };
 
-private:
-    wxString m_remoteAccount;
-
 protected:
     void OnChannelStdout(clCommandEvent& event);
     void OnChannelStderr(clCommandEvent& event);
@@ -42,18 +39,18 @@ public:
     clRemoteExecutor();
     virtual ~clRemoteExecutor();
 
-    /// establish the channels to the remote host
-    bool startup(const wxString& account_name);
-
-    /// cancel the current command being executed and return
-    void shutdown();
-
-    /// try to find a free channel and execute our command
+    /// @param cmd the command details
+    ///
+    /// try to find a free channel and execute `cmd` on the remote host.
+    ///
+    /// the command is executed on the active remote host
+    /// as defined by the `clRemoteHost` instance
+    ///
     /// If succeeded, the output is returned in the form of this event:
     ///
-    /// - wxEVT_ASYNC_PROCESS_OUTPUT
-    /// - wxEVT_ASYNC_PROCESS_STDERR
-    /// - wxEVT_ASYNC_PROCESS_TERMINATED (never contains output)
+    /// * wxEVT_ASYNC_PROCESS_OUTPUT
+    /// * wxEVT_ASYNC_PROCESS_STDERR
+    /// * wxEVT_ASYNC_PROCESS_TERMINATED (never contains output)
     ///
     /// Returns: the remote channel. The caller should delete it upon completion
     IProcess::Ptr_t try_execute(const clRemoteExecutor::Cmd& cmd);

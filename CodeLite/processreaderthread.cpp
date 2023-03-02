@@ -76,27 +76,32 @@ void* ProcessReaderThread::Entry()
                 if(m_process->Read(buff, buffErr, raw_buff, raw_buff_err)) {
                     if(!buff.IsEmpty() || !buffErr.IsEmpty()) {
                         // If we got a callback object, use it
-                        if(m_process && m_process->GetCallback()) {
-                            m_process->GetCallback()->CallAfter(&IProcessCallback::OnProcessOutput, buff);
+                        bool isSuspended = m_is_suspended.load();
+                        if(!isSuspended) {
+                            if(m_process && m_process->GetCallback()) {
+                                m_process->GetCallback()->CallAfter(&IProcessCallback::OnProcessOutput, buff);
 
-                        } else {
-                            // We fire an event per data (stderr/stdout)
-                            if(!buff.IsEmpty() && m_notifiedWindow) {
-                                // fallback to the event system
-                                // we got some data, send event to parent
-                                clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
-                                e.SetOutput(buff);
-                                e.SetOutputRaw(raw_buff);
-                                e.SetProcess(m_process);
-                                m_notifiedWindow->QueueEvent(e.Clone());
-                            }
-                            if(!buffErr.IsEmpty() && m_notifiedWindow) {
-                                // we got some data, send event to parent
-                                clProcessEvent e(wxEVT_ASYNC_PROCESS_STDERR);
-                                e.SetOutput(buffErr);
-                                e.SetOutputRaw(raw_buff_err);
-                                e.SetProcess(m_process);
-                                m_notifiedWindow->QueueEvent(e.Clone());
+                            } else {
+
+                                // We fire an event per data (stderr/stdout)
+                                if(!buff.IsEmpty() && m_notifiedWindow) {
+                                    // fallback to the event system
+                                    // we got some data, send event to parent
+                                    clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
+                                    e.SetOutput(buff);
+                                    e.SetOutputRaw(raw_buff);
+                                    e.SetProcess(m_process);
+                                    m_notifiedWindow->QueueEvent(e.Clone());
+                                }
+
+                                if(!buffErr.IsEmpty() && m_notifiedWindow) {
+                                    // we got some data, send event to parent
+                                    clProcessEvent e(wxEVT_ASYNC_PROCESS_STDERR);
+                                    e.SetOutput(buffErr);
+                                    e.SetOutputRaw(raw_buff_err);
+                                    e.SetProcess(m_process);
+                                    m_notifiedWindow->QueueEvent(e.Clone());
+                                }
                             }
                         }
                     }

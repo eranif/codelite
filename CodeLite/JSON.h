@@ -26,10 +26,11 @@
 #ifndef ZJSONNODE_H
 #define ZJSONNODE_H
 // clang-format off
-#include "wx/vector.h"
+#include <wx/vector.h>
 #include <wx/string.h>
 #include <wx/variant.h>
 #include <wx/filename.h>
+#include <string_view>
 #include <wx/gdicmn.h>
 #include "codelite_exports.h"
 #include <map>
@@ -65,6 +66,7 @@ public:
     JSONItem(const wxString& name, const std::string& val);
     JSONItem(const wxString& name, const char* pval, size_t len);
     JSONItem(const wxString& name, bool val);
+    JSONItem() {}
     virtual ~JSONItem() {}
 
     // Walkers
@@ -83,8 +85,20 @@ public:
     JSONItem namedObject(const wxString& name) const;
     bool hasNamedObject(const wxString& name) const;
 
+    /// If your array is big (hundred of entries) use
+    /// `GetAsVector` and iterate it instead
     JSONItem operator[](int index) const;
     JSONItem operator[](const wxString& name) const;
+
+    /// the C implementation for accessing large arrays, is the sum of an arithmetic progression.
+    /// Use this method to get an array with `O(1)` access
+    /// This call is `O(n)`
+    std::vector<JSONItem> GetAsVector() const;
+
+    /// the C implementation for accessing by name is by `O(n)`
+    /// Use this method when you have large number of items and
+    /// `O(1)` is required
+    std::unordered_map<std::string_view, JSONItem> GetAsMap() const;
 
     bool toBool(bool defaultValue = false) const;
     wxString toString(const wxString& defaultValue = wxEmptyString) const;
@@ -113,12 +127,10 @@ public:
     double toDouble(double defaultVal = -1.0) const;
     wxFileName toFileName() const;
 
-#if wxUSE_GUI
     wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
     wxFont toFont(const wxFont& defaultFont = wxNullFont) const;
     wxSize toSize() const;
     wxPoint toPoint() const;
-#endif
 
     wxStringMap_t toStringMap() const;
 
@@ -167,12 +179,11 @@ public:
         return addProperty(name, std::vector<T>(arr_int.begin(), arr_int.end()));
     }
 
-#if wxUSE_GUI
     JSONItem& addProperty(const wxString& name, const wxSize& sz);
     JSONItem& addProperty(const wxString& name, const wxPoint& pt);
     JSONItem& addProperty(const wxString& name, const wxColour& colour);
     JSONItem& addProperty(const wxString& name, const wxFont& font);
-#endif
+
     JSONItem& addProperty(const wxString& name, const wxArrayString& arr);
     JSONItem& addProperty(const wxString& name, const wxStringMap_t& stringMap);
     JSONItem& addProperty(const wxString& name, const JSONItem& element);

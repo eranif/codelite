@@ -96,7 +96,7 @@ public:
     /**
      * @brief unserialize an object from JSON
      */
-    void FromJSON(JSONItem json);
+    void FromJSON(const JSONItem& json);
 
     /**
      * @brief serialize this style property into a JSON object

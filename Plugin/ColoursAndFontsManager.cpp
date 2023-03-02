@@ -696,18 +696,20 @@ void ColoursAndFontsManager::LoadJSON(const wxFileName& path)
     if(!path.FileExists())
         return;
 
+    clDEBUG() << "==> Loading lexer  <==" << endl;
+    clDEBUG() << "Parsing file:" << path << endl;
     JSON root(path);
     JSONItem arr = root.toElement();
-    int arrSize = arr.arraySize();
-    clDEBUG() << "Loading:" << path << endl;
-    clDEBUG() << "Found" << arrSize << "lexers" << endl;
 
-    for(int i = 0; i < arrSize; ++i) {
-        JSONItem json = arr.arrayItem(i);
+    clDEBUG() << "Building vector" << endl;
+    auto vec = arr.GetAsVector();
+    clDEBUG() << "Found" << vec.size() << "lexers" << endl;
+
+    clDEBUG() << "Loading..." << endl;
+    for(const auto& json : vec) {
         DoAddLexer(json);
     }
-
-    clDEBUG() << "Success" << endl;
+    clDEBUG() << "==> Success  <==" << endl;
 }
 
 LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)

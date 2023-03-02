@@ -412,42 +412,42 @@ JSONItem LexerConf::ToJSON(bool forExport) const
 
 void LexerConf::FromJSON(const JSONItem& json)
 {
-    auto word_set = json["WordSet"];
-    if(word_set.arraySize() == 4) {
+    auto M = json.GetAsMap();
+    auto word_set = M["WordSet"].GetAsVector();
+    if(word_set.size() == 4) {
         m_wordSets[WS_CLASS].from_json(word_set[0]);
         m_wordSets[WS_FUNCTIONS].from_json(word_set[1]);
         m_wordSets[WS_VARIABLES].from_json(word_set[2]);
         m_wordSets[WS_OTHERS].from_json(word_set[3]);
     }
 
-    m_name = json.namedObject("Name").toString();
-    m_lexerId = json.namedObject("Id").toInt();
-    m_themeName = json.namedObject("Theme").toString();
-    if(json.hasNamedObject("Flags")) {
-        m_flags = json.namedObject("Flags").toSize_t();
+    m_name = M["Name"].toString();
+    m_lexerId = M["Id"].toInt();
+    m_themeName = M["Theme"].toString();
+    if(M.count("Flags")) {
+        m_flags = M["Flags"].toSize_t();
     } else {
-        SetIsActive(json.namedObject("IsActive").toBool());
-        SetUseCustomTextSelectionFgColour(json.namedObject("UseCustomTextSelFgColour").toBool());
-        SetStyleWithinPreProcessor(json.namedObject("StylingWithinPreProcessor").toBool());
+        SetIsActive(M["IsActive"].toBool());
+        SetUseCustomTextSelectionFgColour(M["UseCustomTextSelFgColour"].toBool());
+        SetStyleWithinPreProcessor(M["StylingWithinPreProcessor"].toBool());
     }
 
-    SetKeyWords(json.namedObject("KeyWords0").toString(), 0);
-    SetKeyWords(json.namedObject("KeyWords1").toString(), 1);
-    SetKeyWords(json.namedObject("KeyWords2").toString(), 2);
-    SetKeyWords(json.namedObject("KeyWords3").toString(), 3);
-    SetKeyWords(json.namedObject("KeyWords4").toString(), 4);
-    SetFileSpec(json.namedObject("Extensions").toString());
-    SetSubstyleBase(json.namedObject("SubstyleBase").toInt(wxNOT_FOUND));
+    SetKeyWords(M["KeyWords0"].toString(), 0);
+    SetKeyWords(M["KeyWords1"].toString(), 1);
+    SetKeyWords(M["KeyWords2"].toString(), 2);
+    SetKeyWords(M["KeyWords3"].toString(), 3);
+    SetKeyWords(M["KeyWords4"].toString(), 4);
+    SetFileSpec(M["Extensions"].toString());
+    SetSubstyleBase(M["SubstyleBase"].toInt(wxNOT_FOUND));
 
     m_properties.clear();
-    JSONItem properties = json.namedObject("Properties");
-    int arrSize = properties.arraySize();
-    m_properties.reserve(arrSize);
+    auto properties = M["Properties"].GetAsVector();
+    m_properties.reserve(properties.size());
 
-    for(int i = 0; i < arrSize; ++i) {
+    for(const auto& prop_json : properties) {
         // Construct a style property
         StyleProperty p;
-        p.FromJSON(properties.arrayItem(i));
+        p.FromJSON(prop_json);
         m_properties.emplace_back(std::move(p));
     }
 }

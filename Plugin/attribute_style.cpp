@@ -34,15 +34,16 @@ StyleProperty::StyleProperty(int id, const wxString& name, const wxString& fontD
     EnableFlag(kEolFilled, eolFilled);
 }
 
-void StyleProperty::FromJSON(JSONItem json)
+void StyleProperty::FromJSON(const JSONItem& json)
 {
-    m_id = json.namedObject("Id").toInt(0);
-    m_name = json.namedObject("Name").toString("DEFAULT");
-    m_flags = json.namedObject("Flags").toSize_t(0);
-    m_fontDesc = json.namedObject("FontDesc").toString();
-    m_fgColour = json.namedObject("Colour").toString("BLACK");
-    m_bgColour = json.namedObject("BgColour").toString("WHITE");
-    m_fontSize = json.namedObject("Size").toInt(wxNOT_FOUND);
+    auto M = json.GetAsMap();
+    m_id = M["Id"].toInt(0);
+    m_name = M["Name"].toString("DEFAULT");
+    m_flags = M["Flags"].toSize_t(0);
+    m_fontDesc = M["FontDesc"].toString();
+    m_fgColour = M["Colour"].toString("BLACK");
+    m_bgColour = M["BgColour"].toString("WHITE");
+    m_fontSize = M["Size"].toInt(wxNOT_FOUND);
 }
 
 JSONItem StyleProperty::ToJSON(bool portable) const

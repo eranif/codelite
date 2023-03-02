@@ -178,6 +178,33 @@ JSONItem JSONItem::operator[](int index) const
     return JSONItem(NULL);
 }
 
+std::unordered_map<std::string_view, JSONItem> JSONItem::GetAsMap() const
+{
+    std::unordered_map<std::string_view, JSONItem> res;
+    cJSON* c = m_json->child;
+    while(c) {
+        res.insert({ c->string, JSONItem{ c } });
+        c = c->next;
+    }
+    return res;
+}
+
+std::vector<JSONItem> JSONItem::GetAsVector() const
+{
+    if(!m_json || !isArray()) {
+        return {};
+    }
+
+    std::vector<JSONItem> res;
+    res.reserve(arraySize());
+    cJSON* c = m_json->child;
+    while(c) {
+        res.emplace_back(JSONItem{ c });
+        c = c->next;
+    }
+    return res;
+}
+
 JSONItem JSONItem::operator[](const wxString& name) const { return namedObject(name); }
 
 JSONItem JSONItem::arrayItem(int pos) const

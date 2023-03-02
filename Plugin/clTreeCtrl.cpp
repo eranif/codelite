@@ -793,26 +793,33 @@ void clTreeCtrl::SetBitmaps(BitmapVec_t* bitmaps)
 
 void clTreeCtrl::ProcessIdle()
 {
-    if(HasStyle(wxTR_FULL_ROW_HIGHLIGHT)) {
-        CHECK_ROOT_RET();
-        int flags = 0;
-        wxPoint pt = ScreenToClient(::wxGetMousePosition());
-        int column = wxNOT_FOUND;
-        wxTreeItemId item = HitTest(pt, flags, column);
-        if(item.IsOk()) {
-            clRowEntry::Vec_t& items = m_model.GetOnScreenItems();
-            clRowEntry* hoveredNode = m_model.ToPtr(item);
-            bool refreshNeeded = false;
-            for(size_t i = 0; i < items.size(); ++i) {
-                bool new_state = hoveredNode == items[i];
-                bool old_state = items[i]->IsHovered();
-                if(!refreshNeeded) {
-                    refreshNeeded = (new_state != old_state);
+    if(IsEmpty() && wxWindow::FindFocus() == this) {
+        // pass the focus to the top level window
+        // https://github.com/eranif/codelite/issues/3152
+        wxTheApp->GetTopWindow()->CallAfter(&wxWindow::SetFocus);
+
+    } else {
+        if(HasStyle(wxTR_FULL_ROW_HIGHLIGHT)) {
+            CHECK_ROOT_RET();
+            int flags = 0;
+            wxPoint pt = ScreenToClient(::wxGetMousePosition());
+            int column = wxNOT_FOUND;
+            wxTreeItemId item = HitTest(pt, flags, column);
+            if(item.IsOk()) {
+                clRowEntry::Vec_t& items = m_model.GetOnScreenItems();
+                clRowEntry* hoveredNode = m_model.ToPtr(item);
+                bool refreshNeeded = false;
+                for(size_t i = 0; i < items.size(); ++i) {
+                    bool new_state = hoveredNode == items[i];
+                    bool old_state = items[i]->IsHovered();
+                    if(!refreshNeeded) {
+                        refreshNeeded = (new_state != old_state);
+                    }
+                    items[i]->SetHovered(hoveredNode == items[i]);
                 }
-                items[i]->SetHovered(hoveredNode == items[i]);
-            }
-            if(refreshNeeded) {
-                Refresh();
+                if(refreshNeeded) {
+                    Refresh();
+                }
             }
         }
     }

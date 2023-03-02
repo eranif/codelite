@@ -72,8 +72,8 @@ public:
     /**
      * @brief how many items can scroll in the view?
      */
-    int GetRange() const { return GetItemCount(); }
-    bool IsEmpty() const { return GetItemCount() == 0; }
+    int GetRange() const override { return GetItemCount(); }
+    bool IsEmpty() const override { return GetItemCount() == 0; }
 
     ///===--------------------
     /// Search support
@@ -166,7 +166,7 @@ public:
     void SetItemFont(const wxDataViewItem& item, const wxFont& font, size_t col = 0);
     wxFont GetItemFont(const wxDataViewItem& item, size_t col = 0) const;
 
-    virtual void EnableStyle(int style, bool enable, bool refresh = true);
+    void EnableStyle(int style, bool enable, bool refresh = true) override;
 
     clHeaderItem* GetColumn(size_t index);
     size_t GetItemCount() const;
@@ -193,7 +193,7 @@ public:
     /**
      * @brief set sorting function AND apply it
      */
-    void SetSortFunction(const clSortFunc_t& CompareFunc);
+    void SetSortFunction(const clSortFunc_t& CompareFunc) override;
 
     /**
      * @brief remove all columns from the control

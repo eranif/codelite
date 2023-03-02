@@ -3236,24 +3236,7 @@ void clMainFrame::OnDebuggerSettings(wxCommandEvent& e)
     dlg->Destroy();
 }
 
-void clMainFrame::OnIdle(wxIdleEvent& e)
-{
-    e.Skip();
-
-    // make sure that we are always set to the working directory of the workspace
-    //    if(clCxxWorkspaceST::Get()->IsOpen()) {
-    //        // Check that current working directory is set to the workspace folder
-    //        wxString path = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
-    //        wxString curdir = ::wxGetCwd();
-    //        if(path != curdir) {
-    //            // Check that it really *is* different, not just a symlink issue: see bug #942
-    //            if(CLRealPath(path) != CLRealPath(curdir)) {
-    //                clDEBUG1() << "Current working directory is reset to:" << path;
-    //                ::wxSetWorkingDirectory(path);
-    //            }
-    //        }
-    //    }
-}
+void clMainFrame::OnIdle(wxIdleEvent& e) { e.Skip(); }
 
 void clMainFrame::OnLinkClicked(wxHtmlLinkEvent& e)
 {

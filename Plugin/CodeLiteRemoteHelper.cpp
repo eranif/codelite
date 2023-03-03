@@ -138,7 +138,7 @@ void CodeLiteRemoteHelper::ProcessCodeLiteRemoteJSON(const wxString& filepath)
 
     auto child = json.firstChild();
     while(child.isOk()) {
-        wxString plugin_name = child.getName();
+        const wxString& plugin_name = child.GetPropertyName();
         auto p = new JSON(child.format(false));
         m_plugins_configs.insert({ plugin_name, p });
         child = json.nextChild();

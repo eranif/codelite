@@ -53,11 +53,11 @@ class WXDLLIMPEXP_CL JSONItem
 protected:
     cJSON* m_json = nullptr;
     cJSON* m_walker = nullptr;
-    std::string m_name;
+    wxString m_properytName;
     int m_type = wxNOT_FOUND;
 
     // Values
-    std::string m_valueString;
+    wxString m_valueString;
     double m_valueNumer = 0;
 
 public:
@@ -75,10 +75,10 @@ public:
 
     // Setters
     ////////////////////////////////////////////////
-    void setName(const std::string& m_name) { this->m_name = m_name; }
     void setType(int m_type) { this->m_type = m_type; }
     int getType() const { return m_type; }
-    const std::string& getName() const { return m_name; }
+    const wxString& GetPropertyName() const { return m_properytName; }
+    void SetPropertyName(const wxString& name) { m_properytName = name; }
 
     // Readers
     ////////////////////////////////////////////////

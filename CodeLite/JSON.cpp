@@ -138,34 +138,34 @@ JSONItem::JSONItem(cJSON* json)
     : m_json(json)
 {
     if(m_json) {
-        m_name = m_json->string ? m_json->string : "";
+        m_properytName = m_json->string ? m_json->string : "";
         m_type = m_json->type;
     }
 }
 
 JSONItem::JSONItem(const wxString& name, double val)
-    : m_name(name)
+    : m_properytName(name)
     , m_type(cJSON_Number)
     , m_valueNumer(val)
 {
 }
 
 JSONItem::JSONItem(const wxString& name, const std::string& val)
-    : m_name(name)
+    : m_properytName(name)
     , m_type(cJSON_String)
     , m_valueString(val)
 {
 }
 
 JSONItem::JSONItem(const wxString& name, const char* pval, size_t len)
-    : m_name(name)
+    : m_properytName(name)
     , m_type(cJSON_String)
     , m_valueString(pval, len)
 {
 }
 
 JSONItem::JSONItem(const wxString& name, bool val)
-    : m_name(name)
+    : m_properytName(name)
     , m_type(val ? cJSON_True : cJSON_False)
 {
 }
@@ -283,28 +283,29 @@ void JSONItem::append(const JSONItem& element)
 
     switch(element.getType()) {
     case cJSON_False:
-        cJSON_AddFalseToObject(m_json, element.getName().c_str());
+        cJSON_AddFalseToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
         break;
 
     case cJSON_True:
-        cJSON_AddTrueToObject(m_json, element.getName().c_str());
+        cJSON_AddTrueToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
         break;
 
     case cJSON_NULL:
-        cJSON_AddNullToObject(m_json, element.getName().c_str());
+        cJSON_AddNullToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
         break;
 
     case cJSON_Number:
-        cJSON_AddNumberToObject(m_json, element.m_name.c_str(), element.m_valueNumer);
+        cJSON_AddNumberToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data(), element.m_valueNumer);
         break;
 
     case cJSON_String:
-        cJSON_AddStringToObject(m_json, element.m_name.c_str(), element.m_valueString.c_str());
+        cJSON_AddStringToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data(),
+                                element.m_valueString.mb_str(wxConvUTF8).data());
         break;
 
     case cJSON_Array:
     case cJSON_Object:
-        cJSON_AddItemToObject(m_json, element.m_name.c_str(), element.m_json);
+        cJSON_AddItemToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data(), element.m_json);
         break;
     }
 }
@@ -358,7 +359,7 @@ void JSONItem::arrayAppend(const JSONItem& element)
         break;
 
     case cJSON_String:
-        p = cJSON_CreateString(element.m_valueString.c_str());
+        p = cJSON_CreateString(element.m_valueString.mb_str(wxConvUTF8).data());
         break;
     case cJSON_Array:
     case cJSON_Object:
@@ -373,7 +374,7 @@ void JSONItem::arrayAppend(const JSONItem& element)
 JSONItem JSONItem::createArray(const wxString& name)
 {
     JSONItem arr(cJSON_CreateArray());
-    arr.setName(name);
+    arr.SetPropertyName(name);
     arr.setType(cJSON_Array);
     return arr;
 }
@@ -381,7 +382,7 @@ JSONItem JSONItem::createArray(const wxString& name)
 JSONItem JSONItem::createObject(const wxString& name)
 {
     JSONItem obj(cJSON_CreateObject());
-    obj.setName(name);
+    obj.SetPropertyName(name);
     obj.setType(cJSON_Object);
     return obj;
 }

@@ -180,7 +180,7 @@ bool clConfig::Write(const wxString& name, std::function<JSONItem()> serialiser_
     } else {
         // add it to the global configuration file
         DoDeleteProperty(name);
-        item.setName(name);
+        item.SetPropertyName(name);
         m_root->toElement().append(item);
         return true;
     }

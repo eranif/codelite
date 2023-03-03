@@ -72,7 +72,8 @@ public:
     const int& GetSelectedTab() const { return m_selectedTab; }
     // const wxArrayString& GetTabs() const {return m_tabs;}
     const wxString& GetWorkspaceName() const { return m_workspaceName; }
-    const std::vector<TabInfo>& GetTabInfoArr() { return m_vTabInfoArr; }
+    const std::vector<TabInfo>& GetTabInfoArr() const { return m_vTabInfoArr; }
+    std::vector<TabInfo>& GetTabInfoArr() { return m_vTabInfoArr; }
     const std::vector<clDebuggerBreakpoint>& GetBreakpoints() const { return m_breakpoints.GetBreakpoints(); }
 
     void SetFindInFilesMask(const wxString& findInFilesMask) { this->m_findInFilesMask = findInFilesMask; }

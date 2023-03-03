@@ -137,6 +137,7 @@ private:
     bool has_callbacks(const wxString& fullpath) const;
 
     int FindEditorIndexByFullPath(const wxString& fullpath);
+    void DoRestoreSession(const SessionEntry& entry);
 
 public:
     MainBook(wxWindow* parent);
@@ -184,7 +185,7 @@ public:
     void SetEditorBar(clEditorBar* bar) { m_navBar = bar; }
 
     void SaveSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
-    void RestoreSession(SessionEntry& session);
+    void RestoreSession(const SessionEntry& session);
     /**
      * @brief create session from current IDE state
      */

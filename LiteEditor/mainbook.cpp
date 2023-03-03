@@ -340,32 +340,52 @@ void MainBook::ShowNavBar(bool s)
 
 void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { CreateSession(session, excludeArr); }
 
-void MainBook::RestoreSession(SessionEntry& session)
+void MainBook::DoRestoreSession(const SessionEntry& session)
+{
+    size_t sel = session.GetSelectedTab();
+    clEditor* active_editor = nullptr;
+    const auto& vTabInfoArr = session.GetTabInfoArr();
+    for(size_t i = 0; i < vTabInfoArr.size(); i++) {
+        const TabInfo& ti = vTabInfoArr[i];
+        int first_visible_line = ti.GetFirstVisibleLine();
+        int current_line = ti.GetCurrentLine();
+        const wxArrayString& bookmarks = ti.GetBookmarks();
+        const std::vector<int>& folds = ti.GetCollapsedFolds();
+
+        bool is_selected = sel == i;
+        m_reloadingDoRaise = (i == vTabInfoArr.size() - 1); // Raise() when opening only the last editor
+
+        /// prepare a callback to be executed once the file is visible on screen
+        auto cb = [first_visible_line, current_line, is_selected, bookmarks, folds](IEditor* editor) {
+            auto ctrl = editor->GetCtrl();
+            ctrl->SetFirstVisibleLine(first_visible_line);
+            editor->SetCaretAt(ctrl->PositionFromLine(current_line));
+
+            clEditor* cl_editor = dynamic_cast<clEditor*>(ctrl);
+            if(cl_editor) {
+                cl_editor->LoadMarkersFromArray(bookmarks);
+                cl_editor->LoadCollapsedFoldsFromArray(folds);
+            }
+
+            if(is_selected) {
+                editor->SetActive();
+            }
+        };
+        auto editor = OpenFileAsync(ti.GetFileName(), std::move(cb));
+        if(sel == i) {
+            active_editor = editor;
+        }
+    }
+    SelectPage(active_editor);
+}
+
+void MainBook::RestoreSession(const SessionEntry& session)
 {
     if(session.GetTabInfoArr().empty())
         return; // nothing to restore
 
     CloseAll(false);
-    size_t sel = session.GetSelectedTab();
-    const std::vector<TabInfo>& vTabInfoArr = session.GetTabInfoArr();
-    for(size_t i = 0; i < vTabInfoArr.size(); i++) {
-        const TabInfo& ti = vTabInfoArr[i];
-        m_reloadingDoRaise = (i == vTabInfoArr.size() - 1); // Raise() when opening only the last editor
-        clEditor* editor = OpenFile(ti.GetFileName(), wxEmptyString, wxNOT_FOUND, wxNOT_FOUND, OF_None);
-        if(!editor) {
-            if(i < sel) {
-                // have to adjust selected tab number because couldn't open tab
-                sel--;
-            }
-            continue;
-        }
-
-        editor->SetFirstVisibleLine(ti.GetFirstVisibleLine());
-        editor->SetEnsureCaretIsVisible(editor->PositionFromLine(ti.GetCurrentLine()));
-        editor->LoadMarkersFromArray(ti.GetBookmarks());
-        editor->LoadCollapsedFoldsFromArray(ti.GetCollapsedFolds());
-    }
-    m_book->SetSelection(sel);
+    CallAfter(&MainBook::DoRestoreSession, session);
 }
 
 clEditor* MainBook::GetActiveEditor(bool includeDetachedEditors)
@@ -730,6 +750,10 @@ bool MainBook::AddBookPage(wxWindow* win, const wxString& text, const wxString& 
 
 bool MainBook::SelectPage(wxWindow* win)
 {
+    if(win == nullptr) {
+        return false;
+    }
+
     int index = m_book->GetPageIndex(win);
     if(index != wxNOT_FOUND && m_book->GetSelection() != index) {
 #if !CL_USE_NATIVEBOOK
@@ -1157,6 +1181,10 @@ long MainBook::GetBookStyle() { return 0; }
 
 bool MainBook::DoSelectPage(wxWindow* win)
 {
+    if(win == nullptr) {
+        return false;
+    }
+
     clEditor* editor = dynamic_cast<clEditor*>(win);
     if(editor) {
         editor->SetActive();

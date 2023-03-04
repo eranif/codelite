@@ -1171,7 +1171,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     outputFile = fnOutputFile.GetFullPath(wxPATH_NATIVE);
 
     wxString mkdirCommand = cmp->GetTool("MakeDirCommand");
-    if(mkdirCommand.IsEmpty()) {
+    if(mkdirCommand.empty()) {
         mkdirCommand = m_isWindows ? "mkdir" : "mkdir -p";
     }
 

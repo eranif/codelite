@@ -1229,9 +1229,9 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
     text << wxT("PCHCompileFlags        :=") << bldConf->GetPchCompileFlags() << wxT("\n");
 
     wxString mkdirCommand = cmp->GetTool("MakeDirCommand");
-    if(!mkdirCommand.IsEmpty()) {
-        // use the compiler defined one
-        text << wxT("MakeDirCommand         :=") << StringUtils::WrapWithDoubleQuotes(mkdirCommand) << wxT("\n");
+    if(!mkdirCommand.empty()) {
+        // use the compiler defined one, do not manipulate it use it as is
+        text << wxT("MakeDirCommand         :=") << mkdirCommand << wxT("\n");
     } else {
         mkdirCommand = "mkdir";
         if(OS_WINDOWS) {

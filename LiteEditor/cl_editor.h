@@ -42,14 +42,15 @@
 #include "navigationmanager.h"
 #include "plugin.h"
 #include "stringhighlighterjob.h"
-#include "wx/filename.h"
-#include "wx/menu.h"
 
 #include <map>
 #include <stack>
+#include <unordered_map>
 #include <vector>
 #include <wx/bitmap.h>
 #include <wx/cmndata.h>
+#include <wx/filename.h>
+#include <wx/menu.h>
 #include <wx/stc/stc.h>
 
 class wxRichToolTip;
@@ -258,7 +259,7 @@ protected:
     wxColour m_selTextColour;
     wxColour m_selTextBgColour;
     bool m_zoomProgrammatically = false;
-    std::vector<eLineStatus> m_modifiedLines;
+    std::unordered_map<size_t, eLineStatus> m_modifiedLines;
     bool m_trackChanges = false;
     std::unordered_map<int, wxString> m_breakpoints_tooltips;
     size_t m_default_text_width = wxNOT_FOUND;

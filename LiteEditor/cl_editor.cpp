@@ -1145,13 +1145,14 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
         return;
 
     wxString title;
-    if(!GetModify() && m_trackChanges) {
+    for(auto& [_line_number, status] : m_modifiedLines) {
         // mark all modified lines as "saved"
-        for(auto& status : m_modifiedLines) {
-            if(status == LINE_MODIFIED) {
-                status = LINE_SAVED;
-            }
+        if(status == LINE_MODIFIED) {
+            status = LINE_SAVED;
         }
+    }
+
+    if(!GetModify() && m_trackChanges) {
         DoUpdateLineNumbers(GetOptions()->GetRelativeLineNumbers());
     }
 
@@ -3378,27 +3379,27 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers)
     // StyleSetForeground(LINE_NUMBERS_ATTR_ID, fg_colour);
 
     // set the line numbers, taking hidden lines into consideration
-    for(auto& p : lines_to_draw) {
-        int line_number = p.first;
-        int line_to_render = p.second;
+    for(auto& [line_number, line_to_render] : lines_to_draw) {
         line_text.Printf(wxT("%d"), line_to_render);
         MarginSetText(line_number, line_text);
 
         bool is_current_line = (line_number == current_line);
-        if((size_t)line_number < m_modifiedLines.size()) {
-            //        ^^ sanity
-            if(m_modifiedLines[line_number] == LINE_MODIFIED) {
-                MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE_MODIFIED : STYLE_MODIFIED_LINE);
-            } else if(m_modifiedLines[line_number] == LINE_SAVED) {
-                MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE_SAVED : STYLE_SAVED_LINE);
+        if(m_trackChanges) {
+            if(auto iter = m_modifiedLines.find(line_number); iter != m_modifiedLines.end()) {
+                const auto& line_status = iter->second;
+                if(line_status == LINE_MODIFIED) {
+                    MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE_MODIFIED : STYLE_MODIFIED_LINE);
+                } else if(line_status == LINE_SAVED) {
+                    MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE_SAVED : STYLE_SAVED_LINE);
+                } else {
+                    MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE : STYLE_NORMAL_LINE);
+                }
             } else {
+                // normal line
                 MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE : STYLE_NORMAL_LINE);
             }
-        } else if(line_number == current_line) {
-            MarginSetStyle(line_number, STYLE_CURRENT_LINE);
         } else {
-            // normal line
-            MarginSetStyle(line_number, STYLE_NORMAL_LINE);
+            MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE : STYLE_NORMAL_LINE);
         }
     }
 }
@@ -4998,12 +4999,7 @@ void clEditor::OnChange(wxStyledTextEvent& event)
         }
 
         // ignore this event incase we are in the middle of file reloading
-        if(!GetReloadingFile() && m_trackChanges /* tracking changes */) {
-            if(m_modifiedLines.size() < (size_t)GetLineCount()) {
-                m_modifiedLines.reserve(GetLineCount());
-                m_modifiedLines.resize(GetLineCount());
-            }
-
+        if(!GetReloadingFile()) {
             // keep track of modified lines
             int curline = LineFromPosition(event.GetPosition());
             if(numlines == 0) {
@@ -6203,8 +6199,6 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     SetText(text);
     // clear the modified lines
     m_modifiedLines.clear();
-    m_modifiedLines.reserve(GetLineCount());
-    std::fill(m_modifiedLines.begin(), m_modifiedLines.end(), LINE_NONE);
 
     Colourise(0, wxNOT_FOUND);
 

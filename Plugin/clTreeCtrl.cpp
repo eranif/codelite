@@ -1198,6 +1198,7 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
     // Process the rest of the scrolling events here
     wxTreeItemId nextSelection;
     CHECK_ITEM_RET(GetRootItem());
+    CHECK_COND_RET(steps >= 0);
 
     bool fromTop = false;
     if(steps == 0) {

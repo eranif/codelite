@@ -268,6 +268,7 @@ protected:
     // in the given location. This is done inside OnSciUpdateUI() method
     // after the styles have been updated
     int m_trigger_cc_at_pos = wxNOT_FOUND;
+    bool m_clearModifiedLines = false;
 
 public:
     static bool m_ccShowPrivateMembers;

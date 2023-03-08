@@ -133,12 +133,8 @@ void ColoursAndFontsManager::Load()
         }
     }
 
-    clSYSTEM() << "Loading lexers from configuration..." << endl;
-
     // Load the lexers from the old format (json)
     LoadLexersFromDb();
-
-    clSYSTEM() << "Success" << endl;
 
     // read the global font property
     m_globalFont = clConfig::Get().Read("GlobalThemeFont", FontUtils::GetDefaultMonospacedFont());

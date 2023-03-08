@@ -1153,6 +1153,10 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
     }
 
     if(!GetModify() && m_trackChanges) {
+        if(m_clearModifiedLines) {
+            m_modifiedLines.clear();
+            m_clearModifiedLines = false;
+        }
         DoUpdateLineNumbers(GetOptions()->GetRelativeLineNumbers());
     }
 
@@ -6559,5 +6563,5 @@ void clEditor::OnIdle(wxIdleEvent& event)
 void clEditor::ClearModifiedLines()
 {
     // clear all modified lines
-    m_modifiedLines.clear();
+    m_clearModifiedLines = true;
 }

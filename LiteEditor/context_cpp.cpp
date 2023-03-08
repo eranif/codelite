@@ -83,7 +83,7 @@
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
-//#define __PERFORMANCE
+// #define __PERFORMANCE
 #include "performance.h"
 
 // Set of macros to allow use to disable any context code when we are using
@@ -1230,10 +1230,10 @@ void ContextCpp::OnKeyDown(wxKeyEvent& event)
         default: {
             int modifier_key = event.GetModifiers();
             wxChar ch = event.GetUnicodeKey();
-            if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+            if(modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
                 ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
                 return;
-            }  else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+            } else if(modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
                 ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
                 return;
             }
@@ -1734,6 +1734,7 @@ void ContextCpp::DoFormatEditor(clEditor* editor)
     EventNotifier::Get()->ProcessEvent(formatEvent);
     if(!formatEvent.GetFormattedString().IsEmpty()) {
         editor->SetText(formatEvent.GetFormattedString());
+        GetCtrl().ClearModifiedLines();
     }
 }
 

@@ -556,6 +556,9 @@ public:
         }
     }
 
+    /// Clear modified line state
+    virtual void ClearModifiedLines() = 0;
+
     /**
      * @brief return a string representing all the classes coloured by this editor
      */

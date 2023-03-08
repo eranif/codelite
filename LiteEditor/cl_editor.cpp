@@ -6555,3 +6555,9 @@ void clEditor::OnIdle(wxIdleEvent& event)
         RecalcHorizontalScrollbar();
     }
 }
+
+void clEditor::ClearModifiedLines()
+{
+    // clear all modified lines
+    m_modifiedLines.clear();
+}

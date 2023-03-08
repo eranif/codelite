@@ -278,6 +278,9 @@ public:
 
     IManager* GetManager() { return m_mgr; }
 
+    /// Clear the modified lines tracker
+    void ClearModifiedLines() override;
+
     /**
      * @brief CodeLite preferences updated
      */

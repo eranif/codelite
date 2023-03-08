@@ -251,11 +251,11 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
         inc_save_count(file_path);
     }
 
-    if(is_remote) {
-        return f->FormatRemoteFile(file_path, this);
-    } else {
-        return f->FormatFile(file_path, this);
+    bool res = is_remote ? f->FormatRemoteFile(file_path, this) : f->FormatFile(file_path, this);
+    if(res) {
+        editor->ClearModifiedLines();
     }
+    return res;
 }
 
 bool CodeFormatter::DoFormatString(const wxString& content, const wxString& fileName, wxString* output)

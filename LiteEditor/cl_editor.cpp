@@ -1072,29 +1072,22 @@ void clEditor::SetProperties()
     if(val2.IsEmpty() == false) {
         col2 = wxColour(val2);
     }
-
+#define INDICATOR_ALPHA 100
     IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
     IndicatorSetUnder(INDICATOR_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(INDICATOR_WORD_HIGHLIGHT, col2);
-    long alpha = EditorConfigST::Get()->GetInteger(wxT("WordHighlightAlpha"));
-    if(alpha != wxNOT_FOUND) {
-        IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, alpha);
-    }
+    IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, INDICATOR_ALPHA);
 
     IndicatorSetUnder(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, true);
     IndicatorSetStyle(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
 
     IndicatorSetForeground(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
-    if(alpha != wxNOT_FOUND) {
-        IndicatorSetAlpha(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, alpha);
-    }
+    IndicatorSetAlpha(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, INDICATOR_ALPHA);
 
     IndicatorSetUnder(INDICATOR_CONTEXT_WORD_HIGHLIGHT, true);
     IndicatorSetStyle(INDICATOR_CONTEXT_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
     IndicatorSetForeground(INDICATOR_CONTEXT_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
-    if(alpha != wxNOT_FOUND) {
-        IndicatorSetAlpha(INDICATOR_CONTEXT_WORD_HIGHLIGHT, alpha);
-    }
+    IndicatorSetAlpha(INDICATOR_CONTEXT_WORD_HIGHLIGHT, INDICATOR_ALPHA);
 
     IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
     IndicatorSetStyle(INDICATOR_MATCH, wxSTC_INDIC_BOX);
@@ -1102,6 +1095,7 @@ void clEditor::SetProperties()
 
     IndicatorSetStyle(INDICATOR_DEBUGGER, wxSTC_INDIC_BOX);
     IndicatorSetForeground(INDICATOR_DEBUGGER, wxT("GREY"));
+#undef INDICATOR_ALPHA
 
     CmdKeyClear(wxT('L'), wxSTC_KEYMOD_CTRL); // clear Ctrl+D because we use it for something else
 

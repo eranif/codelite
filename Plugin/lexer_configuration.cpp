@@ -278,8 +278,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetKeyWords(4, GetKeyWords(4));
     }
 
-    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_COMPOSITIONTHICK);
-    ctrl->IndicatorSetStyle(INDICATOR_WORD_HIGHLIGHT, wxSTC_INDIC_COMPOSITIONTHICK);
+    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_FULLBOX);
+    ctrl->IndicatorSetStyle(INDICATOR_WORD_HIGHLIGHT, wxSTC_INDIC_FULLBOX);
 
     wxColour default_bg_colour = defaultStyle.GetBgColour();
     bool is_dark = DrawingUtils::IsDark(defaultStyle.GetBgColour());

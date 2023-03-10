@@ -1067,15 +1067,19 @@ void clEditor::SetProperties()
 
     SetUserIndicatorStyleAndColour(wxSTC_INDIC_SQUIGGLE, indicator_colour);
 
-    wxColour col2{ *wxBLUE };
+    wxColour highlight_colour{ *wxGREEN };
     wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
-    if(val2.IsEmpty() == false) {
-        col2 = wxColour(val2);
+    if(!val2.empty()) {
+        highlight_colour = wxColour(val2);
     }
+
+    wxColour hover_highlight_colour = highlight_colour.ChangeLightness(150);
+
 #define INDICATOR_ALPHA 100
     IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
-    IndicatorSetUnder(INDICATOR_WORD_HIGHLIGHT, true);
-    IndicatorSetForeground(INDICATOR_WORD_HIGHLIGHT, col2);
+    IndicatorSetHoverForeground(INDICATOR_WORD_HIGHLIGHT, true);
+    IndicatorSetForeground(INDICATOR_WORD_HIGHLIGHT, highlight_colour);
+    IndicatorSetHoverForeground(INDICATOR_WORD_HIGHLIGHT, hover_highlight_colour);
     IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, INDICATOR_ALPHA);
 
     IndicatorSetUnder(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, true);

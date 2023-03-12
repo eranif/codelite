@@ -835,9 +835,6 @@ void clEditor::SetProperties()
     SetMarginBackground(SYMBOLS_MARGIN_SEP_ID,
                         DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(120) : bgColour.ChangeLightness(60));
 
-    // Fold margin - allow only folder symbols to display
-    SetMarginMask(FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);
-
     // Set margins' width
     SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? FromDIP(16) : 0); // Symbol margin
 
@@ -847,11 +844,7 @@ void clEditor::SetProperties()
     // Show number margin according to settings.
     UpdateLineNumberMarginWidth();
 
-    // Show the fold margin
-    SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? FromDIP(16) : 0); // Fold margin
-
     // Mark fold margin & symbols margins as sensetive
-    SetMarginSensitive(FOLD_MARGIN_ID, true);
     SetMarginSensitive(SYMBOLS_MARGIN_ID, true);
 
     // Right margin
@@ -891,7 +884,14 @@ void clEditor::SetProperties()
         }
     }
 
-    // Define the folding style to be square
+    // ===------------------------------------------------------------
+    // Folding setup
+    // ===------------------------------------------------------------
+    SetMarginMask(FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);
+    SetMarginType(FOLD_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
+    SetMarginSensitive(FOLD_MARGIN_ID, true);
+    SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? FromDIP(16) : 0);
+
     if(options->GetFoldStyle() == wxT("Flatten Tree Square Headers")) {
         DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS, foldFgColour, foldBgColour);
         DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXPLUS, foldFgColour, foldBgColour);
@@ -927,6 +927,11 @@ void clEditor::SetProperties()
         DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW, foldFgColour, foldBgColour);
         DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN, foldFgColour, foldBgColour);
         DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND, foldFgColour, foldBgColour);
+    }
+
+    // Set the highlight colour for the folding
+    for(int i = wxSTC_MARKNUM_FOLDEREND; i <= wxSTC_MARKNUM_FOLDEROPEN; ++i) {
+        MarkerSetBackgroundSelected(i, lexer->IsDark() ? wxColour("YELLOW") : wxColour("RED"));
     }
 
     // Bookmark
@@ -1015,12 +1020,6 @@ void clEditor::SetProperties()
     SetTwoPhaseDraw(true);
 
 #ifdef __WXMSW__
-    SetBufferedDraw(true);
-#elif defined(__WXGTK__)
-    // when enabled on GTK, this causes some nasty drawing issues
-    // and macOS always draw with buffered drawing
-    SetBufferedDraw(false);
-#else
     SetBufferedDraw(true);
 #endif
 
@@ -3453,7 +3452,6 @@ void clEditor::OpenFile()
 
     // Update the editor properties
     UpdateOptions();
-    SetProperties();
     UpdateLineNumberMarginWidth();
     UpdateColours();
     SetEOL();
@@ -3476,6 +3474,7 @@ void clEditor::OpenFile()
     SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
     SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
     m_mgr->GetStatusBar()->SetMessage(_("Ready"));
+    CallAfter(&clEditor::SetProperties);
 }
 
 void clEditor::SetEditorText(const wxString& text)

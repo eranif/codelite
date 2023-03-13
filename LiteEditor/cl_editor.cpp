@@ -604,7 +604,7 @@ void clEditor::SetSyntaxHighlight(const wxString& lexerName)
     if(lexer) {
         lexer->Apply(this, true);
     }
-    SetProperties();
+    CallAfter(&clEditor::SetProperties);
 
     SetEOL();
     m_context->SetActive();
@@ -619,7 +619,7 @@ void clEditor::SetSyntaxHighlight(bool bUpdateColors)
     ClearDocumentStyle();
     m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
 
-    SetProperties();
+    CallAfter(&clEditor::SetProperties);
 
     m_context->SetActive();
     m_context->ApplySettings();
@@ -5784,7 +5784,7 @@ void clEditor::OnEditorConfigChanged(wxCommandEvent& event)
 {
     event.Skip();
     UpdateOptions();
-    SetProperties();
+    CallAfter(&clEditor::SetProperties);
     UpdateLineNumbers();
 }
 
@@ -6147,7 +6147,7 @@ void clEditor::ClearCCAnnotations()
     }
 }
 
-void clEditor::ApplyEditorConfig() { SetProperties(); }
+void clEditor::ApplyEditorConfig() { CallAfter(&clEditor::SetProperties); }
 
 void clEditor::OpenURL(wxCommandEvent& event)
 {
@@ -6207,7 +6207,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     SetSavePoint();
 
     UpdateOptions();
-    SetProperties();
+    CallAfter(&clEditor::SetProperties);
 
     if(!keepUndoHistory) {
         EmptyUndoBuffer();

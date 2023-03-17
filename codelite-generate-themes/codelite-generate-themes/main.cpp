@@ -1,10 +1,11 @@
 #include "ColoursAndFontsManager.h"
 #include "ImportThemesDialog.h"
-#include "ThemeImporterManager.hpp"
+#include "ThemeImporters/ThemeImporterManager.hpp"
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 
 #include <iostream>
+#include <wx/app.h>
 #include <wx/arrstr.h>
 #include <wx/crt.h>
 #include <wx/dir.h>
@@ -14,6 +15,7 @@
 #include <wx/imagjpeg.h>
 #include <wx/imagpng.h>
 #include <wx/init.h>
+#include <wx/msgdlg.h>
 #include <wx/string.h>
 
 #ifdef __WXGTK__
@@ -55,6 +57,7 @@ void import_files(const wxString& input_dir, const wxString& output_dir)
     ColoursAndFontsManager::Get().Save(lexer_json);
 }
 } // namespace
+
 class MainApp : public wxApp
 {
 public:

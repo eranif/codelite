@@ -23,10 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "generic_context.h"
-#include "editor_config.h"
-#include "cl_editor.h"
-#include "clEditorWordCharsLocker.h"
+
+#include "ColoursAndFontsManager.h"
 #include "clEditorColouriseLocker.h"
+#include "clEditorWordCharsLocker.h"
+#include "cl_editor.h"
+#include "editor_config.h"
 #include "file_logger.h"
 
 ContextGeneric::ContextGeneric(clEditor* container, const wxString& name)
@@ -42,10 +44,7 @@ ContextBase* ContextGeneric::NewInstance(clEditor* container) { return new Conte
 
 void ContextGeneric::ApplySettings()
 {
-    LexerConf::Ptr_t lexPtr;
-    if(EditorConfigST::Get()->IsOk()) {
-        lexPtr = EditorConfigST::Get()->GetLexer(GetName());
-    }
+    LexerConf::Ptr_t lexPtr = ColoursAndFontsManager::Get().GetLexer(GetName());
     clEditor& rCtrl = GetCtrl();
     if(lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
@@ -127,13 +126,13 @@ void ContextGeneric::ProcessIdleActions()
         } else if(reCloseHtmlTag.Matches(word)) {
             searchWhat = reCloseHtmlTag.GetMatch(word, 1);
             closeTag << "</" << searchWhat << ">";
-            
+
             wxString reString = "<" + searchWhat + "[>]?";
             wxRegEx reOpenTag(reString, wxRE_DEFAULT | wxRE_ICASE);
             if(!reOpenTag.IsValid()) {
                 clDEBUG() << "Invalid regex:" << reString << clEndl;
             }
-            
+
             int pos = startPos;
             int depth = 0;
             int where = FindPrev(searchWhat, pos, true);

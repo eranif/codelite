@@ -13,6 +13,7 @@
 #include "ThemeImporterFortran.hpp"
 #include "ThemeImporterINI.hpp"
 #include "ThemeImporterInnoSetup.hpp"
+#include "ThemeImporterJSON.hpp"
 #include "ThemeImporterJava.hpp"
 #include "ThemeImporterJavaScript.hpp"
 #include "ThemeImporterLUA.hpp"
@@ -21,17 +22,14 @@
 #include "ThemeImporterPHP.hpp"
 #include "ThemeImporterPython.hpp"
 #include "ThemeImporterRuby.hpp"
+#include "ThemeImporterRust.hpp"
 #include "ThemeImporterSCSS.hpp"
 #include "ThemeImporterSQL.hpp"
 #include "ThemeImporterScript.hpp"
+#include "ThemeImporterTCL.hpp"
 #include "ThemeImporterText.hpp"
 #include "ThemeImporterXML.hpp"
 #include "ThemeImporterYAML.hpp"
-
-#if wxCHECK_VERSION(3, 1, 0)
-#include "ThemeImporterJSON.hpp"
-#include "ThemeImporterRust.hpp"
-#endif
 
 #include <wx/versioninfo.h>
 
@@ -44,6 +42,7 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(new ThemeImporterDiff());
     m_importers.push_back(new ThemeImporterPHP());
     m_importers.push_back(new ThemeImporterCSS());
+    m_importers.push_back(new ThemeImporterTCL());
     m_importers.push_back(new ThemeImporterXML());
     m_importers.push_back(new ThemeImporterJavaScript());
     m_importers.push_back(new ThemeImporterINI());
@@ -63,10 +62,8 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(new ThemeImporterYAML());
     m_importers.push_back(new ThemeImporterRuby());
     m_importers.push_back(new ThemeImporterMarkdown());
-#if wxCHECK_VERSION(3, 1, 0)
     m_importers.push_back(new ThemeImporterRust());
     m_importers.push_back(new ThemeImporterJson());
-#endif
 }
 
 ThemeImporterManager::~ThemeImporterManager() {}

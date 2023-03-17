@@ -25,18 +25,19 @@
 #ifndef CONTEXT_MANAGER_H
 #define CONTEXT_MANAGER_H
 
-#include "singleton.h"
-#include "wx/string.h"
-#include "map"
 #include "context_base.h"
-#include "wx/window.h"
+#include "singleton.h"
+
+#include <unordered_map>
+#include <wx/string.h>
+#include <wx/window.h>
 
 class ContextManager;
 
 class ContextManager : public Singleton<ContextManager>
 {
     friend class Singleton<ContextManager>;
-    std::map<wxString, ContextBasePtr> m_contextPool;
+    std::unordered_map<wxString, ContextBasePtr> m_contextPool;
 
 public:
     /**
@@ -45,10 +46,10 @@ public:
      * \param parent the context parent
      * \return
      */
-    ContextBasePtr NewContext(clEditor *parent, const wxString &lexerName);
-    ContextBasePtr NewContextByFileName(clEditor *parent, const wxFileName &fileName);
+    ContextBasePtr NewContext(clEditor* parent, const wxString& lexerName);
+    ContextBasePtr NewContextByFileName(clEditor* parent, const wxFileName& fileName);
     void Initialize();
-    
+
 private:
     ContextManager();
     virtual ~ContextManager();

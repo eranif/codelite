@@ -117,6 +117,8 @@ void FileExtManager::Init()
         m_map[wxT("phtml")] = TypePhp;
         m_map[wxT("ctp")] = TypePhp;
 
+        m_map[wxT("tcl")] = TypeTcl;
+
         m_map[wxT("xml")] = TypeXml;
         m_map[wxT("xrc")] = TypeXRC;
         m_map[wxT("css")] = TypeCSS;

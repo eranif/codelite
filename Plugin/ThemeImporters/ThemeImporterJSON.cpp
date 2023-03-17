@@ -2,7 +2,6 @@
 
 #include <wx/stc/stc.h>
 
-#if wxCHECK_VERSION(3, 1, 0)
 ThemeImporterJson::ThemeImporterJson()
 {
     // normal keywords
@@ -37,4 +36,3 @@ LexerConf::Ptr_t ThemeImporterJson::Import(const wxFileName& theme_file)
     FinalizeImport(lexer);
     return lexer;
 }
-#endif // wx > 3.1.0

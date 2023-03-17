@@ -14,6 +14,7 @@ include_directories(
     "${CL_SRC_ROOT}/yaml-cpp/include"
     "${CL_SRC_ROOT}/CodeLite/ssh"
     "${CL_SRC_ROOT}/PCH"
+    "${CL_SRC_ROOT}/ThemeImporters"
     "${CL_SRC_ROOT}/Interfaces")
 
 # Macros
@@ -85,7 +86,7 @@ if(NOT MINGW AND WXC_APP)
     message("-- libplugin.so is using RPATH set to ${WXC_LIBS_DIR}")
 endif()
 
-file(GLOB SRCS "*.cpp" "LSP/*.cpp")
+file(GLOB SRCS "*.cpp" "LSP/*.cpp" "ThemeImporters/*.cpp")
 
 # Define the output
 add_library(plugin SHARED ${SRCS})

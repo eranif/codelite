@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "context_manager.h"
+
 #include "ColoursAndFontsManager.h"
 #include "ContextJavaScript.h"
 #include "ContextPhp.h"
@@ -31,11 +33,11 @@
 #include "context_cpp.h"
 #include "context_diff.h"
 #include "context_html.h"
-#include "context_manager.h"
 #include "editor_config.h"
 #include "generic_context.h"
-#include <wx/tokenzr.h>
 #include "wx/versioninfo.h"
+
+#include <wx/tokenzr.h>
 
 ContextManager::ContextManager() { Initialize(); }
 
@@ -46,7 +48,7 @@ ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexe
     // this function is actually a big switch ....
     wxString lex_name = lexerName;
     lex_name.MakeLower();
-    std::map<wxString, ContextBasePtr>::iterator iter = m_contextPool.find(lex_name);
+    auto iter = m_contextPool.find(lex_name);
     if(iter == m_contextPool.end()) {
         return m_contextPool["text"]->NewInstance(parent);
     }
@@ -56,7 +58,7 @@ ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexe
 
 ContextBasePtr ContextManager::NewContextByFileName(clEditor* parent, const wxFileName& fileName)
 {
-    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(fileName.GetFullPath());
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(fileName.GetFullPath());
     if(!lexer) {
         // could not locate a lexer for this file name, return the default text lexer
         return ContextManager::Get()->NewContext(parent, wxT("Text"));
@@ -76,15 +78,13 @@ void ContextManager::Initialize()
     m_contextPool["php"] = new ContextPhp();
     m_contextPool["javascript"] = new ContextJavaScript();
     m_contextPool["python"] = new ContextPython();
-#if wxCHECK_VERSION(3, 1, 0)
     m_contextPool["rust"] = new ContextRust();
-#endif
 
     // load generic lexers
     wxArrayString names = ColoursAndFontsManager::Get().GetAllLexersNames();
-    for(size_t i = 0; i < names.GetCount(); ++i) {
-        if(m_contextPool.find(names.Item(i)) == m_contextPool.end()) {
-            m_contextPool[names.Item(i)] = new ContextGeneric(names.Item(i));
+    for(const auto& name : names) {
+        if(m_contextPool.count(name) == 0) {
+            m_contextPool.insert({ name, new ContextGeneric(name) });
         }
     }
 

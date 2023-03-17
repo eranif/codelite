@@ -929,6 +929,10 @@ else()
 
         # makedirs
         add_subdirectory(TestDir)
+
+        # utility for importing themes
+        add_subdirectory(codelite-generate-themes)
+
     endif()
     add_subdirectory(sdk/codelite_cppcheck)
     add_subdirectory(codelite_echo)

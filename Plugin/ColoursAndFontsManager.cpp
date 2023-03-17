@@ -3,7 +3,7 @@
 #include "DefaultLexerJSON.cpp"
 #include "FontUtils.hpp"
 #include "JSON.h"
-#include "ThemeImporterManager.hpp"
+#include "ThemeImporters/ThemeImporterManager.hpp"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
 #include "editor_config.h"

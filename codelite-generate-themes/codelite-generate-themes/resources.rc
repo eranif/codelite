@@ -1,7 +1,14 @@
-#include "wx/msw/wx.rc"
 #include "wx/version.h"
-#if defined(WIN64) && !wxCHECK_VERSION(3, 1, 6)
-1 24 "wx/msw/amd64.manifest"
-#else
-1 24 "wx/msw/wx.manifest"
-#endif
+aaaaa ICON "../../LiteEditor/codelite-logo.ico"
+
+// set this to 1 if you don't want to use manifest resource (manifest resource
+// is needed to enable visual styles on Windows XP - see docs/msw/winxp.txt
+// for more information)
+#define wxUSE_NO_MANIFEST 0
+
+// To get DPI change events, we need to opt in into per monitor DPI support.
+#define wxUSE_DPI_AWARE_MANIFEST 2
+
+// this is not always needed but doesn't hurt (except making the executable
+// very slightly larger): this file contains the standard icons, cursors, ...
+#include "wx/msw/wx.rc"

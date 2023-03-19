@@ -53,7 +53,9 @@ class WXDLLIMPEXP_SDK ColoursAndFontsManager : public wxEvtHandler
 
 protected:
     bool m_initialized = false;
+    /// Map lexers by name (c++, rust, etc)
     ColoursAndFontsManager::Map_t m_lexersMap;
+    /// List of all lexers available
     ColoursAndFontsManager::Vec_t m_allLexers;
     wxString m_globalTheme;
     LexerConf::Ptr_t m_defaultLexer;

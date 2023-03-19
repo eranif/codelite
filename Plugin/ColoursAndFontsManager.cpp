@@ -163,9 +163,12 @@ wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString&
 
 LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, const wxString& theme) const
 {
-    ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.find(lexerName.Lower());
-    if(iter == m_lexersMap.end())
+    auto iter = m_lexersMap.find(lexerName.Lower());
+    if(iter == m_lexersMap.end()) {
+        clWARNING() << "No lexer available for:" << lexerName << endl;
+        clWARNING() << "Using default lexer:" << m_defaultLexer->GetName() << endl;
         return m_defaultLexer;
+    }
 
     // Locate the requested theme
     LexerConf::Ptr_t firstLexer(NULL);
@@ -183,7 +186,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
         }
     }
 
-    if(theme.IsEmpty()) {
+    if(theme.empty()) {
         // return the active theme
         auto& allLexers = iter->second;
         for(auto lexer : allLexers) {

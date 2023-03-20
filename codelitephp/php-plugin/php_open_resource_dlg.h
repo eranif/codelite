@@ -26,13 +26,13 @@
 #ifndef __php_open_resource_dlg__
 #define __php_open_resource_dlg__
 
-#include <wx/propgrid/manager.h>
 #include "php_ui.h"
 #include <vector>
 #include "PHPEntityVariable.h"
 #include "PHPEntityBase.h"
 #include "PHPLookupTable.h"
 #include "bitmap_loader.h"
+#include <wx/propgrid/manager.h>
 
 struct ResourceItem {
     enum { kRI_Invalid = -1, kRI_File, kRI_Class, kRI_Constant, kRI_Function, kRI_Member, kRI_Variable, kRI_Namespace };

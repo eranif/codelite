@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-macro(CL_INSTALL_NAME_TOOL _findwhat_ _binary_)
+macro(cl_install_name_tool _findwhat_ _binary_)
     if(APPLE)
         install(
             CODE "
@@ -13,11 +13,40 @@ macro(CL_INSTALL_NAME_TOOL _findwhat_ _binary_)
                 string(FIND \${RESULT1} \"(\" POS)
                 string(SUBSTRING \${RESULT1} 0 \${POS} SONAME)
                 string(STRIP \${SONAME} SONAME)
-                execute_process(COMMAND basename \${SONAME} OUTPUT_VARIABLE SOBASENAME OUTPUT_STRIP_TRAILING_WHITESPACE)
-                execute_process(COMMAND install_name_tool -change \${SONAME} @executable_path/\${SOBASENAME} ${_binary_})
+                execute_process(COMMAND
+                    basename \${SONAME}
+                    OUTPUT_VARIABLE SOBASENAME
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+                execute_process(COMMAND 
+                    install_name_tool 
+                    -change \${SONAME} @executable_path/\${SOBASENAME} ${_binary_})
             endif()
-
             ")
+    endif()
+endmacro()
+
+macro(cl_install_name_tool_now _findwhat_ _binary_)
+    if(APPLE)
+        execute_process(
+            COMMAND basename ${_binary_}
+            OUTPUT_VARIABLE _binary_basename_
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(
+            COMMAND /bin/sh -c
+                    "otool -L ${_binary_} | grep ${_findwhat_} |grep -v executable_path |grep -v ${_binary_basename_}"
+            OUTPUT_VARIABLE RESULT1
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if(NOT "${RESULT1}" STREQUAL "")
+            set(POS -1)
+            string(FIND ${RESULT1} "(" POS)
+            string(SUBSTRING ${RESULT1} 0 ${POS} SONAME)
+            string(STRIP ${SONAME} SONAME)
+            execute_process(
+                COMMAND basename ${SONAME}
+                OUTPUT_VARIABLE SOBASENAME
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+            execute_process(COMMAND install_name_tool -change ${SONAME} @executable_path/${SOBASENAME} ${_binary_})
+        endif()
     endif()
 endmacro()
 
@@ -54,7 +83,7 @@ macro(CL_OSX_FIND_BREW_HEADER __header_name HEADER_OUTPUT_VARIABLE)
     endif()
 endmacro()
 
-macro(CL_INSTALL_NAME_TOOL_EX _findwhat_ _replacewith_ _binary_)
+macro(cl_install_name_tool_ex _findwhat_ _replacewith_ _binary_)
     if(APPLE)
         install(
             CODE "
@@ -76,31 +105,28 @@ macro(CL_INSTALL_NAME_TOOL_EX _findwhat_ _replacewith_ _binary_)
 endmacro()
 
 function(copy_extra_homebrew_libs)
-    # first try to copy files from /usr/local/lib
-    execute_process(COMMAND cp -L "/usr/local/lib/libssh.4.dylib" ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
-                    ERROR_QUIET OUTPUT_QUIET)
-    execute_process(COMMAND cp -L "/usr/local/lib/libhunspell-1.7.0.dylib"
-                            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
-
     # if these files also exists under /opt/homebrew -> use this path instead
     execute_process(COMMAND cp -L "/opt/homebrew/opt/libssh/lib/libssh.4.dylib"
                             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
     execute_process(COMMAND cp -L "/opt/homebrew/opt/hunspell/lib/libhunspell-1.7.0.dylib"
                             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
+    copy_lib_deps("/opt/homebrew/opt/libssh/lib/libssh.4.dylib" "homebrew")
 endfunction()
 
 function(copy_lib_deps LIB_FULLPATH DEPS_PATTERN)
-    # first try to copy files from /usr/local/lib
     execute_process(
-        COMMAND sh -c "otool -L ${LIB_FULLPATH} |grep ${DEPS_PATTERN}|cut -d '(' -f1"
+        COMMAND sh -c "otool -L ${LIB_FULLPATH} |grep ${DEPS_PATTERN}|grep -v ${LIB_FULLPATH} |cut -d '(' -f1"
         OUTPUT_VARIABLE _HOMEBREW_DEPS
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(REPLACE " " "" _HOMEBREW_DEPS ${_HOMEBREW_DEPS})
-    string(REPLACE "\t" "" _HOMEBREW_DEPS ${_HOMEBREW_DEPS})
-    string(REPLACE "\n" ";" _HOMEBREW_DEPS ${_HOMEBREW_DEPS})
+    string(REPLACE " " "" _HOMEBREW_DEPS "${_HOMEBREW_DEPS}")
+    string(REPLACE "\t" "" _HOMEBREW_DEPS "${_HOMEBREW_DEPS}")
+    string(REPLACE "\n" ";" _HOMEBREW_DEPS "${_HOMEBREW_DEPS}")
     foreach(DLL ${_HOMEBREW_DEPS})
         message(STATUS "Copying ${DLL} into bundle/MacOS")
         execute_process(COMMAND cp -L ${DLL} ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+        if(NOT "${DLL}" STREQUAL "")
+            copy_lib_deps("${DLL}" "homebrew")
+        endif()
     endforeach()
 endfunction()
 
@@ -114,7 +140,7 @@ endfunction()
 # ------------------------------------------------------------------------------------
 # A useful macro that accepts the string the search string and runs install_name_tool to set it to the @executable_path
 # ------------------------------------------------------------------------------------
-macro(CL_INSTALL_NAME_TOOL_STD _binary_)
+macro(cl_install_name_tool_std _binary_)
     if(APPLE)
         cl_install_name_tool("libwx_" ${_binary_})
         cl_install_name_tool("libdapcxx" ${_binary_})
@@ -258,6 +284,12 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
             file(COPY ${WXLIB} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
         endforeach()
         fix_homebrew_paths("libwx_osx*.dylib")
+        file(GLOB __libs "${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/lib*.dylib")
+        foreach(__lib ${__libs})
+            message(STATUS "Calling cl_install_name_tool for ${__lib}")
+            # call the "now" variant, since we want it to run during the cmake stage
+            cl_install_name_tool_now("homebrew" ${__lib})
+        endforeach()
 
         # Copy Terminal.app launcher script
         file(

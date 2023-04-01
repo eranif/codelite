@@ -6,7 +6,7 @@
    "targets": [["Run CMake", "mkdir -p build-debug\ncd build-debug\ncmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root -Wno-dev"], ["build", "cd build-debug\nmake -j$(nproc) install"], ["clean", "cd build-debug\nmake -j$(nproc) clean"], ["install", "cd build-debug\nmake -j$(nproc) install"]],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.xrc;*.rc;*.plist;*.iss;*.md;*.l",
    "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
-   "excludePaths": "/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm;/home/ANT.AMAZON.COM/eifrah/devl/codelite/CxxParser",
+   "excludePaths": "$(WorkspacePath)/build-debug-native-book;$(WorkspacePath)/build-release-gtk2;$(WorkspacePath)/bitmaps-dark;$(WorkspacePath)/bitmaps-light;$(WorkspacePath)/build-debug;$(WorkspacePath)/build-release;$(WorkspacePath)/codelite-icons-dark;$(WorkspacePath)/codelite-icons-fresh-farm;$(WorkspacePath)/CxxParser",
    "debugger": "GNU gdb debugger"
   }, {
    "name": "Debug GTK2",

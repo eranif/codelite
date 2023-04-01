@@ -1124,7 +1124,8 @@ wxString clFileSystemWorkspace::GetExcludeFolders() const
 {
     clFileSystemWorkspaceConfig::Ptr_t conf = m_settings.GetSelectedConfig();
     if(conf) {
-        return conf->GetExecludePaths();
+        // expand the any macros
+        return MacroManager::Instance()->Expand(conf->GetExecludePaths(), nullptr, wxEmptyString, wxEmptyString);
     }
     return wxEmptyString;
 }

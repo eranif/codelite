@@ -37,7 +37,9 @@
 #include "clEnvironment.hpp"
 #include "cl_ssh.h"
 
+#include <chrono>
 #include <libssh/libssh.h>
+#include <thread>
 
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);
@@ -215,10 +217,12 @@ void clSSH::AcceptServerAuthentication()
 #endif
 }
 
-#define THROW_OR_FALSE(msg)     \
-    if(throwExc) {              \
-        throw clException(msg); \
-    }                           \
+#define THROW_OR_FALSE(msg)       \
+    if(throwExc) {                \
+        throw clException(msg);   \
+    } else {                      \
+        clDEBUG() << msg << endl; \
+    }                             \
     return false;
 
 bool clSSH::LoginAuthNone(bool throwExc)
@@ -342,11 +346,6 @@ void clSSH::Login()
 {
     int rc;
 
-    rc = ssh_userauth_none(m_session, NULL);
-    if(rc == SSH_AUTH_SUCCESS) {
-        return;
-    }
-
     std::string username = StringUtils::ToStdString(GetUsername());
     ssh_options_set(m_session, SSH_OPTIONS_USER, username.c_str());
 
@@ -359,17 +358,30 @@ void clSSH::Login()
     methods.push_back(&clSSH::LoginInteractiveKBD);
     methods.push_back(&clSSH::LoginAuthNone);
 
+    // set the connection to non blocking
+    ssh_set_blocking(m_session, 0);
+
     bool authenticated = false;
     for(auto func : methods) {
-        try {
-            (this->*func)(true);
-        } catch(clException& e) {
-            clDEBUG() << "failed to authenticate." << e.What() << endl;
-            continue;
+        // authenticate with timeout
+        auto login_method = [this, func]() -> bool {
+            for(size_t i = 0; i < 100; ++i) {
+                if((this->*func)(false)) {
+                    return true;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            return false;
+        };
+
+        if(login_method()) {
+            // set the connection back to blocking mode
+            ssh_set_blocking(m_session, 1);
+            authenticated = true;
+            break;
         }
-        authenticated = true;
-        break;
     }
+
     if(!authenticated) {
         throw clException("Unable to login to server");
     }

@@ -555,7 +555,8 @@ void DebugAdapterClient::LoadPerspective()
 
     // Hide all the panes
     auto& panes = m_mgr->GetDockingManager()->GetAllPanes();
-    for(auto &pane : panes) {
+    for(size_t i = 0; i < panes.size(); ++i) {
+        auto& pane = panes[i];
         if(pane.dock_direction != wxAUI_DOCK_CENTER) {
             pane.Hide();
         }

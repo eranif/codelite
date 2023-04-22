@@ -34,6 +34,7 @@ bool SetChoiceOptions(wxChoice* choice, const wxArrayString& values, const wxStr
     return (match != wxNOT_FOUND);
 }
 wxString GENERATOR_UNIX = "CodeLite Makefile Generator - UNIX";
+wxString GENERATOR_DEFAULT = "CodeLite Makefile Generator";
 wxString GENERATOR_NMAKE = "NMakefile for MSVC toolset";
 wxString CONFIG_LAST_SELECTED_CATEGORY = "NewProject/LastCategory";
 wxString CONFIG_LAST_SELECTED_TYPE = "NewProject/LastType";
@@ -55,13 +56,19 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
         m_textCtrlName->ChangeValue(fn.GetDirs().Last());
     }
 
-    wxString lastBuildSystem = "CodeLite Makefile Generator";
+    wxString lastBuildSystem = GENERATOR_DEFAULT;
     wxString lastCategory;
     wxString lastType;
     wxString lastCompiler;
     wxString lastDebugger;
 
     lastBuildSystem = clConfig::Get().Read(CONFIG_LAST_BUILD_SYSTEM, lastBuildSystem);
+    if(lastBuildSystem.CmpNoCase("default") == 0) {
+        // the last used compiler is "Default"
+        // force the "CodeLite Makefile Generator" instead
+        lastBuildSystem = GENERATOR_DEFAULT;
+    }
+
     lastCategory = clConfig::Get().Read(CONFIG_LAST_SELECTED_CATEGORY, lastCategory);
     lastType = clConfig::Get().Read(CONFIG_LAST_SELECTED_TYPE, lastType);
     lastCompiler = clConfig::Get().Read(CONFIG_LAST_COMPILER, lastCompiler);
@@ -122,7 +129,11 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
     wxArrayString knownBuilders;
     BuildManagerST::Get()->GetBuilders(builders);
     for(const wxString& builderName : builders) {
-        knownBuilders.Add(builderName);
+        if(builderName.Lower() != "default") {
+            // we no longer want people to use the "Default" build system
+            // our default is "CodeLite Makefile Generator"
+            knownBuilders.Add(builderName);
+        }
     }
     SetChoiceOptions(m_choiceBuild, knownBuilders, lastBuildSystem);
 

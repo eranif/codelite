@@ -47,6 +47,12 @@ class ZoomText : public wxStyledTextCtrl
     wxString m_locals;
     wxTimer* m_timer;
 
+public:
+    enum MarkerType {
+        MARKER_ERROR,
+        MARKER_WARNING,
+    };
+
 protected:
     void OnThemeChanged(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);
@@ -60,7 +66,8 @@ public:
     void OnSettingsChanged(wxCommandEvent& e);
     void UpdateText(IEditor* editor);
     void HighlightLines(int start, int end);
-
+    void UpdateMarkers(const std::vector<int>& lines, MarkerType type);
+    void DeleteAllMarkers();
     void Startup();
 };
 

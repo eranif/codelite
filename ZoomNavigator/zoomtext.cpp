@@ -32,6 +32,7 @@
 
 #include "zoomtext.h"
 
+#include "bookmark_manager.h"
 #include "cl_config.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -43,6 +44,7 @@
 #include "znSettingsDlg.h"
 #include "zn_config_item.h"
 
+#include <vector>
 #include <wx/app.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -81,6 +83,16 @@ ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
                                   this);
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
     MarkerDefine(1, wxSTC_MARK_BACKGROUND, m_colour, m_colour);
+
+    MarkerDefine(smt_warning, wxSTC_MARK_SHORTARROW);
+    MarkerSetForeground(smt_error, wxColor(128, 128, 0));
+    MarkerSetBackground(smt_warning, wxColor(255, 215, 0));
+    MarkerSetAlpha(smt_warning, 80);
+
+    MarkerDefine(smt_error, wxSTC_MARK_SHORTARROW);
+    MarkerSetForeground(smt_error, wxColor(128, 0, 0));
+    MarkerSetBackground(smt_error, wxColor(255, 0, 0));
+    MarkerSetAlpha(smt_error, 80);
 
 #ifndef __WXMSW__
     SetTwoPhaseDraw(false);
@@ -197,13 +209,13 @@ void ZoomText::OnTimer(wxTimerEvent& event)
 {
     // sanity
     if(!m_classes.IsEmpty() || IsEmpty()) {
-        m_timer->Start(1000, true);
+        m_timer->Start(500, true);
         return;
     }
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(!editor) {
-        m_timer->Start(1000, true);
+        m_timer->Start(500, true);
         return;
     }
 
@@ -214,7 +226,7 @@ void ZoomText::OnTimer(wxTimerEvent& event)
         SetKeyWords(3, editor->GetKeywordLocals());  // locals
         Colourise(0, GetLength());
     }
-    m_timer->Start(1000, true);
+    m_timer->Start(500, true);
 }
 
 void ZoomText::DoClear()
@@ -226,4 +238,31 @@ void ZoomText::DoClear()
     SetReadOnly(true);
 }
 
-void ZoomText::Startup() { m_timer->Start(1000, true); }
+void ZoomText::Startup() { m_timer->Start(500, true); }
+
+void ZoomText::UpdateMarkers(const std::vector<int>& lines, MarkerType type)
+{
+    int marker_mask = wxNOT_FOUND;
+    int marker_number = wxNOT_FOUND;
+    switch(type) {
+    case MARKER_ERROR:
+        marker_number = smt_error;
+        marker_mask = mmt_error;
+        break;
+    case MARKER_WARNING:
+        marker_number = smt_warning;
+        marker_mask = mmt_warning;
+        break;
+    }
+
+    MarkerDeleteAll(marker_number);
+    for(int line : lines) {
+        MarkerAdd(line, marker_number);
+    }
+}
+
+void ZoomText::DeleteAllMarkers()
+{
+    MarkerDeleteAll(smt_error);
+    MarkerDeleteAll(smt_warning);
+}

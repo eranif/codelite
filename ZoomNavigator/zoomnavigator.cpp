@@ -32,6 +32,7 @@
 
 #include "zoomnavigator.h"
 
+#include "bookmark_manager.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "event_notifier.h"
@@ -71,6 +72,26 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+
+namespace
+{
+/// @[param]in ctrl the control
+/// @[param]in marker_mask marker type to check
+/// @[param]out lines
+size_t GetMarkers(wxStyledTextCtrl* ctrl, int marker_mask, std::vector<int>* lines)
+{
+    int nFoundLine = 0;
+    while(true) {
+        nFoundLine = ctrl->MarkerNext(nFoundLine, marker_mask);
+        if(nFoundLine == wxNOT_FOUND) {
+            break;
+        }
+        lines->push_back(nFoundLine);
+        ++nFoundLine;
+    }
+    return lines->size();
+}
+} // namespace
 
 ZoomNavigator::ZoomNavigator(IManager* manager)
     : IPlugin(manager)
@@ -189,6 +210,18 @@ void ZoomNavigator::DoUpdate()
 
     wxStyledTextCtrl* stc = curEditor->GetCtrl();
     CHECK_CONDITION(stc);
+
+    // locate any error and warning markers in the main editor and duplicate then into the zoomed view
+    std::vector<int> error_lines;
+    std::vector<int> warning_lines;
+    m_text->DeleteAllMarkers();
+    if(GetMarkers(stc, mmt_error, &error_lines)) {
+        m_text->UpdateMarkers(error_lines, ZoomText::MARKER_ERROR);
+    }
+
+    if(GetMarkers(stc, mmt_warning, &warning_lines)) {
+        m_text->UpdateMarkers(warning_lines, ZoomText::MARKER_WARNING);
+    }
 
     if(curEditor->GetFileName().GetFullPath() != m_curfile) {
         SetEditorText(curEditor);

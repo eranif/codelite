@@ -118,6 +118,8 @@ void WebUpdateJob::ParseFile()
         if(!v.IsReleaseVersion() && m_onlyRelease) {
             // User wishes to be prompted for new releases only
             // skip weekly builds
+            clDEBUG() << "Found version:" << v.GetVersion()
+                      << ", a non release version. However, use requested for stable releases only" << endl;
             continue;
         }
 
@@ -138,8 +140,6 @@ void WebUpdateJob::ParseFile()
 
 void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString& arch) const
 {
-    static wxStringMap_t linuxVariants;
-
 #ifdef __WXMSW__
     os = "msw";
     codename = "Windows";

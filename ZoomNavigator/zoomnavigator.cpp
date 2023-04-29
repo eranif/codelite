@@ -30,12 +30,14 @@
 //  the Free Software Foundation; either version 2 of the License, or
 //  (at your option) any later version.
 
+#include "zoomnavigator.h"
+
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "event_notifier.h"
 #include "znSettingsDlg.h"
 #include "zn_config_item.h"
-#include "zoomnavigator.h"
+
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
@@ -157,18 +159,11 @@ void ZoomNavigator::DoInitialize()
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
 
     m_text = new ZoomText(zoompane);
-    m_text->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(ZoomNavigator::OnPreviewClicked), NULL, this);
-    m_text->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(ZoomNavigator::OnPreviewClicked), NULL, this);
+    m_text->Bind(wxEVT_LEFT_DOWN, &ZoomNavigator::OnPreviewClicked, this);
+    m_text->Bind(wxEVT_LEFT_DCLICK, &ZoomNavigator::OnPreviewClicked, this);
     m_text->SetCursor(wxCURSOR_POINT_LEFT);
-
     wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
     bs->Add(m_text, 1, wxEXPAND, 0);
-    wxCheckBox* cbEnablePlugin = new wxCheckBox(zoompane, wxID_ANY, _("Enable plugin"));
-    cbEnablePlugin->SetValue(data.IsEnabled());
-    bs->Add(cbEnablePlugin, 0, wxEXPAND);
-
-    cbEnablePlugin->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ZoomNavigator::OnEnablePlugin), NULL,
-                            this);
     zoompane->SetSizer(bs);
 }
 

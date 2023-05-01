@@ -881,7 +881,7 @@ public:
     void TrimText(bool trim, bool appendLf);
 
     /**
-     * @brief overloaded verion for TrimText that accepts flags of type `TrimFlags`
+     * @brief an overloaded version for `TrimText()` method that accepts flags of type `TrimFlags`
      * @param flags bitwise `TrimFlags` options
      */
     void TrimText(size_t flags);

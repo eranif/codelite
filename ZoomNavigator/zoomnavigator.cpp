@@ -118,6 +118,11 @@ ZoomNavigator::ZoomNavigator(IManager* manager)
     m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
+
+    m_timer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &ZoomNavigator::OnTimer, this, m_timer->GetId());
+    m_timer->Start(100);
+
     DoInitialize();
 }
 
@@ -134,6 +139,10 @@ void ZoomNavigator::UnPlug()
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
                             wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
+    // cancel the timer
+    Unbind(wxEVT_TIMER, &ZoomNavigator::OnTimer, this, m_timer->GetId());
+    m_timer->Stop();
+    wxDELETE(m_timer);
 
     // Remove the tab if it's actually docked in the workspace pane
     int index(wxNOT_FOUND);
@@ -159,6 +168,7 @@ void ZoomNavigator::OnShowHideClick(wxCommandEvent& e) {}
 
 void ZoomNavigator::DoInitialize()
 {
+
     znConfigItem data;
     if(m_config->ReadItem(&data)) {
         m_enabled = data.IsEnabled();
@@ -210,6 +220,7 @@ void ZoomNavigator::DoUpdate()
 
     wxStyledTextCtrl* stc = curEditor->GetCtrl();
     CHECK_CONDITION(stc);
+    CHECK_CONDITION(stc->IsShown());
 
     // locate any error and warning markers in the main editor and duplicate then into the zoomed view
     std::vector<int> error_lines;
@@ -374,11 +385,7 @@ void ZoomNavigator::OnInitDone(wxCommandEvent& e)
     m_text->Startup();
 }
 
-void ZoomNavigator::OnIdle(wxIdleEvent& e)
-{
-    e.Skip();
-    DoUpdate();
-}
+void ZoomNavigator::OnIdle(wxIdleEvent& e) { e.Skip(); }
 
 void ZoomNavigator::OnToggleTab(clCommandEvent& event)
 {
@@ -396,4 +403,10 @@ void ZoomNavigator::OnToggleTab(clCommandEvent& event)
             m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
         }
     }
+}
+
+void ZoomNavigator::OnTimer(wxTimerEvent& event)
+{
+    wxUnusedVar(event);
+    DoUpdate();
 }

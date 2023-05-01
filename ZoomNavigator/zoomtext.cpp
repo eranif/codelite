@@ -49,6 +49,10 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 
+#define CHECK_CONDITION(cond) \
+    if(!cond)                 \
+        return;
+
 ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                    const wxString& name)
 {
@@ -214,7 +218,7 @@ void ZoomText::OnTimer(wxTimerEvent& event)
     }
 
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(!editor) {
+    if(!editor || !editor->GetCtrl()->IsShown()) {
         m_timer->Start(500, true);
         return;
     }

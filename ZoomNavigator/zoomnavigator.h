@@ -33,11 +33,12 @@
 #ifndef __ZoomNavigator__
 #define __ZoomNavigator__
 
+#include "cl_command_event.h"
 #include "plugin.h"
 #include "zoomtext.h"
-#include <wx/timer.h>
+
 #include <set>
-#include "cl_command_event.h"
+#include <wx/timer.h>
 
 extern const wxString ZOOM_PANE_TITLE;
 
@@ -56,6 +57,7 @@ class ZoomNavigator : public IPlugin
     int m_lastLine;
     bool m_startupCompleted;
     wxString m_curfile;
+    wxTimer* m_timer = nullptr;
 
 protected:
     void DoInitialize();
@@ -65,6 +67,7 @@ protected:
     void SetZoomTextScrollPosToMiddle(wxStyledTextCtrl* stc);
     void DoUpdate();
     void DoCleanup();
+    void OnTimer(wxTimerEvent& event);
 
 public:
     ZoomNavigator(IManager* manager);

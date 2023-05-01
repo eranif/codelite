@@ -28,7 +28,7 @@
 EditorOptionsGeneralSavePanel::EditorOptionsGeneralSavePanel(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)
 {
-    AddHeader(_("Trim lines"));
+    AddHeader(_(R"(Trim "on save" options)"));
     bool trim_empty_lines = EditorConfigST::Get()->GetInteger(wxT("EditorTrimEmptyLines"), 0) ? true : false;
     AddProperty(_("Enable trim on save"), trim_empty_lines, [&](const wxString& label, const wxAny& value) {
         wxUnusedVar(label);

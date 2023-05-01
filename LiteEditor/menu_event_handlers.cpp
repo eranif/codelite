@@ -113,7 +113,8 @@ void EditHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
         editor->LineCut();
 
     } else if(event.GetId() == XRCID("trim_trailing")) {
-        editor->TrimText(true, false);
+        // trim from the menu ignores the settings defined in `Settings -> Preferences -> Trim`
+        editor->TrimText(TRIM_APPEND_LF | TRIM_ENABLED);
 
     } else if(event.GetId() == XRCID("to_lower")) {
         editor->ChangeCase(true);

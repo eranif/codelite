@@ -78,6 +78,13 @@ typedef struct _BPtoMarker {
     marker_mask_type mask_disabled;
 } BPtoMarker;
 
+enum TrimFlags {
+    TRIM_ENABLED = (1 << 0),
+    TRIM_APPEND_LF = (1 << 1),
+    TRIM_MODIFIED_LINES = (1 << 2),
+    TRIM_IGNORE_CARET_LINE = (1 << 3),
+};
+
 wxDECLARE_EVENT(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, wxCommandEvent);
 wxDECLARE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
 
@@ -872,6 +879,12 @@ public:
      * @param appendLf append a newline to the file if none is present
      */
     void TrimText(bool trim, bool appendLf);
+
+    /**
+     * @brief overloaded verion for TrimText that accepts flags of type `TrimFlags`
+     * @param flags bitwise `TrimFlags` options
+     */
+    void TrimText(size_t flags);
 
     /**
      *--------------------------------------------------

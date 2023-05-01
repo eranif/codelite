@@ -4677,10 +4677,12 @@ void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
     event.Skip();
 }
 
-void clEditor::TrimText(bool trim, bool appendLf)
+void clEditor::TrimText(size_t flags)
 {
-    bool dontTrimCaretLine = GetOptions()->GetDontTrimCaretLine();
-    bool trimOnlyModifiedLInes = GetOptions()->GetTrimOnlyModifiedLines();
+    bool trim = flags & TRIM_ENABLED;
+    bool appendLf = flags & TRIM_APPEND_LF;
+    bool dontTrimCaretLine = flags & TRIM_IGNORE_CARET_LINE;
+    bool trimOnlyModifiedLInes = flags & TRIM_MODIFIED_LINES;
 
     if(!trim && !appendLf) {
         return;
@@ -4733,6 +4735,24 @@ void clEditor::TrimText(bool trim, bool appendLf)
     }
 
     EndUndoAction();
+}
+
+void clEditor::TrimText(bool trim, bool appendLf)
+{
+    size_t flags = 0;
+    if(trim) {
+        flags |= TRIM_ENABLED;
+    }
+    if(appendLf) {
+        flags |= TRIM_APPEND_LF;
+    }
+    if(GetOptions()->GetTrimOnlyModifiedLines()) {
+        flags |= TRIM_MODIFIED_LINES;
+    }
+    if(GetOptions()->GetDontTrimCaretLine()) {
+        flags |= TRIM_IGNORE_CARET_LINE;
+    }
+    TrimText(flags);
 }
 
 wxString clEditor::GetEolString()

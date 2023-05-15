@@ -123,9 +123,8 @@ bool CompilersDetectorManager::Locate()
 CompilerPtr CompilersDetectorManager::Locate(const wxString& folder)
 {
     m_compilersFound.clear();
-    ICompilerLocator::Vect_t::iterator iter = m_detectors.begin();
-    for(; iter != m_detectors.end(); ++iter) {
-        CompilerPtr comp = (*iter)->Locate(folder);
+    for(auto detector : m_detectors) {
+        CompilerPtr comp = detector->Locate(folder);
         if(comp) {
             MSWFixClangToolChain(comp);
             return comp;

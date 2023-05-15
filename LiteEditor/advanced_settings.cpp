@@ -198,7 +198,7 @@ void BuildSettingsDialog::OnApplyUI(wxUpdateUIEvent& event)
 void BuildSettingsDialog::OnAddExistingCompiler()
 {
     wxString folder = ::wxDirSelector(_("Select the compiler folder"));
-    if(folder.IsEmpty()) {
+    if(folder.empty()) {
         return;
     }
 
@@ -209,7 +209,7 @@ void BuildSettingsDialog::OnAddExistingCompiler()
         while(true) {
             wxString name =
                 ::wxGetTextFromUser(_("Set a name to the compiler"), _("New compiler found!"), cmp->GetName());
-            if(name.IsEmpty()) {
+            if(name.empty()) {
                 return;
             }
             // Add the compiler

@@ -3,11 +3,38 @@
 #include "GCCMetadata.hpp"
 #include "Platform.hpp"
 #include "compiler.h"
+#include "file_logger.h"
 
 #include <wx/filename.h>
 
 // --------------------------------------------------
 // --------------------------------------------------
+
+namespace
+{
+std::vector<std::unordered_map<wxString, wxString>> TOOLCHAINS = {
+    // GCC
+    { { "CC", "gcc" },
+      { "CXX", "g++" },
+      { "AR", "ar" },
+      { "AS", "as" },
+      { "LD", "g++" },
+      { "MAKE", "mingw32-make" },
+      { "WINDRES", "windres" },
+      { "MKDIR", "mkdir" },
+      { "DEBUGGER", "gdb" } },
+    // Clang
+    { { "CC", "clang" },
+      { "CXX", "clang++" },
+      { "AR", "ar" },
+      { "AS", "as" },
+      { "LD", "clang++" },
+      { "MAKE", "mingw32-make" },
+      { "WINDRES", "windres" },
+      { "MKDIR", "mkdir" },
+      { "DEBUGGER", "gdb" } }
+};
+}
 
 CompilerLocatorMSYS2Usr::CompilerLocatorMSYS2Usr()
 {
@@ -55,17 +82,20 @@ bool CompilerLocatorMSYS2::Locate()
     return !m_compilers.empty();
 }
 
-CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
+CompilerPtr CompilerLocatorMSYS2::TryToolchain(const wxString& folder,
+                                               const std::unordered_map<wxString, wxString>& toolchain)
 {
     // check for g++
-    wxFileName gcc = GetFileName(folder, "gcc");
-    wxFileName gxx = GetFileName(folder, "g++");
-    wxFileName ar = GetFileName(folder, "ar");
-    wxFileName as = GetFileName(folder, "as");
-    wxFileName make = GetFileName(folder, "mingw32-make");
-    wxFileName windres = GetFileName(folder, "windres");
-    wxFileName mkdir = GetFileName(folder, "mkdir");
-    wxFileName gdb = GetFileName(folder, "gdb");
+    clDEBUG() << "searching for toolchain:" << toolchain.at("CXX") << "at:" << folder << endl;
+
+    wxFileName gcc = GetFileName(folder, toolchain.at("CC"));
+    wxFileName gxx = GetFileName(folder, toolchain.at("CXX"));
+    wxFileName ar = GetFileName(folder, toolchain.at("AR"));
+    wxFileName as = GetFileName(folder, toolchain.at("AS"));
+    wxFileName make = GetFileName(folder, toolchain.at("MAKE"));
+    wxFileName windres = GetFileName(folder, toolchain.at("WINDRES"));
+    wxFileName mkdir = GetFileName(folder, toolchain.at("MKDIR"));
+    wxFileName gdb = GetFileName(folder, toolchain.at("DEBUGGER"));
 
     // make sure that both gcc & g++ exist
     if(!(gcc.FileExists() && gxx.FileExists())) {
@@ -101,6 +131,18 @@ CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
     compiler->SetTool("ResourceCompiler", windres.GetFullPath());
     compiler->SetTool("Debugger", gdb.GetFullPath());
     return compiler;
+}
+
+CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
+{
+    // check for g++
+    for(const auto& toolchain : TOOLCHAINS) {
+        auto cmp = TryToolchain(folder, toolchain);
+        if(cmp) {
+            return cmp;
+        }
+    }
+    return nullptr;
 }
 
 void CompilerLocatorMSYS2::AddTool(const wxString& tool_name, const wxString& value) {}

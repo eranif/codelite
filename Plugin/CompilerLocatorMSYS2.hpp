@@ -4,6 +4,8 @@
 #include "ICompilerLocator.h"
 #include "MSYS2.hpp"
 
+#include <unordered_map>
+#include <vector>
 #include <wx/filename.h>
 
 /// Locate for GCC compilers
@@ -19,6 +21,8 @@ protected:
 
     CompilerLocatorMSYS2();
     virtual ~CompilerLocatorMSYS2();
+
+    CompilerPtr TryToolchain(const wxString& folder, const std::unordered_map<wxString, wxString>& toolchain);
 
 public:
     /**

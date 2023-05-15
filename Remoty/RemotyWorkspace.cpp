@@ -231,6 +231,8 @@ void RemotyWorkspace::OnOpenWorkspace(clCommandEvent& event)
 void RemotyWorkspace::OnCloseWorkspace(clCommandEvent& event)
 {
     event.Skip();
+    // we don't fire the `XRCID("close_workspace")` event here
+    // since this is how we got here in the first place
     DoClose(true);
 }
 
@@ -473,13 +475,7 @@ void RemotyWorkspace::OnNewWorkspace(clCommandEvent& event)
 void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
 {
     // Close any opened workspace
-    auto frame = EventNotifier::Get()->TopFrame();
-    wxCommandEvent eventCloseWsp(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
-    eventCloseWsp.SetEventObject(frame);
-    frame->GetEventHandler()->ProcessEvent(eventCloseWsp);
-
-    // close any previously opened workspace
-    DoClose(true);
+    CloseWorkspace();
 
     // Load the account
     auto ssh_account = SSHAccountInfo::LoadAccount(account);
@@ -1060,12 +1056,28 @@ void RemotyWorkspace::OnDownloadFile(clCommandEvent& event)
 }
 
 void RemotyWorkspace::OpenWorkspace(const wxString& path, const wxString& account) { DoOpen(path, account); }
+void RemotyWorkspace::CloseWorkspace()
+{
+    // Close any opened workspace
+    auto frame = EventNotifier::Get()->TopFrame();
+    wxCommandEvent eventCloseWsp(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
+    eventCloseWsp.SetEventObject(frame);
+    frame->GetEventHandler()->ProcessEvent(eventCloseWsp);
+
+    // close any previously opened workspace
+    DoClose(true);
+}
 
 void RemotyWorkspace::OnReloadWorkspace(clCommandEvent& event)
 {
     CHECK_EVENT(event);
     wxString filepath = GetRemoteWorkspaceFile();
     wxString account_name = GetAccount().GetAccountName();
+
+    // close the current workspace
+    CloseWorkspace();
+
+    // re-open it
     CallAfter(&RemotyWorkspace::OpenWorkspace, filepath, account_name);
 }
 

@@ -155,6 +155,11 @@ public:
      */
     void OpenWorkspace(const wxString& path, const wxString& account);
     /**
+     * @brief close the current workspace. Do nothing if there is no workspace opened
+     */
+    void CloseWorkspace();
+
+    /**
      * @brief Attempt to open a remote file and open it in the editor
      */
     IEditor* OpenFile(const wxString& remote_file_path);

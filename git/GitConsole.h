@@ -82,6 +82,8 @@ protected:
     virtual void OnUnversionedFileActivated(wxDataViewEvent& event);
     virtual void OnUnversionedFileContextMenu(wxDataViewEvent& event);
     virtual void OnUpdateUI(wxUpdateUIEvent& event);
+    virtual void OnAddUnversionedFilesUI(wxUpdateUIEvent& event);
+    virtual void OnResetFileUI(wxUpdateUIEvent& event);
     virtual void OnStclogStcChange(wxStyledTextEvent& event);
     virtual void OnApplyPatch(wxCommandEvent& event);
     virtual void OnFileActivated(wxDataViewEvent& event);
@@ -109,6 +111,8 @@ protected:
     void DoOnDropdown(const wxString& commandName, int id);
     void OnDropDownMenuEvent(wxCommandEvent& e);
     void Clear();
+
     wxArrayString GetSelectedUnversionedFiles() const;
+    wxArrayString GetSelectedModifiedFiles() const;
 };
 #endif // GITCONSOLE_H

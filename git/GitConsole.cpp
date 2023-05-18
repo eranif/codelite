@@ -216,8 +216,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnAddUnversionedFiles, this, XRCID("git_console_add_file"));
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnStopGitProcess, this, XRCID("git_stop_process"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnUpdateUI, this, XRCID("git_console_add_file"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnUpdateUI, this, XRCID("git_console_reset_file"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnAddUnversionedFilesUI, this, XRCID("git_console_add_file"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnResetFileUI, this, XRCID("git_console_reset_file"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
 
     PopulateToolbarOverflow(m_toolbar);
@@ -633,6 +633,30 @@ void GitConsole::OnUnversionedFileContextMenu(wxDataViewEvent& event)
     m_dvListCtrlUnversioned->PopupMenu(&menu);
 }
 
+wxArrayString GitConsole::GetSelectedModifiedFiles() const
+{
+    if(m_dvListCtrl->GetSelectedItemsCount() == 0) {
+        return {};
+    }
+
+    wxArrayString paths;
+    wxDataViewItemArray items;
+    int count = m_dvListCtrl->GetSelections(items);
+    paths.reserve(count);
+    for(int i = 0; i < count; i++) {
+        wxDataViewItem item = items.Item(i);
+        if(item.IsOk() == false) {
+            continue;
+        }
+
+        GitClientData* cd = reinterpret_cast<GitClientData*>(m_dvListCtrl->GetItemData(item));
+        if(cd && cd->GetKind() == eGitFile::kModifiedFile) {
+            paths.Add(cd->GetPath());
+        }
+    }
+    return paths;
+}
+
 wxArrayString GitConsole::GetSelectedUnversionedFiles() const
 {
     if(m_dvListCtrlUnversioned->GetSelectedItemsCount() == 0) {
@@ -641,6 +665,7 @@ wxArrayString GitConsole::GetSelectedUnversionedFiles() const
     wxArrayString paths;
     wxDataViewItemArray items;
     int count = m_dvListCtrlUnversioned->GetSelections(items);
+    paths.reserve(count);
     for(int i = 0; i < count; i++) {
         wxDataViewItem item = items.Item(i);
         if(item.IsOk() == false) {
@@ -736,4 +761,16 @@ void GitConsole::OnSysColoursChanged(clCommandEvent& event)
     m_dvListCtrl->SetDefaultFont(font);
     m_dvListCtrlLog->SetDefaultFont(font);
     m_dvListCtrlUnversioned->SetDefaultFont(font);
+}
+
+void GitConsole::OnAddUnversionedFilesUI(wxUpdateUIEvent& event)
+{
+    bool has_unversioned_files = !GetSelectedUnversionedFiles().empty();
+    event.Enable(m_git->IsGitEnabled() && has_unversioned_files);
+}
+
+void GitConsole::OnResetFileUI(wxUpdateUIEvent& event)
+{
+    bool has_modified_files = !GetSelectedModifiedFiles().empty();
+    event.Enable(m_git->IsGitEnabled() && has_modified_files);
 }

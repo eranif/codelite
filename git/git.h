@@ -33,8 +33,6 @@
 #ifndef __git__
 #define __git__
 
-#include <wx/progdlg.h>
-
 #include "asyncprocess.h"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clTabTogglerHelper.h"
@@ -46,6 +44,7 @@
 #include "plugin.h"
 #include "processreaderthread.h"
 #include "project.h" // wxStringSet_t
+
 #include <map>
 #include <queue>
 #include <set>
@@ -183,11 +182,11 @@ class GitPlugin : public IPlugin
     wxString m_remoteWorkspaceAccount;
     clCodeLiteRemoteProcess m_remoteProcess;
     wxString m_codeliteRemoteScriptPath;
+    bool m_isEnabled = false;
 
 private:
     void StartCodeLiteRemote();
     void ClearCodeLiteRemoteInfo();
-    void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
     void DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString& workingDir);
     bool DoExecuteCommandSync(const wxString& command, wxString* commandOutput,

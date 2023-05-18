@@ -214,7 +214,10 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnClearGitLog, this, XRCID("git_clear_log"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnClearGitLogUI, this, XRCID("git_clear_log"));
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
+    m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnAddUnversionedFiles, this, XRCID("git_console_add_file"));
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnStopGitProcess, this, XRCID("git_stop_process"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnUpdateUI, this, XRCID("git_console_add_file"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnUpdateUI, this, XRCID("git_console_reset_file"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
 
     PopulateToolbarOverflow(m_toolbar);
@@ -610,7 +613,7 @@ void GitConsole::Clear()
     });
 }
 
-void GitConsole::OnUpdateUI(wxUpdateUIEvent& event) { event.Enable(!m_git->GetRepositoryPath().IsEmpty()); }
+void GitConsole::OnUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_git->IsGitEnabled()); }
 
 void GitConsole::OnUnversionedFileActivated(wxDataViewEvent& event)
 {

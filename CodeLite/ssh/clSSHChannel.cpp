@@ -6,7 +6,10 @@
 #include "clJoinableThread.h"
 #include "clModuleLogger.hpp"
 #include "clRemoteHost.hpp"
+#include "clResult.hpp"
+#include "clTempFile.hpp"
 #include "cl_exception.h"
+#include "cl_sftp.h"
 
 #include <libssh/libssh.h>
 
@@ -130,6 +133,16 @@ void clSSHChannel::Close()
     }
     // clear the local copy
     m_ssh.reset();
+}
+
+IProcess::Ptr_t clSSHChannel::CreateAndExecuteScript(clSSH::Ptr_t ssh, wxEvtHandler* owner, const wxString& content,
+                                                     const wxString& script_path, bool wantStderr)
+{
+    if(!ssh::write_remote_file_content(ssh, script_path, content)) {
+        LOG_ERROR(LOG) << "failed to write remote file:" << script_path << endl;
+        return nullptr;
+    }
+    return Execute(ssh, owner, script_path, wantStderr);
 }
 
 IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, wxEvtHandler* owner, const wxString& command, bool wantStderr)

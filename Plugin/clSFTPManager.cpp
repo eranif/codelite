@@ -391,13 +391,9 @@ void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& r
     m_q.push_back(std::move(save_func));
 }
 
-bool clSFTPManager::DoSyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
-                                   bool delete_local)
+bool clSFTPManager::DoSyncSaveFileWithConn(clSFTP::Ptr_t conn, const wxString& localPath, const wxString& remotePath,
+                                           bool delete_local)
 {
-    // save file async
-    auto conn = GetConnectionPtrAddIfMissing(accountName);
-    CHECK_PTR_RET_FALSE(conn);
-
     // prepare the download work
     std::promise<bool> save_promise;
     auto future = save_promise.get_future();
@@ -417,6 +413,15 @@ bool clSFTPManager::DoSyncSaveFile(const wxString& localPath, const wxString& re
     };
     m_q.push_back(std::move(save_func));
     return future.get();
+}
+
+bool clSFTPManager::DoSyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+                                   bool delete_local)
+{
+    // save file async
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    CHECK_PTR_RET_FALSE(conn);
+    return DoSyncSaveFileWithConn(conn, localPath, remotePath, delete_local);
 }
 
 void clSFTPManager::AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
@@ -459,6 +464,16 @@ bool clSFTPManager::AwaitWriteFile(const wxString& content, const wxString& remo
         return false;
     }
     return DoSyncSaveFile(tmpfile.GetFullPath(), remotePath, accountName, true);
+}
+
+bool clSFTPManager::AwaitWriteFile(clSFTP::Ptr_t sftp, const wxString& content, const wxString& remotePath)
+{
+    clTempFile tmpfile;
+    tmpfile.Persist(); // do not delete it on exit
+    if(!tmpfile.Write(content, wxConvUTF8)) {
+        return false;
+    }
+    return DoSyncSaveFileWithConn(sftp, tmpfile.GetFullPath(), remotePath, true);
 }
 
 bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUser)

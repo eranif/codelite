@@ -66,6 +66,9 @@ protected:
     bool DoSyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
                         bool delete_local);
 
+    bool DoSyncSaveFileWithConn(clSFTP::Ptr_t conn, const wxString& localPath, const wxString& remotePath,
+                                bool delete_local);
+
 public:
     clSFTPManager();
     virtual ~clSFTPManager();
@@ -158,6 +161,15 @@ public:
      * @return true on success or false
      */
     bool AwaitWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName);
+
+    /**
+     * @brief write file content. this function is sync. This function uses the caller SFTP connection
+     * @param content of the file
+     * @param remotePath file path on the remote machine
+     * @param accountName the account name to use
+     * @return true on success or false
+     */
+    bool AwaitWriteFile(clSFTP::Ptr_t sftp, const wxString& content, const wxString& remotePath);
 
     /**
      * @brief delete a connection

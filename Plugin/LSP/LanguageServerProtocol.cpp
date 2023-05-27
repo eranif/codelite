@@ -214,6 +214,7 @@ bool LanguageServerProtocol::DoStart()
         EnvSetter env;
         // apply this lsp specific environment variables
         clEnvironment localEnv(&m_env);
+        m_startupInfo.SetEnv(m_env);
         m_network->Open(m_startupInfo);
         return true;
     } catch(clException& e) {

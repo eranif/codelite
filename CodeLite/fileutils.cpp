@@ -61,6 +61,12 @@
 #include <memory>
 #include <wx/filename.h>
 
+thread_local std::unordered_set<wxChar> VALID_CHARS = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+    'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_',
+};
+
 // internal helper method
 namespace
 {
@@ -1056,4 +1062,16 @@ bool FileUtils::IsBinaryExecutable(const wxString& filename)
     ::fclose(fp);
     return (count == 4 && ::memcmp(buffer, ELF_STR, 4) == 0);
 #endif
+}
+
+wxString FileUtils::NormaliseFilename(const wxString& str)
+{
+    wxString fixed = str;
+    for(size_t i = 0; i < fixed.length(); ++i) {
+        if(VALID_CHARS.count(fixed[i])) {
+            continue;
+        }
+        fixed[i] = '_';
+    }
+    return fixed;
 }

@@ -135,11 +135,27 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
                                                                const std::vector<wxString>& args, size_t flags,
                                                                const wxString& workingDir, const clEnvList_t* env)
 {
+    CHECK_ARG(!args.empty(), "cant start remote interactive process. empty command");
     CHECK_ARG(ssh, "cant start remote interactive process with null clSSH");
     CHECK_ARG(parent, "cant start remote interactive process with sink object");
 
     auto session = ssh->GetSession();
     CHECK_ARG(session, "cant start remote interactive process with null ssh session");
+
+    // Create the remote script before we request a channel
+    clEnvList_t envlist;
+    if(env) {
+        envlist = *env;
+    }
+
+    wxString content = ssh::build_script_content(args, workingDir, envlist);
+    wxString remote_script = "/tmp/clssh_" + FileUtils::NormaliseFilename(args[0]);
+    LOG_DEBUG(LOG) << "executing remote script:" << remote_script << endl;
+    auto res = ssh::write_remote_file_content(ssh, remote_script, content);
+    if(!res) {
+        LOG_WARNING(LOG) << "SSH failed to write remote file." << res.error() << endl;
+        return nullptr;
+    }
 
     auto channel = ssh_channel_new(session);
     if(!channel) {
@@ -176,13 +192,7 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
     message.append("echo ").append(START_MARKER).append("\n");
     process->Write(message);
 
-    // Build the command and run it
-    clEnvList_t envlist;
-    if(env) {
-        envlist = *env;
-    }
-    wxString command = ssh::build_command(args, workingDir, envlist);
-    process->Write(command);
+    process->Write(remote_script);
     return IProcess::Ptr_t{ process };
 }
 

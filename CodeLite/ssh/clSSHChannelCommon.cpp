@@ -10,6 +10,9 @@
 #include "clModuleLogger.hpp"
 INITIALISE_SSH_LOG(LOG, "Channel Reader Helper");
 
+#include "clTempFile.hpp"
+#include "cl_sftp.h"
+
 #include <libssh/libssh.h>
 
 wxDEFINE_EVENT(wxEVT_SSH_CHANNEL_READ_ERROR, clCommandEvent);
@@ -92,5 +95,55 @@ wxString build_command(const std::vector<wxString>& command, const wxString& wd,
     }
     return cmd;
 }
+
+wxString build_script_content(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env)
+{
+    wxString content;
+    content << "#!/bin/bash\n\n";
+    if(!env.empty()) {
+        // build each env in its own "export" statement
+        for(const auto& e : env) {
+            content << "export " << e.first << "=" << e.second << "\n";
+        }
+    }
+
+    if(!wd.empty()) {
+        content << "cd " << StringUtils::WrapWithDoubleQuotes(wd) << "\n";
+    }
+
+    for(const wxString& c : command) {
+        content << StringUtils::WrapWithDoubleQuotes(c) << " ";
+    }
+
+    if(content.EndsWith(" ")) {
+        content.RemoveLast();
+    }
+    content << "\n";
+    return content;
+}
+
+clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_path, const wxString& content)
+{
+    clTempFile tmpfile;
+    if(!tmpfile.Write(content, wxConvUTF8)) {
+        return clResultBool::make_err("failed to write file");
+    }
+
+    try {
+        clSFTP::Ptr_t sftp(new clSFTP(ssh));
+        sftp->Initialize();
+
+        // write the file content
+        sftp->Write(tmpfile.GetFullPath(), remote_path);
+        // set execute permissions to the file
+        sftp->Chmod(remote_path, 0755);
+    } catch(clException& e) {
+        wxString errmsg;
+        errmsg << ssh_get_error(ssh->GetSession()) << ". " << e.What();
+        return clResultBool::make_err(errmsg);
+    }
+    return clResultBool::make_ok(true);
+}
+
 } // namespace ssh
 #endif

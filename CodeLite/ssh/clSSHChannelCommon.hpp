@@ -4,6 +4,7 @@
 #if USE_SFTP
 
 #include "clEnvironment.hpp"
+#include "clResult.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "ssh/cl_ssh.h"
@@ -34,6 +35,13 @@ WXDLLIMPEXP_CL read_result channel_read(SSHChannel_t channel, wxEvtHandler* hand
 
 /// build a oneliner command to execute on the remote host
 WXDLLIMPEXP_CL wxString build_command(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env);
+
+/// Place the command + env into a script string
+WXDLLIMPEXP_CL wxString build_script_content(const std::vector<wxString>& command, const wxString& wd,
+                                             const clEnvList_t& env);
+
+WXDLLIMPEXP_CL clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_path,
+                                                      const wxString& content);
 
 } // namespace ssh
 #endif

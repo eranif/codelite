@@ -126,7 +126,7 @@ clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_
 {
     clTempFile tmpfile;
     if(!tmpfile.Write(content, wxConvUTF8)) {
-        return clResultBool::make_err("failed to write file");
+        return clResultBool::make_error("failed to write file");
     }
 
     try {
@@ -140,9 +140,9 @@ clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_
     } catch(clException& e) {
         wxString errmsg;
         errmsg << ssh_get_error(ssh->GetSession()) << ". " << e.What();
-        return clResultBool::make_err(errmsg);
+        return clResultBool::make_error(errmsg);
     }
-    return clResultBool::make_ok(true);
+    return clResultBool::make_success(true);
 }
 
 } // namespace ssh

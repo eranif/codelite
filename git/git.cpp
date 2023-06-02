@@ -1495,10 +1495,18 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         // Dont manipulate the output if its a diff...
         m_commandOutput.Replace(wxT("\r"), wxT(""));
     }
+
     if(ga.action == gitDiffRepoCommit && m_commandOutput.StartsWith(wxT("fatal"))) {
         m_commandOutput.Clear();
         DoExecuteCommandSync("diff --no-color --cached", &m_commandOutput);
     }
+
+    if((ga.action == gitCommit) && m_commandOutput.StartsWith(wxT("fatal"))) {
+        ::wxMessageBox(m_commandOutput, "CodeLite", wxOK | wxOK_DEFAULT | wxICON_ERROR);
+        DoRecoverFromGitCommandError();
+        return;
+    }
+
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
         // Last action failed, clear queue
         LOG_IF_TRACE { clDEBUG1() << "[git]" << m_commandOutput << clEndl; }

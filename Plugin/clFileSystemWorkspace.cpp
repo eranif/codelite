@@ -346,7 +346,7 @@ void clFileSystemWorkspace::DoOpen()
     clWorkspaceEvent event(wxEVT_WORKSPACE_LOADED);
     event.SetString(GetFileName());
     event.SetFileName(GetFileName());
-    EventNotifier::Get()->AddPendingEvent(event);
+    EventNotifier::Get()->ProcessEvent(event);
 
     // Update the build configurations button
     GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
@@ -361,7 +361,7 @@ void clFileSystemWorkspace::DoOpen()
     m_isLoaded = true;
 
     // Load the workspace session (if any)
-    CallAfter(&clFileSystemWorkspace::RestoreSession);
+    RestoreSession();
 }
 
 void clFileSystemWorkspace::DoClose()

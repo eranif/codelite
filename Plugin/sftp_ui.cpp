@@ -11,7 +11,19 @@
 // Declare the bitmap loading function
 extern void wxCE8CInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                    const wxPoint& pos, const wxSize& size, long style)
@@ -85,45 +97,30 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(SSHAccountManagerDlgBase::OnItemActivated), NULL, this);
-    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnAddAccount),
-                         NULL, this);
-    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(SSHAccountManagerDlgBase::OnDeleteAccount), NULL, this);
-    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHAccountManagerDlgBase::OnDeleteAccountUI), NULL,
-                            this);
-    m_buttonEdit->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHAccountManagerDlgBase::OnEditAccountUI), NULL,
-                          this);
-    m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnEditAccount),
-                          NULL, this);
-    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnOK), NULL, this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &SSHAccountManagerDlgBase::OnItemActivated, this);
+    m_buttonNew->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SSHAccountManagerDlgBase::OnAddAccount, this);
+    m_buttonDelete->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SSHAccountManagerDlgBase::OnDeleteAccount, this);
+    m_buttonDelete->Bind(wxEVT_UPDATE_UI, &SSHAccountManagerDlgBase::OnDeleteAccountUI, this);
+    m_buttonEdit->Bind(wxEVT_UPDATE_UI, &SSHAccountManagerDlgBase::OnEditAccountUI, this);
+    m_buttonEdit->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SSHAccountManagerDlgBase::OnEditAccount, this);
+    m_button6->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SSHAccountManagerDlgBase::OnOK, this);
 }
 
 SSHAccountManagerDlgBase::~SSHAccountManagerDlgBase()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(SSHAccountManagerDlgBase::OnItemActivated), NULL, this);
-    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnAddAccount),
-                            NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(SSHAccountManagerDlgBase::OnDeleteAccount), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHAccountManagerDlgBase::OnDeleteAccountUI),
-                               NULL, this);
-    m_buttonEdit->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHAccountManagerDlgBase::OnEditAccountUI), NULL,
-                             this);
-    m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                             wxCommandEventHandler(SSHAccountManagerDlgBase::OnEditAccount), NULL, this);
-    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnOK), NULL,
-                          this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &SSHAccountManagerDlgBase::OnItemActivated, this);
+    m_buttonNew->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SSHAccountManagerDlgBase::OnAddAccount, this);
+    m_buttonDelete->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SSHAccountManagerDlgBase::OnDeleteAccount, this);
+    m_buttonDelete->Unbind(wxEVT_UPDATE_UI, &SSHAccountManagerDlgBase::OnDeleteAccountUI, this);
+    m_buttonEdit->Unbind(wxEVT_UPDATE_UI, &SSHAccountManagerDlgBase::OnEditAccountUI, this);
+    m_buttonEdit->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SSHAccountManagerDlgBase::OnEditAccount, this);
+    m_button6->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SSHAccountManagerDlgBase::OnOK, this);
 }
 
 AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -270,31 +267,24 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_textCtrlHomeFolder->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                  wxCommandEventHandler(AddSSHAcountDlgBase::OnHomeFolderUpdated), NULL, this);
-    m_button51->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddSSHAcountDlgBase::OnTestConnection),
-                        NULL, this);
-    m_button51->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnTestConnectionUI), NULL, this);
-    m_button27->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnOKUI), NULL, this);
+    m_textCtrlHomeFolder->Bind(wxEVT_COMMAND_TEXT_UPDATED, &AddSSHAcountDlgBase::OnHomeFolderUpdated, this);
+    m_button51->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AddSSHAcountDlgBase::OnTestConnection, this);
+    m_button51->Bind(wxEVT_UPDATE_UI, &AddSSHAcountDlgBase::OnTestConnectionUI, this);
+    m_button27->Bind(wxEVT_UPDATE_UI, &AddSSHAcountDlgBase::OnOKUI, this);
 }
 
 AddSSHAcountDlgBase::~AddSSHAcountDlgBase()
 {
-    m_textCtrlHomeFolder->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                     wxCommandEventHandler(AddSSHAcountDlgBase::OnHomeFolderUpdated), NULL, this);
-    m_button51->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddSSHAcountDlgBase::OnTestConnection),
-                           NULL, this);
-    m_button51->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnTestConnectionUI), NULL,
-                           this);
-    m_button27->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnOKUI), NULL, this);
+    m_textCtrlHomeFolder->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &AddSSHAcountDlgBase::OnHomeFolderUpdated, this);
+    m_button51->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AddSSHAcountDlgBase::OnTestConnection, this);
+    m_button51->Unbind(wxEVT_UPDATE_UI, &AddSSHAcountDlgBase::OnTestConnectionUI, this);
+    m_button27->Unbind(wxEVT_UPDATE_UI, &AddSSHAcountDlgBase::OnOKUI, this);
 }
 
 SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -324,19 +314,17 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer151->Add(m_toolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxFlexGridSizer* flexGridSizer147 = new wxFlexGridSizer(0, 5, 0, 0);
+    wxFlexGridSizer* flexGridSizer147 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer147->SetFlexibleDirection(wxBOTH);
     flexGridSizer147->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer147->AddGrowableCol(1);
-    flexGridSizer147->AddGrowableCol(3);
 
     boxSizer151->Add(flexGridSizer147, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText82 = new wxStaticText(m_panel149, wxID_ANY, _("Account:"), wxDefaultPosition,
                                       wxDLG_UNIT(m_panel149, wxSize(-1, -1)), 0);
 
-    flexGridSizer147->Add(m_staticText82, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL,
-                          WXC_FROM_DIP(5));
+    flexGridSizer147->Add(m_staticText82, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceAccountArr;
     m_choiceAccount = new wxChoice(m_panel149, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel149, wxSize(-1, -1)),
@@ -344,11 +332,12 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer147->Add(m_choiceAccount, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
+    flexGridSizer147->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
     m_staticText66 = new wxStaticText(m_panel149, wxID_ANY, _("Path:"), wxDefaultPosition,
                                       wxDLG_UNIT(m_panel149, wxSize(-1, -1)), 0);
 
-    flexGridSizer147->Add(m_staticText66, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL,
-                          WXC_FROM_DIP(5));
+    flexGridSizer147->Add(m_staticText66, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlRemoteFolder = new wxTextCtrl(m_panel149, wxID_ANY, wxT("/"), wxDefaultPosition,
                                             wxDLG_UNIT(m_panel149, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
@@ -414,49 +403,34 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_textCtrlRemoteFolder->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextEnter),
-                                    NULL, this);
-    m_buttonRefresh->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnRefresh), NULL,
-                             this);
-    m_buttonRefresh->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                        wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                        wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemActivated), NULL, this);
-    m_textCtrlInlineSearch->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                    wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextUpdated), NULL, this);
-    m_textCtrlInlineSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnEnter), NULL,
-                                    this);
-    m_textCtrlInlineSearch->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(SFTPBrowserBaseDlg::OnFocusLost), NULL, this);
-    m_button59->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnOKUI), NULL, this);
+    m_textCtrlRemoteFolder->Bind(wxEVT_COMMAND_TEXT_ENTER, &SFTPBrowserBaseDlg::OnTextEnter, this);
+    m_buttonRefresh->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPBrowserBaseDlg::OnRefresh, this);
+    m_buttonRefresh->Bind(wxEVT_UPDATE_UI, &SFTPBrowserBaseDlg::OnRefreshUI, this);
+    m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &SFTPBrowserBaseDlg::OnItemSelected, this);
+    m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &SFTPBrowserBaseDlg::OnItemActivated, this);
+    m_textCtrlInlineSearch->Bind(wxEVT_COMMAND_TEXT_UPDATED, &SFTPBrowserBaseDlg::OnTextUpdated, this);
+    m_textCtrlInlineSearch->Bind(wxEVT_COMMAND_TEXT_ENTER, &SFTPBrowserBaseDlg::OnEnter, this);
+    m_textCtrlInlineSearch->Bind(wxEVT_KILL_FOCUS, &SFTPBrowserBaseDlg::OnFocusLost, this);
+    m_button59->Bind(wxEVT_UPDATE_UI, &SFTPBrowserBaseDlg::OnOKUI, this);
 }
 
 SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
 {
-    m_textCtrlRemoteFolder->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextEnter),
-                                       NULL, this);
-    m_buttonRefresh->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnRefresh),
-                                NULL, this);
-    m_buttonRefresh->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                           wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                           wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemActivated), NULL, this);
-    m_textCtrlInlineSearch->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                       wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextUpdated), NULL, this);
-    m_textCtrlInlineSearch->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnEnter),
-                                       NULL, this);
-    m_textCtrlInlineSearch->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(SFTPBrowserBaseDlg::OnFocusLost), NULL,
-                                       this);
-    m_button59->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnOKUI), NULL, this);
+    m_textCtrlRemoteFolder->Unbind(wxEVT_COMMAND_TEXT_ENTER, &SFTPBrowserBaseDlg::OnTextEnter, this);
+    m_buttonRefresh->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPBrowserBaseDlg::OnRefresh, this);
+    m_buttonRefresh->Unbind(wxEVT_UPDATE_UI, &SFTPBrowserBaseDlg::OnRefreshUI, this);
+    m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &SFTPBrowserBaseDlg::OnItemSelected, this);
+    m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &SFTPBrowserBaseDlg::OnItemActivated, this);
+    m_textCtrlInlineSearch->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &SFTPBrowserBaseDlg::OnTextUpdated, this);
+    m_textCtrlInlineSearch->Unbind(wxEVT_COMMAND_TEXT_ENTER, &SFTPBrowserBaseDlg::OnEnter, this);
+    m_textCtrlInlineSearch->Unbind(wxEVT_KILL_FOCUS, &SFTPBrowserBaseDlg::OnFocusLost, this);
+    m_button59->Unbind(wxEVT_UPDATE_UI, &SFTPBrowserBaseDlg::OnOKUI, this);
 }
 
 clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -572,30 +546,22 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_comboBoxFindWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
-                                this);
-    m_comboBoxWhere->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
-                             this);
-    m_comboBoxTypes->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
-                             this);
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clRemoteFindDialogBase::OnOK_UI), NULL, this);
+    m_comboBoxFindWhat->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
+    m_comboBoxWhere->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
+    m_comboBoxTypes->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &clRemoteFindDialogBase::OnOK_UI, this);
 }
 
 clRemoteFindDialogBase::~clRemoteFindDialogBase()
 {
-    m_comboBoxFindWhat->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch),
-                                   NULL, this);
-    m_comboBoxWhere->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
-                                this);
-    m_comboBoxTypes->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
-                                this);
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clRemoteFindDialogBase::OnOK_UI), NULL, this);
+    m_comboBoxFindWhat->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
+    m_comboBoxWhere->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
+    m_comboBoxTypes->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
+    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &clRemoteFindDialogBase::OnOK_UI, this);
 }

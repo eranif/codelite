@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	201,
+		"m_objCounter":	202,
 		"m_includeFiles":	["\"codelite_exports.h\""],
 		"m_bitmapFunction":	"wxCE8CInitBitmapResources",
 		"m_bitmapsFile":	"sftp_ui_sftp_bitmaps.cpp",
@@ -2846,7 +2846,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"# Columns:",
-													"m_value":	"5"
+													"m_value":	"3"
 												}, {
 													"type":	"string",
 													"m_label":	"# Rows:",
@@ -2854,7 +2854,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Growable columns:",
-													"m_value":	"1,3"
+													"m_value":	"1"
 												}, {
 													"type":	"string",
 													"m_label":	"Growable rows:",
@@ -2876,7 +2876,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL", "wxALIGN_CENTER_VERTICAL"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -3020,13 +3020,32 @@
 													"m_events":	[],
 													"m_children":	[]
 												}, {
+													"m_type":	4454,
+													"proportion":	1,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+													"m_properties":	[{
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"Spacer202"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"0,0"
+														}],
+													"m_events":	[],
+													"m_children":	[]
+												}, {
 													"m_type":	4405,
 													"proportion":	0,
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"1,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL", "wxALIGN_CENTER_VERTICAL"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",

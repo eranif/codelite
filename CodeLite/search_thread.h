@@ -314,9 +314,12 @@ public:
     void SetElapsedTime(long elapsed) { m_elapsed = elapsed; }
     wxString GetMessage() const
     {
-        wxString msg(wxString(wxT("====== ")) + _("Number of files scanned: "));
-        msg << m_fileScanned << wxT(",");
-        msg << _(" Matches found: ");
+        wxString msg;
+        if(m_fileScanned) {
+            msg << _("====== Number of files scanned: ") << m_fileScanned << _(", Matches found: ");
+        } else {
+            msg << _("====== Matches found: ");
+        }
         msg << m_matchesFound;
         int secs = m_elapsed / 1000;
         int msecs = m_elapsed % 1000;

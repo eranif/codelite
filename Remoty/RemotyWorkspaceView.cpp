@@ -213,11 +213,12 @@ void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
     if(editor) {
         // sci is 0 based line numbers
         auto callback = [=](IEditor* peditor) {
+            int editor_line = loc.line - 1;
             peditor->GetCtrl()->ClearSelections();
-            int pos_start = peditor->PosFromLine(loc.line - 1) + loc.column_start;
-            int pos_end = peditor->PosFromLine(loc.line - 1) + loc.column_end;
-            peditor->GetCtrl()->SetSelection(pos_start, pos_end);
-            peditor->CenterLinePreserveSelection(loc.line);
+            int pos = peditor->PosFromLine(editor_line);
+            peditor->SetActive();
+            peditor->SetCaretAt(pos);
+            peditor->CenterLinePreserveSelection(editor_line);
         };
         // load the local file (or make it selected) and then focus on the matched line
         clGetManager()->OpenFileAndAsyncExecute(editor->GetFileName().GetFullPath(), callback);

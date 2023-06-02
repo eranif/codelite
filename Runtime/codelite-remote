@@ -6,6 +6,7 @@ import re
 import argparse
 import subprocess
 import logging
+import time
 
 # global configuration object
 configuration = {}
@@ -26,6 +27,7 @@ configuration = {}
 #   python3 codelite-remote.py --context builder
 #
 # ----------------------------------------------------------------------------------------------------------------------------------
+
 
 ##------------------------------
 ## Helper string finder
@@ -151,30 +153,31 @@ def load_configuration():
     return config_loaded
 
 
-def _get_list_of_files(cmd):
+def list_files(cmd, print_stdout=False):
     """
-    helper method to on_find_files - return list of files as array
+    List or print list of files
     """
-    root_dir = cmd["root_dir"]
-    root_dir = os.path.expanduser(root_dir)
-    root_dir = os.path.expandvars(root_dir)
-    if not os.path.isdir(root_dir):
-        logging.error("error: {} is not a directory".format(root_dir))
-        return []
+    where = cmd["root_dir"]
+    extensions = cmd["file_extensions"]
+    command = f"/usr/bin/find {where} -type f "
+    expr = ""
+    first_ext = True
+    for ext in extensions:
+        if not first_ext:
+            expr += " -o "
+        else:
+            first_ext = False
+        expr += '-name "' + ext + '"'
+    command = f"{command} {expr} | sort"
+    result = []
+    for line in run_command(command):
+        if print_stdout:
+            print(line)
+        else:
+            result.append(line)
 
-    # build the extension tuple
-    exts_set = set()
-    for ext in cmd["file_extensions"]:
-        exts_set.add(ext)
-
-    files_arr = []
-    for root, dirs, files in os.walk(root_dir):
-        for file in files:
-            # get the extension
-            base_name, curext = os.path.splitext(file)
-            if curext in exts_set:
-                files_arr.append(os.path.join(root, file))
-    return files_arr
+    if not print_stdout:
+        return result
 
 
 def write_file(cmd):
@@ -187,37 +190,58 @@ def write_file(cmd):
     print_message_terminator()
 
 
+def run_command(command, working_directory=None, env=None, with_eol=False):
+    p = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=True,
+        env=env,
+        cwd=working_directory,
+    )
+    print(command)
+    # Read stdout from subprocess until the buffer is empty !
+    for line in iter(p.stdout.readline, b""):
+        if line:  # Don't print blank lines
+            if with_eol:
+                yield line.decode("utf-8")
+            else:
+                yield line.decode("utf-8").rstrip()
+
+    # This ensures the process has completed, AND sets the 'returncode' attr
+    while p.poll() is None:
+        print("poll")
+        time.sleep(0.1)  # Don't waste CPU-cycles
+    # Empty STDERR buffer
+    err = p.stderr.read()
+    if p.returncode != 0:
+        # The run_command() function is responsible for logging STDERR
+        print("Error: " + str(err))
+
+
 def on_exec(cmd):
     """
     Execute command and print its output
     """
     # preare the environment
-    try:
-        env_dict = dict(os.environ.copy())
-        user_env = cmd["env"]
-        for env_entry in user_env:
-            name = env_entry["name"]
-            value = env_entry["value"]
-            if env_dict.get(name, -1) == -1:
-                env_dict[name] = value
-            else:
-                env_dict[name] = "{}:{}".format(value, env_dict[name])
-        working_directory = os.path.expanduser(cmd["wd"])
-        working_directory = os.path.expandvars(working_directory)
-        completed_proc = subprocess.run(
-            args=cmd["cmd"],
-            cwd=working_directory,
-            shell=True,
-            env=env_dict,
-            stdin=subprocess.PIPE,
-        )
-    except Exception as e:
-        logging.error("on_exe error: {}".format(e))
-        try:
-            proc.kill()
-            outs, errs = proc.communicate()
-        except:
-            pass
+    env_dict = dict(os.environ.copy())
+    user_env = cmd["env"]
+    for env_entry in user_env:
+        name = env_entry["name"]
+        value = env_entry["value"]
+        if env_dict.get(name, -1) == -1:
+            env_dict[name] = value
+        else:
+            env_dict[name] = "{}:{}".format(value, env_dict[name])
+
+    working_directory = os.path.expanduser(cmd["wd"])
+    working_directory = os.path.expandvars(working_directory)
+
+    for line in run_command(
+        cmd["cmd"], working_directory=working_directory, env=env_dict
+    ):
+        print(line)
+
     # always print the terminating message
     print_message_terminator()
 
@@ -228,11 +252,11 @@ def on_find_files(cmd):
 
     Example command:
 
-    {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
+    {"command":"ls", "file_extensions":["*.cpp","*.hpp","*.h"], "root_dir":"/c/src/codelite"}
     """
-    arr_files = _get_list_of_files(cmd)
-    for file in arr_files:
-        print(file)
+    # build the find command
+    # find /home/eran/devl/codelite -type f \( -name "*.hpp" -o -name "*.cpp" -o -name "*.h" \)|sort
+    list_files(cmd, print_stdout=True)
     print_message_terminator()
 
 
@@ -242,57 +266,29 @@ def on_find_in_files(cmd):
 
     Example command:
 
-    {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite", "find_what":"wxStringSet_t"}
+    {"command":"find","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"/home/eran/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false}
     """
-    files_arr = _get_list_of_files(cmd)
-    find_what = cmd["find_what"]
-    return_obj = []
 
-    # search flags
-    whole_word = cmd["whole_word"]
-    ignore_case = cmd["icase"]
+    # build the grep command
+    command = "grep -R --line-number --with-filename "
+    if cmd["whole_word"] == True:
+        command += "-w "
 
-    # first line contains the number of files scanned
-    files_scanned = {"files_scanned": len(files_arr)}
-    print(json.dumps(files_scanned))
+    if cmd["icase"] == True:
+        command += "-i "
 
-    finder = string_finder(find_what, ignore_case, whole_word)
-    for file in files_arr:
-        try:
-            lines = (
-                open(file=file, mode="r", encoding="utf-8").read().splitlines()
-            )
-            line_number = 0
-            entries = []
-            for line in lines:
-                # aggregate results per line
-                line_number += 1
-                matches = []
-                # set the current line
-                finder.set_line(line)
-                while finder.find_next():
-                    start_pos = finder.get_match_position()
-                    end_pos = start_pos + len(find_what)
-                    matches.append({"start": start_pos, "end": end_pos})
-                # if we found matches for this line,
-                # add them to the "entries"
-                if len(matches) > 0:
-                    for match in matches:
-                        entries.append(
-                            {
-                                "ln": line_number,
-                                "start": match["start"],
-                                "end": match["end"],
-                                "pattern": line,
-                            }
-                        )
-            # add this file to the return object
-            if len(entries) > 0:
-                reply = {"file": file, "matches": entries}
-                print(json.dumps(reply))
-        except UnicodeDecodeError as e:
-            logging.error("decoding error in file {}".format(file))
-            pass
+    for ext in cmd["file_extensions"]:
+        command += f"--include '{ext}' "
+
+    command += cmd["find_what"] + " "
+    command += cmd["root_dir"]
+    command += "|sort"
+
+    curfile = ""
+    entries = []
+    curfile_matches = []
+    for line in run_command(command):
+        print(line)
     print_message_terminator()
 
 

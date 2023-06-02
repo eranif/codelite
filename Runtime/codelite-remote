@@ -199,7 +199,6 @@ def run_command(command, working_directory=None, env=None, with_eol=False):
         env=env,
         cwd=working_directory,
     )
-    print(command)
     # Read stdout from subprocess until the buffer is empty !
     for line in iter(p.stdout.readline, b""):
         if line:  # Don't print blank lines
@@ -210,13 +209,12 @@ def run_command(command, working_directory=None, env=None, with_eol=False):
 
     # This ensures the process has completed, AND sets the 'returncode' attr
     while p.poll() is None:
-        print("poll")
         time.sleep(0.1)  # Don't waste CPU-cycles
     # Empty STDERR buffer
     err = p.stderr.read()
     if p.returncode != 0:
         # The run_command() function is responsible for logging STDERR
-        print("Error: " + str(err))
+        print("error: " + str(err))
 
 
 def on_exec(cmd):

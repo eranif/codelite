@@ -153,33 +153,6 @@ def load_configuration():
     return config_loaded
 
 
-def list_files(cmd, print_stdout=False):
-    """
-    List or print list of files
-    """
-    where = cmd["root_dir"]
-    extensions = cmd["file_extensions"]
-    command = f"/usr/bin/find {where} -type f "
-    expr = ""
-    first_ext = True
-    for ext in extensions:
-        if not first_ext:
-            expr += " -o "
-        else:
-            first_ext = False
-        expr += '-name "' + ext + '"'
-    command = f"{command} {expr} | sort"
-    result = []
-    for line in run_command(command):
-        if print_stdout:
-            print(line)
-        else:
-            result.append(line)
-
-    if not print_stdout:
-        return result
-
-
 def write_file(cmd):
     try:
         fp = open(cmd["path"], "w")
@@ -190,32 +163,36 @@ def write_file(cmd):
     print_message_terminator()
 
 
-def run_command(command, working_directory=None, env=None, with_eol=False):
-    p = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        shell=True,
-        env=env,
-        cwd=working_directory,
-    )
-    # Read stdout from subprocess until the buffer is empty !
-    for line in iter(p.stdout.readline, b""):
-        if line:  # Don't print blank lines
-            if with_eol:
-                yield line.decode("utf-8")
-            else:
-                yield line.decode("utf-8").rstrip()
+def run_command(command, working_directory=None, env=None):
+    try:
+        completed_proc = subprocess.run(
+            args=command,
+            cwd=working_directory,
+            shell=True,
+            env=env,
+            stdin=subprocess.PIPE,
+        )
 
-    # This ensures the process has completed, AND sets the 'returncode' attr
-    while p.poll() is None:
-        time.sleep(0.1)  # Don't waste CPU-cycles
-    # Empty STDERR buffer
-    err = p.stderr.read()
-    if p.returncode != 0:
-        # The run_command() function is responsible for logging STDERR
-        print("error: " + str(err))
+        if completed_proc.returncode != 0:
+            print(
+                f"error: command `{command}` exit with return code {completed_proc.returncode}"
+            )
+            print(f"cwd: `{working_directory}`")
+            print(f"environment: `{env}`")
 
+    except Exception as e:
+        logging.error("on_exe error: {}".format(e))
+        try:
+            proc.kill()
+            outs, errs = proc.communicate()
+        except:
+            pass
+
+
+def expand_vars(s):
+    expanded = os.path.expanduser(s)
+    expanded = os.path.expandvars(expanded)
+    return expanded
 
 def on_exec(cmd):
     """
@@ -226,19 +203,15 @@ def on_exec(cmd):
     user_env = cmd["env"]
     for env_entry in user_env:
         name = env_entry["name"]
-        value = env_entry["value"]
+        value = expand_vars(env_entry["value"])
         if env_dict.get(name, -1) == -1:
             env_dict[name] = value
         else:
             env_dict[name] = "{}:{}".format(value, env_dict[name])
-
-    working_directory = os.path.expanduser(cmd["wd"])
-    working_directory = os.path.expandvars(working_directory)
-
-    for line in run_command(
-        cmd["cmd"], working_directory=working_directory, env=env_dict
-    ):
-        print(line)
+    
+    working_directory = expand_vars(cmd["wd"])
+    command = expand_vars(cmd["cmd"])
+    run_command(command, working_directory=working_directory, env=env_dict)
 
     # always print the terminating message
     print_message_terminator()
@@ -254,7 +227,19 @@ def on_find_files(cmd):
     """
     # build the find command
     # find /home/eran/devl/codelite -type f \( -name "*.hpp" -o -name "*.cpp" -o -name "*.h" \)|sort
-    list_files(cmd, print_stdout=True)
+    where = cmd["root_dir"]
+    extensions = cmd["file_extensions"]
+    command = f"/usr/bin/find {where} -type f "
+    expr = ""
+    first_ext = True
+    for ext in extensions:
+        if not first_ext:
+            expr += " -o "
+        else:
+            first_ext = False
+        expr += '-name "' + ext + '"'
+    command = f"{command} {expr} | sort"
+    run_command(command)
     print_message_terminator()
 
 
@@ -285,8 +270,7 @@ def on_find_in_files(cmd):
     curfile = ""
     entries = []
     curfile_matches = []
-    for line in run_command(command):
-        print(line)
+    run_command(command)
     print_message_terminator()
 
 

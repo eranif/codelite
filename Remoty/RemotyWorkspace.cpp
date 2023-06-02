@@ -331,7 +331,7 @@ void RemotyWorkspace::BuildTarget(const wxString& target)
     }
 
     wxString cmd = GetTargetCommand(target);
-    if(cmd.IsEmpty()) {
+    if(cmd.empty()) {
         ::wxMessageBox(_("Don't know how to run '") + target + "'", "CodeLite", wxICON_ERROR | wxCENTER);
         return;
     }
@@ -917,14 +917,13 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
 {
     wxString root_dir = GetRemoteWorkingDir();
     wxString file_extensions = GetSettings().GetSelectedConfig()->GetFileExtensions();
-    file_extensions.Replace("*", "");
 
     auto files_exts = ::wxStringTokenize(file_extensions, ";,", wxTOKEN_STRTOK);
     std::unordered_set<wxString> S{ files_exts.begin(), files_exts.end() };
 
     // common file extensions
-    S.insert(".txt");
-    S.insert(".toml");
+    S.insert("*.txt");
+    S.insert("*.toml");
     S.insert("Rakefile");
 
     file_extensions.clear();

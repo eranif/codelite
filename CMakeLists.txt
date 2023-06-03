@@ -919,10 +919,6 @@ else()
     # Executables
     add_subdirectory(codelitegcc)
     add_subdirectory(codelite_make)
-    if(NOT APPLE)
-        # exclude codelite-terminal on macOS
-        add_subdirectory(codelite_terminal)
-    endif()
     if(MINGW)
         # codelite-exec
         add_subdirectory(le_exec)

@@ -2,7 +2,6 @@
 
 #include "clConsoleAlacritty.hpp"
 #include "clConsoleCMD.h"
-#include "clConsoleCodeLiteTerminal.h"
 #include "clConsoleGnomeTerminal.h"
 #include "clConsoleKonsole.h"
 #include "clConsoleLXTerminal.h"
@@ -53,9 +52,7 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
     clConsoleBase::Ptr_t terminal;
     wxString terminalName = GetSelectedTerminalName();
 #ifdef __WXMSW__
-    if(terminalName.CmpNoCase("codelite-terminal") == 0) {
-        terminal.reset(new clConsoleCodeLiteTerminal());
-    } else if(terminalName.CmpNoCase("alacritty") == 0) {
+    if(terminalName.CmpNoCase("alacritty") == 0) {
         terminal.reset(new clConsoleAlacritty());
     } else {
         terminal.reset(new clConsoleCMD());
@@ -75,8 +72,6 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
         terminal.reset(new clConsoleQTerminal());
     } else if(terminalName.CmpNoCase("rxvt-unicode") == 0) {
         terminal.reset(new clConsoleRXVTTerminal());
-    } else if(terminalName.CmpNoCase("codelite-terminal") == 0) {
-        terminal.reset(new clConsoleCodeLiteTerminal());
     } else {
         // the default terminal is "gnome-terminal"
         terminal.reset(new clConsoleGnomeTerminal());
@@ -98,7 +93,6 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     wxArrayString terminals;
 #ifdef __WXMSW__
     terminals.Add("CMD");
-    terminals.Add("codelite-terminal");
 #elif defined(__WXGTK__)
     terminals.Add("konsole");
     terminals.Add("gnome-terminal");
@@ -107,7 +101,6 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     terminals.Add("qterminal");
     terminals.Add("xfce4-terminal");
     terminals.Add("rxvt-unicode");
-    terminals.Add("codelite-terminal");
 #else
     terminals.Add("Terminal");
     terminals.Add("iTerm2");
@@ -175,10 +168,10 @@ bool clConsoleBase::StartProcess(const wxString& command)
 wxString clConsoleBase::GetSelectedTerminalName()
 {
     wxString terminalName = clConfig::Get().Read("Terminal", wxString());
-    if(terminalName.IsEmpty()) {
+    if(terminalName.empty()) {
 #ifdef __WXGTK__
         wxFileName file;
-        terminalName = FileUtils::FindExe("gnome-terminal", file) ? "gnome-terminal" : "codelite-terminal";
+        terminalName = "gnome-terminal";
 #elif defined(__WXOSX__)
         terminalName = "Terminal";
 #else

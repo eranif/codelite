@@ -31,10 +31,14 @@ LexerConf::Ptr_t ThemeImporterPython::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_P_STRINGEOL, "String EOL", m_string);
     AddProperty(lexer, wxSTC_P_WORD2, "Locals", m_variable);
     AddProperty(lexer, wxSTC_P_DECORATOR, "Decorator", m_klass);
+
+#if wxCHECK_VERSION(3, 3, 0)
     AddProperty(lexer, wxSTC_P_FSTRING, "F-string", m_string);
     AddProperty(lexer, wxSTC_P_FCHARACTER, "F-character", m_string);
     AddProperty(lexer, wxSTC_P_FTRIPLE, "F-triple", m_string);
     AddProperty(lexer, wxSTC_P_FTRIPLEDOUBLE, "F-triple Double", m_string);
+#endif
+
     FinalizeImport(lexer);
     return lexer;
 }

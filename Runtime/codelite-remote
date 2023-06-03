@@ -329,13 +329,14 @@ def on_replace_in_files(cmd):
     find_what = find_what.replace('"', '\\"')
     replace_with = replace_with.replace('"', '\\"')
 
-    whold_word_delim_start = "([^\\w]|^)"
-    whold_word_delim_end = "([^\\w]|$)"
-
     if whole_word:
+        whold_word_delim_start = "([^\\w]|^)"
+        whold_word_delim_end = "([^\\w]|$)"
         find_what = f"{whold_word_delim_start}{find_what}{whold_word_delim_end}"
+        base_command = f'sed -E -i.bak "s/{find_what}/\\1{replace_with}\\2/g'
+    else:
+        base_command = f'sed -E -i.bak "s/{find_what}/{replace_with}/g'
 
-    base_command = f'sed -E -i.bak "s/{find_what}/\\1{replace_with}\\2/g'
     if ignore_case:
         base_command += "I"
     base_command += '"'

@@ -29,59 +29,6 @@ configuration = {}
 # ----------------------------------------------------------------------------------------------------------------------------------
 
 
-##------------------------------
-## Helper string finder
-##------------------------------
-class string_finder:
-    def __init__(self, find_what: str, ignore_case, whole_word):
-        self.word_chars = set(
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_"
-        )
-        self.find_what = find_what
-        self.ignore_case = ignore_case
-        self.whole_word = whole_word
-        if self.ignore_case:
-            self.find_what = self.find_what.lower()
-
-    def set_line(self, line: str):
-        self.line = line
-        self.last_pos = 0
-        self.where = -1
-        if self.ignore_case:
-            self.line = self.line.lower()
-
-    def is_whole_word(self, start_pos, end_pos):
-        if self.whole_word is False:
-            return True
-
-        # check the char left and right to the match
-        if start_pos > 0 and self.line[start_pos - 1] in self.word_chars:
-            return False
-        elif (
-            end_pos < (len(self.line) - 1)
-            and self.line[end_pos] in self.word_chars
-        ):
-            return False
-        return True
-
-    def find_next(self):
-        self.where = self.line.find(self.find_what, self.last_pos)
-        if self.where == -1:
-            return False
-        else:
-            # store the last position for next iteration
-            self.last_pos = self.where + len(self.find_what)
-            return self.is_whole_word(
-                self.where, self.where + len(self.find_what)
-            )
-
-    def get_match_position(self):
-        return self.where
-
-
-##------------------------------
-## Helper string finder - end
-##------------------------------
 def print_message_terminator():
     print(">>codelite-remote-msg-end<<")
 

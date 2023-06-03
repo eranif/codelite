@@ -37252,6 +37252,38 @@
     "BgColour": "#282C34",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -37475,6 +37507,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#C18401",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -37704,6 +37768,38 @@
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -37927,6 +38023,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#006600",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -38156,6 +38284,38 @@
     "BgColour": "#3F3F3F",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -38379,6 +38539,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
     "BgColour": "#2B2B2B",
     "Size": -1
    }, {
@@ -38608,6 +38800,38 @@
     "BgColour": "#234059",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -38831,6 +39055,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#D25252",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
     "BgColour": "#2F4F4F",
     "Size": -1
    }, {
@@ -39060,6 +39316,38 @@
     "BgColour": "#2e3436",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -39283,6 +39571,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#CC0866",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -39512,6 +39832,38 @@
     "BgColour": "#1E1E1E",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -39735,6 +40087,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#FF8080",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
     "BgColour": "#101020",
     "Size": -1
    }, {
@@ -39964,6 +40348,38 @@
     "BgColour": "#F5F5F5",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -40187,6 +40603,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#52E3F6",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
     "BgColour": "#272822",
     "Size": -1
    }, {
@@ -40416,6 +40864,38 @@
     "BgColour": "#1D1F21",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -40639,6 +41119,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#82F985",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
     "BgColour": "#262626",
     "Size": -1
    }, {
@@ -40868,6 +41380,38 @@
     "BgColour": "#151515",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -41091,6 +41635,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#e5c07b",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
     "BgColour": "#282c34",
     "Size": -1
    }, {
@@ -41320,6 +41896,38 @@
     "BgColour": "#22272e",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -41543,6 +42151,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#89b482",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
     "BgColour": "#292828",
     "Size": -1
    }, {
@@ -41772,6 +42412,38 @@
     "BgColour": "#383838",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -41995,6 +42667,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#B58900",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
     "BgColour": "#002B36",
     "Size": -1
    }, {
@@ -42224,6 +42928,38 @@
     "BgColour": "#2e3434",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -42450,6 +43186,38 @@
     "BgColour": "#faf1dc",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -42673,6 +43441,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#ff9e64",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
     "BgColour": "#24283b",
     "Size": -1
    }, {
@@ -64702,6 +65502,38 @@
     "BgColour": "#282C34",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -64925,6 +65757,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#C18401",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -65154,6 +66018,38 @@
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -65377,6 +66273,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#006600",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -65606,6 +66534,38 @@
     "BgColour": "#3F3F3F",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -65829,6 +66789,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
     "BgColour": "#2B2B2B",
     "Size": -1
    }, {
@@ -66058,6 +67050,38 @@
     "BgColour": "#234059",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -66281,6 +67305,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#D25252",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
     "BgColour": "#2F4F4F",
     "Size": -1
    }, {
@@ -66510,6 +67566,38 @@
     "BgColour": "#2e3436",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -66733,6 +67821,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#CC0866",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -66962,6 +68082,38 @@
     "BgColour": "#1E1E1E",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -67185,6 +68337,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#FF8080",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
     "BgColour": "#101020",
     "Size": -1
    }, {
@@ -67414,6 +68598,38 @@
     "BgColour": "#F5F5F5",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -67637,6 +68853,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#52E3F6",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
     "BgColour": "#272822",
     "Size": -1
    }, {
@@ -67866,6 +69114,38 @@
     "BgColour": "#1D1F21",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -68089,6 +69369,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#82F985",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
     "BgColour": "#262626",
     "Size": -1
    }, {
@@ -68318,6 +69630,38 @@
     "BgColour": "#151515",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -68541,6 +69885,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#e5c07b",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
     "BgColour": "#282c34",
     "Size": -1
    }, {
@@ -68770,6 +70146,38 @@
     "BgColour": "#22272e",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -68993,6 +70401,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#89b482",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
     "BgColour": "#292828",
     "Size": -1
    }, {
@@ -69222,6 +70662,38 @@
     "BgColour": "#383838",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -69445,6 +70917,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#B58900",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
     "BgColour": "#002B36",
     "Size": -1
    }, {
@@ -69674,6 +71178,38 @@
     "BgColour": "#2e3434",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -69900,6 +71436,38 @@
     "BgColour": "#faf1dc",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -70123,6 +71691,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#ff9e64",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
     "BgColour": "#24283b",
     "Size": -1
    }, {
@@ -75602,6 +77202,38 @@
     "BgColour": "#282C34",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -75825,6 +77457,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#C18401",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#50A14F",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -76054,6 +77718,38 @@
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -76277,6 +77973,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#006600",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#0000C0",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -76506,6 +78234,38 @@
     "BgColour": "#3F3F3F",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -76729,6 +78489,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#A5C25C",
     "BgColour": "#2B2B2B",
     "Size": -1
    }, {
@@ -76958,6 +78750,38 @@
     "BgColour": "#234059",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -77181,6 +79005,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#D25252",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
     "BgColour": "#2F4F4F",
     "Size": -1
    }, {
@@ -77410,6 +79266,38 @@
     "BgColour": "#2e3436",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -77633,6 +79521,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#CC0866",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#C71585",
     "BgColour": "#FFFFFF",
     "Size": -1
    }, {
@@ -77862,6 +79782,38 @@
     "BgColour": "#1E1E1E",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -78085,6 +80037,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#FF8080",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
+    "BgColour": "#101020",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#DC78DC",
     "BgColour": "#101020",
     "Size": -1
    }, {
@@ -78314,6 +80298,38 @@
     "BgColour": "#F5F5F5",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -78537,6 +80553,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#52E3F6",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#ECE47E",
     "BgColour": "#272822",
     "Size": -1
    }, {
@@ -78766,6 +80814,38 @@
     "BgColour": "#1D1F21",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -78989,6 +81069,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#82F985",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#FF8E8D",
     "BgColour": "#262626",
     "Size": -1
    }, {
@@ -79218,6 +81330,38 @@
     "BgColour": "#151515",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -79441,6 +81585,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#e5c07b",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
+    "BgColour": "#282c34",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#98c379",
     "BgColour": "#282c34",
     "Size": -1
    }, {
@@ -79670,6 +81846,38 @@
     "BgColour": "#22272e",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#D8A657",
+    "BgColour": "#22272e",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -79893,6 +82101,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#89b482",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
+    "BgColour": "#292828",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#d8a657",
     "BgColour": "#292828",
     "Size": -1
    }, {
@@ -80122,6 +82362,38 @@
     "BgColour": "#383838",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#b8bb26",
+    "BgColour": "#383838",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -80345,6 +82617,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#B58900",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
+    "BgColour": "#002B36",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#CB4B16",
     "BgColour": "#002B36",
     "Size": -1
    }, {
@@ -80574,6 +82878,38 @@
     "BgColour": "#2e3434",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#AD7FA8",
+    "BgColour": "#2e3434",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -80800,6 +83136,38 @@
     "BgColour": "#faf1dc",
     "Size": -1
    }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#00b368",
+    "BgColour": "#faf1dc",
+    "Size": -1
+   }, {
     "Id": 34,
     "Name": "Brace match",
     "Flags": 2,
@@ -81023,6 +83391,38 @@
     "Flags": 0,
     "FontDesc": "",
     "Colour": "#ff9e64",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 16,
+    "Name": "F-string",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 17,
+    "Name": "F-character",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 18,
+    "Name": "F-triple",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
+    "BgColour": "#24283b",
+    "Size": -1
+   }, {
+    "Id": 19,
+    "Name": "F-triple Double",
+    "Flags": 0,
+    "FontDesc": "",
+    "Colour": "#9ece6a",
     "BgColour": "#24283b",
     "Size": -1
    }, {

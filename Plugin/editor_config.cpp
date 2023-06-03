@@ -74,7 +74,7 @@ bool EditorConfig::DoLoadDefaultSettings()
     // try to load the default settings
     m_fileName = wxFileName(clStandardPaths::Get().GetDataDir(), "codelite.xml.default");
     m_fileName.AppendDir("config");
-    clSYSTEM() << "Loading default config:" << m_fileName << endl;
+    clDEBUG() << "Loading default config:" << m_fileName << endl;
     if(!m_fileName.FileExists()) {
         return false;
     }
@@ -102,7 +102,7 @@ bool EditorConfig::Load()
     bool loadSuccess(false);
 
     if(!m_fileName.FileExists()) {
-        clSYSTEM() << "User configuration file:" << m_fileName << "does not exist. Loading defaults" << endl;
+        clDEBUG() << "User configuration file:" << m_fileName << "does not exist. Loading defaults" << endl;
         loadSuccess = DoLoadDefaultSettings();
 
         if(loadSuccess) {
@@ -112,7 +112,7 @@ bool EditorConfig::Load()
 
     } else {
         userSettingsLoaded = true;
-        clSYSTEM() << "Found user configuration file:" << m_fileName << endl;
+        clDEBUG() << "Found user configuration file:" << m_fileName << endl;
         loadSuccess = m_doc->Load(m_fileName.GetFullPath());
     }
 

@@ -177,36 +177,50 @@ public:
 
 class clRemoteFindDialogBase : public wxDialog
 {
+public:
+    enum {
+        ID_REMOTE_REPLACE = 1001,
+        ID_REMOTE_FIND = 1002,
+    };
+
 protected:
     wxStaticText* m_staticText165;
     clThemedComboBox* m_comboBoxFindWhat;
+    wxStaticText* m_staticText210;
+    clThemedComboBox* m_comboBoxReplaceWith;
     wxStaticText* m_staticText169;
     clThemedComboBox* m_comboBoxWhere;
     wxStaticText* m_staticText175;
     clThemedComboBox* m_comboBoxTypes;
     wxStaticText* m_staticText177;
     clThemedChoice* m_choiceAccounts;
-    wxCheckBox* m_checkBoxCase;
+    wxButton* m_buttonFind;
+    wxButton* m_buttonReplace;
+    wxButton* m_buttonCancel;
     wxCheckBox* m_checkBoxWholeWord;
-    wxStdDialogButtonSizer* m_stdBtnSizer157;
-    wxButton* m_buttonOK;
-    wxButton* m_button161;
+    wxCheckBox* m_checkBoxCase;
 
 protected:
     virtual void OnSearch(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOK_UI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText165() { return m_staticText165; }
     clThemedComboBox* GetComboBoxFindWhat() { return m_comboBoxFindWhat; }
+    wxStaticText* GetStaticText210() { return m_staticText210; }
+    clThemedComboBox* GetComboBoxReplaceWith() { return m_comboBoxReplaceWith; }
     wxStaticText* GetStaticText169() { return m_staticText169; }
     clThemedComboBox* GetComboBoxWhere() { return m_comboBoxWhere; }
     wxStaticText* GetStaticText175() { return m_staticText175; }
     clThemedComboBox* GetComboBoxTypes() { return m_comboBoxTypes; }
     wxStaticText* GetStaticText177() { return m_staticText177; }
     clThemedChoice* GetChoiceAccounts() { return m_choiceAccounts; }
-    wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
+    wxButton* GetButtonFind() { return m_buttonFind; }
+    wxButton* GetButtonReplace() { return m_buttonReplace; }
+    wxButton* GetButtonCancel() { return m_buttonCancel; }
     wxCheckBox* GetCheckBoxWholeWord() { return m_checkBoxWholeWord; }
+    wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
     clRemoteFindDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                            const wxString& title = _("Remote Find In Files"), const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

@@ -56,6 +56,7 @@ private:
     std::unordered_map<wxString, bool> m_old_servers_state;
     wxArrayString m_installedLSPs;
     wxString m_listLspOutput;
+    wxStringSet_t m_replaceInFilesModifiedFiles;
 
 public:
     RemotyWorkspace();
@@ -116,6 +117,9 @@ protected:
     // codelite-remote
     void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
     void OnCodeLiteRemoteFindDone(clFindInFilesEvent& event);
+
+    void OnCodeLiteRemoteReplaceProgress(clFindInFilesEvent& event);
+    void OnCodeLiteRemoteReplaceDone(clFindInFilesEvent& event);
 
     void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
     void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);
@@ -192,6 +196,11 @@ public:
      */
     void FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
                      bool whole_word, bool icase);
+    /**
+     * @brief perform replace in files
+     */
+    void ReplaceInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
+                        const wxString& replace_with, bool whole_word, bool icase);
 };
 
 #endif // RemoteWorkspace_HPP

@@ -23,6 +23,8 @@ wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_REPLACE_RESULTS, clFindInFilesEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_REPLACE_DONE, clFindInFilesEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clProcessEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LOCATE_DONE, clCommandEvent);
@@ -604,49 +606,65 @@ bool split_line(wxString& line, wxString* filename, long* line_number, wxString*
 }
 } // namespace
 
-void clCodeLiteRemoteProcess::OnFindOutput(const wxString& output, bool is_completed)
+void clCodeLiteRemoteProcess::OnReplaceOutput(const wxString& output, bool is_completed)
 {
     wxArrayString lines = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
     if(lines.empty()) {
         return;
     }
 
-    clFindInFilesEvent::Match::vec_t matches;
-    matches.reserve(lines.size());
-    wxString curfile;
-    clFindInFilesEvent::Match match;
-    for(wxString& line : lines) {
-        wxString filename, pattern;
-        long line_number;
-        if(!split_line(line, &filename, &line_number, &pattern)) {
-            continue;
+    // the progress reports files modified
+    clFindInFilesEvent event_progress(wxEVT_CODELITE_REMOTE_REPLACE_RESULTS);
+    event_progress.GetStrings() = lines;
+    AddPendingEvent(event_progress);
+
+    if(is_completed) {
+        clFindInFilesEvent event_done(wxEVT_CODELITE_REMOTE_REPLACE_DONE);
+        AddPendingEvent(event_done);
+    }
+}
+
+void clCodeLiteRemoteProcess::OnFindOutput(const wxString& output, bool is_completed)
+{
+    wxArrayString lines = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
+    if(!lines.empty()) {
+        clFindInFilesEvent::Match::vec_t matches;
+        matches.reserve(lines.size());
+        wxString curfile;
+        clFindInFilesEvent::Match match;
+        for(wxString& line : lines) {
+            wxString filename, pattern;
+            long line_number;
+            if(!split_line(line, &filename, &line_number, &pattern)) {
+                continue;
+            }
+
+            if(match.file != filename && !match.locations.empty()) {
+                // switching files
+                matches.push_back(match);
+                match.locations.clear();
+            }
+
+            match.file = filename;
+            clFindInFilesEvent::Location loc;
+            loc.line = line_number;
+            loc.pattern = pattern;
+            loc.column_end = 0;
+            loc.column_start = 0;
+            match.locations.emplace_back(loc);
+            ++m_fif_matches_count;
         }
 
-        if(match.file != filename && !match.locations.empty()) {
-            // switching files
+        if(!match.file.empty() && !match.locations.empty()) {
             matches.push_back(match);
             match.locations.clear();
         }
 
-        match.file = filename;
-        clFindInFilesEvent::Location loc;
-        loc.line = line_number;
-        loc.pattern = pattern;
-        loc.column_end = 0;
-        loc.column_start = 0;
-        match.locations.emplace_back(loc);
-        ++m_fif_matches_count;
-    }
-
-    if(!match.file.empty() && !match.locations.empty()) {
-        matches.push_back(match);
-        match.locations.clear();
-    }
-
-    if(!matches.empty()) {
-        clFindInFilesEvent event(wxEVT_CODELITE_REMOTE_FIND_RESULTS);
-        event.SetMatches(matches);
-        AddPendingEvent(event);
+        if(!matches.empty()) {
+            clFindInFilesEvent event(wxEVT_CODELITE_REMOTE_FIND_RESULTS);
+            event.SetMatches(matches);
+            AddPendingEvent(event);
+        }
     }
 
     if(is_completed) {
@@ -719,4 +737,30 @@ bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& work
     clProcessEvent dummy;
     OnProcessTerminated(dummy);
     return false;
+}
+
+void clCodeLiteRemoteProcess::Replace(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
+                                      const wxString& replace_with, bool whole_word, bool icase)
+{
+    if(!m_process) {
+        return;
+    }
+
+    // build the command and send it
+    JSON root(cJSON_Object);
+    auto item = root.toElement();
+    item.addProperty("command", "replace");
+    item.addProperty("root_dir", root_dir);
+    item.addProperty("find_what", find_what);
+    item.addProperty("replace_with", replace_with);
+    item.addProperty("file_extensions", ::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK));
+    item.addProperty("icase", icase);
+    item.addProperty("whole_word", whole_word);
+
+    wxString command = item.format(false);
+    m_process->Write(command + "\n");
+    LOG_IF_TRACE { clDEBUG1() << command << endl; }
+
+    // push a callback
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnReplaceOutput, nullptr });
 }

@@ -51,6 +51,7 @@ protected:
     void OnListFilesOutput(const wxString& output, bool is_completed);
     void OnListLSPsOutput(const wxString& output, bool is_completed);
     void OnFindOutput(const wxString& buffer, bool is_completed);
+    void OnReplaceOutput(const wxString& buffer, bool is_completed);
     void OnLocateOutput(const wxString& buffer, bool is_completed);
     void OnFindPathOutput(const wxString& buffer, bool is_completed);
     void OnExecOutput(const wxString& buffer, bool is_completed);
@@ -117,6 +118,13 @@ public:
      */
     void Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what, bool whole_word,
                 bool icase);
+
+    /**
+     * @brief replace in file on a remote machine
+     */
+    void Replace(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
+                 const wxString& replace_with, bool whole_word, bool icase);
+
     /**
      * @brief execute a command on the remote machine
      */
@@ -177,6 +185,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCo
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_REPLACE_RESULTS, clFindInFilesEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_REPLACE_DONE, clFindInFilesEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clProcessEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LOCATE, clCommandEvent);

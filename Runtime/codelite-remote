@@ -181,18 +181,28 @@ def run_command(command, working_directory=None, env=None):
             print(f"environment: `{env}`")
 
     except Exception as e:
-        logging.error("on_exe error: {}".format(e))
-        try:
-            proc.kill()
-            outs, errs = proc.communicate()
-        except:
-            pass
+        print(f"error: command `{command}` exited with error. {e}")
+
+
+def run_command_and_return_output(command, working_directory=None, env=None):
+    try:
+        return True, subprocess.check_output(
+            args=command,
+            cwd=working_directory,
+            shell=True,
+            env=env,
+            stderr=subprocess.STDOUT,
+        ).decode("utf-8")
+
+    except Exception as e:
+        return False, f"error: {e}"
 
 
 def expand_vars(s):
     expanded = os.path.expanduser(s)
     expanded = os.path.expandvars(expanded)
     return expanded
+
 
 def on_exec(cmd):
     """
@@ -208,13 +218,29 @@ def on_exec(cmd):
             env_dict[name] = value
         else:
             env_dict[name] = "{}:{}".format(value, env_dict[name])
-    
+
     working_directory = expand_vars(cmd["wd"])
     command = expand_vars(cmd["cmd"])
     run_command(command, working_directory=working_directory, env=env_dict)
 
     # always print the terminating message
     print_message_terminator()
+
+
+def get_list_files_commands(cmd):
+    where = cmd["root_dir"]
+    extensions = cmd["file_extensions"]
+    command = f"find {where} -type f "
+    expr = ""
+    first_ext = True
+    for ext in extensions:
+        if not first_ext:
+            expr += " -o "
+        else:
+            first_ext = False
+        expr += '-name "' + ext + '"'
+    command = f"{command} {expr} | sort"
+    return command
 
 
 def on_find_files(cmd):
@@ -227,32 +253,12 @@ def on_find_files(cmd):
     """
     # build the find command
     # find /home/eran/devl/codelite -type f \( -name "*.hpp" -o -name "*.cpp" -o -name "*.h" \)|sort
-    where = cmd["root_dir"]
-    extensions = cmd["file_extensions"]
-    command = f"/usr/bin/find {where} -type f "
-    expr = ""
-    first_ext = True
-    for ext in extensions:
-        if not first_ext:
-            expr += " -o "
-        else:
-            first_ext = False
-        expr += '-name "' + ext + '"'
-    command = f"{command} {expr} | sort"
+    command = get_list_files_commands(cmd)
     run_command(command)
     print_message_terminator()
 
 
-def on_find_in_files(cmd):
-    """
-    Find list of files with a given extension and from a given root directory
-
-    Example command:
-
-    {"command":"find","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"/home/eran/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false}
-    """
-
-    # build the grep command
+def get_grep_command(cmd):
     command = "grep -R --line-number --with-filename "
     if cmd["whole_word"] == True:
         command += "-w "
@@ -267,10 +273,78 @@ def on_find_in_files(cmd):
     command += cmd["root_dir"]
     command += "|sort"
 
-    curfile = ""
-    entries = []
-    curfile_matches = []
+    return command
+
+
+def on_find_in_files(cmd):
+    """
+    Find list of files with a given extension and from a given root directory
+
+    Example command:
+
+    {"command":"find","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"/home/eran/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false}
+    """
+
+    # build the grep command
+    command = get_grep_command(cmd)
+
     run_command(command)
+    print_message_terminator()
+
+
+def on_replace_in_files(cmd):
+    """
+    Replace `find_what` with `replace_with` in `root_dir` files that match pattern `file_extensions`
+
+    Example command:
+
+    {"command":"replace","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"/home/eran/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false, "replace_with": "std::unordered_set<wxString>"}
+    """
+
+    # get list of files to work on
+    command = get_grep_command(cmd)
+    success, grep_output = run_command_and_return_output(command)
+
+    if success == False:
+        print_message_terminator()
+        return
+
+    grep_output = grep_output.splitlines()
+    files = set()
+    for line in grep_output:
+        file = line.split(":")[0]
+        files.add(file)
+
+    find_what: str = cmd["find_what"]
+    replace_with: str = cmd["replace_with"]
+    ignore_case = cmd["icase"]
+    whole_word = cmd["whole_word"]
+
+    # build the sed command
+    # escape special chars
+    find_what = find_what.replace("/", "\\/")
+    replace_with = replace_with.replace("/", "\\/")
+
+    # escape double quotes
+    find_what = find_what.replace('"', '\\"')
+    replace_with = replace_with.replace('"', '\\"')
+
+    whold_word_delim_start = "([^\\w]|^)"
+    whold_word_delim_end = "([^\\w]|$)"
+
+    if whole_word:
+        find_what = f"{whold_word_delim_start}{find_what}{whold_word_delim_end}"
+
+    base_command = f'sed -E -i.bak "s/{find_what}/\\1{replace_with}\\2/g'
+    if ignore_case:
+        base_command += "I"
+    base_command += '"'
+
+    for file in files:
+        sed_command = f"{base_command} {file}"
+        run_command(sed_command)
+        # print the file modified
+        print(file)
     print_message_terminator()
 
 
@@ -295,9 +369,9 @@ def locate_in_path(name, path, versions_arr, ext):
 
     # If we got here, we could not get a match with suffix
     # so try without it
-    fullpath = "{}/{}".format(path, name)
+    fullpath = f"{path}/{name}"
     if len(ext) > 0:
-        fullpath = "{}.{}".format(fullpath, ext)
+        fullpath = f"{fullpath}.{ext}"
 
     logging.debug("Checking path: {}".format(fullpath))
     if os.path.isfile(fullpath) or os.path.islink(fullpath):
@@ -417,6 +491,7 @@ def main_loop():
         "locate": locate,
         "find_path": on_find_path,
         "list_lsps": on_list_lsps,
+        "replace": on_replace_in_files,
     }
 
     logging.info("codelite-remote started")
@@ -442,6 +517,7 @@ def main_loop():
                 logging.error("unknown command '{}'".format(command["command"]))
         except Exception as e:
             error_count += 1
+            print(e)
             logging.warning(e)
             if error_count == 10:
                 logging.error("Too many errors. Exiting!")

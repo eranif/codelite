@@ -142,6 +142,10 @@ void RemotyWorkspace::BindEvents()
                                 this);
     m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
                                 this);
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_REPLACE_DONE, &RemotyWorkspace::OnCodeLiteRemoteReplaceDone,
+                                this);
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_REPLACE_RESULTS,
+                                &RemotyWorkspace::OnCodeLiteRemoteReplaceProgress, this);
     m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
                                 this);
     m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
@@ -264,6 +268,7 @@ void RemotyWorkspace::DoClose(bool notify)
     m_remoteWorkspaceFile.clear();
     m_localWorkspaceFile.clear();
     m_localUserWorkspaceFile.clear();
+    m_replaceInFilesModifiedFiles.clear();
 
     m_codeliteRemoteBuilder.Stop();
     m_codeliteRemoteFinder.Stop();
@@ -955,6 +960,26 @@ void RemotyWorkspace::OnShutdown(clCommandEvent& event)
 
 void RemotyWorkspace::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
+void RemotyWorkspace::ReplaceInFiles(const wxString& root_dir, const wxString& file_extensions,
+                                     const wxString& find_what, const wxString& replace_with, bool whole_word,
+                                     bool icase)
+{
+    m_replaceInFilesModifiedFiles.clear();
+    wxString search_folder = root_dir;
+    if(search_folder == "<Workspace Folder>") {
+        search_folder = GetRemoteWorkingDir();
+    }
+
+    wxStandardID answer = ::PromptForYesNoCancelDialogWithCheckbox(
+        _("You are about to execute a remote replace in files\nDo you wish to continue?"),
+        "remoty-prompt-before-replace-in-files");
+    if(answer != wxID_YES) {
+        return;
+    }
+
+    m_codeliteRemoteFinder.Replace(search_folder, file_extensions, find_what, replace_with, whole_word, icase);
+}
+
 void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
                                   bool whole_word, bool icase)
 {
@@ -964,6 +989,53 @@ void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file
         search_folder = GetRemoteWorkingDir();
     }
     m_remoteFinder.Search(search_folder, find_what, file_extensions, whole_word, icase);
+}
+
+void RemotyWorkspace::OnCodeLiteRemoteReplaceProgress(clFindInFilesEvent& event)
+{
+    event.Skip();
+    for(const wxString& file : event.GetStrings()) {
+        m_replaceInFilesModifiedFiles.insert(file);
+    }
+}
+
+void RemotyWorkspace::OnCodeLiteRemoteReplaceDone(clFindInFilesEvent& event)
+{
+    event.Skip();
+
+    // prompt the user to load the modified files
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+
+    std::unordered_set<IEditor*> open_editors;
+    open_editors.reserve(editors.size());
+    for(auto editor : editors) {
+        if(editor->IsRemoteFile() && m_replaceInFilesModifiedFiles.count(editor->GetRemotePath())) {
+            open_editors.insert(editor);
+        }
+    }
+
+    // this event will trigger a git refresh
+    clFileSystemEvent fs_event{ wxEVT_FILES_MODIFIED_REPLACE_IN_FILES };
+    EventNotifier::Get()->AddPendingEvent(fs_event);
+
+    wxString message;
+    message << _("Remote replace in files completed, would you like to reload the following modified files:\n");
+    for(auto editor : editors) {
+        message << editor->GetRemotePath() << "\n";
+    }
+
+    wxStandardID answer = ::PromptForYesNoCancelDialogWithCheckbox(
+        message, "remoty-reload-after-replace-in-files", _("Reload"), _("No"), _("Cancel"),
+        _("Remember my answer and don't ask me again"), wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCANCEL_DEFAULT);
+    if(answer != wxID_YES) {
+        return;
+    }
+
+    wxBusyCursor bc;
+    for(auto editor : editors) {
+        editor->ReloadFromDisk();
+    }
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event)

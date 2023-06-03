@@ -31,6 +31,8 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     UpdateCombo(m_comboBoxFindWhat, m_data.find_what_array, m_data.find_what);
     UpdateCombo(m_comboBoxWhere, m_data.where_array, m_data.where);
     UpdateCombo(m_comboBoxTypes, m_data.files_array, m_data.files);
+    UpdateCombo(m_comboBoxReplaceWith, m_data.replace_with_array, m_data.replace_with);
+
     m_checkBoxCase->SetValue(m_data.flags & wxFRD_MATCHCASE);
     m_checkBoxWholeWord->SetValue(m_data.flags & wxFRD_MATCHWHOLEWORD);
     m_comboBoxFindWhat->GetTextCtrl()->SelectAll();
@@ -41,6 +43,8 @@ clRemoteFindDialog::~clRemoteFindDialog()
 {
     m_data.find_what_array = m_comboBoxFindWhat->GetStrings();
     m_data.find_what = m_comboBoxFindWhat->GetStringSelection();
+    m_data.replace_with_array = m_comboBoxReplaceWith->GetStrings();
+    m_data.replace_with = m_comboBoxReplaceWith->GetStringSelection();
     m_data.where_array = m_comboBoxWhere->GetStrings();
     m_data.where = m_comboBoxWhere->GetStringSelection();
     m_data.files_array = m_comboBoxTypes->GetStrings();
@@ -89,41 +93,10 @@ void clRemoteFindDialog::SetFileTypes(const wxString& filetypes) { m_comboBoxTyp
 
 void clRemoteFindDialog::SetFindWhat(const wxString& findWhat) { m_comboBoxFindWhat->SetValue(findWhat); }
 
-wxArrayString clRemoteFindDialog::GetGrepCommand() const
-{
-    wxArrayString command;
-    command.Add("find");
-    command.Add(GetWhere());
-    command.Add("-type");
-    command.Add("f");
-    command.Add("\\(");
-
-    wxArrayString types = ::wxStringTokenize(GetFileExtensions(), ";, ", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < types.size(); ++i) {
-        command.Add("-iname");
-        command.Add("\\" + types[i]);
-        command.Add("-o"); // logical OR
-    }
-    command.RemoveAt(command.size() - 1); // remove the last "-o"
-    command.Add("\\)");
-    command.Add("|");
-    command.Add("xargs");
-    command.Add("grep");
-    if(!m_checkBoxCase->IsChecked()) {
-        command.Add("-i");
-    }
-    if(m_checkBoxWholeWord->IsChecked()) {
-        command.Add("-w");
-    }
-    command.Add("--line-number");
-    command.Add("--with-filename");
-    command.Add(GetFindWhat());
-    return command;
-}
-
 wxString clRemoteFindDialog::GetWhere() const { return m_comboBoxWhere->GetStringSelection(); }
 
 wxString clRemoteFindDialog::GetFindWhat() const { return m_comboBoxFindWhat->GetStringSelection(); }
+wxString clRemoteFindDialog::GetReplaceWith() const { return m_comboBoxReplaceWith->GetStringSelection(); }
 
 wxString clRemoteFindDialog::GetFileExtensions() const { return m_comboBoxTypes->GetStringSelection(); }
 
@@ -131,7 +104,12 @@ bool clRemoteFindDialog::IsIcase() const { return !m_checkBoxCase->IsChecked(); 
 
 bool clRemoteFindDialog::IsWholeWord() const { return m_checkBoxWholeWord->IsChecked(); }
 
-void clRemoteFindDialog::OnSearch(wxCommandEvent& event)
+bool clRemoteFindDialog::CanOk() const
+{
+    return !m_comboBoxFindWhat->GetStringSelection().empty() && !m_comboBoxTypes->GetStringSelection().empty() &&
+           !m_comboBoxWhere->GetStrings().empty() && !m_choiceAccounts->GetStringSelection().empty();
+}
+void clRemoteFindDialog::OnFind(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     if(CanOk()) {
@@ -139,8 +117,11 @@ void clRemoteFindDialog::OnSearch(wxCommandEvent& event)
     }
 }
 
-bool clRemoteFindDialog::CanOk() const
+void clRemoteFindDialog::OnReplace(wxCommandEvent& event)
 {
-    return !m_comboBoxFindWhat->GetStringSelection().empty() && !m_comboBoxTypes->GetStringSelection().empty() &&
-           !m_comboBoxWhere->GetStrings().empty() && !m_choiceAccounts->GetStringSelection().empty();
+    wxUnusedVar(event);
+    if(CanOk()) {
+        m_isReplace = true;
+        EndModal(wxID_OK);
+    }
 }

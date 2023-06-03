@@ -189,8 +189,13 @@ void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
     }
 
     // start the search
-    m_workspace->FindInFiles(dlg.GetWhere(), dlg.GetFileExtensions(), dlg.GetFindWhat(), dlg.IsWholeWord(),
-                             dlg.IsIcase());
+    if(dlg.IsReplaceAction()) {
+        m_workspace->ReplaceInFiles(dlg.GetWhere(), dlg.GetFileExtensions(), dlg.GetFindWhat(), dlg.GetReplaceWith(),
+                                    dlg.IsWholeWord(), dlg.IsIcase());
+    } else {
+        m_workspace->FindInFiles(dlg.GetWhere(), dlg.GetFileExtensions(), dlg.GetFindWhat(), dlg.IsWholeWord(),
+                                 dlg.IsIcase());
+    }
 }
 
 void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)

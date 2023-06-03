@@ -444,7 +444,7 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
 
-    wxBoxSizer* boxSizer155 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer155 = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(boxSizer155);
 
     wxFlexGridSizer* flexGridSizer163 = new wxFlexGridSizer(0, 2, 0, 0);
@@ -468,6 +468,20 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
 #endif
 
     flexGridSizer163->Add(m_comboBoxFindWhat, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText210 =
+        new wxStaticText(this, wxID_ANY, _("Replace with:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer163->Add(m_staticText210, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    wxArrayString m_comboBoxReplaceWithArr;
+    m_comboBoxReplaceWith = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition,
+                                                 wxDLG_UNIT(this, wxSize(-1, -1)), m_comboBoxReplaceWithArr, 0);
+#if wxVERSION_NUMBER >= 3000
+    m_comboBoxReplaceWith->SetHint(wxT(""));
+#endif
+
+    flexGridSizer163->Add(m_comboBoxReplaceWith, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText169 =
         new wxStaticText(this, wxID_ANY, _("Where:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -508,33 +522,38 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer163->Add(m_choiceAccounts, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxGridSizer* gridSizer197 = new wxGridSizer(0, 2, 0, 0);
+    wxBoxSizer* boxSizer204 = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer155->Add(gridSizer197, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer155->Add(boxSizer204, 0, wxALL | wxEXPAND | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
-    m_checkBoxCase =
-        new wxCheckBox(this, wxID_ANY, _("Case sensitive"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxCase->SetValue(false);
+    m_buttonFind =
+        new wxButton(this, ID_REMOTE_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    gridSizer197->Add(m_checkBoxCase, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer204->Add(m_buttonFind, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonReplace =
+        new wxButton(this, ID_REMOTE_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer204->Add(m_buttonReplace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonCancel =
+        new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer204->Add(m_buttonCancel, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    boxSizer204->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxWholeWord =
         new wxCheckBox(this, wxID_ANY, _("Whole word"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxWholeWord->SetValue(false);
 
-    gridSizer197->Add(m_checkBoxWholeWord, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer204->Add(m_checkBoxWholeWord, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_stdBtnSizer157 = new wxStdDialogButtonSizer();
+    m_checkBoxCase =
+        new wxCheckBox(this, wxID_ANY, _("Case sensitive"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxCase->SetValue(false);
 
-    boxSizer155->Add(m_stdBtnSizer157, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
-
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_buttonOK->SetDefault();
-    m_stdBtnSizer157->AddButton(m_buttonOK);
-
-    m_button161 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_stdBtnSizer157->AddButton(m_button161);
-    m_stdBtnSizer157->Realize();
+    boxSizer204->Add(m_checkBoxCase, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("clRemoteFindDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -555,7 +574,8 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
     m_comboBoxFindWhat->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
     m_comboBoxWhere->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
     m_comboBoxTypes->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
-    m_buttonOK->Bind(wxEVT_UPDATE_UI, &clRemoteFindDialogBase::OnOK_UI, this);
+    m_buttonFind->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clRemoteFindDialogBase::OnFind, this);
+    m_buttonReplace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clRemoteFindDialogBase::OnReplace, this);
 }
 
 clRemoteFindDialogBase::~clRemoteFindDialogBase()
@@ -563,5 +583,6 @@ clRemoteFindDialogBase::~clRemoteFindDialogBase()
     m_comboBoxFindWhat->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
     m_comboBoxWhere->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
     m_comboBoxTypes->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
-    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &clRemoteFindDialogBase::OnOK_UI, this);
+    m_buttonFind->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clRemoteFindDialogBase::OnFind, this);
+    m_buttonReplace->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clRemoteFindDialogBase::OnReplace, this);
 }

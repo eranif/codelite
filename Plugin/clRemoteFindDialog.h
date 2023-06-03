@@ -12,9 +12,11 @@ class WXDLLIMPEXP_SDK clRemoteFindDialog : public clRemoteFindDialogBase
 {
     wxString m_root_path;
     FindInFilesSession m_data;
+    bool m_isReplace = false;
 
 protected:
-    virtual void OnSearch(wxCommandEvent& event);
+    virtual void OnFind(wxCommandEvent& event);
+    virtual void OnReplace(wxCommandEvent& event);
     virtual void OnOK_UI(wxUpdateUIEvent& event);
     void UpdateCombo(clThemedComboBox* cb, const wxArrayString& options, const wxString& lastSelection);
     bool CanOk() const;
@@ -28,14 +30,11 @@ public:
 
     wxString GetWhere() const;
     wxString GetFindWhat() const;
+    wxString GetReplaceWith() const;
     wxString GetFileExtensions() const;
     bool IsIcase() const;
     bool IsWholeWord() const;
-
-    /**
-     * @brief build grep command from the input provided
-     */
-    wxArrayString GetGrepCommand() const;
+    bool IsReplaceAction() const { return m_isReplace; }
 };
 
 #endif // CLREMOTEFINDDIALOG_H

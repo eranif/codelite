@@ -1078,7 +1078,6 @@ void clEditor::SetProperties()
     IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
     IndicatorSetHoverForeground(INDICATOR_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(INDICATOR_WORD_HIGHLIGHT, highlight_colour);
-    IndicatorSetHoverForeground(INDICATOR_WORD_HIGHLIGHT, hover_highlight_colour);
     IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, INDICATOR_ALPHA);
 
     IndicatorSetUnder(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, true);

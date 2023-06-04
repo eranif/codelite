@@ -472,7 +472,7 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
     m_staticText210 =
         new wxStaticText(this, wxID_ANY, _("Replace with:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    flexGridSizer163->Add(m_staticText210, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+    flexGridSizer163->Add(m_staticText210, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_comboBoxReplaceWithArr;
     m_comboBoxReplaceWith = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition,

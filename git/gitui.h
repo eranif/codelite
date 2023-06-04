@@ -28,9 +28,9 @@
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
 #include <wx/stc/stc.h>
+#include "clThemedSTC.hpp"
 #include <wx/toolbar.h>
 #include "clToolBar.h"
-#include "clThemedSTC.hpp"
 #include <wx/srchctrl.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
@@ -141,7 +141,7 @@ protected:
     wxPanel* m_panel1;
     clThemedOrderedListCtrl* m_dvListCtrlFiles;
     wxPanel* m_panel2;
-    wxStyledTextCtrl* m_stcDiff;
+    clThemedSTC* m_stcDiff;
     wxPanel* m_panel4;
     clToolBar* m_toolbar;
     clThemedSTC* m_stcCommitMessage;
@@ -157,7 +157,7 @@ protected:
 public:
     clThemedOrderedListCtrl* GetDvListCtrlFiles() { return m_dvListCtrlFiles; }
     wxPanel* GetPanel1() { return m_panel1; }
-    wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
+    clThemedSTC* GetStcDiff() { return m_stcDiff; }
     wxPanel* GetPanel2() { return m_panel2; }
     clThemedSplitterWindow* GetSplitterInner() { return m_splitterInner; }
     wxPanel* GetPanel3() { return m_panel3; }
@@ -198,7 +198,7 @@ protected:
     clThemedSTC* m_stcCommitMessage;
     wxPanel* m_splitterPage182;
     wxStaticText* m_staticText217;
-    wxStyledTextCtrl* m_stcDiff;
+    clThemedSTC* m_stcDiff;
     wxButton* m_buttonClose;
 
 protected:
@@ -232,7 +232,7 @@ public:
     clThemedSplitterWindow* GetSplitter777() { return m_splitter777; }
     wxPanel* GetSplitterPage178() { return m_splitterPage178; }
     wxStaticText* GetStaticText217() { return m_staticText217; }
-    wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
+    clThemedSTC* GetStcDiff() { return m_stcDiff; }
     wxPanel* GetSplitterPage182() { return m_splitterPage182; }
     clThemedSplitterWindow* GetSplitter174() { return m_splitter174; }
     wxButton* GetButtonClose() { return m_buttonClose; }

@@ -2863,7 +2863,7 @@
 																			"border":	5,
 																			"gbSpan":	"1,1",
 																			"gbPosition":	"0,0",
-																			"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																			"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_SINGLE", "wxBORDER_SIMPLE"],
 																			"m_sizerFlags":	["wxEXPAND"],
 																			"m_properties":	[{
 																					"type":	"winid",
@@ -3077,7 +3077,7 @@
 																			"border":	5,
 																			"gbSpan":	"1,1",
 																			"gbPosition":	"0,0",
-																			"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																			"m_styles":	["wxBORDER_SIMPLE"],
 																			"m_sizerFlags":	["wxEXPAND"],
 																			"m_properties":	[{
 																					"type":	"winid",
@@ -3114,11 +3114,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedSTC"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedSTC.hpp"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",
@@ -3353,7 +3353,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_NONE", "wxBORDER_SIMPLE"],
+													"m_styles":	["wxBORDER_NONE", "wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -4877,7 +4877,7 @@
 																							"border":	5,
 																							"gbSpan":	"1,1",
 																							"gbPosition":	"0,0",
-																							"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																							"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxBORDER_SIMPLE"],
 																							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																							"m_properties":	[{
 																									"type":	"winid",
@@ -5478,7 +5478,7 @@
 																													"border":	5,
 																													"gbSpan":	",",
 																													"gbPosition":	",",
-																													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																													"m_styles":	["wxBORDER_SIMPLE"],
 																													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																													"m_properties":	[{
 																															"type":	"winid",
@@ -5733,7 +5733,7 @@
 																													"border":	5,
 																													"gbSpan":	"1,1",
 																													"gbPosition":	"0,0",
-																													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																													"m_styles":	["wxBORDER_SIMPLE"],
 																													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																													"m_properties":	[{
 																															"type":	"winid",
@@ -6032,7 +6032,7 @@
 																	"border":	5,
 																	"gbSpan":	"1,1",
 																	"gbPosition":	"0,0",
-																	"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																	"m_styles":	["wxBORDER_SIMPLE"],
 																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																	"m_properties":	[{
 																			"type":	"winid",
@@ -6069,11 +6069,11 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Class Name:",
-																			"m_value":	""
+																			"m_value":	"clThemedSTC"
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Include File:",
-																			"m_value":	""
+																			"m_value":	"clThemedSTC.hpp"
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Style:",
@@ -6681,7 +6681,7 @@
 													"border":	5,
 													"gbSpan":	",",
 													"gbPosition":	",",
-													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+													"m_styles":	["wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -6936,7 +6936,7 @@
 													"border":	5,
 													"gbSpan":	",",
 													"gbPosition":	",",
-													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+													"m_styles":	["wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -12360,7 +12360,7 @@
 																					"border":	2,
 																					"gbSpan":	"1,1",
 																					"gbPosition":	"0,0",
-																					"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																					"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxBORDER_SIMPLE"],
 																					"m_sizerFlags":	["wxEXPAND"],
 																					"m_properties":	[{
 																							"type":	"winid",
@@ -13046,7 +13046,7 @@
 																					"border":	5,
 																					"gbSpan":	"1,1",
 																					"gbPosition":	"0,0",
-																					"m_styles":	["wxDV_NO_HEADER", "wxDV_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																					"m_styles":	["wxDV_NO_HEADER", "wxDV_SINGLE", "wxBORDER_SIMPLE"],
 																					"m_sizerFlags":	["wxEXPAND"],
 																					"m_properties":	[{
 																							"type":	"winid",
@@ -16456,7 +16456,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxLB_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+															"m_styles":	["wxLB_SINGLE", "wxBORDER_SIMPLE"],
 															"m_sizerFlags":	["wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -16689,7 +16689,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxLB_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+															"m_styles":	["wxLB_SINGLE", "wxBORDER_SIMPLE"],
 															"m_sizerFlags":	["wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",

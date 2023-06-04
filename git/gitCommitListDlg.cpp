@@ -62,7 +62,8 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT, wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnRevertCommit), NULL, this);
 
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(this);
+    CenterOnParent();
 }
 
 /*******************************************************************************/

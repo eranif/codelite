@@ -36,6 +36,7 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     m_checkBoxCase->SetValue(m_data.flags & wxFRD_MATCHCASE);
     m_checkBoxWholeWord->SetValue(m_data.flags & wxFRD_MATCHWHOLEWORD);
     m_comboBoxFindWhat->GetTextCtrl()->SelectAll();
+    GetSizer()->Fit(this);
     CenterOnParent();
 }
 

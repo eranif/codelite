@@ -528,6 +528,7 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
 
     m_buttonFind =
         new wxButton(this, ID_REMOTE_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonFind->SetDefault();
 
     boxSizer204->Add(m_buttonFind, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -571,18 +572,18 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_comboBoxFindWhat->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
-    m_comboBoxWhere->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
-    m_comboBoxTypes->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
+    m_comboBoxFindWhat->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnFind, this);
+    m_comboBoxReplaceWith->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnReplace, this);
+    m_comboBoxTypes->Bind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnFind, this);
     m_buttonFind->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clRemoteFindDialogBase::OnFind, this);
     m_buttonReplace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clRemoteFindDialogBase::OnReplace, this);
 }
 
 clRemoteFindDialogBase::~clRemoteFindDialogBase()
 {
-    m_comboBoxFindWhat->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
-    m_comboBoxWhere->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
-    m_comboBoxTypes->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnSearch, this);
+    m_comboBoxFindWhat->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnFind, this);
+    m_comboBoxReplaceWith->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnReplace, this);
+    m_comboBoxTypes->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clRemoteFindDialogBase::OnFind, this);
     m_buttonFind->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clRemoteFindDialogBase::OnFind, this);
     m_buttonReplace->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clRemoteFindDialogBase::OnReplace, this);
 }

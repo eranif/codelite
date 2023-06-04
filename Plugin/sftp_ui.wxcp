@@ -4226,7 +4226,7 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 											"m_eventClass":	"wxCommandEvent",
-											"m_functionNameAndSignature":	"OnSearch(wxCommandEvent& event)",
+											"m_functionNameAndSignature":	"OnFind(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
 											"m_noBody":	false
 										}],
@@ -4387,7 +4387,13 @@
 											"m_label":	"Value:",
 											"m_value":	""
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
+											"m_eventClass":	"wxCommandEvent",
+											"m_functionNameAndSignature":	"OnReplace(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
+											"m_noBody":	false
+										}],
 									"m_children":	[]
 								}, {
 									"m_type":	4405,
@@ -4545,13 +4551,7 @@
 											"m_label":	"Value:",
 											"m_value":	""
 										}],
-									"m_events":	[{
-											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
-											"m_eventClass":	"wxCommandEvent",
-											"m_functionNameAndSignature":	"OnSearch(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
-											"m_noBody":	false
-										}],
+									"m_events":	[],
 									"m_children":	[]
 								}, {
 									"m_type":	4405,
@@ -4712,7 +4712,7 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 											"m_eventClass":	"wxCommandEvent",
-											"m_functionNameAndSignature":	"OnSearch(wxCommandEvent& event)",
+											"m_functionNameAndSignature":	"OnFind(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
 											"m_noBody":	false
 										}],
@@ -4970,7 +4970,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",

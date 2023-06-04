@@ -201,7 +201,6 @@ protected:
     wxCheckBox* m_checkBoxCase;
 
 protected:
-    virtual void OnSearch(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
 

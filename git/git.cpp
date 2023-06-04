@@ -1670,7 +1670,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             m_commitListDlg = new GitCommitListDlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory, this);
         }
         m_commitListDlg->SetCommitList(m_commandOutput);
-        m_commitListDlg->Show();
+        m_commitListDlg->Display();
     } break;
     case gitCommit: {
         clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_COMMIT_LOCALLY);

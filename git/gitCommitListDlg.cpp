@@ -78,6 +78,14 @@ void GitCommitListDlg::SetCommitList(const wxString& commits)
     DoLoadCommits("");
 }
 
+void GitCommitListDlg::Display()
+{
+    SetName(wxEmptyString); // disable restoring size and position
+    ::clSetTLWindowBestSizeAndPosition(this);
+    CenterOnParent();
+    CallAfter(&GitCommitListDlg::DoShow);
+}
+
 /*******************************************************************************/
 void GitCommitListDlg::OnChangeFile(wxCommandEvent& e)
 {

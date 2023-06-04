@@ -36,6 +36,7 @@
 #include "cl_command_event.h"
 #include "gitui.h"
 #include "macros.h"
+
 #include <map>
 
 class IProcess;
@@ -64,12 +65,15 @@ protected:
     void DoLoadCommits(const wxString& filter);
     void ClearAll(bool includingCommitlist = true);
     wxString GetFilterString() const;
+    virtual bool Show(bool show = true) { return wxDialog::Show(show); }
+    void DoShow() { wxDialog::Show(); }
 
 public:
     GitCommitListDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* git);
-    ~GitCommitListDlg();
+    virtual ~GitCommitListDlg();
 
     void SetCommitList(const wxString& commits);
+    void Display();
 
 private:
     void OnChangeFile(wxCommandEvent& e);

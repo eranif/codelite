@@ -501,3 +501,25 @@ wxString StringUtils::StripDoubleQuotes(const wxString& str)
     }
     return s;
 }
+
+wxArrayString StringUtils::AppendAndMakeUnique(wxArrayString arr, const wxString& str, size_t truncate_size)
+{
+    auto where = arr.Index(str);
+    if(where != wxNOT_FOUND) {
+        // this item already exist, remove it
+        arr.RemoveAt(where);
+    }
+    arr.Insert(str, 0);
+    if(arr.size() > truncate_size) {
+        arr.resize(truncate_size);
+    }
+    return arr;
+}
+
+void StringUtils::UpdateComboBox(wxComboBox* cb, const wxArrayString& arr, const wxString& str)
+{
+    auto updated_arr = AppendAndMakeUnique(arr, str);
+    cb->Clear();
+    cb->Append(updated_arr);
+    cb->SetStringSelection(str);
+}

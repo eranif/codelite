@@ -203,6 +203,8 @@ protected:
 protected:
     virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText165() { return m_staticText165; }

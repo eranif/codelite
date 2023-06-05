@@ -1,13 +1,16 @@
 #include "clRemoteFindDialog.h"
 
+#include "ColoursAndFontsManager.h"
 #include "JSON.h"
+#include "StringUtils.h"
 #include "clThemedTextCtrl.hpp"
 #include "cl_config.h"
 #include "globals.h"
 #include "sessionmanager.h"
 #include "ssh/ssh_account_info.h"
-#include "wx/arrstr.h"
-#include "wx/tokenzr.h"
+
+#include <wx/arrstr.h>
+#include <wx/tokenzr.h>
 
 clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account_name, const wxString& rootpath)
     : clRemoteFindDialogBase(parent)
@@ -28,28 +31,37 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     // read the find what list
     SessionManager::Get().LoadFindInFilesSession(&m_data);
 
-    UpdateCombo(m_comboBoxFindWhat, m_data.find_what_array, m_data.find_what);
-    UpdateCombo(m_comboBoxWhere, m_data.where_array, m_data.where);
-    UpdateCombo(m_comboBoxTypes, m_data.files_array, m_data.files);
-    UpdateCombo(m_comboBoxReplaceWith, m_data.replace_with_array, m_data.replace_with);
+    StringUtils::UpdateComboBox(m_comboBoxFindWhat, m_data.find_what_array, m_data.find_what);
+    StringUtils::UpdateComboBox(m_comboBoxWhere, m_data.where_array, m_data.where);
+    StringUtils::UpdateComboBox(m_comboBoxTypes, m_data.files_array, m_data.files);
+    StringUtils::UpdateComboBox(m_comboBoxReplaceWith, m_data.replace_with_array, m_data.replace_with);
+
+    auto lex = ColoursAndFontsManager::Get().GetLexer("default");
+    auto font = lex->GetFontForStyle(0, this);
+    m_comboBoxFindWhat->SetFont(font);
+    m_comboBoxWhere->SetFont(font);
+    m_comboBoxTypes->SetFont(font);
+    m_comboBoxReplaceWith->SetFont(font);
 
     m_checkBoxCase->SetValue(m_data.flags & wxFRD_MATCHCASE);
     m_checkBoxWholeWord->SetValue(m_data.flags & wxFRD_MATCHWHOLEWORD);
-    m_comboBoxFindWhat->GetTextCtrl()->SelectAll();
+    m_comboBoxFindWhat->SelectAll();
     GetSizer()->Fit(this);
     CenterOnParent();
 }
 
 clRemoteFindDialog::~clRemoteFindDialog()
 {
-    m_data.find_what_array = m_comboBoxFindWhat->GetStrings();
-    m_data.find_what = m_comboBoxFindWhat->GetStringSelection();
-    m_data.replace_with_array = m_comboBoxReplaceWith->GetStrings();
-    m_data.replace_with = m_comboBoxReplaceWith->GetStringSelection();
-    m_data.where_array = m_comboBoxWhere->GetStrings();
-    m_data.where = m_comboBoxWhere->GetStringSelection();
-    m_data.files_array = m_comboBoxTypes->GetStrings();
-    m_data.files = m_comboBoxTypes->GetStringSelection();
+    m_data.find_what_array =
+        StringUtils::AppendAndMakeUnique(m_comboBoxFindWhat->GetStrings(), m_comboBoxFindWhat->GetValue());
+    m_data.find_what = m_comboBoxFindWhat->GetValue();
+    m_data.replace_with_array =
+        StringUtils::AppendAndMakeUnique(m_comboBoxReplaceWith->GetStrings(), m_comboBoxReplaceWith->GetValue());
+    m_data.replace_with = m_comboBoxReplaceWith->GetValue();
+    m_data.where_array = StringUtils::AppendAndMakeUnique(m_comboBoxWhere->GetStrings(), m_comboBoxWhere->GetValue());
+    m_data.where = m_comboBoxWhere->GetValue();
+    m_data.files_array = StringUtils::AppendAndMakeUnique(m_comboBoxTypes->GetStrings(), m_comboBoxTypes->GetValue());
+    m_data.files = m_comboBoxTypes->GetValue();
     m_data.flags = 0;
     if(m_checkBoxCase->IsChecked()) {
         m_data.flags |= wxFRD_MATCHCASE;
@@ -58,71 +70,43 @@ clRemoteFindDialog::~clRemoteFindDialog()
         m_data.flags |= wxFRD_MATCHWHOLEWORD;
     }
 
-    // truncate the number of items we keep in the history
-    static constexpr int max_size = 20;
-    if(m_data.where_array.size() > max_size) {
-        m_data.where_array.resize(max_size);
-    }
-
-    if(m_data.find_what_array.size() > max_size) {
-        m_data.find_what_array.resize(max_size);
-    }
-
-    if(m_data.files_array.size() > max_size) {
-        m_data.files_array.resize(max_size);
-    }
-
     // store the find in files session
     SessionManager::Get().SaveFindInFilesSession(m_data);
 }
-
-void clRemoteFindDialog::UpdateCombo(clThemedComboBox* cb, const wxArrayString& options, const wxString& lastSelection)
-{
-    cb->Clear();
-    cb->Append(options);
-    int where = cb->FindString(lastSelection);
-    if(where != wxNOT_FOUND) {
-        cb->SetSelection(where);
-    } else {
-        cb->SetValue(lastSelection);
-    }
-}
-
-void clRemoteFindDialog::OnOK_UI(wxUpdateUIEvent& event) { event.Enable(CanOk()); }
 
 void clRemoteFindDialog::SetFileTypes(const wxString& filetypes) { m_comboBoxTypes->SetValue(filetypes); }
 
 void clRemoteFindDialog::SetFindWhat(const wxString& findWhat) { m_comboBoxFindWhat->SetValue(findWhat); }
 
-wxString clRemoteFindDialog::GetWhere() const { return m_comboBoxWhere->GetStringSelection(); }
+wxString clRemoteFindDialog::GetWhere() const { return m_comboBoxWhere->GetValue(); }
 
-wxString clRemoteFindDialog::GetFindWhat() const { return m_comboBoxFindWhat->GetStringSelection(); }
-wxString clRemoteFindDialog::GetReplaceWith() const { return m_comboBoxReplaceWith->GetStringSelection(); }
+wxString clRemoteFindDialog::GetFindWhat() const { return m_comboBoxFindWhat->GetValue(); }
+wxString clRemoteFindDialog::GetReplaceWith() const { return m_comboBoxReplaceWith->GetValue(); }
 
-wxString clRemoteFindDialog::GetFileExtensions() const { return m_comboBoxTypes->GetStringSelection(); }
+wxString clRemoteFindDialog::GetFileExtensions() const { return m_comboBoxTypes->GetValue(); }
 
 bool clRemoteFindDialog::IsIcase() const { return !m_checkBoxCase->IsChecked(); }
 
 bool clRemoteFindDialog::IsWholeWord() const { return m_checkBoxWholeWord->IsChecked(); }
 
-bool clRemoteFindDialog::CanOk() const
-{
-    return !m_comboBoxFindWhat->GetStringSelection().empty() && !m_comboBoxTypes->GetStringSelection().empty() &&
-           !m_comboBoxWhere->GetStrings().empty() && !m_choiceAccounts->GetStringSelection().empty();
-}
 void clRemoteFindDialog::OnFind(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(CanOk()) {
-        EndModal(wxID_OK);
-    }
+    EndModal(wxID_OK);
 }
 
 void clRemoteFindDialog::OnReplace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(CanOk()) {
-        m_isReplace = true;
-        EndModal(wxID_OK);
-    }
+    m_isReplace = true;
+    EndModal(wxID_OK);
+}
+void clRemoteFindDialog::OnFindUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!m_comboBoxFindWhat->GetValue().empty() && !m_comboBoxTypes->GetValue().empty());
+}
+
+void clRemoteFindDialog::OnReplaceUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!m_comboBoxFindWhat->GetValue().empty() && !m_comboBoxTypes->GetValue().empty());
 }

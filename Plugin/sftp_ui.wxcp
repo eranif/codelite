@@ -4991,6 +4991,12 @@
 											"m_functionNameAndSignature":	"OnFind(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
+										}, {
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_functionNameAndSignature":	"OnFindUI(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -5084,6 +5090,12 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_functionNameAndSignature":	"OnReplace(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+											"m_noBody":	false
+										}, {
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_functionNameAndSignature":	"OnReplaceUI(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
 										}],
 									"m_children":	[]

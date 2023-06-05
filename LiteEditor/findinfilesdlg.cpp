@@ -26,6 +26,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FindInFilesLocationsDlg.h"
+#include "StringUtils.h"
 #include "clFilesCollector.h"
 #include "clWorkspaceManager.h"
 #include "dirpicker.h"
@@ -56,24 +57,6 @@ const wxString RE_BUG = "(/[/\\*]+ *BUG)";
 const wxString RE_ATTN = "(/[/\\*]+ *ATTN)";
 const wxString RE_FIXME = "(/[/\\*]+ *FIXME)";
 
-wxArrayString& make_unique_array(wxArrayString& array)
-{
-    wxArrayString unique_arr;
-    unique_arr.reserve(array.size());
-    wxStringSet_t S;
-    for(wxString& s : array) {
-        s.Trim().Trim(false);
-        if(s.empty()) {
-            continue;
-        }
-        if(S.count(s) == 0) {
-            S.insert(s);
-            unique_arr.push_back(s);
-        }
-    }
-    unique_arr.swap(array);
-    return array;
-}
 } // namespace
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
@@ -82,11 +65,15 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
 {
     // Load the find-in-files data
     SessionManager::Get().LoadFindInFilesSession(&m_data);
+    auto lex = ColoursAndFontsManager::Get().GetLexer("default");
+    auto font = lex->GetFontForStyle(0, this);
+    m_findString->SetFont(font);
+    m_replaceString->SetFont(font);
+    m_fileTypes->SetFont(font);
+    m_comboBoxEncoding->SetFont(font);
 
     // "Find"
-    m_findString->AddCommand(wxID_CLEAR, _("Clear history"));
-    m_findString->Clear();
-    m_findString->Append(make_unique_array(m_data.find_what_array));
+    StringUtils::UpdateComboBox(m_findString, m_data.find_what_array, m_data.find_what);
     m_findString->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
@@ -95,12 +82,10 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
         },
         wxID_CLEAR);
 
-    m_findString->SetValue(m_data.find_what);
+    m_findString->SetStringSelection(m_data.find_what);
 
     // "Replace"
-    m_replaceString->AddCommand(wxID_CLEAR, _("Clear history"));
-    m_replaceString->Append(make_unique_array(m_data.replace_with_array));
-    m_replaceString->SetValue(m_data.replace_with);
+    StringUtils::UpdateComboBox(m_replaceString, m_data.replace_with_array, m_data.replace_with);
     m_replaceString->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
@@ -110,9 +95,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
         wxID_CLEAR);
 
     // "Files"
-    m_fileTypes->AddCommand(wxID_CLEAR, _("Clear history"));
-    m_fileTypes->Append(make_unique_array(m_data.files_array));
-    m_fileTypes->SetValue(m_data.files);
+    StringUtils::UpdateComboBox(m_fileTypes, m_data.files_array, m_data.files);
     m_fileTypes->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
@@ -122,10 +105,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
         wxID_CLEAR);
 
     // "Where"
-    m_comboBoxWhere->Clear();
-    m_comboBoxWhere->Append(make_unique_array(m_data.where_array));
-    m_comboBoxWhere->SetValue(m_data.where);
-    m_comboBoxWhere->AddCommand(wxID_CLEAR, _("Clear history"));
+    StringUtils::UpdateComboBox(m_comboBoxWhere, m_data.where_array, m_data.where);
     m_comboBoxWhere->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
@@ -432,9 +412,7 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
         selection_start += 1; // skip the `-`
         int selection_end = current_content.length();
         m_comboBoxWhere->SetValue(current_content);
-        m_comboBoxWhere->GetTextCtrl()->SetSelection(selection_start, selection_end);
-        m_comboBoxWhere->GetTextCtrl()->EnsureCaretVisible();
-        m_comboBoxWhere->GetTextCtrl()->CallAfter(&wxStyledTextCtrl::SetFocus);
+        m_comboBoxWhere->CallAfter(&clComboBox::SetFocus);
 
     } else if(selection == (firstItem + 6)) {
         wxString folder = ::wxDirSelector();
@@ -591,10 +569,11 @@ void FindInFilesDialog::SaveFindReplaceData()
     }
 
     m_data.flags = GetSearchFlags();
-    m_data.find_what_array = m_findString->GetStrings();
+    m_data.find_what_array = StringUtils::AppendAndMakeUnique(m_findString->GetStrings(), m_findString->GetValue());
     m_data.find_what = m_findString->GetValue();
 
-    m_data.replace_with_array = m_replaceString->GetStrings();
+    m_data.replace_with_array =
+        StringUtils::AppendAndMakeUnique(m_replaceString->GetStrings(), m_replaceString->GetValue());
     m_data.replace_with = m_replaceString->GetValue();
 
     m_data.encoding = m_comboBoxEncoding->GetStringSelection();
@@ -607,7 +586,8 @@ void FindInFilesDialog::SaveFindReplaceData()
 
     // store the "Where"
     if(!m_transient) {
-        wxArrayString where_arr = GetComboBoxStrings(m_comboBoxWhere);
+        wxArrayString where_arr =
+            StringUtils::AppendAndMakeUnique(m_comboBoxWhere->GetStrings(), m_comboBoxWhere->GetValue());
         m_data.where_array = where_arr;
         m_data.where = m_comboBoxWhere->GetValue();
     }
@@ -645,7 +625,7 @@ void FindInFilesDialog::OnFindEnter(wxCommandEvent& event)
 
 void FindInFilesDialog::OnReplaceEnter(wxCommandEvent& event) { OnReplace(event); }
 
-void FindInFilesDialog::DoSelectAll() { m_findString->GetTextCtrl()->SelectAll(); }
+void FindInFilesDialog::DoSelectAll() { m_findString->SelectAll(); }
 
 void FindInFilesDialog::OnATTN(wxCommandEvent& event)
 {

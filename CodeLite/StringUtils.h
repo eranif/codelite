@@ -29,6 +29,7 @@
 #include "codelite_exports.h"
 
 #include <wx/arrstr.h>
+#include <wx/combobox.h>
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL StringUtils
@@ -111,6 +112,12 @@ public:
 
     /// If a string is wrapped with double quoutes -> strip them
     static wxString StripDoubleQuotes(const wxString& str);
+
+    /// Append `str` to `arr`. If the array size exceed the truncation size, shrink it to fit
+    static wxArrayString AppendAndMakeUnique(wxArrayString arr, const wxString& str, size_t truncate_size = 15);
+
+    /// update comboxbox drop down list
+    static void UpdateComboBox(wxComboBox* cb, const wxArrayString& arr, const wxString& str);
 };
 
 #endif // STRINGUTILS_H

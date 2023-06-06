@@ -215,8 +215,9 @@ def get_grep_command(cmd):
 
     for ext in cmd["file_extensions"]:
         command += f"--include '{ext}' "
-
-    command += cmd["find_what"] + " "
+    
+    find_what = cmd["find_what"]
+    command += f'"{find_what}" '
     command += cmd["root_dir"]
     command += "|sort"
 

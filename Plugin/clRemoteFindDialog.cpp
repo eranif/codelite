@@ -17,10 +17,16 @@ namespace
 
 void UpdateComboBox(clComboBox* cb, const wxArrayString& arr, const wxString& str)
 {
-    auto updated_arr = StringUtils::AppendAndMakeUnique(arr, str);
     cb->Clear();
-    cb->Append(updated_arr);
-    cb->SetStringSelection(str);
+    if(arr.empty()) {
+        return;
+    }
+    cb->Append(arr);
+    int where = cb->FindString(str);
+    if(where != wxNOT_FOUND) {
+        where = 0;
+    }
+    cb->SetSelection(where);
 }
 } // namespace
 

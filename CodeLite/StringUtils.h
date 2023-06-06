@@ -115,9 +115,6 @@ public:
 
     /// Append `str` to `arr`. If the array size exceed the truncation size, shrink it to fit
     static wxArrayString AppendAndMakeUnique(wxArrayString arr, const wxString& str, size_t truncate_size = 15);
-
-    /// update comboxbox drop down list
-    static void UpdateComboBox(wxComboBox* cb, const wxArrayString& arr, const wxString& str);
 };
 
 #endif // STRINGUTILS_H

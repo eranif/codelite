@@ -515,11 +515,3 @@ wxArrayString StringUtils::AppendAndMakeUnique(wxArrayString arr, const wxString
     }
     return arr;
 }
-
-void StringUtils::UpdateComboBox(wxComboBox* cb, const wxArrayString& arr, const wxString& str)
-{
-    auto updated_arr = AppendAndMakeUnique(arr, str);
-    cb->Clear();
-    cb->Append(updated_arr);
-    cb->SetStringSelection(str);
-}

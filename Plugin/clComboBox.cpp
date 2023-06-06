@@ -1,5 +1,6 @@
 #include "clComboBox.hpp"
 
+#if wxUSE_NATIVE_COMBOBOX
 #include "clThemedTextCtrl.hpp"
 
 #include <wx/button.h>
@@ -9,7 +10,7 @@
 clComboBox::clComboBox(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
                        size_t n, const wxString choices[], long style, const wxValidator& validator,
                        const wxString& name)
-    : wxComboBox(parent, id, value, pos, size, n, choices, style, validator)
+    : wxComboBox(parent, id, value, pos, size, n, choices, style | wxTE_RICH2, validator)
 {
 }
 
@@ -37,3 +38,4 @@ bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, 
     wxUnusedVar(name);
     return wxComboBox::Create(parent, id, value, pos, size, choices, style, validator);
 }
+#endif // wxUSE_NATIVE_COMBOBOX

@@ -1,6 +1,10 @@
 #ifndef CLCOMBOBOX_HPP
 #define CLCOMBOBOX_HPP
 
+#include "wxCustomControls.hpp"
+
+#if wxUSE_NATIVE_COMBOBOX
+
 #include "clButton.h"
 #include "codelite_exports.h"
 #include "wx_ordered_map.h"
@@ -31,5 +35,9 @@ public:
                 const wxString& name = wxComboBoxNameStr);
     virtual ~clComboBox();
 };
-
+#else
+// generic version
+#include "clComboBoxGeneric.hpp"
+typedef clComboBoxGeneric clComboBox;
+#endif
 #endif // CLCOMBOBOX_HPP

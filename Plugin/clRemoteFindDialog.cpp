@@ -12,6 +12,18 @@
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
+namespace
+{
+
+void UpdateComboBox(clComboBox* cb, const wxArrayString& arr, const wxString& str)
+{
+    auto updated_arr = StringUtils::AppendAndMakeUnique(arr, str);
+    cb->Clear();
+    cb->Append(updated_arr);
+    cb->SetStringSelection(str);
+}
+} // namespace
+
 clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account_name, const wxString& rootpath)
     : clRemoteFindDialogBase(parent)
     , m_root_path(rootpath)
@@ -31,10 +43,10 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     // read the find what list
     SessionManager::Get().LoadFindInFilesSession(&m_data);
 
-    StringUtils::UpdateComboBox(m_comboBoxFindWhat, m_data.find_what_array, m_data.find_what);
-    StringUtils::UpdateComboBox(m_comboBoxWhere, m_data.where_array, m_data.where);
-    StringUtils::UpdateComboBox(m_comboBoxTypes, m_data.files_array, m_data.files);
-    StringUtils::UpdateComboBox(m_comboBoxReplaceWith, m_data.replace_with_array, m_data.replace_with);
+    UpdateComboBox(m_comboBoxFindWhat, m_data.find_what_array, m_data.find_what);
+    UpdateComboBox(m_comboBoxWhere, m_data.where_array, m_data.where);
+    UpdateComboBox(m_comboBoxTypes, m_data.files_array, m_data.files);
+    UpdateComboBox(m_comboBoxReplaceWith, m_data.replace_with_array, m_data.replace_with);
 
     auto lex = ColoursAndFontsManager::Get().GetLexer("default");
     auto font = lex->GetFontForStyle(0, this);

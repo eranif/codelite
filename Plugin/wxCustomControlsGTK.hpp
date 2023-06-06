@@ -9,3 +9,4 @@
 #define wxUSE_NATIVE_CAPTION 1
 
 #define wxUSE_NATIVE_TOOLBAR 0
+#define wxUSE_NATIVE_COMBOBOX 1

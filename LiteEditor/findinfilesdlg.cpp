@@ -57,6 +57,13 @@ const wxString RE_BUG = "(/[/\\*]+ *BUG)";
 const wxString RE_ATTN = "(/[/\\*]+ *ATTN)";
 const wxString RE_FIXME = "(/[/\\*]+ *FIXME)";
 
+void UpdateComboBox(clComboBox* cb, const wxArrayString& arr, const wxString& str)
+{
+    auto updated_arr = StringUtils::AppendAndMakeUnique(arr, str);
+    cb->Clear();
+    cb->Append(updated_arr);
+    cb->SetStringSelection(str);
+}
 } // namespace
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
@@ -72,7 +79,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     lex->ApplyFont(m_comboBoxEncoding);
 
     // "Find"
-    StringUtils::UpdateComboBox(m_findString, m_data.find_what_array, m_data.find_what);
+    UpdateComboBox(m_findString, m_data.find_what_array, m_data.find_what);
     m_findString->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
@@ -84,7 +91,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     m_findString->SetStringSelection(m_data.find_what);
 
     // "Replace"
-    StringUtils::UpdateComboBox(m_replaceString, m_data.replace_with_array, m_data.replace_with);
+    UpdateComboBox(m_replaceString, m_data.replace_with_array, m_data.replace_with);
     m_replaceString->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
@@ -94,7 +101,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
         wxID_CLEAR);
 
     // "Files"
-    StringUtils::UpdateComboBox(m_fileTypes, m_data.files_array, m_data.files);
+    UpdateComboBox(m_fileTypes, m_data.files_array, m_data.files);
     m_fileTypes->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {
@@ -104,7 +111,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
         wxID_CLEAR);
 
     // "Where"
-    StringUtils::UpdateComboBox(m_comboBoxWhere, m_data.where_array, m_data.where);
+    UpdateComboBox(m_comboBoxWhere, m_data.where_array, m_data.where);
     m_comboBoxWhere->Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& e) {

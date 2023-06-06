@@ -27,7 +27,6 @@
 #include "ColoursAndFontsManager.h"
 #include "clFileSystemEvent.h"
 #include "clStrings.h"
-#include "clThemedButton.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "codelite_events.h"
@@ -52,21 +51,22 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnHoldOpenUpdateUI, this, XRCID("hold_pane_open"));
     wxBoxSizer* horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    clThemedButton* unmark = new clThemedButton(this, wxID_ANY, _("&Unmark All"));
+    wxButton* unmark = new wxButton(this, wxID_ANY, _("&Unmark All"));
     horzSizer->Add(unmark, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
     unmark->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnUnmarkAll, this);
     unmark->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnUnmarkAllUI, this);
 
-    clThemedButton* mark = new clThemedButton(this, wxID_ANY, _("Mark &All"));
+    wxButton* mark = new wxButton(this, wxID_ANY, _("Mark &All"));
     horzSizer->Add(mark, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
     mark->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnMarkAll, this);
     mark->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnMarkAllUI, this);
 
     m_replaceWith = new clThemedComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, {});
-    horzSizer->Add(m_replaceWith, 2, wxALIGN_CENTER_VERTICAL | wxRIGHT | wxLEFT, 5);
+    m_replaceWith->SetHint(_("Replace with"));
+    horzSizer->Add(m_replaceWith, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
     m_replaceWith->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceWithComboUI, this);
 
-    clThemedButton* repl = new clThemedButton(this, wxID_ANY, _("Replace"));
+    wxButton* repl = new wxButton(this, wxID_ANY, _("Replace"));
     horzSizer->Add(repl, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
     repl->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnReplace, this);
     repl->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceUI, this);
@@ -91,6 +91,10 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
     m_progress->Hide();
     m_vSizer->Add(m_progress, wxSizerFlags().Expand().Border(wxALL, 5));
+
+    // ensure that the toolbar is placed at the top
+    mainSizer->Detach(m_tb);
+    mainSizer->Insert(0, m_tb);
     mainSizer->Layout();
 }
 
@@ -134,7 +138,7 @@ void ReplaceInFilesPanel::OnSearchEnded(wxCommandEvent& e)
     OnMarkAll(e);
 
     // Set the focus to the "Replace With" field
-    m_replaceWith->CallAfter(&wxComboBox::SetFocus);
+    m_replaceWith->CallAfter(&clThemedComboBox::SetFocus);
 }
 
 void ReplaceInFilesPanel::OnMarginClick(wxStyledTextEvent& e)
@@ -509,6 +513,8 @@ void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
     if(!lexer) {
         lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
+
+    m_replaceWith->SetFont(lexer->GetFontForStyle(0, this));
 
     const StyleProperty& styleProperty = lexer->GetProperty(0);
     wxColour bgColour = styleProperty.GetBgColour();

@@ -504,3 +504,11 @@ void LexerConf::ApplyWordSet(wxStyledTextCtrl* ctrl, eWordSetIndex index, const 
         ctrl->SetKeyWords(word_set.index, keywords);
     }
 }
+
+void LexerConf::ApplyFont(wxWindow* cb)
+{
+    auto font = GetFontForStyle(0, cb);
+    auto curfont = cb->GetFont();
+    font.SetPointSize(curfont.GetPointSize());
+    cb->SetFont(font);
+}

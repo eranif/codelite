@@ -188,6 +188,12 @@ public:
     void Apply(wxStyledTextCtrl* ctrl, bool applyKeywords = false);
 
     /**
+     * @brief apply the current lexer configuration on an input
+     * wxStyledTextCtrl
+     */
+    void ApplyFont(wxWindow* cb);
+
+    /**
      * @brief similar to `Apply`, but use the system colours instead of the theme colours
      */
     void ApplySystemColours(wxStyledTextCtrl* ctrl);

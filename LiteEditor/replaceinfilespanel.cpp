@@ -82,19 +82,12 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     m_tb->DeleteById(XRCID("repeat_output"));
     m_tb->DeleteById(XRCID("recent_searches"));
     m_tb->Realize();
-
-#ifdef __WXMAC__
-    mainSizer->Insert(0, vertSizer, 1, wxEXPAND);
-#else
     mainSizer->Add(vertSizer, 1, wxEXPAND);
-#endif
+
     m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
     m_progress->Hide();
     m_vSizer->Add(m_progress, wxSizerFlags().Expand().Border(wxALL, 5));
 
-    // ensure that the toolbar is placed at the top
-    mainSizer->Detach(m_tb);
-    mainSizer->Insert(0, m_tb);
     mainSizer->Layout();
 }
 
@@ -513,8 +506,7 @@ void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
     if(!lexer) {
         lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
-
-    m_replaceWith->SetFont(lexer->GetFontForStyle(0, this));
+    lexer->ApplyFont(m_replaceWith);
 
     const StyleProperty& styleProperty = lexer->GetProperty(0);
     wxColour bgColour = styleProperty.GetBgColour();

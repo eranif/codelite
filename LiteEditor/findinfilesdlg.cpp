@@ -66,11 +66,10 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     // Load the find-in-files data
     SessionManager::Get().LoadFindInFilesSession(&m_data);
     auto lex = ColoursAndFontsManager::Get().GetLexer("default");
-    auto font = lex->GetFontForStyle(0, this);
-    m_findString->SetFont(font);
-    m_replaceString->SetFont(font);
-    m_fileTypes->SetFont(font);
-    m_comboBoxEncoding->SetFont(font);
+    lex->ApplyFont(m_findString);
+    lex->ApplyFont(m_replaceString);
+    lex->ApplyFont(m_fileTypes);
+    lex->ApplyFont(m_comboBoxEncoding);
 
     // "Find"
     StringUtils::UpdateComboBox(m_findString, m_data.find_what_array, m_data.find_what);

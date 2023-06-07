@@ -192,7 +192,7 @@ def get_list_files_commands(cmd):
 
 def _escape_special_chars(s):
     # escape special chars
-    special_chars = [".", "*", "$", "^", "[", "]", "(", ")", "<", ">", '"']
+    special_chars = [".", "*", "$", "^", "[", "]", "(", ")", "<", ">", '"', "|"]
     for c in special_chars:
         s = s.replace(c, f"\\{c}")
     return s

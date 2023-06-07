@@ -215,7 +215,7 @@ def get_grep_command(cmd):
 
     for ext in cmd["file_extensions"]:
         command += f"--include '{ext}' "
-    
+
     find_what = cmd["find_what"]
     command += f'"{find_what}" '
     command += cmd["root_dir"]
@@ -264,6 +264,13 @@ def on_replace_in_files(cmd):
         files.add(file)
 
     find_what: str = cmd["find_what"]
+
+    # since we are using sed -E (regex)
+    # escape special chars
+    special_chars = [".", "*", "$", "^", "[", "]", "(", ")", "<", ">"]
+    for c in special_chars:
+        find_what = find_what.replace(c, f"\\{c}")
+
     replace_with: str = cmd["replace_with"]
     ignore_case = cmd["icase"]
     whole_word = cmd["whole_word"]
@@ -294,6 +301,8 @@ def on_replace_in_files(cmd):
         run_command(sed_command)
         # print the file modified
         print(file)
+        # remove the backup file created
+        os.remove(f"{file}.bak")
     print_message_terminator()
 
 

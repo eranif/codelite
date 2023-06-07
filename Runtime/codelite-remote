@@ -190,6 +190,14 @@ def get_list_files_commands(cmd):
     return command
 
 
+def _escape_special_chars(s):
+    # escape special chars
+    special_chars = [".", "*", "$", "^", "[", "]", "(", ")", "<", ">", '"']
+    for c in special_chars:
+        s = s.replace(c, f"\\{c}")
+    return s
+
+
 def on_find_files(cmd):
     """
     Find list of files with a given extension and from a given root directory
@@ -216,7 +224,8 @@ def get_grep_command(cmd):
     for ext in cmd["file_extensions"]:
         command += f"--include '{ext}' "
 
-    find_what = cmd["find_what"]
+    find_what = _escape_special_chars(cmd["find_what"])
+
     command += f'"{find_what}" '
     command += cmd["root_dir"]
     command += "|sort"
@@ -267,9 +276,7 @@ def on_replace_in_files(cmd):
 
     # since we are using sed -E (regex)
     # escape special chars
-    special_chars = [".", "*", "$", "^", "[", "]", "(", ")", "<", ">"]
-    for c in special_chars:
-        find_what = find_what.replace(c, f"\\{c}")
+    find_what = _escape_special_chars(find_what)
 
     replace_with: str = cmd["replace_with"]
     ignore_case = cmd["icase"]

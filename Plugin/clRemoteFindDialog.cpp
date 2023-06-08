@@ -34,6 +34,9 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     : clRemoteFindDialogBase(parent)
     , m_root_path(rootpath)
 {
+    wxString last_tool = clConfig::Get().Read("remote_find_replace_tool/last_tool", wxString("grep"));
+    m_choiceTool->SetSelection(last_tool == "grep" ? 0 : 1);
+
     auto accounts = SSHAccountInfo::Load();
     if(!accounts.empty()) {
         wxArrayString accounts_arr;
@@ -64,6 +67,8 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     m_checkBoxCase->SetValue(m_data.flags & wxFRD_MATCHCASE);
     m_checkBoxWholeWord->SetValue(m_data.flags & wxFRD_MATCHWHOLEWORD);
     m_comboBoxFindWhat->SelectAll();
+
+    CallAfter(&clRemoteFindDialog::DoShowControls);
     GetSizer()->Fit(this);
     CenterOnParent();
 }
@@ -89,6 +94,7 @@ clRemoteFindDialog::~clRemoteFindDialog()
     }
 
     // store the find in files session
+    clConfig::Get().Write("remote_find_replace_tool/last_tool", m_choiceTool->GetStringSelection());
     SessionManager::Get().SaveFindInFilesSession(m_data);
 }
 
@@ -127,4 +133,44 @@ void clRemoteFindDialog::OnFindUI(wxUpdateUIEvent& event)
 void clRemoteFindDialog::OnReplaceUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_comboBoxFindWhat->GetValue().empty() && !m_comboBoxTypes->GetValue().empty());
+}
+void clRemoteFindDialog::DoShowControls()
+{
+    switch(m_choiceTool->GetSelection()) {
+    case 1: // sed
+        DoShowReplaceControls(true);
+        DoShowSearchControls(false);
+        break;
+    default:
+    case 0: // grep
+        DoShowReplaceControls(false);
+        DoShowSearchControls(true);
+        break;
+    }
+    GetSizer()->Layout();
+    SendSizeEvent();
+}
+
+void clRemoteFindDialog::OnTool(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoShowControls();
+}
+
+void clRemoteFindDialog::DoShowSearchControls(bool show)
+{
+    m_buttonFind->Show(show);
+    if(show) {
+        m_buttonFind->SetDefault();
+    }
+}
+
+void clRemoteFindDialog::DoShowReplaceControls(bool show)
+{
+    m_buttonReplace->Show(show);
+    m_staticTextReplace->Show(show);
+    m_comboBoxReplaceWith->Show(show);
+    if(show) {
+        m_buttonReplace->SetDefault();
+    }
 }

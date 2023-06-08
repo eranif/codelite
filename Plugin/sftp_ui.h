@@ -184,9 +184,11 @@ public:
     };
 
 protected:
-    wxStaticText* m_staticText165;
+    wxStaticText* m_staticText215;
+    wxChoice* m_choiceTool;
+    wxStaticText* m_staticTextFind;
     clThemedComboBox* m_comboBoxFindWhat;
-    wxStaticText* m_staticText210;
+    wxStaticText* m_staticTextReplace;
     clThemedComboBox* m_comboBoxReplaceWith;
     wxStaticText* m_staticText169;
     clThemedComboBox* m_comboBoxWhere;
@@ -201,15 +203,18 @@ protected:
     wxCheckBox* m_checkBoxCase;
 
 protected:
+    virtual void OnTool(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText165() { return m_staticText165; }
+    wxStaticText* GetStaticText215() { return m_staticText215; }
+    wxChoice* GetChoiceTool() { return m_choiceTool; }
+    wxStaticText* GetStaticTextFind() { return m_staticTextFind; }
     clThemedComboBox* GetComboBoxFindWhat() { return m_comboBoxFindWhat; }
-    wxStaticText* GetStaticText210() { return m_staticText210; }
+    wxStaticText* GetStaticTextReplace() { return m_staticTextReplace; }
     clThemedComboBox* GetComboBoxReplaceWith() { return m_comboBoxReplaceWith; }
     wxStaticText* GetStaticText169() { return m_staticText169; }
     clThemedComboBox* GetComboBoxWhere() { return m_comboBoxWhere; }
@@ -223,7 +228,7 @@ public:
     wxCheckBox* GetCheckBoxWholeWord() { return m_checkBoxWholeWord; }
     wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
     clRemoteFindDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                           const wxString& title = _("Remote Find In Files"), const wxPoint& pos = wxDefaultPosition,
+                           const wxString& title = _("Run tool on remote host"), const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clRemoteFindDialogBase();
 };

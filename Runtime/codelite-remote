@@ -120,13 +120,6 @@ def run_command(command, working_directory=None, env=None):
             stdin=subprocess.PIPE,
         )
 
-        if completed_proc.returncode != 0:
-            print(
-                f"error: command `{command}` exit with return code {completed_proc.returncode}"
-            )
-            print(f"cwd: `{working_directory}`")
-            print(f"environment: `{env}`")
-
     except Exception as e:
         print(f"error: command `{command}` exited with error. {e}")
 
@@ -177,25 +170,53 @@ def on_exec(cmd):
 def get_list_files_commands(cmd):
     where = cmd["root_dir"]
     extensions = cmd["file_extensions"]
+    exclude_pattern = None
+    if hasattr(cmd, "exclude_patterns"):
+        exclude_pattern = cmd["exclude_patterns"]
     command = f"find {where} -type f "
-    expr = ""
     first_ext = True
     for ext in extensions:
         if not first_ext:
-            expr += " -o "
+            command += " -o "
         else:
             first_ext = False
-        expr += '-name "' + ext + '"'
-    command = f"{command} {expr} | sort"
+        command += f'-name "{ext}" '
+
+    # add exclude patterns
+    if exclude_pattern and len(exclude_pattern) > 0:
+        command += "|"
+        for exclude_pat in exclude_pattern:
+            command += f'grep -v "{exclude_pat}"|'
+        # strip the last "|"
+        command = command[:-1]
+    command += "| sort"
     return command
 
 
-def _escape_special_chars(s):
-    # escape special chars
-    special_chars = [".", "*", "$", "^", "[", "]", "(", ")", "<", ">", '"', "|"]
-    for c in special_chars:
-        s = s.replace(c, f"\\{c}")
-    return s
+def get_files(cmd):
+    files = set()
+    find_cmd = get_list_files_commands(cmd)
+    success, find_output = run_command_and_return_output(find_cmd)
+    if success == False:
+        return None
+
+    files_arr = find_output.splitlines()
+    current_batch: str = ""
+    for i in range(0, len(files_arr)):
+        current_batch += f'"{files_arr[i]}" '
+        if i % 17 == 16:
+            current_batch = current_batch.rstrip()
+            files.add(current_batch)
+            current_batch = ""
+
+    current_batch = current_batch.strip()
+    if len(current_batch) > 0:
+        files.add(current_batch)
+
+    if len(files) == 0:
+        return None
+    else:
+        return files
 
 
 def on_find_files(cmd):
@@ -204,31 +225,26 @@ def on_find_files(cmd):
 
     Example command:
 
-    {"command":"ls", "file_extensions":["*.cpp","*.hpp","*.h"], "root_dir":"/c/src/codelite"}
+    {"command":"ls", "file_extensions":["*.cpp","*.hpp","*.h"], "exclude_patterns": ["*build/*"], "root_dir":"$HOME/devl/codelite"}
     """
     # build the find command
-    # find /home/eran/devl/codelite -type f \( -name "*.hpp" -o -name "*.cpp" -o -name "*.h" \)|sort
     command = get_list_files_commands(cmd)
     run_command(command)
     print_message_terminator()
 
 
 def get_grep_command(cmd):
-    command = "grep -R --line-number --with-filename "
+    command = "grep --line-number --with-filename "
     if cmd["whole_word"] == True:
         command += "-w "
 
     if cmd["icase"] == True:
         command += "-i "
 
-    for ext in cmd["file_extensions"]:
-        command += f"--include '{ext}' "
-
-    find_what = _escape_special_chars(cmd["find_what"])
+    find_what = cmd["find_what"]
 
     command += f'"{find_what}" '
-    command += cmd["root_dir"]
-    command += "|sort"
+    command += "%FILE%"
 
     return command
 
@@ -242,10 +258,13 @@ def on_find_in_files(cmd):
     {"command":"find","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"/home/eran/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false}
     """
 
-    # build the grep command
-    command = get_grep_command(cmd)
-
-    run_command(command)
+    files = get_files(cmd)
+    if files:
+        # get list of files and run grep on each one of them
+        grep_command = get_grep_command(cmd)
+        for file in files:
+            c = grep_command.replace("%FILE%", file)
+            run_command(c)
     print_message_terminator()
 
 
@@ -255,61 +274,53 @@ def on_replace_in_files(cmd):
 
     Example command:
 
-    {"command":"replace","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"/home/eran/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false, "replace_with": "std::unordered_set<wxString>"}
+    {"command":"replace","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"$HOME/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false, "replace_with": "std::unordered_set<wxString>"}
     """
+    files = get_files(cmd)
+    if files:
+        # build sed command
+        find_what: str = cmd["find_what"]
+        replace_with: str = cmd["replace_with"]
+        ignore_case = cmd["icase"]
+        whole_word = cmd["whole_word"]
 
-    # get list of files to work on
-    command = get_grep_command(cmd)
-    success, grep_output = run_command_and_return_output(command)
+        # escape special chars
+        find_what = find_what.replace("/", "\\/")
+        replace_with = replace_with.replace("/", "\\/")
 
-    if success == False:
-        print_message_terminator()
-        return
+        # escape double quotes
+        find_what = find_what.replace('"', '\\"')
+        replace_with = replace_with.replace('"', '\\"')
 
-    grep_output = grep_output.splitlines()
-    files = set()
-    for line in grep_output:
-        file = line.split(":")[0]
-        files.add(file)
+        if whole_word:
+            whold_word_delim_start = "([^\\w]|^)"
+            whold_word_delim_end = "([^\\w]|$)"
+            find_what = (
+                f"{whold_word_delim_start}{find_what}{whold_word_delim_end}"
+            )
+            base_command = (
+                f'sed -E -i.bak "s/{find_what}/\\1{replace_with}\\2/g'
+            )
+        else:
+            base_command = f'sed -E -i.bak "s/{find_what}/{replace_with}/g'
 
-    find_what: str = cmd["find_what"]
+        if ignore_case:
+            base_command += "I"
+        base_command += '"'
 
-    # since we are using sed -E (regex)
-    # escape special chars
-    find_what = _escape_special_chars(find_what)
+        for file in files:
+            sed_command = f"{base_command} {file}"
+            run_command(sed_command)
+            # print the modified files
+            arr_files = file.split(" ")
+            for f in arr_files:
+                f = f.replace('"', "")
+                print(f)
+                # remove the backup file created
+                backup_file = f"{f}.bak"
+                if os.path.exists(backup_file):
+                    os.remove(backup_file)
 
-    replace_with: str = cmd["replace_with"]
-    ignore_case = cmd["icase"]
-    whole_word = cmd["whole_word"]
-
-    # build the sed command
-    # escape special chars
-    find_what = find_what.replace("/", "\\/")
-    replace_with = replace_with.replace("/", "\\/")
-
-    # escape double quotes
-    find_what = find_what.replace('"', '\\"')
-    replace_with = replace_with.replace('"', '\\"')
-
-    if whole_word:
-        whold_word_delim_start = "([^\\w]|^)"
-        whold_word_delim_end = "([^\\w]|$)"
-        find_what = f"{whold_word_delim_start}{find_what}{whold_word_delim_end}"
-        base_command = f'sed -E -i.bak "s/{find_what}/\\1{replace_with}\\2/g'
-    else:
-        base_command = f'sed -E -i.bak "s/{find_what}/{replace_with}/g'
-
-    if ignore_case:
-        base_command += "I"
-    base_command += '"'
-
-    for file in files:
-        sed_command = f"{base_command} {file}"
-        run_command(sed_command)
-        # print the file modified
-        print(file)
-        # remove the backup file created
-        os.remove(f"{file}.bak")
     print_message_terminator()
 
 

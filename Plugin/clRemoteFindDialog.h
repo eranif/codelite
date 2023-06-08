@@ -15,10 +15,15 @@ class WXDLLIMPEXP_SDK clRemoteFindDialog : public clRemoteFindDialogBase
     bool m_isReplace = false;
 
 protected:
+    virtual void OnTool(wxCommandEvent& event);
     virtual void OnReplaceUI(wxUpdateUIEvent& event);
     virtual void OnFindUI(wxUpdateUIEvent& event);
     virtual void OnFind(wxCommandEvent& event);
     virtual void OnReplace(wxCommandEvent& event);
+
+    void DoShowSearchControls(bool show);
+    void DoShowReplaceControls(bool show);
+    void DoShowControls();
 
 public:
     clRemoteFindDialog(wxWindow* parent, const wxString& account_name, const wxString& rootpath);

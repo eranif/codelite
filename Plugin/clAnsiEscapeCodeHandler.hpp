@@ -2,53 +2,36 @@
 #define CLASCIIESCAPCODEHANDLER_HPP
 
 #include <codelite_exports.h>
+#include <map>
 #include <unordered_map>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/colour.h>
 #include <wx/dc.h>
 #include <wx/string.h>
+#include <wx/textctrl.h>
 #include <wx/window.h>
 
 enum class eColourHandlerState {
     kNormal = 0,
-    kInEscape, // found ESC char
-    kInOsc,    // Operating System Command
-    kInCsi,    // Control Sequence Introducer
-};
-
-enum eChunkFlags {
-    kCompleted = (1 << 0),
-    kEndOfLine = (1 << 1),
-    kTextChunk = (1 << 2),
-    kTitleChunk = (1 << 3),
-    kResetStyle = (1 << 4),
+    kInEscape,          // found ESC char
+    kInOsc,             // Operating System Command
+    kInCsi,             // Control Sequence Introducer
+    kInPrivateSequence, // Some popular private sequences
 };
 
 struct WXDLLIMPEXP_SDK Chunk {
-    wxString d;
+    std::string d;
 
     // chunk flags
-    size_t flags = kTextChunk;
-
-    // the line number this chunk belongs to
-    int line_number = wxNOT_FOUND;
-
-    // set or remove a flag
-    void set_flag(eChunkFlags flag, bool b = true)
-    {
-        if(b) {
-            flags |= flag;
-        } else {
-            flags &= ~flag;
-        }
-    }
-
-    bool is_text() const { return flags & kTextChunk; }
-    bool is_eol() const { return flags & kEndOfLine; }
-    bool is_style_reset() const { return flags & kResetStyle; }
-    bool is_window_title() const { return flags & kTitleChunk; }
-    bool is_empty() const { return flags == 0 && d.empty(); }
+    bool is_text = true;
+    bool is_eol = false;
+    bool is_completed = false;
+    bool is_style_reset = false;
+    bool is_title = false;
+    
+    bool is_empty() const { return is_text && d.empty(); }
+    typedef std::vector<Chunk> Vec_t;
 };
 
 struct WXDLLIMPEXP_SDK clRenderDefaultStyle {
@@ -66,30 +49,29 @@ struct WXDLLIMPEXP_SDK clRenderDefaultStyle {
 
 class WXDLLIMPEXP_SDK clAnsiEscapeCodeHandler
 {
-    typedef std::unordered_map<int, wxColour> ColoursMap_t;
+    typedef std::map<int, wxColour> ColoursMap_t;
     ColoursMap_t m_8_bit_colours_normal;
     ColoursMap_t m_8_bit_colours_for_dark_theme;
     ColoursMap_t m_colours_normal;
     ColoursMap_t m_colours_for_dark_theme;
     ColoursMap_t* m_8_bit_colours = nullptr;
     ColoursMap_t* m_colours = nullptr;
-
-    std::vector<Chunk> m_chunks;
     eColourHandlerState m_state = eColourHandlerState::kNormal;
-    int m_lineNumber = 0;
-    // map between chunks and line numbers (index in the m_chunk vector)
-    std::unordered_map<int, std::vector<size_t>> m_lines;
+
+    // Every entry in the below vector represents a single line, splitted into "chunks"
+    std::vector<Chunk::Vec_t> m_chunks;
 
 private:
     void EnsureCurrent();
     void UpdateStyle(const Chunk& chunk, wxDC& dc, const clRenderDefaultStyle& defaultStyle);
+    void UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, const wxTextAttr& defaultStyle);
     const wxColour& GetColour(const ColoursMap_t& m, int num) const;
 
 public:
     clAnsiEscapeCodeHandler();
     ~clAnsiEscapeCodeHandler();
 
-    void Parse(const wxString& buffer);
+    void Parse(const std::string& buffer);
     void Reset();
 
     /**
@@ -98,12 +80,17 @@ public:
     void Render(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect, bool isLightTheme);
 
     /**
+     * @brief draw the text onto the text control
+     */
+    void Render(wxTextCtrl* ctrl, const wxTextAttr& defaultStyle, bool isLightTheme);
+
+    /**
      * @brief render line without style
      */
     void RenderNoStyle(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect,
                        bool isLightTheme);
 
-    size_t GetLineCount() const { return m_lines.size(); }
+    size_t GetLineCount() const { return m_chunks.size(); }
 };
 
 #endif // CLASCIIESCAPCODEHANDLER_HPP

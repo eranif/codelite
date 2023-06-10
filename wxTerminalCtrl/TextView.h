@@ -6,14 +6,6 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 
-#define USE_STC 0
-
-#if USE_STC
-typedef wxStyledTextCtrl TextCtrl_t;
-#else
-typedef wxTextCtrl TextCtrl_t;
-#endif
-
 class TextView : public wxWindow
 {
     TextCtrl_t* m_ctrl = nullptr;
@@ -37,7 +29,7 @@ public:
              const wxColour& bg_colour = *wxBLACK, const wxColour& text_colour = *wxWHITE);
     virtual ~TextView();
     void Focus();
-    wxWindow* GetCtrl() { return m_ctrl; }
+    TextCtrl_t* GetCtrl() { return m_ctrl; }
     void SetSink(wxEvtHandler* sink) { this->m_sink = sink; }
     wxEvtHandler* GetSink() { return m_sink; }
 

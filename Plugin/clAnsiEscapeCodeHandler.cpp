@@ -1,5 +1,6 @@
 #include "clAnsiEscapeCodeHandler.hpp"
 
+#include "ColoursAndFontsManager.h"
 #include "drawingutils.h"
 #include "file_logger.h"
 
@@ -443,7 +444,7 @@ void clAnsiEscapeCodeHandler::Parse(const std::string& buffer)
                 // consume [digits]+[l|h]
                 break;
             case '\r':
-                NEXT(false);
+                *chunk = Chunk{};
                 m_state = eColourHandlerState::kNormal;
                 break;
             default:
@@ -518,6 +519,56 @@ void clAnsiEscapeCodeHandler::RenderNoStyle(wxDC& dc, const clRenderDefaultStyle
     dc.DestroyClippingRegion();
 }
 
+void clAnsiEscapeCodeHandler::Render(wxSTCStyleProvider* style_provider, bool isLightTheme)
+{
+    // find the line chunks
+    if(m_chunks.empty()) {
+        return;
+    }
+
+    wxStyledTextCtrl* stc = style_provider->m_ctrl;
+    // Check if this is a dark theme
+    if(isLightTheme) {
+        // normal
+        m_8_bit_colours = &m_8_bit_colours_normal;
+        m_colours = &m_colours_normal;
+    } else {
+        // dark theme background
+        m_8_bit_colours = &m_8_bit_colours_for_dark_theme;
+        m_colours = &m_colours_for_dark_theme;
+    }
+
+    // render everything
+    int curstyle = 0;
+    for(const auto& v : m_chunks) {
+        for(const auto& chunk : v) {
+            // ensure to restore the dont once we are done with this line
+            if(chunk.is_style_reset) {
+                // reset the style
+                curstyle = 0;
+            } else if(chunk.is_text) {
+                // append and style the next text
+                int pos = stc->GetLastPosition();
+                stc->AppendText(chunk.d);
+                style_provider->StyleSegment(pos, chunk.d.length(), curstyle);
+
+            } else if(chunk.is_title || chunk.is_empty()) {
+                // for now, we do nothing
+            } else {
+                wxTextAttr result;
+                UpdateStyle(chunk, style_provider->GetDefaultStyle(), &result);
+                curstyle = style_provider->GetStyle(result.GetTextColour(), result.GetBackgroundColour());
+            }
+
+            // if this chunk was EOL, reset the style here
+            if(chunk.is_eol) {
+                stc->AppendText("\n");
+            }
+        }
+    }
+    m_chunks.clear();
+}
+
 void clAnsiEscapeCodeHandler::Render(wxTextCtrl* ctrl, const wxTextAttr& defaultStyle, bool isLightTheme)
 {
     // find the line chunks
@@ -537,9 +588,6 @@ void clAnsiEscapeCodeHandler::Render(wxTextCtrl* ctrl, const wxTextAttr& default
     }
 
     // render everything
-    size_t lines_count = m_chunks.size();
-    wxUnusedVar(lines_count);
-
     for(const auto& v : m_chunks) {
         for(const auto& chunk : v) {
             // ensure to restore the dont once we are done with this line
@@ -548,18 +596,20 @@ void clAnsiEscapeCodeHandler::Render(wxTextCtrl* ctrl, const wxTextAttr& default
                 ctrl->SetDefaultStyle(defaultStyle);
             } else if(chunk.is_text) {
                 // draw the text
-                ctrl->SetInsertionPointEnd();
+                // ctrl->SetInsertionPointEnd();
                 ctrl->AppendText(chunk.d);
 
             } else if(chunk.is_title || chunk.is_empty()) {
                 // for now, we do nothing
             } else {
-                UpdateStyle(chunk, ctrl, defaultStyle);
+                wxTextAttr result;
+                UpdateStyle(chunk, defaultStyle, &result);
+                ctrl->SetDefaultStyle(result);
             }
 
             // if this chunk was EOL, reset the style here
             if(chunk.is_eol) {
-                ctrl->SetInsertionPointEnd();
+                // ctrl->SetInsertionPointEnd();
                 ctrl->AppendText("\n");
                 ctrl->SetDefaultStyle(defaultStyle);
             }
@@ -634,16 +684,16 @@ void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defau
         }                                         \
     }
 
-void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, const wxTextAttr& defaultStyle)
+void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, const wxTextAttr& defaultStyle, wxTextAttr* updatedStyle)
 {
     constexpr int STATE_NORMAL = 0;
     constexpr int STATE_SET_FG = 1;
     constexpr int STATE_SET_BG = 2;
 
     // see: https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
-    wxTextAttr attrUpdated = ctrl->GetDefaultStyle();
+    *updatedStyle = defaultStyle;
     if(chunk.d == "0") {
-        attrUpdated = defaultStyle;
+        *updatedStyle = defaultStyle;
     } else {
         int state = STATE_NORMAL;
         wxArrayString attrs = ::wxStringTokenize(chunk.d, ";", wxTOKEN_RET_EMPTY);
@@ -659,7 +709,7 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, 
                 switch(number) {
                 case 0:
                     // reset attributes
-                    attrUpdated = defaultStyle;
+                    *updatedStyle = defaultStyle;
                     break;
                 case 1:
                     f.SetWeight(wxFONTWEIGHT_BOLD);
@@ -684,12 +734,12 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, 
                         // use colour table to set the text colour
                         wxColour c = GetColour(*m_colours, number);
                         if(c.IsOk()) {
-                            attrUpdated.SetTextColour(c);
+                            updatedStyle->SetTextColour(c);
                         }
                     } else if((number >= 40 && number <= 47) || (number >= 100 && number <= 107)) {
                         wxColour c = GetColour(*m_colours, number);
                         if(c.IsOk()) {
-                            attrUpdated.SetBackgroundColour(c);
+                            updatedStyle->SetBackgroundColour(c);
                         }
                     }
                     break;
@@ -707,7 +757,7 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, 
                     NEXT_ATTR(i + 3, b);
                     wxColour c{ r, g, b };
                     if(c.IsOk()) {
-                        attrUpdated.SetTextColour(c);
+                        updatedStyle->SetTextColour(c);
                     }
                     state = STATE_NORMAL;
                 } break;
@@ -715,7 +765,7 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, 
                     // use colour table to set the text colour
                     wxColour c = GetColour(*m_8_bit_colours, number);
                     if(c.IsOk()) {
-                        attrUpdated.SetBackgroundColour(c);
+                        updatedStyle->SetBackgroundColour(c);
                     }
                     state = STATE_NORMAL;
                 } break;
@@ -733,7 +783,7 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, 
                     NEXT_ATTR(i + 3, b);
                     wxColour c{ r, g, b };
                     if(c.IsOk()) {
-                        attrUpdated.SetTextColour(c);
+                        updatedStyle->SetTextColour(c);
                     }
                     state = STATE_NORMAL;
                 } break;
@@ -741,7 +791,7 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, 
                     // use colour table to set the text colour
                     wxColour c = GetColour(*m_8_bit_colours, number);
                     if(c.IsOk()) {
-                        attrUpdated.SetTextColour(c);
+                        updatedStyle->SetTextColour(c);
                     }
                     state = STATE_NORMAL;
                 } break;
@@ -749,9 +799,8 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, 
                 break;
             }
         }
-        attrUpdated.SetFont(f);
+        updatedStyle->SetFont(f);
     }
-    ctrl->SetDefaultStyle(attrUpdated);
 }
 
 void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxDC& dc, const clRenderDefaultStyle& defaultStyle)
@@ -878,4 +927,87 @@ const wxColour& clAnsiEscapeCodeHandler::GetColour(const ColoursMap_t& m, int nu
         return wxNullColour;
     }
     return m.find(num)->second;
+}
+
+// ===------------------------------------------------------------------------
+// ===------------------------------------------------------------------------
+
+int wxSTCStyleProvider::GetStyle(const wxColour& fg, const wxColour& bg)
+{
+    // build the key for the style
+    wxString key;
+    key << "fg:" << fg.GetAsString(wxC2S_HTML_SYNTAX) << ";bg:" << bg.GetAsString(wxC2S_HTML_SYNTAX);
+    if(m_styleCache.count(key)) {
+        return m_styleCache[key];
+    }
+
+    // no such style, create it
+    if(m_curstyle >= wxSTC_STYLE_MAX) {
+        return 0;
+    }
+
+    int new_style = m_curstyle;
+    m_ctrl->StyleSetBackground(new_style, bg);
+    m_ctrl->StyleSetForeground(new_style, fg);
+    m_styleCache.insert({ key, new_style });
+    ++m_curstyle;
+    return new_style;
+}
+
+wxTextAttr wxSTCStyleProvider::GetDefaultStyle() const
+{
+    wxTextAttr attr;
+    attr.SetFont(m_ctrl->StyleGetFont(0));
+    attr.SetTextColour(m_ctrl->StyleGetForeground(0));
+    attr.SetBackgroundColour(m_ctrl->StyleGetBackground(0));
+    return attr;
+}
+
+wxSTCStyleProvider::~wxSTCStyleProvider() { m_ctrl->Unbind(wxEVT_STC_STYLENEEDED, &wxSTCStyleProvider::OnStyle, this); }
+wxSTCStyleProvider::wxSTCStyleProvider(wxStyledTextCtrl* ctrl)
+    : m_ctrl(ctrl)
+{
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("default");
+    lexer->ApplySystemColours(m_ctrl);
+    m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
+    m_ctrl->Bind(wxEVT_STC_STYLENEEDED, &wxSTCStyleProvider::OnStyle, this);
+}
+
+void wxSTCStyleProvider::StyleSegment(int pos, int len, int style)
+{
+    int line = m_ctrl->LineFromPosition(pos);
+    if(m_styleSegments.count(line) == 0) {
+        m_styleSegments.insert({ line, {} });
+    }
+    m_styleSegments[line].push_back({ pos, len, style });
+}
+
+void wxSTCStyleProvider::Clear()
+{
+    m_styleCache.clear();
+    m_styleSegments.clear();
+}
+
+void wxSTCStyleProvider::OnStyle(wxStyledTextEvent& event)
+{
+    int startPos = m_ctrl->GetEndStyled();
+    int endPos = event.GetPosition();
+    int start_line = m_ctrl->LineFromPosition(startPos);
+    int end_line = m_ctrl->LineFromPosition(endPos);
+
+    for(int line = start_line; line < end_line; ++line) {
+        int line_start_pos = m_ctrl->PositionFromLine(line);
+        int line_end_pos = line_start_pos + m_ctrl->LineLength(line);
+        m_ctrl->StartStyling(line_start_pos);
+        // set the default style for the entire line
+        m_ctrl->SetStyling(line_end_pos - line_start_pos, 0);
+        if(m_styleSegments.count(line)) {
+            // style whats needed on that line
+            const auto& segments = m_styleSegments[line];
+            for(const auto& segment : segments) {
+                m_ctrl->StartStyling(segment.pos);
+                m_ctrl->SetStyling(segment.len, segment.style);
+            }
+        }
+    }
 }

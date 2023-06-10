@@ -35,10 +35,9 @@ TextView::TextView(wxWindow* parent, wxWindowID winid, const wxFont& font, const
 
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
-//    m_ctrl->SetWrapMode(wxSTC_WRAP_CHAR);
 #else
     m_ctrl = new TextCtrl_t(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
-                            wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL | wxTE_PROCESS_TAB);
+                            wxTE_MULTILINE | wxTE_RICH2 | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL | wxTE_PROCESS_TAB);
 #endif
 
 #if defined(__WXOSX__) && !USE_STC

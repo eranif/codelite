@@ -8,6 +8,7 @@
 #include <wx/arrstr.h>
 #include <wx/colour.h>
 #include <wx/dc.h>
+#include <wx/stc/stc.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
@@ -20,6 +21,29 @@ enum class eColourHandlerState {
     kInPrivateSequence, // Some popular private sequences
 };
 
+struct WXDLLIMPEXP_SDK wxSTCStyleProvider : public wxEvtHandler {
+    struct wxSTCStyleSegment {
+        int pos = wxNOT_FOUND;
+        int len = wxNOT_FOUND;
+        int style = wxNOT_FOUND;
+    };
+    
+    wxStyledTextCtrl* m_ctrl = nullptr;
+    int m_curstyle = wxSTC_STYLE_LASTPREDEFINED + 1;
+    std::unordered_map<wxString, int> m_styleCache;
+    std::unordered_map<int, std::vector<wxSTCStyleSegment>> m_styleSegments;
+
+    /// Return style for a given colour
+    int GetStyle(const wxColour& fg, const wxColour& bg);
+    void StyleSegment(int pos, int len, int style);
+    wxTextAttr GetDefaultStyle() const;
+    wxSTCStyleProvider(wxStyledTextCtrl* ctrl);
+    ~wxSTCStyleProvider();
+    void Clear();
+    
+    void OnStyle(wxStyledTextEvent& event);
+};
+
 struct WXDLLIMPEXP_SDK Chunk {
     std::string d;
 
@@ -29,7 +53,7 @@ struct WXDLLIMPEXP_SDK Chunk {
     bool is_completed = false;
     bool is_style_reset = false;
     bool is_title = false;
-    
+
     bool is_empty() const { return is_text && d.empty(); }
     typedef std::vector<Chunk> Vec_t;
 };
@@ -64,7 +88,7 @@ class WXDLLIMPEXP_SDK clAnsiEscapeCodeHandler
 private:
     void EnsureCurrent();
     void UpdateStyle(const Chunk& chunk, wxDC& dc, const clRenderDefaultStyle& defaultStyle);
-    void UpdateStyle(const Chunk& chunk, wxTextCtrl* ctrl, const wxTextAttr& defaultStyle);
+    void UpdateStyle(const Chunk& chunk, const wxTextAttr& defaultStyle, wxTextAttr* updatedStyle);
     const wxColour& GetColour(const ColoursMap_t& m, int num) const;
 
 public:
@@ -83,6 +107,10 @@ public:
      * @brief draw the text onto the text control
      */
     void Render(wxTextCtrl* ctrl, const wxTextAttr& defaultStyle, bool isLightTheme);
+    /**
+     * @brief draw the text onto the wxStyledTextCtrl control
+     */
+    void Render(wxSTCStyleProvider* style_provider, bool isLightTheme);
 
     /**
      * @brief render line without style

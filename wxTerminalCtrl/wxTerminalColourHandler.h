@@ -8,11 +8,22 @@
 #include <vector>
 #include <wx/textctrl.h>
 
+#define USE_STC 0
+
+#if USE_STC
+typedef wxStyledTextCtrl TextCtrl_t;
+#else
+typedef wxTextCtrl TextCtrl_t;
+#endif
+
 class TextView;
 class wxTerminalCtrl;
 class wxTerminalColourHandler : public wxEvtHandler
 {
     TextView* m_ctrl = nullptr;
+#if USE_STC
+    wxSTCStyleProvider* m_style_provider = nullptr;
+#endif
     wxTextAttr m_defaultAttr;
     wxString m_title;
 

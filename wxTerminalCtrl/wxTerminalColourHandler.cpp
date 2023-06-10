@@ -14,7 +14,12 @@
 
 wxTerminalColourHandler::wxTerminalColourHandler() {}
 
-wxTerminalColourHandler::~wxTerminalColourHandler() {}
+wxTerminalColourHandler::~wxTerminalColourHandler()
+{
+#if USE_STC
+    wxDELETE(m_style_provider);
+#endif
+}
 
 void wxTerminalColourHandler::Append(const std::string& buffer)
 {
@@ -50,10 +55,15 @@ void wxTerminalColourHandler::Append(const std::string& buffer)
     m_ctrl->SelectNone();
     m_ctrl->SetInsertionPointEnd();
 
-    wxWindowUpdateLocker locker{ m_ctrl };
+    // wxWindowUpdateLocker locker{ m_ctrl };
     clAnsiEscapeCodeHandler handler;
     handler.Parse(FileUtils::ToStdString(curline) + buffer);
-    handler.Render(static_cast<wxTextCtrl*>(m_ctrl->GetCtrl()), m_defaultAttr, false);
+#if USE_STC
+    handler.Render(m_style_provider, false);
+    m_style_provider->m_ctrl->Colourise(0, wxNOT_FOUND);
+#else
+    handler.Render(m_ctrl->GetCtrl(), m_defaultAttr, false);
+#endif
     SetCaretEnd();
 }
 
@@ -68,6 +78,9 @@ void wxTerminalColourHandler::SetCtrl(TextView* ctrl)
     Clear();
     m_ctrl = ctrl;
     m_defaultAttr = m_ctrl->GetDefaultStyle();
+#if USE_STC
+    m_style_provider = new wxSTCStyleProvider(ctrl->GetCtrl());
+#endif
 }
 
 void wxTerminalColourHandler::Clear() {}
@@ -96,5 +109,7 @@ void wxTerminalColourHandler::SetCaretEnd()
 {
     // And ensure that the last line is visible
     m_ctrl->ShowCommandLine();
+    m_ctrl->SelectNone();
+    m_ctrl->SetInsertionPointEnd();
     m_ctrl->CallAfter(&TextView::Focus);
 }

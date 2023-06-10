@@ -9,6 +9,6 @@
 #define TASKS _("Tasks")
 #define TRACE_TAB _("Trace")
 #define SHOW_USAGE _("References")
-#define CLANG_TAB _("Clang")
+#define TERMINAL_TAB _("Terminal")
 
 #endif // CL_STRINGS_H

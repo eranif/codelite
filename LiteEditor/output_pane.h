@@ -28,6 +28,7 @@
 #include "Notebook.h"
 #include "cl_command_event.h"
 #include "shelltab.h"
+#include "wxTerminalCtrl/wxTerminalCtrl.h"
 
 #include <wx/panel.h>
 
@@ -44,7 +45,6 @@ class ShellTab;
 class TaskPanel;
 class OutputPaneBook;
 class FindUsageTab;
-
 /**
  * \ingroup LiteEditor
  * This class represents the default bottom pane in the editor
@@ -90,7 +90,7 @@ private:
     TaskPanel* m_taskPanel;
     FindUsageTab* m_showUsageTab;
     BuildTab* m_build_tab = nullptr;
-
+    wxTerminalCtrl* m_terminal = nullptr;
     bool m_buildInProgress;
 
 protected:

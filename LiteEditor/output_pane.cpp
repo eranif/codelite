@@ -134,55 +134,13 @@ void OutputPane::CreateGUIControls()
     m_book->AddPage(m_outputWind, OUTPUT_WIN, false, images->Add(wxT("console")));
     m_tabs.insert(std::make_pair(OUTPUT_WIN, Tab(OUTPUT_WIN, m_outputWind, images->Add(wxT("console")))));
     mgr->AddOutputTab(OUTPUT_WIN);
-#if 0
-    auto change_callbck = [](const wxString& label, const wxAny& value) {
-        wxString str_value;
-        bool bool_value;
-        wxColour colour_value;
-        if(value.GetAs(&str_value)) {
-            wxMessageBox(wxString() << label << " changed\n"
-                                    << "New value (wxString):" << str_value);
-        } else if(value.GetAs(&bool_value)) {
-            wxMessageBox(wxString() << label << " changed\n"
-                                    << "New value (bool): " << bool_value);
-        } else if(value.GetAs(&colour_value)) {
-            wxMessageBox(wxString() << label << " changed\n"
-                                    << "New value (wxColour): " << colour_value.GetAsString(wxC2S_HTML_SYNTAX));
-        } else {
-            wxMessageBox(label + " action");
-        }
-    };
 
-    auto props = new clPropertiesPage(m_book);
-    props->AddHeader("General Settings");
-    props->AddProperty("Options1", wxString("Valus string"), change_callbck);
-    props->AddProperty("Options1", { "Hello", "World", "From", "clPropertiesPage" }, 0, change_callbck);
+    // Output tab
+    m_terminal = new wxTerminalCtrl(m_book, wxID_ANY);
+    m_book->AddPage(m_terminal, TERMINAL_TAB, false, images->Add(wxT("console")));
+    m_tabs.insert(std::make_pair(TERMINAL_TAB, Tab(TERMINAL_TAB, m_terminal, images->Add(wxT("console")))));
+    mgr->AddOutputTab(TERMINAL_TAB);
 
-    props->AddHeader("Colours");
-    props->AddProperty("Choose a colour R", wxColour("RED"), change_callbck);
-    props->AddProperty("Choose a colour G", wxColour("GREEN"), change_callbck);
-    props->AddProperty("Choose a colour B", wxColour("BLUE"), change_callbck);
-
-    props->AddHeader("Misc");
-    props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" }, 1, change_callbck);
-    props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" }, 2, change_callbck);
-
-    props->AddHeader("Checkboxes");
-    props->AddProperty("Is it good?", true, change_callbck);
-    props->AddProperty("Should we do it?", false, change_callbck);
-
-    props->AddHeader("paths");
-    props->AddPropertyFilePicker("Choose first file", wxEmptyString, change_callbck);
-    props->AddPropertyFilePicker("Choose second file", wxEmptyString, change_callbck);
-    props->AddPropertyDirPicker("Choose directory", wxEmptyString, change_callbck);
-
-
-    props->AddHeader("Buttons");
-    props->AddPropertyButton("First button", change_callbck);
-    props->AddPropertyButton("Second button", change_callbck);
-    m_book->AddPage(props, "Properties", false, images->Add(wxT("console")));
-
-#endif
     SetMinSize(wxSize(200, 100));
     mainSizer->Layout();
 }

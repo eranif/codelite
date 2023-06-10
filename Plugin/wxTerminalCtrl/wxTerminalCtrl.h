@@ -14,16 +14,8 @@
 #include <wx/textctrl.h>
 #include <wx/utils.h>
 
-#ifdef WXMAKINGDLL_TERMINALCTRL
-#define TERMINALCTRL_API __declspec(dllexport)
-#elif defined(WXMAKINGDLL_TERMINALCTRL)
-#define TERMINALCTRL_API __declspec(dllimport)
-#else // not making nor using DLL
-#define TERMINALCTRL_API
-#endif
-
 class TextView;
-struct TERMINALCTRL_API wxTerminalHistory {
+struct WXDLLIMPEXP_SDK wxTerminalHistory {
     wxArrayString m_commands;
     int m_current = wxNOT_FOUND;
 
@@ -88,7 +80,7 @@ enum {
 };
 
 /// a wxCommandEvent that takes ownership of the clientData
-class TERMINALCTRL_API wxTerminalEvent : public wxCommandEvent
+class WXDLLIMPEXP_SDK wxTerminalEvent : public wxCommandEvent
 {
 protected:
     wxArrayString m_strings;
@@ -155,17 +147,17 @@ typedef void (wxEvtHandler::*wxTerminalEventFunction)(wxTerminalEvent&);
 
 // The terminal is ready. This event will include the PTS name (e.g. /dev/pts/12).
 // Use event.GetString()
-wxDECLARE_EXPORTED_EVENT(TERMINALCTRL_API, wxEVT_TERMINAL_CTRL_READY, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_READY, wxTerminalEvent);
 // Fired when stdout output is ready
-wxDECLARE_EXPORTED_EVENT(TERMINALCTRL_API, wxEVT_TERMINAL_CTRL_OUTPUT, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_OUTPUT, wxTerminalEvent);
 // Fired when stderr output is ready
-wxDECLARE_EXPORTED_EVENT(TERMINALCTRL_API, wxEVT_TERMINAL_CTRL_STDERR, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_STDERR, wxTerminalEvent);
 // The terminal has exited
-wxDECLARE_EXPORTED_EVENT(TERMINALCTRL_API, wxEVT_TERMINAL_CTRL_DONE, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_DONE, wxTerminalEvent);
 // Set the terminal title
-wxDECLARE_EXPORTED_EVENT(TERMINALCTRL_API, wxEVT_TERMINAL_CTRL_SET_TITLE, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_SET_TITLE, wxTerminalEvent);
 
-class TERMINALCTRL_API wxTerminalCtrl : public wxPanel
+class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 {
 protected:
     long m_style = 0;

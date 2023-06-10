@@ -561,8 +561,8 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 
     message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
     message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-    
-    if (APPLE OR MINGW)
+
+    if(APPLE OR MINGW)
         # Clang compiler on these platforms
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gdwarf-4 -fstandalone-debug -O0") # No optimization, debug info
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4 -fstandalone-debug -O0")
@@ -847,7 +847,6 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
-add_subdirectory(wxTerminalCtrl)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/yaml-cpp/include")

@@ -133,7 +133,7 @@ There are rpms available for fedora 37 & 38, and openSUSE Leap 15.4:
 Distro	| x86_64 GTK+3
 --------|----------------
 fedora	| [`37` and`38`][10]
-openSUSE | [`15.4`][8]
+openSUSE | [`15.4`][11] [`15.5`][12]
 
 
 First tell rpm about the CodeLite public key. As superuser do:
@@ -173,5 +173,6 @@ As the above CodeLite 17.0 packages already contain wxCrafter, its gui-designer 
 [3]: https://repos.codelite.org/rpms-17.0/suse/codelite-17.0-1.suse.src.rpm
 [4]: https://aur.archlinux.org/packages/codelite/
 [10]: https://repos.codelite.org/rpms-17.0/fedora/37/codelite-17.0-1.fc37.x86_64.rpm
-[8]: https://repos.codelite.org/rpms-17.0/suse/15.4/codelite-17.0-1.suse.x86_64.rpm
+[11]: https://repos.codelite.org/rpms-17.0/suse/15.4/codelite-17.0-1.suse.x86_64.rpm
+[12]: https://repos.codelite.org/rpms-17.0/suse/15.5/codelite-17.0-1.suse.x86_64.rpm
 [9]: https://brew.sh

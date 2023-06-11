@@ -157,6 +157,11 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_DONE, wxTerminalEv
 // Set the terminal title
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_SET_TITLE, wxTerminalEvent);
 
+enum class TerminalState {
+    NORMAL,
+    PASSWORD,
+};
+
 class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 {
 protected:
@@ -166,7 +171,6 @@ protected:
     long m_commandOffset = 0;
     wxTerminalHistory m_history;
     std::unordered_set<long> m_initialProcesses;
-    bool m_echoOff = false; // Not used atm
     wxTextAttr m_preEchoOffAttr;
     wxString m_workingDirectory;
     bool m_pauseOnExit = false;
@@ -175,6 +179,7 @@ protected:
     wxString m_logfile;
     wxString m_ttyfile;
     bool m_terminating = false;
+    TerminalState m_state = TerminalState::NORMAL;
 
 protected:
     void StartShell();
@@ -185,11 +190,11 @@ protected:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
+    void ChangeToPasswordStateIfNeeded();
 
 protected:
     void OnCharHook(wxKeyEvent& event);
     void OnLeftDown(wxMouseEvent& event);
-    void SetEchoOff();
     void DoProcessTerminated();
     void CheckInsertionPoint();
 
@@ -204,6 +209,8 @@ public:
                 long style = wxTAB_TRAVERSAL | wxNO_BORDER | wxTERMINAL_CTRL_USE_EVENTS,
                 const wxString& name = "terminal");
     virtual ~wxTerminalCtrl();
+
+    TextView* GetView() { return m_textCtrl; }
 
     void Terminate();
     void SetAttributes(const wxColour& bg_colour, const wxColour& text_colour, const wxFont& font);

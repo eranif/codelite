@@ -147,7 +147,15 @@ void wxTerminalCtrl::Run(const wxString& command)
     }
 
     m_shell->WriteRaw(command + "\n");
-    AppendText("\n");
+    switch(m_state) {
+    case TerminalState::NORMAL:
+        if(!command.empty()) {
+            AppendText("\n");
+        }
+        break;
+    default:
+        break;
+    }
     m_history.Add(command);
 }
 
@@ -167,11 +175,8 @@ void wxTerminalCtrl::OnCharHook(wxKeyEvent& event)
     if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
         // Execute command
         Run(GetShellCommand());
-        if(m_echoOff) {
-            m_textCtrl->SetDefaultStyle(m_preEchoOffAttr);
-            m_preEchoOffAttr = wxTextAttr();
-            m_echoOff = false;
-        }
+        m_state = TerminalState::NORMAL;
+
     } else if(event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_NUMPAD_HOME) {
         m_textCtrl->SetInsertionPoint(m_commandOffset);
 
@@ -181,19 +186,19 @@ void wxTerminalCtrl::OnCharHook(wxKeyEvent& event)
     } else if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN) {
         m_history.Down();
         SetShellCommand(m_history.Get());
-    } else if((event.GetKeyCode() == 'C') && event.ControlDown()) {
+    } else if((event.GetKeyCode() == 'C') && event.RawControlDown()) {
         // Generate Ctrl-C
         GenerateCtrlC();
-    } else if((event.GetKeyCode() == 'L') && event.ControlDown()) {
+    } else if((event.GetKeyCode() == 'L') && event.RawControlDown()) {
         ClearScreen();
-    } else if((event.GetKeyCode() == 'U') && event.ControlDown()) {
+    } else if((event.GetKeyCode() == 'U') && event.RawControlDown()) {
         ClearLine();
-    } else if((event.GetKeyCode() == 'D') && event.ControlDown()) {
+    } else if((event.GetKeyCode() == 'D') && event.RawControlDown()) {
         Logout();
     } else if(event.GetKeyCode() == WXK_TAB) {
         // block it
     } else {
-        SetEchoOff();
+        ChangeToPasswordStateIfNeeded();
         int pos = m_textCtrl->GetInsertionPoint();
         if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
             // going backward
@@ -209,7 +214,11 @@ void wxTerminalCtrl::OnCharHook(wxKeyEvent& event)
 
 wxString wxTerminalCtrl::GetShellCommand() const
 {
-    return m_textCtrl->GetRange(m_commandOffset, m_textCtrl->GetLastPosition());
+    switch(m_state) {
+    case TerminalState::NORMAL:
+    case TerminalState::PASSWORD:
+        return m_textCtrl->GetRange(m_commandOffset, m_textCtrl->GetLastPosition());
+    }
 }
 
 void wxTerminalCtrl::SetShellCommand(const wxString& command)
@@ -223,30 +232,19 @@ void wxTerminalCtrl::SetShellCommand(const wxString& command)
 
 void wxTerminalCtrl::SetCaretAtEnd() { m_textCtrl->SetCaretEnd(); }
 
-void wxTerminalCtrl::GenerateCtrlC() {}
+void wxTerminalCtrl::GenerateCtrlC()
+{
+    if(m_shell) {
+        m_shell->Signal(wxSIGINT);
+    }
+}
+
 void wxTerminalCtrl::ClearScreen()
 {
     wxWindowUpdateLocker locker(m_textCtrl);
-#if USE_STC
     m_textCtrl->Clear();
     m_commandOffset = 0;
     Run("");
-#else
-    // Delete the entire content excluding the last list
-    if(m_textCtrl->GetNumberOfLines() < 1) {
-        return;
-    }
-    long x, y;
-    if(!m_textCtrl->PositionToXY(m_textCtrl->GetLastPosition(), &x, &y)) {
-        return;
-    }
-    long insertPos = m_textCtrl->GetInsertionPoint();
-    long lineStartPos = m_textCtrl->XYToPosition(0, y);
-    m_textCtrl->Remove(0, lineStartPos);
-    m_commandOffset -= lineStartPos;
-    insertPos -= lineStartPos;
-    m_textCtrl->SetInsertionPoint(insertPos);
-#endif
 }
 
 void wxTerminalCtrl::ClearLine() { m_textCtrl->Remove(m_commandOffset, m_textCtrl->GetLastPosition()); }
@@ -255,22 +253,6 @@ void wxTerminalCtrl::Logout()
 {
     // Loguot
     Run("exit");
-}
-
-void wxTerminalCtrl::SetEchoOff()
-{
-    if(!m_echoOff) {
-        wxString line = m_textCtrl->GetLineText(m_textCtrl->GetNumberOfLines() - 1);
-        line = line.Lower();
-        if(line.Contains("password:") || line.Contains("password for")) {
-            m_echoOff = true;
-            m_preEchoOffAttr = m_textCtrl->GetDefaultStyle();
-            wxTextAttr echoOffAttr = m_preEchoOffAttr;
-            echoOffAttr.SetFontSize(0);
-            echoOffAttr.SetTextColour(echoOffAttr.GetBackgroundColour());
-            m_textCtrl->SetDefaultStyle(echoOffAttr);
-        }
-    }
 }
 
 void wxTerminalCtrl::DoProcessTerminated()
@@ -321,5 +303,16 @@ void wxTerminalCtrl::Terminate()
     m_terminating = true;
     if(m_shell) {
         m_shell->Terminate();
+    }
+}
+
+void wxTerminalCtrl::ChangeToPasswordStateIfNeeded()
+{
+    wxString line = m_textCtrl->GetLineText(m_textCtrl->GetNumberOfLines() - 1);
+    line = line.Lower();
+    if(line.Contains("password:") || line.Contains("password for") || line.Contains("pin for")) {
+        m_state = TerminalState::PASSWORD;
+
+        // TODO: change the style from the prev position to "hidden"
     }
 }

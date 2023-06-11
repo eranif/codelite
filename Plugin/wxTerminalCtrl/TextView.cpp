@@ -14,7 +14,6 @@ TextView::TextView(wxWindow* parent, wxWindowID winid, const wxFont& font, const
     m_bgColour = bg_colour;
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
-#if USE_STC
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY);
     m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
 
@@ -35,14 +34,6 @@ TextView::TextView(wxWindow* parent, wxWindowID winid, const wxFont& font, const
 
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
-#else
-    m_ctrl = new TextCtrl_t(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
-                            wxTE_MULTILINE | wxTE_RICH2 | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL | wxTE_PROCESS_TAB);
-#endif
-
-#if defined(__WXOSX__) && !USE_STC
-    m_ctrl->OSXDisableAllSmartSubstitutions();
-#endif
 
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
@@ -55,9 +46,6 @@ TextView::~TextView() {}
 void TextView::AppendText(const std::string& buffer)
 {
     m_ctrl->AppendText(buffer);
-#if USE_STC
-    m_ctrl->SetStyling(buffer.length(), GetCurrentStyle());
-#endif
     RequestScrollToEnd();
 }
 
@@ -81,22 +69,15 @@ int TextView::GetNumberOfLines() const { return m_ctrl->GetNumberOfLines(); }
 
 void TextView::SetDefaultStyle(const wxTextAttr& attr)
 {
-#if USE_STC
     m_defaultAttr = attr;
-    m_ctrl->StartStyling(m_ctrl->GetLastPosition());
-#else
-    m_ctrl->SetDefaultStyle(attr);
-#endif
+    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+        m_ctrl->StyleSetBackground(i, attr.GetBackgroundColour());
+        m_ctrl->StyleSetForeground(i, attr.GetTextColour());
+        m_ctrl->StyleSetFont(i, attr.GetFont());
+    }
 }
 
-wxTextAttr TextView::GetDefaultStyle() const
-{
-#if USE_STC
-    return m_defaultAttr;
-#else
-    return m_ctrl->GetDefaultStyle();
-#endif
-}
+wxTextAttr TextView::GetDefaultStyle() const { return m_defaultAttr; }
 
 bool TextView::IsEditable() const { return m_ctrl->IsEditable(); }
 
@@ -110,7 +91,6 @@ void TextView::SetEditable(bool b) { m_ctrl->SetEditable(b); }
 
 void TextView::ReloadSettings()
 {
-#if USE_STC
     SetBackgroundColour(m_bgColour);
     SetForegroundColour(m_textColour);
     for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
@@ -125,16 +105,6 @@ void TextView::ReloadSettings()
     SetDefaultStyle(defaultAttr);
     m_colourHandler.SetDefaultStyle(defaultAttr);
     m_ctrl->Refresh();
-#else
-    SetBackgroundColour(m_bgColour);
-    SetForegroundColour(m_textColour);
-    m_ctrl->SetBackgroundColour(m_bgColour);
-    m_ctrl->SetForegroundColour(m_textColour);
-    wxTextAttr defaultAttr = wxTextAttr(m_textColour, m_bgColour, m_textFont);
-    SetDefaultStyle(defaultAttr);
-    m_colourHandler.SetDefaultStyle(defaultAttr);
-    m_ctrl->Refresh();
-#endif
 }
 
 void TextView::StyleAndAppend(const std::string& buffer) { m_colourHandler << buffer; }
@@ -143,37 +113,22 @@ void TextView::Focus() { m_ctrl->SetFocus(); }
 
 void TextView::ShowCommandLine()
 {
-#if USE_STC
     m_ctrl->SetSelection(m_ctrl->GetLastPosition(), m_ctrl->GetLastPosition());
     m_ctrl->EnsureCaretVisible();
-#else
-    m_ctrl->SetInsertionPointEnd();
-    m_ctrl->ShowPosition(m_ctrl->GetLastPosition());
-#endif
     RequestScrollToEnd();
 }
 
 void TextView::SetCommand(long from, const wxString& command)
 {
-#if USE_STC
     m_ctrl->SetSelection(from, GetLastPosition());
     m_ctrl->ReplaceSelection(command);
-#else
-    m_ctrl->Replace(from, GetLastPosition(), command);
-#endif
 }
 
 void TextView::SetCaretEnd()
 {
-#if USE_STC
     m_ctrl->SetSelection(GetLastPosition(), GetLastPosition());
     m_ctrl->SetCurrentPos(GetLastPosition());
     m_ctrl->SetFocus();
-#else
-    SelectNone();
-    SetInsertionPointEnd();
-    CallAfter(&TextView::Focus);
-#endif
 }
 
 int TextView::Truncate()
@@ -189,40 +144,20 @@ int TextView::Truncate()
     return 0;
 }
 
-wxChar TextView::GetLastChar() const
-{
-#if USE_STC
-    return m_ctrl->GetCharAt(m_ctrl->GetLastPosition());
-#else
-    wxString text = m_ctrl->GetRange(m_ctrl->GetLastPosition() - 1, m_ctrl->GetLastPosition());
-    return text[0];
-#endif
-}
+wxChar TextView::GetLastChar() const { return m_ctrl->GetCharAt(m_ctrl->GetLastPosition() - 1); }
 
-int TextView::GetCurrentStyle()
-{
-#if USE_STC
-    return 0;
-#else
-    return wxNOT_FOUND;
-#endif
-}
+int TextView::GetCurrentStyle() { return 0; }
 
 void TextView::Clear()
 {
-#if USE_STC
     m_ctrl->ClearAll();
-    m_ctrl->ClearDocumentStyle();
-    m_ctrl->StartStyling(0);
-#endif
+    m_colourHandler.Clear();
 }
 
 void TextView::DoScrollToEnd()
 {
     m_scrollToEndQueued = false;
-#if USE_STC
     m_ctrl->ScrollToEnd();
-#endif
 }
 
 void TextView::RequestScrollToEnd()

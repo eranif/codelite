@@ -28,7 +28,7 @@
 #include "Notebook.h"
 #include "cl_command_event.h"
 #include "shelltab.h"
-#include "wxTerminalCtrl/wxTerminalCtrl.h"
+#include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
 
 #include <wx/panel.h>
 
@@ -90,7 +90,7 @@ private:
     TaskPanel* m_taskPanel;
     FindUsageTab* m_showUsageTab;
     BuildTab* m_build_tab = nullptr;
-    wxTerminalCtrl* m_terminal = nullptr;
+    clBuiltinTerminalPane* m_terminal = nullptr;
     bool m_buildInProgress;
 
 protected:

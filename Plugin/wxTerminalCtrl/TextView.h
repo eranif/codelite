@@ -1,14 +1,15 @@
 #ifndef TEXTVIEW_H
 #define TEXTVIEW_H
 
+#include "codelite_exports.h"
 #include "wxTerminalColourHandler.h"
 
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 
-class TextView : public wxWindow
+class WXDLLIMPEXP_SDK TextView : public wxWindow
 {
-    TextCtrl_t* m_ctrl = nullptr;
+    wxStyledTextCtrl* m_ctrl = nullptr;
     wxTerminalColourHandler m_colourHandler;
     wxEvtHandler* m_sink = nullptr;
     wxTextAttr m_defaultAttr;
@@ -29,7 +30,7 @@ public:
              const wxColour& bg_colour = *wxBLACK, const wxColour& text_colour = *wxWHITE);
     virtual ~TextView();
     void Focus();
-    TextCtrl_t* GetCtrl() { return m_ctrl; }
+    wxStyledTextCtrl* GetCtrl() { return m_ctrl; }
     void SetSink(wxEvtHandler* sink) { this->m_sink = sink; }
     wxEvtHandler* GetSink() { return m_sink; }
 

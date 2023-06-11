@@ -136,7 +136,7 @@ void OutputPane::CreateGUIControls()
     mgr->AddOutputTab(OUTPUT_WIN);
 
     // Output tab
-    m_terminal = new wxTerminalCtrl(m_book, wxID_ANY);
+    m_terminal = new clBuiltinTerminalPane(m_book, wxID_ANY);
     m_book->AddPage(m_terminal, TERMINAL_TAB, false, images->Add(wxT("console")));
     m_tabs.insert(std::make_pair(TERMINAL_TAB, Tab(TERMINAL_TAB, m_terminal, images->Add(wxT("console")))));
     mgr->AddOutputTab(TERMINAL_TAB);

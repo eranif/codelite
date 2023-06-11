@@ -540,6 +540,7 @@ void clAnsiEscapeCodeHandler::Render(wxSTCStyleProvider* style_provider, bool is
 
     // render everything
     int curstyle = 0;
+    clDEBUG() << "curtest in STC:" << stc->GetText() << endl;
     for(const auto& v : m_chunks) {
         for(const auto& chunk : v) {
             // ensure to restore the dont once we are done with this line
@@ -547,11 +548,15 @@ void clAnsiEscapeCodeHandler::Render(wxSTCStyleProvider* style_provider, bool is
                 // reset the style
                 curstyle = 0;
             } else if(chunk.is_text) {
-                // append and style the next text
-                int pos = stc->GetLastPosition();
-                stc->AppendText(chunk.d);
-                style_provider->StyleSegment(pos, chunk.d.length(), curstyle);
-
+                if(!chunk.d.empty()) {
+                    // append and style the next text
+                    int pos = stc->GetLength();
+                    int curline = stc->LineFromPosition(pos);
+                    clDEBUG() << "styling from line:" << curline << "with style:" << curstyle << endl;
+                    stc->AppendText(chunk.d);
+                    stc->StartStyling(pos);
+                    stc->SetStyling(chunk.d.length(), curstyle);
+                }
             } else if(chunk.is_title || chunk.is_empty()) {
                 // for now, we do nothing
             } else {
@@ -963,44 +968,45 @@ wxTextAttr wxSTCStyleProvider::GetDefaultStyle() const
     return attr;
 }
 
-wxSTCStyleProvider::~wxSTCStyleProvider() { m_ctrl->Unbind(wxEVT_STC_STYLENEEDED, &wxSTCStyleProvider::OnStyle, this); }
+wxSTCStyleProvider::~wxSTCStyleProvider() { wxTheApp->Unbind(wxEVT_IDLE, &wxSTCStyleProvider::OnIdle, this); }
+
 wxSTCStyleProvider::wxSTCStyleProvider(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("default");
     lexer->ApplySystemColours(m_ctrl);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
-    m_ctrl->Bind(wxEVT_STC_STYLENEEDED, &wxSTCStyleProvider::OnStyle, this);
+    wxTheApp->Bind(wxEVT_IDLE, &wxSTCStyleProvider::OnIdle, this);
 }
 
 void wxSTCStyleProvider::StyleSegment(int pos, int len, int style)
 {
-    int line = m_ctrl->LineFromPosition(pos);
-    if(m_styleSegments.count(line) == 0) {
-        m_styleSegments.insert({ line, {} });
-    }
-    m_styleSegments[line].push_back({ pos, len, style });
+    wxUnusedVar(pos);
+    wxUnusedVar(len);
+    wxUnusedVar(style);
+    // int line = m_ctrl->LineFromPosition(pos);
+    // if(m_styleSegments.count(line) == 0) {
+    //     m_styleSegments.insert({ line, {} });
+    // }
+    // m_styleSegments[line].push_back({ pos, len, style });
 }
 
 void wxSTCStyleProvider::Clear()
 {
     m_styleCache.clear();
     m_styleSegments.clear();
+    m_last_styled_range = { wxNOT_FOUND, wxNOT_FOUND };
 }
 
-void wxSTCStyleProvider::OnStyle(wxStyledTextEvent& event)
+void wxSTCStyleProvider::StyleDisplay()
 {
-    int startPos = m_ctrl->GetEndStyled();
-    int endPos = event.GetPosition();
-    int start_line = m_ctrl->LineFromPosition(startPos);
-    int end_line = m_ctrl->LineFromPosition(endPos);
+    return;
+    int display_first_line = m_ctrl->GetFirstVisibleLine();
+    int display_last_line = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
 
-    for(int line = start_line; line < end_line; ++line) {
+    for(int line = display_first_line; line < display_last_line; ++line) {
         int line_start_pos = m_ctrl->PositionFromLine(line);
         int line_end_pos = line_start_pos + m_ctrl->LineLength(line);
-        m_ctrl->StartStyling(line_start_pos);
-        // set the default style for the entire line
-        m_ctrl->SetStyling(line_end_pos - line_start_pos, 0);
         if(m_styleSegments.count(line)) {
             // style whats needed on that line
             const auto& segments = m_styleSegments[line];
@@ -1010,4 +1016,22 @@ void wxSTCStyleProvider::OnStyle(wxStyledTextEvent& event)
             }
         }
     }
+    m_ctrl->Colourise(m_ctrl->PositionFromLine(display_first_line),
+                      m_ctrl->PositionFromLine(display_last_line) + m_ctrl->LineLength(display_last_line));
+}
+
+void wxSTCStyleProvider::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+
+    // style the visible surface
+    int display_first_line = m_ctrl->GetFirstVisibleLine();
+    int display_last_line = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
+    auto new_range = std::pair{ display_first_line, display_last_line };
+
+    if(m_last_styled_range == new_range) {
+        return;
+    }
+    m_last_styled_range = new_range;
+    StyleDisplay();
 }

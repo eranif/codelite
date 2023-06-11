@@ -27,12 +27,15 @@ struct WXDLLIMPEXP_SDK wxSTCStyleProvider : public wxEvtHandler {
         int len = wxNOT_FOUND;
         int style = wxNOT_FOUND;
     };
-    
+
+public:
     wxStyledTextCtrl* m_ctrl = nullptr;
     int m_curstyle = wxSTC_STYLE_LASTPREDEFINED + 1;
     std::unordered_map<wxString, int> m_styleCache;
     std::unordered_map<int, std::vector<wxSTCStyleSegment>> m_styleSegments;
+    std::pair<int, int> m_last_styled_range = { wxNOT_FOUND, wxNOT_FOUND }; // first/last lines styled
 
+public:
     /// Return style for a given colour
     int GetStyle(const wxColour& fg, const wxColour& bg);
     void StyleSegment(int pos, int len, int style);
@@ -40,8 +43,9 @@ struct WXDLLIMPEXP_SDK wxSTCStyleProvider : public wxEvtHandler {
     wxSTCStyleProvider(wxStyledTextCtrl* ctrl);
     ~wxSTCStyleProvider();
     void Clear();
-    
-    void OnStyle(wxStyledTextEvent& event);
+
+    void StyleDisplay();
+    void OnIdle(wxIdleEvent& event);
 };
 
 struct WXDLLIMPEXP_SDK Chunk {

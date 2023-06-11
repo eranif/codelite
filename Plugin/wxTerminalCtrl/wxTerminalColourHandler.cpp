@@ -14,12 +14,7 @@
 
 wxTerminalColourHandler::wxTerminalColourHandler() {}
 
-wxTerminalColourHandler::~wxTerminalColourHandler()
-{
-#if USE_STC
-    wxDELETE(m_style_provider);
-#endif
-}
+wxTerminalColourHandler::~wxTerminalColourHandler() { wxDELETE(m_style_provider); }
 
 void wxTerminalColourHandler::Append(const std::string& buffer)
 {
@@ -32,24 +27,16 @@ void wxTerminalColourHandler::Append(const std::string& buffer)
     }
 
     wxString curline;
-    // we start were left (at the end of the buffer)
-    long lastPos = m_ctrl->GetLastPosition();
-    if(lastPos > 0) {
-        // test the last char
-        wxChar lastCh = m_ctrl->GetLastChar();
-        if(lastCh != '\n') {
-            // we dont have a complete line here
-            // read the last line into the buffer and clear the line
-            long x, y;
-            m_ctrl->PositionToXY(lastPos, &x, &y);
-            long newpos = m_ctrl->XYToPosition(0, y);
-            if(newpos == wxNOT_FOUND) {
-                newpos = 0;
-            }
-            curline = m_ctrl->GetRange(newpos, lastPos);
-            m_ctrl->Remove(newpos, lastPos);
-            m_ctrl->SetInsertionPoint(newpos);
-        }
+    auto stc = m_ctrl->GetCtrl();
+    int last_pos = stc->GetLastPosition();
+    int last_line = stc->LineFromPosition(last_pos);
+    curline = stc->GetLine(last_line);
+    if(curline.EndsWith("\n")) {
+        // a ncomplete line
+        curline.clear();
+    } else {
+        // remove the last line from the control
+        stc->Remove(stc->PositionFromLine(last_line), last_pos);
     }
 
     m_ctrl->SelectNone();
@@ -58,12 +45,7 @@ void wxTerminalColourHandler::Append(const std::string& buffer)
     // wxWindowUpdateLocker locker{ m_ctrl };
     clAnsiEscapeCodeHandler handler;
     handler.Parse(FileUtils::ToStdString(curline) + buffer);
-#if USE_STC
     handler.Render(m_style_provider, false);
-    m_style_provider->m_ctrl->Colourise(0, wxNOT_FOUND);
-#else
-    handler.Render(m_ctrl->GetCtrl(), m_defaultAttr, false);
-#endif
     SetCaretEnd();
 }
 
@@ -75,15 +57,18 @@ wxTerminalColourHandler& wxTerminalColourHandler::operator<<(const std::string& 
 
 void wxTerminalColourHandler::SetCtrl(TextView* ctrl)
 {
-    Clear();
     m_ctrl = ctrl;
-    m_defaultAttr = m_ctrl->GetDefaultStyle();
-#if USE_STC
-    m_style_provider = new wxSTCStyleProvider(ctrl->GetCtrl());
-#endif
+    Clear();
 }
 
-void wxTerminalColourHandler::Clear() {}
+void wxTerminalColourHandler::Clear()
+{
+    wxDELETE(m_style_provider);
+    if(m_ctrl) {
+        m_style_provider = new wxSTCStyleProvider(m_ctrl->GetCtrl());
+        m_ctrl->ReloadSettings();
+    }
+}
 
 void wxTerminalColourHandler::SetDefaultStyle(const wxTextAttr& attr)
 {

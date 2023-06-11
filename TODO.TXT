@@ -13,3 +13,9 @@ others:
 - dap: support stdio connection based
 - sftp save should be in sync with clRemoteHost
 
+Built-In Terminal:
+------------------
+
+- Hide the typed text when typing password
+- Enable edit events on the control
+- Implement `Ctrl-R` using code completion box

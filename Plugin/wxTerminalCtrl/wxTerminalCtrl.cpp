@@ -97,6 +97,7 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     Bind(wxEVT_CHAR_HOOK, &wxTerminalCtrl::OnCharHook, this);
     GetSizer()->Fit(this);
     m_textCtrl->GetCtrl()->Bind(wxEVT_LEFT_DOWN, &wxTerminalCtrl::OnLeftDown, this);
+    m_textCtrl->GetCtrl()->Bind(wxEVT_LEFT_UP, &wxTerminalCtrl::OnLeftDown, this);
     CallAfter(&wxTerminalCtrl::StartShell);
 }
 

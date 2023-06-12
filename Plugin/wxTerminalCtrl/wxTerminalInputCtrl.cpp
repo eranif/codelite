@@ -1,6 +1,7 @@
 #include "wxTerminalInputCtrl.hpp"
 
 #include "ColoursAndFontsManager.h"
+#include "clSystemSettings.h"
 #include "event_notifier.h"
 #include "wxTerminalCtrl.h"
 
@@ -14,12 +15,13 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
-    GetSizer()->Add(m_ctrl, wxSizerFlags(1).Expand().Border(wxALL, 0));
+    GetSizer()->Add(m_ctrl, wxSizerFlags(1).Expand().Border(wxTOP, 2));
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &wxTerminalInputCtrl::OnKeyDown, this);
 
     m_ctrl->AlwaysShowScrollbars(false, false);
     ApplyStyle();
     GetSizer()->Layout();
+    m_editEvents.Reset(new clEditEventsHandler(m_ctrl));
 }
 
 wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CHAR_HOOK, &wxTerminalInputCtrl::OnKeyDown, this); }
@@ -29,7 +31,7 @@ void wxTerminalInputCtrl::OnKeyDown(wxKeyEvent& event)
     if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
         // Execute command
         wxString command = m_ctrl->GetText();
-        m_terminal->Run(command + "\n");
+        m_terminal->Run(command);
         m_history.Add(command);
         m_ctrl->ClearAll();
 
@@ -86,5 +88,5 @@ void wxTerminalInputCtrl::ApplyStyle()
     auto font = lexer->GetFontForStyle(0, m_ctrl);
     gcdc.SetFont(font);
     wxSize textSize = gcdc.GetTextExtent("Tp");
-    SetSizeHints(wxNOT_FOUND, textSize.GetHeight());
+    SetSizeHints(wxNOT_FOUND, textSize.GetHeight() + 2);
 }

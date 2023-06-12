@@ -61,7 +61,6 @@ protected:
     void ChangeToPasswordStateIfNeeded();
 
 protected:
-    void OnCharHook(wxKeyEvent& event);
     void DoProcessTerminated();
 
 public:

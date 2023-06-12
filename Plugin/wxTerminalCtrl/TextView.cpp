@@ -1,5 +1,6 @@
 #include "TextView.h"
 
+#include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
 
 #include <wx/sizer.h>
@@ -14,24 +15,8 @@ TextView::TextView(wxWindow* parent, wxWindowID winid, const wxFont& font, const
     m_bgColour = bg_colour;
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_ctrl = new wxStyledTextCtrl(this, wxID_ANY);
-    m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
-
-    int caretSlop = 1;
-    int caretZone = 20;
-    int caretStrict = 0;
-    int caretEven = 0;
-    int caretJumps = 0;
-
-    m_ctrl->SetXCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
-
-    caretSlop = 1;
-    caretZone = 1;
-    caretStrict = 4;
-    caretEven = 8;
-    caretJumps = 0;
-    m_ctrl->SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
-
+    m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    m_ctrl->SetWrapMode(wxSTC_WRAP_WORD);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
 
@@ -39,6 +24,8 @@ TextView::TextView(wxWindow* parent, wxWindowID winid, const wxFont& font, const
     GetSizer()->Fit(this);
     m_colourHandler.SetCtrl(this);
     CallAfter(&TextView::ReloadSettings);
+
+    m_editEvents.Reset(new clEditEventsHandler(m_ctrl));
 }
 
 TextView::~TextView() {}
@@ -67,15 +54,7 @@ void TextView::SetInsertionPointEnd() { m_ctrl->SetInsertionPointEnd(); }
 
 int TextView::GetNumberOfLines() const { return m_ctrl->GetNumberOfLines(); }
 
-void TextView::SetDefaultStyle(const wxTextAttr& attr)
-{
-    m_defaultAttr = attr;
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
-        m_ctrl->StyleSetBackground(i, attr.GetBackgroundColour());
-        m_ctrl->StyleSetForeground(i, attr.GetTextColour());
-        m_ctrl->StyleSetFont(i, attr.GetFont());
-    }
-}
+void TextView::SetDefaultStyle(const wxTextAttr& attr) { m_defaultAttr = attr; }
 
 wxTextAttr TextView::GetDefaultStyle() const { return m_defaultAttr; }
 
@@ -89,23 +68,7 @@ wxString TextView::GetLineText(int lineNumber) const { return m_ctrl->GetLineTex
 
 void TextView::SetEditable(bool b) { m_ctrl->SetEditable(b); }
 
-void TextView::ReloadSettings()
-{
-    SetBackgroundColour(m_bgColour);
-    SetForegroundColour(m_textColour);
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
-        m_ctrl->StyleSetBackground(i, m_bgColour);
-        m_ctrl->StyleSetForeground(i, m_textColour);
-        m_ctrl->StyleSetFont(i, m_textFont);
-    }
-    m_ctrl->SetCaretForeground(m_textColour);
-    m_ctrl->SetBackgroundColour(m_bgColour);
-    m_ctrl->SetForegroundColour(m_textColour);
-    wxTextAttr defaultAttr = wxTextAttr(m_textColour, m_bgColour, m_textFont);
-    SetDefaultStyle(defaultAttr);
-    m_colourHandler.SetDefaultStyle(defaultAttr);
-    m_ctrl->Refresh();
-}
+void TextView::ReloadSettings() { ApplyTheme(); }
 
 void TextView::StyleAndAppend(const std::string& buffer) { m_colourHandler << buffer; }
 
@@ -167,4 +130,23 @@ void TextView::RequestScrollToEnd()
     }
     m_scrollToEndQueued = true;
     CallAfter(&TextView::DoScrollToEnd);
+}
+
+void TextView::OnThemeChanged(clCommandEvent& event)
+{
+    event.Skip();
+    ApplyTheme();
+}
+
+void TextView::ApplyTheme()
+{
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    lexer->Apply(m_ctrl);
+
+    auto style = lexer->GetProperty(0);
+    wxTextAttr defaultAttr = wxTextAttr(style.GetFgColour(), style.GetBgColour(), lexer->GetFontForStyle(0, m_ctrl));
+    SetDefaultStyle(defaultAttr);
+
+    m_colourHandler.SetDefaultStyle(defaultAttr);
+    m_ctrl->Refresh();
 }

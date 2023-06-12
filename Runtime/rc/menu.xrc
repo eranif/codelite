@@ -334,6 +334,10 @@
         <checkable>1</checkable>
       </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+      <object class="wxMenuItem" name="show_terminal_pane">
+        <label>&amp;Show Builtin Terminal</label>
+      </object>
+      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenuItem" name="toggle_panes">
         <label>&amp;Toggle All Panes</label>
       </object>

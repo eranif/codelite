@@ -322,6 +322,7 @@ EVT_MENU(XRCID("whitespace_indent_only"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("next_tab"), clMainFrame::OnNextTab)
 EVT_MENU(XRCID("prev_tab"), clMainFrame::OnPrevTab)
 EVT_MENU(XRCID("full_screen"), clMainFrame::OnShowFullScreen)
+EVT_MENU(XRCID("show_terminal_pane"), clMainFrame::OnShowBuiltInTerminal)
 EVT_MENU(XRCID("show_nav_toolbar"), clMainFrame::OnShowNavBar)
 EVT_MENU(XRCID("toogle_main_toolbars"), clMainFrame::OnToggleMainTBars)
 EVT_MENU(XRCID("toogle_plugin_toolbars"), clMainFrame::OnTogglePluginTBars)
@@ -1119,6 +1120,7 @@ void clMainFrame::AddKeyboardAccelerators()
                                      { "prev_tab", _("Previous tab"), "Ctrl-Alt-LEFT" },
                                      { "full_screen", _("Full Screen..."), "Alt-M" },
                                      { "output_pane", _("Output Pane"), "Ctrl-`" },
+                                     { "show_terminal_pane", _("Show Builtin Terminal"), "F6" },
                                      { "workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W" },
                                      { "debugger_pane", _("Debugger Pane"), "Ctrl-Alt-D" },
                                      { "show_nav_toolbar", _("Navigation Bar"), "Ctrl-Alt-N" },
@@ -4531,6 +4533,15 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
         type = TagsManager::Retag_Quick_No_Scan;
     }
     ManagerST::Get()->RetagWorkspace(type);
+}
+
+void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    // ensure the view is available
+    ViewPane(_("Output View"), true);
+    // select the "Terminal" tab
+    ManagerST::Get()->ShowOutputPane(_("Terminal"));
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

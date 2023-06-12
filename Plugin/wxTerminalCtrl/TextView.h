@@ -1,6 +1,8 @@
 #ifndef TEXTVIEW_H
 #define TEXTVIEW_H
 
+#include "clEditorEditEventsHandler.h"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "wxTerminalColourHandler.h"
 
@@ -19,11 +21,14 @@ class WXDLLIMPEXP_SDK TextView : public wxWindow
     wxColour m_bgColour;
     wxColour m_textColour;
     bool m_scrollToEndQueued = false;
+    clEditEventsHandler::Ptr_t m_editEvents;
 
 protected:
     int GetCurrentStyle();
     void DoScrollToEnd();
     void RequestScrollToEnd();
+    void OnThemeChanged(clCommandEvent& event);
+    void ApplyTheme();
 
 public:
     TextView(wxWindow* parent, wxWindowID winid = wxNOT_FOUND, const wxFont& font = wxNullFont,

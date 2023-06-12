@@ -1,6 +1,7 @@
 #include "wxTerminalColourHandler.h"
 
 #include "TextView.h"
+#include "drawingutils.h"
 #include "wxTerminalCtrl.h"
 
 #ifdef __WXMSW__
@@ -45,7 +46,7 @@ void wxTerminalColourHandler::Append(const std::string& buffer)
     // wxWindowUpdateLocker locker{ m_ctrl };
     clAnsiEscapeCodeHandler handler;
     handler.Parse(FileUtils::ToStdString(curline) + buffer);
-    handler.Render(m_style_provider, false);
+    handler.Render(m_style_provider, !DrawingUtils::IsDark(m_defaultAttr.GetBackgroundColour()));
     SetCaretEnd();
 }
 

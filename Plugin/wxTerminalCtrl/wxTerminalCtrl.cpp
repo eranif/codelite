@@ -23,13 +23,11 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_outputView = new TextView(this);
     m_outputView->SetSink(this);
-    m_outputView->SetEditable(false);
     GetSizer()->Add(m_outputView, wxSizerFlags(1).Expand());
 
     m_inputCtrl = new wxTerminalInputCtrl(this);
     GetSizer()->Add(m_inputCtrl, wxSizerFlags(0).Expand());
-
-    m_outputView->Bind(wxEVT_KEY_DOWN, &wxTerminalCtrl::OnCharHook, this);
+    m_outputView->SetEditable(false);
     GetSizer()->Fit(this);
     CallAfter(&wxTerminalCtrl::StartShell);
 }
@@ -43,7 +41,6 @@ wxTerminalCtrl::~wxTerminalCtrl()
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessError, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
-    m_outputView->Unbind(wxEVT_KEY_DOWN, &wxTerminalCtrl::OnCharHook, this);
 }
 
 bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
@@ -80,6 +77,7 @@ void wxTerminalCtrl::Run(const wxString& command)
         return;
     }
     m_shell->WriteRaw(command + "\n");
+    AppendText(FileUtils::ToStdString(command) + "\n");
 }
 
 void wxTerminalCtrl::AppendText(const std::string& text)
@@ -88,12 +86,6 @@ void wxTerminalCtrl::AppendText(const std::string& text)
     m_outputView->StyleAndAppend(text);
     m_outputView->SetEditable(false);
     SetCaretAtEnd();
-}
-
-void wxTerminalCtrl::OnCharHook(wxKeyEvent& event)
-{
-    m_inputCtrl->GetEventHandler()->ProcessEvent(event);
-    m_inputCtrl->CallAfter(&wxTerminalInputCtrl::SetCaretEnd);
 }
 
 void wxTerminalCtrl::SetCaretAtEnd()
@@ -116,7 +108,6 @@ void wxTerminalCtrl::DoProcessTerminated()
         wxTerminalEvent outputEvent(wxEVT_TERMINAL_CTRL_DONE);
         outputEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(outputEvent);
-        m_outputView->SetEditable(false);
     } else {
         StartShell();
     }

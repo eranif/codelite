@@ -17,9 +17,7 @@ Built-In Terminal:
 ------------------
 
 - Hide the typed text when typing password
-- Enable edit events on the control
 - Implement `Ctrl-R` using code completion box
 - When the terminal tab is selected - set the focus to the terminal
 - Allow multiple tabs using wxAuiManager
 - When hitting any char, set the insertion point to the edit line
-- Add keyboard shortcut to open the terminal directly

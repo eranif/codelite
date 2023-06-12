@@ -1,6 +1,7 @@
 #ifndef WXTERMINALINPUTCTRL_HPP
 #define WXTERMINALINPUTCTRL_HPP
 
+#include "clEditorEditEventsHandler.h"
 #include "codelite_exports.h"
 #include "wxTerminalHistory.hpp"
 
@@ -15,6 +16,7 @@ protected:
     wxStyledTextCtrl* m_ctrl = nullptr;
     wxTerminalCtrl* m_terminal = nullptr;
     wxTerminalHistory m_history;
+    clEditEventsHandler::Ptr_t m_editEvents;
 
 protected:
     void OnKeyDown(wxKeyEvent& event);

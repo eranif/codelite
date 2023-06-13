@@ -4,15 +4,38 @@
 #include "codelite_exports.h"
 #include "smart_ptr.h"
 
+#include <wx/combobox.h>
 #include <wx/event.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
 #include <wx/window.h>
 
 class wxComboBox;
 class wxStyledTextCtrl;
 class wxTextCtrl;
 
+#define CHECK_FOCUS_WINDOW()                                                     \
+    wxWindow* focus = wxWindow::FindFocus();                                     \
+    if(!focus) {                                                                 \
+        event.Skip();                                                            \
+        return;                                                                  \
+    } else if((focus != m_stc) && (focus != m_textCtrl) && (focus != m_combo)) { \
+        event.Skip();                                                            \
+        return;                                                                  \
+    }
+
+#define CALL_FUNC(func)     \
+    if(m_stc) {             \
+        m_stc->func();      \
+    } else if(m_combo) {    \
+        m_combo->func();    \
+    } else {                \
+        m_textCtrl->func(); \
+    }
+
 class WXDLLIMPEXP_SDK clEditEventsHandler : public wxEvtHandler
 {
+protected:
     wxStyledTextCtrl* m_stc = nullptr;
     wxTextCtrl* m_textCtrl = nullptr;
     wxComboBox* m_combo = nullptr;
@@ -23,12 +46,12 @@ private:
     void DoInitialize();
 
 protected:
-    void OnCopy(wxCommandEvent& event);
-    void OnPaste(wxCommandEvent& event);
-    void OnCut(wxCommandEvent& event);
-    void OnSelectAll(wxCommandEvent& event);
-    void OnUndo(wxCommandEvent& event);
-    void OnRedo(wxCommandEvent& event);
+    virtual void OnCopy(wxCommandEvent& event);
+    virtual void OnPaste(wxCommandEvent& event);
+    virtual void OnCut(wxCommandEvent& event);
+    virtual void OnSelectAll(wxCommandEvent& event);
+    virtual void OnUndo(wxCommandEvent& event);
+    virtual void OnRedo(wxCommandEvent& event);
 
 public:
     clEditEventsHandler(wxTextCtrl* wnd, const wxString& name = wxEmptyString);

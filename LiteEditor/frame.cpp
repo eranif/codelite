@@ -2368,13 +2368,21 @@ void clMainFrame::ToggleToolBars(bool std)
 
 void clMainFrame::OnViewPane(wxCommandEvent& event)
 {
-    std::map<int, wxString>::iterator iter = m_panes.find(event.GetId());
+    auto iter = m_panes.find(event.GetId());
     if(iter != m_panes.end()) {
         // In >wxGTK-2.9.4 event.GetChecked() is invalid when coming from an accelerator; instead examine the actual
         // state
         wxAuiPaneInfo& info = m_mgr.GetPane(iter->second);
         if(info.IsOk()) {
-            ViewPane(iter->second, !info.IsShown());
+            if(info.IsShown()) {
+                ViewPane(iter->second, false);
+                // set the focus to the editor
+                if(clGetManager()->GetActiveEditor()) {
+                    clGetManager()->GetActiveEditor()->SetActive();
+                }
+            } else {
+                ViewPane(iter->second, true);
+            }
         }
     }
 }
@@ -4538,10 +4546,24 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    // ensure the view is available
-    ViewPane(_("Output View"), true);
-    // select the "Terminal" tab
-    ManagerST::Get()->ShowOutputPane(_("Terminal"));
+    const wxString pane_name = _("Output View");
+    wxAuiPaneInfo& info = m_mgr.GetPane(pane_name);
+    if(!info.IsOk()) {
+        return;
+    }
+
+    if(info.IsShown()) {
+        // hide the windows, and set the focus back to the active editor
+        ViewPane(pane_name, false);
+        if(clGetManager()->GetActiveEditor()) {
+            clGetManager()->GetActiveEditor()->SetActive();
+        }
+    } else {
+        ViewPane(pane_name, true);
+        // select the "Terminal" tab
+        ManagerST::Get()->ShowOutputPane(_("Terminal"));
+        GetOutputPane()->GetBuiltInTerminal()->Focus();
+    }
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

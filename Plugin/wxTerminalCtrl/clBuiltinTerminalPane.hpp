@@ -18,6 +18,8 @@ protected:
 public:
     clBuiltinTerminalPane(wxWindow* parent, wxWindowID id = wxID_ANY);
     virtual ~clBuiltinTerminalPane();
+
+    void Focus();
 };
 
 #endif // CLBUILTINTERMINALPANE_HPP

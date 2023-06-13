@@ -73,7 +73,7 @@ void wxTerminalCtrl::Run(const wxString& command)
         return;
     }
     m_shell->WriteRaw(command + "\n");
-    AppendText(FileUtils::ToStdString(command) + "\n");
+    AppendText("\n");
 }
 
 void wxTerminalCtrl::AppendText(const std::string& text)
@@ -86,7 +86,8 @@ void wxTerminalCtrl::AppendText(const std::string& text)
 void wxTerminalCtrl::GenerateCtrlC()
 {
     if(m_shell) {
-        m_shell->Signal(wxSIGINT);
+        std::string ctrlc{ 1, 0x3 };
+        m_shell->WriteRaw(ctrlc + "\n");
     }
 }
 
@@ -137,9 +138,18 @@ void wxTerminalCtrl::ChangeToPasswordStateIfNeeded()
     }
 }
 
-void wxTerminalCtrl::ClearScreen() { m_outputView->Clear(); }
+void wxTerminalCtrl::ClearScreen()
+{
+    m_outputView->Clear();
+    Run("");
+}
 
 void wxTerminalCtrl::Logout()
 {
-    Run("exit");
+    if(m_shell) {
+        std::string ctrld{ 1, 0x4 };
+        m_shell->WriteRaw(ctrld + "\n");
+    }
 }
+
+void wxTerminalCtrl::SendTab() {}

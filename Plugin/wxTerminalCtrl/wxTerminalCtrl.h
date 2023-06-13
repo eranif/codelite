@@ -97,6 +97,12 @@ public:
      * @brief generate Ctrl-C like. By default this will send SIGTERM (Ctrl-C)
      */
     void GenerateCtrlC();
+
+    /**
+     * @brief send TAB char to the terminal
+     */
+    void SendTab();
+
     /**
      * @brief clear the display (Ctrl-L)
      */

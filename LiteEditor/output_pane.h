@@ -138,6 +138,7 @@ public:
     BuildTab* GetBuildTab() { return m_build_tab; }
     ShellTab* GetOutputWindow() { return m_outputWind; }
     FindUsageTab* GetShowUsageTab() { return m_showUsageTab; }
+    clBuiltinTerminalPane* GetBuiltInTerminal() { return m_terminal; }
 };
 
 #endif // OUTPUT_PANE_H

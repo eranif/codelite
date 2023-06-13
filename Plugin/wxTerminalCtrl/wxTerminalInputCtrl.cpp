@@ -9,10 +9,31 @@
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 
+namespace
+{
+class MyEventsHandler : public clEditEventsHandler
+{
+public:
+    MyEventsHandler(wxStyledTextCtrl* ctrl)
+        : clEditEventsHandler(ctrl)
+    {
+    }
+
+    void OnPaste(wxCommandEvent& event) override
+    {
+        CHECK_FOCUS_WINDOW();
+        int where = m_stc->GetLastPosition();
+        m_stc->SetSelection(where, where);
+        m_stc->SetCurrentPos(where);
+        clEditEventsHandler::OnPaste(event);
+    }
+};
+} // namespace
 wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl)
     : m_terminal(parent)
     , m_ctrl(ctrl)
 {
+    m_editEvents.Reset(new MyEventsHandler(m_ctrl));
 }
 
 wxTerminalInputCtrl::~wxTerminalInputCtrl() {}
@@ -21,11 +42,25 @@ wxTerminalInputCtrl::~wxTerminalInputCtrl() {}
 #define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
+    if(event.RawControlDown() && event.GetKeyCode() == 'C') {
+        m_terminal->GenerateCtrlC();
+        return;
+    } else if(event.RawControlDown() && event.GetKeyCode() == 'D') {
+        m_terminal->Logout();
+        return;
+    } else if(event.RawControlDown() && event.GetKeyCode() == 'L') {
+        m_terminal->ClearScreen();
+        return;
+    } else if(event.RawControlDown() && event.GetKeyCode() == 'U') {
+        Clear();
+        return;
+    }
+
     switch(event.GetKeyCode()) {
     case WXK_NUMPAD_ENTER:
     case WXK_RETURN: {
         wxString command = GetText();
-        m_terminal->CallAfter(&wxTerminalCtrl::Run, command);
+        m_terminal->Run(command);
         m_history.Add(command);
         event.Skip();
     } break;
@@ -40,6 +75,7 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
         SetText(m_history.Get());
         break;
     case WXK_TAB:
+        // m_terminal->SendTab();
         return;
     case WXK_LEFT:
     case WXK_NUMPAD_LEFT:

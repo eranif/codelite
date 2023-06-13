@@ -49,25 +49,6 @@ clEditEventsHandler::~clEditEventsHandler()
     }
 }
 
-#define CHECK_FOCUS_WINDOW()                                                     \
-    wxWindow* focus = wxWindow::FindFocus();                                     \
-    if(!focus) {                                                                 \
-        event.Skip();                                                            \
-        return;                                                                  \
-    } else if((focus != m_stc) && (focus != m_textCtrl) && (focus != m_combo)) { \
-        event.Skip();                                                            \
-        return;                                                                  \
-    }
-
-#define CALL_FUNC(func)     \
-    if(m_stc) {             \
-        m_stc->func();      \
-    } else if(m_combo) {    \
-        m_combo->func();    \
-    } else {                \
-        m_textCtrl->func(); \
-    }
-
 void clEditEventsHandler::OnCopy(wxCommandEvent& event)
 {
     CHECK_FOCUS_WINDOW();

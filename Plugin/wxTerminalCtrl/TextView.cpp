@@ -4,6 +4,7 @@
 #include "FontUtils.hpp"
 #include "wxTerminalCtrl.h"
 
+#include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/wupdlock.h>
 
@@ -18,6 +19,7 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    m_ctrl->UsePopUp(0);
     m_ctrl->SetWrapMode(wxSTC_WRAP_WORD);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
@@ -27,11 +29,15 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     m_colourHandler.SetCtrl(this);
     CallAfter(&TextView::ReloadSettings);
 
+    m_ctrl->Bind(wxEVT_CONTEXT_MENU, &TextView::OnMenu, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
-    m_editEvents.Reset(new clEditEventsHandler(m_ctrl));
 }
 
-TextView::~TextView() { m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this); }
+TextView::~TextView()
+{
+    m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
+    m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &TextView::OnMenu, this);
+}
 
 void TextView::AppendText(const std::string& buffer)
 {
@@ -148,4 +154,11 @@ void TextView::OnKeyDown(wxKeyEvent& event)
 {
     // let the input control process this event
     m_terminal->GetInputCtrl()->ProcessKeyDown(event);
+}
+
+void TextView::OnMenu(wxContextMenuEvent& event)
+{
+    wxMenu menu;
+    menu.Append(wxID_COPY);
+    PopupMenu(&menu);
 }

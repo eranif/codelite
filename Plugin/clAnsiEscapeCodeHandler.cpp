@@ -336,9 +336,26 @@ clAnsiEscapeCodeHandler::~clAnsiEscapeCodeHandler() {}
 void clAnsiEscapeCodeHandler::Parse(const std::string& buffer)
 {
     EnsureCurrent();
+    eColourHandlerState kCR_prev_state = eColourHandlerState::kNormal;
     auto chunk = &m_chunks.back().back();
-    for(const char& ch : buffer) {
+    for(size_t i = 0; i < buffer.length(); ++i) {
+        char ch = buffer[i];
         switch(m_state) {
+        case eColourHandlerState::kCR:
+            switch(ch) {
+            case '\n':
+                // "\r\n"
+                --i;
+                m_state = kCR_prev_state;
+                break;
+            default:
+                // any other char, we delete this entire line
+                chunk->d.clear();
+                --i;
+                m_state = kCR_prev_state;
+                break;
+            }
+            break;
         case eColourHandlerState::kNormal:
             switch(ch) {
             case 0x1B: // ESC
@@ -348,7 +365,8 @@ void clAnsiEscapeCodeHandler::Parse(const std::string& buffer)
                 m_state = eColourHandlerState::kInEscape;
                 break;
             case '\r':
-                // ignore CR
+                kCR_prev_state = m_state;
+                m_state = eColourHandlerState::kCR;
                 break;
             case '\n':
                 NEXT(true);
@@ -387,6 +405,10 @@ void clAnsiEscapeCodeHandler::Parse(const std::string& buffer)
             // found ESC[
             switch(ch) {
             case 'K':
+                // clear the current line
+                chunk->d.clear();
+                m_state = eColourHandlerState::kNormal;
+                break;
             case 'A':
             case 'B':
             case 'C':

@@ -19,6 +19,7 @@ enum class eColourHandlerState {
     kInOsc,             // Operating System Command
     kInCsi,             // Control Sequence Introducer
     kInPrivateSequence, // Some popular private sequences
+    kCR,                // Found CR in Normal
 };
 
 struct WXDLLIMPEXP_SDK wxSTCStyleProvider : public wxEvtHandler {

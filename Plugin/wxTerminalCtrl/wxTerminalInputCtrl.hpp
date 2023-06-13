@@ -15,11 +15,14 @@ class WXDLLIMPEXP_SDK wxTerminalInputCtrl
     wxStyledTextCtrl* m_ctrl = nullptr;
     wxTerminalHistory m_history;
     int m_writeStartingPosition = 0;
+    clEditEventsHandler::Ptr_t m_editEvents;
+
 protected:
     enum CaretPos {
         HOME,
         END,
     };
+
 protected:
     void Clear();
     void SetText(const wxString& text);

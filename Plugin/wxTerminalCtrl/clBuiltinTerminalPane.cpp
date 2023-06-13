@@ -41,3 +41,5 @@ void clBuiltinTerminalPane::UpdateTextAttributes()
 }
 
 void clBuiltinTerminalPane::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
+
+void clBuiltinTerminalPane::Focus() { m_terminal->GetView()->GetCtrl()->SetFocus(); }

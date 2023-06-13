@@ -27,11 +27,11 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     m_colourHandler.SetCtrl(this);
     CallAfter(&TextView::ReloadSettings);
 
-    m_ctrl->Bind(wxEVT_KEY_DOWN, &TextView::OnKeyDown, this);
+    m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
     m_editEvents.Reset(new clEditEventsHandler(m_ctrl));
 }
 
-TextView::~TextView() { m_ctrl->Unbind(wxEVT_KEY_DOWN, &TextView::OnKeyDown, this); }
+TextView::~TextView() { m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this); }
 
 void TextView::AppendText(const std::string& buffer)
 {

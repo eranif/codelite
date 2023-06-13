@@ -17,6 +17,8 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 
 wxTerminalInputCtrl::~wxTerminalInputCtrl() {}
 
+#define CAN_EDIT() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
+#define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
     switch(event.GetKeyCode()) {
@@ -42,9 +44,13 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
     case WXK_LEFT:
     case WXK_NUMPAD_LEFT:
     case WXK_BACK:
+        if(CAN_EDIT()) {
+            event.Skip();
+        }
+        break;
     case WXK_DELETE:
     case WXK_NUMPAD_DELETE:
-        if(m_ctrl->GetCurrentPos() > m_writeStartingPosition) {
+        if(CAN_DELETE()) {
             event.Skip();
         }
         break;
@@ -58,8 +64,7 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
     default: {
         // all other cases: if the position is not within the write area,
         // move the caret to write area and continue
-        int curpos = m_ctrl->GetCurrentPos();
-        if(curpos <= m_writeStartingPosition) {
+        if(!CAN_EDIT()) {
             SetCaretPos(CaretPos::END);
         }
         event.Skip();

@@ -9,24 +9,28 @@
 #include <wx/stc/stc.h>
 
 class wxTerminalCtrl;
-class WXDLLIMPEXP_SDK wxTerminalInputCtrl : public wxPanel
+class WXDLLIMPEXP_SDK wxTerminalInputCtrl
 {
-protected:
-    friend class wxTerminalCtrl;
-    wxStyledTextCtrl* m_ctrl = nullptr;
     wxTerminalCtrl* m_terminal = nullptr;
+    wxStyledTextCtrl* m_ctrl = nullptr;
     wxTerminalHistory m_history;
-    clEditEventsHandler::Ptr_t m_editEvents;
-
+    int m_writeStartingPosition = 0;
 protected:
-    void OnKeyDown(wxKeyEvent& event);
+    enum CaretPos {
+        HOME,
+        END,
+    };
+protected:
     void Clear();
-    void ApplyStyle();
+    void SetText(const wxString& text);
+    wxString GetText() const;
+    void SetCaretPos(CaretPos pos);
 
 public:
-    wxTerminalInputCtrl(wxTerminalCtrl* parent);
+    wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);
     virtual ~wxTerminalInputCtrl();
-    void SetCaretEnd();
+    void SetWritePositionEnd();
+    void ProcessKeyDown(wxKeyEvent& event);
 };
 
 #endif // WXTERMINALINPUTCTRL_HPP

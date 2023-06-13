@@ -9,84 +9,95 @@
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 
-wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
-    : wxPanel(parent)
-    , m_terminal(parent)
+wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl)
+    : m_terminal(parent)
+    , m_ctrl(ctrl)
 {
-    SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
-    GetSizer()->Add(m_ctrl, wxSizerFlags(1).Expand().Border(wxTOP, 2));
-    m_ctrl->Bind(wxEVT_CHAR_HOOK, &wxTerminalInputCtrl::OnKeyDown, this);
-
-    m_ctrl->AlwaysShowScrollbars(false, false);
-    ApplyStyle();
-    GetSizer()->Layout();
-    m_editEvents.Reset(new clEditEventsHandler(m_ctrl));
 }
 
-wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CHAR_HOOK, &wxTerminalInputCtrl::OnKeyDown, this); }
+wxTerminalInputCtrl::~wxTerminalInputCtrl() {}
 
-void wxTerminalInputCtrl::OnKeyDown(wxKeyEvent& event)
+void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
-    if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
-        // Execute command
-        wxString command = m_ctrl->GetText();
-        m_terminal->Run(command);
+    switch(event.GetKeyCode()) {
+    case WXK_NUMPAD_ENTER:
+    case WXK_RETURN: {
+        wxString command = GetText();
+        m_terminal->CallAfter(&wxTerminalCtrl::Run, command);
         m_history.Add(command);
-        m_ctrl->ClearAll();
-
-    } else if(event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP) {
-        m_history.Up();
-        m_ctrl->SetText(m_history.Get());
-        SetCaretEnd();
-
-    } else if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN) {
-        m_history.Down();
-        m_ctrl->SetText(m_history.Get());
-        SetCaretEnd();
-
-    } else if((event.GetKeyCode() == 'C') && event.RawControlDown()) {
-        // Generate Ctrl-C
-        m_terminal->GenerateCtrlC();
-
-    } else if((event.GetKeyCode() == 'L') && event.RawControlDown()) {
-        m_terminal->ClearScreen();
-
-    } else if((event.GetKeyCode() == 'U') && event.RawControlDown()) {
-        m_terminal->ClearLine();
-        SetCaretEnd();
-
-    } else if((event.GetKeyCode() == 'D') && event.RawControlDown()) {
-        m_terminal->Logout();
-
-    } else if(event.GetKeyCode() == WXK_TAB) {
-        // block it
-    } else {
         event.Skip();
+    } break;
+    case WXK_UP:
+    case WXK_NUMPAD_UP:
+        m_history.Up();
+        SetText(m_history.Get());
+        break;
+    case WXK_DOWN:
+    case WXK_NUMPAD_DOWN:
+        m_history.Down();
+        SetText(m_history.Get());
+        break;
+    case WXK_TAB:
+        return;
+    case WXK_LEFT:
+    case WXK_NUMPAD_LEFT:
+    case WXK_BACK:
+    case WXK_DELETE:
+    case WXK_NUMPAD_DELETE:
+        if(m_ctrl->GetCurrentPos() > m_writeStartingPosition) {
+            event.Skip();
+        }
+        break;
+    case WXK_RIGHT:
+    case WXK_NUMPAD_RIGHT:
+        event.Skip();
+        break;
+    case WXK_HOME:
+        SetCaretPos(CaretPos::HOME);
+        break;
+    default: {
+        // all other cases: if the position is not within the write area,
+        // move the caret to write area and continue
+        int curpos = m_ctrl->GetCurrentPos();
+        if(curpos <= m_writeStartingPosition) {
+            SetCaretPos(CaretPos::END);
+        }
+        event.Skip();
+    } break;
     }
 }
 
-void wxTerminalInputCtrl::SetCaretEnd()
+void wxTerminalInputCtrl::SetWritePositionEnd() { m_writeStartingPosition = m_ctrl->GetLastPosition(); }
+
+void wxTerminalInputCtrl::Clear()
 {
-    m_ctrl->SetSelection(m_ctrl->GetLastPosition(), m_ctrl->GetLastPosition());
-    m_ctrl->SetCurrentPos(m_ctrl->GetLastPosition());
-    m_ctrl->SetFocus();
+    m_ctrl->Remove(m_writeStartingPosition, m_ctrl->GetLastPosition());
+    SetCaretPos(CaretPos::END);
 }
 
-void wxTerminalInputCtrl::Clear() { m_ctrl->ClearAll(); }
-
-void wxTerminalInputCtrl::ApplyStyle()
+void wxTerminalInputCtrl::SetText(const wxString& text)
 {
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    lexer->ApplySystemColours(m_ctrl);
+    m_ctrl->Remove(m_writeStartingPosition, m_ctrl->GetLastPosition());
+    m_ctrl->AppendText(text);
+    SetCaretPos(CaretPos::END);
+}
 
-    wxBitmap bmp;
-    bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
-    wxMemoryDC memDC(bmp);
-    wxGCDC gcdc(memDC);
+wxString wxTerminalInputCtrl::GetText() const
+{
+    return m_ctrl->GetTextRange(m_writeStartingPosition, m_ctrl->GetLastPosition());
+}
 
-    auto font = lexer->GetFontForStyle(0, m_ctrl);
-    gcdc.SetFont(font);
-    wxSize textSize = gcdc.GetTextExtent("Tp");
-    SetSizeHints(wxNOT_FOUND, textSize.GetHeight() + 2);
+void wxTerminalInputCtrl::SetCaretPos(wxTerminalInputCtrl::CaretPos pos)
+{
+    int where = 0;
+    switch(pos) {
+    case wxTerminalInputCtrl::CaretPos::END:
+        where = m_ctrl->GetLastPosition();
+        break;
+    case wxTerminalInputCtrl::CaretPos::HOME:
+        where = m_writeStartingPosition;
+        break;
+    }
+    m_ctrl->SetSelection(where, where);
+    m_ctrl->SetCurrentPos(where);
 }

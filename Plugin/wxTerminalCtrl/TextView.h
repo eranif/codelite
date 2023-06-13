@@ -9,6 +9,7 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 
+class wxTerminalCtrl;
 class WXDLLIMPEXP_SDK TextView : public wxWindow
 {
     wxStyledTextCtrl* m_ctrl = nullptr;
@@ -22,6 +23,7 @@ class WXDLLIMPEXP_SDK TextView : public wxWindow
     wxColour m_textColour;
     bool m_scrollToEndQueued = false;
     clEditEventsHandler::Ptr_t m_editEvents;
+    wxTerminalCtrl* m_terminal = nullptr;
 
 protected:
     int GetCurrentStyle();
@@ -29,12 +31,12 @@ protected:
     void RequestScrollToEnd();
     void OnThemeChanged(clCommandEvent& event);
     void ApplyTheme();
+    void OnKeyDown(wxKeyEvent& event);
 
 public:
-    TextView(wxWindow* parent, wxWindowID winid = wxNOT_FOUND, const wxFont& font = wxNullFont,
+    TextView(wxTerminalCtrl* parent, wxWindowID winid = wxNOT_FOUND, const wxFont& font = wxNullFont,
              const wxColour& bg_colour = *wxBLACK, const wxColour& text_colour = *wxWHITE);
     virtual ~TextView();
-    void Focus();
     wxStyledTextCtrl* GetCtrl() { return m_ctrl; }
     void SetSink(wxEvtHandler* sink) { this->m_sink = sink; }
     wxEvtHandler* GetSink() { return m_sink; }
@@ -54,13 +56,10 @@ public:
     int GetNumberOfLines() const;
     void SetDefaultStyle(const wxTextAttr& attr);
     wxTextAttr GetDefaultStyle() const;
-    bool IsEditable() const;
-    void SetEditable(bool b);
     void Replace(long from, long to, const wxString& replaceWith);
     wxString GetLineText(int lineNumber) const;
     void ReloadSettings();
     void ShowCommandLine();
-    void SetCommand(long from, const wxString& command);
     void SetCaretEnd();
     int Truncate();
     wxChar GetLastChar() const;

@@ -540,7 +540,6 @@ void clAnsiEscapeCodeHandler::Render(wxSTCStyleProvider* style_provider, bool is
 
     // render everything
     int curstyle = 0;
-    clDEBUG() << "curtest in STC:" << stc->GetText() << endl;
     for(const auto& v : m_chunks) {
         for(const auto& chunk : v) {
             // ensure to restore the dont once we are done with this line

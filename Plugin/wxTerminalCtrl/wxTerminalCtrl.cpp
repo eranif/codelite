@@ -19,16 +19,12 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     if(!Create(parent, winid, pos, size, style)) {
         return;
     }
-
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_outputView = new TextView(this);
     m_outputView->SetSink(this);
     GetSizer()->Add(m_outputView, wxSizerFlags(1).Expand());
 
-    m_inputCtrl = new wxTerminalInputCtrl(this);
-    GetSizer()->Add(m_inputCtrl, wxSizerFlags(0).Expand());
-    m_outputView->SetEditable(false);
-    GetSizer()->Fit(this);
+    m_inputCtrl = new wxTerminalInputCtrl(this, m_outputView->GetCtrl());
     CallAfter(&wxTerminalCtrl::StartShell);
 }
 
@@ -82,16 +78,9 @@ void wxTerminalCtrl::Run(const wxString& command)
 
 void wxTerminalCtrl::AppendText(const std::string& text)
 {
-    m_outputView->SetEditable(true);
     m_outputView->StyleAndAppend(text);
-    m_outputView->SetEditable(false);
-    SetCaretAtEnd();
-}
-
-void wxTerminalCtrl::SetCaretAtEnd()
-{
     m_outputView->SetCaretEnd();
-    m_inputCtrl->m_ctrl->CallAfter(&wxStyledTextCtrl::SetFocus);
+    m_inputCtrl->SetWritePositionEnd();
 }
 
 void wxTerminalCtrl::GenerateCtrlC()
@@ -118,8 +107,6 @@ void wxTerminalCtrl::SetAttributes(const wxColour& bg_colour, const wxColour& te
     m_outputView->SetAttributes(bg_colour, text_colour, font);
     m_outputView->ReloadSettings();
 }
-
-void wxTerminalCtrl::Focus() { m_outputView->Focus(); }
 
 void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event) { AppendText(event.GetOutputRaw()); }
 
@@ -150,17 +137,9 @@ void wxTerminalCtrl::ChangeToPasswordStateIfNeeded()
     }
 }
 
-void wxTerminalCtrl::ClearScreen()
-{
-    m_outputView->SetEditable(true);
-    m_outputView->GetCtrl()->ClearAll();
-    m_outputView->SetEditable(false);
-}
-
-void wxTerminalCtrl::ClearLine() { m_inputCtrl->Clear(); }
+void wxTerminalCtrl::ClearScreen() { m_outputView->Clear(); }
 
 void wxTerminalCtrl::Logout()
 {
-    m_inputCtrl->Clear();
     Run("exit");
 }

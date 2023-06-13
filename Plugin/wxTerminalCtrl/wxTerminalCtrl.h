@@ -54,7 +54,6 @@ protected:
 protected:
     void StartShell();
     void AppendText(const std::string& text);
-    void SetCaretAtEnd();
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
@@ -86,6 +85,8 @@ public:
     void SetPauseOnExit(bool pauseOnExit) { this->m_pauseOnExit = pauseOnExit; }
     bool IsPauseOnExit() const { return m_pauseOnExit; }
 
+    wxTerminalInputCtrl* GetInputCtrl() { return m_inputCtrl; }
+
     /**
      * @brief execute a command in the temrinal
      * @param command
@@ -102,21 +103,12 @@ public:
     void ClearScreen();
 
     /**
-     * @brief clear the current line (Ctrl-U)
-     */
-    void ClearLine();
-    /**
      * @brief Logout from the current session (Ctrl-D)
      */
     void Logout();
 
     void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
     const wxString& GetLogfile() const { return m_logfile; }
-
-    /**
-     * @brief set the focus to the text area
-     */
-    void Focus();
 };
 
 #endif // WXTERMINALCTRL_H

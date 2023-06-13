@@ -2,13 +2,15 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
+#include "wxTerminalCtrl.h"
 
 #include <wx/sizer.h>
 #include <wx/wupdlock.h>
 
-TextView::TextView(wxWindow* parent, wxWindowID winid, const wxFont& font, const wxColour& bg_colour,
+TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font, const wxColour& bg_colour,
                    const wxColour& text_colour)
     : wxWindow(parent, winid)
+    , m_terminal(parent)
 {
     m_textFont = font.IsOk() ? font : FontUtils::GetDefaultMonospacedFont();
     m_textColour = text_colour;
@@ -25,14 +27,17 @@ TextView::TextView(wxWindow* parent, wxWindowID winid, const wxFont& font, const
     m_colourHandler.SetCtrl(this);
     CallAfter(&TextView::ReloadSettings);
 
+    m_ctrl->Bind(wxEVT_KEY_DOWN, &TextView::OnKeyDown, this);
     m_editEvents.Reset(new clEditEventsHandler(m_ctrl));
 }
 
-TextView::~TextView() {}
+TextView::~TextView() { m_ctrl->Unbind(wxEVT_KEY_DOWN, &TextView::OnKeyDown, this); }
 
 void TextView::AppendText(const std::string& buffer)
 {
+
     m_ctrl->AppendText(buffer);
+
     RequestScrollToEnd();
 }
 
@@ -58,21 +63,15 @@ void TextView::SetDefaultStyle(const wxTextAttr& attr) { m_defaultAttr = attr; }
 
 wxTextAttr TextView::GetDefaultStyle() const { return m_defaultAttr; }
 
-bool TextView::IsEditable() const { return m_ctrl->IsEditable(); }
-
 long TextView::GetInsertionPoint() const { return m_ctrl->GetInsertionPoint(); }
 
 void TextView::Replace(long from, long to, const wxString& replaceWith) { m_ctrl->Replace(from, to, replaceWith); }
 
 wxString TextView::GetLineText(int lineNumber) const { return m_ctrl->GetLineText(lineNumber); }
 
-void TextView::SetEditable(bool b) { m_ctrl->SetEditable(b); }
-
 void TextView::ReloadSettings() { ApplyTheme(); }
 
 void TextView::StyleAndAppend(const std::string& buffer) { m_colourHandler << buffer; }
-
-void TextView::Focus() { m_ctrl->SetFocus(); }
 
 void TextView::ShowCommandLine()
 {
@@ -81,17 +80,11 @@ void TextView::ShowCommandLine()
     RequestScrollToEnd();
 }
 
-void TextView::SetCommand(long from, const wxString& command)
-{
-    m_ctrl->SetSelection(from, GetLastPosition());
-    m_ctrl->ReplaceSelection(command);
-}
-
 void TextView::SetCaretEnd()
 {
+    m_ctrl->SelectNone();
     m_ctrl->SetSelection(GetLastPosition(), GetLastPosition());
     m_ctrl->SetCurrentPos(GetLastPosition());
-    m_ctrl->SetFocus();
 }
 
 int TextView::Truncate()
@@ -149,4 +142,10 @@ void TextView::ApplyTheme()
 
     m_colourHandler.SetDefaultStyle(defaultAttr);
     m_ctrl->Refresh();
+}
+
+void TextView::OnKeyDown(wxKeyEvent& event)
+{
+    // let the input control process this event
+    m_terminal->GetInputCtrl()->ProcessKeyDown(event);
 }

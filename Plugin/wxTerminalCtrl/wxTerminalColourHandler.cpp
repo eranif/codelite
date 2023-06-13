@@ -97,5 +97,4 @@ void wxTerminalColourHandler::SetCaretEnd()
     m_ctrl->ShowCommandLine();
     m_ctrl->SelectNone();
     m_ctrl->SetInsertionPointEnd();
-    m_ctrl->CallAfter(&TextView::Focus);
 }

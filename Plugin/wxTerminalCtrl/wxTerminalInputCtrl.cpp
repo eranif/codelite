@@ -8,6 +8,7 @@
 #include <wx/bitmap.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
+#include <wx/tokenzr.h>
 
 namespace
 {
@@ -40,11 +41,46 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 
 wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this); }
 
+void wxTerminalInputCtrl::ShowCompletionBox()
+{
+    wxString editor_text = m_ctrl->GetText();
+
+    wxArrayString filteredWords;
+    wxArrayString words = ::wxStringTokenize(editor_text, "\r\n \t->/\\'\"[]()<>*&^%#!@+=:,;{}|/", wxTOKEN_STRTOK);
+    words.reserve(words.size() + m_history.m_commands.size());
+    words.insert(words.end(), m_history.m_commands.begin(), m_history.m_commands.end());
+    std::set<wxString> suggest_set;
+    for(const auto& word : words) {
+        if(!wxIsdigit(word[0])) {
+            suggest_set.insert(word);
+        }
+    }
+    if(suggest_set.empty()) {
+        return;
+    }
+
+    wxString listItems;
+    for(const auto& entry : suggest_set) {
+        listItems << entry << "@";
+    }
+    listItems.RemoveLast();
+
+    wxString text_entered = GetText();
+    m_ctrl->AutoCompSetSeparator('@');
+    m_ctrl->AutoCompShow(text_entered.length(), listItems);
+}
+
 #define CAN_GO_BACK() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
 #define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
 #define CAN_EDIT() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
+
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
+    if(m_ctrl->AutoCompActive()) {
+        event.Skip();
+        return;
+    }
+
     if(event.RawControlDown() && event.GetKeyCode() == 'C') {
         m_terminal->GenerateCtrlC();
         return;
@@ -56,6 +92,9 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
         return;
     } else if(event.RawControlDown() && event.GetKeyCode() == 'U') {
         Clear();
+        return;
+    } else if((event.RawControlDown() && event.GetKeyCode() == 'R') || (event.GetKeyCode() == WXK_TAB)) {
+        ShowCompletionBox();
         return;
     }
 

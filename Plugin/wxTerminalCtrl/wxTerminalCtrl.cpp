@@ -5,10 +5,12 @@
 
 #include <wx/filename.h>
 #include <wx/log.h>
+#include <wx/msgdlg.h>
 #include <wx/process.h>
 #include <wx/regex.h>
 #include <wx/sizer.h>
 #include <wx/stdpaths.h>
+#include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 
 wxTerminalCtrl::wxTerminalCtrl() {}
@@ -114,9 +116,17 @@ void wxTerminalCtrl::SetAttributes(const wxColour& bg_colour, const wxColour& te
     m_outputView->ReloadSettings();
 }
 
-void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event) { AppendText(event.GetOutputRaw()); }
+void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event)
+{
+    AppendText(event.GetOutputRaw());
+    PromptForPasswordIfNeeded();
+}
 
-void wxTerminalCtrl::OnProcessError(clProcessEvent& event) { AppendText(event.GetOutputRaw()); }
+void wxTerminalCtrl::OnProcessError(clProcessEvent& event)
+{
+    AppendText(event.GetOutputRaw());
+    PromptForPasswordIfNeeded();
+}
 
 void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event)
 {
@@ -132,14 +142,18 @@ void wxTerminalCtrl::Terminate()
     }
 }
 
-void wxTerminalCtrl::ChangeToPasswordStateIfNeeded()
+void wxTerminalCtrl::PromptForPasswordIfNeeded()
 {
     wxString line = m_outputView->GetLineText(m_outputView->GetNumberOfLines() - 1);
     line = line.Lower();
     if(line.Contains("password:") || line.Contains("password for") || line.Contains("pin for")) {
-        m_state = TerminalState::PASSWORD;
-
-        // TODO: change the style from the prev position to "hidden"
+        wxString pass = ::wxGetPasswordFromUser(line, "CodeLite", wxEmptyString, wxTheApp->GetTopWindow());
+        if(pass.empty()) {
+            GenerateCtrlC();
+            return;
+        } else if(m_shell) {
+            m_shell->Write(pass);
+        }
     }
 }
 

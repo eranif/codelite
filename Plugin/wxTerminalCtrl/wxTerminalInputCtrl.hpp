@@ -16,7 +16,7 @@ class WXDLLIMPEXP_SDK wxTerminalInputCtrl
     wxTerminalHistory m_history;
     int m_writeStartingPosition = 0;
     clEditEventsHandler::Ptr_t m_editEvents;
-
+    
 protected:
     enum CaretPos {
         HOME,
@@ -29,7 +29,8 @@ protected:
     wxString GetText() const;
     void SetCaretPos(CaretPos pos);
     void OnMenu(wxContextMenuEvent& event);
-
+    void ShowCompletionBox();
+    
 public:
     wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);
     virtual ~wxTerminalInputCtrl();

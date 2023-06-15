@@ -15,6 +15,7 @@ struct WXDLLIMPEXP_SDK wxTerminalHistory {
     void Clear();
     void Store();
     void Load();
+    wxString ForCompletion() const;
 };
 
 #endif // WXTERMINALHISTORY_HPP

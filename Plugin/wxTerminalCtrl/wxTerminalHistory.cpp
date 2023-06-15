@@ -1,5 +1,6 @@
 #include "wxTerminalHistory.hpp"
 
+#include "StringUtils.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 
@@ -70,4 +71,12 @@ void wxTerminalHistory::Clear()
 {
     m_current = wxNOT_FOUND;
     m_commands.clear();
+}
+
+wxString wxTerminalHistory::ForCompletion() const
+{
+    wxArrayString sorted = m_commands;
+    sorted.Sort();
+    wxString result = wxJoin(sorted, '@');
+    return result;
 }

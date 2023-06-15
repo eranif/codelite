@@ -28,11 +28,6 @@ enum {
     wxTERMINAL_CTRL_USE_EVENTS = (1 << 0),
 };
 
-enum class TerminalState {
-    NORMAL,
-    PASSWORD,
-};
-
 class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 {
 protected:
@@ -49,7 +44,6 @@ protected:
     wxString m_logfile;
     wxString m_ttyfile;
     bool m_terminating = false;
-    TerminalState m_state = TerminalState::NORMAL;
 
 protected:
     void StartShell();
@@ -57,7 +51,7 @@ protected:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
-    void ChangeToPasswordStateIfNeeded();
+    void PromptForPasswordIfNeeded();
 
 protected:
     void DoProcessTerminated();

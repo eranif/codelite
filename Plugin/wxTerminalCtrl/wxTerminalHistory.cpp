@@ -1,5 +1,6 @@
 #include "wxTerminalHistory.hpp"
 
+#include "Platform.hpp"
 #include "StringUtils.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
@@ -19,7 +20,32 @@ void wxTerminalHistory::Load()
     wxFileName history(clStandardPaths::Get().GetUserDataDir(), "history");
     wxString data;
     FileUtils::ReadFileContent(history, data);
-    m_commands = ::wxStringTokenize(data, "\r\n", wxTOKEN_STRTOK);
+
+    wxString homedir;
+    if(ThePlatform->FindHomeDir(&homedir)) {
+        wxFileName bash_history{ homedir, ".bash_history" };
+        wxString bash_content;
+        if(bash_history.FileExists() && FileUtils::ReadFileContent(bash_history, bash_content)) {
+            data << "\n" << bash_content;
+        }
+    }
+
+    // filter non unique and empty items
+    std::unordered_set<wxString> visited;
+    wxArrayString tmpcommands = ::wxStringTokenize(data, "\r\n", wxTOKEN_STRTOK);
+    m_commands.reserve(tmpcommands.size());
+    for(auto& command : tmpcommands) {
+        command.Trim().Trim(false);
+
+        // remove excessive entries
+        if(command.empty()) {
+            continue;
+        }
+
+        if(visited.insert(command).second) {
+            m_commands.Add(command);
+        }
+    }
 }
 
 void wxTerminalHistory::Add(const wxString& command)

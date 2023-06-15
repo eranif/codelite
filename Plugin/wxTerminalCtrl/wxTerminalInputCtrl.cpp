@@ -41,33 +41,54 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 
 wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this); }
 
-void wxTerminalInputCtrl::ShowCompletionBox()
+void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 {
-    wxString editor_text = m_ctrl->GetText();
+    wxArrayString words;
+    int length_typed = 0;
+    wxString listItems;
+    if(type == CompletionType::WORDS) {
+        int start_pos = wxNOT_FOUND;
+        int end_pos = wxNOT_FOUND;
+        wxString editor_text = m_ctrl->GetText();
 
-    wxArrayString filteredWords;
-    wxArrayString words = ::wxStringTokenize(editor_text, "\r\n \t->/\\'\"[]()<>*&^%#!@+=:,;{}|/", wxTOKEN_STRTOK);
-    words.reserve(words.size() + m_history.m_commands.size());
-    words.insert(words.end(), m_history.m_commands.begin(), m_history.m_commands.end());
-    std::set<wxString> suggest_set;
-    for(const auto& word : words) {
-        if(!wxIsdigit(word[0])) {
-            suggest_set.insert(word);
+        // exclude the last line
+        editor_text = editor_text.BeforeLast('\n');
+
+        wxArrayString filteredWords;
+        words = ::wxStringTokenize(editor_text, "\r\n \t>/\\'\"[]()<>*&^%#!@+=:,;{}|/", wxTOKEN_STRTOK);
+        std::set<wxString> suggest_set;
+        for(const auto& word : words) {
+            if(!wxIsdigit(word[0])) {
+                suggest_set.insert(word);
+            }
         }
-    }
-    if(suggest_set.empty()) {
+        if(suggest_set.empty()) {
+            return;
+        }
+
+        for(const auto& entry : suggest_set) {
+            listItems << entry << "@";
+        }
+        listItems.RemoveLast();
+        start_pos = m_writeStartingPosition;
+        end_pos = m_ctrl->GetLastPosition();
+        for(int i = end_pos - 1; i > start_pos; --i) {
+            if(m_ctrl->GetCharAt(i) == ' ' || m_ctrl->GetCharAt(i) == '\t') {
+                start_pos = i;
+                break;
+            }
+        }
+        length_typed = end_pos - start_pos;
+    } else if(type == CompletionType::COMMANDS) {
+        listItems = m_history.ForCompletion();
+        length_typed = GetText().length();
+    } else {
         return;
     }
-
-    wxString listItems;
-    for(const auto& entry : suggest_set) {
-        listItems << entry << "@";
-    }
-    listItems.RemoveLast();
-
-    wxString text_entered = GetText();
     m_ctrl->AutoCompSetSeparator('@');
-    m_ctrl->AutoCompShow(text_entered.length(), listItems);
+    m_ctrl->AutoCompSetMaxWidth(50);
+    m_ctrl->AutoCompSetMaxHeight(8);
+    m_ctrl->AutoCompShow(length_typed, listItems);
 }
 
 #define CAN_GO_BACK() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
@@ -93,8 +114,11 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
     } else if(event.RawControlDown() && event.GetKeyCode() == 'U') {
         Clear();
         return;
-    } else if((event.RawControlDown() && event.GetKeyCode() == 'R') || (event.GetKeyCode() == WXK_TAB)) {
-        ShowCompletionBox();
+    } else if(event.RawControlDown() && event.GetKeyCode() == 'R') {
+        ShowCompletionBox(CompletionType::COMMANDS);
+        return;
+    } else if(event.GetKeyCode() == WXK_TAB) {
+        ShowCompletionBox(CompletionType::WORDS);
         return;
     }
 

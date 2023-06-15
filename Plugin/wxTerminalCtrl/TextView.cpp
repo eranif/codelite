@@ -29,14 +29,12 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     m_colourHandler.SetCtrl(this);
     CallAfter(&TextView::ReloadSettings);
 
-    m_ctrl->Bind(wxEVT_CONTEXT_MENU, &TextView::OnMenu, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
 }
 
 TextView::~TextView()
 {
     m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
-    m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &TextView::OnMenu, this);
 }
 
 void TextView::AppendText(const std::string& buffer)
@@ -154,11 +152,4 @@ void TextView::OnKeyDown(wxKeyEvent& event)
 {
     // let the input control process this event
     m_terminal->GetInputCtrl()->ProcessKeyDown(event);
-}
-
-void TextView::OnMenu(wxContextMenuEvent& event)
-{
-    wxMenu menu;
-    menu.Append(wxID_COPY);
-    PopupMenu(&menu);
 }

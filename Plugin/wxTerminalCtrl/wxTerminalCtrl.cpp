@@ -85,10 +85,15 @@ void wxTerminalCtrl::AppendText(const std::string& text)
 
 void wxTerminalCtrl::GenerateCtrlC()
 {
-    if(m_shell) {
-        std::string ctrlc{ 1, 0x3 };
-        m_shell->WriteRaw(ctrlc + "\n");
+    if(!m_shell) {
+        return;
     }
+
+    std::string ctrlc{ 1, 0x3 };
+#ifdef __WXMSW__
+    ctrlc.append(1, '\n');
+#endif
+    m_shell->WriteRaw(ctrlc);
 }
 
 void wxTerminalCtrl::DoProcessTerminated()
@@ -141,15 +146,35 @@ void wxTerminalCtrl::ChangeToPasswordStateIfNeeded()
 void wxTerminalCtrl::ClearScreen()
 {
     m_outputView->Clear();
-    Run("");
+    m_inputCtrl->SetWritePositionEnd();
+
+    if(!m_shell) {
+        return;
+    }
+    m_shell->WriteRaw(std::string{ 1, '\n' });
 }
 
 void wxTerminalCtrl::Logout()
 {
-    if(m_shell) {
-        std::string ctrld{ 1, 0x4 };
-        m_shell->WriteRaw(ctrld + "\n");
+    if(!m_shell) {
+        return;
     }
+#if defined(__WXMSW__)
+    std::string ctrld{ 1, 0x4 };
+    m_shell->WriteRaw(ctrld);
+#else
+    std::string ctrld{ 1, 0x4 };
+    m_shell->WriteRaw(ctrld + "\n");
+#endif
 }
 
-void wxTerminalCtrl::SendTab() {}
+void wxTerminalCtrl::SendTab()
+{
+#if defined(__WXMSW__)
+    std::string ctrld{ 1, '\t' };
+    m_shell->WriteRaw(ctrld);
+#else
+    std::string ctrld{ 1, '\t' };
+    m_shell->WriteRaw(ctrld);
+#endif
+}

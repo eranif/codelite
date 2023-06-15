@@ -28,6 +28,7 @@ protected:
     void SetText(const wxString& text);
     wxString GetText() const;
     void SetCaretPos(CaretPos pos);
+    void OnMenu(wxContextMenuEvent& event);
 
 public:
     wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);

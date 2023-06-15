@@ -34,9 +34,11 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
     , m_ctrl(ctrl)
 {
     m_editEvents.Reset(new MyEventsHandler(m_ctrl));
+    m_ctrl->Bind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
+    m_history.Load();
 }
 
-wxTerminalInputCtrl::~wxTerminalInputCtrl() {}
+wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this); }
 
 #define CAN_EDIT() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
 #define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
@@ -62,7 +64,7 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
         wxString command = GetText();
         m_terminal->Run(command);
         m_history.Add(command);
-        event.Skip();
+        m_history.Store(); // update the history
     } break;
     case WXK_UP:
     case WXK_NUMPAD_UP:
@@ -141,4 +143,35 @@ void wxTerminalInputCtrl::SetCaretPos(wxTerminalInputCtrl::CaretPos pos)
     }
     m_ctrl->SetSelection(where, where);
     m_ctrl->SetCurrentPos(where);
+}
+
+void wxTerminalInputCtrl::OnMenu(wxContextMenuEvent& event)
+{
+    wxMenu menu;
+    menu.Append(wxID_COPY);
+    menu.Append(wxID_PASTE);
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            if(!CAN_EDIT()) {
+                SetCaretPos(CaretPos::END);
+            }
+            int where = m_ctrl->GetLastPosition();
+            m_ctrl->SetSelection(where, where);
+            m_ctrl->SetCurrentPos(where);
+            m_ctrl->Paste();
+        },
+        wxID_PASTE);
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            if(m_ctrl->CanCopy()) {
+                m_ctrl->Copy();
+            }
+        },
+        wxID_COPY);
+    m_ctrl->PopupMenu(&menu);
 }

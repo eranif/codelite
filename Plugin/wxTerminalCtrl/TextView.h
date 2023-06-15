@@ -31,7 +31,6 @@ protected:
     void OnThemeChanged(clCommandEvent& event);
     void ApplyTheme();
     void OnKeyDown(wxKeyEvent& event);
-    void OnMenu(wxContextMenuEvent& event);
 
 public:
     TextView(wxTerminalCtrl* parent, wxWindowID winid = wxNOT_FOUND, const wxFont& font = wxNullFont,

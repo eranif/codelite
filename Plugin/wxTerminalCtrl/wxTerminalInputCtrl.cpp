@@ -40,8 +40,9 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 
 wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this); }
 
-#define CAN_EDIT() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
+#define CAN_GO_BACK() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
 #define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
+#define CAN_EDIT() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
     if(event.RawControlDown() && event.GetKeyCode() == 'C') {
@@ -82,7 +83,7 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
     case WXK_LEFT:
     case WXK_NUMPAD_LEFT:
     case WXK_BACK:
-        if(CAN_EDIT()) {
+        if(CAN_GO_BACK()) {
             event.Skip();
         }
         break;
@@ -155,7 +156,7 @@ void wxTerminalInputCtrl::OnMenu(wxContextMenuEvent& event)
         wxEVT_MENU,
         [this](wxCommandEvent& event) {
             wxUnusedVar(event);
-            if(!CAN_EDIT()) {
+            if(!CAN_GO_BACK()) {
                 SetCaretPos(CaretPos::END);
             }
             int where = m_ctrl->GetLastPosition();

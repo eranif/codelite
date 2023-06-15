@@ -378,6 +378,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& ar
         tcgetattr(master, &termio);
         cfmakeraw(&termio);
         termio.c_lflag = ICANON | ISIG; // support signals
+        termio.c_lflag &= ~ECHO;
         termio.c_oflag = ONOCR | ONLRET;
         tcsetattr(master, TCSANOW, &termio);
 

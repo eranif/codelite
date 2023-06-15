@@ -57,6 +57,7 @@
 #include "clLocaleManager.hpp"
 #include "clMainFrameHelper.h"
 #include "clSingleChoiceDialog.h"
+#include "clThemedTreeCtrl.h"
 #include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_dock_art.h"
@@ -184,6 +185,15 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 #define FACTOR_1 2.0
 #define FACTOR_2 2.0
 #endif
+
+#define CODELITE_SET_BEST_FOCUS()                                                                        \
+    if(clGetManager()->GetActiveEditor()) {                                                              \
+        clGetManager()->GetActiveEditor()->SetActive();                                                  \
+    } else if(m_workspacePane->GetWorkspaceTab()) {                                                      \
+        m_workspacePane->GetWorkspaceTab()->CallAfter(&wxWindow::SetFocus);                              \
+    } else if(GetMainBook()->GetWelcomePage(false)) {                                                    \
+        GetMainBook()->GetWelcomePage(false)->GetDvTreeCtrlWorkspaces()->CallAfter(&wxWindow::SetFocus); \
+    }
 
 /**
  * @brief is the debugger running?
@@ -1619,12 +1629,15 @@ void clMainFrame::Bootstrap()
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << "/config/sessions.xml";
     SessionManager::Get().Load(sessConfFile);
 
-    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
     // restore last session if needed
     if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
         EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
+    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
+
+    // and finally, find the best window to give focus to
+    CODELITE_SET_BEST_FOCUS();
 }
 
 void clMainFrame::UpdateBuildTools() {}
@@ -2377,9 +2390,7 @@ void clMainFrame::OnViewPane(wxCommandEvent& event)
             if(info.IsShown()) {
                 ViewPane(iter->second, false);
                 // set the focus to the editor
-                if(clGetManager()->GetActiveEditor()) {
-                    clGetManager()->GetActiveEditor()->SetActive();
-                }
+                CODELITE_SET_BEST_FOCUS();
             } else {
                 ViewPane(iter->second, true);
             }
@@ -2818,7 +2829,6 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
 
     // Send initialization end event
     CallAfter(&clMainFrame::Bootstrap);
-
     event.Skip();
 }
 
@@ -4555,9 +4565,7 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
     if(info.IsShown()) {
         // hide the windows, and set the focus back to the active editor
         ViewPane(pane_name, false);
-        if(clGetManager()->GetActiveEditor()) {
-            clGetManager()->GetActiveEditor()->SetActive();
-        }
+        CODELITE_SET_BEST_FOCUS();
     } else {
         ViewPane(pane_name, true);
         // select the "Terminal" tab

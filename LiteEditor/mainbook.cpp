@@ -1648,7 +1648,7 @@ void MainBook::DoShowTabLabelContextMenu()
 
 void MainBook::InitWelcomePage()
 {
-    m_welcomePage = GetOrCreateWelcomePage();
+    m_welcomePage = GetWelcomePage(true);
     ShowWelcomePage(true);
 }
 
@@ -1774,9 +1774,9 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 
 int MainBook::GetBitmapIndexOrAdd(const wxString& name) { return m_book->GetBitmaps()->Add(name); }
 
-WelcomePage* MainBook::GetOrCreateWelcomePage()
+WelcomePage* MainBook::GetWelcomePage(bool createIfMissing)
 {
-    if(m_welcomePage == nullptr) {
+    if(m_welcomePage == nullptr && createIfMissing) {
         m_welcomePage = new WelcomePage(this);
         m_welcomePage->Hide();
         GetSizer()->Add(m_welcomePage, 1, wxEXPAND);

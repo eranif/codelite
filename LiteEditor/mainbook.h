@@ -112,7 +112,6 @@ private:
     void OnEditorSettingsChanged(wxCommandEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
     void OnIdle(wxIdleEvent& event);
-    WelcomePage* GetOrCreateWelcomePage();
 
     /**
      * @brief return proper tab label for a given filename
@@ -142,6 +141,8 @@ private:
 public:
     MainBook(wxWindow* parent);
     virtual ~MainBook();
+
+    WelcomePage* GetWelcomePage(bool createIfMissing = true);
 
     void SetFindBar(QuickFindBar* findBar);
     QuickFindBar* GetFindBar() const { return m_findBar; }

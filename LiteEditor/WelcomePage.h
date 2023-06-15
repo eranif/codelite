@@ -66,6 +66,7 @@ public:
     WelcomePage(wxWindow* parent);
     virtual ~WelcomePage();
     bool Show(bool show = true) override;
+    wxWindow* GetList() { return m_dvTreeCtrlWorkspaces; }
 
 protected:
     void OnSize(wxSizeEvent& event) override;

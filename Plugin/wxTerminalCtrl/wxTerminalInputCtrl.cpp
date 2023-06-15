@@ -70,19 +70,22 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
             listItems << entry << "@";
         }
         listItems.RemoveLast();
-        start_pos = m_writeStartingPosition;
-        end_pos = m_ctrl->GetLastPosition();
-        for(int i = end_pos - 1; i > start_pos; --i) {
-            if(m_ctrl->GetCharAt(i) == ' ' || m_ctrl->GetCharAt(i) == '\t') {
-                start_pos = i;
+        wxString command = GetText();
+        wxString last_token;
+        for(auto iter = command.rbegin(); iter != command.rend(); ++iter) {
+            auto ch = *iter;
+            if(ch == ' ' || ch == '\t' || ch == '/') {
                 break;
+            } else {
+                last_token.insert(last_token.begin(), ch);
             }
         }
-        length_typed = end_pos - start_pos;
+        length_typed = last_token.length();
     } else if(type == CompletionType::COMMANDS) {
         listItems = m_history.ForCompletion();
         length_typed = GetText().length();
     } else {
+        // unknown completion type
         return;
     }
     m_ctrl->AutoCompSetSeparator('@');

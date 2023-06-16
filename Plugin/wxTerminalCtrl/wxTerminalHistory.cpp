@@ -103,6 +103,6 @@ wxString wxTerminalHistory::ForCompletion() const
 {
     wxArrayString sorted = m_commands;
     sorted.Sort();
-    wxString result = wxJoin(sorted, '@');
+    wxString result = wxJoin(sorted, '!');
     return result;
 }

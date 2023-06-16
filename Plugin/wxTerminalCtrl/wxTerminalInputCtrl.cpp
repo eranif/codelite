@@ -67,7 +67,7 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         }
 
         for(const auto& entry : suggest_set) {
-            listItems << entry << "@";
+            listItems << entry << "!";
         }
         listItems.RemoveLast();
         wxString command = GetText();
@@ -88,9 +88,9 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         // unknown completion type
         return;
     }
-    m_ctrl->AutoCompSetSeparator('@');
+    m_ctrl->AutoCompSetSeparator('!');
     m_ctrl->AutoCompSetMaxWidth(50);
-    m_ctrl->AutoCompSetMaxHeight(8);
+    m_ctrl->AutoCompSetMaxHeight(4);
     m_ctrl->AutoCompShow(length_typed, listItems);
 }
 

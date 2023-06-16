@@ -86,7 +86,7 @@ void wxTerminalCtrl::Run(const wxString& command)
     AppendText("\n");
 }
 
-void wxTerminalCtrl::AppendText(const std::string& text)
+void wxTerminalCtrl::AppendText(const wxString& text)
 {
     m_outputView->StyleAndAppend(text);
     m_outputView->SetCaretEnd();
@@ -99,7 +99,8 @@ void wxTerminalCtrl::GenerateCtrlC()
         return;
     }
 
-    std::string ctrlc{ 1, 0x3 };
+    wxString ctrlc;
+    ctrlc.append(1, (char)0x3);
 #ifdef __WXMSW__
     ctrlc.append(1, '\n');
 #endif
@@ -182,25 +183,16 @@ void wxTerminalCtrl::Logout()
     if(!m_shell) {
         return;
     }
+    wxString ctrld;
+    ctrld.append(1, (char)0x4);
 #if defined(__WXMSW__)
-    std::string ctrld{ 1, 0x4 };
     m_shell->WriteRaw(ctrld);
 #else
-    std::string ctrld{ 1, 0x4 };
     m_shell->WriteRaw(ctrld + "\n");
 #endif
 }
 
-void wxTerminalCtrl::SendTab()
-{
-#if defined(__WXMSW__)
-    std::string ctrld{ 1, '\t' };
-    m_shell->WriteRaw(ctrld);
-#else
-    std::string ctrld{ 1, '\t' };
-    m_shell->WriteRaw(ctrld);
-#endif
-}
+void wxTerminalCtrl::SendTab() {}
 
 void wxTerminalCtrl::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {

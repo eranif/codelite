@@ -34,11 +34,9 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
 
 TextView::~TextView() { m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this); }
 
-void TextView::AppendText(const std::string& buffer)
+void TextView::AppendText(const wxString& buffer)
 {
-
     m_ctrl->AppendText(buffer);
-
     RequestScrollToEnd();
 }
 
@@ -72,7 +70,7 @@ wxString TextView::GetLineText(int lineNumber) const { return m_ctrl->GetLineTex
 
 void TextView::ReloadSettings() { ApplyTheme(); }
 
-void TextView::StyleAndAppend(const std::string& buffer) { m_colourHandler << buffer; }
+void TextView::StyleAndAppend(const wxString& buffer) { m_colourHandler << buffer; }
 
 void TextView::ShowCommandLine()
 {

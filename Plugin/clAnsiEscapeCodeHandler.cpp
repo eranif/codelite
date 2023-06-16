@@ -333,13 +333,24 @@ clAnsiEscapeCodeHandler::~clAnsiEscapeCodeHandler() {}
     EnsureCurrent();                                 \
     chunk = &m_chunks.back().back();
 
-void clAnsiEscapeCodeHandler::Parse(const std::string& buffer)
+namespace
+{
+wxChar look_ahead(const wxString& buffer, size_t curpos, size_t count)
+{
+    if((curpos + count) < buffer.length()) {
+        return buffer[curpos + count];
+    }
+    return wxChar(0);
+}
+} // namespace
+
+void clAnsiEscapeCodeHandler::Parse(const wxString& buffer)
 {
     EnsureCurrent();
     eColourHandlerState kCR_prev_state = eColourHandlerState::kNormal;
     auto chunk = &m_chunks.back().back();
     for(size_t i = 0; i < buffer.length(); ++i) {
-        char ch = buffer[i];
+        wxChar ch = buffer[i];
         switch(m_state) {
         case eColourHandlerState::kCR:
             switch(ch) {
@@ -392,15 +403,46 @@ void clAnsiEscapeCodeHandler::Parse(const std::string& buffer)
             break;
         case eColourHandlerState::kInOsc:
             // ESC ]
-            if(ch == '\a') {
+            switch(ch) {
+            case 0x07: // BELL
                 // bell, leave the current state
-                chunk->is_title = true;
-                NEXT(true);
+                chunk->is_completed = true;
+                NEXT(false);
                 m_state = eColourHandlerState::kNormal;
-            } else {
+                break;
+            case '0':
+                m_state = eColourHandlerState::kOSC_Title;
+                break;
+            case '8':
+                m_state = eColourHandlerState::kOSC_Url;
+                break;
+            default:
                 chunk->d.append(1, ch);
+                break;
             }
             break;
+        case eColourHandlerState::kOSC_Title: {
+            // In this state we skip the first char (';')
+            // and read everything until we find the BELL or EOF
+            chunk->is_title = true;
+            wxChar next_char = look_ahead(buffer, i, 1);
+            while(next_char != 0x07 && next_char != 0) { // while NEXT is NOT BELL
+                chunk->d.append(1, next_char);
+                ++i;
+                next_char = look_ahead(buffer, i, 1);
+            }
+            m_state = eColourHandlerState::kInOsc;
+        } break;
+        case eColourHandlerState::kOSC_Url: {
+            // In this state we skip the first char (';')
+            // and read everything until we find the BELL or EOF, but we don't collect it!
+            wxChar next_char = look_ahead(buffer, i, 1);
+            while(next_char != 0x07 && next_char != 0) { // while NEXT is NOT BELL
+                ++i;
+                next_char = look_ahead(buffer, i, 1);
+            }
+            m_state = eColourHandlerState::kInOsc;
+        } break;
         case eColourHandlerState::kInCsi:
             // found ESC[
             switch(ch) {

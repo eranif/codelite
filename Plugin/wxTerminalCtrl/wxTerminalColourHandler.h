@@ -21,13 +21,13 @@ protected:
     void SetCaretEnd();
 
 protected:
-    void Append(const std::string& buffer);
+    void Append(const wxString& buffer);
 
 public:
     wxTerminalColourHandler();
     ~wxTerminalColourHandler();
 
-    wxTerminalColourHandler& operator<<(const std::string& buffer);
+    wxTerminalColourHandler& operator<<(const wxString& buffer);
     void SetCtrl(TextView* ctrl);
     void SetDefaultStyle(const wxTextAttr& attr);
     void Clear();

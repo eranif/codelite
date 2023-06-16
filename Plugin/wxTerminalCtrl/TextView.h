@@ -41,8 +41,8 @@ public:
     wxEvtHandler* GetSink() { return m_sink; }
 
     // API
-    void AppendText(const std::string& buffer);
-    void StyleAndAppend(const std::string& buffer);
+    void AppendText(const wxString& buffer);
+    void StyleAndAppend(const wxString& buffer);
     long GetLastPosition() const;
     wxString GetRange(int from, int to) const;
     bool PositionToXY(long pos, long* x, long* y) const;

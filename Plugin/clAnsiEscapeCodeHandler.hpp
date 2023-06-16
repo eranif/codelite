@@ -20,6 +20,8 @@ enum class eColourHandlerState {
     kInCsi,             // Control Sequence Introducer
     kInPrivateSequence, // Some popular private sequences
     kCR,                // Found CR in Normal
+    kOSC_Title,
+    kOSC_Url,
 };
 
 struct WXDLLIMPEXP_SDK wxSTCStyleProvider : public wxEvtHandler {
@@ -50,7 +52,7 @@ public:
 };
 
 struct WXDLLIMPEXP_SDK Chunk {
-    std::string d;
+    wxString d;
 
     // chunk flags
     bool is_text = true;
@@ -100,7 +102,7 @@ public:
     clAnsiEscapeCodeHandler();
     ~clAnsiEscapeCodeHandler();
 
-    void Parse(const std::string& buffer);
+    void Parse(const wxString& buffer);
     void Reset();
 
     /**

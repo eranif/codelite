@@ -17,7 +17,7 @@ wxTerminalColourHandler::wxTerminalColourHandler() {}
 
 wxTerminalColourHandler::~wxTerminalColourHandler() { wxDELETE(m_style_provider); }
 
-void wxTerminalColourHandler::Append(const std::string& buffer)
+void wxTerminalColourHandler::Append(const wxString& buffer)
 {
     if(buffer == "\n") {
         // small optimization:
@@ -50,7 +50,7 @@ void wxTerminalColourHandler::Append(const std::string& buffer)
     SetCaretEnd();
 }
 
-wxTerminalColourHandler& wxTerminalColourHandler::operator<<(const std::string& buffer)
+wxTerminalColourHandler& wxTerminalColourHandler::operator<<(const wxString& buffer)
 {
     Append(buffer);
     return *this;

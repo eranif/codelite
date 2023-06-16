@@ -48,7 +48,7 @@ protected:
 
 protected:
     void StartShell();
-    void AppendText(const std::string& text);
+    void AppendText(const wxString& text);
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);

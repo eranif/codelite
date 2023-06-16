@@ -99,9 +99,23 @@ void wxTerminalHistory::Clear()
     m_commands.clear();
 }
 
-wxString wxTerminalHistory::ForCompletion() const
+wxString wxTerminalHistory::ForCompletion(const wxString& filter) const
 {
-    wxArrayString sorted = m_commands;
+    wxArrayString sorted;
+    if(filter.empty()) {
+        sorted = m_commands;
+        sorted.Sort();
+    } else {
+        wxString lc_filer = filter.Lower();
+        sorted.reserve(m_commands.size());
+
+        for(const auto& command : m_commands) {
+            wxString lc_command = command.Lower();
+            if(lc_command.Contains(filter)) {
+                sorted.Add(command);
+            }
+        }
+    }
     sorted.Sort();
     wxString result = wxJoin(sorted, '!');
     return result;

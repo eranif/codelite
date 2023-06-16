@@ -43,6 +43,7 @@ wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CONTEXT_MENU,
 
 void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 {
+    m_ctrl->AutoCompCancel();
     wxArrayString words;
     int length_typed = 0;
     wxString listItems;
@@ -51,25 +52,6 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         int end_pos = wxNOT_FOUND;
         wxString editor_text = m_ctrl->GetText();
 
-        // exclude the last line
-        editor_text = editor_text.BeforeLast('\n');
-
-        wxArrayString filteredWords;
-        words = ::wxStringTokenize(editor_text, "\r\n \t>/\\'\"[]()<>*&^%#!@+=:,;{}|/", wxTOKEN_STRTOK);
-        std::set<wxString> suggest_set;
-        for(const auto& word : words) {
-            if(!wxIsdigit(word[0])) {
-                suggest_set.insert(word);
-            }
-        }
-        if(suggest_set.empty()) {
-            return;
-        }
-
-        for(const auto& entry : suggest_set) {
-            listItems << entry << "!";
-        }
-        listItems.RemoveLast();
         wxString command = GetText();
         wxString last_token;
         for(auto iter = command.rbegin(); iter != command.rend(); ++iter) {
@@ -84,15 +66,44 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
                 last_token.insert(last_token.begin(), ch);
             }
         }
+
         length_typed = last_token.length();
+        wxString filter_text = last_token.Lower();
+        // exclude the last line
+        editor_text = editor_text.BeforeLast('\n');
+
+        wxArrayString filteredWords;
+        words = ::wxStringTokenize(editor_text, "\r\n \t>/\\'\"[]()<>*&^%#!@+=:,;{}|/", wxTOKEN_STRTOK);
+        std::set<wxString> suggest_set;
+        for(const auto& word : words) {
+            wxString lc_word = word.Lower();
+            if(!wxIsdigit(word[0]) && (filter_text.empty() || lc_word.Contains(filter_text)) && !lc_word.empty()) {
+                suggest_set.insert(word);
+            }
+        }
+        if(suggest_set.empty()) {
+            return;
+        }
+
+        for(const auto& entry : suggest_set) {
+            listItems << entry << "!";
+        }
+        listItems.RemoveLast();
     } else if(type == CompletionType::COMMANDS) {
-        listItems = m_history.ForCompletion();
-        length_typed = GetText().length();
+        wxString filter = GetText();
+        listItems = m_history.ForCompletion(GetText());
+        length_typed = filter.length();
     } else {
         // unknown completion type
         return;
     }
+
+    if(listItems.empty()) {
+        return;
+    }
+
     m_ctrl->AutoCompSetSeparator('!');
+    m_ctrl->AutoCompSetAutoHide(false);
     m_ctrl->AutoCompSetMaxWidth(50);
     m_ctrl->AutoCompSetMaxHeight(4);
     m_ctrl->AutoCompShow(length_typed, listItems);
@@ -105,6 +116,15 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
     if(m_ctrl->AutoCompActive()) {
+        if(event.GetKeyCode() == WXK_BACK && !CAN_GO_BACK()) {
+            // don't allow to delete outside the writing zone
+            m_ctrl->AutoCompCancel();
+            return;
+        } else if(event.RawControlDown() && event.GetKeyCode() == 'R') {
+            // refresh the list
+            ShowCompletionBox(CompletionType::COMMANDS);
+            return;
+        }
         event.Skip();
         return;
     }

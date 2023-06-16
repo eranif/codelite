@@ -541,35 +541,6 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     }
 }
 
-#include "clTreeCtrl.h"
-namespace
-{
-bool DoSetFocus(wxWindow* win)
-{
-    if(win->IsEnabled()) {
-        if(dynamic_cast<wxTextCtrl*>(win)) {
-            win->CallAfter(&wxTextCtrl::SetFocus);
-            return true;
-        } else if(dynamic_cast<wxStyledTextCtrl*>(win)) {
-            win->CallAfter(&wxStyledTextCtrl::SetFocus);
-            return true;
-        } else if(dynamic_cast<clTreeCtrl*>(win)) {
-            win->CallAfter(&clTreeCtrl::SetFocus);
-            return true;
-        }
-    }
-
-    // try the children
-    auto children = win->GetChildren();
-    for(auto c : children) {
-        if(DoSetFocus(c)) {
-            return true;
-        }
-    }
-    return false;
-}
-} // namespace
-
 int clTabCtrl::ChangeSelection(size_t tabIdx)
 {
     // wxWindowUpdateLocker locker(GetParent());
@@ -591,7 +562,7 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
         // Only SetFocus if !Wayland, otherwise it hangs; see #2457
         if(!clIsWaylandSession()) {
             // find the first "focusable" window and set the focus
-            DoSetFocus(activeTab->GetWindow());
+            ::SetBestFocus(activeTab->GetWindow());
         }
     }
     Refresh();

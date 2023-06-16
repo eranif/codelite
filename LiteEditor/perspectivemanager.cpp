@@ -229,8 +229,11 @@ void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show)
                     }
                 }
             }
-            if(index != wxNOT_FOUND)
+            if(index != wxNOT_FOUND) {
                 pane->GetNotebook()->SetSelection(index);
+                // set the focus to the selected tab
+                ::SetBestFocus(pane->GetNotebook()->GetPage(index));
+            }
         }
 
     } else {

@@ -32,6 +32,7 @@
 #include "clDataViewListCtrl.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clGetTextFromUserDialog.h"
+#include "clTreeCtrl.h"
 #include "cl_standard_paths.h"
 #include "cpp_scanner.h"
 #include "ctags_manager.h"
@@ -2137,4 +2138,26 @@ bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initia
     auto res = dlg.GetValue();
     selected->swap(res);
     return true;
+}
+
+bool SetBestFocus(wxWindow* win)
+{
+    if(win->IsEnabled()) {
+        if(dynamic_cast<wxStyledTextCtrl*>(win)) {
+            win->CallAfter(&wxStyledTextCtrl::SetFocus);
+            return true;
+        } else if(dynamic_cast<clTreeCtrl*>(win)) {
+            win->CallAfter(&clTreeCtrl::SetFocus);
+            return true;
+        }
+    }
+
+    // try the children
+    auto children = win->GetChildren();
+    for(auto c : children) {
+        if(SetBestFocus(c)) {
+            return true;
+        }
+    }
+    return false;
 }

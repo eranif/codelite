@@ -671,4 +671,7 @@ WXDLLIMPEXP_SDK bool clIsWaylandSession();
  */
 WXDLLIMPEXP_SDK bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initial_selection,
                                                    wxArrayString* selected);
+
+/// Find the best window starting from `win` and give it the focus
+WXDLLIMPEXP_SDK bool SetBestFocus(wxWindow* win);
 #endif // GLOBALS_H

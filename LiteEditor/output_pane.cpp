@@ -56,11 +56,13 @@ OutputPane::OutputPane(wxWindow* parent, const wxString& caption, long style)
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(OutputPane::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &OutputPane::OnSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_SHOW_OUTPUT_TAB, &OutputPane::OnToggleTab, this);
+    m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &OutputPane::OnPageChanged, this);
     SetSize(-1, 250);
 }
 
 OutputPane::~OutputPane()
 {
+    m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &OutputPane::OnPageChanged, this);
     EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), NULL,
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), NULL, this);
@@ -330,4 +332,10 @@ void OutputPane::ShowTab(const wxString& name, bool show)
     show_event.SetString(name);
     show_event.SetSelected(show);
     EventNotifier::Get()->ProcessEvent(show_event);
+}
+
+void OutputPane::OnPageChanged(wxBookCtrlEvent& event)
+{
+    event.Skip();
+    ::SetBestFocus(m_book->GetCurrentPage());
 }

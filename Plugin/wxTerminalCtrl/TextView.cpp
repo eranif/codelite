@@ -32,10 +32,7 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
 }
 
-TextView::~TextView()
-{
-    m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
-}
+TextView::~TextView() { m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this); }
 
 void TextView::AppendText(const std::string& buffer)
 {
@@ -108,11 +105,7 @@ wxChar TextView::GetLastChar() const { return m_ctrl->GetCharAt(m_ctrl->GetLastP
 
 int TextView::GetCurrentStyle() { return 0; }
 
-void TextView::Clear()
-{
-    m_ctrl->ClearAll();
-    m_colourHandler.Clear();
-}
+void TextView::Clear() { m_colourHandler.Clear(); }
 
 void TextView::DoScrollToEnd()
 {

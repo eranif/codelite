@@ -2,6 +2,7 @@
 #define WXTERMINALCTRL_H
 
 #include "asyncprocess.h"
+#include "codelite_events.h"
 #include "codelite_exports.h"
 #include "processreaderthread.h"
 #include "wxTerminalColourHandler.h"
@@ -52,6 +53,7 @@ protected:
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
     void PromptForPasswordIfNeeded();
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
 
 protected:
     void DoProcessTerminated();
@@ -70,11 +72,10 @@ public:
 
     TextView* GetView() { return m_outputView; }
 
+    void SSHAndSetWorkingDirectory(const wxString& ssh_account, const wxString& path);
+    void SetTerminalWorkingDirectory(const wxString& path);
     void Terminate();
     void SetAttributes(const wxColour& bg_colour, const wxColour& text_colour, const wxFont& font);
-
-    void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
-    const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 
     void SetPauseOnExit(bool pauseOnExit) { this->m_pauseOnExit = pauseOnExit; }
     bool IsPauseOnExit() const { return m_pauseOnExit; }

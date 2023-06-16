@@ -16,8 +16,5 @@ others:
 Built-In Terminal:
 ------------------
 
-- Hide the typed text when typing password
-- Implement `Ctrl-R` using code completion box
-- When the terminal tab is selected - set the focus to the terminal
 - Allow multiple tabs using wxAuiManager
 

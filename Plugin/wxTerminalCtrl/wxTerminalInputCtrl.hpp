@@ -40,6 +40,7 @@ public:
     wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);
     virtual ~wxTerminalInputCtrl();
     void SetWritePositionEnd();
+    void UpdateTextDeleted(int num);
     void ProcessKeyDown(wxKeyEvent& event);
 };
 

@@ -74,7 +74,11 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         wxString last_token;
         for(auto iter = command.rbegin(); iter != command.rend(); ++iter) {
             auto ch = *iter;
-            if(ch == ' ' || ch == '\t' || ch == '/') {
+            if(ch == ' ' || ch == '\t' || ch == '/'
+#ifdef __WXMSW__
+               || ch == '\\'
+#endif
+            ) {
                 break;
             } else {
                 last_token.insert(last_token.begin(), ch);
@@ -241,4 +245,12 @@ void wxTerminalInputCtrl::OnMenu(wxContextMenuEvent& event)
         },
         wxID_COPY);
     m_ctrl->PopupMenu(&menu);
+}
+
+void wxTerminalInputCtrl::UpdateTextDeleted(int num)
+{
+    if(m_writeStartingPosition < num) {
+        return;
+    }
+    m_writeStartingPosition -= num;
 }

@@ -1602,43 +1602,8 @@ bool Manager::DoFindDockInfo(const wxString& saved_perspective, const wxString& 
 
 bool Manager::ShowOutputPane(wxString focusWin, bool commit)
 {
-    // clMainFrame::Get()->ViewPane(wxT("Output View"), true);
-
     // make the output pane visible
-    GetPerspectiveManager().ToggleOutputPane(false);
-
-    // set the selection to focus win
-    OutputPane* pane = clMainFrame::Get()->GetOutputPane();
-    int index(wxNOT_FOUND);
-    for(size_t i = 0; i < pane->GetNotebook()->GetPageCount(); ++i) {
-        if(pane->GetNotebook()->GetPageText(i) == focusWin) {
-            index = i;
-            break;
-        }
-    }
-
-    if(index == wxNOT_FOUND) {
-        // possibly that tab is hidden, unhide it
-        pane->ShowTab(focusWin, true);
-    }
-
-    if(index != wxNOT_FOUND && index != pane->GetNotebook()->GetSelection()) {
-        wxWindow* focus = wxWindow::FindFocus();
-        clEditor* editor = dynamic_cast<clEditor*>(focus);
-        pane->GetNotebook()->SetSelection((size_t)index);
-        if(editor) {
-            editor->SetFocus();
-        }
-    }
-
-#ifndef __WXMSW__
-#if wxVERSION_NUMBER >= 2900
-    // This is needed in >=wxGTK-2.9, otherwise the current editor sometimes doesn't notice that the output pane has
-    // appeared
-    // resulting in an area at the bottom that can't be scrolled to
-    clMainFrame::Get()->SendSizeEvent(wxSEND_EVENT_POST);
-#endif
-#endif
+    GetPerspectiveManager().ShowOutputPane(focusWin, commit);
     return true;
 }
 

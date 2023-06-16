@@ -2409,18 +2409,7 @@ void clMainFrame::OnViewPaneUI(wxUpdateUIEvent& event)
 
 void clMainFrame::ViewPane(const wxString& paneName, bool checked)
 {
-    wxAuiPaneInfo& info = m_mgr.GetPane(paneName);
-    if(info.IsOk()) {
-        if(checked) {
-            DockablePaneMenuManager::HackShowPane(info, &m_mgr);
-        } else {
-            DockablePaneMenuManager::HackHidePane(true, info, &m_mgr);
-        }
-    }
-
-    // This is needed in >=wxGTK-2.9, otherwise output pane doesn't fully expand, or on closing the auinotebook doesn't
-    // occupy its space
-    SendSizeEvent(wxSEND_EVENT_POST);
+    ManagerST::Get()->GetPerspectiveManager().ShowOutputPane(paneName, checked);
 }
 
 void clMainFrame::ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event)
@@ -4556,22 +4545,7 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    const wxString pane_name = _("Output View");
-    wxAuiPaneInfo& info = m_mgr.GetPane(pane_name);
-    if(!info.IsOk()) {
-        return;
-    }
-
-    if(info.IsShown()) {
-        // hide the windows, and set the focus back to the active editor
-        ViewPane(pane_name, false);
-        CODELITE_SET_BEST_FOCUS();
-    } else {
-        ViewPane(pane_name, true);
-        // select the "Terminal" tab
-        ManagerST::Get()->ShowOutputPane(_("Terminal"));
-        GetOutputPane()->GetBuiltInTerminal()->Focus();
-    }
+    ManagerST::Get()->ShowOutputPane(_("Terminal"), true);
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

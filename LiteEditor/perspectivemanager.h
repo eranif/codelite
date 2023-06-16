@@ -73,8 +73,11 @@ public:
     void FlushCacheToDisk();
     void ConnectEvents(wxAuiManager* mgr);
     void DisconnectEvents();
-
-    void ToggleOutputPane(bool hide);
+    
+    // show or hide the selected tab in the output pane
+    // this method also "unhide" the tab if `show` is set
+    // to true
+    void ShowOutputPane(const wxString& tab, bool show);
     void SetActive(const wxString& active) { this->m_active = active; }
     const wxString& GetActive() const { return m_active; }
 

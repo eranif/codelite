@@ -26,6 +26,7 @@
 #include "perspectivemanager.h"
 
 #include "debuggerpane.h"
+#include "dockablepanemenumanager.h"
 #include "editor_config.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -195,17 +196,47 @@ void PerspectiveManager::ConnectEvents(wxAuiManager* mgr)
     }
 }
 
-void PerspectiveManager::ToggleOutputPane(bool hide)
+void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show)
 {
     if(!m_aui)
         return;
 
-    wxAuiPaneInfo& pane_info = m_aui->GetPane(wxT("Output View"));
-    if(!pane_info.IsOk())
+    wxAuiPaneInfo& info = m_aui->GetPane(wxT("Output View"));
+    if(!info.IsOk()) {
         return;
+    }
 
-    pane_info.Show(!hide);
-    m_aui->Update();
+    if(show) {
+        DockablePaneMenuManager::HackShowPane(info, m_aui);
+        if(!tab.empty()) {
+            // select the requested tab (or unhide it)
+            OutputPane* pane = clMainFrame::Get()->GetOutputPane();
+            int index = wxNOT_FOUND;
+            for(size_t i = 0; i < pane->GetNotebook()->GetPageCount(); ++i) {
+                if(pane->GetNotebook()->GetPageText(i) == tab) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if(index == wxNOT_FOUND) {
+                // possibly that tab is hidden, unhide it
+                pane->ShowTab(tab, true);
+                for(size_t i = 0; i < pane->GetNotebook()->GetPageCount(); ++i) {
+                    if(pane->GetNotebook()->GetPageText(i) == tab) {
+                        index = i;
+                        break;
+                    }
+                }
+            }
+            if(index != wxNOT_FOUND)
+                pane->GetNotebook()->SetSelection(index);
+        }
+
+    } else {
+        DockablePaneMenuManager::HackHidePane(true, info, m_aui);
+    }
+    clMainFrame::Get()->SendSizeEvent(wxSEND_EVENT_POST);
 }
 
 void PerspectiveManager::DisconnectEvents()

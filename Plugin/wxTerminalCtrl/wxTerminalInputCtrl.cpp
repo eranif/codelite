@@ -129,24 +129,35 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
         return;
     }
 
-    if(event.RawControlDown() && event.GetKeyCode() == 'C') {
-        m_terminal->GenerateCtrlC();
-        return;
-    } else if(event.RawControlDown() && event.GetKeyCode() == 'D') {
-        m_terminal->Logout();
-        return;
-    } else if(event.RawControlDown() && event.GetKeyCode() == 'L') {
-        m_terminal->ClearScreen();
-        return;
-    } else if(event.RawControlDown() && event.GetKeyCode() == 'U') {
-        Clear();
-        return;
-    } else if(event.RawControlDown() && event.GetKeyCode() == 'R') {
-        ShowCompletionBox(CompletionType::COMMANDS);
-        return;
-    } else if(event.GetKeyCode() == WXK_TAB) {
-        ShowCompletionBox(CompletionType::WORDS);
-        return;
+    if(event.RawControlDown()) {
+        switch(event.GetKeyCode()) {
+        case 'C':
+            m_terminal->GenerateCtrlC();
+            return;
+        case 'W': {
+            int word_start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
+            if(word_start_pos > m_writeStartingPosition) {
+                m_ctrl->DelWordLeft();
+            } else {
+                Clear();
+            }
+            return;
+        }
+        case 'D':
+            m_terminal->Logout();
+            return;
+        case 'L':
+            m_terminal->ClearScreen();
+            return;
+        case 'U':
+            Clear();
+            return;
+        case 'R':
+            ShowCompletionBox(CompletionType::COMMANDS);
+            return;
+        default:
+            break;
+        }
     }
 
     switch(event.GetKeyCode()) {
@@ -168,7 +179,7 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
         SetText(m_history.Get());
         break;
     case WXK_TAB:
-        // m_terminal->SendTab();
+        ShowCompletionBox(CompletionType::WORDS);
         return;
     case WXK_LEFT:
     case WXK_NUMPAD_LEFT:

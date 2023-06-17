@@ -313,6 +313,10 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
+    if(editor->GetCtrl() != wxWindow::FindFocus()) {
+        return;
+    }
+
     if(event.GetTriggerKind() != LSP::CompletionItem::kTriggerUser && event.IsInsideCommentOrString()) {
         return;
     }

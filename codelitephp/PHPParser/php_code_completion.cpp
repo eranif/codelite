@@ -255,7 +255,7 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
     e.Skip(true);
     if(PHPWorkspace::Get()->IsOpen()) {
         IEditor* editor = GetEditor(e.GetFileName());
-        if(editor && IsPHPFile(editor)) {
+        if(editor && wxWindow::FindFocus() == editor->GetCtrl() && IsPHPFile(editor)) {
             e.Skip(false);
 
             // Update the settings

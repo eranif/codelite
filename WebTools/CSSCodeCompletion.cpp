@@ -141,7 +141,7 @@ void CSSCodeCompletion::OnCodeComplete(clCodeCompletionEvent& event)
 {
     event.Skip();
     IEditor* editor = GetEditor(event.GetFileName());
-    if(editor && m_plugin->IsCSSFile(editor)) {
+    if(editor && wxWindow::FindFocus() == editor->GetCtrl() && m_plugin->IsCSSFile(editor)) {
         // CSS code completion
         event.Skip(false);
         CssCodeComplete(editor);

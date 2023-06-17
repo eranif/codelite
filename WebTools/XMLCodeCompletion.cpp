@@ -376,7 +376,7 @@ void XMLCodeCompletion::OnCodeComplete(clCodeCompletionEvent& event)
 {
     event.Skip();
     IEditor* editor = GetEditor(event.GetFileName());
-    if(editor && editor->GetCtrl()->GetLexer() == wxSTC_LEX_XML) {
+    if(editor && wxWindow::FindFocus() == editor->GetCtrl() && editor->GetCtrl()->GetLexer() == wxSTC_LEX_XML) {
         // an XML file
         event.Skip(false);
         XmlCodeComplete(editor);

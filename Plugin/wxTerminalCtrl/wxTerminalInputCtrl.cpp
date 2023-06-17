@@ -104,7 +104,7 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 
     m_ctrl->AutoCompSetSeparator('!');
     m_ctrl->AutoCompSetAutoHide(false);
-    m_ctrl->AutoCompSetMaxWidth(50);
+    m_ctrl->AutoCompSetMaxWidth(100);
     m_ctrl->AutoCompSetMaxHeight(4);
     m_ctrl->AutoCompShow(length_typed, listItems);
 }

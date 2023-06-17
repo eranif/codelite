@@ -32,12 +32,14 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     UpdateTextAttributes();
     wxTheApp->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
+    m_book->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
     wxTheApp->Unbind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
+    m_book->Unbind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
 }
 
@@ -156,4 +158,10 @@ void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
             break;
         }
     }
+}
+
+void clBuiltinTerminalPane::OnPageChanged(wxAuiNotebookEvent& event)
+{
+    event.Skip();
+    CallAfter(&clBuiltinTerminalPane::Focus);
 }

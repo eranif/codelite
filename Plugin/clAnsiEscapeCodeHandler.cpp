@@ -309,16 +309,29 @@ clAnsiEscapeCodeHandler::clAnsiEscapeCodeHandler()
     m_8_bit_colours_normal.insert({ 254, wxColour("#e4e4e4") });
     m_8_bit_colours_normal.insert({ 255, wxColour("#eeeeee") });
 
-    // lighten the colours a bit
     m_8_bit_colours_for_dark_theme = m_8_bit_colours_normal;
-    for(auto& vt : m_8_bit_colours_for_dark_theme) {
-        vt.second = vt.second.ChangeLightness(150);
+    // lighten the colours a bit
+    for(auto& [_, colour] : m_8_bit_colours_normal) {
+        colour = colour.ChangeLightness(150);
+    }
+
+    // darken the colours for light theme
+    for(auto& [_, colour] : m_8_bit_colours_normal) {
+        colour = colour.ChangeLightness(80);
     }
 
     m_colours_for_dark_theme = m_colours_normal;
-    for(auto& vt : m_colours_for_dark_theme) {
-        vt.second = vt.second.ChangeLightness(150);
+
+    // lighten the colours a bit
+    for(auto& [_, colour] : m_colours_for_dark_theme) {
+        colour = colour.ChangeLightness(150);
     }
+
+    // darken the colours for light theme
+    for(auto& [_, colour] : m_colours_normal) {
+        colour = colour.ChangeLightness(80);
+    }
+
     m_8_bit_colours = &m_8_bit_colours_normal;
     m_colours = &m_colours_normal;
 }

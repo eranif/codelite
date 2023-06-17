@@ -2,6 +2,8 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
+#include "clSystemSettings.h"
+#include "event_notifier.h"
 #include "wxTerminalCtrl.h"
 
 #include <wx/menu.h>
@@ -29,10 +31,15 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     m_colourHandler.SetCtrl(this);
     CallAfter(&TextView::ReloadSettings);
 
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
 }
 
-TextView::~TextView() { m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this); }
+TextView::~TextView()
+{
+    m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
+}
 
 void TextView::AppendText(const wxString& buffer)
 {

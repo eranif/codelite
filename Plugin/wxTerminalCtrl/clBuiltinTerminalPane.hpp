@@ -17,6 +17,7 @@ class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
+    void OnPageChanged(wxAuiNotebookEvent& event);
     void OnSetTitle(wxTerminalEvent& event);
     void UpdateTextAttributes();
     void OnNewDropdown(wxCommandEvent& event);

@@ -1762,14 +1762,6 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
         createProcessFlags = IProcessNoRedirect | IProcessCreateConsole;
     }
 
-#ifdef __WXMSW__
-    createProcessFlags |= IProcessCreateConsole;
-    if(!bldConf->IsGUIProgram()) {
-        // wrap with terminal
-        createProcessFlags |= IProcessWrapInShell;
-    }
-#endif
-
     wxString dummy;
     execLine = GetProjectExecutionCommand(projectName, dummy, bldConf->GetPauseWhenExecEnds());
     wxUnusedVar(dummy);

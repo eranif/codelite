@@ -111,7 +111,7 @@ wxString wxTerminalHistory::ForCompletion(const wxString& filter) const
 
         for(const auto& command : m_commands) {
             wxString lc_command = command.Lower();
-            if(lc_command.Contains(filter)) {
+            if(lc_command.Contains(lc_filer)) {
                 sorted.Add(command);
             }
         }

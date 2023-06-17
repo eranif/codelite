@@ -9,14 +9,8 @@
 #include <wx/stc/stc.h>
 
 class wxTerminalCtrl;
-class WXDLLIMPEXP_SDK wxTerminalInputCtrl
+class WXDLLIMPEXP_SDK wxTerminalInputCtrl : public wxEvtHandler
 {
-    wxTerminalCtrl* m_terminal = nullptr;
-    wxStyledTextCtrl* m_ctrl = nullptr;
-    wxTerminalHistory m_history;
-    int m_writeStartingPosition = 0;
-    clEditEventsHandler::Ptr_t m_editEvents;
-
 protected:
     enum CaretPos {
         HOME,
@@ -24,9 +18,18 @@ protected:
     };
 
     enum CompletionType {
+        NONE = -1,
         WORDS,
         COMMANDS,
     };
+
+protected:
+    wxTerminalCtrl* m_terminal = nullptr;
+    wxStyledTextCtrl* m_ctrl = nullptr;
+    wxTerminalHistory m_history;
+    int m_writeStartingPosition = 0;
+    clEditEventsHandler::Ptr_t m_editEvents;
+    CompletionType m_completionType = CompletionType::NONE;
 
 protected:
     void Clear();

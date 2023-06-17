@@ -44,6 +44,7 @@ wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CONTEXT_MENU,
 void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 {
     m_ctrl->AutoCompCancel();
+
     wxArrayString words;
     int length_typed = 0;
     wxString listItems;
@@ -51,7 +52,7 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         int start_pos = wxNOT_FOUND;
         int end_pos = wxNOT_FOUND;
         wxString editor_text = m_ctrl->GetText();
-
+        m_completionType = CompletionType::WORDS;
         wxString command = GetText();
         wxString last_token;
         for(auto iter = command.rbegin(); iter != command.rend(); ++iter) {
@@ -77,7 +78,10 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         std::set<wxString> suggest_set;
         for(const auto& word : words) {
             wxString lc_word = word.Lower();
-            if(!wxIsdigit(word[0]) && (filter_text.empty() || lc_word.Contains(filter_text)) && !lc_word.empty()) {
+            if(!wxIsdigit(word[0]) &&  // Not a number
+               !lc_word.empty() &&     // the word to display is not empty
+               (filter_text.empty() || // the word to display contains the filter or the filter is empty
+                lc_word.Contains(filter_text))) {
                 suggest_set.insert(word);
             }
         }
@@ -90,28 +94,43 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         }
         listItems.RemoveLast();
     } else if(type == CompletionType::COMMANDS) {
+        m_completionType = CompletionType::COMMANDS;
         wxString filter = GetText();
         listItems = m_history.ForCompletion(GetText());
         length_typed = filter.length();
     } else {
         // unknown completion type
+        m_completionType = CompletionType::NONE;
         return;
     }
 
     if(listItems.empty()) {
+        m_completionType = CompletionType::NONE;
         return;
     }
 
+    wxString selection = listItems.BeforeFirst('!');
     m_ctrl->AutoCompSetSeparator('!');
     m_ctrl->AutoCompSetAutoHide(false);
     m_ctrl->AutoCompSetMaxWidth(100);
     m_ctrl->AutoCompSetMaxHeight(4);
     m_ctrl->AutoCompShow(length_typed, listItems);
+    if(!selection.empty()) {
+        m_ctrl->AutoCompSelect(selection);
+    }
 }
 
 #define CAN_GO_BACK() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
 #define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
 #define CAN_EDIT() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
+
+namespace
+{
+std::unordered_set<int> DO_NOT_REFRESH_KEYS = { WXK_RETURN,       WXK_NUMPAD_ENTER, WXK_UP,    WXK_DOWN,
+                                                WXK_NUMPAD_UP,    WXK_NUMPAD_DOWN,  WXK_RIGHT, WXK_LEFT,
+                                                WXK_NUMPAD_RIGHT, WXK_NUMPAD_LEFT,  WXK_HOME,  WXK_END,
+                                                WXK_PAGEDOWN,     WXK_PAGEUP };
+}
 
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
@@ -120,15 +139,25 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
             // don't allow to delete outside the writing zone
             m_ctrl->AutoCompCancel();
             return;
-        } else if(event.RawControlDown() && event.GetKeyCode() == 'R') {
+        } else if(m_completionType == CompletionType::COMMANDS && event.RawControlDown() && event.GetKeyCode() == 'R') {
             // refresh the list
             ShowCompletionBox(CompletionType::COMMANDS);
             return;
+        } else if(m_completionType == CompletionType::WORDS && event.GetKeyCode() == WXK_TAB) {
+            // refresh the list
+            ShowCompletionBox(CompletionType::WORDS);
+            return;
+        } else {
+            event.Skip();
         }
-        event.Skip();
+
+        if(DO_NOT_REFRESH_KEYS.count(event.GetKeyCode()) == 0) {
+            CallAfter(&wxTerminalInputCtrl::ShowCompletionBox, m_completionType);
+        }
         return;
     }
 
+    m_completionType = CompletionType::NONE;
     if(event.RawControlDown()) {
         switch(event.GetKeyCode()) {
         case 'C':

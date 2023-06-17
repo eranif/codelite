@@ -1,8 +1,10 @@
 #include "phpexecutor.h"
 
 #include "PHPTerminal.h"
+#include "StringUtils.h"
 #include "TerminalEmulatorFrame.h"
 #include "asyncprocess.h"
+#include "clConsoleBase.h"
 #include "clplatform.h"
 #include "console_frame.h"
 #include "environmentconfig.h"
@@ -77,18 +79,20 @@ bool PHPExecutor::DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const
     }
 
     wxString errmsg;
-    wxString cmd = DoGetCLICommand(script, proj, errmsg);
-    if(cmd.IsEmpty()) {
+    auto [php, cmd] = DoGetCLICommand(script, proj, errmsg);
+    if(php.empty() || cmd.empty()) {
         ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK | wxICON_INFORMATION, wxTheApp->GetTopWindow());
         return false;
     }
+
     wxString wd;
     if(proj) {
         const PHPProjectSettingsData& data = proj->GetSettings();
         wd = data.GetWorkingDirectory();
     }
 
-    clLogMessage(cmd);
+    clDEBUG() << "Php:" << php << endl;
+    clDEBUG() << "Arguments:" << cmd << endl;
 
     // Apply the environment variables
     // export XDEBUG_CONFIG="idekey=session_name remote_host=localhost profiler_enable=1"
@@ -113,30 +117,34 @@ bool PHPExecutor::DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const
         return m_terminal.ExecuteNoConsole(cmd, wd);
     } else {
         // Launch the terminal UI
-        ConsoleFrame* console = new ConsoleFrame(EventNotifier::Get()->TopFrame());
-        console->Show();
-        console->Execute(cmd, wd);
-        return true;
+        auto console = clConsoleBase::GetTerminal();
+        console->SetTerminalNeeded(true);
+        console->SetWorkingDirectory(wd);
+        console->SetWaitWhenDone(true);
+        console->SetCommand(php, cmd);
+        return console->Start();
     }
 }
 
 bool PHPExecutor::RunScript(const wxString& script, wxString& php_output)
 {
     wxString errmsg;
-    wxString cmd = DoGetCLICommand(script, PHPProject::Ptr_t(NULL), errmsg);
+    auto [php, cmd] = DoGetCLICommand(script, PHPProject::Ptr_t(NULL), errmsg);
     if(cmd.IsEmpty()) {
         ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK | wxICON_INFORMATION, wxTheApp->GetTopWindow());
         return false;
     }
 
-    IProcess::Ptr_t phpcli(::CreateSyncProcess(cmd, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+    IProcess::Ptr_t phpcli(
+        ::CreateSyncProcess(php + " " + cmd, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
     CHECK_PTR_RET_FALSE(phpcli);
 
     phpcli->WaitForTerminate(php_output);
     return true;
 }
 
-wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t proj, wxString& errmsg)
+std::pair<wxString, wxString> PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t proj,
+                                                           wxString& errmsg)
 {
     wxArrayString args;
     wxString php;
@@ -166,16 +174,17 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
     if(ini.Contains(" ")) {
         ini.Prepend("\"").Append("\"");
     }
-    if(index.IsEmpty()) {
+
+    if(index.empty()) {
         errmsg = _("Please set an index file to execute in the project settings");
-        return "";
+        return {};
     }
 
-    if(php.IsEmpty()) {
+    if(php.empty()) {
         php = globalConf.GetPhpExe();
-        if(php.IsEmpty()) {
+        if(php.empty()) {
             errmsg = _("Could not find any PHP binary to execute. Please set one in from: 'PHP | Settings'");
-            return "";
+            return {};
         }
     }
 
@@ -184,14 +193,9 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
 
     // Build the command for execution
     wxString cmd;
+    php = StringUtils::WrapWithDoubleQuotes(php);
 
-    cmd << php; // Wrap the php exe with qoutes
-#ifdef __WXMSW__
-    ::WrapWithQuotes(cmd);
-#else
-    cmd.Replace(" ", "\\ "); // escape spaces
-#endif
-    if(!ini.IsEmpty()) {
+    if(!ini.empty()) {
         cmd << " -c " << ini << " ";
     }
 
@@ -199,7 +203,7 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
     cmd << wxT(" -d html_errors=Off ");
 
     // add the include path
-    if(includePath.IsEmpty() == false) {
+    if(includePath.empty() == false) {
         cmd << wxT("-d include_path=\"");
         for(size_t i = 0; i < includePath.GetCount(); i++) {
             cmd << includePath.Item(i) << clPlatform::PathSeparator;
@@ -210,13 +214,16 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
     ::WrapWithQuotes(index);
     cmd << index;
 
-    if(!args.IsEmpty()) {
+    if(!args.empty()) {
         cmd << " ";
     }
 
     // set the program arguments to run (after the index file is set)
-    for(size_t i = 0; i < args.GetCount(); ++i) {
-        cmd << args.Item(i) << " ";
+    if(!args.empty()) {
+        for(const wxString& arg : args) {
+            cmd << StringUtils::WrapWithDoubleQuotes(arg) << " ";
+        }
+        cmd.RemoveLast();
     }
-    return cmd;
+    return { php, cmd };
 }

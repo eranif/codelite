@@ -4,19 +4,48 @@
 #include "FontUtils.hpp"
 #include "Platform.hpp"
 #include "TextView.h"
+#include "bitmap_loader.h"
 #include "clWorkspaceManager.h"
+#include "drawingutils.h"
 #include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
 #include "macros.h"
 #include "ssh/ssh_account_info.h"
 
 #include <wx/app.h>
+#include <wx/aui/dockart.h>
+#include <wx/aui/framemanager.h>
+#include <wx/aui/tabart.h>
 #include <wx/sizer.h>
+
+#ifndef __WXMSW__
+namespace
+{
+class MyTabArt : public wxAuiGenericTabArt
+{
+public:
+    MyTabArt()
+    {
+        m_activeCloseBmp = clGetManager()->GetStdIcons()->LoadBitmap("file_close");
+        m_disabledCloseBmp = clGetManager()->GetStdIcons()->LoadBitmap("file_close");
+    }
+    virtual ~MyTabArt() {}
+    wxAuiTabArt* Clone() override { return new MyTabArt(*this); }
+};
+} // namespace
+#endif // MAC or GTK
 
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_book = new wxAuiNotebook(this);
+    m_book = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                               wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_TAB_FIXED_WIDTH);
+#ifndef __WXMSW__
+    m_book->SetTabCtrlHeight(GetTextExtent("Tp").GetHeight() * 2);
+    m_book->SetArtProvider(new MyTabArt());
+#endif
     m_toolbar = new clToolBar(this);
 
     GetSizer()->Add(m_toolbar, wxSizerFlags().Expand().Proportion(0));

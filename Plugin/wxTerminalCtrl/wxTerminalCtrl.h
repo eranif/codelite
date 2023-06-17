@@ -71,7 +71,7 @@ public:
     virtual ~wxTerminalCtrl();
 
     TextView* GetView() { return m_outputView; }
-
+    bool IsFocused();
     void SSHAndSetWorkingDirectory(const wxString& ssh_account, const wxString& path);
     void SetTerminalWorkingDirectory(const wxString& path);
     void Terminate();

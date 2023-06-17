@@ -28,6 +28,7 @@ public:
     virtual ~clBuiltinTerminalPane();
 
     void Focus();
+    bool IsFocused();
     wxTerminalCtrl* GetActiveTerminal();
 };
 

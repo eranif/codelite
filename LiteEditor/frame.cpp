@@ -4545,8 +4545,19 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    ManagerST::Get()->ShowOutputPane(_("Terminal"), true);
-    GetOutputPane()->GetBuiltInTerminal()->Focus();
+    // toggle the terminal view
+    if(GetOutputPane()->GetBuiltInTerminal()->IsFocused()) {
+        ManagerST::Get()->ShowOutputPane(_("Terminal"), false);
+        if(clGetManager()->GetActiveEditor()) {
+            // set the focus back to the editor
+            clGetManager()->GetActiveEditor()->SetActive();
+        } else {
+            ::SetBestFocus(this);
+        }
+    } else {
+        ManagerST::Get()->ShowOutputPane(_("Terminal"), true);
+        GetOutputPane()->GetBuiltInTerminal()->Focus();
+    }
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

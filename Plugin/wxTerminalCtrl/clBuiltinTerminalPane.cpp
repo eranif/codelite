@@ -194,3 +194,12 @@ void clBuiltinTerminalPane::OnPageChanged(wxAuiNotebookEvent& event)
     event.Skip();
     CallAfter(&clBuiltinTerminalPane::Focus);
 }
+
+bool clBuiltinTerminalPane::IsFocused()
+{
+    if(GetActiveTerminal()) {
+        return IsShown() && GetActiveTerminal()->IsFocused();
+    } else {
+        return IsShown();
+    }
+}

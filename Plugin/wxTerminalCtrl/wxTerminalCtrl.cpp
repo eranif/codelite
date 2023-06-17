@@ -238,3 +238,5 @@ void wxTerminalCtrl::SetTerminalWorkingDirectory(const wxString& path)
 {
     m_shell->Write(wxString() << "cd " << StringUtils::WrapWithDoubleQuotes(path));
 }
+
+bool wxTerminalCtrl::IsFocused() { return m_outputView->GetCtrl()->HasFocus(); }

@@ -44,6 +44,6 @@ void wxCrafterRo2g8MInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/cppchecksettingsdlg_cppchecker_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_cppchecker_cppchecksettingsdlg_cppchecker_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/cppchecksettingsdlg_cppchecker_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_cppchecker_cppchecksettingsdlg_cppchecker_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/cppchecksettingsdlg_cppchecker_bitmaps.cpp$C__msys64_home_eran_devl_codelite_cppchecker_cppchecksettingsdlg_cppchecker_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/cppchecksettingsdlg_cppchecker_bitmaps.cpp$C__msys64_home_eran_devl_codelite_cppchecker_cppchecksettingsdlg_cppchecker_bitmaps.xrc"));
 }

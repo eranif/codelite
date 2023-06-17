@@ -28,7 +28,6 @@
 
 #include "asyncprocess.h"
 #include "clTabTogglerHelper.h"
-#include "cppcheck_settings.h"
 #include "plugin.h"
 
 class wxMenuItem;
@@ -37,96 +36,25 @@ class CppCheckReportPage;
 class CppCheckPlugin : public IPlugin
 {
     wxString m_cppcheckPath;
-    IProcess* m_cppcheckProcess;
-    bool m_canRestart;
-    wxArrayString m_filelist;
-    wxMenuItem* m_explorerSepItem;
-    wxMenuItem* m_workspaceSepItem;
-    wxMenuItem* m_projectSepItem;
-    CppCheckReportPage* m_view;
-    bool m_analysisInProgress;
-    size_t m_fileCount;
-    CppCheckSettings m_settings;
-    size_t m_fileProcessed;
-    clTabTogglerHelper::Ptr_t m_tabHelper;
+    IProcess* m_cppcheckProcess = nullptr;
+    bool m_runStartedByUser = false;
 
 protected:
-    wxString DoGetCommand(ProjectPtr proj);
-    wxString DoGenerateFileList();
+    wxString DoGetCommand();
 
 protected:
-    wxMenu* CreateEditorPopMenu();
-    wxMenu* CreateFileExplorerPopMenu();
-    wxMenu* CreateWorkspacePopMenu();
-    wxMenu* CreateProjectPopMenu();
+    void DoRun();
+    void AddOutputLine(const wxString& message);
+    void NotifyStopped();
 
 protected:
-    void GetFileListFromDir(const wxString& root);
-    void RemoveExcludedFiles();
-    void SetTabVisible(bool clearContent);
-    void DoProcess(ProjectPtr proj);
-    void DoStartTest(ProjectPtr proj = NULL);
-    ProjectPtr FindSelectedProject();
-    void DoSettingsItem(ProjectPtr project = NULL);
-
-protected:
-    /**
-     * @brief handle the context meun activation from within the editor context menu
-     * @param e
-     */
-    void OnCheckFileEditorItem(wxCommandEvent& e);
-
-    /**
-     * @brief handle the context meun activation from within the file explorer
-     * @param e
-     */
-    void OnCheckFileExplorerItem(wxCommandEvent& e);
-
-    /**
-     * @brief handle the context meun activation from the workspace
-     * @param e
-     */
-    void OnCheckWorkspaceItem(wxCommandEvent& e);
-
-    /**
-     * @brief handle the context meun activation from the project
-     * @param e
-     */
-    void OnCheckProjectItem(wxCommandEvent& e);
-
-    /**
-     * @brief handles the cppcheck process termination
-     * @param e
-     */
+    void OnSettings(wxCommandEvent& event);
+    void OnIsBuildInProgress(clBuildEvent& event);
+    void OnStopRun(clBuildEvent& event);
+    void OnRun(wxCommandEvent& event);
     void OnCppCheckTerminated(clProcessEvent& e);
-
-    /**
-     * @brief there is data to read from the process
-     * @param e
-     */
     void OnCppCheckReadData(clProcessEvent& e);
-
-    /**
-     * @brief handle the workspace closed event and clear the view
-     * @param e
-     */
     void OnWorkspaceClosed(clWorkspaceEvent& e);
-    /**
-     * @brief handle the settings item
-     * @param e event
-     */
-    void OnSettingsItem(wxCommandEvent& e);
-    /**
-     * @brief handle the settings item from a project context menu
-     * @param e event
-     */
-    void OnSettingsItemProject(wxCommandEvent& e);
-
-    /**
-     * @brief editor context menu is about to be shown.
-     * Append our content if the active editor is a Cxx file
-     */
-    void OnEditorContextMenu(clContextMenuEvent& event);
 
 public:
     CppCheckPlugin(IManager* manager);
@@ -141,20 +69,9 @@ public:
     virtual void UnPlug();
 
     /**
-     * @brief stop the analysis of the current file
-     * and clear the queue
-     */
-    void StopAnalysis();
-    /**
      * @brief return true if analysis currently running
      */
     bool AnalysisInProgress() const { return m_cppcheckProcess != NULL; }
-
-    /**
-     * @brief return the progress
-     * @return value between 0-100
-     */
-    size_t GetProgress();
 };
 
 #endif // CppChecker

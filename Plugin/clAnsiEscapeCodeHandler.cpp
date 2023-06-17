@@ -411,6 +411,7 @@ void clAnsiEscapeCodeHandler::Parse(const wxString& buffer)
                 m_state = eColourHandlerState::kNormal;
                 break;
             case '0':
+            case '2':
                 m_state = eColourHandlerState::kOSC_Title;
                 break;
             case '8':
@@ -530,6 +531,7 @@ void clAnsiEscapeCodeHandler::Parse(const wxString& buffer)
 void clAnsiEscapeCodeHandler::Reset()
 {
     m_chunks.clear();
+    m_windowTitle.clear();
     m_state = eColourHandlerState::kNormal;
 }
 
@@ -620,8 +622,10 @@ void clAnsiEscapeCodeHandler::Render(wxSTCStyleProvider* style_provider, bool is
                     stc->StartStyling(pos);
                     stc->SetStyling(chunk.d.length(), curstyle);
                 }
-            } else if(chunk.is_title || chunk.is_empty()) {
-                // for now, we do nothing
+            } else if(chunk.is_title) {
+                m_windowTitle = chunk.d;
+            } else if(chunk.is_empty()) {
+                // skip it
             } else {
                 wxTextAttr result;
                 UpdateStyle(chunk, style_provider->GetDefaultStyle(), &result);
@@ -668,7 +672,7 @@ void clAnsiEscapeCodeHandler::Render(wxTextCtrl* ctrl, const wxTextAttr& default
                 ctrl->AppendText(chunk.d);
 
             } else if(chunk.is_title || chunk.is_empty()) {
-                // for now, we do nothing
+                m_windowTitle = chunk.d;
             } else {
                 wxTextAttr result;
                 UpdateStyle(chunk, defaultStyle, &result);
@@ -729,7 +733,7 @@ void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defau
             xx += text_size.GetWidth();
 
         } else if(chunk.is_title || chunk.is_empty()) {
-            // for now, we do nothing
+            m_windowTitle = chunk.d;
         } else {
             UpdateStyle(chunk, dc, defaultStyle);
         }

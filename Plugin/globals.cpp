@@ -25,6 +25,7 @@
 #include "globals.h"
 
 #include "ColoursAndFontsManager.h"
+#include "Notebook.h"
 #include "SelectFileTypesDialog.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -60,6 +61,7 @@
 #include <set>
 #include <vector>
 #include <wx/app.h>
+#include <wx/aui/auibook.h>
 #include <wx/clipbrd.h>
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
@@ -2143,7 +2145,19 @@ bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initia
 bool SetBestFocus(wxWindow* win)
 {
     if(win->IsEnabled()) {
-        if(dynamic_cast<wxStyledTextCtrl*>(win)) {
+        if(dynamic_cast<wxBookCtrlBase*>(win)) {
+            auto book = dynamic_cast<wxBookCtrlBase*>(win);
+            if(book->GetPageCount()) {
+                book->GetPage(book->GetSelection())->CallAfter(&wxWindow::SetFocus);
+            }
+            return true;
+        } else if(dynamic_cast<Notebook*>(win)) {
+            auto book = dynamic_cast<Notebook*>(win);
+            if(book->GetCurrentPage()) {
+                book->GetCurrentPage()->CallAfter(&wxWindow::SetFocus);
+            }
+            return true;
+        } else if(dynamic_cast<wxStyledTextCtrl*>(win)) {
             win->CallAfter(&wxStyledTextCtrl::SetFocus);
             return true;
         } else if(dynamic_cast<clTreeCtrl*>(win)) {

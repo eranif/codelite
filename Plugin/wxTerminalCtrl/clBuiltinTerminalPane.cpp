@@ -6,18 +6,21 @@
 #include "TextView.h"
 #include "clWorkspaceManager.h"
 #include "event_notifier.h"
+#include "macros.h"
 #include "ssh/ssh_account_info.h"
 
+#include <wx/app.h>
 #include <wx/sizer.h>
 
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
+    m_book = new wxAuiNotebook(this);
     m_toolbar = new clToolBar(this);
-    m_terminal = new wxTerminalCtrl(this);
+
     GetSizer()->Add(m_toolbar, wxSizerFlags().Expand().Proportion(0));
-    GetSizer()->Add(m_terminal, wxSizerFlags().Expand().Proportion(1));
+    GetSizer()->Add(m_book, wxSizerFlags().Expand().Proportion(1));
 
     auto image_list = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(wxID_NEW, _("New"), image_list->Add("file_new"), wxEmptyString, wxITEM_DROPDOWN);
@@ -28,42 +31,62 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
     GetSizer()->Fit(this);
     UpdateTextAttributes();
+    wxTheApp->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
+    wxTheApp->Unbind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
 }
 
 void clBuiltinTerminalPane::UpdateTextAttributes()
 {
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    auto default_style = lexer->GetProperty(0);
-    wxColour bg_colour = default_style.GetBgColour();
-    wxColour fg_colour = default_style.GetFgColour();
+    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        auto terminal = static_cast<wxTerminalCtrl*>(m_book->GetPage(i));
+        auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+        auto default_style = lexer->GetProperty(0);
+        wxColour bg_colour = default_style.GetBgColour();
+        wxColour fg_colour = default_style.GetFgColour();
 
-    wxFont text_font;
-    if(default_style.GetFontInfoDesc().empty()) {
-        text_font = FontUtils::GetDefaultMonospacedFont();
-    } else {
-        text_font.SetNativeFontInfo(default_style.GetFontInfoDesc());
+        wxFont text_font;
+        if(default_style.GetFontInfoDesc().empty()) {
+            text_font = FontUtils::GetDefaultMonospacedFont();
+        } else {
+            text_font.SetNativeFontInfo(default_style.GetFontInfoDesc());
+        }
+        terminal->GetView()->SetAttributes(bg_colour, fg_colour, text_font);
+        terminal->GetView()->ReloadSettings();
     }
-    m_terminal->GetView()->SetAttributes(bg_colour, fg_colour, text_font);
-    m_terminal->GetView()->ReloadSettings();
 }
 
 void clBuiltinTerminalPane::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
 
-void clBuiltinTerminalPane::Focus() { m_terminal->GetView()->GetCtrl()->SetFocus(); }
+void clBuiltinTerminalPane::Focus()
+{
+    if(GetActiveTerminal()) {
+        GetActiveTerminal()->GetView()->GetCtrl()->CallAfter(&wxStyledTextCtrl::SetFocus);
+    }
+}
+
 wxTerminalCtrl* clBuiltinTerminalPane::GetActiveTerminal()
 {
     // when we add tabs, return the active selected tab's terminal
-    return m_terminal;
+    if(m_book->GetPageCount() == 0) {
+        return nullptr;
+    }
+    return static_cast<wxTerminalCtrl*>(m_book->GetPage(m_book->GetSelection()));
 }
 
 void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
 {
+    // now show the menu for choosing the location for this terminal
+    if(!GetActiveTerminal()) {
+        // this functionality requires an active terminal running
+        return;
+    }
+
     wxMenu menu;
     wxString default_path;          // contains the wd for the terminal
     wxString workspace_ssh_account; // if remote workspace is loaded, this variable will contains its account
@@ -93,6 +116,7 @@ void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
                 } else {
                     GetActiveTerminal()->SSHAndSetWorkingDirectory(workspace_ssh_account, default_path);
                 }
+                Focus();
             },
             item->GetId());
         menu.AppendSeparator();
@@ -105,10 +129,31 @@ void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
             wxEVT_MENU,
             [this, account](wxCommandEvent& event) {
                 GetActiveTerminal()->SSHAndSetWorkingDirectory(account.GetAccountName(), wxEmptyString);
+                Focus();
             },
             item->GetId());
     }
     m_toolbar->ShowMenuForButton(wxID_NEW, &menu);
 }
 
-void clBuiltinTerminalPane::OnNew(wxCommandEvent& event) { OnNewDropdown(event); }
+void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxTerminalCtrl* ctrl = new wxTerminalCtrl(m_book);
+    m_book->AddPage(ctrl, _("Terminal"), true);
+    Focus();
+}
+
+void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
+{
+    event.Skip();
+    wxWindow* win = dynamic_cast<wxWindow*>(event.GetEventObject());
+    CHECK_PTR_RET(win);
+
+    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        if(win == m_book->GetPage(i)) {
+            m_book->SetPageText(i, event.GetString());
+            break;
+        }
+    }
+}

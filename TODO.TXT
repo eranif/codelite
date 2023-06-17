@@ -13,8 +13,3 @@ others:
 - dap: support stdio connection based
 - sftp save should be in sync with clRemoteHost
 
-Built-In Terminal:
-------------------
-
-- Allow multiple tabs using wxAuiManager
-

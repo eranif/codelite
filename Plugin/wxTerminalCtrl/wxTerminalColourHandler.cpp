@@ -17,7 +17,7 @@ wxTerminalColourHandler::wxTerminalColourHandler() {}
 
 wxTerminalColourHandler::~wxTerminalColourHandler() { wxDELETE(m_style_provider); }
 
-void wxTerminalColourHandler::Append(const wxString& buffer)
+void wxTerminalColourHandler::Append(const wxString& buffer, wxString* window_title)
 {
     if(buffer == "\n") {
         // small optimization:
@@ -48,12 +48,9 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
     handler.Parse(FileUtils::ToStdString(curline) + buffer);
     handler.Render(m_style_provider, !DrawingUtils::IsDark(m_defaultAttr.GetBackgroundColour()));
     SetCaretEnd();
-}
-
-wxTerminalColourHandler& wxTerminalColourHandler::operator<<(const wxString& buffer)
-{
-    Append(buffer);
-    return *this;
+    if(window_title) {
+        *window_title = handler.GetWindowTitle();
+    }
 }
 
 void wxTerminalColourHandler::SetCtrl(TextView* ctrl)

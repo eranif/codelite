@@ -88,7 +88,7 @@ class WXDLLIMPEXP_SDK clAnsiEscapeCodeHandler
     ColoursMap_t* m_8_bit_colours = nullptr;
     ColoursMap_t* m_colours = nullptr;
     eColourHandlerState m_state = eColourHandlerState::kNormal;
-
+    wxString m_windowTitle;
     // Every entry in the below vector represents a single line, splitted into "chunks"
     std::vector<Chunk::Vec_t> m_chunks;
 
@@ -126,6 +126,11 @@ public:
                        bool isLightTheme);
 
     size_t GetLineCount() const { return m_chunks.size(); }
+
+    /**
+     * @brief return the window title found
+     */
+    const wxString& GetWindowTitle() const { return m_windowTitle; }
 };
 
 #endif // CLASCIIESCAPCODEHANDLER_HPP

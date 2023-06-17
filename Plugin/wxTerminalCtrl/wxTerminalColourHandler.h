@@ -20,14 +20,11 @@ class wxTerminalColourHandler : public wxEvtHandler
 protected:
     void SetCaretEnd();
 
-protected:
-    void Append(const wxString& buffer);
-
 public:
     wxTerminalColourHandler();
     ~wxTerminalColourHandler();
 
-    wxTerminalColourHandler& operator<<(const wxString& buffer);
+    void Append(const wxString& buffer, wxString* window_title);
     void SetCtrl(TextView* ctrl);
     void SetDefaultStyle(const wxTextAttr& attr);
     void Clear();

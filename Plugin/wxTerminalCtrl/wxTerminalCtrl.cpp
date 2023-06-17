@@ -33,8 +33,6 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
 
     m_inputCtrl = new wxTerminalInputCtrl(this, m_outputView->GetCtrl());
     CallAfter(&wxTerminalCtrl::StartShell);
-
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &wxTerminalCtrl::OnWorkspaceLoaded, this);
 }
 
 wxTerminalCtrl::~wxTerminalCtrl()
@@ -55,6 +53,7 @@ bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& p
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessError, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &wxTerminalCtrl::OnWorkspaceLoaded, this);
     m_style = style & ~wxWINDOW_STYLE_MASK; // Remove all wxWindow style masking (Hi Word)
     return wxWindow::Create(parent, winid, pos, size,
                             style & wxWINDOW_STYLE_MASK); // Pass only the Windows related styles
@@ -88,9 +87,17 @@ void wxTerminalCtrl::Run(const wxString& command)
 
 void wxTerminalCtrl::AppendText(const wxString& text)
 {
-    m_outputView->StyleAndAppend(text);
+    wxString window_title;
+    m_outputView->StyleAndAppend(text, &window_title);
     m_outputView->SetCaretEnd();
     m_inputCtrl->SetWritePositionEnd();
+
+    if(!window_title.empty()) {
+        wxTerminalEvent titleEvent(wxEVT_TERMINAL_CTRL_SET_TITLE);
+        titleEvent.SetEventObject(this);
+        titleEvent.SetString(window_title);
+        GetEventHandler()->AddPendingEvent(titleEvent);
+    }
 }
 
 void wxTerminalCtrl::GenerateCtrlC()

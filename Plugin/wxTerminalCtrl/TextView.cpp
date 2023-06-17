@@ -70,7 +70,10 @@ wxString TextView::GetLineText(int lineNumber) const { return m_ctrl->GetLineTex
 
 void TextView::ReloadSettings() { ApplyTheme(); }
 
-void TextView::StyleAndAppend(const wxString& buffer) { m_colourHandler << buffer; }
+void TextView::StyleAndAppend(const wxString& buffer, wxString* window_title)
+{
+    m_colourHandler.Append(buffer, window_title);
+}
 
 void TextView::ShowCommandLine()
 {

@@ -4546,6 +4546,7 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     ManagerST::Get()->ShowOutputPane(_("Terminal"), true);
+    GetOutputPane()->GetBuiltInTerminal()->Focus();
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

@@ -2,6 +2,7 @@
 #define WXTERMINALINPUTCTRL_HPP
 
 #include "clEditorEditEventsHandler.h"
+#include "codelite_events.h"
 #include "codelite_exports.h"
 #include "wxTerminalHistory.hpp"
 
@@ -38,6 +39,8 @@ protected:
     void SetCaretPos(CaretPos pos);
     void OnMenu(wxContextMenuEvent& event);
     void ShowCompletionBox(CompletionType type);
+    void OnStcCharAdded(wxStyledTextEvent& event);
+    void OnCodeComplete(clCodeCompletionEvent& event);
 
 public:
     wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);

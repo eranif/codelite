@@ -36,10 +36,17 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 {
     m_editEvents.Reset(new MyEventsHandler(m_ctrl));
     m_ctrl->Bind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
+    m_ctrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalInputCtrl::OnStcCharAdded, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &wxTerminalInputCtrl::OnCodeComplete, this);
     m_history.Load();
 }
 
-wxTerminalInputCtrl::~wxTerminalInputCtrl() { m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this); }
+wxTerminalInputCtrl::~wxTerminalInputCtrl()
+{
+    m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
+    m_ctrl->Unbind(wxEVT_STC_CHARADDED, &wxTerminalInputCtrl::OnStcCharAdded, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &wxTerminalInputCtrl::OnCodeComplete, this);
+}
 
 void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 {
@@ -129,7 +136,7 @@ namespace
 std::unordered_set<int> DO_NOT_REFRESH_KEYS = { WXK_RETURN,       WXK_NUMPAD_ENTER, WXK_UP,    WXK_DOWN,
                                                 WXK_NUMPAD_UP,    WXK_NUMPAD_DOWN,  WXK_RIGHT, WXK_LEFT,
                                                 WXK_NUMPAD_RIGHT, WXK_NUMPAD_LEFT,  WXK_HOME,  WXK_END,
-                                                WXK_PAGEDOWN,     WXK_PAGEUP };
+                                                WXK_PAGEDOWN,     WXK_PAGEUP,       WXK_ESCAPE };
 }
 
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
@@ -147,12 +154,12 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
             // refresh the list
             ShowCompletionBox(CompletionType::WORDS);
             return;
+        } else if(DO_NOT_REFRESH_KEYS.count(event.GetKeyCode()) == 0 && !event.RawControlDown() &&
+                  !event.ControlDown()) {
+            // let the conrol process the key
+            event.Skip();
         } else {
             event.Skip();
-        }
-
-        if(DO_NOT_REFRESH_KEYS.count(event.GetKeyCode()) == 0) {
-            CallAfter(&wxTerminalInputCtrl::ShowCompletionBox, m_completionType);
         }
         return;
     }
@@ -313,4 +320,17 @@ void wxTerminalInputCtrl::UpdateTextDeleted(int num)
         return;
     }
     m_writeStartingPosition -= num;
+}
+
+void wxTerminalInputCtrl::OnStcCharAdded(wxStyledTextEvent& event) { event.Skip(); }
+
+void wxTerminalInputCtrl::OnCodeComplete(clCodeCompletionEvent& event)
+{
+    if(wxWindow::FindFocus() != m_ctrl) {
+        event.Skip();
+        return;
+    }
+
+    // ours to handle
+    CallAfter(&wxTerminalInputCtrl::ShowCompletionBox, CompletionType::WORDS);
 }

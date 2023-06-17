@@ -147,12 +147,6 @@ void CppCheckPlugin::OnCppCheckTerminated(clProcessEvent& e)
 {
     wxDELETE(m_cppcheckProcess);
     m_runStartedByUser = false;
-    clAnsiEscapeCodeColourBuilder builder;
-    builder.Add("=== ", eAsciiColours::NORMAL_TEXT);
-    builder.Add("cppcheck run executed completed", eAsciiColours::GREEN);
-    builder.Add(" ===", eAsciiColours::NORMAL_TEXT);
-
-    AddOutputLine(builder.GetString() + "\n");
     NotifyStopped();
 }
 

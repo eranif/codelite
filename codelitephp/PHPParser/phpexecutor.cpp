@@ -6,7 +6,6 @@
 #include "asyncprocess.h"
 #include "clConsoleBase.h"
 #include "clplatform.h"
-#include "console_frame.h"
 #include "environmentconfig.h"
 #include "file_logger.h"
 #include "php_configuration_data.h"

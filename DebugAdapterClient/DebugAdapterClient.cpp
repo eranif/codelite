@@ -43,7 +43,6 @@
 #include "clWorkspaceManager.h"
 #include "cl_config.h"
 #include "clcommandlineparser.h"
-#include "console_frame.h"
 #include "debuggermanager.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"

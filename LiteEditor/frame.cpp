@@ -70,7 +70,6 @@
 #include "cl_unredo.h"
 #include "code_completion_manager.h"
 #include "configuration_manager_dlg.h"
-#include "console_frame.h"
 #include "context_cpp.h"
 #include "cpp_symbol_tree.h"
 #include "cpptoken.h"

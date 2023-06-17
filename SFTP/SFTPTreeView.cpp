@@ -37,7 +37,6 @@
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButtonBase.h"
 #include "cl_config.h"
-#include "console_frame.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"

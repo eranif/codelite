@@ -517,9 +517,16 @@ void clAnsiEscapeCodeHandler::Parse(const wxString& buffer)
             case '7':
             case '8':
             case '9':
+                // consume [digits]
+                break;
+            case '\n':
+                NEXT(true);
+                m_state = eColourHandlerState::kNormal;
+                break;
             case 'h':
             case 'l':
-                // consume [digits]+[l|h]
+                NEXT(false);
+                m_state = eColourHandlerState::kNormal;
                 break;
             case '\r':
                 *chunk = Chunk{};

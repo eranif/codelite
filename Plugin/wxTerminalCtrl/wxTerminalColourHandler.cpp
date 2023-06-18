@@ -19,21 +19,13 @@ wxTerminalColourHandler::~wxTerminalColourHandler() { wxDELETE(m_style_provider)
 
 void wxTerminalColourHandler::Append(const wxString& buffer, wxString* window_title)
 {
-    if(buffer == "\n") {
-        // small optimization:
-        // this is usually the case where the user simply hit ENTER after typing a command
-        // No need to do fancy stuff here
-        m_ctrl->AppendText(buffer);
-        return;
-    }
-
     wxString curline;
     auto stc = m_ctrl->GetCtrl();
     int last_pos = stc->GetLastPosition();
     int last_line = stc->LineFromPosition(last_pos);
     curline = stc->GetLine(last_line);
     if(curline.EndsWith("\n")) {
-        // a ncomplete line
+        // a complete line
         curline.clear();
     } else {
         // remove the last line from the control
@@ -42,14 +34,12 @@ void wxTerminalColourHandler::Append(const wxString& buffer, wxString* window_ti
 
     m_ctrl->SelectNone();
     m_ctrl->SetInsertionPointEnd();
-
-    // wxWindowUpdateLocker locker{ m_ctrl };
-    clAnsiEscapeCodeHandler handler;
-    handler.Parse(FileUtils::ToStdString(curline) + buffer);
-    handler.Render(m_style_provider, !DrawingUtils::IsDark(m_defaultAttr.GetBackgroundColour()));
+    
+    m_ansiEscapeHandler.Parse(curline + buffer);
+    m_ansiEscapeHandler.Render(m_style_provider, !DrawingUtils::IsDark(m_defaultAttr.GetBackgroundColour()));
     SetCaretEnd();
     if(window_title) {
-        *window_title = handler.GetWindowTitle();
+        *window_title = m_ansiEscapeHandler.GetWindowTitle();
     }
 }
 

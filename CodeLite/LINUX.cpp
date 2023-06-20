@@ -95,6 +95,21 @@ bool LINUX::FindHomeDir(wxString* homedir)
 
 bool LINUX::Which(const wxString& command, wxString* command_fullpath)
 {
+    wxString pathenv;
+    GetPath(&pathenv, m_flags & SEARCH_PATH_ENV);
+    wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
+    for(auto path : paths) {
+        path << "/" << command;
+        if(wxFileName::FileExists(path)) {
+            *command_fullpath = path;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool LINUX::GetPath(wxString* value, bool useSystemPath)
+{
     wxString HOME;
     FindHomeDir(&HOME);
 
@@ -128,7 +143,7 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
     // common paths: read the env PATH and append the other paths to it
     // so common paths found ENV:PATH will come first
     wxArrayString paths;
-    if(m_flags & SEARCH_PATH_ENV) {
+    if(useSystemPath) {
         wxString pathenv;
         ::wxGetEnv("PATH", &pathenv);
         paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
@@ -158,15 +173,8 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
     }
 
     paths.swap(unique_paths);
-
-    for(auto path : paths) {
-        path << "/" << command;
-        if(wxFileName::FileExists(path)) {
-            *command_fullpath = path;
-            return true;
-        }
-    }
-    return false;
+    *value = wxJoin(paths, ':');
+    return true;
 }
 
 bool LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath)

@@ -42,10 +42,12 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_book = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_TAB_FIXED_WIDTH);
-#ifndef __WXMSW__
+
+#ifdef __WXMAC__
     m_book->SetTabCtrlHeight(GetTextExtent("Tp").GetHeight() * 2);
     m_book->SetArtProvider(new MyTabArt());
 #endif
+
     m_toolbar = new clToolBar(this);
 
     GetSizer()->Add(m_toolbar, wxSizerFlags().Expand().Proportion(0));

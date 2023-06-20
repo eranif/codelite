@@ -46,6 +46,11 @@ public:
      * this method attempts to search for command-<N>...command (in this order)
      */
     bool WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath);
+
+    /**
+     * @brief return environment variable value
+     */
+    bool GetPath(wxString* value, bool useSystemPath = true) override;
 };
 
 #endif // LINUX_HPP

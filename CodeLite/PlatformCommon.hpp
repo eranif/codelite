@@ -73,5 +73,10 @@ public:
      * @brief set the chroot folder (on linux, this method is a placeholder)
      */
     virtual void SetChroot(const wxString& chroot) { wxUnusedVar(chroot); }
+
+    /**
+     * @brief return environment variable value
+     */
+    virtual bool GetPath(wxString* value, bool useSystemPath = true);
 };
 #endif // PLAFORM_COMMON_HPP

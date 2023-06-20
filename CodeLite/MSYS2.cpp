@@ -82,13 +82,60 @@ bool MSYS2::FindHomeDir(wxString* homedir)
 
 bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
 {
+    wxString path;
+    GetPath(&path, m_flags & SEARCH_PATH_ENV);
+
+    wxArrayString paths_to_try = ::wxStringTokenize(path, ";", wxTOKEN_STRTOK);
+    // at the point, the order of search is:
+    // MSYS2 -> Executable path -> PATH paths
+    for(auto path : paths_to_try) {
+        path << "\\" << command << ".exe";
+        if(wxFileName::FileExists(path)) {
+            *command_fullpath = path;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool MSYS2::WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath)
+{
+    return PlatformCommon::WhichWithVersion(command, versions, command_fullpath);
+}
+
+void MSYS2::SetChroot(const wxString& chroot)
+{
+    m_chroots.clear();
+    m_chroots.Add(chroot);
+
+    // exclude PATH from the search path
+    m_flags &= ~SEARCH_PATH_ENV;
+}
+
+namespace
+{
+thread_local MSYS2 instance;
+}
+
+MSYS2* MSYS2::Get() { return &instance; }
+
+MSYS2::MSYS2()
+{
+    // last entry -> most important (reverse order)
+    m_chroots.Add(R"(\usr)");
+    m_chroots.Add(R"(\mingw64)");
+    m_chroots.Add(R"(\clang64)");
+}
+
+bool MSYS2::GetPath(wxString* value, bool useSystemPath)
+{
     wxString msyspath;
     bool has_msys2 = FindInstallDir(&msyspath);
 
     wxArrayString paths_to_try;
 
     // next in order are is the PATH environment variable
-    if(m_flags & SEARCH_PATH_ENV) {
+    if(useSystemPath) {
         wxString pathenv;
         wxGetEnv("PATH", &pathenv);
         paths_to_try = ::wxStringTokenize(pathenv, ";", wxTOKEN_STRTOK);
@@ -133,44 +180,6 @@ bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
     if(local_bin.DirExists()) {
         paths_to_try.Add(local_bin.GetPath());
     }
-
-    // at the point, the order of search is:
-    // MSYS2 -> Executable path -> PATH paths
-    for(auto path : paths_to_try) {
-        path << "\\" << command << ".exe";
-        if(wxFileName::FileExists(path)) {
-            *command_fullpath = path;
-            return true;
-        }
-    }
-    return false;
-}
-
-bool MSYS2::WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath)
-{
-    return PlatformCommon::WhichWithVersion(command, versions, command_fullpath);
-}
-
-void MSYS2::SetChroot(const wxString& chroot)
-{
-    m_chroots.clear();
-    m_chroots.Add(chroot);
-
-    // exclude PATH from the search path
-    m_flags &= ~SEARCH_PATH_ENV;
-}
-
-namespace
-{
-thread_local MSYS2 instance;
-}
-
-MSYS2* MSYS2::Get() { return &instance; }
-
-MSYS2::MSYS2()
-{
-    // last entry -> most important (reverse order)
-    m_chroots.Add(R"(\usr)");
-    m_chroots.Add(R"(\mingw64)");
-    m_chroots.Add(R"(\clang64)");
+    *value = ::wxJoin(paths_to_try, ';');
+    return true;
 }

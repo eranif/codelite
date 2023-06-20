@@ -3,6 +3,7 @@
 #include "Platform.hpp"
 #include "StringUtils.h"
 #include "TextView.h"
+#include "environmentconfig.h" // EnvSetter
 #include "event_notifier.h"
 #include "ssh/ssh_account_info.h"
 #include "wxTerminalInputCtrl.hpp"
@@ -61,14 +62,27 @@ bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& p
 
 void wxTerminalCtrl::StartShell()
 {
-    wxString shell;
-#ifdef __WXMSW__
-    shell = "C:\\Windows\\System32\\cmd.exe /Q"; // echo off
-#else
-    shell = "/bin/bash";
-#endif
-    m_shell =
-        ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole);
+    wxString bash_exec;
+    if(!ThePlatform->Which("bash", &bash_exec)) {
+        wxMessageBox(_("Unable to find bash. Can't start a terminal"), "CodeLite",
+                     wxICON_WARNING | wxOK | wxCENTRE | wxOK_DEFAULT);
+        return;
+    }
+
+    wxString path;
+    ThePlatform->GetPath(&path, false);
+
+    // override PATH with our own
+    clEnvList_t env = { { "PATH", path } };
+
+    // apply global variables
+    EnvSetter global_env;
+
+    // override the PATH
+    clEnvironment local_env(&env);
+
+    m_shell = ::CreateAsyncProcess(this, bash_exec + " -i",
+                                   IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole);
     if(m_shell) {
         wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
         readyEvent.SetEventObject(this);

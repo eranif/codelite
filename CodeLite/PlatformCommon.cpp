@@ -61,3 +61,9 @@ bool PlatformCommon::FindRustupToolchainBinDir(wxString* rustup_bin_dir)
     return true;
 #endif
 }
+
+bool PlatformCommon::GetPath(wxString* value, bool useSystemPath)
+{
+    wxUnusedVar(useSystemPath);
+    return ::wxGetEnv("PATH", value);
+}

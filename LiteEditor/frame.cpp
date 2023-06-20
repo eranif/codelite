@@ -2408,7 +2408,7 @@ void clMainFrame::OnViewPaneUI(wxUpdateUIEvent& event)
 
 void clMainFrame::ViewPane(const wxString& paneName, bool checked)
 {
-    ManagerST::Get()->GetPerspectiveManager().ShowOutputPane(paneName, checked);
+    ManagerST::Get()->GetPerspectiveManager().ShowPane(paneName, checked);
 }
 
 void clMainFrame::ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event)
@@ -4545,7 +4545,7 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     // toggle the terminal view
-    if(GetOutputPane()->GetBuiltInTerminal()->IsFocused()) {
+    if(GetOutputPane()->IsShown() && GetOutputPane()->GetBuiltInTerminal()->IsFocused()) {
         ManagerST::Get()->ShowOutputPane(_("Terminal"), false);
         if(clGetManager()->GetActiveEditor()) {
             // set the focus back to the editor

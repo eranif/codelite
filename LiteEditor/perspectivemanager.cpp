@@ -198,48 +198,41 @@ void PerspectiveManager::ConnectEvents(wxAuiManager* mgr)
 
 void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show)
 {
-    if(!m_aui)
-        return;
-
-    wxAuiPaneInfo& info = m_aui->GetPane(wxT("Output View"));
-    if(!info.IsOk()) {
+    if(!ShowPane("Output View", show)) {
         return;
     }
 
-    if(show) {
-        DockablePaneMenuManager::HackShowPane(info, m_aui);
-        if(!tab.empty()) {
-            // select the requested tab (or unhide it)
-            OutputPane* pane = clMainFrame::Get()->GetOutputPane();
-            int index = wxNOT_FOUND;
-            for(size_t i = 0; i < pane->GetNotebook()->GetPageCount(); ++i) {
-                if(pane->GetNotebook()->GetPageText(i) == tab) {
-                    index = i;
-                    break;
-                }
-            }
+    if(tab.empty() || !show) {
+        return;
+    }
 
-            if(index == wxNOT_FOUND) {
-                // possibly that tab is hidden, unhide it
-                pane->ShowTab(tab, true);
-                for(size_t i = 0; i < pane->GetNotebook()->GetPageCount(); ++i) {
-                    if(pane->GetNotebook()->GetPageText(i) == tab) {
-                        index = i;
-                        break;
-                    }
-                }
-            }
-            if(index != wxNOT_FOUND) {
-                pane->GetNotebook()->SetSelection(index);
-                // set the focus to the selected tab
-                ::SetBestFocus(pane->GetNotebook()->GetPage(index));
+    auto pane = clMainFrame::Get()->GetOutputPane();
+    auto notebook = pane->GetNotebook();
+    // select the requested tab (or unhide it)
+
+    int index = wxNOT_FOUND;
+    for(size_t i = 0; i < notebook->GetPageCount(); ++i) {
+        if(notebook->GetPageText(i) == tab) {
+            index = i;
+            break;
+        }
+    }
+
+    if(index == wxNOT_FOUND) {
+        // possibly that tab is hidden, unhide it
+        pane->ShowTab(tab, true);
+        for(size_t i = 0; i < notebook->GetPageCount(); ++i) {
+            if(notebook->GetPageText(i) == tab) {
+                index = i;
+                break;
             }
         }
-
-    } else {
-        DockablePaneMenuManager::HackHidePane(true, info, m_aui);
     }
-    clMainFrame::Get()->SendSizeEvent(wxSEND_EVENT_POST);
+    if(index != wxNOT_FOUND) {
+        notebook->SetSelection(index);
+        // set the focus to the selected tab
+        ::SetBestFocus(notebook->GetPage(index));
+    }
 }
 
 void PerspectiveManager::DisconnectEvents()
@@ -314,4 +307,23 @@ void PerspectiveManager::FlushCacheToDisk()
         FileUtils::WriteFileContent(path, value);
         clDEBUG() << "Saving perspective:" << name << "to file:" << path << endl;
     }
+}
+
+bool PerspectiveManager::ShowPane(const wxString& pane, bool show)
+{
+    if(!m_aui)
+        return false;
+
+    wxAuiPaneInfo& info = m_aui->GetPane(pane);
+    if(!info.IsOk()) {
+        return false;
+    }
+
+    if(show) {
+        DockablePaneMenuManager::HackShowPane(info, m_aui);
+    } else {
+        DockablePaneMenuManager::HackHidePane(true, info, m_aui);
+    }
+    clMainFrame::Get()->SendSizeEvent(wxSEND_EVENT_POST);
+    return true;
 }

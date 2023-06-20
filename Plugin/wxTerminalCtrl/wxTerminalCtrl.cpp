@@ -42,6 +42,7 @@ wxTerminalCtrl::~wxTerminalCtrl()
         m_shell->Detach();
         wxDELETE(m_shell);
     }
+    wxDELETE(m_inputCtrl);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &wxTerminalCtrl::OnWorkspaceLoaded, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessError, this);

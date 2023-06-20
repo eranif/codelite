@@ -39,11 +39,11 @@ public:
     }
 
     // no undo
-    void OnUndo(wxCommandEvent& event) override { wxUnusedVar(event); }
+    void OnUndo(wxCommandEvent& event) override { CHECK_FOCUS_WINDOW(); }
     // no cut
-    void OnCut(wxCommandEvent& event) override { wxUnusedVar(event); }
+    void OnCut(wxCommandEvent& event) override { CHECK_FOCUS_WINDOW(); }
     // no redo
-    void OnRedo(wxCommandEvent& event) override { wxUnusedVar(event); }
+    void OnRedo(wxCommandEvent& event) override { CHECK_FOCUS_WINDOW(); }
 };
 } // namespace
 

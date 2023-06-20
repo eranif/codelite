@@ -81,9 +81,10 @@ void wxTerminalCtrl::StartShell()
     env.push_back({ "MSYS2_NOSTART", "yes" });
     env.push_back({ "MSYSTEM_PREFIX", "/usr" });
     env.push_back({ "MSYSTEM", "MSYS" });
+    env.push_back({ "WD", wxFileName(bash_exec).GetPath() });
 #endif
 
-    m_shell = ::CreateAsyncProcess(this, bash_exec + " -i",
+    m_shell = ::CreateAsyncProcess(this, bash_exec + " --login -i",
                                    IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole,
                                    wxEmptyString, &env);
     if(m_shell) {

@@ -41,6 +41,7 @@ protected:
     void ShowCompletionBox(CompletionType type);
     void OnStcCharAdded(wxStyledTextEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
+    void EnsureCommandLineVisible();
 
 public:
     wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);
@@ -48,6 +49,7 @@ public:
     void SetWritePositionEnd();
     void UpdateTextDeleted(int num);
     void ProcessKeyDown(wxKeyEvent& event);
+    int GetWriteStartPosition() const { return m_writeStartingPosition; }
 };
 
 #endif // WXTERMINALINPUTCTRL_HPP

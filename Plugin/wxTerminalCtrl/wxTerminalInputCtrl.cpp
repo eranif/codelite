@@ -10,31 +10,48 @@
 #include <wx/dcmemory.h>
 #include <wx/tokenzr.h>
 
+#define CAN_GO_BACK() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
+#define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
+#define CAN_EDIT() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
+
 namespace
 {
 class MyEventsHandler : public clEditEventsHandler
 {
+    wxTerminalInputCtrl* m_input_ctrl = nullptr;
+
 public:
-    MyEventsHandler(wxStyledTextCtrl* ctrl)
+    MyEventsHandler(wxTerminalInputCtrl* input_ctrl, wxStyledTextCtrl* ctrl)
         : clEditEventsHandler(ctrl)
+        , m_input_ctrl(input_ctrl)
     {
     }
 
     void OnPaste(wxCommandEvent& event) override
     {
         CHECK_FOCUS_WINDOW();
-        int where = m_stc->GetLastPosition();
-        m_stc->SetSelection(where, where);
-        m_stc->SetCurrentPos(where);
+        if(!(m_stc->GetCurrentPos() >= m_input_ctrl->GetWriteStartPosition())) {
+            int where = m_stc->GetLastPosition();
+            m_stc->SetSelection(where, where);
+            m_stc->SetCurrentPos(where);
+        }
         clEditEventsHandler::OnPaste(event);
     }
+
+    // no undo
+    void OnUndo(wxCommandEvent& event) override { wxUnusedVar(event); }
+    // no cut
+    void OnCut(wxCommandEvent& event) override { wxUnusedVar(event); }
+    // no redo
+    void OnRedo(wxCommandEvent& event) override { wxUnusedVar(event); }
 };
 } // namespace
+
 wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl)
     : m_terminal(parent)
     , m_ctrl(ctrl)
 {
-    m_editEvents.Reset(new MyEventsHandler(m_ctrl));
+    m_editEvents.Reset(new MyEventsHandler(this, m_ctrl));
     m_ctrl->Bind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
     m_ctrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalInputCtrl::OnStcCharAdded, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &wxTerminalInputCtrl::OnCodeComplete, this);
@@ -127,10 +144,6 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
     }
 }
 
-#define CAN_GO_BACK() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
-#define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
-#define CAN_EDIT() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
-
 namespace
 {
 std::unordered_set<int> DO_NOT_REFRESH_KEYS = { WXK_RETURN,       WXK_NUMPAD_ENTER, WXK_UP,    WXK_DOWN,
@@ -208,11 +221,13 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
     case WXK_NUMPAD_UP:
         m_history.Up();
         SetText(m_history.Get());
+        EnsureCommandLineVisible();
         break;
     case WXK_DOWN:
     case WXK_NUMPAD_DOWN:
         m_history.Down();
         SetText(m_history.Get());
+        EnsureCommandLineVisible();
         break;
     case WXK_TAB:
         ShowCompletionBox(CompletionType::WORDS);
@@ -238,9 +253,10 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
         SetCaretPos(CaretPos::HOME);
         break;
     default: {
-        // all other cases: if the position is not within the write area,
-        // move the caret to write area and continue
-        if(!CAN_EDIT()) {
+        if((event.GetKeyCode() >= WXK_SPACE) & (event.GetKeyCode() < WXK_DELETE) && !CAN_EDIT() &&
+           (event.GetModifiers() == wxMOD_SHIFT || event.GetModifiers() == wxMOD_NONE)) {
+            // ASCII characters - in the non wanted area
+            // and shift is pressed or no modifier at all
             SetCaretPos(CaretPos::END);
         }
         event.Skip();
@@ -333,4 +349,10 @@ void wxTerminalInputCtrl::OnCodeComplete(clCodeCompletionEvent& event)
 
     // ours to handle
     CallAfter(&wxTerminalInputCtrl::ShowCompletionBox, CompletionType::WORDS);
+}
+
+void wxTerminalInputCtrl::EnsureCommandLineVisible()
+{
+    m_ctrl->ScrollToEnd();
+    m_ctrl->EnsureCaretVisible();
 }

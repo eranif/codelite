@@ -355,6 +355,17 @@ wxChar look_ahead(const wxString& buffer, size_t curpos, size_t count)
     }
     return wxChar(0);
 }
+
+bool check_string_from_curpos_ahead(const wxString& buffer, size_t curpos, const wxString& str)
+{
+    for(size_t i = 0; i < str.length(); ++i) {
+        if(curpos >= buffer.length() || buffer[curpos] != str[i]) {
+            return false;
+        }
+        curpos += 1;
+    }
+    return true;
+}
 } // namespace
 
 void clAnsiEscapeCodeHandler::Parse(const wxString& buffer)
@@ -557,12 +568,12 @@ void clAnsiEscapeCodeHandler::Reset()
 
 void clAnsiEscapeCodeHandler::EnsureCurrent()
 {
-    if(m_chunks.empty()) {
+    if(m_chunks.empty() || m_chunks.back().back().is_eol) {
         // add new row
         m_chunks.emplace_back(Chunk::Vec_t{});
         // make sure we have at least 1 element in that row
         m_chunks.back().push_back(Chunk{});
-    } else if(m_chunks.back().back().is_completed || m_chunks.back().back().is_eol) {
+    } else {
         // start new chunk for the current line
         m_chunks.back().push_back(Chunk{});
     }

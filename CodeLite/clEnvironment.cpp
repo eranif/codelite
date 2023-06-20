@@ -143,9 +143,7 @@ void clEnvironment::ApplyFromList(const clEnvList_t* envlist)
         }
     }
 
-    for(const auto& d : *envlist) {
-        const wxString& varname = d.first;
-        wxString varvalue = d.second;
+    for(auto [varname, varvalue] : *envlist) {
         auto vars = FindVariablesInString(varvalue);
 
         for(const auto& p : vars) {

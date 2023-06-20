@@ -70,19 +70,21 @@ void wxTerminalCtrl::StartShell()
     }
 
     wxString path;
-    ThePlatform->GetPath(&path, false);
+    ThePlatform->GetPath(&path, true);
 
     // override PATH with our own
     clEnvList_t env = { { "PATH", path } };
-
-    // apply global variables
-    EnvSetter global_env;
-
-    // override the PATH
-    clEnvironment local_env(&env);
+#ifdef __WXMSW__
+    env.push_back({ "LOGINSHELL", "bash" });
+    env.push_back({ "MSYS2_PATH", "/usr/local/bin:/usr/bin:/bin" });
+    env.push_back({ "MSYS2_NOSTART", "yes" });
+    env.push_back({ "MSYSTEM_PREFIX", "/usr" });
+    env.push_back({ "MSYSTEM", "MSYS" });
+#endif
 
     m_shell = ::CreateAsyncProcess(this, bash_exec + " -i",
-                                   IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole);
+                                   IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole,
+                                   wxEmptyString, &env);
     if(m_shell) {
         wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
         readyEvent.SetEventObject(this);

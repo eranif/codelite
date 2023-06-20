@@ -54,6 +54,7 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
     m_editEvents.Reset(new MyEventsHandler(this, m_ctrl));
     m_ctrl->Bind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
     m_ctrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalInputCtrl::OnStcCharAdded, this);
+    m_ctrl->Bind(wxEVT_STC_AUTOCOMP_COMPLETED, &wxTerminalInputCtrl::OnStcCompleted, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &wxTerminalInputCtrl::OnCodeComplete, this);
     m_history.Load();
 }
@@ -61,6 +62,7 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 wxTerminalInputCtrl::~wxTerminalInputCtrl()
 {
     m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
+    m_ctrl->Unbind(wxEVT_STC_AUTOCOMP_COMPLETED, &wxTerminalInputCtrl::OnStcCompleted, this);
     m_ctrl->Unbind(wxEVT_STC_CHARADDED, &wxTerminalInputCtrl::OnStcCharAdded, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &wxTerminalInputCtrl::OnCodeComplete, this);
 }
@@ -339,6 +341,14 @@ void wxTerminalInputCtrl::UpdateTextDeleted(int num)
 }
 
 void wxTerminalInputCtrl::OnStcCharAdded(wxStyledTextEvent& event) { event.Skip(); }
+void wxTerminalInputCtrl::OnStcCompleted(wxStyledTextEvent& event)
+{
+    event.Skip();
+    // user inserted text from the auto completion list
+    // to give it a feel like the real terminal, execute it
+    m_history.Add(GetText());
+    m_terminal->Run(GetText());
+}
 
 void wxTerminalInputCtrl::OnCodeComplete(clCodeCompletionEvent& event)
 {

@@ -40,6 +40,7 @@ protected:
     void OnMenu(wxContextMenuEvent& event);
     void ShowCompletionBox(CompletionType type);
     void OnStcCharAdded(wxStyledTextEvent& event);
+    void OnStcCompleted(wxStyledTextEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void EnsureCommandLineVisible();
 

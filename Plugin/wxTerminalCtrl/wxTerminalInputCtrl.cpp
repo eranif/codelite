@@ -204,6 +204,9 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
             Clear();
             return;
         case 'R':
+            if(!CAN_EDIT()) {
+                SetCaretPos(CaretPos::END);
+            }
             ShowCompletionBox(CompletionType::COMMANDS);
             return;
         default:

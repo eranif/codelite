@@ -262,8 +262,17 @@ void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
     if(m_processOutput.empty()) {
         return;
     }
-    AppendText(*m_processOutput.begin());
-    m_processOutput.erase(m_processOutput.begin());
+
+    std::string buffer_to_process;
+    if(m_processOutput.begin()->size() > 1024) {
+        buffer_to_process = m_processOutput.begin()->substr(0, 1024);
+        (*m_processOutput.begin()).erase(0, 1024);
+    } else {
+        buffer_to_process = *m_processOutput.begin();
+        m_processOutput.erase(m_processOutput.begin());
+    }
+
+    AppendText(buffer_to_process);
     // see if we need to prompt for password
     PromptForPasswordIfNeeded();
 }

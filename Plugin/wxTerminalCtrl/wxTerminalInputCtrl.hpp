@@ -49,15 +49,16 @@ protected:
 
     // terminal special actions
     void OnCommandComplete(wxCommandEvent& event);
-    void OnTabComplete(wxCommandEvent& event);
     void OnClearScreen(wxCommandEvent& event);
     void OnLogout(wxCommandEvent& event);
     void OnClearLine(wxCommandEvent& event);
     void OnCtrlC(wxCommandEvent& event);
     void OnDeleteWord(wxCommandEvent& event);
-    void OnEnter(wxCommandEvent& event);
-    void OnUp(wxCommandEvent& event);
-    void OnDown(wxCommandEvent& event);
+    // no events (called from ProcessKeyDown)
+    void OnEnter();
+    void OnUp();
+    void OnDown();
+    void OnTabComplete();
 
 public:
     wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);

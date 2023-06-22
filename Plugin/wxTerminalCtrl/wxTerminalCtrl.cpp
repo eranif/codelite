@@ -31,7 +31,7 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     m_outputView = new TextView(this);
     m_outputView->SetSink(this);
     GetSizer()->Add(m_outputView, wxSizerFlags(1).Expand());
-
+    Bind(wxEVT_IDLE, &wxTerminalCtrl::OnIdle, this);
     m_inputCtrl = new wxTerminalInputCtrl(this, m_outputView->GetCtrl());
     CallAfter(&wxTerminalCtrl::StartShell);
 }
@@ -43,6 +43,7 @@ wxTerminalCtrl::~wxTerminalCtrl()
         wxDELETE(m_shell);
     }
     wxDELETE(m_inputCtrl);
+    Unbind(wxEVT_IDLE, &wxTerminalCtrl::OnIdle, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &wxTerminalCtrl::OnWorkspaceLoaded, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessError, this);
@@ -124,6 +125,9 @@ void wxTerminalCtrl::GenerateCtrlC()
         return;
     }
 
+    // Clear the output buffer
+    m_processOutput.clear();
+
     wxString ctrlc;
     ctrlc.append(1, (char)0x3);
 #ifdef __WXMSW__
@@ -150,17 +154,9 @@ void wxTerminalCtrl::SetAttributes(const wxColour& bg_colour, const wxColour& te
     m_outputView->ReloadSettings();
 }
 
-void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event)
-{
-    AppendText(event.GetOutputRaw());
-    PromptForPasswordIfNeeded();
-}
+void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event) { m_processOutput.push_back(event.GetOutputRaw()); }
 
-void wxTerminalCtrl::OnProcessError(clProcessEvent& event)
-{
-    AppendText(event.GetOutputRaw());
-    PromptForPasswordIfNeeded();
-}
+void wxTerminalCtrl::OnProcessError(clProcessEvent& event) { m_processOutput.push_back(event.GetOutputRaw()); }
 
 void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event)
 {
@@ -258,3 +254,16 @@ void wxTerminalCtrl::SetTerminalWorkingDirectory(const wxString& path)
 }
 
 bool wxTerminalCtrl::IsFocused() { return m_outputView->GetCtrl()->HasFocus(); }
+
+void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
+{
+    event.RequestMore();
+    event.Skip();
+    if(m_processOutput.empty()) {
+        return;
+    }
+    AppendText(*m_processOutput.begin());
+    m_processOutput.erase(m_processOutput.begin());
+    // see if we need to prompt for password
+    PromptForPasswordIfNeeded();
+}

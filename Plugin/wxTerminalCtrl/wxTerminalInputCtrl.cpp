@@ -5,6 +5,7 @@
 #include "event_notifier.h"
 #include "wxTerminalCtrl.h"
 
+#include <vector>
 #include <wx/bitmap.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
@@ -45,6 +46,24 @@ public:
     // no redo
     void OnRedo(wxCommandEvent& event) override { CHECK_FOCUS_WINDOW(); }
 };
+
+wxString get_word(const wxString& command)
+{
+    wxString last_token;
+    for(auto iter = command.rbegin(); iter != command.rend(); ++iter) {
+        auto ch = *iter;
+        if(ch == ' ' || ch == '\t' || ch == '/'
+#ifdef __WXMSW__
+           || ch == '\\'
+#endif
+        ) {
+            break;
+        } else {
+            last_token.insert(last_token.begin(), ch);
+        }
+    }
+    return last_token;
+}
 } // namespace
 
 wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl)
@@ -55,6 +74,40 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
     m_ctrl->Bind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
     m_ctrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalInputCtrl::OnStcCharAdded, this);
     m_ctrl->Bind(wxEVT_STC_AUTOCOMP_COMPLETED, &wxTerminalInputCtrl::OnStcCompleted, this);
+
+    std::vector<wxAcceleratorEntry> V;
+    V.push_back(wxAcceleratorEntry{ wxACCEL_NORMAL, WXK_TAB, XRCID("ID_dircomp") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'R', XRCID("ID_command") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'U', XRCID("ID_clear_line") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'L', XRCID("ID_clear_screen") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'D', XRCID("ID_logout") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'C', XRCID("ID_ctrl_c") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'W', XRCID("ID_delete_word") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_NORMAL, WXK_RETURN, XRCID("ID_enter") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_NORMAL, WXK_NUMPAD_ENTER, XRCID("ID_enter") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_NORMAL, WXK_UP, XRCID("ID_up") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_NORMAL, WXK_NUMPAD_UP, XRCID("ID_up") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_NORMAL, WXK_DOWN, XRCID("ID_down") });
+    V.push_back(wxAcceleratorEntry{ wxACCEL_NORMAL, WXK_NUMPAD_DOWN, XRCID("ID_down") });
+
+    wxAcceleratorEntry accel_entries[V.size()];
+    for(size_t i = 0; i < V.size(); ++i) {
+        accel_entries[i] = V[i];
+    }
+    wxAcceleratorTable accel_table(V.size(), accel_entries);
+
+    m_ctrl->SetAcceleratorTable(accel_table);
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnTabComplete, this, XRCID("ID_dircomp"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnCommandComplete, this, XRCID("ID_command"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnClearLine, this, XRCID("ID_clear_line"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnClearScreen, this, XRCID("ID_clear_screen"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnLogout, this, XRCID("ID_logout"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnCtrlC, this, XRCID("ID_ctrl_c"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnDeleteWord, this, XRCID("ID_delete_word"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnEnter, this, XRCID("ID_enter"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnUp, this, XRCID("ID_up"));
+    m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnDown, this, XRCID("ID_down"));
+
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &wxTerminalInputCtrl::OnCodeComplete, this);
     m_history.Load();
 }
@@ -80,20 +133,7 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         wxString editor_text = m_ctrl->GetText();
         m_completionType = CompletionType::WORDS;
         wxString command = GetText();
-        wxString last_token;
-        for(auto iter = command.rbegin(); iter != command.rend(); ++iter) {
-            auto ch = *iter;
-            if(ch == ' ' || ch == '\t' || ch == '/'
-#ifdef __WXMSW__
-               || ch == '\\'
-#endif
-            ) {
-                break;
-            } else {
-                last_token.insert(last_token.begin(), ch);
-            }
-        }
-
+        wxString last_token = get_word(command);
         length_typed = last_token.length();
         wxString filter_text = last_token.Lower();
         // exclude the last line
@@ -161,14 +201,6 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
             // don't allow to delete outside the writing zone
             m_ctrl->AutoCompCancel();
             return;
-        } else if(m_completionType == CompletionType::COMMANDS && event.RawControlDown() && event.GetKeyCode() == 'R') {
-            // refresh the list
-            ShowCompletionBox(CompletionType::COMMANDS);
-            return;
-        } else if(m_completionType == CompletionType::WORDS && event.GetKeyCode() == WXK_TAB) {
-            // refresh the list
-            ShowCompletionBox(CompletionType::WORDS);
-            return;
         } else if(DO_NOT_REFRESH_KEYS.count(event.GetKeyCode()) == 0 && !event.RawControlDown() &&
                   !event.ControlDown()) {
             // let the conrol process the key
@@ -180,63 +212,7 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
     }
 
     m_completionType = CompletionType::NONE;
-    if(event.RawControlDown()) {
-        switch(event.GetKeyCode()) {
-        case 'C':
-            m_terminal->GenerateCtrlC();
-            return;
-        case 'W': {
-            int word_start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
-            if(word_start_pos > m_writeStartingPosition) {
-                m_ctrl->DelWordLeft();
-            } else {
-                Clear();
-            }
-            return;
-        }
-        case 'D':
-            m_terminal->Logout();
-            return;
-        case 'L':
-            m_terminal->ClearScreen();
-            return;
-        case 'U':
-            Clear();
-            return;
-        case 'R':
-            if(!CAN_EDIT()) {
-                SetCaretPos(CaretPos::END);
-            }
-            ShowCompletionBox(CompletionType::COMMANDS);
-            return;
-        default:
-            break;
-        }
-    }
-
     switch(event.GetKeyCode()) {
-    case WXK_NUMPAD_ENTER:
-    case WXK_RETURN: {
-        wxString command = GetText();
-        m_terminal->Run(command);
-        m_history.Add(command);
-        m_history.Store(); // update the history
-    } break;
-    case WXK_UP:
-    case WXK_NUMPAD_UP:
-        m_history.Up();
-        SetText(m_history.Get());
-        EnsureCommandLineVisible();
-        break;
-    case WXK_DOWN:
-    case WXK_NUMPAD_DOWN:
-        m_history.Down();
-        SetText(m_history.Get());
-        EnsureCommandLineVisible();
-        break;
-    case WXK_TAB:
-        ShowCompletionBox(CompletionType::WORDS);
-        return;
     case WXK_LEFT:
     case WXK_NUMPAD_LEFT:
     case WXK_BACK:
@@ -277,11 +253,13 @@ void wxTerminalInputCtrl::Clear()
     SetCaretPos(CaretPos::END);
 }
 
-void wxTerminalInputCtrl::SetText(const wxString& text)
+wxString wxTerminalInputCtrl::SetText(const wxString& text)
 {
+    wxString oldcmd = m_ctrl->GetTextRange(m_writeStartingPosition, m_ctrl->GetLastPosition());
     m_ctrl->Remove(m_writeStartingPosition, m_ctrl->GetLastPosition());
     m_ctrl->AppendText(text);
     SetCaretPos(CaretPos::END);
+    return oldcmd;
 }
 
 wxString wxTerminalInputCtrl::GetText() const
@@ -368,4 +346,99 @@ void wxTerminalInputCtrl::EnsureCommandLineVisible()
 {
     m_ctrl->ScrollToEnd();
     m_ctrl->EnsureCaretVisible();
+}
+
+void wxTerminalInputCtrl::SwapAndExecuteCommand(const wxString& cmd)
+{
+    auto curcmd = SetText(cmd);
+    m_terminal->Run(cmd);
+    SetText(curcmd);
+}
+
+void wxTerminalInputCtrl::OnCommandComplete(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(m_ctrl->AutoCompActive() && m_completionType == CompletionType::COMMANDS) {
+        // refresh the list
+        ShowCompletionBox(CompletionType::COMMANDS);
+    } else if(!m_ctrl->AutoCompActive()) {
+        if(!CAN_EDIT()) {
+            SetCaretPos(CaretPos::END);
+        }
+        ShowCompletionBox(CompletionType::COMMANDS);
+    }
+}
+
+void wxTerminalInputCtrl::OnTabComplete(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(m_ctrl->AutoCompActive() && m_completionType == CompletionType::WORDS) {
+        // refresh the list
+        ShowCompletionBox(CompletionType::WORDS);
+    } else if(!m_ctrl->AutoCompActive()) {
+        if(!CAN_EDIT()) {
+            SetCaretPos(CaretPos::END);
+        }
+        ShowCompletionBox(CompletionType::WORDS);
+    }
+}
+
+void wxTerminalInputCtrl::OnClearScreen(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_terminal->ClearScreen();
+}
+
+void wxTerminalInputCtrl::OnLogout(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_terminal->Logout();
+}
+
+void wxTerminalInputCtrl::OnClearLine(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    Clear();
+}
+
+void wxTerminalInputCtrl::OnCtrlC(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_terminal->GenerateCtrlC();
+}
+
+void wxTerminalInputCtrl::OnDeleteWord(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    int word_start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
+    if(word_start_pos > m_writeStartingPosition) {
+        m_ctrl->DelWordLeft();
+    } else {
+        Clear();
+    }
+}
+
+void wxTerminalInputCtrl::OnEnter(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString command = GetText();
+    m_terminal->Run(command);
+    m_history.Add(command);
+    m_history.Store(); // update the history
+}
+
+void wxTerminalInputCtrl::OnUp(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_history.Up();
+    SetText(m_history.Get());
+    EnsureCommandLineVisible();
+}
+
+void wxTerminalInputCtrl::OnDown(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_history.Down();
+    SetText(m_history.Get());
+    EnsureCommandLineVisible();
 }

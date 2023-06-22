@@ -34,15 +34,30 @@ protected:
 
 protected:
     void Clear();
-    void SetText(const wxString& text);
+    /// set the current command to be executed, returning
+    /// the last command
+    wxString SetText(const wxString& text);
     wxString GetText() const;
-    void SetCaretPos(CaretPos pos);
+    void SwapAndExecuteCommand(const wxString& cmd);
+    void SetCaretPos(wxTerminalInputCtrl::CaretPos pos);
     void OnMenu(wxContextMenuEvent& event);
     void ShowCompletionBox(CompletionType type);
     void OnStcCharAdded(wxStyledTextEvent& event);
     void OnStcCompleted(wxStyledTextEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void EnsureCommandLineVisible();
+
+    // terminal special actions
+    void OnCommandComplete(wxCommandEvent& event);
+    void OnTabComplete(wxCommandEvent& event);
+    void OnClearScreen(wxCommandEvent& event);
+    void OnLogout(wxCommandEvent& event);
+    void OnClearLine(wxCommandEvent& event);
+    void OnCtrlC(wxCommandEvent& event);
+    void OnDeleteWord(wxCommandEvent& event);
+    void OnEnter(wxCommandEvent& event);
+    void OnUp(wxCommandEvent& event);
+    void OnDown(wxCommandEvent& event);
 
 public:
     wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);

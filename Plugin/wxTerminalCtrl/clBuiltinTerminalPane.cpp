@@ -127,10 +127,9 @@ void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
     if(workspace) {
         if(workspace->IsRemote()) {
             workspace_ssh_account = workspace->GetSshAccount();
-            default_path = wxFileName(workspace->GetFileName()).GetPath(false, wxPATH_UNIX);
-        } else {
-            default_path = wxFileName(workspace->GetFileName()).GetPath();
         }
+        default_path = wxFileName(workspace->GetFileName()).GetPath();
+        default_path.Replace("\\", "/");
     }
 
     if(!default_path.empty()) {

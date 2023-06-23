@@ -254,8 +254,6 @@ bool wxTerminalCtrl::IsFocused() { return m_inputCtrl->IsFocused(); }
 
 void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
 {
-    event.RequestMore();
-    event.Skip();
     if(m_processOutput.empty()) {
         return;
     }

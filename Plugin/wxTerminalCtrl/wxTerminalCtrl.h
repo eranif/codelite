@@ -53,7 +53,7 @@ protected:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
-    void PromptForPasswordIfNeeded();
+    bool PromptForPasswordIfNeeded();
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnIdle(wxIdleEvent& event);
 

@@ -20,21 +20,9 @@ wxTerminalColourHandler::~wxTerminalColourHandler() { wxDELETE(m_style_provider)
 void wxTerminalColourHandler::Append(const wxString& buffer, wxString* window_title)
 {
     wxString curline;
-    auto stc = m_ctrl->GetCtrl();
-    int last_pos = stc->GetLastPosition();
-    int last_line = stc->LineFromPosition(last_pos);
-    curline = stc->GetLine(last_line);
-    if(curline.EndsWith("\n")) {
-        // a complete line
-        curline.clear();
-    } else {
-        // remove the last line from the control
-        stc->Remove(stc->PositionFromLine(last_line), last_pos);
-    }
-
     m_ctrl->SelectNone();
     m_ctrl->SetInsertionPointEnd();
-    
+
     m_ansiEscapeHandler.Parse(curline + buffer);
     m_ansiEscapeHandler.Render(m_style_provider, !DrawingUtils::IsDark(m_defaultAttr.GetBackgroundColour()));
     SetCaretEnd();

@@ -10,6 +10,19 @@
 #include <wx/sizer.h>
 #include <wx/wupdlock.h>
 
+namespace
+{
+struct EditorEnabler {
+    wxStyledTextCtrl* m_ctrl = nullptr;
+    EditorEnabler(wxStyledTextCtrl* ctrl)
+        : m_ctrl(ctrl)
+    {
+        m_ctrl->SetEditable(true);
+    }
+    ~EditorEnabler() { m_ctrl->SetEditable(false); }
+};
+} // namespace
+
 TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font, const wxColour& bg_colour,
                    const wxColour& text_colour)
     : wxWindow(parent, winid)
@@ -21,10 +34,11 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
-    m_ctrl->UsePopUp(0);
+    m_ctrl->UsePopUp(1);
     m_ctrl->SetWrapMode(wxSTC_WRAP_WORD);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
+    m_ctrl->SetEditable(false);
 
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
@@ -43,6 +57,7 @@ TextView::~TextView()
 
 void TextView::AppendText(const wxString& buffer)
 {
+    EditorEnabler d{ m_ctrl };
     m_ctrl->AppendText(buffer);
     RequestScrollToEnd();
 }
@@ -79,6 +94,7 @@ void TextView::ReloadSettings() { ApplyTheme(); }
 
 void TextView::StyleAndAppend(const wxString& buffer, wxString* window_title)
 {
+    EditorEnabler d{ m_ctrl };
     m_colourHandler.Append(buffer, window_title);
 }
 
@@ -113,7 +129,12 @@ wxChar TextView::GetLastChar() const { return m_ctrl->GetCharAt(m_ctrl->GetLastP
 
 int TextView::GetCurrentStyle() { return 0; }
 
-void TextView::Clear() { m_colourHandler.Clear(); }
+void TextView::Clear()
+{
+    m_colourHandler.Clear();
+    EditorEnabler d{ m_ctrl };
+    m_ctrl->ClearAll();
+}
 
 void TextView::DoScrollToEnd()
 {
@@ -152,5 +173,9 @@ void TextView::ApplyTheme()
 void TextView::OnKeyDown(wxKeyEvent& event)
 {
     // let the input control process this event
+#if wxTERMINAL_USE_2_CTRLS
+    m_terminal->GetInputCtrl()->SetFocus();
+#else
     m_terminal->GetInputCtrl()->ProcessKeyDown(event);
+#endif
 }

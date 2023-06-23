@@ -93,6 +93,7 @@ void wxTerminalCtrl::StartShell()
         readyEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(readyEvent);
     }
+    m_inputCtrl->SetFocus();
 }
 
 void wxTerminalCtrl::Run(const wxString& command)
@@ -101,7 +102,11 @@ void wxTerminalCtrl::Run(const wxString& command)
         return;
     }
     m_shell->WriteRaw(command + "\n");
+#if wxTERMINAL_USE_2_CTRLS
+    AppendText(command + "\n");
+#else
     AppendText("\n");
+#endif
 }
 
 void wxTerminalCtrl::AppendText(const wxString& text)
@@ -172,7 +177,7 @@ void wxTerminalCtrl::Terminate()
     }
 }
 
-void wxTerminalCtrl::PromptForPasswordIfNeeded()
+bool wxTerminalCtrl::PromptForPasswordIfNeeded()
 {
     wxString line = m_outputView->GetLineText(m_outputView->GetNumberOfLines() - 1);
     line = line.Lower();
@@ -180,24 +185,16 @@ void wxTerminalCtrl::PromptForPasswordIfNeeded()
         wxString pass = ::wxGetPasswordFromUser(line, "CodeLite", wxEmptyString, wxTheApp->GetTopWindow());
         if(pass.empty()) {
             GenerateCtrlC();
-            return;
         } else if(m_shell) {
             m_shell->Write(pass);
         }
+        return true;
+    } else {
+        return false;
     }
 }
 
-void wxTerminalCtrl::ClearScreen()
-{
-    auto ctrl = m_outputView->GetCtrl();
-    if(ctrl->GetLineCount() <= 1) {
-        return;
-    }
-    int last_pos = ctrl->PositionFromLine(ctrl->GetLineCount() - 1);
-    int start_pos = 0;
-    ctrl->DeleteRange(start_pos, last_pos);
-    m_inputCtrl->UpdateTextDeleted(last_pos - start_pos);
-}
+void wxTerminalCtrl::ClearScreen() { m_outputView->Clear(); }
 
 void wxTerminalCtrl::Logout()
 {
@@ -274,5 +271,11 @@ void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
 
     AppendText(buffer_to_process);
     // see if we need to prompt for password
-    PromptForPasswordIfNeeded();
+    if(PromptForPasswordIfNeeded()) {
+        return;
+    }
+
+    if(m_processOutput.empty()) {
+        m_inputCtrl->CallAfter(&wxTerminalInputCtrl::NotifyTerminalOutput);
+    }
 }

@@ -8,6 +8,9 @@
 
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
+#include <wx/timer.h>
+
+#define wxTERMINAL_USE_2_CTRLS 1
 
 class wxTerminalCtrl;
 class WXDLLIMPEXP_SDK wxTerminalInputCtrl : public wxEvtHandler
@@ -20,7 +23,6 @@ protected:
 
     enum CompletionType {
         NONE = -1,
-        WORDS,
         COMMANDS,
     };
 
@@ -31,6 +33,7 @@ protected:
     int m_writeStartingPosition = 0;
     clEditEventsHandler::Ptr_t m_editEvents;
     CompletionType m_completionType = CompletionType::NONE;
+    bool m_waitingForCompgenOutput = false;
 
 protected:
     void Clear();
@@ -44,8 +47,8 @@ protected:
     void ShowCompletionBox(CompletionType type);
     void OnStcCharAdded(wxStyledTextEvent& event);
     void OnStcCompleted(wxStyledTextEvent& event);
-    void OnCodeComplete(clCodeCompletionEvent& event);
     void EnsureCommandLineVisible();
+    wxString GetWordBack();
 
     // terminal special actions
     void OnCommandComplete(wxCommandEvent& event);
@@ -54,6 +57,7 @@ protected:
     void OnClearLine(wxCommandEvent& event);
     void OnCtrlC(wxCommandEvent& event);
     void OnDeleteWord(wxCommandEvent& event);
+
     // no events (called from ProcessKeyDown)
     void OnEnter();
     void OnUp();
@@ -67,6 +71,15 @@ public:
     void UpdateTextDeleted(int num);
     void ProcessKeyDown(wxKeyEvent& event);
     int GetWriteStartPosition() const { return m_writeStartingPosition; }
+    void SetFocus();
+
+    /// called by the terminal when output has arrived
+    void NotifyTerminalOutput();
+
+#if wxTERMINAL_USE_2_CTRLS
+    void ApplyTheme();
+    void OnThemeChanged(clCommandEvent& event);
+#endif
 };
 
 #endif // WXTERMINALINPUTCTRL_HPP

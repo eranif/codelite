@@ -489,7 +489,7 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     // find the best match
     wxString match;
     for(const auto& line : lines) {
-        if(match.empty()) {
+        if(match.empty() && line.StartsWith(prefix)) {
             match = line;
         } else if(line.StartsWith(match) || !line.StartsWith(prefix)) {
             // example:

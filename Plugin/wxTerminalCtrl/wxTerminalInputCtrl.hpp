@@ -72,6 +72,7 @@ public:
     void ProcessKeyDown(wxKeyEvent& event);
     int GetWriteStartPosition() const { return m_writeStartingPosition; }
     void SetFocus();
+    bool IsFocused() const { return m_ctrl->HasFocus(); }
 
     /// called by the terminal when output has arrived
     void NotifyTerminalOutput();

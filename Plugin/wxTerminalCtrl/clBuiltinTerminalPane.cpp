@@ -99,7 +99,7 @@ void clBuiltinTerminalPane::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.S
 void clBuiltinTerminalPane::Focus()
 {
     if(GetActiveTerminal()) {
-        GetActiveTerminal()->GetView()->GetCtrl()->CallAfter(&wxStyledTextCtrl::SetFocus);
+        GetActiveTerminal()->GetInputCtrl()->SetFocus();
     }
 }
 

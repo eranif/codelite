@@ -5,6 +5,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "wxTerminalAnsiEscapeHandler.hpp"
+#include "wxTerminalAnsiRendererSTC.hpp"
 #include "wxTerminalColourHandler.h"
 
 #include <wx/stc/stc.h>
@@ -14,8 +15,9 @@ class wxTerminalCtrl;
 class WXDLLIMPEXP_SDK TextView : public wxWindow
 {
     wxStyledTextCtrl* m_ctrl = nullptr;
-    wxTerminalColourHandler m_colourHandler;
     wxTerminalAnsiEscapeHandler m_outputHandler;
+    wxTerminalAnsiRendererSTC* m_stcRenderer = nullptr;
+
     wxEvtHandler* m_sink = nullptr;
     wxTextAttr m_defaultAttr;
     std::unordered_map<wxString, int> m_styles;

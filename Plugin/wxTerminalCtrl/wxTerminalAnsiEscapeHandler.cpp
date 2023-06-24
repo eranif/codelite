@@ -4,10 +4,355 @@
 #include "clResult.hpp"
 #include "file_logger.h"
 
+#include <wx/colour.h>
+
 INITIALISE_MODULE_LOG(LOG, "AnsiEscapeHandler", "ansi_escape_parser.log");
 
+typedef std::unordered_map<int, wxColour> ColoursMap_t;
 namespace
 {
+
+thread_local ColoursMap_t LightThemeColours;
+thread_local ColoursMap_t LightThemeColours8Bit;
+thread_local ColoursMap_t DarkThemeColours;
+thread_local ColoursMap_t DarkThemeColours8Bit;
+thread_local ColoursMap_t* pColours = nullptr;
+
+void initialise_colours()
+{
+    if(!LightThemeColours.empty()) {
+        return;
+    }
+
+    LightThemeColours.insert({ 30, wxColour(1, 1, 1) });
+    LightThemeColours.insert({ 31, wxColour(222, 56, 43) });
+    LightThemeColours.insert({ 32, wxColour(57, 181, 74) });
+    LightThemeColours.insert({ 33, wxColour(255, 199, 6) });
+    LightThemeColours.insert({ 34, wxColour(0, 111, 184) });
+    LightThemeColours.insert({ 35, wxColour(118, 38, 113) });
+    LightThemeColours.insert({ 36, wxColour(44, 181, 233) });
+    LightThemeColours.insert({ 37, wxColour(204, 204, 204) });
+    LightThemeColours.insert({ 90, wxColour(128, 128, 128) });
+    LightThemeColours.insert({ 91, wxColour(255, 0, 0) });
+    LightThemeColours.insert({ 92, wxColour(0, 255, 0) });
+    LightThemeColours.insert({ 93, wxColour(255, 255, 0) });
+    LightThemeColours.insert({ 94, wxColour(0, 0, 255) });
+    LightThemeColours.insert({ 95, wxColour(255, 0, 255) });
+    LightThemeColours.insert({ 96, wxColour(0, 255, 255) });
+    LightThemeColours.insert({ 97, wxColour(255, 255, 255) });
+
+    // Background colours
+    LightThemeColours.insert({ 40, wxColour(1, 1, 1) });
+    LightThemeColours.insert({ 41, wxColour(222, 56, 43) });
+    LightThemeColours.insert({ 42, wxColour(57, 181, 74) });
+    LightThemeColours.insert({ 43, wxColour(255, 199, 6) });
+    LightThemeColours.insert({ 44, wxColour(0, 111, 184) });
+    LightThemeColours.insert({ 45, wxColour(118, 38, 113) });
+    LightThemeColours.insert({ 46, wxColour(44, 181, 233) });
+    LightThemeColours.insert({ 47, wxColour(204, 204, 204) });
+    LightThemeColours.insert({ 100, wxColour(128, 128, 128) });
+    LightThemeColours.insert({ 101, wxColour(255, 0, 0) });
+    LightThemeColours.insert({ 102, wxColour(0, 255, 0) });
+    LightThemeColours.insert({ 103, wxColour(255, 255, 0) });
+    LightThemeColours.insert({ 104, wxColour(0, 0, 255) });
+    LightThemeColours.insert({ 105, wxColour(255, 0, 255) });
+    LightThemeColours.insert({ 106, wxColour(0, 255, 255) });
+    LightThemeColours.insert({ 107, wxColour(255, 255, 255) });
+
+    // 8 bit colours
+    // ESC[35;5;<fg colour>
+    // ESC[48;5;<bg colour>
+    LightThemeColours8Bit.insert({ 0, wxColour("#000000") });
+    LightThemeColours8Bit.insert({ 1, wxColour("#800000") });
+    LightThemeColours8Bit.insert({ 2, wxColour("#008000") });
+    LightThemeColours8Bit.insert({ 3, wxColour("#808000") });
+    LightThemeColours8Bit.insert({ 4, wxColour("#000080") });
+    LightThemeColours8Bit.insert({ 5, wxColour("#800080") });
+    LightThemeColours8Bit.insert({ 6, wxColour("#008080") });
+    LightThemeColours8Bit.insert({ 7, wxColour("#c0c0c0") });
+    LightThemeColours8Bit.insert({ 8, wxColour("#808080") });
+    LightThemeColours8Bit.insert({ 9, wxColour("#ff0000") });
+    LightThemeColours8Bit.insert({ 10, wxColour("#00ff00") });
+    LightThemeColours8Bit.insert({ 11, wxColour("#ffff00") });
+    LightThemeColours8Bit.insert({ 12, wxColour("#0000ff") });
+    LightThemeColours8Bit.insert({ 13, wxColour("#ff00ff") });
+    LightThemeColours8Bit.insert({ 14, wxColour("#00ffff") });
+    LightThemeColours8Bit.insert({ 15, wxColour("#ffffff") });
+    LightThemeColours8Bit.insert({ 16, wxColour("#000000") });
+    LightThemeColours8Bit.insert({ 17, wxColour("#00005f") });
+    LightThemeColours8Bit.insert({ 18, wxColour("#000087") });
+    LightThemeColours8Bit.insert({ 19, wxColour("#0000af") });
+    LightThemeColours8Bit.insert({ 20, wxColour("#0000d7") });
+    LightThemeColours8Bit.insert({ 21, wxColour("#0000ff") });
+    LightThemeColours8Bit.insert({ 22, wxColour("#005f00") });
+    LightThemeColours8Bit.insert({ 23, wxColour("#005f5f") });
+    LightThemeColours8Bit.insert({ 24, wxColour("#005f87") });
+    LightThemeColours8Bit.insert({ 25, wxColour("#005faf") });
+    LightThemeColours8Bit.insert({ 26, wxColour("#005fd7") });
+    LightThemeColours8Bit.insert({ 27, wxColour("#005fff") });
+    LightThemeColours8Bit.insert({ 28, wxColour("#008700") });
+    LightThemeColours8Bit.insert({ 29, wxColour("#00875f") });
+    LightThemeColours8Bit.insert({ 30, wxColour("#008787") });
+    LightThemeColours8Bit.insert({ 31, wxColour("#0087af") });
+    LightThemeColours8Bit.insert({ 32, wxColour("#0087d7") });
+    LightThemeColours8Bit.insert({ 33, wxColour("#0087ff") });
+    LightThemeColours8Bit.insert({ 34, wxColour("#00af00") });
+    LightThemeColours8Bit.insert({ 35, wxColour("#00af5f") });
+    LightThemeColours8Bit.insert({ 36, wxColour("#00af87") });
+    LightThemeColours8Bit.insert({ 37, wxColour("#00afaf") });
+    LightThemeColours8Bit.insert({ 38, wxColour("#00afd7") });
+    LightThemeColours8Bit.insert({ 39, wxColour("#00afff") });
+    LightThemeColours8Bit.insert({ 40, wxColour("#00d700") });
+    LightThemeColours8Bit.insert({ 41, wxColour("#00d75f") });
+    LightThemeColours8Bit.insert({ 42, wxColour("#00d787") });
+    LightThemeColours8Bit.insert({ 43, wxColour("#00d7af") });
+    LightThemeColours8Bit.insert({ 44, wxColour("#00d7d7") });
+    LightThemeColours8Bit.insert({ 45, wxColour("#00d7ff") });
+    LightThemeColours8Bit.insert({ 46, wxColour("#00ff00") });
+    LightThemeColours8Bit.insert({ 47, wxColour("#00ff5f") });
+    LightThemeColours8Bit.insert({ 48, wxColour("#00ff87") });
+    LightThemeColours8Bit.insert({ 49, wxColour("#00ffaf") });
+    LightThemeColours8Bit.insert({ 50, wxColour("#00ffd7") });
+    LightThemeColours8Bit.insert({ 51, wxColour("#00ffff") });
+    LightThemeColours8Bit.insert({ 52, wxColour("#5f0000") });
+    LightThemeColours8Bit.insert({ 53, wxColour("#5f005f") });
+    LightThemeColours8Bit.insert({ 54, wxColour("#5f0087") });
+    LightThemeColours8Bit.insert({ 55, wxColour("#5f00af") });
+    LightThemeColours8Bit.insert({ 56, wxColour("#5f00d7") });
+    LightThemeColours8Bit.insert({ 57, wxColour("#5f00ff") });
+    LightThemeColours8Bit.insert({ 58, wxColour("#5f5f00") });
+    LightThemeColours8Bit.insert({ 59, wxColour("#5f5f5f") });
+    LightThemeColours8Bit.insert({ 60, wxColour("#5f5f87") });
+    LightThemeColours8Bit.insert({ 61, wxColour("#5f5faf") });
+    LightThemeColours8Bit.insert({ 62, wxColour("#5f5fd7") });
+    LightThemeColours8Bit.insert({ 63, wxColour("#5f5fff") });
+    LightThemeColours8Bit.insert({ 64, wxColour("#5f8700") });
+    LightThemeColours8Bit.insert({ 65, wxColour("#5f875f") });
+    LightThemeColours8Bit.insert({ 66, wxColour("#5f8787") });
+    LightThemeColours8Bit.insert({ 67, wxColour("#5f87af") });
+    LightThemeColours8Bit.insert({ 68, wxColour("#5f87d7") });
+    LightThemeColours8Bit.insert({ 69, wxColour("#5f87ff") });
+    LightThemeColours8Bit.insert({ 70, wxColour("#5faf00") });
+    LightThemeColours8Bit.insert({ 71, wxColour("#5faf5f") });
+    LightThemeColours8Bit.insert({ 72, wxColour("#5faf87") });
+    LightThemeColours8Bit.insert({ 73, wxColour("#5fafaf") });
+    LightThemeColours8Bit.insert({ 74, wxColour("#5fafd7") });
+    LightThemeColours8Bit.insert({ 75, wxColour("#5fafff") });
+    LightThemeColours8Bit.insert({ 76, wxColour("#5fd700") });
+    LightThemeColours8Bit.insert({ 77, wxColour("#5fd75f") });
+    LightThemeColours8Bit.insert({ 78, wxColour("#5fd787") });
+    LightThemeColours8Bit.insert({ 79, wxColour("#5fd7af") });
+    LightThemeColours8Bit.insert({ 80, wxColour("#5fd7d7") });
+    LightThemeColours8Bit.insert({ 81, wxColour("#5fd7ff") });
+    LightThemeColours8Bit.insert({ 82, wxColour("#5fff00") });
+    LightThemeColours8Bit.insert({ 83, wxColour("#5fff5f") });
+    LightThemeColours8Bit.insert({ 84, wxColour("#5fff87") });
+    LightThemeColours8Bit.insert({ 85, wxColour("#5fffaf") });
+    LightThemeColours8Bit.insert({ 86, wxColour("#5fffd7") });
+    LightThemeColours8Bit.insert({ 87, wxColour("#5fffff") });
+    LightThemeColours8Bit.insert({ 88, wxColour("#870000") });
+    LightThemeColours8Bit.insert({ 89, wxColour("#87005f") });
+    LightThemeColours8Bit.insert({ 90, wxColour("#870087") });
+    LightThemeColours8Bit.insert({ 91, wxColour("#8700af") });
+    LightThemeColours8Bit.insert({ 92, wxColour("#8700d7") });
+    LightThemeColours8Bit.insert({ 93, wxColour("#8700ff") });
+    LightThemeColours8Bit.insert({ 94, wxColour("#875f00") });
+    LightThemeColours8Bit.insert({ 95, wxColour("#875f5f") });
+    LightThemeColours8Bit.insert({ 96, wxColour("#875f87") });
+    LightThemeColours8Bit.insert({ 97, wxColour("#875faf") });
+    LightThemeColours8Bit.insert({ 98, wxColour("#875fd7") });
+    LightThemeColours8Bit.insert({ 99, wxColour("#875fff") });
+    LightThemeColours8Bit.insert({ 100, wxColour("#878700") });
+    LightThemeColours8Bit.insert({ 101, wxColour("#87875f") });
+    LightThemeColours8Bit.insert({ 102, wxColour("#878787") });
+    LightThemeColours8Bit.insert({ 103, wxColour("#8787af") });
+    LightThemeColours8Bit.insert({ 104, wxColour("#8787d7") });
+    LightThemeColours8Bit.insert({ 105, wxColour("#8787ff") });
+    LightThemeColours8Bit.insert({ 106, wxColour("#87af00") });
+    LightThemeColours8Bit.insert({ 107, wxColour("#87af5f") });
+    LightThemeColours8Bit.insert({ 108, wxColour("#87af87") });
+    LightThemeColours8Bit.insert({ 109, wxColour("#87afaf") });
+    LightThemeColours8Bit.insert({ 110, wxColour("#87afd7") });
+    LightThemeColours8Bit.insert({ 111, wxColour("#87afff") });
+    LightThemeColours8Bit.insert({ 112, wxColour("#87d700") });
+    LightThemeColours8Bit.insert({ 113, wxColour("#87d75f") });
+    LightThemeColours8Bit.insert({ 114, wxColour("#87d787") });
+    LightThemeColours8Bit.insert({ 115, wxColour("#87d7af") });
+    LightThemeColours8Bit.insert({ 116, wxColour("#87d7d7") });
+    LightThemeColours8Bit.insert({ 117, wxColour("#87d7ff") });
+    LightThemeColours8Bit.insert({ 118, wxColour("#87ff00") });
+    LightThemeColours8Bit.insert({ 119, wxColour("#87ff5f") });
+    LightThemeColours8Bit.insert({ 120, wxColour("#87ff87") });
+    LightThemeColours8Bit.insert({ 121, wxColour("#87ffaf") });
+    LightThemeColours8Bit.insert({ 122, wxColour("#87ffd7") });
+    LightThemeColours8Bit.insert({ 123, wxColour("#87ffff") });
+    LightThemeColours8Bit.insert({ 124, wxColour("#af0000") });
+    LightThemeColours8Bit.insert({ 125, wxColour("#af005f") });
+    LightThemeColours8Bit.insert({ 126, wxColour("#af0087") });
+    LightThemeColours8Bit.insert({ 127, wxColour("#af00af") });
+    LightThemeColours8Bit.insert({ 128, wxColour("#af00d7") });
+    LightThemeColours8Bit.insert({ 129, wxColour("#af00ff") });
+    LightThemeColours8Bit.insert({ 130, wxColour("#af5f00") });
+    LightThemeColours8Bit.insert({ 131, wxColour("#af5f5f") });
+    LightThemeColours8Bit.insert({ 132, wxColour("#af5f87") });
+    LightThemeColours8Bit.insert({ 133, wxColour("#af5faf") });
+    LightThemeColours8Bit.insert({ 134, wxColour("#af5fd7") });
+    LightThemeColours8Bit.insert({ 135, wxColour("#af5fff") });
+    LightThemeColours8Bit.insert({ 136, wxColour("#af8700") });
+    LightThemeColours8Bit.insert({ 137, wxColour("#af875f") });
+    LightThemeColours8Bit.insert({ 138, wxColour("#af8787") });
+    LightThemeColours8Bit.insert({ 139, wxColour("#af87af") });
+    LightThemeColours8Bit.insert({ 140, wxColour("#af87d7") });
+    LightThemeColours8Bit.insert({ 141, wxColour("#af87ff") });
+    LightThemeColours8Bit.insert({ 142, wxColour("#afaf00") });
+    LightThemeColours8Bit.insert({ 143, wxColour("#afaf5f") });
+    LightThemeColours8Bit.insert({ 144, wxColour("#afaf87") });
+    LightThemeColours8Bit.insert({ 145, wxColour("#afafaf") });
+    LightThemeColours8Bit.insert({ 146, wxColour("#afafd7") });
+    LightThemeColours8Bit.insert({ 147, wxColour("#afafff") });
+    LightThemeColours8Bit.insert({ 148, wxColour("#afd700") });
+    LightThemeColours8Bit.insert({ 149, wxColour("#afd75f") });
+    LightThemeColours8Bit.insert({ 150, wxColour("#afd787") });
+    LightThemeColours8Bit.insert({ 151, wxColour("#afd7af") });
+    LightThemeColours8Bit.insert({ 152, wxColour("#afd7d7") });
+    LightThemeColours8Bit.insert({ 153, wxColour("#afd7ff") });
+    LightThemeColours8Bit.insert({ 154, wxColour("#afff00") });
+    LightThemeColours8Bit.insert({ 155, wxColour("#afff5f") });
+    LightThemeColours8Bit.insert({ 156, wxColour("#afff87") });
+    LightThemeColours8Bit.insert({ 157, wxColour("#afffaf") });
+    LightThemeColours8Bit.insert({ 158, wxColour("#afffd7") });
+    LightThemeColours8Bit.insert({ 159, wxColour("#afffff") });
+    LightThemeColours8Bit.insert({ 160, wxColour("#d70000") });
+    LightThemeColours8Bit.insert({ 161, wxColour("#d7005f") });
+    LightThemeColours8Bit.insert({ 162, wxColour("#d70087") });
+    LightThemeColours8Bit.insert({ 163, wxColour("#d700af") });
+    LightThemeColours8Bit.insert({ 164, wxColour("#d700d7") });
+    LightThemeColours8Bit.insert({ 165, wxColour("#d700ff") });
+    LightThemeColours8Bit.insert({ 166, wxColour("#d75f00") });
+    LightThemeColours8Bit.insert({ 167, wxColour("#d75f5f") });
+    LightThemeColours8Bit.insert({ 168, wxColour("#d75f87") });
+    LightThemeColours8Bit.insert({ 169, wxColour("#d75faf") });
+    LightThemeColours8Bit.insert({ 170, wxColour("#d75fd7") });
+    LightThemeColours8Bit.insert({ 171, wxColour("#d75fff") });
+    LightThemeColours8Bit.insert({ 172, wxColour("#d78700") });
+    LightThemeColours8Bit.insert({ 173, wxColour("#d7875f") });
+    LightThemeColours8Bit.insert({ 174, wxColour("#d78787") });
+    LightThemeColours8Bit.insert({ 175, wxColour("#d787af") });
+    LightThemeColours8Bit.insert({ 176, wxColour("#d787d7") });
+    LightThemeColours8Bit.insert({ 177, wxColour("#d787ff") });
+    LightThemeColours8Bit.insert({ 178, wxColour("#d7af00") });
+    LightThemeColours8Bit.insert({ 179, wxColour("#d7af5f") });
+    LightThemeColours8Bit.insert({ 180, wxColour("#d7af87") });
+    LightThemeColours8Bit.insert({ 181, wxColour("#d7afaf") });
+    LightThemeColours8Bit.insert({ 182, wxColour("#d7afd7") });
+    LightThemeColours8Bit.insert({ 183, wxColour("#d7afff") });
+    LightThemeColours8Bit.insert({ 184, wxColour("#d7d700") });
+    LightThemeColours8Bit.insert({ 185, wxColour("#d7d75f") });
+    LightThemeColours8Bit.insert({ 186, wxColour("#d7d787") });
+    LightThemeColours8Bit.insert({ 187, wxColour("#d7d7af") });
+    LightThemeColours8Bit.insert({ 188, wxColour("#d7d7d7") });
+    LightThemeColours8Bit.insert({ 189, wxColour("#d7d7ff") });
+    LightThemeColours8Bit.insert({ 190, wxColour("#d7ff00") });
+    LightThemeColours8Bit.insert({ 191, wxColour("#d7ff5f") });
+    LightThemeColours8Bit.insert({ 192, wxColour("#d7ff87") });
+    LightThemeColours8Bit.insert({ 193, wxColour("#d7ffaf") });
+    LightThemeColours8Bit.insert({ 194, wxColour("#d7ffd7") });
+    LightThemeColours8Bit.insert({ 195, wxColour("#d7ffff") });
+    LightThemeColours8Bit.insert({ 196, wxColour("#ff0000") });
+    LightThemeColours8Bit.insert({ 197, wxColour("#ff005f") });
+    LightThemeColours8Bit.insert({ 198, wxColour("#ff0087") });
+    LightThemeColours8Bit.insert({ 199, wxColour("#ff00af") });
+    LightThemeColours8Bit.insert({ 200, wxColour("#ff00d7") });
+    LightThemeColours8Bit.insert({ 201, wxColour("#ff00ff") });
+    LightThemeColours8Bit.insert({ 202, wxColour("#ff5f00") });
+    LightThemeColours8Bit.insert({ 203, wxColour("#ff5f5f") });
+    LightThemeColours8Bit.insert({ 204, wxColour("#ff5f87") });
+    LightThemeColours8Bit.insert({ 205, wxColour("#ff5faf") });
+    LightThemeColours8Bit.insert({ 206, wxColour("#ff5fd7") });
+    LightThemeColours8Bit.insert({ 207, wxColour("#ff5fff") });
+    LightThemeColours8Bit.insert({ 208, wxColour("#ff8700") });
+    LightThemeColours8Bit.insert({ 209, wxColour("#ff875f") });
+    LightThemeColours8Bit.insert({ 210, wxColour("#ff8787") });
+    LightThemeColours8Bit.insert({ 211, wxColour("#ff87af") });
+    LightThemeColours8Bit.insert({ 212, wxColour("#ff87d7") });
+    LightThemeColours8Bit.insert({ 213, wxColour("#ff87ff") });
+    LightThemeColours8Bit.insert({ 214, wxColour("#ffaf00") });
+    LightThemeColours8Bit.insert({ 215, wxColour("#ffaf5f") });
+    LightThemeColours8Bit.insert({ 216, wxColour("#ffaf87") });
+    LightThemeColours8Bit.insert({ 217, wxColour("#ffafaf") });
+    LightThemeColours8Bit.insert({ 218, wxColour("#ffafd7") });
+    LightThemeColours8Bit.insert({ 219, wxColour("#ffafff") });
+    LightThemeColours8Bit.insert({ 220, wxColour("#ffd700") });
+    LightThemeColours8Bit.insert({ 221, wxColour("#ffd75f") });
+    LightThemeColours8Bit.insert({ 222, wxColour("#ffd787") });
+    LightThemeColours8Bit.insert({ 223, wxColour("#ffd7af") });
+    LightThemeColours8Bit.insert({ 224, wxColour("#ffd7d7") });
+    LightThemeColours8Bit.insert({ 225, wxColour("#ffd7ff") });
+    LightThemeColours8Bit.insert({ 226, wxColour("#ffff00") });
+    LightThemeColours8Bit.insert({ 227, wxColour("#ffff5f") });
+    LightThemeColours8Bit.insert({ 228, wxColour("#ffff87") });
+    LightThemeColours8Bit.insert({ 229, wxColour("#ffffaf") });
+    LightThemeColours8Bit.insert({ 230, wxColour("#ffffd7") });
+    LightThemeColours8Bit.insert({ 231, wxColour("#ffffff") });
+    LightThemeColours8Bit.insert({ 232, wxColour("#080808") });
+    LightThemeColours8Bit.insert({ 233, wxColour("#121212") });
+    LightThemeColours8Bit.insert({ 234, wxColour("#1c1c1c") });
+    LightThemeColours8Bit.insert({ 235, wxColour("#262626") });
+    LightThemeColours8Bit.insert({ 236, wxColour("#303030") });
+    LightThemeColours8Bit.insert({ 237, wxColour("#3a3a3a") });
+    LightThemeColours8Bit.insert({ 238, wxColour("#444444") });
+    LightThemeColours8Bit.insert({ 239, wxColour("#4e4e4e") });
+    LightThemeColours8Bit.insert({ 240, wxColour("#585858") });
+    LightThemeColours8Bit.insert({ 241, wxColour("#626262") });
+    LightThemeColours8Bit.insert({ 242, wxColour("#6c6c6c") });
+    LightThemeColours8Bit.insert({ 243, wxColour("#767676") });
+    LightThemeColours8Bit.insert({ 244, wxColour("#808080") });
+    LightThemeColours8Bit.insert({ 245, wxColour("#8a8a8a") });
+    LightThemeColours8Bit.insert({ 246, wxColour("#949494") });
+    LightThemeColours8Bit.insert({ 247, wxColour("#9e9e9e") });
+    LightThemeColours8Bit.insert({ 248, wxColour("#a8a8a8") });
+    LightThemeColours8Bit.insert({ 249, wxColour("#b2b2b2") });
+    LightThemeColours8Bit.insert({ 250, wxColour("#bcbcbc") });
+    LightThemeColours8Bit.insert({ 251, wxColour("#c6c6c6") });
+    LightThemeColours8Bit.insert({ 252, wxColour("#d0d0d0") });
+    LightThemeColours8Bit.insert({ 253, wxColour("#dadada") });
+    LightThemeColours8Bit.insert({ 254, wxColour("#e4e4e4") });
+    LightThemeColours8Bit.insert({ 255, wxColour("#eeeeee") });
+
+    DarkThemeColours8Bit = LightThemeColours8Bit;
+    // lighten the colours a bit
+    for(auto& [_, colour] : LightThemeColours8Bit) {
+        colour = colour.ChangeLightness(150);
+    }
+
+    // darken the colours for light theme
+    for(auto& [_, colour] : LightThemeColours8Bit) {
+        colour = colour.ChangeLightness(80);
+    }
+
+    DarkThemeColours = LightThemeColours;
+
+    // lighten the colours a bit
+    for(auto& [_, colour] : DarkThemeColours) {
+        colour = colour.ChangeLightness(150);
+    }
+
+    // darken the colours for light theme
+    for(auto& [_, colour] : LightThemeColours) {
+        colour = colour.ChangeLightness(80);
+    }
+
+    pColours = &LightThemeColours;
+}
+
+const wxColour& find_colour_by_number(ColoursMap_t* coloursMap, int num)
+{
+    if(pColours->count(num) == 0) {
+        return wxNullColour;
+    }
+    return pColours->find(num)->second;
+}
+
 enum AnsiControlCode {
     BELL = 0x07, // Makes an audible noise.
     BS = 0x08,   //  Backspace  Moves the cursor left (but may "backwards wrap" if cursor is at start of line).
@@ -307,18 +652,12 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
 
 } // namespace
 
-wxTerminalAnsiEscapeHandler::wxTerminalAnsiEscapeHandler() {}
+wxTerminalAnsiEscapeHandler::wxTerminalAnsiEscapeHandler() { initialise_colours(); }
 
 wxTerminalAnsiEscapeHandler::~wxTerminalAnsiEscapeHandler() {}
 
 size_t wxTerminalAnsiEscapeHandler::ProcessBuffer(wxStringView input, wxTerminalAnsiRendererInterface* renderer)
 {
-    LOG_IF_DEBUG
-    {
-        LOG_DEBUG(LOG) << "Processing buffer:" << endl;
-        LOG_DEBUG(LOG) << wxString(input.data(), input.length()) << endl;
-    }
-
     wxStringView sv = input;
     size_t consumed = 0;
     while(!sv.empty()) {
@@ -565,10 +904,168 @@ wxHandlResultStringView wxTerminalAnsiEscapeHandler::handle_csi(wxStringView sv,
     return res;
 }
 
+namespace
+{
+/// return the view before the first occurance of ch.
+/// return the whole string if ch is not found
+wxHandlResultStringView before_first(wxStringView sv, wxChar ch)
+{
+    size_t pos = 0;
+    for(; pos < sv.length(); ++pos) {
+        if(sv[pos] == ch) {
+            return wxHandlResultStringView::make_success(sv.substr(0, pos));
+        }
+    }
+    return wxHandlResultStringView::make_error(wxHandleError::kNotFound);
+}
+} // namespace
+
 void wxTerminalAnsiEscapeHandler::handle_sgr(wxStringView sv, wxTerminalAnsiRendererInterface* renderer)
 {
     LOG_IF_DEBUG { LOG_DEBUG(LOG) << "SGR:" << wxString(sv.data(), sv.length()) << endl; }
 
-    wxUnusedVar(sv);
-    wxUnusedVar(renderer);
+    if(sv.empty()) {
+        // handle like reset
+        renderer->ResetStyle();
+        return;
+    }
+
+    std::vector<long> props;
+    props.reserve(10);
+    while(!sv.empty()) {
+        auto res = before_first(sv, ';');
+        if(res) {
+            wxStringView match = res.success();
+            long val = wxStringViewAtol(match, wxNOT_FOUND);
+            if(val != wxNOT_FOUND) {
+                props.push_back(val);
+            }
+            // delete the matched length + the ';'
+            sv.remove_prefix(match.length() + 1);
+        } else {
+            // take the entire string
+            wxStringView match = sv;
+            sv = {};
+            long val = wxStringViewAtol(match, wxNOT_FOUND);
+            if(val != wxNOT_FOUND) {
+                props.push_back(val);
+            }
+        }
+    }
+
+    if(props.empty()) {
+        renderer->ResetStyle();
+        return;
+    }
+
+    // ESC[...;38;2;<r>;<g>;<b>m Select RGB foreground color
+    // ESC[...;38;5;<n>m Select foreground color
+    // ESC[...;48;2;<r>;<g>;<b>m Select RGB background color
+    // ESC[...;48;5;<n>m Select background color
+    // ESC[...;0m Select RGB background color
+    // where n is a number from the colours table
+
+    constexpr int STATE_NORMAL = 0;
+    constexpr int STATE_SET_FG = 1;
+    constexpr int STATE_SET_BG = 2;
+
+#define NEXT_NUMBER(index) (index < props.size() ? props[index] : wxNOT_FOUND)
+#define BETWEEN(a, b) (num >= a && num <= b)
+
+    int state = STATE_NORMAL;
+    for(size_t i = 0; i < props.size(); ++i) {
+        long curnum = props[i];
+        switch(state) {
+        STATE_SET_FG:
+            switch(curnum) {
+            case 5: { // number from the list
+                int num = NEXT_NUMBER(i + 1);
+                if(num != wxNOT_FOUND) {
+                    ++i;
+                    renderer->SetTextColour(find_colour_by_number(pColours, num));
+                }
+            } break;
+            case 2: { // r,g,b format
+                wxColour::ChannelType r = NEXT_NUMBER(i + 1);
+                wxColour::ChannelType g = NEXT_NUMBER(i + 2);
+                wxColour::ChannelType b = NEXT_NUMBER(i + 3);
+                wxColour col{ r, g, b };
+                renderer->SetTextColour(col);
+            } break;
+            default:
+                state = STATE_NORMAL;
+                break;
+            }
+            break;
+        STATE_SET_BG:
+            switch(curnum) {
+            case 5: { // number from the list
+                int num = NEXT_NUMBER(i + 1);
+                if(num != wxNOT_FOUND) {
+                    ++i;
+                    renderer->SetTextBgColour(find_colour_by_number(pColours, num));
+                }
+            } break;
+            case 2: { // r,g,b format
+                wxColour::ChannelType r = NEXT_NUMBER(i + 1);
+                wxColour::ChannelType g = NEXT_NUMBER(i + 2);
+                wxColour::ChannelType b = NEXT_NUMBER(i + 3);
+                wxColour col{ r, g, b };
+                renderer->SetTextBgColour(col);
+            } break;
+            default:
+                state = STATE_NORMAL;
+                break;
+            }
+            break;
+        default:
+        STATE_NORMAL:
+            switch(curnum) {
+            case 0:
+                renderer->ResetStyle();
+                break;
+            case 30:
+            case 31:
+            case 32:
+            case 33:
+            case 34:
+            case 35:
+            case 36:
+            case 37:
+                pColours = renderer->IsUseDarkThemeColours() ? &DarkThemeColours : &LightThemeColours;
+                renderer->SetTextColour(find_colour_by_number(pColours, curnum));
+                break;
+            case 38:
+                state = STATE_SET_FG;
+                pColours = renderer->IsUseDarkThemeColours() ? &DarkThemeColours8Bit : &LightThemeColours8Bit;
+                break;
+            case 39:
+                // Default foreground color
+                renderer->ResetStyle();
+                break;
+            case 40:
+            case 41:
+            case 42:
+            case 43:
+            case 44:
+            case 45:
+            case 46:
+            case 47:
+                pColours = renderer->IsUseDarkThemeColours() ? &DarkThemeColours : &LightThemeColours;
+                renderer->SetTextColour(find_colour_by_number(pColours, curnum));
+                break;
+            case 48:
+                state = STATE_SET_BG;
+                pColours = renderer->IsUseDarkThemeColours() ? &DarkThemeColours8Bit : &LightThemeColours8Bit;
+                break;
+            case 49:
+                // Default background color
+                renderer->ResetStyle();
+                break;
+            }
+            break;
+        }
+    }
+#undef BETWEEN
+#undef NEXT_NUMBER
 }

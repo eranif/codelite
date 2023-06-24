@@ -263,9 +263,10 @@ void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
     }
 
     std::string buffer_to_process;
-    if(m_processOutput.begin()->size() > 1024) {
-        buffer_to_process = m_processOutput.begin()->substr(0, 1024);
-        (*m_processOutput.begin()).erase(0, 1024);
+    constexpr int BUFSIZE = 4096;
+    if(m_processOutput.begin()->size() > BUFSIZE) {
+        buffer_to_process = m_processOutput.begin()->substr(0, BUFSIZE);
+        (*m_processOutput.begin()).erase(0, BUFSIZE);
     } else {
         buffer_to_process = *m_processOutput.begin();
         m_processOutput.erase(m_processOutput.begin());

@@ -45,15 +45,16 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
 
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
-    m_colourHandler.SetCtrl(this);
     CallAfter(&TextView::ReloadSettings);
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
+    m_stcRenderer = new wxTerminalAnsiRendererSTC(m_ctrl);
 }
 
 TextView::~TextView()
 {
+    wxDELETE(m_stcRenderer);
     m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
 }
@@ -97,13 +98,11 @@ void TextView::ReloadSettings() { ApplyTheme(); }
 
 void TextView::StyleAndAppend(const wxString& buffer, wxString* window_title)
 {
-    EditorEnabler d{ m_ctrl };
-    m_colourHandler.Append(buffer, window_title);
-
-    wxTerminalAnsiRendererInterface renderer;
     wxStringView sv{ buffer };
-    size_t consumed = m_outputHandler.ProcessBuffer(sv, &renderer);
-    LOG_DEBUG(LOG) << "consumed:" << consumed << "chars out of" << sv.length() << endl;
+    size_t consumed = m_outputHandler.ProcessBuffer(sv, m_stcRenderer);
+    if(window_title) {
+        *window_title = m_stcRenderer->GetWindowTitle();
+    }
 }
 
 void TextView::ShowCommandLine()
@@ -139,7 +138,7 @@ int TextView::GetCurrentStyle() { return 0; }
 
 void TextView::Clear()
 {
-    m_colourHandler.Clear();
+    m_stcRenderer->Clear();
     EditorEnabler d{ m_ctrl };
     m_ctrl->ClearAll();
 }
@@ -173,8 +172,8 @@ void TextView::ApplyTheme()
     auto style = lexer->GetProperty(0);
     wxTextAttr defaultAttr = wxTextAttr(style.GetFgColour(), style.GetBgColour(), lexer->GetFontForStyle(0, m_ctrl));
     SetDefaultStyle(defaultAttr);
-
-    m_colourHandler.SetDefaultStyle(defaultAttr);
+    m_stcRenderer->SetDefaultAttributes(defaultAttr);
+    m_stcRenderer->SetUseDarkThemeColours(lexer->IsDark());
     m_ctrl->Refresh();
 }
 

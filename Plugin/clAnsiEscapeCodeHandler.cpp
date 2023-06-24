@@ -1066,7 +1066,7 @@ wxTextAttr wxSTCStyleProvider::GetDefaultStyle() const
     return attr;
 }
 
-wxSTCStyleProvider::~wxSTCStyleProvider() { wxTheApp->Unbind(wxEVT_IDLE, &wxSTCStyleProvider::OnIdle, this); }
+wxSTCStyleProvider::~wxSTCStyleProvider() {}
 
 wxSTCStyleProvider::wxSTCStyleProvider(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)
@@ -1074,62 +1074,12 @@ wxSTCStyleProvider::wxSTCStyleProvider(wxStyledTextCtrl* ctrl)
     auto lexer = ColoursAndFontsManager::Get().GetLexer("default");
     lexer->ApplySystemColours(m_ctrl);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
-    wxTheApp->Bind(wxEVT_IDLE, &wxSTCStyleProvider::OnIdle, this);
-}
-
-void wxSTCStyleProvider::StyleSegment(int pos, int len, int style)
-{
-    wxUnusedVar(pos);
-    wxUnusedVar(len);
-    wxUnusedVar(style);
-    // int line = m_ctrl->LineFromPosition(pos);
-    // if(m_styleSegments.count(line) == 0) {
-    //     m_styleSegments.insert({ line, {} });
-    // }
-    // m_styleSegments[line].push_back({ pos, len, style });
 }
 
 void wxSTCStyleProvider::Clear()
 {
     m_styleCache.clear();
-    m_styleSegments.clear();
-    m_last_styled_range = { wxNOT_FOUND, wxNOT_FOUND };
+    m_curstyle = wxSTC_STYLE_LASTPREDEFINED + 1;
 }
 
-void wxSTCStyleProvider::StyleDisplay()
-{
-    return;
-    int display_first_line = m_ctrl->GetFirstVisibleLine();
-    int display_last_line = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
-
-    for(int line = display_first_line; line < display_last_line; ++line) {
-        int line_start_pos = m_ctrl->PositionFromLine(line);
-        int line_end_pos = line_start_pos + m_ctrl->LineLength(line);
-        if(m_styleSegments.count(line)) {
-            // style whats needed on that line
-            const auto& segments = m_styleSegments[line];
-            for(const auto& segment : segments) {
-                m_ctrl->StartStyling(segment.pos);
-                m_ctrl->SetStyling(segment.len, segment.style);
-            }
-        }
-    }
-    m_ctrl->Colourise(m_ctrl->PositionFromLine(display_first_line),
-                      m_ctrl->PositionFromLine(display_last_line) + m_ctrl->LineLength(display_last_line));
-}
-
-void wxSTCStyleProvider::OnIdle(wxIdleEvent& event)
-{
-    event.Skip();
-
-    // style the visible surface
-    int display_first_line = m_ctrl->GetFirstVisibleLine();
-    int display_last_line = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
-    auto new_range = std::pair{ display_first_line, display_last_line };
-
-    if(m_last_styled_range == new_range) {
-        return;
-    }
-    m_last_styled_range = new_range;
-    StyleDisplay();
-}
+void wxSTCStyleProvider::OnIdle(wxIdleEvent& event) { event.Skip(); }

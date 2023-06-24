@@ -3,6 +3,7 @@
 #include "Platform.hpp"
 #include "StringUtils.h"
 #include "TextView.h"
+#include "clModuleLogger.hpp"
 #include "environmentconfig.h" // EnvSetter
 #include "event_notifier.h"
 #include "ssh/ssh_account_info.h"
@@ -18,6 +19,8 @@
 #include <wx/stdpaths.h>
 #include <wx/textdlg.h>
 #include <wx/wupdlock.h>
+
+INITIALISE_MODULE_LOG(TERM_LOG, "Terminal", "terminal.log");
 
 wxTerminalCtrl::wxTerminalCtrl() {}
 
@@ -85,8 +88,8 @@ void wxTerminalCtrl::StartShell()
     env.push_back({ "WD", wxFileName(bash_exec).GetPath() });
 #endif
 
-    m_shell = ::CreateAsyncProcess(this, bash_exec + " --login -i",
-                                   IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole,
+    LOG_DEBUG(TERM_LOG) << "Starting shell process:" << bash_exec << endl;
+    m_shell = ::CreateAsyncProcess(this, bash_exec + " --login -i", IProcessPseudoConsole | IProcessRawOutput,
                                    wxEmptyString, &env);
     if(m_shell) {
         wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
@@ -101,6 +104,7 @@ void wxTerminalCtrl::Run(const wxString& command)
     if(!m_shell) {
         return;
     }
+    LOG_DEBUG(TERM_LOG) << "-->" << command << endl;
     m_shell->WriteRaw(command + "\n");
 #if wxTERMINAL_USE_2_CTRLS
     AppendText(command + "\n");
@@ -267,6 +271,7 @@ void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
         m_processOutput.erase(m_processOutput.begin());
     }
 
+    LOG_DEBUG(TERM_LOG) << "<--" << buffer_to_process << endl;
     AppendText(buffer_to_process);
     // see if we need to prompt for password
     if(PromptForPasswordIfNeeded()) {

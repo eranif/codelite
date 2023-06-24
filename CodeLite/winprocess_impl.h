@@ -62,6 +62,16 @@ public:
     static IProcess* Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags = IProcessCreateDefault,
                              const wxString& workingDir = wxEmptyString, IProcessCallback* cb = NULL);
 
+    // Create process asynchronously and return a process object
+    static IProcess* ExecuteConPTY(wxEvtHandler* parent, const std::vector<wxString>& args,
+                                   size_t flags = IProcessCreateWithHiddenConsole,
+                                   const wxString& workingDir = wxEmptyString);
+
+    // Create process asynchronously and return a process object
+    static IProcess* ExecuteConPTY(wxEvtHandler* parent, const wxString& cmd,
+                                   size_t flags = IProcessCreateWithHiddenConsole,
+                                   const wxString& workingDir = wxEmptyString);
+
     /**
      * @brief read data from stdout and error
      * @param buff check the buffer when true is returned
@@ -88,12 +98,16 @@ public:
 
 private:
     // Creating process related handles
-    HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup, hChildStdoutRd, hChildStdoutWr, hChildStdoutRdDup,
-        hChildStderrRd, hChildStderrWr, hChildStderrRdDup, hSaveStdin, hSaveStdout, hSaveStderr;
+    HANDLE hChildStdinRd = INVALID_HANDLE_VALUE, hChildStdinWr = INVALID_HANDLE_VALUE,
+           hChildStdinWrDup = INVALID_HANDLE_VALUE, hChildStdoutRd = INVALID_HANDLE_VALUE,
+           hChildStdoutWr = INVALID_HANDLE_VALUE, hChildStdoutRdDup = INVALID_HANDLE_VALUE,
+           hChildStderrRd = INVALID_HANDLE_VALUE, hChildStderrWr = INVALID_HANDLE_VALUE,
+           hChildStderrRdDup = INVALID_HANDLE_VALUE, hSaveStdin = INVALID_HANDLE_VALUE,
+           hSaveStdout = INVALID_HANDLE_VALUE, hSaveStderr = INVALID_HANDLE_VALUE;
 
     // Child process id & information
-    DWORD dwProcessId;
-    PROCESS_INFORMATION piProcInfo;
+    DWORD dwProcessId = wxNOT_FOUND;
+    PROCESS_INFORMATION piProcInfo = {};
 };
 
 #endif

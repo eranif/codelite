@@ -2,9 +2,12 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
+#include "clModuleLogger.hpp"
 #include "clSystemSettings.h"
 #include "event_notifier.h"
 #include "wxTerminalCtrl.h"
+
+INITIALISE_MODULE_LOG(LOG, "AnsiEscapeHandler", "ansi_escape_parser.log");
 
 #include <wx/menu.h>
 #include <wx/sizer.h>
@@ -96,6 +99,11 @@ void TextView::StyleAndAppend(const wxString& buffer, wxString* window_title)
 {
     EditorEnabler d{ m_ctrl };
     m_colourHandler.Append(buffer, window_title);
+
+    wxTerminalAnsiRendererInterface renderer;
+    wxStringView sv{ buffer };
+    size_t consumed = m_outputHandler.ProcessBuffer(sv, &renderer);
+    LOG_DEBUG(LOG) << "consumed:" << consumed << "chars out of" << sv.length() << endl;
 }
 
 void TextView::ShowCommandLine()

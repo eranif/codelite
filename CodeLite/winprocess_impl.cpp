@@ -24,6 +24,34 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #ifdef __WXMSW__
+#ifdef NTDDI_VERSION
+#undef NTDDI_VERSION
+#endif
+
+#ifdef NTDDI_VERSION
+#undef NTDDI_VERSION
+#endif
+
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
+
+#define NTDDI_VERSION 0x0A000006
+#define _WIN32_WINNT 0x0600
+
+typedef VOID* HPCON;
+
+typedef HRESULT WINAPI (*CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
+typedef VOID WINAPI (*ClosePseudoConsole_T)(HPCON hPC);
+
+thread_local bool loadOnce = true;
+thread_local CreatePseudoConsole_T CreatePseudoConsole = nullptr;
+thread_local ClosePseudoConsole_T ClosePseudoConsole = nullptr;
+
+#ifndef PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE
+#define PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE 0x00020016
+#endif
+
 #include "winprocess_impl.h"
 
 #include "file_logger.h"
@@ -38,12 +66,6 @@
 #include <wx/msgqueue.h>
 #include <wx/string.h>
 
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
-#endif
-
-#define _WIN32_WINNT 0x0501 // Make AttachConsole(DWORD) visible
-
 class MyDirGuard
 {
     wxString _d;
@@ -55,6 +77,8 @@ public:
     }
     ~MyDirGuard() { wxSetWorkingDirectory(_d); }
 };
+
+typedef HANDLE HPCON;
 
 /**
  * @class ConsoleAttacher
@@ -93,6 +117,10 @@ static bool CheckIsAlive(HANDLE hProcess)
 template <typename T> bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hProcess)
 {
     DWORD dwMode;
+    if(hStdin == INVALID_HANDLE_VALUE || hProcess == INVALID_HANDLE_VALUE) {
+        clWARNING() << "Unable read from process Stdin: invalid handle" << endl;
+        return false;
+    }
 
     // Make the pipe to non-blocking mode
     dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
@@ -170,7 +198,9 @@ public:
     void Write(const std::string& buffer) { m_outgoingQueue.Post(buffer); }
 };
 
-static wxString __JoinArray(const wxArrayString& args, size_t flags)
+namespace
+{
+wxString ArrayJoin(const wxArrayString& args, size_t flags)
 {
     wxString command;
     if(flags & IProcessWrapInShell) {
@@ -178,7 +208,7 @@ static wxString __JoinArray(const wxArrayString& args, size_t flags)
         // Make sure that the first command is wrapped with "" if it contains spaces
         LOG_IF_TRACE
         {
-            clDEBUG1() << "==> __JoinArray called for" << args << endl;
+            clDEBUG1() << "==> ArrayJoin called for" << args << endl;
             clDEBUG1() << "args[2] is:" << args[2] << endl;
         }
 
@@ -212,18 +242,151 @@ static wxString __JoinArray(const wxArrayString& args, size_t flags)
     return command;
 }
 
+// Initializes the specified startup info struct with the required properties and
+// updates its thread attribute list with the specified ConPTY handle
+HRESULT PrepareStartupInformation(HPCON hpc, STARTUPINFOEX* psi)
+{
+    // Prepare Startup Information structure
+    STARTUPINFOEX si;
+    ZeroMemory(&si, sizeof(si));
+    si.StartupInfo.cb = sizeof(STARTUPINFOEX);
+
+    // Discover the size required for the list
+    size_t bytesRequired;
+    InitializeProcThreadAttributeList(NULL, 1, 0, &bytesRequired);
+
+    // Allocate memory to represent the list
+    si.lpAttributeList = (PPROC_THREAD_ATTRIBUTE_LIST)HeapAlloc(GetProcessHeap(), 0, bytesRequired);
+    if(!si.lpAttributeList) {
+        return E_OUTOFMEMORY;
+    }
+
+    // Initialize the list memory location
+    if(!InitializeProcThreadAttributeList(si.lpAttributeList, 1, 0, &bytesRequired)) {
+        HeapFree(GetProcessHeap(), 0, si.lpAttributeList);
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+
+    // Set the pseudoconsole information into the list
+    if(!UpdateProcThreadAttribute(si.lpAttributeList, 0, PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE, hpc, sizeof(hpc), NULL,
+                                  NULL)) {
+        HeapFree(GetProcessHeap(), 0, si.lpAttributeList);
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+
+    *psi = si;
+
+    return S_OK;
+}
+
+} // namespace
+
 IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags,
                                   const wxString& workingDirectory, IProcessCallback* cb)
 {
-    wxString cmd = __JoinArray(args, flags);
+    wxString cmd = ArrayJoin(args, flags);
     LOG_IF_TRACE { clDEBUG1() << "Windows process starting:" << cmd << endl; }
     return Execute(parent, cmd, flags, workingDirectory, cb);
+}
+
+IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const wxString& cmd, size_t flags,
+                                        const wxString& workingDir)
+{
+    // - Close these after CreateProcess of child application with pseudoconsole object.
+    HANDLE inputReadSide, outputWriteSide;
+
+    // - Hold onto these and use them for communication with the child through the pseudoconsole.
+    HANDLE outputReadSide, inputWriteSide;
+    HPCON hPC = 0;
+
+    // Create the in/out pipes:
+    if(!CreatePipe(&inputReadSide, &inputWriteSide, NULL, 0)) {
+        return nullptr;
+    }
+    if(!CreatePipe(&outputReadSide, &outputWriteSide, NULL, 0)) {
+        ::CloseHandle(inputReadSide);
+        ::CloseHandle(inputWriteSide);
+        return nullptr;
+    }
+
+    // Create the Pseudo Console, using the pipes
+    if(loadOnce) {
+        loadOnce = false;
+        auto hDLL = ::LoadLibrary(L"Kernel32.dll");
+        if(hDLL) {
+            CreatePseudoConsole = (CreatePseudoConsole_T)::GetProcAddress(hDLL, "CreatePseudoConsole");
+            ClosePseudoConsole = (ClosePseudoConsole_T)::GetProcAddress(hDLL, "ClosePseudoConsole");
+            FreeLibrary(hDLL);
+        }
+    }
+
+    if(!CreatePseudoConsole || !ClosePseudoConsole) {
+        ::CloseHandle(inputReadSide);
+        ::CloseHandle(outputWriteSide);
+        ::CloseHandle(inputWriteSide);
+        ::CloseHandle(outputReadSide);
+        return nullptr;
+    }
+    auto hr = CreatePseudoConsole({ 1000, 32 }, inputReadSide, outputWriteSide, 0, &hPC);
+    if(FAILED(hr)) {
+        ::CloseHandle(inputReadSide);
+        ::CloseHandle(outputWriteSide);
+        ::CloseHandle(inputWriteSide);
+        ::CloseHandle(outputReadSide);
+        return nullptr;
+    }
+
+    // Prepare the StartupInfoEx structure attached to the ConPTY.
+    STARTUPINFOEX siEx{};
+    PrepareStartupInformation(hPC, &siEx);
+
+    WinProcessImpl* prc = new WinProcessImpl(parent);
+    ::ZeroMemory(&prc->piProcInfo, sizeof(prc->piProcInfo));
+
+    auto fSuccess = CreateProcess(nullptr, (wchar_t*)cmd.wc_str(), nullptr, nullptr, FALSE,
+                                  EXTENDED_STARTUPINFO_PRESENT, nullptr, nullptr, &siEx.StartupInfo, &prc->piProcInfo);
+
+    if(!fSuccess) {
+        clERROR() << "Failed to launch process:" << cmd << "." << GetLastError() << endl;
+        wxDELETE(prc);
+        return nullptr;
+    }
+    ::CloseHandle(inputReadSide);
+    ::CloseHandle(outputWriteSide);
+
+    if(!(prc->m_flags & IProcessCreateSync)) {
+        prc->StartReaderThread();
+    }
+    prc->m_writerThread = new WinWriterThread(prc->piProcInfo.hProcess, inputWriteSide);
+    prc->m_writerThread->Start();
+
+    prc->m_callback = nullptr;
+    prc->m_flags = flags;
+    prc->m_pid = prc->piProcInfo.dwProcessId;
+    prc->hChildStdoutRdDup = outputReadSide;
+    return prc;
+}
+
+IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const std::vector<wxString>& args, size_t flags,
+                                        const wxString& workingDir)
+{
+    wxArrayString wxarr;
+    wxarr.reserve(args.size());
+    for(const auto& arg : args) {
+        wxarr.Add(arg);
+    }
+    wxString cmd = ArrayJoin(wxarr, flags);
+    return ExecuteConPTY(parent, cmd, flags, workingDir);
 }
 
 /*static*/
 IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
                                   IProcessCallback* cb)
 {
+    if(flags & IProcessPseudoConsole) {
+        return ExecuteConPTY(parent, cmd, flags, workingDir);
+    }
+
     SECURITY_ATTRIBUTES saAttr;
     BOOL fSuccess;
 
@@ -366,23 +529,29 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
         siStartInfo.wShowWindow = SW_HIDE;
         creationFlags = CREATE_NEW_CONSOLE | CREATE_NEW_PROCESS_GROUP;
     }
+
     LOG_IF_TRACE { clDEBUG1() << "Running process:" << cmd << endl; }
-    BOOL ret = CreateProcess(NULL,
-                             cmd.wchar_str(),   // shell line execution command
-                             NULL,              // process security attributes
-                             NULL,              // primary thread security attributes
-                             TRUE,              // handles are inherited
-                             creationFlags,     // creation flags
-                             NULL,              // use parent's environment
-                             NULL,              // CD to tmp dir
-                             &siStartInfo,      // STARTUPINFO pointer
-                             &prc->piProcInfo); // receives PROCESS_INFORMATION
+    BOOL ret = FALSE;
+    {
+        ConsoleAttacher ca(prc->GetPid());
+        ret = CreateProcess(NULL,
+                            cmd.wchar_str(),   // shell line execution command
+                            NULL,              // process security attributes
+                            NULL,              // primary thread security attributes
+                            TRUE,              // handles are inherited
+                            creationFlags,     // creation flags
+                            NULL,              // use parent's environment
+                            NULL,              // CD to tmp dir
+                            &siStartInfo,      // STARTUPINFO pointer
+                            &prc->piProcInfo); // receives PROCESS_INFORMATION
+    }
+
     if(ret) {
         prc->dwProcessId = prc->piProcInfo.dwProcessId;
     } else {
         int err = GetLastError();
         wxUnusedVar(err);
-        delete prc;
+        wxDELETE(prc);
         return NULL;
     }
 
@@ -509,6 +678,13 @@ bool WinProcessImpl::IsAlive()
     return false;
 }
 
+inline void CLOSE_HANDLE(HANDLE h)
+{
+    if(h != INVALID_HANDLE_VALUE) {
+        ::CloseHandle(h);
+    }
+}
+
 void WinProcessImpl::Cleanup()
 {
     if(m_writerThread) {
@@ -542,23 +718,23 @@ void WinProcessImpl::Cleanup()
     }
 
     if(IsRedirect()) {
-        CloseHandle(hChildStdinRd);
-        CloseHandle(hChildStdinWrDup);
-        CloseHandle(hChildStdoutWr);
-        CloseHandle(hChildStdoutRdDup);
-        CloseHandle(hChildStderrWr);
-        CloseHandle(hChildStderrRdDup);
+        CLOSE_HANDLE(hChildStdinRd);
+        CLOSE_HANDLE(hChildStdinWrDup);
+        CLOSE_HANDLE(hChildStdoutWr);
+        CLOSE_HANDLE(hChildStdoutRdDup);
+        CLOSE_HANDLE(hChildStderrWr);
+        CLOSE_HANDLE(hChildStderrRdDup);
     }
 
-    CloseHandle(piProcInfo.hProcess);
-    CloseHandle(piProcInfo.hThread);
+    CLOSE_HANDLE(piProcInfo.hProcess);
+    CLOSE_HANDLE(piProcInfo.hThread);
 
-    hChildStdinRd = NULL;
-    hChildStdoutWr = NULL;
-    hChildStdinWrDup = NULL;
-    hChildStdoutRdDup = NULL;
-    hChildStderrWr = NULL;
-    hChildStderrRdDup = NULL;
+    hChildStdinRd = INVALID_HANDLE_VALUE;
+    hChildStdoutRdDup = INVALID_HANDLE_VALUE;
+    hChildStdoutWr = INVALID_HANDLE_VALUE;
+    hChildStderrWr = INVALID_HANDLE_VALUE;
+    hChildStdinWrDup = INVALID_HANDLE_VALUE;
+    hChildStderrRdDup = INVALID_HANDLE_VALUE;
     piProcInfo.hProcess = NULL;
     piProcInfo.hThread = NULL;
 }
@@ -577,6 +753,11 @@ bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff, std::string& ra
     DWORD dwRead = 0;
     DWORD dwMode;
     DWORD dwTimeout;
+
+    if(pipe == INVALID_HANDLE_VALUE || pipe == 0x0) {
+        SetLastError(ERROR_NO_DATA);
+        return false;
+    }
 
     // Make the pipe to non-blocking mode
     dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;

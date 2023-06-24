@@ -32,8 +32,8 @@
 
 #include <functional>
 #include <map>
-#include <vector>
 #include <memory>
+#include <vector>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
@@ -54,7 +54,8 @@ enum IProcessCreateFlags {
                                     // terminal colours escape sequences
     IProcessCreateSSH = (1 << 8),   // Create a remote process, over SSH
     IProcessInteractiveSSH = (1 << 9),
-    IProcessWrapInShell = (1 << 10), // wrap the command in the OS shell (CMD, BASH)
+    IProcessWrapInShell = (1 << 10),   // wrap the command in the OS shell (CMD, BASH)
+    IProcessPseudoConsole = (1 << 11), // MSW only: use CreatePseudoConsole API for creating the process
 };
 
 class WXDLLIMPEXP_CL IProcess;

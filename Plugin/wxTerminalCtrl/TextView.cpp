@@ -21,14 +21,9 @@ struct EditorEnabler {
     EditorEnabler(wxStyledTextCtrl* ctrl)
         : m_ctrl(ctrl)
     {
-        m_ctrl->Freeze();
         m_ctrl->SetEditable(true);
     }
-    ~EditorEnabler()
-    {
-        m_ctrl->SetEditable(false);
-        m_ctrl->Thaw();
-    }
+    ~EditorEnabler() { m_ctrl->SetEditable(false); }
 };
 } // namespace
 
@@ -43,10 +38,11 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    m_ctrl->SetIdleStyling(wxSTC_IDLESTYLING_ALL);
     m_ctrl->UsePopUp(1);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
-    ::clRecalculateSTCHScrollBar(m_ctrl);
+    //::clRecalculateSTCHScrollBar(m_ctrl);
     m_ctrl->SetEditable(false);
 
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
@@ -69,7 +65,7 @@ void TextView::AppendText(const wxString& buffer)
 {
     EditorEnabler d{ m_ctrl };
     m_ctrl->AppendText(buffer);
-    ::clRecalculateSTCHScrollBar(m_ctrl);
+    //::clRecalculateSTCHScrollBar(m_ctrl);
     RequestScrollToEnd();
 }
 

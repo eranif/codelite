@@ -18,7 +18,6 @@ struct EditorEnabler {
 wxTerminalAnsiRendererSTC::wxTerminalAnsiRendererSTC(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)
 {
-    m_ctrl->SetVirtualSpaceOptions(wxSTC_VS_USERACCESSIBLE);
     m_stcStyleProvider = new wxSTCStyleProvider(m_ctrl);
     m_defaultAttr = m_stcStyleProvider->GetDefaultStyle();
     ResetStyle();

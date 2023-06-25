@@ -362,13 +362,33 @@ inline wxChar safe_get_char(wxStringView buffer, size_t pos)
     return 0;
 }
 
+enum AnsiControlCode {
+    BELL = 0x07, // Makes an audible noise.
+    BS = 0x08,   // Backspace  Moves the cursor left (but may "backwards wrap" if cursor is at start of line).
+    HT = 0x09,   // Tab
+    LF = 0x0A,   // Line Feed
+    FF = 0x0C,   // Form Feed
+    CR = 0x0D,   // Carriage Return
+    ESC = 0x1B,  // Escape
+};
+
 /// take input sv and split it by CR (which is not followed by LF)
 std::vector<wxStringView> split_by_cr(wxStringView sv)
 {
     std::vector<wxStringView> res;
     // scan sv and break it into multiple entries, each separated by CR
     for(size_t i = 0; i < sv.length(); ++i) {
-        if(sv[i] == '\r' && safe_get_char(sv, i + 1) != '\n') {
+        if(sv[i] == AnsiControlCode::BS) {
+            // backspace
+            if(i > 1) {
+                auto buff = sv.substr(0, i - 1); // don't pick the char before the BS
+                if(!buff.empty()) {
+                    res.push_back(buff);
+                }
+            }
+            sv.remove_prefix(i + 1); // including the 'BS'
+            i = 0;
+        } else if(sv[i] == '\r' && safe_get_char(sv, i + 1) != '\n') {
             res.push_back(sv.substr(0, i));
             sv.remove_prefix(i + 1); // including the '\r'
             i = 0;
@@ -379,16 +399,6 @@ std::vector<wxStringView> split_by_cr(wxStringView sv)
     }
     return res;
 }
-
-enum AnsiControlCode {
-    BELL = 0x07, // Makes an audible noise.
-    BS = 0x08,   // Backspace  Moves the cursor left (but may "backwards wrap" if cursor is at start of line).
-    HT = 0x09,   // Tab
-    LF = 0x0A,   // Line Feed
-    FF = 0x0C,   // Form Feed
-    CR = 0x0D,   // Carriage Return
-    ESC = 0x1B,  // Escape
-};
 
 enum AnsiSequenceType {
     NEED_MORE_DATA = -3,
@@ -805,11 +815,14 @@ wxHandlResultStringView wxTerminalAnsiEscapeHandler::handle_osc(wxStringView sv,
     }
 
     // ESC ]0;this is the window title <BEL>
+    // ESC ]2;this is the window title <BEL>
     // ESC ]0;this is the window title <ST>
+    // ESC ]2;this is the window title <ST>
     // ESC ]8;;link <ST>
     wxChar ch = sv[0];
     sv.remove_prefix(1); // remove the `0` | `8`
     switch(ch) {
+    case '2': // Windows also allows `2` for the setting the title
     case '0': {
         size_t pos = 0;
         // expecting ';'

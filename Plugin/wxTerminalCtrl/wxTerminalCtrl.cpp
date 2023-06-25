@@ -87,7 +87,7 @@ void wxTerminalCtrl::StartShell()
 #endif
 
     LOG_DEBUG(TERM_LOG) << "Starting shell process:" << bash_exec << endl;
-    m_shell = ::CreateAsyncProcess(this, bash_exec + " --login -i", IProcessPseudoConsole | IProcessRawOutput,
+    m_shell = ::CreateAsyncProcess(this, bash_exec + " --login -i", IProcessCreateWithHiddenConsole | IProcessRawOutput,
                                    wxEmptyString, &env);
     if(m_shell) {
         wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);

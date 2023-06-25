@@ -71,6 +71,7 @@ void wxTerminalAnsiRendererInterface::SetTextColour(const wxColour& col)
 
 void wxTerminalAnsiRendererInterface::SetTextBgColour(const wxColour& col)
 {
+#if 0
     if(col.IsOk()) {
         LOG_IF_DEBUG { LOG_DEBUG(LOG) << "SetTextBgColour(" << col << ")" << endl; }
         m_curAttr.SetBackgroundColour(col);
@@ -78,6 +79,7 @@ void wxTerminalAnsiRendererInterface::SetTextBgColour(const wxColour& col)
         LOG_IF_DEBUG { LOG_DEBUG(LOG) << "SetTextBgColour(NullColour)" << endl; }
         m_curAttr.SetBackgroundColour(m_defaultAttr.GetBackgroundColour());
     }
+#endif
 }
 
 void wxTerminalAnsiRendererInterface::SetDefaultAttributes(const wxTextAttr& attr) { wxUnusedVar(attr); }

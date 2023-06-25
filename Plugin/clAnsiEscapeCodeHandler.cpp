@@ -1071,8 +1071,8 @@ wxSTCStyleProvider::~wxSTCStyleProvider() {}
 wxSTCStyleProvider::wxSTCStyleProvider(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)
 {
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("default");
-    lexer->ApplySystemColours(m_ctrl);
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    lexer->Apply(m_ctrl);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
 }
 

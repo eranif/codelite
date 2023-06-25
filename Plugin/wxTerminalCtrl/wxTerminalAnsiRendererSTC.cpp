@@ -21,6 +21,7 @@ wxTerminalAnsiRendererSTC::wxTerminalAnsiRendererSTC(wxStyledTextCtrl* ctrl)
     m_ctrl->SetVirtualSpaceOptions(wxSTC_VS_USERACCESSIBLE);
     m_stcStyleProvider = new wxSTCStyleProvider(m_ctrl);
     m_defaultAttr = m_stcStyleProvider->GetDefaultStyle();
+    ResetStyle();
 }
 
 wxTerminalAnsiRendererSTC::~wxTerminalAnsiRendererSTC() { wxDELETE(m_stcStyleProvider); }
@@ -171,8 +172,10 @@ void wxTerminalAnsiRendererSTC::SetTextColour(const wxColour& col)
 void wxTerminalAnsiRendererSTC::SetTextBgColour(const wxColour& col)
 {
     wxUnusedVar(col);
+#if 0
     // wxTerminalAnsiRendererInterface::SetTextBgColour(col);
     // m_curstyle = m_stcStyleProvider->GetStyle(m_curAttr.GetTextColour(), m_curAttr.GetBackgroundColour());
+#endif
 }
 
 void wxTerminalAnsiRendererSTC::SetTextFont(const wxFont& font) { wxTerminalAnsiRendererInterface::SetTextFont(font); }

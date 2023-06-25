@@ -5,6 +5,7 @@
 #include "clModuleLogger.hpp"
 #include "clSystemSettings.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include "wxTerminalCtrl.h"
 
 INITIALISE_MODULE_LOG(LOG, "AnsiEscapeHandler", "ansi_escape_parser.log");
@@ -20,9 +21,14 @@ struct EditorEnabler {
     EditorEnabler(wxStyledTextCtrl* ctrl)
         : m_ctrl(ctrl)
     {
+        m_ctrl->Freeze();
         m_ctrl->SetEditable(true);
     }
-    ~EditorEnabler() { m_ctrl->SetEditable(false); }
+    ~EditorEnabler()
+    {
+        m_ctrl->SetEditable(false);
+        m_ctrl->Thaw();
+    }
 };
 } // namespace
 
@@ -38,9 +44,9 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
     m_ctrl->UsePopUp(1);
-    m_ctrl->SetWrapMode(wxSTC_WRAP_WORD);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
+    ::clRecalculateSTCHScrollBar(m_ctrl);
     m_ctrl->SetEditable(false);
 
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
@@ -63,6 +69,7 @@ void TextView::AppendText(const wxString& buffer)
 {
     EditorEnabler d{ m_ctrl };
     m_ctrl->AppendText(buffer);
+    ::clRecalculateSTCHScrollBar(m_ctrl);
     RequestScrollToEnd();
 }
 
@@ -96,10 +103,9 @@ wxString TextView::GetLineText(int lineNumber) const { return m_ctrl->GetLineTex
 
 void TextView::ReloadSettings() { ApplyTheme(); }
 
-void TextView::StyleAndAppend(const wxString& buffer, wxString* window_title)
+void TextView::StyleAndAppend(wxStringView buffer, wxString* window_title)
 {
-    wxStringView sv{ buffer };
-    size_t consumed = m_outputHandler.ProcessBuffer(sv, m_stcRenderer);
+    size_t consumed = m_outputHandler.ProcessBuffer(buffer, m_stcRenderer);
     if(window_title) {
         *window_title = m_stcRenderer->GetWindowTitle();
     }

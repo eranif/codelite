@@ -1,6 +1,7 @@
 #include "wxTerminalInputCtrl.hpp"
 
 #include "ColoursAndFontsManager.h"
+#include "StringUtils.h"
 #include "TextView.h"
 #include "clSystemSettings.h"
 #include "event_notifier.h"
@@ -474,38 +475,21 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     auto ctrl = m_terminal->GetView()->GetCtrl();
     int last_line = ctrl->LineFromPosition(ctrl->GetLastPosition());
 
-    std::vector<wxString> lines;
+    wxArrayString lines;
     lines.reserve(last_line);
     while(last_line >= 0) {
         wxString line = ctrl->GetLine(last_line);
+        line.Trim().Trim(false);
+
         if(line.StartsWith(LINE_PREFIX)) {
             break;
         }
-        lines.push_back(line.Trim().Trim(false));
+
+        lines.push_back(line);
         --last_line;
     }
-    std::sort(lines.begin(), lines.end(), [](const wxString& a, const wxString& b) -> int { return a.Cmp(b); });
 
-    // find the best match
-    wxString match;
-    for(const auto& line : lines) {
-        if(match.empty() && line.StartsWith(prefix)) {
-            match = line;
-        } else if(line.StartsWith(match) || !line.StartsWith(prefix)) {
-            // example:
-            // prefix: build
-            // match: build-release
-            // line: build-release-wxcapp
-            continue;
-        } else {
-            // example:
-            // prefix: build
-            // match: build-release
-            // line: build-debug
-            match.clear();
-            break;
-        }
-    }
+    wxString match = StringUtils::FindCommonPrefix(lines);
 
     // if we reached here and match is not empty - we found a single match
     if(match.empty()) {

@@ -2,6 +2,7 @@
 #define WXTERMINALCTRL_H
 
 #include "asyncprocess.h"
+#include "clResult.hpp"
 #include "codelite_events.h"
 #include "codelite_exports.h"
 #include "processreaderthread.h"
@@ -45,17 +46,18 @@ protected:
     wxString m_logfile;
     wxString m_ttyfile;
     bool m_terminating = false;
-    std::vector<std::string> m_processOutput;
+    std::vector<wxString> m_processOutput;
 
 protected:
     void StartShell();
-    void AppendText(const wxString& text);
+    void AppendText(wxStringView text);
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
     bool PromptForPasswordIfNeeded();
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
-    void OnIdle(wxIdleEvent& event);
+    void ProcessOutputBuffer();
+    bool GetOutputBuffer(wxString* buffer);
 
 protected:
     void DoProcessTerminated();

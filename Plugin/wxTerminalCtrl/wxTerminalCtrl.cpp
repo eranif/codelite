@@ -34,7 +34,6 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     m_outputView = new TextView(this);
     m_outputView->SetSink(this);
     GetSizer()->Add(m_outputView, wxSizerFlags(1).Expand());
-    Bind(wxEVT_IDLE, &wxTerminalCtrl::OnIdle, this);
     m_inputCtrl = new wxTerminalInputCtrl(this, m_outputView->GetCtrl());
     CallAfter(&wxTerminalCtrl::StartShell);
 }
@@ -46,7 +45,6 @@ wxTerminalCtrl::~wxTerminalCtrl()
         wxDELETE(m_shell);
     }
     wxDELETE(m_inputCtrl);
-    Unbind(wxEVT_IDLE, &wxTerminalCtrl::OnIdle, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &wxTerminalCtrl::OnWorkspaceLoaded, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessError, this);
@@ -106,14 +104,15 @@ void wxTerminalCtrl::Run(const wxString& command)
     }
     LOG_DEBUG(TERM_LOG) << "-->" << command << endl;
     m_shell->WriteRaw(command + "\n");
-#if wxTERMINAL_USE_2_CTRLS
-    AppendText(command + "\n");
-#else
-    AppendText("\n");
-#endif
+
+    wxStringView sv{ command };
+    AppendText(sv);
+
+    wxStringView eol(wxT("\n"), 1);
+    AppendText(eol);
 }
 
-void wxTerminalCtrl::AppendText(const wxString& text)
+void wxTerminalCtrl::AppendText(wxStringView text)
 {
     wxString window_title;
     m_outputView->StyleAndAppend(text, &window_title);
@@ -163,9 +162,17 @@ void wxTerminalCtrl::SetAttributes(const wxColour& bg_colour, const wxColour& te
     m_outputView->ReloadSettings();
 }
 
-void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event) { m_processOutput.push_back(event.GetOutputRaw()); }
+void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event)
+{
+    m_processOutput.push_back(event.GetOutput());
+    ProcessOutputBuffer();
+}
 
-void wxTerminalCtrl::OnProcessError(clProcessEvent& event) { m_processOutput.push_back(event.GetOutputRaw()); }
+void wxTerminalCtrl::OnProcessError(clProcessEvent& event)
+{
+    m_processOutput.push_back(event.GetOutput());
+    ProcessOutputBuffer();
+}
 
 void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event)
 {
@@ -256,27 +263,37 @@ void wxTerminalCtrl::SetTerminalWorkingDirectory(const wxString& path)
 
 bool wxTerminalCtrl::IsFocused() { return m_inputCtrl->IsFocused(); }
 
-void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
+bool wxTerminalCtrl::GetOutputBuffer(wxString* buffer)
+{
+    if(m_processOutput.empty()) {
+        return false;
+    }
+    constexpr int BUFSIZE = 8192;
+    if(m_processOutput.begin()->size() > BUFSIZE) {
+        *buffer = m_processOutput.begin()->substr(0, BUFSIZE);
+        (*m_processOutput.begin()).erase(0, BUFSIZE);
+    } else {
+        *buffer = *m_processOutput.begin();
+        m_processOutput.erase(m_processOutput.begin());
+    }
+    return true;
+}
+
+void wxTerminalCtrl::ProcessOutputBuffer()
 {
     if(m_processOutput.empty()) {
         return;
     }
 
-    std::string buffer_to_process;
-    constexpr int BUFSIZE = 4096;
-    if(m_processOutput.begin()->size() > BUFSIZE) {
-        buffer_to_process = m_processOutput.begin()->substr(0, BUFSIZE);
-        (*m_processOutput.begin()).erase(0, BUFSIZE);
-    } else {
-        buffer_to_process = *m_processOutput.begin();
-        m_processOutput.erase(m_processOutput.begin());
-    }
-
-    LOG_DEBUG(TERM_LOG) << "<--" << buffer_to_process << endl;
-    AppendText(buffer_to_process);
-    // see if we need to prompt for password
-    if(PromptForPasswordIfNeeded()) {
-        return;
+    wxString buffer_to_process;
+    while(GetOutputBuffer(&buffer_to_process)) {
+        LOG_DEBUG(TERM_LOG) << "<--" << buffer_to_process << endl;
+        wxStringView sv{ buffer_to_process };
+        AppendText(sv);
+        // see if we need to prompt for password
+        if(PromptForPasswordIfNeeded()) {
+            return;
+        }
     }
 
     if(m_processOutput.empty()) {

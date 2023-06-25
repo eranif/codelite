@@ -62,6 +62,10 @@ public:
     /// clear from caret left | right
     virtual void ClearLine(size_t dir = wxRIGHT | wxLEFT);
 
+    /// replace n chars with space (going right)
+    /// if at edge, insert the space
+    virtual void EraseCharacter(int n);
+
     /// clear from caret up | down
     virtual void ClearDisplay(size_t dir = wxUP | wxDOWN);
 

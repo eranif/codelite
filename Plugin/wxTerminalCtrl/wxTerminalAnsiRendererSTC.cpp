@@ -27,7 +27,17 @@ wxTerminalAnsiRendererSTC::wxTerminalAnsiRendererSTC(wxStyledTextCtrl* ctrl)
 wxTerminalAnsiRendererSTC::~wxTerminalAnsiRendererSTC() { wxDELETE(m_stcStyleProvider); }
 
 void wxTerminalAnsiRendererSTC::Bell() {}
-void wxTerminalAnsiRendererSTC::Backspace() {}
+
+void wxTerminalAnsiRendererSTC::Backspace()
+{
+    if(m_pos.x > 0) {
+        SetInsertionPoint();
+        m_ctrl->ClearSelections(); // ensure 1 char is deleted
+        m_ctrl->DeleteBack();
+        m_pos.x -= 1;
+        SetInsertionPoint();
+    }
+}
 
 void wxTerminalAnsiRendererSTC::InsertText(const wxString& str)
 {
@@ -44,6 +54,7 @@ void wxTerminalAnsiRendererSTC::InsertText(const wxString& str)
     m_pos.y = m_ctrl->LineFromPosition(newpos);
     m_pos.x = newpos - m_ctrl->PositionFromLine(newpos);
     m_ctrl->ScrollToEnd();
+    SetInsertionPoint();
 }
 
 void wxTerminalAnsiRendererSTC::Tab() { InsertText("\t"); }
@@ -70,9 +81,15 @@ void wxTerminalAnsiRendererSTC::AddString(wxStringView str) { InsertText(wxStrin
 void wxTerminalAnsiRendererSTC::MoveCaret(long n, wxDirection direction)
 {
     switch(direction) {
-    case wxRIGHT:
+    case wxRIGHT: {
         m_pos.x += n;
-        break;
+        int curpos = m_ctrl->GetLastPosition();
+        if(GetInsertionPoint() > curpos) {
+            // add whitespace
+            SetInsertionPoint();
+            InsertText(wxString(' ', GetInsertionPoint() - curpos));
+        }
+    } break;
     case wxLEFT:
         m_pos.x -= n;
         if(m_pos.x < 0) {
@@ -185,4 +202,32 @@ void wxTerminalAnsiRendererSTC::Clear()
     wxTerminalAnsiRendererInterface::Clear();
     m_curstyle = 0;
     m_stcStyleProvider->Clear();
+}
+
+void wxTerminalAnsiRendererSTC::EraseCharacter(int n)
+{
+    if(n <= 0) {
+        return;
+    }
+
+    SetInsertionPoint();
+    int curpos = m_ctrl->GetCurrentPos();
+    int curline = m_ctrl->GetCurrentLine();
+    int last_pos_on_cur_line = m_ctrl->PositionFromLine(curline) + m_ctrl->LineLength(curline);
+
+    int cols_until_line_edge = last_pos_on_cur_line > curpos;
+    int n_replace = 0;
+    int n_insert = n;
+    // if we have buffer on the right overwrite what we can
+    if(cols_until_line_edge > 0) {
+        n_replace = wxMin(cols_until_line_edge, n);
+        n_insert = n - n_replace;
+    }
+
+    if(n_replace) {
+        m_ctrl->Replace(curpos, curpos + n_replace, wxString(' ', n_replace));
+    }
+    m_ctrl->InsertText(curpos + n_replace, wxString(' ', n_insert));
+    m_pos.x += n;
+    SetInsertionPoint();
 }

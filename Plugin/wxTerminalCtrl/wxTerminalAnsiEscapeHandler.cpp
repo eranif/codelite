@@ -382,7 +382,7 @@ std::vector<wxStringView> split_by_cr(wxStringView sv)
 
 enum AnsiControlCode {
     BELL = 0x07, // Makes an audible noise.
-    BS = 0x08,   //  Backspace  Moves the cursor left (but may "backwards wrap" if cursor is at start of line).
+    BS = 0x08,   // Backspace  Moves the cursor left (but may "backwards wrap" if cursor is at start of line).
     HT = 0x09,   // Tab
     LF = 0x0A,   // Line Feed
     FF = 0x0C,   // Form Feed
@@ -451,6 +451,8 @@ enum AnsiControlSequence {
     RestoreSavedCursorPosition = 'u',
     ActionEnable = 'h',  // Enable action, the action is determinted by the content between CSI <action> <h>
     ActionDisable = 'l', // Disable action, the action is determinted by the content between CSI <action> <l>
+    EraseCharacter =
+        'X', // Erase <n> characters from the current cursor position by overwriting them with a space character.
 };
 
 struct ColsRows {
@@ -637,6 +639,7 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
         } break;
         case AnsiControlSequence::EraseInDisplay: // default 0
         case AnsiControlSequence::EraseInLine:    // default 0
+        case AnsiControlSequence::EraseCharacter: // default 0
         {
             // CSI <number> <Terminator>
             auto sv = buffer.substr(0, i);
@@ -899,6 +902,9 @@ wxHandlResultStringView wxTerminalAnsiEscapeHandler::handle_csi(wxStringView sv,
             renderer->ClearLine(wxLEFT | wxRIGHT);
             break;
         }
+        break;
+    case AnsiControlSequence::EraseCharacter:
+        renderer->EraseCharacter(value.value_long());
         break;
     case AnsiControlSequence::EraseInDisplay:
         // Move caret backward

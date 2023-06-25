@@ -79,6 +79,10 @@ public:
 
     /// Set the current text font
     void SetTextFont(const wxFont& font) override;
+    
+    /// replace n chars with space (going right)
+    /// if at edge, insert the space
+    void EraseCharacter(int n) override;
 };
 
 #endif // WXTERMINALANSIRENDERERSTC_HPP

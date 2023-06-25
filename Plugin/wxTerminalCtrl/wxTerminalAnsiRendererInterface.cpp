@@ -16,6 +16,7 @@ void wxTerminalAnsiRendererInterface::LineFeed() { LOG_DEBUG(LOG) << "Line Feed!
 void wxTerminalAnsiRendererInterface::FormFeed() { LOG_DEBUG(LOG) << "Form Feed!" << endl; }
 void wxTerminalAnsiRendererInterface::CarriageReturn() { LOG_DEBUG(LOG) << "CR!" << endl; }
 void wxTerminalAnsiRendererInterface::AddString(wxStringView str) {}
+void wxTerminalAnsiRendererInterface::EraseCharacter(int) {}
 
 void wxTerminalAnsiRendererInterface::MoveCaret(long n, wxDirection direction)
 {

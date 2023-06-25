@@ -46,7 +46,7 @@ public:
 
     // API
     void AppendText(const wxString& buffer);
-    void StyleAndAppend(const wxString& buffer, wxString* window_title);
+    void StyleAndAppend(wxStringView buffer, wxString* window_title);
     long GetLastPosition() const;
     wxString GetRange(int from, int to) const;
     bool PositionToXY(long pos, long* x, long* y) const;

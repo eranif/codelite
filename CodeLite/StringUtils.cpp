@@ -515,3 +515,37 @@ wxArrayString StringUtils::AppendAndMakeUnique(wxArrayString arr, const wxString
     }
     return arr;
 }
+#include "file_logger.h"
+
+wxString StringUtils::FindCommonPrefix(const wxArrayString& strings)
+{
+    if(strings.empty()) {
+        return wxEmptyString;
+    }
+
+    wxString prefix;
+    size_t col = 0;
+    bool cont = true;
+    while(cont) {
+        wxChar curchar = 0;
+        for(const auto& str : strings) {
+            if(col >= str.length()) {
+                cont = false;
+                break;
+            }
+
+            if(curchar == 0) {
+                // starting a new column
+                curchar = str[col];
+            } else if(str[col] != curchar) {
+                cont = false;
+                break;
+            }
+        }
+        if(cont) {
+            prefix << curchar;
+            ++col;
+        }
+    }
+    return prefix;
+}

@@ -115,6 +115,9 @@ public:
 
     /// Append `str` to `arr`. If the array size exceed the truncation size, shrink it to fit
     static wxArrayString AppendAndMakeUnique(wxArrayString arr, const wxString& str, size_t truncate_size = 15);
+
+    /// Given `strings` return the longest common prefix for them
+    static wxString FindCommonPrefix(const wxArrayString& strings);
 };
 
 #endif // STRINGUTILS_H

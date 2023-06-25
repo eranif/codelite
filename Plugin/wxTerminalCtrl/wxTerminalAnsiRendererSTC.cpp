@@ -1,6 +1,7 @@
 #include "wxTerminalAnsiRendererSTC.hpp"
 
 #include "clAnsiEscapeCodeHandler.hpp"
+#include "globals.h"
 
 namespace
 {
@@ -54,6 +55,7 @@ void wxTerminalAnsiRendererSTC::InsertText(const wxString& str)
     m_pos.x = newpos - m_ctrl->PositionFromLine(newpos);
     m_ctrl->ScrollToEnd();
     SetInsertionPoint();
+    ::clRecalculateSTCHScrollBar(m_ctrl);
 }
 
 void wxTerminalAnsiRendererSTC::Tab() { InsertText("\t"); }
@@ -81,13 +83,11 @@ void wxTerminalAnsiRendererSTC::MoveCaret(long n, wxDirection direction)
 {
     switch(direction) {
     case wxRIGHT: {
-        m_pos.x += n;
-        int curpos = m_ctrl->GetLastPosition();
-        if(GetInsertionPoint() > curpos) {
-            // add whitespace
-            SetInsertionPoint();
-            InsertText(wxString(' ', GetInsertionPoint() - curpos));
+        int line_last_pos = m_ctrl->LineLength(m_pos.y);
+        if(m_pos.x + n <= line_last_pos) {
+            m_pos.x += n;
         }
+        SetInsertionPoint();
     } break;
     case wxLEFT:
         m_pos.x -= n;

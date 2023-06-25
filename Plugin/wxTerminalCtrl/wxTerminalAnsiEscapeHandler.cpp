@@ -353,6 +353,33 @@ const wxColour& find_colour_by_number(ColoursMap_t* coloursMap, int num)
     return pColours->find(num)->second;
 }
 
+/// safely get char at pos. return 0 if out-of-index
+inline wxChar safe_get_char(wxStringView buffer, size_t pos)
+{
+    if(pos < buffer.length()) {
+        return buffer[pos];
+    }
+    return 0;
+}
+
+/// take input sv and split it by CR (which is not followed by LF)
+std::vector<wxStringView> split_by_cr(wxStringView sv)
+{
+    std::vector<wxStringView> res;
+    // scan sv and break it into multiple entries, each separated by CR
+    for(size_t i = 0; i < sv.length(); ++i) {
+        if(sv[i] == '\r' && safe_get_char(sv, i + 1) != '\n') {
+            res.push_back(sv.substr(0, i));
+            sv.remove_prefix(i + 1); // including the '\r'
+            i = 0;
+        }
+    }
+    if(!sv.empty()) {
+        res.push_back(sv);
+    }
+    return res;
+}
+
 enum AnsiControlCode {
     BELL = 0x07, // Makes an audible noise.
     BS = 0x08,   //  Backspace  Moves the cursor left (but may "backwards wrap" if cursor is at start of line).
@@ -482,15 +509,6 @@ inline size_t find_control_code(wxStringView buffer, int code)
         }
     }
     return wxStringView::npos;
-}
-
-/// safely get char at pos. return 0 if out-of-index
-inline wxChar safe_get_char(wxStringView buffer, size_t pos)
-{
-    if(pos < buffer.length()) {
-        return buffer[pos];
-    }
-    return 0;
 }
 
 /// read from the buffer until we find code
@@ -650,6 +668,20 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
     return wxHandlResultStringView::make_error(wxHandleError::kNeedMoreData);
 }
 
+/// Render string, taking CR into account
+void render_string(wxStringView sv, wxTerminalAnsiRendererInterface* renderer)
+{
+    auto chunks = split_by_cr(sv);
+    while(!chunks.empty()) {
+        auto chunk = chunks.front();
+        renderer->AddString(chunk);
+        chunks.erase(chunks.begin());
+        if(!chunks.empty()) {
+            // call the CR callback
+            renderer->CarriageReturn();
+        }
+    }
+}
 } // namespace
 
 wxTerminalAnsiEscapeHandler::wxTerminalAnsiEscapeHandler() { initialise_colours(); }
@@ -677,11 +709,11 @@ size_t wxTerminalAnsiEscapeHandler::ProcessBuffer(wxStringView input, wxTerminal
             size_t len = find_control_code(sv, AnsiControlCode::ESC);
             if(len != wxStringView::npos) {
                 wxStringView str = sv.substr(0, len);
-                renderer->AddString(str);
+                render_string(str, renderer);
                 sv.remove_prefix(len);
             } else {
                 // add the entire sv
-                renderer->AddString(sv);
+                render_string(sv, renderer);
                 sv = {};
             }
         } break;

@@ -364,6 +364,7 @@ IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const wxString& cm
     prc->m_flags = flags;
     prc->m_pid = prc->piProcInfo.dwProcessId;
     prc->hChildStdoutRdDup = outputReadSide;
+    prc->m_hPseudoConsole = hPC;
     return prc;
 }
 
@@ -690,6 +691,11 @@ void WinProcessImpl::Cleanup()
     if(m_writerThread) {
         m_writerThread->Stop();
         wxDELETE(m_writerThread);
+    }
+
+    if(m_hPseudoConsole) {
+        ClosePseudoConsole(m_hPseudoConsole);
+        m_hPseudoConsole = nullptr;
     }
 
     // Under windows, the reader thread is detached

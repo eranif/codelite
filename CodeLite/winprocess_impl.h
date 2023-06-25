@@ -104,7 +104,8 @@ private:
            hChildStderrRd = INVALID_HANDLE_VALUE, hChildStderrWr = INVALID_HANDLE_VALUE,
            hChildStderrRdDup = INVALID_HANDLE_VALUE, hSaveStdin = INVALID_HANDLE_VALUE,
            hSaveStdout = INVALID_HANDLE_VALUE, hSaveStderr = INVALID_HANDLE_VALUE;
-
+    
+    VOID* m_hPseudoConsole = nullptr;
     // Child process id & information
     DWORD dwProcessId = wxNOT_FOUND;
     PROCESS_INFORMATION piProcInfo = {};

@@ -372,32 +372,63 @@ enum AnsiControlCode {
     ESC = 0x1B,  // Escape
 };
 
-/// take input sv and split it by CR (which is not followed by LF)
-std::vector<wxStringView> split_by_cr(wxStringView sv)
+/// takes an input sv and render its content by taking CR, LF and BS into consideration
+void render_string(wxStringView sv, wxTerminalAnsiRendererInterface* renderer)
 {
-    std::vector<wxStringView> res;
-    // scan sv and break it into multiple entries, each separated by CR
-    for(size_t i = 0; i < sv.length(); ++i) {
-        if(sv[i] == AnsiControlCode::BS) {
-            // backspace
-            if(i > 1) {
-                auto buff = sv.substr(0, i - 1); // don't pick the char before the BS
-                if(!buff.empty()) {
-                    res.push_back(buff);
-                }
+    enum class States {
+        STATE_NORMAL = 0,
+        STATE_CR = 1,
+    } state;
+
+#define RENDER_STRING(end_pos)                                    \
+    if(end_pos > anchor) {                                        \
+        renderer->AddString(sv.substr(anchor, end_pos - anchor)); \
+    }
+
+    size_t anchor = 0;
+    state = States::STATE_NORMAL;
+    size_t curpos = 0;
+    for(; curpos < sv.length(); ++curpos) {
+        switch(state) {
+        case States::STATE_NORMAL:
+            switch(sv[curpos]) {
+            case AnsiControlCode::BS:
+                RENDER_STRING(curpos);
+                renderer->Backspace();
+                anchor = curpos + 1; // Skip the BackSpace
+                break;
+            case '\r':
+                state = States::STATE_CR;
+                break;
+            default:
+                break;
             }
-            sv.remove_prefix(i + 1); // including the 'BS'
-            i = 0;
-        } else if(sv[i] == '\r' && safe_get_char(sv, i + 1) != '\n') {
-            res.push_back(sv.substr(0, i));
-            sv.remove_prefix(i + 1); // including the '\r'
-            i = 0;
+            break; // STATE_NORMAL
+        case States::STATE_CR:
+            switch(sv[curpos]) {
+            case '\n':
+                // a case of \r\n
+                // render any string seen until the \r
+                RENDER_STRING(curpos - 1);
+                // We handle \r\n as LF
+                renderer->LineFeed();
+                // set the new string anchor
+                anchor = curpos + 1; // Skip the LF
+                state = States::STATE_NORMAL;
+                break;
+            default:
+                // it was \r only
+                RENDER_STRING(curpos - 1);
+                renderer->CarriageReturn();
+                anchor = curpos;
+                state = States::STATE_NORMAL;
+                break;
+            }
+            break;
         }
     }
-    if(!sv.empty()) {
-        res.push_back(sv);
-    }
-    return res;
+    RENDER_STRING(curpos);
+#undef RENDER_STRING
 }
 
 enum AnsiSequenceType {
@@ -681,20 +712,6 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
     return wxHandlResultStringView::make_error(wxHandleError::kNeedMoreData);
 }
 
-/// Render string, taking CR into account
-void render_string(wxStringView sv, wxTerminalAnsiRendererInterface* renderer)
-{
-    auto chunks = split_by_cr(sv);
-    while(!chunks.empty()) {
-        auto chunk = chunks.front();
-        renderer->AddString(chunk);
-        chunks.erase(chunks.begin());
-        if(!chunks.empty()) {
-            // call the CR callback
-            renderer->CarriageReturn();
-        }
-    }
-}
 } // namespace
 
 wxTerminalAnsiEscapeHandler::wxTerminalAnsiEscapeHandler() { initialise_colours(); }

@@ -46,7 +46,7 @@ protected:
     wxString m_logfile;
     wxString m_ttyfile;
     bool m_terminating = false;
-    std::vector<wxString> m_processOutput;
+    wxString m_processOutput;
 
 protected:
     void StartShell();
@@ -57,7 +57,7 @@ protected:
     bool PromptForPasswordIfNeeded();
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void ProcessOutputBuffer();
-    bool GetOutputBuffer(wxString* buffer);
+    wxStringView GetNextLine();
 
 protected:
     void DoProcessTerminated();

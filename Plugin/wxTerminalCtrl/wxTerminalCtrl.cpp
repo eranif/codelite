@@ -4,8 +4,10 @@
 #include "StringUtils.h"
 #include "TextView.h"
 #include "clModuleLogger.hpp"
+#include "clResult.hpp"
 #include "environmentconfig.h" // EnvSetter
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "ssh/ssh_account_info.h"
 #include "wxTerminalInputCtrl.hpp"
 
@@ -164,13 +166,13 @@ void wxTerminalCtrl::SetAttributes(const wxColour& bg_colour, const wxColour& te
 
 void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event)
 {
-    m_processOutput.push_back(event.GetOutput());
+    m_processOutput << event.GetOutput();
     ProcessOutputBuffer();
 }
 
 void wxTerminalCtrl::OnProcessError(clProcessEvent& event)
 {
-    m_processOutput.push_back(event.GetOutput());
+    m_processOutput << event.GetOutput();
     ProcessOutputBuffer();
 }
 
@@ -263,20 +265,20 @@ void wxTerminalCtrl::SetTerminalWorkingDirectory(const wxString& path)
 
 bool wxTerminalCtrl::IsFocused() { return m_inputCtrl->IsFocused(); }
 
-bool wxTerminalCtrl::GetOutputBuffer(wxString* buffer)
+wxStringView wxTerminalCtrl::GetNextLine()
 {
     if(m_processOutput.empty()) {
-        return false;
+        return {};
     }
-    constexpr int BUFSIZE = 8192;
-    if(m_processOutput.begin()->size() > BUFSIZE) {
-        *buffer = m_processOutput.begin()->substr(0, BUFSIZE);
-        (*m_processOutput.begin()).erase(0, BUFSIZE);
-    } else {
-        *buffer = *m_processOutput.begin();
-        m_processOutput.erase(m_processOutput.begin());
+
+    int where = m_processOutput.Find('\n');
+    if(where == wxNOT_FOUND) {
+        // return the entire string
+        return wxStringView{ m_processOutput.wc_str(), m_processOutput.length() };
     }
-    return true;
+
+    return wxStringView{ m_processOutput.wc_str(),
+                         (size_t)where + 1 }; // return the string view, including the terminator
 }
 
 void wxTerminalCtrl::ProcessOutputBuffer()
@@ -285,11 +287,17 @@ void wxTerminalCtrl::ProcessOutputBuffer()
         return;
     }
 
-    wxString buffer_to_process;
-    while(GetOutputBuffer(&buffer_to_process)) {
-        LOG_DEBUG(TERM_LOG) << "<--" << buffer_to_process << endl;
-        wxStringView sv{ buffer_to_process.wc_str(), buffer_to_process.length() };
+    while(true) {
+        wxStringView sv = GetNextLine();
+        if(sv.empty()) {
+            break;
+        }
+        LOG_IF_DEBUG { LOG_DEBUG(TERM_LOG) << "<--" << wxString(sv.data(), sv.length()) << endl; }
         AppendText(sv);
+
+        // consume the string from the output buffer
+        m_processOutput.Remove(0, sv.length());
+
         // see if we need to prompt for password
         if(PromptForPasswordIfNeeded()) {
             return;

@@ -963,7 +963,7 @@ wxHandlResultStringView wxTerminalAnsiEscapeHandler::handle_csi(wxStringView sv,
     } break;
     case AnsiControlSequence::SelectGraphicRendition: {
         wxString s = value.value_string();
-        wxStringView sv{ s };
+        wxStringView sv{ s.wc_str(), s.length() };
         handle_sgr(sv, renderer);
     } break;
     }

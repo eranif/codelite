@@ -105,7 +105,7 @@ void wxTerminalCtrl::Run(const wxString& command)
     LOG_DEBUG(TERM_LOG) << "-->" << command << endl;
     m_shell->WriteRaw(command + "\n");
 
-    wxStringView sv{ command };
+    wxStringView sv{ command.wc_str(), command.length() };
     AppendText(sv);
 
     wxStringView eol(wxT("\n"), 1);
@@ -288,7 +288,7 @@ void wxTerminalCtrl::ProcessOutputBuffer()
     wxString buffer_to_process;
     while(GetOutputBuffer(&buffer_to_process)) {
         LOG_DEBUG(TERM_LOG) << "<--" << buffer_to_process << endl;
-        wxStringView sv{ buffer_to_process };
+        wxStringView sv{ buffer_to_process.wc_str(), buffer_to_process.length() };
         AppendText(sv);
         // see if we need to prompt for password
         if(PromptForPasswordIfNeeded()) {

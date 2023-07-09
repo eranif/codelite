@@ -243,6 +243,8 @@ void wxTerminalCtrl::SSHAndSetWorkingDirectory(const wxString& ssh_account, cons
     }
     // build the ssh command
     wxString command;
+    // ensure this does work on Windows & Bash
+    ssh_exe.Replace("\\", "/");
     command << StringUtils::WrapWithDoubleQuotes(ssh_exe) << " -tt ";
     if(!account.GetUsername().empty()) {
         command << account.GetUsername() << "@" << account.GetHost();

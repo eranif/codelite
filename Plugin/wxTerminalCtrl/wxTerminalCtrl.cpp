@@ -77,24 +77,24 @@ void wxTerminalCtrl::StartShell()
     wxString path;
     ThePlatform->GetPath(&path, true);
 
-    // override PATH with our own
-    clEnvList_t env = { { "PATH", path } };
+    clEnvList_t* penv = nullptr;
 #ifdef __WXMSW__
-    env.push_back({ "LOGINSHELL", "bash" });
-    env.push_back({ "MSYS2_PATH", "/usr/local/bin:/usr/bin:/bin" });
-    env.push_back({ "MSYS2_NOSTART", "yes" });
-    env.push_back({ "MSYSTEM_PREFIX", "/usr" });
-    env.push_back({ "MSYSTEM", "MSYS" });
+    // override PATH with our own
+    clEnvList_t env;
     env.push_back({ "WD", wxFileName(bash_exec).GetPath() });
+    penv = &env;
 #endif
 
     LOG_DEBUG(TERM_LOG) << "Starting shell process:" << bash_exec << endl;
     m_shell = ::CreateAsyncProcess(this, bash_exec + " --login -i", IProcessPseudoConsole | IProcessRawOutput,
-                                   wxEmptyString, &env);
+                                   wxEmptyString, penv);
     if(m_shell) {
+        LOG_DEBUG(TERM_LOG) << "Successfully started bash terminal" << endl;
         wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
         readyEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(readyEvent);
+    } else {
+        LOG_ERROR(TERM_LOG) << "Failed to launch bash terminal:" << bash_exec << endl;
     }
     m_inputCtrl->SetFocus();
 }

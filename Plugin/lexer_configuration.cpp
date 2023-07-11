@@ -54,8 +54,8 @@ void allocate_substyles(wxStyledTextCtrl* ctrl, int base_style, size_t num)
     if(count == 0) {
         // allocate the maximum number of substyles that we may require
         int start_index = ctrl->AllocateSubStyles(base_style, num);
-        clDEBUG() << "Allocating" << num << "substyles" << endl;
-        clDEBUG() << "First substyle starting at:" << start_index << endl;
+        clDEBUG1() << "Allocating" << num << "substyles" << endl;
+        clDEBUG1() << "First substyle starting at:" << start_index << endl;
     }
 }
 } // namespace

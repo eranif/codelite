@@ -3485,6 +3485,16 @@ void clEditor::SetEditorText(const wxString& text)
     DelAllBreakpointMarkers();
 }
 
+void clEditor::CreateRemote(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account)
+{
+    SetFileName(local_path);
+    SetProject(wxEmptyString);
+    SetSyntaxHighlight(false);
+    // mark this file as remote by setting a remote data
+    IEditor::SetClientData("sftp", new SFTPClientData(local_path, remote_path, ssh_account));
+    OpenFile();
+}
+
 void clEditor::Create(const wxString& project, const wxFileName& fileName)
 {
     // set the file name
@@ -3872,7 +3882,7 @@ void clEditor::OnLeftDown(wxMouseEvent& event)
     EventNotifier::Get()->AddPendingEvent(destroyEvent);
 
     // Clear any messages from the status bar
-    clGetManager()->GetStatusBar()->SetMessage("");
+    clGetManager()->GetStatusBar()->SetMessage(wxEmptyString);
     event.Skip();
 }
 
@@ -3891,7 +3901,9 @@ BrowseRecord clEditor::CreateBrowseRecord()
     record.project = GetProject();
     record.firstLineInView = GetFirstVisibleLine();
     record.column = GetColumn(GetCurrentPosition());
-    record.ssh_account = IsRemoteFile() ? GetRemoteData()->GetAccountName() : wxString();
+    if(IsRemoteFile()) {
+        record.ssh_account = GetRemoteData()->GetAccountName();
+    }
     return record;
 }
 

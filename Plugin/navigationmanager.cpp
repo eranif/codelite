@@ -30,6 +30,16 @@
 
 #include <wx/stc/stc.h>
 
+namespace
+{
+wxString record_to_string(const BrowseRecord& rec)
+{
+    wxString s;
+    s << rec.filename << ":" << rec.lineno;
+    return s;
+}
+} // namespace
+
 NavMgr::NavMgr() { EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NavMgr::OnWorkspaceClosed, this); }
 
 NavMgr::~NavMgr()
@@ -50,12 +60,7 @@ void NavMgr::Clear()
     m_nexts = {};
 }
 
-bool NavMgr::ValidLocation(const BrowseRecord& rec) const
-{
-    // ATTN: lineno == 1 implies a file was just opened, but before the find-and-select has happened
-    // TODO: don't allow records for non-source files (*.diff, *.i, etc)
-    return (!rec.filename.IsEmpty()) && (rec.lineno > 1);
-}
+bool NavMgr::ValidLocation(const BrowseRecord& rec) const { return (!rec.filename.IsEmpty()) && (rec.lineno > 1); }
 
 bool NavMgr::CanNext() const { return !m_nexts.empty(); }
 
@@ -63,6 +68,8 @@ bool NavMgr::CanPrev() const { return !m_prevs.empty(); }
 
 void NavMgr::StoreCurrentLocation(const BrowseRecord& origin, const BrowseRecord& target)
 {
+    clDEBUG() << "Nav manager storing location: Origin:" << record_to_string(origin)
+              << ", Target:" << record_to_string(target) << endl;
     if(m_prevs.empty() || !m_prevs.top().IsSameAs(origin)) {
         m_prevs.push(origin);
     }
@@ -82,6 +89,7 @@ bool NavMgr::NavigateBackward(IManager* mgr)
     }
     m_currentLocation = new_loc;
 
+    clDEBUG() << "Nav manager BACKWARD:" << record_to_string(new_loc) << endl;
     auto callback = [=](IEditor* editor) {
         editor->GetCtrl()->ClearSelections();
         editor->CenterLine(new_loc.lineno, new_loc.column);
@@ -103,6 +111,7 @@ bool NavMgr::NavigateForward(IManager* mgr)
     }
     m_currentLocation = new_loc;
 
+    clDEBUG() << "Nav manager FORWARD:" << record_to_string(new_loc) << endl;
     auto callback = [=](IEditor* editor) {
         editor->GetCtrl()->ClearSelections();
         editor->CenterLine(new_loc.lineno, new_loc.column);

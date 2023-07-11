@@ -234,6 +234,12 @@ public:
      */
     clEditor* OpenFileAsync(const wxString& file_name, std::function<void(IEditor*)>&& callback);
 
+    /**
+     * @brief open a remote file into the editor mainbook
+     */
+    clEditor* OpenRemoteFile(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account,
+                             const wxString& tooltip = wxEmptyString);
+
     clEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                        long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
                        int bmp = wxNOT_FOUND, const wxString& tooltip = wxEmptyString);

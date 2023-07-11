@@ -99,6 +99,8 @@ public:
     IEditor* OpenFile(const wxString& fileName, const wxString& bmpResourceName,
                       const wxString& tooltip = wxEmptyString) override;
     IEditor* OpenFile(const BrowseRecord& rec) override;
+    IEditor* OpenRemoteFile(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account,
+                            const wxString& tooltip = wxEmptyString) override;
     wxString GetStartupDirectory() const override;
     void AddProject(const wxString& path) override;
     bool IsWorkspaceOpen() const override;

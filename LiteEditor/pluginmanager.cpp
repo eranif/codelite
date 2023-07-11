@@ -394,6 +394,12 @@ IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& bmpRe
     return editor;
 }
 
+IEditor* PluginManager::OpenRemoteFile(const wxString& local_path, const wxString& remote_path,
+                                       const wxString& ssh_account, const wxString& tooltip)
+{
+    return clMainFrame::Get()->GetMainBook()->OpenRemoteFile(local_path, remote_path, ssh_account, tooltip);
+}
+
 IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& projectName, int lineno, OF_extra flags)
 {
     IEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno, wxNOT_FOUND, flags);

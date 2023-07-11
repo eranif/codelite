@@ -735,6 +735,7 @@ public:
      * Open file and clear the undo buffer
      */
     virtual void Create(const wxString& project, const wxFileName& fileName);
+    virtual void CreateRemote(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account);
 
     /**
      * Insert text to the editor and keeping the page indentation

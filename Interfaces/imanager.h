@@ -195,6 +195,12 @@ public:
                               const wxString& tooltip = wxEmptyString) = 0;
 
     /**
+     * @brief load a remote file content (represented by the local_path) into an `IEdtor`
+     */
+    virtual IEditor* OpenRemoteFile(const wxString& local_path, const wxString& remote_path,
+                                    const wxString& ssh_account, const wxString& tooltip = wxEmptyString) = 0;
+
+    /**
      * @brief open or select ((if the file is already loaded in CodeLite) editor with a given `file_name` to the
      * notebook control and make it active Once the page is **visible**, execute the callback provided by the user
      * @param callback user callback to be executed once the editor is visible on screen

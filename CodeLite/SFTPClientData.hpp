@@ -15,6 +15,12 @@ class WXDLLIMPEXP_CL SFTPClientData : public wxClientData
 
 public:
     SFTPClientData();
+    SFTPClientData(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account)
+        : localPath(local_path)
+        , remotePath(remote_path)
+        , accountName(ssh_account)
+    {
+    }
     virtual ~SFTPClientData();
 
     void SetLocalPath(const wxString& localPath) { this->localPath = localPath; }

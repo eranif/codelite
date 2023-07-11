@@ -590,6 +590,49 @@ static bool IsFileExists(const wxFileName& filename)
 #endif
 }
 
+clEditor* MainBook::OpenRemoteFile(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account,
+                                   const wxString& tooltip)
+{
+    if(!IsFileExists(local_path)) {
+        clDEBUG() << "Failed to open:" << local_path << ". No such file or directory" << endl;
+        return nullptr;
+    }
+
+    if(FileExtManager::GetType(local_path) == FileExtManager::TypeBmp) {
+        // a bitmap file, open it using an image viewer
+        DoOpenImageViewer(local_path);
+        return nullptr;
+    }
+
+    clEditor* cur_active_editor = GetActiveEditor(true);
+    BrowseRecord jumpfrom = cur_active_editor ? cur_active_editor->CreateBrowseRecord() : BrowseRecord();
+
+    // locate an existing editor
+    auto editor = FindEditor(local_path);
+    if(!editor) {
+        // create a new one
+        editor = new clEditor(m_book);
+        editor->CreateRemote(local_path, remote_path, ssh_account);
+
+        int sel = m_book->GetSelection();
+
+        // The tab label is the filename + last dir
+        wxString label = CreateLabel(local_path, false);
+        label.Replace("\\", "/");
+
+        AddBookPage(editor, label, tooltip.empty() ? remote_path : tooltip, wxNOT_FOUND, false, sel + 1);
+        editor->SetSyntaxHighlight();
+        SelectPage(editor);
+    } else {
+        editor->SetActive();
+    }
+
+    BrowseRecord jumpto = editor->CreateBrowseRecord();
+    NavMgr::Get()->StoreCurrentLocation(jumpfrom, jumpto);
+
+    return editor;
+}
+
 clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectName, int lineno, long position,
                              OF_extra extra /*=OF_AddJump*/, bool preserveSelection /*=true*/,
                              int bmp /*= wxNullBitmap*/, const wxString& tooltip /* wxEmptyString */)

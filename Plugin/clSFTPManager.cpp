@@ -218,27 +218,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     if(!DoSyncDownload(path, localPath.GetFullPath(), accountName)) {
         return nullptr;
     }
-
-    // set the client data for this editor
-    SFTPClientData* cd = new SFTPClientData;
-    cd->SetLocalPath(localPath.GetFullPath());
-    cd->SetRemotePath(path);
-    cd->SetPermissions(0); // not used
-    cd->SetLineNumber(wxNOT_FOUND);
-    cd->SetAccountName(accountName);
-
-    wxString tooltip;
-    tooltip << "Local: " << cd->GetLocalPath() << "\n"
-            << "Remote: " << cd->GetRemotePath();
-
-    auto editor = clGetManager()->OpenFile(localPath.GetFullPath(), "download", tooltip);
-    if(!editor) {
-        // probably opened using the image viewer
-        wxDELETE(cd);
-        return nullptr;
-    }
-    editor->SetClientData("sftp", cd);
-    return editor;
+    return clGetManager()->OpenRemoteFile(localPath.GetFullPath(), path, accountName, wxEmptyString);
 }
 
 bool clSFTPManager::DoSyncReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content)

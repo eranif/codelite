@@ -3923,6 +3923,9 @@ void clEditor::DoBreakptContextMenu(wxPoint pt)
     BookmarkManager::Get().CreateBookmarksSubmenu(&menu);
     menu.AppendSeparator();
 
+    menu.Append(XRCID("copy_breakpoint_format"), _("Copy lldb/gdb 'set breakpoint' command to clipboard"));
+    menu.AppendSeparator();
+
     menu.Append(XRCID("add_breakpoint"), wxString(_("Add Breakpoint")));
     menu.Append(XRCID("insert_temp_breakpoint"), wxString(_("Add a Temporary Breakpoint")));
     menu.Append(XRCID("insert_disabled_breakpoint"), wxString(_("Add a Disabled Breakpoint")));
@@ -3961,6 +3964,19 @@ void clEditor::DoBreakptContextMenu(wxPoint pt)
     event.SetMenu(&menu);
     if(EventNotifier::Get()->ProcessEvent(event))
         return;
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this, pt](wxCommandEvent& evt) {
+            wxUnusedVar(evt);
+            // build a command that can be used by gdb / lldb cli
+            int line = LineFromPosition(PositionFromPoint(pt)) + 1;
+            wxString set_breakpoint_cmd;
+            set_breakpoint_cmd << "break " << GetRemotePathOrLocal() << ":" << line;
+            ::CopyToClipboard(set_breakpoint_cmd);
+            clGetManager()->SetStatusMessage(_("Breakpoint command copied to clipboard!"), 3);
+        },
+        XRCID("copy_breakpoint_format"));
 
     PopupMenu(&menu, pt.x, pt.y);
     m_popupIsOn = false;

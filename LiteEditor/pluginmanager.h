@@ -46,6 +46,7 @@ class BuildSettingsConfig;
 class BuildManager;
 class BitmapLoader;
 class clWorkspaceView;
+class clInfoBar;
 
 class PluginManager : public IManager
 {
@@ -191,6 +192,8 @@ public:
      */
     void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
                         const std::vector<std::pair<wxWindowID, wxString>>& buttons = {}) override;
+
+    clInfoBar* GetInfoBar() override;
 
     //------------------------------------
     // End of IManager interface

@@ -4,6 +4,8 @@
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
+#include "StringUtils.h"
+#include "clInfoBar.h"
 #include "cl_standard_paths.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -14,6 +16,7 @@
 #include <thread>
 #include <wx/app.h>
 #include <wx/datetime.h>
+#include <wx/notifmsg.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
@@ -61,6 +64,8 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
+    clGetManager()->GetInfoBar()->Bind(wxEVT_BUTTON, &LanguageServerPlugin::OnFixLSPPaths, this,
+                                       XRCID("lsp-fix-paths"));
 
     EventNotifier::Get()->Bind(wxEVT_LSP_STOP_ALL, &LanguageServerPlugin::OnLSPStopAll, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_START_ALL, &LanguageServerPlugin::OnLSPStartAll, this);
@@ -77,9 +82,30 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     /// initialise the LSP library
     LSP::Initialise();
+
+    CallAfter(&LanguageServerPlugin::CheckServers);
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
+
+void LanguageServerPlugin::CheckServers()
+{
+    auto broken_lsps = GetBrokenLSPs();
+    if(broken_lsps.empty()) {
+        return;
+    }
+    clSYSTEM() << "The following LSPs contain paths to a non existing locations:" << broken_lsps << endl;
+    // Show a notification message with a suggestion for a fix
+    wxString message;
+    message << "The following LSPs contain paths to a non existing locations: [";
+    for(const auto& name : broken_lsps) {
+        message << name << ", ";
+    }
+    message.RemoveLast(2);
+    message << "]";
+
+    clGetManager()->DisplayMessage(message, wxICON_WARNING, { { XRCID("lsp-fix-paths"), _("Attempt to fix") } });
+}
 
 void LanguageServerPlugin::CreateToolBar(clToolBarGeneric* toolbar)
 {
@@ -351,7 +377,7 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
     LanguageServerEntry* pentry = &entry;
 
     auto d = LanguageServerConfig::Get().GetServer(event.GetLspName());
-    if(d.IsValid()) {
+    if(!d.IsNull()) {
         LSP_DEBUG() << "an LSP with the same name:" << event.GetLspName() << "already exists. updating it" << endl;
         pentry = &d;
     }
@@ -386,7 +412,7 @@ wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const { return
 void LanguageServerPlugin::OnLSPEnableServer(clLanguageServerEvent& event)
 {
     auto& lsp_config = LanguageServerConfig::Get().GetServer(event.GetLspName());
-    if(!lsp_config.IsValid()) {
+    if(lsp_config.IsNull()) {
         return;
     }
     lsp_config.SetEnabled(true);
@@ -395,7 +421,7 @@ void LanguageServerPlugin::OnLSPEnableServer(clLanguageServerEvent& event)
 void LanguageServerPlugin::OnLSPDisableServer(clLanguageServerEvent& event)
 {
     auto& lsp_config = LanguageServerConfig::Get().GetServer(event.GetLspName());
-    if(!lsp_config.IsValid()) {
+    if(lsp_config.IsNull()) {
         return;
     }
     lsp_config.SetEnabled(false);
@@ -435,4 +461,61 @@ void LanguageServerPlugin::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     m_logView->GetDvListCtrl()->DeleteAllItems();
+}
+
+void LanguageServerPlugin::OnFixLSPPaths(wxCommandEvent& event)
+{
+    // Hide and layout the view
+    clGetManager()->GetInfoBar()->Hide();
+    EventNotifier::Get()->TopFrame()->SendSizeEvent(wxSEND_EVENT_POST);
+
+    wxUnusedVar(event);
+    auto broken_lsps = GetBrokenLSPs();
+    if(broken_lsps.empty()) {
+        return;
+    }
+
+    wxBusyCursor bc;
+    std::vector<LSPDetector::Ptr_t> matches;
+    LSPDetectorManager detector;
+    if(detector.Scan(matches)) {
+        wxArrayString fixed;
+        for(const wxString& broken_lsp : broken_lsps) {
+            auto& lsp = LanguageServerConfig::Get().GetServer(broken_lsp);
+            if(lsp.IsNull()) {
+                // Could not find it
+                continue;
+            }
+
+            // Check to see if
+            for(size_t i = 0; i < matches.size(); ++i) {
+                LanguageServerEntry entry;
+                matches[i]->GetLanguageServerEntry(entry);
+                if(entry.GetName() == broken_lsp) {
+                    lsp = entry;
+                    fixed.Add(broken_lsp);
+                    break;
+                }
+            }
+        }
+
+        if(!fixed.empty()) {
+            LanguageServerConfig::Get().Save();
+            m_servers->Reload();
+        }
+    }
+}
+
+wxArrayString LanguageServerPlugin::GetBrokenLSPs() const
+{
+    wxArrayString broken_lsps;
+    const auto& servers = LanguageServerConfig::Get().GetServers();
+    for(const auto& [name, server] : servers) {
+        auto argv = StringUtils::BuildArgv(server.GetCommand());
+        // Check that the first argument (the executable path) exists
+        if(server.IsEnabled() && argv.empty() || !wxFileName::FileExists(argv[0])) {
+            broken_lsps.push_back(name);
+        }
+    }
+    return broken_lsps;
 }

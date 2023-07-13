@@ -950,6 +950,8 @@ clEditorBar* PluginManager::GetNavigationBar() { return clMainFrame::Get()->GetM
 
 clToolBarGeneric* PluginManager::GetToolBar() { return clMainFrame::Get()->GetPluginsToolBar(); }
 
+clInfoBar* PluginManager::GetInfoBar() { return clMainFrame::Get()->GetMessageBar(); }
+
 void PluginManager::DisplayMessage(const wxString& message, int flags,
                                    const std::vector<std::pair<wxWindowID, wxString>>& buttons)
 {

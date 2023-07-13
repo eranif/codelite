@@ -62,13 +62,7 @@ eNetworkType LanguageServerEntry::GetNetType() const
     }
 }
 
-bool LanguageServerEntry::IsValid() const
-{
-    if(m_name.IsEmpty()) {
-        return false;
-    }
-    return true;
-}
+bool LanguageServerEntry::IsNull() const { return m_name.empty(); }
 
 bool LanguageServerEntry::IsAutoRestart() const
 {

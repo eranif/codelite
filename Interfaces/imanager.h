@@ -56,6 +56,7 @@ class BuildSettingsConfig;
 class NavMgr;
 class IMacroManager;
 class wxAuiManager;
+class clInfoBar;
 
 //--------------------------
 // Auxulary class
@@ -668,6 +669,12 @@ public:
      */
     virtual void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
                                 const std::vector<std::pair<wxWindowID, wxString>>& buttons = {}) = 0;
+
+    /**
+     * @brief return the info bar
+     */
+    virtual clInfoBar* GetInfoBar() = 0;
+
     /**
      * @brief return list of all breakpoints
      */

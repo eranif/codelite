@@ -9,6 +9,9 @@
 #include "detectors/LSPDetector.hpp"
 #include "plugin.h"
 
+#include <wx/notifmsg.h>
+#include <wx/sharedptr.h>
+
 class LanguageServerPlugin : public IPlugin
 {
     LanguageServerCluster::Ptr_t m_servers;
@@ -39,6 +42,11 @@ protected:
     void OnLSPDisableServer(clLanguageServerEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     void OnWorkspaceClosed(clWorkspaceEvent& event);
+    void OnFixLSPPaths(wxCommandEvent& event);
+    // Called by the plugin after load to check that all the configured
+    // LSPs are valid
+    void CheckServers();
+    wxArrayString GetBrokenLSPs() const;
 
 public:
     LanguageServerPlugin(IManager* manager);

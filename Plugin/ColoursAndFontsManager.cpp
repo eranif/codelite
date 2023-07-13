@@ -1055,6 +1055,7 @@ wxArrayString ColoursAndFontsManager::GetAllThemes() const
     std::for_each(m_allLexers.begin(), m_allLexers.end(),
                   [&](LexerConf::Ptr_t lexer) { themes.insert(lexer->GetThemeName()); });
     wxArrayString arr;
+    arr.reserve(themes.size());
     std::for_each(themes.begin(), themes.end(), [&](const wxString& name) { arr.push_back(name); });
     return arr;
 }

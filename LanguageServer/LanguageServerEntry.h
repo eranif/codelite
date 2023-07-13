@@ -29,11 +29,7 @@ public:
     // use 'map' to keep the items sorted by name
     typedef std::map<wxString, LanguageServerEntry> Map_t;
 
-    /**
-     * @brief try to validate the LSP by checking that all paths do exists
-     * @return
-     */
-    bool IsValid() const;
+    bool IsNull() const;
 
 public:
     virtual void FromJSON(const JSONItem& json);

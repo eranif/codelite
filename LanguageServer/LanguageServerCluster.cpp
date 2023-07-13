@@ -510,7 +510,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
     LOG_IF_TRACE { LSP_TRACE() << "Connecting to LSP server:" << entry.GetName(); }
 
-    if(!entry.IsValid()) {
+    if(entry.IsNull()) {
         LSP_WARNING() << "LSP Server" << entry.GetName()
                       << "is not valid and it will not be started (one of the specified paths do not "
                          "exist)";
@@ -893,7 +893,7 @@ void LanguageServerCluster::DeleteServer(const wxString& name)
 void LanguageServerCluster::StartServer(const wxString& name)
 {
     auto entry = LanguageServerConfig::Get().GetServer(name);
-    if(!entry.IsValid()) {
+    if(entry.IsNull()) {
         return;
     }
     StartServer(entry);

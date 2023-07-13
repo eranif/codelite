@@ -2,7 +2,7 @@
 
 #include "LSP/basic_types.h"
 #include "clModuleLogger.hpp"
-#include "ssh/clRemoteHost.hpp"
+#include "clRemoteHost.hpp"
 
 INITIALISE_MODULE_LOG(LOG, "LSPNetworkRemoteSTDIO", "lsp.log");
 

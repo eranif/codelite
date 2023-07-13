@@ -23,7 +23,7 @@ enum class clRemoteCommandStatus {
 
 typedef std::function<void(const std::string&, clRemoteCommandStatus)> execute_callback;
 
-class WXDLLIMPEXP_CL clRemoteHost : public wxEvtHandler
+class WXDLLIMPEXP_SDK clRemoteHost : public wxEvtHandler
 {
     clRemoteExecutor m_executor;
     std::vector<std::pair<execute_callback, IProcess::Ptr_t>> m_callbacks;

@@ -29,6 +29,8 @@
 // useful macro to initialise LOG handle to the "ssh.log" file
 #include "clModuleLogger.hpp"
 
+#include <functional>
+
 #define INITIALISE_SSH_LOG(LOG, MODULE_NAME) INITIALISE_MODULE_LOG(LOG, MODULE_NAME, "ssh.log")
 
 #if USE_SFTP
@@ -165,5 +167,6 @@ public:
     const wxString& GetHost() const { return m_host; }
     const wxString& GetUsername() const { return m_username; }
 };
+typedef std::function<void(clSSH::Ptr_t)> clSSHDeleterFunc;
 #endif // USE_SFTP
 #endif // CLSSH_H

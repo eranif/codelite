@@ -1,14 +1,15 @@
 #if USE_SFTP
-#include "ssh/cl_remote_executor.hpp"
+#include "cl_remote_executor.hpp"
 
 #include "StringUtils.h"
 #include "clModuleLogger.hpp"
+#include "clRemoteHost.hpp"
 #include "cl_standard_paths.h"
 #include "processreaderthread.h"
-#include "ssh/clRemoteHost.hpp"
 #include "ssh/ssh_account_info.h"
 
 #include <thread>
+
 INITIALISE_SSH_LOG(LOG, "clRemoteExecutor");
 
 clRemoteExecutor::clRemoteExecutor()
@@ -39,7 +40,9 @@ IProcess::Ptr_t clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 
     // open the channel
     wxString command = ssh::build_command(cmd.command, cmd.wd, cmd.env);
-    IProcess::Ptr_t proc = clSSHChannel::Execute(ssh_session, this, command, true);
+    IProcess::Ptr_t proc = clSSHChannel::Execute(
+        ssh_session, [](clSSH::Ptr_t ssh) { clRemoteHost::Instance()->AddSshSession(ssh); }, this, command, true);
+
     if(!proc) {
         LOG_ERROR(LOG) << "failed to start remote command:" << command << endl;
         return nullptr;

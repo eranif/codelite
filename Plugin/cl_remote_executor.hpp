@@ -13,7 +13,7 @@
 #include <wx/msgqueue.h>
 
 /// Manage a pool of workers to execute commands remotely for us
-class WXDLLIMPEXP_CL clRemoteExecutor : public wxEvtHandler
+class WXDLLIMPEXP_SDK clRemoteExecutor : public wxEvtHandler
 {
 public:
     struct Cmd {

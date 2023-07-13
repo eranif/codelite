@@ -5,7 +5,6 @@
 #if USE_SFTP
 #include "clJoinableThread.h"
 #include "clModuleLogger.hpp"
-#include "clRemoteHost.hpp"
 #include "clResult.hpp"
 #include "clTempFile.hpp"
 #include "cl_exception.h"
@@ -68,11 +67,12 @@ public:
 //===-------------------------------------------------------------
 // The SSH channel
 //===-------------------------------------------------------------
-clSSHChannel::clSSHChannel(clSSH::Ptr_t ssh, wxEvtHandler* owner, bool wantStderrEvents)
+clSSHChannel::clSSHChannel(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner, bool wantStderrEvents)
     : IProcess(owner)
     , m_ssh(ssh)
     , m_owner(owner)
     , m_wantStderr(wantStderrEvents)
+    , m_deleter_cb(std::move(deleter_cb))
 {
     Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &clSSHChannel::OnReadError, this);
     Bind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &clSSHChannel::OnWriteError, this);
@@ -129,27 +129,29 @@ void clSSHChannel::Close()
 
     } else {
         // put back the ssh session
-        clRemoteHost::Instance()->AddSshSession(m_ssh);
+        m_deleter_cb(m_ssh);
     }
     // clear the local copy
     m_ssh.reset();
 }
 
-IProcess::Ptr_t clSSHChannel::CreateAndExecuteScript(clSSH::Ptr_t ssh, wxEvtHandler* owner, const wxString& content,
-                                                     const wxString& script_path, bool wantStderr)
+IProcess::Ptr_t clSSHChannel::CreateAndExecuteScript(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner,
+                                                     const wxString& content, const wxString& script_path,
+                                                     bool wantStderr)
 {
     if(!ssh::write_remote_file_content(ssh, script_path, content)) {
         LOG_ERROR(LOG) << "failed to write remote file:" << script_path << endl;
         return nullptr;
     }
-    return Execute(ssh, owner, script_path, wantStderr);
+    return Execute(ssh, std::move(deleter_cb), owner, script_path, wantStderr);
 }
 
-IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, wxEvtHandler* owner, const wxString& command, bool wantStderr)
+IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner,
+                                      const wxString& command, bool wantStderr)
 {
     clSSHChannel* channel = nullptr;
     try {
-        channel = new clSSHChannel(ssh, owner, wantStderr);
+        channel = new clSSHChannel(ssh, std::move(deleter_cb), owner, wantStderr);
         channel->Open();
     } catch(clException& e) {
         LOG_ERROR(LOG) << "failed to open channel." << e.What() << endl;

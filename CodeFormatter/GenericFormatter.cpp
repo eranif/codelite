@@ -5,6 +5,7 @@
 #include "asyncprocess.h"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clDirChanger.hpp"
+#include "clRemoteHost.hpp"
 #include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
@@ -14,7 +15,6 @@
 #include "imanager.h"
 #include "macromanager.h"
 #include "procutils.h"
-#include "ssh/clRemoteHost.hpp"
 #include "workspace.h"
 
 #include <sstream>

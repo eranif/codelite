@@ -14,15 +14,10 @@
 #include <wx/dcmemory.h>
 #include <wx/tokenzr.h>
 
-#if wxTERMINAL_USE_2_CTRLS
 #define CAN_GO_BACK() (true)
 #define CAN_DELETE() (true)
 #define CAN_EDIT() (true)
-#else
-#define CAN_GO_BACK() (m_ctrl->GetCurrentPos() > m_writeStartingPosition)
-#define CAN_DELETE() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
-#define CAN_EDIT() (m_ctrl->GetCurrentPos() >= m_writeStartingPosition)
-#endif
+#define IS_CCBOX_ACTIVE() wxCodeCompletionBoxManager::Get().IsShown()
 
 namespace
 {
@@ -40,13 +35,6 @@ public:
     void OnPaste(wxCommandEvent& event) override
     {
         CHECK_FOCUS_WINDOW();
-#if !wxTERMINAL_USE_2_CTRLS
-        if(!(m_stc->GetCurrentPos() >= m_input_ctrl->GetWriteStartPosition())) {
-            int where = m_stc->GetLastPosition();
-            m_stc->SetSelection(where, where);
-            m_stc->SetCurrentPos(where);
-        }
-#endif
         clEditEventsHandler::OnPaste(event);
     }
 
@@ -62,7 +50,6 @@ public:
 wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl)
     : m_terminal(parent)
 {
-#if wxTERMINAL_USE_2_CTRLS
     m_ctrl = new wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
     m_ctrl->AlwaysShowScrollbars(false, false);
     m_ctrl->SetWrapMode(wxSTC_WRAP_WORD);
@@ -81,13 +68,10 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalInputCtrl::OnThemeChanged, this);
     m_ctrl->SetWordChars(":~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-");
-    m_ctrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalInputCtrl::OnStcCharAdded, this);
-#else
-    m_ctrl = ctrl;
-#endif
+
     m_editEvents.Reset(new MyEventsHandler(this, m_ctrl));
     m_ctrl->Bind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
-    m_ctrl->Bind(wxEVT_STC_AUTOCOMP_COMPLETED, &wxTerminalInputCtrl::OnStcCompleted, this);
+    EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &wxTerminalInputCtrl::OnCCBoxSelected, this);
 
     std::vector<wxAcceleratorEntry> V;
     V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'R', XRCID("ID_command") });
@@ -115,18 +99,13 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 
 wxTerminalInputCtrl::~wxTerminalInputCtrl()
 {
+    EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &wxTerminalInputCtrl::OnCCBoxSelected, this);
     m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
-    m_ctrl->Unbind(wxEVT_STC_AUTOCOMP_COMPLETED, &wxTerminalInputCtrl::OnStcCompleted, this);
-#if wxTERMINAL_USE_2_CTRLS
-    m_ctrl->Unbind(wxEVT_STC_CHARADDED, &wxTerminalInputCtrl::OnStcCharAdded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalInputCtrl::OnThemeChanged, this);
-#endif
 }
 
 void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 {
-    m_ctrl->AutoCompCancel();
-
     wxArrayString words;
     int length_typed = 0;
     wxString listItems;
@@ -146,39 +125,23 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         return;
     }
 
-    wxString selection = listItems.BeforeFirst('!');
-    m_ctrl->AutoCompSetSeparator('!');
-    m_ctrl->AutoCompSetAutoHide(false);
-    m_ctrl->AutoCompSetMaxWidth(100);
-    m_ctrl->AutoCompSetMaxHeight(4);
-    m_ctrl->AutoCompShow(length_typed, listItems);
-    if(!selection.empty()) {
-        m_ctrl->AutoCompSelect(selection);
+    auto items = ::wxStringTokenize(listItems, "!", wxTOKEN_STRTOK);
+    if(items.empty()) {
+        return;
     }
-}
-
-namespace
-{
-std::unordered_set<int> DO_NOT_REFRESH_KEYS = { WXK_RETURN,       WXK_NUMPAD_ENTER, WXK_UP,    WXK_DOWN,
-                                                WXK_NUMPAD_UP,    WXK_NUMPAD_DOWN,  WXK_RIGHT, WXK_LEFT,
-                                                WXK_NUMPAD_RIGHT, WXK_NUMPAD_LEFT,  WXK_HOME,  WXK_END,
-                                                WXK_PAGEDOWN,     WXK_PAGEUP,       WXK_ESCAPE };
+    wxCodeCompletionBoxEntry::Vec_t V;
+    V.reserve(items.size());
+    for(const auto& item : items) {
+        V.push_back(wxCodeCompletionBoxEntry::New(item, wxNullBitmap, nullptr));
+    }
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        m_ctrl, V, wxCodeCompletionBox::kRefreshOnKeyType | wxCodeCompletionBox::kNoShowingEvent, wxNOT_FOUND, this);
 }
 
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
-    if(m_ctrl->AutoCompActive()) {
-        if(event.GetKeyCode() == WXK_BACK && !CAN_GO_BACK()) {
-            // don't allow to delete outside the writing zone
-            m_ctrl->AutoCompCancel();
-            return;
-        } else if(DO_NOT_REFRESH_KEYS.count(event.GetKeyCode()) == 0 && !event.RawControlDown() &&
-                  !event.ControlDown()) {
-            // let the conrol process the key
-            event.Skip();
-        } else {
-            event.Skip();
-        }
+    if(IS_CCBOX_ACTIVE()) {
+        event.Skip();
         return;
     }
 
@@ -205,47 +168,20 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
     }
 }
 
-void wxTerminalInputCtrl::SetWritePositionEnd()
-{
-#if !wxTERMINAL_USE_2_CTRLS
-    m_writeStartingPosition = m_ctrl->GetLastPosition();
-#endif
-}
+void wxTerminalInputCtrl::SetWritePositionEnd() { m_writeStartingPosition = m_ctrl->GetLastPosition(); }
 
-void wxTerminalInputCtrl::Clear()
-{
-#if wxTERMINAL_USE_2_CTRLS
-    m_ctrl->ClearAll();
-#else
-    m_ctrl->Remove(m_writeStartingPosition, m_ctrl->GetLastPosition());
-    SetCaretPos(CaretPos::END);
-#endif
-}
+void wxTerminalInputCtrl::Clear() { m_ctrl->ClearAll(); }
 
 wxString wxTerminalInputCtrl::SetText(const wxString& text)
 {
     wxString oldcmd;
-#if wxTERMINAL_USE_2_CTRLS
     oldcmd = m_ctrl->GetText();
     m_ctrl->SetText(text);
     SetCaretPos(CaretPos::END);
-#else
-    oldcmd = m_ctrl->GetTextRange(m_writeStartingPosition, m_ctrl->GetLastPosition());
-    m_ctrl->Remove(m_writeStartingPosition, m_ctrl->GetLastPosition());
-    m_ctrl->AppendText(text);
-    SetCaretPos(CaretPos::END);
-#endif
     return oldcmd;
 }
 
-wxString wxTerminalInputCtrl::GetText() const
-{
-#if wxTERMINAL_USE_2_CTRLS
-    return m_ctrl->GetText();
-#else
-    return m_ctrl->GetTextRange(m_writeStartingPosition, m_ctrl->GetLastPosition());
-#endif
-}
+wxString wxTerminalInputCtrl::GetText() const { return m_ctrl->GetText(); }
 
 void wxTerminalInputCtrl::SetCaretPos(wxTerminalInputCtrl::CaretPos pos)
 {
@@ -255,11 +191,7 @@ void wxTerminalInputCtrl::SetCaretPos(wxTerminalInputCtrl::CaretPos pos)
         where = m_ctrl->GetLastPosition();
         break;
     case wxTerminalInputCtrl::CaretPos::HOME:
-#if wxTERMINAL_USE_2_CTRLS
         where = 0;
-#else
-        where = m_writeStartingPosition;
-#endif
         break;
     }
     m_ctrl->SetSelection(where, where);
@@ -305,23 +237,6 @@ void wxTerminalInputCtrl::UpdateTextDeleted(int num)
     m_writeStartingPosition -= num;
 }
 
-void wxTerminalInputCtrl::OnStcCharAdded(wxStyledTextEvent& event) { event.Skip(); }
-
-void wxTerminalInputCtrl::OnStcCompleted(wxStyledTextEvent& event)
-{
-    event.Skip();
-    if(m_completionType == CompletionType::COMMANDS) {
-        m_completionType = CompletionType::NONE;
-        // user inserted text from the auto completion list
-        // to give it a feel like the real terminal, execute it
-        m_history.Add(GetText());
-        m_terminal->Run(GetText());
-#if wxTERMINAL_USE_2_CTRLS
-        m_ctrl->ClearAll();
-#endif
-    }
-}
-
 void wxTerminalInputCtrl::EnsureCommandLineVisible()
 {
     m_ctrl->ScrollToEnd();
@@ -338,10 +253,10 @@ void wxTerminalInputCtrl::SwapAndExecuteCommand(const wxString& cmd)
 void wxTerminalInputCtrl::OnCommandComplete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_ctrl->AutoCompActive() && m_completionType == CompletionType::COMMANDS) {
+    if(IS_CCBOX_ACTIVE() && m_completionType == CompletionType::COMMANDS) {
         // refresh the list
         ShowCompletionBox(CompletionType::COMMANDS);
-    } else if(!m_ctrl->AutoCompActive()) {
+    } else if(!IS_CCBOX_ACTIVE()) {
         if(!CAN_EDIT()) {
             SetCaretPos(CaretPos::END);
         }
@@ -390,9 +305,7 @@ void wxTerminalInputCtrl::OnEnter()
     m_terminal->Run(command);
     m_history.Add(command);
     m_history.Store(); // update the history
-#if wxTERMINAL_USE_2_CTRLS
     m_ctrl->ClearAll();
-#endif
 }
 
 void wxTerminalInputCtrl::OnUp()
@@ -411,7 +324,6 @@ void wxTerminalInputCtrl::OnDown()
 
 void wxTerminalInputCtrl::OnTabComplete()
 {
-#if wxTERMINAL_USE_2_CTRLS
     wxString oldcmd = GetText();
     wxString filter =
         m_ctrl->GetTextRange(m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true), m_ctrl->GetCurrentPos());
@@ -419,12 +331,10 @@ void wxTerminalInputCtrl::OnTabComplete()
     SetText(oldcmd);
     SetCaretPos(CaretPos::END);
     m_waitingForCompgenOutput = true;
-#endif
 }
 
 void wxTerminalInputCtrl::SetFocus() { m_ctrl->CallAfter(&wxStyledTextCtrl::SetFocus); }
 
-#if wxTERMINAL_USE_2_CTRLS
 void wxTerminalInputCtrl::ApplyTheme()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
@@ -445,15 +355,10 @@ void wxTerminalInputCtrl::OnThemeChanged(clCommandEvent& event)
     event.Skip();
     ApplyTheme();
 }
-#endif
 
 wxString wxTerminalInputCtrl::GetWordBack()
 {
-#if wxTERMINAL_USE_2_CTRLS
     auto ctrl = m_ctrl;
-#else
-    auto ctrl = m_terminal->GetView()->GetCtrl();
-#endif
     int curpos = ctrl->GetCurrentPos();
     return ctrl->GetTextRange(ctrl->WordStartPosition(curpos, true), curpos);
 }
@@ -524,4 +429,21 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     m_ctrl->Replace(start_pos, end_pos, match);
     SetCaretPos(CaretPos::END);
     SetFocus();
+}
+
+void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)
+{
+    if(event.GetEventObject() != this) {
+        event.Skip();
+        return;
+    }
+
+    if(m_completionType == CompletionType::COMMANDS) {
+        m_completionType = CompletionType::NONE;
+        m_ctrl->ClearAll();
+        // user inserted text from the auto completion list
+        // to give it a feel like the real terminal, execute it
+        m_history.Add(event.GetEntry()->GetInsertText());
+        m_terminal->Run(event.GetEntry()->GetInsertText());
+    }
 }

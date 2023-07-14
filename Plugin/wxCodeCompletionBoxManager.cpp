@@ -254,66 +254,8 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
         clSnippetManager::Get().Insert(editor->GetCtrl(), match->GetInsertText());
 
     } else if(match->IsFunction()) {
-        // If the user triggerd this insertion, invoke the function auto complete
-        if(userTriggered) {
-            // a function like
-            wxString textToInsert = entryText.BeforeFirst('(');
-
-            // Build the function signature
-            wxString funcSig = match->GetSignature();
-            bool userProvidedSignature = (match->GetText().Find("(") != wxNOT_FOUND);
-            clDEBUG() << "Inserting selection:" << textToInsert;
-            clDEBUG() << "Signature is:" << funcSig;
-
-            // Check if already have an open paren, don't add another
-            if(addParens) {
-                textToInsert << "()";
-            }
-
-            if(!ranges.empty()) {
-                // Multiple carets
-                int offset = 0;
-                for(size_t i = 0; i < ranges.size(); ++i) {
-                    int from = ranges.at(i).first;
-                    int to = ranges.at(i).second;
-                    from += offset;
-                    to += offset;
-                    // Once we enter that text into the editor, it will change the original
-                    // offsets (in most cases the entered text is larger than that typed text)
-                    offset += textToInsert.length() - (to - from);
-                    ctrl->Replace(from, to, textToInsert);
-                    ctrl->SetSelectionNStart(i, from + textToInsert.length());
-                    ctrl->SetSelectionNEnd(i, from + textToInsert.length());
-                }
-            } else {
-                ctrl->ReplaceSelection(textToInsert);
-                if(!userProvidedSignature || (!funcSig.IsEmpty() && (funcSig != "()"))) {
-
-                    // Place the caret between the parenthesis
-                    int caretPos(wxNOT_FOUND);
-                    if(moveCaretLeft) {
-                        caretPos = start + textToInsert.length() - 1;
-                    } else if(moveCaretRight) {
-                        // Move the caret one char to the right
-                        caretPos = start + textToInsert.length() + 1;
-                    } else {
-                        caretPos = start + textToInsert.length();
-                    }
-
-                    ctrl->SetCurrentPos(caretPos);
-                    ctrl->SetSelection(caretPos, caretPos);
-
-                    // trigger a code complete for function calltip.
-                    // We do this by simply mimicing the user action of going to the menubar:
-                    // Edit->Display Function Calltip
-                    wxCommandEvent event(wxEVT_MENU, XRCID("function_call_tip"));
-                    wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
-                }
-            }
-        } else {
-            ctrl->SetSelectionStart(ctrl->GetCurrentPos());
-            ctrl->SetSelectionEnd(ctrl->GetCurrentPos());
-        }
+        ctrl->SetSelectionStart(ctrl->GetCurrentPos());
+        ctrl->SetSelectionEnd(ctrl->GetCurrentPos());
     } else {
         if(!ranges.empty()) {
             // Multiple carets

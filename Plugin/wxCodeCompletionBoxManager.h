@@ -40,10 +40,6 @@ protected:
     wxCodeCompletionBox* m_box;
     wxStyledTextCtrl* m_stc;
 
-private:
-    wxCodeCompletionBoxManager();
-    ~wxCodeCompletionBoxManager();
-
 protected:
     void DestroyCurrent();
     void InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match, bool userTriggered);
@@ -65,6 +61,9 @@ protected:
 
 public:
     static wxCodeCompletionBoxManager& Get();
+
+    wxCodeCompletionBoxManager();
+    virtual ~wxCodeCompletionBoxManager();
 
     /**
      * @brief uninitialize all event handlers and destroy the CC box manager

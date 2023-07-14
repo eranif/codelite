@@ -4,6 +4,7 @@
 #include "clEditorEditEventsHandler.h"
 #include "codelite_events.h"
 #include "codelite_exports.h"
+#include "wxCodeCompletionBoxManager.h"
 #include "wxTerminalHistory.hpp"
 
 #include <wx/panel.h>
@@ -45,8 +46,7 @@ protected:
     void SetCaretPos(wxTerminalInputCtrl::CaretPos pos);
     void OnMenu(wxContextMenuEvent& event);
     void ShowCompletionBox(CompletionType type);
-    void OnStcCharAdded(wxStyledTextEvent& event);
-    void OnStcCompleted(wxStyledTextEvent& event);
+    void OnCCBoxSelected(clCodeCompletionEvent& event);
     void EnsureCommandLineVisible();
     wxString GetWordBack();
 

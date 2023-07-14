@@ -305,8 +305,5 @@ void wxTerminalCtrl::ProcessOutputBuffer()
             return;
         }
     }
-
-    if(m_processOutput.empty()) {
-        m_inputCtrl->CallAfter(&wxTerminalInputCtrl::NotifyTerminalOutput);
-    }
+    m_inputCtrl->CallAfter(&wxTerminalInputCtrl::NotifyTerminalOutput);
 }

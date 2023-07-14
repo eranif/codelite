@@ -419,7 +419,6 @@ void wxTerminalInputCtrl::OnTabComplete()
     SetText(oldcmd);
     SetCaretPos(CaretPos::END);
     m_waitingForCompgenOutput = true;
-#else
 #endif
 }
 
@@ -465,7 +464,6 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
         return;
     }
 
-    m_waitingForCompgenOutput = false;
     wxString prefix = GetWordBack();
     if(prefix.empty()) {
         return;
@@ -481,23 +479,48 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
         wxString line = ctrl->GetLine(last_line);
         line.Trim().Trim(false);
 
-        if(line.StartsWith(LINE_PREFIX)) {
+        if(line.StartsWith(LINE_PREFIX) || line.empty()) {
             break;
         }
 
-        lines.push_back(line);
+        lines.insert(lines.begin(), line);
         --last_line;
     }
 
-    wxString match = StringUtils::FindCommonPrefix(lines);
+    if(lines.empty()) {
+        return;
+    }
 
+    // we got something, consume the flag
+    m_waitingForCompgenOutput = false;
+
+    wxString match = StringUtils::FindCommonPrefix(lines);
     // if we reached here and match is not empty - we found a single match
     if(match.empty()) {
+        // try omitting the first (it might be the prompt)
+        if(lines.size() > 1) {
+            lines.pop_back();
+            match = StringUtils::FindCommonPrefix(lines);
+            if(match.empty()) {
+                return;
+            }
+        }
+    }
+
+    if(!match.StartsWith(prefix)) {
         return;
     }
 
     int start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
     int end_pos = m_ctrl->GetCurrentPos();
+
+    // only replace the currently typed text if the match len is greater than what
+    // is already typed in the terminal
+    size_t cur_typed_text_len = end_pos - start_pos;
+    if(match.length() <= cur_typed_text_len) {
+        return;
+    }
+
     m_ctrl->Replace(start_pos, end_pos, match);
     SetCaretPos(CaretPos::END);
     SetFocus();

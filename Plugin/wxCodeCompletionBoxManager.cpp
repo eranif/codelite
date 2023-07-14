@@ -223,9 +223,6 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
     }
 
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    bool addParens(false);
-    bool moveCaretRight = false;
-    bool moveCaretLeft = false;
     int start = wxNOT_FOUND, end = wxNOT_FOUND;
     std::vector<std::pair<int, int>> ranges;
     if(ctrl->GetSelections() > 1) {
@@ -242,20 +239,52 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
         start = GetWordStartPos(ctrl, ctrl->GetCurrentPos(), entryText.Contains(":"));
         end = ctrl->GetCurrentPos();
         ctrl->SetSelection(start, end);
-        wxChar endChar = ctrl->GetCharAt(end);
-        if((ctrl->GetCharAt(end) != '(')) {
-            addParens = true;
-            moveCaretLeft = true;
-        } else if(endChar == '(') {
-            moveCaretRight = true;
-        }
     }
+
     if(match->IsSnippet()) {
         clSnippetManager::Get().Insert(editor->GetCtrl(), match->GetInsertText());
 
     } else if(match->IsFunction()) {
-        ctrl->SetSelectionStart(ctrl->GetCurrentPos());
-        ctrl->SetSelectionEnd(ctrl->GetCurrentPos());
+        // If the user triggerd this insertion, invoke the function auto complete
+        if(userTriggered) {
+            // a function like
+            wxString textToInsert = entryText.BeforeFirst('(');
+
+            // Build the function signature
+            wxString funcSig = match->GetSignature();
+            bool userProvidedSignature = (match->GetText().Find("(") != wxNOT_FOUND);
+
+            if(!ranges.empty()) {
+                // Multiple carets
+                int offset = 0;
+                for(size_t i = 0; i < ranges.size(); ++i) {
+                    int from = ranges.at(i).first;
+                    int to = ranges.at(i).second;
+                    from += offset;
+                    to += offset;
+                    // Once we enter that text into the editor, it will change the original
+                    // offsets (in most cases the entered text is larger than that typed text)
+                    offset += textToInsert.length() - (to - from);
+                    ctrl->Replace(from, to, textToInsert);
+                    ctrl->SetSelectionNStart(i, from + textToInsert.length());
+                    ctrl->SetSelectionNEnd(i, from + textToInsert.length());
+                }
+            } else {
+                ctrl->ReplaceSelection(textToInsert);
+                if(!userProvidedSignature || (!funcSig.IsEmpty() && (funcSig != "()"))) {
+
+                    // Place the caret between the parenthesis
+                    int caretPos = start + textToInsert.length();
+
+                    ctrl->SetCurrentPos(caretPos);
+                    ctrl->SetSelection(caretPos, caretPos);
+                }
+            }
+        } else {
+            ctrl->SetSelectionStart(ctrl->GetCurrentPos());
+            ctrl->SetSelectionEnd(ctrl->GetCurrentPos());
+        }
+
     } else {
         if(!ranges.empty()) {
             // Multiple carets

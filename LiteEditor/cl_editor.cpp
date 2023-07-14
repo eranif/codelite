@@ -1254,11 +1254,12 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         break;
     case '(':
         if(m_context->IsCommentOrString(GetCurrentPos()) == false) {
-            CodeComplete();
+            // trigger a code complete for function calltip.
+            wxCommandEvent event{ wxEVT_MENU, XRCID("function_call_tip") };
+            EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event);
         }
         matchChar = ')';
         break;
-
     case '[':
         matchChar = ']';
         break;

@@ -42,7 +42,7 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     m_ctrl->UsePopUp(1);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
-    //::clRecalculateSTCHScrollBar(m_ctrl);
+    m_ctrl->SetWrapMode(wxSTC_WRAP_CHAR);
     m_ctrl->SetEditable(false);
 
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
@@ -52,6 +52,7 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
     m_stcRenderer = new wxTerminalAnsiRendererSTC(m_ctrl);
+    m_editEvents.Reset(new clEditEventsHandler(m_ctrl));
 }
 
 TextView::~TextView()
@@ -65,7 +66,6 @@ void TextView::AppendText(const wxString& buffer)
 {
     EditorEnabler d{ m_ctrl };
     m_ctrl->AppendText(buffer);
-    //::clRecalculateSTCHScrollBar(m_ctrl);
     RequestScrollToEnd();
 }
 
@@ -179,12 +179,4 @@ void TextView::ApplyTheme()
     m_ctrl->Refresh();
 }
 
-void TextView::OnKeyDown(wxKeyEvent& event)
-{
-    // let the input control process this event
-#if wxTERMINAL_USE_2_CTRLS
-    m_terminal->GetInputCtrl()->SetFocus();
-#else
-    m_terminal->GetInputCtrl()->ProcessKeyDown(event);
-#endif
-}
+void TextView::OnKeyDown(wxKeyEvent& event) { event.Skip(); }

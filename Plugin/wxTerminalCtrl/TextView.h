@@ -27,6 +27,7 @@ class WXDLLIMPEXP_SDK TextView : public wxWindow
     wxColour m_textColour;
     bool m_scrollToEndQueued = false;
     wxTerminalCtrl* m_terminal = nullptr;
+    clEditEventsHandler::Ptr_t m_editEvents;
 
 protected:
     int GetCurrentStyle();

@@ -55,7 +55,6 @@ void wxTerminalAnsiRendererSTC::InsertText(const wxString& str)
     m_pos.x = newpos - m_ctrl->PositionFromLine(newpos);
     m_ctrl->ScrollToEnd();
     SetInsertionPoint();
-    ::clRecalculateSTCHScrollBar(m_ctrl);
 }
 
 void wxTerminalAnsiRendererSTC::Tab() { InsertText("\t"); }

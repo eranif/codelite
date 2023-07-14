@@ -32,6 +32,7 @@
 #include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/stdpaths.h>
+#include <wx/textfile.h>
 #include <wx/utils.h>
 
 int FileLogger::m_globalLogVerbosity = FileLogger::Error;
@@ -62,7 +63,7 @@ void FileLogger::AddLogLine(const wxString& msg, int verbosity)
     formattedMsg.Trim().Trim(false);
     formattedMsg << wxT("\n");
     if(!m_buffer.empty() && (m_buffer.Last() != '\n')) {
-        m_buffer << "\n";
+        m_buffer << wxT("\n");
     }
     m_buffer << formattedMsg;
 }
@@ -144,17 +145,14 @@ void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
 
 void FileLogger::Flush()
 {
+    m_fp = nullptr;
     if(m_buffer.IsEmpty()) {
         return;
     }
-    if(!m_fp) {
-        m_fp = wxFopen(m_logfile, wxT("a+"));
-    }
-
-    if(m_fp) {
-        wxFprintf(m_fp, "%s\n", m_buffer);
-        fclose(m_fp);
-        m_fp = nullptr;
+    wxFFile fp(m_logfile, "a+");
+    if(fp.IsOpened()) {
+        fp.Write(m_buffer + wxT("\n"), wxConvUTF8);
+        fp.Close();
     }
     m_buffer.Clear();
 }

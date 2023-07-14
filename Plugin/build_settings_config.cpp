@@ -60,7 +60,10 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
     if(xmlFilePath.IsEmpty()) {
         wxString initialSettings = ConfFileLocator::Instance()->Locate(wxT("config/build_settings.xml"));
         loaded = LoadXmlFile(m_doc, initialSettings);
-        CHECK_PTR_RET_FALSE(m_doc->GetRoot());
+        if(m_doc->GetRoot() == nullptr) {
+            clERROR() << "Failed to load XML file:" << initialSettings << endl;
+            return false;
+        }
 
         wxString xmlVersion = m_doc->GetRoot()->GetAttribute(wxT("Version"), wxEmptyString);
         if(xmlVersion != version) {

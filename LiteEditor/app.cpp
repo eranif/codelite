@@ -351,12 +351,8 @@ bool CodeLiteApp::OnInit()
     wxSystemOptions::SetOption(_T("msw.remap"), 0);
     wxSystemOptions::SetOption("msw.notebook.themed-background", 1);
     wxXmlResource::Get()->InitAllHandlers();
-    wxImage::AddHandler(new wxPNGHandler);
-    wxImage::AddHandler(new wxCURHandler);
-    wxImage::AddHandler(new wxICOHandler);
-    wxImage::AddHandler(new wxXPMHandler);
-    wxImage::AddHandler(new wxGIFHandler);
-    wxImage::AddHandler(new wxJPEGHandler);
+
+    ::wxInitAllImageHandlers();
 
 #if defined(__WXMSW__)
     if(clConfig::Get().Read("CodeLiteAppearance", 0) == 1) {

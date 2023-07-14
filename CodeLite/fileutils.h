@@ -58,7 +58,6 @@ public:
 
 public:
     static bool ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv = wxConvUTF8);
-    static bool ReadFileContentRaw(const wxFileName& fn, std::string& data);
 
     /**
      * @brief attempt to read up to bufferSize from the beginning of file

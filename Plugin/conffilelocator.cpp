@@ -81,10 +81,14 @@ void ConfFileLocator::DeleteLocalCopy(const wxString& basename)
 
 wxString ConfFileLocator::GetLocalCopy(const wxString& baseName)
 {
-    return clStandardPaths::Get().GetUserDataDir() + wxT("/") + baseName;
+    wxString path;
+    path << clStandardPaths::Get().GetUserDataDir() << "/" << baseName;
+    return wxFileName(path).GetFullPath();
 }
 
 wxString ConfFileLocator::GetDefaultCopy(const wxString& baseName)
 {
-    return m_installPath + wxT("/") + baseName + wxT(".default");
+    wxString path;
+    path << clStandardPaths::Get().GetDataDir() << "/" << baseName << ".default";
+    return wxFileName(path).GetFullPath();
 }

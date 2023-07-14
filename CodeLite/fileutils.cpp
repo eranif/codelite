@@ -76,6 +76,7 @@ bool write_file_content(const wxFileName& fn, const wxString& content, const wxM
     if(file.IsOpened()) {
         return file.Write(content, conv);
     } else {
+        clERROR() << "Failed to open file:" << fn.GetFullPath() << "for write!" << endl;
         return false;
     }
 }
@@ -168,59 +169,19 @@ bool FileUtils::AppendFileContent(const wxFileName& fn, const wxString& content,
 
 bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv)
 {
-    std::string rawdata;
-    if(!ReadFileContentRaw(fn, rawdata)) {
+    wxFFile fp(fn.GetFullPath(), "rb");
+    if(!fp.IsOpened()) {
+        clERROR() << "failed to open file:" << fn << "for read-binary" << endl;
         return false;
     }
 
-    // convert
-    data = wxString(rawdata.c_str(), conv, rawdata.length());
-    if(data.IsEmpty() && !rawdata.empty()) {
-        // Conversion failed
-        data = wxString::From8BitData(rawdata.c_str(), rawdata.length());
-    }
-    return true;
-}
-
-bool FileUtils::ReadFileContentRaw(const wxFileName& fn, std::string& data)
-{
-    // fopen() may return non NULL for directories too, so we have to test it ourselves
-    if(!fn.FileExists()) {
-        return false;
-    }
-
-    wxString filename = fn.GetFullPath();
     data.clear();
-    const char* cfile = filename.mb_str(wxConvUTF8).data();
-    FILE* fp = fopen(cfile, "rb");
-    if(!fp) {
-        // Nothing to be done
+    data.reserve(fp.Length());
+
+    if(!fp.ReadAll(&data, conv)) {
+        clERROR() << "Failed to ReadAll() for file:" << fn << endl;
         return false;
     }
-
-    // Get the file size
-    fseek(fp, 0, SEEK_END);
-    long fsize = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    // Allocate buffer for the read
-    data.reserve(fsize + 1);
-
-    // use unique_ptr to auto release the buffer
-    std::unique_ptr<char, std::function<void(char*)>> buffer(new char[fsize + 1], [](char* d) { delete[] d; });
-
-    long bytes_read = fread(buffer.get(), 1, fsize, fp);
-    if(bytes_read != fsize) {
-        // failed to read
-        clERROR() << "Failed to read file content:" << fn << "." << strerror(errno);
-        fclose(fp);
-        return false;
-    }
-    buffer.get()[fsize] = 0;
-    fclose(fp);
-
-    // Close the handle
-    data = buffer.get();
     return true;
 }
 

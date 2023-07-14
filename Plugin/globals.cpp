@@ -1747,6 +1747,7 @@ bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
     if(!FileUtils::ReadFileContent(filepath, content)) {
         return false;
     }
+
     wxStringInputStream sis(content);
     return doc->Load(sis);
 }

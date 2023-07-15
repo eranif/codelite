@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "newclassdlg.h"
+
 #include "VirtualDirectorySelectorDlg.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceView.hpp"
@@ -36,6 +37,7 @@
 #include "workspace.h"
 #include "wx/dir.h"
 #include "wx/xrc/xmlres.h"
+
 #include <wx/dirdlg.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
@@ -101,7 +103,9 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
         m_buttonSelectVD->Disable();
         m_staticTextVD->Disable();
     }
-    ::clSetSmallDialogBestSizeAndPosition(this);
+
+    GetSizer()->Fit(this);
+    CentreOnParent();
 }
 
 NewClassDlg::~NewClassDlg() { DoSaveOptions(); }
@@ -383,7 +387,7 @@ void NewClassDlg::OnBlockGuardUI(wxUpdateUIEvent& event) { event.Enable(!m_check
 void NewClassDlg::DoSaveOptions()
 {
     // Save the check boxes ticked
-    size_t flags(0);
+    size_t flags = 0;
 
     if(m_checkBoxNonCopyable->IsChecked())
         flags |= NewClassDlgData::NonCopyable;

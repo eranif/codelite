@@ -121,6 +121,48 @@ public:
 };
 
 //===----------------------------------------------------------------------------------
+// CompletionParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL ExecuteCommandParams : public Params
+{
+    wxString m_command;
+    wxString m_arguments;
+
+public:
+    ExecuteCommandParams(const wxString& command, const wxString& arguments);
+    virtual ~ExecuteCommandParams() {}
+
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON(const wxString& name) const override;
+};
+
+//===----------------------------------------------------------------------------------
+// CodeActionParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL CodeActionParams : public Params
+{
+    TextDocumentIdentifier m_textDocument;
+    Range m_range;
+    std::vector<LSP::Diagnostic> m_diagnostics;
+
+public:
+    CodeActionParams();
+    virtual ~CodeActionParams() {}
+
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON(const wxString& name) const override;
+
+    void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
+    const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+
+    void SetRange(const Range& range) { this->m_range = range; }
+    const Range& GetRange() const { return m_range; }
+
+    void SetDiagnostics(const std::vector<LSP::Diagnostic>& diagnostics) { this->m_diagnostics = diagnostics; }
+    const std::vector<LSP::Diagnostic>& GetDiagnostics() const { return this->m_diagnostics; }
+};
+
+//===----------------------------------------------------------------------------------
 // DidOpenTextDocumentParams
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL DidOpenTextDocumentParams : public Params

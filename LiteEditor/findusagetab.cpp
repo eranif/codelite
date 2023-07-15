@@ -235,7 +235,7 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     auto range = item_data->location->GetRange();
     auto callback = [=](IEditor* editor) {
         editor->GetCtrl()->ClearSelections();
-        editor->SelectRange(range);
+        editor->SelectRangeAfter(range);
     };
 
     if(fn.FileExists()) {

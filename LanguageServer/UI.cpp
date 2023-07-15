@@ -498,10 +498,36 @@ LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer194);
 
-    m_dvListCtrl = new clTerminalViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
+    m_notebook207 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook207->SetName(wxT("m_notebook207"));
 
-    boxSizer194->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer194->Add(m_notebook207, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel209 = new wxPanel(m_notebook207, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook207, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
+    m_notebook207->AddPage(m_panel209, _("Diagnostics"), true);
+
+    wxBoxSizer* boxSizer211 = new wxBoxSizer(wxVERTICAL);
+    m_panel209->SetSizer(boxSizer211);
+
+    m_treeCtrlProblems =
+        new clThemedTreeCtrl(m_panel209, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel209, wxSize(-1, -1)),
+                             wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_FULL_ROW_HIGHLIGHT);
+
+    boxSizer211->Add(m_treeCtrlProblems, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel208 = new wxPanel(m_notebook207, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook207, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
+    m_notebook207->AddPage(m_panel208, _("Log"), false);
+
+    wxBoxSizer* boxSizer210 = new wxBoxSizer(wxVERTICAL);
+    m_panel208->SetSizer(boxSizer210);
+
+    m_dvListCtrl =
+        new clTerminalViewCtrl(m_panel208, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel208, wxSize(-1, -1)),
+                               wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer210->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("LanguageServerLogViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));

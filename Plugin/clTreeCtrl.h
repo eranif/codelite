@@ -379,6 +379,9 @@ public:
     void SetItemText(const wxTreeItemId& item, const wxString& text, size_t col = 0);
     wxString GetItemText(const wxTreeItemId& item, size_t col = 0) const;
 
+    void SetItemControl(const wxTreeItemId& item, wxControl* control, size_t col = 0);
+    wxControl* GetItemControl(const wxTreeItemId& item, size_t col = 0);
+
     void SetItemBold(const wxTreeItemId& item, bool bold, size_t col = 0);
 
     void SetItemFont(const wxTreeItemId& item, const wxFont& font, size_t col = 0);

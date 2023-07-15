@@ -25,6 +25,7 @@ public:
         kTypeButton = 3,
         kTypeColour = 4,
         kTypeOnlyButton = 5,
+        kTypeControl = 6,
     };
     typedef std::vector<clCellValue> Vect_t;
 
@@ -43,6 +44,7 @@ protected:
     wxColour m_colourValue;
     wxString m_buttonUnicodeSymbol;
     eButtonState m_button_state = eButtonState::kNormal;
+    wxControl* m_control = nullptr;
 
 public:
     clCellValue();
@@ -73,7 +75,13 @@ public:
      * @brief the entire cell is a button
      */
     bool IsButton() const { return m_type == kTypeOnlyButton; }
-
+    bool IsControl() const { return m_type == kTypeControl; }
+    wxControl* GetControl() const { return m_control; }
+    void SetControl(wxControl* ctrl)
+    {
+        m_control = ctrl;
+        m_type = kTypeControl;
+    }
     bool IsColour() const { return m_type == kTypeColour; }
     eCellButtonType GetButtonType() const { return m_button_type; }
     void SetButtonType(eCellButtonType type, const wxString& unicode_symbol)

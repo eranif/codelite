@@ -384,9 +384,13 @@ public:
     virtual bool FindAndSelect(const wxString& pattern, const wxString& what, int from_pos, NavMgr* navmgr) = 0;
 
     /**
-     * @brief select range
+     * @brief select range using CallAfter() method
      */
-    virtual bool SelectRange(const LSP::Range& range) = 0;
+    virtual bool SelectRangeAfter(const LSP::Range& range) = 0;
+    /**
+     * @brief select range, immediately (no CallAfter())
+     */
+    virtual void SelectRange(const LSP::Range& range) = 0;
 
     /**
      * @brief select range from a given location

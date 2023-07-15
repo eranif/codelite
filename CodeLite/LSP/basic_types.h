@@ -509,6 +509,28 @@ public:
     const wxString& GetMessage() const { return m_message; }
 };
 
+class WXDLLIMPEXP_CL Command : public Serializable
+{
+    wxString m_title;
+    wxString m_command;
+    wxString m_arguments;
+
+public:
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON(const wxString& name) const override;
+
+    Command() {}
+    virtual ~Command() {}
+
+    void SetTitle(const wxString& title) { this->m_title = title; }
+    void SetCommand(const wxString& command) { this->m_command = command; }
+    void SetArguments(const wxString& arguments) { this->m_arguments = arguments; }
+
+    const wxString& GetTitle() const { return m_title; }
+    const wxString& GetCommand() const { return m_command; }
+    const wxString& GetArguments() const { return m_arguments; }
+};
+
 class WXDLLIMPEXP_CL DocumentSymbol : public Serializable
 {
     /**

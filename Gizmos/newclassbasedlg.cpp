@@ -9,7 +9,19 @@
 // Declare the bitmap loading function
 extern void wxC3999InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                  const wxSize& size, long style)
@@ -161,96 +173,72 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 
     fgSizer1->Add(m_buttonBrowseFolder, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_notebook53 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebook53->SetName(wxT("m_notebook53"));
+    m_staticLine75 =
+        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
 
-    bSizer1->Add(m_notebook53, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer1->Add(m_staticLine75, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel57 = new wxPanel(m_notebook53, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook53, wxSize(-1, -1)),
-                            wxTAB_TRAVERSAL);
-    m_notebook53->AddPage(m_panel57, _("File"), true);
+    wxFlexGridSizer* flexGridSizer74 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer74->SetFlexibleDirection(wxBOTH);
+    flexGridSizer74->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
-    wxBoxSizer* boxSizer61 = new wxBoxSizer(wxVERTICAL);
-    m_panel57->SetSizer(boxSizer61);
+    bSizer1->Add(flexGridSizer74, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxFlexGridSizer* flexGridSizer51 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer51->SetFlexibleDirection(wxBOTH);
-    flexGridSizer51->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer51->AddGrowableCol(0);
-    flexGridSizer51->AddGrowableCol(1);
-
-    boxSizer61->Add(flexGridSizer51, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxHpp = new wxCheckBox(m_panel57, wxID_ANY, _("Create .hpp instead of .h"), wxDefaultPosition,
-                                   wxDLG_UNIT(m_panel57, wxSize(-1, -1)), 0);
+    m_checkBoxHpp = new wxCheckBox(this, wxID_ANY, _("Create .hpp instead of .h"), wxDefaultPosition,
+                                   wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxHpp->SetValue(false);
     m_checkBoxHpp->SetToolTip(_("If checked, the generated header file will be foo.hpp instead of foo.h"));
 
-    flexGridSizer51->Add(m_checkBoxHpp, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer74->Add(m_checkBoxHpp, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_checkBoxLowercaseFileName = new wxCheckBox(m_panel57, wxID_ANY, _("Use lowercase file names"), wxDefaultPosition,
-                                                 wxDLG_UNIT(m_panel57, wxSize(-1, -1)), 0);
-    m_checkBoxLowercaseFileName->SetValue(false);
-
-    flexGridSizer51->Add(m_checkBoxLowercaseFileName, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_checkBoxPragmaOnce = new wxCheckBox(m_panel57, wxID_ANY, _("Use #pragma once"), wxDefaultPosition,
-                                          wxDLG_UNIT(m_panel57, wxSize(-1, -1)), 0);
+    m_checkBoxPragmaOnce =
+        new wxCheckBox(this, wxID_ANY, _("Use #pragma once"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxPragmaOnce->SetValue(false);
 
-    flexGridSizer51->Add(m_checkBoxPragmaOnce, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer74->Add(m_checkBoxPragmaOnce, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_panel55 = new wxPanel(m_notebook53, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook53, wxSize(-1, -1)),
-                            wxTAB_TRAVERSAL);
-    m_notebook53->AddPage(m_panel55, _("Advanced"), false);
+    m_checkBoxLowercaseFileName = new wxCheckBox(this, wxID_ANY, _("Use lowercase file names"), wxDefaultPosition,
+                                                 wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxLowercaseFileName->SetValue(false);
 
-    wxBoxSizer* boxSizer59 = new wxBoxSizer(wxVERTICAL);
-    m_panel55->SetSizer(boxSizer59);
+    flexGridSizer74->Add(m_checkBoxLowercaseFileName, 0, wxALL, WXC_FROM_DIP(5));
 
-    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer2->SetFlexibleDirection(wxBOTH);
-    fgSizer2->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    fgSizer2->AddGrowableCol(0);
-    fgSizer2->AddGrowableCol(1);
-
-    boxSizer59->Add(fgSizer2, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxSingleton = new wxCheckBox(m_panel55, wxID_ANY, _("This is a singleton class"), wxDefaultPosition,
-                                         wxDLG_UNIT(m_panel55, wxSize(-1, -1)), 0);
-    m_checkBoxSingleton->SetValue(false);
-
-    fgSizer2->Add(m_checkBoxSingleton, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_checkBoxVirtualDtor = new wxCheckBox(m_panel55, wxID_ANY, _("Virtual destructor"), wxDefaultPosition,
-                                           wxDLG_UNIT(m_panel55, wxSize(-1, -1)), 0);
-    m_checkBoxVirtualDtor->SetValue(false);
-
-    fgSizer2->Add(m_checkBoxVirtualDtor, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_checkBoxInline = new wxCheckBox(m_panel55, wxID_ANY, _("Inline class"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panel55, wxSize(-1, -1)), 0);
+    m_checkBoxInline =
+        new wxCheckBox(this, wxID_ANY, _("Inline class"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxInline->SetValue(false);
     m_checkBoxInline->SetToolTip(_("Put both the declaration and the implementation in the header file"));
 
-    fgSizer2->Add(m_checkBoxInline, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer74->Add(m_checkBoxInline, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxNonInheritable = new wxCheckBox(m_panel55, wxID_ANY, _("Prohibit further inheritance"), wxDefaultPosition,
-                                              wxDLG_UNIT(m_panel55, wxSize(-1, -1)), 0);
+    m_checkBoxVirtualDtor =
+        new wxCheckBox(this, wxID_ANY, _("Virtual destructor"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxVirtualDtor->SetValue(false);
+
+    flexGridSizer74->Add(m_checkBoxVirtualDtor, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxSingleton = new wxCheckBox(this, wxID_ANY, _("This is a singleton class"), wxDefaultPosition,
+                                         wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxSingleton->SetValue(false);
+
+    flexGridSizer74->Add(m_checkBoxSingleton, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_checkBoxNonInheritable = new wxCheckBox(this, wxID_ANY, _("Prohibit further inheritance"), wxDefaultPosition,
+                                              wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxNonInheritable->SetValue(false);
 
-    fgSizer2->Add(m_checkBoxNonInheritable, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer74->Add(m_checkBoxNonInheritable, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_checkBoxNonCopyable = new wxCheckBox(m_panel55, wxID_ANY, _("Declare this class non-copyable"), wxDefaultPosition,
-                                           wxDLG_UNIT(m_panel55, wxSize(-1, -1)), 0);
+    m_checkBoxNonCopyable = new wxCheckBox(this, wxID_ANY, _("Declare this class non-copyable"), wxDefaultPosition,
+                                           wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxNonCopyable->SetValue(false);
 
-    fgSizer2->Add(m_checkBoxNonCopyable, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer74->Add(m_checkBoxNonCopyable, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxNonMovable = new wxCheckBox(m_panel55, wxID_ANY, _("Declare this class non-movable"), wxDefaultPosition,
-                                          wxDLG_UNIT(m_panel55, wxSize(-1, -1)), 0);
+    m_checkBoxNonMovable = new wxCheckBox(this, wxID_ANY, _("Declare this class non-movable"), wxDefaultPosition,
+                                          wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxNonMovable->SetValue(false);
 
-    fgSizer2->Add(m_checkBoxNonMovable, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer74->Add(m_checkBoxNonMovable, 0, wxALL, WXC_FROM_DIP(5));
 
     m_stdBtnSizer30 = new wxStdDialogButtonSizer();
 
@@ -264,14 +252,6 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     m_stdBtnSizer30->AddButton(m_button34);
     m_stdBtnSizer30->Realize();
 
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook53)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook53);
-    } else {
-        wxPersistenceManager::Get().Restore(m_notebook53);
-    }
-#endif
-
     SetName(wxT("NewClassBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) {
@@ -282,44 +262,30 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_textClassName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewClassBaseDlg::OnTextEnter), NULL,
-                             this);
-    m_staticText6->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
-    m_textCtrlBlockGuard->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
-    m_buttonSelectVD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseVD), NULL,
-                              this);
-    m_buttonBrowseFolder->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseFolder),
-                                  NULL, this);
-    m_checkBoxLowercaseFileName->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                         wxCommandEventHandler(NewClassBaseDlg::OnUseLowerCaseFileName), NULL, this);
-    m_checkBoxSingleton->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                 wxCommandEventHandler(NewClassBaseDlg::OnCheckSingleton), NULL, this);
-    m_button34->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonOK), NULL, this);
+    m_textClassName->Bind(wxEVT_COMMAND_TEXT_UPDATED, &NewClassBaseDlg::OnTextEnter, this);
+    m_staticText6->Bind(wxEVT_UPDATE_UI, &NewClassBaseDlg::OnBlockGuardUI, this);
+    m_textCtrlBlockGuard->Bind(wxEVT_UPDATE_UI, &NewClassBaseDlg::OnBlockGuardUI, this);
+    m_buttonSelectVD->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewClassBaseDlg::OnBrowseVD, this);
+    m_buttonBrowseFolder->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewClassBaseDlg::OnBrowseFolder, this);
+    m_checkBoxLowercaseFileName->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &NewClassBaseDlg::OnUseLowerCaseFileName, this);
+    m_checkBoxSingleton->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &NewClassBaseDlg::OnCheckSingleton, this);
+    m_button34->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewClassBaseDlg::OnButtonOK, this);
 }
 
 NewClassBaseDlg::~NewClassBaseDlg()
 {
-    m_textClassName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewClassBaseDlg::OnTextEnter), NULL,
-                                this);
-    m_staticText6->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
-    m_textCtrlBlockGuard->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL,
-                                     this);
-    m_buttonSelectVD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseVD), NULL,
-                                 this);
-    m_buttonBrowseFolder->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                     wxCommandEventHandler(NewClassBaseDlg::OnBrowseFolder), NULL, this);
-    m_checkBoxLowercaseFileName->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                            wxCommandEventHandler(NewClassBaseDlg::OnUseLowerCaseFileName), NULL, this);
-    m_checkBoxSingleton->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                    wxCommandEventHandler(NewClassBaseDlg::OnCheckSingleton), NULL, this);
-    m_button34->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonOK), NULL,
-                           this);
+    m_textClassName->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &NewClassBaseDlg::OnTextEnter, this);
+    m_staticText6->Unbind(wxEVT_UPDATE_UI, &NewClassBaseDlg::OnBlockGuardUI, this);
+    m_textCtrlBlockGuard->Unbind(wxEVT_UPDATE_UI, &NewClassBaseDlg::OnBlockGuardUI, this);
+    m_buttonSelectVD->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewClassBaseDlg::OnBrowseVD, this);
+    m_buttonBrowseFolder->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewClassBaseDlg::OnBrowseFolder, this);
+    m_checkBoxLowercaseFileName->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &NewClassBaseDlg::OnUseLowerCaseFileName, this);
+    m_checkBoxSingleton->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &NewClassBaseDlg::OnCheckSingleton, this);
+    m_button34->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewClassBaseDlg::OnButtonOK, this);
 }

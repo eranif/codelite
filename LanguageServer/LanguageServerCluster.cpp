@@ -118,6 +118,9 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &LanguageServerCluster::OnWorkspaceScanCompleted, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
+
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -126,8 +129,6 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     Bind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
     Bind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
     Bind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
-    Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
-    Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Bind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LanguageServerCluster::OnShowQuickOutlineDlg, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LanguageServerCluster::OnQuickOutlineView, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LanguageServerCluster::OnOulineViewSymbols, this);
@@ -149,6 +150,8 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
 
     EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
 
     Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LanguageServerCluster::OnShowQuickOutlineDlg, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
@@ -159,8 +162,6 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
     Unbind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
     Unbind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
-    Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
-    Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LanguageServerCluster::OnQuickOutlineView, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LanguageServerCluster::OnOulineViewSymbols, this);
     Unbind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
@@ -187,10 +188,19 @@ void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor* editor)
 {
-    for(const auto& vt : m_servers) {
-        const auto& thisServer = vt.second;
-        if(thisServer->CanHandle(editor)) {
-            return thisServer;
+    for(const auto& [_, server] : m_servers) {
+        if(server->CanHandle(editor)) {
+            return server;
+        }
+    }
+    return LanguageServerProtocol::Ptr_t{ nullptr };
+}
+
+LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxString& filepath)
+{
+    for(const auto& [_, server] : m_servers) {
+        if(server->CanHandle(FileExtManager::GetType(filepath))) {
+            return server;
         }
     }
     return LanguageServerProtocol::Ptr_t{ nullptr };
@@ -250,7 +260,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
         // try selecting using a location first
         if(!editor->SelectLocation(location)) {
             // try the range
-            editor->SelectRange(location.GetRange());
+            editor->SelectRangeAfter(location.GetRange());
         }
         NavMgr::Get()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
     };
@@ -371,7 +381,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
         }
     }
     CHECK_PTR_RET(editor);
-    LSP_DEBUG() << "Found the editor!" << endl;
+    LSP_TRACE() << "Found the editor!" << endl;
     const auto& semanticTokens = event.GetSemanticTokens();
 
     wxStringSet_t variables_tokens = { "variable", "parameter", "typeParameter", "property" };
@@ -386,7 +396,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     wxString variabls_str;
     wxString method_str;
 
-    LSP_DEBUG() << "Going over" << semanticTokens.size() << "tokens" << endl;
+    LSP_TRACE() << "Going over" << semanticTokens.size() << "tokens" << endl;
     for(const auto& token : semanticTokens) {
         // is this an interesting token?
         wxString token_type = server->GetSemanticToken(token.token_type);
@@ -413,21 +423,21 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
             method_str << token_name << " ";
         }
     }
-    LSP_DEBUG() << "Done" << endl;
+    LSP_TRACE() << "Done" << endl;
 
     // trim the strings, so we can rely on the below test (.empty())
     method_str.Trim().Trim(false);
     variabls_str.Trim().Trim(false);
     method_str.Trim().Trim(false);
 
-    LSP_DEBUG() << "Calling editor->SetSemanticTokens" << endl;
+    LSP_TRACE() << "Calling editor->SetSemanticTokens" << endl;
     if(!classes_str.empty() || !variabls_str.empty() || !method_str.empty()) {
         // we got something to colour
         editor->SetSemanticTokens(classes_str, variabls_str, method_str, wxEmptyString);
     } else {
-        LSP_DEBUG() << "empty semantic tokens, leaving editor untouched" << endl;
+        LSP_TRACE() << "empty semantic tokens, leaving editor untouched" << endl;
     }
-    LSP_DEBUG() << "Success" << endl;
+    LSP_TRACE() << "Success" << endl;
 }
 
 void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)

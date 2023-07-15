@@ -1083,7 +1083,7 @@ void RemotyWorkspace::OnLSPOpenFile(LSPEvent& event)
         event.Skip();
         return;
     }
-    editor->SelectRange(event.GetLocation().GetRange());
+    editor->SelectRangeAfter(event.GetLocation().GetRange());
 }
 
 wxString RemotyWorkspace::GetName() const { return wxFileName(m_localWorkspaceFile).GetName(); }

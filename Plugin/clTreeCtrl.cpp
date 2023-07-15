@@ -331,13 +331,33 @@ void clTreeCtrl::Expand(const wxTreeItemId& item)
     }
 }
 
+namespace
+{
+void HideControls(clRowEntry* r)
+{
+    auto& children = r->GetChildren();
+    for(auto c : children) {
+        for(size_t i = 0; i < c->GetColumnCount(); ++i) {
+            auto& cell = c->GetColumn(i);
+            if(cell.GetControl()) {
+                cell.GetControl()->Hide();
+            }
+        }
+        HideControls(c);
+    }
+}
+} // namespace
+
 void clTreeCtrl::Collapse(const wxTreeItemId& item)
 {
     CHECK_ITEM_RET(item);
     clRowEntry* child = m_model.ToPtr(item);
-    if(!child)
+    if(!child) {
         return;
+    }
+
     child->SetExpanded(false);
+    HideControls(child); // hide any child controls
     m_maxList = true;
     UpdateScrollBar();
     DoUpdateHeader(item);
@@ -1625,4 +1645,26 @@ void clTreeCtrl::UpdateButtonState(clRowEntry::Vec_t& lines)
             }
         }
     }
+}
+
+void clTreeCtrl::SetItemControl(const wxTreeItemId& item, wxControl* control, size_t col)
+{
+    auto p = m_model.ToPtr(item);
+    CHECK_PTR_RET(p);
+
+    auto& cell = p->GetColumn(col);
+    CHECK_COND_RET(cell.IsOk());
+
+    cell.SetControl(control);
+}
+
+wxControl* clTreeCtrl::GetItemControl(const wxTreeItemId& item, size_t col)
+{
+    auto p = m_model.ToPtr(item);
+    CHECK_PTR_RET_NULL(p);
+
+    const auto& cell = p->GetColumn(col);
+    CHECK_COND_RET_NULL(cell.IsOk());
+
+    return cell.GetControl();
 }

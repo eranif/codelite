@@ -427,6 +427,37 @@ public:
 
 DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewColour, WXDLLIMPEXP_SDK)
 
+class WXDLLIMPEXP_SDK clDataViewControl : public wxObject
+{
+private:
+    wxControl* m_ctrl = nullptr;
+
+public:
+    clDataViewControl(wxControl* ctrl)
+        : m_ctrl(ctrl)
+    {
+    }
+
+    clDataViewControl(const clDataViewControl& other)
+        : wxObject()
+        , m_ctrl(other.m_ctrl)
+    {
+    }
+
+    clDataViewControl() {}
+    // we do not delete the control
+    virtual ~clDataViewControl() {}
+
+    void SetControl(wxControl* ctrl) { this->m_ctrl = ctrl; }
+    wxControl* GetControl() { return m_ctrl; }
+    bool IsSameAs(const clDataViewControl& other) const { return m_ctrl == other.m_ctrl; }
+    bool operator==(const clDataViewControl& other) const { return IsSameAs(other); }
+    bool operator!=(const clDataViewControl& other) const { return !IsSameAs(other); }
+    wxDECLARE_DYNAMIC_CLASS(clDataViewControl);
+};
+
+DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewControl, WXDLLIMPEXP_SDK)
+
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_ACTION_BUTTON, wxDataViewEvent);

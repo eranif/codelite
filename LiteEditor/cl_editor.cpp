@@ -3973,7 +3973,7 @@ void clEditor::DoBreakptContextMenu(wxPoint pt)
             // build a command that can be used by gdb / lldb cli
             int line = LineFromPosition(PositionFromPoint(pt)) + 1;
             wxString set_breakpoint_cmd;
-            set_breakpoint_cmd << "break " << GetRemotePathOrLocal() << ":" << line;
+            set_breakpoint_cmd << "b " << GetRemotePathOrLocal() << ":" << line;
             ::CopyToClipboard(set_breakpoint_cmd);
             clGetManager()->SetStatusMessage(_("Breakpoint command copied to clipboard!"), 3);
         },
@@ -5079,7 +5079,7 @@ bool clEditor::FindAndSelect(const wxString& pattern, const wxString& what, int 
     return DoFindAndSelect(pattern, what, pos, navmgr);
 }
 
-void clEditor::DoSelectRange(const LSP::Range& range)
+void clEditor::DoSelectRange(const LSP::Range& range, bool center_line)
 {
     ClearSelections();
     auto getPos = [this](const LSP::Position& param) -> int {
@@ -5093,8 +5093,11 @@ void clEditor::DoSelectRange(const LSP::Range& range)
     };
     SetSelectionStart(getPos(range.GetStart()));
     SetSelectionEnd(getPos(range.GetEnd()));
-    int lineNumber = range.GetStart().GetLine();
-    CallAfter(&clEditor::CenterLinePreserveSelection, lineNumber);
+
+    if(center_line) {
+        int lineNumber = range.GetStart().GetLine();
+        CallAfter(&clEditor::CenterLinePreserveSelection, lineNumber);
+    }
 }
 
 bool clEditor::SelectLocation(const LSP::Location& location)
@@ -5104,13 +5107,15 @@ bool clEditor::SelectLocation(const LSP::Location& location)
     return DoFindAndSelect(location.GetName(), location.GetName(), pos, nullptr);
 }
 
-bool clEditor::SelectRange(const LSP::Range& range)
+bool clEditor::SelectRangeAfter(const LSP::Range& range)
 {
     // on GTK, DoSelectRange will probably fail since the file is not really loaded into screen yet
     // so we need to use here CallAfter
-    CallAfter(&clEditor::DoSelectRange, range);
+    CallAfter(&clEditor::DoSelectRange, range, true);
     return true;
 }
+
+void clEditor::SelectRange(const LSP::Range& range) { DoSelectRange(range, false); }
 
 bool clEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, int start_pos, NavMgr* navmgr)
 {

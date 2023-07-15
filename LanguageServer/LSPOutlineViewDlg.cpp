@@ -279,7 +279,7 @@ void LSPOutlineViewDlg::DoSelectionActivate()
         active_editor->SetCaretAt(position);
         active_editor->CenterLine(sci_line);
     } else {
-        active_editor->SelectRange(loc.GetRange());
+        active_editor->SelectRangeAfter(loc.GetRange());
         active_editor->CenterLinePreserveSelection(sci_line);
     }
     Hide();

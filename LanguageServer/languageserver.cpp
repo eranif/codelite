@@ -49,17 +49,18 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_longName = _("Support for Language Server Protocol (LSP)");
     m_shortName = wxT("LanguageServerPlugin");
 
+    // Load the configuration
+    LanguageServerConfig::Get().Load();
+    m_servers = new LanguageServerCluster(this);
+
     // add log view
-    m_logView = new LanguageServerLogView(m_mgr->GetOutputPaneNotebook());
+    m_logView = new LanguageServerLogView(m_mgr->GetOutputPaneNotebook(), m_servers);
     auto outputBook = m_mgr->GetOutputPaneNotebook();
     int bmp = outputBook->GetBitmaps()->Add("cog");
     outputBook->AddPage(m_logView, _("Language Server"), false, bmp);
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
     m_tabToggler->SetOutputTabBmp(bmp);
 
-    // Load the configuration
-    LanguageServerConfig::Get().Load();
-    m_servers.reset(new LanguageServerCluster(this));
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
@@ -86,7 +87,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     CallAfter(&LanguageServerPlugin::CheckServers);
 }
 
-LanguageServerPlugin::~LanguageServerPlugin() {}
+LanguageServerPlugin::~LanguageServerPlugin() { wxDELETE(m_servers); }
 
 void LanguageServerPlugin::CheckServers()
 {
@@ -142,7 +143,6 @@ void LanguageServerPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerPlugin::OnWorkspaceClosed, this);
 
     LanguageServerConfig::Get().Save();
-    m_servers.reset(nullptr);
 
     // before this plugin is un-plugged we must remove the tab we added
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
@@ -152,6 +152,7 @@ void LanguageServerPlugin::UnPlug()
             break;
         }
     }
+    wxDELETE(m_servers);
 }
 
 void LanguageServerPlugin::OnSettings(wxCommandEvent& e)

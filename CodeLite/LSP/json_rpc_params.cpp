@@ -20,6 +20,7 @@ JSONItem TextDocumentPositionParams::ToJSON(const wxString& name) const
     json.append(m_position.ToJSON("position"));
     return json;
 }
+
 //===----------------------------------------------
 // SemanticTokensParams
 //===----------------------------------------------
@@ -127,6 +128,52 @@ JSONItem CompletionParams::ToJSON(const wxString& name) const
 }
 
 //===----------------------------------------------------------------------------------
+// CodeActionParams
+//===----------------------------------------------------------------------------------
+ExecuteCommandParams::ExecuteCommandParams(const wxString& command, const wxString& arguments)
+    : m_command(command)
+    , m_arguments(arguments)
+{
+}
+
+void ExecuteCommandParams::FromJSON(const JSONItem& json) { wxUnusedVar(json); }
+
+JSONItem ExecuteCommandParams::ToJSON(const wxString& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.addProperty("command", m_command);
+    // parse the "arguments"
+    // and add them
+    JSON root{ m_arguments };
+    if(root.isOk()) {
+        json.addProperty("arguments", root.release());
+    }
+    return json;
+}
+
+//===----------------------------------------------------------------------------------
+// CodeActionParams
+//===----------------------------------------------------------------------------------
+CodeActionParams::CodeActionParams() {}
+
+void CodeActionParams::FromJSON(const JSONItem& json) { wxUnusedVar(json); }
+
+JSONItem CodeActionParams::ToJSON(const wxString& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.append(m_textDocument.ToJSON("textDocument"));
+    json.append(m_range.ToJSON("range"));
+
+    // add empty context
+    auto context = json.AddObject("context");
+    auto diags_arr = context.AddArray("diagnostics"); // empty array
+    for(const auto& diag : m_diagnostics) {
+        diags_arr.arrayAppend(diag.ToJSON(wxEmptyString));
+    }
+    return json;
+}
+
+//===----------------------------------------------------------------------------------
 // DocumentSymbolParams
 //===----------------------------------------------------------------------------------
 DocumentSymbolParams::DocumentSymbolParams() {}
@@ -158,4 +205,5 @@ JSONItem ReferenceParams::ToJSON(const wxString& name) const
     context.addProperty("includeDeclaration", m_includeDeclaration);
     return json;
 }
+
 }; // namespace LSP

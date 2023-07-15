@@ -663,7 +663,8 @@ public:
     void QuickFindAll();
 
     bool FindAndSelect();
-    bool SelectRange(const LSP::Range& range) override;
+    bool SelectRangeAfter(const LSP::Range& range) override;
+    void SelectRange(const LSP::Range& range) override;
     bool SelectLocation(const LSP::Location& range) override;
     bool FindAndSelect(const FindReplaceData& data);
     bool FindAndSelect(const wxString& pattern, const wxString& name);
@@ -1112,7 +1113,7 @@ private:
     void DoUpdateTLWTitle(bool raise);
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
     int GetFirstSingleLineCommentPos(int from, int commentStyle);
-    void DoSelectRange(const LSP::Range& range);
+    void DoSelectRange(const LSP::Range& range, bool center_line);
 
     /**
      * @brief set the zoom factor

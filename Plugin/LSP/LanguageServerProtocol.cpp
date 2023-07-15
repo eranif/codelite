@@ -1,5 +1,6 @@
 #include "LanguageServerProtocol.h"
 
+#include "LSP/CodeActionRequest.hpp"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -22,6 +23,7 @@
 #include "LSP/ResponseMessage.h"
 #include "LSP/SemanticTokensRquest.hpp"
 #include "LSP/SignatureHelpRequest.h"
+#include "LSP/WorkspaceExecuteCommand.hpp"
 #include "LSP/WorkspaceSymbolRequest.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
@@ -462,6 +464,28 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
     }
 }
 
+namespace
+{
+LSP::Range GetFileRange(wxStyledTextCtrl* ctrl)
+{
+    int last_line = ctrl->LineFromPosition(ctrl->GetLastPosition());
+    int last_line_len = ctrl->LineLength(last_line);
+    LSP::Position start_pos{ 0, 0 };
+    LSP::Position end_pos{ last_line, last_line_len };
+    return LSP::Range{ start_pos, end_pos };
+}
+} // namespace
+
+void LanguageServerProtocol::SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags)
+{
+    if(ShouldHandleFile(editor)) {
+        wxString filename = GetEditorFilePath(editor);
+        LSP::CodeActionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+            new LSP::CodeActionRequest(LSP::TextDocumentIdentifier(filename), GetFileRange(editor->GetCtrl()), diags));
+        QueueMessage(req);
+    }
+}
+
 void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column)
 {
     CHECK_PTR_RET(editor);
@@ -722,6 +746,10 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
             log_event.SetServerName(GetName());
             log_event.SetMessage(json_item["params"].toString());
             m_owner->AddPendingEvent(log_event);
+        } else if(message_method == "workspace/applyEdit") {
+
+            // the server is requesting us to apply an edit
+            HandleWorkspaceEdit(json_item["params"]["edit"]["changes"]);
 
         } else {
             // other response
@@ -941,16 +969,21 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
 
         std::vector<LSP::Diagnostic> diags = response.GetDiagnostics();
         if(!diags.empty() && IsDisaplayDiagnostics()) {
+            // send action for each of the diagnostic
+            CallAfter(&LanguageServerProtocol::SendCodeActionRequest, clGetManager()->GetActiveEditor(), diags);
+
             // report the diagnostics
             LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);
+            eventSetDiags.SetFileName(fn);
             eventSetDiags.GetLocation().SetPath(fn);
             eventSetDiags.SetDiagnostics(diags);
-            m_owner->AddPendingEvent(eventSetDiags);
+            EventNotifier::Get()->AddPendingEvent(eventSetDiags);
         } else if(diags.empty()) {
             // clear all diagnostics
             LSPEvent eventClearDiags(wxEVT_LSP_CLEAR_DIAGNOSTICS);
+            eventClearDiags.SetFileName(fn);
             eventClearDiags.GetLocation().SetPath(fn);
-            m_owner->AddPendingEvent(eventClearDiags);
+            EventNotifier::Get()->AddPendingEvent(eventClearDiags);
         }
     }
 }
@@ -1133,3 +1166,48 @@ bool LanguageServerProtocol::IsReferencesSupported() const { return IsCapability
 bool LanguageServerProtocol::IsRenameSupported() const { return IsCapabilitySupported("textDocument/rename"); }
 
 bool LanguageServerProtocol::IsIncrementalChangeSupported() const { return m_incrementalChangeSupported; }
+
+void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command)
+{
+    auto editor = clGetManager()->FindEditor(filepath);
+    if(!editor) {
+        LSP_ERROR() << "Could not send workspace/executeCommand: could not locate editor for file:" << filepath << endl;
+        return;
+    }
+
+    if(ShouldHandleFile(editor)) {
+        LSP_DEBUG() << "Sending `workspace/executeCommand`" << endl;
+        wxString filename = GetEditorFilePath(editor);
+        LSP::WorkspaceExecuteCommand::Ptr_t req =
+            LSP::MessageWithParams::MakeRequest(new LSP::WorkspaceExecuteCommand(filename, command));
+        QueueMessage(req);
+    }
+}
+
+void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
+{
+    auto M = changes.GetAsMap();
+    for(const auto& [filepath, edit_arr] : M) {
+        wxString fn = FileUtils::FilePathFromURI(wxString(filepath.data(), filepath.length()));
+        auto editor = clGetManager()->FindEditor(fn);
+        if(!editor) {
+            LSP_WARNING() << "Could not locate editor for file:" << wxString(filepath.data(), filepath.length())
+                          << endl;
+            continue;
+        }
+        if(!edit_arr.isArray()) {
+            LSP_WARNING() << "Could not apply edit. Expected TextEdit array" << endl;
+            continue;
+        }
+
+        auto edits = edit_arr.GetAsVector();
+        for(const auto& edit : edits) {
+            // apply the change
+            LSP::TextEdit text_edit;
+            text_edit.FromJSON(edit);
+
+            editor->SelectRange(text_edit.GetRange());
+            editor->ReplaceSelection(text_edit.GetNewText());
+        }
+    }
+}

@@ -14,7 +14,7 @@
 
 class LanguageServerPlugin : public IPlugin
 {
-    LanguageServerCluster::Ptr_t m_servers;
+    LanguageServerCluster* m_servers = nullptr;
     IProcess* m_process = nullptr;
     clTabTogglerHelper::Ptr_t m_tabToggler;
     LanguageServerLogView* m_logView = nullptr;

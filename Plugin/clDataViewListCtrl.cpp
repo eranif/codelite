@@ -27,6 +27,9 @@ IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewColour, WXDLLIMPEXP_SDK);
 wxIMPLEMENT_DYNAMIC_CLASS(clDataViewButton, wxObject);
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewButton, WXDLLIMPEXP_SDK);
 
+wxIMPLEMENT_DYNAMIC_CLASS(clDataViewControl, wxObject);
+IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewControl, WXDLLIMPEXP_SDK);
+
 wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_ACTION_BUTTON, wxDataViewEvent);
@@ -443,6 +446,10 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
         clDataViewColour c;
         c << value;
         row->SetColour(c.GetColour(), col);
+    } else if(variantType == "clDataViewControl") {
+        clDataViewControl c;
+        c << value;
+        row->SetIsControl(c.GetControl(), col);
     }
 
     // Call this to update the view + update the header bar

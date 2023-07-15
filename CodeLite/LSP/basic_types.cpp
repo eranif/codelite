@@ -358,4 +358,20 @@ void URI::FromString(const wxString& str, URI* uri)
     uri->m_path = FileUtils::FilePathFromURI(str);
     uri->m_uri = FileUtils::FilePathToURI(str);
 }
+
+//===----------------------------------------------------------------------------------
+// Command
+//===----------------------------------------------------------------------------------
+void Command::FromJSON(const JSONItem& json)
+{
+    m_title = json["title"].toString();
+    m_command = json["command"].toString();
+
+    // raw JSON
+    m_arguments = json["arguments"].format(false);
+}
+
+// unimplemented
+JSONItem Command::ToJSON(const wxString& name) const { return {}; }
+
 }; // namespace LSP

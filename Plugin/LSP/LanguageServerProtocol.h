@@ -125,6 +125,7 @@ protected:
     static wxString GetLanguageId(FileExtManager::FileType file_type);
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
+    void HandleWorkspaceEdit(const JSONItem& changes);
     IEditor* GetEditor(const clCodeCompletionEvent& event) const;
 
 protected:
@@ -162,6 +163,11 @@ protected:
      * @brief request for a code completion at a given doc/position
      */
     void SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column);
+
+    /**
+     * @brief request a code action from the server
+     */
+    void SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags);
 
     bool DoStart();
 
@@ -295,6 +301,11 @@ public:
      * @param context_flags request context. See LSP::DocumentSymbolsRequest::eDocumentSymbolsContext (bit or'd)
      */
     void DocumentSymbols(IEditor* editor, size_t context_flags);
+
+    /**
+     * @brief execute remote command `workspace/executeCommand`
+     */
+    void SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command);
 
     // helpers
     bool IsCapabilitySupported(const wxString& name) const;

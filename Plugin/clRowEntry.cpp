@@ -193,6 +193,13 @@ clRowEntry::~clRowEntry()
     DeleteAllChildren();
     wxDELETE(m_clientObject);
 
+    for(auto& cell : m_cells) {
+        if(cell.IsControl() && cell.GetControl()) {
+            cell.GetControl()->Destroy();
+            cell.SetControl(nullptr);
+        }
+    }
+
     // Notify the model that a selection is being deleted
     if(m_model) {
         m_model->NodeDeleted(this);
@@ -720,7 +727,21 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             DrawingUtils::DrawButton(dc, win, button_rect, cell.GetValueString(), wxNullBitmap, eButtonKind::kNormal,
                                      cell.GetButtonState());
             cell.SetButtonRect(button_rect);
-
+        } else if(cell.IsControl()) {
+            // controls are only displayed if the line has focus
+            auto ctrl = cell.GetControl();
+            bool show_control = IsSelected() && !m_tree->IsDisabled();
+            if(!show_control) {
+                ctrl->Hide();
+            } else {
+                wxRect control_rect = cellRect;
+                // set the control dimensions
+                ctrl->SetSize(ctrl->GetSize().GetWidth() > control_rect.GetWidth() ? control_rect.GetWidth()
+                                                                                   : wxNOT_FOUND,
+                              control_rect.GetHeight());
+                ctrl->Move(control_rect.GetTopLeft());
+                ctrl->Show();
+            }
         } else if(cell.IsColour()) {
             wxRect rr = cellRect;
             rr.Deflate(1);
@@ -1208,4 +1229,23 @@ bool clRowEntry::IsColour(size_t col) const
         return false;
     }
     return cell.IsColour();
+}
+
+bool clRowEntry::IsControl(size_t col) const
+{
+    const clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) {
+        return false;
+    }
+    return cell.IsControl();
+}
+
+void clRowEntry::SetIsControl(wxControl* ctrl, size_t col)
+{
+    clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) {
+        return;
+    }
+    ctrl->Reparent(m_tree);
+    cell.SetControl(ctrl); // this also marks the cell as `IsControl() == true`
 }

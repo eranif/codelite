@@ -200,6 +200,12 @@ public:
     bool HasButton(size_t col) const;
 
     /**
+     * @brief add button to the right of the cell
+     */
+    bool IsControl(size_t col = 0) const;
+    void SetIsControl(wxControl* ctrl, size_t col = 0);
+
+    /**
      * @brief mark cell at column as a button cell
      * @param label the button label
      */

@@ -228,11 +228,19 @@ void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show, bool tak
             }
         }
     }
+
     if(index != wxNOT_FOUND) {
-        notebook->SetSelection(index);
+        wxWindow* old_focus = wxWindow::FindFocus();
+        notebook->ChangeSelection(index);
         // set the focus to the selected tab
         if(take_focus) {
             ::SetBestFocus(notebook->GetPage(index));
+        } else {
+            // On GTK port, wxNotbook::ChangeSelection steals the focus
+            // whether we want it or not
+            if(old_focus) {
+                old_focus->CallAfter(&wxWindow::SetFocus);
+            }
         }
     }
 }

@@ -1200,7 +1200,9 @@ void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
             continue;
         }
 
+        // Apply the changes
         auto edits = edit_arr.GetAsVector();
+        editor->GetCtrl()->BeginUndoAction();
         for(auto iter = edits.rbegin(); iter != edits.rend(); ++iter) {
             // apply the changes, in reverse order (to ensure that there is no skewing)
             LSP::TextEdit text_edit;
@@ -1209,5 +1211,7 @@ void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
             editor->SelectRange(text_edit.GetRange());
             editor->ReplaceSelection(text_edit.GetNewText());
         }
+        editor->GetCtrl()->EndUndoAction();
+        editor->Save();
     }
 }

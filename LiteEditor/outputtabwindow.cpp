@@ -229,7 +229,7 @@ void OutputTabWindow::AppendText(const wxString& text)
 {
     if(m_sci) {
         if(m_autoAppear && m_sci->GetLength() == 0) {
-            ManagerST::Get()->ShowOutputPane(m_name);
+            ManagerST::Get()->ShowOutputPane(m_name, true, false);
         }
 
         //----------------------------------------------

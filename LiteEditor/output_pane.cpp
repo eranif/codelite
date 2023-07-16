@@ -337,5 +337,5 @@ void OutputPane::ShowTab(const wxString& name, bool show)
 void OutputPane::OnPageChanged(wxBookCtrlEvent& event)
 {
     event.Skip();
-    ::SetBestFocus(m_book->GetCurrentPage());
+    //::SetBestFocus(m_book->GetCurrentPage());
 }

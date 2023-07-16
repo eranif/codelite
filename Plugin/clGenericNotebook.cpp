@@ -565,11 +565,6 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
     clTabInfo::Ptr_t activeTab = GetActiveTabInfo();
     if(activeTab) {
         static_cast<clGenericNotebook*>(GetParent())->DoChangeSelection(activeTab->GetWindow());
-        // Only SetFocus if !Wayland, otherwise it hangs; see #2457
-        if(!clIsWaylandSession()) {
-            // find the first "focusable" window and set the focus
-            ::SetBestFocus(activeTab->GetWindow());
-        }
     }
     Refresh();
     return oldSelection;

@@ -196,7 +196,7 @@ void PerspectiveManager::ConnectEvents(wxAuiManager* mgr)
     }
 }
 
-void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show)
+void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show, bool take_focus)
 {
     if(!ShowPane("Output View", show)) {
         return;
@@ -231,7 +231,9 @@ void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show)
     if(index != wxNOT_FOUND) {
         notebook->SetSelection(index);
         // set the focus to the selected tab
-        ::SetBestFocus(notebook->GetPage(index));
+        if(take_focus) {
+            ::SetBestFocus(notebook->GetPage(index));
+        }
     }
 }
 

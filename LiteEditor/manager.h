@@ -520,7 +520,7 @@ public:
      * already
      * shown and nothing needed to be done
      */
-    bool ShowOutputPane(wxString focusWin = wxEmptyString, bool commit = true);
+    bool ShowOutputPane(const wxString& focusWin, bool show, bool take_focus);
 
     /**
      * Show the debugger pane

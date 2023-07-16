@@ -1600,10 +1600,10 @@ bool Manager::DoFindDockInfo(const wxString& saved_perspective, const wxString& 
     return false;
 }
 
-bool Manager::ShowOutputPane(wxString focusWin, bool commit)
+bool Manager::ShowOutputPane(const wxString& focusWin, bool show, bool take_focus)
 {
     // make the output pane visible
-    GetPerspectiveManager().ShowOutputPane(focusWin, commit);
+    GetPerspectiveManager().ShowOutputPane(focusWin, show, take_focus);
     return true;
 }
 

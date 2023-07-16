@@ -3960,7 +3960,19 @@
 															"m_label":	"Style:",
 															"m_value":	"wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_FULL_ROW_HIGHLIGHT"
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_TREE_SEL_CHANGED",
+															"m_eventClass":	"wxTreeEvent",
+															"m_functionNameAndSignature":	"OnDiagnosticSelected(wxTreeEvent& event)",
+															"m_description":	"Selection has changed.",
+															"m_noBody":	false
+														}, {
+															"m_eventName":	"wxEVT_COMMAND_TREE_ITEM_ACTIVATED",
+															"m_eventClass":	"wxTreeEvent",
+															"m_functionNameAndSignature":	"OnDiagnosticSelected(wxTreeEvent& event)",
+															"m_description":	"An item has been activated (e.g. double clicked).",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}]
 										}]

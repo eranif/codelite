@@ -536,6 +536,14 @@ LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowI
     if(GetSizer()) {
         GetSizer()->Fit(this);
     }
+    // Connect events
+    m_treeCtrlProblems->Bind(wxEVT_COMMAND_TREE_SEL_CHANGED, &LanguageServerLogViewBase::OnDiagnosticSelected, this);
+    m_treeCtrlProblems->Bind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &LanguageServerLogViewBase::OnDiagnosticSelected, this);
 }
 
-LanguageServerLogViewBase::~LanguageServerLogViewBase() {}
+LanguageServerLogViewBase::~LanguageServerLogViewBase()
+{
+    m_treeCtrlProblems->Unbind(wxEVT_COMMAND_TREE_SEL_CHANGED, &LanguageServerLogViewBase::OnDiagnosticSelected, this);
+    m_treeCtrlProblems->Unbind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &LanguageServerLogViewBase::OnDiagnosticSelected,
+                               this);
+}

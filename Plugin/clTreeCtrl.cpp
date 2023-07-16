@@ -1656,6 +1656,10 @@ void clTreeCtrl::SetItemControl(const wxTreeItemId& item, wxControl* control, si
     CHECK_COND_RET(cell.IsOk());
 
     cell.SetControl(control);
+    if(!m_bulkInsert) { // in tx
+        DoUpdateHeader(item);
+        Refresh();
+    }
 }
 
 wxControl* clTreeCtrl::GetItemControl(const wxTreeItemId& item, size_t col)

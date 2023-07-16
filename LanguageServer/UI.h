@@ -191,6 +191,8 @@ protected:
     clTerminalViewCtrl* m_dvListCtrl;
 
 protected:
+    virtual void OnDiagnosticSelected(wxTreeEvent& event) { event.Skip(); }
+
 public:
     clThemedTreeCtrl* GetTreeCtrlProblems() { return m_treeCtrlProblems; }
     wxPanel* GetPanel209() { return m_panel209; }

@@ -736,9 +736,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             } else {
                 wxRect control_rect = cellRect;
                 // set the control dimensions
-                ctrl->SetSize(ctrl->GetSize().GetWidth() > control_rect.GetWidth() ? control_rect.GetWidth()
-                                                                                   : wxNOT_FOUND,
-                              control_rect.GetHeight());
+                ctrl->SetSize(wxNOT_FOUND, control_rect.GetHeight());
                 ctrl->Move(control_rect.GetTopLeft());
                 ctrl->Show();
             }
@@ -916,6 +914,9 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
         item_width += X_SPACER;
     } else if(cell.HasButton()) {
         item_width += clGetSize(rowHeight, m_tree);
+        item_width += X_SPACER;
+    } else if(cell.IsControl()) {
+        item_width += cell.GetControl()->GetSize().GetWidth();
         item_width += X_SPACER;
     }
 

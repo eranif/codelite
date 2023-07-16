@@ -14,6 +14,7 @@ public:
     virtual ~LanguageServerLogView();
 
 protected:
+    void OnDiagnosticSelected(wxTreeEvent& event) override;
     void OnCodeActions(LSPEvent& event);
     void OnClearActions(LSPEvent& event);
 

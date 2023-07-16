@@ -3,15 +3,19 @@
 #include "JSON.h"
 #include "LanguageServerCluster.h"
 #include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
 #include "macros.h"
 
 namespace
 {
 struct MyTreeData : public wxTreeItemData {
     LSP::Command m_command;
+    wxString m_filepath;
 
-    MyTreeData(const LSP::Command& command)
+    MyTreeData(const LSP::Command& command, const wxString& filepath)
         : m_command(command)
+        , m_filepath(filepath)
     {
     }
 };
@@ -37,7 +41,7 @@ LanguageServerLogView::LanguageServerLogView(wxWindow* parent, LanguageServerClu
 
     m_treeCtrlProblems->AddRoot(_("Code Actions"), wxNOT_FOUND, wxNOT_FOUND, NULL);
     m_treeCtrlProblems->AddHeader(_("Title"));
-    m_treeCtrlProblems->AddHeader(_("Action"));
+    m_treeCtrlProblems->AddHeader(_("- Action Button - "));
     EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTIONS, &LanguageServerLogView::OnCodeActions, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerLogView::OnClearActions, this);
 }
@@ -72,10 +76,10 @@ void LanguageServerLogView::OnCodeActions(LSPEvent& event)
 
         for(const LSP::Command& d : commands) {
             // add a button
-            wxButton* btn = new wxButton(m_treeCtrlProblems, wxID_ANY, _("Fix it!"));
+            wxButton* btn = new wxButton(m_treeCtrlProblems, wxID_ANY, _("Apply fix"));
             btn->Hide();
-            auto row =
-                m_treeCtrlProblems->AppendItem(file_item, d.GetTitle(), wxNOT_FOUND, wxNOT_FOUND, new MyTreeData(d));
+            auto row = m_treeCtrlProblems->AppendItem(file_item, d.GetTitle(), wxNOT_FOUND, wxNOT_FOUND,
+                                                      new MyTreeData(d, filepath));
             m_treeCtrlProblems->SetItemControl(row, btn, 1);
 
             btn->Bind(wxEVT_BUTTON, [d, filepath, this](wxCommandEvent& event) {
@@ -117,4 +121,15 @@ wxTreeItemId LanguageServerLogView::FindFile(const wxString& filepath) const
         child = m_treeCtrlProblems->GetNextChild(root, cookie);
     }
     return {};
+}
+
+void LanguageServerLogView::OnDiagnosticSelected(wxTreeEvent& event)
+{
+    event.Skip();
+    auto item_data = m_treeCtrlProblems->GetItemData(event.GetItem());
+    CHECK_PTR_RET(item_data);
+
+    auto cd = dynamic_cast<MyTreeData*>(item_data);
+    CHECK_PTR_RET(cd);
+    clGetManager()->OpenFile(cd->m_filepath);
 }

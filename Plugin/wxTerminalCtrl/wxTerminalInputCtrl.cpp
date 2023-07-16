@@ -382,14 +382,19 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     completions.reserve(last_line);
     while(last_line >= 0) {
         wxString line = ctrl->GetLine(last_line);
+        --last_line;
         line.Trim().Trim(false);
 
-        if(line.StartsWith(LINE_PREFIX) || line.empty()) {
+        if(line.Contains(LINE_PREFIX) || line.empty()) {
             break;
         }
 
+        if(line.Contains(" ") || line.length() < prefix.length()) {
+            // don't present lines with spaces or shorter than the prefix
+            continue;
+        }
+
         completions.push_back(wxCodeCompletionBoxEntry::New(line));
-        --last_line;
     }
 
     if(completions.empty()) {
@@ -401,8 +406,9 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     int start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
     int end_pos = m_ctrl->GetCurrentPos();
 
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_ctrl, completions, wxCodeCompletionBox::kNoShowingEvent,
-                                                        wxNOT_FOUND, this);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        m_ctrl, completions, wxCodeCompletionBox::kNoShowingEvent | wxCodeCompletionBox::kInsertSingleMatch,
+        wxNOT_FOUND, this);
     m_completionType = CompletionType::FOLDERS;
 }
 

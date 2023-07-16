@@ -265,9 +265,7 @@ static wxLogNull NO_LOG;
 
 bool CodeLiteApp::OnInit()
 {
-#if defined(__WXMSW__) && CL_DEBUG_BUILD
-    SetAppName(wxT("codelite-dbg"));
-#elif defined(__WXOSX__)
+#if defined(__WXOSX__)
     SetAppName(wxT("CodeLite"));
 #else
     SetAppName(wxT("codelite"));
@@ -363,6 +361,8 @@ bool CodeLiteApp::OnInit()
     }
 #endif
 
+#ifndef CL_DEBUG_BUILD
+    // dont show the splash in debug builds
     bool show_splash = clConfig::Get().Read("ShowSplashScreen", true);
     if(show_splash) {
         wxBitmap bitmap;
@@ -377,6 +377,7 @@ bool CodeLiteApp::OnInit()
         }
         wxYield();
     }
+#endif
 
     InitXmlResource();
 

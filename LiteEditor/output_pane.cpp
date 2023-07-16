@@ -92,7 +92,7 @@ void OutputPane::CreateGUIControls()
         style |= kNotebook_RightTabs;
 #endif
     }
-    style |= kNotebook_UnderlineActiveTab;
+    style |= kNotebook_UnderlineActiveTab | kNotebook_FixedWidth;
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
         style |= kNotebook_MouseScrollSwitchTabs;
     }

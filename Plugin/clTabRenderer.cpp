@@ -22,6 +22,8 @@
 #include "drawingutils.h"
 #endif
 
+#define TAB_FIXED_WIDTH() (m_tabCtrl ? (m_tabCtrl->IsFixedWidth() ? m_tabCtrl->GetLabelFixedWidth() : 0) : 0)
+
 namespace
 {
 void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTabBgColour, wxColour* bgColour)
@@ -87,7 +89,7 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxS
     , m_xButtonState(eButtonState::kDisabled)
 {
     SetBestXButtonSize(tabCtrl);
-    CalculateOffsets(style);
+    CalculateOffsets(style, TAB_FIXED_WIDTH());
     CreateDisabledBitmap();
 }
 
@@ -111,10 +113,10 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
     , m_xButtonState(eButtonState::kDisabled)
 {
     SetBestXButtonSize(tabCtrl);
-    CalculateOffsets(0);
+    CalculateOffsets(0, 0);
 }
 
-void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
+void clTabInfo::CalculateOffsets(size_t style, size_t max_width, wxDC& dc)
 {
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
@@ -155,8 +157,10 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     // Text
     m_textX = m_width;
     m_textY = ((m_height - sz.y) / 2);
-    m_width += sz.x;
-    m_textWidth = sz.x;
+
+    bool isFixedWidth = style & kNotebook_FixedWidth;
+    m_width += (isFixedWidth ? max_width : sz.x);
+    m_textWidth = (isFixedWidth ? max_width : sz.x);
     m_width += X_spacer;
 
     if(HasBitmap()) {
@@ -178,12 +182,12 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     }
 }
 
-void clTabInfo::CalculateOffsets(size_t style)
+void clTabInfo::CalculateOffsets(size_t style, size_t max_width)
 {
     if(m_tabCtrl) {
         wxClientDC dc(m_tabCtrl);
         dc.SetFont(DrawingUtils::GetDefaultGuiFont());
-        CalculateOffsets(style, dc);
+        CalculateOffsets(style, max_width, dc);
     }
 }
 
@@ -191,20 +195,20 @@ void clTabInfo::SetBitmap(int bitmap, size_t style)
 {
     this->m_bitmap = bitmap;
     CreateDisabledBitmap();
-    CalculateOffsets(style);
+    CalculateOffsets(style, TAB_FIXED_WIDTH());
 }
 
 void clTabInfo::SetLabel(const wxString& label, size_t style)
 {
     this->m_label = label;
-    CalculateOffsets(style);
+    CalculateOffsets(style, TAB_FIXED_WIDTH());
 }
 
 void clTabInfo::SetActive(bool active, size_t style)
 {
     this->m_active = active;
     this->m_xButtonState = active ? eButtonState::kNormal : eButtonState::kDisabled;
-    CalculateOffsets(style);
+    CalculateOffsets(style, TAB_FIXED_WIDTH());
 }
 
 wxRect clTabInfo::GetCloseButtonRect() const

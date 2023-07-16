@@ -73,6 +73,9 @@ enum NotebookStyle {
     /// We keep this flag for backward compatability
     kNotebook_LeftTabs = 0,
 
+    /// Fixed width tabs
+    kNotebook_FixedWidth = (1 << 11),
+
     /// The notebook colours are changing based on the current editor theme
     kNotebook_DynamicColours = (1 << 13),
 
@@ -152,8 +155,8 @@ public:
     eButtonState m_xButtonState = eButtonState::kNormal;
 
 public:
-    void CalculateOffsets(size_t style);
-    void CalculateOffsets(size_t style, wxDC& dc);
+    void CalculateOffsets(size_t style, size_t max_width);
+    void CalculateOffsets(size_t style, size_t max_width, wxDC& dc);
     const wxString& GetBestLabel(size_t style) const;
 
 public:
@@ -222,7 +225,8 @@ public:
     clTabRenderer(const wxString& name, const wxWindow* parent);
     virtual ~clTabRenderer() {}
     virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
-                      const clTabColours& colours, size_t style, eButtonState tabState, eButtonState xButtonState) = 0;
+                      size_t activeTabIndex, const clTabColours& colours, size_t style, eButtonState tabState,
+                      eButtonState xButtonState) = 0;
     virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
 

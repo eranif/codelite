@@ -499,7 +499,8 @@ LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer194);
 
-    m_notebook207 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook207 =
+        new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), kNotebook_FixedWidth);
     m_notebook207->SetName(wxT("m_notebook207"));
 
     boxSizer194->Add(m_notebook207, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));

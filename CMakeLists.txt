@@ -578,7 +578,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
         message("-- Adding -DNDEBUG to definitions")
         add_definitions(-DNDEBUG)
     endif()
-
+    add_definitions(-DCL_DEBUG_BUILD)
 else()
     message("-- Building in Release mode")
     set(DEBUG_BUILD 0)

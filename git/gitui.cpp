@@ -1458,7 +1458,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_splitterPage737->SetSizer(boxSizer715);
 
     m_notebookChanges = new clGenericNotebook(m_splitterPage737, wxID_ANY, wxDefaultPosition,
-                                              wxDLG_UNIT(m_splitterPage737, wxSize(-1, -1)), kNotebook_BottomTabs);
+                                              wxDLG_UNIT(m_splitterPage737, wxSize(-1, -1)), kNotebook_FixedWidth);
     m_notebookChanges->SetName(wxT("m_notebookChanges"));
 
     boxSizer715->Add(m_notebookChanges, 1, wxEXPAND, WXC_FROM_DIP(2));

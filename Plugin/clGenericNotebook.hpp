@@ -132,6 +132,10 @@ public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
 
+    /// Return a fixed width for tabs
+    size_t GetLabelFixedWidth() const;
+    size_t GetLabelFixedWidth(wxDC& dc) const;
+
     /// bitmaps mangement
     clBitmapList* GetBitmaps() const { return m_bitmaps; }
 
@@ -146,6 +150,8 @@ public:
     void SetArt(clTabRenderer::Ptr_t art);
 
     bool IsVerticalTabs() const;
+
+    bool IsFixedWidth() const { return GetStyle() & kNotebook_FixedWidth; }
 
     const clTabColours& GetColours() const { return m_colours; }
 

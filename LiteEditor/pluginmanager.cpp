@@ -162,20 +162,6 @@ void PluginManager::Load()
         for(size_t i = 0; i < files.GetCount(); i++) {
 
             wxString fileName(files.Item(i));
-#if defined(__WXMSW__) && CL_DEBUG_BUILD
-
-            // Under MSW loading a release plugin while in debug mode will cause a crash
-            if(!fileName.EndsWith("-dbg.dll")) {
-                continue;
-            }
-#elif defined(__WXMSW__)
-
-            // filter debug plugins
-            if(fileName.EndsWith("-dbg.dll")) {
-                continue;
-            }
-#endif
-
 #ifdef __WXGTK__
             wxFileName fnDLL(fileName);
             if(fnDLL.GetFullName().StartsWith("lib")) {

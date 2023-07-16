@@ -63,10 +63,10 @@ void clTabRendererMinimal::InitLightColours(clTabColours& colours, const wxColou
 }
 
 void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
-                                const clTabColours& colors, size_t style, eButtonState tabState,
+                                size_t activeTabIndex, const clTabColours& colors, size_t style, eButtonState tabState,
                                 eButtonState xButtonState)
 {
-    DoDraw(parent, dc, fontDC, tabInfo, tabIndex, colors, style, tabState, xButtonState);
+    DoDraw(parent, dc, fontDC, tabInfo, tabIndex, activeTabIndex, colors, style, tabState, xButtonState);
 }
 
 void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
@@ -113,8 +113,8 @@ wxColour clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const 
 }
 
 wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
-                                    const clTabColours& colors, size_t style, eButtonState tabState,
-                                    eButtonState xButtonState)
+                                    size_t activeTabIndex, const clTabColours& colors, size_t style,
+                                    eButtonState tabState, eButtonState xButtonState)
 {
     wxRect tabRect = tabInfo.GetRect();
     if(tabIndex == 0) {
@@ -158,6 +158,17 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
     dc.SetPen(tabInfo.IsActive() ? activeTabBgColour : bgColour);
     dc.SetBrush(brush_colour);
     dc.DrawRoundedRectangle(tabRect, TAB_RADIUS);
+
+    if(!tabInfo.IsActive() && (tabIndex + 1) != activeTabIndex /* not to the LEFT of the active tab */) {
+        // draw a line at the bottom of the tab
+        wxColour marker_colour = brush_colour.ChangeLightness(is_dark ? 105 : 95);
+        wxDCPenChanger pc(dc, marker_colour);
+
+        auto from = tabRect.GetRightTop();
+        auto to = tabRect.GetRightBottom();
+
+        dc.DrawLine(from, to);
+    }
 
     // Draw bitmap
     if(tabInfo.HasBitmap()) {

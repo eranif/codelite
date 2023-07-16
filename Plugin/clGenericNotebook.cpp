@@ -408,8 +408,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 #endif
 
     GetArt()->DrawBackground(this, gcdc, clientRect, m_colours, m_style);
+    size_t max_width = IsFixedWidth() ? GetLabelFixedWidth(gcdc) : 0;
     for(size_t i = 0; i < m_tabs.size(); ++i) {
-        m_tabs[i]->CalculateOffsets(GetStyle(), gcdc);
+        m_tabs[i]->CalculateOffsets(GetStyle(), max_width, gcdc);
     }
 
     // Sanity
@@ -433,17 +434,23 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     clTabInfo::Ptr_t activeTab;
     int activeTabIndex = wxNOT_FOUND;
+
+    // locate the active tab
     for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
         clTabInfo::Ptr_t tab = m_visibleTabs[i];
-        if(tab->IsActive() && !activeTab) {
-            activeTab = tab;
+        if(tab->IsActive()) {
             activeTabIndex = i;
+            activeTab = tab;
+            break;
         }
+    }
 
+    for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
+        clTabInfo::Ptr_t tab = m_visibleTabs[i];
         clTabColours* pColours = &m_colours;
         clTabColours user_colours;
 
-        m_art->Draw(this, gcdc, gcdc, *tab.get(), i, (*pColours), m_style,
+        m_art->Draw(this, gcdc, gcdc, *tab.get(), i, activeTabIndex, (*pColours), m_style,
                     tabHit == i ? eButtonState::kHover : eButtonState::kNormal, tab->m_xButtonState);
     }
 
@@ -454,10 +461,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     // Redraw the active tab
-    m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabIndex, activeTabColours, m_style, eButtonState::kNormal,
-                activeTab->m_xButtonState);
+    m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabIndex, activeTabIndex, activeTabColours, m_style,
+                eButtonState::kNormal, activeTab->m_xButtonState);
     gcdc.DestroyClippingRegion();
-
     m_art->FinaliseBackground(this, gcdc, clientRect, activeTab->GetRect(), m_colours, m_style);
 }
 
@@ -846,9 +852,12 @@ void clTabCtrl::SetStyle(size_t style)
         SetSizeHints(wxSize(-1, m_nHeight));
         SetSize(-1, m_nHeight);
     }
+
+    size_t max_width = IsFixedWidth() ? GetLabelFixedWidth() : 0;
     for(size_t i = 0; i < m_tabs.size(); ++i) {
-        m_tabs.at(i)->CalculateOffsets(GetStyle());
+        m_tabs.at(i)->CalculateOffsets(GetStyle(), max_width);
     }
+
     m_visibleTabs.clear();
     Layout();
     if(GetStyle() & kNotebook_HideTabBar) {
@@ -1348,6 +1357,25 @@ void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
             }
         }
     }
+}
+
+size_t clTabCtrl::GetLabelFixedWidth(wxDC& dc) const
+{
+    wxFont font = clTabRenderer::GetTabFont(true);
+    dc.SetFont(font);
+
+    wxString text;
+    size_t width = 0;
+    for(clTabInfo::Ptr_t ti : m_tabs) {
+        width = wxMax(dc.GetTextExtent(ti->GetBestLabel(m_style)).GetWidth(), width);
+    }
+    return width;
+}
+
+size_t clTabCtrl::GetLabelFixedWidth() const
+{
+    wxClientDC dc(const_cast<clTabCtrl*>(this));
+    return GetLabelFixedWidth(dc);
 }
 
 // ---------------------------------------------------------------------------

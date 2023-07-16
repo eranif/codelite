@@ -125,7 +125,7 @@ static gboolean button_press_event(GtkWidget* widget, GdkEventButton* gdk_event,
 
 clGTKNotebook::clGTKNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                              const wxString& name)
-    : wxNotebook(parent, id, pos, size, wxBK_DEFAULT, name)
+    : wxNotebook(parent, id, pos, size, wxBK_DEFAULT | (style & kNotebook_FixedWidth ? wxNB_FIXEDWIDTH : 0), name)
 {
     Initialise(style);
 }
@@ -142,7 +142,8 @@ bool clGTKNotebook::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
                            const wxString& name)
 {
     Initialise(style);
-    return wxNotebook::Create(parent, id, pos, size, wxBK_DEFAULT);
+    return wxNotebook::Create(parent, id, pos, size,
+                              wxBK_DEFAULT | (style & kNotebook_FixedWidth ? wxNB_FIXEDWIDTH : 0));
 }
 
 int clGTKNotebook::SetSelection(size_t nPage)

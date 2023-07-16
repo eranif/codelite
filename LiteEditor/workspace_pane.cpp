@@ -100,28 +100,16 @@ void WorkspacePane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-#if USE_AUI_NOTEBOOK
-    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_TAB_SPLIT;
-#else
-// add notebook for tabs
-#ifdef __WXOSX__
-    long style = (kNotebook_Default | kNotebook_AllowDnD | kNotebook_LeftTabs);
-#else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
-#endif
-    style |= kNotebook_UnderlineActiveTab;
+    style |= kNotebook_UnderlineActiveTab | kNotebook_FixedWidth;
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
         style |= kNotebook_MouseScrollSwitchTabs;
     }
-#endif
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
     m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &WorkspacePane::OnWorkspaceBookFileListMenu, this);
-
-#if !USE_AUI_NOTEBOOK
     m_book->SetArt(GetNotebookRenderer());
-#endif
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;

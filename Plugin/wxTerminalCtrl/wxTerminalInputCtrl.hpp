@@ -25,6 +25,7 @@ protected:
     enum CompletionType {
         NONE = -1,
         COMMANDS,
+        FOLDERS,
     };
 
 protected:

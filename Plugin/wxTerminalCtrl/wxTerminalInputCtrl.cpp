@@ -378,57 +378,32 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     auto ctrl = m_terminal->GetView()->GetCtrl();
     int last_line = ctrl->LineFromPosition(ctrl->GetLastPosition());
 
-    wxArrayString lines;
-    lines.reserve(last_line);
+    wxCodeCompletionBoxEntry::Vec_t completions;
+    completions.reserve(last_line);
     while(last_line >= 0) {
         wxString line = ctrl->GetLine(last_line);
         line.Trim().Trim(false);
 
-        if(line.StartsWith(LINE_PREFIX) || line.length() < prefix.length()) {
+        if(line.StartsWith(LINE_PREFIX) || line.empty()) {
             break;
         }
 
-        lines.insert(lines.begin(), line);
+        completions.push_back(wxCodeCompletionBoxEntry::New(line));
         --last_line;
     }
 
-    if(lines.empty()) {
+    if(completions.empty()) {
         return;
     }
 
     // we got something, consume the flag
     m_waitingForCompgenOutput = false;
-
-    wxString match = StringUtils::FindCommonPrefix(lines);
-    // if we reached here and match is not empty - we found a single match
-    if(match.empty()) {
-        // try omitting the first (it might be the prompt)
-        if(lines.size() > 1) {
-            lines.pop_back();
-            match = StringUtils::FindCommonPrefix(lines);
-            if(match.empty()) {
-                return;
-            }
-        }
-    }
-
-    if(!match.StartsWith(prefix)) {
-        return;
-    }
-
     int start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
     int end_pos = m_ctrl->GetCurrentPos();
 
-    // only replace the currently typed text if the match len is greater than what
-    // is already typed in the terminal
-    size_t cur_typed_text_len = end_pos - start_pos;
-    if(match.length() <= cur_typed_text_len) {
-        return;
-    }
-
-    m_ctrl->Replace(start_pos, end_pos, match);
-    SetCaretPos(CaretPos::END);
-    SetFocus();
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_ctrl, completions, wxCodeCompletionBox::kNoShowingEvent,
+                                                        wxNOT_FOUND, this);
+    m_completionType = CompletionType::FOLDERS;
 }
 
 void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)
@@ -438,12 +413,23 @@ void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)
         return;
     }
 
-    if(m_completionType == CompletionType::COMMANDS) {
-        m_completionType = CompletionType::NONE;
+    switch(m_completionType) {
+    case CompletionType::COMMANDS:
         m_ctrl->ClearAll();
         // user inserted text from the auto completion list
         // to give it a feel like the real terminal, execute it
         m_history.Add(event.GetEntry()->GetInsertText());
         m_terminal->Run(event.GetEntry()->GetInsertText());
+        break;
+    case CompletionType::FOLDERS: {
+        int start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
+        int end_pos = m_ctrl->GetCurrentPos();
+        m_ctrl->Replace(start_pos, end_pos, event.GetEntry()->GetInsertText());
+        SetCaretPos(CaretPos::END);
+        SetFocus();
+    } break;
+    default:
+        break;
     }
+    m_completionType = CompletionType::NONE;
 }

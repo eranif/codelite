@@ -289,21 +289,17 @@ void wxTerminalCtrl::ProcessOutputBuffer()
         return;
     }
 
-    while(true) {
-        wxStringView sv = GetNextLine();
-        if(sv.empty()) {
-            break;
-        }
-        LOG_IF_DEBUG { LOG_DEBUG(TERM_LOG) << "<--" << wxString(sv.data(), sv.length()) << endl; }
-        AppendText(sv);
+    wxStringView sv{ m_processOutput.data(), m_processOutput.length() };
+    LOG_IF_DEBUG { LOG_DEBUG(TERM_LOG) << "<--" << wxString(sv.data(), sv.length()) << endl; }
+    AppendText(sv);
 
-        // consume the string from the output buffer
-        m_processOutput.Remove(0, sv.length());
+    // consume the string from the output buffer
+    m_processOutput.clear();
 
-        // see if we need to prompt for password
-        if(PromptForPasswordIfNeeded()) {
-            return;
-        }
+    if(PromptForPasswordIfNeeded()) {
+        return;
     }
+
+    // see if we need to prompt for password
     m_inputCtrl->CallAfter(&wxTerminalInputCtrl::NotifyTerminalOutput);
 }

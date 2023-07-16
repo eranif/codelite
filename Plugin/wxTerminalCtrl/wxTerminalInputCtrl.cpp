@@ -384,7 +384,7 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
         wxString line = ctrl->GetLine(last_line);
         line.Trim().Trim(false);
 
-        if(line.StartsWith(LINE_PREFIX) || line.empty()) {
+        if(line.StartsWith(LINE_PREFIX) || line.length() < prefix.length()) {
             break;
         }
 

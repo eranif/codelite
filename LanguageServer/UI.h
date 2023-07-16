@@ -30,6 +30,7 @@
 #include "clThemedTextCtrl.hpp"
 #include <wx/dataview.h>
 #include "clTerminalViewCtrl.hpp"
+#include "Notebook.h"
 #include <wx/treectrl.h>
 #include "clThemedTreeCtrl.h"
 #if wxVERSION_NUMBER >= 2900
@@ -183,7 +184,7 @@ public:
 class LanguageServerLogViewBase : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook207;
+    Notebook* m_notebook207;
     wxPanel* m_panel209;
     clThemedTreeCtrl* m_treeCtrlProblems;
     wxPanel* m_panel208;
@@ -195,7 +196,7 @@ public:
     wxPanel* GetPanel209() { return m_panel209; }
     clTerminalViewCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel208() { return m_panel208; }
-    wxNotebook* GetNotebook207() { return m_notebook207; }
+    Notebook* GetNotebook207() { return m_notebook207; }
     LanguageServerLogViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                               const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerLogViewBase();

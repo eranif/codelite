@@ -1201,10 +1201,10 @@ void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
         }
 
         auto edits = edit_arr.GetAsVector();
-        for(const auto& edit : edits) {
-            // apply the change
+        for(auto iter = edits.rbegin(); iter != edits.rend(); ++iter) {
+            // apply the changes, in reverse order (to ensure that there is no skewing)
             LSP::TextEdit text_edit;
-            text_edit.FromJSON(edit);
+            text_edit.FromJSON(*iter);
 
             editor->SelectRange(text_edit.GetRange());
             editor->ReplaceSelection(text_edit.GetNewText());

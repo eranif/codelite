@@ -182,7 +182,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(boxSizer200, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_notebook201 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook201 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                   wxNB_FIXEDWIDTH | wxBK_DEFAULT);
     m_notebook201->SetName(wxT("m_notebook201"));
 
     boxSizer200->Add(m_notebook201, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -498,7 +499,7 @@ LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer194);
 
-    m_notebook207 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook207 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook207->SetName(wxT("m_notebook207"));
 
     boxSizer194->Add(m_notebook207, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));

@@ -240,10 +240,10 @@ IMPLEMENT_APP(CodeLiteApp)
 #define MENU_XRC "menu.macos.xrc"
 namespace
 {
-void on_macos_sigpipe(int sig)
+void on_sigpipe(int sig)
 {
-    clERROR() << "received SIGPIPE" << endl;
-    signal(SIGPIPE, on_macos_sigpipe);
+    clERROR() << "Received SIGPIPE!" << endl;
+    signal(SIGPIPE, on_sigpipe);
 }
 } // namespace
 #else
@@ -309,10 +309,7 @@ bool CodeLiteApp::OnInit()
     signal(SIGSEGV, WaitForDebugger);
     signal(SIGABRT, WaitForDebugger);
 #endif
-
-#ifdef __WXOSX__
-    signal(SIGPIPE, on_macos_sigpipe);
-#endif
+    signal(SIGPIPE, on_sigpipe);
 
 #endif
     wxSocketBase::Initialize();
@@ -330,6 +327,7 @@ bool CodeLiteApp::OnInit()
 #endif
 
 #ifdef __WXMSW__
+    // HiDPI support
     typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
     HINSTANCE user32Dll = LoadLibrary(L"User32.dll");
     if(user32Dll) {

@@ -238,6 +238,14 @@ IMPLEMENT_APP(CodeLiteApp)
 
 #ifdef __WXMAC__
 #define MENU_XRC "menu.macos.xrc"
+namespace
+{
+void on_macos_sigpipe(int sig)
+{
+    clERROR() << "received SIGPIPE" << endl;
+    signal(SIGPIPE, on_macos_sigpipe);
+}
+} // namespace
 #else
 #define MENU_XRC "menu.xrc"
 #endif
@@ -277,14 +285,21 @@ bool CodeLiteApp::OnInit()
     installationDir.RemoveLast(sizeof("/share/codelite") - 1);
     wxStandardPaths::Get().SetInstallPrefix(installationDir);
 #endif
-#if defined(__WXGTK__) || defined(__WXMAC__)
 
+#if defined(__WXGTK__) || defined(__WXMAC__)
     // block signal pipe
     sigset_t mask_set;
     sigemptyset(&mask_set);
     sigaddset(&mask_set, SIGPIPE);
     sigaddset(&mask_set, SIGTTIN);
-    sigprocmask(SIG_SETMASK, &mask_set, NULL);
+    sigprocmask(SIG_SETMASK, &mask_set, nullptr);
+
+    // CodeLite is a MT app, use pthread_sigmask()
+    sigset_t thr_mask_set;
+    sigemptyset(&thr_mask_set);
+    sigaddset(&thr_mask_set, SIGPIPE);
+    sigaddset(&thr_mask_set, SIGTTIN);
+    pthread_sigmask(SIG_SETMASK, &thr_mask_set, nullptr);
 
     // Handle sigchld
     CodeLiteBlockSigChild();
@@ -293,6 +308,10 @@ bool CodeLiteApp::OnInit()
     // Insall signal handlers
     signal(SIGSEGV, WaitForDebugger);
     signal(SIGABRT, WaitForDebugger);
+#endif
+
+#ifdef __WXOSX__
+    signal(SIGPIPE, on_macos_sigpipe);
 #endif
 
 #endif

@@ -1669,22 +1669,6 @@ bool clEditor::SaveFile()
 
     // Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles call
     m_deltas->OnFileSaved();
-
-    if(::clIsCxxWorkspaceOpened()) {
-
-        // clear cached file, this function does nothing if the file is not cached
-        TagsManagerST::Get()->ClearCachedFile(CLRealPath(GetFileName().GetFullPath()));
-
-        //
-        if(ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()) {
-            return true;
-        }
-
-        if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) {
-            return true;
-        }
-        m_context->RetagFile();
-    }
     return true;
 }
 
@@ -1696,35 +1680,36 @@ bool clEditor::SaveFileAs(const wxString& newname, const wxString& savePath)
                      newname.IsEmpty() ? m_fileName.GetFullName() : newname, ALL, wxFD_SAVE | wxFD_OVERWRITE_PROMPT,
                      wxDefaultPosition);
 
-    if(dlg.ShowModal() == wxID_OK) {
-        // get the path
-        wxFileName name(dlg.GetPath());
-
-        // Prepare the "SaveAs" event, but dont send it just yet
-        clFileSystemEvent saveAsEvent(wxEVT_FILE_SAVEAS);
-        saveAsEvent.SetPath(m_fileName.Exists() ? m_fileName.GetFullPath() : wxString(""));
-        saveAsEvent.SetNewpath(name.GetFullPath());
-
-        if(!SaveToFile(name)) {
-            wxMessageBox(_("Failed to save file"), _("Error"), wxOK | wxICON_ERROR);
-            return false;
-        }
-        m_fileName = name;
-
-        // update the tab title (again) since we really want to trigger an update to the file tooltip
-        clMainFrame::Get()->GetMainBook()->SetPageTitle(this, m_fileName, false);
-        DoUpdateTLWTitle(false);
-
-        // update syntax highlight
-        SetSyntaxHighlight();
-
-        clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this);
-
-        // Fire the "File renamed" event
-        EventNotifier::Get()->AddPendingEvent(saveAsEvent);
-        return true;
+    if(dlg.ShowModal() != wxID_OK) {
+        return false;
     }
-    return false;
+
+    // get the path
+    wxFileName name(dlg.GetPath());
+
+    // Prepare the "SaveAs" event, but dont send it just yet
+    clFileSystemEvent saveAsEvent(wxEVT_FILE_SAVEAS);
+    saveAsEvent.SetPath(m_fileName.Exists() ? m_fileName.GetFullPath() : wxString(""));
+    saveAsEvent.SetNewpath(name.GetFullPath());
+
+    if(!SaveToFile(name)) {
+        wxMessageBox(_("Failed to save file"), _("Error"), wxOK | wxICON_ERROR);
+        return false;
+    }
+    m_fileName = name;
+
+    // update the tab title (again) since we really want to trigger an update to the file tooltip
+    clMainFrame::Get()->GetMainBook()->SetPageTitle(this, m_fileName, false);
+    DoUpdateTLWTitle(false);
+
+    // update syntax highlight
+    SetSyntaxHighlight();
+
+    clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this);
+
+    // Fire the "File renamed" event
+    EventNotifier::Get()->AddPendingEvent(saveAsEvent);
+    return true;
 }
 
 // an internal function that does the actual file writing to disk

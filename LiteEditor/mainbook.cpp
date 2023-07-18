@@ -244,6 +244,8 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
         if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
             ShowWelcomePage(true);
         }
+        // update the title bar
+        clMainFrame::Get()->SetFrameTitle(nullptr);
     }
     DoUpdateNotebookTheme();
 }
@@ -288,7 +290,7 @@ void MainBook::OnWorkspaceClosed(clWorkspaceEvent& e)
     CloseAll(false); // make sure no unsaved files
     clStatusBar* sb = clGetManager()->GetStatusBar();
     if(sb) {
-        sb->SetSourceControlBitmap(wxNullBitmap, "", "");
+        sb->SetSourceControlBitmap(wxNullBitmap, wxEmptyString, wxEmptyString, wxEmptyString);
     }
     ShowWelcomePage(true);
 }

@@ -190,14 +190,29 @@ void wxCustomStatusBarBitmapField::Render(wxDC& dc, const wxRect& rect, wxCustom
     // draw border line
     art->DrawFieldSeparator(dc, rect);
 
+    constexpr int X_SPACER = 5;
+
     // Center bitmap
+    int remaining_width = m_width;
+    int xx = rect.GetTopLeft().x;
     if(m_bitmap.IsOk()) {
-        int bmpHeight = m_bitmap.GetScaledHeight();
-        int bmpWidth = m_bitmap.GetScaledWidth();
-        wxCoord bmpY = (rect.GetHeight() - bmpHeight) / 2 + rect.y;
-        wxCoord bmpX = (rect.GetWidth() - bmpWidth) / 2 + rect.x;
+        wxRect rr{ wxPoint(xx, rect.GetTopLeft().y), m_bitmap.GetScaledSize() };
+        rr = rr.CenterIn(rect, wxVERTICAL);
         // Draw the bitmap
-        dc.DrawBitmap(m_bitmap, bmpX, bmpY + 1);
+        dc.DrawBitmap(m_bitmap, rr.GetTopLeft());
+        xx += m_bitmap.GetScaledSize().GetWidth();
+        remaining_width -= m_bitmap.GetScaledSize().GetWidth();
+    }
+
+    if(!m_label.empty()) {
+        xx += X_SPACER;
+        remaining_width -= X_SPACER;
+        wxString fixed_text;
+        DrawingUtils::TruncateText(m_label, remaining_width, dc, fixed_text);
+        wxRect text_rect = dc.GetTextExtent(fixed_text);
+        text_rect = text_rect.CenterIn(rect, wxVERTICAL);
+        text_rect.SetX(xx);
+        dc.DrawText(fixed_text, text_rect.GetTopLeft());
     }
 }
 

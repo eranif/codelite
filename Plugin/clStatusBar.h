@@ -119,7 +119,8 @@ public:
      * @brief set a bitmap (16x16) in the source control section
      * and optionally, provide an output tab name to toggle when the bitmap is clicked
      */
-    void SetSourceControlBitmap(const wxBitmap& bmp, const wxString& outputTabName, const wxString& tooltip);
+    void SetSourceControlBitmap(const wxBitmap& bmp, const wxString& label, const wxString& outputTabName,
+                                const wxString& tooltip);
 };
 
 #endif // CLSTATUSBAR_H

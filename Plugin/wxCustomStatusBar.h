@@ -144,6 +144,7 @@ class WXDLLIMPEXP_SDK wxCustomStatusBarBitmapField : public wxCustomStatusBarFie
 {
     size_t m_width;
     wxBitmap m_bitmap;
+    wxString m_label;
 
 public:
     wxCustomStatusBarBitmapField(wxCustomStatusBar* parent, size_t width)
@@ -157,6 +158,8 @@ public:
     size_t GetWidth() const { return m_width; }
     void SetBitmap(const wxBitmap& bitmap) { this->m_bitmap = bitmap; }
     const wxBitmap& GetBitmap() const { return m_bitmap; }
+    void SetLabel(const wxString& label) { this->m_label = label; }
+    const wxString& GetLabel() const { return m_label; }
 };
 
 //================---------------

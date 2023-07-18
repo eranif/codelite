@@ -73,7 +73,10 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 
-    wxCustomStatusBarField::Ptr_t sourceControl(new wxCustomStatusBarBitmapField(this, clGetScaledSize(30)));
+    // set the width to include a possible label
+    int lable_width = GetTextWidth("_Subversion_Subversion_");
+    wxCustomStatusBarField::Ptr_t sourceControl(
+        new wxCustomStatusBarBitmapField(this, clGetScaledSize(30) + lable_width));
     AddField(sourceControl);
 
     int lineColWidth = GetTextWidth("Ln 100000, Col 999, Pos 12345678, Len 4821182");
@@ -277,7 +280,8 @@ void clStatusBar::SetWhitespaceInfo()
     }
 }
 
-void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp, const wxString& outputTabName, const wxString& tooltip)
+void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp, const wxString& label, const wxString& outputTabName,
+                                         const wxString& tooltip)
 {
     m_sourceControlTabName = outputTabName;
     m_bmpSourceControl = bmp;
@@ -287,6 +291,7 @@ void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp, const wxString& ou
 
     field->Cast<wxCustomStatusBarBitmapField>()->SetBitmap(m_bmpSourceControl);
     field->Cast<wxCustomStatusBarBitmapField>()->SetTooltip(tooltip);
+    field->Cast<wxCustomStatusBarBitmapField>()->SetLabel(label);
 }
 
 void clStatusBar::ClearWhitespaceInfo()

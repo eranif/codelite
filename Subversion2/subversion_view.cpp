@@ -1232,7 +1232,8 @@ void SubversionView::UpdateStatusBar(const wxString& path)
     if(sb) {
         if(m_plugin->IsPathUnderSvn(path)) {
             wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("subversion");
-            sb->SetSourceControlBitmap(bmp, "Svn", _("Using Subversion\nClick to open the Subversion view"));
+            sb->SetSourceControlBitmap(bmp, "Svn", wxEmptyString,
+                                       _("Using Subversion\nClick to open the Subversion view"));
         }
     }
 }
@@ -1305,7 +1306,7 @@ void SubversionView::OnCloseView(wxCommandEvent& event)
     DoCloseView();
 
     // Clear the source control bitmap
-    clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, "", "");
+    clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, wxEmptyString, wxEmptyString, wxEmptyString);
 }
 
 void SubversionView::DoCloseView()

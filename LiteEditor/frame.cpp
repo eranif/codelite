@@ -4110,7 +4110,7 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
     pattern.Replace("$fullpath", fullpath);
 
     pattern.Trim().Trim(false);
-    if(pattern.IsEmpty()) {
+    if(pattern.empty()) {
         pattern << "CodeLite";
     }
 

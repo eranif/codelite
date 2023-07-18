@@ -492,7 +492,8 @@ void GitPlugin::DoSetRepoPath(const wxString& repo_path)
     CHECK_ENABLED_RETURN();
 
     const wxBitmap& bmp = clGetManager()->GetStdIcons()->LoadBitmap("git");
-    clGetManager()->GetStatusBar()->SetSourceControlBitmap(bmp, "Git", _("Using git\nClick to open the git view"));
+    clGetManager()->GetStatusBar()->SetSourceControlBitmap(bmp, m_currentBranch, "Git",
+                                                           _("Using git\nClick to open the git view"));
     AddDefaultActions();
     ProcessGitActionQueue();
 }
@@ -1359,6 +1360,10 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
         }
     }
 
+    const wxBitmap& bmp = clGetManager()->GetStdIcons()->LoadBitmap("git");
+    clGetManager()->GetStatusBar()->SetSourceControlBitmap(bmp, m_currentBranch, "Git",
+                                                           _("Using git\nClick to open the git view"));
+
     if(!m_currentBranch.IsEmpty()) {
         GIT_MESSAGE1(wxT("Current branch ") + m_currentBranch);
         m_mgr->GetDockingManager()
@@ -2004,7 +2009,7 @@ void GitPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
     WorkspaceClosed();
     m_lastBlameMessage.clear();
     ClearCodeLiteRemoteInfo();
-    clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, "", "");
+    clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, wxEmptyString, wxEmptyString, wxEmptyString);
 }
 
 void GitPlugin::DoCleanup()
@@ -2298,12 +2303,6 @@ void GitPlugin::OnMainFrameTitle(clCommandEvent& e)
 {
     // By default - skip it
     e.Skip();
-    if(!m_currentBranch.IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
-        wxString newTitle;
-        newTitle << e.GetString() << wxT(" - [git: ") << m_currentBranch << "]";
-        e.SetString(newTitle);
-        e.Skip(false);
-    }
 }
 
 void GitPlugin::DoRecoverFromGitCommandError(bool clear_queue)

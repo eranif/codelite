@@ -156,7 +156,9 @@ static void massCopy(const wxString& sourceDir, const wxString& spec, const wxSt
     }
 }
 #ifndef __WXMSW__
-static void ChildTerminatedSingalHandler(int signo)
+namespace
+{
+void ChildTerminatedSingalHandler(int signo)
 {
     int status;
     while(true) {
@@ -172,15 +174,22 @@ static void ChildTerminatedSingalHandler(int signo)
 }
 
 // Block/Restore sigchild
-static struct sigaction old_behvior;
-static struct sigaction new_behvior;
-static void CodeLiteBlockSigChild()
+struct sigaction old_behvior;
+struct sigaction new_behvior;
+void CodeLiteBlockSigChild()
 {
     sigfillset(&new_behvior.sa_mask);
     new_behvior.sa_handler = ChildTerminatedSingalHandler;
     new_behvior.sa_flags = 0;
     sigaction(SIGCHLD, &new_behvior, &old_behvior);
 }
+
+void on_sigpipe(int sig)
+{
+    clERROR() << "Received SIGPIPE!" << endl;
+    signal(SIGPIPE, on_sigpipe);
+}
+} // namespace
 #endif
 
 #ifdef __WXGTK__
@@ -238,14 +247,6 @@ IMPLEMENT_APP(CodeLiteApp)
 
 #ifdef __WXMAC__
 #define MENU_XRC "menu.macos.xrc"
-namespace
-{
-void on_sigpipe(int sig)
-{
-    clERROR() << "Received SIGPIPE!" << endl;
-    signal(SIGPIPE, on_sigpipe);
-}
-} // namespace
 #else
 #define MENU_XRC "menu.xrc"
 #endif

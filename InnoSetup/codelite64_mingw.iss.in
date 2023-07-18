@@ -59,10 +59,20 @@ Type: filesandordirs; Name: "{app}"
 Filename: "{app}\codelite.exe"; Description: "Launch CodeLite"; Flags: postinstall nowait skipifsilent
 
 [Code]
+function IsSilentInstall(): Boolean;
 var
-    // Globals
-    sMinGWFolderName: String;
-    bMinGWBackedUp: Boolean;
+  j: Integer;
+  isVerySilent: Boolean;
+begin
+  isVerySilent := False;
+  for j := 1 to ParamCount do
+    if CompareText(ParamStr(j), '/SILENT') = 0 then
+    begin
+      isVerySilent := True;
+      break;
+    end;
+  Result := isVerySilent;
+end;
 
 // Uninstall
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
@@ -71,10 +81,12 @@ begin
     usUninstall:
       begin
         RegDeleteKeyIncludingSubkeys(HKCR, '*\shell\Open With CodeLite');
-        // Prompt the user to delete all his settings, default to "No"
-        if MsgBox('Would you like to keep your user settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO
-        then begin
-            DelTree(ExpandConstant('{userappdata}') + '\codelite', True, True, True);
+        if IsSilentInstall() = False then begin
+            // Prompt the user to delete all his settings, default to "No"
+            if MsgBox('Would you like to keep your user settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO
+            then begin
+                DelTree(ExpandConstant('{userappdata}') + '\codelite', True, True, True);
+            end;
         end;
       end;
     usPostUninstall:
@@ -102,7 +114,6 @@ end;
 function UnInstallOldVersion(): Integer;
 var
     sUnInstallString: String;
-    sUnInstallStringOld: String;
     iResultCode: Integer;
 
 begin
@@ -165,12 +176,13 @@ begin
         DelTree(sCodeLitePath + '\*.ini', False, True, False)
         DelTree(sCodeLitePath + '\*.html', False, True, False)
         DelTree(sCodeLitePath + '\*.dat', False, True, False)
-
-        if MsgBox('Would you like to keep your local settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO
-        then
-        BEGIN
-            DelTree(ExpandConstant('{userappdata}') + '\codelite', True, True, True)
-        END
+        
+        if IsSilentInstall() = False then
+            if MsgBox('Would you like to keep your local settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO
+            then
+            BEGIN
+                DelTree(ExpandConstant('{userappdata}') + '\codelite', True, True, True)
+            END
     END
 end;
 
@@ -178,75 +190,6 @@ function IsUpgrade(): Boolean;
 begin
   Result := (GetUninstallString() <> '');
 end;
-
-function GetMinGWInstallLocation(): String;
-var
-    sMinGWPath: String;
-    sMinGWPathLocation: String;
-begin
-    sMinGWPath := 'Software\codelite\settings';
-    sMinGWPathLocation := '';
-    if not RegQueryStringValue(HKLM, sMinGWPath, 'MinGW', sMinGWPathLocation) then
-        RegQueryStringValue(HKCU, sMinGWPath, 'MinGW', sMinGWPathLocation);
-    Result := sMinGWPathLocation;
-end;
-
-//-------------------------------------------------------
-// Backup MinGW installation before uninstalling CodeLite
-//-------------------------------------------------------
-//procedure BackupMinGW();
-//var
-//    sMinGWLocation: String;
-//    sTempFolder: String;
-//    sMinGWBackupPath: String;
-//    sMinGWDrive: String;
-//
-//begin
-//    bMinGWBackedUp := False;
-//    sMinGWLocation := GetMinGWInstallLocation();
-//    if sMinGWLocation <> '' then
-//    begin
-//        sMinGWFolderName := ExtractFileName(sMinGWLocation);
-//        sMinGWDrive := ExtractFileDrive(sMinGWLocation);
-//        sMinGWBackupPath := sMinGWDrive + '\' + sMinGWFolderName + '.backup'; // Rename the folder so it won't get deleted
-//        bMinGWBackedUp := RenameFile(sMinGWLocation, sMinGWBackupPath);
-//    end;
-//end;
-
-//----------------------------------------------------
-// Restore MinGW from a previously back up
-//----------------------------------------------------
-//procedure RestoreMinGW();
-//var
-//    sMinGWLocation: String;
-//    sTempFolder: String;
-//    sMinGWBackupPath: String;
-//    sMinGWNewLocation: String;
-//begin
-//    sMinGWLocation := GetMinGWInstallLocation();
-//    sMinGWNewLocation := sMinGWLocation; // By default restore to the old location
-//    if (sMinGWLocation <> '') AND (bMinGWBackedUp = True) then
-//    BEGIN
-//        sMinGWBackupPath := GetEnv('TEMP') + '\' + sMinGWFolderName;
-//        if not CreateDir(sMinGWNewLocation) then
-//        BEGIN
-//            // Could not create the restore location, prompt the user
-//            sMinGWNewLocation := ''
-//            if BrowseForFolder('Could not restore MinGW to its previous location' + #13#10 + 'Please select a new location to restore MinGW (Setup will restore it into a separate folder):', sMinGWNewLocation, False) = True then
-//            BEGIN
-//                sMinGWNewLocation := sMinGWNewLocation + sMinGWFolderName;
-//            END
-//        END else BEGIN
-//            // We can safely restore the folder
-//            RemoveDir(sMinGWNewLocation)
-//        END
-//    END
-//
-//	if sMinGWNewLocation <> '' then
-//    BEGIN
-//        RenameFile(sMinGWBackupPath, sMinGWNewLocation)
-//    END
-//end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 var

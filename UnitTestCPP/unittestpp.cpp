@@ -96,10 +96,8 @@ UnitTestPP::UnitTestPP(IManager* manager)
 
     m_outputPage = new UnitTestsPage(m_mgr->GetOutputPaneNotebook(), m_mgr);
     auto book = m_mgr->GetOutputPaneNotebook();
-    auto images = book->GetBitmaps();
-    book->AddPage(m_outputPage, _("UnitTest++"), false, images->Add("ok"));
+    book->AddPage(m_outputPage, _("UnitTest++"), false);
     m_tabHelper.reset(new clTabTogglerHelper(_("UnitTest++"), m_outputPage, "", NULL));
-    m_tabHelper->SetOutputTabBmp(images->Add("ok"));
 
     m_longName = _("A Unit test plugin based on the UnitTest++ framework");
     m_shortName = "UnitTestPP";

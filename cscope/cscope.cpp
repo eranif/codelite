@@ -86,10 +86,8 @@ Cscope::Cscope(IManager* manager)
 
     m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
     auto book = m_mgr->GetOutputPaneNotebook();
-    auto images = book->GetBitmaps();
-    book->AddPage(m_cscopeWin, CSCOPE_NAME, false, images->Add("cscope"));
+    book->AddPage(m_cscopeWin, CSCOPE_NAME, false);
     m_tabHelper.reset(new clTabTogglerHelper(CSCOPE_NAME, m_cscopeWin, "", NULL));
-    m_tabHelper->SetOutputTabBmp(images->Add("cscope"));
 
     Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
     Connect(wxEVT_CSCOPE_THREAD_UPDATE_STATUS, wxCommandEventHandler(Cscope::OnCScopeThreadUpdateStatus), NULL, this);

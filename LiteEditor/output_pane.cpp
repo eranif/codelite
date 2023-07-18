@@ -104,43 +104,39 @@ void OutputPane::CreateGUIControls()
 
     // the IManager instance
     IManager* mgr = PluginManager::Get();
-
-    auto images = m_book->GetBitmaps();
     m_build_tab = new BuildTab(m_book);
-    m_book->AddPage(m_build_tab, BUILD_WIN, true, images->Add(wxT("build")));
+    m_book->AddPage(m_build_tab, BUILD_WIN, true);
     m_tabs.insert(std::make_pair(BUILD_WIN, Tab(BUILD_WIN, m_build_tab, wxNOT_FOUND)));
     mgr->AddOutputTab(BUILD_WIN);
 
     // Find in files
     m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);
-    m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, images->Add(wxT("find")));
-    m_tabs.insert(
-        std::make_pair(FIND_IN_FILES_WIN, Tab(FIND_IN_FILES_WIN, m_findResultsTab, images->Add(wxT("find")))));
+    m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false);
+    m_tabs.insert(std::make_pair(FIND_IN_FILES_WIN, Tab(FIND_IN_FILES_WIN, m_findResultsTab)));
     mgr->AddOutputTab(FIND_IN_FILES_WIN);
 
     // Replace In Files
     m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
-    m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, images->Add(wxT("find_and_replace")));
-    m_tabs.insert(std::make_pair(REPLACE_IN_FILES,
-                                 Tab(REPLACE_IN_FILES, m_replaceResultsTab, images->Add(wxT("find_and_replace")))));
+    m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false);
+    m_tabs.insert(std::make_pair(REPLACE_IN_FILES, Tab(REPLACE_IN_FILES, m_replaceResultsTab)));
     mgr->AddOutputTab(REPLACE_IN_FILES);
 
     // Show Usage ("References")
     m_showUsageTab = new FindUsageTab(m_book);
-    m_book->AddPage(m_showUsageTab, SHOW_USAGE, false, images->Add(wxT("find")));
-    m_tabs.insert({ SHOW_USAGE, Tab(SHOW_USAGE, m_showUsageTab, images->Add(wxT("find"))) });
+    m_book->AddPage(m_showUsageTab, SHOW_USAGE, false);
+    m_tabs.insert({ SHOW_USAGE, Tab(SHOW_USAGE, m_showUsageTab) });
     mgr->AddOutputTab(SHOW_USAGE);
 
     // Output tab
     m_outputWind = new OutputTab(m_book, wxID_ANY, OUTPUT_WIN);
-    m_book->AddPage(m_outputWind, OUTPUT_WIN, false, images->Add(wxT("console")));
-    m_tabs.insert(std::make_pair(OUTPUT_WIN, Tab(OUTPUT_WIN, m_outputWind, images->Add(wxT("console")))));
+    m_book->AddPage(m_outputWind, OUTPUT_WIN, false);
+    m_tabs.insert(std::make_pair(OUTPUT_WIN, Tab(OUTPUT_WIN, m_outputWind)));
     mgr->AddOutputTab(OUTPUT_WIN);
 
     // Output tab
     m_terminal = new clBuiltinTerminalPane(m_book, wxID_ANY);
-    m_book->AddPage(m_terminal, TERMINAL_TAB, false, images->Add(wxT("console")));
-    m_tabs.insert(std::make_pair(TERMINAL_TAB, Tab(TERMINAL_TAB, m_terminal, images->Add(wxT("console")))));
+    m_book->AddPage(m_terminal, TERMINAL_TAB, false);
+    m_tabs.insert(std::make_pair(TERMINAL_TAB, Tab(TERMINAL_TAB, m_terminal)));
     mgr->AddOutputTab(TERMINAL_TAB);
 
     SetMinSize(wxSize(200, 100));

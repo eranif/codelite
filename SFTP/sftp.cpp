@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "sftp.h"
+
 #include "JSON.h"
 #include "SFTPBrowserDlg.h"
 #include "SFTPSettingsDialog.h"
@@ -39,10 +41,10 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "procutils.h"
-#include "sftp.h"
 #include "sftp_settings.h"
 #include "sftp_worker_thread.h"
 #include "sftp_workspace_settings.h"
+
 #include <algorithm>
 #include <wx/log.h>
 #include <wx/menu.h>
@@ -135,22 +137,20 @@ SFTP::SFTP(IManager* manager)
     // Add the "SFTP Log" page to the output pane
     book = m_mgr->GetOutputPaneNotebook();
     auto images = book->GetBitmaps();
-    int bmp_index = images->Add("upload");
     if(IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), false, bmp_index, wxSize(200, 200));
+            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), false, wxNOT_FOUND, wxSize(200, 200));
         m_outputPane = new SFTPStatusPage(cp, this);
         cp->SetChildNoReparent(m_outputPane);
 
     } else {
         m_outputPane = new SFTPStatusPage(book, this);
-        book->AddPage(m_outputPane, _("SFTP Log"), false, bmp_index);
+        book->AddPage(m_outputPane, _("SFTP Log"), false, wxNOT_FOUND);
     }
 
     // Create the helper for adding our tabs in the "more" menu
     m_tabToggler.reset(new clTabTogglerHelper(_("SFTP Log"), m_outputPane, _("SFTP"), m_treeView));
-    m_tabToggler->SetOutputTabBmp(bmp_index);
 
     SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);

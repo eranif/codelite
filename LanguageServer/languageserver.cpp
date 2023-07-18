@@ -56,10 +56,8 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     // add log view
     m_logView = new LanguageServerLogView(m_mgr->GetOutputPaneNotebook(), m_servers);
     auto outputBook = m_mgr->GetOutputPaneNotebook();
-    int bmp = outputBook->GetBitmaps()->Add("cog");
-    outputBook->AddPage(m_logView, _("Language Server"), false, bmp);
+    outputBook->AddPage(m_logView, _("Language Server"), false);
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
-    m_tabToggler->SetOutputTabBmp(bmp);
 
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);

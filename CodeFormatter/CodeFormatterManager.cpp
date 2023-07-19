@@ -69,7 +69,12 @@ void CodeFormatterManager::Load()
 {
     wxFileName config_file{ clStandardPaths::Get().GetUserDataDir(), "code-formatters.json" };
     config_file.AppendDir("config");
-    JSON root(config_file);
+
+    if(!config_file.FileExists()) {
+        return;
+    }
+
+    JSON root{ config_file };
     if(!root.isOk() || !root.toElement().isArray()) {
         initialize_defaults();
         return;

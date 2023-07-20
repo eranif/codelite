@@ -199,12 +199,9 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_RESET_FILES, &GitPlugin::OnGitActionDone, this);
 
     // Add the console
-    auto images = m_mgr->GetOutputPaneNotebook()->GetBitmaps();
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("Git"), false, images->Add("git"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("Git"), false);
     m_tabToggler.reset(new clTabTogglerHelper(_("Git"), m_console, "", NULL));
-    m_tabToggler->SetOutputTabBmp(images->Add("git"));
-
     m_progressTimer.SetOwner(this);
 
     m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);

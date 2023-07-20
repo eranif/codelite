@@ -63,7 +63,7 @@ void FileExplorer::CreateGUIControls()
     SetSizer(mainSizer);
     m_view = new clTreeCtrlPanel(this);
     auto images = m_view->GetToolBar()->GetBitmapsCreateIfNeeded();
-    m_view->GetToolBar()->AddTool(wxID_OPEN, _("Open folder"), images->Add("folder"));
+    m_view->GetToolBar()->AddTool(wxID_OPEN, _("Open folder"), images->Add("folder-yellow-opened"));
     m_view->GetToolBar()->Realize();
     m_view->GetToolBar()->Bind(wxEVT_TOOL, &FileExplorer::OnOpenFolder, this, wxID_OPEN);
     // For the file explorer we use the standard configuration tool

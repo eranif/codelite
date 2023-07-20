@@ -146,7 +146,7 @@ class clMainFrame : public wxFrame
     clCaptionBar* m_captionBar = nullptr;
 #endif
     // the main tool default style
-    int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER | wxTB_LEFT;
+    int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER /* hidden by default */;
 
 public:
     static bool m_initCompleted;
@@ -660,6 +660,8 @@ protected:
     void OnPchCacheStarted(wxCommandEvent& e);
     void OnPchCacheEnded(wxCommandEvent& e);
 
+    void OnMainToolBarHide(wxCommandEvent& event);
+    void OnMainToolBarHideUI(wxUpdateUIEvent& event);
     void OnMainToolBarPlaceTop(wxCommandEvent& event);
     void OnMainToolBarPlaceTopUI(wxUpdateUIEvent& event);
     void OnMainToolBarPlaceBottom(wxCommandEvent& event);

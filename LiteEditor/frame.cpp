@@ -804,10 +804,12 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
                                  wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
 
-    m_mainToolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
-    m_mainToolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
-    m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
-    m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
+    if(m_mainToolbar) {
+        m_mainToolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
+        m_mainToolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
+        m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
+        m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
+    }
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL,
                                      this);
     wxDELETE(m_timer);
@@ -821,7 +823,9 @@ clMainFrame::~clMainFrame(void)
     Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceLeft, this, XRCID("toolbar_left"));
     Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceBottom, this, XRCID("toolbar_bottom"));
     Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceRight, this, XRCID("toolbar_right"));
+    Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarHide, this, XRCID("toolbar_hidden"));
 
+    Unbind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarHideUI, this, XRCID("toolbar_hidden"));
     Unbind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceTopUI, this, XRCID("toolbar_top"));
     Unbind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceLeftUI, this, XRCID("toolbar_left"));
     Unbind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceBottomUI, this, XRCID("toolbar_bottom"));
@@ -917,10 +921,12 @@ void clMainFrame::Construct()
     EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles,
                                this);
     EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
-    m_mainToolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
-    m_mainToolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
-    m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
-    m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
+    if(m_mainToolbar) {
+        m_mainToolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
+        m_mainToolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
+        m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
+        m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
+    }
 
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
 
@@ -930,11 +936,13 @@ void clMainFrame::Construct()
     EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
 
+    Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarHide, this, XRCID("toolbar_hidden"));
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceTop, this, XRCID("toolbar_top"));
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceLeft, this, XRCID("toolbar_left"));
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceBottom, this, XRCID("toolbar_bottom"));
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceRight, this, XRCID("toolbar_right"));
 
+    Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarHideUI, this, XRCID("toolbar_hidden"));
     Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceTopUI, this, XRCID("toolbar_top"));
     Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceLeftUI, this, XRCID("toolbar_left"));
     Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceBottomUI, this, XRCID("toolbar_bottom"));
@@ -1492,6 +1500,8 @@ void add_main_toolbar_item(wxToolBar* tb, const wxString& xrcstr, const wxString
     int toolid = wxXmlResource::GetXRCID(xrcstr);
     tb->AddTool(toolid, label, bmp, disabled_bmp, wxITEM_NORMAL, label, label);
 }
+
+bool is_main_toolbar_hidden(int style) { return (style & (wxTB_TOP | wxTB_BOTTOM | wxTB_LEFT | wxTB_RIGHT)) == 0; }
 } // namespace
 
 #define TB_POS_ALL (wxTB_TOP | wxTB_BOTTOM | wxTB_RIGHT | wxTB_LEFT)
@@ -1501,18 +1511,25 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     //----------------------------------------------
     // create the toolbars
     //----------------------------------------------
+    SetToolBar(nullptr);
+
+    // plugins toolbar
+    // Create the plugins toolbar, empty by default
+    m_pluginsToolbar =
+        new clToolBarGeneric(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_TOP | wxTB_NODIVIDER | wxTB_FLAT);
+    m_pluginsToolbar->EnableCustomisation(true);
+    m_pluginsToolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
+    m_mainToolbarStyle = clConfig::Get().Read("MainToolBarStyle", m_mainToolbarStyle);
+
+    if(is_main_toolbar_hidden(m_mainToolbarStyle)) {
+        return;
+    }
 
 #ifdef __WXMAC__
     // By default, place it at the top
     m_mainToolbarStyle &= ~TB_POS_ALL;
     m_mainToolbarStyle |= wxTB_TOP;
 #endif
-
-    m_mainToolbarStyle = clConfig::Get().Read("MainToolBarStyle", m_mainToolbarStyle);
-
-    // Create the plugins toolbar, emty by default
-    m_pluginsToolbar =
-        new clToolBarGeneric(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_TOP | wxTB_NODIVIDER | wxTB_FLAT);
 
     // the main tool
     const int ID_TOOLBAR = 500;
@@ -1557,10 +1574,6 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     add_main_toolbar_item(m_mainToolbar, "stop_executed_program", _("Stop Running Program"), "execute_stop", toolSize);
     add_main_toolbar_item(m_mainToolbar, "start_debugger", _("Start or Continue debugger"), "start-debugger", toolSize);
     m_mainToolbar->Realize();
-
-    // plugins toolbar
-    m_pluginsToolbar->EnableCustomisation(true);
-    m_pluginsToolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
 
 bool clMainFrame::StartSetupWizard(bool firstTime)
@@ -5120,6 +5133,7 @@ void clMainFrame::OnLoadSession(wxCommandEvent& e)
 void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
 {
     // Show the build menu
+    CHECK_PTR_RET(m_mainToolbar);
     wxMenu menu;
 
     // let the plugins build a different menu
@@ -6077,6 +6091,19 @@ void clMainFrame::OnMainToolBarPlaceTop(wxCommandEvent& event)
     UpdateMainToolbarOrientation(wxTB_TOP);
 }
 
+void clMainFrame::OnMainToolBarHide(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_mainToolbarStyle &= ~TB_POS_ALL;
+    // store the new style
+    clConfig::Get().Write("MainToolBarStyle", m_mainToolbarStyle);
+
+    if(m_mainToolbar != nullptr) {
+        // tb is shown, suggest restart
+        DoSuggestRestart();
+    }
+}
+
 void clMainFrame::OnMainToolBarPlaceBottom(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -6095,6 +6122,7 @@ void clMainFrame::OnMainToolBarPlaceRight(wxCommandEvent& event)
     UpdateMainToolbarOrientation(wxTB_RIGHT);
 }
 
+void clMainFrame::OnMainToolBarHideUI(wxUpdateUIEvent& event) { event.Check((m_mainToolbarStyle & TB_POS_ALL) == 0); }
 void clMainFrame::OnMainToolBarPlaceTopUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_TOP); }
 void clMainFrame::OnMainToolBarPlaceBottomUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_BOTTOM); }
 void clMainFrame::OnMainToolBarPlaceLeftUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_LEFT); }

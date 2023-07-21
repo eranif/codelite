@@ -806,6 +806,7 @@ void clEditor::SetProperties()
 
     // symbol margin
     SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
+    SetMarginCursor(SYMBOLS_MARGIN_ID, 8);
 
     // Line numbers
     if(options->IsLineNumberHighlightCurrent()) {

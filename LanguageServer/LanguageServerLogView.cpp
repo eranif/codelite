@@ -44,12 +44,14 @@ LanguageServerLogView::LanguageServerLogView(wxWindow* parent, LanguageServerClu
     m_treeCtrlProblems->AddHeader(_("- Action Button - "));
     EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTIONS, &LanguageServerLogView::OnCodeActions, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerLogView::OnClearActions, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerLogView::OnWorkspaceClosed, this);
 }
 
 LanguageServerLogView::~LanguageServerLogView()
 {
     EventNotifier::Get()->Unbind(wxEVT_LSP_CODE_ACTIONS, &LanguageServerLogView::OnCodeActions, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerLogView::OnClearActions, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerLogView::OnWorkspaceClosed, this);
 }
 
 void LanguageServerLogView::OnCodeActions(LSPEvent& event)
@@ -133,3 +135,5 @@ void LanguageServerLogView::OnDiagnosticSelected(wxTreeEvent& event)
     CHECK_PTR_RET(cd);
     clGetManager()->OpenFile(cd->m_filepath);
 }
+
+void LanguageServerLogView::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }

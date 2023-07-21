@@ -3,6 +3,7 @@
 
 #include "LSP/LSPEvent.h"
 #include "UI.h"
+#include "clWorkspaceEvent.hpp"
 
 class LanguageServerCluster;
 class LanguageServerLogView : public LanguageServerLogViewBase
@@ -17,6 +18,7 @@ protected:
     void OnDiagnosticSelected(wxTreeEvent& event) override;
     void OnCodeActions(LSPEvent& event);
     void OnClearActions(LSPEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
 
 private:
     wxTreeItemId FindFile(const wxString& filepath) const;

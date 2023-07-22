@@ -17,10 +17,11 @@
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
 #include <wx/statline.h>
-#include <wx/stattext.h>
 #include <wx/notebook.h>
+#include "Notebook.h"
 #include <wx/button.h>
 #include <wx/panel.h>
+#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/imaglist.h>
 #include <wx/stc/stc.h>
@@ -30,7 +31,6 @@
 #include "clThemedTextCtrl.hpp"
 #include <wx/dataview.h>
 #include "clTerminalViewCtrl.hpp"
-#include "Notebook.h"
 #include <wx/treectrl.h>
 #include "clThemedTreeCtrl.h"
 #if wxVERSION_NUMBER >= 2900
@@ -56,8 +56,7 @@ class LanguageServerSettingsDlgBase : public wxDialog
 protected:
     wxCheckBox* m_checkBoxEnable;
     wxStaticLine* m_staticLine102;
-    wxStaticText* m_staticText105;
-    wxNotebook* m_notebook;
+    Notebook* m_notebook;
     wxButton* m_buttonScan;
     wxButton* m_buttonNew;
     wxButton* m_buttonDelete;
@@ -76,8 +75,7 @@ protected:
 public:
     wxCheckBox* GetCheckBoxEnable() { return m_checkBoxEnable; }
     wxStaticLine* GetStaticLine102() { return m_staticLine102; }
-    wxStaticText* GetStaticText105() { return m_staticText105; }
-    wxNotebook* GetNotebook() { return m_notebook; }
+    Notebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonScan() { return m_buttonScan; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }

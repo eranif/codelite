@@ -17,7 +17,7 @@ LSPDetectorManager::LSPDetectorManager()
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPPythonDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPRustAnalyzerDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPTypeScriptDetector()));
-    m_detectors.push_back(LSPDetector::Ptr_t(new LSPCTagsdDetector()));
+    // m_detectors.push_back(LSPDetector::Ptr_t(new LSPCTagsdDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPCMakeDetector()));
 }
 

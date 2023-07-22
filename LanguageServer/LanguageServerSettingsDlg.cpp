@@ -70,6 +70,10 @@ void LanguageServerSettingsDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(tr
 void LanguageServerSettingsDlg::OnScan(wxCommandEvent& event)
 {
     event.Skip();
+    if(::wxMessageBox(_("This will reconfigure your language servers\nContinue?"), "CodeLite",
+                      wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT) != wxYES) {
+        return;
+    }
     DoScan();
 }
 
@@ -77,38 +81,28 @@ void LanguageServerSettingsDlg::DoInitialize()
 {
     wxWindowUpdateLocker locker{ this };
     m_notebook->DeleteAllPages();
-    const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
-    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
-        m_notebook->AddPage(new LanguageServerPage(m_notebook, vt.second), vt.second.GetName());
+    const auto& servers = LanguageServerConfig::Get().GetServers();
+    for(const auto& [name, server] : servers) {
+        m_notebook->AddPage(new LanguageServerPage(m_notebook, server), server.GetName());
     }
     m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
 }
 
 void LanguageServerSettingsDlg::DoScan()
 {
+    // scan and replace the current servers with the what CodeLite can locate
     wxBusyCursor bc;
     std::vector<LSPDetector::Ptr_t> matches;
     LSPDetectorManager detector;
     if(detector.Scan(matches)) {
-        // Matches were found, reload the dialog
-        // Prompt the user to select which entries to add
-        wxArrayString options;
-        wxArrayInt selections;
-        for(size_t i = 0; i < matches.size(); ++i) {
-            options.Add(matches[i]->GetName());
-            selections.Add(i);
-        }
-        if((wxGetSelectedChoices(selections, _("Select Language Servers to add"), "CodeLite", options) ==
-            wxNOT_FOUND) ||
-           selections.empty()) {
-            return;
-        }
         LanguageServerConfig& conf = LanguageServerConfig::Get();
-        for(size_t i = 0; i < selections.size(); ++i) {
+        LanguageServerEntry::Map_t servers;
+        for(const auto& match : matches) {
             LanguageServerEntry entry;
-            matches[selections[i]]->GetLanguageServerEntry(entry);
-            conf.AddServer(entry);
+            match->GetLanguageServerEntry(entry);
+            servers.insert({ entry.GetName(), entry });
         }
+        conf.SetServers(servers);
         conf.Save();
         DoInitialize();
         if(m_scanOnStartup) {

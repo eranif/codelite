@@ -54,16 +54,12 @@ LanguageServerSettingsDlgBase::LanguageServerSettingsDlgBase(wxWindow* parent, w
 
     boxSizer2->Add(m_staticLine102, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText105 = new wxStaticText(this, wxID_ANY, _("Available Language Servers"), wxDefaultPosition,
-                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    boxSizer2->Add(m_staticText105, 0, wxALL, WXC_FROM_DIP(5));
-
     wxBoxSizer* boxSizer106 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer2->Add(boxSizer106, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook =
+        new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), kNotebook_FixedWidth);
     m_notebook->SetName(wxT("m_notebook"));
 
     boxSizer106->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));

@@ -58,7 +58,7 @@ class InstallNameTool:
             ]
         )
         otool_output = self._run_command_and_return_output(
-            f'otool -L {file} |grep -E "f{grep_E}" | grep -v -w "{file_base_name}"'
+            f'otool -L {file} |grep -E "{grep_E}" | grep -v -w "{file_base_name}"'
         )
         lines = otool_output.split("\n")
         for line in lines:

@@ -93,8 +93,12 @@ namespace
 {
 const wxString valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_.>@$:/";
 
-bool CheckCtrlPosition(wxStyledTextCtrl* ctrl, int startPos)
+bool CheckCtrlPosition(wxStyledTextCtrl* ctrl, int startPos, size_t flags)
 {
+    if(flags & wxCodeCompletionBox::kAlwaysShow) {
+        return true;
+    }
+
     // if the box is about to be shown on a different line or near a whitespace
     // return false
     int start_pos = startPos == wxNOT_FOUND ? ctrl->GetCurrentPos() : startPos;
@@ -115,7 +119,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const LSP::CompletionItem::Vec_t& completions, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    if(!ctrl || completions.empty() || !CheckCtrlPosition(ctrl, startPos)) {
+    if(!ctrl || completions.empty() || !CheckCtrlPosition(ctrl, startPos, flags)) {
         DestroyCurrent();
         return;
     }
@@ -134,7 +138,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
                                                    size_t flags, int startPos, wxEvtHandler* eventObject)
 {
-    if(!ctrl || tags.empty() || !CheckCtrlPosition(ctrl, startPos)) {
+    if(!ctrl || tags.empty() || !CheckCtrlPosition(ctrl, startPos, flags)) {
         DestroyCurrent();
         return;
     }
@@ -155,7 +159,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    if(!ctrl || entries.empty() || !CheckCtrlPosition(ctrl, startPos)) {
+    if(!ctrl || entries.empty() || !CheckCtrlPosition(ctrl, startPos, flags)) {
         DestroyCurrent();
         return;
     }
@@ -177,7 +181,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBox::BmpVec_t& bitmaps, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    if(!ctrl || entries.empty() || !CheckCtrlPosition(ctrl, startPos)) {
+    if(!ctrl || entries.empty() || !CheckCtrlPosition(ctrl, startPos, flags)) {
         DestroyCurrent();
         return;
     }

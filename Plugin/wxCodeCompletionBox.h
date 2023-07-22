@@ -57,6 +57,8 @@ public:
         kInsertSingleMatch = (1 << 0),
         kRefreshOnKeyType = (1 << 1),
         kNoShowingEvent = (1 << 2), // Dont send the wxEVT_CCBOX_SHOWING event
+        kAlwaysShow = (1 << 3), // internally, the CC box does some checking to see if the box can be shown. Use this
+                                // flag to force it to show
     };
 
 protected:

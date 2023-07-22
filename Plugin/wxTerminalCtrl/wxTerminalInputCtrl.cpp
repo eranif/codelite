@@ -108,11 +108,11 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 {
     wxArrayString words;
     int length_typed = 0;
-    wxString listItems;
+    wxArrayString items;
     if(type == CompletionType::COMMANDS) {
         m_completionType = CompletionType::COMMANDS;
         wxString filter = GetText();
-        listItems = m_history.ForCompletion(GetText());
+        items = m_history.ForCompletion(GetText());
         length_typed = filter.length();
     } else {
         // unknown completion type
@@ -120,22 +120,21 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         return;
     }
 
-    if(listItems.empty()) {
+    if(items.empty()) {
         m_completionType = CompletionType::NONE;
         return;
     }
 
-    auto items = ::wxStringTokenize(listItems, "!", wxTOKEN_STRTOK);
-    if(items.empty()) {
-        return;
-    }
     wxCodeCompletionBoxEntry::Vec_t V;
     V.reserve(items.size());
     for(const auto& item : items) {
         V.push_back(wxCodeCompletionBoxEntry::New(item, wxNullBitmap, nullptr));
     }
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        m_ctrl, V, wxCodeCompletionBox::kRefreshOnKeyType | wxCodeCompletionBox::kNoShowingEvent, wxNOT_FOUND, this);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_ctrl, V,
+                                                        wxCodeCompletionBox::kRefreshOnKeyType |
+                                                            wxCodeCompletionBox::kNoShowingEvent |
+                                                            wxCodeCompletionBox::kAlwaysShow,
+                                                        wxNOT_FOUND, this);
 }
 
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
@@ -406,9 +405,11 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     int start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
     int end_pos = m_ctrl->GetCurrentPos();
 
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        m_ctrl, completions, wxCodeCompletionBox::kNoShowingEvent | wxCodeCompletionBox::kInsertSingleMatch,
-        wxNOT_FOUND, this);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_ctrl, completions,
+                                                        wxCodeCompletionBox::kNoShowingEvent |
+                                                            wxCodeCompletionBox::kInsertSingleMatch |
+                                                            wxCodeCompletionBox::kAlwaysShow,
+                                                        wxNOT_FOUND, this);
     m_completionType = CompletionType::FOLDERS;
 }
 

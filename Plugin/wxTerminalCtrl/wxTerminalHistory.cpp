@@ -99,12 +99,11 @@ void wxTerminalHistory::Clear()
     m_commands.clear();
 }
 
-wxString wxTerminalHistory::ForCompletion(const wxString& filter) const
+wxArrayString wxTerminalHistory::ForCompletion(const wxString& filter) const
 {
     wxArrayString sorted;
     if(filter.empty()) {
         sorted = m_commands;
-        sorted.Sort();
     } else {
         wxString lc_filer = filter.Lower();
         sorted.reserve(m_commands.size());
@@ -117,6 +116,5 @@ wxString wxTerminalHistory::ForCompletion(const wxString& filter) const
         }
     }
     sorted.Sort();
-    wxString result = wxJoin(sorted, '!');
-    return result;
+    return sorted;
 }

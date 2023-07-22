@@ -136,4 +136,10 @@ void LanguageServerLogView::OnDiagnosticSelected(wxTreeEvent& event)
     clGetManager()->OpenFile(cd->m_filepath);
 }
 
-void LanguageServerLogView::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
+void LanguageServerLogView::OnWorkspaceClosed(clWorkspaceEvent& event)
+{
+    event.Skip();
+    auto root = m_treeCtrlProblems->GetRootItem();
+    CHECK_ITEM_RET(root);
+    m_treeCtrlProblems->DeleteChildren(root);
+}

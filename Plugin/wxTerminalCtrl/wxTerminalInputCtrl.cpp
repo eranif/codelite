@@ -130,11 +130,13 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
     for(const auto& item : items) {
         V.push_back(wxCodeCompletionBoxEntry::New(item, wxNullBitmap, nullptr));
     }
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_ctrl, V,
-                                                        wxCodeCompletionBox::kRefreshOnKeyType |
-                                                            wxCodeCompletionBox::kNoShowingEvent |
-                                                            wxCodeCompletionBox::kAlwaysShow,
-                                                        wxNOT_FOUND, this);
+
+    // display the box
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        m_ctrl, V,
+        wxCodeCompletionBox::kRefreshOnKeyType | wxCodeCompletionBox::kNoShowingEvent |
+            wxCodeCompletionBox::kAlwaysShow,
+        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND, this);
 }
 
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
@@ -405,12 +407,12 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     int start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
     int end_pos = m_ctrl->GetCurrentPos();
 
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_ctrl, completions,
-                                                        wxCodeCompletionBox::kNoShowingEvent |
-                                                            wxCodeCompletionBox::kInsertSingleMatch |
-                                                            wxCodeCompletionBox::kAlwaysShow,
-                                                        wxNOT_FOUND, this);
     m_completionType = CompletionType::FOLDERS;
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        m_ctrl, completions,
+        wxCodeCompletionBox::kNoShowingEvent | wxCodeCompletionBox::kInsertSingleMatch |
+            wxCodeCompletionBox::kAlwaysShow,
+        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND, this);
 }
 
 void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)

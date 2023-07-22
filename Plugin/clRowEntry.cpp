@@ -1152,22 +1152,28 @@ const wxRect& clRowEntry::GetCellButtonRect(size_t col) const
     return cell.GetButtonRect();
 }
 
+#ifdef __WXMSW__
 namespace
 {
-inline wxColour GetCheckBoxColour(bool checkmark, const clColours& colours, bool isSelected)
+inline wxColour MSWGetCheckBoxColour(bool checkmark, const clColours& colours, bool isSelected)
 {
     bool is_light_theme = colours.IsLightTheme();
     if(checkmark) {
         return clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     } else {
-        if(isSelected) {
-            return clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT).ChangeLightness(is_light_theme ? 120 : 80);
+        if(is_light_theme) {
+            if(isSelected) {
+                return clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT).ChangeLightness(120);
+            } else {
+                return clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+            }
         } else {
-            return clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+            return wxColour("SLATE BLUE");
         }
     }
 }
 } // namespace
+#endif
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
@@ -1179,12 +1185,12 @@ void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colour
     }
     wxRendererNative::Get().DrawCheckBox(win, dc, rect, flags);
 #else
-    wxColour border_colour = GetCheckBoxColour(false, colours, IsSelected());
+    wxColour border_colour = MSWGetCheckBoxColour(false, colours, IsSelected());
     wxDCPenChanger pen_changer(dc, border_colour);
     wxDCBrushChanger bursh_changer(dc, border_colour);
     dc.DrawRoundedRectangle(rect, 2.0);
     if(checked) {
-        wxColour color = GetCheckBoxColour(true, colours, IsSelected());
+        wxColour color = MSWGetCheckBoxColour(true, colours, IsSelected());
         wxDCPenChanger pen_changer(dc, color);
         wxDCTextColourChanger text_changer(dc, color);
         wxRect check_mark_rect = rect;

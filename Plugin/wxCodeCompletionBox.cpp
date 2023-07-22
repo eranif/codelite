@@ -188,7 +188,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
 
     // If we got a single match - insert it
     if(m_entries.size() == 1 && (m_flags & kInsertSingleMatch)) {
-        wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
+        wxString entryText = m_entries[0]->GetText();
         if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
             DoDestroy();
             return;
@@ -255,6 +255,10 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
 void wxCodeCompletionBox::StcCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
+    if(m_flags & kAlwaysShow) {
+        return;
+    }
+
     int keychar = m_stc->GetCharAt(m_stc->PositionBefore(m_stc->GetCurrentPos()));
     if(((keychar >= 65) && (keychar <= 90)) ||  // A-Z
        ((keychar >= 97) && (keychar <= 122)) || // a-z
@@ -280,7 +284,7 @@ bool wxCodeCompletionBox::FilterResults(bool updateEntries, size_t& startsWithCo
     containsCount = 0;
     startsWithCount = 0;
     wxString word = GetFilter();
-    if(word.IsEmpty()) {
+    if(word.empty()) {
         if(updateEntries) {
             m_entries = m_allEntries;
         }
@@ -298,7 +302,7 @@ bool wxCodeCompletionBox::FilterResults(bool updateEntries, size_t& startsWithCo
     // Contains
     wxCodeCompletionBoxEntry::Vec_t exactMatches, exactMatchesI, startsWith, startsWithI, contains, containsI;
     for(size_t i = 0; i < m_allEntries.size(); ++i) {
-        wxString entryText = m_allEntries.at(i)->GetText().BeforeFirst('(');
+        wxString entryText = m_allEntries.at(i)->GetText();
         entryText.Trim().Trim(false);
         wxString lcEntryText = entryText.Lower();
 
@@ -443,7 +447,7 @@ void wxCodeCompletionBox::DoUpdateList()
 
     // If there a single entry exact match hide the cc box
     if(m_entries.size() == 1) {
-        wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
+        wxString entryText = m_entries[0]->GetText();
         if(entryText.CmpNoCase(GetFilter()) == 0) {
             CallAfter(&wxCodeCompletionBox::DoDestroy);
             return;
@@ -543,13 +547,13 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
     default: {
         int modifier_key = event.GetModifiers();
         wxChar ch = event.GetUnicodeKey();
-        if (modifier_key == wxMOD_CONTROL && ch == 'U') {
+        if(modifier_key == wxMOD_CONTROL && ch == 'U') {
             m_list->PageUp();
-        } else if (modifier_key == wxMOD_CONTROL && ch == 'D') {
+        } else if(modifier_key == wxMOD_CONTROL && ch == 'D') {
             m_list->PageDown();
-        } else if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+        } else if(modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
             m_list->LineDown();
-        }  else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+        } else if(modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
             m_list->LineUp();
         } else {
             event.Skip();

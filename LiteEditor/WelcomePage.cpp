@@ -177,7 +177,13 @@ void WelcomePage::UpdateRecentWorkspaces()
     auto locals = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(), _("Local workspaces"));
     int image_index = wxNOT_FOUND;
     for(const wxString& filepath : files) {
-        wxFileName fn(filepath);
+
+        wxFileName fn{ filepath };
+        if(!fn.FileExists()) {
+            // exclude non existing files
+            continue;
+        }
+
         wxString workspace_type;
         auto type = FileExtManager::GetType(fn.GetFullPath());
         image_index = clGetManager()->GetStdIcons()->GetMimeImageId(type);
@@ -223,10 +229,9 @@ void WelcomePage::UpdateRecentWorkspaces()
     }
 
     image_index = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeWorkspaceFileSystem);
-    for(const auto& vt : M) {
-        const wxString& category = vt.first;
+    for(const auto& [category, entries] : M) {
         auto parent_item = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(), category);
-        for(const auto& w : vt.second) {
+        for(const auto& w : entries) {
             auto cd = new WelcomePageItemData();
             cd->path = w.path;
             cd->account = w.m_account;

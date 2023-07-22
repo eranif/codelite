@@ -979,4 +979,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_RECENT_WORKSPACE, clRecentWorkspa
 // A file was modified externally
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_MODIFIED_EXTERNALLY, clFileSystemEvent);
 
+// User clicked on a margin with user data
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_MARGIN_CLICKED, clEditorEvent);
+
 #endif // CODELITE_EVENTS_H

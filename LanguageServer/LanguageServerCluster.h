@@ -78,6 +78,7 @@ protected:
     void OnEditorClosed(clCommandEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnWorkspaceScanCompleted(clWorkspaceEvent& event);
+    void OnMarginClicked(clEditorEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
     /**

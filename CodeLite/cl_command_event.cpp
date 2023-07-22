@@ -515,6 +515,29 @@ clSourceControlEvent& clSourceControlEvent::operator=(const clSourceControlEvent
 // --------------------------------------------------------------
 // Recent workspace event
 // --------------------------------------------------------------
+clEditorEvent::clEditorEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clEditorEvent::clEditorEvent(const clEditorEvent& event) { *this = event; }
+
+clEditorEvent::~clEditorEvent() { /* we do not delete the user data */ }
+
+clEditorEvent& clEditorEvent::operator=(const clEditorEvent& src)
+{
+    if(this == &src) {
+        return *this;
+    }
+
+    clCommandEvent::operator=(src);
+    m_userData = src.m_userData;
+    return *this;
+}
+
+//// --------------------------------------------------------------
+// Recent workspace event
+// --------------------------------------------------------------
 clRecentWorkspaceEvent::clRecentWorkspaceEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {

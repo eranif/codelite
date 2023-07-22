@@ -121,6 +121,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &LanguageServerCluster::OnWorkspaceScanCompleted, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_MARGIN_CLICKED, &LanguageServerCluster::OnMarginClicked, this);
 
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
@@ -153,6 +154,7 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_MARGIN_CLICKED, &LanguageServerCluster::OnMarginClicked, this);
 
     Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LanguageServerCluster::OnShowQuickOutlineDlg, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
@@ -1149,4 +1151,14 @@ void LanguageServerCluster::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
     LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
     DiscoverWorkspaceType();
     Reload();
+}
+
+void LanguageServerCluster::OnMarginClicked(clEditorEvent& event)
+{
+    auto cd = dynamic_cast<DiagnosticsData*>(event.GetUserData());
+    if(cd == nullptr) {
+        // not ours
+        event.Skip();
+        return;
+    }
 }

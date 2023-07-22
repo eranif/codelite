@@ -1556,8 +1556,21 @@ void clEditor::OnMarginClick(wxStyledTextEvent& event)
     case SYMBOLS_MARGIN_ID:
         // symbols / breakpoints margin
         {
-            // If Shift-LeftDown, let the user drag any breakpoint marker
+            // If we have a compiler error here -> it takes precedence
+            if((MarkerGet(nLine) & mmt_compiler) && m_compilerMessagesMap.count(nLine)) {
+                // user clicked on compiler error, fire an event
+                clEditorEvent event_error_clicked{ wxEVT_EDITOR_MARGIN_CLICKED };
+                event_error_clicked.SetUserData(m_compilerMessagesMap.find(nLine)->second.userData);
+                event_error_clicked.SetFileName(GetRemotePathOrLocal());
+                event_error_clicked.SetLineNumber(nLine);
+                // use process here and not AddPendingEvent or QueueEvent
+                if(EventNotifier::Get()->ProcessEvent(event_error_clicked)) {
+                    return;
+                }
+            }
+
             if(event.GetShift()) {
+                // Shift-LeftDown, let the user drag any breakpoint marker
                 int markers = (MarkerGet(nLine) & mmt_all_breakpoints);
                 if(!markers) {
                     break;

@@ -63,7 +63,8 @@ struct CompilerMessage {
         message = std::move(other.message);
         std::swap(userData, other.userData);
     }
-
+    // do not allow copy constructor
+    CompilerMessage(const CompilerMessage&) = delete;
     CompilerMessage(const wxString& msg, wxClientData* data = nullptr)
         : message(msg)
         , userData(data)

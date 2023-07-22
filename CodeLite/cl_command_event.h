@@ -861,6 +861,26 @@ public:
 typedef void (wxEvtHandler::*clEditorConfigEventFunction)(clEditorConfigEvent&);
 #define clEditorConfigEventHandler(func) wxEVENT_HANDLER_CAST(clEditorConfigEventFunction, func)
 
+// --------------------------------------------------------------
+// clEditorEvent event
+// --------------------------------------------------------------
+class WXDLLIMPEXP_CL clEditorEvent : public clCommandEvent
+{
+    wxClientData* m_userData = nullptr;
+
+public:
+    clEditorEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clEditorEvent(const clEditorEvent& event);
+    clEditorEvent& operator=(const clEditorEvent& src);
+    virtual ~clEditorEvent();
+    virtual wxEvent* Clone() const { return new clEditorEvent(*this); }
+    wxClientData* GetUserData() const { return m_userData; }
+    void SetUserData(wxClientData* d) { m_userData = d; }
+};
+
+typedef void (wxEvtHandler::*clEditorEventFunction)(clEditorEvent&);
+#define clEditorEventHandler(func) wxEVENT_HANDLER_CAST(clEditorEventFunction, func)
+
 //---------------------------------------------------------------
 // Language Server events
 //---------------------------------------------------------------

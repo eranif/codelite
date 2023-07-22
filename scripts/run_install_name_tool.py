@@ -54,6 +54,7 @@ class InstallNameTool:
                 "libpcre",
                 "libssh",
                 "libhunspell",
+                "homebrew",
             ]
         )
         otool_output = self._run_command_and_return_output(

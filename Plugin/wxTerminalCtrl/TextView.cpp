@@ -179,4 +179,12 @@ void TextView::ApplyTheme()
     m_ctrl->Refresh();
 }
 
-void TextView::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+void TextView::OnKeyDown(wxKeyEvent& event)
+{
+    event.Skip();
+    if(event.ControlDown() || event.AltDown() || event.RawControlDown()) {
+        return;
+    }
+    // pass the focus
+    m_terminal->GetInputCtrl()->CallAfter(&wxTerminalInputCtrl::SetFocus);
+}

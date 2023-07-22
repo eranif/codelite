@@ -339,14 +339,7 @@ void wxTerminalInputCtrl::SetFocus() { m_ctrl->CallAfter(&wxStyledTextCtrl::SetF
 void wxTerminalInputCtrl::ApplyTheme()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    auto font = lexer->GetFontForStyle(0, m_ctrl);
-    auto style = lexer->GetProperty(0);
-    bool is_dark = lexer->IsDark();
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
-        m_ctrl->StyleSetBackground(i, wxColour(style.GetBgColour()).ChangeLightness(is_dark ? 110 : 90));
-        m_ctrl->StyleSetForeground(i, style.GetFgColour());
-        m_ctrl->StyleSetFont(i, font);
-    }
+    lexer->Apply(m_ctrl);
     m_ctrl->SetCaretPeriod(0); // no blinking
     m_ctrl->Refresh();
 }

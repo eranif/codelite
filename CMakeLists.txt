@@ -984,7 +984,6 @@ if(NOT WXC_APP)
             TARGETS ctags
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
             PERMISSIONS ${EXE_PERM})
-        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-ctags)
     endif()
 endif()
 

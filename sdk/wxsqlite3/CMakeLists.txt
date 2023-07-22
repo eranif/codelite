@@ -38,7 +38,6 @@ target_link_libraries(wxsqlite3 ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL
 if(NOT MINGW)
     if(APPLE)
         install(TARGETS wxsqlite3 DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/libwxsqlite3.dylib)
     else()
         install(TARGETS wxsqlite3 DESTINATION ${PLUGINS_DIR})
     endif()

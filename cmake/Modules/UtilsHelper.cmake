@@ -26,10 +26,7 @@ endmacro()
 # install an executable
 # ------------------------------------
 macro(codelite_install_executable TARGET)
-    if(APPLE)
-        install(TARGETS ${TARGET} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-        cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/${TARGET})
-    else()
+    if(NOT APPLE)
         set(EXE_PERM
             OWNER_EXECUTE
             OWNER_WRITE
@@ -177,7 +174,6 @@ endmacro()
 macro(codelite_install_library_target TARGET)
     if(APPLE)
         install(TARGETS ${TARGET} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-        cl_install_name_tool_std("${CL_INSTALL_BIN}/lib${TARGET}.dylib")
     elseif(MINGW)
         # under windows (MinGW) we install libraries under the "bin" folder
         install(TARGETS ${TARGET} DESTINATION "${CL_INSTALL_BIN}")

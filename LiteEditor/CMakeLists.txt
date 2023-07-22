@@ -360,7 +360,6 @@ else() # !APPLE
         TARGETS codelite
         DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
         PERMISSIONS ${EXE_PERM})
-    cl_install_name_tool_std(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite)
     install(
         FILES ${CL_SRC_ROOT}/Runtime/OpenTerm
         DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport
@@ -382,7 +381,7 @@ set(POST_INSTALL_SCRIPT "${CMAKE_BINARY_DIR}/post_install.cmake")
 if(MINGW)
     message(STATUS "Generating post_install.cmake script")
     # on MinGW, we do not want to include PluginName.dll.a files
-    write_file(${POST_INSTALL_SCRIPT} "file(GLOB FILES_TO_REMOVE \"${CL_INSTALL_BIN}/plugins/*.a\")" APPEND)
+    write_file(${POST_INSTALL_SCRIPT} "file(GLOB FILES_TO_REMOVE \"${CL_INSTALL_BIN}/plugins/*.a\")")
     write_file(${POST_INSTALL_SCRIPT} "file(REMOVE \${FILES_TO_REMOVE})" APPEND)
 
     # remove test executables from ctagsd
@@ -394,5 +393,13 @@ if(MINGW)
 
     # include this file
     install(SCRIPT ${POST_INSTALL_SCRIPT})
+elseif(APPLE)
+    message(STATUS "Generating post_install.cmake script")
+    write_file(${POST_INSTALL_SCRIPT} "message(STATUS \"Running post install script\")")
+    write_file(
+        ${POST_INSTALL_SCRIPT}
+        "execute_process(COMMAND sh -c \"/usr/bin/python3 ${CL_SRC_ROOT}/scripts/run_install_name_tool.py ${CMAKE_BINARY_DIR}/codelite.app\")"
+        APPEND)
+    write_file(${POST_INSTALL_SCRIPT} "message(STATUS \"Success\")" APPEND)
+    install(SCRIPT ${POST_INSTALL_SCRIPT})
 endif()
-

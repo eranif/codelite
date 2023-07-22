@@ -2047,7 +2047,7 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         // Compiler marker takes precedence over any other tooltip on that margin
         if((MarkerGet(line) & mmt_compiler) && m_compilerMessagesMap.count(line)) {
             // Get the compiler tooltip
-            tooltip = m_compilerMessagesMap.find(line)->second;
+            tooltip = m_compilerMessagesMap.find(line)->second.message;
             // Disable markdown to ensure it doesn't break anything
             StringUtils::DisableMarkdownStyling(tooltip);
         }
@@ -4101,54 +4101,56 @@ void clEditor::ToggleBreakpoint(int lineno)
     }
 }
 
-void clEditor::SetWarningMarker(int lineno, const wxString& annotationText)
+void clEditor::SetWarningMarker(int lineno, CompilerMessage&& msg)
 {
-    if(lineno >= 0) {
+    if(lineno < 0) {
+        return;
+    }
 
-        // Keep the text message
-        if(m_compilerMessagesMap.count(lineno)) {
-            m_compilerMessagesMap.erase(lineno);
-        }
-        m_compilerMessagesMap.insert(std::make_pair(lineno, annotationText));
+    // Keep the text message
+    if(m_compilerMessagesMap.count(lineno)) {
+        m_compilerMessagesMap.erase(lineno);
+    }
+    m_compilerMessagesMap.insert({ lineno, std::move(msg) });
 
-        BuildTabSettingsData options;
-        EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &options);
+    BuildTabSettingsData options;
+    EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &options);
 
-        if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
-            MarkerAdd(lineno, smt_warning);
-            NotifyMarkerChanged(lineno);
-        }
+    if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
+        MarkerAdd(lineno, smt_warning);
+        NotifyMarkerChanged(lineno);
+    }
 
-        if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
-            // define the warning marker
-            AnnotationSetText(lineno, annotationText);
-            AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
-        }
+    if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
+        // define the warning marker
+        AnnotationSetText(lineno, msg.message);
+        AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
     }
 }
 
-void clEditor::SetErrorMarker(int lineno, const wxString& annotationText)
+void clEditor::SetErrorMarker(int lineno, CompilerMessage&& msg)
 {
-    if(lineno >= 0) {
+    if(lineno < 0) {
+        return;
+    }
 
-        // Keep the text message
-        if(m_compilerMessagesMap.count(lineno)) {
-            m_compilerMessagesMap.erase(lineno);
-        }
-        m_compilerMessagesMap.insert(std::make_pair(lineno, annotationText));
+    // Keep the text message
+    if(m_compilerMessagesMap.count(lineno)) {
+        m_compilerMessagesMap.erase(lineno);
+    }
+    m_compilerMessagesMap.insert({ lineno, std::move(msg) });
 
-        BuildTabSettingsData options;
-        EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &options);
+    BuildTabSettingsData options;
+    EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &options);
 
-        if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
-            MarkerAdd(lineno, smt_error);
-            NotifyMarkerChanged(lineno);
-        }
+    if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
+        MarkerAdd(lineno, smt_error);
+        NotifyMarkerChanged(lineno);
+    }
 
-        if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
-            AnnotationSetText(lineno, annotationText);
-            AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
-        }
+    if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
+        AnnotationSetText(lineno, msg.message);
+        AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
     }
 }
 

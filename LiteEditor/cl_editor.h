@@ -243,7 +243,7 @@ protected:
     bool m_preserveSelection;
     std::vector<std::pair<int, int>> m_savedMarkers;
     bool m_findBookmarksActive;
-    std::map<int, wxString> m_compilerMessagesMap;
+    std::map<int, CompilerMessage> m_compilerMessagesMap;
     CLCommandProcessor m_commandsProcessor;
     wxString m_preProcessorsWords;
     SelectionInfo m_prevSelectionInfo;
@@ -818,8 +818,8 @@ public:
     void UnHighlightAll() override;
 
     // compiler warnings and errors
-    void SetWarningMarker(int lineno, const wxString& annotationText) override;
-    void SetErrorMarker(int lineno, const wxString& annotationText) override;
+    void SetWarningMarker(int lineno, CompilerMessage&& msg) override;
+    void SetErrorMarker(int lineno, CompilerMessage&& msg) override;
     void DelAllCompilerMarkers() override;
 
     void DoShowCalltip(int pos, const wxString& title, const wxString& tip, bool strip_html_tags = true);

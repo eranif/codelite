@@ -52,6 +52,25 @@ enum {
     Format_Text_Save_Empty_Lines = 0x00000002,
 };
 
+struct CompilerMessage {
+    wxString message;
+    wxClientData* userData = nullptr;
+
+    ~CompilerMessage() { wxDELETE(userData); }
+    CompilerMessage() {}
+    CompilerMessage(CompilerMessage&& other)
+    {
+        message = std::move(other.message);
+        std::swap(userData, other.userData);
+    }
+
+    CompilerMessage(const wxString& msg, wxClientData* data = nullptr)
+        : message(msg)
+        , userData(data)
+    {
+    }
+};
+
 //------------------------------------------------------------------
 // Defines the interface to the editor control
 //------------------------------------------------------------------
@@ -490,11 +509,12 @@ public:
     /**
      * @brief set a warning marker in the editor with a given text
      */
-    virtual void SetWarningMarker(int lineno, const wxString& annotationText) = 0;
+    virtual void SetWarningMarker(int lineno, CompilerMessage&& msg) = 0;
+
     /**
      * @brief set a warning marker in the editor with a given text
      */
-    virtual void SetErrorMarker(int lineno, const wxString& annotationText) = 0;
+    virtual void SetErrorMarker(int lineno, CompilerMessage&& msg) = 0;
 
     /**
      * @brief set a code completion annotation at the given line. code completion

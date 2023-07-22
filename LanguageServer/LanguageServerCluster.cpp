@@ -1,6 +1,7 @@
 #include "LanguageServerCluster.h"
 
 #include "CompileCommandsGenerator.h"
+#include "DiagnosticsData.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSPOutlineViewDlg.h"
 #include "LanguageServerConfig.h"
@@ -850,7 +851,8 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
 
         for(const LSP::Diagnostic& d : event.GetDiagnostics()) {
             // LSP uses 1 based line numbers
-            editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), d.GetMessage());
+            CompilerMessage cm{ d.GetMessage(), new DiagnosticsData(d) };
+            editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), std::move(cm));
         }
     } else {
         LSP_DEBUG() << "Setting diagnostics: could not locate editor for file:" << event.GetFileName() << endl;

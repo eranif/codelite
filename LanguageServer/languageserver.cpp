@@ -312,7 +312,6 @@ void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& 
         for(auto lsp : lsps) {
             LanguageServerEntry entry;
             lsp->GetLanguageServerEntry(entry);
-            entry.SetEnabled(true);
             config.AddServer(entry);
             LSP_DEBUG() << "Adding LSP:" << entry.GetName() << endl;
         }

@@ -11,8 +11,6 @@
 #include <wx/stc/stc.h>
 #include <wx/timer.h>
 
-#define wxTERMINAL_USE_2_CTRLS 1
-
 class wxTerminalCtrl;
 class WXDLLIMPEXP_SDK wxTerminalInputCtrl : public wxEvtHandler
 {
@@ -78,10 +76,8 @@ public:
     /// called by the terminal when output has arrived
     void NotifyTerminalOutput();
 
-#if wxTERMINAL_USE_2_CTRLS
     void ApplyTheme();
     void OnThemeChanged(clCommandEvent& event);
-#endif
 };
 
 #endif // WXTERMINALINPUTCTRL_HPP

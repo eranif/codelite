@@ -40,5 +40,4 @@ public:
     void SetDefaultFont(const wxFont& font) override;
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINALVIEWCTRL_LINE_ADDED, clCommandEvent);
 #endif // CLTERMINALVIEWCTRL_HPP

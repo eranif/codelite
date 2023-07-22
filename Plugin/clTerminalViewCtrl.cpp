@@ -6,8 +6,6 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 
-wxDEFINE_EVENT(wxEVT_TERMINALVIEWCTRL_LINE_ADDED, clCommandEvent);
-
 namespace
 {
 class MyAnsiCodeRenderer : public clControlWithItemsRowRenderer
@@ -153,9 +151,6 @@ void clTerminalViewCtrl::AddLine(const wxString& text, bool text_ends_with_cr, w
         ScrollToBottom();
     }
     m_overwriteLastLine = text_ends_with_cr;
-
-    clCommandEvent event_line_added{ wxEVT_TERMINALVIEWCTRL_LINE_ADDED };
-    GetEventHandler()->AddPendingEvent(event_line_added);
 }
 
 clAnsiEscapeCodeColourBuilder& clTerminalViewCtrl::GetBuilder(bool clear_it)

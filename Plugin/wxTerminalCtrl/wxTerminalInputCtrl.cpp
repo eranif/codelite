@@ -52,6 +52,7 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 {
     m_ctrl = new wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
     m_ctrl->AlwaysShowScrollbars(false, false);
+    m_ctrl->SetHint("Type a command here...");
     m_ctrl->SetWrapMode(wxSTC_WRAP_WORD);
     m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
     ApplyTheme();

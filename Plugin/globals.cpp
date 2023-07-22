@@ -1840,13 +1840,9 @@ wxString clGetTextFromUser(const wxString& title, const wxString& message, const
 }
 
 static IManager* s_pluginManager = NULL;
-IManager* clGetManager()
-{
-    wxASSERT(s_pluginManager);
-    return s_pluginManager;
-}
 
 void clSetManager(IManager* manager) { s_pluginManager = manager; }
+IManager* clGetManager() { return s_pluginManager; }
 
 void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
 {

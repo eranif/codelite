@@ -27,18 +27,28 @@ struct EditorEnabler {
 };
 } // namespace
 
+TextView::TextView(wxWindow* parent, wxWindowID winid)
+    : wxWindow(parent, winid)
+    , m_terminal(nullptr)
+{
+    Initialise();
+}
+
 TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font, const wxColour& bg_colour,
                    const wxColour& text_colour)
     : wxWindow(parent, winid)
     , m_terminal(parent)
 {
+    Initialise(font, bg_colour, text_colour);
+}
+
+void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const wxColour& text_colour)
+{
     m_textFont = font.IsOk() ? font : FontUtils::GetDefaultMonospacedFont();
     m_textColour = text_colour;
     m_bgColour = bg_colour;
-
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
-    m_ctrl->SetIdleStyling(wxSTC_IDLESTYLING_ALL);
     m_ctrl->UsePopUp(1);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);
@@ -186,5 +196,7 @@ void TextView::OnKeyDown(wxKeyEvent& event)
         return;
     }
     // pass the focus
-    m_terminal->GetInputCtrl()->CallAfter(&wxTerminalInputCtrl::SetFocus);
+    if(m_terminal) {
+        m_terminal->GetInputCtrl()->CallAfter(&wxTerminalInputCtrl::SetFocus);
+    }
 }

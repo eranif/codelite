@@ -185,13 +185,13 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 #define FACTOR_2 2.0
 #endif
 
-#define CODELITE_SET_BEST_FOCUS()                                                                        \
-    if(clGetManager()->GetActiveEditor()) {                                                              \
-        clGetManager()->GetActiveEditor()->SetActive();                                                  \
-    } else if(m_workspacePane->GetWorkspaceTab()) {                                                      \
-        m_workspacePane->GetWorkspaceTab()->CallAfter(&wxWindow::SetFocus);                              \
-    } else if(GetMainBook()->GetWelcomePage(false)) {                                                    \
-        GetMainBook()->GetWelcomePage(false)->GetDvTreeCtrlWorkspaces()->CallAfter(&wxWindow::SetFocus); \
+#define CODELITE_SET_BEST_FOCUS()                                             \
+    if(clGetManager()->GetActiveEditor()) {                                   \
+        clGetManager()->GetActiveEditor()->SetActive();                       \
+    } else if(m_workspacePane->GetWorkspaceTab()) {                           \
+        m_workspacePane->GetWorkspaceTab()->CallAfter(&wxWindow::SetFocus);   \
+    } else if(GetMainBook()->GetWelcomePage(false)) {                         \
+        GetMainBook()->GetWelcomePage(false)->CallAfter(&wxWindow::SetFocus); \
     }
 
 /**
@@ -206,7 +206,11 @@ bool IsDebuggerRunning()
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     return (dbgr && dbgr->IsRunning()) || eventIsRunning.IsAnswer();
 }
+
+bool codelite_initialised = false;
+bool codelite_active = false;
 } // namespace
+
 //----------------------------------------------------------------
 // Our main frame
 //----------------------------------------------------------------
@@ -1649,7 +1653,7 @@ void clMainFrame::Bootstrap()
     EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
 
     // and finally, find the best window to give focus to
-    CODELITE_SET_BEST_FOCUS();
+    codelite_initialised = true;
 }
 
 void clMainFrame::UpdateBuildTools() {}
@@ -3257,7 +3261,17 @@ void clMainFrame::OnDebuggerSettings(wxCommandEvent& e)
     dlg->Destroy();
 }
 
-void clMainFrame::OnIdle(wxIdleEvent& e) { e.Skip(); }
+void clMainFrame::OnIdle(wxIdleEvent& e)
+{
+    e.Skip();
+    if(codelite_initialised) {
+        static bool once = true;
+        if(once) {
+            once = false;
+            CODELITE_SET_BEST_FOCUS();
+        }
+    }
+}
 
 void clMainFrame::OnLinkClicked(wxHtmlLinkEvent& e)
 {
@@ -3548,6 +3562,7 @@ void clMainFrame::RestoreFrameSizeAndPosition()
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
 {
     e.Skip();
+    codelite_active = e.GetActive();
 
     // check for external theme detection
     wxColour currentBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);

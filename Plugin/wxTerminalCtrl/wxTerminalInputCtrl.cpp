@@ -190,7 +190,11 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 
 void wxTerminalInputCtrl::SetWritePositionEnd() { m_writeStartingPosition = m_ctrl->GetLastPosition(); }
 
-void wxTerminalInputCtrl::Clear() { m_ctrl->ClearAll(); }
+void wxTerminalInputCtrl::Clear()
+{
+    m_ctrl->ClearAll(); // restore the marker
+    m_ctrl->MarkerAdd(m_ctrl->GetCurrentLine(), MARKER_ARROWS);
+}
 
 wxString wxTerminalInputCtrl::SetText(const wxString& text)
 {
@@ -326,6 +330,8 @@ void wxTerminalInputCtrl::OnEnter()
     m_history.Add(command);
     m_history.Store(); // update the history
     m_ctrl->ClearAll();
+    // restore the marker
+    m_ctrl->MarkerAdd(m_ctrl->GetCurrentLine(), MARKER_ARROWS);
 }
 
 void wxTerminalInputCtrl::OnUp()
@@ -438,6 +444,8 @@ void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)
     switch(m_completionType) {
     case CompletionType::COMMANDS:
         m_ctrl->ClearAll();
+        // restore the marker
+        m_ctrl->MarkerAdd(m_ctrl->GetCurrentLine(), MARKER_ARROWS);
         // user inserted text from the auto completion list
         // to give it a feel like the real terminal, execute it
         m_history.Add(event.GetEntry()->GetInsertText());

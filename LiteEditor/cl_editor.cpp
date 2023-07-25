@@ -1608,7 +1608,8 @@ void clEditor::OnMarginClick(wxStyledTextEvent& event)
                 Connect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), NULL, bpm->GetDragImage());
 
             } else {
-                ToggleBreakpoint(nLine + 1);
+                GotoPos(event.GetPosition());
+                DoBreakptContextMenu({});
             }
         }
         break;
@@ -3978,7 +3979,7 @@ void clEditor::DoBreakptContextMenu(wxPoint pt)
         },
         XRCID("copy_breakpoint_format"));
 
-    PopupMenu(&menu, pt.x, pt.y);
+    PopupMenu(&menu);
     m_popupIsOn = false;
 }
 
@@ -6409,12 +6410,7 @@ void clEditor::OnZoom(wxStyledTextEvent& event)
 
 void clEditor::DoToggleFold(int line, const wxString& textTag)
 {
-#if wxCHECK_VERSION(3, 1, 0)
     ToggleFoldShowText(line, GetOptions()->GetUnderlineFoldLine() ? wxString() : textTag);
-#else
-    wxUnusedVar(textTag);
-    ToggleFold(line);
-#endif
 }
 
 size_t clEditor::GetEditorTextRaw(std::string& text)

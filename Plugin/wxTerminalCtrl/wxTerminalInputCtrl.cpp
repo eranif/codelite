@@ -45,6 +45,9 @@ public:
     // no redo
     void OnRedo(wxCommandEvent& event) override { CHECK_FOCUS_WINDOW(); }
 };
+
+constexpr int MARKER_ARROWS = 2;
+constexpr int MARING_MARKER_ID = 2;
 } // namespace
 
 wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl)
@@ -52,10 +55,23 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 {
     m_ctrl = new wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
     m_ctrl->AlwaysShowScrollbars(false, false);
-    m_ctrl->SetHint("Type a command here...");
     m_ctrl->SetWrapMode(wxSTC_WRAP_WORD);
     m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
+
+    for(int i = 0; i < wxSTC_MAX_MARGIN; ++i) {
+        m_ctrl->SetMarginWidth(i, 0);
+    }
+
+    // define the marker margin
+    m_ctrl->SetMarginType(MARING_MARKER_ID, wxSTC_MARGIN_SYMBOL);
+    m_ctrl->SetMarginMask(MARING_MARKER_ID, ~(wxSTC_MASK_FOLDERS));
+    m_ctrl->SetMarginWidth(MARING_MARKER_ID, 16);
+
+    // define the marker
+    m_ctrl->MarkerDefine(MARKER_ARROWS, wxSTC_MARK_ARROWS);
+    m_ctrl->MarkerAdd(m_ctrl->GetCurrentLine(), MARKER_ARROWS);
     ApplyTheme();
+
     // calculate the height
     wxClientDC dc(m_ctrl);
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
@@ -72,6 +88,7 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 
     m_editEvents.Reset(new MyEventsHandler(this, m_ctrl));
     m_ctrl->Bind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
+    m_ctrl->Bind(wxEVT_IDLE, &wxTerminalInputCtrl::OnIdle, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &wxTerminalInputCtrl::OnCCBoxSelected, this);
 
     std::vector<wxAcceleratorEntry> V;
@@ -101,8 +118,9 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtr
 wxTerminalInputCtrl::~wxTerminalInputCtrl()
 {
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &wxTerminalInputCtrl::OnCCBoxSelected, this);
-    m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalInputCtrl::OnThemeChanged, this);
+    m_ctrl->Unbind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
+    m_ctrl->Unbind(wxEVT_IDLE, &wxTerminalInputCtrl::OnIdle, this);
 }
 
 void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
@@ -342,6 +360,7 @@ void wxTerminalInputCtrl::ApplyTheme()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     lexer->Apply(m_ctrl);
     m_ctrl->SetCaretPeriod(0); // no blinking
+    m_ctrl->MarkerSetForeground(MARKER_ARROWS, lexer->GetProperty(0).GetFgColour());
     m_ctrl->Refresh();
 }
 
@@ -435,4 +454,13 @@ void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)
         break;
     }
     m_completionType = CompletionType::NONE;
+}
+
+void wxTerminalInputCtrl::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    int curline = m_ctrl->GetCurrentLine();
+    if(m_ctrl->IsShown() && m_ctrl->MarkerGet(curline) == 0) {
+        m_ctrl->MarkerAdd(curline, MARKER_ARROWS);
+    }
 }

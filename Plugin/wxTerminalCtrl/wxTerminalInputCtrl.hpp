@@ -56,6 +56,7 @@ protected:
     void OnClearLine(wxCommandEvent& event);
     void OnCtrlC(wxCommandEvent& event);
     void OnDeleteWord(wxCommandEvent& event);
+    void OnIdle(wxIdleEvent& event);
 
     // no events (called from ProcessKeyDown)
     void OnEnter();

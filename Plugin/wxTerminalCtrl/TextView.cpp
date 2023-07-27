@@ -54,7 +54,7 @@ void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const w
     m_ctrl->StartStyling(0);
     m_ctrl->SetWrapMode(wxSTC_WRAP_CHAR);
     m_ctrl->SetEditable(false);
-
+    m_ctrl->SetWordChars(":~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-");
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
     CallAfter(&TextView::ReloadSettings);

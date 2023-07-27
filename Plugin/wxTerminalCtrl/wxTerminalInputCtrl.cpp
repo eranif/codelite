@@ -476,6 +476,18 @@ void wxTerminalInputCtrl::OnIdle(wxIdleEvent& event)
 
 void wxTerminalInputCtrl::SimulateKeyEvent(const wxKeyEvent& event)
 {
+#ifdef __WXMSW__
     wxUIActionSimulator sim;
-    sim.KeyDown(event.GetKeyCode(), event.GetModifiers());
+    auto pt = m_ctrl->PointFromPosition(m_ctrl->GetLastPosition());
+    // click at the end of the text control
+    sim.MouseMove(m_ctrl->GetScreenPosition() + wxPoint(pt.x, 10));
+    sim.MouseClick(wxMOUSE_BTN_LEFT);
+    wxYield();
+    // no one processed this simulation yet, do it now
+    m_ctrl->SetFocus();
+    sim.Char(event.GetKeyCode(), event.GetModifiers());
+#else
+    wxUnusedVar(event);
+    m_ctrl->SetFocus();
+#endif
 }

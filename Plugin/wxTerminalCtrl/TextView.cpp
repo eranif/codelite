@@ -200,9 +200,6 @@ void TextView::OnKeyDown(wxKeyEvent& event)
 
     // pass the focus
     if(m_terminal) {
-        // set the focus
-        m_terminal->GetInputCtrl()->CallAfter(&wxTerminalInputCtrl::SetFocus);
-        // and now simulate the event
-        m_terminal->GetInputCtrl()->CallAfter(&wxTerminalInputCtrl::SimulateKeyEvent, event);
+        m_terminal->GetInputCtrl()->SimulateKeyEvent(event);
     }
 }

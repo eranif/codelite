@@ -8,6 +8,8 @@
 #include "globals.h"
 #include "wxTerminalCtrl.h"
 
+#include <wx/uiaction.h>
+
 INITIALISE_MODULE_LOG(LOG, "AnsiEscapeHandler", "ansi_escape_parser.log");
 
 #include <wx/menu.h>
@@ -195,8 +197,12 @@ void TextView::OnKeyDown(wxKeyEvent& event)
     if(event.ControlDown() || event.AltDown() || event.RawControlDown()) {
         return;
     }
+
     // pass the focus
     if(m_terminal) {
+        // set the focus
         m_terminal->GetInputCtrl()->CallAfter(&wxTerminalInputCtrl::SetFocus);
+        // and now simulate the event
+        m_terminal->GetInputCtrl()->CallAfter(&wxTerminalInputCtrl::SimulateKeyEvent, event);
     }
 }

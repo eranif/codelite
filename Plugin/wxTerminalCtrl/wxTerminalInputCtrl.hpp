@@ -70,6 +70,7 @@ public:
     void SetWritePositionEnd();
     void UpdateTextDeleted(int num);
     void ProcessKeyDown(wxKeyEvent& event);
+    void SimulateKeyEvent(const wxKeyEvent& event);
     int GetWriteStartPosition() const { return m_writeStartingPosition; }
     void SetFocus();
     bool IsFocused() const { return m_ctrl->HasFocus(); }

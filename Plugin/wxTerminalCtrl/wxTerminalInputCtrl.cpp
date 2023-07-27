@@ -13,6 +13,7 @@
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/tokenzr.h>
+#include <wx/uiaction.h>
 
 #define CAN_GO_BACK() (true)
 #define CAN_DELETE() (true)
@@ -471,4 +472,10 @@ void wxTerminalInputCtrl::OnIdle(wxIdleEvent& event)
     if(m_ctrl->IsShown() && m_ctrl->MarkerGet(curline) == 0) {
         m_ctrl->MarkerAdd(curline, MARKER_ARROWS);
     }
+}
+
+void wxTerminalInputCtrl::SimulateKeyEvent(const wxKeyEvent& event)
+{
+    wxUIActionSimulator sim;
+    sim.KeyDown(event.GetKeyCode(), event.GetModifiers());
 }

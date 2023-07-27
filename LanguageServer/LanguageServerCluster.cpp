@@ -9,6 +9,7 @@
 #include "StringUtils.h"
 #include "clEditorBar.h"
 #include "clFileSystemWorkspace.hpp"
+#include "clResult.hpp"
 #include "clSFTPEvent.h"
 #include "clSelectSymbolDialog.h"
 #include "clWorkspaceManager.h"
@@ -30,6 +31,8 @@
 #include <algorithm>
 #include <thread>
 #include <wx/arrstr.h>
+#include <wx/choicdlg.h>
+#include <wx/richmsgdlg.h>
 #include <wx/stc/stc.h>
 
 namespace
@@ -122,6 +125,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     EventNotifier::Get()->Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_MARGIN_CLICKED, &LanguageServerCluster::OnMarginClicked, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTIONS, &LanguageServerCluster::OnCodeActionAvailable, this);
 
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
@@ -155,6 +159,7 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_MARGIN_CLICKED, &LanguageServerCluster::OnMarginClicked, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_CODE_ACTIONS, &LanguageServerCluster::OnCodeActionAvailable, this);
 
     Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LanguageServerCluster::OnShowQuickOutlineDlg, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
@@ -1161,4 +1166,64 @@ void LanguageServerCluster::OnMarginClicked(clEditorEvent& event)
         event.Skip();
         return;
     }
+
+    CHECK_PTR_RET(clGetManager());
+    auto editor = clGetManager()->GetActiveEditor();
+
+    CHECK_PTR_RET(editor);
+    auto server = GetServerForEditor(editor);
+
+    CHECK_PTR_RET(server);
+    server->SendCodeActionRequest(editor, { cd->diagnostic });
+}
+
+void LanguageServerCluster::OnCodeActionAvailable(LSPEvent& event)
+{
+    event.Skip();
+    // prompt the user
+    if(event.GetCommands().empty()) {
+        return;
+    }
+
+    const LSP::Command* command_to_apply = nullptr;
+    if(event.GetCommands().size() > 1) {
+        // multiple fixes available, choose one
+        wxArrayString choices;
+        choices.reserve(event.GetCommands().size());
+
+        std::unordered_map<wxStringView, const LSP::Command*> M;
+        for(const auto& cmd : event.GetCommands()) {
+            choices.Add(cmd.GetTitle());
+            M.insert({ wxStringView(cmd.GetTitle().data(), cmd.GetTitle().length()), &cmd });
+        }
+
+        // prompt the user to choose a fix
+        wxString selection =
+            wxGetSingleChoice(_("Choose a fix to apply:"), "CodeLite", choices, EventNotifier::Get()->TopFrame());
+        if(selection.empty()) {
+            return; // user hit cancel
+        }
+
+        wxStringView sv_selection{ selection.data(), selection.length() };
+        command_to_apply = M[sv_selection];
+    } else {
+        wxRichMessageDialog dlg(wxTheApp->GetTopWindow(), _("A fix is available"), "CodeLite",
+                                wxOK | wxCANCEL | wxOK_DEFAULT | wxCENTER | wxICON_QUESTION);
+        dlg.SetExtendedMessage(event.GetCommands()[0].GetTitle());
+        dlg.SetOKCancelLabels(_("Fix it!"), _("Cancel"));
+        if(dlg.ShowModal() != wxID_OK) {
+            return;
+        }
+        command_to_apply = &event.GetCommands()[0];
+    }
+
+    CHECK_PTR_RET(command_to_apply);
+
+    auto editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    auto server = GetServerForEditor(editor);
+    CHECK_PTR_RET(server);
+
+    server->SendWorkspaceExecuteCommand(event.GetFileName(), *command_to_apply);
 }

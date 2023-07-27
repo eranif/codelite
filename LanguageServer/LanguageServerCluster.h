@@ -79,7 +79,7 @@ protected:
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnWorkspaceScanCompleted(clWorkspaceEvent& event);
     void OnMarginClicked(clEditorEvent& event);
-
+    void OnCodeActionAvailable(LSPEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     /**
      * @brief find an editor either by local or remote path

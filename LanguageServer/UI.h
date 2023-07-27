@@ -31,8 +31,6 @@
 #include "clThemedTextCtrl.hpp"
 #include <wx/dataview.h>
 #include "clTerminalViewCtrl.hpp"
-#include <wx/treectrl.h>
-#include "clThemedTreeCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -183,17 +181,11 @@ class LanguageServerLogViewBase : public wxPanel
 {
 protected:
     Notebook* m_notebook207;
-    wxPanel* m_panel209;
-    clThemedTreeCtrl* m_treeCtrlProblems;
     wxPanel* m_panel208;
     clTerminalViewCtrl* m_dvListCtrl;
 
 protected:
-    virtual void OnDiagnosticSelected(wxTreeEvent& event) { event.Skip(); }
-
 public:
-    clThemedTreeCtrl* GetTreeCtrlProblems() { return m_treeCtrlProblems; }
-    wxPanel* GetPanel209() { return m_panel209; }
     clTerminalViewCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel208() { return m_panel208; }
     Notebook* GetNotebook207() { return m_notebook207; }

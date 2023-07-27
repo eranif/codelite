@@ -164,11 +164,6 @@ protected:
      */
     void SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column);
 
-    /**
-     * @brief request a code action from the server
-     */
-    void SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags);
-
     bool DoStart();
 
     /**
@@ -306,6 +301,11 @@ public:
      * @brief execute remote command `workspace/executeCommand`
      */
     void SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command);
+
+    /**
+     * @brief request a code action from the server
+     */
+    void SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags);
 
     // helpers
     bool IsCapabilitySupported(const wxString& name) const;

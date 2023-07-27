@@ -501,22 +501,9 @@ LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowI
 
     boxSizer194->Add(m_notebook207, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel209 = new wxPanel(m_notebook207, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook207, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
-    m_notebook207->AddPage(m_panel209, _("Diagnostics"), true);
-
-    wxBoxSizer* boxSizer211 = new wxBoxSizer(wxVERTICAL);
-    m_panel209->SetSizer(boxSizer211);
-
-    m_treeCtrlProblems =
-        new clThemedTreeCtrl(m_panel209, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel209, wxSize(-1, -1)),
-                             wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_FULL_ROW_HIGHLIGHT);
-
-    boxSizer211->Add(m_treeCtrlProblems, 1, wxEXPAND, WXC_FROM_DIP(5));
-
     m_panel208 = new wxPanel(m_notebook207, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook207, wxSize(-1, -1)),
                              wxTAB_TRAVERSAL);
-    m_notebook207->AddPage(m_panel208, _("Log"), false);
+    m_notebook207->AddPage(m_panel208, _("Log"), true);
 
     wxBoxSizer* boxSizer210 = new wxBoxSizer(wxVERTICAL);
     m_panel208->SetSizer(boxSizer210);
@@ -532,14 +519,6 @@ LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowI
     if(GetSizer()) {
         GetSizer()->Fit(this);
     }
-    // Connect events
-    m_treeCtrlProblems->Bind(wxEVT_COMMAND_TREE_SEL_CHANGED, &LanguageServerLogViewBase::OnDiagnosticSelected, this);
-    m_treeCtrlProblems->Bind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &LanguageServerLogViewBase::OnDiagnosticSelected, this);
 }
 
-LanguageServerLogViewBase::~LanguageServerLogViewBase()
-{
-    m_treeCtrlProblems->Unbind(wxEVT_COMMAND_TREE_SEL_CHANGED, &LanguageServerLogViewBase::OnDiagnosticSelected, this);
-    m_treeCtrlProblems->Unbind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &LanguageServerLogViewBase::OnDiagnosticSelected,
-                               this);
-}
+LanguageServerLogViewBase::~LanguageServerLogViewBase() {}

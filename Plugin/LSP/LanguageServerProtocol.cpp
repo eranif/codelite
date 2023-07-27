@@ -969,9 +969,6 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
 
         std::vector<LSP::Diagnostic> diags = response.GetDiagnostics();
         if(!diags.empty() && IsDisaplayDiagnostics()) {
-            // send action for each of the diagnostic
-            CallAfter(&LanguageServerProtocol::SendCodeActionRequest, clGetManager()->GetActiveEditor(), diags);
-
             // report the diagnostics
             LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);
             eventSetDiags.SetFileName(fn);

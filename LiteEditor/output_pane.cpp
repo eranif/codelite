@@ -276,6 +276,10 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
 
 void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
 {
+    if(event.GetEventObject() != m_book) {
+        event.Skip();
+        return;
+    }
     wxMenu* menu = event.GetMenu();
 
     DetachedPanesInfo dpi;

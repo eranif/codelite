@@ -453,6 +453,11 @@ clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer()
 
 void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
 {
+    if(event.GetEventObject() != m_book) {
+        event.Skip();
+        return;
+    }
+
     wxMenu* menu = event.GetMenu();
     DetachedPanesInfo dpi;
     EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);

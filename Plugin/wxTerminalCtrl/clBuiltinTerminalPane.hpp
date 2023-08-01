@@ -1,6 +1,7 @@
 #ifndef CLBUILTINTERMINALPANE_HPP
 #define CLBUILTINTERMINALPANE_HPP
 
+#include "Notebook.h"
 #include "clToolBar.h"
 #include "codelite_events.h"
 #include "codelite_exports.h"
@@ -13,11 +14,11 @@ class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
     wxTerminalCtrl* m_terminal = nullptr;
     clToolBar* m_toolbar = nullptr;
-    wxAuiNotebook* m_book = nullptr;
+    Notebook* m_book = nullptr;
 
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
-    void OnPageChanged(wxAuiNotebookEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& event);
     void OnSetTitle(wxTerminalEvent& event);
     void UpdateTextAttributes();
     void OnNewDropdown(wxCommandEvent& event);

@@ -20,6 +20,7 @@
 #include <wx/sizer.h>
 
 #ifndef __WXMSW__
+#if 0
 namespace
 {
 class MyTabArt : public wxAuiGenericTabArt
@@ -34,19 +35,16 @@ public:
     wxAuiTabArt* Clone() override { return new MyTabArt(*this); }
 };
 } // namespace
+#endif
 #endif // MAC or GTK
 
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_book = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                               wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_TAB_FIXED_WIDTH);
-
-#ifdef __WXMAC__
-    m_book->SetTabCtrlHeight(GetTextExtent("Tp").GetHeight() * 2);
-    m_book->SetArtProvider(new MyTabArt());
-#endif
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                          kNotebook_CloseButtonOnActiveTab | kNotebook_ShowFileListButton |
+                              kNotebook_MouseMiddleClickClosesTab | kNotebook_FixedWidth | kNotebook_AllowDnD);
 
     m_toolbar = new clToolBar(this);
 
@@ -63,14 +61,14 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     UpdateTextAttributes();
     wxTheApp->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
-    m_book->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
+    m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
     wxTheApp->Unbind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
-    m_book->Unbind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
+    m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
 }
 
@@ -190,7 +188,7 @@ void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
     }
 }
 
-void clBuiltinTerminalPane::OnPageChanged(wxAuiNotebookEvent& event)
+void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)
 {
     event.Skip();
     CallAfter(&clBuiltinTerminalPane::Focus);

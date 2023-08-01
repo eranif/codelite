@@ -80,7 +80,7 @@ protected:
 
 public:
     clCodeLiteRemoteProcess();
-    ~clCodeLiteRemoteProcess();
+    virtual ~clCodeLiteRemoteProcess();
 
     /**
      * @brief start the process using the same arguments used in the last call to StartInteractive. If the process is

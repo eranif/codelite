@@ -14,29 +14,7 @@
 #include "ssh/ssh_account_info.h"
 
 #include <wx/app.h>
-#include <wx/aui/dockart.h>
-#include <wx/aui/framemanager.h>
-#include <wx/aui/tabart.h>
 #include <wx/sizer.h>
-
-#ifndef __WXMSW__
-#if 0
-namespace
-{
-class MyTabArt : public wxAuiGenericTabArt
-{
-public:
-    MyTabArt()
-    {
-        m_activeCloseBmp = clGetManager()->GetStdIcons()->LoadBitmap("file_close");
-        m_disabledCloseBmp = clGetManager()->GetStdIcons()->LoadBitmap("file_close");
-    }
-    virtual ~MyTabArt() {}
-    wxAuiTabArt* Clone() override { return new MyTabArt(*this); }
-};
-} // namespace
-#endif
-#endif // MAC or GTK
 
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)

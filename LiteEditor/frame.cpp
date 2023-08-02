@@ -32,6 +32,7 @@
 #include "DebuggerToolBar.h"
 #include "GCCMetadata.hpp"
 #include "Notebook.h"
+#include "NotebookNavigationDlg.h"
 #include "SwitchToWorkspaceDlg.h"
 #include "WelcomePage.h"
 #include "acceltabledlg.h"
@@ -5852,10 +5853,33 @@ void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
     wxDELETE(m_webUpdate);
 }
 
+namespace
+{
+void ShowNavDialog(Notebook* book)
+{
+    if(book->GetPageCount() == 0) {
+        return;
+    }
+
+    NotebookNavigationDlg dlg(book->GetParent(), book);
+    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
+        book->SetSelection(dlg.GetSelection());
+    }
+}
+} // namespace
+
 void clMainFrame::OnMainBookNavigating(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    GetMainBook()->ShowNavigationDialog();
+    // show the navigation dialog based on the current focus
+    wxWindow* focused_window = wxWindow::FindFocus();
+    if(::IsWindowParentOf(GetMainBook(), focused_window)) {
+        GetMainBook()->ShowNavigationDialog();
+    } else if(::IsWindowParentOf(GetOutputPane(), focused_window)) {
+        ShowNavDialog(GetOutputPane()->GetNotebook());
+    } else if(::IsWindowParentOf(GetWorkspacePane(), focused_window)) {
+        ShowNavDialog(GetWorkspacePane()->GetNotebook());
+    }
 }
 
 void clMainFrame::OnMainBookMovePage(wxCommandEvent& e)

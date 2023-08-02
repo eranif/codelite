@@ -7,7 +7,6 @@
 #include "codelite_exports.h"
 #include "wxTerminalCtrl.h"
 
-#include <wx/aui/auibook.h>
 #include <wx/panel.h>
 
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel

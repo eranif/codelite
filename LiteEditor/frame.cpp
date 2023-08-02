@@ -5857,6 +5857,10 @@ namespace
 {
 void ShowNavDialog(Notebook* book)
 {
+    if(!EditorConfigST::Get()->GetOptions()->IsCtrlTabEnabled()) {
+        return;
+    }
+
     if(book->GetPageCount() == 0) {
         return;
     }
@@ -5872,13 +5876,9 @@ void clMainFrame::OnMainBookNavigating(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     // show the navigation dialog based on the current focus
-    wxWindow* focused_window = wxWindow::FindFocus();
-    if(::IsWindowParentOf(GetMainBook(), focused_window)) {
-        GetMainBook()->ShowNavigationDialog();
-    } else if(::IsWindowParentOf(GetOutputPane(), focused_window)) {
-        ShowNavDialog(GetOutputPane()->GetNotebook());
-    } else if(::IsWindowParentOf(GetWorkspacePane(), focused_window)) {
-        ShowNavDialog(GetWorkspacePane()->GetNotebook());
+    Notebook* book = ::FindNotebookParentOf(wxWindow::FindFocus());
+    if(book) {
+        ShowNavDialog(book);
     }
 }
 

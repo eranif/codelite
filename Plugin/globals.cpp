@@ -25,7 +25,6 @@
 #include "globals.h"
 
 #include "ColoursAndFontsManager.h"
-#include "Notebook.h"
 #include "SelectFileTypesDialog.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -2196,4 +2195,21 @@ bool IsWindowParentOf(wxWindow* parent, wxWindow* child)
         }
     }
     return false;
+}
+
+Notebook* FindNotebookParentOf(wxWindow* child)
+{
+    if(!child) {
+        return nullptr;
+    }
+
+    wxWindow* parent = child->GetParent();
+    while(parent) {
+        Notebook* book = dynamic_cast<Notebook*>(parent);
+        if(book) {
+            return book;
+        }
+        parent = parent->GetParent();
+    }
+    return nullptr;
 }

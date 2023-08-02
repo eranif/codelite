@@ -25,6 +25,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include "Notebook.h"
 #include "codelite_exports.h"
 #include "fileextmanager.h"
 #include "macros.h"
@@ -677,4 +678,7 @@ WXDLLIMPEXP_SDK bool SetBestFocus(wxWindow* win);
 
 /// Check if Window `parent` is the parent (or grand parent, or grand-grand-parent ...) of `child`
 WXDLLIMPEXP_SDK bool IsWindowParentOf(wxWindow* parent, wxWindow* child);
+
+/// Find Notebook parent of a `child`
+WXDLLIMPEXP_SDK Notebook* FindNotebookParentOf(wxWindow* child);
 #endif // GLOBALS_H

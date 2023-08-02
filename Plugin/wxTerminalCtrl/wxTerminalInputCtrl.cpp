@@ -181,7 +181,11 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
         OnDown();
         break;
     case WXK_TAB:
-        OnTabComplete();
+        if(event.GetModifiers() == 0) {
+            OnTabComplete();
+        } else {
+            event.Skip();
+        }
         return;
     default: {
         event.Skip();

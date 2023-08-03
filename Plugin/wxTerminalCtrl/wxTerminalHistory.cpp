@@ -8,6 +8,11 @@
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
+namespace
+{
+constexpr size_t HISTORY_MAX_SIZE = 500;
+}
+
 void wxTerminalHistory::Store()
 {
     wxFileName history(clStandardPaths::Get().GetUserDataDir(), "history");
@@ -46,10 +51,15 @@ void wxTerminalHistory::Load()
             m_commands.Add(command);
         }
     }
+
+    if(m_commands.size() > HISTORY_MAX_SIZE) {
+        m_commands.resize(HISTORY_MAX_SIZE);
+    }
 }
 
 void wxTerminalHistory::Add(const wxString& command)
 {
+    // Items added are placed at the top
     wxString trimmed_command = command;
     trimmed_command.Trim().Trim(false);
     if(trimmed_command.empty()) {
@@ -61,6 +71,10 @@ void wxTerminalHistory::Add(const wxString& command)
     }
     m_commands.Insert(command, 0);
     m_current = wxNOT_FOUND;
+
+    if(m_commands.size() > HISTORY_MAX_SIZE) {
+        m_commands.resize(HISTORY_MAX_SIZE);
+    }
 }
 
 void wxTerminalHistory::Up()
@@ -101,20 +115,19 @@ void wxTerminalHistory::Clear()
 
 wxArrayString wxTerminalHistory::ForCompletion(const wxString& filter) const
 {
-    wxArrayString sorted;
+    wxArrayString output;
     if(filter.empty()) {
-        sorted = m_commands;
+        output = m_commands;
     } else {
         wxString lc_filer = filter.Lower();
-        sorted.reserve(m_commands.size());
+        output.reserve(m_commands.size());
 
         for(const auto& command : m_commands) {
             wxString lc_command = command.Lower();
             if(lc_command.Contains(lc_filer)) {
-                sorted.Add(command);
+                output.Add(command);
             }
         }
     }
-    sorted.Sort();
-    return sorted;
+    return output;
 }

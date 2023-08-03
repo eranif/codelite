@@ -54,7 +54,7 @@ protected:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
-    bool PromptForPasswordIfNeeded();
+    bool PromptForPasswordIfNeeded(const wxString &line_lowercase);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void ProcessOutputBuffer();
     wxStringView GetNextLine();

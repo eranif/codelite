@@ -20,6 +20,7 @@
 #include <wx/sizer.h>
 #include <wx/stdpaths.h>
 #include <wx/textdlg.h>
+#include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 
 INITIALISE_MODULE_LOG(TERM_LOG, "Terminal", "terminal.log");
@@ -189,11 +190,28 @@ void wxTerminalCtrl::Terminate()
     }
 }
 
-bool wxTerminalCtrl::PromptForPasswordIfNeeded()
+bool wxTerminalCtrl::PromptForPasswordIfNeeded(const wxString& line)
 {
-    wxString line = m_outputView->GetLineText(m_outputView->GetNumberOfLines() - 1);
-    line = line.Lower();
-    if(line.Contains("password:") || line.Contains("password for") || line.Contains("pin for")) {
+    static std::vector<wxString> password_phrases;
+    if(password_phrases.empty()) {
+        password_phrases = {
+            "password:",
+            "password for",
+            "pin for",
+            "press the button on your yubikey",
+        };
+    }
+
+    auto should_prompt_user_func = [](const wxString& text) -> bool {
+        for(const auto& expr : password_phrases) {
+            if(text.Contains(expr)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    if(should_prompt_user_func(line.Lower())) {
         wxString pass = ::wxGetPasswordFromUser(line, "CodeLite", wxEmptyString, wxTheApp->GetTopWindow());
         if(pass.empty()) {
             GenerateCtrlC();
@@ -290,13 +308,19 @@ void wxTerminalCtrl::ProcessOutputBuffer()
 
     wxStringView sv{ m_processOutput.data(), m_processOutput.length() };
     LOG_IF_DEBUG { LOG_DEBUG(TERM_LOG) << "<--" << wxString(sv.data(), sv.length()) << endl; }
+
     AppendText(sv);
+
+    wxArrayString new_lines = ::wxStringTokenize(m_processOutput, "\r\n", wxTOKEN_STRTOK);
 
     // consume the string from the output buffer
     m_processOutput.clear();
 
-    if(PromptForPasswordIfNeeded()) {
-        return;
+    // Check if any of the newly added lines require password prompting
+    for(const auto& line : new_lines) {
+        if(PromptForPasswordIfNeeded(line)) {
+            break;
+        }
     }
 
     // see if we need to prompt for password

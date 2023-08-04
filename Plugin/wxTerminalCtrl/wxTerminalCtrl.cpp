@@ -34,10 +34,11 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
         return;
     }
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_outputView = new TextView(this);
+    m_inputCtrl = new wxTerminalInputCtrl(this);
+    m_outputView = new TextView(this, m_inputCtrl);
     m_outputView->SetSink(this);
     GetSizer()->Add(m_outputView, wxSizerFlags(1).Expand());
-    m_inputCtrl = new wxTerminalInputCtrl(this, m_outputView->GetCtrl());
+    GetSizer()->Add(m_inputCtrl->GetCtrl(), wxSizerFlags(0).Expand());
     CallAfter(&wxTerminalCtrl::StartShell);
 }
 

@@ -51,7 +51,7 @@ constexpr int MARKER_ARROWS = 2;
 constexpr int MARING_MARKER_ID = 2;
 } // namespace
 
-wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl)
+wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
     : m_terminal(parent)
 {
     m_ctrl = new wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
@@ -494,4 +494,13 @@ void wxTerminalInputCtrl::SimulateKeyEvent(const wxKeyEvent& event)
     wxUnusedVar(event);
     m_ctrl->SetFocus();
 #endif
+}
+
+void wxTerminalInputCtrl::Paste()
+{
+    CHECK_PTR_RET(m_ctrl);
+    CHECK_COND_RET(m_ctrl->CanPaste());
+    m_ctrl->SetFocus();
+    m_ctrl->SetInsertionPointEnd();
+    m_ctrl->Paste();
 }

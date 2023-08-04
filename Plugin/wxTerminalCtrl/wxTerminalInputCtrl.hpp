@@ -65,7 +65,7 @@ protected:
     void OnTabComplete();
 
 public:
-    wxTerminalInputCtrl(wxTerminalCtrl* parent, wxStyledTextCtrl* ctrl);
+    wxTerminalInputCtrl(wxTerminalCtrl* parent);
     virtual ~wxTerminalInputCtrl();
     void SetWritePositionEnd();
     void UpdateTextDeleted(int num);
@@ -80,6 +80,9 @@ public:
 
     void ApplyTheme();
     void OnThemeChanged(clCommandEvent& event);
+    void Paste();
+
+    wxStyledTextCtrl* GetCtrl() { return m_ctrl; }
 };
 
 #endif // WXTERMINALINPUTCTRL_HPP

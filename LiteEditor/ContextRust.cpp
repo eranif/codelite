@@ -31,12 +31,13 @@
 #include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "editor_config.h"
+
 #include <unordered_set>
 
 ContextRust::ContextRust(clEditor* editor)
     : ContextGeneric(editor, "rust")
 {
-    editor->SetWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$");
+    editor->SetWordChars("!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$");
     m_completionTriggerStrings.insert(".");
     m_completionTriggerStrings.insert("::");
     SetName("rust");

@@ -5,7 +5,7 @@
     This section only works for [C++ workspace][1]
     
 
-You can customise much of CodeLite's behaviour from the Settings menu; in particular, Right-click on the worksapace and
+You can customise much of CodeLite's behaviour from the Settings menu; in particular, Right-click on the workspace and
 select `Workspace Editor Preferences` this lets you make choices about everyday things such as whether line numbers are shown, 
 how deep is indentation, what margins are visible. These choices are applied globally, which is usually what you want.
 

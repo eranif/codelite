@@ -1,8 +1,8 @@
 #include "wxTerminalColourHandler.h"
 
-#include "TextView.h"
 #include "drawingutils.h"
 #include "wxTerminalCtrl.h"
+#include "wxTerminalOutputCtrl.hpp"
 
 #ifdef __WXMSW__
 #include "wx/msw/wrapwin.h" // includes windows.h

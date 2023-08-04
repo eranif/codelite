@@ -2,7 +2,6 @@
 
 #include "Platform.hpp"
 #include "StringUtils.h"
-#include "TextView.h"
 #include "clModuleLogger.hpp"
 #include "clResult.hpp"
 #include "environmentconfig.h" // EnvSetter
@@ -10,6 +9,7 @@
 #include "file_logger.h"
 #include "ssh/ssh_account_info.h"
 #include "wxTerminalInputCtrl.hpp"
+#include "wxTerminalOutputCtrl.hpp"
 
 #include <wx/app.h>
 #include <wx/filename.h>

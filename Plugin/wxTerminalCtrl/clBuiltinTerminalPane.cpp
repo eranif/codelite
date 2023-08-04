@@ -3,7 +3,6 @@
 #include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
 #include "Platform.hpp"
-#include "TextView.h"
 #include "bitmap_loader.h"
 #include "clWorkspaceManager.h"
 #include "drawingutils.h"
@@ -12,6 +11,7 @@
 #include "imanager.h"
 #include "macros.h"
 #include "ssh/ssh_account_info.h"
+#include "wxTerminalOutputCtrl.hpp"
 
 #include <wx/app.h>
 #include <wx/sizer.h>

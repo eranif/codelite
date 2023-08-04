@@ -2,10 +2,10 @@
 
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
-#include "TextView.h"
 #include "clSystemSettings.h"
 #include "event_notifier.h"
 #include "wxTerminalCtrl.h"
+#include "wxTerminalOutputCtrl.hpp"
 
 #include <vector>
 #include <wx/bitmap.h>

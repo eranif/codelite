@@ -1231,7 +1231,17 @@ void RemotyWorkspace::OnSftpSaveError(clCommandEvent& event)
     if(!IsOpened()) {
         return;
     }
-    ::wxMessageBox(_("Failed to save file: ") + event.GetFileName(), "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+
+    // Attempt to reconnect
+    wxBusyCursor bc;
+    clGetManager()->SetStatusMessage(wxString() << _("Reconnecting to: ") << event.GetSshAccount());
+    wxYield();
+    if(clSFTPManager::Get().AddConnection(event.GetSshAccount(), true)) {
+        clGetManager()->GetActiveEditor()->Save();
+    } else {
+        ::wxMessageBox(_("Failed to save file: ") + event.GetFileName() + "\n" + event.GetString(), "CodeLite (Remoty)",
+                       wxICON_WARNING | wxOK | wxCENTRE);
+    }
 }
 
 void RemotyWorkspace::OnSftpSaveSuccess(clCommandEvent& event)

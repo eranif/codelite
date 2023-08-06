@@ -97,6 +97,15 @@ void clSFTPManager::Release()
     }
 }
 
+bool clSFTPManager::AddConnection(const wxString& account_name, bool replace)
+{
+    auto acc = SSHAccountInfo::LoadAccount(account_name);
+    if(!acc.IsOk()) {
+        return false;
+    }
+    return AddConnection(acc, replace);
+}
+
 bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
 {
     wxBusyCursor bc;
@@ -126,6 +135,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
         ssh->Login();
         clSFTP::Ptr_t sftp(new clSFTP(ssh));
         sftp->Initialize();
+        sftp->SetAccount(account.GetAccountName());
         m_connections.insert({ account.GetAccountName(), { account, sftp } });
 
         // Notify that a session is established
@@ -354,6 +364,7 @@ void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& r
                 // notify about save success
                 clCommandEvent success_event(wxEVT_SFTP_ASYNC_SAVE_COMPLETED);
                 success_event.SetFileName(remotePath);
+                success_event.SetSshAccount(conn->GetAccount());
                 sink->AddPendingEvent(success_event);
             }
         } catch(clException& e) {
@@ -361,6 +372,7 @@ void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& r
             clCommandEvent fail_event(wxEVT_SFTP_ASYNC_SAVE_ERROR);
             fail_event.SetFileName(remotePath);
             fail_event.SetString(e.What());
+            fail_event.SetSshAccount(conn->GetAccount());
             sink->AddPendingEvent(fail_event);
         }
         // always delete the file
@@ -494,7 +506,7 @@ bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUse
     return true;
 }
 
-SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo)
+clResult<SFTPAttribute::List_t, bool> clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo)
 {
     wxBusyCursor bc;
     // save file async
@@ -519,9 +531,9 @@ SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccount
     };
     m_q.push_back(std::move(func));
     if(!future.get()) {
-        return {};
+        return clResult<SFTPAttribute::List_t, bool>::make_error(false);
     }
-    return result;
+    return clResult<SFTPAttribute::List_t, bool>::make_success(result);
 }
 
 bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountInfo)
@@ -653,7 +665,7 @@ void clSFTPManager::OnTimer(wxTimerEvent& event)
             try {
                 conn->SendKeepAlive();
             } catch(clException& e) {
-                clWARNING() << "failed to send keep-alive message for account:" << e.What() << endl;
+                clERROR() << "failed to send keep-alive message for account:" << e.What() << endl;
             }
         };
         m_q.push_back(std::move(func));

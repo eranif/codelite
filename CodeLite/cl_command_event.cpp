@@ -63,6 +63,7 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_cmdString = src.m_cmdString;
     m_commandInt = src.m_commandInt;
     m_extraLong = src.m_extraLong;
+    m_sshAccount = src.m_sshAccount;
     return *this;
 }
 
@@ -223,7 +224,6 @@ clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
     m_memoryBlockValue = other.m_memoryBlockValue;
     m_breakpoints = other.m_breakpoints;
     m_isSSHDebugging = other.m_isSSHDebugging;
-    m_sshAccount = other.m_sshAccount;
     m_alternateDebuggerPath = other.m_alternateDebuggerPath;
     m_uiBreakpoint = other.m_uiBreakpoint;
     return *this;
@@ -522,7 +522,9 @@ clEditorEvent::clEditorEvent(wxEventType commandType, int winid)
 
 clEditorEvent::clEditorEvent(const clEditorEvent& event) { *this = event; }
 
-clEditorEvent::~clEditorEvent() { /* we do not delete the user data */ }
+clEditorEvent::~clEditorEvent()
+{ /* we do not delete the user data */
+}
 
 clEditorEvent& clEditorEvent::operator=(const clEditorEvent& src)
 {

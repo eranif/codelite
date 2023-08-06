@@ -2,6 +2,7 @@
 #define CLSFTPMANAGER_HPP
 
 #if USE_SFTP
+#include "clResult.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "ssh/cl_sftp.h"
@@ -90,6 +91,12 @@ public:
      * true, replace it
      */
     bool AddConnection(const SSHAccountInfo& account, bool replace = false);
+
+    /**
+     * @brief add new connection to the manager. if a connection for this account already exists and 'replace' is set to
+     * true, replace it
+     */
+    bool AddConnection(const wxString& account_name, bool replace = false);
 
     /**
      * @brief open remote file in an editor and return a pointer to the editor
@@ -183,7 +190,7 @@ public:
      * @param path
      * @return
      */
-    SFTPAttribute::List_t List(const wxString& path, const SSHAccountInfo& accountInfo);
+    clResult<SFTPAttribute::List_t, bool> List(const wxString& path, const SSHAccountInfo& accountInfo);
 
     /**
      * @brief create new file with a given path

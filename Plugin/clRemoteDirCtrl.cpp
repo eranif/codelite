@@ -116,6 +116,16 @@ bool clRemoteDirCtrl::Close(bool promptUser)
     return true;
 }
 
+#define RECONNECT_RET(msg)                                                                                \
+    clGetManager()->SetStatusMessage(wxString() << _("Reconnecting to: ") << m_account.GetAccountName()); \
+    wxYield();                                                                                            \
+    if(!clSFTPManager::Get().AddConnection(m_account, true)) {                                            \
+        ::wxMessageBox(msg, "CodeLite", wxICON_ERROR | wxOK);                                             \
+        return;                                                                                           \
+    }                                                                                                     \
+    clGetManager()->SetStatusMessage(wxString() << _("Connected to: ") << m_account.GetAccountName());    \
+    wxYield();
+
 void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
 {
     wxBusyCursor bc;
@@ -127,7 +137,16 @@ void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
         return;
     }
 
-    auto entries = clSFTPManager::Get().List(cd->IsSymlink() ? cd->GetSymlinkTarget() : cd->GetFullPath(), m_account);
+    auto res = clSFTPManager::Get().List(cd->IsSymlink() ? cd->GetSymlinkTarget() : cd->GetFullPath(), m_account);
+    if(!res) {
+        RECONNECT_RET(_("Failed to list remote files. Connection lost"));
+        res = clSFTPManager::Get().List(cd->IsSymlink() ? cd->GetSymlinkTarget() : cd->GetFullPath(), m_account);
+    }
+
+    if(!res) {
+        ::wxMessageBox(_("Failed to list remote files. Connection lost"), "CodeLite", wxICON_ERROR | wxOK);
+        return;
+    }
 
     // remove the fake item "dummy"
     wxTreeItemIdValue cookie;
@@ -136,8 +155,8 @@ void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
 
     // mark the entry as "initialized"
     cd->SetInitialized(true);
-
-    for(auto entry : entries) {
+    SFTPAttribute::List_t list = res.success();
+    for(auto entry : list) {
         if(entry->GetName() == "." || entry->GetName() == "..")
             continue;
 
@@ -345,15 +364,21 @@ void clRemoteDirCtrl::DoOpenItem(const wxTreeItemId& item, eDownloadAction actio
 
     switch(action) {
     case kOpenInCodeLite:
-        clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
+        if(!clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account)) {
+            RECONNECT_RET(_("Failed to open file: connection lost"));
+            clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
+        }
         break;
     case kOpenInExplorer: {
         auto editor = clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
-        if(editor) {
-            auto cd = reinterpret_cast<SFTPClientData*>(editor->GetClientData("sftp"));
-            if(cd) {
-                FileUtils::OpenFileExplorerAndSelect(cd->GetLocalPath());
-            }
+        if(!editor) {
+            RECONNECT_RET(_("Failed to open file: connection lost"));
+            editor = clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
+        }
+        CHECK_PTR_RET(editor);
+        auto cd = reinterpret_cast<SFTPClientData*>(editor->GetClientData("sftp"));
+        if(cd) {
+            FileUtils::OpenFileExplorerAndSelect(cd->GetLocalPath());
         }
         break;
     }

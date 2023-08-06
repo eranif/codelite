@@ -37,7 +37,7 @@ class WXDLLIMPEXP_CL SSHAccountInfo : public clConfigItem
     wxString m_accountName;
     wxString m_username;
     wxString m_password;
-    int m_port;
+    int m_port = wxNOT_FOUND;
     wxString m_host;
     wxArrayString m_bookmarks;
     wxString m_defaultFolder;
@@ -47,12 +47,11 @@ public:
 
 public:
     SSHAccountInfo();
-
     virtual ~SSHAccountInfo();
     SSHAccountInfo& operator=(const SSHAccountInfo& other);
 
+    bool IsOk() const { return !m_accountName.empty() && !m_host.empty() && !m_username.empty(); }
     void AddBookmark(const wxString& location);
-
     void SetBookmarks(const wxArrayString& bookmarks) { this->m_bookmarks = bookmarks; }
     const wxArrayString& GetBookmarks() const { return m_bookmarks; }
     void SetAccountName(const wxString& accountName) { this->m_accountName = accountName; }

@@ -432,7 +432,8 @@ void clRemoteDirCtrl::DoCreateFile(const wxTreeItemId& item, const wxString& nam
     wxString fullpath;
     fullpath << cd->GetFullPath() << "/" << name;
     if(!clSFTPManager::Get().NewFile(fullpath, m_account)) {
-        return;
+        RECONNECT_RET(_("Failed to create file: connection lost"));
+        CHECK_COND_RET(clSFTPManager::Get().NewFile(fullpath, m_account));
     }
 
     // update the tree view and open the file in the editor
@@ -464,7 +465,13 @@ void clRemoteDirCtrl::DoRename(const wxTreeItemId& item)
     cd->SetFullName(new_name);
     if(!clSFTPManager::Get().Rename(old_path, cd->GetFullPath(), m_account)) {
         cd->SetFullName(oldName); // restore the old name
-        return;
+        RECONNECT_RET(_("Failed to rename file: connection lost"));
+        // reconnect ok
+        cd->SetFullName(new_name);
+        if(!clSFTPManager::Get().Rename(old_path, cd->GetFullPath(), m_account)) {
+            cd->SetFullName(oldName); // restore the old name
+            return;
+        }
     }
 
     // update the text

@@ -290,14 +290,19 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
         clDEBUG() << "Build root dir is set to Cargo.toml path:" << m_cargoTomlFile.GetPath() << endl;
         basepath = m_cargoTomlFile.GetPath();
     }
-
-    if(basepath.empty()) {
+    bool is_abspath = event.GetFileName().StartsWith("/") || wxFileName(event.GetFileName()).IsAbsolute();
+    if(!is_abspath && basepath.empty()) {
         // unable to determine the root folder
         event.Skip();
         return;
     }
 
-    basepath << "/" << event.GetFileName();
+    if(!is_abspath) {
+        basepath << "/" << event.GetFileName();
+    } else {
+        basepath = event.GetFileName();
+    }
+
     wxFileName fnFile(basepath);
     if(!fnFile.FileExists()) {
         event.Skip(true); // let others handle this

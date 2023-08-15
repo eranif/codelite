@@ -78,12 +78,15 @@ void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const w
     m_ctrl->SetWrapMode(wxSTC_WRAP_CHAR);
     m_ctrl->SetEditable(false);
     m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-)#");
+    m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_SQUIGGLE);
+    m_ctrl->Bind(wxEVT_LEFT_DOWN, &TextView::OnLeftDown, this);
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
     CallAfter(&TextView::ReloadSettings);
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
+    wxTheApp->Bind(wxEVT_IDLE, &TextView::OnIdle, this);
     m_stcRenderer = new wxTerminalAnsiRendererSTC(m_ctrl);
 }
 
@@ -91,6 +94,8 @@ TextView::~TextView()
 {
     wxDELETE(m_stcRenderer);
     m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
+    wxTheApp->Unbind(wxEVT_IDLE, &TextView::OnIdle, this);
+    m_ctrl->Unbind(wxEVT_LEFT_DOWN, &TextView::OnLeftDown, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
 }
 
@@ -208,6 +213,7 @@ void TextView::ApplyTheme()
     SetDefaultStyle(defaultAttr);
     m_stcRenderer->SetDefaultAttributes(defaultAttr);
     m_stcRenderer->SetUseDarkThemeColours(lexer->IsDark());
+    m_ctrl->IndicatorSetForeground(INDICATOR_HYPERLINK, lexer->IsDark() ? wxColour("YELLOW") : wxColour("BLUE"));
     m_ctrl->Refresh();
 }
 
@@ -222,4 +228,96 @@ void TextView::OnKeyDown(wxKeyEvent& event)
     if(m_terminal) {
         m_terminal->GetInputCtrl()->SimulateKeyEvent(event);
     }
+}
+
+void TextView::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    if(!::wxGetKeyState(WXK_CONTROL)) {
+        ClearIndicators();
+        return;
+    }
+
+    int pos = m_ctrl->PositionFromPoint(m_ctrl->ScreenToClient(::wxGetMousePosition()));
+    int word_start_pos = m_ctrl->WordStartPosition(pos, true);
+    int word_end_pos = m_ctrl->WordEndPosition(pos, true);
+    IndicatorRange range{ word_start_pos, word_end_pos };
+    if(m_indicatorHyperlink.is_ok() && m_indicatorHyperlink == range) {
+        // already marked
+        return;
+    }
+    // clear the current
+    ClearIndicators();
+    // set new
+    m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
+    m_ctrl->IndicatorFillRange(range.start, range.length());
+    m_indicatorHyperlink = range;
+}
+
+void TextView::ClearIndicators()
+{
+    if(m_indicatorHyperlink.is_ok()) {
+        m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
+        m_ctrl->IndicatorClearRange(m_indicatorHyperlink.start, m_indicatorHyperlink.length());
+        m_indicatorHyperlink.reset();
+    }
+}
+
+void TextView::OnLeftDown(wxMouseEvent& event)
+{
+    event.Skip();
+    if(!m_indicatorHyperlink.is_ok()) {
+        return;
+    }
+
+    // fire an event
+    wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.start, m_indicatorHyperlink.end);
+
+    wxString file;
+    wxString line_str;
+    wxString col_str;
+    auto parts = ::wxStringTokenize(pattern, ":", wxTOKEN_STRTOK);
+    if(parts.size() > 1) {
+        if(parts[0].length() == 1) {
+            // single char -> volume
+            // assume windows fullpath
+            file = parts[0] + ":" + parts[1];
+            parts.RemoveAt(0, 2);
+        } else {
+            file = parts[0];
+            parts.RemoveAt(0, 1);
+        }
+        if(!parts.empty()) {
+            // line number
+            line_str = parts[0];
+            parts.RemoveAt(0, 1);
+        }
+        if(!parts.empty()) {
+            // column
+            col_str = parts[0];
+            parts.RemoveAt(0, 1);
+        }
+    } else {
+        file = pattern;
+    }
+
+    clDEBUG() << "Terminal: firing hostspot event for:" << endl;
+    clDEBUG() << "Terminal: file:" << file << endl;
+    clDEBUG() << "Terminal: line:" << line_str << endl;
+    clDEBUG() << "Terminal: column:" << col_str << endl;
+
+    clBuildEvent event_clicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
+    event_clicked.SetBuildDir(wxEmptyString); // can be empty
+    event_clicked.SetFileName(file);
+    event_clicked.SetLineNumber(0);
+    long nLine = 0;
+    if(!line_str.empty() && line_str.ToCLong(&nLine)) {
+        event_clicked.SetLineNumber(nLine);
+    }
+    event_clicked.SetProjectName(wxEmptyString);
+    if(EventNotifier::Get()->ProcessEvent(event_clicked)) {
+        return;
+    }
+
+    // TODO: provide default open behavior here
 }

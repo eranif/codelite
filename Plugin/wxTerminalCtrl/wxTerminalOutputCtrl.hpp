@@ -13,8 +13,30 @@
 
 class wxTerminalCtrl;
 class wxTerminalInputCtrl;
+
 class WXDLLIMPEXP_SDK TextView : public wxWindow
 {
+    struct IndicatorRange {
+        int start = wxNOT_FOUND;
+        int end = wxNOT_FOUND;
+        int length() const { return end - start; }
+        bool is_ok() const { return length() > 0; }
+        void reset() { start = end = wxNOT_FOUND; }
+        bool operator==(const IndicatorRange& other) const
+        {
+            return this->start == other.start && this->end == other.end;
+        }
+        IndicatorRange& operator=(const IndicatorRange& other)
+        {
+            if(this == &other) {
+                return *this;
+            }
+            this->start = other.start;
+            this->end = other.end;
+            return *this;
+        }
+    };
+
     wxStyledTextCtrl* m_ctrl = nullptr;
     wxTerminalAnsiEscapeHandler m_outputHandler;
     wxTerminalAnsiRendererSTC* m_stcRenderer = nullptr;
@@ -29,16 +51,20 @@ class WXDLLIMPEXP_SDK TextView : public wxWindow
     bool m_scrollToEndQueued = false;
     wxTerminalCtrl* m_terminal = nullptr;
     clEditEventsHandler::Ptr_t m_editEvents;
+    IndicatorRange m_indicatorHyperlink;
 
 protected:
     int GetCurrentStyle();
     void DoScrollToEnd();
     void RequestScrollToEnd();
     void OnThemeChanged(clCommandEvent& event);
+    void OnLeftDown(wxMouseEvent& event);
     void ApplyTheme();
     void OnKeyDown(wxKeyEvent& event);
     void Initialise(const wxFont& font = wxNullFont, const wxColour& bg_colour = *wxBLACK,
                     const wxColour& text_colour = *wxWHITE);
+    void ClearIndicators();
+    void OnIdle(wxIdleEvent& event);
 
 public:
     explicit TextView(wxTerminalCtrl* parent, wxTerminalInputCtrl* inputCtrl, wxWindowID winid = wxNOT_FOUND,

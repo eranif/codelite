@@ -342,12 +342,6 @@ void clFileSystemWorkspace::DoOpen()
     clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
     clWorkspaceManager::Get().SetWorkspace(this);
 
-    // Notify that the a new workspace is loaded
-    clWorkspaceEvent event(wxEVT_WORKSPACE_LOADED);
-    event.SetString(GetFileName());
-    event.SetFileName(GetFileName());
-    EventNotifier::Get()->ProcessEvent(event);
-
     // Update the build configurations button
     GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
 
@@ -359,6 +353,12 @@ void clFileSystemWorkspace::DoOpen()
 
     // mark the workspace as loaded before restoring the session
     m_isLoaded = true;
+
+    // Notify that the a new workspace is loaded
+    clWorkspaceEvent event(wxEVT_WORKSPACE_LOADED);
+    event.SetString(GetFileName());
+    event.SetFileName(GetFileName());
+    EventNotifier::Get()->ProcessEvent(event);
 
     // Load the workspace session (if any)
     RestoreSession();

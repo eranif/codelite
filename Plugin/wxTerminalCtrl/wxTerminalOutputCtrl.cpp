@@ -4,6 +4,8 @@
 #include "FontUtils.hpp"
 #include "clModuleLogger.hpp"
 #include "clSystemSettings.h"
+#include "clWorkspaceManager.h"
+#include "dirsaver.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
@@ -330,6 +332,14 @@ void TextView::OnLeftDown(wxMouseEvent& event)
     event_clicked.SetProjectName(wxEmptyString);
     if(EventNotifier::Get()->ProcessEvent(event_clicked)) {
         return;
+    }
+
+    // Default handling for opening files
+    // change dir to the active workspace directory
+    DirSaver ds;
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if(workspace && !workspace->IsRemote()) {
+        ::wxSetWorkingDirectory(wxFileName(workspace->GetFileName()).GetPath());
     }
 
     auto cb = [=](IEditor* editor) {

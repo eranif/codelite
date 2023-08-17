@@ -6,6 +6,7 @@
 #include "clSystemSettings.h"
 #include "event_notifier.h"
 #include "globals.h"
+#include "imanager.h"
 #include "wxTerminalCtrl.h"
 #include "wxTerminalInputCtrl.hpp"
 
@@ -78,7 +79,7 @@ void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const w
     m_ctrl->SetWrapMode(wxSTC_WRAP_CHAR);
     m_ctrl->SetEditable(false);
     m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-)#");
-    m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_SQUIGGLE);
+    m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
     m_ctrl->Bind(wxEVT_LEFT_DOWN, &TextView::OnLeftDown, this);
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
@@ -213,7 +214,7 @@ void TextView::ApplyTheme()
     SetDefaultStyle(defaultAttr);
     m_stcRenderer->SetDefaultAttributes(defaultAttr);
     m_stcRenderer->SetUseDarkThemeColours(lexer->IsDark());
-    m_ctrl->IndicatorSetForeground(INDICATOR_HYPERLINK, lexer->IsDark() ? wxColour("YELLOW") : wxColour("BLUE"));
+    m_ctrl->IndicatorSetForeground(INDICATOR_HYPERLINK, lexer->IsDark() ? wxColour("WHITE") : wxColour("BLUE"));
     m_ctrl->Refresh();
 }
 
@@ -246,20 +247,24 @@ void TextView::OnIdle(wxIdleEvent& event)
         // already marked
         return;
     }
+
     // clear the current
     ClearIndicators();
+
     // set new
     m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
-    m_ctrl->IndicatorFillRange(range.start, range.length());
+    m_ctrl->IndicatorFillRange(range.get_start(), range.length());
     m_indicatorHyperlink = range;
+    m_ctrl->SetCursor(wxCURSOR_HAND);
 }
 
 void TextView::ClearIndicators()
 {
     if(m_indicatorHyperlink.is_ok()) {
         m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
-        m_ctrl->IndicatorClearRange(m_indicatorHyperlink.start, m_indicatorHyperlink.length());
+        m_ctrl->IndicatorClearRange(m_indicatorHyperlink.get_start(), m_indicatorHyperlink.length());
         m_indicatorHyperlink.reset();
+        m_ctrl->SetCursor(wxCURSOR_IBEAM);
     }
 }
 
@@ -271,7 +276,15 @@ void TextView::OnLeftDown(wxMouseEvent& event)
     }
 
     // fire an event
-    wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.start, m_indicatorHyperlink.end);
+    wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.get_start(), m_indicatorHyperlink.get_end());
+
+    // if the pattern matches a URL, open it
+    if(pattern.StartsWith("https://") || pattern.StartsWith("http://")) {
+        m_indicatorHyperlink.reset();
+        m_ctrl->SetCursor(wxCURSOR_IBEAM);
+        ::wxLaunchDefaultBrowser(pattern);
+        return;
+    }
 
     wxString file;
     wxString line_str;
@@ -319,5 +332,12 @@ void TextView::OnLeftDown(wxMouseEvent& event)
         return;
     }
 
-    // TODO: provide default open behavior here
+    auto cb = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
+        // compilers report line numbers starting from `1`
+        // our editor sees line numbers starting from `0`
+        editor->CenterLine(nLine > 0 ? nLine - 1 : 0, wxNOT_FOUND);
+        editor->SetActive();
+    };
+    clGetManager()->OpenFileAndAsyncExecute(file, std::move(cb));
 }

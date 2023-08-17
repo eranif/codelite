@@ -17,15 +17,28 @@ class wxTerminalInputCtrl;
 class WXDLLIMPEXP_SDK TextView : public wxWindow
 {
     struct IndicatorRange {
+    private:
         int start = wxNOT_FOUND;
         int end = wxNOT_FOUND;
+
+    public:
         int length() const { return end - start; }
         bool is_ok() const { return length() > 0; }
+        int get_start() const { return start; }
+        int get_end() const { return end; }
         void reset() { start = end = wxNOT_FOUND; }
+
+        void set_range(int s, int e)
+        {
+            start = s;
+            end = e;
+        }
+
         bool operator==(const IndicatorRange& other) const
         {
             return this->start == other.start && this->end == other.end;
         }
+
         IndicatorRange& operator=(const IndicatorRange& other)
         {
             if(this == &other) {
@@ -35,6 +48,12 @@ class WXDLLIMPEXP_SDK TextView : public wxWindow
             this->end = other.end;
             return *this;
         }
+        IndicatorRange(int s, int e)
+            : start(s)
+            , end(e)
+        {
+        }
+        IndicatorRange() {}
     };
 
     wxStyledTextCtrl* m_ctrl = nullptr;

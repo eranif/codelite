@@ -84,6 +84,8 @@ protected:
                     const wxColour& text_colour = *wxWHITE);
     void ClearIndicators();
     void OnIdle(wxIdleEvent& event);
+    void OnEnterWindow(wxMouseEvent& event);
+    void OnLeaveWindow(wxMouseEvent& event);
 
 public:
     explicit TextView(wxTerminalCtrl* parent, wxTerminalInputCtrl* inputCtrl, wxWindowID winid = wxNOT_FOUND,

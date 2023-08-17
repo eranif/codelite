@@ -82,14 +82,14 @@ void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const w
     m_ctrl->SetEditable(false);
     m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-)#");
     m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
-    m_ctrl->Bind(wxEVT_LEFT_DOWN, &TextView::OnLeftDown, this);
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
     CallAfter(&TextView::ReloadSettings);
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
-    wxTheApp->Bind(wxEVT_IDLE, &TextView::OnIdle, this);
+    m_ctrl->Bind(wxEVT_IDLE, &TextView::OnIdle, this);
+    m_ctrl->Bind(wxEVT_LEFT_DOWN, &TextView::OnLeftDown, this);
     m_stcRenderer = new wxTerminalAnsiRendererSTC(m_ctrl);
 }
 
@@ -97,7 +97,7 @@ TextView::~TextView()
 {
     wxDELETE(m_stcRenderer);
     m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
-    wxTheApp->Unbind(wxEVT_IDLE, &TextView::OnIdle, this);
+    m_ctrl->Unbind(wxEVT_IDLE, &TextView::OnIdle, this);
     m_ctrl->Unbind(wxEVT_LEFT_DOWN, &TextView::OnLeftDown, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
 }
@@ -236,12 +236,22 @@ void TextView::OnKeyDown(wxKeyEvent& event)
 void TextView::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+    if(!m_ctrl->IsShownOnScreen()) {
+        ClearIndicators();
+        return;
+    }
+
     if(!::wxGetKeyState(WXK_CONTROL)) {
         ClearIndicators();
         return;
     }
 
-    int pos = m_ctrl->PositionFromPoint(m_ctrl->ScreenToClient(::wxGetMousePosition()));
+    auto client_pt = m_ctrl->ScreenToClient(::wxGetMousePosition());
+    if(!m_ctrl->GetRect().Contains(client_pt)) {
+        return;
+    }
+
+    int pos = m_ctrl->PositionFromPoint(client_pt);
     int word_start_pos = m_ctrl->WordStartPosition(pos, true);
     int word_end_pos = m_ctrl->WordEndPosition(pos, true);
     IndicatorRange range{ word_start_pos, word_end_pos };
@@ -262,17 +272,18 @@ void TextView::OnIdle(wxIdleEvent& event)
 
 void TextView::ClearIndicators()
 {
+    m_ctrl->SetCursor(wxCURSOR_IBEAM);
     if(m_indicatorHyperlink.is_ok()) {
         m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
         m_ctrl->IndicatorClearRange(m_indicatorHyperlink.get_start(), m_indicatorHyperlink.length());
         m_indicatorHyperlink.reset();
-        m_ctrl->SetCursor(wxCURSOR_IBEAM);
     }
 }
 
 void TextView::OnLeftDown(wxMouseEvent& event)
 {
     event.Skip();
+
     if(!m_indicatorHyperlink.is_ok()) {
         return;
     }
@@ -350,4 +361,18 @@ void TextView::OnLeftDown(wxMouseEvent& event)
         editor->SetActive();
     };
     clGetManager()->OpenFileAndAsyncExecute(file, std::move(cb));
+}
+
+void TextView::OnEnterWindow(wxMouseEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_ctrl);
+    m_ctrl->SetCursor(wxCURSOR_IBEAM);
+}
+
+void TextView::OnLeaveWindow(wxMouseEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_ctrl);
+    m_ctrl->SetCursor(wxCURSOR_IBEAM);
 }

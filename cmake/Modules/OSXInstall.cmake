@@ -11,36 +11,47 @@ macro(CL_OSX_COPY_BREW_LIB lib_full_path destination_folder)
     # -sf real-${__lib_basename} ${__lib_basename}") endif()
 endmacro()
 
-macro(CL_OSX_FIND_BREW_LIB __lib_name LIB_OUTPUT_VARIABLE)
+macro(CL_OSX_FIND_BREW_LIB BREW_PKG_NAME __lib_name LIB_OUTPUT_VARIABLE)
     if(APPLE)
-        unset(${LIB_OUTPUT_VARIABLE} CACHE)
-        find_library(
-            ${LIB_OUTPUT_VARIABLE}
-            NAMES ${__lib_name}
-            HINTS ${BREW_PREFIX}/lib
-            PATH_SUFFIXES lib)
+        execute_process(
+            COMMAND brew --prefix --installed ${BREW_PKG_NAME}
+            OUTPUT_VARIABLE __PKG_PREFIX
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+        if(NOT __PKG_PREFIX)
+            message(FATAL_ERROR "Could not locate brew install for ${BREW_PKG_NAME}")
+        endif()
+
+        set(TMP_FILEPATH "${__PKG_PREFIX}/lib/lib${__lib_name}.dylib")
+        if(NOT EXISTS ${TMP_FILEPATH})
+            message(FATAL_ERROR "Could not locate ${TMP_FILEPATH}")
+        endif()
+        set(${LIB_OUTPUT_VARIABLE} "-L${__PKG_PREFIX}/lib -l${__lib_name}")
+        message(STATUS "${LIB_OUTPUT_VARIABLE} is set to ${${LIB_OUTPUT_VARIABLE}}")
+        message(STATUS "Copying ${TMP_FILEPATH} -> ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS")
+        execute_process(COMMAND mkdir -p "${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS")
+        execute_process(COMMAND cp -L "${TMP_FILEPATH}" "${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS")
     endif()
 endmacro()
 
-macro(CL_OSX_FIND_BREW_HEADER __header_name HEADER_OUTPUT_VARIABLE)
+macro(CL_OSX_FIND_BREW_HEADER BREW_PKG_NAME __header_name HEADER_OUTPUT_VARIABLE)
     if(APPLE)
-        unset(${HEADER_OUTPUT_VARIABLE} CACHE)
-        find_path(
-            ${HEADER_OUTPUT_VARIABLE}
-            NAMES ${__header_name}
-            HINTS ${BREW_PREFIX}/include
-            PATH_SUFFIXES include)
+        execute_process(
+            COMMAND brew --prefix --installed ${BREW_PKG_NAME}
+            OUTPUT_VARIABLE __PKG_PREFIX
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if(NOT __PKG_PREFIX)
+            message(FATAL_ERROR "Could not locate brew install for ${BREW_PKG_NAME}")
+        endif()
+
+        set(TMP_FILEPATH "${__PKG_PREFIX}/include/${__header_name}")
+        if(NOT EXISTS ${TMP_FILEPATH})
+            message(FATAL_ERROR "Could not locate ${TMP_FILEPATH}")
+        endif()
+        set(${HEADER_OUTPUT_VARIABLE} "${__PKG_PREFIX}/include")
+        message(STATUS "${HEADER_OUTPUT_VARIABLE} is set to ${${HEADER_OUTPUT_VARIABLE}}")
     endif()
 endmacro()
-
-function(copy_extra_homebrew_libs)
-    # if these files also exists under /opt/homebrew -> use this path instead
-    execute_process(COMMAND cp -L "/opt/homebrew/opt/libssh/lib/libssh.4.dylib"
-                            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
-    execute_process(COMMAND cp -L "/opt/homebrew/opt/hunspell/lib/libhunspell-1.7.0.dylib"
-                            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS ERROR_QUIET OUTPUT_QUIET)
-    copy_lib_deps("/opt/homebrew/opt/libssh/lib/libssh.4.dylib" "homebrew")
-endfunction()
 
 function(copy_lib_deps LIB_FULLPATH DEPS_PATTERN)
     execute_process(
@@ -146,9 +157,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
             set(CL_SRC_ROOT "/Users/eran/devl/codelite")
         endif()
 
-        message("-- Removing old bundle folder...")
-        file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/codelite.app)
-        message("-- Removing old bundle folder...done")
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
@@ -160,8 +168,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/cppcheck)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/dics)
-
-        copy_extra_homebrew_libs()
 
         file(COPY ${CL_SRC_ROOT}/svgs/logo/osx/icon.icns
              DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources)

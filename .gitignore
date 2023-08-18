@@ -26,3 +26,4 @@ compile_commands.json
 compile_flags.txt
 wxcrafter/src/wxcversion.cpp
 LiteEditor/autoversion.h
+.DS_Store

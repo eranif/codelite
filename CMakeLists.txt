@@ -341,9 +341,8 @@ if(WITH_SFTP)
                 NAMES libssh.h
                 PATH_SUFFIXES include/libssh)
         elseif(APPLE)
-            cl_osx_find_brew_lib(libssh.4.dylib LIBSSH_LIB)
-            cl_osx_find_brew_header(libssh/libssh.h LIBSSH_INCLUDE_DIR)
-            message(STATUS "LIBSSH_INCLUDE_DIR is set to ${LIBSSH_INCLUDE_DIR}")
+            cl_osx_find_brew_lib(libssh ssh.4 LIBSSH_LIB)
+            cl_osx_find_brew_header(libssh libssh/libssh.h LIBSSH_INCLUDE_DIR)
             include_directories(${LIBSSH_INCLUDE_DIR})
         elseif(UNIX)
             # Linux

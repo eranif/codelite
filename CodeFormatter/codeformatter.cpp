@@ -151,6 +151,7 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &CodeFormatter::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CodeFormatter::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &CodeFormatter::OnInitDone, this);
 
     Bind(wxEVT_FORMAT_INPLACE_COMPELTED, &CodeFormatter::OnInplaceFormatCompleted, this);
     Bind(wxEVT_FORMAT_COMPELTED, &CodeFormatter::OnFormatCompleted, this);
@@ -348,6 +349,7 @@ void CodeFormatter::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FORMAT_FILE, &CodeFormatter::OnFormatFile, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &CodeFormatter::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &CodeFormatter::OnInitDone, this);
 
     Unbind(wxEVT_FORMAT_INPLACE_COMPELTED, &CodeFormatter::OnInplaceFormatCompleted, this);
     Unbind(wxEVT_FORMAT_COMPELTED, &CodeFormatter::OnFormatCompleted, this);
@@ -571,4 +573,17 @@ void CodeFormatter::OnInplaceFormatCompleted(clSourceFormatEvent& event)
     event_modified.SetPath(filepath);
     event_modified.SetIsRemoteFile(!wxFileName::FileExists(filepath));
     EventNotifier::Get()->AddPendingEvent(event_modified);
+}
+
+void CodeFormatter::OnInitDone(wxCommandEvent& e)
+{
+    e.Skip();
+    // if no formatters are set, re-scan
+    wxArrayString all_names;
+    if(m_manager.GetAllNames(&all_names) == 0) {
+        wxUnusedVar(all_names);
+        wxBusyCursor bc;
+        m_manager.RestoreDefaults();
+        m_manager.Save();
+    }
 }

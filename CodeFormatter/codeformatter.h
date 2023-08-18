@@ -55,6 +55,7 @@ private:
 
     void OnFormatCompleted(clSourceFormatEvent& event);
     void OnInplaceFormatCompleted(clSourceFormatEvent& event);
+    void OnInitDone(wxCommandEvent& e);
 
 public:
     /**

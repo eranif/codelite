@@ -54,6 +54,7 @@ macro(CL_OSX_FIND_BREW_HEADER BREW_PKG_NAME __header_name HEADER_OUTPUT_VARIABLE
 endmacro()
 
 function(copy_lib_deps LIB_FULLPATH DEPS_PATTERN)
+    execute_process(COMMAND mkdir -p ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
     execute_process(
         COMMAND sh -c "otool -L ${LIB_FULLPATH} |grep ${DEPS_PATTERN}|grep -v ${LIB_FULLPATH} |cut -d '(' -f1"
         OUTPUT_VARIABLE _HOMEBREW_DEPS
@@ -62,10 +63,10 @@ function(copy_lib_deps LIB_FULLPATH DEPS_PATTERN)
     string(REPLACE "\t" "" _HOMEBREW_DEPS "${_HOMEBREW_DEPS}")
     string(REPLACE "\n" ";" _HOMEBREW_DEPS "${_HOMEBREW_DEPS}")
     foreach(DLL ${_HOMEBREW_DEPS})
-        message(STATUS "Copying ${DLL} into bundle/MacOS")
-        execute_process(COMMAND cp -L ${DLL} ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
+        message(STATUS "Copying ${DLL} -> ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS (Dep of: ${LIB_FULLPATH})")
+        execute_process(COMMAND cp -fL ${DLL} ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
         if(NOT "${DLL}" STREQUAL "")
-            copy_lib_deps("${DLL}" "homebrew")
+            copy_lib_deps("${DLL}" ${DEPS_PATTERN})
         endif()
     endforeach()
 endfunction()
@@ -183,7 +184,11 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
 
         set(WX_DYLIB ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}.dylib)
         message(STATUS "wxWidgets lib is: ${WX_DYLIB}")
-        copy_lib_deps(${WX_DYLIB} "homebrew")
+        if(NOT BREW_PREFIX)
+            message(FATAL_ERROR "***BUG*** BREW_PREFIX is not defined!")
+        endif()
+
+        copy_lib_deps(${WX_DYLIB} ${BREW_PREFIX})
 
         file(GLOB WXLIBS ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}*.dylib)
         foreach(WXLIB ${WXLIBS})

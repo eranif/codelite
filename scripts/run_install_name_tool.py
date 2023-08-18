@@ -19,7 +19,7 @@ def run_command_and_return_output(command, working_directory=None):
 
 brew_install_prefix = (
     run_command_and_return_output(
-        "brew --prefix --installed openssl pcre2 libssh hunspell"
+        "brew --prefix --installed openssl pcre2 zstd xz libssh hunspell libtiff jpeg jpeg-turbo"
     )
     .strip()
     .split("\n")

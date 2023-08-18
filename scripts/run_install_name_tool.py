@@ -4,7 +4,9 @@ import subprocess
 import shutil
 
 
-def run_command_and_return_output(command, working_directory=None):
+def run_command_and_return_output(
+    command, throw_err=False, working_directory=None
+):
     """Execute command and return its output as a string. In case of an error, return an empty string"""
     try:
         return subprocess.check_output(
@@ -14,12 +16,16 @@ def run_command_and_return_output(command, working_directory=None):
             stderr=subprocess.STDOUT,
         ).decode("utf-8")
     except Exception as e:
-        return ""
+        if throw_err:
+            raise e
+        else:
+            return ""
 
 
 brew_install_prefix = (
     run_command_and_return_output(
-        "brew --prefix --installed openssl pcre2 zstd xz libssh hunspell libtiff jpeg jpeg-turbo"
+        "brew --prefix --installed openssl pcre2 zstd xz libssh hunspell libtiff jpeg jpeg-turbo",
+        throw_err=True,
     )
     .strip()
     .split("\n")

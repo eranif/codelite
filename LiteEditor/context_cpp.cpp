@@ -367,7 +367,7 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         return;
     }
 
-    int line = rCtrl.LineFromPosition(curpos);
+    int current_line = rCtrl.LineFromPosition(curpos);
     if(nChar == '\n') {
 
         int prevpos(wxNOT_FOUND);
@@ -378,8 +378,8 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         word = rCtrl.PreviousWord(curpos, foundPos);
 
         bool isPreLinePreProcessLine(false);
-        if(line) {
-            wxString lineStr = rCtrl.GetLine(line - 1);
+        if(current_line) {
+            wxString lineStr = rCtrl.GetLine(current_line - 1);
             lineStr.Trim().Trim(false);
             isPreLinePreProcessLine = lineStr.StartsWith("#");
         }
@@ -387,8 +387,8 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         // user hit ENTER after 'else'
         if(word == "else" && !isPreLinePreProcessLine) {
             int prevLine = rCtrl.LineFromPosition(prevpos);
-            rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
-            rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+            rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+            rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(current_line));
             rCtrl.ChooseCaretX(); // set new column as "current" column
             return;
         }
@@ -404,11 +404,11 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
                 if(posWordBeforeOpenBrace != wxNOT_FOUND) {
                     word = rCtrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
-                    // c++ expression with single line and should be treated separatly
+                    // c++ expression with single current_line and should be treated separatly
                     if(word == "if" || word == "while" || word == "for") {
                         int prevLine = rCtrl.LineFromPosition(prevpos);
-                        rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
-                        rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+                        rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+                        rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(current_line));
                         rCtrl.ChooseCaretX(); // set new column as "current" column
                         return;
                     }
@@ -419,28 +419,15 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         // User typed 'ENTER' immediatly after colons ':'
         if(prevpos != wxNOT_FOUND && ch == ':') {
             int posWordBeforeColons(wxNOT_FOUND);
-
             rCtrl.PreviousChar(prevpos, posWordBeforeColons);
             if(posWordBeforeColons != wxNOT_FOUND) {
                 word = rCtrl.PreviousWord(posWordBeforeColons, foundPos);
-                int prevLine = rCtrl.LineFromPosition(posWordBeforeColons);
-                wxUnusedVar(prevLine);
                 // If we found one of the following keywords, un-indent their line by (foldLevel - 1)*indentSize
                 if(word == "public" || word == "private" || word == "protected") {
-
-                    ContextBase::AutoIndent(nChar);
-
-                    // Indent this line according to the block indentation level
-                    // But do this only if "Fold PreProcessors" switch is OFF
-                    // Otherwise, these keywords will be somewhat miss-aligned
-                    if(!GetCtrl().GetOptions()->GetFoldPreprocessor()) {
-                        int foldLevel =
-                            (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) - wxSTC_FOLDLEVELBASE;
-                        if(foldLevel) {
-                            rCtrl.SetLineIndentation(prevLine, ((foldLevel - 1) * rCtrl.GetIndent()));
-                            rCtrl.ChooseCaretX();
-                        }
-                    }
+                    int prevLine = rCtrl.LineFromPosition(prevpos);
+                    rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+                    rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(current_line));
+                    rCtrl.ChooseCaretX(); // set new column as "current" column
                     return;
                 }
             }
@@ -454,8 +441,8 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
 
         // Open brace? increase indent size
         int prevLine = rCtrl.LineFromPosition(prevpos);
-        rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
-        rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+        rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+        rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(current_line));
 
     } else if(nChar == '}') {
 
@@ -464,13 +451,13 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
             return;
         }
         int secondLine = rCtrl.LineFromPosition(matchPos);
-        if(secondLine == line) {
+        if(secondLine == current_line) {
             return;
         }
-        rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
+        rCtrl.SetLineIndentation(current_line, rCtrl.GetLineIndentation(secondLine));
 
     } else if(nChar == '{') {
-        wxString lineString = rCtrl.GetLine(line);
+        wxString lineString = rCtrl.GetLine(current_line);
         lineString.Trim().Trim(false);
 
         int matchPos = wxNOT_FOUND;

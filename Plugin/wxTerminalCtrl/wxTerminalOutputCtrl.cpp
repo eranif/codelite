@@ -236,7 +236,7 @@ void TextView::OnKeyDown(wxKeyEvent& event)
 void TextView::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
-    if(!m_ctrl->IsShownOnScreen()) {
+    if(!m_ctrl->IsShownOnScreen() || !m_ctrl->IsShown()) {
         ClearIndicators();
         return;
     }
@@ -267,12 +267,10 @@ void TextView::OnIdle(wxIdleEvent& event)
     m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
     m_ctrl->IndicatorFillRange(range.get_start(), range.length());
     m_indicatorHyperlink = range;
-    m_ctrl->SetCursor(wxCURSOR_HAND);
 }
 
 void TextView::ClearIndicators()
 {
-    m_ctrl->SetCursor(wxCURSOR_IBEAM);
     if(m_indicatorHyperlink.is_ok()) {
         m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
         m_ctrl->IndicatorClearRange(m_indicatorHyperlink.get_start(), m_indicatorHyperlink.length());
@@ -294,7 +292,6 @@ void TextView::OnLeftDown(wxMouseEvent& event)
     // if the pattern matches a URL, open it
     if(pattern.StartsWith("https://") || pattern.StartsWith("http://")) {
         m_indicatorHyperlink.reset();
-        m_ctrl->SetCursor(wxCURSOR_IBEAM);
         ::wxLaunchDefaultBrowser(pattern);
         return;
     }
@@ -367,12 +364,10 @@ void TextView::OnEnterWindow(wxMouseEvent& event)
 {
     event.Skip();
     CHECK_PTR_RET(m_ctrl);
-    m_ctrl->SetCursor(wxCURSOR_IBEAM);
 }
 
 void TextView::OnLeaveWindow(wxMouseEvent& event)
 {
     event.Skip();
     CHECK_PTR_RET(m_ctrl);
-    m_ctrl->SetCursor(wxCURSOR_IBEAM);
 }

@@ -4,10 +4,16 @@
 #include "generic_context.h"
 class ContextRust : public ContextGeneric
 {
+    bool m_eventsBound = false;
+
 public:
     ContextRust();
     ContextRust(clEditor* Editor);
     virtual ~ContextRust();
+
+protected:
+    void OnCommentSelection(wxCommandEvent& event);
+    void OnCommentLine(wxCommandEvent& event);
 
 public:
     bool IsStringTriggerCodeComplete(const wxString& str) const;

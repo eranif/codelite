@@ -40,6 +40,9 @@ ContextRust::ContextRust(clEditor* editor)
     editor->SetWordChars("!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$");
     m_completionTriggerStrings.insert(".");
     m_completionTriggerStrings.insert("::");
+    Bind(wxEVT_MENU, &ContextRust::OnCommentSelection, this, XRCID("comment_selection"));
+    Bind(wxEVT_MENU, &ContextRust::OnCommentLine, this, XRCID("comment_line"));
+    m_eventsBound = true;
     SetName("rust");
 }
 
@@ -48,7 +51,13 @@ ContextRust::ContextRust()
 {
 }
 
-ContextRust::~ContextRust() {}
+ContextRust::~ContextRust()
+{
+    if(m_eventsBound) {
+        Unbind(wxEVT_MENU, &ContextRust::OnCommentSelection, this, XRCID("comment_selection"));
+        Unbind(wxEVT_MENU, &ContextRust::OnCommentLine, this, XRCID("comment_line"));
+    }
+}
 
 void ContextRust::AddMenuDynamicContent(wxMenu* menu) { wxUnusedVar(menu); }
 
@@ -194,5 +203,17 @@ bool ContextRust::IsStringTriggerCodeComplete(const wxString& str) const
 }
 
 void ContextRust::ProcessIdleActions() { ContextGeneric::ProcessIdleActions(); }
+
+void ContextRust::OnCommentSelection(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    GetCtrl().CommentBlockSelection("/*", "*/");
+}
+
+void ContextRust::OnCommentLine(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    GetCtrl().ToggleLineComment("//", wxSTC_RUST_COMMENTLINE);
+}
 
 #endif // wxVERSION_NUMBER >= 3100

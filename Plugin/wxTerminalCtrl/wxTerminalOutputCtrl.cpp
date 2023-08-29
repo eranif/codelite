@@ -89,7 +89,7 @@ void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const w
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
     m_ctrl->Bind(wxEVT_IDLE, &TextView::OnIdle, this);
-    m_ctrl->Bind(wxEVT_LEFT_DOWN, &TextView::OnLeftDown, this);
+    m_ctrl->Bind(wxEVT_LEFT_UP, &TextView::OnLeftUp, this);
     m_stcRenderer = new wxTerminalAnsiRendererSTC(m_ctrl);
 }
 
@@ -98,7 +98,7 @@ TextView::~TextView()
     wxDELETE(m_stcRenderer);
     m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
     m_ctrl->Unbind(wxEVT_IDLE, &TextView::OnIdle, this);
-    m_ctrl->Unbind(wxEVT_LEFT_DOWN, &TextView::OnLeftDown, this);
+    m_ctrl->Unbind(wxEVT_LEFT_UP, &TextView::OnLeftUp, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
 }
 
@@ -278,7 +278,7 @@ void TextView::ClearIndicators()
     }
 }
 
-void TextView::OnLeftDown(wxMouseEvent& event)
+void TextView::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
 
@@ -288,7 +288,23 @@ void TextView::OnLeftDown(wxMouseEvent& event)
 
     // fire an event
     wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.get_start(), m_indicatorHyperlink.get_end());
+    CallAfter(&TextView::DoPatternClicked, pattern);
+}
 
+void TextView::OnEnterWindow(wxMouseEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_ctrl);
+}
+
+void TextView::OnLeaveWindow(wxMouseEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_ctrl);
+}
+
+void TextView::DoPatternClicked(const wxString& pattern)
+{
     // if the pattern matches a URL, open it
     if(pattern.StartsWith("https://") || pattern.StartsWith("http://")) {
         m_indicatorHyperlink.reset();
@@ -358,16 +374,4 @@ void TextView::OnLeftDown(wxMouseEvent& event)
         editor->SetActive();
     };
     clGetManager()->OpenFileAndAsyncExecute(file, std::move(cb));
-}
-
-void TextView::OnEnterWindow(wxMouseEvent& event)
-{
-    event.Skip();
-    CHECK_PTR_RET(m_ctrl);
-}
-
-void TextView::OnLeaveWindow(wxMouseEvent& event)
-{
-    event.Skip();
-    CHECK_PTR_RET(m_ctrl);
 }

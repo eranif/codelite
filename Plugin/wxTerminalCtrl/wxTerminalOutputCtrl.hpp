@@ -77,7 +77,7 @@ protected:
     void DoScrollToEnd();
     void RequestScrollToEnd();
     void OnThemeChanged(clCommandEvent& event);
-    void OnLeftDown(wxMouseEvent& event);
+    void OnLeftUp(wxMouseEvent& event);
     void ApplyTheme();
     void OnKeyDown(wxKeyEvent& event);
     void Initialise(const wxFont& font = wxNullFont, const wxColour& bg_colour = *wxBLACK,
@@ -86,6 +86,7 @@ protected:
     void OnIdle(wxIdleEvent& event);
     void OnEnterWindow(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
+    void DoPatternClicked(const wxString& pattern);
 
 public:
     explicit TextView(wxTerminalCtrl* parent, wxTerminalInputCtrl* inputCtrl, wxWindowID winid = wxNOT_FOUND,

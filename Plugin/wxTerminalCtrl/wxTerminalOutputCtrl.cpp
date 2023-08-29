@@ -2,6 +2,8 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
+#include "Platform.hpp"
+#include "StringUtils.h"
 #include "clModuleLogger.hpp"
 #include "clSystemSettings.h"
 #include "clWorkspaceManager.h"
@@ -9,6 +11,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
+#include "procutils.h"
 #include "wxTerminalCtrl.h"
 #include "wxTerminalInputCtrl.hpp"
 
@@ -355,6 +358,29 @@ void TextView::DoPatternClicked(const wxString& pattern)
     }
     event_clicked.SetProjectName(wxEmptyString);
     if(EventNotifier::Get()->ProcessEvent(event_clicked)) {
+        return;
+    }
+
+    if(FileUtils::IsBinaryExecutable(file)) {
+#ifdef __WXMSW__
+        // if we are running under Windows and the file path is POSIX (e.g. MSYS2)
+        // convert it into Windows native path
+        if(file.StartsWith("/")) {
+            wxString cygpath;
+            if(ThePlatform->Which("cygpath", &cygpath)) {
+                wxString command;
+                command << StringUtils::WrapWithDoubleQuotes(cygpath) << " -w "
+                        << StringUtils::WrapWithDoubleQuotes(file);
+                wxString winpath = ProcUtils::SafeExecuteCommand(command);
+                winpath.Trim().Trim(false);
+                if(wxFileName::FileExists(winpath)) {
+                    file = StringUtils::WrapWithDoubleQuotes(winpath);
+                }
+            }
+        }
+#endif
+        // do not attempt to open a biary file
+        ::wxLaunchDefaultApplication(file);
         return;
     }
 

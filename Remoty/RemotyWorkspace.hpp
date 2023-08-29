@@ -128,6 +128,7 @@ protected:
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
 
     void RestoreSession();
+    void SetFocusToActiveEditor();
 
 public:
     // IWorkspace

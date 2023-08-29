@@ -434,7 +434,16 @@ void RemotyWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
         // clEditor start counting lines from 0
         // hence the -1
         editor->CenterLine(line_number - 1);
+        CallAfter(&RemotyWorkspace::SetFocusToActiveEditor);
     }
+}
+
+void RemotyWorkspace::SetFocusToActiveEditor()
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    editor->SetActive();
 }
 
 void RemotyWorkspace::OnNewWorkspace(clCommandEvent& event)

@@ -51,7 +51,7 @@ is included in all the CodeLite packages.
 Note that the CodeLite packages incorporate the required wxWidgets libraries (`wx3.2.0` or `wx3.2.1`), so there is no need to install wxWidgets too.
 Of course you can if you wish, and you'll need to do so to build apps against wxWidgets.
 
-Ubuntu `16.04` (`xenial`) and later have official CodeLite packages. Therefore, to avoid a name-clash, our CodeLite packages have `unofficial` appended to the name.
+Ubuntu `16.04` ( `xenial` ) and later have official CodeLite packages. Therefore, to avoid a name-clash, our CodeLite packages have `unofficial` appended to the name.
 
 To download CodeLite for Debian based systems (Debian / Mint / Ubuntu etc):
 
@@ -60,9 +60,11 @@ To download CodeLite for Debian based systems (Debian / Mint / Ubuntu etc):
 ```bash
 sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
 ```
+
 !!! Tip
   Since ubuntu 21.10, using apt-key displays the following message:
-  ```bash
+
+```bash
   Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8))
   ```
   Don't panic! it's only a warning. apt-key still works.
@@ -73,6 +75,7 @@ sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
 
 For example, if you use Ubuntu jammy (22.04), either open `/etc/apt/sources.list` in an editor (as superuser) and append the proper line
 from Table 1, or else use `apt-add-repository` in a terminal:
+```
 
 ```bash
  sudo apt-add-repository 'deb https://repos.codelite.org/ubuntu/ jammy universe'
@@ -94,7 +97,7 @@ ubuntu kinetic |	`deb https://repos.codelite.org/ubuntu/ kinetic universe`
 ```
 
 !!! Tip
-    The Ubuntu packages should also work on other *buntus, and on derivatives e.g. Mint.
+    The Ubuntu packages should also work on other ubuntus, and on derivatives e.g. Mint.
 
 #### Apt
 
@@ -109,6 +112,7 @@ Then you can select which version to install. For example, to prefer the officia
 ```bash
  sudo apt install codelite=14.0*
 ```
+
 
 #### Synaptic
 
@@ -141,10 +145,13 @@ First tell rpm about the CodeLite public key. As superuser do:
 ```bash
  rpm --import https://repos.codelite.org/CodeLite.asc
  ```
+
 Then either download the required rpm and install it as usual, or download and install in one step; e.g.
+
 ```bash
   rpm -Uvh https://repos.codelite.org/rpms-17.0/fedora/37/codelite-17.0-1.fc37.x86_64.rpm
 ```
+
 There are also source rpms for [fedora][2] and [OpenSUSE][3]
 
 ### ArchLinux

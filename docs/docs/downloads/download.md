@@ -62,12 +62,11 @@ sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
 ```
 
 !!! Tip
-  Since ubuntu 21.10, using apt-key displays the following message:
+    Since ubuntu `21.10`, using `apt-key` displays the following message:
 
-```bash
-  Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8))
-```
-  Don't panic! it's only a warning. apt-key still works.
+    `Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8))`
+
+    Don't panic! it's only a warning. `apt-key` still works.
   
 - Now let apt know that the repositories exist by adding the proper line from Table 1 or 2:
     - If you use an `apt` front-end e.g. synaptic, tell it to Add a repository, using as data the appropriate entry from the tables below

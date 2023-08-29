@@ -66,7 +66,7 @@ sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
 
 ```bash
   Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8))
-  ```
+```
   Don't panic! it's only a warning. apt-key still works.
   
 - Now let apt know that the repositories exist by adding the proper line from Table 1 or 2:
@@ -75,7 +75,6 @@ sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
 
 For example, if you use Ubuntu jammy (22.04), either open `/etc/apt/sources.list` in an editor (as superuser) and append the proper line
 from Table 1, or else use `apt-add-repository` in a terminal:
-```
 
 ```bash
  sudo apt-add-repository 'deb https://repos.codelite.org/ubuntu/ jammy universe'
@@ -140,11 +139,11 @@ fedora	| [`37` and`38`][10]
 openSUSE | [`15.4`][11] [`15.5`][12]
 
 
-First tell rpm about the CodeLite public key. As superuser do:
+First tell rpm about the CodeLite public key. As superuser run:
 
 ```bash
  rpm --import https://repos.codelite.org/CodeLite.asc
- ```
+```
 
 Then either download the required rpm and install it as usual, or download and install in one step; e.g.
 

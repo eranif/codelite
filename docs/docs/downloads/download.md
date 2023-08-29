@@ -97,7 +97,7 @@ ubuntu kinetic |	`deb https://repos.codelite.org/ubuntu/ kinetic universe`
 ```
 
 !!! Tip
-    The Ubuntu packages should also work on other ubuntus, and on derivatives e.g. Mint.
+    The Ubuntu packages should also work on other ubuntu flavours e.g. xubuntu, and on derivatives e.g. Mint.
 
 #### Apt
 

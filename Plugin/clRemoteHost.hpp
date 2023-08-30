@@ -74,6 +74,8 @@ public:
     IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent, const wxArrayString& command, size_t flags,
                                             const wxString& wd, const clEnvList_t& env = {});
 
+    const wxString& GetActiveAccount() const { return m_activeAccount; }
+
 private:
     clRemoteHost();
     virtual ~clRemoteHost();

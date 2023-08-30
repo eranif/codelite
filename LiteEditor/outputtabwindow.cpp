@@ -225,10 +225,10 @@ void OutputTabWindow::Clear()
     }
 }
 
-void OutputTabWindow::AppendText(const wxString& text)
+void OutputTabWindow::AppendText(const wxString& text, bool toggle_view)
 {
     if(m_sci) {
-        if(m_autoAppear && m_sci->GetLength() == 0) {
+        if(toggle_view && m_autoAppear && m_sci->GetLength() == 0) {
             ManagerST::Get()->ShowOutputPane(m_name, true, false);
         }
 

@@ -84,6 +84,6 @@ public:
     void ScrollToBottom();
     const wxString& GetCaption() const { return m_name; }
     wxStyledTextCtrl* GetSci() { return m_sci; }
-    virtual void AppendText(const wxString& text);
+    virtual void AppendText(const wxString& text, bool toggle_view = true);
 };
 #endif // __outputtabwindow__

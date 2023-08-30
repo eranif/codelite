@@ -193,6 +193,18 @@ read_result channel_read(SSHChannel_t channel, std::string* output, bool isStder
     }
     return res.rc;
 }
+
+int channel_read_all(SSHChannel_t channel, std::string* output, bool isStderr)
+{
+    int nbytes = 0;
+    nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), isStderr ? 1 : 0);
+    while(nbytes > 0) {
+        output->reserve(output->size() + nbytes);
+        output->append(buffer, nbytes);
+        nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), isStderr ? 1 : 0);
+    }
+    return nbytes < 0 ? 1 : 0;
+}
 } // namespace ssh
 
 #endif

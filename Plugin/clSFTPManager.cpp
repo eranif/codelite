@@ -4,6 +4,7 @@
 #include "SFTPClientData.hpp"
 #include "StringUtils.h"
 #include "clSFTPEvent.h"
+#include "clSSHChannelCommon.hpp"
 #include "clTempFile.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
@@ -33,6 +34,8 @@
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_SAVE_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_EXEC_ERROR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_EXEC_STDOUT, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_EXEC_STDERR, clCommandEvent);
 
 clSFTPManager::clSFTPManager()
 {
@@ -866,26 +869,26 @@ void QueueExecErrorEvent(const wxString& msg, wxEvtHandler* sink)
 }
 } // namespace
 
-void clSFTPManager::AsyncExecute(const wxString& accountName, const wxString& command, const wxString& wd,
-                                 clEnvList_t* env, wxEvtHandler* sink)
+ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxString& command, const wxString& wd,
+                                         clEnvList_t* env)
 {
     clDEBUG() << "SFTP Manager: AsyncExecute:" << command << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);
     if(!conn) {
-        QueueExecErrorEvent(
-            wxString::Format("Execution of command: '%s' failed. Could not create connection for account '%s'", command,
-                             accountName),
-            sink);
-        return;
+        clWARNING() << "Failed to obtain connection for command:" << command << ". Account:" << accountName << endl;
+        return {};
     }
 
-    auto exec_func = [command, wd, conn, env, accountName, sink]() {
+    std::promise<ReadOutput_t> exec_promise;
+    auto future = exec_promise.get_future();
+
+    auto exec_func = [command, wd, conn, env, accountName, &exec_promise]() {
         // read the file content
         auto session = conn->GetSsh()->GetSession();
         auto channel = ssh_channel_new(conn->GetSsh()->GetSession());
         if(!channel) {
-            QueueExecErrorEvent(
-                wxString::Format("Execution of command: '%s' failed. %s", command, ssh_get_error(session)), sink);
+            clWARNING() << "Execution of command:" << command << "failed." << ssh_get_error(session) << endl;
+            exec_promise.set_value({});
             return;
         }
 
@@ -893,24 +896,41 @@ void clSFTPManager::AsyncExecute(const wxString& accountName, const wxString& co
         rc = ssh_channel_open_session(channel);
         if(rc != SSH_OK) {
             ssh_channel_free(channel);
-            QueueExecErrorEvent(
-                wxString::Format("Failed to open channel for command: '%s'. %s", command, ssh_get_error(session)),
-                sink);
+            clWARNING() << "Failed to open channel for command:" << command << "." << ssh_get_error(session) << endl;
+            exec_promise.set_value({});
             return;
         }
 
-        rc = ssh_channel_request_exec(channel, command.mb_str(wxConvUTF8).data());
+        wxString cmd_w_dir;
+        if(!wd.empty()) {
+            cmd_w_dir << "cd " << StringUtils::WrapWithDoubleQuotes(wd) << " && " << command;
+        } else {
+            cmd_w_dir << command;
+        }
+        rc = ssh_channel_request_exec(channel, cmd_w_dir.mb_str(wxConvUTF8).data());
         if(rc != SSH_OK) {
             // mark the channel + ssh session as "broken"
+            ssh_channel_close(channel);
             ssh_channel_free(channel);
-            QueueExecErrorEvent(
-                wxString::Format("Execution of command: '%s' failed. %s", command, ssh_get_error(session)), sink);
+            clWARNING() << "Execution of command :" << cmd_w_dir << " failed." << ssh_get_error(session) << endl;
+            exec_promise.set_value({});
             return;
         }
 
+        std::tuple<std::string, std::string, int> result;
+        std::string std_out;
+        std::string std_err;
+        ssh::channel_read_all(channel, &std_err, true);
+        int exit_code = ssh::channel_read_all(channel, &std_out, false);
+
+        result = { std_out, std_err, exit_code };
+        exec_promise.set_value(std::move(result));
+
         // release the channel
+        ssh_channel_close(channel);
         ssh_channel_free(channel);
     };
     m_q.push_back(std::move(exec_func));
+    return future.get();
 }
 #endif

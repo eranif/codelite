@@ -771,14 +771,14 @@ void PluginManager::ProcessEditEvent(wxCommandEvent& e, IEditor* editor)
     }
 }
 
-void PluginManager::AppendOutputTabText(eOutputPaneTab tab, const wxString& text)
+void PluginManager::AppendOutputTabText(eOutputPaneTab tab, const wxString& text, bool toggle_view)
 {
     switch(tab) {
     case kOutputTab_Build:
         clMainFrame::Get()->GetOutputPane()->GetBuildTab()->AppendLine(text);
         break;
     case kOutputTab_Output:
-        clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(text);
+        clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(text, toggle_view);
         break;
     }
 }

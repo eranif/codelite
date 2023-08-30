@@ -24,6 +24,8 @@
 
 class IEditor;
 class SFTPClientData;
+
+typedef std::tuple<std::string, std::string, int> ReadOutput_t;
 class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
 {
 protected:
@@ -251,20 +253,27 @@ public:
 
     /**
      * @brief execute a remote command
+     * @returns `ReadOutput_t` is a pair: stdout, stderr
      */
-    void AsyncExecute(const wxString& accountName, const wxString& command, const wxString& wd, clEnvList_t* env,
-                      wxEvtHandler* sink);
-    void AsyncExecute(const wxString& accountName, const std::vector<wxString>& command, const wxString& wd,
-                      clEnvList_t* env, wxEvtHandler* sink)
+    ReadOutput_t AwaitExecute(const wxString& accountName, const wxString& command, const wxString& wd,
+                              clEnvList_t* env);
+    /**
+     * @brief execute a remote command
+     * @returns `ReadOutput_t` is a pair: stdout and stderr
+     */
+    ReadOutput_t AwaitExecute(const wxString& accountName, const std::vector<wxString>& command, const wxString& wd,
+                              clEnvList_t* env)
     {
         wxArrayString arr;
         StdToWX::ToArrayString(command, &arr);
-        AsyncExecute(accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env, sink);
+        return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env);
     }
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_ERROR, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_EXEC_ERROR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_EXEC_STDOUT, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_EXEC_STDERR, clCommandEvent);
 #endif
 #endif // CLSFTPMANAGER_HPP

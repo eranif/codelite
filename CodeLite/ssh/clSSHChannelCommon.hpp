@@ -38,6 +38,10 @@ WXDLLIMPEXP_CL read_result channel_read(SSHChannel_t channel, wxEvtHandler* hand
 /// return ssh::read_result::* (see above)
 WXDLLIMPEXP_CL read_result channel_read(SSHChannel_t channel, std::string* output, bool isStderr, bool wantStderr);
 
+/// read everything from the channel until the channel is closed or an error occurs
+/// return 0 if the process exited with success, 1 if it exited with an error
+WXDLLIMPEXP_CL int channel_read_all(SSHChannel_t channel, std::string* output, bool isStderr);
+
 /// build a oneliner command to execute on the remote host
 WXDLLIMPEXP_CL wxString build_command(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env);
 

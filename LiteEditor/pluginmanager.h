@@ -166,7 +166,7 @@ public:
     void LoadPerspective(const wxString& perspectiveName) override;
     void SavePerspective(const wxString& perspectiveName) override;
     void ProcessEditEvent(wxCommandEvent& e, IEditor* editor) override;
-    void AppendOutputTabText(eOutputPaneTab tab, const wxString& text) override;
+    void AppendOutputTabText(eOutputPaneTab tab, const wxString& text, bool toggle_view = true) override;
     void ClearOutputTab(eOutputPaneTab tab) override;
     void AddWorkspaceToRecentlyUsedList(const wxFileName& filename) override;
     void StoreWorkspaceSession(const wxFileName& workspaceFile) override;

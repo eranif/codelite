@@ -261,7 +261,7 @@ public:
     /**
      * @brief append text line to the tab in the "Output View"
      */
-    virtual void AppendOutputTabText(eOutputPaneTab tab, const wxString& text) = 0;
+    virtual void AppendOutputTabText(eOutputPaneTab tab, const wxString& text, bool toggle_view = true) = 0;
 
     /**
      * @brief clear the content of the selected output tab

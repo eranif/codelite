@@ -6,6 +6,7 @@
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clDirChanger.hpp"
 #include "clRemoteHost.hpp"
+#include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
@@ -142,52 +143,25 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* 
 
     bool inplace_edit = IsInplaceFormatter();
 
-    // Execute the command with a callback
-    std::string* stdout_string = new std::string(); // collect the output here
-    clRemoteHost::Instance()->run_command_with_callback(
-        cmd, wd, {}, [=](const std::string& output, clRemoteCommandStatus status) mutable {
-            switch(status) {
-            case clRemoteCommandStatus::DONE_WITH_ERROR: {
-                // completed with error
-                if(stdout_string) {
-                    stdout_string->append(output);
+    auto result = clSFTPManager::Get().AwaitExecute(clRemoteHost::Instance()->GetActiveAccount(), cmd, wd, nullptr);
+    int exit_code = std::get<2>(result);
+    std::string std_out = std::get<0>(result);
+    std::string std_err = std::get<1>(result);
+    if(exit_code == 0) {
+        // std out
+        clSourceFormatEvent format_completed_event{ inplace_edit ? wxEVT_FORMAT_INPLACE_COMPELTED
+                                                                 : wxEVT_FORMAT_COMPELTED };
+        format_completed_event.SetFormattedString(inplace_edit ? "" : wxString::FromUTF8(std_out));
+        format_completed_event.SetFileName(filepath);
+        sink->AddPendingEvent(format_completed_event);
+    }
 
-                    wxString message;
-                    message << _("Format error:\n") << wxString::FromUTF8(*stdout_string);
-                    clGetManager()->ShowOutputPane(_("Output"));
-                    clGetManager()->AppendOutputTabText(eOutputPaneTab::kOutputTab_Output, message);
-                    wxDELETE(stdout_string);
-                }
-            } break;
-            case clRemoteCommandStatus::DONE: {
-                if(stdout_string) {
-                    clDEBUG() << "FormatRemoteFile: DONE: total output size:" << stdout_string->size() << endl;
-                    clSourceFormatEvent format_completed_event{ inplace_edit ? wxEVT_FORMAT_INPLACE_COMPELTED
-                                                                             : wxEVT_FORMAT_COMPELTED };
-                    format_completed_event.SetFormattedString(inplace_edit ? "" : wxString::FromUTF8(*stdout_string));
-                    format_completed_event.SetFileName(filepath);
-                    sink->QueueEvent(format_completed_event.Clone());
-                }
-                // delete the collected stdout
-                wxDELETE(stdout_string);
-            } break;
-            case clRemoteCommandStatus::STDERR:
-                if(stdout_string) {
-                    stdout_string->append(output);
-                    clDEBUG() << "FormatRemoteFile: STDERR: output size:" << output.size() << endl;
-                    clGetManager()->AppendOutputTabText(eOutputPaneTab::kOutputTab_Output,
-                                                        wxString::FromUTF8(*stdout_string));
-                }
-                break;
-            case clRemoteCommandStatus::STDOUT:
-                clDEBUG() << "FormatRemoteFile: STDOUT: output size:" << output.size() << endl;
-                if(stdout_string) {
-                    stdout_string->append(output);
-                    clDEBUG() << "FormatRemoteFile: DONE. current output size:" << stdout_string->size() << endl;
-                }
-                break;
-            }
-        });
+    if(!std_err.empty()) {
+        // std error -> print it to the output tab
+        wxString message;
+        message << wxString::FromUTF8(std_err);
+        clGetManager()->AppendOutputTabText(eOutputPaneTab::kOutputTab_Output, message, false);
+    }
     return true;
 }
 

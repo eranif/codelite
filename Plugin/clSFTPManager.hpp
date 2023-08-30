@@ -2,6 +2,7 @@
 #define CLSFTPMANAGER_HPP
 
 #if USE_SFTP
+#include "StringUtils.h"
 #include "clResult.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -246,9 +247,24 @@ public:
      * @brief clear last error captured
      */
     void ClearLastError() { m_lastError.clear(); }
+
+    /**
+     * @brief execute a remote command
+     */
+    void AsyncExecute(const wxString& accountName, const wxString& command, const wxString& wd, clEnvList_t* env,
+                      wxEvtHandler* sink);
+    void AsyncExecute(const wxString& accountName, const std::vector<wxString>& command, const wxString& wd,
+                      clEnvList_t* env, wxEvtHandler* sink)
+    {
+        wxArrayString arr;
+        arr.reserve(command.size());
+        arr.insert(arr.end(), command.begin(), command.end());
+        AsyncExecute(accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env, sink);
+    }
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_ERROR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_EXEC_ERROR, clCommandEvent);
 #endif
 #endif // CLSFTPMANAGER_HPP

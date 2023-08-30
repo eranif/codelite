@@ -14,6 +14,7 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
+#include "libssh/libssh.h"
 #include "macros.h"
 
 #include <condition_variable>
@@ -31,6 +32,7 @@
 
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_SAVE_ERROR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_EXEC_ERROR, clCommandEvent);
 
 clSFTPManager::clSFTPManager()
 {
@@ -854,4 +856,61 @@ bool clSFTPManager::AwaitReadFile(const wxString& remotePath, const wxString& ac
     return DoSyncReadFile(remotePath, accountName, content);
 }
 
+namespace
+{
+void QueueExecErrorEvent(const wxString& msg, wxEvtHandler* sink)
+{
+    clSFTPEvent event_error{ wxEVT_SFTP_ASYNC_EXEC_ERROR };
+    event_error.SetString(msg);
+    sink->AddPendingEvent(event_error);
+}
+} // namespace
+
+void clSFTPManager::AsyncExecute(const wxString& accountName, const wxString& command, const wxString& wd,
+                                 clEnvList_t* env, wxEvtHandler* sink)
+{
+    clDEBUG() << "SFTP Manager: AsyncExecute:" << command << "for account:" << accountName << endl;
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    if(!conn) {
+        QueueExecErrorEvent(
+            wxString::Format("Execution of command: '%s' failed. Could not create connection for account '%s'", command,
+                             accountName),
+            sink);
+        return;
+    }
+
+    auto exec_func = [command, wd, conn, env, accountName, sink]() {
+        // read the file content
+        auto session = conn->GetSsh()->GetSession();
+        auto channel = ssh_channel_new(conn->GetSsh()->GetSession());
+        if(!channel) {
+            QueueExecErrorEvent(
+                wxString::Format("Execution of command: '%s' failed. %s", command, ssh_get_error(session)), sink);
+            return;
+        }
+
+        int rc = SSH_OK;
+        rc = ssh_channel_open_session(channel);
+        if(rc != SSH_OK) {
+            ssh_channel_free(channel);
+            QueueExecErrorEvent(
+                wxString::Format("Failed to open channel for command: '%s'. %s", command, ssh_get_error(session)),
+                sink);
+            return;
+        }
+
+        rc = ssh_channel_request_exec(channel, command.mb_str(wxConvUTF8).data());
+        if(rc != SSH_OK) {
+            // mark the channel + ssh session as "broken"
+            ssh_channel_free(channel);
+            QueueExecErrorEvent(
+                wxString::Format("Execution of command: '%s' failed. %s", command, ssh_get_error(session)), sink);
+            return;
+        }
+
+        // release the channel
+        ssh_channel_free(channel);
+    };
+    m_q.push_back(std::move(exec_func));
+}
 #endif

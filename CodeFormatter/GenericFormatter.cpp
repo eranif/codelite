@@ -143,7 +143,9 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* 
 
     bool inplace_edit = IsInplaceFormatter();
 
+    wxBusyCursor bc;
     auto result = clSFTPManager::Get().AwaitExecute(clRemoteHost::Instance()->GetActiveAccount(), cmd, wd, nullptr);
+
     int exit_code = std::get<2>(result);
     std::string std_out = std::get<0>(result);
     std::string std_err = std::get<1>(result);

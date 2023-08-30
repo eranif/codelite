@@ -31,7 +31,12 @@ inline bool result_ok(read_result res) { return res == read_result::SSH_SUCCESS 
 
 /// read from the channel
 /// return ssh::read_result::* (see above)
+/// this function fire events of type: `wxEVT_SSH_CHANNEL_*`
 WXDLLIMPEXP_CL read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStderr, bool wantStderr);
+
+/// read from the channel and return the `output`
+/// return ssh::read_result::* (see above)
+WXDLLIMPEXP_CL read_result channel_read(SSHChannel_t channel, std::string* output, bool isStderr, bool wantStderr);
 
 /// build a oneliner command to execute on the remote host
 WXDLLIMPEXP_CL wxString build_command(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env);

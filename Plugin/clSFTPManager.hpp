@@ -2,6 +2,7 @@
 #define CLSFTPMANAGER_HPP
 
 #if USE_SFTP
+#include "StdToWX.h"
 #include "StringUtils.h"
 #include "clResult.hpp"
 #include "cl_command_event.h"
@@ -257,8 +258,7 @@ public:
                       clEnvList_t* env, wxEvtHandler* sink)
     {
         wxArrayString arr;
-        arr.reserve(command.size());
-        arr.insert(arr.end(), command.begin(), command.end());
+        StdToWX::ToArrayString(command, &arr);
         AsyncExecute(accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env, sink);
     }
 };

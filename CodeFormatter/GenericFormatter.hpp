@@ -30,6 +30,7 @@ class GenericFormatter : public SourceFormatterBase
     wxArrayString m_command;
     wxString m_workingDirectory;
     std::unordered_map<long, CommandMetadata> m_pid_commands;
+    std::vector<std::pair<wxString, wxEvtHandler*>> m_inFlightFiles;
 
     // remote execution
     wxString m_remote_command;
@@ -42,6 +43,10 @@ protected:
                       wxEvtHandler* sink);
 
     void OnAsyncShellProcessTerminated(clShellProcessEvent& event);
+    void OnRemoteCommandStdout(clCommandEvent& event);
+    void OnRemoteCommandStderr(clCommandEvent& event);
+    void OnRemoteCommandDone(clCommandEvent& event);
+    void OnRemoteCommandError(clCommandEvent& event);
 
 public:
     GenericFormatter();

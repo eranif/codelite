@@ -256,17 +256,35 @@ public:
      * @returns `ReadOutput_t` is a pair: stdout, stderr
      */
     ReadOutput_t AwaitExecute(const wxString& accountName, const wxString& command, const wxString& wd,
-                              clEnvList_t* env);
+                              clEnvList_t* env = nullptr);
     /**
      * @brief execute a remote command
      * @returns `ReadOutput_t` is a pair: stdout and stderr
      */
     ReadOutput_t AwaitExecute(const wxString& accountName, const std::vector<wxString>& command, const wxString& wd,
-                              clEnvList_t* env)
+                              clEnvList_t* env = nullptr)
     {
         wxArrayString arr;
         StdToWX::ToArrayString(command, &arr);
         return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env);
+    }
+
+    /**
+     * @brief execute a remote command
+     * @returns this function fires events to report its progress (`wxEVT_SFTP_ASYNC_EXEC_*`)
+     */
+    void AsyncExecute(wxEvtHandler* sink, const wxString& accountName, const wxString& command, const wxString& wd,
+                      clEnvList_t* env = nullptr);
+    /**
+     * @brief execute a remote command
+     * @returns this function fires events to report its progress (`wxEVT_SFTP_ASYNC_EXEC_*`)
+     */
+    void AsyncExecute(wxEvtHandler* sink, const wxString& accountName, const std::vector<wxString>& command,
+                      const wxString& wd, clEnvList_t* env = nullptr)
+    {
+        wxArrayString arr;
+        StdToWX::ToArrayString(command, &arr);
+        return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env);
     }
 };
 
@@ -275,5 +293,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_ERROR, clCommand
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_EXEC_ERROR, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_EXEC_STDOUT, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_EXEC_STDERR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_EXEC_DONE, clCommandEvent);
 #endif
 #endif // CLSFTPMANAGER_HPP

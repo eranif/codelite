@@ -79,11 +79,19 @@ GenericFormatter::GenericFormatter()
 {
     SetWorkingDirectory("$(WorkspacePath)");
     Bind(wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, &GenericFormatter::OnAsyncShellProcessTerminated, this);
+    Bind(wxEVT_SFTP_ASYNC_EXEC_STDERR, &GenericFormatter::OnRemoteCommandStderr, this);
+    Bind(wxEVT_SFTP_ASYNC_EXEC_STDOUT, &GenericFormatter::OnRemoteCommandStdout, this);
+    Bind(wxEVT_SFTP_ASYNC_EXEC_DONE, &GenericFormatter::OnRemoteCommandDone, this);
+    Bind(wxEVT_SFTP_ASYNC_EXEC_ERROR, &GenericFormatter::OnRemoteCommandError, this);
 }
 
 GenericFormatter::~GenericFormatter()
 {
     Unbind(wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, &GenericFormatter::OnAsyncShellProcessTerminated, this);
+    Unbind(wxEVT_SFTP_ASYNC_EXEC_STDERR, &GenericFormatter::OnRemoteCommandStderr, this);
+    Unbind(wxEVT_SFTP_ASYNC_EXEC_STDOUT, &GenericFormatter::OnRemoteCommandStdout, this);
+    Unbind(wxEVT_SFTP_ASYNC_EXEC_DONE, &GenericFormatter::OnRemoteCommandDone, this);
+    Unbind(wxEVT_SFTP_ASYNC_EXEC_ERROR, &GenericFormatter::OnRemoteCommandError, this);
 }
 
 wxString GenericFormatter::GetCommandAsString() const { return join_array(m_command); }
@@ -141,29 +149,8 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* 
     clDEBUG() << "Working dir:" << wd << endl;
     clDEBUG() << "Calling:" << cmd << endl;
 
-    bool inplace_edit = IsInplaceFormatter();
-
-    wxBusyCursor bc;
-    auto result = clSFTPManager::Get().AwaitExecute(clRemoteHost::Instance()->GetActiveAccount(), cmd, wd, nullptr);
-
-    int exit_code = std::get<2>(result);
-    std::string std_out = std::get<0>(result);
-    std::string std_err = std::get<1>(result);
-    if(exit_code == 0) {
-        // std out
-        clSourceFormatEvent format_completed_event{ inplace_edit ? wxEVT_FORMAT_INPLACE_COMPELTED
-                                                                 : wxEVT_FORMAT_COMPELTED };
-        format_completed_event.SetFormattedString(inplace_edit ? "" : wxString::FromUTF8(std_out));
-        format_completed_event.SetFileName(filepath);
-        sink->AddPendingEvent(format_completed_event);
-    }
-
-    if(!std_err.empty()) {
-        // std error -> print it to the output tab
-        wxString message;
-        message << wxString::FromUTF8(std_err);
-        clGetManager()->AppendOutputTabText(eOutputPaneTab::kOutputTab_Output, message, false);
-    }
+    clSFTPManager::Get().AsyncExecute(this, clRemoteHost::Instance()->GetActiveAccount(), cmd, wd, nullptr);
+    m_inFlightFiles.push_back({ filepath, sink });
     return true;
 }
 
@@ -259,4 +246,47 @@ void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
         format_completed_event.SetFileName(command_data.m_filepath);
         command_data.m_sink->QueueEvent(format_completed_event.Clone());
     }
+}
+
+void GenericFormatter::OnRemoteCommandStdout(clCommandEvent& event)
+{
+    if(m_inFlightFiles.empty()) {
+        clERROR() << "GenericFormatter::OnRemoteCommandStdout is called but NO inflight files" << endl;
+        return;
+    }
+
+    const wxString& filepath = m_inFlightFiles.front().first;
+    bool inplace_edit = IsInplaceFormatter();
+    clSourceFormatEvent format_completed_event{ inplace_edit ? wxEVT_FORMAT_INPLACE_COMPELTED
+                                                             : wxEVT_FORMAT_COMPELTED };
+    format_completed_event.SetFormattedString(inplace_edit ? "" : wxString::FromUTF8(event.GetStringRaw()));
+    format_completed_event.SetFileName(filepath);
+    m_inFlightFiles.front().second->AddPendingEvent(format_completed_event);
+}
+
+void GenericFormatter::OnRemoteCommandStderr(clCommandEvent& event)
+{
+    wxString message;
+    message << wxString::FromUTF8(event.GetStringRaw());
+    clGetManager()->AppendOutputTabText(eOutputPaneTab::kOutputTab_Output, message, false);
+}
+
+void GenericFormatter::OnRemoteCommandDone(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(m_inFlightFiles.empty()) {
+        clERROR() << "GenericFormatter::OnRemoteCommandDone is called but NO inflight files" << endl;
+        return;
+    }
+    m_inFlightFiles.erase(m_inFlightFiles.begin());
+}
+
+void GenericFormatter::OnRemoteCommandError(clCommandEvent& event)
+{
+    clERROR() << "Code Formatter:" << event.GetString() << endl;
+    if(m_inFlightFiles.empty()) {
+        clERROR() << "GenericFormatter::OnRemoteCommandError is called but NO inflight files" << endl;
+        return;
+    }
+    m_inFlightFiles.erase(m_inFlightFiles.begin());
 }

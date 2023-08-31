@@ -36,6 +36,7 @@ wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_SAVE_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_EXEC_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_EXEC_STDOUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_EXEC_STDERR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_EXEC_DONE, clCommandEvent);
 
 clSFTPManager::clSFTPManager()
 {
@@ -859,20 +860,17 @@ bool clSFTPManager::AwaitReadFile(const wxString& remotePath, const wxString& ac
     return DoSyncReadFile(remotePath, accountName, content);
 }
 
-namespace
-{
-void QueueExecErrorEvent(const wxString& msg, wxEvtHandler* sink)
-{
-    clSFTPEvent event_error{ wxEVT_SFTP_ASYNC_EXEC_ERROR };
-    event_error.SetString(msg);
-    sink->AddPendingEvent(event_error);
-}
-} // namespace
+#define QUEUE_ERROR_EVENT(msg)                                  \
+    {                                                           \
+        clSFTPEvent event_error{ wxEVT_SFTP_ASYNC_EXEC_ERROR }; \
+        event_error.SetString(msg);                             \
+        sink->AddPendingEvent(event_error);                     \
+    }
 
 ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxString& command, const wxString& wd,
                                          clEnvList_t* env)
 {
-    clDEBUG() << "SFTP Manager: AsyncExecute:" << command << "for account:" << accountName << endl;
+    clDEBUG() << "SFTP Manager: AwaitExecute:" << command << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);
     if(!conn) {
         clWARNING() << "Failed to obtain connection for command:" << command << ". Account:" << accountName << endl;
@@ -932,5 +930,92 @@ ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxSt
     };
     m_q.push_back(std::move(exec_func));
     return future.get();
+}
+
+#define QUEUE_ERROR_EVENT(msg)                                  \
+    {                                                           \
+        clSFTPEvent event_error{ wxEVT_SFTP_ASYNC_EXEC_ERROR }; \
+        event_error.SetString(msg);                             \
+        sink->AddPendingEvent(event_error);                     \
+    }
+
+#define QUEUE_OUTPUT_EVENT(output, is_stdout)                                                            \
+    {                                                                                                    \
+        clSFTPEvent event_ok{ is_stdout ? wxEVT_SFTP_ASYNC_EXEC_STDOUT : wxEVT_SFTP_ASYNC_EXEC_STDERR }; \
+        event_ok.SetStringRaw(output);                                                                   \
+        sink->AddPendingEvent(event_ok);                                                                 \
+    }
+
+#define QUEUE_DONE_EVENT(exit_code)                           \
+    {                                                         \
+        clSFTPEvent event_done{ wxEVT_SFTP_ASYNC_EXEC_DONE }; \
+        event_done.SetInt(exit_code);                         \
+        sink->AddPendingEvent(event_done);                    \
+    }
+
+void clSFTPManager::AsyncExecute(wxEvtHandler* sink, const wxString& accountName, const wxString& command,
+                                 const wxString& wd, clEnvList_t* env)
+{
+    clDEBUG() << "SFTP Manager: AsyncExecute:" << command << "for account:" << accountName << endl;
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    if(!conn) {
+        QUEUE_ERROR_EVENT(wxString() << "Failed to obtain connection for command:" << command
+                                     << ". Account:" << accountName);
+        return;
+    }
+
+    auto exec_func = [command, wd, conn, env, accountName, sink]() {
+        // read the file content
+        auto session = conn->GetSsh()->GetSession();
+        auto channel = ssh_channel_new(conn->GetSsh()->GetSession());
+        if(!channel) {
+            QUEUE_ERROR_EVENT(wxString() << "Execution of command:" << command << "failed." << ssh_get_error(session));
+            return;
+        }
+
+        int rc = SSH_OK;
+        rc = ssh_channel_open_session(channel);
+        if(rc != SSH_OK) {
+            ssh_channel_free(channel);
+            QUEUE_ERROR_EVENT(wxString() << "Failed to open channel for command:" << command << "."
+                                         << ssh_get_error(session));
+            return;
+        }
+
+        wxString cmd_w_dir;
+        if(!wd.empty()) {
+            cmd_w_dir << "cd " << StringUtils::WrapWithDoubleQuotes(wd) << " && " << command;
+        } else {
+            cmd_w_dir << command;
+        }
+
+        rc = ssh_channel_request_exec(channel, cmd_w_dir.mb_str(wxConvUTF8).data());
+        if(rc != SSH_OK) {
+            // mark the channel + ssh session as "broken"
+            ssh_channel_close(channel);
+            ssh_channel_free(channel);
+            QUEUE_ERROR_EVENT(wxString() << "Execution of command :" << cmd_w_dir << " failed."
+                                         << ssh_get_error(session));
+            return;
+        }
+
+        std::string std_out;
+        std::string std_err;
+        ssh::channel_read_all(channel, &std_err, true);
+        if(!std_err.empty()) {
+            QUEUE_OUTPUT_EVENT(std_err, false);
+        }
+        int exit_code = ssh::channel_read_all(channel, &std_out, false);
+        if(!std_out.empty()) {
+            QUEUE_OUTPUT_EVENT(std_out, true);
+        }
+
+        QUEUE_DONE_EVENT(exit_code);
+
+        // release the channel
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+    };
+    m_q.push_back(std::move(exec_func));
 }
 #endif

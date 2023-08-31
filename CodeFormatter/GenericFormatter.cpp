@@ -255,13 +255,13 @@ void GenericFormatter::OnRemoteCommandStdout(clCommandEvent& event)
         return;
     }
 
-    const wxString& filepath = m_inFlightFiles.front().first;
-    bool inplace_edit = IsInplaceFormatter();
-    clSourceFormatEvent format_completed_event{ inplace_edit ? wxEVT_FORMAT_INPLACE_COMPELTED
-                                                             : wxEVT_FORMAT_COMPELTED };
-    format_completed_event.SetFormattedString(inplace_edit ? "" : wxString::FromUTF8(event.GetStringRaw()));
-    format_completed_event.SetFileName(filepath);
-    m_inFlightFiles.front().second->AddPendingEvent(format_completed_event);
+    if(!IsInplaceFormatter()) {
+        const wxString& filepath = m_inFlightFiles.front().first;
+        clSourceFormatEvent format_completed_event{ wxEVT_FORMAT_COMPELTED };
+        format_completed_event.SetFormattedString(wxString::FromUTF8(event.GetStringRaw()));
+        format_completed_event.SetFileName(filepath);
+        m_inFlightFiles.front().second->AddPendingEvent(format_completed_event);
+    }
 }
 
 void GenericFormatter::OnRemoteCommandStderr(clCommandEvent& event)
@@ -277,6 +277,13 @@ void GenericFormatter::OnRemoteCommandDone(clCommandEvent& event)
     if(m_inFlightFiles.empty()) {
         clERROR() << "GenericFormatter::OnRemoteCommandDone is called but NO inflight files" << endl;
         return;
+    }
+    auto sink = m_inFlightFiles.front().second;
+    if(IsInplaceFormatter()) {
+        const wxString& filepath = m_inFlightFiles.front().first;
+        clSourceFormatEvent format_completed_event{ wxEVT_FORMAT_INPLACE_COMPELTED };
+        format_completed_event.SetFileName(filepath);
+        sink->AddPendingEvent(format_completed_event);
     }
     m_inFlightFiles.erase(m_inFlightFiles.begin());
 }

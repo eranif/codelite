@@ -16,7 +16,7 @@ RemotyNewWorkspaceDlg::~RemotyNewWorkspaceDlg() {}
 void RemotyNewWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
     auto result = ::clRemoteFileSelector(_("Seelct a folder"));
-    if(result.second.empty() || result.second.empty()) {
+    if(result.first.empty() || result.second.empty()) {
         return;
     }
     m_textCtrlPath->SetEditable(true);

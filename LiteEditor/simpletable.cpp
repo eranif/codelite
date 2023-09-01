@@ -22,13 +22,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "simpletable.h"
+
 #include "debugger.h"
 #include "debuggermanager.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "manager.h"
-#include "simpletable.h"
 #include "simpletablebase.h"
+
 #include <wx/regex.h>
 #include <wx/textdlg.h> //wxGetTextFromUser
 #include <wx/utils.h>
@@ -345,15 +347,17 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEventData& event)
 
                 // set the type
                 m_listTable->SetItemText(item, event.m_variableObject.typeName, 2);
-                if(dbgr->GetDebuggerInformation().defaultHexDisplay == true)
-                    dbgr->SetVariableObbjectDisplayFormat(DoGetGdbId(item), DBG_DF_HEXADECIMAL);
-                // refresh this item only
-                if(dbgr)
+                if(dbgr) {
+                    if(dbgr->GetDebuggerInformation().defaultHexDisplay == true) {
+                        dbgr->SetVariableObbjectDisplayFormat(DoGetGdbId(item), DBG_DF_HEXADECIMAL);
+                    }
+                    // refresh this item only
                     DoRefreshItem(dbgr, item, true);
 
-                // Query the debugger to see if this node has a children
-                // In case it does, we add a dummy node so we will get the [+] sign
-                dbgr->ListChildren(data->_gdbId, m_QUERY_NUM_CHILDS);
+                    // Query the debugger to see if this node has a children
+                    // In case it does, we add a dummy node so we will get the [+] sign
+                    dbgr->ListChildren(data->_gdbId, m_QUERY_NUM_CHILDS);
+                }
                 m_listChildItemId[data->_gdbId] = item;
             }
 

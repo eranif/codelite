@@ -279,7 +279,7 @@ int clSocketBase::ReadMessage(wxString& message, int timeout)
     message_len = ::atoi(msglen);
 
     bytesRead = 0;
-    std::unique_ptr<char> pBuff(new char[message_len]);
+    std::unique_ptr<char[]> pBuff(new char[message_len]);
 
     // read the entire amount we need
     int bytesLeft = message_len;

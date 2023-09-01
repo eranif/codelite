@@ -1712,10 +1712,9 @@ bool GitPlugin::HandleErrorsOnRemoteRepo(const wxString& output) const
         return false;
     }
 
-    if(output.Contains("username for") || output.Contains("username for") ||
-       output.Contains("commit-msg hook failure") || output.Contains("pre-commit hook failure") ||
-       output.Contains("*** please tell me who you are") || output.EndsWith("password:") ||
-       output.Contains("password for") || output.Contains("authentication failed") ||
+    if(output.Contains("username for") || output.Contains("commit-msg hook failure") ||
+       output.Contains("pre-commit hook failure") || output.Contains("*** please tell me who you are") ||
+       output.EndsWith("password:") || output.Contains("password for") || output.Contains("authentication failed") ||
        (output.Contains("the authenticity of host") && output.Contains("can't be established")) ||
        output.Contains("key fingerprint")) {
         ::wxMessageBox(_("Remote git error (needs to be handled manually on the remote server)\n") + output, "CodeLite",

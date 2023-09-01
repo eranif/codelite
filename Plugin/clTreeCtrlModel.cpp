@@ -369,7 +369,7 @@ int clTreeCtrlModel::GetItemIndex(clRowEntry* item) const
 bool clTreeCtrlModel::GetRange(clRowEntry* from, clRowEntry* to, clRowEntry::Vec_t& items) const
 {
     items.clear();
-    if(from == nullptr || to == nullptr) {
+    if(from == nullptr && to == nullptr) {
         return false;
     }
     if(from == nullptr) {

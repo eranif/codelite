@@ -1,12 +1,14 @@
 #if USE_SFTP
 
 #include "PhpSFTPHandler.h"
+
 #include "clSFTPEvent.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "php_workspace.h"
-#include "ssh_workspace_settings.h"
 #include "sftp_settings.h"
+#include "ssh_workspace_settings.h"
+
 #include <wx/msgdlg.h>
 
 PhpSFTPHandler::PhpSFTPHandler()
@@ -28,20 +30,26 @@ PhpSFTPHandler::~PhpSFTPHandler()
 void PhpSFTPHandler::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
-    if(!PHPWorkspace::Get()->IsOpen()) { return; }
+    if(!PHPWorkspace::Get()->IsOpen()) {
+        return;
+    }
     DoSyncFileWithRemote(e.GetFileName());
 }
 
 void PhpSFTPHandler::OnReplaceInFiles(clFileSystemEvent& e)
 {
     e.Skip();
-    if(!PHPWorkspace::Get()->IsOpen()) { return; }
-    
+    if(!PHPWorkspace::Get()->IsOpen()) {
+        return;
+    }
+
     SSHWorkspaceSettings settings;
     settings.Load();
-    
-    if(!EnsureAccountExists(settings)) { return; }
-    
+
+    if(!EnsureAccountExists(settings)) {
+        return;
+    }
+
     const wxArrayString& files = e.GetStrings();
     for(size_t i = 0; i < files.size(); ++i) {
         DoSyncFileWithRemote(files.Item(i));
@@ -51,16 +59,22 @@ void PhpSFTPHandler::OnReplaceInFiles(clFileSystemEvent& e)
 void PhpSFTPHandler::OnFileRenamed(clFileSystemEvent& e)
 {
     e.Skip();
-    if(!PHPWorkspace::Get()->IsOpen()) { return; }
+    if(!PHPWorkspace::Get()->IsOpen()) {
+        return;
+    }
 
     SSHWorkspaceSettings settings;
     settings.Load();
-    
-    if(!EnsureAccountExists(settings)) { return; }
-    
+
+    if(!EnsureAccountExists(settings)) {
+        return;
+    }
+
     wxString oldPath = GetRemotePath(settings, e.GetPath());
     wxString newPath = GetRemotePath(settings, e.GetNewpath());
-    if(oldPath.IsEmpty() || newPath.IsEmpty()) { return; }
+    if(oldPath.IsEmpty() || newPath.IsEmpty()) {
+        return;
+    }
 
     clDEBUG() << "PHP SFTP: Renaming:" << oldPath << "->" << newPath;
 
@@ -84,12 +98,16 @@ void PhpSFTPHandler::DoSyncFileWithRemote(const wxFileName& localFile)
 
     SSHWorkspaceSettings workspaceSettings;
     workspaceSettings.Load();
-    
-    if(!EnsureAccountExists(workspaceSettings)) { return; }
-    
+
+    if(!EnsureAccountExists(workspaceSettings)) {
+        return;
+    }
+
     // Convert the local path to remote path
     wxString remotePath = GetRemotePath(workspaceSettings, localFile.GetFullPath());
-    if(remotePath.IsEmpty()) { return; }
+    if(remotePath.IsEmpty()) {
+        return;
+    }
 
     // Fire this event, if the sftp plugin is ON, it will handle it
     clSFTPEvent eventSave(wxEVT_SFTP_SAVE_FILE);
@@ -101,7 +119,9 @@ void PhpSFTPHandler::DoSyncFileWithRemote(const wxFileName& localFile)
 
 wxString PhpSFTPHandler::GetRemotePath(const SSHWorkspaceSettings& sshSettings, const wxString& localpath) const
 {
-    if(!sshSettings.IsRemoteUploadEnabled() || !sshSettings.IsRemoteUploadEnabled()) { return ""; }
+    if(!sshSettings.IsRemoteUploadEnabled()) {
+        return "";
+    }
     wxFileName fnLocalFile = localpath;
     fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
     fnLocalFile.MakeAbsolute(wxFileName(sshSettings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
@@ -111,20 +131,28 @@ wxString PhpSFTPHandler::GetRemotePath(const SSHWorkspaceSettings& sshSettings, 
 void PhpSFTPHandler::OnFileDeleted(clFileSystemEvent& e)
 {
     e.Skip();
-    if(!PHPWorkspace::Get()->IsOpen()) { return; }
+    if(!PHPWorkspace::Get()->IsOpen()) {
+        return;
+    }
 
     SSHWorkspaceSettings settings;
     settings.Load();
-    
-    if(!EnsureAccountExists(settings)) { return; }
-    
+
+    if(!EnsureAccountExists(settings)) {
+        return;
+    }
+
     const wxArrayString& paths = e.GetPaths();
-    if(paths.IsEmpty()) { return; }
-    
+    if(paths.IsEmpty()) {
+        return;
+    }
+
     for(size_t i = 0; i < paths.size(); ++i) {
         wxString remotePath = GetRemotePath(settings, paths.Item(i));
-        if(remotePath.IsEmpty()) { return; }
-        
+        if(remotePath.IsEmpty()) {
+            return;
+        }
+
         // Fire this event, if the sftp plugin is ON, it will handle it
         clSFTPEvent eventDelete(wxEVT_SFTP_DELETE_FILE);
         eventDelete.SetAccount(settings.GetAccount());
@@ -136,11 +164,13 @@ void PhpSFTPHandler::OnFileDeleted(clFileSystemEvent& e)
 bool PhpSFTPHandler::EnsureAccountExists(SSHWorkspaceSettings& workspaceSettings)
 {
     // Do we need to sync?
-    if(!(workspaceSettings.IsRemoteUploadSet() && workspaceSettings.IsRemoteUploadEnabled())) { return false; }
-    
+    if(!(workspaceSettings.IsRemoteUploadSet() && workspaceSettings.IsRemoteUploadEnabled())) {
+        return false;
+    }
+
     SFTPSettings sftpSettings;
     sftpSettings.Load();
-    
+
     // Try to locate hte SSH account for this workspace
     SSHAccountInfo account;
     if(!sftpSettings.GetAccount(workspaceSettings.GetAccount(), account)) {
@@ -156,4 +186,4 @@ bool PhpSFTPHandler::EnsureAccountExists(SSHWorkspaceSettings& workspaceSettings
     return true;
 }
 
-#endif //USE_SFTP
+#endif // USE_SFTP

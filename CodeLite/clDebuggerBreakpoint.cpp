@@ -6,13 +6,9 @@
 #define is_windows false
 #endif
 
-clDebuggerBreakpoint::clDebuggerBreakpoint()
-{
-}
+clDebuggerBreakpoint::clDebuggerBreakpoint() {}
 
-clDebuggerBreakpoint::~clDebuggerBreakpoint()
-{
-}
+clDebuggerBreakpoint::~clDebuggerBreakpoint() {}
 
 clDebuggerBreakpoint::clDebuggerBreakpoint(const clDebuggerBreakpoint& BI)
 {
@@ -23,7 +19,7 @@ clDebuggerBreakpoint::clDebuggerBreakpoint(const clDebuggerBreakpoint& BI)
     // call operator=
     *this = BI;
 
-    if(!is_windows || (is_windows && !file.Contains("/"))) {
+    if(!is_windows || !file.Contains("/")) {
         // Normalize the file name
         if(!file.IsEmpty()) {
             wxFileName fn(file);

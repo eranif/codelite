@@ -210,7 +210,7 @@ void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& va
             curtext << wxT(" = ") << value;
             m_treeCtrl->SetItemText(item, curtext);
 
-        } else if(item.IsOk()) {
+        } else {
             nodeId = item;
         }
     } else if(varname == m_mainVariableObject) {

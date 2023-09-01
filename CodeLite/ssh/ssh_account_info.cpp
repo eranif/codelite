@@ -105,7 +105,7 @@ SSHAccountInfo::Vect_t SSHAccountInfo::Load(const std::function<bool(const SSHAc
         auto account = accounts[i];
         SSHAccountInfo ai;
         ai.FromJSON(account);
-        if(!matcher || (matcher && matcher(ai))) {
+        if(!matcher || matcher(ai)) {
             accountsVec.emplace_back(ai);
         }
     }

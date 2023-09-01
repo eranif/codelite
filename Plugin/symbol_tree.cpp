@@ -52,7 +52,7 @@ SymbolTree::SymbolTree()
             img2 = b->GetBitmapIndex();
             if(img1 < img2)
                 return true;
-            else if(img1 < img2)
+            else if(img1 > img2)
                 return false;
             else {
                 // Items  has the same icons, compare text
@@ -81,7 +81,7 @@ SymbolTree::SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos
             img2 = b->GetBitmapIndex();
             if(img1 < img2)
                 return true;
-            else if(img1 < img2)
+            else if(img1 > img2)
                 return false;
             else {
                 // Items  has the same icons, compare text

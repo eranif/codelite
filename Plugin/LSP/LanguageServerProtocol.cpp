@@ -47,6 +47,7 @@
 #include <unordered_map>
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
+#include <wx/textdlg.h>
 
 thread_local wxString emptyString;
 FileExtManager::FileType LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
@@ -1034,7 +1035,10 @@ void LanguageServerProtocol::RenameSymbol(IEditor* editor)
     CHECK_EXPECTED_RETURN(IsRenameSupported(), true);
     LSP_DEBUG() << GetLogPrefix() << "Sending `rename symbol` request" << endl;
 
-    wxString newname = clGetTextFromUser(_("Rename symbol"), _("New name:"));
+    wxString old_name = editor->GetWordAtCaret();
+    wxString title;
+    title << _("Rename Symbol: '") << old_name << "'";
+    wxString newname = wxGetTextFromUser(_("New name:"), title);
     if(newname.empty()) {
         return;
     }

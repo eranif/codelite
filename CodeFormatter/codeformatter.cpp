@@ -25,6 +25,7 @@
 #include "codeformatter.h"
 
 #include "JSON.h"
+#include "SFTPClientData.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clEditorConfig.h"
@@ -249,6 +250,17 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     // save the file formatting it
     if(editor->IsEditorModified()) {
         editor->Save();
+#if USE_SFTP
+        // By default, `editor->Save()`, for remote files, will save the file in an async mode ("later"), but we need
+        // this to happen NOW. So call `clSFTPManager::Get().AwaitSaveFile`
+        if(editor->IsRemoteFile()) {
+            auto cd = editor->GetRemoteData();
+            if(cd) {
+                wxBusyCursor bc;
+                clSFTPManager::Get().AwaitSaveFile(cd->GetLocalPath(), cd->GetRemotePath(), cd->GetAccountName());
+            }
+        }
+#endif
         inc_save_count(file_path);
     }
 

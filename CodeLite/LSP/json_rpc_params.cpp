@@ -206,4 +206,15 @@ JSONItem ReferenceParams::ToJSON(const wxString& name) const
     return json;
 }
 
+RenameParams::RenameParams() {}
+
+void RenameParams::FromJSON(const JSONItem& json) { wxUnusedVar(json); }
+
+JSONItem RenameParams::ToJSON(const wxString& name) const
+{
+    JSONItem json = TextDocumentPositionParams::ToJSON(name);
+    json.addProperty("newName", m_newName);
+    return json;
+}
+
 }; // namespace LSP

@@ -238,21 +238,30 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
         menu->Prepend(XRCID("lsp_find_references"), _("Find references"));
     }
     menu->PrependSeparator();
-    if(add_rename_symbol && false) {
+    if(add_rename_symbol) {
         menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
     }
     menu->Prepend(XRCID("lsp_find_symbol"), _("Find symbol"));
 
-    // TODO:
-    // add here "Find References" and "Rename Symbol"
-    // menu entries if supported by the LSP
-    // we always add them to the top of the list
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindSymbol, this, XRCID("lsp_find_symbol"));
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindReferences, this, XRCID("lsp_find_references"));
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuRenameSymbol, this, XRCID("lsp_rename_symbol"));
 }
 
-void LanguageServerPlugin::OnMenuRenameSymbol(wxCommandEvent& event) {}
+void LanguageServerPlugin::OnMenuRenameSymbol(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+
+    LSP_DEBUG() << "OnMenuRenameSymbol is called" << endl;
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForEditor(editor);
+    CHECK_PTR_RET(lsp);
+
+    lsp->RenameSymbol(editor);
+}
 
 void LanguageServerPlugin::OnMenuFindReferences(wxCommandEvent& event)
 {

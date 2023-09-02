@@ -18,6 +18,7 @@
 #include "LSP/LSPNetworkRemoteSTDIO.hpp"
 #include "LSP/LSPNetworkSTDIO.h"
 #include "LSP/LSPNetworkSocketClient.h"
+#include "LSP/RenameRequest.hpp"
 #include "LSP/Request.h"
 #include "LSP/ResponseError.h"
 #include "LSP/ResponseMessage.h"
@@ -1027,7 +1028,22 @@ void LanguageServerProtocol::FindReferences(IEditor* editor)
     EventNotifier::Get()->AddPendingEvent(event_start);
 }
 
-void LanguageServerProtocol::RenameSymbol(IEditor* editor) {}
+void LanguageServerProtocol::RenameSymbol(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+    CHECK_EXPECTED_RETURN(IsRenameSupported(), true);
+    LSP_DEBUG() << GetLogPrefix() << "Sending `rename symbol` request" << endl;
+
+    wxString newname = clGetTextFromUser(_("Rename symbol"), _("New name:"));
+    if(newname.empty()) {
+        return;
+    }
+
+    LSP::RenameRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+        new LSP::RenameRequest(newname, GetEditorFilePath(editor), editor->GetCurrentLine(),
+                               editor->GetColumnInChars(editor->GetCurrentPosition())));
+    QueueMessage(req);
+}
 
 void LanguageServerProtocol::OnSemanticHighlights(clCodeCompletionEvent& event)
 {

@@ -48,6 +48,28 @@ public:
 };
 
 //===----------------------------------------------------------------------------------
+// RenameParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL RenameParams : public TextDocumentPositionParams
+{
+    /**
+     * The new name of the symbol. If the given name is not valid the
+     * request must return a [ResponseError](#ResponseError) with an
+     * appropriate message set.
+     */
+    wxString m_newName;
+
+public:
+    RenameParams();
+    virtual ~RenameParams() {}
+
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    void SetNewName(const wxString& newName) { this->m_newName = newName; }
+    const wxString& GetNewName() const { return m_newName; }
+};
+
+//===----------------------------------------------------------------------------------
 // TextDocumentPositionParams
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL ReferenceParams : public TextDocumentPositionParams

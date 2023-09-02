@@ -28,6 +28,10 @@
 #include "wxCodeCompletionBoxManager.h"
 #include "wxStringHash.h"
 
+#if USE_SFTP
+#include "clSFTPManager.hpp"
+#endif
+
 #include <algorithm>
 #include <thread>
 #include <wx/arrstr.h>
@@ -141,6 +145,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
     Bind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
     Bind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
+    Bind(wxEVT_LSP_EDIT_FILES, &LanguageServerCluster::OnApplyEdits, this);
     m_remoteHelper.reset(new CodeLiteRemoteHelper);
 }
 
@@ -175,6 +180,8 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
     Unbind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
+    Unbind(wxEVT_LSP_EDIT_FILES, &LanguageServerCluster::OnApplyEdits, this);
+
     if(m_quick_outline_dlg) {
         m_quick_outline_dlg->Destroy();
         m_quick_outline_dlg = nullptr;
@@ -1226,4 +1233,52 @@ void LanguageServerCluster::OnCodeActionAvailable(LSPEvent& event)
     CHECK_PTR_RET(server);
 
     server->SendWorkspaceExecuteCommand(event.GetFileName(), *command_to_apply);
+}
+
+void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
+{
+    wxBusyCursor bc;
+    const auto& changes = event.GetChanges();
+    if(changes.empty()) {
+        LSP_WARNING() << "Apply Edits event was called with 0 changes" << endl;
+        return;
+    }
+    // confirm with the user
+    if(::wxMessageBox(wxString() << "This will update: " << changes.size() << " files. Continue?", "CodeLite",
+                      wxICON_QUESTION | wxCANCEL | wxYES_NO | wxYES_DEFAULT) != wxYES) {
+        return;
+    }
+
+    for(const auto& [filepath, edit_arr] : changes) {
+        if(edit_arr.empty()) {
+            continue;
+        }
+
+        IEditor* editor{ nullptr };
+#if USE_SFTP
+        if(clWorkspaceManager::Get().IsWorkspaceOpened() && clWorkspaceManager::Get().GetWorkspace()->IsRemote()) {
+            editor = clSFTPManager::Get().OpenFile(filepath, clWorkspaceManager::Get().GetWorkspace()->GetSshAccount());
+        } else {
+            editor = clGetManager()->OpenFile(filepath);
+        }
+#else
+        editor = clGetManager()->OpenFile(filepath);
+#endif
+
+        if(!editor) {
+            LSP_WARNING() << "Could not open editor for file:" << filepath << endl;
+            continue;
+        }
+
+        // Apply the changes
+        editor->GetCtrl()->BeginUndoAction();
+        for(auto iter = edit_arr.rbegin(); iter != edit_arr.rend(); ++iter) {
+            // apply the changes, in reverse order (to ensure that there is no skewing)
+            const LSP::TextEdit& text_edit = *iter;
+            editor->SelectRange(text_edit.GetRange());
+            editor->ReplaceSelection(text_edit.GetNewText());
+        }
+        editor->GetCtrl()->EndUndoAction();
+        editor->Save();
+    }
 }

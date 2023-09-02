@@ -20,5 +20,61 @@ void LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtH
     wxUnusedVar(owner);
     JSONItem result = response.Get("result");
     CHECK_EXPECTED_RETURN(result.isOk(), true);
-    LOG_IF_DEBUG { LSP_DEBUG() << result.format(false) << endl; }
+    LOG_IF_TRACE { LSP_TRACE() << result.format(false) << endl; }
+
+    std::unordered_map<wxString, std::vector<LSP::TextEdit>> modifications;
+    // some LSPs will reply with "changes" and some with "documentChanges" -> we support them both
+    if(result.hasNamedObject("changes")) {
+        auto changes = result["changes"];
+        auto M = changes.GetAsMap();
+
+        modifications.reserve(M.size());
+        for(const auto& [filepath, json] : M) {
+            int count = json.arraySize();
+            std::vector<LSP::TextEdit> file_changes;
+            file_changes.reserve(count);
+            for(int i = 0; i < count; ++i) {
+                auto e = json[i];
+                LSP::TextEdit te;
+                te.FromJSON(e);
+                file_changes.push_back(te);
+            }
+            wxString path = FileUtils::FilePathFromURI(wxString(filepath.data(), filepath.length()));
+            modifications.erase(path);
+            modifications.insert({ path, file_changes });
+        }
+    } else if(result.hasNamedObject("documentChanges")) {
+        auto documentChanges = result["documentChanges"];
+        int files_count = documentChanges.arraySize();
+        for(int i = 0; i < files_count; ++i) {
+            auto edits = documentChanges[i]["edits"];
+            wxString filepath = documentChanges[i]["textDocument"]["uri"].toString();
+            filepath = FileUtils::FilePathFromURI(filepath);
+            std::vector<LSP::TextEdit> file_changes;
+            int edits_count = edits.arraySize();
+            file_changes.reserve(edits_count);
+            for(int j = 0; j < edits_count; ++j) {
+                auto e = edits[j];
+                LSP::TextEdit te;
+                te.FromJSON(e);
+                file_changes.push_back(te);
+            }
+            modifications.erase(filepath);
+            modifications.insert({ filepath, file_changes });
+        }
+    }
+
+    LSPEvent event_edit_files{ wxEVT_LSP_EDIT_FILES };
+    event_edit_files.SetChanges(modifications);
+    owner->AddPendingEvent(event_edit_files);
+    LOG_IF_DEBUG
+    {
+        LSP_DEBUG() << "Updating" << modifications.size() << "files:" << endl;
+        for(const auto& [filepath, changes] : modifications) {
+            LSP_DEBUG() << "  " << filepath << modifications.size() << "changes:" << endl;
+            for(const auto& change : changes) {
+                LSP_DEBUG() << "    " << change.ToJSON(wxEmptyString).format(false) << endl;
+            }
+        }
+    }
 }

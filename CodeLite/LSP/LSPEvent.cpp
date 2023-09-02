@@ -22,6 +22,7 @@ wxDEFINE_EVENT(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_REFERENCES, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_REFERENCES_INPROGRESS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_CODE_ACTIONS, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_EDIT_FILES, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -48,6 +49,7 @@ LSPEvent& LSPEvent::operator=(const LSPEvent& other)
     m_logMessageSeverity = other.m_logMessageSeverity;
     m_locations = other.m_locations;
     m_commands = other.m_commands;
+    m_changes = other.m_changes;
     return *this;
 }
 

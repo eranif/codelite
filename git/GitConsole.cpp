@@ -730,16 +730,16 @@ void GitConsole::AddLine(const wxString& line)
     builder.Clear();
 
     if(HasAnsiEscapeSequences(tmp)) {
-        builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
+        builder.Add(tmp, AnsiColours::NormalText());
     } else {
         if(IsPatternFound(tmp, m_errorPatterns)) {
-            builder.Add(tmp, eAsciiColours::RED);
+            builder.Add(tmp, AnsiColours::Red());
         } else if(IsPatternFound(tmp, m_warningPatterns)) {
-            builder.Add(tmp, eAsciiColours::YELLOW);
+            builder.Add(tmp, AnsiColours::Yellow());
         } else if(IsPatternFound(tmp, m_successPatterns)) {
-            builder.Add(tmp, eAsciiColours::GREEN);
+            builder.Add(tmp, AnsiColours::Green());
         } else {
-            builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
+            builder.Add(tmp, AnsiColours::NormalText());
         }
     }
     m_dvListCtrlLog->AddLine(builder.GetString(), text_ends_with_cr);
@@ -749,7 +749,7 @@ void GitConsole::PrintPrompt()
 {
     auto& builder = m_dvListCtrlLog->GetBuilder();
     builder.Clear();
-    builder.Add(GetPrompt(), eAsciiColours::GREEN, true);
+    builder.Add(GetPrompt(), AnsiColours::Green(), true);
     m_dvListCtrlLog->AddLine(builder.GetString(), false);
     builder.Clear();
 }

@@ -43,7 +43,7 @@ protected:
     void ProcessBuildingProjectLine(const wxString& line);
     bool ProcessCargoBuildLine(const wxString& line);
     const wxString& GetCurrentProjectName() const { return m_currentProjectName; }
-    wxString WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font = false) const;
+    wxString WrapLineInColour(const wxString& line, int colour, bool fold_font = false) const;
     void SaveBuildLog();
     void CopySelections();
     void CopyAll();

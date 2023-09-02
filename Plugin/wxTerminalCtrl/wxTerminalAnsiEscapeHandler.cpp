@@ -347,7 +347,7 @@ void initialise_colours()
 
 const wxColour& find_colour_by_number(ColoursMap_t* coloursMap, int num)
 {
-    if(pColours->count(num) == 0) {
+    if(!coloursMap || pColours->count(num) == 0) {
         return wxNullColour;
     }
     return pColours->find(num)->second;
@@ -1152,4 +1152,9 @@ void wxTerminalAnsiEscapeHandler::handle_sgr(wxStringView sv, wxTerminalAnsiRend
     }
 #undef BETWEEN
 #undef NEXT_NUMBER
+}
+
+const wxColour& wxTerminalAnsiEscapeHandler::GetColour(int colour_number)
+{
+    return find_colour_by_number(pColours, colour_number);
 }

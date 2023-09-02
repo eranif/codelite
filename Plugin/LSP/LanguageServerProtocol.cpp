@@ -930,7 +930,7 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
         LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
         log_event.SetServerName(GetName());
         log_event.SetMessage(_("Method: `") + msg_ptr->GetMethod() + _("` is not supported"));
-        log_event.SetLogMessageSeverity(2); // warning
+        log_event.SetLogMessageSeverity(LSP_LOG_WARNING); // warning
         m_owner->AddPendingEvent(log_event);
 
     } break;
@@ -940,8 +940,15 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
         reparseEvent.SetServerName(GetName());
         m_owner->AddPendingEvent(reparseEvent);
     } break;
-    default:
-        break;
+    case LSP::ResponseError::kErrorCodeUnknownErrorCode:
+    default: {
+        // log it
+        LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
+        log_event.SetServerName(GetName());
+        log_event.SetMessage(errMsg.GetMessage());
+        log_event.SetLogMessageSeverity(LSP_LOG_ERROR);
+        m_owner->AddPendingEvent(log_event);
+    } break;
     }
 }
 

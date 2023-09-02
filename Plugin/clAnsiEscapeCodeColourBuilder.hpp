@@ -7,36 +7,30 @@
 #include <wx/colour.h>
 #include <wx/string.h>
 
-enum class eAsciiColours : int {
-    RED,
-    YELLOW,
-    GREEN,
-    GRAY,
-    NORMAL_TEXT,
+/// Helper class for getting proper common colour code
+struct WXDLLIMPEXP_SDK AnsiColours {
+    static bool dark_theme;
+    static void SetDarkTheme(bool b) { dark_theme = b; }
+    inline static int OneOf(int light, int dark) { return dark_theme ? dark : light; }
+    inline static int Red() { return OneOf(160, 160); }
+    inline static int Yellow() { return OneOf(220, 214); }
+    inline static int Green() { return OneOf(28, 40); }
+    inline static int NormalText() { return OneOf(0, 255); }
+    inline static int Cyan() { return OneOf(45, 117); }
+    inline static int Magenta() { return OneOf(162, 200); }
+    inline static int Gray() { return OneOf(247, 250); }
 };
 
-enum class eAsciiTheme : int {
+enum class eColourTheme : int {
     DARK,
     LIGHT,
 };
-
-// provide hash for eAsciiColours
-namespace std
-{
-template <> struct hash<eAsciiColours> {
-    std::size_t operator()(eAsciiColours i) const { return hash<int>{}((int)i); }
-};
-} // namespace std
 
 class WXDLLIMPEXP_SDK clAnsiEscapeCodeColourBuilder
 {
 private:
     wxString* m_string = nullptr;
     wxString m_internalBuffer;
-    typedef std::unordered_map<eAsciiColours, int> ColoursTable_t;
-    ColoursTable_t m_lightThemeColours;
-    ColoursTable_t m_darkThemeColours;
-    ColoursTable_t* m_activeColours = nullptr;
 
 protected:
     void DoAddTextToBuffer(wxString* buffer, const wxString& text, int textColour, bool bold) const;
@@ -46,16 +40,16 @@ public:
     clAnsiEscapeCodeColourBuilder();
     ~clAnsiEscapeCodeColourBuilder();
 
-    clAnsiEscapeCodeColourBuilder& SetTheme(eAsciiTheme theme);
+    clAnsiEscapeCodeColourBuilder& SetTheme(eColourTheme theme);
     clAnsiEscapeCodeColourBuilder& Add(const wxString& text, int textColour, bool bold = false);
-    clAnsiEscapeCodeColourBuilder& Add(const wxString& text, eAsciiColours textColour, bool bold = false);
     clAnsiEscapeCodeColourBuilder& Add(const wxString& text, const wxColour& colour, bool bold = false);
 
     /**
      * @brief wrap "line" with colour and optionally, bold font
      * @return reference to `line`
      */
-    wxString& WrapWithColour(wxString& line, eAsciiColours colour, bool bold_font = false) const;
+    wxString& WrapWithColour(wxString& line, int colour, bool bold_font = false) const;
+
     /**
      * @brief should be used when working with the default constructor
      * @return

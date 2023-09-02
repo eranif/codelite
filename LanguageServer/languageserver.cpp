@@ -438,28 +438,28 @@ void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxStrin
 {
     auto& builder = m_logView->GetDvListCtrl()->GetBuilder(true);
 
-    eAsciiColours ansi_colour_code = eAsciiColours::NORMAL_TEXT;
+    int ansi_colour_code = AnsiColours::NormalText();
     wxString label = "T "; // trace
     switch(log_leve) {
     case 1:
-        ansi_colour_code = eAsciiColours::RED; // error
+        ansi_colour_code = AnsiColours::Red(); // error
         label = "E ";
         break;
     case 2:
-        ansi_colour_code = eAsciiColours::YELLOW; // warning
+        ansi_colour_code = AnsiColours::Yellow(); // warning
         label = "W ";
         break;
     case 3:
-        ansi_colour_code = eAsciiColours::GREEN; // info
+        ansi_colour_code = AnsiColours::Green(); // info
         label = "I ";
     default:
         break;
     }
 
     builder.Add(label, ansi_colour_code);
-    builder.Add(wxDateTime::Now().FormatISOTime() + " ", eAsciiColours::GRAY);
-    builder.Add(server_name + " ", eAsciiColours::NORMAL_TEXT);
-    builder.Add(message, eAsciiColours::NORMAL_TEXT);
+    builder.Add(wxDateTime::Now().FormatISOTime() + " ", AnsiColours::Gray());
+    builder.Add(server_name + " ", AnsiColours::Magenta());
+    builder.Add(message, AnsiColours::NormalText());
     m_logView->GetDvListCtrl()->AddLine(builder.GetString(), false);
     m_logView->GetDvListCtrl()->ScrollToBottom();
 }

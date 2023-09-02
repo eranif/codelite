@@ -159,12 +159,12 @@ void BuildTab::ProcessBuffer(bool last_line)
 
         // easy path: check for common makefile messages
         if(line.Lower().Contains("entering directory") || line.Lower().Contains("leaving directory")) {
-            line = WrapLineInColour(line, eAsciiColours::GRAY);
+            line = WrapLineInColour(line, AnsiColours::Gray());
             m_view->AppendItem(line);
 
         } else if(line.Lower().Contains("building project")) {
             ProcessBuildingProjectLine(line);
-            line = WrapLineInColour(line, eAsciiColours::NORMAL_TEXT, true);
+            line = WrapLineInColour(line, AnsiColours::NormalText(), true);
             m_view->AppendItem(line);
 
         } else if(m_activeCompiler && (m_activeCompiler->GetName() == "rustc") && line.Lower().Contains("compiling") &&
@@ -199,8 +199,8 @@ void BuildTab::ProcessBuffer(bool last_line)
             // this colour has no colour associated with it (using ANSI escape)
             // add some
             if(!lineHasColours && m.get()) {
-                line = WrapLineInColour(line, m->match_pattern.sev == Compiler::kSevError ? eAsciiColours::RED
-                                                                                          : eAsciiColours::YELLOW);
+                line = WrapLineInColour(line, m->match_pattern.sev == Compiler::kSevError ? AnsiColours::Red()
+                                                                                          : AnsiColours::Yellow());
             }
             // Associate the match info with the line in the view
             // this will be used later when selecting lines
@@ -253,13 +253,13 @@ void BuildTab::ClearView()
     m_buffer.clear();
 }
 
-wxString BuildTab::WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font) const
+wxString BuildTab::WrapLineInColour(const wxString& line, int colour, bool fold_font) const
 {
     wxString text;
     clAnsiEscapeCodeColourBuilder text_builder(&text);
 
     bool is_light = m_view->GetColours().IsLightTheme();
-    text_builder.SetTheme(is_light ? eAsciiTheme::LIGHT : eAsciiTheme::DARK).Add(line, colour, fold_font);
+    text_builder.SetTheme(is_light ? eColourTheme::LIGHT : eColourTheme::DARK).Add(line, colour, fold_font);
     return text;
 }
 
@@ -436,7 +436,7 @@ wxString BuildTab::CreateSummaryLine()
     if(m_buildInterrupted) {
         // build was cancelled by the user
         text << _("(Build cancelled by the user)\n");
-        text = WrapLineInColour(text, eAsciiColours::YELLOW);
+        text = WrapLineInColour(text, AnsiColours::Yellow());
         m_buildInterrupted = false;
     } else {
 
@@ -444,13 +444,13 @@ wxString BuildTab::CreateSummaryLine()
         text << "\n";
         if(m_error_count) {
             text = _("==== build ended with ");
-            text << WrapLineInColour(_("errors"), eAsciiColours::RED, true);
+            text << WrapLineInColour(_("errors"), AnsiColours::Red(), true);
         } else if(m_warn_count) {
             text = _("=== build ended with ");
-            text << WrapLineInColour(_("warnings"), eAsciiColours::YELLOW, true);
+            text << WrapLineInColour(_("warnings"), AnsiColours::Yellow(), true);
         } else {
             text = _("=== build completed ");
-            text << WrapLineInColour(_("successfully"), eAsciiColours::GREEN, true);
+            text << WrapLineInColour(_("successfully"), AnsiColours::Green(), true);
         }
         text << " (" << m_error_count << _(" errors, ") << m_warn_count << _(" warnings)");
         if(!total_time.empty()) {

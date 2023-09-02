@@ -38,21 +38,21 @@ void Tester::RunTests()
 #endif
 
     clAnsiEscapeCodeColourBuilder builder;
-    builder.SetTheme(eAsciiTheme::DARK);
+    builder.SetTheme(eColourTheme::DARK);
 
     vector<wxString> failures;
     size_t total_checks = 0;
     for(size_t i = 0; i < m_tests.size(); i++) {
         ITest* test = m_tests[i];
         if(test->test()) {
-            builder.Add(wxString() << test->name() << "....", eAsciiColours::NORMAL_TEXT);
-            builder.Add("OK", eAsciiColours::GREEN);
-            builder.Add(wxString() << " (" << test->get_check_counter() << " checks performed)", eAsciiColours::GRAY);
+            builder.Add(wxString() << test->name() << "....", AnsiColours::NormalText());
+            builder.Add("OK", AnsiColours::Green());
+            builder.Add(wxString() << " (" << test->get_check_counter() << " checks performed)", AnsiColours::Gray());
             wxPrintf(wxT("%s\n"), builder.GetString());
         } else {
-            builder.Add(wxString() << test->name() << "....", eAsciiColours::NORMAL_TEXT);
-            builder.Add("FAILED", eAsciiColours::RED);
-            builder.Add(wxString() << " (" << test->file() << ":" << test->line() << ")", eAsciiColours::GRAY);
+            builder.Add(wxString() << test->name() << "....", AnsiColours::NormalText());
+            builder.Add("FAILED", AnsiColours::Red());
+            builder.Add(wxString() << " (" << test->file() << ":" << test->line() << ")", AnsiColours::Gray());
             wxPrintf(wxT("%s\n"), builder.GetString());
             failures.push_back(builder.GetString() + "\n" + test->get_summary());
         }
@@ -65,18 +65,18 @@ void Tester::RunTests()
 
     builder.Clear();
     if(failures.empty()) {
-        builder.Add("All tests completed ", eAsciiColours::NORMAL_TEXT);
-        builder.Add("successfully", eAsciiColours::GREEN);
-        builder.Add(wxString() << ". Total of ", eAsciiColours::NORMAL_TEXT);
-        builder.Add(wxString() << m_tests.size(), eAsciiColours::NORMAL_TEXT, true);
-        builder.Add(wxString() << " tests and ", eAsciiColours::NORMAL_TEXT);
-        builder.Add(wxString() << total_checks, eAsciiColours::NORMAL_TEXT, true);
-        builder.Add(wxString() << " checks ", eAsciiColours::NORMAL_TEXT);
+        builder.Add("All tests completed ", AnsiColours::NormalText());
+        builder.Add("successfully", AnsiColours::Green());
+        builder.Add(wxString() << ". Total of ", AnsiColours::NormalText());
+        builder.Add(wxString() << m_tests.size(), AnsiColours::NormalText(), true);
+        builder.Add(wxString() << " tests and ", AnsiColours::NormalText());
+        builder.Add(wxString() << total_checks, AnsiColours::NormalText(), true);
+        builder.Add(wxString() << " checks ", AnsiColours::NormalText());
         wxPrintf("%s\n", builder.GetString());
     } else {
-        builder.Add("Some tests ", eAsciiColours::NORMAL_TEXT);
-        builder.Add("FAILED", eAsciiColours::RED, true);
-        builder.Add(". See summary below", eAsciiColours::NORMAL_TEXT);
+        builder.Add("Some tests ", AnsiColours::NormalText());
+        builder.Add("FAILED", AnsiColours::Red(), true);
+        builder.Add(". See summary below", AnsiColours::NormalText());
         wxPrintf("%s\n\n", builder.GetString());
         for(const wxString& message : failures) {
             wxPrintf("%s\n", message);

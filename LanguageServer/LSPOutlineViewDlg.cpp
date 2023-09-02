@@ -38,9 +38,9 @@ void LSPOutlineViewDlg::DoInitialise()
 
     if(m_symbols.empty()) {
         clAnsiEscapeCodeColourBuilder builder;
-        builder.SetTheme(lexer->IsDark() ? eAsciiTheme::DARK : eAsciiTheme::LIGHT);
-        builder.Add(_("Language Server is still not ready... "), eAsciiColours::NORMAL_TEXT, false);
-        builder.Add(_("(hit ESCAPE key to dismiss)"), eAsciiColours::GRAY, false);
+        builder.SetTheme(lexer->IsDark() ? eColourTheme::DARK : eColourTheme::LIGHT);
+        builder.Add(_("Language Server is still not ready... "), AnsiColours::NormalText(), false);
+        builder.Add(_("(hit ESCAPE key to dismiss)"), AnsiColours::Gray(), false);
         m_dvTreeCtrll->AddLine(builder.GetString(), false, (wxUIntPtr)0);
         m_textCtrlFilter->CallAfter(&wxTextCtrl::SetFocus);
         return;
@@ -81,14 +81,14 @@ void LSPOutlineViewDlg::DoInitialise()
         builder.Clear();
         int curdepth = containers.empty() ? 1 : containers.back().second;
         // add indentation
-        builder.Add(wxString(' ', curdepth * 4), eAsciiColours::NORMAL_TEXT);
+        builder.Add(wxString(' ', curdepth * 4), AnsiColours::NormalText());
 
         // determine the symbol
         switch(si.GetKind()) {
         case kSK_File:
         case kSK_Module:
         case kSK_Package:
-            builder.Add(MODULE_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);
+            builder.Add(MODULE_SYMBOL + " ", AnsiColours::NormalText());
             builder.Add(si.GetName(), module_colour);
             break;
         case kSK_Class:
@@ -96,13 +96,13 @@ void LSPOutlineViewDlg::DoInitialise()
         case kSK_Interface:
         case kSK_Object:
         case kSK_Enum:
-            builder.Add(CLASS_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);
+            builder.Add(CLASS_SYMBOL + " ", AnsiColours::NormalText());
             builder.Add(si.GetName(), class_colour, true);
             break;
         case kSK_Method:
         case kSK_Function:
         case kSK_Constructor:
-            builder.Add(FUNCTION_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);
+            builder.Add(FUNCTION_SYMBOL + " ", AnsiColours::NormalText());
             if(si.GetName().Contains("(") && si.GetName().Contains(")")) {
                 // the name also has the signature
                 wxString signature = si.GetName().AfterFirst('(');
@@ -110,7 +110,7 @@ void LSPOutlineViewDlg::DoInitialise()
                 wxString name_only = si.GetName().BeforeFirst('(');
                 builder.Add(name_only, function_colour);
                 builder.Add("(", operator_colour);
-                builder.Add(signature, eAsciiColours::NORMAL_TEXT);
+                builder.Add(signature, AnsiColours::NormalText());
                 builder.Add(")", operator_colour);
             } else {
                 builder.Add(si.GetName(), function_colour);
@@ -119,11 +119,11 @@ void LSPOutlineViewDlg::DoInitialise()
             break;
         case kSK_TypeParameter: // define
         case kSK_EnumMember:
-            builder.Add(ENUMERATOR_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);
-            builder.Add(si.GetName(), eAsciiColours::NORMAL_TEXT);
+            builder.Add(ENUMERATOR_SYMBOL + " ", AnsiColours::NormalText());
+            builder.Add(si.GetName(), AnsiColours::NormalText());
             break;
         default:
-            builder.Add(VARIABLE_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);
+            builder.Add(VARIABLE_SYMBOL + " ", AnsiColours::NormalText());
             builder.Add(si.GetName(), variable_colour);
             break;
         }

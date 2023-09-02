@@ -155,7 +155,7 @@ void clTerminalViewCtrl::AddLine(const wxString& text, bool text_ends_with_cr, w
 
 clAnsiEscapeCodeColourBuilder& clTerminalViewCtrl::GetBuilder(bool clear_it)
 {
-    m_builder.SetTheme(GetColours().IsLightTheme() ? eAsciiTheme::LIGHT : eAsciiTheme::DARK);
+    m_builder.SetTheme(GetColours().IsLightTheme() ? eColourTheme::LIGHT : eColourTheme::DARK);
     if(clear_it) {
         m_builder.Clear();
     }

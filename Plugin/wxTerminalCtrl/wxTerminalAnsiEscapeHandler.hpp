@@ -34,6 +34,11 @@ public:
      * @brief process buffer, return the number of chars consumed
      */
     size_t ProcessBuffer(wxStringView input, wxTerminalAnsiRendererInterface* renderer);
+
+    /**
+     * @brief return the colour by its ANSI code
+     */
+    static const wxColour& GetColour(int colour_number);
 };
 
 #endif // WXTERMINALANSIESCAPEHANDLER_HPP

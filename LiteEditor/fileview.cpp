@@ -854,7 +854,7 @@ void FileViewTree::DoRemoveItems()
                     // For multiple selections, use a YesToAll dialog
                     wxRichMessageDialog dlg(wxTheApp->GetTopWindow(), message, _("Confirm"),
                                             wxYES_NO | wxYES_DEFAULT | wxCANCEL | wxCENTER | wxICON_QUESTION);
-                    dlg.ShowCheckBox(_("Remember my answer and apply it all files"), false);
+                    dlg.ShowCheckBox(_("Remember my answer and apply to all files"), false);
                     result = dlg.ShowModal();
                     ApplyToEachFileRemoval = dlg.IsCheckBoxChecked();
 
@@ -893,7 +893,7 @@ void FileViewTree::DoRemoveItems()
                             // For multiple selections, use a YesToAll dialog
                             wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), message, _("Confirm"),
                                                     wxYES_NO | wxNO_DEFAULT | wxCANCEL | wxCENTER | wxICON_QUESTION);
-                            dlg.ShowCheckBox(_("Remember my answer and apply it all files"), false);
+                            dlg.ShowCheckBox(_("Remember my answer and apply to all files"), false);
                             DeleteThisItemFromDisc = dlg.ShowModal();
                             ApplyToEachFileDeletion = dlg.IsCheckBoxChecked();
                         } else {

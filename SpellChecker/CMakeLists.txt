@@ -13,7 +13,7 @@ if(NOT APPLE)
         PATHS /usr/include /usr/local/include /usr/include/hunspell /usr/local/include/hunspell ${BREW_PREFIX}/include
         PATH_SUFFIXES include/hunspell include)
 else()
-    cl_osx_find_brew_lib(hunspell hunspell-1.7 LIBHUNSPELL)
+    cl_osx_find_brew_lib(hunspell hunspell-1.7.0 LIBHUNSPELL)
     cl_osx_find_brew_header(hunspell hunspell/hunspell.h HUNSPELL_H)
 endif()
 

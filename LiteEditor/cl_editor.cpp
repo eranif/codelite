@@ -1609,7 +1609,7 @@ void clEditor::OnMarginClick(wxStyledTextEvent& event)
 
             } else {
                 GotoPos(event.GetPosition());
-                DoBreakptContextMenu({});
+                ToggleBreakpoint();
             }
         }
         break;

@@ -54,10 +54,10 @@
 #include <wx/scopedptr.h>
 
 // CodeLite
-#include "plugin.h"
-#include "project.h"
 #include "build_config.h"
 #include "cl_command_event.h"
+#include "plugin.h"
+#include "project.h"
 
 // CMakePlugin
 #include "CMakeConfiguration.h"
@@ -242,6 +242,11 @@ public:
     void OnWorkspaceContextMenu(clContextMenuEvent& event);
 
     /**
+     * @brief edit the folder context menu
+     */
+    void OnFolderContextMenu(clContextMenuEvent& event);
+
+    /**
      * @brief Run CMake for the selected project
      */
     void OnRunCMake(wxCommandEvent& event);
@@ -285,6 +290,13 @@ protected:
     void DoRunCMake(ProjectPtr p);
 
     // Private Operations
+    void OnCreateCMakeListsExe(wxCommandEvent& event);
+    void OnCreateCMakeListsDll(wxCommandEvent& event);
+    void OnCreateCMakeListsLib(wxCommandEvent& event);
+    bool IsCMakeListsExists() const;
+    void WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines);
+    void CreateLibraryCMakeLists(bool is_shared);
+
 private:
     /// CMake configuration.
     wxScopedPtr<CMakeConfiguration> m_configuration;

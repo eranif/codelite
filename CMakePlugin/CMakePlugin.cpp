@@ -49,9 +49,11 @@
 /* ************************************************************************ */
 
 // Declaration
-#include "CMakeBuilder.h"
 #include "CMakePlugin.h"
+
+#include "CMakeBuilder.h"
 #include "ICompilerLocator.h"
+#include "StdToWX.h"
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 
@@ -90,6 +92,8 @@
 #include "CMakeProjectSettings.h"
 #include "CMakeSettingsDialog.h"
 #include "CMakeSettingsManager.h"
+
+#include <wx/textdlg.h>
 
 /* ************************************************************************ */
 /* VARIABLES                                                                */
@@ -189,6 +193,7 @@ CMakePlugin::CMakePlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &CMakePlugin::OnToggleHelpTab, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_PROJECT, &CMakePlugin::OnProjectContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_WORKSPACE, &CMakePlugin::OnWorkspaceContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &CMakePlugin::OnFolderContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_ADDED, &CMakePlugin::OnFileAdded, this);
     EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_REMOVED, &CMakePlugin::OnFileRemoved, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &CMakePlugin::OnCMakeOutput, this);
@@ -324,6 +329,8 @@ void CMakePlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_WORKSPACE, &CMakePlugin::OnWorkspaceContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &CMakePlugin::OnFileAdded, this);
     EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_REMOVED, &CMakePlugin::OnFileRemoved, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &CMakePlugin::OnFolderContextMenu, this);
+
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &CMakePlugin::OnCMakeOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CMakePlugin::OnCMakeTerminated, this);
 }
@@ -491,6 +498,25 @@ void CMakePlugin::OnExportCMakeLists(wxCommandEvent& event)
     }
 }
 
+void CMakePlugin::OnFolderContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    // Add context menu with following items:
+    // - Create Executable CMakeLists.txt file
+    // - Create Library (static) CMakeLists.txt file
+    // - Create Library (shared) CMakeLists.txt file
+    wxMenu* menu = event.GetMenu();
+    wxMenu* cmake_menu = new wxMenu;
+    cmake_menu->Append(XRCID("cmake_new_cmake_exe"), "Executable", wxEmptyString);
+    cmake_menu->Append(XRCID("cmake_new_cmake_dll"), "Shared object", wxEmptyString);
+    cmake_menu->Append(XRCID("cmake_new_cmake_lib"), "Static library", wxEmptyString);
+    menu->AppendSeparator();
+    menu->AppendSubMenu(cmake_menu, "Generate CMakeLists.txt for...");
+    cmake_menu->Bind(wxEVT_MENU, &CMakePlugin::OnCreateCMakeListsExe, this, XRCID("cmake_new_cmake_exe"));
+    cmake_menu->Bind(wxEVT_MENU, &CMakePlugin::OnCreateCMakeListsDll, this, XRCID("cmake_new_cmake_dll"));
+    cmake_menu->Bind(wxEVT_MENU, &CMakePlugin::OnCreateCMakeListsLib, this, XRCID("cmake_new_cmake_lib"));
+}
+
 void CMakePlugin::OnWorkspaceContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
@@ -619,3 +645,108 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
 }
 
 /* ************************************************************************ */
+
+bool CMakePlugin::IsCMakeListsExists() const
+{
+    wxFileName cmakelists_txt{ ::wxGetCwd(), "CMakeLists.txt" };
+    if(cmakelists_txt.FileExists()) {
+        ::wxMessageBox(_("This folder already contains a CMakeLists.txt file"), "CodeLite",
+                       wxICON_WARNING | wxOK | wxCENTER);
+        return true;
+    }
+    return false;
+}
+
+void CMakePlugin::WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines)
+{
+    wxFileName cmakelists_txt{ ::wxGetCwd(), "CMakeLists.txt" };
+    wxArrayString wx_lines;
+    StdToWX::ToArrayString(lines, &wx_lines);
+    FileUtils::WriteFileContent(cmakelists_txt, wxJoin(wx_lines, '\n'));
+    clGetManager()->OpenFile(cmakelists_txt.GetFullPath());
+}
+
+void CMakePlugin::CreateLibraryCMakeLists(bool is_shared)
+{
+    wxString name = ::wxGetTextFromUser(_("Library name:"), "Library name");
+    if(name.empty()) {
+        return;
+    }
+
+    // Check for an already existing CMakeLists.txt in this folder
+    if(IsCMakeListsExists()) {
+        return;
+    }
+
+    WriteCMakeListsAndOpenIt({
+        "cmake_minimum_required(VERSION 3.16)",
+        wxString::Format("project(%s)", name),
+        wxEmptyString,
+        wxEmptyString,
+        "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)",
+        "set(CMAKE_CXX_STANDARD 17)",
+        "set(CMAKE_CXX_STANDARD_REQUIRED ON)",
+        wxEmptyString,
+        "file(GLOB CXX_SRCS \"*.cpp\")",
+        "file(GLOB C_SRCS \"*.c\")",
+        wxEmptyString,
+        wxString::Format("add_library(%s %s ${CXX_SRCS} ${C_SRCS})", (is_shared ? "SHARED" : "STATIC"), name),
+        "if(NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})",
+        "    add_custom_command(",
+        wxString::Format("        TARGET %s", name),
+        "        POST_BUILD",
+        "        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/compile_commands.json",
+        "                ${CMAKE_SOURCE_DIR}/compile_commands.json)",
+        "endif()",
+        wxEmptyString,
+    });
+}
+
+void CMakePlugin::OnCreateCMakeListsExe(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString name = ::wxGetTextFromUser(_("Executable name:"), "Executable name");
+    if(name.empty()) {
+        return;
+    }
+
+    // Check for an already existing CMakeLists.txt in this folder
+    if(IsCMakeListsExists()) {
+        return;
+    }
+
+    WriteCMakeListsAndOpenIt({
+        "cmake_minimum_required(VERSION 3.16)",
+        wxString::Format("project(%s)", name),
+        wxEmptyString,
+        wxEmptyString,
+        "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)",
+        "set(CMAKE_CXX_STANDARD 17)",
+        "set(CMAKE_CXX_STANDARD_REQUIRED ON)",
+        wxEmptyString,
+        "file(GLOB CXX_SRCS \"*.cpp\")",
+        "file(GLOB C_SRCS \"*.c\")",
+        wxEmptyString,
+        wxString::Format("add_executable(%s ${CXX_SRCS} ${C_SRCS})", name),
+        "if(NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})",
+        "    add_custom_command(",
+        wxString::Format("        TARGET %s", name),
+        "        POST_BUILD",
+        "        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/compile_commands.json",
+        "                ${CMAKE_SOURCE_DIR}/compile_commands.json)",
+        "endif()",
+        wxEmptyString,
+    });
+}
+
+void CMakePlugin::OnCreateCMakeListsDll(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    CreateLibraryCMakeLists(true);
+}
+
+void CMakePlugin::OnCreateCMakeListsLib(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    CreateLibraryCMakeLists(false);
+}

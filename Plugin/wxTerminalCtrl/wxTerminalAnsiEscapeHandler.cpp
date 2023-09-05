@@ -655,7 +655,7 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
         case AnsiControlSequence::SaveCurrentCursorPosition:
         case AnsiControlSequence::RestoreSavedCursorPosition: {
             // just skip it
-            return wxHandlResultStringView::make_success(buffer.substr(i + 1));
+            return buffer.substr(i + 1);
         } break;
         case AnsiControlSequence::CursorUp:                 // default 1
         case AnsiControlSequence::CursorDown:               // default 1
@@ -676,7 +676,7 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
             value->value = n;
             value->seq = (AnsiControlSequence)buffer[i];
             // return the remainder string
-            return wxHandlResultStringView::make_success(buffer.substr(i + 1));
+            return buffer.substr(i + 1);
         } break;
         case AnsiControlSequence::EraseInDisplay: // default 0
         case AnsiControlSequence::EraseInLine:    // default 0
@@ -688,7 +688,7 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
             value->value = n;
             value->seq = (AnsiControlSequence)buffer[i];
             // return the remainder string
-            return wxHandlResultStringView::make_success(buffer.substr(i + 1));
+            return buffer.substr(i + 1);
         } break;
         case AnsiControlSequence::CursorPosition:
         case AnsiControlSequence::HorizontalVerticalPosition: {
@@ -696,7 +696,7 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
             auto nm = parse_cols_rows(wxStringView(buffer.data(), i), 1);
             value->value = nm;
             value->seq = (AnsiControlSequence)buffer[i];
-            return wxHandlResultStringView::make_success(buffer.substr(i + 1));
+            return buffer.substr(i + 1);
         } break;
         case AnsiControlSequence::ActionEnable:
         case AnsiControlSequence::ActionDisable:
@@ -705,7 +705,7 @@ inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiCo
             // following this code
             value->value = wxString(buffer.data(), i);
             value->seq = (AnsiControlSequence)buffer[i];
-            return wxHandlResultStringView::make_success(buffer.substr(i + 1));
+            return buffer.substr(i + 1);
         } break;
         }
     }
@@ -821,7 +821,7 @@ wxHandlResultStringView wxTerminalAnsiEscapeHandler::loop_until_st(wxStringView 
     if(pos == wxStringView::npos) {
         return wxHandlResultStringView::make_error(wxHandleError::kNeedMoreData);
     }
-    return wxHandlResultStringView::make_success(sv.substr(pos + len));
+    return sv.substr(pos + len);
 }
 
 wxHandlResultStringView wxTerminalAnsiEscapeHandler::handle_osc(wxStringView sv,
@@ -860,7 +860,7 @@ wxHandlResultStringView wxTerminalAnsiEscapeHandler::handle_osc(wxStringView sv,
         wxStringView window_title = sv.substr(0, pos);
         renderer->SetWindowTitle(window_title);
         sv.remove_prefix(pos + st_len); // removing everything, including the terminator
-        return wxHandlResultStringView::make_success(sv);
+        return sv;
     } break;
     case '8': {
         size_t pos = find_control_code(sv, '\a' /* BEL */);
@@ -869,7 +869,7 @@ wxHandlResultStringView wxTerminalAnsiEscapeHandler::handle_osc(wxStringView sv,
             return wxHandlResultStringView::make_error(wxHandleError::kNeedMoreData);
         }
         sv.remove_prefix(pos + 1); // remove, including the BEL
-        return wxHandlResultStringView::make_success(sv);
+        return sv;
     } break;
     default:
         return wxHandlResultStringView::make_error(wxHandleError::kProtocolError);
@@ -981,7 +981,7 @@ wxHandlResultStringView before_first(wxStringView sv, wxChar ch)
     size_t pos = 0;
     for(; pos < sv.length(); ++pos) {
         if(sv[pos] == ch) {
-            return wxHandlResultStringView::make_success(sv.substr(0, pos));
+            return sv.substr(0, pos);
         }
     }
     return wxHandlResultStringView::make_error(wxHandleError::kNotFound);

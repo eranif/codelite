@@ -25,19 +25,18 @@ public:
     /// return the error object
     E error() const { return m_error; }
 
-    static clResult make_error(E error)
+    clResult() {}
+    clResult(T&& t)
+    {
+        m_result = std::move(t);
+        m_ok = true;
+    }
+
+    static clResult make_error(E&& error)
     {
         clResult o;
         o.m_ok = false;
-        o.m_error = error;
-        return o;
-    }
-
-    static clResult make_success(T res)
-    {
-        clResult o;
-        o.m_ok = true;
-        std::swap(o.m_result, res);
+        o.m_error = std::move(error);
         return o;
     }
 };

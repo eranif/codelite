@@ -171,9 +171,10 @@ clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_
     } catch(clException& e) {
         wxString errmsg;
         errmsg << ssh_get_error(ssh->GetSession()) << ". " << e.What();
-        return clResultBool::make_error(errmsg);
+        return clResultBool::make_error(std::move(errmsg));
     }
-    return clResultBool::make_success(true);
+
+    return true;
 }
 
 read_result channel_read(SSHChannel_t channel, std::string* output, bool isStderr, bool wantStderr)

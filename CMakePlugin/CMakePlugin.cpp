@@ -692,7 +692,7 @@ clResultString CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType type) c
     }
 
     if(name.empty()) {
-        return clResultString::make_error("User cancelled");
+        return clResultString::make_error(std::move(wxString("User cancelled")));
     }
 
     wxString cmakelists_txt = WriteCMakeListsAndOpenIt({
@@ -717,7 +717,7 @@ clResultString CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType type) c
         "endif()",
         wxEmptyString,
     });
-    return clResultString::make_success(cmakelists_txt);
+    return cmakelists_txt;
 }
 
 void CMakePlugin::OnCreateCMakeListsExe(wxCommandEvent& event)

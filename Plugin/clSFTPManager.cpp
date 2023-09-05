@@ -539,7 +539,7 @@ clResult<SFTPAttribute::List_t, bool> clSFTPManager::List(const wxString& path, 
     if(!future.get()) {
         return clResult<SFTPAttribute::List_t, bool>::make_error(false);
     }
-    return clResult<SFTPAttribute::List_t, bool>::make_success(result);
+    return result;
 }
 
 bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountInfo)

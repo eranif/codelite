@@ -23,7 +23,9 @@ void clInfoBar::DisplayMessage(const wxString& message, int flags,
     if(m_buttons.empty()) {
         m_buttons.push_back({ wxID_OK, "" });
     }
-    std::for_each(m_buttons.begin(), m_buttons.end(),
-                  [&](const std::pair<wxWindowID, wxString>& btn) { AddButton(btn.first, btn.second); });
+
+    for(const auto& [id, label] : m_buttons) {
+        AddButton(id, label);
+    }
     ShowMessage(message, flags);
 }

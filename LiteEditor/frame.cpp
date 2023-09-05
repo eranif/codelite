@@ -1251,18 +1251,23 @@ void clMainFrame::CreateGUIControls()
 
     // add menu bar
     m_mainMenuBar = wxXmlResource::Get()->LoadMenuBar("main_menu");
-#ifndef __WXGTK__
+
+#ifdef __WXMAC__
     // remove the "Show menu bar"
     wxMenu* view = NULL;
     wxMenuItem* item = m_mainMenuBar->FindItem(XRCID("show_menu_bar"), &view);
     if(item && view) {
         view->Remove(item);
     }
-#endif
     SetMenuBar(m_mainMenuBar);
-
+#else
     bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
-    DoShowMenuBar(showMenuBar);
+    if(showMenuBar) {
+        SetMenuBar(m_mainMenuBar);
+    } else {
+        m_mainMenuBar->Hide();
+    }
+#endif
 
     // Layout the main panel ASAP
     m_mgr.Update();
@@ -5703,7 +5708,6 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
 
     // Update the various configurations
     clConfig::Get().Write(kConfigShowToolBar, !minimalView);
-    clConfig::Get().Write(kConfigShowMenuBar, !minimalView);
     clConfig::Get().Write("MinimalView", !minimalView); // for next time
 
     // Update the captions settings
@@ -6001,12 +6005,10 @@ void clMainFrame::OnInfobarButton(wxCommandEvent& event)
 void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-#ifdef __WXGTK__
+#ifndef __WXMAC__
     bool currentState = clConfig::Get().Read(kConfigShowMenuBar, true);
-    DoShowMenuBar(!currentState);
-    GetSizer()->Layout();
-    PostSizeEvent();
     clConfig::Get().Write(kConfigShowMenuBar, !currentState);
+    DoSuggestRestart();
 #endif
 }
 
@@ -6045,12 +6047,7 @@ void clMainFrame::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID)
     toolbar->ShowMenuForButton(buttonID, &menu);
 }
 
-void clMainFrame::DoShowMenuBar(bool show)
-{
-#if defined(__WXGTK__) || defined(__WXMSW__)
-    GetMainMenuBar()->Show(show);
-#endif
-}
+void clMainFrame::DoShowMenuBar(bool show) { wxUnusedVar(show); }
 
 void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
 {

@@ -657,28 +657,45 @@ bool CMakePlugin::IsCMakeListsExists() const
     return false;
 }
 
-void CMakePlugin::WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines)
+wxString CMakePlugin::WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines) const
 {
     wxFileName cmakelists_txt{ ::wxGetCwd(), "CMakeLists.txt" };
     wxArrayString wx_lines;
     StdToWX::ToArrayString(lines, &wx_lines);
     FileUtils::WriteFileContent(cmakelists_txt, wxJoin(wx_lines, '\n'));
     clGetManager()->OpenFile(cmakelists_txt.GetFullPath());
+    return cmakelists_txt.GetFullPath();
 }
 
-void CMakePlugin::CreateLibraryCMakeLists(bool is_shared)
+clResultString CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType type) const
 {
-    wxString name = ::wxGetTextFromUser(_("Library name:"), "Library name");
-    if(name.empty()) {
-        return;
-    }
-
     // Check for an already existing CMakeLists.txt in this folder
     if(IsCMakeListsExists()) {
-        return;
+        return clResultString::make_error(wxEmptyString);
     }
 
-    WriteCMakeListsAndOpenIt({
+    wxString name;
+    wxString target_line;
+    switch(type) {
+    case TargetType::EXECUTABLE:
+        name = ::wxGetTextFromUser(_("Executable name:"), "Executable name");
+        target_line = wxString::Format("add_executable(%s ${CXX_SRCS} ${C_SRCS})", name);
+        break;
+    case TargetType::SHARED_LIB:
+        name = ::wxGetTextFromUser(_("Library name:"), "Library name");
+        target_line = wxString::Format("add_library(%s SHARED ${CXX_SRCS} ${C_SRCS})", name);
+        break;
+    case TargetType::STATIC_LIB:
+        name = ::wxGetTextFromUser(_("Library name:"), "Library name");
+        target_line = wxString::Format("add_library(%s STATIC ${CXX_SRCS} ${C_SRCS})", name);
+        break;
+    }
+
+    if(name.empty()) {
+        return clResultString::make_error("User cancelled");
+    }
+
+    wxString cmakelists_txt = WriteCMakeListsAndOpenIt({
         "cmake_minimum_required(VERSION 3.16)",
         wxString::Format("project(%s)", name),
         wxEmptyString,
@@ -690,7 +707,7 @@ void CMakePlugin::CreateLibraryCMakeLists(bool is_shared)
         "file(GLOB CXX_SRCS \"*.cpp\")",
         "file(GLOB C_SRCS \"*.c\")",
         wxEmptyString,
-        wxString::Format("add_library(%s %s ${CXX_SRCS} ${C_SRCS})", (is_shared ? "SHARED" : "STATIC"), name),
+        target_line,
         "if(NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})",
         "    add_custom_command(",
         wxString::Format("        TARGET %s", name),
@@ -700,53 +717,39 @@ void CMakePlugin::CreateLibraryCMakeLists(bool is_shared)
         "endif()",
         wxEmptyString,
     });
+    return clResultString::make_success(cmakelists_txt);
 }
 
 void CMakePlugin::OnCreateCMakeListsExe(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    wxString name = ::wxGetTextFromUser(_("Executable name:"), "Executable name");
-    if(name.empty()) {
-        return;
-    }
-
-    // Check for an already existing CMakeLists.txt in this folder
-    if(IsCMakeListsExists()) {
-        return;
-    }
-
-    WriteCMakeListsAndOpenIt({
-        "cmake_minimum_required(VERSION 3.16)",
-        wxString::Format("project(%s)", name),
-        wxEmptyString,
-        wxEmptyString,
-        "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)",
-        "set(CMAKE_CXX_STANDARD 17)",
-        "set(CMAKE_CXX_STANDARD_REQUIRED ON)",
-        wxEmptyString,
-        "file(GLOB CXX_SRCS \"*.cpp\")",
-        "file(GLOB C_SRCS \"*.c\")",
-        wxEmptyString,
-        wxString::Format("add_executable(%s ${CXX_SRCS} ${C_SRCS})", name),
-        "if(NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})",
-        "    add_custom_command(",
-        wxString::Format("        TARGET %s", name),
-        "        POST_BUILD",
-        "        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/compile_commands.json",
-        "                ${CMAKE_SOURCE_DIR}/compile_commands.json)",
-        "endif()",
-        wxEmptyString,
-    });
+    auto res = CreateCMakeListsFile(CMakePlugin::TargetType::EXECUTABLE);
+    CHECK_COND_RET(res);
+    FireCMakeListsFileCreatedEvent(res.success());
 }
 
 void CMakePlugin::OnCreateCMakeListsDll(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    CreateLibraryCMakeLists(true);
+    auto res = CreateCMakeListsFile(CMakePlugin::TargetType::SHARED_LIB);
+    CHECK_COND_RET(res);
+    FireCMakeListsFileCreatedEvent(res.success());
 }
 
 void CMakePlugin::OnCreateCMakeListsLib(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    CreateLibraryCMakeLists(false);
+    auto res = CreateCMakeListsFile(CMakePlugin::TargetType::STATIC_LIB);
+    CHECK_COND_RET(res);
+    FireCMakeListsFileCreatedEvent(res.success());
+}
+
+void CMakePlugin::FireCMakeListsFileCreatedEvent(const wxString& cmakelists_txt) const
+{
+    // fire an event
+    clFileSystemEvent fsEvent(wxEVT_FILE_CREATED);
+    fsEvent.SetPath(cmakelists_txt);
+    fsEvent.SetFileName(cmakelists_txt);
+    fsEvent.GetPaths().Add(cmakelists_txt);
+    EventNotifier::Get()->AddPendingEvent(fsEvent);
 }

@@ -144,6 +144,11 @@ public:
      */
     void RefreshTree();
 
+    /**
+     * @brief refresh the selected nodes in the tree
+     */
+    void RefreshSelections();
+
 protected:
     void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items) const;

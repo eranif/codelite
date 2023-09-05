@@ -967,7 +967,7 @@ void clTreeCtrlPanel::ToggleView()
     GetSizer()->Layout();
 }
 
-void clTreeCtrlPanel::OnRefresh(wxCommandEvent& event)
+void clTreeCtrlPanel::RefreshSelections()
 {
     wxArrayString paths, files;
     wxArrayTreeItemIds items, fileItems;
@@ -1006,6 +1006,12 @@ void clTreeCtrlPanel::OnRefresh(wxCommandEvent& event)
         GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
         ToggleView();
     }
+}
+
+void clTreeCtrlPanel::OnRefresh(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    RefreshSelections();
 }
 
 void clTreeCtrlPanel::SetNewFileTemplate(const wxString& newfile, size_t charsToHighlight)

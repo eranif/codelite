@@ -55,6 +55,8 @@
 
 // CodeLite
 #include "build_config.h"
+#include "clResult.hpp"
+#include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
 #include "plugin.h"
 #include "project.h"
@@ -92,6 +94,12 @@ class CMakeHelpTab;
  */
 class CMakePlugin : public IPlugin
 {
+
+    enum class TargetType {
+        EXECUTABLE,
+        STATIC_LIB,
+        SHARED_LIB,
+    };
 
     // Public Constants
 public:
@@ -294,8 +302,9 @@ protected:
     void OnCreateCMakeListsDll(wxCommandEvent& event);
     void OnCreateCMakeListsLib(wxCommandEvent& event);
     bool IsCMakeListsExists() const;
-    void WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines);
-    void CreateLibraryCMakeLists(bool is_shared);
+    wxString WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines) const;
+    clResultString CreateCMakeListsFile(TargetType type) const;
+    void FireCMakeListsFileCreatedEvent(const wxString& cmakelists_txt) const;
 
 private:
     /// CMake configuration.

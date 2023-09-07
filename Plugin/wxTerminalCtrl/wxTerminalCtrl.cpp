@@ -257,18 +257,16 @@ void wxTerminalCtrl::OnWorkspaceLoaded(clWorkspaceEvent& event)
 void wxTerminalCtrl::SSHAndSetWorkingDirectory(const wxString& ssh_account, const wxString& path)
 {
 #if USE_SFTP
-    wxString ssh_exe;
-    if(!ThePlatform->Which("ssh", &ssh_exe)) {
-        return;
-    }
     auto account = SSHAccountInfo::LoadAccount(ssh_account);
     if(account.GetAccountName().empty()) {
         return;
     }
     // build the ssh command
     wxString command;
+
     // ensure this does work on Windows & Bash
-    ssh_exe.Replace("\\", "/");
+    wxString ssh_exe = "ssh";
+
     command << StringUtils::WrapWithDoubleQuotes(ssh_exe) << " -tt ";
     if(!account.GetUsername().empty()) {
         command << account.GetUsername() << "@" << account.GetHost();

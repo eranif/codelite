@@ -6,6 +6,8 @@
 #include "fileutils.h"
 #include "procutils.h"
 
+#include <mutex>
+
 namespace
 {
 

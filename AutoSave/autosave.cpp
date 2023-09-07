@@ -1,7 +1,9 @@
+#include "autosave.h"
+
 #include "AutoSaveDlg.h"
 #include "AutoSaveSettings.h"
-#include "autosave.h"
 #include "event_notifier.h"
+
 #include <algorithm>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
@@ -11,7 +13,9 @@ static AutoSave* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new AutoSave(manager); }
+    if(thePlugin == NULL) {
+        thePlugin = new AutoSave(manager);
+    }
     return thePlugin;
 }
 
@@ -68,7 +72,9 @@ void AutoSave::UpdateTimers()
 {
     DeleteTimer();
     AutoSaveSettings conf = AutoSaveSettings::Load();
-    if(!conf.HasFlag(AutoSaveSettings::kEnabled)) { return; }
+    if(!conf.HasFlag(AutoSaveSettings::kEnabled)) {
+        return;
+    }
 
     m_timer = new wxTimer(this, XRCID("auto_save_timer"));
     m_timer->Start((conf.GetCheckInterval() * 1000), true);
@@ -81,14 +87,14 @@ void AutoSave::OnTimer(wxTimerEvent& event)
     m_mgr->GetAllEditors(editors);
 
     // Save every modified editor
-    std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
+    for(auto editor : editors) {
         // Save modified files. However, don't attempt to try and save an "Untitled" document :/
-        if(editor->IsEditorModified() && editor->GetFileName().Exists()) {
-
-            // Don't auto-save remote files marked with "SFTP"
-            if(!editor->GetClientData("sftp")) { editor->Save(); }
+        bool local_file_and_exists = !editor->IsRemoteFile() && editor->GetFileName().FileExists();
+        bool is_remote = editor->IsRemoteFile();
+        if(editor->IsEditorModified() && (local_file_and_exists || is_remote)) {
+            editor->Save();
         }
-    });
+    }
 
     // Restart the timer
     AutoSaveSettings conf = AutoSaveSettings::Load();

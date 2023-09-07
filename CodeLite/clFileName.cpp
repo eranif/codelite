@@ -1,11 +1,17 @@
 #include "clFileName.hpp"
 
+#include "Platform.hpp"
+#include "StringUtils.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
 
 namespace
 {
+
+std::once_flag cygpath_once;
+wxString cygpath; // contains path to cygpth or empty string if not found
+
 /// helper method:
 /// run `uname -s` command and cache the output
 const wxString& __uname()
@@ -103,4 +109,27 @@ wxString clFileName::ToCygwin(const wxFileName& fullpath)
     cygwin_path.Replace("\\", "/");
     cygwin_path.Prepend("/cygdrive/" + drive.Lower());
     return cygwin_path;
+}
+
+wxString clFileName::ToMSYS2(const wxString& fullpath) { return ToMSYS2(wxFileName(fullpath)); }
+wxString clFileName::ToMSYS2(const wxFileName& fullpath)
+{
+    // MSYS2 can handle Windows native paths, they just need to be using forward slashes
+    wxString f = fullpath.GetFullPath();
+    f.Replace("\\", "/");
+    return f;
+}
+
+wxString clFileName::FromMSYS2(const wxString& fullpath)
+{
+    std::call_once(cygpath_once, []() -> void {
+        if(ThePlatform->Which("cygpath", &cygpath)) {
+            cygpath << " -w";
+        }
+    });
+
+    if(cygpath.empty()) {
+        return fullpath;
+    }
+    return ProcUtils::SafeExecuteCommand(cygpath + " " + StringUtils::WrapWithDoubleQuotes(fullpath));
 }

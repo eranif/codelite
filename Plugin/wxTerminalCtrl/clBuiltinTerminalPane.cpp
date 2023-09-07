@@ -4,6 +4,7 @@
 #include "FontUtils.hpp"
 #include "Platform.hpp"
 #include "bitmap_loader.h"
+#include "clFileName.hpp"
 #include "clWorkspaceManager.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
@@ -147,7 +148,15 @@ void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
 void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    wxTerminalCtrl* ctrl = new wxTerminalCtrl(m_book);
+
+    wxString working_directory;
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if(workspace && !workspace->IsRemote()) {
+        wxFileName fn{ workspace->GetFileName() };
+        working_directory = clFileName::ToMSYS2(fn.GetPath());
+    }
+
+    wxTerminalCtrl* ctrl = new wxTerminalCtrl(m_book, wxID_ANY, working_directory);
     m_book->AddPage(ctrl, _("Terminal"), true);
     Focus();
 }

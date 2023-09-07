@@ -39,7 +39,6 @@ protected:
     wxTerminalInputCtrl* m_inputCtrl = nullptr;
     std::unordered_set<long> m_initialProcesses;
     wxTextAttr m_preEchoOffAttr;
-    wxString m_workingDirectory;
     bool m_pauseOnExit = false;
     bool m_printTTY = false;
     wxString m_startupCommand;
@@ -47,6 +46,7 @@ protected:
     wxString m_ttyfile;
     bool m_terminating = false;
     wxString m_processOutput;
+    wxString m_startingDirectory;
 
 protected:
     void StartShell();
@@ -54,7 +54,7 @@ protected:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessError(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
-    bool PromptForPasswordIfNeeded(const wxString &line_lowercase);
+    bool PromptForPasswordIfNeeded(const wxString& line_lowercase);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void ProcessOutputBuffer();
     wxStringView GetNextLine();
@@ -64,8 +64,8 @@ protected:
 
 public:
     wxTerminalCtrl();
-    wxTerminalCtrl(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxDefaultSize,
+    wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxString& working_directory,
+                   const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
                    long style = wxTAB_TRAVERSAL | wxNO_BORDER | wxTERMINAL_CTRL_USE_EVENTS,
                    const wxString& name = "terminal");
     bool Create(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

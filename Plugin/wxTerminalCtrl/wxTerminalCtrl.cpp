@@ -27,12 +27,13 @@ INITIALISE_MODULE_LOG(TERM_LOG, "Terminal", "terminal.log");
 
 wxTerminalCtrl::wxTerminalCtrl() {}
 
-wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
-                               const wxString& name)
+wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxString& working_directory,
+                               const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 {
     if(!Create(parent, winid, pos, size, style)) {
         return;
     }
+    m_startingDirectory = working_directory;
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_inputCtrl = new wxTerminalInputCtrl(this);
     m_outputView = new TextView(this, m_inputCtrl);
@@ -90,6 +91,11 @@ void wxTerminalCtrl::StartShell()
     LOG_DEBUG(TERM_LOG) << "Starting shell process:" << bash_exec << endl;
     m_shell = ::CreateAsyncProcess(this, bash_exec + " --login -i", IProcessRawOutput, wxEmptyString, penv);
     if(m_shell) {
+        LOG_DEBUG(TERM_LOG) << "Setting working directory to:" << m_startingDirectory << endl;
+        if(!m_startingDirectory.empty()) {
+            // now that we have a shell, set the working directory
+            SetTerminalWorkingDirectory(m_startingDirectory);
+        }
         LOG_DEBUG(TERM_LOG) << "Successfully started bash terminal" << endl;
         wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
         readyEvent.SetEventObject(this);

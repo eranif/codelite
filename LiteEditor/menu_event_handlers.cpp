@@ -270,41 +270,12 @@ void GotoHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
     wxString msg;
     msg.Printf(_("Go to line number (1 - %i):"), editor->GetLineCount());
 
-    while(1) {
-        wxTextEntryDialog dlg(editor, msg, _("Go To Line"));
-        dlg.SetTextValidator(wxFILTER_NUMERIC);
-
-        if(dlg.ShowModal() == wxID_OK) {
-            wxString val = dlg.GetValue();
-            long line;
-            if(!val.ToLong(&line)) {
-                wxString err;
-                err.Printf(_("'%s' is not a valid line number"), val.GetData());
-                wxMessageBox(err, _("Go To Line"), wxOK | wxICON_INFORMATION);
-                continue;
-            }
-
-            if(line > editor->GetLineCount()) {
-                wxString err;
-                err.Printf(_("Please insert a line number in the range of (1 - %i)"), editor->GetLineCount());
-                wxMessageBox(err, _("Go To Line"), wxOK | wxICON_INFORMATION);
-                continue;
-            }
-
-            editor->ClearSelections();
-            if(line > 0) {
-                editor->CenterLine(line - 1);
-                break;
-            } else {
-                editor->GotoLine(0);
-                break;
-            }
-        } else {
-            // wxID_CANCEL
-            return;
-        }
+    wxNumberEntryDialog dlg(editor, msg, wxEmptyString, _("Go To Line"), 0, 1, editor->GetLineCount());
+    if(dlg.ShowModal() == wxID_OK) {
+        long line = dlg.GetValue();
+        editor->CenterLine(line - 1);
+        editor->SetActive();
     }
-    editor->SetActive();
 }
 
 void GotoHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event)

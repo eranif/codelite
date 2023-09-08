@@ -29,6 +29,7 @@
 
 #include "DiffSideBySidePanel.h"
 #include "GitApplyPatchDlg.h"
+#include "GitBlamePage.h"
 #include "GitConsole.h"
 #include "GitLocator.h"
 #include "GitUserEmailDialog.h"
@@ -44,7 +45,6 @@
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "gitBlameDlg.h"
 #include "gitCloneDlg.h"
 #include "gitCommitDlg.h"
 #include "gitCommitListDlg.h"
@@ -143,7 +143,6 @@ GitPlugin::GitPlugin(IManager* manager)
     , m_pluginMenu(NULL)
     , m_commitListDlg(NULL)
     , m_commandProcessor(NULL)
-    , m_gitBlameDlg(NULL)
 {
     m_longName = _("GIT plugin");
     m_shortName = wxT("Git");
@@ -213,7 +212,7 @@ GitPlugin::GitPlugin(IManager* manager)
     m_configFlags = data.GetFlags();
 }
 
-GitPlugin::~GitPlugin() { wxDELETE(m_gitBlameDlg); }
+GitPlugin::~GitPlugin() {}
 
 void GitPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
@@ -1569,17 +1568,11 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         }
     } break;
     case gitBlame: {
-        if(!m_gitBlameDlg) {
-            m_gitBlameDlg = new GitBlameDlg(EventNotifier::Get()->TopFrame(), this);
-        }
-        m_gitBlameDlg->SetBlame(m_commandOutput, ga.arguments);
-        m_gitBlameDlg->Show();
-        m_gitBlameDlg->SetFocus();
+        GitBlamePage* page = new GitBlamePage(clGetManager()->GetMainNotebook(), this);
+        page->SetBlame(m_commandOutput, ga.arguments);
+        clGetManager()->AddEditorPage(page, "[Git Blame]");
     } break;
     case gitRevlist: {
-        if(m_gitBlameDlg) {
-            m_gitBlameDlg->OnRevListOutput(m_commandOutput, ga.arguments);
-        }
     } break;
     case gitDiffRepoShow: {
         // This is now dealt with by GitDiffDlg itself

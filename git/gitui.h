@@ -45,10 +45,6 @@
 #include "clGenericNotebook.hpp"
 #include "clTerminalViewCtrl.hpp"
 #include <wx/gauge.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
 #include <wx/checklst.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -476,73 +472,6 @@ public:
     GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~GitConsoleBase();
-};
-
-class GitBlameDlgBase : public wxDialog
-{
-protected:
-    wxAuiToolBar* m_auibar436;
-    wxChoice* m_choiceHistory;
-    wxStaticText* m_staticText414;
-    wxComboBox* m_comboExtraArgs;
-    wxSplitterWindow* m_splitterMain;
-    wxPanel* m_splitterPageTop;
-    wxStyledTextCtrl* m_stcBlame;
-    wxPanel* m_splitterPageBottom;
-    wxSplitterWindow* m_splitterH;
-    wxPanel* m_splitterPage194;
-    wxStaticText* m_staticText220;
-    wxStyledTextCtrl* m_stcCommitMessage;
-    wxPanel* m_splitterPage190;
-    wxSplitterWindow* m_splitterV;
-    wxPanel* m_splitterPage200;
-    wxStaticText* m_staticText210;
-    wxListBox* m_fileListBox;
-    wxPanel* m_splitterPage204;
-    wxStaticText* m_staticText217;
-    wxStyledTextCtrl* m_stcDiff;
-    wxStdDialogButtonSizer* m_stdBtnSizer306;
-    wxButton* m_button308;
-
-protected:
-    virtual void OnPreviousBlame(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnBackUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnNextBlame(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnForwardUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnHistoryItemSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnExtraArgsTextEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRefreshBlame(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSettings(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnStcblameLeftDclick(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnSelectionChanged(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCloseDialog(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxChoice* GetChoiceHistory() { return m_choiceHistory; }
-    wxStaticText* GetStaticText414() { return m_staticText414; }
-    wxComboBox* GetComboExtraArgs() { return m_comboExtraArgs; }
-    wxAuiToolBar* GetAuibar436() { return m_auibar436; }
-    wxStyledTextCtrl* GetStcBlame() { return m_stcBlame; }
-    wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
-    wxStaticText* GetStaticText220() { return m_staticText220; }
-    wxStyledTextCtrl* GetStcCommitMessage() { return m_stcCommitMessage; }
-    wxPanel* GetSplitterPage194() { return m_splitterPage194; }
-    wxStaticText* GetStaticText210() { return m_staticText210; }
-    wxListBox* GetFileListBox() { return m_fileListBox; }
-    wxPanel* GetSplitterPage200() { return m_splitterPage200; }
-    wxStaticText* GetStaticText217() { return m_staticText217; }
-    wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
-    wxPanel* GetSplitterPage204() { return m_splitterPage204; }
-    wxSplitterWindow* GetSplitterV() { return m_splitterV; }
-    wxPanel* GetSplitterPage190() { return m_splitterPage190; }
-    wxSplitterWindow* GetSplitterH() { return m_splitterH; }
-    wxPanel* GetSplitterPageBottom() { return m_splitterPageBottom; }
-    wxSplitterWindow* GetSplitterMain() { return m_splitterMain; }
-    GitBlameDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Blame"),
-                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                    long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
-    virtual ~GitBlameDlgBase();
 };
 
 class GitBlameSettingsDlgBase : public wxDialog

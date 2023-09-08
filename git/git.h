@@ -53,7 +53,6 @@
 
 class clTreeCtrl;
 class clCommandProcessor;
-class GitBlameDlg;
 
 class gitAction
 {
@@ -173,7 +172,6 @@ class GitPlugin : public IPlugin
     wxString m_selectedFolder;
     clCommandProcessor* m_commandProcessor;
     clTabTogglerHelper::Ptr_t m_tabToggler;
-    GitBlameDlg* m_gitBlameDlg;
     std::unordered_map<wxString, std::vector<wxString>>
         m_blameMap; // contains file: comment per line (extracted from the 'git blame' info)
     size_t m_configFlags = 0;

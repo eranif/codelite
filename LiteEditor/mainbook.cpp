@@ -1241,7 +1241,13 @@ bool MainBook::DoSelectPage(wxWindow* win)
     if(!editor) {
         clMainFrame::Get()->SetFrameTitle(NULL);
         clMainFrame::Get()->GetStatusBar()->SetLinePosColumn(wxEmptyString);
-        SendCmdEvent(wxEVT_CMD_PAGE_CHANGED, win);
+        EventNotifier::Get()->SendCommandEvent(wxEVT_CMD_PAGE_CHANGED, win);
+
+        // update the find bar STC control
+        auto stc = dynamic_cast<wxStyledTextCtrl*>(win);
+        if(stc) {
+            m_findBar->SetEditor(stc);
+        }
 
     } else {
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);

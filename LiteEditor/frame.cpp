@@ -1752,6 +1752,16 @@ bool clMainFrame::IsEditorEvent(wxEvent& event)
     return true;
 }
 
+namespace
+{
+wxStyledTextCtrl* CurrentSTC(clMainFrame* self)
+{
+    auto page = self->GetMainBook()->GetCurrentPage();
+    CHECK_PTR_RET_NULL(page);
+
+    return dynamic_cast<wxStyledTextCtrl*>(page);
+}
+} // namespace
 void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
 {
     if(!IsEditorEvent(event)) {
@@ -1763,8 +1773,27 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
     if(editor) {
         editor->OnMenuCommand(event);
     } else if(event.GetId() == XRCID("id_find")) {
+        auto stc = CurrentSTC(this);
+        if(stc) {
+            // Try generic handling first
+            GetMainBook()->GetFindBar()->SetEditor(stc);
+            GetMainBook()->ShowQuickBar(true);
+            return;
+        }
+
         // Let the plugins handle this
         GetMainBook()->ShowQuickBarForPlugins();
+    } else if(event.GetId() == XRCID("goto_linenumber")) {
+        auto stc = CurrentSTC(this);
+        CHECK_PTR_RET(stc);
+
+        wxString msg = wxString::Format(_("Go to line number (1 - %i):"), stc->GetLineCount());
+        wxNumberEntryDialog dlg(stc, msg, wxEmptyString, _("Go To Line"), 0, 1, stc->GetLineCount());
+        if(dlg.ShowModal() == wxID_OK) {
+            long line = dlg.GetValue();
+            stc->GotoLine(line - 1);
+            stc->SetSTCFocus(true);
+        }
     }
 }
 

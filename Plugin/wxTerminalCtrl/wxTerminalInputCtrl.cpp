@@ -404,7 +404,6 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     int last_line = ctrl->LineFromPosition(ctrl->GetLastPosition());
 
     wxCodeCompletionBoxEntry::Vec_t completions;
-    completions.reserve(last_line);
     while(last_line >= 0) {
         wxString line = ctrl->GetLine(last_line);
         --last_line;

@@ -11,6 +11,4 @@ others:
 - clTreeCtrl: replace the current search with a panel that shows when clicking "/"
 - git: support showing file revision history
 - dap: support stdio connection based
-- sftp save should be in sync with clRemoteHost
-- git: replace the current blame UI, its not useful
-- remote formatter: at times, the first click is not always working
+- Diff: when using remote files, the "edit" does not work

@@ -96,9 +96,9 @@ bool LineInfo::FromPorcelainFormat(wxArrayString& lines)
 
     unsigned long timestamp = 0;
     author_time.ToCULong(&timestamp);
-    display_line =
-        wxString::Format("% 10s % 10s %s ", commit_hash.Mid(0, 10), author.length() > 10 ? author.Mid(0, 10) : author,
-                         wxDateTime((time_t)timestamp).FormatISODate());
+    author_time = wxDateTime((time_t)timestamp).FormatISODate();
+    display_line = wxString::Format("% 10s % 10s %s ", commit_hash.Mid(0, 10),
+                                    author.length() > 10 ? author.Mid(0, 10) : author, author_time);
     return true;
 }
 }; // namespace git::blame
@@ -124,7 +124,7 @@ git::blame::LineInfo::vec_t ParseBlameOutputInternal(wxArrayString& blameArr, si
 }
 
 GitBlamePage::GitBlamePage(wxWindow* parent, GitPlugin* plugin, const wxString& fullpath)
-    : wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
+    : clThemedSTC(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
     , m_plugin(plugin)
     , m_filename(fullpath)
 {
@@ -132,6 +132,7 @@ GitBlamePage::GitBlamePage(wxWindow* parent, GitPlugin* plugin, const wxString& 
     GitEntry data;
     conf.ReadItem(&data);
     InitialiseView();
+    Bind(wxEVT_STC_MARGIN_RIGHT_CLICK, &GitBlamePage::OnMarginRightClick, this);
 }
 
 GitBlamePage::~GitBlamePage()
@@ -140,6 +141,7 @@ GitBlamePage::~GitBlamePage()
     GitEntry data;
     conf.ReadItem(&data);
     conf.WriteItem(&data);
+    Unbind(wxEVT_STC_MARGIN_RIGHT_CLICK, &GitBlamePage::OnMarginRightClick, this);
 }
 
 void GitBlamePage::ParseBlameOutput(const wxString& blame)
@@ -214,4 +216,66 @@ void GitBlamePage::InitialiseView()
     SetCaretLineVisible(true);
     SetCaretLineFrame(1);
     SetCaretLineBackground(bgColour);
+}
+
+void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)
+{
+    wxUnusedVar(event);
+    event.Skip(false);
+
+    wxPoint mousePtInScreenCoord = ::wxGetMousePosition();
+    wxPoint clientPt = ScreenToClient(mousePtInScreenCoord);
+    size_t line_number = LineFromPosition(PositionFromPoint(clientPt));
+
+    wxMenu menu;
+    menu.Append(XRCID("copy-commit-id"), _("Copy commit hash"));
+    menu.Append(XRCID("copy-commit-date"), _("Copy commit date"));
+    menu.AppendSeparator();
+    menu.Append(XRCID("copy-author-email"), _("Copy author email"));
+    menu.Append(XRCID("copy-author-name"), _("Copy author name"));
+    menu.Bind(
+        wxEVT_MENU,
+        [this, line_number](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            if(line_number >= current_info().size()) {
+                return;
+            }
+            ::CopyToClipboard(current_info()[line_number].commit_hash);
+            clGetManager()->SetStatusMessage(_("Commit hash copied to clipboard"), 3);
+        },
+        XRCID("copy-commit-id"));
+    menu.Bind(
+        wxEVT_MENU,
+        [this, line_number](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            if(line_number >= current_info().size()) {
+                return;
+            }
+            ::CopyToClipboard(current_info()[line_number].author_time);
+            clGetManager()->SetStatusMessage(_("Commit date copied to clipboard"), 3);
+        },
+        XRCID("copy-commit-date"));
+    menu.Bind(
+        wxEVT_MENU,
+        [this, line_number](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            if(line_number >= current_info().size()) {
+                return;
+            }
+            ::CopyToClipboard(current_info()[line_number].author_email);
+            clGetManager()->SetStatusMessage(_("Author email copied to clipboard"), 3);
+        },
+        XRCID("copy-author-email"));
+    menu.Bind(
+        wxEVT_MENU,
+        [this, line_number](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            if(line_number >= current_info().size()) {
+                return;
+            }
+            ::CopyToClipboard(current_info()[line_number].author);
+            clGetManager()->SetStatusMessage(_("Author name copied to clipboard"), 3);
+        },
+        XRCID("copy-author-name"));
+    PopupMenu(&menu);
 }

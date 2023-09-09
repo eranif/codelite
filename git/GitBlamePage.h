@@ -1,6 +1,7 @@
 #ifndef GITBLAMEPAGE_H
 #define GITBLAMEPAGE_H
 
+#include "clThemedSTC.hpp"
 #include "cl_command_event.h"
 #include "git.h"
 
@@ -27,7 +28,7 @@ struct LineInfo {
 
 } // namespace git::blame
 
-class GitBlamePage : public wxStyledTextCtrl
+class GitBlamePage : public clThemedSTC
 {
     GitPlugin* m_plugin = nullptr;
     std::vector<git::blame::LineInfo::vec_t> m_stack;
@@ -36,6 +37,7 @@ class GitBlamePage : public wxStyledTextCtrl
 protected:
     const git::blame::LineInfo::vec_t& current_info() const;
     void InitialiseView();
+    void OnMarginRightClick(wxStyledTextEvent& event);
 
 public:
     GitBlamePage(wxWindow* parent, GitPlugin* plugin, const wxString& fullpath);

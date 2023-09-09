@@ -777,6 +777,7 @@ void clEditor::SetProperties()
         SetCaretLineFrame(0);
     } else {
         SetCaretLineBackground(StyleGetForeground(0));
+        SetCaretLineBackAlpha(wxSTC_ALPHA_NOALPHA);
         SetCaretLineFrame(1);
     }
 

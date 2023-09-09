@@ -22,8 +22,10 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
 
     AddHeader(_("Caret line"));
     AddProperty(_("Highlight caret line"), m_options->GetHighlightCaretLine(), UPDATE_BOOL_CB(SetHighlightCaretLine));
+#if wxCHECK_VERSION(3, 3, 0)
     AddProperty(_("Highlight with colour"), m_options->IsHighlightCaretLineWithColour(),
                 UPDATE_BOOL_CB(SetHighlightCaretLineWithColour));
+#endif
     AddProperty(_("Background colour"), m_options->GetCaretLineColour(), UPDATE_COLOUR_CB(SetCaretLineColour));
 
     AddHeader(_("Right margin indicator"));

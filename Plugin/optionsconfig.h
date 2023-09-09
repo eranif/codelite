@@ -91,6 +91,7 @@ protected:
     wxString m_bookmarkFgColours;
     wxString m_bookmarkLabels;
     bool m_highlightCaretLine;
+    bool m_highlightCaretLineWithColour;
     bool m_clearHighlitWordsOnFind;
     bool m_displayLineNumbers;
     bool m_relativeLineNumbers;
@@ -332,6 +333,8 @@ public:
     bool GetClearHighlitWordsOnFind() const { return m_clearHighlitWordsOnFind; }
 
     bool GetHighlightCaretLine() const { return m_highlightCaretLine; }
+    bool IsHighlightCaretLineWithColour() const { return m_highlightCaretLineWithColour; }
+    void SetHighlightCaretLineWithColour(bool b) { m_highlightCaretLineWithColour = b; }
     bool GetDisplayLineNumbers() const { return m_displayLineNumbers; }
     bool GetRelativeLineNumbers() const { return m_relativeLineNumbers; }
     bool GetShowIndentationGuidelines() const { return m_showIndentationGuidelines; }

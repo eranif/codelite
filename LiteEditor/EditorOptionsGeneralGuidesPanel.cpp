@@ -21,8 +21,9 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     AddProperty(_("Modified lines"), m_options->IsTrackChanges(), UPDATE_BOOL_CB(SetTrackChanges));
 
     AddHeader(_("Caret line"));
-    AddProperty(_("Enable background colour"), m_options->GetHighlightCaretLine(),
-                UPDATE_BOOL_CB(SetHighlightCaretLine));
+    AddProperty(_("Highlight caret line"), m_options->GetHighlightCaretLine(), UPDATE_BOOL_CB(SetHighlightCaretLine));
+    AddProperty(_("Highlight with colour"), m_options->IsHighlightCaretLineWithColour(),
+                UPDATE_BOOL_CB(SetHighlightCaretLineWithColour));
     AddProperty(_("Background colour"), m_options->GetCaretLineColour(), UPDATE_COLOUR_CB(SetCaretLineColour));
 
     AddHeader(_("Right margin indicator"));
@@ -31,7 +32,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     AddProperty(_("Indicator column"), m_options->GetRightMarginColumn(), UPDATE_INT_CB(SetRightMarginColumn));
 
     AddHeader(_("Debugger line"));
-    AddProperty(_("Enable background colour"), m_options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line),
+    AddProperty(_("Highlight debugger line"), m_options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line),
                 UPDATE_OPTION_CB(Opt_Mark_Debugger_Line));
     AddProperty(_("Background colour"), m_options->GetDebuggerMarkerLine(), UPDATE_COLOUR_CB(SetDebuggerMarkerLine));
 

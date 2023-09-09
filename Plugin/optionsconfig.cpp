@@ -68,6 +68,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_bookmarkFgColours(SetDefaultBookmarkColours())
     , m_bookmarkLabels(defaultBookmarkLabels)
     , m_highlightCaretLine(true)
+    , m_highlightCaretLineWithColour(false)
     , m_clearHighlitWordsOnFind(true)
     , m_displayLineNumbers(true)
     , m_relativeLineNumbers(false)
@@ -156,6 +157,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_bookmarkLabels = XmlUtils::ReadString(node, wxT("BookmarkLabels"), defaultBookmarkLabels);
         m_clearHighlitWordsOnFind = XmlUtils::ReadBool(node, wxT("ClearHighlitWordsOnFind"), m_clearHighlitWordsOnFind);
         m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
+        m_highlightCaretLineWithColour =
+            XmlUtils::ReadBool(node, "HighlightCaretLineWithColour", m_highlightCaretLineWithColour);
         m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"), m_displayLineNumbers);
         m_relativeLineNumbers = XmlUtils::ReadBool(node, wxT("RelativeLineNumber"), m_relativeLineNumbers);
         m_lineNumberHighlightCurrent =
@@ -283,6 +286,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("BookmarkLabels"), m_bookmarkLabels);
     n->AddAttribute(wxT("ClearHighlitWordsOnFind"), BoolToString(m_clearHighlitWordsOnFind));
     n->AddAttribute(wxT("HighlightCaretLine"), BoolToString(m_highlightCaretLine));
+    n->AddAttribute(wxT("HighlightCaretLineWithColour"), BoolToString(m_highlightCaretLineWithColour));
     n->AddAttribute(wxT("ShowLineNumber"), BoolToString(m_displayLineNumbers));
     n->AddAttribute(wxT("RelativeLineNumber"), BoolToString(m_relativeLineNumbers));
     n->AddAttribute(wxT("LineNumbersHighlightCurrent"), BoolToString(m_lineNumberHighlightCurrent));

@@ -771,8 +771,14 @@ void clEditor::SetProperties()
 
     // Mark current line
     SetCaretLineVisible(options->GetHighlightCaretLine());
-    SetCaretLineBackground(options->GetCaretLineColour());
-    SetCaretLineBackAlpha(options->GetCaretLineAlpha());
+    if(options->IsHighlightCaretLineWithColour()) {
+        SetCaretLineBackground(options->GetCaretLineColour());
+        SetCaretLineBackAlpha(options->GetCaretLineAlpha());
+        SetCaretLineFrame(0);
+    } else {
+        SetCaretLineBackground(StyleGetForeground(0));
+        SetCaretLineFrame(1);
+    }
 
     SetFoldFlags(options->GetUnderlineFoldLine()
                      ? wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED | wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED

@@ -69,3 +69,36 @@ void clSTCHelper::SetCaretAt(wxStyledTextCtrl* ctrl, long pos)
     // ensure caret is visible, but only if needed
     ScrollRange(ctrl, pos, pos);
 }
+
+void clSTCHelper::UpdateScrollbarWidth(wxStyledTextCtrl* ctrl, size_t char_width)
+{
+    // recalculate and set the length of horizontal scrollbar
+    if(char_width == wxString::npos) {
+        char_width = ctrl->TextWidth(0, "X");
+    }
+
+    int maxPixel = 0;
+    int startLine = ctrl->GetFirstVisibleLine();
+    int endLine = startLine + ctrl->LinesOnScreen();
+    if(endLine >= (ctrl->GetLineCount() - 1)) {
+        endLine--;
+    }
+
+    wxString text;
+    for(int i = startLine; i <= endLine; i++) {
+        int visibleLine = (int)ctrl->DocLineFromVisible(i); // get actual visible line, folding may offset lines
+        wxString line_text = ctrl->GetLine(visibleLine);
+        text = line_text.length() > text.length() ? line_text : text;
+    }
+
+    maxPixel = char_width * text.length();
+    if(maxPixel == 0) {
+        maxPixel++; // make sure maxPixel is valid
+    }
+
+    int currentLength = ctrl->GetScrollWidth(); // Get current scrollbar size
+    if(currentLength != maxPixel) {
+        // And if it is not the same, update it
+        ctrl->SetScrollWidth(maxPixel);
+    }
+}

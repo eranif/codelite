@@ -4,6 +4,7 @@
 #include "GitDiffOutputParser.h"
 #include "asyncprocess.h"
 #include "clResult.hpp"
+#include "clSTCHelper.hpp"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -133,6 +134,7 @@ GitBlamePage::GitBlamePage(wxWindow* parent, GitPlugin* plugin, const wxString& 
     conf.ReadItem(&data);
     InitialiseView();
     Bind(wxEVT_STC_MARGIN_RIGHT_CLICK, &GitBlamePage::OnMarginRightClick, this);
+    Bind(wxEVT_IDLE, &GitBlamePage::OnIdle, this);
 }
 
 GitBlamePage::~GitBlamePage()
@@ -142,6 +144,7 @@ GitBlamePage::~GitBlamePage()
     conf.ReadItem(&data);
     conf.WriteItem(&data);
     Unbind(wxEVT_STC_MARGIN_RIGHT_CLICK, &GitBlamePage::OnMarginRightClick, this);
+    Unbind(wxEVT_IDLE, &GitBlamePage::OnIdle, this);
 }
 
 void GitBlamePage::ParseBlameOutput(const wxString& blame)
@@ -278,4 +281,13 @@ void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)
         },
         XRCID("copy-author-name"));
     PopupMenu(&menu);
+}
+
+void GitBlamePage::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    if(m_scrollbar_recalc_is_required) {
+        m_scrollbar_recalc_is_required = false;
+        clSTCHelper::UpdateScrollbarWidth(this);
+    }
 }

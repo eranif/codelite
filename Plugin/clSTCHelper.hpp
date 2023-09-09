@@ -18,6 +18,9 @@ public:
 
     /// Set the caret at the given `pos` and ensure its visible
     static void SetCaretAt(wxStyledTextCtrl* ctrl, long pos);
+
+    /// Update the scrollbar width to match the visible view
+    static void UpdateScrollbarWidth(wxStyledTextCtrl* ctrl, size_t char_width = wxString::npos);
 };
 
 #endif // CLSTCHELPER_HPP

@@ -33,11 +33,13 @@ class GitBlamePage : public clThemedSTC
     GitPlugin* m_plugin = nullptr;
     std::vector<git::blame::LineInfo::vec_t> m_stack;
     wxString m_filename;
+    bool m_scrollbar_recalc_is_required = true;
 
 protected:
     const git::blame::LineInfo::vec_t& current_info() const;
     void InitialiseView();
     void OnMarginRightClick(wxStyledTextEvent& event);
+    void OnIdle(wxIdleEvent& event);
 
 public:
     GitBlamePage(wxWindow* parent, GitPlugin* plugin, const wxString& fullpath);

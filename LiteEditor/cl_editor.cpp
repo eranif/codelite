@@ -740,6 +740,7 @@ void clEditor::SetProperties()
 
     // Mark current line
     SetCaretLineVisible(options->GetHighlightCaretLine());
+#if wxCHECK_VERSION(3, 3, 0)
     if(options->IsHighlightCaretLineWithColour()) {
         SetCaretLineBackground(options->GetCaretLineColour());
         SetCaretLineBackAlpha(options->GetCaretLineAlpha());
@@ -749,6 +750,10 @@ void clEditor::SetProperties()
         SetCaretLineBackAlpha(wxSTC_ALPHA_NOALPHA);
         SetCaretLineFrame(1);
     }
+#else
+    SetCaretLineBackground(options->GetCaretLineColour());
+    SetCaretLineBackAlpha(options->GetCaretLineAlpha());
+#endif
 
     SetFoldFlags(options->GetUnderlineFoldLine()
                      ? wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED | wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED

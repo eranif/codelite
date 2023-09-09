@@ -217,7 +217,9 @@ void GitBlamePage::InitialiseView()
     SetMarginWidth(SYMBOLS_MARGIN, FromDIP(16));
 
     SetCaretLineVisible(true);
+#if wxCHECK_VERSION(3, 3, 0)
     SetCaretLineFrame(1);
+#endif
     SetCaretLineBackground(bgColour);
 
     SetMarginCursor(SYMBOLS_MARGIN_SEP_ID_1, 8);

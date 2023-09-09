@@ -1570,7 +1570,9 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     case gitBlame: {
         GitBlamePage* page = new GitBlamePage(clGetManager()->GetMainNotebook(), this);
         page->SetBlame(m_commandOutput, ga.arguments);
-        clGetManager()->AddEditorPage(page, "[Git Blame]");
+        wxString tooltip = wxString::Format("[Git Blame]\n%s", ga.arguments);
+        wxString title = wxString::Format("[Git Blame]: %s", wxFileName(ga.arguments).GetFullName());
+        clGetManager()->AddEditorPage(page, title, tooltip);
     } break;
     case gitRevlist: {
     } break;

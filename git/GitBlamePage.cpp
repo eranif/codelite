@@ -155,20 +155,13 @@ GitBlamePage::~GitBlamePage()
     conf.WriteItem(&data);
 }
 
-void GitBlamePage::SetBlame(const wxString& blame, const wxString& args)
+void GitBlamePage::SetBlame(const wxString& blame, const wxString& fullpath)
 {
-    wxString filename = args;
-    size_t where = args.Find(" -- ");
-    if(where != wxString::npos) {
-        filename = args.Mid(where + 4);
-    }
-    filename.Trim().Trim(false);
-
-    clDEBUG() << "GitBlame is called for file:" << filename << clEndl;
-    LOG_IF_TRACE { clDEBUG1() << "GitBlame 'blame':\n" << blame << clEndl; }
+    clDEBUG() << "GitBlame is called for file:" << fullpath << clEndl;
+    LOG_IF_TRACE { clTRACE() << "GitBlame 'blame':\n" << blame << clEndl; }
 
     // Set blame editor style and fonts
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(wxFileName(filename).GetFullName());
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(fullpath);
     if(!lexer) {
         lexer = ColoursAndFontsManager::Get().GetLexer("default");
     }

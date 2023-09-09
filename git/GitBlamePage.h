@@ -14,6 +14,6 @@ public:
     GitBlamePage(wxWindow* parent, GitPlugin* plugin);
     virtual ~GitBlamePage();
 
-    void SetBlame(const wxString& blame, const wxString& args);
+    void SetBlame(const wxString& blame, const wxString& fullpath);
 };
 #endif // GITBLAMEPAGE_H

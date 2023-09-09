@@ -57,17 +57,12 @@ class clCommandProcessor;
 class gitAction
 {
 public:
-    int action;
+    int action = 0;
     wxString arguments;
     wxString workingDirectory;
 
 public:
-    gitAction()
-        : action(0)
-        , arguments("")
-        , workingDirectory("")
-    {
-    }
+    gitAction() {}
     gitAction(int act, const wxString& args)
         : action(act)
         , arguments(args)

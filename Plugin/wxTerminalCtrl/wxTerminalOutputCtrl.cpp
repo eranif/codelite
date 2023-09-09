@@ -39,6 +39,7 @@ public:
     void OnPaste(wxCommandEvent& event) override
     {
         CHECK_FOCUS_WINDOW();
+        CHECK_PTR_RET(m_input_ctrl);
         m_input_ctrl->Paste();
     }
 };
@@ -54,21 +55,26 @@ struct EditorEnabler {
 };
 } // namespace
 
-TextView::TextView(wxWindow* parent, wxTerminalInputCtrl* inputCtrl, wxWindowID winid)
+TextView::TextView(wxWindow* parent, wxWindowID winid)
     : wxWindow(parent, winid)
     , m_terminal(nullptr)
 {
     Initialise();
-    m_editEvents.Reset(new MyEventsHandler(inputCtrl, m_ctrl));
+    m_editEvents.Reset(new MyEventsHandler(nullptr, m_ctrl));
 }
 
-TextView::TextView(wxTerminalCtrl* parent, wxTerminalInputCtrl* inputCtrl, wxWindowID winid, const wxFont& font,
-                   const wxColour& bg_colour, const wxColour& text_colour)
+TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font, const wxColour& bg_colour,
+                   const wxColour& text_colour)
     : wxWindow(parent, winid)
     , m_terminal(parent)
 {
     Initialise(font, bg_colour, text_colour);
-    m_editEvents.Reset(new MyEventsHandler(inputCtrl, m_ctrl));
+    m_editEvents.Reset(new MyEventsHandler(nullptr, m_ctrl));
+}
+
+void TextView::SetInputCtrl(wxTerminalInputCtrl* input_ctrl)
+{
+    m_editEvents.Reset(new MyEventsHandler(input_ctrl, m_ctrl));
 }
 
 void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const wxColour& text_colour)

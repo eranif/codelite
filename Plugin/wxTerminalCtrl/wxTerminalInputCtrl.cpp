@@ -81,8 +81,6 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
 
     // hook key events
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &wxTerminalInputCtrl::ProcessKeyDown, this);
-    // add the control the parent's size (at the bottom)
-    parent->GetSizer()->Add(m_ctrl, wxSizerFlags(0).Expand());
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalInputCtrl::OnThemeChanged, this);
     m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-)#");

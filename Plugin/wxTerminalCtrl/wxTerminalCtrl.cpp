@@ -35,11 +35,16 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxStrin
     }
     m_startingDirectory = working_directory;
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_inputCtrl = new wxTerminalInputCtrl(this);
-    m_outputView = new TextView(this, m_inputCtrl);
+    m_outputView = new TextView(this);
     m_outputView->SetSink(this);
     GetSizer()->Add(m_outputView, wxSizerFlags(1).Expand());
+
+    m_inputCtrl = new wxTerminalInputCtrl(this);
     GetSizer()->Add(m_inputCtrl->GetCtrl(), wxSizerFlags(0).Expand());
+
+    // assoicate the input control with the output
+    m_outputView->SetInputCtrl(m_inputCtrl);
+    GetSizer()->Fit(this);
     CallAfter(&wxTerminalCtrl::StartShell);
 }
 
@@ -64,8 +69,8 @@ bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& p
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &wxTerminalCtrl::OnWorkspaceLoaded, this);
     m_style = style & ~wxWINDOW_STYLE_MASK; // Remove all wxWindow style masking (Hi Word)
-    return wxWindow::Create(parent, winid, pos, size,
-                            style & wxWINDOW_STYLE_MASK); // Pass only the Windows related styles
+    return wxPanel::Create(parent, winid, pos, size,
+                           style & wxWINDOW_STYLE_MASK); // Pass only the Windows related styles
 }
 
 void wxTerminalCtrl::StartShell()

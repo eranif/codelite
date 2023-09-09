@@ -89,11 +89,11 @@ protected:
     void DoPatternClicked(const wxString& pattern);
 
 public:
-    explicit TextView(wxTerminalCtrl* parent, wxTerminalInputCtrl* inputCtrl, wxWindowID winid = wxNOT_FOUND,
-                      const wxFont& font = wxNullFont, const wxColour& bg_colour = *wxBLACK,
-                      const wxColour& text_colour = *wxWHITE);
-    explicit TextView(wxWindow* parent, wxTerminalInputCtrl* inputCtrl, wxWindowID winid = wxNOT_FOUND);
+    explicit TextView(wxTerminalCtrl* parent, wxWindowID winid = wxNOT_FOUND, const wxFont& font = wxNullFont,
+                      const wxColour& bg_colour = *wxBLACK, const wxColour& text_colour = *wxWHITE);
+    explicit TextView(wxWindow* parent, wxWindowID winid = wxNOT_FOUND);
     virtual ~TextView();
+    void SetInputCtrl(wxTerminalInputCtrl* input_ctrl);
     wxStyledTextCtrl* GetCtrl() { return m_ctrl; }
     void SetSink(wxEvtHandler* sink) { this->m_sink = sink; }
     wxEvtHandler* GetSink() { return m_sink; }

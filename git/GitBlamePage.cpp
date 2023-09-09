@@ -219,6 +219,12 @@ void GitBlamePage::InitialiseView()
     SetCaretLineVisible(true);
     SetCaretLineFrame(1);
     SetCaretLineBackground(bgColour);
+
+    SetMarginCursor(SYMBOLS_MARGIN_SEP_ID_1, 8);
+    SetMarginCursor(SYMBOLS_MARGIN_SEP_ID_2, 8);
+    SetMarginCursor(SYMBOLS_MARGIN, 8);
+    SetMarginCursor(LINENUMBER_MARGIN_ID, 8);
+    SetMarginCursor(TEXT_MARGIN_ID, 8);
 }
 
 void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)
@@ -286,8 +292,9 @@ void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)
 void GitBlamePage::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
-    if(m_scrollbar_recalc_is_required) {
-        m_scrollbar_recalc_is_required = false;
+    int first_visible_line = GetFirstVisibleLine();
+    if(first_visible_line != m_first_visible_line) {
+        m_first_visible_line = first_visible_line;
         clSTCHelper::UpdateScrollbarWidth(this);
     }
 }

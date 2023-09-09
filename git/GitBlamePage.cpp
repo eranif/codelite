@@ -19,10 +19,11 @@
 #include <wx/dcmemory.h>
 #include <wx/tokenzr.h>
 
-#define LINENUMBER_MARGIN_ID 0
+#define TEXT_MARGIN_ID 0
 #define SYMBOLS_MARGIN_SEP_ID_1 1
-#define TEXT_MARGIN_ID 2
-#define SYMBOLS_MARGIN_SEP_ID_2 3
+#define LINENUMBER_MARGIN_ID 2
+#define SYMBOLS_MARGIN 3
+#define SYMBOLS_MARGIN_SEP_ID_2 4
 
 namespace
 {
@@ -173,7 +174,7 @@ void GitBlamePage::SetBlame(const wxString& blame, const wxString& args)
     }
     lexer->Apply(this, true);
 
-    SetMarginType(TEXT_MARGIN_ID, wxSTC_MARGIN_RTEXT);
+    SetMarginType(TEXT_MARGIN_ID, wxSTC_MARGIN_TEXT);
     int char_width = TextWidth(0, "W");
 
     wxArrayString lines = wxStringTokenize(blame, "\n");
@@ -184,7 +185,7 @@ void GitBlamePage::SetBlame(const wxString& blame, const wxString& args)
     SetMarginWidth(TEXT_MARGIN_ID, maxChars * char_width);
     SetMarginSensitive(TEXT_MARGIN_ID, true);
 
-    size_t numlen = log10(count) + 1; // How many digits must we allow room for in the number margin?
+    size_t numlen = log10(count) + 2; // How many digits must we allow room for in the number margin?
     SetMarginType(LINENUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
     SetMarginWidth(LINENUMBER_MARGIN_ID, char_width * numlen);
 
@@ -200,6 +201,10 @@ void GitBlamePage::SetBlame(const wxString& blame, const wxString& args)
     SetMarginWidth(SYMBOLS_MARGIN_SEP_ID_2, FromDIP(1));
     SetMarginBackground(SYMBOLS_MARGIN_SEP_ID_2,
                         DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(120) : bgColour.ChangeLightness(60));
+
+    SetMarginType(SYMBOLS_MARGIN, wxSTC_MARGIN_SYMBOL);
+    SetMarginMask(SYMBOLS_MARGIN, 0);
+    SetMarginWidth(SYMBOLS_MARGIN, FromDIP(16));
 
     // In case we're re-entering, ensure we're r/w. For a wxSTC 'readonly' also means can't append text programatically
     SetReadOnly(false);

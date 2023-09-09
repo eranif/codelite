@@ -1654,6 +1654,11 @@ void MainBook::DoUpdateEditorsThemes()
     GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for(size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
+
+        // request for new semantics tokens for this editor
+        clCodeCompletionEvent event_semantic_tokens{ wxEVT_CC_SEMANTICS_HIGHLIGHT };
+        event_semantic_tokens.SetFileName(editors[i]->GetRemotePathOrLocal());
+        EventNotifier::Get()->AddPendingEvent(event_semantic_tokens);
     }
 }
 

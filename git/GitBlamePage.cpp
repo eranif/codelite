@@ -227,6 +227,7 @@ void GitBlamePage::InitialiseView()
     SetMarginCursor(SYMBOLS_MARGIN, 8);
     SetMarginCursor(LINENUMBER_MARGIN_ID, 8);
     SetMarginCursor(TEXT_MARGIN_ID, 8);
+    UsePopUp(0);
 }
 
 void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)

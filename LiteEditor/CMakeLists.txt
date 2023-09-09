@@ -376,6 +376,15 @@ else() # !APPLE
     codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
 endif()
 
+if(NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
+    # building outside of the source tree
+    add_custom_command(
+        TARGET codelite
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/compile_commands.json
+                ${CMAKE_SOURCE_DIR}/compile_commands.json)
+endif()
+
 # generate PostInstall.cmake script
 set(POST_INSTALL_SCRIPT "${CMAKE_BINARY_DIR}/post_install.cmake")
 if(MINGW)

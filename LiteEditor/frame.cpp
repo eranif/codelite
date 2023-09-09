@@ -1266,6 +1266,11 @@ void clMainFrame::CreateGUIControls()
     if(showMenuBar) {
         SetMenuBar(m_mainMenuBar);
     } else {
+#if defined(__WXGTK__)
+        // we can set it
+        SetMenuBar(m_mainMenuBar);
+        PostSizeEvent();
+#endif
         m_mainMenuBar->Hide();
     }
 #endif
@@ -6038,8 +6043,15 @@ void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
     wxUnusedVar(event);
 #ifndef __WXMAC__
     bool currentState = clConfig::Get().Read(kConfigShowMenuBar, true);
-    clConfig::Get().Write(kConfigShowMenuBar, !currentState);
+    currentState = !currentState;
+    clConfig::Get().Write(kConfigShowMenuBar, currentState);
+#ifdef __WXMSW__
     DoSuggestRestart();
+#else
+    // No need for restart on wxGTK, just show it and post a size event
+    m_mainMenuBar->Show(currentState);
+    PostSizeEvent();
+#endif
 #endif
 }
 

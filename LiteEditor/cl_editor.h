@@ -316,11 +316,6 @@ public:
     static void CenterLinePreserveSelection(wxStyledTextCtrl* ctrl, int line);
 
     /**
-     * @brief static version of the below
-     */
-    static void SetCaretAt(wxStyledTextCtrl* ctrl, long pos);
-
-    /**
      * @brief wrapper calling CenterLinePreserveSelection using CallAfter()
      */
     void CenterLinePreserveSelectionAfter(int line);

@@ -57,6 +57,7 @@
 #include "clInfoBar.h"
 #include "clLocaleManager.hpp"
 #include "clMainFrameHelper.h"
+#include "clSTCHelper.hpp"
 #include "clSingleChoiceDialog.h"
 #include "clThemedTreeCtrl.h"
 #include "clToolBarButtonBase.h"
@@ -1792,6 +1793,7 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
         if(dlg.ShowModal() == wxID_OK) {
             long line = dlg.GetValue();
             stc->GotoLine(line - 1);
+            clSTCHelper::CenterLine(stc, line - 1);
             stc->SetSTCFocus(true);
         }
     }

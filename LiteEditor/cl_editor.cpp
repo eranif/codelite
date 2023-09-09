@@ -40,6 +40,7 @@
 #include "clPrintout.h"
 #include "clResizableTooltip.h"
 #include "clSFTPManager.hpp"
+#include "clSTCHelper.hpp"
 #include "clSTCLineKeeper.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
@@ -679,29 +680,7 @@ BPtoMarker clEditor::GetMarkerForBreakpt(enum BreakpointType bp_type)
     return *iter;
 }
 
-void clEditor::SetCaretAt(long pos)
-{
-    DoSetCaretAt(this, pos);
-    int line = LineFromPosition(pos);
-
-    // make sure that the line is visible (folded lines mainly)
-    EnsureVisible(line);
-
-    // ensure caret is visible, but only if needed
-    scroll_range(this, pos, pos);
-}
-
-void clEditor::SetCaretAt(wxStyledTextCtrl* ctrl, long pos)
-{
-    DoSetCaretAt(ctrl, pos);
-    int line = ctrl->LineFromPosition(pos);
-
-    // make sure that the line is visible (folded lines mainly)
-    ctrl->EnsureVisible(line);
-
-    // ensure caret is visible, but only if needed
-    scroll_range(ctrl, pos, pos);
-}
+void clEditor::SetCaretAt(long pos) { clSTCHelper::SetCaretAt(this, pos); }
 
 /// Setup some scintilla properties
 void clEditor::SetProperties()
@@ -5799,7 +5778,7 @@ void clEditor::CenterLinePreserveSelection(wxStyledTextCtrl* ctrl, int line)
     int selection_start = ctrl->GetSelectionStart();
     int selection_end = ctrl->GetSelectionEnd();
 
-    CenterLine(ctrl, line, wxNOT_FOUND);
+    clSTCHelper::CenterLine(ctrl, line, wxNOT_FOUND);
 
     if(selection_end != wxNOT_FOUND && selection_start != wxNOT_FOUND) {
         ctrl->SetSelection(selection_start, selection_end);
@@ -5807,33 +5786,7 @@ void clEditor::CenterLinePreserveSelection(wxStyledTextCtrl* ctrl, int line)
     }
 }
 
-void clEditor::CenterLine(wxStyledTextCtrl* ctrl, int line, int col)
-{
-    int caret_pos = ctrl->PositionFromLine(line);
-    if(col != wxNOT_FOUND) {
-        // calculate the position
-        caret_pos += col;
-    }
-
-    // move the caret to the requested line
-    ctrl->EnsureVisible(line); // make sure the requested line is visible
-    SetCaretAt(ctrl, caret_pos);
-
-    // center that line
-    int linesOnScreen = ctrl->LinesOnScreen();
-    // To place our line in the middle, the first visible line should be
-    // the: line - (linesOnScreen / 2)
-    int firstVisibleLine = line - (linesOnScreen / 2);
-    if(firstVisibleLine < 0) {
-        firstVisibleLine = 0;
-    }
-
-    int real_visible_line = ctrl->VisibleFromDocLine(firstVisibleLine);
-    ctrl->EnsureVisible(real_visible_line);
-    ctrl->SetFirstVisibleLine(real_visible_line);
-}
-
-void clEditor::CenterLine(int line, int col) { CenterLine(this, line, col); }
+void clEditor::CenterLine(int line, int col) { clSTCHelper::CenterLine(this, line, col); }
 
 void clEditor::OnEditorConfigChanged(wxCommandEvent& event)
 {

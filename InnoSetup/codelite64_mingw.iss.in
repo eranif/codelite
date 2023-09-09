@@ -10,7 +10,7 @@ AppVersion=@CODELITE_VERSION@
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
-DefaultDirName={pf64}\CodeLite
+DefaultDirName={commonpf64}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=@CL_SRC_ROOT@/LICENSE
 OutputDir=@BUILD_DIRECTORY@/installer
@@ -148,7 +148,7 @@ begin
     Result := sCodeLitePath;
 end;
 
-function UnInstallVersion6(): Integer;
+procedure UnInstallVersion6();
 var
     sCodeLitePath: String;
 
@@ -192,8 +192,6 @@ begin
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
-var
-  ResultCode: Integer;
 begin
     case CurStep of
     ssInstall:

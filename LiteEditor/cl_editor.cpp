@@ -347,6 +347,12 @@ wxColour GetContrastColour(const wxColour& c)
     }
 }
 
+/// return the default FG colour for `ctrl`
+wxColour GetDefaultFgColour(wxStyledTextCtrl* ctrl) { return ctrl->StyleGetBackground(0); }
+
+/// return true if the default FG colour for `ctrl` is dark
+bool IsDefaultFgColourDark(wxStyledTextCtrl* ctrl) { return DrawingUtils::IsDark(GetDefaultFgColour(ctrl)); }
+
 void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
 {
     // Use a distinct style to highlight the current line number
@@ -745,8 +751,11 @@ void clEditor::SetProperties()
         SetCaretLineBackground(options->GetCaretLineColour());
         SetCaretLineBackAlpha(options->GetCaretLineAlpha());
         SetCaretLineFrame(0);
+
     } else {
-        SetCaretLineBackground(StyleGetForeground(0));
+
+        bool is_dark = IsDefaultFgColourDark(this);
+        SetCaretLineBackground(is_dark ? wxColour("GRAY") : wxColour("LIGHT GRAY"));
         SetCaretLineBackAlpha(wxSTC_ALPHA_NOALPHA);
         SetCaretLineFrame(1);
     }

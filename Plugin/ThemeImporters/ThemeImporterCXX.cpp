@@ -65,6 +65,7 @@ LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_NUMBER, "Number", m_number);
     AddProperty(lexer, wxSTC_C_WORD, "C++ keyword", m_keyword);
     AddProperty(lexer, wxSTC_C_STRING, "String", m_string);
+    AddProperty(lexer, wxSTC_C_STRINGRAW, "String Raw", m_string);
     AddProperty(lexer, wxSTC_C_CHARACTER, "Character", m_string);
     AddProperty(lexer, wxSTC_C_UUID, "Uuid", m_number);
     AddProperty(lexer, wxSTC_C_PREPROCESSOR, "Preprocessor", m_editor);

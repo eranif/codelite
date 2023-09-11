@@ -9,16 +9,16 @@ ThemeImporterMakefile::~ThemeImporterMakefile() {}
 
 LexerConf::Ptr_t ThemeImporterMakefile::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "makefile", 11);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "makefile", wxSTC_LEX_MAKEFILE);
     CHECK_PTR_RET_NULL(lexer);
 
-    AddProperty(lexer, "0", "Default", m_editor);
-    AddProperty(lexer, "1", "Comment", m_singleLineComment);
-    AddProperty(lexer, "2", "Preprocessor", m_keyword);
-    AddProperty(lexer, "3", "Identifier", m_variable);
-    AddProperty(lexer, "4", "Operator", m_oper);
-    AddProperty(lexer, "5", "Target", m_klass);
-    AddProperty(lexer, "9", "ID End Of Line", m_editor);
+    AddProperty(lexer, wxSTC_MAKE_DEFAULT, "Default", m_editor);
+    AddProperty(lexer, wxSTC_MAKE_COMMENT, "Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_MAKE_PREPROCESSOR, "Preprocessor", m_keyword);
+    AddProperty(lexer, wxSTC_MAKE_IDENTIFIER, "Identifier", m_variable);
+    AddProperty(lexer, wxSTC_MAKE_OPERATOR, "Operator", m_oper);
+    AddProperty(lexer, wxSTC_MAKE_TARGET, "Target", m_klass);
+    AddProperty(lexer, wxSTC_MAKE_IDEOL, "ID End Of Line", m_editor);
 
     FinalizeImport(lexer);
     return lexer;

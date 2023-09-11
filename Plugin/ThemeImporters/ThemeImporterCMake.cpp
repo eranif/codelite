@@ -26,25 +26,25 @@ ThemeImporterCMake::~ThemeImporterCMake() {}
 
 LexerConf::Ptr_t ThemeImporterCMake::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "cmake", 80);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "cmake", wxSTC_LEX_CMAKE);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties
-    AddProperty(lexer, "0", "Default", m_editor);
-    AddProperty(lexer, "1", "Comment", m_singleLineComment);
-    AddProperty(lexer, "2", "String DQ", m_string);
-    AddProperty(lexer, "3", "String LQ", m_string);
-    AddProperty(lexer, "4", "String RQ", m_string);
-    AddProperty(lexer, "5", "Commands", m_keyword);
-    AddProperty(lexer, "6", "Parameters", m_variable);
-    AddProperty(lexer, "7", "Variables", m_variable);
-    AddProperty(lexer, "8", "UserDefined", m_editor);
-    AddProperty(lexer, "9", "While Def", m_keyword);
-    AddProperty(lexer, "10", "Foreach Def", m_keyword);
-    AddProperty(lexer, "11", "If Defined Def", m_keyword);
-    AddProperty(lexer, "12", "Macro Def", m_function);
-    AddProperty(lexer, "13", "String Var", m_klass);
-    AddProperty(lexer, "14", "Number", m_number);
+    AddProperty(lexer, wxSTC_CMAKE_DEFAULT, "Default", m_editor);
+    AddProperty(lexer, wxSTC_CMAKE_COMMENT, "Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_CMAKE_STRINGDQ, "String DQ", m_string);
+    AddProperty(lexer, wxSTC_CMAKE_STRINGLQ, "String LQ", m_string);
+    AddProperty(lexer, wxSTC_CMAKE_STRINGRQ, "String RQ", m_string);
+    AddProperty(lexer, wxSTC_CMAKE_COMMANDS, "Commands", m_keyword);
+    AddProperty(lexer, wxSTC_CMAKE_PARAMETERS, "Parameters", m_variable);
+    AddProperty(lexer, wxSTC_CMAKE_VARIABLE, "Variables", m_variable);
+    AddProperty(lexer, wxSTC_CMAKE_USERDEFINED, "UserDefined", m_editor);
+    AddProperty(lexer, wxSTC_CMAKE_WHILEDEF, "While Def", m_keyword);
+    AddProperty(lexer, wxSTC_CMAKE_FOREACHDEF, "Foreach Def", m_keyword);
+    AddProperty(lexer, wxSTC_CMAKE_IFDEFINEDEF, "If Defined Def", m_keyword);
+    AddProperty(lexer, wxSTC_CMAKE_MACRODEF, "Macro Def", m_function);
+    AddProperty(lexer, wxSTC_CMAKE_STRINGVAR, "String Var", m_klass);
+    AddProperty(lexer, wxSTC_CMAKE_NUMBER, "Number", m_number);
 
     FinalizeImport(lexer);
     return lexer;

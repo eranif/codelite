@@ -38,11 +38,18 @@
 #include "globals.h"
 #include "macros.h"
 #include "wx/wxprec.h"
+
 #include <wx/log.h>
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
 #endif
+
+#include "CorrectSpellingDlg.h"
+#include "IHunSpell.h"
+#include "ctags_manager.h"
+#include "scGlobals.h"
+#include "spellcheck.h"
 
 #include <wx/arrimpl.cpp>
 #include <wx/filename.h>
@@ -51,11 +58,105 @@
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
 
-#include "CorrectSpellingDlg.h"
-#include "IHunSpell.h"
-#include "ctags_manager.h"
-#include "scGlobals.h"
-#include "spellcheck.h"
+namespace
+{
+/// Keep a set of styles per lexer-id that should be checked for spelling
+
+/// Only STRING styles
+std::unordered_map<int, std::unordered_set<int>> ALLOWED_STYLES_STRINGS = {
+    { wxSTC_LEX_ASM, { wxSTC_ASM_STRING } },
+    { wxSTC_LEX_BASH, { wxSTC_SH_STRING } },
+    { wxSTC_LEX_CMAKE, { wxSTC_CMAKE_STRINGDQ, wxSTC_CMAKE_STRINGLQ, wxSTC_CMAKE_STRINGRQ } },
+    { wxSTC_LEX_CSS, { wxSTC_CSS_DOUBLESTRING, wxSTC_CSS_SINGLESTRING } },
+    { wxSTC_LEX_CPP, { wxSTC_C_STRING, wxSTC_C_STRINGRAW, wxSTC_C_STRINGEOL } },
+    { wxSTC_LEX_FORTRAN, { wxSTC_F_STRING1, wxSTC_F_STRING2 } },
+    { wxSTC_LEX_INNOSETUP, { wxSTC_INNO_STRING_DOUBLE, wxSTC_INNO_STRING_SINGLE } },
+    { wxSTC_LEX_JSON, { wxSTC_JSON_STRING, wxSTC_JSON_STRINGEOL } },
+    { wxSTC_LEX_LUA, { wxSTC_LUA_STRING, wxSTC_LUA_LITERALSTRING, wxSTC_LUA_STRINGEOL } },
+    { wxSTC_LEX_MARKDOWN, { wxSTC_MARKDOWN_DEFAULT } },
+    { wxSTC_LEX_HTML,
+      {
+          wxSTC_H_DOUBLESTRING,
+          wxSTC_H_SINGLESTRING,
+          wxSTC_HJ_DOUBLESTRING,
+          wxSTC_HJ_SINGLESTRING,
+          wxSTC_HJ_STRINGEOL,
+          wxSTC_HPHP_HSTRING,
+          wxSTC_HPHP_SIMPLESTRING,
+      } },
+    { wxSTC_LEX_PYTHON,
+      {
+          wxSTC_P_STRING,
+          wxSTC_P_STRINGEOL,
+          wxSTC_P_TRIPLE,
+          wxSTC_P_TRIPLEDOUBLE,
+#if wxCHECK_VERSION(3, 3, 0)
+          wxSTC_P_FSTRING,
+          wxSTC_P_FCHARACTER,
+          wxSTC_P_FTRIPLE,
+          wxSTC_P_FTRIPLEDOUBLE,
+#endif
+      } },
+    { wxSTC_LEX_RUBY,
+      {
+          wxSTC_RB_STRING,
+          wxSTC_RB_STRING_Q,
+          wxSTC_RB_STRING_QQ,
+          wxSTC_RB_STRING_QX,
+          wxSTC_RB_STRING_QR,
+          wxSTC_RB_STRING_QW,
+      } },
+    { wxSTC_LEX_RUST,
+      {
+          wxSTC_RUST_STRING,
+          wxSTC_RUST_STRINGR,
+          wxSTC_RUST_BYTESTRING,
+          wxSTC_RUST_BYTESTRINGR,
+      } },
+    { wxSTC_LEX_NULL, { 0 } },
+};
+
+/// Only COMMENT styles
+std::unordered_map<int, std::unordered_set<int>> ALLOWED_STYLES_COMMENTS = {
+    { wxSTC_LEX_ASM, { wxSTC_ASM_COMMENT, wxSTC_ASM_COMMENTBLOCK, wxSTC_ASM_COMMENTDIRECTIVE } },
+    { wxSTC_LEX_BASH, { wxSTC_SH_COMMENTLINE } },
+    { wxSTC_LEX_BATCH, { wxSTC_BAT_COMMENT } },
+    { wxSTC_LEX_CMAKE, { wxSTC_CMAKE_COMMENT } },
+    { wxSTC_LEX_CSS, { wxSTC_CSS_COMMENT } },
+    { wxSTC_LEX_CPP, { wxSTC_C_COMMENT, wxSTC_C_COMMENTDOC, wxSTC_C_COMMENTLINE, wxSTC_C_COMMENTLINEDOC } },
+    { wxSTC_LEX_DIFF, { wxSTC_DIFF_COMMENT } },
+    { wxSTC_LEX_FORTRAN, { wxSTC_F_COMMENT } },
+    { wxSTC_LEX_PROPERTIES, { wxSTC_PROPS_COMMENT } },
+    { wxSTC_LEX_INNOSETUP, { wxSTC_INNO_COMMENT } },
+    { wxSTC_LEX_JSON, { wxSTC_JSON_LINECOMMENT, wxSTC_JSON_BLOCKCOMMENT } },
+    { wxSTC_LEX_LUA, { wxSTC_LUA_COMMENT, wxSTC_LUA_COMMENTLINE, wxSTC_LUA_COMMENTDOC } },
+    { wxSTC_LEX_MAKEFILE, { wxSTC_MAKE_COMMENT } },
+    { wxSTC_LEX_MARKDOWN, { wxSTC_MARKDOWN_DEFAULT } },
+    { wxSTC_LEX_HTML,
+      {
+          wxSTC_H_COMMENT,
+          wxSTC_HJ_COMMENT,
+          wxSTC_HJ_COMMENTLINE,
+          wxSTC_HJ_COMMENTDOC,
+          wxSTC_HPHP_COMMENTLINE,
+          wxSTC_HPHP_COMMENT,
+      } },
+    { wxSTC_LEX_PYTHON, { wxSTC_P_COMMENTLINE, wxSTC_P_COMMENTBLOCK } },
+    { wxSTC_LEX_RUBY, { wxSTC_RB_COMMENTLINE } },
+    { wxSTC_LEX_RUST,
+      {
+          wxSTC_RUST_COMMENTBLOCK,
+          wxSTC_RUST_COMMENTLINE,
+          wxSTC_RUST_COMMENTBLOCKDOC,
+          wxSTC_RUST_COMMENTLINEDOC,
+      } },
+    { wxSTC_LEX_SQL, { wxSTC_SQL_COMMENT, wxSTC_SQL_COMMENTLINE, wxSTC_SQL_COMMENTDOC } },
+    { wxSTC_LEX_TCL, { wxSTC_TCL_COMMENT, wxSTC_TCL_COMMENTLINE, wxSTC_TCL_BLOCK_COMMENT, wxSTC_TCL_COMMENT_BOX } },
+    { wxSTC_LEX_NULL, { 0 } },
+    { wxSTC_LEX_XML, { wxSTC_H_COMMENT } },
+    { wxSTC_LEX_YAML, { wxSTC_YAML_COMMENT } },
+};
+} // namespace
 
 // ------------------------------------------------------------
 #define MIN_TOKEN_LEN 3
@@ -293,23 +394,43 @@ void IHunSpell::CheckSpelling()
     m_pSpellDlg->SetPHs(this);
     wxStringTokenizer tkz(text, s_defDelimiters);
 
+    const std::unordered_set<int>* STRING_STYLES = nullptr;
+    const std::unordered_set<int>* COMMENT_STYLES = nullptr;
+
+    if(ALLOWED_STYLES_STRINGS.count(pEditor->GetLexerId())) {
+        STRING_STYLES = &ALLOWED_STYLES_STRINGS[pEditor->GetLexerId()];
+    }
+
+    if(ALLOWED_STYLES_COMMENTS.count(pEditor->GetLexerId())) {
+        COMMENT_STYLES = &ALLOWED_STYLES_COMMENTS[pEditor->GetLexerId()];
+    }
+
+#define IS_STYLE_ALLOWED(pset, style_id) \
+    (!pset /* no limit */ || (pset && pset->count(style_id) /* we have a set -> it must contain the id*/))
+
     LOG_IF_TRACE { clDEBUG1() << "SpellChecker: checking file:" << pEditor->GetFileName() << endl; }
     while(tkz.HasMoreTokens()) {
         wxString token = tkz.GetNextToken();
-        int pos = tkz.GetPosition() - token.Len() - 1;
+        int pos = tkz.GetPosition() - token.length() - 1;
         pos += offset;
 
         // ignore token shorter then MIN_TOKEN_LEN
-        if(token.Len() <= MIN_TOKEN_LEN)
+        if(token.length() <= MIN_TOKEN_LEN)
+            continue;
+
+        // Check the style at the middle of the token
+        int style_at_pos = pEditor->GetStyleAtPos(pos + token.length() / 2);
+        if(!IS_STYLE_ALLOWED(STRING_STYLES, style_at_pos) && !IS_STYLE_ALLOWED(COMMENT_STYLES, style_at_pos))
+            // skip this token
             continue;
 
         // process token
         if(!CheckWord(token)) {
-            pEditor->SetUserIndicator(pos, token.Len());
+            pEditor->SetUserIndicator(pos, token.length());
 
             if(!m_pPlugIn->GetCheckContinuous()) {
                 pEditor->SetCaretAt(pos);
-                pEditor->SelectText(pos, token.Len());
+                pEditor->SelectText(pos, token.length());
                 // show correct spelling dialog
                 error = true;
                 m_pSpellDlg->SetMisspelled(token);
@@ -338,6 +459,8 @@ void IHunSpell::CheckSpelling()
             }
         }
     }
+#undef IS_STYLE_ALLOWED
+
     LOG_IF_TRACE { clDEBUG1() << "SpellChecker:: checking file:" << pEditor->GetFileName() << "is done" << endl; }
     if(!m_pPlugIn->GetCheckContinuous()) {
         // clean up

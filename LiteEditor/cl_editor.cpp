@@ -1029,12 +1029,12 @@ void clEditor::SetProperties()
     IndicatorSetUnder(INDICATOR_DEBUGGER, true);
 
     bool isDarkTheme = (lexer && lexer->IsDark());
-    wxColour indicator_colour = *wxRED;
+    wxColour indicator_colour = "RED";
     if(isDarkTheme) {
-        indicator_colour = wxColour("YELLOW");
+        indicator_colour = wxColour("CYAN");
     }
 
-    SetUserIndicatorStyleAndColour(wxSTC_INDIC_SQUIGGLE, indicator_colour);
+    SetUserIndicatorStyleAndColour(wxSTC_INDIC_FULLBOX, indicator_colour);
 
     wxColour highlight_colour{ *wxGREEN };
     wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
@@ -4608,8 +4608,7 @@ void clEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
 {
     IndicatorSetForeground(INDICATOR_USER, colour);
     IndicatorSetStyle(INDICATOR_USER, style);
-    IndicatorSetAlpha(INDICATOR_USER, 255);
-    IndicatorSetUnder(INDICATOR_USER, false);
+    IndicatorSetUnder(INDICATOR_USER, true);
 }
 
 int clEditor::GetLexerId() { return GetLexer(); }

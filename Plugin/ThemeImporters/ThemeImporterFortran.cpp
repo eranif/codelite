@@ -58,7 +58,6 @@ LexerConf::Ptr_t ThemeImporterFortran::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_F_NUMBER, "Number", m_number);
     AddProperty(lexer, wxSTC_F_STRING1, "String 1", m_string);
     AddProperty(lexer, wxSTC_F_STRING2, "String 2", m_string);
-    AddProperty(lexer, wxSTC_F_STRING2, "String 3", m_string);
     AddProperty(lexer, wxSTC_F_OPERATOR, "Operator", m_oper);
     AddProperty(lexer, wxSTC_F_IDENTIFIER, "Identifier", m_editor);
     AddProperty(lexer, wxSTC_F_WORD, "Word", m_keyword);

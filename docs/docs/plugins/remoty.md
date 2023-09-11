@@ -55,9 +55,9 @@ If this file does not exist for you, you can create a skeleton file by:
 - Choose `Edit codelite-remote.json`
 - Edit the file (update the commands, delete unwanted entries etc)
 - Save the file
-- CodeLite will prompt to you reload the workspcae, accept the offer
+- Once this file is saved a workspace reload should be done
 
-The skeleton file looks like this:
+Fo example, when using `C++`, the skeleton file should look like this:
 
 ```json
 {
@@ -67,23 +67,6 @@ The skeleton file looks like this:
         "command": "/usr/bin/clangd -limit-results=500 -header-insertion-decorators=1",
         "env": [],
         "name": "clangd",
-        "working_directory": "$(WorkspacePath)"
-      },
-      {
-        "command": "rust-analyzer",
-        "env": [],
-        "name": "rust-analyzer",
-        "working_directory": "$(WorkspacePath)"
-      },
-      {
-        "command": "python3 -m pylsp",
-        "env": [
-          {
-            "name": "PYTHONPATH",
-            "value": ".:$PYTHONPATH"
-          }
-        ],
-        "name": "python",
         "working_directory": "$(WorkspacePath)"
       }
     ]
@@ -99,16 +82,6 @@ The skeleton file looks like this:
         "command": "clang-format $(CurrentFileRelPath)",
         "name": "clang-format",
         "working_directory": "$(WorkspacePath)"
-      },
-      {
-        "command": "xmllint --format $(CurrentFileRelPath)",
-        "name": "xmllint",
-        "working_directory": "$(WorkspacePath)"
-      },
-      {
-        "command": "rustfmt --edition 2021 $(CurrentFileRelPath)",
-        "name": "rustfmt",
-        "working_directory": "$(WorkspacePath)"
       }
     ]
   }
@@ -123,6 +96,12 @@ The skeleton file looks like this:
     defined under `Plugins` &#8594; `Language Server` &#8594; `Settings...`
 
     The same applies for the `Source Code Formatter` entries
+
+!!! Important
+    All the `command` entries in the `codelite-remote.json` should be able to run on the **remote** machine
+    
+    e.g. in the above example, `/usr/bin/clangd` should exist in the remote machine. CodeLite will launch this language server
+    on the remote machine
 
 ## Supported features
 ---

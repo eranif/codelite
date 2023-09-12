@@ -4,6 +4,7 @@
 #include "JSON.h"
 #include "StringUtils.h"
 #include "clThemedTextCtrl.hpp"
+#include "clWorkspaceManager.h"
 #include "cl_config.h"
 #include "globals.h"
 #include "sessionmanager.h"
@@ -22,11 +23,14 @@ void UpdateComboBox(clComboBox* cb, const wxArrayString& arr, const wxString& st
         return;
     }
     cb->Append(arr);
-    int where = cb->FindString(str);
-    if(where != wxNOT_FOUND) {
-        where = 0;
+    size_t where = cb->FindString(str);
+    if(where == wxString::npos) {
+        where = cb->Append(str);
     }
-    cb->SetSelection(where);
+
+    if(where != wxString::npos) { // this shouldn't happen... but better be safe than sorry
+        cb->SetSelection(where);
+    }
 }
 } // namespace
 
@@ -51,6 +55,9 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
 
     // read the find what list
     SessionManager::Get().LoadFindInFilesSession(&m_data);
+    if(m_data.where.empty() && clWorkspaceManager::Get().GetWorkspace()) {
+        m_data.where = clWorkspaceManager::Get().GetWorkspace()->GetFileName().BeforeLast('/');
+    }
 
     UpdateComboBox(m_comboBoxFindWhat, m_data.find_what_array, m_data.find_what);
     UpdateComboBox(m_comboBoxWhere, m_data.where_array, m_data.where);

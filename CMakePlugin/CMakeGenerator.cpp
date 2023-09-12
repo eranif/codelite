@@ -175,7 +175,7 @@ bool CMakeGenerator::Generate(ProjectPtr p)
 
     // Print project name
     mainProjectContent << CODELITE_CMAKE_PREFIX << "\n\n";
-    mainProjectContent << "cmake_minimum_required(VERSION 3.0)\n";
+    mainProjectContent << "cmake_minimum_required(VERSION 3.2)\n";
     AddUserCodeSection(mainProjectContent, CMAKELISTS_USER_CODE_01_PREFIX, m_userBlock01);
     mainProjectContent << "enable_language(CXX C ASM)\n";
     mainProjectContent << "# Project name\n";
@@ -733,7 +733,7 @@ wxString CMakeGenerator::Prefix(ProjectPtr project)
     wxString content;
 
     content << CODELITE_CMAKE_PREFIX << "\n\n";
-    content << "cmake_minimum_required(VERSION 3.0)\n";
+    content << "cmake_minimum_required(VERSION 3.2)\n";
     
     AddUserCodeSection(content, CMAKELISTS_USER_CODE_01_PREFIX, m_userBlock01);
     content << "enable_language(CXX C ASM)\n\n";

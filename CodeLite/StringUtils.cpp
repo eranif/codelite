@@ -502,18 +502,22 @@ wxString StringUtils::StripDoubleQuotes(const wxString& str)
     return s;
 }
 
-wxArrayString StringUtils::AppendAndMakeUnique(wxArrayString arr, const wxString& str, size_t truncate_size)
+wxArrayString StringUtils::AppendAndMakeUnique(const wxArrayString& arr, const wxString& str, size_t truncate_size)
 {
-    auto where = arr.Index(str);
-    if(where != wxNOT_FOUND) {
-        // this item already exist, remove it
-        arr.RemoveAt(where);
+    wxArrayString unique_arr;
+    unique_arr.reserve(arr.size());
+
+    for(const auto& s : arr) {
+        if(s != str) {
+            unique_arr.push_back(s);
+        }
     }
-    arr.Insert(str, 0);
-    if(arr.size() > truncate_size) {
-        arr.resize(truncate_size);
+
+    unique_arr.Insert(str, 0);
+    if(unique_arr.size() > truncate_size) {
+        unique_arr.resize(truncate_size);
     }
-    return arr;
+    return unique_arr;
 }
 #include "file_logger.h"
 

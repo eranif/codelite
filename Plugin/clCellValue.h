@@ -48,9 +48,10 @@ protected:
 
 public:
     clCellValue();
-    clCellValue(const wxString& text, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
-    clCellValue(const char* ptext, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
-    clCellValue(bool bValue, const wxString& label, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
+    explicit clCellValue(const wxString& text, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
+    explicit clCellValue(const char* ptext, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
+    explicit clCellValue(bool bValue, const wxString& label, int bmpIndex = wxNOT_FOUND,
+                         int bmpOpenIndex = wxNOT_FOUND);
     virtual ~clCellValue();
     bool IsOk() const { return m_type != kTypeNull; }
     bool IsString() const { return m_type == kTypeString; }

@@ -60,7 +60,7 @@ public:
 
         // draw the ascii line
         handler.Reset();
-        handler.Parse(FileUtils::ToStdString(entry->GetLabel(0)));
+        handler.Parse(entry->GetLabel(0));
 
         // draw item background
         DoRenderBackground(dc, entry->GetItemRect(), colours);

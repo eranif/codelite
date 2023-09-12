@@ -37,11 +37,12 @@ clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString
     wxString suffix;
 
     // prepare the prefix
-    prefix << ESC << "[";
-    prefix << "38;2;" << (int)colour.Red() << ";" << (int)colour.Green() << ";" << (int)colour.Blue() << "m";
+    prefix << ESC << wxT("[");
+    prefix << wxT("38;2;") << (int)colour.Red() << wxT(";") << (int)colour.Green() << wxT(";") << (int)colour.Blue()
+           << wxT("m");
 
     // and suffix
-    suffix << ESC << "[0m";
+    suffix << ESC << wxT("[0m");
 
     (*m_string) << prefix << text << suffix;
     return *this;
@@ -67,11 +68,11 @@ void clAnsiEscapeCodeColourBuilder::DoAddTextToBuffer(wxString* buffer, const wx
     wxString prefix;
     wxString suffix;
 
-    prefix << ESC << "[";
+    prefix << ESC << wxT("[");
     if(bold) {
-        prefix << "1;";
+        prefix << wxT("1;");
     }
-    prefix << "38;5;" << textColour << "m";
-    suffix << ESC << "[0m";
+    prefix << wxT("38;5;") << textColour << wxT("m");
+    suffix << ESC << wxT("[0m");
     (*buffer) << prefix << text << suffix;
 }

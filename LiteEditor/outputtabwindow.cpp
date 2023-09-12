@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "outputtabwindow.h"
 
+#include "clSTCHelper.hpp"
 #include "clToolBar.h"
 #include "cl_config.h"
 #include "editor_config.h"
@@ -227,24 +228,28 @@ void OutputTabWindow::Clear()
 
 void OutputTabWindow::AppendText(const wxString& text, bool toggle_view)
 {
-    if(m_sci) {
-        if(toggle_view && m_autoAppear && m_sci->GetLength() == 0) {
-            ManagerST::Get()->ShowOutputPane(m_name, true, false);
-        }
+    CHECK_PTR_RET(m_sci);
+    if(toggle_view && m_autoAppear && m_sci->GetLength() == 0) {
+        ManagerST::Get()->ShowOutputPane(m_name, true, false);
+    }
 
-        //----------------------------------------------
-        // enable writing
-        m_sci->SetReadOnly(false);
+    //----------------------------------------------
+    // enable writing
+    m_sci->SetReadOnly(false);
 
-        // Strip any terminal escape chars from the buffer
-        wxString modText;
-        ::clStripTerminalColouring(text, modText);
+    // Strip any terminal escape chars from the buffer
+    wxString modText;
+    ::clStripTerminalColouring(text, modText);
 
-        // add the text
-        m_sci->InsertText(m_sci->GetLength(), modText);
+    // add the text
+    m_sci->InsertText(m_sci->GetLength(), modText);
 
-        // enable readonly mode
-        m_sci->SetReadOnly(true);
+    // enable readonly mode
+    m_sci->SetReadOnly(true);
+
+    if(m_outputScrolls) {
+        m_sci->ScrollToEnd();
+        clSTCHelper::SetCaretAt(m_sci, m_sci->GetLastPosition());
     }
 }
 

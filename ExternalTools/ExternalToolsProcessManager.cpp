@@ -1,4 +1,5 @@
 #include "ExternalToolsProcessManager.h"
+
 #include "asyncprocess.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
@@ -8,6 +9,7 @@
 #include "imanager.h"
 #include "macromanager.h"
 #include "processreaderthread.h"
+
 #include <algorithm>
 #include <wx/msgdlg.h>
 #include <wx/process.h>
@@ -23,12 +25,8 @@
 class ExtToolsMyProcess : public wxProcess
 {
 public:
-    ExtToolsMyProcess()
-    {
-    }
-    virtual ~ExtToolsMyProcess()
-    {
-    }
+    ExtToolsMyProcess() {}
+    virtual ~ExtToolsMyProcess() {}
     void OnTerminate(int pid, int status)
     {
         ToolsTaskManager::Instance()->ProcessTerminated(pid);

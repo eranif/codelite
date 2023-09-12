@@ -6,7 +6,7 @@ const wxString DEFAULT_CODELITE_REMOTE_JSON = R"EOF(
   "Language Server Plugin": {
     "servers": [
       {
-        "command": "/usr/bin/clangd -limit-results=500 -header-insertion-decorators=1",
+        "command": "/usr/bin/clangd -limit-results=500 --header-insertion-decorators=1",
         "env": [],
         "name": "clangd",
         "working_directory": "$(WorkspacePath)"

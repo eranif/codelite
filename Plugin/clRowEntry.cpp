@@ -22,11 +22,14 @@
 #endif
 
 #ifdef __WXGTK__
-#define SELECTION_RECT_DEFLATE 0
+#define SELECTION_RECT_DEFLATE_X 1
+#define SELECTION_RECT_DEFLATE_Y 0
 #elif defined(__WXMSW__)
-#define SELECTION_RECT_DEFLATE 0
+#define SELECTION_RECT_DEFLATE_X 1
+#define SELECTION_RECT_DEFLATE_Y 0
 #else
-#define SELECTION_RECT_DEFLATE 0
+#define SELECTION_RECT_DEFLATE_X 1
+#define SELECTION_RECT_DEFLATE_Y 0
 #endif
 
 namespace
@@ -111,9 +114,9 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
 {
     wxUnusedVar(win);
     wxRect r = rect;
-    r.Deflate(SELECTION_RECT_DEFLATE);
+    r.Deflate(SELECTION_RECT_DEFLATE_X, SELECTION_RECT_DEFLATE_Y);
     r = r.CenterIn(rect);
-    draw_item_selected_rect(win, dc, r, colours.GetSelItemBgColour(), colours.GetSelItemBgColour());
+    draw_item_selected_rect(win, dc, r, colours.GetSelItemBgColour(), colours.GetSelItemBgColour(), 2.0);
 }
 
 void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clCellValue& cell)
@@ -817,6 +820,9 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
         } else {
             text_colour = colours.GetItemTextColour();
         }
+    } else if(IsSelected()) {
+        // when selected, override the user provided colour
+        text_colour = colours.GetSelItemTextColour();
     }
 
     dc.SetTextForeground(text_colour);

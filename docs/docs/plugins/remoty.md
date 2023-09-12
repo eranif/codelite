@@ -64,7 +64,7 @@ Fo example, when using `C++`, the skeleton file should look like this:
   "Language Server Plugin": {
     "servers": [
       {
-        "command": "/usr/bin/clangd -limit-results=500 --header-insertion-decorators=1",
+        "command": "/usr/bin/clangd --limit-results=500 --header-insertion-decorators=1",
         "env": [],
         "name": "clangd",
         "working_directory": "$(WorkspacePath)"

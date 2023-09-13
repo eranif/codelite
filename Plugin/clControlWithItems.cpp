@@ -25,14 +25,10 @@ wxDEFINE_EVENT(wxEVT_TREE_CLEAR_SEARCH, wxTreeEvent);
 //===------------------------
 // Helper class
 //===------------------------
-class clSearchControl :
-#if USE_PANEL_PARENT
-    public wxPanel
-#else
-    public wxMiniFrame
-#endif
+class clSearchControl : public wxPanel
 {
     wxTextCtrl* m_textCtrl = nullptr;
+    clControlWithItems* m_searchedCtrl = nullptr;
 
 private:
     void DoSelect(bool next)
@@ -67,83 +63,53 @@ private:
     }
 
 public:
-    clSearchControl(clControlWithItems* parent)
-#if USE_PANEL_PARENT
+    clSearchControl(wxWindow* parent, clControlWithItems* ctrl)
         : wxPanel(parent)
-#else
-        : wxMiniFrame(parent, wxID_ANY, "Find", wxDefaultPosition, wxDefaultSize,
-                      wxFRAME_FLOAT_ON_PARENT | wxBORDER_SIMPLE)
-#endif
+        , m_searchedCtrl(ctrl)
     {
         SetSizer(new wxBoxSizer(wxVERTICAL));
         wxPanel* mainPanel = new wxPanel(this);
         GetSizer()->Add(mainPanel, 1, wxEXPAND);
         mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
-        int scrollBarWidth = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, parent);
-        wxSize searchControlSize(GetParent()->GetSize().GetWidth() / 2 - scrollBarWidth, -1);
-        m_textCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition, searchControlSize,
+        m_textCtrl = new wxTextCtrl(mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
                                     wxTE_RICH | wxTE_PROCESS_ENTER);
-        mainPanel->GetSizer()->Add(m_textCtrl, 0, wxEXPAND);
-        m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
+        mainPanel->GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
         m_textCtrl->Bind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
         m_textCtrl->Bind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
+        SetFocusAfter();
         GetSizer()->Fit(this);
-        Hide();
     }
 
     virtual ~clSearchControl()
     {
+
         m_textCtrl->Unbind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
         m_textCtrl->Unbind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
-
-        // Let the parent know that we were dismissed
-        clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
-        parent->SearchControlDismissed();
     }
 
-    void PositionControl()
-    {
-#if USE_PANEL_PARENT
-        int scrollBarHeight = wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y, GetParent());
-        int x = GetParent()->GetSize().GetWidth() / 2;
-        int y = GetParent()->GetSize().GetHeight() - GetSize().GetHeight() - scrollBarHeight;
-        SetPosition(wxPoint(x, y));
-#else
-        wxPoint parentPt = GetParent()->GetScreenPosition();
-        CenterOnParent();
-        SetPosition(wxPoint(GetPosition().x, parentPt.y - m_textCtrl->GetSize().GetHeight()));
-#endif
-    }
     void DoSelectNone() { m_textCtrl->SelectNone(); }
-
-    void InitSearch(const wxChar& ch)
-    {
-        m_textCtrl->SetFocus();
-        m_textCtrl->ChangeValue(wxString() << ch);
-        m_textCtrl->SetInsertionPointEnd();
-        CallAfter(&clSearchControl::DoSelectNone);
-    }
-
-    void ShowControl(const wxChar& ch)
-    {
-        Show();
-        m_textCtrl->ChangeValue("");
-        PositionControl();
-        CallAfter(&clSearchControl::InitSearch, ch);
-    }
-
     void SelectNext() { DoSelect(true); }
-
     void SelectPrev() { DoSelect(false); }
+
+    void SetFocusAfter() { m_textCtrl->CallAfter(&wxTextCtrl::SetFocus); }
 
     void Dismiss()
     {
-        GetParent()->CallAfter(&wxWindow::SetFocus);
+        m_searchedCtrl->CallAfter(&wxWindow::SetFocus);
+
         // Clear the search
         wxTreeEvent e(wxEVT_TREE_CLEAR_SEARCH);
         e.SetEventObject(GetParent());
-        GetParent()->GetEventHandler()->QueueEvent(e.Clone());
-        Hide();
+        m_searchedCtrl->GetEventHandler()->AddPendingEvent(e);
+
+        // remove ourself from the paren't sizer
+        GetParent()->GetSizer()->Detach(this);
+        GetParent()->GetSizer()->Layout();
+
+        // Let the searched control know that we were dismissed
+        m_searchedCtrl->SearchControlDismissed();
+
+        Destroy();
     }
 
     void OnTextUpdated(wxCommandEvent& event)
@@ -152,7 +118,7 @@ public:
         wxTreeEvent e(wxEVT_TREE_SEARCH_TEXT);
         e.SetString(m_textCtrl->GetValue());
         e.SetEventObject(GetParent());
-        GetParent()->GetEventHandler()->QueueEvent(e.Clone());
+        m_searchedCtrl->GetEventHandler()->QueueEvent(e.Clone());
     }
 
     void OnKeyDown(wxKeyEvent& event)
@@ -166,7 +132,7 @@ public:
             SelectPrev();
         } else if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
             // Activate the item
-            clTreeCtrl* tree = dynamic_cast<clTreeCtrl*>(GetParent());
+            clTreeCtrl* tree = static_cast<clTreeCtrl*>(m_searchedCtrl);
             wxTreeEvent evt(wxEVT_TREE_ITEM_ACTIVATED);
             evt.SetEventObject(tree);
             evt.SetItem(tree->GetSelection());
@@ -491,21 +457,33 @@ void clControlWithItems::OnMouseScroll(wxMouseEvent& event)
 
 bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 {
-    if(m_searchControl && m_searchControl->IsShown()) {
-        return true;
+    if(!m_search.IsEnabled() || event.GetKeyCode() != '/') {
+        return false;
     }
-    if(m_search.IsEnabled() && wxIsprint(event.GetUnicodeKey()) &&
-       (event.GetModifiers() == wxMOD_NONE || event.GetModifiers() == wxMOD_SHIFT)) {
-        if(!m_searchControl) {
-            m_searchControl = new clSearchControl(this);
-        }
-        m_searchControl->ShowControl(event.GetUnicodeKey());
-        return true;
+
+    // the search bar is placed at the bottom of the parent
+    // we require a sizer to do this
+    if(GetParent()->GetSizer() == nullptr) {
+        return false;
     }
-    return false;
+
+    clSYSTEM() << "Creating search control" << endl;
+    m_searchControl = new clSearchControl(GetParent(), this);
+    GetParent()->GetSizer()->Insert(0, m_searchControl, 0, wxEXPAND);
+
+    // show it
+    m_searchControl->Show();
+    m_searchControl->SetFocusAfter();
+    GetParent()->GetSizer()->Layout();
+    GetParent()->PostSizeEvent();
+    return true;
 }
 
-void clControlWithItems::SearchControlDismissed() {}
+void clControlWithItems::SearchControlDismissed()
+{
+    clSYSTEM() << "Search control destroyed" << endl;
+    m_searchControl = nullptr;
+}
 
 void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
 {

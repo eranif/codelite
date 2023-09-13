@@ -8,7 +8,6 @@ Debug Adapter Client
 others:
 ----
 
-- clTreeCtrl: replace the current search with a panel that shows when clicking "/"
 - git: support showing file revision history
 - dap: support stdio connection based
 - Diff: when using remote files, the "edit" does not work

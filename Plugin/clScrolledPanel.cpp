@@ -245,6 +245,7 @@ void clScrolledPanel::OnCharHook(wxKeyEvent& event)
     if(DoKeyDown(keyDown)) {
         // event was handled. Stop processing it
         event.Skip(false);
+        event.StopPropagation();
         return;
     }
 

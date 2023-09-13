@@ -467,7 +467,6 @@ bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
         return false;
     }
 
-    clSYSTEM() << "Creating search control" << endl;
     m_searchControl = new clSearchControl(GetParent(), this);
     GetParent()->GetSizer()->Insert(0, m_searchControl, 0, wxEXPAND);
 
@@ -481,7 +480,6 @@ bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 
 void clControlWithItems::SearchControlDismissed()
 {
-    clSYSTEM() << "Search control destroyed" << endl;
     m_searchControl = nullptr;
 }
 

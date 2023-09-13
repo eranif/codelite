@@ -34,6 +34,12 @@ UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
         m_childStdout.Close();
         m_childStderr.Close();
 
+        // prevent descriptor leak into child process
+        const int fd_max = (sysconf(_SC_OPEN_MAX) != -1 ? sysconf(_SC_OPEN_MAX) : FD_SETSIZE);
+        for (int fd = 3; fd < fd_max; fd++) {
+            close(fd);
+        }
+
         char** argv = new char*[args.size() + 1];
         for(size_t i = 0; i < args.size(); ++i) {
             wxString wx_arg = args[i];

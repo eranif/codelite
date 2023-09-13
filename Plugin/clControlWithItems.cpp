@@ -33,10 +33,11 @@ class clSearchControl : public wxPanel
 private:
     void DoSelect(bool next)
     {
-        clTreeCtrl* tree = dynamic_cast<clTreeCtrl*>(GetParent());
+        clTreeCtrl* tree = dynamic_cast<clTreeCtrl*>(m_searchedCtrl);
         if(!tree || m_textCtrl->IsEmpty()) {
             return;
         }
+
         wxTreeItemId where = next ? tree->FindNext(tree->GetSelection(), m_textCtrl->GetValue(), 0,
                                                    wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM)
                                   : tree->FindPrev(tree->GetSelection(), m_textCtrl->GetValue(), 0,
@@ -478,10 +479,7 @@ bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
     return true;
 }
 
-void clControlWithItems::SearchControlDismissed()
-{
-    m_searchControl = nullptr;
-}
+void clControlWithItems::SearchControlDismissed() { m_searchControl = nullptr; }
 
 void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
 {

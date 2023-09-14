@@ -365,7 +365,7 @@ void clSSH::Login()
     for(auto func : methods) {
         // authenticate with timeout
         auto login_method = [this, func]() -> bool {
-            for(size_t i = 0; i < 100; ++i) {
+            for(size_t i = 0; i < 10; ++i) {
                 if((this->*func)(false)) {
                     return true;
                 }

@@ -217,7 +217,7 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
     if(!has_close_button && tabInfo.IsModified()) {
         // no close button, and a modified tab: use different colour for drawing
         // the tab label
-        text_colour = colours.markerColour;
+        text_colour = is_dark ? "PINK" : "RED";
     }
 
     fontDC.SetTextForeground(text_colour);

@@ -411,16 +411,31 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
     wxUnusedVar(parent);
     wxUnusedVar(activeTabRect);
 
-#ifdef __WXMAC__
+#if defined(__WXMAC__)
     wxColour bg_colour;
     wxColour active_tab_colour;
     GetTabColours(colours, style, &active_tab_colour, &bg_colour);
     bool is_dark = DrawingUtils::IsDark(bg_colour);
-    dc.SetPen(bg_colour.ChangeLightness(is_dark ? 60 : 80));
+    dc.SetPen(is_dark ? *wxBLACK_PEN : wxPen(bg_colour.ChangeLightness(90)));
     if(!(style & kNotebook_BottomTabs)) {
-        // top tabs
-        dc.DrawLine(clientRect.GetTopLeft(), activeTabRect.GetTopLeft());
-        dc.DrawLine(activeTabRect.GetTopRight(), clientRect.GetTopRight());
+        // draw black dark line from top left side to the right side
+        // of the notebook bar, skipping the active tab
+        wxPoint from, to;
+        from = clientRect.GetTopLeft();
+        to = activeTabRect.GetTopLeft();
+        to.x -= 1;
+
+        dc.DrawLine(from, to);
+
+        from = activeTabRect.GetTopRight();
+        from.x += 1;
+
+        to = clientRect.GetTopRight();
+
+        dc.DrawLine(from, to);
+
+        // Draw a black line at the bottom of the active tab
+        dc.DrawLine(activeTabRect.GetBottomLeft(), activeTabRect.GetBottomRight());
     }
 #endif
 }

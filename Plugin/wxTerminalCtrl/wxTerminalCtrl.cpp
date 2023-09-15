@@ -35,7 +35,7 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxStrin
     }
     m_startingDirectory = working_directory;
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_outputView = new TextView(this);
+    m_outputView = new wxTerminalOutputCtrl(this);
     m_outputView->SetSink(this);
     GetSizer()->Add(m_outputView, wxSizerFlags(1).Expand());
 

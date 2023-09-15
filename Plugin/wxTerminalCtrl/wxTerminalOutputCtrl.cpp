@@ -55,7 +55,7 @@ struct EditorEnabler {
 };
 } // namespace
 
-TextView::TextView(wxWindow* parent, wxWindowID winid)
+wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxWindow* parent, wxWindowID winid)
     : wxWindow(parent, winid)
     , m_terminal(nullptr)
 {
@@ -63,7 +63,7 @@ TextView::TextView(wxWindow* parent, wxWindowID winid)
     m_editEvents.Reset(new MyEventsHandler(nullptr, m_ctrl));
 }
 
-TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font, const wxColour& bg_colour,
+wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font, const wxColour& bg_colour,
                    const wxColour& text_colour)
     : wxWindow(parent, winid)
     , m_terminal(parent)
@@ -72,12 +72,12 @@ TextView::TextView(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
     m_editEvents.Reset(new MyEventsHandler(nullptr, m_ctrl));
 }
 
-void TextView::SetInputCtrl(wxTerminalInputCtrl* input_ctrl)
+void wxTerminalOutputCtrl::SetInputCtrl(wxTerminalInputCtrl* input_ctrl)
 {
     m_editEvents.Reset(new MyEventsHandler(input_ctrl, m_ctrl));
 }
 
-void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const wxColour& text_colour)
+void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_colour, const wxColour& text_colour)
 {
     m_textFont = font.IsOk() ? font : FontUtils::GetDefaultMonospacedFont();
     m_textColour = text_colour;
@@ -97,62 +97,62 @@ void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const w
     m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
-    CallAfter(&TextView::ReloadSettings);
+    CallAfter(&wxTerminalOutputCtrl::ReloadSettings);
 
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
-    m_ctrl->Bind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
-    m_ctrl->Bind(wxEVT_IDLE, &TextView::OnIdle, this);
-    m_ctrl->Bind(wxEVT_LEFT_UP, &TextView::OnLeftUp, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalOutputCtrl::OnThemeChanged, this);
+    m_ctrl->Bind(wxEVT_CHAR_HOOK, &wxTerminalOutputCtrl::OnKeyDown, this);
+    m_ctrl->Bind(wxEVT_IDLE, &wxTerminalOutputCtrl::OnIdle, this);
+    m_ctrl->Bind(wxEVT_LEFT_UP, &wxTerminalOutputCtrl::OnLeftUp, this);
     m_stcRenderer = new wxTerminalAnsiRendererSTC(m_ctrl);
 }
 
-TextView::~TextView()
+wxTerminalOutputCtrl::~wxTerminalOutputCtrl()
 {
     wxDELETE(m_stcRenderer);
-    m_ctrl->Unbind(wxEVT_CHAR_HOOK, &TextView::OnKeyDown, this);
-    m_ctrl->Unbind(wxEVT_IDLE, &TextView::OnIdle, this);
-    m_ctrl->Unbind(wxEVT_LEFT_UP, &TextView::OnLeftUp, this);
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &TextView::OnThemeChanged, this);
+    m_ctrl->Unbind(wxEVT_CHAR_HOOK, &wxTerminalOutputCtrl::OnKeyDown, this);
+    m_ctrl->Unbind(wxEVT_IDLE, &wxTerminalOutputCtrl::OnIdle, this);
+    m_ctrl->Unbind(wxEVT_LEFT_UP, &wxTerminalOutputCtrl::OnLeftUp, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalOutputCtrl::OnThemeChanged, this);
 }
 
-void TextView::AppendText(const wxString& buffer)
+void wxTerminalOutputCtrl::AppendText(const wxString& buffer)
 {
     EditorEnabler d{ m_ctrl };
     m_ctrl->AppendText(buffer);
     RequestScrollToEnd();
 }
 
-long TextView::GetLastPosition() const { return m_ctrl->GetLastPosition(); }
+long wxTerminalOutputCtrl::GetLastPosition() const { return m_ctrl->GetLastPosition(); }
 
-wxString TextView::GetRange(int from, int to) const { return m_ctrl->GetRange(from, to); }
+wxString wxTerminalOutputCtrl::GetRange(int from, int to) const { return m_ctrl->GetRange(from, to); }
 
-bool TextView::PositionToXY(long pos, long* x, long* y) const { return m_ctrl->PositionToXY(pos, x, y); }
+bool wxTerminalOutputCtrl::PositionToXY(long pos, long* x, long* y) const { return m_ctrl->PositionToXY(pos, x, y); }
 
-long TextView::XYToPosition(long x, long y) const { return m_ctrl->XYToPosition(x, y); }
+long wxTerminalOutputCtrl::XYToPosition(long x, long y) const { return m_ctrl->XYToPosition(x, y); }
 
-void TextView::Remove(long from, long to) { return m_ctrl->Remove(from, to); }
+void wxTerminalOutputCtrl::Remove(long from, long to) { return m_ctrl->Remove(from, to); }
 
-void TextView::SetInsertionPoint(long pos) { m_ctrl->SetInsertionPoint(pos); }
+void wxTerminalOutputCtrl::SetInsertionPoint(long pos) { m_ctrl->SetInsertionPoint(pos); }
 
-void TextView::SelectNone() { m_ctrl->SelectNone(); }
+void wxTerminalOutputCtrl::SelectNone() { m_ctrl->SelectNone(); }
 
-void TextView::SetInsertionPointEnd() { m_ctrl->SetInsertionPointEnd(); }
+void wxTerminalOutputCtrl::SetInsertionPointEnd() { m_ctrl->SetInsertionPointEnd(); }
 
-int TextView::GetNumberOfLines() const { return m_ctrl->GetNumberOfLines(); }
+int wxTerminalOutputCtrl::GetNumberOfLines() const { return m_ctrl->GetNumberOfLines(); }
 
-void TextView::SetDefaultStyle(const wxTextAttr& attr) { m_defaultAttr = attr; }
+void wxTerminalOutputCtrl::SetDefaultStyle(const wxTextAttr& attr) { m_defaultAttr = attr; }
 
-wxTextAttr TextView::GetDefaultStyle() const { return m_defaultAttr; }
+wxTextAttr wxTerminalOutputCtrl::GetDefaultStyle() const { return m_defaultAttr; }
 
-long TextView::GetInsertionPoint() const { return m_ctrl->GetInsertionPoint(); }
+long wxTerminalOutputCtrl::GetInsertionPoint() const { return m_ctrl->GetInsertionPoint(); }
 
-void TextView::Replace(long from, long to, const wxString& replaceWith) { m_ctrl->Replace(from, to, replaceWith); }
+void wxTerminalOutputCtrl::Replace(long from, long to, const wxString& replaceWith) { m_ctrl->Replace(from, to, replaceWith); }
 
-wxString TextView::GetLineText(int lineNumber) const { return m_ctrl->GetLineText(lineNumber); }
+wxString wxTerminalOutputCtrl::GetLineText(int lineNumber) const { return m_ctrl->GetLineText(lineNumber); }
 
-void TextView::ReloadSettings() { ApplyTheme(); }
+void wxTerminalOutputCtrl::ReloadSettings() { ApplyTheme(); }
 
-void TextView::StyleAndAppend(wxStringView buffer, wxString* window_title)
+void wxTerminalOutputCtrl::StyleAndAppend(wxStringView buffer, wxString* window_title)
 {
     size_t consumed = m_outputHandler.ProcessBuffer(buffer, m_stcRenderer);
     if(window_title) {
@@ -160,21 +160,21 @@ void TextView::StyleAndAppend(wxStringView buffer, wxString* window_title)
     }
 }
 
-void TextView::ShowCommandLine()
+void wxTerminalOutputCtrl::ShowCommandLine()
 {
     m_ctrl->SetSelection(m_ctrl->GetLastPosition(), m_ctrl->GetLastPosition());
     m_ctrl->EnsureCaretVisible();
     RequestScrollToEnd();
 }
 
-void TextView::SetCaretEnd()
+void wxTerminalOutputCtrl::SetCaretEnd()
 {
     m_ctrl->SelectNone();
     m_ctrl->SetSelection(GetLastPosition(), GetLastPosition());
     m_ctrl->SetCurrentPos(GetLastPosition());
 }
 
-int TextView::Truncate()
+int wxTerminalOutputCtrl::Truncate()
 {
     if(GetNumberOfLines() > 1000) {
         // Start removing lines from the top
@@ -187,39 +187,39 @@ int TextView::Truncate()
     return 0;
 }
 
-wxChar TextView::GetLastChar() const { return m_ctrl->GetCharAt(m_ctrl->GetLastPosition() - 1); }
+wxChar wxTerminalOutputCtrl::GetLastChar() const { return m_ctrl->GetCharAt(m_ctrl->GetLastPosition() - 1); }
 
-int TextView::GetCurrentStyle() { return 0; }
+int wxTerminalOutputCtrl::GetCurrentStyle() { return 0; }
 
-void TextView::Clear()
+void wxTerminalOutputCtrl::Clear()
 {
     m_stcRenderer->Clear();
     EditorEnabler d{ m_ctrl };
     m_ctrl->ClearAll();
 }
 
-void TextView::DoScrollToEnd()
+void wxTerminalOutputCtrl::DoScrollToEnd()
 {
     m_scrollToEndQueued = false;
     m_ctrl->ScrollToEnd();
 }
 
-void TextView::RequestScrollToEnd()
+void wxTerminalOutputCtrl::RequestScrollToEnd()
 {
     if(m_scrollToEndQueued) {
         return;
     }
     m_scrollToEndQueued = true;
-    CallAfter(&TextView::DoScrollToEnd);
+    CallAfter(&wxTerminalOutputCtrl::DoScrollToEnd);
 }
 
-void TextView::OnThemeChanged(clCommandEvent& event)
+void wxTerminalOutputCtrl::OnThemeChanged(clCommandEvent& event)
 {
     event.Skip();
     ApplyTheme();
 }
 
-void TextView::ApplyTheme()
+void wxTerminalOutputCtrl::ApplyTheme()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     lexer->Apply(m_ctrl);
@@ -233,7 +233,7 @@ void TextView::ApplyTheme()
     m_ctrl->Refresh();
 }
 
-void TextView::OnKeyDown(wxKeyEvent& event)
+void wxTerminalOutputCtrl::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
     if(event.ControlDown() || event.AltDown() || event.RawControlDown()) {
@@ -246,7 +246,7 @@ void TextView::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void TextView::OnIdle(wxIdleEvent& event)
+void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
     if(!m_ctrl->IsShownOnScreen() || !m_ctrl->IsShown()) {
@@ -282,7 +282,7 @@ void TextView::OnIdle(wxIdleEvent& event)
     m_indicatorHyperlink = range;
 }
 
-void TextView::ClearIndicators()
+void wxTerminalOutputCtrl::ClearIndicators()
 {
     if(m_indicatorHyperlink.is_ok()) {
         m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
@@ -291,7 +291,7 @@ void TextView::ClearIndicators()
     }
 }
 
-void TextView::OnLeftUp(wxMouseEvent& event)
+void wxTerminalOutputCtrl::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
 
@@ -301,22 +301,22 @@ void TextView::OnLeftUp(wxMouseEvent& event)
 
     // fire an event
     wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.get_start(), m_indicatorHyperlink.get_end());
-    CallAfter(&TextView::DoPatternClicked, pattern);
+    CallAfter(&wxTerminalOutputCtrl::DoPatternClicked, pattern);
 }
 
-void TextView::OnEnterWindow(wxMouseEvent& event)
+void wxTerminalOutputCtrl::OnEnterWindow(wxMouseEvent& event)
 {
     event.Skip();
     CHECK_PTR_RET(m_ctrl);
 }
 
-void TextView::OnLeaveWindow(wxMouseEvent& event)
+void wxTerminalOutputCtrl::OnLeaveWindow(wxMouseEvent& event)
 {
     event.Skip();
     CHECK_PTR_RET(m_ctrl);
 }
 
-void TextView::DoPatternClicked(const wxString& pattern)
+void wxTerminalOutputCtrl::DoPatternClicked(const wxString& pattern)
 {
     // if the pattern matches a URL, open it
     if(pattern.StartsWith("https://") || pattern.StartsWith("http://")) {

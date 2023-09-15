@@ -14,7 +14,7 @@
 class wxTerminalCtrl;
 class wxTerminalInputCtrl;
 
-class WXDLLIMPEXP_SDK TextView : public wxWindow
+class WXDLLIMPEXP_SDK wxTerminalOutputCtrl : public wxWindow
 {
     struct IndicatorRange {
     private:
@@ -89,10 +89,10 @@ protected:
     void DoPatternClicked(const wxString& pattern);
 
 public:
-    explicit TextView(wxTerminalCtrl* parent, wxWindowID winid = wxNOT_FOUND, const wxFont& font = wxNullFont,
+    explicit wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID winid = wxNOT_FOUND, const wxFont& font = wxNullFont,
                       const wxColour& bg_colour = *wxBLACK, const wxColour& text_colour = *wxWHITE);
-    explicit TextView(wxWindow* parent, wxWindowID winid = wxNOT_FOUND);
-    virtual ~TextView();
+    explicit wxTerminalOutputCtrl(wxWindow* parent, wxWindowID winid = wxNOT_FOUND);
+    virtual ~wxTerminalOutputCtrl();
     void SetInputCtrl(wxTerminalInputCtrl* input_ctrl);
     wxStyledTextCtrl* GetCtrl() { return m_ctrl; }
     void SetSink(wxEvtHandler* sink) { this->m_sink = sink; }

@@ -31,7 +31,7 @@ void wxTerminalColourHandler::Append(const wxString& buffer, wxString* window_ti
     }
 }
 
-void wxTerminalColourHandler::SetCtrl(TextView* ctrl)
+void wxTerminalColourHandler::SetCtrl(wxTerminalOutputCtrl* ctrl)
 {
     m_ctrl = ctrl;
     Clear();

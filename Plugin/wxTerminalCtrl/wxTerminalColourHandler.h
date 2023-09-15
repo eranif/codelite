@@ -8,11 +8,11 @@
 #include <vector>
 #include <wx/textctrl.h>
 
-class TextView;
+class wxTerminalOutputCtrl;
 class wxTerminalCtrl;
 class wxTerminalColourHandler : public wxEvtHandler
 {
-    TextView* m_ctrl = nullptr;
+    wxTerminalOutputCtrl* m_ctrl = nullptr;
     wxSTCStyleProvider* m_style_provider = nullptr;
     wxTextAttr m_defaultAttr;
     wxString m_title;
@@ -26,7 +26,7 @@ public:
     ~wxTerminalColourHandler();
 
     void Append(const wxString& buffer, wxString* window_title);
-    void SetCtrl(TextView* ctrl);
+    void SetCtrl(wxTerminalOutputCtrl* ctrl);
     void SetDefaultStyle(const wxTextAttr& attr);
     void Clear();
 };

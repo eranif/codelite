@@ -19,7 +19,7 @@
 #include <wx/textctrl.h>
 #include <wx/utils.h>
 
-class TextView;
+class wxTerminalOutputCtrl;
 // Styles
 enum {
     // Low word (0-16)
@@ -35,7 +35,7 @@ class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 protected:
     long m_style = 0;
     IProcess* m_shell = nullptr;
-    TextView* m_outputView = nullptr;
+    wxTerminalOutputCtrl* m_outputView = nullptr;
     wxTerminalInputCtrl* m_inputCtrl = nullptr;
     std::unordered_set<long> m_initialProcesses;
     wxTextAttr m_preEchoOffAttr;
@@ -74,7 +74,7 @@ public:
                 const wxString& name = "terminal");
     virtual ~wxTerminalCtrl();
 
-    TextView* GetView() { return m_outputView; }
+    wxTerminalOutputCtrl* GetView() { return m_outputView; }
     bool IsFocused();
     void SSHAndSetWorkingDirectory(const wxString& ssh_account, const wxString& path);
     void SetTerminalWorkingDirectory(const wxString& path);

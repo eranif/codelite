@@ -24,12 +24,16 @@
 #ifdef __WXGTK__
 #define SELECTION_RECT_DEFLATE_X 1
 #define SELECTION_RECT_DEFLATE_Y 0
+#define SELECTION_RADIUS 2.0
 #elif defined(__WXMSW__)
 #define SELECTION_RECT_DEFLATE_X 1
 #define SELECTION_RECT_DEFLATE_Y 0
+#define SELECTION_RADIUS 2.0
 #else
+// macOS
 #define SELECTION_RECT_DEFLATE_X 1
 #define SELECTION_RECT_DEFLATE_Y 0
+#define SELECTION_RADIUS 5.0
 #endif
 
 namespace
@@ -116,7 +120,7 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
     wxRect r = rect;
     r.Deflate(SELECTION_RECT_DEFLATE_X, SELECTION_RECT_DEFLATE_Y);
     r = r.CenterIn(rect);
-    draw_item_selected_rect(win, dc, r, colours.GetSelItemBgColour(), colours.GetSelItemBgColour(), 2.0);
+    draw_item_selected_rect(win, dc, r, colours.GetSelItemBgColour(), colours.GetSelItemBgColour(), SELECTION_RADIUS);
 }
 
 void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clCellValue& cell)

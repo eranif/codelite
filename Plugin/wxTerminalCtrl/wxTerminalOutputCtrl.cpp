@@ -84,6 +84,10 @@ void TextView::Initialise(const wxFont& font, const wxColour& bg_colour, const w
     m_bgColour = bg_colour;
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    for(int i = 0; i < wxSTC_MAX_MARGIN; ++i) {
+        m_ctrl->SetMarginWidth(i, 0);
+    }
+
     m_ctrl->UsePopUp(1);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->StartStyling(0);

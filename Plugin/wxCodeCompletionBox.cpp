@@ -157,7 +157,8 @@ void wxCodeCompletionBox::Reset(wxEvtHandler* eventObject, size_t flags)
     m_list->DeleteAllItems();
 }
 
-void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries)
+void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries,
+                                            const wxSize& control_size)
 {
     m_stc = ctrl;
     m_allEntries = entries;
@@ -206,7 +207,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
         return;
     }
 
-    DoShowCompletionBox();
+    DoShowCompletionBox(control_size);
 
     if(m_stc) {
         // Set the focus back to the completion control
@@ -430,9 +431,10 @@ int wxCodeCompletionBox::GetImageId(TagEntryPtr entry)
     return wxNOT_FOUND;
 }
 
-void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags)
+void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
+                                            const wxSize& control_size)
 {
-    ShowCompletionBox(ctrl, TagsToEntries(tags));
+    ShowCompletionBox(ctrl, TagsToEntries(tags), control_size);
 }
 
 void wxCodeCompletionBox::DoUpdateList()
@@ -563,11 +565,13 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
     }
 }
 
-void wxCodeCompletionBox::DoShowCompletionBox()
+void wxCodeCompletionBox::DoShowCompletionBox(const wxSize& control_size)
 {
     CHECK_PTR_RET(m_stc);
     DoPopulateList();
-
+    if(control_size.GetWidth() != wxNOT_FOUND || control_size.GetHeight() != wxNOT_FOUND) {
+        SetSizeHints(control_size);
+    }
     int lineHeight = m_stc->TextHeight(m_stc->GetCurrentLine());
     wxRect rect = GetRect();
 
@@ -659,9 +663,10 @@ wxString wxCodeCompletionBox::GetFilter()
     return m_stc->GetTextRange(start, end);
 }
 
-void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const LSP::CompletionItem::Vec_t& completions)
+void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const LSP::CompletionItem::Vec_t& completions,
+                                            const wxSize& control_size)
 {
-    ShowCompletionBox(ctrl, LSPCompletionsToEntries(completions));
+    ShowCompletionBox(ctrl, LSPCompletionsToEntries(completions), control_size);
 }
 
 wxCodeCompletionBoxEntry::Vec_t

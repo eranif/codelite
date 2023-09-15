@@ -150,11 +150,16 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
     }
 
     // display the box
+    int width = m_ctrl->GetSize().GetWidth() - (clSystemSettings::GetMetric(wxSYS_VSCROLL_X) * 2);
+    if(width < 0) {
+        width = wxNOT_FOUND;
+    }
+
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
         m_ctrl, V,
         wxCodeCompletionBox::kRefreshOnKeyType | wxCodeCompletionBox::kNoShowingEvent |
             wxCodeCompletionBox::kAlwaysShow,
-        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND, this);
+        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND, this, wxSize(width, wxNOT_FOUND));
 }
 
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
@@ -429,11 +434,16 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     int end_pos = m_ctrl->GetCurrentPos();
 
     m_completionType = CompletionType::FOLDERS;
+    // display the box
+    int width = m_ctrl->GetSize().GetWidth() - (clSystemSettings::GetMetric(wxSYS_VSCROLL_X) * 2);
+    if(width < 0) {
+        width = wxNOT_FOUND;
+    }
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
         m_ctrl, completions,
         wxCodeCompletionBox::kNoShowingEvent | wxCodeCompletionBox::kInsertSingleMatch |
             wxCodeCompletionBox::kAlwaysShow,
-        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND, this);
+        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND, this, wxSize(width, wxNOT_FOUND));
 }
 
 void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)

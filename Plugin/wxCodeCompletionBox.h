@@ -123,17 +123,20 @@ public:
     /**
      * @brief show the completion box
      */
-    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries);
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries,
+                           const wxSize& control_size = wxDefaultSize);
 
     /**
      * @brief show the completion box
      */
-    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags);
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
+                           const wxSize& control_size = wxDefaultSize);
 
     /**
      * @brief show the completion box  (Language Server Protocol support)
      */
-    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const LSP::CompletionItem::Vec_t& completions);
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const LSP::CompletionItem::Vec_t& completions,
+                           const wxSize& control_size = wxDefaultSize);
 
     void SetBitmaps(const wxCodeCompletionBox::BmpVec_t& bitmaps) { this->m_bitmaps = bitmaps; }
     const wxCodeCompletionBox::BmpVec_t& GetBitmaps() const { return m_bitmaps; }
@@ -178,6 +181,6 @@ protected:
 
     void DoUpdateList();
     void DoDestroy();
-    void DoShowCompletionBox();
+    void DoShowCompletionBox(const wxSize& control_size);
 };
 #endif // WXCODECOMPLETIONBOX_H

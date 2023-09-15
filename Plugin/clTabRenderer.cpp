@@ -411,7 +411,7 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
     wxUnusedVar(parent);
     wxUnusedVar(activeTabRect);
 
-#if defined(__WXMAC__)
+#if defined(__WXMAC__) || defined(__WXMSW__)
     wxColour bg_colour;
     wxColour active_tab_colour;
     GetTabColours(colours, style, &active_tab_colour, &bg_colour);

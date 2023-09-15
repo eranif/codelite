@@ -85,7 +85,7 @@ public:
      * as the event object (wxEvent::GetEventObject())
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries, size_t flags,
-                           int startPos, wxEvtHandler* eventObject = NULL);
+                           int startPos, wxEvtHandler* eventObject = NULL, const wxSize& control_size = wxDefaultSize);
     /**
      * @brief show the completion box
      * @param ctrl the wxSTC control requesting the completion box
@@ -98,7 +98,7 @@ public:
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries,
                            const wxCodeCompletionBox::BmpVec_t& bitmaps, size_t flags, int startPos,
-                           wxEvtHandler* eventObject = NULL);
+                           wxEvtHandler* eventObject = NULL, const wxSize& control_size = wxDefaultSize);
 
     /**
      * @brief show the completion box
@@ -110,13 +110,14 @@ public:
      * as the event object (wxEvent::GetEventObject())
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags, size_t flags, int startPos,
-                           wxEvtHandler* eventObject = NULL);
+                           wxEvtHandler* eventObject = NULL, const wxSize& control_size = wxDefaultSize);
 
     /**
      * @brief show the completion box. Language Server Protocol version
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl, const LSP::CompletionItem::Vec_t& completions, size_t flags = 0,
-                           int startPos = wxNOT_FOUND, wxEvtHandler* eventObject = NULL);
+                           int startPos = wxNOT_FOUND, wxEvtHandler* eventObject = NULL,
+                           const wxSize& control_size = wxDefaultSize);
 
     /**
      * @brief do we have a completion box shown?

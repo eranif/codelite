@@ -209,7 +209,8 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
     }
 
     wxFont font = GetTabFont(tabInfo.IsActive() && IsUseBoldFont());
-    wxColour text_colour = is_dark ? bgColour.ChangeLightness(170) : bgColour.ChangeLightness(30);
+    wxColour text_colour =
+        is_dark ? (tabInfo.IsActive() ? *wxWHITE : bgColour.ChangeLightness(170)) : bgColour.ChangeLightness(30);
 
     // use distinct colour to mark modified tabs
     bool has_close_button = (style & kNotebook_CloseButtonOnActiveTab);

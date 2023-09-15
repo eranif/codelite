@@ -1721,7 +1721,7 @@ void MainBook::ShowWelcomePage(bool show)
     if(show) {
         GetSizer()->Show(m_book, false);
         GetSizer()->Show(m_welcomePage, true);
-        m_welcomePage->GetDvTreeCtrlWorkspaces()->CallAfter(&clTreeCtrl::SetFocus);
+        m_welcomePage->SelectSomething();
 
     } else {
         GetSizer()->Show(m_book, true);

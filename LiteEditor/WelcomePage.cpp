@@ -312,3 +312,11 @@ bool WelcomePage::Show(bool show)
     UpdateRecentWorkspaces();
     return wxPanel::Show(show);
 }
+
+void WelcomePage::SelectSomething() { CallAfter(&WelcomePage::DoSomethingSomething); }
+
+void WelcomePage::DoSomethingSomething()
+{
+    // for now, select the "Open workspace" button
+    m_buttonOpenWorkspace->SetFocus();
+}

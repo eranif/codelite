@@ -61,12 +61,14 @@ protected:
     WelcomePageItemData* GetWorkspaceItemData(const wxTreeItemId& item);
     void OpenBuiltinWorkspace(WelcomePageItemData* cd);
     void OpenPluginWorkspace(WelcomePageItemData* cd);
+    void DoSomethingSomething();
 
 public:
     WelcomePage(wxWindow* parent);
     virtual ~WelcomePage();
     bool Show(bool show = true) override;
     wxWindow* GetList() { return m_dvTreeCtrlWorkspaces; }
+    void SelectSomething();
 
 protected:
     void OnSize(wxSizeEvent& event) override;

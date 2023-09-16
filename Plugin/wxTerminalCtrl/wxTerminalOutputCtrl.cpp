@@ -63,8 +63,8 @@ wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxWindow* parent, wxWindowID winid)
     m_editEvents.Reset(new MyEventsHandler(nullptr, m_ctrl));
 }
 
-wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font, const wxColour& bg_colour,
-                   const wxColour& text_colour)
+wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
+                                           const wxColour& bg_colour, const wxColour& text_colour)
     : wxWindow(parent, winid)
     , m_terminal(parent)
 {
@@ -146,7 +146,10 @@ wxTextAttr wxTerminalOutputCtrl::GetDefaultStyle() const { return m_defaultAttr;
 
 long wxTerminalOutputCtrl::GetInsertionPoint() const { return m_ctrl->GetInsertionPoint(); }
 
-void wxTerminalOutputCtrl::Replace(long from, long to, const wxString& replaceWith) { m_ctrl->Replace(from, to, replaceWith); }
+void wxTerminalOutputCtrl::Replace(long from, long to, const wxString& replaceWith)
+{
+    m_ctrl->Replace(from, to, replaceWith);
+}
 
 wxString wxTerminalOutputCtrl::GetLineText(int lineNumber) const { return m_ctrl->GetLineText(lineNumber); }
 
@@ -268,7 +271,7 @@ void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
     int word_start_pos = m_ctrl->WordStartPosition(pos, true);
     int word_end_pos = m_ctrl->WordEndPosition(pos, true);
     IndicatorRange range{ word_start_pos, word_end_pos };
-    if(m_indicatorHyperlink.is_ok() && m_indicatorHyperlink == range) {
+    if(m_indicatorHyperlink.ok() && m_indicatorHyperlink == range) {
         // already marked
         return;
     }
@@ -278,15 +281,15 @@ void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
 
     // set new
     m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
-    m_ctrl->IndicatorFillRange(range.get_start(), range.length());
+    m_ctrl->IndicatorFillRange(range.start(), range.length());
     m_indicatorHyperlink = range;
 }
 
 void wxTerminalOutputCtrl::ClearIndicators()
 {
-    if(m_indicatorHyperlink.is_ok()) {
+    if(m_indicatorHyperlink.ok()) {
         m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
-        m_ctrl->IndicatorClearRange(m_indicatorHyperlink.get_start(), m_indicatorHyperlink.length());
+        m_ctrl->IndicatorClearRange(m_indicatorHyperlink.start(), m_indicatorHyperlink.length());
         m_indicatorHyperlink.reset();
     }
 }
@@ -295,12 +298,12 @@ void wxTerminalOutputCtrl::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
 
-    if(!m_indicatorHyperlink.is_ok()) {
+    if(!m_indicatorHyperlink.ok()) {
         return;
     }
 
     // fire an event
-    wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.get_start(), m_indicatorHyperlink.get_end());
+    wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.start(), m_indicatorHyperlink.end());
     CallAfter(&wxTerminalOutputCtrl::DoPatternClicked, pattern);
 }
 

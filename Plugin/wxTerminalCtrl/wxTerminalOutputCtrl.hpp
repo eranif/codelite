@@ -18,25 +18,25 @@ class WXDLLIMPEXP_SDK wxTerminalOutputCtrl : public wxWindow
 {
     struct IndicatorRange {
     private:
-        int start = wxNOT_FOUND;
-        int end = wxNOT_FOUND;
+        int m_start = wxNOT_FOUND;
+        int m_end = wxNOT_FOUND;
 
     public:
-        int length() const { return end - start; }
-        bool is_ok() const { return length() > 0; }
-        int get_start() const { return start; }
-        int get_end() const { return end; }
-        void reset() { start = end = wxNOT_FOUND; }
+        int length() const { return m_end - m_start; }
+        bool ok() const { return length() > 0; }
+        int start() const { return m_start; }
+        int end() const { return m_end; }
+        void reset() { m_start = m_end = wxNOT_FOUND; }
 
         void set_range(int s, int e)
         {
-            start = s;
-            end = e;
+            m_start = s;
+            m_end = e;
         }
 
         bool operator==(const IndicatorRange& other) const
         {
-            return this->start == other.start && this->end == other.end;
+            return this->m_start == other.m_start && this->m_end == other.m_end;
         }
 
         IndicatorRange& operator=(const IndicatorRange& other)
@@ -44,13 +44,13 @@ class WXDLLIMPEXP_SDK wxTerminalOutputCtrl : public wxWindow
             if(this == &other) {
                 return *this;
             }
-            this->start = other.start;
-            this->end = other.end;
+            this->m_start = other.m_start;
+            this->m_end = other.m_end;
             return *this;
         }
         IndicatorRange(int s, int e)
-            : start(s)
-            , end(e)
+            : m_start(s)
+            , m_end(e)
         {
         }
         IndicatorRange() {}
@@ -89,8 +89,9 @@ protected:
     void DoPatternClicked(const wxString& pattern);
 
 public:
-    explicit wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID winid = wxNOT_FOUND, const wxFont& font = wxNullFont,
-                      const wxColour& bg_colour = *wxBLACK, const wxColour& text_colour = *wxWHITE);
+    explicit wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID winid = wxNOT_FOUND,
+                                  const wxFont& font = wxNullFont, const wxColour& bg_colour = *wxBLACK,
+                                  const wxColour& text_colour = *wxWHITE);
     explicit wxTerminalOutputCtrl(wxWindow* parent, wxWindowID winid = wxNOT_FOUND);
     virtual ~wxTerminalOutputCtrl();
     void SetInputCtrl(wxTerminalInputCtrl* input_ctrl);

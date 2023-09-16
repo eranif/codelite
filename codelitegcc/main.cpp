@@ -1,24 +1,35 @@
 #include "proc.hpp"
+#include "string_utils.hpp"
 #include "tinyjson.hpp"
 
-#include <algorithm>
 #include <fstream>
-#include <iostream>
-#include <limits.h>
+#include <map>
 #include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <string>
-#include <unistd.h>
-#include <vector>
+#include <utility>
 
-typedef std::vector<std::string> StringVec_t;
+struct entry {
+    std::string file;
+    std::string command;
+    std::string dir;
 
-std::vector<std::string> extract_file_name(const std::string& line);
-char* normalize_path(const char* src, size_t src_len);
-bool is_source_file(const std::string& filename, std::string& fixed_file_name);
-void* Memrchr(const void* buf, int c, size_t num);
+    entry(const entry& other) = delete;
+    entry(const entry&& other)
+    {
+        file = std::move(other.file);
+        command = std::move(other.command);
+        dir = std::move(other.dir);
+    }
+
+    entry() {}
+    static entry from(const tinyjson::element& e)
+    {
+        entry d;
+        e["file"].as_str(&d.file);
+        e["command"].as_str(&d.command);
+        e["directory"].as_str(&d.dir);
+        return std::move(d);
+    }
+};
 
 /// Convert the file pointed by `CL_COMPILATION_DB` into a valid
 /// `compile_commands.json` file
@@ -37,20 +48,71 @@ void finalize_and_exit()
         exit(EXIT_FAILURE);
     }
 
+    // build the json
     std::string line;
-    std::ofstream out_file{ "compile_commands.json" };
-    out_file << "[\n";
+    std::stringstream ss;
+    ss << "[\n";
     bool prepend_comma = false;
     while(!file.eof()) {
         std::getline(file, line);
-        if(prepend_comma) {
-            out_file << ",";
+
+        if(trim(line).empty()) {
+            continue;
         }
-        out_file << line << "\n";
+
+        if(prepend_comma) {
+            ss << ",";
+        }
+
+        ss << line << "\n";
         prepend_comma = true;
     }
-    out_file << "]\n";
+    ss << "]\n";
     file.close();
+
+    // load the string and build a tinyjson array
+    tinyjson::element root;
+    if(!tinyjson::parse(ss.str(), &root)) {
+        std::cerr << "ERROR: failed to parse JSON file!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // remove duplicate entries
+    // keeping the last seen line
+    std::map<std::string, entry> M;
+    for(size_t i = 0; i < root.size(); ++i) {
+        const auto& d = root[i];
+        std::string filename;
+        d["file"].as_str(&filename);
+        if(M.count(filename)) {
+            M.erase(filename);
+        }
+        M.insert({ filename, entry::from(d) });
+    }
+
+    // build new json from the map
+    tinyjson::element unique_json;
+    tinyjson::element::create_array(&unique_json);
+    for(const auto& [filename, d] : M) {
+        unique_json.add_array_object()
+            .add_property("file", d.file)
+            .add_property("command", d.command)
+            .add_property("directory", d.dir);
+    }
+    
+    // format it
+    std::stringstream as_string;
+    tinyjson::to_string(unique_json, as_string);
+
+    std::ofstream out_file{ "compile_commands.json" };
+    if(!out_file.is_open()) {
+        std::cerr << "ERROR: could not open file: compile_commands.json for write" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    out_file << as_string.str();
+    out_file.flush();
+    out_file.close();
+
     std::cout << "file compile_commands.json created successfully" << std::endl;
     exit(EXIT_SUCCESS);
 }
@@ -101,7 +163,7 @@ int main(int argc, char** argv)
         print_help_and_exit();
     }
 
-    if(strcmp(argv[1], "--finalize")) {
+    if(strcmp(argv[1], "--finalize") == 0) {
         finalize_and_exit();
     }
 
@@ -138,6 +200,7 @@ int main(int argc, char** argv)
     }
 
     if(pdb) {
+        // only write lines that are not meant for dependencies generation
         char cwd[1024];
         memset(cwd, 0, sizeof(cwd));
         ::getcwd(cwd, sizeof(cwd));
@@ -147,7 +210,10 @@ int main(int argc, char** argv)
 
             tinyjson::element obj;
             tinyjson::element::create_object(&obj);
-            obj.add_property("directory", cwd).add_property("file", file_names[i]).add_property("command", commandline);
+            obj.add_property("directory", cwd)
+                .add_property("file", trim(file_names[i]))
+                .add_property("command", trim(commandline));
+
             std::stringstream ss;
             tinyjson::to_string(obj, ss, false);
             file_write_content(logfile, ss.str());
@@ -156,135 +222,4 @@ int main(int argc, char** argv)
 
     // launch the real command
     return run_child_process(argc, argv, commandline);
-}
-
-bool ends_with(const std::string& s, const std::string& e)
-{
-    size_t where = s.rfind(e);
-    return (where == std::string::npos ? false : ((s.length() - where) == e.length()));
-}
-
-bool is_source_file(const std::string& filename, std::string& fixed_file_name)
-{
-    StringVec_t extensions;
-    extensions.push_back(".cpp");
-    extensions.push_back(".cxx");
-    extensions.push_back(".cc");
-    extensions.push_back(".c");
-
-    for(size_t n = 0; n < extensions.size(); ++n) {
-        if(ends_with(filename, extensions.at(n))) {
-            fixed_file_name = filename;
-
-#ifdef _WIN32
-            std::replace(fixed_file_name.begin(), fixed_file_name.end(), '/', '\\');
-#endif
-            char* ret = normalize_path(fixed_file_name.c_str(), fixed_file_name.length());
-            fixed_file_name = ret;
-            free(ret);
-
-            // rtrim
-            fixed_file_name.erase(0, fixed_file_name.find_first_not_of("\t\r\v\n\" "));
-
-            // ltrim
-            fixed_file_name.erase(fixed_file_name.find_last_not_of("\t\r\v\n\" ") + 1);
-            return true;
-        }
-    }
-    fixed_file_name.clear();
-    return false;
-}
-
-char* normalize_path(const char* src, size_t src_len)
-{
-    std::string strpath = src;
-    size_t where = strpath.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    bool has_drive = (where == 0 && strpath.length() > 1 && strpath.at(1) == ':');
-
-    char* res;
-    size_t res_len;
-
-    const char* ptr = src;
-    const char* end = &src[src_len];
-    const char* next;
-
-    if(!has_drive && (src_len == 0 || src[0] != '/')) {
-
-        // relative path
-
-        char pwd[4096];
-        size_t pwd_len;
-
-        if(getcwd(pwd, sizeof(pwd)) == NULL) {
-            return NULL;
-        }
-
-        pwd_len = strlen(pwd);
-        std::replace(pwd, pwd + pwd_len, '\\', '/');
-
-        res = (char*)malloc(pwd_len + 1 + src_len + 1);
-        memcpy(res, pwd, pwd_len);
-        res_len = pwd_len;
-    } else {
-        res = (char*)malloc((src_len > 0 ? src_len : 1) + 1);
-        res_len = 0;
-    }
-
-    for(ptr = src; ptr < end; ptr = next + 1) {
-        size_t len;
-        next = (char*)memchr(ptr, '/', end - ptr);
-        if(next == NULL) {
-            next = end;
-        }
-        len = next - ptr;
-        switch(len) {
-        case 2:
-            if(ptr[0] == '.' && ptr[1] == '.') {
-                const char* slash = (char*)Memrchr(res, '/', res_len);
-                if(slash != NULL) {
-                    res_len = slash - res;
-                }
-                continue;
-            }
-            break;
-        case 1:
-            if(ptr[0] == '.') {
-                continue;
-            }
-            break;
-        case 0:
-            continue;
-        }
-
-        if(res_len == 0 && !has_drive)
-            res[res_len++] = '/';
-        else if(res_len)
-            res[res_len++] = '/';
-
-        memcpy(&res[res_len], ptr, len);
-        res_len += len;
-    }
-
-    if(res_len == 0) {
-        res[res_len++] = '/';
-    }
-    res[res_len] = '\0';
-    return res;
-}
-
-void* Memrchr(const void* buf, int c, size_t num)
-{
-    char* pMem = (char*)buf;
-
-    for(;;) {
-        if(num-- == 0) {
-            return NULL;
-        }
-
-        if(pMem[num] == (unsigned char)c) {
-            break;
-        }
-    }
-
-    return (void*)(pMem + num);
 }

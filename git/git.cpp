@@ -1577,14 +1577,12 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     case gitRevlist: {
     } break;
     case gitDiffRepoShow: {
-        // This is now dealt with by GitDiffDlg itself
-        //        GitDiffDlg dlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory, this);
-        //        dlg.SetDiff(m_commandOutput);
-        //        dlg.ShowModal();
     } break;
     case gitResetFile:
     case gitApplyPatch: {
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
+        // fire modified event (the new one)
+        clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
+        EventNotifier::Get()->AddPendingEvent(event_modified);
 
         gitAction newAction;
         newAction.action = gitListModified;
@@ -2241,12 +2239,13 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
     l.deleteOnExit = true;
 
     wxString right_file;
+    wxString remote_path;
     if(IsRemoteWorkspace()) {
 #if USE_SFTP
         // download the file and store it locally
         wxFileName remote_file(GetRepositoryPath() + "/" + fileName);
-        right_file =
-            clSFTPManager::Get().Download(remote_file.GetFullPath(wxPATH_UNIX), m_remoteWorkspaceAccount).GetFullPath();
+        remote_path = remote_file.GetFullPath(wxPATH_UNIX);
+        right_file = clSFTPManager::Get().Download(remote_path, m_remoteWorkspaceAccount).GetFullPath();
 #else
         return;
 #endif
@@ -2257,6 +2256,11 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
     }
 
     DiffSideBySidePanel::FileInfo r(right_file, _("Working copy"), false);
+    if(IsRemoteWorkspace()) {
+        r.remoteAccount = m_remoteWorkspaceAccount;
+        r.remotePath.swap(remote_path);
+    }
+
     clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
     diffView->Show();
 }

@@ -39,10 +39,15 @@
 #include "lexer_configuration.h"
 #include "plugin.h"
 
+#if USE_SFTP
+#include "clSFTPManager.hpp"
+#endif
+
 #include <clPluginsFindBar.h>
 #include <wx/filedlg.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
+
 #define RED_MARKER 5
 #define GREEN_MARKER 6
 #define PLACE_HOLDER_MARKER 7
@@ -503,7 +508,7 @@ void DiffSideBySidePanel::SetFilesDetails(const DiffSideBySidePanel::FileInfo& l
     m_textCtrlRightFile->ChangeValue(rightFile.filename.GetFullPath());
     m_staticTextRight->SetLabel(rightFile.title);
 
-    m_flags = 0x0;
+    m_flags = 0;
     if(leftFile.readOnly)
         m_flags |= kLeftReadOnly;
     if(leftFile.deleteOnExit)
@@ -512,6 +517,9 @@ void DiffSideBySidePanel::SetFilesDetails(const DiffSideBySidePanel::FileInfo& l
         m_flags |= kRightReadOnly;
     if(rightFile.deleteOnExit)
         m_flags |= kDeleteRightOnExit;
+
+    m_left = leftFile;
+    m_right = rightFile;
 }
 
 void DiffSideBySidePanel::OnNextDiffSequence(wxCommandEvent& event)
@@ -733,6 +741,29 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
 
     // Reload any file opened in codelite
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+
+#if USE_SFTP
+    wxString remote_path;
+    wxString remote_account;
+    if(m_right.is_remote() && fn == m_right.filename) {
+        clSFTPManager::Get().AwaitSaveFile(m_right.filename.GetFullPath(), m_right.remotePath, m_right.remoteAccount);
+        remote_path = m_right.remotePath;
+        remote_account = m_right.remoteAccount;
+    } else if(m_left.is_remote() && fn == m_left.filename) {
+        clSFTPManager::Get().AwaitSaveFile(m_left.filename.GetFullPath(), m_left.remotePath, m_left.remoteAccount);
+        remote_path = m_left.remotePath;
+        remote_account = m_left.remoteAccount;
+    }
+
+    if(!remote_account.empty() && !remote_path.empty()) {
+        // Notify about a remote file being modified externally
+        clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
+        event_modified.SetFileName(remote_path);
+        event_modified.SetIsRemoteFile(true);
+        event_modified.SetSshAccount(remote_account);
+        EventNotifier::Get()->AddPendingEvent(event_modified);
+    }
+#endif
 }
 
 void DiffSideBySidePanel::OnSaveChanges(wxCommandEvent& event)

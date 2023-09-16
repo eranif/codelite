@@ -29,6 +29,7 @@
 #include "SvnInfoDialog.h"
 #include "bitmap_loader.h"
 #include "clDiffFrame.h"
+#include "clSTCHelper.hpp"
 #include "clToolBar.h"
 #include "cl_command_event.h"
 #include "clcommandlineparser.h"
@@ -1292,7 +1293,7 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
 void SubversionView::OnSciStcChange(wxStyledTextEvent& event)
 {
     event.Skip();
-    ::clRecalculateSTCHScrollBar(m_sci);
+    clSTCHelper::UpdateScrollbarWidth(m_sci);
 }
 
 void SubversionView::OnCloseView(wxCommandEvent& event)

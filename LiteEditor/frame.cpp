@@ -4698,7 +4698,6 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
         return false;
     }
 
-    // Make sure we don't have the mouse captured in any editor or we might get a crash somewhere
     wxStandardID res =
         ::PromptForYesNoDialogWithCheckbox(_("Workspace or project settings have been modified outside "
                                              "of CodeLite\nWould you like to reload the workspace?"),

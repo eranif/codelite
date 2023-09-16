@@ -480,6 +480,7 @@ clEditor::clEditor(wxWindow* parent)
     UpdateOptions();
     PreferencesChanged();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_MODIFIED_EXTERNALLY, &clEditor::OnModifiedExternally, this);
     m_commandsProcessor.SetParent(this);
 
     SetDropTarget(new clEditorDropTarget(this));
@@ -544,6 +545,7 @@ clEditor::~clEditor()
 
     wxDELETE(m_richTooltip);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_MODIFIED_EXTERNALLY, &clEditor::OnModifiedExternally, this);
 
     EventNotifier::Get()->Disconnect(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT,
                                      wxCommandEventHandler(clEditor::OnHighlightWordChecked), NULL, this);
@@ -6215,7 +6217,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
 
     // Notify about file-reload
     clCommandEvent e(wxEVT_FILE_LOADED);
-    e.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+    e.SetFileName(GetRemotePathOrLocal());
     EventNotifier::Get()->AddPendingEvent(e);
 }
 
@@ -6553,4 +6555,12 @@ void clEditor::ClearModifiedLines()
 {
     // clear all modified lines
     m_clearModifiedLines = true;
+}
+
+void clEditor::OnModifiedExternally(clFileSystemEvent& event)
+{
+    event.Skip();
+    if(event.GetFileName().empty() || (GetRemotePathOrLocal() == event.GetFileName())) {
+        ReloadFromDisk(true); // keep file history
+    }
 }

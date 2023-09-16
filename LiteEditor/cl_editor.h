@@ -305,12 +305,6 @@ public:
     void NotifyMarkerChanged(int lineNumber = wxNOT_FOUND);
 
     /**
-     * @brief static version of the below `CenterLine`
-     * so we can use it outside of this class, e.g. from `QuickFindBar`
-     */
-    static void CenterLine(wxStyledTextCtrl* ctrl, int line, int col);
-
-    /**
      * @brief static version
      */
     static void CenterLinePreserveSelection(wxStyledTextCtrl* ctrl, int line);
@@ -1193,6 +1187,7 @@ private:
     void OnTimer(wxTimerEvent& event);
     void OnEditorConfigChanged(wxCommandEvent& event);
     void OnColoursAndFontsUpdated(clCommandEvent& event);
+    void OnModifiedExternally(clFileSystemEvent& event);
 };
 
 #endif // LITEEDITOR_EDITOR_H

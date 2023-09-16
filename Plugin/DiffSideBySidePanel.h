@@ -50,8 +50,10 @@ public:
     struct FileInfo {
         wxFileName filename;
         wxString title;
-        bool readOnly;
-        bool deleteOnExit;
+        bool readOnly = true;
+        bool deleteOnExit = false;
+        wxString remoteAccount;
+        wxString remotePath;
 
         FileInfo(const wxFileName& fn, const wxString& caption, bool ro)
             : filename(fn)
@@ -60,11 +62,21 @@ public:
             , deleteOnExit(false)
         {
         }
+
+        FileInfo(const wxFileName& fn)
+            : filename(fn)
+            , title(fn.GetFullPath())
+        {
+        }
+
         FileInfo()
             : readOnly(true)
             , deleteOnExit(false)
         {
         }
+
+        inline bool is_remote() const { return !remoteAccount.empty() && !remotePath.empty(); }
+        inline void clear() { *this = {}; }
     };
 
     enum {
@@ -92,11 +104,13 @@ protected:
     std::vector<std::pair<int, int>> m_sequences; // start-line - end-line pairs
     int m_cur_sequence;
 
-    size_t m_flags;
+    size_t m_flags = 0;
     DiffConfig m_config;
     bool m_storeFilepaths;
     clToolBar* m_toolbar;
     clPluginsFindBar* m_findBar = nullptr;
+    FileInfo m_left;
+    FileInfo m_right;
 
 protected:
     virtual void OnBrowseLeftFile(wxCommandEvent& event);

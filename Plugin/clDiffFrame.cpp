@@ -50,7 +50,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent)
     }
     CreateMenuBar();
     SetIcons(b);
-    CallAfter(&clDiffFrame::Maximize, true);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileName& right, bool isTempFile)
@@ -75,7 +75,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileN
     }
     CreateMenuBar();
     SetIcons(b);
-    CallAfter(&clDiffFrame::Maximize, true);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 clDiffFrame::~clDiffFrame() {}

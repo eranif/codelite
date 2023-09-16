@@ -1,4 +1,9 @@
+#include "proc.hpp"
+#include "tinyjson.hpp"
+
 #include <algorithm>
+#include <fstream>
+#include <iostream>
 #include <limits.h>
 #include <sstream>
 #include <stdio.h>
@@ -15,77 +20,97 @@ char* normalize_path(const char* src, size_t src_len);
 bool is_source_file(const std::string& filename, std::string& fixed_file_name);
 void* Memrchr(const void* buf, int c, size_t num);
 
-#ifdef _WIN32
-extern int ExecuteProcessWIN(const std::string& commandline);
-#endif
-
-#ifndef _WIN32
-
-#include <errno.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <string>
-#include <sys/file.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-
-void WriteContent(const std::string& logfile, const std::string& filename, const std::string& flags)
+/// Convert the file pointed by `CL_COMPILATION_DB` into a valid
+/// `compile_commands.json` file
+void finalize_and_exit()
 {
-    // Open the file
-    int fd = ::open(logfile.c_str(), O_CREAT | O_APPEND, 0660);
-    ::chmod(logfile.c_str(), 0660);
-
-    if(fd < 0)
-        return;
-
-    // Lock it
-    if(::flock(fd, LOCK_EX) < 0) {
-        ::close(fd);
-        return;
+    const char* pdb = ::getenv("CL_COMPILATION_DB");
+    if(!pdb) {
+        std::cerr << "ERROR: environment variable `CL_COMPILATION_DB` is not set" << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    char cwd[1024];
-    memset(cwd, 0, sizeof(cwd));
-    char* pcwd = ::getcwd(cwd, sizeof(cwd));
-    (void)pcwd;
-
-    std::string line = filename + "|" + cwd + "|" + flags + "\n";
-
-    FILE* fp = fopen(logfile.c_str(), "a+b");
-    if(!fp) {
-        perror("fopen");
+    // open the file and read it line by line
+    std::ifstream file(pdb);
+    if(!file.is_open()) {
+        std::cerr << "ERROR: could not open file: " << pdb << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    // Write the content
-    ::fprintf(fp, "%s", line.c_str());
-    ::fflush(fp);
-    ::fclose(fp);
-
-    // Release the lock
-    ::flock(fd, LOCK_UN);
-
-    // close the fd
-    ::close(fd);
+    std::string line;
+    std::ofstream out_file{ "compile_commands.json" };
+    out_file << "[\n";
+    bool prepend_comma = false;
+    while(!file.eof()) {
+        std::getline(file, line);
+        if(prepend_comma) {
+            out_file << ",";
+        }
+        out_file << line << "\n";
+        prepend_comma = true;
+    }
+    out_file << "]\n";
+    file.close();
+    std::cout << "file compile_commands.json created successfully" << std::endl;
+    exit(EXIT_SUCCESS);
 }
 
-#endif
-extern void WriteContent(const std::string& logfile, const std::string& filename, const std::string& flags);
+/// Print usage and exit
+void print_help_and_exit()
+{
+    std::string help_string = R"(
+    codelite-cc: a helper program that wraps your compiler
+    and records the command line in a format acceptable by
+    clangd (i.e. `compile_commands.json`)
+    
+    The compile commands are saved to the file pointed by the
+    `CL_COMPILATION_DB` environment variable
+    
+    Example usage:
+    
+    # export the required env vars
+    export CL_COMPILATION_DB=/tmp/intermediate_compile_commands.log
+    
+    # tell your Makefile that we want a different compiler
+    export CC="/usr/bin/codelite-cc gcc"
+    export CXX="/usr/bin/codelite-cc g++"
+    
+    # build as you usually do
+    make -j$(nproc)
+    
+    # convert the output file pointed by `CL_COMPILATION_DB` into a valid
+    # `compile_commands.json`
+    /usr/bin/codelite-cc --finalize
+    
+    # You should now have a `compile_commands.json` to make `clangd` happy
+)";
+    std::cout << help_string << std::endl;
+    exit(EXIT_SUCCESS);
+}
 
-// A thin wrapper around gcc
-// Its sole purpose is to parse gcc's output and to store the parsed output
-// in a sqlite database
+// A thin wrapper around gcc that intercepts the compiler (e.g. gcc) command line arguments, store them in a file and
+// then invoke the compiler
 int main(int argc, char** argv)
 {
     // We require at least one argument
     if(argc < 2) {
-        return -1;
+        exit(EXIT_FAILURE);
+    }
+
+    if(strcmp(argv[1], "--help") == 0) {
+        print_help_and_exit();
+    }
+
+    if(strcmp(argv[1], "--finalize")) {
+        finalize_and_exit();
     }
 
     StringVec_t file_names;
     const char* pdb = getenv("CL_COMPILATION_DB");
+    if(!pdb) {
+        std::cerr << "WARNING: missing environment variable CL_COMPILATION_DB" << std::endl;
+    }
+
     std::string commandline;
     for(int i = 1; i < argc; ++i) {
         // Wrap all arguments with spaces with double quotes
@@ -113,23 +138,24 @@ int main(int argc, char** argv)
     }
 
     if(pdb) {
-        for(size_t i = 0; i < file_names.size(); ++i) {
-#if __DEBUG
-            printf("filename: %s\n", file_names.at(i).c_str());
-#endif
-            std::string logfile = pdb;
-            logfile += ".txt";
+        char cwd[1024];
+        memset(cwd, 0, sizeof(cwd));
+        ::getcwd(cwd, sizeof(cwd));
 
-            WriteContent(logfile, file_names.at(i), commandline);
+        for(size_t i = 0; i < file_names.size(); ++i) {
+            std::string logfile = pdb;
+
+            tinyjson::element obj;
+            tinyjson::element::create_object(&obj);
+            obj.add_property("directory", cwd).add_property("file", file_names[i]).add_property("command", commandline);
+            std::stringstream ss;
+            tinyjson::to_string(obj, ss, false);
+            file_write_content(logfile, ss.str());
         }
     }
 
-#ifdef _WIN32
-    int exitCode = ::ExecuteProcessWIN(commandline);
-    return exitCode;
-#else
-    return execvp(argv[1], argv + 1);
-#endif
+    // launch the real command
+    return run_child_process(argc, argv, commandline);
 }
 
 bool ends_with(const std::string& s, const std::string& e)

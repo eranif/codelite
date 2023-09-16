@@ -5,6 +5,7 @@ file(GLOB SRCS "*.cpp")
 
 # Define the output
 add_executable(codelite-cc ${SRCS})
+include_directories(${CMAKE_SOURCE_DIR}/tinyjson)
 target_link_libraries(codelite-cc ${LINKER_OPTIONS} tinyjson)
 
 cl_install_executable(codelite-cc)

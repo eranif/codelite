@@ -27,7 +27,14 @@ int ExecuteProcessWIN(const std::string& commandline)
     return ret;
 }
 
-void WriteContent(const std::string& logfile, const std::string& filename, const std::string& flags)
+int run_child_process(int argc, char** argv, const std::string& commandline)
+{
+    (void)argc;
+    (void)argv;
+    return ExecuteProcessWIN(commandline);
+}
+
+void file_write_content(const std::string& logfile, const std::string& content)
 {
     // Open the file
     HANDLE hFile =
@@ -58,7 +65,7 @@ void WriteContent(const std::string& logfile, const std::string& filename, const
     memset(cwd, 0, sizeof(cwd));
     ::getcwd(cwd, sizeof(cwd));
 
-    std::string line = filename + "|" + cwd + "|" + flags + "\n";
+    std::string line = content + "\n";
 
     DWORD dwBytesWritten = 0;
     ::WriteFile(hFile, line.c_str(), line.length(), &dwBytesWritten, NULL);

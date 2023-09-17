@@ -26,15 +26,14 @@ select the ones you are interested in and then [configure them in CodeLite][14]
 
     Install `clangd` by install the recommended packages as [described here][15]
 
-    ** Linux **
+    **Linux**
 
     On Linux machines, you will need to manually install `clangd` via your package manager.
     On `Ubuntu` and `Debian` it is usually part of the `clang-tools` package. So to install it, use the below code snippet:
 
     ```bash
     sudo apt-get update
-    sudo apt-get install clang-tools
-    ```
+    sudo apt-get install clang-tools```
 
     Once installed, follow the steps in the [manual configuration section](#manual-configuration)
 
@@ -42,7 +41,7 @@ select the ones you are interested in and then [configure them in CodeLite][14]
         Often, the `clang-tools` package comes with a version number, e.g. `clang-tools-10`
         Make sure to install the one with the highest number
 
-    ** macOS **
+    **macOS**
 
     Like Windows, `clangd` in part of CodeLite bundle
 
@@ -61,15 +60,13 @@ select the ones you are interested in and then [configure them in CodeLite][14]
     - pip3 installed
 
     ```bash
-    pip install python-lsp-server
-    ```
+    pip install python-lsp-server```
 
     On Windows / MSYS2, use this command:
 
     ```bash
     pacman -S mingw-w64-clang-x86_64-python mingw-w64-clang-x86_64-python-pip mingw-w64-clang-x86_64-python-ujson
-    pip install python-lsp-server
-    ```
+    pip install python-lsp-server```
 
     Visit the [project home page][3]
 
@@ -78,14 +75,12 @@ select the ones you are interested in and then [configure them in CodeLite][14]
     - Type:
 
     ```bash
-    npm install -g typescript typescript-language-server
-    ```
+    npm install -g typescript typescript-language-server```
 
     If you choose to [configure it manually][12] in CodeLite, use this as the command:
 
     ```bash
-    typescript-language-server --stdio
-    ```
+    typescript-language-server --stdio```
 
 === "rust-analyzer"
     `rust-analyzer` is the recommended LSP for the rust language. To install it, follow these steps:
@@ -95,8 +90,8 @@ select the ones you are interested in and then [configure them in CodeLite][14]
         - On `macOS` and `Linux`:
             ```bash
             rustup update
-            rustup +nightly component add rust-src rust-analyzer-preview
-            ```
+            rustup +nightly component add rust-src rust-analyzer-preview```
+            
         - On `Windows`, we build it from sources. Open `MSYS2` terminal and type:
 
             ```bash
@@ -105,16 +100,14 @@ select the ones you are interested in and then [configure them in CodeLite][14]
             cd rust-analyzer
             cargo build --release \
                 && mkdir -p ~/.cargo/bin \
-                && cp target/release/rust-analyzer.exe target/release/rust-analyzer-proc-macro-srv.exe ~/.cargo/bin
-            ```
+                && cp target/release/rust-analyzer.exe target/release/rust-analyzer-proc-macro-srv.exe ~/.cargo/bin```
 
     You should now have `rust-analyzer` installed under `rustup` local folder, for example, under `Linux` or `macOS`,
     it can be found here:
 
     ```bash
     TARGET=$(rustup target list|grep installed|cut -d" " -f1)
-    $HOME/.rustup/toolchains/nightly-$TARGET/bin/rust-analyzer
-    ```
+    $HOME/.rustup/toolchains/nightly-$TARGET/bin/rust-analyzer```
 
 === "rls"
     `rls` is yet another rust language server, but less popular than `rust-analzyer`
@@ -126,13 +119,13 @@ select the ones you are interested in and then [configure them in CodeLite][14]
         - On `macOS` and `Linux`:
             ```bash
             rustup update
-            rustup component add rls rust-analysis rust-src
-            ```
+            rustup component add rls rust-analysis rust-src```
+
         - On `Windows`:
             ```batch
             %USERPROFILE%\.cargo\bin\rustup update
-            %USERPROFILE%\.cargo\bin\rustup component add rls rust-analysis rust-src
-            ```
+            %USERPROFILE%\.cargo\bin\rustup component add rls rust-analysis rust-src```
+
     Visit the [project home page][8]
 
     !!! Important

@@ -76,13 +76,16 @@ nav:
       - CodeLite v17.x - 18.0.0: release_notes/v18_0_0.md
       - CodeLite v16.x - 17.0.0: release_notes/v17_0_0.md
       - CodeLite v15.x - 16.0.0: release_notes/v16_0_0.md
-extra_css:
-  - stylesheets/extra.css
 theme:
   name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
   palette:
     scheme: default
-    primary: black
+    primary: indigo
   highlightjs: true
   font:
     text: Roboto
@@ -96,3 +99,5 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
+extra:
+  generator: false

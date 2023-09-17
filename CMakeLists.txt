@@ -843,7 +843,6 @@ add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
 add_subdirectory(yaml-cpp)
-add_subdirectory(tinyjson)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
@@ -925,7 +924,6 @@ else()
     add_subdirectory(wxcrafter)
 
     # Executables
-    add_subdirectory(codelitegcc)
     add_subdirectory(codelite_make)
     if(MINGW)
         # codelite-exec

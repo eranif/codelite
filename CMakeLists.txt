@@ -846,6 +846,7 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
+add_subdirectory(cc-wrapper)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/yaml-cpp/include")
@@ -965,6 +966,8 @@ else()
     # Scan for user plugins
     cl_scan_for_plugins()
 endif() # NOT WXC_APP
+
+install(TARGETS cc-wrapper DESTINATION ${CL_INSTALL_BIN})
 
 if(NOT WXC_APP)
     # building CodeLite, install the SVGs

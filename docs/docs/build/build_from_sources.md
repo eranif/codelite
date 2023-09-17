@@ -34,7 +34,7 @@ mingw32-make -j$(nproc) install
 ```bash
 git clone https://github.com/eranif/codelite.git
 cd codelite
-git submodule update --init
+git submodule update --init --recursive
 mkdir build-release
 cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN=$HOME/root
@@ -70,7 +70,7 @@ cd build-release/install
 ```bash
     git clone https://github.com/eranif/codelite.git
     cd codelite
-    git submodule update --init
+    git submodule update --init --recursive
 ```
 
 - Build CodeLite:
@@ -141,7 +141,7 @@ source $HOME/.$(basename $SHELL)rc
     cd $HOME/src
     git clone https://github.com/eranif/codelite.git
     cd codelite
-    git submodule update --init
+    git submodule update --init --recursive
 
     # build CodeLite release configuration
     mkdir build-release

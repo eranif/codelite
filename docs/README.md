@@ -14,7 +14,7 @@ pacman -S libcrypt-devel
 pacman -S python3
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python3 get-pip.py
-echo 'export PATH=/home/eran/.local/bin;$PATH' >> ~/.bashrc
+echo 'export PATH=/home/eran/.local/bin:$PATH' >> ~/.bashrc
 . ~/.bashrc
 ```
 
@@ -26,7 +26,7 @@ sudo apt-get install curl
 # install pip3
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python3 get-pip.py
-echo 'export PATH=$HOME/.local/bin;$PATH' >> ~/.bashrc
+echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc
 . ~/.bashrc
 sudo apt-get install libpython2-dev
 ```

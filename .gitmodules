@@ -10,3 +10,6 @@
 [submodule "yaml-cpp"]
 	path = yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "cc-wrapper"]
+	path = cc-wrapper
+	url = https://github.com/eranif/cc-wrapper

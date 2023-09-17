@@ -1031,12 +1031,7 @@ void clEditor::SetProperties()
     IndicatorSetUnder(INDICATOR_DEBUGGER, true);
 
     bool isDarkTheme = (lexer && lexer->IsDark());
-    wxColour indicator_colour = "RED";
-    if(isDarkTheme) {
-        indicator_colour = wxColour("CYAN");
-    }
-
-    SetUserIndicatorStyleAndColour(wxSTC_INDIC_FULLBOX, indicator_colour);
+    SetUserIndicatorStyleAndColour(wxSTC_INDIC_ROUNDBOX, "RED");
 
     wxColour highlight_colour{ *wxGREEN };
     wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
@@ -1050,7 +1045,7 @@ void clEditor::SetProperties()
     IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
     IndicatorSetHoverForeground(INDICATOR_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(INDICATOR_WORD_HIGHLIGHT, highlight_colour);
-    IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, INDICATOR_ALPHA);
+    IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, wxSTC_ALPHA_NOALPHA);
 
     IndicatorSetUnder(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, true);
     IndicatorSetStyle(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
@@ -4610,7 +4605,8 @@ void clEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
 {
     IndicatorSetForeground(INDICATOR_USER, colour);
     IndicatorSetStyle(INDICATOR_USER, style);
-    IndicatorSetUnder(INDICATOR_USER, true);
+    IndicatorSetUnder(INDICATOR_USER, false);
+    IndicatorSetAlpha(INDICATOR_USER, wxSTC_ALPHA_NOALPHA);
 }
 
 int clEditor::GetLexerId() { return GetLexer(); }

@@ -39,6 +39,7 @@
 #include "cl_command_event.h"
 #include "plugin.h"
 #include "spellcheckeroptions.h"
+
 #include <wx/timer.h>
 //------------------------------------------------------------
 class IHunSpell;
@@ -91,6 +92,7 @@ protected:
 
     IEditor* m_pLastEditor;           // The editor checked last time the spell check ran.
     wxUint64 m_lastModificationCount; // Modification count of the editor last time the spell check ran.
+    bool m_forceCheck = false;        // Force re-check if user added or ignored a word to the list
 };
 //------------------------------------------------------------
 #endif // SpellCheck

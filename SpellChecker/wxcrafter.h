@@ -4,9 +4,10 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_SPELLCHECKER_WXCRAFTER_BASE_CLASSES_H
-#define CODELITE_SPELLCHECKER_WXCRAFTER_BASE_CLASSES_H
+#ifndef _CODELITE_SPELLCHECKER_WXCRAFTER_BASE_CLASSES_H
+#define _CODELITE_SPELLCHECKER_WXCRAFTER_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -14,12 +15,12 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/hyperlink.h>
 #include <wx/textctrl.h>
 #include <wx/listbox.h>
-#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
@@ -29,22 +30,28 @@
 #include <wx/persist/treebook.h>
 #endif
 
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
+// clang-format on
+
 class SpellCheckerSettings_base : public wxDialog
 {
 protected:
+    wxPanel* m_panel34;
     wxStaticText* m_staticText2;
     wxDirPickerCtrl* m_pDirPicker;
     wxHyperlinkCtrl* m_pHyperlink;
     wxStaticText* m_staticText4;
     wxTextCtrl* m_pCurrentLanguage;
     wxListBox* m_pLanguageList;
-    wxCheckBox* m_pStrings;
-    wxCheckBox* m_pCppComments;
-    wxCheckBox* m_pC_Comments;
-    wxCheckBox* m_pDox1;
-    wxCheckBox* m_pDox2;
     wxCheckBox* m_pCaseSensitiveUserDictionary;
-    wxCheckBox* m_pIgnoreSymbolsInTagsDatabase;
     wxButton* m_buttonClearIgnoreList;
     wxStdDialogButtonSizer* m_stdBtnSizer12;
     wxButton* m_buttonOK;
@@ -65,18 +72,15 @@ public:
     wxStaticText* GetStaticText4() { return m_staticText4; }
     wxTextCtrl* GetPCurrentLanguage() { return m_pCurrentLanguage; }
     wxListBox* GetPLanguageList() { return m_pLanguageList; }
-    wxCheckBox* GetPStrings() { return m_pStrings; }
-    wxCheckBox* GetPCppComments() { return m_pCppComments; }
-    wxCheckBox* GetPC_Comments() { return m_pC_Comments; }
-    wxCheckBox* GetPDox1() { return m_pDox1; }
-    wxCheckBox* GetPDox2() { return m_pDox2; }
     wxCheckBox* GetPCaseSensitiveUserDictionary() { return m_pCaseSensitiveUserDictionary; }
-    wxCheckBox* GetPIgnoreSymbolsInTagsDatabase() { return m_pIgnoreSymbolsInTagsDatabase; }
     wxButton* GetButtonClearIgnoreList() { return m_buttonClearIgnoreList; }
-    SpellCheckerSettings_base(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SpellChecker Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    wxPanel* GetPanel34() { return m_panel34; }
+    SpellCheckerSettings_base(wxWindow* parent, wxWindowID id = wxID_ANY,
+                              const wxString& title = _("SpellChecker Settings"),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SpellCheckerSettings_base();
 };
-
 
 class CorrectSpellingDlg_base : public wxDialog
 {
@@ -110,7 +114,9 @@ public:
     wxButton* GetButton4() { return m_button4; }
     wxButton* GetButton5() { return m_button5; }
     wxButton* GetButton3() { return m_button3; }
-    CorrectSpellingDlg_base(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Misspelling found!"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CorrectSpellingDlg_base(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Misspelling found!"),
+                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~CorrectSpellingDlg_base();
 };
 

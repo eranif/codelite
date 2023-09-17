@@ -400,7 +400,7 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
 
     // Only run the checks if we've not run them or the file is modified.
     const auto modificationCount(editor->GetModificationCount());
-    if((editor == m_pLastEditor) && (m_lastModificationCount == modificationCount)) {
+    if(!m_forceCheck && ((editor == m_pLastEditor) && (m_lastModificationCount == modificationCount))) {
         return;
     }
 
@@ -408,6 +408,7 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
     m_lastModificationCount = modificationCount;
     m_pLastEditor->ClearUserIndicators();
     m_pEngine->CheckSpelling();
+    m_forceCheck = false; // consume it
 }
 
 // ------------------------------------------------------------
@@ -478,6 +479,7 @@ void SpellCheck::OnIgnoreWord(wxCommandEvent& e)
     }
 
     m_pEngine->AddWordToIgnoreList(selection);
+    m_forceCheck = true;
 }
 // ------------------------------------------------------------
 void SpellCheck::OnAddWord(wxCommandEvent& e)
@@ -493,6 +495,7 @@ void SpellCheck::OnAddWord(wxCommandEvent& e)
     }
 
     m_pEngine->AddWordToUserDict(selection);
+    m_forceCheck = true;
 }
 // ------------------------------------------------------------
 void SpellCheck::ClearIndicatorsFromEditors()

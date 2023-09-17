@@ -279,95 +279,7 @@ wxArrayString IHunSpell::GetSuggestions(const wxString& misspelled)
 
     return suggestions;
 }
-// ------------------------------------------------------------
-void IHunSpell::CheckCppSpelling()
-{
-    // check if engine is initialized, if not do so
-    CHECK_COND_RET(InitEngine());
 
-    IEditor* pEditor = ::clGetManager()->GetActiveEditor();
-    CHECK_PTR_RET(pEditor);
-
-    int retVal = kNoSpellingError;
-    wxString text = pEditor->GetEditorText() + " ";
-
-    m_parseValues.clear();
-    wxStyledTextCtrl* pTextCtrl = pEditor->GetCtrl();
-
-    // check for dialog and create if necessary
-    if(!m_pPlugIn->GetCheckContinuous()) {
-        if(m_pSpellDlg == NULL) {
-            m_pSpellDlg = new CorrectSpellingDlg(NULL);
-        }
-
-        m_pSpellDlg->SetPHs(this);
-    }
-    posLen query;
-
-    for(int i = 0; i < pEditor->GetLength(); i++) {
-        switch(pTextCtrl->GetStyleAt(i)) {
-        case SCT_STRING: {
-            query.first = i;
-
-            while(pTextCtrl->GetStyleAt(i++) == SCT_STRING)
-                ;
-            query.second = i;
-
-            if(IsScannerType(kString))
-                m_parseValues.push_back(make_pair(query, kString));
-        } break;
-        case SCT_CPP_COM: {
-            query.first = i;
-
-            while(pTextCtrl->GetStyleAt(i++) == SCT_CPP_COM)
-                ;
-            query.second = i;
-
-            if(IsScannerType(kCppComment))
-                m_parseValues.push_back(make_pair(query, kCppComment));
-        } break;
-        case SCT_C_COM: {
-            query.first = i;
-
-            while(pTextCtrl->GetStyleAt(i++) == SCT_C_COM)
-                ;
-            query.second = i;
-
-            if(IsScannerType(kCComment))
-                m_parseValues.push_back(make_pair(query, kCComment));
-        } break;
-        case SCT_DOX_1: {
-            query.first = i;
-
-            while(pTextCtrl->GetStyleAt(i++) == SCT_DOX_1)
-                ;
-            query.second = i;
-
-            if(IsScannerType(kDox1))
-                m_parseValues.push_back(make_pair(query, kDox1));
-        } break;
-        case SCT_DOX_2: {
-            query.first = i;
-
-            while(pTextCtrl->GetStyleAt(i++) == SCT_DOX_2)
-                ;
-            query.second = i;
-
-            if(IsScannerType(kDox2))
-                m_parseValues.push_back(make_pair(query, kDox2));
-        } break;
-        }
-    }
-    int errors = 0;
-
-    if(!m_pPlugIn->GetCheckContinuous()) {
-        retVal = CheckCppType(pEditor);
-
-        if(errors == 0 && retVal != kSpellingCanceled)
-            ::wxMessageBox(_("No spelling errors found!"));
-    } else
-        retVal = MarkErrors(pEditor);
-}
 // ------------------------------------------------------------
 void IHunSpell::CheckSpelling()
 {
@@ -375,13 +287,6 @@ void IHunSpell::CheckSpelling()
     IEditor* pEditor = ::clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(pEditor);
     CHECK_COND_RET(InitEngine());
-
-    // special handling for C++ files
-    if(pEditor->GetLexerId() == wxSTC_LEX_CPP) {
-        LOG_IF_TRACE { clDEBUG1() << "SpellChecker: checkSpelling -> C++ is called" << endl; }
-        CheckCppSpelling();
-        return;
-    }
 
     int offset = 0;
     bool error = false;

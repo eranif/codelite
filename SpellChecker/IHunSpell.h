@@ -36,13 +36,14 @@
 #ifndef _IHUNSPELL_
 #define _IHUNSPELL_
 // ------------------------------------------------------------
+#include "wx/arrstr.h"
 #include "wxStringHash.h"
+
 #include <hunspell/hunspell.h>
 #include <unordered_set>
 #include <utility>
 #include <vector>
 #include <wx/hashmap.h>
-#include "wx/arrstr.h"
 // ------------------------------------------------------------
 WX_DECLARE_STRING_HASH_MAP(wxString, languageMap);
 typedef std::pair<int, int> posLen;
@@ -52,7 +53,7 @@ typedef std::vector<parseEntry> partList;
 class CorrectSpellingDlg;
 class SpellCheck;
 class IEditor;
-// ------------------------------------------------------------ 
+// ------------------------------------------------------------
 
 class StringHashOptionalCase
 {
@@ -97,19 +98,12 @@ private:
 
 class IHunSpell
 {
-protected:
-    /// makes a spell check for the given cpp text. Canceled is set to true when the user cancels.
-    void CheckCppSpelling();
-
 public:
     IHunSpell();
     virtual ~IHunSpell();
 
     /// Clears the ignore list
-    void ClearIgnoreList()
-    {
-        m_ignoreList.clear();
-    }
+    void ClearIgnoreList() { m_ignoreList.clear(); }
     /// initializes spelling engine. This will be done automatic on the first check.
     bool InitEngine();
     /// close the engine. The engine must be closed before a new init or when the program finishes.
@@ -129,69 +123,36 @@ public:
     /// checks for predefined language names, which could be found in path
     void GetAvailableLanguageKeyNames(const wxString& path, wxArrayString& lang);
     /// returns the base filename for language key without extension
-    wxString GetLanguageShort(const wxString& key)
-    {
-        return m_languageList[key];
-    }
+    wxString GetLanguageShort(const wxString& key) { return m_languageList[key]; }
     /// sets the dictionary path
-    void SetDictionaryPath(const wxString& dicPath)
-    {
-        m_dicPath = dicPath;
-    }
+    void SetDictionaryPath(const wxString& dicPath) { m_dicPath = dicPath; }
     /// returns the dictionary path
-    const wxString& GetDictionaryPath() const
-    {
-        return m_dicPath;
-    }
+    const wxString& GetDictionaryPath() const { return m_dicPath; }
     /// sets the dictionary base filename
-    void SetDictionary(const wxString& dictionary)
-    {
-        m_dictionary = dictionary;
-    }
+    void SetDictionary(const wxString& dictionary) { m_dictionary = dictionary; }
     /// returns the current dictionary base filename
-    const wxString& GetDictionary() const
-    {
-        return m_dictionary;
-    }
+    const wxString& GetDictionary() const { return m_dictionary; }
     void SetCaseSensitiveUserDictionary(const bool caseSensitiveUserDictionary);
     /// gets whether user dictionary and ignored words are case sensitive
-    bool GetCaseSensitiveUserDictionary() const
-    {
-        return m_caseSensitiveUserDictionary;
-    }
+    bool GetCaseSensitiveUserDictionary() const { return m_caseSensitiveUserDictionary; }
     void SetIgnoreSymbolsInTagsDatabase(const bool ignoreSymbolsInTagsDatabase)
     {
         m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase;
     }
     /// gets whether to ignore words that match ctags symbols
-    bool GetIgnoreSymbolsInTagsDatabase() const
-    {
-        return m_ignoreSymbolsInTagsDatabase;
-    }
+    bool GetIgnoreSymbolsInTagsDatabase() const { return m_ignoreSymbolsInTagsDatabase; }
     ///
     void AddWord(const wxString& word);
 
-    void SetUserDictPath(const wxString& userDictPath)
-    {
-        this->m_userDictPath = userDictPath;
-    }
-    const wxString& GetUserDictPath() const
-    {
-        return m_userDictPath;
-    }
+    void SetUserDictPath(const wxString& userDictPath) { this->m_userDictPath = userDictPath; }
+    const wxString& GetUserDictPath() const { return m_userDictPath; }
 
     /// sets plugin pointer
-    void SetPlugIn(SpellCheck* plugin)
-    {
-        m_pPlugIn = plugin;
-    }
+    void SetPlugIn(SpellCheck* plugin) { m_pPlugIn = plugin; }
     /// enables/disables scanner types
     void EnableScannerType(int type, bool state);
     /// checks if type is set
-    bool IsScannerType(int type)
-    {
-        return (m_scanners & type);
-    }
+    bool IsScannerType(int type) { return (m_scanners & type); }
 
     void AddWordToUserDict(const wxString& word);
 

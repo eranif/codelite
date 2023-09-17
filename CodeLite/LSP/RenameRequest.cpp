@@ -1,6 +1,7 @@
 #include "RenameRequest.hpp"
 
 #include "LSP/LSPEvent.h"
+#include "LSP/ResponseError.h"
 #include "event_notifier.h"
 
 LSP::RenameRequest::RenameRequest(const wxString& new_name, const wxString& filename, size_t line, size_t column)
@@ -77,4 +78,15 @@ void LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtH
             }
         }
     }
+}
+
+void LSP::RenameRequest::OnError(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+{
+    wxUnusedVar(owner);
+    // an example for such an error:
+    // {"error":{"code":-32001,"message":"invalid name: conflict with the symbol in
+    // C:/msys64/home/eran/devl/test_cpp/main.cpp:9:17"},"id":111,"jsonrpc":"2.0"}
+    LSP::ResponseError errMsg(response.ToString());
+    wxMessageBox(wxString::Format(_("Rename symbol error:\n%s"), errMsg.GetMessage()), "CodeLite",
+                 wxICON_ERROR | wxCENTER);
 }

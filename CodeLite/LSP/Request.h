@@ -4,6 +4,7 @@
 #include "IPathConverter.hpp"
 #include "LSP/MessageWithParams.h"
 #include "wx/string.h"
+
 #include <wx/filename.h>
 
 namespace LSP
@@ -48,6 +49,15 @@ public:
      * Override it in the various requests
      */
     virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+    {
+        wxUnusedVar(response);
+        wxUnusedVar(owner);
+    }
+
+    /**
+     * @brief this method will get called by the protocol for handling the errors
+     */
+    virtual void OnError(const LSP::ResponseMessage& response, wxEvtHandler* owner)
     {
         wxUnusedVar(response);
         wxUnusedVar(owner);

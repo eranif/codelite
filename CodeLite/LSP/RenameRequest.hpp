@@ -12,6 +12,7 @@ public:
     virtual ~RenameRequest();
 
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    void OnError(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };
 
 } // namespace LSP

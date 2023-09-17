@@ -950,6 +950,11 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
         m_owner->AddPendingEvent(log_event);
     } break;
     }
+
+    // finally, call the request handler
+    if(msg_ptr->As<LSP::Request>()) {
+        msg_ptr->As<LSP::Request>()->OnError(response, m_owner);
+    }
 }
 
 void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)

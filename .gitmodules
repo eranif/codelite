@@ -10,6 +10,3 @@
 [submodule "yaml-cpp"]
 	path = yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
-[submodule "tinyjson"]
-	path = tinyjson
-	url = https://github.com/eranif/tinyjson

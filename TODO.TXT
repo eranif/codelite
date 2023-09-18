@@ -10,4 +10,4 @@ others:
 
 - git: support showing file revision history
 - dap: support stdio connection based
-- Diff: when using remote files, the "edit" does not work
+- LSP: apply fix: after applying a fix, return the last line were

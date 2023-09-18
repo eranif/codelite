@@ -94,7 +94,6 @@ void BitmapLoader::AddBitmapInternal(const wxBitmapBundle& bundle, const wxStrin
 {
     wxBitmap bmp = bundle.GetBitmapFor(wxTheApp->GetTopWindow());
     if(bmp.IsOk()) {
-        LOG_IF_TRACE { clTRACE() << "SVG:" << base_name << "successfully loaded" << endl; }
         m_toolbarsBitmaps.insert({ base_name, bmp });
     }
 }

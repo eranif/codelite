@@ -939,7 +939,6 @@ else()
         add_subdirectory(codelite-generate-themes)
 
     endif()
-    add_subdirectory(sdk/codelite_cppcheck)
     add_subdirectory(codelite_echo)
     add_subdirectory(ctagsd)
 

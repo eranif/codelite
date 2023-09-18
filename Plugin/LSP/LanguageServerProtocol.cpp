@@ -54,7 +54,7 @@ FileExtManager::FileType LanguageServerProtocol::workspace_file_type = FileExtMa
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
     : m_name(name)
-    , m_owner(owner)
+    , m_cluster(owner)
 {
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
@@ -92,6 +92,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     m_network->Bind(wxEVT_LSP_NET_DATA_READY, &LanguageServerProtocol::EventMainLoop, this);
     m_network->Bind(wxEVT_LSP_NET_ERROR, &LanguageServerProtocol::OnNetError, this);
     m_network->Bind(wxEVT_LSP_NET_CONNECTED, &LanguageServerProtocol::OnNetConnected, this);
+    m_network->Bind(wxEVT_LSP_NET_LOGMSG, &LanguageServerProtocol::OnNetLogMessage, this);
 }
 
 LanguageServerProtocol::~LanguageServerProtocol()
@@ -694,7 +695,7 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
     DoClear();
     LSPEvent restartEvent(wxEVT_LSP_RESTART_NEEDED);
     restartEvent.SetServerName(GetName());
-    m_owner->AddPendingEvent(restartEvent);
+    m_cluster->AddPendingEvent(restartEvent);
 }
 
 void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
@@ -739,7 +740,7 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
             log_event.SetServerName(GetName());
             log_event.SetMessage(json_item["params"]["message"].toString());
             log_event.SetLogMessageSeverity(json_item["params"]["type"].toInt());
-            m_owner->AddPendingEvent(log_event);
+            m_cluster->AddPendingEvent(log_event);
 
         } else if(message_method == "telemetry/event") {
             // show dialog to the user
@@ -747,7 +748,7 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
             LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
             log_event.SetServerName(GetName());
             log_event.SetMessage(json_item["params"].toString());
-            m_owner->AddPendingEvent(log_event);
+            m_cluster->AddPendingEvent(log_event);
         } else if(message_method == "workspace/applyEdit") {
 
             // the server is requesting us to apply an edit
@@ -803,7 +804,7 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
                     // Notify about this
                     LSPEvent initEvent(wxEVT_LSP_INITIALIZED);
                     initEvent.SetServerName(GetName());
-                    m_owner->AddPendingEvent(initEvent);
+                    m_cluster->AddPendingEvent(initEvent);
 
                     // Move the content of the pending queue into the main queue
                     m_Queue.Move(m_pendingQueue);
@@ -850,7 +851,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
                                     LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
         // dont wait for the response, but fire an event to load the dialog
         LSPEvent show_quick_outline_dlg_event(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG);
-        m_owner->AddPendingEvent(show_quick_outline_dlg_event);
+        m_cluster->AddPendingEvent(show_quick_outline_dlg_event);
     }
 }
 
@@ -917,28 +918,28 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
         // Restart this server
         LSPEvent restartEvent(wxEVT_LSP_RESTART_NEEDED);
         restartEvent.SetServerName(GetName());
-        m_owner->AddPendingEvent(restartEvent);
+        m_cluster->AddPendingEvent(restartEvent);
     } break;
     case LSP::ResponseError::kErrorCodeMethodNotFound: {
         // Report this missing event
         LSPEvent eventMethodNotFound(wxEVT_LSP_METHOD_NOT_FOUND);
         eventMethodNotFound.SetServerName(GetName());
         eventMethodNotFound.SetString(msg_ptr->GetMethod());
-        m_owner->AddPendingEvent(eventMethodNotFound);
+        m_cluster->AddPendingEvent(eventMethodNotFound);
 
         // Log this message
         LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
         log_event.SetServerName(GetName());
         log_event.SetMessage(_("Method: `") + msg_ptr->GetMethod() + _("` is not supported"));
         log_event.SetLogMessageSeverity(LSP_LOG_WARNING); // warning
-        m_owner->AddPendingEvent(log_event);
+        m_cluster->AddPendingEvent(log_event);
 
     } break;
     case LSP::ResponseError::kErrorCodeInvalidParams: {
         // Recreate this AST (in other words: reparse), by default we reparse the current editor
         LSPEvent reparseEvent(wxEVT_LSP_REPARSE_NEEDED);
         reparseEvent.SetServerName(GetName());
-        m_owner->AddPendingEvent(reparseEvent);
+        m_cluster->AddPendingEvent(reparseEvent);
     } break;
     case LSP::ResponseError::kErrorCodeUnknownErrorCode:
     default: {
@@ -947,13 +948,13 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
         log_event.SetServerName(GetName());
         log_event.SetMessage(errMsg.GetMessage());
         log_event.SetLogMessageSeverity(LSP_LOG_ERROR);
-        m_owner->AddPendingEvent(log_event);
+        m_cluster->AddPendingEvent(log_event);
     } break;
     }
 
     // finally, call the request handler
     if(msg_ptr->As<LSP::Request>()) {
-        msg_ptr->As<LSP::Request>()->OnError(response, m_owner);
+        msg_ptr->As<LSP::Request>()->OnError(response, m_cluster);
     }
 }
 
@@ -970,7 +971,7 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
         }
         preq->SetServerName(GetName());
         LSP_DEBUG() << "Processing response for request:" << preq->GetMethod() << endl;
-        preq->OnResponse(response, m_owner);
+        preq->OnResponse(response, m_cluster);
 
     } else if(response.IsPushDiagnostics()) {
         // Get the URI
@@ -1243,4 +1244,13 @@ void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
         editor->GetCtrl()->EndUndoAction();
         editor->Save();
     }
+}
+
+void LanguageServerProtocol::OnNetLogMessage(clCommandEvent& event)
+{
+    LSPEvent log_event{ wxEVT_LSP_LOGMESSAGE };
+    log_event.SetServerName(GetName());
+    log_event.SetMessage(event.GetString());
+    log_event.SetLogMessageSeverity(event.GetInt());
+    m_cluster->AddPendingEvent(log_event);
 }

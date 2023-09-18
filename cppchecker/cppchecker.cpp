@@ -153,6 +153,10 @@ void CppCheckPlugin::OnCppCheckTerminated(clProcessEvent& e)
 void CppCheckPlugin::DoRun()
 {
     wxString command = DoGetCommand();
+    if(command.empty()) {
+        return;
+    }
+
     // notify about starting build process.
     // we pass the selected compiler in the event
     clBuildEvent eventStarted(wxEVT_BUILD_PROCESS_STARTED);
@@ -168,7 +172,8 @@ void CppCheckPlugin::DoRun()
     size_t flags = IProcessCreateDefault | IProcessWrapInShell;
     m_cppcheckProcess = ::CreateAsyncProcess(this, command, flags);
     if(!m_cppcheckProcess) {
-        wxMessageBox(_("Failed to launch codelite_cppcheck process!"), _("Warning"), wxOK | wxCENTER | wxICON_WARNING);
+        wxMessageBox(_("Failed to launch cppcheck process.\nMake sure its installed and in your PATH"), _("Warning"),
+                     wxOK | wxCENTER | wxICON_WARNING);
         return;
     }
     m_runStartedByUser = true;
@@ -179,7 +184,7 @@ wxString CppCheckPlugin::DoGetCommand()
     // Linux / Mac way: spawn the process and execute the command
     wxString cppcheck;
     if(!ThePlatform->Which("cppcheck", &cppcheck)) {
-        ::wxMessageBox(_("Could not locate cppcheck. Please install it and try again"), "CodeLite",
+        ::wxMessageBox(_("Could not locate \"cppcheck\". Please install it and try again"), "CodeLite",
                        wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCENTRE);
         return wxEmptyString;
     }

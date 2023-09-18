@@ -4,6 +4,7 @@
 #include "LSP/DocumentSymbolsRequest.hpp"
 #include "LSP/FileContentTracker.hpp"
 #include "LSP/IPathConverter.hpp"
+#include "LSP/LSPEvent.h"
 #include "LSP/LSPNetwork.h"
 #include "LSP/MessageWithParams.h"
 #include "SocketAPI/clSocketClientAsync.h"
@@ -58,7 +59,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
     };
 
     wxString m_name;
-    wxEvtHandler* m_owner = nullptr;
+    wxEvtHandler* m_cluster = nullptr;
     LSPNetwork::Ptr_t m_network;
     wxString m_initOptions;
     FileContentTracker m_filesTracker;
@@ -92,6 +93,7 @@ public:
 protected:
     void OnNetConnected(clCommandEvent& event);
     void OnNetError(clCommandEvent& event);
+    void OnNetLogMessage(clCommandEvent& event);
     void EventMainLoop(clCommandEvent& event);
 
     void OnFileLoaded(clCommandEvent& event);

@@ -3,6 +3,7 @@
 wxDEFINE_EVENT(wxEVT_LSP_NET_DATA_READY, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LSP_NET_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LSP_NET_CONNECTED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_LSP_NET_LOGMSG, clCommandEvent);
 
 LSPNetwork::LSPNetwork() {}
 
@@ -32,4 +33,19 @@ wxString LSPNetwork::BuildCommand(const wxArrayString& args)
         command << " " << argument;
     }
     return command;
+}
+
+void LSPNetwork::LogMessage(int sev, const wxString& msg)
+{
+    clCommandEvent log_error_event{ wxEVT_LSP_NET_LOGMSG };
+    log_error_event.SetString(msg);
+    log_error_event.SetInt(sev);
+    AddPendingEvent(log_error_event);
+}
+
+void LSPNetwork::NotifyError(const wxString& reason)
+{
+    clCommandEvent error_event{ wxEVT_LSP_NET_ERROR };
+    error_event.SetString(reason);
+    AddPendingEvent(error_event);
 }

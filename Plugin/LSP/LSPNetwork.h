@@ -1,6 +1,7 @@
 #ifndef LSPNETWORK_H
 #define LSPNETWORK_H
 
+#include "LSP/LSPEvent.h"
 #include "LSPStartupInfo.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -13,6 +14,7 @@
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_DATA_READY, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_ERROR, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_CONNECTED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_LOGMSG, clCommandEvent);
 
 enum class eNetworkType {
     kStdio,
@@ -27,6 +29,8 @@ protected:
 protected:
     wxString& wrap_with_quotes(wxString& str);
     wxString BuildCommand(const wxArrayString& args);
+    void LogMessage(int sev, const wxString& msg);
+    void NotifyError(const wxString& reason);
 
 public:
     typedef wxSharedPtr<LSPNetwork> Ptr_t;

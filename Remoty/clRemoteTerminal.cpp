@@ -1,5 +1,6 @@
 #include "clRemoteTerminal.hpp"
 
+#include "Platform.hpp"
 #include "asyncprocess.h"
 #include "environmentconfig.h"
 #include "file_logger.h"
@@ -22,9 +23,8 @@ bool clRemoteTerminal::Start()
     }
 
     // wrap the command in ssh
-    wxFileName ssh_exe;
-    EnvSetter setter;
-    if(!FileUtils::FindExe("ssh", ssh_exe)) {
+    wxString ssh_exe;
+    if(!ThePlatform->Which("ssh", &ssh_exe)) {
         clERROR() << "Could not locate ssh executable in your PATH!" << endl;
         return false;
     }

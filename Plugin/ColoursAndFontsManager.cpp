@@ -726,8 +726,6 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
     lexer->SetThemeName(themeName);
 
-    LOG_IF_TRACE { clDEBUG1() << "Loading lexer:" << lexerName; }
-
     // Fix C++ lexer
     if(lexer->GetName() == "c++") {
         AddLexerKeywords(lexer, 0, { "override", "final", "constexpr", "co_return", "co_await", "co_yield" });

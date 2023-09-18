@@ -846,6 +846,8 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
+
+set(WITHOUT_INSTALL ON)
 add_subdirectory(cc-wrapper)
 
 # include the yaml-cpp directory
@@ -967,6 +969,7 @@ else()
     cl_scan_for_plugins()
 endif() # NOT WXC_APP
 
+message(STATUS "CL_INSTALL_BIN is set to ${CL_INSTALL_BIN}")
 install(TARGETS cc-wrapper DESTINATION ${CL_INSTALL_BIN})
 
 if(NOT WXC_APP)

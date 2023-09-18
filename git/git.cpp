@@ -1488,6 +1488,7 @@ void GitPlugin::UpdateFileTree()
 void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 {
     HideProgress();
+    wxDELETE(m_process);
     if(m_gitActionQueue.empty())
         return;
 
@@ -1688,7 +1689,6 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     }
 
-    wxDELETE(m_process);
     m_commandOutput.Clear();
     m_gitActionQueue.pop_front();
 

@@ -229,10 +229,20 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
 
         size_t index = static_cast<size_t>(m_list->GetItemData(item));
 
-        wxString docComment = m_entries.at(index)->GetComment();
+        wxString docComment;
+        if(index >= m_entries.size()) {
+            clWARNING() << "wxCodeCompletionBox::DoDisplayTipWindow(): Requesting tip for index:" << index
+                        << ". m_entries.size():" << m_entries.size() << ". m_allEntries.size():" << m_allEntries.size()
+                        << endl;
+            clWARNING() << "m_allEntries[" << index << "].GetText():" << m_allEntries[index]->GetText() << endl;
+            clWARNING() << "m_allEntries[" << index << "].GetCommnet():" << m_allEntries[index]->GetComment() << endl;
+
+        } else {
+            docComment = m_entries[index]->GetComment();
+        }
         docComment.Trim().Trim(false);
 
-        if(docComment.IsEmpty()) {
+        if(docComment.empty()) {
             // No tip to display
             DoDestroyTipWindow();
 

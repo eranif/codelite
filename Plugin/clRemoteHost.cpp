@@ -81,7 +81,7 @@ clSSH::Ptr_t clRemoteHost::TakeSession()
 {
     clSSH::Ptr_t ssh_session;
     if(m_sessions.empty()) {
-        ssh_session = CreateSession();
+        ssh_session = CreateSession(m_activeAccount);
     } else {
         ssh_session = m_sessions.back();
         m_sessions.pop_back();
@@ -89,15 +89,13 @@ clSSH::Ptr_t clRemoteHost::TakeSession()
     return ssh_session;
 }
 
-clSSH::Ptr_t clRemoteHost::CreateSession()
+clSSH::Ptr_t clRemoteHost::CreateSession(const wxString& account_name)
 {
     clSSH::Ptr_t ssh_session;
-    wxBusyCursor bc;
-    LOG_DEBUG(LOG) << "No ssh session in cache, will create new one" << endl;
     // create new session
-    auto account = SSHAccountInfo::LoadAccount(m_activeAccount);
+    auto account = SSHAccountInfo::LoadAccount(account_name);
     if(account.GetHost().empty()) {
-        LOG_WARNING(LOG) << "could not find account:" << m_activeAccount << endl;
+        LOG_WARNING(LOG) << "could not find account:" << account_name << endl;
         return nullptr;
     }
 
@@ -117,7 +115,7 @@ clSSH::Ptr_t clRemoteHost::CreateSession()
                        << endl;
         return nullptr;
     }
-    LOG_DEBUG(LOG) << "Initializing for account:" << m_activeAccount << "completed successfully" << endl;
+    LOG_DEBUG(LOG) << "Initializing for account:" << account_name << "completed successfully" << endl;
     return ssh_session;
 }
 
@@ -179,8 +177,8 @@ void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
 IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, const wxArrayString& command, size_t flags,
                                                       const wxString& wd, const clEnvList_t& env)
 {
-    // create new ssh session (or re-use one)
-    auto ssh_session = CreateSession();
+    // create new ssh session
+    auto ssh_session = CreateSession(m_activeAccount);
     if(!ssh_session) {
         LOG_ERROR(LOG) << "no ssh session available" << endl;
         return IProcess::Ptr_t{};

@@ -53,7 +53,7 @@ public:
     clSSH::Ptr_t TakeSession();
 
     /// create a new ssh session
-    clSSH::Ptr_t CreateSession();
+    static clSSH::Ptr_t CreateSession(const wxString& account_name);
 
     /// put back the ssh_session into the queue
     void AddSshSession(clSSH::Ptr_t ssh_session);

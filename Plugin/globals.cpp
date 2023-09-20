@@ -2022,9 +2022,6 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     tlw->SetSize(frameSize.GetSize());
     tlw->CentreOnParent();
     tlw->PostSizeEvent();
-
-    // restore persistency stuff
-    WindowAttrManager::Load(tlw);
 }
 
 static void DoSetDialogSize(wxDialog* win, double factor)
@@ -2051,9 +2048,6 @@ static void DoSetDialogSize(wxDialog* win, double factor)
         win->GetSizer()->Layout();
         win->CentreOnParent();
     }
-
-    // restore persistency stuff
-    WindowAttrManager::Load(win);
 }
 
 std::pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, const wxString& accountName,

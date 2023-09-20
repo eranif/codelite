@@ -273,9 +273,9 @@ void RemotyWorkspace::DoClose(bool notify)
     m_codeliteRemoteBuilder.Stop();
     m_codeliteRemoteFinder.Stop();
 
-    // and restart all the lsp_metadata_arr
-    clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
-    EventNotifier::Get()->AddPendingEvent(restart_event);
+    //    // and restart all the lsp_metadata_arr
+    //    clLanguageServerEvent stop_event(wxEVT_LSP_STOP_ALL);
+    //    EventNotifier::Get()->ProcessEvent(stop_event);
 
     if(notify) {
         // notify codelite to close all opened files
@@ -573,7 +573,8 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     // we need this to be processed first
     clRemoteHost::Instance()->ProcessEvent(open_event);
 
-    EventNotifier::Get()->AddPendingEvent(open_event);
+    // Fire the `wxEVT_WORKSPACE_LOADED` event
+    EventNotifier::Get()->ProcessEvent(open_event);
 
     // update the remote workspace list
     RemotyConfig config;
@@ -924,6 +925,7 @@ void RemotyWorkspace::OnCodeLiteRemoteListFilesDone(clCommandEvent& event)
     // notify that scan is completed
     clDEBUG() << "Sending wxEVT_WORKSPACE_FILES_SCANNED event..." << endl;
     clWorkspaceEvent event_scan{ wxEVT_WORKSPACE_FILES_SCANNED };
+    event_scan.SetIsRemote(true);
     EventNotifier::Get()->ProcessEvent(event_scan);
 }
 
@@ -1138,6 +1140,11 @@ void RemotyWorkspace::OnDownloadFile(clCommandEvent& event)
 void RemotyWorkspace::OpenWorkspace(const wxString& path, const wxString& account) { DoOpen(path, account); }
 void RemotyWorkspace::CloseWorkspace()
 {
+    if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        // nothing is opened
+        return;
+    }
+
     // Close any opened workspace
     auto frame = EventNotifier::Get()->TopFrame();
     wxCommandEvent eventCloseWsp(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));

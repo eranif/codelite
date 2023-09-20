@@ -1159,7 +1159,10 @@ void LanguageServerCluster::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
 {
     event.Skip();
     LSP_DEBUG() << "==> LanguageServerCluster: workspace file scanned completed." << endl;
-
+    if(event.IsRemote()) {
+        LSP_DEBUG() << "==> LanguageServerCluster: remote workspace. nothing to be done here" << endl;
+        return;
+    }
     LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
     DiscoverWorkspaceType();
     Reload();

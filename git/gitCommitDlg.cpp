@@ -63,7 +63,7 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnToggleCheckAll, this, XRCID("ID_CHECKALL"));
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnCommitHistory, this, XRCID("ID_HISTORY"));
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetTLWindowBestSizeAndPosition(this);
     CentreOnParent();
 
     // set the focus to the text control

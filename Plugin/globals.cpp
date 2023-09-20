@@ -2006,17 +2006,19 @@ wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
 
 void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 {
-    if(!win || !win->GetParent()) {
-        return;
-    }
+    CHECK_PTR_RET(win);
+
+    // confirm that this window is top level
     wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
-    wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win->GetParent());
 
-    if(!tlw || !parentTlw) {
+    // find its parent
+    wxWindow* parent_tlw = EventNotifier::Get()->TopFrame();
+
+    if(!tlw || !parent_tlw) {
         return;
     }
 
-    wxRect frameSize = parentTlw->GetSize();
+    wxRect frameSize = parent_tlw->GetSize();
     frameSize.Deflate(100);
     tlw->SetMinSize(frameSize.GetSize());
     tlw->SetSize(frameSize.GetSize());

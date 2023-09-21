@@ -1012,6 +1012,10 @@ void clTreeCtrlPanel::OnRefresh(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     RefreshSelections();
+
+    if(clGetManager()->GetActiveEditor() && (m_options & kLinkToEditor)) {
+        CallAfter(&clTreeCtrlPanel::ExpandToFileVoid, clGetManager()->GetActiveEditor()->GetFileName());
+    }
 }
 
 void clTreeCtrlPanel::SetNewFileTemplate(const wxString& newfile, size_t charsToHighlight)
@@ -1177,6 +1181,11 @@ void clTreeCtrlPanel::RefreshTree()
 
     GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
     ToggleView();
+
+    if(clGetManager()->GetActiveEditor() && (m_options & kLinkToEditor)) {
+        CallAfter(&clTreeCtrlPanel::ExpandToFileVoid, clGetManager()->GetActiveEditor()->GetFileName());
+    }
+
 }
 
 void clTreeCtrlPanel::OnFilesCreated(clFileSystemEvent& event)

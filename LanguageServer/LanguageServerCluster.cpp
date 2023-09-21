@@ -1246,8 +1246,10 @@ void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
         LSP_WARNING() << "Apply Edits event was called with 0 changes" << endl;
         return;
     }
+
     // confirm with the user
-    if(::wxMessageBox(wxString() << "This will update: " << changes.size() << " files. Continue?", "CodeLite",
+    if(event.IsAnswer() /* prompt? */ &&
+       ::wxMessageBox(wxString() << "This will update: " << changes.size() << " files. Continue?", "CodeLite",
                       wxICON_QUESTION | wxCANCEL | wxYES_NO | wxYES_DEFAULT) != wxYES) {
         return;
     }

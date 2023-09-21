@@ -752,7 +752,7 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
         } else if(message_method == "workspace/applyEdit") {
 
             // the server is requesting us to apply an edit
-            HandleWorkspaceEdit(json_item["params"]["edit"]["changes"]);
+            HandleWorkspaceEdit(json_item["params"]["edit"]);
 
         } else {
             // other response
@@ -1216,34 +1216,12 @@ void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepat
 
 void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
 {
-    auto M = changes.GetAsMap();
-    for(const auto& [filepath, edit_arr] : M) {
-        wxString fn = FileUtils::FilePathFromURI(wxString(filepath.data(), filepath.length()));
-        auto editor = clGetManager()->FindEditor(fn);
-        if(!editor) {
-            LSP_WARNING() << "Could not locate editor for file:" << wxString(filepath.data(), filepath.length())
-                          << endl;
-            continue;
-        }
-        if(!edit_arr.isArray()) {
-            LSP_WARNING() << "Could not apply edit. Expected TextEdit array" << endl;
-            continue;
-        }
+    auto edits = LSP::ParseWorkspaceEdit(changes);
 
-        // Apply the changes
-        auto edits = edit_arr.GetAsVector();
-        editor->GetCtrl()->BeginUndoAction();
-        for(auto iter = edits.rbegin(); iter != edits.rend(); ++iter) {
-            // apply the changes, in reverse order (to ensure that there is no skewing)
-            LSP::TextEdit text_edit;
-            text_edit.FromJSON(*iter);
-
-            editor->SelectRange(text_edit.GetRange());
-            editor->ReplaceSelection(text_edit.GetNewText());
-        }
-        editor->GetCtrl()->EndUndoAction();
-        editor->Save();
-    }
+    LSPEvent event_edit_files{ wxEVT_LSP_EDIT_FILES };
+    event_edit_files.SetChanges(edits);
+    event_edit_files.SetAnswer(false); // Do not prompt the user
+    m_cluster->AddPendingEvent(event_edit_files);
 }
 
 void LanguageServerProtocol::OnNetLogMessage(clCommandEvent& event)

@@ -646,5 +646,9 @@ WXDLLIMPEXP_CL wxString FileNameToURI(const wxString& filename);
 
 /// Return the log handle of this library
 WXDLLIMPEXP_CL clModuleLogger& GetLogHandle();
+
+/// Parse the text edit from a reponse "result" field
+WXDLLIMPEXP_CL std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result);
+
 };     // namespace LSP
 #endif // JSONRPC_BASICTYPES_H

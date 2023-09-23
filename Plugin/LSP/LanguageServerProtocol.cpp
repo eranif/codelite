@@ -1049,10 +1049,17 @@ void LanguageServerProtocol::RenameSymbol(IEditor* editor)
     LSP_DEBUG() << GetLogPrefix() << "Sending `rename symbol` request" << endl;
 
     wxString old_name = editor->GetWordAtCaret();
+    old_name.Trim().Trim(false);
+
+    if(old_name.empty()) {
+        // nothing to be done here
+        return;
+    }
+
     wxString title;
     title << _("Rename Symbol: '") << old_name << "'";
-    wxString newname = wxGetTextFromUser(_("New name:"), title);
-    if(newname.empty()) {
+    wxString newname = wxGetTextFromUser(_("New name:"), title, old_name);
+    if(newname.empty() || newname == old_name) {
         return;
     }
 

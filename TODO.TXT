@@ -10,5 +10,5 @@ others:
 
 - git: support showing file revision history
 - dap: support stdio connection based
-- LSP: apply fix: after applying a fix, return the last line were
 - Change workspace tabs to use button bar on the left side
+- LSP: "find symbol" of an overloaded function shows empty dialog

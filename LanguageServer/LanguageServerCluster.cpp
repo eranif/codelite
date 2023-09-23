@@ -8,6 +8,7 @@
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
 #include "clEditorBar.h"
+#include "clEditorStateLocker.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clResult.hpp"
 #include "clSFTPEvent.h"
@@ -1253,6 +1254,15 @@ void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
                       wxICON_QUESTION | wxCANCEL | wxYES_NO | wxYES_DEFAULT) != wxYES) {
         return;
     }
+
+    // lock the book
+    wxWindowUpdateLocker book_locker{ clGetManager()->GetMainNotebook() };
+
+    // capture and restore the current editor state
+    clEditorStateLocker state_locker{};
+
+    // capture the active editor
+    clEditorActiveLocker active_locker{};
 
     for(const auto& [filepath, edit_arr] : changes) {
         if(edit_arr.empty()) {

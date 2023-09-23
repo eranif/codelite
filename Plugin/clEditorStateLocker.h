@@ -27,6 +27,7 @@
 #define CLEDITORSTATELOCKER_H
 
 #include "codelite_exports.h"
+#include "ieditor.h"
 
 #include <vector>
 #include <wx/arrstr.h>
@@ -67,7 +68,7 @@ private:
     void ApplyBreakpoints();
 
 public:
-    clEditorStateLocker(wxStyledTextCtrl* ctrl);
+    clEditorStateLocker(wxStyledTextCtrl* ctrl = nullptr);
     virtual ~clEditorStateLocker();
 
     /**
@@ -102,4 +103,12 @@ public:
     static void ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArrayString& breapoints);
 };
 
+class WXDLLIMPEXP_SDK clEditorActiveLocker
+{
+    IEditor* editor = nullptr;
+
+public:
+    clEditorActiveLocker();
+    ~clEditorActiveLocker();
+};
 #endif // CLEDITORSTATELOCKER_H

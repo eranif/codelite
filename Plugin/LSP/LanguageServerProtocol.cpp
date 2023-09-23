@@ -1218,10 +1218,10 @@ void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
 {
     auto edits = LSP::ParseWorkspaceEdit(changes);
 
-    LSPEvent event_edit_files{ wxEVT_LSP_EDIT_FILES };
-    event_edit_files.SetChanges(edits);
-    event_edit_files.SetAnswer(false); // Do not prompt the user
-    m_cluster->AddPendingEvent(event_edit_files);
+    LSPEvent edit_event{ wxEVT_LSP_EDIT_FILES };
+    edit_event.SetChanges(edits);
+    edit_event.SetAnswer(false); // Do not prompt the user
+    m_cluster->AddPendingEvent(edit_event);
 }
 
 void LanguageServerProtocol::OnNetLogMessage(clCommandEvent& event)

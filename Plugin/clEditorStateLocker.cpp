@@ -1,10 +1,20 @@
 #include "clEditorStateLocker.h"
 
 #include "bookmark_manager.h"
+#include "globals.h"
+#include "imanager.h"
 
 clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)
 {
+    if(!m_ctrl) {
+        if(clGetManager()->GetActiveEditor()) {
+            m_ctrl = clGetManager()->GetActiveEditor()->GetCtrl();
+        }
+    }
+
+    CHECK_PTR_RET(m_ctrl);
+
     // store the first visible line
     m_firstVisibleLine = m_ctrl->GetFirstVisibleLine();
     m_position = m_ctrl->GetCurrentPos();
@@ -19,6 +29,8 @@ clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
 
 clEditorStateLocker::~clEditorStateLocker()
 {
+    CHECK_PTR_RET(m_ctrl);
+
     // restore the position.
     if(m_position > m_ctrl->GetLastPosition()) {
         m_position = m_ctrl->GetLastPosition();
@@ -147,3 +159,16 @@ void clEditorStateLocker::SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArraySt
 void clEditorStateLocker::ApplyBreakpoints() { ApplyBreakpoints(m_ctrl, m_breakpoints); }
 
 void clEditorStateLocker::SerializeBreakpoints() { SerializeBreakpoints(m_ctrl, m_breakpoints); }
+
+// ======================================
+
+clEditorActiveLocker::clEditorActiveLocker()
+    : editor(clGetManager()->GetActiveEditor())
+{
+}
+
+clEditorActiveLocker::~clEditorActiveLocker()
+{
+    CHECK_PTR_RET(editor);
+    clGetManager()->SelectEditor(editor);
+}

@@ -169,6 +169,11 @@ public:
     virtual IEditor* GetActiveEditor() = 0;
 
     /**
+     * @brief find `editor` and select it
+     */
+    virtual bool SelectEditor(IEditor* editor) = 0;
+
+    /**
      * @brief return the main frame's status bar
      */
     virtual clStatusBar* GetStatusBar() = 0;

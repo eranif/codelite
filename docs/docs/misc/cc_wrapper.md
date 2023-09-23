@@ -25,6 +25,7 @@ The tools comes installed with CodeLite, but you can choose to build it from sou
 ```bash
 git clone https://github.com/eranif/cc-wrapper.git
 cd cc-wrapper
+git submodule update --init
 mkdir build-release
 cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release

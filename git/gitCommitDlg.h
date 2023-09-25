@@ -51,6 +51,7 @@ class GitCommitDlg : public GitCommitDlgBase
     wxString m_previousCommitMessage;
     wxArrayString m_history;
     wxString m_stashedMessage;
+    bool m_dismissedWithOk = false;
 
 public:
     GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir);

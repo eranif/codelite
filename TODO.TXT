@@ -13,3 +13,8 @@ others:
 - git: explore the option of using the new api of end of line annotations to replace the nav bar commit info ^^
 - dap: support stdio connection based
 - Change workspace tabs to use button bar on the left side
+- SFTP plugin: re-use the remote find in files dialog
+- SFTP plugin: use clTerminalViewCtrl for the log view
+- Status bar: add a "show sidebar" button
+- Status bar: add a "show output pane" button
+- Spell Checker: enable it for the commit dialog

@@ -38,6 +38,14 @@
 
 #include <wx/tokenzr.h>
 
+namespace
+{
+wxString GetTempCommitFile()
+{
+    return wxFileName{ clStandardPaths::Get().GetTempDir(), "commit-message.tmp" }.GetFullPath();
+}
+} // namespace
+
 GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir)
     : GitCommitDlgBase(parent)
     , m_plugin(plugin)
@@ -66,6 +74,13 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     ::clSetTLWindowBestSizeAndPosition(this);
     CentreOnParent();
 
+    wxFileName temp_commit = GetTempCommitFile();
+    if(temp_commit.FileExists()) {
+        wxString content;
+        FileUtils::ReadFileContent(temp_commit, content);
+        m_stcCommitMessage->SetText(content);
+    }
+
     // set the focus to the text control
     m_stcCommitMessage->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
@@ -81,6 +96,14 @@ GitCommitDlg::~GitCommitDlg()
     data.SetGitCommitDlgHSashPos(m_splitterInner->GetSashPosition());
     data.SetGitCommitDlgVSashPos(m_splitterMain->GetSashPosition());
     conf.WriteItem(&data);
+
+    // if the dialog was dimissed with "OK", remove the commit file
+    if(m_dismissedWithOk) {
+        FileUtils::RemoveFile(GetTempCommitFile());
+    } else if(!m_stcCommitMessage->IsEmpty()) {
+        // otherwise, write the content to the file, we will load it later
+        FileUtils::WriteFileContent(GetTempCommitFile(), m_stcCommitMessage->GetText());
+    }
 }
 
 /*******************************************************************************/
@@ -149,6 +172,7 @@ void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
         ::wxMessageBox(_("Git requires a commit message"), "codelite", wxICON_WARNING | wxOK | wxCENTER);
         return;
     }
+    m_dismissedWithOk = true;
     EndModal(wxID_OK);
 }
 

@@ -9,6 +9,7 @@ others:
 ----
 
 - git: support showing file revision history
+- editor: add an api to add end of line annotations
+- git: explore the option of using the new api of end of line annotations to replace the nav bar commit info ^^
 - dap: support stdio connection based
 - Change workspace tabs to use button bar on the left side
-- LSP: "find symbol" of an overloaded function shows empty dialog

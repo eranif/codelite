@@ -330,12 +330,12 @@ public:
      * @brief calculate checksum of a given file
      */
     static bool GetChecksum(const wxString& filepath, size_t* checksum);
-    
+
     /**
      * @brief convert any string into a valid filename while allowing only alphanum + '_' + '-' + '.'
      * example: "/12d#$file.exe" -> "_12d__file.exe"
      * @param str
-     * @return 
+     * @return
      */
     static wxString NormaliseFilename(const wxString& str);
 };

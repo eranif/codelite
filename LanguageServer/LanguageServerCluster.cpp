@@ -238,7 +238,8 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
         for(const auto& loc : event.GetLocations()) {
             entries.emplace_back();
             auto& entry = entries.back();
-            entry.name = loc.GetPattern();
+            // build the pattern: <file>:<line>
+            entry.name = wxString::Format("%s:%d", loc.GetPath(), loc.GetRange().GetStart().GetLine() + 1);
             entry.clientData = new SymbolClientData(loc);
         }
 

@@ -214,7 +214,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     }
     bool canScrollDown = GetVScrollBar()->CanScollDown();
 
-    // An action took that requires us to try to maximimze the list
+    // An action took that requires us to try to maximize the list
     if(m_maxList) {
         while(
             (canScrollDown &&
@@ -500,7 +500,7 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
                         wxRect checkboxRect = item->GetCheckboxRect(col);
                         wxRect action_button = item->GetCellButtonRect(col);
                         if(!checkboxRect.IsEmpty()) {
-                            // Adjust the coordiantes incase we got h-scroll
+                            // Adjust the coordinates in-case we got h-scroll
                             checkboxRect.SetX(checkboxRect.GetX() - GetFirstColumn());
                             if(checkboxRect.Contains(point)) {
                                 flags |= wxTREE_HITTEST_ONITEMSTATEICON;
@@ -546,7 +546,7 @@ void clTreeCtrl::EnsureVisible(const wxTreeItemId& item)
     if(!item.IsOk()) {
         return;
     }
-    // Make sure that all parents of ítem are expanded
+    // Make sure that all parents of item are expanded
     if(!m_model.ExpandToItem(item)) {
         return;
     }
@@ -583,7 +583,7 @@ void clTreeCtrl::OnMouseLeftDClick(wxMouseEvent& event)
     if(where.IsOk()) {
         SelectItem(where, true);
 
-        // Let sublclasses handle this first
+        // Let subclass handle this first
         wxTreeEvent evt(wxEVT_TREE_ITEM_ACTIVATED);
         evt.SetEventObject(this);
         evt.SetItem(where);
@@ -706,6 +706,25 @@ wxTreeItemData* clTreeCtrl::GetItemData(const wxTreeItemId& item) const
     return node->GetClientObject();
 }
 
+namespace
+{
+clRowEntry* GetBestFirstLine(clTreeCtrlModel& m_model, int window_size, clRowEntry* first_line)
+{
+    clRowEntry::Vec_t items;
+    m_model.GetNextItems(first_line, window_size, items, true);
+
+    // if we use `first_line` as our first line, we will have an empty area in the control
+    // and we don't want that. So find a better "first_line"
+    clRowEntry* prev = m_model.GetRowBefore(first_line, true);
+    while(prev && (items.size() < window_size)) {
+        items.insert(items.begin(), prev);
+        first_line = prev;
+        prev = m_model.GetRowBefore(prev, true);
+    }
+    return first_line;
+}
+} // namespace
+
 void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
 {
     CHECK_ROOT_RET();
@@ -778,7 +797,10 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
             if(items.empty()) {
                 return;
             }
-            SetFirstItemOnScreen(items.back()); // the last item
+
+            auto first_line = items.back();
+            first_line = GetBestFirstLine(m_model, GetNumLineCanFitOnScreen(), first_line);
+            SetFirstItemOnScreen(first_line); // the last item
             UpdateScrollBar();
         }
     }
@@ -1186,6 +1208,7 @@ void clTreeCtrl::ScrollToRow(int firstLine)
         if(newTopLine->IsHidden()) {
             newTopLine = newTopLine->GetFirstChild();
         }
+
         SetFirstItemOnScreen(newTopLine);
         if(!GetVScrollBar()->CanScollDown()) {
             // we cant scroll down anymore

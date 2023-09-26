@@ -799,7 +799,7 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
             }
 
             auto first_line = items.back();
-            first_line = GetBestFirstLine(m_model, GetNumLineCanFitOnScreen(), first_line);
+            first_line = GetBestFirstLine(m_model, GetNumLineCanFitOnScreen(true), first_line);
             SetFirstItemOnScreen(first_line); // the last item
             UpdateScrollBar();
         }

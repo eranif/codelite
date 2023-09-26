@@ -52,6 +52,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Set this option to "ON" in order to get CMake standard/expected behavior
+set(RETAIN_CACHED_VALUES OFF CACHE BOOL "Compat option to unset certain cached variables")
+
 if(UNIX AND NOT APPLE)
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         # user did not pass -DCMAKE_INSTALL_PREFIX and this is the first time we are executing cmake, the default is set
@@ -185,7 +188,9 @@ endif()
 if(WITH_WXPATH)
     set(ENV{PATH} ${WITH_WXPATH}:$ENV{PATH})
 endif()
-unset(WITH_WXPATH CACHE)
+if(NOT RETAIN_CACHED_VALUES)
+    unset(WITH_WXPATH CACHE)
+endif()
 
 if(WITH_WX_CONFIG)
     set(CL_WX_CONFIG ${WITH_WX_CONFIG})
@@ -303,7 +308,9 @@ if(ENABLE_LLDB MATCHES 0)
     set(WITH_LLDB 0)
     message("-- Disabling lldb support")
 endif()
-unset(ENABLE_LLDB CACHE)
+if(NOT RETAIN_CACHED_VALUES)
+    unset(ENABLE_LLDB CACHE)
+endif()
 
 set(DISABLE_CXX 0)
 if(PHP_BUILD MATCHES 1)
@@ -325,7 +332,10 @@ if(MAKE_RPM_SLIM MATCHES 1)
     set(WITH_SFTP 0)
 endif()
 
-unset(ENABLE_SFTP CACHE)
+if(NOT RETAIN_CACHED_VALUES)
+    unset(ENABLE_SFTP CACHE)
+endif()
+
 include(OSXInstall)
 
 if(WITH_SFTP)
@@ -436,7 +446,9 @@ if(AUTOGEN_REVISION MATCHES 0)
 else(AUTOGEN_REVISION MATCHES 1)
     set(MAKE_AUTOGEN_REVISION_STRING 1)
 endif(AUTOGEN_REVISION MATCHES 0)
-unset(AUTOGEN_REVISION CACHE)
+if(NOT RETAIN_CACHED_VALUES)
+    unset(AUTOGEN_REVISION CACHE)
+endif()
 
 set(BUILD_WXC 1)
 if(UNIX AND NOT APPLE)
@@ -447,7 +459,9 @@ endif(UNIX AND NOT APPLE)
 if(COPY_WX_LIBS MATCHES 1)
     set(CL_COPY_WX_LIBS 1)
 endif()
-unset(COPY_WX_LIBS CACHE)
+if(NOT RETAIN_CACHED_VALUES)
+    unset(COPY_WX_LIBS CACHE)
+endif()
 
 # file encoding detect
 if(UNIX
@@ -534,7 +548,10 @@ else() # NOT LINUX
     message("-- Using custom Notebook")
 endif()
 
-unset(CL_GTK_USE_NATIVEBOOK CACHE)
+if(NOT RETAIN_CACHED_VALUES)
+    unset(CL_GTK_USE_NATIVEBOOK CACHE)
+endif()
+
 
 # ######################################################################################################################
 # Global optimizations
@@ -640,8 +657,10 @@ else()
     endif()
 
 endif()
-unset(CMAKE_BUILD_TYPE CACHE)
-unset(PREVENT_WX_ASSERTS CACHE)
+if(NOT RETAIN_CACHED_VALUES)
+    unset(CMAKE_BUILD_TYPE CACHE)
+    unset(PREVENT_WX_ASSERTS CACHE)
+endif()
 
 # ######################################################################################################################
 # Determine if 32 or 64 bit
@@ -818,7 +837,9 @@ endif(UNIX AND NOT APPLE)
 if(WITH_PCH)
     set(USE_PCH 1)
 endif(WITH_PCH)
-unset(WITH_PCH CACHE)
+if(NOT RETAIN_CACHED_VALUES)
+    unset(WITH_PCH CACHE)
+endif()
 
 if(MINGW AND USE_PCH)
     if(CMAKE_VERSION VERSION_LESS 3.16)

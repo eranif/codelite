@@ -882,6 +882,15 @@ clStatusBar* PluginManager::GetStatusBar()
     return NULL;
 }
 
+void PluginManager::ToggleWorkspacePane(const wxString& selectedWindow)
+{
+    if(ManagerST::Get()->IsPaneVisible(wxT("Workspace View"))) {
+        ManagerST::Get()->HidePane(wxT("Workspace View"));
+    } else {
+        ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
+    }
+}
+
 void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
 {
     if(ManagerST::Get()->IsPaneVisible(wxT("Output View"))) {

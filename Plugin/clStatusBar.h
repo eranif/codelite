@@ -34,6 +34,7 @@
 #include <wx/bitmap.h>
 
 class IManager;
+class clToolBarGeneric;
 class WXDLLIMPEXP_SDK clStatusBar : public wxCustomStatusBar
 {
     IManager* m_mgr;
@@ -63,6 +64,12 @@ protected:
     void DoUpdateView();
     void DoFieldClicked(int fieldIndex);
     int GetTextWidth(const wxString& text) const;
+
+    clToolBarGeneric* CreatePaneButtonsToolbar();
+    void OnSidebarUI(wxUpdateUIEvent& event);
+    void OnSidebar(wxCommandEvent& event);
+    void OnBottombarUI(wxUpdateUIEvent& event);
+    void OnBottombar(wxCommandEvent& event);
 
 public:
     clStatusBar(wxWindow* parent, IManager* mgr);

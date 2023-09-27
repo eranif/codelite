@@ -78,7 +78,7 @@ public:
 };
 #endif
 
-class WXDLLIMPEXP_SDK clToolBarGeneric : public wxPanel
+class WXDLLIMPEXP_SDK clToolBarGeneric : public wxControl
 {
 public:
     typedef std::vector<clToolBarButtonBase*> ToolVect_t;

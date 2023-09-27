@@ -99,7 +99,7 @@ void clToolBarNative::ShowMenuForButton(wxWindowID buttonID, wxMenu* menu)
 wxDEFINE_EVENT(wxEVT_TOOLBAR_CUSTOMISE, wxCommandEvent);
 clToolBarGeneric::clToolBarGeneric(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size,
                                    long style, const wxString& name)
-    : wxPanel(parent, winid, pos, size, style, name)
+    : wxControl(parent, winid, pos, size, style)
     , m_popupShown(false)
     , m_flags(kMiniToolBar)
 {
@@ -260,7 +260,9 @@ void clToolBarGeneric::Realize()
     wxMemoryDC dc(bmp);
     wxGCDC gcdc(dc);
     gcdc.SetFont(DrawingUtils::GetDefaultGuiFont());
-    SetSizeHints(CalculateRect(gcdc).GetSize());
+    auto sz = CalculateRect(gcdc).GetSize();
+    SetSizeHints(sz);
+    SetSize(sz);
     Refresh();
 }
 
@@ -533,7 +535,7 @@ void clToolBarGeneric::UpdateWindowUI(long flags)
         DoIdleUpdate();
     }
 
-    wxPanel::UpdateWindowUI(flags);
+    wxControl::UpdateWindowUI(flags);
 }
 
 void clToolBarGeneric::DoIdleUpdate()

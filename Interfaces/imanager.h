@@ -145,6 +145,13 @@ public:
     virtual void ShowOutputPane(const wxString& selectWindow = "") = 0;
 
     /**
+     * @brief toggle the workspace pane and if provided, select 'selectedWindow'
+     * @param selectWindow tab within the 'Workspace Pane' to select, if empty don't change
+     * the selection
+     */
+    virtual void ToggleWorkspacePane(const wxString& selectWindow = "") = 0;
+
+    /**
      * @brief show the toolbar. This only works when using the native toolbar
      */
     virtual void ShowToolBar(bool show = true) = 0;

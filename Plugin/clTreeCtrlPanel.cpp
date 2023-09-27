@@ -55,7 +55,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     ::MSWSetNativeTheme(GetTreeCtrl());
     GetTreeCtrl()->SetFont(DrawingUtils::GetDefaultGuiFont());
 
-    m_toolbar = new clToolBar(this);
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER | wxTB_FLAT);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(XRCID("link_editor"), _("Link Editor"), images->Add("link_editor"), "", wxITEM_CHECK);
@@ -1185,7 +1185,6 @@ void clTreeCtrlPanel::RefreshTree()
     if(clGetManager()->GetActiveEditor() && (m_options & kLinkToEditor)) {
         CallAfter(&clTreeCtrlPanel::ExpandToFileVoid, clGetManager()->GetActiveEditor()->GetFileName());
     }
-
 }
 
 void clTreeCtrlPanel::OnFilesCreated(clFileSystemEvent& event)

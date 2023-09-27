@@ -66,10 +66,17 @@ public:
 //================---------------
 class WXDLLIMPEXP_SDK wxCustomStatusBarField : public wxEvtHandler
 {
+public:
+    enum Flags {
+        AUTO_WIDTH = (1 << 0),
+    };
+
 protected:
     wxRect m_rect;
     wxString m_tooltip;
     wxCustomStatusBar* m_parent;
+    size_t m_flags = 0;
+    size_t m_autoWidth = 0;
 
 public:
     typedef wxSharedPtr<wxCustomStatusBarField> Ptr_t;
@@ -80,6 +87,12 @@ public:
     {
     }
     virtual ~wxCustomStatusBarField() {}
+
+    bool IsAutoWidth() const { return m_flags & AUTO_WIDTH; }
+    void SetAutoWidth(bool b) { m_flags |= AUTO_WIDTH; }
+
+    void SetAutoWidth(size_t w) { m_autoWidth = w; }
+    size_t GetAutoWidth() const { return m_autoWidth; }
 
     /**
      * @brief render the field content
@@ -135,6 +148,26 @@ public:
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
     void SetTextAlignment(wxAlignment align) { m_textAlign = align; }
+};
+
+//================---------------
+// Spacer field
+//================---------------
+class WXDLLIMPEXP_SDK wxCustomStatusBarSpacerField : public wxCustomStatusBarField
+{
+    wxString m_text;
+    size_t m_width;
+
+public:
+    wxCustomStatusBarSpacerField(wxCustomStatusBar* parent, size_t width)
+        : wxCustomStatusBarField(parent)
+        , m_width(width)
+    {
+    }
+    virtual ~wxCustomStatusBarSpacerField() {}
+    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
+    void SetWidth(size_t width) { this->m_width = width; }
+    size_t GetWidth() const { return m_width; }
 };
 
 //================---------------
@@ -284,6 +317,37 @@ public:
     }
     const wxString& GetLastArtNameUsedForPaint() const { return m_lastArtNameUsedForPaint; }
 
+    /// Add field to the status bar, returns its index
+    size_t AddField(wxCustomStatusBarField::Ptr_t field)
+    {
+        size_t idx = m_fields.size();
+        m_fields.push_back(field);
+        return idx;
+    }
+
+    /// Add field to the status bar, returns its index
+    size_t AddSpacer(size_t width)
+    {
+        size_t idx = m_fields.size();
+        m_fields.push_back(wxCustomStatusBarField::Ptr_t(new wxCustomStatusBarSpacerField(this, width)));
+        return idx;
+    }
+
+    /// Insert field at given position
+    size_t InsertField(size_t index, wxCustomStatusBarField::Ptr_t field)
+    {
+        if(index >= m_fields.size()) {
+            return AddField(field);
+        }
+        m_fields.insert(m_fields.begin() + index, field);
+        return index;
+    }
+
+    /// Call this method after done adding fields
+    /// The status bar uses this method to calculate the
+    /// width of dynamic width fields
+    void Finalize();
+
 public:
     wxCustomStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = 0);
     virtual ~wxCustomStatusBar();
@@ -291,8 +355,6 @@ public:
     void SetArt(wxCustomStatusBarArt::Ptr_t art);
 
     wxCustomStatusBarArt::Ptr_t GetArt() { return m_art; }
-
-    void AddField(wxCustomStatusBarField::Ptr_t field) { m_fields.push_back(field); }
 
     /**
      * @brief set text in the main status bar text area

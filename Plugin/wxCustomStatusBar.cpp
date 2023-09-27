@@ -134,6 +134,33 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
 }
 
 //========================------------------------------------
+// wxCustomStatusBarControlField
+//========================------------------------------------
+
+wxCustomStatusBarControlField::wxCustomStatusBarControlField(wxCustomStatusBar* parent, wxControl* control)
+    : wxCustomStatusBarField(parent)
+    , m_control(control)
+{
+}
+
+wxCustomStatusBarControlField::~wxCustomStatusBarControlField() {}
+void wxCustomStatusBarControlField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art)
+{
+    CHECK_PTR_RET(m_control);
+    wxUnusedVar(dc);
+    m_rect = rect;
+
+    // Draw the left side border
+    art->DrawFieldSeparator(dc, rect);
+
+    // Position the animation
+    wxSize control_size = m_control->GetSize();
+    wxCoord y = (rect.GetHeight() - control_size.GetHeight()) / 2 + rect.y;
+    wxCoord x = (rect.GetWidth() - control_size.GetWidth()) / 2 + rect.x;
+    m_control->Move(wxPoint(x, y + 1));
+}
+
+//========================------------------------------------
 //========================------------------------------------
 
 wxCustomStatusBarAnimationField::wxCustomStatusBarAnimationField(wxCustomStatusBar* parent, const wxBitmap& sprite,

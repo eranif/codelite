@@ -207,6 +207,48 @@ public:
 };
 
 //================---------------
+// Custom control
+//================---------------
+class WXDLLIMPEXP_SDK wxCustomStatusBarControlField : public wxCustomStatusBarField
+{
+    wxControl* m_control = nullptr;
+
+public:
+    /**
+     * @brief construct animation field.
+     */
+    wxCustomStatusBarControlField(wxCustomStatusBar* parent, wxControl* control);
+
+    virtual ~wxCustomStatusBarControlField();
+    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
+
+    void SetSize(const wxSize& size)
+    {
+        CHECK_PTR_RET(m_control);
+        m_control->SetSizeHints(size);
+        m_control->SetSize(size);
+    }
+
+    size_t GetWidth() const
+    {
+        if(m_control) {
+            return m_control->GetSize().GetWidth();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * @brief set the tooltip for the control
+     */
+    virtual void SetTooltip(const wxString& tooltip)
+    {
+        CHECK_PTR_RET(m_control);
+        m_control->SetToolTip(tooltip);
+    }
+};
+
+//================---------------
 // Custom status bar
 //================---------------
 class WXDLLIMPEXP_SDK wxCustomStatusBar : public wxStatusBar

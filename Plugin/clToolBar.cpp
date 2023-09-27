@@ -99,7 +99,7 @@ void clToolBarNative::ShowMenuForButton(wxWindowID buttonID, wxMenu* menu)
 wxDEFINE_EVENT(wxEVT_TOOLBAR_CUSTOMISE, wxCommandEvent);
 clToolBarGeneric::clToolBarGeneric(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size,
                                    long style, const wxString& name)
-    : wxControl(parent, winid, pos, size, style)
+    : wxControl(parent, winid, pos, size, style | wxNO_BORDER)
     , m_popupShown(false)
     , m_flags(kMiniToolBar)
 {

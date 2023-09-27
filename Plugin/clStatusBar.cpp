@@ -82,8 +82,10 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     wxCustomStatusBarField::Ptr_t button_field(new wxCustomStatusBarControlField(this, CreatePaneButtonsToolbar()));
     STATUSBAR_PANES_BUTTON_IDX = InsertField(0, button_field);
 
+#ifndef __WXMSW__
     // add a spacer first
     InsertField(0, wxCustomStatusBarField::Ptr_t(new wxCustomStatusBarSpacerField(this, 10)));
+#endif
 
     // set the width to include a possible label
     int lable_width = GetTextWidth("_Subversion_Subversion_");

@@ -1586,7 +1586,7 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     m_mainToolbar->AddSeparator();
 
     // debugger
-    add_main_toolbar_item(m_mainToolbar, "execute_no_debug", _("Run Active Project"), "execute", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "execute_no_debug", _("Run Active Project"), "run", toolSize);
     add_main_toolbar_item(m_mainToolbar, "stop_executed_program", _("Stop Running Program"), "execute_stop", toolSize);
     add_main_toolbar_item(m_mainToolbar, "start_debugger", _("Start or Continue debugger"), "start-debugger", toolSize);
     m_mainToolbar->Realize();

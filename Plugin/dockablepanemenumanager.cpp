@@ -47,7 +47,7 @@ void DockablePaneMenuManager::HackHidePane(bool commit, wxAuiPaneInfo& pane_info
     if(pane_info.IsOk() && pAui) {
         int width = 0;
         int height = 0;
-        pane_info.window->GetClientSize(&width, &height);
+        pane_info.window->GetSize(&width, &height);
         pane_info.BestSize(width, height); // save for later subsequent show
         pane_info.Hide();
 

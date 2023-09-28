@@ -1,78 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   data-name="Livello 1"
-   id="Livello_1"
-   viewBox="0 0 64 64"
+   width="800px"
+   height="800px"
+   viewBox="0 0 16 16"
+   fill="#000000"
    version="1.1"
+   id="svg4"
    sodipodi:docname="file_save_all.svg"
-   inkscape:version="0.92.1 r15371"
-   width="64"
-   height="64">
-  <metadata
-     id="metadata13">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs11" />
+     id="defs8" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
+     id="namedview6"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
      borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
+     inkscape:pageshadow="0"
      inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1042"
-     id="namedview9"
+     inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="10.429825"
-     inkscape:cx="32.64149"
-     inkscape:cy="31.884658"
-     inkscape:window-x="2191"
-     inkscape:window-y="157"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="Livello_1" />
-  <g
-     id="g966"
-     transform="translate(-2.4648895,0.942325)"
-     style="stroke:#666666;fill:none">
-    <path
-       id="path892"
-       d="M 12.638504,2.0000058 V 8.0879882 H 6.931979 6.929779 V 60.11535 H 56.29132 v -0.0022 h 0.0022 V 54.027413 H 62 V 8.2918702 c -0.01504,-0.01162 -0.03111,-0.0235 -0.04604,-0.03508 v 0.0044 L 53.963073,2 Z"
-       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:4;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:connector-curvature="0"
-       d="M 6.929779,8.0879882 V 60.113533 H 56.29139 v -45.73553 c -0.01504,-0.01162 -0.03031,-0.02279 -0.04524,-0.03436 v 0.0036 L 48.25613,8.0879772 Z m 13.426176,0.03436 H 42.955647 V 19.422197 H 20.355955 Z M 14.957137,37.600089 H 48.354461 V 59.948672 H 14.957137 Z"
-       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:4;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path897" />
-  </g>
+     inkscape:zoom="1.09125"
+     inkscape:cx="400"
+     inkscape:cy="400"
+     inkscape:window-width="3440"
+     inkscape:window-height="1361"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="M14.85 2.65l-1.5-1.5L13 1H4.48l-.5.5V4H1.5l-.5.5v10l.5.5h10l.5-.5V12h2.5l.5-.5V3l-.15-.35zM11 14H2V5h1v3.07h6V5h.79L11 6.21V14zM6 7V5h2v2H6zm8 4h-2V6l-.15-.35-1.5-1.5L10 4H5V2h7.81l1.21 1.21L14 11z"
+     id="path2"
+     style="fill:#808080" />
 </svg>

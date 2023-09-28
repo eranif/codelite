@@ -1,67 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   data-name="Livello 1"
-   id="Livello_1"
-   viewBox="0 0 64 64"
+   width="800px"
+   height="800px"
+   viewBox="0 0 16 16"
+   fill="#000000"
    version="1.1"
+   id="svg4"
    sodipodi:docname="file_save.svg"
-   inkscape:version="0.92.1 r15371"
-   width="64"
-   height="64">
-  <metadata
-     id="metadata13">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs11" />
+     id="defs8" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
+     id="namedview6"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
      borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
+     inkscape:pageshadow="0"
      inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="2328"
-     inkscape:window-height="1103"
-     id="namedview9"
+     inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="5.6568542"
-     inkscape:cx="18.980832"
-     inkscape:cy="-2.1559255"
-     inkscape:window-x="2018"
-     inkscape:window-y="115"
+     inkscape:zoom="1.09125"
+     inkscape:cx="400.91638"
+     inkscape:cy="400"
+     inkscape:window-width="1902"
+     inkscape:window-height="1091"
+     inkscape:window-x="347"
+     inkscape:window-y="163"
      inkscape:window-maximized="0"
-     inkscape:current-layer="Livello_1" />
+     inkscape:current-layer="svg4" />
   <path
-     id="rect4601"
-     style="fill:none;fill-opacity:1;stroke:#cccccc;stroke-width:4;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="M 18.968119,2.0000002 H 45.031883 V 15.031883 H 18.968119 Z M 12.91855,35.872284 h 38.516452 v 25.77416 H 12.91855 Z M 3.5361348,2.0000001 V 62 H 60.463865 V 9.254145 c -0.01726,-0.013402 -0.03487,-0.026281 -0.05214,-0.039629 v 0.00416 L 51.196997,2.0000001 Z" />
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="M13.353 1.146l1.5 1.5L15 3v11.5l-.5.5h-13l-.5-.5v-13l.5-.5H13l.353.146zM2 2v12h12V3.208L12.793 2H11v4H4V2H2zm6 0v3h2V2H8z"
+     id="path2"
+     style="fill:#b3b3b3;stroke:none;stroke-opacity:1" />
 </svg>

@@ -75,13 +75,6 @@ public:
     bool IsEmpty() const { return m_bom.IsEmpty(); }
 };
 
-class WXDLLIMPEXP_SDK clEventDisabler
-{
-public:
-    clEventDisabler();
-    ~clEventDisabler();
-};
-
 /**
  * \brief send command event to the application (wxTheApp),
  * \param eventId

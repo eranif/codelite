@@ -1062,10 +1062,11 @@ bool MainBook::CloseAll(bool cancellable)
     m_reloadingDoRaise = true;
 
     // Delete all detached editors
-    EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
-    for(; iter != m_detachedEditors.end(); ++iter) {
-        (*iter)->Destroy(); // Destroying the frame will release the editor
+    for(auto frame : m_detachedEditors) {
+        // Destroying the frame will release the editor
+        frame->Destroy();
     }
+    m_detachedEditors.clear();
 
     // Since we got no more editors opened,
     // send a wxEVT_ALL_EDITORS_CLOSED event

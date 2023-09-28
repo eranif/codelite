@@ -1882,9 +1882,6 @@ wxString clEditor::GetWordAtCaret(bool wordCharsOnly) { return GetWordAtPosition
 //---------------------------------------------------------------------------
 void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool onlyRefresh)
 {
-    if(EventNotifier::Get()->IsEventsDiabled())
-        return;
-
     if(AutoCompActive())
         return; // Don't clobber the boxes
 
@@ -1940,8 +1937,6 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
 //------------------------------------------------------------------
 void clEditor::CodeComplete(bool refreshingList)
 {
-    if(EventNotifier::Get()->IsEventsDiabled())
-        return;
     if(AutoCompActive())
         return; // Don't clobber the boxes..
 
@@ -4557,10 +4552,6 @@ int clEditor::GetEOLByOS()
 void clEditor::ShowFunctionTipFromCurrentPos()
 {
     if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
-
-        if(EventNotifier::Get()->IsEventsDiabled())
-            return;
-
         int pos = DoGetOpenBracePos();
         // see if any of the plugins want to handle it
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());

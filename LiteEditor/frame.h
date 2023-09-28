@@ -146,7 +146,7 @@ class clMainFrame : public wxFrame
     clCaptionBar* m_captionBar = nullptr;
 #endif
     // the main tool default style
-    int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER /* hidden by default */;
+    int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER | wxTB_RIGHT /* on the right by default */;
 
 public:
     static bool m_initCompleted;

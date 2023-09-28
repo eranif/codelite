@@ -1541,12 +1541,6 @@ void clMainFrame::DoCreateToolBar(int toolSize)
         return;
     }
 
-#ifdef __WXMAC__
-    // By default, place it at the top
-    m_mainToolbarStyle &= ~TB_POS_ALL;
-    m_mainToolbarStyle |= wxTB_TOP;
-#endif
-
     // the main tool
     const int ID_TOOLBAR = 500;
     toolSize = 16;

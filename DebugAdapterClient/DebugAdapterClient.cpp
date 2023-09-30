@@ -486,6 +486,14 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
         }
     }
 
+    if(working_directory.empty()) {
+        // always pass a working directory
+        working_directory =
+            clWorkspaceManager::Get().IsWorkspaceOpened()
+                ? wxFileName(clWorkspaceManager::Get().GetWorkspace()->GetFileName()).GetPath(wxPATH_UNIX)
+                : ::wxGetCwd();
+    }
+
     // start the debugger
     if(!InitialiseSession(dap_server, exepath, args, working_directory, ssh_account, env)) {
         return;

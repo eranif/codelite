@@ -24,6 +24,48 @@ The Debug Adapter Protocol is a win for both debugger providers and tooling vend
 CodeLite does not install any debug adapter; this needs to be done manually.
 Visit the [microsoft implementation page][2] to see the full list.
 
+### cpptools (VS Code)
+
+#### Install cpptools
+
+Download VS Code cpptools that provides a DAP debugger that supports both `clang`, `gcc` & `cl`
+
+- Visit the latest [cpptools release page][8] and download the `.vsix` file for your platform
+- Rename the `.vsix` file that you downloaded into `.zip`
+- unzip it into a folder: for example: `unzip -d $HOME/cpptools-linux cpptools-linux.zip`
+- Move the file `extension/cppdbg.ad7Engine.json` into `extension/debugAdapters/bin/.ad7Engine.json` (notice the name change)
+- ( `Linux` & `macOS` ) Ensure the binary has execute permissions: `chmod +x extension/debugAdapters/bin/OpenDebugAD7`
+
+
+An Example:
+
+For the purpose of this document, lets assume that you are running on Linux ( `x86_64` ) and the current
+cpptools version is `1.17.5` (which is the latest version at time of writing this document):
+
+```bash
+wget https://github.com/microsoft/vscode-cpptools/releases/download/v1.17.5/cpptools-linux.vsix
+mv cpptools-linux.vsix cpptools-linux.zip
+unzip -d $HOME/cpptools cpptools-linux.zip
+cd cpptools-linux
+cp extension/cppdbg.ad7Engine.json extension/debugAdapters/bin/.ad7Engine.json
+chmod +x extension/debugAdapters/bin/OpenDebugAD7
+```
+
+#### Configure CodeLite
+
+Since `cpptools` is not installed into a common place, you will have to configure CodeLite manually:
+
+* Go to: `Settings` &#8594; `Debug Adapter Client`
+* Click on the `+` button ("New")
+* Set the new DAP server name to `cpptool` and click `OK` 
+* You should now have a new tab named `cpptools`, select it and set the following values:
+    * **Command** : `$HOME/cpptools/extension/debugAdapters/bin/OpenDebugAD7 --server` (replace the path with the actual path of `OpenDebugAD7`)
+    * **Connection string**: `tcp://127.0.0.1:4711`
+* Click `OK`
+* You can now choose to use `cpptools` as your debugger
+
+----
+
 ### lldb-vscode
 
 A wrapper for the `lldb` debugger that implements the Debug Adapter Protocol
@@ -119,3 +161,4 @@ The configuration dialog is minimal and contains the following fields:
  [5]: https://github.com/microsoft/debugpy/blob/main/doc/Subprocess%20debugging.md
  [6]: /getting_started/linux/#optional-install-brew-for-linux
  [7]: /getting_started/macos/#install-brew
+ [8]: https://github.com/microsoft/vscode-cpptools/releases/latest

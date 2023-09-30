@@ -1,5 +1,7 @@
 #include "StringUtils.h"
 
+#include "clModuleLogger.hpp"
+
 #include <vector>
 #include <wx/tokenzr.h>
 
@@ -412,16 +414,18 @@ clEnvList_t StringUtils::ResolveEnvList(const clEnvList_t& env_list)
     wxEnvVariableHashMap current_env;
     ::wxGetEnvMap(&current_env);
 
-    clEnvList_t result;
-    result.reserve(env_list.size());
+    for(auto [env_var_name, env_var_value] : env_list) {
+        env_var_value = expand_env_variable(env_var_value, current_env);
+        current_env.erase(env_var_name);
+        current_env.insert({ env_var_name, env_var_value });
+    }
 
-    for(auto& p : env_list) {
-        wxString key = p.first;
-        wxString value = p.second;
-        value = expand_env_variable(value, current_env);
-        current_env.erase(key);
-        current_env.insert({ key, value });
-        result.push_back({ key, value });
+    clEnvList_t result;
+    result.reserve(current_env.size());
+
+    // convert the hash map into list and return it
+    for(const auto& [env_var_name, env_var_value] : current_env) {
+        result.push_back({ env_var_name, env_var_value });
     }
     return result;
 }

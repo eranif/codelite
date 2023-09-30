@@ -1205,6 +1205,7 @@ bool DebugAdapterClient::StartSocketDap()
     wxString command = ReplacePlaceholders(dap_server.GetCommand());
 
     LOG_DEBUG(LOG) << "starting dap with command:" << command << endl;
+
     if(m_session.debug_over_ssh) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
@@ -1213,6 +1214,7 @@ bool DebugAdapterClient::StartSocketDap()
                                                 wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName()));
     } else {
         // launch local process
+        EnvSetter env; // apply CodeLite env variables
         auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
         m_dap_server.reset(::CreateAsyncProcess(
             this, command, IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole, wxEmptyString,

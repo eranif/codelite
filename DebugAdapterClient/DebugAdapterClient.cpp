@@ -970,6 +970,14 @@ void DebugAdapterClient::OnDapLaunchResponse(DAPEvent& event)
 
 void DebugAdapterClient::OnDapInitializeResponse(DAPEvent& event)
 {
+    if(m_session.working_directory.empty() && m_session.dap_server.GetLaunchType() == DapLaunchType::LAUNCH) {
+        // ensure we have a working directory
+        m_session.working_directory =
+            clWorkspaceManager::Get().IsWorkspaceOpened()
+                ? wxFileName(clWorkspaceManager::Get().GetWorkspace()->GetFileName()).GetPath(wxPATH_UNIX)
+                : ::wxGetCwd();
+    }
+
     LOG_DEBUG(LOG) << "got initialize response" << endl;
     LOG_DEBUG(LOG) << "Starting debugger for command:" << endl;
     LOG_DEBUG(LOG) << m_session.command << endl;

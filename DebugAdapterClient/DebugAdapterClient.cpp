@@ -1097,8 +1097,6 @@ void DebugAdapterClient::OnDapSetFunctionBreakpointResponse(DAPEvent& event)
 {
     auto resp = event.GetDapResponse()->As<dap::SetFunctionBreakpointsResponse>();
     CHECK_PTR_RET(resp);
-
-    // delete all breakpoints associated with the reported file
     m_sessionBreakpoints.delete_by_paths(resp->breakpoints);
 
     for(const auto& bp : resp->breakpoints) {
@@ -1112,11 +1110,23 @@ void DebugAdapterClient::OnDapSetSourceBreakpointResponse(DAPEvent& event)
     auto resp = event.GetDapResponse()->As<dap::SetBreakpointsResponse>();
     CHECK_PTR_RET(resp);
 
+    auto req = event.GetOriginatingReuqest();
+    CHECK_PTR_RET(req);
+
+    auto set_bp_req = req->As<dap::SetBreakpointsRequest>();
+    CHECK_PTR_RET(set_bp_req);
+
     // delete all breakpoints associated with the reported file
-    LOG_DEBUG(LOG) << "Deleting session breakpoints for file:" << resp->originSource << endl;
+    // in some cases, the DAP server does not report back a file
+    // so we use the originating request path instead
+    LOG_DEBUG(LOG) << "Deleting session breakpoints for file:"
+                   << (resp->originSource.empty() ? set_bp_req->arguments.source.path : resp->originSource) << endl;
     m_sessionBreakpoints.delete_by_path(resp->originSource);
 
-    for(const auto& bp : resp->breakpoints) {
+    for(auto bp : resp->breakpoints) {
+        if(bp.source.path.empty()) {
+            bp.source.path = set_bp_req->arguments.source.path;
+        }
         m_sessionBreakpoints.update_or_insert(bp);
     }
     RefreshBreakpointsView();
@@ -1128,9 +1138,16 @@ void DebugAdapterClient::OnDapBreakpointEvent(DAPEvent& event)
     CHECK_PTR_RET(event_data);
     CHECK_PTR_RET(m_breakpointsView);
     // check the event reason
-    const auto& bp = event_data->breakpoint;
+    auto bp = event_data->breakpoint;
+
+    // load the current bp before we modify it
+    dap::Breakpoint before_bp;
+    m_sessionBreakpoints.find_by_id(bp.id, &before_bp);
     m_sessionBreakpoints.delete_by_id(bp.id);
     if(event_data->reason != "removed") {
+        if(bp.source.path.empty()) {
+            bp.source.path = before_bp.source.path;
+        }
         m_sessionBreakpoints.update_or_insert(bp);
     }
     RefreshBreakpointsView();
@@ -1145,15 +1162,16 @@ void DebugAdapterClient::OnDapRunInTerminal(DAPEvent& event)
     // send the response back to the dap server
     auto response = m_client.MakeRequest<dap::RunInTerminalResponse>();
     LOG_DEBUG(LOG) << "RunInTerminal process ID:" << process_id << endl;
-    response.request_seq = request->seq;
+    response->request_seq = request->seq;
     if(process_id == wxNOT_FOUND) {
-        response.success = false;
-        response.processId = 0;
+        response->success = false;
+        response->processId = 0;
     } else {
-        response.success = true;
-        response.processId = process_id;
+        response->success = true;
+        response->processId = process_id;
     }
-    m_client.SendResponse(response);
+    m_client.SendResponse(*response);
+    wxDELETE(response);
 }
 
 /// --------------------------------------------------------------------------
@@ -1283,7 +1301,13 @@ void DebugAdapterClient::StartAndConnectToDapServer()
 
     // construct new client with the transport
     m_client.SetTransport(transport);
-    m_client.Initialize(); // send protocol Initialize request
+
+    // send protocol Initialize request
+    dap::InitializeRequestArguments init_request_args;
+    init_request_args.clientID = "CodeLite";
+    init_request_args.linesStartAt1 = true;
+    init_request_args.clientName = "CodeLite IDE";
+    m_client.Initialize(&init_request_args);
 }
 
 void DebugAdapterClient::OnFileLoaded(clCommandEvent& event) { event.Skip(); }

@@ -1,23 +1,15 @@
 #include "clControlWithItems.h"
 
+#include "clThemedTextCtrl.hpp"
 #include "clTreeCtrl.h"
 #include "file_logger.h"
 
 #include <cmath>
 #include <wx/minifram.h>
+#include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
-
-#if defined(__WXGTK__) || defined(__WXOSX__)
-#define USE_PANEL_PARENT 1
-#else
-#define USE_PANEL_PARENT 0
-#endif
-
-#if USE_PANEL_PARENT
-#include <wx/panel.h>
-#endif
 
 wxDEFINE_EVENT(wxEVT_TREE_SEARCH_TEXT, wxTreeEvent);
 wxDEFINE_EVENT(wxEVT_TREE_CLEAR_SEARCH, wxTreeEvent);
@@ -27,7 +19,7 @@ wxDEFINE_EVENT(wxEVT_TREE_CLEAR_SEARCH, wxTreeEvent);
 //===------------------------
 class clSearchControl : public wxPanel
 {
-    wxTextCtrl* m_textCtrl = nullptr;
+    clThemedTextCtrl* m_textCtrl = nullptr;
     clControlWithItems* m_searchedCtrl = nullptr;
 
 private:
@@ -72,10 +64,11 @@ public:
         wxPanel* mainPanel = new wxPanel(this);
         GetSizer()->Add(mainPanel, 1, wxEXPAND);
         mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
-        m_textCtrl = new wxTextCtrl(mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-                                    wxTE_RICH | wxTE_PROCESS_ENTER);
+        m_textCtrl = new clThemedTextCtrl(mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
+        m_textCtrl->SetUseVerticalScrollBar(false); // don't show v-scrollbar
+        m_textCtrl->SetWrapMode(wxSTC_WRAP_CHAR);   // this will effectivley hide the v-scrollbar
         mainPanel->GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
-        m_textCtrl->Bind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
+        m_textCtrl->Bind(wxEVT_STC_MODIFIED, &clSearchControl::OnTextUpdated, this);
         m_textCtrl->Bind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
         SetFocusAfter();
         GetSizer()->Fit(this);
@@ -84,7 +77,7 @@ public:
     virtual ~clSearchControl()
     {
 
-        m_textCtrl->Unbind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
+        m_textCtrl->Unbind(wxEVT_STC_MODIFIED, &clSearchControl::OnTextUpdated, this);
         m_textCtrl->Unbind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
     }
 
@@ -92,7 +85,7 @@ public:
     void SelectNext() { DoSelect(true); }
     void SelectPrev() { DoSelect(false); }
 
-    void SetFocusAfter() { m_textCtrl->CallAfter(&wxTextCtrl::SetFocus); }
+    void SetFocusAfter() { m_textCtrl->CallAfter(&wxStyledTextCtrl::SetFocus); }
 
     void Dismiss()
     {
@@ -113,13 +106,13 @@ public:
         Destroy();
     }
 
-    void OnTextUpdated(wxCommandEvent& event)
+    void OnTextUpdated(wxStyledTextEvent& event)
     {
         event.Skip();
         wxTreeEvent e(wxEVT_TREE_SEARCH_TEXT);
-        e.SetString(m_textCtrl->GetValue());
+        e.SetString(m_textCtrl->GetText());
         e.SetEventObject(GetParent());
-        m_searchedCtrl->GetEventHandler()->QueueEvent(e.Clone());
+        m_searchedCtrl->GetEventHandler()->AddPendingEvent(e);
     }
 
     void OnKeyDown(wxKeyEvent& event)
@@ -469,7 +462,22 @@ bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
     }
 
     m_searchControl = new clSearchControl(GetParent(), this);
-    GetParent()->GetSizer()->Insert(0, m_searchControl, 0, wxEXPAND);
+    auto sizer = GetParent()->GetSizer();
+
+    // find the tree position in the sizer
+    size_t pos = 0;
+    int current_pos = 0;
+    for(auto child : sizer->GetChildren()) {
+        if(child->GetWindow() == this) {
+            // found our position
+            pos = current_pos;
+            break;
+        }
+        ++current_pos;
+    }
+
+    // place the search bar just before the tree
+    sizer->Insert(pos, m_searchControl, 0, wxEXPAND);
 
     // show it
     m_searchControl->Show();

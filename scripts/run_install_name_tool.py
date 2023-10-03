@@ -24,7 +24,7 @@ def run_command_and_return_output(
 
 brew_install_prefix = (
     run_command_and_return_output(
-        "brew --prefix --installed openssl pcre2 zstd xz libssh hunspell libtiff jpeg jpeg-turbo",
+        "brew --prefix --installed openssl pcre2 libssh hunspell",
         throw_err=True,
     )
     .strip()

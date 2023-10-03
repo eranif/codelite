@@ -1246,6 +1246,8 @@ void clMainFrame::CreateGUIControls()
 
 #if defined(__WXMSW__)
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
+#elif defined(__WXMAC__)
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 1);
 #else
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 #endif

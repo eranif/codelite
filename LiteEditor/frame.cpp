@@ -163,7 +163,7 @@ wxBorder get_border_simple_theme_aware_bit()
 #elif defined(__WXGTK__)
     return wxBORDER_STATIC;
 #else
-    return clSystemSettings::Get().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+    return wxBORDER_NONE;
 #endif
 } // DoGetBorderSimpleBit
 } // namespace
@@ -1245,7 +1245,7 @@ void clMainFrame::CreateGUIControls()
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BUTTON_SIZE, GetBestXButtonSize(this));
 
 #if defined(__WXMSW__)
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 #elif defined(__WXMAC__)
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 1);
 #else

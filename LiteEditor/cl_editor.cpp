@@ -149,6 +149,26 @@ static int ID_OPEN_URL = wxNOT_FOUND;
 namespace
 {
 
+/// A helper class that sets the cursor of the current control to
+/// left pointing arrow and restores it once its destroyed
+struct CursorChanger {
+    wxWindow* win = nullptr;
+    wxCursor old_cursor;
+    CursorChanger(wxWindow* w)
+        : win(w)
+    {
+        CHECK_PTR_RET(win);
+        old_cursor = win->GetCursor();
+        win->SetCursor(wxCURSOR_ARROW);
+    }
+
+    ~CursorChanger()
+    {
+        CHECK_PTR_RET(win);
+        win->SetCursor(old_cursor);
+    }
+};
+
 class clEditorDropTarget : public wxDropTarget
 {
     wxStyledTextCtrl* m_stc;
@@ -3611,6 +3631,7 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
     // +++++--------------------------
     // Popup the menu
     // +++++--------------------------
+    CursorChanger cd{ this };
     PopupMenu(menu);
     wxDELETE(menu);
 

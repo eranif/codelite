@@ -33,7 +33,7 @@
 
 void DockablePaneMenuManager::HackShowPane(wxAuiPaneInfo& pane_info, wxAuiManager* pAui)
 {
-    if(pane_info.IsOk() && pAui) {
+    if(pane_info.IsOk() && pAui && pane_info.best_size != wxDefaultSize)  {
         pane_info.MinSize(pane_info.best_size); // saved while hiding
         pane_info.Show();
         pAui->Update();

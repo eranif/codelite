@@ -159,7 +159,7 @@ int FrameTimerId = wxNewId();
 wxBorder get_border_simple_theme_aware_bit()
 {
 #ifdef __WXMAC__
-    return clSystemSettings::Get().IsDark() ? wxBORDER_SIMPLE : wxBORDER_THEME;
+    return wxBORDER_NONE;
 #elif defined(__WXGTK__)
     return wxBORDER_STATIC;
 #else

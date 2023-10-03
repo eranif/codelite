@@ -1384,7 +1384,7 @@ wxString DebugAdapterClient::NormaliseReceivedPath(const wxString& path) const
 
 void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
 {
-    if(sourceId.sourceReference <= 0) {
+    if(sourceId.sourceReference <= 0 && !sourceId.path.empty()) {
         // use local file system
         // not a server file, load it locally
         wxFileName fp(sourceId.path);
@@ -1415,7 +1415,7 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
             }
         }
 
-    } else {
+    } else if(sourceId.sourceReference > 0) {
         // reference file, load it into the editor
 
         // easy path

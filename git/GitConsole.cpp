@@ -27,6 +27,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "GitResetDlg.h"
+#include "StdToWX.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clBitmap.h"
@@ -463,12 +464,39 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
 {
     CHECK_ITEM_RET(event.GetItem());
 
-    wxArrayString files;
     GitClientData* gcd = GIT_ITEM_DATA(event.GetItem());
-    if(gcd) {
-        GIT_MESSAGE("Showing diff for: %s", gcd->GetPath().c_str());
+    CHECK_PTR_RET(gcd);
+
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+
+    wxString difftool = data.GetDifftool();
+    if(difftool.empty()) {
+        const std::vector<wxString> options = { "built-in", "vimdiff", "vimdiff1", "vimdiff2", "vimdiff3", "winmerge" };
+        wxArrayString wx_options;
+        StdToWX::ToArrayString(options, &wx_options);
+        difftool = ::wxGetSingleChoice(_("Choose a tool to use:"), "CodeLite", wx_options, 0);
+        if(difftool.empty()) {
+            // user hit cancel
+            return;
+        }
+
+        data.SetDifftool(difftool);
+        data.Save();
+
+        wxString message;
+        message << _("Your diff tool is set to: ") << difftool << "\n"
+                << _("You can change this from the menu bar: Plugins > Git > GIT plugin settings > Tools");
+        ::wxMessageBox(message);
+    }
+
+    if(difftool == "built-in") {
+        wxArrayString files;
         files.push_back(gcd->GetPath());
         m_git->ShowDiff(files);
+    } else {
+        m_git->ShowExternalDiff(gcd->GetPath(), difftool);
     }
 }
 

@@ -21,6 +21,8 @@
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/textctrl.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/splitter.h>
@@ -33,13 +35,11 @@
 #include "clToolBar.h"
 #include <wx/srchctrl.h>
 #include <wx/combobox.h>
-#include <wx/arrstr.h>
 #include <wx/listbox.h>
 #include "gitCommitEditor.h"
 #include <wx/radiobox.h>
 #include <wx/statbox.h>
 #include <wx/radiobut.h>
-#include <wx/choice.h>
 #include <wx/spinctrl.h>
 #include <wx/notebook.h>
 #include "clGenericNotebook.hpp"
@@ -75,6 +75,8 @@ protected:
     wxFilePickerCtrl* m_pathGITK;
     wxStaticText* m_staticText355;
     wxTextCtrl* m_textCtrlGitShell;
+    wxStaticText* m_staticText824;
+    wxChoice* m_choiceDiffTools;
     wxPanel* m_panel234;
     wxStaticText* m_staticText246;
     wxTextCtrl* m_textCtrlGlobalName;
@@ -105,6 +107,8 @@ public:
     wxFilePickerCtrl* GetPathGITK() { return m_pathGITK; }
     wxStaticText* GetStaticText355() { return m_staticText355; }
     wxTextCtrl* GetTextCtrlGitShell() { return m_textCtrlGitShell; }
+    wxStaticText* GetStaticText824() { return m_staticText824; }
+    wxChoice* GetChoiceDiffTools() { return m_choiceDiffTools; }
     wxPanel* GetPanel232() { return m_panel232; }
     wxStaticText* GetStaticText246() { return m_staticText246; }
     wxTextCtrl* GetTextCtrlGlobalName() { return m_textCtrlGlobalName; }

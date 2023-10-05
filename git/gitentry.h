@@ -154,6 +154,7 @@ class GitEntry : public clConfigItem
     int m_gitBlameDlgMainSashPos;
     int m_gitBlameDlgHSashPos;
     int m_gitBlameDlgVSashPos;
+    wxString m_difftool;
 
 public:
     enum {
@@ -256,5 +257,7 @@ public:
     virtual JSONItem ToJSON() const;
 
     bool IsShowBlameInfoInStatusBar() const { return m_flags & Git_Show_Commit_Info; }
+    void SetDifftool(const wxString& difftool) { this->m_difftool = difftool; }
+    const wxString& GetDifftool() const { return m_difftool; }
 };
 #endif

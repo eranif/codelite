@@ -56,8 +56,8 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer240->Add(fgSizer11, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText42 = new wxStaticText(m_panel232, wxID_ANY, _("Git executable:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panel232, wxSize(-1, -1)), 0);
+    m_staticText42 =
+        new wxStaticText(m_panel232, wxID_ANY, _("git:"), wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1, -1)), 0);
 
     fgSizer11->Add(m_staticText42, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -67,7 +67,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     fgSizer11->Add(m_pathGIT, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticText54 = new wxStaticText(m_panel232, wxID_ANY, _("Gitk executable:"), wxDefaultPosition,
+    m_staticText54 = new wxStaticText(m_panel232, wxID_ANY, _("gitk:"), wxDefaultPosition,
                                       wxDLG_UNIT(m_panel232, wxSize(-1, -1)), 0);
 
     fgSizer11->Add(m_staticText54, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -78,7 +78,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     fgSizer11->Add(m_pathGITK, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticText355 = new wxStaticText(m_panel232, wxID_ANY, _("Git Shell command:"), wxDefaultPosition,
+    m_staticText355 = new wxStaticText(m_panel232, wxID_ANY, _("shell:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panel232, wxSize(-1, -1)), 0);
 
     fgSizer11->Add(m_staticText355, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -90,6 +90,23 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 #endif
 
     fgSizer11->Add(m_textCtrlGitShell, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText824 = new wxStaticText(m_panel232, wxID_ANY, _("diff tool:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel232, wxSize(-1, -1)), 0);
+
+    fgSizer11->Add(m_staticText824, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceDiffToolsArr;
+    m_choiceDiffToolsArr.Add(_("built-in"));
+    m_choiceDiffToolsArr.Add(_("vimdiff"));
+    m_choiceDiffToolsArr.Add(_("vimdiff1"));
+    m_choiceDiffToolsArr.Add(_("vimdiff2"));
+    m_choiceDiffToolsArr.Add(_("vimdiff3"));
+    m_choiceDiffToolsArr.Add(_("winmerge"));
+    m_choiceDiffTools = new wxChoice(m_panel232, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1, -1)),
+                                     m_choiceDiffToolsArr, 0);
+
+    fgSizer11->Add(m_choiceDiffTools, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panel234 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook230, wxSize(-1, -1)),
                              wxTAB_TRAVERSAL);

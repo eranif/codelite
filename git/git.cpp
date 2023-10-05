@@ -1107,6 +1107,11 @@ void GitPlugin::ProcessGitActionQueue()
         command_args << wxT("--no-pager show HEAD:") << ga.arguments;
         break;
 
+    case gitDiffFileExternal:
+        command_args << ga.arguments;
+        log_message = true;
+        break;
+
     case gitDiffRepoCommit:
         command_args << wxT("--no-pager diff --no-color HEAD");
         ShowProgress(wxT("Obtaining diffs for modified files..."));
@@ -2143,6 +2148,16 @@ void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files, bool useFileAsBa
         m_gitActionQueue.push_back(ga);
     }
 
+    ProcessGitActionQueue();
+}
+
+void GitPlugin::ShowExternalDiff(const wxString& file, const wxString& tool)
+{
+    // and finally, perform the action
+    // File name should be relative to the repo
+    gitAction ga(gitDiffFileExternal,
+                 wxString() << "difftool -y --tool=" << tool << " " << StringUtils::WrapWithDoubleQuotes(file));
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
 

@@ -54,6 +54,7 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, 
     m_textCtrlLocalName->ChangeValue(props.local_username);
     m_dirPickerGitRepoPath->SetPath(m_userEnteredRepoPath);
 
+    m_choiceDiffTools->SetStringSelection(data.GetDifftool());
     SetName("GitSettingsDlg");
     WindowAttrManager::Load(this);
 }
@@ -87,6 +88,7 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     data.SetGITExecutablePath(m_pathGIT->GetPath());
     data.SetGITKExecutablePath(m_pathGITK->GetPath());
     data.SetGitShellCommand(m_textCtrlGitShell->GetValue());
+    data.SetDifftool(m_choiceDiffTools->GetStringSelection()); // can be an empty string
 
     size_t flags = 0;
     if(m_checkBoxLog->IsChecked())

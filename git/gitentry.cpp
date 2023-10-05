@@ -136,6 +136,8 @@ void GitEntry::FromJSON(const JSONItem& json)
         workspace.FromJSON(arrWorkspaces.arrayItem(i));
         m_workspacesMap.insert(std::make_pair(workspace.GetWorkspaceName(), workspace));
     }
+
+    m_difftool = json["DiffTool"].toString();
 }
 
 JSONItem GitEntry::ToJSON() const
@@ -183,6 +185,7 @@ JSONItem GitEntry::ToJSON() const
     for(; it != m_workspacesMap.end(); ++it) {
         it->second.ToJSON(arrWorkspaces);
     }
+    json.addProperty("DiffTool", m_difftool);
     return json;
 }
 

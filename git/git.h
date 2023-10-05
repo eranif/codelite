@@ -106,6 +106,7 @@ class GitPlugin : public IPlugin
         gitAddFile,
         gitDeleteFile,
         gitDiffFile,
+        gitDiffFileExternal,
         gitDiffRepoCommit,
         gitDiffRepoShow,
         gitResetFile,
@@ -328,6 +329,7 @@ public:
     IManager* GetManager() { return m_mgr; }
 
     void ShowDiff(const wxArrayString& files) { DoShowDiffsForFiles(files); }
+    void ShowExternalDiff(const wxString& file, const wxString& tool);
 
     void ApplyPatch(const wxString& filename, const wxString& extraFlags);
     void AddFiles(const wxArrayString& files) { DoAddFiles(files); }

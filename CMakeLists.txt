@@ -53,7 +53,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set this option to "ON" in order to get CMake standard/expected behavior
-set(RETAIN_CACHED_VALUES OFF CACHE BOOL "Compat option to unset certain cached variables")
+set(RETAIN_CACHED_VALUES
+    OFF
+    CACHE BOOL "Compat option to unset certain cached variables")
 
 if(UNIX AND NOT APPLE)
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -552,7 +554,6 @@ if(NOT RETAIN_CACHED_VALUES)
     unset(CL_GTK_USE_NATIVEBOOK CACHE)
 endif()
 
-
 # ######################################################################################################################
 # Global optimizations
 # ######################################################################################################################
@@ -858,6 +859,9 @@ if(NOT SQLite3_FOUND)
     # On Linux, we use the distro's libsqlite3
     add_subdirectory(sqlite3)
 endif()
+
+# add the dtl module include path before we include Plugin folder
+include_directories(dtl)
 
 # build the Core part of CodeLite (regardless of the final target)
 add_subdirectory(sdk/wxsqlite3)

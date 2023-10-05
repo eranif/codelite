@@ -13,3 +13,6 @@
 [submodule "cc-wrapper"]
 	path = cc-wrapper
 	url = https://github.com/eranif/cc-wrapper
+[submodule "dtl"]
+	path = dtl
+	url = https://github.com/cubicdaiya/dtl.git

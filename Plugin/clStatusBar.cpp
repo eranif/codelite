@@ -620,6 +620,8 @@ int clStatusBar::GetTextWidth(const wxString& text) const
 clToolBarGeneric* clStatusBar::CreatePaneButtonsToolbar()
 {
     clToolBarGeneric* toolbar = new clToolBarGeneric(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
+    toolbar->ShowOverflowButton(false);
+
     clBitmapList* images = toolbar->GetBitmapsCreateIfNeeded();
     toolbar->AddTool(XRCID("sidebar-button"), _("Show workspace view pane"), images->Add("sidebar"), wxEmptyString,
                      wxITEM_CHECK);

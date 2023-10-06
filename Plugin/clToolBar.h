@@ -28,6 +28,7 @@ public:
                     const wxString& name = "clToolBarNative");
     virtual ~clToolBarNative();
     void SetMiniToolBar(bool) {}
+    void ShowOverflowButton(bool) {}
     wxToolBarToolBase* AddTool(wxWindowID id, const wxString& label, size_t bitmapIndex,
                                const wxString& helpString = "", wxItemKind kind = wxITEM_NORMAL);
     void AddSpacer() { AddSeparator(); }
@@ -95,6 +96,7 @@ private:
     bool m_useCustomBgColour = false;
     clBitmapList* m_bitmaps = nullptr;
     bool m_ownedBitmaps = false;
+    bool m_hasOverflowButton = true;
 
 public:
     enum eFlags {
@@ -184,6 +186,7 @@ public:
     void EnableCustomisation(bool b) { EnableFlag(kShowCustomiseMenu, b); }
     bool IsCustomisationEnabled() const { return HasFlag(kShowCustomiseMenu); }
     void SetMiniToolBar(bool b) { EnableFlag(kMiniToolBar, b); }
+    void ShowOverflowButton(bool b) { m_hasOverflowButton = b; }
     bool IsMiniToolBar() const { return HasFlag(kMiniToolBar); }
     void SetGroupSpacing(int spacing);
     int GetGroupSpacing() const { return m_groupSpacing; }

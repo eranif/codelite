@@ -174,8 +174,10 @@ void clToolBarGeneric::OnPaint(wxPaintEvent& event)
 
     wxColour tbBgColour;
     DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
-    clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
-    DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
+    if(m_hasOverflowButton) {
+        clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
+        DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
+    }
     tbBgColour = DrawingUtils::GetMenuBarBgColour(HasFlag(kMiniToolBar));
 
     // Prepare for drawings
@@ -189,14 +191,16 @@ void clToolBarGeneric::OnPaint(wxPaintEvent& event)
         xx += GetGroupSpacing();
     }
 
-    wxRect chevronRect = GetClientRect();
-    chevronRect.SetX(chevronRect.GetX() + (chevronRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE));
-    chevronRect.SetWidth(CL_TOOL_BAR_CHEVRON_SIZE);
+    if(m_hasOverflowButton) {
+        wxRect chevronRect = GetClientRect();
+        chevronRect.SetX(chevronRect.GetX() + (chevronRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE));
+        chevronRect.SetWidth(CL_TOOL_BAR_CHEVRON_SIZE);
 
-    // If we have overflow buttons, draw an arrow to the right
-    if(!m_overflowButtons.empty() || IsCustomisationEnabled()) {
-        DrawingUtils::DrawDropDownArrow(this, gcdc, chevronRect, wxCONTROL_NONE);
-        m_chevronRect = chevronRect;
+        // If we have overflow buttons, draw an arrow to the right
+        if(!m_overflowButtons.empty() || IsCustomisationEnabled()) {
+            DrawingUtils::DrawDropDownArrow(this, gcdc, chevronRect, wxCONTROL_NONE);
+            m_chevronRect = chevronRect;
+        }
     }
 
     if(!(m_windowStyle & wxTB_NODIVIDER)) {
@@ -248,8 +252,10 @@ wxRect clToolBarGeneric::CalculateRect(wxDC& dc) const
         rect.width += buttonSize.GetWidth();
         rect.height = wxMax(rect.GetHeight(), buttonSize.GetHeight());
     });
-    // Always assume that we need the extra space for the chevron button
-    rect.width += CL_TOOL_BAR_CHEVRON_SIZE + 2;
+    if(m_hasOverflowButton) {
+        rect.width += CL_TOOL_BAR_CHEVRON_SIZE;
+    }
+    rect.width += 2;
     return rect;
 }
 

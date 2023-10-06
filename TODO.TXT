@@ -3,7 +3,6 @@ Debug Adapter Client
 
 - support attach to process
 - support debugging core
-- deleting breakpoints does not work
 
 others:
 ----

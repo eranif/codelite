@@ -1111,7 +1111,9 @@ void GitPlugin::ProcessGitActionQueue()
     case gitDiffFileExternal:
         command_args << ga.arguments;
         log_message = true;
-        open_with_terminal = true;
+        if(ga.arguments.Contains("vimdiff")) {
+            open_with_terminal = true;
+        }
         break;
 
     case gitDiffRepoCommit:
@@ -1260,8 +1262,10 @@ void GitPlugin::ProcessGitActionQueue()
     wxString workingDirectory = ga.workingDirectory.IsEmpty() ? m_repositoryDirectory : ga.workingDirectory;
     LOG_IF_TRACE { clTRACE() << "Running git command:" << command_args << endl; }
     if(open_with_terminal) {
+        // we need a terminal for when using "vimdiff" tools
         wxString cmd;
         cmd << StringUtils::WrapWithDoubleQuotes(m_pathGITExecutable) << " " << command_args;
+        GIT_MESSAGE("Launching command: %s", cmd);
         FileUtils::OpenTerminal(workingDirectory, cmd);
         m_gitActionQueue.pop_front();
     } else {

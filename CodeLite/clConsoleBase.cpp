@@ -3,6 +3,7 @@
 #include "clConsoleAlacritty.hpp"
 #include "clConsoleCMD.h"
 #include "clConsoleGnomeTerminal.h"
+#include "clConsoleKitty.hpp"
 #include "clConsoleKonsole.h"
 #include "clConsoleLXTerminal.h"
 #include "clConsoleMateTerminal.h"
@@ -62,6 +63,8 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
         terminal.reset(new clConsoleKonsole());
     } else if(terminalName.CmpNoCase("alacritty") == 0) {
         terminal.reset(new clConsoleAlacritty());
+    } else if(terminalName.CmpNoCase("kitty") == 0) {
+        terminal.reset(new clConsoleKitty());
     } else if(terminalName.CmpNoCase("lxterminal") == 0) {
         terminal.reset(new clConsoleLXTerminal());
     } else if(terminalName.CmpNoCase("mate-terminal") == 0) {
@@ -83,6 +86,8 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
         t->SetTerminalApp("iTerm");
     } else if(terminalName.CmpNoCase("alacritty") == 0) {
         terminal.reset(new clConsoleAlacritty());
+    } else if(terminalName.CmpNoCase("kitty") == 0) {
+        terminal.reset(new clConsoleKitty());
     }
 #endif
     return terminal;
@@ -101,9 +106,11 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     terminals.Add("qterminal");
     terminals.Add("xfce4-terminal");
     terminals.Add("rxvt-unicode");
+    terminals.Add("Kitty");
 #else
     terminals.Add("Terminal");
     terminals.Add("iTerm2");
+    terminals.Add("Kitty");
 #endif
     terminals.Add("alacritty");
     return terminals;
@@ -308,4 +315,22 @@ void clConsoleBase::SetEnvironment(const clEnvList_t& environment)
     for(const auto& p : environment) {
         m_environment.insert({ p.first, p.second });
     }
+}
+
+void clConsoleBase::MacAddArgsIfNeeded(wxString* outcmd)
+{
+    if(!IsTerminalNeeded()) {
+        return;
+    }
+
+#ifndef __WXMAC__
+    wxUnusedVar(outcmd);
+#else
+    if(!GetWorkingDirectory().empty() || !GetCommand().empty()) {
+        if(!outcmd->empty()) {
+            *outcmd << " ";
+        }
+        *outcmd << "--args ";
+    }
+#endif
 }

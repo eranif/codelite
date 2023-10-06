@@ -57,6 +57,7 @@ protected:
     wxString WrapWithQuotesIfNeeded(const wxString& s) const;
     wxString EscapeString(const wxString& str, const wxString& c = "\"") const;
     virtual bool StartProcess(const wxString& command);
+    void MacAddArgsIfNeeded(wxString* outcmd);
 
 public:
     clConsoleBase();

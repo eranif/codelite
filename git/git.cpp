@@ -1037,6 +1037,7 @@ void GitPlugin::ProcessGitActionQueue()
     wxString command_args;
     size_t createFlags = 0;
     bool log_message = false;
+    bool open_with_terminal = false;
     switch(ga.action) {
     case gitBlameSummary: {
         wxString filepath = ga.arguments;
@@ -1110,6 +1111,7 @@ void GitPlugin::ProcessGitActionQueue()
     case gitDiffFileExternal:
         command_args << ga.arguments;
         log_message = true;
+        open_with_terminal = true;
         break;
 
     case gitDiffRepoCommit:
@@ -1257,10 +1259,17 @@ void GitPlugin::ProcessGitActionQueue()
     EnvSetter es(&om);
     wxString workingDirectory = ga.workingDirectory.IsEmpty() ? m_repositoryDirectory : ga.workingDirectory;
     LOG_IF_TRACE { clTRACE() << "Running git command:" << command_args << endl; }
-    m_process = AsyncRunGit(this, command_args, createFlags | IProcessWrapInShell, workingDirectory, log_message);
-    if(!m_process) {
-        GIT_MESSAGE(wxT("Failed to execute git command!"));
-        DoRecoverFromGitCommandError();
+    if(open_with_terminal) {
+        wxString cmd;
+        cmd << StringUtils::WrapWithDoubleQuotes(m_pathGITExecutable) << " " << command_args;
+        FileUtils::OpenTerminal(workingDirectory, cmd);
+        m_gitActionQueue.pop_front();
+    } else {
+        m_process = AsyncRunGit(this, command_args, createFlags | IProcessWrapInShell, workingDirectory, log_message);
+        if(!m_process) {
+            GIT_MESSAGE(wxT("Failed to execute git command!"));
+            DoRecoverFromGitCommandError();
+        }
     }
 }
 

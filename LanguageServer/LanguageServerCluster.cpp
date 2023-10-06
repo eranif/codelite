@@ -868,7 +868,16 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
         for(const LSP::Diagnostic& d : event.GetDiagnostics()) {
             // LSP uses 1 based line numbers
             CompilerMessage cm{ d.GetMessage(), new DiagnosticsData(d) };
-            editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), std::move(cm));
+            switch(d.GetSeverity()) {
+            case LSP::DiagnosticSeverity::Error:
+                editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), std::move(cm));
+                break;
+            case LSP::DiagnosticSeverity::Warning:
+            case LSP::DiagnosticSeverity::Information:
+            case LSP::DiagnosticSeverity::Hint:
+                editor->SetWarningMarker(d.GetRange().GetStart().GetLine(), std::move(cm));
+                break;
+            }
         }
     } else {
         LSP_DEBUG() << "Setting diagnostics: could not locate editor for file:" << event.GetFileName() << endl;

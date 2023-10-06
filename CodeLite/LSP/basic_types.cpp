@@ -281,6 +281,7 @@ void Diagnostic::FromJSON(const JSONItem& json)
 {
     m_range.FromJSON(json.namedObject("range"));
     m_message = json.namedObject("message").toString();
+    m_severity = json.namedObject("severity").fromNumber(DiagnosticSeverity::Error);
 }
 
 JSONItem Diagnostic::ToJSON(const wxString& name) const
@@ -288,6 +289,7 @@ JSONItem Diagnostic::ToJSON(const wxString& name) const
     JSONItem json = JSONItem::createObject(name);
     json.append(m_range.ToJSON("range"));
     json.addProperty("message", GetMessage());
+    json.addProperty("severity", (int)m_severity);
     return json;
 }
 

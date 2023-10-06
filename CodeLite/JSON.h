@@ -123,6 +123,10 @@ public:
     char* FormatRawString(bool formatted = true) const;
     int arraySize() const;
     int toInt(int defaultVal = -1) const;
+
+    /// Convert the value into `T` from
+    template <typename T> T fromNumber(T default_value) const { return static_cast<T>(toInt((int)default_value)); }
+
     size_t toSize_t(size_t defaultVal = 0) const;
     double toDouble(double defaultVal = -1.0) const;
     wxFileName toFileName() const;

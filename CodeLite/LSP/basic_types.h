@@ -479,10 +479,30 @@ public:
     virtual JSONItem ToJSON(const wxString& name) const;
 };
 
+enum DiagnosticSeverity {
+    /**
+     * Reports an error.
+     */
+    Error = 1,
+    /**
+     * Reports a warning.
+     */
+    Warning = 2,
+    /**
+     * Reports an information.
+     */
+    Information = 3,
+    /**
+     * Reports a hint.
+     */
+    Hint = 4,
+};
+
 class WXDLLIMPEXP_CL Diagnostic : public Serializable
 {
     Range m_range;
     wxString m_message;
+    DiagnosticSeverity m_severity = DiagnosticSeverity::Error;
 
 public:
     virtual void FromJSON(const JSONItem& json);
@@ -507,6 +527,8 @@ public:
         return *this;
     }
     const wxString& GetMessage() const { return m_message; }
+    void SetSeverity(const DiagnosticSeverity& severity) { this->m_severity = severity; }
+    const DiagnosticSeverity& GetSeverity() const { return m_severity; }
 };
 
 class WXDLLIMPEXP_CL Command : public Serializable

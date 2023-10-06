@@ -82,7 +82,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     wxCustomStatusBarField::Ptr_t button_field(new wxCustomStatusBarControlField(this, CreatePaneButtonsToolbar()));
     STATUSBAR_PANES_BUTTON_IDX = InsertField(0, button_field);
 
-#ifndef __WXMSW__
+#ifdef __WXMAC__
     // add a spacer first
     InsertField(0, wxCustomStatusBarField::Ptr_t(new wxCustomStatusBarSpacerField(this, 10)));
 #endif

@@ -477,18 +477,23 @@ void wxCustomStatusBar::SetArt(wxCustomStatusBarArt::Ptr_t art)
 
 wxRect wxCustomStatusBar::DoGetMainFieldRect()
 {
-    // Calculate the fields length
     wxRect rect = GetClientRect();
+    size_t offset_x = 0;
+    for(auto field : m_fields) {
+        // Prepare the rect
+        if(field.get() == m_mainText.get()) {
+            // found the main text field
+            break;
+        }
+        size_t width = field->IsAutoWidth() ? field->GetAutoWidth() : field->GetWidth();
+        offset_x += width;
+    }
+
+    // Calculate the fields length
     size_t totalLength = rect.GetWidth();
     size_t fieldsLength = DoGetFieldsWidth();
-
-    size_t offsetX = 0;
-    if(totalLength <= fieldsLength) {
-        offsetX = 0;
-    } else {
-        offsetX = totalLength - fieldsLength;
-    }
-    wxRect mainRect(0, rect.y, offsetX, rect.height);
+    wxRect mainRect(offset_x, rect.y, m_mainText->IsAutoWidth() ? m_mainText->GetAutoWidth() : m_mainText->GetWidth(),
+                    rect.height);
     return mainRect;
 }
 

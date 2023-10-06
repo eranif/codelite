@@ -119,6 +119,8 @@ protected:
 public:
     static wxString CLANG_CACHE_LAZY;
     static wxString CLANG_CACHE_ON_FILE_LOAD;
+    static const std::vector<wxString>& GetDefaultTokens();
+    static const std::vector<wxString>& GetDefaultTypes();
 
 public:
     TagsOptionsData();

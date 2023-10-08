@@ -1,20 +1,21 @@
 #ifndef GTKNOTEBOOK_HPP
 #define GTKNOTEBOOK_HPP
 
-#include "cl_defs.h"
-
-#ifdef __WXGTK__
 #include "bitmap_loader.h"
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
 #include "cl_command_event.h"
+#include "cl_defs.h"
 
+#ifdef __WXGTK__
 #include <gtk/gtk.h>
+#endif
+
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/notebook.h>
 
-class clGTKNotebook : public wxNotebook
+class clNativeNotebook : public wxNotebook
 {
 protected:
     size_t m_bookStyle = kNotebook_Default;
@@ -39,22 +40,25 @@ protected:
     void DoUpdateHistoryPostRemove(wxWindow* page, bool deletedSelection);
 
 public:
-    int FindPageByGTKHandle(WXWidget page) const;
     void TabButtonClicked(wxWindow* page);
+
+#ifdef __WXGTK__
     void TabReordered();
+    int FindPageByGTKHandle(WXWidget page) const;
     void GTKLeftDClick(int index);
     void GTKMiddleDown(int index);
     void GTKRightDown(int index);
     void GTKActionButtonMenuClicked(GtkToolItem* button);
     void GTKActionButtonNewClicked(GtkToolItem* button);
+#endif
 
 public:
-    clGTKNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxNotebookNameStr);
+    clNativeNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxNotebookNameStr);
     bool Create(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxNotebookNameStr);
     // dtor
-    virtual ~clGTKNotebook();
+    virtual ~clNativeNotebook();
 
     clBitmapList* GetBitmaps() const { return m_bitmaps; }
     int GetPageBitmapIndex(size_t index) const;
@@ -101,5 +105,4 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCt
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NEW_PAGE, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
-#endif // defined(__WXGTK__)
 #endif // GTKNOTEBOOK_HPP

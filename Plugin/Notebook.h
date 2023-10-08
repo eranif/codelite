@@ -29,8 +29,8 @@
 #include "cl_defs.h"
 #if CL_USE_NATIVEBOOK
 
-#include "GTKNotebook.hpp"
-typedef clGTKNotebook Notebook;
+#include "clNativeNotebook.hpp"
+typedef clNativeNotebook Notebook;
 #else // !CL_USE_NATIVEBOOK
 
 #include "clGenericNotebook.hpp"

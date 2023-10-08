@@ -1,15 +1,10 @@
-#include "GTKNotebook.hpp"
-
-#include <wx/wupdlock.h>
-
-#ifdef __WXGTK__
+#include "clNativeNotebook.hpp"
 
 #include "clTabRenderer.h"
 #include "editor_config.h"
 #include "file_logger.h"
 
 #include <deque>
-#include <gtk/gtk.h>
 #include <iostream>
 #include <unordered_map>
 #include <vector>
@@ -18,7 +13,10 @@
 #include <wx/dnd.h>
 #include <wx/gdicmn.h>
 #include <wx/types.h>
+#include <wx/wupdlock.h>
 
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
 //===------------------
 // GTK specifics
 //===------------------
@@ -31,13 +29,13 @@ public:
     int m_imageIndex;
 };
 
-static void on_action_button_clicked(GtkWidget* widget, clGTKNotebook* book)
+static void on_action_button_clicked(GtkWidget* widget, clNativeNotebook* book)
 {
     wxUnusedVar(widget);
     book->GTKActionButtonMenuClicked(GTK_TOOL_ITEM(widget));
 }
 
-static void on_action_button_new_clicked(GtkWidget* widget, clGTKNotebook* book)
+static void on_action_button_new_clicked(GtkWidget* widget, clNativeNotebook* book)
 {
     wxUnusedVar(widget);
     book->GTKActionButtonNewClicked(GTK_TOOL_ITEM(widget));
@@ -47,22 +45,20 @@ static void on_button_clicked(GtkWidget* widget, gpointer* data)
 {
     wxUnusedVar(widget);
     wxWindow* page = reinterpret_cast<wxWindow*>(data);
-    clGTKNotebook* book = dynamic_cast<clGTKNotebook*>(page->GetParent());
+    clNativeNotebook* book = dynamic_cast<clNativeNotebook*>(page->GetParent());
     book->TabButtonClicked(page);
 }
 
-static void on_page_reordered(clGTKNotebook* notebook, GtkWidget* child, guint page_num, gpointer user_data)
+static void on_page_reordered(clNativeNotebook* notebook, GtkWidget* child, guint page_num, gpointer user_data)
 {
     wxUnusedVar(notebook);
     wxUnusedVar(child);
     wxUnusedVar(page_num);
-    clGTKNotebook* wxbook = reinterpret_cast<clGTKNotebook*>(user_data);
+    clNativeNotebook* wxbook = reinterpret_cast<clNativeNotebook*>(user_data);
     wxbook->TabReordered();
 }
 
-#define INVALID_POS ((size_t)-1)
-
-static wxRect get_label_rect(clGTKNotebook* win, int i)
+static wxRect get_label_rect(clNativeNotebook* win, int i)
 {
     auto box = win->GetNotebookPage(i)->m_box;
     GtkAllocation a;
@@ -70,7 +66,7 @@ static wxRect get_label_rect(clGTKNotebook* win, int i)
     return wxRect(a.x, a.y, a.width, a.height);
 }
 
-static gboolean button_press_event(GtkWidget* widget, GdkEventButton* gdk_event, clGTKNotebook* win)
+static gboolean button_press_event(GtkWidget* widget, GdkEventButton* gdk_event, clNativeNotebook* win)
 {
     // take the current cursor position
     wxPoint pt = ::wxGetMousePosition();
@@ -119,48 +115,50 @@ static gboolean button_press_event(GtkWidget* widget, GdkEventButton* gdk_event,
         return false;
     }
 }
+#endif
 
 //===------------------
 //===------------------
 
-clGTKNotebook::clGTKNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
-                             const wxString& name)
+clNativeNotebook::clNativeNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+                                   const wxString& name)
     : wxNotebook(parent, id, pos, size, wxBK_DEFAULT | (style & kNotebook_FixedWidth ? wxNB_FIXEDWIDTH : 0), name)
 {
     Initialise(style);
 }
 
-clGTKNotebook::~clGTKNotebook()
+clNativeNotebook::~clNativeNotebook()
 {
     wxDELETE(m_tabContextMenu);
     wxDELETE(m_bitmaps);
-    Unbind(wxEVT_NOTEBOOK_PAGE_CHANGING, &clGTKNotebook::OnPageChanging, this);
-    Unbind(wxEVT_NOTEBOOK_PAGE_CHANGED, &clGTKNotebook::OnPageChanged, this);
+    Unbind(wxEVT_NOTEBOOK_PAGE_CHANGING, &clNativeNotebook::OnPageChanging, this);
+    Unbind(wxEVT_NOTEBOOK_PAGE_CHANGED, &clNativeNotebook::OnPageChanged, this);
 }
 
-bool clGTKNotebook::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
-                           const wxString& name)
+bool clNativeNotebook::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+                              const wxString& name)
 {
     Initialise(style);
     return wxNotebook::Create(parent, id, pos, size,
                               wxBK_DEFAULT | (style & kNotebook_FixedWidth ? wxNB_FIXEDWIDTH : 0));
 }
 
-int clGTKNotebook::SetSelection(size_t nPage)
+int clNativeNotebook::SetSelection(size_t nPage)
 {
     int res = wxNotebook::SetSelection(nPage);
     m_history->Push(GetCurrentPage());
     return res;
 }
 
-int clGTKNotebook::ChangeSelection(size_t nPage)
+int clNativeNotebook::ChangeSelection(size_t nPage)
 {
     int res = wxNotebook::ChangeSelection(nPage);
     m_history->Push(GetCurrentPage());
     return res;
 }
 
-void clGTKNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, int bmp, const wxString& shortLabel)
+void clNativeNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, int bmp,
+                               const wxString& shortLabel)
 {
     if(!page) {
         return;
@@ -178,8 +176,8 @@ void clGTKNotebook::AddPage(wxWindow* page, const wxString& label, bool selected
     DoFinaliseAddPage(page, shortLabel, bmp);
 }
 
-bool clGTKNotebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, int bmp,
-                               const wxString& shortLabel)
+bool clNativeNotebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, int bmp,
+                                  const wxString& shortLabel)
 {
     if(!page) {
         return false;
@@ -198,7 +196,7 @@ bool clGTKNotebook::InsertPage(size_t index, wxWindow* page, const wxString& lab
     return true;
 }
 
-int clGTKNotebook::GetPageIndex(wxWindow* page) const
+int clNativeNotebook::GetPageIndex(wxWindow* page) const
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
         if(page == GetPage(i)) {
@@ -208,16 +206,19 @@ int clGTKNotebook::GetPageIndex(wxWindow* page) const
     return wxNOT_FOUND;
 }
 
-void clGTKNotebook::BindEvents()
+void clNativeNotebook::BindEvents()
 {
-    Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, &clGTKNotebook::OnPageChanging, this);
-    Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &clGTKNotebook::OnPageChanged, this);
+    Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, &clNativeNotebook::OnPageChanging, this);
+    Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &clNativeNotebook::OnPageChanged, this);
 
+#ifdef __WXGTK__
     g_signal_connect(GTK_WIDGET(GetHandle()), "button_press_event", G_CALLBACK(button_press_event), this);
     g_signal_connect(GTK_NOTEBOOK(GetHandle()), "page-reordered", G_CALLBACK(on_page_reordered), this);
+#endif
 }
 
-void clGTKNotebook::GTKLeftDClick(int index)
+#ifdef __WXGTK__
+void clNativeNotebook::GTKLeftDClick(int index)
 {
     if(index != wxNOT_FOUND) {
         // Fire event
@@ -228,7 +229,7 @@ void clGTKNotebook::GTKLeftDClick(int index)
     }
 }
 
-void clGTKNotebook::GTKMiddleDown(int index)
+void clNativeNotebook::GTKMiddleDown(int index)
 {
     if(m_bookStyle & kNotebook_MouseMiddleClickClosesTab) {
         // Close the tab
@@ -242,7 +243,7 @@ void clGTKNotebook::GTKMiddleDown(int index)
     }
 }
 
-void clGTKNotebook::GTKRightDown(int index)
+void clNativeNotebook::GTKRightDown(int index)
 {
     if(m_tabContextMenu) {
         if(GetSelection() != index) {
@@ -258,7 +259,19 @@ void clGTKNotebook::GTKRightDown(int index)
     }
 }
 
-bool clGTKNotebook::GetPageDetails(wxWindow* page, int& curindex, wxString& label, int& imageId) const
+int clNativeNotebook::FindPageByGTKHandle(WXWidget page) const
+{
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        if(page == GetPage(i)->GetHandle()) {
+            return i;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+#endif
+
+bool clNativeNotebook::GetPageDetails(wxWindow* page, int& curindex, wxString& label, int& imageId) const
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
         if(page == GetPage(i)) {
@@ -271,17 +284,7 @@ bool clGTKNotebook::GetPageDetails(wxWindow* page, int& curindex, wxString& labe
     return false;
 }
 
-int clGTKNotebook::FindPageByGTKHandle(WXWidget page) const
-{
-    for(size_t i = 0; i < GetPageCount(); ++i) {
-        if(page == GetPage(i)->GetHandle()) {
-            return i;
-        }
-    }
-    return wxNOT_FOUND;
-}
-
-void clGTKNotebook::OnPageChanged(wxBookCtrlEvent& e)
+void clNativeNotebook::OnPageChanged(wxBookCtrlEvent& e)
 {
     wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
     event.SetEventObject(this);
@@ -291,7 +294,7 @@ void clGTKNotebook::OnPageChanged(wxBookCtrlEvent& e)
     m_history->Push(GetCurrentPage());
 }
 
-void clGTKNotebook::OnPageChanging(wxBookCtrlEvent& e)
+void clNativeNotebook::OnPageChanging(wxBookCtrlEvent& e)
 {
     // wrap this event with our own event
     wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGING);
@@ -308,7 +311,7 @@ void clGTKNotebook::OnPageChanging(wxBookCtrlEvent& e)
     e.Skip();
 }
 
-wxWindow* clGTKNotebook::DoUpdateHistoryPreRemove(wxWindow* page)
+wxWindow* clNativeNotebook::DoUpdateHistoryPreRemove(wxWindow* page)
 {
     bool deletingSelection = (page == GetCurrentPage());
     wxWindow* nextSelection = nullptr;
@@ -326,7 +329,7 @@ wxWindow* clGTKNotebook::DoUpdateHistoryPreRemove(wxWindow* page)
     return nextSelection;
 }
 
-void clGTKNotebook::DoUpdateHistoryPostRemove(wxWindow* page, bool deletedSelection)
+void clNativeNotebook::DoUpdateHistoryPostRemove(wxWindow* page, bool deletedSelection)
 {
     // Choose a new selection
     if(deletedSelection) {
@@ -342,7 +345,7 @@ void clGTKNotebook::DoUpdateHistoryPostRemove(wxWindow* page, bool deletedSelect
     }
 }
 
-bool clGTKNotebook::RemovePage(size_t page, bool notify)
+bool clNativeNotebook::RemovePage(size_t page, bool notify)
 {
     if(GetPageCount() <= page) {
         return false;
@@ -380,9 +383,9 @@ bool clGTKNotebook::RemovePage(size_t page, bool notify)
     return true;
 }
 
-bool clGTKNotebook::RemovePage(size_t page) { return RemovePage(page, false); }
+bool clNativeNotebook::RemovePage(size_t page) { return RemovePage(page, false); }
 
-bool clGTKNotebook::DeletePage(size_t page, bool notify)
+bool clNativeNotebook::DeletePage(size_t page, bool notify)
 {
     if(GetPageCount() <= page) {
         return false;
@@ -422,9 +425,9 @@ bool clGTKNotebook::DeletePage(size_t page, bool notify)
     return true;
 }
 
-bool clGTKNotebook::DeletePage(size_t page) { return DeletePage(page, true); }
+bool clNativeNotebook::DeletePage(size_t page) { return DeletePage(page, true); }
 
-void clGTKNotebook::TabButtonClicked(wxWindow* page)
+void clNativeNotebook::TabButtonClicked(wxWindow* page)
 {
     int where = GetPageIndex(page);
     if(where == wxNOT_FOUND) {
@@ -443,7 +446,7 @@ void clGTKNotebook::TabButtonClicked(wxWindow* page)
     }
 }
 
-void clGTKNotebook::Initialise(long style)
+void clNativeNotebook::Initialise(long style)
 {
     m_bitmaps = new clBitmapList;
     m_history.reset(new clTabHistory());
@@ -452,6 +455,7 @@ void clGTKNotebook::Initialise(long style)
         SetPadding(wxSize(5, 5));
     }
 
+#ifdef __WXGTK__
     GtkWidget* box = nullptr;
     if(m_bookStyle & (kNotebook_NewButton | kNotebook_ShowFileListButton)) {
 #if defined(__WXGTK20__) && !defined(__WXGTK3__)
@@ -479,11 +483,12 @@ void clGTKNotebook::Initialise(long style)
         gtk_notebook_set_action_widget(GTK_NOTEBOOK(GetHandle()), GTK_WIDGET(box), GTK_PACK_END);
         gtk_widget_show_all(box);
     }
+#endif
 
     BindEvents();
 }
 
-void clGTKNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, int bmp)
+void clNativeNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, int bmp)
 {
     // do we need to add buton?
     int index = GetPageIndex(page);
@@ -498,6 +503,7 @@ void clGTKNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel
     data.tooltip = shortlabel;
     data.bitmap = bmp;
 
+#ifdef __WXGTK__
     wxGtkNotebookPage* p = GetNotebookPage(index);
     if(m_bookStyle & kNotebook_CloseButtonOnActiveTab) {
         GtkToolItem* button = gtk_tool_button_new(nullptr, "✖");
@@ -520,6 +526,7 @@ void clGTKNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel
         // we allow tabs to be moved around
         gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(GetHandle()), GTK_WIDGET(page->GetHandle()), true);
     }
+#endif
 
     // wxNotebook does not fire wxEVT_NOTEBOOK_PAGE_CHANGED
     // when we are inserting/adding the first page
@@ -533,7 +540,8 @@ void clGTKNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel
     }
 }
 
-void clGTKNotebook::TabReordered()
+#ifdef __WXGTK__
+void clNativeNotebook::TabReordered()
 {
     // we need to update two data structures:
     // m_pagesData & m_pages
@@ -562,9 +570,11 @@ void clGTKNotebook::TabReordered()
         m_pagesData.push_back(modifiedPagesDataList[i]);
     }
 }
+#endif
 
-void clGTKNotebook::SetTabDirection(wxDirection d)
+void clNativeNotebook::SetTabDirection(wxDirection d)
 {
+#ifdef __WXGTK__
     GtkPositionType pos;
     switch(d) {
     case wxLEFT:
@@ -584,15 +594,18 @@ void clGTKNotebook::SetTabDirection(wxDirection d)
         break;
     }
     gtk_notebook_set_tab_pos(GTK_NOTEBOOK(GetHandle()), pos);
+#else
+    wxUnusedVar(d);
+#endif
 }
 
-void clGTKNotebook::EnableStyle(NotebookStyle style, bool enable)
+void clNativeNotebook::EnableStyle(NotebookStyle style, bool enable)
 {
     wxUnusedVar(style);
     wxUnusedVar(enable);
 }
 
-wxWindow* clGTKNotebook::GetCurrentPage() const
+wxWindow* clNativeNotebook::GetCurrentPage() const
 {
     if(GetSelection() == wxNOT_FOUND) {
         return nullptr;
@@ -600,7 +613,7 @@ wxWindow* clGTKNotebook::GetCurrentPage() const
     return GetPage(GetSelection());
 }
 
-bool clGTKNotebook::DeleteAllPages()
+bool clNativeNotebook::DeleteAllPages()
 {
     if(GetPageCount() == 0) {
         return true;
@@ -613,7 +626,7 @@ bool clGTKNotebook::DeleteAllPages()
     return true;
 }
 
-void clGTKNotebook::SetPageBitmap(size_t index, int bmp)
+void clNativeNotebook::SetPageBitmap(size_t index, int bmp)
 {
     wxUnusedVar(bmp);
     wxWindow* win = GetPage(index);
@@ -624,13 +637,13 @@ void clGTKNotebook::SetPageBitmap(size_t index, int bmp)
     m_userData[win].bitmap = bmp;
 }
 
-wxBitmap clGTKNotebook::GetPageBitmap(size_t index) const
+wxBitmap clNativeNotebook::GetPageBitmap(size_t index) const
 {
     wxUnusedVar(index);
     return wxNullBitmap;
 }
 
-int clGTKNotebook::GetPageIndex(const wxString& label) const
+int clNativeNotebook::GetPageIndex(const wxString& label) const
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
         if(GetPageText(i) == label) {
@@ -640,14 +653,14 @@ int clGTKNotebook::GetPageIndex(const wxString& label) const
     return wxNOT_FOUND;
 }
 
-void clGTKNotebook::GetAllPages(std::vector<wxWindow*>& pages)
+void clNativeNotebook::GetAllPages(std::vector<wxWindow*>& pages)
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
         pages.push_back(GetPage(i));
     }
 }
 
-bool clGTKNotebook::SetPageToolTip(size_t page, const wxString& tooltip)
+bool clNativeNotebook::SetPageToolTip(size_t page, const wxString& tooltip)
 {
     wxWindow* win = GetPage(page);
     if(m_userData.count(win) == 0) {
@@ -657,7 +670,7 @@ bool clGTKNotebook::SetPageToolTip(size_t page, const wxString& tooltip)
     return true;
 }
 
-bool clGTKNotebook::MoveActivePage(int newIndex)
+bool clNativeNotebook::MoveActivePage(int newIndex)
 {
     wxWindow* curpage = GetCurrentPage();
     if(curpage == nullptr) {
@@ -672,13 +685,13 @@ bool clGTKNotebook::MoveActivePage(int newIndex)
     return true;
 }
 
-clTabHistory::Ptr_t clGTKNotebook::GetHistory() const
+clTabHistory::Ptr_t clNativeNotebook::GetHistory() const
 {
     // return the history
     return m_history;
 }
 
-size_t clGTKNotebook::GetAllTabs(clTabInfo::Vec_t& tabs)
+size_t clNativeNotebook::GetAllTabs(clTabInfo::Vec_t& tabs)
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
         clTabInfo::Ptr_t info(new clTabInfo(nullptr, 0, GetPage(i), GetPageText(i), wxNOT_FOUND));
@@ -687,7 +700,8 @@ size_t clGTKNotebook::GetAllTabs(clTabInfo::Vec_t& tabs)
     return tabs.size();
 }
 
-void clGTKNotebook::GTKActionButtonMenuClicked(GtkToolItem* button)
+#ifdef __WXGTK__
+void clNativeNotebook::GTKActionButtonMenuClicked(GtkToolItem* button)
 {
     clTabInfo::Vec_t tabs;
     GetAllTabs(tabs);
@@ -734,7 +748,7 @@ void clGTKNotebook::GTKActionButtonMenuClicked(GtkToolItem* button)
     // Let others handle this event as well
     clContextMenuEvent menuEvent(wxEVT_BOOK_FILELIST_BUTTON_CLICKED);
     menuEvent.SetMenu(&menu);
-    menuEvent.SetEventObject(this); // The clGTKNotebook
+    menuEvent.SetEventObject(this); // The clNativeNotebook
     GetEventHandler()->ProcessEvent(menuEvent);
 
     if(menu.GetMenuItemCount() == 0) {
@@ -782,18 +796,17 @@ void clGTKNotebook::GTKActionButtonMenuClicked(GtkToolItem* button)
     }
 }
 
-void clGTKNotebook::GTKActionButtonNewClicked(GtkToolItem* button)
+void clNativeNotebook::GTKActionButtonNewClicked(GtkToolItem* button)
 {
     wxUnusedVar(button);
     wxBookCtrlEvent event(wxEVT_BOOK_NEW_PAGE);
     event.SetEventObject(this);
     GetEventHandler()->ProcessEvent(event);
 }
+#endif
 
-int clGTKNotebook::GetPageBitmapIndex(size_t index) const
+int clNativeNotebook::GetPageBitmapIndex(size_t index) const
 {
     // TODO :: implement this
     return wxNOT_FOUND;
 }
-
-#endif // __WXGTK3__

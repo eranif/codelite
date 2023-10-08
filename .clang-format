@@ -52,3 +52,4 @@ TabWidth: 4
 UseTab: Never
 SortIncludes: true
 IncludeBlocks: Regroup
+AlwaysBreakTemplateDeclarations: true

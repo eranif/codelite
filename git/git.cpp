@@ -2516,6 +2516,7 @@ void GitPlugin::DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString&
 
 void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 {
+    m_commitDialogIsShown = true;
     wxString lastCommitString, commitHistory;
     // Find the title/body message of the previous commit, in case the user wants to amend it
     DoExecuteCommandSync("log -1 --pretty=format:\"%B\"", &lastCommitString);
@@ -2527,7 +2528,9 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
     dlg.AppendDiff(diff);
     dlg.SetPreviousCommitMessage(lastCommitString);
     dlg.SetHistory(commitHistory);
-    if(dlg.ShowModal() == wxID_OK) {
+    auto res = dlg.ShowModal();
+    m_commitDialogIsShown = false;
+    if(res == wxID_OK) {
         if(dlg.GetSelectedFiles().IsEmpty() && !dlg.IsAmending())
             return;
         wxString message = dlg.GetCommitMessage();
@@ -2773,6 +2776,8 @@ void GitPlugin::OnAppActivated(wxCommandEvent& event)
 {
     event.Skip();
     CHECK_ENABLED_RETURN();
+    if(m_commitDialogIsShown)
+        return;
     CallAfter(&GitPlugin::DoRefreshView, false);
 }
 

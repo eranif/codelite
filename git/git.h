@@ -177,6 +177,7 @@ class GitPlugin : public IPlugin
     clCodeLiteRemoteProcess m_remoteProcess;
     wxString m_codeliteRemoteScriptPath;
     bool m_isEnabled = false;
+    bool m_commitDialogIsShown = false;
 
 private:
     void StartCodeLiteRemote();

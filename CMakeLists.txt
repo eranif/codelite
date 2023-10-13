@@ -704,9 +704,8 @@ message("-- OS_CODENAME is set to ${OS_CODENAME}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(ARCH 64)
-    set(ARCH_NAME x86_64)
 endif()
-
+set(ARCH_NAME ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message("-- ARCH ${ARCH}")
 message("-- ARCH_NAME ${ARCH_NAME}")
 

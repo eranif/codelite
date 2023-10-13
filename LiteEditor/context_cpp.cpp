@@ -2244,9 +2244,12 @@ void ContextCpp::OnCalltipCancel() {}
 void ContextCpp::DoUpdateCalltipHighlight()
 {
     CHECK_JS_RETURN_VOID();
-    clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) {
-        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+    
+    auto tip = GetCtrl().GetFunctionTip();
+    CHECK_PTR_RET(tip);
+    
+    if(tip->IsActive()) {
+        tip->Highlight(DoGetCalltipParamterIndex());
     }
 }
 

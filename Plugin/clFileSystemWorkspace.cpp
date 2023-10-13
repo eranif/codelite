@@ -1,6 +1,7 @@
 #include "clFileSystemWorkspace.hpp"
 
 #include "CompileCommandsGenerator.h"
+#include "ICompilerLocator.h"
 #include "JSON.h"
 #include "NewFileSystemWorkspaceDialog.h"
 #include "StringUtils.h"
@@ -797,7 +798,7 @@ void clFileSystemWorkspace::OnNewWorkspace(clCommandEvent& event)
 
 void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path, bool loadIfExists)
 {
-    wxFileName fn(path, "");
+    wxFileName fn(path, wxEmptyString);
     if(fn.GetDirCount() == 0) {
         ::wxMessageBox(_("Unable to create a workspace on the root folder"), "CodeLite", wxICON_ERROR | wxCENTER);
         return;
@@ -842,6 +843,10 @@ void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path,
     m_filename = fn;
     if(!fn.FileExists()) {
         Save(false);
+
+        // Check if we detect a:
+        // CMakeLists.txt file, if we do, prompt the user to add some custom commands
+        CheckForCMakeLists();
 
         // let the plugins know that we just created a new workspace file and we
         // are about to load it
@@ -1188,4 +1193,67 @@ clEnvList_t clFileSystemWorkspace::GetEnvironment() const
         env_list = StringUtils::BuildEnvFromString(envstr);
     }
     return env_list;
+}
+
+void clFileSystemWorkspace::CheckForCMakeLists()
+{
+    // Check for the existence of a CMakeLists.txt file
+    wxFileName cmakeListsTxt{ m_filename.GetPath(), "CMakeLists.txt" };
+    if(!cmakeListsTxt.FileExists()) {
+        return;
+    }
+
+    // Prompt the user for configuring the workspace
+    auto answer =
+        ::wxMessageBox(_("A CMakeLists.txt file was found in the workspace folder, would you like to use it?"),
+                       "CodeLite", wxYES_NO | wxYES_DEFAULT | wxCENTER);
+    if(answer != wxYES) {
+        return;
+    }
+
+    auto cmp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_CLANG);
+    if(!cmp) {
+        cmp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_GCC);
+    }
+
+    // Add 2 configurations: Debug and Release
+    auto& settings = GetSettings();
+    const std::vector<wxString> configurations = { "Debug", "Release" };
+
+    for(const auto& config_name : configurations) {
+        wxString cmake_generator;
+        wxString make_command;
+        wxString build_dir = "build-" + config_name.Lower();
+        wxString cmpiler_name = cmp ? cmp->GetName() : wxString();
+
+#ifdef __WXMSW__
+        make_command = "mingw32-make";
+        cmake_generator = "\"MinGW Makefiles\"";
+#else
+        make_command = "make";
+        cmake_generator = "\"Unix Makefiles\"";
+#endif
+
+        make_command << " -j" << std::thread::hardware_concurrency();
+
+        // the file exists, update the debug configuration
+        auto config = settings.GetConfig(config_name);
+        if(!config) {
+            settings.AddConfig(config_name);
+            config = settings.GetConfig(config_name);
+        }
+
+        if(!config) {
+            continue;
+        }
+
+        clDEBUG() << "Configuring workspace config:" << config_name << endl;
+        config->SetBuildTargets(
+            { { "build", wxString() << "cd " << build_dir << " && " << make_command },
+              { "clean", wxString() << "cd " << build_dir << " && " << make_command << " clean" },
+              { "cmake", wxString() << "mkdir -p " << build_dir << " && cd " << build_dir << " && cmake -G"
+                                    << cmake_generator << " .. -DCMAKE_BUILD_TYPE=" << config_name } });
+        config->SetCompiler(cmpiler_name);
+    }
+    settings.Save(m_filename.GetFullPath());
 }

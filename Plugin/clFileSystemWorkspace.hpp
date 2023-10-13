@@ -48,7 +48,8 @@ protected:
     void DoPrintBuildMessage(const wxString& message);
     clEnvList_t GetEnvList();
     CompilerPtr GetCompiler();
-
+    void CheckForCMakeLists();
+    
     //===--------------------------
     // Event handlers
     //===--------------------------

@@ -28,6 +28,7 @@
 
 #include "Notebook.h"
 #include "bitmap_loader.h"
+#include "clResult.hpp"
 #include "clStatusBar.h"
 #include "clTab.h"
 #include "clToolBar.h"
@@ -40,6 +41,7 @@
 #include "queuecommand.h"
 #include "wx/treectrl.h"
 
+#include <tuple>
 #include <vector>
 #include <wx/aui/framemanager.h>
 
@@ -80,6 +82,11 @@ enum TreeType { TreeFileView = 0, TreeFileExplorer };
 enum eOutputPaneTab { kOutputTab_Build, kOutputTab_Output };
 
 enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCurrent = 0x00000004 };
+
+enum class PaneId {
+    BOTTOM_BAR,
+    SIDE_BAR,
+};
 
 //------------------------------------------------------------------
 // Defines the interface of the manager
@@ -696,6 +703,37 @@ public:
      * @brief build and display the build menu for a toolbar button
      */
     virtual void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) = 0;
+
+    ///--------------------
+    /// Book management
+    ///--------------------
+
+    /// Add a book page
+    virtual void BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label) = 0;
+
+    /// Find a book page by its label
+    virtual wxWindow* BookGetPage(PaneId pane_id, const wxString& label) = 0;
+
+    /// Remove a book page (do not destroy it), return the removed page
+    virtual wxWindow* BookRemovePage(PaneId pane_id, const wxString& label) = 0;
+
+    /// Remove a book page (do not destroy it), return the removed page
+    virtual wxWindow* BookRemovePage(PaneId pane_id, wxWindow* page) = 0;
+
+    /// Delete a book page, return true on success, false otherwise
+    virtual bool BookDeletePage(PaneId pane_id, wxWindow* page) = 0;
+
+    /// Delete a book page, return true on success, false otherwise
+    virtual bool BookDeletePage(PaneId pane_id, const wxString& label) = 0;
+
+    /// Delete a book page, return true on success, false otherwise
+    virtual void BookSelectPage(PaneId pane_id, const wxString& label) = 0;
+
+    /// Delete a book page, return true on success, false otherwise
+    virtual void BookSelectPage(PaneId pane_id, wxWindow* win) = 0;
+
+    /// Get the book control
+    virtual wxWindow* BookGet(PaneId pane_id) = 0;
 };
 
 #endif // IMANAGER_H

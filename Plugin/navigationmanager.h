@@ -29,10 +29,9 @@
 #include "clWorkspaceEvent.hpp"
 #include "codelite_exports.h"
 #include "ieditor.h"
-#include "imanager.h"
 
 #include <stack>
-
+class IManager;
 /**
  * @class NavMgr
  * @brief a manager class that remembers navigation position in a queue

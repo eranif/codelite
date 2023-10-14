@@ -27,6 +27,7 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "ieditor.h"
+#include "imanager.h"
 
 #include <wx/stc/stc.h>
 

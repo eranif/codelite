@@ -979,3 +979,194 @@ bool PluginManager::SelectEditor(IEditor* editor)
     auto mainbook = clMainFrame::Get()->GetMainBook();
     return mainbook->SelectPage(editor->GetCtrl());
 }
+
+void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label)
+{
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR:
+        clMainFrame::Get()->GetOutputPane()->GetNotebook()->AddPage(page, label);
+        break;
+    case PaneId::SIDE_BAR:
+        clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label);
+        break;
+    }
+}
+
+namespace
+{
+template <typename BookT>
+wxWindow* find_page(BookT* book, const wxString& label)
+{
+    for(size_t i = 0; i < book->GetPageCount(); ++i) {
+        if(book->GetPageText(i) == label) {
+            return book->GetPage(i);
+        }
+    }
+    return nullptr;
+}
+
+template <typename BookT>
+bool find_page_label(BookT* book, wxWindow* page, wxString* label)
+{
+    for(size_t i = 0; i < book->GetPageCount(); ++i) {
+        if(book->GetPage(i) == page) {
+            *label = book->GetPageText(i);
+            return true;
+        }
+    }
+    return false;
+}
+
+template <typename BookT>
+int find_page_index(BookT* book, wxWindow* page)
+{
+    for(size_t i = 0; i < book->GetPageCount(); ++i) {
+        if(book->GetPage(i) == page) {
+            return i;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+template <typename BookT>
+int find_page_index(BookT* book, const wxString& label)
+{
+    for(size_t i = 0; i < book->GetPageCount(); ++i) {
+        if(book->GetPageText(i) == label) {
+            return i;
+        }
+    }
+    return wxNOT_FOUND;
+}
+} // namespace
+
+wxWindow* PluginManager::BookGetPage(PaneId pane_id, const wxString& label)
+{
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR:
+        return find_page(clMainFrame::Get()->GetOutputPane()->GetNotebook(), label);
+    case PaneId::SIDE_BAR:
+        return find_page(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), label);
+    }
+}
+
+wxWindow* PluginManager::BookRemovePage(PaneId pane_id, const wxString& label)
+{
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR: {
+        auto book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
+        int index = find_page_index(book, label);
+        CHECK_COND_RET_NULL(index != wxNOT_FOUND);
+        auto page = book->GetPage(index);
+        book->RemovePage(index);
+        return page;
+    } break;
+    case PaneId::SIDE_BAR:
+        auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+        int index = find_page_index(book, label);
+        CHECK_COND_RET_NULL(index != wxNOT_FOUND);
+        auto page = book->GetPage(index);
+        book->RemovePage(index);
+        return page;
+    }
+}
+
+wxWindow* PluginManager::BookRemovePage(PaneId pane_id, wxWindow* page)
+{
+    wxString label;
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR:
+        find_page_label(clMainFrame::Get()->GetOutputPane()->GetNotebook(), page, &label);
+        break;
+    case PaneId::SIDE_BAR:
+        find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
+        break;
+    }
+
+    if(label.empty()) {
+        return nullptr;
+    }
+    return BookRemovePage(pane_id, label);
+}
+
+wxWindow* PluginManager::BookGet(PaneId pane_id)
+{
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR:
+        return clMainFrame::Get()->GetOutputPane()->GetNotebook();
+    case PaneId::SIDE_BAR:
+        return clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+    }
+}
+
+bool PluginManager::BookDeletePage(PaneId pane_id, wxWindow* page)
+{
+    wxString label;
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR:
+        find_page_label(clMainFrame::Get()->GetOutputPane()->GetNotebook(), page, &label);
+        break;
+    case PaneId::SIDE_BAR:
+        find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
+        break;
+    }
+
+    if(label.empty()) {
+        return false;
+    }
+    return BookDeletePage(pane_id, label);
+}
+
+bool PluginManager::BookDeletePage(PaneId pane_id, const wxString& label)
+{
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR: {
+        auto book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
+        int index = find_page_index(book, label);
+        CHECK_COND_RET_FALSE(index != wxNOT_FOUND);
+        auto page = book->GetPage(index);
+        book->RemovePage(index);
+        return true;
+    } break;
+    case PaneId::SIDE_BAR:
+        auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+        int index = find_page_index(book, label);
+        CHECK_COND_RET_FALSE(index != wxNOT_FOUND);
+        auto page = book->GetPage(index);
+        book->RemovePage(index);
+        return true;
+    }
+}
+
+void PluginManager::BookSelectPage(PaneId pane_id, const wxString& label)
+{
+    int index = wxNOT_FOUND;
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR: {
+        auto book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
+        index = find_page_index(book, label);
+        CHECK_COND_RET(index != wxNOT_FOUND);
+        book->SetSelection(index);
+    } break;
+    case PaneId::SIDE_BAR:
+        auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+        index = find_page_index(book, label);
+        CHECK_COND_RET(index != wxNOT_FOUND);
+        book->SetSelection(index);
+    }
+}
+
+void PluginManager::BookSelectPage(PaneId pane_id, wxWindow* page)
+{
+    wxString label;
+    switch(pane_id) {
+    case PaneId::BOTTOM_BAR:
+        find_page_label(clMainFrame::Get()->GetOutputPane()->GetNotebook(), page, &label);
+        break;
+    case PaneId::SIDE_BAR:
+        find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
+        break;
+    }
+    CHECK_COND_RET(!label.empty());
+    BookSelectPage(pane_id, label);
+}

@@ -197,6 +197,37 @@ public:
 
     clInfoBar* GetInfoBar() override;
 
+    ///--------------------
+    /// Book management
+    ///--------------------
+
+    /// Add a book page
+    void BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label) override;
+
+    /// Find a book page by its label
+    wxWindow* BookGetPage(PaneId pane_id, const wxString& label) override;
+
+    /// Remove a book page (do not destroy it), return the removed page
+    wxWindow* BookRemovePage(PaneId pane_id, const wxString& label) override;
+
+    /// Remove a book page (do not destroy it), return the removed page
+    wxWindow* BookRemovePage(PaneId pane_id, wxWindow* page) override;
+
+    /// Delete a book page, return true on success, false otherwise
+    bool BookDeletePage(PaneId pane_id, wxWindow* page) override;
+
+    /// Delete a book page, return true on success, false otherwise
+    bool BookDeletePage(PaneId pane_id, const wxString& label) override;
+
+    /// Get the book control
+    wxWindow* BookGet(PaneId pane_id) override;
+
+    /// Delete a book page, return true on success, false otherwise
+    void BookSelectPage(PaneId pane_id, const wxString& label) override;
+
+    /// Delete a book page, return true on success, false otherwise
+    void BookSelectPage(PaneId pane_id, wxWindow* win) override;
+
     //------------------------------------
     // End of IManager interface
     //------------------------------------

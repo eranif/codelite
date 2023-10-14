@@ -109,7 +109,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 {
 
     // create tab (possibly detached)
-    Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+    Notebook* book = m_mgr->GetSidebarBook();
     wxWindow* editorBook = m_mgr->GetEditorPaneNotebook();
 
     EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
@@ -186,9 +186,9 @@ void DatabaseExplorer::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
                                      clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
-    int index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_dbViewerPanel);
+    int index = m_mgr->GetSidebarBook()->GetPageIndex(m_dbViewerPanel);
     if(index != wxNOT_FOUND) {
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
+        m_mgr->GetSidebarBook()->RemovePage(index);
     }
     wxTheApp->Unbind(wxEVT_MENU, &DatabaseExplorer::OnExecuteSQL, this, XRCID("wxEVT_EXECUTE_SQL"));
     wxDELETE(m_dbViewerPanel);
@@ -252,11 +252,11 @@ void DatabaseExplorer::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_dbViewerPanel, _("DbExplorer"), true);
+        clGetManager()->GetSidebarBook()->AddPage(m_dbViewerPanel, _("DbExplorer"), true);
     } else {
-        int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("DbExplorer"));
+        int where = m_mgr->GetSidebarBook()->GetPageIndex(_("DbExplorer"));
         if(where != wxNOT_FOUND) {
-            clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where);
+            clGetManager()->GetSidebarBook()->RemovePage(where);
         }
     }
 }

@@ -176,7 +176,7 @@ CMakePlugin::CMakePlugin(IManager* manager)
     // Create cmake application
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
-    Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+    Notebook* book = m_mgr->GetSidebarBook();
     auto images = book->GetBitmaps();
     if(IsPaneDetached()) {
         DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, false,
@@ -309,7 +309,7 @@ void CMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 void CMakePlugin::UnPlug()
 {
     wxASSERT(m_mgr);
-    Notebook* notebook = m_mgr->GetWorkspacePaneNotebook();
+    Notebook* notebook = m_mgr->GetSidebarBook();
     wxASSERT(notebook);
 
     int pos = notebook->GetPageIndex("CMake Help");
@@ -383,12 +383,12 @@ void CMakePlugin::OnToggleHelpTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        auto images = m_mgr->GetWorkspacePaneNotebook()->GetBitmaps();
-        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_helpTab, HELP_TAB_NAME, true, images->Add("cmake"));
+        auto images = m_mgr->GetSidebarBook()->GetBitmaps();
+        m_mgr->GetSidebarBook()->AddPage(m_helpTab, HELP_TAB_NAME, true, images->Add("cmake"));
     } else {
-        int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(HELP_TAB_NAME);
+        int where = m_mgr->GetSidebarBook()->GetPageIndex(HELP_TAB_NAME);
         if(where != wxNOT_FOUND) {
-            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+            m_mgr->GetSidebarBook()->RemovePage(where);
         }
     }
 }

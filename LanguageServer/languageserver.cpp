@@ -54,8 +54,8 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_servers = new LanguageServerCluster(this);
 
     // add log view
-    m_logView = new LanguageServerLogView(m_mgr->GetOutputPaneNotebook(), m_servers);
-    auto outputBook = m_mgr->GetOutputPaneNotebook();
+    m_logView = new LanguageServerLogView(m_mgr->GetOutputBook(), m_servers);
+    auto outputBook = m_mgr->GetOutputBook();
     outputBook->AddPage(m_logView, _("Language Server"), false);
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
 
@@ -143,9 +143,9 @@ void LanguageServerPlugin::UnPlug()
     LanguageServerConfig::Get().Save();
 
     // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if(m_logView == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
+        if(m_logView == m_mgr->GetOutputBook()->GetPage(i)) {
+            m_mgr->GetOutputBook()->RemovePage(i);
             m_logView->Destroy();
             break;
         }

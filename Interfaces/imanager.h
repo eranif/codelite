@@ -252,18 +252,18 @@ public:
     virtual clTreeCtrl* GetWorkspaceTree() = 0;
 
     /**
-     * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
+     * @brief return a pointer to the sidebar notebook control
      * @return pointer to Notebook
      * @sa Notebook
      */
-    virtual Notebook* GetWorkspacePaneNotebook() = 0;
+    virtual Notebook* GetSidebarBook() = 0;
 
     /**
      * @brief return a pointer to the output pane notebook (the one with the 'output' title)
      * @return pointer to Notebook
      * @sa Notebook
      */
-    virtual Notebook* GetOutputPaneNotebook() = 0;
+    virtual Notebook* GetOutputBook() = 0;
 
     /**
      * @brief return the main editor notebook

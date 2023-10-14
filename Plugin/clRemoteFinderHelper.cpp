@@ -100,7 +100,7 @@ void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& find
 
 wxWindow* clRemoteFinderHelper::GetSearchTab()
 {
-    auto book = clGetManager()->GetOutputPaneNotebook();
+    auto book = clGetManager()->GetOutputBook();
     for(size_t i = 0; i < book->GetPageCount(); ++i) {
         if(book->GetPageText(i) == _("Search")) {
             return book->GetPage(i);

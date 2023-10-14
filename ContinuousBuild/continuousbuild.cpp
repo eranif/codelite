@@ -74,12 +74,12 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 {
     m_longName = _("Continuous build plugin which compiles files on save and report errors");
     m_shortName = wxT("ContinuousBuild");
-    m_view = new ContinousBuildPane(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
+    m_view = new ContinousBuildPane(m_mgr->GetOutputBook(), m_mgr, this);
 
     // add our page to the output pane notebook
-    auto book = m_mgr->GetOutputPaneNotebook();
+    auto book = m_mgr->GetOutputBook();
     auto images = book->GetBitmaps();
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, images->Add("execute"));
+    m_mgr->GetOutputBook()->AddPage(m_view, CONT_BUILD, false, images->Add("execute"));
     m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", NULL));
     m_tabHelper->SetOutputTabBmp(images->Add("execute"));
 
@@ -113,9 +113,9 @@ void ContinuousBuild::UnPlug()
 {
     m_tabHelper.reset(NULL);
     // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if(m_view == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
+        if(m_view == m_mgr->GetOutputBook()->GetPage(i)) {
+            m_mgr->GetOutputBook()->RemovePage(i);
             break;
         }
     }

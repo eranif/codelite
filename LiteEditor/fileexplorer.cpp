@@ -79,9 +79,9 @@ void FileExplorer::OnFolderDropped(clCommandEvent& event)
     for(size_t i = 0; i < folders.size(); ++i) {
         m_view->AddFolder(folders.Item(i));
     }
-    size_t index = clGetManager()->GetWorkspacePaneNotebook()->GetPageIndex(_("Explorer"));
+    size_t index = clGetManager()->GetSidebarBook()->GetPageIndex(_("Explorer"));
     if(index != wxString::npos) {
-        clGetManager()->GetWorkspacePaneNotebook()->ChangeSelection(index);
+        clGetManager()->GetSidebarBook()->ChangeSelection(index);
     }
 }
 

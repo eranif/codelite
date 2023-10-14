@@ -59,7 +59,7 @@ void clProfileHandler::HandleWorkspaceTabs(bool show)
     if(show) {
         RestoreTabs(m_cxxWorkspaceTabsToRestore, wxEVT_SHOW_WORKSPACE_TAB);
     } else {
-        HideTabs(m_cxxWorkspaceTabs, clGetManager()->GetWorkspacePaneNotebook(), wxEVT_SHOW_WORKSPACE_TAB,
+        HideTabs(m_cxxWorkspaceTabs, clGetManager()->GetSidebarBook(), wxEVT_SHOW_WORKSPACE_TAB,
                  m_cxxWorkspaceTabsToRestore);
     }
 }
@@ -69,7 +69,7 @@ void clProfileHandler::HandleOutputTabs(bool show)
     if(show) {
         RestoreTabs(m_cxxOutputTabsToRestore, wxEVT_SHOW_OUTPUT_TAB);
     } else {
-        HideTabs(m_cxxOutputTabs, clGetManager()->GetOutputPaneNotebook(), wxEVT_SHOW_OUTPUT_TAB,
+        HideTabs(m_cxxOutputTabs, clGetManager()->GetOutputBook(), wxEVT_SHOW_OUTPUT_TAB,
                  m_cxxOutputTabsToRestore);
     }
 }

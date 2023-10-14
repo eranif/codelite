@@ -367,9 +367,9 @@ void Subversion2::UnPlug()
 
     // Remove the tab if it's actually docked in the workspace pane
     int index(wxNOT_FOUND);
-    index = m_mgr->GetOutputPaneNotebook()->GetPageIndex(m_subversionView);
+    index = m_mgr->GetOutputBook()->GetPageIndex(m_subversionView);
     if(index != wxNOT_FOUND) {
-        m_mgr->GetOutputPaneNotebook()->RemovePage(index);
+        m_mgr->GetOutputBook()->RemovePage(index);
     }
 
     m_subversionView->Destroy();
@@ -384,7 +384,7 @@ void Subversion2::EnsureVisible()
         GetManager()->GetDockingManager()->Update();
     }
 
-    Notebook* book = GetManager()->GetOutputPaneNotebook();
+    Notebook* book = GetManager()->GetOutputBook();
     for(size_t i = 0; i < book->GetPageCount(); i++) {
         if(m_subversionView == book->GetPage(i)) {
             book->SetSelection(i);
@@ -398,7 +398,7 @@ void Subversion2::DoInitialize()
     m_svnBitmap = GetManager()->GetStdIcons()->LoadBitmap("subversion");
 
     // create tab (possibly detached)
-    Notebook* book = m_mgr->GetOutputPaneNotebook();
+    Notebook* book = m_mgr->GetOutputBook();
     auto images = book->GetBitmaps();
     if(IsSubversionViewDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)

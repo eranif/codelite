@@ -121,7 +121,7 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SFTP_OPEN_FILE, &SFTP::OnOpenFile, this);
 
     // Add the "SFTP" page to the workspace pane
-    Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+    Notebook* book = m_mgr->GetSidebarBook();
     if(IsPaneDetached(_("SFTP"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
@@ -135,7 +135,7 @@ SFTP::SFTP(IManager* manager)
     }
 
     // Add the "SFTP Log" page to the output pane
-    book = m_mgr->GetOutputPaneNotebook();
+    book = m_mgr->GetOutputBook();
     auto images = book->GetBitmaps();
     if(IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
@@ -210,17 +210,17 @@ void SFTP::UnPlug()
 {
     // Find our page and release it
     // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); ++i) {
-        if(m_outputPane == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); ++i) {
+        if(m_outputPane == m_mgr->GetOutputBook()->GetPage(i)) {
+            m_mgr->GetOutputBook()->RemovePage(i);
             break;
         }
     }
     m_outputPane->Destroy();
 
-    for(size_t i = 0; i < m_mgr->GetWorkspacePaneNotebook()->GetPageCount(); ++i) {
-        if(m_treeView == m_mgr->GetWorkspacePaneNotebook()->GetPage(i)) {
-            m_mgr->GetWorkspacePaneNotebook()->RemovePage(i);
+    for(size_t i = 0; i < m_mgr->GetSidebarBook()->GetPageCount(); ++i) {
+        if(m_treeView == m_mgr->GetSidebarBook()->GetPage(i)) {
+            m_mgr->GetSidebarBook()->RemovePage(i);
             break;
         }
     }

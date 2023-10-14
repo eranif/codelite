@@ -94,8 +94,8 @@ UnitTestPP::UnitTestPP(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(UnitTestPP::OnRunProject),
                                   NULL, this);
 
-    m_outputPage = new UnitTestsPage(m_mgr->GetOutputPaneNotebook(), m_mgr);
-    auto book = m_mgr->GetOutputPaneNotebook();
+    m_outputPage = new UnitTestsPage(m_mgr->GetOutputBook(), m_mgr);
+    auto book = m_mgr->GetOutputBook();
     book->AddPage(m_outputPage, _("UnitTest++"), false);
     m_tabHelper.reset(new clTabTogglerHelper(_("UnitTest++"), m_outputPage, "", NULL));
 
@@ -524,10 +524,10 @@ void UnitTestPP::OnProcessTerminated(clProcessEvent& e)
 
 void UnitTestPP::SelectUTPage()
 {
-    size_t pageCount = m_mgr->GetOutputPaneNotebook()->GetPageCount();
+    size_t pageCount = m_mgr->GetOutputBook()->GetPageCount();
     for(size_t i = 0; i < pageCount; ++i) {
-        if(m_mgr->GetOutputPaneNotebook()->GetPage(i) == m_outputPage) {
-            m_mgr->GetOutputPaneNotebook()->SetSelection(i);
+        if(m_mgr->GetOutputBook()->GetPage(i) == m_outputPage) {
+            m_mgr->GetOutputBook()->SetSelection(i);
             break;
         }
     }

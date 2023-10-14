@@ -146,9 +146,9 @@ void ZoomNavigator::UnPlug()
 
     // Remove the tab if it's actually docked in the workspace pane
     int index(wxNOT_FOUND);
-    index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(zoompane);
+    index = m_mgr->GetSidebarBook()->GetPageIndex(zoompane);
     if(index != wxNOT_FOUND) {
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
+        m_mgr->GetSidebarBook()->RemovePage(index);
     }
     zoompane->Destroy();
 }
@@ -175,7 +175,7 @@ void ZoomNavigator::DoInitialize()
     }
 
     // create tab (possibly detached)
-    Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+    Notebook* book = m_mgr->GetSidebarBook();
     if(IsZoomPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNOT_FOUND,
@@ -396,11 +396,11 @@ void ZoomNavigator::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        m_mgr->GetWorkspacePaneNotebook()->AddPage(zoompane, ZOOM_PANE_TITLE, true);
+        m_mgr->GetSidebarBook()->AddPage(zoompane, ZOOM_PANE_TITLE, true);
     } else {
-        int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(ZOOM_PANE_TITLE);
+        int where = m_mgr->GetSidebarBook()->GetPageIndex(ZOOM_PANE_TITLE);
         if(where != wxNOT_FOUND) {
-            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+            m_mgr->GetSidebarBook()->RemovePage(where);
         }
     }
 }

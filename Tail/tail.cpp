@@ -37,7 +37,7 @@ Tail::Tail(IManager* manager)
     m_shortName = wxT("Tail");
 
     // Hook our output-pane panel
-    InitTailWindow(m_mgr->GetOutputPaneNotebook(), true, TailData(), false);
+    InitTailWindow(m_mgr->GetOutputBook(), true, TailData(), false);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &Tail::OnInitDone, this);
 }
 
@@ -91,15 +91,15 @@ void Tail::DetachTailWindow(const TailData& d)
 
 void Tail::DockTailWindow(const TailData& d)
 {
-    InitTailWindow(m_mgr->GetOutputPaneNotebook(), true, d, true);
+    InitTailWindow(m_mgr->GetOutputBook(), true, d, true);
     m_mgr->GetDockingManager()->Update();
 }
 
 void Tail::DoDetachWindow()
 {
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if(m_view == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
+        if(m_view == m_mgr->GetOutputBook()->GetPage(i)) {
+            m_mgr->GetOutputBook()->RemovePage(i);
             break;
         }
     }
@@ -118,11 +118,11 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, 
     }
 
     // Hook our output-pane panel
-    int bmp = m_mgr->GetOutputPaneNotebook()->GetBitmaps()->Add("mime-txt");
+    int bmp = m_mgr->GetOutputBook()->GetBitmaps()->Add("mime-txt");
     m_view = tmpView;
     m_editEventsHandler.Reset(new clEditEventsHandler(m_view->GetStc()));
     if(isNotebook) {
-        m_mgr->GetOutputPaneNotebook()->InsertPage(0, m_view, "Tail", selectPage, bmp);
+        m_mgr->GetOutputBook()->InsertPage(0, m_view, "Tail", selectPage, bmp);
         m_tabHelper.reset(new clTabTogglerHelper("Tail", m_view, "", NULL));
         m_tabHelper->SetOutputTabBmp(bmp);
     } else {

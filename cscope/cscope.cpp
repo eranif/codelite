@@ -84,8 +84,8 @@ Cscope::Cscope(IManager* manager)
     m_shortName = CSCOPE_NAME;
     m_topWindow = m_mgr->GetTheApp();
 
-    m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
-    auto book = m_mgr->GetOutputPaneNotebook();
+    m_cscopeWin = new CscopeTab(m_mgr->GetOutputBook(), m_mgr);
+    auto book = m_mgr->GetOutputBook();
     book->AddPage(m_cscopeWin, CSCOPE_NAME, false);
     m_tabHelper.reset(new clTabTogglerHelper(CSCOPE_NAME, m_cscopeWin, "", NULL));
 
@@ -240,9 +240,9 @@ void Cscope::UnPlug()
                             wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this);
 
     // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if(m_cscopeWin == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
+        if(m_cscopeWin == m_mgr->GetOutputBook()->GetPage(i)) {
+            m_mgr->GetOutputBook()->RemovePage(i);
             m_cscopeWin->Destroy();
             break;
         }
@@ -382,7 +382,7 @@ void Cscope::DoCscopeCommand(const wxString& command, const wxString& findWhat, 
     }
 
     // set the focus to the cscope tab
-    Notebook* book = m_mgr->GetOutputPaneNotebook();
+    Notebook* book = m_mgr->GetOutputBook();
 
     // make sure that the Output pane is visible
     wxAuiManager* aui = m_mgr->GetDockingManager();

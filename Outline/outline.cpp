@@ -83,7 +83,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
     m_longName = _("Outline Plugin");
     m_shortName = wxT("Outline");
 
-    Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+    Notebook* book = m_mgr->GetSidebarBook();
     if(IsPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
@@ -108,10 +108,10 @@ void SymbolViewPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(plugi
 void SymbolViewPlugin::UnPlug()
 {
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
-    int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_view);
+    int where = m_mgr->GetSidebarBook()->GetPageIndex(m_view);
     if(where != wxNOT_FOUND) {
         // this window might be floating
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+        m_mgr->GetSidebarBook()->RemovePage(where);
     }
 
     m_view->Destroy();
@@ -135,11 +135,11 @@ void SymbolViewPlugin::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_view, _("Outline"), true);
+        m_mgr->GetSidebarBook()->AddPage(m_view, _("Outline"), true);
     } else {
-        int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("Outline"));
+        int where = m_mgr->GetSidebarBook()->GetPageIndex(_("Outline"));
         if(where != wxNOT_FOUND) {
-            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+            m_mgr->GetSidebarBook()->RemovePage(where);
         }
     }
 }

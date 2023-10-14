@@ -40,20 +40,20 @@ void clTabTogglerHelper::OnToggleOutputTab(clCommandEvent& event)
         return;
     }
 
-    Notebook* book = clGetManager()->GetOutputPaneNotebook();
+    Notebook* book = clGetManager()->GetOutputBook();
     if(event.IsSelected()) {
         // show it
         int where = IsTabInNotebook(book, m_outputTabName);
         if(where == wxNOT_FOUND) {
             // Only show it if it does not exists in the notebook
-            clGetManager()->GetOutputPaneNotebook()->AddPage(m_outputTab, m_outputTabName, true, m_outputTabBmp);
+            clGetManager()->GetOutputBook()->AddPage(m_outputTab, m_outputTabName, true, m_outputTabBmp);
         } else {
-            clGetManager()->GetOutputPaneNotebook()->SetSelection(where);
+            clGetManager()->GetOutputBook()->SetSelection(where);
         }
     } else {
-        int where = clGetManager()->GetOutputPaneNotebook()->GetPageIndex(m_outputTabName);
+        int where = clGetManager()->GetOutputBook()->GetPageIndex(m_outputTabName);
         if(where != wxNOT_FOUND) {
-            clGetManager()->GetOutputPaneNotebook()->RemovePage(where);
+            clGetManager()->GetOutputBook()->RemovePage(where);
         }
     }
 }
@@ -65,22 +65,22 @@ void clTabTogglerHelper::OnToggleWorkspaceTab(clCommandEvent& event)
         return;
     }
 
-    Notebook* book = clGetManager()->GetWorkspacePaneNotebook();
+    Notebook* book = clGetManager()->GetSidebarBook();
     if(event.IsSelected()) {
         // show it
         int where = IsTabInNotebook(book, m_workspaceTabName);
         if(where == wxNOT_FOUND) {
             // Only show it if it does not exists in the notebook
-            clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_workspaceTab, m_workspaceTabName, true,
+            clGetManager()->GetSidebarBook()->AddPage(m_workspaceTab, m_workspaceTabName, true,
                                                                 m_workspaceTabBmp);
         } else {
             // The tab already in the notebook, just select it
-            clGetManager()->GetWorkspacePaneNotebook()->SetSelection(where);
+            clGetManager()->GetSidebarBook()->SetSelection(where);
         }
     } else {
-        int where = clGetManager()->GetWorkspacePaneNotebook()->GetPageIndex(m_workspaceTabName);
+        int where = clGetManager()->GetSidebarBook()->GetPageIndex(m_workspaceTabName);
         if(where != wxNOT_FOUND) {
-            clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where);
+            clGetManager()->GetSidebarBook()->RemovePage(where);
         }
     }
 }

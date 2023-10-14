@@ -43,7 +43,7 @@ Docker::Docker(IManager* manager)
     clDockerWorkspace::Initialise(this);
     clDockerWorkspace::Get(); // Make sure that the workspace instance is up and all events are hooked
 
-    Notebook* book = m_mgr->GetOutputPaneNotebook();
+    Notebook* book = m_mgr->GetOutputBook();
     auto images = book->GetBitmaps();
     m_outputView = new DockerOutputPane(book, m_driver);
     book->AddPage(m_outputView, _("Docker"), false, images->Add("docker"));
@@ -79,9 +79,9 @@ void Docker::UnPlug()
     clDockerWorkspace::Shutdown();
 
     // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if(m_outputView == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
+        if(m_outputView == m_mgr->GetOutputBook()->GetPage(i)) {
+            m_mgr->GetOutputBook()->RemovePage(i);
             m_outputView->Destroy();
             break;
         }

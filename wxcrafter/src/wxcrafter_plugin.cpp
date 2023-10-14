@@ -254,7 +254,7 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
                       wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), NULL, (wxEvtHandler*)this);
 
 #if !STANDALONE_BUILD
-    m_mgr->GetWorkspacePaneNotebook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &wxCrafterPlugin::OnWorkspaceTabSelected, this);
+    m_mgr->GetSidebarBook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &wxCrafterPlugin::OnWorkspaceTabSelected, this);
     clKeyboardManager::Get()->AddAccelerator("ID_SHOW_DESIGNER", _("wxCrafter"), _("Show the designer"),
                                              "Ctrl-Shift-F12");
 #endif
@@ -337,7 +337,7 @@ void wxCrafterPlugin::UnPlug()
     wxTheApp->Disconnect(XRCID("save_wxcp_project"), wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(wxCrafterPlugin::OnSaveProjectUI), NULL, this);
 #if !STANDALONE_BUILD
-    m_mgr->GetWorkspacePaneNotebook()->Unbind(wxEVT_BOOK_PAGE_CHANGED, &wxCrafterPlugin::OnWorkspaceTabSelected, this);
+    m_mgr->GetSidebarBook()->Unbind(wxEVT_BOOK_PAGE_CHANGED, &wxCrafterPlugin::OnWorkspaceTabSelected, this);
 #endif
     wxTheApp->Disconnect(XRCID("wxcp_new_form"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(wxCrafterPlugin::OnNewForm), NULL, this);
@@ -346,9 +346,9 @@ void wxCrafterPlugin::UnPlug()
     if(IsTabMode()) {
 
 #if !STANDALONE_BUILD
-        for(size_t i = 0; i < m_mgr->GetWorkspacePaneNotebook()->GetPageCount(); i++) {
-            if(m_treeView == m_mgr->GetWorkspacePaneNotebook()->GetPage(i)) {
-                m_mgr->GetWorkspacePaneNotebook()->RemovePage(i);
+        for(size_t i = 0; i < m_mgr->GetSidebarBook()->GetPageCount(); i++) {
+            if(m_treeView == m_mgr->GetSidebarBook()->GetPage(i)) {
+                m_mgr->GetSidebarBook()->RemovePage(i);
                 break;
             }
         }
@@ -819,7 +819,7 @@ void wxCrafterPlugin::DoSelectWorkspaceTab()
     CHECK_POINTER(m_mgr);
     if(IsTabMode()) {
         // And finally, select the wxCrafter tab in the 'Workspace' view
-        Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+        Notebook* book = m_mgr->GetSidebarBook();
         for(size_t i = 0; i < book->GetPageCount(); i++) {
             if(book->GetPage(i) == m_treeView) {
                 book->SetSelection(i);
@@ -875,7 +875,7 @@ void wxCrafterPlugin::OnWorkspaceTabSelected(wxBookCtrlEvent& e)
 {
     e.Skip();
     CHECK_POINTER(m_mgr);
-    wxWindow* page = m_mgr->GetWorkspacePaneNotebook()->GetPage(e.GetSelection());
+    wxWindow* page = m_mgr->GetSidebarBook()->GetPage(e.GetSelection());
     if(page == m_treeView) {
         DoShowDesigner(false);
     }

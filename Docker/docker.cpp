@@ -1,11 +1,13 @@
+#include "docker.h"
+
 #include "DockerOutputPane.h"
 #include "DockerSettingsDlg.h"
 #include "bitmap_loader.h"
 #include "clDockerWorkspace.h"
 #include "clWorkspaceManager.h"
-#include "docker.h"
 #include "event_notifier.h"
 #include "wxterminal.h"
+
 #include <imanager.h>
 #include <wx/xrc/xmlres.h>
 
@@ -43,13 +45,9 @@ Docker::Docker(IManager* manager)
     clDockerWorkspace::Initialise(this);
     clDockerWorkspace::Get(); // Make sure that the workspace instance is up and all events are hooked
 
-    Notebook* book = m_mgr->GetOutputBook();
-    auto images = book->GetBitmaps();
-    m_outputView = new DockerOutputPane(book, m_driver);
-    book->AddPage(m_outputView, _("Docker"), false, images->Add("docker"));
-
+    m_outputView = new DockerOutputPane(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_driver);
+    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_outputView, _("Docker"));
     m_tabToggler.reset(new clTabTogglerHelper(_("Docker"), m_outputView, "", NULL));
-    m_tabToggler->SetOutputTabBmp(images->Add("docker"));
 }
 
 Docker::~Docker() {}
@@ -77,13 +75,9 @@ void Docker::CreatePluginMenu(wxMenu* pluginsMenu)
 void Docker::UnPlug()
 {
     clDockerWorkspace::Shutdown();
-
-    // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
-        if(m_outputView == m_mgr->GetOutputBook()->GetPage(i)) {
-            m_mgr->GetOutputBook()->RemovePage(i);
-            m_outputView->Destroy();
-            break;
-        }
+    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_outputView)) {
+        // failed to delete, delete it manually
+        m_outputView->Destroy();
     }
+    m_outputView = nullptr;
 }

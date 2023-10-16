@@ -3954,7 +3954,7 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
     wxString text = GetWorkspacePane()->GetNotebook()->GetPageText(sel);
     int bmp = GetWorkspacePane()->GetNotebook()->GetPageBitmapIndex(sel);
 
-    DockablePane* pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), text, true, bmp, wxSize(200, 200));
+    DockablePane* pane = new DockablePane(this, PaneId::SIDE_BAR, text, true, wxSize(200, 200));
     page->Reparent(pane);
 
     // remove the page from the notebook
@@ -4218,7 +4218,7 @@ void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
     wxString text = GetDebuggerPane()->GetNotebook()->GetPageText(sel);
     int bmp = GetDebuggerPane()->GetNotebook()->GetPageBitmapIndex(sel);
 
-    DockablePane* pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), text, false, bmp, wxSize(200, 200));
+    DockablePane* pane = new DockablePane(this, PaneId::DEBUG_BAR, text, false, wxSize(200, 200));
     page->Reparent(pane);
 
     // remove the page from the notebook

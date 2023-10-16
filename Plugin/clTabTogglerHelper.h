@@ -29,6 +29,7 @@
 #include "Notebook.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+#include "imanager.h"
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
@@ -42,19 +43,17 @@ class WXDLLIMPEXP_SDK clTabTogglerHelper : public wxEvtHandler
     wxWindow* m_outputTab;
     wxString m_workspaceTabName;
     wxWindow* m_workspaceTab;
-    int m_outputTabBmp = wxNOT_FOUND;
-    int m_workspaceTabBmp = wxNOT_FOUND;
 
-protected:
     void OnToggleOutputTab(clCommandEvent& event);
     void OnToggleWorkspaceTab(clCommandEvent& event);
+    void DoShowTab(bool show, PaneId pane_id, wxWindow* tab, const wxString& label);
 
 public:
     /**
      * @brief return true if "tabname" is in the notebook (does not matter if it is focused or not)
      * @return wxNOT_FOUND if the tab does not exists, otherwise, return the tab index
      */
-    static int IsTabInNotebook(Notebook* book, const wxString& tabname);
+    static bool IsTabInNotebook(PaneId pane_id, const wxString& tabname);
 
 public:
     typedef wxSharedPtr<clTabTogglerHelper> Ptr_t;
@@ -69,11 +68,6 @@ public:
         this->m_outputTab = outputTab;
         return *this;
     }
-    clTabTogglerHelper& SetOutputTabBmp(int outputTabBmp)
-    {
-        this->m_outputTabBmp = outputTabBmp;
-        return *this;
-    }
     clTabTogglerHelper& SetOutputTabName(const wxString& outputTabName)
     {
         this->m_outputTabName = outputTabName;
@@ -84,11 +78,6 @@ public:
         this->m_workspaceTab = workspaceTab;
         return *this;
     }
-    clTabTogglerHelper& SetWorkspaceTabBmp(int workspaceTabBmp)
-    {
-        this->m_workspaceTabBmp = workspaceTabBmp;
-        return *this;
-    }
     clTabTogglerHelper& SetWorkspaceTabName(const wxString& workspaceTabName)
     {
         this->m_workspaceTabName = workspaceTabName;
@@ -96,10 +85,8 @@ public:
     }
 
     wxWindow* GetOutputTab() { return m_outputTab; }
-    int GetOutputTabBmp() const { return m_outputTabBmp; }
     const wxString& GetOutputTabName() const { return m_outputTabName; }
     wxWindow* GetWorkspaceTab() { return m_workspaceTab; }
-    int GetWorkspaceTabBmp() const { return m_workspaceTabBmp; }
     const wxString& GetWorkspaceTabName() const { return m_workspaceTabName; }
 };
 

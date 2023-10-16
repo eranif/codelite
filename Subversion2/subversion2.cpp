@@ -366,13 +366,10 @@ void Subversion2::UnPlug()
     m_subversionView->DisconnectEvents();
 
     // Remove the tab if it's actually docked in the workspace pane
-    int index(wxNOT_FOUND);
-    index = m_mgr->GetOutputBook()->GetPageIndex(m_subversionView);
-    if(index != wxNOT_FOUND) {
-        m_mgr->GetOutputBook()->RemovePage(index);
+    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_subversionView)) {
+        m_subversionView->Destroy();
     }
-
-    m_subversionView->Destroy();
+    m_subversionView = nullptr;
 }
 
 void Subversion2::EnsureVisible()
@@ -398,20 +395,17 @@ void Subversion2::DoInitialize()
     m_svnBitmap = GetManager()->GetStdIcons()->LoadBitmap("subversion");
 
     // create tab (possibly detached)
-    Notebook* book = m_mgr->GetOutputBook();
-    auto images = book->GetBitmaps();
     if(IsSubversionViewDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, svnCONSOLE_TEXT, false, wxNOT_FOUND,
-                                            wxSize(200, 200));
+        DockablePane* cp =
+            new DockablePane(m_mgr->GetMainPanel(), PaneId::BOTTOM_BAR, svnCONSOLE_TEXT, false, wxSize(200, 200));
         m_subversionView = new SubversionView(cp, this);
         cp->SetChildNoReparent(m_subversionView);
     } else {
-        m_subversionView = new SubversionView(book, this);
-        book->AddPage(m_subversionView, svnCONSOLE_TEXT, false, images->Add("subversion"));
+        m_subversionView = new SubversionView(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
+        m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_subversionView, svnCONSOLE_TEXT);
     }
     m_tabToggler.reset(new clTabTogglerHelper(svnCONSOLE_TEXT, m_subversionView, "", NULL));
-    m_tabToggler->SetOutputTabBmp(images->Add("subversion"));
 
     DoSetSSH();
     // We need to perform a dummy call to svn so it will create all the default

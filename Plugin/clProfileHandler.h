@@ -5,6 +5,7 @@
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+#include "imanager.h"
 #include "macros.h"
 #include "wxStringHash.h"
 
@@ -27,9 +28,9 @@ protected:
     void HandleWorkspaceTabs(bool show);
     void HandleOutputTabs(bool show);
 
-    bool IsPageExistsInBook(Notebook* book, const wxString& label) const;
+    bool IsPageExistsInBook(PaneId pane_id, const wxString& label) const;
     void RestoreTabs(wxStringSet_t& tabs, wxEventType eventType);
-    void HideTabs(const wxStringSet_t& candidates, Notebook* book, wxEventType eventType, wxStringSet_t& tabsHidden);
+    void HideTabs(const wxStringSet_t& candidates, PaneId pane_id, wxEventType eventType, wxStringSet_t& tabsHidden);
 
 public:
     static clProfileHandler& Get();

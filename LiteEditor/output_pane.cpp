@@ -259,18 +259,14 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
     const Tab& t = m_tabs.find(event.GetString())->second;
     if(event.IsSelected()) {
         // Insert the page
-        int where = clTabTogglerHelper::IsTabInNotebook(GetNotebook(), t.m_label);
-        if(where == wxNOT_FOUND) {
-            GetNotebook()->AddPage(t.m_window, t.m_label, true, t.m_bmpIndex);
+        if(!clTabTogglerHelper::IsTabInNotebook(PaneId::BOTTOM_BAR, t.m_label)) {
+            clGetManager()->BookAddPage(PaneId::BOTTOM_BAR, t.m_window, t.m_label);
         } else {
-            GetNotebook()->SetSelection(where);
+            clGetManager()->BookSelectPage(PaneId::BOTTOM_BAR, t.m_label);
         }
     } else {
         // hide the tab
-        int where = GetNotebook()->GetPageIndex(t.m_label);
-        if(where != wxNOT_FOUND) {
-            GetNotebook()->RemovePage(where);
-        }
+        clGetManager()->BookRemovePage(PaneId::BOTTOM_BAR, t.m_label);
     }
 }
 

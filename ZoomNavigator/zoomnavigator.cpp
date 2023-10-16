@@ -145,12 +145,10 @@ void ZoomNavigator::UnPlug()
     wxDELETE(m_timer);
 
     // Remove the tab if it's actually docked in the workspace pane
-    int index(wxNOT_FOUND);
-    index = m_mgr->GetSidebarBook()->GetPageIndex(zoompane);
-    if(index != wxNOT_FOUND) {
-        m_mgr->GetSidebarBook()->RemovePage(index);
+    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, zoompane)) {
+        zoompane->Destroy();
     }
-    zoompane->Destroy();
+    zoompane = nullptr;
 }
 
 void ZoomNavigator::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -175,17 +173,17 @@ void ZoomNavigator::DoInitialize()
     }
 
     // create tab (possibly detached)
-    Notebook* book = m_mgr->GetSidebarBook();
+    auto book = m_mgr->BookGet(PaneId::SIDE_BAR);
     if(IsZoomPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNOT_FOUND,
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), PaneId::SIDE_BAR, ZOOM_PANE_TITLE, false,
                                             wxSize(200, 200));
         zoompane = new wxPanel(cp);
         cp->SetChildNoReparent(zoompane);
 
     } else {
         zoompane = new wxPanel(book);
-        book->AddPage(zoompane, ZOOM_PANE_TITLE, false, wxNOT_FOUND);
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, zoompane, ZOOM_PANE_TITLE);
     }
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
 
@@ -395,13 +393,9 @@ void ZoomNavigator::OnToggleTab(clCommandEvent& event)
     }
 
     if(event.IsSelected()) {
-        // show it
-        m_mgr->GetSidebarBook()->AddPage(zoompane, ZOOM_PANE_TITLE, true);
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, zoompane, ZOOM_PANE_TITLE);
     } else {
-        int where = m_mgr->GetSidebarBook()->GetPageIndex(ZOOM_PANE_TITLE);
-        if(where != wxNOT_FOUND) {
-            m_mgr->GetSidebarBook()->RemovePage(where);
-        }
+        m_mgr->BookRemovePage(PaneId::SIDE_BAR, ZOOM_PANE_TITLE);
     }
 }
 

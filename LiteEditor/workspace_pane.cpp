@@ -143,7 +143,7 @@ void WorkspacePane::CreateGUIControls()
 
     name = _("Workspace");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
         m_workspaceTab = new WorkspaceTab(cp, name);
         cp->SetChildNoReparent(m_workspaceTab);
     } else {
@@ -156,7 +156,7 @@ void WorkspacePane::CreateGUIControls()
     // Add the explorer tab
     name = _("Explorer");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
         m_explorer = new FileExplorer(cp, name);
         cp->SetChildNoReparent(m_explorer);
     } else {
@@ -173,7 +173,7 @@ void WorkspacePane::CreateGUIControls()
     // #ifndef __WXOSX__
     name = _("Tabs");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
         m_openWindowsPane = new OpenWindowsPanel(cp, name);
         cp->SetChildNoReparent(m_openWindowsPane);
     } else {
@@ -187,7 +187,7 @@ void WorkspacePane::CreateGUIControls()
     // Add the Tabgroups tab
     name = _("Tabgroups");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
         m_TabgroupsPane = new TabgroupsPane(cp, name);
         cp->SetChildNoReparent(m_TabgroupsPane);
     } else {
@@ -431,18 +431,14 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
     const Tab& t = m_tabs.find(event.GetString())->second;
     if(event.IsSelected()) {
         // Insert the page
-        int where = clTabTogglerHelper::IsTabInNotebook(GetNotebook(), t.m_label);
-        if(where == wxNOT_FOUND) {
-            GetNotebook()->AddPage(t.m_window, t.m_label, true, t.m_bmp);
+        if(!clTabTogglerHelper::IsTabInNotebook(PaneId::SIDE_BAR, t.m_label)) {
+            clGetManager()->BookAddPage(PaneId::SIDE_BAR, t.m_window, t.m_label);
         } else {
-            GetNotebook()->SetSelection(where);
+            clGetManager()->BookSelectPage(PaneId::SIDE_BAR, t.m_label);
         }
     } else {
         // hide the tab
-        int where = GetNotebook()->GetPageIndex(t.m_label);
-        if(where != wxNOT_FOUND) {
-            GetNotebook()->RemovePage(where);
-        }
+        clGetManager()->BookRemovePage(PaneId::SIDE_BAR, t.m_label);
     }
 }
 

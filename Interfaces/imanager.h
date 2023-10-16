@@ -86,6 +86,7 @@ enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCur
 enum class PaneId {
     BOTTOM_BAR,
     SIDE_BAR,
+    DEBUG_BAR,
 };
 
 //------------------------------------------------------------------
@@ -257,13 +258,6 @@ public:
      */
     virtual clTreeCtrl* GetFileExplorerTree() = 0;
     virtual clTreeCtrl* GetWorkspaceTree() = 0;
-
-    /**
-     * @brief return a pointer to the sidebar notebook control
-     * @return pointer to Notebook
-     * @sa Notebook
-     */
-    virtual Notebook* GetSidebarBook() = 0;
 
     /**
      * @brief return a pointer to the output pane notebook (the one with the 'output' title)
@@ -734,6 +728,9 @@ public:
 
     /// Get the book control
     virtual wxWindow* BookGet(PaneId pane_id) = 0;
+
+    /// Return the main panel of the top level frame
+    virtual wxPanel* GetMainPanel() = 0;
 };
 
 #endif // IMANAGER_H

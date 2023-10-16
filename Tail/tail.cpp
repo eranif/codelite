@@ -124,7 +124,6 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, 
     if(isNotebook) {
         m_mgr->GetOutputBook()->InsertPage(0, m_view, "Tail", selectPage, bmp);
         m_tabHelper.reset(new clTabTogglerHelper("Tail", m_view, "", NULL));
-        m_tabHelper->SetOutputTabBmp(bmp);
     } else {
         m_tabHelper.reset(NULL);
     }

@@ -28,6 +28,7 @@
 #include "Notebook.h"
 #include "codelite_exports.h"
 #include "fileextmanager.h"
+#include "imanager.h"
 #include "macros.h"
 #include "window_locker.h"
 #include "workspace.h"

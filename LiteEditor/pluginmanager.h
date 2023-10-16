@@ -62,6 +62,7 @@ class PluginManager : public IManager
 private:
     PluginManager();
     virtual ~PluginManager();
+    Notebook* GetSidebarBook();
 
 public:
     static PluginManager* Get();
@@ -94,7 +95,6 @@ public:
     clTreeCtrl* GetFileExplorerTree() override;
     clTreeCtrl* GetWorkspaceTree() override;
     Notebook* GetOutputBook() override;
-    Notebook* GetSidebarBook() override;
     Notebook* GetMainNotebook() override;
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                       OF_extra flags = OF_AddJump) override;
@@ -221,6 +221,9 @@ public:
 
     /// Get the book control
     wxWindow* BookGet(PaneId pane_id) override;
+
+    /// Return the main panel
+    wxPanel* GetMainPanel() override;
 
     /// Delete a book page, return true on success, false otherwise
     void BookSelectPage(PaneId pane_id, const wxString& label) override;

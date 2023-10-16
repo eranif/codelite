@@ -254,7 +254,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
                       wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), NULL, (wxEvtHandler*)this);
 
 #if !STANDALONE_BUILD
-    m_mgr->GetSidebarBook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &wxCrafterPlugin::OnWorkspaceTabSelected, this);
     clKeyboardManager::Get()->AddAccelerator("ID_SHOW_DESIGNER", _("wxCrafter"), _("Show the designer"),
                                              "Ctrl-Shift-F12");
 #endif
@@ -336,39 +335,12 @@ void wxCrafterPlugin::UnPlug()
                          wxUpdateUIEventHandler(wxCrafterPlugin::OnCloseProjectUI), NULL, this);
     wxTheApp->Disconnect(XRCID("save_wxcp_project"), wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(wxCrafterPlugin::OnSaveProjectUI), NULL, this);
-#if !STANDALONE_BUILD
-    m_mgr->GetSidebarBook()->Unbind(wxEVT_BOOK_PAGE_CHANGED, &wxCrafterPlugin::OnWorkspaceTabSelected, this);
-#endif
     wxTheApp->Disconnect(XRCID("wxcp_new_form"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(wxCrafterPlugin::OnNewForm), NULL, this);
 
-    // before this plugin is un-plugged we must remove the tab we added
-    if(IsTabMode()) {
-
-#if !STANDALONE_BUILD
-        for(size_t i = 0; i < m_mgr->GetSidebarBook()->GetPageCount(); i++) {
-            if(m_treeView == m_mgr->GetSidebarBook()->GetPage(i)) {
-                m_mgr->GetSidebarBook()->RemovePage(i);
-                break;
-            }
-        }
-        m_treeView->Destroy();
-#endif
-
-    } else {
-        m_mainFrame->Destroy();
-        m_treeView = NULL;
-    }
-
+    m_mainFrame->Destroy();
+    m_treeView = NULL;
     wxXmlResource::Get()->ClearHandlers();
-    // Why is wxModule::CleanUpModules(); commented out?
-    // We comment this or m_mainFrame->Destroy(); will crash (it destroys wxPG class which relies on a
-    // wxModule::Register)
-    // We can:
-    // 1. use wxDELETE(m_mainFrame) and uncomment the line below
-    // 2. use m_mainFrame->Destroy() and comment the line below
-    // we choose the second option
-    // wxModule::CleanUpModules();
 }
 
 void wxCrafterPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -813,21 +785,7 @@ void wxCrafterPlugin::OnOpenFile(clCommandEvent& e)
     }
 }
 
-void wxCrafterPlugin::DoSelectWorkspaceTab()
-{
-
-    CHECK_POINTER(m_mgr);
-    if(IsTabMode()) {
-        // And finally, select the wxCrafter tab in the 'Workspace' view
-        Notebook* book = m_mgr->GetSidebarBook();
-        for(size_t i = 0; i < book->GetPageCount(); i++) {
-            if(book->GetPage(i) == m_treeView) {
-                book->SetSelection(i);
-                break;
-            }
-        }
-    }
-}
+void wxCrafterPlugin::DoSelectWorkspaceTab() { CHECK_POINTER(m_mgr); }
 
 void wxCrafterPlugin::OnProjectModified(wxCommandEvent& e)
 {
@@ -870,16 +828,6 @@ void wxCrafterPlugin::OnPageChanged(wxCommandEvent& e)
 }
 
 void wxCrafterPlugin::UpdateFileNameInStatusBar() {}
-
-void wxCrafterPlugin::OnWorkspaceTabSelected(wxBookCtrlEvent& e)
-{
-    e.Skip();
-    CHECK_POINTER(m_mgr);
-    wxWindow* page = m_mgr->GetSidebarBook()->GetPage(e.GetSelection());
-    if(page == m_treeView) {
-        DoShowDesigner(false);
-    }
-}
 
 void wxCrafterPlugin::OnDesignerItemSelected(wxCommandEvent& e)
 {

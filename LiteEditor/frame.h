@@ -168,6 +168,8 @@ public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
 
+    wxPanel* GetMainPanel() const { return m_mainPanel; }
+
     clInfoBar* GetMessageBar() { return m_infoBar; }
 
     /**

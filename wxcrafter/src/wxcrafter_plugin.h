@@ -72,7 +72,6 @@ protected:
     void OnProjectModified(wxCommandEvent& e);
     void OnProjectSynched(wxCommandEvent& e);
     void OnPageChanged(wxCommandEvent& e);
-    void OnWorkspaceTabSelected(wxBookCtrlEvent& e);
     void OnDesignerItemSelected(wxCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnBuildStarting(wxCommandEvent& e);

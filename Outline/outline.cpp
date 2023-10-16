@@ -83,19 +83,18 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
     m_longName = _("Outline Plugin");
     m_shortName = wxT("Outline");
 
-    Notebook* book = m_mgr->GetSidebarBook();
     if(IsPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("Outline"), false, wxNOT_FOUND, wxSize(200, 200));
+            new DockablePane(m_mgr->GetMainPanel(), PaneId::SIDE_BAR, _("Outline"), false, wxSize(200, 200));
         m_view = new OutlineTab(cp);
         cp->SetChildNoReparent(m_view);
 
     } else {
-        m_view = new OutlineTab(book);
-        book->AddPage(m_view, _("Outline"), false, wxNOT_FOUND);
+        m_view = new OutlineTab(m_mgr->BookGet(PaneId::SIDE_BAR));
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_view, _("Outline"));
     }
-    EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
+    m_tabHelper.reset(new clTabTogglerHelper(wxEmptyString, nullptr, _("Outline"), m_view));
     m_mgr->AddWorkspaceTab(_("Outline"));
 }
 
@@ -107,15 +106,11 @@ void SymbolViewPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(plugi
 
 void SymbolViewPlugin::UnPlug()
 {
-    EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
-    int where = m_mgr->GetSidebarBook()->GetPageIndex(m_view);
-    if(where != wxNOT_FOUND) {
-        // this window might be floating
-        m_mgr->GetSidebarBook()->RemovePage(where);
+    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_view)) {
+        // failed to delete, delete it manually
+        m_view->Destroy();
     }
-
-    m_view->Destroy();
-    m_view = NULL;
+    m_view = nullptr;
 }
 
 bool SymbolViewPlugin::IsPaneDetached()
@@ -124,22 +119,4 @@ bool SymbolViewPlugin::IsPaneDetached()
     m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
     wxArrayString detachedPanes = dpi.GetPanes();
     return detachedPanes.Index(_("Outline")) != wxNOT_FOUND;
-}
-
-void SymbolViewPlugin::OnToggleTab(clCommandEvent& event)
-{
-    if(event.GetString() != _("Outline")) {
-        event.Skip();
-        return;
-    }
-
-    if(event.IsSelected()) {
-        // show it
-        m_mgr->GetSidebarBook()->AddPage(m_view, _("Outline"), true);
-    } else {
-        int where = m_mgr->GetSidebarBook()->GetPageIndex(_("Outline"));
-        if(where != wxNOT_FOUND) {
-            m_mgr->GetSidebarBook()->RemovePage(where);
-        }
-    }
 }

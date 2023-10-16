@@ -122,7 +122,8 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(LOCALS);
     // Add the 'Locals View'
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp =
+            new DockablePane(clGetManager()->GetMainPanel(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_localsTable = new LocalsTable(cp);
         cp->SetChildNoReparent(m_localsTable);
 
@@ -134,7 +135,7 @@ void DebuggerPane::CreateGUIControls()
     // Add the 'watches View'
     name = wxGetTranslation(WATCHES);
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_watchesTable = new WatchesTable(cp);
         cp->SetChildNoReparent(m_watchesTable);
 
@@ -146,7 +147,7 @@ void DebuggerPane::CreateGUIControls()
     // Add the 'ASCII Viewer'
     name = wxGetTranslation(ASCII_VIEWER);
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_asciiViewer = new DebuggerAsciiViewer(cp);
         cp->SetChildNoReparent(m_asciiViewer);
 
@@ -158,7 +159,7 @@ void DebuggerPane::CreateGUIControls()
     // Add the 'Call Stack'
     name = wxGetTranslation(FRAMES);
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_frameList = new DebuggerCallstackView(cp);
         cp->SetChildNoReparent(m_frameList);
 
@@ -170,7 +171,7 @@ void DebuggerPane::CreateGUIControls()
     // Add the 'Breakpoints'
     name = wxGetTranslation(BREAKPOINTS);
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_breakpoints = new BreakpointsView(cp);
         cp->SetChildNoReparent(m_breakpoints);
 
@@ -182,7 +183,7 @@ void DebuggerPane::CreateGUIControls()
     // Add the 'Threads'
     name = wxGetTranslation(THREADS);
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_threads = new ThreadListPanel(cp);
         cp->SetChildNoReparent(m_threads);
 
@@ -194,7 +195,7 @@ void DebuggerPane::CreateGUIControls()
     // Add the 'Memory View'
     name = wxGetTranslation(MEMORY);
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_memory = new MemoryView(cp);
         cp->SetChildNoReparent(m_memory);
 
@@ -206,7 +207,7 @@ void DebuggerPane::CreateGUIControls()
     // Add the "Output" tab
     name = wxGetTranslation(DEBUGGER_OUTPUT);
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_outputDebug = new DebugTab(cp, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
         cp->SetChildNoReparent(m_outputDebug);
 
@@ -218,7 +219,7 @@ void DebuggerPane::CreateGUIControls()
     // Add the "Output" tab
     name = wxGetTranslation(DISASSEMBLY);
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_disassemble = new DebuggerDisassemblyTab(cp, wxGetTranslation(DISASSEMBLY));
         cp->SetChildNoReparent(m_disassemble);
 

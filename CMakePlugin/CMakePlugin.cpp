@@ -176,14 +176,13 @@ CMakePlugin::CMakePlugin(IManager* manager)
     // Create cmake application
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
-    wxWindow* book = clGetManager()->BookGet(PaneId::SIDE_BAR);
     if(IsPaneDetached()) {
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), PaneId::SIDE_BAR, HELP_TAB_NAME, false, wxSize(200, 200));
+            new DockablePane(m_mgr->GetMainPanel(), PaneId::SIDE_BAR, HELP_TAB_NAME, false, wxSize(200, 200));
         m_helpTab = new CMakeHelpTab(cp, this);
         cp->SetChildNoReparent(m_helpTab);
     } else {
-        m_helpTab = new CMakeHelpTab(book, this);
+        m_helpTab = new CMakeHelpTab(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
         clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME);
         m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
     }
@@ -313,7 +312,10 @@ void CMakePlugin::UnPlug()
         if(helpTab) {
             helpTab->Stop();
         }
-        clGetManager()->BookDeletePage(PaneId::SIDE_BAR, page);
+        if(!clGetManager()->BookDeletePage(PaneId::SIDE_BAR, page)) {
+            // failed to delete, delete it manually
+            page->Destroy();
+        }
     }
 
     // Unbind events

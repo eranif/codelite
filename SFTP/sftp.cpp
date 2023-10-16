@@ -121,38 +121,35 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SFTP_OPEN_FILE, &SFTP::OnOpenFile, this);
 
     // Add the "SFTP" page to the workspace pane
-    Notebook* book = m_mgr->GetSidebarBook();
     if(IsPaneDetached(_("SFTP"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP"), false, wxNOT_FOUND, wxSize(200, 200));
-        m_treeView = new SFTPTreeView(cp, this);
-        cp->SetChildNoReparent(m_treeView);
+            new DockablePane(m_mgr->GetMainPanel(), PaneId::SIDE_BAR, _("SFTP"), false, wxSize(200, 200));
+        m_browserView = new SFTPTreeView(cp, this);
+        cp->SetChildNoReparent(m_browserView);
 
     } else {
-        m_treeView = new SFTPTreeView(book, this);
-        book->AddPage(m_treeView, _("SFTP"), false);
+        m_browserView = new SFTPTreeView(m_mgr->BookGet(PaneId::SIDE_BAR), this);
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_browserView, _("SFTP"));
     }
 
     // Add the "SFTP Log" page to the output pane
-    book = m_mgr->GetOutputBook();
-    auto images = book->GetBitmaps();
     if(IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), false, wxNOT_FOUND, wxSize(200, 200));
-        m_outputPane = new SFTPStatusPage(cp, this);
-        cp->SetChildNoReparent(m_outputPane);
+            new DockablePane(m_mgr->GetMainPanel(), PaneId::BOTTOM_BAR, _("SFTP Log"), false, wxSize(200, 200));
+        m_logView = new SFTPStatusPage(cp, this);
+        cp->SetChildNoReparent(m_logView);
 
     } else {
-        m_outputPane = new SFTPStatusPage(book, this);
-        book->AddPage(m_outputPane, _("SFTP Log"), false, wxNOT_FOUND);
+        m_logView = new SFTPStatusPage(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
+        m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("SFTP Log"));
     }
 
     // Create the helper for adding our tabs in the "more" menu
-    m_tabToggler.reset(new clTabTogglerHelper(_("SFTP Log"), m_outputPane, _("SFTP"), m_treeView));
+    m_tabToggler.reset(new clTabTogglerHelper(_("SFTP Log"), m_logView, _("SFTP"), m_browserView));
 
-    SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
+    SFTPWorkerThread::Instance()->SetNotifyWindow(m_logView);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);
     SFTPWorkerThread::Instance()->Start();
 
@@ -202,29 +199,20 @@ bool SFTP::IsPaneDetached(const wxString& name) const
 {
     DetachedPanesInfo dpi;
     m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
-    const wxArrayString& detachedPanes = dpi.GetPanes();
-    return detachedPanes.Index(name) != wxNOT_FOUND;
+    return dpi.GetPanes().Index(name) != wxNOT_FOUND;
 }
 
 void SFTP::UnPlug()
 {
-    // Find our page and release it
-    // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); ++i) {
-        if(m_outputPane == m_mgr->GetOutputBook()->GetPage(i)) {
-            m_mgr->GetOutputBook()->RemovePage(i);
-            break;
-        }
+    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_browserView)) {
+        m_browserView->Destroy();
     }
-    m_outputPane->Destroy();
+    m_browserView = nullptr;
 
-    for(size_t i = 0; i < m_mgr->GetSidebarBook()->GetPageCount(); ++i) {
-        if(m_treeView == m_mgr->GetSidebarBook()->GetPage(i)) {
-            m_mgr->GetSidebarBook()->RemovePage(i);
-            break;
-        }
+    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_logView)) {
+        m_logView->Destroy();
     }
-    m_treeView->Destroy();
+    m_logView = nullptr;
 
     SFTPWorkerThread::Release();
     wxTheApp->Disconnect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager),
@@ -250,7 +238,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_SFTP_DELETE_FILE, &SFTP::OnDeleteFile, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_OPEN_FILE, &SFTP::OnOpenFile, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &SFTP::OnInitDone, this);
-    m_tabToggler.reset(NULL);
+    m_tabToggler.reset();
 
     // Delete the temporary files
     wxFileName::Rmdir(clSFTP::GetDefaultDownloadFolder({}), wxPATH_RMDIR_RECURSIVE);

@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "continuousbuild.h"
+
 #include "build_settings_config.h"
 #include "builder.h"
 #include "buildmanager.h"
@@ -30,7 +32,6 @@
 #include "compile_request.h"
 #include "continousbuildconf.h"
 #include "continousbuildpane.h"
-#include "continuousbuild.h"
 #include "custombuildrequest.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -39,6 +40,7 @@
 #include "globals.h"
 #include "processreaderthread.h"
 #include "workspace.h"
+
 #include <wx/app.h>
 #include <wx/imaglist.h>
 #include <wx/log.h>
@@ -81,7 +83,6 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
     auto images = book->GetBitmaps();
     m_mgr->GetOutputBook()->AddPage(m_view, CONT_BUILD, false, images->Add("execute"));
     m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", NULL));
-    m_tabHelper->SetOutputTabBmp(images->Add("execute"));
 
     m_topWin = m_mgr->GetTheApp();
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);

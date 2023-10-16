@@ -26,6 +26,7 @@
 #ifndef __SymbolView__
 #define __SymbolView__
 
+#include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
 #include "dockablepane.h"
 #include "globals.h"
@@ -44,10 +45,10 @@ class SymbolViewPlugin : public IPlugin
 {
 protected:
     OutlineTab* m_view;
+    clTabTogglerHelper::Ptr_t m_tabHelper;
 
 protected:
     bool IsPaneDetached();
-    void OnToggleTab(clCommandEvent& event);
 
 public:
     //--------------------------------------------

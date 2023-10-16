@@ -22,11 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "event_notifier.h"
 #include "fileexplorer.h"
-#include "wx/sizer.h"
-#include "wx/tokenzr.h"
-#include "wx/xrc/xmlres.h"
 
 #include "OpenFolderDlg.h"
 #include "clFileOrFolderDropTarget.h"
@@ -36,6 +32,7 @@
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "editor_config.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "frame.h"
 #include "globals.h"
@@ -43,6 +40,10 @@
 #include "manager.h"
 #include "plugin.h"
 #include "workspace_pane.h"
+#include "wx/sizer.h"
+#include "wx/tokenzr.h"
+#include "wx/xrc/xmlres.h"
+
 #include <wx/arrstr.h>
 #include <wx/dirdlg.h>
 
@@ -79,10 +80,7 @@ void FileExplorer::OnFolderDropped(clCommandEvent& event)
     for(size_t i = 0; i < folders.size(); ++i) {
         m_view->AddFolder(folders.Item(i));
     }
-    size_t index = clGetManager()->GetSidebarBook()->GetPageIndex(_("Explorer"));
-    if(index != wxString::npos) {
-        clGetManager()->GetSidebarBook()->ChangeSelection(index);
-    }
+    clGetManager()->BookSelectPage(PaneId::SIDE_BAR, _("Explorer"));
 }
 
 void FileExplorer::OpenFolder(const wxString& path) { m_view->AddFolder(path); }

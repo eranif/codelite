@@ -989,6 +989,9 @@ void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& 
     case PaneId::SIDE_BAR:
         clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label, true);
         break;
+    case PaneId::DEBUG_BAR:
+        clMainFrame::Get()->GetDebuggerPane()->GetNotebook()->AddPage(page, label, true);
+        break;
     }
 }
 
@@ -1047,6 +1050,8 @@ wxWindow* PluginManager::BookGetPage(PaneId pane_id, const wxString& label)
         return find_page(clMainFrame::Get()->GetOutputPane()->GetNotebook(), label);
     case PaneId::SIDE_BAR:
         return find_page(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), label);
+    case PaneId::DEBUG_BAR:
+        return find_page(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), label);
     }
 }
 
@@ -1059,15 +1064,27 @@ wxWindow* PluginManager::BookRemovePage(PaneId pane_id, const wxString& label)
         CHECK_COND_RET_NULL(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
         book->RemovePage(index);
+        page->Hide();
         return page;
     } break;
-    case PaneId::SIDE_BAR:
+    case PaneId::SIDE_BAR: {
         auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
         int index = find_page_index(book, label);
         CHECK_COND_RET_NULL(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
         book->RemovePage(index);
+        page->Hide();
         return page;
+    } break;
+    case PaneId::DEBUG_BAR: {
+        auto book = clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
+        int index = find_page_index(book, label);
+        CHECK_COND_RET_NULL(index != wxNOT_FOUND);
+        auto page = book->GetPage(index);
+        book->RemovePage(index);
+        page->Hide();
+        return page;
+    } break;
     }
 }
 
@@ -1080,6 +1097,9 @@ wxWindow* PluginManager::BookRemovePage(PaneId pane_id, wxWindow* page)
         break;
     case PaneId::SIDE_BAR:
         find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
+        break;
+    case PaneId::DEBUG_BAR:
+        find_page_label(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), page, &label);
         break;
     }
 
@@ -1096,6 +1116,8 @@ wxWindow* PluginManager::BookGet(PaneId pane_id)
         return clMainFrame::Get()->GetOutputPane()->GetNotebook();
     case PaneId::SIDE_BAR:
         return clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+    case PaneId::DEBUG_BAR:
+        return clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
     }
 }
 
@@ -1108,6 +1130,9 @@ bool PluginManager::BookDeletePage(PaneId pane_id, wxWindow* page)
         break;
     case PaneId::SIDE_BAR:
         find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
+        break;
+    case PaneId::DEBUG_BAR:
+        find_page_label(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), page, &label);
         break;
     }
 
@@ -1125,16 +1150,25 @@ bool PluginManager::BookDeletePage(PaneId pane_id, const wxString& label)
         int index = find_page_index(book, label);
         CHECK_COND_RET_FALSE(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
-        book->RemovePage(index);
+        book->DeletePage(index, false);
         return true;
     } break;
-    case PaneId::SIDE_BAR:
+    case PaneId::SIDE_BAR: {
         auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
         int index = find_page_index(book, label);
         CHECK_COND_RET_FALSE(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
-        book->RemovePage(index);
+        book->DeletePage(index, false);
         return true;
+    } break;
+    case PaneId::DEBUG_BAR: {
+        auto book = clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
+        int index = find_page_index(book, label);
+        CHECK_COND_RET_FALSE(index != wxNOT_FOUND);
+        auto page = book->GetPage(index);
+        book->DeletePage(index, false);
+        return true;
+    } break;
     }
 }
 
@@ -1148,11 +1182,18 @@ void PluginManager::BookSelectPage(PaneId pane_id, const wxString& label)
         CHECK_COND_RET(index != wxNOT_FOUND);
         book->SetSelection(index);
     } break;
-    case PaneId::SIDE_BAR:
+    case PaneId::SIDE_BAR: {
         auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
         index = find_page_index(book, label);
         CHECK_COND_RET(index != wxNOT_FOUND);
         book->SetSelection(index);
+    } break;
+    case PaneId::DEBUG_BAR: {
+        auto book = clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
+        index = find_page_index(book, label);
+        CHECK_COND_RET(index != wxNOT_FOUND);
+        book->SetSelection(index);
+    } break;
     }
 }
 
@@ -1166,7 +1207,12 @@ void PluginManager::BookSelectPage(PaneId pane_id, wxWindow* page)
     case PaneId::SIDE_BAR:
         find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
         break;
+    case PaneId::DEBUG_BAR:
+        find_page_label(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), page, &label);
+        break;
     }
     CHECK_COND_RET(!label.empty());
     BookSelectPage(pane_id, label);
 }
+
+wxPanel* PluginManager::GetMainPanel() { return clMainFrame::Get()->GetMainPanel(); }

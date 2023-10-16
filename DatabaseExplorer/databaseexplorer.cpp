@@ -38,17 +38,17 @@
 #include <wx/wxsf/AutoLayout.h>
 #include <wx/xrc/xmlres.h>
 
-//#ifdef DBL_USE_MYSQL
+// #ifdef DBL_USE_MYSQL
 #include "MySqlDbAdapter.h"
-//#endif
+// #endif
 
-//#ifdef DBL_USE_SQLITE
+// #ifdef DBL_USE_SQLITE
 #include "SqliteDbAdapter.h"
-//#endif
+// #endif
 
-//#ifdef DBL_USE_POSTGRES
+// #ifdef DBL_USE_POSTGRES
 #include "PostgreSqlDbAdapter.h"
-//#endif
+// #endif
 
 #define DBE_VERSION "0.5.3 Beta"
 
@@ -109,7 +109,6 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 {
 
     // create tab (possibly detached)
-    Notebook* book = m_mgr->GetSidebarBook();
     wxWindow* editorBook = m_mgr->GetEditorPaneNotebook();
 
     EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
@@ -117,15 +116,15 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     if(IsDbViewDetached()) {
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, _("DbExplorer"), false, wxNOT_FOUND,
-                                            wxSize(200, 200));
+        DockablePane* cp =
+            new DockablePane(m_mgr->GetMainPanel(), PaneId::SIDE_BAR, _("DbExplorer"), false, wxSize(200, 200));
         m_dbViewerPanel = new DbViewerPanel(cp, editorBook, m_mgr);
         cp->SetChildNoReparent(m_dbViewerPanel);
 
     } else {
 
-        m_dbViewerPanel = new DbViewerPanel(book, editorBook, m_mgr);
-        book->AddPage(m_dbViewerPanel, _("DbExplorer"), false);
+        m_dbViewerPanel = new DbViewerPanel(m_mgr->BookGet(PaneId::SIDE_BAR), editorBook, m_mgr);
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"));
     }
     m_mgr->AddWorkspaceTab(_("DbExplorer"));
 
@@ -186,12 +185,12 @@ void DatabaseExplorer::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
                                      clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
-    int index = m_mgr->GetSidebarBook()->GetPageIndex(m_dbViewerPanel);
-    if(index != wxNOT_FOUND) {
-        m_mgr->GetSidebarBook()->RemovePage(index);
+    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_dbViewerPanel)) {
+        // failed to delete, delete it manually
+        m_dbViewerPanel->Destroy();
+        m_dbViewerPanel = nullptr;
     }
     wxTheApp->Unbind(wxEVT_MENU, &DatabaseExplorer::OnExecuteSQL, this, XRCID("wxEVT_EXECUTE_SQL"));
-    wxDELETE(m_dbViewerPanel);
 }
 
 bool DatabaseExplorer::IsDbViewDetached()
@@ -252,11 +251,8 @@ void DatabaseExplorer::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        clGetManager()->GetSidebarBook()->AddPage(m_dbViewerPanel, _("DbExplorer"), true);
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"));
     } else {
-        int where = m_mgr->GetSidebarBook()->GetPageIndex(_("DbExplorer"));
-        if(where != wxNOT_FOUND) {
-            clGetManager()->GetSidebarBook()->RemovePage(where);
-        }
+        m_mgr->BookRemovePage(PaneId::SIDE_BAR, m_dbViewerPanel);
     }
 }

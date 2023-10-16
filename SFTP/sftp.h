@@ -34,6 +34,7 @@
 #include "plugin.h"
 #include "remote_file_info.h"
 #include "sftp_workspace_settings.h"
+
 #include <SFTPClientData.hpp>
 
 class SFTPStatusPage;
@@ -43,8 +44,8 @@ class SFTP : public IPlugin
 {
     wxFileName m_workspaceFile;
     SFTPWorkspaceSettings m_workspaceSettings;
-    SFTPStatusPage* m_outputPane;
-    SFTPTreeView* m_treeView;
+    SFTPStatusPage* m_logView = nullptr;
+    SFTPTreeView* m_browserView = nullptr;
     RemoteFileInfo::Map_t m_remoteFiles;
     clTabTogglerHelper::Ptr_t m_tabToggler;
     long m_sshAgentPID = wxNOT_FOUND;
@@ -57,8 +58,8 @@ public:
     void OpenWithDefaultApp(const wxString& localFileName);
     void OpenContainingFolder(const wxString& localFileName);
     void AddRemoteFile(const RemoteFileInfo& remoteFile);
-    SFTPStatusPage* GetOutputPane() { return m_outputPane; }
-    SFTPTreeView* GetTreeView() { return m_treeView; }
+    SFTPStatusPage* GetOutputPane() { return m_logView; }
+    SFTPTreeView* GetTreeView() { return m_browserView; }
 
     void OpenFile(const wxString& remotePath, int lineNumber = wxNOT_FOUND);
 

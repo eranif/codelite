@@ -5,21 +5,17 @@
  * @copyright GNU General Public License v2
  */
 
-#include <wx/busyinfo.h>
-#include <wx/filedlg.h>
+#include "memcheck.h"
 
 #include "async_executable_cmd.h"
+#include "asyncprocess.h"
+#include "build_config.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "workspace.h"
-
-#include "asyncprocess.h"
-#include "build_config.h"
 #include "globals.h"
 #include "macromanager.h"
-#include "memcheck.h"
 #include "memcheckdefs.h"
 #include "memcheckoutputview.h"
 #include "memchecksettings.h"
@@ -27,6 +23,10 @@
 #include "memcheckui.h"
 #include "processreaderthread.h"
 #include "valgrindprocessor.h"
+#include "workspace.h"
+
+#include <wx/busyinfo.h>
+#include <wx/filedlg.h>
 
 static MemCheckPlugin* thePlugin = NULL;
 
@@ -99,11 +99,9 @@ MemCheckPlugin::MemCheckPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MemCheckPlugin::OnWorkspaceClosed, this);
 
     // CL_DEBUG1(PLUGIN_PREFIX("adding 'Output View' notebook pane"));
-    auto images = m_mgr->GetOutputPaneNotebook()->GetBitmaps();
-    m_outputView = new MemCheckOutputView(m_mgr->GetOutputPaneNotebook(), this, m_mgr);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputView, _("MemCheck"), false, images->Add("check-all"));
-    m_tabHelper.reset(new clTabTogglerHelper(_("MemCheck"), m_outputView, "", NULL));
-    m_tabHelper->SetOutputTabBmp(images->Add("check-all"));
+    m_outputView = new MemCheckOutputView(m_mgr->BookGet(PaneId::BOTTOM_BAR), this, m_mgr);
+    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_outputView, _("MemCheck"));
+    m_tabHelper.reset(new clTabTogglerHelper(_("MemCheck"), m_outputView, wxEmptyString, nullptr));
 
     m_settings = new MemCheckSettings();
     GetSettings()->LoadFromConfig();
@@ -222,13 +220,10 @@ void MemCheckPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MemCheckPlugin::OnWorkspaceClosed, this);
 
     // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if(m_outputView == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
-            m_outputView->Destroy();
-            break;
-        }
+    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_outputView)) {
+        m_outputView->Destroy();
     }
+    m_outputView = nullptr;
 }
 
 void MemCheckPlugin::OnWorkspaceLoaded(clWorkspaceEvent& event)
@@ -265,15 +260,7 @@ void MemCheckPlugin::ApplySettings(bool loadLastErrors)
     }
 }
 
-void MemCheckPlugin::SwitchToMyPage()
-{
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if(m_outputView == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->ChangeSelection(i);
-            break;
-        }
-    }
-}
+void MemCheckPlugin::SwitchToMyPage() { m_mgr->BookSelectPage(PaneId::BOTTOM_BAR, m_outputView); }
 
 void MemCheckPlugin::OnCheckAtiveProject(wxCommandEvent& event)
 {

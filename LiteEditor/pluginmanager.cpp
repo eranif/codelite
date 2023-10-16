@@ -1170,6 +1170,7 @@ bool PluginManager::BookDeletePage(PaneId pane_id, const wxString& label)
         return true;
     } break;
     }
+    return false;
 }
 
 void PluginManager::BookSelectPage(PaneId pane_id, const wxString& label)

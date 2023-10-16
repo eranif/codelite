@@ -28,6 +28,7 @@
 
 #include "Notebook.h"
 #include "codelite_exports.h"
+#include "imanager.h"
 
 #include <wx/panel.h>
 #include <wx/toolbar.h>
@@ -37,25 +38,25 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_DELETE_DOCKPANE;
 
 class WXDLLIMPEXP_SDK DockablePane : public wxPanel
 {
-    wxWindow* m_child;
-    Notebook* m_book;
+    wxWindow* m_child = nullptr;
+    Notebook* m_book = nullptr;
     wxString m_text;
+    int m_paneId = wxNOT_FOUND;
     int m_bmp = wxNOT_FOUND;
-    bool m_notifiedDestroyed;
+    bool m_notifiedDestroyed = false;
 
+protected:
     void ClosePane(wxCommandEvent& e);
-
     void OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }
     void OnPaint(wxPaintEvent& e);
-
-    DECLARE_EVENT_TABLE();
 
 public:
     DockablePane(wxWindow* parent, Notebook* book, const wxString& title, bool initialFloat = true,
                  int bmp = wxNOT_FOUND, wxSize size = wxDefaultSize);
+    DockablePane(wxWindow* parent, PaneId pane_id, const wxString& title, bool initialFloat = true,
+                 const wxSize& size = wxDefaultSize);
     virtual ~DockablePane();
     wxString GetName() { return m_text; }
-    Notebook* GetBook() { return m_book; }
     void SetChildNoReparent(wxWindow* child);
 };
 #endif // __dockablepane__

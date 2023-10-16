@@ -176,16 +176,15 @@ CMakePlugin::CMakePlugin(IManager* manager)
     // Create cmake application
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
-    Notebook* book = m_mgr->GetSidebarBook();
-    auto images = book->GetBitmaps();
+    wxWindow* book = clGetManager()->BookGet(PaneId::SIDE_BAR);
     if(IsPaneDetached()) {
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, false,
-                                            images->Add("cmake"), wxSize(200, 200));
+        DockablePane* cp =
+            new DockablePane(book->GetParent()->GetParent(), PaneId::SIDE_BAR, HELP_TAB_NAME, false, wxSize(200, 200));
         m_helpTab = new CMakeHelpTab(cp, this);
         cp->SetChildNoReparent(m_helpTab);
     } else {
         m_helpTab = new CMakeHelpTab(book, this);
-        book->AddPage(m_helpTab, HELP_TAB_NAME, false, images->Add("cmake"));
+        clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME);
         m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
     }
 
@@ -308,17 +307,13 @@ void CMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void CMakePlugin::UnPlug()
 {
-    wxASSERT(m_mgr);
-    Notebook* notebook = m_mgr->GetSidebarBook();
-    wxASSERT(notebook);
-
-    int pos = notebook->GetPageIndex("CMake Help");
-    if(pos != wxNOT_FOUND) {
-        CMakeHelpTab* helpTab = dynamic_cast<CMakeHelpTab*>(notebook->GetPage(pos));
+    auto page = clGetManager()->BookGetPage(PaneId::SIDE_BAR, HELP_TAB_NAME);
+    if(page) {
+        CMakeHelpTab* helpTab = dynamic_cast<CMakeHelpTab*>(page);
         if(helpTab) {
             helpTab->Stop();
         }
-        notebook->RemovePage(pos);
+        clGetManager()->BookDeletePage(PaneId::SIDE_BAR, page);
     }
 
     // Unbind events
@@ -383,13 +378,10 @@ void CMakePlugin::OnToggleHelpTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        auto images = m_mgr->GetSidebarBook()->GetBitmaps();
-        m_mgr->GetSidebarBook()->AddPage(m_helpTab, HELP_TAB_NAME, true, images->Add("cmake"));
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME);
     } else {
-        int where = m_mgr->GetSidebarBook()->GetPageIndex(HELP_TAB_NAME);
-        if(where != wxNOT_FOUND) {
-            m_mgr->GetSidebarBook()->RemovePage(where);
-        }
+        // remove it, dont destroy it
+        m_mgr->BookRemovePage(PaneId::SIDE_BAR, HELP_TAB_NAME);
     }
 }
 

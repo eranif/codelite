@@ -39,11 +39,6 @@
 const wxEventType wxEVT_CMD_NEW_DOCKPANE = XRCID("new_dockpane");
 const wxEventType wxEVT_CMD_DELETE_DOCKPANE = XRCID("delete_dockpane");
 
-BEGIN_EVENT_TABLE(DockablePane, wxPanel)
-EVT_ERASE_BACKGROUND(DockablePane::OnEraseBg)
-EVT_PAINT(DockablePane::OnPaint)
-END_EVENT_TABLE()
-
 DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& title, bool initialFloat, int bmp,
                            wxSize size)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxBORDER_NONE)
@@ -53,6 +48,9 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& tit
     , m_bmp(bmp)
     , m_notifiedDestroyed(false)
 {
+    Bind(wxEVT_ERASE_BACKGROUND, &DockablePane::OnEraseBg, this);
+    Bind(wxEVT_PAINT, &DockablePane::OnPaint, this);
+
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
 
@@ -70,7 +68,40 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& tit
     parent->GetEventHandler()->AddPendingEvent(event);
 }
 
-DockablePane::~DockablePane() {}
+DockablePane::DockablePane(wxWindow* parent, PaneId pane_id, const wxString& title, bool initialFloat,
+                           const wxSize& size)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxBORDER_NONE)
+    , m_child(NULL)
+    , m_book(nullptr)
+    , m_text(title)
+    , m_notifiedDestroyed(false)
+    , m_paneId(static_cast<int>(pane_id))
+{
+    Bind(wxEVT_ERASE_BACKGROUND, &DockablePane::OnEraseBg, this);
+    Bind(wxEVT_PAINT, &DockablePane::OnPaint, this);
+
+    wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
+    SetSizer(sz);
+
+    Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DockablePane::ClosePane));
+    wxAuiPaneInfo info;
+    info.Name(title).Caption(title);
+    if(initialFloat) {
+        info.Float();
+    }
+    clGetManager()->GetDockingManager()->AddPane(this, info);
+    clGetManager()->GetDockingManager()->Update();
+
+    wxCommandEvent event(wxEVT_CMD_NEW_DOCKPANE);
+    event.SetClientData(this);
+    parent->GetEventHandler()->AddPendingEvent(event);
+}
+
+DockablePane::~DockablePane()
+{
+    Unbind(wxEVT_ERASE_BACKGROUND, &DockablePane::OnEraseBg, this);
+    Unbind(wxEVT_PAINT, &DockablePane::OnPaint, this);
+}
 
 void DockablePane::ClosePane(wxCommandEvent& e)
 {
@@ -86,6 +117,20 @@ void DockablePane::ClosePane(wxCommandEvent& e)
 
             // now we can add it to the noteook (it will be automatically be reparented to the notebook)
             m_book->AddPage(m_child, m_text, false, m_bmp);
+        } else if(m_paneId != wxNOT_FOUND) {
+            // first detach the child from this pane
+            wxSizer* sz = GetSizer();
+            sz->Detach(m_child);
+
+            // use the new API
+            switch(static_cast<PaneId>(m_paneId)) {
+            case PaneId::SIDE_BAR:
+                clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_child, m_text);
+                break;
+            case PaneId::BOTTOM_BAR:
+                clGetManager()->BookAddPage(PaneId::BOTTOM_BAR, m_child, m_text);
+                break;
+            }
         }
 
         wxCommandEvent event(wxEVT_CMD_DELETE_DOCKPANE);

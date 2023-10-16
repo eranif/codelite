@@ -984,10 +984,10 @@ void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& 
 {
     switch(pane_id) {
     case PaneId::BOTTOM_BAR:
-        clMainFrame::Get()->GetOutputPane()->GetNotebook()->AddPage(page, label);
+        clMainFrame::Get()->GetOutputPane()->GetNotebook()->AddPage(page, label, true);
         break;
     case PaneId::SIDE_BAR:
-        clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label);
+        clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label, true);
         break;
     }
 }

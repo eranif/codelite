@@ -59,6 +59,8 @@
 #include "wx/filename.h"
 #include "wx/xrc/xmlres.h"
 
+#include <memory>
+#include <tuple>
 #include <wx/dir.h>
 #include <wx/log.h>
 #include <wx/tokenzr.h>
@@ -73,18 +75,19 @@ PluginManager* PluginManager::Get()
 
 void PluginManager::UnLoad()
 {
-    auto bottom_book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
-    // Before we unload the plugins, store the list of visible workspace tabs
     {
+        // Before we unload the plugins, store the list of visible workspace tabs
+        auto sidebar_book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
         wxArrayString visibleTabs;
-        for(size_t i = 0; i < bottom_book->GetPageCount(); ++i) {
-            visibleTabs.Add(bottom_book->GetPageText(i));
+        for(size_t i = 0; i < sidebar_book->GetPageCount(); ++i) {
+            visibleTabs.Add(sidebar_book->GetPageText(i));
         }
         clConfig::Get().Write("VisibleWorkspaceTabs", visibleTabs);
     }
 
-    // Now do the same for the output view
     {
+        // Now do the same for the output view
+        auto bottom_book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
         wxArrayString visibleTabs;
         for(size_t i = 0; i < bottom_book->GetPageCount(); ++i) {
             visibleTabs.Add(bottom_book->GetPageText(i));
@@ -92,15 +95,12 @@ void PluginManager::UnLoad()
         clConfig::Get().Write("VisibleOutputTabs", visibleTabs);
     }
 
-    std::map<wxString, IPlugin*>::iterator plugIter = m_plugins.begin();
-    for(; plugIter != m_plugins.end(); plugIter++) {
-        IPlugin* plugin = plugIter->second;
+    for(auto [__, plugin] : m_plugins) {
         plugin->UnPlug();
         delete plugin;
     }
-
-    m_dl.clear();
     m_plugins.clear();
+    m_dl.clear();
 }
 
 PluginManager::~PluginManager() {}

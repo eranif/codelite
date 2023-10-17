@@ -1051,6 +1051,7 @@ wxWindow* PluginManager::BookGetPage(PaneId pane_id, const wxString& label)
     case PaneId::DEBUG_BAR:
         return find_page(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), label);
     }
+    return nullptr;
 }
 
 wxWindow* PluginManager::BookRemovePage(PaneId pane_id, const wxString& label)
@@ -1084,6 +1085,7 @@ wxWindow* PluginManager::BookRemovePage(PaneId pane_id, const wxString& label)
         return page;
     } break;
     }
+    return nullptr;
 }
 
 wxWindow* PluginManager::BookRemovePage(PaneId pane_id, wxWindow* page)
@@ -1117,6 +1119,7 @@ wxWindow* PluginManager::BookGet(PaneId pane_id)
     case PaneId::DEBUG_BAR:
         return clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
     }
+    return nullptr;
 }
 
 bool PluginManager::BookDeletePage(PaneId pane_id, wxWindow* page)

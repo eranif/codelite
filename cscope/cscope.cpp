@@ -84,9 +84,9 @@ Cscope::Cscope(IManager* manager)
     m_shortName = CSCOPE_NAME;
     m_topWindow = m_mgr->GetTheApp();
 
-    auto book = m_mgr->BookGet(PaneId::SIDE_BAR);
+    auto book = m_mgr->BookGet(PaneId::BOTTOM_BAR);
     m_cscopeWin = new CscopeTab(book, m_mgr);
-    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_cscopeWin, CSCOPE_NAME);
+    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_cscopeWin, CSCOPE_NAME);
     m_tabHelper.reset(new clTabTogglerHelper(CSCOPE_NAME, m_cscopeWin, "", NULL));
 
     Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);

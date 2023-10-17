@@ -4995,7 +4995,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
     // Set the manager flags
-    unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_LIVE_RESIZE;
+    unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_LIVE_RESIZE | wxAUI_MGR_HINT_FADE;
     m_mgr.SetFlags(auiMgrFlags);
 }
 

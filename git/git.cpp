@@ -198,8 +198,8 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_RESET_FILES, &GitPlugin::OnGitActionDone, this);
 
     // Add the console
-    m_console = new GitConsole(m_mgr->GetOutputBook(), this);
-    m_mgr->GetOutputBook()->AddPage(m_console, _("Git"), false);
+    m_console = new GitConsole(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
+    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_console, _("Git"));
     m_tabToggler.reset(new clTabTogglerHelper(_("Git"), m_console, "", NULL));
     m_progressTimer.SetOwner(this);
 
@@ -375,13 +375,10 @@ void GitPlugin::UnPlug()
 {
     ClearCodeLiteRemoteInfo();
     // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
-        if(m_console == m_mgr->GetOutputBook()->GetPage(i)) {
-            m_mgr->GetOutputBook()->RemovePage(i);
-            m_console->Destroy();
-            break;
-        }
+    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_console)) {
+        m_console->Destroy();
     }
+    m_console = nullptr;
 
     EventNotifier::Get()->Unbind(wxEVT_FILE_CREATED, &GitPlugin::OnFileCreated, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);

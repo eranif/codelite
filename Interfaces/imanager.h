@@ -260,13 +260,6 @@ public:
     virtual clTreeCtrl* GetWorkspaceTree() = 0;
 
     /**
-     * @brief return a pointer to the output pane notebook (the one with the 'output' title)
-     * @return pointer to Notebook
-     * @sa Notebook
-     */
-    virtual Notebook* GetOutputBook() = 0;
-
-    /**
      * @brief return the main editor notebook
      */
     virtual Notebook* GetMainNotebook() = 0;

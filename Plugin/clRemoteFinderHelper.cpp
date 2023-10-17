@@ -98,16 +98,7 @@ void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& find
     GetSearchTab()->GetEventHandler()->AddPendingEvent(start_event);
 }
 
-wxWindow* clRemoteFinderHelper::GetSearchTab()
-{
-    auto book = clGetManager()->GetOutputBook();
-    for(size_t i = 0; i < book->GetPageCount(); ++i) {
-        if(book->GetPageText(i) == _("Search")) {
-            return book->GetPage(i);
-        }
-    }
-    return nullptr;
-}
+wxWindow* clRemoteFinderHelper::GetSearchTab() { return clGetManager()->BookGetPage(PaneId::BOTTOM_BAR, _("Search")); }
 
 void clRemoteFinderHelper::SetCodeLiteRemote(clCodeLiteRemoteProcess* clr) { m_codeliteRemote = clr; }
 

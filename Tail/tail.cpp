@@ -1,9 +1,11 @@
+#include "tail.h"
+
 #include "TailFrame.h"
 #include "TailPanel.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "event_notifier.h"
-#include "tail.h"
+
 #include <wx/xrc/xmlres.h>
 
 static Tail* thePlugin = NULL;
@@ -37,7 +39,7 @@ Tail::Tail(IManager* manager)
     m_shortName = wxT("Tail");
 
     // Hook our output-pane panel
-    InitTailWindow(m_mgr->GetOutputBook(), true, TailData(), false);
+    InitTailWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR), true, TailData(), false);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &Tail::OnInitDone, this);
 }
 
@@ -91,19 +93,11 @@ void Tail::DetachTailWindow(const TailData& d)
 
 void Tail::DockTailWindow(const TailData& d)
 {
-    InitTailWindow(m_mgr->GetOutputBook(), true, d, true);
+    InitTailWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR), true, d, true);
     m_mgr->GetDockingManager()->Update();
 }
 
-void Tail::DoDetachWindow()
-{
-    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
-        if(m_view == m_mgr->GetOutputBook()->GetPage(i)) {
-            m_mgr->GetOutputBook()->RemovePage(i);
-            break;
-        }
-    }
-}
+void Tail::DoDetachWindow() { m_mgr->BookRemovePage(PaneId::BOTTOM_BAR, m_view); }
 
 void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, bool selectPage)
 {
@@ -118,12 +112,10 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, 
     }
 
     // Hook our output-pane panel
-    int bmp = m_mgr->GetOutputBook()->GetBitmaps()->Add("mime-txt");
     m_view = tmpView;
     m_editEventsHandler.Reset(new clEditEventsHandler(m_view->GetStc()));
     if(isNotebook) {
-        m_mgr->GetOutputBook()->InsertPage(0, m_view, "Tail", selectPage, bmp);
-        m_tabHelper.reset(new clTabTogglerHelper("Tail", m_view, "", NULL));
+        m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_view, "Tail");
     } else {
         m_tabHelper.reset(NULL);
     }

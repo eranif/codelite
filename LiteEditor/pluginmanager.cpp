@@ -73,11 +73,12 @@ PluginManager* PluginManager::Get()
 
 void PluginManager::UnLoad()
 {
+    auto bottom_book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
     // Before we unload the plugins, store the list of visible workspace tabs
     {
         wxArrayString visibleTabs;
-        for(size_t i = 0; i < GetSidebarBook()->GetPageCount(); ++i) {
-            visibleTabs.Add(GetSidebarBook()->GetPageText(i));
+        for(size_t i = 0; i < bottom_book->GetPageCount(); ++i) {
+            visibleTabs.Add(bottom_book->GetPageText(i));
         }
         clConfig::Get().Write("VisibleWorkspaceTabs", visibleTabs);
     }
@@ -85,8 +86,8 @@ void PluginManager::UnLoad()
     // Now do the same for the output view
     {
         wxArrayString visibleTabs;
-        for(size_t i = 0; i < GetOutputBook()->GetPageCount(); ++i) {
-            visibleTabs.Add(GetOutputBook()->GetPageText(i));
+        for(size_t i = 0; i < bottom_book->GetPageCount(); ++i) {
+            visibleTabs.Add(bottom_book->GetPageText(i));
         }
         clConfig::Get().Write("VisibleOutputTabs", visibleTabs);
     }
@@ -365,10 +366,7 @@ clTreeCtrl* PluginManager::GetWorkspaceTree() { return clMainFrame::Get()->GetWo
 
 clTreeCtrl* PluginManager::GetFileExplorerTree() { return clMainFrame::Get()->GetFileExplorer()->GetTree(); }
 
-Notebook* PluginManager::GetOutputBook() { return clMainFrame::Get()->GetOutputPane()->GetNotebook(); }
 Notebook* PluginManager::GetMainNotebook() { return clMainFrame::Get()->GetMainBook()->GetNotebook(); }
-
-Notebook* PluginManager::GetSidebarBook() { return clMainFrame::Get()->GetWorkspacePane()->GetNotebook(); }
 
 IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& bmpResourceName, const wxString& tooltip)
 {

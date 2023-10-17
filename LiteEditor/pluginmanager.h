@@ -62,7 +62,6 @@ class PluginManager : public IManager
 private:
     PluginManager();
     virtual ~PluginManager();
-    Notebook* GetSidebarBook();
 
 public:
     static PluginManager* Get();
@@ -94,7 +93,6 @@ public:
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type) override;
     clTreeCtrl* GetFileExplorerTree() override;
     clTreeCtrl* GetWorkspaceTree() override;
-    Notebook* GetOutputBook() override;
     Notebook* GetMainNotebook() override;
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                       OF_extra flags = OF_AddJump) override;

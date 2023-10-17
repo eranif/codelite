@@ -76,12 +76,10 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 {
     m_longName = _("Continuous build plugin which compiles files on save and report errors");
     m_shortName = wxT("ContinuousBuild");
-    m_view = new ContinousBuildPane(m_mgr->GetOutputBook(), m_mgr, this);
+    m_view = new ContinousBuildPane(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_mgr, this);
 
     // add our page to the output pane notebook
-    auto book = m_mgr->GetOutputBook();
-    auto images = book->GetBitmaps();
-    m_mgr->GetOutputBook()->AddPage(m_view, CONT_BUILD, false, images->Add("execute"));
+    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_view, CONT_BUILD);
     m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", NULL));
 
     m_topWin = m_mgr->GetTheApp();
@@ -113,14 +111,10 @@ void ContinuousBuild::HookPopupMenu(wxMenu* menu, MenuType type)
 void ContinuousBuild::UnPlug()
 {
     m_tabHelper.reset(NULL);
-    // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
-        if(m_view == m_mgr->GetOutputBook()->GetPage(i)) {
-            m_mgr->GetOutputBook()->RemovePage(i);
-            break;
-        }
+    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_view)) {
+        m_view->Destroy();
     }
-    m_view->Destroy();
+    m_view = nullptr;
 
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_START,

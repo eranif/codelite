@@ -380,14 +380,7 @@ void Subversion2::EnsureVisible()
         pi.Show(true);
         GetManager()->GetDockingManager()->Update();
     }
-
-    Notebook* book = GetManager()->GetOutputBook();
-    for(size_t i = 0; i < book->GetPageCount(); i++) {
-        if(m_subversionView == book->GetPage(i)) {
-            book->SetSelection(i);
-            break;
-        }
-    }
+    clGetManager()->BookSelectPage(PaneId::BOTTOM_BAR, m_subversionView);
 }
 
 void Subversion2::DoInitialize()

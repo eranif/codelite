@@ -84,9 +84,9 @@ Cscope::Cscope(IManager* manager)
     m_shortName = CSCOPE_NAME;
     m_topWindow = m_mgr->GetTheApp();
 
-    m_cscopeWin = new CscopeTab(m_mgr->GetOutputBook(), m_mgr);
-    auto book = m_mgr->GetOutputBook();
-    book->AddPage(m_cscopeWin, CSCOPE_NAME, false);
+    auto book = m_mgr->BookGet(PaneId::SIDE_BAR);
+    m_cscopeWin = new CscopeTab(book, m_mgr);
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_cscopeWin, CSCOPE_NAME);
     m_tabHelper.reset(new clTabTogglerHelper(CSCOPE_NAME, m_cscopeWin, "", NULL));
 
     Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
@@ -240,13 +240,11 @@ void Cscope::UnPlug()
                             wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this);
 
     // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputBook()->GetPageCount(); i++) {
-        if(m_cscopeWin == m_mgr->GetOutputBook()->GetPage(i)) {
-            m_mgr->GetOutputBook()->RemovePage(i);
-            m_cscopeWin->Destroy();
-            break;
-        }
+    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_cscopeWin)) {
+        m_cscopeWin->Destroy();
     }
+    m_cscopeWin = nullptr;
+
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &Cscope::OnEditorContentMenu, this);
     CScopeThreadST::Get()->Stop();
     CScopeThreadST::Free();
@@ -382,7 +380,6 @@ void Cscope::DoCscopeCommand(const wxString& command, const wxString& findWhat, 
     }
 
     // set the focus to the cscope tab
-    Notebook* book = m_mgr->GetOutputBook();
 
     // make sure that the Output pane is visible
     wxAuiManager* aui = m_mgr->GetDockingManager();
@@ -394,15 +391,7 @@ void Cscope::DoCscopeCommand(const wxString& command, const wxString& findWhat, 
         }
     }
 
-    wxString curSel = book->GetPageText((size_t)book->GetSelection());
-    if(curSel != CSCOPE_NAME) {
-        for(size_t i = 0; i < (size_t)book->GetPageCount(); i++) {
-            if(book->GetPageText(i) == CSCOPE_NAME) {
-                book->SetSelection(i);
-                break;
-            }
-        }
-    }
+    m_mgr->BookSelectPage(PaneId::BOTTOM_BAR, CSCOPE_NAME);
 
     // create the search thread and return
     CscopeRequest* req = new CscopeRequest();

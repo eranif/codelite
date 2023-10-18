@@ -504,15 +504,35 @@ void WorkspacePane::OnNativeBookContextMenu(wxContextMenuEvent& event)
 #if USE_SIDEBAR_NATIVE_BOOK
     wxMenu menu;
     long flags = 0;
-    int tabIndex = m_book->HitTest(m_book->ScreenToClient(::wxGetMousePosition()), &flags);
-    if(tabIndex != wxNOT_FOUND) {
+    wxPoint pt = m_book->ScreenToClient(::wxGetMousePosition());
+    m_book->HitTest(pt, &flags);
+
+#if defined(__WXMAC__)
+    // Hack: on macOS, context menu is broken when the notebook orientation is placed
+    // top or left. We workaround it by moving the clicked point by approximately the
+    // height of the tab control
+    if(flags & wxNB_HITTEST_NOWHERE) {
+        static int offset = wxNOT_FOUND;
+        if(offset == wxNOT_FOUND) {
+            wxClientDC dc(this);
+            offset = dc.GetTextExtent("Wp").GetHeight() * 2;
+        }
+        // try to move the test down a bit
+        pt.y += offset;
+        flags = 0;
+        // try again
+        m_book->HitTest(pt, &flags);
+    }
+#endif
+
+    if(flags & wxNB_HITTEST_ONLABEL || flags & wxNB_HITTEST_ONICON) {
         if(m_book->GetPageCount() > 1) {
             // we must always have at least 1 tab shown
             menu.Append(XRCID("detach_wv_tab"), _("Detach"));
             menu.Append(XRCID("hide_wv_tab"), _("Hide"));
         }
         BuildTabListMenu(menu);
-        m_book->PopupMenu(&menu);
+        PopupMenu(&menu);
     }
 #else
     wxUnusedVar(event);

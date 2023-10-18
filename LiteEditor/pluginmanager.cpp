@@ -985,6 +985,11 @@ void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& 
         clMainFrame::Get()->GetOutputPane()->GetNotebook()->AddPage(page, label, true);
         break;
     case PaneId::SIDE_BAR:
+#if USE_SIDEBAR_NATIVE_BOOK
+        if(page->GetParent() != clMainFrame::Get()->GetWorkspacePane()->GetNotebook()) {
+            page->Reparent(clMainFrame::Get()->GetWorkspacePane()->GetNotebook());
+        }
+#endif
         clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label, true);
         break;
     case PaneId::DEBUG_BAR:
@@ -1159,7 +1164,11 @@ bool PluginManager::BookDeletePage(PaneId pane_id, const wxString& label)
         int index = find_page_index(book, label);
         CHECK_COND_RET_FALSE(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
+#if USE_SIDEBAR_GENERIC_BOOK
         book->DeletePage(index, false);
+#else
+        book->DeletePage(index);
+#endif
         return true;
     } break;
     case PaneId::DEBUG_BAR: {

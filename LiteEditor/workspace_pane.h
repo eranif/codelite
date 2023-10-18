@@ -46,6 +46,19 @@ class WorkspaceTab;
 class TabgroupsPane;
 class wxGauge;
 
+#if USE_SIDEBAR_NATIVE_BOOK
+typedef class SidebarBookT : public wxNotebook
+{
+public:
+    SidebarBookT(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style);
+    virtual ~SidebarBookT() {}
+    int GetPageIndex(const wxString& label) const;
+    void SetMenu(wxMenu* menu);
+} SidebarBook;
+#else
+typedef Notebook SidebarBook;
+#endif
+
 class WorkspacePane : public wxPanel
 {
 private:
@@ -53,13 +66,16 @@ private:
     wxAuiManager* m_mgr = nullptr;
     wxGauge* m_parsingProgress = nullptr;
     wxStaticText* m_staticText = nullptr;
-    Notebook* m_book = nullptr;
+    SidebarBook* m_book = nullptr;
     TabgroupsPane* m_TabgroupsPane = nullptr;
     OpenWindowsPanel* m_openWindowsPane = nullptr;
 
     FileExplorer* m_explorer = nullptr;
     WorkspaceTab* m_workspaceTab = nullptr;
     clAuiCaptionEnabler m_captionEnabler;
+
+private:
+    bool BuildTabListMenu(wxMenu& menu);
 
 protected:
     struct Tab {
@@ -90,6 +106,7 @@ protected:
     clTabRenderer::Ptr_t GetNotebookRenderer();
 
     void OnWorkspaceBookFileListMenu(clContextMenuEvent& event);
+    void OnNativeBookContextMenu(wxContextMenuEvent& event);
 
 public:
     WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style);
@@ -103,7 +120,7 @@ public:
 
     // Getters
     const wxString& GetCaption() const { return m_caption; }
-    Notebook* GetNotebook() { return m_book; }
+    SidebarBook* GetNotebook() { return m_book; }
     WorkspaceTab* GetWorkspaceTab() { return m_workspaceTab; }
     FileExplorer* GetFileExplorer() { return m_explorer; }
     TabgroupsPane* GetTabgroupsTab() { return m_TabgroupsPane; }

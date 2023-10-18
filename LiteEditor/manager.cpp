@@ -1656,7 +1656,7 @@ void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
     }
 
     // set the selection to focus win
-    Notebook* book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+    auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
     int index = book->GetPageIndex(focusWin);
     if(index != wxNOT_FOUND && index != book->GetSelection()) {
         book->SetSelection((size_t)index);

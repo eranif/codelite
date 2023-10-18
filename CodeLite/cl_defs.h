@@ -61,19 +61,29 @@
 // Allow override the default CL_USE_NATIVEBOOK by cmake variable (GTK only)
 #ifdef __WXGTK__
 #if GTK_USE_NATIVEBOOK
-#   ifdef CL_USE_NATIVEBOOK
-#       undef CL_USE_NATIVEBOOK
-#   endif
-#   define CL_USE_NATIVEBOOK 1
+#ifdef CL_USE_NATIVEBOOK
+#undef CL_USE_NATIVEBOOK
+#endif
+#define CL_USE_NATIVEBOOK 1
 #else
-#   ifdef CL_USE_NATIVEBOOK
-#       undef CL_USE_NATIVEBOOK
-#   endif
-#   define CL_USE_NATIVEBOOK 0
+#ifdef CL_USE_NATIVEBOOK
+#undef CL_USE_NATIVEBOOK
+#endif
+#define CL_USE_NATIVEBOOK 0
 #endif // GTK_USE_NATIVEBOOK
 #endif // __WXGTK__
 
 #define CL_USE_NEW_BUILD_TAB 1
 #define CL_N0_OF_BOOKMARK_TYPES 5
 
+// Side bar notebook
+#ifdef __WXMSW__
+#define USE_SIDEBAR_NATIVE_BOOK 0
+#elif defined(__WXMAC__)
+#define USE_SIDEBAR_NATIVE_BOOK 1
+#else
+#define USE_SIDEBAR_NATIVE_BOOK 0
+#endif
+
+#define USE_SIDEBAR_GENERIC_BOOK !USE_SIDEBAR_NATIVE_BOOK
 #endif // CL_DEFS_H

@@ -65,6 +65,24 @@
 #undef GSocket
 #endif
 
+#if USE_SIDEBAR_NATIVE_BOOK
+SidebarBookT::SidebarBookT(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxNotebook(parent, id, pos, size, style)
+{
+}
+
+int SidebarBookT::GetPageIndex(const wxString& label) const
+{
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        if(GetPageText(i) == label) {
+            return static_cast<int>(i);
+        }
+    }
+    return wxNOT_FOUND;
+}
+void SidebarBookT::SetMenu(wxMenu* menu) { wxUnusedVar(menu); }
+#endif
+
 WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
     : m_caption(caption)
     , m_mgr(mgr)
@@ -100,16 +118,29 @@ void WorkspacePane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
+#if USE_SIDEBAR_GENERIC_BOOK
     long style = (kNotebook_Default | kNotebook_AllowDnD);
     style |= kNotebook_UnderlineActiveTab | kNotebook_FixedWidth;
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
         style |= kNotebook_MouseScrollSwitchTabs;
     }
-
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
+    m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
     m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &WorkspacePane::OnWorkspaceBookFileListMenu, this);
+#else
+    long style = wxNB_DEFAULT;
+    if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxDOWN) {
+        style &= ~(wxNB_TOP | wxNB_BOTTOM | wxNB_LEFT | wxNB_RIGHT);
+        style |= wxNB_BOTTOM;
+    }
+
+    m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
+    m_book->Bind(wxEVT_CONTEXT_MENU, &WorkspacePane::OnNativeBookContextMenu, this);
+#endif
+
+#if USE_SIDEBAR_GENERIC_BOOK
     m_book->SetArt(GetNotebookRenderer());
+#endif
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
@@ -255,8 +286,9 @@ void WorkspacePane::ApplySavedTabOrder(bool update_ui) const
                 tagTabInfo Tab;
                 Tab.text = title;
                 Tab.win = m_book->GetPage(n);
+#if USE_SIDEBAR_GENERIC_BOOK
                 Tab.bmp = m_book->GetPageBitmapIndex(n);
-
+#endif
                 vTempstore.push_back(Tab);
                 m_book->RemovePage(n);
                 break;
@@ -287,19 +319,23 @@ void WorkspacePane::ApplySavedTabOrder(bool update_ui) const
 
 void WorkspacePane::SaveWorkspaceViewTabOrder() const
 {
-#if USE_AUI_NOTEBOOK
-    wxArrayString panes = m_book->GetAllTabsLabels();
-#else
     wxArrayString panes;
+#if USE_SIDEBAR_GENERIC_BOOK
     clTabInfo::Vec_t tabs;
     m_book->GetAllTabs(tabs);
     std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
+#else
+    panes.reserve(m_book->GetPageCount());
+    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        panes.Add(m_book->GetPageText(i));
+    }
 #endif
     clConfig::Get().SetWorkspaceTabOrder(panes, m_book->GetSelection());
 }
 
 void WorkspacePane::DoShowTab(bool show, const wxString& title)
 {
+#if USE_SIDEBAR_GENERIC_BOOK
     if(!show) {
         for(size_t i = 0; i < m_book->GetPageCount(); i++) {
             if(m_book->GetPageText(i) == title) {
@@ -340,6 +376,10 @@ void WorkspacePane::DoShowTab(bool show, const wxString& title)
             m_book->InsertPage(0, win, title, true);
         }
     }
+#else
+    wxUnusedVar(show);
+    wxUnusedVar(title);
+#endif
 }
 
 wxWindow* WorkspacePane::DoGetControlByName(const wxString& title)
@@ -414,9 +454,17 @@ void WorkspacePane::SelectTab(const wxString& tabTitle)
 void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
+
+#if USE_SIDEBAR_GENERIC_BOOK
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
-#if !USE_AUI_NOTEBOOK
     m_book->SetArt(GetNotebookRenderer());
+#else
+    long style = wxNB_DEFAULT;
+    if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxDOWN) {
+        style &= ~(wxNB_TOP | wxNB_BOTTOM | wxNB_LEFT | wxNB_RIGHT);
+        style |= wxNB_BOTTOM;
+    }
+    m_book->SetWindowStyle(style);
 #endif
 }
 
@@ -444,17 +492,57 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
 
 clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer()
 {
+#if USE_SIDEBAR_GENERIC_BOOK
     return clTabRenderer::CreateRenderer(m_book, m_book->GetStyle());
+#else
+    return clTabRenderer::Ptr_t{};
+#endif
+}
+
+void WorkspacePane::OnNativeBookContextMenu(wxContextMenuEvent& event)
+{
+#if USE_SIDEBAR_NATIVE_BOOK
+    wxMenu menu;
+    long flags = 0;
+    int tabIndex = m_book->HitTest(m_book->ScreenToClient(::wxGetMousePosition()), &flags);
+    if(tabIndex != wxNOT_FOUND) {
+        if(m_book->GetPageCount() > 1) {
+            // we must always have at least 1 tab shown
+            menu.Append(XRCID("detach_wv_tab"), _("Detach"));
+            menu.Append(XRCID("hide_wv_tab"), _("Hide"));
+        }
+        BuildTabListMenu(menu);
+        m_book->PopupMenu(&menu);
+    }
+#else
+    wxUnusedVar(event);
+#endif
 }
 
 void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
 {
+#if USE_SIDEBAR_GENERIC_BOOK
     if(event.GetEventObject() != m_book) {
         event.Skip();
         return;
     }
-
     wxMenu* menu = event.GetMenu();
+    BuildTabListMenu(*menu);
+#else
+    wxUnusedVar(event);
+#endif
+}
+
+void WorkspacePane::ShowTab(const wxString& name, bool show)
+{
+    clCommandEvent show_event(wxEVT_SHOW_WORKSPACE_TAB);
+    show_event.SetString(name);
+    show_event.SetSelected(show);
+    EventNotifier::Get()->ProcessEvent(show_event);
+}
+
+bool WorkspacePane::BuildTabListMenu(wxMenu& menu)
+{
     DetachedPanesInfo dpi;
     EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
 
@@ -467,9 +555,9 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
             continue;
         }
 
-        if(menu->GetMenuItemCount() > 0 && hiddenTabsMenu->GetMenuItemCount() == 0) {
+        if(menu.GetMenuItemCount() > 0 && hiddenTabsMenu->GetMenuItemCount() == 0) {
             // we are adding the first menu item
-            menu->AppendSeparator();
+            menu.AppendSeparator();
         }
 
         int tabId = wxXmlResource::GetXRCID(wxString() << "workspace_tab_" << label);
@@ -493,15 +581,9 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
     }
     if(hiddenTabsMenu->GetMenuItemCount() == 0) {
         wxDELETE(hiddenTabsMenu);
+        return false;
     } else {
-        menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
+        menu.AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
+        return true;
     }
-}
-
-void WorkspacePane::ShowTab(const wxString& name, bool show)
-{
-    clCommandEvent show_event(wxEVT_SHOW_WORKSPACE_TAB);
-    show_event.SetString(name);
-    show_event.SetSelected(show);
-    EventNotifier::Get()->ProcessEvent(show_event);
 }

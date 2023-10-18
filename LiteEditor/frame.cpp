@@ -3952,7 +3952,6 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
     size_t sel = GetWorkspacePane()->GetNotebook()->GetSelection();
     wxWindow* page = GetWorkspacePane()->GetNotebook()->GetCurrentPage();
     wxString text = GetWorkspacePane()->GetNotebook()->GetPageText(sel);
-    int bmp = GetWorkspacePane()->GetNotebook()->GetPageBitmapIndex(sel);
 
     DockablePane* pane = new DockablePane(this, PaneId::SIDE_BAR, text, true, wxSize(200, 200));
     page->Reparent(pane);

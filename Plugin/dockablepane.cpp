@@ -85,6 +85,9 @@ void DockablePane::ClosePane(wxCommandEvent& e)
             wxSizer* sz = GetSizer();
             sz->Detach(m_child);
 
+#if USE_SIDEBAR_NATIVE_BOOK
+            RemoveChild(m_child);
+#endif
             // use the new API
             switch(static_cast<PaneId>(m_paneId)) {
             case PaneId::SIDE_BAR:

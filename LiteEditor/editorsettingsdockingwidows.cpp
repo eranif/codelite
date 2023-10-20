@@ -56,10 +56,21 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
                 });
 #endif
 
-    std::unordered_map<wxString, wxDirection> orientation_map = { { "UP", wxUP }, { "DOWN", wxDOWN } };
-    std::unordered_map<int, wxString> orientation_map_reverse = { { wxUP, "UP" }, { wxDOWN, "DOWN" } };
+    std::unordered_map<wxString, wxDirection> orientation_map = {
+        { "UP", wxUP }, { "DOWN", wxDOWN }, { "LEFT", wxLEFT }, { "RIGHT", wxRIGHT }
+    };
+    std::unordered_map<int, wxString> orientation_map_reverse = {
+        { wxUP, "UP" }, { wxDOWN, "DOWN" }, { wxLEFT, "LEFT" }, { wxRIGHT, "RIGHT" }
+    };
 
-    AddProperty(_("Workspace tabs orientation"), std::vector<wxString>{ "UP", "DOWN" },
+    std::vector<wxString> tab_orientation = { "UP", "DOWN" };
+
+#ifndef __WXMSW__
+    tab_orientation.push_back("LEFT");
+    tab_orientation.push_back("RIGHT");
+#endif
+
+    AddProperty(_("Workspace tabs orientation"), tab_orientation,
                 orientation_map_reverse[m_options->GetWorkspaceTabsDirection()],
                 [this, orientation_map](const wxString&, const wxAny& value) mutable {
                     wxString str_value;

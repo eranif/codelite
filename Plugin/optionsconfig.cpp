@@ -122,7 +122,12 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_preferredLocale(wxT("en_US"))
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
+#ifdef __WXMSW__
     , m_workspaceTabsDirection(wxUP)
+#else
+    // macOS & Linux -> place it on the LEFT
+    , m_workspaceTabsDirection(wxLEFT)
+#endif
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
 #ifdef __WXMAC__

@@ -127,17 +127,12 @@ void WorkspacePane::CreateGUIControls()
 
     m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
     auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
-#ifdef __WXGTK__
-    direction = wxLEFT;
-#endif
     m_book->SetTabDirection(direction);
     m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &WorkspacePane::OnWorkspaceBookFileListMenu, this);
 #else
     long style = wxNB_DEFAULT;
-    if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxDOWN) {
-        style &= ~wxBK_ALIGN_MASK;
-        style |= wxBK_BOTTOM;
-    }
+    style &= ~wxBK_ALIGN_MASK;
+    style |= EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
 
     m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
     m_book->Bind(wxEVT_CONTEXT_MENU, &WorkspacePane::OnNativeBookContextMenu, this);
@@ -462,17 +457,12 @@ void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
 
 #if USE_SIDEBAR_GENERIC_BOOK
     auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
-#ifdef __WXGTK__
-    direction = wxLEFT;
-#endif
     m_book->SetTabDirection(direction);
     m_book->SetArt(GetNotebookRenderer());
 #else
     long style = wxNB_DEFAULT;
-    if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxDOWN) {
-        style &= ~(wxNB_TOP | wxNB_BOTTOM | wxNB_LEFT | wxNB_RIGHT);
-        style |= wxNB_BOTTOM;
-    }
+    style &= ~wxBK_ALIGN_MASK;
+    style |= EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
     m_book->SetWindowStyle(style);
 #endif
 }

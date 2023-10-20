@@ -50,7 +50,7 @@ static ZoomNavigator* thePlugin = NULL;
     if(!cond)                 \
         return;
 
-const wxString ZOOM_PANE_TITLE(_("Zoom Navigator"));
+const wxString ZOOM_PANE_TITLE(_("Zoom"));
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)

@@ -19,7 +19,7 @@ clProfileHandler::clProfileHandler()
     m_cxxOutputTabs = {
         "UnitTest++", "Trace", "CppCheck", "MemCheck", "CScope", "BuildQ",
     };
-    m_cxxWorkspaceTabs = { "CMake Help", "wxCrafter", "Tabgroups" };
+    m_cxxWorkspaceTabs = { "CMake", "wxCrafter", "Groups" };
 }
 
 clProfileHandler::~clProfileHandler()

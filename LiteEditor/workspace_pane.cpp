@@ -124,14 +124,19 @@ void WorkspacePane::CreateGUIControls()
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
         style |= kNotebook_MouseScrollSwitchTabs;
     }
+
     m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
-    m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
+    auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
+#ifdef __WXGTK__
+    direction = wxLEFT;
+#endif
+    m_book->SetTabDirection(direction);
     m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &WorkspacePane::OnWorkspaceBookFileListMenu, this);
 #else
     long style = wxNB_DEFAULT;
     if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxDOWN) {
-        style &= ~(wxNB_TOP | wxNB_BOTTOM | wxNB_LEFT | wxNB_RIGHT);
-        style |= wxNB_BOTTOM;
+        style &= ~wxBK_ALIGN_MASK;
+        style |= wxBK_BOTTOM;
     }
 
     m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
@@ -216,7 +221,7 @@ void WorkspacePane::CreateGUIControls()
     // #endif
 
     // Add the Tabgroups tab
-    name = _("Tabgroups");
+    name = _("Groups");
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
         m_TabgroupsPane = new TabgroupsPane(cp, name);
@@ -392,7 +397,7 @@ wxWindow* WorkspacePane::DoGetControlByName(const wxString& title)
     else if(title == _("Tabs"))
         return m_openWindowsPane;
 #endif
-    else if(title == _("Tabgroups"))
+    else if(title == _("Groups"))
         return m_TabgroupsPane;
     return NULL;
 }
@@ -418,8 +423,8 @@ bool WorkspacePane::IsTabVisible(int flag)
         break;
 #endif
     case View_Show_Tabgroups_Tab:
-        title = _("Tabgroups");
-        win = DoGetControlByName(_("Tabgroups"));
+        title = _("Groups");
+        win = DoGetControlByName(_("Groups"));
         break;
     }
 
@@ -456,7 +461,11 @@ void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
     event.Skip();
 
 #if USE_SIDEBAR_GENERIC_BOOK
-    m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
+    auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
+#ifdef __WXGTK__
+    direction = wxLEFT;
+#endif
+    m_book->SetTabDirection(direction);
     m_book->SetArt(GetNotebookRenderer());
 #else
     long style = wxNB_DEFAULT;

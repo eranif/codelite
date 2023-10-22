@@ -689,7 +689,7 @@ void clEditor::SetProperties()
 #else
     UsePopUp(0);
 #endif
-
+    
     m_lastBeginLine = wxNOT_FOUND;
     m_lastEndLine = wxNOT_FOUND;
     m_lastLine = wxNOT_FOUND;

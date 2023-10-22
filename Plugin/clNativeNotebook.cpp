@@ -1,11 +1,14 @@
 #include "clNativeNotebook.hpp"
 
 #include "clTabRenderer.h"
+#if 0
 #include "editor_config.h"
 #include "file_logger.h"
 
 #include <deque>
 #include <iostream>
+#endif
+
 #include <unordered_map>
 #include <vector>
 #include <wx/dataobj.h>
@@ -15,7 +18,7 @@
 #include <wx/types.h>
 #include <wx/wupdlock.h>
 
-#ifdef __WXGTK__
+#if 0
 #include <gtk/gtk.h>
 //===------------------
 // GTK specifics
@@ -211,13 +214,13 @@ void clNativeNotebook::BindEvents()
     Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, &clNativeNotebook::OnPageChanging, this);
     Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &clNativeNotebook::OnPageChanged, this);
 
-#ifdef __WXGTK__
+#if 0
     g_signal_connect(GTK_WIDGET(GetHandle()), "button_press_event", G_CALLBACK(button_press_event), this);
     g_signal_connect(GTK_NOTEBOOK(GetHandle()), "page-reordered", G_CALLBACK(on_page_reordered), this);
 #endif
 }
 
-#ifdef __WXGTK__
+#if 0
 void clNativeNotebook::GTKLeftDClick(int index)
 {
     if(index != wxNOT_FOUND) {
@@ -455,7 +458,7 @@ void clNativeNotebook::Initialise(long style)
         SetPadding(wxSize(5, 5));
     }
 
-#ifdef __WXGTK__
+#if 0
     GtkWidget* box = nullptr;
     if(m_bookStyle & (kNotebook_NewButton | kNotebook_ShowFileListButton)) {
 #if defined(__WXGTK20__) && !defined(__WXGTK3__)
@@ -503,7 +506,7 @@ void clNativeNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortla
     data.tooltip = shortlabel;
     data.bitmap = bmp;
 
-#ifdef __WXGTK__
+#if 0
     wxGtkNotebookPage* p = GetNotebookPage(index);
     if(m_bookStyle & kNotebook_CloseButtonOnActiveTab) {
         GtkToolItem* button = gtk_tool_button_new(nullptr, "✖");
@@ -540,7 +543,7 @@ void clNativeNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortla
     }
 }
 
-#ifdef __WXGTK__
+#if 0
 void clNativeNotebook::TabReordered()
 {
     // we need to update two data structures:
@@ -574,7 +577,7 @@ void clNativeNotebook::TabReordered()
 
 void clNativeNotebook::SetTabDirection(wxDirection d)
 {
-#ifdef __WXGTK__
+#if 0
     GtkPositionType pos;
     switch(d) {
     case wxLEFT:
@@ -700,7 +703,7 @@ size_t clNativeNotebook::GetAllTabs(clTabInfo::Vec_t& tabs)
     return tabs.size();
 }
 
-#ifdef __WXGTK__
+#if 0
 void clNativeNotebook::GTKActionButtonMenuClicked(GtkToolItem* button)
 {
     clTabInfo::Vec_t tabs;

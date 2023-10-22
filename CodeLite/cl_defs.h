@@ -41,7 +41,7 @@
 #ifndef INSTALL_DIR
 #define INSTALL_DIR "/usr/share/codelite"
 #endif
-#define CL_USE_NATIVEBOOK 1
+#define CL_USE_NATIVEBOOK 0
 #else
 #ifdef USE_POSIX_LAYOUT
 #ifndef PLUGINS_DIR
@@ -58,21 +58,6 @@
 #define CL_USE_NATIVEBOOK 0
 #endif
 
-// Allow override the default CL_USE_NATIVEBOOK by cmake variable (GTK only)
-#ifdef __WXGTK__
-#if GTK_USE_NATIVEBOOK
-#ifdef CL_USE_NATIVEBOOK
-#undef CL_USE_NATIVEBOOK
-#endif
-#define CL_USE_NATIVEBOOK 1
-#else
-#ifdef CL_USE_NATIVEBOOK
-#undef CL_USE_NATIVEBOOK
-#endif
-#define CL_USE_NATIVEBOOK 0
-#endif // GTK_USE_NATIVEBOOK
-#endif // __WXGTK__
-
 #define CL_USE_NEW_BUILD_TAB 1
 #define CL_N0_OF_BOOKMARK_TYPES 5
 
@@ -86,4 +71,5 @@
 #endif
 
 #define USE_SIDEBAR_GENERIC_BOOK !USE_SIDEBAR_NATIVE_BOOK
+
 #endif // CL_DEFS_H

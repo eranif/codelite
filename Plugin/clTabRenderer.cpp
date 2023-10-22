@@ -1,16 +1,11 @@
 #include "clTabRenderer.h"
 
-#include "ColoursAndFontsManager.h"
-#include "Notebook.h"
 #include "clGenericNotebook.hpp"
 #include "clSystemSettings.h"
 #include "clTabRendererMinimal.hpp"
 #include "cl_config.h"
-#include "cl_defs.h"
 #include "editor_config.h"
 #include "globals.h"
-#include "macros.h"
-#include "wxStringHash.h"
 
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>

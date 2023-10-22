@@ -5,9 +5,11 @@
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
 #include "cl_command_event.h"
+#if 0
 #include "cl_defs.h"
+#endif
 
-#ifdef __WXGTK__
+#if 0
 #include <gtk/gtk.h>
 #endif
 
@@ -42,7 +44,7 @@ protected:
 public:
     void TabButtonClicked(wxWindow* page);
 
-#ifdef __WXGTK__
+#if 0
     void TabReordered();
     int FindPageByGTKHandle(WXWidget page) const;
     void GTKLeftDClick(int index);

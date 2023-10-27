@@ -548,4 +548,31 @@ bool BitmapLoader::GetIconBundle(const wxString& name, wxIconBundle* bundle)
     return true;
 }
 
-wxBitmap clLoadBitmap(const wxString& name) { return clGetManager()->GetStdIcons()->LoadBitmap(name); }
+wxBitmap clLoadSidebarBitmap(const wxString& name)
+{
+    thread_local static std::unordered_map<wxString, wxBitmap> dark_sidebar_bitmaps;
+    thread_local static std::unordered_map<wxString, wxBitmap> light_sidebar_bitmaps;
+
+    std::unordered_map<wxString, wxBitmap>& cache =
+        clSystemSettings::IsDark() ? dark_sidebar_bitmaps : light_sidebar_bitmaps;
+    if(cache.count(name)) {
+        return cache.find(name)->second;
+    }
+
+    wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
+    svg_path.AppendDir("svgs");
+    svg_path.AppendDir(clSystemSettings::IsDark() ? "dark-theme" : "light-theme");
+    svg_path.SetFullName(name + ".svg");
+    if(!svg_path.DirExists()) {
+        clWARNING() << "Unable to locate:" << svg_path << ". broken installation?" << endl;
+        return wxNullBitmap;
+    }
+
+    auto bmpbundle = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), wxSize(32, 32));
+    if(!bmpbundle.IsOk()) {
+        return wxNullBitmap;
+    }
+    auto bmp = bmpbundle.GetBitmapFor(wxTheApp->GetTopWindow());
+    cache.insert({ name, bmp });
+    return bmp;
+}

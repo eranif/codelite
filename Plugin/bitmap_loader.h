@@ -223,5 +223,5 @@ public:
 };
 
 // Helper load function
-wxBitmap WXDLLIMPEXP_SDK clLoadBitmap(const wxString& name);
+wxBitmap WXDLLIMPEXP_SDK clLoadSidebarBitmap(const wxString& name);
 #endif

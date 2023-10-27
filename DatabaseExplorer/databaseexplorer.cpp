@@ -125,7 +125,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 
         m_dbViewerPanel = new DbViewerPanel(m_mgr->BookGet(PaneId::SIDE_BAR), editorBook, m_mgr);
         m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"),
-                           clGetManager()->GetStdIcons()->LoadBitmap("dbexplorer-button"));
+                           clLoadSidebarBitmap("dbexplorer-button"));
     }
     m_mgr->AddWorkspaceTab(_("DbExplorer"));
 
@@ -245,16 +245,6 @@ void DatabaseExplorer::DoOpenFile(const wxFileName& filename)
 
 void DatabaseExplorer::OnToggleTab(clCommandEvent& event)
 {
-    if(event.GetString() != _("DbExplorer")) {
-        event.Skip();
-        return;
-    }
-
-    if(event.IsSelected()) {
-        // show it
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"),
-                           clGetManager()->GetStdIcons()->LoadBitmap("dbexplorer-button"));
-    } else {
-        m_mgr->BookRemovePage(PaneId::SIDE_BAR, m_dbViewerPanel);
-    }
+    wxUnusedVar(event);
+    return;
 }

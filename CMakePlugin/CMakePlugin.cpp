@@ -177,8 +177,7 @@ CMakePlugin::CMakePlugin(IManager* manager)
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
     m_helpTab = new CMakeHelpTab(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
-    clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME,
-                                clGetManager()->GetStdIcons()->LoadBitmap("cmake-button"));
+    clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME, clLoadSidebarBitmap("cmake-button"));
     m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
 
     // Bind events

@@ -183,7 +183,7 @@ void ZoomNavigator::DoInitialize()
 
     } else {
         zoompane = new wxPanel(book);
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, zoompane, ZOOM_PANE_TITLE, clLoadBitmap("zoom-button"));
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, zoompane, ZOOM_PANE_TITLE, clLoadSidebarBitmap("zoom-button"));
     }
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
 
@@ -393,7 +393,7 @@ void ZoomNavigator::OnToggleTab(clCommandEvent& event)
     }
 
     if(event.IsSelected()) {
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, zoompane, ZOOM_PANE_TITLE, clLoadBitmap("zoom-button"));
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, zoompane, ZOOM_PANE_TITLE, clLoadSidebarBitmap("zoom-button"));
     } else {
         m_mgr->BookRemovePage(PaneId::SIDE_BAR, ZOOM_PANE_TITLE);
     }

@@ -161,30 +161,45 @@ protected:
 
         wxRect client_rect = GetClientRect();
 
-        wxColour colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-        bool is_dark = DrawingUtils::IsDark(colour);
-        if(IsSeleced()) {
-            if(is_dark) {
-                colour = colour.ChangeLightness(50);
-            } else {
-                colour = colour.ChangeLightness(160);
-            }
-        }
-        dc.SetBrush(colour);
-        dc.SetPen(colour);
+        // first, fill the entire client rect
+        wxColour base_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        dc.SetBrush(base_colour);
+        dc.SetPen(base_colour);
         dc.DrawRectangle(client_rect);
 
         if(IsSeleced()) {
-            auto pen_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-            dc.SetPen(pen_colour);
+            // draw the selected item using different background colour
+            wxRect frame_rect = client_rect;
+            constexpr double RADIUS_SIZE = 0.0;
+
+            wxColour colour = base_colour;
+            bool is_dark = DrawingUtils::IsDark(colour);
+            if(is_dark) {
+                colour = colour.ChangeLightness(110);
+            } else {
+                colour = colour.ChangeLightness(170);
+            }
+            dc.SetBrush(colour);
+            dc.SetPen(colour);
+            dc.DrawRoundedRectangle(frame_rect, RADIUS_SIZE);
+
+            // draw small marker on the left or right side of the active tab
+#ifdef __WXMSW__
+            wxColour marker = is_dark ? wxColour("GOLD") : wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+#else
+            wxColour marker = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+#endif
+
+            dc.SetPen(wxPen(marker, 3));
+            if(m_sidebar->IsOrientationOnTheRight()) {
+                dc.DrawLine(frame_rect.GetTopLeft(), frame_rect.GetBottomLeft());
+            } else {
+                dc.DrawLine(frame_rect.GetTopRight(), frame_rect.GetBottomRight());
+            }
+
+            dc.SetPen(is_dark ? base_colour.ChangeLightness(120) : wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
             dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
             dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
-
-            if(m_sidebar->IsOrientationOnTheRight()) {
-                dc.DrawLine(client_rect.GetTopRight(), client_rect.GetBottomRight());
-            } else {
-                dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetBottomLeft());
-            }
         }
 
         wxRect bmp_rect = wxRect(m_bmp.GetSize()).CenterIn(client_rect);

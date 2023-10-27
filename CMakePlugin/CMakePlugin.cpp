@@ -176,16 +176,10 @@ CMakePlugin::CMakePlugin(IManager* manager)
     // Create cmake application
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
-    if(IsPaneDetached()) {
-        DockablePane* cp =
-            new DockablePane(m_mgr->GetMainPanel(), PaneId::SIDE_BAR, HELP_TAB_NAME, false, wxSize(200, 200));
-        m_helpTab = new CMakeHelpTab(cp, this);
-        cp->SetChildNoReparent(m_helpTab);
-    } else {
-        m_helpTab = new CMakeHelpTab(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
-        clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME);
-        m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
-    }
+    m_helpTab = new CMakeHelpTab(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
+    clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME,
+                                clGetManager()->GetStdIcons()->LoadBitmap("cmake-button"));
+    m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
 
     // Bind events
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &CMakePlugin::OnToggleHelpTab, this);
@@ -371,21 +365,7 @@ void CMakePlugin::OnSettings(wxCommandEvent& event)
     }
 }
 
-void CMakePlugin::OnToggleHelpTab(clCommandEvent& event)
-{
-    if(event.GetString() != HELP_TAB_NAME) {
-        event.Skip();
-        return;
-    }
-
-    if(event.IsSelected()) {
-        // show it
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME);
-    } else {
-        // remove it, dont destroy it
-        m_mgr->BookRemovePage(PaneId::SIDE_BAR, HELP_TAB_NAME);
-    }
-}
+void CMakePlugin::OnToggleHelpTab(clCommandEvent& event) { wxUnusedVar(event); }
 
 void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
 {

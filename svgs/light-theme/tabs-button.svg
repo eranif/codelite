@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="tabs-button.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#ffffff"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="1.09125"
+     inkscape:cx="400"
+     inkscape:cy="400"
+     inkscape:window-width="3440"
+     inkscape:window-height="1373"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
+  <path
+     d="M 6.2897424,2.4161943 C 5.4312011,2.4314228 4.8026507,2.3857371 4.2887544,2.8070607 A 1.2830345,1.9086464 0 0 0 3.7175311,3.8202677 C 3.6049243,4.2639264 3.5639764,4.7948956 3.5639764,5.4619066 V 12.568569 H 2.8815113 v 1.015237 H 4.2464417 V 5.4619066 c 0,-0.6010205 0.042995,-1.0213289 0.1091944,-1.2852906 C 4.4225177,3.9126543 4.493494,3.7999629 4.6183851,3.697424 4.8674849,3.4923459 5.433931,3.4466603 6.2938372,3.4314317 h 3.4123257 c 0.8592241,0.015229 1.4243051,0.060914 1.6740871,0.2659923 0.125574,0.1015237 0.197916,0.2152303 0.264114,0.479192 0.0662,0.2639617 0.109194,0.6842701 0.109194,1.2852906 v 8.1218994 h 1.364931 V 12.568569 H 12.436024 V 5.4619066 c 0,-0.6680262 -0.04095,-1.1969649 -0.153554,-1.6416389 A 1.2830345,1.9086464 0 0 0 11.710563,2.8070607 C 11.19735,2.3847219 10.5688,2.4314228 9.7102577,2.4161943 H 6.2924722 Z"
+     style="color:#000000;font-weight:400;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;white-space:normal;shape-padding:0;isolation:auto;mix-blend-mode:normal;fill:#4d4d4d;stroke:#4d4d4d;stroke-width:0.832388;marker:none"
+     overflow="visible"
+     id="path2" />
+</svg>

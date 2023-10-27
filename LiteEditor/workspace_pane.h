@@ -25,8 +25,8 @@
 #ifndef WORKSPACE_PANE_H
 #define WORKSPACE_PANE_H
 
-#include "Notebook.h"
 #include "clAuiCaptionEnabler.h"
+#include "clSideBarCtrl.hpp"
 #include "clTabRenderer.h"
 #include "cl_command_event.h"
 #include "cl_defs.h"
@@ -46,18 +46,16 @@ class WorkspaceTab;
 class TabgroupsPane;
 class wxGauge;
 
-#if USE_SIDEBAR_NATIVE_BOOK
-typedef class SidebarBookT : public wxNotebook
+typedef class SidebarBookT : public clSideBarCtrl
 {
 public:
-    SidebarBookT(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style);
+    SidebarBookT(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+        : clSideBarCtrl(parent, id, pos, size, style)
+    {
+    }
     virtual ~SidebarBookT() {}
-    int GetPageIndex(const wxString& label) const;
-    void SetMenu(wxMenu* menu);
+    void SetMenu(wxMenu* menu) {}
 } SidebarBook;
-#else
-typedef Notebook SidebarBook;
-#endif
 
 class WorkspacePane : public wxPanel
 {

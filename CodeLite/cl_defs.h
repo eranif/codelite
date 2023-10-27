@@ -61,15 +61,4 @@
 #define CL_USE_NEW_BUILD_TAB 1
 #define CL_N0_OF_BOOKMARK_TYPES 5
 
-// Side bar notebook
-#ifdef __WXMSW__
-#define USE_SIDEBAR_NATIVE_BOOK 0
-#elif defined(__WXMAC__)
-#define USE_SIDEBAR_NATIVE_BOOK 1
-#else
-#define USE_SIDEBAR_NATIVE_BOOK 0
-#endif
-
-#define USE_SIDEBAR_GENERIC_BOOK !USE_SIDEBAR_NATIVE_BOOK
-
 #endif // CL_DEFS_H

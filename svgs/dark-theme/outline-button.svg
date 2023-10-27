@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg7"
+   sodipodi:docname="outline-button.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs11" />
+  <sodipodi:namedview
+     id="namedview9"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="1.09125"
+     inkscape:cx="400"
+     inkscape:cy="400"
+     inkscape:window-width="3440"
+     inkscape:window-height="1373"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg7" />
+  <title
+     id="title2">hierarchy</title>
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     style="fill:#b3b3b3">
+    <g
+       id="scheduler"
+       fill="#000000"
+       transform="translate(42.666667, 64.000000)"
+       style="fill:#b3b3b3">
+      <path
+         d="M128,-1.42108547e-14 L298.666667,-1.42108547e-14 L298.666667,106.666667 L128,106.666667 L128,-1.42108547e-14 Z M3.55271368e-14,277.333333 L128,277.333333 L128,362.666667 L3.55271368e-14,362.666667 L3.55271368e-14,277.333333 Z M298.666667,277.333333 L426.666667,277.333333 L426.666667,362.666667 L298.666667,362.666667 L298.666667,277.333333 Z M149.333333,277.333333 L277.333333,277.333333 L277.333333,362.666667 L149.333333,362.666667 L149.333333,277.333333 Z M234.666667,128 L234.666,170.666 L384,170.666667 L384,256 L341.333333,256 L341.333333,213.312 L234.666,213.312 L234.666667,256 L192,256 L192,213.312 L85.3333333,213.312 L85.3333333,256 L42.6666667,256 L42.6666667,170.666667 L192,170.666 L192,128 L234.666667,128 Z"
+         id="Combined-Shape"
+         style="fill:#b3b3b3" />
+    </g>
+  </g>
+  <metadata
+     id="metadata828">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>hierarchy</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

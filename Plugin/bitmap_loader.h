@@ -221,4 +221,7 @@ public:
     BitmapLoader* GetLoader();
     void SysColoursChanged();
 };
+
+// Helper load function
+wxBitmap WXDLLIMPEXP_SDK clLoadBitmap(const wxString& name);
 #endif

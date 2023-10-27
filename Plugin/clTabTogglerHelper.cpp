@@ -45,11 +45,14 @@ void clTabTogglerHelper::OnToggleOutputTab(clCommandEvent& event)
 
 void clTabTogglerHelper::OnToggleWorkspaceTab(clCommandEvent& event)
 {
+    wxUnusedVar(event);
+#if 0
     if(event.GetString() != m_workspaceTabName) {
         event.Skip();
         return;
     }
     DoShowTab(event.IsSelected(), PaneId::SIDE_BAR, m_workspaceTab, m_workspaceTabName);
+#endif
 }
 
 bool clTabTogglerHelper::IsTabInNotebook(PaneId pane_id, const wxString& tabname)

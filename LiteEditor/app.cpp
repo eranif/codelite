@@ -741,6 +741,10 @@ bool CodeLiteApp::OnInit()
 #elif defined(__WXMSW__)
     wxUpdateUIEvent::SetUpdateInterval(50);
 #endif
+
+    // don't show the tooltip too fast
+    wxToolTip::SetDelay(1000);
+    wxToolTip::SetReshow(1000);
     return TRUE;
 }
 

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg7"
+   sodipodi:docname="sftp-button.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs11" />
+  <sodipodi:namedview
+     id="namedview9"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="1.09125"
+     inkscape:cx="400"
+     inkscape:cy="400"
+     inkscape:window-width="3440"
+     inkscape:window-height="1373"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg7" />
+  <title
+     id="title2">connector</title>
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     style="fill:#b3b3b3">
+    <g
+       id="add"
+       fill="#000000"
+       transform="translate(64.000000, 64.000000)"
+       style="fill:#b3b3b3">
+      <path
+         d="M181.333333,1.42108547e-14 C234.352669,1.42108547e-14 277.333333,42.980664 277.333333,96 C277.333333,147.504498 236.773621,189.535767 185.852495,191.89551 L181.333333,192 L117.333333,192 C87.8781467,192 64,215.878147 64,245.333333 C64,273.610313 86.0061,296.747492 113.826652,298.553223 L117.333333,298.666667 L194.68864,298.665629 C204.04963,262.29754 236.783165,235.312679 275.922191,234.678099 L277.333333,234.666667 L341.333333,234.666667 L341.333,266.666667 L405.333333,266.666667 L405.333333,298.666667 L341.333,298.666667 L341.333,341.332667 L405.333333,341.333333 L405.333333,373.333333 L341.333,373.332667 L341.333333,405.333333 L277.333333,405.333333 C237.571799,405.333333 204.161914,378.138692 194.68864,341.334371 L117.333333,341.333333 C64.3139973,341.333333 21.3333333,298.352669 21.3333333,245.333333 C21.3333333,193.828836 61.8930457,151.797566 112.814172,149.437824 L117.333333,149.333333 L181.333333,149.333333 C210.78852,149.333333 234.666667,125.455187 234.666667,96 C234.666667,67.7230208 212.660567,44.5858417 184.840015,42.7801105 L181.333333,42.6666667 L1.42108547e-14,42.6666667 L1.42108547e-14,1.42108547e-14 L181.333333,1.42108547e-14 Z M298.666667,277.333333 L277.333333,277.333333 L274.14907,277.450362 C252.29283,279.062856 235.015242,297.140072 234.671876,319.326441 L234.666667,320 L234.783696,323.184263 C236.39619,345.040504 254.473406,362.318092 276.659774,362.661458 L277.333333,362.666667 L298.666667,362.666667 L298.666667,277.333333 Z"
+         id="Combined-Shape"
+         style="fill:#b3b3b3" />
+    </g>
+  </g>
+  <metadata
+     id="metadata828">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>connector</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

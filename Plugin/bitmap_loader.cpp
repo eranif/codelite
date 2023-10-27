@@ -34,6 +34,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "imanager.h"
 #include "optionsconfig.h"
 
 #include <algorithm>
@@ -546,3 +547,5 @@ bool BitmapLoader::GetIconBundle(const wxString& name, wxIconBundle* bundle)
     }
     return true;
 }
+
+wxBitmap clLoadBitmap(const wxString& name) { return clGetManager()->GetStdIcons()->LoadBitmap(name); }

@@ -200,7 +200,8 @@ public:
     ///--------------------
 
     /// Add a book page
-    void BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label) override;
+    void BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label,
+                     const wxBitmap& bmp = wxNullBitmap) override;
 
     /// Find a book page by its label
     wxWindow* BookGetPage(PaneId pane_id, const wxString& label) override;

@@ -1436,11 +1436,6 @@ void clMainFrame::CreateGUIControls()
 void clMainFrame::DoShowToolbars(bool show, bool update)
 {
     wxUnusedVar(update);
-    // Hide the _native_ toolbar
-#ifdef __WXMSW__
-    wxWindowUpdateLocker locker(this);
-#endif
-
     m_pluginsToolbar->Show(show);
     Layout();
 }
@@ -3947,20 +3942,7 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
     wxDELETE(m_webUpdate);
 }
 
-void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
-{
-    size_t sel = GetWorkspacePane()->GetNotebook()->GetSelection();
-    wxWindow* page = GetWorkspacePane()->GetNotebook()->GetCurrentPage();
-    wxString text = GetWorkspacePane()->GetNotebook()->GetPageText(sel);
-
-    DockablePane* pane = new DockablePane(this, PaneId::SIDE_BAR, text, true, wxSize(200, 200));
-    page->Reparent(pane);
-
-    // remove the page from the notebook
-    GetWorkspacePane()->GetNotebook()->RemovePage(sel);
-    pane->SetChildNoReparent(page);
-    wxUnusedVar(e);
-}
+void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e) { wxUnusedVar(e); }
 
 void clMainFrame::OnHideOutputViewTab(wxCommandEvent& e)
 {

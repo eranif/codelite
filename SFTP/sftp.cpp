@@ -130,7 +130,7 @@ SFTP::SFTP(IManager* manager)
 
     } else {
         m_browserView = new SFTPTreeView(m_mgr->BookGet(PaneId::SIDE_BAR), this);
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_browserView, _("SFTP"));
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_browserView, _("SFTP"), clLoadBitmap("sftp-button"));
     }
 
     // Add the "SFTP Log" page to the output pane
@@ -143,7 +143,7 @@ SFTP::SFTP(IManager* manager)
 
     } else {
         m_logView = new SFTPStatusPage(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
-        m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("SFTP Log"));
+        m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("SFTP Log"), wxNullBitmap);
     }
 
     // Create the helper for adding our tabs in the "more" menu

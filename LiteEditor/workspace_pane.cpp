@@ -65,24 +65,6 @@
 #undef GSocket
 #endif
 
-#if USE_SIDEBAR_NATIVE_BOOK
-SidebarBookT::SidebarBookT(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxNotebook(parent, id, pos, size, style)
-{
-}
-
-int SidebarBookT::GetPageIndex(const wxString& label) const
-{
-    for(size_t i = 0; i < GetPageCount(); ++i) {
-        if(GetPageText(i) == label) {
-            return static_cast<int>(i);
-        }
-    }
-    return wxNOT_FOUND;
-}
-void SidebarBookT::SetMenu(wxMenu* menu) { wxUnusedVar(menu); }
-#endif
-
 WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
     : m_caption(caption)
     , m_mgr(mgr)
@@ -118,29 +100,11 @@ void WorkspacePane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-#if USE_SIDEBAR_GENERIC_BOOK
-    long style = (kNotebook_Default | kNotebook_AllowDnD);
-    style |= kNotebook_UnderlineActiveTab | kNotebook_FixedWidth;
-    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
-        style |= kNotebook_MouseScrollSwitchTabs;
+    long style = 0;
+    if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT) {
+        style = wxBK_RIGHT;
     }
-
     m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
-    auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
-    m_book->SetTabDirection(direction);
-    m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &WorkspacePane::OnWorkspaceBookFileListMenu, this);
-#else
-    long style = wxNB_DEFAULT;
-    style &= ~wxBK_ALIGN_MASK;
-    style |= EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
-
-    m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
-    m_book->Bind(wxEVT_CONTEXT_MENU, &WorkspacePane::OnNativeBookContextMenu, this);
-#endif
-
-#if USE_SIDEBAR_GENERIC_BOOK
-    m_book->SetArt(GetNotebookRenderer());
-#endif
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
@@ -173,27 +137,17 @@ void WorkspacePane::CreateGUIControls()
     IManager* mgr = PluginManager::Get();
 
     name = _("Workspace");
-    if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
-        m_workspaceTab = new WorkspaceTab(cp, name);
-        cp->SetChildNoReparent(m_workspaceTab);
-    } else {
-        m_workspaceTab = new WorkspaceTab(m_book, name);
-        m_book->AddPage(m_workspaceTab, name, true, wxNOT_FOUND);
-    }
+    m_workspaceTab = new WorkspaceTab(m_book, name);
+    m_book->AddPage(m_workspaceTab, name, clLoadBitmap("workspace-button"), true);
+
     m_tabs.insert(std::make_pair(name, Tab(name, m_workspaceTab)));
     mgr->AddWorkspaceTab(name);
 
     // Add the explorer tab
     name = _("Explorer");
-    if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
-        m_explorer = new FileExplorer(cp, name);
-        cp->SetChildNoReparent(m_explorer);
-    } else {
-        m_explorer = new FileExplorer(m_book, name);
-        m_book->AddPage(m_explorer, name, false);
-    }
+    m_explorer = new FileExplorer(m_book, name);
+    m_book->AddPage(m_explorer, name, clLoadBitmap("file-explorer-button"), false);
+
     m_tabs.insert(std::make_pair(name, Tab(name, m_explorer)));
     mgr->AddWorkspaceTab(name);
 
@@ -203,28 +157,18 @@ void WorkspacePane::CreateGUIControls()
     // Add the Open Windows Panel (Tabs)
     // #ifndef __WXOSX__
     name = _("Tabs");
-    if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
-        m_openWindowsPane = new OpenWindowsPanel(cp, name);
-        cp->SetChildNoReparent(m_openWindowsPane);
-    } else {
-        m_openWindowsPane = new OpenWindowsPanel(m_book, name);
-        m_book->AddPage(m_openWindowsPane, name, false);
-    }
+    m_openWindowsPane = new OpenWindowsPanel(m_book, name);
+    m_book->AddPage(m_openWindowsPane, name, clLoadBitmap("tabs-button"));
+
     m_tabs.insert(std::make_pair(name, Tab(name, m_openWindowsPane)));
     mgr->AddWorkspaceTab(name);
     // #endif
 
     // Add the Tabgroups tab
     name = _("Groups");
-    if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), PaneId::SIDE_BAR, name, false, wxSize(200, 200));
-        m_TabgroupsPane = new TabgroupsPane(cp, name);
-        cp->SetChildNoReparent(m_TabgroupsPane);
-    } else {
-        m_TabgroupsPane = new TabgroupsPane(m_book, name);
-        m_book->AddPage(m_TabgroupsPane, name, false);
-    }
+    m_TabgroupsPane = new TabgroupsPane(m_book, name);
+    m_book->AddPage(m_TabgroupsPane, name, clLoadBitmap("groups-button"));
+
     m_tabs.insert(std::make_pair(name, Tab(name, m_TabgroupsPane)));
     mgr->AddWorkspaceTab(name);
 
@@ -260,58 +204,42 @@ void WorkspacePane::UpdateProgress(int val)
 typedef struct _tagTabInfo {
     wxString text;
     wxWindow* win = nullptr;
-    int bmp = wxNOT_FOUND;
+    wxBitmap bmp;
+    bool selected = false;
 } tagTabInfo;
 
 void WorkspacePane::ApplySavedTabOrder(bool update_ui) const
 {
+    return;
+    wxWindowUpdateLocker locker{ m_book };
     wxArrayString tabs;
     int index = -1;
     if(!clConfig::Get().GetWorkspaceTabOrder(tabs, index))
         return;
 
-    // There are (currently) 4 'standard' panes and a variable number of plugin ones
-    // NB Since we're only dealing with panes currently in the notebook, this shouldn't
-    // be broken by floating panes or non-loaded plugins
-    std::vector<tagTabInfo> vTempstore;
-    vTempstore.reserve(tabs.size());
-
-    for(size_t t = 0; t < tabs.GetCount(); ++t) {
-        wxString title = tabs.Item(t);
-        if(title.empty()) {
+    std::vector<tagTabInfo> tabs_in_order;
+    for(const wxString& tab : tabs) {
+        tagTabInfo ti;
+        int pos = m_book->GetPageIndex(tab);
+        if(pos == wxNOT_FOUND) {
+            clWARNING() << "error while restoring tab order. could not locate tab:" << tab << endl;
             continue;
         }
-        for(size_t n = 0; n < m_book->GetPageCount(); ++n) {
-            if(title == m_book->GetPageText(n)) {
-                tagTabInfo Tab;
-                Tab.text = title;
-                Tab.win = m_book->GetPage(n);
-#if USE_SIDEBAR_GENERIC_BOOK
-                Tab.bmp = m_book->GetPageBitmapIndex(n);
-#endif
-                vTempstore.push_back(Tab);
-                m_book->RemovePage(n);
-                break;
-            }
-        }
-        // If we reach here without finding title, presumably that tab is no longer available and will just be ignored
+        ti.selected = (m_book->GetSelection() == pos);
+        ti.text = tab;
+        ti.win = m_book->GetPage(pos);
+        ti.bmp = m_book->GetPageBitmap(pos);
+        tabs_in_order.push_back(ti);
     }
 
-    // All the matched tabs are now stored in the vector. Any left in m_book are presumably new additions
-    // Now prepend the ordered tabs, so that any additions will effectively be appended
-    for(size_t n = 0; n < vTempstore.size(); ++n) {
-        m_book->InsertPage(n, vTempstore.at(n).win, vTempstore.at(n).text, false, vTempstore.at(n).bmp);
+    // Remove all buttons (this does not delete them)
+    m_book->RemoveAll();
+
+    // Add re-add them in-order
+    for(auto& d : tabs_in_order) {
+        m_book->AddPage(d.win, d.text, d.bmp, d.selected);
     }
 
-    // Restore any saved last selection
-    // NB: this doesn't actually work atm: the selection is set correctly, but presumably something else changes is
-    // later
-    // I've left the code in case anyone ever has time/inclination to fix it
-    if((index >= 0) && (index < (int)m_book->GetPageCount())) {
-        m_book->SetSelection(index);
-    } else if(m_book->GetPageCount()) {
-        m_book->SetSelection(0);
-    }
     if(update_ui) {
         m_mgr->Update();
     }
@@ -320,66 +248,18 @@ void WorkspacePane::ApplySavedTabOrder(bool update_ui) const
 void WorkspacePane::SaveWorkspaceViewTabOrder() const
 {
     wxArrayString panes;
-#if USE_SIDEBAR_GENERIC_BOOK
-    clTabInfo::Vec_t tabs;
-    m_book->GetAllTabs(tabs);
-    std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
-#else
     panes.reserve(m_book->GetPageCount());
+
     for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
         panes.Add(m_book->GetPageText(i));
     }
-#endif
     clConfig::Get().SetWorkspaceTabOrder(panes, m_book->GetSelection());
 }
 
 void WorkspacePane::DoShowTab(bool show, const wxString& title)
 {
-#if USE_SIDEBAR_GENERIC_BOOK
-    if(!show) {
-        for(size_t i = 0; i < m_book->GetPageCount(); i++) {
-            if(m_book->GetPageText(i) == title) {
-                // we've got a match
-                m_book->RemovePage(i);
-                wxWindow* win = DoGetControlByName(title);
-                if(win) {
-                    win->Show(false);
-                }
-                break;
-            }
-        }
-    } else {
-        for(size_t i = 0; i < m_book->GetPageCount(); i++) {
-            if(m_book->GetPageText(i) == title) {
-                // requested to add a page which already exists
-                return;
-            }
-        }
-
-        // Fetch the list of detached panes
-        // If the mainframe is NULL, read the
-        // list from the disk, otherwise use the
-        // dockable pane menu
-
-        // Read it from the disk
-        DetachedPanesInfo dpi;
-        EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-        wxArrayString detachedPanes;
-        detachedPanes = dpi.GetPanes();
-
-        if(IS_DETACHED(title))
-            return;
-
-        wxWindow* win = DoGetControlByName(title);
-        if(win) {
-            win->Show(true);
-            m_book->InsertPage(0, win, title, true);
-        }
-    }
-#else
     wxUnusedVar(show);
     wxUnusedVar(title);
-#endif
 }
 
 wxWindow* WorkspacePane::DoGetControlByName(const wxString& title)
@@ -455,102 +335,21 @@ void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
 
-#if USE_SIDEBAR_GENERIC_BOOK
     auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
-    m_book->SetTabDirection(direction);
-    m_book->SetArt(GetNotebookRenderer());
-#else
-    long style = wxNB_DEFAULT;
-    style &= ~wxBK_ALIGN_MASK;
-    style |= EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
-    m_book->SetWindowStyle(style);
-#endif
+    m_book->SetOrientationOnTheRight(direction == wxRIGHT);
 }
 
 void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
 {
     // Handle the core tabs
-    if(m_tabs.count(event.GetString()) == 0) {
-        event.Skip();
-        return;
-    }
-
-    const Tab& t = m_tabs.find(event.GetString())->second;
-    if(event.IsSelected()) {
-        // Insert the page
-        if(!clTabTogglerHelper::IsTabInNotebook(PaneId::SIDE_BAR, t.m_label)) {
-            clGetManager()->BookAddPage(PaneId::SIDE_BAR, t.m_window, t.m_label);
-        } else {
-            clGetManager()->BookSelectPage(PaneId::SIDE_BAR, t.m_label);
-        }
-    } else {
-        // hide the tab
-        clGetManager()->BookRemovePage(PaneId::SIDE_BAR, t.m_label);
-    }
-}
-
-clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer()
-{
-#if USE_SIDEBAR_GENERIC_BOOK
-    return clTabRenderer::CreateRenderer(m_book, m_book->GetStyle());
-#else
-    return clTabRenderer::Ptr_t{};
-#endif
-}
-
-void WorkspacePane::OnNativeBookContextMenu(wxContextMenuEvent& event)
-{
-#if USE_SIDEBAR_NATIVE_BOOK
-    wxMenu menu;
-    long flags = 0;
-    wxPoint pt = m_book->ScreenToClient(::wxGetMousePosition());
-    m_book->HitTest(pt, &flags);
-
-#if defined(__WXMAC__)
-    // Hack: on macOS, context menu is broken when the notebook orientation is placed
-    // top or left. We workaround it by moving the clicked point by approximately the
-    // height of the tab control
-    if(flags & wxNB_HITTEST_NOWHERE) {
-        static int offset = wxNOT_FOUND;
-        if(offset == wxNOT_FOUND) {
-            wxClientDC dc(this);
-            offset = dc.GetTextExtent("Wp").GetHeight() * 2;
-        }
-        // try to move the test down a bit
-        pt.y += offset;
-        flags = 0;
-        // try again
-        m_book->HitTest(pt, &flags);
-    }
-#endif
-
-    if(flags & wxNB_HITTEST_ONLABEL || flags & wxNB_HITTEST_ONICON) {
-        if(m_book->GetPageCount() > 1) {
-            // we must always have at least 1 tab shown
-            menu.Append(XRCID("detach_wv_tab"), _("Detach"));
-            menu.Append(XRCID("hide_wv_tab"), _("Hide"));
-        }
-        BuildTabListMenu(menu);
-        PopupMenu(&menu);
-    }
-#else
     wxUnusedVar(event);
-#endif
 }
 
-void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
-{
-#if USE_SIDEBAR_GENERIC_BOOK
-    if(event.GetEventObject() != m_book) {
-        event.Skip();
-        return;
-    }
-    wxMenu* menu = event.GetMenu();
-    BuildTabListMenu(*menu);
-#else
-    wxUnusedVar(event);
-#endif
-}
+clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer() { return clTabRenderer::Ptr_t{}; }
+
+void WorkspacePane::OnNativeBookContextMenu(wxContextMenuEvent& event) { wxUnusedVar(event); }
+
+void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event) { wxUnusedVar(event); }
 
 void WorkspacePane::ShowTab(const wxString& name, bool show)
 {

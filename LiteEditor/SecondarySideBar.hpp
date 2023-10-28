@@ -3,9 +3,11 @@
 
 #include "clSideBarCtrl.hpp"
 
+class SideBar;
 class SecondarySideBar : public wxPanel
 {
     clSideBarCtrl* m_book = nullptr;
+    SideBar* m_sidebar = nullptr;
 
 public:
     SecondarySideBar(wxWindow* parent);

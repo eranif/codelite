@@ -190,8 +190,8 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 #define CODELITE_SET_BEST_FOCUS()                                             \
     if(clGetManager()->GetActiveEditor()) {                                   \
         clGetManager()->GetActiveEditor()->SetActive();                       \
-    } else if(m_workspacePane->GetWorkspaceTab()) {                           \
-        m_workspacePane->GetWorkspaceTab()->CallAfter(&wxWindow::SetFocus);   \
+    } else if(m_sidebar->GetWorkspaceTab()) {                                 \
+        m_sidebar->GetWorkspaceTab()->CallAfter(&wxWindow::SetFocus);         \
     } else if(GetMainBook()->GetWelcomePage(false)) {                         \
         GetMainBook()->GetWelcomePage(false)->CallAfter(&wxWindow::SetFocus); \
     }
@@ -1310,10 +1310,16 @@ void clMainFrame::CreateGUIControls()
         _("wxCrafter")); // One that would otherwise be untranslated; OT here, but it's a convenient place to put it
 
     // Add the workspace pane
-    m_workspacePane =
+    m_sidebar =
         new SideBar(m_mainPanel, "Workspace View", &m_mgr, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
-
     RegisterDockWindow(XRCID("workspace_pane"), "Workspace View");
+
+    m_secondary_sidebar = new SecondarySideBar(m_mainPanel, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
+    RegisterDockWindow(XRCID("secondary_side_bar"), "Secondary Sidebar");
+
+    // link between the side bars
+    m_sidebar->SetSecondarySideBar(m_secondary_sidebar);
+    m_secondary_sidebar->SetSideBar(m_sidebar);
 
     // add the debugger locals tree, make it hidden by default
     m_debuggerPane =
@@ -3407,15 +3413,27 @@ void clMainFrame::CompleteInitialization()
     int bestHeight = frameSize.GetHeight() / 4;
     int bestWidth = frameSize.GetWidth() / 5;
 
-    m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
-                                       .CaptionVisible(false)
-                                       .Name(m_workspacePane->GetCaption())
-                                       .Caption(m_workspacePane->GetCaption())
-                                       .Left()
-                                       .BestSize(bestWidth, -1)
-                                       .Layer(1)
-                                       .Position(0)
-                                       .CloseButton(true));
+    m_mgr.AddPane(m_sidebar, wxAuiPaneInfo()
+                                 .CaptionVisible(false)
+                                 .Name(m_sidebar->GetCaption())
+                                 .Caption(m_sidebar->GetCaption())
+                                 .Left()
+                                 .BestSize(bestWidth, -1)
+                                 .Layer(1)
+                                 .Position(0)
+                                 .CloseButton(false)
+                                 .Show(true));
+
+    m_mgr.AddPane(m_secondary_sidebar, wxAuiPaneInfo()
+                                           .CaptionVisible(false)
+                                           .Name(m_secondary_sidebar->GetCaption())
+                                           .Caption(m_secondary_sidebar->GetCaption())
+                                           .Right()
+                                           .BestSize(bestWidth, -1)
+                                           .Layer(1)
+                                           .Position(0)
+                                           .CloseButton(false)
+                                           .Show(true));
 
     m_mgr.AddPane(m_debuggerPane, wxAuiPaneInfo()
                                       .CaptionVisible(false)
@@ -3424,7 +3442,7 @@ void clMainFrame::CompleteInitialization()
                                       .Bottom()
                                       .Layer(1)
                                       .Position(1)
-                                      .CloseButton(true)
+                                      .CloseButton(false)
                                       .BestSize(-1, bestHeight)
                                       .Hide());
 
@@ -6096,7 +6114,7 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     m_mainPanel->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_debuggerPane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_outputPane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    m_workspacePane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    m_sidebar->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 #endif
 }
 

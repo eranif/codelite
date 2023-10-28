@@ -90,7 +90,7 @@
 #include "tabgroupspane.h"
 #include "threadlistpanel.h"
 #include "vcimporter.h"
-#include "workspace_pane.h"
+#include "SideBar.hpp"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
 

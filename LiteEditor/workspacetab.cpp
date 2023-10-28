@@ -41,7 +41,7 @@
 #include "plugin.h"
 #include "pluginmanager.h"
 #include "project_settings_dlg.h"
-#include "workspace_pane.h"
+#include "SideBar.hpp"
 
 #include <algorithm>
 #include <wx/button.h>

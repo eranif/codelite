@@ -115,18 +115,8 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
                                   clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
-    if(IsDbViewDetached()) {
-        DockablePane* cp =
-            new DockablePane(m_mgr->GetMainPanel(), PaneId::SIDE_BAR, _("DbExplorer"), false, wxSize(200, 200));
-        m_dbViewerPanel = new DbViewerPanel(cp, editorBook, m_mgr);
-        cp->SetChildNoReparent(m_dbViewerPanel);
-
-    } else {
-
-        m_dbViewerPanel = new DbViewerPanel(m_mgr->BookGet(PaneId::SIDE_BAR), editorBook, m_mgr);
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"),
-                           clLoadSidebarBitmap("dbexplorer-button"));
-    }
+    m_dbViewerPanel = new DbViewerPanel(m_mgr->BookGet(PaneId::SIDE_BAR), editorBook, m_mgr);
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"), clLoadSidebarBitmap("dbexplorer-button"));
     m_mgr->AddWorkspaceTab(_("DbExplorer"));
 
     // configure autolayout algorithns
@@ -192,19 +182,6 @@ void DatabaseExplorer::UnPlug()
         m_dbViewerPanel = nullptr;
     }
     wxTheApp->Unbind(wxEVT_MENU, &DatabaseExplorer::OnExecuteSQL, this, XRCID("wxEVT_EXECUTE_SQL"));
-}
-
-bool DatabaseExplorer::IsDbViewDetached()
-{
-    wxASSERT(m_mgr);
-    IConfigTool* configTool = m_mgr->GetConfigTool();
-    wxASSERT(configTool);
-
-    DetachedPanesInfo dpi;
-    configTool->ReadObject("DetachedPanesList", &dpi);
-    const wxArrayString& detachedPanes = dpi.GetPanes();
-
-    return detachedPanes.Index(_("DbExplorer")) != wxNOT_FOUND;
 }
 
 void DatabaseExplorer::OnAbout(wxCommandEvent& e)

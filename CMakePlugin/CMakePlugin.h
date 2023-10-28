@@ -192,13 +192,6 @@ public:
      */
     wxArrayString GetSupportedGenerators() const;
 
-    /**
-     * @brief Check if Help pane is detached.
-     *
-     * @return
-     */
-    bool IsPaneDetached() const;
-
     // Public Operations
 public:
     /**

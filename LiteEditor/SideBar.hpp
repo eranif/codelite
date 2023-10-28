@@ -22,8 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef WORKSPACE_PANE_H
-#define WORKSPACE_PANE_H
+#ifndef SIDEBAR_HPP
+#define SIDEBAR_HPP
 
 #include "clAuiCaptionEnabler.h"
 #include "clSideBarCtrl.hpp"
@@ -57,7 +57,7 @@ public:
     void SetMenu(wxMenu* menu) {}
 } SidebarBook;
 
-class WorkspacePane : public wxPanel
+class SideBar : public wxPanel
 {
 private:
     wxString m_caption;
@@ -67,13 +67,8 @@ private:
     SidebarBook* m_book = nullptr;
     TabgroupsPane* m_TabgroupsPane = nullptr;
     OpenWindowsPanel* m_openWindowsPane = nullptr;
-
     FileExplorer* m_explorer = nullptr;
     WorkspaceTab* m_workspaceTab = nullptr;
-    clAuiCaptionEnabler m_captionEnabler;
-
-private:
-    bool BuildTabListMenu(wxMenu& menu);
 
 protected:
     struct Tab {
@@ -100,15 +95,11 @@ protected:
     wxWindow* DoGetControlByName(const wxString& title);
     void OnInitDone(wxCommandEvent& event);
     void OnSettingsChanged(wxCommandEvent& event);
-    void OnToggleWorkspaceTab(clCommandEvent& event);
-    clTabRenderer::Ptr_t GetNotebookRenderer();
-
-    void OnWorkspaceBookFileListMenu(clContextMenuEvent& event);
-    void OnNativeBookContextMenu(wxContextMenuEvent& event);
+    void OnContextMenu(wxContextMenuEvent& event);
 
 public:
-    WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style);
-    ~WorkspacePane();
+    SideBar(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style);
+    ~SideBar();
 
     void UpdateProgress(int val);
     void ClearProgress();
@@ -134,4 +125,4 @@ public:
     void ShowTab(const wxString& name, bool show);
 };
 
-#endif // WORKSPACE_PANE_H
+#endif // SIDEBAR_HPP

@@ -33,6 +33,7 @@
 #include "GCCMetadata.hpp"
 #include "Notebook.h"
 #include "NotebookNavigationDlg.h"
+#include "SideBar.hpp"
 #include "SwitchToWorkspaceDlg.h"
 #include "WelcomePage.h"
 #include "acceltabledlg.h"
@@ -128,7 +129,6 @@
 #include "tabgroupspane.h"
 #include "tags_parser_search_path_dlg.h"
 #include "webupdatethread.h"
-#include "workspace_pane.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "wxCustomControls.hpp"
@@ -1311,7 +1311,7 @@ void clMainFrame::CreateGUIControls()
 
     // Add the workspace pane
     m_workspacePane =
-        new WorkspacePane(m_mainPanel, "Workspace View", &m_mgr, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
+        new SideBar(m_mainPanel, "Workspace View", &m_mgr, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
 
     RegisterDockWindow(XRCID("workspace_pane"), "Workspace View");
 
@@ -3409,7 +3409,7 @@ void clMainFrame::CompleteInitialization()
     int bestWidth = frameSize.GetWidth() / 5;
 
     m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
-                                       .CaptionVisible(true)
+                                       .CaptionVisible(false)
                                        .Name(m_workspacePane->GetCaption())
                                        .Caption(m_workspacePane->GetCaption())
                                        .Left()
@@ -3419,7 +3419,7 @@ void clMainFrame::CompleteInitialization()
                                        .CloseButton(true));
 
     m_mgr.AddPane(m_debuggerPane, wxAuiPaneInfo()
-                                      .CaptionVisible(true)
+                                      .CaptionVisible(false)
                                       .Name(m_debuggerPane->GetCaption())
                                       .Caption(m_debuggerPane->GetCaption())
                                       .Bottom()
@@ -3430,7 +3430,7 @@ void clMainFrame::CompleteInitialization()
                                       .Hide());
 
     m_mgr.AddPane(m_outputPane, wxAuiPaneInfo()
-                                    .CaptionVisible(true)
+                                    .CaptionVisible(false)
                                     .Name("Output View")
                                     .Caption("Output View")
                                     .Bottom()
@@ -4969,6 +4969,11 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
     }
 
     ManagerST::Get()->GetPerspectiveManager().DeleteAllPerspectives();
+
+    // clear the detached panes list
+    DetachedPanesInfo dpi;
+    clGetManager()->GetConfigTool()->WriteObject("DetachedPanesList", &dpi);
+
     m_mgr.LoadPerspective(m_defaultLayout, false);
     m_mgr.Update();
 }
@@ -4976,7 +4981,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
     // Set the manager flags
-    unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE;
+    unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE | wxAUI_MGR_ALLOW_FLOATING;
 #ifndef __WXMSW__
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
 #endif

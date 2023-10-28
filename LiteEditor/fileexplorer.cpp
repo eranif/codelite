@@ -39,7 +39,7 @@
 #include "macros.h"
 #include "manager.h"
 #include "plugin.h"
-#include "workspace_pane.h"
+#include "SideBar.hpp"
 #include "wx/sizer.h"
 #include "wx/tokenzr.h"
 #include "wx/xrc/xmlres.h"

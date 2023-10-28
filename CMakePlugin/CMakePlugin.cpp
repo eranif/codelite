@@ -267,20 +267,6 @@ wxArrayString CMakePlugin::GetSupportedGenerators() const
 
 /* ************************************************************************ */
 
-bool CMakePlugin::IsPaneDetached() const
-{
-    wxASSERT(m_mgr);
-    IConfigTool* configTool = m_mgr->GetConfigTool();
-    wxASSERT(configTool);
-
-    DetachedPanesInfo dpi;
-    configTool->ReadObject("DetachedPanesList", &dpi);
-    const wxArrayString& detachedPanes = dpi.GetPanes();
-    return detachedPanes.Index(HELP_TAB_NAME) != wxNOT_FOUND;
-}
-
-/* ************************************************************************ */
-
 void CMakePlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 /* ************************************************************************ */

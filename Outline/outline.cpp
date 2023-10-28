@@ -83,17 +83,9 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
     m_longName = _("Outline Plugin");
     m_shortName = wxT("Outline");
 
-    if(IsPaneDetached()) {
-        // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp =
-            new DockablePane(m_mgr->GetMainPanel(), PaneId::SIDE_BAR, _("Outline"), false, wxSize(200, 200));
-        m_view = new OutlineTab(cp);
-        cp->SetChildNoReparent(m_view);
+    m_view = new OutlineTab(m_mgr->BookGet(PaneId::SIDE_BAR));
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_view, _("Outline"), clLoadSidebarBitmap("outline-button"));
 
-    } else {
-        m_view = new OutlineTab(m_mgr->BookGet(PaneId::SIDE_BAR));
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_view, _("Outline"), clLoadSidebarBitmap("outline-button"));
-    }
     m_tabHelper.reset(new clTabTogglerHelper(wxEmptyString, nullptr, _("Outline"), m_view));
     m_mgr->AddWorkspaceTab(_("Outline"));
 }
@@ -109,14 +101,6 @@ void SymbolViewPlugin::UnPlug()
     if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_view)) {
         // failed to delete, delete it manually
         m_view->Destroy();
-    }
+    } 
     m_view = nullptr;
-}
-
-bool SymbolViewPlugin::IsPaneDetached()
-{
-    DetachedPanesInfo dpi;
-    m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
-    wxArrayString detachedPanes = dpi.GetPanes();
-    return detachedPanes.Index(_("Outline")) != wxNOT_FOUND;
 }

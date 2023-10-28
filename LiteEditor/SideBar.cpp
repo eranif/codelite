@@ -22,13 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "workspace_pane.h"
+#include "SideBar.hpp"
 
 #include "clWorkspaceView.h"
 #include "cl_config.h"
 #include "cl_editor.h"
 #include "codelite_events.h"
 #include "detachedpanesinfo.h"
+#include "dockablepane.h"
 #include "dockablepanemenumanager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -58,7 +59,7 @@
 #undef GSocket
 #endif
 
-WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
+SideBar::SideBar(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
     : m_caption(caption)
     , m_mgr(mgr)
 {
@@ -69,9 +70,8 @@ WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiMan
 
     Hide();
     CreateGUIControls();
-    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &WorkspacePane::OnSettingsChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &WorkspacePane::OnToggleWorkspaceTab, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &SideBar::OnInitDone, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &SideBar::OnSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
         e.Skip();
         SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
@@ -79,16 +79,15 @@ WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiMan
     });
 }
 
-WorkspacePane::~WorkspacePane()
+SideBar::~SideBar()
 {
-    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &WorkspacePane::OnSettingsChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &WorkspacePane::OnToggleWorkspaceTab, this);
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &SideBar::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &SideBar::OnSettingsChanged, this);
 }
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
 
-void WorkspacePane::CreateGUIControls()
+void SideBar::CreateGUIControls()
 {
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
@@ -98,6 +97,7 @@ void WorkspacePane::CreateGUIControls()
         style = wxBK_RIGHT;
     }
     m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
+    m_book->Bind(wxEVT_SIDEBAR_CONTEXT_MENU, &SideBar::OnContextMenu, this);
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
@@ -116,13 +116,6 @@ void WorkspacePane::CreateGUIControls()
     m_parsingProgress->Hide();
     m_staticText->Hide();
 
-    // create tabs (possibly detached)
-    DetachedPanesInfo dpi;
-    EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-
-    wxArrayString detachedPanes;
-    detachedPanes = dpi.GetPanes();
-
     // Add the workspace tab
     wxString name;
 
@@ -137,7 +130,7 @@ void WorkspacePane::CreateGUIControls()
     mgr->AddWorkspaceTab(name);
 
     // Add the explorer tab
-    name = _("Explorer");
+    name = _("File Explorer");
     m_explorer = new FileExplorer(m_book, name);
     m_book->AddPage(m_explorer, name, clLoadSidebarBitmap("file-explorer-button"), false);
 
@@ -168,10 +161,11 @@ void WorkspacePane::CreateGUIControls()
     if(m_book->GetPageCount() > 0) {
         m_book->SetSelection((size_t)0);
     }
+
     m_mgr->Update();
 }
 
-void WorkspacePane::ClearProgress()
+void SideBar::ClearProgress()
 {
     m_parsingProgress->SetValue(0);
     m_parsingProgress->Hide();
@@ -181,7 +175,7 @@ void WorkspacePane::ClearProgress()
     Layout();
 }
 
-void WorkspacePane::UpdateProgress(int val)
+void SideBar::UpdateProgress(int val)
 {
     if(m_parsingProgress->IsShown() == false) {
         m_parsingProgress->Show();
@@ -194,14 +188,7 @@ void WorkspacePane::UpdateProgress(int val)
     m_parsingProgress->Update();
 }
 
-typedef struct _tagTabInfo {
-    wxString text;
-    wxWindow* win = nullptr;
-    wxBitmap bmp;
-    bool selected = false;
-} tagTabInfo;
-
-void WorkspacePane::ApplySavedTabOrder(bool update_ui) const
+void SideBar::ApplySavedTabOrder(bool update_ui) const
 {
     wxWindowUpdateLocker locker{ m_book };
     wxArrayString tabs;
@@ -218,7 +205,7 @@ void WorkspacePane::ApplySavedTabOrder(bool update_ui) const
     }
 }
 
-void WorkspacePane::SaveWorkspaceViewTabOrder() const
+void SideBar::SaveWorkspaceViewTabOrder() const
 {
     wxArrayString panes;
     panes.reserve(m_book->GetPageCount());
@@ -229,13 +216,13 @@ void WorkspacePane::SaveWorkspaceViewTabOrder() const
     clConfig::Get().SetWorkspaceTabOrder(panes, m_book->GetSelection());
 }
 
-void WorkspacePane::DoShowTab(bool show, const wxString& title)
+void SideBar::DoShowTab(bool show, const wxString& title)
 {
     wxUnusedVar(show);
     wxUnusedVar(title);
 }
 
-wxWindow* WorkspacePane::DoGetControlByName(const wxString& title)
+wxWindow* SideBar::DoGetControlByName(const wxString& title)
 {
     if(title == _("Explorer"))
         return m_explorer;
@@ -250,7 +237,7 @@ wxWindow* WorkspacePane::DoGetControlByName(const wxString& title)
     return NULL;
 }
 
-bool WorkspacePane::IsTabVisible(int flag)
+bool SideBar::IsTabVisible(int flag)
 {
     wxWindow* win(NULL);
     wxString title;
@@ -288,13 +275,28 @@ bool WorkspacePane::IsTabVisible(int flag)
     return win && win->IsShown();
 }
 
-void WorkspacePane::OnInitDone(wxCommandEvent& event)
+void SideBar::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
-    m_captionEnabler.Initialize(this, "Workspace View", &clMainFrame::Get()->GetDockingManager());
+    if(m_book->GetPageCount() == 0) {
+        return;
+    }
+
+    //    // Detach panes if needed
+    //    bool update_required = false;
+    //    for(int i = (int)m_book->GetPageCount() - 1; i >= 0; --i) {
+    //        if(clIsPaneDetached(m_book->GetPageText(i))) {
+    //            DetachPane(i);
+    //            update_required = true;
+    //        }
+    //    }
+    //
+    //    if(update_required) {
+    //        clGetManager()->GetDockingManager()->Update();
+    //    }
 }
 
-void WorkspacePane::SelectTab(const wxString& tabTitle)
+void SideBar::SelectTab(const wxString& tabTitle)
 {
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         if(m_book->GetPageText(i) == tabTitle) {
@@ -304,7 +306,7 @@ void WorkspacePane::SelectTab(const wxString& tabTitle)
     }
 }
 
-void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
+void SideBar::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
 
@@ -312,19 +314,7 @@ void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
     m_book->SetOrientationOnTheRight(direction == wxRIGHT);
 }
 
-void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
-{
-    // Handle the core tabs
-    wxUnusedVar(event);
-}
-
-clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer() { return clTabRenderer::Ptr_t{}; }
-
-void WorkspacePane::OnNativeBookContextMenu(wxContextMenuEvent& event) { wxUnusedVar(event); }
-
-void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event) { wxUnusedVar(event); }
-
-void WorkspacePane::ShowTab(const wxString& name, bool show)
+void SideBar::ShowTab(const wxString& name, bool show)
 {
     clCommandEvent show_event(wxEVT_SHOW_WORKSPACE_TAB);
     show_event.SetString(name);
@@ -332,49 +322,18 @@ void WorkspacePane::ShowTab(const wxString& name, bool show)
     EventNotifier::Get()->ProcessEvent(show_event);
 }
 
-bool WorkspacePane::BuildTabListMenu(wxMenu& menu)
+void SideBar::OnContextMenu(wxContextMenuEvent& event)
 {
-    DetachedPanesInfo dpi;
-    EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
+    wxMenu menu;
+    menu.Append(XRCID("sidebar-detach-tab"), _("Move to secondary sidebar"));
 
-    wxMenu* hiddenTabsMenu = new wxMenu();
-    const wxArrayString& tabs = clGetManager()->GetWorkspaceTabs();
-    for(size_t i = 0; i < tabs.size(); ++i) {
-        const wxString& label = tabs.Item(i);
-        if((m_book->GetPageIndex(label) != wxNOT_FOUND)) {
-            // Tab is visible, dont show it
-            continue;
-        }
-
-        if(menu.GetMenuItemCount() > 0 && hiddenTabsMenu->GetMenuItemCount() == 0) {
-            // we are adding the first menu item
-            menu.AppendSeparator();
-        }
-
-        int tabId = wxXmlResource::GetXRCID(wxString() << "workspace_tab_" << label);
-        hiddenTabsMenu->Append(tabId, label);
-
-        // If the tab is detached, disable it's menu entry
-        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) {
-            hiddenTabsMenu->Enable(tabId, false);
-        }
-
-        // Bind the event
-        hiddenTabsMenu->Bind(
-            wxEVT_MENU,
-            // Use lambda by value here so we make a copy
-            [=](wxCommandEvent& e) {
-                clCommandEvent eventShow(wxEVT_SHOW_WORKSPACE_TAB);
-                eventShow.SetSelected(true).SetString(label);
-                EventNotifier::Get()->AddPendingEvent(eventShow);
-            },
-            tabId);
-    }
-    if(hiddenTabsMenu->GetMenuItemCount() == 0) {
-        wxDELETE(hiddenTabsMenu);
-        return false;
-    } else {
-        menu.AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
-        return true;
-    }
+    int pos = event.GetSelection();
+    menu.Bind(
+        wxEVT_MENU,
+        [pos, this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            // TODO: move the pane to the secondary side bar
+        },
+        XRCID("sidebar-detach-tab"));
+    m_book->PopupMenu(&menu);
 }

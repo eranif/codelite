@@ -24,36 +24,29 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "workspace_pane.h"
 
-#include "Notebook.h"
-#include "clTabTogglerHelper.h"
 #include "clWorkspaceView.h"
-#include "cl_aui_dock_art.h"
 #include "cl_config.h"
-#include "cl_defs.h"
 #include "cl_editor.h"
 #include "codelite_events.h"
-#include "configuration_manager_dlg.h"
-#include "cpp_symbol_tree.h"
 #include "detachedpanesinfo.h"
-#include "dockablepane.h"
 #include "dockablepanemenumanager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "fileexplorer.h"
 #include "fileview.h"
 #include "frame.h"
 #include "globals.h"
-#include "macros.h"
-#include "manager.h"
 #include "openwindowspanel.h"
 #include "pluginmanager.h"
 #include "tabgroupspane.h"
-#include "windowstack.h"
 #include "workspacetab.h"
 
-#include <algorithm>
 #include <wx/app.h>
+#include <wx/bitmap.h>
+#include <wx/gauge.h>
 #include <wx/menu.h>
+#include <wx/sizer.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
@@ -210,34 +203,14 @@ typedef struct _tagTabInfo {
 
 void WorkspacePane::ApplySavedTabOrder(bool update_ui) const
 {
-    return;
     wxWindowUpdateLocker locker{ m_book };
     wxArrayString tabs;
     int index = -1;
     if(!clConfig::Get().GetWorkspaceTabOrder(tabs, index))
         return;
 
-    std::vector<tagTabInfo> tabs_in_order;
-    for(const wxString& tab : tabs) {
-        tagTabInfo ti;
-        int pos = m_book->GetPageIndex(tab);
-        if(pos == wxNOT_FOUND) {
-            clWARNING() << "error while restoring tab order. could not locate tab:" << tab << endl;
-            continue;
-        }
-        ti.selected = (m_book->GetSelection() == pos);
-        ti.text = tab;
-        ti.win = m_book->GetPage(pos);
-        ti.bmp = m_book->GetPageBitmap(pos);
-        tabs_in_order.push_back(ti);
-    }
-
-    // Remove all buttons (this does not delete them)
-    m_book->RemoveAll();
-
-    // Add re-add them in-order
-    for(auto& d : tabs_in_order) {
-        m_book->AddPage(d.win, d.text, d.bmp, d.selected);
+    for(size_t i = 0; i < tabs.size(); ++i) {
+        m_book->MovePageToIndex(tabs[i], i);
     }
 
     if(update_ui) {

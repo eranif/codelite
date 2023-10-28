@@ -1,7 +1,10 @@
 #include "clSideBarCtrl.hpp"
 
+#include "drawingutils.h"
+
 #include <wx/anybutton.h>
 #include <wx/dcbuffer.h>
+#include <wx/gdicmn.h>
 #include <wx/log.h>
 #include <wx/sizer.h>
 #include <wx/tooltip.h>
@@ -22,6 +25,9 @@ wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
 
 class SideBarButton : public wxControl
 {
+    friend class clSideBarButtonCtrl;
+    friend class clSideBarCtrl;
+
 protected:
     clSideBarButtonCtrl* m_sidebar = nullptr;
     wxBitmap m_bmp;
@@ -197,7 +203,7 @@ protected:
     }
 
 public:
-    explicit SideBarButton(clSideBarButtonCtrl* parent, const wxBitmap& bmp)
+    explicit SideBarButton(clSideBarButtonCtrl* parent, const wxBitmap bmp)
         : wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
         , m_sidebar(parent)
         , m_bmp(bmp)
@@ -236,7 +242,7 @@ public:
     bool IsSeleced() const { return m_selected; }
     void SetPageLabel(const wxString& label) { this->m_label = label; }
     const wxString& GetButtonLabel() const { return m_label; }
-    const wxBitmap& GetButtonBitmap() const { return m_bmp; }
+    const wxBitmap GetButtonBitmap() const { return m_bmp; }
 };
 
 clSideBarButtonCtrl::clSideBarButtonCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -254,7 +260,7 @@ clSideBarButtonCtrl::~clSideBarButtonCtrl() {}
 
 void clSideBarButtonCtrl::SetOrientationOnTheRight(bool b) { m_orientation = b ? wxRIGHT : wxLEFT; }
 
-int clSideBarButtonCtrl::AddButton(const wxBitmap& bmp, const wxString& label, wxWindow* linked_page, bool select)
+int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wxWindow* linked_page, bool select)
 {
     SideBarButton* btn = new SideBarButton(this, bmp);
     if(select) {
@@ -278,9 +284,7 @@ int clSideBarButtonCtrl::AddButton(const wxBitmap& bmp, const wxString& label, w
 
 void clSideBarButtonCtrl::Clear()
 {
-    while(m_mainSizer->GetItemCount()) {
-        m_mainSizer->Detach(0);
-    }
+    m_mainSizer->Clear(false);
     m_mainSizer->Layout();
 }
 
@@ -425,6 +429,20 @@ SideBarButton* clSideBarButtonCtrl::GetButton(size_t pos) const
     return static_cast<SideBarButton*>(m_mainSizer->GetItem(pos)->GetWindow());
 }
 
+SideBarButton* clSideBarButtonCtrl::GetButton(const wxString& label) const
+{
+    if(label.empty()) {
+        return nullptr;
+    }
+    for(size_t i = 0; i < m_mainSizer->GetItemCount(); ++i) {
+        SideBarButton* button = static_cast<SideBarButton*>(m_mainSizer->GetItem(i)->GetWindow());
+        if(button->GetButtonLabel() == label) {
+            return button;
+        }
+    }
+    return nullptr;
+}
+
 int clSideBarButtonCtrl::GetPageIndex(const wxString& label) const
 {
     for(size_t i = 0; i < m_mainSizer->GetItemCount(); ++i) {
@@ -479,7 +497,7 @@ void clSideBarCtrl::PlaceButtons()
     GetSizer()->Fit(this);
 }
 
-void clSideBarCtrl::AddPage(wxWindow* page, const wxString& label, const wxBitmap& bmp, bool selected)
+void clSideBarCtrl::AddPage(wxWindow* page, const wxString& label, wxBitmap bmp, bool selected)
 {
     page->Reparent(m_book);
     m_book->AddPage(page, label, selected);
@@ -600,4 +618,15 @@ void clSideBarCtrl::SetOrientationOnTheRight(bool b)
 {
     m_buttons->SetOrientationOnTheRight(b);
     PlaceButtons();
+}
+
+void clSideBarCtrl::MovePageToIndex(const wxString& label, int new_pos)
+{
+    auto src_button = m_buttons->GetButton(label);
+    auto target_button = m_buttons->GetButton(new_pos);
+
+    if(!src_button || !target_button || src_button == target_button) {
+        return;
+    }
+    m_buttons->MoveBefore(src_button, target_button);
 }

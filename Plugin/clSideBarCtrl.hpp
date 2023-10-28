@@ -1,10 +1,8 @@
 #ifndef CLSIDEBARCTRL_HPP
 #define CLSIDEBARCTRL_HPP
 
-#include "clButton.h"
 #include "codelite_exports.h"
 
-#include <unordered_map>
 #include <wx/bitmap.h>
 #include <wx/control.h>
 #include <wx/simplebook.h>
@@ -13,6 +11,7 @@ class SideBarButton;
 class WXDLLIMPEXP_SDK clSideBarButtonCtrl : public wxControl
 {
     friend class SideBarButton;
+    friend class clSideBarCtrl;
 
 protected:
     wxSizer* m_mainSizer = nullptr;
@@ -37,7 +36,7 @@ public:
     /// Add new button at the end, returns its index
     /// Note that the `label` property is used as the tooltip
     /// It is here for convenience: it can be used to fetch
-    int AddButton(const wxBitmap& bmp, const wxString& label, wxWindow* linked_page, bool select = false);
+    int AddButton(const wxBitmap bmp, const wxString& label, wxWindow* linked_page, bool select = false);
 
     /// Remove a button by index
     /// return the removed button linked page
@@ -68,7 +67,10 @@ public:
 
     /// Return the button at position `pos`
     SideBarButton* GetButton(size_t pos) const;
-    
+
+    /// Return the button identified by `label`
+    SideBarButton* GetButton(const wxString& label) const;
+
     /// Remove all buttons
     void Clear();
 };
@@ -90,9 +92,12 @@ public:
     virtual ~clSideBarCtrl();
 
     /// Book API
-    void AddPage(wxWindow* page, const wxString& label, const wxBitmap& bmp, bool selected = false);
+    void AddPage(wxWindow* page, const wxString& label, wxBitmap bmp, bool selected = false);
 
-    /// reutrn the number of pages in the control
+    /// Move page identified by `label` to a new position
+    void MovePageToIndex(const wxString& label, int new_pos);
+
+    /// return the number of pages in the control
     size_t GetPageCount() const;
 
     /// return page by index

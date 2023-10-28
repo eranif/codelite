@@ -647,7 +647,7 @@ void clStatusBar::OnSidebarUI(wxUpdateUIEvent& event)
 void clStatusBar::OnSidebar(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clGetManager()->ToggleWorkspacePane();
+    clGetManager()->ToggleSidebarPane();
 }
 
 void clStatusBar::OnBottombarUI(wxUpdateUIEvent& event)

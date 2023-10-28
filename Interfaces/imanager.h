@@ -153,11 +153,25 @@ public:
     virtual void ShowOutputPane(const wxString& selectWindow = "") = 0;
 
     /**
-     * @brief toggle the workspace pane and if provided, select 'selectedWindow'
+     * @brief toggle the sidebar pane and if provided, select 'selectedWindow'
      * @param selectWindow tab within the 'Workspace Pane' to select, if empty don't change
      * the selection
      */
-    virtual void ToggleWorkspacePane(const wxString& selectWindow = "") = 0;
+    virtual void ToggleSidebarPane(const wxString& selectWindow = "") = 0;
+
+    /**
+     * @brief toggle the secondary pane and if provided, select 'selectedWindow'
+     * @param selectWindow tab within the 'Workspace Pane' to select, if empty don't change
+     * the selection
+     */
+    virtual void ToggleSecondarySidebarPane(const wxString& selectWindow = "") = 0;
+
+    /// Show / Hide pane
+    /// Possible `pane_names` are:
+    /// - "Workspace View"
+    /// - "Secondary Sidebar"
+    /// - "Output View"
+    virtual void ShowPane(const wxString& pane_name, bool show) = 0;
 
     /**
      * @brief show the toolbar. This only works when using the native toolbar

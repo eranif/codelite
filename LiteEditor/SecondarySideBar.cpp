@@ -2,6 +2,10 @@
 
 #include "SideBar.hpp"
 #include "cl_config.h"
+#include "globals.h"
+#include "imanager.h"
+
+#define VIEW_NAME "Secondary Sidebar"
 
 SecondarySideBar::SecondarySideBar(wxWindow* parent, long style)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)
@@ -32,6 +36,10 @@ void SecondarySideBar::SetSideBar(SideBar* sb) { m_sidebar = sb; }
 
 void SecondarySideBar::AddPage(wxWindow* win, wxBitmap bmp, const wxString& label)
 {
+    if(m_book->GetPageCount() == 0) {
+        clGetManager()->ShowPane(VIEW_NAME, true);
+    }
+
     m_book->AddPage(win, label, bmp, true);
     m_book->GetSizer()->Layout();
 
@@ -69,4 +77,9 @@ void SecondarySideBar::MoveToPrimarySideBar(int pos)
 
     // add it to the right side bar
     m_sidebar->AddPage(win, bmp, label);
+
+    if(m_book->GetPageCount() == 0) {
+        // No more pages -> hide this view
+        clGetManager()->ShowPane(VIEW_NAME, false);
+    }
 }

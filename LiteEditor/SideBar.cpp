@@ -59,6 +59,9 @@
 #undef GSocket
 #endif
 
+#define VIEW_NAME "Workspace View"
+#define SECONDARY_VIEW_NAME "Secondary Sidebar"
+
 SideBar::SideBar(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
     : m_caption(caption)
     , m_mgr(mgr)
@@ -336,11 +339,21 @@ void SideBar::MoveToSecondarySideBar(int pos)
 
     // add it to the right side bar
     m_secondarySideBar->AddPage(win, bmp, label);
+
+    if(m_book->GetPageCount() == 0) {
+        // hide the sidebar
+        clGetManager()->ShowPane(VIEW_NAME, false);
+    }
 }
 
 void SideBar::MoveToSecondarySideBar()
 {
     auto secondary_tabs = clConfig::Get().Read("secondary_side_bar.tabs", wxArrayString{});
+    if(secondary_tabs.empty()) {
+        clGetManager()->ShowPane(SECONDARY_VIEW_NAME, false);
+        return;
+    }
+
     for(const auto& tab_label : secondary_tabs) {
         int pos = m_book->GetPageIndex(tab_label);
         if(pos == wxNOT_FOUND) {
@@ -354,4 +367,5 @@ void SideBar::AddPage(wxWindow* win, wxBitmap bmp, const wxString& label, bool s
 {
     m_book->AddPage(win, label, bmp, selected);
     m_book->GetSizer()->Layout();
+    clGetManager()->ShowPane(VIEW_NAME, true);
 }

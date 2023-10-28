@@ -87,6 +87,12 @@ protected:
     void OnSettingsChanged(wxCommandEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
 
+    /// After load, move all tabs to the secondary sidebar
+    void MoveToSecondarySideBar();
+
+    /// Move tab with `pos` to the secondary bar
+    void MoveToSecondarySideBar(int pos);
+
 public:
     SideBar(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style);
     ~SideBar();
@@ -113,6 +119,11 @@ public:
      * @brief show or hide a workspace tab
      */
     void ShowTab(const wxString& name, bool show);
+
+    void SetSecondarySideBar(SecondarySideBar* ssb);
+
+    /// Add new page to the side bar
+    void AddPage(wxWindow* win, wxBitmap bmp, const wxString& label, bool selected = false);
 };
 
 #endif // SIDEBAR_HPP

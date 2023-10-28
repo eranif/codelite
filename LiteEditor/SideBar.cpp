@@ -277,18 +277,8 @@ void SideBar::OnInitDone(wxCommandEvent& event)
         return;
     }
 
-    //    // Detach panes if needed
-    //    bool update_required = false;
-    //    for(int i = (int)m_book->GetPageCount() - 1; i >= 0; --i) {
-    //        if(clIsPaneDetached(m_book->GetPageText(i))) {
-    //            DetachPane(i);
-    //            update_required = true;
-    //        }
-    //    }
-    //
-    //    if(update_required) {
-    //        clGetManager()->GetDockingManager()->Update();
-    //    }
+    // Move tabs to the secondary bar if needed
+    MoveToSecondarySideBar();
 }
 
 void SideBar::SelectTab(const wxString& tabTitle)
@@ -327,8 +317,41 @@ void SideBar::OnContextMenu(wxContextMenuEvent& event)
         wxEVT_MENU,
         [pos, this](wxCommandEvent& e) {
             wxUnusedVar(e);
-            // TODO: move the pane to the secondary side bar
+            MoveToSecondarySideBar(pos);
         },
         XRCID("sidebar-detach-tab"));
     m_book->PopupMenu(&menu);
+}
+
+void SideBar::SetSecondarySideBar(SecondarySideBar* ssb) { m_secondarySideBar = ssb; }
+
+void SideBar::MoveToSecondarySideBar(int pos)
+{
+    wxString label = m_book->GetPageText(pos);
+    wxBitmap bmp = m_book->GetPageBitmap(pos);
+    wxWindow* win = m_book->GetPage(pos);
+
+    m_book->RemovePage(pos);
+    m_book->GetSizer()->Layout();
+
+    // add it to the right side bar
+    m_secondarySideBar->AddPage(win, bmp, label);
+}
+
+void SideBar::MoveToSecondarySideBar()
+{
+    auto secondary_tabs = clConfig::Get().Read("secondary_side_bar.tabs", wxArrayString{});
+    for(const auto& tab_label : secondary_tabs) {
+        int pos = m_book->GetPageIndex(tab_label);
+        if(pos == wxNOT_FOUND) {
+            continue;
+        }
+        MoveToSecondarySideBar(pos);
+    }
+}
+
+void SideBar::AddPage(wxWindow* win, wxBitmap bmp, const wxString& label, bool selected)
+{
+    m_book->AddPage(win, label, bmp, selected);
+    m_book->GetSizer()->Layout();
 }

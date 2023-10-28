@@ -27,6 +27,7 @@
 
 #include "EnvironmentVariablesDlg.h"
 #include "Notebook.h"
+#include "SecondarySideBar.hpp"
 #include "ZombieReaperPOSIX.h"
 #include "clCaptionBar.hpp"
 #include "clDockingManager.h"
@@ -97,7 +98,8 @@ class clMainFrame : public wxFrame
     static clMainFrame* m_theFrame;
     clDockingManager m_mgr;
     OutputPane* m_outputPane;
-    SideBar* m_workspacePane;
+    SideBar* m_sidebar = nullptr;
+    SecondarySideBar* m_secondary_sidebar = nullptr;
     wxArrayString m_files;
     wxTimer* m_timer;
     std::map<int, wxString> m_viewAsMap;
@@ -271,7 +273,7 @@ public:
     /**
      * @return the workspace pane (the one that contained the Symbol view & class view)
      */
-    SideBar* GetWorkspacePane() { return m_workspacePane; }
+    SideBar* GetWorkspacePane() { return m_sidebar; }
 
     /**
      * return the workspace tab pane

@@ -283,12 +283,15 @@ int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wx
         int old_selection = GetSelection();
         if(old_selection != wxNOT_FOUND) {
             GetButton(old_selection)->SetSeleced(false);
+            GetButton(old_selection)->Refresh();
         }
     }
+
     btn->SetSeleced(select);
     btn->SetToolTip(label);
     btn->SetPageLabel(label);
     btn->SetLinkedPage(linked_page);
+    btn->Refresh();
     m_mainSizer->Add(btn, wxSizerFlags().CenterHorizontal());
 
     SetSizeHints(btn->GetSize().GetWidth(), wxNOT_FOUND);

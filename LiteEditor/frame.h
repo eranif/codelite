@@ -67,7 +67,7 @@ class CodeLiteApp;
 class clSingleInstanceThread;
 class wxCustomStatusBar;
 class TagEntry;
-class WorkspacePane;
+class SideBar;
 class wxToolBar;
 class OpenWindowsPanel;
 class WorkspaceTab;
@@ -97,7 +97,7 @@ class clMainFrame : public wxFrame
     static clMainFrame* m_theFrame;
     clDockingManager m_mgr;
     OutputPane* m_outputPane;
-    WorkspacePane* m_workspacePane;
+    SideBar* m_workspacePane;
     wxArrayString m_files;
     wxTimer* m_timer;
     std::map<int, wxString> m_viewAsMap;
@@ -271,7 +271,7 @@ public:
     /**
      * @return the workspace pane (the one that contained the Symbol view & class view)
      */
-    WorkspacePane* GetWorkspacePane() { return m_workspacePane; }
+    SideBar* GetWorkspacePane() { return m_workspacePane; }
 
     /**
      * return the workspace tab pane

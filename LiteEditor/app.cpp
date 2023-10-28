@@ -28,6 +28,7 @@
 #include "BuildTab.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocatorCygwin.h"
+#include "SideBar.hpp"
 #include "SocketAPI/clSocketClient.h"
 #include "asyncprocess.h" // IProcess
 #include "autoversion.h"
@@ -55,7 +56,6 @@
 #include "procutils.h"
 #include "singleinstancethreadjob.h"
 #include "stack_walker.h"
-#include "workspace_pane.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
@@ -739,12 +739,12 @@ bool CodeLiteApp::OnInit()
 #ifdef __WXGTK__
     wxUpdateUIEvent::SetUpdateInterval(500);
 #elif defined(__WXMSW__)
-    wxUpdateUIEvent::SetUpdateInterval(50);
+    wxUpdateUIEvent::SetUpdateInterval(100);
 #endif
 
     // don't show the tooltip too fast
-    wxToolTip::SetDelay(1000);
-    wxToolTip::SetReshow(1000);
+    wxToolTip::SetDelay(500);
+    wxToolTip::SetReshow(500);
     return TRUE;
 }
 

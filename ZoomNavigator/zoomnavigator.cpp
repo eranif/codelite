@@ -96,7 +96,7 @@ size_t GetMarkers(wxStyledTextCtrl* ctrl, int marker_mask, std::vector<int>* lin
 ZoomNavigator::ZoomNavigator(IManager* manager)
     : IPlugin(manager)
     , mgr(manager)
-    , zoompane(NULL)
+    , m_zoompane(NULL)
     , m_topWindow(NULL)
     , m_text(NULL)
     , m_markerFirstLine(wxNOT_FOUND)
@@ -117,7 +117,6 @@ ZoomNavigator::ZoomNavigator(IManager* manager)
                                   NULL, this);
     m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
-    EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
 
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &ZoomNavigator::OnTimer, this, m_timer->GetId());
@@ -138,17 +137,16 @@ void ZoomNavigator::UnPlug()
     m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
                             wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
-    EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
     // cancel the timer
     Unbind(wxEVT_TIMER, &ZoomNavigator::OnTimer, this, m_timer->GetId());
     m_timer->Stop();
     wxDELETE(m_timer);
 
     // Remove the tab if it's actually docked in the workspace pane
-    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, zoompane)) {
-        zoompane->Destroy();
+    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_zoompane)) {
+        m_zoompane->Destroy();
     }
-    zoompane = nullptr;
+    m_zoompane = nullptr;
 }
 
 void ZoomNavigator::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -174,34 +172,17 @@ void ZoomNavigator::DoInitialize()
 
     // create tab (possibly detached)
     auto book = m_mgr->BookGet(PaneId::SIDE_BAR);
-    if(IsZoomPaneDetached()) {
-        // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), PaneId::SIDE_BAR, ZOOM_PANE_TITLE, false,
-                                            wxSize(200, 200));
-        zoompane = new wxPanel(cp);
-        cp->SetChildNoReparent(zoompane);
-
-    } else {
-        zoompane = new wxPanel(book);
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, zoompane, ZOOM_PANE_TITLE, clLoadSidebarBitmap("zoom-button"));
-    }
+    m_zoompane = new wxPanel(book);
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_zoompane, ZOOM_PANE_TITLE, clLoadSidebarBitmap("zoom-button"));
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
 
-    m_text = new ZoomText(zoompane);
+    m_text = new ZoomText(m_zoompane);
     m_text->Bind(wxEVT_LEFT_DOWN, &ZoomNavigator::OnPreviewClicked, this);
     m_text->Bind(wxEVT_LEFT_DCLICK, &ZoomNavigator::OnPreviewClicked, this);
     m_text->SetCursor(wxCURSOR_POINT_LEFT);
     wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
     bs->Add(m_text, 1, wxEXPAND, 0);
-    zoompane->SetSizer(bs);
-}
-
-bool ZoomNavigator::IsZoomPaneDetached()
-{
-    DetachedPanesInfo dpi;
-    m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
-    wxArrayString detachedPanes = dpi.GetPanes();
-    return detachedPanes.Index(ZOOM_PANE_TITLE) != wxNOT_FOUND;
+    m_zoompane->SetSizer(bs);
 }
 
 void ZoomNavigator::DoUpdate()
@@ -384,20 +365,6 @@ void ZoomNavigator::OnInitDone(wxCommandEvent& e)
 }
 
 void ZoomNavigator::OnIdle(wxIdleEvent& e) { e.Skip(); }
-
-void ZoomNavigator::OnToggleTab(clCommandEvent& event)
-{
-    if(event.GetString() != ZOOM_PANE_TITLE) {
-        event.Skip();
-        return;
-    }
-
-    if(event.IsSelected()) {
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, zoompane, ZOOM_PANE_TITLE, clLoadSidebarBitmap("zoom-button"));
-    } else {
-        m_mgr->BookRemovePage(PaneId::SIDE_BAR, ZOOM_PANE_TITLE);
-    }
-}
 
 void ZoomNavigator::OnTimer(wxTimerEvent& event)
 {

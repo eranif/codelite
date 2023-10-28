@@ -47,7 +47,7 @@ class ZoomNavUpdateTimer;
 class ZoomNavigator : public IPlugin
 {
     IManager* mgr;
-    wxPanel* zoompane;
+    wxPanel* m_zoompane;
     wxEvtHandler* m_topWindow;
     ZoomText* m_text;
     int m_markerFirstLine;
@@ -61,7 +61,6 @@ class ZoomNavigator : public IPlugin
 
 protected:
     void DoInitialize();
-    bool IsZoomPaneDetached();
     void PatchUpHighlights(const int first, const int last);
     void SetEditorText(IEditor* editor);
     void SetZoomTextScrollPosToMiddle(wxStyledTextCtrl* stc);
@@ -91,7 +90,6 @@ public:
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnEnablePlugin(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& e);
-    void OnToggleTab(clCommandEvent& event);
 };
 
 #endif // ZoomNavigator

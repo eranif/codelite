@@ -54,7 +54,7 @@
 #include "plugin_version.h"
 #include "procutils.h"
 #include "sessionmanager.h"
-#include "workspace_pane.h"
+#include "SideBar.hpp"
 #include "workspacetab.h"
 #include "wx/filename.h"
 #include "wx/xrc/xmlres.h"

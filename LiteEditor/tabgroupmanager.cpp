@@ -30,7 +30,7 @@
 #include "frame.h"
 #include "manager.h"
 #include "tabgroupspane.h"
-#include "workspace_pane.h"
+#include "SideBar.hpp"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 

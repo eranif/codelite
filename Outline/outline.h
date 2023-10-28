@@ -47,9 +47,6 @@ protected:
     OutlineTab* m_view;
     clTabTogglerHelper::Ptr_t m_tabHelper;
 
-protected:
-    bool IsPaneDetached();
-
 public:
     //--------------------------------------------
     // Constructors/Destructors

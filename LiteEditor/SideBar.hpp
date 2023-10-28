@@ -46,17 +46,7 @@ class WorkspaceTab;
 class TabgroupsPane;
 class wxGauge;
 
-typedef class SidebarBookT : public clSideBarCtrl
-{
-public:
-    SidebarBookT(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-        : clSideBarCtrl(parent, id, pos, size, style)
-    {
-    }
-    virtual ~SidebarBookT() {}
-    void SetMenu(wxMenu* menu) {}
-} SidebarBook;
-
+class SecondarySideBar;
 class SideBar : public wxPanel
 {
 private:
@@ -64,11 +54,12 @@ private:
     wxAuiManager* m_mgr = nullptr;
     wxGauge* m_parsingProgress = nullptr;
     wxStaticText* m_staticText = nullptr;
-    SidebarBook* m_book = nullptr;
+    clSideBarCtrl* m_book = nullptr;
     TabgroupsPane* m_TabgroupsPane = nullptr;
     OpenWindowsPanel* m_openWindowsPane = nullptr;
     FileExplorer* m_explorer = nullptr;
     WorkspaceTab* m_workspaceTab = nullptr;
+    SecondarySideBar* m_secondarySideBar = nullptr;
 
 protected:
     struct Tab {
@@ -91,7 +82,6 @@ protected:
 
 protected:
     void CreateGUIControls();
-    void DoShowTab(bool show, const wxString& title);
     wxWindow* DoGetControlByName(const wxString& title);
     void OnInitDone(wxCommandEvent& event);
     void OnSettingsChanged(wxCommandEvent& event);
@@ -109,7 +99,7 @@ public:
 
     // Getters
     const wxString& GetCaption() const { return m_caption; }
-    SidebarBook* GetNotebook() { return m_book; }
+    clSideBarCtrl* GetNotebook() { return m_book; }
     WorkspaceTab* GetWorkspaceTab() { return m_workspaceTab; }
     FileExplorer* GetFileExplorer() { return m_explorer; }
     TabgroupsPane* GetTabgroupsTab() { return m_TabgroupsPane; }

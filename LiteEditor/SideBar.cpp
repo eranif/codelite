@@ -96,7 +96,8 @@ void SideBar::CreateGUIControls()
     if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT) {
         style = wxBK_RIGHT;
     }
-    m_book = new SidebarBook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
+
+    m_book = new clSideBarCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
     m_book->Bind(wxEVT_SIDEBAR_CONTEXT_MENU, &SideBar::OnContextMenu, this);
 
     // Calculate the widest tab (the one with the 'Workspace' label)
@@ -214,12 +215,6 @@ void SideBar::SaveWorkspaceViewTabOrder() const
         panes.Add(m_book->GetPageText(i));
     }
     clConfig::Get().SetWorkspaceTabOrder(panes, m_book->GetSelection());
-}
-
-void SideBar::DoShowTab(bool show, const wxString& title)
-{
-    wxUnusedVar(show);
-    wxUnusedVar(title);
 }
 
 wxWindow* SideBar::DoGetControlByName(const wxString& title)

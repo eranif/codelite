@@ -1674,6 +1674,15 @@ void Manager::HidePane(const wxString& paneName, bool commit)
     }
 }
 
+void Manager::ShowPane(const wxString& paneName, bool commit)
+{
+    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(paneName);
+    if(info.IsOk() && !info.IsShown()) {
+        wxAuiManager* aui = &clMainFrame::Get()->GetDockingManager();
+        DockablePaneMenuManager::HackShowPane(info, aui);
+    }
+}
+
 void Manager::TogglePanes()
 {
     static wxString savedLayout;

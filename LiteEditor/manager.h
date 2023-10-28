@@ -539,6 +539,11 @@ public:
     void HidePane(const wxString& paneName, bool commit = true);
 
     /**
+     * Show pane
+     */
+    void ShowPane(const wxString& paneName, bool commit = true);
+
+    /**
      * Hide/Show all panes. This function saves the current prespective and
      * then hides all panes, when called again, all panes are restored
      */

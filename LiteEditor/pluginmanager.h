@@ -173,7 +173,9 @@ public:
     void OpenFindInFileForPath(const wxString& path) override;
     void OpenFindInFileForPaths(const wxArrayString& paths) override;
     void ShowOutputPane(const wxString& selectedWindow = "") override;
-    void ToggleWorkspacePane(const wxString& selectedWindow = "") override;
+    void ShowPane(const wxString& pane_name, bool show) override;
+    void ToggleSidebarPane(const wxString& selectedWindow = "") override;
+    void ToggleSecondarySidebarPane(const wxString& selectedWindow = "") override;
     void ToggleOutputPane(const wxString& selectedWindow = "") override;
     clStatusBar* GetStatusBar() override;
     clEditorBar* GetNavigationBar() override;

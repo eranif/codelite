@@ -25,6 +25,7 @@
 #include "pluginmanager.h"
 
 #include "BuildTab.hpp"
+#include "SideBar.hpp"
 #include "app.h"
 #include "bitmap_loader.h"
 #include "build_settings_config.h"
@@ -54,7 +55,6 @@
 #include "plugin_version.h"
 #include "procutils.h"
 #include "sessionmanager.h"
-#include "SideBar.hpp"
 #include "workspacetab.h"
 #include "wx/filename.h"
 #include "wx/xrc/xmlres.h"
@@ -880,10 +880,33 @@ clStatusBar* PluginManager::GetStatusBar()
     return NULL;
 }
 
-void PluginManager::ToggleWorkspacePane(const wxString& selectedWindow)
+void PluginManager::ToggleSidebarPane(const wxString& selectedWindow)
 {
     if(ManagerST::Get()->IsPaneVisible(wxT("Workspace View"))) {
         ManagerST::Get()->HidePane(wxT("Workspace View"));
+    } else {
+        ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
+    }
+}
+
+void PluginManager::ShowPane(const wxString& pane_name, bool show)
+{
+    if(show) {
+        if(!ManagerST::Get()->IsPaneVisible(pane_name)) {
+            ManagerST::Get()->ShowPane(pane_name);
+        }
+    } else {
+        // hide
+        if(ManagerST::Get()->IsPaneVisible(pane_name)) {
+            ManagerST::Get()->HidePane(pane_name);
+        }
+    }
+}
+
+void PluginManager::ToggleSecondarySidebarPane(const wxString& selectedWindow)
+{
+    if(ManagerST::Get()->IsPaneVisible(wxT("Secondary Sidebar"))) {
+        ManagerST::Get()->HidePane(wxT("Secondary Sidebar"));
     } else {
         ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
     }

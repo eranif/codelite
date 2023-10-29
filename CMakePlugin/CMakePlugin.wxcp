@@ -760,7 +760,7 @@
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -1335,7 +1335,7 @@
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -1468,7 +1468,7 @@
 									"border":	0,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxLB_SINGLE"],
+									"m_styles":	["wxLB_SINGLE", "wxBORDER_NONE"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",

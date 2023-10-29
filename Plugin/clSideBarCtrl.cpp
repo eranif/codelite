@@ -214,7 +214,7 @@ protected:
         wxContextMenuEvent menu_event{ wxEVT_SIDEBAR_CONTEXT_MENU };
         menu_event.SetInt(m_sidebar->GetButtonIndex(this));
         menu_event.SetEventObject(m_sidebar->GetParent());
-        m_sidebar->GetParent()->GetEventHandler()->AddPendingEvent(menu_event);
+        m_sidebar->GetParent()->GetEventHandler()->ProcessEvent(menu_event);
     }
 
 public:

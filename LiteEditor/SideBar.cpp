@@ -361,6 +361,8 @@ void SideBar::MoveToSecondarySideBar()
         }
         MoveToSecondarySideBar(pos);
     }
+    auto selection = clConfig::Get().Read("secondary_side_bar.selection", 0);
+    m_secondarySideBar->SetSelection(selection);
 }
 
 void SideBar::AddPage(wxWindow* win, wxBitmap bmp, const wxString& label, bool selected)

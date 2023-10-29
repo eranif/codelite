@@ -209,20 +209,14 @@ protected:
             dc.SetPen(colour);
             dc.DrawRoundedRectangle(frame_rect, RADIUS_SIZE);
 
-#ifdef __WXMSW__
-            // draw small marker on the left or right side of the active tab
-            wxColour marker = is_dark ? wxColour("GOLD") : wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-            dc.SetPen(wxPen(marker, 3));
-            if(m_sidebar->IsOrientationOnTheRight()) {
-                dc.DrawLine(frame_rect.GetTopLeft(), frame_rect.GetBottomLeft());
-            } else {
-                dc.DrawLine(frame_rect.GetTopRight(), frame_rect.GetBottomRight());
-            }
-#endif
-
-            dc.SetPen(is_dark ? base_colour.ChangeLightness(120) : wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-            dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
+            wxColour line_colour = is_dark ? base_colour.ChangeLightness(120) : *wxWHITE;
+            wxColour upper_line_colour = is_dark ? *wxBLACK : line_colour.ChangeLightness(60);
+            dc.SetPen(line_colour);
             dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
+            // we want to make a "sink" effect
+            // so the upper line needs to appear darker
+            dc.SetPen(upper_line_colour);
+            dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
 
             // draw a vertical line as well
             wxColour pen_colour = is_dark ? *wxBLACK : base_colour.ChangeLightness(80);

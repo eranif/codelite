@@ -23,6 +23,7 @@ protected:
     int GetButtonIndex(SideBarButton* btn) const;
     std::vector<wxWindow*> GetAllButtons();
     wxWindow* DoChangeSelection(int pos, bool notify);
+    void OnPaint(wxPaintEvent& event);
 
 public:
     clSideBarButtonCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

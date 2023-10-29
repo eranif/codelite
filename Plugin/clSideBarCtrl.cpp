@@ -23,6 +23,28 @@ wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
         return WHAT;                                 \
     }
 
+namespace
+{
+/// Paint the control background
+void paint_background(wxDC& dc, wxWindow* win, bool is_right_tabs)
+{
+    wxRect client_rect = win->GetClientRect();
+    wxColour bg_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    bool is_dark = DrawingUtils::IsDark(bg_colour);
+    int alpha = is_dark ? 110 : 150;
+    dc.GradientFillLinear(client_rect, bg_colour.ChangeLightness(alpha), bg_colour, is_right_tabs ? wxWEST : wxEAST);
+    wxColour pen_colour = is_dark ? *wxBLACK : bg_colour.ChangeLightness(80);
+    dc.SetPen(pen_colour);
+    if(is_right_tabs) {
+        // draw line on the LEFT side
+        dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetBottomLeft());
+    } else {
+        // draw line on the RIGHT side
+        dc.DrawLine(client_rect.GetTopRight(), client_rect.GetBottomRight());
+    }
+}
+} // namespace
+
 class SideBarButton : public wxControl
 {
     friend class clSideBarButtonCtrl;
@@ -161,11 +183,16 @@ protected:
 
         wxRect client_rect = GetClientRect();
 
-        // first, fill the entire client rect
+        // draw the background
         wxColour base_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-        dc.SetBrush(base_colour);
-        dc.SetPen(base_colour);
-        dc.DrawRectangle(client_rect);
+        bool is_dark = DrawingUtils::IsDark(base_colour);
+        if(IsSeleced()) {
+            dc.SetBrush(base_colour);
+            dc.SetPen(base_colour);
+            dc.DrawRectangle(client_rect);
+        } else {
+            paint_background(dc, this, m_sidebar->IsOrientationOnTheRight());
+        }
 
         if(IsSeleced()) {
             // draw the selected item using different background colour
@@ -173,7 +200,6 @@ protected:
             constexpr double RADIUS_SIZE = 0.0;
 
             wxColour colour = base_colour;
-            bool is_dark = DrawingUtils::IsDark(colour);
             if(is_dark) {
                 colour = colour.ChangeLightness(110);
             } else {
@@ -183,23 +209,31 @@ protected:
             dc.SetPen(colour);
             dc.DrawRoundedRectangle(frame_rect, RADIUS_SIZE);
 
-            // draw small marker on the left or right side of the active tab
 #ifdef __WXMSW__
+            // draw small marker on the left or right side of the active tab
             wxColour marker = is_dark ? wxColour("GOLD") : wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-#else
-            wxColour marker = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-#endif
-
             dc.SetPen(wxPen(marker, 3));
             if(m_sidebar->IsOrientationOnTheRight()) {
                 dc.DrawLine(frame_rect.GetTopLeft(), frame_rect.GetBottomLeft());
             } else {
                 dc.DrawLine(frame_rect.GetTopRight(), frame_rect.GetBottomRight());
             }
+#endif
 
             dc.SetPen(is_dark ? base_colour.ChangeLightness(120) : wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
             dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
             dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
+
+            // draw a vertical line as well
+            wxColour pen_colour = is_dark ? *wxBLACK : base_colour.ChangeLightness(80);
+            dc.SetPen(pen_colour);
+            if(m_sidebar->IsOrientationOnTheRight()) {
+                // draw line on the LEFT side
+                dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetBottomLeft());
+            } else {
+                // draw line on the RIGHT side
+                dc.DrawLine(client_rect.GetTopRight(), client_rect.GetBottomRight());
+            }
         }
 
         wxRect bmp_rect = wxRect(m_bmp.GetSize()).CenterIn(client_rect);
@@ -264,14 +298,29 @@ clSideBarButtonCtrl::clSideBarButtonCtrl(wxWindow* parent, wxWindowID id, const 
                                          long style)
     : wxControl(parent, id, pos, size, style | wxBORDER_NONE)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_mainSizer = new wxBoxSizer(wxHORIZONTAL);
     SetSizer(m_mainSizer);
 
     m_mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(m_mainSizer);
+
+    Bind(wxEVT_PAINT, &clSideBarButtonCtrl::OnPaint, this);
+    Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
 }
 
-clSideBarButtonCtrl::~clSideBarButtonCtrl() {}
+clSideBarButtonCtrl::~clSideBarButtonCtrl()
+{
+    Unbind(wxEVT_PAINT, &clSideBarButtonCtrl::OnPaint, this);
+    Unbind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
+}
+
+void clSideBarButtonCtrl::OnPaint(wxPaintEvent& event)
+{
+    wxUnusedVar(event);
+    wxBufferedPaintDC dc(this);
+    paint_background(dc, this, IsOrientationOnTheRight());
+}
 
 void clSideBarButtonCtrl::SetOrientationOnTheRight(bool b) { m_orientation = b ? wxRIGHT : wxLEFT; }
 

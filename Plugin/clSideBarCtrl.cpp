@@ -203,14 +203,14 @@ protected:
             if(is_dark) {
                 colour = colour.ChangeLightness(110);
             } else {
-                colour = colour.ChangeLightness(170);
+                colour = *wxWHITE;
             }
             dc.SetBrush(colour);
             dc.SetPen(colour);
             dc.DrawRoundedRectangle(frame_rect, RADIUS_SIZE);
 
-            wxColour line_colour = is_dark ? base_colour.ChangeLightness(120) : *wxWHITE;
-            wxColour upper_line_colour = is_dark ? *wxBLACK : line_colour.ChangeLightness(60);
+            wxColour line_colour = is_dark ? base_colour.ChangeLightness(120) : base_colour.ChangeLightness(50);
+            wxColour upper_line_colour = is_dark ? *wxBLACK : base_colour.ChangeLightness(50);
             dc.SetPen(line_colour);
             dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
             // we want to make a "sink" effect

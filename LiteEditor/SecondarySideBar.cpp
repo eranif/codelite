@@ -30,6 +30,7 @@ SecondarySideBar::~SecondarySideBar()
 
     // override the values
     clConfig::Get().Write("secondary_side_bar.tabs", tabs);
+    clConfig::Get().Write("secondary_side_bar.selection", m_book->GetSelection());
 }
 
 void SecondarySideBar::SetSideBar(SideBar* sb) { m_sidebar = sb; }
@@ -82,4 +83,12 @@ void SecondarySideBar::MoveToPrimarySideBar(int pos)
         // No more pages -> hide this view
         clGetManager()->ShowPane(VIEW_NAME, false);
     }
+}
+
+void SecondarySideBar::SetSelection(int selection)
+{
+    if((size_t)selection >= m_book->GetPageCount()) {
+        return;
+    }
+    m_book->SetSelection(selection);
 }

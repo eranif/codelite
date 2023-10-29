@@ -20,6 +20,7 @@ public:
     const char* GetCaption() const { return "Secondary Sidebar"; }
     void SetSideBar(SideBar* sb);
     void AddPage(wxWindow* win, wxBitmap bmp, const wxString& label);
+    void SetSelection(int selection);
 };
 
 #endif // SECONDARYSIDEBAR_HPP

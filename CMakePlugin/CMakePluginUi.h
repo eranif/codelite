@@ -7,6 +7,7 @@
 #ifndef _CODELITE_CMAKEPLUGIN_CMAKEPLUGIN_BASE_CLASSES_H
 #define _CODELITE_CMAKEPLUGIN_CMAKEPLUGIN_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -43,6 +44,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
 
 class CMakeSettingsDialogBase : public wxDialog
 {
@@ -56,16 +58,16 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
-
 public:
     wxStaticText* GetStaticTextProgram() { return m_staticTextProgram; }
     wxFilePickerCtrl* GetFilePickerProgram() { return m_filePickerProgram; }
     wxStaticText* GetStaticTextDefaultGenerator() { return m_staticTextDefaultGenerator; }
     wxChoice* GetChoiceDefaultGenerator() { return m_choiceDefaultGenerator; }
-    CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CMakePlugin Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                            const wxString& title = _("CMakePlugin Settings"), const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~CMakeSettingsDialogBase();
 };
-
 
 class CMakeHelpTabBase : public wxPanel
 {
@@ -97,10 +99,10 @@ public:
     wxGauge* GetGaugeLoad() { return m_gaugeLoad; }
     wxSearchCtrl* GetSearchCtrlFilter() { return m_searchCtrlFilter; }
     wxListBox* GetListBoxList() { return m_listBoxList; }
-    CMakeHelpTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    CMakeHelpTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~CMakeHelpTabBase();
 };
-
 
 class cmakeImages : public wxImageList
 {
@@ -112,20 +114,17 @@ protected:
     int m_imagesWidth;
     int m_imagesHeight;
 
-
 protected:
-
 public:
     cmakeImages();
-    const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name + m_resolution) )
+    const wxBitmap& Bitmap(const wxString& name) const
+    {
+        if(!m_bitmaps.count(name + m_resolution))
             return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
 
-    void SetBitmapResolution(const wxString &res = wxEmptyString) {
-        m_resolution = res;
-    }
+    void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
 
     virtual ~cmakeImages();
 };

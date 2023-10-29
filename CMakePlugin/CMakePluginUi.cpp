@@ -6,205 +6,226 @@
 
 #include "CMakePluginUi.h"
 
-
 // Declare the bitmap loading function
 extern void wxCrafterR3nJ3cInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
-
-CMakeSettingsDialogBase::CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+CMakeSettingsDialogBase::CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                 const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterR3nJ3cInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizerMain = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizerMain);
-    
+
     wxFlexGridSizer* flexGridSizer = new wxFlexGridSizer(0, 2, 5, 5);
-    flexGridSizer->SetFlexibleDirection( wxBOTH );
-    flexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer->SetFlexibleDirection(wxBOTH);
+    flexGridSizer->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer->AddGrowableCol(1);
-    
-    boxSizerMain->Add(flexGridSizer, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticTextProgram = new wxStaticText(this, wxID_ANY, _("CMake program:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    
-    flexGridSizer->Add(m_staticTextProgram, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerProgram = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+
+    boxSizerMain->Add(flexGridSizer, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticTextProgram =
+        new wxStaticText(this, wxID_ANY, _("CMake program:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer->Add(m_staticTextProgram, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_filePickerProgram =
+        new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
+                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL);
     m_filePickerProgram->SetToolTip(_("Path to cmake executable."));
-    
-    flexGridSizer->Add(m_filePickerProgram, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    m_filePickerProgram->SetMinSize(wxSize(200,-1));
-    
-    m_staticTextDefaultGenerator = new wxStaticText(this, wxID_ANY, _("Default Generator:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    
-    flexGridSizer->Add(m_staticTextDefaultGenerator, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    flexGridSizer->Add(m_filePickerProgram, 1, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    m_filePickerProgram->SetMinSize(wxSize(200, -1));
+
+    m_staticTextDefaultGenerator = new wxStaticText(this, wxID_ANY, _("Default Generator:"), wxDefaultPosition,
+                                                    wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer->Add(m_staticTextDefaultGenerator, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
+                       WXC_FROM_DIP(5));
+
     wxArrayString m_choiceDefaultGeneratorArr;
-    m_choiceDefaultGenerator = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceDefaultGeneratorArr, 0);
-    m_choiceDefaultGenerator->SetToolTip(_("You can specify default generator for all projects (if is not overridden by project settings). If generator is not selected the CMake uses platform's default."));
-    
-    flexGridSizer->Add(m_choiceDefaultGenerator, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+    m_choiceDefaultGenerator = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                            m_choiceDefaultGeneratorArr, 0);
+    m_choiceDefaultGenerator->SetToolTip(
+        _("You can specify default generator for all projects (if is not overridden by project settings). If generator "
+          "is not selected the CMake uses platform's default."));
+
+    flexGridSizer->Add(m_choiceDefaultGenerator, 1, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_stdBtnSizer = new wxStdDialogButtonSizer();
-    
-    boxSizerMain->Add(m_stdBtnSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    boxSizerMain->Add(m_stdBtnSizer, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOk->SetDefault();
     m_stdBtnSizer->AddButton(m_buttonOk);
-    
+
     m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer->AddButton(m_buttonCancel);
     m_stdBtnSizer->Realize();
-    
+
     SetName(wxT("CMakeSettingsDialogBase"));
-    SetMinClientSize(wxSize(400,150));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
+    SetMinClientSize(wxSize(400, 150));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
-CMakeSettingsDialogBase::~CMakeSettingsDialogBase()
-{
-}
+CMakeSettingsDialogBase::~CMakeSettingsDialogBase() {}
 
 CMakeHelpTabBase::CMakeHelpTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterR3nJ3cInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizerMain = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizerMain);
-    
+
     wxFlexGridSizer* flexGridSizer225 = new wxFlexGridSizer(0, 3, 0, 0);
-    flexGridSizer225->SetFlexibleDirection( wxBOTH );
-    flexGridSizer225->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer225->SetFlexibleDirection(wxBOTH);
+    flexGridSizer225->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer225->AddGrowableCol(1);
-    
-    boxSizerMain->Add(flexGridSizer225, 0, wxALL|wxEXPAND, WXC_FROM_DIP(0));
-    
-    m_staticTextVersion = new wxStaticText(this, wxID_ANY, _("Version:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    
-    flexGridSizer225->Add(m_staticTextVersion, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticTextVersionValue = new wxStaticText(this, wxID_ANY, _("?"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+
+    boxSizerMain->Add(flexGridSizer225, 0, wxEXPAND, WXC_FROM_DIP(0));
+
+    m_staticTextVersion =
+        new wxStaticText(this, wxID_ANY, _("Version:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer225->Add(m_staticTextVersion, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticTextVersionValue =
+        new wxStaticText(this, wxID_ANY, _("?"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     wxFont m_staticTextVersionValueFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextVersionValueFont.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticTextVersionValue->SetFont(m_staticTextVersionValueFont);
-    
-    flexGridSizer225->Add(m_staticTextVersionValue, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    flexGridSizer225->Add(m_staticTextVersionValue, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     flexGridSizer225->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-    
-    m_staticText222 = new wxStaticText(this, wxID_ANY, _("Select Topic:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    
-    flexGridSizer225->Add(m_staticText222, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    m_staticText222 =
+        new wxStaticText(this, wxID_ANY, _("Select Topic:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer225->Add(m_staticText222, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_choiceTopicsArr;
-    m_choiceTopicsArr.Add(wxT("Modules"));
-    m_choiceTopicsArr.Add(wxT("Commands"));
-    m_choiceTopicsArr.Add(wxT("Properties"));
-    m_choiceTopicsArr.Add(wxT("Variables"));
-    m_choiceTopics = new wxChoice(this, wxID_REFRESH, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceTopicsArr, 0);
+    m_choiceTopicsArr.Add(_("Modules"));
+    m_choiceTopicsArr.Add(_("Commands"));
+    m_choiceTopicsArr.Add(_("Properties"));
+    m_choiceTopicsArr.Add(_("Variables"));
+    m_choiceTopics =
+        new wxChoice(this, wxID_REFRESH, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceTopicsArr, 0);
     m_choiceTopics->SetSelection(0);
-    
-    flexGridSizer225->Add(m_choiceTopics, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_buttonReload = new wxButton(this, wxID_REFRESH, _("Reload"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+
+    flexGridSizer225->Add(m_choiceTopics, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_buttonReload =
+        new wxButton(this, wxID_REFRESH, _("Reload"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonReload->SetToolTip(_("Reloads Help from CMake"));
-    
+
     flexGridSizer225->Add(m_buttonReload, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_gaugeLoad = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxGA_HORIZONTAL);
+
+    m_gaugeLoad =
+        new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxGA_HORIZONTAL);
     m_gaugeLoad->Hide();
     m_gaugeLoad->SetValue(0);
-    
-    boxSizerMain->Add(m_gaugeLoad, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizerMain->Add(m_gaugeLoad, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizerList = new wxBoxSizer(wxVERTICAL);
-    
-    boxSizerMain->Add(boxSizerList, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_searchCtrlFilter = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+
+    boxSizerMain->Add(boxSizerList, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_searchCtrlFilter = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                          wxTE_PROCESS_ENTER);
     m_searchCtrlFilter->SetFocus();
     m_searchCtrlFilter->ShowSearchButton(true);
     m_searchCtrlFilter->ShowCancelButton(false);
-    
-    boxSizerList->Add(m_searchCtrlFilter, 0, wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizerList->Add(m_searchCtrlFilter, 0, wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_listBoxListArr;
-    m_listBoxList = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_listBoxListArr, wxLB_SINGLE);
+    m_listBoxList = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_listBoxListArr,
+                                  wxLB_SINGLE | wxBORDER_NONE);
     m_listBoxList->SetToolTip(_("Double click to insert in the current editor."));
-    
-    boxSizerList->Add(m_listBoxList, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
-    m_listBoxList->SetMinSize(wxSize(100,200));
-    
+
+    boxSizerList->Add(m_listBoxList, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+    m_listBoxList->SetMinSize(wxSize(100, 200));
+
     SetName(wxT("CMakeHelpTabBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
     // Connect events
-    m_staticTextVersion->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_staticTextVersionValue->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_staticText222->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_choiceTopics->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CMakeHelpTabBase::OnChangeTopic), NULL, this);
-    m_choiceTopics->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_buttonReload->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CMakeHelpTabBase::OnReload), NULL, this);
-    m_buttonReload->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_searchCtrlFilter->Connect(wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler(CMakeHelpTabBase::OnSearch), NULL, this);
-    m_searchCtrlFilter->Connect(wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler(CMakeHelpTabBase::OnSearchCancel), NULL, this);
-    m_searchCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(CMakeHelpTabBase::OnSearch), NULL, this);
-    m_searchCtrlFilter->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_listBoxList->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CMakeHelpTabBase::OnSelect), NULL, this);
-    m_listBoxList->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(CMakeHelpTabBase::OnInsert), NULL, this);
-    m_listBoxList->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    
+    m_staticTextVersion->Bind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_staticTextVersionValue->Bind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_staticText222->Bind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_choiceTopics->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &CMakeHelpTabBase::OnChangeTopic, this);
+    m_choiceTopics->Bind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_buttonReload->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CMakeHelpTabBase::OnReload, this);
+    m_buttonReload->Bind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_searchCtrlFilter->Bind(wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, &CMakeHelpTabBase::OnSearch, this);
+    m_searchCtrlFilter->Bind(wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, &CMakeHelpTabBase::OnSearchCancel, this);
+    m_searchCtrlFilter->Bind(wxEVT_COMMAND_TEXT_ENTER, &CMakeHelpTabBase::OnSearch, this);
+    m_searchCtrlFilter->Bind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_listBoxList->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &CMakeHelpTabBase::OnSelect, this);
+    m_listBoxList->Bind(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, &CMakeHelpTabBase::OnInsert, this);
+    m_listBoxList->Bind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
 }
 
 CMakeHelpTabBase::~CMakeHelpTabBase()
 {
-    m_staticTextVersion->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_staticTextVersionValue->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_staticText222->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_choiceTopics->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CMakeHelpTabBase::OnChangeTopic), NULL, this);
-    m_choiceTopics->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_buttonReload->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CMakeHelpTabBase::OnReload), NULL, this);
-    m_buttonReload->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_searchCtrlFilter->Disconnect(wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler(CMakeHelpTabBase::OnSearch), NULL, this);
-    m_searchCtrlFilter->Disconnect(wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler(CMakeHelpTabBase::OnSearchCancel), NULL, this);
-    m_searchCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(CMakeHelpTabBase::OnSearch), NULL, this);
-    m_searchCtrlFilter->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    m_listBoxList->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CMakeHelpTabBase::OnSelect), NULL, this);
-    m_listBoxList->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(CMakeHelpTabBase::OnInsert), NULL, this);
-    m_listBoxList->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    
+    m_staticTextVersion->Unbind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_staticTextVersionValue->Unbind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_staticText222->Unbind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_choiceTopics->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &CMakeHelpTabBase::OnChangeTopic, this);
+    m_choiceTopics->Unbind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_buttonReload->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CMakeHelpTabBase::OnReload, this);
+    m_buttonReload->Unbind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_searchCtrlFilter->Unbind(wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, &CMakeHelpTabBase::OnSearch, this);
+    m_searchCtrlFilter->Unbind(wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, &CMakeHelpTabBase::OnSearchCancel, this);
+    m_searchCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_ENTER, &CMakeHelpTabBase::OnSearch, this);
+    m_searchCtrlFilter->Unbind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
+    m_listBoxList->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &CMakeHelpTabBase::OnSelect, this);
+    m_listBoxList->Unbind(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, &CMakeHelpTabBase::OnInsert, this);
+    m_listBoxList->Unbind(wxEVT_UPDATE_UI, &CMakeHelpTabBase::OnUpdateUi, this);
 }
 
 cmakeImages::cmakeImages()
@@ -212,28 +233,25 @@ cmakeImages::cmakeImages()
     , m_imagesWidth(16)
     , m_imagesHeight(16)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterR3nJ3cInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("cmake_16"));
         if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
             m_bitmaps.insert(std::make_pair(wxT("cmake_16"), bmp));
         }
     }
-    
 }
 
-cmakeImages::~cmakeImages()
-{
-}
+cmakeImages::~cmakeImages() {}

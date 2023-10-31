@@ -68,6 +68,8 @@ protected:
     clToolBarGeneric* CreatePaneButtonsToolbar();
     void OnSidebarUI(wxUpdateUIEvent& event);
     void OnSidebar(wxCommandEvent& event);
+    void OnSecondarySidebarUI(wxUpdateUIEvent& event);
+    void OnSecondarySidebar(wxCommandEvent& event);
     void OnBottombarUI(wxUpdateUIEvent& event);
     void OnBottombar(wxCommandEvent& event);
 

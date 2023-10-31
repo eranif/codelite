@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="800px"
+   viewBox="0 0 24 24"
+   width="800px"
+   version="1.1"
+   id="svg11"
+   sodipodi:docname="secondary-sidebar.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs15" />
+  <sodipodi:namedview
+     id="namedview13"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="1.09125"
+     inkscape:cx="400.91638"
+     inkscape:cy="400"
+     inkscape:window-width="1768"
+     inkscape:window-height="1091"
+     inkscape:window-x="711"
+     inkscape:window-y="69"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg11" />
+  <title
+     id="title2" />
+  <g
+     id="Complete"
+     style="fill:none;fill-opacity:1;stroke:#e6e6e6;stroke-width:2.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     transform="matrix(-1,0,0,1,24,0)">
+    <g
+       id="sidebar-left"
+       style="fill:none;fill-opacity:1;stroke:#e6e6e6;stroke-width:2.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+      <g
+         id="g7"
+         style="fill:none;fill-opacity:1;stroke:#e6e6e6;stroke-width:2.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+        <rect
+           data-name="Square"
+           fill="none"
+           height="18"
+           id="Square-2"
+           rx="2"
+           ry="2"
+           stroke="#000000"
+           stroke-miterlimit="10"
+           stroke-width="2"
+           width="18"
+           x="3"
+           y="3"
+           style="fill:none;fill-opacity:1;stroke:#e6e6e6;stroke-width:2.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+        <line
+           fill="none"
+           stroke="#000000"
+           stroke-miterlimit="10"
+           stroke-width="2"
+           x1="9"
+           x2="9"
+           y1="21"
+           y2="3"
+           id="line5"
+           style="fill:none;fill-opacity:1;stroke:#e6e6e6;stroke-width:2.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      </g>
+    </g>
+  </g>
+</svg>

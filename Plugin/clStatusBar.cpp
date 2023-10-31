@@ -34,6 +34,11 @@ size_t STATUSBAR_EOL_COL_IDX = 0;
 size_t STATUSBAR_LANG_COL_IDX = 0;
 size_t STATUSBAR_ENCODING_COL_IDX = 0;
 size_t STATUSBAR_ICON_COL_IDX = 0;
+
+const wxString SIDEBAR = wxT("Workspace View");
+const wxString SECONDARY_SIDEBAR = wxT("Secondary Sidebar");
+const wxString BOTTOM_BAR = wxT("Output View");
+
 } // namespace
 
 namespace
@@ -623,17 +628,41 @@ clToolBarGeneric* clStatusBar::CreatePaneButtonsToolbar()
     toolbar->ShowOverflowButton(false);
 
     clBitmapList* images = toolbar->GetBitmapsCreateIfNeeded();
-    toolbar->AddTool(XRCID("sidebar-button"), _("Show workspace view pane"), images->Add("sidebar"), wxEmptyString,
+    toolbar->AddTool(XRCID("sidebar-button"), _("Show sidebar"), images->Add("sidebar"), wxEmptyString, wxITEM_CHECK);
+    toolbar->AddTool(XRCID("bottombar-button"), _("Show output pane"), images->Add("bottombar"), wxEmptyString,
                      wxITEM_CHECK);
-    toolbar->AddTool(XRCID("bottombar-button"), _("Show output view pane"), images->Add("bottombar"), wxEmptyString,
-                     wxITEM_CHECK);
+    toolbar->AddTool(XRCID("secondary-sidebar-button"), _("Show secondary sidebar"), images->Add("secondary-sidebar"),
+                     wxEmptyString, wxITEM_CHECK);
     toolbar->Realize();
 
     toolbar->Bind(wxEVT_TOOL, &clStatusBar::OnSidebar, this, XRCID("sidebar-button"));
     toolbar->Bind(wxEVT_UPDATE_UI, &clStatusBar::OnSidebarUI, this, XRCID("sidebar-button"));
     toolbar->Bind(wxEVT_TOOL, &clStatusBar::OnBottombar, this, XRCID("bottombar-button"));
     toolbar->Bind(wxEVT_UPDATE_UI, &clStatusBar::OnBottombarUI, this, XRCID("bottombar-button"));
+    toolbar->Bind(wxEVT_TOOL, &clStatusBar::OnSecondarySidebar, this, XRCID("secondary-sidebar-button"));
+    toolbar->Bind(wxEVT_UPDATE_UI, &clStatusBar::OnSecondarySidebarUI, this, XRCID("secondary-sidebar-button"));
     return toolbar;
+}
+
+void clStatusBar::OnSecondarySidebarUI(wxUpdateUIEvent& event)
+{
+    wxAuiPaneInfo& info = clGetManager()->GetDockingManager()->GetPane(SECONDARY_SIDEBAR);
+    if(info.IsOk()) {
+        event.Check(info.IsShown());
+    }
+}
+
+void clStatusBar::OnSecondarySidebar(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxAuiPaneInfo& info = clGetManager()->GetDockingManager()->GetPane(SECONDARY_SIDEBAR);
+    CHECK_COND_RET(info.IsOk());
+
+    if(!info.IsShown()) {
+        clGetManager()->ShowPane(SECONDARY_SIDEBAR, true);
+    } else {
+        clGetManager()->ShowPane(SECONDARY_SIDEBAR, false);
+    }
 }
 
 void clStatusBar::OnSidebarUI(wxUpdateUIEvent& event)

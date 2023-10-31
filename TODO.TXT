@@ -15,5 +15,3 @@ others:
 - SFTP plugin: use clTerminalViewCtrl for the log view
 - Spell Checker: enable it for the commit dialog
 
-- Status bar: add button to hide the secondary sidebar
-

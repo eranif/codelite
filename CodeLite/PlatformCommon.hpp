@@ -40,6 +40,18 @@ public:
         return false;
     }
 
+    /// Find the firs command in the array and return its full path
+    /// we stop on the first match
+    bool AnyWhich(const wxArrayString& commands, wxString* command_fullpath)
+    {
+        for(const auto& cmd : commands) {
+            if(Which(cmd, command_fullpath)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /// override this in the platform specific code
     /// on macOS, application are usually placed under /Application
     /// are are opened with the `open` command

@@ -45,7 +45,6 @@ class SymbolViewPlugin : public IPlugin
 {
 protected:
     OutlineTab* m_view;
-    clTabTogglerHelper::Ptr_t m_tabHelper;
 
 public:
     //--------------------------------------------

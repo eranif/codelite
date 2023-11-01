@@ -81,6 +81,11 @@ void OutlineTab::RenderSymbols(const std::vector<LSP::SymbolInformation>& symbol
     m_dvListCtrl->Begin();
     m_dvListCtrl->SetScrollToBottom(false);
 
+    // reduce the outline font size
+    wxFont font = lexer->GetFontForStyle(0, m_dvListCtrl);
+    font.SetFractionalPointSize(static_cast<double>(font.GetPointSize()) * 0.8);
+    m_dvListCtrl->SetDefaultFont(font);
+
     // build the tree
     wxColour class_colour = lexer->GetProperty(wxSTC_P_WORD2).GetFgColour();
     wxColour variable_colour = lexer->GetProperty(wxSTC_P_IDENTIFIER).GetFgColour();

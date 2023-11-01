@@ -85,8 +85,6 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
 
     m_view = new OutlineTab(m_mgr->BookGet(PaneId::SIDE_BAR));
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_view, _("Outline"), clLoadSidebarBitmap("outline-button"));
-
-    m_tabHelper.reset(new clTabTogglerHelper(wxEmptyString, nullptr, _("Outline"), m_view));
     m_mgr->AddWorkspaceTab(_("Outline"));
 }
 

@@ -32,7 +32,7 @@ void paint_background(wxDC& dc, wxWindow* win, bool is_right_tabs)
     wxColour bg_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     bool is_dark = DrawingUtils::IsDark(bg_colour);
     int alpha = is_dark ? 110 : 150;
-    dc.GradientFillLinear(client_rect, bg_colour.ChangeLightness(alpha), bg_colour, is_right_tabs ? wxWEST : wxEAST);
+    dc.GradientFillLinear(client_rect, bg_colour.ChangeLightness(alpha), bg_colour, wxEAST);
     wxColour pen_colour = is_dark ? *wxBLACK : bg_colour.ChangeLightness(80);
     dc.SetPen(pen_colour);
     if(is_right_tabs) {
@@ -534,13 +534,14 @@ clSideBarCtrl::clSideBarCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos
     : wxPanel(parent, id, pos, size, wxBORDER_NONE)
 {
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    Bind(wxEVT_SIZE, &clSideBarCtrl::OnSize, this);
     m_buttons = new clSideBarButtonCtrl(this);
     m_book = new wxSimplebook(this);
     m_buttons->SetOrientationOnTheRight(style & wxBK_RIGHT);
     PlaceButtons();
 }
 
-clSideBarCtrl::~clSideBarCtrl() {}
+clSideBarCtrl::~clSideBarCtrl() { Unbind(wxEVT_SIZE, &clSideBarCtrl::OnSize, this); }
 
 void clSideBarCtrl::PlaceButtons()
 {
@@ -690,4 +691,10 @@ void clSideBarCtrl::MovePageToIndex(const wxString& label, int new_pos)
         return;
     }
     m_buttons->MoveBefore(src_button, target_button);
+}
+
+void clSideBarCtrl::OnSize(wxSizeEvent& event)
+{
+    event.Skip();
+    GetSizer()->Layout();
 }

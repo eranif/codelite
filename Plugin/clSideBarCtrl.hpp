@@ -86,6 +86,7 @@ protected:
     int SimpleBookGetPageIndex(wxWindow* page) const;
     void DoRemovePage(size_t pos, bool delete_it);
     void PlaceButtons();
+    void OnSize(wxSizeEvent& event);
 
 public:
     clSideBarCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

@@ -5228,10 +5228,8 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
             }
 
             const CustomTargetsMgr::Map_t& targets = CustomTargetsMgr::Get().GetTargets();
-            CustomTargetsMgr::Map_t::const_iterator iter = targets.begin();
-            for(; iter != targets.end(); ++iter) {
-                int winid = iter->first; // contains the menu ID
-                menu->Append(winid, iter->second.first);
+            for(const auto& [winid, d] : targets) {
+                menu->Append(winid, d.first);
             }
         }
     }
@@ -5241,15 +5239,7 @@ void clMainFrame::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     CustomTargetsMgr::Get().Clear();
-
-#ifndef __WXMSW__
-#if wxVERSION_NUMBER >= 2900
-    // This is needed in >=wxGTK-2.9, otherwise the current editor sometimes doesn't notice that the output pane has
-    // appeared
-    // resulting in an area at the bottom that can't be scrolled to
-    clMainFrame::Get()->SendSizeEvent(wxSEND_EVENT_POST);
-#endif
-#endif
+    PostSizeEvent();
 }
 
 void clMainFrame::OnIncrementalSearchUI(wxUpdateUIEvent& event)

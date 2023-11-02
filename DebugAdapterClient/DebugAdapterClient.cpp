@@ -653,6 +653,7 @@ void DebugAdapterClient::DestroyUI()
     DestroyTooltip();
     ClearDebuggerMarker();
     m_mgr->GetDockingManager()->Update();
+    EventNotifier::Get()->TopFrame()->PostSizeEvent();
 }
 
 void DebugAdapterClient::InitializeUI()

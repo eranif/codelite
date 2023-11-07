@@ -3225,7 +3225,7 @@ void wxSFShapeCanvas::_OnDrop(wxCoord x, wxCoord y, wxDragResult def, wxDataObje
 					{
 						parent->OnChildDropped( shape->GetAbsolutePosition() - parent->GetAbsolutePosition(), shape );
 						// update each target parent just once
-						if( lstParentsToUpdate.Find( parent ) == NULL ) lstParentsToUpdate.Append( parent );
+						if( !lstParentsToUpdate.Find( parent ) ) lstParentsToUpdate.Append( parent );
 					}
 					lstNewContent.Append( shape );
 				}

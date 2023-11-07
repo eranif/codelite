@@ -32,6 +32,7 @@
 #include "GitBlamePage.h"
 #include "GitConsole.h"
 #include "GitLocator.h"
+#include "GitStatusCode.hpp"
 #include "GitUserEmailDialog.h"
 #include "bitmap_loader.h"
 #include "clCommandProcessor.h"
@@ -1758,19 +1759,21 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
             return;
         }
 
-        if(tmpOutput.Contains("username for")) {
-            // username is required
+        // Handle possible error code
+        GitStatusCode git_code{ output };
+        switch(git_code.GetCode()) {
+        case GitStatusCode::ERROR_USER_REQUIRED: {
             wxString username = ::wxGetTextFromUser(output);
             if(username.IsEmpty()) {
                 process->Terminate();
             } else {
                 process->WriteToConsole(username);
             }
-
-        } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
+        } break;
+        case GitStatusCode::ERROR_HOOK:
             process->Terminate();
-
-        } else if(tmpOutput.Contains("*** please tell me who you are")) {
+            break;
+        case GitStatusCode::ERROR_WHO_ARE_YOU: {
             process->Terminate();
             GitUserEmailDialog userEmailDialog(EventNotifier::Get()->TopFrame());
             if(userEmailDialog.ShowModal() == wxID_OK) {
@@ -1789,9 +1792,8 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
                     m_gitActionQueue.push_back(act);
                 }
             }
-        } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for") ||
-                  tmpOutput.Contains("authentication failed")) {
-
+        } break;
+        case GitStatusCode::ERROR_PASSWORD_REQUIRED: {
             // Password is required
             wxString pass = ::wxGetPasswordFromUser(output);
             if(pass.IsEmpty()) {
@@ -1804,8 +1806,8 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
                 // write the password
                 process->WriteToConsole(pass);
             }
-        } else if((tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) ||
-                  tmpOutput.Contains("key fingerprint")) {
+        } break;
+        case GitStatusCode::ERROR_AUTHENTICITIY: {
             if(::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"),
                               wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
                 process->WriteToConsole("yes");
@@ -1813,6 +1815,15 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
             } else {
                 process->Terminate();
             }
+        } break;
+        case GitStatusCode::ERROR_REDIRECT: {
+            ::wxLaunchDefaultBrowser(git_code.GetSubText());
+            process->Terminate();
+            ::wxMessageBox(wxString() << _("Redirected"));
+        } break;
+        case GitStatusCode::ERROR_OTHER:
+        default:
+            break;
         }
     }
 

@@ -286,6 +286,7 @@ private:
 
     // Remote callbacks
     void OnFindPath(clCommandEvent& event);
+    void OpenURLInBrowser(const wxString& url);
 
 public:
     GitPlugin(IManager* manager);

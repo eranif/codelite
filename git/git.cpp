@@ -1817,9 +1817,8 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
             }
         } break;
         case GitStatusCode::ERROR_REDIRECT: {
-            ::wxLaunchDefaultBrowser(git_code.GetSubText());
-            process->Terminate();
-            ::wxMessageBox(wxString() << _("Redirected"));
+            CallAfter(&GitPlugin::OpenURLInBrowser, git_code.GetSubText());
+            GIT_MESSAGE("Redirect URL opened in browser");
         } break;
         case GitStatusCode::ERROR_OTHER:
         default:
@@ -3055,3 +3054,5 @@ void GitPlugin::OnSftpFileSaved(clCommandEvent& event)
         RefreshFileListView();
     }
 }
+
+void GitPlugin::OpenURLInBrowser(const wxString& url) { ::wxLaunchDefaultBrowser(url); }

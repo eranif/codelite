@@ -112,20 +112,22 @@ but `wx-common` contains `wxrc` so, if you use this, be aware that there may be 
 
 ## Fedora and openSUSE
 ---
-There are currently rpms available for fedora 38 and openSUSE 15.5.
+There are currently rpms available for fedora 38 and 39,  and openSUSE 15.5.
 
 Distro|Release|x86_64
 ------|-------|------
-fedora|`38`|[wxBase31][2] [wxBase32-debuginfo][26] [wxGTK31][3] [wxGTK32-debuginfo][7] [wxGTK32-debugsource][27] [wxGTK32-devel][4] [wxGTK32-devel-debuginfo][28] [wxGTK32-gl][5] [wxGTK32-gl-debuginfo][29] [wxGTK32-media][6] [wxGTK32-media-debuginfo][30]
+fedora|`38`|[wxBase32][2] [wxBase32-debuginfo][26] [wxGTK32][3] [wxGTK32-debuginfo][7] [wxGTK32-debugsource][27] [wxGTK32-devel][4] [wxGTK32-devel-debuginfo][28] [wxGTK32-gl][5] [wxGTK32-gl-debuginfo][29] [wxGTK32-media][6] [wxGTK32-media-debuginfo][30] 
+fedora| `39`|[wxBase32][32] [wxBase32-debuginfo][41] [wxGTK32][33] [wxGTK32-debuginfo][37] [wxGTK32-debugsource][42] [wxGTK32-devel][34] [wxGTK32-devel-debuginfo][43] [wxGTK32-gl][35] [wxGTK32-gl-debuginfo][44] [wxGTK32-media][36] [wxGTK32-media-debuginfo][45]
 openSUSE|`15.5`|[libwx_baseu_net][8] [libwx_baseu][9] [libwx_baseu_xml][10] [libwx_gtk3u_adv][11] [libwx_gtk3u_aui][12] [libwx_gtk3u_core][13] [libwx_gtk3u_gl][14]  [libwx_gtk3u_html][15] [libwx_gtk3u_media][16] [libwx_gtk3u_propgrid][17] [libwx_gtk3u_qa][18] [libwx_gtk3u_ribbon][19] [libwx_gtk3u_richtext][20] [libwx_gtk3u_stc][21]  [libwx_gtk3u_xrc][23] [wxWidgets-3_2-devel][24] 
 
-There are also source rpms for [Fedora][31] and [openSUSE][32]. The fedora srpm should also build on CentOS 8. 
+There are also source rpms for [Fedora][51] and [openSUSE][52]. The fedora srpm should also build on CentOS 8. 
 
 Either download the required rpms and install them as usual, or download and install in one step; e.g. 
 
 ```bash
 rpm -Uvh https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/wxWidgets-3_2-3.2.3-0.src.rpm
 ```
+
 
 !!! Note
     Some of these rpms may conflict with the wx2.8 devel ones. 
@@ -162,6 +164,19 @@ rpm -Uvh https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/wxWidgets-3_2-3.
  [29]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-gl-debuginfo-3.2.3-1.fc38.x86_64.rpm
  [30]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-media-debuginfo-3.2.3-1.fc38.x86_64.rpm
 
- [31]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/wxGTK32-3.2.3-1.fc.src.rpm
- [32]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/wxWidgets-3_2-3.2.3-0.src.rpm
+ [32]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxBase32-3.2.3-1.fc39.x86_64.rpm
+ [33]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-3.2.3-1.fc39.x86_64.rpm
+ [34]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-devel-3.2.3-1.fc39.x86_64.rpm
+ [35]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-gl-3.2.3-1.fc39.x86_64.rpm
+ [36]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-media-3.2.3-1.fc39.x86_64.rpm
+ [37]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-debuginfo-3.2.3-1.fc39.x86_64.rpm
+ 
+ [41]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxBase32-debuginfo-3.2.3-1.fc39.x86_64.rpm
+ [42]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-debugsource-3.2.3-1.fc39.x86_64.rpm
+ [43]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-devel-debuginfo-3.2.3-1.fc39.x86_64.rpm
+ [44]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-gl-debuginfo-3.2.3-1.fc39.x86_64.rpm
+ [45]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-media-debuginfo-3.2.3-1.fc39.x86_64.rpm
+ 
+ [51]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/wxGTK32-3.2.3-1.fc.src.rpm
+ [52]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/wxWidgets-3_2-3.2.3-0.src.rpm
 

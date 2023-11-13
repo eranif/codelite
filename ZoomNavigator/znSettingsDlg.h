@@ -28,7 +28,7 @@
 
 #include "zoom_navigator.h"
 
-extern const wxEventType wxEVT_ZN_SETTINGS_UPDATED;
+wxDECLARE_EVENT(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEvent);
 
 class znSettingsDlg : public znSettingsDlgBase
 {

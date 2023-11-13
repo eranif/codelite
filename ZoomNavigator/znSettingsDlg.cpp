@@ -24,12 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "znSettingsDlg.h"
-#include "windowattrmanager.h"
-#include "zn_config_item.h"
+
 #include "cl_config.h"
 #include "event_notifier.h"
+#include "windowattrmanager.h"
+#include "zn_config_item.h"
 
-const wxEventType wxEVT_ZN_SETTINGS_UPDATED = ::wxNewEventType();
+wxDEFINE_EVENT(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEvent);
 
 znSettingsDlg::znSettingsDlg(wxWindow* parent)
     : znSettingsDlgBase(parent)
@@ -41,7 +42,7 @@ znSettingsDlg::znSettingsDlg(wxWindow* parent)
         m_colourPickerHighlightColour->SetColour(wxColour(data.GetHighlightColour()));
         m_checkBoxUseVScrollbar->SetValue(data.IsUseScrollbar());
     }
-    
+
     m_spinCtrlZoomFactor->SetValue(data.GetZoomFactor());
     GetSizer()->Fit(this);
     CentreOnParent();

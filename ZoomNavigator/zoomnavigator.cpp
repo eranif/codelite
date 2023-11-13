@@ -238,8 +238,8 @@ void ZoomNavigator::SetEditorText(IEditor* editor)
 
 void ZoomNavigator::SetZoomTextScrollPosToMiddle(wxStyledTextCtrl* stc)
 {
-    int first;
-    first = stc->GetFirstVisibleLine();
+    // make the middle line of editor text centered in the zoomview
+    int first = stc->GetFirstVisibleLine() + (stc->LinesOnScreen() / 2);
 
     // we want to make 'first' centered
     int numLinesOnScreen = m_text->LinesOnScreen();

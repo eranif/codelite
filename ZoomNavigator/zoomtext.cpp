@@ -32,6 +32,7 @@
 
 #include "zoomtext.h"
 
+#include "ColoursAndFontsManager.h"
 #include "bookmark_manager.h"
 #include "cl_config.h"
 #include "editor_config.h"
@@ -49,9 +50,11 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 
-#define CHECK_CONDITION(cond) \
-    if(!cond)                 \
-        return;
+namespace
+{
+static constexpr int TIMER_DELAY = 150;
+static constexpr int FIRST_LINE_MARKER = 1;
+} // namespace
 
 ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                    const wxString& name)
@@ -83,10 +86,10 @@ ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
     m_colour = data.GetHighlightColour();
     MarkerSetBackground(1, m_colour);
     SetZoom(m_zoomFactor);
-    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
-    MarkerDefine(1, wxSTC_MARK_BACKGROUND, m_colour, m_colour);
+    EventNotifier::Get()->Bind(wxEVT_ZN_SETTINGS_UPDATED, &ZoomText::OnSettingsChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ZoomText::OnThemeChanged, this);
+
+    MarkerDefine(FIRST_LINE_MARKER, wxSTC_MARK_BACKGROUND, m_colour, m_colour);
 
     MarkerDefine(smt_warning, wxSTC_MARK_SHORTARROW);
     MarkerSetForeground(smt_error, wxColor(128, 128, 0));
@@ -103,7 +106,8 @@ ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
     SetBufferedDraw(false);
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 #endif
-    MarkerSetAlpha(1, 10);
+
+    SetCursor(wxCURSOR_HAND);
 
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &ZoomText::OnTimer, this, m_timer->GetId());
@@ -112,10 +116,8 @@ ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
 
 ZoomText::~ZoomText()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL,
-                                     this);
+    EventNotifier::Get()->Unbind(wxEVT_ZN_SETTINGS_UPDATED, &ZoomText::OnSettingsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ZoomText::OnThemeChanged, this);
     Unbind(wxEVT_TIMER, &ZoomText::OnTimer, this, m_timer->GetId());
 
     if(m_timer->IsRunning()) {
@@ -145,18 +147,13 @@ void ZoomText::UpdateLexer(IEditor* editor)
     }
     lexer->Apply(this, true);
 
-    if(lexer->IsDark()) {
-        MarkerSetAlpha(1, 10);
-    } else {
-        MarkerSetAlpha(1, 20);
-    }
+    MarkerSetAlpha(FIRST_LINE_MARKER, 30);
 
     SetZoom(m_zoomFactor);
     SetEditable(false);
     SetUseHorizontalScrollBar(false);
     SetUseVerticalScrollBar(data.IsUseScrollbar());
     HideSelection(true);
-    MarkerSetBackground(1, m_colour);
 }
 
 void ZoomText::OnSettingsChanged(wxCommandEvent& e)
@@ -167,7 +164,10 @@ void ZoomText::OnSettingsChanged(wxCommandEvent& e)
     if(conf.ReadItem(&data)) {
         m_zoomFactor = data.GetZoomFactor();
         m_colour = data.GetHighlightColour();
-        MarkerSetBackground(1, m_colour);
+
+        MarkerSetBackground(FIRST_LINE_MARKER, m_colour);
+        MarkerSetAlpha(FIRST_LINE_MARKER, 50);
+
         SetZoom(m_zoomFactor);
         Colourise(0, wxSTC_INVALID_POSITION);
     }
@@ -197,9 +197,10 @@ void ZoomText::HighlightLines(int start, int end)
             start = 0;
     }
 
-    MarkerDeleteAll(1);
+    MarkerDeleteAll(FIRST_LINE_MARKER);
+
     for(int i = start; i <= end; ++i) {
-        MarkerAdd(i, 1);
+        MarkerAdd(i, FIRST_LINE_MARKER);
     }
 }
 
@@ -212,37 +213,33 @@ void ZoomText::OnThemeChanged(wxCommandEvent& e)
 void ZoomText::OnTimer(wxTimerEvent& event)
 {
     // sanity
-    if(!m_classes.IsEmpty() || IsEmpty()) {
-        m_timer->Start(500, true);
+    if(IsEmpty()) {
+        m_timer->Start(TIMER_DELAY, true);
         return;
     }
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(!editor || !editor->GetCtrl()->IsShown()) {
-        m_timer->Start(500, true);
+        m_timer->Start(TIMER_DELAY, true);
         return;
     }
 
-    if(m_classes.IsEmpty() && !editor->GetKeywordClasses().IsEmpty() &&
-       (editor->GetFileName().GetFullPath() == m_filename)) {
+    if(!editor->GetKeywordClasses().IsEmpty() && (editor->GetFileName().GetFullPath() == m_filename)) {
         // Sync between the keywords
-        SetKeyWords(1, editor->GetKeywordClasses()); // classes
-        SetKeyWords(3, editor->GetKeywordLocals());  // locals
-        Colourise(0, GetLength());
+        SetSemanticTokens(editor->GetKeywordClasses(), editor->GetKeywordLocals(), editor->GetKeywordMethods(),
+                          wxEmptyString);
     }
-    m_timer->Start(500, true);
+    m_timer->Start(TIMER_DELAY, true);
 }
 
 void ZoomText::DoClear()
 {
-    m_classes.clear();
-    m_locals.clear();
     SetReadOnly(false);
     SetText("");
     SetReadOnly(true);
 }
 
-void ZoomText::Startup() { m_timer->Start(500, true); }
+void ZoomText::Startup() { m_timer->Start(TIMER_DELAY, true); }
 
 void ZoomText::UpdateMarkers(const std::vector<int>& lines, MarkerType type)
 {
@@ -269,4 +266,64 @@ void ZoomText::DeleteAllMarkers()
 {
     MarkerDeleteAll(smt_error);
     MarkerDeleteAll(smt_warning);
+}
+
+void ZoomText::SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+                                 const wxString& others)
+{
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    wxString flatStrClasses = classes;
+    wxString flatStrLocals = variables;
+    wxString flatStrOthers = others;
+    wxString flatStrMethods = methods;
+
+    flatStrClasses.Trim().Trim(false);
+    flatStrLocals.Trim().Trim(false);
+    flatStrOthers.Trim().Trim(false);
+    flatStrMethods.Trim().Trim(false);
+
+    // locate the lexer
+    auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullName());
+    CHECK_PTR_RET(lexer);
+
+    if(lexer->GetWordSet(LexerConf::WS_CLASS).is_ok()) {
+        LOG_IF_TRACE { clDEBUG1() << "Setting semantic tokens:" << endl; }
+        lexer->ApplyWordSet(this, LexerConf::WS_CLASS, flatStrClasses);
+        lexer->ApplyWordSet(this, LexerConf::WS_FUNCTIONS, flatStrMethods);
+        lexer->ApplyWordSet(this, LexerConf::WS_VARIABLES, flatStrLocals);
+        lexer->ApplyWordSet(this, LexerConf::WS_OTHERS, flatStrOthers);
+
+    } else {
+
+        int keywords_class = wxNOT_FOUND;
+        int keywords_variables = wxNOT_FOUND;
+
+        switch(lexer->GetLexerId()) {
+        case wxSTC_LEX_CPP:
+            keywords_class = 1;
+            keywords_variables = 3;
+            break;
+
+        case wxSTC_LEX_RUST:
+            keywords_class = 3;
+            keywords_variables = 4;
+            break;
+
+        case wxSTC_LEX_PYTHON:
+            keywords_variables = 1;
+            break;
+        default:
+            break;
+        }
+        if(!flatStrClasses.empty() && keywords_class != wxNOT_FOUND) {
+            SetKeyWords(keywords_class, flatStrClasses);
+        }
+
+        if(!flatStrLocals.empty() && keywords_variables != wxNOT_FOUND) {
+            SetKeyWords(keywords_variables, flatStrLocals);
+        }
+    }
+    Colourise(0, wxSTC_INVALID_POSITION);
 }

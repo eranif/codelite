@@ -43,8 +43,6 @@ class ZoomText : public wxStyledTextCtrl
     int m_zoomFactor;
     wxColour m_colour;
     wxString m_filename;
-    wxString m_classes;
-    wxString m_locals;
     wxTimer* m_timer;
 
 public:
@@ -57,6 +55,8 @@ protected:
     void OnThemeChanged(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);
     void DoClear();
+    void SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+                           const wxString& others);
 
 public:
     ZoomText(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

@@ -107,8 +107,6 @@ ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 #endif
 
-    SetCursor(wxCURSOR_HAND);
-
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &ZoomText::OnTimer, this, m_timer->GetId());
     Show();
@@ -154,6 +152,7 @@ void ZoomText::UpdateLexer(IEditor* editor)
     SetUseHorizontalScrollBar(false);
     SetUseVerticalScrollBar(data.IsUseScrollbar());
     HideSelection(true);
+    SetSTCCursor(wxSTC_CURSORARROW);
 }
 
 void ZoomText::OnSettingsChanged(wxCommandEvent& e)
@@ -207,7 +206,7 @@ void ZoomText::HighlightLines(int start, int end)
 void ZoomText::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    UpdateLexer(NULL);
+    UpdateLexer(nullptr);
 }
 
 void ZoomText::OnTimer(wxTimerEvent& event)

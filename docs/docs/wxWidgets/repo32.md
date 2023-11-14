@@ -1,10 +1,10 @@
-# wxWidgets 3.2.3 Packages and Repositories
+# wxWidgets 3.2.4 Packages and Repositories
 ---
 
 ## Preface
 ---
 
-This page is for the stable release, wx3.2.3.. The CodeLite packages for Linux now use wxWidgets >=3.1. As wx3.2.3 is newly released, few current (October 2023) distro versions will supply it. I've therefore built 3.2.3 packages for the commonest ones.
+This page is for the stable release, wx3.2.4. The CodeLite packages for Linux now use wxWidgets >=3.1. As wx3.2.4 is newly released, few current (November 2023) distro versions will supply it. I've therefore built 3.2.4 packages for the commonest ones.
 
 ## Fetching CodeLite keys
 ---
@@ -37,18 +37,18 @@ If you use a debian-based distro there are the following wxWidgets repositories 
 
 Repository | Available | Versions | Component
 -----------|-----------|----------|-----------
-debian	| `https://repos.codelite.org/wx3.2/debian/` | bullseye bookworm | libs
-ubuntu | `https://repos.codelite.org/wx3.2/ubuntu/` |  jammy kinetic mantic | universe
+debian	| `https://repos.codelite.org/wx3.2/debian/` | bookworm | libs
+ubuntu | `https://repos.codelite.org/wx3.2/ubuntu/` |  jammy mantic | universe
 
 
-The repositories also contain wx3.1.0 to wx3.2.2 builds (including some i386 ones) for debian stretch and buster, and ubuntu trusty, wily to hirsute.
+The repositories also contain wx3.1.0 to wx3.2.3 builds (including some i386 ones) for debian stretch, buster and bullseye, and ubuntu trusty, wily to kinetic.
 
 The ubuntu ones should also work on other *buntus of the same version, and on derivatives e.g. Mint.
 
 Now let apt know that the repository exits. If you use an apt front-end e.g. synaptic, tell it to Add a repository, using as data the appropriate entry in the table above. If you do things by hand, add the appropriate url to /etc/apt/sources.list. Become superuser and either use a text editor to edit /etc/apt/sources.list, adding a line similar to:
 
 ```bash
-deb https://repos.codelite.org/wx3.2/debian/ bullseye libs
+deb https://repos.codelite.org/wx3.2/debian/ bookworm libs
 ```
 
 or, in a terminal, do something like: 
@@ -61,14 +61,12 @@ The line to add is different for different distros/versions; choose the appropri
 
 Distro/release | Line to append
 ---------------|-------------------
-debian bullseye| `deb https://repos.codelite.org/wx3.2/debian/ bullseye libs`
 debian bookworm| `deb https://repos.codelite.org/wx3.2/debian/ bookworm libs`
 ubuntu jammy | `deb https://repos.codelite.org/wx3.2/ubuntu/ jammy universe`
-ubuntu kinetic| `deb https://repos.codelite.org/wx3.2/ubuntu/ kinetic universe`
 ubuntu mantic| `deb https://repos.codelite.org/wx3.2/ubuntu/ mantic universe`
 
 !!! Tip
-If you prefer, you can instead enter a specific version e.g. `https://repos.codelite.org/wx3.2.3/debian`
+If you prefer, you can instead enter a specific version e.g. `https://repos.codelite.org/wx3.2.4/debian`
 
 You then need to update the repositories. In synaptic, click the Reload button. If you're doing things by hand, do: 
 
@@ -112,11 +110,10 @@ but `wx-common` contains `wxrc` so, if you use this, be aware that there may be 
 
 ## Fedora and openSUSE
 ---
-There are currently rpms available for fedora 38 and 39,  and openSUSE 15.5.
+There are currently rpms available for fedora 39,  and openSUSE 15.5.
 
 Distro|Release|x86_64
 ------|-------|------
-fedora|`38`|[wxBase32][2] [wxBase32-debuginfo][26] [wxGTK32][3] [wxGTK32-debuginfo][7] [wxGTK32-debugsource][27] [wxGTK32-devel][4] [wxGTK32-devel-debuginfo][28] [wxGTK32-gl][5] [wxGTK32-gl-debuginfo][29] [wxGTK32-media][6] [wxGTK32-media-debuginfo][30] 
 fedora| `39`|[wxBase32][32] [wxBase32-debuginfo][41] [wxGTK32][33] [wxGTK32-debuginfo][37] [wxGTK32-debugsource][42] [wxGTK32-devel][34] [wxGTK32-devel-debuginfo][43] [wxGTK32-gl][35] [wxGTK32-gl-debuginfo][44] [wxGTK32-media][36] [wxGTK32-media-debuginfo][45]
 openSUSE|`15.5`|[libwx_baseu_net][8] [libwx_baseu][9] [libwx_baseu_xml][10] [libwx_gtk3u_adv][11] [libwx_gtk3u_aui][12] [libwx_gtk3u_core][13] [libwx_gtk3u_gl][14]  [libwx_gtk3u_html][15] [libwx_gtk3u_media][16] [libwx_gtk3u_propgrid][17] [libwx_gtk3u_qa][18] [libwx_gtk3u_ribbon][19] [libwx_gtk3u_richtext][20] [libwx_gtk3u_stc][21]  [libwx_gtk3u_xrc][23] [wxWidgets-3_2-devel][24] 
 

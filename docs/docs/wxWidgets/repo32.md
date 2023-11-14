@@ -122,7 +122,7 @@ There are also source rpms for [Fedora][51] and [openSUSE][52]. The fedora srpm 
 Either download the required rpms and install them as usual, or download and install in one step; e.g. 
 
 ```bash
-rpm -Uvh https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/wxWidgets-3_2-3.2.3-0.src.rpm
+rpm -Uvh https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/wxWidgets-3_2-3.2.4-0.src.rpm
 ```
 
 
@@ -130,50 +130,38 @@ rpm -Uvh https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/wxWidgets-3_2-3.
     Some of these rpms may conflict with the wx2.8 devel ones. 
 
  [1]: https://forums.wxwidgets.org/viewtopic.php?f=19&t=47403&p=200198#p200198
- [2]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxBase32-3.2.3-1.fc38.x86_64.rpm
- [3]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-3.2.3-1.fc38.x86_64.rpm
- [4]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-devel-3.2.3-1.fc38.x86_64.rpm
- [5]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-gl-3.2.3-1.fc38.x86_64.rpm
- [6]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-media-3.2.3-1.fc38.x86_64.rpm
- [7]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-debuginfo-3.2.3-1.fc38.x86_64.rpm
- [8]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_baseu_net-suse15-3.2.3-0.x86_64.rpm
- [9]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_baseu-suse15-3.2.3-0.x86_64.rpm
- [10]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_baseu_xml-suse15-3.2.3-0.x86_64.rpm
- [11]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_adv-suse15-3.2.3-0.x86_64.rpm
- [12]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_aui-suse15-3.2.3-0.x86_64.rpm
- [13]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_core-suse15-3.2.3-0.x86_64.rpm
- [14]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_gl-suse15-3.2.3-0.x86_64.rpm
- [15]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_html-suse15-3.2.3-0.x86_64.rpm
- [16]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_media-suse15-3.2.3-0.x86_64.rpm
- [17]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_propgrid-suse15-3.2.3-0.x86_64.rpm
- [18]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_qa-suse15-3.2.3-0.x86_64.rpm
- [19]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_ribbon-suse15-3.2.3-0.x86_64.rpm
- [20]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_richtext-suse15-3.2.3-0.x86_64.rpm
- [21]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_stc-suse15-3.2.3-0.x86_64.rpm
- [22]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_webview-suse15-3.2.3-0.x86_64.rpm
- [23]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/libwx_gtk3u_xrc-suse15-3.2.3-0.x86_64.rpm
- [24]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/wxWidgets-3_2-devel-3.2.3-0.x86_64.rpm
- [25]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/15.5/wxWidgets-3_2-plugin-sound_sdlu-3_2-3.2.3-0.x86_64.rpm
+ [8]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_baseu_net-suse15-3.2.4-0.x86_64.rpm
+ [9]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_baseu-suse15-3.2.4-0.x86_64.rpm
+ [10]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_baseu_xml-suse15-3.2.4-0.x86_64.rpm
+ [11]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_adv-suse15-3.2.4-0.x86_64.rpm
+ [12]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_aui-suse15-3.2.4-0.x86_64.rpm
+ [13]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_core-suse15-3.2.4-0.x86_64.rpm
+ [14]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_gl-suse15-3.2.4-0.x86_64.rpm
+ [15]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_html-suse15-3.2.4-0.x86_64.rpm
+ [16]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_media-suse15-3.2.4-0.x86_64.rpm
+ [17]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_propgrid-suse15-3.2.4-0.x86_64.rpm
+ [18]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_qa-suse15-3.2.4-0.x86_64.rpm
+ [19]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_ribbon-suse15-3.2.4-0.x86_64.rpm
+ [20]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_richtext-suse15-3.2.4-0.x86_64.rpm
+ [21]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_stc-suse15-3.2.4-0.x86_64.rpm
+ [22]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_webview-suse15-3.2.4-0.x86_64.rpm
+ [23]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/libwx_gtk3u_xrc-suse15-3.2.4-0.x86_64.rpm
+ [24]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/wxWidgets-3_2-devel-3.2.4-0.x86_64.rpm
+ [25]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/15.5/wxWidgets-3_2-plugin-sound_sdlu-3_2-3.2.4-0.x86_64.rpm
 
- [26]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxBase32-debuginfo-3.2.3-1.fc38.x86_64.rpm
- [27]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-debugsource-3.2.3-1.fc38.x86_64.rpm
- [28]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-devel-debuginfo-3.2.3-1.fc38.x86_64.rpm
- [29]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-gl-debuginfo-3.2.3-1.fc38.x86_64.rpm
- [30]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/38/wxGTK32-media-debuginfo-3.2.3-1.fc38.x86_64.rpm
-
- [32]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxBase32-3.2.3-1.fc39.x86_64.rpm
- [33]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-3.2.3-1.fc39.x86_64.rpm
- [34]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-devel-3.2.3-1.fc39.x86_64.rpm
- [35]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-gl-3.2.3-1.fc39.x86_64.rpm
- [36]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-media-3.2.3-1.fc39.x86_64.rpm
- [37]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-debuginfo-3.2.3-1.fc39.x86_64.rpm
+ [32]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxBase32-3.2.4-1.fc39.x86_64.rpm
+ [33]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-3.2.4-1.fc39.x86_64.rpm
+ [34]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-devel-3.2.4-1.fc39.x86_64.rpm
+ [35]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-gl-3.2.4-1.fc39.x86_64.rpm
+ [36]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-media-3.2.4-1.fc39.x86_64.rpm
+ [37]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-debuginfo-3.2.4-1.fc39.x86_64.rpm
  
- [41]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxBase32-debuginfo-3.2.3-1.fc39.x86_64.rpm
- [42]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-debugsource-3.2.3-1.fc39.x86_64.rpm
- [43]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-devel-debuginfo-3.2.3-1.fc39.x86_64.rpm
- [44]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-gl-debuginfo-3.2.3-1.fc39.x86_64.rpm
- [45]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/39/wxGTK32-media-debuginfo-3.2.3-1.fc39.x86_64.rpm
+ [41]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxBase32-debuginfo-3.2.4-1.fc39.x86_64.rpm
+ [42]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-debugsource-3.2.4-1.fc39.x86_64.rpm
+ [43]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-devel-debuginfo-3.2.4-1.fc39.x86_64.rpm
+ [44]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-gl-debuginfo-3.2.4-1.fc39.x86_64.rpm
+ [45]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/39/wxGTK32-media-debuginfo-3.2.4-1.fc39.x86_64.rpm
  
- [51]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/fedora/wxGTK32-3.2.3-1.fc.src.rpm
- [52]: https://repos.codelite.org/wx3.2.3/wx3.2-packages/suse/wxWidgets-3_2-3.2.3-0.src.rpm
+ [51]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/fedora/wxGTK32-3.2.4-1.fc.src.rpm
+ [52]: https://repos.codelite.org/wx3.2.4/wx3.2-packages/suse/wxWidgets-3_2-3.2.4-0.src.rpm
 

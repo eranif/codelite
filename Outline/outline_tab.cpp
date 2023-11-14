@@ -9,6 +9,7 @@
 #include "imanager.h"
 #include "macros.h"
 
+#include <unordered_set>
 #include <wx/colour.h>
 #include <wx/stc/stc.h>
 
@@ -92,32 +93,26 @@ void OutlineTab::RenderSymbols(const std::vector<LSP::SymbolInformation>& symbol
     wxColour module_colour = lexer->GetProperty(wxSTC_P_STRING).GetFgColour();
     wxColour function_colour = lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour();
     wxColour operator_colour = lexer->GetProperty(wxSTC_P_OPERATOR).GetFgColour();
-    std::vector<std::pair<wxString, int>> containers;
 
     constexpr int INITIAL_DEPTH = 0;
     constexpr int DEPTH_WIDTH = 2;
 
+    std::unordered_set<wxString> containers;
     clAnsiEscapeCodeColourBuilder builder;
     for(const SymbolInformation& si : m_symbols) {
-        const wxString& symbol_container = si.GetContainerName();
-        if(symbol_container.empty()) {
-            containers.push_back({ si.GetName(), INITIAL_DEPTH });
-        } else {
-            int parent_depth = 0;
-            while(!containers.empty()) {
-                if(containers.back().first == symbol_container) {
-                    parent_depth = containers.back().second;
-                    break;
-                }
-                containers.pop_back();
-            }
-            containers.push_back({ si.GetName(), parent_depth + 1 });
+        builder.Clear();
+
+        if(!si.GetContainerName().empty() && containers.count(si.GetContainerName()) == 0) {
+            // probably a fake container
+            containers.insert(si.GetContainerName());
+            builder.Add(CLASS_SYMBOL + " ", AnsiColours::NormalText());
+            builder.Add(si.GetContainerName(), class_colour, true);
+            m_dvListCtrl->AddLine(builder.GetString(), false, (wxUIntPtr)&si);
+            builder.Clear();
         }
 
-        builder.Clear();
-        int curdepth = containers.empty() ? INITIAL_DEPTH : containers.back().second;
-        // add indentation
-        builder.Add(wxString(' ', curdepth * DEPTH_WIDTH), AnsiColours::NormalText());
+        size_t indent_level = si.GetContainerName().empty() ? INITIAL_DEPTH : DEPTH_WIDTH;
+        builder.Add(wxString(' ', indent_level), AnsiColours::NormalText());
 
         // determine the symbol
         switch(si.GetKind()) {

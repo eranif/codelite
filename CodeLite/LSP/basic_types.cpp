@@ -341,6 +341,18 @@ void SymbolInformation::FromJSON(const JSONItem& json)
     containerName = json["containerName"].toString();
     kind = (eSymbolKind)json["kind"].toInt(0);
     location.FromJSON(json["location"]);
+
+    // manipulate the data: if no container exists, extract it from the name
+    if(containerName.empty() && !name.empty()) {
+        int where = name.rfind("::");
+        if(where == wxNOT_FOUND) {
+            return;
+        }
+
+        wxString shortname = name.Mid(where + 2);
+        containerName = name.Mid(0, where);
+        name.swap(shortname);
+    }
 }
 
 JSONItem SymbolInformation::ToJSON(const wxString& name) const

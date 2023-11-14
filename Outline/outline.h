@@ -44,7 +44,7 @@
 class SymbolViewPlugin : public IPlugin
 {
 protected:
-    OutlineTab* m_view;
+    OutlineTab* m_view = nullptr;
 
 public:
     //--------------------------------------------
@@ -56,8 +56,8 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void UnPlug() override;
 };
 #endif // Outline

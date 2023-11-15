@@ -44,7 +44,6 @@
 #include "stringhighlighterjob.h"
 
 #include <map>
-#include <stack>
 #include <unordered_map>
 #include <vector>
 #include <wx/bitmap.h>
@@ -109,6 +108,7 @@ wxDECLARE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
  */
 class clEditor : public wxStyledTextCtrl, public IEditor
 {
+
 private:
     struct SelectionInfo {
         std::vector<std::pair<int, int>> selections;

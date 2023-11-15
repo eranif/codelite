@@ -50,8 +50,8 @@ class ZoomNavigator : public IPlugin
     wxPanel* m_zoompane;
     wxEvtHandler* m_topWindow;
     ZoomText* m_text;
-    int m_markerFirstLine;
-    int m_markerLastLine;
+    int m_markerFirstLine = wxNOT_FOUND;
+    int m_markerLastLine = wxNOT_FOUND;
     bool m_enabled;
     clConfig* m_config;
     int m_lastLine;

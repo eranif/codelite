@@ -33,8 +33,6 @@
 #include "zoomnavigator.h"
 
 #include "bookmark_manager.h"
-#include "detachedpanesinfo.h"
-#include "dockablepane.h"
 #include "event_notifier.h"
 #include "znSettingsDlg.h"
 #include "zn_config_item.h"
@@ -111,10 +109,10 @@ ZoomNavigator::ZoomNavigator(IManager* manager)
     m_topWindow = m_mgr->GetTheApp();
 
     m_topWindow->Connect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged),
-                                  NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ZoomNavigator::OnInitDone, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ZoomNavigator::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_ZN_SETTINGS_UPDATED, &ZoomNavigator::OnSettingsChanged, this);
+
     m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
 
@@ -129,10 +127,9 @@ ZoomNavigator::~ZoomNavigator() {}
 
 void ZoomNavigator::UnPlug()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_ZN_SETTINGS_UPDATED, &ZoomNavigator::OnSettingsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ZoomNavigator::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ZoomNavigator::OnFileSaved, this);
 
     m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
@@ -334,6 +331,7 @@ void ZoomNavigator::OnFileSaved(clCommandEvent& e)
     if(e.GetString() == m_curfile) {
         // Update the file content
         m_curfile.Clear();
+        m_markerFirstLine = m_markerLastLine = wxNOT_FOUND; // forces a scrolling
         DoUpdate();
     }
 }

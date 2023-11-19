@@ -4999,9 +4999,7 @@ void clMainFrame::SetAUIManagerFlags()
 {
     // Set the manager flags
     unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE | wxAUI_MGR_ALLOW_FLOATING;
-#ifndef __WXMSW__
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
-#endif
     m_mgr.SetFlags(auiMgrFlags);
 }
 

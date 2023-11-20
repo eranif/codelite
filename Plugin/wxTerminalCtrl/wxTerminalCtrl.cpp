@@ -76,10 +76,12 @@ bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& p
 void wxTerminalCtrl::StartShell()
 {
     wxString shell_exec;
-    if(m_shellCommand.CmpNoCase("bash") == 0 && !ThePlatform->Which(m_shellCommand, &shell_exec)) {
-        wxMessageBox(wxString() << _("Unable to find ") << m_shellCommand << ". Can't start a terminal", "CodeLite",
-                     wxICON_WARNING | wxOK | wxCENTRE | wxOK_DEFAULT);
-        return;
+    if(m_shellCommand.CmpNoCase("bash") == 0) {
+        if(!ThePlatform->Which(m_shellCommand, &shell_exec)) {
+            wxMessageBox(wxString() << _("Unable to find ") << m_shellCommand << ". Can't start a terminal", "CodeLite",
+                         wxICON_WARNING | wxOK | wxCENTRE | wxOK_DEFAULT);
+            return;
+        }
     } else if(m_shellCommand.CmpNoCase("cmd") == 0) {
         shell_exec = "cmd";
     } else {

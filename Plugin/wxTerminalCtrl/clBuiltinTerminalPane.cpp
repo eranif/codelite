@@ -1,6 +1,7 @@
 #include "clBuiltinTerminalPane.hpp"
 
 #include "ColoursAndFontsManager.h"
+#include "CompilerLocatorMSVC.h"
 #include "FontUtils.hpp"
 #include "Platform.hpp"
 #include "bitmap_loader.h"
@@ -15,6 +16,7 @@
 #include "wxTerminalOutputCtrl.hpp"
 
 #include <wx/app.h>
+#include <wx/choicdlg.h>
 #include <wx/sizer.h>
 
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
@@ -150,13 +152,47 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     wxUnusedVar(event);
 
     wxString working_directory;
+    wxString shell;
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if(workspace && !workspace->IsRemote()) {
         wxFileName fn{ workspace->GetFileName() };
         working_directory = clFileName::ToMSYS2(fn.GetPath());
     }
 
+#ifdef __WXMSW__
+    static std::map<wxString, wxString> options_map = { { "bash", "bash" }, { "CMD", "CMD" } };
+    static bool once = true;
+    if(once) {
+        once = false;
+        wxBusyCursor bc{};
+        CompilerLocatorMSVC locator_msvc{};
+        if(locator_msvc.Locate()) {
+            const auto& compilers = locator_msvc.GetCompilers();
+            for(auto compiler : compilers) {
+                wxString build_tool = compiler->GetTool("MAKE");
+                build_tool = build_tool.BeforeLast('>');
+                build_tool.Prepend("CMD /K ");
+                options_map.insert({ "CMD for " + compiler->GetName(), build_tool });
+            }
+        }
+    }
+    wxArrayString options;
+    for(const auto& [name, _] : options_map) {
+        options.Add(name);
+    }
+
+    wxString selected_shell = ::wxGetSingleChoice(_("Choose a shell:"), _("New Terminal"), options, 0);
+    if(selected_shell.empty()) {
+        return;
+    }
+    shell = options_map[selected_shell];
+
+#else
+    shell = "bash";
+#endif
+
     wxTerminalCtrl* ctrl = new wxTerminalCtrl(m_book, wxID_ANY, working_directory);
+    ctrl->SetShellCommand(shell);
     m_book->AddPage(ctrl, _("Terminal"), true);
     Focus();
 }

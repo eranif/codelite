@@ -47,6 +47,7 @@ protected:
     bool m_terminating = false;
     wxString m_processOutput;
     wxString m_startingDirectory;
+    wxString m_shellCommand;
 
 protected:
     void StartShell();
@@ -85,6 +86,9 @@ public:
     bool IsPauseOnExit() const { return m_pauseOnExit; }
 
     wxTerminalInputCtrl* GetInputCtrl() { return m_inputCtrl; }
+
+    void SetShellCommand(const wxString& shellName) { this->m_shellCommand = shellName; }
+    const wxString& GetShellCommand() const { return m_shellCommand; }
 
     /**
      * @brief execute a command in the temrinal

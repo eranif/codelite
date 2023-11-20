@@ -75,11 +75,15 @@ bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& p
 
 void wxTerminalCtrl::StartShell()
 {
-    wxString bash_exec;
-    if(!ThePlatform->Which("bash", &bash_exec)) {
-        wxMessageBox(_("Unable to find bash. Can't start a terminal"), "CodeLite",
+    wxString shell_exec;
+    if(m_shellCommand.CmpNoCase("bash") == 0 && !ThePlatform->Which(m_shellCommand, &shell_exec)) {
+        wxMessageBox(wxString() << _("Unable to find ") << m_shellCommand << ". Can't start a terminal", "CodeLite",
                      wxICON_WARNING | wxOK | wxCENTRE | wxOK_DEFAULT);
         return;
+    } else if(m_shellCommand.CmpNoCase("cmd") == 0) {
+        shell_exec = "cmd";
+    } else {
+        shell_exec = m_shellCommand;
     }
 
     wxString path;
@@ -89,24 +93,29 @@ void wxTerminalCtrl::StartShell()
 #ifdef __WXMSW__
     // override PATH with our own
     clEnvList_t env;
-    env.push_back({ "WD", wxFileName(bash_exec).GetPath() });
+    env.push_back({ "WD", wxFileName(shell_exec).GetPath() });
     penv = &env;
 #endif
 
-    LOG_DEBUG(TERM_LOG) << "Starting shell process:" << bash_exec << endl;
-    m_shell = ::CreateAsyncProcess(this, bash_exec + " --login -i", IProcessRawOutput, wxEmptyString, penv);
+    LOG_DEBUG(TERM_LOG) << "Starting shell process:" << shell_exec << endl;
+    if(m_shellCommand == "bash") {
+        m_shell = ::CreateAsyncProcess(this, shell_exec + " --login -i", IProcessRawOutput, wxEmptyString, penv);
+    } else {
+        m_shell = ::CreateAsyncProcess(this, shell_exec, IProcessRawOutput, wxEmptyString, penv);
+    }
+
     if(m_shell) {
         LOG_DEBUG(TERM_LOG) << "Setting working directory to:" << m_startingDirectory << endl;
         if(!m_startingDirectory.empty()) {
             // now that we have a shell, set the working directory
             SetTerminalWorkingDirectory(m_startingDirectory);
         }
-        LOG_DEBUG(TERM_LOG) << "Successfully started bash terminal" << endl;
+        LOG_DEBUG(TERM_LOG) << "Successfully started shell terminal" << endl;
         wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
         readyEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(readyEvent);
     } else {
-        LOG_ERROR(TERM_LOG) << "Failed to launch bash terminal:" << bash_exec << endl;
+        LOG_ERROR(TERM_LOG) << "Failed to launch shell terminal:" << shell_exec << endl;
     }
     m_inputCtrl->SetFocus();
 }

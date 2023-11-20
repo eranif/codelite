@@ -28,6 +28,7 @@
 
 #include "compiler.h"
 #include "compiler_pages.h"
+
 #include <wx/dataview.h>
 
 // =================--------------------
@@ -121,8 +122,10 @@ protected:
     // Patterns
     void InitializePatterns();
     void SavePatterns();
-    void DoUpdateErrPattern(long item);
-    void DoUpdateWarnPattern(long item);
+    void DoUpdateErrPattern(const wxDataViewItem& item);
+    void DoUpdateWarnPattern(const wxDataViewItem& item);
+    void DoUpdatePattern(clThemedListCtrl* list, const wxDataViewItem& item, const wxString& dialog_title);
+    void DoAddPattern(clThemedListCtrl* list, const Compiler::CmpInfoPattern& pattern);
 
     // Compiler Switches
     void AddSwitch(const wxString& name, const wxString& value, bool choose);
@@ -148,7 +151,7 @@ protected:
 
     void LoadCompiler(const wxString& compilerName);
     void DoFileTypeActivated(const wxDataViewItem& item);
-    
+
 public:
     CompilerMainPage(wxWindow* parent);
     virtual ~CompilerMainPage();
@@ -173,7 +176,7 @@ protected:
     virtual void OnDeleteLinkerOption(wxCommandEvent& event);
     virtual void OnEditIncludePaths(wxCommandEvent& event);
     virtual void OnEditLibraryPaths(wxCommandEvent& event);
-    virtual void OnErrItemActivated(wxListEvent& event);
+    virtual void OnErrItemActivated(wxDataViewEvent& event);
     virtual void OnErrorPatternSelectedUI(wxUpdateUIEvent& event);
     virtual void OnFileTypeActivated(wxDataViewEvent& event);
     virtual void OnItemActivated(wxListEvent& event);
@@ -184,7 +187,7 @@ protected:
     virtual void OnNewCompilerOption(wxCommandEvent& event);
     virtual void OnNewFileType(wxCommandEvent& event);
     virtual void OnNewLinkerOption(wxCommandEvent& event);
-    virtual void OnWarnItemActivated(wxListEvent& event);
+    virtual void OnWarnItemActivated(wxDataViewEvent& event);
     virtual void OnWarningPatternSelectedUI(wxUpdateUIEvent& event);
 };
 #endif // COMPILERMAINPAGE_H

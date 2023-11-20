@@ -270,9 +270,11 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
             AddPattern(kSevError, "^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error", 1,
                        2);
+            AddPattern(kSevError, R"#(([>\d]*)(.*?)\(([\d]+)(.*?)error)#", 2, 3);
             AddPattern(kSevError, "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(error)", 1, 3);
             AddPattern(kSevError, "(LINK : fatal error)", 1, 1);
             AddPattern(kSevError, "(NMAKE : fatal error)", 1, 1);
+            AddPattern(kSevWarning, R"#(([>\d]*)(.*?)\(([\d]+)(.*?)warning)#", 2, 3);
             AddPattern(kSevWarning, "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(warning)", 1, 3);
             AddPattern(kSevWarning, "([a-z_A-Z]*\\.obj)( : warning)", 1, 1);
             AddPattern(kSevWarning, "(cl : Command line warning)", 1, 1);

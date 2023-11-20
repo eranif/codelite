@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	315,
+		"m_objCounter":	317,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCAD0CInitBitmapResources",
 		"m_bitmapsFile":	"compiler_page_plugin_bitmaps.cpp",
@@ -358,6 +358,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -518,6 +522,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -837,7 +845,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"500,-1"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -1148,11 +1156,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	""
+											"m_value":	"clThemedTextCtrl"
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	""
+											"m_value":	"clThemedTextCtrl.hpp"
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
@@ -1169,6 +1177,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -1310,11 +1322,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	""
+											"m_value":	"clThemedTextCtrl"
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	""
+											"m_value":	"clThemedTextCtrl.hpp"
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
@@ -1331,6 +1343,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -1472,11 +1488,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	""
+											"m_value":	"clThemedTextCtrl"
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	""
+											"m_value":	"clThemedTextCtrl.hpp"
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
@@ -1493,6 +1509,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -1634,11 +1654,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	""
+											"m_value":	"clThemedTextCtrl"
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	""
+											"m_value":	"clThemedTextCtrl.hpp"
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
@@ -1655,6 +1675,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -1689,7 +1713,7 @@
 						}, {
 							"m_type":	4467,
 							"proportion":	0,
-							"border":	5,
+							"border":	10,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
@@ -2160,6 +2184,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -2663,7 +2691,7 @@
 									"border":	5,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxLB_SORT", "wxLB_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+									"m_styles":	["wxLB_SORT", "wxLB_SINGLE", "wxBORDER_SIMPLE"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -2929,7 +2957,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxPG_DESCRIPTION", "wxPG_HIDE_MARGIN", "wxPG_BOLD_MODIFIED", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+															"m_styles":	["wxPG_DESCRIPTION", "wxPG_HIDE_MARGIN", "wxPG_BOLD_MODIFIED", "wxBORDER_SIMPLE"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -3978,12 +4006,12 @@
 																		}],
 																	"m_events":	[],
 																	"m_children":	[{
-																			"m_type":	4413,
+																			"m_type":	4469,
 																			"proportion":	1,
 																			"border":	5,
-																			"gbSpan":	",",
-																			"gbPosition":	",",
-																			"m_styles":	["wxLC_VRULES", "wxLC_HRULES", "wxLC_SINGLE_SEL", "wxLC_REPORT", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																			"gbSpan":	"1,1",
+																			"gbPosition":	"0,0",
+																			"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
 																			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																			"m_properties":	[{
 																					"type":	"winid",
@@ -3996,11 +4024,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Minimum Size:",
-																					"m_value":	""
+																					"m_value":	"-1,-1"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Name:",
-																					"m_value":	"m_listErrPatterns"
+																					"m_value":	"m_dvListCtrlErrors"
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Tooltip:",
@@ -4032,21 +4060,27 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedListCtrl"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedListCtrl.h"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",
 																					"m_value":	""
 																				}],
 																			"m_events":	[{
-																					"m_eventName":	"wxEVT_COMMAND_LIST_ITEM_ACTIVATED",
-																					"m_eventClass":	"wxListEvent",
-																					"m_functionNameAndSignature":	"OnErrItemActivated(wxListEvent& event)",
-																					"m_description":	"The item has been activated (ENTER or double click)",
+																					"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+																					"m_eventClass":	"wxDataViewEvent",
+																					"m_functionNameAndSignature":	"OnErrItemActivated(wxDataViewEvent& event)",
+																					"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
+																					"m_noBody":	false
+																				}, {
+																					"m_eventName":	"wxEVT_UPDATE_UI",
+																					"m_eventClass":	"wxUpdateUIEvent",
+																					"m_functionNameAndSignature":	"OnErrorPatternSelectedUI(wxUpdateUIEvent& event)",
+																					"m_description":	"Process a wxEVT_UPDATE_UI event",
 																					"m_noBody":	false
 																				}],
 																			"m_children":	[]
@@ -4516,12 +4550,12 @@
 																		}],
 																	"m_events":	[],
 																	"m_children":	[{
-																			"m_type":	4413,
+																			"m_type":	4469,
 																			"proportion":	1,
 																			"border":	5,
-																			"gbSpan":	",",
-																			"gbPosition":	",",
-																			"m_styles":	["wxLC_VRULES", "wxLC_HRULES", "wxLC_SINGLE_SEL", "wxLC_REPORT", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																			"gbSpan":	"1,1",
+																			"gbPosition":	"0,0",
+																			"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
 																			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																			"m_properties":	[{
 																					"type":	"winid",
@@ -4530,15 +4564,15 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Size:",
-																					"m_value":	""
+																					"m_value":	"-1,-1"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Minimum Size:",
-																					"m_value":	""
+																					"m_value":	"-1,-1"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Name:",
-																					"m_value":	"m_listWarnPatterns"
+																					"m_value":	"m_dvListCtrlWarnings"
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Tooltip:",
@@ -4570,21 +4604,27 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedListCtrl"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedListCtrl.h"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",
 																					"m_value":	""
 																				}],
 																			"m_events":	[{
-																					"m_eventName":	"wxEVT_COMMAND_LIST_ITEM_ACTIVATED",
-																					"m_eventClass":	"wxListEvent",
-																					"m_functionNameAndSignature":	"OnWarnItemActivated(wxListEvent& event)",
-																					"m_description":	"The item has been activated (ENTER or double click)",
+																					"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+																					"m_eventClass":	"wxDataViewEvent",
+																					"m_functionNameAndSignature":	"OnWarnItemActivated(wxDataViewEvent& event)",
+																					"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
+																					"m_noBody":	false
+																				}, {
+																					"m_eventName":	"wxEVT_UPDATE_UI",
+																					"m_eventClass":	"wxUpdateUIEvent",
+																					"m_functionNameAndSignature":	"OnWarningPatternSelectedUI(wxUpdateUIEvent& event)",
+																					"m_description":	"Process a wxEVT_UPDATE_UI event",
 																					"m_noBody":	false
 																				}],
 																			"m_children":	[]
@@ -5143,7 +5183,7 @@
 																	"border":	5,
 																	"gbSpan":	",",
 																	"gbPosition":	",",
-																	"m_styles":	["wxLC_VRULES", "wxLC_HRULES", "wxLC_SINGLE_SEL", "wxLC_REPORT", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																	"m_styles":	["wxLC_VRULES", "wxLC_HRULES", "wxLC_SINGLE_SEL", "wxLC_REPORT", "wxBORDER_SIMPLE"],
 																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																	"m_properties":	[{
 																			"type":	"winid",
@@ -5670,7 +5710,7 @@
 																	"border":	5,
 																	"gbSpan":	",",
 																	"gbPosition":	",",
-																	"m_styles":	["wxLC_VRULES", "wxLC_HRULES", "wxLC_SINGLE_SEL", "wxLC_REPORT", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																	"m_styles":	["wxLC_VRULES", "wxLC_HRULES", "wxLC_SINGLE_SEL", "wxLC_REPORT", "wxBORDER_SIMPLE"],
 																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																	"m_properties":	[{
 																			"type":	"winid",
@@ -6377,7 +6417,7 @@
 																							"border":	5,
 																							"gbSpan":	"1,1",
 																							"gbPosition":	"0,0",
-																							"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																							"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxBORDER_SIMPLE"],
 																							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																							"m_properties":	[{
 																									"type":	"winid",
@@ -6971,7 +7011,7 @@
 																					"border":	5,
 																					"gbSpan":	"1,1",
 																					"gbPosition":	"0,0",
-																					"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+																					"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxBORDER_SIMPLE"],
 																					"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																					"m_properties":	[{
 																							"type":	"winid",
@@ -7402,7 +7442,7 @@
 															"border":	5,
 															"gbSpan":	",",
 															"gbPosition":	",",
-															"m_styles":	["wxLC_VRULES", "wxLC_HRULES", "wxLC_SINGLE_SEL", "wxLC_REPORT", "wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+															"m_styles":	["wxLC_VRULES", "wxLC_HRULES", "wxLC_SINGLE_SEL", "wxLC_REPORT", "wxBORDER_SIMPLE"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -7937,6 +7977,10 @@
 																					"m_value":	"0"
 																				}, {
 																					"type":	"bool",
+																					"m_label":	"Enable Spell Checking",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
 																					"m_value":	false
 																				}, {
@@ -8197,6 +8241,10 @@
 																					"type":	"string",
 																					"m_label":	"Max Length:",
 																					"m_value":	"0"
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Enable Spell Checking",
+																					"m_value":	false
 																				}, {
 																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
@@ -8574,6 +8622,10 @@
 																					"m_value":	"0"
 																				}, {
 																					"type":	"bool",
+																					"m_label":	"Enable Spell Checking",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
 																					"m_value":	false
 																				}, {
@@ -8761,6 +8813,10 @@
 																					"m_value":	"0"
 																				}, {
 																					"type":	"bool",
+																					"m_label":	"Enable Spell Checking",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
 																					"m_value":	false
 																				}, {
@@ -8946,6 +9002,10 @@
 																					"type":	"string",
 																					"m_label":	"Max Length:",
 																					"m_value":	"0"
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Enable Spell Checking",
+																					"m_value":	false
 																				}, {
 																					"type":	"bool",
 																					"m_label":	"Auto Complete Directories:",
@@ -9957,6 +10017,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",

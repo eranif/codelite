@@ -19,6 +19,7 @@
 #include <wx/textctrl.h>
 #include <wx/statline.h>
 #include <wx/button.h>
+#include "clThemedTextCtrl.hpp"
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/panel.h>
@@ -30,11 +31,11 @@
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #include <wx/listctrl.h>
 #include <wx/splitter.h>
 #include "clThemedSplitterWindow.h"
-#include <wx/dataview.h>
-#include "clThemedListCtrl.h"
 #include <wx/checkbox.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
@@ -87,13 +88,13 @@ class CompilerPatternDlgBase : public wxDialog
 {
 protected:
     wxStaticText* m_staticText5;
-    wxTextCtrl* m_textPattern;
+    clThemedTextCtrl* m_textPattern;
     wxStaticText* m_staticText6;
-    wxTextCtrl* m_textFileIndex;
+    clThemedTextCtrl* m_textFileIndex;
     wxStaticText* m_staticText7;
-    wxTextCtrl* m_textLineNumber;
+    clThemedTextCtrl* m_textLineNumber;
     wxStaticText* m_staticText235;
-    wxTextCtrl* m_textColumn;
+    clThemedTextCtrl* m_textColumn;
     wxStdDialogButtonSizer* m_stdBtnSizer229;
     wxButton* m_button231;
     wxButton* m_button233;
@@ -103,15 +104,15 @@ protected:
 
 public:
     wxStaticText* GetStaticText5() { return m_staticText5; }
-    wxTextCtrl* GetTextPattern() { return m_textPattern; }
+    clThemedTextCtrl* GetTextPattern() { return m_textPattern; }
     wxStaticText* GetStaticText6() { return m_staticText6; }
-    wxTextCtrl* GetTextFileIndex() { return m_textFileIndex; }
+    clThemedTextCtrl* GetTextFileIndex() { return m_textFileIndex; }
     wxStaticText* GetStaticText7() { return m_staticText7; }
-    wxTextCtrl* GetTextLineNumber() { return m_textLineNumber; }
+    clThemedTextCtrl* GetTextLineNumber() { return m_textLineNumber; }
     wxStaticText* GetStaticText235() { return m_staticText235; }
-    wxTextCtrl* GetTextColumn() { return m_textColumn; }
+    clThemedTextCtrl* GetTextColumn() { return m_textColumn; }
     CompilerPatternDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
-                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, -1),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~CompilerPatternDlgBase();
 };
@@ -162,12 +163,12 @@ protected:
     wxPGProperty* m_pgPropDebugger;
     wxPanel* m_panelPatterns;
     wxStaticText* m_staticText161;
-    wxListCtrl* m_listErrPatterns;
+    clThemedListCtrl* m_dvListCtrlErrors;
     wxButton* m_btnAddErrPattern;
     wxButton* m_btnDelErrPattern;
     wxButton* m_btnUpdateErrPattern;
     wxStaticText* m_staticText17;
-    wxListCtrl* m_listWarnPatterns;
+    clThemedListCtrl* m_dvListCtrlWarnings;
     wxButton* m_btnAddWarnPattern;
     wxButton* m_btnDelWarnPattern;
     wxButton* m_btnUpdateWarnPattern;
@@ -218,15 +219,15 @@ protected:
     virtual void OnContextMenu(wxContextMenuEvent& event) { event.Skip(); }
     virtual void OnCustomEditorButtonClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
-    virtual void OnErrItemActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnErrItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnErrorPatternSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBtnAddErrPattern(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBtnDelErrPattern(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnErrorPatternSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBtnUpdateErrPattern(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWarnItemActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnWarnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnWarningPatternSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBtnAddWarnPattern(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBtnDelWarnPattern(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWarningPatternSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBtnUpdateWarnPattern(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCompilerOptionActivated(wxListEvent& event) { event.Skip(); }
     virtual void OnCompilerOptionDeSelected(wxListEvent& event) { event.Skip(); }
@@ -255,12 +256,12 @@ public:
     wxPropertyGridManager* GetPgMgrTools() { return m_pgMgrTools; }
     wxPanel* GetPanelTools() { return m_panelTools; }
     wxStaticText* GetStaticText161() { return m_staticText161; }
-    wxListCtrl* GetListErrPatterns() { return m_listErrPatterns; }
+    clThemedListCtrl* GetDvListCtrlErrors() { return m_dvListCtrlErrors; }
     wxButton* GetBtnAddErrPattern() { return m_btnAddErrPattern; }
     wxButton* GetBtnDelErrPattern() { return m_btnDelErrPattern; }
     wxButton* GetBtnUpdateErrPattern() { return m_btnUpdateErrPattern; }
     wxStaticText* GetStaticText17() { return m_staticText17; }
-    wxListCtrl* GetListWarnPatterns() { return m_listWarnPatterns; }
+    clThemedListCtrl* GetDvListCtrlWarnings() { return m_dvListCtrlWarnings; }
     wxButton* GetBtnAddWarnPattern() { return m_btnAddWarnPattern; }
     wxButton* GetBtnDelWarnPattern() { return m_btnDelWarnPattern; }
     wxButton* GetBtnUpdateWarnPattern() { return m_btnUpdateWarnPattern; }

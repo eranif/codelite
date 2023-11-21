@@ -5,7 +5,6 @@
 #include "clToolBar.h"
 #include "wxTerminalCtrl.h"
 
-#include <thread>
 #include <wx/panel.h>
 
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
@@ -13,10 +12,6 @@ class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
     wxTerminalCtrl* m_terminal = nullptr;
     clToolBar* m_toolbar = nullptr;
     Notebook* m_book = nullptr;
-    std::thread* m_scan_thread = nullptr;
-
-public:
-    wxMutex m_mutex;
     std::map<wxString, wxString> m_options_map = { { "bash", "bash" }, { "CMD", "CMD" } };
 
 protected:
@@ -27,6 +22,8 @@ protected:
     void OnNewDropdown(wxCommandEvent& event);
     void OnNew(wxCommandEvent& event);
     void DetectTerminals();
+    bool ReadTerminalOptionsFromDisk();
+    void WriteTerminalOptionsToDisk();
 
 public:
     clBuiltinTerminalPane(wxWindow* parent, wxWindowID id = wxID_ANY);
@@ -35,9 +32,6 @@ public:
     void Focus();
     bool IsFocused();
     wxTerminalCtrl* GetActiveTerminal();
-
-    void GetTerminalOptions(std::map<wxString, wxString>* options);
-    void SetTerminalOptions(const std::map<wxString, wxString>& options);
 };
 
 #endif // CLBUILTINTERMINALPANE_HPP

@@ -7,6 +7,7 @@
 #include "clFileName.hpp"
 #include "clWorkspaceManager.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include "imanager.h"
 #include "macros.h"
 #include "ssh/ssh_account_info.h"
@@ -42,7 +43,6 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     wxTheApp->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
-    CallAfter(&clBuiltinTerminalPane::DetectTerminals);
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
@@ -50,10 +50,6 @@ clBuiltinTerminalPane::~clBuiltinTerminalPane()
     wxTheApp->Unbind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
-    if(m_scan_thread) {
-        m_scan_thread->join();
-    }
-    wxDELETE(m_scan_thread);
 }
 
 void clBuiltinTerminalPane::UpdateTextAttributes()
@@ -163,12 +159,17 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     }
 
 #ifdef __WXMSW__
-    std::map<wxString, wxString> options_map;
-    GetTerminalOptions(&options_map);
+    static wxString DLG_ID = "scan-for-vs-terminals";
+    if(!ReadTerminalOptionsFromDisk()) {
+        auto answer = ::PromptForYesNoDialogWithCheckbox(_("Scan for Visual Studio terminals?"), DLG_ID);
+        if(answer == wxID_YES) {
+            DetectTerminals();
+        }
+    }
 
     wxArrayString options;
-    options.reserve(options_map.size());
-    for(const auto& [name, _] : options_map) {
+    options.reserve(m_options_map.size());
+    for(const auto& [name, _] : m_options_map) {
         options.Add(name);
     }
 
@@ -176,7 +177,7 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     if(selected_shell.empty()) {
         return;
     }
-    shell = options_map[selected_shell];
+    shell = m_options_map[selected_shell];
 
 #else
     // Linux / macOS
@@ -225,34 +226,56 @@ bool clBuiltinTerminalPane::IsFocused()
 void clBuiltinTerminalPane::DetectTerminals()
 {
 #ifdef __WXMSW__
-    m_scan_thread = new std::thread([this]() {
-        std::map<wxString, wxString> options_map = { { "bash", "bash" }, { "CMD", "CMD" } };
-        CompilerLocatorMSVC locator_msvc{};
-        if(locator_msvc.Locate()) {
-            // attempt to locate MSVC compilers
-            const auto& compilers = locator_msvc.GetCompilers();
-            for(auto compiler : compilers) {
-                wxString build_tool = compiler->GetTool("MAKE");
-                build_tool = build_tool.BeforeLast('>');
-                build_tool.Prepend("CMD /K ");
-                options_map.insert({ "CMD for " + compiler->GetName(), build_tool });
-            }
+    // Check to see if we already scanned this machine before
+    if(ReadTerminalOptionsFromDisk()) {
+        return;
+    }
+
+    wxBusyCursor bc{};
+    m_options_map.clear();
+    m_options_map = { { "bash", "bash" }, { "CMD", "CMD" } };
+    CompilerLocatorMSVC locator_msvc{};
+    if(locator_msvc.Locate()) {
+        // attempt to locate MSVC compilers
+        const auto& compilers = locator_msvc.GetCompilers();
+        for(auto compiler : compilers) {
+            wxString build_tool = compiler->GetTool("MAKE");
+            build_tool = build_tool.BeforeLast('>');
+            build_tool.Prepend("CMD /K ");
+            m_options_map.insert({ "CMD for " + compiler->GetName(), build_tool });
         }
-        SetTerminalOptions(options_map);
-    });
+    }
+    WriteTerminalOptionsToDisk();
 #endif
 }
 
-void clBuiltinTerminalPane::GetTerminalOptions(std::map<wxString, wxString>* options)
+bool clBuiltinTerminalPane::ReadTerminalOptionsFromDisk()
 {
-    wxMutexLocker locker{ m_mutex };
-    options->clear();
-    options->insert(m_options_map.begin(), m_options_map.end());
+    wxArrayString results = clConfig::Get().Read("terminal/options", wxArrayString{});
+    if(results.empty() || results.size() % 2 != 0) {
+        return false;
+    }
+
+    m_options_map.clear();
+    // we serialise the map into array as pairs of: [key,value,key2,value...]
+    for(size_t i = 0; i < results.size() / 2; ++i) {
+        wxString name = results[i * 2];
+        wxString command = results[i * 2 + 1];
+        m_options_map.insert({ name, command });
+    }
+    return true;
 }
 
-void clBuiltinTerminalPane::SetTerminalOptions(const std::map<wxString, wxString>& options)
+void clBuiltinTerminalPane::WriteTerminalOptionsToDisk()
 {
-    wxMutexLocker locker{ m_mutex };
-    m_options_map.clear();
-    m_options_map.insert(options.begin(), options.end());
+    wxArrayString result;
+    result.reserve(m_options_map.size() * 2);
+
+    for(const auto& [name, command] : m_options_map) {
+        result.Add(name);
+        result.Add(command);
+    }
+
+    // persist the results
+    clConfig::Get().Write("terminal/options", result);
 }

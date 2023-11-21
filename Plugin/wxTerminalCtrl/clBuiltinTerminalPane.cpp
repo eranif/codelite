@@ -3,18 +3,16 @@
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocatorMSVC.h"
 #include "FontUtils.hpp"
-#include "Platform.hpp"
 #include "bitmap_loader.h"
 #include "clFileName.hpp"
 #include "clWorkspaceManager.h"
-#include "drawingutils.h"
 #include "event_notifier.h"
-#include "globals.h"
 #include "imanager.h"
 #include "macros.h"
 #include "ssh/ssh_account_info.h"
 #include "wxTerminalOutputCtrl.hpp"
 
+#include <thread>
 #include <wx/app.h>
 #include <wx/choicdlg.h>
 #include <wx/sizer.h>
@@ -44,6 +42,7 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     wxTheApp->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
+    CallAfter(&clBuiltinTerminalPane::DetectTerminals);
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
@@ -51,6 +50,10 @@ clBuiltinTerminalPane::~clBuiltinTerminalPane()
     wxTheApp->Unbind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
+    if(m_scan_thread) {
+        m_scan_thread->join();
+    }
+    wxDELETE(m_scan_thread);
 }
 
 void clBuiltinTerminalPane::UpdateTextAttributes()
@@ -160,23 +163,11 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     }
 
 #ifdef __WXMSW__
-    static std::map<wxString, wxString> options_map = { { "bash", "bash" }, { "CMD", "CMD" } };
-    static bool once = true;
-    if(once) {
-        once = false;
-        wxBusyCursor bc{};
-        CompilerLocatorMSVC locator_msvc{};
-        if(locator_msvc.Locate()) {
-            const auto& compilers = locator_msvc.GetCompilers();
-            for(auto compiler : compilers) {
-                wxString build_tool = compiler->GetTool("MAKE");
-                build_tool = build_tool.BeforeLast('>');
-                build_tool.Prepend("CMD /K ");
-                options_map.insert({ "CMD for " + compiler->GetName(), build_tool });
-            }
-        }
-    }
+    std::map<wxString, wxString> options_map;
+    GetTerminalOptions(&options_map);
+
     wxArrayString options;
+    options.reserve(options_map.size());
     for(const auto& [name, _] : options_map) {
         options.Add(name);
     }
@@ -188,12 +179,17 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     shell = options_map[selected_shell];
 
 #else
+    // Linux / macOS
     shell = "bash";
 #endif
 
     wxTerminalCtrl* ctrl = new wxTerminalCtrl(m_book, wxID_ANY, working_directory);
+    static size_t terminal_id = 0;
     ctrl->SetShellCommand(shell);
-    m_book->AddPage(ctrl, _("Terminal"), true);
+
+    m_book->AddPage(ctrl, wxString::Format("Terminal %d", ++terminal_id), true);
+    m_book->SetPageToolTip(m_book->GetPageCount() - 1, shell);
+
     Focus();
 }
 
@@ -224,4 +220,39 @@ bool clBuiltinTerminalPane::IsFocused()
     } else {
         return IsShown();
     }
+}
+
+void clBuiltinTerminalPane::DetectTerminals()
+{
+#ifdef __WXMSW__
+    m_scan_thread = new std::thread([this]() {
+        std::map<wxString, wxString> options_map = { { "bash", "bash" }, { "CMD", "CMD" } };
+        CompilerLocatorMSVC locator_msvc{};
+        if(locator_msvc.Locate()) {
+            // attempt to locate MSVC compilers
+            const auto& compilers = locator_msvc.GetCompilers();
+            for(auto compiler : compilers) {
+                wxString build_tool = compiler->GetTool("MAKE");
+                build_tool = build_tool.BeforeLast('>');
+                build_tool.Prepend("CMD /K ");
+                options_map.insert({ "CMD for " + compiler->GetName(), build_tool });
+            }
+        }
+        SetTerminalOptions(options_map);
+    });
+#endif
+}
+
+void clBuiltinTerminalPane::GetTerminalOptions(std::map<wxString, wxString>* options)
+{
+    wxMutexLocker locker{ m_mutex };
+    options->clear();
+    options->insert(m_options_map.begin(), m_options_map.end());
+}
+
+void clBuiltinTerminalPane::SetTerminalOptions(const std::map<wxString, wxString>& options)
+{
+    wxMutexLocker locker{ m_mutex };
+    m_options_map.clear();
+    m_options_map.insert(options.begin(), options.end());
 }

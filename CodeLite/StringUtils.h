@@ -28,6 +28,7 @@
 #include "asyncprocess.h"
 #include "codelite_exports.h"
 
+#include <sstream>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/string.h>
@@ -118,6 +119,21 @@ public:
 
     /// Given `strings` return the longest common prefix for them
     static wxString FindCommonPrefix(const wxArrayString& strings);
+
+    /// Given `Container` create an array with unique entries
+    template <typename Container>
+    static wxArrayString MakeUniqueArray(const Container& container)
+    {
+        wxArrayString arr;
+        std::unordered_set<wxString> unique_set;
+        arr.reserve(container.size());
+        for(const auto& str : container) {
+            if(unique_set.insert(str).second) {
+                arr.Add(str);
+            }
+        }
+        return arr;
+    }
 };
 
 #endif // STRINGUTILS_H

@@ -63,6 +63,9 @@ void InflateSize(wxSize& size, double factor)
     }
 }
 
+/// Given tooltip text `str` prepare it so it can fit into a window without overflowing the screen size
+/// by default, we use maximum line width of 80 chars, but this is not strict, since we enforce word
+/// wrapping and not line character wrapping
 void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
 {
     wxString restr = R"str(<.*?>)str";
@@ -84,14 +87,12 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
     wxArrayString lines;
     enum State { kNormal, kCodeBlockLanguage, kCodeBlock } state = kNormal;
     for(const wxChar& ch : str) {
-        // check if this line is empty
         switch(state) {
         case kNormal:
             if(curline.empty()) {
                 switch(ch) {
+                    // ignore leading white spaces
                 case '\n':
-                    break;
-                // ignore leading whitespaces
                 case '\r':
                 case '\t':
                 case ' ':
@@ -102,6 +103,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                 }
                 continue;
             } else {
+                // curline is not empty
                 switch(ch) {
                 case '\n':
                     lines.Add(curline);
@@ -111,7 +113,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                 case '.':
                 case ';':
                 case ',':
-                    // word wrapping
+                    // check for word wrapping after the above characters
                     curline << ch;
                     if(curline.size() >= MAX_LINE_WIDTH) {
                         lines.Add(curline);
@@ -121,6 +123,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                 default:
                     curline << ch;
                     if(curline == "```") {
+                        // starting a codeblock
                         state = kCodeBlockLanguage;
                         lines.Add(curline);
                         curline.clear();
@@ -130,7 +133,8 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
             }
             break;
         case kCodeBlockLanguage:
-            // consume everything until we find the LF
+            // sometimes, a codeblock prefix is followed by the language
+            // skip it (e.g. "```cpp")
             switch(ch) {
             case '\n':
                 state = kCodeBlock;
@@ -140,6 +144,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
             }
             break;
         case kCodeBlock:
+            // Unformatted code block. Only handle LF and the special char backslash
             switch(ch) {
             case '\\':
                 break;
@@ -160,6 +165,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
         }
     }
 
+    // if we got some unprocessed line -> add it
     if(!curline.empty()) {
         lines.Add(curline);
         curline.clear();

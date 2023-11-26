@@ -44,9 +44,6 @@
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
 
-const wxEventType wxEVT_TIP_BTN_CLICKED_UP = wxNewEventType();
-const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
-
 namespace
 {
 /// mostly needed under linux where the calculate size does not match the actual size required to draw the tooltip

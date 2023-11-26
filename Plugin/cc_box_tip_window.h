@@ -35,9 +35,6 @@
 class IEditor;
 class CCBox;
 
-WXDLLIMPEXP_SDK extern const wxEventType wxEVT_TIP_BTN_CLICKED_UP;
-WXDLLIMPEXP_SDK extern const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN;
-
 class WXDLLIMPEXP_SDK CCBoxTipWindow : public wxPopupWindow
 {
 protected:

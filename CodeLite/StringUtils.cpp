@@ -1,6 +1,5 @@
 #include "StringUtils.h"
 
-#include "clModuleLogger.hpp"
 
 #include <vector>
 #include <wx/tokenzr.h>
@@ -523,7 +522,6 @@ wxArrayString StringUtils::AppendAndMakeUnique(const wxArrayString& arr, const w
     }
     return unique_arr;
 }
-#include "file_logger.h"
 
 wxString StringUtils::FindCommonPrefix(const wxArrayString& strings)
 {

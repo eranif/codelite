@@ -25,22 +25,12 @@
 
 #include "cc_box_tip_window.h"
 
-#include "ColoursAndFontsManager.h"
-#include "Markup.h"
-#include "bitmap_loader.h"
 #include "clMarkdownRenderer.hpp"
-#include "clSystemSettings.h"
-#include "drawingutils.h"
-#include "editor_config.h"
-#include "event_notifier.h"
-#include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "wx/arrstr.h"
 #include "wx/dcclient.h"
-#include "wx/panel.h"
 #include "wx/regex.h"
-#include "wx/sizer.h"
 
 #include <algorithm>
 #include <memory>
@@ -78,63 +68,103 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
     wxString restr = R"str(<.*?>)str";
     wxRegEx re(restr, wxRE_ADVANCED);
 
-    auto lines = wxStringTokenize(str, "\n", wxTOKEN_RET_EMPTY);
-    str.clear();
+    constexpr int MAX_LINE_WIDTH = 80;
 
-    wxArrayString lines_trimmed;
-    lines_trimmed.reserve(lines.size());
+    str.Replace("\t", " ");
+    str.Replace("/**", wxEmptyString);
+    str.Replace("/*", wxEmptyString);
+    str.Replace("/*!", wxEmptyString);
+    str.Replace("*/", wxEmptyString);
 
-    for(auto& line : lines) {
-        if(strip_html_tags && re.IsValid()) {
-            re.ReplaceAll(&line, wxEmptyString);
-        }
+    if(strip_html_tags && re.IsValid()) {
+        re.ReplaceAll(&str, wxEmptyString);
+    }
 
-        line.Replace("\t", " ");
-        line.Replace("/**", wxEmptyString);
-        line.Replace("/*", wxEmptyString);
-        line.Replace("/*!", wxEmptyString);
-        line.Replace("*/", wxEmptyString);
-
-        bool cont = true;
-        size_t len = 0;
-        for(size_t i = 0; i < line.length() && cont; ++i) {
-            wxChar ch = line[i];
+    wxString curline;
+    wxArrayString lines;
+    enum State { kNormal, kCodeBlockLanguage, kCodeBlock } state = kNormal;
+    for(const wxChar& ch : str) {
+        // check if this line is empty
+        switch(state) {
+        case kNormal:
+            if(curline.empty()) {
+                switch(ch) {
+                case '\n':
+                    break;
+                // ignore leading whitespaces
+                case '\r':
+                case '\t':
+                case ' ':
+                    break;
+                default:
+                    curline << ch;
+                    break;
+                }
+                continue;
+            } else {
+                switch(ch) {
+                case '\n':
+                    lines.Add(curline);
+                    curline.clear();
+                    break;
+                case ' ':
+                case '.':
+                case ';':
+                case ',':
+                    // word wrapping
+                    curline << ch;
+                    if(curline.size() >= MAX_LINE_WIDTH) {
+                        lines.Add(curline);
+                        curline.clear();
+                    }
+                    break;
+                default:
+                    curline << ch;
+                    if(curline == "```") {
+                        state = kCodeBlockLanguage;
+                        lines.Add(curline);
+                        curline.clear();
+                    }
+                    break;
+                }
+            }
+            break;
+        case kCodeBlockLanguage:
+            // consume everything until we find the LF
             switch(ch) {
-            case ' ':
-                // skip leading whitespace
-                break;
-            case '*':
-                // include the start and break
-                len = i + 1;
-                cont = false;
+            case '\n':
+                state = kCodeBlock;
                 break;
             default:
-                cont = false;
                 break;
             }
-        }
-
-        if(len) {
-            line.erase(0, len);
-        }
-
-        // check if this line is empty
-        wxString tmp_line = line;
-        tmp_line.Trim();
-
-        bool is_empty_line = tmp_line.empty();
-
-        // remove excessive empty lines
-        if(is_empty_line && (lines_trimmed.empty() || lines_trimmed.Last().empty()))
-            continue;
-
-        if(is_empty_line) {
-            lines_trimmed.Add(tmp_line);
-        } else {
-            lines_trimmed.Add(line);
+            break;
+        case kCodeBlock:
+            switch(ch) {
+            case '\\':
+                break;
+            case '\n':
+                lines.Add(curline);
+                curline.clear();
+                break;
+            default:
+                curline << ch;
+                if(curline.EndsWith("```")) {
+                    lines.Add(curline);
+                    curline.clear();
+                    state = kNormal;
+                }
+                break;
+            }
+            break;
         }
     }
-    str = wxJoin(lines_trimmed, '\n');
+
+    if(!curline.empty()) {
+        lines.Add(curline);
+        curline.clear();
+    }
+    str = wxJoin(lines, '\n');
 }
 
 /**

@@ -34,6 +34,7 @@
 
 #include "bookmark_manager.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include "znSettingsDlg.h"
 #include "zn_config_item.h"
 
@@ -170,7 +171,8 @@ void ZoomNavigator::DoInitialize()
     // create tab (possibly detached)
     auto book = m_mgr->BookGet(PaneId::SIDE_BAR);
     m_zoompane = new wxPanel(book);
-    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_zoompane, ZOOM_PANE_TITLE, clLoadSidebarBitmap("zoom-button"));
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_zoompane, ZOOM_PANE_TITLE,
+                       clLoadSidebarBitmap("zoom-button", clGetManager()->BookGet(PaneId::SIDE_BAR)));
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
 
     m_text = new ZoomText(m_zoompane);

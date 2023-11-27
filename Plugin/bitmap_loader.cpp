@@ -548,8 +548,9 @@ bool BitmapLoader::GetIconBundle(const wxString& name, wxIconBundle* bundle)
     return true;
 }
 
-wxBitmap clLoadSidebarBitmap(const wxString& name)
+wxBitmap clLoadSidebarBitmap(const wxString& name, wxWindow* win)
 {
+    wxUnusedVar(win);
     thread_local static std::unordered_map<wxString, wxBitmap> dark_sidebar_bitmaps;
     thread_local static std::unordered_map<wxString, wxBitmap> light_sidebar_bitmaps;
 
@@ -569,15 +570,13 @@ wxBitmap clLoadSidebarBitmap(const wxString& name)
     }
 
     wxSize button_size{ 24, 24 };
-#ifdef __WXMAC__
-    button_size = wxSize{ 32, 32 };
-#endif
 
     auto bmpbundle = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), button_size);
     if(!bmpbundle.IsOk()) {
         return wxNullBitmap;
     }
-    auto bmp = bmpbundle.GetBitmapFor(wxTheApp->GetTopWindow());
+
+    auto bmp = bmpbundle.GetBitmap(button_size);
     cache.insert({ name, bmp });
     return bmp;
 }

@@ -128,7 +128,7 @@ void SideBar::CreateGUIControls()
 
     name = _("Workspace");
     m_workspaceTab = new WorkspaceTab(m_book, name);
-    m_book->AddPage(m_workspaceTab, name, clLoadSidebarBitmap("workspace-button"), true);
+    m_book->AddPage(m_workspaceTab, name, clLoadSidebarBitmap("workspace-button", m_book), true);
 
     m_tabs.insert(std::make_pair(name, Tab(name, m_workspaceTab)));
     mgr->AddWorkspaceTab(name);
@@ -136,7 +136,7 @@ void SideBar::CreateGUIControls()
     // Add the explorer tab
     name = _("File Explorer");
     m_explorer = new FileExplorer(m_book, name);
-    m_book->AddPage(m_explorer, name, clLoadSidebarBitmap("file-explorer-button"), false);
+    m_book->AddPage(m_explorer, name, clLoadSidebarBitmap("file-explorer-button", m_book), false);
 
     m_tabs.insert(std::make_pair(name, Tab(name, m_explorer)));
     mgr->AddWorkspaceTab(name);
@@ -148,7 +148,7 @@ void SideBar::CreateGUIControls()
     // #ifndef __WXOSX__
     name = _("Tabs");
     m_openWindowsPane = new OpenWindowsPanel(m_book, name);
-    m_book->AddPage(m_openWindowsPane, name, clLoadSidebarBitmap("tabs-button"));
+    m_book->AddPage(m_openWindowsPane, name, clLoadSidebarBitmap("tabs-button", m_book));
 
     m_tabs.insert(std::make_pair(name, Tab(name, m_openWindowsPane)));
     mgr->AddWorkspaceTab(name);
@@ -157,7 +157,7 @@ void SideBar::CreateGUIControls()
     // Add the Tabgroups tab
     name = _("Groups");
     m_TabgroupsPane = new TabgroupsPane(m_book, name);
-    m_book->AddPage(m_TabgroupsPane, name, clLoadSidebarBitmap("groups-button"));
+    m_book->AddPage(m_TabgroupsPane, name, clLoadSidebarBitmap("groups-button", m_book));
 
     m_tabs.insert(std::make_pair(name, Tab(name, m_TabgroupsPane)));
     mgr->AddWorkspaceTab(name);

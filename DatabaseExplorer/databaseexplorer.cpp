@@ -116,7 +116,8 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     m_dbViewerPanel = new DbViewerPanel(m_mgr->BookGet(PaneId::SIDE_BAR), editorBook, m_mgr);
-    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"), clLoadSidebarBitmap("dbexplorer-button"));
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"),
+                       clLoadSidebarBitmap("dbexplorer-button", clGetManager()->BookGet(PaneId::SIDE_BAR)));
     m_mgr->AddWorkspaceTab(_("DbExplorer"));
 
     // configure autolayout algorithns

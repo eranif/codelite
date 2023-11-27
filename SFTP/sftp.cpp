@@ -130,7 +130,8 @@ SFTP::SFTP(IManager* manager)
 
     } else {
         m_browserView = new SFTPTreeView(m_mgr->BookGet(PaneId::SIDE_BAR), this);
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_browserView, _("SFTP"), clLoadSidebarBitmap("sftp-button"));
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_browserView, _("SFTP"),
+                           clLoadSidebarBitmap("sftp-button", clGetManager()->BookGet(PaneId::SIDE_BAR)));
     }
 
     // Add the "SFTP Log" page to the output pane

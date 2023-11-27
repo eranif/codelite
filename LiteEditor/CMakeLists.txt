@@ -60,8 +60,6 @@ if(UNIX)
         set(ADDTIONAL_LIBRARIES "-lutil")
     elseif(UNIX AND NOT APPLE)
         set(ADDITIONAL_LIBRARIES "-ldl -lutil -lgobject-2.0")
-    else()
-        set(ADDITIONAL_LIBRARIES "-ldl")
     endif()
 endif(UNIX)
 

@@ -682,7 +682,7 @@ void clEditor::SetProperties()
 #else
     UsePopUp(0);
 #endif
-    
+
     m_lastBeginLine = wxNOT_FOUND;
     m_lastEndLine = wxNOT_FOUND;
     m_lastLine = wxNOT_FOUND;
@@ -3825,6 +3825,7 @@ void clEditor::OnMotion(wxMouseEvent& event)
         DoMarkHyperlink(event, true);
     } else {
         event.Skip();
+        SetSTCCursor(wxSTC_CURSORNORMAL);
     }
 }
 
@@ -4644,6 +4645,7 @@ void clEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
         if(pos != wxSTC_INVALID_POSITION) {
             if(m_context->GetHyperlinkRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd)) {
                 IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
+                SetSTCCursor(8);
             } else {
                 m_hyperLinkIndicatroStart = wxNOT_FOUND;
                 m_hyperLinkIndicatroEnd = wxNOT_FOUND;

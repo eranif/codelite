@@ -259,6 +259,7 @@ void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
 
     if(!::wxGetKeyState(WXK_CONTROL)) {
         ClearIndicators();
+        m_ctrl->SetSTCCursor(wxSTC_CURSORNORMAL);
         return;
     }
 
@@ -282,6 +283,7 @@ void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
     // set new
     m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
     m_ctrl->IndicatorFillRange(range.start(), range.length());
+    m_ctrl->SetSTCCursor(8); // hand cursor
     m_indicatorHyperlink = range;
 }
 

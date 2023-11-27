@@ -230,7 +230,7 @@ protected:
             }
         }
 
-        wxRect bmp_rect = wxRect(m_bmp.GetSize()).CenterIn(client_rect);
+        wxRect bmp_rect = wxRect(m_bmp.GetLogicalSize()).CenterIn(client_rect);
         dc.DrawBitmap(m_bmp, bmp_rect.GetTopLeft());
     }
 

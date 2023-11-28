@@ -3418,9 +3418,9 @@ void clMainFrame::CompleteInitialization()
                                  .Name(m_sidebar->GetCaption())
                                  .Caption(m_sidebar->GetCaption())
                                  .Left()
-                                 .BestSize(bestWidth, -1)
                                  .Layer(1)
                                  .Position(0)
+                                 .MinSize(FromDIP(250), -1)
                                  .CloseButton(false)
                                  .Show(true));
 
@@ -3429,8 +3429,8 @@ void clMainFrame::CompleteInitialization()
                                            .Name(m_secondary_sidebar->GetCaption())
                                            .Caption(m_secondary_sidebar->GetCaption())
                                            .Right()
-                                           .BestSize(bestWidth, -1)
                                            .Layer(1)
+                                           .MinSize(FromDIP(250), -1)
                                            .Position(0)
                                            .CloseButton(false)
                                            .Show(true));
@@ -3443,7 +3443,6 @@ void clMainFrame::CompleteInitialization()
                                       .Layer(1)
                                       .Position(1)
                                       .CloseButton(false)
-                                      .BestSize(-1, bestHeight)
                                       .Hide());
 
     m_mgr.AddPane(m_outputPane, wxAuiPaneInfo()
@@ -3453,8 +3452,7 @@ void clMainFrame::CompleteInitialization()
                                     .Bottom()
                                     .Layer(1)
                                     .Position(0)
-                                    .Show(false)
-                                    .BestSize(-1, bestHeight));
+                                    .Show(false));
     UpdateAUI();
     m_defaultLayout = m_mgr.SavePerspective();
     Layout();

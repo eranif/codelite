@@ -70,8 +70,6 @@ SideBar::SideBar(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, l
         return;
     }
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-
-    Hide();
     CreateGUIControls();
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &SideBar::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &SideBar::OnSettingsChanged, this);

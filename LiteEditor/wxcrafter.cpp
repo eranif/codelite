@@ -200,7 +200,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_mainPanel->SetSashGravity(0.5);
     m_mainPanel->SetMinimumPaneSize(10);
 
-    boxSizer149->Add(m_mainPanel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer149->Add(m_mainPanel, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_buttonsPage =
         new wxPanel(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTAB_TRAVERSAL);

@@ -3420,7 +3420,7 @@ void clMainFrame::CompleteInitialization()
                                  .Left()
                                  .Layer(1)
                                  .Position(0)
-                                 .MinSize(FromDIP(250), -1)
+                                 .MinSize(FromDIP(200), -1)
                                  .CloseButton(false)
                                  .Show(true));
 
@@ -3430,7 +3430,7 @@ void clMainFrame::CompleteInitialization()
                                            .Caption(m_secondary_sidebar->GetCaption())
                                            .Right()
                                            .Layer(1)
-                                           .MinSize(FromDIP(250), -1)
+                                           .MinSize(FromDIP(200), -1)
                                            .Position(0)
                                            .CloseButton(false)
                                            .Show(true));

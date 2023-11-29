@@ -25,10 +25,21 @@ wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
 
 namespace
 {
-/// Paint the control background
-void paint_background(wxDC& dc, wxWindow* win, wxDirection direction)
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder border_simple_theme_aware_bit()
 {
-    wxRect client_rect = win->GetClientRect();
+#ifdef __WXMAC__
+    return wxBORDER_NONE;
+#elif defined(__WXGTK__)
+    return wxBORDER_STATIC;
+#else
+    return wxBORDER_SIMPLE;
+#endif
+} // DoGetBorderSimpleBit
+
+/// Paint the control background
+void paint_background(wxDC& dc, wxWindow* win, const wxRect& rect, wxDirection direction)
+{
     wxColour bg_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     bool is_dark = DrawingUtils::IsDark(bg_colour);
     int alpha = is_dark ? 110 : 150;
@@ -37,25 +48,7 @@ void paint_background(wxDC& dc, wxWindow* win, wxDirection direction)
     if(direction == wxBOTTOM || direction == wxTOP) {
         gradient_direction = wxSOUTH;
     }
-
-    dc.GradientFillLinear(client_rect, bg_colour.ChangeLightness(alpha), bg_colour, gradient_direction);
-    wxColour pen_colour = is_dark ? *wxBLACK : bg_colour.ChangeLightness(80);
-    dc.SetPen(pen_colour);
-    switch(direction) {
-    case wxRIGHT:
-        dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetBottomLeft());
-        break;
-    case wxTOP:
-        dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
-        break;
-    case wxBOTTOM:
-        dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
-        break;
-    default:
-    case wxLEFT:
-        dc.DrawLine(client_rect.GetTopRight(), client_rect.GetBottomRight());
-        break;
-    }
+    dc.GradientFillLinear(rect, bg_colour.ChangeLightness(alpha), bg_colour, gradient_direction);
 }
 } // namespace
 
@@ -201,60 +194,30 @@ protected:
         // draw the background
         wxColour base_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
         bool is_dark = DrawingUtils::IsDark(base_colour);
-        if(IsSeleced()) {
-            dc.SetBrush(base_colour);
-            dc.SetPen(base_colour);
-            dc.DrawRectangle(client_rect);
-        } else {
-            paint_background(dc, this, m_direction);
-        }
-
+        paint_background(dc, this, client_rect, m_direction);
         if(IsSeleced()) {
             // draw the selected item using different background colour
+            client_rect.Deflate(1);
             wxRect frame_rect = client_rect;
-            constexpr double RADIUS_SIZE = 0.0;
-
             wxColour colour = base_colour;
             if(is_dark) {
-                colour = colour.ChangeLightness(110);
+                colour = colour.ChangeLightness(115);
             } else {
                 colour = *wxWHITE;
             }
             dc.SetBrush(colour);
             dc.SetPen(colour);
-            dc.DrawRoundedRectangle(frame_rect, RADIUS_SIZE);
-
-            wxColour line_colour = is_dark ? base_colour.ChangeLightness(120) : base_colour.ChangeLightness(50);
-            wxColour upper_line_colour = is_dark ? *wxBLACK : base_colour.ChangeLightness(50);
-            dc.SetPen(line_colour);
-            dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
-            // we want to make a "sink" effect
-            // so the upper line needs to appear darker
-            dc.SetPen(upper_line_colour);
-            dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
-
-            // draw a vertical line as well
-            wxColour pen_colour = is_dark ? *wxBLACK : base_colour.ChangeLightness(80);
-            dc.SetPen(pen_colour);
-            switch(m_direction) {
-            case wxRIGHT:
-                dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetBottomLeft());
-                break;
-            case wxTOP:
-                dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
-                break;
-            case wxBOTTOM:
-                dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
-                break;
-            default:
-            case wxLEFT:
-                dc.DrawLine(client_rect.GetTopRight(), client_rect.GetBottomRight());
-                break;
-            }
+            dc.DrawRectangle(frame_rect);
         }
 
         wxRect bmp_rect = wxRect(m_bmp.GetLogicalSize()).CenterIn(client_rect);
         dc.DrawBitmap(m_bmp, bmp_rect.GetTopLeft());
+
+        if(IsSeleced()) {
+            dc.SetBrush(*wxTRANSPARENT_BRUSH);
+            dc.SetPen(is_dark ? base_colour.ChangeLightness(150) : base_colour.ChangeLightness(70));
+            dc.DrawRectangle(client_rect);
+        }
     }
 
     void OnEraseBg(wxEraseEvent& event) { wxUnusedVar(event); }
@@ -361,7 +324,7 @@ void clSideBarButtonCtrl::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
     wxBufferedPaintDC dc(this);
-    paint_background(dc, this, m_buttonsPosition);
+    paint_background(dc, this, GetClientRect(), m_buttonsPosition);
 }
 
 int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wxWindow* linked_page, bool select)
@@ -382,7 +345,12 @@ int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wx
     btn->SetLinkedPage(linked_page);
     btn->SetDirection(m_buttonsPosition);
     btn->Refresh();
-    m_mainSizer->Add(btn, wxSizerFlags().CenterHorizontal());
+
+    if(IsHorizontalLayout()) {
+        m_mainSizer->Add(btn, wxSizerFlags().CenterVertical());
+    } else {
+        m_mainSizer->Add(btn, wxSizerFlags().CenterHorizontal());
+    }
 
     SetSizeHints(btn->GetSize().GetWidth(), wxNOT_FOUND);
     SetSize(btn->GetSize().GetWidth(), wxNOT_FOUND);
@@ -583,7 +551,7 @@ bool clSideBarButtonCtrl::IsHorizontalLayout() const
 // -----------------------
 
 clSideBarCtrl::clSideBarCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, wxBORDER_NONE)
+    : wxPanel(parent, id, pos, size, border_simple_theme_aware_bit())
 {
     bool vertical_sizer = style & (wxBK_TOP | wxBK_BOTTOM);
     m_mainSizer = new wxBoxSizer(vertical_sizer ? wxVERTICAL : wxHORIZONTAL);

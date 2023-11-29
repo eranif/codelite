@@ -27,7 +27,6 @@
 
 #include "cl_config.h"
 #include "cl_defs.h"
-#include "wxStringHash.h"
 
 EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)
@@ -57,20 +56,15 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
 #endif
 
     std::unordered_map<wxString, wxDirection> orientation_map = {
-        { "UP", wxUP }, { "DOWN", wxDOWN }, { "LEFT", wxLEFT }, { "RIGHT", wxRIGHT }
+        { "UP", wxUP }, { "DOWN", wxDOWN }, { "LEFT", wxLEFT }, { "RIGHT", wxRIGHT }, { "VERTICAL", wxLEFT }
     };
+
     std::unordered_map<int, wxString> orientation_map_reverse = {
-        { wxUP, "UP" }, { wxDOWN, "DOWN" }, { wxLEFT, "LEFT" }, { wxRIGHT, "RIGHT" }
+        { wxUP, "UP" }, { wxDOWN, "DOWN" }, { wxLEFT, "LEFT" }, { wxRIGHT, "RIGHT" }, { wxLEFT, "VERTICAL" }
     };
 
-    std::vector<wxString> tab_orientation = { "UP", "DOWN" };
-
-#ifndef __WXMSW__
-    tab_orientation.push_back("LEFT");
-    tab_orientation.push_back("RIGHT");
-#endif
-
-    AddProperty(_("Workspace tabs orientation"), tab_orientation,
+    std::vector<wxString> sidebar_tab_orientation = { "VERTICAL", "UP", "DOWN" };
+    AddProperty(_("Sidebar buttons position"), sidebar_tab_orientation,
                 orientation_map_reverse[m_options->GetWorkspaceTabsDirection()],
                 [this, orientation_map](const wxString&, const wxAny& value) mutable {
                     wxString str_value;

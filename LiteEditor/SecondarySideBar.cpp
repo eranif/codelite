@@ -2,6 +2,8 @@
 
 #include "SideBar.hpp"
 #include "cl_config.h"
+#include "editor_config.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
 
@@ -14,10 +16,13 @@ SecondarySideBar::SecondarySideBar(wxWindow* parent, long style)
 
     m_book = new clSideBarCtrl(this);
     GetSizer()->Add(m_book, wxSizerFlags().Expand().Proportion(1));
-    m_book->SetOrientationOnTheRight(true);
-    GetSizer()->Fit(this);
 
+    auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
+    m_book->SetButtonPosition(direction);
+
+    GetSizer()->Fit(this);
     m_book->Bind(wxEVT_SIDEBAR_CONTEXT_MENU, &SecondarySideBar::OnContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &SecondarySideBar::OnSettingsChanged, this);
 }
 
 SecondarySideBar::~SecondarySideBar()
@@ -27,6 +32,8 @@ SecondarySideBar::~SecondarySideBar()
     for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
         tabs.Add(m_book->GetPageText(i));
     }
+
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &SecondarySideBar::OnSettingsChanged, this);
 
     // override the values
     clConfig::Get().Write("secondary_side_bar.tabs", tabs);
@@ -91,4 +98,16 @@ void SecondarySideBar::SetSelection(int selection)
         return;
     }
     m_book->SetSelection(selection);
+}
+
+void SecondarySideBar::OnSettingsChanged(wxCommandEvent& event)
+{
+    event.Skip();
+
+    auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
+    // on the secondary bar, "left" means: vertical tabs, i.e. place them on the right side
+    if(direction == wxLEFT) {
+        direction = wxRIGHT;
+    }
+    m_book->SetButtonPosition(direction);
 }

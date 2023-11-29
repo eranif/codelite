@@ -13,6 +13,7 @@ private:
 protected:
     void OnContextMenu(wxContextMenuEvent& event);
     void MoveToPrimarySideBar(int pos);
+    void OnSettingsChanged(wxCommandEvent& event);
 
 public:
     SecondarySideBar(wxWindow* parent, long style = wxBORDER_NONE);

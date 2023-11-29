@@ -26,21 +26,35 @@ wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
 namespace
 {
 /// Paint the control background
-void paint_background(wxDC& dc, wxWindow* win, bool is_right_tabs)
+void paint_background(wxDC& dc, wxWindow* win, wxDirection direction)
 {
     wxRect client_rect = win->GetClientRect();
     wxColour bg_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     bool is_dark = DrawingUtils::IsDark(bg_colour);
     int alpha = is_dark ? 110 : 150;
-    dc.GradientFillLinear(client_rect, bg_colour.ChangeLightness(alpha), bg_colour, wxEAST);
+
+    wxDirection gradient_direction = wxEAST;
+    if(direction == wxBOTTOM || direction == wxTOP) {
+        gradient_direction = wxSOUTH;
+    }
+
+    dc.GradientFillLinear(client_rect, bg_colour.ChangeLightness(alpha), bg_colour, gradient_direction);
     wxColour pen_colour = is_dark ? *wxBLACK : bg_colour.ChangeLightness(80);
     dc.SetPen(pen_colour);
-    if(is_right_tabs) {
-        // draw line on the LEFT side
+    switch(direction) {
+    case wxRIGHT:
         dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetBottomLeft());
-    } else {
-        // draw line on the RIGHT side
+        break;
+    case wxTOP:
+        dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
+        break;
+    case wxBOTTOM:
+        dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
+        break;
+    default:
+    case wxLEFT:
         dc.DrawLine(client_rect.GetTopRight(), client_rect.GetBottomRight());
+        break;
     }
 }
 } // namespace
@@ -59,6 +73,7 @@ protected:
     bool m_dragging = false;
     wxWindow* m_linkedPage = nullptr;
     wxString m_label;
+    wxDirection m_direction = wxLEFT;
 
 protected:
     void DoDrop()
@@ -191,7 +206,7 @@ protected:
             dc.SetPen(base_colour);
             dc.DrawRectangle(client_rect);
         } else {
-            paint_background(dc, this, m_sidebar->IsOrientationOnTheRight());
+            paint_background(dc, this, m_direction);
         }
 
         if(IsSeleced()) {
@@ -221,12 +236,20 @@ protected:
             // draw a vertical line as well
             wxColour pen_colour = is_dark ? *wxBLACK : base_colour.ChangeLightness(80);
             dc.SetPen(pen_colour);
-            if(m_sidebar->IsOrientationOnTheRight()) {
-                // draw line on the LEFT side
+            switch(m_direction) {
+            case wxRIGHT:
                 dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetBottomLeft());
-            } else {
-                // draw line on the RIGHT side
+                break;
+            case wxTOP:
+                dc.DrawLine(client_rect.GetBottomLeft(), client_rect.GetBottomRight());
+                break;
+            case wxBOTTOM:
+                dc.DrawLine(client_rect.GetTopLeft(), client_rect.GetTopRight());
+                break;
+            default:
+            case wxLEFT:
                 dc.DrawLine(client_rect.GetTopRight(), client_rect.GetBottomRight());
+                break;
             }
         }
 
@@ -278,6 +301,8 @@ public:
         Unbind(wxEVT_CONTEXT_MENU, &SideBarButton::OnContextMenu, this);
     }
 
+    void SetDirection(const wxDirection& direction) { this->m_direction = direction; }
+    const wxDirection& GetDirection() const { return m_direction; }
     void SetLinkedPage(wxWindow* win) { m_linkedPage = win; }
     wxWindow* GetLinkedPage() const { return m_linkedPage; }
 
@@ -293,11 +318,7 @@ clSideBarButtonCtrl::clSideBarButtonCtrl(wxWindow* parent, wxWindowID id, const 
     : wxControl(parent, id, pos, size, style | wxBORDER_NONE)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    m_mainSizer = new wxBoxSizer(wxHORIZONTAL);
-    SetSizer(m_mainSizer);
-
-    m_mainSizer = new wxBoxSizer(wxVERTICAL);
-    SetSizer(m_mainSizer);
+    Initialise();
 
     Bind(wxEVT_PAINT, &clSideBarButtonCtrl::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
@@ -309,14 +330,39 @@ clSideBarButtonCtrl::~clSideBarButtonCtrl()
     Unbind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
 }
 
+void clSideBarButtonCtrl::Initialise()
+{
+    if(!m_mainSizer) {
+        m_mainSizer = new wxBoxSizer(wxVERTICAL);
+    }
+
+    if(IsHorizontalLayout()) {
+        m_mainSizer->SetOrientation(wxHORIZONTAL);
+    } else {
+        m_mainSizer->SetOrientation(wxVERTICAL);
+    }
+
+    SetSizer(m_mainSizer);
+    GetSizer()->Layout();
+}
+
+void clSideBarButtonCtrl::SetButtonsPosition(wxDirection direction)
+{
+    m_buttonsPosition = direction;
+    // update the buttons
+    auto all_buttons = GetAllButtons();
+    for(auto button : all_buttons) {
+        static_cast<SideBarButton*>(button)->SetDirection(direction);
+    }
+    Initialise();
+}
+
 void clSideBarButtonCtrl::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
     wxBufferedPaintDC dc(this);
-    paint_background(dc, this, IsOrientationOnTheRight());
+    paint_background(dc, this, m_buttonsPosition);
 }
-
-void clSideBarButtonCtrl::SetOrientationOnTheRight(bool b) { m_orientation = b ? wxRIGHT : wxLEFT; }
 
 int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wxWindow* linked_page, bool select)
 {
@@ -334,6 +380,7 @@ int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wx
     btn->SetToolTip(label);
     btn->SetPageLabel(label);
     btn->SetLinkedPage(linked_page);
+    btn->SetDirection(m_buttonsPosition);
     btn->Refresh();
     m_mainSizer->Add(btn, wxSizerFlags().CenterHorizontal());
 
@@ -526,6 +573,11 @@ int clSideBarButtonCtrl::GetPageIndex(wxWindow* page) const
     return wxNOT_FOUND;
 }
 
+bool clSideBarButtonCtrl::IsHorizontalLayout() const
+{
+    return m_buttonsPosition == wxTOP || m_buttonsPosition == wxBOTTOM;
+}
+
 // -----------------------
 // SideBar control
 // -----------------------
@@ -533,11 +585,26 @@ int clSideBarButtonCtrl::GetPageIndex(wxWindow* page) const
 clSideBarCtrl::clSideBarCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, wxBORDER_NONE)
 {
-    SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    bool vertical_sizer = style & (wxBK_TOP | wxBK_BOTTOM);
+    m_mainSizer = new wxBoxSizer(vertical_sizer ? wxVERTICAL : wxHORIZONTAL);
+
+    SetSizer(m_mainSizer);
     Bind(wxEVT_SIZE, &clSideBarCtrl::OnSize, this);
     m_buttons = new clSideBarButtonCtrl(this);
     m_book = new wxSimplebook(this);
-    m_buttons->SetOrientationOnTheRight(style & wxBK_RIGHT);
+    // when we use a vertical sizer (i.e. the buttons are placed under or on top of the book,
+    // we set the buttons layout to be horizontal)
+    m_buttonsPosition = wxLEFT;
+    if(style & wxBK_TOP) {
+        m_buttonsPosition = wxTOP;
+    } else if(style & wxBK_RIGHT) {
+        m_buttonsPosition = wxRIGHT;
+    } else if(style & wxBK_BOTTOM) {
+        m_buttonsPosition = wxBOTTOM;
+    } else /* assume left, the default */ {
+        m_buttonsPosition = wxLEFT;
+    }
+    m_buttons->SetButtonsPosition(m_buttonsPosition);
     PlaceButtons();
 }
 
@@ -548,12 +615,22 @@ void clSideBarCtrl::PlaceButtons()
     GetSizer()->Detach(m_book);
     GetSizer()->Detach(m_buttons);
 
-    if(m_buttons->IsOrientationOnTheRight()) {
+    // adjust the sizer orientation
+    m_mainSizer->SetOrientation((m_buttonsPosition == wxLEFT || m_buttonsPosition == wxRIGHT) ? wxHORIZONTAL
+                                                                                              : wxVERTICAL);
+
+    switch(m_buttonsPosition) {
+    case wxRIGHT:
+    case wxBOTTOM:
         GetSizer()->Add(m_book, 1, wxEXPAND);
         GetSizer()->Add(m_buttons, 0, wxEXPAND);
-    } else {
+        break;
+    default:
+    case wxLEFT:
+    case wxTOP:
         GetSizer()->Add(m_buttons, 0, wxEXPAND);
         GetSizer()->Add(m_book, 1, wxEXPAND);
+        break;
     }
     GetSizer()->Layout();
     GetSizer()->Fit(this);
@@ -676,9 +753,10 @@ int clSideBarCtrl::GetPageIndex(wxWindow* page) const { return m_buttons->GetPag
 
 int clSideBarCtrl::GetPageIndex(const wxString& label) const { return m_buttons->GetPageIndex(label); }
 
-void clSideBarCtrl::SetOrientationOnTheRight(bool b)
+void clSideBarCtrl::SetButtonPosition(wxDirection direction)
 {
-    m_buttons->SetOrientationOnTheRight(b);
+    m_buttonsPosition = direction;
+    m_buttons->SetButtonsPosition(m_buttonsPosition);
     PlaceButtons();
 }
 

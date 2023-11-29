@@ -297,7 +297,7 @@ void SideBar::OnSettingsChanged(wxCommandEvent& event)
     event.Skip();
 
     auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
-    m_book->SetOrientationOnTheRight(direction == wxRIGHT);
+    m_book->SetButtonPosition(direction);
 }
 
 void SideBar::ShowTab(const wxString& name, bool show)

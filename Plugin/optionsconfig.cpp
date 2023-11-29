@@ -122,12 +122,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_preferredLocale(wxT("en_US"))
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
-#ifdef __WXMSW__
-    , m_workspaceTabsDirection(wxUP)
-#else
-    // macOS & Linux -> place it on the LEFT
     , m_workspaceTabsDirection(wxLEFT)
-#endif
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
 #ifdef __WXMAC__
@@ -249,16 +244,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_outputTabsDirection =
             (wxDirection)XmlUtils::ReadLong(node, "OutputTabsDirection", (int)m_outputTabsDirection);
         m_workspaceTabsDirection =
-            (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)m_workspaceTabsDirection);
-#ifdef __WXOSX__
-        if(m_workspaceTabsDirection == wxLEFT) {
-            m_workspaceTabsDirection = wxTOP;
-        }
-        if(m_workspaceTabsDirection == wxRIGHT) {
-            m_workspaceTabsDirection = wxBOTTOM;
-        }
-#endif
-
+            (wxDirection)XmlUtils::ReadLong(node, "SidebarButtonsPosition", (int)m_workspaceTabsDirection);
         m_webSearchPrefix = XmlUtils::ReadString(node, wxT("m_webSearchPrefix"), m_webSearchPrefix);
     }
 
@@ -341,7 +327,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("m_trimOnlyModifiedLines"), BoolToString(m_trimOnlyModifiedLines));
     n->AddAttribute(wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
     n->AddAttribute(wxT("OutputTabsDirection"), wxString() << (int)m_outputTabsDirection);
-    n->AddAttribute(wxT("WorkspaceTabsDirection"), wxString() << (int)m_workspaceTabsDirection);
+    n->AddAttribute(wxT("SidebarButtonsPosition"), wxString() << (int)m_workspaceTabsDirection);
     n->AddAttribute(wxT("IndentedComments"), BoolToString(m_indentedComments));
     n->AddAttribute(wxT("CopyLineEmptySelection"), BoolToString(m_copyLineEmptySelection));
     n->AddAttribute(wxT("SmartParen"), BoolToString(m_smartParen));

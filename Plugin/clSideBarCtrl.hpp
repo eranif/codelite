@@ -14,8 +14,8 @@ class WXDLLIMPEXP_SDK clSideBarButtonCtrl : public wxControl
     friend class clSideBarCtrl;
 
 protected:
-    wxSizer* m_mainSizer = nullptr;
-    wxDirection m_orientation = wxLEFT;
+    wxBoxSizer* m_mainSizer = nullptr;
+    wxDirection m_buttonsPosition = wxLEFT;
 
 protected:
     void MoveAfter(SideBarButton* src, SideBarButton* target);
@@ -24,15 +24,16 @@ protected:
     std::vector<wxWindow*> GetAllButtons();
     wxWindow* DoChangeSelection(int pos, bool notify);
     void OnPaint(wxPaintEvent& event);
+    void Initialise();
 
 public:
     clSideBarButtonCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clSideBarButtonCtrl();
 
-    /// Does the control placed on the left or right?
-    void SetOrientationOnTheRight(bool b);
-    bool IsOrientationOnTheRight() const { return m_orientation == wxRIGHT; }
+    /// Set the buttons packing (horizontal or vertical)
+    bool IsHorizontalLayout() const;
+    void SetButtonsPosition(wxDirection direction);
 
     /// Add new button at the end, returns its index
     /// Note that the `label` property is used as the tooltip
@@ -80,6 +81,8 @@ class WXDLLIMPEXP_SDK clSideBarCtrl : public wxPanel
 {
     clSideBarButtonCtrl* m_buttons = nullptr;
     wxSimplebook* m_book = nullptr;
+    wxDirection m_buttonsPosition = wxLEFT;
+    wxBoxSizer* m_mainSizer = nullptr;
 
 protected:
     /// Return the page position
@@ -138,8 +141,8 @@ public:
     /// Return the page position
     int GetPageIndex(const wxString& label) const;
 
-    /// place the buttons on the RIGHT side (false for LEFT)
-    void SetOrientationOnTheRight(bool b);
+    /// place the buttons position (top, left, right or bottom)
+    void SetButtonPosition(wxDirection direction);
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SIDEBAR_SELECTION_CHANGED, wxCommandEvent);

@@ -173,10 +173,19 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
         options.Add(name);
     }
 
-    wxString selected_shell = ::wxGetSingleChoice(_("Choose a shell:"), _("New Terminal"), options, 0);
+    int initial_value = 0;
+    wxString last_selection = clConfig::Get().Read("terminal/last_used_terminal", wxString());
+    if(!last_selection.empty() && options.Index(last_selection) != wxNOT_FOUND) {
+        initial_value = options.Index(last_selection);
+    }
+
+    wxString selected_shell = ::wxGetSingleChoice(_("Choose a shell:"), _("New Terminal"), options, initial_value);
     if(selected_shell.empty()) {
         return;
     }
+
+    // persist our selection
+    clConfig::Get().Write("terminal/last_used_terminal", selected_shell);
     shell = m_options_map[selected_shell];
 
 #else

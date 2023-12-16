@@ -79,9 +79,6 @@ void LSPOutlineViewDlg::DoInitialise()
         }
 
         builder.Clear();
-        int curdepth = containers.empty() ? 1 : containers.back().second;
-        // add indentation
-        builder.Add(wxString(' ', curdepth * 4), AnsiColours::NormalText());
 
         // determine the symbol
         switch(si.GetKind()) {

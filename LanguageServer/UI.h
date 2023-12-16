@@ -173,7 +173,7 @@ public:
     wxPanel* GetPanel155() { return m_panel155; }
     LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Outline View"),
                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
-                          long style = wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP | wxRESIZE_BORDER);
+                          long style = wxSTAY_ON_TOP);
     virtual ~LSPOutlineViewDlgBase();
 };
 

@@ -105,6 +105,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_choiceDiffToolsArr.Add(_("winmerge"));
     m_choiceDiffTools = new wxChoice(m_panel232, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1, -1)),
                                      m_choiceDiffToolsArr, 0);
+    m_choiceDiffTools->SetSelection(0);
 
     fgSizer11->Add(m_choiceDiffTools, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -1534,7 +1535,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     m_dvListCtrlLog =
         new clTerminalViewCtrl(m_panel_log, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel_log, wxSize(-1, -1)),
-                               wxDV_NO_HEADER | wxDV_SINGLE | get_border_simple_theme_aware_bit());
+                               wxDV_NO_HEADER | wxDV_MULTIPLE | wxDV_SINGLE | get_border_simple_theme_aware_bit());
 
     boxSizer729->Add(m_dvListCtrlLog, 1, wxEXPAND, WXC_FROM_DIP(5));
 

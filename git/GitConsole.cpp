@@ -44,6 +44,7 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "macros.h"
+#include "StringUtils.h"
 
 #include <algorithm>
 #include <wx/datetime.h>
@@ -240,6 +241,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
 
+    m_dvListCtrlLog->Bind(wxEVT_CONTEXT_MENU, &GitConsole::OnLogMenu, this);
     // force font/colours udpate
     clCommandEvent dummy;
     OnSysColoursChanged(dummy);
@@ -780,6 +782,43 @@ void GitConsole::PrintPrompt()
     builder.Add(GetPrompt(), AnsiColours::Green(), true);
     m_dvListCtrlLog->AddLine(builder.GetString(), false);
     builder.Clear();
+}
+
+void GitConsole::OnLogMenu(wxContextMenuEvent& event)
+{
+    wxUnusedVar(event);
+    wxMenu menu;
+    menu.Append(XRCID("git-console-log-copy"), _("Copy"));
+    menu.Append(XRCID("git-console-log-clear"), _("Clear"));
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            wxDataViewItemArray selected_items;
+            m_dvListCtrlLog->GetSelections(selected_items);
+
+            wxArrayString lines;
+            for(auto item : selected_items) {
+                wxString line = m_dvListCtrlLog->GetItemText(item);
+                line.Trim();
+                wxString mod_buffer;
+                StringUtils::StripTerminalColouring(line, mod_buffer);
+                lines.Add(mod_buffer);
+            }
+
+            ::CopyToClipboard(wxJoin(lines, '\n'));
+        },
+        XRCID("git-console-log-copy"));
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            m_dvListCtrlLog->DeleteAllItems();
+        },
+        XRCID("git-console-log-clear"));
+    m_dvListCtrlLog->PopupMenu(&menu);
 }
 
 void GitConsole::OnSysColoursChanged(clCommandEvent& event)

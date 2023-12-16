@@ -97,6 +97,7 @@ protected:
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);
     void OnSysColoursChanged(clCommandEvent& event);
+    void OnLogMenu(wxContextMenuEvent& event);
 
     void OnOpenFile(wxCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);

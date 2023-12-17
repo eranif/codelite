@@ -548,11 +548,21 @@ bool BitmapLoader::GetIconBundle(const wxString& name, wxIconBundle* bundle)
     return true;
 }
 
+namespace
+{
+thread_local static std::unordered_map<wxString, wxBitmap> dark_sidebar_bitmaps;
+thread_local static std::unordered_map<wxString, wxBitmap> light_sidebar_bitmaps;
+} // namespace
+
+void clClearSidebarBitmapCache()
+{
+    dark_sidebar_bitmaps.clear();
+    light_sidebar_bitmaps.clear();
+}
+
 wxBitmap clLoadSidebarBitmap(const wxString& name, wxWindow* win)
 {
     wxUnusedVar(win);
-    thread_local static std::unordered_map<wxString, wxBitmap> dark_sidebar_bitmaps;
-    thread_local static std::unordered_map<wxString, wxBitmap> light_sidebar_bitmaps;
 
     std::unordered_map<wxString, wxBitmap>& cache =
         clSystemSettings::IsDark() ? dark_sidebar_bitmaps : light_sidebar_bitmaps;

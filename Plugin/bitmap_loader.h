@@ -222,6 +222,9 @@ public:
     void SysColoursChanged();
 };
 
-// Helper load function
+/// Helper load function
 wxBitmap WXDLLIMPEXP_SDK clLoadSidebarBitmap(const wxString& name, wxWindow* win);
+
+/// Clear the sidebar bitmaps cache
+void WXDLLIMPEXP_SDK clClearSidebarBitmapCache();
 #endif

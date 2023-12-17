@@ -274,6 +274,7 @@ public:
     void SetPageLabel(const wxString& label) { this->m_label = label; }
     const wxString& GetButtonLabel() const { return m_label; }
     const wxBitmap GetButtonBitmap() const { return m_bmp; }
+    void SetPageBitmap(const wxBitmap& bmp) { m_bmp = bmp; }
 };
 
 clSideBarButtonCtrl::clSideBarButtonCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -684,6 +685,13 @@ wxBitmap clSideBarCtrl::GetPageBitmap(size_t pos) const
     auto button = m_buttons->GetButton(pos);
     CHECK_POINTER_RETURN(button, wxNullBitmap);
     return button->GetButtonBitmap();
+}
+
+void clSideBarCtrl::SetPageBitmap(size_t pos, const wxBitmap& bmp)
+{
+    auto button = m_buttons->GetButton(pos);
+    CHECK_POINTER_RETURN(button, );
+    button->SetPageBitmap(bmp);
 }
 
 wxString clSideBarCtrl::GetPageText(size_t pos) const

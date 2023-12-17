@@ -117,6 +117,9 @@ public:
     /// return the page bitmap
     wxBitmap GetPageBitmap(size_t pos) const;
 
+    /// Set the page bitmap
+    void SetPageBitmap(size_t pos, const wxBitmap& bmp);
+
     /// Remove page (this does not delete it)
     void RemovePage(size_t pos);
 

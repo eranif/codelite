@@ -235,16 +235,12 @@ public:
     explicit SideBarButton(clSideBarButtonCtrl* parent, const wxBitmap bmp)
         : wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
         , m_sidebar(parent)
-        , m_bmp(bmp)
     {
         m_dragStartTime = (time_t)-1;
         SetBackgroundStyle(wxBG_STYLE_PAINT);
         SetCursor(wxCURSOR_HAND);
 
-        wxRect rr = m_bmp.GetScaledSize();
-        rr.Inflate(10);
-        SetSizeHints(rr.GetWidth(), rr.GetHeight());
-        SetSize(rr.GetWidth(), rr.GetHeight());
+        SetPageBitmap(bmp);
 
         Bind(wxEVT_PAINT, &SideBarButton::OnPaint, this);
         Bind(wxEVT_ERASE_BACKGROUND, &SideBarButton::OnEraseBg, this);
@@ -274,7 +270,16 @@ public:
     void SetPageLabel(const wxString& label) { this->m_label = label; }
     const wxString& GetButtonLabel() const { return m_label; }
     const wxBitmap GetButtonBitmap() const { return m_bmp; }
-    void SetPageBitmap(const wxBitmap& bmp) { m_bmp = bmp; }
+    void SetPageBitmap(const wxBitmap& bmp)
+    {
+        m_bmp = bmp;
+        wxRect rr = m_bmp.GetScaledSize();
+        rr.Inflate(10);
+        SetSizeHints(rr.GetWidth(), rr.GetHeight());
+        SetSize(rr.GetWidth(), rr.GetHeight());
+
+        m_sidebar->GetSizer()->Layout();
+    }
 };
 
 clSideBarButtonCtrl::clSideBarButtonCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,

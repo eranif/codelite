@@ -28,6 +28,7 @@
 #include "ColoursAndFontsManager.h"
 #include "GitResetDlg.h"
 #include "StdToWX.h"
+#include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clBitmap.h"
@@ -44,7 +45,6 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "macros.h"
-#include "StringUtils.h"
 
 #include <algorithm>
 #include <wx/datetime.h>
@@ -787,6 +787,9 @@ void GitConsole::PrintPrompt()
 void GitConsole::OnLogMenu(wxContextMenuEvent& event)
 {
     wxUnusedVar(event);
+    wxDataViewItemArray selected_items;
+    m_dvListCtrlLog->GetSelections(selected_items);
+
     wxMenu menu;
     menu.Append(XRCID("git-console-log-copy"), _("Copy"));
     menu.Append(XRCID("git-console-log-clear"), _("Clear"));
@@ -810,6 +813,9 @@ void GitConsole::OnLogMenu(wxContextMenuEvent& event)
             ::CopyToClipboard(wxJoin(lines, '\n'));
         },
         XRCID("git-console-log-copy"));
+
+    menu.Enable(XRCID("git-console-log-copy"), !selected_items.empty());
+    menu.Enable(XRCID("git-console-log-clear"), !selected_items.empty());
 
     menu.Bind(
         wxEVT_MENU,

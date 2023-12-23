@@ -1044,7 +1044,9 @@ void clEditor::SetProperties()
     IndicatorSetUnder(INDICATOR_DEBUGGER, true);
 
     bool isDarkTheme = (lexer && lexer->IsDark());
-    SetUserIndicatorStyleAndColour(wxSTC_INDIC_ROUNDBOX, "RED");
+    auto indicator_style = isDarkTheme ? wxSTC_INDIC_BOX : wxSTC_INDIC_ROUNDBOX;
+    SetUserIndicatorStyleAndColour(isDarkTheme ? wxSTC_INDIC_SQUIGGLE : wxSTC_INDIC_ROUNDBOX,
+                                   isDarkTheme ? "WHITE" : "RED");
 
     wxColour highlight_colour{ *wxGREEN };
     wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
@@ -1054,30 +1056,34 @@ void clEditor::SetProperties()
 
     wxColour hover_highlight_colour = highlight_colour.ChangeLightness(150);
 
-#define INDICATOR_ALPHA 100
+    int ALPHA = 100;
+    if(isDarkTheme) {
+        ALPHA = wxSTC_ALPHA_OPAQUE;
+    }
+
     IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
     IndicatorSetHoverForeground(INDICATOR_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(INDICATOR_WORD_HIGHLIGHT, highlight_colour);
-    IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, wxSTC_ALPHA_NOALPHA);
+    IndicatorSetStyle(INDICATOR_WORD_HIGHLIGHT, indicator_style);
+    IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, ALPHA);
 
-    IndicatorSetUnder(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, true);
-    IndicatorSetStyle(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
+    IndicatorSetUnder(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, !isDarkTheme);
+    IndicatorSetStyle(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, indicator_style);
 
     IndicatorSetForeground(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
-    IndicatorSetAlpha(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, INDICATOR_ALPHA);
+    IndicatorSetAlpha(INDICATOR_FIND_BAR_WORD_HIGHLIGHT, ALPHA);
 
-    IndicatorSetUnder(INDICATOR_CONTEXT_WORD_HIGHLIGHT, true);
-    IndicatorSetStyle(INDICATOR_CONTEXT_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
+    IndicatorSetUnder(INDICATOR_CONTEXT_WORD_HIGHLIGHT, !isDarkTheme);
+    IndicatorSetStyle(INDICATOR_CONTEXT_WORD_HIGHLIGHT, indicator_style);
     IndicatorSetForeground(INDICATOR_CONTEXT_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
-    IndicatorSetAlpha(INDICATOR_CONTEXT_WORD_HIGHLIGHT, INDICATOR_ALPHA);
+    IndicatorSetAlpha(INDICATOR_CONTEXT_WORD_HIGHLIGHT, ALPHA);
 
     IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
-    IndicatorSetStyle(INDICATOR_MATCH, wxSTC_INDIC_BOX);
+    IndicatorSetStyle(INDICATOR_MATCH, indicator_style);
     IndicatorSetForeground(INDICATOR_MATCH, wxT("GREY"));
 
-    IndicatorSetStyle(INDICATOR_DEBUGGER, wxSTC_INDIC_BOX);
+    IndicatorSetStyle(INDICATOR_DEBUGGER, indicator_style);
     IndicatorSetForeground(INDICATOR_DEBUGGER, wxT("GREY"));
-#undef INDICATOR_ALPHA
 
     CmdKeyClear(wxT('L'), wxSTC_KEYMOD_CTRL); // clear Ctrl+D because we use it for something else
 

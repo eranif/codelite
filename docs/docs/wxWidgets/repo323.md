@@ -87,9 +87,9 @@ apt-get install libwxbase3.2-0-unofficial \
                 wx-common \
                 libwxgtk-media3.2-0-unofficial \
                 libwxgtk-media3.2unofficial-dev \
-                libwxgtk-webview3.2-0-unofficial \ 
-                libwxgtk-webview3.2unofficial-dev \ 
-                libwxgtk-webview3.2-0-unofficial-dbg \ 
+                libwxgtk-webview3.2-0-unofficial \
+                libwxgtk-webview3.2unofficial-dev \
+                libwxgtk-webview3.2-0-unofficial-dbg \
                 libwxbase3.2-0-unofficial-dbg \
                 libwxgtk3.2-0-unofficial-dbg \
                 libwxgtk-media3.2-0-unofficial-dbg \

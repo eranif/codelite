@@ -269,10 +269,12 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
         return;
     }
 
-    clDEBUG() << "User requested to open file:" << event.GetFileName() << endl;
+    clDEBUG() << "Rust plugin: handling build line clicked" << endl;
+    clDEBUG() << "File:" << event.GetFileName() << endl;
     clDEBUG() << "Line number:" << event.GetLineNumber() << endl;
 
     if(!FileExtManager::IsFileType(event.GetFileName(), FileExtManager::TypeRust)) {
+        clDEBUG() << "Not a rust file, Skip()" << endl;
         event.Skip();
         return;
     }
@@ -283,13 +285,14 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     // build the file path:
     // the compiler report the file in relative path to the `Cargo.toml` file
     wxString basepath;
-    if(!event.GetBuildDir().empty()) {
-        basepath = event.GetBuildDir();
-        clDEBUG() << "Build root dir is set to:" << event.GetBuildDir() << endl;
-    } else if(m_cargoTomlFile.FileExists()) {
-        clDEBUG() << "Build root dir is set to Cargo.toml path:" << m_cargoTomlFile.GetPath() << endl;
+    if(m_cargoTomlFile.FileExists()) {
         basepath = m_cargoTomlFile.GetPath();
+        clDEBUG() << "Build root dir is set to Cargo.toml path:" << basepath << endl;
+    } else {
+        basepath = wxFileName(clFileSystemWorkspace::Get().GetFileName()).GetPath();
+        clDEBUG() << "Build root dir is set to workspace path:" << basepath << endl;
     }
+
     bool is_abspath = event.GetFileName().StartsWith("/") || wxFileName(event.GetFileName()).IsAbsolute();
     if(!is_abspath && basepath.empty()) {
         // unable to determine the root folder
@@ -297,10 +300,10 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
         return;
     }
 
-    if(!is_abspath) {
-        basepath << "/" << event.GetFileName();
-    } else {
+    if(is_abspath) {
         basepath = event.GetFileName();
+    } else {
+        basepath << "/" << event.GetFileName();
     }
 
     wxFileName fnFile(basepath);

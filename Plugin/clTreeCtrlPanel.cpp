@@ -750,16 +750,30 @@ void clTreeCtrlPanel::OnRenameFile(wxCommandEvent& event)
 
 void clTreeCtrlPanel::ExpandToFileVoid(const wxFileName& filename) { ExpandToFile(filename); }
 
-bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
+bool clTreeCtrlPanel::ExpandToFile(const wxFileName& file_to_search)
 {
+#ifdef __WXMSW__
+    wxFileName filename{ file_to_search.GetFullPath().Lower() };
+#else
+    wxFileName filename{ file_to_search };
+#endif
+
     wxArrayString topFolders;
     wxArrayTreeItemIds topFoldersItems;
     GetTopLevelFolders(topFolders, topFoldersItems);
 
+#ifdef __WXMSW__
+    for(auto& top_folder : topFolders) {
+        top_folder.MakeLower();
+    }
+#endif
+
     int where = wxNOT_FOUND;
     wxString fullpath = filename.GetFullPath();
+
     for(size_t i = 0; i < topFolders.size(); ++i) {
-        if(fullpath.StartsWith(topFolders.Item(i))) {
+        auto& top_folder = topFolders[i];
+        if(fullpath.StartsWith(top_folder)) {
             where = i;
             break;
         }
@@ -768,11 +782,11 @@ bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
     // Could not find a folder that matches the filename
     if(where == wxNOT_FOUND)
         return false;
+
     wxString topFolder = topFolders.Item(where);
     wxTreeItemId closestItem = topFoldersItems.Item(where);
     fullpath.Remove(0, topFolder.length());
     wxFileName left(fullpath);
-
     wxArrayString parts = left.GetDirs();
     parts.Add(filename.GetFullName());
     clTreeCtrlData* d = GetItemData(closestItem);

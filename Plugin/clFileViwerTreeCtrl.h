@@ -47,15 +47,10 @@ public:
     clTreeNodeIndex() {}
     virtual ~clTreeNodeIndex() {}
 
-    wxTreeItemId Find(const wxString& path)
-    {
-        if(m_children.count(path)) {
-            return m_children.find(path)->second;
-        }
-        return wxTreeItemId();
-    }
-    void Add(const wxString& path, const wxTreeItemId& item) { m_children.insert(std::make_pair(path, item)); }
-    void Delete(const wxString& name) { m_children.erase(name); }
+    wxTreeItemId Find(const wxString& path);
+    void Add(const wxString& path, const wxTreeItemId& item);
+    void Delete(const wxString& name);
+
     /**
      * @brief clear the index content
      */

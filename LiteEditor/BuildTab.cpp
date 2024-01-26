@@ -167,8 +167,11 @@ void BuildTab::ProcessBuffer(bool last_line)
             line = WrapLineInColour(line, AnsiColours::NormalText(), true);
             m_view->AppendItem(line);
 
-        } else if(m_activeCompiler && (m_activeCompiler->GetName() == "rustc") && line.Lower().Contains("compiling") &&
-                  ProcessCargoBuildLine(line)) {
+        } else if(false && m_activeCompiler && (m_activeCompiler->GetName() == "rustc") &&
+                  line.Lower().Contains("compiling") && ProcessCargoBuildLine(line)) {
+            // for now, I have disabled ("false") this check since in Cargo workspace, the path
+            // reported by the compiler is relative to the root workspace and not to
+            // the internal project
             m_view->AppendItem(line);
 
         } else {

@@ -2,7 +2,6 @@
 
 #include "addincludefiledlg.h"
 #include "clSnippetManager.hpp"
-#include "cl_command_event.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -20,7 +19,7 @@ std::unordered_set<wxChar> delimiters = { ':', '@',  '!', ' ', '\t', '.', '\\', 
                                           '>', '[',  ']', '(', ')',  '{', '}',  '=', '%', '#', '^',
                                           '&', '\'', '"', '/', '|',  ',', '~',  ';', '`' };
 
-int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
+int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool allow_apostrophe)
 {
     int lineNumber = ctrl->LineFromPosition(from);
     int lineStartPos = ctrl->PositionFromLine(lineNumber);
@@ -35,7 +34,12 @@ int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
             ++from;
             break;
         }
+
         wxChar ch = ctrl->GetCharAt(from);
+        if(allow_apostrophe && ch == '\'') {
+            continue;
+        }
+
         if(delimiters.count(ch)) {
             from++;
             break;
@@ -222,7 +226,7 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
     std::vector<std::pair<int, int>> ranges;
     if(ctrl->GetSelections() > 1) {
         for(int i = 0; i < ctrl->GetSelections(); ++i) {
-            int nStart = GetWordStartPos(ctrl, ctrl->GetSelectionNCaret(i), entryText.Contains(":"));
+            int nStart = GetWordStartPos(ctrl, ctrl->GetSelectionNCaret(i), entryText.Contains("'"));
             int nEnd = ctrl->GetSelectionNCaret(i);
             ranges.push_back(std::make_pair(nStart, nEnd));
         }
@@ -231,7 +235,7 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
     } else {
         // Default behviour: remove the partial text from the editor and replace it
         // with the selection
-        start = GetWordStartPos(ctrl, ctrl->GetCurrentPos(), entryText.Contains(":"));
+        start = GetWordStartPos(ctrl, ctrl->GetCurrentPos(), entryText.Contains("'"));
         end = ctrl->GetCurrentPos();
         ctrl->SetSelection(start, end);
     }

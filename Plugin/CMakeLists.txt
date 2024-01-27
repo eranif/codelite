@@ -65,7 +65,7 @@ set(ADDITIONAL_LIBRARIES "")
 
 if(UNIX)
     if(IS_FREEBSD)
-        set(ADDITIONAL_LIBRARIES "-lkvm")
+        set(ADDITIONAL_LIBRARIES "-lkvm -lutil")
     elseif(IS_NETBSD)
         set(ADDITIONAL_LIBRARIES "-lutil")
     elseif(UNIX AND NOT APPLE)

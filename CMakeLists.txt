@@ -112,6 +112,9 @@ if(NOT SQLite3_FOUND)
 endif()
 
 set(IS_FREEBSD 0)
+if (CMAKE_SYSTEM_NAME MATCHES "^.*BSD$|DragonFly")
+    set(IS_FREEBSD 1)
+endif()
 set(IS_NETBSD 0)
 set(BUILD_WXC 0)
 set(CL_COPY_WX_LIBS 0)
@@ -133,7 +136,7 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to
                                                                        # deprecated wx methods
 if(UNIX AND NOT APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem /usr/include/harfbuzz"
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem /usr/include/harfbuzz -isystem /usr/local/include/harfbuzz"
     )# Needed for fedora 31 so far, but will spread. See https://gitlab.kitware.com/cmake/cmake/issues/19531
 endif()
 
@@ -672,14 +675,19 @@ set(ARCH_NAME i386)
 set(OS_CODENAME "unknown")
 
 if(UNIX AND NOT APPLE)
-    execute_process(
-        COMMAND /bin/sh -c "lsb_release -a|grep -i Codename | cut -d: -f2"
-        OUTPUT_VARIABLE OS_CODENAME
-        OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
-    execute_process(
-        COMMAND /bin/sh -c "lsb_release -a|grep -i Distributor | cut -d: -f2"
-        OUTPUT_VARIABLE OS_DISTRO
-        OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+    if (CMAKE_SYSTEM_NAME MATCHES "^.*BSD$|DragonFly")
+        set(OS_CODENAME "${OS_NAME}")
+        set(OS_DISTRO "${OS_NAME}")
+    else()
+        execute_process(
+            COMMAND /bin/sh -c "lsb_release -a|grep -i Codename | cut -d: -f2"
+            OUTPUT_VARIABLE OS_CODENAME
+            OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+        execute_process(
+            COMMAND /bin/sh -c "lsb_release -a|grep -i Distributor | cut -d: -f2"
+            OUTPUT_VARIABLE OS_DISTRO
+            OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+    endif()
     execute_process(
         COMMAND /bin/sh -c "uname -m"
         OUTPUT_VARIABLE OS_ARCH

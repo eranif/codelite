@@ -30,10 +30,12 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     if(phpLexer) {
         phpLexer->Apply(m_console->GetTerminalOutputWindow());
     }
-    m_tbBreakpoints->AddTool(wxID_DELETE, _("Delete"), clGetManager()->GetStdIcons()->LoadBitmap("minus"),
+    m_tbBreakpoints->AddTool(wxID_DELETE, _("Delete"),
+                            wxBitmapBundle(clGetManager()->GetStdIcons()->LoadBitmap("minus")),
                              _("Delete the selected breakpoints"));
     m_tbBreakpoints->AddTool(wxID_CLEAR, _("Delete all breakpoints"),
-                             clGetManager()->GetStdIcons()->LoadBitmap("clean"), _("Delete all breakpoints"));
+                             wxBitmapBundle(clGetManager()->GetStdIcons()->LoadBitmap("clean")),
+                             _("Delete all breakpoints"));
     m_tbBreakpoints->Bind(wxEVT_TOOL, &PHPDebugPane::OnDeleteBreakpoint, this, wxID_DELETE);
     m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &PHPDebugPane::OnDeleteBreakpointUI, this, wxID_DELETE);
     m_tbBreakpoints->Bind(wxEVT_TOOL, &PHPDebugPane::OnClearAll, this, wxID_CLEAR);

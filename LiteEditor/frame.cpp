@@ -1561,14 +1561,46 @@ void clMainFrame::DoCreateToolBar(int toolSize)
 
     add_main_toolbar_item(m_mainToolbar, "new_file", _("New file"), "file_new", toolSize);
     add_main_toolbar_item(m_mainToolbar, "open_file", _("Open file"), "file_open", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "refresh_file", _("Reload File"), "file_reload", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "close_file", _("Close File"), "file_close", toolSize);
     m_mainToolbar->AddSeparator();
 
     add_main_toolbar_item(m_mainToolbar, "save_file", _("Save"), "file_save", toolSize);
     add_main_toolbar_item(m_mainToolbar, "save_all", _("Save All"), "file_save_all", toolSize);
     m_mainToolbar->AddSeparator();
 
+    add_main_toolbar_item(m_mainToolbar, "wxID_CUT", _("Cut"), "cut", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "wxID_COPY", _("Copy"), "copy", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "wxID_PASTE", _("Paste"), "paste", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "wxID_UNDO", _("Undo"), "undo", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "wxID_REDO", _("Redo"), "redo", toolSize);
+    m_mainToolbar->AddSeparator();
+
+    add_main_toolbar_item(m_mainToolbar, "to_upper", _("Make Uppercase"), "up", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "to_lower", _("Make Lowercase"), "down", toolSize);
+    m_mainToolbar->AddSeparator();
+
     add_main_toolbar_item(m_mainToolbar, "id_backward", _("Backward"), "back", toolSize);
     add_main_toolbar_item(m_mainToolbar, "id_forward", _("Forward"), "forward", toolSize);
+    m_mainToolbar->AddSeparator();
+
+    //----------------------------------------------
+    // create the bookmark toolbar
+    //----------------------------------------------
+    add_main_toolbar_item(m_mainToolbar, "toggle_bookmark", _("Toggle Bookmark"), "bookmark", toolSize);
+    //m_mainToolbar->Bind(wxEVT_TOOL, BookmarkManager::Get().CreateBookmarksSubmenu(NULL), this, XRCID("toggle_bookmark"));
+    add_main_toolbar_item(m_mainToolbar, "previous_bookmark", _("Previous Bookmark"), "back", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "next_bookmark", _("Next Bookmark"), "forward", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "removeall_bookmarks", _("Remove All Bookmarks"), "clear", toolSize);
+    m_mainToolbar->AddSeparator();
+
+    //----------------------------------------------
+    // create the search toolbar
+    //----------------------------------------------
+    add_main_toolbar_item(m_mainToolbar, "id_find", _("Find"), "find", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "id_replace", _("Replace"), "find_and_replace", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "find_in_files", _("Find In Files"), "find_in_files", toolSize);
+    add_main_toolbar_item(m_mainToolbar, "find_resource", _("Find Resource In Workspace"), "open_resource", toolSize);
     m_mainToolbar->AddSeparator();
 
     //----------------------------------------------

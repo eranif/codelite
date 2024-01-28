@@ -20,6 +20,8 @@ class BuildTab : public wxPanel
     // cleanable properties (between builds)
     bool m_buildInProgress = false;
     wxString m_buffer;
+    wxStopWatch m_buffer_sw;
+    long m_buffer_time = 0;
     CompilerPtr m_activeCompiler;
     size_t m_error_count = 0;
     size_t m_warn_count = 0;

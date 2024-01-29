@@ -1,4 +1,5 @@
 #include "LSPNetworkRemoteSTDIO.hpp"
+#if USE_SFTP
 
 #include "LSP/basic_types.h"
 #include "clModuleLogger.hpp"
@@ -97,3 +98,4 @@ void LSPNetworkRemoteSTDIO::BindEvents()
         m_process->Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &LSPNetworkRemoteSTDIO::OnProcessTerminated, this);
     }
 }
+#endif // USE_SFTP

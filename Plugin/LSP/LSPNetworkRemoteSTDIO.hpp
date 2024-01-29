@@ -1,6 +1,8 @@
 #ifndef LSPNETWORKREMOTESTDIO_HPP
 #define LSPNETWORKREMOTESTDIO_HPP
 
+#if USE_SFTP
+
 #include "LSP/LSPNetwork.h"
 #include "ssh/clSSHInteractiveChannel.hpp"
 
@@ -46,5 +48,5 @@ public:
      */
     bool IsConnected() const override;
 };
-
+#endif // USE_SFTP
 #endif // LSPNETWORKREMOTESTDIO_HPP

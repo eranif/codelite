@@ -231,36 +231,21 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         m_preprocessSuffix = ".i";
 
         if(regexType == kRegexGNU) {
-            AddPattern(kSevError,
-                       "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal "
-                       "error)|(error)|(undefined reference)|([\\t ]*required from))",
-                       1, 3, 4);
-            AddPattern(
-                kSevError,
-                "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ "
-                "*)(:)(\\(\\.text\\+[0-9a-fx]*\\))",
-                3, 1, -1);
-            AddPattern(
-                kSevError,
-                "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ "
-                "*)(:)([0-9]+)(:)",
-                3, 1, -1);
             AddPattern(kSevError, "undefined reference to", -1, -1, -1);
-            AddPattern(kSevError, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1, -1);
+            AddPattern(kSevError,
+                "^(.+?):(\\d+):(\\d+)?(?:\\{\\d:-\\}+)?(?:.*) (error): (.*)$",
+                1, 2, 3);
+            AddPattern(kSevError,
+                "^(?:.*referenced by .+?:\\d+ )\\((.+?):(\\d+)\\).*$",
+                1, 2, -1);
 
-            AddPattern(
-                kSevWarning,
-                "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ \\t]*(warning|required)", 1,
-                3, 4);
-            AddPattern(kSevWarning, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)",
-                       1, 3, -1);
             AddPattern(kSevWarning,
-                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)", 1,
-                       3, -1);
+                "^(.+?):(\\d+):(\\d+)?(?:\\{\\d:-\\}+)?(?:.*) (note|warning): (.*)$",
+                1, 2, 3);
             AddPattern(
                 kSevWarning,
-                "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?", 2,
-                4, -1);
+                "^(?:In file included from *)(.+?):(\\d+):.*$",
+                1, 2, -1);
 
             AddDefaultGnuCompilerOptions();
             AddDefaultGnuLinkerOptions();

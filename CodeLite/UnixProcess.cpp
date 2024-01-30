@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/select.h>
 #include <sys/types.h>
+#include <sys/syscall.h>
 
 UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
     : m_owner(owner)
@@ -35,10 +36,16 @@ UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
         m_childStderr.Close();
 
         // prevent descriptor leak into child process
+#ifdef SYS_close_range
+        close_range(3, ~0U, 0);
+#elif defined(SYS_closefrom)
+        closefrom(3);
+#else
         const int fd_max = (sysconf(_SC_OPEN_MAX) != -1 ? sysconf(_SC_OPEN_MAX) : FD_SETSIZE);
         for (int fd = 3; fd < fd_max; fd++) {
             close(fd);
         }
+#endif
 
         char** argv = new char*[args.size() + 1];
         for(size_t i = 0; i < args.size(); ++i) {
@@ -81,12 +88,11 @@ UnixProcess::~UnixProcess()
     Stop();
     Wait();
 }
-#define CHUNK_SIZE 1024
-#define MAX_BUFF_SIZE (1024 * 2048)
+
 bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
 {
     fd_set rset;
-    char buff[CHUNK_SIZE];
+    char buff[65536];
     FD_ZERO(&rset);
     FD_SET(fd, &rset);
 
@@ -94,28 +100,19 @@ bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
     int ms = timeoutMilliseconds % 1000;
 
     struct timeval tv = { seconds, ms * 1000 }; //  10 milliseconds timeout
-    while(true) {
-        int rc = ::select(fd + 1, &rset, nullptr, nullptr, &tv);
-        if(rc > 0) {
+    int rc = ::select(fd + 1, &rset, nullptr, nullptr, &tv);
+    if(rc > 0) {
+        for (;;) {
             int len = read(fd, buff, (sizeof(buff) - 1));
-            if(len > 0) {
-                buff[len] = 0;
-                content.append(buff);
-                if(content.length() >= MAX_BUFF_SIZE) {
-                    return true;
-                }
-                // clear the tv struct so next select() call will return immediately
-                tv.tv_usec = 0;
-                tv.tv_sec = 0;
-                FD_ZERO(&rset);
-                FD_SET(fd, &rset);
-                continue;
-            }
-        } else if(rc == 0) {
-            // timeout
-            return true;
+            if(len <= 0)
+                break;
+            buff[len] = 0;
+            content.append(buff);
         }
-        break;
+        return true;
+    } else if(rc == 0) {
+        // timeout
+        return true;
     }
     // error
     return false;
@@ -125,7 +122,7 @@ bool UnixProcess::Write(int fd, const std::string& message, std::atomic_bool& sh
 {
     int bytes = 0;
     std::string tmp = message;
-    const int chunkSize = 4096;
+    const int chunkSize = 65536;
     while(!tmp.empty() && !shutdown.load()) {
         errno = 0;
         bytes = ::write(fd, tmp.c_str(), tmp.length() > chunkSize ? chunkSize : tmp.length());
@@ -191,6 +188,9 @@ void UnixProcess::StartReaderThread()
 {
     m_readerThread = new std::thread(
         [](UnixProcess* process, int stdoutFd, int stderrFd) {
+            fcntl(stdoutFd, F_SETFL, O_NONBLOCK);
+            fcntl(stderrFd, F_SETFL, O_NONBLOCK);
+
             while(!process->m_goingDown.load()) {
                 std::string content;
                 if(!ReadAll(stdoutFd, content, 10)) {

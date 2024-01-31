@@ -227,11 +227,11 @@ void clRowEntry::ConnectNodes(clRowEntry* first, clRowEntry* second)
 
 void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
 {
-    clRowEntry::Vec_t::iterator iterCur;
     child->SetParent(this);
     child->SetIndentsCount(GetIndentsCount() + 1);
 
     // We need the last item of this subtree (prev 'this' is the root)
+    clRowEntry::Vec_t::iterator iterCur = {};
     if(prev == nullptr || prev == this) {
         // make it the first item
         iterCur = m_children.insert(m_children.begin(), child);
@@ -254,8 +254,9 @@ void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
         }
     }
 
-    // Connect the linked list for sequential iteration
+    // iterCur points to the newly added `child` element in the array
     clRowEntry* nodeBefore = nullptr;
+
     // Find the item before and after
     if(iterCur == m_children.begin()) {
         nodeBefore = child->GetParent(); // "this"

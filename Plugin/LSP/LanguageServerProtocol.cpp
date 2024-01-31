@@ -79,11 +79,15 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     // Use sockets here
     switch(netType) {
     case eNetworkType::kStdio:
+#if USE_SFTP
         if(clWorkspaceManager::Get().GetWorkspace() && clWorkspaceManager::Get().GetWorkspace()->IsRemote()) {
             m_network.reset(new LSPNetworkRemoteSTDIO());
         } else {
             m_network.reset(new LSPNetworkSTDIO());
         }
+#else
+        m_network.reset(new LSPNetworkSTDIO());
+#endif
         break;
     case eNetworkType::kTcpIP:
         m_network.reset(new LSPNetworkSocketClient());

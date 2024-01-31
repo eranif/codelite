@@ -57,6 +57,8 @@ BuildTab::BuildTab(wxWindow* parent)
 
     wxTheApp->Bind(wxEVT_MENU, &BuildTab::OnNextBuildError, this, XRCID("next_build_error"));
     wxTheApp->Bind(wxEVT_UPDATE_UI, &BuildTab::OnNextBuildErrorUI, this, XRCID("next_build_error"));
+
+    m_buffer_sw.Start();
 }
 
 BuildTab::~BuildTab()
@@ -142,14 +144,28 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
     m_currentRootDir.clear();
 }
 
+
+#define PROCESSBUFFER_FMT_LINES_MAX     8192
+#define PROCESSBUFFER_FLUSH_TIME        200 // ms
+
 void BuildTab::ProcessBuffer(bool last_line)
 {
+    const long cur_time = m_buffer_sw.Time();
+
+    // Limit data process frequency.
+    if(!last_line) {
+        if ((cur_time - m_buffer_time) < PROCESSBUFFER_FLUSH_TIME)
+            return;
+        m_buffer_time = cur_time;
+    }
+
     // process completed lines
     m_view->Begin();
     auto lines = ::wxStringTokenize(m_buffer, "\n", wxTOKEN_RET_DELIMS);
     wxString remainder;
-    while(!lines.empty()) {
-        auto& line = lines[0];
+    const size_t cnt = lines.Count();
+    for (size_t i = 0; i < cnt; i ++) {
+        auto& line = lines[i];
         if(!last_line && !line.EndsWith("\n")) {
             // not a complete line
             remainder.swap(line);
@@ -172,6 +188,10 @@ void BuildTab::ProcessBuffer(bool last_line)
             // for now, I have disabled ("false") this check since in Cargo workspace, the path
             // reported by the compiler is relative to the root workspace and not to
             // the internal project
+            m_view->AppendItem(line);
+
+         } else if(cnt > PROCESSBUFFER_FMT_LINES_MAX) {
+            // Do not heavy process big lines count, no one will read results.
             m_view->AppendItem(line);
 
         } else {
@@ -215,7 +235,6 @@ void BuildTab::ProcessBuffer(bool last_line)
             }
             m_view->AppendItem(line, wxNOT_FOUND, wxNOT_FOUND, (wxUIntPtr)m.release());
         }
-        lines.erase(lines.begin());
     }
 
     if(last_line) {

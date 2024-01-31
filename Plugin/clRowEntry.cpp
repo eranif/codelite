@@ -287,12 +287,8 @@ void clRowEntry::SetParent(clRowEntry* parent)
 void clRowEntry::DeleteChild(clRowEntry* child)
 {
     // first remove all of its children
-    // do this in a while loop since 'child->RemoveChild(c);' will alter
-    // the array and will invalidate all iterators
-    while(!child->m_children.empty()) {
-        clRowEntry* c = child->m_children[0];
-        child->DeleteChild(c);
-    }
+    child->DeleteAllChildren();
+
     // Connect the list
     clRowEntry* prev = child->m_prev;
     clRowEntry* next = child->m_next;
@@ -303,10 +299,14 @@ void clRowEntry::DeleteChild(clRowEntry* child)
         next->m_prev = prev;
     }
     // Now disconnect this child from this node
-    clRowEntry::Vec_t::iterator iter =
-        std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == child; });
-    if(iter != m_children.end()) {
-        m_children.erase(iter);
+    if (child == m_children.back()) { // Fast track for DeleteAllChildren().
+        m_children.pop_back();
+    } else {
+        clRowEntry::Vec_t::iterator iter =
+            std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == child; });
+        if(iter != m_children.end()) {
+            m_children.erase(iter);
+        }
     }
     wxDELETE(child);
 }
@@ -864,7 +864,7 @@ bool clRowEntry::IsVisible() const
 void clRowEntry::DeleteAllChildren()
 {
     while(!m_children.empty()) {
-        clRowEntry* c = m_children[0];
+        clRowEntry* c = m_children.back();
         // DeleteChild will remove it from the array
         DeleteChild(c);
     }

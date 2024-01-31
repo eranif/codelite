@@ -231,16 +231,17 @@ void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
     child->SetIndentsCount(GetIndentsCount() + 1);
 
     // We need the last item of this subtree (prev 'this' is the root)
+    clRowEntry::Vec_t::iterator iterCur = {};
     if(prev == nullptr || prev == this) {
         // make it the first item
-        m_children.insert(m_children.begin(), child);
+        iterCur = m_children.insert(m_children.begin(), child);
     } else {
 
         // optimization:
         // we often get here by calling AddChild(), so don't loop over the list, check if `prev`
         // is the last item
         if(!m_children.empty() && m_children.back() == prev) {
-            m_children.insert(m_children.end(), child);
+            iterCur = m_children.insert(m_children.end(), child);
         } else {
             // Insert the item in the parent children list
             clRowEntry::Vec_t::iterator iter = m_children.end();
@@ -249,15 +250,13 @@ void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
                 ++iter;
             }
             // if iter is end(), than the is actually appending the item
-            m_children.insert(iter, child);
+            iterCur = m_children.insert(iter, child);
         }
     }
 
-    // Connect the linked list for sequential iteration
-    clRowEntry::Vec_t::iterator iterCur =
-        std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == child; });
-
+    // iterCur points to the newly added `child` element in the array
     clRowEntry* nodeBefore = nullptr;
+
     // Find the item before and after
     if(iterCur == m_children.begin()) {
         nodeBefore = child->GetParent(); // "this"

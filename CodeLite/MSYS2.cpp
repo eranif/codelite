@@ -4,8 +4,10 @@
 
 #include <functional>
 #include <wx/arrstr.h>
+#include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
+#include <wx/utils.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>

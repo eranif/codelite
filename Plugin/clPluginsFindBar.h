@@ -33,6 +33,7 @@
 #include <codelite_exports.h>
 #include <wx/combobox.h>
 #include <wx/panel.h>
+#include <wx/stattext.h>
 
 class wxStyledTextCtrl;
 

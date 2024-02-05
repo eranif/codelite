@@ -12,6 +12,7 @@
 #include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
+#include <wx/menu.h>
 #include <wx/tokenzr.h>
 #include <wx/uiaction.h>
 

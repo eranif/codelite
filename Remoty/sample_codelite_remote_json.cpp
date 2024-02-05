@@ -1,6 +1,8 @@
 #ifndef SAMPLE_CODELITE_REMOTE_JSON_HPP
 #define SAMPLE_CODELITE_REMOTE_JSON_HPP
 
+#include <wx/string.h>
+
 const wxString DEFAULT_CODELITE_REMOTE_JSON = R"EOF(
 {
   "Language Server Plugin": {

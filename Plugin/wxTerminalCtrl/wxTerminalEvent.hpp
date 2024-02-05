@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 
 #include <wx/arrstr.h>
+#include <wx/event.h>
 #include <wx/ffile.h>
 #include <wx/utils.h>
 

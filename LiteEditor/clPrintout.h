@@ -26,6 +26,7 @@
 #ifndef CLPRINTOUT_H
 #define CLPRINTOUT_H
 
+#include <wx/choice.h>
 #include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/prntbase.h>

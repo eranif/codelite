@@ -39,6 +39,7 @@
 #include <wx/choicdlg.h>
 #include <wx/richmsgdlg.h>
 #include <wx/stc/stc.h>
+#include <wx/wupdlock.h>
 
 namespace
 {

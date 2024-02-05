@@ -3,6 +3,7 @@
 #include "LSP/LSPEvent.h"
 #include "LSP/ResponseError.h"
 #include "event_notifier.h"
+#include <wx/msgdlg.h>
 
 LSP::RenameRequest::RenameRequest(const wxString& new_name, const wxString& filename, size_t line, size_t column)
 {

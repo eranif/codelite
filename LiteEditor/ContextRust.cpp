@@ -32,6 +32,7 @@
 #include "cl_editor_tip_window.h"
 #include "editor_config.h"
 
+#include <wx/xrc/xmlres.h>
 #include <unordered_set>
 
 ContextRust::ContextRust(clEditor* editor)

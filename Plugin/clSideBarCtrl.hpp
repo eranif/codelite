@@ -5,7 +5,10 @@
 
 #include <wx/bitmap.h>
 #include <wx/control.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
 #include <wx/simplebook.h>
+#include <wx/sizer.h>
 
 class SideBarButton;
 class WXDLLIMPEXP_SDK clSideBarButtonCtrl : public wxControl

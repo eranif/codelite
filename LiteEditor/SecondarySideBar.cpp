@@ -7,6 +7,8 @@
 #include "globals.h"
 #include "imanager.h"
 
+#include <wx/xrc/xmlres.h>
+
 #define VIEW_NAME "Secondary Sidebar"
 
 SecondarySideBar::SecondarySideBar(wxWindow* parent, long style)

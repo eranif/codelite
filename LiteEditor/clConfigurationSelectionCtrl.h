@@ -5,6 +5,7 @@
 #include "cl_command_event.h"
 
 #include <wx/arrstr.h>
+#include <wx/choice.h>
 #include <wx/panel.h>
 
 #define OPEN_CONFIG_MGR_STR _("Open Workspace Configuration Manager...")

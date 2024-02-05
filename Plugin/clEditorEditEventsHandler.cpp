@@ -2,6 +2,7 @@
 
 #include "event_notifier.h"
 
+#include <wx/app.h>
 #include <wx/combobox.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>

@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 
 #include <vector>
+#include <wx/arrstr.h>
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL PlatformCommon

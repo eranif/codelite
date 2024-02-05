@@ -33,7 +33,7 @@
 #include <wx/arrstr.h>
 #include <wx/event.h>
 #include <wx/string.h>
-
+#include <wx/xml/xml.h>
 /**
  * Each pair consists of the tabgroup name, and an array of the names of the constituent tabs
  */

@@ -31,6 +31,7 @@
 #include "fileentry.h"
 #include "pptable.h"
 #include "tag_tree.h"
+#include <wx/filename.h>
 
 #define MAX_SEARCH_LIMIT 250
 

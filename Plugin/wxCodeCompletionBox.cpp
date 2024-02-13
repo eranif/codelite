@@ -37,6 +37,9 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_flags(flags)
 {
     MSWSetWindowDarkTheme(this);
+    m_tooltipTimer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &wxCodeCompletionBox::OnTooltipWindowTimer, this, m_tooltipTimer->GetId());
+
     // Use the active editor's font (if any)
     wxColour bgColour;
     wxColour textColour;
@@ -143,10 +146,21 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_list->SetSortFunction(nullptr);
 }
 
-wxCodeCompletionBox::~wxCodeCompletionBox() { DoDestroyTipWindow(); }
+wxCodeCompletionBox::~wxCodeCompletionBox()
+{
+    Unbind(wxEVT_TIMER, &wxCodeCompletionBox::OnTooltipWindowTimer, this, m_tooltipTimer->GetId());
+    if(m_tooltipTimer) {
+        m_tooltipTimer->Stop();
+    }
+    wxDELETE(m_tooltipTimer);
+    DoDestroyTipWindow();
+}
 
 void wxCodeCompletionBox::Reset(wxEvtHandler* eventObject, size_t flags)
 {
+    if(m_tooltipTimer) {
+        m_tooltipTimer->Stop();
+    }
     m_eventObject = eventObject;
     m_flags = flags;
     DoDestroyTipWindow();
@@ -215,11 +229,12 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     }
 
     // Display the help window
-    DoDisplayTipWindow();
+    StartTooltipWindowTimer();
 }
 
-void wxCodeCompletionBox::DoDisplayTipWindow()
+void wxCodeCompletionBox::OnTooltipWindowTimer(wxTimerEvent& event)
 {
+    wxUnusedVar(event);
     // Display the tooltip
     if(m_list->GetItemCount() == 0) {
         DoDestroyTipWindow();
@@ -261,6 +276,14 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
             m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
         }
     }
+}
+
+void wxCodeCompletionBox::StartTooltipWindowTimer()
+{
+    if(m_tooltipTimer->IsRunning()) {
+        m_tooltipTimer->Stop();
+    }
+    m_tooltipTimer->StartOnce(250);
 }
 
 void wxCodeCompletionBox::StcCharAdded(wxStyledTextEvent& event)
@@ -475,7 +498,7 @@ void wxCodeCompletionBox::DoUpdateList()
         wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
         DoDestroy();
     } else {
-        DoDisplayTipWindow();
+        StartTooltipWindowTimer();
         DoPopulateList();
     }
 
@@ -798,7 +821,7 @@ void wxCodeCompletionBox::OnSelectionActivated(wxDataViewEvent& event)
 void wxCodeCompletionBox::OnSelectionChanged(wxDataViewEvent& event)
 {
     event.Skip();
-    CallAfter(&wxCodeCompletionBox::DoDisplayTipWindow);
+    StartTooltipWindowTimer();
 }
 
 void wxCodeCompletionBox::SetStripHtmlTags(bool strip) { strip_html_tags = strip; }

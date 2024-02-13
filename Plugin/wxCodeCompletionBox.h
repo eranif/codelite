@@ -31,7 +31,6 @@
 #include "wxCodeCompletionBoxBase.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 
-#include <list>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
@@ -39,6 +38,7 @@
 #include <wx/font.h>
 #include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
+#include <wx/timer.h>
 #include <wxStringHash.h>
 
 class CCBoxTipWindow;
@@ -90,6 +90,7 @@ protected:
     wxBitmap m_bmpDown;
     wxBitmap m_bmpUpEnabled;
     wxBitmap m_bmpDownEnabled;
+    wxTimer* m_tooltipTimer = nullptr;
 
 protected:
     void StcModified(wxStyledTextEvent& event);
@@ -176,7 +177,11 @@ protected:
     wxCodeCompletionBoxEntry::Vec_t LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& completions);
     static int GetImageId(TagEntryPtr entry);
     int GetImageId(LSP::CompletionItem::Ptr_t entry) const;
-    void DoDisplayTipWindow();
+
+    /// Starts a tooltip timer
+    void StartTooltipWindowTimer();
+    void OnTooltipWindowTimer(wxTimerEvent& event);
+
     void DoDestroyTipWindow();
 
     void DoUpdateList();

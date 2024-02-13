@@ -1129,12 +1129,12 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
     gdbinit_file_content.Trim().Trim(false);
 
     // Write the content into a file
-    wxFileName gdbInitFile(wxFileName::GetHomeDir(), ".gdbinit");
+    wxFileName userGdbInitFile(wxFileName::GetHomeDir(), ".gdbinit");
     wxFileName clGdbInitFile(wxFileName::GetHomeDir(), ".codelite-gdbinit");
 
     // Read the content of the user's file
     wxString fileContent;
-    FileUtils::ReadFileContent(gdbInitFile, fileContent);
+    FileUtils::ReadFileContent(userGdbInitFile, fileContent);
     if(!fileContent.IsEmpty() && !fileContent.EndsWith("\n")) {
         fileContent << "\n";
     }

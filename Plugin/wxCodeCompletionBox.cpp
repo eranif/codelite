@@ -188,7 +188,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     wxUnusedVar(containsCount);
 
     // If we got a single match - insert it
-    if(m_entries.size() == 1 && (m_flags & kInsertSingleMatch)) {
+    if(m_entries.size() == 1) {
         wxString entryText = m_entries[0]->GetText();
         if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
             DoDestroy();

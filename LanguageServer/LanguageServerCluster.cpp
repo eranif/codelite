@@ -5,13 +5,10 @@
 #include "LSP/LSPEvent.h"
 #include "LSPOutlineViewDlg.h"
 #include "LanguageServerConfig.h"
-#include "PathConverterDefault.hpp"
 #include "StringUtils.h"
 #include "clEditorBar.h"
 #include "clEditorStateLocker.h"
-#include "clFileSystemWorkspace.hpp"
 #include "clResult.hpp"
-#include "clSFTPEvent.h"
 #include "clSelectSymbolDialog.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
@@ -27,13 +24,11 @@
 #include "macromanager.h"
 #include "macros.h"
 #include "wxCodeCompletionBoxManager.h"
-#include "wxStringHash.h"
 
 #if USE_SFTP
 #include "clSFTPManager.hpp"
 #endif
 
-#include <algorithm>
 #include <thread>
 #include <wx/arrstr.h>
 #include <wx/choicdlg.h>
@@ -118,6 +113,7 @@ clEnvList_t json_get_server_config_env(JSON* root, const wxString& server_name)
 LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     : m_plugin(plugin)
 {
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerCluster::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
@@ -153,6 +149,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
 
 LanguageServerCluster::~LanguageServerCluster()
 {
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LanguageServerCluster::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
@@ -1306,5 +1303,20 @@ void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
         }
         editor->GetCtrl()->EndUndoAction();
         editor->Save();
+    }
+}
+
+void LanguageServerCluster::OnFileSaved(clCommandEvent& event)
+{
+    // always skipped
+    event.Skip();
+
+    if(wxFileName(event.GetFileName()).GetFullName() == "Cargo.toml") {
+        // Check to see if a Cargo.toml file was modified
+        auto server = GetServerForLanguage("rust");
+        if(server && server->IsRunning()) {
+            LSP_DEBUG() << "Restarting" << server->GetName() << "server due to Cargo.toml modified" << endl;
+            RestartServer("rust");
+        }
     }
 }

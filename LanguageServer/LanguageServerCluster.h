@@ -63,6 +63,7 @@ protected:
     void OnLSPInitialized(LSPEvent& event);
     void OnMethodNotFound(LSPEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
+    void OnFileSaved(clCommandEvent& event);
     void OnWorkspaceOpen(clWorkspaceEvent& event);
     void OnCompileCommandsGenerated(clCommandEvent& event);
     void OnSetDiagnostics(LSPEvent& event);

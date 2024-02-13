@@ -10,7 +10,6 @@
 #include "LSP/FindReferencesRequest.hpp"
 #include "LSP/GotoDeclarationRequest.h"
 #include "LSP/GotoDefinitionRequest.h"
-#include "LSP/GotoImplementationRequest.h"
 #include "LSP/HoverRequest.hpp"
 #include "LSP/InitializeRequest.h"
 #include "LSP/InitializedNotification.hpp"
@@ -38,12 +37,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
-#include "processreaderthread.h"
-#include "wxmd5.h"
 
-#include <iomanip>
-#include <sstream>
-#include <thread>
 #include <unordered_map>
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
@@ -458,6 +452,7 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
     // For now: report a change event
     wxString filename = GetEditorFilePath(editor);
     if(ShouldHandleFile(editor)) {
+
         // before sending the save request, send a change request
         LSP_DEBUG() << "Flushing changes before save" << endl;
         SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
@@ -979,7 +974,7 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
 
     } else if(response.IsPushDiagnostics()) {
         // Get the URI
-        LSP_DEBUG() << "Received diagnostic message" << endl;
+        LSP_DEBUG() << "Received diagnostic message:" << endl;
         wxString fn = FileUtils::FilePathFromURI(response.GetDiagnosticsUri());
 
         // Don't show this message on macOS as it appears in the middle of the screen...

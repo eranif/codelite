@@ -72,8 +72,14 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
         return 0;
     }
 
+#ifdef __WXMSW__
     wxArrayString specArr = ::wxStringTokenize(filespec.Lower(), ";,|", wxTOKEN_STRTOK);
     wxArrayString excludeSpecArr = ::wxStringTokenize(excludeFilespec.Lower(), ";,|", wxTOKEN_STRTOK);
+#else
+    wxArrayString excludeSpecArr = ::wxStringTokenize(excludeFilespec, ";,|", wxTOKEN_STRTOK);
+    wxArrayString specArr = ::wxStringTokenize(filespec, ";,|", wxTOKEN_STRTOK);
+#endif
+
     std::queue<wxString> Q;
     std::unordered_set<wxString> Visited;
     Q.push(rootFolder);
@@ -94,6 +100,10 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
             // Check to see if this is a folder
             wxString fullpath;
             fullpath << dir.GetNameWithSep() << filename;
+
+#ifdef __WXMSW__
+            filename.MakeLower();
+#endif
             bool isDirectory = wxFileName::DirExists(fullpath);
             // Use FileUtils::RealPath() here to cope with symlinks on Linux
             bool isExcludeDir =

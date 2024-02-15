@@ -1445,63 +1445,8 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int charCurrnt = SafeGetChar(pos);
 
     int selectionSize = std::abs(GetSelectionEnd() - GetSelectionStart());
-    if(GetHighlightGuide() != wxNOT_FOUND) {
-        SetHighlightGuide(0);
-    }
-
-    if(m_hightlightMatchedBraces) {
-        if(selectionSize) {
-            wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
-        } else if((charCurrnt == '<' && charAfter == '<') ||    //<<
-                  (charCurrnt == '<' && charBefore == '<') ||   //<<
-                  (charCurrnt == '>' && charAfter == '>') ||    //>>
-                  (charCurrnt == '>' && charBefore == '>') ||   //>>
-                  (beforeBefore == '<' && charBefore == '<') || //<<
-                  (beforeBefore == '>' && charBefore == '>') || //>>
-                  (beforeBefore == '-' && charBefore == '>') || //->
-                  (charCurrnt == '>' && charBefore == '-')) {   //->
-            wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
-        } else {
-            if((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') &&
-               !m_context->IsCommentOrString(pos)) {
-                BraceMatch((long)pos);
-            } else if((charBefore == '{' || charBefore == '<' || charBefore == '[' || charBefore == '(') &&
-                      !m_context->IsCommentOrString(PositionBefore(pos))) {
-                BraceMatch((long)PositionBefore(pos));
-            } else if((charCurrnt == '}' || charCurrnt == ']' || charCurrnt == '>' || charCurrnt == ')') &&
-                      !m_context->IsCommentOrString(pos)) {
-                BraceMatch((long)pos);
-            } else if((charBefore == '}' || charBefore == '>' || charBefore == ']' || charBefore == ')') &&
-                      !m_context->IsCommentOrString(PositionBefore(pos))) {
-                BraceMatch((long)PositionBefore(pos));
-            } else {
-                wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
-            }
-        }
-    }
-
     int mainSelectionPos = GetSelectionNCaret(GetMainSelection());
     int curLine = LineFromPosition(mainSelectionPos);
-
-    wxString message;
-    if(m_statusBarFields & kShowLine) {
-        message << "Ln " << curLine + 1;
-    }
-    if(m_statusBarFields & kShowColumn) {
-        message << (!message.empty() ? ", " : "") << "Col " << GetColumn(mainSelectionPos);
-    }
-    if(m_statusBarFields & kShowPosition) {
-        message << (!message.empty() ? ", " : "") << "Pos " << mainSelectionPos;
-    }
-    if(m_statusBarFields & kShowLen) {
-        message << (!message.empty() ? ", " : "") << "Len " << GetLength();
-    }
-    if((m_statusBarFields & kShowSelectedChars) && selectionSize) {
-        message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
-    }
-
-    // Always update the status bar with event, calling it directly causes performance degredation
-    m_mgr->GetStatusBar()->SetLinePosColumn(message);
 
     if(m_trigger_cc_at_pos > 0) {
         // trigger CC
@@ -6554,10 +6499,73 @@ void clEditor::UpdateDefaultTextWidth() { m_default_text_width = TextWidth(wxSTC
 void clEditor::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+    if(!IsShown()) {
+        return;
+    }
+
     if(m_scrollbar_recalc_is_required) {
         m_scrollbar_recalc_is_required = false;
         RecalcHorizontalScrollbar();
     }
+
+    if(GetHighlightGuide() != wxNOT_FOUND) {
+        SetHighlightGuide(0);
+    }
+
+    int selectionSize = std::abs(GetSelectionEnd() - GetSelectionStart());
+    if(m_hightlightMatchedBraces) {
+        long pos = GetCurrentPosition();
+        int charBefore = SafeGetChar(PositionBefore(pos));
+        int charAfter = SafeGetChar(PositionAfter(pos));
+        int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
+        int charCurrnt = SafeGetChar(pos);
+        if(selectionSize) {
+            wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
+        } else if((beforeBefore == '-' && charBefore == '>') || //->
+                  (charCurrnt == '>' && charBefore == '-')) {   //->
+            wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
+        } else {
+            if((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') &&
+               !m_context->IsCommentOrString(pos)) {
+                BraceMatch((long)pos);
+            } else if((charBefore == '{' || charBefore == '<' || charBefore == '[' || charBefore == '(') &&
+                      !m_context->IsCommentOrString(PositionBefore(pos))) {
+                BraceMatch((long)PositionBefore(pos));
+            } else if((charCurrnt == '}' || charCurrnt == ']' || charCurrnt == '>' || charCurrnt == ')') &&
+                      !m_context->IsCommentOrString(pos)) {
+                BraceMatch((long)pos);
+            } else if((charBefore == '}' || charBefore == '>' || charBefore == ']' || charBefore == ')') &&
+                      !m_context->IsCommentOrString(PositionBefore(pos))) {
+                BraceMatch((long)PositionBefore(pos));
+            } else {
+                wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
+            }
+        }
+    }
+
+    wxString message;
+    long current_pos = GetCurrentPosition();
+    int curLine = LineFromPosition(current_pos);
+
+    if(m_statusBarFields & kShowLine) {
+        message << "Ln " << curLine + 1;
+    }
+    if(m_statusBarFields & kShowColumn) {
+        message << (!message.empty() ? ", " : "") << "Col " << GetColumn(current_pos);
+    }
+    if(m_statusBarFields & kShowPosition) {
+        message << (!message.empty() ? ", " : "") << "Pos " << current_pos;
+    }
+    if(m_statusBarFields & kShowLen) {
+        message << (!message.empty() ? ", " : "") << "Len " << GetLength();
+    }
+
+    if((m_statusBarFields & kShowSelectedChars) && selectionSize) {
+        message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
+    }
+
+    // Always update the status bar with event, calling it directly causes performance degredation
+    m_mgr->GetStatusBar()->SetLinePosColumn(message);
 }
 
 void clEditor::ClearModifiedLines()

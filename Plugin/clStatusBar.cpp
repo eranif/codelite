@@ -197,8 +197,12 @@ void clStatusBar::DoSetLinePosColumn(const wxString& message)
     wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LINE_COL_IDX);
     CHECK_PTR_RET(field);
 
-    field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
-    field->SetTooltip(message);
+    auto line_col_text = field->Cast<wxCustomStatusBarFieldText>();
+    if(line_col_text->GetText() != message) {
+        // new message, set it
+        field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
+        field->SetTooltip(message);
+    }
 }
 
 void clStatusBar::OnAllEditorsClosed(wxCommandEvent& event)

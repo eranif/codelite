@@ -537,7 +537,7 @@ clEditor::clEditor(wxWindow* parent)
     EventNotifier::Get()->Connect(wxEVT_CODEFORMATTER_INDENT_COMPLETED,
                                   wxCommandEventHandler(clEditor::OnFileFormatDone), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clEditor::OnColoursAndFontsUpdated, this);
-
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditor::OnActiveEditorChanged, this);
     Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnChangeActiveBookmarkType), this,
          XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
 
@@ -555,8 +555,8 @@ clEditor::~clEditor()
         eventClose.SetFileName(CLRealPath(GetFileName().GetFullPath()));
         EventNotifier::Get()->AddPendingEvent(eventClose);
     }
-
     wxDELETE(m_richTooltip);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditor::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_MODIFIED_EXTERNALLY, &clEditor::OnModifiedExternally, this);
 
@@ -6587,4 +6587,10 @@ void clEditor::OnModifiedExternally(clFileSystemEvent& event)
     if(event.GetFileName().empty() || (GetRemotePathOrLocal() == event.GetFileName())) {
         ReloadFromDisk(true); // keep file history
     }
+}
+
+void clEditor::OnActiveEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    m_lastIdlePosition = wxNOT_FOUND; // reset the idle position
 }

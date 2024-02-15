@@ -1191,6 +1191,7 @@ private:
     void OnEditorConfigChanged(wxCommandEvent& event);
     void OnColoursAndFontsUpdated(clCommandEvent& event);
     void OnModifiedExternally(clFileSystemEvent& event);
+    void OnActiveEditorChanged(wxCommandEvent& event);
 };
 
 #endif // LITEEDITOR_EDITOR_H

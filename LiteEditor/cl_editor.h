@@ -277,6 +277,9 @@ protected:
     int m_trigger_cc_at_pos = wxNOT_FOUND;
     bool m_clearModifiedLines = false;
 
+    // track the position between Idle event calls
+    long m_lastIdlePosition = wxNOT_FOUND;
+
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;

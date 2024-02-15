@@ -6508,6 +6508,14 @@ void clEditor::OnIdle(wxIdleEvent& event)
         RecalcHorizontalScrollbar();
     }
 
+    // Optimization: do we need to update anything here?
+    long current_pos = GetCurrentPosition();
+    if(m_lastIdlePosition == current_pos) {
+        // same position as last update, nothing to be done here
+        return;
+    }
+    m_lastIdlePosition = current_pos;
+
     if(GetHighlightGuide() != wxNOT_FOUND) {
         SetHighlightGuide(0);
     }
@@ -6544,7 +6552,6 @@ void clEditor::OnIdle(wxIdleEvent& event)
     }
 
     wxString message;
-    long current_pos = GetCurrentPosition();
     int curLine = LineFromPosition(current_pos);
 
     if(m_statusBarFields & kShowLine) {

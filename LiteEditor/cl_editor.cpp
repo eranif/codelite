@@ -1340,7 +1340,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
                GetContext()->IsStringTriggerCodeComplete(strTyped2)) &&
               !GetContext()->IsCommentOrString(GetCurrentPos())) {
         // this char should trigger a code completion
-        CallAfter(&clEditor::CodeComplete, false);
+        CallAfter(&clEditor::CodeComplete);
     }
 
     if(matchChar && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {
@@ -1899,22 +1899,17 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
 // the '.', '->' operator and to display a popup menu with
 // list of possible matches
 //------------------------------------------------------------------
-void clEditor::CodeComplete(bool refreshingList)
+void clEditor::CodeComplete()
 {
     if(AutoCompActive())
         return; // Don't clobber the boxes..
 
-    if(!refreshingList) {
-        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
-        evt.SetPosition(GetCurrentPosition());
-        evt.SetTriggerKind(LSP::CompletionItem::kTriggerCharacter);
-        evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-        evt.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-        EventNotifier::Get()->AddPendingEvent(evt);
-
-    } else {
-        CompleteWord(LSP::CompletionItem::kTriggerCharacter);
-    }
+    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
+    evt.SetPosition(GetCurrentPosition());
+    evt.SetTriggerKind(LSP::CompletionItem::kTriggerKindInvoked);
+    evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+    evt.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+    EventNotifier::Get()->AddPendingEvent(evt);
 }
 
 void clEditor::FindDeclarationFile()

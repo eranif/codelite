@@ -201,8 +201,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     FilterResults(true, startsWithCount, containsCount, exactMatchCount);
     wxUnusedVar(containsCount);
 
-    // If we got a single match - insert it
-    if(m_entries.size() == 1) {
+    if(m_entries.size() == 1 && !(m_flags & kTriggerUser)) {
         wxString entryText = m_entries[0]->GetText();
         if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
             DoDestroy();
@@ -500,11 +499,6 @@ void wxCodeCompletionBox::DoUpdateList()
     } else {
         StartTooltipWindowTimer();
         DoPopulateList();
-    }
-
-    if(exactMatchCount == 0) {
-        wxCommandEvent event(wxEVT_MENU, XRCID("complete_word"));
-        wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
     }
 }
 

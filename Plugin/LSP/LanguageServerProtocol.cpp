@@ -326,7 +326,7 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
 
     if(CanHandle(editor)) {
         event.Skip(false);
-        CodeComplete(editor);
+        CodeComplete(editor, event.GetTriggerKind() == LSP::CompletionItem::kTriggerUser);
     }
 }
 
@@ -488,13 +488,13 @@ void LanguageServerProtocol::SendCodeActionRequest(IEditor* editor, const std::v
     }
 }
 
-void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column)
+void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column, bool userTriggered)
 {
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
     if(ShouldHandleFile(editor)) {
-        LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-            new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
+        LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::CompletionRequest(
+            LSP::TextDocumentIdentifier(filename), LSP::Position(line, column), userTriggered));
         QueueMessage(req);
     }
 }
@@ -589,7 +589,7 @@ void LanguageServerProtocol::HoverTip(IEditor* editor)
     }
 }
 
-void LanguageServerProtocol::CodeComplete(IEditor* editor)
+void LanguageServerProtocol::CodeComplete(IEditor* editor, bool userTriggered)
 {
     // sanity
     CHECK_PTR_RET(editor);
@@ -601,7 +601,8 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
     // Now request the for code completion
-    SendCodeCompleteRequest(editor, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition()));
+    SendCodeCompleteRequest(editor, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition()),
+                            userTriggered);
 }
 
 void LanguageServerProtocol::ProcessQueue()

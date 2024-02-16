@@ -3,12 +3,12 @@
 #include "LSP/CompletionItem.h"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
-#include "file_logger.h"
 
 LSP::CompletionRequest::CompletionRequest(const LSP::TextDocumentIdentifier& textDocument,
-                                          const LSP::Position& position)
+                                          const LSP::Position& position, bool userTriggered)
 {
     SetMethod("textDocument/completion");
+    m_userTrigger = userTriggered;
     m_params.reset(new CompletionParams());
     m_params->As<CompletionParams>()->SetPosition(position);
     m_params->As<CompletionParams>()->SetTextDocument(textDocument);
@@ -54,6 +54,7 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     if(!completions.empty()) {
         LSPEvent event(wxEVT_LSP_COMPLETION_READY);
         event.SetCompletions(completions);
+        event.SetTriggerKind(m_userTrigger ? CompletionItem::kTriggerUser : CompletionItem::kTriggerKindInvoked);
         owner->QueueEvent(event.Clone());
     }
 }

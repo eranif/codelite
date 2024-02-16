@@ -50,6 +50,7 @@ LSPEvent& LSPEvent::operator=(const LSPEvent& other)
     m_locations = other.m_locations;
     m_commands = other.m_commands;
     m_changes = other.m_changes;
+    m_triggerKind = other.m_triggerKind;
     return *this;
 }
 

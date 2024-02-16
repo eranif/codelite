@@ -32,12 +32,17 @@ protected:
     std::vector<LSP::Command> m_commands;                               // used by wxEVT_LSP_CODE_ACTIONS
     std::unordered_map<wxString, std::vector<LSP::TextEdit>> m_changes; // list of changes per file
     int m_logMessageSeverity = LSP_LOG_INFO;
+    LSP::CompletionItem::eTriggerKind m_triggerKind =
+        LSP::CompletionItem::kTriggerKindInvoked; // CC response is due to 24x7 cc
 
 public:
     LSPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     LSPEvent(const LSPEvent& src);
     LSPEvent& operator=(const LSPEvent& other);
     virtual ~LSPEvent();
+
+    void SetTriggerKind(LSP::CompletionItem::eTriggerKind triggerKind) { this->m_triggerKind = triggerKind; }
+    LSP::CompletionItem::eTriggerKind GetTriggerKind() const { return m_triggerKind; }
 
     void SetLogMessageSeverity(int sev) { m_logMessageSeverity = sev; }
     int GetLogMessageSeverity() const { return m_logMessageSeverity; }

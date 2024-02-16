@@ -353,11 +353,14 @@ void LanguageServerCluster::OnMethodNotFound(LSPEvent& event) { wxUnusedVar(even
 void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
 {
     const LSP::CompletionItem::Vec_t& items = event.GetCompletions();
+    auto trigger_kind = event.GetTriggerKind();
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(clGetManager()->GetActiveEditor()->GetCtrl(), items);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        clGetManager()->GetActiveEditor()->GetCtrl(), items,
+        trigger_kind == LSP::CompletionItem::kTriggerUser ? wxCodeCompletionBox::kTriggerUser : 0);
 }
 
 void LanguageServerCluster::OnReparseNeeded(LSPEvent& event)

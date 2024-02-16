@@ -164,7 +164,7 @@ protected:
     /**
      * @brief request for a code completion at a given doc/position
      */
-    void SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column);
+    void SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column, bool userTriggered);
 
     bool DoStart();
 
@@ -260,7 +260,7 @@ public:
     /**
      * @brief perform code completion for a given editor
      */
-    void CodeComplete(IEditor* editor);
+    void CodeComplete(IEditor* editor, bool userTriggered);
 
     /**
      * @brief ask for function call help

@@ -409,15 +409,6 @@ public:
     void SetProject(const wxString& proj) { m_project = proj; }
 
     /**
-     * @brief attempt to code complete the expression up until the caret position
-     * @param refreshingList when set to true, it means that the 'CodeComplete' was invoked
-     * by the code completion box itself in attempt to request new items for the list
-     * This feature is only supported internally for C++ and is not exposed to plugins
-     * i.e. the event wxEVT_CC_CODE_COMPLETE is fired only when refreshingList == false
-     */
-    void CodeComplete(bool refreshingList = false);
-
-    /**
      * @brief toggle line comment
      * @param commentSymbol the comment symbol to insert (e.g. "//")
      * @param commentStyle the wxSTC line comment style
@@ -1106,6 +1097,10 @@ private:
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
     int GetFirstSingleLineCommentPos(int from, int commentStyle);
     void DoSelectRange(const LSP::Range& range, bool center_line);
+    /**
+     * @brief attempt to code complete the expression up until the caret position
+     */
+    void CodeComplete();
 
     /**
      * @brief set the zoom factor

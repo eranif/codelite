@@ -38,18 +38,11 @@ wxBorder border_simple_theme_aware_bit()
 } // DoGetBorderSimpleBit
 
 /// Paint the control background
-void paint_background(wxDC& dc, wxWindow* win, const wxRect& rect, wxDirection direction)
+void finalise_background(wxDC& dc, wxWindow* win, const wxRect& rect, wxDirection direction)
 {
+    wxUnusedVar(win);
     wxColour bg_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     bool is_dark = DrawingUtils::IsDark(bg_colour);
-    int alpha = is_dark ? 110 : 150;
-
-    wxDirection gradient_direction = wxEAST;
-    if (direction == wxBOTTOM || direction == wxTOP) {
-        gradient_direction = wxSOUTH;
-    }
-    dc.GradientFillLinear(rect, bg_colour.ChangeLightness(alpha), bg_colour, gradient_direction);
-
     if (is_dark) {
         dc.SetPen(*wxBLACK_PEN);
     } else {
@@ -57,21 +50,40 @@ void paint_background(wxDC& dc, wxWindow* win, const wxRect& rect, wxDirection d
     }
 
     switch (direction) {
-    case wxLEFT:
-        dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
-        break;
-    case wxRIGHT:
-        dc.DrawLine(rect.GetTopLeft(), rect.GetBottomLeft());
-        break;
-    case wxTOP:
-        dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-        break;
-    case wxBOTTOM:
-        dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
-        break;
+    case wxLEFT: {
+        wxPoint bottom_right = rect.GetBottomRight();
+        bottom_right.y += 1;
+        dc.DrawLine(rect.GetTopRight(), bottom_right);
+    } break;
+    case wxRIGHT: {
+        wxPoint bottom_left = rect.GetBottomLeft();
+        bottom_left.y += 1;
+        dc.DrawLine(rect.GetTopLeft(), bottom_left);
+    } break;
+    case wxTOP: {
+        wxPoint bottom_right = rect.GetBottomRight();
+        bottom_right.x += 1;
+        dc.DrawLine(rect.GetBottomLeft(), bottom_right);
+    } break;
+    case wxBOTTOM: {
+        wxPoint top_right = rect.GetTopRight();
+        top_right.x += 1;
+        dc.DrawLine(rect.GetTopLeft(), top_right);
+    } break;
     default:
         break;
     }
+}
+
+void paint_background(wxDC& dc, wxWindow* win, const wxRect& rect, wxDirection direction)
+{
+    wxUnusedVar(win);
+    wxColour bg_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+
+    dc.SetPen(bg_colour);
+    dc.SetBrush(bg_colour);
+    dc.DrawRectangle(rect);
+    finalise_background(dc, win, rect, direction);
 }
 } // namespace
 
@@ -220,7 +232,6 @@ protected:
         paint_background(dc, this, client_rect, m_direction);
         if (IsSeleced()) {
             // draw the selected item using different background colour
-            client_rect.Deflate(1);
             wxRect frame_rect = client_rect;
             wxColour colour = base_colour;
             if (is_dark) {
@@ -255,7 +266,7 @@ protected:
     }
 
 public:
-    explicit SideBarButton(clSideBarButtonCtrl* parent, const wxBitmap bmp)
+    explicit SideBarButton(clSideBarButtonCtrl* parent, const wxBitmap bmp, int width)
         : wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
         , m_sidebar(parent)
     {
@@ -264,6 +275,8 @@ public:
         SetCursor(wxCURSOR_HAND);
 
         SetPageBitmap(bmp);
+        SetSizeHints(width, width);
+        SetSize(width, width);
 
         Bind(wxEVT_PAINT, &SideBarButton::OnPaint, this);
         Bind(wxEVT_ERASE_BACKGROUND, &SideBarButton::OnEraseBg, this);
@@ -293,16 +306,7 @@ public:
     void SetPageLabel(const wxString& label) { this->m_label = label; }
     const wxString& GetButtonLabel() const { return m_label; }
     const wxBitmap GetButtonBitmap() const { return m_bmp; }
-    void SetPageBitmap(const wxBitmap& bmp)
-    {
-        m_bmp = bmp;
-        wxRect rr = m_bmp.GetScaledSize();
-        rr.Inflate(10);
-        SetSizeHints(rr.GetWidth(), rr.GetHeight());
-        SetSize(rr.GetWidth(), rr.GetHeight());
-
-        m_sidebar->GetSizer()->Layout();
-    }
+    void SetPageBitmap(const wxBitmap& bmp) { m_bmp = bmp; }
 };
 
 clSideBarButtonCtrl::clSideBarButtonCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -358,7 +362,13 @@ void clSideBarButtonCtrl::OnPaint(wxPaintEvent& event)
 
 int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wxWindow* linked_page, bool select)
 {
-    SideBarButton* btn = new SideBarButton(this, bmp);
+    if (m_width == wxNOT_FOUND) {
+        wxRect rr = bmp.GetScaledSize();
+        rr.Inflate(10);
+        m_width = rr.GetWidth();
+    }
+
+    SideBarButton* btn = new SideBarButton(this, bmp, m_width);
     if (select) {
         // unselect the old button
         int old_selection = GetSelection();
@@ -381,8 +391,8 @@ int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wx
         m_mainSizer->Add(btn, wxSizerFlags().CenterHorizontal());
     }
 
-    SetSizeHints(btn->GetSize().GetWidth(), wxNOT_FOUND);
-    SetSize(btn->GetSize().GetWidth(), wxNOT_FOUND);
+    SetSizeHints(m_width, wxNOT_FOUND);
+    SetSize(m_width, wxNOT_FOUND);
     GetParent()->GetSizer()->Layout();
     return GetButtonIndex(btn);
 }

@@ -19,6 +19,7 @@ class WXDLLIMPEXP_SDK clSideBarButtonCtrl : public wxControl
 protected:
     wxBoxSizer* m_mainSizer = nullptr;
     wxDirection m_buttonsPosition = wxLEFT;
+    int m_width = wxNOT_FOUND;
 
 protected:
     void MoveAfter(SideBarButton* src, SideBarButton* target);

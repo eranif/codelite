@@ -395,6 +395,10 @@ wxFont clScrolledPanel::GetDefaultFont()
 #elif defined(__WXMAC__)
     float pointSize = f.GetFractionalPointSize() * 1.2;
     f.SetFractionalPointSize(pointSize);
+#else
+    // wxMSW
+    float pointSize = f.GetFractionalPointSize() * 1.1;
+    f.SetFractionalPointSize(pointSize);
 #endif
     return f;
 }

@@ -38,7 +38,7 @@ void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
     command << clangdExe.GetFullPath();
     ::WrapWithQuotes(command);
 
-    command << " --limit-results=0 --header-insertion-decorators=0 --compile-commands-dir=$(WorkspacePath)";
+    command << " --limit-results=250 --header-insertion-decorators=0 --compile-commands-dir=$(WorkspacePath)";
     SetCommand(command);
     // Add support for the languages
     GetLangugaes().Add("c");

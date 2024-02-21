@@ -38,7 +38,7 @@ PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Left
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: false
+SpaceBeforeParens: true
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
 SpacesInAngles:  false

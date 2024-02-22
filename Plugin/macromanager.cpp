@@ -386,7 +386,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
 
         // exapand common macros
         wxDateTime now = wxDateTime::Now();
-        expandedString.Replace("$(User)", wxGetUserName());
+        expandedString.Replace("$(User)", wxGetUserId());
         expandedString.Replace("$(Date)", now.FormatDate());
 
         // ssh related

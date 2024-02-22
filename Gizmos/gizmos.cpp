@@ -247,7 +247,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         content.Replace("$(BaseFileName)", baseFileName);
         content.Replace("$(PluginShortName)", data.GetPluginName());
         content.Replace("$(PluginLongName)", data.GetPluginDescription());
-        content.Replace("$(UserName)", wxGetUserName().c_str());
+        content.Replace("$(UserName)", wxGetUserId().c_str());
 
         // Notify the formatter plugin to format the plugin source files
         clSourceFormatEvent evtFormat(wxEVT_FORMAT_STRING);
@@ -274,7 +274,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         content.Replace("$(BaseFileName)", baseFileName);
         content.Replace("$(PluginShortName)", data.GetPluginName());
         content.Replace("$(PluginLongName)", data.GetPluginDescription());
-        content.Replace("$(UserName)", wxGetUserName().c_str());
+        content.Replace("$(UserName)", wxGetUserId().c_str());
 
         // format the content
         evtFormat.SetString(content);

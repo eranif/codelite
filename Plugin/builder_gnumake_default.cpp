@@ -1185,7 +1185,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << "CurrentFileName        :=\n";
     text << "CurrentFilePath        :=\n";
     text << "CurrentFileFullPath    :=\n";
-    text << "User                   :=" << wxGetUserName() << "\n";
+    text << "User                   :=" << wxGetUserId() << "\n";
     text << "Date                   :=" << wxDateTime::Now().FormatDate() << "\n";
     text << "CodeLitePath           :=" << ::WrapWithQuotes(startupDir) << "\n";
     text << "MakeDirCommand         :=" << mkdirCommand << "\n";

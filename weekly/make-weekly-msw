@@ -69,5 +69,7 @@ rm -fr ${CODELITE_BUILD_DIR}/installer/
 build_codelite
 package_codelite
 
-build_wxcrafter
-package_wxcrafter
+if [[ "${BUILD_WXC}" == "YES" ]]; then
+    build_wxcrafter
+    package_wxcrafter
+fi

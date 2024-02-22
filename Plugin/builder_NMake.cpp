@@ -1250,7 +1250,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     text << "CurrentFileName        =\n"; // TODO:: Need implementation
     text << "CurrentFilePath        =\n"; // TODO:: Need implementation
     text << "CurrentFileFullPath    =\n"; // TODO:: Need implementation
-    text << "User                   =" << wxGetUserName() << "\n";
+    text << "User                   =" << wxGetUserId() << "\n";
     text << "Date                   =" << wxDateTime::Now().FormatDate() << "\n";
     text << "CodeLitePath           =" << ::WrapWithQuotes(startupDir) << "\n";
     // replace all occurence of forward slash with double backslash

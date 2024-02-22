@@ -1200,7 +1200,7 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
     text << "CurrentFileName        :=\n"; // TODO:: Need implementation
     text << "CurrentFilePath        :=\n"; // TODO:: Need implementation
     text << "CurrentFileFullPath    :=\n"; // TODO:: Need implementation
-    text << "User                   :=" << wxGetUserName() << "\n";
+    text << "User                   :=" << wxGetUserId() << "\n";
     text << "Date                   :=" << wxDateTime::Now().FormatDate() << "\n";
     text << "CodeLitePath           :=" << ::WrapWithQuotes(startupdir) << "\n";
     text << "LinkerName             :=" << cmp->GetTool("LinkerName") << "\n";

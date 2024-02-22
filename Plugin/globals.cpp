@@ -539,7 +539,7 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
 
         // exapnd common macros
         wxDateTime now = wxDateTime::Now();
-        output.Replace("$(User)", wxGetUserName());
+        output.Replace("$(User)", wxGetUserId());
         output.Replace("$(Date)", now.FormatDate());
 
         if(workspace) {
@@ -807,7 +807,7 @@ void WrapInShell(wxString& cmd)
 
 wxString clGetUserName()
 {
-    wxString squashedname, name = wxGetUserName();
+    wxString squashedname, name = wxGetUserId();
 
     // The wx doc says that 'name' may now be e.g. "Mr. John Smith"
     // So try to make it more suitable to be an extension

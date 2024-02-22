@@ -28,11 +28,16 @@ elif [[ "$os_name" = *"MSYS_NT"* ]]; then
 fi
 
 ## parse the command line arguments and over defaults
+BUILD_WXC="NO"
 for i in "$@"
 do
     case $i in
     --version=*)
         version="${i#*=}"
+        shift
+        ;;
+    --with-wxc)
+        BUILD_WXC="YES"
         shift
         ;;
     esac
@@ -43,9 +48,10 @@ if [ -z ${version} ]; then
     exit 1
 fi
 
-echo "-- Platform      : ${os_name}"
-echo "-- CPU count     : ${cpu_count}"
-echo "-- Version       : ${version}"
+echo "-- Platform           : ${os_name}"
+echo "-- CPU count          : ${cpu_count}"
+echo "-- Version            : ${version}"
+echo "-- Building wxCrafter : ${BUILD_WXC}"
 
 # Update our source tree
 cd ${CODELITE_HOME}

@@ -37,4 +37,8 @@ function linux_build_wxcrafter() {
 }
 
 linux_build_codelite
-linux_build_wxcrafter
+
+if [[ "${BUILD_WXC}" == "YES" ]]; then
+    linux_build_wxcrafter
+fi
+

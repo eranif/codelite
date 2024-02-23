@@ -675,4 +675,7 @@ WXDLLIMPEXP_SDK bool IsWindowParentOf(wxWindow* parent, wxWindow* child);
 
 /// Find Notebook parent of a `child`
 WXDLLIMPEXP_SDK Notebook* FindNotebookParentOf(wxWindow* child);
+
+/// Return true if `child` is a child (does not have to be a direct child) of `parent`
+WXDLLIMPEXP_SDK bool IsChildOf(wxWindow* child, wxWindow* parent);
 #endif // GLOBALS_H

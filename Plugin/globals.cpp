@@ -162,17 +162,17 @@ static bool IsBOMFile(const char* file_name)
 {
     bool res(false);
     FILE* fp = fopen(file_name, "rb");
-    if(fp) {
+    if (fp) {
         struct stat buff;
-        if(stat(file_name, &buff) == 0) {
+        if (stat(file_name, &buff) == 0) {
 
             // Read the first 4 bytes (or less)
             size_t size = buff.st_size;
-            if(size > 4) {
+            if (size > 4) {
                 size = 4;
             }
             char* buffer = new char[size];
-            if(fread(buffer, sizeof(char), size, fp) == size) {
+            if (fread(buffer, sizeof(char), size, fp) == size) {
                 BOM bom(buffer, size);
                 res = (bom.Encoding() != wxFONTENCODING_SYSTEM);
             }
@@ -188,31 +188,31 @@ static bool ReadBOMFile(const char* file_name, wxString& content, BOM& bom)
     content.Empty();
 
     FILE* fp = fopen(file_name, "rb");
-    if(fp) {
+    if (fp) {
         struct stat buff;
-        if(stat(file_name, &buff) == 0) {
+        if (stat(file_name, &buff) == 0) {
             size_t size = buff.st_size;
             char* buffer = new char[size + 1];
-            if(fread(buffer, sizeof(char), size, fp) == size) {
+            if (fread(buffer, sizeof(char), size, fp) == size) {
                 buffer[size] = 0;
 
                 wxFontEncoding encoding(wxFONTENCODING_SYSTEM);
                 size_t bomSize(size);
 
-                if(bomSize > 4) {
+                if (bomSize > 4) {
                     bomSize = 4;
                 }
                 bom.SetData(buffer, bomSize);
                 encoding = bom.Encoding();
 
-                if(encoding != wxFONTENCODING_SYSTEM) {
+                if (encoding != wxFONTENCODING_SYSTEM) {
                     wxCSConv conv(encoding);
                     // Skip the BOM
                     char* ptr = buffer;
                     ptr += bom.Len();
                     content = wxString(ptr, conv);
 
-                    if(content.IsEmpty()) {
+                    if (content.IsEmpty()) {
                         content = wxString::From8BitData(ptr);
                     }
                 }
@@ -229,12 +229,12 @@ static bool ReadFile8BitData(const char* file_name, wxString& content)
     content.Empty();
 
     FILE* fp = fopen(file_name, "rb");
-    if(fp) {
+    if (fp) {
         struct stat buff;
-        if(stat(file_name, &buff) == 0) {
+        if (stat(file_name, &buff) == 0) {
             size_t size = buff.st_size;
             char* buffer = new char[size + 1];
-            if(fread(buffer, sizeof(char), size, fp) == size) {
+            if (fread(buffer, sizeof(char), size, fp) == size) {
                 buffer[size] = 0;
                 content = wxString::From8BitData(buffer);
             }
@@ -282,29 +282,29 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
     wxFile file(fileName, wxFile::read);
 
     const wxCharBuffer name = _C(fileName);
-    if(file.IsOpened()) {
+    if (file.IsOpened()) {
 
         // If we got a BOM pointer, test to see whether the file is BOM file
-        if(bom && IsBOMFile(name.data())) {
+        if (bom && IsBOMFile(name.data())) {
             return ReadBOMFile(name.data(), content, *bom);
         }
 
-        if(encoding == wxFONTENCODING_DEFAULT) {
+        if (encoding == wxFONTENCODING_DEFAULT) {
             encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
         }
 
         // first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
-        if(encoding != wxFONTENCODING_UTF8) {
+        if (encoding != wxFONTENCODING_UTF8) {
             wxCSConv fontEncConv(encoding);
-            if(fontEncConv.IsOk()) {
+            if (fontEncConv.IsOk()) {
                 file.ReadAll(&content, fontEncConv);
             }
         }
 
-        if(content.IsEmpty()) {
+        if (content.IsEmpty()) {
             // now try the Utf8
             file.ReadAll(&content, wxConvUTF8);
-            if(content.IsEmpty()) {
+            if (content.IsEmpty()) {
                 // try local 8 bit data
                 ReadFile8BitData(name.data(), content);
             }
@@ -316,7 +316,7 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
 bool RemoveDirectory(const wxString& path)
 {
     wxString cmd;
-    if(wxGetOsVersion() & wxOS_WINDOWS) {
+    if (wxGetOsVersion() & wxOS_WINDOWS) {
         // any of the windows variants
         cmd << "rmdir /S /Q "
             << "\"" << path << "\"";
@@ -329,16 +329,16 @@ bool RemoveDirectory(const wxString& path)
 
 bool IsValidCppIndetifier(const wxString& id)
 {
-    if(id.IsEmpty()) {
+    if (id.IsEmpty()) {
         return false;
     }
     // first char can be only _A-Za-z
     wxString first(id.Mid(0, 1));
-    if(first.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != wxString::npos) {
+    if (first.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != wxString::npos) {
         return false;
     }
     // make sure that rest of the id contains only a-zA-Z0-9_
-    if(id.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != wxString::npos) {
+    if (id.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != wxString::npos) {
         return false;
     }
     return true;
@@ -359,12 +359,12 @@ long AppendListCtrlRow(wxListCtrl* list)
 
 bool IsValidCppFile(const wxString& id)
 {
-    if(id.IsEmpty()) {
+    if (id.IsEmpty()) {
         return false;
     }
 
     // make sure that rest of the id contains only a-zA-Z0-9_
-    if(id.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != wxString::npos) {
+    if (id.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != wxString::npos) {
         return false;
     }
     return true;
@@ -374,7 +374,7 @@ wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* e
 {
     wxString project_name(proj->GetName());
     wxString file = filename;
-    if(file.IsEmpty() && editor) {
+    if (file.IsEmpty() && editor) {
         file = editor->GetFileName().GetFullPath();
     }
     return ExpandAllVariables(expression, clCxxWorkspaceST::Get(), project_name, wxEmptyString, file);
@@ -387,14 +387,14 @@ wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspac
     // add support for backticks commands
     wxString tmpExp;
     wxString noBackticksExpression;
-    for(size_t i = 0; i < expression.Length(); i++) {
-        if(expression.GetChar(i) == '`') {
+    for (size_t i = 0; i < expression.Length(); i++) {
+        if (expression.GetChar(i) == '`') {
             // found a backtick, loop over until we found the closing backtick
             wxString backtick;
             bool found(false);
             i++;
-            for(; i < expression.Length(); i++) {
-                if(expression.GetChar(i) == '`') {
+            for (; i < expression.Length(); i++) {
+                if (expression.GetChar(i) == '`') {
                     found = true;
                     i++;
                     break;
@@ -402,7 +402,7 @@ wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspac
                 backtick << expression.GetChar(i);
             }
 
-            if(!found) {
+            if (!found) {
                 // dont replace anything
                 clLogMessage("Syntax error in expression: " + expression + ": expecting '`'");
                 return expression;
@@ -416,7 +416,7 @@ wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspac
 
                 // concatenate the array into sAssign To:pace delimited string
                 backtick.Clear();
-                for(size_t xx = 0; xx < output.GetCount(); xx++) {
+                for (size_t xx = 0; xx < output.GetCount(); xx++) {
                     backtick << output.Item(xx).Trim().Trim(false) << " ";
                 }
 
@@ -439,15 +439,15 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
 
     size_t retries = 0;
     wxString dummyname, dummfullname;
-    while((retries < 5) && MacroManager::Instance()->FindVariable(output, dummyname, dummyname)) {
+    while ((retries < 5) && MacroManager::Instance()->FindVariable(output, dummyname, dummyname)) {
         ++retries;
         DollarEscaper de(output);
-        if(workspace) {
+        if (workspace) {
             output.Replace("$(WorkspaceName)", workspace->GetName());
             output.Replace("$(WorkspaceConfiguration)",
                            workspace->GetSelectedConfig() ? workspace->GetSelectedConfig()->GetName() : "");
             ProjectPtr proj = workspace->FindProjectByName(projectName, errMsg);
-            if(proj) {
+            if (proj) {
                 wxString project_name(proj->GetName());
 
                 // make sure that the project name does not contain any spaces
@@ -458,7 +458,7 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
                 output.Replace("$(WorkspacePath)", workspace->GetWorkspaceFileName().GetPath());
                 output.Replace("$(ProjectName)", project_name);
 
-                if(bldConf) {
+                if (bldConf) {
                     output.Replace("$(ConfigurationName)", bldConf->GetName());
                     output.Replace("$(OutputDirectory)", bldConf->GetOutputDirectory());
                     output.Replace("$(OutputFile)", bldConf->GetOutputFileName());
@@ -512,16 +512,16 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
                     output.Replace("$(LinkLibraries)", bldConf->GetLibraries());
                 }
 
-                if(output.Find("$(ProjectFiles)") != wxNOT_FOUND) {
+                if (output.Find("$(ProjectFiles)") != wxNOT_FOUND) {
                     output.Replace("$(ProjectFiles)", proj->GetFilesAsString(false));
                 }
-                if(output.Find("$(ProjectFilesAbs)") != wxNOT_FOUND) {
+                if (output.Find("$(ProjectFilesAbs)") != wxNOT_FOUND) {
                     output.Replace("$(ProjectFilesAbs)", proj->GetFilesAsString(true));
                 }
             }
         }
 
-        if(fileName.IsEmpty() == false) {
+        if (fileName.IsEmpty() == false) {
             wxFileName fn(fileName);
 
             output.Replace("$(CurrentFileName)", fn.GetName());
@@ -542,7 +542,7 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
         output.Replace("$(User)", wxGetUserId());
         output.Replace("$(Date)", now.FormatDate());
 
-        if(workspace) {
+        if (workspace) {
             output.Replace("$(CodeLitePath)", workspace->GetStartupDir());
         }
 
@@ -555,7 +555,7 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
 bool WriteFileUTF8(const wxString& fileName, const wxString& content)
 {
     wxFFile file(fileName, "w+b");
-    if(!file.IsOpened()) {
+    if (!file.IsOpened()) {
         return false;
     }
 
@@ -566,7 +566,7 @@ bool WriteFileUTF8(const wxString& fileName, const wxString& content)
 bool CompareFileWithString(const wxString& filePath, const wxString& str)
 {
     wxString content;
-    if(!ReadFileWithConversion(filePath, content)) {
+    if (!ReadFileWithConversion(filePath, content)) {
         return false;
     }
 
@@ -584,38 +584,38 @@ bool CopyDir(const wxString& src, const wxString& target)
 
     // append a slash if there is not one (for easier parsing)
     // because who knows what people will pass to the function.
-    if(to.EndsWith(SLASH) == false) {
+    if (to.EndsWith(SLASH) == false) {
         to << SLASH;
     }
 
     // for both dirs
-    if(from.EndsWith(SLASH) == false) {
+    if (from.EndsWith(SLASH) == false) {
         from << SLASH;
     }
 
     // first make sure that the source dir exists
-    if(!wxDir::Exists(from)) {
+    if (!wxDir::Exists(from)) {
         Mkdir(from);
         return false;
     }
 
-    if(!wxDir::Exists(to)) {
+    if (!wxDir::Exists(to)) {
         Mkdir(to);
     }
 
     wxDir dir(from);
     wxString filename;
     bool bla = dir.GetFirst(&filename);
-    if(bla) {
+    if (bla) {
         do {
-            if(wxDirExists(from + filename)) {
+            if (wxDirExists(from + filename)) {
                 Mkdir(to + filename);
                 CopyDir(from + filename, to + filename);
             } else {
                 // change the umask for files only
                 wxCopyFile(from + filename, to + filename);
             }
-        } while(dir.GetNext(&filename));
+        } while (dir.GetNext(&filename));
     }
     return true;
 }
@@ -631,17 +631,17 @@ void Mkdir(const wxString& path)
 
 bool WriteFileWithBackup(const wxString& file_name, const wxString& content, bool backup)
 {
-    if(backup) {
+    if (backup) {
         wxString backup_name(file_name);
         backup_name << ".bak";
-        if(!wxCopyFile(file_name, backup_name, true)) {
+        if (!wxCopyFile(file_name, backup_name, true)) {
             clLogMessage(wxString::Format("Failed to backup file %s, skipping it", file_name.c_str()));
             return false;
         }
     }
 
     wxFFile file(file_name, "wb");
-    if(file.IsOpened() == false) {
+    if (file.IsOpened() == false) {
         // Nothing to be done
         wxString msg = wxString::Format("Failed to open file %s", file_name.c_str());
         clLogMessage(msg);
@@ -660,9 +660,9 @@ bool CopyToClipboard(const wxString& text)
     bool ret(true);
 
 #if wxUSE_CLIPBOARD
-    if(wxTheClipboard->Open()) {
+    if (wxTheClipboard->Open()) {
         wxTheClipboard->UsePrimarySelection(false);
-        if(!wxTheClipboard->SetData(new wxTextDataObject(text))) {
+        if (!wxTheClipboard->SetData(new wxTextDataObject(text))) {
             ret = false;
         }
         wxTheClipboard->Close();
@@ -681,7 +681,7 @@ bool IsFileReadOnly(const wxFileName& filename)
 {
 #ifdef __WXMSW__
     DWORD dwAttrs = GetFileAttributes(filename.GetFullPath().c_str());
-    if(dwAttrs != INVALID_FILE_ATTRIBUTES && (dwAttrs & FILE_ATTRIBUTE_READONLY)) {
+    if (dwAttrs != INVALID_FILE_ATTRIBUTES && (dwAttrs & FILE_ATTRIBUTE_READONLY)) {
         return true;
     } else {
         return false;
@@ -701,10 +701,10 @@ void FillFromSmiColonString(wxArrayString& arr, const wxString& str)
 wxString ArrayToSmiColonString(const wxArrayString& array)
 {
     wxString result;
-    for(size_t i = 0; i < array.GetCount(); i++) {
+    for (size_t i = 0; i < array.GetCount(); i++) {
         wxString tmp = NormalizePath(array.Item(i));
         tmp.Trim().Trim(false);
-        if(tmp.IsEmpty() == false) {
+        if (tmp.IsEmpty() == false) {
             result += NormalizePath(array.Item(i));
             result += ";";
         }
@@ -719,7 +719,7 @@ wxString NormalizePath(const wxString& path)
     wxString normalized_path(path);
     normalized_path.Trim().Trim(false);
     normalized_path.Replace("\\", "/");
-    while(normalized_path.Replace("//", "/")) {}
+    while (normalized_path.Replace("//", "/")) {}
     return normalized_path;
 }
 
@@ -729,7 +729,7 @@ time_t GetFileModificationTime(const wxString& filename)
 {
     struct stat buff;
     const wxCharBuffer cname = _C(filename);
-    if(stat(cname.data(), &buff) < 0) {
+    if (stat(cname.data(), &buff) < 0) {
         return 0;
     }
     return buff.st_mtime;
@@ -744,10 +744,10 @@ const wxString& __uname()
     static wxString uname_output;
     static bool firstTime = true;
 
-    if(firstTime) {
+    if (firstTime) {
         firstTime = false;
         wxFileName uname;
-        if(FileUtils::FindExe("uname", uname)) {
+        if (FileUtils::FindExe("uname", uname)) {
             firstTime = false;
             clDEBUG() << "Running `uname -s`..." << endl;
             wxString cmd;
@@ -786,11 +786,11 @@ void WrapInShell(wxString& cmd)
     wxString command;
 #ifdef __WXMSW__
     wxString shell = wxGetenv("COMSPEC");
-    if(shell.IsEmpty()) {
+    if (shell.IsEmpty()) {
         shell = "CMD.EXE";
     }
     command << shell << " /C ";
-    if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
+    if (cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
         command << "\"" << cmd << "\"";
     } else {
         command << cmd;
@@ -813,9 +813,9 @@ wxString clGetUserName()
     // So try to make it more suitable to be an extension
     name.MakeLower();
     name.Replace(" ", "_");
-    for(size_t i = 0; i < name.Len(); ++i) {
+    for (size_t i = 0; i < name.Len(); ++i) {
         wxChar ch = name.GetChar(i);
-        if((ch < 'a' || ch > 'z') && ch != '_') {
+        if ((ch < 'a' || ch > 'z') && ch != '_') {
             // Non [a-z_] character: skip it
         } else {
             squashedname << ch;
@@ -830,17 +830,17 @@ static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<P
 {
     // read all files under this directory
     wxArrayString files;
-    if(wxFileName::DirExists(folder)) {
+    if (wxFileName::DirExists(folder)) {
         DirTraverser dt("*.project");
 
         wxDir dir(folder);
         dir.Traverse(dt);
 
         const auto& files = dt.GetFiles();
-        if(files.GetCount() > 0) {
-            for(size_t i = 0; i < files.GetCount(); i++) {
+        if (files.GetCount() > 0) {
+            for (size_t i = 0; i < files.GetCount(); i++) {
                 ProjectPtr proj(new Project());
-                if(!proj->Load(files.Item(i))) {
+                if (!proj->Load(files.Item(i))) {
                     // corrupted xml file?
                     clWARNING() << "Failed to load template project:" << files.Item(i) << "(corrupted XML?)" << endl;
                     continue;
@@ -850,9 +850,9 @@ static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<P
                 // load template icon
                 wxFileName fn(files.Item(i));
                 fn.SetFullName("icon.png");
-                if(fn.Exists()) {
+                if (fn.Exists()) {
                     wxBitmap bmp = wxBitmap(fn.GetFullPath(), wxBITMAP_TYPE_ANY);
-                    if(bmp.IsOk() && bmp.GetWidth() == 16 && bmp.GetHeight() == 16) {
+                    if (bmp.IsOk() && bmp.GetWidth() == 16 && bmp.GetHeight() == 16) {
                         proj->SetIconPath(fn.GetFullPath());
                     }
                 }
@@ -860,7 +860,7 @@ static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<P
         }
     }
 
-    if(loadDefaults && files.IsEmpty()) {
+    if (loadDefaults && files.IsEmpty()) {
         // if we ended up here, it means the installation got screwed up since
         // there should be at least 8 project templates !
         // create 3 default empty projects
@@ -887,7 +887,7 @@ thread_local std::unordered_set<wxString> words;
 
 bool IsCppKeyword(const wxString& word)
 {
-    if(words.empty()) {
+    if (words.empty()) {
         words.insert("auto");
         words.insert("break");
         words.insert("case");
@@ -978,7 +978,7 @@ void StringManager::AddStrings(size_t size, const wxString* strings, const wxStr
     p_control->Clear();
 
     // Add each item to the control, localising as we go
-    for(size_t n = 0; n < size; ++n) {
+    for (size_t n = 0; n < size; ++n) {
         p_control->Append(wxGetTranslation(strings[n]));
     }
 
@@ -991,7 +991,7 @@ wxString StringManager::GetStringSelection() const
     wxString selection;
     // Find which localised string was selected
     int sel = p_control->GetSelection();
-    if(sel != wxNOT_FOUND) {
+    if (sel != wxNOT_FOUND) {
         selection = m_unlocalisedStringArray.Item(sel);
     }
 
@@ -1000,14 +1000,14 @@ wxString StringManager::GetStringSelection() const
 
 void StringManager::SetStringSelection(const wxString& str, size_t dfault /*= 0*/)
 {
-    if(str.IsEmpty() || m_size == 0) {
+    if (str.IsEmpty() || m_size == 0) {
         return;
     }
     int sel = m_unlocalisedStringArray.Index(str);
-    if(sel != wxNOT_FOUND) {
+    if (sel != wxNOT_FOUND) {
         p_control->SetSelection(sel);
     } else {
-        if(dfault < m_size) {
+        if (dfault < m_size) {
             p_control->SetSelection(dfault);
         } else {
             p_control->SetSelection(0);
@@ -1018,20 +1018,20 @@ void StringManager::SetStringSelection(const wxString& str, size_t dfault /*= 0*
 wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize)
 {
     wxArrayString array(oldarray);
-    if(!str.empty()) {
+    if (!str.empty()) {
         // Remove any pre-existing identical entry
         // This avoids duplication, and allows us to prepend the current string
         // As a result, the array will be suitable for 'recently-used-strings' situations
         int index = array.Index(str);
-        if(index != wxNOT_FOUND) {
+        if (index != wxNOT_FOUND) {
             array.RemoveAt(index);
         }
         array.Insert(str, 0);
     }
 
     // Truncate the array if needed
-    if(maxsize) {
-        while(array.GetCount() > maxsize) {
+    if (maxsize) {
+        while (array.GetCount() > maxsize) {
             array.RemoveAt(array.GetCount() - 1);
         }
     }
@@ -1042,7 +1042,7 @@ wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxS
 // Then only 'make relative' if it's a subpath of reference_path (or reference_path itself)
 bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
 {
-    if(reference_path.IsEmpty() || !fn.IsOk()) {
+    if (reference_path.IsEmpty() || !fn.IsOk()) {
         return false;
     }
 
@@ -1051,10 +1051,10 @@ bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
     wxStructStat statstruct;
     int error = wxLstat(fn.GetFullPath(), &statstruct);
 
-    if(!error && S_ISLNK(statstruct.st_mode)) { // If it's a symlink
+    if (!error && S_ISLNK(statstruct.st_mode)) { // If it's a symlink
         char buf[4096];
         int len = readlink(fn.GetFullPath().mb_str(wxConvUTF8), buf, WXSIZEOF(buf) - sizeof(char));
-        if(len != -1) {
+        if (len != -1) {
             buf[len] = '\0'; // readlink() doesn't NULL-terminate the buffer
             fn.Assign(wxString(buf, wxConvUTF8, len));
         }
@@ -1065,7 +1065,7 @@ bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
 
     // Now see if fn is in or under 'reference_path'
     wxString fnPath = fn.GetPath();
-    if((fnPath.Len() >= reference_path.Len()) && (fnPath.compare(0, reference_path.Len(), reference_path) == 0)) {
+    if ((fnPath.Len() >= reference_path.Len()) && (fnPath.compare(0, reference_path.Len(), reference_path) == 0)) {
         fn.MakeRelativeTo(reference_path);
         return true;
     }
@@ -1076,11 +1076,11 @@ bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
 wxString wxImplode(const wxArrayString& arr, const wxString& glue)
 {
     wxString str, tmp;
-    for(size_t i = 0; i < arr.GetCount(); i++) {
+    for (size_t i = 0; i < arr.GetCount(); i++) {
         str << arr.Item(i) << glue;
     }
 
-    if(str.EndsWith(glue, &tmp)) {
+    if (str.EndsWith(glue, &tmp)) {
         str = tmp;
     }
     return str;
@@ -1091,7 +1091,7 @@ bool wxIsFileSymlink(const wxFileName& filename) { return FileUtils::IsSymlink(f
 wxFileName wxReadLink(const wxFileName& filename)
 {
 #ifndef __WXMSW__
-    if(wxIsFileSymlink(filename)) {
+    if (wxIsFileSymlink(filename)) {
 #if defined(__WXGTK__)
         // Use 'realpath' on Linux, otherwise this breaks on relative symlinks, and (untested) on symlinks-to-symlinks
         return wxFileName(CLRealPath(filename.GetFullPath()));
@@ -1101,7 +1101,7 @@ wxFileName wxReadLink(const wxFileName& filename)
         char _tmp[512];
         memset(_tmp, 0, sizeof(_tmp));
         int len = readlink(filename.GetFullPath().mb_str(wxConvUTF8).data(), _tmp, sizeof(_tmp));
-        if(len != -1) {
+        if (len != -1) {
             realFileName = wxFileName(wxString(_tmp, wxConvUTF8, len));
             return realFileName;
         }
@@ -1123,14 +1123,14 @@ wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: i
 int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
 {
     long v;
-    if(!str.ToLong(&v)) {
+    if (!str.ToLong(&v)) {
         return defval;
     }
 
-    if(minval != -1 && v < minval) {
+    if (minval != -1 && v < minval) {
         return defval;
     }
-    if(maxval != -1 && v > maxval) {
+    if (maxval != -1 && v > maxval) {
         return defval;
     }
 
@@ -1157,8 +1157,8 @@ BOM::~BOM() {}
 wxFontEncoding BOM::Encoding()
 {
     wxFontEncoding encoding = Encoding((const char*)m_bom.GetData());
-    if(encoding != wxFONTENCODING_SYSTEM) {
-        switch(encoding) {
+    if (encoding != wxFONTENCODING_SYSTEM) {
+        switch (encoding) {
 
         case wxFONTENCODING_UTF32BE:
         case wxFONTENCODING_UTF32LE:
@@ -1197,19 +1197,19 @@ wxFontEncoding BOM::Encoding(const char* buff)
     static const char UTF16le[] = { (char)0xff, (char)0xfe };
     static const char UTF8[] = { (char)0xef, (char)0xbb, (char)0xbf };
 
-    if(memcmp(buff, UTF32be, sizeof(UTF32be)) == 0) {
+    if (memcmp(buff, UTF32be, sizeof(UTF32be)) == 0) {
         encoding = wxFONTENCODING_UTF32BE;
 
-    } else if(memcmp(buff, UTF32le, sizeof(UTF32le)) == 0) {
+    } else if (memcmp(buff, UTF32le, sizeof(UTF32le)) == 0) {
         encoding = wxFONTENCODING_UTF32LE;
 
-    } else if(memcmp(buff, UTF16be, sizeof(UTF16be)) == 0) {
+    } else if (memcmp(buff, UTF16be, sizeof(UTF16be)) == 0) {
         encoding = wxFONTENCODING_UTF16BE;
 
-    } else if(memcmp(buff, UTF16le, sizeof(UTF16le)) == 0) {
+    } else if (memcmp(buff, UTF16le, sizeof(UTF16le)) == 0) {
         encoding = wxFONTENCODING_UTF16LE;
 
-    } else if(memcmp(buff, UTF8, sizeof(UTF8)) == 0) {
+    } else if (memcmp(buff, UTF8, sizeof(UTF8)) == 0) {
         encoding = wxFONTENCODING_UTF8;
     }
     return encoding;
@@ -1240,13 +1240,13 @@ enum { SURROGATE_TRAIL_LAST = 0xDFFF };
 unsigned int clUTF8Length(const wchar_t* uptr, unsigned int tlen)
 {
     unsigned int len = 0;
-    for(unsigned int i = 0; i < tlen && uptr[i];) {
+    for (unsigned int i = 0; i < tlen && uptr[i];) {
         unsigned int uch = uptr[i];
-        if(uch < 0x80) {
+        if (uch < 0x80) {
             len++;
-        } else if(uch < 0x800) {
+        } else if (uch < 0x800) {
             len += 2;
-        } else if((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_TRAIL_LAST)) {
+        } else if ((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_TRAIL_LAST)) {
             len += 4;
             i++;
         } else {
@@ -1422,13 +1422,13 @@ wxString DbgPrependCharPtrCastIfNeeded(const wxString& expr, const wxString& exp
     bool arrayAsCharPtr = false;
     DebuggerInformation info;
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(dbgr) {
+    if (dbgr) {
         DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
         arrayAsCharPtr = info.charArrAsPtr;
     }
 
     wxString newExpr;
-    if(arrayAsCharPtr && reConstArr.Matches(exprType)) {
+    if (arrayAsCharPtr && reConstArr.Matches(exprType)) {
         // array
         newExpr << "(char*)" << expr;
 
@@ -1454,18 +1454,18 @@ wxArrayString SplitString(const wxString& inString, bool trim)
     wxString curline;
 
     bool inContinuation = false;
-    for(size_t i = 0; i < inString.length(); ++i) {
+    for (size_t i = 0; i < inString.length(); ++i) {
         wxChar ch = inString.GetChar(i);
         wxChar ch1 = (i + 1 < inString.length()) ? inString.GetChar(i + 1) : wxUniChar(0);
         wxChar ch2 = (i + 2 < inString.length()) ? inString.GetChar(i + 2) : wxUniChar(0);
 
-        switch(ch) {
+        switch (ch) {
         case '\r':
             // do nothing
             curline << ch;
             break;
         case '\n':
-            if(inContinuation) {
+            if (inContinuation) {
                 curline << ch;
 
             } else {
@@ -1476,7 +1476,7 @@ wxArrayString SplitString(const wxString& inString, bool trim)
             break;
         case '\\':
             curline << ch;
-            if((ch1 == '\n') || (ch1 == '\r' && ch2 == '\n')) {
+            if ((ch1 == '\n') || (ch1 == '\r' && ch2 == '\n')) {
                 inContinuation = true;
             }
             break;
@@ -1488,7 +1488,7 @@ wxArrayString SplitString(const wxString& inString, bool trim)
     }
 
     // any leftovers?
-    if(curline.IsEmpty() == false) {
+    if (curline.IsEmpty() == false) {
         lines.Add(trim ? curline.Trim().Trim(false) : curline);
         curline.clear();
     }
@@ -1507,7 +1507,7 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
 #else
     // Non Windows machines
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
-    if(console->StartForDebugger()) {
+    if (console->StartForDebugger()) {
         tty = console->GetTty();
         realPts = console->GetRealPts();
         pid = console->GetPid();
@@ -1521,19 +1521,19 @@ wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message, con
                                                     long style, bool checkboxInitialValue)
 {
     int res = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND);
-    if(res == wxNOT_FOUND) {
+    if (res == wxNOT_FOUND) {
 
         // User did not save his answer
         wxRichMessageDialog d(EventNotifier::Get()->TopFrame(), message, "CodeLite", style);
         d.ShowCheckBox(checkboxLabel);
-        if(cancelLabel.empty()) {
+        if (cancelLabel.empty()) {
             d.SetYesNoLabels(yesLabel, noLabel);
         } else {
             d.SetYesNoCancelLabels(yesLabel, noLabel, cancelLabel);
         }
 
         res = d.ShowModal();
-        if(d.IsCheckBoxChecked() && (res != wxID_CANCEL)) {
+        if (d.IsCheckBoxChecked() && (res != wxID_CANCEL)) {
             // store the user result
             clConfig::Get().SetAnnoyingDlgAnswer(dlgId, res);
         }
@@ -1553,24 +1553,24 @@ static wxChar sPreviousChar(wxStyledTextCtrl* ctrl, int pos, int& foundPos, bool
 {
     wxChar ch = 0;
     long curpos = ctrl->PositionBefore(pos);
-    if(curpos == 0) {
+    if (curpos == 0) {
         foundPos = curpos;
         return ch;
     }
 
-    while(true) {
+    while (true) {
         ch = ctrl->GetCharAt(curpos);
-        if(ch == '\t' || ch == ' ' || ch == '\r' || ch == '\v' || ch == '\n') {
+        if (ch == '\t' || ch == ' ' || ch == '\r' || ch == '\v' || ch == '\n') {
             // if the caller is intrested in whitepsaces,
             // simply return it
-            if(wantWhitespace) {
+            if (wantWhitespace) {
                 foundPos = curpos;
                 return ch;
             }
 
             long tmpPos = curpos;
             curpos = ctrl->PositionBefore(curpos);
-            if(curpos == 0 && tmpPos == curpos) {
+            if (curpos == 0 && tmpPos == curpos) {
                 break;
             }
         } else {
@@ -1590,38 +1590,38 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
     int position(pos);
     int at(position);
     bool prevGt(false);
-    while(cont && depth >= 0) {
+    while (cont && depth >= 0) {
         wxChar ch = sPreviousChar(ctrl, position, at, true);
         position = at;
         // Eof?
-        if(ch == 0) {
+        if (ch == 0) {
             at = 0;
             break;
         }
 
         // Comment?
         int style = ctrl->GetStyleAt(position);
-        if(style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
-           style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
-           style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
-           style == wxSTC_C_CHARACTER) {
+        if (style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
+            style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
+            style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
+            style == wxSTC_C_CHARACTER) {
             continue;
         }
 
-        switch(ch) {
+        switch (ch) {
         case ';':
             // dont include this token
             at = ctrl->PositionAfter(at);
             cont = false;
             break;
         case '-':
-            if(prevGt) {
+            if (prevGt) {
                 prevGt = false;
                 // if previous char was '>', we found an arrow so reduce the depth
                 // which was increased
                 depth--;
             } else {
-                if(depth <= 0) {
+                if (depth <= 0) {
                     // dont include this token
                     at = ctrl->PositionAfter(at);
                     cont = false;
@@ -1634,7 +1634,7 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         case '\t':
         case '\r':
             prevGt = false;
-            if(depth <= 0) {
+            if (depth <= 0) {
                 cont = false;
                 break;
             }
@@ -1648,7 +1648,7 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         case '[':
             depth--;
             prevGt = false;
-            if(depth < 0) {
+            if (depth < 0) {
                 // dont include this token
                 at = ctrl->PositionAfter(at);
                 cont = false;
@@ -1665,7 +1665,7 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         case '%':
         case '?':
             prevGt = false;
-            if(depth <= 0) {
+            if (depth <= 0) {
 
                 // dont include this token
                 at = ctrl->PositionAfter(at);
@@ -1679,7 +1679,7 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         case '<':
             prevGt = false;
             depth--;
-            if(depth < 0) {
+            if (depth < 0) {
 
                 // dont include this token
                 at = ctrl->PositionAfter(at);
@@ -1697,11 +1697,11 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         }
     }
 
-    if(at < 0) {
+    if (at < 0) {
         at = 0;
     }
     wxString expr = ctrl->GetTextRange(at, pos);
-    if(!forCC) {
+    if (!forCC) {
         // If we do not require the expression for CodeCompletion
         // return the un-touched buffer
         return expr;
@@ -1712,7 +1712,7 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
     sc.SetText(_C(expr));
     wxString expression;
     int type = 0;
-    while((type = sc.yylex()) != 0) {
+    while ((type = sc.yylex()) != 0) {
         wxString token = _U(sc.YYText());
         expression += token;
         expression += " ";
@@ -1722,7 +1722,7 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
 
 wxString& WrapWithQuotes(wxString& str)
 {
-    if(!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
+    if (!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
         str.Prepend("\"").Append("\"");
     }
     return str;
@@ -1737,7 +1737,7 @@ wxString& EscapeSpaces(wxString& str)
 bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
 {
     wxString content;
-    if(!FileUtils::ReadFileContent(filepath, content)) {
+    if (!FileUtils::ReadFileContent(filepath, content)) {
         return false;
     }
 
@@ -1751,7 +1751,7 @@ bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
 
     wxString content;
     wxStringOutputStream sos(&content);
-    if(doc->Save(sos)) {
+    if (doc->Save(sos)) {
         return FileUtils::WriteFileContent(filename, content);
     }
     return false;
@@ -1779,7 +1779,7 @@ void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid)
     wxColour caption_colour = bg_colour;
 
     bool is_dark = DrawingUtils::IsDark(bg_colour);
-    if(is_dark) {
+    if (is_dark) {
         line_colour = line_colour.ChangeLightness(130);
         caption_colour = caption_colour.ChangeLightness(120);
 
@@ -1799,24 +1799,24 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
     int maxPixel = 0;
     int startLine = ctrl->GetFirstVisibleLine();
     int endLine = startLine + ctrl->LinesOnScreen();
-    if(endLine >= (ctrl->GetLineCount() - 1)) {
+    if (endLine >= (ctrl->GetLineCount() - 1)) {
         endLine--;
     }
 
     wxString text;
-    for(int i = startLine; i <= endLine; i++) {
+    for (int i = startLine; i <= endLine; i++) {
         int visibleLine = (int)ctrl->DocLineFromVisible(i); // get actual visible line, folding may offset lines
         wxString line_text = ctrl->GetLine(visibleLine);
         text = line_text.length() > text.length() ? line_text : text;
     }
 
     maxPixel = ctrl->TextWidth(0, text);
-    if(maxPixel == 0) {
+    if (maxPixel == 0) {
         maxPixel++; // make sure maxPixel is valid
     }
 
     int currentLength = ctrl->GetScrollWidth(); // Get current scrollbar size
-    if(currentLength != maxPixel) {
+    if (currentLength != maxPixel) {
         // And if it is not the same, update it
         ctrl->SetScrollWidth(maxPixel);
     }
@@ -1826,7 +1826,7 @@ wxString clGetTextFromUser(const wxString& title, const wxString& message, const
 {
     clGetTextFromUserDialog dialog(parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message,
                                    initialValue, charsToSelect);
-    if(dialog.ShowModal() == wxID_OK) {
+    if (dialog.ShowModal() == wxID_OK) {
         return dialog.GetValue();
     }
     return "";
@@ -1851,11 +1851,11 @@ double clGetContentScaleFactor()
 {
     static bool once = false;
     static double res = 1.0;
-    if(!once) {
+    if (!once) {
         once = true;
 #ifdef __WXGTK__
         GdkScreen* screen = gdk_screen_get_default();
-        if(screen) {
+        if (screen) {
             res = gdk_screen_get_resolution(screen) / 96.;
         }
 #else
@@ -1867,7 +1867,7 @@ double clGetContentScaleFactor()
 
 int clGetScaledSize(int size)
 {
-    if(clGetContentScaleFactor() >= 1.5) {
+    if (clGetContentScaleFactor() >= 1.5) {
         return size * 2;
     } else {
         return size;
@@ -1882,13 +1882,13 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
 #else
     wxString sudoAskpass = ::wxGetenv("SUDO_ASKPASS");
     const char* sudo_path = "/usr/bin/sudo";
-    if(!wxFileName::Exists(sudo_path)) {
+    if (!wxFileName::Exists(sudo_path)) {
         sudo_path = "/usr/local/bin/sudo";
     }
-    if(as_superuser && wxFileName::Exists(sudo_path) && wxFileName::Exists(sudoAskpass)) {
+    if (as_superuser && wxFileName::Exists(sudo_path) && wxFileName::Exists(sudoAskpass)) {
         wxString cmd;
         cmd << sudo_path << " --askpass kill -" << (int)signo << " ";
-        if(kill_whole_group) {
+        if (kill_whole_group) {
             cmd << "-";
         }
         cmd << processID;
@@ -1916,13 +1916,13 @@ bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArraySt
 
 int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
 {
-    if(!menu) {
+    if (!menu) {
         return wxNOT_FOUND;
     }
     const wxMenuItemList& list = menu->GetMenuItems();
     wxMenuItemList::const_iterator iter = list.begin();
-    for(int pos = 0; iter != list.end(); ++iter, ++pos) {
-        if((*iter)->GetId() == menuItemId) {
+    for (int pos = 0; iter != list.end(); ++iter, ++pos) {
+        if ((*iter)->GetId() == menuItemId) {
             return pos;
         }
     }
@@ -1934,7 +1934,7 @@ bool clNextWord(const wxString& str, size_t& offset, wxString& word) { return Fi
 wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
 {
     wxString glue = "\n";
-    switch(eol) {
+    switch (eol) {
     case wxSTC_EOL_CRLF:
         glue = "\r\n";
         break;
@@ -1946,8 +1946,8 @@ wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
         break;
     }
     wxString result;
-    for(size_t i = 0; i < lines.size(); ++i) {
-        if(!result.IsEmpty()) {
+    for (size_t i = 0; i < lines.size(); ++i) {
+        if (!result.IsEmpty()) {
             result << glue;
         }
         result << lines.Item(i);
@@ -1959,11 +1959,11 @@ wxSize clGetDisplaySize()
 {
     // Calculate the display size only once. If the user changes the display size, he will need to restart CodeLite
     static wxSize displaySize;
-    if(displaySize.GetHeight() == 0) {
+    if (displaySize.GetHeight() == 0) {
 
         int displayWidth = ::wxGetDisplaySize().GetWidth();
         int displayHeight = ::wxGetDisplaySize().GetHeight();
-        for(size_t i = 0; i < wxDisplay::GetCount(); ++i) {
+        for (size_t i = 0; i < wxDisplay::GetCount(); ++i) {
             wxDisplay display(i);
             displayWidth = wxMax(display.GetClientArea().GetWidth(), displayWidth);
             displayHeight = wxMax(display.GetClientArea().GetHeight(), displayHeight);
@@ -1976,7 +1976,7 @@ wxSize clGetDisplaySize()
 void clFitColumnWidth(wxDataViewCtrl* ctrl)
 {
 #ifndef __WXOSX__
-    for(size_t i = 0; i < ctrl->GetColumnCount(); ++i) {
+    for (size_t i = 0; i < ctrl->GetColumnCount(); ++i) {
         ctrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
     }
 #endif
@@ -2008,7 +2008,7 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     // find its parent
     wxWindow* parent_tlw = EventNotifier::Get()->TopFrame();
 
-    if(!tlw || !parent_tlw) {
+    if (!tlw || !parent_tlw) {
         return;
     }
 
@@ -2022,18 +2022,18 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 
 static void DoSetDialogSize(wxDialog* win, double factor)
 {
-    if(!win) {
+    if (!win) {
         return;
     }
-    if(factor <= 0.0) {
+    if (factor <= 0.0) {
         factor = 1.0;
     }
 
     wxWindow* parent = win->GetParent();
-    if(!parent) {
+    if (!parent) {
         parent = wxTheApp->GetTopWindow();
     }
-    if(parent) {
+    if (parent) {
         wxSize parentSize = parent->GetSize();
 
         double dlgWidth = (double)parentSize.GetWidth() * factor;
@@ -2051,7 +2051,7 @@ std::pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, cons
 {
 #if USE_SFTP
     SFTPBrowserDlg dlg(parent, title, wxEmptyString, clSFTP::SFTP_BROWSE_FOLDERS, accountName);
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return {};
     }
     return { dlg.GetAccount(), dlg.GetPath() };
@@ -2065,7 +2065,7 @@ std::pair<wxString, wxString> clRemoteFileSelector(const wxString& title, const 
 {
 #if USE_SFTP
     SFTPBrowserDlg dlg(parent, title, filter, clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES, accountName);
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return {};
     }
     return { dlg.GetAccount(), dlg.GetPath() };
@@ -2084,14 +2084,14 @@ bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFi
 
 int clGetSize(int size, const wxWindow* win)
 {
-    if(!win) {
+    if (!win) {
         return size;
     }
 #ifdef __WXGTK__
     wxString dpiscale = "1.0";
-    if(wxGetEnv("GDK_DPI_SCALE", &dpiscale)) {
+    if (wxGetEnv("GDK_DPI_SCALE", &dpiscale)) {
         double scale = 1.0;
-        if(dpiscale.ToDouble(&scale)) {
+        if (dpiscale.ToDouble(&scale)) {
             double scaledSize = scale * size;
             return scaledSize;
         }
@@ -2119,7 +2119,7 @@ bool clIsWaylandSession()
 bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initial_selection, wxArrayString* selected)
 {
     SelectFileTypesDialog dlg(parent, initial_selection);
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return false;
     }
 
@@ -2130,23 +2130,23 @@ bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initia
 
 bool SetBestFocus(wxWindow* win)
 {
-    if(win->IsEnabled()) {
-        if(dynamic_cast<wxBookCtrlBase*>(win)) {
+    if (win->IsEnabled()) {
+        if (dynamic_cast<wxBookCtrlBase*>(win)) {
             auto book = dynamic_cast<wxBookCtrlBase*>(win);
-            if(book->GetPageCount()) {
+            if (book->GetPageCount()) {
                 book->GetPage(book->GetSelection())->CallAfter(&wxWindow::SetFocus);
             }
             return true;
-        } else if(dynamic_cast<Notebook*>(win)) {
+        } else if (dynamic_cast<Notebook*>(win)) {
             auto book = dynamic_cast<Notebook*>(win);
-            if(book->GetCurrentPage()) {
+            if (book->GetCurrentPage()) {
                 book->GetCurrentPage()->CallAfter(&wxWindow::SetFocus);
             }
             return true;
-        } else if(dynamic_cast<wxStyledTextCtrl*>(win)) {
+        } else if (dynamic_cast<wxStyledTextCtrl*>(win)) {
             win->CallAfter(&wxStyledTextCtrl::SetFocus);
             return true;
-        } else if(dynamic_cast<clTreeCtrl*>(win)) {
+        } else if (dynamic_cast<clTreeCtrl*>(win)) {
             win->CallAfter(&clTreeCtrl::SetFocus);
             return true;
         }
@@ -2154,8 +2154,8 @@ bool SetBestFocus(wxWindow* win)
 
     // try the children
     auto children = win->GetChildren();
-    for(auto c : children) {
-        if(SetBestFocus(c)) {
+    for (auto c : children) {
+        if (SetBestFocus(c)) {
             return true;
         }
     }
@@ -2164,23 +2164,23 @@ bool SetBestFocus(wxWindow* win)
 
 bool IsWindowParentOf(wxWindow* parent, wxWindow* child)
 {
-    if(!child) {
+    if (!child) {
         return false;
     }
 
     std::vector<wxWindow*> Q;
     Q.push_back(parent);
 
-    while(!Q.empty()) {
+    while (!Q.empty()) {
         auto parent = Q.front();
         Q.erase(Q.begin());
 
-        if(parent == child) {
+        if (parent == child) {
             return true;
         }
 
         // put its children
-        for(auto c : parent->GetChildren()) {
+        for (auto c : parent->GetChildren()) {
             Q.push_back(c);
         }
     }
@@ -2189,17 +2189,33 @@ bool IsWindowParentOf(wxWindow* parent, wxWindow* child)
 
 Notebook* FindNotebookParentOf(wxWindow* child)
 {
-    if(!child) {
+    if (!child) {
         return nullptr;
     }
 
     wxWindow* parent = child->GetParent();
-    while(parent) {
+    while (parent) {
         Notebook* book = dynamic_cast<Notebook*>(parent);
-        if(book) {
+        if (book) {
             return book;
         }
         parent = parent->GetParent();
     }
     return nullptr;
+}
+
+bool IsChildOf(wxWindow* child, wxWindow* parent)
+{
+    if (child == nullptr || parent == nullptr) {
+        return false;
+    }
+
+    wxWindow* curparent = child->GetParent();
+    while (curparent) {
+        if (curparent == parent) {
+            return true;
+        }
+        curparent = curparent->GetParent();
+    }
+    return false;
 }

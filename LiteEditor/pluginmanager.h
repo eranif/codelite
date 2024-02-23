@@ -25,6 +25,7 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
+#include "Notebook.h"
 #include "clToolBar.h"
 #include "debugger.h"
 #include "dynamiclibrary.h"
@@ -93,7 +94,7 @@ public:
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type) override;
     clTreeCtrl* GetFileExplorerTree() override;
     clTreeCtrl* GetWorkspaceTree() override;
-    Notebook* GetMainNotebook() override;
+    clAuiBook* GetMainNotebook() override;
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                       OF_extra flags = OF_AddJump) override;
     IEditor* OpenFile(const wxString& fileName, const wxString& bmpResourceName,

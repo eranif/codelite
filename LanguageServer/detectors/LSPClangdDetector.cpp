@@ -8,6 +8,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "procutils.h"
+#include "tags_options_data.h"
 
 #include <wx/filename.h>
 #include <wx/regex.h>
@@ -22,7 +23,7 @@ LSPClangdDetector::~LSPClangdDetector() {}
 bool LSPClangdDetector::DoLocate()
 {
     wxString path;
-    if(!ThePlatform->WhichWithVersion("clangd", { 12, 13, 14, 15, 16, 17, 18, 19, 20 }, &path)) {
+    if (!ThePlatform->WhichWithVersion("clangd", { 12, 13, 14, 15, 16, 17, 18, 19, 20 }, &path)) {
         return false;
     }
 
@@ -38,7 +39,14 @@ void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
     command << clangdExe.GetFullPath();
     ::WrapWithQuotes(command);
 
-    command << " --limit-results=250 --header-insertion-decorators=0 --compile-commands-dir=$(WorkspacePath)";
+    clConfig ccConfig("code-completion.conf");
+    TagsOptionsData tagsOptionsData;
+    ccConfig.ReadItem(&tagsOptionsData);
+
+    size_t limit_results = tagsOptionsData.GetCcNumberOfDisplayItems();
+    command << " --limit-results=" << limit_results
+            << " --header-insertion-decorators=0 --compile-commands-dir=$(WorkspacePath)";
+
     SetCommand(command);
     // Add support for the languages
     GetLangugaes().Add("c");

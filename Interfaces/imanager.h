@@ -26,9 +26,7 @@
 #ifndef IMANAGER_H
 #define IMANAGER_H
 
-#include "Notebook.h"
 #include "bitmap_loader.h"
-#include "clResult.hpp"
 #include "clStatusBar.h"
 #include "clTab.h"
 #include "clToolBar.h"
@@ -39,10 +37,9 @@
 #include "optionsconfig.h"
 #include "project.h"
 #include "queuecommand.h"
-#include "wx/treectrl.h"
 
-#include <tuple>
 #include <vector>
+#include <wx/aui/auibook.h>
 #include <wx/aui/framemanager.h>
 
 class clTreeCtrl;
@@ -124,7 +121,7 @@ public:
      */
     void AddWorkspaceTab(const wxString& tabLabel)
     {
-        if(m_workspaceTabs.Index(tabLabel) == wxNOT_FOUND) {
+        if (m_workspaceTabs.Index(tabLabel) == wxNOT_FOUND) {
             m_workspaceTabs.Add(tabLabel);
         }
     }
@@ -134,7 +131,7 @@ public:
      */
     void AddOutputTab(const wxString& tabLabel)
     {
-        if(m_outputTabs.Index(tabLabel) == wxNOT_FOUND) {
+        if (m_outputTabs.Index(tabLabel) == wxNOT_FOUND) {
             m_outputTabs.Add(tabLabel);
         }
     }
@@ -276,7 +273,7 @@ public:
     /**
      * @brief return the main editor notebook
      */
-    virtual Notebook* GetMainNotebook() = 0;
+    virtual wxAuiNotebook* GetMainNotebook() = 0;
 
     /**
      * @brief append text line to the tab in the "Output View"

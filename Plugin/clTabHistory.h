@@ -19,9 +19,12 @@ public:
     clTabHistory() {}
     virtual ~clTabHistory() {}
 
+    /// Compact the history, keeping only windows from the `windows` list
+    void Compact(const std::vector<wxWindow*>& windows);
+
     void Push(wxWindow* page)
     {
-        if(page == NULL)
+        if (page == NULL)
             return;
         Pop(page);
         m_history.insert(m_history.begin(), page);
@@ -29,18 +32,18 @@ public:
 
     void Pop(wxWindow* page)
     {
-        if(!page)
+        if (!page)
             return;
         std::vector<wxWindow*>::iterator iter =
             std::find_if(m_history.begin(), m_history.end(), [&](wxWindow* w) { return w == page; });
-        if(iter != m_history.end()) {
+        if (iter != m_history.end()) {
             m_history.erase(iter);
         }
     }
 
     wxWindow* PrevPage()
     {
-        if(m_history.empty()) {
+        if (m_history.empty()) {
             return NULL;
         }
         // return the top of the heap

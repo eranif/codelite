@@ -31,15 +31,12 @@
 #include "cl_editor.h"
 #include "editorframe.h"
 #include "filehistory.h"
-#include "navigationmanager.h"
 #include "quickfindbar.h"
 #include "sessionmanager.h"
-#include "wxStringHash.h"
 
-#include <deque>
 #include <functional>
-#include <set>
 #include <vector>
+#include <wx/aui/auibook.h>
 #include <wx/panel.h>
 
 class FilesModifiedDlg;
@@ -56,7 +53,7 @@ class MainBook : public wxPanel
 private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
-    Notebook* m_book;
+    clAuiBook* m_book = nullptr;
     bool m_useBuffereLimit;
     EditorFrame::List_t m_detachedEditors;
     bool m_isWorkspaceReloading;
@@ -303,7 +300,7 @@ public:
     void SetUseBuffereLimit(bool useBuffereLimit) { this->m_useBuffereLimit = useBuffereLimit; }
     bool GetUseBuffereLimit() const { return m_useBuffereLimit; }
 
-    Notebook* GetNotebook() { return m_book; }
+    clAuiBook* GetNotebook() { return m_book; }
 };
 
 #endif // MAINBOOK_H

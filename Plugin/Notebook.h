@@ -50,6 +50,8 @@ public:
     size_t GetAllTabs(clTabInfo::Vec_t& tabs);
     clTabHistory::Ptr_t GetHistory() const { return m_history; }
     void MoveActivePage(int newIndex);
+    int SetSelection(size_t newPage) override;
+    int ChangeSelection(size_t n) override;
 
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);

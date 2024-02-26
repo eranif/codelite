@@ -51,7 +51,7 @@ void clAuiBook::OnPageClosed(wxAuiNotebookEvent& event)
 
     wxBookCtrlEvent event_closed(wxEVT_BOOK_PAGE_CLOSED);
     event_closed.SetEventObject(this);
-    GetEventHandler()->AddPendingEvent(event_closed);
+    GetEventHandler()->ProcessEvent(event_closed);
 }
 
 void clAuiBook::OnPageChanged(wxAuiNotebookEvent& event)
@@ -67,7 +67,7 @@ void clAuiBook::OnPageChanged(wxAuiNotebookEvent& event)
     wxBookCtrlEvent changed_event(wxEVT_BOOK_PAGE_CHANGED);
     changed_event.SetEventObject(GetParent());
     changed_event.SetSelection(GetSelection());
-    GetEventHandler()->AddPendingEvent(changed_event);
+    GetEventHandler()->ProcessEvent(changed_event);
 }
 
 void clAuiBook::MoveActivePage(int newIndex)
@@ -76,4 +76,18 @@ void clAuiBook::MoveActivePage(int newIndex)
     CHECK_COND_RET(cursel != wxNOT_FOUND);
 
     wxUnusedVar(newIndex);
+}
+
+int clAuiBook::SetSelection(size_t newPage)
+{
+    size_t res = wxAuiNotebook::SetSelection(newPage);
+    m_history->Push(GetCurrentPage());
+    return res;
+}
+
+int clAuiBook::ChangeSelection(size_t n)
+{
+    size_t res = wxAuiNotebook::ChangeSelection(n);
+    m_history->Push(GetCurrentPage());
+    return res;
 }

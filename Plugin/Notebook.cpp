@@ -48,17 +48,26 @@ void clAuiBook::OnPageClosed(wxAuiNotebookEvent& event)
         windows.emplace_back(GetPage(i));
     }
     m_history->Compact(windows);
+
+    wxBookCtrlEvent event_closed(wxEVT_BOOK_PAGE_CLOSED);
+    event_closed.SetEventObject(this);
+    GetEventHandler()->AddPendingEvent(event_closed);
 }
 
 void clAuiBook::OnPageChanged(wxAuiNotebookEvent& event)
 {
-    event.Skip();
     // Get the new selection and move it to the top of the hisotry list
     wxWindow* win = GetCurrentPage();
     CHECK_PTR_RET(win);
 
     m_history->Pop(win);
     m_history->Push(win);
+
+    // Send an event
+    wxBookCtrlEvent changed_event(wxEVT_BOOK_PAGE_CHANGED);
+    changed_event.SetEventObject(GetParent());
+    changed_event.SetSelection(GetSelection());
+    GetEventHandler()->AddPendingEvent(changed_event);
 }
 
 void clAuiBook::MoveActivePage(int newIndex)

@@ -25,6 +25,8 @@ protected:
     void OnPageChanged(wxAuiNotebookEvent& event);
     void OnPageChanging(wxAuiNotebookEvent& event);
     void OnPageRightDown(wxAuiNotebookEvent& event);
+    void OnTabAreaDoubleClick(wxAuiNotebookEvent& event);
+    void OnPageDoubleClick(wxAuiNotebookEvent& event);
 
 private:
     clTabHistory::Ptr_t m_history;

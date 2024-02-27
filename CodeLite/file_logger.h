@@ -33,6 +33,7 @@
 #include <wx/colour.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
+#include <wx/gdicmn.h>
 #include <wx/stopwatch.h>
 #include <wx/thread.h>
 #include <wxStringHash.h>
@@ -118,16 +119,16 @@ public:
     // special types printing
     inline FileLogger& operator<<(const std::vector<wxString>& arr)
     {
-        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
 
-        if(!m_buffer.IsEmpty()) {
+        if (!m_buffer.IsEmpty()) {
             m_buffer << " ";
         }
         m_buffer << "[";
-        if(!arr.empty()) {
-            for(size_t i = 0; i < arr.size(); ++i) {
+        if (!arr.empty()) {
+            for (size_t i = 0; i < arr.size(); ++i) {
                 m_buffer << arr[i] << ", ";
             }
             m_buffer.RemoveLast(2);
@@ -138,15 +139,15 @@ public:
 
     inline FileLogger& operator<<(const wxStringSet_t& S)
     {
-        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
-        if(!m_buffer.IsEmpty()) {
+        if (!m_buffer.IsEmpty()) {
             m_buffer << " ";
         }
         m_buffer << "{";
-        if(!S.empty()) {
-            for(const wxString& s : S) {
+        if (!S.empty()) {
+            for (const wxString& s : S) {
                 m_buffer << s << ", ";
             }
             m_buffer.RemoveLast(2);
@@ -157,15 +158,15 @@ public:
 
     inline FileLogger& operator<<(const wxStringMap_t& M)
     {
-        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
-        if(!m_buffer.IsEmpty()) {
+        if (!m_buffer.IsEmpty()) {
             m_buffer << " ";
         }
         m_buffer << "{";
-        if(!M.empty()) {
-            for(const auto& vt : M) {
+        if (!M.empty()) {
+            for (const auto& vt : M) {
                 m_buffer << "{" << vt.first << ", " << vt.second << "}, ";
             }
             m_buffer.RemoveLast(2);
@@ -176,7 +177,7 @@ public:
 
     inline FileLogger& operator<<(const wxArrayString& arr)
     {
-        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
         std::vector<wxString> v{ arr.begin(), arr.end() };
@@ -184,9 +185,45 @@ public:
         return *this;
     }
 
+    inline FileLogger& operator<<(const wxRect& rect)
+    {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
+            return *this;
+        }
+
+        wxString str;
+        str << "(" << rect.x << ", " << rect.y << ", " << rect.width << ", " << rect.height << ")";
+        *this << str;
+        return *this;
+    }
+
+    inline FileLogger& operator<<(const wxPoint& point)
+    {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
+            return *this;
+        }
+
+        wxString str;
+        str << "(" << point.x << ", " << point.y << ")";
+        *this << str;
+        return *this;
+    }
+
+    inline FileLogger& operator<<(const wxSize& size)
+    {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
+            return *this;
+        }
+
+        wxString str;
+        str << "(" << size.x << ", " << size.y << ")";
+        *this << str;
+        return *this;
+    }
+
     inline FileLogger& operator<<(const wxColour& colour)
     {
-        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
 
@@ -201,10 +238,10 @@ public:
      */
     inline FileLogger& operator<<(const wxString& str)
     {
-        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
-        if(!m_buffer.IsEmpty()) {
+        if (!m_buffer.IsEmpty()) {
             m_buffer << " ";
         }
         m_buffer << str;
@@ -216,10 +253,10 @@ public:
      */
     inline FileLogger& operator<<(const wxFileName& fn)
     {
-        if(!FileLogger::CanLog(GetLogEntryVerbosity())) {
+        if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
-        if(!m_buffer.IsEmpty()) {
+        if (!m_buffer.IsEmpty()) {
             m_buffer << " ";
         }
         m_buffer << fn.GetFullPath();
@@ -229,12 +266,13 @@ public:
     /**
      * @brief append any type to the buffer, take log level into consideration
      */
-    template <typename T> FileLogger& Append(const T& elem, int level)
+    template <typename T>
+    FileLogger& Append(const T& elem, int level)
     {
-        if(level > m_globalLogVerbosity) {
+        if (level > m_globalLogVerbosity) {
             return *this;
         }
-        if(!m_buffer.IsEmpty()) {
+        if (!m_buffer.IsEmpty()) {
             m_buffer << " ";
         }
         m_buffer << elem;
@@ -259,9 +297,10 @@ inline FileLogger& endl(FileLogger& d)
     return d;
 }
 
-template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
+template <typename T>
+FileLogger& operator<<(FileLogger& logger, const T& obj)
 {
-    if(!FileLogger::CanLog(logger.GetLogEntryVerbosity()))
+    if (!FileLogger::CanLog(logger.GetLogEntryVerbosity()))
         return logger;
 
     logger.Append(obj, logger.GetLogEntryVerbosity());
@@ -277,9 +316,9 @@ template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
 #define clWARNING() FileLogger(FileLogger::Warning) << FileLogger::Prefix(FileLogger::Warning)
 #define clSYSTEM() FileLogger(FileLogger::System) << FileLogger::Prefix(FileLogger::System)
 
-#define LOG_IF_DEBUG if(FileLogger::CanLog(FileLogger::Dbg))
-#define LOG_IF_TRACE if(FileLogger::CanLog(FileLogger::Developer))
-#define LOG_IF_WARN if(FileLogger::CanLog(FileLogger::Developer))
+#define LOG_IF_DEBUG if (FileLogger::CanLog(FileLogger::Dbg))
+#define LOG_IF_TRACE if (FileLogger::CanLog(FileLogger::Developer))
+#define LOG_IF_WARN if (FileLogger::CanLog(FileLogger::Developer))
 
 // A replacement for wxLogMessage
 #define clLogMessage(msg) clDEBUG() << msg

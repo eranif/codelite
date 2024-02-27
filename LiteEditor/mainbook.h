@@ -26,6 +26,7 @@
 #define MAINBOOK_H
 
 #include "Notebook.h"
+#include "clAuiBook.hpp"
 #include "clEditorBar.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"

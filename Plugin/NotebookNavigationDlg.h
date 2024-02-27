@@ -27,6 +27,7 @@
 #define NOTEBOOKNAVIGATIONDLG_H
 
 #include "Notebook.h"
+#include "clAuiBook.hpp"
 #include "clTab.h"
 #include "globals.h"
 #include "wxcrafter_plugin.h"

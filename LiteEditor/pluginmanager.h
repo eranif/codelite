@@ -26,6 +26,7 @@
 #define PLUGINMANAGER_H
 
 #include "Notebook.h"
+#include "clAuiBook.hpp"
 #include "clToolBar.h"
 #include "debugger.h"
 #include "dynamiclibrary.h"

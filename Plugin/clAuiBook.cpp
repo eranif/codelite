@@ -18,10 +18,6 @@ public:
         wxSize button_size = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
 
         wxRect tab_rect(inRect.GetTopLeft(), button_size);
-        if (page.active) {
-            clSYSTEM() << "Tab rect:" << tab_rect << endl;
-            clSYSTEM() << "xExtent" << *xExtent << endl;
-        }
         wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
         if (is_active) {
             if (is_dark) {
@@ -30,10 +26,11 @@ public:
             } else {
                 bg_colour = *wxWHITE;
             }
-            tab_rect.Inflate(wnd->FromDIP(2));
         } else {
             bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
         }
+
+        tab_rect.Inflate(0, wnd->FromDIP(2));
         wxColour pen_colour = bg_colour;
 
         *outTabRect = tab_rect;
@@ -102,8 +99,11 @@ private:
     }
 };
 
+static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS |
+                                     wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_WINDOWLIST_BUTTON;
+
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxAuiNotebook(parent, id, pos, size, style)
+    : wxAuiNotebook(parent, id, pos, size, style == 0 ? BOOK_STYLE : style)
 {
     SetArtProvider(new clAuiBookArt());
     m_history.reset(new clTabHistory());
@@ -112,6 +112,7 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     Bind(wxEVT_AUINOTEBOOK_PAGE_CLOSE, &clAuiBook::OnPageClosing, this);
     Bind(wxEVT_AUINOTEBOOK_PAGE_CLOSED, &clAuiBook::OnPageClosed, this);
     Bind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &clAuiBook::OnPageRightDown, this);
+    Bind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiBook::OnTabAreaDoubleClick, this);
 
     wxFont default_font = DrawingUtils::GetDefaultGuiFont();
     SetFont(default_font);
@@ -127,6 +128,7 @@ clAuiBook::~clAuiBook()
     Unbind(wxEVT_AUINOTEBOOK_PAGE_CLOSE, &clAuiBook::OnPageClosing, this);
     Unbind(wxEVT_AUINOTEBOOK_PAGE_CLOSED, &clAuiBook::OnPageClosed, this);
     Unbind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &clAuiBook::OnPageRightDown, this);
+    Unbind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiBook::OnTabAreaDoubleClick, this);
 }
 
 size_t clAuiBook::GetAllTabs(clTabInfo::Vec_t& tabs)
@@ -214,6 +216,23 @@ void clAuiBook::OnPageChanging(wxAuiNotebookEvent& event)
     }
     // Allow changing
     event.Skip();
+}
+
+void clAuiBook::OnPageDoubleClick(wxAuiNotebookEvent& event)
+{
+    wxUnusedVar(event);
+    wxBookCtrlEvent e(wxEVT_BOOK_TAB_DCLICKED);
+    e.SetEventObject(GetParent());
+    e.SetSelection(GetSelection());
+    GetParent()->GetEventHandler()->AddPendingEvent(e);
+}
+
+void clAuiBook::OnTabAreaDoubleClick(wxAuiNotebookEvent& event)
+{
+    wxUnusedVar(event);
+    wxBookCtrlEvent e(wxEVT_BOOK_NEW_PAGE);
+    e.SetEventObject(GetParent());
+    GetParent()->GetEventHandler()->AddPendingEvent(e);
 }
 
 void clAuiBook::OnPageRightDown(wxAuiNotebookEvent& event)

@@ -26,30 +26,22 @@
 
 #include "JSON.h"
 #include "SFTPClientData.hpp"
-#include "StringUtils.h"
-#include "asyncprocess.h"
-#include "clEditorConfig.h"
 #include "clEditorStateLocker.h"
 #include "clFileSystemEvent.h"
 #include "clFilesCollector.h"
 #include "clKeyboardManager.h"
 #include "clSFTPManager.hpp"
 #include "clSTCLineKeeper.h"
-#include "clWorkspaceManager.h"
 #include "codeformatterdlg.h"
 #include "codelite_events.h"
-#include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "macros.h"
-#include "precompiled_header.h"
-#include "procutils.h"
 #include "workspace.h"
 
-#include <algorithm>
 #include <thread>
 #include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>
@@ -58,6 +50,7 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
+#include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
 namespace
@@ -71,14 +64,14 @@ CodeFormatter* theFormatter = NULL;
 JSONItem json_get_formatter_object(JSON* root, const wxString& formatter_name)
 {
     auto json = root->toElement();
-    if(!json.hasNamedObject("tools")) {
+    if (!json.hasNamedObject("tools")) {
         return JSONItem{ nullptr };
     }
     auto servers = json["tools"];
     int count = servers.arraySize();
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         auto tool = servers[i];
-        if(tool["name"].toString() != formatter_name) {
+        if (tool["name"].toString() != formatter_name) {
             continue;
         }
         return tool;
@@ -89,14 +82,14 @@ JSONItem json_get_formatter_object(JSON* root, const wxString& formatter_name)
 thread_local std::unordered_map<wxString, size_t> ignore_map;
 bool dec_save_count_if_needed(const wxString& filepath)
 {
-    if(ignore_map.count(filepath) == 0) {
+    if (ignore_map.count(filepath) == 0) {
         return false;
     }
 
     // we caused this event, reduce the file reference count
     // and return
     ignore_map[filepath] -= 1;
-    if(ignore_map[filepath] == 0) {
+    if (ignore_map[filepath] == 0) {
         ignore_map.erase(filepath);
     }
     return true;
@@ -104,7 +97,7 @@ bool dec_save_count_if_needed(const wxString& filepath)
 
 void inc_save_count(const wxString& filepath)
 {
-    if(ignore_map.count(filepath)) {
+    if (ignore_map.count(filepath)) {
         ignore_map[filepath] += 1;
     } else {
         ignore_map[filepath] = 1;
@@ -116,7 +109,7 @@ void inc_save_count(const wxString& filepath)
 // the application
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(theFormatter == 0) {
+    if (theFormatter == 0) {
         theFormatter = new CodeFormatter(manager);
     }
     return theFormatter;
@@ -200,7 +193,7 @@ void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
     const wxString& fileToFormat = e.GetString();
 
     // If we got a file name in the event, use it instead of the active editor
-    if(!fileToFormat.empty()) {
+    if (!fileToFormat.empty()) {
         editor = m_mgr->FindEditor(fileToFormat);
     } else {
         editor = m_mgr->GetActiveEditor();
@@ -212,16 +205,16 @@ void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
 }
 std::shared_ptr<GenericFormatter> CodeFormatter::FindFormatter(const wxString& filepath, const wxString& content) const
 {
-    if(wxFileName(filepath).GetExt().IsEmpty()) {
+    if (wxFileName(filepath).GetExt().IsEmpty()) {
         // detect by content
-        if(!content.empty()) {
+        if (!content.empty()) {
             // we got content, use it
             return m_manager.GetFormatterByContent(content);
-        } else if(wxFileName::FileExists(filepath)) {
+        } else if (wxFileName::FileExists(filepath)) {
             // No content provided, but the file is a local file
             // read the content and try again
             wxString buffer;
-            if(FileUtils::ReadBufferFromFile(filepath, buffer, 4000)) {
+            if (FileUtils::ReadBufferFromFile(filepath, buffer, 4000)) {
                 return m_manager.GetFormatterByContent(content);
             }
         }
@@ -240,7 +233,7 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     CHECK_PTR_RET_FALSE(editor);
     bool is_remote = editor->IsRemoteFile();
     auto f = FindFormatter(editor->GetRemotePathOrLocal(), editor->GetEditorText());
-    if(!f) {
+    if (!f) {
         return false;
     }
 
@@ -248,14 +241,14 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     wxString file_path = editor->GetRemotePathOrLocal();
 
     // save the file formatting it
-    if(editor->IsEditorModified()) {
+    if (editor->IsEditorModified()) {
         editor->Save();
 #if USE_SFTP
         // By default, `editor->Save()`, for remote files, will save the file in an async mode ("later"), but we need
         // this to happen NOW. So call `clSFTPManager::Get().AwaitSaveFile`
-        if(editor->IsRemoteFile()) {
+        if (editor->IsRemoteFile()) {
             auto cd = editor->GetRemoteData();
-            if(cd) {
+            if (cd) {
                 wxBusyCursor bc;
                 clSFTPManager::Get().AwaitSaveFile(cd->GetLocalPath(), cd->GetRemotePath(), cd->GetAccountName());
             }
@@ -265,7 +258,7 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     }
 
     bool res = is_remote ? f->FormatRemoteFile(file_path, this) : f->FormatFile(file_path, this);
-    if(res) {
+    if (res) {
         editor->ClearModifiedLines();
     }
     return res;
@@ -273,12 +266,12 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
 
 bool CodeFormatter::DoFormatString(const wxString& content, const wxString& fileName, wxString* output)
 {
-    if(content.empty()) {
+    if (content.empty()) {
         return false;
     }
 
     auto formatter = FindFormatter(fileName, content);
-    if(!formatter) {
+    if (!formatter) {
         clDEBUG() << "Could not find suitable formatter for file:" << fileName << endl;
         return false;
     }
@@ -295,12 +288,12 @@ void CodeFormatter::ReloadCurrentEditor()
 bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format)
 {
     auto f = FindFormatter(fileName);
-    if(!f) {
+    if (!f) {
         clDEBUG() << "Could not find suitable formatter for file:" << fileName << endl;
         return false;
     }
 
-    if(is_remote_format) {
+    if (is_remote_format) {
         return f->FormatRemoteFile(fileName, this);
     } else {
         return f->FormatFile(fileName, this);
@@ -312,7 +305,7 @@ void CodeFormatter::OnSettings(wxCommandEvent& e)
     wxUnusedVar(e);
 
     CodeFormatterDlg dlg(EventNotifier::Get()->TopFrame(), m_manager);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // save the changes to the file system
         m_manager.Save();
     } else {
@@ -341,7 +334,7 @@ void CodeFormatter::HookPopupMenu(wxMenu* menu, MenuType type)
     wxUnusedVar(type);
     wxUnusedVar(menu);
 
-    if(type == MenuTypeFileView_Project) {
+    if (type == MenuTypeFileView_Project) {
         // Project context menu
         menu->Prepend(ID_TOOL_SOURCE_CODE_FORMATTER, _("Source Code Formatter"));
     }
@@ -372,7 +365,7 @@ IManager* CodeFormatter::GetManager() { return m_mgr; }
 void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 {
     wxString output;
-    if(DoFormatString(e.GetInputString(), e.GetFileName(), &output)) {
+    if (DoFormatString(e.GetInputString(), e.GetFileName(), &output)) {
         e.SetFormattedString(output);
     } else {
         e.SetFormattedString(wxEmptyString);
@@ -382,7 +375,7 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 void CodeFormatter::OnFormatFile(clSourceFormatEvent& e)
 {
     e.Skip(false);
-    if(!DoFormatFile(e.GetFileName(), false)) {
+    if (!DoFormatFile(e.GetFileName(), false)) {
         // let someone else handle this
         e.Skip();
     }
@@ -400,8 +393,8 @@ void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
 
             std::vector<wxString> arrfiles;
             arrfiles.reserve(files.size());
-            for(const wxFileName& f : files) {
-                if(m_manager.CanFormat(f.GetFullName())) {
+            for (const wxFileName& f : files) {
+                if (m_manager.CanFormat(f.GetFullName())) {
                     arrfiles.push_back(f.GetFullPath());
                 }
             }
@@ -415,7 +408,7 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     TreeItemInfo selectedItem = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    if(selectedItem.m_itemType != ProjectItem::TypeProject) {
+    if (selectedItem.m_itemType != ProjectItem::TypeProject) {
         return;
     }
 
@@ -427,8 +420,8 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
     std::vector<wxString> filesToFormat;
     filesToFormat.reserve(allFiles.size());
 
-    for(const auto& vt : allFiles) {
-        if(m_manager.CanFormat(vt.second->GetFilename())) {
+    for (const auto& vt : allFiles) {
+        if (m_manager.CanFormat(vt.second->GetFilename())) {
             filesToFormat.push_back(vt.second->GetFilename());
         }
     }
@@ -437,32 +430,32 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
 
 void CodeFormatter::BatchFormat(const std::vector<wxString>& files, bool silent)
 {
-    if(files.empty()) {
-        if(!silent) {
+    if (files.empty()) {
+        if (!silent) {
             ::wxMessageBox(_("Project contains no supported files"));
         }
         return;
     }
 
-    if(!silent) {
+    if (!silent) {
         wxString msg;
         msg << _("You are about to beautify ") << files.size() << _(" files\nContinue?");
-        if(wxYES != ::wxMessageBox(msg, _("Source Code Formatter"), wxYES_NO | wxCANCEL | wxCENTER)) {
+        if (wxYES != ::wxMessageBox(msg, _("Source Code Formatter"), wxYES_NO | wxCANCEL | wxCENTER)) {
             return;
         }
     }
 
-    for(size_t i = 0; i < files.size(); ++i) {
+    for (size_t i = 0; i < files.size(); ++i) {
         wxString msg;
         msg << "Formatting file: " << (i + 1) << "/" << files.size() << " " << files[i];
-        if(!silent) {
+        if (!silent) {
             clGetManager()->SetStatusMessage(msg, 1);
             wxSafeYield();
         }
         DoFormatFile(files[i], false);
     }
 
-    if(!silent) {
+    if (!silent) {
         clGetManager()->SetStatusMessage(wxString() << _("Successfully formatted ") << files.size() << _(" files"), 3);
         wxSafeYield();
     }
@@ -480,7 +473,7 @@ void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
     // reset the remote commands from the previous workspace
     m_manager.ClearRemoteCommands();
 
-    if(!config) {
+    if (!config) {
         return;
     }
 
@@ -490,10 +483,10 @@ void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
     // update the formatters with the remote command template
     // note: we do not replace macros here since some of them
     // might change per activation (e.g. $(CurrentFileRelPath))
-    for(size_t i = 0; i < all_tools.size(); ++i) {
+    for (size_t i = 0; i < all_tools.size(); ++i) {
         const wxString& tool_name = all_tools[i];
         auto json = json_get_formatter_object(config, tool_name);
-        if(!json.isOk() || (m_manager.GetFormatterByName(tool_name) == nullptr)) {
+        if (!json.isOk() || (m_manager.GetFormatterByName(tool_name) == nullptr)) {
             continue;
         }
 
@@ -528,16 +521,16 @@ void CodeFormatter::OnFileSaved(clCommandEvent& e)
     CHECK_PTR_RET(editor);
 
     // is format required?
-    if(!f->IsFormatOnSave()) {
+    if (!f->IsFormatOnSave()) {
         return;
     }
 
     // did we cause the OnSave event?
-    if(dec_save_count_if_needed(filepath)) {
+    if (dec_save_count_if_needed(filepath)) {
         return;
     }
 
-    if(!DoFormatEditor(editor)) {
+    if (!DoFormatEditor(editor)) {
         return;
     }
 }
@@ -548,21 +541,22 @@ void CodeFormatter::OnFormatCompleted(clSourceFormatEvent& event)
     const wxString& filepath = event.GetFileName();
     auto editor = clGetManager()->FindEditor(filepath);
 
-    if(editor) {
+    if (editor) {
+        wxWindowUpdateLocker window_locker{ editor->GetCtrl() };
         editor->GetCtrl()->BeginUndoAction();
         clEditorStateLocker locker{ editor->GetCtrl() };
         editor->GetCtrl()->SetText(event.GetFormattedString());
         editor->GetCtrl()->EndUndoAction();
         m_mgr->SetStatusMessage(_("Done"), 0);
 
-        if(editor->IsEditorModified() /* it should be.. */) {
+        if (editor->IsEditorModified() /* it should be.. */) {
             // need to set the editor back to "saved" status
             editor->Save();
             inc_save_count(filepath);
         }
     } else {
         // no editor is opened, update the file content
-        if(wxFileExists(filepath)) {
+        if (wxFileExists(filepath)) {
             FileUtils::WriteFileContent(filepath, event.GetFormattedString());
         }
     }
@@ -574,7 +568,7 @@ void CodeFormatter::OnInplaceFormatCompleted(clSourceFormatEvent& event)
     const wxString& filepath = event.GetFileName();
     auto editor = clGetManager()->FindEditor(filepath);
 
-    if(editor) {
+    if (editor) {
         // need to update the file itself
         editor->ReloadFromDisk(true);
     }
@@ -592,7 +586,7 @@ void CodeFormatter::OnInitDone(wxCommandEvent& e)
     e.Skip();
     // if no formatters are set, re-scan
     wxArrayString all_names;
-    if(m_manager.GetAllNames(&all_names) == 0) {
+    if (m_manager.GetAllNames(&all_names) == 0) {
         wxUnusedVar(all_names);
         wxBusyCursor bc;
         m_manager.RestoreDefaults();

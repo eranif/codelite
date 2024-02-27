@@ -11,12 +11,15 @@ class clAuiBookArt : public wxAuiDefaultTabArt
 {
 public:
     wxAuiTabArt* Clone() override { return new clAuiBookArt(); }
+    int GetBorderWidth(wxWindow* wnd) override { return 0; }
+    int GetAdditionalBorderSpace(wxWindow* wnd) override { return 0; }
+    int GetIndentSize() override { return 0; }
 
     void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override
     {
-        wxDCBrushChanger brush_changer(dc, clSystemSettings::GetDefaultPanelColour());
-        wxDCPenChanger pen_changer(dc, clSystemSettings::GetDefaultPanelColour());
-        dc.DrawRectangle(rect);
+        wxAuiDefaultTabArt::DrawBackground(dc, wnd, rect);
+        dc.SetPen(GetPenColour());
+        dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
     }
 
     void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& inRect, int closeButtonState,
@@ -30,6 +33,7 @@ public:
         wxSize button_size = GetTabSize(dcref, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
 
         wxRect tab_rect(inRect.GetTopLeft(), button_size);
+        tab_rect.SetHeight(wnd->GetClientRect().GetHeight());
         wxRect tab_rect_for_clipping(tab_rect);
         if (tab_rect_for_clipping.GetRight() >= inRect.GetRight()) {
             // the tab overflows. Make room for the window drop down list button
@@ -49,15 +53,41 @@ public:
             bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
         }
 
-#ifdef __WXGTK__
-        tab_rect.SetHeight(tab_rect.GetHeight() + wnd->FromDIP(5));
-#endif
-        wxColour pen_colour = bg_colour;
+        if (is_active) {
+            tab_rect.SetHeight(wnd->GetClientRect().GetHeight());
+        }
 
         *outTabRect = tab_rect;
-        dcref.SetPen(pen_colour);
+        dcref.SetPen(bg_colour);
         dcref.SetBrush(bg_colour);
         dcref.DrawRectangle(tab_rect);
+
+        if (is_active) {
+            if (is_dark) {
+                // top: do nothing
+                // left: light
+                // right: light
+                // bottom: dark
+                dcref.SetPen(GetPenColour());
+                dcref.DrawLine(tab_rect.GetBottomLeft(), tab_rect.GetBottomRight());
+
+                wxColour light_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(120);
+                dcref.SetPen(light_colour);
+                dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetBottomLeft());
+
+                dcref.SetPen(light_colour);
+                dcref.DrawLine(tab_rect.GetTopRight(), tab_rect.GetBottomRight());
+
+            } else {
+                dcref.SetPen(GetPenColour());
+                dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetBottomLeft());
+                dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetTopRight());
+                dcref.DrawLine(tab_rect.GetTopRight(), tab_rect.GetBottomRight());
+            }
+        } else {
+            dcref.SetPen(GetPenColour());
+            dcref.DrawLine(tab_rect.GetBottomLeft(), tab_rect.GetBottomRight());
+        }
 
         // Draw the text
         {
@@ -91,6 +121,18 @@ public:
     }
 
 private:
+    wxColour GetPenColour() const
+    {
+        bool is_dark = clSystemSettings::GetAppearance().IsDark();
+        wxColour pen_colour;
+        if (is_dark) {
+            pen_colour = *wxBLACK;
+        } else {
+            pen_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+        }
+        return pen_colour;
+    }
+
     void DoDrawButton(wxDC& dc, wxWindow* wnd, const wxRect& inRect, const wxColour& tab_bg_colour, int bitmapId,
                       int buttonState, int orientation, wxRect* outRect)
     {
@@ -124,12 +166,13 @@ private:
 };
 
 static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS |
-                                     wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_WINDOWLIST_BUTTON;
+                                     wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_WINDOWLIST_BUTTON |
+                                     wxAUI_NB_MIDDLE_CLICK_CLOSE;
 
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxAuiNotebook(parent, id, pos, size, style == 0 ? BOOK_STYLE : style)
 {
-    //SetArtProvider(new wxAuiSimpleTabArt());
+    // SetArtProvider(new wxAuiSimpleTabArt());
     SetArtProvider(new clAuiBookArt());
     m_history.reset(new clTabHistory());
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGING, &clAuiBook::OnPageChanging, this);

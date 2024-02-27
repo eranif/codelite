@@ -6276,7 +6276,7 @@ void clEditor::UpdateLineNumberMarginWidth()
         UpdateDefaultTextWidth();
     }
 
-    int size = new_width * m_default_text_width + 5;
+    int size = new_width * m_default_text_width + 10;
     SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers() ? size : 0);
 }
 

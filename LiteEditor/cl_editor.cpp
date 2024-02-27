@@ -768,11 +768,10 @@ void clEditor::SetProperties()
         SetCaretLineFrame(0);
 
     } else {
-
         bool is_dark = IsDefaultFgColourDark(this);
         SetCaretLineBackground(is_dark ? wxColour("GRAY") : wxColour("LIGHT GRAY"));
         SetCaretLineBackAlpha(wxSTC_ALPHA_NOALPHA);
-        SetCaretLineFrame(1);
+        SetCaretLineFrame(2);
     }
 #else
     SetCaretLineBackground(options->GetCaretLineColour());

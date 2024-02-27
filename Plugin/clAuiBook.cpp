@@ -75,9 +75,10 @@ public:
                 dcref.SetPen(light_colour);
                 wxPoint top_right = tab_rect.GetTopRight();
                 wxPoint bottom_right = tab_rect.GetBottomRight();
+#ifdef __WXMAC__
                 top_right.x += wnd->FromDIP(1);
                 bottom_right.x += wnd->FromDIP(1);
-
+#endif
                 dcref.DrawLine(top_right, bottom_right);
 
                 dcref.SetPen(GetPenColour());
@@ -88,8 +89,10 @@ public:
 
                 wxPoint top_right = tab_rect.GetTopRight();
                 wxPoint bottom_right = tab_rect.GetBottomRight();
+#ifdef __WXMAC__
                 top_right.x += wnd->FromDIP(1);
                 bottom_right.x += wnd->FromDIP(1);
+#endif
                 dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetTopRight());
                 dcref.DrawLine(top_right, bottom_right);
             }
@@ -172,6 +175,9 @@ private:
         DrawingUtils::DrawButtonX(dcref, wnd, inRect, pen_colour, tab_bg_colour, button_state);
         *outRect = inRect;
     }
+
+private:
+    clAuiBook* m_book = nullptr;
 };
 
 static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS |

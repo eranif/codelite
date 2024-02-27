@@ -1,6 +1,8 @@
 #include "clAuiBook.hpp"
 
 #include "clSystemSettings.h"
+#include "editor_config.h"
+#include "event_notifier.h"
 
 #include <vector>
 #include <wx/aui/tabart.h>
@@ -9,6 +11,8 @@ class clAuiBookArt : public wxAuiDefaultTabArt
 {
 public:
     wxAuiTabArt* Clone() override { return new clAuiBookArt(); }
+
+    void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override {}
 
     void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& inRect, int closeButtonState,
                  wxRect* outTabRect, wxRect* outButtonRect, int* xExtent) override
@@ -33,7 +37,7 @@ public:
             bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
         }
 
-        // tab_rect.Inflate(0, wnd->FromDIP(2));
+        tab_rect.SetHeight(tab_rect.GetHeight() + wnd->FromDIP(5));
         wxColour pen_colour = bg_colour;
 
         *outTabRect = tab_rect;
@@ -64,7 +68,7 @@ public:
                 offsetY = 1;
 
             wxRect button_rect(0, 0, bmp.GetLogicalWidth(), bmp.GetLogicalWidth());
-            button_rect.x = tab_rect.GetX() + tab_rect.GetWidth() - button_rect.GetWidth() - wnd->FromDIP(5);
+            button_rect.x = tab_rect.GetX() + tab_rect.GetWidth() - button_rect.GetWidth() - wnd->FromDIP(10);
             button_rect = button_rect.CenterIn(tab_rect, wxVERTICAL);
             DoDrawButton(dcref, wnd, button_rect, bg_colour, wxAUI_BUTTON_CLOSE, closeButtonState, wxTOP, &button_rect);
 
@@ -119,6 +123,7 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     Bind(wxEVT_AUINOTEBOOK_PAGE_CLOSED, &clAuiBook::OnPageClosed, this);
     Bind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &clAuiBook::OnPageRightDown, this);
     Bind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiBook::OnTabAreaDoubleClick, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &clAuiBook::OnPreferences, this);
 
     wxFont default_font = DrawingUtils::GetDefaultGuiFont();
     SetFont(default_font);
@@ -135,6 +140,7 @@ clAuiBook::~clAuiBook()
     Unbind(wxEVT_AUINOTEBOOK_PAGE_CLOSED, &clAuiBook::OnPageClosed, this);
     Unbind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &clAuiBook::OnPageRightDown, this);
     Unbind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiBook::OnTabAreaDoubleClick, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &clAuiBook::OnPreferences, this);
 }
 
 size_t clAuiBook::GetAllTabs(clTabInfo::Vec_t& tabs)
@@ -238,7 +244,7 @@ void clAuiBook::OnTabAreaDoubleClick(wxAuiNotebookEvent& event)
     wxUnusedVar(event);
     wxBookCtrlEvent e(wxEVT_BOOK_NEW_PAGE);
     e.SetEventObject(GetParent());
-    GetParent()->GetEventHandler()->AddPendingEvent(e);
+    GetEventHandler()->AddPendingEvent(e);
 }
 
 void clAuiBook::OnPageRightDown(wxAuiNotebookEvent& event)
@@ -261,4 +267,20 @@ void clAuiBook::OnPageClosing(wxAuiNotebookEvent& event)
         return;
     }
     event.Skip();
+}
+
+void clAuiBook::OnPreferences(wxCommandEvent& event)
+{
+    event.Skip();
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    bool show_x_on_tab = options->IsTabHasXButton();
+
+    auto style = GetWindowStyle();
+    if (show_x_on_tab) {
+        style |= wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
+    } else {
+        style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
+    }
+    SetWindowStyle(style);
+    Refresh();
 }

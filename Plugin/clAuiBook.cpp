@@ -129,6 +129,7 @@ static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_N
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxAuiNotebook(parent, id, pos, size, style == 0 ? BOOK_STYLE : style)
 {
+    //SetArtProvider(new wxAuiSimpleTabArt());
     SetArtProvider(new clAuiBookArt());
     m_history.reset(new clTabHistory());
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGING, &clAuiBook::OnPageChanging, this);

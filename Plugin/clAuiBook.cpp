@@ -7,6 +7,8 @@
 #include <vector>
 #include <wx/aui/tabart.h>
 
+static constexpr size_t X_SPACER = 7;
+
 class clAuiBookArt : public wxAuiDefaultTabArt
 {
 public:
@@ -27,6 +29,14 @@ public:
     {
         wxGCDC gcdc;
         wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
+
+        bool is_modified = false;
+        if (page.window) {
+            auto stc = dynamic_cast<wxStyledTextCtrl*>(page.window);
+            if (stc) {
+                is_modified = stc->GetModify();
+            }
+        }
 
         bool is_active = page.active;
         bool is_dark = clSystemSettings::GetAppearance().IsDark();
@@ -106,13 +116,27 @@ public:
             wxColour text_colour =
                 is_dark ? (page.active ? *wxWHITE : bg_colour.ChangeLightness(170)) : bg_colour.ChangeLightness(30);
 
-            wxDCTextColourChanger text_colour_changer(dcref, text_colour);
-            wxDCFontChanger font_changer(dcref, m_normalFont);
+            if (is_modified) {
+                text_colour = is_dark ? "PINK" : "RED";
+            }
 
+            wxDCTextColourChanger text_colour_changer(dcref, text_colour);
+            if (is_modified) {
+                m_normalFont.SetWeight(wxFONTWEIGHT_BOLD);
+                m_normalFont.SetStyle(wxFONTSTYLE_ITALIC);
+            }
+
+            wxDCFontChanger font_changer(dcref, m_normalFont);
             wxRect textRect = dcref.GetTextExtent(page.caption);
+
             textRect = textRect.CenterIn(tab_rect, wxVERTICAL);
-            textRect.SetX(tab_rect.GetX() + wnd->FromDIP(10));
+            textRect.SetX(tab_rect.GetX() + wnd->FromDIP(X_SPACER));
             dcref.DrawText(page.caption, textRect.GetTopLeft());
+
+            if (is_modified) {
+                m_normalFont.SetWeight(wxFONTWEIGHT_NORMAL);
+                m_normalFont.SetStyle(wxFONTSTYLE_NORMAL);
+            }
         }
 
         if (closeButtonState != wxAUI_BUTTON_STATE_HIDDEN) {
@@ -124,7 +148,7 @@ public:
                 offsetY = 1;
 
             wxRect button_rect(0, 0, bmp.GetLogicalWidth(), bmp.GetLogicalWidth());
-            button_rect.x = tab_rect.GetX() + tab_rect.GetWidth() - button_rect.GetWidth() - wnd->FromDIP(10);
+            button_rect.x = tab_rect.GetX() + tab_rect.GetWidth() - button_rect.GetWidth() - wnd->FromDIP(X_SPACER);
             button_rect = button_rect.CenterIn(tab_rect, wxVERTICAL);
             DoDrawButton(dcref, wnd, button_rect, bg_colour, wxAUI_BUTTON_CLOSE, closeButtonState, wxTOP, &button_rect);
 

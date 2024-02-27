@@ -13,9 +13,12 @@ public:
     void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& inRect, int closeButtonState,
                  wxRect* outTabRect, wxRect* outButtonRect, int* xExtent) override
     {
+        wxGCDC gcdc;
+        wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
+
         bool is_active = page.active;
         bool is_dark = clSystemSettings::GetAppearance().IsDark();
-        wxSize button_size = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
+        wxSize button_size = GetTabSize(dcref, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
 
         wxRect tab_rect(inRect.GetTopLeft(), button_size);
         wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
@@ -30,26 +33,26 @@ public:
             bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
         }
 
-        //tab_rect.Inflate(0, wnd->FromDIP(2));
+        // tab_rect.Inflate(0, wnd->FromDIP(2));
         wxColour pen_colour = bg_colour;
 
         *outTabRect = tab_rect;
-        dc.SetPen(pen_colour);
-        dc.SetBrush(bg_colour);
-        dc.DrawRectangle(tab_rect);
+        dcref.SetPen(pen_colour);
+        dcref.SetBrush(bg_colour);
+        dcref.DrawRectangle(tab_rect);
 
         // Draw the text
         {
             wxColour text_colour =
                 is_dark ? (page.active ? *wxWHITE : bg_colour.ChangeLightness(170)) : bg_colour.ChangeLightness(30);
 
-            wxDCTextColourChanger text_colour_changer(dc, text_colour);
-            wxDCFontChanger font_changer(dc, m_normalFont);
+            wxDCTextColourChanger text_colour_changer(dcref, text_colour);
+            wxDCFontChanger font_changer(dcref, m_normalFont);
 
-            wxRect textRect = dc.GetTextExtent(page.caption);
+            wxRect textRect = dcref.GetTextExtent(page.caption);
             textRect = textRect.CenterIn(tab_rect, wxVERTICAL);
             textRect.SetX(tab_rect.GetX() + wnd->FromDIP(10));
-            dc.DrawText(page.caption, textRect.GetTopLeft());
+            dcref.DrawText(page.caption, textRect.GetTopLeft());
         }
 
         if (closeButtonState != wxAUI_BUTTON_STATE_HIDDEN) {
@@ -63,7 +66,7 @@ public:
             wxRect button_rect(0, 0, bmp.GetLogicalWidth(), bmp.GetLogicalWidth());
             button_rect.x = tab_rect.GetX() + tab_rect.GetWidth() - button_rect.GetWidth() - wnd->FromDIP(5);
             button_rect = button_rect.CenterIn(tab_rect, wxVERTICAL);
-            DoDrawButton(dc, wnd, button_rect, bg_colour, wxAUI_BUTTON_CLOSE, closeButtonState, wxTOP, &button_rect);
+            DoDrawButton(dcref, wnd, button_rect, bg_colour, wxAUI_BUTTON_CLOSE, closeButtonState, wxTOP, &button_rect);
 
             *outButtonRect = button_rect;
         }
@@ -73,6 +76,9 @@ private:
     void DoDrawButton(wxDC& dc, wxWindow* wnd, const wxRect& inRect, const wxColour& tab_bg_colour, int bitmapId,
                       int buttonState, int orientation, wxRect* outRect)
     {
+        wxGCDC gcdc;
+        wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
+
         if (bitmapId != wxAUI_BUTTON_CLOSE) {
             wxAuiDefaultTabArt::DrawButton(dc, wnd, inRect, bitmapId, buttonState, orientation, outRect);
             return;
@@ -94,7 +100,7 @@ private:
         case wxAUI_BUTTON_STATE_NORMAL:
             break;
         }
-        DrawingUtils::DrawButtonX(dc, wnd, inRect, pen_colour, tab_bg_colour, button_state);
+        DrawingUtils::DrawButtonX(dcref, wnd, inRect, pen_colour, tab_bg_colour, button_state);
         *outRect = inRect;
     }
 };

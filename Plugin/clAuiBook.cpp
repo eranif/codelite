@@ -30,7 +30,7 @@ public:
             bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
         }
 
-        tab_rect.Inflate(0, wnd->FromDIP(2));
+        //tab_rect.Inflate(0, wnd->FromDIP(2));
         wxColour pen_colour = bg_colour;
 
         *outTabRect = tab_rect;

@@ -12,7 +12,12 @@ class clAuiBookArt : public wxAuiDefaultTabArt
 public:
     wxAuiTabArt* Clone() override { return new clAuiBookArt(); }
 
-    void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override {}
+    void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override
+    {
+        wxDCBrushChanger brush_changer(dc, clSystemSettings::GetDefaultPanelColour());
+        wxDCPenChanger pen_changer(dc, clSystemSettings::GetDefaultPanelColour());
+        dc.DrawRectangle(rect);
+    }
 
     void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& inRect, int closeButtonState,
                  wxRect* outTabRect, wxRect* outButtonRect, int* xExtent) override
@@ -25,12 +30,13 @@ public:
         wxSize button_size = GetTabSize(dcref, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
 
         wxRect tab_rect(inRect.GetTopLeft(), button_size);
-        if (tab_rect.GetRight() >= inRect.GetRight()) {
+        wxRect tab_rect_for_clipping(tab_rect);
+        if (tab_rect_for_clipping.GetRight() >= inRect.GetRight()) {
             // the tab overflows. Make room for the window drop down list button
-            tab_rect.SetRight(inRect.GetRight() - 10);
+            tab_rect_for_clipping.SetRight(inRect.GetRight() - 10);
         }
 
-        wxDCClipper clipper(dc, tab_rect);
+        wxDCClipper clipper(dcref, tab_rect_for_clipping);
         wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
         if (is_active) {
             if (is_dark) {
@@ -43,7 +49,9 @@ public:
             bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
         }
 
+#ifdef __WXGTK__
         tab_rect.SetHeight(tab_rect.GetHeight() + wnd->FromDIP(5));
+#endif
         wxColour pen_colour = bg_colour;
 
         *outTabRect = tab_rect;

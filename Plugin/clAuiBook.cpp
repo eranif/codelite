@@ -25,6 +25,12 @@ public:
         wxSize button_size = GetTabSize(dcref, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
 
         wxRect tab_rect(inRect.GetTopLeft(), button_size);
+        if (tab_rect.GetRight() >= inRect.GetRight()) {
+            // the tab overflows. Make room for the window drop down list button
+            tab_rect.SetRight(inRect.GetRight() - 10);
+        }
+
+        wxDCClipper clipper(dc, tab_rect);
         wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
         if (is_active) {
             if (is_dark) {

@@ -88,8 +88,8 @@ void MainBook::CreateGuiControls()
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
-    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS |
-                 wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_WINDOWLIST_BUTTON;
+    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_CLOSE_ON_ACTIVE_TAB |
+                 wxAUI_NB_WINDOWLIST_BUTTON;
 
     if (!EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
         style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;

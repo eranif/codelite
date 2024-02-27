@@ -68,21 +68,30 @@ public:
                 // left: light
                 // right: light
                 // bottom: dark
-                dcref.SetPen(GetPenColour());
-                dcref.DrawLine(tab_rect.GetBottomLeft(), tab_rect.GetBottomRight());
-
                 wxColour light_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(120);
                 dcref.SetPen(light_colour);
                 dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetBottomLeft());
 
                 dcref.SetPen(light_colour);
-                dcref.DrawLine(tab_rect.GetTopRight(), tab_rect.GetBottomRight());
+                wxPoint top_right = tab_rect.GetTopRight();
+                wxPoint bottom_right = tab_rect.GetBottomRight();
+                top_right.x += wnd->FromDIP(1);
+                bottom_right.x += wnd->FromDIP(1);
 
+                dcref.DrawLine(top_right, bottom_right);
+
+                dcref.SetPen(GetPenColour());
+                dcref.DrawLine(tab_rect.GetBottomLeft(), tab_rect.GetBottomRight());
             } else {
                 dcref.SetPen(GetPenColour());
                 dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetBottomLeft());
+
+                wxPoint top_right = tab_rect.GetTopRight();
+                wxPoint bottom_right = tab_rect.GetBottomRight();
+                top_right.x += wnd->FromDIP(1);
+                bottom_right.x += wnd->FromDIP(1);
                 dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetTopRight());
-                dcref.DrawLine(tab_rect.GetTopRight(), tab_rect.GetBottomRight());
+                dcref.DrawLine(top_right, bottom_right);
             }
         } else {
             dcref.SetPen(GetPenColour());

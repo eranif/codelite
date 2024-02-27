@@ -25,15 +25,12 @@
 
 #include "editorsettingsdockingwidows.h"
 
-#include "cl_config.h"
-#include "cl_defs.h"
-
 EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)
 {
     AddHeader(_("Tabs"));
 
-#if !CL_USE_NATIVEBOOK
+#if 1
     const std::unordered_map<wxString, int> tab_height_map = { { "TALL", OptionsConfig::nbTabHt_Tall },
                                                                { "MEDIUM", OptionsConfig::nbTabHt_Medium },
                                                                { "SHORT", OptionsConfig::nbTabHt_Short },
@@ -49,7 +46,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
     AddProperty(_("Height"), tab_heights, tab_height_map_reverse.find(m_options->GetNotebookTabHeight())->second,
                 [this, tab_height_map](const wxString& label, const wxAny& value) {
                     wxString value_str;
-                    if(value.GetAs(&value_str)) {
+                    if (value.GetAs(&value_str)) {
                         m_options->SetNotebookTabHeight(tab_height_map.find(value_str)->second);
                     }
                 });
@@ -68,7 +65,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
                 orientation_map_reverse[m_options->GetWorkspaceTabsDirection()],
                 [this, orientation_map](const wxString&, const wxAny& value) mutable {
                     wxString str_value;
-                    if(value.GetAs(&str_value)) {
+                    if (value.GetAs(&str_value)) {
                         m_options->SetWorkspaceTabsDirection(orientation_map[str_value]);
                     }
                 });
@@ -76,24 +73,21 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
                 orientation_map_reverse[m_options->GetOutputTabsDirection()],
                 [this, orientation_map](const wxString&, const wxAny& value) mutable {
                     wxString str_value;
-                    if(value.GetAs(&str_value)) {
+                    if (value.GetAs(&str_value)) {
                         m_options->SetOutputTabsDirection(orientation_map[str_value]);
                     }
                 });
 
-#if !CL_USE_NATIVEBOOK
     AddProperty(_("Show close button on tabs"), m_options->IsTabHasXButton(), UPDATE_BOOL_CB(SetTabHasXButton));
-#endif
-
     AddProperty(_("Show file path on tab label"), m_options->IsTabShowPath(), UPDATE_BOOL_CB(SetTabShowPath));
 
-#if !CL_USE_NATIVEBOOK
+#if 0
     AddProperty(_("Mouse scroll switch bewtween tabs"), m_options->IsMouseScrollSwitchTabs(),
                 UPDATE_BOOL_CB(SetMouseScrollSwitchTabs));
-#endif
-
     AddProperty(_("Sort tab file list"), m_options->IsSortTabsDropdownAlphabetically(),
                 UPDATE_BOOL_CB(SetSortTabsDropdownAlphabetically));
+#endif
+
     AddProperty(_("Use Ctrl+TAB to switch tabs"), m_options->IsCtrlTabEnabled(), UPDATE_BOOL_CB(SetCtrlTabEnabled));
 #ifndef __WXGTK__
     AddProperty(_("Hide main tab bar"), clConfig::Get().Read("HideTabBar", false),

@@ -1,10 +1,111 @@
 #include "clAuiBook.hpp"
 
+#include "clSystemSettings.h"
+
 #include <vector>
+#include <wx/aui/tabart.h>
+
+class clAuiBookArt : public wxAuiDefaultTabArt
+{
+public:
+    wxAuiTabArt* Clone() override { return new clAuiBookArt(); }
+
+    void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& inRect, int closeButtonState,
+                 wxRect* outTabRect, wxRect* outButtonRect, int* xExtent) override
+    {
+        bool is_active = page.active;
+        bool is_dark = clSystemSettings::GetAppearance().IsDark();
+        wxSize button_size = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
+
+        wxRect tab_rect(inRect.GetTopLeft(), button_size);
+        if (page.active) {
+            clSYSTEM() << "Tab rect:" << tab_rect << endl;
+            clSYSTEM() << "xExtent" << *xExtent << endl;
+        }
+        wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
+        if (is_active) {
+            if (is_dark) {
+                bg_colour = bg_colour.ChangeLightness(110);
+
+            } else {
+                bg_colour = *wxWHITE;
+            }
+            tab_rect.Inflate(wnd->FromDIP(2));
+        } else {
+            bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
+        }
+        wxColour pen_colour = bg_colour;
+
+        *outTabRect = tab_rect;
+        dc.SetPen(pen_colour);
+        dc.SetBrush(bg_colour);
+        dc.DrawRectangle(tab_rect);
+
+        // Draw the text
+        {
+            wxColour text_colour =
+                is_dark ? (page.active ? *wxWHITE : bg_colour.ChangeLightness(170)) : bg_colour.ChangeLightness(30);
+
+            wxDCTextColourChanger text_colour_changer(dc, text_colour);
+            wxDCFontChanger font_changer(dc, m_normalFont);
+
+            wxRect textRect = dc.GetTextExtent(page.caption);
+            textRect = textRect.CenterIn(tab_rect, wxVERTICAL);
+            textRect.SetX(tab_rect.GetX() + wnd->FromDIP(10));
+            dc.DrawText(page.caption, textRect.GetTopLeft());
+        }
+
+        if (closeButtonState != wxAUI_BUTTON_STATE_HIDDEN) {
+            wxBitmapBundle bb = m_activeCloseBmp;
+            const wxBitmap bmp = bb.GetBitmapFor(wnd);
+
+            int offsetY = tab_rect.GetY() - 1;
+            if (m_flags & wxAUI_NB_BOTTOM)
+                offsetY = 1;
+
+            wxRect button_rect(0, 0, bmp.GetLogicalWidth(), bmp.GetLogicalWidth());
+            button_rect.x = tab_rect.GetX() + tab_rect.GetWidth() - button_rect.GetWidth() - wnd->FromDIP(5);
+            button_rect = button_rect.CenterIn(tab_rect, wxVERTICAL);
+            DoDrawButton(dc, wnd, button_rect, bg_colour, wxAUI_BUTTON_CLOSE, closeButtonState, wxTOP, &button_rect);
+
+            *outButtonRect = button_rect;
+        }
+    }
+
+private:
+    void DoDrawButton(wxDC& dc, wxWindow* wnd, const wxRect& inRect, const wxColour& tab_bg_colour, int bitmapId,
+                      int buttonState, int orientation, wxRect* outRect)
+    {
+        if (bitmapId != wxAUI_BUTTON_CLOSE) {
+            wxAuiDefaultTabArt::DrawButton(dc, wnd, inRect, bitmapId, buttonState, orientation, outRect);
+            return;
+        }
+
+        bool is_dark = clSystemSettings::GetAppearance().IsDark();
+        wxColour pen_colour = is_dark ? "ORANGE" : clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+        eButtonState button_state = eButtonState::kNormal;
+        switch (buttonState) {
+        case wxAUI_BUTTON_STATE_HOVER:
+            button_state = eButtonState::kHover;
+            break;
+        case wxAUI_BUTTON_STATE_PRESSED:
+            button_state = eButtonState::kPressed;
+            break;
+        case wxAUI_BUTTON_STATE_HIDDEN:
+            return;
+        default:
+        case wxAUI_BUTTON_STATE_NORMAL:
+            break;
+        }
+        DrawingUtils::DrawButtonX(dc, wnd, inRect, pen_colour, tab_bg_colour, button_state);
+        *outRect = inRect;
+    }
+};
 
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxAuiNotebook(parent, id, pos, size, style)
 {
+    SetArtProvider(new clAuiBookArt());
     m_history.reset(new clTabHistory());
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGING, &clAuiBook::OnPageChanging, this);
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clAuiBook::OnPageChanged, this);

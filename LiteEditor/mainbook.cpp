@@ -322,6 +322,8 @@ void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { Crea
 
 void MainBook::DoRestoreSession(const SessionEntry& session)
 {
+    clAuiBookEventsDisabler events_disabler{ m_book };
+
     size_t sel = session.GetSelectedTab();
     clEditor* active_editor = nullptr;
     const auto& vTabInfoArr = session.GetTabInfoArr();
@@ -1032,7 +1034,9 @@ bool MainBook::CloseAll(bool cancellable)
     }
 
     // Delete the files without notifications (it will be faster)
-    clWindowUpdateLocker locker(this);
+    clAuiBookEventsDisabler events_disabler{ m_book };
+    clWindowUpdateLocker locker{ m_book };
+
     SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
 
     m_reloadingDoRaise = false;

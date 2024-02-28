@@ -199,9 +199,6 @@ private:
         DrawingUtils::DrawButtonX(dcref, wnd, inRect, pen_colour, tab_bg_colour, button_state);
         *outRect = inRect;
     }
-
-private:
-    clAuiBook* m_book = nullptr;
 };
 
 static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS |
@@ -211,8 +208,19 @@ static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_N
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxAuiNotebook(parent, id, pos, size, style == 0 ? BOOK_STYLE : style)
 {
-    // SetArtProvider(new wxAuiSimpleTabArt());
-    SetArtProvider(new clAuiBookArt());
+    wxFont default_font = DrawingUtils::GetDefaultGuiFont();
+    SetFont(default_font);
+    SetMeasuringFont(default_font);
+    SetNormalFont(default_font);
+    SetSelectedFont(default_font);
+
+    auto art = new clAuiBookArt();
+    SetArtProvider(art);
+
+    art->SetMeasuringFont(default_font);
+    art->SetNormalFont(default_font);
+    art->SetSelectedFont(default_font);
+
     m_history.reset(new clTabHistory());
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGING, &clAuiBook::OnPageChanging, this);
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clAuiBook::OnPageChanged, this);
@@ -221,12 +229,6 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     Bind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &clAuiBook::OnPageRightDown, this);
     Bind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiBook::OnTabAreaDoubleClick, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &clAuiBook::OnPreferences, this);
-
-    wxFont default_font = DrawingUtils::GetDefaultGuiFont();
-    SetFont(default_font);
-    SetMeasuringFont(default_font);
-    SetNormalFont(default_font);
-    SetSelectedFont(default_font);
 }
 
 clAuiBook::~clAuiBook()
@@ -279,6 +281,9 @@ wxBorder clAuiBook::GetDefaultBorder() const { return wxBORDER_NONE; }
 void clAuiBook::OnPageClosed(wxAuiNotebookEvent& event)
 {
     event.Skip();
+    if (!m_eventsEnabled) {
+        return;
+    }
     // Ensure that the history contains only existing tabs
     std::vector<wxWindow*> windows;
     size_t count = GetPageCount();
@@ -296,6 +301,11 @@ void clAuiBook::OnPageClosed(wxAuiNotebookEvent& event)
 
 void clAuiBook::OnPageChanged(wxAuiNotebookEvent& event)
 {
+    wxUnusedVar(event);
+    if (!m_eventsEnabled) {
+        return;
+    }
+
     // Get the new selection and move it to the top of the hisotry list
     wxWindow* win = GetCurrentPage();
     CHECK_PTR_RET(win);
@@ -312,6 +322,12 @@ void clAuiBook::OnPageChanged(wxAuiNotebookEvent& event)
 
 void clAuiBook::OnPageChanging(wxAuiNotebookEvent& event)
 {
+    if (!m_eventsEnabled) {
+        // Allow changing
+        event.Skip();
+        return;
+    }
+
     // wrap this event with our own event
     wxBookCtrlEvent event_changing(wxEVT_BOOK_PAGE_CHANGING);
     event_changing.SetEventObject(this);
@@ -329,6 +345,11 @@ void clAuiBook::OnPageChanging(wxAuiNotebookEvent& event)
 
 void clAuiBook::OnPageDoubleClick(wxAuiNotebookEvent& event)
 {
+    if (!m_eventsEnabled) {
+        // Allow changing
+        event.Skip();
+        return;
+    }
     wxUnusedVar(event);
     wxBookCtrlEvent e(wxEVT_BOOK_TAB_DCLICKED);
     e.SetEventObject(GetParent());
@@ -338,7 +359,12 @@ void clAuiBook::OnPageDoubleClick(wxAuiNotebookEvent& event)
 
 void clAuiBook::OnTabAreaDoubleClick(wxAuiNotebookEvent& event)
 {
-    wxUnusedVar(event);
+    if (!m_eventsEnabled) {
+        // Allow changing
+        event.Skip();
+        return;
+    }
+
     wxBookCtrlEvent e(wxEVT_BOOK_NEW_PAGE);
     e.SetEventObject(GetParent());
     GetEventHandler()->AddPendingEvent(e);
@@ -346,6 +372,12 @@ void clAuiBook::OnTabAreaDoubleClick(wxAuiNotebookEvent& event)
 
 void clAuiBook::OnPageRightDown(wxAuiNotebookEvent& event)
 {
+    if (!m_eventsEnabled) {
+        // Allow changing
+        event.Skip();
+        return;
+    }
+
     wxBookCtrlEvent menuEvent(wxEVT_BOOK_TAB_CONTEXT_MENU);
     menuEvent.SetEventObject(this);
     menuEvent.SetSelection(GetSelection());
@@ -354,6 +386,12 @@ void clAuiBook::OnPageRightDown(wxAuiNotebookEvent& event)
 
 void clAuiBook::OnPageClosing(wxAuiNotebookEvent& event)
 {
+    if (!m_eventsEnabled) {
+        // Allow changing
+        event.Skip();
+        return;
+    }
+
     wxBookCtrlEvent eventClosing(wxEVT_BOOK_PAGE_CLOSING);
     eventClosing.SetEventObject(this);
     eventClosing.SetSelection(GetSelection());
@@ -381,3 +419,5 @@ void clAuiBook::OnPreferences(wxCommandEvent& event)
     SetWindowStyle(style);
     Refresh();
 }
+
+void clAuiBook::EnableEvents(bool b) { m_eventsEnabled = b; }

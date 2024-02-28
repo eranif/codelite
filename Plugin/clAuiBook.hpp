@@ -19,6 +19,10 @@ public:
     int ChangeSelection(size_t n) override;
     wxBorder GetDefaultBorder() const override;
 
+    /// Enable events fired from the book
+    void EnableEvents(bool b);
+    bool AreEventsEnabled() const { return m_eventsEnabled; }
+
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);
     void OnPageClosing(wxAuiNotebookEvent& event);
@@ -31,6 +35,30 @@ protected:
 
 private:
     clTabHistory::Ptr_t m_history;
+    bool m_eventsEnabled = true;
+};
+
+class WXDLLIMPEXP_SDK clAuiBookEventsDisabler
+{
+public:
+    clAuiBookEventsDisabler(clAuiBook* book)
+        : m_book(book)
+    {
+        if (m_book) {
+            m_oldState = m_book->AreEventsEnabled();
+            m_book->EnableEvents(false);
+        }
+    }
+    ~clAuiBookEventsDisabler()
+    {
+        if (m_book) {
+            m_book->EnableEvents(m_oldState);
+        }
+    }
+
+private:
+    clAuiBook* m_book = nullptr;
+    bool m_oldState = true;
 };
 
 #endif // CLAUIBOOK_HPP

@@ -110,7 +110,7 @@ private:
     void OnEditorSettingsChanged(wxCommandEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
     void OnIdle(wxIdleEvent& event);
-
+    void OnSessionLoaded(clCommandEvent& event);
     /**
      * @brief return proper tab label for a given filename
      */

@@ -292,7 +292,7 @@ void clAuiBook::OnPageClosed(wxAuiNotebookEvent& event)
     for (size_t i = 0; i < count; ++i) {
         windows.emplace_back(GetPage(i));
     }
-    m_history->Compact(windows);
+    m_history->Compact(windows, false);
 
     wxBookCtrlEvent event_closed(wxEVT_BOOK_PAGE_CLOSED);
     event_closed.SetEventObject(this);
@@ -421,3 +421,16 @@ void clAuiBook::OnPreferences(wxCommandEvent& event)
 }
 
 void clAuiBook::EnableEvents(bool b) { m_eventsEnabled = b; }
+
+void clAuiBook::UpdateHistory()
+{
+    // Ensure that the history contains only existing tabs
+    std::vector<wxWindow*> windows;
+    size_t count = GetPageCount();
+    windows.reserve(count);
+
+    for (size_t i = 0; i < count; ++i) {
+        windows.emplace_back(GetPage(i));
+    }
+    m_history->Compact(windows, true);
+}

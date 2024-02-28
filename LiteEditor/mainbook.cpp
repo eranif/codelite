@@ -132,6 +132,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &MainBook::OnEditorSaved, this);
     // we handle a "load file" as if the file was saved
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &MainBook::OnEditorSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_SESSION_LOADED, &MainBook::OnSessionLoaded, this);
 
     Bind(wxEVT_IDLE, &MainBook::OnIdle, this);
 }
@@ -147,7 +148,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_NEW_PAGE, &MainBook::OnMouseDClick, this);
     m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     m_book->Unbind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
-
+    EventNotifier::Get()->Bind(wxEVT_SESSION_LOADED, &MainBook::OnSessionLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &MainBook::OnThemeChanged, this);
 
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &MainBook::OnWorkspaceLoaded, this);
@@ -1945,4 +1946,10 @@ void MainBook::OnEditorSaved(clCommandEvent& event)
     m_book->SetPageModified(index, editor->GetModify());
 #endif
 #endif
+}
+
+void MainBook::OnSessionLoaded(clCommandEvent& event)
+{
+    event.Skip();
+    m_book->UpdateHistory();
 }

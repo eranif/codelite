@@ -20,7 +20,9 @@ public:
     virtual ~clTabHistory() {}
 
     /// Compact the history, keeping only windows from the `windows` list
-    void Compact(const std::vector<wxWindow*>& windows);
+    /// If `add_missing` is true, we update the history with windows that
+    /// exists in `windows` but not in this history object
+    void Compact(const std::vector<wxWindow*>& windows, bool add_missing);
 
     void Push(wxWindow* page)
     {

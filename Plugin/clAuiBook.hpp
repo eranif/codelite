@@ -22,6 +22,8 @@ public:
     /// Enable events fired from the book
     void EnableEvents(bool b);
     bool AreEventsEnabled() const { return m_eventsEnabled; }
+    /// Ensure that all windows exist in the history
+    void UpdateHistory();
 
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);

@@ -36,7 +36,7 @@ public:
         wxCoord measured_textx, measured_texty, tmp;
 
         const int xPadding = wnd->FromDIP(X_SPACER);
-        wxFont font = clTabRenderer::GetTabFont(true);
+        wxFont font = clTabRenderer::GetTabFont(false);
         dc.SetFont(font);
         dc.GetTextExtent(caption, &measured_textx, &measured_texty);
         dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
@@ -79,8 +79,8 @@ public:
     {
         wxGCDC gcdc;
         wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
+        wxFont font = clTabRenderer::GetTabFont(false);
 
-        wxFont font = clTabRenderer::GetTabFont(page.active ? true : false);
         dcref.SetFont(font);
 
         bool is_modified = false;
@@ -266,7 +266,7 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
 {
     SetBookArt();
 
-    wxFont font = clTabRenderer::GetTabFont(true);
+    wxFont font = clTabRenderer::GetTabFont(false);
     SetFont(font);
     SetMeasuringFont(font);
     SetNormalFont(font);
@@ -493,7 +493,7 @@ void clAuiBook::UpdatePreferences()
 
 void clAuiBook::SetBookArt()
 {
-    wxFont font = clTabRenderer::GetTabFont(true);
+    wxFont font = clTabRenderer::GetTabFont(false);
     auto art = new clAuiBookArt();
     art->SetMeasuringFont(font);
     art->SetNormalFont(font);

@@ -184,10 +184,6 @@ public:
             }
 
             wxDCTextColourChanger text_colour_changer(dcref, text_colour);
-            if (is_modified) {
-                font.SetWeight(wxFONTWEIGHT_BOLD);
-            }
-
             wxDCFontChanger font_changer(dcref, font);
             wxRect textRect = dcref.GetTextExtent(page.caption);
 
@@ -496,7 +492,7 @@ void clAuiBook::UpdatePreferences()
 void clAuiBook::SetBookArt()
 {
     wxFont font = clTabRenderer::GetTabFont(false);
-    //auto art = new wxAuiDefaultTabArt();
+    // auto art = new wxAuiDefaultTabArt();
     auto art = new clAuiBookArt();
     art->SetMeasuringFont(font);
     art->SetNormalFont(font);

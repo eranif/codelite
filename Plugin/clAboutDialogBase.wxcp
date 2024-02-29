@@ -698,7 +698,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Label:",
-																					"m_value":	"2007 - 2023, by Eran Ifrah"
+																					"m_value":	"2007 - 2024, by Eran Ifrah"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Wrap:",
@@ -1142,7 +1142,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+													"m_styles":	["wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -1376,7 +1376,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxTRANSPARENT_WINDOW", "wxBORDER_SIMPLE"],
+													"m_styles":	["wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",

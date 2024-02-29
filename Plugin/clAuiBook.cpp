@@ -28,6 +28,12 @@ public:
         dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
     }
 
+    void DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_rect, int bitmap_id, int button_state, int orientation,
+                    wxRect* out_rect) override
+    {
+        wxAuiGenericTabArt::DrawButton(dc, wnd, in_rect, bitmap_id, button_state, orientation, out_rect);
+    }
+
     wxSize GetTabSize(wxDC& dcRef, wxWindow* wnd, const wxString& caption, const wxBitmapBundle& bitmap,
                       bool WXUNUSED(active), int close_button_state, int* x_extent) override
     {
@@ -231,7 +237,7 @@ private:
         wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
 
         if (bitmapId != wxAUI_BUTTON_CLOSE) {
-            wxAuiDefaultTabArt::DrawButton(dc, wnd, inRect, bitmapId, buttonState, orientation, outRect);
+            wxAuiGenericTabArt::DrawButton(dc, wnd, inRect, bitmapId, buttonState, orientation, outRect);
             return;
         }
 
@@ -257,12 +263,8 @@ private:
 };
 } // namespace
 
-static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS |
-                                     wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_WINDOWLIST_BUTTON |
-                                     wxAUI_NB_MIDDLE_CLICK_CLOSE;
-
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxAuiNotebook(parent, id, pos, size, style == 0 ? BOOK_STYLE : style)
+    : wxAuiNotebook(parent, id, pos, size, style)
 {
     SetBookArt();
 
@@ -471,17 +473,17 @@ void clAuiBook::UpdatePreferences()
     // update the tab height
     switch (options->GetNotebookTabHeight()) {
     case OptionsConfig::nbTabHt_Tiny:
-        Y_SPACER = 4;
+        Y_SPACER = FromDIP(4);
         break;
     case OptionsConfig::nbTabHt_Short:
-        Y_SPACER = 6;
+        Y_SPACER = FromDIP(6);
         break;
     case OptionsConfig::nbTabHt_Tall:
-        Y_SPACER = 10;
+        Y_SPACER = FromDIP(10);
         break;
     default:
     case OptionsConfig::nbTabHt_Medium:
-        Y_SPACER = 8;
+        Y_SPACER = FromDIP(8);
         break;
     }
 
@@ -494,6 +496,7 @@ void clAuiBook::UpdatePreferences()
 void clAuiBook::SetBookArt()
 {
     wxFont font = clTabRenderer::GetTabFont(false);
+    //auto art = new wxAuiDefaultTabArt();
     auto art = new clAuiBookArt();
     art->SetMeasuringFont(font);
     art->SetNormalFont(font);

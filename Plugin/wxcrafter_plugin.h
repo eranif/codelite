@@ -68,7 +68,7 @@ public:
     virtual ~EditDlgBase();
 };
 
-class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxPanel
+class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxControl
 {
 protected:
     clThemedSplitterWindow* m_splitter;
@@ -136,7 +136,7 @@ public:
     virtual ~clGetTextFromUserBaseDialog();
 };
 
-class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxPanel
+class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxControl
 {
 protected:
     clFileViewerTreeCtrl* m_treeCtrl;
@@ -149,7 +149,7 @@ protected:
 public:
     clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~clTreeCtrlPanelBase();
 };
 
@@ -173,7 +173,7 @@ public:
     virtual ~NotebookNavigationDlgBase();
 };
 
-class clTreeCtrlPanelDefaultPageBase : public wxPanel
+class clTreeCtrlPanelDefaultPageBase : public wxControl
 {
 protected:
     wxPanel* m_panel169;
@@ -186,7 +186,7 @@ public:
     wxStaticText* GetStaticText177() { return m_staticText177; }
     wxPanel* GetPanel169() { return m_panel169; }
     clTreeCtrlPanelDefaultPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                                   const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+                                   const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~clTreeCtrlPanelDefaultPageBase();
 };
 
@@ -225,7 +225,7 @@ public:
     virtual ~clImageViewerBase();
 };
 
-class WXDLLIMPEXP_SDK clEditorBarBase : public wxPanel
+class WXDLLIMPEXP_SDK clEditorBarBase : public wxControl
 {
 protected:
     clThemedButton* m_buttonScope;

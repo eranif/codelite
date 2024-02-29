@@ -79,7 +79,8 @@ public:
     wxPanel* GetSplitterPage41() { return m_splitterPage41; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
     NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1), long style = wxWANTS_CHARS | wxTAB_TRAVERSAL);
+                           const wxSize& size = wxSize(-1, -1),
+                           long style = wxWANTS_CHARS | wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~NavBarControlBaseClass();
 };
 
@@ -98,7 +99,7 @@ public:
     NewProjImgList();
     const wxBitmap& Bitmap(const wxString& name) const
     {
-        if(!m_bitmaps.count(name + m_resolution))
+        if (!m_bitmaps.count(name + m_resolution))
             return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
@@ -137,7 +138,7 @@ public:
     virtual ~AddFunctionsImplBaseDlg();
 };
 
-class WelcomePageBase : public wxPanel
+class WelcomePageBase : public wxControl
 {
 protected:
     clThemedSplitterWindow* m_mainPanel;
@@ -160,7 +161,7 @@ public:
     wxPanel* GetListPage() { return m_listPage; }
     clThemedSplitterWindow* GetMainPanel() { return m_mainPanel; }
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~WelcomePageBase();
 };
 
@@ -257,7 +258,7 @@ public:
     virtual ~OpenFolderDlgBase();
 };
 
-class DefaultWorkspacePageBase : public wxPanel
+class DefaultWorkspacePageBase : public wxControl
 {
 protected:
     wxStaticText* m_staticText523;

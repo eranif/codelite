@@ -310,7 +310,7 @@ void WelcomePage::OnGitter(wxCommandEvent& event)
 bool WelcomePage::Show(bool show)
 {
     UpdateRecentWorkspaces();
-    return wxPanel::Show(show);
+    return wxControl::Show(show);
 }
 
 void WelcomePage::SelectSomething() { CallAfter(&WelcomePage::DoSomethingSomething); }

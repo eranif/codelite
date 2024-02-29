@@ -19,7 +19,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxWANTS_CHARS", "wxTAB_TRAVERSAL"],
+			"m_styles":	["wxWANTS_CHARS", "wxTAB_TRAVERSAL", "wxBORDER_NONE"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -1663,7 +1663,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxTAB_TRAVERSAL"],
+			"m_styles":	["wxTAB_TRAVERSAL", "wxBORDER_NONE"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -1708,7 +1708,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
-					"m_value":	""
+					"m_value":	"wxControl"
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
@@ -4765,7 +4765,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
-					"m_value":	""
+					"m_value":	"wxControl"
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",

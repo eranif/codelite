@@ -33,7 +33,7 @@ FILESUBTYPE      VFT2_UNKNOWN { // not used
             VALUE "FileDescription",  "CodeLite, an Open Source cross platform C, C++, Rust, Python, PHP and Node.js IDE"
             VALUE "FileVersion",      "18.0.0"
             VALUE "InternalName",     "CodeLite"
-            VALUE "LegalCopyright",   "Copyright (C) 2007-2023 Eran Ifrah"
+            VALUE "LegalCopyright",   "Copyright (C) 2007-2024 Eran Ifrah"
             VALUE "LegalTrademarks",  "All rights reserved."
             VALUE "OriginalFilename", "codelite.exe"
             VALUE "PrivateBuild",     ""

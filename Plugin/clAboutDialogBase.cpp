@@ -27,7 +27,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
                                      const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA637InitBitmapResources();
@@ -81,7 +81,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     flexGridSizer32->Add(m_staticText34, 0, wxRIGHT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2023, by Eran Ifrah"), wxDefaultPosition,
+    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2024, by Eran Ifrah"), wxDefaultPosition,
                                             wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
 
     flexGridSizer32->Add(m_staticTextSubtitle, 0, wxLEFT | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -124,9 +124,8 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
     m_paneLicense->SetSizer(boxSizer18);
 
-    m_stcLicense =
-        new clThemedSTC(m_paneLicense, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_paneLicense, wxSize(300, 200)),
-                        wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
+    m_stcLicense = new clThemedSTC(m_paneLicense, wxID_ANY, wxDefaultPosition,
+                                   wxDLG_UNIT(m_paneLicense, wxSize(300, 200)), get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcLicense->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLicense->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -171,9 +170,8 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panelCredits->SetSizer(boxSizer20);
 
-    m_stcCredits =
-        new clThemedSTC(m_panelCredits, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCredits, wxSize(-1, -1)),
-                        wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
+    m_stcCredits = new clThemedSTC(m_panelCredits, wxID_ANY, wxDefaultPosition,
+                                   wxDLG_UNIT(m_panelCredits, wxSize(-1, -1)), get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcCredits->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCredits->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -221,7 +219,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     m_stdBtnSizer4->Realize();
 
 #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook8)) {
+    if (!wxPersistenceManager::Get().Find(m_notebook8)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook8);
     } else {
         wxPersistenceManager::Get().Restore(m_notebook8);
@@ -230,15 +228,15 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     SetName(wxT("clAboutDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);

@@ -32,27 +32,21 @@
 
 class WXDLLIMPEXP_SDK clWindowUpdateLocker
 {
-    wxWindow* m_win;
-
 public:
-    clWindowUpdateLocker(wxWindow* win)
+    explicit clWindowUpdateLocker(wxWindow* win)
         : m_win(win)
     {
-#if wxVERSION_NUMBER < 2900
-#ifndef __WXGTK__
-        m_win->Freeze();
-#endif
-#endif
+        if (m_win)
+            m_win->Freeze();
     }
-
     ~clWindowUpdateLocker()
     {
-#if wxVERSION_NUMBER < 2900
-#ifndef __WXGTK__
-        m_win->Thaw();
-#endif
-#endif
+        if (m_win)
+            m_win->Thaw();
     }
+
+private:
+    wxWindow* m_win = nullptr;
 };
 
 #endif // __WINDOW_LOCKER__H__

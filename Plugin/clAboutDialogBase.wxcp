@@ -1006,15 +1006,15 @@
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Normal Colour:",
-																					"colour":	"#0000FF"
+																					"colour":	"<Default>"
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Visited Colour:",
-																					"colour":	"#FF0000"
+																					"colour":	"<Default>"
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Hover Colour:",
-																					"colour":	"#0000FF"
+																					"colour":	"<Default>"
 																				}],
 																			"m_events":	[],
 																			"m_children":	[]
@@ -1142,7 +1142,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxBORDER_SIMPLE"],
+													"m_styles":	["wxBORDER_NONE", "wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -1376,7 +1376,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxBORDER_SIMPLE"],
+													"m_styles":	["wxBORDER_NONE", "wxBORDER_SIMPLE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",

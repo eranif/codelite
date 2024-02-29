@@ -111,9 +111,6 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     m_hyperLink44 = new wxHyperlinkCtrl(m_panel22, wxID_ANY, _("CodeLite IDE"), wxT("https://codelite.org"),
                                         wxDefaultPosition, wxDLG_UNIT(m_panel22, wxSize(-1, -1)), wxHL_DEFAULT_STYLE);
-    m_hyperLink44->SetNormalColour(wxColour(wxT("#0000FF")));
-    m_hyperLink44->SetHoverColour(wxColour(wxT("#0000FF")));
-    m_hyperLink44->SetVisitedColour(wxColour(wxT("#FF0000")));
 
     flexGridSizer32->Add(m_hyperLink44, 0, wxLEFT, WXC_FROM_DIP(5));
 
@@ -124,8 +121,9 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
     m_paneLicense->SetSizer(boxSizer18);
 
-    m_stcLicense = new clThemedSTC(m_paneLicense, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_paneLicense, wxSize(300, 200)), get_border_simple_theme_aware_bit());
+    m_stcLicense =
+        new clThemedSTC(m_paneLicense, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_paneLicense, wxSize(300, 200)),
+                        wxBORDER_NONE | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcLicense->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLicense->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -170,8 +168,9 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panelCredits->SetSizer(boxSizer20);
 
-    m_stcCredits = new clThemedSTC(m_panelCredits, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_panelCredits, wxSize(-1, -1)), get_border_simple_theme_aware_bit());
+    m_stcCredits =
+        new clThemedSTC(m_panelCredits, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCredits, wxSize(-1, -1)),
+                        wxBORDER_NONE | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcCredits->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCredits->SetMarginMask(4, wxSTC_MASK_FOLDERS);

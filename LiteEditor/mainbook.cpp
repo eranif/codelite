@@ -27,11 +27,9 @@
 #include "FilesModifiedDlg.h"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
-#include "clFileOrFolderDropTarget.h"
 #include "clImageViewer.h"
 #include "clWorkspaceManager.h"
 #include "cl_defs.h"
-#include "close_all_dlg.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "editorframe.h"
@@ -44,7 +42,6 @@
 #include "ieditor.h"
 #include "macros.h"
 #include "manager.h"
-#include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
 #include "quickfindbar.h"
 
@@ -966,6 +963,8 @@ bool MainBook::ClosePage(wxWindow* page)
 bool MainBook::CloseAllButThis(wxWindow* page)
 {
     wxBusyCursor bc;
+    wxWindowUpdateLocker locker{ m_book };
+
     clEditor::Vec_t editors;
     GetAllEditors(editors, kGetAll_IncludeDetached);
 
@@ -1007,6 +1006,8 @@ bool MainBook::CloseAll(bool cancellable)
 {
     wxBusyCursor bc;
     clEditor::Vec_t editors;
+    clWindowUpdateLocker locker{ m_book };
+
     GetAllEditors(editors, kGetAll_IncludeDetached);
 
     // filter list of editors for any that need to be saved
@@ -1036,7 +1037,6 @@ bool MainBook::CloseAll(bool cancellable)
 
     // Delete the files without notifications (it will be faster)
     clAuiBookEventsDisabler events_disabler{ m_book };
-    clWindowUpdateLocker locker{ m_book };
 
     SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
 
@@ -1502,6 +1502,7 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
     if (tabsToClose.empty())
         return;
 
+    wxWindowUpdateLocker locker{ m_book };
     for (size_t i = 0; i < tabsToClose.size(); ++i) {
         ClosePage(tabsToClose.at(i));
     }

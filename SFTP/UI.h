@@ -52,7 +52,7 @@
 
 // clang-format on
 
-class SFTPStatusPageBase : public wxPanel
+class SFTPStatusPageBase : public wxControl
 {
 protected:
     clGenericNotebook* m_notebook;
@@ -71,7 +71,7 @@ public:
     wxPanel* GetPanelSearch() { return m_panelSearch; }
     clGenericNotebook* GetNotebook() { return m_notebook; }
     SFTPStatusPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~SFTPStatusPageBase();
 };
 
@@ -90,7 +90,7 @@ public:
     SFTPImages();
     const wxBitmap& Bitmap(const wxString& name) const
     {
-        if(!m_bitmaps.count(name + m_resolution))
+        if (!m_bitmaps.count(name + m_resolution))
             return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
@@ -100,7 +100,7 @@ public:
     virtual ~SFTPImages();
 };
 
-class SFTPTreeViewBase : public wxPanel
+class SFTPTreeViewBase : public wxControl
 {
 protected:
     clToolBar* m_toolbar;
@@ -116,7 +116,7 @@ public:
     wxStaticText* GetStaticText49() { return m_staticText49; }
     wxTextCtrl* GetTextCtrlQuickJump() { return m_textCtrlQuickJump; }
     SFTPTreeViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~SFTPTreeViewBase();
 };
 

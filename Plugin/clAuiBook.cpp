@@ -7,7 +7,12 @@
 #include <vector>
 #include <wx/aui/tabart.h>
 
+#ifdef __WXGTK__
+static constexpr size_t X_SPACER = 15;
+#else
 static constexpr size_t X_SPACER = 10;
+#endif
+
 // Configurable via Settings -> Preferences -> Tabs
 static size_t Y_SPACER = 10;
 
@@ -469,17 +474,17 @@ void clAuiBook::UpdatePreferences()
     // update the tab height
     switch (options->GetNotebookTabHeight()) {
     case OptionsConfig::nbTabHt_Tiny:
-        Y_SPACER = FromDIP(4);
+        Y_SPACER = FromDIP(8);
         break;
     case OptionsConfig::nbTabHt_Short:
-        Y_SPACER = FromDIP(6);
+        Y_SPACER = FromDIP(10);
         break;
     case OptionsConfig::nbTabHt_Tall:
-        Y_SPACER = FromDIP(10);
+        Y_SPACER = FromDIP(14);
         break;
     default:
     case OptionsConfig::nbTabHt_Medium:
-        Y_SPACER = FromDIP(8);
+        Y_SPACER = FromDIP(12);
         break;
     }
 

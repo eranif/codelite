@@ -6268,6 +6268,12 @@ int clEditor::GetFirstNonWhitespacePos(bool backward)
     return pos;
 }
 
+#ifdef __WXGTK__
+#define MARING_SPACER 15
+#else
+#define MARING_SPACER 10
+#endif
+
 void clEditor::UpdateLineNumberMarginWidth()
 {
     int new_width = log10(GetLineCount()) + 1;
@@ -6276,7 +6282,7 @@ void clEditor::UpdateLineNumberMarginWidth()
         UpdateDefaultTextWidth();
     }
 
-    int size = new_width * m_default_text_width + 10;
+    int size = new_width * m_default_text_width + FromDIP(MARING_SPACER);
     SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers() ? size : 0);
 }
 

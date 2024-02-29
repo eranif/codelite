@@ -8,7 +8,11 @@
 #include <wx/aui/tabart.h>
 
 static constexpr size_t X_SPACER = 10;
+// Configurable via Settings -> Preferences -> Tabs
+static size_t Y_SPACER = 10;
 
+namespace
+{
 class clAuiBookArt : public wxAuiDefaultTabArt
 {
 public:
@@ -60,7 +64,7 @@ public:
         }
 
         // add padding
-        tab_height += wnd->FromDIP(10);
+        tab_height += wnd->FromDIP(Y_SPACER);
 
         if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
             tab_width = m_fixedTabWidth;
@@ -75,6 +79,7 @@ public:
     {
         wxGCDC gcdc;
         wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
+        dcref.SetFont(m_normalFont);
 
         bool is_modified = false;
         if (page.window) {
@@ -85,6 +90,10 @@ public:
         }
 
         bool is_active = page.active;
+        if (is_active) {
+            dcref.SetFont(m_selectedFont);
+        }
+
         bool is_dark = clSystemSettings::GetAppearance().IsDark();
         wxSize button_size = GetTabSize(dcref, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
 
@@ -246,6 +255,7 @@ private:
         *outRect = inRect;
     }
 };
+} // namespace
 
 static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS |
                                      wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_WINDOWLIST_BUTTON |
@@ -254,18 +264,13 @@ static constexpr size_t BOOK_STYLE = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_N
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxAuiNotebook(parent, id, pos, size, style == 0 ? BOOK_STYLE : style)
 {
+    SetBookArt();
+
     wxFont default_font = DrawingUtils::GetDefaultGuiFont();
     SetFont(default_font);
     SetMeasuringFont(default_font);
     SetNormalFont(default_font);
     SetSelectedFont(default_font);
-
-    auto art = new clAuiBookArt();
-    SetArtProvider(art);
-
-    art->SetMeasuringFont(default_font);
-    art->SetNormalFont(default_font);
-    art->SetSelectedFont(default_font);
 
     m_history.reset(new clTabHistory());
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGING, &clAuiBook::OnPageChanging, this);
@@ -275,6 +280,7 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     Bind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &clAuiBook::OnPageRightDown, this);
     Bind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiBook::OnTabAreaDoubleClick, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &clAuiBook::OnPreferences, this);
+    CallAfter(&clAuiBook::UpdatePreferences);
 }
 
 clAuiBook::~clAuiBook()
@@ -450,9 +456,8 @@ void clAuiBook::OnPageClosing(wxAuiNotebookEvent& event)
     event.Skip();
 }
 
-void clAuiBook::OnPreferences(wxCommandEvent& event)
+void clAuiBook::UpdatePreferences()
 {
-    event.Skip();
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     bool show_x_on_tab = options->IsTabHasXButton();
 
@@ -462,8 +467,45 @@ void clAuiBook::OnPreferences(wxCommandEvent& event)
     } else {
         style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
     }
+
+    // update the tab height
+    switch (options->GetNotebookTabHeight()) {
+    case OptionsConfig::nbTabHt_Tiny:
+        Y_SPACER = 4;
+        break;
+    case OptionsConfig::nbTabHt_Short:
+        Y_SPACER = 6;
+        break;
+    case OptionsConfig::nbTabHt_Tall:
+        Y_SPACER = 10;
+        break;
+    default:
+    case OptionsConfig::nbTabHt_Medium:
+        Y_SPACER = 8;
+        break;
+    }
+
+    // update the art
+    SetBookArt();
     SetWindowStyle(style);
     Refresh();
+}
+
+void clAuiBook::SetBookArt()
+{
+    wxFont default_font = DrawingUtils::GetDefaultGuiFont();
+    auto art = new clAuiBookArt();
+
+    art->SetMeasuringFont(default_font);
+    art->SetNormalFont(default_font);
+    art->SetSelectedFont(default_font);
+    SetArtProvider(art);
+}
+
+void clAuiBook::OnPreferences(wxCommandEvent& event)
+{
+    event.Skip();
+    UpdatePreferences();
 }
 
 void clAuiBook::EnableEvents(bool b) { m_eventsEnabled = b; }

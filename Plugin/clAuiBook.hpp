@@ -35,6 +35,9 @@ protected:
     void OnPageDoubleClick(wxAuiNotebookEvent& event);
     void OnPreferences(wxCommandEvent& event);
 
+    void UpdatePreferences();
+    void SetBookArt();
+
 private:
     clTabHistory::Ptr_t m_history;
     bool m_eventsEnabled = true;

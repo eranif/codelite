@@ -535,7 +535,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
-					"m_value":	""
+					"m_value":	"wxControl"
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
@@ -2547,7 +2547,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxTAB_TRAVERSAL"],
+			"m_styles":	["wxTAB_TRAVERSAL", "wxBORDER_NONE"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -2592,7 +2592,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
-					"m_value":	""
+					"m_value":	"wxControl"
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
@@ -3176,7 +3176,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxTAB_TRAVERSAL"],
+			"m_styles":	["wxTAB_TRAVERSAL", "wxBORDER_NONE"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -3221,7 +3221,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
-					"m_value":	""
+					"m_value":	"wxControl"
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
@@ -3319,7 +3319,7 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Bg Colour:",
-									"colour":	"(220,220,220)"
+									"colour":	"<Default>"
 								}, {
 									"type":	"colour",
 									"m_label":	"Fg Colour:",
@@ -3445,7 +3445,7 @@
 												}, {
 													"type":	"colour",
 													"m_label":	"Fg Colour:",
-													"colour":	"(128,128,128)"
+													"colour":	"<Default>"
 												}, {
 													"type":	"font",
 													"m_label":	"Font:",
@@ -4283,7 +4283,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
-					"m_value":	""
+					"m_value":	"wxControl"
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",

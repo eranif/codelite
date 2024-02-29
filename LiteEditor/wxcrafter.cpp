@@ -27,7 +27,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
                                                long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -71,7 +71,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("NavBarControlBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -90,7 +90,7 @@ NewProjImgList::NewProjImgList()
     , m_imagesWidth(16)
     , m_imagesHeight(16)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -104,7 +104,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
                                                  const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -160,10 +160,10 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     SetName(wxT("AddFunctionsImplBaseDlg"));
     SetMinClientSize(wxSize(500, 300));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
@@ -182,9 +182,9 @@ AddFunctionsImplBaseDlg::~AddFunctionsImplBaseDlg()
 }
 
 WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
+    : wxControl(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -253,7 +253,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     SetName(wxT("WelcomePageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -270,7 +270,7 @@ WelcomePageBase::~WelcomePageBase()
 WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -350,7 +350,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     SetName(wxT("WorkspaceTabBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -372,7 +372,7 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
                                  const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -427,15 +427,15 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     SetName(wxT("EditorFrameBase"));
     SetMinClientSize(wxSize(800, 600));
     SetSize(wxDLG_UNIT(this, wxSize(800, 600)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -475,7 +475,7 @@ OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxSt
                                      const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -521,15 +521,15 @@ OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     SetName(wxT("OpenFolderDlgBase"));
     SetMinClientSize(wxSize(-1, 100));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -540,9 +540,9 @@ OpenFolderDlgBase::~OpenFolderDlgBase() {}
 
 DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,
                                                    const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
+    : wxControl(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -573,7 +573,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
     SetName(wxT("DefaultWorkspacePageBase"));
     SetMinClientSize(wxSize(400, 300));
     SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
 }
@@ -584,7 +584,7 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
                                                  const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3F25InitBitmapResources();
@@ -625,15 +625,15 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
     SetName(wxT("SelectDropTargetBaseDlg"));
     SetMinClientSize(wxSize(400, 400));
     SetSize(wxDLG_UNIT(this, wxSize(400, 400)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);

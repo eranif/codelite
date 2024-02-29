@@ -36,9 +36,9 @@ public:
         wxCoord measured_textx, measured_texty, tmp;
 
         const int xPadding = wnd->FromDIP(X_SPACER);
-        dc.SetFont(m_measuringFont);
+        wxFont font = clTabRenderer::GetTabFont(true);
+        dc.SetFont(font);
         dc.GetTextExtent(caption, &measured_textx, &measured_texty);
-
         dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
 
         // add padding around the text
@@ -79,7 +79,9 @@ public:
     {
         wxGCDC gcdc;
         wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
-        dcref.SetFont(m_normalFont);
+
+        wxFont font = clTabRenderer::GetTabFont(page.active ? true : false);
+        dcref.SetFont(font);
 
         bool is_modified = false;
         if (page.window) {
@@ -177,11 +179,10 @@ public:
 
             wxDCTextColourChanger text_colour_changer(dcref, text_colour);
             if (is_modified) {
-                m_normalFont.SetWeight(wxFONTWEIGHT_BOLD);
-                m_normalFont.SetStyle(wxFONTSTYLE_ITALIC);
+                font.SetWeight(wxFONTWEIGHT_BOLD);
             }
 
-            wxDCFontChanger font_changer(dcref, m_normalFont);
+            wxDCFontChanger font_changer(dcref, font);
             wxRect textRect = dcref.GetTextExtent(page.caption);
 
             textRect = textRect.CenterIn(tab_rect, wxVERTICAL);
@@ -189,8 +190,7 @@ public:
             dcref.DrawText(page.caption, textRect.GetTopLeft());
 
             if (is_modified) {
-                m_normalFont.SetWeight(wxFONTWEIGHT_NORMAL);
-                m_normalFont.SetStyle(wxFONTSTYLE_NORMAL);
+                font.SetWeight(wxFONTWEIGHT_NORMAL);
             }
         }
 
@@ -266,11 +266,11 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
 {
     SetBookArt();
 
-    wxFont default_font = DrawingUtils::GetDefaultGuiFont();
-    SetFont(default_font);
-    SetMeasuringFont(default_font);
-    SetNormalFont(default_font);
-    SetSelectedFont(default_font);
+    wxFont font = clTabRenderer::GetTabFont(true);
+    SetFont(font);
+    SetMeasuringFont(font);
+    SetNormalFont(font);
+    SetSelectedFont(font);
 
     m_history.reset(new clTabHistory());
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGING, &clAuiBook::OnPageChanging, this);
@@ -493,12 +493,11 @@ void clAuiBook::UpdatePreferences()
 
 void clAuiBook::SetBookArt()
 {
-    wxFont default_font = DrawingUtils::GetDefaultGuiFont();
+    wxFont font = clTabRenderer::GetTabFont(true);
     auto art = new clAuiBookArt();
-
-    art->SetMeasuringFont(default_font);
-    art->SetNormalFont(default_font);
-    art->SetSelectedFont(default_font);
+    art->SetMeasuringFont(font);
+    art->SetNormalFont(font);
+    art->SetSelectedFont(font);
     SetArtProvider(art);
 }
 

@@ -246,13 +246,6 @@ protected:
 
         wxRect bmp_rect = wxRect(m_bmp.GetLogicalSize()).CenterIn(client_rect);
         dc.DrawBitmap(m_bmp, bmp_rect.GetTopLeft());
-#if 0
-        if (false && IsSeleced()) {
-            dc.SetBrush(*wxTRANSPARENT_BRUSH);
-            dc.SetPen(is_dark ? base_colour.ChangeLightness(150) : base_colour.ChangeLightness(70));
-            dc.DrawRectangle(client_rect);
-        }
-#endif
     }
 
     void OnEraseBg(wxEraseEvent& event) { wxUnusedVar(event); }
@@ -364,7 +357,7 @@ void clSideBarButtonCtrl::OnPaint(wxPaintEvent& event)
 int clSideBarButtonCtrl::AddButton(const wxBitmap bmp, const wxString& label, wxWindow* linked_page, bool select)
 {
     if (m_width == wxNOT_FOUND) {
-        wxRect rr = bmp.GetScaledSize();
+        wxRect rr = FromDIP(wxSize(24, 24));
         rr.Inflate(10);
         m_width = rr.GetWidth();
     }

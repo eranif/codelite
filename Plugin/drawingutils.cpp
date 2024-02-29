@@ -24,21 +24,20 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "drawingutils.h"
 
-#include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
 #include "clScrolledPanel.h"
 #include "clSystemSettings.h"
-#include "globals.h"
-#include "wx/dc.h"
-#include "wx/settings.h"
+#include "clTabRenderer.h"
 
 #include <wx/app.h>
+#include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/graphics.h>
 #include <wx/image.h>
 #include <wx/panel.h>
 #include <wx/renderer.h>
+#include <wx/settings.h>
 #include <wx/stc/stc.h>
 
 #ifdef __WXMSW__
@@ -84,11 +83,11 @@ void RGB_2_HSL(float r, float g, float b, float* h, float* s, float* l)
 
     *l = (var_Max + var_Min) / 2.0;
 
-    if(del_Max == 0) { // This is a gray, no chroma...
-        *h = 0;        // HSL results from 0 to 1
+    if (del_Max == 0) { // This is a gray, no chroma...
+        *h = 0;         // HSL results from 0 to 1
         *s = 0;
     } else { // Chromatic data...
-        if(*l < 0.5)
+        if (*l < 0.5)
             *s = del_Max / (var_Max + var_Min);
         else
             *s = del_Max / (2.0 - var_Max - var_Min);
@@ -97,44 +96,44 @@ void RGB_2_HSL(float r, float g, float b, float* h, float* s, float* l)
         float del_G = (((var_Max - var_G) / 6.0) + (del_Max / 2.0)) / del_Max;
         float del_B = (((var_Max - var_B) / 6.0) + (del_Max / 2.0)) / del_Max;
 
-        if(var_R == var_Max)
+        if (var_R == var_Max)
             *h = del_B - del_G;
-        else if(var_G == var_Max)
+        else if (var_G == var_Max)
             *h = (1.0 / 3.0) + del_R - del_B;
-        else if(var_B == var_Max)
+        else if (var_B == var_Max)
             *h = (2.0 / 3.0) + del_G - del_R;
 
-        if(*h < 0)
+        if (*h < 0)
             *h += 1;
-        if(*h > 1)
+        if (*h > 1)
             *h -= 1;
     }
 }
 
 float Hue_2_RGB(float v1, float v2, float vH) // Function Hue_2_RGB
 {
-    if(vH < 0)
+    if (vH < 0)
         vH += 1;
-    if(vH > 1)
+    if (vH > 1)
         vH -= 1;
-    if((6.0 * vH) < 1)
+    if ((6.0 * vH) < 1)
         return (v1 + (v2 - v1) * 6.0 * vH);
-    if((2.0 * vH) < 1)
+    if ((2.0 * vH) < 1)
         return (v2);
-    if((3.0 * vH) < 2)
+    if ((3.0 * vH) < 2)
         return (v1 + (v2 - v1) * ((2.0 / 3.0) - vH) * 6.0);
     return (v1);
 }
 
 void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 {
-    if(s == 0) {        // HSL from 0 to 1
+    if (s == 0) {       // HSL from 0 to 1
         *r = l * 255.0; // RGB results from 0 to 255
         *g = l * 255.0;
         *b = l * 255.0;
     } else {
         float var_2;
-        if(l < 0.5)
+        if (l < 0.5)
             var_2 = l * (1.0 + s);
         else
             var_2 = (l + s) - (s * l);
@@ -154,7 +153,7 @@ void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 
 wxColour DrawingUtils::LightColour(const wxColour& color, float percent)
 {
-    if(percent == 0) {
+    if (percent == 0) {
         return color;
     }
 
@@ -163,7 +162,7 @@ wxColour DrawingUtils::LightColour(const wxColour& color, float percent)
 
     // reduce the Lum value
     l += (float)((percent * 5.0) / 100.0);
-    if(l > 1.0)
+    if (l > 1.0)
         l = 1.0;
 
     HSL_2_RGB(h, s, l, &r, &g, &b);
@@ -179,7 +178,7 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
 
     fixedText = wxT("");
     dc.GetTextExtent(tempText, &textW, &textH);
-    if(rectSize >= textW) {
+    if (rectSize >= textW) {
         fixedText = text;
         return;
     }
@@ -195,13 +194,13 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
     wxString text1 = text.Mid(0, mid);
     wxString text2 = text.Mid(mid);
     int min = std::min(text1.size(), text2.size());
-    for(int i = 0; i < min; ++i) {
+    for (int i = 0; i < min; ++i) {
         text1.RemoveLast();
         text2.Remove(0, 1);
 
         fixedText = text1 + suffix + text2;
         dc.GetTextExtent(fixedText, &textW, &textH);
-        if(rectSize >= textW) {
+        if (rectSize >= textW) {
             return;
         }
     }
@@ -219,15 +218,15 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const 
     wxPen savedPen = dc.GetPen();
     wxBrush savedBrush = dc.GetBrush();
 
-    if(vertical)
+    if (vertical)
         high = rect.GetHeight() - 1;
     else
         high = rect.GetWidth() - 1;
 
-    if(high < 1)
+    if (high < 1)
         return;
 
-    for(int i = 0; i <= high; ++i) {
+    for (int i = 0; i <= high; ++i) {
         int r = startColor.Red() + ((i * rd * 100) / high) / 100;
         int g = startColor.Green() + ((i * gd * 100) / high) / 100;
         int b = startColor.Blue() + ((i * bd * 100) / high) / 100;
@@ -235,7 +234,7 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const 
         wxPen p(wxColour(r, g, b));
         dc.SetPen(p);
 
-        if(vertical)
+        if (vertical)
             dc.DrawLine(rect.x, rect.y + i, rect.x + rect.width, rect.y + i);
         else
             dc.DrawLine(rect.x + i, rect.y, rect.x + i, rect.y + rect.height);
@@ -258,7 +257,7 @@ bool DrawingUtils::IsDark(const wxColour& color)
 
 wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 {
-    if(percent == 0) {
+    if (percent == 0) {
         return color;
     }
 
@@ -267,7 +266,7 @@ wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 
     // reduce the Lum value
     l -= (float)((percent * 5.0) / 100.0);
-    if(l < 0)
+    if (l < 0)
         l = 0.0;
 
     HSL_2_RGB(h, s, l, &r, &g, &b);
@@ -281,7 +280,6 @@ wxColour DrawingUtils::GetPanelTextColour() { return clSystemSettings::GetColour
 wxColour DrawingUtils::GetTextCtrlTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT); }
 
 wxColour DrawingUtils::GetMenuTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT); }
-#include "cl_defs.h"
 
 wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 {
@@ -350,7 +348,7 @@ wxColour DrawingUtils::GetThemeTextColour() { return clSystemSettings::GetColour
 
 wxColour DrawingUtils::GetThemeTipBgColour()
 {
-    if(IsThemeDark()) {
+    if (IsThemeDark()) {
         return GetThemeBgColour();
     } else {
         return clSystemSettings::GetDefaultPanelColour();
@@ -397,7 +395,7 @@ wxBrush DrawingUtils::GetStippleBrush()
 wxColour DrawingUtils::GetThemeLinkColour()
 {
     wxColour bgColour = GetThemeTipBgColour();
-    if(!IsDark(bgColour)) {
+    if (!IsDark(bgColour)) {
         return "BLUE";
 
     } else {
@@ -429,7 +427,7 @@ double wxOSXGetMainScreenContentScaleFactor();
 wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 {
     bool bDarkBG = IsDark(GetPanelBgColour());
-    if(!bmp.IsOk()) {
+    if (!bmp.IsOk()) {
         return wxNullBitmap;
     }
     return bmp.ConvertToDisabled(bDarkBG ? 69 : 255);
@@ -442,7 +440,7 @@ namespace
 wxColour update_button_bg_colour(const wxColour& baseColour, eButtonState state)
 {
     int bgLightness = 0;
-    switch(state) {
+    switch (state) {
     case eButtonState::kHover:
 #ifdef __WXMSW__
         bgLightness = 140;
@@ -486,7 +484,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
 #ifdef __WXGTK__
     // translate states
     int flags = 0;
-    switch(state) {
+    switch (state) {
     case eButtonState::kNormal:
         flags = 0;
         break;
@@ -508,7 +506,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     wxColour textColour = GetButtonTextColour();
     dc.SetTextForeground(textColour);
 
-    if(kind == eButtonKind::kDropDown) {
+    if (kind == eButtonKind::kDropDown) {
         // we want a drop down to the right
         int height = rect.GetHeight();
         allocated_dropdown_arrow_rect =
@@ -519,7 +517,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     }
 
     // check if we have a bitmap
-    if(bmp.IsOk()) {
+    if (bmp.IsOk()) {
         // bitmap is drawn on the left side of the button
         allocated_bmp_rect = allocated_text_rect;
         allocated_bmp_rect.SetWidth(allocated_text_rect.GetHeight());
@@ -530,7 +528,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     }
 
     // draw the bimap
-    if(bmp.IsOk()) {
+    if (bmp.IsOk()) {
         // draw the bitmap
         wxRect bmp_rect(0, 0, bmp.GetScaledWidth(), bmp.GetScaledHeight());
         bmp_rect = bmp_rect.CenterIn(allocated_bmp_rect);
@@ -540,7 +538,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     }
 
     // the the text
-    if(!label.empty()) {
+    if (!label.empty()) {
         wxRect text_rect = dc.GetTextExtent(label);
         text_rect = text_rect.CenterIn(allocated_text_rect);
 
@@ -550,7 +548,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     }
 
     // draw the dropdown
-    if(kind == eButtonKind::kDropDown) {
+    if (kind == eButtonKind::kDropDown) {
         const wxString DROPDOWN_RECT = wxT("\u25BC");
         wxRect text_rect = dc.GetTextExtent(label);
         text_rect = text_rect.CenterIn(allocated_text_rect);
@@ -586,7 +584,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     bool is_dark = IsDark(bg_colour);
     wxColour xColour = penColour;
     bool drawBackground = false;
-    switch(state) {
+    switch (state) {
     case eButtonState::kNormal:
         break;
     case eButtonState::kDisabled:
@@ -606,7 +604,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
 
     wxRect xrect(rect);
     wxRect bgRect = rect;
-    if(drawBackground) {
+    if (drawBackground) {
         bgRect.Inflate(3);
         bgRect = bgRect.CenterIn(rect);
         dc.SetBrush(bg_colour);
@@ -614,11 +612,8 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
         dc.DrawRectangle(bgRect);
     }
 
-    wxDCFontChanger font_changer(dc);
+    wxDCFontChanger font_changer(dc, clTabRenderer::GetTabFont(true));
     wxDCTextColourChanger font_colour_changer(dc, xColour);
-    wxFont font = GetDefaultGuiFont();
-    font.SetWeight(wxFONTWEIGHT_BOLD);
-    dc.SetFont(font);
 
     xrect = dc.GetTextExtent(unicode_symbol);
     xrect = xrect.CenterIn(bgRect);
@@ -651,7 +646,7 @@ void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRe
     wxRect innerRect(rect);
     wxColour b = bgColouur;
     wxColour xColour = penColour;
-    switch(state) {
+    switch (state) {
     case eButtonState::kHover:
         b = b.ChangeLightness(120);
         break;
@@ -664,7 +659,7 @@ void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRe
     }
 
     // Draw the background
-    if(state != eButtonState::kNormal) {
+    if (state != eButtonState::kNormal) {
         dc.SetPen(b);
         dc.SetBrush(b);
         dc.DrawRoundedRectangle(rect, 2.0);
@@ -695,13 +690,13 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     arrowRect = arrowRect.CenterIn(rect);
 
     wxColour buttonColour = colour;
-    if(!buttonColour.IsOk()) {
+    if (!buttonColour.IsOk()) {
         // No colour provided, provide one based on the system colours
         buttonColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
         buttonColour = IsDark(buttonColour) ? buttonColour.ChangeLightness(120) : buttonColour.ChangeLightness(80);
     }
 
-    if(flags & wxCONTROL_DISABLED) {
+    if (flags & wxCONTROL_DISABLED) {
         buttonColour = buttonColour.ChangeLightness(clSystemSettings::IsDark() ? 50 : 150);
     }
 
@@ -749,7 +744,7 @@ void DrawingUtils::DrawCustomChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     dc.SetClippingRegion(textRect);
 
     int xx = textRect.GetX() + X_MARGIN;
-    if(bmp.IsOk()) {
+    if (bmp.IsOk()) {
         // Draw bitmap first
         wxRect bmpRect(xx, textRect.GetY(), bmp.GetScaledWidth(), bmp.GetScaledHeight());
         bmpRect = bmpRect.CenterIn(choiceRect, wxVERTICAL);
@@ -786,7 +781,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
 #else
     // OSX
     wxColour bgColour = clSystemSettings::GetDefaultPanelColour();
-    if(IsDark(bgColour)) {
+    if (IsDark(bgColour)) {
         // On Dark theme (Mojave and later)
         int width = choiceRect.GetHeight();
         wxRect dropDownRect = wxRect(0, 0, width, width);
@@ -809,7 +804,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     dc.SetClippingRegion(textRect);
 
     int xx = textRect.GetX() + X_MARGIN;
-    if(bmp.IsOk()) {
+    if (bmp.IsOk()) {
         // Draw bitmap first
         wxRect bmpRect(xx, textRect.GetY(), bmp.GetScaledWidth(), bmp.GetScaledHeight());
         bmpRect = bmpRect.CenterIn(choiceRect, wxVERTICAL);
@@ -832,12 +827,12 @@ clColours& DrawingUtils::GetColours(bool darkColours)
     static bool once = true;
     static clColours g_darkColours;
     static clColours g_normalColours;
-    if(once) {
+    if (once) {
         g_darkColours.InitDarkDefaults();
         g_normalColours.InitDefaults();
         once = false;
     }
-    if(darkColours) {
+    if (darkColours) {
         return g_darkColours;
     } else {
         return g_normalColours;
@@ -894,10 +889,10 @@ wxDC& DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
 #endif
 
     wxGraphicsContext* context;
-    if(wxPaintDC* paintdc = wxDynamicCast(&dc, wxPaintDC)) {
+    if (wxPaintDC* paintdc = wxDynamicCast(&dc, wxPaintDC)) {
         context = renderer->CreateContext(*paintdc);
 
-    } else if(wxMemoryDC* memdc = wxDynamicCast(&dc, wxMemoryDC)) {
+    } else if (wxMemoryDC* memdc = wxDynamicCast(&dc, wxMemoryDC)) {
         context = renderer->CreateContext(*memdc);
 
     } else {

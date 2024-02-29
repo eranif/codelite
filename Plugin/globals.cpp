@@ -631,28 +631,9 @@ void Mkdir(const wxString& path)
 
 bool WriteFileWithBackup(const wxString& file_name, const wxString& content, bool backup)
 {
-    if (backup) {
-        wxString backup_name(file_name);
-        backup_name << ".bak";
-        if (!wxCopyFile(file_name, backup_name, true)) {
-            clLogMessage(wxString::Format("Failed to backup file %s, skipping it", file_name.c_str()));
-            return false;
-        }
-    }
-
-    wxFFile file(file_name, "wb");
-    if (file.IsOpened() == false) {
-        // Nothing to be done
-        wxString msg = wxString::Format("Failed to open file %s", file_name.c_str());
-        clLogMessage(msg);
-        return false;
-    }
-
-    // write the new content
+    wxUnusedVar(backup);
     wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-    file.Write(content, fontEncConv); // JK was without conversion
-    file.Close();
-    return true;
+    return FileUtils::WriteFileContent(file_name, content, fontEncConv);
 }
 
 bool CopyToClipboard(const wxString& text)

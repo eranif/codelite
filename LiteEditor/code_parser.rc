@@ -7,7 +7,7 @@ aaaaa ICON "codelite-logo.ico"
 #define wxUSE_NO_MANIFEST 0
 
 // To get DPI change events, we need to opt in into per monitor DPI support.
-#define wxUSE_DPI_AWARE_MANIFEST 1
+#define wxUSE_DPI_AWARE_MANIFEST 2
 
 // this is not always needed but doesn't hurt (except making the executable
 // very slightly larger): this file contains the standard icons, cursors, ...

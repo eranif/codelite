@@ -7,7 +7,7 @@
 #include <vector>
 #include <wx/aui/tabart.h>
 
-static constexpr size_t X_SPACER = 7;
+static constexpr size_t X_SPACER = 10;
 
 class clAuiBookArt : public wxAuiDefaultTabArt
 {
@@ -22,6 +22,52 @@ public:
         wxAuiDefaultTabArt::DrawBackground(dc, wnd, rect);
         dc.SetPen(GetPenColour());
         dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+    }
+
+    wxSize GetTabSize(wxDC& dcRef, wxWindow* wnd, const wxString& caption, const wxBitmapBundle& bitmap,
+                      bool WXUNUSED(active), int close_button_state, int* x_extent) override
+    {
+        wxGCDC gcdc;
+        wxDC& dc = DrawingUtils::GetGCDC(dcRef, gcdc);
+        wxCoord measured_textx, measured_texty, tmp;
+
+        const int xPadding = wnd->FromDIP(X_SPACER);
+        dc.SetFont(m_measuringFont);
+        dc.GetTextExtent(caption, &measured_textx, &measured_texty);
+
+        dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
+
+        // add padding around the text
+        // [ _ | text | _ | bmp | _ | x | _ ]
+        wxCoord tab_width = xPadding + measured_textx + xPadding;
+        wxCoord tab_height = measured_texty;
+
+        // if there's a bitmap, add space for it
+        if (bitmap.IsOk()) {
+            // we need the correct size of the bitmap to be used on this window in
+            // logical dimensions for drawing
+            const wxSize bitmapSize = bitmap.GetPreferredLogicalSizeFor(wnd);
+
+            // increase by bitmap plus right side bitmap padding
+            tab_width += bitmapSize.x + xPadding;
+            tab_height = wxMax(tab_height, bitmapSize.y);
+        }
+
+        // if the close button is showing, add space for it
+        if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN) {
+            // increase by button size plus the padding
+            tab_width += m_activeCloseBmp.GetBitmapFor(wnd).GetLogicalWidth() + xPadding;
+        }
+
+        // add padding
+        tab_height += wnd->FromDIP(10);
+
+        if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
+            tab_width = m_fixedTabWidth;
+        }
+
+        *x_extent = tab_width;
+        return wxSize(tab_width, tab_height);
     }
 
     void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& inRect, int closeButtonState,

@@ -85,7 +85,11 @@ public:
 };
 #endif
 
+#if defined(__WXMAC__) || defined(__WXMSW__)
+#define USE_AUI_TOOLBAR 1
+#else
 #define USE_AUI_TOOLBAR 0
+#endif
 
 class WXDLLIMPEXP_SDK clSideBarCtrl : public wxControl
 {
@@ -106,6 +110,7 @@ protected:
     void DoRemovePage(size_t pos, bool delete_it);
     void PlaceButtons();
     void OnSize(wxSizeEvent& event);
+    void AddTool(const wxString& label, const wxBitmap& bmp, size_t book_index);
 
 public:
     clSideBarCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

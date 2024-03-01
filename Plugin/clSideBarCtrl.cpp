@@ -1,7 +1,6 @@
 #include "clSideBarCtrl.hpp"
 
 #include "bitmap_loader.h"
-#include "drawingutils.h"
 
 #include <wx/anybutton.h>
 #include <wx/dcbuffer.h>
@@ -408,8 +407,11 @@ void clSideBarCtrl::PlaceButtons()
 
 #if USE_AUI_TOOLBAR
     long tb_style = wxAUI_TB_DEFAULT_STYLE;
-    if (vertical_sizer) {
+    if (vertical_toolbar) {
         tb_style |= wxAUI_TB_VERTICAL;
+        tb_style |= wxAUI_TB_PLAIN_BACKGROUND;
+    } else {
+        tb_style |= wxAUI_TB_HORIZONTAL;
     }
 #else
     long tb_style = wxTB_NODIVIDER;
@@ -420,7 +422,12 @@ void clSideBarCtrl::PlaceButtons()
 
     tb_style |= wxBORDER_NONE;
     if (!m_toolbar) {
+#if USE_AUI_TOOLBAR
+        m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
+#else
         m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
+#endif
+
     } else {
         GetSizer()->Detach(m_toolbar);
     }
@@ -440,7 +447,20 @@ void clSideBarCtrl::PlaceButtons()
     }
 #endif
 
+#if USE_AUI_TOOLBAR
+    // need to re-create the toolbar
+    wxAuiToolBar* old_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
+    wxSwap(old_toolbar, m_toolbar);
+    size_t tools_count = old_toolbar->GetToolCount();
+    for (size_t i = 0; i < tools_count; ++i) {
+        auto tool = old_toolbar->FindToolByIndex(i);
+        AddTool(tool->GetLabel(), tool->GetBitmap(), i);
+    }
+    wxDELETE(old_toolbar);
+#else
     m_toolbar->SetWindowStyle(tb_style);
+#endif
+
     m_toolbar->Realize();
 
     // adjust the sizer orientation
@@ -463,6 +483,23 @@ void clSideBarCtrl::PlaceButtons()
     GetSizer()->Layout();
 }
 
+void clSideBarCtrl::AddTool(const wxString& label, const wxBitmap& bmp, size_t book_index)
+{
+    auto tool = m_toolbar->AddTool(wxID_ANY, label, bmp, label, wxITEM_CHECK);
+    m_toolbar->Bind(
+        wxEVT_TOOL,
+        [book_index, this](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            m_book->ChangeSelection(book_index);
+        },
+        tool->GetId());
+
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI,
+        [book_index, this](wxUpdateUIEvent& event) { event.Check(m_book->GetSelection() == book_index); },
+        tool->GetId());
+}
+
 void clSideBarCtrl::AddPage(wxWindow* page, const wxString& label, const wxString& bmpname, bool selected)
 {
     page->Reparent(m_book);
@@ -477,19 +514,7 @@ void clSideBarCtrl::AddPage(wxWindow* page, const wxString& label, const wxStrin
     m_bitmapByPos.erase(page_index);
     m_bitmapByPos.insert({ page_index, bmpname });
 
-    auto tool = m_toolbar->AddTool(wxID_ANY, label, bmp, label, wxITEM_CHECK);
-    m_toolbar->Bind(
-        wxEVT_TOOL,
-        [page_index, this](wxCommandEvent& event) {
-            wxUnusedVar(event);
-            m_book->ChangeSelection(page_index);
-        },
-        tool->GetId());
-
-    m_toolbar->Bind(
-        wxEVT_UPDATE_UI,
-        [page_index, this](wxUpdateUIEvent& event) { event.Check(m_book->GetSelection() == page_index); },
-        tool->GetId());
+    AddTool(label, bmp, page_index);
 }
 
 void clSideBarCtrl::DoRemovePage(size_t pos, bool delete_it)

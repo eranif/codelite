@@ -437,7 +437,7 @@ void clSideBarCtrl::PlaceButtons()
         GetSizer()->Detach(m_toolbar);
     }
 
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !USE_AUI_TOOLBAR
     if (m_toolbar->GetToolsCount()) {
         auto tool = m_toolbar->GetToolByPos(0);
         if (tool) {

@@ -88,7 +88,7 @@ public:
 #if defined(__WXMAC__) || defined(__WXMSW__)
 #define USE_AUI_TOOLBAR 1
 #else
-#define USE_AUI_TOOLBAR 0
+#define USE_AUI_TOOLBAR 1
 #endif
 
 class WXDLLIMPEXP_SDK clSideBarCtrl : public wxControl

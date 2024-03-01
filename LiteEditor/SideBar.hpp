@@ -123,7 +123,7 @@ public:
     void SetSecondarySideBar(SecondarySideBar* ssb);
 
     /// Add new page to the side bar
-    void AddPage(wxWindow* win, wxBitmap bmp, const wxString& label, bool selected = false);
+    void AddPage(wxWindow* win, const wxString& bmpname, const wxString& label, bool selected = false);
 };
 
 #endif // SIDEBAR_HPP

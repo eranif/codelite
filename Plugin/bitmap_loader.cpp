@@ -579,7 +579,7 @@ wxBitmap clLoadSidebarBitmap(const wxString& name, wxWindow* win)
         return wxNullBitmap;
     }
 
-    wxSize button_size{ 24, 24 };
+    wxSize button_size{ 32, 32 };
 
     auto bmpbundle = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), button_size);
     if (!bmpbundle.IsOk()) {

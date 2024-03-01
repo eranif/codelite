@@ -64,7 +64,7 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 {
     wxString wxbuild(wxVERSION_STRING);
 
-    if(format == long_f) {
+    if (format == long_f) {
 #if defined(__WXMSW__)
         wxbuild << _T("-Windows");
 #elif defined(__WXMAC__)
@@ -86,7 +86,7 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
+    if (thePlugin == 0) {
         thePlugin = new DatabaseExplorer(manager);
     }
     return thePlugin;
@@ -116,8 +116,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     m_dbViewerPanel = new DbViewerPanel(m_mgr->BookGet(PaneId::SIDE_BAR), editorBook, m_mgr);
-    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"),
-                       clLoadSidebarBitmap("dbexplorer-button", clGetManager()->BookGet(PaneId::SIDE_BAR)));
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"), "dbexplorer-button");
     m_mgr->AddWorkspaceTab(_("DbExplorer"));
 
     // configure autolayout algorithns
@@ -125,12 +124,12 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 
     wxSFLayoutHorizontalTree* pHTreeAlg =
         wxDynamicCast(layout.GetAlgorithm("Horizontal Tree"), wxSFLayoutHorizontalTree);
-    if(pHTreeAlg) {
+    if (pHTreeAlg) {
         pHTreeAlg->SetHSpace(200);
     }
 
     wxSFLayoutVerticalTree* pVTreeAlg = wxDynamicCast(layout.GetAlgorithm("Vertical Tree"), wxSFLayoutVerticalTree);
-    if(pVTreeAlg) {
+    if (pVTreeAlg) {
         pVTreeAlg->SetVSpace(75);
     }
 
@@ -177,7 +176,7 @@ void DatabaseExplorer::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
                                      clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
-    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_dbViewerPanel)) {
+    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_dbViewerPanel)) {
         // failed to delete, delete it manually
         m_dbViewerPanel->Destroy();
         m_dbViewerPanel = nullptr;
@@ -207,7 +206,7 @@ void DatabaseExplorer::OnOpenWithDBE(clCommandEvent& e)
 {
     // get the file name
     e.Skip();
-    if(FileExtManager::IsFileType(e.GetFileName(), FileExtManager::TypeDatabase)) {
+    if (FileExtManager::IsFileType(e.GetFileName(), FileExtManager::TypeDatabase)) {
         e.Skip(false);
         // Open the databse file
         DoOpenFile(e.GetFileName());
@@ -216,7 +215,7 @@ void DatabaseExplorer::OnOpenWithDBE(clCommandEvent& e)
 
 void DatabaseExplorer::DoOpenFile(const wxFileName& filename)
 {
-    if(m_dbViewerPanel) {
+    if (m_dbViewerPanel) {
         m_dbViewerPanel->OpenSQLiteFile(filename, true);
     }
 }

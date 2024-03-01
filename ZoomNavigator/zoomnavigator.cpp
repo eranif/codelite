@@ -46,7 +46,7 @@
 
 static ZoomNavigator* thePlugin = NULL;
 #define CHECK_CONDITION(cond) \
-    if(!cond)                 \
+    if (!cond)                \
         return;
 
 const wxString ZOOM_PANE_TITLE(_("Zoom"));
@@ -54,7 +54,7 @@ const wxString ZOOM_PANE_TITLE(_("Zoom"));
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
+    if (thePlugin == 0) {
         thePlugin = new ZoomNavigator(manager);
     }
     return thePlugin;
@@ -80,9 +80,9 @@ namespace
 size_t GetMarkers(wxStyledTextCtrl* ctrl, int marker_mask, std::vector<int>* lines)
 {
     int nFoundLine = 0;
-    while(true) {
+    while (true) {
         nFoundLine = ctrl->MarkerNext(nFoundLine, marker_mask);
-        if(nFoundLine == wxNOT_FOUND) {
+        if (nFoundLine == wxNOT_FOUND) {
             break;
         }
         lines->push_back(nFoundLine);
@@ -141,7 +141,7 @@ void ZoomNavigator::UnPlug()
     wxDELETE(m_timer);
 
     // Remove the tab if it's actually docked in the workspace pane
-    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_zoompane)) {
+    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_zoompane)) {
         m_zoompane->Destroy();
     }
     m_zoompane = nullptr;
@@ -164,15 +164,14 @@ void ZoomNavigator::DoInitialize()
 {
 
     znConfigItem data;
-    if(m_config->ReadItem(&data)) {
+    if (m_config->ReadItem(&data)) {
         m_enabled = data.IsEnabled();
     }
 
     // create tab (possibly detached)
     auto book = m_mgr->BookGet(PaneId::SIDE_BAR);
     m_zoompane = new wxPanel(book);
-    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_zoompane, ZOOM_PANE_TITLE,
-                       clLoadSidebarBitmap("zoom-button", clGetManager()->BookGet(PaneId::SIDE_BAR)));
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_zoompane, ZOOM_PANE_TITLE, "zoom-button");
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
 
     m_text = new ZoomText(m_zoompane);
@@ -191,7 +190,7 @@ void ZoomNavigator::DoUpdate()
     CHECK_CONDITION(!m_mgr->IsShutdownInProgress());
 
     IEditor* curEditor = m_mgr->GetActiveEditor();
-    if(!curEditor && !m_text->IsEmpty()) {
+    if (!curEditor && !m_text->IsEmpty()) {
         DoCleanup();
     }
     CHECK_CONDITION(curEditor);
@@ -204,22 +203,22 @@ void ZoomNavigator::DoUpdate()
     std::vector<int> error_lines;
     std::vector<int> warning_lines;
     m_text->DeleteAllMarkers();
-    if(GetMarkers(stc, mmt_error, &error_lines)) {
+    if (GetMarkers(stc, mmt_error, &error_lines)) {
         m_text->UpdateMarkers(error_lines, ZoomText::MARKER_ERROR);
     }
 
-    if(GetMarkers(stc, mmt_warning, &warning_lines)) {
+    if (GetMarkers(stc, mmt_warning, &warning_lines)) {
         m_text->UpdateMarkers(warning_lines, ZoomText::MARKER_WARNING);
     }
 
-    if(curEditor->GetFileName().GetFullPath() != m_curfile) {
+    if (curEditor->GetFileName().GetFullPath() != m_curfile) {
         SetEditorText(curEditor);
     }
 
     int first = stc->GetFirstVisibleLine();
     int last = stc->LinesOnScreen() + first;
 
-    if(m_markerFirstLine != first || m_markerLastLine != last) {
+    if (m_markerFirstLine != first || m_markerLastLine != last) {
         PatchUpHighlights(first, last);
         SetZoomTextScrollPosToMiddle(stc);
     }
@@ -229,7 +228,7 @@ void ZoomNavigator::SetEditorText(IEditor* editor)
 {
     m_curfile.Clear();
     m_text->UpdateText(editor);
-    if(editor) {
+    if (editor) {
         m_curfile = editor->GetFileName().GetFullPath();
         m_text->UpdateLexer(editor);
     }
@@ -245,7 +244,7 @@ void ZoomNavigator::SetZoomTextScrollPosToMiddle(wxStyledTextCtrl* stc)
     int linesAboveIt = numLinesOnScreen / 2;
 
     first = first - linesAboveIt;
-    if(first < 0)
+    if (first < 0)
         first = 0;
 
     m_text->SetFirstVisibleLine(first);
@@ -272,13 +271,13 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 
     // the first line is taken from the preview
     int pos = m_text->PositionFromPoint(e.GetPosition());
-    if(pos == wxSTC_INVALID_POSITION) {
+    if (pos == wxSTC_INVALID_POSITION) {
         return;
     }
     int first = m_text->LineFromPosition(pos);
     int nLinesOnScreen = curEditor->GetCtrl()->LinesOnScreen();
     first -= (nLinesOnScreen / 2);
-    if(first < 0)
+    if (first < 0)
         first = 0;
 
     // however, the last line is set according to the actual editor
@@ -312,10 +311,10 @@ void ZoomNavigator::OnSettingsChanged(wxCommandEvent& e)
     e.Skip();
     m_config->Reload();
     znConfigItem data;
-    if(m_config->ReadItem(&data)) {
+    if (m_config->ReadItem(&data)) {
         m_enabled = data.IsEnabled();
 
-        if(!m_enabled) {
+        if (!m_enabled) {
             // Clear selection
             m_text->UpdateText(NULL);
 
@@ -330,7 +329,7 @@ void ZoomNavigator::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
 
-    if(e.GetString() == m_curfile) {
+    if (e.GetString() == m_curfile) {
         // Update the file content
         m_curfile.Clear();
         m_markerFirstLine = m_markerLastLine = wxNOT_FOUND; // forces a scrolling

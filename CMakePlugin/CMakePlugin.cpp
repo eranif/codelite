@@ -122,7 +122,7 @@ static const wxString HELP_TAB_NAME = _("CMake");
  */
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(!g_plugin) {
+    if (!g_plugin) {
         g_plugin = new CMakePlugin(manager);
     }
 
@@ -177,8 +177,7 @@ CMakePlugin::CMakePlugin(IManager* manager)
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
     m_helpTab = new CMakeHelpTab(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
-    clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME,
-                                clLoadSidebarBitmap("cmake-button", clGetManager()->BookGet(PaneId::SIDE_BAR)));
+    clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME, "cmake-button");
     m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
 
     // Bind events
@@ -229,7 +228,7 @@ wxString CMakePlugin::GetSelectedProjectConfig() const
 {
     BuildConfigPtr configPtr = GetSelectedBuildConfig();
 
-    if(configPtr)
+    if (configPtr)
         return configPtr->GetName();
 
     return wxEmptyString;
@@ -287,12 +286,12 @@ void CMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 void CMakePlugin::UnPlug()
 {
     auto page = clGetManager()->BookGetPage(PaneId::SIDE_BAR, HELP_TAB_NAME);
-    if(page) {
+    if (page) {
         CMakeHelpTab* helpTab = dynamic_cast<CMakeHelpTab*>(page);
-        if(helpTab) {
+        if (helpTab) {
             helpTab->Stop();
         }
-        if(!clGetManager()->BookDeletePage(PaneId::SIDE_BAR, page)) {
+        if (!clGetManager()->BookDeletePage(PaneId::SIDE_BAR, page)) {
             // failed to delete, delete it manually
             page->Destroy();
         }
@@ -328,7 +327,7 @@ void CMakePlugin::OpenCMakeLists(wxFileName filename) const
 {
     filename.SetFullName(CMAKELISTS_FILE);
 
-    if(!m_mgr->OpenFile(filename.GetFullPath()))
+    if (!m_mgr->OpenFile(filename.GetFullPath()))
         wxMessageBox("Unable to open \"" + filename.GetFullPath() + "\"", wxMessageBoxCaptionStr,
                      wxOK | wxCENTER | wxICON_ERROR);
 }
@@ -344,7 +343,7 @@ void CMakePlugin::OnSettings(wxCommandEvent& event)
     dlg.SetDefaultGenerator(m_configuration->GetDefaultGenerator());
 
     // Store change
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_configuration->SetProgramPath(dlg.GetCMakePath());
         m_configuration->SetDefaultGenerator(dlg.GetDefaultGenerator());
         m_cmake->SetPath(dlg.GetCMakePath());
@@ -377,11 +376,11 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
     size_t settingsPos = 0;
     size_t curpos = 0;
     wxMenuItemList::const_iterator iter = items.begin();
-    for(; iter != items.end(); ++iter) {
-        if((*iter)->GetId() == XRCID("build_project")) {
+    for (; iter != items.end(); ++iter) {
+        if ((*iter)->GetId() == XRCID("build_project")) {
             buildPos = curpos;
         }
-        if((*iter)->GetId() == XRCID("project_properties")) {
+        if ((*iter)->GetId() == XRCID("project_properties")) {
             settingsPos = curpos;
         }
         ++curpos;
@@ -389,7 +388,7 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
 
     wxFileName projectFile = p->GetFileName();
     projectFile.SetFullName(CMAKELISTS_FILE);
-    if(projectFile.FileExists()) {
+    if (projectFile.FileExists()) {
         wxMenuItem* item = new wxMenuItem(NULL, XRCID("cmake_open_cmake"), _("Open CMakeLists.txt"));
         item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("cmake"));
         menu->Insert(settingsPos, item);
@@ -430,7 +429,7 @@ void CMakePlugin::OnOpenCMakeLists(wxCommandEvent& event)
 {
     bool openWorkspaceCMakeLists = (event.GetId() == XRCID("cmake_open_active_project_cmake"));
     wxFileName cmakelists;
-    if(openWorkspaceCMakeLists) {
+    if (openWorkspaceCMakeLists) {
         cmakelists = clCxxWorkspaceST::Get()->GetFileName();
     } else {
         ProjectPtr proj = GetSelectedProject();
@@ -439,7 +438,7 @@ void CMakePlugin::OnOpenCMakeLists(wxCommandEvent& event)
     }
 
     cmakelists.SetFullName(CMAKELISTS_FILE);
-    if(cmakelists.FileExists()) {
+    if (cmakelists.FileExists()) {
         m_mgr->OpenFile(cmakelists.GetFullPath());
     }
 }
@@ -453,7 +452,7 @@ void CMakePlugin::OnExportCMakeLists(wxCommandEvent& event)
     CHECK_PTR_RET(proj);
 
     CMakeGenerator generator;
-    if(generator.Generate(proj)) {
+    if (generator.Generate(proj)) {
         EventNotifier::Get()->PostReloadExternallyModifiedEvent();
     }
 }
@@ -499,7 +498,7 @@ void CMakePlugin::OnWorkspaceContextMenu(clContextMenuEvent& event)
     workspaceFile.SetFullName(CMAKELISTS_FILE);
 
     menu->AppendSeparator();
-    if(workspaceFile.FileExists()) {
+    if (workspaceFile.FileExists()) {
         wxMenuItem* item = new wxMenuItem(NULL, XRCID("cmake_open_active_project_cmake"), _("Open CMakeLists.txt"));
         item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("cmake"));
         menu->Append(item);
@@ -550,7 +549,7 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
 #endif
 
     CMakeGenerator generator;
-    if(generator.CanGenerate(p)) {
+    if (generator.CanGenerate(p)) {
         generator.Generate(p);
     }
 
@@ -579,11 +578,11 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
     command << cmakeExe << " " << projectFolder << " " << args;
 
 #ifdef __WXMSW__
-    if(!hasGeneratorInArgs) {
+    if (!hasGeneratorInArgs) {
         bool is_msys =
             buildConf->GetCompiler() && buildConf->GetCompiler()->GetCompilerFamily() == COMPILER_FAMILY_MSYS2;
         // On Windows, generate MinGW makefiles
-        if(is_msys) {
+        if (is_msys) {
             command << " -G\"MSYS Makefiles\"";
         } else {
             command << " -G\"MinGW Makefiles\"";
@@ -594,7 +593,7 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
     // Execute it
     IProcess* proc =
         ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell, fnWorkingDirectory.GetPath());
-    if(!proc) {
+    if (!proc) {
         ::wxMessageBox(_("Failed to execute:\n") + command, "CodeLite", wxICON_ERROR | wxOK | wxCENTER,
                        EventNotifier::Get()->TopFrame());
         return;
@@ -609,7 +608,7 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
 bool CMakePlugin::IsCMakeListsExists() const
 {
     wxFileName cmakelists_txt{ ::wxGetCwd(), "CMakeLists.txt" };
-    if(cmakelists_txt.FileExists()) {
+    if (cmakelists_txt.FileExists()) {
         ::wxMessageBox(_("This folder already contains a CMakeLists.txt file"), "CodeLite",
                        wxICON_WARNING | wxOK | wxCENTER);
         return true;
@@ -630,13 +629,13 @@ wxString CMakePlugin::WriteCMakeListsAndOpenIt(const std::vector<wxString>& line
 clResultString CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType type) const
 {
     // Check for an already existing CMakeLists.txt in this folder
-    if(IsCMakeListsExists()) {
+    if (IsCMakeListsExists()) {
         return clResultString::make_error(wxEmptyString);
     }
 
     wxString name;
     wxString target_line;
-    switch(type) {
+    switch (type) {
     case TargetType::EXECUTABLE:
         name = ::wxGetTextFromUser(_("Executable name:"), "Executable name");
         target_line = wxString::Format("add_executable(%s ${CXX_SRCS} ${C_SRCS})", name);
@@ -651,7 +650,7 @@ clResultString CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType type) c
         break;
     }
 
-    if(name.empty()) {
+    if (name.empty()) {
         return clResultString::make_error(std::move(wxString("User cancelled")));
     }
 

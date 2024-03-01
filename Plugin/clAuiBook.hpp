@@ -24,6 +24,9 @@ public:
     bool AreEventsEnabled() const { return m_eventsEnabled; }
     /// Ensure that all windows exist in the history
     void UpdateHistory();
+    void SetCanHaveCloseButton(bool b) { m_canHaveCloseButton = b; }
+    int GetPageIndex(const wxString& name) const;
+    int GetPageIndex(wxWindow* win) const;
 
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);
@@ -41,6 +44,7 @@ protected:
 private:
     clTabHistory::Ptr_t m_history;
     bool m_eventsEnabled = true;
+    bool m_canHaveCloseButton = true;
 };
 
 class WXDLLIMPEXP_SDK clAuiBookEventsDisabler

@@ -55,7 +55,7 @@ static SymbolViewPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
+    if (thePlugin == 0) {
         thePlugin = new SymbolViewPlugin(manager);
     }
     return thePlugin;
@@ -84,8 +84,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
     m_shortName = wxT("Outline");
 
     m_view = new OutlineTab(m_mgr->BookGet(PaneId::SIDE_BAR));
-    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_view, _("Outline"),
-                       clLoadSidebarBitmap("outline-button", clGetManager()->BookGet(PaneId::SIDE_BAR)));
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_view, _("Outline"), "outline-button");
     m_mgr->AddWorkspaceTab(_("Outline"));
 }
 
@@ -97,7 +96,7 @@ void SymbolViewPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(plugi
 
 void SymbolViewPlugin::UnPlug()
 {
-    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_view)) {
+    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_view)) {
         // failed to delete, delete it manually
         m_view->Destroy();
     }

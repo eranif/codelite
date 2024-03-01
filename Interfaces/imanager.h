@@ -708,7 +708,7 @@ public:
 
     /// Add a book page
     virtual void BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label,
-                             const wxBitmap& bmp = wxNullBitmap) = 0;
+                             const wxString& bmp = wxEmptyString) = 0;
 
     /// Find a book page by its label
     virtual wxWindow* BookGetPage(PaneId pane_id, const wxString& label) = 0;

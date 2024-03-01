@@ -1001,14 +1001,14 @@ bool PluginManager::SelectEditor(IEditor* editor)
     return mainbook->SelectPage(editor->GetCtrl());
 }
 
-void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label, const wxBitmap& bmp)
+void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label, const wxString& bmpname)
 {
     switch (pane_id) {
     case PaneId::BOTTOM_BAR:
         clMainFrame::Get()->GetOutputPane()->GetNotebook()->AddPage(page, label, true);
         break;
     case PaneId::SIDE_BAR:
-        clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label, bmp, true);
+        clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label, bmpname, true);
         break;
     case PaneId::DEBUG_BAR:
         clMainFrame::Get()->GetDebuggerPane()->GetNotebook()->AddPage(page, label, true);

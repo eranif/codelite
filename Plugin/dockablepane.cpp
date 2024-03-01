@@ -56,7 +56,7 @@ DockablePane::DockablePane(wxWindow* parent, PaneId pane_id, const wxString& tit
     Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DockablePane::ClosePane));
     wxAuiPaneInfo info;
     info.Name(title).Caption(title);
-    if(initialFloat) {
+    if (initialFloat) {
         info.Float();
     }
     clGetManager()->GetDockingManager()->AddPane(this, info);
@@ -77,23 +77,23 @@ void DockablePane::ClosePane(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
-    if(!m_notifiedDestroyed) {
+    if (!m_notifiedDestroyed) {
         m_notifiedDestroyed = true;
 
-        if(m_paneId != wxNOT_FOUND) {
+        if (m_paneId != wxNOT_FOUND) {
             // first detach the child from this pane
             wxSizer* sz = GetSizer();
             sz->Detach(m_child);
 
             // use the new API
-            switch(static_cast<PaneId>(m_paneId)) {
+            switch (static_cast<PaneId>(m_paneId)) {
             case PaneId::SIDE_BAR:
                 break;
             case PaneId::BOTTOM_BAR:
-                clGetManager()->BookAddPage(PaneId::BOTTOM_BAR, m_child, m_text, wxNullBitmap);
+                clGetManager()->BookAddPage(PaneId::BOTTOM_BAR, m_child, m_text, wxEmptyString);
                 break;
             case PaneId::DEBUG_BAR:
-                clGetManager()->BookAddPage(PaneId::DEBUG_BAR, m_child, m_text, wxNullBitmap);
+                clGetManager()->BookAddPage(PaneId::DEBUG_BAR, m_child, m_text, wxEmptyString);
                 break;
             }
         }
@@ -119,7 +119,7 @@ void DockablePane::SetChildNoReparent(wxWindow* child)
 {
     m_child = child;
     wxSizer* sz = GetSizer();
-    if(!m_child->IsShown()) {
+    if (!m_child->IsShown()) {
         m_child->Show();
     }
     sz->Add(m_child, 1, wxEXPAND | wxALL, 0);

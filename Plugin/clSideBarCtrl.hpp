@@ -3,6 +3,7 @@
 
 #include "codelite_exports.h"
 
+#include <wx/aui/auibar.h>
 #include <wx/bitmap.h>
 #include <wx/control.h>
 #include <wx/panel.h>
@@ -10,6 +11,7 @@
 #include <wx/simplebook.h>
 #include <wx/sizer.h>
 
+#if 0
 class SideBarButton;
 class WXDLLIMPEXP_SDK clSideBarButtonCtrl : public wxControl
 {
@@ -17,18 +19,20 @@ class WXDLLIMPEXP_SDK clSideBarButtonCtrl : public wxControl
     friend class clSideBarCtrl;
 
 protected:
-    wxBoxSizer* m_mainSizer = nullptr;
     wxDirection m_buttonsPosition = wxLEFT;
-    int m_width = wxNOT_FOUND;
+    std::vector<SideBarButton*> m_buttons;
+    std::unordered_map<wxString, wxBitmap> m_bitmaps;
 
 protected:
     void MoveAfter(SideBarButton* src, SideBarButton* target);
     void MoveBefore(SideBarButton* src, SideBarButton* target);
     int GetButtonIndex(SideBarButton* btn) const;
-    std::vector<wxWindow*> GetAllButtons();
+    SideBarButton* GetButtonFromPos(const wxPoint& pt) const;
+    const std::vector<SideBarButton*>& GetAllButtons() const;
     wxWindow* DoChangeSelection(int pos, bool notify);
+    void LoadBitmaps();
     void OnPaint(wxPaintEvent& event);
-    void Initialise();
+    void OnLeftDown(wxMouseEvent& event);
 
 public:
     clSideBarButtonCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
@@ -42,11 +46,10 @@ public:
     /// Add new button at the end, returns its index
     /// Note that the `label` property is used as the tooltip
     /// It is here for convenience: it can be used to fetch
-    int AddButton(const wxBitmap bmp, const wxString& label, wxWindow* linked_page, bool select = false);
+    int AddButton(const wxString& bitmap_name, const wxString& label, wxWindow* linked_page, bool select = false);
 
-    /// Remove a button by index
-    /// return the removed button linked page
-    wxWindow* RemoveButton(int pos);
+    /// Remove a button by index, return the associated page
+    wxWindow* RemoveButton(size_t pos);
 
     /// Return the current selection
     int GetSelection() const;
@@ -80,13 +83,22 @@ public:
     /// Remove all buttons
     void Clear();
 };
+#endif
 
-class WXDLLIMPEXP_SDK clSideBarCtrl : public wxPanel
+#define USE_AUI_TOOLBAR 0
+
+class WXDLLIMPEXP_SDK clSideBarCtrl : public wxControl
 {
-    clSideBarButtonCtrl* m_buttons = nullptr;
+#if USE_AUI_TOOLBAR
+    wxAuiToolBar* m_toolbar = nullptr;
+#else
+    wxToolBar* m_toolbar = nullptr;
+#endif
+
     wxSimplebook* m_book = nullptr;
     wxDirection m_buttonsPosition = wxLEFT;
     wxBoxSizer* m_mainSizer = nullptr;
+    std::unordered_map<size_t, wxString> m_bitmapByPos;
 
 protected:
     /// Return the page position
@@ -101,7 +113,7 @@ public:
     virtual ~clSideBarCtrl();
 
     /// Book API
-    void AddPage(wxWindow* page, const wxString& label, wxBitmap bmp, bool selected = false);
+    void AddPage(wxWindow* page, const wxString& label, const wxString& bmpname, bool selected = false);
 
     /// Move page identified by `label` to a new position
     void MovePageToIndex(const wxString& label, int new_pos);
@@ -119,16 +131,13 @@ public:
     wxString GetPageText(size_t pos) const;
 
     /// return the page bitmap
-    wxBitmap GetPageBitmap(size_t pos) const;
+    wxString GetPageBitmap(size_t pos) const;
 
     /// Set the page bitmap
-    void SetPageBitmap(size_t pos, const wxBitmap& bmp);
+    void SetPageBitmap(size_t pos, const wxString& bmp);
 
     /// Remove page (this does not delete it)
     void RemovePage(size_t pos);
-
-    /// Remove all pages, do not destroy them
-    void RemoveAll();
 
     /// Delete page
     void DeletePage(size_t pos);
@@ -150,6 +159,8 @@ public:
 
     /// place the buttons position (top, left, right or bottom)
     void SetButtonPosition(wxDirection direction);
+
+    void Realize();
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SIDEBAR_SELECTION_CHANGED, wxCommandEvent);

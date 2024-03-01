@@ -72,7 +72,7 @@ const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
+    if (thePlugin == 0) {
         thePlugin = new SFTP(manager);
     }
     return thePlugin;
@@ -121,7 +121,7 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SFTP_OPEN_FILE, &SFTP::OnOpenFile, this);
 
     // Add the "SFTP" page to the workspace pane
-    if(IsPaneDetached(_("SFTP"))) {
+    if (IsPaneDetached(_("SFTP"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
             new DockablePane(m_mgr->GetMainPanel(), PaneId::SIDE_BAR, _("SFTP"), false, wxSize(200, 200));
@@ -130,12 +130,11 @@ SFTP::SFTP(IManager* manager)
 
     } else {
         m_browserView = new SFTPTreeView(m_mgr->BookGet(PaneId::SIDE_BAR), this);
-        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_browserView, _("SFTP"),
-                           clLoadSidebarBitmap("sftp-button", clGetManager()->BookGet(PaneId::SIDE_BAR)));
+        m_mgr->BookAddPage(PaneId::SIDE_BAR, m_browserView, _("SFTP"), "sftp-button");
     }
 
     // Add the "SFTP Log" page to the output pane
-    if(IsPaneDetached(_("SFTP Log"))) {
+    if (IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
             new DockablePane(m_mgr->GetMainPanel(), PaneId::BOTTOM_BAR, _("SFTP Log"), false, wxSize(200, 200));
@@ -144,7 +143,7 @@ SFTP::SFTP(IManager* manager)
 
     } else {
         m_logView = new SFTPStatusPage(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
-        m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("SFTP Log"), wxNullBitmap);
+        m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("SFTP Log"));
     }
 
     // Create the helper for adding our tabs in the "more" menu
@@ -177,7 +176,7 @@ void SFTP::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void SFTP::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if(type == MenuTypeFileView_Workspace) {
+    if (type == MenuTypeFileView_Workspace) {
         // Create the popup menu for the virtual folders
         wxMenuItem* item(NULL);
 
@@ -205,12 +204,12 @@ bool SFTP::IsPaneDetached(const wxString& name) const
 
 void SFTP::UnPlug()
 {
-    if(!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_browserView)) {
+    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_browserView)) {
         m_browserView->Destroy();
     }
     m_browserView = nullptr;
 
-    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_logView)) {
+    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_logView)) {
         m_logView->Destroy();
     }
     m_logView = nullptr;
@@ -256,7 +255,7 @@ void SFTP::OnSetupWorkspaceMirroring(wxCommandEvent& e)
 {
     SFTPBrowserDlg dlg(wxTheApp->GetTopWindow(), _("Select the remote workspace"), "*.workspace");
     dlg.Initialize(m_workspaceSettings.GetAccount(), m_workspaceSettings.GetRemoteWorkspacePath());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_workspaceSettings.SetRemoteWorkspacePath(dlg.GetPath());
         m_workspaceSettings.SetAccount(dlg.GetAccount());
         SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
@@ -266,7 +265,7 @@ void SFTP::OnSetupWorkspaceMirroring(wxCommandEvent& e)
 void SFTP::OnWorkspaceOpened(clWorkspaceEvent& e)
 {
     e.Skip();
-    if(e.IsRemote()) {
+    if (e.IsRemote()) {
         m_workspaceFile.Clear();
         m_workspaceSettings.Clear();
     } else {
@@ -319,7 +318,7 @@ void SFTP::OnSaveFile(clSFTPEvent& e)
     wxString remoteFile = e.GetRemoteFile();
 
     SSHAccountInfo account;
-    if(settings.GetAccount(accName, account)) {
+    if (settings.GetAccount(accName, account)) {
         SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, localFile, 0));
 
     } else {
@@ -343,18 +342,18 @@ void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
             << "Remote: " << cd.GetRemotePath();
 
     IEditor* editor = m_mgr->OpenFile(cd.GetLocalPath(), "download", tooltip);
-    if(editor) {
+    if (editor) {
         // Tag this editor as a remote file
         SFTPClientData* pcd = new SFTPClientData(cd);
         editor->SetClientData("sftp", pcd);
         // set the line number
-        if(cd.GetLineNumber() != wxNOT_FOUND) {
+        if (cd.GetLineNumber() != wxNOT_FOUND) {
             editor->GetCtrl()->GotoLine(cd.GetLineNumber());
         }
     }
 
     // Now that the file was downloaded, update the file permissions
-    if(m_remoteFiles.count(cd.GetLocalPath())) {
+    if (m_remoteFiles.count(cd.GetLocalPath())) {
         RemoteFileInfo& info = m_remoteFiles[cd.GetLocalPath()];
         info.SetPremissions(cd.GetPermissions());
     }
@@ -364,7 +363,7 @@ void SFTP::OpenWithDefaultApp(const wxString& localFileName) { ::wxLaunchDefault
 
 void SFTP::AddRemoteFile(const RemoteFileInfo& remoteFile)
 {
-    if(m_remoteFiles.count(remoteFile.GetLocalFile())) {
+    if (m_remoteFiles.count(remoteFile.GetLocalFile())) {
         m_remoteFiles.erase(remoteFile.GetLocalFile());
     }
     m_remoteFiles.insert(std::make_pair(remoteFile.GetLocalFile(), remoteFile));
@@ -374,9 +373,9 @@ void SFTP::OnEditorClosed(wxCommandEvent& e)
 {
     e.Skip();
     IEditor* editor = (IEditor*)e.GetClientData();
-    if(editor) {
+    if (editor) {
         wxString localFile = editor->GetFileName().GetFullPath();
-        if(m_remoteFiles.count(localFile)) {
+        if (m_remoteFiles.count(localFile)) {
 
             wxLogNull noLog;
 
@@ -396,7 +395,7 @@ void SFTP::MSWInitiateConnection()
     SFTPSettings settings;
     settings.Load();
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
-    if(accounts.empty())
+    if (accounts.empty())
         return;
     const SSHAccountInfo& account = accounts.at(0);
     SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account));
@@ -412,11 +411,11 @@ void SFTP::OnSettings(wxCommandEvent& e)
 
 void SFTP::DoFileSaved(const wxString& filename)
 {
-    if(filename.IsEmpty())
+    if (filename.IsEmpty())
         return;
 
     // Check to see if this file is part of a remote files managed by our plugin
-    if(m_remoteFiles.count(filename)) {
+    if (m_remoteFiles.count(filename)) {
         // ----------------------------------------------------------------------------------------------
         // this file was opened by the SFTP explorer
         // ----------------------------------------------------------------------------------------------
@@ -428,7 +427,7 @@ void SFTP::DoFileSaved(const wxString& filename)
         // ----------------------------------------------------------------------------------------------
 
         wxString remoteFile = GetRemotePath(filename);
-        if(remoteFile.IsEmpty()) {
+        if (remoteFile.IsEmpty()) {
             return;
         }
 
@@ -436,7 +435,7 @@ void SFTP::DoFileSaved(const wxString& filename)
         settings.Load();
 
         SSHAccountInfo account;
-        if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
+        if (settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
             SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, filename, 0));
 
         } else {
@@ -457,7 +456,7 @@ void SFTP::OnReplaceInFiles(clFileSystemEvent& e)
 {
     e.Skip();
     const wxArrayString& files = e.GetStrings();
-    for(size_t i = 0; i < files.size(); ++i) {
+    for (size_t i = 0; i < files.size(); ++i) {
         DoFileSaved(files.Item(i));
     }
 }
@@ -471,7 +470,7 @@ void SFTP::OnFileRenamed(clFileSystemEvent& e)
     // Convert local paths to remote paths
     wxString remoteFile = GetRemotePath(e.GetPath());
     wxString remoteNew = GetRemotePath(e.GetNewpath());
-    if(remoteFile.IsEmpty() || remoteNew.IsEmpty()) {
+    if (remoteFile.IsEmpty() || remoteNew.IsEmpty()) {
         return;
     }
 
@@ -479,7 +478,7 @@ void SFTP::OnFileRenamed(clFileSystemEvent& e)
     settings.Load();
 
     SSHAccountInfo account;
-    if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
+    if (settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
         clDEBUG() << "SFTP: Renaming remote file:" << remoteFile << "->" << remoteNew;
         SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, remoteNew));
 
@@ -500,7 +499,7 @@ void SFTP::OnFileDeleted(clFileSystemEvent& e)
 {
     e.Skip();
     const wxArrayString& files = e.GetPaths();
-    for(size_t i = 0; i < files.size(); ++i) {
+    for (size_t i = 0; i < files.size(); ++i) {
         DoFileDeleted(files.Item(i));
     }
 }
@@ -517,7 +516,7 @@ void SFTP::OnRenameFile(clSFTPEvent& e)
     wxString remoteNew = e.GetNewRemoteFile();
 
     SSHAccountInfo account;
-    if(settings.GetAccount(accName, account)) {
+    if (settings.GetAccount(accName, account)) {
         SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteOld, remoteNew));
 
     } else {
@@ -537,7 +536,7 @@ void SFTP::OnDeleteFile(clSFTPEvent& e)
     wxString path = e.GetRemoteFile();
 
     SSHAccountInfo account;
-    if(settings.GetAccount(accName, account)) {
+    if (settings.GetAccount(accName, account)) {
         SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, path));
 
     } else {
@@ -550,7 +549,7 @@ void SFTP::OnDeleteFile(clSFTPEvent& e)
 void SFTP::DoFileDeleted(const wxString& filepath)
 {
     wxString remoteFile = GetRemotePath(filepath);
-    if(remoteFile.IsEmpty()) {
+    if (remoteFile.IsEmpty()) {
         return;
     }
 
@@ -558,7 +557,7 @@ void SFTP::DoFileDeleted(const wxString& filepath)
     settings.Load();
 
     SSHAccountInfo account;
-    if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
+    if (settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
         SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile));
 
     } else {
@@ -576,7 +575,7 @@ void SFTP::DoFileDeleted(const wxString& filepath)
 
 wxString SFTP::GetRemotePath(const wxString& localpath) const
 {
-    if(!IsCxxWorkspaceMirrorEnabled()) {
+    if (!IsCxxWorkspaceMirrorEnabled()) {
         return "";
     }
     wxFileName file(localpath);
@@ -591,7 +590,7 @@ void SFTP::OpenFile(const wxString& remotePath, int lineNumber)
         std::find_if(m_remoteFiles.begin(), m_remoteFiles.end(), [&](const RemoteFileInfo::Map_t::value_type& vt) {
             return vt.second.GetRemoteFile() == remotePath;
         });
-    if(iter != m_remoteFiles.end()) {
+    if (iter != m_remoteFiles.end()) {
         m_mgr->OpenFile(iter->second.GetLocalFile(), "", lineNumber);
     } else {
         RemoteFileInfo remoteFile;

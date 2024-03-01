@@ -465,8 +465,13 @@ void clAuiBook::UpdatePreferences()
     bool show_x_on_tab = options->IsTabHasXButton();
 
     auto style = GetWindowStyle();
-    if (show_x_on_tab) {
-        style |= wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
+    style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;
+    if (m_canHaveCloseButton) {
+        if (show_x_on_tab) {
+            style |= wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
+        } else {
+            style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
+        }
     } else {
         style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
     }
@@ -474,17 +479,17 @@ void clAuiBook::UpdatePreferences()
     // update the tab height
     switch (options->GetNotebookTabHeight()) {
     case OptionsConfig::nbTabHt_Tiny:
-        Y_SPACER = FromDIP(8);
+        Y_SPACER = FromDIP(4);
         break;
     case OptionsConfig::nbTabHt_Short:
-        Y_SPACER = FromDIP(10);
-        break;
-    case OptionsConfig::nbTabHt_Tall:
-        Y_SPACER = FromDIP(14);
+        Y_SPACER = FromDIP(6);
         break;
     default:
     case OptionsConfig::nbTabHt_Medium:
-        Y_SPACER = FromDIP(12);
+        Y_SPACER = FromDIP(8);
+        break;
+    case OptionsConfig::nbTabHt_Tall:
+        Y_SPACER = FromDIP(10);
         break;
     }
 
@@ -524,4 +529,16 @@ void clAuiBook::UpdateHistory()
         windows.emplace_back(GetPage(i));
     }
     m_history->Compact(windows, true);
+}
+
+int clAuiBook::GetPageIndex(wxWindow* win) const { return FindPage(win); }
+
+int clAuiBook::GetPageIndex(const wxString& name) const
+{
+    for (size_t i = 0; i < GetPageCount(); ++i) {
+        if (GetPageText(i) == name) {
+            return i;
+        }
+    }
+    return wxNOT_FOUND;
 }

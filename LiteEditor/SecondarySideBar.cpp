@@ -31,7 +31,7 @@ SecondarySideBar::~SecondarySideBar()
 {
     wxArrayString tabs;
     tabs.reserve(m_book->GetPageCount());
-    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
         tabs.Add(m_book->GetPageText(i));
     }
 
@@ -44,17 +44,17 @@ SecondarySideBar::~SecondarySideBar()
 
 void SecondarySideBar::SetSideBar(SideBar* sb) { m_sidebar = sb; }
 
-void SecondarySideBar::AddPage(wxWindow* win, wxBitmap bmp, const wxString& label)
+void SecondarySideBar::AddPage(wxWindow* win, const wxString& bmpname, const wxString& label)
 {
-    if(m_book->GetPageCount() == 0) {
+    if (m_book->GetPageCount() == 0) {
         clGetManager()->ShowPane(VIEW_NAME, true);
     }
 
-    m_book->AddPage(win, label, bmp, true);
+    m_book->AddPage(win, label, bmpname, true);
     m_book->GetSizer()->Layout();
 
     auto secondary_tabs = clConfig::Get().Read("secondary_side_bar.tabs", wxArrayString{});
-    if(secondary_tabs.Index(label) == wxNOT_FOUND) {
+    if (secondary_tabs.Index(label) == wxNOT_FOUND) {
         secondary_tabs.Add(label);
         clConfig::Get().Write("secondary_side_bar.tabs", secondary_tabs);
     }
@@ -79,7 +79,7 @@ void SecondarySideBar::OnContextMenu(wxContextMenuEvent& event)
 void SecondarySideBar::MoveToPrimarySideBar(int pos)
 {
     wxString label = m_book->GetPageText(pos);
-    wxBitmap bmp = m_book->GetPageBitmap(pos);
+    wxString bmp = m_book->GetPageBitmap(pos);
     wxWindow* win = m_book->GetPage(pos);
 
     m_book->RemovePage(pos);
@@ -88,7 +88,7 @@ void SecondarySideBar::MoveToPrimarySideBar(int pos)
     // add it to the right side bar
     m_sidebar->AddPage(win, bmp, label);
 
-    if(m_book->GetPageCount() == 0) {
+    if (m_book->GetPageCount() == 0) {
         // No more pages -> hide this view
         clGetManager()->ShowPane(VIEW_NAME, false);
     }
@@ -96,7 +96,7 @@ void SecondarySideBar::MoveToPrimarySideBar(int pos)
 
 void SecondarySideBar::SetSelection(int selection)
 {
-    if((size_t)selection >= m_book->GetPageCount()) {
+    if ((size_t)selection >= m_book->GetPageCount()) {
         return;
     }
     m_book->SetSelection(selection);
@@ -108,7 +108,7 @@ void SecondarySideBar::OnSettingsChanged(wxCommandEvent& event)
 
     auto direction = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection();
     // on the secondary bar, "left" means: vertical tabs, i.e. place them on the right side
-    if(direction == wxLEFT) {
+    if (direction == wxLEFT) {
         direction = wxRIGHT;
     }
     m_book->SetButtonPosition(direction);

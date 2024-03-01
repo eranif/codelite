@@ -396,9 +396,14 @@ clSideBarCtrl::clSideBarCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos
     }
     PlaceButtons();
     Bind(wxEVT_SIZE, &clSideBarCtrl::OnSize, this);
+    Bind(wxEVT_DPI_CHANGED, &clSideBarCtrl::OnDPIChangedEvent, this);
 }
 
-clSideBarCtrl::~clSideBarCtrl() { Unbind(wxEVT_SIZE, &clSideBarCtrl::OnSize, this); }
+clSideBarCtrl::~clSideBarCtrl()
+{
+    Unbind(wxEVT_SIZE, &clSideBarCtrl::OnSize, this);
+    Unbind(wxEVT_DPI_CHANGED, &clSideBarCtrl::OnDPIChangedEvent, this);
+}
 
 void clSideBarCtrl::PlaceButtons()
 {
@@ -676,4 +681,14 @@ void clSideBarCtrl::Realize()
 #if USE_AUI_TOOLBAR
     SendSizeEvent(wxSEND_EVENT_POST);
 #endif
+}
+
+void clSideBarCtrl::OnDPIChangedEvent(wxDPIChangedEvent& event)
+{
+    event.Skip();
+    clDEBUG() << "DPI changed event captured. Rebuilding SideBar control" << endl;
+
+    // clear the bitmaps cache and rebuild the control
+    ::clClearSidebarBitmapCache();
+    PlaceButtons();
 }

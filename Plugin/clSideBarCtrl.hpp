@@ -111,6 +111,7 @@ protected:
     void PlaceButtons();
     void OnSize(wxSizeEvent& event);
     void AddTool(const wxString& label, const wxBitmap& bmp, size_t book_index);
+    void OnDPIChangedEvent(wxDPIChangedEvent& event);
 
 public:
     clSideBarCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

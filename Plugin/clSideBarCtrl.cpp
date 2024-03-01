@@ -454,13 +454,19 @@ void clSideBarCtrl::PlaceButtons()
     size_t tools_count = old_toolbar->GetToolCount();
     for (size_t i = 0; i < tools_count; ++i) {
         auto tool = old_toolbar->FindToolByIndex(i);
-        AddTool(tool->GetLabel(), tool->GetBitmap(), i);
+        if (m_bitmapByPos.count(i)) {
+            wxBitmap bmp = ::clLoadSidebarBitmap(m_bitmapByPos[i], this);
+            AddTool(tool->GetLabel(), bmp, i);
+
+        } else {
+            // fallback...
+            AddTool(tool->GetLabel(), tool->GetBitmap(), i);
+        }
     }
     wxDELETE(old_toolbar);
 #else
     m_toolbar->SetWindowStyle(tb_style);
 #endif
-
     m_toolbar->Realize();
 
     // adjust the sizer orientation
@@ -664,4 +670,10 @@ void clSideBarCtrl::OnSize(wxSizeEvent& event)
     GetSizer()->Layout();
 }
 
-void clSideBarCtrl::Realize() { m_toolbar->Realize(); }
+void clSideBarCtrl::Realize()
+{
+    m_toolbar->Realize();
+#if USE_AUI_TOOLBAR
+    SendSizeEvent(wxSEND_EVENT_POST);
+#endif
+}

@@ -404,7 +404,7 @@ clSideBarCtrl::~clSideBarCtrl() { Unbind(wxEVT_SIZE, &clSideBarCtrl::OnSize, thi
 void clSideBarCtrl::PlaceButtons()
 {
     GetSizer()->Detach(m_book);
-    bool vertical_sizer = (m_buttonsPosition == wxLEFT || m_buttonsPosition == wxRIGHT);
+    bool vertical_toolbar = (m_buttonsPosition == wxLEFT || m_buttonsPosition == wxRIGHT);
 
 #if USE_AUI_TOOLBAR
     long tb_style = wxAUI_TB_DEFAULT_STYLE;
@@ -413,7 +413,7 @@ void clSideBarCtrl::PlaceButtons()
     }
 #else
     long tb_style = wxTB_NODIVIDER;
-    if (vertical_sizer) {
+    if (vertical_toolbar) {
         tb_style |= wxTB_VERTICAL;
     }
 #endif
@@ -425,7 +425,21 @@ void clSideBarCtrl::PlaceButtons()
         GetSizer()->Detach(m_toolbar);
     }
 
-    // m_toolbar->SetGripperVisible(false);
+#ifdef __WXGTK__
+    if (m_toolbar->GetToolsCount()) {
+        auto tool = m_toolbar->GetToolByPos(0);
+        if (tool) {
+            if (vertical_toolbar) {
+                m_toolbar->SetSize(wxSize(48, -1));
+                m_toolbar->SetSizeHints(wxSize(48, -1));
+            } else {
+                m_toolbar->SetSize(wxSize(-1, 48));
+                m_toolbar->SetSizeHints(wxSize(-1, 48));
+            }
+        }
+    }
+#endif
+
     m_toolbar->SetWindowStyle(tb_style);
     m_toolbar->Realize();
 
@@ -447,7 +461,6 @@ void clSideBarCtrl::PlaceButtons()
         break;
     }
     GetSizer()->Layout();
-    GetSizer()->Fit(this);
 }
 
 void clSideBarCtrl::AddPage(wxWindow* page, const wxString& label, const wxString& bmpname, bool selected)
@@ -626,8 +639,4 @@ void clSideBarCtrl::OnSize(wxSizeEvent& event)
     GetSizer()->Layout();
 }
 
-void clSideBarCtrl::Realize()
-{
-    m_toolbar->Realize();
-    SendSizeEvent(wxSEND_EVENT_POST);
-}
+void clSideBarCtrl::Realize() { m_toolbar->Realize(); }

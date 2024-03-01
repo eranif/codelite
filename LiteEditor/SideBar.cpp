@@ -103,7 +103,7 @@ void SideBar::CreateGUIControls()
         style = wxBK_RIGHT;
     }
 
-    m_book = new clSideBarCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
+    m_book = new clSideBarCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->Bind(wxEVT_SIDEBAR_CONTEXT_MENU, &SideBar::OnContextMenu, this);
 
     // Calculate the widest tab (the one with the 'Workspace' label)

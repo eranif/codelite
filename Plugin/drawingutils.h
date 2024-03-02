@@ -68,6 +68,11 @@ public:
     static bool IsDark(const wxColour& col);
 
     /**
+     * @brief draw a tab area background
+     */
+    static void DrawTabBackgroundArea(wxDC& dc, wxWindow* wnd, const wxRect& rect);
+
+    /**
      * @brief return a fallback fixed font incase we could not locate one in the
      * settings
      * @param win unused

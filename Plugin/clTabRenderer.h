@@ -234,11 +234,10 @@ public:
     bool IsUseBoldFont() const { return use_bold_font; }
 
     /**
-     * @brief draw the tab area background, return the colour used to actually
-     * paint it
+     * @brief draw the tab area background
      */
-    virtual wxColour DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
-                                    size_t style);
+    virtual void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
+                                size_t style);
 
     /**
      * @brief finalise the background after all elements have been drawn on the tab area colour. Default is

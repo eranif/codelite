@@ -245,6 +245,35 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const 
     dc.SetBrush(savedBrush);
 }
 
+void DrawingUtils::DrawTabBackgroundArea(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+{
+    bool is_dark = clSystemSettings::GetAppearance().IsDark();
+    wxColour pen_colour;
+    if (is_dark) {
+        pen_colour = *wxBLACK;
+    } else {
+        pen_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+
+    wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
+
+    wxRect upper_rect = rect;
+    wxRect lower_rect = rect;
+
+    upper_rect.SetHeight(rect.GetHeight() * 11 / 12);
+    lower_rect.SetHeight(rect.GetHeight() - upper_rect.GetHeight());
+    lower_rect.SetY(upper_rect.GetY() + upper_rect.GetHeight());
+
+    bool is_bg_dark = IsDark(bg_colour);
+    wxColour second_bg_colour = bg_colour.ChangeLightness(is_bg_dark ? 105 : 95);
+    wxColour first_bg_colour = bg_colour.ChangeLightness(is_bg_dark ? 95 : 105);
+    dc.GradientFillLinear(upper_rect, first_bg_colour, second_bg_colour, is_bg_dark ? wxTOP : wxBOTTOM);
+    dc.GradientFillLinear(lower_rect, second_bg_colour, first_bg_colour, is_bg_dark ? wxBOTTOM : wxTOP);
+
+    dc.SetPen(pen_colour);
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+}
+
 bool DrawingUtils::IsDark(const wxColour& color)
 {
     double r = color.Red();

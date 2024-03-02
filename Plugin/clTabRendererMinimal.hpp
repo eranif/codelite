@@ -27,8 +27,8 @@ public:
               eButtonState xButtonState) override;
     void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect, wxDC& dc,
                         const clTabColours& colours, size_t style) override;
-    wxColour DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
-                            size_t style) override;
+    void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+                        size_t style) override;
     clTabRenderer* New(const wxWindow* parent) const override { return new clTabRendererMinimal(parent); }
     bool IsVerticalTabSupported() const override { return true; }
     void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const wxRect& activeTabRect,

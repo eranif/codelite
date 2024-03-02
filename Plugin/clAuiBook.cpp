@@ -28,15 +28,7 @@ public:
 
     void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override
     {
-        wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
-
-        bool is_bg_dark = DrawingUtils::IsDark(bg_colour);
-        wxColour second_bg_colour = bg_colour.ChangeLightness(is_bg_dark ? 115 : 80);
-        wxColour first_bg_colour = bg_colour.ChangeLightness(is_bg_dark ? 90 : 80);
-        dc.GradientFillLinear(rect, first_bg_colour, second_bg_colour, is_bg_dark ? wxTOP : wxBOTTOM);
-
-        dc.SetPen(GetPenColour());
-        dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+        DrawingUtils::DrawTabBackgroundArea(dc, wnd, rect);
     }
 
     void DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_rect, int bitmap_id, int button_state, int orientation,

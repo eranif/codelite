@@ -178,7 +178,7 @@ public:
                 is_bg_dark ? (page.active ? *wxWHITE : bg_colour.ChangeLightness(170)) : bg_colour.ChangeLightness(30);
 
             if (is_modified) {
-                text_colour = is_dark ? "PINK" : "RED";
+                text_colour = is_bg_dark ? "PINK" : "RED";
             }
 
             wxDCTextColourChanger text_colour_changer(dcref, text_colour);
@@ -188,10 +188,6 @@ public:
             textRect = textRect.CenterIn(tab_rect, wxVERTICAL);
             textRect.SetX(tab_rect.GetX() + wnd->FromDIP(X_SPACER));
             dcref.DrawText(page.caption, textRect.GetTopLeft());
-
-            if (is_modified) {
-                font.SetWeight(wxFONTWEIGHT_NORMAL);
-            }
         }
 
         if (closeButtonState != wxAUI_BUTTON_STATE_HIDDEN) {
@@ -344,7 +340,7 @@ void clAuiBook::OnPageClosed(wxAuiNotebookEvent& event)
 
     wxBookCtrlEvent event_closed(wxEVT_BOOK_PAGE_CLOSED);
     event_closed.SetEventObject(this);
-    GetEventHandler()->ProcessEvent(event_closed);
+    GetEventHandler()->AddPendingEvent(event_closed);
 }
 
 void clAuiBook::OnPageChanged(wxAuiNotebookEvent& event)
@@ -365,7 +361,7 @@ void clAuiBook::OnPageChanged(wxAuiNotebookEvent& event)
     wxBookCtrlEvent changed_event(wxEVT_BOOK_PAGE_CHANGED);
     changed_event.SetEventObject(GetParent());
     changed_event.SetSelection(GetSelection());
-    GetEventHandler()->ProcessEvent(changed_event);
+    GetEventHandler()->AddPendingEvent(changed_event);
 }
 
 void clAuiBook::OnPageChanging(wxAuiNotebookEvent& event)

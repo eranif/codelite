@@ -14,7 +14,7 @@ static constexpr size_t X_SPACER = 10;
 #endif
 
 // Configurable via Settings -> Preferences -> Tabs
-static size_t Y_SPACER = 10;
+static size_t Y_SPACER = 5;
 
 namespace
 {
@@ -45,7 +45,7 @@ public:
         wxCoord measured_textx, measured_texty, tmp;
 
         const int xPadding = wnd->FromDIP(X_SPACER);
-        wxFont font = clTabRenderer::GetTabFont(false);
+        wxFont font = clTabRenderer::GetTabFont(true);
         dc.SetFont(font);
         dc.GetTextExtent(caption, &measured_textx, &measured_texty);
         dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
@@ -63,7 +63,6 @@ public:
 
             // increase by bitmap plus right side bitmap padding
             tab_width += bitmapSize.x + xPadding;
-            tab_height = wxMax(tab_height, bitmapSize.y);
         }
 
         // if the close button is showing, add space for it
@@ -73,7 +72,7 @@ public:
         }
 
         // add padding
-        tab_height += wnd->FromDIP(Y_SPACER);
+        tab_height = DrawingUtils::GetTabHeight(dc, wnd, Y_SPACER);
 
         if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
             tab_width = m_fixedTabWidth;
@@ -471,19 +470,20 @@ void clAuiBook::UpdatePreferences()
     }
 
     // update the tab height
-    switch (options->GetNotebookTabHeight()) {
+    int tabHeight = options->GetNotebookTabHeight();
+    switch (tabHeight) {
     case OptionsConfig::nbTabHt_Tiny:
-        Y_SPACER = FromDIP(4);
+        Y_SPACER = tabHeight + 2;
         break;
     case OptionsConfig::nbTabHt_Short:
-        Y_SPACER = FromDIP(6);
+        Y_SPACER = tabHeight + 2;
         break;
     default:
     case OptionsConfig::nbTabHt_Medium:
-        Y_SPACER = FromDIP(8);
+        Y_SPACER = tabHeight + 2;
         break;
     case OptionsConfig::nbTabHt_Tall:
-        Y_SPACER = FromDIP(10);
+        Y_SPACER = tabHeight + 2;
         break;
     }
 

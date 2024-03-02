@@ -245,6 +245,17 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const 
     dc.SetBrush(savedBrush);
 }
 
+int DrawingUtils::GetTabHeight(wxDC& dc, wxWindow* win, int requestedHeight)
+{
+    wxFont font = clTabRenderer::GetTabFont(true);
+    wxDCFontChanger font_changer{ dc, font };
+    wxCoord measured_texty, tmp;
+    dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
+
+    int tab_height = measured_texty + (4 * requestedHeight);
+    return tab_height;
+}
+
 void DrawingUtils::DrawTabBackgroundArea(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     bool is_dark = clSystemSettings::GetAppearance().IsDark();

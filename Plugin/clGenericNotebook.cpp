@@ -292,7 +292,7 @@ void clTabCtrl::DoSetBestSize()
     wxSize sz = dc.GetTextExtent(text);
     int bmpHeight = clTabRenderer::GetDefaultBitmapHeight(GetArt()->ySpacer);
 
-    m_nHeight = sz.GetHeight() + (4 * GetArt()->ySpacer);
+    m_nHeight = DrawingUtils::GetTabHeight(dc, this, GetArt()->ySpacer);
     m_nHeight = wxMax(m_nHeight, bmpHeight);
     m_nWidth = sz.GetWidth();
 

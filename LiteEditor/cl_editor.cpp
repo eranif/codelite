@@ -75,6 +75,7 @@
 #include "wxCodeCompletionBoxManager.h"
 
 #include <algorithm>
+#include <chrono>
 #include <wx/dataobj.h>
 #include <wx/dcmemory.h>
 #include <wx/display.h>
@@ -6500,6 +6501,16 @@ void clEditor::UpdateDefaultTextWidth() { m_default_text_width = TextWidth(wxSTC
 void clEditor::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+    std::chrono::milliseconds ms =
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+
+    // We allow IDLE event once in 100ms
+    uint64_t current_ts = ms.count();
+    if ((current_ts - m_lastIdleEvent) < 100) {
+        return;
+    }
+
+    m_lastIdleEvent = current_ts;
     if (!IsShown()) {
         return;
     }

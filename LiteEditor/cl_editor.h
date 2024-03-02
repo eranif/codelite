@@ -279,6 +279,7 @@ protected:
 
     // track the position between Idle event calls
     long m_lastIdlePosition = wxNOT_FOUND;
+    uint64_t m_lastIdleEvent = 0;
 
 public:
     static bool m_ccShowPrivateMembers;

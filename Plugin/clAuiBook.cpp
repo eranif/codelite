@@ -28,7 +28,13 @@ public:
 
     void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override
     {
-        wxAuiDefaultTabArt::DrawBackground(dc, wnd, rect);
+        wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
+
+        bool is_bg_dark = DrawingUtils::IsDark(bg_colour);
+        wxColour second_bg_colour = bg_colour.ChangeLightness(is_bg_dark ? 115 : 80);
+        wxColour first_bg_colour = bg_colour.ChangeLightness(is_bg_dark ? 90 : 80);
+        dc.GradientFillLinear(rect, first_bg_colour, second_bg_colour, is_bg_dark ? wxTOP : wxBOTTOM);
+
         dc.SetPen(GetPenColour());
         dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
     }
@@ -152,32 +158,23 @@ public:
         dcref.DrawRectangle(tab_rect);
 
         if (is_active) {
-            if (is_dark) {
-                wxColour light_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(120);
-                dcref.SetPen(light_colour);
-                dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetBottomLeft());
+            dcref.SetPen(GetPenColour());
 
-                dcref.SetPen(light_colour);
-                wxPoint top_right = tab_rect.GetTopRight();
-                wxPoint bottom_right = tab_rect.GetBottomRight();
-#ifdef __WXMAC__
-                top_right.x += wnd->FromDIP(1);
-                bottom_right.x += wnd->FromDIP(1);
-#endif
-                dcref.DrawLine(top_right, bottom_right);
-            } else {
-                dcref.SetPen(GetPenColour());
-                dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetBottomLeft());
+            wxPoint bottom_right = tab_rect.GetBottomRight();
+            wxPoint top_right = tab_rect.GetTopRight();
+            bottom_right.y += 1;
+            bottom_right.x += 1;
+            top_right.x += 1;
 
-                wxPoint top_right = tab_rect.GetTopRight();
-                wxPoint bottom_right = tab_rect.GetBottomRight();
-#ifdef __WXMAC__
-                top_right.x += wnd->FromDIP(1);
-                bottom_right.x += wnd->FromDIP(1);
-#endif
-                dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetTopRight());
-                dcref.DrawLine(top_right, bottom_right);
-            }
+            wxPoint bottom_left = tab_rect.GetBottomLeft();
+            wxPoint top_left = tab_rect.GetTopLeft();
+            bottom_left.y += 1;
+            bottom_left.x -= 1;
+            top_left.x -= 1;
+
+            dcref.DrawLine(top_left, bottom_left);
+            dcref.DrawLine(top_right, bottom_right);
+
         } else {
             dcref.SetPen(GetPenColour());
             dcref.DrawLine(tab_rect.GetBottomLeft(), tab_rect.GetBottomRight());
@@ -247,8 +244,8 @@ private:
             return;
         }
 
-        bool is_dark = clSystemSettings::GetAppearance().IsDark();
-        wxColour pen_colour = is_dark ? "ORANGE" : clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+        wxColour pen_colour =
+            DrawingUtils::IsDark(tab_bg_colour) ? "ORANGE" : clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
         eButtonState button_state = eButtonState::kNormal;
         switch (buttonState) {
         case wxAUI_BUTTON_STATE_HOVER:

@@ -95,14 +95,19 @@ public:
         dcref.SetFont(font);
 
         bool is_modified = false;
+        bool is_active = page.active;
+        wxColour active_tab_bg_colour = wxNullColour;
         if (page.window) {
             auto stc = dynamic_cast<wxStyledTextCtrl*>(page.window);
             if (stc) {
                 is_modified = stc->GetModify();
+
+                if (is_active) {
+                    active_tab_bg_colour = stc->StyleGetBackground(0);
+                }
             }
         }
 
-        bool is_active = page.active;
         if (is_active) {
             dcref.SetFont(m_selectedFont);
         }
@@ -121,11 +126,17 @@ public:
         wxDCClipper clipper(dcref, tab_rect_for_clipping);
         wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
         if (is_active) {
-            if (is_dark) {
-                bg_colour = bg_colour.ChangeLightness(110);
-
+            if (active_tab_bg_colour.IsOk()) {
+                // If we haev an editor background colour, use this
+                // as the tab active background colour
+                bg_colour = active_tab_bg_colour;
             } else {
-                bg_colour = *wxWHITE;
+                if (is_dark) {
+                    bg_colour = bg_colour.ChangeLightness(110);
+
+                } else {
+                    bg_colour = *wxWHITE;
+                }
             }
         } else {
             bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
@@ -142,10 +153,6 @@ public:
 
         if (is_active) {
             if (is_dark) {
-                // top: do nothing
-                // left: light
-                // right: light
-                // bottom: dark
                 wxColour light_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(120);
                 dcref.SetPen(light_colour);
                 dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetBottomLeft());
@@ -158,11 +165,6 @@ public:
                 bottom_right.x += wnd->FromDIP(1);
 #endif
                 dcref.DrawLine(top_right, bottom_right);
-
-#if defined(__WXMAC__)
-                dcref.SetPen(GetPenColour());
-                dcref.DrawLine(tab_rect.GetBottomLeft(), tab_rect.GetBottomRight());
-#endif
             } else {
                 dcref.SetPen(GetPenColour());
                 dcref.DrawLine(tab_rect.GetTopLeft(), tab_rect.GetBottomLeft());
@@ -183,8 +185,9 @@ public:
 
         // Draw the text
         {
+            bool is_bg_dark = DrawingUtils::IsDark(bg_colour);
             wxColour text_colour =
-                is_dark ? (page.active ? *wxWHITE : bg_colour.ChangeLightness(170)) : bg_colour.ChangeLightness(30);
+                is_bg_dark ? (page.active ? *wxWHITE : bg_colour.ChangeLightness(170)) : bg_colour.ChangeLightness(30);
 
             if (is_modified) {
                 text_colour = is_dark ? "PINK" : "RED";

@@ -85,24 +85,12 @@ public:
 };
 #endif
 
-#if defined(__WXMAC__) || defined(__WXMSW__)
-#define USE_AUI_TOOLBAR 1
-#else
-#define USE_AUI_TOOLBAR 1
-#endif
-
 class WXDLLIMPEXP_SDK clSideBarCtrl : public wxControl
 {
-#if USE_AUI_TOOLBAR
     wxAuiToolBar* m_toolbar = nullptr;
-#else
-    wxToolBar* m_toolbar = nullptr;
-#endif
-
     wxSimplebook* m_book = nullptr;
     wxDirection m_buttonsPosition = wxLEFT;
     wxBoxSizer* m_mainSizer = nullptr;
-    std::unordered_map<size_t, wxString> m_bitmapByPos;
 
 protected:
     /// Return the page position
@@ -110,8 +98,9 @@ protected:
     void DoRemovePage(size_t pos, bool delete_it);
     void PlaceButtons();
     void OnSize(wxSizeEvent& event);
-    void AddTool(const wxString& label, const wxBitmap& bmp, size_t book_index);
+    void AddTool(const wxString& label, const wxString& bmpname, size_t book_index);
     void OnDPIChangedEvent(wxDPIChangedEvent& event);
+    void OnContextMenu(wxAuiToolBarEvent& event);
 
 public:
     clSideBarCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

@@ -51,6 +51,7 @@ void SecondarySideBar::AddPage(wxWindow* win, const wxString& bmpname, const wxS
     }
 
     m_book->AddPage(win, label, bmpname, true);
+    m_book->Realize();
     m_book->GetSizer()->Layout();
 
     auto secondary_tabs = clConfig::Get().Read("secondary_side_bar.tabs", wxArrayString{});
@@ -87,6 +88,7 @@ void SecondarySideBar::MoveToPrimarySideBar(int pos)
 
     // add it to the right side bar
     m_sidebar->AddPage(win, bmp, label);
+    m_sidebar->GetNotebook()->Realize();
 
     if (m_book->GetPageCount() == 0) {
         // No more pages -> hide this view

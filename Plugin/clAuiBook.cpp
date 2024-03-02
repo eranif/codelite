@@ -159,7 +159,7 @@ public:
 #endif
                 dcref.DrawLine(top_right, bottom_right);
 
-#ifndef __WXGTK__
+#if defined(__WXMAC__)
                 dcref.SetPen(GetPenColour());
                 dcref.DrawLine(tab_rect.GetBottomLeft(), tab_rect.GetBottomRight());
 #endif

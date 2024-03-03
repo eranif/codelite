@@ -113,7 +113,7 @@ public:
     clThemedSplitterWindow* GetSplitter() { return m_splitter; }
     wxPanel* GetPanelOverviewFull() { return m_panelOverviewFull; }
     DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~DiffSideBySidePanelBase();
 };
 

@@ -577,6 +577,7 @@ void CodeFormatter::OnInplaceFormatCompleted(clSourceFormatEvent& event)
     // we do this by firing a wxEVT_FILE_MODIFIED_EXTERNALLY event
     clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
     event_modified.SetPath(filepath);
+    event_modified.SetFileName(filepath);
     event_modified.SetIsRemoteFile(!wxFileName::FileExists(filepath));
     EventNotifier::Get()->AddPendingEvent(event_modified);
 }

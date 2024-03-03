@@ -149,6 +149,7 @@ class clMainFrame : public wxFrame
 #endif
     // the main tool default style
     int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER | wxTB_RIGHT /* on the right by default */;
+    wxString m_mainFrameTitleTemplate;
 
 public:
     static bool m_initCompleted;

@@ -4176,7 +4176,9 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
         title << wxT(" \u25CF ");
     }
 
-    wxString pattern = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
+    if (m_mainFrameTitleTemplate.empty()) {
+        m_mainFrameTitleTemplate = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
+    }
     wxString username = ::wxGetUserId();
     username.Prepend("[ ").Append(" ]");
 
@@ -4199,6 +4201,7 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
         }
     }
 
+    wxString pattern = m_mainFrameTitleTemplate;
     pattern.Replace("$workspace", workspace);
     pattern.Replace("$user", username);
     pattern.Replace("$filename", fullname);
@@ -4214,10 +4217,11 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
     // notify the plugins
     clCommandEvent titleEvent(wxEVT_CL_FRAME_TITLE);
     titleEvent.SetString(title);
-    EventNotifier::Get()->ProcessEvent(titleEvent);
+    EventNotifier::Get()->AddPendingEvent(titleEvent);
 
     // Update the title
     SetTitle(titleEvent.GetString());
+
 #if !wxUSE_NATIVE_CAPTION
     m_captionBar->SetCaption(titleEvent.GetString());
 #endif
@@ -5446,6 +5450,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
 
     std::for_each(editors.begin(), editors.end(), [&](clEditor* editor) { editor->PreferencesChanged(); });
+    m_mainFrameTitleTemplate = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
 }
 
 void clMainFrame::OnDetachEditor(wxCommandEvent& e)

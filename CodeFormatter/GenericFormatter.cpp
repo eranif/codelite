@@ -27,11 +27,11 @@ namespace
 wxString join_array(const wxArrayString& arr)
 {
     wxString cmd;
-    for(auto c : arr) {
+    for (auto c : arr) {
         cmd << WrapWithQuotes(c) << " ";
     }
 
-    if(!cmd.IsEmpty()) {
+    if (!cmd.IsEmpty()) {
         cmd.RemoveLast();
     }
     return cmd;
@@ -42,7 +42,7 @@ wxArrayString to_wx_array(const std::vector<wxString>& arr)
     wxArrayString wxarr;
     wxarr.reserve(arr.size());
 
-    for(const auto& s : arr) {
+    for (const auto& s : arr) {
         wxarr.push_back(s);
     }
     return wxarr;
@@ -68,7 +68,7 @@ bool sync_format(const wxString& cmd, const wxString& wd, bool inplace_formatter
     clDirChanger cd{ wd };
     EnvSetter es(NULL, NULL, wxEmptyString, wxEmptyString);
     bool res = ProcUtils::ShellExecSync(cmd, output) == 0;
-    if(inplace_formatter) {
+    if (inplace_formatter) {
         output->clear();
     }
     return res;
@@ -104,7 +104,7 @@ void GenericFormatter::async_format(const wxString& cmd, const wxString& wd, con
 {
     clDirChanger cd{ wd };
     long pid = wxNOT_FOUND;
-    if(ProcUtils::ShellExecAsync(cmd, &pid, this)) {
+    if (ProcUtils::ShellExecAsync(cmd, &pid, this)) {
         m_pid_commands.insert({ pid, CommandMetadata{ cmd, filepath, sink } });
     }
 }
@@ -121,7 +121,7 @@ bool GenericFormatter::DoFormatFile(const wxString& filepath, wxEvtHandler* sink
     clDEBUG() << "Calling:" << cmd << endl;
 
     wxBusyCursor bc;
-    if(sink) {
+    if (sink) {
         async_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
         return true;
     } else {
@@ -136,7 +136,7 @@ bool GenericFormatter::FormatFile(const wxFileName& filepath, wxEvtHandler* sink
 
 bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* sink)
 {
-    if(!CanHandleRemoteFile()) {
+    if (!CanHandleRemoteFile()) {
         return false;
     }
 
@@ -162,7 +162,7 @@ bool GenericFormatter::FormatFile(const wxString& filepath, wxEvtHandler* sink)
 bool GenericFormatter::FormatString(const wxString& content, const wxString& fullpath, wxString* output)
 {
     auto file_type = FileExtManager::GetType(fullpath);
-    if(!CanHandle(file_type)) {
+    if (!CanHandle(file_type)) {
         return false;
     }
 
@@ -172,16 +172,16 @@ bool GenericFormatter::FormatString(const wxString& content, const wxString& ful
     wxString dirpart = fullpath_linux_style.BeforeLast('/');
     clTempFile tmpfile{ dirpart, "txt" };
 
-    if(!tmpfile.Write(content)) {
+    if (!tmpfile.Write(content)) {
         clWARNING() << "failed to write content to temp file:" << tmpfile.GetFullPath() << endl;
         return false;
     }
 
-    if(!DoFormatFile(tmpfile.GetFullPath(), nullptr, output)) {
+    if (!DoFormatFile(tmpfile.GetFullPath(), nullptr, output)) {
         return false;
     }
 
-    if(IsInplaceFormatter()) {
+    if (IsInplaceFormatter()) {
         // read the content of the temp file and return it
         return FileUtils::ReadFileContent(tmpfile.GetFullPath(), *output);
     }
@@ -222,7 +222,7 @@ void GenericFormatter::SetRemoteCommand(const wxString& cmd, const wxString& rem
 void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
 {
     event.Skip();
-    if(m_pid_commands.count(event.GetPid()) == 0) {
+    if (m_pid_commands.count(event.GetPid()) == 0) {
         clWARNING() << "Could not find command for process:" << event.GetPid() << endl;
         return;
     }
@@ -231,7 +231,7 @@ void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
     auto command_data = m_pid_commands[event.GetPid()];
     m_pid_commands.erase(event.GetPid());
 
-    if(event.GetExitCode() != 0) {
+    if (event.GetExitCode() != 0) {
         wxString errmsg;
         errmsg << wxT("\u26A0") << _(" format error. Process exit code: ") << event.GetExitCode();
         clGetManager()->SetStatusMessage(errmsg, 3);
@@ -239,7 +239,7 @@ void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
     }
 
     // notify the sink that formatting is done
-    if(command_data.m_sink) {
+    if (command_data.m_sink) {
         clSourceFormatEvent format_completed_event{ IsInplaceFormatter() ? wxEVT_FORMAT_INPLACE_COMPELTED
                                                                          : wxEVT_FORMAT_COMPELTED };
         format_completed_event.SetFormattedString(IsInplaceFormatter() ? "" : event.GetOutput());
@@ -250,12 +250,12 @@ void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
 
 void GenericFormatter::OnRemoteCommandStdout(clCommandEvent& event)
 {
-    if(m_inFlightFiles.empty()) {
+    if (m_inFlightFiles.empty()) {
         clERROR() << "GenericFormatter::OnRemoteCommandStdout is called but NO inflight files" << endl;
         return;
     }
 
-    if(!IsInplaceFormatter()) {
+    if (!IsInplaceFormatter()) {
         const wxString& filepath = m_inFlightFiles.front().first;
         clSourceFormatEvent format_completed_event{ wxEVT_FORMAT_COMPELTED };
         format_completed_event.SetFormattedString(wxString::FromUTF8(event.GetStringRaw()));
@@ -274,12 +274,12 @@ void GenericFormatter::OnRemoteCommandStderr(clCommandEvent& event)
 void GenericFormatter::OnRemoteCommandDone(clCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_inFlightFiles.empty()) {
+    if (m_inFlightFiles.empty()) {
         clERROR() << "GenericFormatter::OnRemoteCommandDone is called but NO inflight files" << endl;
         return;
     }
     auto sink = m_inFlightFiles.front().second;
-    if(IsInplaceFormatter()) {
+    if (IsInplaceFormatter()) {
         const wxString& filepath = m_inFlightFiles.front().first;
         clSourceFormatEvent format_completed_event{ wxEVT_FORMAT_INPLACE_COMPELTED };
         format_completed_event.SetFileName(filepath);
@@ -291,7 +291,7 @@ void GenericFormatter::OnRemoteCommandDone(clCommandEvent& event)
 void GenericFormatter::OnRemoteCommandError(clCommandEvent& event)
 {
     clERROR() << "Code Formatter:" << event.GetString() << endl;
-    if(m_inFlightFiles.empty()) {
+    if (m_inFlightFiles.empty()) {
         clERROR() << "GenericFormatter::OnRemoteCommandError is called but NO inflight files" << endl;
         return;
     }

@@ -84,6 +84,43 @@ enum TrimFlags {
     TRIM_IGNORE_CARET_LINE = (1 << 3),
 };
 
+/// Current editor state
+struct EditorViewState {
+    int current_line = wxNOT_FOUND;
+    int first_visible_line = wxNOT_FOUND;
+    int lines_on_screen = wxNOT_FOUND;
+
+    bool operator==(const EditorViewState& other) const
+    {
+        return current_line == other.current_line && first_visible_line == other.first_visible_line &&
+               lines_on_screen == other.lines_on_screen;
+    }
+
+    void Reset()
+    {
+        current_line = wxNOT_FOUND;
+        first_visible_line = wxNOT_FOUND;
+        lines_on_screen = wxNOT_FOUND;
+    }
+
+    EditorViewState& operator=(const EditorViewState& other)
+    {
+        current_line = other.current_line;
+        first_visible_line = other.first_visible_line;
+        lines_on_screen = other.lines_on_screen;
+        return *this;
+    }
+
+    static EditorViewState From(wxStyledTextCtrl* ctrl)
+    {
+        EditorViewState state;
+        state.first_visible_line = ctrl->GetFirstVisibleLine();
+        state.current_line = ctrl->GetCurrentLine();
+        state.lines_on_screen = ctrl->LinesOnScreen();
+        return state;
+    }
+};
+
 wxDECLARE_EVENT(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, wxCommandEvent);
 wxDECLARE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
 
@@ -237,9 +274,7 @@ protected:
     wxChar m_lastCharEntered;
     int m_lastCharEnteredPos;
     bool m_isFocused;
-    bool m_pluginInitializedRMenu;
     BOM m_fileBom;
-    int m_positionToEnsureVisible;
     bool m_preserveSelection;
     std::vector<std::pair<int, int>> m_savedMarkers;
     bool m_findBookmarksActive;
@@ -259,8 +294,7 @@ protected:
     wxString m_keywordLocals;
     int m_editorBitmap = wxNOT_FOUND;
     size_t m_statusBarFields;
-    int m_lastBeginLine = wxNOT_FOUND;
-    int m_lastLine = wxNOT_FOUND;
+    EditorViewState m_editorState;
     int m_lastEndLine;
     int m_lastLineCount;
     wxColour m_selTextColour;
@@ -1142,8 +1176,8 @@ private:
     void DoToggleFold(int line, const wxString& textTag);
 
     // Line numbers drawings
-    void DoUpdateLineNumbers(bool relative_numbers);
-    void UpdateLineNumbers();
+    void DoUpdateLineNumbers(bool relative_numbers, bool force);
+    void UpdateLineNumbers(bool force);
     void UpdateDefaultTextWidth();
 
     // Event handlers

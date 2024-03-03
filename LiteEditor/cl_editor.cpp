@@ -438,8 +438,6 @@ clEditor::clEditor(wxWindow* parent)
     , m_lastCharEntered(0)
     , m_lastCharEnteredPos(0)
     , m_isFocused(true)
-    , m_pluginInitializedRMenu(false)
-    , m_positionToEnsureVisible(wxNOT_FOUND)
     , m_findBookmarksActive(false)
     , m_mgr(PluginManager::Get())
     , m_hasCCAnnotation(false)
@@ -684,9 +682,8 @@ void clEditor::SetProperties()
     UsePopUp(0);
 #endif
 
-    m_lastBeginLine = wxNOT_FOUND;
     m_lastEndLine = wxNOT_FOUND;
-    m_lastLine = wxNOT_FOUND;
+    m_editorState = {};
     m_lastLineCount = 0;
 
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
@@ -1139,7 +1136,7 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
             m_modifiedLines.clear();
             m_clearModifiedLines = false;
         }
-        DoUpdateLineNumbers(GetOptions()->GetRelativeLineNumbers());
+        DoUpdateLineNumbers(GetOptions()->GetRelativeLineNumbers(), false);
     }
 
     clMainFrame::Get()->GetMainBook()->SetPageTitle(this, GetFileName(), GetModify());
@@ -1429,11 +1426,10 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     m_scrollbar_recalc_is_required = true;
 
     // keep the last line we visited this method
-    // (m_lastLine will be modified inside UpdateLineNumbers())
-    int lastLine = m_lastLine;
+    int lastLine = m_editorState.current_line;
 
     // Update the line numbers if needed (only when using custom drawing line numbers)
-    UpdateLineNumbers();
+    UpdateLineNumbers(false);
 
     // Get current position
     long pos = GetCurrentPos();
@@ -1475,8 +1471,8 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 
     // TODO:: mark the current line
 
-    // Keep the last line
-    m_lastLine = curLine;
+    // Keep the current state
+    m_editorState = EditorViewState::From(this);
 }
 
 void clEditor::OnMarginClick(wxStyledTextEvent& event)
@@ -3217,13 +3213,14 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
     return encoding;
 }
 
-void clEditor::DoUpdateLineNumbers(bool relative_numbers)
+void clEditor::DoUpdateLineNumbers(bool relative_numbers, bool force)
 {
-    if (m_lastLine == GetCurrentLine()) {
+    auto state = EditorViewState::From(this);
+    if (state == m_editorState && !force) {
         return;
     }
 
-    if (!GetOptions()->IsLineNumberHighlightCurrent())
+    if (!GetOptions()->IsLineNumberHighlightCurrent() && !force)
         return;
 
     int linesOnScreen = LinesOnScreen();
@@ -3330,13 +3327,13 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers)
     }
 }
 
-void clEditor::UpdateLineNumbers()
+void clEditor::UpdateLineNumbers(bool force)
 {
     OptionsConfigPtr c = GetOptions();
     if (!c->GetDisplayLineNumbers() || !c->IsLineNumberHighlightCurrent()) {
         return;
     }
-    DoUpdateLineNumbers(c->GetRelativeLineNumbers());
+    DoUpdateLineNumbers(c->GetRelativeLineNumbers(), force);
 }
 
 void clEditor::OpenFile()
@@ -3714,7 +3711,7 @@ void clEditor::OnLeftUp(wxMouseEvent& event)
 
     PostCmdEvent(wxEVT_EDITOR_CLICKED);
     event.Skip();
-    UpdateLineNumbers();
+    UpdateLineNumbers(true);
 }
 
 void clEditor::OnLeaveWindow(wxMouseEvent& event)
@@ -3731,7 +3728,7 @@ void clEditor::OnFocusLost(wxFocusEvent& event)
 {
     m_isFocused = false;
     event.Skip();
-    UpdateLineNumbers();
+    UpdateLineNumbers(true);
 
     // release the tooltip
     DoCancelCalltip();
@@ -4864,9 +4861,8 @@ void clEditor::OnChange(wxStyledTextEvent& event)
 
     int newLineCount = GetLineCount();
     if (m_lastLineCount != newLineCount) {
-        int lastWidthCount = log10(m_lastLine) + 1;
+        int lastWidthCount = log10(m_editorState.current_line) + 1;
         int newWidthCount = log10(newLineCount) + 1;
-        m_lastLine = newLineCount;
         if (newWidthCount != lastWidthCount) {
             UpdateLineNumberMarginWidth();
         }
@@ -5393,7 +5389,7 @@ void clEditor::OnKeyUp(wxKeyEvent& event)
         SetIndicatorCurrent(INDICATOR_DEBUGGER);
         IndicatorClearRange(0, GetLength());
     }
-    UpdateLineNumbers();
+    UpdateLineNumbers(true);
 }
 
 size_t clEditor::GetCodeNavModifier()
@@ -5738,7 +5734,7 @@ void clEditor::OnEditorConfigChanged(wxCommandEvent& event)
     event.Skip();
     UpdateOptions();
     CallAfter(&clEditor::SetProperties);
-    UpdateLineNumbers();
+    UpdateLineNumbers(true);
 }
 
 void clEditor::ConvertIndentToSpaces()
@@ -6610,4 +6606,9 @@ void clEditor::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_lastIdlePosition = wxNOT_FOUND; // reset the idle position
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if (editor->GetCtrl() != this) {
+        return;
+    }
+    UpdateLineNumbers(true);
 }

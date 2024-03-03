@@ -3219,8 +3219,13 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
 
 void clEditor::DoUpdateLineNumbers(bool relative_numbers)
 {
+    if (m_lastLine == GetCurrentLine()) {
+        return;
+    }
+
     if (!GetOptions()->IsLineNumberHighlightCurrent())
         return;
+
     int linesOnScreen = LinesOnScreen();
     int current_line = GetCurrentLine();
 

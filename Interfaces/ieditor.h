@@ -96,7 +96,7 @@ public:
     virtual ~IEditor()
     {
         IEditor::ClientDataMap_t::iterator iter = m_data.begin();
-        for(; iter != m_data.end(); ++iter) {
+        for (; iter != m_data.end(); ++iter) {
             wxDELETE(iter->second);
         }
         m_data.clear();
@@ -541,7 +541,7 @@ public:
     void SetClientData(const wxString& key, wxClientData* data)
     {
         IEditor::ClientDataMap_t::iterator iter = m_data.find(key);
-        if(iter != m_data.end()) {
+        if (iter != m_data.end()) {
             wxDELETE(iter->second);
             m_data.erase(iter);
         }
@@ -561,7 +561,7 @@ public:
     wxClientData* GetClientData(const wxString& key) const
     {
         IEditor::ClientDataMap_t::const_iterator iter = m_data.find(key);
-        if(iter != m_data.end()) {
+        if (iter != m_data.end()) {
             return iter->second;
         }
         return NULL;
@@ -575,7 +575,7 @@ public:
     void DeleteClientData(const wxString& key)
     {
         IEditor::ClientDataMap_t::iterator iter = m_data.find(key);
-        if(iter != m_data.end()) {
+        if (iter != m_data.end()) {
             wxDELETE(iter->second);
             m_data.erase(iter);
         }
@@ -668,6 +668,11 @@ public:
      * @brief clear all highlights (added by `HighlightLine` calls)
      */
     virtual void UnHighlightAll() = 0;
+
+    /**
+     * @brief notify the control that was updated externally
+     */
+    virtual void NotifyTextUpdated() = 0;
 };
 
 #endif // IEDITOR_H

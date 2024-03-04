@@ -50,7 +50,7 @@ static AbbreviationPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
+    if (thePlugin == 0) {
         thePlugin = new AbbreviationPlugin(manager);
     }
     return thePlugin;
@@ -138,7 +138,7 @@ void AbbreviationPlugin::GetAbbreviations(wxCodeCompletionBoxEntry::Vec_t& V, co
     wxString lcFilter = filter.Lower();
 
     AbbreviationJSONEntry jsonData;
-    if(!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(&jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
@@ -149,13 +149,13 @@ void AbbreviationPlugin::GetAbbreviations(wxCodeCompletionBoxEntry::Vec_t& V, co
     }
 
     wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("replace-blue");
-    if(bmp.IsOk()) {
+    if (bmp.IsOk()) {
         // search for the old item
         const wxStringMap_t& entries = jsonData.GetEntries();
         std::for_each(entries.begin(), entries.end(), [&](const wxStringMap_t::value_type& vt) {
             // Only add matching entries (entries that "starts_with")
             wxString lcAbbv = vt.first.Lower();
-            if(lcAbbv.StartsWith(lcFilter)) {
+            if (lcAbbv.StartsWith(lcFilter)) {
                 // Append our entries
                 wxString textHelp;
                 textHelp << "**Abbreviation entry**\n===```" << vt.second << "```";
@@ -167,13 +167,13 @@ void AbbreviationPlugin::GetAbbreviations(wxCodeCompletionBoxEntry::Vec_t& V, co
 
 void AbbreviationPlugin::OnAbbrevSelected(clCodeCompletionEvent& e)
 {
-    if(!e.GetEntry()) {
+    if (!e.GetEntry()) {
         e.Skip();
         return;
     }
 
     AbbreviationClientData* cd = dynamic_cast<AbbreviationClientData*>(e.GetEntry()->GetClientData());
-    if(!cd) {
+    if (!cd) {
         e.Skip();
         return;
     }
@@ -184,7 +184,7 @@ void AbbreviationPlugin::InitDefaults()
 {
     // check to see if there are any abbreviations configured
     AbbreviationJSONEntry jsonData;
-    if(!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(&jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
@@ -195,7 +195,7 @@ void AbbreviationPlugin::InitDefaults()
     }
 
     // search for the old item
-    if(jsonData.GetEntries().empty()) {
+    if (jsonData.GetEntries().empty()) {
         // fill some default abbreviations
         wxStringMap_t entries;
         entries["main"] = "int main(int argc, char **argv) {\n    |\n}\n";
@@ -215,14 +215,14 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 {
     // get the active editor
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(!editor || abbreviation.IsEmpty()) {
+    if (!editor || abbreviation.IsEmpty()) {
         return false;
     }
 
     // search for abbreviation that matches str
     // prepate list of abbreviations
     AbbreviationJSONEntry jsonData;
-    if(!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(&jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
@@ -236,7 +236,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
     const wxStringMap_t& entries = jsonData.GetEntries();
     wxStringMap_t::const_iterator iter = entries.find(abbreviation);
 
-    if(iter != entries.end()) {
+    if (iter != entries.end()) {
 
         wxString text = iter->second;
         int selStart = editor->WordStartPos(editor->GetCurrentPosition(), true);
@@ -246,13 +246,13 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         wxString textOrig;
         wxString textLeadingSpaces;
 
-        if(typedWordLen < 0) {
+        if (typedWordLen < 0) {
             typedWordLen = 0;
         }
 
         // format the text to insert
         bool appendEol(false);
-        if(text.EndsWith("\r") || text.EndsWith("\n")) {
+        if (text.EndsWith("\r") || text.EndsWith("\n")) {
             appendEol = true;
         }
 
@@ -266,9 +266,9 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         text.Trim(false).Trim();
         text = textLeadingSpaces + text;
 
-        if(appendEol) {
+        if (appendEol) {
             wxString eol;
-            switch(editor->GetEOL()) {
+            switch (editor->GetEOL()) {
             case 1:
                 eol = "\r";
                 break;
@@ -291,7 +291,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         // locate the caret(s)
         std::vector<int> carets;
         int where = text.Find("|");
-        while(where != wxNOT_FOUND) {
+        while (where != wxNOT_FOUND) {
             carets.push_back(where);
             where = text.find('|', where + 1);
         }
@@ -299,7 +299,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         // remove the pipe (|) character
         text.Replace("|", " ");
 
-        if(selEnd - selStart >= 0) {
+        if (selEnd - selStart >= 0) {
             editor->SelectText(selStart, selEnd - selStart);
             editor->ReplaceSelection(text);
             editor->GetCtrl()->ClearSelections();
@@ -307,7 +307,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
             bool first = true;
             std::for_each(carets.begin(), carets.end(), [&](int where) {
                 int caretPos = curPos + where - typedWordLen;
-                if(first) {
+                if (first) {
                     editor->GetCtrl()->SetSelection(caretPos, caretPos + 1);
                     first = false;
                 } else {
@@ -331,7 +331,7 @@ void AbbreviationPlugin::OnShowAbbvreviations(wxCommandEvent& e)
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
     wxCodeCompletionBoxEntry::Vec_t V;
     GetAbbreviations(V, editor->GetWordAtPosition(editor->GetCurrentPosition()));
-    if(!V.empty()) {
+    if (!V.empty()) {
         wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, V, wxCodeCompletionBox::kRefreshOnKeyType,
                                                             wxNOT_FOUND);
     }

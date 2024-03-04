@@ -145,7 +145,6 @@ wxDECLARE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
  */
 class clEditor : public wxStyledTextCtrl, public IEditor
 {
-
 private:
     struct SelectionInfo {
         std::vector<std::pair<int, int>> selections;
@@ -367,7 +366,6 @@ public:
     bool IsFocused() const;
     CLCommandProcessor& GetCommandsProcessor() { return m_commandsProcessor; }
 
-public:
     /// Construct a clEditor object
     clEditor(wxWindow* parent);
 
@@ -574,6 +572,11 @@ public:
     bool LineIsMarked(enum marker_mask_type mask);
     // Toggle marker at the current line
     void ToggleMarker();
+
+    /**
+     * @brief notify the control that was updated externally
+     */
+    void NotifyTextUpdated() override;
 
     /**
      * Delete markers from the current document

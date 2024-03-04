@@ -546,6 +546,7 @@ void CodeFormatter::OnFormatCompleted(clSourceFormatEvent& event)
         editor->GetCtrl()->BeginUndoAction();
         clEditorStateLocker locker{ editor->GetCtrl() };
         editor->GetCtrl()->SetText(event.GetFormattedString());
+        editor->NotifyTextUpdated();
         editor->GetCtrl()->EndUndoAction();
         m_mgr->SetStatusMessage(_("Done"), 0);
 

@@ -1795,6 +1795,10 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     // update the tab title (remove the star from the file name)
     clMainFrame::Get()->GetMainBook()->SetPageTitle(this, fileName, false);
 
+    // Update line numbers drawings
+    UpdateLineNumberMarginWidth();
+    UpdateLineNumbers(true);
+
     if (fileName.GetExt() != m_fileName.GetExt()) {
         // new context is required
         SetSyntaxHighlight();
@@ -6610,5 +6614,14 @@ void clEditor::OnActiveEditorChanged(wxCommandEvent& event)
     if (editor->GetCtrl() != this) {
         return;
     }
+
+    // Update line numbers drawings
+    UpdateLineNumberMarginWidth();
+    UpdateLineNumbers(true);
+}
+
+void clEditor::NotifyTextUpdated()
+{
+    UpdateLineNumberMarginWidth();
     UpdateLineNumbers(true);
 }

@@ -28,14 +28,6 @@ wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
 namespace
 {
 
-struct ToolData : public wxObject {
-    ToolData(const wxString& d)
-        : data(d)
-    {
-    }
-    wxString data;
-};
-
 // return the wxBORDER_SIMPLE that matches the current application theme
 wxBorder border_simple_theme_aware_bit()
 {
@@ -86,6 +78,27 @@ clSideBarCtrl::~clSideBarCtrl()
     Unbind(wxEVT_DPI_CHANGED, &clSideBarCtrl::OnDPIChangedEvent, this);
 }
 
+const clSideBarToolData* clSideBarCtrl::GetToolData(long id) const
+{
+    if (m_toolDataMap.count(id) == 0) {
+        return nullptr;
+    }
+    return &m_toolDataMap.find(id)->second;
+}
+
+void clSideBarCtrl::DeleteToolData(long id) { m_toolDataMap.erase(id); }
+
+long clSideBarCtrl::AddToolData(clSideBarToolData data)
+{
+    static long tool_data_id = 0;
+
+    long next_id = ++tool_data_id;
+    m_toolDataMap.insert({ next_id, data });
+    return next_id;
+}
+
+void clSideBarCtrl::ClearAllToolData() { m_toolDataMap.clear(); }
+
 void clSideBarCtrl::PlaceButtons()
 {
     GetSizer()->Detach(m_book);
@@ -113,8 +126,10 @@ void clSideBarCtrl::PlaceButtons()
     size_t tools_count = old_toolbar->GetToolCount();
     for (size_t i = 0; i < tools_count; ++i) {
         auto tool = old_toolbar->FindToolByIndex(i);
-        ToolData* cd = dynamic_cast<ToolData*>(tool->GetClientData());
-        AddTool(tool->GetLabel(), cd->data, i);
+        auto tool_data_id = tool->GetUserData();
+        const clSideBarToolData* cd = GetToolData(tool_data_id);
+        AddTool(tool->GetLabel(), cd ? cd->data : wxString(), i);
+        DeleteToolData(tool_data_id);
     }
     wxDELETE(old_toolbar);
 
@@ -150,7 +165,8 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
     }
 
     auto tool = m_toolbar->AddTool(wxID_ANY, label, bmp, label, wxITEM_CHECK);
-    tool->SetClientData(new ToolData(bmpname));
+    long tool_data_id = AddToolData(clSideBarToolData(bmpname));
+    tool->SetUserData(tool_data_id);
 
     m_toolbar->Bind(
         wxEVT_TOOL,
@@ -228,7 +244,7 @@ wxString clSideBarCtrl::GetPageBitmap(size_t pos) const
     auto tool = m_toolbar->FindToolByIndex(pos);
 
     CHECK_POINTER_RETURN(tool, wxEmptyString);
-    auto tool_data = dynamic_cast<ToolData*>(tool->GetClientData());
+    auto tool_data = GetToolData(tool->GetUserData());
     CHECK_POINTER_RETURN(tool_data, wxEmptyString);
 
     return tool_data->data;
@@ -241,10 +257,11 @@ void clSideBarCtrl::SetPageBitmap(size_t pos, const wxString& bmpname)
     auto tool = m_toolbar->FindToolByIndex(pos);
     CHECK_POINTER_RETURN(tool, );
 
-    auto cd = tool->GetClientData();
-    wxDELETE(cd);
-
-    tool->SetClientData(new ToolData(bmpname));
+    long tool_data_idx = tool->GetUserData();
+    const clSideBarToolData* cd = GetToolData(tool_data_idx);
+    if (cd) {
+        const_cast<clSideBarToolData*>(cd)->data = bmpname;
+    }
     tool->SetBitmap(::clLoadSidebarBitmap(bmpname, m_toolbar));
 }
 

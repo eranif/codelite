@@ -357,6 +357,9 @@ void MainBook::DoRestoreSession(const SessionEntry& session)
         }
     }
     SelectPage(active_editor);
+    // now that all the pages have been loaded into the book, ensure that our Ctrl-TAB window
+    // will display all of them
+    m_book->UpdateHistory();
 }
 
 void MainBook::RestoreSession(const SessionEntry& session)
@@ -1949,8 +1952,4 @@ void MainBook::OnEditorSaved(clCommandEvent& event)
 #endif
 }
 
-void MainBook::OnSessionLoaded(clCommandEvent& event)
-{
-    event.Skip();
-    m_book->UpdateHistory();
-}
+void MainBook::OnSessionLoaded(clCommandEvent& event) { event.Skip(); }

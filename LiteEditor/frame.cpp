@@ -4988,8 +4988,13 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 
 void clMainFrame::DoSuggestRestart()
 {
-    m_infoBar->DisplayMessage(_("Reload CodeLite?"), wxICON_QUESTION,
-                              { { XRCID("restart-codelite"), _("Yes") }, { wxID_NO, _("No") } });
+    if (::wxMessageBox(_("Restart is require for changes to take effect\rRestore now?"), "CodeLite",
+                       wxYES_NO | wxYES_DEFAULT, this) != wxYES) {
+        return;
+    }
+
+    wxCommandEvent event_dummy;
+    ManagerST::Get()->OnCmdRestart(event_dummy);
 }
 
 void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)

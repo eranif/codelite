@@ -300,10 +300,23 @@ size_t clAuiBook::GetAllTabs(clTabInfo::Vec_t& tabs)
 
 void clAuiBook::MoveActivePage(int newIndex)
 {
+    // freeze the UI
+    wxWindowUpdateLocker locker{ this };
+
+    // no events while we are doing the tab movement
+    clAuiBookEventsDisabler disabler{ this };
+
     int cursel = GetSelection();
     CHECK_COND_RET(cursel != wxNOT_FOUND);
 
-    wxUnusedVar(newIndex);
+    wxWindow* page = GetCurrentPage();
+    CHECK_PTR_RET(page);
+
+    wxString label = GetPageText(cursel);
+    wxBitmap bmp = GetPageBitmap(cursel);
+    if (RemovePage(cursel)) {
+        InsertPage(newIndex, page, label, true, bmp);
+    }
 }
 
 int clAuiBook::SetSelection(size_t newPage)

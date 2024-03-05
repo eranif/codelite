@@ -1801,14 +1801,6 @@ void MainBook::ShowQuickBarToolBar(bool s)
 void MainBook::SetPageTitle(wxWindow* page, const wxFileName& filename, bool modified)
 {
     SetPageTitle(page, CreateLabel(filename, modified));
-#if 0
-#if !CL_USE_NATIVEBOOK
-    int index = m_book->GetPageIndex(page);
-    if (index != wxNOT_FOUND) {
-        m_book->SetPageModified(index, modified);
-    }
-#endif
-#endif
 }
 
 wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
@@ -1830,9 +1822,6 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 
 int MainBook::GetBitmapIndexOrAdd(const wxString& name)
 {
-#if 0
-    return m_book->GetBitmaps()->Add(name);
-#endif
     wxUnusedVar(name);
     return wxNOT_FOUND;
 }
@@ -1922,34 +1911,8 @@ void MainBook::OnIdle(wxIdleEvent& event)
     execute_callbacks_for_file(CLRealPath(editor->GetFileName().GetFullPath()));
 }
 
-void MainBook::OnEditorModified(clCommandEvent& event)
-{
-    event.Skip();
-#if 0
-#if !CL_USE_NATIVEBOOK
-    int index = FindEditorIndexByFullPath(event.GetFileName());
-    CHECK_COND_RET(index != wxNOT_FOUND);
+void MainBook::OnEditorModified(clCommandEvent& event) { event.Skip(); }
 
-    auto editor = FindEditor(event.GetFileName());
-    CHECK_PTR_RET(editor);
-    m_book->SetPageModified(index, editor->GetModify());
-#endif
-#endif
-}
-
-void MainBook::OnEditorSaved(clCommandEvent& event)
-{
-    event.Skip();
-#if 0
-#if !CL_USE_NATIVEBOOK
-    int index = FindEditorIndexByFullPath(event.GetFileName());
-    CHECK_COND_RET(index != wxNOT_FOUND);
-
-    auto editor = FindEditor(event.GetFileName());
-    CHECK_PTR_RET(editor);
-    m_book->SetPageModified(index, editor->GetModify());
-#endif
-#endif
-}
+void MainBook::OnEditorSaved(clCommandEvent& event) { event.Skip(); }
 
 void MainBook::OnSessionLoaded(clCommandEvent& event) { event.Skip(); }

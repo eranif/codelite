@@ -25,10 +25,11 @@ git clone https://github.com/eranif/wx-config-msys2.git
 cd wx-config-msys2
 mkdir build-release
 cd $_
-cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles"
+cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=$HOME/root
 mingw32-make -j$(nproc) install
 ```
 
+- Add `$HOME/root/bin` to your path and make sure that `which wx-config` finds it in the correct path
 - Build CodeLite (in `Release` mode):
 
 ```bash
@@ -37,7 +38,7 @@ cd codelite
 git submodule update --init --recursive
 mkdir build-release
 cd $_
-cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN=$HOME/root
+cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN=$HOME/root -Wno-dev
 mingw32-make -j$(nproc) install
 ```
 

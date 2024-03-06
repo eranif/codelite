@@ -67,7 +67,7 @@ static CppCheckPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
+    if (thePlugin == 0) {
         thePlugin = new CppCheckPlugin(manager);
     }
     return thePlugin;
@@ -153,14 +153,21 @@ void CppCheckPlugin::OnCppCheckTerminated(clProcessEvent& e)
 void CppCheckPlugin::DoRun()
 {
     wxString command = DoGetCommand();
-    if(command.empty()) {
+    if (command.empty()) {
         return;
     }
 
     // notify about starting build process.
     // we pass the selected compiler in the event
     clBuildEvent eventStarted(wxEVT_BUILD_PROCESS_STARTED);
-    eventStarted.SetToolchain(BuildSettingsConfigST::Get()->GetDefaultCompiler(wxEmptyString)->GetName());
+    auto default_compiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(wxEmptyString);
+    if (default_compiler) {
+        eventStarted.SetToolchain(BuildSettingsConfigST::Get()->GetDefaultCompiler(wxEmptyString)->GetName());
+    } else {
+        // use the default compiler known to CodeLite
+        eventStarted.SetToolchain("gnu g++");
+    }
+
     EventNotifier::Get()->AddPendingEvent(eventStarted);
 
     // Notify about build process started
@@ -171,7 +178,7 @@ void CppCheckPlugin::DoRun()
 
     size_t flags = IProcessCreateDefault | IProcessWrapInShell;
     m_cppcheckProcess = ::CreateAsyncProcess(this, command, flags);
-    if(!m_cppcheckProcess) {
+    if (!m_cppcheckProcess) {
         wxMessageBox(_("Failed to launch cppcheck process.\nMake sure its installed and in your PATH"), _("Warning"),
                      wxOK | wxCENTER | wxICON_WARNING);
         return;
@@ -183,7 +190,7 @@ wxString CppCheckPlugin::DoGetCommand()
 {
     // Linux / Mac way: spawn the process and execute the command
     wxString cppcheck;
-    if(!ThePlatform->Which("cppcheck", &cppcheck)) {
+    if (!ThePlatform->Which("cppcheck", &cppcheck)) {
         ::wxMessageBox(_("Could not locate \"cppcheck\". Please install it and try again"), "CodeLite",
                        wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCENTRE);
         return wxEmptyString;
@@ -194,14 +201,14 @@ wxString CppCheckPlugin::DoGetCommand()
     wxString workspace_path;
     wxString current_file;
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if(workspace) {
-        if(workspace->IsRemote()) {
+    if (workspace) {
+        if (workspace->IsRemote()) {
             workspace_path = wxFileName(workspace->GetFileName()).GetPath(false, wxPATH_UNIX);
         } else {
             workspace_path = wxFileName(workspace->GetFileName()).GetPath();
         }
     }
-    if(clGetManager()->GetActiveEditor()) {
+    if (clGetManager()->GetActiveEditor()) {
         current_file = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
     }
 
@@ -212,23 +219,23 @@ wxString CppCheckPlugin::DoGetCommand()
 
     wxString cmd;
     auto lines = ::wxStringTokenize(command, "\n", wxTOKEN_STRTOK);
-    for(auto& line : lines) {
+    for (auto& line : lines) {
         line.Trim().Trim(false);
         line = line.BeforeFirst('#');
-        if(line.empty()) {
+        if (line.empty()) {
             continue;
         }
 
         // Create the cache dir if required
         wxString cache_dir;
-        if(line.StartsWith("--cppcheck-build-dir=", &cache_dir)) {
+        if (line.StartsWith("--cppcheck-build-dir=", &cache_dir)) {
             cache_dir.Trim().Trim(false);
             wxFileName::Mkdir(cache_dir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         }
         cmd << line << " ";
     }
     cmd.Trim();
-    if(cmd.empty()) {
+    if (cmd.empty()) {
         ::wxMessageBox(_("Cannot run cppcheck. Empty command"), "CodeLite",
                        wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCENTRE);
         return wxEmptyString;
@@ -266,7 +273,7 @@ void CppCheckPlugin::AddOutputLine(const wxString& message)
 
 void CppCheckPlugin::OnIsBuildInProgress(clBuildEvent& event)
 {
-    if(!m_runStartedByUser) {
+    if (!m_runStartedByUser) {
         event.Skip();
         return;
     }
@@ -276,13 +283,13 @@ void CppCheckPlugin::OnIsBuildInProgress(clBuildEvent& event)
 
 void CppCheckPlugin::OnStopRun(clBuildEvent& event)
 {
-    if(!m_runStartedByUser) {
+    if (!m_runStartedByUser) {
         event.Skip();
         return;
     }
 
     m_runStartedByUser = false;
-    if(m_cppcheckProcess) {
+    if (m_cppcheckProcess) {
         wxDELETE(m_cppcheckProcess);
     }
 

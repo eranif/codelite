@@ -6563,7 +6563,7 @@ void clEditor::OnIdle(wxIdleEvent& event)
                        !m_context->IsCommentOrString(PositionBefore(pos))) {
                 BraceMatch((long)PositionBefore(pos));
             } else {
-                wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
+                wxStyledTextCtrl::BraceBadLight(wxSTC_INVALID_POSITION);
             }
         }
     }
@@ -6622,6 +6622,12 @@ void clEditor::OnActiveEditorChanged(wxCommandEvent& event)
 
 void clEditor::NotifyTextUpdated()
 {
+    // Use CallAfter
+    CallAfter(&clEditor::DrawLineNumbers, true);
+}
+
+void clEditor::DrawLineNumbers(bool force)
+{
     UpdateLineNumberMarginWidth();
-    UpdateLineNumbers(true);
+    UpdateLineNumbers(force);
 }

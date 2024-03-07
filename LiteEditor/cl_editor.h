@@ -1130,6 +1130,7 @@ public:
     SFTPClientData* GetRemoteData() const override;
 
 private:
+    void DrawLineNumbers(bool force);
     void UpdateLineNumberMarginWidth();
     void DoUpdateTLWTitle(bool raise);
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);

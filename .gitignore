@@ -9,7 +9,11 @@
 *.gch
 .clangd/
 *.a
+*.bak
+*.orig
+*.log
 tags
+*.diff
 Makefile
 build-Debug/
 build-Win*/

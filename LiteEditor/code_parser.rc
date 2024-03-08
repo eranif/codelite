@@ -16,8 +16,8 @@ aaaaa ICON "codelite-logo.ico"
 ///////////////////////////////////////////////////////////////////////////////
 // Version information
 VS_VERSION_INFO    VERSIONINFO
-FILEVERSION      17,9,0,0
-PRODUCTVERSION   17,9,0,0
+FILEVERSION      17,10,0,0
+PRODUCTVERSION   17,10,0,0
 FILEFLAGSMASK    0x3fL // VS_FFI_FILEFLAGSMASK
 FILEFLAGS        0x0L  // final version
 FILEOS           VOS_NT_WINDOWS32

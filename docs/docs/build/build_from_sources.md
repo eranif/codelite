@@ -29,8 +29,9 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=$
 mingw32-make -j$(nproc) install
 ```
 
-- Add `$HOME/root/bin` to your path and make sure that `which wx-config` finds it in the correct path
+- Add `$HOME/root/bin` to your path and make sure that `which wx-config` points to the newly installed `wx-config`
 - Build CodeLite (in `Release` mode):
+- Set the environment variable `MSYS2_BASE` to point to `MSYS2` root installation folder (e.g. `C:/msys64`)
 
 ```bash
 git clone https://github.com/eranif/codelite.git

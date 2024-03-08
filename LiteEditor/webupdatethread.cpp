@@ -74,9 +74,9 @@ struct CodeLiteVersion {
         long nVersionNumber = -1;
         strVersionNumer.ToCLong(&nVersionNumber);
 
-        if((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
+        if ((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
             bool res = (m_version > nVersionNumber);
-            if(res) {
+            if (res) {
                 clDEBUG() << "Found new version!" << clEndl;
             }
             return res;
@@ -112,10 +112,10 @@ void WebUpdateJob::ParseFile()
     JSONItem platforms = root.toElement().namedObject("platforms");
 
     int count = platforms.arraySize();
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         CodeLiteVersion v(platforms.arrayItem(i));
         v.Print();
-        if(!v.IsReleaseVersion() && m_onlyRelease) {
+        if (!v.IsReleaseVersion() && m_onlyRelease) {
             // User wishes to be prompted for new releases only
             // skip weekly builds
             clDEBUG() << "Found version:" << v.GetVersion()
@@ -123,7 +123,7 @@ void WebUpdateJob::ParseFile()
             continue;
         }
 
-        if(v.IsNewer(os, codename, arch)) {
+        if (v.IsNewer(os, codename, arch)) {
             clDEBUG() << "A new version of CodeLite found" << clEndl;
             wxCommandEvent event(wxEVT_CMD_NEW_VERSION_AVAILABLE);
             event.SetClientData(new WebUpdateJobData("https://codelite.org/support.php", v.GetUrl(),
@@ -153,20 +153,20 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
     os = "linux";
     wxFFile fp("/etc/issue", "rb");
     wxString content;
-    if(fp.IsOpened()) {
+    if (fp.IsOpened()) {
         fp.ReadAll(&content, wxConvUTF8);
         fp.Close();
     }
     // Test for common code names that we support on Linux
-    if(content.Contains("Ubuntu 14.04")) {
+    if (content.Contains("Ubuntu 14.04")) {
         codename = "Ubuntu 14.04";
-    } else if(content.Contains("Ubuntu 16.04")) {
+    } else if (content.Contains("Ubuntu 16.04")) {
         codename = "Ubuntu 16.04";
-    } else if(content.Contains("Ubuntu 18.04")) {
+    } else if (content.Contains("Ubuntu 18.04")) {
         codename = "Ubuntu 18.04";
-    } else if(content.Contains("Ubuntu 20.04")) {
+    } else if (content.Contains("Ubuntu 20.04")) {
         codename = "Ubuntu 20.04";
-    } else if(content.Contains("Debian GNU/Linux 8")) {
+    } else if (content.Contains("Debian GNU/Linux 8")) {
         codename = "Debian GNU/Linux 8";
     } else {
         codename = "others";
@@ -213,7 +213,7 @@ void WebUpdateJob::OnSocketInput(clCommandEvent& e)
 {
     m_dataRead << e.GetString();
     int where = m_dataRead.Find("\r\n\r\n");
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         wxString headers = m_dataRead.Mid(0, where);
         m_dataRead = m_dataRead.Mid(where + 4);
         ParseFile();

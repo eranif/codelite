@@ -12,7 +12,7 @@
 #include <wx/sizer.h>
 #include <wx/toolbar.h>
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__WXGTK__)
 #define USE_NATIVETOOLBAR 1
 #else
 #define USE_NATIVETOOLBAR 0

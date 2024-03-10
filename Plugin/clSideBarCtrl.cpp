@@ -10,9 +10,6 @@
 #include <wx/toolbar.h>
 #include <wx/tooltip.h>
 
-thread_local int BUTTON_ID = 0;
-constexpr int BAR_SIZE = 24;
-
 wxDEFINE_EVENT(wxEVT_SIDEBAR_SELECTION_CHANGED, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
 
@@ -176,10 +173,6 @@ void clSideBarCtrl::PlaceButtons()
     m_mainSizer->SetOrientation((m_buttonsPosition == wxLEFT || m_buttonsPosition == wxRIGHT) ? wxHORIZONTAL
                                                                                               : wxVERTICAL);
     int border = 0;
-#if USE_NATIVETOOLBAR
-    border = 5;
-#endif
-
     switch (m_buttonsPosition) {
     case wxRIGHT:
     case wxBOTTOM:

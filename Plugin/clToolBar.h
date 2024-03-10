@@ -125,6 +125,7 @@ protected:
     void OnColoursChanged(clCommandEvent& event);
 
 public:
+    clToolBarGeneric() {}
     clToolBarGeneric(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
                      const wxString& name = "clToolBarGeneric");
@@ -151,7 +152,7 @@ public:
 
     void EnableFlag(eFlags f, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= f;
         } else {
             m_flags &= ~f;
@@ -225,7 +226,7 @@ public:
                                  const wxString& helpString = "", wxItemKind kind = wxITEM_NORMAL)
     {
         wxUnusedVar(helpString);
-        switch(kind) {
+        switch (kind) {
         case wxITEM_DROPDOWN:
             return AddMenuButton(id, bitmapIndex, label);
         case wxITEM_CHECK:
@@ -269,6 +270,16 @@ public:
      * @brief find a button by ID
      */
     clToolBarButtonBase* FindById(wxWindowID id) const;
+
+    size_t GetToolCount() const { return m_buttons.size(); }
+
+    clToolBarButtonBase* FindToolByIndex(size_t pos) const
+    {
+        if (pos >= m_buttons.size()) {
+            return nullptr;
+        }
+        return m_buttons[pos];
+    }
 
     /**
      * @brief delete a button identified by 'id'

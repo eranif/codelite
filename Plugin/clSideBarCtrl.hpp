@@ -10,8 +10,56 @@
 #include <wx/settings.h>
 #include <wx/simplebook.h>
 #include <wx/sizer.h>
+#include <wx/toolbar.h>
 
-struct WXDLLIMPEXP_SDK clSideBarToolData {
+#ifdef __WXMSW__
+#define USE_NATIVETOOLBAR 1
+#else
+#define USE_NATIVETOOLBAR 0
+#endif
+
+#if USE_NATIVETOOLBAR
+struct LongClientData : wxObject {
+    long m_data = wxNOT_FOUND;
+    LongClientData(long l)
+        : m_data(l)
+    {
+    }
+    ~LongClientData() override {}
+};
+
+class SideBarToolBar : public wxToolBar
+{
+public:
+    SideBarToolBar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style);
+    size_t GetToolCount() const { return this->GetToolsCount(); }
+    wxToolBarToolBase* FindToolByIndex(size_t pos) { return GetToolByPos(pos); }
+    void SetUserData(wxToolBarToolBase* tool, long data)
+    {
+        LongClientData* cd = new LongClientData(data);
+        tool->SetClientData(cd);
+    }
+    long GetUserData(wxToolBarToolBase* tool)
+    {
+        LongClientData* cd = reinterpret_cast<LongClientData*>(tool->GetClientData());
+        return cd->m_data;
+    }
+    wxToolBarToolBase* FindTool(int tool_id)
+    {
+        for (size_t i = 0; i < GetToolsCount(); ++i) {
+            auto tool = GetToolByPos(i);
+            if (tool->GetId() == tool_id) {
+                return tool;
+            }
+        }
+        return nullptr;
+    }
+};
+#else
+typedef wxAuiToolBar SideBarToolBar;
+#endif
+
+struct WXDLLIMPEXP_SDK clSideBarToolData : public wxClientData {
     clSideBarToolData(const wxString& d)
         : data(d)
     {
@@ -21,7 +69,7 @@ struct WXDLLIMPEXP_SDK clSideBarToolData {
 
 class WXDLLIMPEXP_SDK clSideBarCtrl : public wxControl
 {
-    wxAuiToolBar* m_toolbar = nullptr;
+    SideBarToolBar* m_toolbar = nullptr;
     wxSimplebook* m_book = nullptr;
     wxDirection m_buttonsPosition = wxLEFT;
     wxBoxSizer* m_mainSizer = nullptr;
@@ -35,7 +83,13 @@ protected:
     void OnSize(wxSizeEvent& event);
     void AddTool(const wxString& label, const wxString& bmpname, size_t book_index);
     void OnDPIChangedEvent(wxDPIChangedEvent& event);
-    void OnContextMenu(wxAuiToolBarEvent& event);
+    void OnContextMenu(
+#if USE_NATIVETOOLBAR
+        wxCommandEvent& event
+#else
+        wxAuiToolBarEvent& event
+#endif
+    );
 
     const clSideBarToolData* GetToolData(long id) const;
     /// add tool data, return its unique ID

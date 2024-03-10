@@ -25,6 +25,18 @@ wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
         return WHAT;                             \
     }
 
+#if USE_NATIVETOOLBAR
+#define TOOL_GET_USER_DATA(tool) m_toolbar->GetUserData(tool)
+#define TOOL_SET_USER_DATA(tool, data) m_toolbar->SetUserData(tool, data)
+#define TOOL_SET_BITMAP(tool, bmp) tool->SetNormalBitmap(bmp)
+#define TOOL_IS_CHECKED(tool) tool->IsToggled()
+#else
+#define TOOL_GET_USER_DATA(tool) tool->GetUserData()
+#define TOOL_SET_BITMAP(tool, bmp) tool->SetBitmap(bmp)
+#define TOOL_SET_USER_DATA(tool, data) tool->SetUserData(data)
+#define TOOL_IS_CHECKED(tool) tool->IsActive()
+#endif
+
 namespace
 {
 
@@ -41,6 +53,24 @@ wxBorder border_simple_theme_aware_bit()
 } // DoGetBorderSimpleBit
 
 } // namespace
+
+// SideBarToolBar
+SideBarToolBar::SideBarToolBar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+{
+    long tb_style = wxTB_NODIVIDER;
+    wxSize sz = wxDefaultSize;
+    auto bmp = ::clLoadSidebarBitmap("workspace-button", parent);
+    if (style & wxAUI_TB_VERTICAL) {
+        tb_style |= wxTB_VERTICAL;
+        sz.SetWidth(bmp.GetScaledWidth());
+    } else if (style & wxAUI_TB_HORIZONTAL) {
+        tb_style |= wxTB_HORIZONTAL;
+        sz.SetHeight(bmp.GetScaledHeight());
+    }
+
+    wxUnusedVar(size);
+    wxToolBar::Create(parent, id, pos, wxDefaultSize, tb_style);
+}
 
 // -----------------------
 // SideBar control
@@ -114,19 +144,20 @@ void clSideBarCtrl::PlaceButtons()
 
     tb_style |= wxBORDER_NONE;
     if (!m_toolbar) {
-        m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
+        m_toolbar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
 
     } else {
         GetSizer()->Detach(m_toolbar);
     }
 
     // need to re-create the toolbar
-    wxAuiToolBar* old_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
+    SideBarToolBar* old_toolbar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
     wxSwap(old_toolbar, m_toolbar);
+
     size_t tools_count = old_toolbar->GetToolCount();
     for (size_t i = 0; i < tools_count; ++i) {
         auto tool = old_toolbar->FindToolByIndex(i);
-        auto tool_data_id = tool->GetUserData();
+        auto tool_data_id = TOOL_GET_USER_DATA(tool);
         const clSideBarToolData* cd = GetToolData(tool_data_id);
         AddTool(tool->GetLabel(), cd ? cd->data : wxString(), i);
         DeleteToolData(tool_data_id);
@@ -134,23 +165,31 @@ void clSideBarCtrl::PlaceButtons()
     wxDELETE(old_toolbar);
 
     // Reconnect the event
+#if USE_NATIVETOOLBAR
+    m_toolbar->Bind(wxEVT_TOOL_RCLICKED, &clSideBarCtrl::OnContextMenu, this);
+#else
     m_toolbar->Bind(wxEVT_AUITOOLBAR_RIGHT_CLICK, &clSideBarCtrl::OnContextMenu, this);
+#endif
     m_toolbar->Realize();
 
     // adjust the sizer orientation
     m_mainSizer->SetOrientation((m_buttonsPosition == wxLEFT || m_buttonsPosition == wxRIGHT) ? wxHORIZONTAL
                                                                                               : wxVERTICAL);
+    int border = 0;
+#if USE_NATIVETOOLBAR
+    border = 5;
+#endif
 
     switch (m_buttonsPosition) {
     case wxRIGHT:
     case wxBOTTOM:
         GetSizer()->Add(m_book, 1, wxEXPAND);
-        GetSizer()->Add(m_toolbar, 0, wxEXPAND);
+        GetSizer()->Add(m_toolbar, 0, wxEXPAND | wxALL, border);
         break;
     default:
     case wxLEFT:
     case wxTOP:
-        GetSizer()->Add(m_toolbar, 0, wxEXPAND);
+        GetSizer()->Add(m_toolbar, 0, wxEXPAND | wxALL, border);
         GetSizer()->Add(m_book, 1, wxEXPAND);
         break;
     }
@@ -166,7 +205,7 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
 
     auto tool = m_toolbar->AddTool(wxID_ANY, label, bmp, label, wxITEM_CHECK);
     long tool_data_id = AddToolData(clSideBarToolData(bmpname));
-    tool->SetUserData(tool_data_id);
+    TOOL_SET_USER_DATA(tool, tool_data_id);
 
     m_toolbar->Bind(
         wxEVT_TOOL,
@@ -206,7 +245,7 @@ void clSideBarCtrl::DoRemovePage(size_t pos, bool delete_it)
     }
 
     int tool_id = tool->GetId();
-    bool was_selection = tool->IsActive();
+    bool was_selection = TOOL_IS_CHECKED(tool);
 
     m_toolbar->DeleteTool(tool->GetId());
 
@@ -244,7 +283,7 @@ wxString clSideBarCtrl::GetPageBitmap(size_t pos) const
     auto tool = m_toolbar->FindToolByIndex(pos);
 
     CHECK_POINTER_RETURN(tool, wxEmptyString);
-    auto tool_data = GetToolData(tool->GetUserData());
+    auto tool_data = GetToolData(TOOL_GET_USER_DATA(tool));
     CHECK_POINTER_RETURN(tool_data, wxEmptyString);
 
     return tool_data->data;
@@ -257,12 +296,12 @@ void clSideBarCtrl::SetPageBitmap(size_t pos, const wxString& bmpname)
     auto tool = m_toolbar->FindToolByIndex(pos);
     CHECK_POINTER_RETURN(tool, );
 
-    long tool_data_idx = tool->GetUserData();
+    long tool_data_idx = TOOL_GET_USER_DATA(tool);
     const clSideBarToolData* cd = GetToolData(tool_data_idx);
     if (cd) {
         const_cast<clSideBarToolData*>(cd)->data = bmpname;
     }
-    tool->SetBitmap(::clLoadSidebarBitmap(bmpname, m_toolbar));
+    TOOL_SET_BITMAP(tool, ::clLoadSidebarBitmap(bmpname, m_toolbar));
 }
 
 wxString clSideBarCtrl::GetPageText(size_t pos) const { return m_book->GetPageText(pos); }
@@ -334,10 +373,21 @@ void clSideBarCtrl::Realize()
     SendSizeEvent(wxSEND_EVENT_POST);
 }
 
-void clSideBarCtrl::OnContextMenu(wxAuiToolBarEvent& event)
+void clSideBarCtrl::OnContextMenu(
+#if USE_NATIVETOOLBAR
+    wxCommandEvent& event
+#else
+    wxAuiToolBarEvent& event
+#endif
+)
 {
     event.Skip();
+#if USE_NATIVETOOLBAR
+    int tool_id = event.GetId();
+#else
     int tool_id = event.GetToolId();
+#endif
+
     CHECK_COND_RET(tool_id != wxNOT_FOUND);
 
     auto tool = m_toolbar->FindTool(tool_id);
@@ -356,7 +406,6 @@ void clSideBarCtrl::OnDPIChangedEvent(wxDPIChangedEvent& event)
 {
     event.Skip();
     clDEBUG() << "DPI changed event captured. Rebuilding SideBar control" << endl;
-
     // clear the bitmaps cache and rebuild the control
     ::clClearSidebarBitmapCache();
     PlaceButtons();

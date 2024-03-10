@@ -24,7 +24,7 @@ clToolBarButtonBase::clToolBarButtonBase(clToolBarGeneric* parent, wxWindowID id
 clToolBarButtonBase::~clToolBarButtonBase()
 {
     wxDELETE(m_menu);
-    if(m_toolbar && m_toolbar->GetBitmaps()) {
+    if (m_toolbar && m_toolbar->GetBitmaps()) {
         m_toolbar->GetBitmaps()->Delete(m_bmpId);
     }
 }
@@ -40,7 +40,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
 
     const wxColour bgColour = DrawingUtils::GetMenuBarBgColour(m_toolbar->HasFlag(clToolBarGeneric::kMiniToolBar));
     bool isdark = DrawingUtils::IsDark(bgColour);
-    if(IsEnabled() && (IsPressed() || IsChecked())) {
+    if (IsEnabled() && (IsPressed() || IsChecked())) {
         wxColour pressBgColour = isdark ? bgColour.ChangeLightness(110) : bgColour.ChangeLightness(80);
         wxRect highlightRect = m_buttonRect;
         highlightRect.Inflate(1);
@@ -52,7 +52,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         textColour = colours.GetSelItemTextColour();
         buttonColour = colours.GetSelbuttonColour();
 
-    } else if(IsEnabled() && IsHover()) {
+    } else if (IsEnabled() && IsHover()) {
         // wxColour hoverColour = bgColour;
         // penColour = bgColour;
         // wxRect highlightRect = m_buttonRect;
@@ -62,13 +62,13 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         // textColour = colours.GetSelItemTextColour();
         // buttonColour = colours.GetSelbuttonColour();
 
-    } else if(!IsEnabled()) {
+    } else if (!IsEnabled()) {
         // A disabled button
         textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
         buttonColour = textColour;
     } else {
         // Default
-        if(DrawingUtils::IsDark(bgColour)) {
+        if (DrawingUtils::IsDark(bgColour)) {
             buttonColour = colours.GetSelbuttonColour();
         } else {
             buttonColour = colours.GetButtonColour();
@@ -80,9 +80,9 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     xx += m_toolbar->GetXSpacer();
 
     const wxBitmap& m_bmp = m_toolbar->GetBitmap(m_bmpId);
-    if(m_bmp.IsOk()) {
+    if (m_bmp.IsOk()) {
         wxBitmap bmp(m_bmp);
-        if(!IsEnabled()) {
+        if (!IsEnabled()) {
             bmp = DrawingUtils::CreateDisabledBitmap(m_bmp);
         }
         yy = (m_buttonRect.GetHeight() - bmp.GetScaledHeight()) / 2 + m_buttonRect.GetY();
@@ -91,7 +91,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         xx += m_toolbar->GetXSpacer();
     }
 
-    if(!m_label.IsEmpty() && m_toolbar->IsShowLabels()) {
+    if (!m_label.IsEmpty() && m_toolbar->IsShowLabels()) {
         dc.SetTextForeground(textColour);
         wxSize sz = dc.GetTextExtent(m_label);
         yy = (m_buttonRect.GetHeight() - sz.GetHeight()) / 2 + m_buttonRect.GetY();
@@ -101,18 +101,18 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     }
 
     // Do we need to draw a drop down arrow?
-    if(IsMenuButton()) {
+    if (IsMenuButton()) {
         // draw a drop down menu
         int drop_down_button_width = m_buttonRect.GetHeight();
         m_dropDownArrowRect = wxRect(xx, m_buttonRect.GetY(), drop_down_button_width, drop_down_button_width);
         m_dropDownArrowRect = m_dropDownArrowRect.CenterIn(m_buttonRect, wxVERTICAL);
-        if(IsPressed() && IsEnabled()) {
+        if (IsPressed() && IsEnabled()) {
             dc.DrawLine(wxPoint(xx, m_buttonRect.GetY() + 2),
                         wxPoint(xx, m_buttonRect.GetY() + m_buttonRect.GetHeight() - 2));
         }
 
         int flags = wxCONTROL_NONE;
-        if(!IsEnabled()) {
+        if (!IsEnabled()) {
             flags |= wxCONTROL_DISABLED;
         }
         DrawingUtils::DrawDropDownArrow(m_toolbar, dc, m_dropDownArrowRect, flags, textColour);

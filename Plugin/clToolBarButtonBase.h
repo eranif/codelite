@@ -29,6 +29,7 @@ protected:
     wxRect m_buttonRect;
     size_t m_renderFlags = 0;
     wxMenu* m_menu = nullptr;
+    long m_userData = wxNOT_FOUND;
 
 public:
     enum eFlags {
@@ -69,7 +70,7 @@ public:
 protected:
     void EnableRenderFlag(clToolBarButtonBase::eRenderFlags f, bool b)
     {
-        if(b) {
+        if (b) {
             m_renderFlags |= f;
         } else {
             m_renderFlags &= ~f;
@@ -78,7 +79,7 @@ protected:
 
     void EnableFlag(clToolBarButtonBase::eFlags f, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= f;
         } else {
             m_flags &= ~f;
@@ -93,6 +94,8 @@ public:
     const wxBitmap& GetBitmap() const;
     const wxString& GetLabel() const { return m_label; }
 
+    void SetUserData(long userData) { this->m_userData = userData; }
+    long GetUserData() const { return m_userData; }
     /**
      * @brief does this button has a menu?
      */
@@ -137,6 +140,10 @@ public:
     bool IsShown() const { return !IsHidden(); }
     void Show(bool b) { EnableFlag(kHidden, !b); }
 
-    template <typename T> T* Cast() { return dynamic_cast<T*>(this); }
+    template <typename T>
+    T* Cast()
+    {
+        return dynamic_cast<T*>(this);
+    }
 };
 #endif // CLTOOLBARBUTTONBASE_H

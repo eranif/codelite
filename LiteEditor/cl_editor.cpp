@@ -4863,12 +4863,22 @@ void clEditor::OnChange(wxStyledTextEvent& event)
     bool isUndo = modification_flags & wxSTC_PERFORMED_UNDO;
     bool isRedo = modification_flags & wxSTC_PERFORMED_REDO;
 
-    int newLineCount = GetLineCount();
-    if (m_lastLineCount != newLineCount) {
-        int lastWidthCount = log10(m_editorState.current_line) + 1;
-        int newWidthCount = log10(newLineCount) + 1;
-        if (newWidthCount != lastWidthCount) {
-            UpdateLineNumberMarginWidth();
+    bool line_numbers_margin_updated = false;
+    if (isUndo || isRedo) {
+        // update line numbers on the next event loop
+        NotifyTextUpdated();
+        line_numbers_margin_updated = true;
+    }
+
+    if (!line_numbers_margin_updated) {
+        int newLineCount = GetLineCount();
+        if (m_lastLineCount != newLineCount) {
+            int lastWidthCount = log10(m_editorState.current_line) + 1;
+            int newWidthCount = log10(newLineCount) + 1;
+            if (newWidthCount != lastWidthCount) {
+                NotifyTextUpdated();
+                line_numbers_margin_updated = true;
+            }
         }
     }
 

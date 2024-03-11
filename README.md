@@ -1,5 +1,6 @@
 ![Mac-OS-badge](https://github.com/eranif/codelite/actions/workflows/macos.yml/badge.svg)
 ![Unix-badge](https://github.com/eranif/codelite/actions/workflows/ubuntu.yml/badge.svg)
+![msys2-badge](https://github.com/eranif/codelite/actions/workflows/msys2.yml/badge.svg)
 [![Join the chat at https://gitter.im/eranif/codelite](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eranif/codelite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 What is CodeLite?

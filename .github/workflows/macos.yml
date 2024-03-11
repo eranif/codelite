@@ -1,0 +1,50 @@
+name: macos
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  macos:
+    runs-on: macos-latest
+
+    steps:
+
+    - name: Install Codelite's dependencies
+      run: |
+        # brew update && brew upgrade # fails somehow
+        brew install git cmake libssh hunspell
+
+    # WxWidgets
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+          repository: wxWidgets/wxWidgets
+          path: wxWidgets
+          submodules: recursive
+    
+    - name: Build and install wxWidgets
+      run: |
+        mkdir wxWidgets/build-release
+        cd wxWidgets/build-release
+        ../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++11 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl --enable-stl
+        make -j10
+        sudo make install
+
+    # Codelite
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build and install Codelite
+      run: |
+        mkdir build-release
+        cd build-release
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake --build . -j $(sysctl -n hw.physicalcpu)
+        cmake --build . --target install
+
+    - name: codelite --version
+      run: codelite.app/Contents/MacOS/codelite --version || exit 0 # codelite --version returns -1

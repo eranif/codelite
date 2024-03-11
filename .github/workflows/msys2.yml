@@ -1,0 +1,76 @@
+name: msys2
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  msys2:
+    runs-on: windows-latest
+
+    steps:
+    - uses: msys2/setup-msys2@v2
+
+    # pre-requires
+    - name: Install dependencies
+      shell: msys2 {0}
+      run: |
+        # pacman -Syu --noconfirm # Fail, requires to close this process
+        pacman -S --noconfirm mingw-w64-clang-x86_64-cmake mingw-w64-clang-x86_64-make mingw-w64-clang-x86_64-clang mingw-w64-clang-x86_64-clang-tools-extra
+        pacman -S --noconfirm mingw-w64-clang-x86_64-zlib mingw-w64-clang-x86_64-libssh mingw-w64-clang-x86_64-hunspell mingw-w64-clang-x86_64-openssl mingw-w64-clang-x86_64-sqlite3
+
+    # WxWidgets
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        repository: wxWidgets/wxWidgets
+        path: wxWidgets
+        # ref: 3.2.4 # use master
+        submodules: recursive
+
+    - name: build and install wxWidgets
+      shell: msys2 {0}
+      run: |
+        mkdir wxWidgets/build-release
+        cd wxWidgets/build-release
+        PATH="/clang64/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/root -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1
+        PATH="/clang64/bin:$PATH" mingw32-make -j$(nproc) && PATH="/clang64/bin:$PATH" mingw32-make install
+
+    # wx-config-msys2
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        repository: eranif/wx-config-msys2
+        path: wx-config-msys2
+
+    - name: build and install wx-config-msys2
+      shell: msys2 {0}
+      run: |
+        mkdir wx-config-msys2/build-release
+        cd wx-config-msys2/build-release
+        PATH="/clang64/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/root
+        PATH="/clang64/bin:$PATH" mingw32-make -j$(nproc) install
+        #add $HOME/root/bin to PATH
+
+    # Codelite
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: build and install Codelite
+      shell: msys2 {0}
+      run: |
+        mkdir build-release
+        cd build-release
+        MSYS2_BASE=/d/a/_temp/msys64 PATH="/clang64/bin:$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN=$HOME/root -Wno-dev
+        PATH="/clang64/bin:$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
+
+    # Upload artefact
+    - name: artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: codelite
+        path: |
+          build-release/install/**.*

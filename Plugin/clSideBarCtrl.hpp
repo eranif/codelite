@@ -74,6 +74,7 @@ class WXDLLIMPEXP_SDK clSideBarCtrl : public wxControl
     wxDirection m_buttonsPosition = wxLEFT;
     wxBoxSizer* m_mainSizer = nullptr;
     std::unordered_map<long, clSideBarToolData> m_toolDataMap;
+    int m_selectedToolId = wxNOT_FOUND;
 
 protected:
     /// Return the page position
@@ -96,6 +97,8 @@ protected:
     long AddToolData(clSideBarToolData data);
     void DeleteToolData(long id);
     void ClearAllToolData();
+    void MSWUpdateToolbarBitmaps(int new_selection, int old_selection);
+    int GetToolIdForBookPos(int book_index) const;
 
 public:
     clSideBarCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

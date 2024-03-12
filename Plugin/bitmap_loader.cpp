@@ -560,19 +560,16 @@ void clClearSidebarBitmapCache()
     light_sidebar_bitmaps.clear();
 }
 
-wxBitmap clLoadSidebarBitmap(const wxString& name, wxWindow* win)
+static wxBitmap LoadSidebarBitmapInternal(const wxString& name, wxWindow* win, bool dark_theme)
 {
-    wxUnusedVar(win);
-
-    std::unordered_map<wxString, wxBitmap>& cache =
-        clSystemSettings::IsDark() ? dark_sidebar_bitmaps : light_sidebar_bitmaps;
+    std::unordered_map<wxString, wxBitmap>& cache = dark_theme ? dark_sidebar_bitmaps : light_sidebar_bitmaps;
     if (cache.count(name)) {
         return cache.find(name)->second;
     }
 
     wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
     svg_path.AppendDir("svgs");
-    svg_path.AppendDir(clSystemSettings::IsDark() ? "dark-theme" : "light-theme");
+    svg_path.AppendDir(dark_theme ? "dark-theme" : "light-theme");
     svg_path.SetFullName(name + ".svg");
     if (!svg_path.DirExists()) {
         clWARNING() << "Unable to locate:" << svg_path << ". broken installation?" << endl;
@@ -589,4 +586,10 @@ wxBitmap clLoadSidebarBitmap(const wxString& name, wxWindow* win)
     auto bmp = bmpbundle.GetBitmapFor(win);
     cache.insert({ name, bmp });
     return bmp;
+}
+
+void clLoadSidebarBitmap(const wxString& name, wxWindow* win, wxBitmap* light_theme_bmp, wxBitmap* dark_theme_bmp)
+{
+    *light_theme_bmp = LoadSidebarBitmapInternal(name, win, false);
+    *dark_theme_bmp = LoadSidebarBitmapInternal(name, win, true);
 }

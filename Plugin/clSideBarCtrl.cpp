@@ -1,6 +1,7 @@
 #include "clSideBarCtrl.hpp"
 
 #include "bitmap_loader.h"
+#include "clSystemSettings.h"
 
 #include <wx/anybutton.h>
 #include <wx/dcbuffer.h>
@@ -56,13 +57,14 @@ SideBarToolBar::SideBarToolBar(wxWindow* parent, wxWindowID id, const wxPoint& p
 {
     long tb_style = wxTB_NODIVIDER;
     wxSize sz = wxDefaultSize;
-    auto bmp = ::clLoadSidebarBitmap("workspace-button", parent);
+    wxBitmap dark_theme_bmp, light_theme_bmp;
+    ::clLoadSidebarBitmap("workspace-button", parent, &light_theme_bmp, &dark_theme_bmp);
     if (style & wxAUI_TB_VERTICAL) {
         tb_style |= wxTB_VERTICAL;
-        sz.SetWidth(bmp.GetScaledWidth());
+        sz.SetWidth(dark_theme_bmp.GetScaledWidth());
     } else if (style & wxAUI_TB_HORIZONTAL) {
         tb_style |= wxTB_HORIZONTAL;
-        sz.SetHeight(bmp.GetScaledHeight());
+        sz.SetHeight(dark_theme_bmp.GetScaledHeight());
     }
 
     wxUnusedVar(size);
@@ -189,14 +191,65 @@ void clSideBarCtrl::PlaceButtons()
     GetSizer()->Layout();
 }
 
+void clSideBarCtrl::MSWUpdateToolbarBitmaps(int new_selection, int old_selection)
+{
+#ifdef __WXMSW__
+    static int major = wxNOT_FOUND;
+    static int min = wxNOT_FOUND;
+    static int build = wxNOT_FOUND;
+    if (major == wxNOT_FOUND) {
+        ::wxGetOsVersion(&major, &min, &build);
+    }
+
+    if (major == 10 && build >= 22000 && clSystemSettings::GetAppearance().IsDark()) {
+        // Windows 11
+        wxWindowUpdateLocker locker{ m_toolbar };
+        {
+            wxBitmap dark_theme_bmp, light_theme_bmp;
+            auto tool = m_toolbar->FindTool(old_selection);
+            if (tool) {
+                auto user_data = TOOL_GET_USER_DATA(tool);
+                auto data = GetToolData(user_data);
+                if (data) {
+                    wxBitmap bmp_for_light_theme, bmp_for_dark_theme;
+                    ::clLoadSidebarBitmap(data->data, this, &bmp_for_light_theme, &bmp_for_dark_theme);
+                    m_toolbar->SetToolNormalBitmap(tool->GetId(), bmp_for_dark_theme);
+                }
+            }
+        }
+
+        // selection needs to have the light theme bitmap
+        {
+            wxBitmap dark_theme_bmp, light_theme_bmp;
+            auto tool = m_toolbar->FindTool(new_selection);
+            if (tool) {
+                auto user_data = TOOL_GET_USER_DATA(tool);
+                auto data = GetToolData(user_data);
+                if (data) {
+                    wxBitmap bmp_for_light_theme, bmp_for_dark_theme;
+                    ::clLoadSidebarBitmap(data->data, this, &bmp_for_light_theme, &bmp_for_dark_theme);
+                    m_toolbar->SetToolNormalBitmap(tool->GetId(), bmp_for_light_theme);
+                }
+            }
+        }
+    }
+#else
+    wxUnusedVar(new_selection);
+    wxUnusedVar(old_selection);
+#endif
+}
+
 void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size_t book_index)
 {
-    wxBitmap bmp = ::clLoadSidebarBitmap(bmpname, this);
-    if (!bmp.IsOk()) {
+    wxBitmap dark_theme_bmp, light_theme_bmp;
+    ::clLoadSidebarBitmap(bmpname, this, &light_theme_bmp, &dark_theme_bmp);
+    if (!light_theme_bmp.IsOk() || !dark_theme_bmp.IsOk()) {
         clWARNING() << "clSideBarCtrl::AddPage(): Invalid bitmap:" << bmpname << endl;
     }
 
+    const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp;
     auto tool = m_toolbar->AddTool(wxID_ANY, label, bmp, label, wxITEM_CHECK);
+    auto tool_id = tool->GetId();
     long tool_data_id = AddToolData(clSideBarToolData(bmpname));
     TOOL_SET_USER_DATA(tool, tool_data_id);
 
@@ -205,15 +258,16 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
         [label, this](wxCommandEvent& event) {
             wxUnusedVar(event);
             int book_index = GetPageIndex(label);
-            m_book->ChangeSelection(book_index);
+            ChangeSelection(book_index);
         },
         tool->GetId());
 
     m_toolbar->Bind(
         wxEVT_UPDATE_UI,
-        [label, this](wxUpdateUIEvent& event) {
+        [label, tool_id, this](wxUpdateUIEvent& event) {
             int book_index = GetPageIndex(label);
-            event.Check(m_book->GetSelection() == book_index);
+            bool is_checked = m_book->GetSelection() == book_index;
+            event.Check(is_checked);
         },
         tool->GetId());
 }
@@ -244,7 +298,7 @@ void clSideBarCtrl::DoRemovePage(size_t pos, bool delete_it)
 
     // sync the selection between the book and the button bar
     if (was_selection && m_book->GetPageCount()) {
-        m_book->ChangeSelection(0);
+        ChangeSelection(0);
     }
 }
 
@@ -254,11 +308,32 @@ void clSideBarCtrl::DeletePage(size_t pos) { DoRemovePage(pos, true); }
 
 void clSideBarCtrl::SetSelection(size_t pos) { ChangeSelection(pos); }
 
+int clSideBarCtrl::GetToolIdForBookPos(int book_index) const
+{
+    if (book_index < 0 || book_index >= (int)m_book->GetPageCount()) {
+        return wxNOT_FOUND;
+    }
+
+    wxString label = m_book->GetPageText(book_index);
+    for (size_t i = 0; i < m_toolbar->GetToolCount(); ++i) {
+        auto tool = m_toolbar->GetToolByPos(i);
+        if (tool->GetLabel() == label) {
+            return tool->GetId();
+        }
+    }
+    return wxNOT_FOUND;
+}
+
 void clSideBarCtrl::ChangeSelection(size_t pos)
 {
     if (pos >= m_book->GetPageCount()) {
         return;
     }
+
+    int new_tool_id = GetToolIdForBookPos(pos);
+    int old_tool_id = GetToolIdForBookPos(m_book->GetSelection());
+    CallAfter(&clSideBarCtrl::MSWUpdateToolbarBitmaps, new_tool_id, old_tool_id);
+    m_selectedToolId = new_tool_id;
     m_book->ChangeSelection(pos);
 }
 
@@ -294,7 +369,10 @@ void clSideBarCtrl::SetPageBitmap(size_t pos, const wxString& bmpname)
     if (cd) {
         const_cast<clSideBarToolData*>(cd)->data = bmpname;
     }
-    TOOL_SET_BITMAP(tool, ::clLoadSidebarBitmap(bmpname, m_toolbar));
+
+    wxBitmap light_theme_bmp, dark_theme_bmp;
+    ::clLoadSidebarBitmap(bmpname, m_toolbar, &light_theme_bmp, &dark_theme_bmp);
+    TOOL_SET_BITMAP(tool, clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp);
 }
 
 wxString clSideBarCtrl::GetPageText(size_t pos) const { return m_book->GetPageText(pos); }

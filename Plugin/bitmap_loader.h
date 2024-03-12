@@ -223,7 +223,8 @@ public:
 };
 
 /// Helper load function
-wxBitmap WXDLLIMPEXP_SDK clLoadSidebarBitmap(const wxString& name, wxWindow* win);
+WXDLLIMPEXP_SDK void clLoadSidebarBitmap(const wxString& name, wxWindow* win, wxBitmap* light_theme_bmp,
+                                         wxBitmap* dark_theme_bmp);
 
 /// Clear the sidebar bitmaps cache
 void WXDLLIMPEXP_SDK clClearSidebarBitmapCache();

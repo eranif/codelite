@@ -449,12 +449,7 @@ clEditor::clEditor(wxWindow* parent)
     Hide();
 #endif
 
-#ifdef __WXGTK3__
-    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_DEFAULT);
-#else
     wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
-#endif
-
     MSWSetWindowDarkTheme(this);
 
     Bind(wxEVT_IDLE, &clEditor::OnIdle, this);

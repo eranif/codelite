@@ -67,6 +67,7 @@ bool IsWindows11DarkMode()
 }
 } // namespace
 
+#if USE_NATIVETOOLBAR
 // SideBarToolBar
 SideBarToolBar::SideBarToolBar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
@@ -85,6 +86,7 @@ SideBarToolBar::SideBarToolBar(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxUnusedVar(size);
     wxToolBar::Create(parent, id, pos, wxDefaultSize, tb_style);
 }
+#endif
 
 // -----------------------
 // SideBar control
@@ -294,7 +296,11 @@ int clSideBarCtrl::GetToolIdForBookPos(int book_index) const
 
     wxString label = m_book->GetPageText(book_index);
     for (size_t i = 0; i < m_toolbar->GetToolCount(); ++i) {
+#if USE_NATIVETOOLBAR
         auto tool = m_toolbar->GetToolByPos(i);
+#else
+        auto tool = m_toolbar->FindToolByIndex(i);
+#endif
         if (tool->GetLabel() == label) {
             return tool->GetId();
         }

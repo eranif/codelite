@@ -161,7 +161,7 @@ wxBorder get_border_simple_theme_aware_bit()
 #ifdef __WXMAC__
     return wxBORDER_NONE;
 #elif defined(__WXGTK__)
-    return wxBORDER_STATIC;
+    return wxBORDER_DEFAULT;
 #else
     // Windows
     if (clSystemSettings::GetAppearance().IsDark()) {

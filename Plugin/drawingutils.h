@@ -185,7 +185,7 @@ public:
     /**
      * @brief get colours object
      */
-    static clColours& GetColours(bool darkColours = false);
+    static clColours& GetColours();
 
     /// return GCDC, this function never fails
     static wxDC& GetGCDC(wxDC& dc, wxGCDC& gdc);

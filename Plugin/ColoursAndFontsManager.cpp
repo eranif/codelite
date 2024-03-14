@@ -46,18 +46,18 @@ void AddLexerKeywords(LexerConf::Ptr_t lexer, int setIndex, const std::vector<wx
     wxArrayString arrWords = ::wxStringTokenize(curwords, " ", wxTOKEN_STRTOK);
     // use std::set to make sure that the elements are sorted
     std::set<wxString> uniqueSet;
-    for(size_t i = 0; i < arrWords.size(); ++i) {
+    for (size_t i = 0; i < arrWords.size(); ++i) {
         uniqueSet.insert(arrWords.Item(i));
     }
 
     // add the new words
-    for(const wxString& new_word : words) {
+    for (const wxString& new_word : words) {
         uniqueSet.insert(new_word);
     }
 
     // serialise them back to space delimited string
     curwords.clear();
-    for(const auto& word : uniqueSet) {
+    for (const auto& word : uniqueSet) {
         curwords << word << " ";
     }
     lexer->SetKeyWords(curwords, setIndex);
@@ -68,7 +68,7 @@ void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
     wxString spec = lexer->GetFileSpec();
     wxString as_str;
     auto extensions = ::wxStringTokenize(spec, ";,", wxTOKEN_STRTOK);
-    if(extensions.Index(extension) != wxNOT_FOUND) {
+    if (extensions.Index(extension) != wxNOT_FOUND) {
         return;
     }
     extensions.Add(extension);
@@ -83,7 +83,7 @@ void RemoveFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
     auto extensions = ::wxStringTokenize(spec, ";,", wxTOKEN_STRTOK);
     int where = extensions.Index(extension);
 
-    if(where == wxNOT_FOUND) {
+    if (where == wxNOT_FOUND) {
         return;
     }
 
@@ -119,16 +119,16 @@ ColoursAndFontsManager& ColoursAndFontsManager::Get()
 
 void ColoursAndFontsManager::Load()
 {
-    if(m_initialized)
+    if (m_initialized)
         return;
     m_lexersMap.clear();
     m_initialized = true;
     m_globalTheme = DEFAULT_THEME;
 
     // Load the global settings
-    if(GetConfigFile().FileExists()) {
+    if (GetConfigFile().FileExists()) {
         JSON root(GetConfigFile());
-        if(root.isOk()) {
+        if (root.isOk()) {
             m_globalTheme = root.toElement().namedObject("m_globalTheme").toString("Atom One-Dark");
         }
     }
@@ -143,7 +143,7 @@ void ColoursAndFontsManager::Load()
 wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString& lexerName) const
 {
     const wxString lowerCaseName = lexerName.Lower();
-    if(m_lexersMap.count(lowerCaseName) == 0) {
+    if (m_lexersMap.count(lowerCaseName) == 0) {
         return {};
     }
 
@@ -152,7 +152,7 @@ wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString&
     wxArrayString themes;
     themes.reserve(lexers.size());
 
-    for(size_t i = 0; i < lexers.size(); ++i) {
+    for (size_t i = 0; i < lexers.size(); ++i) {
         themes.Add(lexers[i]->GetThemeName());
     }
 
@@ -164,7 +164,7 @@ wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString&
 LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, const wxString& theme) const
 {
     auto iter = m_lexersMap.find(lexerName.Lower());
-    if(iter == m_lexersMap.end()) {
+    if (iter == m_lexersMap.end()) {
         clWARNING() << "No lexer available for:" << lexerName << endl;
         clWARNING() << "Using default lexer:" << m_defaultLexer->GetName() << endl;
         return m_defaultLexer;
@@ -180,30 +180,30 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
     // based on that information, extract the active theme
     auto textThemeIter = m_lexersMap.find("text");
     LexerConf::Ptr_t defaultTextLexer(nullptr);
-    for(auto textTheme : textThemeIter->second) {
-        if(textTheme->IsActive()) {
+    for (auto textTheme : textThemeIter->second) {
+        if (textTheme->IsActive()) {
             defaultTextLexer = textTheme;
         }
     }
 
-    if(theme.empty()) {
+    if (theme.empty()) {
         // return the active theme
         auto& allLexers = iter->second;
-        for(auto lexer : allLexers) {
+        for (auto lexer : allLexers) {
 
-            if(!firstLexer) {
+            if (!firstLexer) {
                 firstLexer = lexer;
             }
-            if(!defaultLexer && lexer->GetThemeName() == DEFAULT_THEME) {
+            if (!defaultLexer && lexer->GetThemeName() == DEFAULT_THEME) {
                 defaultLexer = lexer;
             }
-            if(!defaultDarkLexer && lexer->IsDark()) {
+            if (!defaultDarkLexer && lexer->IsDark()) {
                 defaultDarkLexer = lexer;
             }
-            if(!defaultLightLexer && !lexer->IsDark()) {
+            if (!defaultLightLexer && !lexer->IsDark()) {
                 defaultLightLexer = lexer;
             }
-            if(lexer->IsActive()) {
+            if (lexer->IsActive()) {
                 return lexer;
             }
         }
@@ -211,16 +211,16 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
         //
         // No match, we use this logic to determine the best lexer:
         //
-        if(defaultDarkLexer && defaultTextLexer && defaultTextLexer->IsDark()) {
+        if (defaultDarkLexer && defaultTextLexer && defaultTextLexer->IsDark()) {
             // return the first dark lexer for this language
             return defaultDarkLexer;
-        } else if(defaultLightLexer && defaultTextLexer && !defaultTextLexer->IsDark()) {
+        } else if (defaultLightLexer && defaultTextLexer && !defaultTextLexer->IsDark()) {
             // return the first light lexer for this language
             return defaultLightLexer;
-        } else if(defaultLexer) {
+        } else if (defaultLexer) {
             // return the lexer that matches the DEFAULT_THEME theme
             return defaultLexer;
-        } else if(firstLexer) {
+        } else if (firstLexer) {
             // return the first one that we found
             return firstLexer;
         } else {
@@ -231,11 +231,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
     } else {
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         LexerConf::Ptr_t themeDefaultLexer = nullptr;
-        for(size_t i = 0; i < lexers.size(); ++i) {
-            if(lexers[i]->GetThemeName() == DEFAULT_THEME) {
+        for (size_t i = 0; i < lexers.size(); ++i) {
+            if (lexers[i]->GetThemeName() == DEFAULT_THEME) {
                 themeDefaultLexer = lexers[i];
             }
-            if(lexers[i]->GetThemeName() == theme) {
+            if (lexers[i]->GetThemeName() == theme) {
                 return lexers[i];
             }
         }
@@ -251,15 +251,15 @@ void ColoursAndFontsManager::Save(const wxFileName& lexer_json)
     ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.begin();
     JSON root(cJSON_Array);
     JSONItem element = root.toElement();
-    for(; iter != m_lexersMap.end(); ++iter) {
+    for (; iter != m_lexersMap.end(); ++iter) {
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
-        for(size_t i = 0; i < lexers.size(); ++i) {
+        for (size_t i = 0; i < lexers.size(); ++i) {
             element.arrayAppend(lexers.at(i)->ToJSON(for_export));
         }
     }
 
     wxFileName output_file = lexer_json;
-    if(!output_file.IsOk()) {
+    if (!output_file.IsOk()) {
         output_file = wxFileName(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
         output_file.AppendDir("lexers");
     }
@@ -267,7 +267,7 @@ void ColoursAndFontsManager::Save(const wxFileName& lexer_json)
 
     root.save(output_file);
     // store the global font as well
-    if(m_globalFont.IsOk()) {
+    if (m_globalFont.IsOk()) {
         clConfig::Get().Write("GlobalThemeFont", m_globalFont);
     }
     SaveGlobalSettings();
@@ -279,9 +279,9 @@ void ColoursAndFontsManager::Save(const wxFileName& lexer_json)
 wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
 {
     wxArrayString names;
-    for(size_t i = 0; i < m_allLexers.size(); ++i) {
+    for (size_t i = 0; i < m_allLexers.size(); ++i) {
         LexerConf::Ptr_t lexer = m_allLexers.at(i);
-        if(names.Index(lexer->GetName()) == wxNOT_FOUND) {
+        if (names.Index(lexer->GetName()) == wxNOT_FOUND) {
             names.Add(lexer->GetName());
         }
     }
@@ -291,7 +291,7 @@ wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
 
 LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filename) const
 {
-    if(filename.IsEmpty())
+    if (filename.IsEmpty())
         return GetLexer("text");
 
     wxFileName fnFileName(filename);
@@ -306,21 +306,21 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     const wxString& theme_name = GetGlobalTheme();
 
     // Scan the list of lexers, locate the active lexer for it and return it
-    for(auto lexer : m_allLexers) {
+    for (auto lexer : m_allLexers) {
         wxString fileMask = lexer->GetFileSpec();
-        if(FileUtils::WildMatch(fileMask, filename)) {
-            if(lexer->IsActive()) {
+        if (FileUtils::WildMatch(fileMask, filename)) {
+            if (lexer->IsActive()) {
                 return lexer;
 
-            } else if(!firstLexer) {
+            } else if (!firstLexer) {
                 firstLexer = lexer;
 
-            } else if(!defaultLexer && lexer->GetThemeName() == DEFAULT_THEME) {
+            } else if (!defaultLexer && lexer->GetThemeName() == DEFAULT_THEME) {
                 defaultLexer = lexer;
             }
 
             // try to find a theme that matches the current one
-            if(!firstLexerForTheme && lexer->GetThemeName() == theme_name) {
+            if (!firstLexerForTheme && lexer->GetThemeName() == theme_name) {
                 firstLexerForTheme = lexer;
             }
         }
@@ -330,9 +330,9 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     // the file mask. However, if we did find a "firstLexer" it means
     // that we do have a lexer that matches the file extension, its just that it is not
     // set as active
-    if(firstLexerForTheme) {
+    if (firstLexerForTheme) {
         return firstLexerForTheme;
-    } else if(firstLexer) {
+    } else if (firstLexer) {
         return firstLexer;
     }
 
@@ -340,12 +340,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     // Use the FileExtManager to get the file type by examinig its content
     LexerConf::Ptr_t lexerByContent; // Null by default
     FileExtManager::FileType fileType = FileExtManager::TypeOther;
-    if(!FileExtManager::AutoDetectByContent(filename, fileType)) {
+    if (!FileExtManager::AutoDetectByContent(filename, fileType)) {
         fileType = FileExtManager::GetType(filename);
     }
 
-    if(fileType != FileExtManager::TypeOther) {
-        switch(fileType) {
+    if (fileType != FileExtManager::TypeOther) {
+        switch (fileType) {
         case FileExtManager::TypeShellScript:
             lexerByContent = GetLexer("script");
             break;
@@ -391,14 +391,14 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     }
 
     // If we managed to find a lexer by content, use it
-    if(lexerByContent)
+    if (lexerByContent)
         return lexerByContent;
 
     // If we reached here, it means we could not locate an active lexer for this file type
-    if(defaultLexer) {
+    if (defaultLexer) {
         return defaultLexer;
 
-    } else if(firstLexer) {
+    } else if (firstLexer) {
         return firstLexer;
 
     } else {
@@ -423,9 +423,9 @@ void ColoursAndFontsManager::Clear()
 void ColoursAndFontsManager::SetActiveTheme(const wxString& lexerName, const wxString& themeName)
 {
     wxArrayString themes = GetAvailableThemesForLexer(lexerName);
-    for(size_t i = 0; i < themes.GetCount(); ++i) {
+    for (size_t i = 0; i < themes.GetCount(); ++i) {
         LexerConf::Ptr_t lexer = GetLexer(lexerName, themes.Item(i));
-        if(lexer && lexer->GetName() == lexerName) {
+        if (lexer && lexer->GetName() == lexerName) {
             lexer->SetIsActive(lexer->GetThemeName() == themeName);
         }
     }
@@ -446,7 +446,7 @@ void ColoursAndFontsManager::SaveGlobalSettings(bool notify)
     wxFileName fnSettings = GetConfigFile();
     root.save(fnSettings.GetFullPath());
 
-    if(notify) {
+    if (notify) {
         wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
         EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
     }
@@ -478,7 +478,7 @@ void ColoursAndFontsManager::RestoreDefaults()
     {
         wxLogNull noLog;
         wxFileName fnLexersJSON(clStandardPaths::Get().GetUserLexersDir(), "lexers.json");
-        if(fnLexersJSON.Exists()) {
+        if (fnLexersJSON.Exists()) {
             clRemoveFile(fnLexersJSON.GetFullPath());
         }
     }
@@ -492,7 +492,7 @@ void ColoursAndFontsManager::RestoreDefaults()
 
 wxString ColoursAndFontsManager::ImportEclipseTheme(const wxString& theme_file)
 {
-    if(!theme_file.IsEmpty()) {
+    if (!theme_file.IsEmpty()) {
         ThemeImporterManager importer;
         return importer.Import(theme_file);
     }
@@ -508,7 +508,7 @@ bool ColoursAndFontsManager::IsBackupRequired() const
 
 void ColoursAndFontsManager::BackupUserOldJsonFileIfNeeded()
 {
-    if(IsBackupRequired()) {
+    if (IsBackupRequired()) {
         wxFileName fnUserLexers(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
         fnUserLexers.AppendDir("lexers");
         wxString user_settings = fnUserLexers.GetFullPath();
@@ -551,16 +551,16 @@ void ColoursAndFontsManager::LoadLexersFromFile()
 void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool force)
 {
     StyleProperty& defaultProp = lexer->GetProperty(0); // Default
-    if(force || m_lexersVersion < 1) {
+    if (force || m_lexersVersion < 1) {
         // adjust line numbers
-        if(lexer->IsDark()) {
+        if (lexer->IsDark()) {
             StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
-            if(!defaultProp.IsNull()) {
-                if(lexer->GetName() == "c++") {
+            if (!defaultProp.IsNull()) {
+                if (lexer->GetName() == "c++") {
                     defaultProp.SetFgColour(
                         wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
                 }
-                if(!lineNumbers.IsNull()) {
+                if (!lineNumbers.IsNull()) {
                     lineNumbers.SetFgColour(
                         wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
                     lineNumbers.SetBgColour(defaultProp.GetBgColour());
@@ -570,14 +570,14 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
         } else {
             lexer->SetLineNumbersFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
             StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
-            if(!lineNumbers.IsNull()) {
+            if (!lineNumbers.IsNull()) {
                 lineNumbers.SetBgColour(defaultProp.GetBgColour());
             }
 
             // don't adjust PHP and HTML default colours, since they also affects the various operators
             // foreground colours
-            if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
-               lexer->GetName() != "cmake" && lexer->GetName() != "xml") {
+            if (lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
+                lexer->GetName() != "cmake" && lexer->GetName() != "xml") {
                 lexer->SetDefaultFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
             }
         }
@@ -586,11 +586,11 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
     //=====================================================================
     // Second upgrade stage: adjust whitespace colour and fold margin
     //=====================================================================
-    if(force || m_lexersVersion < 2) {
+    if (force || m_lexersVersion < 2) {
         // adjust line numbers
         StyleProperty& fold = lexer->GetProperty(FOLD_MARGIN_ATTR_ID);       // fold margin
         StyleProperty& whitespace = lexer->GetProperty(WHITE_SPACE_ATTR_ID); // whitespace
-        if(lexer->IsDark()) {
+        if (lexer->IsDark()) {
             wxColour newCol = wxColour(defaultProp.GetBgColour()).ChangeLightness(110);
 
             fold.SetFgColour(newCol.GetAsString(wxC2S_HTML_SYNTAX));
@@ -609,24 +609,24 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
     //=====================================================================
     // Third upgrade stage: adjust whitespace colour and fold margin
     //=====================================================================
-    if(force || m_lexersVersion < 3) {
+    if (force || m_lexersVersion < 3) {
         // remove the *.js;*.javascript from the C++ lexer
-        if(lexer->GetName() == "c++") {
+        if (lexer->GetName() == "c++") {
             lexer->SetFileSpec("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++");
         }
     }
 
-    if((lexer->GetName() == "c++") && (lexer->GetFileSpec().IsEmpty() || !lexer->GetFileSpec().Contains("*.cpp"))) {
+    if ((lexer->GetName() == "c++") && (lexer->GetFileSpec().IsEmpty() || !lexer->GetFileSpec().Contains("*.cpp"))) {
         lexer->SetFileSpec("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++;*.ino");
     }
 
     // Add Arduino sketches files as C++ (*.ino)
-    if(lexer->GetName() == "c++" && !lexer->GetFileSpec().Contains(".ino")) {
+    if (lexer->GetName() == "c++" && !lexer->GetFileSpec().Contains(".ino")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ino");
     }
 
     // Upgrade CSS colours
-    if((force || m_lexersVersion < 4) && lexer->GetName().Lower() == "css") {
+    if ((force || m_lexersVersion < 4) && lexer->GetName().Lower() == "css") {
         // adjust line numbers
         bool isDark = lexer->IsDark();
         StyleProperty& var = lexer->GetProperty(wxSTC_CSS_VARIABLE);
@@ -634,23 +634,23 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
         StyleProperty& identifier2 = lexer->GetProperty(wxSTC_CSS_IDENTIFIER2);
         StyleProperty& identifier3 = lexer->GetProperty(wxSTC_CSS_IDENTIFIER3);
         StyleProperty& oper = lexer->GetProperty(wxSTC_CSS_OPERATOR);
-        if(!var.IsNull()) {
-            if(!identifier.IsNull()) {
+        if (!var.IsNull()) {
+            if (!identifier.IsNull()) {
                 identifier.SetFgColour(var.GetFgColour());
             }
-            if(!identifier2.IsNull()) {
+            if (!identifier2.IsNull()) {
                 identifier2.SetFgColour(var.GetFgColour());
             }
-            if(!identifier3.IsNull()) {
+            if (!identifier3.IsNull()) {
                 identifier3.SetFgColour(var.GetFgColour());
             }
-            if(!oper.IsNull()) {
+            if (!oper.IsNull()) {
                 oper.SetFgColour(isDark ? "WHITE" : "BLACK");
             }
         }
     }
 
-    if(force || m_lexersVersion < 5) {
+    if (force || m_lexersVersion < 5) {
         // Indentation guides (style #37)
         StyleProperty& indentGuides = lexer->GetProperty(37);
         indentGuides.SetFgColour(defaultProp.GetBgColour());
@@ -665,34 +665,27 @@ void ColoursAndFontsManager::SetTheme(const wxString& themeName)
 
     bool isDark = lexer->IsDark();
     wxString fallbackTheme;
-    if(isDark) {
+    if (isDark) {
         fallbackTheme = "Atom One-Dark";
     } else {
         fallbackTheme = "Atom One Light";
     }
 
     const wxArrayString& lexers = GetAllLexersNames();
-    for(size_t i = 0; i < lexers.size(); ++i) {
+    for (size_t i = 0; i < lexers.size(); ++i) {
         wxArrayString themesForLexer = GetAvailableThemesForLexer(lexers.Item(i));
-        if(themesForLexer.Index(themeName) == wxNOT_FOUND) {
+        if (themesForLexer.Index(themeName) == wxNOT_FOUND) {
             SetActiveTheme(lexers.Item(i), fallbackTheme);
         } else {
             SetActiveTheme(lexers.Item(i), themeName);
         }
     }
     SetGlobalTheme(themeName);
-
-    clColours colours;
-    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
-    if(useCustomColour) {
-        wxColour bgColour = GetBackgroundColourFromLexer(lexer);
-        clConfig::Get().Write("BaseColour", bgColour);
-    }
 }
 
 void ColoursAndFontsManager::LoadJSON(const wxFileName& path)
 {
-    if(!path.FileExists())
+    if (!path.FileExists())
         return;
 
     clDEBUG() << "==> Loading lexer  <==" << endl;
@@ -705,7 +698,7 @@ void ColoursAndFontsManager::LoadJSON(const wxFileName& path)
     clDEBUG() << "Found" << vec.size() << "lexers" << endl;
 
     clDEBUG() << "Loading..." << endl;
-    for(const auto& json : vec) {
+    for (const auto& json : vec) {
         DoAddLexer(json);
     }
     clDEBUG() << "==> Success  <==" << endl;
@@ -717,7 +710,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     lexer->FromJSON(json);
 
     wxString lexerName = lexer->GetName().Lower();
-    if(lexerName.IsEmpty())
+    if (lexerName.IsEmpty())
         return NULL;
 
     // ensure that the theme name is capitalized - this helps
@@ -727,7 +720,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     lexer->SetThemeName(themeName);
 
     // Fix C++ lexer
-    if(lexer->GetName() == "c++") {
+    if (lexer->GetName() == "c++") {
         AddLexerKeywords(lexer, 0, { "override", "final", "constexpr", "co_return", "co_await", "co_yield" });
         wxString filespec = lexer->GetFileSpec();
         filespec.Replace("*.javascript", wxEmptyString);
@@ -737,76 +730,77 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
 
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
-    if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
+    if (lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
         lexer->SetFileSpec("*.java");
     }
 
     // Append *.sqlite to the SQL lexer if missing
-    if(lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
+    if (lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");
     }
 
     // Hack2: since we now provide our own PHP and javaScript lexer, remove the PHP/JS extensions from
     // the HTML lexer
-    if(lexer->GetName() == "html" && (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {
+    if (lexer->GetName() == "html" &&
+        (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {
         lexer->SetFileSpec("*.htm;*.html;*.xhtml");
     }
 
     // Hack3: all the HTML support to PHP which have much more colour themes
-    if(lexer->GetName() == "html" && lexer->GetFileSpec().Contains(".html")) {
+    if (lexer->GetName() == "html" && lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec("*.vbs;*.vbe;*.wsf;*.wsc;*.asp;*.aspx");
     }
 
     // Hack5: all the remove *.scss from the css lexer (it now has its own lexer)
-    if(lexer->GetName() == "css" && lexer->GetFileSpec().Contains(".scss")) {
+    if (lexer->GetName() == "css" && lexer->GetFileSpec().Contains(".scss")) {
         lexer->SetFileSpec("*.css");
     }
 
     // Add *.less file extension to the css lexer
-    if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".less")) {
+    if (lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".less")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.less");
     }
 
-    if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
+    if (lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
 
-    if(lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
+    if (lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
         lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
     }
 
-    if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".php5")) {
+    if (lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".php5")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.php5");
     }
 
-    if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".ctp")) {
+    if (lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".ctp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ctp");
     }
 
     // Add wxcp file extension to the JavaScript lexer
-    if(lexer->GetName() == "javascript") {
+    if (lexer->GetName() == "javascript") {
 #if wxCHECK_VERSION(3, 1, 0)
         // remove the JSON file from the JavaScript
-        if(lexer->GetFileSpec().Contains("*.json")) {
+        if (lexer->GetFileSpec().Contains("*.json")) {
             auto specs = ::wxStringTokenize(lexer->GetFileSpec(), ";,", wxTOKEN_STRTOK);
             int where = specs.Index("*.json");
-            if(where != wxNOT_FOUND) {
+            if (where != wxNOT_FOUND) {
                 specs.RemoveAt(where);
             }
             lexer->SetFileSpec(wxJoin(specs, ';'));
         }
 #else
         // wxCrafter files
-        if(!lexer->GetFileSpec().Contains(".wxcp")) {
+        if (!lexer->GetFileSpec().Contains(".wxcp")) {
             lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
         }
 
 #endif
-        if(!lexer->GetFileSpec().Contains(".qml")) {
+        if (!lexer->GetFileSpec().Contains(".qml")) {
             lexer->SetFileSpec(lexer->GetFileSpec() + ";*.qml");
         }
         // typescript
-        if(!lexer->GetFileSpec().Contains(".ts")) {
+        if (!lexer->GetFileSpec().Contains(".ts")) {
             lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ts");
         }
         const wxString ts_keywords = "break as any "
@@ -855,16 +849,16 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     // update script lexer with additional keywords
-    if(lexer->GetName() == "script") {
+    if (lexer->GetName() == "script") {
         AddLexerKeywords(lexer, 0, { "return", "exit", "local", "function" });
     }
 
-    if(lexer->GetName() == "text") {
+    if (lexer->GetName() == "text") {
         lexer->SetFileSpec(wxEmptyString);
     }
 
     // Set the JavaScript keywords
-    if(lexer->GetName() == "php" && !lexer->GetKeyWords(1).Contains("instanceof")) {
+    if (lexer->GetName() == "php" && !lexer->GetKeyWords(1).Contains("instanceof")) {
         lexer->SetKeyWords(
             "break do instanceof typeof case else new var catch finally return void continue for switch while "
             "debugger function this with default if throw delete in try abstract  export interface  static "
@@ -877,7 +871,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
             1);
     }
 
-    if(lexer->GetName() == "python") {
+    if (lexer->GetName() == "python") {
         AddLexerKeywords(lexer, 0, { "await", "async", "True", "False", "None", "pass", "self" });
         lexer->SetKeyWords("", 1);
         lexer->SetKeyWords("", 2);
@@ -885,45 +879,45 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         lexer->SetKeyWords("", 4);
         auto& sp_word_0 = lexer->GetProperty(wxSTC_P_WORD);
         auto& sp_word_2 = lexer->GetProperty(wxSTC_P_WORD2);
-        if(sp_word_2.GetFgColour() == sp_word_0.GetFgColour()) {
+        if (sp_word_2.GetFgColour() == sp_word_0.GetFgColour()) {
             // old configuration, dont set the variables fg colour to the same colour as the keywords
             sp_word_2.SetFgColour(lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour());
         }
     }
 
     // make sure we include Rakefile as a Ruby file
-    if(lexer->GetName() == "ruby") {
-        if(!lexer->GetFileSpec().Contains("Rakefile")) {
+    if (lexer->GetName() == "ruby") {
+        if (!lexer->GetFileSpec().Contains("Rakefile")) {
             lexer->SetFileSpec(lexer->GetFileSpec() + ";Rakefile");
         }
     }
 
-    if(lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
+    if (lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*akefile.in;*akefile.am");
     }
 
-    if(lexer->GetName() == "properties") {
+    if (lexer->GetName() == "properties") {
         AddFileExtension(lexer, "*.toml");
     }
 
     // .clangd is of type "yaml"
-    if(lexer->GetName() == "yaml") {
+    if (lexer->GetName() == "yaml") {
         AddFileExtension(lexer, ".clangd");
     }
 
-    if(lexer->GetName() == "fortran") {
+    if (lexer->GetName() == "fortran") {
         RemoveFileExtension(lexer, "*f");
         AddFileExtension(lexer, "*.f");
     }
 
-    if(lexer->GetName() == "json") {
+    if (lexer->GetName() == "json") {
         AddFileExtension(lexer, "*.conf");
     }
 
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 
-    if(m_lexersMap.count(lexerName) == 0) {
+    if (m_lexersMap.count(lexerName) == 0) {
         m_lexersMap.insert({ lexerName, ColoursAndFontsManager::Vec_t() });
     }
 
@@ -934,13 +928,13 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     // name
     ColoursAndFontsManager::Vec_t::iterator iter =
         std::find_if(vec.begin(), vec.end(), LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
-    if(iter != vec.end()) {
+    if (iter != vec.end()) {
         vec.erase(iter);
     }
 
     iter = std::find_if(m_allLexers.begin(), m_allLexers.end(),
                         LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
-    if(iter != m_allLexers.end()) {
+    if (iter != m_allLexers.end()) {
         m_allLexers.erase(iter);
     }
     vec.push_back(lexer);
@@ -959,9 +953,9 @@ void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
     this->m_globalFont = font;
 
     // Loop for every lexer and update the font per style
-    for(auto lexer : m_allLexers) {
+    for (auto lexer : m_allLexers) {
         auto& props = lexer->GetLexerProperties();
-        for(auto& sp : props) {
+        for (auto& sp : props) {
             sp.SetFontInfoDesc(FontUtils::GetFontInfo(font));
         }
     }
@@ -972,7 +966,7 @@ const wxFont& ColoursAndFontsManager::GetGlobalFont() const { return this->m_glo
 bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, const wxArrayString& names) const
 {
     wxStringSet_t M;
-    for(size_t i = 0; i < names.size(); ++i) {
+    for (size_t i = 0; i < names.size(); ++i) {
         M.insert(names.Item(i).Lower());
     }
 
@@ -980,7 +974,7 @@ bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, co
     JSONItem arr = root.toElement();
     std::vector<LexerConf::Ptr_t> Lexers;
     std::for_each(m_allLexers.begin(), m_allLexers.end(), [&](LexerConf::Ptr_t lexer) {
-        if(M.empty() || M.count(lexer->GetThemeName().Lower())) {
+        if (M.empty() || M.count(lexer->GetThemeName().Lower())) {
             Lexers.push_back(lexer);
         }
     });
@@ -991,15 +985,15 @@ bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, co
 bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool prompt)
 {
     JSON root(inputFile);
-    if(!root.isOk()) {
+    if (!root.isOk()) {
         clWARNING() << "Invalid lexers input file:" << inputFile << clEndl;
         return false;
     }
 
-    if(prompt) {
-        if(::wxMessageBox(
-               _("Importing syntax highlight file will override any duplicate syntax highlight settings.\nContinue?"),
-               "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT, NULL) != wxYES) {
+    if (prompt) {
+        if (::wxMessageBox(
+                _("Importing syntax highlight file will override any duplicate syntax highlight settings.\nContinue?"),
+                "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT, NULL) != wxYES) {
             return false;
         }
     }
@@ -1007,7 +1001,7 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
     std::vector<LexerConf::Ptr_t> Lexers;
     JSONItem arr = root.toElement();
     int arrSize = arr.arraySize();
-    for(int i = 0; i < arrSize; ++i) {
+    for (int i = 0; i < arrSize; ++i) {
         JSONItem lexerObj = arr.arrayItem(i);
         LexerConf::Ptr_t lexer(new LexerConf());
         lexer->FromJSON(lexerObj);
@@ -1015,22 +1009,22 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
     }
 
     std::for_each(Lexers.begin(), Lexers.end(), [&](LexerConf::Ptr_t lexer) {
-        if(m_lexersMap.count(lexer->GetName()) == 0) {
+        if (m_lexersMap.count(lexer->GetName()) == 0) {
             m_lexersMap[lexer->GetName()] = Vec_t();
         }
         Vec_t& v = m_lexersMap[lexer->GetName()];
         Vec_t::iterator iter = std::find_if(
             v.begin(), v.end(), [&](LexerConf::Ptr_t l) { return l->GetThemeName() == lexer->GetThemeName(); });
-        if(prompt) {
+        if (prompt) {
             // Override this theme with the new one
-            if(iter != v.end()) {
+            if (iter != v.end()) {
                 // erase old lexer
                 v.erase(iter);
             }
             v.push_back(lexer);
         } else {
             // We dont have this theme, add it
-            if(iter == v.end()) {
+            if (iter == v.end()) {
                 v.push_back(lexer);
             }
         }
@@ -1061,25 +1055,20 @@ wxArrayString ColoursAndFontsManager::GetAllThemes() const
 void ColoursAndFontsManager::OnAdjustTheme(clCommandEvent& event)
 {
     event.Skip();
-    if(event.GetInt() != XRCID("adjust-current-theme")) {
+    if (event.GetInt() != XRCID("adjust-current-theme")) {
         return;
     }
     event.Skip(false);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(!lexer) {
+    if (!lexer) {
         return;
     }
 
     wxColour bgColour = GetBackgroundColourFromLexer(lexer);
-    if(!bgColour.IsOk()) {
+    if (!bgColour.IsOk()) {
         return;
     }
-
-    // Adjust the colours
-    // Save the base colour changes
-    clConfig::Get().Write("BaseColour", bgColour);
-    clConfig::Get().Write("UseCustomBaseColour", true);
 
     // Notify this change
     clCommandEvent evt(wxEVT_CMD_COLOURS_FONTS_UPDATED);
@@ -1088,11 +1077,11 @@ void ColoursAndFontsManager::OnAdjustTheme(clCommandEvent& event)
 
 wxColour ColoursAndFontsManager::GetBackgroundColourFromLexer(LexerConf::Ptr_t lexer) const
 {
-    if(!lexer) {
+    if (!lexer) {
         return wxNullColour;
     }
     wxColour bgColour;
-    if(lexer->IsDark()) {
+    if (lexer->IsDark()) {
         bgColour = lexer->GetProperty(0).GetBgColour();
         bgColour = bgColour.ChangeLightness(110);
     } else {
@@ -1105,7 +1094,7 @@ wxColour ColoursAndFontsManager::GetBackgroundColourFromLexer(LexerConf::Ptr_t l
 bool ColoursAndFontsManager::IsDarkTheme() const
 {
     LexerConf::Ptr_t lexer = GetLexer("text");
-    if(!lexer) {
+    if (!lexer) {
         return false;
     }
     return lexer->IsDark();
@@ -1115,8 +1104,8 @@ void ColoursAndFontsManager::SetThemeTextSelectionColours(const wxString& theme_
                                                           const wxColour& fg, bool useCustomerFgColour)
 {
     wxString theme_name_lc = theme_name.Lower();
-    for(auto& lexer : m_allLexers) {
-        if(lexer->GetThemeName().CmpNoCase(theme_name) == 0) {
+    for (auto& lexer : m_allLexers) {
+        if (lexer->GetThemeName().CmpNoCase(theme_name) == 0) {
             auto& sp = lexer->GetProperty(SEL_TEXT_ATTR_ID);
             sp.SetBgColour(bg.GetAsString(wxC2S_HTML_SYNTAX));
             sp.SetFgColour(fg.GetAsString(wxC2S_HTML_SYNTAX));
@@ -1130,7 +1119,7 @@ wxFont ColoursAndFontsManager::GetFixedFont(bool small) const
     auto lexer = GetLexer("text");
     auto font = lexer->GetFontForStyle(0, EventNotifier::Get()->TopFrame());
 #ifndef __WXMAC__
-    if(small) {
+    if (small) {
         font.SetFractionalPointSize(font.GetPointSize() * 0.9);
     }
 #else
@@ -1150,7 +1139,7 @@ void ColoursAndFontsManager::LoadLexersFromDb()
     wxFileName db_file{ clStandardPaths::Get().GetUserDataDir(), "lexers.db" };
     db_file.AppendDir("lexers");
 
-    if(!db_file.FileExists()) {
+    if (!db_file.FileExists()) {
         // load the lexers from the file
         LoadLexersFromFile();
     }

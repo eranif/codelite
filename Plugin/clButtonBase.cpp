@@ -191,7 +191,7 @@ void clButtonBase::Initialise()
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     BindEvents();
-    m_colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    m_colours.InitDefaults();
     SetSizeHints(GetBestSize());
 }
 

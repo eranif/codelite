@@ -22,7 +22,7 @@ namespace
 wxArrayString miscPlugins;
 wxArrayString GetMiscPlugins()
 {
-    if(miscPlugins.empty()) {
+    if (miscPlugins.empty()) {
         miscPlugins.push_back("AutoSave");
         miscPlugins.push_back("CodeLite Vim");
         miscPlugins.push_back("ExternalTools");
@@ -42,7 +42,7 @@ wxArrayString GetMiscPlugins()
 wxArrayString basePlugins;
 const wxArrayString& GetBasePlugins()
 {
-    if(basePlugins.empty()) {
+    if (basePlugins.empty()) {
         basePlugins.push_back("Source Code Formatter");
         basePlugins.push_back("EditorConfig");
         basePlugins.push_back("LanguageServerPlugin");
@@ -62,7 +62,7 @@ const wxArrayString& GetBasePlugins()
 wxArrayString cxxPlugins;
 const wxArrayString& GetCxxPlugins()
 {
-    if(cxxPlugins.empty()) {
+    if (cxxPlugins.empty()) {
         cxxPlugins.insert(cxxPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
         cxxPlugins.push_back("Wizards");
         cxxPlugins.push_back("wxcrafter");
@@ -73,7 +73,7 @@ const wxArrayString& GetCxxPlugins()
 wxArrayString eosPlugins;
 const wxArrayString& GetEOSWikiPlugins()
 {
-    if(eosPlugins.empty()) {
+    if (eosPlugins.empty()) {
         eosPlugins.insert(eosPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
         eosPlugins.push_back("Wizards");
         eosPlugins.push_back("EOSWiki");
@@ -84,7 +84,7 @@ const wxArrayString& GetEOSWikiPlugins()
 wxArrayString webPlugins;
 const wxArrayString& GetWebPlugins()
 {
-    if(webPlugins.empty()) {
+    if (webPlugins.empty()) {
         webPlugins.insert(webPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
         webPlugins.push_back("WebTools");
         webPlugins.push_back("PHP");
@@ -97,7 +97,7 @@ const wxArrayString& GetWebPlugins()
 wxArrayString allPlugins;
 const wxArrayString& GetAllPlugins()
 {
-    if(allPlugins.empty()) {
+    if (allPlugins.empty()) {
         WX_APPEND_ARRAY(allPlugins, GetBasePlugins());
         WX_APPEND_ARRAY(allPlugins, GetCxxPlugins());
         WX_APPEND_ARRAY(allPlugins, GetWebPlugins());
@@ -159,7 +159,7 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent, bool firstTime)
     , m_developmentProfile(0)
 {
     m_selectedTheme = LIGHT_THEME;
-    if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
+    if (DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
         m_selectedTheme = DARK_THEME;
     }
 
@@ -183,14 +183,6 @@ clBootstrapWizard::~clBootstrapWizard() { clConfig::Get().Write("DevelopmentProf
 void clBootstrapWizard::SetSelectedTheme(const wxString& themeName)
 {
     m_selectedTheme = themeName;
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("c++", m_selectedTheme);
-    wxColour bgColour = ColoursAndFontsManager::Get().GetBackgroundColourFromLexer(lexer);
-    if(bgColour.IsOk()) {
-        clConfig::Get().Write("UseCustomBaseColour", true);
-        clConfig::Get().Write("BaseColour", bgColour);
-    } else {
-        clConfig::Get().Write("UseCustomBaseColour", false);
-    }
     DoUpdatePreview(themeName);
 }
 
@@ -198,16 +190,15 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
 {
     m_globalThemeChanged = true;
     int themeID = m_themePicker->GetSelection();
-    switch(themeID) {
+    switch (themeID) {
     case 0: { // System Default
         auto lexer = ColoursAndFontsManager::Get().GetLexer("c++", m_selectedTheme);
         m_selectedTheme = LIGHT_THEME;
-        if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
+        if (DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
             m_selectedTheme = DARK_THEME;
         }
         SetSelectedTheme(m_selectedTheme);
-        clConfig::Get().Write("UseCustomBaseColour", false);
-        if(lexer) {
+        if (lexer) {
             lexer->Apply(m_stc24, true);
         }
     }; break;
@@ -234,20 +225,20 @@ void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
 #endif
 
     CompilersDetectorManager detector;
-    if(detector.Locate()) {
+    if (detector.Locate()) {
         m_cmdLnkBtnScanForCompilers->Hide();
         m_cmdLnkBtnDownloadCompiler->Hide();
         m_dvListCtrlCompilers->Show();
 
         m_compilers = detector.GetCompilersFound();
-        for(size_t i = 0; i < m_compilers.size(); ++i) {
+        for (size_t i = 0; i < m_compilers.size(); ++i) {
             wxVector<wxVariant> cols;
             cols.push_back(m_compilers.at(i)->GetName());
             cols.push_back(m_compilers.at(i)->GetInstallationPath());
             m_dvListCtrlCompilers->AppendItem(cols);
         }
 
-        if(!detector.FoundMinGWCompiler()) {
+        if (!detector.FoundMinGWCompiler()) {
             CompilersDetectorManager::MSWSuggestToDownloadMinGW(true);
         }
 
@@ -264,7 +255,7 @@ clBootstrapData clBootstrapWizard::GetData()
     data.compilers = m_compilers;
     data.selectedTheme = m_selectedTheme;
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text", m_selectedTheme);
-    if(lexer) {
+    if (lexer) {
         data.forceDarkAppearance = lexer->IsDark();
     }
 
@@ -290,13 +281,13 @@ void clBootstrapWizard::OnInstallCompilerUI(wxUpdateUIEvent& event)
 wxArrayString clBootstrapWizard::GetSelectedPlugins()
 {
     int profile = m_radioBoxProfile->GetSelection();
-    if(profile == 0) {
+    if (profile == 0) {
         // Default, so load the lot
         return GetAllPlugins();
-    } else if(profile == 1) {
+    } else if (profile == 1) {
         // C++
         return GetCxxPlugins();
-    } else if(profile == 2) {
+    } else if (profile == 2) {
         // web developer
         return GetWebPlugins();
     } else {
@@ -312,7 +303,7 @@ bool clBootstrapWizard::IsRestartRequired()
 void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 {
     event.Skip();
-    if(IsRestartRequired() || m_firstTime) {
+    if (IsRestartRequired() || m_firstTime) {
         // user changed plugins
         clConfig conf("plugins.conf");
         PluginInfoArray plugins;
@@ -333,7 +324,7 @@ void clBootstrapWizard::DoUpdatePreview(const wxString& themeName)
 {
     // Populate the preview
     LexerConf::Ptr_t previewLexer = ColoursAndFontsManager::Get().GetLexer("c++", themeName);
-    if(previewLexer) {
+    if (previewLexer) {
         previewLexer->Apply(m_stc24, true);
         previewLexer->ApplyWordSet(m_stc24, LexerConf::WS_CLASS, "Demo std string");
         previewLexer->ApplyWordSet(m_stc24, LexerConf::WS_VARIABLES, "other m_integer m_str");

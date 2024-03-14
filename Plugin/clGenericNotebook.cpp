@@ -1419,7 +1419,7 @@ void clTabCtrl::PositionFilelistButton()
     }
 
     clColours colours;
-    colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
+    colours.InitDefaults();
     colours.SetBgColour(GetBackgroundColour());
     colours.SetBorderColour(GetBackgroundColour());
     m_fileListButton->SetColours(colours);

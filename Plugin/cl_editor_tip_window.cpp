@@ -73,18 +73,16 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
 
-    if(m_args.IsEmpty())
+    if (m_args.IsEmpty())
         return;
 
     // Define the colours used by this tooltip window
     clColours colours = DrawingUtils::GetColours();
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-        if(DrawingUtils::IsDark(bgColour)) {
+        if (DrawingUtils::IsDark(bgColour)) {
             colours.InitFromColour(bgColour);
-        } else {
-            colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
         }
     }
 
@@ -118,7 +116,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxCoord x = TIP_SPACER;
     wxCoord y = 0;
 
-    if(!m_header.IsEmpty()) {
+    if (!m_header.IsEmpty()) {
         wxFont guiFont = m_font;
         dc.SetFont(guiFont);
         wxSize headerSize = dc.GetTextExtent(m_header);
@@ -132,9 +130,9 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     }
 
     dc.SetFont(m_font);
-    for(size_t i = 0; i < m_args.size(); ++i) {
+    for (size_t i = 0; i < m_args.size(); ++i) {
         wxString line = m_args.Item(i);
-        if((int)i == m_highlighIndex) {
+        if ((int)i == m_highlighIndex) {
             // wxFont f = m_font;
             // f.SetWeight(wxFONTWEIGHT_BOLD);
             dc.SetBrush(highlightBgColour);
@@ -152,7 +150,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
         y += helperTextSize.y;
     }
 
-    if(!m_footer.IsEmpty()) {
+    if (!m_footer.IsEmpty()) {
         dc.SetPen(penColour);
         dc.DrawLine(0, y, rr.GetWidth(), y);
 
@@ -174,12 +172,12 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
 void clEditorTipWindow::AddCallTip(clCallTipPtr tip)
 {
-    if(tip && tip->Count()) {
+    if (tip && tip->Count()) {
         TipInfo ti;
         ti.tip = tip;
         ti.highlightIndex = 0;
         m_highlighIndex = 0;
-        if(!m_selectedSignature.IsEmpty()) {
+        if (!m_selectedSignature.IsEmpty()) {
             tip->SelectSiganture(m_selectedSignature);
             m_selectedSignature.Clear();
         }
@@ -189,7 +187,7 @@ void clEditorTipWindow::AddCallTip(clCallTipPtr tip)
 
 clCallTipPtr clEditorTipWindow::GetTip()
 {
-    if(m_tips.empty())
+    if (m_tips.empty())
         return NULL;
 
     return m_tips.at(m_tips.size() - 1).tip;
@@ -199,15 +197,15 @@ bool clEditorTipWindow::IsEmpty() { return m_tips.empty(); }
 
 void clEditorTipWindow::Remove()
 {
-    if(!m_tips.empty()) {
+    if (!m_tips.empty()) {
         m_tips.pop_back();
 
-        if(!m_tips.empty()) {
+        if (!m_tips.empty()) {
             m_highlighIndex = m_tips.at(m_tips.size() - 1).highlightIndex;
         }
     }
 
-    if(m_tips.empty())
+    if (m_tips.empty())
         Deactivate();
 }
 
@@ -226,23 +224,23 @@ bool clEditorTipWindow::IsActive() { return IsShown(); }
 void clEditorTipWindow::Highlight(int argIdxToHilight)
 {
     clCallTipPtr tip = GetTip();
-    if(tip) {
-        if(argIdxToHilight == wxNOT_FOUND) {
+    if (tip) {
+        if (argIdxToHilight == wxNOT_FOUND) {
             Remove();
         } else {
             m_tipText = tip->Current();
             DoMakeMultipleLineTip();
-            if((int)m_args.size() <= argIdxToHilight) {
+            if ((int)m_args.size() <= argIdxToHilight) {
                 // The current tip does not match the requested arg to highlight
                 // try to find a better tip
-                if(!tip->SelectTipToMatchArgCount(argIdxToHilight)) {
+                if (!tip->SelectTipToMatchArgCount(argIdxToHilight)) {
                     Deactivate();
                     return;
                 }
 
                 // Update the tip text
                 tip = GetTip();
-                if(!tip) {
+                if (!tip) {
                     Deactivate();
                     return;
                 }
@@ -260,7 +258,7 @@ void clEditorTipWindow::Highlight(int argIdxToHilight)
 void clEditorTipWindow::SelectNext(int argIdxToHilight)
 {
     clCallTipPtr tip = GetTip();
-    if(tip) {
+    if (tip) {
         m_tipText = tip->Next();
         DoMakeMultipleLineTip();
         m_highlighIndex = argIdxToHilight;
@@ -271,7 +269,7 @@ void clEditorTipWindow::SelectNext(int argIdxToHilight)
 void clEditorTipWindow::SelectPrev(int argIdxToHilight)
 {
     clCallTipPtr tip = GetTip();
-    if(tip) {
+    if (tip) {
         m_tipText = tip->Prev();
         DoMakeMultipleLineTip();
         m_highlighIndex = argIdxToHilight;
@@ -282,7 +280,7 @@ void clEditorTipWindow::SelectPrev(int argIdxToHilight)
 wxString clEditorTipWindow::GetText()
 {
     clCallTipPtr tip = GetTip();
-    if(tip) {
+    if (tip) {
         return tip->All();
     }
     return wxT("");
@@ -290,7 +288,7 @@ wxString clEditorTipWindow::GetText()
 
 void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgColour)
 {
-    if(m_tips.empty())
+    if (m_tips.empty())
         return;
 
     m_point = pt;
@@ -301,7 +299,7 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
     m_font = ColoursAndFontsManager::Get().GetFixedFont(true);
 
     DoAdjustPosition();
-    if(!IsActive()) {
+    if (!IsActive()) {
         Show();
         Refresh();
     }
@@ -310,7 +308,7 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
 void clEditorTipWindow::Deactivate()
 {
     Clear();
-    if(IsShown())
+    if (IsShown())
         Hide();
 }
 
@@ -327,12 +325,12 @@ wxSize clEditorTipWindow::DoGetTipSize()
 
     int lineHeight = helperTextSize.y;
     int minLineWidth = wxNOT_FOUND;
-    if(!m_footer.IsEmpty()) {
+    if (!m_footer.IsEmpty()) {
         // Multiple signatures
         minLineWidth = dc.GetTextExtent(m_footer).x;
     }
 
-    if(!m_header.IsEmpty()) {
+    if (!m_header.IsEmpty()) {
         wxSize headerSize = dc.GetTextExtent(m_header);
         minLineWidth = headerSize.x > minLineWidth ? headerSize.x : minLineWidth;
     }
@@ -349,14 +347,14 @@ wxSize clEditorTipWindow::DoGetTipSize()
     sz.y = (m_args.size() * lineHeight);
     sz.x += (2 * TIP_SPACER);
 
-    if(sz.x < minLineWidth) {
+    if (sz.x < minLineWidth) {
         sz.x = minLineWidth;
     }
 
-    if(!m_footer.IsEmpty()) {
+    if (!m_footer.IsEmpty()) {
         sz.y += lineHeight;
     }
-    if(!m_header.IsEmpty()) {
+    if (!m_header.IsEmpty()) {
         sz.y += lineHeight;
     }
     return sz;
@@ -375,18 +373,18 @@ void clEditorTipWindow::DoAdjustPosition()
     wxSize sz = DoGetTipSize();
     wxRect parentSize = GetParent()->GetClientRect();
 
-    if(pt.y + m_lineHeight + sz.y > parentSize.height) {
+    if (pt.y + m_lineHeight + sz.y > parentSize.height) {
         pt.y -= sz.y;
 
     } else {
         pt.y += m_lineHeight;
     }
 
-    if(pt.x + sz.x > parentSize.width) {
+    if (pt.x + sz.x > parentSize.width) {
         // our tip can not fit into the screen, shift it left
         pt.x -= ((pt.x + sz.x) - parentSize.width);
 
-        if(pt.x < 0)
+        if (pt.x < 0)
             pt.x = 0;
     }
     Move(pt);
@@ -404,7 +402,7 @@ void clEditorTipWindow::DoLayoutTip()
 void clEditorTipWindow::SelectSignature(const wxString& signature)
 {
     m_selectedSignature = signature;
-    if(GetTip()) {
+    if (GetTip()) {
         GetTip()->SelectSiganture(m_selectedSignature);
         m_selectedSignature.clear();
     }
@@ -428,7 +426,7 @@ void clEditorTipWindow::DoMakeMultipleLineTip()
     wxString sig = m_tipText.AfterFirst('(');
     wxString returnValue = m_tipText.BeforeFirst('(');
     returnValue.Trim().Trim(false);
-    if(returnValue.EndsWith(":")) {
+    if (returnValue.EndsWith(":")) {
         returnValue.RemoveLast();
         returnValue.Trim().Trim(false);
         m_header << "RETURNS:  " << returnValue;
@@ -436,9 +434,9 @@ void clEditorTipWindow::DoMakeMultipleLineTip()
 
     sig = sig.BeforeLast(')');
     sig.Trim().Trim(false);
-    if(sig.IsEmpty()) {
+    if (sig.IsEmpty()) {
         m_args.Add("()");
-        if(GetTip() && (GetTip()->Count() > 1)) {
+        if (GetTip() && (GetTip()->Count() > 1)) {
             m_footer << GetTip()->GetCurr() << " OF " << GetTip()->Count();
         }
         return;
@@ -446,21 +444,21 @@ void clEditorTipWindow::DoMakeMultipleLineTip()
 
     int depth = 0;
     wxString currentArg;
-    for(size_t i = 0; i < sig.length(); ++i) {
+    for (size_t i = 0; i < sig.length(); ++i) {
         wxChar ch = sig.at(i);
-        if(ch == '<' || ch == '[' || ch == '{' || ch == '(') {
+        if (ch == '<' || ch == '[' || ch == '{' || ch == '(') {
             ++depth;
             currentArg << ch;
-        } else if(ch == '>' || ch == ']' || ch == '}' || ch == ')') {
+        } else if (ch == '>' || ch == ']' || ch == '}' || ch == ')') {
             --depth;
             currentArg << ch;
-            if(depth < 0) {
+            if (depth < 0) {
                 // a parsing error
                 m_tipText.Clear();
                 m_args.Clear();
                 return;
             }
-        } else if(ch == ',' && (depth == 0)) {
+        } else if (ch == ',' && (depth == 0)) {
             currentArg.Trim().Trim(false);
             m_args.Add(currentArg);
             currentArg.Clear();
@@ -469,12 +467,12 @@ void clEditorTipWindow::DoMakeMultipleLineTip()
         }
     }
 
-    if(!currentArg.IsEmpty()) {
+    if (!currentArg.IsEmpty()) {
         currentArg.Trim().Trim(false);
         m_args.Add(currentArg);
     }
 
-    if(GetTip() && (GetTip()->Count() > 1)) {
+    if (GetTip() && (GetTip()->Count() > 1)) {
         m_footer << GetTip()->GetCurr() << " OF " << GetTip()->Count();
     }
 }

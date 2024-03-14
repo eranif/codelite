@@ -17,20 +17,6 @@ enum wxSysColourEx {
 
 class WXDLLIMPEXP_SDK clSystemSettings : public wxEvtHandler, public wxSystemSettings
 {
-    static bool m_useCustomColours;
-    static clColours m_customColours;
-    static wxColour btn_face;
-    static wxColour panel_face;
-
-protected:
-    void OnAppActivated(wxActivateEvent& event);
-    void OnColoursChanged(clCommandEvent& event);
-    void OnSystemColourChanged(wxSysColourChangedEvent& event);
-    void DoColourChangedEvent();
-    static void SampleColoursFromControls();
-
-    clSystemSettings();
-
 public:
     static clSystemSettings& Get();
 
@@ -42,13 +28,20 @@ public:
      */
     static wxColour GetDefaultPanelColour();
 
-    /**
-     * @brief return the colours used internally
-     */
-    static const clColours& GetColours() { return m_customColours; }
-
     static bool IsLexerThemeDark();
     static bool IsDark();
+
+protected:
+    clSystemSettings();
+    void OnAppActivated(wxActivateEvent& event);
+    void OnColoursChanged(clCommandEvent& event);
+    void OnSystemColourChanged(wxSysColourChangedEvent& event);
+    void DoColourChangedEvent();
+    static void SampleColoursFromControls();
+
+private:
+    static wxColour btn_face;
+    static wxColour panel_face;
 };
 
 #endif // CLSYSTEMSETTINGS_H

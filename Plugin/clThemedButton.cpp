@@ -53,7 +53,7 @@ void clThemedButton::ApplyTheme()
 {
 #if !wxUSE_NATIVE_BUTTON
     clColours colours;
-    colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
+    colours.InitDefaults();
     SetColours(colours);
 #endif
 }

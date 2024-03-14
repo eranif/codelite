@@ -21,7 +21,7 @@ namespace
 {
 void init_from_colour(clColours* colours, const wxColour& baseColour)
 {
-    if(!baseColour.IsOk()) {
+    if (!baseColour.IsOk()) {
         colours->InitDefaults();
         return;
     }
@@ -33,7 +33,7 @@ void init_from_colour(clColours* colours, const wxColour& baseColour)
     colours->itemTextColour =
         is_light ? wxColour(*wxBLACK).ChangeLightness(110) : wxColour(*wxWHITE).ChangeLightness(90);
 
-    if(is_light) {
+    if (is_light) {
         colours->alternateColour = colours->bgColour.ChangeLightness(FACTOR_ALTROW_LIGHT);
         colours->hoverBgColour = colours->bgColour.ChangeLightness(110);
         colours->headerBgColour = colours->bgColour.ChangeLightness(96);
@@ -77,18 +77,14 @@ clColours::clColours() {}
 
 void clColours::InitDefaults()
 {
-    wxColour base_colour = clSystemSettings::Get().IsDark() ? wxColour(*wxBLACK).ChangeLightness(105) : *wxWHITE;
-    InitFromColour(base_colour);
-
+    InitFromColour(clSystemSettings::GetDefaultPanelColour());
     itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
     selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT);
 }
 
-void clColours::InitDarkDefaults() { InitFromColour(wxColour("#5F6A6A")); }
-
 bool clColours::IsLightTheme() const
 {
-    if(GetBgColour().IsOk()) {
+    if (GetBgColour().IsOk()) {
         return !DrawingUtils::IsDark(GetBgColour());
     } else {
         return !DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
@@ -98,7 +94,7 @@ bool clColours::IsLightTheme() const
 void clColours::FromLexer(LexerConf::Ptr_t lexer)
 {
     // sanity
-    if(!lexer) {
+    if (!lexer) {
         InitDefaults();
         return;
     }

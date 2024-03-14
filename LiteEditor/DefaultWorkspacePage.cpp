@@ -17,13 +17,7 @@
 DefaultWorkspacePage::DefaultWorkspacePage(wxWindow* parent)
     : DefaultWorkspacePageBase(parent)
 {
-    wxColour bg = clSystemSettings::clSystemSettings::GetDefaultPanelColour();
-    m_colours.InitFromColour(bg);
-    if(clConfig::Get().Read("UseCustomBaseColour", false)) {
-        bg = clConfig::Get().Read("BaseColour", bg);
-        m_colours.InitFromColour(bg);
-    }
-
+    m_colours.InitDefaults();
     SetDropTarget(new clFileOrFolderDropTarget(this));
     SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     m_staticBitmap521->SetDropTarget(new clFileOrFolderDropTarget(this));

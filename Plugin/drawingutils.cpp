@@ -862,21 +862,15 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     dc.DestroyClippingRegion();
 }
 
-clColours& DrawingUtils::GetColours(bool darkColours)
+clColours& DrawingUtils::GetColours()
 {
     static bool once = true;
-    static clColours g_darkColours;
     static clColours g_normalColours;
     if (once) {
-        g_darkColours.InitDarkDefaults();
         g_normalColours.InitDefaults();
         once = false;
     }
-    if (darkColours) {
-        return g_darkColours;
-    } else {
-        return g_normalColours;
-    }
+    return g_normalColours;
 }
 
 int DrawingUtils::GetFallbackFixedFontSize() { return GetFallbackFixedFont().GetPointSize(); }

@@ -2,9 +2,9 @@
 #define CLCOLOURS_H
 
 #include "codelite_exports.h"
+#include "lexer_configuration.h"
 
 #include <wx/colour.h>
-#include "lexer_configuration.h"
 
 class WXDLLIMPEXP_SDK clColours
 {
@@ -41,8 +41,7 @@ public:
     virtual ~clColours() {}
     bool IsLightTheme() const;
     void InitDefaults();
-    void InitFromColour(const wxColour& baseColour = wxColour());
-    void InitDarkDefaults();
+    void InitFromColour(const wxColour& baseColour = wxNullColour);
     void FromLexer(LexerConf::Ptr_t lexer);
     void SetAlternateColour(const wxColour& alternateColour) { this->alternateColour = alternateColour; }
     void SetBgColour(const wxColour& bgColour) { this->bgColour = bgColour; }

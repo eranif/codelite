@@ -50,6 +50,21 @@ wxBorder border_simple_theme_aware_bit()
 #endif
 } // DoGetBorderSimpleBit
 
+/// Return true if we are running under Windows 11 in dark mode
+bool IsWindows11DarkMode()
+{
+#ifdef __WXMSW__
+    static int major = wxNOT_FOUND;
+    static int min = wxNOT_FOUND;
+    static int build = wxNOT_FOUND;
+    if (major == wxNOT_FOUND) {
+        ::wxGetOsVersion(&major, &min, &build);
+    }
+    return major == 10 && build >= 22000 && clSystemSettings::GetAppearance().IsDark();
+#else
+    return false;
+#endif
+}
 } // namespace
 
 // SideBarToolBar
@@ -193,50 +208,8 @@ void clSideBarCtrl::PlaceButtons()
 
 void clSideBarCtrl::MSWUpdateToolbarBitmaps(int new_selection, int old_selection)
 {
-#ifdef __WXMSW__
-    static int major = wxNOT_FOUND;
-    static int min = wxNOT_FOUND;
-    static int build = wxNOT_FOUND;
-    if (major == wxNOT_FOUND) {
-        ::wxGetOsVersion(&major, &min, &build);
-    }
-
-    if (major == 10 && build >= 22000 && clSystemSettings::GetAppearance().IsDark()) {
-        // Windows 11
-        wxWindowUpdateLocker locker{ m_toolbar };
-        {
-            wxBitmap dark_theme_bmp, light_theme_bmp;
-            auto tool = m_toolbar->FindTool(old_selection);
-            if (tool) {
-                auto user_data = TOOL_GET_USER_DATA(tool);
-                auto data = GetToolData(user_data);
-                if (data) {
-                    wxBitmap bmp_for_light_theme, bmp_for_dark_theme;
-                    ::clLoadSidebarBitmap(data->data, this, &bmp_for_light_theme, &bmp_for_dark_theme);
-                    m_toolbar->SetToolNormalBitmap(tool->GetId(), bmp_for_dark_theme);
-                }
-            }
-        }
-
-        // selection needs to have the light theme bitmap
-        {
-            wxBitmap dark_theme_bmp, light_theme_bmp;
-            auto tool = m_toolbar->FindTool(new_selection);
-            if (tool) {
-                auto user_data = TOOL_GET_USER_DATA(tool);
-                auto data = GetToolData(user_data);
-                if (data) {
-                    wxBitmap bmp_for_light_theme, bmp_for_dark_theme;
-                    ::clLoadSidebarBitmap(data->data, this, &bmp_for_light_theme, &bmp_for_dark_theme);
-                    m_toolbar->SetToolNormalBitmap(tool->GetId(), bmp_for_light_theme);
-                }
-            }
-        }
-    }
-#else
     wxUnusedVar(new_selection);
     wxUnusedVar(old_selection);
-#endif
 }
 
 void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size_t book_index)
@@ -247,7 +220,12 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
         clWARNING() << "clSideBarCtrl::AddPage(): Invalid bitmap:" << bmpname << endl;
     }
 
-    const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp;
+    const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark()
+                              // Under Windows 11, the toolbar selection is "very light"
+                              // so use the light theme bitmap
+                              ? (IsWindows11DarkMode() ? light_theme_bmp : dark_theme_bmp)
+                              : light_theme_bmp;
+
     auto tool = m_toolbar->AddTool(wxID_ANY, label, bmp, label, wxITEM_CHECK);
     auto tool_id = tool->GetId();
     long tool_data_id = AddToolData(clSideBarToolData(bmpname));
@@ -372,7 +350,13 @@ void clSideBarCtrl::SetPageBitmap(size_t pos, const wxString& bmpname)
 
     wxBitmap light_theme_bmp, dark_theme_bmp;
     ::clLoadSidebarBitmap(bmpname, m_toolbar, &light_theme_bmp, &dark_theme_bmp);
-    TOOL_SET_BITMAP(tool, clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp);
+
+    const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark()
+                              // Under Windows 11, the toolbar selection is "very light"
+                              // so use the light theme bitmap
+                              ? (IsWindows11DarkMode() ? light_theme_bmp : dark_theme_bmp)
+                              : light_theme_bmp;
+    TOOL_SET_BITMAP(tool, bmp);
 }
 
 wxString clSideBarCtrl::GetPageText(size_t pos) const { return m_book->GetPageText(pos); }

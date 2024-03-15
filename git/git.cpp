@@ -57,6 +57,7 @@
 #include "overlaytool.h"
 #include "project.h"
 #include "workspace.h"
+#include "StringUtils.h"
 
 #include <stack>
 #include <unordered_set>

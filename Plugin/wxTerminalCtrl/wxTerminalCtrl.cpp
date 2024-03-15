@@ -294,7 +294,7 @@ void wxTerminalCtrl::SSHAndSetWorkingDirectory(const wxString& ssh_account, cons
     Run(command);
 #else
     wxUnusedVar(ssh_account);
-    wxUnusedVar(remote_workspace_file);
+    wxUnusedVar(path);
 #endif
 }
 

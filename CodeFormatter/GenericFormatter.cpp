@@ -79,19 +79,23 @@ GenericFormatter::GenericFormatter()
 {
     SetWorkingDirectory("$(WorkspacePath)");
     Bind(wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, &GenericFormatter::OnAsyncShellProcessTerminated, this);
+#if USE_SFTP
     Bind(wxEVT_SFTP_ASYNC_EXEC_STDERR, &GenericFormatter::OnRemoteCommandStderr, this);
     Bind(wxEVT_SFTP_ASYNC_EXEC_STDOUT, &GenericFormatter::OnRemoteCommandStdout, this);
     Bind(wxEVT_SFTP_ASYNC_EXEC_DONE, &GenericFormatter::OnRemoteCommandDone, this);
     Bind(wxEVT_SFTP_ASYNC_EXEC_ERROR, &GenericFormatter::OnRemoteCommandError, this);
+#endif
 }
 
 GenericFormatter::~GenericFormatter()
 {
     Unbind(wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, &GenericFormatter::OnAsyncShellProcessTerminated, this);
+#if USE_SFTP
     Unbind(wxEVT_SFTP_ASYNC_EXEC_STDERR, &GenericFormatter::OnRemoteCommandStderr, this);
     Unbind(wxEVT_SFTP_ASYNC_EXEC_STDOUT, &GenericFormatter::OnRemoteCommandStdout, this);
     Unbind(wxEVT_SFTP_ASYNC_EXEC_DONE, &GenericFormatter::OnRemoteCommandDone, this);
     Unbind(wxEVT_SFTP_ASYNC_EXEC_ERROR, &GenericFormatter::OnRemoteCommandError, this);
+#endif
 }
 
 wxString GenericFormatter::GetCommandAsString() const { return join_array(m_command); }
@@ -136,6 +140,7 @@ bool GenericFormatter::FormatFile(const wxFileName& filepath, wxEvtHandler* sink
 
 bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* sink)
 {
+#if USE_SFTP
     if (!CanHandleRemoteFile()) {
         return false;
     }
@@ -151,6 +156,10 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* 
 
     clSFTPManager::Get().AsyncExecute(this, clRemoteHost::Instance()->GetActiveAccount(), cmd, wd, nullptr);
     m_inFlightFiles.push_back({ filepath, sink });
+#else
+    wxUnusedVar(filepath);
+    wxUnusedVar(sink);
+#endif
     return true;
 }
 

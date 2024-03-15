@@ -228,7 +228,7 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
                               ? (IsWindows11DarkMode() ? light_theme_bmp : dark_theme_bmp)
                               : light_theme_bmp;
 
-    auto tool = m_toolbar->AddTool(wxID_ANY, label, bmp, label, wxITEM_CHECK);
+    auto tool = m_toolbar->AddTool(wxID_ANY, label, wxBitmapBundle(bmp), label, wxITEM_CHECK);
     auto tool_id = tool->GetId();
     long tool_data_id = AddToolData(clSideBarToolData(bmpname));
     TOOL_SET_USER_DATA(tool, tool_data_id);

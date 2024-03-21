@@ -153,15 +153,21 @@ public:
 
             wxPoint bottom_right = tab_rect.GetBottomRight();
             wxPoint top_right = tab_rect.GetTopRight();
+            wxPoint bottom_left = tab_rect.GetBottomLeft();
+            wxPoint top_left = tab_rect.GetTopLeft();
+
+#ifndef __WXMSW__
+            bottom_left.y += 1;
             bottom_right.y += 1;
             bottom_right.x += 1;
             top_right.x += 1;
-
-            wxPoint bottom_left = tab_rect.GetBottomLeft();
-            wxPoint top_left = tab_rect.GetTopLeft();
-            bottom_left.y += 1;
             bottom_left.x -= 1;
             top_left.x -= 1;
+#endif
+
+#ifdef __WXMSW__
+            dcref.DrawLine(top_right, top_left);
+#endif
 
             dcref.DrawLine(top_left, bottom_left);
             dcref.DrawLine(top_right, bottom_right);

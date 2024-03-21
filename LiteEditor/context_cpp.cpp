@@ -89,16 +89,16 @@
 // Set of macros to allow use to disable any context code when we are using
 // the C++ lexer for Java Script
 #define CHECK_JS_RETURN_TRUE() \
-    if(IsJavaScript())         \
+    if (IsJavaScript())        \
     return true
 #define CHECK_JS_RETURN_FALSE() \
-    if(IsJavaScript())          \
+    if (IsJavaScript())         \
     return false
 #define CHECK_JS_RETURN_VOID() \
-    if(IsJavaScript())         \
+    if (IsJavaScript())        \
     return
 #define CHECK_JS_RETURN_NULL() \
-    if(IsJavaScript())         \
+    if (IsJavaScript())        \
     return NULL
 
 static bool IsSource(const wxString& ext)
@@ -115,31 +115,31 @@ static bool IsHeader(const wxString& ext)
     return e == "hpp" || e == "h" || e == "hxx";
 }
 
-#define VALIDATE_PROJECT(ctrl)        \
-    if(ctrl.GetProject().IsEmpty()) { \
-        return;                       \
+#define VALIDATE_PROJECT(ctrl)         \
+    if (ctrl.GetProject().IsEmpty()) { \
+        return;                        \
     }
 
-#define VALIDATE_PROJECT_FALSE(ctrl)  \
-    if(ctrl.GetProject().IsEmpty()) { \
-        return false;                 \
+#define VALIDATE_PROJECT_FALSE(ctrl)   \
+    if (ctrl.GetProject().IsEmpty()) { \
+        return false;                  \
     }
 
 #define IS_CXX_WORKSPACE_OPENED() (::clIsCxxWorkspaceOpened())
 
-#define VALIDATE_WORKSPACE()         \
-    if(!IS_CXX_WORKSPACE_OPENED()) { \
-        return;                      \
+#define VALIDATE_WORKSPACE()          \
+    if (!IS_CXX_WORKSPACE_OPENED()) { \
+        return;                       \
     }
 
-#define VALIDATE_WORKSPACE_FALSE()   \
-    if(!IS_CXX_WORKSPACE_OPENED()) { \
-        return false;                \
+#define VALIDATE_WORKSPACE_FALSE()    \
+    if (!IS_CXX_WORKSPACE_OPENED()) { \
+        return false;                 \
     }
 
-#define VALIDATE_WORKSPACE_NULL()    \
-    if(!IS_CXX_WORKSPACE_OPENED()) { \
-        return NULL;                 \
+#define VALIDATE_WORKSPACE_NULL()     \
+    if (!IS_CXX_WORKSPACE_OPENED()) { \
+        return NULL;                  \
     }
 
 struct SFileSort {
@@ -224,7 +224,7 @@ bool ContextCpp::GetHoverTip(int pos)
     clEditor& rCtrl = GetCtrl();
 
     // before we start, make sure we are the visible window
-    if(clMainFrame::Get()->GetMainBook()->GetActiveEditor(true) != &rCtrl) {
+    if (clMainFrame::Get()->GetMainBook()->GetActiveEditor() != &rCtrl) {
         return false;
     }
 
@@ -232,18 +232,18 @@ bool ContextCpp::GetHoverTip(int pos)
     int word_start = rCtrl.WordStartPosition(pos, true);
 
     // get the expression we are standing on it
-    if(IsCommentOrString(pos)) {
+    if (IsCommentOrString(pos)) {
         return false;
     }
 
     // get the token
     wxString word = rCtrl.GetTextRange(word_start, end);
-    if(word.IsEmpty()) {
+    if (word.IsEmpty()) {
         return false;
     }
 
     int foundPos(wxNOT_FOUND);
-    if(rCtrl.PreviousChar(word_start, foundPos) == '~') {
+    if (rCtrl.PreviousChar(word_start, foundPos) == '~') {
         word.Prepend("~");
     }
 
@@ -260,10 +260,10 @@ bool ContextCpp::GetHoverTip(int pos)
 
     // display a tooltip
     wxString tooltip;
-    if(tips.size() > 0) {
+    if (tips.size() > 0) {
 
         tooltip << tips[0];
-        for(size_t i = 1; i < tips.size(); i++) {
+        for (size_t i = 1; i < tips.size(); i++) {
             tooltip << "\n" << tips[i];
         }
 
@@ -271,7 +271,7 @@ bool ContextCpp::GetHoverTip(int pos)
         rCtrl.DoCancelCalltip();
 
         tooltip.Trim().Trim(false);
-        if(tooltip.IsEmpty()) {
+        if (tooltip.IsEmpty()) {
             return false;
         }
         rCtrl.DoShowCalltip(wxNOT_FOUND, "", tooltip, false);
@@ -283,10 +283,10 @@ bool ContextCpp::GetHoverTip(int pos)
 
 wxString ContextCpp::GetFileImageString(const wxString& ext)
 {
-    if(IsSource(ext)) {
+    if (IsSource(ext)) {
         return "?15";
     }
-    if(IsHeader(ext)) {
+    if (IsHeader(ext)) {
         return "?16";
     }
     return "?17";
@@ -294,51 +294,51 @@ wxString ContextCpp::GetFileImageString(const wxString& ext)
 
 wxString ContextCpp::GetImageString(const TagEntry& entry)
 {
-    if(entry.GetKind() == "class") {
+    if (entry.GetKind() == "class") {
         return "?1";
     }
-    if(entry.GetKind() == "struct") {
+    if (entry.GetKind() == "struct") {
         return "?2";
     }
-    if(entry.GetKind() == "namespace") {
+    if (entry.GetKind() == "namespace") {
         return "?3";
     }
-    if(entry.GetKind() == "variable") {
+    if (entry.GetKind() == "variable") {
         return "?4";
     }
-    if(entry.GetKind() == "typedef") {
+    if (entry.GetKind() == "typedef") {
         return "?5";
     }
-    if(entry.GetKind() == "member" && entry.GetAccess().Contains("private")) {
+    if (entry.GetKind() == "member" && entry.GetAccess().Contains("private")) {
         return "?6";
     }
-    if(entry.GetKind() == "member" && entry.GetAccess().Contains("public")) {
+    if (entry.GetKind() == "member" && entry.GetAccess().Contains("public")) {
         return "?7";
     }
-    if(entry.GetKind() == "member" && entry.GetAccess().Contains("protected")) {
+    if (entry.GetKind() == "member" && entry.GetAccess().Contains("protected")) {
         return "?8";
     }
     // member with no access? (maybe part of namespace??)
-    if(entry.GetKind() == "member") {
+    if (entry.GetKind() == "member") {
         return "?7";
     }
-    if((entry.GetKind() == "function" || entry.GetKind() == "prototype") && entry.GetAccess().Contains("private")) {
+    if ((entry.GetKind() == "function" || entry.GetKind() == "prototype") && entry.GetAccess().Contains("private")) {
         return "?9";
     }
-    if((entry.GetKind() == "function" || entry.GetKind() == "prototype") &&
-       (entry.GetAccess().Contains("public") || entry.GetAccess().IsEmpty())) {
+    if ((entry.GetKind() == "function" || entry.GetKind() == "prototype") &&
+        (entry.GetAccess().Contains("public") || entry.GetAccess().IsEmpty())) {
         return "?10";
     }
-    if((entry.GetKind() == "function" || entry.GetKind() == "prototype") && entry.GetAccess().Contains("protected")) {
+    if ((entry.GetKind() == "function" || entry.GetKind() == "prototype") && entry.GetAccess().Contains("protected")) {
         return "?11";
     }
-    if(entry.GetKind() == "macro") {
+    if (entry.GetKind() == "macro") {
         return "?12";
     }
-    if(entry.GetKind() == "enum") {
+    if (entry.GetKind() == "enum") {
         return "?13";
     }
-    if(entry.GetKind() == "enumerator") {
+    if (entry.GetKind() == "enumerator") {
         return "?14";
     }
     return wxEmptyString;
@@ -348,27 +348,27 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
 {
     clEditor& rCtrl = GetCtrl();
 
-    if(rCtrl.GetDisableSmartIndent()) {
+    if (rCtrl.GetDisableSmartIndent()) {
         return;
     }
 
-    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == '\n') {
+    if (rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == '\n') {
         return;
     }
 
     int curpos = rCtrl.GetCurrentPos();
-    if(IsComment(curpos) && nChar == '\n') {
+    if (IsComment(curpos) && nChar == '\n') {
         AutoAddComment();
         return;
     }
 
-    if(IsCommentOrString(curpos)) {
+    if (IsCommentOrString(curpos)) {
         ContextBase::AutoIndent(nChar);
         return;
     }
 
     int current_line = rCtrl.LineFromPosition(curpos);
-    if(nChar == '\n') {
+    if (nChar == '\n') {
 
         int prevpos(wxNOT_FOUND);
         int foundPos(wxNOT_FOUND);
@@ -378,14 +378,14 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         word = rCtrl.PreviousWord(curpos, foundPos);
 
         bool isPreLinePreProcessLine(false);
-        if(current_line) {
+        if (current_line) {
             wxString lineStr = rCtrl.GetLine(current_line - 1);
             lineStr.Trim().Trim(false);
             isPreLinePreProcessLine = lineStr.StartsWith("#");
         }
 
         // user hit ENTER after 'else'
-        if(word == "else" && !isPreLinePreProcessLine) {
+        if (word == "else" && !isPreLinePreProcessLine) {
             int prevLine = rCtrl.LineFromPosition(prevpos);
             rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
             rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(current_line));
@@ -394,18 +394,18 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         }
 
         // User typed 'ENTER' immediatly after closing brace ')'
-        if(prevpos != wxNOT_FOUND && ch == ')') {
+        if (prevpos != wxNOT_FOUND && ch == ')') {
 
             long openBracePos(wxNOT_FOUND);
             int posWordBeforeOpenBrace(wxNOT_FOUND);
 
-            if(rCtrl.MatchBraceBack(')', prevpos, openBracePos)) {
+            if (rCtrl.MatchBraceBack(')', prevpos, openBracePos)) {
                 rCtrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-                if(posWordBeforeOpenBrace != wxNOT_FOUND) {
+                if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                     word = rCtrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
                     // c++ expression with single current_line and should be treated separatly
-                    if(word == "if" || word == "while" || word == "for") {
+                    if (word == "if" || word == "while" || word == "for") {
                         int prevLine = rCtrl.LineFromPosition(prevpos);
                         rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
                         rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(current_line));
@@ -417,13 +417,13 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         }
 
         // User typed 'ENTER' immediatly after colons ':'
-        if(prevpos != wxNOT_FOUND && ch == ':') {
+        if (prevpos != wxNOT_FOUND && ch == ':') {
             int posWordBeforeColons(wxNOT_FOUND);
             rCtrl.PreviousChar(prevpos, posWordBeforeColons);
-            if(posWordBeforeColons != wxNOT_FOUND) {
+            if (posWordBeforeColons != wxNOT_FOUND) {
                 word = rCtrl.PreviousWord(posWordBeforeColons, foundPos);
                 // If we found one of the following keywords, un-indent their line by (foldLevel - 1)*indentSize
-                if(word == "public" || word == "private" || word == "protected") {
+                if (word == "public" || word == "private" || word == "protected") {
                     int prevLine = rCtrl.LineFromPosition(prevpos);
                     rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
                     rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(current_line));
@@ -434,7 +434,7 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         }
 
         // use the previous line indentation level
-        if(prevpos == wxNOT_FOUND || ch != '{' || IsCommentOrString(prevpos)) {
+        if (prevpos == wxNOT_FOUND || ch != '{' || IsCommentOrString(prevpos)) {
             ContextBase::AutoIndent(nChar);
             return;
         }
@@ -444,25 +444,25 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
         rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(current_line));
 
-    } else if(nChar == '}') {
+    } else if (nChar == '}') {
 
         long matchPos = wxNOT_FOUND;
-        if(!rCtrl.MatchBraceBack('}', rCtrl.PositionBefore(curpos), matchPos)) {
+        if (!rCtrl.MatchBraceBack('}', rCtrl.PositionBefore(curpos), matchPos)) {
             return;
         }
         int secondLine = rCtrl.LineFromPosition(matchPos);
-        if(secondLine == current_line) {
+        if (secondLine == current_line) {
             return;
         }
         rCtrl.SetLineIndentation(current_line, rCtrl.GetLineIndentation(secondLine));
 
-    } else if(nChar == '{') {
+    } else if (nChar == '{') {
         wxString lineString = rCtrl.GetLine(current_line);
         lineString.Trim().Trim(false);
 
         int matchPos = wxNOT_FOUND;
         wxChar previousChar = rCtrl.PreviousChar(rCtrl.PositionBefore(curpos), matchPos);
-        if(previousChar != '{' && lineString == "{") {
+        if (previousChar != '{' && lineString == "{") {
             // indent this line accroding to the previous line
             int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
             rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
@@ -494,7 +494,7 @@ bool ContextCpp::CodeComplete(long pos)
     CHECK_JS_RETURN_FALSE();
     VALIDATE_WORKSPACE_FALSE();
     long from = pos;
-    if(from == wxNOT_FOUND) {
+    if (from == wxNOT_FOUND) {
         from = GetCtrl().GetCurrentPos();
     }
     return DoCodeComplete(from);
@@ -503,11 +503,11 @@ bool ContextCpp::CodeComplete(long pos)
 void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
 {
     CHECK_JS_RETURN_VOID();
-    for(size_t i = 0; i < src.size(); i++) {
-        if(i == 0) {
+    for (size_t i = 0; i < src.size(); i++) {
+        if (i == 0) {
             target.push_back(src.at(0));
         } else {
-            if(src.at(i)->GetName() != target.at(target.size() - 1)->GetName()) {
+            if (src.at(i)->GetName() != target.at(target.size() - 1)->GetName()) {
                 target.push_back(src.at(i));
             }
         }
@@ -531,7 +531,7 @@ void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
     wxString fileName;
     clEditor& rCtrl = GetCtrl();
     wxString line = rCtrl.GetCurLine();
-    if(!IsIncludeStatement(line)) {
+    if (!IsIncludeStatement(line)) {
         return;
     }
 
@@ -544,7 +544,7 @@ void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
 void ContextCpp::RemoveMenuDynamicContent(wxMenu* menu)
 {
     std::vector<wxMenuItem*>::iterator iter = m_dynItems.begin();
-    for(; iter != m_dynItems.end(); iter++) {
+    for (; iter != m_dynItems.end(); iter++) {
         menu->Destroy((*iter));
     }
     m_dynItems.clear();
@@ -563,7 +563,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu* menu)
     wxString line = rCtrl.GetCurLine();
     menuItemText.Clear();
 
-    if(IsIncludeStatement(line, &fileName)) {
+    if (IsIncludeStatement(line, &fileName)) {
 
         PrependMenuItemSeparator(menu);
         menuItemText << _("Open Include File \"") << fileName << "\"";
@@ -574,12 +574,12 @@ void ContextCpp::AddMenuDynamicContent(wxMenu* menu)
 
     } else {
         int pos = rCtrl.GetCurrentPos();
-        if(IsCommentOrString(pos)) {
+        if (IsCommentOrString(pos)) {
             return;
         }
 
         wxString word = rCtrl.GetWordAtCaret();
-        if(word.IsEmpty() == false) {
+        if (word.IsEmpty() == false) {
             PrependMenuItemSeparator(menu);
 
             menuItemText << _("Add Forward Declaration for \"") << word << "\"";
@@ -603,7 +603,7 @@ void ContextCpp::OnAddForwardDecl(wxCommandEvent& e)
     // get expression
     int pos = rCtrl.GetCurrentPos();
 
-    if(IsCommentOrString(pos)) {
+    if (IsCommentOrString(pos)) {
         return;
     }
 
@@ -611,10 +611,10 @@ void ContextCpp::OnAddForwardDecl(wxCommandEvent& e)
     wxString text = rCtrl.GetTextRange(0, rCtrl.GetCurrentPos());
 
     wxString word = m_selectedWord;
-    if(word.IsEmpty()) {
+    if (word.IsEmpty()) {
         // try the word under the caret
         word = rCtrl.GetWordAtCaret();
-        if(word.IsEmpty()) {
+        if (word.IsEmpty()) {
             return;
         }
     }
@@ -622,7 +622,7 @@ void ContextCpp::OnAddForwardDecl(wxCommandEvent& e)
     int lineNumber = wxNOT_FOUND;
     wxString lineToAdd;
     TagsManagerST::Get()->InsertForwardDeclaration(word, text, lineToAdd, lineNumber);
-    if(lineNumber == wxNOT_FOUND) {
+    if (lineNumber == wxNOT_FOUND) {
         // Append it to the end of the file
         rCtrl.AppendText(rCtrl.GetEolString() + lineToAdd);
 
@@ -641,7 +641,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
     // get expression
     int pos = rCtrl.GetCurrentPos();
 
-    if(IsCommentOrString(pos)) {
+    if (IsCommentOrString(pos)) {
         return;
     }
 
@@ -652,10 +652,10 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
     wxString text = rCtrl.GetTextRange(0, word_end);
 
     wxString word = m_selectedWord;
-    if(word.IsEmpty()) {
+    if (word.IsEmpty()) {
         // try the word under the caret
         word = rCtrl.GetWordAtCaret();
-        if(word.IsEmpty()) {
+        if (word.IsEmpty()) {
             return;
         }
     }
@@ -682,14 +682,14 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
     tmpLine.Replace("\t", " ");
 
     static wxRegEx reIncludeFile("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.\\+\\-]*)");
-    if(tmpLine.StartsWith("#", &tmpLine1)) {
-        if(reIncludeFile.Matches(tmpLine1)) {
-            if(fileNameUpToCaret) {
+    if (tmpLine.StartsWith("#", &tmpLine1)) {
+        if (reIncludeFile.Matches(tmpLine1)) {
+            if (fileNameUpToCaret) {
                 // 'line' contains the entire current line
                 // we want the part up until the caret
                 int caretpos = GetCtrl().GetCurrentPos();
                 int lineStartPos = GetCtrl().PositionFromLine(GetCtrl().GetCurrentLine());
-                if(lineStartPos > caretpos) {
+                if (lineStartPos > caretpos) {
                     return false;
                 }
 
@@ -697,7 +697,7 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
 
                 // Get the partial file name (up to the caret)
                 size_t where = partialLine.find_first_of("<\"");
-                if(where == wxString::npos) {
+                if (where == wxString::npos) {
                     return false;
                 }
                 ++where; // Skip the < or " character found
@@ -707,7 +707,7 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
                 *fileNameUpToCaret = partialLine;
             }
 
-            if(fileName) {
+            if (fileName) {
                 *fileName = reIncludeFile.GetMatch(tmpLine1, 1);
             }
             return true;
@@ -728,7 +728,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
     TagsManagerST::Get()->GetFilesForCC(fileName, files);
     files.Sort();
 
-    if(!files.IsEmpty()) {
+    if (!files.IsEmpty()) {
         // Show completion box for files
         wxCodeCompletionBoxEntry::Vec_t entries;
         wxCodeCompletionBox::BmpVec_t bitmaps;
@@ -737,15 +737,15 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
         bitmaps.push_back(m_otherFileBmp);
         // Make sure that the file list is unique
         wxStringSet_t matches;
-        for(size_t i = 0; i < files.GetCount(); ++i) {
+        for (size_t i = 0; i < files.GetCount(); ++i) {
             wxFileName fn(files.Item(i));
-            if(matches.count(files.Item(i))) {
+            if (matches.count(files.Item(i))) {
                 continue; // we already have this file in the list, don't add another one
             }
             matches.insert(files.Item(i));
 
             int imgID = 0;
-            switch(FileExtManager::GetType(fn.GetFullName())) {
+            switch (FileExtManager::GetType(fn.GetFullName())) {
             case FileExtManager::TypeSourceC:
             case FileExtManager::TypeSourceCpp:
                 imgID = 0;
@@ -758,8 +758,8 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
                 break;
             }
 
-            if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeHeader ||
-               FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeOther) {
+            if (FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeHeader ||
+                FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeOther) {
                 entries.push_back(wxCodeCompletionBoxEntry::New(files.Item(i), imgID));
             }
         }
@@ -782,10 +782,10 @@ struct ContextCpp_ClientData : public wxClientData {
 bool ContextCpp::DoGotoSymbol(TagEntryPtr tag)
 {
     CHECK_JS_RETURN_FALSE();
-    if(tag) {
+    if (tag) {
         clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
-        if(editor) {
+        if (editor) {
             editor->FindAndSelectV(tag->GetPattern(), tag->GetName());
         }
         return true;
@@ -807,14 +807,14 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
     wxStringSet_t file_options;
     FindSwappedFile(fileName, file_options);
     wxString file_to_open;
-    if(file_options.size() > 1) {
+    if (file_options.size() > 1) {
         // More than one option
         wxArrayString fileArr;
         std::for_each(file_options.begin(), file_options.end(), [&](const wxString& s) { fileArr.Add(s); });
         file_to_open = ::wxGetSingleChoice(_("Multiple candidates found. Select a file to open:"),
                                            _("Swap Header/Source Implementation"), fileArr, 0);
 
-        if(file_to_open.IsEmpty()) {
+        if (file_to_open.IsEmpty()) {
             // Cancel clicked
             return;
         }
@@ -822,10 +822,10 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
         TryOpenFile(file_to_open, false);
         return;
 
-    } else if(!file_options.empty()) {
+    } else if (!file_options.empty()) {
 
         file_to_open = *file_options.begin();
-        if(TryOpenFile(file_to_open, false)) {
+        if (TryOpenFile(file_to_open, false)) {
             return;
         }
     }
@@ -839,7 +839,7 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
                                                           "CreateSwappedFile", _("Create"), _("Don't Create"),
                                                           _("Remember my answer and don't ask me again"),
                                                           wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCANCEL_DEFAULT);
-    if(res == wxID_YES) {
+    if (res == wxID_YES) {
         DoCreateFile(otherFile);
     }
 }
@@ -850,7 +850,7 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
 
     clFileSystemEvent event_find_pair(wxEVT_FILE_FIND_MATCHING_PAIR);
     event_find_pair.SetFileName(rhs.GetFullPath());
-    if(EventNotifier::Get()->ProcessEvent(event_find_pair)) {
+    if (EventNotifier::Get()->ProcessEvent(event_find_pair)) {
         others.insert(event_find_pair.GetPath());
         return true;
     }
@@ -860,8 +860,8 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
     wxStringSet_t exts;
 
     // replace the file extension
-    if(FileExtManager::GetType(rhs.GetFullName()) == FileExtManager::TypeSourceC ||
-       FileExtManager::GetType(rhs.GetFullName()) == FileExtManager::TypeSourceCpp) {
+    if (FileExtManager::GetType(rhs.GetFullName()) == FileExtManager::TypeSourceC ||
+        FileExtManager::GetType(rhs.GetFullName()) == FileExtManager::TypeSourceCpp) {
         // try to find a header file
         exts.insert("h");
         exts.insert("hpp");
@@ -883,21 +883,21 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
     std::for_each(exts.begin(), exts.end(), [&](const wxString& ext) {
         wxFileName otherFile = rhs;
         otherFile.SetExt(ext);
-        if(otherFile.FileExists()) {
+        if (otherFile.FileExists()) {
             others.insert(otherFile.GetFullPath());
         }
     });
 
     // if we found a match on the same folder, don't bother continue searching
-    if(others.empty()) {
+    if (others.empty()) {
 
         // Get a list of workspace files
         std::vector<wxFileName> files;
         ManagerST::Get()->GetWorkspaceFiles(files, true);
 
-        for(size_t i = 0; i < files.size(); ++i) {
+        for (size_t i = 0; i < files.size(); ++i) {
             const wxFileName& workspaceFile = files.at(i);
-            if((workspaceFile.GetName() == rhs.GetName()) && exts.count(workspaceFile.GetExt().Lower())) {
+            if ((workspaceFile.GetName() == rhs.GetName()) && exts.count(workspaceFile.GetExt().Lower())) {
                 others.insert(workspaceFile.GetFullPath());
             }
         }
@@ -914,7 +914,7 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
     std::vector<wxString> exts;
 
     // replace the file extension
-    if(IsSource(ext)) {
+    if (IsSource(ext)) {
         // try to find a header file
         exts.push_back("h");
         exts.push_back("hpp");
@@ -933,7 +933,7 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
     std::vector<wxFileName> files;
     // try to locate it on the current folder
     size_t nMatches = FileUtils::FindSimilar(rhs, exts, files);
-    if(nMatches) {
+    if (nMatches) {
         // we return the first match
         lhs = files[0].GetFullPath();
         return true;
@@ -945,8 +945,8 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
 
         std::vector<wxFileName> workspaceFiles;
         ManagerST::Get()->GetWorkspaceFiles(workspaceFiles, true);
-        for(const wxFileName& workspaceFile : workspaceFiles) {
-            if((workspaceFile.GetName() == otherFile.GetName()) && (extensionsHash.count(workspaceFile.GetExt()))) {
+        for (const wxFileName& workspaceFile : workspaceFiles) {
+            if ((workspaceFile.GetName() == otherFile.GetName()) && (extensionsHash.count(workspaceFile.GetExt()))) {
                 // the same file name with the proper extension, this is our "swapped" file
                 lhs = workspaceFile.GetFullPath();
                 return true;
@@ -958,14 +958,14 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
 
 bool ContextCpp::TryOpenFile(const wxFileName& fileName, bool lookInEntireWorkspace)
 {
-    if(fileName.FileExists()) {
+    if (fileName.FileExists()) {
         // we got a match
         wxString proj = ManagerST::Get()->GetProjectNameByFile(fileName.GetFullPath());
         return clMainFrame::Get()->GetMainBook()->OpenFile(fileName.GetFullPath(), proj, wxNOT_FOUND, wxNOT_FOUND,
                                                            (enum OF_extra)(OF_PlaceNextToCurrent | OF_AddJump));
     }
 
-    if(!lookInEntireWorkspace) {
+    if (!lookInEntireWorkspace) {
         return false;
     }
 
@@ -974,8 +974,8 @@ bool ContextCpp::TryOpenFile(const wxFileName& fileName, bool lookInEntireWorksp
     std::vector<wxFileName> files;
     ManagerST::Get()->GetWorkspaceFiles(files, true);
 
-    for(size_t i = 0; i < files.size(); i++) {
-        if(files.at(i).GetFullName() == fileName.GetFullName()) {
+    for (size_t i = 0; i < files.size(); i++) {
+        if (files.at(i).GetFullName() == fileName.GetFullName()) {
             wxString proj = ManagerST::Get()->GetProjectNameByFile(files.at(i).GetFullPath());
             return clMainFrame::Get()->GetMainBook()->OpenFile(files.at(i).GetFullPath(), proj, wxNOT_FOUND,
                                                                wxNOT_FOUND,
@@ -1056,14 +1056,14 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     int insertPos = editor.PositionFromLine(curline);
     int endPos = curpos;
 
-    if(editor.SafeGetChar(curpos - 1) == ';' || editor.SafeGetChar(curpos - 1) == '{') {
+    if (editor.SafeGetChar(curpos - 1) == ';' || editor.SafeGetChar(curpos - 1) == '{') {
         endPos = curpos;
     } else {
         // start moving from this position until we find '{'
-        for(int i = curpos; i < editor.GetLength(); ++i) {
+        for (int i = curpos; i < editor.GetLength(); ++i) {
             endPos = i;
             int ch = editor.SafeGetChar(i);
-            if(ch == '{' || ch == ';') {
+            if (ch == '{' || ch == ';') {
                 ++endPos; // include this char as well
                 break;
             }
@@ -1073,13 +1073,13 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     wxString text = editor.GetTextRange(0, endPos);
     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
 
-    if(!tags.empty()) {
+    if (!tags.empty()) {
         // the last tag is our function
         TagEntryPtr t = tags.at(tags.size() - 1);
         // get doxygen comment based on file and line
         DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, keyPrefix);
         // do we have a comment?
-        if(dc.comment.IsEmpty()) {
+        if (dc.comment.IsEmpty()) {
             return;
         }
 
@@ -1088,8 +1088,8 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         // with the exact whitespace of the current line
         wxString lineContent = editor.GetLine(editor.GetCurrentLine());
         wxString whitespace;
-        for(size_t i = 0; i < lineContent.length(); ++i) {
-            if(lineContent[i] == ' ' || lineContent == '\t') {
+        for (size_t i = 0; i < lineContent.length(); ++i) {
+            if (lineContent[i] == ' ' || lineContent == '\t') {
                 whitespace << lineContent[i];
             } else {
                 break;
@@ -1098,7 +1098,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
 
         // Prepare the doxy block
         wxArrayString lines = ::wxStringTokenize(dc.comment, "\n", wxTOKEN_STRTOK);
-        for(size_t i = 0; i < lines.GetCount(); ++i) {
+        for (size_t i = 0; i < lines.GetCount(); ++i) {
             lines.Item(i).Prepend(whitespace);
         }
 
@@ -1113,11 +1113,11 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
 
         // Try to place the caret after the @brief
         wxRegEx reBrief("[@\\]brief[ \t]*");
-        if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
+        if (reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
             wxString match = reBrief.GetMatch(doxyBlock);
             // Get the index
             int where = doxyBlock.Find(match);
-            if(where != wxNOT_FOUND) {
+            if (where != wxNOT_FOUND) {
                 where += match.length();
                 int caretPos = insertPos + where;
                 editor.SetCaretAt(caretPos);
@@ -1152,7 +1152,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
 
     long pos = editor.GetCurrentPos();
 
-    if(IsCommentOrString(pos)) {
+    if (IsCommentOrString(pos)) {
         return;
     }
 
@@ -1167,17 +1167,17 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
     // filter all tags that are do not belong to the current scope
     std::vector<TagEntryPtr> function_tags; // both prototypes + definitions
     std::vector<TagEntryPtr> member_tags;   // member variables
-    for(TagEntryPtr tag : tags) {
-        if(tag->GetScope() == scopeName) {
-            if(tag->GetKind() == "member") {
+    for (TagEntryPtr tag : tags) {
+        if (tag->GetScope() == scopeName) {
+            if (tag->GetKind() == "member") {
                 member_tags.push_back(tag);
-            } else if(tag->IsMethod()) {
+            } else if (tag->IsMethod()) {
                 function_tags.push_back(tag);
             }
         }
     }
 
-    if(member_tags.empty()) {
+    if (member_tags.empty()) {
         return;
     }
 
@@ -1185,18 +1185,18 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
 
     // get the file name and line where to insert the setters getters
     SettersGettersDlg dlg(EventNotifier::Get()->TopFrame());
-    if(!dlg.Init(member_tags, function_tags, editor.GetFileName(), lineno)) {
+    if (!dlg.Init(member_tags, function_tags, editor.GetFileName(), lineno)) {
         ::wxMessageBox(_("Seems like you have all the getters/setters you need..."), _("codelite"));
         return;
     }
 
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         clEditorStateLocker locker(editor.GetCtrl());
         wxString code = dlg.GetGenCode();
-        if(code.IsEmpty() == false) {
+        if (code.IsEmpty() == false) {
             editor.InsertTextWithIndentation(code, lineno);
         }
-        if(dlg.GetFormatText()) {
+        if (dlg.GetFormatText()) {
             DoFormatEditor(&GetCtrl());
         }
     }
@@ -1205,8 +1205,8 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
 void ContextCpp::OnKeyDown(wxKeyEvent& event)
 {
     clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) {
-        switch(event.GetKeyCode()) {
+    if (ctrl.GetFunctionTip()->IsActive()) {
+        switch (event.GetKeyCode()) {
         case WXK_UP:
             ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
             return;
@@ -1217,10 +1217,10 @@ void ContextCpp::OnKeyDown(wxKeyEvent& event)
         default: {
             int modifier_key = event.GetModifiers();
             wxChar ch = event.GetUnicodeKey();
-            if(modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+            if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
                 ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
                 return;
-            } else if(modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+            } else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
                 ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
                 return;
             }
@@ -1248,7 +1248,7 @@ void ContextCpp::OnFindDecl(wxCommandEvent& event)
 
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent& event)
 {
-    if(IsJavaScript()) {
+    if (IsJavaScript()) {
         event.Enable(false);
         return;
     }
@@ -1256,19 +1256,19 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent& event)
     bool workspaceOpen = IS_CXX_WORKSPACE_OPENED();
     bool projectAvailable = (GetCtrl().GetProjectName().IsEmpty() == false);
 
-    if(event.GetId() == XRCID("insert_doxy_comment")) {
+    if (event.GetId() == XRCID("insert_doxy_comment")) {
         event.Enable(projectAvailable);
-    } else if(event.GetId() == XRCID("setters_getters")) {
+    } else if (event.GetId() == XRCID("setters_getters")) {
         event.Enable(projectAvailable);
-    } else if(event.GetId() == XRCID("go_to_function_start")) {
+    } else if (event.GetId() == XRCID("go_to_function_start")) {
         event.Enable(workspaceOpen);
-    } else if(event.GetId() == XRCID("go_to_next_function")) {
+    } else if (event.GetId() == XRCID("go_to_next_function")) {
         event.Enable(workspaceOpen);
-    } else if(event.GetId() == XRCID("find_decl")) {
+    } else if (event.GetId() == XRCID("find_decl")) {
         event.Enable(workspaceOpen);
-    } else if(event.GetId() == XRCID("find_impl")) {
+    } else if (event.GetId() == XRCID("find_impl")) {
         event.Enable(workspaceOpen);
-    } else if(event.GetId() == XRCID("move_impl")) {
+    } else if (event.GetId() == XRCID("move_impl")) {
         event.Enable(projectAvailable && GetCtrl().GetSelectedText().IsEmpty() == false);
     } else {
         event.Skip();
@@ -1290,7 +1290,7 @@ void ContextCpp::OnSciUpdateUI(wxStyledTextEvent& event)
 
     // get the current position
     long curpos = ctrl.GetCurrentPos();
-    if(curpos != lastPos) {
+    if (curpos != lastPos) {
         lastPos = curpos;
 
         // update the calltip highlighting if needed
@@ -1311,7 +1311,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
     static wxRegEx reCppIndentifier("[a-zA-Z_][a-zA-Z0-9_]*");
 
     // the tip is already up
-    if(ManagerST::Get()->GetDebuggerTip() && ManagerST::Get()->GetDebuggerTip()->IsShown()) {
+    if (ManagerST::Get()->GetDebuggerTip() && ManagerST::Get()->GetDebuggerTip()->IsShown()) {
         return;
     }
 
@@ -1319,21 +1319,21 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
     DebuggerInformation info;
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(!dbgr) {
+    if (!dbgr) {
         return;
     }
 
     DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
-    if(info.showTooltipsOnlyWithControlKeyIsDown && wxGetMouseState().ControlDown() == false) {
+    if (info.showTooltipsOnlyWithControlKeyIsDown && wxGetMouseState().ControlDown() == false) {
         return;
     }
 
     wxString word;
     clEditor& ctrl = GetCtrl();
     int pos = event.GetPosition();
-    if(pos != wxNOT_FOUND) {
+    if (pos != wxNOT_FOUND) {
 
-        if(IsCommentOrString(pos)) {
+        if (IsCommentOrString(pos)) {
             return;
         }
 
@@ -1343,7 +1343,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
         end = ctrl.WordEndPosition(pos, true);
 
         // if thers is no selected text, use the word calculated from the caret position
-        if(!ctrl.GetSelectedText().IsEmpty()) {
+        if (!ctrl.GetSelectedText().IsEmpty()) {
             // selection is not empty, use it
             sel_start = ctrl.GetSelectionStart();
             sel_end = ctrl.GetSelectionEnd();
@@ -1362,15 +1362,15 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
             GetCtrl().IndicatorFillRange(end - word.length(), word.Length());
         }
 
-        if(word.IsEmpty()) {
+        if (word.IsEmpty()) {
             return;
         }
     } else {
         return;
     }
 
-    if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-        if(ManagerST::Get()->GetDebuggerTip()->IsShown() && ManagerST::Get()->GetDebuggerTip()->m_expression == word) {
+    if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+        if (ManagerST::Get()->GetDebuggerTip()->IsShown() && ManagerST::Get()->GetDebuggerTip()->m_expression == word) {
             // a 'Quick Show dialog' is already shown for this word
             // dont show another tip
             return;
@@ -1387,7 +1387,7 @@ int ContextCpp::FindLineToAddInclude()
     clEditor& ctrl = GetCtrl();
 
     int maxLineToScan = ctrl.GetLineCount();
-    if(maxLineToScan > 500) {
+    if (maxLineToScan > 500) {
         maxLineToScan = 500;
     }
 
@@ -1396,31 +1396,31 @@ int ContextCpp::FindLineToAddInclude()
     int i = 0;
     // Start by skipping any initial copyright block and include-guard
     int initialblock = 0;
-    for(int i = 0; i < maxLineToScan; i++) {
+    for (int i = 0; i < maxLineToScan; i++) {
         wxString line = ctrl.GetLine(i).Trim().Trim(false);
-        if(!(line.empty() || line.StartsWith("//") || IsComment(ctrl.PositionFromLine(i)) ||
-             line.StartsWith("#ifndef") || line.StartsWith("#define"))) {
+        if (!(line.empty() || line.StartsWith("//") || IsComment(ctrl.PositionFromLine(i)) ||
+              line.StartsWith("#ifndef") || line.StartsWith("#define"))) {
             break;
         }
         initialblock = i;
     }
 
     // Try to find the end of the #include list
-    for(; i < maxLineToScan; i++) {
+    for (; i < maxLineToScan; i++) {
         wxString line = ctrl.GetLine(i).Trim().Trim(false);
-        if(line.empty()) {
+        if (line.empty()) {
             continue;
         }
-        if(IsIncludeStatement(line)) {
+        if (IsIncludeStatement(line)) {
             lineno = i;
             found = true;
-        } else if(found) {
+        } else if (found) {
             // Only return here if we've found at least 1
             return lineno + 1;
         }
     }
 
-    if(lineno != wxNOT_FOUND) {
+    if (lineno != wxNOT_FOUND) {
         return lineno + 1;
     } else {
         return initialblock ? initialblock + 1 : wxNOT_FOUND;
@@ -1443,7 +1443,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
     // get the scope
     wxString word = rCtrl.GetTextRange(word_start, word_end);
 
-    if(word.IsEmpty()) {
+    if (word.IsEmpty()) {
         return;
     }
 
@@ -1455,7 +1455,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
 
     // get the scope name from the text
     wxString scopeName = TagsManagerST::Get()->GetScopeName(scopeText);
-    if(scopeName.IsEmpty()) {
+    if (scopeName.IsEmpty()) {
         scopeName = "<global>";
     }
 
@@ -1466,8 +1466,8 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
 
     TagEntryPtr tag;
     bool match(false);
-    for(auto t : tags) {
-        if(t->GetName() == word && t->GetLine() == line && t->GetKind() == "function" && t->GetScope() == scopeName) {
+    for (auto t : tags) {
+        if (t->GetName() == word && t->GetLine() == line && t->GetKind() == "function" && t->GetScope() == scopeName) {
             // we got a match
             tag = t;
             match = true;
@@ -1527,51 +1527,51 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& block
     blockEndPos = wxNOT_FOUND;
 
     // scan for the functions' start block
-    while(true) {
+    while (true) {
         curPos = rCtrl.PositionAfter(curPos);
 
         // eof?
-        if(curPos == rCtrl.GetLength()) {
+        if (curPos == rCtrl.GetLength()) {
             break;
         }
 
         // comment?
-        if(IsCommentOrString(curPos)) {
+        if (IsCommentOrString(curPos)) {
             continue;
         }
 
         // valid character
         wxChar ch = rCtrl.GetCharAt(curPos);
-        if(ch == ';') {
+        if (ch == ';') {
             // no implementation to move
             break;
         }
 
-        if(ch == '{') {
+        if (ch == '{') {
             blockStartPos = curPos;
             break;
         }
     }
 
     // collect the functions' block
-    if(blockStartPos != wxNOT_FOUND) {
+    if (blockStartPos != wxNOT_FOUND) {
         int depth(1);
         content << "{";
-        while(depth > 0) {
+        while (depth > 0) {
             curPos = rCtrl.PositionAfter(curPos);
             // eof?
-            if(curPos == rCtrl.GetLength()) {
+            if (curPos == rCtrl.GetLength()) {
                 break;
             }
 
             // comment?
             wxChar ch = rCtrl.GetCharAt(curPos);
-            if(IsCommentOrString(curPos)) {
+            if (IsCommentOrString(curPos)) {
                 content << ch;
                 continue;
             }
 
-            switch(ch) {
+            switch (ch) {
             case '{':
                 depth++;
                 break;
@@ -1582,7 +1582,7 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& block
             content << ch;
         }
 
-        if(depth == 0) {
+        if (depth == 0) {
             blockEndPos = rCtrl.PositionAfter(curPos);
         }
     }
@@ -1600,15 +1600,15 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
 
     // filter non prototypes
     tmp_tags.reserve(prototypes.size());
-    for(TagEntryPtr tag : prototypes) {
-        if(tag->IsPrototype()) {
+    for (TagEntryPtr tag : prototypes) {
+        if (tag->IsPrototype()) {
             tmp_tags.emplace_back(tag);
         }
     }
     prototypes.swap(tmp_tags);
 
     // locate the c++ file
-    if(!FindSwappedFile(rCtrl.GetFileName(), otherfile)) {
+    if (!FindSwappedFile(rCtrl.GetFileName(), otherfile)) {
         wxMessageBox(_("Could not locate implementation file!"), "CodeLite", wxICON_WARNING | wxOK);
         return 0;
     }
@@ -1618,11 +1618,11 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
     // read it from the file system
     auto editor = clGetManager()->FindEditor(otherfile);
     wxString implContent;
-    if(editor) {
+    if (editor) {
         implContent = editor->GetEditorText();
     } else {
         // read it from the file system
-        if(!FileUtils::ReadFileContent(otherfile, implContent)) {
+        if (!FileUtils::ReadFileContent(otherfile, implContent)) {
             wxMessageBox(_("Could not read file: ") + otherfile, "CodeLite", wxICON_WARNING | wxOK);
             return 0;
         }
@@ -1631,8 +1631,8 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
     // filter non functions
     tmp_tags.clear();
     tmp_tags.reserve(functions.size());
-    for(TagEntryPtr tag : functions) {
-        if(tag->IsFunction()) {
+    for (TagEntryPtr tag : functions) {
+        if (tag->IsFunction()) {
             tmp_tags.emplace_back(tag);
         }
     }
@@ -1649,7 +1649,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
     std::vector<TagEntryPtr> prototypes;
     std::vector<TagEntryPtr> functions;
     wxString otherfile;
-    if(DoGetEntriesForHeaderAndImpl(prototypes, functions, otherfile) == 0) {
+    if (DoGetEntriesForHeaderAndImpl(prototypes, functions, otherfile) == 0) {
         wxMessageBox(_("No prototypes were found"), "CodeLite", wxICON_INFORMATION | wxOK);
         return;
     }
@@ -1658,7 +1658,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
     int pos = rCtrl.GetCurrentPos();
     wxString context = rCtrl.GetTextRange(0, pos);
     wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
-    if(scopeName.IsEmpty() || scopeName == "<global>") {
+    if (scopeName.IsEmpty() || scopeName == "<global>") {
         wxMessageBox(_("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + ")",
                      _("CodeLite"), wxICON_INFORMATION | wxOK);
         return;
@@ -1666,32 +1666,32 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
 
     CompletionHelper ch;
     wxStringSet_t implHash;
-    for(TagEntryPtr t : functions) {
-        if(scopeName == t->GetScope()) {
+    for (TagEntryPtr t : functions) {
+        if (scopeName == t->GetScope()) {
             implHash.insert(ch.normalize_function(t));
         }
     }
 
     std::vector<TagEntryPtr> unimplPrototypes;
-    for(auto t : prototypes) {
-        if(scopeName == t->GetScope()) {
+    for (auto t : prototypes) {
+        if (scopeName == t->GetScope()) {
             wxString name = ch.normalize_function(t);
-            if(implHash.count(name) == 0) {
+            if (implHash.count(name) == 0) {
                 // this prototype does not have an implementation
-                if(line_number == wxNOT_FOUND || t->GetLine() == line_number) {
+                if (line_number == wxNOT_FOUND || t->GetLine() == line_number) {
                     unimplPrototypes.push_back(t);
                 }
             }
         }
     }
 
-    if(unimplPrototypes.empty()) {
+    if (unimplPrototypes.empty()) {
         wxMessageBox(_("No un-implemented functions found"), "CodeLite", wxICON_INFORMATION | wxOK);
         return;
     }
 
     AddFunctionsImpDlg dlg(wxTheApp->GetTopWindow(), unimplPrototypes, otherfile);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // get the updated data
         otherfile = dlg.GetFileName();
         wxString body = dlg.GetText();
@@ -1719,7 +1719,7 @@ void ContextCpp::DoFormatEditor(clEditor* editor)
     formatEvent.SetInputString(editor->GetText());
     formatEvent.SetFileName(editor->GetFileName().GetFullPath());
     EventNotifier::Get()->ProcessEvent(formatEvent);
-    if(!formatEvent.GetFormattedString().IsEmpty()) {
+    if (!formatEvent.GetFormattedString().IsEmpty()) {
         editor->SetText(formatEvent.GetFormattedString());
         GetCtrl().ClearModifiedLines();
     }
@@ -1729,7 +1729,7 @@ void ContextCpp::OnFileSaved()
 {
     PERF_FUNCTION();
 
-    if(!IsJavaScript()) {
+    if (!IsJavaScript()) {
         VariableList var_list;
 
         wxArrayString varList;
@@ -1737,7 +1737,7 @@ void ContextCpp::OnFileSaved()
         VALIDATE_WORKSPACE();
 
         // if there is nothing to color, go ahead and return
-        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS)) {
+        if (!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS)) {
             return;
         }
         // Update preprocessor visualization
@@ -1755,7 +1755,7 @@ void ContextCpp::ApplySettings()
     // Set the key words and the lexer
     LexerConf::Ptr_t lexPtr;
     // Read the configuration file
-    if(EditorConfigST::Get()->IsOk()) {
+    if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer("C++");
     }
 
@@ -1775,7 +1775,7 @@ void ContextCpp::ApplySettings()
     jsKeywords.Replace("\r", " ");
 
     // A javascript file?
-    if(!IsJavaScript()) {
+    if (!IsJavaScript()) {
         rCtrl.SetKeyWords(0, keyWords);
     } else {
         rCtrl.SetKeyWords(0, jsKeywords);
@@ -1789,7 +1789,7 @@ void ContextCpp::ApplySettings()
     DoApplySettings(lexPtr);
 
     // create all images used by the cpp context
-    if(!m_cppFileBmp.IsOk()) {
+    if (!m_cppFileBmp.IsOk()) {
         // Initialise the file bitmaps
         BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
         m_cppFileBmp = bmpLoader->LoadBitmap("mime-cpp");
@@ -1807,7 +1807,7 @@ void ContextCpp::ApplySettings()
 
 void ContextCpp::Initialize()
 {
-    if(!IsJavaScript()) {
+    if (!IsJavaScript()) {
         m_completionTriggerStrings.insert(".");
         m_completionTriggerStrings.insert("->");
         m_completionTriggerStrings.insert("::");
@@ -1830,7 +1830,7 @@ void ContextCpp::AutoAddComment()
     wxString text = rCtrl.GetLine(line - 1).Trim(false);
 
     bool dontadd = false;
-    switch(cur_style) {
+    switch (cur_style) {
     case wxSTC_C_COMMENTLINE:
     case wxSTC_C_COMMENTLINEDOC:
         dontadd = !text.StartsWith("//") || !data.GetContinueCppComment();
@@ -1843,21 +1843,21 @@ void ContextCpp::AutoAddComment()
         dontadd = true;
         break;
     }
-    if(dontadd) {
+    if (dontadd) {
         ContextBase::AutoIndent('\n');
         return;
     }
 
     wxString toInsert;
-    switch(cur_style) {
+    switch (cur_style) {
     case wxSTC_C_COMMENTLINE:
     case wxSTC_C_COMMENTLINEDOC: {
-        if(text.StartsWith("//")) {
+        if (text.StartsWith("//")) {
             // try to parse the comment text and indentation
             unsigned i = (text.Length() > 2 && text[2] == '!') ? 3 : 2; // support "//!" for doxygen
             i = text.find_first_not_of('/', i);
             i = text.find_first_not_of(" \t", i);
-            if(i == wxString::npos) {
+            if (i == wxString::npos) {
                 i = text.Length() - 1;
             }
             // we want to avoid duplicating line-long comments such as those
@@ -1869,10 +1869,10 @@ void ContextCpp::AutoAddComment()
             // match if it is less than half the typical line length
             // (i.e. 80/2=40) (a guesstimate that it's not a line-long
             // comment); otherwise, we'll use a default value
-            if(i < text.Length() - 1 || i < 40) {
+            if (i < text.Length() - 1 || i < 40) {
                 toInsert = text.substr(0, i);
             } else {
-                if(cur_style == wxSTC_C_COMMENTLINEDOC && i >= 3) {
+                if (cur_style == wxSTC_C_COMMENTLINEDOC && i >= 3) {
                     toInsert = text.substr(0, 3) + " ";
                 } else {
                     toInsert = "// ";
@@ -1889,9 +1889,9 @@ void ContextCpp::AutoAddComment()
         // Check the text typed before this char
         int startPos = rCtrl.PositionBefore(curpos);
         startPos -= 3; // for "/**"
-        if(startPos >= 0) {
+        if (startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
-            if(((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert() && !IsJavaScript()) {
+            if (((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert() && !IsJavaScript()) {
 
                 // Let the plugins/codelite check if they can provide a doxy comment
                 // for the current entry
@@ -1899,14 +1899,14 @@ void ContextCpp::AutoAddComment()
                 // Parse the source file
                 wxString text = rCtrl.GetTextRange(curpos, rCtrl.GetLength());
                 TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
-                if(!tags.empty()) {
+                if (!tags.empty()) {
                     TagEntryPtr t = tags[0];
 
                     wxChar keyPrefix = (textTyped == "/*!") ? '\\' : '@';
                     // get doxygen comment based on file and line
                     DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, keyPrefix);
                     // do we have a comment?
-                    if(dc.comment.IsEmpty()) {
+                    if (dc.comment.IsEmpty()) {
                         return;
                     }
 
@@ -1918,8 +1918,8 @@ void ContextCpp::AutoAddComment()
 
                     // Prepare the doxy block
                     wxArrayString lines = ::wxStringTokenize(dc.comment, "\n", wxTOKEN_STRTOK);
-                    for(size_t i = 0; i < lines.GetCount(); ++i) {
-                        if(i) { // don't add it to the first line (it already exists in the editor)
+                    for (size_t i = 0; i < lines.GetCount(); ++i) {
+                        if (i) { // don't add it to the first line (it already exists in the editor)
                             lines.Item(i).Prepend(whitespace);
                         }
                     }
@@ -1927,7 +1927,7 @@ void ContextCpp::AutoAddComment()
                     // Join the lines back
                     wxString doxyBlock = ::clJoinLinesWithEOL(lines, rCtrl.GetEOL());
                     int where = doxyBlock.Find('|');
-                    if(where == wxNOT_FOUND) {
+                    if (where == wxNOT_FOUND) {
                         where = startPos;
                     } else {
                         where += startPos; // we are removing the marker from the string, hence the -1
@@ -1942,7 +1942,7 @@ void ContextCpp::AutoAddComment()
             }
         }
 
-        if(rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
+        if (rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
             toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line - 1)) == '*' ? "* " : " * ";
         }
         break;
@@ -1977,15 +1977,15 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
     // Otherwise a different editor may be selected, and the original one will have scrolled to the last replacement
     int current_line = wxSTC_INVALID_POSITION;
     clEditor* current = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(current) {
+    if (current) {
         current_line = current->GetCurrentLine();
     }
 
     clEditor* previous = NULL;
-    for(CppToken::Vec_t::const_iterator iter = li.begin(); iter != li.end(); ++iter) {
+    for (CppToken::Vec_t::const_iterator iter = li.begin(); iter != li.end(); ++iter) {
         CppToken cppToken = *iter;
         wxString file_name(cppToken.getFilename());
-        if(fileName == file_name) {
+        if (fileName == file_name) {
             // update next token offset in case we are still in the same file
             cppToken.setOffset(cppToken.getOffset() + off);
         } else {
@@ -1996,21 +1996,21 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
 
         // Open the file only once
         clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-        if(!editor || editor->GetFileName().GetFullPath() != file_name) {
+        if (!editor || editor->GetFileName().GetFullPath() != file_name) {
             editor = clMainFrame::Get()->GetMainBook()->OpenFile(file_name, wxEmptyString, 0);
             // We've loaded a new editor, so start a new bulk undo action for it
             // (this can only be done per editor, not per refactor :( )
             // First end any previous one
-            if(previous) {
+            if (previous) {
                 previous->EndUndoAction();
             }
             editor->BeginUndoAction();
             previous = editor;
         }
 
-        if(editor) {
+        if (editor) {
             editor->SetSelection(cppToken.getOffset(), cppToken.getOffset() + cppToken.getName().length());
-            if(editor->GetSelectionStart() != editor->GetSelectionEnd()) {
+            if (editor->GetSelectionStart() != editor->GetSelectionEnd()) {
                 editor->ReplaceSelection(word);
                 off += word.Len() - cppToken.getName().length();
                 success = true; // Flag that there's been at least one replacement
@@ -2019,13 +2019,13 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
     }
 
     // The last editor won't have this done otherwise
-    if(previous) {
+    if (previous) {
         previous->EndUndoAction();
     }
 
-    if(current) {
+    if (current) {
         clMainFrame::Get()->GetMainBook()->SelectPage(current);
-        if(current_line != wxSTC_INVALID_POSITION) {
+        if (current_line != wxSTC_INVALID_POSITION) {
             current->GotoLine(current_line);
         }
     }
@@ -2033,7 +2033,7 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
     // re-enable the feature again
     clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
 
-    if(success) {
+    if (success) {
         clGetManager()->GetStatusBar()->SetMessage(_("Symbol renamed"));
     }
 }
@@ -2045,7 +2045,7 @@ void ContextCpp::OnRetagFile(wxCommandEvent& e)
 
     wxUnusedVar(e);
     clEditor& editor = GetCtrl();
-    if(editor.GetModify()) {
+    if (editor.GetModify()) {
         wxMessageBox(wxString::Format(_("Please save the file before retagging it")));
         return;
     }
@@ -2057,7 +2057,7 @@ void ContextCpp::OnRetagFile(wxCommandEvent& e)
 void ContextCpp::RetagFile()
 {
     CHECK_JS_RETURN_VOID();
-    if(ManagerST::Get()->GetRetagInProgress()) {
+    if (ManagerST::Get()->GetRetagInProgress()) {
         return;
     }
 
@@ -2071,7 +2071,7 @@ void ContextCpp::RetagFile()
 void ContextCpp::OnUserTypedXChars(const wxString& word)
 {
     // user typed more than 3 chars, display completion box with C++ keywords
-    if(IsCommentOrString(GetCtrl().GetCurrentPos())) {
+    if (IsCommentOrString(GetCtrl().GetCurrentPos())) {
         return;
     }
 }
@@ -2079,19 +2079,19 @@ void ContextCpp::OnUserTypedXChars(const wxString& word)
 void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags)
 {
     // C++ keywords are handled differently
-    if(!IsJavaScript()) {
+    if (!IsJavaScript()) {
         return;
     }
 
     LexerConf::Ptr_t lexPtr;
     // Read the configuration file
-    if(EditorConfigST::Get()->IsOk()) {
+    if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(this->GetName());
     }
 
     wxString cppWords;
 
-    if(lexPtr) {
+    if (lexPtr) {
         cppWords = lexPtr->GetKeyWords(1);
 
     } else {
@@ -2106,16 +2106,16 @@ void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryP
     wxString s1(word);
     std::set<wxString> uniqueWords;
     wxArrayString wordsArr = wxStringTokenize(cppWords, " \r\t\n");
-    for(size_t i = 0; i < wordsArr.GetCount(); i++) {
+    for (size_t i = 0; i < wordsArr.GetCount(); i++) {
 
         // Dont add duplicate words
-        if(uniqueWords.find(wordsArr.Item(i)) != uniqueWords.end()) {
+        if (uniqueWords.find(wordsArr.Item(i)) != uniqueWords.end()) {
             continue;
         }
 
         uniqueWords.insert(wordsArr.Item(i));
         wxString s2(wordsArr.Item(i));
-        if(s2.StartsWith(s1) || s2.Lower().StartsWith(s1.Lower())) {
+        if (s2.StartsWith(s1) || s2.Lower().StartsWith(s1.Lower())) {
             TagEntryPtr tag(new TagEntry());
             tag->SetName(wordsArr.Item(i));
             tag->SetKind("cpp_keyword");
@@ -2127,7 +2127,7 @@ void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryP
 wxString ContextCpp::CallTipContent()
 {
     // if we have an active call tip, return its content
-    if(GetCtrl().GetFunctionTip()->IsActive()) {
+    if (GetCtrl().GetFunctionTip()->IsActive()) {
         return GetCtrl().GetFunctionTip()->GetText();
     }
     return wxEmptyString;
@@ -2141,7 +2141,7 @@ void ContextCpp::DoOpenWorkspaceFile()
     wxString tmpName(m_selectedWord);
 
     tmpName.Replace("\\", "/");
-    if(tmpName.Contains("..")) {
+    if (tmpName.Contains("..")) {
         tmpName = fileName.GetFullName();
     }
 
@@ -2161,7 +2161,7 @@ void ContextCpp::DoOpenWorkspaceFile()
 #endif
 
     // filter out the all files that does not have an exact match
-    for(size_t i = 0; i < files.size(); i++) {
+    for (size_t i = 0; i < files.size(); i++) {
         wxString curFileName = files.at(i).GetFullPath();
 
 #ifdef __WXMSW__
@@ -2170,33 +2170,33 @@ void ContextCpp::DoOpenWorkspaceFile()
 #endif
 
         curFileName.Replace("\\", "/");
-        if(curFileName.EndsWith(tmpName)) {
+        if (curFileName.EndsWith(tmpName)) {
             files2.push_back(files.at(i));
         }
     }
 
     wxString fileToOpen;
-    if(files2.size() > 1) {
+    if (files2.size() > 1) {
         wxArrayString choices;
         wxStringSet_t uniqueFileSet;
-        for(size_t i = 0; i < files2.size(); i++) {
+        for (size_t i = 0; i < files2.size(); i++) {
             wxString fullPath = files2.at(i).GetFullPath();
             wxString fullPathLc = (wxGetOsVersion() & wxOS_WINDOWS) ? fullPath.Lower() : fullPath;
 
             // Dont add duplicate entries.
             // On Windows, we have a non case sensitive file system
-            if(uniqueFileSet.count(fullPathLc) == 0) {
+            if (uniqueFileSet.count(fullPathLc) == 0) {
                 uniqueFileSet.insert(fullPathLc);
                 choices.Add(fullPath);
             }
         }
 
         fileToOpen = wxGetSingleChoice(_("Select file to open:"), _("Select file"), choices, &GetCtrl());
-    } else if(files2.size() == 1) {
+    } else if (files2.size() == 1) {
         fileToOpen = files2.at(0).GetFullPath();
     }
 
-    if(fileToOpen.IsEmpty() == false) {
+    if (fileToOpen.IsEmpty() == false) {
         clMainFrame::Get()->GetMainBook()->OpenFile(fileToOpen);
     }
 }
@@ -2205,31 +2205,31 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
 {
     // get the file name from the user
     wxString new_file = wxGetTextFromUser(_("New File Name:"), _("Create File"), fn.GetFullPath(), clMainFrame::Get());
-    if(new_file.IsEmpty()) {
+    if (new_file.IsEmpty()) {
         // user clicked cancel
         return;
     }
 
     // if the project is part of a project, add this file to the same project
     // (under the same virtual folder as well)
-    if(GetCtrl().GetProject().IsEmpty() == false) {
+    if (GetCtrl().GetProject().IsEmpty() == false) {
         ProjectPtr p = ManagerST::Get()->GetProject(GetCtrl().GetProject());
-        if(p) {
+        if (p) {
             wxString vd = p->GetVDByFileName(GetCtrl().GetFileName().GetFullPath());
             vd.Prepend(p->GetName() + ":");
 
-            if(vd.IsEmpty() == false) {
+            if (vd.IsEmpty() == false) {
                 clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->CreateAndAddFile(new_file, vd);
             }
         }
     } else {
         // just a plain file
         wxFile file;
-        if(!file.Create(new_file.GetData(), true)) {
+        if (!file.Create(new_file.GetData(), true)) {
             return;
         }
 
-        if(file.IsOpened()) {
+        if (file.IsOpened()) {
             file.Close();
         }
     }
@@ -2244,11 +2244,11 @@ void ContextCpp::OnCalltipCancel() {}
 void ContextCpp::DoUpdateCalltipHighlight()
 {
     CHECK_JS_RETURN_VOID();
-    
+
     auto tip = GetCtrl().GetFunctionTip();
     CHECK_PTR_RET(tip);
-    
-    if(tip->IsActive()) {
+
+    if (tip->IsActive()) {
         tip->Highlight(DoGetCalltipParamterIndex());
     }
 }
@@ -2258,19 +2258,19 @@ void ContextCpp::SemicolonShift()
     int foundPos(wxNOT_FOUND);
     int semiColonPos(wxNOT_FOUND);
     clEditor& ctrl = GetCtrl();
-    if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == ')') {
+    if (ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == ')') {
 
         // test to see if we are inside a 'for' statement
         long openBracePos(wxNOT_FOUND);
         int posWordBeforeOpenBrace(wxNOT_FOUND);
 
-        if(ctrl.MatchBraceBack(')', semiColonPos, openBracePos)) {
+        if (ctrl.MatchBraceBack(')', semiColonPos, openBracePos)) {
             ctrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-            if(posWordBeforeOpenBrace != wxNOT_FOUND) {
+            if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                 wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
                 // c++ expression with single line and should be treated separatly
-                if(word == "for") {
+                if (word == "for") {
                     return;
                 }
 
@@ -2291,9 +2291,9 @@ void ContextCpp::DoSetProjectPaths()
     wxArrayString projects;
     wxArrayString projectPaths;
     ManagerST::Get()->GetProjectList(projects);
-    for(size_t i = 0; i < projects.GetCount(); i++) {
+    for (size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
-        if(p) {
+        if (p) {
             projectPaths.Add(p->GetFileName().GetPath());
         }
     }
@@ -2302,13 +2302,13 @@ void ContextCpp::DoSetProjectPaths()
 
 wxString ContextCpp::GetCurrentScopeName()
 {
-    if(IsJavaScript()) {
+    if (IsJavaScript()) {
         return wxEmptyString;
     }
 
     TagEntryPtr tag =
         TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), GetCtrl().GetCurrentLine() + 1);
-    if(tag) {
+    if (tag) {
         return tag->GetParent();
     }
     return wxEmptyString;
@@ -2316,7 +2316,7 @@ wxString ContextCpp::GetCurrentScopeName()
 
 wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bool forCC)
 {
-    if(IsJavaScript()) {
+    if (IsJavaScript()) {
         return wxEmptyString;
     }
 
@@ -2324,7 +2324,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
     int depth(0);
 
     clEditor* ctrl(NULL);
-    if(!editor) {
+    if (!editor) {
         ctrl = &GetCtrl();
     } else {
         ctrl = editor;
@@ -2333,38 +2333,38 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
     int position(pos);
     int at(position);
     bool prevGt(false);
-    while(cont && depth >= 0) {
+    while (cont && depth >= 0) {
         wxChar ch = ctrl->PreviousChar(position, at, true);
         position = at;
         // Eof?
-        if(ch == 0) {
+        if (ch == 0) {
             at = 0;
             break;
         }
 
         // Comment?
         int style = ctrl->GetStyleAt(position);
-        if(style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
-           style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
-           style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
-           style == wxSTC_C_CHARACTER) {
+        if (style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
+            style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
+            style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
+            style == wxSTC_C_CHARACTER) {
             continue;
         }
 
-        switch(ch) {
+        switch (ch) {
         case ';':
             // dont include this token
             at = ctrl->PositionAfter(at);
             cont = false;
             break;
         case '-':
-            if(prevGt) {
+            if (prevGt) {
                 prevGt = false;
                 // if previous char was '>', we found an arrow so reduce the depth
                 // which was increased
                 depth--;
             } else {
-                if(depth <= 0) {
+                if (depth <= 0) {
                     // dont include this token
                     at = ctrl->PositionAfter(at);
                     cont = false;
@@ -2377,7 +2377,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         case '\t':
         case '\r':
             prevGt = false;
-            if(depth <= 0) {
+            if (depth <= 0) {
                 cont = false;
                 break;
             }
@@ -2396,7 +2396,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         case '[':
             depth--;
             prevGt = false;
-            if(depth < 0) {
+            if (depth < 0) {
                 // dont include this token
                 at = ctrl->PositionAfter(at);
                 cont = false;
@@ -2414,7 +2414,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         case '?':
         case '/':
             prevGt = false;
-            if(depth <= 0) {
+            if (depth <= 0) {
                 // dont include this token
                 at = ctrl->PositionAfter(at);
                 cont = false;
@@ -2427,7 +2427,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         case '<':
             prevGt = false;
             depth--;
-            if(depth < 0) {
+            if (depth < 0) {
 
                 // dont include this token
                 at = ctrl->PositionAfter(at);
@@ -2445,11 +2445,11 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         }
     }
 
-    if(at < 0) {
+    if (at < 0) {
         at = 0;
     }
     wxString expr = ctrl->GetTextRange(at, pos);
-    if(!forCC) {
+    if (!forCC) {
         // If we do not require the expression for CodeCompletion
         // return the un-touched buffer
         return expr;
@@ -2459,7 +2459,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
     CppScanner sc;
     sc.SetText(_C(expr));
     wxString expression;
-    while((sc.yylex()) != 0) {
+    while ((sc.yylex()) != 0) {
         wxString token = _U(sc.YYText());
         expression += token;
         expression += " ";
@@ -2479,14 +2479,14 @@ bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, clEditor* c
     int nLen = ctrl->GetLength();
     int nCur = nStart;
 
-    while(nCur < nLen) {
+    while (nCur < nLen) {
         wxChar ch = ctrl->SafeGetChar(nCur);
-        if(IsCommentOrString(nCur)) {
+        if (IsCommentOrString(nCur)) {
             nCur++;
             continue;
         }
 
-        if(ch == '(') {
+        if (ch == '(') {
             start = nCur;
             nCur++;
             break;
@@ -2494,27 +2494,27 @@ bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, clEditor* c
         nCur++;
     }
 
-    if(start == wxNOT_FOUND) {
+    if (start == wxNOT_FOUND) {
         return false;
     }
 
     // search for the function end position
     int nDepth = 1;
-    while((nCur < nLen) && nDepth > 0) {
+    while ((nCur < nLen) && nDepth > 0) {
 
         wxChar ch = ctrl->SafeGetChar(nCur);
-        if(ctrl->GetContext()->IsCommentOrString(nCur)) {
+        if (ctrl->GetContext()->IsCommentOrString(nCur)) {
             nCur++;
             continue;
         }
 
-        switch(ch) {
+        switch (ch) {
         case '(':
             nDepth++;
             break;
         case ')':
             nDepth--;
-            if(nDepth == 0) {
+            if (nDepth == 0) {
                 nCur++;
                 end = nCur;
             }
@@ -2525,7 +2525,7 @@ bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, clEditor* c
         nCur++;
     }
 
-    if(end == wxNOT_FOUND) {
+    if (end == wxNOT_FOUND) {
         return false;
     }
     return true;
@@ -2554,7 +2554,7 @@ bool ContextCpp::IsAtLineComment() const
 void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
 {
     clEditor* editor = &GetCtrl();
-    if(editor->GetFileName().GetFullPath() != e.GetFileName()) {
+    if (editor->GetFileName().GetFullPath() != e.GetFileName()) {
         e.Skip();
         return;
     }
@@ -2568,11 +2568,11 @@ void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
 wxMenu* ContextCpp::GetMenu()
 {
     wxMenu* menu = NULL;
-    if(!IsJavaScript()) {
+    if (!IsJavaScript()) {
         // load the context menu from the resource manager
         menu = wxXmlResource::Get()->LoadMenu("editor_right_click");
         wxMenuItem* item = menu->FindItem(XRCID("grep_current_workspace"));
-        if(item) {
+        if (item) {
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
         }
     } else {
@@ -2585,7 +2585,7 @@ void ContextCpp::OnSymbolDeclaraionFound(LSPEvent& event)
 {
     clDEBUG() << "OnSymbolDeclaraionFound() is called for path:" << event.GetFileName() << endl;
     const wxString& filepath = event.GetFileName();
-    if(filepath != GetCtrl().GetFileName().GetFullPath()) {
+    if (filepath != GetCtrl().GetFileName().GetFullPath()) {
         event.Skip();
         return;
     }
@@ -2597,7 +2597,7 @@ void ContextCpp::OnSymbolDeclaraionFound(LSPEvent& event)
     // check to see if this file is a workspace file
     AddIncludeFileDlg dlg(clMainFrame::Get(), event.GetLocation().GetPath(), GetCtrl().GetText(),
                           FindLineToAddInclude());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // add the line to the current document
         wxString lineToAdd = dlg.GetLineToAdd();
         int line = dlg.GetLine();
@@ -2609,7 +2609,7 @@ void ContextCpp::OnSymbolDeclaraionFound(LSPEvent& event)
 
 void ContextCpp::OnCodeCompleteFiles(clCodeCompletionEvent& event)
 {
-    if(event.GetEventObject() == this) {
+    if (event.GetEventObject() == this) {
         const wxString& selection = event.GetWord();
         wxString origWordChars = GetCtrl().GetWordChars();
         // for proper string selection, we want to replace all the #include statement

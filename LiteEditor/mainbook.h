@@ -30,7 +30,6 @@
 #include "clEditorBar.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
-#include "editorframe.h"
 #include "filehistory.h"
 #include "quickfindbar.h"
 #include "sessionmanager.h"
@@ -56,7 +55,6 @@ private:
     clEditorBar* m_navBar;
     clAuiBook* m_book = nullptr;
     bool m_useBuffereLimit;
-    EditorFrame::List_t m_detachedEditors;
     bool m_isWorkspaceReloading;
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
     FilesModifiedDlg* m_filesModifiedDlg;
@@ -68,10 +66,9 @@ private:
 
 public:
     enum {
-        kGetAll_Default = 0x00000000,         // booked editors only
-        kGetAll_RetainOrder = 0x00000001,     // Order must keep
-        kGetAll_IncludeDetached = 0x00000002, // return both booked editors and detached
-        kGetAll_DetachedOnly = 0x00000004,    // return detached editors only
+        kGetAll_Default = 0,                       // Default
+        kGetAll_IncludeDetached = kGetAll_Default, // for backward compatability, keep this symbol
+        kGetAll_RetainOrder = (1 << 0),            // Order must be kept
     };
 
 private:
@@ -99,12 +96,10 @@ private:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnDebugEnded(clDebugEvent& e);
     void OnInitDone(wxCommandEvent& e);
-    void OnDetachedEditorClosed(clCommandEvent& e);
     void OnThemeChanged(clCommandEvent& e);
     void OnColoursAndFontsChanged(clCommandEvent& e);
     bool DoSelectPage(wxWindow* win);
     void DoHandleFrameMenu(clEditor* editor);
-    void DoEraseDetachedEditor(IEditor* editor);
     void OnWorkspaceReloadStarted(clWorkspaceEvent& e);
     void OnWorkspaceReloadEnded(clWorkspaceEvent& e);
     void OnEditorSettingsChanged(wxCommandEvent& e);
@@ -161,8 +156,6 @@ public:
      */
     void MovePage(bool movePageRight);
 
-    const EditorFrame::List_t& GetDetachedEditors() const { return m_detachedEditors; }
-    void DetachActiveEditor();
     void ClearFileHistory();
     void GetRecentlyOpenedFiles(wxArrayString& files);
     FileHistory& GetRecentlyOpenedFilesClass() { return m_recentFiles; }
@@ -190,7 +183,7 @@ public:
      */
     void CreateSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
 
-    clEditor* GetActiveEditor(bool includeDetachedEditors = false);
+    clEditor* GetActiveEditor();
     /**
      * @brief return vector of all editors in the notebook. This function only returns instances of type clEditor
      * @param editors [output]
@@ -202,11 +195,6 @@ public:
      * @param tabs [output]
      */
     void GetAllTabs(clTab::Vec_t& tabs);
-
-    /**
-     * @brief return a list of the detached tabs
-     */
-    void GetDetachedTabs(clTab::Vec_t& tabs);
 
     clEditor* FindEditor(const wxString& fileName);
     bool CloseEditor(const wxString& fileName) { return ClosePage(FindEditor(fileName)); }

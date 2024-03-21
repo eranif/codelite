@@ -334,7 +334,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
             }
         } else if((rootDir == wxGetTranslation(SEARCH_IN_OPEN_FILES)) || (rootDir == SEARCH_IN_OPEN_FILES)) {
             std::vector<clEditor*> editors;
-            clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
+            clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
 
             for(size_t n = 0; n < editors.size(); ++n) {
                 clEditor* editor = dynamic_cast<clEditor*>(*(editors.begin() + n));

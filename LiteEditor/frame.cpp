@@ -1450,7 +1450,7 @@ void clMainFrame::DoShowToolbars(bool show, bool update)
 void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
 {
     event.Skip();
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     wxMenuItem* labelCurrentState = event.GetMenu()->FindChildItem(XRCID("label_current_state"));
     if (labelCurrentState) { // Here seems to be the only reliable place to do 'updateui' for this; a real UpdateUI
                              // handler is only hit when there's no editor :/
@@ -1475,7 +1475,7 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
 
 void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (editor && m_mainToolbar) {
         bool undoing = event.GetId() == wxID_UNDO;
         wxMenu* menu = new wxMenu;
@@ -1705,7 +1705,7 @@ void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) { Close(); }
 
 void clMainFrame::OnTBUnRedoMenu(wxCommandEvent& event)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (editor) {
         editor->GetCommandsProcessor().ProcessEvent(event);
 
@@ -1730,7 +1730,7 @@ bool clMainFrame::IsEditorEvent(wxEvent& event)
 
 #ifdef __WXGTK__
     MainBook* mainBook = GetMainBook();
-    if (!mainBook || !mainBook->GetActiveEditor(true)) {
+    if (!mainBook || !mainBook->GetActiveEditor()) {
         if (event.GetId() == XRCID("id_find")) {
             return true;
         } else {
@@ -1751,7 +1751,7 @@ bool clMainFrame::IsEditorEvent(wxEvent& event)
             isFocused = true;
 
         } else {
-            isFocused = mainBook->GetActiveEditor(true)->IsFocused();
+            isFocused = mainBook->GetActiveEditor()->IsFocused();
         }
         return isFocused;
     }
@@ -1806,7 +1806,7 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
         return;
     }
 
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (editor) {
         editor->OnMenuCommand(event);
     } else if (event.GetId() == XRCID("id_find")) {
@@ -1844,7 +1844,7 @@ void clMainFrame::DispatchUpdateUIEvent(wxUpdateUIEvent& event)
         return;
     }
 
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (!editor) {
         event.Enable(false);
         return;
@@ -1862,7 +1862,7 @@ void clMainFrame::DispatchUpdateUIEvent(wxUpdateUIEvent& event)
 void clMainFrame::OnFileExistUpdateUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    event.Enable(GetMainBook()->GetActiveEditor(true) != NULL);
+    event.Enable(GetMainBook()->GetActiveEditor() != NULL);
 }
 
 void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
@@ -1969,7 +1969,7 @@ void clMainFrame::LoadSession(const wxString& sessionName)
 void clMainFrame::OnSave(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (editor) {
         editor->SaveFile();
 
@@ -2040,7 +2040,7 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 void clMainFrame::OnFileReload(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (editor) {
         if (editor->GetModify()) {
             // Ask user if he really wants to lose all changes
@@ -2141,7 +2141,7 @@ void clMainFrame::OnCompleteWordRefreshList(wxCommandEvent& event) { wxUnusedVar
 void clMainFrame::OnCodeComplete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (editor) {
         editor->CompleteWord(LSP::CompletionItem::kTriggerUser);
     }
@@ -2150,7 +2150,7 @@ void clMainFrame::OnCodeComplete(wxCommandEvent& event)
 void clMainFrame::OnFunctionCalltip(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (editor) {
         editor->ShowFunctionTipFromCurrentPos();
     }
@@ -2217,10 +2217,9 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 
     std::vector<clEditor*> editors;
     wxArrayString filepaths;
-    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_RetainOrder |
-                                              MainBook::kGetAll_IncludeDetached); // We'll want the order of intArr
-                                                                                  // to match the order in
-                                                                                  // MainBook::SaveSession
+    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_RetainOrder); // We'll want the order of intArr
+                                                                          // to match the order in
+                                                                          // MainBook::SaveSession
     for (size_t i = 0; i < editors.size(); ++i) {
         filepaths.Add(editors[i]->GetFileName().GetFullPath());
     }
@@ -2283,7 +2282,7 @@ void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
 
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     // This menu item is enabled only if the current editor belongs to a project
     event.Enable(editor);
 }
@@ -2958,7 +2957,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     // Sanity
-    clEditor* activeEditor = GetMainBook()->GetActiveEditor(true);
+    clEditor* activeEditor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(activeEditor);
 
     // let the plugins process this first
@@ -3894,7 +3893,7 @@ void clMainFrame::OnManagePlugins(wxCommandEvent& e)
 
 void clMainFrame::OnCppContextMenu(wxCommandEvent& e)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     if (editor) {
         editor->GetContext()->ProcessEvent(e);
     }
@@ -5305,7 +5304,6 @@ void clMainFrame::OnFileSaveAllUI(wxUpdateUIEvent& event)
     bool hasModifiedEditor = false;
     clTab::Vec_t tabs;
     GetMainBook()->GetAllTabs(tabs);
-    GetMainBook()->GetDetachedTabs(tabs);
 
     for (size_t i = 0; i < tabs.size(); ++i) {
         if (tabs.at(i).isFile && tabs.at(i).isModified) {
@@ -5510,7 +5508,7 @@ void clMainFrame::OnSwitchWorkspaceUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnSplitSelection(wxCommandEvent& event)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
     editor->SplitSelection();
@@ -5518,7 +5516,7 @@ void clMainFrame::OnSplitSelection(wxCommandEvent& event)
 
 void clMainFrame::OnSplitSelectionUI(wxUpdateUIEvent& event)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     event.Enable(editor && editor->HasSelection());
 }
 
@@ -5625,15 +5623,15 @@ void clMainFrame::OnDebugEnded(clDebugEvent& event)
 
 void clMainFrame::OnPrint(wxCommandEvent& event)
 {
-    if (GetMainBook()->GetActiveEditor(true)) {
-        GetMainBook()->GetActiveEditor(true)->Print();
+    if (GetMainBook()->GetActiveEditor()) {
+        GetMainBook()->GetActiveEditor()->Print();
     }
 }
 
 void clMainFrame::OnPageSetup(wxCommandEvent& event)
 {
-    if (GetMainBook()->GetActiveEditor(true)) {
-        GetMainBook()->GetActiveEditor(true)->PageSetup();
+    if (GetMainBook()->GetActiveEditor()) {
+        GetMainBook()->GetActiveEditor()->PageSetup();
     }
 }
 
@@ -5887,7 +5885,7 @@ void clMainFrame::OnEnvironmentVariablesModified(clCommandEvent& e)
 void clMainFrame::OnWordComplete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
     // Get the filter

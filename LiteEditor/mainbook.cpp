@@ -32,7 +32,6 @@
 #include "cl_defs.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
-#include "editorframe.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "filechecklist.h"
@@ -112,14 +111,11 @@ void MainBook::ConnectEvents()
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &MainBook::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MainBook::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(MainBook::OnProjectFileAdded), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_ADDED, &MainBook::OnProjectFileAdded, this);
+    EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_REMOVED, &MainBook::OnProjectFileRemoved, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &MainBook::OnDebugEnded, this);
-    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &MainBook::OnInitDone, this);
 
-    EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &MainBook::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
@@ -150,14 +146,11 @@ MainBook::~MainBook()
 
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &MainBook::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MainBook::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(MainBook::OnProjectFileAdded), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &MainBook::OnProjectFileAdded, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_REMOVED, &MainBook::OnProjectFileRemoved, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &MainBook::OnDebugEnded, this);
-    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &MainBook::OnInitDone, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
@@ -371,17 +364,8 @@ void MainBook::RestoreSession(const SessionEntry& session)
     CallAfter(&MainBook::DoRestoreSession, session);
 }
 
-clEditor* MainBook::GetActiveEditor(bool includeDetachedEditors)
+clEditor* MainBook::GetActiveEditor()
 {
-    if (includeDetachedEditors) {
-        EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
-        for (; iter != m_detachedEditors.end(); ++iter) {
-            if ((*iter)->GetEditor()->IsFocused()) {
-                return (*iter)->GetEditor();
-            }
-        }
-    }
-
     if (!GetCurrentPage()) {
         return NULL;
     }
@@ -418,30 +402,13 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
 void MainBook::GetAllEditors(clEditor::Vec_t& editors, size_t flags)
 {
     editors.clear();
-    if (!(flags & kGetAll_DetachedOnly)) {
-        // Collect booked editors
-        if (!(flags & kGetAll_RetainOrder)) {
-            // Most of the time we don't care about the order the tabs are stored in
-            for (size_t i = 0; i < m_book->GetPageCount(); i++) {
-                clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
-                if (editor) {
-                    editors.push_back(editor);
-                }
-            }
-        } else {
-            for (size_t i = 0; i < m_book->GetPageCount(); i++) {
-                clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
-                if (editor) {
-                    editors.push_back(editor);
-                }
-            }
-        }
-    }
-    if ((flags & kGetAll_IncludeDetached) || (flags & kGetAll_DetachedOnly)) {
-        // Add the detached editors
-        EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
-        for (; iter != m_detachedEditors.end(); ++iter) {
-            editors.push_back((*iter)->GetEditor());
+    editors.reserve(m_book->GetPageCount());
+
+    // Collect booked editors
+    for (size_t i = 0; i < m_book->GetPageCount(); i++) {
+        clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
+        if (editor) {
+            editors.push_back(editor);
         }
     }
 }
@@ -453,7 +420,7 @@ int MainBook::FindEditorIndexByFullPath(const wxString& fullpath)
     wxString fileNameDest = CLRealPath(fullpath);
 #endif
 
-    for (size_t i = 0; i < m_book->GetPageCount(); i++) {
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
         clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
         if (editor) {
             // are we a remote path?
@@ -500,14 +467,6 @@ clEditor* MainBook::FindEditor(const wxString& fileName)
     int index = FindEditorIndexByFullPath(fileName);
     if (index != wxNOT_FOUND) {
         return dynamic_cast<clEditor*>(m_book->GetPage(index));
-    }
-
-    // try the detached editors
-    EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
-    for (; iter != m_detachedEditors.end(); ++iter) {
-        if ((*iter)->GetEditor()->GetFileName().GetFullPath() == fileName) {
-            return (*iter)->GetEditor();
-        }
     }
     return nullptr;
 }
@@ -587,7 +546,7 @@ clEditor* MainBook::OpenRemoteFile(const wxString& local_path, const wxString& r
         return nullptr;
     }
 
-    clEditor* cur_active_editor = GetActiveEditor(true);
+    clEditor* cur_active_editor = GetActiveEditor();
     BrowseRecord jumpfrom = cur_active_editor ? cur_active_editor->CreateBrowseRecord() : BrowseRecord();
 
     // locate an existing editor
@@ -658,7 +617,7 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
         fileName = wxFileName(filePath);
     }
 
-    clEditor* editor = GetActiveEditor(true);
+    clEditor* editor = GetActiveEditor();
     BrowseRecord jumpfrom = editor ? editor->CreateBrowseRecord() : BrowseRecord();
 
     editor = FindEditor(fileName.GetFullPath());
@@ -1047,13 +1006,6 @@ bool MainBook::CloseAll(bool cancellable)
     m_book->DeleteAllPages();
     m_reloadingDoRaise = true;
 
-    // Delete all detached editors
-    for (auto frame : m_detachedEditors) {
-        // Destroying the frame will release the editor
-        frame->Destroy();
-    }
-    m_detachedEditors.clear();
-
     // Since we got no more editors opened,
     // send a wxEVT_ALL_EDITORS_CLOSED event
     SendCmdEvent(wxEVT_ALL_EDITORS_CLOSED);
@@ -1347,45 +1299,6 @@ bool MainBook::ClosePage(const wxString& text)
 
 size_t MainBook::GetPageCount() const { return m_book->GetPageCount(); }
 
-void MainBook::DetachActiveEditor()
-{
-#if 0
-    if (GetActiveEditor()) {
-        clEditor* editor = GetActiveEditor();
-        m_book->RemovePage(m_book->GetSelection());
-        EditorFrame* frame = new EditorFrame(clMainFrame::Get(), editor, m_book->GetStyle());
-        // Move it to the same position as the main frame
-        frame->Move(EventNotifier::Get()->TopFrame()->GetPosition());
-        // And show it
-        frame->Show();
-        // frame->Raise();
-        m_detachedEditors.push_back(frame);
-    }
-#endif
-}
-
-void MainBook::OnDetachedEditorClosed(clCommandEvent& e)
-{
-    e.Skip();
-    IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
-    DoEraseDetachedEditor(editor);
-
-    wxString alternateText = (editor && editor->IsEditorModified()) ? editor->GetCtrl()->GetText() : "";
-    // Open the file again in the main book
-    CallAfter(&MainBook::DoOpenFile, e.GetFileName(), alternateText);
-}
-
-void MainBook::DoEraseDetachedEditor(IEditor* editor)
-{
-    EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
-    for (; iter != m_detachedEditors.end(); ++iter) {
-        if ((*iter)->GetEditor() == editor) {
-            m_detachedEditors.erase(iter);
-            break;
-        }
-    }
-}
-
 void MainBook::OnWorkspaceReloadEnded(clWorkspaceEvent& e)
 {
     e.Skip();
@@ -1612,22 +1525,6 @@ bool MainBook::ClosePage(IEditor* editor, bool notify)
     return (pos != wxNOT_FOUND) && (m_book->DeletePage(pos));
 }
 
-void MainBook::GetDetachedTabs(clTab::Vec_t& tabs)
-{
-    // Make sure that modified detached editors are also enabling the "Save" and "Save All" button
-    const EditorFrame::List_t& detachedEditors = GetDetachedEditors();
-    std::for_each(detachedEditors.begin(), detachedEditors.end(), [&](EditorFrame* fr) {
-        clTab tabInfo;
-        tabInfo.bitmap = wxNOT_FOUND;
-        tabInfo.filename = fr->GetEditor()->GetFileName();
-        tabInfo.isFile = true;
-        tabInfo.isModified = fr->GetEditor()->GetModify();
-        tabInfo.text = fr->GetEditor()->GetFileName().GetFullPath();
-        tabInfo.window = fr->GetEditor();
-        tabs.push_back(tabInfo);
-    });
-}
-
 void MainBook::DoOpenFile(const wxString& filename, const wxString& content)
 {
     clEditor* editor = OpenFile(filename);
@@ -1645,7 +1542,7 @@ void MainBook::OnColoursAndFontsChanged(clCommandEvent& e)
 void MainBook::DoUpdateEditorsThemes()
 {
     std::vector<clEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
     }
@@ -1662,18 +1559,6 @@ void MainBook::OnSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
     ApplyTabLabelChanges();
-
-#if 0
-    // do we need to hide/show the tab bar?
-    bool hideTabBar = clConfig::Get().Read("HideTabBar", false);
-    size_t style = m_book->GetStyle();
-    if (hideTabBar) {
-        style |= kNotebook_HideTabBar;
-    } else {
-        style &= ~kNotebook_HideTabBar;
-    }
-    m_book->SetStyle(style);
-#endif
 }
 
 clEditor* MainBook::OpenFile(const BrowseRecord& rec)
@@ -1905,7 +1790,7 @@ void MainBook::OnIdle(wxIdleEvent& event)
         return;
     }
 
-    auto editor = GetActiveEditor(false);
+    auto editor = GetActiveEditor();
     CHECK_PTR_RET(editor);
 
     execute_callbacks_for_file(CLRealPath(editor->GetFileName().GetFullPath()));

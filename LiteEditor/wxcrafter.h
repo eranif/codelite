@@ -36,8 +36,6 @@
 #include "clToolBar.h"
 #include "clConfigurationSelectionCtrl.h"
 #include "fileview.h"
-#include <wx/frame.h>
-#include <wx/menu.h>
 #include <wx/textctrl.h>
 #include <wx/statbmp.h>
 #include <wx/bannerwindow.h>
@@ -197,46 +195,6 @@ public:
     WorkspaceTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~WorkspaceTabBase();
-};
-
-class EditorFrameBase : public wxFrame
-{
-protected:
-    wxPanel* m_mainPanel;
-    clToolBar* m_toolbar;
-    wxMenuBar* m_menuBar587;
-    wxMenu* FILE;
-    wxMenuItem* m_menuItemSave;
-    wxMenuItem* m_menuItemReload;
-    wxMenuItem* m_menuItemSEPARATOR;
-    wxMenuItem* m_menuItemClose;
-    wxMenu* EDIT;
-    wxMenuItem* m_menuItemFind;
-    wxMenuItem* m_menuItemUndo;
-    wxMenuItem* m_menuItemRedo;
-
-protected:
-    virtual void OnCloseWindow(wxCloseEvent& event) { event.Skip(); }
-    virtual void OnSave(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSaveUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnReload(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCloseUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnUndo(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUndoUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnRedo(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRedoUI(wxUpdateUIEvent& event) { event.Skip(); }
-
-public:
-    clToolBar* GetToolbar() { return m_toolbar; }
-    wxPanel* GetMainPanel() { return m_mainPanel; }
-    wxMenuBar* GetMenuBar587() { return m_menuBar587; }
-    EditorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("EditorFrame"),
-                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800, 600),
-                    long style = wxDEFAULT_FRAME_STYLE);
-    virtual ~EditorFrameBase();
 };
 
 class OpenFolderDlgBase : public wxDialog

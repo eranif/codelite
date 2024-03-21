@@ -330,7 +330,7 @@ void PluginManager::Load()
 IEditor* PluginManager::GetActiveEditor()
 {
     if (clMainFrame::Get() && clMainFrame::Get()->GetMainBook()) {
-        clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+        clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
         if (!editor) {
             return nullptr;
         }

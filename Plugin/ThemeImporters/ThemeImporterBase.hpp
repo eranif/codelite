@@ -95,6 +95,22 @@ private:
     WordSetIndex m_localsIndex;
     WordSetIndex m_othersIndex;
 
+    /// Alacritty basic colours read from the configuration file
+    struct AlacrittyColours {
+        wxString theme_name;
+        wxString bg;
+        wxString fg;
+        wxString caret;
+        wxString black;
+        wxString red;
+        wxString green;
+        wxString yellow;
+        wxString blue;
+        wxString magenta;
+        wxString cyan;
+        wxString white;
+    };
+
 protected:
     void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const wxString& colour,
                      const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false);
@@ -124,7 +140,8 @@ protected:
     void DoSetKeywords(wxString& wordset, const wxString& words);
     LexerConf::Ptr_t ImportEclipseXML(const wxFileName& theme_file, const wxString& langName, int langId);
     LexerConf::Ptr_t ImportVSCodeJSON(const wxFileName& theme_file, const wxString& langName, int langId);
-    LexerConf::Ptr_t ImportAlacrittyTheme(const wxFileName& theme_file, const wxString& langName, int langId);
+    LexerConf::Ptr_t ImportAlacrittyThemeYAML(const wxFileName& theme_file, const wxString& langName, int langId);
+    LexerConf::Ptr_t ImportAlacrittyThemeToml(const wxFileName& theme_file, const wxString& langName, int langId);
     void GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map, const std::vector<wxString>& scopes,
                          Property& colour);
     void GetEditorVSCodeColour(JSONItem& colours, const wxString& bg_prop, const wxString& fg_prop, Property& colour);
@@ -136,6 +153,8 @@ private:
      */
     void GetEclipseXmlProperty(const wxString& bg_prop, const wxString& fg_prop,
                                ThemeImporterBase::Property& prop) const;
+
+    LexerConf::Ptr_t ImportAlacrittyThemeBase(AlacrittyColours& colours, const wxString& langName, int langId);
 
 public:
     const wxString& GetLangName() const { return m_langName; }

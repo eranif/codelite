@@ -1,4 +1,5 @@
 #include "clIniFile.h"
+
 #include "cl_standard_paths.h"
 
 clIniFile::clIniFile(const wxFileName& iniFullPath)
@@ -7,13 +8,10 @@ clIniFile::clIniFile(const wxFileName& iniFullPath)
 }
 
 clIniFile::clIniFile(const wxString& fullname)
-    : wxFileConfig("",
-                   "",
+    : wxFileConfig("", "",
                    clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-                       wxFileName::GetPathSeparator() +
-                       fullname,
-                   "",
-                   wxCONFIG_USE_LOCAL_FILE)
+                       wxFileName::GetPathSeparator() + fullname,
+                   "", wxCONFIG_USE_LOCAL_FILE)
 {
 }
 

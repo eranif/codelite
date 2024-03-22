@@ -67,7 +67,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     m_panelGeneral =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelGeneral, _("General"), false);
+    m_notebook->AddPage(m_panelGeneral, _("General"), true);
 
     wxBoxSizer* boxSizer198 = new wxBoxSizer(wxVERTICAL);
     m_panelGeneral->SetSizer(boxSizer198);
@@ -435,6 +435,22 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer10->AddButton(m_buttonApply);
     m_stdBtnSizer10->Realize();
 
+#if wxVERSION_NUMBER >= 2900
+    if (!wxPersistenceManager::Get().Find(m_notebook)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook);
+    }
+#endif
+
+#if wxVERSION_NUMBER >= 2900
+    if (!wxPersistenceManager::Get().Find(m_notebook2)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook2);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook2);
+    }
+#endif
+
     SetName(wxT("SyntaxHighlightBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if (GetSizer()) {
@@ -444,6 +460,11 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
     m_choiceAppearance->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnCodeLiteAppearance, this);

@@ -158,6 +158,9 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_choiceAppearance->SetSelection(appearance);
 #endif
 
+    // Use a default big size for this dialog
+    ::clSetDialogBestSizeAndPosition(this);
+
     // Theme handling
     CentreOnParent();
 }

@@ -47,6 +47,8 @@
 #include "pluginmanager.h"
 #include "procutils.h"
 #include "singleinstancethreadjob.h"
+#include "exelocator.h"
+#include "stack_walker.h"
 
 #include <wx/imagjpeg.h>
 #include <wx/persist.h>

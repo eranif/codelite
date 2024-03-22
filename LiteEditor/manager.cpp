@@ -84,6 +84,7 @@
 #include "threadlistpanel.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "exelocator.h"
 
 #include <unordered_map>
 #include <unordered_set>

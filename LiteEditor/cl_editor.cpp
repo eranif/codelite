@@ -6115,7 +6115,7 @@ void clEditor::OpenURL(wxCommandEvent& event)
 
 void clEditor::ReloadFromDisk(bool keepUndoHistory)
 {
-    wxWindowUpdateLocker locker(this);
+    wxWindowUpdateLocker locker(GetParent());
     SetReloadingFile(true);
 
     DoCancelCalltip();

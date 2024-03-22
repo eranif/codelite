@@ -542,7 +542,7 @@ void CodeFormatter::OnFormatCompleted(clSourceFormatEvent& event)
     auto editor = clGetManager()->FindEditor(filepath);
 
     if (editor) {
-        wxWindowUpdateLocker window_locker{ editor->GetCtrl() };
+        wxWindowUpdateLocker window_locker{ editor->GetCtrl()->GetParent() };
         editor->GetCtrl()->BeginUndoAction();
         clEditorStateLocker locker{ editor->GetCtrl() };
         editor->GetCtrl()->SetText(event.GetFormattedString());

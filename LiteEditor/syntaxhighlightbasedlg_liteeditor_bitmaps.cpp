@@ -90,6 +90,6 @@ void wxCrafterqEa5vvInitBitmapResources()
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$res_fonts-and-colours.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$_Users_eifrah_devl_codelite_LiteEditor_syntaxhighlightbasedlg_liteeditor_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$_Users_eifrah_devl_codelite_LiteEditor_syntaxhighlightbasedlg_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$C__msys64_home_eran_devl_codelite_LiteEditor_syntaxhighlightbasedlg_liteeditor_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$C__msys64_home_eran_devl_codelite_LiteEditor_syntaxhighlightbasedlg_liteeditor_bitmaps.xrc"));
 }

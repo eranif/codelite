@@ -17,6 +17,8 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
 #include <wx/statbox.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
@@ -25,10 +27,7 @@
 #include <wx/fontpicker.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
-#include <wx/collpane.h>
 #include <wx/listbox.h>
-#include <wx/notebook.h>
-#include <wx/imaglist.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/statline.h>
@@ -56,6 +55,8 @@ class SyntaxHighlightBaseDlg : public wxDialog
 protected:
     wxPanel* m_panel171;
     wxToolBar* m_toolbar;
+    wxNotebook* m_notebook;
+    wxPanel* m_panelGeneral;
     wxChoice* m_choiceAppearance;
     wxStaticText* m_staticText9;
     wxColourPickerCtrl* m_colourPickerSelTextBgColour;
@@ -66,7 +67,7 @@ protected:
     wxStaticText* m_staticText155;
     wxChoice* m_choiceGlobalTheme;
     clThemedSTC* m_stcPreview;
-    wxCollapsiblePane* m_collPane193;
+    wxPanel* m_panelAdvanced;
     wxListBox* m_listBox;
     wxPanel* m_panel25;
     wxNotebook* m_notebook2;
@@ -108,7 +109,6 @@ protected:
     virtual void OnSelTextFgChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCollapse(wxCollapsiblePaneEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }
@@ -140,6 +140,7 @@ public:
     wxStaticText* GetStaticText155() { return m_staticText155; }
     wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
     clThemedSTC* GetStcPreview() { return m_stcPreview; }
+    wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     wxListBox* GetListBox() { return m_listBox; }
     wxStaticText* GetStaticText70() { return m_staticText70; }
     wxChoice* GetChoiceLexerThemes() { return m_choiceLexerThemes; }
@@ -169,7 +170,8 @@ public:
     wxPanel* GetPanelCustomize() { return m_panelCustomize; }
     wxNotebook* GetNotebook2() { return m_notebook2; }
     wxPanel* GetPanel25() { return m_panel25; }
-    wxCollapsiblePane* GetCollPane193() { return m_collPane193; }
+    wxPanel* GetPanelAdvanced() { return m_panelAdvanced; }
+    wxNotebook* GetNotebook() { return m_notebook; }
     wxPanel* GetPanel171() { return m_panel171; }
     SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"),
                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),

@@ -57,7 +57,6 @@ protected:
     void OnNewTheme(wxCommandEvent& event);
 
     // other ui events
-    void OnCollapse(wxCollapsiblePaneEvent& event) override;
     void OnCodeLiteAppearance(wxCommandEvent& event) override;
     void OnGlobalFontSelected(wxFontPickerEvent& event) override;
     void OnGlobalThemeSelected(wxCommandEvent& event) override;

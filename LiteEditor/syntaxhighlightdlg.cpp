@@ -157,9 +157,8 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     int appearance = clConfig::Get().Read("CodeLiteAppearance", CodeLiteAppearance::SYSTEM_DEFAULT);
     m_choiceAppearance->SetSelection(appearance);
 #endif
-    // Theme handling
 
-    GetSizer()->Fit(this);
+    // Theme handling
     CentreOnParent();
 }
 
@@ -808,11 +807,4 @@ void SyntaxHighlightDlg::OnCodeLiteAppearance(wxCommandEvent& event)
 #else
     wxUnusedVar(event);
 #endif
-}
-
-void SyntaxHighlightDlg::OnCollapse(wxCollapsiblePaneEvent& event)
-{
-    event.Skip();
-    // re-center the dialog
-    CentreOnParent();
 }

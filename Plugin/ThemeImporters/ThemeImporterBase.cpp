@@ -3,6 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include "JSON.h"
 #include "StringUtils.h"
+#include "clINIParser.hpp"
 #include "drawingutils.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -15,7 +16,6 @@
 #include <string>
 #include <wx/arrstr.h>
 #include <wx/colour.h>
-#include <wx/fileconf.h>
 #include <wx/settings.h>
 #include <wx/tokenzr.h>
 
@@ -367,16 +367,18 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeToml(const wxFileName& t
     clDEBUG() << "   > Importing Alacritty Theme (TOML) file:" << theme_file << ". Language:" << langName << endl;
     std::string filename = StringUtils::ToStdString(theme_file.GetFullPath());
 
-    wxFileConfig conf(wxEmptyString, wxEmptyString, filename);
+    clINIParser ini_parser;
+    ini_parser.ParseFile(theme_file.GetFullPath());
+
     AlacrittyColours colours;
     colours.theme_name = theme_file.GetName();
-    conf.Read("/colors.primary/background", &colours.bg);
-    conf.Read("/colors.primary/foreground", &colours.fg);
+    colours.bg = ini_parser["colors.primary"]["background"].GetValue();
+    colours.fg = ini_parser["colors.primary"]["foreground"].GetValue();
 
     m_isDarkTheme = DrawingUtils::IsDark(colours.bg);
 
     wxString default_caret_colour = m_isDarkTheme ? "ORANGE" : "DARK GREY";
-    conf.Read("/colors.cursor/foreground", &colours.caret);
+    colours.caret = ini_parser["colors.cursor"]["foreground"].GetValue();
     if (colours.caret.empty()) {
         colours.caret = default_caret_colour;
     }
@@ -390,32 +392,30 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeToml(const wxFileName& t
     // and "bright" is optional. if "bright" is required but missing
     // fallback to use "normal"
     wxString section_name = "colors.normal"; // the default
-    if (m_isDarkTheme && conf.HasGroup("colors.bright")) {
+    if (m_isDarkTheme && ini_parser.HasSection("colors.bright")) {
         section_name = "colors.bright";
     }
 
-    conf.Read(wxString() << "/" << section_name << "/black", &colours.black);
-    conf.Read(wxString() << "/" << section_name << "/red", &colours.red);
-    conf.Read(wxString() << "/" << section_name << "/green", &colours.green);
-    conf.Read(wxString() << "/" << section_name << "/yellow", &colours.yellow);
-    conf.Read(wxString() << "/" << section_name << "/blue", &colours.blue);
-    conf.Read(wxString() << "/" << section_name << "/magenta", &colours.magenta);
-    conf.Read(wxString() << "/" << section_name << "/cyan", &colours.cyan);
-    conf.Read(wxString() << "/" << section_name << "/white", &colours.white);
+    colours.black = ini_parser[section_name]["black"].GetValue();
+    colours.red = ini_parser[section_name]["red"].GetValue();
+    colours.green = ini_parser[section_name]["green"].GetValue();
+    colours.yellow = ini_parser[section_name]["yellow"].GetValue();
+    colours.blue = ini_parser[section_name]["blue"].GetValue();
+    colours.magenta = ini_parser[section_name]["magenta"].GetValue();
+    colours.cyan = ini_parser[section_name]["cyan"].GetValue();
+    colours.white = ini_parser[section_name]["white"].GetValue();
 
-    // Fix TOML single quoted strings
-    colours.theme_name.Replace("'", wxEmptyString);
-    colours.bg.Replace("'", wxEmptyString);
-    colours.fg.Replace("'", wxEmptyString);
-    colours.caret.Replace("'", wxEmptyString);
-    colours.black.Replace("'", wxEmptyString);
-    colours.red.Replace("'", wxEmptyString);
-    colours.green.Replace("'", wxEmptyString);
-    colours.yellow.Replace("'", wxEmptyString);
-    colours.blue.Replace("'", wxEmptyString);
-    colours.magenta.Replace("'", wxEmptyString);
-    colours.cyan.Replace("'", wxEmptyString);
-    colours.white.Replace("'", wxEmptyString);
+#if 0
+    clSYSTEM() << "black=[" << colours.black << "]" << endl;
+    clSYSTEM() << "red=[" << colours.red << "]" << endl;
+    clSYSTEM() << "yellow=[" << colours.yellow << "]" << endl;
+    clSYSTEM() << "blue=[" << colours.blue << "]" << endl;
+    clSYSTEM() << "green=[" << colours.green << "]" << endl;
+    clSYSTEM() << "green=[" << colours.green << "]" << endl;
+    clSYSTEM() << "magenta=[" << colours.magenta << "]" << endl;
+    clSYSTEM() << "cyan=[" << colours.cyan << "]" << endl;
+    clSYSTEM() << "white=[" << colours.white << "]" << endl;
+#endif
 
     if (colours.black.empty() || colours.red.empty() || colours.green.empty() || colours.yellow.empty() ||
         colours.blue.empty() || colours.magenta.empty() || colours.cyan.empty() || colours.white.empty()) {

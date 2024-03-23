@@ -6510,20 +6510,21 @@ void clEditor::UpdateDefaultTextWidth() { m_default_text_width = TextWidth(wxSTC
 
 void clEditor::OnIdle(wxIdleEvent& event)
 {
+    if (!IsShown()) {
+        return;
+    }
+
     event.Skip();
     std::chrono::milliseconds ms =
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
     // We allow IDLE event once in 100ms
     uint64_t current_ts = ms.count();
-    if ((current_ts - m_lastIdleEvent) < 100) {
+    if ((current_ts - m_lastIdleEvent) < 250) {
         return;
     }
 
     m_lastIdleEvent = current_ts;
-    if (!IsShown()) {
-        return;
-    }
 
     if (m_scrollbar_recalc_is_required) {
         m_scrollbar_recalc_is_required = false;

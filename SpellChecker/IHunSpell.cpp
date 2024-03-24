@@ -176,14 +176,14 @@ IHunSpell::~IHunSpell()
 {
     CloseEngine();
 
-    if(m_pSpellDlg != NULL)
+    if (m_pSpellDlg != NULL)
         m_pSpellDlg->Destroy();
 }
 // ------------------------------------------------------------
 bool IHunSpell::InitEngine()
 {
     // check if we are already initialized
-    if(m_pSpell != NULL)
+    if (m_pSpell != NULL)
         return true;
 
     m_ignoreList = CustomDictionary(0, StringHashOptionalCase(m_caseSensitiveUserDictionary),
@@ -192,7 +192,7 @@ bool IHunSpell::InitEngine()
                                   StringCompareOptionalCase(m_caseSensitiveUserDictionary));
 
     // check base path
-    if(!m_dicPath.IsEmpty() && !wxEndsWithPathSeparator(m_dicPath))
+    if (!m_dicPath.IsEmpty() && !wxEndsWithPathSeparator(m_dicPath))
         m_dicPath += wxFILE_SEP_PATH;
     // load user dict
     LoadUserDict(m_userDictPath + s_userDict);
@@ -205,13 +205,13 @@ bool IHunSpell::InitEngine()
 
     wxFileName fna(aff);
 
-    if(!fna.FileExists()) {
+    if (!fna.FileExists()) {
         clLogMessage(_("Could not find aff file!"));
         return false;
     }
     wxFileName fnd(dict);
 
-    if(!fnd.FileExists()) {
+    if (!fnd.FileExists()) {
         clLogMessage(_("Could not find dictionary file!"));
         return false;
     }
@@ -223,7 +223,7 @@ bool IHunSpell::InitEngine()
 // ------------------------------------------------------------
 void IHunSpell::CloseEngine()
 {
-    if(m_pSpell != NULL) {
+    if (m_pSpell != NULL) {
         Hunspell_destroy(m_pSpell);
         SaveUserDict(m_userDictPath + s_userDict);
     }
@@ -235,15 +235,15 @@ bool IHunSpell::CheckWord(const wxString& word) const
     static thread_local wxRegEx rehex(s_dectHex, wxRE_ADVANCED);
 
     // look in ignore list
-    if(m_ignoreList.count(word) != 0)
+    if (m_ignoreList.count(word) != 0)
         return true;
 
     // look in user list
-    if(m_userDict.count(word) != 0)
+    if (m_userDict.count(word) != 0)
         return true;
 
     // see if hex number
-    if(rehex.Matches(word))
+    if (rehex.Matches(word))
         return true;
 
     return Hunspell_spell(m_pSpell, word.ToUTF8()) != 0;
@@ -251,10 +251,10 @@ bool IHunSpell::CheckWord(const wxString& word) const
 // ------------------------------------------------------------
 bool IHunSpell::IsTag(const wxString& word) const
 {
-    if(GetIgnoreSymbolsInTagsDatabase()) {
+    if (GetIgnoreSymbolsInTagsDatabase()) {
         std::vector<TagEntryPtr> tags;
         TagsManagerST::Get()->FindSymbol(word, tags);
-        if(!tags.empty())
+        if (!tags.empty())
             return true;
     }
 
@@ -266,13 +266,13 @@ wxArrayString IHunSpell::GetSuggestions(const wxString& misspelled)
     wxArrayString suggestions;
     suggestions.Empty();
 
-    if(m_pSpell) {
+    if (m_pSpell) {
         char** wlst;
 
         wxCharBuffer misspelledBuffer = misspelled.mb_str();
         int ns = Hunspell_suggest(m_pSpell, &wlst, misspelledBuffer);
 
-        for(int i = 0; i < ns; i++)
+        for (int i = 0; i < ns; i++)
             suggestions.Add(wxString(wlst[i]));
         Hunspell_free_list(m_pSpell, &wlst, ns);
     }
@@ -288,25 +288,24 @@ void IHunSpell::CheckSpelling()
     CHECK_PTR_RET(pEditor);
     CHECK_COND_RET(InitEngine());
 
-    int offset = 0;
     bool error = false;
     wxString text = pEditor->GetEditorText() + " ";
 
     // check for dialog and create if necessary
-    if(m_pSpellDlg == NULL) {
+    if (m_pSpellDlg == NULL) {
         m_pSpellDlg = new CorrectSpellingDlg(NULL);
     }
     m_pSpellDlg->SetPHs(this);
-    wxStringTokenizer tkz(text, s_defDelimiters);
+    wxArrayString lines = ::wxStringTokenize(text, "\n", wxTOKEN_RET_EMPTY_ALL);
 
     const std::unordered_set<int>* STRING_STYLES = nullptr;
     const std::unordered_set<int>* COMMENT_STYLES = nullptr;
 
-    if(ALLOWED_STYLES_STRINGS.count(pEditor->GetLexerId())) {
+    if (ALLOWED_STYLES_STRINGS.count(pEditor->GetLexerId())) {
         STRING_STYLES = &ALLOWED_STYLES_STRINGS[pEditor->GetLexerId()];
     }
 
-    if(ALLOWED_STYLES_COMMENTS.count(pEditor->GetLexerId())) {
+    if (ALLOWED_STYLES_COMMENTS.count(pEditor->GetLexerId())) {
         COMMENT_STYLES = &ALLOWED_STYLES_COMMENTS[pEditor->GetLexerId()];
     }
 
@@ -314,52 +313,65 @@ void IHunSpell::CheckSpelling()
     (!pset /* no limit */ || (pset && pset->count(style_id) /* we have a set -> it must contain the id*/))
 
     LOG_IF_TRACE { clDEBUG1() << "SpellChecker: checking file:" << pEditor->GetFileName() << endl; }
-    while(tkz.HasMoreTokens()) {
-        wxString token = tkz.GetNextToken();
-        int pos = tkz.GetPosition() - token.length() - 1;
-        pos += offset;
+    for (size_t line_number = 0; line_number < lines.size(); ++line_number) {
+        // Now parse each line separately
+        wxStringTokenizer tkz(lines[line_number], s_defDelimiters);
+        int offset = 0;
+        while (tkz.HasMoreTokens()) {
+            wxString token = tkz.GetNextToken();
 
-        // ignore token shorter then MIN_TOKEN_LEN
-        if(token.length() <= MIN_TOKEN_LEN)
-            continue;
+            int line_start_pos = pEditor->PosFromLine(line_number);
+            int pos = tkz.GetPosition() - token.length() + line_start_pos;
+            // incase the current token real length is greater than the normal len
+            // include it in the offset
+            size_t utf8_len = FileUtils::UTF8Length(token.c_str(), token.length());
+            if (utf8_len > token.length()) {
+                offset += (utf8_len - token.length());
+            }
+            pos += offset;
 
-        // Check the style at the middle of the token
-        int style_at_pos = pEditor->GetStyleAtPos(pos + token.length() / 2);
-        if(!IS_STYLE_ALLOWED(STRING_STYLES, style_at_pos) && !IS_STYLE_ALLOWED(COMMENT_STYLES, style_at_pos))
-            // skip this token
-            continue;
+            // ignore token shorter then MIN_TOKEN_LEN
+            if (token.length() <= MIN_TOKEN_LEN)
+                continue;
 
-        // process token
-        if(!CheckWord(token)) {
-            pEditor->SetUserIndicator(pos, token.length());
+            // Check the style at the middle of the token
+            int style_at_pos = pEditor->GetStyleAtPos(pos + token.length() / 2);
+            if (!IS_STYLE_ALLOWED(STRING_STYLES, style_at_pos) && !IS_STYLE_ALLOWED(COMMENT_STYLES, style_at_pos))
+                // skip this token
+                continue;
 
-            if(!m_pPlugIn->GetCheckContinuous()) {
-                pEditor->SetCaretAt(pos);
-                pEditor->SelectText(pos, token.length());
-                // show correct spelling dialog
-                error = true;
-                m_pSpellDlg->SetMisspelled(token);
-                m_pSpellDlg->SetSuggestions(GetSuggestions(token));
-                int ret = m_pSpellDlg->ShowModal();
+            // process token
+            if (!CheckWord(token)) {
+                pEditor->SetUserIndicator(pos, token.length());
 
-                switch(ret) {
-                case SC_CHANGE: {
-                    // correct spelling
-                    wxString replace = m_pSpellDlg->GetMisspelled();
-                    offset += replace.Len() - token.Len();
-                    text.replace(pos, token.Len(), replace);
-                    pEditor->ReplaceSelection(replace);
-                } break;
-                case SC_IGNORE:
-                    AddWordToIgnoreList(token);
-                    break;
-                case SC_ADD:
-                    AddWordToUserDict(token);
-                    break;
-                default: {
-                    pEditor->ClearUserIndicators();
-                    return;
-                }
+                if (!m_pPlugIn->GetCheckContinuous()) {
+                    pEditor->SetCaretAt(pos);
+                    pEditor->SelectText(pos, token.length());
+                    // show correct spelling dialog
+                    error = true;
+                    m_pSpellDlg->SetMisspelled(token);
+                    m_pSpellDlg->SetSuggestions(GetSuggestions(token));
+                    int ret = m_pSpellDlg->ShowModal();
+
+                    switch (ret) {
+                    case SC_CHANGE: {
+                        // correct spelling
+                        wxString replace = m_pSpellDlg->GetMisspelled();
+                        offset += replace.Len() - token.Len();
+                        text.replace(pos, token.Len(), replace);
+                        pEditor->ReplaceSelection(replace);
+                    } break;
+                    case SC_IGNORE:
+                        AddWordToIgnoreList(token);
+                        break;
+                    case SC_ADD:
+                        AddWordToUserDict(token);
+                        break;
+                    default: {
+                        pEditor->ClearUserIndicators();
+                        return;
+                    }
+                    }
                 }
             }
         }
@@ -367,11 +379,11 @@ void IHunSpell::CheckSpelling()
 #undef IS_STYLE_ALLOWED
 
     LOG_IF_TRACE { clDEBUG1() << "SpellChecker:: checking file:" << pEditor->GetFileName() << "is done" << endl; }
-    if(!m_pPlugIn->GetCheckContinuous()) {
+    if (!m_pPlugIn->GetCheckContinuous()) {
         // clean up
         pEditor->ClearUserIndicators();
 
-        if(!error)
+        if (!error)
             ::wxMessageBox(_("No spelling errors found!"));
     }
 }
@@ -380,7 +392,7 @@ void IHunSpell::CheckSpelling()
 // ------------------------------------------------------------
 wxString IHunSpell::GetCharacterEncoding()
 {
-    if(m_pSpell == NULL)
+    if (m_pSpell == NULL)
         return wxEmptyString;
 
     wxString encoding(wxConvUTF8.cMB2WC(Hunspell_get_dic_encoding(m_pSpell)), *wxConvCurrent);
@@ -390,7 +402,7 @@ wxString IHunSpell::GetCharacterEncoding()
 // ------------------------------------------------------------
 void IHunSpell::AddWordToIgnoreList(const wxString& word)
 {
-    if(word.IsEmpty())
+    if (word.IsEmpty())
         return;
 
     m_ignoreList.insert(word);
@@ -398,7 +410,7 @@ void IHunSpell::AddWordToIgnoreList(const wxString& word)
 // ------------------------------------------------------------
 void IHunSpell::AddWordToUserDict(const wxString& word)
 {
-    if(word.IsEmpty())
+    if (word.IsEmpty())
         return;
 
     m_userDict.insert(word);
@@ -408,14 +420,14 @@ bool IHunSpell::LoadUserDict(const wxString& filename)
 {
     wxTextFile tf(filename);
 
-    if(!tf.Exists())
+    if (!tf.Exists())
         return false;
 
     m_userDict.clear();
 
     tf.Open();
 
-    for(wxUint32 i = 0; i < tf.GetLineCount(); i++) {
+    for (wxUint32 i = 0; i < tf.GetLineCount(); i++) {
         m_userDict.insert(tf.GetLine(i));
     }
     tf.Close();
@@ -428,22 +440,22 @@ bool IHunSpell::SaveUserDict(const wxString& filename)
     wxTextFile tf(filename);
     CustomDictionary fileUserDict(m_userDict);
 
-    if(!tf.Exists()) {
-        if(!tf.Create())
+    if (!tf.Exists()) {
+        if (!tf.Create())
             return false;
     } else {
-        if(!tf.Open())
+        if (!tf.Open())
             return false;
 
         // Re-read contents from disk in case another CodeLite instance has updated the user dictionary.
-        for(wxUint32 i = 0; i < tf.GetLineCount(); i++) {
+        for (wxUint32 i = 0; i < tf.GetLineCount(); i++) {
             fileUserDict.insert(tf.GetLine(i));
         }
 
         tf.Clear();
     }
 
-    for(const auto& word : fileUserDict) {
+    for (const auto& word : fileUserDict) {
         tf.AddLine(word);
     }
     tf.Write();
@@ -454,7 +466,7 @@ bool IHunSpell::SaveUserDict(const wxString& filename)
 // ------------------------------------------------------------
 bool IHunSpell::ChangeLanguage(const wxString& language)
 {
-    if(m_dictionary.Cmp(language) == 0)
+    if (m_dictionary.Cmp(language) == 0)
         return false;
     CloseEngine();
     m_dictionary = language;
@@ -529,7 +541,7 @@ void IHunSpell::GetAllLanguageKeyNames(wxArrayString& lang)
     lang.Clear();
     languageMap::iterator itLang;
 
-    for(itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang) {
+    for (itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang) {
         wxString key = itLang->first;
         lang.Add(key);
     }
@@ -540,7 +552,7 @@ void IHunSpell::GetAvailableLanguageKeyNames(const wxString& path, wxArrayString
     lang.Clear();
     languageMap::iterator itLang;
 
-    for(itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang) {
+    for (itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang) {
         wxFileName fna(path, "");
         wxFileName fnd(path, "");
 
@@ -550,7 +562,7 @@ void IHunSpell::GetAvailableLanguageKeyNames(const wxString& path, wxArrayString
         fnd.SetName(itLang->second);
         fnd.SetExt("dic");
 
-        if(!fna.FileExists() || !fnd.FileExists())
+        if (!fna.FileExists() || !fnd.FileExists())
             continue;
 
         lang.Add(itLang->first);
@@ -560,7 +572,7 @@ void IHunSpell::GetAvailableLanguageKeyNames(const wxString& path, wxArrayString
 // ------------------------------------------------------------
 void IHunSpell::EnableScannerType(int type, bool state)
 {
-    if(state)
+    if (state)
         m_scanners |= type;
     else
         m_scanners &= ~type;
@@ -573,18 +585,18 @@ int IHunSpell::CheckCppType(IEditor* pEditor)
     int retVal = kNoSpellingError;
     int offset = 0;
 
-    for(wxUint32 i = 0; i < m_parseValues.size(); i++) {
+    for (wxUint32 i = 0; i < m_parseValues.size(); i++) {
         posLen pl = m_parseValues[i].first;
         wxString text = pEditor->GetTextRange(pl.first, pl.second);
         wxString del = s_commentDelimiters;
 
-        if(m_parseValues[i].second ==
-           kString) { // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
+        if (m_parseValues[i].second ==
+            kString) { // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
             wxRegEx re(s_wsRegEx, wxRE_ADVANCED);
             // to ensure that \\n will not get captured by the regex, we temporarily replace it
             text.Replace(s_DOUBLE_BACKSLASH, s_PLACE_HOLDER);
 
-            if(re.Matches(text)) {
+            if (re.Matches(text)) {
                 re.ReplaceAll(&text, wxT("  "));
                 del = s_cppDelimiters;
             }
@@ -595,23 +607,23 @@ int IHunSpell::CheckCppType(IEditor* pEditor)
 
         tkz.SetString(text, del);
 
-        while(tkz.HasMoreTokens()) {
+        while (tkz.HasMoreTokens()) {
             wxString token = tkz.GetNextToken();
             int pos = pl.first + tkz.GetPosition() - token.Len() - 1;
             pos += offset;
 
-            if(token.Len() <= MIN_TOKEN_LEN)
+            if (token.Len() <= MIN_TOKEN_LEN)
                 continue;
 
-            if(m_parseValues[i].second == kString) { // ignore filenames in #include
+            if (m_parseValues[i].second == kString) { // ignore filenames in #include
                 wxString line = pEditor->GetCtrl()->GetLine(pEditor->LineFromPos(pl.first));
 
-                if(line.Find(s_include) != wxNOT_FOUND)
+                if (line.Find(s_include) != wxNOT_FOUND)
                     continue;
             }
 
             // Note checking tags database only in continuous mode.
-            if(!CheckWord(token)) {
+            if (!CheckWord(token)) {
                 pEditor->SetUserIndicator(pos, token.Len());
                 pEditor->SetCaretAt(pos);
                 pEditor->SelectText(pos, token.Len());
@@ -621,7 +633,7 @@ int IHunSpell::CheckCppType(IEditor* pEditor)
                 m_pSpellDlg->SetSuggestions(GetSuggestions(token));
                 int ret = m_pSpellDlg->ShowModal();
 
-                switch(ret) {
+                switch (ret) {
                 case SC_CHANGE: {
                     // correct spelling
                     wxString replace = m_pSpellDlg->GetMisspelled();
@@ -653,17 +665,17 @@ int IHunSpell::MarkErrors(IEditor* pEditor)
     int counter = 0;
     pEditor->ClearUserIndicators();
 
-    for(wxUint32 i = 0; i < m_parseValues.size(); i++) {
+    for (wxUint32 i = 0; i < m_parseValues.size(); i++) {
         posLen pl = m_parseValues[i].first;
         wxString text = pEditor->GetTextRange(pl.first, pl.second);
         wxString del = s_commentDelimiters;
 
-        if(m_parseValues[i].second ==
-           kString) { // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
+        if (m_parseValues[i].second ==
+            kString) { // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
             wxRegEx re(s_wsRegEx, wxRE_ADVANCED);
             // to ensure that \\n will not get captured by the regex, we temporarily replace it
             text.Replace(s_DOUBLE_BACKSLASH, s_PLACE_HOLDER);
-            if(re.Matches(text)) {
+            if (re.Matches(text)) {
                 re.ReplaceAll(&text, wxT("  "));
                 del = s_cppDelimiters;
             }
@@ -671,21 +683,21 @@ int IHunSpell::MarkErrors(IEditor* pEditor)
         }
         tkz.SetString(text, del);
 
-        while(tkz.HasMoreTokens()) {
+        while (tkz.HasMoreTokens()) {
             wxString token = tkz.GetNextToken();
             int pos = pl.first + tkz.GetPosition() - token.Len() - 1;
 
-            if(token.Len() <= MIN_TOKEN_LEN)
+            if (token.Len() <= MIN_TOKEN_LEN)
                 continue;
 
-            if(m_parseValues[i].second == kString) {
+            if (m_parseValues[i].second == kString) {
                 wxString line = pEditor->GetCtrl()->GetLine(pEditor->LineFromPos(pl.first));
 
-                if(line.Find(s_include) != wxNOT_FOUND) // ignore filenames
+                if (line.Find(s_include) != wxNOT_FOUND) // ignore filenames
                     continue;
             }
 
-            if(!CheckWord(token) && !IsTag(token)) {
+            if (!CheckWord(token) && !IsTag(token)) {
                 pEditor->SetUserIndicator(pos, token.Len());
                 counter++;
             }
@@ -697,7 +709,7 @@ int IHunSpell::MarkErrors(IEditor* pEditor)
 
 void IHunSpell::SetCaseSensitiveUserDictionary(const bool caseSensitiveUserDictionary)
 {
-    if(caseSensitiveUserDictionary != m_caseSensitiveUserDictionary) {
+    if (caseSensitiveUserDictionary != m_caseSensitiveUserDictionary) {
         m_caseSensitiveUserDictionary = caseSensitiveUserDictionary;
 
         // Re-order user dictionary and ignores.

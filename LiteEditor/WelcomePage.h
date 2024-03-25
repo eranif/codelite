@@ -30,6 +30,7 @@
 #include "wxcrafter.h"
 
 #include <map>
+#include <wx/commandlinkbutton.h>
 
 enum class WorkspaceSource {
     BUILTIN,
@@ -46,10 +47,10 @@ struct WelcomePageItemData : public wxTreeItemData {
 
 class WelcomePage : public WelcomePageBase
 {
-    clThemedButton* m_buttonGithub = nullptr;
-    clThemedButton* m_buttonNewWorkspace = nullptr;
-    clThemedButton* m_buttonOpenWorkspace = nullptr;
-    clThemedButton* m_buttonGitter = nullptr;
+    wxCommandLinkButton* m_buttonGithub = nullptr;
+    wxCommandLinkButton* m_buttonNewWorkspace = nullptr;
+    wxCommandLinkButton* m_buttonOpenWorkspace = nullptr;
+    wxCommandLinkButton* m_buttonGitter = nullptr;
 
 protected:
     void OnNewWorkspace(wxCommandEvent& event);

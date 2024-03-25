@@ -81,14 +81,14 @@ WelcomePage::WelcomePage(wxWindow* parent)
     m_dvTreeCtrlWorkspaces->SetSortFunction(nullptr);
 
     // create the buttons
-    m_buttonOpenWorkspace = new clThemedButton(m_buttonsPage, wxID_ANY, _("Open"), _("Open an existing workspace"),
-                                               wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
-    m_buttonNewWorkspace = new clThemedButton(m_buttonsPage, wxID_ANY, _("New"), _("Create a new workspace"),
-                                              wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
-    m_buttonGithub = new clThemedButton(m_buttonsPage, wxID_ANY, _("GitHub"), _("Visit our GitHub project page"),
-                                        wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
-    m_buttonGitter = new clThemedButton(m_buttonsPage, wxID_ANY, _("Gitter"), _("Join the chat!"), wxDefaultPosition,
-                                        wxDefaultSize, wxBU_LEFT);
+    m_buttonOpenWorkspace = new wxCommandLinkButton(m_buttonsPage, wxID_ANY, _("Open"), _("Open an existing workspace"),
+                                                    wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
+    m_buttonNewWorkspace = new wxCommandLinkButton(m_buttonsPage, wxID_ANY, _("New"), _("Create a new workspace"),
+                                                   wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
+    m_buttonGithub = new wxCommandLinkButton(m_buttonsPage, wxID_ANY, _("GitHub"), _("Visit our GitHub project page"),
+                                             wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
+    m_buttonGitter = new wxCommandLinkButton(m_buttonsPage, wxID_ANY, _("Gitter"), _("Join the chat!"),
+                                             wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
 
     // events
     m_buttonOpenWorkspace->Bind(wxEVT_BUTTON, &WelcomePage::OnOpenWorkspace, this);
@@ -176,10 +176,10 @@ void WelcomePage::UpdateRecentWorkspaces()
     // TODO: fire event here to collect other workspaces as well
     auto locals = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(), _("Local workspaces"));
     int image_index = wxNOT_FOUND;
-    for(const wxString& filepath : files) {
+    for (const wxString& filepath : files) {
 
         wxFileName fn{ filepath };
-        if(!fn.FileExists()) {
+        if (!fn.FileExists()) {
             // exclude non existing files
             continue;
         }
@@ -187,7 +187,7 @@ void WelcomePage::UpdateRecentWorkspaces()
         wxString workspace_type;
         auto type = FileExtManager::GetType(fn.GetFullPath());
         image_index = clGetManager()->GetStdIcons()->GetMimeImageId(type);
-        switch(type) {
+        switch (type) {
         case FileExtManager::TypeWorkspaceFileSystem:
             workspace_type = _("File System");
             break;
@@ -221,17 +221,17 @@ void WelcomePage::UpdateRecentWorkspaces()
     // add the plugin base workspaces
     auto other_workspaces = other_workspaces_event.GetWorkspaces();
     std::unordered_map<wxString, std::vector<RecentWorkspace>> M;
-    for(const auto& e : other_workspaces) {
-        if(M.count(e.m_category) == 0) {
+    for (const auto& e : other_workspaces) {
+        if (M.count(e.m_category) == 0) {
             M.insert({ e.m_category, {} });
         }
         M[e.m_category].push_back(e);
     }
 
     image_index = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeWorkspaceFileSystem);
-    for(const auto& [category, entries] : M) {
+    for (const auto& [category, entries] : M) {
         auto parent_item = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(), category);
-        for(const auto& w : entries) {
+        for (const auto& w : entries) {
             auto cd = new WelcomePageItemData();
             cd->path = w.path;
             cd->account = w.m_account;
@@ -257,7 +257,7 @@ void WelcomePage::OnWorkspaceActivated(wxTreeEvent& event)
     auto cd = GetWorkspaceItemData(event.GetItem());
     CHECK_PTR_RET(cd);
 
-    switch(cd->type) {
+    switch (cd->type) {
     case WorkspaceSource::BUILTIN:
         OpenBuiltinWorkspace(cd);
         break;

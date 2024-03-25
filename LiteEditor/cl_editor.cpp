@@ -35,6 +35,7 @@
 #include "buildtabsettingsdata.h"
 #include "cc_box_tip_window.h"
 #include "clEditorStateLocker.h"
+#include "clIdleEventThrottler.hpp"
 #include "clPrintout.h"
 #include "clResizableTooltip.h"
 #include "clSFTPManager.hpp"
@@ -6515,16 +6516,12 @@ void clEditor::OnIdle(wxIdleEvent& event)
     }
 
     event.Skip();
-    std::chrono::milliseconds ms =
-        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-    // We allow IDLE event once in 100ms
-    uint64_t current_ts = ms.count();
-    if ((current_ts - m_lastIdleEvent) < 250) {
+    // The internval between idle events can not be under 250ms
+    static clIdleEventThrottler event_throttler{ 250 };
+    if (!event_throttler.CanHandle()) {
         return;
     }
-
-    m_lastIdleEvent = current_ts;
 
     if (m_scrollbar_recalc_is_required) {
         m_scrollbar_recalc_is_required = false;

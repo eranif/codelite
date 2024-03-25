@@ -27,6 +27,7 @@
 #include "FilesModifiedDlg.h"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
+#include "clIdleEventThrottler.hpp"
 #include "clImageViewer.h"
 #include "clWorkspaceManager.h"
 #include "cl_defs.h"
@@ -1784,6 +1785,12 @@ void MainBook::execute_callbacks_for_file(const wxString& fullpath)
 void MainBook::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+
+    // The internval between idle events can not be under 200ms
+    static clIdleEventThrottler event_throttler{ 200 };
+    if (!event_throttler.CanHandle()) {
+        return;
+    }
 
     // avoid processing if not really needed
     if (!m_initDone || (m_book->GetPageCount() == 0)) {

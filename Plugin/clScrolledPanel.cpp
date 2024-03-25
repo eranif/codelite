@@ -1,5 +1,6 @@
 #include "clScrolledPanel.h"
 
+#include "clIdleEventThrottler.hpp"
 #include "clScrollBar.h"
 #include "drawingutils.h"
 
@@ -280,6 +281,10 @@ int clScrolledPanel::GetPageSize() const { return m_pageSize; }
 void clScrolledPanel::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+    static clIdleEventThrottler event_throttler{ 200 };
+    if (!event_throttler.CanHandle()) {
+        return;
+    }
     if (m_vsb && m_showSBOnFocus) {
         wxWindow* focus_win = wxWindow::FindFocus();
         bool inOurWindows = IsDescendant(focus_win);

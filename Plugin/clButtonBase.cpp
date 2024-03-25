@@ -1,5 +1,6 @@
 #include "clButtonBase.h"
 
+#include "clIdleEventThrottler.hpp"
 #include "clSystemSettings.h"
 
 #include <wx/anybutton.h>
@@ -94,7 +95,7 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
     wxUnusedVar(name);
     wxUnusedVar(validator);
     m_buttonStyle = style;
-    if(!wxControl::Create(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)) {
+    if (!wxControl::Create(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)) {
         return false;
     }
     SetText(label);
@@ -156,7 +157,7 @@ void clButtonBase::OnErasebg(wxEraseEvent& event) { wxUnusedVar(event); }
 void clButtonBase::OnLeftDown(wxMouseEvent& event)
 {
     event.Skip();
-    if(!IsEnabled()) {
+    if (!IsEnabled()) {
         return;
     }
 
@@ -168,15 +169,15 @@ void clButtonBase::OnLeftDown(wxMouseEvent& event)
 void clButtonBase::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
-    if(HasCapture()) {
+    if (HasCapture()) {
         ReleaseMouse();
     }
-    if(!IsEnabled()) {
+    if (!IsEnabled()) {
         return;
     }
 
     wxRect rect = GetClientRect();
-    if(rect.Contains(event.GetPosition())) {
+    if (rect.Contains(event.GetPosition())) {
         m_state = eButtonState::kHover;
         wxCommandEvent eventClick(wxEVT_BUTTON);
         eventClick.SetEventObject(this);
@@ -202,14 +203,14 @@ void clButtonBase::Render(wxDC& dc)
     wxColour parentbgColour =
         GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();
 #ifdef __WXGTK3__
-    if(GetParent()) {
+    if (GetParent()) {
         GdkRGBA colour;
         auto hParent = GetParent()->GetHandle();
         auto style_context = gtk_widget_get_style_context(GTK_WIDGET(hParent));
-        if(style_context) {
+        if (style_context) {
             gtk_style_context_get_background_color(style_context, GTK_STATE_FLAG_NORMAL, &colour);
             wxColour c = wxColour(colour);
-            if(c.IsOk()) {
+            if (c.IsOk()) {
                 parentbgColour = c;
             }
         }
@@ -235,7 +236,7 @@ void clButtonBase::Render(wxDC& dc)
     wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
     bool isDark = DrawingUtils::IsDark(bgColour);
 
-    switch(m_state) {
+    switch (m_state) {
     case eButtonState::kNormal:
     case eButtonState::kHover:
         bgColour = bgColour.ChangeLightness(isDark ? 80 : 95);
@@ -255,15 +256,15 @@ void clButtonBase::Render(wxDC& dc)
     wxColour btn_hilite_face = btn_face.ChangeLightness(isDark ? 110 : 150);
 #endif
     // Draw the background
-    if(!isDisabled) {
-        if(IsNormal()) {
+    if (!isDisabled) {
+        if (IsNormal()) {
             // draw the border
             dc.SetBrush(btn_face);
 
-        } else if(IsHover()) {
+        } else if (IsHover()) {
             dc.SetBrush(btn_hilite_face);
 
-        } else if(m_state == eButtonState::kPressed) {
+        } else if (m_state == eButtonState::kPressed) {
             // pressed button is drawns with flat bg colour and border
             dc.SetBrush(btn_pressed_face);
         }
@@ -276,7 +277,7 @@ void clButtonBase::Render(wxDC& dc)
     wxColour base_colour = clSystemSettings::GetDefaultPanelColour();
     wxColour border_colour = base_colour.ChangeLightness(isDark ? 50 : 70);
 #ifdef __WXMAC__
-    if(isDisabled) {
+    if (isDisabled) {
         border_colour = border_colour.ChangeLightness(110);
     }
 #endif
@@ -298,14 +299,14 @@ void clButtonBase::Render(wxDC& dc)
     wxRect arrow_rect;
     wxRect sub_text_rect;
 
-    if(GetBitmap().IsOk()) {
+    if (GetBitmap().IsOk()) {
         bitmap_rect.SetX(2 * TEXT_SPACER);
         bitmap_rect.SetWidth(GetBitmap().GetScaledWidth() + TEXT_SPACER);
         bitmap_rect.SetHeight(GetBitmap().GetScaledHeight());
         bitmap_rect.SetY(0);
     }
 
-    if(HasDropDownMenu()) {
+    if (HasDropDownMenu()) {
         arrow_rect.SetWidth((2 * TEXT_SPACER) + rect.GetHeight());
         arrow_rect.SetX(rect.GetWidth() - arrow_rect.GetWidth());
         arrow_rect.SetY(0);
@@ -315,7 +316,7 @@ void clButtonBase::Render(wxDC& dc)
     wxString buttonText = GetText();
     wxString subtext = GetSubText();
     int sub_text_x_spacer = 0;
-    if(!buttonText.IsEmpty()) {
+    if (!buttonText.IsEmpty()) {
         double factor = 1.2;
         wxFont font = DrawingUtils::GetDefaultGuiFont();
 #ifdef __WXMAC__
@@ -323,13 +324,13 @@ void clButtonBase::Render(wxDC& dc)
         double default_font_point_size = font.GetFractionalPointSize();
 #endif
 
-        if(!subtext.empty()) {
+        if (!subtext.empty()) {
             font.SetFractionalPointSize(factor * (double)font.GetPointSize());
             font.SetWeight(wxFONTWEIGHT_SEMIBOLD);
         }
         dc.SetFont(font);
 
-        if(!subtext.empty()) {
+        if (!subtext.empty()) {
             wxString prefix = RIGHT_ARROW;
             sub_text_x_spacer = dc.GetTextExtent(prefix).x;
             buttonText.Prepend(prefix);
@@ -345,14 +346,14 @@ void clButtonBase::Render(wxDC& dc)
 
 #ifdef __WXMAC__
         // restore the real fractional point size which 1.2
-        if(!subtext.empty()) {
+        if (!subtext.empty()) {
             font.SetFractionalPointSize(1.2 * default_font_point_size);
         }
 #endif
     }
 
     // Draw the bitmap first
-    if(GetBitmap().IsOk()) {
+    if (GetBitmap().IsOk()) {
         wxRect bitmapRect = bitmap_rect;
         bitmapRect = bitmapRect.CenterIn(rect, wxVERTICAL);
         dc.DrawBitmap(GetBitmap(), bitmapRect.GetTopLeft());
@@ -362,18 +363,18 @@ void clButtonBase::Render(wxDC& dc)
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
     wxColour dropDownColour = textColour.ChangeLightness(isDark ? 80 : 120);
 
-    if(isDisabled) {
+    if (isDisabled) {
         dropDownColour = textColour = m_colours.GetGrayText();
-    } else if(IsPressed()) {
+    } else if (IsPressed()) {
         textColour = textColour.ChangeLightness(isDark ? 70 : 110);
         dropDownColour = dropDownColour.ChangeLightness(isDark ? 70 : 110);
     }
 
-    if(!buttonText.IsEmpty()) {
+    if (!buttonText.IsEmpty()) {
         bool has_sub_text = !subtext.empty();
         wxRect textBoundingRect = text_rect;
         textBoundingRect = textBoundingRect.CenterIn(rect, (has_sub_text ? (wxVERTICAL) : (wxVERTICAL | wxHORIZONTAL)));
-        if(has_sub_text) {
+        if (has_sub_text) {
             textBoundingRect.x += TEXT_SPACER;
             sub_text_rect = textBoundingRect;
             sub_text_rect.width = dc.GetTextExtent(subtext).x;
@@ -386,32 +387,32 @@ void clButtonBase::Render(wxDC& dc)
 
 #ifdef __WXMAC__
         wxFont font = DrawingUtils::GetDefaultGuiFont();
-        if(has_sub_text) {
+        if (has_sub_text) {
             font.SetFractionalPointSize((double)font.GetPointSize() * 1.2);
         }
         dc.SetFont(font);
 #endif
         DrawLabel(dc, textBoundingRect, buttonText, textColour);
-        if(has_sub_text) {
+        if (has_sub_text) {
             wxFont font = DrawingUtils::GetDefaultGuiFont();
             dc.SetFont(font);
             DrawLabel(dc, sub_text_rect, subtext, textColour);
         }
     }
 
-    if(HasDropDownMenu()) {
+    if (HasDropDownMenu()) {
         // Draw an arrow
         int flags = wxCONTROL_NONE;
-        if(isDisabled)
+        if (isDisabled)
             flags |= wxCONTROL_DISABLED;
 
-        if(HasFocus())
+        if (HasFocus())
             flags |= wxCONTROL_FOCUSED;
 
         DrawingUtils::DrawDropDownArrow(this, dc, arrow_rect, flags, textColour);
     }
 
-    if(HasFocus()) {
+    if (HasFocus()) {
         wxRect focus_rect = clientRect;
         focus_rect.Deflate(2);
         wxRendererNative::Get().DrawFocusRect(this, dc, focus_rect);
@@ -427,15 +428,15 @@ void clButtonBase::Render(wxDC& dc)
 
     // draw the button
     int flags = 0;
-    if(IsPressed()) {
+    if (IsPressed()) {
         flags |= wxCONTROL_PRESSED;
     }
 
-    if(IsHover()) {
+    if (IsHover()) {
         flags |= wxCONTROL_CURRENT;
     }
 
-    if(m_state == eButtonState::kDisabled) {
+    if (m_state == eButtonState::kDisabled) {
         flags |= wxCONTROL_DISABLED;
     }
 
@@ -453,14 +454,14 @@ void clButtonBase::Render(wxDC& dc)
     wxRect arrow_rect;
     wxRect sub_text_rect;
 
-    if(GetBitmap().IsOk()) {
+    if (GetBitmap().IsOk()) {
         bitmap_rect.SetX(2 * TEXT_SPACER);
         bitmap_rect.SetWidth(GetBitmap().GetScaledWidth() + TEXT_SPACER);
         bitmap_rect.SetHeight(GetBitmap().GetScaledHeight());
         bitmap_rect.SetY(0);
     }
 
-    if(HasDropDownMenu()) {
+    if (HasDropDownMenu()) {
         arrow_rect.SetWidth((2 * TEXT_SPACER) + rect.GetHeight());
         arrow_rect.SetX(rect.GetWidth() - arrow_rect.GetWidth());
         arrow_rect.SetY(0);
@@ -470,7 +471,7 @@ void clButtonBase::Render(wxDC& dc)
     wxString buttonText = GetText();
     wxString subtext = GetSubText();
     int sub_text_x_spacer = 0;
-    if(!buttonText.IsEmpty()) {
+    if (!buttonText.IsEmpty()) {
         double factor = 1.2;
         wxFont font = DrawingUtils::GetDefaultGuiFont();
 #ifdef __WXMAC__
@@ -478,13 +479,13 @@ void clButtonBase::Render(wxDC& dc)
         double default_font_point_size = font.GetFractionalPointSize();
 #endif
 
-        if(!subtext.empty()) {
+        if (!subtext.empty()) {
             font.SetFractionalPointSize(factor * (double)font.GetPointSize());
             font.SetWeight(wxFONTWEIGHT_SEMIBOLD);
         }
         dc.SetFont(font);
 
-        if(!subtext.empty()) {
+        if (!subtext.empty()) {
             wxString prefix = RIGHT_ARROW;
             sub_text_x_spacer = dc.GetTextExtent(prefix).x;
             buttonText.Prepend(prefix);
@@ -500,14 +501,14 @@ void clButtonBase::Render(wxDC& dc)
 
 #ifdef __WXMAC__
         // restore the real fractional point size which 1.2
-        if(!subtext.empty()) {
+        if (!subtext.empty()) {
             font.SetFractionalPointSize(1.2 * default_font_point_size);
         }
 #endif
     }
 
     // Draw the bitmap first
-    if(GetBitmap().IsOk()) {
+    if (GetBitmap().IsOk()) {
         wxRect bitmapRect = bitmap_rect;
         bitmapRect = bitmapRect.CenterIn(rect, wxVERTICAL);
         dc.DrawBitmap(GetBitmap(), bitmapRect.GetTopLeft());
@@ -516,17 +517,17 @@ void clButtonBase::Render(wxDC& dc)
     // Setup some colours (text and dropdown)
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
 
-    if(isDisabled) {
+    if (isDisabled) {
         textColour = m_colours.GetGrayText();
-    } else if(IsPressed()) {
+    } else if (IsPressed()) {
         textColour = m_colours.GetItemTextColour().ChangeLightness(isDark ? 70 : 110);
     }
 
-    if(!buttonText.IsEmpty()) {
+    if (!buttonText.IsEmpty()) {
         bool has_sub_text = !subtext.empty();
         wxRect textBoundingRect = text_rect;
         textBoundingRect = textBoundingRect.CenterIn(rect, (has_sub_text ? (wxVERTICAL) : (wxVERTICAL | wxHORIZONTAL)));
-        if(has_sub_text) {
+        if (has_sub_text) {
             textBoundingRect.x += TEXT_SPACER;
             sub_text_rect = textBoundingRect;
             sub_text_rect.width = dc.GetTextExtent(subtext).x;
@@ -539,20 +540,20 @@ void clButtonBase::Render(wxDC& dc)
 
 #ifdef __WXMAC__
         wxFont font = DrawingUtils::GetDefaultGuiFont();
-        if(has_sub_text) {
+        if (has_sub_text) {
             font.SetFractionalPointSize((double)font.GetPointSize() * 1.2);
         }
         dc.SetFont(font);
 #endif
         DrawLabel(dc, textBoundingRect, buttonText, textColour);
-        if(has_sub_text) {
+        if (has_sub_text) {
             wxFont font = DrawingUtils::GetDefaultGuiFont();
             dc.SetFont(font);
             DrawLabel(dc, sub_text_rect, subtext, textColour);
         }
     }
 
-    if(HasDropDownMenu()) {
+    if (HasDropDownMenu()) {
         // Draw an arrow
         wxRect arrowRect(0, 0, rect.GetHeight(), rect.GetHeight());
         arrowRect = arrowRect.CenterIn(arrow_rect);
@@ -563,7 +564,7 @@ void clButtonBase::Render(wxDC& dc)
         wxRendererNative::Get().DrawDropArrow(this, dc, r, 0);
     }
 
-    if(HasFocus()) {
+    if (HasFocus()) {
         wxRect focus_rect = clientRect;
         focus_rect.Deflate(2);
         wxRendererNative::Get().DrawFocusRect(this, dc, focus_rect);
@@ -574,7 +575,7 @@ void clButtonBase::Render(wxDC& dc)
 void clButtonBase::OnEnter(wxMouseEvent& event)
 {
     event.Skip();
-    if(!HasCapture()) {
+    if (!HasCapture()) {
         m_state = eButtonState::kHover;
         Refresh();
     }
@@ -583,7 +584,7 @@ void clButtonBase::OnEnter(wxMouseEvent& event)
 void clButtonBase::OnLeave(wxMouseEvent& event)
 {
     event.Skip();
-    if(!HasCapture()) {
+    if (!HasCapture()) {
         m_state = eButtonState::kNormal;
         Refresh();
     }
@@ -594,7 +595,7 @@ wxSize clButtonBase::GetBestSize() const
     wxClientDC dc(const_cast<clButtonBase*>(this));
 
     wxFont f = DrawingUtils::GetDefaultGuiFont();
-    if(!GetSubText().empty()) {
+    if (!GetSubText().empty()) {
         double factor = 1.2;
 #ifdef __WXMAC__
         factor = 1.5;
@@ -619,7 +620,7 @@ wxSize clButtonBase::GetBestSize() const
     }
 
     wxString mainText = GetText();
-    if(!GetSubText().empty()) {
+    if (!GetSubText().empty()) {
         mainText.Prepend(RIGHT_ARROW);
     }
 
@@ -627,7 +628,7 @@ wxSize clButtonBase::GetBestSize() const
     wxString sampleText =
         GetSubText().empty() ? mainText : (mainText.length() > GetSubText().length() ? mainText : GetSubText());
 
-    if(!(m_buttonStyle & wxBU_EXACTFIT) && defaultText.length() > sampleText.length()) {
+    if (!(m_buttonStyle & wxBU_EXACTFIT) && defaultText.length() > sampleText.length()) {
         sampleText = defaultText;
     }
 
@@ -638,7 +639,7 @@ wxSize clButtonBase::GetBestSize() const
     buttonWidth += TEXT_SPACER;
 
     // Add bitmap length
-    if(GetBitmap().IsOk()) {
+    if (GetBitmap().IsOk()) {
         buttonWidth += GetBitmap().GetScaledWidth();
         buttonWidth += TEXT_SPACER;
     }
@@ -647,11 +648,11 @@ wxSize clButtonBase::GetBestSize() const
     buttonWidth += TEXT_SPACER;
 
     // Drop down arrow width
-    if(HasDropDownMenu()) {
+    if (HasDropDownMenu()) {
         buttonWidth += buttonHeight;
     }
 
-    if(!GetSubText().empty()) {
+    if (!GetSubText().empty()) {
         buttonHeight *= 2;
         buttonHeight += TEXT_SPACER;
     }
@@ -672,10 +673,10 @@ void clButtonBase::OnFocus(wxFocusEvent& event)
 
 void clButtonBase::OnKeyDown(wxKeyEvent& event)
 {
-    if((event.GetKeyCode() == WXK_SPACE) || (event.GetKeyCode() == WXK_NUMPAD_ENTER) ||
-       (event.GetKeyCode() == WXK_RETURN)) {
+    if ((event.GetKeyCode() == WXK_SPACE) || (event.GetKeyCode() == WXK_NUMPAD_ENTER) ||
+        (event.GetKeyCode() == WXK_RETURN)) {
         PostClickEvent();
-    } else if(event.GetKeyCode() == WXK_TAB) {
+    } else if (event.GetKeyCode() == WXK_TAB) {
         Navigate(event.ShiftDown() ? wxNavigationKeyEvent::IsBackward : wxNavigationKeyEvent::IsForward);
     } else {
         event.Skip();
@@ -692,8 +693,12 @@ void clButtonBase::PostClickEvent()
 void clButtonBase::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+    static clIdleEventThrottler event_throttler{ 200 };
+    if (!event_throttler.CanHandle()) {
+        return;
+    }
     size_t flags = GetDrawingFlags();
-    if(flags != m_lastPaintFlags) {
+    if (flags != m_lastPaintFlags) {
         // We need to refresh the window
         Refresh();
     }
@@ -702,7 +707,7 @@ void clButtonBase::OnIdle(wxIdleEvent& event)
 size_t clButtonBase::GetDrawingFlags() const
 {
     size_t flags = 0;
-    if(IsEnabled()) {
+    if (IsEnabled()) {
         flags |= kDrawingFlagEnabled;
     }
     return flags;
@@ -718,7 +723,7 @@ void clButtonBase::SetBitmap(const wxBitmap& bmp)
 {
     m_bitmap = bmp;
     SetSizeHints(GetBestSize());
-    if(GetParent() && GetParent()->GetSizer()) {
+    if (GetParent() && GetParent()->GetSizer()) {
         GetParent()->Layout();
     }
     Refresh();
@@ -741,7 +746,7 @@ void clButtonBase::ShowMenu(wxMenu& menu, wxPoint* point)
 #endif
 
     wxPoint menuPos;
-    if(point) {
+    if (point) {
         menuPos = *point;
     } else {
         menuPos = GetClientRect().GetBottomLeft();
@@ -768,7 +773,7 @@ void clButtonBase::SetText(const wxString& text)
     tmp.Replace("@@", "&");
     m_text = tmp;
     SetSizeHints(GetBestSize());
-    if(GetParent() && GetParent()->GetSizer()) {
+    if (GetParent() && GetParent()->GetSizer()) {
         GetParent()->Layout();
     }
     Refresh();

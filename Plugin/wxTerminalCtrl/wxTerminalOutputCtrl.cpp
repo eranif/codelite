@@ -4,6 +4,7 @@
 #include "FontUtils.hpp"
 #include "Platform.hpp"
 #include "StringUtils.h"
+#include "clIdleEventThrottler.hpp"
 #include "clModuleLogger.hpp"
 #include "clSystemSettings.h"
 #include "clWorkspaceManager.h"
@@ -84,7 +85,7 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
     m_bgColour = bg_colour;
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
-    for(int i = 0; i < wxSTC_MAX_MARGIN; ++i) {
+    for (int i = 0; i < wxSTC_MAX_MARGIN; ++i) {
         m_ctrl->SetMarginWidth(i, 0);
     }
 
@@ -158,7 +159,7 @@ void wxTerminalOutputCtrl::ReloadSettings() { ApplyTheme(); }
 void wxTerminalOutputCtrl::StyleAndAppend(wxStringView buffer, wxString* window_title)
 {
     size_t consumed = m_outputHandler.ProcessBuffer(buffer, m_stcRenderer);
-    if(window_title) {
+    if (window_title) {
         *window_title = m_stcRenderer->GetWindowTitle();
     }
 }
@@ -179,7 +180,7 @@ void wxTerminalOutputCtrl::SetCaretEnd()
 
 int wxTerminalOutputCtrl::Truncate()
 {
-    if(GetNumberOfLines() > 1000) {
+    if (GetNumberOfLines() > 1000) {
         // Start removing lines from the top
         long linesToRemove = (GetNumberOfLines() - 1000);
         long startPos = 0;
@@ -209,7 +210,7 @@ void wxTerminalOutputCtrl::DoScrollToEnd()
 
 void wxTerminalOutputCtrl::RequestScrollToEnd()
 {
-    if(m_scrollToEndQueued) {
+    if (m_scrollToEndQueued) {
         return;
     }
     m_scrollToEndQueued = true;
@@ -239,12 +240,12 @@ void wxTerminalOutputCtrl::ApplyTheme()
 void wxTerminalOutputCtrl::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.ControlDown() || event.AltDown() || event.RawControlDown()) {
+    if (event.ControlDown() || event.AltDown() || event.RawControlDown()) {
         return;
     }
 
     // pass the focus
-    if(m_terminal) {
+    if (m_terminal) {
         m_terminal->GetInputCtrl()->SimulateKeyEvent(event);
     }
 }
@@ -252,19 +253,24 @@ void wxTerminalOutputCtrl::OnKeyDown(wxKeyEvent& event)
 void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
-    if(!m_ctrl->IsShownOnScreen() || !m_ctrl->IsShown()) {
+    static clIdleEventThrottler event_throttler{ 200 };
+    if (!event_throttler.CanHandle()) {
+        return;
+    }
+
+    if (!m_ctrl->IsShownOnScreen() || !m_ctrl->IsShown()) {
         ClearIndicators();
         return;
     }
 
-    if(!::wxGetKeyState(WXK_CONTROL)) {
+    if (!::wxGetKeyState(WXK_CONTROL)) {
         ClearIndicators();
         m_ctrl->SetSTCCursor(wxSTC_CURSORNORMAL);
         return;
     }
 
     auto client_pt = m_ctrl->ScreenToClient(::wxGetMousePosition());
-    if(!m_ctrl->GetRect().Contains(client_pt)) {
+    if (!m_ctrl->GetRect().Contains(client_pt)) {
         return;
     }
 
@@ -272,7 +278,7 @@ void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
     int word_start_pos = m_ctrl->WordStartPosition(pos, true);
     int word_end_pos = m_ctrl->WordEndPosition(pos, true);
     IndicatorRange range{ word_start_pos, word_end_pos };
-    if(m_indicatorHyperlink.ok() && m_indicatorHyperlink == range) {
+    if (m_indicatorHyperlink.ok() && m_indicatorHyperlink == range) {
         // already marked
         return;
     }
@@ -289,7 +295,7 @@ void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
 
 void wxTerminalOutputCtrl::ClearIndicators()
 {
-    if(m_indicatorHyperlink.ok()) {
+    if (m_indicatorHyperlink.ok()) {
         m_ctrl->SetIndicatorCurrent(INDICATOR_HYPERLINK);
         m_ctrl->IndicatorClearRange(m_indicatorHyperlink.start(), m_indicatorHyperlink.length());
         m_indicatorHyperlink.reset();
@@ -300,7 +306,7 @@ void wxTerminalOutputCtrl::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
 
-    if(!m_indicatorHyperlink.ok()) {
+    if (!m_indicatorHyperlink.ok()) {
         return;
     }
 
@@ -324,7 +330,7 @@ void wxTerminalOutputCtrl::OnLeaveWindow(wxMouseEvent& event)
 void wxTerminalOutputCtrl::DoPatternClicked(const wxString& pattern)
 {
     // if the pattern matches a URL, open it
-    if(pattern.StartsWith("https://") || pattern.StartsWith("http://")) {
+    if (pattern.StartsWith("https://") || pattern.StartsWith("http://")) {
         m_indicatorHyperlink.reset();
         ::wxLaunchDefaultBrowser(pattern);
         return;
@@ -334,8 +340,8 @@ void wxTerminalOutputCtrl::DoPatternClicked(const wxString& pattern)
     wxString line_str;
     wxString col_str;
     auto parts = ::wxStringTokenize(pattern, ":", wxTOKEN_STRTOK);
-    if(parts.size() > 1) {
-        if(parts[0].length() == 1) {
+    if (parts.size() > 1) {
+        if (parts[0].length() == 1) {
             // single char -> volume
             // assume windows fullpath
             file = parts[0] + ":" + parts[1];
@@ -344,12 +350,12 @@ void wxTerminalOutputCtrl::DoPatternClicked(const wxString& pattern)
             file = parts[0];
             parts.RemoveAt(0, 1);
         }
-        if(!parts.empty()) {
+        if (!parts.empty()) {
             // line number
             line_str = parts[0];
             parts.RemoveAt(0, 1);
         }
-        if(!parts.empty()) {
+        if (!parts.empty()) {
             // column
             col_str = parts[0];
             parts.RemoveAt(0, 1);
@@ -368,27 +374,27 @@ void wxTerminalOutputCtrl::DoPatternClicked(const wxString& pattern)
     event_clicked.SetFileName(file);
     event_clicked.SetLineNumber(0);
     long nLine = 0;
-    if(!line_str.empty() && line_str.ToCLong(&nLine)) {
+    if (!line_str.empty() && line_str.ToCLong(&nLine)) {
         event_clicked.SetLineNumber(nLine);
     }
     event_clicked.SetProjectName(wxEmptyString);
-    if(EventNotifier::Get()->ProcessEvent(event_clicked)) {
+    if (EventNotifier::Get()->ProcessEvent(event_clicked)) {
         return;
     }
 
-    if(FileUtils::IsBinaryExecutable(file)) {
+    if (FileUtils::IsBinaryExecutable(file)) {
 #ifdef __WXMSW__
         // if we are running under Windows and the file path is POSIX (e.g. MSYS2)
         // convert it into Windows native path
-        if(file.StartsWith("/")) {
+        if (file.StartsWith("/")) {
             wxString cygpath;
-            if(ThePlatform->Which("cygpath", &cygpath)) {
+            if (ThePlatform->Which("cygpath", &cygpath)) {
                 wxString command;
                 command << StringUtils::WrapWithDoubleQuotes(cygpath) << " -w "
                         << StringUtils::WrapWithDoubleQuotes(file);
                 wxString winpath = ProcUtils::SafeExecuteCommand(command);
                 winpath.Trim().Trim(false);
-                if(wxFileName::FileExists(winpath)) {
+                if (wxFileName::FileExists(winpath)) {
                     file = StringUtils::WrapWithDoubleQuotes(winpath);
                 }
             }
@@ -403,7 +409,7 @@ void wxTerminalOutputCtrl::DoPatternClicked(const wxString& pattern)
     // change dir to the active workspace directory
     DirSaver ds;
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if(workspace && !workspace->IsRemote()) {
+    if (workspace && !workspace->IsRemote()) {
         ::wxSetWorkingDirectory(wxFileName(workspace->GetFileName()).GetPath());
     }
 

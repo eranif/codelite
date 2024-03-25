@@ -2,6 +2,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
+#include "clIdleEventThrottler.hpp"
 #include "clSystemSettings.h"
 #include "event_notifier.h"
 #include "wxTerminalCtrl.h"
@@ -60,7 +61,7 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
     m_ctrl->SetWrapMode(wxSTC_WRAP_WORD);
     m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
 
-    for(int i = 0; i < wxSTC_MAX_MARGIN; ++i) {
+    for (int i = 0; i < wxSTC_MAX_MARGIN; ++i) {
         m_ctrl->SetMarginWidth(i, 0);
     }
 
@@ -100,7 +101,7 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
     V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'W', XRCID("ID_delete_word") });
 
     wxAcceleratorEntry accel_entries[V.size()];
-    for(size_t i = 0; i < V.size(); ++i) {
+    for (size_t i = 0; i < V.size(); ++i) {
         accel_entries[i] = V[i];
     }
     wxAcceleratorTable accel_table(V.size(), accel_entries);
@@ -128,7 +129,7 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
     wxArrayString words;
     int length_typed = 0;
     wxArrayString items;
-    if(type == CompletionType::COMMANDS) {
+    if (type == CompletionType::COMMANDS) {
         m_completionType = CompletionType::COMMANDS;
         wxString filter = GetText();
         items = m_history.ForCompletion(GetText());
@@ -139,20 +140,20 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         return;
     }
 
-    if(items.empty()) {
+    if (items.empty()) {
         m_completionType = CompletionType::NONE;
         return;
     }
 
     wxCodeCompletionBoxEntry::Vec_t V;
     V.reserve(items.size());
-    for(const auto& item : items) {
+    for (const auto& item : items) {
         V.push_back(wxCodeCompletionBoxEntry::New(item, wxNullBitmap, nullptr));
     }
 
     // display the box
     int width = m_ctrl->GetSize().GetWidth() - (clSystemSettings::GetMetric(wxSYS_VSCROLL_X) * 2);
-    if(width < 0) {
+    if (width < 0) {
         width = wxNOT_FOUND;
     }
 
@@ -165,13 +166,13 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
 {
-    if(IS_CCBOX_ACTIVE()) {
+    if (IS_CCBOX_ACTIVE()) {
         event.Skip();
         return;
     }
 
     m_completionType = CompletionType::NONE;
-    switch(event.GetKeyCode()) {
+    switch (event.GetKeyCode()) {
     case WXK_NUMPAD_ENTER:
     case WXK_RETURN:
         OnEnter();
@@ -185,7 +186,7 @@ void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
         OnDown();
         break;
     case WXK_TAB:
-        if(event.GetModifiers() == 0) {
+        if (event.GetModifiers() == 0) {
             OnTabComplete();
         } else {
             event.Skip();
@@ -219,7 +220,7 @@ wxString wxTerminalInputCtrl::GetText() const { return m_ctrl->GetText(); }
 void wxTerminalInputCtrl::SetCaretPos(wxTerminalInputCtrl::CaretPos pos)
 {
     int where = 0;
-    switch(pos) {
+    switch (pos) {
     case wxTerminalInputCtrl::CaretPos::END:
         where = m_ctrl->GetLastPosition();
         break;
@@ -241,7 +242,7 @@ void wxTerminalInputCtrl::OnMenu(wxContextMenuEvent& event)
         wxEVT_MENU,
         [this](wxCommandEvent& event) {
             wxUnusedVar(event);
-            if(!CAN_GO_BACK()) {
+            if (!CAN_GO_BACK()) {
                 SetCaretPos(CaretPos::END);
             }
             int where = m_ctrl->GetLastPosition();
@@ -254,7 +255,7 @@ void wxTerminalInputCtrl::OnMenu(wxContextMenuEvent& event)
         wxEVT_MENU,
         [this](wxCommandEvent& event) {
             wxUnusedVar(event);
-            if(m_ctrl->CanCopy()) {
+            if (m_ctrl->CanCopy()) {
                 m_ctrl->Copy();
             }
         },
@@ -264,7 +265,7 @@ void wxTerminalInputCtrl::OnMenu(wxContextMenuEvent& event)
 
 void wxTerminalInputCtrl::UpdateTextDeleted(int num)
 {
-    if(m_writeStartingPosition < num) {
+    if (m_writeStartingPosition < num) {
         return;
     }
     m_writeStartingPosition -= num;
@@ -286,11 +287,11 @@ void wxTerminalInputCtrl::SwapAndExecuteCommand(const wxString& cmd)
 void wxTerminalInputCtrl::OnCommandComplete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(IS_CCBOX_ACTIVE() && m_completionType == CompletionType::COMMANDS) {
+    if (IS_CCBOX_ACTIVE() && m_completionType == CompletionType::COMMANDS) {
         // refresh the list
         ShowCompletionBox(CompletionType::COMMANDS);
-    } else if(!IS_CCBOX_ACTIVE()) {
-        if(!CAN_EDIT()) {
+    } else if (!IS_CCBOX_ACTIVE()) {
+        if (!CAN_EDIT()) {
             SetCaretPos(CaretPos::END);
         }
         ShowCompletionBox(CompletionType::COMMANDS);
@@ -325,7 +326,7 @@ void wxTerminalInputCtrl::OnDeleteWord(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     int word_start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
-    if(word_start_pos > m_writeStartingPosition) {
+    if (word_start_pos > m_writeStartingPosition) {
         m_ctrl->DelWordLeft();
     } else {
         Clear();
@@ -394,12 +395,12 @@ wxString wxTerminalInputCtrl::GetWordBack()
 
 void wxTerminalInputCtrl::NotifyTerminalOutput()
 {
-    if(!m_waitingForCompgenOutput) {
+    if (!m_waitingForCompgenOutput) {
         return;
     }
 
     wxString prefix = GetWordBack();
-    if(prefix.empty()) {
+    if (prefix.empty()) {
         return;
     }
 
@@ -408,16 +409,16 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     int last_line = ctrl->LineFromPosition(ctrl->GetLastPosition());
 
     wxCodeCompletionBoxEntry::Vec_t completions;
-    while(last_line >= 0) {
+    while (last_line >= 0) {
         wxString line = ctrl->GetLine(last_line);
         --last_line;
         line.Trim().Trim(false);
 
-        if(line.Contains(LINE_PREFIX) || line.empty()) {
+        if (line.Contains(LINE_PREFIX) || line.empty()) {
             break;
         }
 
-        if(line.Contains(" ") || line.length() < prefix.length()) {
+        if (line.Contains(" ") || line.length() < prefix.length()) {
             // don't present lines with spaces or shorter than the prefix
             continue;
         }
@@ -425,7 +426,7 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
         completions.push_back(wxCodeCompletionBoxEntry::New(line));
     }
 
-    if(completions.empty()) {
+    if (completions.empty()) {
         return;
     }
 
@@ -437,7 +438,7 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     m_completionType = CompletionType::FOLDERS;
     // display the box
     int width = m_ctrl->GetSize().GetWidth() - (clSystemSettings::GetMetric(wxSYS_VSCROLL_X) * 2);
-    if(width < 0) {
+    if (width < 0) {
         width = wxNOT_FOUND;
     }
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
@@ -449,12 +450,12 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
 
 void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)
 {
-    if(event.GetEventObject() != this) {
+    if (event.GetEventObject() != this) {
         event.Skip();
         return;
     }
 
-    switch(m_completionType) {
+    switch (m_completionType) {
     case CompletionType::COMMANDS:
         m_ctrl->ClearAll();
         // restore the marker
@@ -480,8 +481,14 @@ void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)
 void wxTerminalInputCtrl::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+
+    static clIdleEventThrottler event_throttler{ 200 };
+    if (!event_throttler.CanHandle()) {
+        return;
+    }
+
     int curline = m_ctrl->GetCurrentLine();
-    if(m_ctrl->IsShown() && m_ctrl->MarkerGet(curline) == 0) {
+    if (m_ctrl->IsShown() && m_ctrl->MarkerGet(curline) == 0) {
         m_ctrl->MarkerAdd(curline, MARKER_ARROWS);
     }
 }

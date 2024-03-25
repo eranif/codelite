@@ -4049,6 +4049,8 @@ void clEditor::SetWarningMarker(int lineno, CompilerMessage&& msg)
     if (m_compilerMessagesMap.count(lineno)) {
         m_compilerMessagesMap.erase(lineno);
     }
+
+    wxString display_message = msg.message;
     m_compilerMessagesMap.insert({ lineno, std::move(msg) });
 
     BuildTabSettingsData options;
@@ -4061,7 +4063,7 @@ void clEditor::SetWarningMarker(int lineno, CompilerMessage&& msg)
 
     if (options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
         // define the warning marker
-        AnnotationSetText(lineno, msg.message);
+        AnnotationSetText(lineno, display_message);
         AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
     }
 }
@@ -4076,6 +4078,8 @@ void clEditor::SetErrorMarker(int lineno, CompilerMessage&& msg)
     if (m_compilerMessagesMap.count(lineno)) {
         m_compilerMessagesMap.erase(lineno);
     }
+
+    wxString display_message = msg.message;
     m_compilerMessagesMap.insert({ lineno, std::move(msg) });
 
     BuildTabSettingsData options;
@@ -4087,7 +4091,7 @@ void clEditor::SetErrorMarker(int lineno, CompilerMessage&& msg)
     }
 
     if (options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
-        AnnotationSetText(lineno, msg.message);
+        AnnotationSetText(lineno, display_message);
         AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
     }
 }

@@ -28,8 +28,8 @@ jobs:
       run: |
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
-        ../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++11 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl --enable-stl
-        make -j10
+        ../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++17 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl --enable-stl
+        make -j$(sysctl -n hw.physicalcpu)
         sudo make install
 
     # Codelite
@@ -46,5 +46,6 @@ jobs:
         cmake --build . -j $(sysctl -n hw.physicalcpu)
         cmake --build . --target install
 
-    - name: codelite --version
-      run: codelite.app/Contents/MacOS/codelite --version || exit 0 # codelite --version returns -1
+# Not the right command/path for codelite
+#    - name: codelite --version
+#      run: codelite.app/Contents/MacOS/codelite --version || exit 0 # codelite --version returns -1

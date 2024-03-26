@@ -106,8 +106,8 @@ git submodule init
 git submodule update
 mkdir build-release
 cd build-release
-../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++11 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl --enable-stl
-make -j10
+../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++17 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl --enable-stl
+make -j$(sysctl -n hw.physicalcpu)
 sudo make install
 ```
 

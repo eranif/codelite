@@ -100,11 +100,7 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
     V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'C', XRCID("ID_ctrl_c") });
     V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'W', XRCID("ID_delete_word") });
 
-    wxAcceleratorEntry accel_entries[V.size()];
-    for (size_t i = 0; i < V.size(); ++i) {
-        accel_entries[i] = V[i];
-    }
-    wxAcceleratorTable accel_table(V.size(), accel_entries);
+    wxAcceleratorTable accel_table(V.size(), V.data());
 
     m_ctrl->SetAcceleratorTable(accel_table);
     m_ctrl->Bind(wxEVT_MENU, &wxTerminalInputCtrl::OnCommandComplete, this, XRCID("ID_command"));

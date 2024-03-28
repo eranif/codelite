@@ -190,7 +190,6 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& acce
     }
 
     if(!table.empty() || !accels.empty()) {
-        wxAcceleratorEntry entries[table.size() + accels.size()];
         // append the globals
         clDEBUG() << "clKeyboardManager: appending global entries" << clEndl;
         for(MenuItemDataIntMap_t::iterator iter = accels.begin(); iter != accels.end(); ++iter) {
@@ -204,11 +203,7 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& acce
             }
         }
 
-        for(size_t i = 0; i < table.size(); ++i) {
-            entries[i] = table.at(i);
-        }
-
-        wxAcceleratorTable acceleTable(table.size(), entries);
+        wxAcceleratorTable acceleTable(table.size(), table.data());
         frame->SetAcceleratorTable(acceleTable);
     }
 }

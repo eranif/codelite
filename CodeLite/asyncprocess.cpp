@@ -68,7 +68,7 @@ public:
     void OnProcessOutput(clProcessEvent& event)
     {
         size_t new_len = m_output.length() + event.GetOutput().length();
-        if(new_len > m_output.length()) {
+        if (new_len > m_output.length()) {
             m_output.reserve(new_len);
             m_output << event.GetOutput();
         }
@@ -76,7 +76,7 @@ public:
 
     void OnProcessTerminated(clProcessEvent& event)
     {
-        if(!event.GetOutput().empty()) {
+        if (!event.GetOutput().empty()) {
             m_output << event.GetOutput();
         }
         // all the user callback
@@ -90,8 +90,8 @@ static void __WrapSpacesForShell(wxString& str, size_t flags)
 {
     str.Trim().Trim(false);
     auto tmpArgs = StringUtils::BuildArgv(str);
-    if(tmpArgs.size() > 1) {
-        if(!shell_is_cmd || (flags & IProcessCreateSSH)) {
+    if (tmpArgs.size() > 1) {
+        if (!shell_is_cmd || (flags & IProcessCreateSSH)) {
             // escape any occurances of "
             str.Replace("\"", "\\\"");
         }
@@ -102,7 +102,7 @@ static void __WrapSpacesForShell(wxString& str, size_t flags)
 static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
 {
     wxArrayString tmparr = args;
-    for(wxString& arg : tmparr) {
+    for (wxString& arg : tmparr) {
         __WrapSpacesForShell(arg, flags);
     }
 
@@ -110,9 +110,9 @@ static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
     wxArrayString command;
 
     bool is_ssh = flags & IProcessCreateSSH;
-    if(shell_is_cmd && !is_ssh) {
+    if (shell_is_cmd && !is_ssh) {
         wxString shell = wxGetenv("COMSPEC");
-        if(shell.IsEmpty()) {
+        if (shell.IsEmpty()) {
             shell = "CMD.EXE";
         }
         command.Add(shell);
@@ -135,14 +135,14 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
 #endif
 
     // we accept both SSHAccountInfo* & wxString* with the account name
-    if(sshAccountName.empty()) {
+    if (sshAccountName.empty()) {
         clERROR() << "CreateAsyncProcess: no ssh account name provided" << endl;
         return args;
     }
     wxArrayString a;
 
     auto accountInfo = SSHAccountInfo::LoadAccount(sshAccountName);
-    if(accountInfo.GetAccountName().empty()) {
+    if (accountInfo.GetAccountName().empty()) {
         clERROR() << "CreateAsyncProcess: could not locate ssh account:" << sshAccountName << endl;
         return args;
     }
@@ -157,13 +157,13 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
     wxArrayString tmpargs;
 
     // add any environment variables provided by the caller
-    if(env_list) {
-        for(const std::pair<wxString, wxString>& env_var : *env_list) {
+    if (env_list) {
+        for (const std::pair<wxString, wxString>& env_var : *env_list) {
             tmpargs.Add(env_var.first + "=" + env_var.second);
         }
     }
 
-    if(!wd.empty()) {
+    if (!wd.empty()) {
         // add working directory
         tmpargs.Add("cd");
         tmpargs.Add(wd);
@@ -197,7 +197,7 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
     // CL_SSH_OPTIONS
     //----------------------------------------------------------
     wxString sshEnv;
-    if(::wxGetEnv("CL_SSH_OPTIONS", &sshEnv)) {
+    if (::wxGetEnv("CL_SSH_OPTIONS", &sshEnv)) {
         wxArrayString sshOptionsArr = StringUtils::BuildArgv(sshEnv);
         a.insert(a.end(), sshOptionsArr.begin(), sshOptionsArr.end());
     }
@@ -208,17 +208,17 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
 
 static void __FixArgs(wxArrayString& args)
 {
-    for(wxString& arg : args) {
+    for (wxString& arg : args) {
         // escape LF/CR
         arg.Replace("\n", "");
         arg.Replace("\r", "");
 #if defined(__WXOSX__) || defined(__WXGTK__)
         arg.Trim().Trim(false);
-        if(arg.length() > 1) {
-            if(arg.StartsWith("'") && arg.EndsWith("'")) {
+        if (arg.length() > 1) {
+            if (arg.StartsWith("'") && arg.EndsWith("'")) {
                 arg.Remove(0, 1);
                 arg.RemoveLast();
-            } else if(arg.StartsWith("\"") && arg.EndsWith("\"")) {
+            } else if (arg.StartsWith("\"") && arg.EndsWith("\"")) {
                 arg.Remove(0, 1);
                 arg.RemoveLast();
             }
@@ -232,7 +232,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vector<wxString>& 
 {
     wxArrayString wxargs;
     wxargs.reserve(args.size());
-    for(const wxString& s : args) {
+    for (const wxString& s : args) {
         wxargs.Add(s);
     }
     return CreateAsyncProcess(parent, wxargs, flags, workingDir, env, sshAccountName);
@@ -247,20 +247,20 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
     // sanity:
     // Check that we have SSH executable
     wxFileName sshpath;
-    if((flags & IProcessCreateSSH) && !FileUtils::FindExe("ssh", sshpath)) {
+    if ((flags & IProcessCreateSSH) && !FileUtils::FindExe("ssh", sshpath)) {
         return nullptr;
     }
 
     // clDEBUG1() << "1: CreateAsyncProcess called with:" << c << endl;
 
-    if(flags & IProcessWrapInShell) {
+    if (flags & IProcessWrapInShell) {
         // wrap the command in OS specific terminal
         c = __WrapInShell(c, flags);
     }
 
     clTempFile tmpfile; // needed for putty clients
     tmpfile.Persist();  // do not delete this file on destruct
-    if(flags & IProcessCreateSSH) {
+    if (flags & IProcessCreateSSH) {
         c = __AddSshCommand(c, workingDir, sshAccountName, tmpfile, env);
     }
 
@@ -313,21 +313,21 @@ void IProcess::SetProcessExitCode(int pid, int exitCode)
 
 void IProcess::WaitForTerminate(wxString& output)
 {
-    if(IsRedirect()) {
+    if (IsRedirect()) {
         wxString buff;
         wxString buffErr;
         std::string raw_buff;
         std::string raw_buff_err;
-        while(Read(buff, buffErr, raw_buff, raw_buff_err)) {
+        while (Read(buff, buffErr, raw_buff, raw_buff_err)) {
             output << buff;
-            if(!buff.IsEmpty() && !buffErr.IsEmpty()) {
+            if (!buff.IsEmpty() && !buffErr.IsEmpty()) {
                 output << "\n";
             }
             output << buffErr;
         }
     } else {
         // Just wait for the process to terminate in a busy loop
-        while(IsAlive()) {
+        while (IsAlive()) {
             wxThread::Sleep(10);
         }
     }
@@ -335,7 +335,7 @@ void IProcess::WaitForTerminate(wxString& output)
 
 void IProcess::SuspendAsyncReads()
 {
-    if(m_thr) {
+    if (m_thr) {
         clDEBUG1() << "Suspending process reader thread..." << endl;
         m_thr->Suspend();
         clDEBUG1() << "Suspending process reader thread...done" << endl;
@@ -344,7 +344,7 @@ void IProcess::SuspendAsyncReads()
 
 void IProcess::ResumeAsyncReads()
 {
-    if(m_thr) {
+    if (m_thr) {
         clDEBUG1() << "Resuming process reader thread..." << endl;
         m_thr->Resume();
         clDEBUG1() << "Resuming process reader thread..." << endl;

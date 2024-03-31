@@ -156,6 +156,15 @@ std::unordered_map<int, std::unordered_set<int>> ALLOWED_STYLES_COMMENTS = {
     { wxSTC_LEX_XML, { wxSTC_H_COMMENT } },
     { wxSTC_LEX_YAML, { wxSTC_YAML_COMMENT } },
 };
+
+void HighlightWord(IEditor* editor, int pos)
+{
+    int indicator_start = editor->GetCtrl()->WordStartPosition(pos, true);
+    int indicator_end = editor->GetCtrl()->WordEndPosition(pos, true);
+    int len = indicator_end - indicator_start;
+    editor->SetUserIndicator(indicator_start, len);
+}
+
 } // namespace
 
 // ------------------------------------------------------------
@@ -342,7 +351,8 @@ void IHunSpell::CheckSpelling()
 
             // process token
             if (!CheckWord(token)) {
-                pEditor->SetUserIndicator(pos, token.length());
+                HighlightWord(pEditor, pos + (token.length() / 2));
+                // pEditor->SetUserIndicator(pos, token.length());
 
                 if (!m_pPlugIn->GetCheckContinuous()) {
                     pEditor->SetCaretAt(pos);

@@ -1038,8 +1038,8 @@ void clEditor::SetProperties()
 
     bool isDarkTheme = (lexer && lexer->IsDark());
     auto indicator_style = isDarkTheme ? wxSTC_INDIC_BOX : wxSTC_INDIC_ROUNDBOX;
-    SetUserIndicatorStyleAndColour(isDarkTheme ? wxSTC_INDIC_SQUIGGLE : wxSTC_INDIC_ROUNDBOX,
-                                   isDarkTheme ? "WHITE" : "RED");
+    SetUserIndicatorStyleAndColour(isDarkTheme ? wxSTC_INDIC_COMPOSITIONTHICK : wxSTC_INDIC_ROUNDBOX,
+                                   isDarkTheme ? "PINK" : "RED");
 
     wxColour highlight_colour{ *wxGREEN };
     wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));

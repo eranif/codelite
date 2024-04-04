@@ -2,8 +2,8 @@
 #define CLEDITOREDITEVENTSHANDLER_H
 
 #include "codelite_exports.h"
-#include "smart_ptr.h"
 
+#include <memory>
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/stc/stc.h>
@@ -59,7 +59,7 @@ public:
     clEditEventsHandler(wxComboBox* wnd, const wxString& name = wxEmptyString);
     virtual ~clEditEventsHandler();
     void NoUnbind() { m_noUnbind = true; }
-    typedef SmartPtr<clEditEventsHandler> Ptr_t;
+    using Ptr_t = std::unique_ptr<clEditEventsHandler>;
 };
 
 #endif // CLEDITOREDITEVENTSHANDLER_H

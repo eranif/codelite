@@ -26,8 +26,9 @@
 #ifndef __fileentry__
 #define __fileentry__
 
+#include <memory>
 #include <wx/string.h>
-#include "smart_ptr.h"
+
 class FileEntry
 {
 	long      m_id;
@@ -58,6 +59,6 @@ public:
 		return m_id;
 	}
 };
-typedef SmartPtr<FileEntry> FileEntryPtr;
+using FileEntryPtr = std::unique_ptr<FileEntry>;
 
 #endif // __fileentry__

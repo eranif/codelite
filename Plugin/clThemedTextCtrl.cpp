@@ -74,7 +74,7 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     Bind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
 #endif
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
-    m_editEventsHandler.Reset(new clEditEventsHandler(this));
+    m_editEventsHandler = std::make_unique<clEditEventsHandler>(this);
 }
 
 clThemedTextCtrl::~clThemedTextCtrl()

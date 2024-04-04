@@ -27,7 +27,6 @@
 #define __FILEEXTMANAGER__
 
 #include "codelite_exports.h"
-#include "smart_ptr.h"
 #include "wxStringHash.h"
 
 #include <map>

@@ -26,19 +26,17 @@
 #ifndef COMMENT_PARSER_H
 #define COMMENT_PARSER_H
 
+#include "codelite_exports.h"
+
 #include <map>
 #include <string>
-#include "codelite_exports.h"
-#include "smart_ptr.h"
 
 class WXDLLIMPEXP_CL CommentParseResult
 {
 private:
     std::map<size_t, std::string> m_comments;
     std::string m_filename;
-public:
-    typedef SmartPtr<CommentParseResult> Ptr_t;
-    
+
 public:
     void addComment(const std::string& comment, size_t line, bool cppComment)
     {

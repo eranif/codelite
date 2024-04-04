@@ -188,7 +188,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
         return (a->GetData().GetDisplayName().CmpNoCase(b->GetData().GetDisplayName()) < 0);
     };
     SetSortFunction(SortFunc);
-    m_colourHelper.Reset(new clTreeCtrlColourHelper(this));
+    m_colourHelper = std::make_unique<clTreeCtrlColourHelper>(this);
 
     // Initialise images map
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
@@ -2374,7 +2374,7 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
         pd.m_path = folder;
 
         // Set a default empty project
-        pd.m_srcProject.Reset(new Project());
+        pd.m_srcProject = std::make_shared<Project>();
 
 // Use sensible debugger defaults
 #ifdef __WXMAC__

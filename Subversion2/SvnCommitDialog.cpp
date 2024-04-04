@@ -106,8 +106,8 @@ void SvnCommitDialog::DoCommonInit()
     m_checkListFiles->Clear();
 
     // These two classes will allow copy / paste etc using the keyboard on the STC classes
-    m_stcMessageHelper.Reset(new clEditEventsHandler(m_stcMessage));
-    m_stcDiffHelper.Reset(new clEditEventsHandler(m_stcDiff));
+    m_stcMessageHelper = std::make_unique<clEditEventsHandler>(m_stcMessage);
+    m_stcDiffHelper = std::make_unique<clEditEventsHandler>(m_stcDiff);
     DoCreateToolbar();
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if(sashPos != wxNOT_FOUND) {

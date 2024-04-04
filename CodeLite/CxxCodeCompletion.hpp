@@ -252,7 +252,7 @@ private:
     TagEntryPtr find_scope_tag(CxxExpression& curexp, const std::vector<wxString>& visible_scopes);
     bool is_scope_tag(CxxExpression& curexp, const std::vector<wxString>& visible_scopes)
     {
-        return find_scope_tag(curexp, visible_scopes);
+        return find_scope_tag(curexp, visible_scopes) != nullptr;
     }
     TagEntryPtr find_scope_tag_externvar(CxxExpression& curexp, const std::vector<wxString>& visible_scopes);
     TagEntryPtr on_extern_var(CxxExpression& curexp, TagEntryPtr var, const std::vector<wxString>& visible_scopes);

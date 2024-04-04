@@ -25,22 +25,24 @@
 
 #ifndef IDBADAPTER_H
 #define IDBADAPTER_H
-#include <wx/wx.h>
-#include "smart_ptr.h"
-#include <wx/dynarray.h>
-#include <wx/dblayer/include/DatabaseLayer.h>
+
 #include "IDbType.h"
 //#include "columncol.h"
-//#include "tablecol.h"
 //#include "databasecol.h"
+//#include "tablecol.h"
+
+#include <memory>
+#include <wx/dblayer/include/DatabaseLayer.h>
+#include <wx/dynarray.h>
+#include <wx/wx.h>
+
 class DbConnection;
 class Database;
 class Table;
 class View;
 class IDbType;
 
-
-typedef SmartPtr<DatabaseLayer> DatabaseLayerPtr;
+using DatabaseLayerPtr = std::shared_ptr<DatabaseLayer>;
 
 /*! \brief Basic virtual class for creating universal interface between different database servers. */
 class IDbAdapter

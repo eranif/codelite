@@ -35,35 +35,35 @@
 
 ThemeImporterManager::ThemeImporterManager()
 {
-    m_importers.push_back(new ThemeImporterCXX());
-    m_importers.push_back(new ThemeImporterCMake());
-    m_importers.push_back(new ThemeImporterText());
-    m_importers.push_back(new ThemeImporterMakefile());
-    m_importers.push_back(new ThemeImporterDiff());
-    m_importers.push_back(new ThemeImporterPHP());
-    m_importers.push_back(new ThemeImporterCSS());
-    m_importers.push_back(new ThemeImporterTCL());
-    m_importers.push_back(new ThemeImporterXML());
-    m_importers.push_back(new ThemeImporterJavaScript());
-    m_importers.push_back(new ThemeImporterINI());
-    m_importers.push_back(new ThemeImporterASM());
-    m_importers.push_back(new ThemeImporterBatch());
-    m_importers.push_back(new ThemeImporterPython());
-    m_importers.push_back(new ThemeImporterCobra());
-    m_importers.push_back(new ThemeImporterCobraAlt());
-    m_importers.push_back(new ThemeImporterFortran());
-    m_importers.push_back(new ThemeImporterInnoSetup());
-    m_importers.push_back(new ThemeImporterJava());
-    m_importers.push_back(new ThemeImporterLua());
-    m_importers.push_back(new ThemeImporterScript());
-    m_importers.push_back(new ThemeImporterSQL());
-    m_importers.push_back(new ThemeImporterSCSS());
-    m_importers.push_back(new ThemeImporterDockerfile());
-    m_importers.push_back(new ThemeImporterYAML());
-    m_importers.push_back(new ThemeImporterRuby());
-    m_importers.push_back(new ThemeImporterMarkdown());
-    m_importers.push_back(new ThemeImporterRust());
-    m_importers.push_back(new ThemeImporterJson());
+    m_importers.push_back(std::make_unique<ThemeImporterCXX>());
+    m_importers.push_back(std::make_unique<ThemeImporterCMake>());
+    m_importers.push_back(std::make_unique<ThemeImporterText>());
+    m_importers.push_back(std::make_unique<ThemeImporterMakefile>());
+    m_importers.push_back(std::make_unique<ThemeImporterDiff>());
+    m_importers.push_back(std::make_unique<ThemeImporterPHP>());
+    m_importers.push_back(std::make_unique<ThemeImporterCSS>());
+    m_importers.push_back(std::make_unique<ThemeImporterTCL>());
+    m_importers.push_back(std::make_unique<ThemeImporterXML>());
+    m_importers.push_back(std::make_unique<ThemeImporterJavaScript>());
+    m_importers.push_back(std::make_unique<ThemeImporterINI>());
+    m_importers.push_back(std::make_unique<ThemeImporterASM>());
+    m_importers.push_back(std::make_unique<ThemeImporterBatch>());
+    m_importers.push_back(std::make_unique<ThemeImporterPython>());
+    m_importers.push_back(std::make_unique<ThemeImporterCobra>());
+    m_importers.push_back(std::make_unique<ThemeImporterCobraAlt>());
+    m_importers.push_back(std::make_unique<ThemeImporterFortran>());
+    m_importers.push_back(std::make_unique<ThemeImporterInnoSetup>());
+    m_importers.push_back(std::make_unique<ThemeImporterJava>());
+    m_importers.push_back(std::make_unique<ThemeImporterLua>());
+    m_importers.push_back(std::make_unique<ThemeImporterScript>());
+    m_importers.push_back(std::make_unique<ThemeImporterSQL>());
+    m_importers.push_back(std::make_unique<ThemeImporterSCSS>());
+    m_importers.push_back(std::make_unique<ThemeImporterDockerfile>());
+    m_importers.push_back(std::make_unique<ThemeImporterYAML>());
+    m_importers.push_back(std::make_unique<ThemeImporterRuby>());
+    m_importers.push_back(std::make_unique<ThemeImporterMarkdown>());
+    m_importers.push_back(std::make_unique<ThemeImporterRust>());
+    m_importers.push_back(std::make_unique<ThemeImporterJson>());
 }
 
 ThemeImporterManager::~ThemeImporterManager() {}
@@ -74,7 +74,7 @@ wxString ThemeImporterManager::Import(const wxString& theme_file)
     wxString name;
     std::vector<LexerConf::Ptr_t> lexers;
     lexers.reserve(m_importers.size());
-    for(auto importer : m_importers) {
+    for (auto& importer : m_importers) {
         auto lexer = importer->Import(theme_file);
         if(!lexer) {
             return wxEmptyString;

@@ -25,8 +25,8 @@
 #ifndef MENU_EVENT_HANDLERS_H
 #define MENU_EVENT_HANDLERS_H
 
-#include "wx/event.h"
-#include "smart_ptr.h"
+#include <memory>
+#include <wx/event.h>
 #include <wx/xrc/xmlres.h>
 
 /**
@@ -51,7 +51,7 @@ public:
     void SetEventId(const int& id) { m_id = id; }
 };
 
-typedef SmartPtr<MenuEventHandler> MenuEventHandlerPtr;
+using MenuEventHandlerPtr = std::shared_ptr<MenuEventHandler>;
 
 //-----------------------------------------------------------------
 // Define here a class per event/group

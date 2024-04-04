@@ -44,10 +44,10 @@ SQLiteDbAdapter::~SQLiteDbAdapter() {}
 void SQLiteDbAdapter::CloseConnection() {}
 DatabaseLayerPtr SQLiteDbAdapter::GetDatabaseLayer(const wxString& dbName)
 {
-    DatabaseLayer* pDatabase = NULL;
+    DatabaseLayerPtr pDatabase;
 
 #ifdef DBL_USE_SQLITE
-    pDatabase = new SqliteDatabaseLayer(m_sFileName);
+    pDatabase = std::make_shared<SqliteDatabaseLayer>(m_sFileName);
 #endif
 
     return pDatabase;

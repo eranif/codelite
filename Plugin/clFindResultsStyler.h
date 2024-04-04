@@ -2,8 +2,8 @@
 #define CLFINDRESULTSSTYLER_H
 
 #include "codelite_exports.h"
-#include "smart_ptr.h"
 
+#include <memory>
 #include <wx/stc/stc.h>
 
 class WXDLLIMPEXP_SDK clFindResultsStyler : public wxEvtHandler
@@ -28,7 +28,7 @@ public:
         LEX_FIF_SCOPE,
         LEX_FIF_MATCH_COMMENT,
     };
-    typedef SmartPtr<clFindResultsStyler> Ptr_t;
+    using Ptr_t = std::unique_ptr<clFindResultsStyler>;
 
 protected:
     wxStyledTextCtrl* m_stc;

@@ -248,7 +248,7 @@ void ConfigurationManagerDlg::SaveCurrentSettings()
     WorkspaceConfigurationPtr conf = matrix->GetConfigurationByName(m_currentWorkspaceConfiguration);
     if(!conf) {
         // create new configuration
-        conf = new WorkspaceConfiguration(NULL);
+        conf = std::make_shared<WorkspaceConfiguration>(nullptr);
         conf->SetName(m_currentWorkspaceConfiguration);
         matrix->SetConfiguration(conf);
     }

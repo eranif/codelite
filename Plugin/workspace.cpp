@@ -81,7 +81,7 @@ wxString clCxxWorkspace::GetName() const
 
 void clCxxWorkspace::CloseWorkspace()
 {
-    m_buildMatrix.Reset(NULL);
+    m_buildMatrix = nullptr;
     if(m_doc.IsOk()) {
         SaveXmlFile();
         m_doc = wxXmlDocument();
@@ -96,7 +96,7 @@ void clCxxWorkspace::CloseWorkspace()
 
 bool clCxxWorkspace::OpenReadOnly(const wxString& fileName, wxString& errMsg)
 {
-    m_buildMatrix.Reset(NULL);
+    m_buildMatrix = nullptr;
     wxFileName workSpaceFile(fileName);
     if(!workSpaceFile.FileExists()) {
         return false;
@@ -207,7 +207,7 @@ bool clCxxWorkspace::CreateWorkspace(const wxString& name, const wxString& path,
 
     // This function sets the working directory to the workspace directory!
     ::wxSetWorkingDirectory(m_fileName.GetPath());
-    m_buildMatrix.Reset(NULL);
+    m_buildMatrix = nullptr;
 
     wxFileName dbFileName = GetTagsFileName();
     TagsManagerST::Get()->OpenDatabase(dbFileName);
@@ -1168,8 +1168,8 @@ void clCxxWorkspace::ReplaceCompilers(const wxStringMap_t& compilers)
 
 void clCxxWorkspace::DoUpdateBuildMatrix()
 {
-    m_buildMatrix.Reset(new BuildMatrix(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "BuildMatrix"),
-                                        GetLocalWorkspace()->GetSelectedBuildConfiguration()));
+    m_buildMatrix = std::make_shared<BuildMatrix>(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "BuildMatrix"),
+                                                  GetLocalWorkspace()->GetSelectedBuildConfiguration());
 }
 
 void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newname)
@@ -1434,7 +1434,7 @@ bool clCxxWorkspace::CreateWorkspaceFolder(const wxString& path) { return (DoCre
 bool clCxxWorkspace::DoLoadWorkspace(const wxString& fileName, wxString& errMsg)
 {
     CloseWorkspace();
-    m_buildMatrix.Reset(NULL);
+    m_buildMatrix = nullptr;
     wxFileName workSpaceFile(fileName);
     if(workSpaceFile.FileExists() == false) {
         errMsg = wxString::Format(_("Could not open workspace file: '%s'"), fileName.c_str());

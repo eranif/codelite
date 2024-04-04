@@ -28,14 +28,14 @@
 #include "JSON.h"
 #include "attribute_style.h"
 #include "codelite_exports.h"
-#include "wx/filename.h"
-#include "wx/string.h"
-#include "wx/xml/xml.h"
 
-#include <smart_ptr.h>
+#include <memory>
+#include <wx/filename.h>
 #include <wx/font.h>
 #include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
+#include <wx/string.h>
+#include <wx/xml/xml.h>
 
 #define ANNOTATION_STYLE_WARNING 210
 #define ANNOTATION_STYLE_ERROR 211
@@ -106,7 +106,7 @@ private:
     int m_substyleBase = wxNOT_FOUND;
 
 public:
-    typedef SmartPtr<LexerConf> Ptr_t;
+    using Ptr_t = std::shared_ptr<LexerConf>;
 
 protected:
     enum eLexerConfFlags {

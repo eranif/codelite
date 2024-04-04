@@ -111,7 +111,7 @@ CMake::CMake(const wxFileName& path)
     PrepareDatabase();
 
     // Register the CMake builder
-    BuildManagerST::Get()->AddBuilder(new CMakeBuilder());
+    BuildManagerST::Get()->AddBuilder(std::make_shared<CMakeBuilder>());
 }
 
 /* ************************************************************************ */

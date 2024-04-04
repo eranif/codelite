@@ -26,10 +26,10 @@
 #define __configuration_manager_dlg__
 
 #include "ConfigManagerBaseDlg.h"
-#include "smart_ptr.h"
-#include <map>
-#include "project_settings.h"
 #include "configuration_mapping.h"
+#include "project_settings.h"
+
+#include <map>
 
 /** Implementing ConfigManagerBaseDlg */
 class ConfigurationManagerDlg : public ConfigManagerBaseDlg

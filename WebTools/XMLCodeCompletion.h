@@ -28,8 +28,8 @@
 
 #include "cl_command_event.h"
 #include "macros.h"
-#include "smart_ptr.h"
 
+#include <memory>
 #include <vector>
 #include <wx/event.h>
 
@@ -38,7 +38,7 @@ class IEditor;
 class XMLCodeCompletion : public wxEvtHandler
 {
 public:
-    typedef SmartPtr<XMLCodeCompletion> Ptr_t;
+    using Ptr_t = std::unique_ptr<XMLCodeCompletion>;
     struct HtmlCompletion {
         wxString m_tag;
         wxString m_comment;

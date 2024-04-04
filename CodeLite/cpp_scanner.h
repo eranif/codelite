@@ -26,8 +26,9 @@
 #define CODELITE_CPPSCANNER_H
 
 #include "FlexLexer.h"
-#include "smart_ptr.h"
 #include "codelite_exports.h"
+
+#include <memory>
 
 class WXDLLIMPEXP_CL CppScanner : public flex::yyFlexLexer
 {
@@ -61,5 +62,5 @@ private:
 	int   m_curr;
 };
 
-typedef SmartPtr<CppScanner> CppScannerPtr;
+using CppScannerPtr = std::unique_ptr<CppScanner>;
 #endif // CODELITE_CPPSCANNER_H

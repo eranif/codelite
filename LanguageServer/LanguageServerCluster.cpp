@@ -308,7 +308,7 @@ void LanguageServerCluster::OnSignatureHelp(LSPEvent& event)
     if(tags.empty()) {
         return;
     }
-    editor->ShowCalltip(new clCallTip(tags));
+    editor->ShowCalltip(std::make_shared<clCallTip>(tags));
 }
 
 void LanguageServerCluster::OnHover(LSPEvent& event)

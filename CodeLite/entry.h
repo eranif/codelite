@@ -31,15 +31,15 @@
 
 #include "codelite_exports.h"
 #include "macros.h"
-#include "smart_ptr.h"
 
 #include <map>
+#include <memory>
 #include <vector>
 #include <wx/string.h>
 
 class TagEntry;
-typedef SmartPtr<TagEntry> TagEntryPtr;
-typedef std::vector<TagEntryPtr> TagEntryPtrVector_t;
+using TagEntryPtr = std::shared_ptr<TagEntry>;
+using TagEntryPtrVector_t = std::vector<TagEntryPtr>;
 
 #define KIND_CLASS "class"
 #define KIND_ENUM "enum"

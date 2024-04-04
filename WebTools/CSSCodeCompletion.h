@@ -27,8 +27,8 @@
 #define CSSCODECOMPLETION_H
 
 #include "cl_command_event.h"
-#include "smart_ptr.h"
 
+#include <memory>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h> // Base class: wxEvtHandler
@@ -38,7 +38,7 @@ class IEditor;
 class CSSCodeCompletion : public wxEvtHandler
 {
 public:
-    typedef SmartPtr<CSSCodeCompletion> Ptr_t;
+    using Ptr_t = std::unique_ptr<CSSCodeCompletion>;
     struct Entry {
         wxString property;
         wxArrayString values;

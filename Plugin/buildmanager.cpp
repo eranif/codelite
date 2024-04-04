@@ -34,12 +34,12 @@
 BuildManager::BuildManager()
 {
     // register all builders here
-    AddBuilder(new BuilderGnuMake());
-    AddBuilder(new BuilderGNUMakeClassic());
-    AddBuilder(new BuilderGnuMakeOneStep());
+    AddBuilder(std::make_shared<BuilderGnuMake>());
+    AddBuilder(std::make_shared<BuilderGNUMakeClassic>());
+    AddBuilder(std::make_shared<BuilderGnuMakeOneStep>());
 #ifdef __WXMSW__
-    AddBuilder(new BuilderNMake());
-    AddBuilder(new BuilderGnuMakeMSYS());
+    AddBuilder(std::make_shared<BuilderNMake>());
+    AddBuilder(std::make_shared<BuilderGnuMakeMSYS>());
 #endif
 }
 

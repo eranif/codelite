@@ -25,14 +25,15 @@
 #ifndef __cppwordscanner__
 #define __cppwordscanner__
 
-#include <wx/arrstr.h>
-#include <vector>
-#include "cpptoken.h"
-#include "smart_ptr.h"
 #include "codelite_exports.h"
-#include <set>
+#include "cpptoken.h"
 #include "macros.h"
 #include "wxStringHash.h"
+
+#include <memory>
+#include <set>
+#include <vector>
+#include <wx/arrstr.h>
 
 struct ByteState {
     short state;   // Holds the current byte state (one of CppWordScanner::STATE_*)
@@ -83,7 +84,7 @@ public:
     int LineToPos(int lineNo);
 };
 
-typedef SmartPtr<TextStates> TextStatesPtr;
+using TextStatesPtr = std::shared_ptr<TextStates>;
 
 class WXDLLIMPEXP_CL CppWordScanner
 {

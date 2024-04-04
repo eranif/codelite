@@ -321,7 +321,7 @@ void TagsStorageSQLite::Store(const std::vector<TagEntryPtr>& tags, bool auto_co
             // we dont store local variables
             if(tag->IsLocalVariable())
                 continue;
-            DoInsertTagEntry(*tag.Get());
+            DoInsertTagEntry(*tag);
         }
     } catch(wxSQLite3Exception& e) {
         clWARNING() << "TagsStorageSQLite::Store(): failed to insert entires into the db." << e.GetMessage() << endl;
@@ -477,7 +477,7 @@ void TagsStorageSQLite::GetFiles(const wxString& partialName, std::vector<FileEn
             wxString lowerCasePartialName(partialName);
 #endif
             if(match.StartsWith(lowerCasePartialName)) {
-                files.push_back(fe);
+                files.emplace_back(std::move(fe));
             }
         }
     } catch(wxSQLite3Exception& e) {
@@ -524,7 +524,7 @@ void TagsStorageSQLite::GetFiles(std::vector<FileEntryPtr>& files)
             fe->SetFile(res.GetString(1));
             fe->SetLastRetaggedTimestamp(res.GetInt(2));
 
-            files.push_back(fe);
+            files.push_back(std::move(fe));
         }
         // release unneeded memory
         files.shrink_to_fit();

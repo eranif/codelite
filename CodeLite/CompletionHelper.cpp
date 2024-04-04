@@ -807,7 +807,7 @@ thread_local wxRegEx reFN("([@\\\\]{1}fn)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
 
 wxString CompletionHelper::format_comment(TagEntryPtr tag, const wxString& input_comment) const
 {
-    return format_comment(tag.Get(), input_comment);
+    return format_comment(tag.get(), input_comment);
 }
 
 wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_comment) const
@@ -983,7 +983,7 @@ wxString CompletionHelper::normalize_function(const TagEntry* tag, size_t flags)
 
 wxString CompletionHelper::normalize_function(TagEntryPtr tag, size_t flags)
 {
-    return normalize_function(tag.Get(), flags);
+    return normalize_function(tag.get(), flags);
 }
 
 void CompletionHelper::get_cxx_keywords(std::vector<wxString>& keywords)

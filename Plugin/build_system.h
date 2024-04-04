@@ -26,10 +26,11 @@
 #define BUILD_SYSTEM_H
 
 #include "codelite_exports.h"
-#include "list"
-#include "smart_ptr.h"
-#include "wx/string.h"
-#include "wx/xml/xml.h"
+
+#include <list>
+#include <memory>
+#include <wx/string.h>
+#include <wx/xml/xml.h>
 
 class WXDLLIMPEXP_SDK BuilderConfig
 {
@@ -56,6 +57,6 @@ public:
     void SetToolJobs(const wxString& jobs) { m_toolJobs = jobs; }
 };
 
-typedef SmartPtr<BuilderConfig> BuilderConfigPtr;
+using BuilderConfigPtr = std::shared_ptr<BuilderConfig>;
 
 #endif // BUILD_SYSTEM_H

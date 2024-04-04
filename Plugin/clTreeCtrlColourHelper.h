@@ -3,9 +3,9 @@
 
 #include "VirtualDirectoryColour.h"
 #include "clThemedTreeCtrl.h"
-#include "smart_ptr.h"
+#include "codelite_exports.h"
 
-#include <codelite_exports.h>
+#include <memory>
 #include <wx/colour.h>
 #include <wx/treectrl.h>
 
@@ -14,7 +14,7 @@ class WXDLLIMPEXP_SDK clTreeCtrlColourHelper
     clThemedTreeCtrl* m_tree;
 
 public:
-    typedef SmartPtr<clTreeCtrlColourHelper> Ptr_t;
+    using Ptr_t = std::unique_ptr<clTreeCtrlColourHelper>;
 
 protected:
     wxString GetItemPath(const wxTreeItemId& item) const;

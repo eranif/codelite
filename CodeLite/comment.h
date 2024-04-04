@@ -25,8 +25,8 @@
 #ifndef CODELITE_COMMENT_H
 #define CODELITE_COMMENT_H
 
+#include <memory>
 #include <wx/string.h>
-#include "smart_ptr.h"
 
 class Comment
 {
@@ -82,6 +82,6 @@ public:
 	}
 };
 
-typedef SmartPtr<Comment> CommentPtr;
+using CommentPtr = std::unique_ptr<Comment>;
 
 #endif // CODELITE_COMMENT_H

@@ -1,13 +1,14 @@
 #ifndef PHPDOCVAR_H
 #define PHPDOCVAR_H
 
-#include "codelite_exports.h"
-#include <wx/string.h>
 #include "PHPSourceFile.h"
-#include "smart_ptr.h"
+#include "codelite_exports.h"
+
 #include <list>
 #include <map>
-#include "wx/wxsqlite3.h"
+#include <memory>
+#include <wx/string.h>
+#include <wx/wxsqlite3.h>
 
 class WXDLLIMPEXP_CL PHPDocVar
 {
@@ -23,9 +24,9 @@ private:
     void Parse(PHPSourceFile& sourceFile, const wxString& doc);
 
 public:
-    typedef SmartPtr<PHPDocVar> Ptr_t;
-    typedef std::list<PHPDocVar::Ptr_t> List_t;
-    typedef std::map<wxString, PHPDocVar::Ptr_t> Map_t;
+    using Ptr_t = std::shared_ptr<PHPDocVar>;
+    using List_t = std::list<PHPDocVar::Ptr_t>;
+    using Map_t = std::map<wxString, PHPDocVar::Ptr_t>;
 
 public:
     PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc);

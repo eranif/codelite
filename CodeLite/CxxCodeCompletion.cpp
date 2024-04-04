@@ -896,8 +896,8 @@ void CxxCodeCompletion::reset()
     m_template_manager->clear();
     m_file_only_tags.clear();
     m_recurse_protector = 0;
-    m_current_function_tag.Reset(nullptr);
-    m_current_container_tag.Reset(nullptr);
+    m_current_function_tag = nullptr;
+    m_current_container_tag = nullptr;
 }
 
 namespace

@@ -96,8 +96,8 @@ WebTools::WebTools(IManager* manager)
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     Bind(wxEVT_NODE_COMMAND_TERMINATED, &WebTools::OnNodeCommandCompleted, this);
 
-    m_xmlCodeComplete.Reset(new XMLCodeCompletion(this));
-    m_cssCodeComplete.Reset(new CSSCodeCompletion(this));
+    m_xmlCodeComplete = std::make_unique<XMLCodeCompletion>(this);
+    m_cssCodeComplete = std::make_unique<CSSCodeCompletion>(this);
 
     // Connect the timer
     m_timer = new wxTimer(this);

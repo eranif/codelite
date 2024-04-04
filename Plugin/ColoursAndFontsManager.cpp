@@ -98,7 +98,7 @@ ColoursAndFontsManager::ColoursAndFontsManager()
     : m_initialized(false)
 {
     JSON json(DefaultLexerJSON);
-    m_defaultLexer.Reset(new LexerConf());
+    m_defaultLexer = std::make_shared<LexerConf>();
     m_defaultLexer->FromJSON(json.toElement());
 
     m_lexersVersion = clConfig::Get().Read(LEXERS_VERSION_STRING, LEXERS_UPGRADE_LINENUM_DEFAULT_COLOURS);

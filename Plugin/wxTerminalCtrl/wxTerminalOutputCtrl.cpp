@@ -61,7 +61,7 @@ wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxWindow* parent, wxWindowID winid)
     , m_terminal(nullptr)
 {
     Initialise();
-    m_editEvents.Reset(new MyEventsHandler(nullptr, m_ctrl));
+    m_editEvents = std::make_unique<MyEventsHandler>(nullptr, m_ctrl);
 }
 
 wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID winid, const wxFont& font,
@@ -70,12 +70,12 @@ wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID wi
     , m_terminal(parent)
 {
     Initialise(font, bg_colour, text_colour);
-    m_editEvents.Reset(new MyEventsHandler(nullptr, m_ctrl));
+    m_editEvents = std::make_unique<MyEventsHandler>(nullptr, m_ctrl);
 }
 
 void wxTerminalOutputCtrl::SetInputCtrl(wxTerminalInputCtrl* input_ctrl)
 {
-    m_editEvents.Reset(new MyEventsHandler(input_ctrl, m_ctrl));
+    m_editEvents = std::make_unique<MyEventsHandler>(input_ctrl, m_ctrl);
 }
 
 void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_colour, const wxColour& text_colour)

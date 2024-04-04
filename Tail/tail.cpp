@@ -62,7 +62,7 @@ void Tail::CreatePluginMenu(wxMenu* pluginsMenu) {}
 
 void Tail::UnPlug()
 {
-    m_editEventsHandler.Reset(NULL);
+    m_editEventsHandler = nullptr;
     // Unbind events
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &Tail::OnInitDone, this);
 
@@ -113,7 +113,7 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, 
 
     // Hook our output-pane panel
     m_view = tmpView;
-    m_editEventsHandler.Reset(new clEditEventsHandler(m_view->GetStc()));
+    m_editEventsHandler = std::make_unique<clEditEventsHandler>(m_view->GetStc());
     if(isNotebook) {
         m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_view, "Tail");
     } else {

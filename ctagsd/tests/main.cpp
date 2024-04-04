@@ -55,7 +55,7 @@ TagEntryPtr find_tag_by_name(const wxString& name, const vector<TagEntryPtr>& ca
 
 bool is_tag_exists(const wxString& path, const vector<TagEntryPtr>& candidates)
 {
-    return find_tag(path, candidates).Get() != NULL;
+    return find_tag(path, candidates) != nullptr;
 }
 
 bool is_file_exists(const wxString& suffix, wxString* fullpath)
@@ -229,7 +229,7 @@ TEST_FUNC(TestLSPLocation)
     if(resolved) {
         completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, { "LSP" });
     }
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_SIZE(candidates.size(), 18);
     return true;
 }
@@ -346,12 +346,12 @@ TEST_FUNC(test_cxx_code_complete_macro)
     ENSURE_DB_LOADED();
     {
         TagEntryPtr resolved = completer->code_complete("wxTheApp->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxApp");
     }
     {
         TagEntryPtr resolved = completer->code_complete("wxTheClipboard->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxClipboard");
     }
     return true;
@@ -366,7 +366,7 @@ TEST_FUNC(test_cxx_code_complete_member_of_parent_class)
     // set our scope at MyPlugin::foo
     completer->set_text(wxEmptyString, member_of_parent_class_file, 8);
     TagEntryPtr resolved = completer->code_complete("m_mgr->", {});
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_STRING(resolved->GetPath(), "IManager");
     return true;
 }
@@ -379,7 +379,7 @@ TEST_FUNC(TestCTagsManager_AutoCandidates)
         wxString fulltext = "wxCodeCompletionBoxManager::Get().";
 
         auto resolved = completer->code_complete(fulltext, {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
 
         completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, {});
         CHECK_BOOL(!candidates.empty());
@@ -388,7 +388,7 @@ TEST_FUNC(TestCTagsManager_AutoCandidates)
         vector<TagEntryPtr> candidates;
         CxxRemainder remainder;
         auto resolved = completer->code_complete("StringUtils::StripTerminalColouring", {}, &remainder);
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "StringUtils");
         CHECK_STRING(remainder.filter, "StripTerminalColouring");
         completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates, {});
@@ -532,7 +532,7 @@ TEST_FUNC(test_cxx_code_completion_both_subscript_and_arrow_operator)
     {
         completer->set_text(cc_subscript_operator_2, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("my_json[1][2].", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "JSONItem");
     }
     return true;
@@ -546,7 +546,7 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
         if(is_file_exists("ctagsd/tests/main.cpp", &filepath)) {
             completer->set_text(wxEmptyString, filepath, wxNOT_FOUND);
             TagEntryPtr resolved = completer->code_complete("completer->", { "std" });
-            CHECK_BOOL(resolved);
+            CHECK_NOT_NULL(resolved);
             CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");
         }
     }
@@ -589,7 +589,7 @@ TEST_FUNC(test_cxx_code_completion_static_member)
         if(is_file_exists("LiteEditor/frame.cpp", &filepath)) {
             completer->set_text(wxEmptyString, filepath, 1180);
             TagEntryPtr resolved = completer->code_complete("m_theFrame->", {});
-            CHECK_BOOL(resolved);
+            CHECK_NOT_NULL(resolved);
             CHECK_STRING(resolved->GetPath(), "clMainFrame");
         }
     }
@@ -622,7 +622,7 @@ TEST_FUNC(test_cxx_code_completion_overloaded_function)
 {
     ENSURE_DB_LOADED();
     TagEntryPtr resolved = completer->code_complete("wxString::Append", { "std" });
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_STRING(resolved->GetPath(), "wxString");
 
     // vector<TagEntryPtr> tags;
@@ -665,7 +665,7 @@ TEST_FUNC(test_cxx_code_completion_init_from_ctor)
         wxString code = "JSONItem item = new JSONItem();";
         completer->set_text(code, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("item->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "JSONItem");
     }
 
@@ -673,7 +673,7 @@ TEST_FUNC(test_cxx_code_completion_init_from_ctor)
         wxString code = "auto item = JSONItem();";
         completer->set_text(code, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("item[0].", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "JSONItem");
     }
     return true;
@@ -697,17 +697,17 @@ TEST_FUNC(test_cxx_code_completion_arrow_operator)
     ENSURE_DB_LOADED();
     {
         TagEntryPtr resolved = completer->code_complete("SmartPtr<wxString>->", {}, nullptr);
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     {
         TagEntryPtr resolved = completer->code_complete("SmartPtr<TagEntryPtr>->", {}, nullptr);
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "SmartPtr");
     }
     {
         TagEntryPtr resolved = completer->code_complete("SmartPtr<TagEntryPtr>.Get()->", {}, nullptr);
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "TagEntry");
     }
     return true;
@@ -869,7 +869,7 @@ TEST_FUNC(test_cxx_code_completion_word_completion)
     {
         CxxRemainder remainder;
         TagEntryPtr resolved = completer->code_complete("std::str", {}, &remainder);
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "std");
         CHECK_STRING(remainder.filter, "str");
         vector<TagEntryPtr> candidates;
@@ -964,7 +964,7 @@ TEST_FUNC(test_cxx_code_completion_class_enum)
     CxxRemainder remainder;
     vector<TagEntryPtr> candidates;
     TagEntryPtr resolved = completer->code_complete("eCxxStandard::", {});
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_STRING(resolved->GetPath(), "eCxxStandard");
     CHECK_STRING(resolved->GetKind(), "enum");
 
@@ -985,19 +985,19 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
     if(is_file_exists("CodeLite/ctags_manager.cpp", &filename)) {
         completer->set_text(wxEmptyString, filename, 149);
         resolved = completer->code_complete("this->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "TagsManager");
     }
 
     if(is_file_exists("CodeLite/CxxCodeCompletion.cpp", &filename_2)) {
         completer->set_text(wxEmptyString, filename_2, 78);
         resolved = completer->code_complete("m_template_manager->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "TemplateManager");
     }
 
     resolved = completer->code_complete("::", {});
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_STRING(resolved->GetPath(), "<global>");
 
     CxxRemainder remainder;
@@ -1013,7 +1013,7 @@ TEST_FUNC(test_cxx_code_completion_vector_of_pairs)
 
     completer->set_text(wxEmptyString, wxEmptyString, wxNOT_FOUND);
     auto resolved = completer->code_complete("vector<pair<wxString, wxString>>.at(0).", { "std" }, &remainder);
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_STRING(resolved->GetPath(), "std::pair");
     return true;
 }
@@ -1026,7 +1026,7 @@ TEST_FUNC(test_cxx_code_completion_pointer_type_in_template)
     wxString code = "vector<ITest*> m_tests;";
     completer->set_text(code, wxEmptyString, wxNOT_FOUND);
     auto resolved = completer->code_complete("m_tests.at(i)->tes", { "std" }, &remainder);
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_STRING(resolved->GetPath(), "ITest");
     CHECK_STRING(remainder.filter, "tes");
     return true;
@@ -1064,7 +1064,7 @@ TEST_FUNC(test_cxx_code_completion_global_method)
     {
         // try again, this time with the global namespace prefix
         auto resolved = completer->code_complete("::clGetManager()->", {}, nullptr);
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "IManager");
     }
     return true;
@@ -1081,7 +1081,7 @@ TEST_FUNC(test_cxx_code_completion_after_adding_func_impl)
     {
         completer->set_text(wxEmptyString, filename, 1117); // inside clFileSystemWorkspace::ReloadWorkspace
         auto resolved = completer->code_complete("this->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "clFileSystemWorkspace");
 
         vector<TagEntryPtr> candidates;
@@ -1103,7 +1103,7 @@ TEST_FUNC(test_cxx_code_completion_member_variable_in_scope)
     {
         completer->set_text(wxEmptyString, filename, 210); // inside TagsManager::TreeFromTags
         auto resolved = completer->code_complete("m_watch.", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxStopWatch");
     }
     return true;
@@ -1157,7 +1157,7 @@ TEST_FUNC(test_cxx_code_completion_full_ns_path)
 {
     ENSURE_DB_LOADED();
     auto resolved = completer->code_complete("LSP::Params::Ptr_t->", {}, nullptr);
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_STRING(resolved->GetPath(), "LSP::Params");
     return true;
 }
@@ -1172,14 +1172,14 @@ TEST_FUNC(test_cxx_code_completion_function_arguments)
             completer->set_text(wxEmptyString, filepath,
                                 430); // ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
             TagEntryPtr resolved = completer->code_complete("msg->", { "std" });
-            CHECK_BOOL(resolved);
+            CHECK_NOT_NULL(resolved);
             CHECK_STRING(resolved->GetPath(), "JSON");
         }
         {
             completer->set_text(wxEmptyString, filepath,
                                 430); // ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
             TagEntryPtr resolved = completer->code_complete("channel->", { "std" });
-            CHECK_BOOL(resolved);
+            CHECK_NOT_NULL(resolved);
             CHECK_STRING(resolved->GetPath(), "Channel");
         }
         {
@@ -1210,7 +1210,7 @@ TEST_FUNC(test_cxx_code_completion_rvalue_reference)
         wxString text = "TagEntry&& entry;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("entry.m_path.", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     return true;
@@ -1223,7 +1223,7 @@ TEST_FUNC(test_cxx_code_completion_member_variable)
         wxString text = "TagEntry entry;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("entry.m_path.", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     return true;
@@ -1234,7 +1234,7 @@ TEST_FUNC(test_cxx_code_completion_template_function)
     ENSURE_DB_LOADED();
     {
         TagEntryPtr resolved = completer->code_complete("get_as_type<wxString>()->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
@@ -1242,7 +1242,7 @@ TEST_FUNC(test_cxx_code_completion_template_function)
         wxString code = "auto resolved = get_as_type<wxString>();";
         completer->set_text(code, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("resolved.", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
@@ -1256,13 +1256,13 @@ TEST_FUNC(test_cxx_code_completion_template_std_set)
         wxString text = "set<wxString> S;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("S.begin()->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         TagEntryPtr resolved = completer->code_complete("wxStringSet_t::value_type::", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     return true;
@@ -1275,13 +1275,13 @@ TEST_FUNC(test_cxx_code_completion_template_std_multiset)
         wxString text = "multiset<wxString> S;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("S.begin()->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         TagEntryPtr resolved = completer->code_complete("multiset<wxString>::value_type::", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     return true;
@@ -1294,13 +1294,13 @@ TEST_FUNC(test_cxx_code_completion_template_std_unordered_multiset)
         wxString text = "unordered_multiset<wxString> S;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("S.begin()->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         TagEntryPtr resolved = completer->code_complete("unordered_multiset<wxString>::value_type::", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     return true;
@@ -1313,13 +1313,13 @@ TEST_FUNC(test_cxx_code_completion_template_std_map)
         wxString text = "map<wxString> M;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("M.begin()->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "std::pair");
     }
 
     {
         TagEntryPtr resolved = completer->code_complete("wxStringMap_t::value_type.", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "std::pair");
     }
     return true;
@@ -1331,7 +1331,7 @@ TEST_FUNC(test_cxx_code_completion_typedef_using)
     wxString text = "ClangFormatMap compiledMap;";
     completer->set_text(text, wxEmptyString, wxNOT_FOUND);
     TagEntryPtr resolved = completer->code_complete("ClangFormatMap.begin()->first.", { "FormatOptions" });
-    CHECK_BOOL(resolved);
+    CHECK_NOT_NULL(resolved);
     CHECK_STRING(resolved->GetPath(), "wxString");
     return true;
 }
@@ -1344,7 +1344,7 @@ TEST_FUNC(test_cxx_code_completion_template)
         wxString text = "cJSON* json;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("json->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "cJSON");
         vector<TagEntryPtr> tags;
         completer->get_completions(resolved, wxEmptyString, wxEmptyString, tags, {});
@@ -1356,7 +1356,7 @@ TEST_FUNC(test_cxx_code_completion_template)
         wxString text = "wxVector<wxString> V;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("V.at(0).", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     {
@@ -1364,7 +1364,7 @@ TEST_FUNC(test_cxx_code_completion_template)
         // typedef Singleton<Manager> ManagerST;
         completer->reset();
         TagEntryPtr resolved = completer->code_complete("ManagerST::Get()->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "Manager");
     }
 
@@ -1374,7 +1374,7 @@ TEST_FUNC(test_cxx_code_completion_template)
         // ContextManager::Get()->
         completer->reset();
         TagEntryPtr resolved = completer->code_complete("ContextManager::Get()->", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "ContextManager");
     }
 
@@ -1382,7 +1382,7 @@ TEST_FUNC(test_cxx_code_completion_template)
         wxString text = "map<wxString, wxArrayString> M;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("M.at(str).", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxArrayString");
     }
 
@@ -1390,7 +1390,7 @@ TEST_FUNC(test_cxx_code_completion_template)
         wxString text = "shared_ptr<wxString> P;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("P.", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "std::shared_ptr");
     }
 
@@ -1398,61 +1398,61 @@ TEST_FUNC(test_cxx_code_completion_template)
         wxString text = "shared_ptr<wxString> P;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("P->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     {
         wxString text = "unique_ptr<wxString> P;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("P->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
     {
         completer->set_text("CxxVariable::Map_t varsMap;", wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("varsMap.begin()->first.", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         completer->set_text("CxxVariable::Map_t varsMap;", wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("varsMap.begin()->second->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "CxxVariable");
     }
 
     {
         completer->set_text("CxxVariable::Map_t varsMap;", wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("varsMap.begin()->second.", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "SmartPtr");
     }
 
     {
         completer->set_text("unordered_set<CxxVariable> varsSet;", wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("varsSet.begin()->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "CxxVariable");
     }
 
     {
         TagEntryPtr resolved =
             completer->code_complete("map<wxString, CxxVariable::Ptr_t>::begin()->first.", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         TagEntryPtr resolved =
             completer->code_complete("map<wxString, CxxVariable::Ptr_t>::begin()->second.", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "SmartPtr");
     }
     {
         TagEntryPtr resolved =
             completer->code_complete("map<wxString, CxxVariable::Ptr_t>::begin()->second->", { "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "CxxVariable");
     }
     return true;
@@ -1466,49 +1466,49 @@ TEST_FUNC(test_cxx_code_completion)
         wxString text = "std::string str;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("str.", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "std::basic_string");
     }
 
     {
         completer->set_text(cc_text_auto_chained, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("str.", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         completer->set_text(cc_text_auto_simple, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("str.", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         completer->set_text(cc_text_simple, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("wxString::", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         completer->set_text(cc_text_simple, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("str.AfterFirst('(').", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         completer->set_text(cc_text_simple, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("str.AfterFirst('(').BeforeFirst().", {});
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
         completer->set_text(cc_text_lsp_event, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("event.GetLocation().GetRange().GetStart().", { "LSP", "std" });
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "LSP::Position");
     }
     return true;

@@ -138,10 +138,10 @@ void NewConfigurationDlg::OnButtonOK(wxCommandEvent& event)
     BuildConfigPtr newBuildConf;
 
     if(copyFrom == _("-- None --")) {
-        newBuildConf = new BuildConfig(NULL);
+        newBuildConf = std::make_shared<BuildConfig>(nullptr);
     } else {
         BuildConfigPtr origBuildConf = settings->GetBuildConfiguration(copyFrom);
-        newBuildConf = origBuildConf->Clone();
+        newBuildConf.reset(origBuildConf->Clone());
     }
 
     newBuildConf->SetName(newConfName);

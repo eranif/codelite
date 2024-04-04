@@ -39,6 +39,9 @@ public:
     ThemeImporterManager();
     virtual ~ThemeImporterManager();
 
+    ThemeImporterManager(const ThemeImporterManager&) = delete;
+    ThemeImporterManager& operator=(const ThemeImporterManager&) = delete;
+
     /**
      * @brief import the XML and create a lexer out of it
      * @param theme_file path to the XML file

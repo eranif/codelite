@@ -30,6 +30,7 @@
 #include "wx/string.h"
 
 #include <map>
+#include <memory>
 
 /**
  * \ingroup SDK
@@ -146,6 +147,6 @@ public:
     void SetProjectType(const wxString& type) { m_projectType = type; }
 };
 
-typedef SmartPtr<ProjectSettings> ProjectSettingsPtr;
+using ProjectSettingsPtr = std::shared_ptr<ProjectSettings>;
 
 #endif // PROJECT_SETTINGS_H

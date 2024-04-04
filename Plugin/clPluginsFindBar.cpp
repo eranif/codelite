@@ -105,8 +105,8 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     , m_replaceInSelection(false)
 {
     // Handle Edit events
-    m_findEventsHandler.Reset(new clEditEventsHandler(m_textCtrlFind));
-    m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace));
+    m_findEventsHandler = std::make_unique<clEditEventsHandler>(m_textCtrlFind);
+    m_replaceEventsHandler = std::make_unique<clEditEventsHandler>(m_textCtrlReplace);
     m_findEventsHandler->NoUnbind();
     m_replaceEventsHandler->NoUnbind();
     m_toolbar->SetMiniToolBar(true);

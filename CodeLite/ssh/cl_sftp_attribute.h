@@ -28,8 +28,9 @@
 #if USE_SFTP
 
 #include "codelite_exports.h"
-#include "smart_ptr.h"
+
 #include <list>
+#include <memory>
 #include <wx/clntdata.h>
 #include <wx/filename.h>
 
@@ -47,8 +48,8 @@ class WXDLLIMPEXP_CL SFTPAttribute : public wxClientData
     wxString m_symlinkPath; // incase this file represents a symlink, this member will hold the target path
 
 public:
-    typedef SmartPtr<SFTPAttribute> Ptr_t;
-    typedef std::list<SFTPAttribute::Ptr_t> List_t;
+    using Ptr_t = std::shared_ptr<SFTPAttribute>;
+    using List_t = std::list<SFTPAttribute::Ptr_t>;
 
     enum {
         TYPE_FOLDER = 0x00000001,

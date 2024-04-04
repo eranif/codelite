@@ -70,7 +70,7 @@ void PHPEntityFunctionAlias::FromJSON(const JSONItem& json)
     m_scope = json.namedObject("scope").toString();
     if(json.hasNamedObject("func")) {
         JSONItem func = json.namedObject("func");
-        m_func.Reset(new PHPEntityFunction());
+        m_func = std::make_shared<PHPEntityFunction>();
         m_func->FromJSON(func);
     }
 }

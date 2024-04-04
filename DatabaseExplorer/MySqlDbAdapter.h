@@ -83,7 +83,7 @@ protected:
 	wxString m_userName;
 	wxString m_password;
 
-	DatabaseLayer* m_pDbLayer;
+	DatabaseLayerPtr m_pDbLayer;
 };
 
 #endif // MYSQLDBADAPTER_H

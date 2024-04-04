@@ -26,9 +26,10 @@
 #define BUILDER_H
 
 #include "codelite_exports.h"
-#include "smart_ptr.h"
-#include "wx/event.h"
-#include "wx/string.h"
+
+#include <memory>
+#include <wx/event.h>
+#include <wx/string.h>
 
 /**
  * \ingroup SDK
@@ -185,6 +186,6 @@ public:
     virtual wxString GetStaticLibSuffix() const { return ".a"; }
 };
 
-typedef SmartPtr<Builder> BuilderPtr;
+using BuilderPtr = std::shared_ptr<Builder>;
 
 #endif // BUILDER_H

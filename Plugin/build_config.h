@@ -34,6 +34,7 @@
 
 #include <list>
 #include <map>
+#include <memory>
 #include <wx/arrstr.h>
 #include <wx/string.h>
 
@@ -388,6 +389,6 @@ public:
     clEnvList_t GetEnvironment(Project* project = nullptr) const;
 };
 
-typedef SmartPtr<BuildConfig> BuildConfigPtr;
+using BuildConfigPtr = std::shared_ptr<BuildConfig>;
 
 #endif // BUILD_CONFIGURATION_H

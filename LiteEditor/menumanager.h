@@ -27,7 +27,7 @@
 
 #include "menu_event_handlers.h"
 #include "singleton.h"
-#include "smart_ptr.h"
+
 #include <map>
 
 //-------------------------------------------------

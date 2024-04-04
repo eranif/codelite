@@ -40,7 +40,7 @@ ProjectSettings::ProjectSettings(wxXmlNode* node)
                 wxString configName = XmlUtils::ReadString(child, wxT("Name"));
                 m_configs.insert(std::pair<wxString, BuildConfigPtr>(configName, new BuildConfig(child)));
             } else if(child->GetName() == wxT("GlobalSettings")) {
-                m_globalSettings = new BuildConfigCommon(child, wxT("GlobalSettings"));
+                m_globalSettings = std::make_shared<BuildConfigCommon>(child, wxT("GlobalSettings"));
             }
             child = child->GetNext();
         }
@@ -59,7 +59,7 @@ ProjectSettings::ProjectSettings(wxXmlNode* node)
     // Create global settings if it's not been loaded or by default
     if(!m_globalSettings) {
         // clLogMessage(wxT("ProjectSettings : Create global settings because it doesn't exists"));
-        m_globalSettings = new BuildConfigCommon(NULL, wxT("GlobalSettings"));
+        m_globalSettings = std::make_shared<BuildConfigCommon>(nullptr, wxT("GlobalSettings"));
     }
 }
 

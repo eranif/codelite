@@ -425,7 +425,7 @@ PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
                 // use the internal function
                 resolved = resolved->Cast<PHPEntityFunctionAlias>()->GetFunc();
             }
-            loc = new PHPLocation;
+            loc = std::make_shared<PHPLocation>();
             loc->filename = resolved->GetFilename().GetFullPath();
             loc->linenumber = resolved->GetLine();
             loc->what = resolved->GetShortName();

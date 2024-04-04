@@ -87,7 +87,7 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalInputCtrl::OnThemeChanged, this);
     m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-)#");
 
-    m_editEvents.Reset(new MyEventsHandler(this, m_ctrl));
+    m_editEvents = std::make_unique<MyEventsHandler>(this, m_ctrl);
     m_ctrl->Bind(wxEVT_CONTEXT_MENU, &wxTerminalInputCtrl::OnMenu, this);
     m_ctrl->Bind(wxEVT_IDLE, &wxTerminalInputCtrl::OnIdle, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &wxTerminalInputCtrl::OnCCBoxSelected, this);

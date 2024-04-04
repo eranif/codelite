@@ -91,7 +91,7 @@ SQLCommandPanel::SQLCommandPanel(wxWindow* parent, IDbAdapter* dbAdapter, const 
     m_dbName = dbName;
     m_dbTable = dbTable;
 
-    m_editHelper.Reset(new clEditEventsHandler(m_scintillaSQL));
+    m_editHelper = std::make_unique<clEditEventsHandler>(m_scintillaSQL);
     m_scintillaSQL->AddText(wxString::Format(_(" -- selected database %s\n"), m_dbName.c_str()));
     if(!dbTable.IsEmpty()) {
         m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));

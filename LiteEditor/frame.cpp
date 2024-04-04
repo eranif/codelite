@@ -872,7 +872,7 @@ void clMainFrame::Construct()
     m_highlightWord = (bool)value;
 
     // Initialize the frame helper
-    m_frameHelper.Reset(new clMainFrameHelper(this, &m_mgr));
+    m_frameHelper = std::make_unique<clMainFrameHelper>(this, &m_mgr);
     CreateGUIControls();
 
     ManagerST::Get(); // Dummy call

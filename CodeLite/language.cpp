@@ -807,7 +807,7 @@ void Language::ParseComments(const wxFileName& fileName, std::vector<CommentPtr>
 
             // save the previous comment buffer
             if(comment.IsEmpty() == false) {
-                comments->push_back(new Comment(comment, fileName.GetFullPath(), line - 1));
+                comments->push_back(std::make_unique<Comment>(comment, fileName.GetFullPath(), line - 1));
                 comment.Empty();
                 line = -1;
             }
@@ -820,19 +820,19 @@ void Language::ParseComments(const wxFileName& fileName, std::vector<CommentPtr>
                 continue;
             }
 
-            comments->push_back(new Comment(m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno() - 1));
+            comments->push_back(std::make_unique<Comment>(m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno() - 1));
             comment.Empty();
             line = -1;
             m_scanner->ClearComment();
 
         } else if(type == CComment) {
-            comments->push_back(new Comment(m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno()));
+            comments->push_back(std::make_unique<Comment>(m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno()));
             m_scanner->ClearComment();
         }
     }
 
     if(comment.IsEmpty() == false) {
-        comments->push_back(new Comment(comment, fileName.GetFullPath(), line - 1));
+        comments->push_back(std::make_unique<Comment>(comment, fileName.GetFullPath(), line - 1));
     }
 
     // reset the scanner

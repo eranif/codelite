@@ -437,7 +437,7 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
 
         // Determine the executable to debug, working directory and arguments
         LOG_DEBUG(LOG) << "Preparing environment variables.." << endl;
-        env = bldConf->GetEnvironment(project.Get());
+        env = bldConf->GetEnvironment(project.get());
         LOG_DEBUG(LOG) << "Success" << endl;
         exepath = bldConf->GetCommand();
 

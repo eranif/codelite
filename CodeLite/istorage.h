@@ -31,6 +31,8 @@
 #include "fileentry.h"
 #include "pptable.h"
 #include "tag_tree.h"
+
+#include <memory>
 #include <wx/filename.h>
 
 #define MAX_SEARCH_LIMIT 250
@@ -547,6 +549,6 @@ public:
 
 enum { TagOk = 0, TagExist, TagError };
 
-typedef SmartPtr<ITagsStorage> ITagsStoragePtr;
+using ITagsStoragePtr = std::shared_ptr<ITagsStorage>;
 
 #endif // ISTORAGE_H

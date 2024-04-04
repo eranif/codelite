@@ -45,7 +45,7 @@ EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions, wxXmlNode* 
     }
     SetTitle(label);
 
-    localOptions = new LocalOptionsConfig;
+    localOptions = std::make_shared<LocalOptionsConfig>();
     LocalOptionsConfig pOC(localOptions, node);
 
     DisplayHigherValues(higherOptions); // Sets the 'global'? defaults, and the enabling checkboxes to disabling
@@ -203,7 +203,7 @@ void EditorSettingsLocal::DisplayLocalValues(const LocalOptionsConfigPtr options
 void EditorSettingsLocal::OnOK(wxCommandEvent& event)
 {
     // Kill the old LocalOptionsConfigPtr, which now holds stale data
-    localOptions.Reset(new LocalOptionsConfig);
+    localOptions = std::make_shared<LocalOptionsConfig>();
 
     // Assume that, for any items still disabled, the user wants to use the global setting
     // That's true even if he decided to change an item, then disabled it again

@@ -277,7 +277,6 @@
     <File Name="progress_dialog.h"/>
     <File Name="readtags.h"/>
     <File Name="singleton.h"/>
-    <File Name="smart_ptr.h"/>
     <File Name="tag_tree.h"/>
     <File Name="tokenizer.h"/>
     <File Name="tree.h"/>

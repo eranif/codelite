@@ -27,8 +27,9 @@
 
 #include "codelite_exports.h"
 #include "entry.h"
-#include "smart_ptr.h"
 #include "tokenizer.h"
+
+#include <memory>
 
 struct clTipInfo {
     wxString str;
@@ -144,5 +145,5 @@ public:
     wxString TipAt(int at);
 };
 
-typedef SmartPtr<clCallTip> clCallTipPtr;
+using clCallTipPtr = std::shared_ptr<clCallTip>;
 #endif // CODELITE_CALLTIP_H

@@ -187,7 +187,7 @@ static int strcmp(const wxString& str, const wxString& expc) {
     {                                                       \
         ++m_testCount;                                      \
         SET_FILE_LINE_NAME();                               \
-        set_passed((ptr));                                  \
+        set_passed((ptr) != nullptr);                       \
         if(!is_passed()) {                                  \
             set_summary(wxString() << #ptr << " is null!"); \
             return false;                                   \

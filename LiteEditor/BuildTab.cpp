@@ -93,7 +93,7 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
     EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &m_buildTabSettings);
 
     // clean the last used compiler
-    m_activeCompiler.Reset(nullptr);
+    m_activeCompiler = nullptr;
     m_error_count = m_warn_count = 0;
 
     // get the toolchain from the event and attempt to load the compiler
@@ -251,7 +251,7 @@ void BuildTab::Cleanup()
     m_buildInProgress = false;
     m_buffer.clear();
     ClearView();
-    m_activeCompiler.Reset(nullptr);
+    m_activeCompiler = nullptr;
     m_error_count = 0;
     m_warn_count = 0;
     m_buildInterrupted = false;

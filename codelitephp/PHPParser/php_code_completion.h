@@ -37,7 +37,7 @@
 
 #include <cc_box_tip_window.h>
 #include <cl_command_event.h>
-#include <smart_ptr.h>
+#include <memory>
 #include <vector>
 
 struct PHPLocation {
@@ -45,7 +45,7 @@ struct PHPLocation {
     wxString filename; // file name (absolute path)
     int linenumber;    // line number within filename
     PHPEntityBase::Ptr_t entity;
-    typedef SmartPtr<PHPLocation> Ptr_t;
+    using Ptr_t = std::shared_ptr<PHPLocation>;
 };
 
 class IManager;

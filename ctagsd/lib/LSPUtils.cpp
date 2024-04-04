@@ -121,7 +121,7 @@ std::vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const 
     wxStringSet_t parent_seen;
     for(auto tag : tags) {
         LSP::SymbolInformation symbol_information;
-        to_symbol_information(tag.Get(), symbol_information, for_tree_view ? &parent_seen : nullptr);
+        to_symbol_information(tag.get(), symbol_information, for_tree_view ? &parent_seen : nullptr);
         result.push_back(symbol_information);
     }
     return result;

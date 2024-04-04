@@ -4,9 +4,9 @@
 #include "CxxLexerAPI.h"
 #include "codelite_exports.h"
 #include "macros.h"
-#include "smart_ptr.h"
 
 #include <map>
+#include <memory>
 #include <set>
 #include <unordered_map>
 #include <vector>
@@ -65,9 +65,9 @@ protected:
     int m_lineNumber = wxNOT_FOUND;
 
 public:
-    typedef SmartPtr<CxxVariable> Ptr_t;
-    typedef std::vector<CxxVariable::Ptr_t> Vec_t;
-    typedef std::unordered_map<wxString, CxxVariable::Ptr_t> Map_t;
+    using Ptr_t = std::shared_ptr<CxxVariable>;
+    using Vec_t = std::vector<CxxVariable::Ptr_t>;
+    using Map_t = std::unordered_map<wxString, CxxVariable::Ptr_t>;
 
 public:
     CxxVariable(eCxxStandard standard);

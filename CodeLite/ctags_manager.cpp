@@ -128,7 +128,7 @@ TagsManager::TagsManager()
     , m_evtHandler(NULL)
     , m_encoding(wxFONTENCODING_DEFAULT)
 {
-    m_db = new TagsStorageSQLite();
+    m_db = std::make_shared<TagsStorageSQLite>();
     m_db->SetSingleSearchLimit(MAX_SEARCH_LIMIT);
 
     // CPP keywords that are usually followed by open brace '('
@@ -180,7 +180,7 @@ TagTreePtr TagsManager::Load(const wxFileName& fileName, TagEntryPtrVector_t* ta
     // Load the records and build a language tree
     TagEntry root;
     root.SetName(wxT("<ROOT>"));
-    tree.Reset(new TagTree(wxT("<ROOT>"), root));
+    tree = std::make_shared<TagTree>(wxT("<ROOT>"), root);
     for(size_t i = 0; i < tagsByFile.size(); i++) {
         tree->AddEntry(*(tagsByFile.at(i)));
     }
@@ -923,8 +923,8 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr>& tags, c
 void TagsManager::CloseDatabase()
 {
     m_dbFile.Clear();
-    m_db = NULL; // Free the current database
-    m_db = new TagsStorageSQLite();
+    m_db = nullptr; // Free the current database
+    m_db = std::make_shared<TagsStorageSQLite>();
     m_db->SetSingleSearchLimit(m_tagsOptions.GetCcNumberOfDisplayItems());
     m_db->SetUseCache(false);
 }
@@ -1570,7 +1570,7 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
     }
 
     for(size_t i = 0; i < files_entries.size(); i++) {
-        FileEntryPtr fe = files_entries.at(i);
+        const FileEntryPtr& fe = files_entries.at(i);
 
         // does the file exist in both lists?
         std::unordered_set<wxString>::iterator iter = files_set.find(fe->GetFile());

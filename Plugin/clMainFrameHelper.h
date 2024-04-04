@@ -2,8 +2,8 @@
 #define CLMAINFRAMEHELPER_H
 
 #include "codelite_exports.h"
-#include "smart_ptr.h"
 
+#include <memory>
 #include <wx/event.h>
 
 class clMainFrame;
@@ -16,7 +16,7 @@ class WXDLLIMPEXP_SDK clMainFrameHelper : public wxEvtHandler
     size_t m_debuggerFeatures;
 
 public:
-    typedef SmartPtr<clMainFrameHelper> Ptr_t;
+    using Ptr_t = std::unique_ptr<clMainFrameHelper>;
 
 public:
     clMainFrameHelper(clMainFrame* frame, clDockingManager* dockMgr);

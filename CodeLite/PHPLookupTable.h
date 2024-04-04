@@ -34,8 +34,6 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "smart_ptr.h"
-#include "wx/wxsqlite3.h"
 
 #include <set>
 #include <unordered_set>
@@ -43,6 +41,7 @@
 #include <wx/longlong.h>
 #include <wx/stopwatch.h>
 #include <wx/string.h>
+#include <wx/wxsqlite3.h>
 #include <wxStringHash.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_STARTED, clParseEvent);
@@ -89,7 +88,7 @@ public:
         kUpdateMode_Fast,
         kUpdateMode_Full,
     };
-    typedef SmartPtr<PHPLookupTable> Ptr_t;
+
     static void DoSplitFullname(const wxString& fullname, wxString& ns, wxString& shortName);
 
 private:

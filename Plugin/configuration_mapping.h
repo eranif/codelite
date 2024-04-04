@@ -26,10 +26,11 @@
 #define CONFIGURATION_MAPPING_H
 
 #include "codelite_exports.h"
-#include "list"
-#include "smart_ptr.h"
-#include "wx/string.h"
-#include "wx/xml/xml.h"
+
+#include <list>
+#include <memory>
+#include <wx/string.h>
+#include <wx/xml/xml.h>
 
 class WXDLLIMPEXP_SDK ConfigMappingEntry
 {
@@ -82,7 +83,7 @@ public:
     }
 };
 
-typedef SmartPtr<WorkspaceConfiguration> WorkspaceConfigurationPtr;
+using WorkspaceConfigurationPtr = std::shared_ptr<WorkspaceConfiguration>;
 
 class WXDLLIMPEXP_SDK BuildMatrix
 {
@@ -108,6 +109,6 @@ public:
     WorkspaceConfigurationPtr GetConfigurationByName(const wxString& name) const;
 };
 
-typedef SmartPtr<BuildMatrix> BuildMatrixPtr;
+using BuildMatrixPtr = std::shared_ptr<BuildMatrix>;
 
 #endif // CONFIGURATION_MAPPING_H

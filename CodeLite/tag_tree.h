@@ -25,11 +25,12 @@
 #ifndef CODELITE_TAG_TREE_H
 #define CODELITE_TAG_TREE_H
 
-#include <wx/string.h>
-#include "smart_ptr.h"
-#include "tree.h"
 #include "codelite_exports.h"
 #include "entry.h"
+#include "tree.h"
+
+#include <wx/string.h>
+#include <memory>
 
 typedef TreeNode<wxString, TagEntry> TagNode;
 
@@ -69,6 +70,6 @@ public:
 
 };
 
-typedef SmartPtr<TagTree> TagTreePtr;
+using TagTreePtr = std::shared_ptr<TagTree>;
 
 #endif // CODELITE_TAG_TREE_H

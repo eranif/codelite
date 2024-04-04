@@ -28,6 +28,7 @@
 #include "codelite_exports.h"
 #include "configuration_object.h"
 
+#include <memory>
 #include <wx/arrstr.h>
 #include <wx/string.h>
 
@@ -88,6 +89,6 @@ public:
     void SetResCmpOptions(const wxString& options) { m_resCompileOptions = options; }
 };
 
-typedef SmartPtr<BuildConfigCommon> BuildConfigCommonPtr;
+using BuildConfigCommonPtr = std::shared_ptr<BuildConfigCommon>;
 
 #endif // BUILD_CONFIGURATION_COMMON_H

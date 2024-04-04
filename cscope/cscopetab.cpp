@@ -46,7 +46,7 @@ CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     , m_table(NULL)
     , m_mgr(mgr)
 {
-    m_styler.Reset(new clFindResultsStyler(m_stc));
+    m_styler = std::make_unique<clFindResultsStyler>(m_stc);
 
     CScopeConfData data;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);

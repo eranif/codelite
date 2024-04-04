@@ -521,7 +521,6 @@ void PHPLookupTable::DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls, std::ve
         if(parent && !parentsVisited.count(parent->GetDbId())) {
             DoGetInheritanceParentIDs(parent, parents, parentsVisited, false);
         }
-        parent.Reset(nullptr);
     }
 }
 
@@ -552,10 +551,10 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(const wxString& fullname, ePhpS
             int scopeType = res.GetInt("SCOPE_TYPE", 1);
             if(scopeType == 0) {
                 // namespace
-                match.Reset(new PHPEntityNamespace());
+                match = std::make_shared<PHPEntityNamespace>();
             } else {
                 // class
-                match.Reset(new PHPEntityClass());
+                match = std::make_shared<PHPEntityClass>();
             }
             match->FromResultSet(res);
         }
@@ -594,10 +593,10 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(wxLongLong id, ePhpScopeType sc
             int scopeType = res.GetInt("SCOPE_TYPE", 1);
             if(scopeType == kPhpScopeTypeNamespace) {
                 // namespace
-                match.Reset(new PHPEntityNamespace());
+                match = std::make_shared<PHPEntityNamespace>();
             } else {
                 // class
-                match.Reset(new PHPEntityClass());
+                match = std::make_shared<PHPEntityClass>();
             }
             match->FromResultSet(res);
             return match;
@@ -1060,7 +1059,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindFunction(const wxString& fullname)
                 return PHPEntityBase::Ptr_t(NULL);
             }
 
-            match.Reset(new PHPEntityFunction());
+            match = std::make_shared<PHPEntityFunction>();
             match->FromResultSet(res);
         }
         return match;
@@ -1093,7 +1092,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::CreateNamespaceForDefine(PHPEntityBase::Ptr
     PHPEntityBase::Ptr_t pNamespace = DoFindScope(nameSpaceName, kPhpScopeTypeNamespace);
     if(!pNamespace) {
         // Create it
-        pNamespace.Reset(new PHPEntityNamespace());
+        pNamespace = std::make_shared<PHPEntityNamespace>();
         pNamespace->SetFullName(nameSpaceName);
         pNamespace->SetShortName(nameSpaceName.AfterLast('\\'));
         pNamespace->SetFilename(define->GetFilename());
@@ -1384,7 +1383,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindFunctionNearLine(const wxFileName& file
         PHPEntityBase::Ptr_t match(NULL);
 
         if(res.NextRow()) {
-            match.Reset(new PHPEntityFunction());
+            match = std::make_shared<PHPEntityFunction>();
             match->FromResultSet(res);
         }
         return match;

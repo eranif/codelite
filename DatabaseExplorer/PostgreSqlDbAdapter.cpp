@@ -60,19 +60,19 @@ void PostgreSqlDbAdapter::CloseConnection()
 
 DatabaseLayerPtr PostgreSqlDbAdapter::GetDatabaseLayer(const wxString& dbName)
 {
-    DatabaseLayer* dbLayer = NULL;
+    DatabaseLayerPtr dbLayer;
 
 #ifdef DBL_USE_POSTGRES
     if(!CanConnect())
-        return new PostgresDatabaseLayer();
+        return std::make_shared<PostgresDatabaseLayer>();
     if(m_port == 0)
         m_port = 5432;
     if(!dbName.IsEmpty())
-        dbLayer =
-            new PostgresDatabaseLayer(this->m_serverName, this->m_port, dbName, this->m_userName, this->m_password);
+        dbLayer = std::make_shared<PostgresDatabaseLayer>(this->m_serverName, this->m_port, dbName, this->m_userName,
+                                                          this->m_password);
     else
-        dbLayer = new PostgresDatabaseLayer(this->m_serverName, this->m_port, this->m_defaultDb, this->m_userName,
-                                            this->m_password);
+        dbLayer = std::make_shared<PostgresDatabaseLayer>(this->m_serverName, this->m_port, this->m_defaultDb,
+                                                          this->m_userName, this->m_password);
 #endif
     this->m_pDbLayer = dbLayer;
 

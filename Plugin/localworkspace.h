@@ -33,6 +33,7 @@
 
 #include <list>
 #include <map>
+#include <memory>
 #include <wx/colour.h>
 #include <wx/filename.h>
 
@@ -40,7 +41,7 @@
 enum prefsLevel { pLevel_global, pLevel_workspace, pLevel_project, pLevel_file, pLevel_dunno };
 
 class LocalOptionsConfig;
-typedef SmartPtr<LocalOptionsConfig> LocalOptionsConfigPtr;
+using LocalOptionsConfigPtr = std::shared_ptr<LocalOptionsConfig>;
 
 template <typename T> class validVar
 {

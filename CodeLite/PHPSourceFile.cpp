@@ -938,7 +938,7 @@ void PHPSourceFile::UngetToken(const phpLexerToken& token)
 const PHPEntityBase* PHPSourceFile::Class()
 {
     PHPEntityBase::Ptr_t curScope = CurrentScope();
-    PHPEntityBase* pScope = curScope.Get();
+    PHPEntityBase* pScope = curScope.get();
     while(pScope) {
         PHPEntityClass* cls = pScope->Cast<PHPEntityClass>();
         if(cls) {
@@ -1407,11 +1407,11 @@ void PHPSourceFile::OnConstant(const phpLexerToken& tok)
         } else if(token.type == ',') {
             if(member) {
                 CurrentScope()->AddChild(member);
-                member.Reset(NULL);
+                member = nullptr;
             }
         } else if(token.type == kPHP_T_IDENTIFIER) {
             // found the constant name
-            member.Reset(new PHPEntityVariable());
+            member = std::make_shared<PHPEntityVariable>();
             member->Cast<PHPEntityVariable>()->SetFlag(kVar_Const);
             member->Cast<PHPEntityVariable>()->SetFlag(kVar_Member);
             member->SetFullName(token.Text());

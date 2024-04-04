@@ -32,7 +32,7 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
                         PHPEntityBase::Ptr_t child = entity->FindChild(p.second.name);
                         if(!child) {
                             // No child of this type, create a new property and add it
-                            child.Reset(new PHPEntityVariable());
+                            child = std::make_shared<PHPEntityVariable>();
                             child->SetFilename(m_sourceFile.GetFilename());
                             child->SetLine(entity->GetLine());
                             child->Cast<PHPEntityVariable>()->SetTypeHint(p.second.type);

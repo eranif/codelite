@@ -28,13 +28,13 @@
 #include "entry.h"
 #include "lexer_configuration.h"
 #include "macros.h"
-#include "smart_ptr.h"
-#include "wx/filename.h"
-#include "wx/string.h"
 
+#include <memory>
 #include <set>
 #include <vector>
+#include <wx/filename.h>
 #include <wx/stc/stc.h>
+#include <wx/string.h>
 
 class clEditor;
 
@@ -168,5 +168,5 @@ public:
     int PositionBeforeCurrent() const;
 };
 
-typedef SmartPtr<ContextBase> ContextBasePtr;
+using ContextBasePtr = std::shared_ptr<ContextBase>;
 #endif // CONTEXT_BASE_H

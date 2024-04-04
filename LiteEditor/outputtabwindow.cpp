@@ -67,7 +67,7 @@ OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString
     , m_autoAppearErrors(false)
     , m_errorsFirstLine(false)
 {
-    m_styler.Reset(new clFindResultsStyler());
+    m_styler = std::make_unique<clFindResultsStyler>();
     CreateGUIControls();
     wxTheApp->Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL,
                       this);
@@ -81,7 +81,7 @@ OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString
 
 OutputTabWindow::~OutputTabWindow()
 {
-    m_styler.Reset(NULL);
+    m_styler.reset(nullptr);
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged),
                                      NULL, this);
     wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL,

@@ -30,9 +30,9 @@
 #include "codelite_exports.h"
 #include "lexer_configuration.h"
 #include "macros.h"
-#include "smart_ptr.h"
 
 #include <list>
+#include <memory>
 #include <unordered_map>
 #include <wx/filename.h>
 #include <wx/string.h>
@@ -54,8 +54,8 @@ public:
         bool isItalic = false;
     };
 
-    typedef SmartPtr<ThemeImporterBase> Ptr_t;
-    typedef std::list<ThemeImporterBase::Ptr_t> List_t;
+    using Ptr_t = std::unique_ptr<ThemeImporterBase>;
+    using List_t = std::list<ThemeImporterBase::Ptr_t>;
 
 protected:
     wxString m_keywords0;

@@ -87,7 +87,7 @@ protected:
 	wxString m_password;
 	wxString m_defaultDb;
 
-	DatabaseLayer* m_pDbLayer;
+	DatabaseLayerPtr m_pDbLayer;
 };
 
 #endif // POSTGRESQLDBADAPTER_H

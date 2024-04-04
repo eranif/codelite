@@ -69,7 +69,6 @@
     <File Name="cJSON.h"/>
     <File Name="json_node.cpp"/>
     <File Name="json_node.h"/>
-    <File Name="smart_ptr.h"/>
     <File Name="wxcLibDefines.h"/>
   </VirtualDirectory>
   <Settings Type="Static Library">

@@ -66,10 +66,10 @@ Project::Project()
     , m_workspace(NULL)
 {
     // initialize it with default settings
-    m_settings.Reset(new ProjectSettings(NULL));
+    m_settings = std::make_shared<ProjectSettings>(nullptr);
 }
 
-Project::~Project() { m_settings.Reset(NULL); }
+Project::~Project() {}
 
 bool Project::Create(const wxString& name, const wxString& description, const wxString& path, const wxString& projType)
 {
@@ -1652,7 +1652,7 @@ void Project::ReplaceCompilers(const wxStringMap_t& compilers)
 
 void Project::DoUpdateProjectSettings()
 {
-    m_settings.Reset(new ProjectSettings(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Settings")));
+    m_settings = std::make_shared<ProjectSettings>(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Settings"));
 }
 
 wxArrayString Project::GetPreProcessors(bool clearCache)

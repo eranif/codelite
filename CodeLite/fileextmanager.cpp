@@ -29,6 +29,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 
+#include <memory>
 #include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/thread.h>
@@ -36,7 +37,7 @@
 #include <wx/xml/xml.h>
 
 struct Matcher {
-    SmartPtr<wxRegEx> m_regex;
+    std::unique_ptr<wxRegEx> m_regex;
     wxString m_exactMatch;
     FileExtManager::FileType m_fileType;
 
@@ -44,7 +45,7 @@ struct Matcher {
         : m_fileType(fileType)
     {
         if(regex) {
-            m_regex = new wxRegEx(pattern, wxRE_ADVANCED | wxRE_ICASE);
+            m_regex = std::make_unique<wxRegEx>(pattern, wxRE_ADVANCED | wxRE_ICASE);
         } else {
             m_exactMatch = pattern;
         }
@@ -53,7 +54,7 @@ struct Matcher {
     bool Matches(const wxString& in) const
     {
         auto lines = ::wxStringTokenize(in, "\r\n", wxTOKEN_STRTOK);
-        bool use_regex = m_regex;
+        bool use_regex = static_cast<bool>(m_regex);
         for(const auto& line : lines) {
             if(use_regex && m_regex->Matches(line)) {
                 return true;

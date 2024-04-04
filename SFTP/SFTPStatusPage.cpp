@@ -52,7 +52,7 @@ SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     Bind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &SFTPStatusPage::OnFindError, this);
     Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SFTPStatusPage::OnFindOutput, this);
     Bind(wxEVT_SSH_CHANNEL_CLOSED, &SFTPStatusPage::OnFindFinished, this);
-    m_styler.Reset(new SFTPGrepStyler(m_stcSearch));
+    m_styler = std::make_unique<SFTPGrepStyler>(m_stcSearch);
     m_stcSearch->Bind(wxEVT_STC_HOTSPOT_CLICK, &SFTPStatusPage::OnHotspotClicked, this);
 }
 
@@ -130,7 +130,7 @@ void SFTPStatusPage::OnThemeChanged(wxCommandEvent& event)
         lexer->Apply(m_stcOutput);
         lexer->Apply(m_stcSearch);
     }
-    m_styler.Reset(new SFTPGrepStyler(m_stcSearch));
+    m_styler = std::make_unique<SFTPGrepStyler>(m_stcSearch);
 }
 
 void SFTPStatusPage::OnCopy(wxCommandEvent& event)

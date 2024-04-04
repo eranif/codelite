@@ -36,14 +36,14 @@ BuildMatrix::BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration)
         wxXmlNode* config = node->GetChildren();
         while(config) {
             if(config->GetName() == wxT("WorkspaceConfiguration")) {
-                m_configurationList.push_back(new WorkspaceConfiguration(config));
+                m_configurationList.push_back(std::make_shared<WorkspaceConfiguration>(config));
             }
             config = config->GetNext();
         }
     } else {
         // construct default empty mapping with a default build configuration
-        m_configurationList.push_back(new WorkspaceConfiguration(wxT("Debug")));
-        m_configurationList.push_back(new WorkspaceConfiguration(wxT("Release")));
+        m_configurationList.push_back(std::make_shared<WorkspaceConfiguration>(wxT("Debug")));
+        m_configurationList.push_back(std::make_shared<WorkspaceConfiguration>(wxT("Release")));
     }
 
     // verify the selected configuration

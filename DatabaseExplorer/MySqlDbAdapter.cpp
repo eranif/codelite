@@ -58,12 +58,12 @@ void MySqlDbAdapter::CloseConnection()
 
 DatabaseLayerPtr MySqlDbAdapter::GetDatabaseLayer(const wxString& dbName)
 {
-    DatabaseLayer* dbLayer = NULL;
+    DatabaseLayerPtr dbLayer;
 
 #ifdef DBL_USE_MYSQL
     if(!CanConnect())
-        return new MysqlDatabaseLayer();
-    dbLayer = new MysqlDatabaseLayer(this->m_serverName, wxT(""), this->m_userName, this->m_password);
+        return std::make_shared<MysqlDatabaseLayer>();
+    dbLayer = std::make_shared<MysqlDatabaseLayer>(this->m_serverName, wxT(""), this->m_userName, this->m_password);
 #endif
     this->m_pDbLayer = dbLayer;
 

@@ -26,20 +26,21 @@
 #ifndef PHPENTITYIMPL_H
 #define PHPENTITYIMPL_H
 
+#include "JSON.h"
 #include "codelite_exports.h"
-#include <wx/sharedptr.h>
-#include <list>
-#include <map>
-#include <wx/string.h>
-#include <iostream>
-#include <wx/filename.h>
-#include "wx/wxsqlite3.h"
-#include <wx/wxcrtvararg.h> // Needed for wxPrintf
-#include "smart_ptr.h"
-#include <set>
 #include "commentconfigdata.h"
 #include "wxStringHash.h"
-#include "JSON.h"
+
+#include <iostream>
+#include <list>
+#include <map>
+#include <memory>
+#include <set>
+#include <wx/filename.h>
+#include <wx/sharedptr.h>
+#include <wx/string.h>
+#include <wx/wxcrtvararg.h> // Needed for wxPrintf
+#include <wx/wxsqlite3.h>
 
 // The entity type
 class WXDLLIMPEXP_CL PHPLookupTable;
@@ -88,9 +89,9 @@ enum {
 class WXDLLIMPEXP_CL PHPEntityBase
 {
 public:
-    typedef SmartPtr<PHPEntityBase> Ptr_t;
-    typedef std::vector<PHPEntityBase::Ptr_t> List_t;
-    typedef std::unordered_map<wxString, PHPEntityBase::Ptr_t> Map_t;
+    using Ptr_t = std::shared_ptr<PHPEntityBase>;
+    using List_t = std::vector<PHPEntityBase::Ptr_t>;
+    using Map_t = std::unordered_map<wxString, PHPEntityBase::Ptr_t>;
 
 protected:
     PHPEntityBase::Map_t m_childrenMap;

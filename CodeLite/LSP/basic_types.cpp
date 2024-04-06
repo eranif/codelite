@@ -13,7 +13,10 @@ INITIALISE_MODULE_LOG(LSP_LOG_HANDLER, "LSP", "lsp.log");
 namespace LSP
 {
 
-clModuleLogger& GetLogHandle() { return LSP_LOG_HANDLER; }
+clModuleLogger& GetLogHandle()
+{
+    return LSP_LOG_HANDLER();
+}
 
 wxString FileNameToURI(const wxString& filename)
 {

@@ -30,11 +30,11 @@ void LSPNetworkRemoteSTDIO::DoClose()
 
 void LSPNetworkRemoteSTDIO::DoStartRemoteProcess()
 {
-    LOG_DEBUG(LOG) << "Starting remote process:" << endl;
-    LOG_DEBUG(LOG) << m_startupInfo.GetLspServerCommand() << endl;
-    LOG_DEBUG(LOG) << m_startupInfo.GetWorkingDirectory() << endl;
+    LOG_DEBUG(LOG()) << "Starting remote process:" << endl;
+    LOG_DEBUG(LOG()) << m_startupInfo.GetLspServerCommand() << endl;
+    LOG_DEBUG(LOG()) << m_startupInfo.GetWorkingDirectory() << endl;
     for(const auto& p : m_startupInfo.GetEnv()) {
-        LOG_DEBUG(LOG) << p.first << "=" << p.second << endl;
+        LOG_DEBUG(LOG()) << p.first << "=" << p.second << endl;
     }
 
     m_process = clRemoteHost::Instance()->run_interactive_process(
@@ -48,9 +48,9 @@ void LSPNetworkRemoteSTDIO::DoStartRemoteProcess()
 
 void LSPNetworkRemoteSTDIO::Send(const std::string& data)
 {
-    LOG_IF_DEBUG { LOG_DEBUG(LOG) << ">" << data << endl; }
+    LOG_IF_DEBUG { LOG_DEBUG(LOG()) << ">" << data << endl; }
     if(!m_process) {
-        LOG_WARNING(LOG) << "remote server is not running" << endl;
+        LOG_WARNING(LOG()) << "remote server is not running" << endl;
         return;
     }
     m_process->WriteRaw(data);
@@ -88,7 +88,7 @@ void LSPNetworkRemoteSTDIO::OnProcessStderr(clProcessEvent& event)
 void LSPNetworkRemoteSTDIO::BindEvents()
 {
     if(!m_process) {
-        LOG_WARNING(LOG) << "failed to bind events. process is not running" << endl;
+        LOG_WARNING(LOG()) << "failed to bind events. process is not running" << endl;
         return;
     }
     if(!m_eventsBound) {

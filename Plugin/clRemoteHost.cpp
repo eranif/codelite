@@ -95,7 +95,7 @@ clSSH::Ptr_t clRemoteHost::CreateSession(const wxString& account_name)
     // create new session
     auto account = SSHAccountInfo::LoadAccount(account_name);
     if(account.GetHost().empty()) {
-        LOG_WARNING(LOG) << "could not find account:" << account_name << endl;
+        LOG_WARNING(LOG()) << "could not find account:" << account_name << endl;
         return nullptr;
     }
 
@@ -111,11 +111,11 @@ clSSH::Ptr_t clRemoteHost::CreateSession(const wxString& account_name)
         }
         ssh_session->Login();
     } catch(clException& e) {
-        LOG_ERROR(LOG) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
+        LOG_ERROR(LOG()) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
                        << endl;
         return nullptr;
     }
-    LOG_DEBUG(LOG) << "Initializing for account:" << account_name << "completed successfully" << endl;
+    LOG_DEBUG(LOG()) << "Initializing for account:" << account_name << "completed successfully" << endl;
     return ssh_session;
 }
 
@@ -140,10 +140,10 @@ void clRemoteHost::OnCommandStderr(clProcessEvent& event)
 {
     const std::string& output = event.GetStringRaw();
     if(m_callbacks.empty()) {
-        LOG_WARNING(LOG) << "no callback found for command output" << endl;
+        LOG_WARNING(LOG()) << "no callback found for command output" << endl;
         return;
     }
-    LOG_DEBUG(LOG) << "stderr:" << event.GetStringRaw().size() << "bytes" << endl;
+    LOG_DEBUG(LOG()) << "stderr:" << event.GetStringRaw().size() << "bytes" << endl;
     // call the callback
     m_callbacks.front().first(output, clRemoteCommandStatus::STDERR);
 }
@@ -152,10 +152,10 @@ void clRemoteHost::OnCommandStdout(clProcessEvent& event)
 {
     const std::string& output = event.GetStringRaw();
     if(m_callbacks.empty()) {
-        LOG_WARNING(LOG) << "no callback found for command output" << endl;
+        LOG_WARNING(LOG()) << "no callback found for command output" << endl;
         return;
     }
-    LOG_DEBUG(LOG) << "stdout:" << event.GetStringRaw().size() << "bytes" << endl;
+    LOG_DEBUG(LOG()) << "stdout:" << event.GetStringRaw().size() << "bytes" << endl;
     // call the callback
     m_callbacks.front().first(output, clRemoteCommandStatus::STDOUT);
 }
@@ -163,12 +163,12 @@ void clRemoteHost::OnCommandStdout(clProcessEvent& event)
 void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
 {
     if(m_callbacks.empty()) {
-        LOG_WARNING(LOG) << "no callback found for command output" << endl;
+        LOG_WARNING(LOG()) << "no callback found for command output" << endl;
         return;
     }
 
     // call the callback and consume it from the queue
-    LOG_DEBUG(LOG) << "command completed. exit status:" << event.GetInt() << endl;
+    LOG_DEBUG(LOG()) << "command completed. exit status:" << event.GetInt() << endl;
     m_callbacks.front().first("", event.GetInt() == 0 ? clRemoteCommandStatus::DONE
                                                       : clRemoteCommandStatus::DONE_WITH_ERROR);
     m_callbacks.erase(m_callbacks.begin());
@@ -180,11 +180,11 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
     // create new ssh session
     auto ssh_session = CreateSession(m_activeAccount);
     if(!ssh_session) {
-        LOG_ERROR(LOG) << "no ssh session available" << endl;
+        LOG_ERROR(LOG()) << "no ssh session available" << endl;
         return IProcess::Ptr_t{};
     }
 
-    LOG_DEBUG(LOG) << "Launching remote process:" << command << endl;
+    LOG_DEBUG(LOG()) << "Launching remote process:" << command << endl;
     std::vector<wxString> argv{ command.begin(), command.end() };
 
     IProcess::Ptr_t proc(

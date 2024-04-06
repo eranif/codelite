@@ -34,7 +34,7 @@ IProcess::Ptr_t clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {
     auto ssh_session = clRemoteHost::Instance()->TakeSession();
     if(!ssh_session) {
-        LOG_WARNING(LOG) << "SSH session is not opened" << endl;
+        LOG_WARNING(LOG()) << "SSH session is not opened" << endl;
         return nullptr;
     }
 
@@ -44,7 +44,7 @@ IProcess::Ptr_t clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
         ssh_session, [](clSSH::Ptr_t ssh) { clRemoteHost::Instance()->AddSshSession(ssh); }, this, command, true);
 
     if(!proc) {
-        LOG_ERROR(LOG) << "failed to start remote command:" << command << endl;
+        LOG_ERROR(LOG()) << "failed to start remote command:" << command << endl;
         return nullptr;
     }
     return proc;
@@ -54,7 +54,7 @@ void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)
 {
     clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_OUTPUT };
     output_event.SetStringRaw(event.GetStringRaw());
-    LOG_DEBUG(LOG) << "stdout read:" << event.GetStringRaw().size() << "bytes" << endl;
+    LOG_DEBUG(LOG()) << "stdout read:" << event.GetStringRaw().size() << "bytes" << endl;
     ProcessEvent(output_event);
 }
 
@@ -62,13 +62,13 @@ void clRemoteExecutor::OnChannelStderr(clCommandEvent& event)
 {
     clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_STDERR };
     output_event.SetStringRaw(event.GetStringRaw());
-    LOG_DEBUG(LOG) << "stderr read:" << event.GetStringRaw().size() << "bytes" << endl;
+    LOG_DEBUG(LOG()) << "stderr read:" << event.GetStringRaw().size() << "bytes" << endl;
     ProcessEvent(output_event);
 }
 
 void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
 {
-    LOG_DEBUG(LOG) << "remote channel closed" << endl;
+    LOG_DEBUG(LOG()) << "remote channel closed" << endl;
 
     clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_TERMINATED };
     output_event.SetInt(event.GetInt());

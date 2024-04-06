@@ -16,12 +16,9 @@
 #include "wxTerminalCtrl.h"
 #include "wxTerminalInputCtrl.hpp"
 
-#include <wx/uiaction.h>
-
-INITIALISE_MODULE_LOG(LOG, "AnsiEscapeHandler", "ansi_escape_parser.log");
-
 #include <wx/menu.h>
 #include <wx/sizer.h>
+#include <wx/uiaction.h>
 #include <wx/wupdlock.h>
 
 namespace

@@ -99,7 +99,7 @@ void wxTerminalCtrl::StartShell()
     penv = &env;
 #endif
 
-    LOG_DEBUG(TERM_LOG) << "Starting shell process:" << shell_exec << endl;
+    LOG_DEBUG(TERM_LOG()) << "Starting shell process:" << shell_exec << endl;
     if(m_shellCommand == "bash") {
         m_shell = ::CreateAsyncProcess(this, shell_exec + " --login -i", IProcessRawOutput, wxEmptyString, penv);
     } else {
@@ -107,17 +107,17 @@ void wxTerminalCtrl::StartShell()
     }
 
     if(m_shell) {
-        LOG_DEBUG(TERM_LOG) << "Setting working directory to:" << m_startingDirectory << endl;
+        LOG_DEBUG(TERM_LOG()) << "Setting working directory to:" << m_startingDirectory << endl;
         if(!m_startingDirectory.empty()) {
             // now that we have a shell, set the working directory
             SetTerminalWorkingDirectory(m_startingDirectory);
         }
-        LOG_DEBUG(TERM_LOG) << "Successfully started shell terminal" << endl;
+        LOG_DEBUG(TERM_LOG()) << "Successfully started shell terminal" << endl;
         wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
         readyEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(readyEvent);
     } else {
-        LOG_ERROR(TERM_LOG) << "Failed to launch shell terminal:" << shell_exec << endl;
+        LOG_ERROR(TERM_LOG()) << "Failed to launch shell terminal:" << shell_exec << endl;
     }
     m_inputCtrl->SetFocus();
 }
@@ -127,7 +127,7 @@ void wxTerminalCtrl::Run(const wxString& command)
     if(!m_shell) {
         return;
     }
-    LOG_DEBUG(TERM_LOG) << "-->" << command << endl;
+    LOG_DEBUG(TERM_LOG()) << "-->" << command << endl;
     m_shell->WriteRaw(command + "\n");
 
     wxStringView sv{ command.wc_str(), command.length() };
@@ -328,7 +328,7 @@ void wxTerminalCtrl::ProcessOutputBuffer()
     }
 
     wxStringView sv{ m_processOutput.data(), m_processOutput.length() };
-    LOG_IF_DEBUG { LOG_DEBUG(TERM_LOG) << "<--" << wxString(sv.data(), sv.length()) << endl; }
+    LOG_IF_DEBUG { LOG_DEBUG(TERM_LOG()) << "<--" << wxString(sv.data(), sv.length()) << endl; }
 
     AppendText(sv);
 

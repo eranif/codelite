@@ -125,7 +125,7 @@ void clSSHChannel::Close()
 
     if(m_hadErrors) {
         // log this
-        LOG_DEBUG(LOG) << "ssh session had errors. discarding it" << endl;
+        LOG_DEBUG(LOG()) << "ssh session had errors. discarding it" << endl;
 
     } else {
         // put back the ssh session
@@ -140,7 +140,7 @@ IProcess::Ptr_t clSSHChannel::CreateAndExecuteScript(clSSH::Ptr_t ssh, clSSHDele
                                                      bool wantStderr)
 {
     if(!ssh::write_remote_file_content(ssh, script_path, content)) {
-        LOG_ERROR(LOG) << "failed to write remote file:" << script_path << endl;
+        LOG_ERROR(LOG()) << "failed to write remote file:" << script_path << endl;
         return nullptr;
     }
     return Execute(ssh, std::move(deleter_cb), owner, script_path, wantStderr);
@@ -154,7 +154,7 @@ IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter
         channel = new clSSHChannel(ssh, std::move(deleter_cb), owner, wantStderr);
         channel->Open();
     } catch(clException& e) {
-        LOG_ERROR(LOG) << "failed to open channel." << e.What() << endl;
+        LOG_ERROR(LOG()) << "failed to open channel." << e.What() << endl;
         wxDELETE(channel);
         return nullptr;
     }

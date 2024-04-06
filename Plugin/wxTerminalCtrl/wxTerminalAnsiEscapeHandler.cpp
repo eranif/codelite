@@ -990,7 +990,7 @@ wxHandlResultStringView before_first(wxStringView sv, wxChar ch)
 
 void wxTerminalAnsiEscapeHandler::handle_sgr(wxStringView sv, wxTerminalAnsiRendererInterface* renderer)
 {
-    LOG_IF_DEBUG { LOG_DEBUG(LOG) << "SGR:" << wxString(sv.data(), sv.length()) << endl; }
+    LOG_IF_DEBUG { LOG_DEBUG(LOG()) << "SGR:" << wxString(sv.data(), sv.length()) << endl; }
 
     if(sv.empty()) {
         // handle like reset

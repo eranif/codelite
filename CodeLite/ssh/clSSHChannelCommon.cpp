@@ -37,14 +37,14 @@ void channel_read_internal(SSHChannel_t channel, ReadResult* result, bool isStde
     int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 1);
     if(bytes == SSH_ERROR) {
         // an error
-        LOG_DEBUG(LOG) << "channel read error" << endl;
+        LOG_DEBUG(LOG()) << "channel read error" << endl;
         int exit_code = ssh_channel_get_exit_status(channel);
         result->exit_code = exit_code;
         result->rc = ssh::read_result::SSH_IO_ERROR;
 
     } else if(bytes == SSH_EOF) {
         // channel closed
-        LOG_DEBUG(LOG) << "channel read eof" << endl;
+        LOG_DEBUG(LOG()) << "channel read eof" << endl;
         int exit_code = ssh_channel_get_exit_status(channel);
         result->exit_code = exit_code;
         result->rc = ssh::read_result::SSH_CONN_CLOSED;
@@ -52,7 +52,7 @@ void channel_read_internal(SSHChannel_t channel, ReadResult* result, bool isStde
     } else if(bytes == 0) {
         // timeout
         if(ssh_channel_is_eof(channel)) {
-            LOG_DEBUG(LOG) << "channel eof detected" << endl;
+            LOG_DEBUG(LOG()) << "channel eof detected" << endl;
             int exit_code = ssh_channel_get_exit_status(channel);
             result->exit_code = exit_code;
             result->rc = ssh::read_result::SSH_CONN_CLOSED;
@@ -63,7 +63,7 @@ void channel_read_internal(SSHChannel_t channel, ReadResult* result, bool isStde
             result->rc = ssh::read_result::SSH_TIMEOUT;
         }
     } else {
-        LOG_DEBUG(LOG) << "read" << bytes << "bytes" << endl;
+        LOG_DEBUG(LOG()) << "read" << bytes << "bytes" << endl;
         buffer[bytes] = 0;
         result->exit_code = 0;
         result->rc = ssh::read_result::SSH_SUCCESS;

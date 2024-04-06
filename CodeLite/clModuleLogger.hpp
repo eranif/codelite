@@ -22,6 +22,9 @@ public:
     clModuleLogger();
     ~clModuleLogger();
 
+    clModuleLogger(clModuleLogger&&) = default;
+    clModuleLogger& operator=(clModuleLogger&&) = default;
+
     /// Set the module name
     void SetModule(const wxString& name) { m_module = name; }
 
@@ -249,20 +252,19 @@ template <typename T> clModuleLogger& operator<<(clModuleLogger& logger, const T
 #define INITIALISE_MODULE_LOG(LOG, MODULE_NAME, FILE_NAME)                                \
     namespace                                                                             \
     {                                                                                     \
-        thread_local clModuleLogger LOG;                                                  \
-        struct Init {                                                                     \
-            Init()                                                                        \
-            {                                                                             \
+        clModuleLogger& LOG()                                                             \
+        {                                                                                 \
+            thread_local static clModuleLogger instance = []() {                          \
                 wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), FILE_NAME }; \
                 logfile.AppendDir("logs");                                                \
                 logfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);                        \
-                LOG.SetModule(MODULE_NAME);                                               \
-                LOG.Open(logfile.GetFullPath());                                          \
-            }                                                                             \
-        };                                                                                \
-                                                                                          \
-        /*Initialise our logger (once per thread)*/                                       \
-        thread_local Init init;                                                           \
+                clModuleLogger logger;                                                    \
+                logger.SetModule(MODULE_NAME);                                            \
+                logger.Open(logfile.GetFullPath());                                       \
+                return logger;                                                            \
+            }();                                                                          \
+            return instance;                                                              \
+        }                                                                                 \
     }
 
 #endif // CLMODULELOGGER_HPP

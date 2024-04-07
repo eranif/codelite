@@ -99,7 +99,6 @@
         <IncludePath Value="../CodeLite/Interfaces"/>
         <IncludePath Value="../CodeLite/CodeLite"/>
         <IncludePath Value="../CodeLite/Plugin"/>
-        <IncludePath Value="../CodeLite/sqlite3"/>
         <IncludePath Value="../CodeLite/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -152,7 +151,6 @@
         <IncludePath Value="../CodeLite/Interfaces"/>
         <IncludePath Value="../CodeLite/CodeLite"/>
         <IncludePath Value="../CodeLite/Plugin"/>
-        <IncludePath Value="../CodeLite/sqlite3"/>
         <IncludePath Value="../CodeLite/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -269,11 +267,9 @@
     <Configuration Name="Win_x64_Release" CompilerType="clang64/clang-15.0.2" DebuggerType="lldb-vscode" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options=";$(shell wx-config --cxxflags --debug=no ); -O2" C_Options=";-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="2">
         <IncludePath Value="."/>
-        <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
@@ -337,7 +333,6 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>

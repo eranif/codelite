@@ -339,7 +339,6 @@ php_expr_lexer.cpp: php_expr.l
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../CodeLite"/>
         <IncludePath Value="../../Plugin"/>
-        <IncludePath Value="../../sqlite3"/>
         <IncludePath Value="../../sdk/wxsqlite3/include"/>
         <IncludePath Value="../../PCH"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>

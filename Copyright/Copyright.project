@@ -73,7 +73,6 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config  --libs --unicode=yes);" Required="yes">
@@ -188,7 +187,6 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
@@ -250,7 +248,6 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>

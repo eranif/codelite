@@ -54,21 +54,6 @@
     <File Name="include/wx/wxsqlite3def.h"/>
     <File Name="include/wx/wxsqlite3dyn.h"/>
   </VirtualDirectory>
-  <Dependencies>
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="DebugUnicode">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="ReleaseUnicode">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="WinDebug_29">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="WinRelease_29">
-    <Project Name="sqlite3"/>
-  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -84,7 +69,6 @@
       <Compiler Options="$(shell wx-config --cxxflags  --unicode=yes);-g;-fstandalone-debug" C_Options="$(shell wx-config --cxxflags  --unicode=yes);-g;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
-        <IncludePath Value="./sqlite3/include"/>
       </Compiler>
       <Linker Options=" $(shell wx-config --libs  --unicode=yes);" Required="yes">
         <LibraryPath Value="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/"/>
@@ -130,7 +114,6 @@
       <Compiler Options="-g;-fstandalone-debug;-std=c++11;-Wall;$(shell wx-config --cxxflags  --unicode=yes);-Winvalid-pch" C_Options="$(shell wx-config --cxxflags  --unicode=yes);-g;-fstandalone-debug" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
-        <IncludePath Value="./sqlite3/include"/>
       </Compiler>
       <Linker Options=" $(shell wx-config --libs  --unicode=yes);" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
@@ -176,7 +159,6 @@
       <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
-        <IncludePath Value="./sqlite3/include"/>
       </Compiler>
       <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
@@ -222,7 +204,6 @@
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
-        <IncludePath Value="./sqlite3/include"/>
       </Compiler>
       <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
@@ -265,16 +246,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_wxWidgets_29">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="sqlite3"/>
-  </Dependencies>
 </CodeLite_Project>

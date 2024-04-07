@@ -7,7 +7,7 @@ project(databaselayersqlite)
 include("${wxWidgets_USE_FILE}")
 
 # Include paths
-include_directories(./include/wx/dblayer/include src/sqlite3)
+include_directories(./include/wx/dblayer/include)
 
 if(USE_PCH AND NOT MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include ${CL_PCH_FILE} -Winvalid-pch ")
@@ -27,11 +27,7 @@ if(APPLE)
     add_definitions(-fPIC)
 endif()
 
-if(NOT SQLite3_FOUND)
-    file(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
-else()
-    file(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp")
-endif()
+file(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp")
 
 if(WITH_MYSQL)
     find_library(LIBMYSQLCLIENT NAMES mysql mysqlclient mariadb mariadbclient)

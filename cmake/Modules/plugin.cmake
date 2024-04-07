@@ -48,8 +48,7 @@ function(CL_PLUGIN PLUGIN_NAME)
         ${wxWidgets_LIBRARIES}
         libcodelite
         plugin
-        wxsqlite3
-        sqlite3lib)
+        wxsqlite3)
 
     # Installation destination
     install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})

@@ -41,6 +41,7 @@ protected:
     wxString m_tip;
     size_t m_numOfTips = 1;
     bool m_stripHtmlTags = false;
+    int m_editorStartPosition = wxNOT_FOUND;
 
 protected:
     void OnPaint(wxPaintEvent& e);
@@ -59,7 +60,7 @@ public:
      * if focusEditor is NOT null, the editor will gain the focus once
      * the tip is shown
      */
-    void PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor* focusEdior = NULL);
+    void PositionRelativeTo(wxWindow* win, wxPoint caretPos, int start_position, IEditor* focusEdior = NULL);
 
     /**
      * @brief position this window to the left of 'win'
@@ -71,6 +72,8 @@ public:
      * @brief position and show the tip at a given location
      */
     void PositionAt(const wxPoint& pt, IEditor* focusEdior = NULL);
+
+    int GetEditorStartPosition() const { return m_editorStartPosition; }
 };
 
 #endif // CCBOXTIPWINDOW_H

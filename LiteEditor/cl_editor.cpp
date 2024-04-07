@@ -4784,6 +4784,10 @@ void clEditor::DoCancelCalltip()
 
 int clEditor::DoGetOpenBracePos()
 {
+    if (m_calltip && m_calltip->IsShown()) {
+        return m_calltip->GetEditorStartPosition();
+    }
+
     // determine the closest open brace from the current caret position
     int depth(0);
     int char_tested(0); // we add another performance tuning here: dont test more than 256 characters backward

@@ -52,7 +52,7 @@ double m_ratio = 0.0;
 
 void InflateSize(wxSize& size, double factor)
 {
-    if(factor > 1.0) {
+    if (factor > 1.0) {
         double updated_w = factor * (double)size.GetWidth();
         double updated_h = factor * (double)size.GetHeight();
         size.SetWidth(updated_w);
@@ -76,18 +76,18 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
     str.Replace("/*!", wxEmptyString);
     str.Replace("*/", wxEmptyString);
 
-    if(strip_html_tags && re.IsValid()) {
+    if (strip_html_tags && re.IsValid()) {
         re.ReplaceAll(&str, wxEmptyString);
     }
 
     wxString curline;
     wxArrayString lines;
     enum State { kNormal, kCodeBlockLanguage, kCodeBlock } state = kNormal;
-    for(const wxChar& ch : str) {
-        switch(state) {
+    for (const wxChar& ch : str) {
+        switch (state) {
         case kNormal:
-            if(curline.empty()) {
-                switch(ch) {
+            if (curline.empty()) {
+                switch (ch) {
                     // ignore leading white spaces
                 case '\n':
                 case '\r':
@@ -101,7 +101,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                 continue;
             } else {
                 // curline is not empty
-                switch(ch) {
+                switch (ch) {
                 case '\n':
                     lines.Add(curline);
                     curline.clear();
@@ -112,14 +112,14 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                 case ',':
                     // check for word wrapping after the above characters
                     curline << ch;
-                    if(curline.size() >= MAX_LINE_WIDTH) {
+                    if (curline.size() >= MAX_LINE_WIDTH) {
                         lines.Add(curline);
                         curline.clear();
                     }
                     break;
                 default:
                     curline << ch;
-                    if(curline == "```") {
+                    if (curline == "```") {
                         // starting a codeblock
                         state = kCodeBlockLanguage;
                         lines.Add(curline);
@@ -132,7 +132,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
         case kCodeBlockLanguage:
             // sometimes, a codeblock prefix is followed by the language
             // skip it (e.g. "```cpp")
-            switch(ch) {
+            switch (ch) {
             case '\n':
                 state = kCodeBlock;
                 break;
@@ -142,7 +142,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
             break;
         case kCodeBlock:
             // Unformatted code block. Only handle LF and the special char backslash
-            switch(ch) {
+            switch (ch) {
             case '\\':
                 break;
             case '\n':
@@ -151,7 +151,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                 break;
             default:
                 curline << ch;
-                if(curline.EndsWith("```")) {
+                if (curline.EndsWith("```")) {
                     lines.Add(curline);
                     curline.clear();
                     state = kNormal;
@@ -163,7 +163,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
     }
 
     // if we got some unprocessed line -> add it
-    if(!curline.empty()) {
+    if (!curline.empty()) {
         lines.Add(curline);
         curline.clear();
     }
@@ -181,7 +181,7 @@ std::unique_ptr<wxDisplay> GetDisplay(const wxWindow* win)
 #else
     wxDisplay* d = nullptr;
     int index = wxDisplay::GetFromWindow(win);
-    if(index == wxNOT_FOUND) {
+    if (index == wxNOT_FOUND) {
         d = new wxDisplay();
     } else {
         d = new wxDisplay(index);
@@ -213,7 +213,7 @@ void CCBoxTipWindow::DoInitialize(size_t numOfTips)
 
     clMarkdownRenderer renderer;
     wxRect text_rect = renderer.GetSize(this, dc, m_tip);
-    if(m_ratio > 0.0) {
+    if (m_ratio > 0.0) {
         wxSize sz = text_rect.GetSize();
         InflateSize(sz, m_ratio);
         text_rect.SetSize(sz);
@@ -236,17 +236,18 @@ void CCBoxTipWindow::ShrinkToScreen(wxSize& size) const
     // shrink up to the client area to preserve an extra space to un-hover it
     wxRect display_rect = display->GetClientArea();
 
-    if(size.GetHeight() > display_rect.GetHeight()) {
+    if (size.GetHeight() > display_rect.GetHeight()) {
         size.SetHeight(display_rect.GetHeight());
     }
-    if(size.GetWidth() >= display_rect.GetWidth()) {
+    if (size.GetWidth() >= display_rect.GetWidth()) {
         size.SetWidth(display_rect.GetWidth());
     }
 }
 
-void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor* focusEdior)
+void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, int start_position, IEditor* focusEdior)
 {
     // When shown, set the focus back to the editor
+    m_editorStartPosition = start_position;
     wxPoint pt = win->GetScreenPosition();
     wxPoint windowPos = pt;
     wxSize ccBoxSize = win->GetSize();
@@ -254,16 +255,16 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     pt.x += ccBoxSize.x;
     int lineHeight = 20;
     wxStyledTextCtrl* stc = nullptr;
-    if(focusEdior) {
+    if (focusEdior) {
         stc = focusEdior->GetCtrl();
     } else {
         IEditor* editor = clGetManager()->GetActiveEditor();
-        if(editor) {
+        if (editor) {
             stc = editor->GetCtrl();
         }
     }
 
-    if(stc) {
+    if (stc) {
         lineHeight = stc->TextHeight(stc->GetCurrentLine());
     }
 
@@ -274,48 +275,48 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     auto display = GetDisplay(this);
     wxRect displaySize = display->GetGeometry();
 
-    if((pt.x + tipSize.x) > (displaySize.GetX() + displaySize.GetWidth())) {
+    if ((pt.x + tipSize.x) > (displaySize.GetX() + displaySize.GetWidth())) {
         // Move the tip to the left
         pt = windowPos;
         pt.x -= tipSize.x;
 
-        if(pt.x < 0) {
+        if (pt.x < 0) {
             // it cant be placed on the left side either
             // try placing it on top of the completion box
             pt = windowPos;
             vPositioned = true;
             pt.y -= tipSize.y;
-            if(!ccBoxIsAboveCaretLine) {
+            if (!ccBoxIsAboveCaretLine) {
                 pt.y -= lineHeight; // The CC box is placed under the caret line, but the tip will be placed
                                     // on top of the CC box
             }
 
-            if(pt.y < 0) {
+            if (pt.y < 0) {
                 // try placing under the completion box
                 pt = windowPos;
                 pt.y += ccBoxSize.y + 1;
-                if(ccBoxIsAboveCaretLine) {
+                if (ccBoxIsAboveCaretLine) {
                     pt.y += lineHeight; // dont hide the caret line
                 }
             }
         }
     }
 
-    if(!vPositioned) {
+    if (!vPositioned) {
         // The tip window is positioned to the left or right of the CC box
         // Check if the tip window is going outside of the display, if it is, move it up
-        if((pt.y + tipSize.GetHeight()) > displaySize.GetHeight()) {
+        if ((pt.y + tipSize.GetHeight()) > displaySize.GetHeight()) {
             pt.y = (displaySize.GetHeight() - tipSize.GetHeight());
             // Make sure that the top of the tip is always visible
             pt.y = std::max(0, pt.y);
         }
     }
 
-    if(focusEdior) {
+    if (focusEdior) {
         // Check that the tip Y coord is inside the editor
         // this is to prevent some zombie tips appearing floating in no-man-land
         wxRect editorRect = focusEdior->GetCtrl()->GetScreenRect();
-        if(editorRect.GetTopLeft().y > pt.y) {
+        if (editorRect.GetTopLeft().y > pt.y) {
             return;
         }
     }
@@ -323,7 +324,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     SetSize(wxRect(pt, GetSize()));
     Show();
 
-    if(focusEdior) {
+    if (focusEdior) {
         focusEdior->SetActive();
     }
 }
@@ -342,7 +343,7 @@ void CCBoxTipWindow::PositionAt(const wxPoint& pt, IEditor* focusEdior)
     SetSize(wxRect(pt, GetSize()));
     Show();
 
-    if(focusEdior) {
+    if (focusEdior) {
         focusEdior->SetActive();
     }
 }
@@ -356,7 +357,7 @@ void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
     SetSize(wxRect(pt, GetSize()));
     Show();
 
-    if(focusEditor) {
+    if (focusEditor) {
         focusEditor->SetActive();
     }
 }
@@ -369,7 +370,7 @@ void CCBoxTipWindow::DoDrawTip(wxDC& dc)
 
     ShrinkToScreen(size);
 
-    if(m_ratio == 0.0 && size.GetWidth() > client_rect.GetWidth()) {
+    if (m_ratio == 0.0 && size.GetWidth() > client_rect.GetWidth()) {
         m_ratio = (double)size.GetWidth() / (double)client_rect.GetWidth();
         m_ratio += 0.01; // give it some extra space
 

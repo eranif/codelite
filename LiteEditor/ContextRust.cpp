@@ -32,8 +32,8 @@
 #include "cl_editor_tip_window.h"
 #include "editor_config.h"
 
-#include <wx/xrc/xmlres.h>
 #include <unordered_set>
+#include <wx/xrc/xmlres.h>
 
 ContextRust::ContextRust(clEditor* editor)
     : ContextGeneric(editor, "rust")
@@ -54,7 +54,7 @@ ContextRust::ContextRust()
 
 ContextRust::~ContextRust()
 {
-    if(m_eventsBound) {
+    if (m_eventsBound) {
         Unbind(wxEVT_MENU, &ContextRust::OnCommentSelection, this, XRCID("comment_selection"));
         Unbind(wxEVT_MENU, &ContextRust::OnCommentLine, this, XRCID("comment_line"));
     }
@@ -66,13 +66,13 @@ void ContextRust::ApplySettings()
 {
     SetName(wxT("rust"));
     LexerConf::Ptr_t lexPtr;
-    if(EditorConfigST::Get()->IsOk()) {
+    if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }
     clEditor& rCtrl = GetCtrl();
-    if(lexPtr) {
+    if (lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
-        for(int i = 0; i <= 4; ++i) {
+        for (int i = 0; i <= 4; ++i) {
             wxString keyWords = lexPtr->GetKeyWords(i);
             keyWords.Replace(wxT("\n"), wxT(" "));
             keyWords.Replace(wxT("\r"), wxT(" "));
@@ -129,13 +129,7 @@ void ContextRust::OnFileSaved() {}
 
 void ContextRust::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 
-void ContextRust::OnSciUpdateUI(wxStyledTextEvent& event)
-{
-    clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) {
-        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
-    }
-}
+void ContextRust::OnSciUpdateUI(wxStyledTextEvent& event) { wxUnusedVar(event); }
 
 void ContextRust::RemoveMenuDynamicContent(wxMenu* menu) {}
 
@@ -146,15 +140,15 @@ void ContextRust::SemicolonShift()
     int foundPos(wxNOT_FOUND);
     int semiColonPos(wxNOT_FOUND);
     clEditor& ctrl = GetCtrl();
-    if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
+    if (ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
 
         // test to see if we are inside a 'for' statement
         long openBracePos(wxNOT_FOUND);
         int posWordBeforeOpenBrace(wxNOT_FOUND);
 
-        if(ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
+        if (ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
             ctrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-            if(posWordBeforeOpenBrace != wxNOT_FOUND) {
+            if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                 wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
                 // At the current pos, we got a ';'
@@ -203,7 +197,13 @@ bool ContextRust::IsStringTriggerCodeComplete(const wxString& str) const
     return (m_completionTriggerStrings.count(str) > 0);
 }
 
-void ContextRust::ProcessIdleActions() { ContextGeneric::ProcessIdleActions(); }
+void ContextRust::ProcessIdleActions()
+{
+    clEditor& ctrl = GetCtrl();
+    if (ctrl.GetFunctionTip()->IsActive()) {
+        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+    }
+}
 
 void ContextRust::OnCommentSelection(wxCommandEvent& event)
 {

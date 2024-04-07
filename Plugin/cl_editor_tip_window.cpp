@@ -48,6 +48,17 @@ END_EVENT_TABLE()
 
 #define TIP_SPACER 10
 
+namespace
+{
+/// Rust & Python has the "self" as the first argument
+/// ignore it
+bool ShouldSkipFirstArgument(wxString arg)
+{
+    arg.Trim().Trim(false);
+    return arg == "self" || arg == "&self" || arg == "&mut self" || arg == "&self";
+}
+} // namespace
+
 clEditorTipWindow::clEditorTipWindow(wxWindow* parent)
     : wxPanel(parent)
     , m_highlighIndex(0)
@@ -130,9 +141,15 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     }
 
     dc.SetFont(m_font);
+
+    // Choose the line to highlight
+    size_t highlight_index = m_highlighIndex;
+    if (!m_args.empty() && ShouldSkipFirstArgument(m_args[0])) {
+        highlight_index++;
+    }
     for (size_t i = 0; i < m_args.size(); ++i) {
         wxString line = m_args.Item(i);
-        if ((int)i == m_highlighIndex) {
+        if ((int)i == highlight_index) {
             // wxFont f = m_font;
             // f.SetWeight(wxFONTWEIGHT_BOLD);
             dc.SetBrush(highlightBgColour);

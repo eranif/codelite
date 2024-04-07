@@ -127,14 +127,6 @@ public:
      */
     wxString All();
 
-    /**
-     * @brief get the highlight offset & width for the current tip
-     * @param index paramter index
-     * @param start [output]
-     * @param len [output]
-     */
-    void GetHighlightPos(int index, int& start, int& len);
-
     int GetCurr() const { return m_curr; }
 
     /**

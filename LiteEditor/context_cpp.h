@@ -69,48 +69,49 @@ public:
      * @brief
      * @return
      */
-    virtual bool IsAtBlockComment() const;
+    bool IsAtBlockComment() const override;
     /**
      * @brief
      * @return
      */
-    virtual bool IsAtLineComment() const;
+    bool IsAtLineComment() const override;
     ContextCpp(clEditor* container);
-    virtual bool IsDefaultContext() const;
+    bool IsDefaultContext() const override;
 
     virtual ~ContextCpp();
     ContextCpp();
-    virtual ContextBase* NewInstance(clEditor* container);
-    virtual bool CompleteWord();
-    virtual bool CodeComplete(long pos = wxNOT_FOUND);
-    virtual bool GotoDefinition();
-    virtual wxString GetCurrentScopeName();
-    virtual void AutoIndent(const wxChar&);
-    virtual bool IsCommentOrString(long pos);
+    ContextBase* NewInstance(clEditor* container) override;
+    bool CompleteWord() override;
+    bool CodeComplete(long pos = wxNOT_FOUND) override;
+    bool GotoDefinition() override;
+    wxString GetCurrentScopeName() override;
+    void AutoIndent(const wxChar&) override;
+    bool IsCommentOrString(long pos) override;
     virtual bool IsComment(long pos);
-    virtual void AddMenuDynamicContent(wxMenu* menu);
-    virtual void RemoveMenuDynamicContent(wxMenu* menu);
-    virtual void ApplySettings();
-    virtual void RetagFile();
-    virtual wxString CallTipContent();
-    virtual void SetActive();
-    virtual void SemicolonShift();
+    void AddMenuDynamicContent(wxMenu* menu) override;
+    void RemoveMenuDynamicContent(wxMenu* menu) override;
+    void ApplySettings() override;
+    void RetagFile() override;
+    wxString CallTipContent() override;
+    void SetActive() override;
+    void SemicolonShift() override;
+    void ProcessIdleActions() override;
 
     // override swapfiles features
     virtual void SwapFiles(const wxFileName& fileName);
 
     // Event handlers
-    virtual void OnDwellEnd(wxStyledTextEvent& event);
-    virtual bool GetHoverTip(int pos);
-    virtual void OnDbgDwellEnd(wxStyledTextEvent& event);
-    virtual void OnDbgDwellStart(wxStyledTextEvent& event);
-    virtual void OnSciUpdateUI(wxStyledTextEvent& event);
-    virtual void OnFileSaved();
-    virtual void AutoAddComment();
+    void OnDwellEnd(wxStyledTextEvent& event) override;
+    bool GetHoverTip(int pos) override;
+    void OnDbgDwellEnd(wxStyledTextEvent& event) override;
+    void OnDbgDwellStart(wxStyledTextEvent& event) override;
+    void OnSciUpdateUI(wxStyledTextEvent& event) override;
+    void OnFileSaved() override;
+    void AutoAddComment() override;
 
     // Capture menu events
     // return this context specific right click menu
-    virtual wxMenu* GetMenu();
+    wxMenu* GetMenu() override;
     virtual void OnSwapFiles(wxCommandEvent& event);
     virtual void OnInsertDoxyComment(wxCommandEvent& event);
     virtual void OnCommentSelection(wxCommandEvent& event);
@@ -118,7 +119,7 @@ public:
     virtual void OnGenerateSettersGetters(wxCommandEvent& event);
     virtual void OnFindImpl(wxCommandEvent& event);
     virtual void OnFindDecl(wxCommandEvent& event);
-    virtual void OnKeyDown(wxKeyEvent& event);
+    void OnKeyDown(wxKeyEvent& event) override;
     virtual void OnUpdateUI(wxUpdateUIEvent& event);
     virtual void OnContextOpenDocument(wxCommandEvent& event);
     virtual void OnAddIncludeFile(wxCommandEvent& e);
@@ -128,8 +129,8 @@ public:
     virtual void OnAddMultiImpl(wxCommandEvent& e);
     virtual void OnRetagFile(wxCommandEvent& e);
     virtual void OnUserTypedXChars(const wxString& word);
-    virtual void OnCallTipClick(wxStyledTextEvent& e);
-    virtual void OnCalltipCancel();
+    void OnCallTipClick(wxStyledTextEvent& e) override;
+    void OnCalltipCancel() override;
     DECLARE_EVENT_TABLE()
 
 private:

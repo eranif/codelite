@@ -62,9 +62,9 @@ void ContextBase::AutoIndent(const wxChar& ch)
     int curpos = rCtrl.GetCurrentPos();
     int line = rCtrl.LineFromPosition(curpos);
 
-    if(ch == wxT('\n')) {
+    if (ch == wxT('\n')) {
         wxChar prevCh = rCtrl.PreviousChar(curpos, prevpos);
-        if(prevCh == '{') {
+        if (prevCh == '{') {
             // an enter was hit just after an open brace
             int prevLine = rCtrl.LineFromPosition(prevpos);
             rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
@@ -78,12 +78,12 @@ void ContextBase::AutoIndent(const wxChar& ch)
             rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
             rCtrl.ChooseCaretX();
         }
-    } else if(ch == '}' && !IsCommentOrString(curpos)) {
+    } else if (ch == '}' && !IsCommentOrString(curpos)) {
         long matchPos = wxNOT_FOUND;
-        if(!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
+        if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
             return;
         int secondLine = rCtrl.LineFromPosition(matchPos);
-        if(secondLine == line)
+        if (secondLine == line)
             return;
         rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
     }
@@ -95,16 +95,16 @@ bool ContextBase::GetHyperlinkRange(int& start, int& end)
 {
     clEditor& rCtrl = GetCtrl();
     wxPoint pt = wxGetMousePosition();
-    if(pt == wxDefaultPosition) {
+    if (pt == wxDefaultPosition) {
         return false;
     }
     wxPoint clientPt = rCtrl.ScreenToClient(pt);
     int mouse_pos = rCtrl.PositionFromPointClose(clientPt.x, clientPt.y);
-    if(!IsCommentOrString(mouse_pos)) {
+    if (!IsCommentOrString(mouse_pos)) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(mouse_pos, true);
         end = rCtrl.WordEndPos(mouse_pos, true);
-        if(start < end)
+        if (start < end)
             return true;
     }
     return false;
@@ -116,7 +116,7 @@ void ContextBase::PrependMenuItem(wxMenu* menu, const wxString& text, wxObjectEv
 {
     wxMenuItem* item;
     wxString menuItemText;
-    if(eventId == -1)
+    if (eventId == -1)
         eventId = wxNewId();
 
     item = new wxMenuItem(menu, eventId, text);
@@ -147,28 +147,31 @@ int ContextBase::DoGetCalltipParamterIndex()
     int index(0);
     clEditor& ctrl = GetCtrl();
     int pos = ctrl.DoGetOpenBracePos();
-    if(pos != wxNOT_FOUND) {
+    if (pos != wxNOT_FOUND) {
 
         // loop over the text from pos -> current position and count the number of commas found
-        int depth(0);
-        while(pos < ctrl.GetCurrentPos()) {
+        int depth = 0;
+        while (pos < ctrl.GetCurrentPos()) {
             wxChar ch = ctrl.SafeGetChar(pos);
-            // wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
-
-            if(IsCommentOrString(pos)) {
+            if (IsCommentOrString(pos)) {
                 pos = ctrl.PositionAfter(pos);
                 continue;
             }
 
-            switch(ch) {
-            case wxT(','):
-                if(depth == 0)
+            switch (ch) {
+            case ',':
+                if (depth == 0) {
                     index++;
+                }
                 break;
-            case wxT('('):
+            case '(':
+            case '[':
+            case '{':
                 depth++;
                 break;
-            case wxT(')'):
+            case ')':
+            case ']':
+            case '}':
                 depth--;
                 break;
             default:
@@ -187,7 +190,7 @@ void ContextBase::OnUserTypedXChars(int pos)
     // user typed more than X chars
     // trigger code complete event (as if the user typed ctrl-space)
     // if no one handles this event, fire a word completion event
-    if(IsCommentOrString(pos)) {
+    if (IsCommentOrString(pos)) {
         return;
     }
 
@@ -198,7 +201,7 @@ void ContextBase::OnUserTypedXChars(int pos)
     ccEvt.SetFileName(GetCtrl().GetFileName().GetFullPath());
     ccEvt.SetWord(GetCtrl().GetWordAtPosition(pos));
 
-    if(!EventNotifier::Get()->ProcessEvent(ccEvt)) {
+    if (!EventNotifier::Get()->ProcessEvent(ccEvt)) {
         // This is ugly, since CodeLite should not be calling
         // the plugins... we take comfort in the fact that it
         // merely fires an event and not calling it directly
@@ -220,37 +223,37 @@ void ContextBase::AutoAddComment()
     wxString text = rCtrl.GetLine(line - 1).Trim(false);
 
     bool dontadd = false;
-    if(IsAtLineComment()) {
+    if (IsAtLineComment()) {
         dontadd = !text.StartsWith(wxT("//")) || !data.GetContinueCppComment();
-    } else if(IsAtBlockComment()) {
+    } else if (IsAtBlockComment()) {
         dontadd = !data.GetAddStarOnCComment();
 
     } else {
         dontadd = true;
     }
 
-    if(dontadd) {
+    if (dontadd) {
         ContextBase::AutoIndent(wxT('\n'));
         return;
     }
 
     wxString toInsert;
-    if(IsAtLineComment()) {
-        if(text.StartsWith(wxT("//"))) {
+    if (IsAtLineComment()) {
+        if (text.StartsWith(wxT("//"))) {
             toInsert = wxT("// ");
         }
-    } else if(IsAtBlockComment()) {
+    } else if (IsAtBlockComment()) {
         // Check the text typed before this char
         int startPos = rCtrl.PositionBefore(curpos);
         startPos -= 3; // for "/**"
-        if(startPos >= 0) {
+        if (startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
-            if(((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert()) {
+            if (((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert()) {
                 // Let the plugins/codelite check if they can provide a doxy comment
                 // for the current entry
                 clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);
                 event.SetFileName(GetCtrl().GetFileName().GetFullPath());
-                if(EventNotifier::Get()->ProcessEvent(event) && !event.GetTooltip().IsEmpty()) {
+                if (EventNotifier::Get()->ProcessEvent(event) && !event.GetTooltip().IsEmpty()) {
                     rCtrl.BeginUndoAction();
 
                     // To make the doxy block fit in, we need to prepend each line
@@ -259,8 +262,8 @@ void ContextBase::AutoAddComment()
                     wxString whitespace = rCtrl.GetTextRange(lineStartPos, startPos);
                     // Break the comment, for each line, prepend the 'whitespace' buffer
                     wxArrayString lines = ::wxStringTokenize(event.GetTooltip(), "\n", wxTOKEN_STRTOK);
-                    for(size_t i = 0; i < lines.GetCount(); ++i) {
-                        if(i) { // don't add it to the first line (it already exists in the editor)
+                    for (size_t i = 0; i < lines.GetCount(); ++i) {
+                        if (i) { // don't add it to the first line (it already exists in the editor)
                             lines.Item(i).Prepend(whitespace);
                         }
                     }
@@ -273,11 +276,11 @@ void ContextBase::AutoAddComment()
 
                     // Try to place the caret after the @brief
                     wxRegEx reBrief("[@\\]brief[ \t]*");
-                    if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
+                    if (reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
                         wxString match = reBrief.GetMatch(doxyBlock);
                         // Get the index
                         int where = doxyBlock.Find(match);
-                        if(where != wxNOT_FOUND) {
+                        if (where != wxNOT_FOUND) {
                             where += match.length();
                             int caretPos = startPos + where;
                             rCtrl.SetCaretAt(caretPos);
@@ -292,12 +295,12 @@ void ContextBase::AutoAddComment()
             }
         }
 
-        if(rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
+        if (rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
             toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line - 1)) == wxT('*') ? wxT("* ") : wxT(" * ");
         }
     }
 
-    if(!toInsert.IsEmpty()) {
+    if (!toInsert.IsEmpty()) {
         rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
         int insertPos = rCtrl.GetLineIndentPosition(line);
         rCtrl.InsertText(insertPos, toInsert);
@@ -309,17 +312,17 @@ void ContextBase::AutoAddComment()
 bool ContextBase::IsStringTriggerCodeComplete(const wxString& str) const
 {
     // default behavior is to check if 'str' exists in the m_completionTriggerStrings container
-    if(!m_completionTriggerStrings.empty()) {
+    if (!m_completionTriggerStrings.empty()) {
         return m_completionTriggerStrings.count(str) > 0;
     }
 
-    if(GetCtrl().GetLexer() == wxSTC_LEX_XML) {
+    if (GetCtrl().GetLexer() == wxSTC_LEX_XML) {
         return str == "<" || str == "</";
-    } else if(GetCtrl().GetLexer() == wxSTC_LEX_CSS) {
+    } else if (GetCtrl().GetLexer() == wxSTC_LEX_CSS) {
         return str == ":";
-    } else if(GetCtrl().GetLexer() == wxSTC_LEX_PYTHON) {
+    } else if (GetCtrl().GetLexer() == wxSTC_LEX_PYTHON) {
         return str == ".";
-    } else if((GetCtrl().GetLexer() == wxSTC_LEX_CPP)) {
+    } else if ((GetCtrl().GetLexer() == wxSTC_LEX_CPP)) {
         // This can happen for Java
         return str == "." || str == "::";
     } else {
@@ -333,7 +336,7 @@ int ContextBase::FindNext(const wxString& what, int& pos, bool wholePage)
     int startpos(wxNOT_FOUND);
     int lastLine(wxNOT_FOUND);
     int endpos(wxNOT_FOUND);
-    if(wholePage) {
+    if (wholePage) {
         startpos = ctrl->GetCurrentPos();
         endpos = ctrl->GetLastPosition();
     } else {
@@ -341,10 +344,10 @@ int ContextBase::FindNext(const wxString& what, int& pos, bool wholePage)
         lastLine = ctrl->GetFirstVisibleLine() + ctrl->LinesOnScreen();
         endpos = ctrl->GetLineEndPosition(lastLine);
     }
-    if((pos < startpos) || (pos > endpos))
+    if ((pos < startpos) || (pos > endpos))
         return wxNOT_FOUND;
     int where = ctrl->FindText(pos, endpos, what);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         pos = where + what.length();
     }
     return where;
@@ -356,7 +359,7 @@ int ContextBase::FindPrev(const wxString& what, int& pos, bool wholePage)
     int startpos(wxNOT_FOUND);
     int lastLine(wxNOT_FOUND);
     int endpos(wxNOT_FOUND);
-    if(wholePage) {
+    if (wholePage) {
         startpos = 0;
         endpos = ctrl->GetCurrentPos();
     } else {
@@ -364,10 +367,10 @@ int ContextBase::FindPrev(const wxString& what, int& pos, bool wholePage)
         lastLine = ctrl->GetFirstVisibleLine() + ctrl->LinesOnScreen();
         endpos = ctrl->GetLineEndPosition(lastLine);
     }
-    if((pos < startpos) || (pos > endpos))
+    if ((pos < startpos) || (pos > endpos))
         return wxNOT_FOUND;
     int where = ctrl->FindText(pos, startpos, what);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         pos = where;
     }
     return where;
@@ -378,7 +381,7 @@ void ContextBase::BlockCommentComplete()
     wxStyledTextCtrl* stc = GetCtrl().GetCtrl();
     int curPos = stc->GetCurrentPos();
     int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
-    if(curPos < start)
+    if (curPos < start)
         return;
 
     // Fire an event indicating user typed '@' in a block comment
@@ -390,7 +393,7 @@ void ContextBase::BlockCommentComplete()
 int ContextBase::PositionBeforeCurrent() const
 {
     int curpos = GetCtrl().GetCurrentPos();
-    if(curpos == 0) {
+    if (curpos == 0) {
         return 0;
     }
     return GetCtrl().PositionBefore(curpos);

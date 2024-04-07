@@ -5689,7 +5689,6 @@ void clEditor::OnTimer(wxTimerEvent& event)
             }
         }
     }
-    GetContext()->ProcessIdleActions();
 }
 
 void clEditor::SplitSelection()
@@ -6597,6 +6596,8 @@ void clEditor::OnIdle(wxIdleEvent& event)
 
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
+
+    GetContext()->ProcessIdleActions();
 }
 
 void clEditor::ClearModifiedLines()

@@ -1281,22 +1281,7 @@ void ContextCpp::SetActive()
     OnSciUpdateUI(dummy);
 }
 
-void ContextCpp::OnSciUpdateUI(wxStyledTextEvent& event)
-{
-    wxUnusedVar(event);
-    clEditor& ctrl = GetCtrl();
-
-    static long lastPos(wxNOT_FOUND);
-
-    // get the current position
-    long curpos = ctrl.GetCurrentPos();
-    if (curpos != lastPos) {
-        lastPos = curpos;
-
-        // update the calltip highlighting if needed
-        DoUpdateCalltipHighlight();
-    }
-}
+void ContextCpp::OnSciUpdateUI(wxStyledTextEvent& event) { wxUnusedVar(event); }
 
 void ContextCpp::OnDbgDwellEnd(wxStyledTextEvent& event)
 {
@@ -2632,5 +2617,21 @@ void ContextCpp::OnCodeCompleteFiles(clCodeCompletionEvent& event)
     } else {
         // not ours
         event.Skip();
+    }
+}
+
+void ContextCpp::ProcessIdleActions()
+{
+    clEditor& ctrl = GetCtrl();
+
+    static long lastPos(wxNOT_FOUND);
+
+    // get the current position
+    long curpos = ctrl.GetCurrentPos();
+    if (curpos != lastPos) {
+        lastPos = curpos;
+
+        // update the calltip highlighting if needed
+        DoUpdateCalltipHighlight();
     }
 }

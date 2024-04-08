@@ -47,8 +47,8 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     GetSizer()->Insert(0, m_choiceConfigs, 0, wxEXPAND | wxALL, 5);
 
     // Hide hidden folders and files
-    m_options &= ~kShowHiddenFiles;
-    m_options &= ~kShowHiddenFolders;
+    //m_options &= ~kShowHiddenFiles;
+    //m_options &= ~kShowHiddenFolders;
 
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &clFileSystemWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &clFileSystemWorkspaceView::OnBuildStarted, this);

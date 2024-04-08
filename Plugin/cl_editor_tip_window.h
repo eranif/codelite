@@ -34,6 +34,7 @@
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/panel.h> // Base class: wxPanel
+#include <wx/stc/stc.h>
 
 class WXDLLIMPEXP_SDK clEditorTipWindow : public wxPanel
 {
@@ -55,6 +56,7 @@ protected:
     wxArrayString m_args;
     wxString m_footer; // the line that says  "1 of 2"
     wxString m_header; // The return value line
+    int m_lexerId = wxNOT_FOUND;
 
 protected:
     wxSize DoGetTipSize();
@@ -67,7 +69,7 @@ protected:
     void DoMakeMultipleLineTip();
 
 public:
-    clEditorTipWindow(wxWindow* parent);
+    explicit clEditorTipWindow(wxStyledTextCtrl* parent);
     virtual ~clEditorTipWindow();
 
     // API

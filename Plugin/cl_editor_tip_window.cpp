@@ -52,16 +52,21 @@ namespace
 {
 /// Rust & Python has the "self" as the first argument
 /// ignore it
-bool ShouldSkipFirstArgument(wxString arg)
+bool ShouldSkipFirstArgument(wxString arg, int lexerId)
 {
-    arg.Trim().Trim(false);
-    return arg == "self" || arg == "&self" || arg == "&mut self" || arg == "&self";
+    if (lexerId == wxSTC_LEX_RUST || lexerId == wxSTC_LEX_PYTHON) {
+        arg.Trim().Trim(false);
+        return arg == "self" || arg == "&self" || arg == "&mut self" || arg == "&self";
+    } else {
+        return false;
+    }
 }
 } // namespace
 
-clEditorTipWindow::clEditorTipWindow(wxWindow* parent)
+clEditorTipWindow::clEditorTipWindow(wxStyledTextCtrl* parent)
     : wxPanel(parent)
     , m_highlighIndex(0)
+    , m_lexerId(parent->GetLexer())
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_font = ColoursAndFontsManager::Get().GetFixedFont(true);
@@ -144,7 +149,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
     // Choose the line to highlight
     size_t highlight_index = m_highlighIndex;
-    if (!m_args.empty() && ShouldSkipFirstArgument(m_args[0])) {
+    if (!m_args.empty() && ShouldSkipFirstArgument(m_args[0], m_lexerId)) {
         highlight_index++;
     }
     for (size_t i = 0; i < m_args.size(); ++i) {

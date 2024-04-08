@@ -926,6 +926,9 @@ void clTreeCtrlPanel::OnInitDone(wxCommandEvent& event)
     if (GetConfig()) {
         wxArrayString pinnedFolders;
         m_options = GetConfig()->Read("FileExplorer/Options", m_options);
+        m_options |= kShowHiddenFiles;
+        m_options |= kShowHiddenFolders;
+
         pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
         for (size_t i = 0; i < pinnedFolders.size(); ++i) {
             AddFolder(pinnedFolders.Item(i));

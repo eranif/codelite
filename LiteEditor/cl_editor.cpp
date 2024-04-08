@@ -5345,7 +5345,7 @@ void clEditor::ShowCalltip(clCallTipPtr tip)
     // In an ideal world, we would like our tooltip to be placed
     // on top of the caret.
     wxPoint pt = PointFromPosition(GetCurrentPosition());
-    GetFunctionTip()->Activate(pt, GetCurrLineHeight(), StyleGetBackground(wxSTC_C_DEFAULT));
+    GetFunctionTip()->Activate(pt, GetCurrLineHeight(), StyleGetBackground(wxSTC_C_DEFAULT), GetLexerId());
 }
 
 int clEditor::PositionAfterPos(int pos) { return wxStyledTextCtrl::PositionAfter(pos); }

@@ -27,7 +27,6 @@
 
 #include "ColoursAndFontsManager.h"
 #include "drawingutils.h"
-#include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "ieditor.h"
@@ -56,7 +55,7 @@ bool ShouldSkipFirstArgument(wxString arg, int lexerId)
 {
     if (lexerId == wxSTC_LEX_RUST || lexerId == wxSTC_LEX_PYTHON) {
         arg.Trim().Trim(false);
-        return arg == "self" || arg == "&self" || arg == "&mut self" || arg == "&self";
+        return arg == "self" || arg == "&self" || arg == "&mut self" || arg == "mut self";
     } else {
         return false;
     }
@@ -308,7 +307,7 @@ wxString clEditorTipWindow::GetText()
     return wxT("");
 }
 
-void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgColour)
+void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgColour, int lexerId)
 {
     if (m_tips.empty())
         return;
@@ -316,6 +315,7 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
     m_point = pt;
     m_lineHeight = lineHeight;
     m_parentBgColour = parentBgColour;
+    m_lexerId = lexerId;
 
     // update the font to the current editor
     m_font = ColoursAndFontsManager::Get().GetFixedFont(true);

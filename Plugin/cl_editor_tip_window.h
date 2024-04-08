@@ -81,7 +81,7 @@ public:
     bool IsEmpty();
     void Clear();
     bool IsActive();
-    void Activate(wxPoint pt, int lineHeight, wxColour parentBgColour);
+    void Activate(wxPoint pt, int lineHeight, wxColour parentBgColour, int lexerId);
     void Deactivate();
     void SelectNext(int argIdxToHilight);
     void SelectPrev(int argIdxToHilight);

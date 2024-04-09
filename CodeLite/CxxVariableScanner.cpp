@@ -562,7 +562,7 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bo
                 vars.push_back(var);
             } else if(!varInitialization.IsEmpty()) {
                 // This means that the above was a function call
-                // Parse the siganture which is placed inside the varInitialization
+                // Parse the signature which is placed inside the varInitialization
                 CxxVariableScanner scanner(varInitialization, m_standard, m_macros, true);
                 CxxVariable::Vec_t args = scanner.GetVariables(sort);
                 vars.insert(vars.end(), args.begin(), args.end());

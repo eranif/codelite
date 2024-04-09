@@ -199,7 +199,7 @@ void clEditorTipWindow::AddCallTip(clCallTipPtr tip)
         ti.highlightIndex = 0;
         m_highlighIndex = 0;
         if (!m_selectedSignature.IsEmpty()) {
-            tip->SelectSiganture(m_selectedSignature);
+            tip->SelectSignature(m_selectedSignature);
             m_selectedSignature.Clear();
         }
         m_tips.push_back(ti);
@@ -425,7 +425,7 @@ void clEditorTipWindow::SelectSignature(const wxString& signature)
 {
     m_selectedSignature = signature;
     if (GetTip()) {
-        GetTip()->SelectSiganture(m_selectedSignature);
+        GetTip()->SelectSignature(m_selectedSignature);
         m_selectedSignature.clear();
     }
 }

@@ -136,7 +136,7 @@ wxString clCallTip::Current()
     return TipAt(m_curr);
 }
 
-void clCallTip::SelectSiganture(const wxString& signature)
+void clCallTip::SelectSignature(const wxString& signature)
 {
     // search for a match
     for (size_t i = 0; i < m_tips.size(); ++i) {

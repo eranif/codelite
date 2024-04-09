@@ -132,7 +132,7 @@ public:
     /**
      * @brief set the tip to a specific tag
      */
-    void SelectSiganture(const wxString& signature);
+    void SelectSignature(const wxString& signature);
 
     wxString TipAt(int at);
 };

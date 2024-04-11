@@ -356,7 +356,6 @@ and the plugin is NOT one of the official plugins (see list below):
 - Subversion
 - UnitTestPP
 - wxFormBuilder plugin
-- Tweaks
 - CMakePlugin
 - CodeLiteDiff
 - SFTP

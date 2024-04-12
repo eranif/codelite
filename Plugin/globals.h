@@ -245,12 +245,12 @@ WXDLLIMPEXP_SDK bool IsFileReadOnly(const wxFileName& filename);
  * \param arr [out] the array to fill
  * \param str the string to split
  */
-WXDLLIMPEXP_SDK void FillFromSmiColonString(wxArrayString& arr, const wxString& str);
+WXDLLIMPEXP_SDK void FillFromSemiColonString(wxArrayString& arr, const wxString& str);
 
 /**
  * \brief return a string semi-colon separated of the given array
  */
-WXDLLIMPEXP_SDK wxString ArrayToSmiColonString(const wxArrayString& array);
+WXDLLIMPEXP_SDK wxString ArrayToSemiColonString(const wxArrayString& array);
 
 /**
  * \brief Remove all semi colons of the given string
@@ -550,7 +550,7 @@ WXDLLIMPEXP_SDK void clStripTerminalColouring(const wxString& buffer, wxString& 
 /**
  * @brief return true if the name is valid
  */
-WXDLLIMPEXP_SDK bool clIsVaidProjectName(const wxString& name);
+WXDLLIMPEXP_SDK bool clIsValidProjectName(const wxString& name);
 
 /**
  * @brief support for Hi-Res displays

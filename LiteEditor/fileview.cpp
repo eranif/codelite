@@ -2295,7 +2295,7 @@ void FileViewTree::OnRenameProject(wxCommandEvent& event)
             return;
         }
 
-        if(!::clIsVaidProjectName(newname)) {
+        if(!::clIsValidProjectName(newname)) {
             wxMessageBox(_("Project names may contain only the following characters [a-z0-9_-]"), "CodeLite",
                          wxOK | wxICON_WARNING | wxCENTER, this);
             return;

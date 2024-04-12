@@ -154,7 +154,7 @@ static wxString MacGetInstallPath()
 #include <unistd.h>
 #endif
 
-struct ProjListCompartor {
+struct ProjListComparator {
     bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
 };
 
@@ -673,13 +673,13 @@ bool IsFileReadOnly(const wxFileName& filename)
 #endif
 }
 
-void FillFromSmiColonString(wxArrayString& arr, const wxString& str)
+void FillFromSemiColonString(wxArrayString& arr, const wxString& str)
 {
     arr.clear();
     arr = StringUtils::BuildArgv(str);
 }
 
-wxString ArrayToSmiColonString(const wxArrayString& array)
+wxString ArrayToSemiColonString(const wxArrayString& array)
 {
     wxString result;
     for (size_t i = 0; i < array.GetCount(); i++) {
@@ -861,7 +861,7 @@ void GetProjectTemplateList(std::list<ProjectPtr>& list)
 {
     DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetProjectTemplatesDir(), list);
     DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetUserProjectTemplatesDir(), list, false);
-    list.sort(ProjListCompartor());
+    list.sort(ProjListComparator());
 }
 
 thread_local std::unordered_set<wxString> words;
@@ -1823,7 +1823,7 @@ void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
     StringUtils::StripTerminalColouring(buffer, modbuffer);
 }
 
-bool clIsVaidProjectName(const wxString& name)
+bool clIsValidProjectName(const wxString& name)
 {
     return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos;
 }

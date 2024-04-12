@@ -154,7 +154,7 @@ static wxString MacGetInstallPath()
 #include <unistd.h>
 #endif
 
-struct ProjListCompartor {
+struct ProjListComparator {
     bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
 };
 
@@ -861,7 +861,7 @@ void GetProjectTemplateList(std::list<ProjectPtr>& list)
 {
     DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetProjectTemplatesDir(), list);
     DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetUserProjectTemplatesDir(), list, false);
-    list.sort(ProjListCompartor());
+    list.sort(ProjListComparator());
 }
 
 thread_local std::unordered_set<wxString> words;

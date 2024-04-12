@@ -4053,15 +4053,12 @@ void clEditor::SetWarningMarker(int lineno, CompilerMessage&& msg)
     wxString display_message = msg.message;
     m_compilerMessagesMap.insert({ lineno, std::move(msg) });
 
-    BuildTabSettingsData options;
-    EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &options);
-
-    if (options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
+    if (m_buildOptions.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
         MarkerAdd(lineno, smt_warning);
         NotifyMarkerChanged(lineno);
     }
 
-    if (options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
+    if (m_buildOptions.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
         // define the warning marker
         AnnotationSetText(lineno, display_message);
         AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
@@ -4082,15 +4079,12 @@ void clEditor::SetErrorMarker(int lineno, CompilerMessage&& msg)
     wxString display_message = msg.message;
     m_compilerMessagesMap.insert({ lineno, std::move(msg) });
 
-    BuildTabSettingsData options;
-    EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &options);
-
-    if (options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
+    if (m_buildOptions.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
         MarkerAdd(lineno, smt_error);
         NotifyMarkerChanged(lineno);
     }
 
-    if (options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
+    if (m_buildOptions.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
         AnnotationSetText(lineno, display_message);
         AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
     }
@@ -5217,6 +5211,8 @@ void clEditor::UpdateOptions()
     if (clCxxWorkspaceST::Get()->IsOpen()) {
         clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetOptions(m_options, GetProject());
     }
+
+    EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &m_buildOptions);
 
     clEditorConfigEvent event(wxEVT_EDITOR_CONFIG_LOADING);
     event.SetFileName(CLRealPath(GetFileName().GetFullPath()));

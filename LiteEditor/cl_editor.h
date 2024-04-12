@@ -29,6 +29,7 @@
 #include "SFTPClientData.hpp"
 #include "bookmark_manager.h"
 #include "browse_record.h"
+#include "buildtabsettingsdata.h"
 #include "clEditorStateLocker.h"
 #include "cl_calltip.h"
 #include "cl_defs.h"
@@ -313,6 +314,7 @@ protected:
     // track the position between Idle event calls
     long m_lastIdlePosition = wxNOT_FOUND;
     uint64_t m_lastIdleEvent = 0;
+    BuildTabSettingsData m_buildOptions;
 
 public:
     static bool m_ccShowPrivateMembers;

@@ -39,7 +39,6 @@ private:
     // Bookmarks button
     wxBitmap m_bookmarksBmp;
     wxRect m_bookmarksRect;
-    std::vector<std::pair<int, wxString>> m_bookmarks;
 
     bool m_shouldShow = false;
 

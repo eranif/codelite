@@ -47,7 +47,6 @@ clEditorBar::clEditorBar(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clEditorBar::OnThemeChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_MARKER_CHANGED, &clEditorBar::OnMarkerChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &clEditorBar::OnUpdate, this);
     m_buttonScope->SetBitmap(m_functionBmp);
     m_buttonScope->SetHasDropDownMenu(true);
@@ -61,7 +60,6 @@ clEditorBar::~clEditorBar()
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clEditorBar::OnThemeChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_MARKER_CHANGED, &clEditorBar::OnMarkerChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &clEditorBar::OnUpdate, this);
 }
 
@@ -83,7 +81,7 @@ void clEditorBar::SetScopes(const wxString& filename, const clEditorBar::ScopeEn
 void clEditorBar::DoShow(bool s)
 {
     m_shouldShow = s;
-    if(Show(s)) {
+    if (Show(s)) {
         GetParent()->GetSizer()->Layout();
     }
     CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
@@ -102,7 +100,6 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_projectFile.clear();
     m_projectName.clear();
     m_filenameRelative.clear();
-    m_bookmarks.clear();
 
     wxColour bgcolour = clSystemSettings::GetDefaultPanelColour();
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
@@ -111,35 +108,21 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_labelText->SetForegroundColour(textColour);
     m_labelText->SetBackgroundColour(bgcolour);
 
-    if(!m_shouldShow) {
+    if (!m_shouldShow) {
         return;
     }
 
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) {
-        if(!IsShown()) {
+    if (editor) {
+        if (!IsShown()) {
             Show();
         }
 
         wxString current_file = editor->GetRemotePathOrLocal();
-
-        // Update bookmarks button
-        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
-        editor->GetFindMarkers(m_bookmarks);
-
-        if(!m_bookmarks.empty()) {
-            CreateBookmarksBitmap();
-            if(!m_buttonBookmarks->IsShown()) {
-                m_buttonBookmarks->Show();
-            }
-            m_buttonBookmarks->SetText(_("Bookmarks"));
-            m_buttonBookmarks->SetBitmap(m_bookmarksBmp);
-        } else {
-            m_buttonBookmarks->Hide();
-        }
+        m_buttonBookmarks->Hide();
 
         // Update file path button
-        if(!m_buttonFilePath->IsShown()) {
+        if (!m_buttonFilePath->IsShown()) {
             m_buttonFilePath->Show();
         }
 
@@ -148,7 +131,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
         wxFileName fn(current_file, editor->IsRemoteFile() ? wxPATH_UNIX : wxPATH_NATIVE);
         wxString PATH_SEPARATOR = editor->IsRemoteFile() ? wxString("/") : wxFileName::GetPathSeparator();
 
-        if(fn.GetDirCount()) {
+        if (fn.GetDirCount()) {
             filepath << fn.GetDirs().Last() << PATH_SEPARATOR;
         }
         filepath << fn.GetFullName();
@@ -157,10 +140,10 @@ void clEditorBar::DoRefreshColoursAndFonts()
 
         // update the scope
         bool hide_scope_button = m_scopes.empty() || m_scopesFile != current_file;
-        if(hide_scope_button) {
+        if (hide_scope_button) {
             m_buttonScope->Hide();
         } else {
-            if(!m_buttonScope->IsShown()) {
+            if (!m_buttonScope->IsShown()) {
                 m_buttonScope->Show();
             }
             UpdateScope();
@@ -181,14 +164,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
 
 void clEditorBar::DoRefresh() { Refresh(); }
 
-void clEditorBar::OnMarkerChanged(clCommandEvent& event)
-{
-    event.Skip();
-    if(!IsShown()) {
-        return;
-    }
-    CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
-}
+void clEditorBar::OnMarkerChanged(clCommandEvent& event) { event.Skip(); }
 
 void clEditorBar::CreateBookmarksBitmap()
 {
@@ -241,24 +217,24 @@ void clEditorBar::OnButtonActions(wxCommandEvent& event)
         wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
     m_buttonFilePath->ShowMenu(menu);
 
-    if(selection == wxID_NONE)
+    if (selection == wxID_NONE)
         return;
 
     text.Clear();
-    if(selection == idCopyFullPath->GetId()) {
+    if (selection == idCopyFullPath->GetId()) {
         text = m_filename;
-    } else if(selection == idCopyName->GetId()) {
+    } else if (selection == idCopyName->GetId()) {
         text = wxFileName(m_filename).GetFullName();
-    } else if(selection == idCopyPath->GetId()) {
+    } else if (selection == idCopyPath->GetId()) {
         text = wxFileName(m_filename).GetPath();
-    } else if(selection == idOpenExplorer->GetId()) {
+    } else if (selection == idOpenExplorer->GetId()) {
         FileUtils::OpenFileExplorerAndSelect(wxFileName(m_filename).GetFullPath());
-    } else if(selection == idOpenShell->GetId()) {
+    } else if (selection == idOpenShell->GetId()) {
         FileUtils::OpenTerminal(wxFileName(m_filename).GetPath());
     }
 
     // Clipboard action?
-    if(!text.IsEmpty()) {
+    if (!text.IsEmpty()) {
         ::CopyToClipboard(text);
         clGetManager()->SetStatusMessage((wxString() << "'" << text << _("' copied!")), 2);
     }
@@ -269,7 +245,7 @@ void clEditorBar::OnButtonBookmarks(wxCommandEvent& event)
     wxUnusedVar(event);
     IEditor* editor = clGetManager()->GetActiveEditor();
     std::vector<std::pair<int, wxString>> V;
-    if(editor && editor->GetFindMarkers(V)) {
+    if (editor && editor->GetFindMarkers(V)) {
         // Show bookmarks menu
         wxMenu menu;
         std::unordered_map<int, int> M;
@@ -285,9 +261,9 @@ void clEditorBar::OnButtonBookmarks(wxCommandEvent& event)
             wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
         m_buttonBookmarks->ShowMenu(menu);
 
-        if(selection == wxID_NONE)
+        if (selection == wxID_NONE)
             return;
-        if(M.count(selection)) {
+        if (M.count(selection)) {
             int lineNumber = M[selection] - 1;
             editor->CenterLine(lineNumber);
             editor->GetCtrl()->EnsureVisible(lineNumber);
@@ -306,7 +282,7 @@ void clEditorBar::OnButtonScope(wxCommandEvent& event)
     // build the menu
     wxMenu menu;
     std::unordered_map<int, ScopeEntry> M;
-    for(const ScopeEntry& entry : m_scopes) {
+    for (const ScopeEntry& entry : m_scopes) {
         int menu_id = wxXmlResource::GetXRCID(entry.display_string);
         M[menu_id] = entry;
         menu.Append(menu_id, entry.display_string);
@@ -319,10 +295,10 @@ void clEditorBar::OnButtonScope(wxCommandEvent& event)
         wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
     m_buttonScope->ShowMenu(menu);
 
-    if(selection == wxID_NONE)
+    if (selection == wxID_NONE)
         return;
 
-    if(M.count(selection)) {
+    if (M.count(selection)) {
         // Display the matched entry from the menu
         auto stc = editor->GetCtrl();
         ScopeEntry entry = M[selection];
@@ -347,15 +323,15 @@ thread_local clEditorBar::ScopeEntry InvalidScope;
 const clEditorBar::ScopeEntry& clEditorBar::FindByLine(int lineNumber) const
 {
     const ScopeEntry* match = nullptr;
-    for(const clEditorBar::ScopeEntry& entry : m_scopes) {
-        if((entry.line_number - 1) >= lineNumber) {
+    for (const clEditorBar::ScopeEntry& entry : m_scopes) {
+        if ((entry.line_number - 1) >= lineNumber) {
             break;
         } else {
             match = &entry;
         }
     }
 
-    if(match) {
+    if (match) {
         return *match;
     } else {
         return InvalidScope;
@@ -368,14 +344,14 @@ void clEditorBar::UpdateScope()
     CHECK_PTR_RET(editor);
 
     wxString fullpath = editor->GetRemotePathOrLocal();
-    if(fullpath != m_scopesFile) {
+    if (fullpath != m_scopesFile) {
         m_scopes.clear();
         m_buttonScope->SetText(wxEmptyString);
         return;
     }
 
     const auto& scope = FindByLine(editor->GetCurrentLine());
-    if(scope.is_ok()) {
+    if (scope.is_ok()) {
         m_buttonScope->SetText(scope.display_string);
     } else {
         m_buttonScope->SetText(wxEmptyString);

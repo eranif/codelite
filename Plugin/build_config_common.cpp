@@ -148,13 +148,13 @@ wxXmlNode* BuildConfigCommon::ToXml() const
     return node;
 }
 
-void BuildConfigCommon::SetPreprocessor(const wxString& pre) { FillFromSmiColonString(m_preprocessor, pre); }
+void BuildConfigCommon::SetPreprocessor(const wxString& pre) { FillFromSemiColonString(m_preprocessor, pre); }
 
-void BuildConfigCommon::SetIncludePath(const wxString& path) { FillFromSmiColonString(m_includePath, path); }
+void BuildConfigCommon::SetIncludePath(const wxString& path) { FillFromSemiColonString(m_includePath, path); }
 
-void BuildConfigCommon::SetLibraries(const wxString& libs) { FillFromSmiColonString(m_libs, libs); }
+void BuildConfigCommon::SetLibraries(const wxString& libs) { FillFromSemiColonString(m_libs, libs); }
 
-void BuildConfigCommon::SetLibPath(const wxString& paths) { FillFromSmiColonString(m_libPath, paths); }
+void BuildConfigCommon::SetLibPath(const wxString& paths) { FillFromSemiColonString(m_libPath, paths); }
 
 static wxString ConvertToSmiColonString(const wxArrayString& array)
 {

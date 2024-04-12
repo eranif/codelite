@@ -673,7 +673,7 @@ bool IsFileReadOnly(const wxFileName& filename)
 #endif
 }
 
-void FillFromSmiColonString(wxArrayString& arr, const wxString& str)
+void FillFromSemiColonString(wxArrayString& arr, const wxString& str)
 {
     arr.clear();
     arr = StringUtils::BuildArgv(str);

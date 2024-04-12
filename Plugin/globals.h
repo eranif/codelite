@@ -245,7 +245,7 @@ WXDLLIMPEXP_SDK bool IsFileReadOnly(const wxFileName& filename);
  * \param arr [out] the array to fill
  * \param str the string to split
  */
-WXDLLIMPEXP_SDK void FillFromSmiColonString(wxArrayString& arr, const wxString& str);
+WXDLLIMPEXP_SDK void FillFromSemiColonString(wxArrayString& arr, const wxString& str);
 
 /**
  * \brief return a string semi-colon separated of the given array

@@ -156,7 +156,7 @@ void BuildConfigCommon::SetLibraries(const wxString& libs) { FillFromSemiColonSt
 
 void BuildConfigCommon::SetLibPath(const wxString& paths) { FillFromSemiColonString(m_libPath, paths); }
 
-static wxString ConvertToSmiColonString(const wxArrayString& array)
+static wxString ConvertToSemiColonString(const wxArrayString& array)
 {
     wxString result;
     for(size_t i = 0; i < array.GetCount(); i++) {
@@ -170,11 +170,11 @@ static wxString ConvertToSmiColonString(const wxArrayString& array)
     return result.BeforeLast(';');
 }
 
-wxString BuildConfigCommon::GetLibPath() const { return ConvertToSmiColonString(m_libPath); }
+wxString BuildConfigCommon::GetLibPath() const { return ConvertToSemiColonString(m_libPath); }
 
-wxString BuildConfigCommon::GetLibraries() const { return ConvertToSmiColonString(m_libs); }
+wxString BuildConfigCommon::GetLibraries() const { return ConvertToSemiColonString(m_libs); }
 
-wxString BuildConfigCommon::GetIncludePath() const { return ConvertToSmiColonString(m_includePath); }
+wxString BuildConfigCommon::GetIncludePath() const { return ConvertToSemiColonString(m_includePath); }
 
 wxString BuildConfigCommon::GetPreprocessor() const
 {

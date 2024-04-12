@@ -679,7 +679,7 @@ void FillFromSemiColonString(wxArrayString& arr, const wxString& str)
     arr = StringUtils::BuildArgv(str);
 }
 
-wxString ArrayToSmiColonString(const wxArrayString& array)
+wxString ArrayToSemiColonString(const wxArrayString& array)
 {
     wxString result;
     for (size_t i = 0; i < array.GetCount(); i++) {

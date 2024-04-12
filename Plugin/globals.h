@@ -550,7 +550,7 @@ WXDLLIMPEXP_SDK void clStripTerminalColouring(const wxString& buffer, wxString& 
 /**
  * @brief return true if the name is valid
  */
-WXDLLIMPEXP_SDK bool clIsVaidProjectName(const wxString& name);
+WXDLLIMPEXP_SDK bool clIsValidProjectName(const wxString& name);
 
 /**
  * @brief support for Hi-Res displays

@@ -1823,7 +1823,7 @@ void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
     StringUtils::StripTerminalColouring(buffer, modbuffer);
 }
 
-bool clIsVaidProjectName(const wxString& name)
+bool clIsValidProjectName(const wxString& name)
 {
     return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos;
 }

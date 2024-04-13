@@ -166,13 +166,6 @@ WXDLLIMPEXP_SDK bool RemoveDirectory(const wxString& path);
 WXDLLIMPEXP_SDK bool IsValidCppIndetifier(const wxString& id);
 
 /**
- * \brief return true of word is a C++ keyword
- * \param word
- * \return
- */
-WXDLLIMPEXP_SDK bool IsCppKeyword(const wxString& word);
-
-/**
  * \brief return true of id is a valid cpp file
  */
 WXDLLIMPEXP_SDK bool IsValidCppFile(const wxString& id);

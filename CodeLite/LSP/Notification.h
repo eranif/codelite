@@ -6,7 +6,7 @@
 namespace LSP
 {
 
-class WXDLLIMPEXP_SDK Notification : public LSP::MessageWithParams
+class WXDLLIMPEXP_CL Notification : public LSP::MessageWithParams
 {
 public:
     Notification();

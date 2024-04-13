@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <locale>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

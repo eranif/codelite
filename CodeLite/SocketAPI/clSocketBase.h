@@ -27,7 +27,6 @@
 #define CLSOCKETBASE_H
 
 #include <string>
-#include <sys/param.h>
 #include <wx/msgqueue.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>

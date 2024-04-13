@@ -41,8 +41,8 @@
 
 typedef VOID* HPCON;
 
-typedef HRESULT WINAPI (*CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
-typedef VOID WINAPI (*ClosePseudoConsole_T)(HPCON hPC);
+typedef HRESULT(WINAPI* CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
+typedef VOID(WINAPI* ClosePseudoConsole_T)(HPCON hPC);
 
 thread_local bool loadOnce = true;
 thread_local CreatePseudoConsole_T CreatePseudoConsole = nullptr;

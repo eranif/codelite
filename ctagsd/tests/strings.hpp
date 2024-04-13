@@ -1060,7 +1060,7 @@ public:
         // m_persistencManager = new clPersistenceManager();
         // wxPersistenceManager::Set(*m_persistencManager);
 #ifdef __WXMSW__
-        typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
+        typedef BOOL (WINAPI* SetProcessDPIAwareFunc)();
         HINSTANCE user32Dll = LoadLibrary(L"User32.dll");
         if(user32Dll) {
             SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(user32Dll, "SetProcessDPIAware");

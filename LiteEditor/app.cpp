@@ -361,7 +361,7 @@ bool CodeLiteApp::OnInit()
 
     ::wxInitAllImageHandlers();
 
-#if defined(__WXMSW__)
+#if defined(__WXMSW__) && !defined(_MSC_VER)
     if (clConfig::Get().Read("CodeLiteAppearance", 0) == 1) {
         // force dark
         MSWEnableDarkMode(wxApp::DarkMode_Always);

@@ -41,12 +41,14 @@
 
 typedef VOID* HPCON;
 
+#if !defined(_MSC_VER)
 typedef HRESULT(WINAPI* CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
 typedef VOID(WINAPI* ClosePseudoConsole_T)(HPCON hPC);
 
 thread_local bool loadOnce = true;
 thread_local CreatePseudoConsole_T CreatePseudoConsole = nullptr;
 thread_local ClosePseudoConsole_T ClosePseudoConsole = nullptr;
+#endif
 
 #ifndef PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE
 #define PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE 0x00020016
@@ -308,6 +310,7 @@ IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const wxString& cm
         return nullptr;
     }
 
+#if !defined(_MSC_VER)
     // Create the Pseudo Console, using the pipes
     if(loadOnce) {
         loadOnce = false;
@@ -318,6 +321,7 @@ IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const wxString& cm
             FreeLibrary(hDLL);
         }
     }
+#endif
 
     if(!CreatePseudoConsole || !ClosePseudoConsole) {
         ::CloseHandle(inputReadSide);

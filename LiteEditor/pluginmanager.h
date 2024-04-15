@@ -95,7 +95,7 @@ public:
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type) override;
     clTreeCtrl* GetFileExplorerTree() override;
     clTreeCtrl* GetWorkspaceTree() override;
-    clAuiBook* GetMainNotebook() override;
+    MainNotebook* GetMainNotebook() override;
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                       OF_extra flags = OF_AddJump) override;
     IEditor* OpenFile(const wxString& fileName, const wxString& bmpResourceName,

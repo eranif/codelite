@@ -85,6 +85,8 @@ void MainBook::CreateGuiControls()
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
+
+#if MAINBOOK_AUIBOOK
     long style = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_CLOSE_ON_ACTIVE_TAB |
                  wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_MIDDLE_CLICK_CLOSE;
 
@@ -92,9 +94,13 @@ void MainBook::CreateGuiControls()
         style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;
         style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
     }
+#else
+    long style = kNotebook_NewButton | kNotebook_AllowDnD | kNotebook_CloseButtonOnActiveTab |
+                 kNotebook_ShowFileListButton | kNotebook_EnableNavigationEvent;
+#endif
 
     // load the notebook style from the configuration settings
-    m_book = new clAuiBook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_book = new MainNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);
     sz->Layout();
 }
@@ -314,7 +320,9 @@ void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { Crea
 
 void MainBook::DoRestoreSession(const SessionEntry& session)
 {
+#if MAINBOOK_AUIBOOK
     clAuiBookEventsDisabler events_disabler{ m_book };
+#endif
 
     size_t sel = session.GetSelectedTab();
     clEditor* active_editor = nullptr;
@@ -351,9 +359,12 @@ void MainBook::DoRestoreSession(const SessionEntry& session)
         }
     }
     SelectPage(active_editor);
+
+#if MAINBOOK_AUIBOOK
     // now that all the pages have been loaded into the book, ensure that our Ctrl-TAB window
     // will display all of them
     m_book->UpdateHistory();
+#endif
 }
 
 void MainBook::RestoreSession(const SessionEntry& session)
@@ -999,7 +1010,9 @@ bool MainBook::CloseAll(bool cancellable)
     }
 
     // Delete the files without notifications (it will be faster)
+#if MAINBOOK_AUIBOOK
     clAuiBookEventsDisabler events_disabler{ m_book };
+#endif
 
     SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
 

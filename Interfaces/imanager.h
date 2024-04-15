@@ -56,6 +56,20 @@ class NavMgr;
 class IMacroManager;
 class wxAuiManager;
 class clInfoBar;
+class clGenericNotebook;
+class clAuiBook;
+
+#ifdef __WXMSW__
+#define MAINBOOK_AUIBOOK 0
+#else
+#define MAINBOOK_AUIBOOK 1
+#endif
+
+#if MAINBOOK_AUIBOOK
+using MainNotebook = clAuiBook;
+#else
+using MainNotebook = clGenericNotebook;
+#endif
 
 //--------------------------
 // Auxulary class
@@ -273,7 +287,7 @@ public:
     /**
      * @brief return the main editor notebook
      */
-    virtual wxAuiNotebook* GetMainNotebook() = 0;
+    virtual MainNotebook* GetMainNotebook() = 0;
 
     /**
      * @brief append text line to the tab in the "Output View"

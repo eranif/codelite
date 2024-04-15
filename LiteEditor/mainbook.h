@@ -53,7 +53,7 @@ class MainBook : public wxPanel
 private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
-    clAuiBook* m_book = nullptr;
+    MainNotebook* m_book = nullptr;
     bool m_useBuffereLimit;
     bool m_isWorkspaceReloading;
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
@@ -289,7 +289,7 @@ public:
     void SetUseBuffereLimit(bool useBuffereLimit) { this->m_useBuffereLimit = useBuffereLimit; }
     bool GetUseBuffereLimit() const { return m_useBuffereLimit; }
 
-    clAuiBook* GetNotebook() { return m_book; }
+    MainNotebook* GetNotebook() { return m_book; }
 };
 
 #endif // MAINBOOK_H

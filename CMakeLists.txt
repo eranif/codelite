@@ -866,11 +866,6 @@ if(APPLE)
     add_definitions(-mmacosx-version-min=10.8)
 endif()
 
-if(NOT SQLite3_FOUND)
-    # On Linux, we use the distro's libsqlite3
-    add_subdirectory(sqlite3)
-endif()
-
 # add the dtl module include path before we include Plugin folder
 include_directories(dtl)
 
@@ -977,16 +972,6 @@ else()
     endif()
     add_subdirectory(codelite_echo)
     add_subdirectory(ctagsd)
-
-    #
-    # Setup the proper dependencies
-    #
-    if(NOT SQLite3_FOUND)
-        if(USE_PCH AND NOT MINGW)
-            add_dependencies(sqlite3lib ${CL_PCH_TARGET})
-        endif()
-        add_dependencies(wxsqlite3 sqlite3lib)
-    endif()
 
     add_subdirectory(LiteEditor)
     add_dependencies(databaselayersqlite wxsqlite3)

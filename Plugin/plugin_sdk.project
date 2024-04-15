@@ -885,7 +885,6 @@
   </Dependencies>
   <Dependencies Name="Win_x86_Release"/>
   <Dependencies Name="Win_x64_Release">
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="ctagsdlib"/>
     <Project Name="libCodeLite"/>

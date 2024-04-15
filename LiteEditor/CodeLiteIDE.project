@@ -597,7 +597,6 @@
   </VirtualDirectory>
   <Dependencies>
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -647,7 +646,6 @@
   <Options/>
   <Dependencies Name="UnixCodeLite">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -664,7 +662,6 @@
   </Dependencies>
   <Dependencies Name="WinDebug_29">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -686,7 +683,6 @@
   </Dependencies>
   <Dependencies Name="WinReleaseUnicode_NoPlugins">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -698,7 +694,6 @@
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -814,7 +809,6 @@
     <File Name="ConfigManagerBaseDlg.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -826,7 +820,6 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <Dependencies Name="Unix_Make_J">
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -839,7 +832,6 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <Dependencies Name="Unix_Wx_29">
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -852,7 +844,6 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <Dependencies Name="Win_wxWidgets_29">
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -893,7 +884,6 @@
   </VirtualDirectory>
   <Dependencies Name="CMake_Debug">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -907,7 +897,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Debug_Aui_Book">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -921,7 +910,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Debug_DBE_MySQL">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -935,7 +923,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Debug_Essential">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -949,7 +936,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Debug_GTK3">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -963,7 +949,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Release">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -977,7 +962,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Release_Aui_Book">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -991,7 +975,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Release_DBE_MySQL">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -1005,7 +988,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Release_Essential">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -1019,7 +1001,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Release_GTK3">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -1033,7 +1014,6 @@
   </Dependencies>
   <Dependencies Name="CMake_Release_NO_SFTP">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -1047,7 +1027,6 @@
   </Dependencies>
   <Dependencies Name="OSX_Debug">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -1061,7 +1040,6 @@
   </Dependencies>
   <Dependencies Name="OSX_Release">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -1074,7 +1052,6 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <Dependencies Name="Win_x64_Debug_No_Plugins">
-    <Project Name="sqlite3"/>
     <Project Name="wxscintilla"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
@@ -1083,7 +1060,6 @@
   </Dependencies>
   <Dependencies Name="Win_x64_Release_PHP">
     <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -1119,7 +1095,6 @@
   </Dependencies>
   <Dependencies Name="Win_x86_Release">
     <Project Name="PCH"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -1177,7 +1152,6 @@
     <Project Name="Remote"/>
   </Dependencies>
   <Dependencies Name="Win_x64_Release">
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="ctagsdlib"/>
     <Project Name="hunspell"/>
@@ -1238,7 +1212,6 @@
     <Project Name="DebugAdapterClient"/>
   </Dependencies>
   <Dependencies Name="Win_x64_Debug">
-    <Project Name="sqlite3"/>
     <Project Name="PCH"/>
     <Project Name="wxsqlite3"/>
     <Project Name="databaselayer_sqlite"/>
@@ -1294,7 +1267,6 @@
   </Dependencies>
   <Dependencies Name="Win_x64_Debug">
     <Project Name="PCH"/>
-    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>

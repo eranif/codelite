@@ -1573,6 +1573,12 @@ void MainBook::OnSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
     ApplyTabLabelChanges();
+
+#if !MAINBOOK_AUIBOOK
+    m_book->EnableStyle(kNotebook_CloseButtonOnActiveTab, EditorConfigST::Get()->GetOptions()->IsTabHasXButton());
+    m_book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
+                        EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
+#endif
 }
 
 clEditor* MainBook::OpenFile(const BrowseRecord& rec)

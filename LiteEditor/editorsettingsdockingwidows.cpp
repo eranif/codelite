@@ -25,6 +25,8 @@
 
 #include "editorsettingsdockingwidows.h"
 
+#include "imanager.h"
+
 EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)
 {
@@ -81,7 +83,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
     AddProperty(_("Show close button on tabs"), m_options->IsTabHasXButton(), UPDATE_BOOL_CB(SetTabHasXButton));
     AddProperty(_("Show file path on tab label"), m_options->IsTabShowPath(), UPDATE_BOOL_CB(SetTabShowPath));
 
-#if 0
+#if !MAINBOOK_AUIBOOK
     AddProperty(_("Mouse scroll switch bewtween tabs"), m_options->IsMouseScrollSwitchTabs(),
                 UPDATE_BOOL_CB(SetMouseScrollSwitchTabs));
     AddProperty(_("Sort tab file list"), m_options->IsSortTabsDropdownAlphabetically(),

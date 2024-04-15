@@ -103,7 +103,6 @@ public:
     wxStaticText* GetStaticText5() { return m_staticText5; }
     clThemedComboBox* GetComboBoxEncoding() { return m_comboBoxEncoding; }
     wxButton* GetCancel() { return m_cancel; }
-    wxPanel* GetPanelMainPanel() { return m_panelMainPanel; }
     wxCheckBox* GetMatchCase() { return m_matchCase; }
     wxCheckBox* GetMatchWholeWord() { return m_matchWholeWord; }
     wxCheckBox* GetRegualrExpression() { return m_regualrExpression; }
@@ -115,6 +114,7 @@ public:
     wxCheckBox* GetCheckBoxATTN() { return m_checkBoxATTN; }
     wxCheckBox* GetCheckBoxBUG() { return m_checkBoxBUG; }
     wxCheckBox* GetCheckBoxFIXME() { return m_checkBoxFIXME; }
+    wxPanel* GetPanelMainPanel() { return m_panelMainPanel; }
     FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find In Files"),
                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

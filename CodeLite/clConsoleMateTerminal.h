@@ -3,7 +3,7 @@
 
 #include "clConsoleGnomeTerminal.h"
 
-class WXDLLIMPEXP_SDK clConsoleMateTerminal : public clConsoleGnomeTerminal
+class WXDLLIMPEXP_CL clConsoleMateTerminal : public clConsoleGnomeTerminal
 {
 public:
     clConsoleMateTerminal();

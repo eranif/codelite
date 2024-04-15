@@ -320,7 +320,7 @@ bool CodeLiteApp::OnInit()
 
 #ifdef __WXMSW__
     // HiDPI support
-    typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
+    typedef BOOL(WINAPI * SetProcessDPIAwareFunc)();
     HINSTANCE user32Dll = LoadLibrary(L"User32.dll");
     if (user32Dll) {
         SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(user32Dll, "SetProcessDPIAware");
@@ -361,7 +361,7 @@ bool CodeLiteApp::OnInit()
 
     ::wxInitAllImageHandlers();
 
-#if defined(__WXMSW__)
+#if defined(__WXMSW__) && !defined(_MSC_VER)
     if (clConfig::Get().Read("CodeLiteAppearance", 0) == 1) {
         // force dark
         MSWEnableDarkMode(wxApp::DarkMode_Always);

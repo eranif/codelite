@@ -1114,16 +1114,16 @@ void ColoursAndFontsManager::SetThemeTextSelectionColours(const wxString& theme_
     }
 }
 
-wxFont ColoursAndFontsManager::GetFixedFont(bool small) const
+wxFont ColoursAndFontsManager::GetFixedFont(bool smaller) const
 {
     auto lexer = GetLexer("text");
     auto font = lexer->GetFontForStyle(0, EventNotifier::Get()->TopFrame());
 #ifndef __WXMAC__
-    if (small) {
+    if (smaller) {
         font.SetFractionalPointSize(font.GetPointSize() * 0.9);
     }
 #else
-    wxUnusedVar(small);
+    wxUnusedVar(smaller);
 #endif
     return font;
 }

@@ -27,7 +27,7 @@
 
 #include "cl_standard_paths.h"
 
-#include <sys/time.h>
+#include <chrono>
 #include <wx/crt.h>
 #include <wx/filename.h>
 #include <wx/log.h>
@@ -163,12 +163,10 @@ wxString FileLogger::Prefix(int verbosity)
         return wxEmptyString;
     }
 
+    const auto now = std::chrono::system_clock::now().time_since_epoch();
+    const int ms = std::chrono::duration_cast<std::chrono::milliseconds>(now).count() % 1000;
+    const wxString msStr = wxString::Format(wxT("%03d"), ms);
     wxString prefix;
-    timeval tim;
-    gettimeofday(&tim, NULL);
-    int ms = (int)tim.tv_usec / 1000.0;
-
-    wxString msStr = wxString::Format(wxT("%03d"), ms);
     prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
     switch(verbosity) {
     case System:

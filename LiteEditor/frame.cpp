@@ -6184,7 +6184,7 @@ void clMainFrame::OnSetActivePoject(wxCommandEvent& e)
     CHECK_COND_RET(!projects.empty());
 
     // sort the entries
-    projects.Sort([](const wxString& first, const wxString& second) { return first.CmpNoCase(second) < 0; });
+    projects.Sort(+[](const wxString& first, const wxString& second) { return first.CmpNoCase(second) < 0; });
 
     int initialSelection = projects.Index(cur_active_project);
     clSingleChoiceDialog dlg(this, projects, initialSelection == wxNOT_FOUND ? 0 : initialSelection);

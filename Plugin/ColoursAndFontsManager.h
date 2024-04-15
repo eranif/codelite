@@ -94,7 +94,7 @@ public:
     /**
      * @brief return the default editor font (monospaced)
      */
-    wxFont GetFixedFont(bool small = false) const;
+    wxFont GetFixedFont(bool smaller = false) const;
     /**
      * @brief return a suitable background colour that matches the lexer's bg colour
      */

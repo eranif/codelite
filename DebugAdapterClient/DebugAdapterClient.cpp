@@ -1120,7 +1120,7 @@ void DebugAdapterClient::OnDapSetSourceBreakpointResponse(DAPEvent& event)
     auto resp = event.GetDapResponse()->As<dap::SetBreakpointsResponse>();
     CHECK_PTR_RET(resp);
 
-    auto req = event.GetOriginatingReuqest();
+    auto req = event.GetOriginatingRequest();
     CHECK_PTR_RET(req);
 
     auto set_bp_req = req->As<dap::SetBreakpointsRequest>();

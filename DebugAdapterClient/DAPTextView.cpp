@@ -6,6 +6,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
+#include "clAuiBook.hpp"
 
 namespace
 {

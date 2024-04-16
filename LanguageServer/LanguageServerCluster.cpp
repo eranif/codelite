@@ -24,6 +24,7 @@
 #include "macromanager.h"
 #include "macros.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "clAuiBook.hpp"
 
 #if USE_SFTP
 #include "clSFTPManager.hpp"

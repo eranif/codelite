@@ -51,6 +51,7 @@
 #include "globals.h"
 #include "macromanager.h"
 #include "processreaderthread.h"
+#include "clAuiBook.hpp"
 
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>

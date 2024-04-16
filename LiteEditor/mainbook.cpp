@@ -96,7 +96,7 @@ void MainBook::CreateGuiControls()
     }
 #else
     long style = kNotebook_NewButton | kNotebook_AllowDnD | kNotebook_CloseButtonOnActiveTab |
-                 kNotebook_ShowFileListButton | kNotebook_EnableNavigationEvent;
+                 kNotebook_ShowFileListButton | kNotebook_EnableNavigationEvent | kNotebook_MouseMiddleClickClosesTab;
 #endif
 
     // load the notebook style from the configuration settings

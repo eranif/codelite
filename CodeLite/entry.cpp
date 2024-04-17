@@ -29,7 +29,6 @@
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
 #include "code_completion_api.h"
-#include "comment_parser.h"
 #include "ctags_manager.h"
 #include "language.h"
 #include "macros.h"

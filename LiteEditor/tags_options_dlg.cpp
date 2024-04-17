@@ -36,7 +36,6 @@
 #include "lexer_configuration.h"
 #include "macros.h"
 #include "pluginmanager.h"
-#include "pp_include.h"
 #include "pptable.h"
 #include "windowattrmanager.h"
 #include "wx/tokenzr.h"

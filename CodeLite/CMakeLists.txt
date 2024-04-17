@@ -14,12 +14,14 @@ endif(UNIX AND NOT APPLE)
 # Flex files
 FLEX_TARGET(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l" "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
             COMPILE_FLAGS "--noline --yylineno --batch")
+FLEX_TARGET(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/include_finder.l" "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp"
+            COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
 FLEX_TARGET(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
             COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
 FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
             COMPILE_FLAGS "-Pxml --noline --yylineno --batch")
 
-set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}" "${FLEX_XmlFlex_OUTPUTS}")
+set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}" "${FLEX_XmlFlex_OUTPUTS}")
 
 # Include paths
 include_directories(

@@ -12,41 +12,14 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 # Flex files
-if(UNIX AND NOT APPLE)
-    if(WITH_FLEX)
-        message("-- Adding flex support")
-        find_package(FLEX REQUIRED)
+FLEX_TARGET(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l" "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
+            COMPILE_FLAGS "--noline --yylineno --batch")
+FLEX_TARGET(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
+            COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
+FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
+            COMPILE_FLAGS "-Pxml --noline --yylineno --batch")
 
-        set(CxxFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/CxxLexer.cpp)
-        set(CxxFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l)
-
-        set(PhpFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.cpp)
-        set(PhpFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.l)
-
-        set(JSFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/JSLexer.cpp)
-        set(JSFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/JSLexer.l)
-
-        if(FLEX_FOUND)
-            add_custom_command(
-                OUTPUT ${CxxFlexOutput}
-                COMMAND ${FLEX_EXECUTABLE} --noline --yylineno --batch --outfile=${CxxFlexOutput} ${CxxFlexInput}
-                DEPENDS ${CxxFlexInput}
-                COMMENT "Generating ${CxxFlexOutput}")
-            add_custom_command(
-                OUTPUT ${PhpFlexOutput}
-                COMMAND ${FLEX_EXECUTABLE} -Pphp --yylineno --noline --batch --outfile=${PhpFlexOutput} ${PhpFlexInput}
-                DEPENDS ${PhpFlexInput}
-                COMMENT "Generating ${PhpFlexOutput}")
-            add_custom_command(
-                OUTPUT ${JSFlexOutput}
-                COMMAND ${FLEX_EXECUTABLE} -Pjs --yylineno --noline --batch --outfile=${JSFlexOutput} ${JSFlexInput}
-                DEPENDS ${JSFlexInput}
-                COMMENT "Generating ${JSFlexOutput}")
-        endif()
-    else()
-        message("-- Flex support is disabled")
-    endif()
-endif()
+set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}" "${FLEX_XmlFlex_OUTPUTS}")
 
 # Include paths
 include_directories(
@@ -122,7 +95,7 @@ else()
 endif()
 
 # Define the output
-add_library(libcodelite SHARED ${SRCS})
+add_library(libcodelite SHARED ${SRCS} ${FlexSrcs})
 target_link_libraries(
     libcodelite
     ${LINKER_OPTIONS}

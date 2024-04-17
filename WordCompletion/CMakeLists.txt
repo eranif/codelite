@@ -31,11 +31,17 @@ if(APPLE)
     add_definitions(-fPIC)
 endif()
 
+FLEX_TARGET(WordFlex "WordTokenizer.l" "${CMAKE_CURRENT_BINARY_DIR}/WordTokenizer.cpp"
+            COMPILE_FLAGS "-Pword --noline --yylineno --batch")
+
+set(FlexSrcs "${FLEX_WordFlex_OUTPUTS}")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${FlexSrcs})
 target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+target_include_directories(${PLUGIN_NAME} PRIVATE .)
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

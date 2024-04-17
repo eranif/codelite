@@ -31,7 +31,7 @@ jobs:
 
     # Codelite
     - name: install Codelite's dependencies
-      run: sudo apt-get install build-essential cmake git libpcre2-dev libsqlite3-dev libssh-dev
+      run: sudo apt-get install build-essential cmake git libpcre2-dev libsqlite3-dev libssh-dev flex
 
     - name: Checkout Codelite
       uses: actions/checkout@v4

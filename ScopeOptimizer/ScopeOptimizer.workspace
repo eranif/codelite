@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="ScopeOptimizer" Database="./ScopeOptimizer.tags">
-  <Project Name="ScopeOptimizer" Path="ScopeOptimizer/scope_optimizer.project" Active="Yes"/>
-  <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
-      <Project Name="ScopeOptimizer" ConfigName="Debug"/>
-    </WorkspaceConfiguration>
-  </BuildMatrix>
-</CodeLite_Workspace>

@@ -7,7 +7,6 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
-#include "readtags.h"
 
 #include <set>
 #include <wx/stopwatch.h>

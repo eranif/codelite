@@ -30,7 +30,6 @@
 #include "wx/filename.h"
 #include "wx/regex.h"
 #include "wx/utils.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 #include <algorithm>

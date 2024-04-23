@@ -30,7 +30,6 @@
 #include "serialized_object.h"
 #include "wx/ffile.h"
 #include "wx/filename.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 ConfigTool::ConfigTool()

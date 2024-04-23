@@ -33,7 +33,6 @@
 #include "optionsconfig.h"
 #include "project.h"
 #include "workspace.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 #include <algorithm>

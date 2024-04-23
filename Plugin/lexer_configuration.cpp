@@ -35,7 +35,6 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "macros.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 #include <algorithm>

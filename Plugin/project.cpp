@@ -41,7 +41,6 @@
 #include "plugin.h"
 #include "workspace.h"
 #include "wxArrayStringAppender.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 #include <algorithm>

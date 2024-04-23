@@ -27,7 +27,6 @@
 #include "cl_defs.h"
 #include "editor_config.h"
 #include "macros.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 #include <wx/fontmap.h>

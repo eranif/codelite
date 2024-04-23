@@ -25,13 +25,12 @@
 
 #include "tabgroupmanager.h"
 
+#include "SideBar.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "frame.h"
 #include "manager.h"
 #include "tabgroupspane.h"
-#include "SideBar.hpp"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 #include <wx/dir.h>

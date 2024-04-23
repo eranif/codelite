@@ -35,7 +35,6 @@
 #include "ieditor.h"
 #include "pluginmanager.h"
 #include "tabgroupmanager.h"
-#include "wx_xml_compatibility.h"
 
 #include <algorithm>
 #include <wx/accel.h>

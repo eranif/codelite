@@ -42,7 +42,6 @@
 #include "plugin.h"
 #include "project.h"
 #include "wx/regex.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 #include <wx/app.h>

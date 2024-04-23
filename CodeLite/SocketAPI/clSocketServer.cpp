@@ -27,6 +27,7 @@
 #include "clSocketServer.h"
 
 #ifndef _WIN32
+#include <sys/param.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -60,6 +61,9 @@ int clSocketServer::CreateServer(const std::string& pipePath)
 
     // Prepare the sockaddr_in structure
     struct sockaddr_un server;
+#ifdef BSD /* BSD specific code. */
+    server.sun_len = sizeof(struct sockaddr_un);
+#endif
     server.sun_family = AF_UNIX;
     strcpy(server.sun_path, pipePath.c_str());
 
@@ -97,6 +101,9 @@ int clSocketServer::CreateServer(const std::string& address, int port)
 
     // Prepare the sockaddr_in structure
     struct sockaddr_in server;
+#ifdef BSD /* BSD specific code. */
+    server.sin_len = sizeof(struct sockaddr_in);
+#endif
     server.sin_family = AF_INET;
 #ifdef __WXMSW__
     server.sin_addr.s_addr = inet_addr(address.c_str());

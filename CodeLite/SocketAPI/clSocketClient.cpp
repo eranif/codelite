@@ -27,6 +27,7 @@
 #include "clSocketClient.h"
 
 #ifndef _WIN32
+#include <sys/param.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -52,6 +53,9 @@ bool clSocketClient::ConnectLocal(const wxString& socketPath)
 #ifndef __WXMSW__
     struct sockaddr_un server;
     m_socket = socket(AF_UNIX, SOCK_STREAM, 0);
+#ifdef BSD /* BSD specific code. */
+    server.sun_len = sizeof(struct sockaddr_un);
+#endif
     server.sun_family = AF_UNIX;
     strcpy(server.sun_path, socketPath.mb_str(wxConvUTF8).data());
     if(::connect(m_socket, (struct sockaddr*)&server, sizeof(struct sockaddr_un)) < 0) { return false; }
@@ -70,6 +74,9 @@ bool clSocketClient::ConnectRemote(const wxString& address, int port, bool& woul
 
     const char* ip_addr = address.mb_str(wxConvUTF8).data();
     struct sockaddr_in serv_addr;
+#ifdef BSD /* BSD specific code. */
+    serv_addr.sin_len = sizeof(struct sockaddr_in);
+#endif
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
 

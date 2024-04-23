@@ -1,1 +1,0 @@
-./Debug/main.o ./Debug/clang_result_lexer.o ./Debug/clang_result_parser.o  

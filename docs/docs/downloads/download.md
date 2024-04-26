@@ -123,11 +123,11 @@ This allows you to select which to install using apt (or aptitude or synaptic).
 ### CodeLite RPMs
 ---
 
-There are rpms available for fedora 37, 38 & 39, and openSUSE Leap 15.4 & 15.5:
+There are rpms available for fedora 37 & 38 and 39 & 40, and openSUSE Leap 15.4 & 15.5:
 
 Distro	| x86_64 GTK+3
 --------|----------------
-fedora	| [`37 and 38`][10]  [`39`][11] 
+fedora	| [`37 and 38`][10]  [`39 and 40`][11] 
 openSUSE | [`15.4`][12] [`15.5`][13]
 
 
@@ -140,7 +140,7 @@ First tell rpm about the CodeLite public key. As superuser run:
 Then either download the required rpm and install it as usual, or download and install in one step; e.g.
 
 ```bash
-  rpm -Uvh https://repos.codelite.org/rpms-17.0/fedora/37/codelite-17.0-1.fc37.x86_64.rpm
+  rpm -Uvh https://repos.codelite.org/rpms-17.0/fedora/39/codelite-17.0-1.fc39.x86_64.rpm
 ```
 
 There are also source rpms for [fedora][2] and [OpenSUSE][3]

@@ -111,7 +111,24 @@ if(NOT SQLite3_FOUND)
                 " **** Could not find sqlite3. Please install sqlite3 package: pacman -S mingw-w64-clang-x86_64-sqlite3"
         )
     else()
-        message(FATAL_ERROR " **** Could not find sqlite3. Plesae install sqlite3 development package")
+        message(FATAL_ERROR " **** Could not find sqlite3. Please install sqlite3 development package")
+    endif()
+endif()
+
+find_package(FLEX REQUIRED)
+
+if(NOT FLEX_FOUND)
+    if(UNIX)
+        message(FATAL_ERROR " **** Could not find flex. Please install flex package")
+    elseif(APPLE)
+        message(FATAL_ERROR " **** Could not find flex. Please install flex via brew")
+    elseif(MINGW)
+        message(
+            FATAL_ERROR
+                " **** Could not find flex. Please install flex package: pacman -S flex"
+        )
+    else()
+        message(FATAL_ERROR " **** Could not find flex. Please install flex package")
     endif()
 endif()
 

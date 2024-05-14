@@ -11,11 +11,12 @@
 - Open `MSYS` terminal, and type:
 
 ```bash
-pacman -S mingw-w64-clang-x86_64-zlib       \
-          mingw-w64-clang-x86_64-libssh     \
-          mingw-w64-clang-x86_64-hunspell   \
-          mingw-w64-clang-x86_64-openssl    \
-          mingw-w64-clang-x86_64-sqlite3
+pacman -S mingw-w64-clang-x86_64-zlib     \
+          mingw-w64-clang-x86_64-libssh   \
+          mingw-w64-clang-x86_64-hunspell \
+          mingw-w64-clang-x86_64-openssl  \
+          mingw-w64-clang-x86_64-sqlite3  \
+          flex
 ```
 
 - Download and build `wx-config.exe` from sources:
@@ -25,7 +26,7 @@ git clone https://github.com/eranif/wx-config-msys2.git
 cd wx-config-msys2
 mkdir build-release
 cd $_
-cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=$HOME/root
+cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/root"
 mingw32-make -j$(nproc) install
 ```
 
@@ -39,7 +40,7 @@ cd codelite
 git submodule update --init --recursive
 mkdir build-release
 cd $_
-cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN=$HOME/root -Wno-dev
+cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN="$HOME/root" -Wno-dev
 mingw32-make -j$(nproc) install
 ```
 
@@ -62,7 +63,7 @@ cd build-release/install
 
 ```bash
     sudo apt install build-essential            \
-                     git cmake                  \
+                     git cmake flex             \
                      libssh-dev libsqlite3-dev  \
                      libpcre2-dev
 ```
@@ -106,6 +107,7 @@ Prerequisites:
  - Xcode
  - Xcode command-line tools
  - Homebrew
+ - Flex
 
 Preparation:
 
@@ -125,7 +127,8 @@ brew update
 brew install git \
              cmake \
              libssh \
-             hunspell
+             hunspell \
+             flex
 ```
 
  - Usually, `brew` will install everything under `/opt/homebrew`, so run this from the terminal:

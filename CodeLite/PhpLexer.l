@@ -497,38 +497,38 @@ bool phpLexerNext(void* scanner, phpLexerToken& token)
         switch(token.type) {
         case kPHP_T_END_HEREDOC:
             token.lineNumber = yylineno; 
-            token.text = userData->GetString();
+            token.SetText(userData->GetString());
             userData->GetString().clear();
             break;
         case kPHP_T_START_HEREDOC:
             token.lineNumber = yylineno;
-            token.text.clear();
+            token.ClearText();
             break;
         case kPHP_T_CONSTANT_ENCAPSED_STRING:
             token.lineNumber = yylineno;
-            token.text = userData->GetString();
+            token.SetText(userData->GetString());
             userData->GetString().clear();
             break;
         case kPHP_T_CXX_COMMENT:
             // One line up for CXX comments
             token.lineNumber = userData->GetCommentStartLine();
-            token.text = userData->GetComment();
+            token.SetText(userData->GetComment());
             userData->ClearComment();
             break;
         case kPHP_T_C_COMMENT:
-            token.text = userData->GetComment();
+            token.SetText(userData->GetComment());
             token.lineNumber = userData->GetCommentStartLine();
             token.endLineNumber = userData->GetCommentEndLine();
             userData->ClearComment();
             break;
         default:
             token.lineNumber = yylineno;
-            token.text = phpget_text(scanner);
+            token.SetText(phpget_text(scanner));
             break;
         }
 
     } else {
-        token.text.clear();
+        token.ClearText();
         token.lineNumber = 0;
     }
     return token.type != 0;

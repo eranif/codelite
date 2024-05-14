@@ -31,7 +31,6 @@
 #include "CxxTemplateFunction.h"
 #include "CxxUsingNamespaceCollector.h"
 #include "CxxVariableScanner.h"
-#include "crawler_include.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
 #include "function.h"
@@ -50,7 +49,6 @@
 //#define __PERFORMANCE
 #include "code_completion_api.h"
 #include "performance.h"
-#include "scope_optimizer.h"
 
 static wxString PathFromNameAndScope(const wxString& typeName, const wxString& typeScope)
 {

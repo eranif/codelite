@@ -26,7 +26,6 @@
 #include "configuration_mapping.h"
 
 #include "macros.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 BuildMatrix::BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration)

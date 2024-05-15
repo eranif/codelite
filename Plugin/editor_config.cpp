@@ -34,7 +34,6 @@
 #include "globals.h"
 #include "precompiled_header.h"
 #include "workspace.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 #include <wx/ffile.h>

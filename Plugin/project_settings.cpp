@@ -26,7 +26,6 @@
 
 #include "macros.h"
 #include "project.h"
-#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 
 ProjectSettings::ProjectSettings(wxXmlNode* node)

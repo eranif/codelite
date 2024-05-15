@@ -33,7 +33,6 @@
 #include "comment.h"
 #include "cpptoken.h"
 #include "entry.h"
-#include "extdbdata.h"
 #include "istorage.h"
 #include "language.h"
 #include "macros.h"

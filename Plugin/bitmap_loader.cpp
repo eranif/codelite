@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "bitmap_loader.h"
 
-#include "clBitmap.h"
 #include "clFilesCollector.h"
 #include "clSystemSettings.h"
 #include "clZipReader.h"

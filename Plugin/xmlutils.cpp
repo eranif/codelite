@@ -24,9 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "xmlutils.h"
 
-// wxXmlNode compatibilty macros
-#include "wx_xml_compatibility.h"
-
 wxXmlNode* XmlUtils::FindNodeByName(const wxXmlNode* parent, const wxString& tagName, const wxString& name)
 {
     if(!parent) {

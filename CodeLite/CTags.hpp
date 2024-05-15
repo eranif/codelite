@@ -3,7 +3,6 @@
 
 #include "codelite_exports.h"
 #include "entry.h"
-#include "readtags.h"
 #include "tag_tree.h"
 
 #include <vector>

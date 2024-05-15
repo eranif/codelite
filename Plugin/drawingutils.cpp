@@ -406,7 +406,11 @@ wxBrush DrawingUtils::GetStippleBrush()
     wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     wxBitmap bmpStipple(3, 3);
     wxColour lightPen = bgColour.ChangeLightness(105);
+#if wxCHECK_VERSION(3, 3, 0)
     wxColour darkPen = clSystemSettings::Get().SelectLightDark(bgColour.ChangeLightness(95), *wxBLACK);
+#else
+    wxColour darkPen = clSystemSettings::Get().IsDark() ? bgColour.ChangeLightness(95) : *wxBLACK;
+#endif
 #else
     wxColour bgColour = clSystemSettings::GetDefaultPanelColour();
     wxBitmap bmpStipple(3, 3);

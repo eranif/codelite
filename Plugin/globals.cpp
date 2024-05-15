@@ -288,20 +288,6 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
     return !content.IsEmpty();
 }
 
-bool RemoveDirectory(const wxString& path)
-{
-    wxString cmd;
-    if (wxGetOsVersion() & wxOS_WINDOWS) {
-        // any of the windows variants
-        cmd << "rmdir /S /Q "
-            << "\"" << path << "\"";
-    } else {
-        cmd << "\rm -fr "
-            << "\"" << path << "\"";
-    }
-    return wxShell(cmd);
-}
-
 bool IsValidCppIndetifier(const wxString& id)
 {
     if (id.IsEmpty()) {

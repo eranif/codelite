@@ -154,13 +154,6 @@ WXDLLIMPEXP_SDK bool WriteFileUTF8(const wxString& fileName, const wxString& con
 WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxString& str);
 
 /**
- * \brief delete directory using shell command
- * \param path directory path
- * \return true on success, false otherwise
- */
-WXDLLIMPEXP_SDK bool RemoveDirectory(const wxString& path);
-
-/**
  * \brief return true of id is a valid cpp identifier
  */
 WXDLLIMPEXP_SDK bool IsValidCppIndetifier(const wxString& id);

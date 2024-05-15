@@ -318,19 +318,6 @@ long AppendListCtrlRow(wxListCtrl* list)
     return item;
 }
 
-bool IsValidCppFile(const wxString& id)
-{
-    if (id.IsEmpty()) {
-        return false;
-    }
-
-    // make sure that rest of the id contains only a-zA-Z0-9_
-    if (id.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != wxString::npos) {
-        return false;
-    }
-    return true;
-}
-
 wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* editor, const wxString& filename)
 {
     wxString project_name(proj->GetName());

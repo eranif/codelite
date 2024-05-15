@@ -159,11 +159,6 @@ WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxStr
 WXDLLIMPEXP_SDK bool IsValidCppIndetifier(const wxString& id);
 
 /**
- * \brief return true of id is a valid cpp file
- */
-WXDLLIMPEXP_SDK bool IsValidCppFile(const wxString& id);
-
-/**
  * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
  * Expand variables to their real value, if expanding fails
  * the return value is same as input. The variable is expanded

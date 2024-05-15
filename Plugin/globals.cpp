@@ -500,17 +500,6 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
     return output;
 }
 
-bool WriteFileUTF8(const wxString& fileName, const wxString& content)
-{
-    wxFFile file(fileName, "w+b");
-    if (!file.IsOpened()) {
-        return false;
-    }
-
-    // first try the Utf8
-    return file.Write(content, wxConvUTF8);
-}
-
 bool CompareFileWithString(const wxString& filePath, const wxString& str)
 {
     wxString content;

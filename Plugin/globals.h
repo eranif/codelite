@@ -138,14 +138,6 @@ WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString& fileName, wxString& 
                                             wxFontEncoding encoding = wxFONTENCODING_DEFAULT, BOM* bom = NULL);
 
 /**
- * \brief write file using UTF8 converter
- * \param fileName file path
- * \param content file's content
- * \return true on success, false otherwise
- */
-WXDLLIMPEXP_SDK bool WriteFileUTF8(const wxString& fileName, const wxString& content);
-
-/**
  * \brief compare a file with a wxString using md5
  * \param filePath file's full path
  * \param str a wxString, perhaps containing an editor's content

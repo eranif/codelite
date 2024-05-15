@@ -124,31 +124,6 @@ void MSWSetWindowDarkTheme(wxWindow* win)
 static wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
                                      const wxString& confToBuild, const wxString& fileName);
 
-#ifdef __WXMAC__
-#include <mach-o/dyld.h>
-
-// On Mac we determine the base path using system call
-//_NSGetExecutablePath(path, &path_len);
-static wxString MacGetInstallPath()
-{
-    char path[257];
-    uint32_t path_len = 256;
-    _NSGetExecutablePath(path, &path_len);
-
-    // path now contains
-    // CodeLite.app/Contents/MacOS/
-    wxFileName fname(wxString(path, wxConvUTF8));
-
-    // remove he MacOS part of the exe path
-    wxString file_name = fname.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-    wxString rest;
-    file_name.EndsWith("MacOS/", &rest);
-    rest.Append("SharedSupport/");
-
-    return rest;
-}
-#endif
-
 #if defined(__WXGTK__)
 #include <dirent.h>
 #include <unistd.h>

@@ -431,14 +431,6 @@ WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString& str);
 WXDLLIMPEXP_SDK wxString& EscapeSpaces(wxString& str);
 
 /**
- * @brief return an expression from a given position.
- * e.g. if the caret is on a line:
- * variable.m_name.m_value|
- * the | represents the cart, this function will return the entire expression: variable.m_name.m_value
- */
-WXDLLIMPEXP_SDK wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC);
-
-/**
  * @brief save an xml document to file
  */
 WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename);

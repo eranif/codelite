@@ -450,11 +450,6 @@ WXDLLIMPEXP_SDK bool clIsCygwinEnvironment();
 WXDLLIMPEXP_SDK bool clIsMSYSEnvironment();
 
 /**
- * @brief change the command so it will run in the background
- */
-WXDLLIMPEXP_SDK wxString MakeCommandRunInBackground(const wxString& cmd);
-
-/**
  * @brief enable use of checkbox for boolean properties
  */
 WXDLLIMPEXP_SDK void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid);

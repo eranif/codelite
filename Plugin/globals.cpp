@@ -1402,18 +1402,6 @@ bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
     return false;
 }
 
-wxString MakeCommandRunInBackground(const wxString& cmd)
-{
-    wxString alteredCommand;
-#ifdef __WXMSW__
-    alteredCommand << "start /b " << cmd;
-#else
-    // POSIX systems
-    alteredCommand << cmd << "&";
-#endif
-    return alteredCommand;
-}
-
 void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid)
 {
     grid->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);

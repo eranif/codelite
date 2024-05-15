@@ -1379,12 +1379,6 @@ wxString& WrapWithQuotes(wxString& str)
     return str;
 }
 
-wxString& EscapeSpaces(wxString& str)
-{
-    str.Replace(" ", "\\ ");
-    return str;
-}
-
 bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
 {
     wxString content;

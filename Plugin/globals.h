@@ -426,11 +426,6 @@ WXDLLIMPEXP_SDK wxStandardID PromptForYesNoDialogWithCheckbox(
 WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString& str);
 
 /**
- * @brief wrap string with quotes if needed
- */
-WXDLLIMPEXP_SDK wxString& EscapeSpaces(wxString& str);
-
-/**
  * @brief save an xml document to file
  */
 WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename);

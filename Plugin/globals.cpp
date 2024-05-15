@@ -1562,8 +1562,6 @@ int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
     return wxNOT_FOUND;
 }
 
-bool clNextWord(const wxString& str, size_t& offset, wxString& word) { return FileUtils::NextWord(str, offset, word); }
-
 wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
 {
     wxString glue = "\n";

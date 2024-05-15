@@ -542,23 +542,6 @@ WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name, wxFileName& exepath,
 WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
 
 /**
- * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
- * @code
- * wxString str = "My String That Requires Tokenize";
- * wxString word; // The output
- * size_t offset = 0;
- * while(clNextWord(str, offset, word)) {
- *      // Do something with "word" here
- * }
- * @codeend
- * @param str the string to tokenize
- * @param offset used internally, allocate one on the stack and initialise it to 0
- * @param word [output]
- * @return true if a word was found
- */
-WXDLLIMPEXP_SDK bool clNextWord(const wxString& str, size_t& offset, wxString& word);
-
-/**
  * @brief join strings with "\n" or "\r\n" (depends on eol)
  * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
  */

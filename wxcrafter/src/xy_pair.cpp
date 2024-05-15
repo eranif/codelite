@@ -1,18 +1,19 @@
 #include "xy_pair.h"
+
 #include "wxgui_helpers.h"
 
-XYPair::XYPair(const wxString& str, int defaultx, int defaulty)
-    : m_string(str)
-    , m_x(defaultx)
+XYPair::XYPair(wxString str, int defaultx, int defaulty)
+    : m_x(defaultx)
     , m_y(defaulty)
 {
-    m_string.Trim().Trim(false);
-    if(m_string.StartsWith(wxT("("))) m_string.Remove(0, 1);
+    if (str.StartsWith(wxT("(")))
+        str.Remove(0, 1);
 
-    if(m_string.EndsWith(wxT(")"))) m_string.RemoveLast();
+    if (str.EndsWith(wxT(")")))
+        str.RemoveLast();
 
-    wxString strx = m_string.BeforeFirst(wxT(','));
-    wxString stry = m_string.AfterFirst(wxT(','));
+    wxString strx = str.BeforeFirst(wxT(','));
+    wxString stry = str.AfterFirst(wxT(','));
 
     strx.Trim().Trim(false);
     stry.Trim().Trim(false);
@@ -25,7 +26,6 @@ XYPair::XYPair(int x, int y)
     : m_x(x)
     , m_y(y)
 {
-    m_string = ToString(false);
 }
 
 XYPair::~XYPair() {}

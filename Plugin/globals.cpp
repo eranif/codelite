@@ -679,20 +679,6 @@ void FillFromSemiColonString(wxArrayString& arr, const wxString& str)
     arr = StringUtils::BuildArgv(str);
 }
 
-wxString ArrayToSemiColonString(const wxArrayString& array)
-{
-    wxString result;
-    for (size_t i = 0; i < array.GetCount(); i++) {
-        wxString tmp = NormalizePath(array.Item(i));
-        tmp.Trim().Trim(false);
-        if (tmp.IsEmpty() == false) {
-            result += NormalizePath(array.Item(i));
-            result += ";";
-        }
-    }
-    return result.BeforeLast(';');
-}
-
 void StripSemiColons(wxString& str) { str.Replace(";", " "); }
 
 wxString NormalizePath(const wxString& path)

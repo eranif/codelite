@@ -5937,7 +5937,7 @@ void ShowNavDialog(Notebook* book)
         return;
     }
 
-    NotebookNavigationDlg dlg(book->GetParent(), book);
+    NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), book);
     if (dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
         book->SetSelection(dlg.GetSelection());
     }

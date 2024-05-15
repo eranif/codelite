@@ -368,12 +368,6 @@ WXDLLIMPEXP_SDK wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex
 WXDLLIMPEXP_SDK wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex);
 
 /**
- * @brief queue a call to a function to be executed on the next event loop
- */
-WXDLLIMPEXP_SDK void PostCall(wxObject* instance, clEventFunc_t func, wxClientData* arg);
-WXDLLIMPEXP_SDK void PostCall(wxObject* instance, clEventFunc_t func);
-
-/**
  * @brief split lines (using CR|LF as the separator), taking into considertaion line continuation
  * @param trim trim the lines with set to true
  */

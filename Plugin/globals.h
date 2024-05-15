@@ -241,11 +241,6 @@ WXDLLIMPEXP_SDK bool IsFileReadOnly(const wxFileName& filename);
 WXDLLIMPEXP_SDK void FillFromSemiColonString(wxArrayString& arr, const wxString& str);
 
 /**
- * \brief Remove all semi colons of the given string
- */
-WXDLLIMPEXP_SDK void StripSemiColons(wxString& str);
-
-/**
  * \brief Normalize the given path (change all \ by /)
  */
 WXDLLIMPEXP_SDK wxString NormalizePath(const wxString& path);

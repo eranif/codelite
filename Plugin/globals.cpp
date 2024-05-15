@@ -679,8 +679,6 @@ void FillFromSemiColonString(wxArrayString& arr, const wxString& str)
     arr = StringUtils::BuildArgv(str);
 }
 
-void StripSemiColons(wxString& str) { str.Replace(";", " "); }
-
 wxString NormalizePath(const wxString& path)
 {
     wxString normalized_path(path);

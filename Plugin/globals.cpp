@@ -1793,31 +1793,6 @@ bool SetBestFocus(wxWindow* win)
     return false;
 }
 
-bool IsWindowParentOf(wxWindow* parent, wxWindow* child)
-{
-    if (!child) {
-        return false;
-    }
-
-    std::vector<wxWindow*> Q;
-    Q.push_back(parent);
-
-    while (!Q.empty()) {
-        auto parent = Q.front();
-        Q.erase(Q.begin());
-
-        if (parent == child) {
-            return true;
-        }
-
-        // put its children
-        for (auto c : parent->GetChildren()) {
-            Q.push_back(c);
-        }
-    }
-    return false;
-}
-
 Notebook* FindNotebookParentOf(wxWindow* child)
 {
     if (!child) {

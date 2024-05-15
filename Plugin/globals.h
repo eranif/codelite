@@ -598,9 +598,6 @@ WXDLLIMPEXP_SDK bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArr
 /// Find the best window starting from `win` and give it the focus
 WXDLLIMPEXP_SDK bool SetBestFocus(wxWindow* win);
 
-/// Check if Window `parent` is the parent (or grand parent, or grand-grand-parent ...) of `child`
-WXDLLIMPEXP_SDK bool IsWindowParentOf(wxWindow* parent, wxWindow* child);
-
 /// Find Notebook parent of a `child`
 WXDLLIMPEXP_SDK Notebook* FindNotebookParentOf(wxWindow* child);
 

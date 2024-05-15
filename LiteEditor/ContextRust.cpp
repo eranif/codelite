@@ -22,15 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "wx/versioninfo.h"
+#include "commentconfigdata.h"
 
-// rust support was added in wx3.1
+#include <wx/versioninfo.h>
+
+// Rust support was added in wx3.1
 #if wxCHECK_VERSION(3, 1, 0)
 
 #include "ContextRust.hpp"
 #include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "editor_config.h"
+#include "file_logger.h"
 
 #include <unordered_set>
 #include <wx/xrc/xmlres.h>
@@ -84,7 +87,44 @@ void ContextRust::ApplySettings()
     DoApplySettings(lexPtr);
 }
 
-void ContextRust::AutoIndent(const wxChar& nChar) { ContextGeneric::AutoIndent(nChar); }
+void ContextRust::AutoIndent(const wxChar& nChar)
+{
+    clEditor& rCtrl = GetCtrl();
+    CommentConfigData data;
+    EditorConfigST::Get()->ReadObject("CommentConfigData", &data);
+
+    int curpos = rCtrl.GetCurrentPos();
+    int prev_pos = rCtrl.PositionBeforePos(curpos);
+
+    if (rCtrl.GetDisableSmartIndent()) {
+        return;
+    }
+
+    if (nChar == '\n' && data.GetContinueCppComment()) {
+        // Single line comment?
+        wxString prev_line = rCtrl.GetLine(rCtrl.LineFromPosition(prev_pos));
+        prev_line.Trim().Trim(false);
+        wxString to_insert;
+        if (prev_line.StartsWith("///")) {
+            to_insert = "/// ";
+        } else if (prev_line.StartsWith("//")) {
+            to_insert = "// ";
+        }
+
+        if (!to_insert.empty()) {
+            int line = rCtrl.LineFromPosition(curpos);
+            rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
+            int insertPos = rCtrl.GetLineIndentPosition(line);
+            rCtrl.InsertText(insertPos, to_insert);
+            rCtrl.SetCaretAt(insertPos + to_insert.Length());
+            rCtrl.ChooseCaretX(); // set new column as "current" column
+            return;
+        }
+    }
+
+    // Default behavior
+    ContextGeneric::AutoIndent(nChar);
+}
 
 wxString ContextRust::CallTipContent() { return wxEmptyString; }
 

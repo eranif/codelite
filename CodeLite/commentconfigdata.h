@@ -46,14 +46,14 @@ public:
     virtual void Serialize(Archive& arch);
 
     // Setters
-    void SetAddStarOnCComment(const bool& addStarOnCComment) { this->m_addStarOnCComment = addStarOnCComment; }
+    void SetAddStarOnCComment(bool addStarOnCComment) { this->m_addStarOnCComment = addStarOnCComment; }
     void SetClassPattern(const wxString& classPattern) { this->m_classPattern = classPattern; }
-    void SetContinueCppComment(const bool& continueCppComment) { this->m_continueCppComment = continueCppComment; }
+    void SetContinueCppComment(bool continueCppComment) { this->m_continueCppComment = continueCppComment; }
     void SetFunctionPattern(const wxString& functionPattern) { this->m_functionPattern = functionPattern; }
 
     const bool& GetAddStarOnCComment() const { return m_addStarOnCComment; }
     const wxString& GetClassPattern() const { return m_classPattern; }
-    const bool& GetContinueCppComment() const { return m_continueCppComment; }
+    bool GetContinueCppComment() const { return m_continueCppComment; }
     const wxString& GetFunctionPattern() const { return m_functionPattern; }
     void SetUseQtStyle(bool useQtStyle) { this->m_useQtStyle = useQtStyle; }
     bool IsUseQtStyle() const { return m_useQtStyle; }

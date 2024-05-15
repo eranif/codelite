@@ -213,7 +213,6 @@ void clFileSystemWorkspace::CacheFiles(bool force)
                 }
             }
 
-            clSYSTEM() << "Scan called with:" << excludeFolders << endl;
             fs.Scan(rootFolder, files, GetFilesMask(), "", excludeFolders);
             clFileSystemEvent event(wxEVT_FS_SCAN_COMPLETED);
             wxArrayString arrfiles;

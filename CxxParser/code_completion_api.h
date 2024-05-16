@@ -19,7 +19,7 @@ extern WXDLLIMPEXP_CL void              cl_scope_lex_clean();
 // directly
 extern int cl_scope_lex();
 extern int cl_scope_lineno;
-extern std::string cl_scope_text;
+extern char* cl_scope_text;
 
 class WXDLLIMPEXP_CL CppLexer
 {

@@ -2,18 +2,17 @@
 /* Included code before lex code */
 /*************** Includes and Defines *****************************/
 
-
-#include "map"
-#include "cpp_lexer.h"		// YACC generated definitions based on C++ grammar
-#include "errno.h"
-
-#define YYSTYPE std::string
-#define ECHO
-
-#include "string"
+#include <errno.h>
+#include <map>
 #include <stdlib.h>
+#include <string>
 #include <string.h>
 #include <vector>
+
+#define YYSTYPE std::string
+#include "cpp_lexer.h"		// YACC generated definitions based on C++ grammar
+
+#define ECHO
 
 extern std::string cl_scope_lval;
 extern std::string cl_var_lval;
@@ -80,6 +79,7 @@ static bool defineFound = false;
 %}
 
 %option yylineno
+%option never-interactive
 
 identifier [a-zA-Z_][0-9a-zA-Z_]*
 

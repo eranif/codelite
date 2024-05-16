@@ -104,6 +104,7 @@ target_link_libraries(
     ${wxWidgets_LIBRARIES}
     -L"${CL_LIBPATH}"
     ${SQLite3_LIBRARIES}
+    libCxxParser
     wxsqlite3
     ${LIBSSH_LIB}
     ${GTK_LIBS}

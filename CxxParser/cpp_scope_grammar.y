@@ -19,6 +19,12 @@ static void readClassName();
 static std::string className;
 
 static std::string templateInitList;
+void yyerror(const char *s) {}
+void consumeDecl();
+void consumeFuncArgList();
+void consumeInitializationList();
+void consumeNotIncluding(int ch);
+void consumeTemplateDecl();
 int cl_scope_parse();
 void cl_scope_error(char *string);
 void syncParser();
@@ -443,8 +449,6 @@ union_decl			:	stmnt_starter LE_UNION LE_IDENTIFIER '{'
                             }
                         ;
 %%
-void yyerror(char *s) {}
-
 void syncParser(){
     //move lexer to the next ';' line or scope opening '{'
     //int ch = cl_scope_lex();

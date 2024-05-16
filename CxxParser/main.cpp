@@ -1,11 +1,10 @@
 //test the parser
-#include "windows.h"
-#include "stdio.h"
-#include "errno.h"
-#include "string.h"
-#include "vector"
-#include "string"
-#include "map"
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <vector>
+#include <string>
+#include <map>
 #include "code_completion_api.h"
 
 void testScopeParser(char *buf);

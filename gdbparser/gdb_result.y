@@ -25,6 +25,7 @@ bool setGdbLexerInput(const std::string &in, bool ascii, bool wantWhitespace);
 void gdb_result_lex_clean();
 int  gdb_result_parse();
 void cleanup();
+void gdbConsumeList();
 
 extern std::string gdb_result_lval;
 static GdbStringMap_t            sg_attributes;
@@ -45,7 +46,6 @@ static std::vector<std::string>  sg_currentArrayString;
 %token GDB_NAME
 %token GDB_STRING
 %token GDB_LEVEL
-%token GDB_FRAME
 %token GDB_ESCAPED_STRING
 %token GDB_LOCALS
 %token GDB_VARIABLES

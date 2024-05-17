@@ -31,7 +31,6 @@
 #include "debuggermanager.h"
 #include "event_notifier.h"
 #include "gdb_parser_incl.h"
-#include "gdb_result_parser.h"
 #include "gdbmi.hpp"
 #include "gdbmi_parse_thread_info.h"
 #include "precompiled_header.h"

@@ -115,6 +115,23 @@ if(NOT SQLite3_FOUND)
     endif()
 endif()
 
+find_package(BISON REQUIRED)
+
+if(NOT BISON_FOUND)
+    if(UNIX)
+        message(FATAL_ERROR " **** Could not find flex. Please install bison package")
+    elseif(APPLE)
+        message(FATAL_ERROR " **** Could not find flex. Please install bison via brew")
+    elseif(MINGW)
+        message(
+            FATAL_ERROR
+                " **** Could not find flex. Please install bison package: pacman -S bison"
+        )
+    else()
+        message(FATAL_ERROR " **** Could not find bison. Please install bison package")
+    endif()
+endif()
+
 find_package(FLEX REQUIRED)
 
 if(NOT FLEX_FOUND)
@@ -892,6 +909,7 @@ add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
 add_subdirectory(yaml-cpp)
+add_subdirectory(CxxParser)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)

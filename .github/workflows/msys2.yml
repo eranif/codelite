@@ -11,14 +11,21 @@ jobs:
 
     steps:
     - uses: msys2/setup-msys2@v2
-
-    # pre-requires
-    - name: Install dependencies
-      shell: msys2 {0}
-      run: |
-        # pacman -Syu --noconfirm # Fail, requires to close this process
-        pacman -S --noconfirm mingw-w64-clang-x86_64-cmake mingw-w64-clang-x86_64-make mingw-w64-clang-x86_64-clang mingw-w64-clang-x86_64-clang-tools-extra
-        pacman -S --noconfirm mingw-w64-clang-x86_64-zlib mingw-w64-clang-x86_64-libssh mingw-w64-clang-x86_64-hunspell mingw-w64-clang-x86_64-openssl mingw-w64-clang-x86_64-sqlite3 flex
+      with:
+        msystem: clang64
+        update: true
+        install: >-
+          mingw-w64-clang-x86_64-cmake
+          mingw-w64-clang-x86_64-make
+          mingw-w64-clang-x86_64-clang
+          mingw-w64-clang-x86_64-clang-tools-extra
+          mingw-w64-clang-x86_64-zlib
+          mingw-w64-clang-x86_64-libssh
+          mingw-w64-clang-x86_64-hunspell
+          mingw-w64-clang-x86_64-openssl
+          mingw-w64-clang-x86_64-sqlite3
+          bison
+          flex
 
     # WxWidgets
     - name: Checkout
@@ -34,8 +41,8 @@ jobs:
       run: |
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
-        PATH="/clang64/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1
-        PATH="/clang64/bin:$PATH" mingw32-make -j$(nproc) && PATH="/clang64/bin:$PATH" mingw32-make install
+        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1
+        mingw32-make -j$(nproc) && PATH="/clang64/bin:$PATH" mingw32-make install
 
     # wx-config-msys2
     - name: Checkout
@@ -49,8 +56,8 @@ jobs:
       run: |
         mkdir wx-config-msys2/build-release
         cd wx-config-msys2/build-release
-        PATH="/clang64/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/root
-        PATH="/clang64/bin:$PATH" mingw32-make -j$(nproc) install
+        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root"
+        mingw32-make -j$(nproc) install
         #add $HOME/root/bin to PATH
 
     # Codelite
@@ -64,8 +71,8 @@ jobs:
       run: |
         mkdir build-release
         cd build-release
-        MSYS2_BASE=/d/a/_temp/msys64 PATH="/clang64/bin:$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev
-        PATH="/clang64/bin:$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
+        MSYS2_BASE=/d/a/_temp/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev
+        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
 
     # Upload artefact
     - name: artifact

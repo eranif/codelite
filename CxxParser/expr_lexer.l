@@ -56,6 +56,7 @@ static bool defineFound = false;
 %}
 
 %option yylineno
+%option never-interactive
 
 identifier [a-zA-Z_][0-9a-zA-Z_]*
 

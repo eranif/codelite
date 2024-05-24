@@ -19,6 +19,8 @@
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
 
+void yyerror(const char *s) {}
+
 int  cl_typedef_parse();
 void syncParser();
 static std::string typedef_consumBracketsContent(char openBrace);
@@ -295,8 +297,6 @@ variable_decl       :   const_spec basic_type_name
                         ;
 
 %%
-void yyerror(char *s) {}
-
 
 std::string typedef_consumBracketsContent(char openBrace)
 {

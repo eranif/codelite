@@ -13,6 +13,11 @@
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
 
+void yyerror(const char *s) {}
+
+void expr_consumBracketsContent(char openBrace);
+void expr_FuncArgList();
+void expr_syncParser();
 void cl_expr_error(char *string);
 
 static ExpressionResult result;
@@ -304,8 +309,6 @@ array_brackets 	:	/* empty */ { $$ = ""; }
 				|	'[' { expr_consumBracketsContent('['); $$ = "[]";}
 				;
 %%
-void yyerror(char *s) {}
-
 void expr_consumBracketsContent(char openBrace)
 {
 	char closeBrace;

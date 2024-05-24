@@ -927,10 +927,10 @@ bool MainBook::ClosePage(wxWindow* page)
 {
     int pos = m_book->GetPageIndex(page);
     if (pos != wxNOT_FOUND && m_book->GetPage(pos) == m_welcomePage) {
-        m_book->RemovePage(pos);
+        m_book->RemovePage(pos, false);
         return true;
     } else {
-        return pos != wxNOT_FOUND && m_book->DeletePage(pos);
+        return pos != wxNOT_FOUND && m_book->DeletePage(pos, true);
     }
 }
 
@@ -1536,7 +1536,7 @@ bool MainBook::ClosePage(IEditor* editor, bool notify)
     if (!page)
         return false;
     int pos = m_book->GetPageIndex(page);
-    return (pos != wxNOT_FOUND) && (m_book->DeletePage(pos));
+    return (pos != wxNOT_FOUND) && (m_book->DeletePage(pos, true));
 }
 
 void MainBook::DoOpenFile(const wxString& filename, const wxString& content)

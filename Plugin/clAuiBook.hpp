@@ -27,6 +27,8 @@ public:
     void SetCanHaveCloseButton(bool b) { m_canHaveCloseButton = b; }
     int GetPageIndex(const wxString& name) const;
     int GetPageIndex(wxWindow* win) const;
+    bool DeletePage(size_t index, bool notify);
+    bool RemovePage(size_t index, bool notify);
 
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);

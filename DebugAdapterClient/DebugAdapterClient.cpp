@@ -38,6 +38,7 @@
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "bookmark_manager.h"
+#include "clAuiBook.hpp"
 #include "clFileSystemWorkspace.hpp"
 #include "clResizableTooltip.h"
 #include "clWorkspaceManager.h"
@@ -51,7 +52,6 @@
 #include "globals.h"
 #include "macromanager.h"
 #include "processreaderthread.h"
-#include "clAuiBook.hpp"
 
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>
@@ -645,7 +645,7 @@ void DebugAdapterClient::DestroyUI()
     if (m_textView) {
         int index = clGetManager()->GetMainNotebook()->FindPage(m_textView);
         if (index != wxNOT_FOUND) {
-            clGetManager()->GetMainNotebook()->RemovePage(index);
+            clGetManager()->GetMainNotebook()->RemovePage(index, false);
         }
         m_textView->Destroy();
         m_textView = nullptr;

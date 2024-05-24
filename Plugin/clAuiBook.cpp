@@ -320,7 +320,7 @@ void clAuiBook::MoveActivePage(int newIndex)
 
     wxString label = GetPageText(cursel);
     wxBitmap bmp = GetPageBitmap(cursel);
-    if (RemovePage(cursel)) {
+    if (RemovePage(cursel, false)) {
         InsertPage(newIndex, page, label, true, bmp);
     }
 }
@@ -378,7 +378,7 @@ void clAuiBook::OnPageChanged(wxAuiNotebookEvent& event)
 
     // Send an event
     wxBookCtrlEvent changed_event(wxEVT_BOOK_PAGE_CHANGED);
-    changed_event.SetEventObject(GetParent());
+    changed_event.SetEventObject(this);
     changed_event.SetSelection(GetSelection());
     GetEventHandler()->AddPendingEvent(changed_event);
 }
@@ -415,9 +415,9 @@ void clAuiBook::OnPageDoubleClick(wxAuiNotebookEvent& event)
     }
     wxUnusedVar(event);
     wxBookCtrlEvent e(wxEVT_BOOK_TAB_DCLICKED);
-    e.SetEventObject(GetParent());
+    e.SetEventObject(this);
     e.SetSelection(GetSelection());
-    GetParent()->GetEventHandler()->AddPendingEvent(e);
+    GetEventHandler()->AddPendingEvent(e);
 }
 
 void clAuiBook::OnTabAreaDoubleClick(wxAuiNotebookEvent& event)
@@ -429,7 +429,7 @@ void clAuiBook::OnTabAreaDoubleClick(wxAuiNotebookEvent& event)
     }
 
     wxBookCtrlEvent e(wxEVT_BOOK_NEW_PAGE);
-    e.SetEventObject(GetParent());
+    e.SetEventObject(this);
     GetEventHandler()->AddPendingEvent(e);
 }
 
@@ -550,4 +550,54 @@ int clAuiBook::GetPageIndex(const wxString& name) const
         }
     }
     return wxNOT_FOUND;
+}
+
+bool clAuiBook::DeletePage(size_t index, bool notify)
+{
+    if (notify) {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSING);
+        event.SetEventObject(this);
+        event.SetSelection(index);
+        GetEventHandler()->ProcessEvent(event);
+        if (!event.IsAllowed()) {
+            // Vetoed
+            return false;
+        }
+    }
+
+    if (!wxAuiNotebook::DeletePage(index)) {
+        return false;
+    }
+
+    if (notify) {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSED);
+        event.SetEventObject(this);
+        GetEventHandler()->ProcessEvent(event);
+    }
+    return true;
+}
+
+bool clAuiBook::RemovePage(size_t index, bool notify)
+{
+    if (notify) {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSING);
+        event.SetEventObject(this);
+        event.SetSelection(index);
+        GetEventHandler()->ProcessEvent(event);
+        if (!event.IsAllowed()) {
+            // Vetoed
+            return false;
+        }
+    }
+
+    if (!wxAuiNotebook::RemovePage(index)) {
+        return false;
+    }
+
+    if (notify) {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSED);
+        event.SetEventObject(this);
+        GetEventHandler()->ProcessEvent(event);
+    }
+    return true;
 }

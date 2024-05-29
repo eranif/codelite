@@ -379,14 +379,12 @@ bool wxCodeCompletionBox::FilterResults(bool updateEntries, size_t& startsWithCo
 
 void wxCodeCompletionBox::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t entry)
 {
-
     if (m_stc) {
         wxCodeCompletionBoxEntry::Ptr_t match = entry;
         if (match == nullptr) {
             wxDataViewItem item = m_list->GetSelection();
             CHECK_PTR_RET(item);
             size_t index = static_cast<size_t>(m_list->GetItemData(item));
-
             match = m_entries[index];
         }
 

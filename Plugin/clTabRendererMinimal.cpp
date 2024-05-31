@@ -12,12 +12,6 @@
 #include <wx/settings.h>
 #include <wx/stc/stc.h>
 
-#define DRAW_LINE(__p1, __p2) \
-    dc.DrawLine(__p1, __p2);  \
-    dc.DrawLine(__p1, __p2);  \
-    dc.DrawLine(__p1, __p2);  \
-    dc.DrawLine(__p1, __p2);
-
 namespace
 {
 #ifdef __WXMAC__

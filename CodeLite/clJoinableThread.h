@@ -1,9 +1,10 @@
 #ifndef CSJOINABLETHREAD_H
 #define CSJOINABLETHREAD_H
 
-#include "clJoinableThread.h"
 #include "codelite_exports.h"
+
 #include <wx/thread.h>
+
 class WXDLLIMPEXP_CL clJoinableThread : public wxThread
 {
 protected:

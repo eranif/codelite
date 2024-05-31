@@ -34,8 +34,6 @@
 
 class WXDLLIMPEXP_CL EventNotifier : public wxEvtHandler
 {
-    bool _eventsDiabled;
-
 private:
     EventNotifier();
     virtual ~EventNotifier();

@@ -138,14 +138,6 @@ WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString& fileName, wxString& 
                                             wxFontEncoding encoding = wxFONTENCODING_DEFAULT, BOM* bom = NULL);
 
 /**
- * \brief write file using UTF8 converter
- * \param fileName file path
- * \param content file's content
- * \return true on success, false otherwise
- */
-WXDLLIMPEXP_SDK bool WriteFileUTF8(const wxString& fileName, const wxString& content);
-
-/**
  * \brief compare a file with a wxString using md5
  * \param filePath file's full path
  * \param str a wxString, perhaps containing an editor's content
@@ -154,28 +146,9 @@ WXDLLIMPEXP_SDK bool WriteFileUTF8(const wxString& fileName, const wxString& con
 WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxString& str);
 
 /**
- * \brief delete directory using shell command
- * \param path directory path
- * \return true on success, false otherwise
- */
-WXDLLIMPEXP_SDK bool RemoveDirectory(const wxString& path);
-
-/**
  * \brief return true of id is a valid cpp identifier
  */
 WXDLLIMPEXP_SDK bool IsValidCppIndetifier(const wxString& id);
-
-/**
- * \brief return true of word is a C++ keyword
- * \param word
- * \return
- */
-WXDLLIMPEXP_SDK bool IsCppKeyword(const wxString& word);
-
-/**
- * \brief return true of id is a valid cpp file
- */
-WXDLLIMPEXP_SDK bool IsValidCppFile(const wxString& id);
 
 /**
  * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
@@ -246,16 +219,6 @@ WXDLLIMPEXP_SDK bool IsFileReadOnly(const wxFileName& filename);
  * \param str the string to split
  */
 WXDLLIMPEXP_SDK void FillFromSemiColonString(wxArrayString& arr, const wxString& str);
-
-/**
- * \brief return a string semi-colon separated of the given array
- */
-WXDLLIMPEXP_SDK wxString ArrayToSemiColonString(const wxArrayString& array);
-
-/**
- * \brief Remove all semi colons of the given string
- */
-WXDLLIMPEXP_SDK void StripSemiColons(wxString& str);
 
 /**
  * \brief Normalize the given path (change all \ by /)
@@ -405,12 +368,6 @@ WXDLLIMPEXP_SDK wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex
 WXDLLIMPEXP_SDK wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex);
 
 /**
- * @brief queue a call to a function to be executed on the next event loop
- */
-WXDLLIMPEXP_SDK void PostCall(wxObject* instance, clEventFunc_t func, wxClientData* arg);
-WXDLLIMPEXP_SDK void PostCall(wxObject* instance, clEventFunc_t func);
-
-/**
  * @brief split lines (using CR|LF as the separator), taking into considertaion line continuation
  * @param trim trim the lines with set to true
  */
@@ -463,19 +420,6 @@ WXDLLIMPEXP_SDK wxStandardID PromptForYesNoDialogWithCheckbox(
 WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString& str);
 
 /**
- * @brief wrap string with quotes if needed
- */
-WXDLLIMPEXP_SDK wxString& EscapeSpaces(wxString& str);
-
-/**
- * @brief return an expression from a given position.
- * e.g. if the caret is on a line:
- * variable.m_name.m_value|
- * the | represents the cart, this function will return the entire expression: variable.m_name.m_value
- */
-WXDLLIMPEXP_SDK wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC);
-
-/**
  * @brief save an xml document to file
  */
 WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename);
@@ -498,11 +442,6 @@ WXDLLIMPEXP_SDK bool clIsCygwinEnvironment();
  * output of the command 'uname -s'
  */
 WXDLLIMPEXP_SDK bool clIsMSYSEnvironment();
-
-/**
- * @brief change the command so it will run in the background
- */
-WXDLLIMPEXP_SDK wxString MakeCommandRunInBackground(const wxString& cmd);
 
 /**
  * @brief enable use of checkbox for boolean properties
@@ -597,23 +536,6 @@ WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name, wxFileName& exepath,
 WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
 
 /**
- * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
- * @code
- * wxString str = "My String That Requires Tokenize";
- * wxString word; // The output
- * size_t offset = 0;
- * while(clNextWord(str, offset, word)) {
- *      // Do something with "word" here
- * }
- * @codeend
- * @param str the string to tokenize
- * @param offset used internally, allocate one on the stack and initialise it to 0
- * @param word [output]
- * @return true if a word was found
- */
-WXDLLIMPEXP_SDK bool clNextWord(const wxString& str, size_t& offset, wxString& word);
-
-/**
  * @brief join strings with "\n" or "\r\n" (depends on eol)
  * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
  */
@@ -669,9 +591,6 @@ WXDLLIMPEXP_SDK bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArr
 
 /// Find the best window starting from `win` and give it the focus
 WXDLLIMPEXP_SDK bool SetBestFocus(wxWindow* win);
-
-/// Check if Window `parent` is the parent (or grand parent, or grand-grand-parent ...) of `child`
-WXDLLIMPEXP_SDK bool IsWindowParentOf(wxWindow* parent, wxWindow* child);
 
 /// Find Notebook parent of a `child`
 WXDLLIMPEXP_SDK Notebook* FindNotebookParentOf(wxWindow* child);

@@ -34,7 +34,6 @@
 #include "clGetTextFromUserDialog.h"
 #include "clTreeCtrl.h"
 #include "cl_standard_paths.h"
-#include "cpp_scanner.h"
 #include "ctags_manager.h"
 #include "debugger.h"
 #include "debuggermanager.h"
@@ -123,31 +122,6 @@ void MSWSetWindowDarkTheme(wxWindow* win)
 
 static wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
                                      const wxString& confToBuild, const wxString& fileName);
-
-#ifdef __WXMAC__
-#include <mach-o/dyld.h>
-
-// On Mac we determine the base path using system call
-//_NSGetExecutablePath(path, &path_len);
-static wxString MacGetInstallPath()
-{
-    char path[257];
-    uint32_t path_len = 256;
-    _NSGetExecutablePath(path, &path_len);
-
-    // path now contains
-    // CodeLite.app/Contents/MacOS/
-    wxFileName fname(wxString(path, wxConvUTF8));
-
-    // remove he MacOS part of the exe path
-    wxString file_name = fname.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-    wxString rest;
-    file_name.EndsWith("MacOS/", &rest);
-    rest.Append("SharedSupport/");
-
-    return rest;
-}
-#endif
 
 #if defined(__WXGTK__)
 #include <dirent.h>
@@ -313,20 +287,6 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
     return !content.IsEmpty();
 }
 
-bool RemoveDirectory(const wxString& path)
-{
-    wxString cmd;
-    if (wxGetOsVersion() & wxOS_WINDOWS) {
-        // any of the windows variants
-        cmd << "rmdir /S /Q "
-            << "\"" << path << "\"";
-    } else {
-        cmd << "\rm -fr "
-            << "\"" << path << "\"";
-    }
-    return wxShell(cmd);
-}
-
 bool IsValidCppIndetifier(const wxString& id)
 {
     if (id.IsEmpty()) {
@@ -355,19 +315,6 @@ long AppendListCtrlRow(wxListCtrl* list)
     info.SetId(item);
     item = list->InsertItem(info);
     return item;
-}
-
-bool IsValidCppFile(const wxString& id)
-{
-    if (id.IsEmpty()) {
-        return false;
-    }
-
-    // make sure that rest of the id contains only a-zA-Z0-9_
-    if (id.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != wxString::npos) {
-        return false;
-    }
-    return true;
 }
 
 wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* editor, const wxString& filename)
@@ -552,17 +499,6 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
     return output;
 }
 
-bool WriteFileUTF8(const wxString& fileName, const wxString& content)
-{
-    wxFFile file(fileName, "w+b");
-    if (!file.IsOpened()) {
-        return false;
-    }
-
-    // first try the Utf8
-    return file.Write(content, wxConvUTF8);
-}
-
 bool CompareFileWithString(const wxString& filePath, const wxString& str)
 {
     wxString content;
@@ -678,22 +614,6 @@ void FillFromSemiColonString(wxArrayString& arr, const wxString& str)
     arr.clear();
     arr = StringUtils::BuildArgv(str);
 }
-
-wxString ArrayToSemiColonString(const wxArrayString& array)
-{
-    wxString result;
-    for (size_t i = 0; i < array.GetCount(); i++) {
-        wxString tmp = NormalizePath(array.Item(i));
-        tmp.Trim().Trim(false);
-        if (tmp.IsEmpty() == false) {
-            result += NormalizePath(array.Item(i));
-            result += ";";
-        }
-    }
-    return result.BeforeLast(';');
-}
-
-void StripSemiColons(wxString& str) { str.Replace(";", " "); }
 
 wxString NormalizePath(const wxString& path)
 {
@@ -862,85 +782,6 @@ void GetProjectTemplateList(std::list<ProjectPtr>& list)
     DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetProjectTemplatesDir(), list);
     DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetUserProjectTemplatesDir(), list, false);
     list.sort(ProjListComparator());
-}
-
-thread_local std::unordered_set<wxString> words;
-
-bool IsCppKeyword(const wxString& word)
-{
-    if (words.empty()) {
-        words.insert("auto");
-        words.insert("break");
-        words.insert("case");
-        words.insert("char");
-        words.insert("const");
-        words.insert("continue");
-        words.insert("default");
-        words.insert("define");
-        words.insert("defined");
-        words.insert("do");
-        words.insert("double");
-        words.insert("elif");
-        words.insert("else");
-        words.insert("endif");
-        words.insert("enum");
-        words.insert("error");
-        words.insert("extern");
-        words.insert("float");
-        words.insert("for");
-        words.insert("goto");
-        words.insert("if");
-        words.insert("ifdef");
-        words.insert("ifndef");
-        words.insert("include");
-        words.insert("int");
-        words.insert("line");
-        words.insert("long");
-        words.insert("bool");
-        words.insert("pragma");
-        words.insert("register");
-        words.insert("return");
-        words.insert("short");
-        words.insert("signed");
-        words.insert("sizeof");
-        words.insert("static");
-        words.insert("struct");
-        words.insert("switch");
-        words.insert("typedef");
-        words.insert("undef");
-        words.insert("union");
-        words.insert("unsigned");
-        words.insert("void");
-        words.insert("volatile");
-        words.insert("while");
-        words.insert("class");
-        words.insert("namespace");
-        words.insert("delete");
-        words.insert("friend");
-        words.insert("inline");
-        words.insert("new");
-        words.insert("operator");
-        words.insert("overload");
-        words.insert("protected");
-        words.insert("private");
-        words.insert("public");
-        words.insert("this");
-        words.insert("virtual");
-        words.insert("template");
-        words.insert("typename");
-        words.insert("dynamic_cast");
-        words.insert("static_cast");
-        words.insert("const_cast");
-        words.insert("reinterpret_cast");
-        words.insert("using");
-        words.insert("throw");
-        words.insert("catch");
-        words.insert("nullptr");
-        words.insert("noexcept");
-        words.insert("override");
-        words.insert("constexpr");
-    }
-    return words.count(word) != 0;
 }
 
 void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
@@ -1530,188 +1371,11 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxS
                                                   checkboxInitialValue);
 }
 
-static wxChar sPreviousChar(wxStyledTextCtrl* ctrl, int pos, int& foundPos, bool wantWhitespace)
-{
-    wxChar ch = 0;
-    long curpos = ctrl->PositionBefore(pos);
-    if (curpos == 0) {
-        foundPos = curpos;
-        return ch;
-    }
-
-    while (true) {
-        ch = ctrl->GetCharAt(curpos);
-        if (ch == '\t' || ch == ' ' || ch == '\r' || ch == '\v' || ch == '\n') {
-            // if the caller is intrested in whitepsaces,
-            // simply return it
-            if (wantWhitespace) {
-                foundPos = curpos;
-                return ch;
-            }
-
-            long tmpPos = curpos;
-            curpos = ctrl->PositionBefore(curpos);
-            if (curpos == 0 && tmpPos == curpos) {
-                break;
-            }
-        } else {
-            foundPos = curpos;
-            return ch;
-        }
-    }
-    foundPos = -1;
-    return ch;
-}
-
-wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
-{
-    bool cont(true);
-    int depth(0);
-
-    int position(pos);
-    int at(position);
-    bool prevGt(false);
-    while (cont && depth >= 0) {
-        wxChar ch = sPreviousChar(ctrl, position, at, true);
-        position = at;
-        // Eof?
-        if (ch == 0) {
-            at = 0;
-            break;
-        }
-
-        // Comment?
-        int style = ctrl->GetStyleAt(position);
-        if (style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
-            style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
-            style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
-            style == wxSTC_C_CHARACTER) {
-            continue;
-        }
-
-        switch (ch) {
-        case ';':
-            // dont include this token
-            at = ctrl->PositionAfter(at);
-            cont = false;
-            break;
-        case '-':
-            if (prevGt) {
-                prevGt = false;
-                // if previous char was '>', we found an arrow so reduce the depth
-                // which was increased
-                depth--;
-            } else {
-                if (depth <= 0) {
-                    // dont include this token
-                    at = ctrl->PositionAfter(at);
-                    cont = false;
-                }
-            }
-            break;
-        case ' ':
-        case '\n':
-        case '\v':
-        case '\t':
-        case '\r':
-            prevGt = false;
-            if (depth <= 0) {
-                cont = false;
-                break;
-            }
-            break;
-        case '{':
-        case '=':
-            prevGt = false;
-            cont = false;
-            break;
-        case '(':
-        case '[':
-            depth--;
-            prevGt = false;
-            if (depth < 0) {
-                // dont include this token
-                at = ctrl->PositionAfter(at);
-                cont = false;
-            }
-            break;
-        case ',':
-        case '*':
-        case '&':
-        case '!':
-        case '~':
-        case '+':
-        case '^':
-        case '|':
-        case '%':
-        case '?':
-            prevGt = false;
-            if (depth <= 0) {
-
-                // dont include this token
-                at = ctrl->PositionAfter(at);
-                cont = false;
-            }
-            break;
-        case '>':
-            prevGt = true;
-            depth++;
-            break;
-        case '<':
-            prevGt = false;
-            depth--;
-            if (depth < 0) {
-
-                // dont include this token
-                at = ctrl->PositionAfter(at);
-                cont = false;
-            }
-            break;
-        case ')':
-        case ']':
-            prevGt = false;
-            depth++;
-            break;
-        default:
-            prevGt = false;
-            break;
-        }
-    }
-
-    if (at < 0) {
-        at = 0;
-    }
-    wxString expr = ctrl->GetTextRange(at, pos);
-    if (!forCC) {
-        // If we do not require the expression for CodeCompletion
-        // return the un-touched buffer
-        return expr;
-    }
-
-    // remove comments from it
-    CppScanner sc;
-    sc.SetText(_C(expr));
-    wxString expression;
-    int type = 0;
-    while ((type = sc.yylex()) != 0) {
-        wxString token = _U(sc.YYText());
-        expression += token;
-        expression += " ";
-    }
-    return expression;
-}
-
 wxString& WrapWithQuotes(wxString& str)
 {
     if (!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
         str.Prepend("\"").Append("\"");
     }
-    return str;
-}
-
-wxString& EscapeSpaces(wxString& str)
-{
-    str.Replace(" ", "\\ ");
     return str;
 }
 
@@ -1736,18 +1400,6 @@ bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
         return FileUtils::WriteFileContent(filename, content);
     }
     return false;
-}
-
-wxString MakeCommandRunInBackground(const wxString& cmd)
-{
-    wxString alteredCommand;
-#ifdef __WXMSW__
-    alteredCommand << "start /b " << cmd;
-#else
-    // POSIX systems
-    alteredCommand << cmd << "&";
-#endif
-    return alteredCommand;
 }
 
 void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid)
@@ -1909,8 +1561,6 @@ int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
     }
     return wxNOT_FOUND;
 }
-
-bool clNextWord(const wxString& str, size_t& offset, wxString& word) { return FileUtils::NextWord(str, offset, word); }
 
 wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
 {
@@ -2138,31 +1788,6 @@ bool SetBestFocus(wxWindow* win)
     for (auto c : children) {
         if (SetBestFocus(c)) {
             return true;
-        }
-    }
-    return false;
-}
-
-bool IsWindowParentOf(wxWindow* parent, wxWindow* child)
-{
-    if (!child) {
-        return false;
-    }
-
-    std::vector<wxWindow*> Q;
-    Q.push_back(parent);
-
-    while (!Q.empty()) {
-        auto parent = Q.front();
-        Q.erase(Q.begin());
-
-        if (parent == child) {
-            return true;
-        }
-
-        // put its children
-        for (auto c : parent->GetChildren()) {
-            Q.push_back(c);
         }
     }
     return false;

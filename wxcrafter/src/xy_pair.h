@@ -6,12 +6,11 @@
 class XYPair
 {
 protected:
-    wxString m_string;
     int m_x;
     int m_y;
 
 public:
-    XYPair(const wxString& str, int defaultx = -1, int defaulty = -1);
+    XYPair(wxString str, int defaultx = -1, int defaulty = -1);
     XYPair(int x, int y);
     virtual ~XYPair();
 

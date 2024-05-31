@@ -592,7 +592,7 @@ wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& 
 clEnvList_t BuildConfig::GetEnvironment(Project* project) const
 {
     wxString envstr;
-    EvnVarList env = EnvironmentConfig::Instance()->GetSettings();
+    EnvVarList env = EnvironmentConfig::Instance()->GetSettings();
 
     wxString config_name;
     wxString project_name;

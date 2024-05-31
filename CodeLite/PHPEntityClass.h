@@ -42,7 +42,7 @@ public:
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
-    // Save the class into teh database
+    // Save the class into the database
     virtual void Store(PHPLookupTable* lookup);
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void PrintStdout(int indent) const;

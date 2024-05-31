@@ -262,7 +262,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             switch(ch) {
             case '(':
                 curstr << ch;
-                dollar_paren_depth++; // increase teh depth
+                dollar_paren_depth++; // increase the depth
                 break;
             case ')':
                 curstr << ch;

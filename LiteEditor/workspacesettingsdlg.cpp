@@ -27,7 +27,7 @@
 #include "ColoursAndFontsManager.h"
 #include "code_completion_page.h"
 #include "environmentconfig.h"
-#include "evnvarlist.h"
+#include "envvarlist.h"
 #include "globals.h"
 #include "localworkspace.h"
 #include "windowattrmanager.h"
@@ -45,7 +45,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
     m_ccPage = new CodeCompletionPage(m_notebook1, CodeCompletionPage::TypeWorkspace);
     m_notebook1->AddPage(m_ccPage, _("Code Completion"), false);
 
-    EvnVarList vars;
+    EnvVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
     const wxStringMap_t& envSets = vars.GetEnvVarSets();
     wxString activePage = vars.GetActiveSet();

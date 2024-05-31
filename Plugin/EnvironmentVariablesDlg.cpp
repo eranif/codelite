@@ -4,8 +4,8 @@
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "environmentconfig.h"
+#include "envvarlist.h"
 #include "event_notifier.h"
-#include "evnvarlist.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "window_locker.h"
@@ -23,7 +23,7 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     : EnvVarsTableDlgBase(parent)
     , m_editEventsHander(m_textCtrlDefault)
 {
-    EvnVarList vars;
+    EnvVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
     wxStringMap_t envSets = vars.GetEnvVarSets();
     wxString activePage = vars.GetActiveSet();
@@ -81,7 +81,7 @@ void EnvironmentVariablesDlg::DoAddPage(const wxString& name, const wxString& co
 
 void EnvironmentVariablesDlg::OnButtonOk(wxCommandEvent& event)
 {
-    EvnVarList vars;
+    EnvVarList vars;
 
     wxStringMap_t envSets;
 

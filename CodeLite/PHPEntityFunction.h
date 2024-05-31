@@ -44,7 +44,7 @@ public:
     JSONItem ToJSON() const;
     
 protected:
-    // The local variabels defined in this function of type
+    // The local variables defined in this function of type
     // PHPEntityVariable
     PHPEntityBase::List_t m_locals;
 

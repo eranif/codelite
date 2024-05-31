@@ -148,7 +148,7 @@ WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxStr
 /**
  * \brief return true of id is a valid cpp identifier
  */
-WXDLLIMPEXP_SDK bool IsValidCppIndetifier(const wxString& id);
+WXDLLIMPEXP_SDK bool IsValidCppIdentifier(const wxString& id);
 
 /**
  * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager

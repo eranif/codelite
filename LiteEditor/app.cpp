@@ -37,7 +37,7 @@
 #include "conffilelocator.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
-#include "evnvarlist.h"
+#include "envvarlist.h"
 #include "file_logger.h"
 #include "fileexplorer.h"
 #include "fileextmanager.h"
@@ -628,7 +628,7 @@ bool CodeLiteApp::OnInit()
     // Set environment variable for CodeLiteDir (make it first
     // on the list so it can be used by other variables)
     //---------------------------------------------------------
-    EvnVarList vars;
+    EnvVarList vars;
     EnvironmentConfig::Instance()->Load();
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 
@@ -869,7 +869,7 @@ void CodeLiteApp::MSWReadRegistry()
 {
 #ifdef __WXMSW__
 
-    EvnVarList vars;
+    EnvVarList vars;
     EnvironmentConfig::Instance()->Load();
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 

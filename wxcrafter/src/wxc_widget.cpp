@@ -90,7 +90,7 @@ wxcWidget::wxcWidget(int type)
     m_gbSpan = "1,1";
     m_gbPos = "0,0";
 
-    // This will act as the separator between the basic styles and the control scpecific ones
+    // This will act as the separator between the basic styles and the control specific ones
     ADD_STYLE(0, false);
     ADD_STYLE(wxFULL_REPAINT_ON_RESIZE, false);
     ADD_STYLE(wxWANTS_CHARS, false);

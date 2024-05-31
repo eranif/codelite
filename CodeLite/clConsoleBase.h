@@ -113,7 +113,7 @@ public:
     /**
      * @brief return list of known terminals
      */
-    static wxArrayString GetAvailaleTerminals();
+    static wxArrayString GetAvailableTerminals();
 
     // Setters/Getters
     void SetCommand(const wxString& command, const wxString& args)

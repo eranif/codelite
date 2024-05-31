@@ -426,7 +426,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
             return;
         }
 
-        // prepend the string lenght
+        // prepend the string length
         qmake = wxString::Format(wxT("%04d%s"), qmakeSettings.Length(), qmakeSettings.c_str());
 
         content.Replace(wxT("$(TYPE)"), type);

@@ -32,8 +32,8 @@
 #include "dirsaver.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
+#include "envvarlist.h"
 #include "event_notifier.h"
-#include "evnvarlist.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "globals.h"
@@ -528,11 +528,11 @@ void BuilderGNUMakeClassic::GenerateMakefile(ProjectPtr proj, const wxString& co
 
     //----------------------------------------------------------
     // copy environment variables to the makefile
-    // We put them after the 'hard-coeded' ones
+    // We put them after the 'hard-coded' ones
     // so user will be able to override any of the default
     // variables by defining its own
     //----------------------------------------------------------
-    EvnVarList vars;
+    EnvVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
     EnvMap varMap = vars.GetVariables(wxT(""), true, proj->GetName(), bldConf->GetName());
 

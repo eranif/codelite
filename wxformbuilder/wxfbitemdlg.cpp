@@ -47,7 +47,7 @@ void wxFBItemDlg::OnGenerate(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
-    if(!IsValidCppIndetifier(m_textCtrlClassName->GetValue())) {
+    if(!IsValidCppIdentifier(m_textCtrlClassName->GetValue())) {
         wxMessageBox(_("Invalid C++ class name"), _("CodeLite"), wxOK | wxICON_WARNING);
         return;
     }

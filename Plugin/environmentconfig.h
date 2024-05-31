@@ -28,7 +28,7 @@
 #include "archive.h"
 #include "build_config.h"
 #include "configurationtoolbase.h"
-#include "evnvarlist.h"
+#include "envvarlist.h"
 #include "macros.h"
 #include "project.h"
 
@@ -37,7 +37,7 @@
 
 class EnvSetter;
 
-/// A helper class that makes sure that escpaed $ signs
+/// A helper class that makes sure that escaped $ signs
 /// are kept unharmed
 class WXDLLIMPEXP_SDK DollarEscaper
 {
@@ -68,11 +68,11 @@ public:
     static void Release();
     bool Load();
     wxString ExpandVariables(const wxString& in, bool applyEnvironment);
-    EvnVarList GetSettings();
-    void SetSettings(EvnVarList& vars);
+    EnvVarList GetSettings();
+    void SetSettings(EnvVarList& vars);
     /**
-     * @brief return a list of the environment variabels as defined by the user
-     * in the global environment table + workspace + project (this function only return the names of the variable, not
+     * @brief return a list of the environment variables as defined by the user
+     * in the global environment table + workspace + project (this function only returns the names of the variable, not
      * its value)
      */
     wxArrayString GetActiveSetEnvNames(bool includeWorkspace = true, const wxString& project = wxEmptyString);

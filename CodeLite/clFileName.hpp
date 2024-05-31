@@ -23,7 +23,7 @@ public:
     static wxString FromCygwin(const wxString& fullpath);
 
     /**
-     * @brief covnert to cygwin path
+     * @brief convert to cygwin path
      */
     static wxString ToCygwin(const wxString& fullpath);
     static wxString ToCygwin(const wxFileName& fullpath);

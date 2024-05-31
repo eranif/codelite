@@ -689,7 +689,7 @@ void get_variables(const std::string &in, VariableList &li, const std::map<std::
     gs_vars = &li;
     setUseIgnoreMacros(false);
 
-    // the 'g_isUsedWithinFunc' allows us to parse variabels without name
+    // the 'g_isUsedWithinFunc' allows us to parse variables without name
     // this is typical when used as function declaration (e.g. void setValue(bool);)
     g_isUsedWithinFunc = isUsedWithinFunc;
 

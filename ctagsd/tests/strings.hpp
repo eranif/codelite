@@ -516,7 +516,6 @@ const wxString cc_text_ProtocolHandler = R"(
 #include "CxxPreProcessor.h"
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
-#include "CxxUsingNamespaceCollector.h"
 #include "CxxVariableScanner.h"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"

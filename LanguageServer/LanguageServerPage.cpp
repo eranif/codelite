@@ -3,10 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include "JSON.h"
 #include "LSP/LanguageServerProtocol.h"
-#include "StringUtils.h"
-#include "globals.h"
 
-#include <algorithm>
 #include <macros.h>
 #include <wx/choicdlg.h>
 #include <wx/dirdlg.h>
@@ -15,8 +12,9 @@
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
 {
+    Hide();
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lex) {
+    if (lex) {
         lex->ApplySystemColours(m_stcCommand);
         lex->ApplySystemColours(m_stcInitOptions);
     }
@@ -39,7 +37,7 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent)
     : LanguageServerPageBase(parent)
 {
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lex) {
+    if (lex) {
         lex->ApplySystemColours(m_stcCommand);
         lex->ApplySystemColours(m_stcInitOptions);
     }
@@ -74,19 +72,19 @@ void LanguageServerPage::OnSuggestLanguages(wxCommandEvent& event)
 {
     const std::set<wxString>& langSet = LanguageServerProtocol::GetSupportedLanguages();
     wxArrayString arrLang;
-    for(const wxString& lang : langSet) {
+    for (const wxString& lang : langSet) {
         arrLang.Add(lang);
     }
 
     wxArrayInt selections;
     int count = ::wxGetSelectedChoices(selections, _("Select the supported languages by this server:"), _("CodeLite"),
                                        arrLang, GetParent());
-    if(count == wxNOT_FOUND) {
+    if (count == wxNOT_FOUND) {
         return;
     }
 
     wxString newText;
-    for(int sel : selections) {
+    for (int sel : selections) {
         newText << arrLang.Item(sel) << ";";
     }
     m_textCtrlLanguages->ChangeValue(newText);
@@ -98,7 +96,7 @@ void LanguageServerPage::OnBrowseWD(wxCommandEvent& event)
     wxString path(m_textCtrlWD->GetValue());
     wxString new_path =
         wxDirSelector(_("Select a working directory:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if(new_path.IsEmpty() == false) {
+    if (new_path.IsEmpty() == false) {
         m_textCtrlWD->SetValue(new_path);
     }
 }
@@ -109,17 +107,17 @@ bool LanguageServerPage::ValidateData(wxString* message) const
     wxString init_options = m_stcInitOptions->GetText();
     init_options.Trim().Trim(false);
 
-    if(init_options.empty()) {
+    if (init_options.empty()) {
         return true;
     }
 
     JSON root{ init_options };
-    if(!root.isOk()) {
+    if (!root.isOk()) {
         (*message) << m_textCtrlName->GetValue() << ": invalid JSON input in `initializationOptions`";
         return false;
     }
 
-    if(!root.toElement().isObject()) {
+    if (!root.toElement().isObject()) {
         (*message) << m_textCtrlName->GetValue() << ": `initializationOptions` must be a JSON object";
         return false;
     }

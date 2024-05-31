@@ -434,15 +434,15 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	"Notebook"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	"Notebook.h"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
-											"m_value":	"kNotebook_FixedWidth"
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1444,7 +1444,7 @@
 											"border":	5,
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
-											"m_styles":	["wxNB_FIXEDWIDTH", "wxBK_DEFAULT"],
+											"m_styles":	["wxBK_DEFAULT"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",

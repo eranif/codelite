@@ -54,7 +54,7 @@ static RustPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
+    if (thePlugin == 0) {
         thePlugin = new RustPlugin(manager);
     }
     return thePlugin;
@@ -119,13 +119,13 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
     wxFileName workspaceFile(event.GetPath());
     wxFileName fnCargoToml(workspaceFile);
     fnCargoToml.SetFullName("Cargo.toml");
-    if(fnCargoToml.FileExists()) {
+    if (fnCargoToml.FileExists()) {
         CargoToml cargoToml;
         const wxString& name = cargoToml.Load(fnCargoToml).GetName();
 
         // update the build commands
         clFileSystemWorkspaceSettings settings;
-        if(!settings.Load(workspaceFile)) {
+        if (!settings.Load(workspaceFile)) {
             clWARNING() << "Failed to load file:" << workspaceFile << endl;
             return;
         }
@@ -133,19 +133,20 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
         wxString cargo_exe = "cargo";
 #ifdef __WXMSW__
         clRustLocator rust_locator;
-        if(rust_locator.Locate()) {
+        if (rust_locator.Locate()) {
             cargo_exe = rust_locator.GetRustTool("cargo");
             ::WrapWithQuotes(cargo_exe);
         }
 #endif
 
         auto debug = settings.GetConfig("Debug");
-        if(debug) {
+        if (debug) {
             clDEBUG() << "Setting project preferences..." << endl;
-            debug->SetBuildTargets({ { "build", cargo_exe + " build --color always" },
-                                     { "clean", cargo_exe + " clean --color always" },
-                                     { "tests", cargo_exe + " test --color always" },
-                                     { "clippy", cargo_exe + " clippy --color always" } });
+            debug->SetBuildTargets(
+                { { "build", cargo_exe + " build --color always" },
+                  { "clean", cargo_exe + " clean --color always" },
+                  { "tests", cargo_exe + " test --color always" },
+                  { "clippy", cargo_exe + " clippy --color always --all-features --all-targets -- -D warnings" } });
             wxFileName target_exe(workspaceFile.GetPath() + "/target/debug/" + name);
 #ifdef __WXMSW__
             target_exe.SetExt("exe");
@@ -158,7 +159,7 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
 #if !defined(__WXMSW__)
             // use rust-gdb
             wxFileName rust_gdb = GetRustTool("rust-gdb");
-            if(rust_gdb.IsOk()) {
+            if (rust_gdb.IsOk()) {
                 env_str << "GDB=" << rust_gdb.GetFullPath() << "\n";
                 env_str << "PATH=" << rust_gdb.GetPath() << clPATH_SEPARATOR << "$PATH"
                         << "\n";
@@ -171,7 +172,7 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
             gdb_python_module_directory.AppendDir("etc");
 
             wxFileName gdb_exe = GetRustTool("gdb");
-            if(gdb_exe.FileExists()) {
+            if (gdb_exe.FileExists()) {
                 env_str << "RUST_GDB=" << gdb_exe.GetFullPath() << "\n";
                 env_str << "PATH=" << gdb_exe.GetPath() << clPATH_SEPARATOR << "$PATH\n";
             } else {
@@ -201,7 +202,7 @@ end
             gdbinit_content.Replace("%GDB_PYTHON_MODULE_DIRECTORY%", fixed_path);
             debug->SetDebuggerCommands(gdbinit_content);
 #endif
-            if(!env_str.empty()) {
+            if (!env_str.empty()) {
                 debug->SetEnvironment(env_str);
             }
             AddRustcCompilerIfMissing();
@@ -214,18 +215,18 @@ end
 void RustPlugin::OnNewWorkspace(clCommandEvent& e)
 {
     e.Skip();
-    if(e.GetString() == "Rust") {
+    if (e.GetString() == "Rust") {
         e.Skip(false);
         // Prompt the user for the folder to run 'cargo new'
         NewFileSystemWorkspaceDialog dlg(EventNotifier::Get()->TopFrame(), false /* do not auto update the name */);
         dlg.SetLabel(_("Select the folder to run 'cargo new'"));
-        if(dlg.ShowModal() != wxID_OK) {
+        if (dlg.ShowModal() != wxID_OK) {
             return;
         }
 
         EnvSetter env;
         wxString cargo_exe;
-        if(!ThePlatform->Which("cargo", &cargo_exe)) {
+        if (!ThePlatform->Which("cargo", &cargo_exe)) {
             wxMessageBox(_("Could not locate cargo in your PATH"), "CodeLite", wxICON_ERROR | wxCENTRE);
             return;
         }
@@ -236,7 +237,7 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
         command << cargo_exe << " new " << dlg.GetWorkspaceName();
         IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole,
                                                     dlg.GetWorkspacePath()));
-        if(!process) {
+        if (!process) {
             clWARNING() << "failed to execute:" << command << endl;
             return;
         }
@@ -245,7 +246,7 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
         process->WaitForTerminate(output);
         wxFileName cargoToml(dlg.GetWorkspacePath(), "Cargo.toml");
         cargoToml.AppendDir(dlg.GetWorkspaceName());
-        if(cargoToml.FileExists()) {
+        if (cargoToml.FileExists()) {
             // we successfully created a new cargo workspace, now, load it (using the standard file system
             // workspace)
             clFileSystemWorkspace::Get().New(cargoToml.GetPath(), cargoToml.GetDirs().Last());
@@ -256,7 +257,7 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
 wxString RustPlugin::GetRustTool(const wxString& toolname) const
 {
     clRustLocator locator;
-    if(!locator.Locate()) {
+    if (!locator.Locate()) {
         return wxEmptyString;
     }
     return locator.GetRustTool(toolname);
@@ -264,7 +265,7 @@ wxString RustPlugin::GetRustTool(const wxString& toolname) const
 
 void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
 {
-    if(!clFileSystemWorkspace::Get().IsOpen()) {
+    if (!clFileSystemWorkspace::Get().IsOpen()) {
         event.Skip();
         return;
     }
@@ -273,7 +274,7 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     clDEBUG() << "File:" << event.GetFileName() << endl;
     clDEBUG() << "Line number:" << event.GetLineNumber() << endl;
 
-    if(!FileExtManager::IsFileType(event.GetFileName(), FileExtManager::TypeRust)) {
+    if (!FileExtManager::IsFileType(event.GetFileName(), FileExtManager::TypeRust)) {
         clDEBUG() << "Not a rust file, Skip()" << endl;
         event.Skip();
         return;
@@ -285,7 +286,7 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     // build the file path:
     // the compiler report the file in relative path to the `Cargo.toml` file
     wxString basepath;
-    if(m_cargoTomlFile.FileExists()) {
+    if (m_cargoTomlFile.FileExists()) {
         basepath = m_cargoTomlFile.GetPath();
         clDEBUG() << "Build root dir is set to Cargo.toml path:" << basepath << endl;
     } else {
@@ -294,20 +295,20 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     }
 
     bool is_abspath = event.GetFileName().StartsWith("/") || wxFileName(event.GetFileName()).IsAbsolute();
-    if(!is_abspath && basepath.empty()) {
+    if (!is_abspath && basepath.empty()) {
         // unable to determine the root folder
         event.Skip();
         return;
     }
 
-    if(is_abspath) {
+    if (is_abspath) {
         basepath = event.GetFileName();
     } else {
         basepath << "/" << event.GetFileName();
     }
 
     wxFileName fnFile(basepath);
-    if(!fnFile.FileExists()) {
+    if (!fnFile.FileExists()) {
         event.Skip(true); // let others handle this
         return;
     }
@@ -327,7 +328,7 @@ void RustPlugin::AddRustcCompilerIfMissing()
 {
     // Create new "rustc" compiler and place compiler patterns to use
     clDEBUG() << "Searching for rustc compiler..." << endl;
-    if(BuildSettingsConfigST::Get()->IsCompilerExist("rustc")) {
+    if (BuildSettingsConfigST::Get()->IsCompilerExist("rustc")) {
         clDEBUG() << "Compiler rustc already exists" << endl;
         return;
     }
@@ -342,24 +343,24 @@ void RustPlugin::AddRustcCompilerIfMissing()
 void RustPlugin::OnBuildEnded(clBuildEvent& event)
 {
     event.Skip();
-    if(!clFileSystemWorkspace::Get().IsOpen()) {
+    if (!clFileSystemWorkspace::Get().IsOpen()) {
         return;
     }
 
     wxFileName fnCargoToml(clFileSystemWorkspace::Get().GetFileName());
     fnCargoToml.SetFullName("Cargo.toml");
     wxString cargo_toml = fnCargoToml.GetFullPath();
-    if(!wxFileName::FileExists(cargo_toml)) {
+    if (!wxFileName::FileExists(cargo_toml)) {
         return;
     }
 
     wxString new_digest = wxMD5::GetDigest(fnCargoToml);
     wxString old_digest;
-    if(m_cargoTomlDigest.count(cargo_toml)) {
+    if (m_cargoTomlDigest.count(cargo_toml)) {
         old_digest = m_cargoTomlDigest[cargo_toml];
     }
 
-    if(new_digest != old_digest) {
+    if (new_digest != old_digest) {
         // restart is required
         clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
         EventNotifier::Get()->ProcessEvent(restart_event);
@@ -370,19 +371,19 @@ void RustPlugin::OnBuildEnded(clBuildEvent& event)
 void RustPlugin::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
-    if(!clFileSystemWorkspace::Get().IsOpen()) {
+    if (!clFileSystemWorkspace::Get().IsOpen()) {
         return;
     }
 
     wxFileName workspaceFile = clFileSystemWorkspace::Get().GetFileName();
     wxFileName cargo_toml{ workspaceFile.GetPath(), "Cargo.toml" };
 
-    if(cargo_toml.FileExists()) {
+    if (cargo_toml.FileExists()) {
         m_cargoTomlFile = cargo_toml;
     } else {
         // try the parent folder
         cargo_toml.RemoveLastDir();
-        if(cargo_toml.FileExists()) {
+        if (cargo_toml.FileExists()) {
             m_cargoTomlFile = cargo_toml;
         } else {
             // We might placed our Cargo.toml in one of the children folers (1 level below)
@@ -392,10 +393,10 @@ void RustPlugin::OnWorkspaceLoaded(clWorkspaceEvent& event)
             d.Open(workspace_path);
 
             wxString filename;
-            for(bool cont = d.GetFirst(&filename, wxEmptyString, wxDIR_DIRS); cont; cont = d.GetNext(&filename)) {
+            for (bool cont = d.GetFirst(&filename, wxEmptyString, wxDIR_DIRS); cont; cont = d.GetNext(&filename)) {
                 cargo_toml = wxFileName(workspace_path, "Cargo.toml");
                 cargo_toml.AppendDir(filename);
-                if(cargo_toml.FileExists()) {
+                if (cargo_toml.FileExists()) {
                     m_cargoTomlFile = cargo_toml;
                     break;
                 }

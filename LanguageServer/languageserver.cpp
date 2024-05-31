@@ -25,7 +25,7 @@ static LanguageServerPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
+    if (thePlugin == NULL) {
         thePlugin = new LanguageServerPlugin(manager);
     }
     return thePlugin;
@@ -89,20 +89,22 @@ LanguageServerPlugin::~LanguageServerPlugin() { wxDELETE(m_servers); }
 void LanguageServerPlugin::CheckServers()
 {
     auto broken_lsps = GetBrokenLSPs();
-    if(broken_lsps.empty()) {
+    if (broken_lsps.empty()) {
         return;
     }
+
     clSYSTEM() << "The following LSPs contain paths to a non existing locations:" << broken_lsps << endl;
     // Show a notification message with a suggestion for a fix
     wxString message;
     message << "The following LSPs contain paths to a non existing locations: [";
-    for(const auto& name : broken_lsps) {
+    for (const auto& name : broken_lsps) {
         message << name << ", ";
     }
     message.RemoveLast(2);
     message << "]";
 
-    clGetManager()->DisplayMessage(message, wxICON_WARNING, { { XRCID("lsp-fix-paths"), _("Attempt to fix") } });
+    clGetManager()->DisplayMessage(message, wxICON_WARNING,
+                                   { { wxID_CANCEL, _("Cancel") }, { XRCID("lsp-fix-paths"), _("Attempt to fix") } });
 }
 
 void LanguageServerPlugin::CreateToolBar(clToolBarGeneric* toolbar)
@@ -142,7 +144,7 @@ void LanguageServerPlugin::UnPlug()
     LanguageServerConfig::Get().Save();
 
     // before this plugin is un-plugged we must remove the tab we added
-    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_logView)) {
+    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_logView)) {
         m_logView->Destroy();
     }
     m_logView = nullptr;
@@ -152,10 +154,10 @@ void LanguageServerPlugin::UnPlug()
 void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
 {
     LanguageServerSettingsDlg dlg(EventNotifier::Get()->TopFrame(), false);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // restart all language servers
         dlg.Save();
-        if(m_servers) {
+        if (m_servers) {
             // Lets assume that we fixed something in the settings
             // and clear all the restart counters
             m_servers->ClearRestartCounters();
@@ -167,7 +169,7 @@ void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
 void LanguageServerPlugin::OnRestartLSP(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(m_servers) {
+    if (m_servers) {
         m_servers->Reload();
     }
 }
@@ -179,14 +181,14 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
 
     bool force = false;
     const auto& servers = LanguageServerConfig::Get().GetServers();
-    for(auto& server : servers) {
-        if(server.second.GetCommand().Contains(".codelite/lsp/clang-tools")) {
+    for (auto& server : servers) {
+        if (server.second.GetCommand().Contains(".codelite/lsp/clang-tools")) {
             force = true;
             break;
         }
     }
 
-    if(LanguageServerConfig::Get().GetServers().empty() || force) {
+    if (LanguageServerConfig::Get().GetServers().empty() || force) {
         LSP_DEBUG() << "Scanning..." << endl;
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {
@@ -194,7 +196,7 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
                 LSPDetectorManager detector;
                 LSP_DEBUG() << "***"
                             << "Scanning for LSPs... ***" << endl;
-                if(detector.Scan(matches)) {
+                if (detector.Scan(matches)) {
                     LSP_DEBUG() << "   ******"
                                 << "found!" << endl;
                 }
@@ -224,17 +226,17 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     bool add_rename_symbol = lsp->IsRenameSupported();
 
     // nothing to be done here
-    if(!add_find_symbol && !add_find_references && !add_rename_symbol) {
+    if (!add_find_symbol && !add_find_references && !add_rename_symbol) {
         return;
     }
 
     wxMenu* menu = event.GetMenu();
-    if(add_find_references) {
+    if (add_find_references) {
         menu->PrependSeparator();
         menu->Prepend(XRCID("lsp_find_references"), _("Find references"));
     }
     menu->PrependSeparator();
-    if(add_rename_symbol) {
+    if (add_rename_symbol) {
         menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
     }
     menu->Prepend(XRCID("lsp_find_symbol"), _("Find symbol"));
@@ -289,7 +291,7 @@ void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& 
 {
     LSP_DEBUG() << "   ******"
                 << "ConfigureLSPs is called!" << endl;
-    if(lsps.empty()) {
+    if (lsps.empty()) {
         LSP_DEBUG() << "ConfigureLSPs: no LSPs found. Nothing to be done here" << endl;
         return;
     }
@@ -297,24 +299,24 @@ void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& 
     LanguageServerConfig& config = LanguageServerConfig::Get();
     // remove clangd installed under ~/.codelite/lsp/clang-tools
     wxArrayString serversToRemove;
-    for(const auto& server : config.GetServers()) {
-        if(server.second.GetCommand().Contains(".codelite/lsp/clang-tools")) {
+    for (const auto& server : config.GetServers()) {
+        if (server.second.GetCommand().Contains(".codelite/lsp/clang-tools")) {
             serversToRemove.Add(server.first);
         }
     }
 
     bool force = !serversToRemove.IsEmpty();
     // remove all old entries
-    for(const auto& name : serversToRemove) {
+    for (const auto& name : serversToRemove) {
         LSP_SYSTEM() << "Removing broken LSP server:" << name << endl;
         config.RemoveServer(name);
     }
 
     LSP_DEBUG() << "ConfigureLSPs: there are currently" << config.GetServers().size() << "LSPs configured" << endl;
-    if(config.GetServers().empty() || force) {
+    if (config.GetServers().empty() || force) {
         LSP_DEBUG() << "No LSPs configured - auto configuring" << endl;
         // Only if the user did not configure LSP before, we configure it for him
-        for(auto lsp : lsps) {
+        for (auto lsp : lsps) {
             LanguageServerEntry entry;
             lsp->GetLanguageServerEntry(entry);
             config.AddServer(entry);
@@ -322,7 +324,7 @@ void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& 
         }
         config.SetEnabled(true);
         config.Save();
-        if(m_servers) {
+        if (m_servers) {
             m_servers->Reload();
         }
     }
@@ -380,7 +382,7 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
     LanguageServerEntry* pentry = &entry;
 
     auto d = LanguageServerConfig::Get().GetServer(event.GetLspName());
-    if(!d.IsNull()) {
+    if (!d.IsNull()) {
         LSP_DEBUG() << "an LSP with the same name:" << event.GetLspName() << "already exists. updating it" << endl;
         pentry = &d;
     }
@@ -415,7 +417,7 @@ wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const { return
 void LanguageServerPlugin::OnLSPEnableServer(clLanguageServerEvent& event)
 {
     auto& lsp_config = LanguageServerConfig::Get().GetServer(event.GetLspName());
-    if(lsp_config.IsNull()) {
+    if (lsp_config.IsNull()) {
         return;
     }
     lsp_config.SetEnabled(true);
@@ -424,7 +426,7 @@ void LanguageServerPlugin::OnLSPEnableServer(clLanguageServerEvent& event)
 void LanguageServerPlugin::OnLSPDisableServer(clLanguageServerEvent& event)
 {
     auto& lsp_config = LanguageServerConfig::Get().GetServer(event.GetLspName());
-    if(lsp_config.IsNull()) {
+    if (lsp_config.IsNull()) {
         return;
     }
     lsp_config.SetEnabled(false);
@@ -436,7 +438,7 @@ void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxStrin
 
     int ansi_colour_code = AnsiColours::NormalText();
     wxString label = "T "; // trace
-    switch(log_leve) {
+    switch (log_leve) {
     case 1:
         ansi_colour_code = AnsiColours::Red(); // error
         label = "E ";
@@ -474,27 +476,27 @@ void LanguageServerPlugin::OnFixLSPPaths(wxCommandEvent& event)
 
     wxUnusedVar(event);
     auto broken_lsps = GetBrokenLSPs();
-    if(broken_lsps.empty()) {
+    if (broken_lsps.empty()) {
         return;
     }
 
     wxBusyCursor bc;
     std::vector<LSPDetector::Ptr_t> matches;
     LSPDetectorManager detector;
-    if(detector.Scan(matches)) {
+    if (detector.Scan(matches)) {
         wxArrayString fixed;
-        for(const wxString& broken_lsp : broken_lsps) {
+        for (const wxString& broken_lsp : broken_lsps) {
             auto& lsp = LanguageServerConfig::Get().GetServer(broken_lsp);
-            if(lsp.IsNull()) {
+            if (lsp.IsNull()) {
                 // Could not find it
                 continue;
             }
 
             // Check to see if
-            for(size_t i = 0; i < matches.size(); ++i) {
+            for (size_t i = 0; i < matches.size(); ++i) {
                 LanguageServerEntry entry;
                 matches[i]->GetLanguageServerEntry(entry);
-                if(entry.GetName() == broken_lsp) {
+                if (entry.GetName() == broken_lsp) {
                     lsp = entry;
                     fixed.Add(broken_lsp);
                     break;
@@ -502,7 +504,7 @@ void LanguageServerPlugin::OnFixLSPPaths(wxCommandEvent& event)
             }
         }
 
-        if(!fixed.empty()) {
+        if (!fixed.empty()) {
             LanguageServerConfig::Get().Save();
             m_servers->Reload();
         }
@@ -513,10 +515,10 @@ wxArrayString LanguageServerPlugin::GetBrokenLSPs() const
 {
     wxArrayString broken_lsps;
     const auto& servers = LanguageServerConfig::Get().GetServers();
-    for(const auto& [name, server] : servers) {
+    for (const auto& [name, server] : servers) {
         auto argv = StringUtils::BuildArgv(server.GetCommand());
         // Check that the first argument (the executable path) exists
-        if(server.IsEnabled() && argv.empty() || !wxFileName::FileExists(argv[0])) {
+        if (server.IsEnabled() && argv.empty() || !wxFileName::FileExists(argv[0])) {
             broken_lsps.push_back(name);
         }
     }

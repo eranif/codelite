@@ -50,6 +50,15 @@ add_library(libCxxParser STATIC
     ${BisonSrcs}
 )
 
+if(UNIX AND NOT APPLE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
+
+if(APPLE)
+    add_definitions(-fPIC)
+endif()
+
 # Include paths
 target_include_directories(libCxxParser
     PUBLIC "${CL_SRC_ROOT}/CxxParser"

@@ -40,6 +40,6 @@ target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin)
+target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin libgdbparser)
 
 cl_install_debugger(${PLUGIN_NAME})

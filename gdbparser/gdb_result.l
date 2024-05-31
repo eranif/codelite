@@ -1,11 +1,11 @@
 %{
 /* Included code before lex code */
 #include "string"
+#define YYSTYPE std::string
 #include "gdb_result_parser.h"
 #include <vector>
 #include <sstream>
 
-#define YYSTYPE std::string
 
 static std::vector<YY_BUFFER_STATE> gs_bufferStack;
 static std::string                  gs_string;
@@ -35,6 +35,8 @@ extern std::string gdb_result_lval;
 %}
 
 %option yylineno
+%option nounput
+%option never-interactive
 
 /**
  * Some basic regexes

@@ -25,11 +25,11 @@ set(BisonSrcs
 FLEX_TARGET(CppFlex "${CMAKE_SOURCE_DIR}/CxxParser/cpp.l" "${CMAKE_CURRENT_BINARY_DIR}/cpp.cpp"
             COMPILE_FLAGS "-Pcl_scope_ --noline --yylineno --batch")
 # Increase YY_BUF_SIZE from 16384 to 16384*5
-set_source_files_properties("${FLEX_CppFlex_OUTPUTS}" PROPERTIES COMPILE_DEFINITIONS "-DYY_BUF_SIZE=(16384*5)")
+set_source_files_properties("${FLEX_CppFlex_OUTPUTS}" PROPERTIES COMPILE_DEFINITIONS "YY_BUF_SIZE=(16384*5)")
 FLEX_TARGET(ExprLexerFlex "${CMAKE_SOURCE_DIR}/CxxParser/expr_lexer.l" "${CMAKE_CURRENT_BINARY_DIR}/expr_lexer.cpp"
             COMPILE_FLAGS "-Pcl_expr_ --noline --yylineno --batch")
 # Increase YY_BUF_SIZE from 16384 to 16384*5
-set_source_files_properties("${FLEX_ExprLexerFlex_OUTPUTS}" PROPERTIES COMPILE_DEFINITIONS "-DYY_BUF_SIZE=(16384*5)")
+set_source_files_properties("${FLEX_ExprLexerFlex_OUTPUTS}" PROPERTIES COMPILE_DEFINITIONS "YY_BUF_SIZE=(16384*5)")
 
 ADD_FLEX_BISON_DEPENDENCY(CppFlex CppScopeGrammarYacc)
 ADD_FLEX_BISON_DEPENDENCY(ExprLexerFlex CppScopeGrammarYacc)

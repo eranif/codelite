@@ -95,6 +95,8 @@ bool testChildrenParser()
 
     info.print();
     free(l);
+
+    return true;
 }
 
 char *loadFile(const char *fileName)
@@ -140,6 +142,8 @@ bool testTokens()
     ReadTokens();
     gdb_result_lex_clean();
     free(l);
+
+    return true;
 }
 
 bool testParseLocals()

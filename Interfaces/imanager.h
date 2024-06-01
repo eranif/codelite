@@ -59,7 +59,7 @@ class clInfoBar;
 class clGenericNotebook;
 class clAuiBook;
 
-#if defined(__WXMSW__)
+#if defined(__WXMSW__) || defined(__WXMAC__)
 #define MAINBOOK_AUIBOOK 0
 #else
 #define MAINBOOK_AUIBOOK 1

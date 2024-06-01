@@ -71,6 +71,8 @@ void* clSingleInstanceThread::Entry()
             } else {
                 clCommandEvent event(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES);
                 event.SetStrings(args);
+                long lineno = root.toElement().namedObject("lineno").toInt();
+                event.SetLineNumber(lineno);
                 EventNotifier::Get()->AddPendingEvent(event);
             }
         }

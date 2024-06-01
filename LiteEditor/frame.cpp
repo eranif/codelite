@@ -3954,7 +3954,13 @@ void clMainFrame::OnSingleInstanceOpenFiles(clCommandEvent& e)
             OnSwitchWorkspace(workspaceEvent);
 
         } else {
-            GetMainBook()->OpenFile(files.Item(i), wxEmptyString);
+            long lineNumber = e.GetLineNumber();
+            if (lineNumber > 0) {
+                lineNumber--;
+            } else {
+                lineNumber = 0;
+            }
+            GetMainBook()->OpenFile(files.Item(i), wxEmptyString, lineNumber);
         }
     }
 

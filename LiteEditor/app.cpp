@@ -842,6 +842,11 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& m_parser)
 
                 JSON json(cJSON_Object);
                 json.toElement().addProperty("args", files);
+
+                long lineNumber(0);
+                m_parser.Found(wxT("l"), &lineNumber);
+                json.toElement().addProperty("lineno", lineNumber);
+
                 client.WriteMessage(json.toElement().format());
                 return false;
 

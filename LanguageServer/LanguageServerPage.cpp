@@ -12,7 +12,6 @@
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
 {
-    Hide();
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if (lex) {
         lex->ApplySystemColours(m_stcCommand);

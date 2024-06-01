@@ -22,7 +22,7 @@ FileLogger& operator<<(FileLogger& logger, const std::vector<std::pair<wxString,
 {
     wxString buffer;
     buffer << "[";
-    for(const auto& d : vec) {
+    for (const auto& d : vec) {
         buffer << "{" << d.first << ", " << d.second << "}, ";
     }
     buffer << "]";
@@ -34,7 +34,7 @@ std::vector<std::pair<wxString, wxString>> to_vector_of_pairs(const std::vector<
 {
     std::vector<std::pair<wxString, wxString>> result;
     result.reserve(arr.size());
-    for(const wxString& line : arr) {
+    for (const wxString& line : arr) {
         wxString k = line.BeforeFirst('=');
         wxString v = line.AfterFirst('=');
         result.emplace_back(std::make_pair(k, v));
@@ -44,7 +44,7 @@ std::vector<std::pair<wxString, wxString>> to_vector_of_pairs(const std::vector<
 
 void write_to_json(JSONItem& json_arr, const std::vector<std::pair<wxString, wxString>>& arr)
 {
-    for(const auto& entry : arr) {
+    for (const auto& entry : arr) {
         auto type = json_arr.AddObject(wxEmptyString);
         type.addProperty("key", entry.first);
         type.addProperty("value", entry.second);
@@ -66,7 +66,7 @@ void CTagsdSettings::Load(const wxFileName& filepath)
     JSON config_file(filepath);
     m_settings_dir = filepath.GetPath();
 
-    if(!config_file.isOk()) {
+    if (!config_file.isOk()) {
         clWARNING() << "Could not locate configuration file:" << filepath << endl;
         CreateDefault(filepath);
 
@@ -81,7 +81,7 @@ void CTagsdSettings::Load(const wxFileName& filepath)
     }
 
     build_search_path(filepath);
-    if(m_types.empty() || m_tokens.empty() || m_search_path.empty()) {
+    if (m_types.empty() || m_tokens.empty() || m_search_path.empty()) {
         CreateDefault(filepath);
     }
 
@@ -97,7 +97,7 @@ void CTagsdSettings::Load(const wxFileName& filepath)
     // conver the tokens to wxArrayString
     wxArrayString wxarr;
     wxarr.reserve(m_tokens.size());
-    for(const auto& p : m_tokens) {
+    for (const auto& p : m_tokens) {
         wxarr.Add(p.first + "=" + p.second);
     }
 
@@ -138,17 +138,18 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
     wxFileName compile_commands_json(path, "compile_commands.json");
 
     std::set<wxString> S{ m_search_path.begin(), m_search_path.end() };
-    if(compile_flags_txt.FileExists()) {
+    if (compile_flags_txt.FileExists()) {
         // we are using the compile_flags.txt file method
         CompileFlagsTxt cft(compile_flags_txt);
         S.insert(cft.GetIncludes().begin(), cft.GetIncludes().end());
-    } else if(compile_commands_json.FileExists()) {
+    } else if (compile_commands_json.FileExists()) {
         CompileCommandsJSON ccj(compile_commands_json.GetFullPath());
         S.insert(ccj.GetIncludes().begin(), ccj.GetIncludes().end());
     }
 
     // Add the paths found in the compile_flags.txt/compile_commands.json files
-    for(const auto& path : S) {
+    m_search_path.clear();
+    for (const auto& path : S) {
         // add the custom paths
         m_search_path.Add(path);
     }
@@ -165,7 +166,7 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
     wxString command;
 
     // Common compiler paths - should be placed at top of the include path!
-    if(ThePlatform->Which(basename, &command)) {
+    if (ThePlatform->Which(basename, &command)) {
         GCCMetadata md{ basename };
 
         md.Load(command, wxEmptyString, false);
@@ -184,7 +185,7 @@ wxStringMap_t CTagsdSettings::GetMacroTable() const
 {
     wxStringMap_t table;
     table.reserve(m_tokens.size());
-    for(const auto& p : m_tokens) {
+    for (const auto& p : m_tokens) {
         table.insert(p);
     }
     return table;

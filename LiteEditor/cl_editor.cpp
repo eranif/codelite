@@ -6596,7 +6596,10 @@ void clEditor::OnIdle(wxIdleEvent& event)
 
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
-
+    
+#if defined(__WXGTK__)
+    m_mgr->GetStatusBar()->Refresh();
+#endif
     GetContext()->ProcessIdleActions();
 }
 

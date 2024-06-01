@@ -29,7 +29,6 @@
 #include "CxxPreProcessor.h"
 #include "CxxScannerTokens.h"
 #include "CxxTemplateFunction.h"
-#include "CxxUsingNamespaceCollector.h"
 #include "CxxVariableScanner.h"
 #include "ctags_manager.h"
 #include "file_logger.h"

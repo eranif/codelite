@@ -49,7 +49,7 @@ public:
     void SetWorkspaceType(FileExtManager::FileType type);
 
     /**
-     * @brief covnert LSP::SignatureHelp class to TagEntryPtrVector_t
+     * @brief convert LSP::SignatureHelp class to TagEntryPtrVector_t
      */
     void LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp);
 

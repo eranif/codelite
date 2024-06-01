@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "environmentconfig.h"
 
-#include "evnvarlist.h"
+#include "envvarlist.h"
 #include "file_logger.h"
 #include "macromanager.h"
 #include "wx/filename.h"
@@ -78,7 +78,7 @@ bool EnvironmentConfig::Load()
             if(node) {
 
                 // this is an old version, convert it to the new format
-                EvnVarList vars;
+                EnvVarList vars;
                 wxStringMap_t envSets;
                 wxString content;
 
@@ -127,7 +127,7 @@ void EnvironmentConfig::ApplyEnv(wxStringMap_t* overrideMap, const wxString& pro
     }
 
     // read the environments variables
-    EvnVarList vars;
+    EnvVarList vars;
     ReadObject(wxT("Variables"), &vars);
 
     // get the active environment variables set
@@ -194,14 +194,14 @@ void EnvironmentConfig::UnApplyEnv()
     m_cs.Leave();
 }
 
-EvnVarList EnvironmentConfig::GetSettings()
+EnvVarList EnvironmentConfig::GetSettings()
 {
-    EvnVarList vars;
+    EnvVarList vars;
     ReadObject(wxT("Variables"), &vars);
     return vars;
 }
 
-void EnvironmentConfig::SetSettings(EvnVarList& vars) { WriteObject(wxT("Variables"), &vars); }
+void EnvironmentConfig::SetSettings(EnvVarList& vars) { WriteObject(wxT("Variables"), &vars); }
 
 wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
 {
@@ -247,7 +247,7 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
 wxArrayString EnvironmentConfig::GetActiveSetEnvNames(bool includeWorkspace, const wxString& project)
 {
     // read the environments variables
-    EvnVarList vars;
+    EnvVarList vars;
     ReadObject(wxT("Variables"), &vars);
 
     wxArrayString envnames;

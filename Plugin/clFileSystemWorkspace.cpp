@@ -590,7 +590,7 @@ clEnvList_t clFileSystemWorkspace::GetEnvList()
         return envList;
     }
     wxString envstr;
-    EvnVarList env = EnvironmentConfig::Instance()->GetSettings();
+    EnvVarList env = EnvironmentConfig::Instance()->GetSettings();
     EnvMap envMap = env.GetVariables(env.GetActiveSet(), false, "", "");
 
     // Add the global variables

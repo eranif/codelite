@@ -23,7 +23,7 @@ public:
 
 public:
     /**
-     * @brief some vendros deliver binaries with "-N" where N is the version number
+     * @brief some vendors deliver binaries with "-N" where N is the version number
      * this method attempts to search for command-<N>...command (in this order)
      */
     bool WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath);

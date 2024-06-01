@@ -50,7 +50,7 @@ public:
 
     /**
      * @brief this method is called by the traverser for every item in the tree
-     * By default this method does nothing. Override it to do something meaningfull
+     * By default this method does nothing. Override it to do something meaningful
      * @param item current item
      */
     virtual void OnItem(const wxTreeItemId& item);

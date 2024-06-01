@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah
-// file name            : evnvarlist.cpp
+// file name            : envvarlist.cpp
 //
 // -------------------------------------------------------------------------
 // A
@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "evnvarlist.h"
+#include "envvarlist.h"
 
 #include "macromanager.h"
 #include "workspace.h"
@@ -30,26 +30,26 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 
-EvnVarList::EvnVarList()
+EnvVarList::EnvVarList()
     : m_activeSet(wxT("Default"))
 {
 }
 
-EvnVarList::~EvnVarList() {}
+EnvVarList::~EnvVarList() {}
 
-void EvnVarList::DeSerialize(Archive& arch)
+void EnvVarList::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_envVarSets"), m_envVarSets);
     arch.Read(wxT("m_activeSet"), m_activeSet);
 }
 
-void EvnVarList::Serialize(Archive& arch)
+void EnvVarList::Serialize(Archive& arch)
 {
     arch.Write(wxT("m_envVarSets"), m_envVarSets);
     arch.Write(wxT("m_activeSet"), m_activeSet);
 }
 
-void EvnVarList::AddVariable(const wxString& setName, const wxString& name, const wxString& value)
+void EnvVarList::AddVariable(const wxString& setName, const wxString& name, const wxString& value)
 {
     wxString newEntry, actualSetName;
     newEntry << name << wxT("=") << value;
@@ -71,7 +71,7 @@ void EvnVarList::AddVariable(const wxString& setName, const wxString& name, cons
     m_envVarSets[actualSetName] = currentValueStr;
 }
 
-void EvnVarList::InsertVariable(const wxString& setName, const wxString& name, const wxString& value)
+void EnvVarList::InsertVariable(const wxString& setName, const wxString& name, const wxString& value)
 {
     wxString actualSetName;
 
@@ -84,7 +84,7 @@ void EvnVarList::InsertVariable(const wxString& setName, const wxString& name, c
     m_envVarSets[actualSetName] = set.String();
 }
 
-EnvMap EvnVarList::GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString& projectName,
+EnvMap EnvVarList::GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString& projectName,
                                 const wxString& configName)
 {
     EnvMap variables;
@@ -132,7 +132,7 @@ EnvMap EvnVarList::GetVariables(const wxString& setName, bool includeWorkspaceEn
     return variables;
 }
 
-wxString EvnVarList::DoGetSetVariablesStr(const wxString& setName, wxString& selectedSetName)
+wxString EnvVarList::DoGetSetVariablesStr(const wxString& setName, wxString& selectedSetName)
 {
     wxString currentValueStr;
 
@@ -155,7 +155,7 @@ wxString EvnVarList::DoGetSetVariablesStr(const wxString& setName, wxString& sel
     return currentValueStr;
 }
 
-bool EvnVarList::IsSetExist(const wxString& setName) { return m_envVarSets.find(setName) != m_envVarSets.end(); }
+bool EnvVarList::IsSetExist(const wxString& setName) { return m_envVarSets.find(setName) != m_envVarSets.end(); }
 
 // Env Map helper class
 EnvMap::EnvMap() {}

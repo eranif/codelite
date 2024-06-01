@@ -43,8 +43,8 @@ public:
 	 */
 	virtual bool GetDataHere(void* buf) const;
 	/*!
-	 * \brief Function should inport data from data object from given buffer.
-	 * \param len Data lenght
+	 * \brief Function should import data from data object from given buffer.
+	 * \param len Data length
 	 * \param buf External input data buffer
 	 * \return TRUE on success, otherwise FALSE
 	 */

@@ -287,7 +287,7 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
     return !content.IsEmpty();
 }
 
-bool IsValidCppIndetifier(const wxString& id)
+bool IsValidCppIdentifier(const wxString& id)
 {
     if (id.IsEmpty()) {
         return false;

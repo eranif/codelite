@@ -4314,7 +4314,7 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
     DirSaver ds;
     wxSetWorkingDirectory(filepath);
 
-    // Apply the environment variabels before opening the shell
+    // Apply the environment variables before opening the shell
     EnvSetter setter;
     FileUtils::OpenTerminal(filepath);
 }
@@ -4946,7 +4946,7 @@ void clMainFrame::SelectBestEnvSet()
 
     wxString globalActiveSet = "Default";
     wxString activeSetName;
-    EvnVarList vars = EnvironmentConfig::Instance()->GetSettings();
+    EnvVarList vars = EnvironmentConfig::Instance()->GetSettings();
 
     // By default, use the global one
     activeSetName = globalActiveSet;
@@ -5264,7 +5264,7 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
             clCxxWorkspaceST::Get()->GetProjBuildConf(clCxxWorkspaceST::Get()->GetActiveProjectName(), "");
         if (bldcfg && bldcfg->IsCustomBuild()) {
 
-            // Update teh custom targets
+            // Update the custom targets
             CustomTargetsMgr::Get().SetTargets(clCxxWorkspaceST::Get()->GetActiveProjectName(),
                                                bldcfg->GetCustomTargets());
 

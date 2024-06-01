@@ -30,7 +30,7 @@
 #include "dirsaver.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
-#include "evnvarlist.h"
+#include "envvarlist.h"
 #include "globals.h"
 #include "macros.h"
 #include "project.h"

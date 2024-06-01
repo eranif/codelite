@@ -411,7 +411,7 @@ void wxCodeCompletionBoxManager::InsertSelectionTemplateFunction(const wxString&
     IEditor* editor = manager->GetActiveEditor();
     if (editor) {
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
-        // Default behviour: remove the partial text from teh editor and replace it
+        // Default behviour: remove the partial text from the editor and replace it
         // with the selection
         int start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
         int end = ctrl->GetCurrentPos();

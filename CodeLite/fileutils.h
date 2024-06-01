@@ -313,7 +313,7 @@ public:
                          wxString& port);
 
     /**
-     * @brief covnert path to uri
+     * @brief convert path to uri
      * /home/eran/file.cpp -> file:///home/eran/file.cpp
      * file:///home/eran/file.cpp -> file:///home/eran/file.cpp
      */

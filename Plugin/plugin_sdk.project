@@ -481,8 +481,8 @@
     <File Name="configurationtoolbase.h"/>
     <File Name="environmentconfig.cpp"/>
     <File Name="environmentconfig.h"/>
-    <File Name="evnvarlist.cpp"/>
-    <File Name="evnvarlist.h"/>
+    <File Name="envvarlist.cpp"/>
+    <File Name="envvarlist.h"/>
     <File Name="plugindata.cpp"/>
     <File Name="plugindata.h"/>
     <File Name="quickdebuginfo.cpp"/>

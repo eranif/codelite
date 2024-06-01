@@ -59,7 +59,7 @@ void PluginWizard::OnPageChanging(wxWizardEvent& event)
     if ( event.GetDirection() && event.GetPage() == m_pages.at(0)) {
         wxString pluginName = m_textCtrlName->GetValue();
         pluginName.Trim();
-        if ( pluginName.IsEmpty() || !::IsValidCppIndetifier(pluginName) ) {
+        if ( pluginName.IsEmpty() || !::IsValidCppIdentifier(pluginName) ) {
             ::wxMessageBox(_("Invalid plugin name"), "codelite");
             event.Veto();
             return;

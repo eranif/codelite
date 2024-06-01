@@ -194,7 +194,7 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
         type = wxEVT_DATAVIEW_SELECTION_CHANGING;
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_ACTIVATED) {
         // we user hit ENTER or d-clicked on an entry in the list
-        // if the current line has action button, covnert this event
+        // if the current line has action button, convert this event
         // into action button event
         type = wxEVT_DATAVIEW_ITEM_ACTIVATED;
         auto entry = m_model.ToPtr(event.GetItem());

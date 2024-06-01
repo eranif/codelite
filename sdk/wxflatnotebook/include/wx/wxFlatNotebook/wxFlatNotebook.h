@@ -374,7 +374,7 @@ public:
 	long GetCustomizeOptions() const;
 	
 	/**
-	 * \brief set a fixed tab width, when set to -1 (the default), wxFNB will calculate each tab lenght according to 
+	 * \brief set a fixed tab width, when set to -1 (the default), wxFNB will calculate each tab length according to
 	 * image, text and x button, otherwise, the value provided here will be used. A tab can not have width lower than 
 	 * 30 pixels. If the tabs' text is wider than the fixed tab width, it will be truncated 
 	 * \param width in pixels, in range between 30 - 300

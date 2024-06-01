@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah
-// file name            : evnvarlist.h
+// file name            : envvarlist.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -49,7 +49,7 @@ public:
     wxString String();
 };
 
-class WXDLLIMPEXP_SDK EvnVarList : public SerializedObject
+class WXDLLIMPEXP_SDK EnvVarList : public SerializedObject
 {
     wxStringMap_t m_envVarSets;
     wxString m_activeSet;
@@ -58,8 +58,8 @@ protected:
     wxString DoGetSetVariablesStr(const wxString& setName, wxString& selectedSetName);
 
 public:
-    EvnVarList();
-    virtual ~EvnVarList();
+    EnvVarList();
+    virtual ~EnvVarList();
 
     void SetActiveSet(const wxString& activeSet)
     {
@@ -89,4 +89,4 @@ public:
     virtual void DeSerialize(Archive& arch);
     virtual void Serialize(Archive& arch);
 };
-#endif // __evnvarlist__
+#endif // __envvarlist__

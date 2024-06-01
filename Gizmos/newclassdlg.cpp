@@ -130,7 +130,7 @@ void NewClassDlg::OnButtonOK(wxCommandEvent& e)
 bool NewClassDlg::ValidateInput()
 {
     // validate the class name
-    if(!IsValidCppIndetifier(m_textClassName->GetValue())) {
+    if(!IsValidCppIdentifier(m_textClassName->GetValue())) {
         wxString msg;
         msg << wxT("'") << m_textClassName->GetValue() << _("' is not a valid C++ qualifier");
         wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
@@ -143,7 +143,7 @@ bool NewClassDlg::ValidateInput()
         this->GetNamespacesList(namespacesList);
         // validate each namespace
         for(unsigned int i = 0; i < namespacesList.Count(); i++) {
-            if(!IsValidCppIndetifier(namespacesList[i])) {
+            if(!IsValidCppIdentifier(namespacesList[i])) {
                 wxString msg;
                 msg << wxT("'") << namespacesList[i] << _("' is not a valid C++ qualifier");
                 wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);

@@ -53,7 +53,7 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-#include "evnvarlist.h"
+#include "envvarlist.h"
 
 #include <wx/msw/registry.h>
 #endif

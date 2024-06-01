@@ -34,7 +34,7 @@
 EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)
 {
-    wxArrayString terminals = clConsoleBase::GetAvailaleTerminals();
+    wxArrayString terminals = clConsoleBase::GetAvailableTerminals();
 #if defined(__WXGTK__)
     wxString where; // GetAvailableTerminals() doesn't, it gets a list of supported ones; so check for existence
     for(size_t t = terminals.GetCount(); t > 0; --t) {

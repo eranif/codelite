@@ -1501,7 +1501,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, st
         kinds = { "member", "function", "prototype" };
     }
 
-    // collect member variabels if we are within a scope
+    // collect member variables if we are within a scope
     get_children_of_current_scope(kinds, remainder.filter, scopes, &scope_members, &other_scopes_members,
                                   &global_scopes_members);
 

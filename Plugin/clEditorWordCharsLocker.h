@@ -22,7 +22,7 @@ public:
 
     /**
      * @brief return the word from given pos
-     * This function uses the 'm_wordChars' to decided on teh word boundaries
+     * This function uses the 'm_wordChars' to decide on the word boundaries
      */
     wxString GetXmlTagAt(int pos, int& startPos, int& endPos) const;
 };

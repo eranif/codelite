@@ -59,8 +59,8 @@
 #include "dockablepanemenumanager.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
+#include "envvarlist.h"
 #include "event_notifier.h"
-#include "evnvarlist.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
@@ -500,7 +500,7 @@ void Manager::CloseWorkspace()
     // set back the "Default" environment variable as the active set
     /////////////////////////////////////////////////////////////////
 
-    EvnVarList vars = EnvironmentConfig::Instance()->GetSettings();
+    EnvVarList vars = EnvironmentConfig::Instance()->GetSettings();
     if (vars.IsSetExist(wxT("Default"))) {
         vars.SetActiveSet(wxT("Default"));
     }

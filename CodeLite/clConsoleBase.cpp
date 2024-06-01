@@ -93,7 +93,7 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
     return terminal;
 }
 
-wxArrayString clConsoleBase::GetAvailaleTerminals()
+wxArrayString clConsoleBase::GetAvailableTerminals()
 {
     wxArrayString terminals;
 #ifdef __WXMSW__

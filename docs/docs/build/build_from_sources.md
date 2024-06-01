@@ -108,6 +108,7 @@ Prerequisites:
  - Xcode command-line tools
  - Homebrew
  - Flex
+ - autoconf
 
 Preparation:
 
@@ -124,11 +125,13 @@ Preparation:
 
 ```bash
 brew update
-brew install git \
-             cmake \
-             libssh \
-             hunspell \
-             flex
+brew install git        \
+             cmake      \
+             flex       \
+             autoconf   \
+             automake   \
+             libtool    \
+             gettext
 ```
 
  - Usually, `brew` will install everything under `/opt/homebrew`, so run this from the terminal:

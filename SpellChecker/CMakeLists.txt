@@ -12,9 +12,6 @@ if(NOT APPLE)
         HINTS ENV HUNSPELL_DIR
         PATHS /usr/include /usr/local/include /usr/include/hunspell /usr/local/include/hunspell ${BREW_PREFIX}/include
         PATH_SUFFIXES include/hunspell include)
-else()
-    cl_osx_find_brew_lib(hunspell hunspell-1.7.0 LIBHUNSPELL)
-    cl_osx_find_brew_header(hunspell hunspell/hunspell.h HUNSPELL_H)
 endif()
 
 if(LIBHUNSPELL STREQUAL "LIBHUNSPELL-NOTFOUND" OR HUNSPELL_H STREQUAL "HUNSPELL_H-NOTFOUND")
@@ -26,11 +23,6 @@ else()
     if(UNIX AND NOT APPLE)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    endif()
-
-    if(APPLE)
-        add_definitions(-fPIC)
-        include_directories(${BREW_PREFIX}/include)
     endif()
 
     # set the plugin name here
@@ -78,7 +70,6 @@ else()
 
     # Installation destination
     cl_install_plugin(${PLUGIN_NAME})
-    cl_osx_copy_brew_lib(${LIBHUNSPELL} ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
 
     install(
         DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics

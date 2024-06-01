@@ -1,76 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-macro(CL_OSX_COPY_BREW_LIB lib_full_path destination_folder)
-    # if(APPLE) # when using brew, the libraries are symlinked to ../Cellar/... # we need to fix this by copying the
-    # real file and then creating a symbolic link # in our directory
-    #
-    # # what we want to do here is: # alter the symlink libfoo.dylib -> ../Cellar/lib/libfoo.1.X.dylib # into
-    # libfoo.dylib -> real-libfoo.dylib execute_process(COMMAND basename ${lib_full_path} OUTPUT_VARIABLE __lib_basename
-    # OUTPUT_STRIP_TRAILING_WHITESPACE) execute_process(COMMAND cp -L ${lib_full_path}
-    # ${destination_folder}/real-${__lib_basename}) execute_process(COMMAND /bin/sh -c "cd ${destination_folder} && ln
-    # -sf real-${__lib_basename} ${__lib_basename}") endif()
-endmacro()
-
-macro(CL_OSX_FIND_BREW_LIB BREW_PKG_NAME __lib_name LIB_OUTPUT_VARIABLE)
-    if(APPLE)
-        execute_process(
-            COMMAND brew --prefix --installed ${BREW_PKG_NAME}
-            OUTPUT_VARIABLE __PKG_PREFIX
-            OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-        if(NOT __PKG_PREFIX)
-            message(FATAL_ERROR "Could not locate brew install for ${BREW_PKG_NAME}")
-        endif()
-
-        set(TMP_FILEPATH "${__PKG_PREFIX}/lib/lib${__lib_name}.dylib")
-        if(NOT EXISTS ${TMP_FILEPATH})
-            message(FATAL_ERROR "Could not locate ${TMP_FILEPATH}")
-        endif()
-        set(${LIB_OUTPUT_VARIABLE} "-L${__PKG_PREFIX}/lib -l${__lib_name}")
-        message(STATUS "${LIB_OUTPUT_VARIABLE} is set to ${${LIB_OUTPUT_VARIABLE}}")
-        message(STATUS "Copying ${TMP_FILEPATH} -> ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS")
-        execute_process(COMMAND mkdir -p "${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS")
-        execute_process(COMMAND cp -L "${TMP_FILEPATH}" "${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS")
-    endif()
-endmacro()
-
-macro(CL_OSX_FIND_BREW_HEADER BREW_PKG_NAME __header_name HEADER_OUTPUT_VARIABLE)
-    if(APPLE)
-        execute_process(
-            COMMAND brew --prefix --installed ${BREW_PKG_NAME}
-            OUTPUT_VARIABLE __PKG_PREFIX
-            OUTPUT_STRIP_TRAILING_WHITESPACE)
-        if(NOT __PKG_PREFIX)
-            message(FATAL_ERROR "Could not locate brew install for ${BREW_PKG_NAME}")
-        endif()
-
-        set(TMP_FILEPATH "${__PKG_PREFIX}/include/${__header_name}")
-        if(NOT EXISTS ${TMP_FILEPATH})
-            message(FATAL_ERROR "Could not locate ${TMP_FILEPATH}")
-        endif()
-        set(${HEADER_OUTPUT_VARIABLE} "${__PKG_PREFIX}/include")
-        message(STATUS "${HEADER_OUTPUT_VARIABLE} is set to ${${HEADER_OUTPUT_VARIABLE}}")
-    endif()
-endmacro()
-
-function(copy_lib_deps LIB_FULLPATH DEPS_PATTERN)
-    execute_process(COMMAND mkdir -p ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
-    execute_process(
-        COMMAND sh -c "otool -L ${LIB_FULLPATH} |grep ${DEPS_PATTERN}|grep -v ${LIB_FULLPATH} |cut -d '(' -f1"
-        OUTPUT_VARIABLE _HOMEBREW_DEPS
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(REPLACE " " "" _HOMEBREW_DEPS "${_HOMEBREW_DEPS}")
-    string(REPLACE "\t" "" _HOMEBREW_DEPS "${_HOMEBREW_DEPS}")
-    string(REPLACE "\n" ";" _HOMEBREW_DEPS "${_HOMEBREW_DEPS}")
-    foreach(DLL ${_HOMEBREW_DEPS})
-        message(STATUS "Copying ${DLL} -> ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS (Dep of: ${LIB_FULLPATH})")
-        execute_process(COMMAND cp -fL ${DLL} ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-        if(NOT "${DLL}" STREQUAL "")
-            copy_lib_deps("${DLL}" ${DEPS_PATTERN})
-        endif()
-    endforeach()
-endfunction()
-
 macro(_FIND_WX_LIBRARIES)
     if(APPLE)
         if(NOT _WX_LIBS_DIR)
@@ -184,11 +113,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
 
         set(WX_DYLIB ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}.dylib)
         message(STATUS "wxWidgets lib is: ${WX_DYLIB}")
-        if(NOT BREW_PREFIX)
-            message(FATAL_ERROR "***BUG*** BREW_PREFIX is not defined!")
-        endif()
-
-        copy_lib_deps(${WX_DYLIB} ${BREW_PREFIX})
 
         file(GLOB WXLIBS ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}*.dylib)
         foreach(WXLIB ${WXLIBS})

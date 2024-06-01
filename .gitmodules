@@ -16,3 +16,15 @@
 [submodule "dtl"]
 	path = dtl
 	url = https://github.com/cubicdaiya/dtl.git
+[submodule "openssl-cmake"]
+	path = submodules/openssl-cmake
+	url = https://github.com/janbar/openssl-cmake.git
+[submodule "libssh"]
+	path = submodules/libssh
+	url = https://git.libssh.org/projects/libssh.git
+[submodule "zlib"]
+	path = submodules/zlib
+	url = https://github.com/madler/zlib
+[submodule "hunspell"]
+	path = submodules/hunspell
+	url = https://github.com/hunspell/hunspell.git

@@ -56,7 +56,12 @@ echo "-- Building wxCrafter : ${BUILD_WXC}"
 # Update our source tree
 cd ${CODELITE_HOME}
 echo "-- Pulling CodeLite changes..."
-git pull --rebase --recurse-submodules
+git pull --rebase
+if [ $? -ne 0 ]; then
+    exit $?
+fi
+
+git pull --recurse-submodules
 if [ $? -ne 0 ]; then
     exit $?
 fi

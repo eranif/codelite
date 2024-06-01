@@ -94,7 +94,7 @@ add_library(plugin SHARED ${SRCS})
 
 target_link_libraries(
     plugin
-    yaml-cpp
+    ${LIBYAML_CPP}
     ${LINKER_OPTIONS}
     ${ADDITIONAL_LIBRARIES}
     ${GTK3_LIBRARIES}

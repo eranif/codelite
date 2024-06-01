@@ -42,6 +42,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.1) # THIS MUST STAY AT THE TOP OF THE FILE
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+include(OSXDeps)
 
 # ######################################################################################################################
 # Defaults
@@ -121,12 +122,9 @@ if(NOT BISON_FOUND)
     if(UNIX)
         message(FATAL_ERROR " **** Could not find flex. Please install bison package")
     elseif(APPLE)
-        message(FATAL_ERROR " **** Could not find flex. Please install bison via brew")
+        message(FATAL_ERROR " **** Could not find flex. Please install bison")
     elseif(MINGW)
-        message(
-            FATAL_ERROR
-                " **** Could not find flex. Please install bison package: pacman -S bison"
-        )
+        message(FATAL_ERROR " **** Could not find flex. Please install bison package: pacman -S bison")
     else()
         message(FATAL_ERROR " **** Could not find bison. Please install bison package")
     endif()
@@ -138,12 +136,9 @@ if(NOT FLEX_FOUND)
     if(UNIX)
         message(FATAL_ERROR " **** Could not find flex. Please install flex package")
     elseif(APPLE)
-        message(FATAL_ERROR " **** Could not find flex. Please install flex via brew")
+        message(FATAL_ERROR " **** Could not find flex. Please install flex")
     elseif(MINGW)
-        message(
-            FATAL_ERROR
-                " **** Could not find flex. Please install flex package: pacman -S flex"
-        )
+        message(FATAL_ERROR " **** Could not find flex. Please install flex package: pacman -S flex")
     else()
         message(FATAL_ERROR " **** Could not find flex. Please install flex package")
     endif()
@@ -161,16 +156,6 @@ set(WITH_SFTP 1)
 
 # Create the post_install.cmake script (no append here)
 write_file("${CMAKE_BINARY_DIR}/post_install.cmake" "message(STATUS \"Running post install script\")")
-
-if(APPLE)
-    # add homebrew path to cmake search pathsbrew --prefix
-    execute_process(
-        COMMAND brew --prefix
-        OUTPUT_VARIABLE BREW_PREFIX
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    list(APPEND CMAKE_SYSTEM_PREFIX_PATH ${BREW_PREFIX})
-    message(STATUS "CMAKE_SYSTEM_PREFIX_PATH is set to ${CMAKE_SYSTEM_PREFIX_PATH}")
-endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to
                                                                        # deprecated wx methods
@@ -395,9 +380,7 @@ if(WITH_SFTP)
                 NAMES libssh.h
                 PATH_SUFFIXES include/libssh)
         elseif(APPLE)
-            cl_osx_find_brew_lib(libssh ssh.4 LIBSSH_LIB)
-            cl_osx_find_brew_header(libssh libssh/libssh.h LIBSSH_INCLUDE_DIR)
-            include_directories(${LIBSSH_INCLUDE_DIR})
+            message("-- LIBSSH_INCLUDE_DIR is set to ${LIBSSH_INCLUDE_DIR}")
         elseif(UNIX)
             # Linux
             find_library(
@@ -410,18 +393,18 @@ if(WITH_SFTP)
                 HINTS /usr/local/include /usr/include
                 PATH_SUFFIXES libssh)
         endif()
-        string(FIND ${LIBSSH_INCLUDE_DIR} "NOTFOUND" LIBSSH_NOT_FOUND_POS)
-        if(LIBSSH_NOT_FOUND_POS GREATER -1)
-            if(UNIX AND NOT APPLE)
-                # Linux / FreeBSD
-                message(FATAL_ERROR "**** NOTICE: Install libssh-dev and try again")
-            elseif(APPLE)
-                message(FATAL_ERROR "Could not locate libssh. Please run 'brew install libssh'")
-            elseif(NOT MINGW)
-                # OSX
-                message(FATAL_ERROR "**** NOTICE: Install libssh and try again (brew install libssh)")
+        if(NOT APPLE)
+            string(FIND ${LIBSSH_INCLUDE_DIR} "NOTFOUND" LIBSSH_NOT_FOUND_POS)
+            if(LIBSSH_NOT_FOUND_POS GREATER -1)
+                if(UNIX AND NOT APPLE)
+                    # Linux / FreeBSD
+                    message(FATAL_ERROR "**** NOTICE: Install libssh-dev and try again")
+                elseif(NOT MINGW)
+                    # FreeBSD ?
+                    message(FATAL_ERROR "**** NOTICE: Install libssh and try again")
+                endif()
+                message(FATAL_ERROR "-- Could not find libssh")
             endif()
-            message(FATAL_ERROR "-- Could not find libssh")
         endif()
     endif()
     message("-- LIBSSH_LIB is set to ${LIBSSH_LIB}")
@@ -904,11 +887,14 @@ endif()
 # add the dtl module include path before we include Plugin folder
 include_directories(dtl)
 
-# build the Core part of CodeLite (regardless of the final target)
 add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
-add_subdirectory(yaml-cpp)
+
+if(NOT APPLE)
+    add_subdirectory(yaml-cpp)
+endif()
+
 add_subdirectory(CxxParser)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
@@ -1017,7 +1003,11 @@ else()
     add_dependencies(plugin libcodelite)
     add_dependencies(codelite plugin)
     add_dependencies(codelite ctagsd)
-    add_dependencies(codelite yaml-cpp)
+
+    if(NOT APPLE)
+        add_dependencies(codelite yaml-cpp)
+        set(LIBYAML_CPP "yaml-cpp")
+    endif()
 
     # Include our custom plugin.cmake module
     include(plugin)

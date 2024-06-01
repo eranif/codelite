@@ -11,7 +11,7 @@
   }, {
    "name": "Release",
    "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -Wno-dev"], ["build", "cd  build-release && make -j8 install"], ["clean", "cd  build-release && make -j8 clean"]],
-   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;.*.xrc;*.cmake;*.rc",
+   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;.*.xrc;*.cmake;*.rc;*.py",
    "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
    "excludePaths": "codelite-cli;codelite-icons;codelite-icons-dark;codelite-icons-fresh-farm;codelite-stdio;codelite_echo;codelite_launcher;codelite_make;bitmaps;bitmaps-dark;bitmaps-light;build-release;CallGraph",
    "debugger": "lldb-vscode"

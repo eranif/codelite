@@ -94,11 +94,11 @@ add_library(plugin SHARED ${SRCS})
 
 target_link_libraries(
     plugin
-    ${LIBYAML_CPP}
     ${LINKER_OPTIONS}
     ${ADDITIONAL_LIBRARIES}
     ${GTK3_LIBRARIES}
     ${wxWidgets_LIBRARIES}
+    ${LIBYAML_CPP}
     -L"${CL_LIBPATH}"
     libcodelite)
 target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}"

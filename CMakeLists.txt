@@ -893,6 +893,7 @@ add_subdirectory(sdk/databaselayer)
 
 if(NOT APPLE)
     add_subdirectory(yaml-cpp)
+    set(LIBYAML_CPP "yaml-cpp")
 endif()
 
 add_subdirectory(CxxParser)
@@ -1006,7 +1007,6 @@ else()
 
     if(NOT APPLE)
         add_dependencies(codelite yaml-cpp)
-        set(LIBYAML_CPP "yaml-cpp")
     endif()
 
     # Include our custom plugin.cmake module

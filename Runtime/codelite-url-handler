@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# CodeLite URL Handler
+# codelite://open?url=file://@file&line=@line
+# codelite://open?file=@file&line=@line
+# codelite://open?url=file://@file:@line
+# codelite://open?file=@file:line
+#
+# @license GPL
+# @author Stefan Auditor <stefan@auditor.email>
+
+function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+
+arg=$(urldecode "${1}")
+pattern=".*file(:\/\/|\=)(.*)(:|&line=)(.*)"
+
+# Get the file path.
+file=$(echo "${arg}" | sed -r "s/${pattern}/\2/")
+
+# Get the line number.
+line=$(echo "${arg}" | sed -r "s/${pattern}/\4/")
+
+# Check if codelite command exist.
+if type codelite > /dev/null; then
+    /usr/bin/env codelite --line "${line}" "${file}" &
+fi
+
+if type wmctrl > /dev/null; then
+    filename=$(basename "$file")
+    /usr/bin/env wmctrl -i -a $(wmctrl -l | grep "${filename}" | tail -n 1 | cut -d ' ' -f1)
+fi
+
+exit 0

@@ -42,7 +42,8 @@ jobs:
       run: |
         mkdir build-release
         cd build-release
-        cmake .. -DCMAKE_BUILD_TYPE=Release
+        brew install autoconf automake libtool gettext
+        cmake .. -DCMAKE_BUILD_TYPE=Release -Wno-dev
         cmake --build . -j $(sysctl -n hw.physicalcpu)
         cmake --build . --target install
 

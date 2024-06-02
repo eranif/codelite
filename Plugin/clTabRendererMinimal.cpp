@@ -28,6 +28,13 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
 {
     *bgColour = colours.tabAreaColour;
     *activeTabBgColour = colours.activeTabBgColour;
+
+#ifdef __WXMAC__
+    // Make the active tab a bit brighther
+    if (wxSystemSettings::GetAppearance().IsDark()) {
+        *activeTabBgColour = (*activeTabBgColour).ChangeLightness(110);
+    }
+#endif
 }
 } // namespace
 

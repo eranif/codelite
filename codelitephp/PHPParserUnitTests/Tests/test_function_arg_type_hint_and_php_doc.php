@@ -6,7 +6,7 @@ class test_function_arg_type_hint_and_php_doc {
 }
 
 /**
- * @param mixed db
+ * @param mixed $db
  */
 function foo(\test_function_arg_type_hint_and_php_doc $db) {
     $db->// code complete based on \PDO and not "mixed"

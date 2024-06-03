@@ -30,7 +30,7 @@
 #include "DebuggerCallstackView.h"
 #include "NewProjectDialog.h"
 #include "SideBar.hpp"
-#include "WSImporter.h"
+#include "WorkspaceImporter/WSImporter.h"
 #include "app.h"
 #include "asyncprocess.h"
 #include "attachdbgprocdlg.h"

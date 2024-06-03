@@ -265,6 +265,7 @@ horizontal_white [ ]|{h_tab}
 <PHP>"trait"                {LEX_RETURN(kPHP_T_TRAIT);}
 <PHP>"extends"              {LEX_RETURN(kPHP_T_EXTENDS);}
 <PHP>"implements"           {LEX_RETURN(kPHP_T_IMPLEMENTS);}
+<PHP>"?->"                  {LEX_RETURN(kPHP_T_OBJECT_OPERATOR);}
 <PHP>"->"                   {LEX_RETURN(kPHP_T_OBJECT_OPERATOR);}
 <PHP>"::"                   {LEX_RETURN(kPHP_T_PAAMAYIM_NEKUDOTAYIM);}
 <PHP>\\                     {LEX_RETURN(kPHP_T_NS_SEPARATOR);}

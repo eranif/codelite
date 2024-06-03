@@ -71,10 +71,10 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
 
     // Use sockets here
-    switch(netType) {
+    switch (netType) {
     case eNetworkType::kStdio:
 #if USE_SFTP
-        if(clWorkspaceManager::Get().GetWorkspace() && clWorkspaceManager::Get().GetWorkspace()->IsRemote()) {
+        if (clWorkspaceManager::Get().GetWorkspace() && clWorkspaceManager::Get().GetWorkspace()->IsRemote()) {
             m_network.reset(new LSPNetworkRemoteSTDIO());
         } else {
             m_network.reset(new LSPNetworkSTDIO());
@@ -119,7 +119,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
 
 wxString LanguageServerProtocol::GetLanguageId(FileExtManager::FileType file_type)
 {
-    switch(file_type) {
+    switch (file_type) {
     case FileExtManager::TypeSourceC:
         return "c";
     case FileExtManager::TypeSourceCpp:
@@ -160,7 +160,7 @@ wxString LanguageServerProtocol::GetLanguageId(FileExtManager::FileType file_typ
 
 wxString LanguageServerProtocol::GetLanguageId(IEditor* editor)
 {
-    if(!editor) {
+    if (!editor) {
         return wxEmptyString;
     }
     FileExtManager::FileType type =
@@ -185,9 +185,9 @@ std::set<wxString> LanguageServerProtocol::GetSupportedLanguages()
 
 void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
 {
-    if(!IsInitialized()) {
-        if(request->GetMethod() == "textDocument/semanticTokens/full" ||
-           request->GetMethod() == "textDocument/didOpen") {
+    if (!IsInitialized()) {
+        if (request->GetMethod() == "textDocument/semanticTokens/full" ||
+            request->GetMethod() == "textDocument/didOpen") {
             // store the request for later processing
             m_pendingQueue.Push(request);
         }
@@ -195,7 +195,7 @@ void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
     }
 
     LSP_DEBUG() << "Sending" << request->GetMethod() << "request..." << endl;
-    if(request->As<LSP::CompletionRequest>()) {
+    if (request->As<LSP::CompletionRequest>()) {
         m_lastCompletionRequestId = request->As<LSP::CompletionRequest>()->GetId();
     }
     m_Queue.Push(request);
@@ -209,7 +209,7 @@ bool LanguageServerProtocol::DoStart()
     LSP_DEBUG() << GetLogPrefix() << "Starting..." << endl;
     LSP_DEBUG() << GetLogPrefix() << "Command:" << m_startupInfo.GetLspServerCommand() << endl;
     LSP_DEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder << endl;
-    for(const wxString& lang : m_languages) {
+    for (const wxString& lang : m_languages) {
         LSP_DEBUG() << GetLogPrefix() << "Language:" << lang << endl;
     }
     try {
@@ -220,7 +220,7 @@ bool LanguageServerProtocol::DoStart()
         m_startupInfo.SetEnv(m_env);
         m_network->Open(m_startupInfo);
         return true;
-    } catch(clException& e) {
+    } catch (clException& e) {
         LSP_WARNING() << e.What();
         return false;
     }
@@ -230,7 +230,7 @@ bool LanguageServerProtocol::Start(const LSPStartupInfo& startupInfo, const clEn
                                    const wxString& initOptions, const wxString& rootFolder,
                                    const wxArrayString& languages)
 {
-    if(IsRunning()) {
+    if (IsRunning()) {
         return true;
     }
     DoClear();
@@ -247,7 +247,7 @@ bool LanguageServerProtocol::Start(const LSPStartupInfo& startupInfo, const clEn
 
 bool LanguageServerProtocol::Start()
 {
-    if(IsRunning()) {
+    if (IsRunning()) {
         return true;
     }
     return DoStart();
@@ -293,7 +293,7 @@ void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
-    if(CanHandle(editor)) {
+    if (CanHandle(editor)) {
         event.Skip(false);
         FunctionHelp(editor);
     }
@@ -304,7 +304,7 @@ void LanguageServerProtocol::OnTypeInfoToolTip(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
-    if(CanHandle(editor)) {
+    if (CanHandle(editor)) {
         event.Skip(false);
         HoverTip(editor);
     }
@@ -316,15 +316,15 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(editor->GetCtrl() != wxWindow::FindFocus()) {
+    if (editor->GetCtrl() != wxWindow::FindFocus()) {
         return;
     }
 
-    if(event.GetTriggerKind() != LSP::CompletionItem::kTriggerUser && event.IsInsideCommentOrString()) {
+    if (event.GetTriggerKind() != LSP::CompletionItem::kTriggerUser && event.IsInsideCommentOrString()) {
         return;
     }
 
-    if(CanHandle(editor)) {
+    if (CanHandle(editor)) {
         event.Skip(false);
         CodeComplete(editor, event.GetTriggerKind() == LSP::CompletionItem::kTriggerUser);
     }
@@ -336,7 +336,7 @@ void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(editor)) {
+    if (CanHandle(editor)) {
         // this event is ours to handle
         event.Skip(false);
         FindDeclaration(editor, false);
@@ -349,7 +349,7 @@ void LanguageServerProtocol::OnFindSymbolImpl(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(editor)) {
+    if (CanHandle(editor)) {
         // this event is ours to handle
         event.Skip(false);
         FindImplementation(editor);
@@ -362,7 +362,7 @@ void LanguageServerProtocol::OnFindSymbol(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(editor)) {
+    if (CanHandle(editor)) {
         // this event is ours to handle
         event.Skip(false);
         FindDefinition(editor);
@@ -395,10 +395,10 @@ void LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor, const wxSt
     wxString filename = GetEditorFilePath(editor);
 
     wxString preContent;
-    if(m_filesTracker.exists(filename) && m_filesTracker.get_last_content(filename, &preContent)) {
+    if (m_filesTracker.exists(filename) && m_filesTracker.get_last_content(filename, &preContent)) {
         // we already did "open" for this, see if there are changes to report back to the language server
         auto changes = m_filesTracker.changes_from(preContent, fileContent);
-        if(changes.empty()) {
+        if (changes.empty()) {
             // everything is up-to-date
             LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
             return;
@@ -411,7 +411,7 @@ void LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor, const wxSt
             LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
 
         // incremental changes are supported, send them
-        if(IsIncrementalChangeSupported()) {
+        if (IsIncrementalChangeSupported()) {
             // only send the changes
             LSP_DEBUG() << "textDocument/didChange: using incremental changes:" << changes.size() << "changes" << endl;
             req->GetParams()->As<LSP::DidChangeTextDocumentParams>()->SetContentChanges(changes);
@@ -436,7 +436,7 @@ void LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor, const wxSt
 
 void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
 {
-    if(!m_filesTracker.exists(filename)) {
+    if (!m_filesTracker.exists(filename)) {
         return;
     }
 
@@ -451,7 +451,7 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
     CHECK_PTR_RET(editor);
     // For now: report a change event
     wxString filename = GetEditorFilePath(editor);
-    if(ShouldHandleFile(editor)) {
+    if (ShouldHandleFile(editor)) {
 
         // before sending the save request, send a change request
         LSP_DEBUG() << "Flushing changes before save" << endl;
@@ -480,7 +480,7 @@ LSP::Range GetFileRange(wxStyledTextCtrl* ctrl)
 
 void LanguageServerProtocol::SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags)
 {
-    if(ShouldHandleFile(editor)) {
+    if (ShouldHandleFile(editor)) {
         wxString filename = GetEditorFilePath(editor);
         LSP::CodeActionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
             new LSP::CodeActionRequest(LSP::TextDocumentIdentifier(filename), GetFileRange(editor->GetCtrl()), diags));
@@ -492,7 +492,7 @@ void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t lin
 {
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
-    if(ShouldHandleFile(editor)) {
+    if (ShouldHandleFile(editor)) {
         LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::CompletionRequest(
             LSP::TextDocumentIdentifier(filename), LSP::Position(line, column), userTriggered));
         QueueMessage(req);
@@ -526,7 +526,7 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     // For now, it does the same as 'OnFileLoaded'
     IEditor* editor = clGetManager()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
-    if(ShouldHandleFile(editor)) {
+    if (ShouldHandleFile(editor)) {
         SendSaveRequest(editor, editor->GetEditorText());
     }
 }
@@ -536,13 +536,13 @@ wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "["
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
     LOG_IF_TRACE { LSP_TRACE() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl; }
-    if(!IsInitialized()) {
+    if (!IsInitialized()) {
         LSP_TRACE() << "OpenEditor: server is still not initialized. server:" << GetName()
                     << ", file:" << GetEditorFilePath(editor) << endl;
         return;
     }
 
-    if(editor && ShouldHandleFile(editor)) {
+    if (editor && ShouldHandleFile(editor)) {
         wxString fileContent = editor->GetEditorText();
         SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
         SendSemanticTokensRequest(editor);
@@ -578,10 +578,10 @@ void LanguageServerProtocol::HoverTip(IEditor* editor)
     wxString fileContent = editor->GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
-    if(ShouldHandleFile(editor)) {
+    if (ShouldHandleFile(editor)) {
         int pos = editor->GetPosAtMousePointer();
         // trigger a hover request only when we are hovering something
-        if(pos != wxNOT_FOUND && isgraph(editor->GetCharAtPos(pos))) {
+        if (pos != wxNOT_FOUND && isgraph(editor->GetCharAtPos(pos))) {
             LSP::HoverRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
                 new LSP::HoverRequest(filename, editor->LineFromPos(pos), editor->GetColumnInChars(pos)));
             QueueMessage(req);
@@ -607,15 +607,15 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor, bool userTriggered)
 
 void LanguageServerProtocol::ProcessQueue()
 {
-    if(m_Queue.IsEmpty()) {
+    if (m_Queue.IsEmpty()) {
         return;
     }
-    if(m_Queue.IsWaitingReponse()) {
+    if (m_Queue.IsWaitingReponse()) {
         LSP_DEBUG() << "LSP is busy, will not send message";
         return;
     }
     LSP::MessageWithParams::Ptr_t req = m_Queue.Get();
-    if(!IsRunning()) {
+    if (!IsRunning()) {
         LSP_DEBUG() << GetLogPrefix() << "is down.";
         return;
     }
@@ -624,24 +624,24 @@ void LanguageServerProtocol::ProcessQueue()
     m_network->Send(req->ToString());
     m_Queue.SetWaitingReponse(true);
     m_Queue.Pop();
-    if(!req->GetStatusMessage().IsEmpty()) {
+    if (!req->GetStatusMessage().IsEmpty()) {
         clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1);
     }
 }
 
 void LanguageServerProtocol::CloseEditor(IEditor* editor)
 {
-    if(!IsInitialized()) {
+    if (!IsInitialized()) {
         return;
     }
-    if(editor && ShouldHandleFile(editor)) {
+    if (editor && ShouldHandleFile(editor)) {
         SendCloseRequest(GetEditorFilePath(editor));
     }
 }
 
 void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missing_header)
 {
-    if(!IsDeclarationSupported()) {
+    if (!IsDeclarationSupported()) {
         LSP_DEBUG() << GetLogPrefix() << "message `textDocument/declaration` is not supported" << endl;
         return;
     }
@@ -665,7 +665,7 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missi
 void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
 {
     // invoke the custom callback
-    if(m_onServerStartedCallback) {
+    if (m_onServerStartedCallback) {
         m_onServerStartedCallback();
     }
 
@@ -674,7 +674,7 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
     LSP::InitializeRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest());
     // some LSPs will crash if we path an empty root folder
     wxString root_uri = m_rootFolder;
-    if(root_uri.empty()) {
+    if (root_uri.empty()) {
         root_uri = clWorkspaceManager::Get().IsWorkspaceOpened() ? clWorkspaceManager::Get().GetWorkspace()->GetDir()
                                                                  : clStandardPaths::Get().GetTempDir();
     }
@@ -704,10 +704,10 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
     LSP_DEBUG() << "Received data from LSP server of size:" << m_outputBuffer.size() << "bytes" << endl;
 
     m_Queue.SetWaitingReponse(false);
-    while(!m_outputBuffer.empty()) {
+    while (!m_outputBuffer.empty()) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
-        if(!json) {
+        if (!json) {
             LOG_IF_TRACE { LSP_TRACE() << "Unable to read JSON payload" << endl; }
             LOG_IF_DEBUG
             {
@@ -716,7 +716,7 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
                 // dump the output buffer into a file and continue
                 // we only dump 3 files per CodeLite session
                 static size_t dumps_count = 0;
-                if(dumps_count < 3 && (m_outputBuffer.size() > (1024 * 1024 * 1024))) {
+                if (dumps_count < 3 && (m_outputBuffer.size() > (1024 * 1024 * 1024))) {
                     dumps_count++;
                     auto tmp_filename =
                         FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "cl_lsp", "txt");
@@ -734,7 +734,7 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
         // LSP_TRACE() << "-- LSP:" << json_item.format(false) << endl;
         LOG_IF_TRACE { LSP_TRACE() << "-- LSP: Message Method is:" << message_method << endl; }
 
-        if(message_method == "window/logMessage" || message_method == "window/showMessage") {
+        if (message_method == "window/logMessage" || message_method == "window/showMessage") {
             // log this message
             LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
             log_event.SetServerName(GetName());
@@ -742,14 +742,14 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
             log_event.SetLogMessageSeverity(json_item["params"]["type"].toInt());
             m_cluster->AddPendingEvent(log_event);
 
-        } else if(message_method == "telemetry/event") {
+        } else if (message_method == "telemetry/event") {
             // show dialog to the user
             // log this message
             LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
             log_event.SetServerName(GetName());
             log_event.SetMessage(json_item["params"].toString());
             m_cluster->AddPendingEvent(log_event);
-        } else if(message_method == "workspace/applyEdit") {
+        } else if (message_method == "workspace/applyEdit") {
 
             // the server is requesting us to apply an edit
             HandleWorkspaceEdit(json_item["params"]["edit"]);
@@ -757,10 +757,10 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
         } else {
             // other response
             LSP::ResponseMessage res(std::move(json));
-            if(IsInitialized()) {
+            if (IsInitialized()) {
                 LSP::MessageWithParams::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 // Is this an error message?
-                if(res.IsErrorResponse()) {
+                if (res.IsErrorResponse()) {
                     // an error response arrived, handle it
                     HandleResponseError(res, msg_ptr);
                 } else {
@@ -769,11 +769,11 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
                 }
             } else {
                 // Server is not initialized yet: only accept initialization responses here
-                if(res.GetId() == m_initializeRequestID) {
+                if (res.GetId() == m_initializeRequestID) {
                     m_state = kInitialized;
 
                     // Keep the semantic tokens array
-                    if(CheckCapability(res, "semanticTokensProvider", "textDocument/semanticTokens/full")) {
+                    if (CheckCapability(res, "semanticTokensProvider", "textDocument/semanticTokens/full")) {
                         m_semanticTokensTypes =
                             res["result"]["capabilities"]["semanticTokensProvider"]["legend"]["tokenTypes"]
                                 .toArrayString();
@@ -787,7 +787,7 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
                     CheckCapability(res, "referencesProvider", "textDocument/references");
                     // Check for textDocumentSync capability
                     // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocumentSyncOptions
-                    if(res["result"]["capabilities"]["textDocumentSync"]["change"].toInt(wxNOT_FOUND) == 2) {
+                    if (res["result"]["capabilities"]["textDocumentSync"]["change"].toInt(wxNOT_FOUND) == 2) {
                         m_incrementalChangeSupported = true;
                     }
 
@@ -828,7 +828,7 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         OpenEditor(editor);
         // a semantic tokens request will be sent as part of the `OpenEditor` request
     }
@@ -844,7 +844,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(editor) && IsDocumentSymbolsSupported()) {
+    if (CanHandle(editor) && IsDocumentSymbolsSupported()) {
         // this event is ours to handle
         event.Skip(false);
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE |
@@ -868,7 +868,7 @@ void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_fla
 
 wxString LanguageServerProtocol::GetEditorFilePath(IEditor* editor) const
 {
-    if(editor->IsRemoteFile()) {
+    if (editor->IsRemoteFile()) {
         return editor->GetRemotePath();
     } else {
         return editor->GetFileName().GetFullPath();
@@ -877,7 +877,7 @@ wxString LanguageServerProtocol::GetEditorFilePath(IEditor* editor) const
 
 const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
 {
-    if(index >= m_semanticTokensTypes.size()) {
+    if (index >= m_semanticTokensTypes.size()) {
         return emptyString;
     }
     return m_semanticTokensTypes[index];
@@ -897,12 +897,12 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
     wxString filepath = GetEditorFilePath(editor);
 
     // check if this is implemented by the server
-    if(IsSemanticTokensSupported()) {
+    if (IsSemanticTokensSupported()) {
         LSP::DidChangeTextDocumentRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(filepath));
         QueueMessage(req);
 
-    } else if(IsDocumentSymbolsSupported()) {
+    } else if (IsDocumentSymbolsSupported()) {
         // Use DocumentSymbol instead
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT);
     }
@@ -912,7 +912,7 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
 {
     LSP_DEBUG() << GetLogPrefix() << "received an error message:" << response.ToString() << endl;
     LSP::ResponseError errMsg(response.ToString());
-    switch(errMsg.GetErrorCode()) {
+    switch (errMsg.GetErrorCode()) {
     case LSP::ResponseError::kErrorCodeInternalError:
     case LSP::ResponseError::kErrorCodeInvalidRequest: {
         // Restart this server
@@ -953,17 +953,17 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
     }
 
     // finally, call the request handler
-    if(msg_ptr->As<LSP::Request>()) {
+    if (msg_ptr->As<LSP::Request>()) {
         msg_ptr->As<LSP::Request>()->OnError(response, m_cluster);
     }
 }
 
 void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)
 {
-    if(msg_ptr && msg_ptr->As<LSP::Request>()) {
+    if (msg_ptr && msg_ptr->As<LSP::Request>()) {
         LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "received a response"; }
         LSP::Request* preq = msg_ptr->As<LSP::Request>();
-        if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
+        if (preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
             LSP_TRACE() << "Received a response for completion message ID#" << preq->GetId()
                         << ". However, a newer completion request with ID#" << m_lastCompletionRequestId
                         << "was already sent. Dropping response";
@@ -971,9 +971,10 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
         }
         preq->SetServerName(GetName());
         LSP_DEBUG() << "Processing response for request:" << preq->GetMethod() << endl;
+        LSP_TRACE() << response.ToString() << endl;
         preq->OnResponse(response, m_cluster);
 
-    } else if(response.IsPushDiagnostics()) {
+    } else if (response.IsPushDiagnostics()) {
         // Get the URI
         LSP_DEBUG() << "Received diagnostic message:" << endl;
         wxString fn = FileUtils::FilePathFromURI(response.GetDiagnosticsUri());
@@ -983,14 +984,14 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
                                          1);
 
         std::vector<LSP::Diagnostic> diags = response.GetDiagnostics();
-        if(!diags.empty() && IsDisaplayDiagnostics()) {
+        if (!diags.empty() && IsDisaplayDiagnostics()) {
             // report the diagnostics
             LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);
             eventSetDiags.SetFileName(fn);
             eventSetDiags.GetLocation().SetPath(fn);
             eventSetDiags.SetDiagnostics(diags);
             EventNotifier::Get()->AddPendingEvent(eventSetDiags);
-        } else if(diags.empty()) {
+        } else if (diags.empty()) {
             // clear all diagnostics
             LSPEvent eventClearDiags(wxEVT_LSP_CLEAR_DIAGNOSTICS);
             eventClearDiags.SetFileName(fn);
@@ -1007,7 +1008,7 @@ void LanguageServerProtocol::OnFindHeaderFile(clCodeCompletionEvent& event)
     IEditor* editor = ::clGetManager()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
 
-    if(!ShouldHandleFile(editor)) {
+    if (!ShouldHandleFile(editor)) {
         return;
     }
     event.Skip(false);
@@ -1017,7 +1018,7 @@ void LanguageServerProtocol::OnFindHeaderFile(clCodeCompletionEvent& event)
 void LanguageServerProtocol::OnWorkspaceSymbols(clCodeCompletionEvent& event)
 {
     event.Skip();
-    if(!CanHandle(workspace_file_type)) {
+    if (!CanHandle(workspace_file_type)) {
         return;
     }
     event.Skip(false);
@@ -1051,7 +1052,7 @@ void LanguageServerProtocol::RenameSymbol(IEditor* editor)
     wxString old_name = editor->GetWordAtCaret();
     old_name.Trim().Trim(false);
 
-    if(old_name.empty()) {
+    if (old_name.empty()) {
         // nothing to be done here
         return;
     }
@@ -1059,7 +1060,7 @@ void LanguageServerProtocol::RenameSymbol(IEditor* editor)
     wxString title;
     title << _("Rename Symbol: '") << old_name << "'";
     wxString newname = wxGetTextFromUser(_("New name:"), title, old_name);
-    if(newname.empty() || newname == old_name) {
+    if (newname.empty() || newname == old_name) {
         return;
     }
 
@@ -1076,7 +1077,7 @@ void LanguageServerProtocol::OnSemanticHighlights(clCodeCompletionEvent& event)
                                                   : clGetManager()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
 
-    if(!ShouldHandleFile(editor)) {
+    if (!ShouldHandleFile(editor)) {
         return;
     }
 
@@ -1089,7 +1090,7 @@ bool LanguageServerProtocol::CheckCapability(const LSP::ResponseMessage& res, co
                                              const wxString& lspRequestName)
 {
     bool capabilitySupported = res["result"]["capabilities"].hasNamedObject(capabilityName);
-    if(capabilitySupported) {
+    if (capabilitySupported) {
         m_providers.insert(lspRequestName);
     }
     return capabilitySupported;
@@ -1127,14 +1128,14 @@ void LSPRequestMessageQueue::Push(LSP::MessageWithParams::Ptr_t message)
 
     // Messages of type 'Request' require responses from the server
     LSP::Request* req = message->As<LSP::Request>();
-    if(req) {
+    if (req) {
         m_pendingReplyMessages.insert({ req->GetId(), message });
     }
 }
 
 void LSPRequestMessageQueue::Pop()
 {
-    if(!m_Queue.empty()) {
+    if (!m_Queue.empty()) {
         m_Queue.pop();
     }
     SetWaitingReponse(false);
@@ -1142,7 +1143,7 @@ void LSPRequestMessageQueue::Pop()
 
 LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::Get()
 {
-    if(m_Queue.empty()) {
+    if (m_Queue.empty()) {
         return LSP::MessageWithParams::Ptr_t(nullptr);
     }
     return m_Queue.front();
@@ -1150,7 +1151,7 @@ LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::Get()
 
 void LSPRequestMessageQueue::Clear()
 {
-    while(!m_Queue.empty()) {
+    while (!m_Queue.empty()) {
         m_Queue.pop();
     }
     SetWaitingReponse(false);
@@ -1159,7 +1160,7 @@ void LSPRequestMessageQueue::Clear()
 
 void LSPRequestMessageQueue::Move(LSPRequestMessageQueue& other)
 {
-    while(!other.m_Queue.empty()) {
+    while (!other.m_Queue.empty()) {
         m_Queue.push(other.m_Queue.front());
         other.m_Queue.pop();
     }
@@ -1170,10 +1171,10 @@ void LSPRequestMessageQueue::Move(LSPRequestMessageQueue& other)
 
 LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::TakePendingReplyMessage(int msgid)
 {
-    if(m_pendingReplyMessages.empty()) {
+    if (m_pendingReplyMessages.empty()) {
         return LSP::MessageWithParams::Ptr_t(nullptr);
     }
-    if(m_pendingReplyMessages.count(msgid) == 0) {
+    if (m_pendingReplyMessages.count(msgid) == 0) {
         return LSP::MessageWithParams::Ptr_t(nullptr);
     }
     LSP::MessageWithParams::Ptr_t msgptr = m_pendingReplyMessages[msgid];
@@ -1188,7 +1189,7 @@ void LanguageServerProtocol::OnWorkspaceClosed(clWorkspaceEvent& e) { e.Skip(); 
 IEditor* LanguageServerProtocol::GetEditor(const clCodeCompletionEvent& event) const
 {
     auto editor = clGetManager()->FindEditor(event.GetFileName());
-    if(editor && editor == clGetManager()->GetActiveEditor()) {
+    if (editor && editor == clGetManager()->GetActiveEditor()) {
         return editor;
     }
     return nullptr;
@@ -1207,12 +1208,12 @@ bool LanguageServerProtocol::IsIncrementalChangeSupported() const { return m_inc
 void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command)
 {
     auto editor = clGetManager()->FindEditor(filepath);
-    if(!editor) {
+    if (!editor) {
         LSP_ERROR() << "Could not send workspace/executeCommand: could not locate editor for file:" << filepath << endl;
         return;
     }
 
-    if(ShouldHandleFile(editor)) {
+    if (ShouldHandleFile(editor)) {
         LSP_DEBUG() << "Sending `workspace/executeCommand`" << endl;
         wxString filename = GetEditorFilePath(editor);
         LSP::WorkspaceExecuteCommand::Ptr_t req =

@@ -26,6 +26,7 @@
 
 #include "cl_command_event.h"
 #include "cl_editor.h"
+#include "cl_editor_tip_window.h"
 #include "commentconfigdata.h"
 #include "ctags_manager.h"
 #include "drawingutils.h"
@@ -397,4 +398,35 @@ int ContextBase::PositionBeforeCurrent() const
         return 0;
     }
     return GetCtrl().PositionBefore(curpos);
+}
+
+void ContextBase::OnKeyDown(wxKeyEvent& event)
+{
+    clEditor& ctrl = GetCtrl();
+    if (!ctrl.GetFunctionTip()->IsActive()) {
+        event.Skip();
+        return;
+    }
+    switch (event.GetKeyCode()) {
+    case WXK_UP:
+        ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
+        return;
+    case WXK_DOWN:
+        ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
+        return;
+    default: {
+        int modifier_key = event.GetModifiers();
+        wxChar ch = event.GetUnicodeKey();
+        if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+            ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
+            return;
+        } else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+            ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
+            return;
+        }
+        break;
+    }
+    }
+    // if we got here, it means that the event was not handled - call skip and return
+    event.Skip();
 }

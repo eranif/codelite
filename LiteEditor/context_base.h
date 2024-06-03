@@ -120,7 +120,7 @@ public:
     virtual void OnDwellEnd(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnDbgDwellEnd(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnDbgDwellStart(wxStyledTextEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxKeyEvent& event);
     virtual void AddMenuDynamicContent(wxMenu* WXUNUSED(menu)) {}
     virtual void RemoveMenuDynamicContent(wxMenu* WXUNUSED(menu)) {}
     virtual void OnSciUpdateUI(wxStyledTextEvent& WXUNUSED(event)) {}

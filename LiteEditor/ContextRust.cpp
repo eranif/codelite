@@ -167,7 +167,7 @@ void ContextRust::OnEnterHit() {}
 
 void ContextRust::OnFileSaved() {}
 
-void ContextRust::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+void ContextRust::OnKeyDown(wxKeyEvent& event) { ContextBase::OnKeyDown(event); }
 
 void ContextRust::OnSciUpdateUI(wxStyledTextEvent& event) { wxUnusedVar(event); }
 

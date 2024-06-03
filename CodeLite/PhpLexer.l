@@ -281,6 +281,7 @@ horizontal_white [ ]|{h_tab}
 <PHP>"goto"                 {LEX_RETURN(kPHP_T_GOTO);}
 <PHP>"echo"                 {LEX_RETURN(kPHP_T_ECHO);}
 <PHP>"print"                {LEX_RETURN(kPHP_T_PRINT);}
+<PHP>"enum"                 {LEX_RETURN(kPHP_T_ENUM);}
 <PHP>"class"                {LEX_RETURN(kPHP_T_CLASS);}
 <PHP>"interface"            {LEX_RETURN(kPHP_T_INTERFACE);}
 <PHP>"trait"                {LEX_RETURN(kPHP_T_TRAIT);}

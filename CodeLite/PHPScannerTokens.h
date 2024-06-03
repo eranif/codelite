@@ -130,6 +130,7 @@ enum {
     kPHP_T_HALT_COMPILER,
     kPHP_T_CLASS,
     kPHP_T_TRAIT,
+    kPHP_T_ENUM,
     kPHP_T_INTERFACE,
     kPHP_T_EXTENDS,
     kPHP_T_IMPLEMENTS,

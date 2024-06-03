@@ -186,6 +186,12 @@ void PHPSourceFile::Parse(int exitDepth)
         case kPHP_T_CONST:
             OnConstant(token);
             break;
+        case kPHP_T_CASE:
+            if(Class() == CurrentScope().get()) {
+                // in class cope, this means that this is an enum case
+                OnEnumCase(token);
+            }
+            break;
         case kPHP_T_REQUIRE:
         case kPHP_T_REQUIRE_ONCE:
         case kPHP_T_INCLUDE:
@@ -212,6 +218,7 @@ void PHPSourceFile::Parse(int exitDepth)
         case kPHP_T_CLASS:
         case kPHP_T_INTERFACE:
         case kPHP_T_TRAIT:
+        case kPHP_T_ENUM:
             // Found class
             OnClass(token);
             m_lookBackTokens.clear();
@@ -364,7 +371,7 @@ void PHPSourceFile::OnFunction()
     // update function attributes
     ParseFunctionSignature(funcDepth);
     func->SetFlags(LookBackForFunctionFlags());
-    if(LookBackTokensContains(kPHP_T_ABSTRACT) || // The 'abstract modifier was found for this this function
+    if(LookBackTokensContains(kPHP_T_ABSTRACT) || // The 'abstract modifier was found for this function
        (funcPtr->Parent() && funcPtr->Parent()->Is(kEntityTypeClass) &&
         funcPtr->Parent()->Cast<PHPEntityClass>()->IsInterface())) // We are inside an interface
     {
@@ -791,6 +798,30 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     pClass->SetIsTrait(tok.type == kPHP_T_TRAIT);
     pClass->SetFullName(PrependCurrentScope(token.Text()));
     pClass->SetLine(token.lineNumber);
+
+    if (tok.type == kPHP_T_ENUM) {
+        pClass->SetIsEnum(true);
+        wxArrayString implements;
+        NextToken(token);
+        if (token.type == ':') {
+            NextToken(token);
+            if (token.type == kPHP_T_IDENTIFIER) {
+                if (token.Text() == "int") {
+                    implements.Add("\\IntBackedEnum");
+                } else if (token.Text() == "string") {
+                    implements.Add("\\StringBackedEnum");
+                } else {
+                    implements.Add("\\BackedEnum");
+                }
+            } else {
+                implements.Add("\\BackedEnum");
+            }
+        } else {
+            UngetToken(token);
+            implements.Add("\\UnitEnum");
+        }
+        pClass->SetImplements(implements);
+    }
 
     while(NextToken(token)) {
         if(token.IsAnyComment())
@@ -1419,6 +1450,47 @@ void PHPSourceFile::OnConstant(const phpLexerToken& tok)
             member->SetFilename(m_filename.GetFullPath());
         } else {
             // do nothing
+        }
+    }
+}
+
+void PHPSourceFile::OnEnumCase(const phpLexerToken& tok)
+{
+    // Parse enum case
+    phpLexerToken token;
+    PHPEntityBase::Ptr_t member;
+    while(NextToken(token)) {
+        if(token.type == '=') {
+
+            // The next value should contain the value
+            wxString constantValue;
+            while(NextToken(token)) {
+                if(token.type == ';') {
+                    UngetToken(token);
+                    break;
+                }
+                constantValue << token.Text();
+            }
+
+            if(member && !constantValue.IsEmpty()) {
+                // Keep the constant value, we will be using it later for tooltip
+                member->Cast<PHPEntityVariable>()->SetDefaultValue(constantValue);
+            }
+        }
+        if(token.type == ';') {
+            if(member) {
+                CurrentScope()->AddChild(member);
+                break;
+            }
+        } else if(token.type == kPHP_T_IDENTIFIER) {
+            // found the constant name
+            member = std::make_shared<PHPEntityVariable>();
+            member->Cast<PHPEntityVariable>()->SetFlag(kVar_Const);
+            member->Cast<PHPEntityVariable>()->SetFlag(kVar_Member);
+            member->SetFullName(token.Text());
+            member->SetLine(token.lineNumber);
+            member->SetFilename(m_filename.GetFullPath());
+            member->Cast<PHPEntityVariable>()->SetTypeHint(CurrentScope()->GetFullName());
         }
     }
 }

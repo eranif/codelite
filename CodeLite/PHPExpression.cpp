@@ -56,6 +56,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case kPHP_T_CASE:
         case kPHP_T_RETURN:
         case kPHP_T_THROW:
+        case kPHP_T_ENUM:
         case kPHP_T_CLASS:
         case kPHP_T_TRAIT:
         case kPHP_T_INTERFACE:

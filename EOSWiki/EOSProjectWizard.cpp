@@ -1,9 +1,11 @@
 #include "EOSProjectWizard.h"
-#include <wx/filename.h>
-#include "CompilerLocatorEosCDT.h"
+
+#include "CompilerLocator/CompilerLocatorEosCDT.h"
 #include "build_settings_config.h"
 #include "compiler.h"
 #include "globals.h"
+
+#include <wx/filename.h>
 
 EOSProjectWizard::EOSProjectWizard(wxWindow* parent)
     : EOSProjectWizardBase(parent)

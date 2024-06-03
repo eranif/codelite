@@ -26,7 +26,7 @@
 #include "app.h"
 
 #include "ColoursAndFontsManager.h"
-#include "CompilerLocatorCygwin.h"
+#include "CompilerLocator/CompilerLocatorCygwin.h"
 #include "SideBar.hpp"
 #include "SocketAPI/clSocketClient.h"
 #include "autoversion.h"

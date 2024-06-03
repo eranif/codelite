@@ -26,7 +26,7 @@
 #include "RustPlugin.hpp"
 
 #include "CargoToml.hpp"
-#include "CompilerLocatorRustc.hpp"
+#include "CompilerLocator/CompilerLocatorRustc.hpp"
 #include "NewFileSystemWorkspaceDialog.h"
 #include "Platform.hpp"
 #include "RustWorkspace.hpp"

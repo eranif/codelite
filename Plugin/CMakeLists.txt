@@ -89,6 +89,7 @@ endif()
 
 file(GLOB SRCS
     "*.cpp"
+    "CompilerLocator/*.cpp"
     "LSP/*.cpp"
     "ThemeImporters/*.cpp"
     "WorkspaceImporter/*.cpp"

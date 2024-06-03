@@ -1,13 +1,14 @@
 #include "cl_make_generator_app.h"
 
+#include "build_settings_config.h"
+#include "builder/builder_gnumake.h"
+#include "builder/builder_gnumake_default.h"
+#include "configuration_mapping.h"
+#include "globals.h"
+#include "macromanager.h"
+#include "workspace.h"
+
 #include <algorithm>
-#include <build_settings_config.h>
-#include <builder_gnumake.h>
-#include <builder_gnumake_default.h>
-#include <configuration_mapping.h>
-#include <globals.h>
-#include <macromanager.h>
-#include <workspace.h>
 #include <wx/crt.h>
 #include <wx/filename.h>
 

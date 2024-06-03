@@ -46,8 +46,6 @@
 #include "bookmark_manager.h"
 #include "build_custom_targets_menu_manager.h"
 #include "build_settings_config.h"
-#include "builder.h"
-#include "buildmanager.h"
 #include "buildtabsettingsdata.h"
 #include "clAboutDialog.h"
 #include "clBootstrapWizard.h"

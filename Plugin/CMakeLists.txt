@@ -93,6 +93,7 @@ file(GLOB SRCS
     "LSP/*.cpp"
     "ThemeImporters/*.cpp"
     "WorkspaceImporter/*.cpp"
+    "builder/*.cpp"
     "wxTerminalCtrl/*.cpp")
 
 # Define the output

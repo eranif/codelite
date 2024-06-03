@@ -1,7 +1,7 @@
 #ifndef CMAKEBUILDER_H
 #define CMAKEBUILDER_H
 
-#include "builder.h" // Base class: Builder
+#include "builder/builder.h" // Base class: Builder
 
 class CMakeBuilder : public Builder
 {

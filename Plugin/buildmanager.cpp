@@ -24,12 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "buildmanager.h"
 
-#include "BuilderGnuMakeMSYS.hpp"
-#include "builder.h"
-#include "builder_NMake.h"
-#include "builder_gnumake.h"
-#include "builder_gnumake_default.h"
-#include "builder_gnumake_onestep.h"
+#include "builder/BuilderGnuMakeMSYS.hpp"
+#include "builder/builder.h"
+#include "builder/builder_NMake.h"
+#include "builder/builder_gnumake.h"
+#include "builder/builder_gnumake_default.h"
+#include "builder/builder_gnumake_onestep.h"
 
 BuildManager::BuildManager()
 {

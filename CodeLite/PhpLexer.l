@@ -40,6 +40,8 @@ extern "C" int yywrap(void*) { return 1; }
     return x;\
 }
 
+int bracket_count = 0;
+
 %}
 
 /* regex and modes */
@@ -55,6 +57,7 @@ extern "C" int yywrap(void*) { return 1; }
 %x HEREDOC
 %x DSTRING
 %x SINGLE_STRING
+%x ATTRIBUTE
 
 identifier [a-zA-Z_][0-9a-zA-Z_]*
 
@@ -195,6 +198,24 @@ horizontal_white [ ]|{h_tab}
     if(userData->IsCollectingComments()) {
         userData->AppendToComment(yytext[0]);
     }
+}
+<PHP>"#[" {
+    BEGIN(ATTRIBUTE);
+    bracket_count = 1;
+}
+<ATTRIBUTE>"[" {
+    bracket_count++;
+}
+<ATTRIBUTE>"]" {
+    bracket_count--;
+    if (bracket_count == 0) {
+        BEGIN(PHP);
+        return ATTRIBUTE;
+    }
+}
+<ATTRIBUTE>"\n" {
+}
+<ATTRIBUTE>. {
 }
 
 <PHP>"//"|"#" { 

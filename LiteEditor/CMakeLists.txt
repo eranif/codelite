@@ -185,8 +185,13 @@ if(NOT APPLE)
             FILES ${CL_SRC_ROOT}/Runtime/codelite_xterm
             DESTINATION ${CL_INSTALL_BIN}
             PERMISSIONS ${EXE_PERM})
+        install(
+            FILES ${CL_SRC_ROOT}/Runtime/codelite-url-handler
+            DESTINATION ${CL_INSTALL_BIN}
+            PERMISSIONS ${EXE_PERM})
         # Create application launcher, copy application icon to standard location
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+        install(FILES ${CL_SRC_ROOT}/Runtime/codelite-url-handler.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
         # Install icons
 
         # 32x32

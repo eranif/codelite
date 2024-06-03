@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=CodeLite URL Handler
+Exec=codelite-url-handler %u
+Type=Application
+StartupNotify=false
+MimeType=x-scheme-handler/codelite;

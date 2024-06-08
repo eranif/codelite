@@ -26,7 +26,8 @@ body:
       options:
         - Self compiled
         - 16.0.0
-        - 16.0.2
+        - 17.0.0
+        - 17.10.0
         - Other
     validations:
       required: true

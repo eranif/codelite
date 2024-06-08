@@ -105,6 +105,7 @@ public:
         TypeSLite,
         TypeTar,
         TypeTcl,
+        TypeGo,
         TypeLast,
     };
 

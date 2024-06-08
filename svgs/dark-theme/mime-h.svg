@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
 <svg
-   viewBox="0 0 100 100"
+   width="800px"
+   height="800px"
+   viewBox="0 0 32 32"
    version="1.1"
-   id="svg4"
+   id="svg6"
    sodipodi:docname="mime-h.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
-     id="defs8" />
+     id="defs10" />
   <sodipodi:namedview
-     id="namedview6"
+     id="namedview8"
      pagecolor="#505050"
      bordercolor="#eeeeee"
      borderopacity="1"
@@ -20,21 +27,28 @@
      inkscape:pageopacity="0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="8.73"
-     inkscape:cx="10.137457"
-     inkscape:cy="50"
-     inkscape:window-width="1664"
-     inkscape:window-height="1111"
-     inkscape:window-x="1256"
-     inkscape:window-y="108"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg4" />
+     inkscape:zoom="0.97375"
+     inkscape:cx="399.48652"
+     inkscape:cy="399.48652"
+     inkscape:window-width="3840"
+     inkscape:window-height="2080"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <title
+     id="title2">file_type_cheader</title>
   <path
-     d="M11.8 3.5h16.9v39.4h42.6V3.5h16.9v93H71.3v-39H28.7v39H11.8v-93z"
-     fill="#8463ce"
-     stroke="#8463ce"
-     stroke-width="1.75"
-     stroke-miterlimit="10"
-     id="path2"
-     style="fill:#cccccc;stroke:#cccccc" />
+     d="M8.329,29V3h3.192v9.329a7.132,7.132,0,0,1,5.64-2.589,7.605,7.605,0,0,1,3.636.825,4.842,4.842,0,0,1,2.208,2.279,10.506,10.506,0,0,1,.665,4.221V29H20.478V17.064a4.932,4.932,0,0,0-1.038-3.485,3.858,3.858,0,0,0-2.935-1.091,5.176,5.176,0,0,0-2.669.736,4.157,4.157,0,0,0-1.782,2,9.164,9.164,0,0,0-.532,3.476V29Z"
+     style="fill:#eeeeec"
+     id="path4" />
+  <metadata
+     id="metadata827">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>file_type_cheader</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
 </svg>

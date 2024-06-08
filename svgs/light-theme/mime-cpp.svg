@@ -1,47 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
 <svg
-   id="Layer_1"
-   viewBox="0 0 100 100"
+   width="800px"
+   height="800px"
+   viewBox="0 0 32 32"
    version="1.1"
+   id="svg6"
    sodipodi:docname="mime-cpp.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
-     id="defs34099" />
+     id="defs10" />
   <sodipodi:namedview
-     id="namedview34097"
-     pagecolor="#505050"
+     id="namedview8"
+     pagecolor="#ffffff"
      bordercolor="#eeeeee"
      borderopacity="1"
      inkscape:pageshadow="0"
      inkscape:pageopacity="0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="8.73"
-     inkscape:cx="65.693013"
-     inkscape:cy="50.114548"
-     inkscape:window-width="2179"
-     inkscape:window-height="1111"
-     inkscape:window-x="709"
-     inkscape:window-y="120"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="Layer_1" />
-  <style
-     id="style34090">.st0{fill:#1d88e5}</style>
+     inkscape:zoom="0.97375"
+     inkscape:cx="399.48652"
+     inkscape:cy="399.48652"
+     inkscape:window-width="3840"
+     inkscape:window-height="2080"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <title
+     id="title2">file_type_cpp2</title>
   <path
-     class="st0"
-     d="m 72.098127,52.962192 h -7.711523 v 8.501142 H 56.413673 V 52.962192 H 48.702149 V 44.46105 h 7.711524 v -8.501142 h 7.972931 v 8.501142 h 7.711523 z m 27.709204,0 H 91.8344 v 8.501142 H 84.122876 V 52.962192 H 76.149945 V 44.46105 h 7.972931 V 35.959908 H 91.8344 v 8.501142 h 7.972931 z"
-     id="path34094"
-     style="fill:#00b8f8;stroke-width:1.36084" />
-  <path
-     d="M 55.349999,3.4499999 C 77.249999,3.4499999 88.55,15.75 88.55,15.75 l -7.8,12.2 c 0,0 -10.3,-9.5 -24.600001,-9.5 -19,0 -30.199999,14.2 -30.199999,30.9 0,17.1 11.5,32.2 30.3,32.2 15.599999,0 26.1,-11.4 26.1,-11.4 l 8.6,11.8 c 0,0 -12.4,14.6 -35.4,14.6 -27.5,0 -46.5000004,-20.4 -46.5000004,-46.9 0.1,-26.2 19.7999994,-46.2000001 46.2999994,-46.2000001 z"
-     fill="#1d88e5"
-     stroke="#1d88e5"
-     stroke-width="1.75"
-     stroke-miterlimit="10"
-     id="path29620"
-     style="fill:#00b8f8;fill-opacity:1;stroke:none" />
+     d="m 26.911741,13.794156 v 1.54 h -1.542 v 1.543 h 1.542 v 1.543 h 1.543 v -1.543 h 1.543 v -1.543 h -1.543 v -1.54 z m -3.5,0 h -1.544 v 1.54 h -1.543 v 1.543 h 1.543 v 1.543 h 1.543 v -1.543 h 1.543 v -1.543 h -1.543 z m -3.654,5.226 a 6.167,6.167 0 1 1 -0.04,-6.118 l 5.39,-3.1000004 a 12.384,12.384 0 1 0 0.032,12.3400004 z"
+     style="fill:#8fbc8f"
+     id="path4" />
+  <metadata
+     id="metadata827">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>file_type_cpp2</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
 </svg>

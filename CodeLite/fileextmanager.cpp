@@ -44,7 +44,7 @@ struct Matcher {
     Matcher(const wxString& pattern, FileExtManager::FileType fileType, bool regex = true)
         : m_fileType(fileType)
     {
-        if(regex) {
+        if (regex) {
             m_regex = std::make_unique<wxRegEx>(pattern, wxRE_ADVANCED | wxRE_ICASE);
         } else {
             m_exactMatch = pattern;
@@ -55,10 +55,10 @@ struct Matcher {
     {
         auto lines = ::wxStringTokenize(in, "\r\n", wxTOKEN_STRTOK);
         bool use_regex = static_cast<bool>(m_regex);
-        for(const auto& line : lines) {
-            if(use_regex && m_regex->Matches(line)) {
+        for (const auto& line : lines) {
+            if (use_regex && m_regex->Matches(line)) {
                 return true;
-            } else if(!use_regex && line.Find(m_exactMatch) != wxNOT_FOUND) {
+            } else if (!use_regex && line.Find(m_exactMatch) != wxNOT_FOUND) {
                 return true;
             }
         }
@@ -76,7 +76,7 @@ bool init_done = false;
 
 void FileExtManager::Init()
 {
-    if(!init_done) {
+    if (!init_done) {
         init_done = true;
         m_map[wxT("cc")] = TypeSourceCpp;
         m_map[wxT("cpp")] = TypeSourceCpp;
@@ -135,6 +135,7 @@ void FileExtManager::Init()
 
         // Java file
         m_map[wxT("java")] = TypeJava;
+        m_map[wxT("go")] = TypeGo;
 
         m_map[wxT("exe")] = TypeExe;
         m_map[wxT("html")] = TypeHtml;
@@ -223,8 +224,8 @@ void FileExtManager::Init()
         m_language_bundle.insert({ "CMake", { TypeCMake } });
 
         // build the reverse search table: file type -> language
-        for(auto vt : m_language_bundle) {
-            for(auto t : vt.second) {
+        for (auto vt : m_language_bundle) {
+            for (auto t : vt.second) {
                 m_file_type_to_lang.insert({ (int)t, vt.first });
             }
         }
@@ -269,7 +270,7 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     Init();
 
     wxFileName fn(filename);
-    if(fn.IsOk() == false) {
+    if (fn.IsOk() == false) {
         return defaultType;
     }
 
@@ -278,45 +279,45 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     e.Trim().Trim(false);
 
     auto iter = m_map.find(e);
-    if(iter == m_map.end()) {
+    if (iter == m_map.end()) {
         // try to see if the file is a makefile
-        if(fn.GetFullName().CmpNoCase(wxT("makefile")) == 0) {
+        if (fn.GetFullName().CmpNoCase(wxT("makefile")) == 0) {
             return TypeMakefile;
-        } else if(fn.GetFullName().Lower() == "dockerfile") {
+        } else if (fn.GetFullName().Lower() == "dockerfile") {
             return TypeDockerfile;
-        } else if(fn.GetFullName().CmpNoCase("README") == 0) {
+        } else if (fn.GetFullName().CmpNoCase("README") == 0) {
             return TypeMarkdown;
-        } else if(fn.GetFullName().CmpNoCase(".clangd") == 0) {
+        } else if (fn.GetFullName().CmpNoCase(".clangd") == 0) {
             return TypeYAML;
         } else {
             // try auto detecting
             FileType autoDetectType = defaultType;
-            if(AutoDetectByContent(filename, autoDetectType)) {
+            if (AutoDetectByContent(filename, autoDetectType)) {
                 return autoDetectType;
             }
         }
         return defaultType;
-    } else if((iter->second == TypeText) && (fn.GetFullName().CmpNoCase("CMakeLists.txt") == 0)) {
+    } else if ((iter->second == TypeText) && (fn.GetFullName().CmpNoCase("CMakeLists.txt") == 0)) {
         return TypeCMake;
     }
 
     FileExtManager::FileType type = iter->second;
-    if(fn.Exists() && (type == TypeWorkspace)) {
+    if (fn.Exists() && (type == TypeWorkspace)) {
         wxString content;
-        if(FileUtils::ReadFileContent(fn, content)) {
-            if(content.Contains("<CodeLite_Workspace")) {
+        if (FileUtils::ReadFileContent(fn, content)) {
+            if (content.Contains("<CodeLite_Workspace")) {
                 return TypeWorkspace;
             } else {
                 JSON root(content);
-                if(!root.isOk())
+                if (!root.isOk())
                     return TypeWorkspace;
-                if(root.toElement().hasNamedObject("NodeJS")) {
+                if (root.toElement().hasNamedObject("NodeJS")) {
                     return TypeWorkspaceNodeJS;
-                } else if(root.toElement().hasNamedObject("Docker")) {
+                } else if (root.toElement().hasNamedObject("Docker")) {
                     return TypeWorkspaceDocker;
-                } else if(root.toElement().namedObject("workspace_type").toString() == "File System Workspace") {
+                } else if (root.toElement().namedObject("workspace_type").toString() == "File System Workspace") {
                     return TypeWorkspaceFileSystem;
-                } else if(root.toElement().namedObject("metadata").namedObject("type").toString() == "php") {
+                } else if (root.toElement().namedObject("metadata").namedObject("type").toString() == "php") {
                     return TypeWorkspacePHP;
                 } else {
                     return TypeWorkspace;
@@ -333,9 +334,9 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 {
 
     FileType ft = GetType(filename);
-    if(ft == TypeOther) {
+    if (ft == TypeOther) {
         // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
+        if (!AutoDetectByContent(filename, ft)) {
             return false;
         }
     }
@@ -345,7 +346,7 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
     wxString fileContent;
-    if(!FileUtils::ReadBufferFromFile(filename, fileContent, 1024)) {
+    if (!FileUtils::ReadBufferFromFile(filename, fileContent, 1024)) {
         clWARNING() << "Failed to read file's content" << endl;
         return false;
     }
@@ -354,11 +355,11 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
 
 bool FileExtManager::GetContentType(const wxString& string_content, FileExtManager::FileType& fileType)
 {
-    for(size_t i = 0; i < m_matchers.size(); ++i) {
-        if(m_matchers[i].Matches(string_content)) {
+    for (size_t i = 0; i < m_matchers.size(); ++i) {
+        if (m_matchers[i].Matches(string_content)) {
             LOG_IF_TRACE
             {
-                if(m_matchers[i].m_regex) {
+                if (m_matchers[i].m_regex) {
                     clDEBUG1() << "Matching part is:" << m_matchers[i].m_regex->GetMatch(string_content, 0) << endl;
                 }
             }
@@ -373,9 +374,9 @@ bool FileExtManager::IsFileType(const wxString& filename, FileExtManager::FileTy
 {
 
     FileType ft = GetType(filename);
-    if(ft == TypeOther) {
+    if (ft == TypeOther) {
         // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
+        if (!AutoDetectByContent(filename, ft)) {
             return false;
         }
     }
@@ -392,7 +393,7 @@ FileExtManager::FileType FileExtManager::GetTypeFromExtension(const wxFileName& 
 {
 
     std::unordered_map<wxString, FileExtManager::FileType>::iterator iter = m_map.find(filename.GetExt().Lower());
-    if(iter == m_map.end())
+    if (iter == m_map.end())
         return TypeOther;
     return iter->second;
 }
@@ -411,7 +412,7 @@ bool FileExtManager::IsSymlinkFolder(const wxString& filename)
 
 wxString FileExtManager::GetLanguageFromType(FileExtManager::FileType file_type)
 {
-    if(m_file_type_to_lang.count((int)file_type) == 0) {
+    if (m_file_type_to_lang.count((int)file_type) == 0) {
         return wxEmptyString;
     }
 

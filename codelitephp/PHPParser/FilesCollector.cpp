@@ -31,6 +31,7 @@ void FilesCollector::Collect(const wxString& rootFolder)
         m_filesAndFolders.clear();
         return;
     }
+    std::unordered_set<wxString> visitedFolders;
     std::queue<wxString> Q;
     Q.push(rootFolder);
 
@@ -50,11 +51,13 @@ void FilesCollector::Collect(const wxString& rootFolder)
             fullpath << dir.GetNameWithSep() << filename;
             bool isDirectory = wxFileName::DirExists(fullpath);
             if(isDirectory && (m_excludeFolders.count(filename) == 0)) {
-                // A directory
-                Q.push(fullpath);
-                fullpath << wxFileName::GetPathSeparator() << FOLDER_MARKER;
-                V.push_back(fullpath);
-
+                wxString canonicalPath = wxFileName(fullpath).ResolveLink().GetFullPath();
+                if (visitedFolders.insert(canonicalPath).second) {
+                    // A directory
+                    Q.push(fullpath);
+                    fullpath << wxFileName::GetPathSeparator() << FOLDER_MARKER;
+                    V.push_back(fullpath);
+                }
             } else if(!isDirectory && IsFileOK(filename)) {
                 // A file
                 V.push_back(fullpath);

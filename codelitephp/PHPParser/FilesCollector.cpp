@@ -52,8 +52,7 @@ void FilesCollector::Collect(const wxString& rootFolder)
             bool isDirectory = wxFileName::DirExists(fullpath);
             if(isDirectory && (m_excludeFolders.count(filename) == 0)) {
                 wxString canonicalPath = wxFileName(fullpath).ResolveLink().GetFullPath();
-                if (visitedFolders.find(canonicalPath) == visitedFolders.end()) {
-                    visitedFolders.insert(canonicalPath);
+                if (visitedFolders.insert(canonicalPath).second) {
                     // A directory
                     Q.push(fullpath);
                     fullpath << wxFileName::GetPathSeparator() << FOLDER_MARKER;

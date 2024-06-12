@@ -7,7 +7,7 @@ ThemeImporterJava::ThemeImporterJava()
                  "extends final  finally float for future generic goto if implements import inner "
                  "instanceof int interface long native new null outer  package private protected public rest "
                  "return short static super switch synchronized this throw throws transient try  var "
-                 "void volatile while");
+                 "void volatile while async await");
     // Documentation comment keywords
     SetKeywords2("a addindex addtogroup anchor arg attention author b brief bug c callgraph callergraph category class "
                  "code "

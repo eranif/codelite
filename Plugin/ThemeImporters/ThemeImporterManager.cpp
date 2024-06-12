@@ -11,6 +11,7 @@
 #include "ThemeImporterDiff.hpp"
 #include "ThemeImporterDockerfile.hpp"
 #include "ThemeImporterFortran.hpp"
+#include "ThemeImporterGo.hpp"
 #include "ThemeImporterINI.hpp"
 #include "ThemeImporterInnoSetup.hpp"
 #include "ThemeImporterJSON.hpp"
@@ -64,6 +65,7 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(std::make_unique<ThemeImporterMarkdown>());
     m_importers.push_back(std::make_unique<ThemeImporterRust>());
     m_importers.push_back(std::make_unique<ThemeImporterJson>());
+    m_importers.push_back(std::make_unique<ThemeImporterGo>());
 }
 
 ThemeImporterManager::~ThemeImporterManager() {}
@@ -76,18 +78,18 @@ wxString ThemeImporterManager::Import(const wxString& theme_file)
     lexers.reserve(m_importers.size());
     for (auto& importer : m_importers) {
         auto lexer = importer->Import(theme_file);
-        if(!lexer) {
+        if (!lexer) {
             return wxEmptyString;
         }
 
-        if(name.empty()) {
+        if (name.empty()) {
             name = lexer->GetThemeName();
         }
         lexers.emplace_back(lexer);
     }
 
     // add the lexers
-    for(auto lexer : lexers) {
+    for (auto lexer : lexers) {
         ColoursAndFontsManager::Get().AddLexer(lexer);
     }
     return name;

@@ -52,6 +52,14 @@ void import_files(const wxString& input_dir, const wxString& output_dir)
         }
     }
 
+    {
+        wxArrayString toml_files;
+        wxDir::GetAllFiles(input_dir, &toml_files, "*.toml");
+        for(const wxString& file : toml_files) {
+            clDEBUG() << "Importing VSCode Theme:" << file << "..." << importer.Import(file) << endl;
+        }
+    }
+
     // save the changes
     wxFileName lexer_json(output_dir, "lexers.json");
     ColoursAndFontsManager::Get().Save(lexer_json);

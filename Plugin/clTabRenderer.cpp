@@ -104,8 +104,8 @@ void clTabInfo::CalculateOffsets(size_t style, size_t max_width, wxDC& dc)
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
 
-    int Y_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->ySpacer : 10;
-    int X_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->xSpacer : 10;
+    int Y_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->ySpacer : DEFAULT_YSPACER;
+    int X_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->xSpacer : DEFAULT_XSPACER;
     bool using_bold_font = m_tabCtrl ? m_tabCtrl->GetArt()->IsUseBoldFont() : false;
 
     wxDCFontChanger font_changer(dc);
@@ -168,7 +168,11 @@ void clTabInfo::CalculateOffsets(size_t style, size_t max_width, wxDC& dc)
 void clTabInfo::CalculateOffsets(size_t style, size_t max_width)
 {
     if (m_tabCtrl) {
-        wxClientDC dc(m_tabCtrl);
+        wxBitmap bmp{ 1, 1 };
+        wxMemoryDC memDC(bmp);
+        wxGCDC gcdc;
+        wxDC& dc = DrawingUtils::GetGCDC(memDC, gcdc);
+
         dc.SetFont(DrawingUtils::GetDefaultGuiFont());
         CalculateOffsets(style, max_width, dc);
     }
@@ -221,14 +225,8 @@ std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderes;
 
 clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     : bottomAreaHeight(0)
-    , majorCurveWidth(0)
-    , smallCurveWidth(0)
-    , overlapWidth(0)
-    , verticalOverlapWidth(0)
-    , ySpacer(5)
     , m_name(name)
 {
-    xSpacer = 10;
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;
 }
 

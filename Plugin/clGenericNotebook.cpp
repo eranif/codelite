@@ -275,7 +275,10 @@ void clTabCtrl::OnActivateApp(wxActivateEvent& e)
 
 void clTabCtrl::DoSetBestSize()
 {
-    wxClientDC dc(this);
+    wxBitmap bmp{ 1, 1 };
+    wxMemoryDC memDC(bmp);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(memDC, gcdc);
 
     wxFont font = clTabRenderer::GetTabFont(true);
     dc.SetFont(font);
@@ -312,7 +315,7 @@ bool clTabCtrl::ShiftRight(clTabInfo::Vec_t& tabs)
 
         for (size_t i = 0; i < tabs.size(); ++i) {
             clTabInfo::Ptr_t t = tabs.at(i);
-            t->GetRect().SetX(t->GetRect().x - width + GetArt()->overlapWidth);
+            t->GetRect().SetX(t->GetRect().x - width);
         }
         return true;
     }
@@ -472,9 +475,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 {
     int xx = 0;
-    wxRect clientRect = GetClientRect();
-    for (size_t i = 0; i < tabs.size(); ++i) {
-        clTabInfo::Ptr_t tab = tabs[i];
+    const wxRect clientRect = GetClientRect();
+    for (auto tab : tabs) {
         tab->GetRect().SetX(xx);
         tab->GetRect().SetY(0);
         tab->GetRect().SetWidth(tab->GetWidth());
@@ -494,16 +496,9 @@ void clTabCtrl::UpdateVisibleTabs(bool forceReshuffle)
 
     // Start shifting right tabs until the active tab is visible
     m_visibleTabs = m_tabs;
-    if (!IsVerticalTabs()) {
-        while (!IsActiveTabVisible(m_visibleTabs)) {
-            if (!ShiftRight(m_visibleTabs))
-                break;
-        }
-    } else {
-        while (!IsActiveTabVisible(m_visibleTabs)) {
-            if (!ShiftBottom(m_visibleTabs))
-                break;
-        }
+    while (!IsActiveTabVisible(m_visibleTabs)) {
+        if (!ShiftRight(m_visibleTabs))
+            break;
     }
 }
 
@@ -925,9 +920,9 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
         for (; iter != m_visibleTabs.end(); ++iter) {
             // update the remainding tabs coordinates
             if (IsVerticalTabs()) {
-                (*iter)->GetRect().SetY((*iter)->GetRect().GetY() - tab->GetHeight() + GetArt()->verticalOverlapWidth);
+                (*iter)->GetRect().SetY((*iter)->GetRect().GetY() - tab->GetHeight());
             } else {
-                (*iter)->GetRect().SetX((*iter)->GetRect().GetX() - tab->GetWidth() + GetArt()->overlapWidth);
+                (*iter)->GetRect().SetX((*iter)->GetRect().GetX() - tab->GetWidth());
             }
         }
     }
@@ -1316,18 +1311,18 @@ bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
 {
     // Move the first tab from the list and adjust the remainder
     // of the tabs y coordiate
-    if (!tabs.empty()) {
-        clTabInfo::Ptr_t t = tabs.at(0);
-        int height = t->GetHeight();
-        tabs.erase(tabs.begin() + 0);
-
-        for (size_t i = 0; i < tabs.size(); ++i) {
-            clTabInfo::Ptr_t t = tabs.at(i);
-            t->GetRect().SetY(t->GetRect().y - height + GetArt()->verticalOverlapWidth);
-        }
-        return true;
+    if (tabs.empty()) {
+        return false;
     }
-    return false;
+
+    clTabInfo::Ptr_t t = tabs.at(0);
+    int height = t->GetHeight();
+    tabs.erase(tabs.begin() + 0);
+
+    for (auto t : tabs) {
+        t->GetRect().SetY(t->GetRect().y - height);
+    }
+    return true;
 }
 
 void clTabCtrl::OnRightUp(wxMouseEvent& event) { event.Skip(); }
@@ -1371,7 +1366,11 @@ size_t clTabCtrl::GetLabelFixedWidth(wxDC& dc) const
 
 size_t clTabCtrl::GetLabelFixedWidth() const
 {
-    wxClientDC dc(const_cast<clTabCtrl*>(this));
+    wxBitmap bmp{ 1, 1 };
+    wxMemoryDC memDC(bmp);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(memDC, gcdc);
+
     return GetLabelFixedWidth(dc);
 }
 
@@ -1401,7 +1400,11 @@ void clTabCtrl::PositionFilelistButton()
         return;
     }
 
-    wxClientDC cdc(this);
+    wxBitmap bmp{ 1, 1 };
+    wxMemoryDC memDC(bmp);
+    wxGCDC gcdc;
+    wxDC& cdc = DrawingUtils::GetGCDC(memDC, gcdc);
+
     wxRect button_rect_base = GetFileListButtonRect(this, m_style, cdc);
     m_chevronRect = button_rect_base;
 

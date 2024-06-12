@@ -41,11 +41,6 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
 clTabRendererMinimal::clTabRendererMinimal(const wxWindow* parent)
     : clTabRenderer("MINIMAL", parent)
 {
-    bottomAreaHeight = 0;
-    smallCurveWidth = 0;
-    majorCurveWidth = 0;
-    overlapWidth = 0;
-    verticalOverlapWidth = 0;
 }
 
 clTabRendererMinimal::~clTabRendererMinimal() {}

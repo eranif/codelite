@@ -197,19 +197,18 @@ public:
     bool IsModified() const { return m_isModified; }
 };
 
+#define DEFAULT_XSPACER 10
+#define DEFAULT_YSPACER 10
+
 class WXDLLIMPEXP_SDK clTabRenderer
 {
 public:
     typedef wxSharedPtr<clTabRenderer> Ptr_t;
 
     // Geometry
-    int bottomAreaHeight;     // BOTTOM_AREA_HEIGHT = 3;
-    int majorCurveWidth;      // MAJOR_CURVE_WIDTH = 15;
-    int smallCurveWidth;      // SMALL_CURVE_WIDTH = 4;
-    int overlapWidth;         // OVERLAP_WIDTH = 20;
-    int verticalOverlapWidth; // V_OVERLAP_WIDTH = 3;
-    int xSpacer;
-    int ySpacer;
+    int bottomAreaHeight = 0;
+    int xSpacer = DEFAULT_XSPACER;
+    int ySpacer = DEFAULT_YSPACER;
     wxString m_name;
     static std::unordered_map<wxString, clTabRenderer*> ms_Renderes;
     bool use_bold_font = false;

@@ -18,6 +18,7 @@ ThemeImporterGo::ThemeImporterGo()
     // Special task markers
     // will be styled with SCE_C_TASKMARKER
     SetKeywords5("TODO FIXME BUG ATTN");
+    SetLangName("go");
     SetFileExtensions("*.go");
 }
 
@@ -25,7 +26,7 @@ ThemeImporterGo::~ThemeImporterGo() {}
 
 LexerConf::Ptr_t ThemeImporterGo::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "go", wxSTC_LEX_CPP);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties

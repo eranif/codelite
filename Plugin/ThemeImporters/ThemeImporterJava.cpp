@@ -57,6 +57,9 @@ LexerConf::Ptr_t ThemeImporterJava::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_WORD2, "Methods", m_function);
     AddProperty(lexer, wxSTC_C_GLOBALCLASS, "Classes", m_klass);
 
+    // the base for all our substyles
+    lexer->SetSubstyleBase(wxSTC_C_IDENTIFIER);
+
     FinalizeImport(lexer);
     return lexer;
 }

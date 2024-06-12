@@ -288,7 +288,6 @@ void ZoomText::SetSemanticTokens(const wxString& classes, const wxString& variab
     CHECK_PTR_RET(lexer);
 
     if(lexer->GetWordSet(LexerConf::WS_CLASS).is_ok()) {
-        LOG_IF_TRACE { clDEBUG1() << "Setting semantic tokens:" << endl; }
         lexer->ApplyWordSet(this, LexerConf::WS_CLASS, flatStrClasses);
         lexer->ApplyWordSet(this, LexerConf::WS_FUNCTIONS, flatStrMethods);
         lexer->ApplyWordSet(this, LexerConf::WS_VARIABLES, flatStrLocals);

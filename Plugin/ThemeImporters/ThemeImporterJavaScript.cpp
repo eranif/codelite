@@ -56,12 +56,11 @@ ThemeImporterJavaScript::ThemeImporterJavaScript()
     // Used for wxSTC_C_GLOBALCLASS ("classes")
     SetKeywords3("Math Array Date document window NumberObject URL");
 
-    // used for functions
+    // Secondary keywords and identifiers
     SetFunctionsWordSetIndex(1);
-
-    // Global classes and typedefs, it already contains values, so be careful here
-    // so when used, append the values
     SetClassWordSetIndex(3);
+    SetOthersWordSetIndex(4);
+    SetLocalsWordSetIndex(LexerConf::WS_VARIABLES, true);
     SetFileExtensions("*.js;*.javascript;*.qml;*.json;*.ts");
 }
 
@@ -89,6 +88,11 @@ LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_GLOBALCLASS, "JavaScript global classes", m_klass);
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Javadoc keyword", m_javadocKeyword);
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Javadoc keyword error", m_javadocKeyword);
+    AddPropertySubstyle(lexer, LexerConf::WS_VARIABLES, "Variables", m_variable);
+
+    // the base for all our substyles
+    lexer->SetSubstyleBase(wxSTC_C_IDENTIFIER);
+
     FinalizeImport(lexer);
     return lexer;
 }

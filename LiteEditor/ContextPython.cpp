@@ -30,7 +30,7 @@ ContextPython::ContextPython(clEditor* container)
 
 ContextPython::~ContextPython()
 {
-    if(m_eventsBound) {
+    if (m_eventsBound) {
         Unbind(wxEVT_MENU, &ContextPython::OnCommentSelection, this, XRCID("comment_selection"));
         Unbind(wxEVT_MENU, &ContextPython::OnCommentLine, this, XRCID("comment_line"));
     }
@@ -41,9 +41,9 @@ void ContextPython::ApplySettings()
     SetName("python");
     clEditor& rCtrl = GetCtrl();
     LexerConf::Ptr_t lexPtr = ColoursAndFontsManager::Get().GetLexer(GetName());
-    if(lexPtr) {
+    if (lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
-        for(int i = 0; i <= 4; ++i) {
+        for (int i = 0; i <= 4; ++i) {
             wxString keyWords = lexPtr->GetKeyWords(i);
             keyWords.Replace(wxT("\n"), wxT(" "));
             keyWords.Replace(wxT("\r"), wxT(" "));
@@ -75,21 +75,21 @@ void ContextPython::AutoIndent(const wxChar& ch)
     clEditor& rCtrl = GetCtrl();
     int curpos = rCtrl.GetCurrentPos();
     int col = rCtrl.GetColumn(curpos);
-    if(ch == '\n') {
+    if (ch == '\n') {
         // if in comment block, check if we are on top of a function
         // if we are, prepare a comment block
         int curline = rCtrl.LineFromPos(curpos);
         int nPrevline = curline - 1;
         wxString prevline = rCtrl.GetLine(nPrevline);
         prevline.Trim().Trim(false);
-        if(prevline == COMMENT_BLOCK) {
+        if (prevline == COMMENT_BLOCK) {
             // Check if the previous line is a function definition
             curline -= 2;
             int nextLinePos = rCtrl.PositionFromLine(curline);
-            if(nextLinePos != wxNOT_FOUND) {
+            if (nextLinePos != wxNOT_FOUND) {
                 wxString defline = rCtrl.GetLine(curline);
                 static wxRegEx reDef("def[ \t]+[a-z0-9_]+[ \t]*(\\(.*?\\))[ \t]*\\:", wxRE_ADVANCED | wxRE_ICASE);
-                if(reDef.IsValid() && reDef.Matches(defline)) {
+                if (reDef.IsValid() && reDef.Matches(defline)) {
                     int caretPos = curpos;
                     wxString signature = reDef.GetMatch(defline, 1);
                     signature = signature.AfterFirst('(').BeforeLast(')');
@@ -97,14 +97,14 @@ void ContextPython::AutoIndent(const wxChar& ch)
                     wxString doc;
                     wxString NEWLINE = rCtrl.GetEolString();
                     wxString indent(rCtrl.GetUseTabs() ? '\t' : ' ', col);
-                    if(params.empty()) {
+                    if (params.empty()) {
                         doc << indent << NEWLINE;
                         doc << indent << COMMENT_BLOCK;
                     } else {
                         doc << indent << NEWLINE;
                         doc << indent << "Parameters" << NEWLINE;
                         doc << indent << "----------" << NEWLINE;
-                        for(wxString& param : params) {
+                        for (wxString& param : params) {
                             param.Trim().Trim(false);
                             doc << indent << param << " : " << NEWLINE;
                             doc << indent << "    "

@@ -49,13 +49,13 @@ void ContextJavaScript::ApplySettings()
 {
     SetName(wxT("javascript"));
     LexerConf::Ptr_t lexPtr;
-    if(EditorConfigST::Get()->IsOk()) {
+    if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }
     clEditor& rCtrl = GetCtrl();
-    if(lexPtr) {
+    if (lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
-        for(int i = 0; i <= 4; ++i) {
+        for (int i = 0; i <= 4; ++i) {
             wxString keyWords = lexPtr->GetKeyWords(i);
             keyWords.Replace(wxT("\n"), wxT(" "));
             keyWords.Replace(wxT("\r"), wxT(" "));
@@ -71,25 +71,25 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
 {
     clEditor& rCtrl = GetCtrl();
 
-    if(rCtrl.GetDisableSmartIndent()) {
+    if (rCtrl.GetDisableSmartIndent()) {
         return;
     }
-    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) {
+    if (rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) {
         return;
     }
 
     int curpos = rCtrl.GetCurrentPos();
-    if(IsCommentOrString(curpos) && nChar == wxT('\n')) {
+    if (IsCommentOrString(curpos) && nChar == wxT('\n')) {
         AutoAddComment();
         return;
     }
 
-    if(IsCommentOrString(curpos)) {
+    if (IsCommentOrString(curpos)) {
         ContextBase::AutoIndent(nChar);
         return;
     }
     int line = rCtrl.LineFromPosition(curpos);
-    if(nChar == wxT('\n')) {
+    if (nChar == wxT('\n')) {
 
         int prevpos(wxNOT_FOUND);
         int foundPos(wxNOT_FOUND);
@@ -99,7 +99,7 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
         word = rCtrl.PreviousWord(curpos, foundPos);
 
         // user hit ENTER after 'else'
-        if(word == wxT("else")) {
+        if (word == wxT("else")) {
             int prevLine = rCtrl.LineFromPosition(prevpos);
             rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
             rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
@@ -108,18 +108,18 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
         }
 
         // User typed 'ENTER' immediatly after closing brace ')'
-        if(prevpos != wxNOT_FOUND && ch == wxT(')')) {
+        if (prevpos != wxNOT_FOUND && ch == wxT(')')) {
 
             long openBracePos(wxNOT_FOUND);
             int posWordBeforeOpenBrace(wxNOT_FOUND);
 
-            if(rCtrl.MatchBraceBack(wxT(')'), prevpos, openBracePos)) {
+            if (rCtrl.MatchBraceBack(wxT(')'), prevpos, openBracePos)) {
                 rCtrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-                if(posWordBeforeOpenBrace != wxNOT_FOUND) {
+                if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                     word = rCtrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
                     // c++ expression with single line and should be treated separatly
-                    if(word == wxT("if") || word == wxT("while") || word == wxT("for")) {
+                    if (word == wxT("if") || word == wxT("while") || word == wxT("for")) {
                         int prevLine = rCtrl.LineFromPosition(prevpos);
                         rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
                         rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
@@ -131,7 +131,7 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
         }
 
         // use the previous line indentation level
-        if(prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
+        if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
             ContextBase::AutoIndent(nChar);
             return;
         }
@@ -141,23 +141,23 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
         rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
         rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
 
-    } else if(nChar == wxT('}')) {
+    } else if (nChar == wxT('}')) {
 
         long matchPos = wxNOT_FOUND;
-        if(!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
+        if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
             return;
         int secondLine = rCtrl.LineFromPosition(matchPos);
-        if(secondLine == line)
+        if (secondLine == line)
             return;
         rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
 
-    } else if(nChar == wxT('{')) {
+    } else if (nChar == wxT('{')) {
         wxString lineString = rCtrl.GetLine(line);
         lineString.Trim().Trim(false);
 
         int matchPos = wxNOT_FOUND;
         wxChar previousChar = rCtrl.PreviousChar(rCtrl.PositionBefore(curpos), matchPos);
-        if(previousChar != wxT('{') && lineString == wxT("{")) {
+        if (previousChar != wxT('{') && lineString == wxT("{")) {
             // indent this line accroding to the previous line
             int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
             rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
@@ -207,12 +207,12 @@ void ContextJavaScript::OnEnterHit() {}
 
 void ContextJavaScript::OnFileSaved() {}
 
-void ContextJavaScript::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+void ContextJavaScript::OnKeyDown(wxKeyEvent& event) { ContextBase::OnKeyDown(event); }
 
 void ContextJavaScript::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) {
+    if (ctrl.GetFunctionTip()->IsActive()) {
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
 }
@@ -226,15 +226,15 @@ void ContextJavaScript::SemicolonShift()
     int foundPos(wxNOT_FOUND);
     int semiColonPos(wxNOT_FOUND);
     clEditor& ctrl = GetCtrl();
-    if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
+    if (ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
 
         // test to see if we are inside a 'for' statement
         long openBracePos(wxNOT_FOUND);
         int posWordBeforeOpenBrace(wxNOT_FOUND);
 
-        if(ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
+        if (ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
             ctrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-            if(posWordBeforeOpenBrace != wxNOT_FOUND) {
+            if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                 wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
                 // At the current pos, we got a ';'

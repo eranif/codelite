@@ -350,6 +350,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
             lexerByContent = GetLexer("script");
             break;
         case FileExtManager::TypeJS:
+        case FileExtManager::TypeTypeScript:
             lexerByContent = GetLexer("javascript");
             break;
         case FileExtManager::TypePhp:
@@ -726,6 +727,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         filespec.Replace("*.javascript", wxEmptyString);
         filespec.Replace("*.js", wxEmptyString);
         lexer->SetFileSpec(filespec);
+    }
+
+    if (lexer->GetName() == "javascript") {
+        AddLexerKeywords(lexer, 0, { "async", "await" });
     }
 
     // Hack: fix Java lexer which is using the same

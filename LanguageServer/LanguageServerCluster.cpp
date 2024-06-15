@@ -1104,7 +1104,7 @@ void LanguageServerCluster::DiscoverWorkspaceType()
                 FileExtManager::TypeSourceCpp, FileExtManager::TypeCSS,         FileExtManager::TypeHeader,
                 FileExtManager::TypeHtml,      FileExtManager::TypeJS,          FileExtManager::TypeJava,
                 FileExtManager::TypeLua,       FileExtManager::TypeRuby,        FileExtManager::TypeRust,
-                FileExtManager::TypePython,    FileExtManager::TypeDart,
+                FileExtManager::TypePython,    FileExtManager::TypeDart,        FileExtManager::TypeTypeScript,
             };
             for (const wxString& file : files) {
                 auto file_type = FileExtManager::GetType(file);

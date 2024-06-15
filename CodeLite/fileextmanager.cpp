@@ -127,8 +127,9 @@ void FileExtManager::Init()
         m_map[wxT("sass")] = TypeCSS;
         m_map[wxT("js")] = TypeJS;
         m_map[wxT("javascript")] = TypeJS;
-        m_map[wxT("ts")] = TypeJS; // TypeScript, but we consider this a JavaScript
+        m_map[wxT("ts")] = TypeTypeScript;
         m_map[wxT("py")] = TypePython;
+        m_map[wxT("pyi")] = TypePython;
         m_map["json"] = TypeJSON;
         m_map["conf"] = TypeJSON; // CodeLite configuration files are marked as "conf"
         m_map["md"] = TypeMarkdown;

@@ -107,6 +107,7 @@ public:
         TypeTcl,
         TypeGo,
         TypeLast,
+        TypeTypeScript,
     };
 
 public:

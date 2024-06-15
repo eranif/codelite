@@ -120,12 +120,15 @@ LanguageServerProtocol::~LanguageServerProtocol()
 wxString LanguageServerProtocol::GetLanguageId(FileExtManager::FileType file_type)
 {
     switch (file_type) {
+    case FileExtManager::TypeGo:
+        return "go";
     case FileExtManager::TypeSourceC:
         return "c";
     case FileExtManager::TypeSourceCpp:
     case FileExtManager::TypeHeader:
         return "cpp";
     case FileExtManager::TypeJS:
+    case FileExtManager::TypeTypeScript:
         return "javascript";
     case FileExtManager::TypeDockerfile:
         return "dockerfile";

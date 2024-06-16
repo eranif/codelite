@@ -55,7 +55,7 @@ public:
         , m_fullpath(fullpath)
     {
         wxFileName fn;
-        if(m_attribute->IsFolder()) {
+        if (m_attribute->IsFolder()) {
             fn = wxFileName(fullpath, "", wxPATH_UNIX);
             fn.Normalize();
             m_fullpath = fn.GetPath(false, wxPATH_UNIX);
@@ -91,9 +91,9 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
     int selection = wxNOT_FOUND;
-    for(const auto& account : accounts) {
+    for (const auto& account : accounts) {
         int index = m_choiceAccount->Append(account.GetAccountName());
-        if(!selectedAccount.empty() && selectedAccount == account.GetAccountName()) {
+        if (!selectedAccount.empty() && selectedAccount == account.GetAccountName()) {
             selection = index;
         }
     }
@@ -101,7 +101,7 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     clBitmapList* images = new clBitmapList;
     m_toolbar->AddTool(wxID_NEW, _("Create new folder"), images->Add("plus"));
     m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent folder"), images->Add("up"));
-    m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"), _("Open SSH account manager"), images->Add("folder-users"));
+    m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"), _("Open SSH account manager"), images->Add("user"));
     m_toolbar->AssignBitmaps(images);
     m_toolbar->Realize();
 
@@ -116,17 +116,17 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     wxString last_location = clConfig::Get().Read("SFTPBrowserDlg/location", wxString());
     wxString last_account = clConfig::Get().Read("SFTPBrowserDlg/account", wxString());
 
-    if(selection != wxNOT_FOUND) {
+    if (selection != wxNOT_FOUND) {
         m_choiceAccount->SetSelection(selection);
         m_choiceAccount->Enable(false); // don't allow the user to change the account selection
     } else {
-        if(!last_location.empty()) {
+        if (!last_location.empty()) {
             m_textCtrlRemoteFolder->ChangeValue(last_location);
         }
         int where = m_choiceAccount->FindString(last_account);
-        if(where != wxNOT_FOUND) {
+        if (where != wxNOT_FOUND) {
             m_choiceAccount->SetSelection(where);
-        } else if(!m_choiceAccount->IsEmpty()) {
+        } else if (!m_choiceAccount->IsEmpty()) {
             m_choiceAccount->SetSelection(0);
         }
     }
@@ -162,21 +162,21 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
     try {
         wxString folder;
         SFTPAttribute::List_t attributes;
-        if(path.IsEmpty()) {
+        if (path.IsEmpty()) {
             folder = m_textCtrlRemoteFolder->GetValue();
-            if(folder.IsEmpty()) {
+            if (folder.IsEmpty()) {
                 folder = "/";
             } else {
                 // if the path contains file name, remmove it
                 wxFileName fn(folder);
-                if(fn.GetFullName().Contains(".")) {
+                if (fn.GetFullName().Contains(".")) {
                     folder = fn.GetPath(wxPATH_UNIX);
                 }
             }
             folder.Replace("\\", "/");
             attributes = m_sftp->List(folder, m_flags, m_filter);
 
-        } else if(path == "..") {
+        } else if (path == "..") {
             // cd up
             attributes = m_sftp->CdUp(m_flags, m_filter);
             m_textCtrlRemoteFolder->ChangeValue(m_sftp->GetCurrentFolder());
@@ -188,7 +188,7 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
         }
 
         BitmapLoader* loader = clGetManager()->GetStdIcons();
-        for(SFTPAttribute::Ptr_t attr : attributes) {
+        for (SFTPAttribute::Ptr_t attr : attributes) {
             // Set the columns Name (icontext) | Type (text) | Size (text)
             wxVector<wxVariant> cols;
 
@@ -197,14 +197,14 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
             wxString fullname;
             fullname << folder << "/" << attr->GetName();
 
-            if(attr->IsSymlink()) {
-                if(attr->IsFolder()) {
+            if (attr->IsSymlink()) {
+                if (attr->IsFolder()) {
                     imgid = loader->GetMimeImageId(FileExtManager::TypeFolderSymlink);
                 } else {
                     imgid = loader->GetMimeImageId(FileExtManager::TypeFileSymlink);
                 }
             } else {
-                if(attr->IsFolder()) {
+                if (attr->IsFolder()) {
                     imgid = loader->GetMimeImageId(FileExtManager::TypeFolder);
                 } else {
                     wxFileName fn(fullname);
@@ -220,7 +220,7 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
         }
         m_dataview->SetFocus();
 
-    } catch(clException& e) {
+    } catch (clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK);
         DoCloseSession();
     }
@@ -234,13 +234,13 @@ void SFTPBrowserDlg::DoCloseSession()
 
 void SFTPBrowserDlg::OnItemActivated(wxDataViewEvent& event)
 {
-    if(!m_sftp) {
+    if (!m_sftp) {
         DoCloseSession();
         return;
     }
 
     SFTPBrowserEntryClientData* cd = DoGetItemData(event.GetItem());
-    if(cd && cd->GetAttribute()->IsFolder()) {
+    if (cd && cd->GetAttribute()->IsFolder()) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
         ClearView();
         DoDisplayEntriesForPath();
@@ -249,7 +249,7 @@ void SFTPBrowserDlg::OnItemActivated(wxDataViewEvent& event)
 
 void SFTPBrowserDlg::OnTextEnter(wxCommandEvent& event)
 {
-    if(!m_sftp) {
+    if (!m_sftp) {
         OnRefresh(event);
     } else {
         ClearView();
@@ -259,13 +259,13 @@ void SFTPBrowserDlg::OnTextEnter(wxCommandEvent& event)
 void SFTPBrowserDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     wxString selection = m_textCtrlRemoteFolder->GetValue();
-    if(m_filter.IsEmpty()) { // folder / files - and there is a selection
+    if (m_filter.IsEmpty()) { // folder / files - and there is a selection
         event.Enable(!selection.IsEmpty());
 
-    } else if(!(m_flags & clSFTP::SFTP_BROWSE_FILES)) { // folders only
+    } else if (!(m_flags & clSFTP::SFTP_BROWSE_FILES)) { // folders only
         event.Enable(!selection.IsEmpty());
 
-    } else if(!selection.IsEmpty() && (m_flags & clSFTP::SFTP_BROWSE_FILES) && ::wxMatchWild(m_filter, selection)) {
+    } else if (!selection.IsEmpty() && (m_flags & clSFTP::SFTP_BROWSE_FILES) && ::wxMatchWild(m_filter, selection)) {
         event.Enable(true);
 
     } else {
@@ -275,7 +275,7 @@ void SFTPBrowserDlg::OnOKUI(wxUpdateUIEvent& event)
 
 SFTPBrowserEntryClientData* SFTPBrowserDlg::DoGetItemData(const wxDataViewItem& item) const
 {
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return NULL;
     }
     SFTPBrowserEntryClientData* cd = reinterpret_cast<SFTPBrowserEntryClientData*>(m_dataview->GetItemData(item));
@@ -287,7 +287,7 @@ wxString SFTPBrowserDlg::GetPath() const { return m_textCtrlRemoteFolder->GetVal
 void SFTPBrowserDlg::OnItemSelected(wxDataViewEvent& event)
 {
     SFTPBrowserEntryClientData* cd = DoGetItemData(m_dataview->GetSelection());
-    if(cd) {
+    if (cd) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
     }
 }
@@ -298,7 +298,7 @@ void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 {
     m_textCtrlRemoteFolder->ChangeValue(path);
     int where = m_choiceAccount->FindString(account);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_choiceAccount->SetSelection(where);
     }
 }
@@ -308,8 +308,8 @@ void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
     event.Skip();
     wxChar ch = (wxChar)event.GetKeyCode();
 
-    if(::wxIsprint(ch)) {
-        if(!m_textCtrlInlineSearch->IsShown()) {
+    if (::wxIsprint(ch)) {
+        if (!m_textCtrlInlineSearch->IsShown()) {
             m_textCtrlInlineSearch->SetFocus();
             m_textCtrlInlineSearch->Clear();
 #ifdef __WXMSW__
@@ -326,7 +326,7 @@ void SFTPBrowserDlg::OnInlineSearch()
 {
     wxString text = m_textCtrlInlineSearch->GetValue();
     wxDataViewItem matchedItem = m_dataview->FindNext(wxDataViewItem(nullptr), text);
-    if(matchedItem.IsOk()) {
+    if (matchedItem.IsOk()) {
         m_dataview->Select(matchedItem);
         m_dataview->EnsureVisible(matchedItem);
     }
@@ -335,12 +335,12 @@ void SFTPBrowserDlg::OnInlineSearch()
 void SFTPBrowserDlg::OnInlineSearchEnter()
 {
     wxDataViewItem item = m_dataview->GetSelection();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
 
     SFTPBrowserEntryClientData* cd = DoGetItemData(item);
-    if(cd && cd->GetAttribute()->IsFolder()) {
+    if (cd && cd->GetAttribute()->IsFolder()) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
         ClearView();
         DoDisplayEntriesForPath();
@@ -377,7 +377,7 @@ void SFTPBrowserDlg::OnConnectedUI(wxUpdateUIEvent& event) { event.Enable(m_sftp
 void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
 {
     SSHAccountManagerDlg dlg(this);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // Update the selections at the top
         SFTPSettings settings;
         settings.Load();
@@ -385,18 +385,18 @@ void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
 
         m_choiceAccount->Clear();
         const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
-        if(accounts.empty()) {
+        if (accounts.empty()) {
             DoCloseSession();
             return;
 
         } else {
             SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
-            for(; iter != accounts.end(); ++iter) {
+            for (; iter != accounts.end(); ++iter) {
                 m_choiceAccount->Append(iter->GetAccountName());
             }
 
             int where = m_choiceAccount->FindString(curselection);
-            if(where == wxNOT_FOUND) {
+            if (where == wxNOT_FOUND) {
                 // Our previous session is no longer available, close the session
                 DoCloseSession();
                 where = 0;
@@ -409,7 +409,7 @@ void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
 
 void SFTPBrowserDlg::ClearView()
 {
-    for(size_t i = 0; i < m_dataview->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dataview->GetItemCount(); ++i) {
         SFTPBrowserEntryClientData* cd = DoGetItemData(m_dataview->RowToItem(i));
         wxDELETE(cd);
     }
@@ -426,7 +426,7 @@ void SFTPBrowserDlg::DoBrowse()
     settings.Load();
 
     SSHAccountInfo account;
-    if(!settings.GetAccount(accountName, account)) {
+    if (!settings.GetAccount(accountName, account)) {
         ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "CodeLite", wxICON_ERROR | wxOK,
                        this);
         return;
@@ -437,8 +437,8 @@ void SFTPBrowserDlg::DoBrowse()
         wxString message;
         EnvSetter env;
         ssh->Open();
-        if(!ssh->AuthenticateServer(message)) {
-            if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
+        if (!ssh->AuthenticateServer(message)) {
+            if (::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
                 ssh->AcceptServerAuthentication();
             }
         }
@@ -449,7 +449,7 @@ void SFTPBrowserDlg::DoBrowse()
 
         DoDisplayEntriesForPath();
 
-    } catch(clException& e) {
+    } catch (clException& e) {
         ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
         DoCloseSession();
     }
@@ -461,7 +461,7 @@ void SFTPBrowserDlg::OnNewFolder(wxCommandEvent& event)
     CHECK_PTR_RET(m_sftp);
 
     wxString name = clGetTextFromUser(_("Create new folder"), _("Name:"));
-    if(name.empty()) {
+    if (name.empty()) {
         return;
     }
 
@@ -471,7 +471,7 @@ void SFTPBrowserDlg::OnNewFolder(wxCommandEvent& event)
         m_sftp->CreateDir(path);
         ClearView();
         DoDisplayEntriesForPath();
-    } catch(clException& e) {
+    } catch (clException& e) {
         ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
     }
 }

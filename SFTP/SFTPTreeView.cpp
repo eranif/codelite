@@ -80,7 +80,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnRedo, this, wxID_REDO);
 
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(XRCID("ID_OPEN_ACCOUNT_MANAGER"), _("Open account manager..."), images->Add("folder-users"));
+    m_toolbar->AddTool(XRCID("ID_OPEN_ACCOUNT_MANAGER"), _("Open account manager..."), images->Add("user"));
     m_toolbar->AddTool(XRCID("ID_SFTP_CONNECT"), _("Disconnected. Click to connect"), images->Add("disconnected"),
                        wxEmptyString, wxITEM_CHECK);
 #if !wxUSE_NATIVE_TOOLBAR
@@ -148,19 +148,19 @@ void SFTPTreeView::OnAddBookmarkMenu(wxCommandEvent& event)
     // Show the menu
     const wxArrayString& bookmarks = m_account.GetBookmarks();
     wxMenu menu;
-    for(size_t i = 0; i < bookmarks.GetCount(); ++i) {
-        if(!bookmarks[i].empty()) {
+    for (size_t i = 0; i < bookmarks.GetCount(); ++i) {
+        if (!bookmarks[i].empty()) {
             menu.Append(ID_SFTP_BOOKMARK_FIRST + i, bookmarks.Item(i));
         }
     }
     menu.AppendSeparator();
     menu.Append(ID_SFTP_BOOKMARK_SETTINGS, _("Manage bookmarks..."));
     int sel = m_toolbar->GetMenuSelectionFromUser(XRCID("ID_ADD_BOOKMARK"), &menu);
-    if((sel >= ID_SFTP_BOOKMARK_FIRST) && (sel <= ID_SFTP_BOOKMARK_LAST)) {
+    if ((sel >= ID_SFTP_BOOKMARK_FIRST) && (sel <= ID_SFTP_BOOKMARK_LAST)) {
         // A bookmark was selected
         CallAfter(&SFTPTreeView::DoChangeLocation, bookmarks.Item(sel - ID_SFTP_BOOKMARK_FIRST));
 
-    } else if(sel == ID_SFTP_BOOKMARK_SETTINGS) {
+    } else if (sel == ID_SFTP_BOOKMARK_SETTINGS) {
         // Bookmark settings
         CallAfter(&SFTPTreeView::ManageBookmarks);
     }
@@ -171,7 +171,7 @@ void SFTPTreeView::OnAddBookmark(wxCommandEvent& event)
 {
     try {
         // sanity
-        if(!m_view->IsConnected())
+        if (!m_view->IsConnected())
             return;
 
         wxString path = m_view->GetSelectedFolder();
@@ -181,7 +181,7 @@ void SFTPTreeView::OnAddBookmark(wxCommandEvent& event)
         settings.UpdateAccount(m_account);
         settings.Save();
 
-    } catch(clException& e) {
+    } catch (clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);
     }
 }
@@ -198,7 +198,7 @@ void SFTPTreeView::OnGotoLocationUI(wxUpdateUIEvent& event) { event.Enable(m_vie
 void SFTPTreeView::ManageBookmarks()
 {
     SFTPManageBookmarkDlg dlg(NULL, m_account.GetBookmarks());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_account.SetBookmarks(dlg.GetBookmarks());
         SFTPSettings settings;
         settings.Load();
@@ -214,7 +214,7 @@ void SFTPTreeView::OnConnectionUI(wxUpdateUIEvent& event) { event.Check(m_view->
 
 void SFTPTreeView::OnConnection(wxCommandEvent& event)
 {
-    if(m_view->IsConnected()) {
+    if (m_view->IsConnected()) {
         // Disconnect
         DoCloseSession();
     } else {
@@ -225,7 +225,7 @@ void SFTPTreeView::OnConnection(wxCommandEvent& event)
 void SFTPTreeView::DoOpenSession()
 {
     DoCloseSession();
-    if(!GetAccountFromUser(m_account)) {
+    if (!GetAccountFromUser(m_account)) {
         return;
     }
     DoBuildTree(m_account.GetDefaultFolder().IsEmpty() ? "/" : m_account.GetDefaultFolder());
@@ -235,7 +235,7 @@ void SFTPTreeView::DoOpenSession()
 void SFTPTreeView::OnCopy(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_textCtrlQuickJump->HasFocus()) {
+    if (m_textCtrlQuickJump->HasFocus()) {
         event.Skip(false);
     }
 }
@@ -243,7 +243,7 @@ void SFTPTreeView::OnCopy(wxCommandEvent& event)
 void SFTPTreeView::OnPaste(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_textCtrlQuickJump->HasFocus()) {
+    if (m_textCtrlQuickJump->HasFocus()) {
         event.Skip(false);
         m_textCtrlQuickJump->Paste();
     }
@@ -252,7 +252,7 @@ void SFTPTreeView::OnPaste(wxCommandEvent& event)
 void SFTPTreeView::OnRedo(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_textCtrlQuickJump->HasFocus()) {
+    if (m_textCtrlQuickJump->HasFocus()) {
         event.Skip(false);
         m_textCtrlQuickJump->Redo();
     }
@@ -261,7 +261,7 @@ void SFTPTreeView::OnRedo(wxCommandEvent& event)
 void SFTPTreeView::OnSelectAll(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_textCtrlQuickJump->HasFocus()) {
+    if (m_textCtrlQuickJump->HasFocus()) {
         event.Skip(false);
         m_textCtrlQuickJump->SelectAll();
     }
@@ -270,7 +270,7 @@ void SFTPTreeView::OnSelectAll(wxCommandEvent& event)
 void SFTPTreeView::OnUndo(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_textCtrlQuickJump->HasFocus()) {
+    if (m_textCtrlQuickJump->HasFocus()) {
         event.Skip(false);
         m_textCtrlQuickJump->Undo();
     }
@@ -279,7 +279,7 @@ void SFTPTreeView::OnUndo(wxCommandEvent& event)
 void SFTPTreeView::OnCut(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_textCtrlQuickJump->HasFocus()) {
+    if (m_textCtrlQuickJump->HasFocus()) {
         event.Skip(false);
         m_textCtrlQuickJump->Cut();
     }
@@ -297,7 +297,7 @@ void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
 {
     // Open terminal to the selected account
     SSHAccountInfo account;
-    if(!GetAccountFromUser(account)) {
+    if (!GetAccountFromUser(account)) {
         return;
     }
 
@@ -323,7 +323,7 @@ void SFTPTreeView::OnSftpSettings(wxCommandEvent& event)
 bool SFTPTreeView::GetAccountFromUser(SSHAccountInfo& account)
 {
     SFTPQuickConnectDlg connectDialog(EventNotifier::Get()->TopFrame());
-    if(connectDialog.ShowModal() != wxID_OK) {
+    if (connectDialog.ShowModal() != wxID_OK) {
         return false;
     }
 

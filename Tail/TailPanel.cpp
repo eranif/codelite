@@ -67,11 +67,11 @@ void TailPanel::OnFileModified(clFileSystemEvent& event)
     // Get the current file size
     size_t cursize = FileUtils::GetFileSize(m_file);
     wxFFile fp(m_file.GetFullPath(), "rb");
-    if(fp.IsOpened() && fp.Seek(m_lastPos)) {
-        if(cursize > m_lastPos) {
+    if (fp.IsOpened() && fp.Seek(m_lastPos)) {
+        if (cursize > m_lastPos) {
             size_t bufferSize = cursize - m_lastPos;
             char* buffer = new char[bufferSize + 1];
-            if(fp.Read(buffer, bufferSize) == bufferSize) {
+            if (fp.Read(buffer, bufferSize) == bufferSize) {
                 buffer[bufferSize] = '\0';
                 wxString content((const char*)buffer, wxConvUTF8);
                 DoAppendText(content);
@@ -99,7 +99,7 @@ void TailPanel::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip(); // must call this to allow other handlers to work
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_stc);
     }
     m_stc->SetEOLMode(wxSTC_EOL_CRLF);
@@ -122,7 +122,7 @@ void TailPanel::OnCloseUI(wxUpdateUIEvent& event) { event.Enable(m_file.IsOk());
 void TailPanel::OnOpen(wxCommandEvent& event)
 {
     wxString filepath = ::wxFileSelector();
-    if(filepath.IsEmpty() || !wxFileName::Exists(filepath)) {
+    if (filepath.IsEmpty() || !wxFileName::Exists(filepath)) {
         return;
     }
 
@@ -143,7 +143,7 @@ void TailPanel::DoOpen(const wxString& filename)
     m_lastPos = FileUtils::GetFileSize(m_file);
 
     wxArrayString recentItems = clConfig::Get().Read("tail", wxArrayString());
-    if(recentItems.Index(m_file.GetFullPath()) == wxNOT_FOUND) {
+    if (recentItems.Index(m_file.GetFullPath()) == wxNOT_FOUND) {
         // add it
         recentItems.Add(m_file.GetFullPath());
         recentItems.Sort();
@@ -163,7 +163,7 @@ void TailPanel::DoPrepareRecentItemsMenu(wxMenu& menu)
 {
     m_recentItemsMap.clear();
     wxArrayString recentItems = clConfig::Get().Read("tail", wxArrayString());
-    for(size_t i = 0; i < recentItems.size(); ++i) {
+    for (size_t i = 0; i < recentItems.size(); ++i) {
         int id = ::wxNewId();
         m_recentItemsMap.insert(std::make_pair(id, recentItems.Item(i)));
         menu.Append(id, recentItems.Item(i));
@@ -174,7 +174,7 @@ void TailPanel::DoPrepareRecentItemsMenu(wxMenu& menu)
 
 void TailPanel::OnOpenRecentItem(wxCommandEvent& event)
 {
-    if(m_recentItemsMap.count(event.GetId()) == 0)
+    if (m_recentItemsMap.count(event.GetId()) == 0)
         return;
     wxString filepath = m_recentItemsMap[event.GetId()];
     DoClear(); // Clear the old content first
@@ -194,7 +194,7 @@ void TailPanel::OnDetachWindowUI(wxUpdateUIEvent& event) { event.Enable(!m_isDet
 void TailPanel::Initialize(const TailData& tailData)
 {
     DoClear();
-    if(tailData.filename.IsOk() && tailData.filename.Exists()) {
+    if (tailData.filename.IsOk() && tailData.filename.Exists()) {
         DoOpen(tailData.filename.GetFullPath());
         DoAppendText(tailData.displayedText);
         m_lastPos = tailData.lastPos;
@@ -214,8 +214,8 @@ TailData TailPanel::GetTailData() const
 wxString TailPanel::GetTailTitle() const
 {
     wxString title;
-    if(IsDetached()) {
-        if(IsOpen()) {
+    if (IsDetached()) {
+        if (IsOpen()) {
             title << m_file.GetFullName() << " (" << m_file.GetFullPath() << ")";
         } else {
             title = "Tail";
@@ -227,7 +227,7 @@ wxString TailPanel::GetTailTitle() const
 void TailPanel::SetFrameTitle()
 {
     wxFrame* parent = dynamic_cast<wxFrame*>(GetParent());
-    if(parent) {
+    if (parent) {
         parent->SetLabel(GetTailTitle());
     }
 }
@@ -236,7 +236,7 @@ void TailPanel::DoBuildToolbar()
 {
     m_toolbar = new clToolBarGeneric(this);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(XRCID("tail_open"), _("Open file"), images->Add("folder"), "", wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("tail_open"), _("Open file"), images->Add("folder-yellow"), "", wxITEM_DROPDOWN);
     m_toolbar->AddTool(XRCID("tail_close"), _("Close file"), images->Add("file_close"));
     m_toolbar->AddTool(XRCID("tail_clear"), _("Clear"), images->Add("clear"));
     m_toolbar->AddSeparator();

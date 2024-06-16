@@ -1,1 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M100 22.1l-3.5 18.6H79.1l-3.5 18.6H93l-2.3 18.6H72.1l-2.3 17.4H51.2l3.5-17.4H36l-3.5 17.4H15.1l2.3-17.4H0l3.5-18.6h17.4l3.5-18.6H7l2.3-18.6h18.6l2.3-17.4h18.6l-3.5 17.4H64l3.5-17.4h17.4l-2.3 17.4H100zM60.5 40.7H41.9l-3.5 18.6h19.8l2.3-18.6z" fill="#bababa"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="mime-md.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     id="namedview12"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.97375"
+     inkscape:cx="399.48652"
+     inkscape:cy="399.48652"
+     inkscape:window-width="3840"
+     inkscape:window-height="2080"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg10" />
+  <title
+     id="title2">file_type_markdown</title>
+  <rect
+     x="2.5"
+     y="7.955"
+     width="27"
+     height="16.091"
+     style="fill:#6495ed;stroke:#ffffff"
+     id="rect4" />
+  <polygon
+     points="5.909 20.636 5.909 11.364 8.636 11.364 11.364 14.773 14.091 11.364 16.818 11.364 16.818 20.636 14.091 20.636 14.091 15.318 11.364 18.727 8.636 15.318 8.636 20.636 5.909 20.636"
+     style="fill:#ffffff;fill-opacity:1"
+     id="polygon6" />
+  <polygon
+     points="22.955 20.636 18.864 16.136 21.591 16.136 21.591 11.364 24.318 11.364 24.318 16.136 27.045 16.136 22.955 20.636"
+     style="fill:#ffffff;fill-opacity:1"
+     id="polygon8" />
+  <metadata
+     id="metadata831">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>file_type_markdown</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

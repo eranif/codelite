@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
 <svg
-   viewBox="0 0 100 100"
+   width="800px"
+   height="800px"
+   viewBox="0 0 512 512"
    version="1.1"
-   id="svg6"
+   id="svg7"
    sodipodi:docname="folder-yellow.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
-     id="defs10" />
+     id="defs11" />
   <sodipodi:namedview
-     id="namedview8"
+     id="namedview9"
      pagecolor="#505050"
      bordercolor="#eeeeee"
      borderopacity="1"
@@ -20,23 +27,43 @@
      inkscape:pageopacity="0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="8.73"
-     inkscape:cx="50.057274"
-     inkscape:cy="50"
-     inkscape:window-width="2023"
-     inkscape:window-height="1111"
-     inkscape:window-x="1191"
-     inkscape:window-y="89"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg6" />
-  <path
-     d="M90 20H45L35 10H10C4.5 10 0 14.5 0 20v20h100V30c0-5.5-4.5-10-10-10z"
-     fill="#ffa000"
-     id="path2"
-     style="fill:#c2c2c2" />
-  <path
-     d="M90 20H10C4.5 20 0 24.5 0 30v50c0 5.5 4.5 10 10 10h80c5.5 0 10-4.5 10-10V30c0-5.5-4.5-10-10-10z"
-     fill="#ffca28"
-     id="path4"
-     style="fill:#adadad" />
+     inkscape:zoom="0.97375"
+     inkscape:cx="399.48652"
+     inkscape:cy="399.48652"
+     inkscape:window-width="3840"
+     inkscape:window-height="2080"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg7" />
+  <title
+     id="title2">folder-filled</title>
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     style="fill:#ffd700"
+     transform="matrix(1.05,0,0,1,-12.800002,2e-6)">
+    <g
+       id="folder-outline"
+       fill="#000000"
+       transform="translate(42.666667,85.333333)"
+       style="fill:#ffd700">
+      <polygon
+         id="Shape"
+         points="178.08341,1.4210855e-14 232.04181,42.666667 426.66667,42.666667 426.66667,341.33333 3.5527137e-14,341.33333 3.5527137e-14,1.4210855e-14 "
+         style="fill:#ffd700" />
+    </g>
+  </g>
+  <metadata
+     id="metadata828">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>folder-filled</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
 </svg>

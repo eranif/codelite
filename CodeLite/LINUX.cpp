@@ -23,25 +23,25 @@ namespace
 bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxString* install_path)
 {
     wxString cellar_path = "/opt/homebrew/Cellar";
-    if(!wxFileName::DirExists(cellar_path)) {
+    if (!wxFileName::DirExists(cellar_path)) {
         cellar_path = "/usr/local/Cellar";
     }
 
     cellar_path << "/" << formula;
 
-    if(!wxFileName::DirExists(cellar_path)) {
+    if (!wxFileName::DirExists(cellar_path)) {
         return false;
     }
 
     // we take the string with the highest value
     clFilesScanner fs;
     clFilesScanner::EntryData::Vec_t results;
-    if(fs.ScanNoRecurse(cellar_path, results) == 0) {
+    if (fs.ScanNoRecurse(cellar_path, results) == 0) {
         return false;
     }
 
     // we are only interested in the name part
-    for(auto& result : results) {
+    for (auto& result : results) {
         result.fullpath = result.fullpath.AfterLast('/');
     }
 
@@ -65,7 +65,7 @@ bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxStri
 /// $HOME/.rustup/toolchains/TOOLCHAIN-NAME/bin
 bool LINUX::get_rustup_bin_folder(wxString* rustup_bin_dir)
 {
-    if(rust_toolchain_scanned) {
+    if (rust_toolchain_scanned) {
         *rustup_bin_dir = RUST_TOOLCHAIN_BIN;
         return !RUST_TOOLCHAIN_BIN.empty();
     }
@@ -98,9 +98,9 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
     wxString pathenv;
     GetPath(&pathenv, m_flags & SEARCH_PATH_ENV);
     wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
-    for(auto path : paths) {
+    for (auto path : paths) {
         path << "/" << command;
-        if(wxFileName::FileExists(path)) {
+        if (wxFileName::FileExists(path)) {
             *command_fullpath = path;
             return true;
         }
@@ -120,12 +120,15 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     special_paths.Add("/opt/homebrew/bin");
 #endif
 
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined(__WXMAC__)
+    // both macOS and Linux are using this path
     special_paths.Add(wxString() << HOME << "/.local/bin");
+#if defined(__WXGTK__)
     // linux also supports homebrew
-    if(wxFileName::DirExists("/home/linuxbrew/.linuxbrew/bin")) {
+    if (wxFileName::DirExists("/home/linuxbrew/.linuxbrew/bin")) {
         special_paths.Add("/home/linuxbrew/.linuxbrew/bin");
     }
+#endif
 #endif
 
     // cargo
@@ -133,7 +136,7 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
 
     // rustup
     wxString rustup_bin_folder;
-    if(get_rustup_bin_folder(&rustup_bin_folder)) {
+    if (get_rustup_bin_folder(&rustup_bin_folder)) {
         special_paths.Add(rustup_bin_folder);
     }
 
@@ -143,7 +146,7 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     // common paths: read the env PATH and append the other paths to it
     // so common paths found ENV:PATH will come first
     wxArrayString paths;
-    if(useSystemPath) {
+    if (useSystemPath) {
         wxString pathenv;
         ::wxGetEnv("PATH", &pathenv);
         paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
@@ -156,7 +159,7 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     // llvm is placed under a special location
     // if we find it, we place it first
     wxString llvm_path;
-    if(macos_find_homebrew_cellar_path_for_formula("llvm", &llvm_path)) {
+    if (macos_find_homebrew_cellar_path_for_formula("llvm", &llvm_path)) {
         paths.Insert(llvm_path + "/bin", 0);
     }
 #endif
@@ -165,8 +168,8 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     wxStringSet_t S;
     wxArrayString unique_paths;
     unique_paths.reserve(paths.size());
-    for(const auto& path : paths) {
-        if(S.count(path) == 0) {
+    for (const auto& path : paths) {
+        if (S.count(path) == 0) {
             S.insert(path);
             unique_paths.Add(path);
         }
@@ -195,9 +198,9 @@ bool LINUX::MacFindApp(const wxString& appname, wxString* command_fullpath, bool
     path.AppendDir(appname + ".app");
 
     // search for app name
-    if(path.DirExists()) {
+    if (path.DirExists()) {
         (*command_fullpath) << "/usr/bin/open ";
-        if(new_instance) {
+        if (new_instance) {
             (*command_fullpath) << "-n ";
         }
         (*command_fullpath) << StringUtils::WrapWithDoubleQuotes(path.GetPath());

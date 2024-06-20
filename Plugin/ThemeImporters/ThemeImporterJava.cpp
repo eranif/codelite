@@ -7,7 +7,7 @@ ThemeImporterJava::ThemeImporterJava()
                  "extends final  finally float for future generic goto if implements import inner "
                  "instanceof int interface long native new null outer  package private protected public rest "
                  "return short static super switch synchronized this throw throws transient try  var "
-                 "void volatile while async await");
+                 "void volatile while async await enum");
     // Documentation comment keywords
     SetKeywords2("a addindex addtogroup anchor arg attention author b brief bug c callgraph callergraph category class "
                  "code "
@@ -56,6 +56,7 @@ LexerConf::Ptr_t ThemeImporterJava::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Javadoc keyword error", m_javadocKeyword);
     AddProperty(lexer, wxSTC_C_WORD2, "Methods", m_function);
     AddProperty(lexer, wxSTC_C_GLOBALCLASS, "Classes", m_klass);
+    AddPropertySubstyle(lexer, LexerConf::WS_VARIABLES, "Variable", m_variable);
 
     // the base for all our substyles
     lexer->SetSubstyleBase(wxSTC_C_IDENTIFIER);

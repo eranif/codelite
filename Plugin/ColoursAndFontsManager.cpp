@@ -739,6 +739,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         lexer->SetFileSpec("*.java");
     }
 
+    if (lexer->GetName() == "java") {
+        AddLexerKeywords(lexer, 0, { "async", "await", "enum" });
+    }
+
     // Append *.sqlite to the SQL lexer if missing
     if (lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");

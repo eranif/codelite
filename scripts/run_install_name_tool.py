@@ -4,9 +4,7 @@ import subprocess
 import shutil
 
 
-def run_command_and_return_output(
-    command, throw_err=False, working_directory=None
-):
+def run_command_and_return_output(command, throw_err=False, working_directory=None):
     """Execute command and return its output as a string. In case of an error, return an empty string"""
     try:
         return subprocess.check_output(
@@ -60,7 +58,6 @@ def run_install_name_tool(file: str):
         run_command_and_return_output(
             f"install_name_tool -change {dep_full_path} @executable_path/{dep_full_name} {file}"
         )
-
 
 if len(sys.argv) != 2:
     print("expected param: build directory")

@@ -11,6 +11,8 @@ public:
 
 protected:
     virtual bool DoLocate();
+
+    void ConfigurePylsp(const wxString& pylsp);
 };
 
 #endif // LSPPYTHONDETECTOR_HPP

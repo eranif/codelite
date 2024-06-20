@@ -388,13 +388,13 @@ void wxCodeCompletionBox::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t entry)
             match = m_entries[index];
         }
 
-        // Let the owner override the default behavior
+        // Let the owner override the default behaviour
         clCodeCompletionEvent e(wxEVT_CCBOX_SELECTION_MADE);
         e.SetWord(match->GetInsertText());
         e.SetEventObject(m_eventObject);
         e.SetEntry(match);
         if (!EventNotifier::Get()->ProcessEvent(e)) {
-            // execute the default behavior
+            // execute the default behaviour
             if (match->m_tag && match->m_tag->IsTemplateFunction()) {
                 CxxTemplateFunction tf(match->m_tag);
                 if (!tf.CanTemplateArgsDeduced()) {

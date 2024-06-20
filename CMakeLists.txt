@@ -990,10 +990,11 @@ else()
         # makedirs
         add_subdirectory(TestDir)
 
-        # utility for importing themes
-        add_subdirectory(codelite-generate-themes)
-
     endif()
+
+    # utility for importing themes
+    add_subdirectory(codelite-generate-themes)
+
     add_subdirectory(codelite_echo)
     add_subdirectory(ctagsd)
 

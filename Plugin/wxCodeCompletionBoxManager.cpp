@@ -19,7 +19,7 @@ std::unordered_set<wxChar> delimiters = { ':', '@',  '!', ' ', '\t', '.', '\\', 
                                           '>', '[',  ']', '(', ')',  '{', '}',  '=', '%', '#', '^',
                                           '&', '\'', '"', '/', '|',  ',', '~',  ';', '`' };
 
-int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool allow_apostrophe)
+int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, const std::unordered_set<wxChar>& allowed_delims = {})
 {
     int lineNumber = ctrl->LineFromPosition(from);
     int lineStartPos = ctrl->PositionFromLine(lineNumber);
@@ -36,7 +36,7 @@ int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool allow_apostrophe)
         }
 
         wxChar ch = ctrl->GetCharAt(from);
-        if (allow_apostrophe && ch == '\'') {
+        if (allowed_delims.count(ch)) {
             continue;
         }
 
@@ -228,18 +228,27 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
     int start = wxNOT_FOUND, end = wxNOT_FOUND;
     std::vector<std::pair<int, int>> ranges;
+    std::unordered_set<wxChar> allowed_delims = {};
+    if (entryText.Contains("'")) {
+        allowed_delims.insert('\'');
+    }
+
+    if (entryText.Contains(".")) {
+        allowed_delims.insert('.');
+    }
+
     if (ctrl->GetSelections() > 1) {
         for (int i = 0; i < ctrl->GetSelections(); ++i) {
-            int nStart = GetWordStartPos(ctrl, ctrl->GetSelectionNCaret(i), entryText.Contains("'"));
+            int nStart = GetWordStartPos(ctrl, ctrl->GetSelectionNCaret(i), allowed_delims);
             int nEnd = ctrl->GetSelectionNCaret(i);
             ranges.push_back(std::make_pair(nStart, nEnd));
         }
         std::sort(ranges.begin(), ranges.end(),
                   [&](const std::pair<int, int>& e1, const std::pair<int, int>& e2) { return e1.first < e2.first; });
     } else {
-        // Default behviour: remove the partial text from the editor and replace it
+        // Default behaviour: remove the partial text from the editor and replace it
         // with the selection
-        start = GetWordStartPos(ctrl, ctrl->GetCurrentPos(), entryText.Contains("'"));
+        start = GetWordStartPos(ctrl, ctrl->GetCurrentPos(), allowed_delims);
         end = ctrl->GetCurrentPos();
         ctrl->SetSelection(start, end);
     }
@@ -248,7 +257,7 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
         clSnippetManager::Get().Insert(editor->GetCtrl(), match->GetInsertText());
 
     } else if (match->IsFunction()) {
-        // If the user triggerd this insertion, invoke the function auto complete
+        // If the user triggered this insertion, invoke the function auto complete
         if (userTriggered) {
             // a function like
             wxString textToInsert = entryText.BeforeFirst('(');

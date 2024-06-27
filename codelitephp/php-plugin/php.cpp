@@ -152,13 +152,15 @@ PhpPlugin::PhpPlugin(IManager* manager)
         targetDir.AppendDir("php-plugin");
 
         // Don't extract the zip if one of the files on disk is newer or equal to the zip timestamp
-        wxFileName fnSampleFile(targetDir.GetPath(), "basic.php");
+        wxFileName fnSampleFile(targetDir.GetPath(), "version");
         fnSampleFile.AppendDir("cc");
         PHPConfigurationData config;
         if(!fnSampleFile.Exists() || // the sample file does not exists
                                      // Or the resource file (PHP.zip) is newer than the sample file
            (phpResources.GetModificationTime().GetTicks() > fnSampleFile.GetModificationTime().GetTicks())) {
-
+            if(targetDir.DirExists()) {
+                targetDir.Rmdir(wxPATH_RMDIR_RECURSIVE);
+            }
             targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
             zipReader.Extract("*", targetDir.GetPath());
 

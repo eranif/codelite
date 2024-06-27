@@ -774,14 +774,17 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     bool isAbstractClass = LookBackTokensContains(kPHP_T_ABSTRACT);
 
     // Read until we get the class name
+    wxString name;
     phpLexerToken token;
     while(NextToken(token)) {
         if(token.IsAnyComment())
             continue;
         if(token.type != kPHP_T_IDENTIFIER) {
-            // expecting the class name
-            return;
+            // Anonymous classes
+            name = "@anonymous/" + m_filename.GetFullPath() + "/" + wxString::Format(wxT("%i"), token.lineNumber);
+            break;
         }
+        name = PrependCurrentScope(token.Text());
         break;
     }
 
@@ -796,7 +799,7 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     pClass->SetIsInterface(tok.type == kPHP_T_INTERFACE);
     pClass->SetIsAbstractClass(isAbstractClass);
     pClass->SetIsTrait(tok.type == kPHP_T_TRAIT);
-    pClass->SetFullName(PrependCurrentScope(token.Text()));
+    pClass->SetFullName(name);
     pClass->SetLine(token.lineNumber);
 
     if (tok.type == kPHP_T_ENUM) {

@@ -84,6 +84,7 @@ enum {
     kClass_Interface = (1 << 1),
     kClass_Trait = (1 << 2),
     kClass_Abstract = (1 << 3),
+    kClass_Enum = (1 << 4),
 };
 
 class WXDLLIMPEXP_CL PHPEntityBase

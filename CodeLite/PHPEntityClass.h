@@ -74,7 +74,9 @@ public:
     void SetIsInterface(bool b) { SetFlag(kClass_Interface, b); }
     bool IsInterface() const { return HasFlag(kClass_Interface); }
     void SetIsTrait(bool b) { SetFlag(kClass_Trait, b); }
+    void SetIsEnum(bool b) { SetFlag(kClass_Enum, b); }
     bool IsTrait() const { return HasFlag(kClass_Trait); }
+    bool IsEnum() const { return HasFlag(kClass_Enum); }
     void SetIsAbstractClass(bool b) { SetFlag(kClass_Abstract, b); }
     bool IsAbstractClass() const { return HasFlag(kClass_Abstract); }
 };

@@ -187,6 +187,11 @@ protected:
     void OnConstant(const phpLexerToken& tok);
 
     /**
+     * @brief found enum case
+     */
+    void OnEnumCase(const phpLexerToken& tok);
+
+    /**
      * @brief go over the look back tokens and extract all function flags
      */
     size_t LookBackForFunctionFlags();

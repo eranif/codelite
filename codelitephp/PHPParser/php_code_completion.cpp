@@ -762,7 +762,7 @@ int PHPCodeCompletion::GetLocationForSettersGetters(const wxString& filecontent,
     phpLexerToken token;
     bool isOK = false;
     while(::phpLexerNext(scanner, token)) {
-        if(token.type != kPHP_T_CLASS) {
+        if(token.type != kPHP_T_CLASS && token.type != kPHP_T_ENUM) {
             continue;
         }
 

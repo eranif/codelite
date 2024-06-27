@@ -83,6 +83,7 @@ file(
     SRCS
     "*.cpp"
     "../sdk/codelite_indexer/network/*.cpp"
+    "Console/*.cpp"
     "SocketAPI/*.cpp"
     "LSP/*.cpp"
     "ssh/*.cpp")

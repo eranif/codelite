@@ -1,12 +1,14 @@
 #include "TerminalEmulator.h"
+
+#include "Console/clConsoleBase.h"
 #include "dirsaver.h"
 #include "file_logger.h"
 #include "macros.h"
 #include "processreaderthread.h"
+
 #include <algorithm>
 #include <wx/filename.h>
 #include <wx/log.h>
-#include "clConsoleBase.h"
 
 #ifndef __WXMSW__
 #include <signal.h>

@@ -1,10 +1,11 @@
+#include "NodeJSWorkspaceView.h"
+
+#include "Console/clConsoleBase.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSPackageJSON.h"
 #include "NodeJSWorkspaceConfiguration.h"
-#include "NodeJSWorkspaceView.h"
 #include "NoteJSWorkspace.h"
 #include "bitmap_loader.h"
-#include "clConsoleBase.h"
 #include "clNodeJS.h"
 #include "clWorkspaceView.h"
 #include "codelite_events.h"
@@ -15,6 +16,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
+
 #include <wx/filename.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>

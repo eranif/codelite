@@ -1,5 +1,6 @@
 #include "RemotyWorkspace.hpp"
 
+#include "Console/clConsoleBase.h"
 #include "JSON.h"
 #include "Platform.hpp"
 #include "RemotyConfig.hpp"
@@ -9,7 +10,6 @@
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clCodeLiteRemoteProcess.hpp"
-#include "clConsoleBase.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clRemoteFindDialog.h"
 #include "clRemoteHost.hpp"

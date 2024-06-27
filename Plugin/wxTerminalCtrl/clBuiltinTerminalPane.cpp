@@ -1,7 +1,7 @@
 #include "clBuiltinTerminalPane.hpp"
 
 #include "ColoursAndFontsManager.h"
-#include "CompilerLocatorMSVC.h"
+#include "CompilerLocator/CompilerLocatorMSVC.h"
 #include "FontUtils.hpp"
 #include "bitmap_loader.h"
 #include "clFileName.hpp"

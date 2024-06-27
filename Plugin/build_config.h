@@ -27,7 +27,7 @@
 
 #include "asyncprocess.h"
 #include "build_config_common.h"
-#include "builder.h"
+#include "builder/builder.h"
 #include "codelite_exports.h"
 #include "compiler.h"
 #include "configuration_object.h"

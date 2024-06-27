@@ -27,7 +27,7 @@
 
 #include "JSON.h"
 #include "build_system.h"
-#include "builder.h"
+#include "builder/builder.h"
 #include "cl_config.h"
 #include "codelite_exports.h"
 #include "compiler.h"

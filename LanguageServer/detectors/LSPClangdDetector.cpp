@@ -1,6 +1,6 @@
 #include "LSPClangdDetector.hpp"
 
-#include "CompilerLocatorCLANG.h"
+#include "CompilerLocator/CompilerLocatorCLANG.h"
 #include "MSYS2.hpp"
 #include "Platform.hpp"
 #include "asyncprocess.h"

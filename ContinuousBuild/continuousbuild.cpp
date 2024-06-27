@@ -26,7 +26,7 @@
 #include "continuousbuild.h"
 
 #include "build_settings_config.h"
-#include "builder.h"
+#include "builder/builder.h"
 #include "buildmanager.h"
 #include "cl_command_event.h"
 #include "compile_request.h"

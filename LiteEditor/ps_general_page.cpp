@@ -26,7 +26,7 @@
 #include "ps_general_page.h"
 
 #include "build_settings_config.h"
-#include "builder.h"
+#include "builder/builder.h"
 #include "buildmanager.h"
 #include "dirsaver.h"
 #include "globals.h"

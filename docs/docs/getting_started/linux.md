@@ -20,7 +20,7 @@ al. In such cases, I recommed you to use `brew`
 sudo apt install build-essential            \
                  git cmake                  \
                  libssh-dev libsqlite3-dev  \
-                 libpcre2-dev
+                 libpcre2-dev bison flex
 ```
 
 ## Optional: install `Rust`

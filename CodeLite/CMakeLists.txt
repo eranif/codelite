@@ -16,7 +16,7 @@ FLEX_TARGET(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l" "${CMAKE_CURRENT
             COMPILE_FLAGS "--noline --yylineno --batch")
 FLEX_TARGET(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/include_finder.l" "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp"
             COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
-FLEX_TARGET(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
+FLEX_TARGET(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
             COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
 FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
             COMPILE_FLAGS "-Pxml --noline --yylineno --batch")
@@ -84,6 +84,7 @@ file(
     "*.cpp"
     "../sdk/codelite_indexer/network/*.cpp"
     "Console/*.cpp"
+    "PHP/*.cpp"
     "SocketAPI/*.cpp"
     "LSP/*.cpp"
     "ssh/*.cpp")

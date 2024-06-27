@@ -1,6 +1,8 @@
 #include "PHPSetterGetterEntry.h"
+
+#include "PHP/PHPEntityVariable.h"
+
 #include <wx/tokenzr.h>
-#include "PHPEntityVariable.h"
 
 PHPSetterGetterEntry::PHPSetterGetterEntry() {}
 

@@ -1,20 +1,22 @@
-#include "PHPEntityBase.h"
-#include "PHPEntityClass.h"
-#include "PHPLookupTable.h"
+#include "php_editor_context_menu.h"
+
+#include "PHP/PHPEntityBase.h"
+#include "PHP/PHPEntityClass.h"
+#include "PHP/PHPLookupTable.h"
+#include "PHP/PHPSourceFile.h"
 #include "PHPRefactoring.h"
 #include "PHPSettersGettersDialog.h"
-#include "PHPSourceFile.h"
 #include "clEditorStateLocker.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
+#include "codelite_events.h"
 #include "editor_config.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "php_code_completion.h"
-#include "php_editor_context_menu.h"
 #include "php_utils.h"
-#include <codelite_events.h>
-#include <event_notifier.h>
-#include <plugin.h>
+#include "plugin.h"
+
 #include <wx/app.h>
 #include <wx/msgdlg.h>
 #include <wx/regex.h>

@@ -67,8 +67,8 @@ struct Matcher {
 };
 namespace
 {
-std::unordered_map<wxString, FileExtManager::FileType> m_map;
-std::unordered_map<wxString, std::vector<FileExtManager::FileType>> m_language_bundle;
+std::map<wxString, FileExtManager::FileType> m_map;
+std::map<wxString, std::vector<FileExtManager::FileType>> m_language_bundle;
 std::unordered_map<int, wxString> m_file_type_to_lang;
 std::vector<Matcher> m_matchers;
 bool init_done = false;
@@ -219,10 +219,12 @@ void FileExtManager::Init()
         m_language_bundle.insert({ "Ruby", { TypeRuby } });
         m_language_bundle.insert({ "Shell script", { TypeShellScript } });
         m_language_bundle.insert({ "Java", { TypeJava } });
-        m_language_bundle.insert({ "Javascript/Typescript", { TypeJS } });
+        m_language_bundle.insert({ "Javascript", { TypeJS } });
+        m_language_bundle.insert({ "TypeScript", { TypeTypeScript } });
         m_language_bundle.insert({ "Python", { TypePython } });
         m_language_bundle.insert({ "PHP", { TypePhp } });
         m_language_bundle.insert({ "CMake", { TypeCMake } });
+        m_language_bundle.insert({ "Go", { TypeGo } });
 
         // build the reverse search table: file type -> language
         for (auto vt : m_language_bundle) {
@@ -254,13 +256,13 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher("#include[ \t]+[\\<\"]", TypeSourceCpp));
     }
 }
-std::unordered_map<wxString, FileExtManager::FileType> FileExtManager::GetAllSupportedFileTypes()
+std::map<wxString, FileExtManager::FileType> FileExtManager::GetAllSupportedFileTypes()
 {
     Init();
     return m_map;
 }
 
-std::unordered_map<wxString, std::vector<FileExtManager::FileType>> FileExtManager::GetLanguageBundles()
+std::map<wxString, std::vector<FileExtManager::FileType>> FileExtManager::GetLanguageBundles()
 {
     Init();
     return m_language_bundle;
@@ -392,8 +394,7 @@ bool FileExtManager::IsJavaFile(const wxString& filename) { return FileExtManage
 
 FileExtManager::FileType FileExtManager::GetTypeFromExtension(const wxFileName& filename)
 {
-
-    std::unordered_map<wxString, FileExtManager::FileType>::iterator iter = m_map.find(filename.GetExt().Lower());
+    auto iter = m_map.find(filename.GetExt().Lower());
     if (iter == m_map.end())
         return TypeOther;
     return iter->second;

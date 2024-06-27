@@ -5,11 +5,11 @@
 #include "codelite_exports.h"
 #include "fileextmanager.h"
 
-#include <unordered_map>
+#include <map>
 
 class WXDLLIMPEXP_SDK SelectFileTypesDialog : public SelectFileTypesDialogBase
 {
-    std::unordered_map<wxString, std::vector<FileExtManager::FileType>> m_all;
+    std::map<wxString, std::vector<FileExtManager::FileType>> m_all;
 
 private:
     void InitializeList(const wxArrayString& selected_items);

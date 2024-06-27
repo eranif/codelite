@@ -25,6 +25,12 @@ public:
     std::shared_ptr<GenericFormatter> GetFormatterByContent(const wxString& content) const;
     size_t GetAllNames(wxArrayString* names) const;
 
+    /// Add new custom formatter
+    bool AddCustom(GenericFormatter* formatter);
+
+    /// Delete formatter by name
+    bool DeleteFormatter(const wxString& name);
+
     // do we have a formatter that can handle `filepath`?
     bool CanFormat(const wxString& filepath) const;
     // can we format this content?

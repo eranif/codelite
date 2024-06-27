@@ -39,6 +39,9 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
     FormatterPage* m_page = nullptr;
 
 protected:
+    virtual void OnDeleteUI(wxUpdateUIEvent& event);
+    virtual void OnDelete(wxCommandEvent& event);
+    virtual void OnNew(wxCommandEvent& event);
     void OnSelectFileTypes(wxCommandEvent& event);
     void OnRevert(wxCommandEvent& event);
     void OnSelectionChanged(wxDataViewEvent& event);

@@ -19,6 +19,7 @@
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
 #include <wx/button.h>
+#include <wx/statline.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -35,8 +36,6 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-#include "PHPFormatterBuffer.h"
-
 // clang-format on
 
 class CodeFormatterBaseDlg : public wxDialog
@@ -45,20 +44,29 @@ protected:
     wxPanel* m_mainPanel;
     clThemedOrderedListCtrl* m_dvListCtrl;
     wxBoxSizer* boxSizerFormatter;
+    wxButton* m_button_new;
+    wxButton* m_button_delete;
+    wxStaticLine* m_staticLine392;
+    wxButton* m_button_revert;
     wxButton* m_button_ok;
     wxButton* m_button_cancel;
-    wxButton* m_button_revert;
 
 protected:
     virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNew(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnRevert(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     clThemedOrderedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxButton* GetButton_new() { return m_button_new; }
+    wxButton* GetButton_delete() { return m_button_delete; }
+    wxStaticLine* GetStaticLine392() { return m_staticLine392; }
+    wxButton* GetButton_revert() { return m_button_revert; }
     wxButton* GetButton_ok() { return m_button_ok; }
     wxButton* GetButton_cancel() { return m_button_cancel; }
-    wxButton* GetButton_revert() { return m_button_revert; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
                          const wxString& title = _("Source Code Formatter Options"),

@@ -13,6 +13,7 @@
 #include "fmtXmlLint.hpp"
 #include "fmtYQ.hpp"
 
+#include <algorithm>
 #include <wx/filename.h>
 
 CodeFormatterManager::CodeFormatterManager() {}
@@ -164,4 +165,29 @@ std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatterByContent(co
         }
     }
     return nullptr;
+}
+
+bool CodeFormatterManager::AddCustom(GenericFormatter* formatter)
+{
+    auto where =
+        std::find_if(m_formatters.begin(), m_formatters.end(), [formatter](std::shared_ptr<GenericFormatter> fmtr) {
+            return fmtr->GetName() == formatter->GetName();
+        });
+    if (where != m_formatters.end()) {
+        return false;
+    }
+    push_back(formatter);
+    return true;
+}
+
+bool CodeFormatterManager::DeleteFormatter(const wxString& name)
+{
+    auto where = std::find_if(m_formatters.begin(), m_formatters.end(),
+                              [&name](std::shared_ptr<GenericFormatter> fmtr) { return fmtr->GetName() == name; });
+    if (where == m_formatters.end()) {
+        // not found
+        return false;
+    }
+    m_formatters.erase(where);
+    return true;
 }

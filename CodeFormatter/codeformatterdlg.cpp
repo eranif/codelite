@@ -61,13 +61,13 @@ void CodeFormatterDlg::InitDialog()
     m_formatter_manager.GetAllNames(&all_formatters);
     m_dvListCtrl->DeleteAllItems();
     m_dvListCtrl->Begin();
-    for(const auto& name : all_formatters) {
+    for (const auto& name : all_formatters) {
         wxVector<wxVariant> cols;
         cols.push_back(name);
         m_dvListCtrl->AppendItem(cols);
     }
 
-    if(!m_dvListCtrl->IsEmpty()) {
+    if (!m_dvListCtrl->IsEmpty()) {
         m_dvListCtrl->SelectRow(0);
     }
     m_dvListCtrl->Commit();
@@ -91,24 +91,48 @@ void CodeFormatterDlg::OnSelectionChanging(wxDataViewEvent& event) { event.Skip(
 void CodeFormatterDlg::OnRevert(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(::wxMessageBox(_("Lose all your modifications and restore default settings?"), "CodeLite",
-                      wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
+    if (::wxMessageBox(_("Lose all your modifications and restore default settings?"), "CodeLite",
+                       wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
         return;
     }
     m_formatter_manager.RestoreDefaults();
     InitDialog();
 }
 
-void CodeFormatterDlg::OnSelectFileTypes(wxCommandEvent& event)
+void CodeFormatterDlg::OnSelectFileTypes(wxCommandEvent& event) { wxUnusedVar(event); }
+
+void CodeFormatterDlg::OnNew(wxCommandEvent& event)
 {
-    //    wxArrayString selected;
-    //
-    //    wxString cur = m_textCtrlFileTypes->GetValue();
-    //    wxArrayString initial = wxStringTokenize(cur, ";", wxTOKEN_STRTOK);
-    //    if(!::clShowFileTypeSelectionDialog(this, initial, &selected)) {
-    //        return;
-    //    }
-    //
-    //    wxString value = wxJoin(selected, ';');
-    //    m_textCtrlFileTypes->ChangeValue(value);
+    wxUnusedVar(event);
+    GenericFormatter* formatter = new GenericFormatter();
+    wxString name = ::clGetTextFromUser(_("New formatter"), _("Enter the new formatter name:"));
+    if (name.empty()) {
+        return;
+    }
+    formatter->SetName(name);
+    formatter->SetShortDescription(name);
+    if (!m_formatter_manager.AddCustom(formatter)) {
+        wxDELETE(formatter);
+        ::wxMessageBox(_("Formatter with similar name already exists"), "CodeLite", wxICON_ERROR);
+        return;
+    }
+    InitDialog();
 }
+void CodeFormatterDlg::OnDelete(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    auto item = m_dvListCtrl->GetSelection();
+    if (!item.IsOk()) {
+        return;
+    }
+
+    wxString formatter_name = m_dvListCtrl->GetItemText(item);
+    if (::wxMessageBox(_("Delete formatter '") + formatter_name + "'", _("Delete formatter"),
+                       wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) != wxYES) {
+        return;
+    }
+    m_formatter_manager.DeleteFormatter(formatter_name);
+    InitDialog();
+}
+
+void CodeFormatterDlg::OnDeleteUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->GetSelectedItemsCount() > 0); }

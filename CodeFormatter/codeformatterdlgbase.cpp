@@ -6,18 +6,28 @@
 
 #include "codeformatterdlgbase.h"
 
-#include "PHPFormatterBuffer.h"
-
 // Declare the bitmap loading function
 extern void wxCrafterGgLOZbInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                            const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterGgLOZbInitBitmapResources();
@@ -34,20 +44,49 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer359 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer359);
 
-    wxBoxSizer* boxSizer360 = new wxBoxSizer(wxHORIZONTAL);
+    wxFlexGridSizer* flexGridSizer389 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer389->SetFlexibleDirection(wxBOTH);
+    flexGridSizer389->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer389->AddGrowableCol(1);
+    flexGridSizer389->AddGrowableRow(0);
 
-    boxSizer359->Add(boxSizer360, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer359->Add(flexGridSizer389, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl =
-        new clThemedOrderedListCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)),
+        new clThemedOrderedListCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(200, -1)),
                                     wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
-    boxSizer360->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer389->Add(m_dvListCtrl, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl->AppendTextColumn(_("name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
     boxSizerFormatter = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer360->Add(boxSizerFormatter, 3, wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer389->Add(boxSizerFormatter, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer390 = new wxBoxSizer(wxVERTICAL);
+
+    flexGridSizer389->Add(boxSizer390, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button_new =
+        new wxButton(m_mainPanel, wxID_NEW, _("&New"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+
+    boxSizer390->Add(m_button_new, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button_delete = new wxButton(m_mainPanel, wxID_DELETE, _("&Delete"), wxDefaultPosition,
+                                   wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+
+    boxSizer390->Add(m_button_delete, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_staticLine392 = new wxStaticLine(m_mainPanel, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxLI_HORIZONTAL);
+
+    boxSizer390->Add(m_staticLine392, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button_revert = new wxButton(m_mainPanel, wxID_REVERT, _("Defaults"), wxDefaultPosition,
+                                   wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+    m_button_revert->SetToolTip(_("Revert all changes and load factory defaults"));
+
+    boxSizer390->Add(m_button_revert, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer371 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -64,36 +103,36 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 
     boxSizer371->Add(m_button_cancel, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_button_revert = new wxButton(m_mainPanel, wxID_REVERT, _("Defaults"), wxDefaultPosition,
-                                   wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
-    m_button_revert->SetToolTip(_("Revert all changes and load factory defaults"));
-
-    boxSizer371->Add(m_button_revert, 0, wxALL, WXC_FROM_DIP(5));
-
     SetName(wxT("CodeFormatterBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
     m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &CodeFormatterBaseDlg::OnSelectionChanged, this);
-    m_button_ok->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnOK, this);
+    m_button_new->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnNew, this);
+    m_button_delete->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnDelete, this);
+    m_button_delete->Bind(wxEVT_UPDATE_UI, &CodeFormatterBaseDlg::OnDeleteUI, this);
     m_button_revert->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnRevert, this);
+    m_button_ok->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnOK, this);
 }
 
 CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 {
     m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &CodeFormatterBaseDlg::OnSelectionChanged, this);
-    m_button_ok->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnOK, this);
+    m_button_new->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnNew, this);
+    m_button_delete->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnDelete, this);
+    m_button_delete->Unbind(wxEVT_UPDATE_UI, &CodeFormatterBaseDlg::OnDeleteUI, this);
     m_button_revert->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnRevert, this);
+    m_button_ok->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &CodeFormatterBaseDlg::OnOK, this);
 }

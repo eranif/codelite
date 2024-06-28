@@ -30,6 +30,7 @@
 #include "Cxx/CxxScannerTokens.h"
 #include "Cxx/CxxTemplateFunction.h"
 #include "Cxx/CxxVariableScanner.h"
+#include "Cxx/y.tab.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
 #include "function.h"
@@ -37,7 +38,6 @@
 #include "pptable.h"
 #include "precompiled_header.h"
 #include "variable.h"
-#include "y.tab.h"
 
 #include <algorithm>
 #include <wx/ffile.h>

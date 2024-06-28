@@ -14,7 +14,7 @@ endif(UNIX AND NOT APPLE)
 # Flex files
 FLEX_TARGET(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/CxxScanner.l" "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
             COMPILE_FLAGS "--noline --yylineno --batch")
-FLEX_TARGET(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/include_finder.l" "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp"
+FLEX_TARGET(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/include_finder.l" "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp"
             COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
 FLEX_TARGET(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
             COMPILE_FLAGS "-Pphp --noline --yylineno --batch")

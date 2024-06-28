@@ -28,14 +28,14 @@
 #include "Cxx/CxxTemplateFunction.h"
 #include "Cxx/CxxVariable.h"
 #include "Cxx/CxxVariableScanner.h"
+#include "Cxx/cpp_comment_creator.h"
+#include "Cxx/cppwordscanner.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
 #include "code_completion_api.h"
 #include "codelite_events.h"
 #include "codelite_exports.h"
-#include "cpp_comment_creator.h"
-#include "cppwordscanner.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -45,9 +45,6 @@
 #include "procutils.h"
 #include "tags_options_data.h"
 #include "tags_storage_sqlite3.h"
-#include "wx/filename.h"
-#include "wx/timer.h"
-#include "wx/tokenzr.h"
 #include "wxStringHash.h"
 
 #include <algorithm>
@@ -56,6 +53,9 @@
 #include <wx/app.h>
 #include <wx/busyinfo.h>
 #include <wx/file.h>
+#include <wx/filename.h>
+#include <wx/timer.h>
+#include <wx/tokenzr.h>
 #if wxUSE_GUI
 #include <wx/frame.h>
 #include <wx/msgdlg.h>

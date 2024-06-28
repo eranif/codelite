@@ -26,9 +26,9 @@
 #define CONTEXT_CPP_H
 
 #include "LSP/LSPEvent.h"
+#include "Cxx/cpptoken.h"
 #include "cl_command_event.h"
 #include "context_base.h"
-#include "cpptoken.h"
 #include "ctags_manager.h"
 #include "entry.h"
 #include "macros.h"

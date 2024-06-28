@@ -25,10 +25,11 @@
 #ifndef __renamesymboldlg__
 #define __renamesymboldlg__
 
-#include "cpptoken.h"
+#include "Cxx/cpptoken.h"
+#include "rename_symbool_dlg.h"
+
 #include <list>
 #include <vector>
-#include "rename_symbool_dlg.h"
 
 class RenameSymbol : public RenameSymbolBase
 {

@@ -29,7 +29,7 @@ s_char [^"\\\n]|{escape_sequence}
 #define YY_FATAL_ERROR(msg)
 
 #include <list>
-#include "include_finder.h"
+#include "Cxx/include_finder.h"
 
 static std::vector<IncludeStatement>* pIncludes = NULL;
 static std::string currentFile;

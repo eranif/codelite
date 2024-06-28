@@ -25,8 +25,8 @@
 
 #include "code_completion_manager.h"
 
-#include "CxxScannerTokens.h"
-#include "CxxVariableScanner.h"
+#include "Cxx/CxxScannerTokens.h"
+#include "Cxx/CxxVariableScanner.h"
 #include "bitmap_loader.h"
 #include "cl_editor.h"
 #include "code_completion_api.h"

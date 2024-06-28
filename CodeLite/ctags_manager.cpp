@@ -25,9 +25,9 @@
 #include "ctags_manager.h"
 
 #include "CTags.hpp"
-#include "CxxTemplateFunction.h"
-#include "CxxVariable.h"
-#include "CxxVariableScanner.h"
+#include "Cxx/CxxTemplateFunction.h"
+#include "Cxx/CxxVariable.h"
+#include "Cxx/CxxVariableScanner.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"

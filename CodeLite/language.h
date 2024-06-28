@@ -25,8 +25,8 @@
 #ifndef CODELITE_LANGUAGE_H
 #define CODELITE_LANGUAGE_H
 
-#include "CxxTokenizer.h"
-#include "CxxVariable.h"
+#include "Cxx/CxxTokenizer.h"
+#include "Cxx/CxxVariable.h"
 #include "codelite_exports.h"
 #include "comment.h"
 #include "cpp_scanner.h"

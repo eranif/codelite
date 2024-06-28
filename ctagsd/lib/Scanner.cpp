@@ -1,8 +1,8 @@
 #include "Scanner.hpp"
 
-#include "CxxLexerAPI.h"
-#include "CxxScannerTokens.h"
-#include "CxxTokenizer.h"
+#include "Cxx/CxxLexerAPI.h"
+#include "Cxx/CxxScannerTokens.h"
+#include "Cxx/CxxTokenizer.h"
 #include "file_logger.h"
 #include "fileutils.h"
 

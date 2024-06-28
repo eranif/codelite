@@ -1,7 +1,7 @@
 #include "wxCodeCompletionBox.h"
 
 #include "ColoursAndFontsManager.h"
-#include "CxxTemplateFunction.h"
+#include "Cxx/CxxTemplateFunction.h"
 #include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "cc_box_tip_window.h"

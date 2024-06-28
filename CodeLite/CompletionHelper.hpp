@@ -1,7 +1,6 @@
 #ifndef COMPLETIONHELPER_HPP
 #define COMPLETIONHELPER_HPP
 
-#include "CxxTokenizer.h"
 #include "codelite_exports.h"
 #include "entry.h"
 #include "istorage.h"

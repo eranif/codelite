@@ -12,7 +12,7 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 # Flex files
-FLEX_TARGET(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l" "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
+FLEX_TARGET(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/CxxScanner.l" "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
             COMPILE_FLAGS "--noline --yylineno --batch")
 FLEX_TARGET(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/include_finder.l" "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp"
             COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
@@ -84,6 +84,7 @@ file(
     "*.cpp"
     "../sdk/codelite_indexer/network/*.cpp"
     "Console/*.cpp"
+    "Cxx/*.cpp"
     "PHP/*.cpp"
     "SocketAPI/*.cpp"
     "LSP/*.cpp"

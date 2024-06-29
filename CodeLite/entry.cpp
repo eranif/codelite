@@ -26,8 +26,8 @@
 #include "entry.h"
 
 #include "CompletionHelper.hpp"
-#include "CxxScannerTokens.h"
-#include "CxxTokenizer.h"
+#include "Cxx/CxxScannerTokens.h"
+#include "Cxx/CxxTokenizer.h"
 #include "code_completion_api.h"
 #include "ctags_manager.h"
 #include "language.h"

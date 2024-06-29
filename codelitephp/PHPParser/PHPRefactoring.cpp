@@ -1,10 +1,10 @@
 #include "PHPRefactoring.h"
+
+#include "PHP/PHPEntityClass.h"
+#include "PHP/PHPEntityVariable.h"
+#include "PHP/PHPSourceFile.h"
+#include "ieditor.h"
 #include "php_code_completion.h"
-#include <ieditor.h>
-#include "PHPEntityBase.h"
-#include "PHPEntityVariable.h"
-#include "PHPSourceFile.h"
-#include "PHPEntityClass.h"
 
 PHPRefactoring::PHPRefactoring() {}
 

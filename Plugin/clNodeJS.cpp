@@ -1,8 +1,8 @@
 #include "clNodeJS.h"
 
+#include "Console/clConsoleBase.h"
 #include "NodeJSLocator.h"
 #include "asyncprocess.h"
-#include "clConsoleBase.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"

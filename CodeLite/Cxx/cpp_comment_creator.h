@@ -22,13 +22,14 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CPP_COMMENT_CREATOR_H
+#ifndef CPP_COMMENT_CREATOR_H
 #define CPP_COMMENT_CREATOR_H
 
-#include "wx/string.h"
-#include "entry.h"
-#include "comment_creator.h"
 #include "codelite_exports.h"
+#include "comment_creator.h"
+#include "entry.h"
+
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL CppCommentCreator : public CommentCreator
 {

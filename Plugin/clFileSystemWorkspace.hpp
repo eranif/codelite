@@ -4,7 +4,6 @@
 #include "IWorkspace.h"
 #include "asyncprocess.h"
 #include "clBacktickCache.hpp"
-#include "clConsoleBase.h"
 #include "clDebuggerTerminal.h"
 #include "clFileCache.hpp"
 #include "clFileSystemEvent.h"

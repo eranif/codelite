@@ -24,11 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pptable.h"
-#include <wx/tokenzr.h>
-#include <set>
-#include "CxxLexerAPI.h"
-#include "CxxScannerTokens.h"
+
+#include "Cxx/CxxLexerAPI.h"
+#include "Cxx/CxxScannerTokens.h"
+
 #include <algorithm>
+#include <set>
+#include <wx/tokenzr.h>
 
 bool IsWordChar(const wxString& s, int strSize)
 {

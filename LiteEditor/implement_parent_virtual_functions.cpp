@@ -23,15 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "implement_parent_virtual_functions.h"
+
+#include "Cxx/cpp_comment_creator.h"
 #include "commentconfigdata.h"
 #include "context_cpp.h"
-#include "cpp_comment_creator.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "globals.h"
-#include "implement_parent_virtual_functions.h"
 #include "implparentvirtualfunctionsdata.h"
 #include "windowattrmanager.h"
+
 #include <wx/settings.h>
 #include <wx/tokenzr.h>
 

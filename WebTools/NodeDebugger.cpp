@@ -1,5 +1,6 @@
 #include "NodeDebugger.h"
 
+#include "Console/clConsoleBase.h"
 #include "NodeFileManager.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
@@ -7,7 +8,6 @@
 #include "SocketAPI/clSocketBase.h"
 #include "SocketAPI/clWebSocketClient.h"
 #include "bookmark_manager.h"
-#include "clConsoleBase.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"

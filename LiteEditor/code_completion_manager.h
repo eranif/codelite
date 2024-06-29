@@ -27,7 +27,7 @@
 #define CODECOMPLETIONMANAGER_H
 
 #include "CompileCommandsGenerator.h"
-#include "CxxPreProcessorCache.h"
+#include "Cxx/CxxPreProcessorCache.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 

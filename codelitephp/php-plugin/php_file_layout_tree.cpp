@@ -1,12 +1,14 @@
 #include "php_file_layout_tree.h"
-#include <imanager.h>
-#include <ieditor.h>
-#include <algorithm>
-#include <globals.h>
-#include "PHPEntityFunction.h"
-#include "PHPEntityVariable.h"
-#include "PHPSourceFile.h"
+
+#include "PHP/PHPEntityFunction.h"
+#include "PHP/PHPEntityVariable.h"
+#include "PHP/PHPSourceFile.h"
 #include "fileutils.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+
+#include <algorithm>
 
 #ifndef __WXMSW__
 #include <wx/imaglist.h>

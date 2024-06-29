@@ -25,10 +25,10 @@
 #include "globals.h"
 
 #include "ColoursAndFontsManager.h"
+#include "Console/clConsoleBase.h"
 #include "SelectFileTypesDialog.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
-#include "clConsoleBase.h"
 #include "clDataViewListCtrl.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clGetTextFromUserDialog.h"

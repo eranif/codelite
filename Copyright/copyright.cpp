@@ -24,12 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "copyright.h"
 
+#include "Cxx/cpptoken.h"
+#include "Cxx/cppwordscanner.h"
 #include "clKeyboardManager.h"
 #include "copyrights_options_dlg.h"
 #include "copyrights_proj_sel_dlg.h"
 #include "copyrightsconfigdata.h"
-#include "cpptoken.h"
-#include "cppwordscanner.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"

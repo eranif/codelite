@@ -1,8 +1,8 @@
 #ifndef FUNCTIONSPARSER_H
 #define FUNCTIONSPARSER_H
 
+#include "Cxx/cpp_scanner.h"
 #include "wxc_widget.h"
-#include <cpp_scanner.h>
 
 class FunctionsParser
 {

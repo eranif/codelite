@@ -23,14 +23,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+#include "fileutils.h"
+
+#include "Console/clConsoleBase.h"
 #include "StringUtils.h"
 #include "asyncprocess.h"
-#include "clConsoleBase.h"
 #include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
 #include "file_logger.h"
-#include "fileutils.h"
 #include "macros.h"
 #include "procutils.h"
 #include "wxStringHash.h"

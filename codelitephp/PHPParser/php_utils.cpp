@@ -1,7 +1,7 @@
 #include "php_utils.h"
 
 #include "JSON.h"
-#include "PHPSourceFile.h"
+#include "PHP/PHPSourceFile.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"

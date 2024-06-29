@@ -1,6 +1,6 @@
 #include "PHPFormatterBuffer.h"
 
-#include "PHPScannerTokens.h"
+#include "PHP/PHPScannerTokens.h"
 
 #include <wx/tokenzr.h>
 

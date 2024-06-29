@@ -26,7 +26,7 @@
 #ifndef PHPFORMATTERBUFFER_H
 #define PHPFORMATTERBUFFER_H
 
-#include "PhpLexerAPI.h"
+#include "PHP/PhpLexerAPI.h"
 
 #include <stack>
 #include <wx/string.h>

@@ -1,20 +1,21 @@
 #if HAS_LIBCLANG
 
-#include <wx/app.h>
+#include "Cxx/cpp_scanner.h"
+#include "Cxx/y.tab.h"
 #include "clang_pch_maker_thread.h"
-#include <wx/thread.h>
-#include <wx/stdpaths.h>
+#include "clang_utils.h"
 #include "event_notifier.h"
-#include <wx/regex.h>
-#include <wx/tokenzr.h>
-#include "y.tab.h"
-#include "cpp_scanner.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "globals.h"
 #include "procutils.h"
-#include "fileextmanager.h"
+
+#include <wx/app.h>
+#include <wx/regex.h>
+#include <wx/stdpaths.h>
+#include <wx/thread.h>
+#include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
-#include "clang_utils.h"
 
 #define cstr(x) x.mb_str(wxConvUTF8).data()
 

@@ -26,8 +26,8 @@
 #ifndef PHPREFACTORING_H
 #define PHPREFACTORING_H
 
+#include "PHP/PHPEntityBase.h"
 #include "PHPSetterGetterEntry.h"
-#include "PHPEntityBase.h"
 
 class IEditor;
 class PHPRefactoring

@@ -1,7 +1,7 @@
 #ifndef SCANNER_HPP
 #define SCANNER_HPP
 
-#include "CxxTokenizer.h"
+#include "Cxx/CxxTokenizer.h"
 #include "macros.h"
 
 #include <unordered_map>

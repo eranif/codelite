@@ -26,9 +26,9 @@
 #ifndef PHPCODECOMPLETION_H
 #define PHPCODECOMPLETION_H
 
-#include "PHPEntityBase.h"
-#include "PHPExpression.h"
-#include "PHPLookupTable.h"
+#include "PHP/PHPEntityBase.h"
+#include "PHP/PHPExpression.h"
+#include "PHP/PHPLookupTable.h"
 #include "cl_command_event.h"
 #include "ieditor.h"
 #include "php_event.h"

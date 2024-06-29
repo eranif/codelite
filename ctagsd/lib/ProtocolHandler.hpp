@@ -3,7 +3,7 @@
 
 #include "Channel.hpp"
 #include "CompletionHelper.hpp"
-#include "CxxCodeCompletion.hpp"
+#include "Cxx/CxxCodeCompletion.hpp"
 #include "JSON.h"
 #include "ParseThread.hpp"
 #include "Scanner.hpp"

@@ -1,7 +1,7 @@
 #include <wx/string.h>
 const wxString big_file = R"(
-#include "CxxScannerTokens.h"
-#include "CxxVariableScanner.h"
+#include "Cxx/CxxScannerTokens.h"
+#include "Cxx/CxxVariableScanner.h"
 #include "file_logger.h"
 
 #include <algorithm>
@@ -512,11 +512,11 @@ wxTerminalColourHandler::wxTerminalColourHandler()
 const wxString cc_text_ProtocolHandler = R"(
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
-#include "CxxCodeCompletion.hpp"
-#include "CxxPreProcessor.h"
-#include "CxxScannerTokens.h"
-#include "CxxTokenizer.h"
-#include "CxxVariableScanner.h"
+#include "Cxx/CxxCodeCompletion.hpp"
+#include "Cxx/CxxPreProcessor.h"
+#include "Cxx/CxxScannerTokens.h"
+#include "Cxx/CxxTokenizer.h"
+#include "Cxx/CxxVariableScanner.h"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LSPUtils.hpp"

@@ -129,14 +129,13 @@ bool GenericFormatter::DoFormatFile(const wxString& filepath, wxEvtHandler* sink
     cmd = replace_macros(cmd, filepath);
     wxString wd = replace_macros(GetWorkingDirectory(), filepath);
 
-    clDEBUG() << "Working dir:" << wd << endl;
-    clDEBUG() << "Calling:" << cmd << endl;
-
     wxBusyCursor bc;
     if (sink) {
+        clDEBUG() << "Formatting file (async):" << filepath << "Working dir:" << wd << "Calling:" << cmd << endl;
         AsyncFormat(cmd, wd, filepath, IsInplaceFormatter(), sink);
         return true;
     } else {
+        clDEBUG() << "Formatting file (sync):" << filepath << "Working dir:" << wd << "Calling:" << cmd << endl;
         return SyncFormat(cmd, wd, IsInplaceFormatter(), output);
     }
 }

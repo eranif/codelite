@@ -22,11 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __environmentconfig__
-#define __environmentconfig__
+#pragma once
 
-#include "archive.h"
 #include "build_config.h"
+#include "clEnvironment.hpp"
 #include "configurationtoolbase.h"
 #include "envvarlist.h"
 #include "macros.h"
@@ -87,61 +86,66 @@ public:
 
 class EnvSetter
 {
-    EnvironmentConfig* m_env;
-    wxString m_envName;
-    wxString m_oldEnvValue;
-    bool m_restoreOldValue;
-
 public:
-    EnvSetter(wxStringMap_t* om = NULL)
+    explicit EnvSetter(wxStringMap_t* om = NULL)
         : m_env(EnvironmentConfig::Instance())
-        , m_restoreOldValue(false)
     {
         m_env->ApplyEnv(om, wxEmptyString, wxEmptyString);
+    }
+
+    explicit EnvSetter(const clEnvList_t* envlist)
+        : m_env(EnvironmentConfig::Instance())
+    {
+        // convert envlist -> wxStringMap_t
+        wxStringMap_t overrideMap;
+        if (envlist) {
+            overrideMap.reserve(envlist->size());
+            for (const auto& [name, value] : *envlist) {
+                overrideMap.insert({ name, value });
+            }
+        }
+        m_env->ApplyEnv(&overrideMap, wxEmptyString, wxEmptyString);
     }
 
     EnvSetter(ProjectPtr proj)
         : m_env(EnvironmentConfig::Instance())
-        , m_restoreOldValue(false)
     {
         wxString projname = proj->GetName();
         wxString buildConfName;
         BuildConfigPtr buildConf = proj->GetBuildConfiguration();
-        if(buildConf) {
+        if (buildConf) {
             buildConfName = buildConf->GetName();
         }
         m_env->ApplyEnv(NULL, projname, buildConfName);
     }
 
-    EnvSetter(Project* proj)
+    explicit EnvSetter(Project* proj)
         : m_env(EnvironmentConfig::Instance())
-        , m_restoreOldValue(false)
     {
         wxString projname = proj->GetName();
         wxString buildConfName;
         BuildConfigPtr buildConf = proj->GetBuildConfiguration();
-        if(buildConf) {
+        if (buildConf) {
             buildConfName = buildConf->GetName();
         }
         m_env->ApplyEnv(NULL, projname, buildConfName);
     }
 
-    EnvSetter(EnvironmentConfig* conf, wxStringMap_t* om = NULL)
+    explicit EnvSetter(EnvironmentConfig* conf, wxStringMap_t* om = NULL)
         : m_env(EnvironmentConfig::Instance())
-        , m_restoreOldValue(false)
     {
         wxUnusedVar(conf);
         m_env->ApplyEnv(om, wxEmptyString, wxEmptyString);
     }
-    EnvSetter(EnvironmentConfig* conf, wxStringMap_t* om, const wxString& project, const wxString& buildConfig)
+
+    explicit EnvSetter(EnvironmentConfig* conf, wxStringMap_t* om, const wxString& project, const wxString& buildConfig)
         : m_env(EnvironmentConfig::Instance())
-        , m_restoreOldValue(false)
     {
         wxUnusedVar(conf);
         m_env->ApplyEnv(om, project, buildConfig);
     }
 
-    EnvSetter(const wxString& var, const wxString& value)
+    explicit EnvSetter(const wxString& var, const wxString& value)
         : m_env(NULL)
     {
         m_envName = var;
@@ -152,20 +156,25 @@ public:
 
     ~EnvSetter()
     {
-        if(m_env) {
+        if (m_env) {
             m_env->UnApplyEnv();
             m_env = NULL;
         }
 
-        if(m_restoreOldValue) {
+        if (m_restoreOldValue) {
             // restore old env variable value
             ::wxSetEnv(m_envName, m_oldEnvValue);
 
-        } else if(!m_envName.IsEmpty()) {
-            // we applied a single evn variable without old value
+        } else if (!m_envName.IsEmpty()) {
+            // we applied a single env variable without old value
             // uset it
             ::wxUnsetEnv(m_envName);
         }
     }
+
+private:
+    EnvironmentConfig* m_env = nullptr;
+    wxString m_envName;
+    wxString m_oldEnvValue;
+    bool m_restoreOldValue = false;
 };
-#endif // __environmentconfig__

@@ -6,6 +6,7 @@
 #include "cl_remote_executor.hpp"
 #include "procutils.h"
 
+#include <memory>
 #include <unordered_map>
 #include <vector>
 #include <wx/arrstr.h>
@@ -39,14 +40,15 @@ class GenericFormatter : public SourceFormatterBase
 
 protected:
     bool DoFormatFile(const wxString& filepath, wxEvtHandler* sink, wxString* output);
-    void async_format(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
-                      wxEvtHandler* sink);
-
+    void AsyncFormat(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
+                     wxEvtHandler* sink);
+    bool SyncFormat(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output);
     void OnAsyncShellProcessTerminated(clShellProcessEvent& event);
     void OnRemoteCommandStdout(clCommandEvent& event);
     void OnRemoteCommandStderr(clCommandEvent& event);
     void OnRemoteCommandDone(clCommandEvent& event);
     void OnRemoteCommandError(clCommandEvent& event);
+    std::unique_ptr<clEnvList_t> CreateLocalEnv();
 
 public:
     GenericFormatter();

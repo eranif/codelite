@@ -1,14 +1,11 @@
 #include "GenericFormatter.hpp"
 
-#include "Platform.hpp"
 #include "StringUtils.h"
-#include "asyncprocess.h"
-#include "clCodeLiteRemoteProcess.hpp"
 #include "clDirChanger.hpp"
+#include "clFileSystemWorkspace.hpp"
 #include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
-#include "clWorkspaceManager.h"
 #include "environmentconfig.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -16,10 +13,7 @@
 #include "imanager.h"
 #include "macromanager.h"
 #include "procutils.h"
-#include "workspace.h"
 
-#include <sstream>
-#include <thread>
 #include <wx/msgdlg.h>
 
 namespace
@@ -62,17 +56,6 @@ wxString get_command_with_desc(const wxArrayString& command_arr, const wxString&
     return command;
 }
 
-bool sync_format(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output)
-{
-    // save the current directory
-    clDirChanger cd{ wd };
-    EnvSetter es(NULL, NULL, wxEmptyString, wxEmptyString);
-    bool res = ProcUtils::ShellExecSync(cmd, output) == 0;
-    if (inplace_formatter) {
-        output->clear();
-    }
-    return res;
-}
 } // namespace
 
 GenericFormatter::GenericFormatter()
@@ -101,12 +84,37 @@ GenericFormatter::~GenericFormatter()
 wxString GenericFormatter::GetCommandAsString() const { return join_array(m_command); }
 
 /**
+ * @brief synchronously format a file, return true if the process exited with return code `0`
+ * @param cmd command to execute
+ * @param wd working directory
+ * @param inplace_formatter set to true if the formatter tool modifies the file directly
+ * @param output contains the formatter output. If the `inplace_formatter` is `true`, output is always empty string
+ */
+bool GenericFormatter::SyncFormat(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output)
+{
+    // save the current directory
+    clDirChanger cd{ wd };
+    auto envlist = CreateLocalEnv();
+    EnvSetter setter{ envlist.get() };
+    bool res = ProcUtils::ShellExecSync(cmd, output) == 0;
+    if (inplace_formatter) {
+        output->clear();
+    }
+    return res;
+}
+
+/**
  * @brief format source file using background thread, when the formatting is done, fire an event to the sink object
  */
-void GenericFormatter::async_format(const wxString& cmd, const wxString& wd, const wxString& filepath,
-                                    bool inplace_formatter, wxEvtHandler* sink)
+void GenericFormatter::AsyncFormat(const wxString& cmd, const wxString& wd, const wxString& filepath,
+                                   bool inplace_formatter, wxEvtHandler* sink)
 {
     clDirChanger cd{ wd };
+
+    // Apply environment
+    auto envlist = CreateLocalEnv();
+    EnvSetter setter{ envlist.get() };
+
     long pid = wxNOT_FOUND;
     if (ProcUtils::ShellExecAsync(cmd, &pid, this)) {
         m_pid_commands.insert({ pid, CommandMetadata{ cmd, filepath, sink } });
@@ -126,10 +134,10 @@ bool GenericFormatter::DoFormatFile(const wxString& filepath, wxEvtHandler* sink
 
     wxBusyCursor bc;
     if (sink) {
-        async_format(cmd, wd, filepath, IsInplaceFormatter(), sink);
+        AsyncFormat(cmd, wd, filepath, IsInplaceFormatter(), sink);
         return true;
     } else {
-        return sync_format(cmd, wd, IsInplaceFormatter(), output);
+        return SyncFormat(cmd, wd, IsInplaceFormatter(), output);
     }
 }
 
@@ -305,4 +313,13 @@ void GenericFormatter::OnRemoteCommandError(clCommandEvent& event)
         return;
     }
     m_inFlightFiles.erase(m_inFlightFiles.begin());
+}
+
+std::unique_ptr<clEnvList_t> GenericFormatter::CreateLocalEnv()
+{
+    std::unique_ptr<clEnvList_t> env{ new clEnvList_t };
+    if (clFileSystemWorkspace::Get().IsOpen()) {
+        env.reset(new clEnvList_t(clFileSystemWorkspace::Get().GetEnvironment()));
+    }
+    return env;
 }

@@ -317,7 +317,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
-															"m_value":	"200,-1"
+															"m_value":	"150,-1"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Size:",
@@ -456,7 +456,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"string",
 															"m_label":	"Minimum Size:",

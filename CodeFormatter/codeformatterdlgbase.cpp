@@ -53,7 +53,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     boxSizer359->Add(flexGridSizer389, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl =
-        new clThemedOrderedListCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(200, -1)),
+        new clThemedOrderedListCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(150, -1)),
                                     wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
     flexGridSizer389->Add(m_dvListCtrl, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -65,7 +65,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 
     wxBoxSizer* boxSizer390 = new wxBoxSizer(wxVERTICAL);
 
-    flexGridSizer389->Add(boxSizer390, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer389->Add(boxSizer390, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_button_new =
         new wxButton(m_mainPanel, wxID_NEW, _("&New"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);

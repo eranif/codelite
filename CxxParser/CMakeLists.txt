@@ -59,6 +59,9 @@ target_include_directories(libCxxParser
     PUBLIC "${CL_SRC_ROOT}/CxxParser"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
 )
+if(WIN32)
+    target_compile_definitions(libCxxParser PRIVATE WXMAKINGDLL_CL)
+endif()
 
 # "testing" application
 add_executable(CxxParser

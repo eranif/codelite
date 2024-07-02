@@ -51,6 +51,12 @@ endif(UNIX)
 file(GLOB LIBSRC "lib/*.cpp")
 add_library(ctagdslib STATIC "${LIBSRC}")
 
+target_include_directories(
+    ctagdslib
+    PUBLIC
+    "${CL_SRC_ROOT}/CxxParser"
+)
+
 add_executable(ctagsd "main.cpp")
 target_link_libraries(
   ctagsd

@@ -268,6 +268,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
     GetEclipseXmlProperty(wxEmptyString, "method", m_function);
     GetEclipseXmlProperty(wxEmptyString, "field", m_field);
     GetEclipseXmlProperty(wxEmptyString, "enum", m_enum);
+    GetEclipseXmlProperty(wxEmptyString, "commentTaskTag", m_task);
 
     m_javadoc = m_multiLineComment;
     // set the caret colour
@@ -326,7 +327,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeBase(AlacrittyColours& c
     // reset everything to the m_editor
     m_enum = m_lineNumber = m_lineNumberActive = m_selection = m_caret = m_singleLineComment = m_multiLineComment =
         m_number = m_string = m_oper = m_keyword = m_klass = m_variable = m_javadoc = m_javadocKeyword = m_function =
-            m_field = m_editor;
+            m_field = m_task = m_editor;
 
     // no cursor colour found? define one
     if (m_caret.fg_colour.empty()) {
@@ -352,6 +353,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeBase(AlacrittyColours& c
     m_javadocKeyword.fg_colour = colours.yellow;
     m_field = m_variable;
     m_enum.fg_colour = colours.cyan;
+    m_task.fg_colour = colours.cyan;
     lexer->SetUseCustomTextSelectionFgColour(false);
     m_themeName = "Alacritty: " + colours.theme_name;
 

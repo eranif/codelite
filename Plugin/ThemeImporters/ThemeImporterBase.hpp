@@ -83,6 +83,7 @@ protected:
     Property m_function;
     Property m_field;
     Property m_enum;
+    Property m_task;
     wxString m_langName;
     wxString m_themeName;
     bool m_isDarkTheme = false;

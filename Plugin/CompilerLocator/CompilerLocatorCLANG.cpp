@@ -46,16 +46,16 @@ bool OSXFindBrewClang(wxFileName& clang)
 {
     // We use brew to query the location of clang.
     // Clang is installed as part of the LLVM package
-    IProcess::Ptr_t proc(::CreateSyncProcess("brew list llvm"));
-    if(!proc) {
+    IProcess::Ptr_t proc(::CreateSyncProcess("brew list llvm", IProcessWrapInShell));
+    if (!proc) {
         return false;
     }
     wxString output;
     proc->WaitForTerminate(output);
 
     wxArrayString lines = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
-    for(const wxString& line : lines) {
-        if(line.Contains("bin/clang")) {
+    for (const wxString& line : lines) {
+        if (line.Contains("bin/clang")) {
             clang = line;
             clang.SetFullName("clang");
             return true;
@@ -84,7 +84,7 @@ bool CompilerLocatorCLANG::Locate()
 #ifdef __WXOSX__
     {
         wxFileName fnClang;
-        if(OSXFindBrewClang(fnClang)) {
+        if (OSXFindBrewClang(fnClang)) {
             AddCompiler(fnClang.GetPath());
         }
     }
@@ -95,17 +95,17 @@ bool CompilerLocatorCLANG::Locate()
     wxArrayString paths = GetPaths();
     clFilesScanner scanner;
     clFilesScanner::EntryData::Vec_t outputFiles, tmpFiles;
-    for(const wxString& path : paths) {
-        if(scanner.ScanNoRecurse(path, tmpFiles, "clang")) {
+    for (const wxString& path : paths) {
+        if (scanner.ScanNoRecurse(path, tmpFiles, "clang")) {
             outputFiles.insert(outputFiles.end(), tmpFiles.begin(), tmpFiles.end());
         }
     }
 
     wxStringSet_t set;
-    for(const auto& d : outputFiles) {
-        if(d.flags & clFilesScanner::kIsFile) {
+    for (const auto& d : outputFiles) {
+        if (d.flags & clFilesScanner::kIsFile) {
             wxFileName clang(d.fullpath);
-            if(clang.GetFullName() == "clang") {
+            if (clang.GetFullName() == "clang") {
                 // keep all the paths were we found clang
                 set.insert(clang.GetPath());
             }
@@ -114,7 +114,7 @@ bool CompilerLocatorCLANG::Locate()
 
     clDEBUG() << "Scan completed. Found" << set.size() << "compilers" << endl;
 
-    for(const auto& path : set) {
+    for (const auto& path : set) {
         AddCompiler(path, wxEmptyString, wxEmptyString);
     }
     clDEBUG() << "Locate completed!" << endl;
@@ -129,13 +129,13 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
     clang.SetExt("exe");
 #endif
     bool found = clang.FileExists();
-    if(!found) {
+    if (!found) {
         // try to see if we have a bin folder here
         clang.AppendDir("bin");
         found = clang.FileExists();
     }
 
-    if(found) {
+    if (found) {
         return AddCompiler(clang.GetPath());
     }
     return NULL;
@@ -148,7 +148,7 @@ void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& toolnam
 {
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
-    if(!extraArgs.IsEmpty()) {
+    if (!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;
     }
     compiler->SetTool(toolname, tool);
@@ -178,7 +178,7 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString& instal
 
     // Add the archive tool
     toolFile.SetName("llvm-ar" + suffix);
-    if(toolFile.FileExists()) {
+    if (toolFile.FileExists()) {
         AddTool(compiler, "AR", toolFile.GetFullPath(), "rcu");
 
     } else {
@@ -188,7 +188,7 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString& instal
 
 #ifdef __WXMSW__
     toolFile.SetName("llvm-windres");
-    if(toolFile.FileExists()) {
+    if (toolFile.FileExists()) {
         AddTool(compiler, "ResourceCompiler", toolFile.GetFullPath());
     } else {
         AddTool(compiler, "ResourceCompiler", "windres.exe");
@@ -199,7 +199,7 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString& instal
 
     // Add the assembler tool
     toolFile.SetName("llvm-as" + suffix);
-    if(toolFile.FileExists()) {
+    if (toolFile.FileExists()) {
         AddTool(compiler, "AS", toolFile.GetFullPath());
 
     } else {
@@ -208,13 +208,13 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString& instal
     }
 
     wxString makeExtraArgs;
-    if(wxThread::GetCPUCount() > 1) {
+    if (wxThread::GetCPUCount() > 1) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
 
 #ifdef __WXMSW__
     toolFile.SetName("mingw32-make");
-    if(toolFile.FileExists()) {
+    if (toolFile.FileExists()) {
         AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs + " SHELL=cmd.exe");
     } else {
         AddTool(compiler, "MAKE", "mingw32-make.exe", makeExtraArgs);
@@ -230,7 +230,7 @@ wxString CompilerLocatorCLANG::GetClangVersion(const wxString& clangBinary)
     wxArrayString stdoutArr;
     command << clangBinary << " --version";
     ProcUtils::SafeExecuteCommand(command, stdoutArr);
-    if(!stdoutArr.IsEmpty()) {
+    if (!stdoutArr.IsEmpty()) {
         wxString versionString = stdoutArr.Item(0);
         versionString = versionString.AfterLast('(');
         versionString = versionString.BeforeLast(')');
@@ -246,7 +246,7 @@ wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
     version_string = version_string.AfterLast(' ');
     version_string.Trim().Trim(false);
     fullname = wxFileName(clangBinary).GetFullName().Capitalize();
-    if(!version_string.empty()) {
+    if (!version_string.empty()) {
         fullname << "-" << version_string;
     }
     return fullname;
@@ -273,7 +273,7 @@ CompilerPtr CompilerLocatorCLANG::AddCompiler(const wxString& clangFolder, const
     CompilerPtr compiler(new Compiler(NULL));
     compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
     compiler->SetGenerateDependeciesFile(true);
-    if(name.IsEmpty()) {
+    if (name.IsEmpty()) {
         // get the compiler version
         wxFileName clang(clangFolder, "clang" + suffix);
         compiler->SetName(GetCompilerFullName(clang.GetFullPath()));

@@ -6389,13 +6389,14 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
     SetKeywordClasses(flatStrClasses);
 
     if (lexer->GetWordSet(LexerConf::WS_CLASS).is_ok()) {
-        LOG_IF_TRACE { clDEBUG1() << "Setting semantic tokens:" << endl; }
+        LOG_IF_DEBUG { clDEBUG1() << "Setting semantic tokens:" << endl; }
         lexer->ApplyWordSet(this, LexerConf::WS_CLASS, flatStrClasses);
         lexer->ApplyWordSet(this, LexerConf::WS_FUNCTIONS, flatStrMethods);
         lexer->ApplyWordSet(this, LexerConf::WS_VARIABLES, flatStrLocals);
         lexer->ApplyWordSet(this, LexerConf::WS_OTHERS, flatStrOthers);
 
     } else {
+        LOG_IF_DEBUG { clDEBUG1() << "Setting semantic tokens (default):" << endl; }
 
         int keywords_class = wxNOT_FOUND;
         int keywords_variables = wxNOT_FOUND;
@@ -6596,7 +6597,7 @@ void clEditor::OnIdle(wxIdleEvent& event)
 
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
-    
+
 #if defined(__WXGTK__)
     m_mgr->GetStatusBar()->Refresh();
 #endif

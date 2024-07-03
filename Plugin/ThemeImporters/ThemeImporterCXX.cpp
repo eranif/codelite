@@ -41,7 +41,7 @@ ThemeImporterCXX::ThemeImporterCXX()
     SetClassWordSetIndex(3);
     SetOthersWordSetIndex(4);
     SetLocalsWordSetIndex(LexerConf::WS_VARIABLES, true);
-
+    SetLangName("c++");
     // Special task markers
     // will be styled with SCE_C_TASKMARKER
     SetKeywords5("TODO FIXME BUG ATTN");
@@ -54,7 +54,7 @@ ThemeImporterCXX::~ThemeImporterCXX() {}
 
 LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "c++", wxSTC_LEX_CPP);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties
@@ -77,6 +77,7 @@ LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Doxygen keyword error", m_javadocKeyword);
     AddProperty(lexer, wxSTC_C_WORD2, "Functions", m_function);
     AddProperty(lexer, wxSTC_C_GLOBALCLASS, "Classes", m_klass);
+    AddProperty(lexer, wxSTC_C_TASKMARKER, "Task Markers", m_task);
     AddPropertySubstyle(lexer, LexerConf::WS_VARIABLES, "Variables", m_variable);
 
     // the base for all our substyles
@@ -120,9 +121,9 @@ std::vector<wxFileName> ThemeImporterCXX::ToEclipseXMLs()
 {
     std::vector<wxFileName> arr;
     wxArrayString themes = ColoursAndFontsManager::Get().GetAllThemes();
-    for(size_t i = 0; i < themes.size(); ++i) {
+    for (size_t i = 0; i < themes.size(); ++i) {
         LexerConf::Ptr_t cxxLexer = ColoursAndFontsManager::Get().GetLexer("c++", themes.Item(i));
-        if(!cxxLexer)
+        if (!cxxLexer)
             continue;
         arr.push_back(ToEclipseXML(cxxLexer, i));
     }

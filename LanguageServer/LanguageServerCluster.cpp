@@ -438,7 +438,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
             variables_set.insert(token_name);
             variabls_str << token_name << " ";
         } else if (is_method && methods_set.count(token_name) == 0) {
-            methods_set.insert(token_type);
+            methods_set.insert(token_name);
             method_str << token_name << " ";
         }
     }

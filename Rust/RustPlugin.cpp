@@ -28,7 +28,7 @@
 #include "CargoToml.hpp"
 #include "CompilerLocator/CompilerLocatorRustc.hpp"
 #include "NewFileSystemWorkspaceDialog.h"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "RustWorkspace.hpp"
 #include "asyncprocess.h"
 #include "build_settings_config.h"

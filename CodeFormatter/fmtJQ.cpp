@@ -1,6 +1,6 @@
 #include "fmtJQ.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 fmtJQ::fmtJQ()
 {

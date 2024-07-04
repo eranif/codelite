@@ -1,6 +1,6 @@
 #include "fmtBlack.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 fmtBlack::fmtBlack()
 {

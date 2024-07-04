@@ -1,6 +1,6 @@
 #include "wxTerminalCtrl.h"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "clModuleLogger.hpp"
 #include "clResult.hpp"

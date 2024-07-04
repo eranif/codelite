@@ -1,6 +1,6 @@
 #include "LSPPythonDetector.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "asyncprocess.h"
 #include "file_logger.h"
 #include "globals.h"

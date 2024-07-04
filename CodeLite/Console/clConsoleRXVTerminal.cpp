@@ -1,6 +1,6 @@
 #include "clConsoleRXVTerminal.h"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 clConsoleRXVTTerminal::clConsoleRXVTTerminal()
 {

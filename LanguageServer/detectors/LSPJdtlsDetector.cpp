@@ -1,6 +1,6 @@
 #include "LSPJdtlsDetector.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "globals.h"
 
 #include <wx/filename.h>

@@ -1,6 +1,6 @@
 #include "clRustLocator.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "fileutils.h"
 
 #include <wx/arrstr.h>

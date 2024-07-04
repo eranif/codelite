@@ -27,7 +27,7 @@
 
 #include "IWorkspace.h"
 #include "Notebook.h"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "build_settings_config.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"

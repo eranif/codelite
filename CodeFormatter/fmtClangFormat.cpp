@@ -1,6 +1,6 @@
 #include "fmtClangFormat.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 fmtClangFormat::fmtClangFormat()
 {

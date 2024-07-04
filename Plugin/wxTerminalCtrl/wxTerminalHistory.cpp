@@ -1,6 +1,6 @@
 #include "wxTerminalHistory.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"

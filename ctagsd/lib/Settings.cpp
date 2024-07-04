@@ -4,7 +4,7 @@
 #include "CompileFlagsTxt.h"
 #include "GCCMetadata.hpp"
 #include "JSON.h"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "clTempFile.hpp"
 #include "ctags_manager.h"
 #include "file_logger.h"

@@ -2,7 +2,7 @@
 
 #include "Console/clConsoleBase.h"
 #include "JSON.h"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "RemotyConfig.hpp"
 #include "RemotyNewWorkspaceDlg.h"
 #include "RemotySwitchToWorkspaceDlg.h"

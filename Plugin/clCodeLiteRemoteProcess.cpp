@@ -1,7 +1,7 @@
 #include "clCodeLiteRemoteProcess.hpp"
 
 #include "JSON.h"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "cJSON.h"

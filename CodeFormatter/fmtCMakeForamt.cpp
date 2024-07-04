@@ -1,6 +1,6 @@
 #include "fmtCMakeForamt.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 fmtCMakeForamt::fmtCMakeForamt()
 {

@@ -85,9 +85,10 @@ file(
     "../sdk/codelite_indexer/network/*.cpp"
     "Console/*.cpp"
     "Cxx/*.cpp"
-    "PHP/*.cpp"
-    "SocketAPI/*.cpp"
     "LSP/*.cpp"
+    "PHP/*.cpp"
+    "Platform/*.cpp"
+    "SocketAPI/*.cpp"
     "ssh/*.cpp")
 
 # Define GTK libraries

@@ -1,7 +1,7 @@
 #include "CompilerLocatorMSYS2.hpp"
 
 #include "GCCMetadata.hpp"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "compiler.h"
 #include "file_logger.h"
 

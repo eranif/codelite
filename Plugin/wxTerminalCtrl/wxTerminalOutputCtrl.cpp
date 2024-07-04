@@ -2,7 +2,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "clIdleEventThrottler.hpp"
 #include "clModuleLogger.hpp"

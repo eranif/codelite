@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_CODELITE_TERMINALEMULATORUI_BASE_CLASSES_H
-#define _CODELITE_CODELITE_TERMINALEMULATORUI_BASE_CLASSES_H
+#ifndef _CODELITE_ASYNCPROCESS_TERMINALEMULATORUI_BASE_CLASSES_H
+#define _CODELITE_ASYNCPROCESS_TERMINALEMULATORUI_BASE_CLASSES_H
 
 // clang-format off
 #include <wx/settings.h>

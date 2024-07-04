@@ -25,11 +25,12 @@
 #ifndef CODELITE_LANGUAGE_H
 #define CODELITE_LANGUAGE_H
 
-#include "CxxTokenizer.h"
-#include "CxxVariable.h"
+#include "Cxx/CxxTokenizer.h"
+#include "Cxx/CxxVariable.h"
+#include "Cxx/cpp_scanner.h"
+#include "Cxx/y.tab.h"
 #include "codelite_exports.h"
 #include "comment.h"
-#include "cpp_scanner.h"
 #include "entry.h"
 #include "expression_result.h"
 #include "function.h"
@@ -38,7 +39,6 @@
 #include "singleton.h"
 #include "tokenizer.h"
 #include "variable.h"
-#include "y.tab.h"
 
 #include <set>
 #include <vector>

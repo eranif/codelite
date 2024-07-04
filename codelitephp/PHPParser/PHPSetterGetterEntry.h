@@ -26,9 +26,10 @@
 #ifndef PHPSETTERGETTERENTRY_H
 #define PHPSETTERGETTERENTRY_H
 
-#include <wx/string.h>
+#include "PHP/PHPEntityBase.h"
+
 #include <vector>
-#include "PHPEntityBase.h"
+#include <wx/string.h>
 
 enum eSettersGettersFlags {
     kSG_None = 0,

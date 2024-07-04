@@ -1,8 +1,8 @@
 #include "clDockerDriver.h"
 
+#include "Console/clConsoleBase.h"
 #include "DockerOutputPane.h"
 #include "asyncprocess.h"
-#include "clConsoleBase.h"
 #include "clDockerEvents.h"
 #include "clDockerSettings.h"
 #include "clDockerWorkspace.h"

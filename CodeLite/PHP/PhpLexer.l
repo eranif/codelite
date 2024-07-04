@@ -16,8 +16,8 @@ extern "C" int yywrap(void*) { return 1; }
 
 #include <wx/string.h>
 #include <wx/filename.h>
-#include "PhpLexerAPI.h"
-#include "PHPScannerTokens.h"
+#include "PHP/PhpLexerAPI.h"
+#include "PHP/PHPScannerTokens.h"
 #include "StdToWX.h" // Conversion methods from wxString -> std::string
 
 #define YYSTYPE std::string

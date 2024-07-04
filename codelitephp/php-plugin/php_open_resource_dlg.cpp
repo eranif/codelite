@@ -1,6 +1,8 @@
 #include "php_open_resource_dlg.h"
+
 #include "FilesCollector.h"
-#include "PHPLookupTable.h"
+#include "PHP/PHPLookupTable.h"
+#include "bitmap_loader.h"
 #include "cl_config.h"
 #include "fileutils.h"
 #include "globals.h"
@@ -10,7 +12,6 @@
 #include "php_workspace.h"
 #include "windowattrmanager.h"
 
-#include <bitmap_loader.h>
 #include <wx/imaglist.h>
 #include <wx/tokenzr.h>
 

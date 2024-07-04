@@ -1,5 +1,6 @@
 #include "functions_parser.h"
-#include <y.tab.h>
+
+#include "Cxx/y.tab.h"
 
 FunctionsParser::FunctionsParser(wxcWidget::Map_t& connectedEvents, const wxString& clsname, const wxString& header)
     : m_allEvents(connectedEvents)

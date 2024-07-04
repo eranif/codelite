@@ -1,11 +1,12 @@
+#include "PHP/PHPEntityFunction.h"
+#include "PHP/PHPExpression.h"
+#include "PHP/PHPLookupTable.h"
+#include "PHP/PHPSourceFile.h"
+#include "tester.h"
+
+#include <stdio.h>
 #include <wx/ffile.h>
 #include <wx/init.h>
-#include <stdio.h>
-#include "PHPSourceFile.h"
-#include "PHPLookupTable.h"
-#include "PHPExpression.h"
-#include "PHPEntityFunction.h"
-#include "tester.h"
 
 #ifdef __WXMSW__
 #define SYMBOLS_DB_PATH "%TEMP%"

@@ -1,7 +1,7 @@
 #include "CompletionHelper.hpp"
 
-#include "CxxScannerTokens.h"
-#include "CxxTokenizer.h"
+#include "Cxx/CxxScannerTokens.h"
+#include "Cxx/CxxTokenizer.h"
 #include "file_logger.h"
 
 #include <vector>

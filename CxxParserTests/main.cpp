@@ -1,5 +1,5 @@
-#include "CxxTokenizer.h"
-#include "CxxVariableScanner.h"
+#include "Cxx/CxxTokenizer.h"
+#include "Cxx/CxxVariableScanner.h"
 #include "ctags_manager.h"
 #include "fileutils.h"
 #include "tester.h"

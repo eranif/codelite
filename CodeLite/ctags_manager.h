@@ -26,12 +26,12 @@
 #ifndef CODELITE_CTAGS_MANAGER_H
 #define CODELITE_CTAGS_MANAGER_H
 
+#include "Cxx/cpptoken.h"
 #include "cl_calltip.h"
 #include "cl_command_event.h"
 #include "cl_process.h"
 #include "codelite_exports.h"
 #include "comment.h"
-#include "cpptoken.h"
 #include "entry.h"
 #include "istorage.h"
 #include "language.h"
@@ -40,11 +40,11 @@
 #include "singleton.h"
 #include "tags_options_data.h"
 #include "tree.h"
-#include "wx/event.h"
-#include "wx/process.h"
 #include "wxStringHash.h"
 
 #include <set>
+#include <wx/event.h>
+#include <wx/process.h>
 #include <wx/stopwatch.h>
 #include <wx/thread.h>
 #include <wx/timer.h>
@@ -55,7 +55,6 @@
 
 /// Forward declaration
 class DirTraverser;
-class Language;
 class Language;
 class IProcess;
 

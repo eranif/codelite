@@ -1,7 +1,9 @@
 #include "php_parser_thread.h"
-#include "PHPLookupTable.h"
-#include "PHPSourceFile.h"
+
+#include "PHP/PHPLookupTable.h"
+#include "PHP/PHPSourceFile.h"
 #include "macros.h"
+
 #include <wx/dir.h>
 
 PHPParserThread* PHPParserThread::ms_instance = 0;

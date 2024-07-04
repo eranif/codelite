@@ -25,11 +25,10 @@
 
 #include "editorsettingsterminal.h"
 
-#include "clConsoleBase.h"
+#include "Console/clConsoleBase.h"
 #include "cl_config.h"
 #include "editor_config.h"
-
-#include <exelocator.h>
+#include "exelocator.h"
 
 EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)

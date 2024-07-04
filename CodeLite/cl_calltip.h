@@ -26,7 +26,7 @@
 #define CODELITE_CALLTIP_H
 
 #include "codelite_exports.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "tokenizer.h"
 
 #include <memory>

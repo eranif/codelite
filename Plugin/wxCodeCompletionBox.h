@@ -27,7 +27,7 @@
 #define WXCODECOMPLETIONBOX_H
 
 #include "LSP/CompletionItem.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "wxCodeCompletionBoxBase.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 

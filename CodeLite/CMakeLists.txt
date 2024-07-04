@@ -89,6 +89,7 @@ file(
     "PHP/*.cpp"
     "Platform/*.cpp"
     "SocketAPI/*.cpp"
+    "database/*.cpp"
     "ssh/*.cpp")
 
 # Define GTK libraries

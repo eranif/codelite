@@ -31,7 +31,7 @@
 #include "clAnagram.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "fileextmanager.h"
 #include "openresourcedialogbase.h"
 #include "wxStringHash.h"

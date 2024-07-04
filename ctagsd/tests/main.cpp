@@ -13,10 +13,10 @@
 #include "clTempFile.hpp"
 #include "clWildMatch.hpp"
 #include "ctags_manager.h"
+#include "database/tags_storage_sqlite3.h"
 #include "fileutils.h"
 #include "macros.h"
 #include "strings.hpp"
-#include "tags_storage_sqlite3.h"
 #include "tester.hpp"
 
 #include <iostream>

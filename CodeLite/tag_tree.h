@@ -26,7 +26,7 @@
 #define CODELITE_TAG_TREE_H
 
 #include "codelite_exports.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "tree.h"
 
 #include <wx/string.h>

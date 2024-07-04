@@ -26,7 +26,7 @@
 #ifndef __implement_parent_virtual_functions__
 #define __implement_parent_virtual_functions__
 
-#include "entry.h"
+#include "database/entry.h"
 #include "implementparentvirtualfunctionsbase.h"
 #include <vector>
 #include <wx/clntdata.h>

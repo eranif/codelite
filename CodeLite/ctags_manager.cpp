@@ -36,6 +36,7 @@
 #include "code_completion_api.h"
 #include "codelite_events.h"
 #include "codelite_exports.h"
+#include "database/tags_storage_sqlite3.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -44,7 +45,6 @@
 #include "processreaderthread.h"
 #include "procutils.h"
 #include "tags_options_data.h"
-#include "tags_storage_sqlite3.h"
 #include "wxStringHash.h"
 
 #include <algorithm>

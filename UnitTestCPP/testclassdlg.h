@@ -26,11 +26,12 @@
 #ifndef __testclassdlg__
 #define __testclassdlg__
 
+#include "database/entry.h"
 #include "testclassbasedlg.h"
-#include "entry.h"
-#include <vector>
 #include "wxStringHash.h"
+
 #include <unordered_map>
+#include <vector>
 
 class IManager;
 class UnitTestPP;

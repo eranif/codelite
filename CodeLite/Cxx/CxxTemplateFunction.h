@@ -27,7 +27,7 @@
 #define CXXTEMPLATEFUNCTION_H
 
 #include "codelite_exports.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "CxxLexerAPI.h"
 
 class WXDLLIMPEXP_CL CxxTemplateFunction

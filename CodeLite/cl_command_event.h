@@ -33,7 +33,7 @@
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"
 #include "codelite_exports.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "ssh/ssh_account_info.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 

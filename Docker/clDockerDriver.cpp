@@ -1,8 +1,9 @@
 #include "clDockerDriver.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "DockerOutputPane.h"
-#include "asyncprocess.h"
 #include "clDockerEvents.h"
 #include "clDockerSettings.h"
 #include "clDockerWorkspace.h"
@@ -12,7 +13,6 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "processreaderthread.h"
 #include "wxterminal.h"
 
 #include <wx/msgdlg.h>

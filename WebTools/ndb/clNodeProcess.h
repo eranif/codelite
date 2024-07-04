@@ -1,8 +1,9 @@
 #ifndef CLNODEPROCESS_H
 #define CLNODEPROCESS_H
 
-#include <asyncprocess.h>
-#include <cl_command_event.h>
+#include "AsyncProcess/asyncprocess.h"
+#include "cl_command_event.h"
+
 #include <wx/event.h>
 #include <wx/string.h>
 #include <wx/arrstr.h>

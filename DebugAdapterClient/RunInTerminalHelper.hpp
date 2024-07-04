@@ -1,11 +1,11 @@
 #ifndef RUNINTERMINALHELPER_HPP
 #define RUNINTERMINALHELPER_HPP
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "clModuleLogger.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
-#include "processreaderthread.h"
 
 #include <vector>
 #include <wx/event.h>

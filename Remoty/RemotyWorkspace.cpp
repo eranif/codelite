@@ -1,5 +1,7 @@
 #include "RemotyWorkspace.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "JSON.h"
 #include "Platform/Platform.hpp"
@@ -8,7 +10,6 @@
 #include "RemotySwitchToWorkspaceDlg.h"
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
-#include "asyncprocess.h"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clFileSystemWorkspace.hpp"
 #include "clRemoteFindDialog.h"
@@ -28,7 +29,6 @@
 #include "imanager.h"
 #include "macros.h"
 #include "open_resource_dialog.h"
-#include "processreaderthread.h"
 #include "sample_codelite_remote_json.cpp"
 #include "shell_command.h"
 #include "wxStringHash.h"

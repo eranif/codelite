@@ -2,11 +2,11 @@
 #define CLREMOTEHOST_HPP
 
 #if USE_SFTP
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "clWorkspaceEvent.hpp"
 #include "cl_remote_executor.hpp"
 #include "codelite_exports.h"
-#include "processreaderthread.h"
 #include "procutils.h"
 #include "ssh/ssh_account_info.h"
 

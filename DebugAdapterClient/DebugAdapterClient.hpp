@@ -26,13 +26,13 @@
 #ifndef DAP_DEBUGGER_CLIENT_HPP
 #define DAP_DEBUGGER_CLIENT_HPP
 
+#include "AsyncProcess/asyncprocess.h"
 #include "BreakpointsHelper.hpp"
 #include "DAPOutputPane.hpp"
 #include "DAPTextView.h"
 #include "DebugSession.hpp"
 #include "RunInTerminalHelper.hpp"
 #include "SessionBreakpoints.hpp"
-#include "asyncprocess.h"
 #include "clDapSettingsStore.hpp"
 #include "clModuleLogger.hpp"
 #include "cl_command_event.h"

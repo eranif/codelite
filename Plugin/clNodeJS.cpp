@@ -1,13 +1,13 @@
 #include "clNodeJS.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "NodeJSLocator.h"
-#include "asyncprocess.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "processreaderthread.h"
 
 #include <algorithm>
 

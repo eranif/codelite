@@ -1,6 +1,6 @@
 #include "clRustup.hpp"
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "globals.h"
 
 #include <wx/tokenzr.h>

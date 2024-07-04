@@ -1,9 +1,9 @@
 #ifndef LSPNETWORKSOCKET_H
 #define LSPNETWORKSOCKET_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "LSPNetwork.h"
 #include "SocketAPI/clSocketClientAsync.h"
-#include "asyncprocess.h"
 #include "cl_command_event.h"
 
 #include <wx/ffile.h>

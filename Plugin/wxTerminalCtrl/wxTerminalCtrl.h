@@ -1,11 +1,11 @@
 #ifndef WXTERMINALCTRL_H
 #define WXTERMINALCTRL_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "clResult.hpp"
 #include "codelite_events.h"
 #include "codelite_exports.h"
-#include "processreaderthread.h"
 #include "wxTerminalColourHandler.h"
 #include "wxTerminalEvent.hpp"
 #include "wxTerminalHistory.hpp"

@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "clean_request.h"
 
+#include "AsyncProcess/asyncprocess.h"
 #include "ICompilerLocator.h"
-#include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "cl_command_event.h"
@@ -38,10 +38,10 @@
 #include "macros.h"
 #include "plugin.h"
 #include "workspace.h"
-#include "wx/process.h"
 
 #include <wx/app.h>
 #include <wx/log.h>
+#include <wx/process.h>
 
 CleanRequest::CleanRequest(const QueueCommand& info)
     : ShellCommand(info)

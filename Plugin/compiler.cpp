@@ -24,19 +24,19 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "compiler.h"
 
+#include "AsyncProcess/asyncprocess.h"
 #include "Cxx/CxxPreProcessor.h"
 #include "GCCMetadata.hpp"
-#include "asyncprocess.h"
+#include "ICompilerLocator.h"
 #include "build_settings_config.h"
 #include "build_system.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "macros.h"
+#include "procutils.h"
 #include "xmlutils.h"
 
-#include <ICompilerLocator.h>
-#include <procutils.h>
 #include <wx/log.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>

@@ -1,14 +1,14 @@
 #include "LSPNetworkSTDIO.h"
 
-#include "ChildProcess.h"
+#include "AsyncProcess/ChildProcess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "JSON.h"
 #include "LSP/basic_types.h" // needed for the debugging macros
-#include "asyncprocess.h"
 #include "cl_exception.h"
 #include "clcommandlineparser.h"
 #include "dirsaver.h"
 #include "file_logger.h"
-#include "processreaderthread.h"
 #include "sftp_settings.h"
 
 #include <sstream>

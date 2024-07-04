@@ -24,11 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "globals.h"
 
+#include "AsyncProcess/asyncprocess.h"
 #include "ColoursAndFontsManager.h"
 #include "Console/clConsoleBase.h"
 #include "SelectFileTypesDialog.hpp"
 #include "StringUtils.h"
-#include "asyncprocess.h"
 #include "clDataViewListCtrl.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clGetTextFromUserDialog.h"

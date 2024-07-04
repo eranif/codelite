@@ -25,8 +25,8 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "GCCMetadata.hpp"
-#include "asyncprocess.h"
 #include "codelite_exports.h"
 #include "configuration_object.h"
 

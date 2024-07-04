@@ -25,18 +25,17 @@
 #ifndef DEBUGGER_H
 #define DEBUGGER_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "BreakpointInfoArray.hpp"
 #include "archive.h"
-#include "asyncprocess.h"
 #include "clDebuggerBreakpoint.hpp"
 #include "cl_standard_paths.h"
 #include "macros.h"
 #include "serialized_object.h"
-#include "vector"
-#include "wx/arrstr.h"
-#include "wx/event.h"
-#include "wx/string.h"
 
+#include <vector>
+#include <wx/arrstr.h>
+#include <wx/event.h>
 #include <wx/stdpaths.h>
 #include <wx/string.h>
 

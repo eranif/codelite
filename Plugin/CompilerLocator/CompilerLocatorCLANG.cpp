@@ -25,8 +25,8 @@
 
 #include "CompilerLocatorCLANG.h"
 
+#include "AsyncProcess/asyncprocess.h"
 #include "GCCMetadata.hpp"
-#include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "clFilesCollector.h"
 #include "file_logger.h"

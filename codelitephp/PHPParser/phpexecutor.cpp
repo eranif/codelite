@@ -1,23 +1,23 @@
 #include "phpexecutor.h"
 
+#include "AsyncProcess/TerminalEmulatorFrame.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "PHPTerminal.h"
 #include "StringUtils.h"
-#include "TerminalEmulatorFrame.h"
-#include "asyncprocess.h"
+#include "cl_config.h"
 #include "clplatform.h"
+#include "dirsaver.h"
 #include "environmentconfig.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
 #include "php_configuration_data.h"
 #include "php_event.h"
 #include "php_project_settings_data.h"
 #include "php_workspace.h"
 
-#include <cl_config.h>
-#include <dirsaver.h>
-#include <event_notifier.h>
-#include <globals.h>
-#include <processreaderthread.h>
 #include <wx/app.h>
 #include <wx/msgdlg.h>
 #include <wx/process.h>

@@ -25,8 +25,9 @@
 
 #include "gitCommitListDlg.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "GitDiffOutputParser.h"
-#include "asyncprocess.h"
 #include "cl_config.h"
 #include "editor_config.h"
 #include "git.h"
@@ -34,7 +35,6 @@
 #include "gitentry.h"
 #include "globals.h"
 #include "lexer_configuration.h"
-#include "processreaderthread.h"
 #include "windowattrmanager.h"
 
 #include <wx/tokenzr.h>

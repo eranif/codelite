@@ -1,10 +1,11 @@
 #ifndef LSPNETWORKSOCKETCLIENT_H
 #define LSPNETWORKSOCKETCLIENT_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "LSPNetwork.h" // Base class: LSPNetwork
 #include "SocketAPI/clSocketClientAsync.h"
-#include "asyncprocess.h"
-#include "wx/process.h"
+
+#include <wx/process.h>
 
 class LSPNetworkSocketClient : public LSPNetwork
 {

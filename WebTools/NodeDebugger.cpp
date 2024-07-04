@@ -1,5 +1,6 @@
 #include "NodeDebugger.h"
 
+#include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "NodeFileManager.h"
 #include "NodeJSDebuggerDlg.h"
@@ -15,7 +16,6 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
-#include "processreaderthread.h"
 
 #include <wx/msgdlg.h>
 

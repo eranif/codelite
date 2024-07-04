@@ -24,13 +24,14 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "ctags_manager.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "CTags.hpp"
 #include "Cxx/CxxTemplateFunction.h"
 #include "Cxx/CxxVariable.h"
 #include "Cxx/CxxVariableScanner.h"
 #include "Cxx/cpp_comment_creator.h"
 #include "Cxx/cppwordscanner.h"
-#include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
 #include "code_completion_api.h"
@@ -42,7 +43,6 @@
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include "precompiled_header.h"
-#include "processreaderthread.h"
 #include "procutils.h"
 #include "tags_options_data.h"
 #include "wxStringHash.h"

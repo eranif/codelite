@@ -24,9 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "project.h"
 
+#include "AsyncProcess/asyncprocess.h"
 #include "GCCMetadata.hpp"
 #include "ICompilerLocator.h"
-#include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "compiler_command_line_parser.h"
 #include "dirsaver.h"

@@ -1,5 +1,6 @@
 #include "CompileCommandsGenerator.h"
 
+#include "AsyncProcess/processreaderthread.h"
 #include "CompileCommandsJSON.h"
 #include "CompileFlagsTxt.h"
 #include "JSON.h"
@@ -14,7 +15,6 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "processreaderthread.h"
 #include "workspace.h"
 #include "wxmd5.h"
 

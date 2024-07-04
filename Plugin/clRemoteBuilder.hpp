@@ -1,7 +1,7 @@
 #ifndef CLREMOTEBUILDER_HPP
 #define CLREMOTEBUILDER_HPP
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 

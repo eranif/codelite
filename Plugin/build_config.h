@@ -25,7 +25,7 @@
 #ifndef BUILD_CONFIGURATION_H
 #define BUILD_CONFIGURATION_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "build_config_common.h"
 #include "builder/builder.h"
 #include "codelite_exports.h"

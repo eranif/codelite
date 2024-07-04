@@ -1,9 +1,10 @@
 #include "clCodeLiteRemoteProcess.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "JSON.h"
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
-#include "asyncprocess.h"
 #include "cJSON.h"
 #include "clSFTPManager.hpp"
 #include "cl_command_event.h"
@@ -11,7 +12,6 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "processreaderthread.h"
 
 #include <functional>
 #include <unordered_map>

@@ -33,7 +33,8 @@
 #ifndef __git__
 #define __git__
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
@@ -42,7 +43,6 @@
 #include "ieditor.h"
 #include "overlaytool.h"
 #include "plugin.h"
-#include "processreaderthread.h"
 #include "project.h" // wxStringSet_t
 
 #include <map>

@@ -26,7 +26,7 @@
 #ifndef BUILDPROCESS_H
 #define BUILDPROCESS_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 
 class BuildProcess
 {

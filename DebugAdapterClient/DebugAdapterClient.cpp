@@ -25,6 +25,8 @@
 
 #include "DebugAdapterClient.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "DAPBreakpointsView.h"
 #include "DAPConsoleOutput.hpp"
 #include "DAPMainView.h"
@@ -36,7 +38,6 @@
 #include "DapLocator.hpp"
 #include "DapLoggingHelper.hpp"
 #include "StringUtils.h"
-#include "asyncprocess.h"
 #include "bookmark_manager.h"
 #include "clAuiBook.hpp"
 #include "clFileSystemWorkspace.hpp"
@@ -51,7 +52,6 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "macromanager.h"
-#include "processreaderthread.h"
 
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>

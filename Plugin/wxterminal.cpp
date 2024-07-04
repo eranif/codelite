@@ -25,15 +25,15 @@
 
 #include "wxterminal.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "ColoursAndFontsManager.h"
-#include "asyncprocess.h"
 #include "clTerminalHistory.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "lexer_configuration.h"
-#include "processreaderthread.h"
 
 #include <algorithm>
 #include <wx/app.h>
@@ -70,9 +70,9 @@
 #else
 #include <pty.h>
 #endif
-#include "unixprocess_impl.h"
+#include "AsyncProcess/unixprocess_impl.h"
 #elif defined(__WXMAC__)
-#include "unixprocess_impl.h"
+#include "AsyncProcess/unixprocess_impl.h"
 
 #include <util.h>
 #endif

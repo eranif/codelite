@@ -1,6 +1,7 @@
 #ifndef LANGUAG_ESERVER_PROTOCOL_H
 #define LANGUAG_ESERVER_PROTOCOL_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "LSP/DocumentSymbolsRequest.hpp"
 #include "LSP/FileContentTracker.hpp"
 #include "LSP/IPathConverter.hpp"
@@ -8,7 +9,6 @@
 #include "LSP/LSPNetwork.h"
 #include "LSP/MessageWithParams.h"
 #include "SocketAPI/clSocketClientAsync.h"
-#include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "codelite_exports.h"

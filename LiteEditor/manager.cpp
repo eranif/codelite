@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "manager.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "BreakpointsView.hpp"
 #include "BuildTab.hpp"
 #include "CompilersModifiedDlg.h"
@@ -33,7 +35,6 @@
 #include "SideBar.hpp"
 #include "WorkspaceImporter/WSImporter.h"
 #include "app.h"
-#include "asyncprocess.h"
 #include "attachdbgprocdlg.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
@@ -74,7 +75,6 @@
 #include "menumanager.h"
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
-#include "processreaderthread.h"
 #include "reconcileproject.h"
 #include "renamefiledlg.h"
 #include "search_thread.h"

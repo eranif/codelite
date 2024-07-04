@@ -25,6 +25,7 @@
 
 #include "continuousbuild.h"
 
+#include "AsyncProcess/processreaderthread.h"
 #include "build_settings_config.h"
 #include "builder/builder.h"
 #include "buildmanager.h"
@@ -38,7 +39,6 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "globals.h"
-#include "processreaderthread.h"
 #include "workspace.h"
 
 #include <wx/app.h>

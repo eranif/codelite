@@ -25,7 +25,7 @@
 #ifndef STRINGUTILS_H
 #define STRINGUTILS_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "codelite_exports.h"
 
 #include <sstream>

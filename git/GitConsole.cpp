@@ -25,13 +25,13 @@
 
 #include "GitConsole.h"
 
+#include "AsyncProcess/clCommandProcessor.h"
 #include "ColoursAndFontsManager.h"
 #include "GitResetDlg.h"
 #include "StdToWX.h"
 #include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
-#include "clCommandProcessor.h"
 #include "clToolBar.h"
 #include "cl_aui_tool_stickness.h"
 #include "cl_config.h"

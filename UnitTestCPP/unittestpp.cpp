@@ -24,7 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "unittestpp.h"
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "bitmap_loader.h"
 #include "clKeyboardManager.h"
 #include "codelite_events.h"
@@ -35,7 +36,6 @@
 #include "macros.h"
 #include "newunittestdlg.h"
 #include "pipedprocess.h"
-#include "processreaderthread.h"
 #include "procutils.h"
 #include "project.h"
 #include "testclassdlg.h"

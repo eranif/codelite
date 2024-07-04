@@ -26,11 +26,11 @@
 #ifndef NODEJSWORKSPACEVIEW_H
 #define NODEJSWORKSPACEVIEW_H
 
+#include "AsyncProcess/TerminalEmulator.h"
+#include "NodeJSDebuggerDlg.h"
+#include "clFileSystemEvent.h"
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
-#include "NodeJSDebuggerDlg.h"
-#include "TerminalEmulator.h"
-#include "clFileSystemEvent.h"
 
 class NodeJSWorkspaceView : public clTreeCtrlPanel
 {

@@ -1,11 +1,11 @@
 #if USE_SFTP
 #include "cl_remote_executor.hpp"
 
+#include "AsyncProcess/processreaderthread.h"
 #include "StringUtils.h"
 #include "clModuleLogger.hpp"
 #include "clRemoteHost.hpp"
 #include "cl_standard_paths.h"
-#include "processreaderthread.h"
 #include "ssh/ssh_account_info.h"
 
 #include <thread>

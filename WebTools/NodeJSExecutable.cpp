@@ -1,7 +1,8 @@
 #include "NodeJSExecutable.h"
-#include "asyncprocess.h"
-#include "globals.h"
+
+#include "AsyncProcess/asyncprocess.h"
 #include "clNodeJS.h"
+#include "globals.h"
 
 #define DEFAULT_VERSION 4
 

@@ -1,8 +1,9 @@
 #include "RemotyWorkspaceView.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "RemotyWorkspace.hpp"
 #include "SFTPClientData.hpp"
-#include "asyncprocess.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clFileSystemWorkspaceDlg.h"
 #include "clRemoteFindDialog.h"
@@ -13,7 +14,6 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "processreaderthread.h"
 #include "search_thread.h"
 #include "ssh/ssh_account_info.h"
 #include "wx/event.h"

@@ -26,9 +26,9 @@
 #ifndef CLCOMMANDEVENT_H
 #define CLCOMMANDEVENT_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "LSP/CompletionItem.h"
 #include "UIBreakpoint.hpp"
-#include "asyncprocess.h"
 #include "clDebuggerBreakpoint.hpp"
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"

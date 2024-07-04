@@ -1,5 +1,7 @@
+#include "phprefactoring.h"
+
+#include "AsyncProcess/asyncprocess.h"
 #include "PHPRefactoringPreviewDlg.h"
-#include "asyncprocess.h"
 #include "clEditorStateLocker.h"
 #include "clPatch.h"
 #include "event_notifier.h"
@@ -7,11 +9,11 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "phpoptions.h"
-#include "phprefactoring.h"
 #include "phprefactoringdlg.h"
 #include "phprefactoringoptions.h"
-#include "string"
+
 #include <sstream>
+#include <string>
 #include <wx/filename.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>

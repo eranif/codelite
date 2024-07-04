@@ -1,6 +1,7 @@
 #include "ExternalToolsProcessManager.h"
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -8,7 +9,6 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macromanager.h"
-#include "processreaderthread.h"
 
 #include <algorithm>
 #include <wx/msgdlg.h>

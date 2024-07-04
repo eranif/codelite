@@ -26,7 +26,6 @@
 class wxEvtHandler;
 class IProcess;
 
-// #include "asyncprocess.h"
 #include "asyncprocess.h"
 
 #include "StringUtils.h"

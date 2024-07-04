@@ -1,13 +1,15 @@
-#include "asyncprocess.h"
+#include "phplint.h"
+
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "lintoptions.h"
-#include "phplint.h"
 #include "phplintdlg.h"
 #include "phpoptions.h"
-#include "processreaderthread.h"
-#include "wx/menu.h"
-#include <event_notifier.h>
+
+#include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/xrc/xmlres.h>

@@ -1,9 +1,9 @@
 #ifndef REMOTYWORKSPACEVIEW_H
 #define REMOTYWORKSPACEVIEW_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "RemotyUI.h"
 #include "SFTPClientData.hpp"
-#include "asyncprocess.h"
 #include "clRemoteDirCtrl.hpp"
 #include "clRemoteFinderHelper.hpp"
 #include "cl_command_event.h"

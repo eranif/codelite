@@ -31,21 +31,21 @@
 #include <sys/user.h>
 #endif
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "processreaderthread.h"
 #include "procutils.h"
 #include "winprocess.h"
-#include "wx/tokenzr.h"
 
 #include <memory>
 #include <stdio.h>
+#include <wx/tokenzr.h>
 #ifdef __WXMSW__
-#include "wx/msw/private.h"
-#include "wx/textbuf.h"
+#include <wx/msw/private.h>
+#include <wx/textbuf.h>
 #ifndef pclose
 #define pclose _pclose
 #endif

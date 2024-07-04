@@ -83,6 +83,7 @@ file(
     SRCS
     "*.cpp"
     "../sdk/codelite_indexer/network/*.cpp"
+    "AsyncProcess/*.cpp"
     "Console/*.cpp"
     "Cxx/*.cpp"
     "LSP/*.cpp"

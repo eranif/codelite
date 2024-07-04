@@ -24,18 +24,20 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "SvnCommitDialog.h"
-#include "asyncprocess.h"
+
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "bitmap_loader.h"
 #include "clSingleChoiceDialog.h"
 #include "editor_config.h"
 #include "globals.h"
 #include "imanager.h"
 #include "lexer_configuration.h"
-#include "processreaderthread.h"
 #include "subversion2.h"
 #include "svn_local_properties.h"
 #include "svnsettingsdata.h"
 #include "windowattrmanager.h"
+
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 

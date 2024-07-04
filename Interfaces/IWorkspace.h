@@ -26,7 +26,7 @@
 #ifndef IWORKSPACE_H
 #define IWORKSPACE_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 
 #include <list>
 #include <wx/event.h>

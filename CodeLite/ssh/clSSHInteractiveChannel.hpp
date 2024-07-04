@@ -1,7 +1,7 @@
 #ifndef CLSSHINTERACTIVECHANNEL_HPP
 #define CLSSHINTERACTIVECHANNEL_HPP
 
-#include "asyncprocess.h" // IProcess
+#include "AsyncProcess/asyncprocess.h" // IProcess
 #include "codelite_exports.h"
 
 #include <thread>

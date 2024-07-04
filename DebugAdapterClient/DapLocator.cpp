@@ -1,10 +1,10 @@
 #include "DapLocator.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "Platform/Platform.hpp"
-#include "asyncprocess.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "processreaderthread.h"
 #include "procutils.h"
 
 #include <wx/filefn.h>

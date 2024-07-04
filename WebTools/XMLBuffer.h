@@ -26,10 +26,11 @@
 #ifndef XMLBUFFER_H
 #define XMLBUFFER_H
 
-#include <wx/string.h>
-#include "XMLLexerAPI.h"
-#include <vector>
+#include "XML/XMLLexerAPI.h"
 #include "macros.h"
+
+#include <vector>
+#include <wx/string.h>
 
 class XMLBuffer
 {

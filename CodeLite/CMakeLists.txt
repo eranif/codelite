@@ -18,7 +18,7 @@ FLEX_TARGET(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/include_finder.l
             COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
 FLEX_TARGET(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
             COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
-FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
+FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XML/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
             COMPILE_FLAGS "-Pxml --noline --yylineno --batch")
 
 set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}" "${FLEX_XmlFlex_OUTPUTS}")
@@ -89,6 +89,7 @@ file(
     "PHP/*.cpp"
     "Platform/*.cpp"
     "SocketAPI/*.cpp"
+    "XML/*.cpp"
     "database/*.cpp"
     "ssh/*.cpp")
 

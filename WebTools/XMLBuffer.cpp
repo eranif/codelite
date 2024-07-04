@@ -1,5 +1,6 @@
 #include "XMLBuffer.h"
-#include "XMLLexerTokens.h"
+
+#include "XML/XMLLexerTokens.h"
 #include "macros.h"
 
 wxStringSet_t XMLBuffer::m_emptyTags;

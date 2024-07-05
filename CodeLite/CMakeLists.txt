@@ -26,7 +26,6 @@ set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FL
 # Include paths
 include_directories(
     "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-    "${CL_SRC_ROOT}/sdk/codelite_indexer/network"
     "${CL_SRC_ROOT}/sdk/websocketpp"
     "${CL_SRC_ROOT}/sdk/asio-1.12.1"
     "${CL_SRC_ROOT}/CodeLite"
@@ -82,7 +81,6 @@ file(
     GLOB
     SRCS
     "*.cpp"
-    "../sdk/codelite_indexer/network/*.cpp"
     "AsyncProcess/*.cpp"
     "Console/*.cpp"
     "Cxx/*.cpp"

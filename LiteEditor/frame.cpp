@@ -28,8 +28,8 @@
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompilersDetectorManager.h"
-#include "Cxx/cpptoken.h"
 #include "CompilersFoundDlg.h"
+#include "Cxx/cpptoken.h"
 #include "DebuggerToolBar.h"
 #include "GCCMetadata.hpp"
 #include "Notebook.h"
@@ -1243,14 +1243,7 @@ void clMainFrame::CreateGUIControls()
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BUTTON_SIZE, GetBestXButtonSize(this));
-
-#if defined(__WXMSW__)
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
-#elif defined(__WXMAC__)
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 1);
-#else
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
-#endif
 
     // add menu bar
     m_mainMenuBar = wxXmlResource::Get()->LoadMenuBar("main_menu");
@@ -1328,7 +1321,7 @@ void clMainFrame::CreateGUIControls()
 
     // Wrap the mainbook with a wxPanel
     // We do this so we can place the find bar under the main book
-    long container_style = get_border_simple_theme_aware_bit() | wxTAB_TRAVERSAL;
+    long container_style = wxBORDER_NONE | wxTAB_TRAVERSAL;
     wxPanel* container = new wxPanel(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, container_style);
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
@@ -5043,8 +5036,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
     // Set the manager flags
-    unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE | wxAUI_MGR_ALLOW_FLOATING;
-    auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
+    unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE;
     m_mgr.SetFlags(auiMgrFlags);
 }
 
@@ -5462,9 +5454,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     m_mainFrameTitleTemplate = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
 }
 
-void clMainFrame::OnDetachEditor(wxCommandEvent& e)
-{ /*GetMainBook()->DetachActiveEditor();*/
-}
+void clMainFrame::OnDetachEditor(wxCommandEvent& e) { /*GetMainBook()->DetachActiveEditor();*/ }
 
 void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != NULL); }
 

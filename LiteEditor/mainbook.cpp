@@ -66,7 +66,7 @@ wxString create_platform_filepath(const wxString& fullpath)
 } // namespace
 
 MainBook::MainBook(wxWindow* parent)
-    : wxPanel(parent)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxTAB_TRAVERSAL)
     , m_navBar(NULL)
     , m_book(NULL)
     , m_useBuffereLimit(true)

@@ -49,8 +49,8 @@ bool IsRectOK(wxDC& dc, const wxRect& rect)
 {
     const wxSize dc_size = dc.GetSize();
 
-    if(0 > rect.x || 0 > rect.y || 0 >= rect.width || 0 >= rect.height || dc_size.GetWidth() < (rect.x + rect.width) ||
-       dc_size.GetHeight() < (rect.y + rect.height))
+    if (0 > rect.x || 0 > rect.y || 0 >= rect.width || 0 >= rect.height || dc_size.GetWidth() < (rect.x + rect.width) ||
+        dc_size.GetHeight() < (rect.y + rect.height))
         return (false);
     return (true);
 }
@@ -61,17 +61,17 @@ wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 
     // first check if the text fits with no problems
     dc.GetTextExtent(text, &x, &y);
-    if(x <= max_size)
+    if (x <= max_size)
         return text;
 
     size_t i, len = text.Length();
     size_t last_good_length = 0;
-    for(i = 0; i < len; ++i) {
+    for (i = 0; i < len; ++i) {
         wxString s = text.Left(i);
         s += wxT("...");
 
         dc.GetTextExtent(s, &x, &y);
-        if(x > max_size)
+        if (x > max_size)
             break;
 
         last_good_length = i;
@@ -105,22 +105,22 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 {
     wxRect buttonRect = _rect;
 
-    if(!IsRectOK(dc, _rect))
+    if (!IsRectOK(dc, _rect))
         return;
     // Make sure that the height and width of the button are equals
-    if(buttonRect.GetWidth() != buttonRect.GetHeight()) {
+    if (buttonRect.GetWidth() != buttonRect.GetHeight()) {
         buttonRect.SetHeight(wxMin(buttonRect.GetHeight(), buttonRect.GetWidth()));
         buttonRect.SetWidth(wxMin(buttonRect.GetHeight(), buttonRect.GetWidth()));
     } else {
         buttonRect.Deflate(1);
     }
-    if(buttonRect.GetHeight() < 2) {
+    if (buttonRect.GetHeight() < 2) {
         // A wx3.0.x build may arrive here with a 1*1 rect -> a sigabort in libcairo
         return;
     }
     buttonRect = buttonRect.CenterIn(_rect);
     eButtonState buttonState = eButtonState::kNormal;
-    switch(button_state) {
+    switch (button_state) {
     case wxAUI_BUTTON_STATE_HOVER:
         buttonState = eButtonState::kHover;
         break;
@@ -142,7 +142,7 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 #endif
 
     // Prepare the colours
-    switch(button) {
+    switch (button) {
     case wxAUI_BUTTON_CLOSE:
         DrawingUtils::DrawButtonX(dc, window, buttonRect, pen_colour, bg_colour, buttonState);
         break;
@@ -160,7 +160,7 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect,
                                wxAuiPaneInfo& pane)
 {
-    if(!IsRectOK(dc, rect))
+    if (!IsRectOK(dc, rect))
         return;
 
     wxRect tmpRect;
@@ -199,13 +199,13 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     wxRect clip_rect = tmpRect;
     clip_rect.width -= 3; // text offset
     clip_rect.width -= 2; // button padding
-    if(pane.HasCloseButton()) {
+    if (pane.HasCloseButton()) {
         clip_rect.width -= m_buttonSize;
     }
-    if(pane.HasPinButton()) {
+    if (pane.HasPinButton()) {
         clip_rect.width -= m_buttonSize;
     }
-    if(pane.HasMaximizeButton()) {
+    if (pane.HasMaximizeButton()) {
         clip_rect.width -= m_buttonSize;
     }
 
@@ -237,11 +237,11 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         wxRect clip_rect = tmpRect;
         clip_rect.width -= caption_offset; // text offset
         clip_rect.width -= 2;              // button padding
-        if(pane.HasCloseButton())
+        if (pane.HasCloseButton())
             clip_rect.width -= m_buttonSize;
-        if(pane.HasPinButton())
+        if (pane.HasPinButton())
             clip_rect.width -= m_buttonSize;
-        if(pane.HasMaximizeButton())
+        if (pane.HasMaximizeButton())
             clip_rect.width -= m_buttonSize;
 
         // Truncate the text if needed
@@ -295,20 +295,19 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
 {
     wxUnusedVar(orientation);
     wxUnusedVar(window);
-#ifdef __WXMSW__
-    DrawingUtils::DrawStippleBackground(rect, dc);
-#else
-    dc.SetPen(m_bgColour);
-    dc.SetBrush(m_bgColour);
+
+    auto colour = clSystemSettings::GetDefaultPanelColour().ChangeLightness(
+        clSystemSettings::GetAppearance().IsDark() ? 120 : 80);
+    dc.SetPen(colour);
+    dc.SetBrush(colour);
     dc.DrawRectangle(rect);
-#endif
 }
 
 void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)
 {
     event.Skip();
     m_bgColour = clSystemSettings::GetDefaultPanelColour();
-    if(DrawingUtils::IsDark(m_bgColour)) {
+    if (DrawingUtils::IsDark(m_bgColour)) {
         m_captionTextColour = wxColour(*wxWHITE).ChangeLightness(80);
     } else {
         m_captionTextColour = wxColour(*wxBLACK).ChangeLightness(120);

@@ -816,10 +816,6 @@
       </object>
     </object>
     <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="ID_DETACH_EDITOR">
-      <label>Detach Editor</label>
-    </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
     <object class="wxMenuItem" name="open_shell_from_filepath">
       <label>Open Shell</label>
     </object>

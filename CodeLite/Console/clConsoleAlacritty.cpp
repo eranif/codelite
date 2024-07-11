@@ -1,6 +1,6 @@
 #include "clConsoleAlacritty.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 clConsoleAlacritty::clConsoleAlacritty()
 {

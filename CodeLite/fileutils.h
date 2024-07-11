@@ -25,10 +25,9 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "codelite_exports.h"
 #include "macros.h"
-#include "wx/filename.h"
 
 #include <wx/filename.h>
 #include <wx/log.h>

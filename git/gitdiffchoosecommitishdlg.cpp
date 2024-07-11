@@ -23,14 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "asyncprocess.h"
+#include "gitdiffchoosecommitishdlg.h"
+
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "cl_config.h"
 #include "git.h"
-#include "gitdiffchoosecommitishdlg.h"
 #include "gitentry.h"
 #include "globals.h"
-#include "processreaderthread.h"
 #include "windowattrmanager.h"
+
 #include <wx/tokenzr.h>
 
 GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin* plugin)

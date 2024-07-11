@@ -4,7 +4,7 @@
 #include "LSP/CompletionItem.h"
 #include "LSP/basic_types.h"
 #include "SimpleTokenizer.hpp"
-#include "entry.h"
+#include "database/entry.h"
 
 #include <unordered_set>
 #include <vector>

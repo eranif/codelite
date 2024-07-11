@@ -26,15 +26,16 @@
 #ifndef WXCODECOMPLETIONBOXENTRY_H
 #define WXCODECOMPLETIONBOXENTRY_H
 
-#include <wx/clntdata.h>
-#include <wx/sharedptr.h>
-#include <vector>
-#include "codelite_exports.h"
-#include <wx/gdicmn.h>
-#include <wx/string.h>
-#include "entry.h" // TagEntryPtr
-#include <wx/bitmap.h>
 #include "LSP/basic_types.h"
+#include "codelite_exports.h"
+#include "database/entry.h" // TagEntryPtr
+
+#include <vector>
+#include <wx/bitmap.h>
+#include <wx/clntdata.h>
+#include <wx/gdicmn.h>
+#include <wx/sharedptr.h>
+#include <wx/string.h>
 
 class wxStyledTextCtrl;
 class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry

@@ -1,7 +1,7 @@
 #ifndef CLCODELITEREMOTEPROCESS_HPP
 #define CLCODELITEREMOTEPROCESS_HPP
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "ssh/ssh_account_info.h"

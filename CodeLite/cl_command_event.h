@@ -26,14 +26,14 @@
 #ifndef CLCOMMANDEVENT_H
 #define CLCOMMANDEVENT_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "LSP/CompletionItem.h"
 #include "UIBreakpoint.hpp"
-#include "asyncprocess.h"
 #include "clDebuggerBreakpoint.hpp"
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"
 #include "codelite_exports.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "ssh/ssh_account_info.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 

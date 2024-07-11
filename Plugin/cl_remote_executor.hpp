@@ -2,7 +2,7 @@
 #ifndef CL_REMOTE_EXECUTOR_HPP
 #define CL_REMOTE_EXECUTOR_HPP
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "clSSHChannel.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"

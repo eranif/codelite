@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "externaltools.h"
 
+#include "AsyncProcess/processreaderthread.h"
 #include "ExternalToolsManager.h"
 #include "ExternalToolsProcessManager.h"
 #include "async_executable_cmd.h"
@@ -39,7 +40,6 @@
 #include "globals.h"
 #include "macromanager.h"
 #include "plugin_version.h"
-#include "processreaderthread.h"
 #include "workspace.h"
 
 #include <algorithm>

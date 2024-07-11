@@ -5,18 +5,31 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "TerminalEmulatorUIBase.h"
+
 #include "codelite_exports.h"
 
 // Declare the bitmap loading function
 extern void wxCB1DAInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 TerminalEmulatorUIBase::TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                                long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB1DAInitBitmapResources();
@@ -75,25 +88,23 @@ TerminalEmulatorUIBase::TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("TerminalEmulatorUIBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_textCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TerminalEmulatorUIBase::OnSendCommand), NULL,
-                        this);
+    m_textCtrl->Bind(wxEVT_COMMAND_TEXT_ENTER, &TerminalEmulatorUIBase::OnSendCommand, this);
 }
 
 TerminalEmulatorUIBase::~TerminalEmulatorUIBase()
 {
-    m_textCtrl->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TerminalEmulatorUIBase::OnSendCommand), NULL,
-                           this);
+    m_textCtrl->Unbind(wxEVT_COMMAND_TEXT_ENTER, &TerminalEmulatorUIBase::OnSendCommand, this);
 }
 
 TerminalEmulatorFrameBase::TerminalEmulatorFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                      const wxPoint& pos, const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB1DAInitBitmapResources();
@@ -105,21 +116,19 @@ TerminalEmulatorFrameBase::TerminalEmulatorFrameBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("TerminalEmulatorFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 TerminalEmulatorFrameBase::~TerminalEmulatorFrameBase() {}

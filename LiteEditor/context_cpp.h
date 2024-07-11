@@ -30,7 +30,7 @@
 #include "cl_command_event.h"
 #include "context_base.h"
 #include "ctags_manager.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "macros.h"
 
 #include <map>

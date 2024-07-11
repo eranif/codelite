@@ -33,7 +33,7 @@
 #include "compilation_database.h"
 #include "compiler_command_line_parser.h"
 #include "ctags_manager.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"

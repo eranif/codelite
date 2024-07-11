@@ -1,6 +1,6 @@
 #include "clConsoleKitty.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 clConsoleKitty::clConsoleKitty()
 {

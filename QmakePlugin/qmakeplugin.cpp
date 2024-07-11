@@ -23,7 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "asyncprocess.h"
+#include "qmakeplugin.h"
+
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "build_settings_config.h"
 #include "build_system.h"
 #include "cl_standard_paths.h"
@@ -33,15 +36,14 @@
 #include "globals.h"
 #include "macros.h"
 #include "newqtprojdlg.h"
-#include "processreaderthread.h"
 #include "procutils.h"
 #include "project.h"
 #include "qmakeconf.h"
 #include "qmakegenerator.h"
-#include "qmakeplugin.h"
 #include "qmakesettingsdlg.h"
 #include "qmaketab.h"
 #include "workspace.h"
+
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/menu.h>

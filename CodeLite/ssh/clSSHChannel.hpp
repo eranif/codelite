@@ -3,7 +3,7 @@
 
 #if USE_SFTP
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "clSSHChannelCommon.hpp"
 #include "codelite_exports.h"
 #include "ssh/cl_ssh.h"

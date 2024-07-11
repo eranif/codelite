@@ -23,17 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "asyncprocess.h"
+#include "wxformbuilder.h"
+
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "confformbuilder.h"
 #include "event_notifier.h"
 #include "formbuildsettingsdlg.h"
 #include "globals.h"
-#include "processreaderthread.h"
 #include "procutils.h"
 #include "project.h"
 #include "workspace.h"
 #include "wxfbitemdlg.h"
-#include "wxformbuilder.h"
+
 #include <wx/app.h>
 #include <wx/menu.h>
 #include <wx/mimetype.h>

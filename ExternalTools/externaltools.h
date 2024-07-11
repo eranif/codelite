@@ -26,10 +26,10 @@
 #ifndef __ExternalTools__
 #define __ExternalTools__
 
-#include "plugin.h"
-#include "externaltoolsdata.h"
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
+#include "externaltoolsdata.h"
+#include "plugin.h"
 
 class ExternalToolsPlugin : public IPlugin
 {

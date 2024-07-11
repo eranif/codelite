@@ -1,10 +1,10 @@
 #ifndef LSPDETECTOR_HPP
 #define LSPDETECTOR_HPP
 
+#include "AsyncProcess/asyncprocess.h"
 #include "LanguageServerEntry.h"
-#include "asyncprocess.h"
-#include "wx/arrstr.h"
 
+#include <wx/arrstr.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 

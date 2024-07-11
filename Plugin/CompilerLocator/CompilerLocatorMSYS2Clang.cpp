@@ -1,7 +1,7 @@
 #include "CompilerLocatorMSYS2Clang.hpp"
 
 #include "GCCMetadata.hpp"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "compiler.h"
 
 #include <wx/filename.h>

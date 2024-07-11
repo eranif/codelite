@@ -2,8 +2,8 @@
 #define COMPLETIONHELPER_HPP
 
 #include "codelite_exports.h"
-#include "entry.h"
-#include "istorage.h"
+#include "database/entry.h"
+#include "database/istorage.h"
 
 #include <functional>
 #include <vector>

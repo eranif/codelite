@@ -1,11 +1,11 @@
 #ifndef NODEJSCLIDEBUGGER_H
 #define NODEJSCLIDEBUGGER_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "NodeJSDebuggerBreakpoint.h"
 #include "NodeJSDebuggerBreakpointManager.h"
 #include "NodeJSDevToolsProtocol.h"
 #include "SocketAPI/clWebSocketClient.h"
-#include "asyncprocess.h"
 #include "cl_command_event.h"
 
 #include <functional>

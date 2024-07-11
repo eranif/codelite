@@ -26,7 +26,7 @@
 #ifndef GCCMETADATA_H
 #define GCCMETADATA_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "codelite_exports.h"
 
 #include <wx/arrstr.h>

@@ -26,11 +26,12 @@
 #ifndef CLCOMMANDPROCESSOR_H
 #define CLCOMMANDPROCESSOR_H
 
-#include <wx/event.h>
 #include "asyncprocess.h"
-#include <wx/string.h>
-#include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
+
+#include <wx/event.h>
+#include <wx/string.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COMMAND_PROCESSOR_ENDED, clCommandEvent);
 

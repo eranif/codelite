@@ -1,13 +1,13 @@
 #include "LSPPythonDetector.hpp"
 
-#include "Platform.hpp"
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "Platform/Platform.hpp"
 #include "file_logger.h"
 #include "globals.h"
 #include "procutils.h"
-#include "wx/filename.h"
 
 #include <cstdlib>
+#include <wx/filename.h>
 
 LSPPythonDetector::LSPPythonDetector()
     : LSPDetector("python")

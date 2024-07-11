@@ -26,7 +26,7 @@
 
 #include "cl_config.h"
 #include "ctags_manager.h"
-#include "istorage.h"
+#include "database/istorage.h"
 #include "precompiled_header.h"
 
 #include <set>

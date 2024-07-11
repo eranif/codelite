@@ -1,11 +1,13 @@
 #include "clNodeProcess.h"
-#include <asyncprocess.h>
-#include <globals.h>
-#include <processreaderthread.h>
+
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
+#include "globals.h"
+#include "json_node.h"
+
 #include <wx/crt.h>
 #include <wx/event.h>
 #include <wx/string.h>
-#include <json_node.h>
 
 #if USE_FORK
 #include <clJoinableThread.h>

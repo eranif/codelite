@@ -18,7 +18,7 @@ FLEX_TARGET(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/include_finder.l
             COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
 FLEX_TARGET(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
             COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
-FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
+FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XML/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
             COMPILE_FLAGS "-Pxml --noline --yylineno --batch")
 
 set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}" "${FLEX_XmlFlex_OUTPUTS}")
@@ -26,7 +26,6 @@ set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FL
 # Include paths
 include_directories(
     "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-    "${CL_SRC_ROOT}/sdk/codelite_indexer/network"
     "${CL_SRC_ROOT}/sdk/websocketpp"
     "${CL_SRC_ROOT}/sdk/asio-1.12.1"
     "${CL_SRC_ROOT}/CodeLite"
@@ -82,12 +81,15 @@ file(
     GLOB
     SRCS
     "*.cpp"
-    "../sdk/codelite_indexer/network/*.cpp"
+    "AsyncProcess/*.cpp"
     "Console/*.cpp"
     "Cxx/*.cpp"
-    "PHP/*.cpp"
-    "SocketAPI/*.cpp"
     "LSP/*.cpp"
+    "PHP/*.cpp"
+    "Platform/*.cpp"
+    "SocketAPI/*.cpp"
+    "XML/*.cpp"
+    "database/*.cpp"
     "ssh/*.cpp")
 
 # Define GTK libraries

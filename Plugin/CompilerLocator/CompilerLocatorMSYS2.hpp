@@ -2,7 +2,7 @@
 #define COMPILERLOCATORMSYS2_HPP
 
 #include "ICompilerLocator.h"
-#include "MSYS2.hpp"
+#include "Platform/MSYS2.hpp"
 
 #include <unordered_map>
 #include <vector>

@@ -3,7 +3,7 @@
 
 #include "SmartCompletionsConfig.h"
 #include "cl_command_event.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "plugin.h"
 #include "wxStringHash.h"
 #include <unordered_map>

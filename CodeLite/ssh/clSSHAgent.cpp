@@ -1,8 +1,10 @@
-#include "asyncprocess.h"
 #include "clSSHAgent.hpp"
+
+#include "AsyncProcess/asyncprocess.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
+
 #include <wx/filename.h>
 #include <wx/utils.h>
 

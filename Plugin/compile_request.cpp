@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "compile_request.h"
 
+#include "AsyncProcess/asyncprocess.h"
 #include "ICompilerLocator.h"
-#include "asyncprocess.h"
 #include "build_config.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"

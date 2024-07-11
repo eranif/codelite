@@ -1,6 +1,6 @@
 #include "fmtPHPCSFixer.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 fmtPHPCSFixer::fmtPHPCSFixer()
 {

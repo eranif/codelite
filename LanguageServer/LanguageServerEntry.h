@@ -1,8 +1,8 @@
 #ifndef LANGUAGESERVERENTRY_H
 #define LANGUAGESERVERENTRY_H
 
+#include "AsyncProcess/asyncprocess.h"
 #include "LSP/LSPNetwork.h"
-#include "asyncprocess.h"
 #include "cl_config.h"
 
 #include <map>

@@ -25,10 +25,10 @@
 #ifndef LITEEDITOR_FRAME_H
 #define LITEEDITOR_FRAME_H
 
+#include "AsyncProcess/ZombieReaperPOSIX.h"
 #include "EnvironmentVariablesDlg.h"
 #include "Notebook.h"
 #include "SecondarySideBar.hpp"
-#include "ZombieReaperPOSIX.h"
 #include "clCaptionBar.hpp"
 #include "clDockingManager.h"
 #include "clInfoBar.h"

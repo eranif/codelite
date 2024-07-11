@@ -1,12 +1,13 @@
 #include "clFileSystemWorkspace.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "CompileCommandsGenerator.h"
 #include "Console/clConsoleBase.h"
 #include "ICompilerLocator.h"
 #include "JSON.h"
 #include "NewFileSystemWorkspaceDialog.h"
 #include "StringUtils.h"
-#include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceView.hpp"
@@ -29,7 +30,6 @@
 #include "imanager.h"
 #include "macromanager.h"
 #include "macros.h"
-#include "processreaderthread.h"
 #include "shell_command.h"
 #include "wxStringHash.h"
 

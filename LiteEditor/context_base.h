@@ -25,7 +25,7 @@
 #ifndef CONTEXT_BASE_H
 #define CONTEXT_BASE_H
 
-#include "entry.h"
+#include "database/entry.h"
 #include "lexer_configuration.h"
 #include "macros.h"
 

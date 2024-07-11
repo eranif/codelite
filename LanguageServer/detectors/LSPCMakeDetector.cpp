@@ -1,6 +1,6 @@
 #include "LSPCMakeDetector.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 
 LSPCMakeDetector::LSPCMakeDetector()

@@ -25,10 +25,10 @@
 
 #include "RemotyPlugin.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
 #include "NewFileSystemWorkspaceDialog.h"
 #include "RemotyConfig.hpp"
 #include "RemotyWorkspace.hpp"
-#include "asyncprocess.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clWorkspaceManager.h"

@@ -8,7 +8,7 @@
 #include "ParseThread.hpp"
 #include "Scanner.hpp"
 #include "Settings.hpp"
-#include "istorage.h"
+#include "database/istorage.h"
 #include "macros.h"
 
 #include <algorithm>

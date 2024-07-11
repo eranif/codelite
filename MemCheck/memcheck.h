@@ -33,14 +33,13 @@
 #ifndef _MEMCHECK_H_
 #define _MEMCHECK_H_
 
-#include <wx/process.h>
-
-#include "plugin.h"
-
-#include "TerminalEmulator.h"
+#include "AsyncProcess/TerminalEmulator.h"
 #include "clTabTogglerHelper.h"
 #include "imemcheckprocessor.h"
 #include "memcheckui.h"
+#include "plugin.h"
+
+#include <wx/process.h>
 
 class MemCheckOutputView;
 

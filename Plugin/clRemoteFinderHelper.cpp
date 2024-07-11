@@ -1,14 +1,14 @@
 #include "clRemoteFinderHelper.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "Notebook.h"
-#include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
-#include "processreaderthread.h"
 #include "search_thread.h"
 
 #include <wx/tokenzr.h>

@@ -80,7 +80,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"CodeLite:AsyncProcess"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -120,6 +120,10 @@
 							"type":	"string",
 							"m_label":	"Style:",
 							"m_value":	""
+						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -324,6 +328,10 @@
 									"m_value":	"0"
 								}, {
 									"type":	"bool",
+									"m_label":	"Enable Spell Checking",
+									"m_value":	false
+								}, {
+									"type":	"bool",
 									"m_label":	"Auto Complete Directories:",
 									"m_value":	false
 								}, {
@@ -334,7 +342,6 @@
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 									"m_eventClass":	"wxCommandEvent",
-									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnSendCommand(wxCommandEvent& event)",
 									"m_description":	"Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
 									"m_noBody":	false
@@ -478,6 +485,10 @@
 							"type":	"string",
 							"m_label":	"Style:",
 							"m_value":	""
+						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",

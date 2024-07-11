@@ -1,11 +1,11 @@
 #ifndef COMPILECOMMANDSGENERATOR_H
 #define COMPILECOMMANDSGENERATOR_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+#include "macros.h"
 
-#include <macros.h>
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/process.h>

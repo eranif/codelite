@@ -1,8 +1,8 @@
 #ifndef CLFILESYSTEMWORKSPACE_HPP
 #define CLFILESYSTEMWORKSPACE_HPP
 
+#include "AsyncProcess/asyncprocess.h"
 #include "IWorkspace.h"
-#include "asyncprocess.h"
 #include "clBacktickCache.hpp"
 #include "clDebuggerTerminal.h"
 #include "clFileCache.hpp"

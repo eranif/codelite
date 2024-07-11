@@ -1,7 +1,7 @@
 #ifndef CLNODEJS_H
 #define CLNODEJS_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 

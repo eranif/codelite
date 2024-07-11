@@ -8,11 +8,12 @@
 #include "UnixProcess.h"
 #endif
 
+#include "asyncprocess.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
+
 #include <wx/arrstr.h>
 #include <wx/event.h>
-#include "cl_command_event.h"
-#include <asyncprocess.h>
-#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL ChildProcess : public wxEvtHandler
 {

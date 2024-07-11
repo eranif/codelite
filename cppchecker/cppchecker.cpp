@@ -25,9 +25,10 @@
 
 #include "cppchecker.h"
 
+#include "AsyncProcess/processreaderthread.h"
 #include "IWorkspace.h"
 #include "Notebook.h"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "build_settings_config.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
@@ -42,7 +43,6 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
-#include "processreaderthread.h"
 #include "procutils.h"
 #include "project.h"
 #include "shell_command.h"

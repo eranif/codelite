@@ -24,7 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "svncommandhandler.h"
-#include "asyncprocess.h"
+
+#include "AsyncProcess/asyncprocess.h"
 
 void SvnCommandHandler::OnProcessOutput(IProcess *process, const wxString& output)
 {

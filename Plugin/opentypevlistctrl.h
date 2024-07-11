@@ -27,7 +27,7 @@
 #define __opentypevlistctrl__
 
 #include "codelite_exports.h"
-#include "entry.h"
+#include "database/entry.h"
 
 #include <vector>
 #include <wx/listctrl.h>

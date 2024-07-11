@@ -23,6 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "svn_console.h"
+
+#include "AsyncProcess/processreaderthread.h"
+#include "ColoursAndFontsManager.h"
 #include "Notebook.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
@@ -30,10 +34,9 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "lexer_configuration.h"
-#include "processreaderthread.h"
 #include "subversion2.h"
 #include "subversion_strings.h"
-#include "svn_console.h"
+
 #include <wx/app.h>
 #include <wx/aui/framemanager.h>
 #include <wx/regex.h>
@@ -41,7 +44,6 @@
 #include <wx/textdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
-#include "ColoursAndFontsManager.h"
 
 //-------------------------------------------------------------
 SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)

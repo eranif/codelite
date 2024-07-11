@@ -26,9 +26,9 @@
 #ifndef NOTEJSWORKSPACE_H
 #define NOTEJSWORKSPACE_H
 
+#include "AsyncProcess/TerminalEmulator.h"
 #include "IWorkspace.h"
 #include "NodeDebugger.h"
-#include "TerminalEmulator.h"
 #include "cl_command_event.h"
 
 #include <wx/filename.h>

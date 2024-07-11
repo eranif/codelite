@@ -26,14 +26,14 @@
 #ifndef PHPDEBUGPANE_H
 #define PHPDEBUGPANE_H
 
-#include "TerminalEmulatorUI.h"
+#include "AsyncProcess/TerminalEmulatorUI.h"
 #include "XDebugManager.h"
 #include "bitmap_loader.h"
+#include "cl_command_event.h"
+#include "macros.h"
 #include "php_event.h"
 #include "php_ui.h"
 #include "xdebugevent.h"
-#include <cl_command_event.h>
-#include <macros.h>
 
 class PHPDebugPane : public PHPDebugPaneBase
 {

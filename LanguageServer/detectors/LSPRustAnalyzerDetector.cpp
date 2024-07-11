@@ -1,7 +1,7 @@
 #include "LSPRustAnalyzerDetector.hpp"
 
-#include "Platform.hpp"
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "Platform/Platform.hpp"
 #include "clRustup.hpp"
 #include "file_logger.h"
 #include "globals.h"

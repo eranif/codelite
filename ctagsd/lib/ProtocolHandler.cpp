@@ -17,10 +17,10 @@
 #include "clTempFile.hpp"
 #include "cl_calltip.h"
 #include "ctags_manager.h"
+#include "database/tags_storage_sqlite3.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "tags_options_data.h"
-#include "tags_storage_sqlite3.h"
 
 #include <deque>
 #include <iostream>

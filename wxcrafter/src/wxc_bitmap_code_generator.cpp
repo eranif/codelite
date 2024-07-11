@@ -1,14 +1,16 @@
 #include "wxc_bitmap_code_generator.h"
+
+#include "AsyncProcess/processreaderthread.h"
 #include "DirectoryChanger.h"
+#include "environmentconfig.h"
+#include "globals.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 #include "wxrc.h"
-#include <environmentconfig.h>
-#include <globals.h>
-#include <processreaderthread.h>
+
 #include <wx/frame.h>
 #include <wx/log.h>
 #include <wx/sstream.h>

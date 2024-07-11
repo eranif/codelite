@@ -1,6 +1,6 @@
 #include "fmtYQ.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 #include <wx/string.h>
 

@@ -1,6 +1,6 @@
 #include "CodeLiteRemoteHelper.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"

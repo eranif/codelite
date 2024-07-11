@@ -1,8 +1,9 @@
 #include "GitBlamePage.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "ColoursAndFontsManager.h"
 #include "GitDiffOutputParser.h"
-#include "asyncprocess.h"
 #include "clResult.hpp"
 #include "clSTCHelper.hpp"
 #include "drawingutils.h"
@@ -12,7 +13,6 @@
 #include "git.h"
 #include "globals.h"
 #include "lexer_configuration.h"
-#include "processreaderthread.h"
 #include "windowattrmanager.h"
 
 #include <cmath>

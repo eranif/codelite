@@ -24,15 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "shell_command.h"
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "cl_command_event.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "globals.h"
-#include "processreaderthread.h"
 #include "workspace.h"
-#include "wx/tokenzr.h"
 
+#include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
 wxDEFINE_EVENT(wxEVT_BUILD_PROCESS_ADDLINE, clBuildEvent);

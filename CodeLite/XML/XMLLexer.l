@@ -14,11 +14,12 @@
 //
 extern "C" int yywrap(void*) { return 1; }
 
-#include <wx/string.h>
+#include "XML/XMLLexerAPI.h"
+#include "XML/XMLLexerTokens.h"
+
 #include <string>
 #include <wx/filename.h>
-#include "XMLLexerAPI.h"
-#include "XMLLexerTokens.h"
+#include <wx/string.h>
 
 #define YY_FATAL_ERROR(x)
 #define YYSTYPE char*

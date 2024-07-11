@@ -1,9 +1,9 @@
 #include "clSSHInteractiveChannel.hpp"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "StringUtils.h"
-#include "asyncprocess.h"
 #include "file_logger.h"
-#include "processreaderthread.h"
 
 #include <thread>
 #include <typeinfo>

@@ -28,7 +28,7 @@
 #include "clThemedTreeCtrl.h"
 #include "codelite_exports.h"
 #include "ctags_manager.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "map"
 #include "wx/filename.h"
 

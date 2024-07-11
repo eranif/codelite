@@ -7,8 +7,9 @@
 
 #include "memcheck.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "async_executable_cmd.h"
-#include "asyncprocess.h"
 #include "build_config.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
@@ -21,7 +22,6 @@
 #include "memchecksettings.h"
 #include "memchecksettingsdialog.h"
 #include "memcheckui.h"
-#include "processreaderthread.h"
 #include "valgrindprocessor.h"
 #include "workspace.h"
 

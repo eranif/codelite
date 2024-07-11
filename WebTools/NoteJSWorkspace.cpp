@@ -1,12 +1,13 @@
 #include "NoteJSWorkspace.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "NodeDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSExecutable.h"
 #include "NodeJSNewWorkspaceDlg.h"
 #include "NodeJSWorkspaceConfiguration.h"
 #include "NodeJSWorkspaceView.h"
-#include "asyncprocess.h"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
 #include "codelite_events.h"
@@ -15,7 +16,6 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
-#include "processreaderthread.h"
 
 #include <wx/dir.h>
 #include <wx/dirdlg.h>

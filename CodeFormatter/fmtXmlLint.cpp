@@ -1,6 +1,6 @@
 #include "fmtXmlLint.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 fmtXmlLint::fmtXmlLint()
 {

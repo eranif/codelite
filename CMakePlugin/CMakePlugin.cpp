@@ -51,11 +51,11 @@
 // Declaration
 #include "CMakePlugin.h"
 
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "CMakeBuilder.h"
 #include "ICompilerLocator.h"
 #include "StdToWX.h"
-#include "asyncprocess.h"
-#include "processreaderthread.h"
 
 // wxWidgets
 #include <wx/app.h>

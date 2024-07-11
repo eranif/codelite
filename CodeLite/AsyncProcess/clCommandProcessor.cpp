@@ -1,6 +1,7 @@
 #include "clCommandProcessor.h"
-#include "cl_command_event.h"
+
 #include "processreaderthread.h"
+#include "cl_command_event.h"
 
 wxDEFINE_EVENT(wxEVT_COMMAND_PROCESSOR_ENDED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_COMMAND_PROCESSOR_OUTPUT, clCommandEvent);

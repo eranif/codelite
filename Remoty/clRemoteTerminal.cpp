@@ -1,7 +1,7 @@
 #include "clRemoteTerminal.hpp"
 
-#include "Platform.hpp"
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
+#include "Platform/Platform.hpp"
 #include "environmentconfig.h"
 #include "file_logger.h"
 #include "globals.h"

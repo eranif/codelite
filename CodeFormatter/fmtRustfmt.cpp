@@ -1,6 +1,6 @@
 #include "fmtRustfmt.hpp"
 
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 fmtRustfmt::fmtRustfmt()
 {

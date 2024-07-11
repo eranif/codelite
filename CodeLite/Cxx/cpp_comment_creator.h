@@ -27,7 +27,7 @@
 
 #include "codelite_exports.h"
 #include "comment_creator.h"
-#include "entry.h"
+#include "database/entry.h"
 
 #include <wx/string.h>
 

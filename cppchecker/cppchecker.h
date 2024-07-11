@@ -26,7 +26,7 @@
 #ifndef __CppChecker__
 #define __CppChecker__
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "clTabTogglerHelper.h"
 #include "plugin.h"
 

@@ -2,7 +2,7 @@
 #define COMPILERLOCATORMSYS2CLANG_HPP
 
 #include "ICompilerLocator.h"
-#include "MSYS2.hpp"
+#include "Platform/MSYS2.hpp"
 
 #include <wx/filename.h>
 

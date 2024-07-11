@@ -29,9 +29,8 @@
 #include "LSP/basic_types.h"
 #include "browse_record.h"
 #include "cl_calltip.h"
-#include "entry.h"
+#include "database/entry.h"
 #include "optionsconfig.h"
-#include "wx/string.h"
 
 #include <list>
 #include <map>
@@ -39,6 +38,7 @@
 #include <vector>
 #include <wx/colour.h>
 #include <wx/filename.h>
+#include <wx/string.h>
 
 class SFTPClientData;
 class wxStyledTextCtrl;

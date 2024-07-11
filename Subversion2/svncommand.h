@@ -26,10 +26,11 @@
 #ifndef SVNCOMMAND_H
 #define SVNCOMMAND_H
 
-#include <wx/event.h> // Base class
+#include "AsyncProcess/asyncprocess.h"
+#include "AsyncProcess/processreaderthread.h"
 #include "svncommandhandler.h"
-#include "asyncprocess.h"
-#include "processreaderthread.h"
+
+#include <wx/event.h> // Base class
 
 class Subversion2;
 class SvnCommand : public wxEvtHandler

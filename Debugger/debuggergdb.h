@@ -25,16 +25,16 @@
 #ifndef DBGINTERFACE_H
 #define DBGINTERFACE_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
 #include "consolefinder.h"
 #include "debugger.h"
 #include "list"
 #include "ssh/ssh_account_info.h"
-#include "wx/event.h"
-#include "wx/string.h"
 
+#include <wx/event.h>
 #include <wx/hashmap.h>
+#include <wx/string.h>
 
 #ifdef MSVC_VER
 // declare the debugger function creation

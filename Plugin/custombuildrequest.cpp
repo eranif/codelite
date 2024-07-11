@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "custombuildrequest.h"
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "cl_command_event.h"

@@ -2,9 +2,9 @@
 #if defined(__WXGTK__) || defined(__WXOSX__)
 #include "file_logger.h"
 
-#include <cl_command_event.h>
-#include <fileutils.h>
-#include <processreaderthread.h>
+#include "cl_command_event.h"
+#include "fileutils.h"
+#include "processreaderthread.h"
 #include <signal.h>
 #include <string.h>
 #include <sys/select.h>

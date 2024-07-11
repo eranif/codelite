@@ -68,7 +68,7 @@ void testFuncParser(char *buf)
     }
 
 //	printf("total time: %d\n", end-start);
-    printf("matches found: %d\n", li.size());
+    printf("matches found: %d\n", (int)li.size());
 }
 
 void testExprParser(char *buf)
@@ -116,7 +116,7 @@ void testVarParser(char *buf)
     }
 
 //	printf("total time: %d\n", end-start);
-    printf("matches found: %d\n", li.size());
+    printf("matches found: %d\n", (int)li.size());
 }
 
 void testTypedefParser(char *buf)
@@ -131,7 +131,7 @@ void testTypedefParser(char *buf)
         clTypedef var = *iter;
         var.print();
     }
-    printf("matches found: %d\n", li.size());
+    printf("matches found: %d\n", (int)li.size());
 }
 
 //-------------------------------------------------------

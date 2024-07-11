@@ -5036,7 +5036,10 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
     // Set the manager flags
-    unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE | wxAUI_MGR_LIVE_RESIZE;
+    unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE;
+#if defined(__WXMAC__) || defined(__WXGTK__)
+    auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
+#endif
     m_mgr.SetFlags(auiMgrFlags);
 }
 
@@ -5454,7 +5457,9 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     m_mainFrameTitleTemplate = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
 }
 
-void clMainFrame::OnDetachEditor(wxCommandEvent& e) { /*GetMainBook()->DetachActiveEditor();*/ }
+void clMainFrame::OnDetachEditor(wxCommandEvent& e)
+{ /*GetMainBook()->DetachActiveEditor();*/
+}
 
 void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != NULL); }
 

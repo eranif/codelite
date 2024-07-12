@@ -9,12 +9,24 @@
 // Declare the bitmap loading function
 extern void wxC5C75InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC5C75InitBitmapResources();
@@ -54,14 +66,14 @@ MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
                         WXC_FROM_DIP(5));
 
     wxArrayString m_choiceSizeArr;
-    m_choiceSizeArr.Add(wxT("32"));
-    m_choiceSizeArr.Add(wxT("64"));
-    m_choiceSizeArr.Add(wxT("128"));
-    m_choiceSizeArr.Add(wxT("256"));
-    m_choiceSizeArr.Add(wxT("512"));
-    m_choiceSizeArr.Add(wxT("1024"));
-    m_choiceSizeArr.Add(wxT("2048"));
-    m_choiceSizeArr.Add(wxT("4096"));
+    m_choiceSizeArr.Add(_("32"));
+    m_choiceSizeArr.Add(_("64"));
+    m_choiceSizeArr.Add(_("128"));
+    m_choiceSizeArr.Add(_("256"));
+    m_choiceSizeArr.Add(_("512"));
+    m_choiceSizeArr.Add(_("1024"));
+    m_choiceSizeArr.Add(_("2048"));
+    m_choiceSizeArr.Add(_("4096"));
     m_choiceSize =
         new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceSizeArr, 0);
     m_choiceSize->SetToolTip(_("Memory size to view"));
@@ -75,10 +87,10 @@ MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     flexGridSizer6->Add(m_staticText8, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceColsArr;
-    m_choiceColsArr.Add(wxT("4"));
-    m_choiceColsArr.Add(wxT("8"));
-    m_choiceColsArr.Add(wxT("16"));
-    m_choiceColsArr.Add(wxT("32"));
+    m_choiceColsArr.Add(_("4"));
+    m_choiceColsArr.Add(_("8"));
+    m_choiceColsArr.Add(_("16"));
+    m_choiceColsArr.Add(_("32"));
     m_choiceCols =
         new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceColsArr, 0);
     m_choiceCols->SetToolTip(_("Number of columns to use per row"));
@@ -122,36 +134,27 @@ MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     bSizer4->Add(m_buttonUpdate, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("MemoryViewBase"));
-    SetSize(-1, -1);
-    if(GetSizer()) {
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(MemoryViewBase::OnTextEntered), NULL,
-                                  this);
-    m_choiceSize->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MemoryViewBase::OnMemorySize), NULL,
-                          this);
-    m_choiceCols->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MemoryViewBase::OnNumberOfRows), NULL,
-                          this);
-    m_textCtrlMemory->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MemoryViewBase::OnTextDClick), NULL, this);
-    m_buttonEvaluate->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MemoryViewBase::OnEvaluate), NULL,
-                              this);
-    m_buttonEvaluate->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemoryViewBase::OnEvaluateUI), NULL, this);
-    m_buttonUpdate->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MemoryViewBase::OnUpdate), NULL, this);
+    m_textCtrlExpression->Bind(wxEVT_COMMAND_TEXT_ENTER, &MemoryViewBase::OnTextEntered, this);
+    m_choiceSize->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &MemoryViewBase::OnMemorySize, this);
+    m_choiceCols->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &MemoryViewBase::OnNumberOfRows, this);
+    m_textCtrlMemory->Bind(wxEVT_LEFT_DCLICK, &MemoryViewBase::OnTextDClick, this);
+    m_buttonEvaluate->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MemoryViewBase::OnEvaluate, this);
+    m_buttonEvaluate->Bind(wxEVT_UPDATE_UI, &MemoryViewBase::OnEvaluateUI, this);
+    m_buttonUpdate->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MemoryViewBase::OnUpdate, this);
 }
 
 MemoryViewBase::~MemoryViewBase()
 {
-    m_textCtrlExpression->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(MemoryViewBase::OnTextEntered),
-                                     NULL, this);
-    m_choiceSize->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MemoryViewBase::OnMemorySize), NULL,
-                             this);
-    m_choiceCols->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MemoryViewBase::OnNumberOfRows), NULL,
-                             this);
-    m_textCtrlMemory->Disconnect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MemoryViewBase::OnTextDClick), NULL, this);
-    m_buttonEvaluate->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MemoryViewBase::OnEvaluate), NULL,
-                                 this);
-    m_buttonEvaluate->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemoryViewBase::OnEvaluateUI), NULL, this);
-    m_buttonUpdate->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MemoryViewBase::OnUpdate), NULL,
-                               this);
+    m_textCtrlExpression->Unbind(wxEVT_COMMAND_TEXT_ENTER, &MemoryViewBase::OnTextEntered, this);
+    m_choiceSize->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &MemoryViewBase::OnMemorySize, this);
+    m_choiceCols->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &MemoryViewBase::OnNumberOfRows, this);
+    m_textCtrlMemory->Unbind(wxEVT_LEFT_DCLICK, &MemoryViewBase::OnTextDClick, this);
+    m_buttonEvaluate->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &MemoryViewBase::OnEvaluate, this);
+    m_buttonEvaluate->Unbind(wxEVT_UPDATE_UI, &MemoryViewBase::OnEvaluateUI, this);
+    m_buttonUpdate->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &MemoryViewBase::OnUpdate, this);
 }

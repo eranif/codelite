@@ -26,10 +26,10 @@
 #ifndef CODECOMPLETIONMANAGER_H
 #define CODECOMPLETIONMANAGER_H
 
-#include "CompileCommandsGenerator.h"
 #include "Cxx/CxxPreProcessorCache.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
+#include "clangd/CompileCommandsGenerator.h"
 
 #include <thread>
 #include <wx/event.h>

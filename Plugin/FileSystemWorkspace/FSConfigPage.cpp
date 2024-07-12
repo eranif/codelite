@@ -2,11 +2,11 @@
 
 #include "BuildTargetDlg.h"
 #include "ColoursAndFontsManager.h"
-#include "CompileCommandsGenerator.h"
 #include "EditDlg.h"
 #include "StringUtils.h"
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
+#include "clangd/CompileCommandsGenerator.h"
 #include "debuggermanager.h"
 #include "event_notifier.h"
 #include "file_logger.h"

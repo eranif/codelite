@@ -2,7 +2,6 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
-#include "CompileCommandsGenerator.h"
 #include "Console/clConsoleBase.h"
 #include "ICompilerLocator.h"
 #include "JSON.h"
@@ -17,6 +16,7 @@
 #include "clShellHelper.hpp"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
+#include "clangd/CompileCommandsGenerator.h"
 #include "codelite_events.h"
 #include "compiler_command_line_parser.h"
 #include "ctags_manager.h"

@@ -1,18 +1,18 @@
 #include "languageserver.h"
 
-#include "CompileCommandsGenerator.h"
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
 #include "StringUtils.h"
 #include "clInfoBar.h"
 #include "cl_standard_paths.h"
+#include "clangd/CompileCommandsGenerator.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
+#include "macros.h"
 
-#include <macros.h>
 #include <thread>
 #include <wx/app.h>
 #include <wx/datetime.h>

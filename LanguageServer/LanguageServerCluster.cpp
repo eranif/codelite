@@ -1,6 +1,5 @@
 #include "LanguageServerCluster.h"
 
-#include "CompileCommandsGenerator.h"
 #include "DiagnosticsData.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSPOutlineViewDlg.h"
@@ -14,6 +13,7 @@
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
 #include "cl_standard_paths.h"
+#include "clangd/CompileCommandsGenerator.h"
 #include "codelite_events.h"
 #include "ctags_manager.h"
 #include "event_notifier.h"

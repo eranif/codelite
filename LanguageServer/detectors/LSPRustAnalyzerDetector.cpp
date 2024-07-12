@@ -2,7 +2,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "Platform/Platform.hpp"
-#include "clRustup.hpp"
+#include "Rust/clRustup.hpp"
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"

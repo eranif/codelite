@@ -1,18 +1,19 @@
 #include "eoswiki.h"
-#include <wx/xrc/xmlres.h>
+
 #include "EOSProjectWizard.h"
-#include "event_notifier.h"
-#include <wx/msgdlg.h>
-#include "compiler.h"
+#include "Zip/clZipReader.h"
 #include "build_settings_config.h"
-#include <workspace.h>
-#include <algorithm>
 #include "cl_standard_paths.h"
-#include "clZipReader.h"
-#include "fileutils.h"
-#include <algorithm>
+#include "compiler.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
+
+#include <algorithm>
+#include <workspace.h>
 #include <wx/app.h>
+#include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 static EOSWiki* thePlugin = NULL;
 

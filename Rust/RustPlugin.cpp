@@ -43,7 +43,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
-#include "wxmd5.h"
+#include "md5/wxmd5.h"
 
 #include <wx/dir.h>
 #include <wx/msgdlg.h>

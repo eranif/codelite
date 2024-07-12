@@ -48,12 +48,12 @@
 #include "imanager.h"
 #include "macromanager.h"
 #include "macros.h"
+#include "md5/wxmd5.h"
 #include "precompiled_header.h"
 #include "procutils.h"
 #include "project.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
-#include "wxmd5.h"
 
 #include <algorithm>
 #include <set>

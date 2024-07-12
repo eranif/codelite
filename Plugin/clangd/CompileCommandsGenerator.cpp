@@ -15,10 +15,10 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
+#include "macros.h"
+#include "md5/wxmd5.h"
 #include "workspace.h"
-#include "wxmd5.h"
 
-#include <macros.h>
 #include <thread>
 
 wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);

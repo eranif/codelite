@@ -3,12 +3,12 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "IWorkspace.h"
+#include "builder/clRemoteBuilder.hpp"
 #include "clBacktickCache.hpp"
 #include "clDebuggerTerminal.h"
 #include "clFileCache.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
-#include "clRemoteBuilder.hpp"
 #include "clShellHelper.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"

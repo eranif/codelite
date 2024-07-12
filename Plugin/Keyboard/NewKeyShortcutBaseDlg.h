@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_PLUGIN_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
-#define _CODELITE_PLUGIN_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
+#ifndef _PLUGIN_KEYBOARD_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
+#define _PLUGIN_KEYBOARD_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
 
 // clang-format off
 #include <wx/settings.h>

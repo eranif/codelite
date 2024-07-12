@@ -44,6 +44,6 @@ void wxC8418InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp$_Users_eifrah_devl_codelite_Plugin_NewKeyShortcutBaseDlg_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp$_Users_eifrah_devl_codelite_Plugin_NewKeyShortcutBaseDlg_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp$_Users_eifrah_devl_codelite_Plugin_Keyboard_NewKeyShortcutBaseDlg_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp$_Users_eifrah_devl_codelite_Plugin_Keyboard_NewKeyShortcutBaseDlg_liteeditor_bitmaps.xrc"));
 }

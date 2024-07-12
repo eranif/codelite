@@ -25,9 +25,9 @@
 
 #include "newclassdlg.h"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "VirtualDirectorySelectorDlg.h"
-#include "clFileSystemWorkspace.hpp"
-#include "clFileSystemWorkspaceView.hpp"
 #include "editor_config.h"
 #include "globals.h"
 #include "imanager.h"

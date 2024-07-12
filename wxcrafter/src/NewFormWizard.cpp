@@ -1,14 +1,14 @@
 #include "NewFormWizard.h"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "VirtualDirectorySelectorDlg.h"
 #include "allocator_mgr.h"
-#include "clFileSystemWorkspace.hpp"
+#include "macros.h"
+#include "project.h"
+#include "workspace.h"
 #include "wxc_project_metadata.h"
 #include "wxc_settings.h"
 
-#include <macros.h>
-#include <project.h>
-#include <workspace.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>

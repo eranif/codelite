@@ -1,6 +1,6 @@
 #include "RustWorkspace.hpp"
 
-#include "clFileSystemWorkspace.hpp"
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "file_logger.h"
 #include "fileextmanager.h"
 

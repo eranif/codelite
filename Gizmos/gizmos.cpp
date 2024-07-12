@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "gizmos.h"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "PluginWizard.h"
-#include "clFileSystemWorkspace.hpp"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"

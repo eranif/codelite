@@ -22,9 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+#include "cscopetab.h"
+
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "bitmap_loader.h"
 #include "cscopedbbuilderthread.h"
-#include "cscopetab.h"
 #include "csscopeconfdata.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
@@ -34,12 +37,12 @@
 #include "imanager.h"
 #include "plugin.h"
 #include "workspace.h"
+
 #include <set>
 #include <wx/app.h>
 #include <wx/imaglist.h>
 #include <wx/log.h>
 #include <wx/treectrl.h>
-#include <clFileSystemWorkspace.hpp>
 
 CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     : CscopeTabBase(parent)

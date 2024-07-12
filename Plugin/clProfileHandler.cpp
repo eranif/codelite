@@ -1,7 +1,7 @@
 #include "clProfileHandler.h"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "Notebook.h"
-#include "clFileSystemWorkspace.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"

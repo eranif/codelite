@@ -28,7 +28,8 @@
 #include "git.h"
 
 #include "AsyncProcess/clCommandProcessor.h"
-#include "DiffSideBySidePanel.h"
+#include "Diff/DiffSideBySidePanel.h"
+#include "Diff/clDiffFrame.h"
 #include "GitApplyPatchDlg.h"
 #include "GitBlamePage.h"
 #include "GitConsole.h"
@@ -41,7 +42,6 @@
 #if MAINBOOK_AUIBOOK
 #include "clAuiBook.hpp"
 #endif
-#include "clDiffFrame.h"
 #include "clEditorBar.h"
 #include "clSFTPManager.hpp"
 #include "clStatusBar.h"

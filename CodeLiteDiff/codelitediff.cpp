@@ -25,10 +25,10 @@
 
 #include "codelitediff.h"
 
-#include "DiffFoldersFrame.h"
-#include "DiffSideBySidePanel.h"
+#include "Diff/DiffFoldersFrame.h"
+#include "Diff/DiffSideBySidePanel.h"
+#include "Diff/clDiffFrame.h"
 #include "NewFileComparison.h"
-#include "clDiffFrame.h"
 #include "clKeyboardManager.h"
 #include "event_notifier.h"
 #include "file_logger.h"

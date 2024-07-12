@@ -25,10 +25,10 @@
 
 #include "subversion_view.h"
 
-#include "DiffSideBySidePanel.h"
+#include "Diff/DiffSideBySidePanel.h"
+#include "Diff/clDiffFrame.h"
 #include "SvnInfoDialog.h"
 #include "bitmap_loader.h"
-#include "clDiffFrame.h"
 #include "clSTCHelper.hpp"
 #include "clToolBar.h"
 #include "cl_command_event.h"

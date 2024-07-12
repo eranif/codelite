@@ -1,6 +1,6 @@
 #include "FileContentTracker.hpp"
 
-#include "clDTL.h"
+#include "Diff/clDTL.h"
 #include "file_logger.h"
 
 namespace

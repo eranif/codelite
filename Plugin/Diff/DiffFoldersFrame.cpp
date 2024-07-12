@@ -8,11 +8,11 @@
 #include "cl_config.h"
 #include "fileextmanager.h"
 #include "globals.h"
+#include "imanager.h"
+#include "macros.h"
 
 #include <algorithm>
 #include <atomic>
-#include <imanager.h>
-#include <macros.h>
 #include <wx/dir.h>
 #include <wx/wupdlock.h>
 #include <wxStringHash.h>

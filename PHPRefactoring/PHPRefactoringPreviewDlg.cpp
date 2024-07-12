@@ -1,7 +1,9 @@
 #include "PHPRefactoringPreviewDlg.h"
+
 #include "ColoursAndFontsManager.h"
-#include "clPatch.h"
+#include "Diff/clPatch.h"
 #include "lexer_configuration.h"
+
 #include <wx/msgdlg.h>
 
 PHPRefactoringPreviewDlg::PHPRefactoringPreviewDlg(wxWindow* parent, const wxString& patchContent)

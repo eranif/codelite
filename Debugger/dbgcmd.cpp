@@ -24,24 +24,24 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "dbgcmd.h"
 
+#include "Debugger/debuggermanager.h"
 #include "clFileName.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "debuggergdb.h"
-#include "debuggermanager.h"
 #include "event_notifier.h"
 #include "gdb_parser_incl.h"
 #include "gdbmi.hpp"
 #include "gdbmi_parse_thread_info.h"
 #include "precompiled_header.h"
 #include "procutils.h"
-#include "wx/buffer.h"
-#include "wx/tokenzr.h"
 
 #include <algorithm>
 #include <sstream>
 #include <unordered_map>
+#include <wx/buffer.h>
 #include <wx/regex.h>
+#include <wx/tokenzr.h>
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 

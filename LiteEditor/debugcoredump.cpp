@@ -23,19 +23,21 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "manager.h"
-#include "project.h"
-#include "windowattrmanager.h"
-#include "macromanager.h"
-#include "pluginmanager.h"
+#include "debugcoredump.h"
+
+#include "Debugger/debuggermanager.h"
+#include "debugcoredumpinfo.h"
 #include "editor_config.h"
 #include "globals.h"
-#include "debuggermanager.h"
-#include "debugcoredumpinfo.h"
-#include "debugcoredump.h"
+#include "macromanager.h"
+#include "manager.h"
+#include "pluginmanager.h"
+#include "project.h"
+#include "windowattrmanager.h"
+
+#include <wx/dirdlg.h>
 #include <wx/display.h>
 #include <wx/filedlg.h>
-#include <wx/dirdlg.h>
 
 DebugCoreDumpDlg::DebugCoreDumpDlg(wxWindow* parent)
     : DebugCoreDumpDlgBase(parent)

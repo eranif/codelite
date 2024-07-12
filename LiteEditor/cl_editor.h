@@ -25,6 +25,7 @@
 #ifndef LITEEDITOR_EDITOR_H
 #define LITEEDITOR_EDITOR_H
 
+#include "Debugger/debuggermanager.h"
 #include "LSP/CompletionItem.h"
 #include "SFTPClientData.hpp"
 #include "bookmark_manager.h"
@@ -36,7 +37,6 @@
 #include "cl_unredo.h"
 #include "context_base.h"
 #include "database/entry.h"
-#include "debuggermanager.h"
 #include "findreplacedlg.h"
 #include "globals.h"
 #include "lexer_configuration.h"

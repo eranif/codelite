@@ -25,8 +25,8 @@
 #include "breakpointsmgr.h"
 
 #include "BreakpointsView.hpp"
+#include "Debugger/debuggermanager.h"
 #include "breakpointpropertiesdlg.h"
-#include "debuggermanager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "frame.h"

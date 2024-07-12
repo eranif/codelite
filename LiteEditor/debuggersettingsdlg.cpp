@@ -22,12 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "debuggersettingsdlg.h"
+
 #include "ColoursAndFontsManager.h"
+#include "Debugger/debuggermanager.h"
 #include "dbgcommanddlg.h"
 #include "debugger_predefined_types_page.h"
 #include "debuggerconfigtool.h"
-#include "debuggermanager.h"
-#include "debuggersettingsdlg.h"
 #include "editor_config.h"
 #include "globals.h"
 #include "lexer_configuration.h"

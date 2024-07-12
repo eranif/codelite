@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "BreakpointsView.hpp"
 
+#include "Debugger/debuggermanager.h"
 #include "breakpointslistctrl.h"
-#include "debuggermanager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "frame.h"

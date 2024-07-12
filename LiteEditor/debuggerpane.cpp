@@ -25,27 +25,27 @@
 #include "debuggerpane.h"
 
 #include "BreakpointsView.hpp"
+#include "Debugger/debuggermanager.h"
+#include "Debugger/memoryview.h"
 #include "DebuggerCallstackView.h"
 #include "DebuggerDisassemblyTab.h"
 #include "codelite_events.h"
 #include "debugger.h"
 #include "debuggerasciiviewer.h"
-#include "debuggermanager.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "localstable.h"
 #include "manager.h"
-#include "memoryview.h"
 #include "plugin_general_wxcp.h"
 #include "shelltab.h"
 #include "simpletable.h"
 #include "threadlistpanel.h"
-#include "wx/dcbuffer.h"
-#include "wx/xrc/xmlres.h"
 
 #include <wx/aui/framemanager.h>
+#include <wx/dcbuffer.h>
+#include <wx/xrc/xmlres.h>
 
 const wxString DebuggerPane::LOCALS = wxTRANSLATE("Locals");
 const wxString DebuggerPane::WATCHES = wxTRANSLATE("Watches");

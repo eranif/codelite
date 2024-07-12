@@ -25,9 +25,10 @@
 #ifndef __debuggersettingsdlg__
 #define __debuggersettingsdlg__
 
-#include "debuggersettings.h"
+#include "Debugger/debuggersettings.h"
 #include "debuggersettingsbasedlg.h"
 #include "filepicker.h"
+
 #include <vector>
 
 class DebuggerSettingsDlg;

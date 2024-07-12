@@ -1,11 +1,11 @@
 #include "NewProjectDialog.h"
 
+#include "Debugger/debuggermanager.h"
 #include "ICompilerLocator.h" // for COMPILER_FAMILY_VC
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "clWorkspaceManager.h"
 #include "cl_config.h"
-#include "debuggermanager.h"
 #include "macros.h"
 #include "wxStringHash.h"
 

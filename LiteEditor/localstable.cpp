@@ -25,8 +25,8 @@
 
 #include "localstable.h"
 
+#include "Debugger/debuggermanager.h"
 #include "debuggerconfigtool.h"
-#include "debuggermanager.h"
 #include "event_notifier.h"
 #include "frame.h"
 #include "globals.h"

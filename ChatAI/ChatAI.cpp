@@ -25,7 +25,7 @@
 #include "ChatAI.hpp"
 
 #include "ChatAISettingsDlg.hpp"
-#include "clKeyboardManager.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "macromanager.h"

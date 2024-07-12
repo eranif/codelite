@@ -26,7 +26,7 @@
 #define __acceltabledlg__
 
 #include "AccelTableBaseDlg.h"
-#include "clKeyboardManager.h"
+#include "Keyboard/clKeyboardManager.h"
 
 #include <map>
 #include <vector>

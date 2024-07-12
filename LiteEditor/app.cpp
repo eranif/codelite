@@ -36,10 +36,10 @@
 #endif
 
 #include "ColoursAndFontsManager.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "SideBar.hpp"
 #include "SocketAPI/clSocketClient.h"
 #include "autoversion.h"
-#include "clKeyboardManager.h"
 #include "clSystemSettings.h"
 #include "cl_config.h"
 #include "conffilelocator.h"

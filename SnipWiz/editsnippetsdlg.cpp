@@ -26,7 +26,7 @@
 #include "editsnippetsdlg.h"
 
 #include "AboutHtml.h"
-#include "clKeyboardManager.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "snipwiz.h"
 
 #include <wx/msgdlg.h>

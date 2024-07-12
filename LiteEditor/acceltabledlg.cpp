@@ -24,10 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "acceltabledlg.h"
 
+#include "Keyboard/newkeyshortcutdlg.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "manager.h"
-#include "newkeyshortcutdlg.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
 

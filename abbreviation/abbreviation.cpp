@@ -25,9 +25,9 @@
 
 #include "abbreviation.h"
 
+#include "Keyboard/clKeyboardManager.h"
 #include "abbreviationentry.h"
 #include "abbreviationssettingsdlg.h"
-#include "clKeyboardManager.h"
 #include "cl_config.h"
 #include "event_notifier.h"
 #include "globals.h"

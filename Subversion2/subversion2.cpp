@@ -25,12 +25,12 @@
 
 #include "subversion2.h"
 
+#include "Keyboard/clKeyboardManager.h"
 #include "SvnCommitDialog.h"
 #include "SvnLogDialog.h"
 #include "SvnShowFileChangesHandler.h"
 #include "SvnShowRecentChangesDlg.h"
 #include "clGotoAnythingManager.h"
-#include "clKeyboardManager.h"
 #include "cl_standard_paths.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"

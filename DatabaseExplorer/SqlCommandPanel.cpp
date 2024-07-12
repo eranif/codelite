@@ -26,8 +26,8 @@
 #include "SqlCommandPanel.h"
 
 #include "DbViewerPanel.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "bitmap_loader.h"
-#include "clKeyboardManager.h"
 #include "clStatusBarMessage.h"
 #include "cl_aui_tool_stickness.h"
 #include "cl_defs.h"

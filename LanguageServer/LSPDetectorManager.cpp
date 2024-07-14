@@ -5,6 +5,7 @@
 #include "detectors/LSPCMakeDetector.hpp"
 #include "detectors/LSPCTagsdDetector.hpp"
 #include "detectors/LSPClangdDetector.hpp"
+#include "detectors/LSPGoplsDetector.hpp"
 #include "detectors/LSPJdtlsDetector.hpp"
 #include "detectors/LSPPythonDetector.hpp"
 #include "detectors/LSPRustAnalyzerDetector.hpp"
@@ -21,6 +22,7 @@ LSPDetectorManager::LSPDetectorManager()
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPCTagsdDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPCMakeDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPJdtlsDetector()));
+    m_detectors.push_back(LSPDetector::Ptr_t(new LSPGoplsDetector()));
 }
 
 LSPDetectorManager::~LSPDetectorManager() {}

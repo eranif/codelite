@@ -264,7 +264,7 @@ void LanguageServerProtocol::DoClear()
     m_initializeRequestID = wxNOT_FOUND;
     m_Queue.Clear();
     m_lastCompletionRequestId = wxNOT_FOUND;
-    // Destory the current connection
+    // Destroy the current connection
     m_network->Close();
 }
 
@@ -674,7 +674,13 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
 
     // The process started successfully
     // Send the 'initialize' request
-    LSP::InitializeRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest());
+
+    // Go lsp requires the client to send the list of tokenTypes (for semanticTokens support) in the
+    // initialise request
+    bool withTokenTypesHack = CanHandle(FileExtManager::TypeGo);
+    LSP::InitializeRequest::Ptr_t req =
+        LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest(withTokenTypesHack));
+
     // some LSPs will crash if we path an empty root folder
     wxString root_uri = m_rootFolder;
     if (root_uri.empty()) {

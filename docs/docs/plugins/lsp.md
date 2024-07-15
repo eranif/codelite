@@ -109,28 +109,13 @@ select the ones you are interested in and then [configure them in CodeLite][14]
     TARGET=$(rustup target list|grep installed|cut -d" " -f1)
     $HOME/.rustup/toolchains/nightly-$TARGET/bin/rust-analyzer```
 
-=== "rls"
-    `rls` is yet another rust language server, but less popular than `rust-analzyer`
+=== "gopls"
+    `gopls` (pronounced "Go Please") is the official LSP for `golang`
 
     To install it:
-
-    - [Install rust][13]
-    - Open a terminal and type:
-        - On `macOS` and `Linux`:
-            ```bash
-            rustup update
-            rustup component add rls rust-analysis rust-src```
-
-        - On `Windows`:
-            ```batch
-            %USERPROFILE%\.cargo\bin\rustup update
-            %USERPROFILE%\.cargo\bin\rustup component add rls rust-analysis rust-src```
-
-    Visit the [project home page][8]
-
-    !!! Important
-        The `rls` language server must be started from the cargo project directory
-        i.e. the location of the `Cargo.toml` file
+    ```bash
+    go install golang.org/x/tools/gopls@latest
+    ```
 
 ---
 

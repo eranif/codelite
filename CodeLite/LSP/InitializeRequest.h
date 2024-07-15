@@ -10,9 +10,10 @@ class WXDLLIMPEXP_CL InitializeRequest : public LSP::Request
     int m_processId = wxNOT_FOUND;
     wxString m_rootUri;
     wxString m_initOptions;
+    bool m_withTokenTypes = false;
 
 public:
-    InitializeRequest(const wxString& rootUri = "");
+    InitializeRequest(bool withTokenTypes, const wxString& rootUri = "");
     virtual ~InitializeRequest();
     InitializeRequest& SetProcessId(int processId)
     {
@@ -32,5 +33,5 @@ public:
     void SetInitOptions(const wxString& initOptions) { this->m_initOptions = initOptions; }
     const wxString& GetInitOptions() const { return m_initOptions; }
 };
-};     // namespace LSP
+}; // namespace LSP
 #endif // INITIALIZEREQUEST_H

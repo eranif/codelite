@@ -3773,7 +3773,9 @@ void clEditor::OnMotion(wxMouseEvent& event)
         DoMarkHyperlink(event, true);
     } else {
         event.Skip();
-        SetSTCCursor(wxSTC_CURSORNORMAL);
+        if (GetSTCCursor() != wxSTC_CURSORNORMAL) {
+            SetSTCCursor(wxSTC_CURSORNORMAL);
+        }
     }
 }
 

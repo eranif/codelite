@@ -790,14 +790,6 @@ void clEditor::SetProperties()
         SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
     }
 
-    // Update the line numbers background colour based on the currently selected theme
-    if (DrawingUtils::IsDark(StyleGetBackground(0))) {
-        StyleSetBackground(wxSTC_STYLE_LINENUMBER, StyleGetBackground(0).ChangeLightness(80));
-    } else {
-        StyleSetForeground(wxSTC_STYLE_LINENUMBER, "BLACK");
-        StyleSetBackground(wxSTC_STYLE_LINENUMBER, StyleGetBackground(0).ChangeLightness(80));
-    }
-
     // line number margin displays every thing but folding, bookmarks and breakpoint
     SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler |
                                       mmt_all_breakpoints | mmt_line_marker));
@@ -3305,13 +3297,6 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers, bool force)
             lines_to_draw.push_back({ line, line + 1 });
         }
     }
-
-    // wxColour bg_colour, fg_colour;
-    // GetLineMarginColours(GetCtrl(), &bg_colour, &fg_colour);
-    // wxUnusedVar(bg_colour);
-
-    // StyleSetBackground(wxSTC_STYLE_LINENUMBER, StyleGetBackground(0));
-    // StyleSetForeground(wxSTC_STYLE_LINENUMBER, fg_colour);
 
     // set the line numbers, taking hidden lines into consideration
     for (auto& [line_number, line_to_render] : lines_to_draw) {

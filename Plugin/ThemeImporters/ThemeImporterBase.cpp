@@ -251,6 +251,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
 
     // Read the basic properties ("m_editor")
     GetEclipseXmlProperty("background", "foreground", m_editor);
+
     m_isDarkTheme = DrawingUtils::IsDark(m_editor.bg_colour);
     // set the selection colour
     SetSelectionColour(m_isDarkTheme, m_selection);

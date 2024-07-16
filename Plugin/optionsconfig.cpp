@@ -45,8 +45,8 @@ wxString SetDefaultBookmarkColours()
     // one
     const wxString arr[] = { "#FF0080", "#0000FF", "#FF0000", "#00FF00", "#FFFF00" };
     wxString output;
-    for(size_t n = 0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
-        if(n < sizeof(arr) / sizeof(wxString)) {
+    for (size_t n = 0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
+        if (n < sizeof(arr) / sizeof(wxString)) {
             output << arr[n] << ';';
         } else {
             output << "#FF0080" << ';';
@@ -57,23 +57,23 @@ wxString SetDefaultBookmarkColours()
 }
 
 OptionsConfig::OptionsConfig(wxXmlNode* node)
-    : m_displayFoldMargin(true)
+    : m_displayFoldMargin(false)
     , m_underlineFoldLine(false)
     , m_scrollBeyondLastLine(true)
-    , m_foldStyle("Flatten Tree Square Headers")
+    , m_foldStyle("Arrows")
     , m_displayBookmarkMargin(true)
     , m_bookmarkShape(wxT("Small Arrow"))
     , m_bookmarkBgColours(SetDefaultBookmarkColours())
     , m_bookmarkFgColours(SetDefaultBookmarkColours())
     , m_bookmarkLabels(defaultBookmarkLabels)
     , m_highlightCaretLine(true)
-    , m_highlightCaretLineWithColour(false)
+    , m_highlightCaretLineWithColour(true)
     , m_clearHighlitWordsOnFind(true)
     , m_displayLineNumbers(true)
     , m_relativeLineNumbers(false)
     , m_showIndentationGuidelines(true)
     , m_caretLineColour(wxT("LIGHT BLUE"))
-    , m_indentUsesTabs(true)
+    , m_indentUsesTabs(false)
     , m_indentWidth(4)
     , m_tabWidth(4)
     , m_iconsSize(16)
@@ -136,12 +136,13 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     m_options.set(Opt_NavKey_Shift);
     m_options.set(Opt_FoldHighlightActiveBlock);
     m_options.set(Opt_TabStyleMinimal);
+    m_options.set(Opt_HideDockingWindowCaption);
 
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
     // set the default font name to be wxFONTENCODING_UTF8
     SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
-    if(node) {
+    if (node) {
         SetFileFontEncoding(
             XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
 
@@ -222,7 +223,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_trimOnlyModifiedLines = XmlUtils::ReadBool(node, wxT("m_trimOnlyModifiedLines"), m_trimOnlyModifiedLines);
 
         wxString options;
-        if(XmlUtils::ReadStringIfExists(node, "options_bits", options)) {
+        if (XmlUtils::ReadStringIfExists(node, "options_bits", options)) {
             m_options.from_string(options);
         }
         m_debuggerMarkerLine = XmlUtils::ReadString(node, wxT("m_debuggerMarkerLine"),
@@ -248,13 +249,13 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     }
 
     // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
-    if(m_bookmarkFgColours.empty()) {
+    if (m_bookmarkFgColours.empty()) {
         // This must be the first time with multiple BMs, so rescue any old user-set value
         m_bookmarkFgColours = SetDefaultBookmarkColours();
         wxString oldcolour = XmlUtils::ReadString(node, "BookmarkFgColour", "#FF0080");
         SetBookmarkFgColour(oldcolour, 0);
     }
-    if(m_bookmarkBgColours.empty()) {
+    if (m_bookmarkBgColours.empty()) {
         m_bookmarkBgColours = SetDefaultBookmarkColours();
         wxString oldcolour = XmlUtils::ReadString(node, "BookmarkBgColour", "#FF0080");
         SetBookmarkBgColour(oldcolour, 0);
@@ -374,20 +375,20 @@ void OptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 {
     this->m_fileFontEncoding = wxFontMapper::Get()->CharsetToEncoding(strFileFontEncoding, false);
 
-    if(wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) {
+    if (wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) {
         this->m_fileFontEncoding = wxFONTENCODING_UTF8;
     }
 }
 
 wxString OptionsConfig::GetEOLAsString() const
 {
-    if(GetEolMode() == wxT("Unix (LF)")) {
+    if (GetEolMode() == wxT("Unix (LF)")) {
         return "\n";
 
-    } else if(GetEolMode() == wxT("Mac (CR)")) {
+    } else if (GetEolMode() == wxT("Mac (CR)")) {
         return "\r";
 
-    } else if(GetEolMode() == wxT("Windows (CRLF)")) {
+    } else if (GetEolMode() == wxT("Windows (CRLF)")) {
         return "\r\n";
 
     } else {
@@ -399,7 +400,7 @@ wxColour OptionsConfig::GetBookmarkFgColour(size_t index) const
 {
     wxColour col;
     wxArrayString arr = wxSplit(m_bookmarkFgColours, ';');
-    if(index < arr.GetCount()) {
+    if (index < arr.GetCount()) {
         return wxColour(arr.Item(index));
     }
 
@@ -409,7 +410,7 @@ wxColour OptionsConfig::GetBookmarkFgColour(size_t index) const
 void OptionsConfig::SetBookmarkFgColour(wxColour c, size_t index)
 {
     wxArrayString arr = wxSplit(m_bookmarkFgColours, ';');
-    if(index < arr.GetCount()) {
+    if (index < arr.GetCount()) {
         arr.Item(index) = c.GetAsString(wxC2S_HTML_SYNTAX);
         m_bookmarkFgColours = wxJoin(arr, ';');
     }
@@ -419,7 +420,7 @@ wxColour OptionsConfig::GetBookmarkBgColour(size_t index) const
 {
     wxColour col;
     wxArrayString arr = wxSplit(m_bookmarkBgColours, ';');
-    if(index < arr.GetCount()) {
+    if (index < arr.GetCount()) {
         return wxColour(arr.Item(index));
     }
 
@@ -429,7 +430,7 @@ wxColour OptionsConfig::GetBookmarkBgColour(size_t index) const
 void OptionsConfig::SetBookmarkBgColour(wxColour c, size_t index)
 {
     wxArrayString arr = wxSplit(m_bookmarkBgColours, ';');
-    if(index < arr.GetCount()) {
+    if (index < arr.GetCount()) {
         arr.Item(index) = c.GetAsString(wxC2S_HTML_SYNTAX);
         m_bookmarkBgColours = wxJoin(arr, ';');
     }
@@ -438,7 +439,7 @@ void OptionsConfig::SetBookmarkBgColour(wxColour c, size_t index)
 wxString OptionsConfig::GetBookmarkLabel(size_t index) const
 {
     wxArrayString arr = wxSplit(m_bookmarkLabels, ';');
-    if(index < arr.GetCount()) {
+    if (index < arr.GetCount()) {
         return arr.Item(index);
     }
 
@@ -448,7 +449,7 @@ wxString OptionsConfig::GetBookmarkLabel(size_t index) const
 void OptionsConfig::SetBookmarkLabel(const wxString& label, size_t index)
 {
     wxArrayString arr = wxSplit(m_bookmarkLabels, ';');
-    if(index < arr.GetCount()) {
+    if (index < arr.GetCount()) {
         arr.Item(index) = label;
         m_bookmarkLabels = wxJoin(arr, ';');
     }
@@ -456,32 +457,32 @@ void OptionsConfig::SetBookmarkLabel(const wxString& label, size_t index)
 
 void OptionsConfig::UpdateFromEditorConfig(const clEditorConfigSection& section)
 {
-    if(section.IsInsertFinalNewlineSet()) {
+    if (section.IsInsertFinalNewlineSet()) {
         this->SetAppendLF(section.IsInsertFinalNewline());
     }
-    if(section.IsSetEndOfLineSet()) {
+    if (section.IsSetEndOfLineSet()) {
         // Convert .editorconfig to CodeLite strings
         wxString eolMode = "Unix (LF)"; // default
-        if(section.GetEndOfLine() == "crlf") {
+        if (section.GetEndOfLine() == "crlf") {
             eolMode = "Windows (CRLF)";
-        } else if(section.GetEndOfLine() == "cr") {
+        } else if (section.GetEndOfLine() == "cr") {
             eolMode = "Mac (CR)";
         }
         this->SetEolMode(eolMode);
     }
-    if(section.IsTabWidthSet()) {
+    if (section.IsTabWidthSet()) {
         this->SetTabWidth(section.GetTabWidth());
     }
-    if(section.IsIndentStyleSet()) {
+    if (section.IsIndentStyleSet()) {
         this->SetIndentUsesTabs(section.GetIndentStyle() == "tab");
     }
-    if(section.IsTabWidthSet()) {
+    if (section.IsTabWidthSet()) {
         this->SetTabWidth(section.GetTabWidth());
     }
-    if(section.IsIndentSizeSet()) {
+    if (section.IsIndentSizeSet()) {
         this->SetIndentWidth(section.GetIndentSize());
     }
-    if(section.IsCharsetSet()) {
+    if (section.IsCharsetSet()) {
         // TODO: fix the locale here
     }
 }

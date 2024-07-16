@@ -100,12 +100,6 @@
 #include "uchardet/uchardet.h"
 #endif
 
-#define NUMBER_MARGIN_ID 0
-#define EDIT_TRACKER_MARGIN_ID 1
-#define SYMBOLS_MARGIN_ID 2
-#define SYMBOLS_MARGIN_SEP_ID 3
-#define FOLD_MARGIN_ID 4
-
 #define CL_LINE_MODIFIED_STYLE 200
 #define CL_LINE_SAVED_STYLE 201
 
@@ -137,12 +131,20 @@ bool clEditor::m_ccInitialized = false;
 
 wxPrintData* g_printData = NULL;
 wxPageSetupDialogData* g_pageSetupData = NULL;
-static int ID_OPEN_URL = wxNOT_FOUND;
 
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 namespace
 {
+
+int ID_OPEN_URL = wxNOT_FOUND;
+
+// Margins. The orders here matters
+constexpr int FOLD_MARGIN_ID = 0;
+constexpr int NUMBER_MARGIN_ID = 1;
+constexpr int EDIT_TRACKER_MARGIN_ID = 2;
+constexpr int SYMBOLS_MARGIN_ID = 3;
+constexpr int SYMBOLS_MARGIN_SEP_ID = 4;
 
 /// A helper class that sets the cursor of the current control to
 /// left pointing arrow and restores it once its destroyed
@@ -371,7 +373,7 @@ bool IsDefaultFgColourDark(wxStyledTextCtrl* ctrl) { return DrawingUtils::IsDark
 void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
 {
     // Use a distinct style to highlight the current line number
-    wxColour default_bg_colour = ctrl->StyleGetBackground(0);
+    wxColour default_bg_colour = ctrl->StyleGetBackground(wxSTC_STYLE_LINENUMBER);
     wxColour default_fg_colour = DrawingUtils::IsDark(default_bg_colour) ? default_bg_colour.ChangeLightness(120)
                                                                          : default_bg_colour.ChangeLightness(80);
     wxColour current_line_bg_colour = ctrl->StyleGetBackground(0);
@@ -748,11 +750,6 @@ void clEditor::SetProperties()
     SetCaretPeriod(options->GetCaretBlinkPeriod());
     SetMarginLeft(1);
 
-    wxColour line_colour, line_bg_colour;
-    GetLineMarginColours(GetCtrl(), &line_bg_colour, &line_colour);
-    StyleSetBackground(wxSTC_STYLE_LINENUMBER, line_bg_colour);
-    StyleSetForeground(wxSTC_STYLE_LINENUMBER, line_colour);
-
     // Mark current line
     SetCaretLineVisible(options->GetHighlightCaretLine());
 #if wxCHECK_VERSION(3, 3, 0)
@@ -792,6 +789,14 @@ void clEditor::SetProperties()
         SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
     }
 
+    // Update the line numbers background colour based on the currently selected theme
+    if (DrawingUtils::IsDark(StyleGetBackground(0))) {
+        StyleSetBackground(wxSTC_STYLE_LINENUMBER, StyleGetBackground(0).ChangeLightness(80));
+    } else {
+        StyleSetForeground(wxSTC_STYLE_LINENUMBER, "BLACK");
+        StyleSetBackground(wxSTC_STYLE_LINENUMBER, StyleGetBackground(0).ChangeLightness(80));
+    }
+
     // line number margin displays every thing but folding, bookmarks and breakpoint
     SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler |
                                       mmt_all_breakpoints | mmt_line_marker));
@@ -809,6 +814,7 @@ void clEditor::SetProperties()
     SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_COLOUR);
     SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
     SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, FromDIP(1));
+
     wxColour bgColour = StyleGetBackground(0);
     SetMarginBackground(SYMBOLS_MARGIN_SEP_ID,
                         DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(120) : bgColour.ChangeLightness(60));
@@ -822,7 +828,7 @@ void clEditor::SetProperties()
     // Show number margin according to settings.
     UpdateLineNumberMarginWidth();
 
-    // Mark fold margin & symbols margins as sensetive
+    // Mark fold margin & symbols margins as sensitive
     SetMarginSensitive(SYMBOLS_MARGIN_ID, true);
 
     // Right margin
@@ -834,6 +840,9 @@ void clEditor::SetProperties()
     //---------------------------------------------------
     // Fold settings
     //---------------------------------------------------
+    StyleSetBackground(wxSTC_STYLE_FOLDDISPLAYTEXT, StyleGetBackground(wxSTC_STYLE_DEFAULT));
+    StyleSetForeground(wxSTC_STYLE_FOLDDISPLAYTEXT, DrawingUtils::IsDark(bg_colour) ? "GOLD" : "ORANGE");
+
     // Determine the folding symbols colours
     wxColour foldFgColour = wxColor(0xff, 0xff, 0xff);
     wxColour foldBgColour = wxColor(0x80, 0x80, 0x80);
@@ -869,6 +878,7 @@ void clEditor::SetProperties()
     SetMarginType(FOLD_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
     SetMarginSensitive(FOLD_MARGIN_ID, true);
     SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? FromDIP(16) : 0);
+    StyleSetBackground(FOLD_MARGIN_ID, StyleGetBackground(wxSTC_STYLE_DEFAULT));
 
     if (options->GetFoldStyle() == wxT("Flatten Tree Square Headers")) {
         DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS, foldFgColour, foldBgColour);
@@ -3298,8 +3308,8 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers, bool force)
     // GetLineMarginColours(GetCtrl(), &bg_colour, &fg_colour);
     // wxUnusedVar(bg_colour);
 
-    // StyleSetBackground(LINE_NUMBERS_ATTR_ID, StyleGetBackground(0));
-    // StyleSetForeground(LINE_NUMBERS_ATTR_ID, fg_colour);
+    // StyleSetBackground(wxSTC_STYLE_LINENUMBER, StyleGetBackground(0));
+    // StyleSetForeground(wxSTC_STYLE_LINENUMBER, fg_colour);
 
     // set the line numbers, taking hidden lines into consideration
     for (auto& [line_number, line_to_render] : lines_to_draw) {

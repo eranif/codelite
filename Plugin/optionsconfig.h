@@ -158,7 +158,7 @@ protected:
     int m_nbTabHeight; // Should notebook tabs be too tall, too short or...
     wxString m_webSearchPrefix;
     bool m_smartParen = true;
-    bool m_lineNumberHighlightCurrent = true;
+    bool m_lineNumberHighlightCurrent = false;
     bool m_showRightMarginIndicator = false;
     int m_rightMarginColumn = 120;
 

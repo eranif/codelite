@@ -40,7 +40,7 @@ void clRemoteHost::DrainPendingCommands() { m_callbacks.clear(); }
 
 clRemoteHost* clRemoteHost::Instance()
 {
-    if(ms_instance == nullptr) {
+    if (ms_instance == nullptr) {
         ms_instance = new clRemoteHost{};
     }
     return ms_instance;
@@ -56,7 +56,7 @@ void clRemoteHost::OnWorkspaceOpened(clWorkspaceEvent& event)
 {
     event.Skip();
     m_activeAccount.clear();
-    if(event.IsRemote()) {
+    if (event.IsRemote()) {
         /// Initialise the remote host executor
         m_activeAccount = event.GetRemoteAccount();
     }
@@ -66,7 +66,7 @@ void clRemoteHost::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     DrainPendingCommands();
-    for(auto proc : m_interactiveProcesses) {
+    for (auto proc : m_interactiveProcesses) {
         // terminate the bg thread + close the channel
         proc->Terminate();
     }
@@ -80,7 +80,7 @@ void clRemoteHost::AddSshSession(clSSH::Ptr_t ssh_session) { m_sessions.push_bac
 clSSH::Ptr_t clRemoteHost::TakeSession()
 {
     clSSH::Ptr_t ssh_session;
-    if(m_sessions.empty()) {
+    if (m_sessions.empty()) {
         ssh_session = CreateSession(m_activeAccount);
     } else {
         ssh_session = m_sessions.back();
@@ -94,25 +94,25 @@ clSSH::Ptr_t clRemoteHost::CreateSession(const wxString& account_name)
     clSSH::Ptr_t ssh_session;
     // create new session
     auto account = SSHAccountInfo::LoadAccount(account_name);
-    if(account.GetHost().empty()) {
+    if (account.GetHost().empty()) {
         LOG_WARNING(LOG()) << "could not find account:" << account_name << endl;
         return nullptr;
     }
 
     /// open channel
     try {
-        ssh_session.reset(
-            new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
+        ssh_session.reset(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(),
+                                    account.GetKeyFiles(), account.GetPort()));
         wxString message;
 
         ssh_session->Open();
-        if(!ssh_session->AuthenticateServer(message)) {
+        if (!ssh_session->AuthenticateServer(message)) {
             ssh_session->AcceptServerAuthentication();
         }
         ssh_session->Login();
-    } catch(clException& e) {
+    } catch (clException& e) {
         LOG_ERROR(LOG()) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
-                       << endl;
+                         << endl;
         return nullptr;
     }
     LOG_DEBUG(LOG()) << "Initializing for account:" << account_name << "completed successfully" << endl;
@@ -123,7 +123,7 @@ void clRemoteHost::run_command_with_callback(const std::vector<wxString>& comman
                                              const clEnvList_t& env, execute_callback&& cb)
 {
     auto proc = m_executor.try_execute(clRemoteExecutor::Cmd::from(command, wd, env));
-    if(proc) {
+    if (proc) {
         m_callbacks.emplace_back(std::make_pair(std::move(cb), proc));
     }
 }
@@ -139,7 +139,7 @@ void clRemoteHost::run_command_with_callback(const wxString& command, const wxSt
 void clRemoteHost::OnCommandStderr(clProcessEvent& event)
 {
     const std::string& output = event.GetStringRaw();
-    if(m_callbacks.empty()) {
+    if (m_callbacks.empty()) {
         LOG_WARNING(LOG()) << "no callback found for command output" << endl;
         return;
     }
@@ -151,7 +151,7 @@ void clRemoteHost::OnCommandStderr(clProcessEvent& event)
 void clRemoteHost::OnCommandStdout(clProcessEvent& event)
 {
     const std::string& output = event.GetStringRaw();
-    if(m_callbacks.empty()) {
+    if (m_callbacks.empty()) {
         LOG_WARNING(LOG()) << "no callback found for command output" << endl;
         return;
     }
@@ -162,7 +162,7 @@ void clRemoteHost::OnCommandStdout(clProcessEvent& event)
 
 void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
 {
-    if(m_callbacks.empty()) {
+    if (m_callbacks.empty()) {
         LOG_WARNING(LOG()) << "no callback found for command output" << endl;
         return;
     }
@@ -179,7 +179,7 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
 {
     // create new ssh session
     auto ssh_session = CreateSession(m_activeAccount);
-    if(!ssh_session) {
+    if (!ssh_session) {
         LOG_ERROR(LOG()) << "no ssh session available" << endl;
         return IProcess::Ptr_t{};
     }
@@ -189,7 +189,7 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
 
     IProcess::Ptr_t proc(
         clSSHInteractiveChannel::Create(parent, ssh_session, argv, flags, wd, env.empty() ? nullptr : &env));
-    if(proc) {
+    if (proc) {
         m_interactiveProcesses.push_back(proc);
     }
     return proc;

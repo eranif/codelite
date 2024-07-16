@@ -432,7 +432,8 @@ void SFTPBrowserDlg::DoBrowse()
         return;
     }
 
-    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
+    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFiles(),
+                               account.GetPort()));
     try {
         wxString message;
         EnvSetter env;

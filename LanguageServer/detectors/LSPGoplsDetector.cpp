@@ -31,6 +31,9 @@ void LSPGoplsDetector::ConfigureFile(const wxFileName& gopls)
     SetCommand(command);
     SetEnabled(true);
 
+    // Need this enabled to have semantic tokens
+    SetInitialiseOptions(R"({ "ui.semanticTokens": true })");
+
     // Add support for the languages
     GetLangugaes().Add("go");
     SetConnectionString("stdio");

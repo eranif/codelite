@@ -56,13 +56,13 @@ clSFTPManager::clSFTPManager()
 clSFTPManager::~clSFTPManager()
 {
     StopWorkerThread();
-    if(m_eventsConnected) {
+    if (m_eventsConnected) {
         EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
         EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
         m_eventsConnected = false;
     }
 
-    if(m_timer) {
+    if (m_timer) {
         Unbind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
         m_timer->Stop();
         wxDELETE(m_timer);
@@ -80,23 +80,23 @@ clSFTPManager& clSFTPManager::Get()
 void clSFTPManager::Release()
 {
     StopWorkerThread();
-    while(!m_connections.empty()) {
+    while (!m_connections.empty()) {
         const auto& conn_info = *(m_connections.begin());
         DeleteConnection(conn_info.first, false);
     }
     m_connections.clear();
 
-    if(m_eventsConnected) {
+    if (m_eventsConnected) {
         EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
         EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
         m_eventsConnected = false;
     }
-    if(m_timer) {
+    if (m_timer) {
         Unbind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
         m_timer->Stop();
         wxDELETE(m_timer);
     }
-    if(m_worker_thread) {
+    if (m_worker_thread) {
         m_shutdown.store(true);
         m_worker_thread->join();
         wxDELETE(m_worker_thread);
@@ -106,7 +106,7 @@ void clSFTPManager::Release()
 bool clSFTPManager::AddConnection(const wxString& account_name, bool replace)
 {
     auto acc = SSHAccountInfo::LoadAccount(account_name);
-    if(!acc.IsOk()) {
+    if (!acc.IsOk()) {
         return false;
     }
     return AddConnection(acc, replace);
@@ -117,8 +117,8 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
     wxBusyCursor bc;
     {
         auto iter = m_connections.find(account.GetAccountName());
-        if(iter != m_connections.end()) {
-            if(!replace) {
+        if (iter != m_connections.end()) {
+            if (!replace) {
                 // do not replace the current connection
                 return true;
             }
@@ -127,12 +127,13 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
     }
 
     try {
-        clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
+        clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(),
+                                   account.GetKeyFiles(), account.GetPort()));
         EnvSetter env;
         ssh->Open();
         wxString message;
-        if(!ssh->AuthenticateServer(message)) {
-            if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
+        if (!ssh->AuthenticateServer(message)) {
+            if (::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
                 ssh->AcceptServerAuthentication();
             } else {
                 return false;
@@ -149,7 +150,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
         event.SetAccount(account.GetAccountName());
         EventNotifier::Get()->AddPendingEvent(event);
 
-    } catch(clException& e) {
+    } catch (clException& e) {
         clERROR() << "AddConnection() error:" << e.What();
         return false;
     }
@@ -159,7 +160,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
 std::pair<SSHAccountInfo, clSFTP::Ptr_t> clSFTPManager::GetConnectionPair(const wxString& account) const
 {
     auto iter = m_connections.find(account);
-    if(iter == m_connections.end()) {
+    if (iter == m_connections.end()) {
         return { {}, clSFTP::Ptr_t(nullptr) };
     }
     return iter->second;
@@ -168,7 +169,7 @@ std::pair<SSHAccountInfo, clSFTP::Ptr_t> clSFTPManager::GetConnectionPair(const 
 clSFTP::Ptr_t clSFTPManager::GetConnectionPtr(const wxString& account) const
 {
     auto iter = m_connections.find(account);
-    if(iter == m_connections.end()) {
+    if (iter == m_connections.end()) {
         return clSFTP::Ptr_t(nullptr);
     }
     return iter->second.second;
@@ -177,15 +178,15 @@ clSFTP::Ptr_t clSFTPManager::GetConnectionPtr(const wxString& account) const
 clSFTP::Ptr_t clSFTPManager::GetConnectionPtrAddIfMissing(const wxString& account)
 {
     auto iter = m_connections.find(account);
-    if(iter != m_connections.end()) {
+    if (iter != m_connections.end()) {
         return iter->second.second;
     }
     // no such connection, add it
     auto acc = SSHAccountInfo::LoadAccount(account);
-    if(acc.GetAccountName().empty()) {
+    if (acc.GetAccountName().empty()) {
         return clSFTP::Ptr_t(nullptr);
     }
-    if(!AddConnection(acc)) {
+    if (!AddConnection(acc)) {
         return clSFTP::Ptr_t(nullptr);
     }
     return m_connections[account].second;
@@ -194,7 +195,7 @@ clSFTP::Ptr_t clSFTPManager::GetConnectionPtrAddIfMissing(const wxString& accoun
 SFTPClientData* clSFTPManager::GetSFTPClientData(IEditor* editor)
 {
     auto clientData = editor->GetClientData("sftp");
-    if(!clientData) {
+    if (!clientData) {
         return nullptr;
     }
     return dynamic_cast<SFTPClientData*>(clientData);
@@ -204,7 +205,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const SSHAccountInfo& acc
 {
     wxBusyCursor bc;
     bool res = AddConnection(accountInfo);
-    if(!res) {
+    if (!res) {
         return nullptr;
     }
     return OpenFile(path, accountInfo.GetAccountName());
@@ -215,23 +216,23 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     // if the file is already opened in the editor, return it
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
-    for(auto editor : editors) {
+    for (auto editor : editors) {
         auto clientData = GetSFTPClientData(editor);
-        if(clientData && clientData->GetAccountName() == accountName && clientData->GetRemotePath() == path) {
+        if (clientData && clientData->GetAccountName() == accountName && clientData->GetRemotePath() == path) {
             clGetManager()->SelectPage(editor->GetCtrl());
             return editor;
         }
     }
 
     auto account = SSHAccountInfo::LoadAccount(accountName);
-    if(account.GetAccountName().empty()) {
+    if (account.GetAccountName().empty()) {
         m_lastError.clear();
         m_lastError << "failed to locate account:" << accountName;
         return nullptr;
     }
 
     wxFileName localPath = clSFTP::GetLocalFileName(account, path, true);
-    if(!DoSyncDownload(path, localPath.GetFullPath(), accountName)) {
+    if (!DoSyncDownload(path, localPath.GetFullPath(), accountName)) {
         return nullptr;
     }
     return clGetManager()->OpenRemoteFile(localPath.GetFullPath(), path, accountName, wxEmptyString);
@@ -256,7 +257,7 @@ bool clSFTPManager::DoSyncReadFile(const wxString& remotePath, const wxString& a
             wxUnusedVar(fileAttr);
             read_promise.set_value(buffer);
 
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "Failed to read remote file:" << remotePath << "." << e.What();
             wxDELETE(buffer);
             read_promise.set_value(nullptr);
@@ -266,7 +267,7 @@ bool clSFTPManager::DoSyncReadFile(const wxString& remotePath, const wxString& a
     // queue the task and wait for the response
     m_q.push_back(std::move(read_func));
     auto buffer = future.get();
-    if(!buffer) {
+    if (!buffer) {
         return false;
     }
 
@@ -300,7 +301,7 @@ void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& 
             event_read.SetContent(content);
             sink->QueueEvent(event_read.Clone());
 
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "Failed to read remote file:" << remotePath << "." << e.What();
         }
     };
@@ -316,30 +317,31 @@ bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& l
     CHECK_PTR_RET_FALSE(conn);
 
     // if the local file already exists, compare checksums before downloading it
-    if(wxFileName::FileExists(localPath)) {
+    if (wxFileName::FileExists(localPath)) {
         clDEBUG() << "Local file with the same path already exists, comapring checksums..." << endl;
         try {
             // read the file size
             size_t remote_file_checksum, local_file_checksum;
-            if(conn->GetChecksum(remotePath, &remote_file_checksum) &&
-               FileUtils::GetChecksum(localPath, &local_file_checksum) && local_file_checksum == remote_file_checksum) {
+            if (conn->GetChecksum(remotePath, &remote_file_checksum) &&
+                FileUtils::GetChecksum(localPath, &local_file_checksum) &&
+                local_file_checksum == remote_file_checksum) {
                 clDEBUG() << "Using cached local file (checksum are the same)" << endl;
                 return true;
             }
-        } catch(clException& e) {
+        } catch (clException& e) {
             wxUnusedVar(e);
         }
     }
 
     wxMemoryBuffer file_content;
-    if(!DoSyncReadFile(remotePath, accountName, &file_content)) {
+    if (!DoSyncReadFile(remotePath, accountName, &file_content)) {
         return false;
     }
 
     {
         wxLogNull no_log;
         wxFFile fp(localPath, "w+b");
-        if(!fp.IsOpened()) {
+        if (!fp.IsOpened()) {
             clERROR() << "failed to open local file:" << localPath << "for write" << endl;
             return false;
         }
@@ -366,14 +368,14 @@ void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& r
     auto save_func = [localPath, remotePath, conn, sink, delete_local]() {
         try {
             conn->Write(localPath, remotePath);
-            if(sink) {
+            if (sink) {
                 // notify about save success
                 clCommandEvent success_event(wxEVT_SFTP_ASYNC_SAVE_COMPLETED);
                 success_event.SetFileName(remotePath);
                 success_event.SetSshAccount(conn->GetAccount());
                 sink->AddPendingEvent(success_event);
             }
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "(AsyncSaveFile): Failed to write file:" << remotePath << "." << e.What();
             clCommandEvent fail_event(wxEVT_SFTP_ASYNC_SAVE_ERROR);
             fail_event.SetFileName(remotePath);
@@ -382,7 +384,7 @@ void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& r
             sink->AddPendingEvent(fail_event);
         }
         // always delete the file
-        if(delete_local) {
+        if (delete_local) {
             clRemoveFile(localPath);
         }
     };
@@ -399,13 +401,13 @@ bool clSFTPManager::DoSyncSaveFileWithConn(clSFTP::Ptr_t conn, const wxString& l
         try {
             conn->Write(localPath, remotePath);
             save_promise.set_value(true);
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "Failed to write file:" << remotePath << "." << e.What();
             save_promise.set_value(false);
         }
 
         // always delete the file
-        if(delete_local) {
+        if (delete_local) {
             clRemoveFile(localPath);
         }
     };
@@ -432,7 +434,7 @@ void clSFTPManager::AsyncSaveFile(const wxString& localPath, const wxString& rem
 void clSFTPManager::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
-    if(clGetManager()->IsShutdownInProgress()) {
+    if (clGetManager()->IsShutdownInProgress()) {
         return;
     }
 
@@ -458,7 +460,7 @@ bool clSFTPManager::AwaitWriteFile(const wxString& content, const wxString& remo
 {
     clTempFile tmpfile;
     tmpfile.Persist(); // do not delete it on exit
-    if(!tmpfile.Write(content, wxConvUTF8)) {
+    if (!tmpfile.Write(content, wxConvUTF8)) {
         return false;
     }
     return DoSyncSaveFile(tmpfile.GetFullPath(), remotePath, accountName, true);
@@ -468,7 +470,7 @@ bool clSFTPManager::AwaitWriteFile(clSFTP::Ptr_t sftp, const wxString& content, 
 {
     clTempFile tmpfile;
     tmpfile.Persist(); // do not delete it on exit
-    if(!tmpfile.Write(content, wxConvUTF8)) {
+    if (!tmpfile.Write(content, wxConvUTF8)) {
         return false;
     }
     return DoSyncSaveFileWithConn(sftp, tmpfile.GetFullPath(), remotePath, true);
@@ -477,7 +479,7 @@ bool clSFTPManager::AwaitWriteFile(clSFTP::Ptr_t sftp, const wxString& content, 
 bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUser)
 {
     auto iter = m_connections.find(accountName);
-    if(iter == m_connections.end()) {
+    if (iter == m_connections.end()) {
         // nothing to be done here
         return false;
     }
@@ -485,10 +487,10 @@ bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUse
     // close all editors owned by this account
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
-    for(auto editor : editors) {
+    for (auto editor : editors) {
         auto cd = GetSFTPClientData(editor);
-        if(cd && (cd->GetAccountName() == accountName)) {
-            if(!clGetManager()->CloseEditor(editor, promptUser)) {
+        if (cd && (cd->GetAccountName() == accountName)) {
+            if (!clGetManager()->CloseEditor(editor, promptUser)) {
                 // user cancelled
                 return false;
             }
@@ -517,7 +519,7 @@ clResult<SFTPAttribute::List_t, bool> clSFTPManager::List(const wxString& path, 
     wxBusyCursor bc;
     // save file async
     auto conn = GetConnectionPtrAddIfMissing(accountInfo.GetAccountName());
-    if(!conn) {
+    if (!conn) {
         return {};
     }
 
@@ -530,13 +532,13 @@ clResult<SFTPAttribute::List_t, bool> clSFTPManager::List(const wxString& path, 
             auto attr = conn->List(path, clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
             result.swap(attr);
             promise.set_value(true);
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "List error." << e.What();
             promise.set_value(false);
         }
     };
     m_q.push_back(std::move(func));
-    if(!future.get()) {
+    if (!future.get()) {
         return clResult<SFTPAttribute::List_t, bool>::make_error(false);
     }
     return result;
@@ -554,7 +556,7 @@ bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountI
         try {
             conn->CreateEmptyFile(path);
             promise.set_value(true);
-        } catch(clException& e) {
+        } catch (clException& e) {
             clDEBUG() << "NewFile() error." << e.What();
             promise.set_value(false);
         }
@@ -582,7 +584,7 @@ bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accoun
         try {
             conn->CreateDir(path);
             promise.set_value(true);
-        } catch(clException& e) {
+        } catch (clException& e) {
             clDEBUG() << "NewFolder() error." << e.What();
             promise.set_value(false);
         }
@@ -603,7 +605,7 @@ bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, con
         try {
             conn->Rename(oldpath, newpath);
             promise.set_value(true);
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "Rename() error." << e.What();
             promise.set_value(false);
         }
@@ -624,7 +626,7 @@ bool clSFTPManager::DeleteDir(const wxString& fullpath, const SSHAccountInfo& ac
         try {
             conn->RemoveDir(fullpath);
             promise.set_value(true);
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "Rename() error." << e.What();
             promise.set_value(false);
         }
@@ -646,7 +648,7 @@ bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& a
         try {
             conn->UnlinkFile(fullpath);
             promise.set_value(true);
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "Rename() error." << e.What();
             promise.set_value(false);
         }
@@ -661,16 +663,16 @@ void clSFTPManager::OnTimer(wxTimerEvent& event)
 
     std::vector<clSFTP::Ptr_t> all_connections;
     size_t count = GetAllConnectionsPtr(all_connections);
-    if(count == 0) {
+    if (count == 0) {
         return;
     }
 
     // push SendKeepAlive() function for all the connections that we hold
-    for(auto conn : all_connections) {
+    for (auto conn : all_connections) {
         auto func = [conn]() {
             try {
                 conn->SendKeepAlive();
-            } catch(clException& e) {
+            } catch (clException& e) {
                 clERROR() << "failed to send keep-alive message for account:" << e.What() << endl;
             }
         };
@@ -690,7 +692,7 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo&
         try {
             auto d = conn->Stat(fullpath);
             promise.set_value(d->IsFile());
-        } catch(clException& e) {
+        } catch (clException& e) {
             clDEBUG() << "IsFileExists() error." << e.What();
             promise.set_value(false);
         }
@@ -711,7 +713,7 @@ bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& 
         try {
             auto d = conn->Stat(fullpath);
             promise.set_value(d->IsFolder());
-        } catch(clException& e) {
+        } catch (clException& e) {
             clERROR() << "IsDirExists() error." << e.What();
             promise.set_value(false);
         }
@@ -724,14 +726,14 @@ wxFileName clSFTPManager::Download(const wxString& path, const wxString& account
 {
     clDEBUG() << "SFTP Manager: Download() called for" << path << endl;
     wxFileName local_file;
-    if(localFileName.empty()) {
+    if (localFileName.empty()) {
         local_file = wxFileName(clStandardPaths::Get().GetTempDir(), path.AfterLast('/'));
         local_file.AppendDir("sftp-downloads");
     } else {
         local_file = wxFileName(localFileName);
     }
     local_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    if(DoSyncDownload(path, local_file.GetFullPath(), accountName)) {
+    if (DoSyncDownload(path, local_file.GetFullPath(), accountName)) {
         return local_file;
     }
     return {};
@@ -742,7 +744,7 @@ void clSFTPManager::AsyncWriteFile(const wxString& content, const wxString& remo
 {
     clTempFile tmpfile;
     tmpfile.Persist(); // do not delete it on exit
-    if(!tmpfile.Write(content, wxConvUTF8)) {
+    if (!tmpfile.Write(content, wxConvUTF8)) {
         return;
     }
     AsyncSaveFile(tmpfile.GetFullPath(), remotePath, accountName, sink);
@@ -756,7 +758,7 @@ bool clSFTPManager::GetRemotePath(const wxString& local_path, const wxString& ac
     const auto& account_info = p.first;
     wxString download_folder = clSFTP::GetDefaultDownloadFolder(account_info);
     wxString rest;
-    if(local_path.StartsWith(download_folder, &rest)) {
+    if (local_path.StartsWith(download_folder, &rest)) {
         rest.Replace("\\", "/");
         remote_path.swap(rest);
         return true;
@@ -771,7 +773,7 @@ bool clSFTPManager::GetLocalPath(const wxString& remote_path, const wxString& ac
 
     const auto& account_info = p.first;
     wxFileName fn = clSFTP::GetLocalFileName(account_info, remote_path);
-    if(fn.IsOk()) {
+    if (fn.IsOk()) {
         local_path = fn.GetFullPath();
         return true;
     }
@@ -780,7 +782,7 @@ bool clSFTPManager::GetLocalPath(const wxString& remote_path, const wxString& ac
 
 void clSFTPManager::StopWorkerThread()
 {
-    if(m_worker_thread) {
+    if (m_worker_thread) {
         m_shutdown.store(true);
         m_worker_thread->join();
         wxDELETE(m_worker_thread);
@@ -790,15 +792,15 @@ void clSFTPManager::StopWorkerThread()
 
 void clSFTPManager::StartWorkerThread()
 {
-    if(m_worker_thread) {
+    if (m_worker_thread) {
         return;
     }
 
     m_worker_thread = new std::thread(
         [](SyncQueue<std::function<void()>>& Q, std::atomic_bool& shutdown) {
-            while(!shutdown.load()) {
+            while (!shutdown.load()) {
                 auto work_func = Q.pop_front();
-                if(work_func == nullptr) {
+                if (work_func == nullptr) {
                     continue;
                 }
                 work_func();
@@ -824,7 +826,7 @@ void clSFTPManager::OnSaveError(clCommandEvent& e)
 
 bool clSFTPManager::IsRemoteFile(const wxString& filepath, wxString* account, wxString* remote_path) const
 {
-    if(m_downloadedFileToAccount.count(filepath) == 0) {
+    if (m_downloadedFileToAccount.count(filepath) == 0) {
         return false;
     }
 
@@ -835,14 +837,14 @@ bool clSFTPManager::IsRemoteFile(const wxString& filepath, wxString* account, wx
 
 size_t clSFTPManager::GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connections) const
 {
-    if(m_connections.empty()) {
+    if (m_connections.empty()) {
         return 0;
     }
     connections.clear();
     connections.reserve(m_connections.size());
-    for(const auto& vt : m_connections) {
+    for (const auto& vt : m_connections) {
         auto conn = GetConnectionPtr(vt.first);
-        if(!conn) {
+        if (!conn) {
             continue;
         }
         connections.push_back(conn);
@@ -872,7 +874,7 @@ ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxSt
 {
     clDEBUG() << "SFTP Manager: AwaitExecute:" << command << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);
-    if(!conn) {
+    if (!conn) {
         clWARNING() << "Failed to obtain connection for command:" << command << ". Account:" << accountName << endl;
         return {};
     }
@@ -884,7 +886,7 @@ ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxSt
         // read the file content
         auto session = conn->GetSsh()->GetSession();
         auto channel = ssh_channel_new(conn->GetSsh()->GetSession());
-        if(!channel) {
+        if (!channel) {
             clWARNING() << "Execution of command:" << command << "failed." << ssh_get_error(session) << endl;
             exec_promise.set_value({});
             return;
@@ -892,7 +894,7 @@ ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxSt
 
         int rc = SSH_OK;
         rc = ssh_channel_open_session(channel);
-        if(rc != SSH_OK) {
+        if (rc != SSH_OK) {
             ssh_channel_free(channel);
             clWARNING() << "Failed to open channel for command:" << command << "." << ssh_get_error(session) << endl;
             exec_promise.set_value({});
@@ -900,13 +902,13 @@ ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxSt
         }
 
         wxString cmd_w_dir;
-        if(!wd.empty()) {
+        if (!wd.empty()) {
             cmd_w_dir << "cd " << StringUtils::WrapWithDoubleQuotes(wd) << " && " << command;
         } else {
             cmd_w_dir << command;
         }
         rc = ssh_channel_request_exec(channel, cmd_w_dir.mb_str(wxConvUTF8).data());
-        if(rc != SSH_OK) {
+        if (rc != SSH_OK) {
             // mark the channel + ssh session as "broken"
             ssh_channel_close(channel);
             ssh_channel_free(channel);
@@ -958,7 +960,7 @@ void clSFTPManager::AsyncExecute(wxEvtHandler* sink, const wxString& accountName
 {
     clDEBUG() << "SFTP Manager: AsyncExecute:" << command << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);
-    if(!conn) {
+    if (!conn) {
         QUEUE_ERROR_EVENT(wxString() << "Failed to obtain connection for command:" << command
                                      << ". Account:" << accountName);
         return;
@@ -968,14 +970,14 @@ void clSFTPManager::AsyncExecute(wxEvtHandler* sink, const wxString& accountName
         // read the file content
         auto session = conn->GetSsh()->GetSession();
         auto channel = ssh_channel_new(conn->GetSsh()->GetSession());
-        if(!channel) {
+        if (!channel) {
             QUEUE_ERROR_EVENT(wxString() << "Execution of command:" << command << "failed." << ssh_get_error(session));
             return;
         }
 
         int rc = SSH_OK;
         rc = ssh_channel_open_session(channel);
-        if(rc != SSH_OK) {
+        if (rc != SSH_OK) {
             ssh_channel_free(channel);
             QUEUE_ERROR_EVENT(wxString() << "Failed to open channel for command:" << command << "."
                                          << ssh_get_error(session));
@@ -983,14 +985,14 @@ void clSFTPManager::AsyncExecute(wxEvtHandler* sink, const wxString& accountName
         }
 
         wxString cmd_w_dir;
-        if(!wd.empty()) {
+        if (!wd.empty()) {
             cmd_w_dir << "cd " << StringUtils::WrapWithDoubleQuotes(wd) << " && " << command;
         } else {
             cmd_w_dir << command;
         }
 
         rc = ssh_channel_request_exec(channel, cmd_w_dir.mb_str(wxConvUTF8).data());
-        if(rc != SSH_OK) {
+        if (rc != SSH_OK) {
             // mark the channel + ssh session as "broken"
             ssh_channel_close(channel);
             ssh_channel_free(channel);
@@ -1002,11 +1004,11 @@ void clSFTPManager::AsyncExecute(wxEvtHandler* sink, const wxString& accountName
         std::string std_out;
         std::string std_err;
         ssh::channel_read_all(channel, &std_err, true);
-        if(!std_err.empty()) {
+        if (!std_err.empty()) {
             QUEUE_OUTPUT_EVENT(std_err, false);
         }
         int exit_code = ssh::channel_read_all(channel, &std_out, false);
-        if(!std_out.empty()) {
+        if (!std_out.empty()) {
             QUEUE_OUTPUT_EVENT(std_out, true);
         }
 

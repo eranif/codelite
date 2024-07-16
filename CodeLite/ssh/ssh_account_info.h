@@ -41,6 +41,7 @@ class WXDLLIMPEXP_CL SSHAccountInfo : public clConfigItem
     wxString m_host;
     wxArrayString m_bookmarks;
     wxString m_defaultFolder;
+    wxArrayString m_keyFiles;
 
 public:
     typedef std::vector<SSHAccountInfo> Vect_t;
@@ -66,6 +67,8 @@ public:
     const wxString& GetUsername() const { return m_username; }
     void SetDefaultFolder(const wxString& defaultFolder) { this->m_defaultFolder = defaultFolder; }
     const wxString& GetDefaultFolder() const { return m_defaultFolder; }
+    void AddKeyFile(const wxString& filepath);
+    const wxArrayString& GetKeyFiles() const { return m_keyFiles; }
 
     /**
      * @brief read list of accounts from the JSON file

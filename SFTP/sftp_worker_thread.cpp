@@ -45,7 +45,7 @@ SFTPWorkerThread::~SFTPWorkerThread() {}
 
 SFTPWorkerThread* SFTPWorkerThread::Instance()
 {
-    if(ms_instance == 0) {
+    if (ms_instance == 0) {
         ms_instance = new SFTPWorkerThread();
     }
     return ms_instance;
@@ -53,7 +53,7 @@ SFTPWorkerThread* SFTPWorkerThread::Instance()
 
 void SFTPWorkerThread::Release()
 {
-    if(ms_instance) {
+    if (ms_instance) {
         ms_instance->Stop();
         delete ms_instance;
     }
@@ -67,12 +67,12 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
     wxString currentAccout = m_sftp ? m_sftp->GetAccount() : "";
     wxString requestAccount = req->GetAccount().GetAccountName();
 
-    if(currentAccout.IsEmpty() || currentAccout != requestAccount) {
+    if (currentAccout.IsEmpty() || currentAccout != requestAccount) {
         m_sftp.reset();
         DoConnect(req);
     }
 
-    if(req->GetAction() == eSFTPActions::kConnect) {
+    if (req->GetAction() == eSFTPActions::kConnect) {
         // Nothing more to be done here
         // Disconnect
         m_sftp.reset();
@@ -81,10 +81,10 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
 
     wxString msg;
     wxString accountName = req->GetAccount().GetAccountName();
-    if(m_sftp && m_sftp->IsConnected()) {
+    if (m_sftp && m_sftp->IsConnected()) {
         msg.Clear();
         try {
-            switch(req->GetAction()) {
+            switch (req->GetAction()) {
             case eSFTPActions::kConnect:
                 // We don't really need this case. Just make the compiler silence
                 return;
@@ -103,7 +103,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 wxMemoryBuffer buffer;
                 SFTPAttribute::Ptr_t fileAttr = m_sftp->Read(req->GetRemoteFile(), buffer);
                 wxFFile fp(req->GetLocalFile(), "w+b");
-                if(fp.IsOpened()) {
+                if (fp.IsOpened()) {
                     fp.Write(buffer.GetData(), buffer.GetDataLen());
                     fp.Close();
                 }
@@ -113,7 +113,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 DoReportStatusBarMessage("");
 
                 // We should also notify the parent window about download completed
-                if(req->GetAction() == eSFTPActions::kDownload) {
+                if (req->GetAction() == eSFTPActions::kDownload) {
                     SFTPClientData cd;
                     cd.SetLocalPath(req->GetLocalFile());
                     cd.SetRemotePath(req->GetRemoteFile());
@@ -122,7 +122,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                     cd.SetAccountName(req->GetAccount().GetAccountName());
                     m_plugin->CallAfter(&SFTP::FileDownloadedSuccessfully, cd);
 
-                } else if(req->GetAction() == eSFTPActions::kDownloadAndOpenContainingFolder) {
+                } else if (req->GetAction() == eSFTPActions::kDownloadAndOpenContainingFolder) {
                     m_plugin->CallAfter(&SFTP::OpenContainingFolder, req->GetLocalFile());
 
                 } else {
@@ -148,7 +148,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 break;
             }
             }
-        } catch(clException& e) {
+        } catch (clException& e) {
 
             msg.Clear();
             msg << "SFTP error: " << e.What();
@@ -157,7 +157,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
             m_sftp.reset();
 
             // Requeue our request
-            if(req->GetRetryCounter() == 0) {
+            if (req->GetRetryCounter() == 0) {
                 msg.Clear();
                 msg << "Retrying to upload file: " << req->GetRemoteFile();
                 DoReportMessage(req->GetAccount().GetAccountName(), msg, SFTPThreadMessage::STATUS_NONE);
@@ -175,14 +175,15 @@ void SFTPWorkerThread::DoConnect(SFTPThreadRequet* req)
 {
     wxString accountName = req->GetAccount().GetAccountName();
     clSSH::Ptr_t ssh(new clSSH(req->GetAccount().GetHost(), req->GetAccount().GetUsername(),
-                               req->GetAccount().GetPassword(), req->GetAccount().GetPort()));
+                               req->GetAccount().GetPassword(), req->GetAccount().GetKeyFiles(),
+                               req->GetAccount().GetPort()));
     try {
         wxString message;
         DoReportStatusBarMessage(wxString() << _("Connecting to ") << accountName);
         DoReportMessage(accountName, "Connecting...", SFTPThreadMessage::STATUS_NONE);
         EnvSetter env;
         ssh->Open();
-        if(!ssh->AuthenticateServer(message)) {
+        if (!ssh->AuthenticateServer(message)) {
             ssh->AcceptServerAuthentication();
         }
 
@@ -197,7 +198,7 @@ void SFTPWorkerThread::DoConnect(SFTPThreadRequet* req)
         msg << "Successfully connected to " << accountName;
         DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
 
-    } catch(clException& e) {
+    } catch (clException& e) {
         wxString msg;
         msg << "Connect error. " << e.What();
         DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_ERROR);
@@ -267,7 +268,7 @@ SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxSt
 
 SFTPThreadRequet::SFTPThreadRequet(const SFTPThreadRequet& other)
 {
-    if(this == &other)
+    if (this == &other)
         return;
     *this = other;
 }

@@ -18,6 +18,7 @@ protected:
     int m_priority = 50;
     clEnvList_t m_env;
     bool m_enabled = true;
+    wxString m_initialiseOptions;
 
 public:
     typedef wxSharedPtr<LSPDetector> Ptr_t;
@@ -47,6 +48,12 @@ public:
     const clEnvList_t& GetEnv() const { return m_env; }
     void SetEnabled(bool enabled) { this->m_enabled = enabled; }
     bool IsEnabled() const { return m_enabled; }
+    LSPDetector& SetInitialiseOptions(const wxString& initialiseOptions)
+    {
+        this->m_initialiseOptions = initialiseOptions;
+        return *this;
+    }
+    const wxString& GetInitialiseOptions() const { return m_initialiseOptions; }
 };
 
 #endif // LSPDETECTOR_HPP

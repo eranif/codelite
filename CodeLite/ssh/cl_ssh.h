@@ -41,6 +41,7 @@
 
 #include <errno.h>
 #include <memory>
+#include <wx/arrstr.h>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
@@ -72,6 +73,7 @@ protected:
     wxTimer* m_timer;
     wxEvtHandler* m_owner;
     clSSHAgent::Ptr_t m_sshAgent;
+    wxArrayString m_keyFiles;
 
 public:
     typedef std::shared_ptr<clSSH> Ptr_t;
@@ -83,7 +85,8 @@ protected:
     void DoConnectWithRetries(int retries);
 
 public:
-    clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);
+    clSSH(const wxString& host, const wxString& user, const wxString& pass, const wxArrayString& keyFiles,
+          int port = 22);
     clSSH();
     virtual ~clSSH();
 

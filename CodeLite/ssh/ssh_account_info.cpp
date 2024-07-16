@@ -37,7 +37,7 @@ SSHAccountInfo::~SSHAccountInfo() {}
 
 SSHAccountInfo& SSHAccountInfo::operator=(const SSHAccountInfo& other)
 {
-    if(&other == this) {
+    if (&other == this) {
         return *this;
     }
     m_accountName = other.m_accountName;
@@ -47,6 +47,7 @@ SSHAccountInfo& SSHAccountInfo::operator=(const SSHAccountInfo& other)
     m_host = other.m_host;
     m_bookmarks = other.m_bookmarks;
     m_defaultFolder = other.m_defaultFolder;
+    m_keyFiles = other.m_keyFiles;
     return *this;
 }
 
@@ -61,6 +62,7 @@ void SSHAccountInfo::FromJSON(const JSONItem& json)
     m_host = json.namedObject("m_host").toString();
     m_bookmarks = json.namedObject("m_bookmarks").toArrayString();
     m_defaultFolder = json.namedObject("m_defaultFolder").toString();
+    m_keyFiles = json.namedObject("m_keyFiles").toArrayString();
 }
 
 JSONItem SSHAccountInfo::ToJSON() const
@@ -72,6 +74,7 @@ JSONItem SSHAccountInfo::ToJSON() const
     element.addProperty("m_host", m_host);
     element.addProperty("m_bookmarks", m_bookmarks);
     element.addProperty("m_defaultFolder", m_defaultFolder);
+    element.addProperty("m_keyFiles", m_keyFiles);
     XORString x(m_password);
     element.addProperty("m_password", x.Encrypt());
     return element;
@@ -79,7 +82,7 @@ JSONItem SSHAccountInfo::ToJSON() const
 
 void SSHAccountInfo::AddBookmark(const wxString& location)
 {
-    if(m_bookmarks.Index(location) == wxNOT_FOUND) {
+    if (m_bookmarks.Index(location) == wxNOT_FOUND) {
         m_bookmarks.Add(location);
     }
 }
@@ -90,22 +93,22 @@ SSHAccountInfo::Vect_t SSHAccountInfo::Load(const std::function<bool(const SSHAc
     jsonfile.AppendDir("config");
 
     JSON root(jsonfile);
-    if(!root.isOk()) {
+    if (!root.isOk()) {
         return {};
     }
     JSONItem s = root.toElement()["sftp-settings"];
     auto accounts = s["accounts"];
     size_t count = accounts.arraySize();
-    if(count == 0) {
+    if (count == 0) {
         return {};
     }
     Vect_t accountsVec;
     accountsVec.reserve(count);
-    for(size_t i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         auto account = accounts[i];
         SSHAccountInfo ai;
         ai.FromJSON(account);
-        if(!matcher || matcher(ai)) {
+        if (!matcher || matcher(ai)) {
             accountsVec.emplace_back(ai);
         }
     }
@@ -115,7 +118,7 @@ SSHAccountInfo::Vect_t SSHAccountInfo::Load(const std::function<bool(const SSHAc
 SSHAccountInfo SSHAccountInfo::LoadAccount(const wxString& accountName)
 {
     auto res = Load([&](const SSHAccountInfo& ai) { return ai.GetAccountName() == accountName; });
-    if(res.size() == 1) {
+    if (res.size() == 1) {
         return res[0];
     }
     return {};
@@ -127,8 +130,15 @@ wxString SSHAccountInfo::GetSSHClient()
     jsonfile.AppendDir("config");
 
     JSON root(jsonfile);
-    if(!root.isOk()) {
+    if (!root.isOk()) {
         return wxEmptyString;
     }
     return root.toElement()["sftp-settings"]["sshClient"].toString();
+}
+
+void SSHAccountInfo::AddKeyFile(const wxString& filepath)
+{
+    if (m_keyFiles.Index(filepath) == wxNOT_FOUND) {
+        m_keyFiles.Add(filepath);
+    }
 }

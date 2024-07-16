@@ -46,16 +46,17 @@ wxDEFINE_EVENT(wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_CONNECTED, clCommandEvent);
 
-clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, int port)
+clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, const wxArrayString& keyFiles, int port)
     : m_host(host)
     , m_username(user)
     , m_password(pass)
     , m_port(port)
     , m_connected(false)
-    , m_session(NULL)
-    , m_channel(NULL)
-    , m_timer(NULL)
-    , m_owner(NULL)
+    , m_session(nullptr)
+    , m_channel(nullptr)
+    , m_timer(nullptr)
+    , m_owner(nullptr)
+    , m_keyFiles(keyFiles)
 {
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutut, this, m_timer->GetId());
@@ -64,10 +65,10 @@ clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, i
 clSSH::clSSH()
     : m_port(22)
     , m_connected(false)
-    , m_session(NULL)
-    , m_channel(NULL)
-    , m_timer(NULL)
-    , m_owner(NULL)
+    , m_session(nullptr)
+    , m_channel(nullptr)
+    , m_timer(nullptr)
+    , m_owner(nullptr)
 {
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutut, this, m_timer->GetId());
@@ -78,10 +79,10 @@ clSSH::~clSSH() { Close(); }
 void clSSH::Open(int seconds)
 {
     // Start ssh-agent before we attempt to connect
-    m_sshAgent.reset(new clSSHAgent());
+    m_sshAgent.reset(new clSSHAgent(m_keyFiles));
 
     m_session = ssh_new();
-    if(!m_session) {
+    if (!m_session) {
         throw clException("ssh_new failed!");
     }
 
@@ -110,23 +111,31 @@ void clSSH::Open(int seconds)
     wxString ssh_options_key_exchange;
     wxString ssh_options_hostkeys;
     wxString ssh_options_publickey_accepted_types;
+    wxString ssh_options_add_identity;
 
-    if(::wxGetEnv("SSH_OPTIONS_KEY_EXCHANGE", &ssh_options_key_exchange)) {
+    if (::wxGetEnv("SSH_OPTIONS_KEY_EXCHANGE", &ssh_options_key_exchange)) {
         ssh_options_set(m_session, SSH_OPTIONS_KEY_EXCHANGE, ssh_options_key_exchange.mb_str(wxConvUTF8).data());
     }
 
-    if(::wxGetEnv("SSH_OPTIONS_HOSTKEYS", &ssh_options_hostkeys)) {
+    if (::wxGetEnv("SSH_OPTIONS_HOSTKEYS", &ssh_options_hostkeys)) {
         ssh_options_set(m_session, SSH_OPTIONS_HOSTKEYS, ssh_options_hostkeys.mb_str(wxConvUTF8).data());
     }
 
-    if(::wxGetEnv("SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES", &ssh_options_publickey_accepted_types)) {
+    if (::wxGetEnv("SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES", &ssh_options_publickey_accepted_types)) {
         ssh_options_set(m_session, SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES,
                         ssh_options_publickey_accepted_types.mb_str(wxConvUTF8).data());
     }
 
+    // Add a new identity file (const char *, format string) to the identity list.
+    // By default id_rsa, id_ecdsa and id_ed25519 files are used.
+    // Use this environment variable to pass a custom SSH key file
+    if (::wxGetEnv("SSH_OPTIONS_ADD_IDENTITY", &ssh_options_add_identity)) {
+        ssh_options_set(m_session, SSH_OPTIONS_ADD_IDENTITY, ssh_options_add_identity.mb_str(wxConvUTF8).data());
+    }
+
     // Connect the session
     int retries = seconds * 100;
-    if(retries < 0) {
+    if (retries < 0) {
         retries = 1;
     }
     DoConnectWithRetries(retries);
@@ -144,7 +153,7 @@ bool clSSH::AuthenticateServer(wxString& message)
 #if LIBSSH_VERSION_INT < SSH_VERSION_INT(0, 6, 5)
     int hlen = 0;
     hlen = ssh_get_pubkey_hash(m_session, &hash);
-    if(hlen < 0) {
+    if (hlen < 0) {
         throw clException("Unable to obtain server public key!");
     }
 #else
@@ -156,7 +165,7 @@ bool clSSH::AuthenticateServer(wxString& message)
     ssh_get_publickey(m_session, &key);
 #endif
     ssh_get_publickey_hash(key, SSH_PUBLICKEY_HASH_SHA1, &hash, &hlen);
-    if(hlen == 0) {
+    if (hlen == 0) {
         throw clException("Unable to obtain server public key!");
     }
 #endif
@@ -166,7 +175,7 @@ bool clSSH::AuthenticateServer(wxString& message)
 #else
     state = ssh_is_server_known(m_session);
 #endif
-    switch(state) {
+    switch (state) {
     case SSH_SERVER_KNOWN_OK:
         free(hash);
         return true;
@@ -207,7 +216,7 @@ bool clSSH::AuthenticateServer(wxString& message)
 
 void clSSH::AcceptServerAuthentication()
 {
-    if(!m_session) {
+    if (!m_session) {
         throw clException("NULL SSH session");
     }
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0, 8, 0)
@@ -218,7 +227,7 @@ void clSSH::AcceptServerAuthentication()
 }
 
 #define THROW_OR_FALSE(msg)       \
-    if(throwExc) {                \
+    if (throwExc) {               \
         throw clException(msg);   \
     } else {                      \
         clDEBUG() << msg << endl; \
@@ -228,7 +237,7 @@ void clSSH::AcceptServerAuthentication()
 bool clSSH::LoginAuthNone(bool throwExc)
 {
     clDEBUG() << "Trying to ssh using `ssh_userauth_none`" << endl;
-    if(!m_session) {
+    if (!m_session) {
         THROW_OR_FALSE("NULL SSH session");
     }
 
@@ -236,7 +245,7 @@ bool clSSH::LoginAuthNone(bool throwExc)
     // interactive keyboard method failed, try another method
     auto username = StringUtils::ToStdString(GetUsername());
     rc = ssh_userauth_none(m_session, username.c_str());
-    if(rc == SSH_AUTH_SUCCESS) {
+    if (rc == SSH_AUTH_SUCCESS) {
         return true;
     }
     THROW_OR_FALSE(_("ssh_userauth_none failed"));
@@ -245,17 +254,17 @@ bool clSSH::LoginAuthNone(bool throwExc)
 
 bool clSSH::LoginPassword(bool throwExc)
 {
-    if(!m_session) {
+    if (!m_session) {
         THROW_OR_FALSE("NULL SSH session");
     }
 
     int rc;
     // interactive keyboard method failed, try another method
     rc = ssh_userauth_password(m_session, NULL, GetPassword().mb_str().data());
-    if(rc == SSH_AUTH_SUCCESS) {
+    if (rc == SSH_AUTH_SUCCESS) {
         return true;
 
-    } else if(rc == SSH_AUTH_DENIED) {
+    } else if (rc == SSH_AUTH_DENIED) {
         THROW_OR_FALSE(_("Login failed: invalid username/password"));
 
     } else {
@@ -266,14 +275,14 @@ bool clSSH::LoginPassword(bool throwExc)
 
 bool clSSH::LoginInteractiveKBD(bool throwExc)
 {
-    if(!m_session) {
+    if (!m_session) {
         THROW_OR_FALSE("NULL SSH session");
     }
 
     int rc;
     rc = ssh_userauth_kbdint(m_session, NULL, NULL);
-    if(rc == SSH_AUTH_INFO) {
-        while(rc == SSH_AUTH_INFO) {
+    if (rc == SSH_AUTH_INFO) {
+        while (rc == SSH_AUTH_INFO) {
             const char *name, *instruction;
             int nprompts, iprompt;
             name = ssh_userauth_kbdint_getname(m_session);
@@ -281,20 +290,21 @@ bool clSSH::LoginInteractiveKBD(bool throwExc)
             nprompts = ssh_userauth_kbdint_getnprompts(m_session);
             wxUnusedVar(name);
             wxUnusedVar(instruction);
-            for(iprompt = 0; iprompt < nprompts; iprompt++) {
+            for (iprompt = 0; iprompt < nprompts; iprompt++) {
                 const char* prompt;
                 char echo;
                 prompt = ssh_userauth_kbdint_getprompt(m_session, iprompt, &echo);
-                if(echo) {
+                if (echo) {
                     wxString answer = ::wxGetTextFromUser(prompt, "SSH");
-                    if(answer.IsEmpty()) {
+                    if (answer.IsEmpty()) {
                         THROW_OR_FALSE(wxString() << "Login error: " << ssh_get_error(m_session));
                     }
-                    if(ssh_userauth_kbdint_setanswer(m_session, iprompt, answer.mb_str(wxConvUTF8).data()) < 0) {
+                    if (ssh_userauth_kbdint_setanswer(m_session, iprompt, answer.mb_str(wxConvUTF8).data()) < 0) {
                         THROW_OR_FALSE(wxString() << "Login error: " << ssh_get_error(m_session));
                     }
                 } else {
-                    if(ssh_userauth_kbdint_setanswer(m_session, iprompt, GetPassword().mb_str(wxConvUTF8).data()) < 0) {
+                    if (ssh_userauth_kbdint_setanswer(m_session, iprompt, GetPassword().mb_str(wxConvUTF8).data()) <
+                        0) {
                         THROW_OR_FALSE(wxString() << "Login error: " << ssh_get_error(m_session));
                     }
                 }
@@ -309,13 +319,13 @@ bool clSSH::LoginInteractiveKBD(bool throwExc)
 
 bool clSSH::LoginPublicKey(bool throwExc)
 {
-    if(!m_session) {
+    if (!m_session) {
         THROW_OR_FALSE("NULL SSH session");
     }
 
     int rc;
     rc = ssh_userauth_publickey_auto(m_session, nullptr, nullptr);
-    if(rc != SSH_AUTH_SUCCESS) {
+    if (rc != SSH_AUTH_SUCCESS) {
         THROW_OR_FALSE(wxString() << _("Public Key error: ") << ssh_get_error(m_session));
     }
     return true;
@@ -329,11 +339,11 @@ void clSSH::Close()
 
     DoCloseChannel();
 
-    if(m_session && m_connected) {
+    if (m_session && m_connected) {
         ssh_disconnect(m_session);
     }
 
-    if(m_session) {
+    if (m_session) {
         ssh_free(m_session);
     }
 
@@ -362,11 +372,11 @@ void clSSH::Login()
     ssh_set_blocking(m_session, 0);
 
     bool authenticated = false;
-    for(auto func : methods) {
+    for (auto func : methods) {
         // authenticate with timeout
         auto login_method = [this, func]() -> bool {
-            for(size_t i = 0; i < 10; ++i) {
-                if((this->*func)(false)) {
+            for (size_t i = 0; i < 10; ++i) {
+                if ((this->*func)(false)) {
                     return true;
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -374,7 +384,7 @@ void clSSH::Login()
             return false;
         };
 
-        if(login_method()) {
+        if (login_method()) {
             // set the connection back to blocking mode
             ssh_set_blocking(m_session, 1);
             authenticated = true;
@@ -382,7 +392,7 @@ void clSSH::Login()
         }
     }
 
-    if(!authenticated) {
+    if (!authenticated) {
         throw clException("Unable to login to server");
     }
 }
@@ -392,36 +402,36 @@ void clSSH::ExecuteShellCommand(wxEvtHandler* owner, const wxString& command)
     DoOpenChannel();
 
     m_owner = owner;
-    if(!m_owner) {
+    if (!m_owner) {
         throw clException(wxString() << "No owner specified for output");
     }
 
     wxCharBuffer buffer = command.mb_str(wxConvUTF8);
     int rc = ssh_channel_write(m_channel, buffer.data(), buffer.length());
-    if(rc != (int)buffer.length()) {
+    if (rc != (int)buffer.length()) {
         throw clException("SSH Socket error");
     }
 
     // Start a timer to check for the output on 10ms intervals
-    if(!m_timer->IsRunning()) {
+    if (!m_timer->IsRunning()) {
         m_timer->Start(50);
     }
 }
 
 void clSSH::OnCheckRemoteOutut(wxTimerEvent& event)
 {
-    if(!m_channel)
+    if (!m_channel)
         return;
 
     char buffer[1024];
     int nbytes = ssh_channel_read_nonblocking(m_channel, buffer, sizeof(buffer), 0);
-    if(nbytes > 0) {
+    if (nbytes > 0) {
         wxString strOutput = wxString::FromUTF8((const char*)buffer, nbytes);
         clCommandEvent sshEvent(wxEVT_SSH_COMMAND_OUTPUT);
         sshEvent.SetString(strOutput);
         m_owner->AddPendingEvent(sshEvent);
 
-    } else if(nbytes == SSH_ERROR) {
+    } else if (nbytes == SSH_ERROR) {
         m_timer->Stop();
         DoCloseChannel();
         clCommandEvent sshEvent(wxEVT_SSH_COMMAND_ERROR);
@@ -430,7 +440,7 @@ void clSSH::OnCheckRemoteOutut(wxTimerEvent& event)
 
     } else {
         // nbytes == 0
-        if(ssh_channel_is_eof(m_channel)) {
+        if (ssh_channel_is_eof(m_channel)) {
             m_timer->Stop();
             DoCloseChannel();
             // EOF was sent, nothing more to read
@@ -445,7 +455,7 @@ void clSSH::OnCheckRemoteOutut(wxTimerEvent& event)
 void clSSH::DoCloseChannel()
 {
     // Properly close the channel
-    if(m_channel) {
+    if (m_channel) {
         ssh_channel_close(m_channel);
         ssh_channel_send_eof(m_channel);
         ssh_channel_free(m_channel);
@@ -455,45 +465,45 @@ void clSSH::DoCloseChannel()
 
 void clSSH::DoOpenChannel()
 {
-    if(m_channel)
+    if (m_channel)
         return;
 
     m_channel = ssh_channel_new(m_session);
-    if(!m_channel) {
+    if (!m_channel) {
         throw clException(ssh_get_error(m_session));
     }
 
     int rc = ssh_channel_open_session(m_channel);
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
     }
 
     rc = ssh_channel_request_pty(m_channel);
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
     }
 
     rc = ssh_channel_change_pty_size(m_channel, 80, 24);
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
     }
 
     rc = ssh_channel_request_shell(m_channel);
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
     }
 }
 
 void clSSH::DoConnectWithRetries(int retries)
 {
-    while(retries) {
+    while (retries) {
         int rc = ssh_connect(m_session);
-        if(rc == SSH_AGAIN) {
+        if (rc == SSH_AGAIN) {
             wxThread::Sleep(10);
             --retries;
             continue;
         }
-        if(rc == SSH_OK) {
+        if (rc == SSH_OK) {
             m_connected = true;
             return;
         } else {
@@ -505,10 +515,10 @@ void clSSH::DoConnectWithRetries(int retries)
 
 void clSSH::SendIgnore()
 {
-    if(!m_session) {
+    if (!m_session) {
         throw clException("Session not opened");
     }
-    if(ssh_send_ignore(m_session, "ping") != SSH_OK) {
+    if (ssh_send_ignore(m_session, "ping") != SSH_OK) {
         throw clException("Failed to send ignore message");
     }
 }

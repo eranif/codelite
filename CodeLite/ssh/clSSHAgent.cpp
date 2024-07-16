@@ -1,6 +1,7 @@
 #include "clSSHAgent.hpp"
 
 #include "AsyncProcess/asyncprocess.h"
+#include "StringUtils.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
@@ -11,21 +12,25 @@
 #ifndef __WXMSW__
 static wxString& AddQuotesIfNeeded(wxString& str)
 {
-    if(str.Contains(" ")) {
+    if (str.Contains(" ")) {
         str.Prepend("\"").Append("\"");
     }
     return str;
 }
 #endif
 
-clSSHAgent::clSSHAgent() { Start(); }
+clSSHAgent::clSSHAgent(const wxArrayString& files)
+    : m_files(files)
+{
+    Start();
+}
 
 clSSHAgent::~clSSHAgent() { Stop(); }
 
 void clSSHAgent::Start()
 {
     wxFileName sshAgent;
-    if(!FileUtils::FindExe("ssh-agent", sshAgent)) {
+    if (!FileUtils::FindExe("ssh-agent", sshAgent)) {
         clDEBUG() << "Could not find ssh-agent executable";
         return;
     }
@@ -34,11 +39,11 @@ void clSSHAgent::Start()
     // Check if an instance of ssh-agent is already running
 #ifdef __WXMSW__
     PidVec_t P = ProcUtils::PS("ssh-agent");
-    if(P.empty()) {
+    if (P.empty()) {
         clDEBUG() << "Could not find a running instance of ssh-agent, starting one...";
         m_process = ::CreateAsyncProcess(nullptr, sshAgent.GetFullPath(),
                                          IProcessCreateWithHiddenConsole | IProcessCreateDefault);
-        if(m_process) {
+        if (m_process) {
             clDEBUG() << "Started" << sshAgent << "with process ID:" << m_process->GetPid() << clEndl;
         } else {
             clWARNING() << "Failed to start" << sshAgent << "ssh-agent daemon" << clEndl;
@@ -59,7 +64,7 @@ void clSSHAgent::Start()
     command << " -D -a " << socketPath;
 
     m_process = ::CreateAsyncProcess(nullptr, command);
-    if(!m_process) {
+    if (!m_process) {
         clWARNING() << "Failed to launch" << command << clEndl;
     } else {
         clDEBUG() << "Starting ssh-agent:" << command << ". pid:" << m_process->GetPid();
@@ -79,12 +84,18 @@ void clSSHAgent::Start()
 
     // Execute ssh-add
     sshAgent.SetFullName("ssh-add");
-    ProcUtils::SafeExecuteCommand(sshAgent.GetFullPath());
+    wxString ssh_add_command = StringUtils::WrapWithDoubleQuotes(sshAgent.GetFullPath());
+
+    // Pass the key files to load
+    for (const auto& keyfile : m_files) {
+        ssh_add_command << " " << StringUtils::WrapWithDoubleQuotes(keyfile);
+    }
+    ProcUtils::SafeExecuteCommand(ssh_add_command);
 }
 
 void clSSHAgent::Stop()
 {
-    if(m_process) {
+    if (m_process) {
         m_process->Terminate();
         wxDELETE(m_process);
     }

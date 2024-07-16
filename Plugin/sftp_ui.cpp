@@ -29,7 +29,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
                                                    const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCE8CInitBitmapResources();
@@ -89,15 +89,15 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
 
     SetName(wxT("SSHAccountManagerDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -127,7 +127,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
                                          const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCE8CInitBitmapResources();
@@ -233,6 +233,50 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
 
     flexGridSizer31->Add(m_textCtrlHomeFolder, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText217 = new wxStaticText(this, wxID_ANY, _("Additional key files:"), wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer31->Add(m_staticText217, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_additionalFiles = new clThemedSTC(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_additionalFiles->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_additionalFiles->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_additionalFiles->SetMarginSensitive(4, true);
+    m_additionalFiles->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_additionalFiles->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_additionalFiles->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_additionalFiles->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_additionalFiles->SetMarginWidth(2, 0);
+    m_additionalFiles->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_additionalFiles->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_additionalFiles->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_additionalFiles->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_additionalFiles->SetMarginMask(3, 0);
+    m_additionalFiles->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_additionalFiles->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_additionalFiles->StyleClearAll();
+    m_additionalFiles->SetWrapMode(2);
+    m_additionalFiles->SetIndentationGuides(0);
+    m_additionalFiles->SetEOLMode(2);
+    m_additionalFiles->SetKeyWords(0, wxT(""));
+    m_additionalFiles->SetKeyWords(1, wxT(""));
+    m_additionalFiles->SetKeyWords(2, wxT(""));
+    m_additionalFiles->SetKeyWords(3, wxT(""));
+    m_additionalFiles->SetKeyWords(4, wxT(""));
+
+    flexGridSizer31->Add(m_additionalFiles, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_button51 =
         new wxButton(this, wxID_ANY, _("Test Connection"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 #if wxVERSION_NUMBER >= 2904
@@ -259,15 +303,15 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("AddSSHAcountDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -291,7 +335,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
                                        const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCE8CInitBitmapResources();
@@ -395,15 +439,15 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("SFTPBrowserBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -437,7 +481,7 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
                                                const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCE8CInitBitmapResources();
@@ -574,15 +618,15 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("clRemoteFindDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);

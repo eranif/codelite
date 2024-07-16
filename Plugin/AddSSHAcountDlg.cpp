@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "AddSSHAcountDlg.h"
+
+#include <wx/tokenzr.h>
 #if USE_SFTP
 #include "cl_exception.h"
 #include "environmentconfig.h"
@@ -48,6 +50,7 @@ AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account
     m_textCtrlUsername->ChangeValue(account.GetUsername());
     m_textCtrlName->ChangeValue(account.GetAccountName());
     m_textCtrlHomeFolder->ChangeValue(account.GetDefaultFolder());
+    m_additionalFiles->SetText(::wxJoin(account.GetKeyFiles(), '\n'));
     SetName("AddSSHAcountDlg");
     WindowAttrManager::Load(this);
 }
@@ -74,20 +77,30 @@ void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
     info.SetUsername(m_textCtrlUsername->GetValue());
     info.SetAccountName(m_textCtrlName->GetValue());
     info.SetDefaultFolder(m_textCtrlHomeFolder->GetValue());
+
+    wxArrayString files = ::wxStringTokenize(m_additionalFiles->GetText(), "\n", wxTOKEN_STRTOK);
+    for (auto& file : files) {
+        file.Trim().Trim(false);
+        if (file.StartsWith("#")) {
+            continue;
+        }
+        info.AddKeyFile(file);
+    }
 }
 
 void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
 {
     SSHAccountInfo account;
     GetAccountInfo(account);
-    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
+    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFiles(),
+                               account.GetPort()));
 
     try {
         wxString message;
         EnvSetter env;
         ssh->Open();
-        if(!ssh->AuthenticateServer(message)) {
-            if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
+        if (!ssh->AuthenticateServer(message)) {
+            if (::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
                 ssh->AcceptServerAuthentication();
             }
         }
@@ -96,7 +109,7 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
         ssh->Login();
         ::wxMessageBox(_("Successfully connected to host!"));
 
-    } catch(clException& e) {
+    } catch (clException& e) {
         ::wxMessageBox(e.What(), "SSH", wxICON_WARNING | wxOK, this);
     }
 }
@@ -107,7 +120,7 @@ void AddSSHAcountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
 void AddSSHAcountDlg::OnHomeFolderUpdated(wxCommandEvent& event)
 {
     wxString homeFolder = m_textCtrlHomeFolder->GetValue();
-    if(!homeFolder.StartsWith("/")) {
+    if (!homeFolder.StartsWith("/")) {
         m_infobar->ShowMessage(_("Default folder must be set to full path (i.e. it should start with a '/')"),
                                wxICON_WARNING);
     }

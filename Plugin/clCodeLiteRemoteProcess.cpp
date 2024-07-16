@@ -50,7 +50,7 @@ class CodeLiteRemoteProcess : public IProcess
 private:
     bool DoWrite(const wxString& buff)
     {
-        if(!m_process) {
+        if (!m_process) {
             return false;
         }
         m_process->Write(buff);
@@ -121,7 +121,7 @@ public:
 
     void PostOutputEvent(const wxString& output)
     {
-        if(m_callback) {
+        if (m_callback) {
             // when callback is used, we aggregate the output
             // and post it in the terminated event
             m_output << output;
@@ -135,7 +135,7 @@ public:
 
     void PostTerminateEvent()
     {
-        if(m_callback) {
+        if (m_callback) {
             m_callback(m_output);
         } else {
             clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
@@ -163,7 +163,7 @@ void clCodeLiteRemoteProcess::StartInteractive(const wxString& account, const wx
                                                const wxString& contextString)
 {
     auto ssh_account = SSHAccountInfo::LoadAccount(account);
-    if(ssh_account.GetAccountName().empty()) {
+    if (ssh_account.GetAccountName().empty()) {
         clWARNING() << "Failed to load ssh account:" << account << endl;
         return;
     }
@@ -172,18 +172,24 @@ void clCodeLiteRemoteProcess::StartInteractive(const wxString& account, const wx
 
 void clCodeLiteRemoteProcess::StartIfNotRunning()
 {
-    if(IsRunning()) {
+    if (IsRunning()) {
         return;
     }
 
     // wrap the command in ssh
     wxString ssh_exe;
     EnvSetter setter;
-    if(!ThePlatform->Which("ssh", &ssh_exe)) {
+    if (!ThePlatform->Which("ssh", &ssh_exe)) {
         clERROR() << "Could not locate ssh executable in your PATH!" << endl;
         return;
     }
     std::vector<wxString> command = { ssh_exe, "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
+
+    // If this account has custom key files, use it instead
+    if (!m_account.GetKeyFiles().empty()) {
+        command.push_back("-i");
+        command.push_back(m_account.GetKeyFiles()[0]);
+    }
 
     command.push_back(m_account.GetUsername() + "@" + m_account.GetHost());
     command.push_back("-p");
@@ -200,7 +206,7 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
 void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath,
                                                const wxString& contextString)
 {
-    if(m_process) {
+    if (m_process) {
         return;
     }
 
@@ -209,7 +215,7 @@ void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, co
     wxString localCodeLiteRemoteScript = clStandardPaths::Get().GetBinFolder() + "/codelite-remote";
     clDEBUG() << "Uploading codelite-remote file:" << endl;
     clDEBUG() << localCodeLiteRemoteScript << "->" << scriptPath << endl;
-    if(!clSFTPManager::Get().AwaitSaveFile(localCodeLiteRemoteScript, scriptPath, account.GetAccountName())) {
+    if (!clSFTPManager::Get().AwaitSaveFile(localCodeLiteRemoteScript, scriptPath, account.GetAccountName())) {
         clERROR() << "Failed to upload file:" << scriptPath << "." << clSFTPManager::Get().GetLastError() << endl;
         return;
     }
@@ -235,7 +241,7 @@ void clCodeLiteRemoteProcess::OnProcessTerminated(clProcessEvent& e)
 {
     wxUnusedVar(e);
     Cleanup();
-    if(!m_going_down) {
+    if (!m_going_down) {
         // restart the process
         StartIfNotRunning();
 
@@ -249,7 +255,7 @@ void clCodeLiteRemoteProcess::OnProcessTerminated(clProcessEvent& e)
 void clCodeLiteRemoteProcess::Stop()
 {
     m_going_down = true;
-    if(m_process) {
+    if (m_process) {
         m_process->Write(wxString("exit\n"));
     }
     wxDELETE(m_process);
@@ -258,7 +264,7 @@ void clCodeLiteRemoteProcess::Stop()
 
 void clCodeLiteRemoteProcess::Cleanup()
 {
-    while(!m_completionCallbacks.empty()) {
+    while (!m_completionCallbacks.empty()) {
         m_completionCallbacks.pop_back();
     }
     wxDELETE(m_process);
@@ -268,7 +274,7 @@ bool clCodeLiteRemoteProcess::GetNextBuffer(wxString& raw_input_buffer, wxString
 {
     size_t separator_len = msg_terminator_len;
     size_t where = raw_input_buffer.find(msg_terminator);
-    if(where == wxString::npos) {
+    if (where == wxString::npos) {
         // locate the \n from the end
         is_completed = false;
         where = raw_input_buffer.rfind("\n");
@@ -277,9 +283,9 @@ bool clCodeLiteRemoteProcess::GetNextBuffer(wxString& raw_input_buffer, wxString
         is_completed = true;
     }
 
-    if(where != wxString::npos) {
+    if (where != wxString::npos) {
         size_t length_to_take = where;
-        if(separator_len == 1) {
+        if (separator_len == 1) {
             length_to_take += 1;
         }
         buffer = raw_input_buffer.Mid(0, length_to_take);
@@ -293,29 +299,29 @@ void clCodeLiteRemoteProcess::ProcessOutput()
     bool is_completed = false;
     wxString buffer;
 
-    while(GetNextBuffer(m_outputRead, buffer, is_completed)) {
-        if(m_completionCallbacks.empty()) {
+    while (GetNextBuffer(m_outputRead, buffer, is_completed)) {
+        if (m_completionCallbacks.empty()) {
             clDEBUG() << "Read: [" << buffer << "]. But there are no completion callback" << endl;
             continue;
         }
 
         auto p = m_completionCallbacks.front();
-        if(p.handler) {
+        if (p.handler) {
             auto handler = static_cast<CodeLiteRemoteProcess*>(p.handler);
             handler->PostOutputEvent(buffer);
-            if(is_completed) {
+            if (is_completed) {
                 handler->PostTerminateEvent();
 
                 // when using callback the handler is handled internally
-                if(handler->IsUsingCallback()) {
+                if (handler->IsUsingCallback()) {
                     delete handler;
                 }
             }
-        } else if(p.func) {
+        } else if (p.func) {
             (this->*p.func)(buffer, is_completed);
         }
 
-        if(is_completed) {
+        if (is_completed) {
             m_completionCallbacks.pop_front();
             ResetStates();
         }
@@ -324,7 +330,7 @@ void clCodeLiteRemoteProcess::ProcessOutput()
 
 void clCodeLiteRemoteProcess::ListLSPs()
 {
-    if(!m_process) {
+    if (!m_process) {
         return;
     }
 
@@ -340,7 +346,7 @@ void clCodeLiteRemoteProcess::ListLSPs()
 
 void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString& extensions)
 {
-    if(!m_process) {
+    if (!m_process) {
         return;
     }
 
@@ -360,7 +366,7 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
 void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
                                      bool whole_word, bool icase)
 {
-    if(!m_process) {
+    if (!m_process) {
         return;
     }
 
@@ -385,7 +391,7 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& e
 void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name, const wxString& ext,
                                      const std::vector<wxString>& versions)
 {
-    if(!m_process) {
+    if (!m_process) {
         return;
     }
 
@@ -401,7 +407,7 @@ void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name,
     wxArrayString v;
     v.reserve(versions.size());
 
-    for(const auto& s : versions) {
+    for (const auto& s : versions) {
         v.Add(s);
     }
 
@@ -417,7 +423,7 @@ void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name,
 
 void clCodeLiteRemoteProcess::FindPath(const wxString& path)
 {
-    if(!m_process) {
+    if (!m_process) {
         return;
     }
 
@@ -444,7 +450,7 @@ void clCodeLiteRemoteProcess::ResetStates()
 bool clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
                                      IProcess* handler)
 {
-    if(!m_process) {
+    if (!m_process) {
         return false;
     }
 
@@ -456,7 +462,7 @@ bool clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& workin
     item.addProperty("cmd", cmd);
 
     auto envarr = item.AddArray("env");
-    for(const auto& p : env) {
+    for (const auto& p : env) {
         auto entry = envarr.AddObject(wxEmptyString);
         entry.addProperty("name", p.first);
         entry.addProperty("value", p.second);
@@ -473,7 +479,7 @@ bool clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& workin
 void clCodeLiteRemoteProcess::Exec(const wxArrayString& args, const wxString& working_directory, const clEnvList_t& env)
 {
     wxString cmdstr = GetCmdString(args);
-    if(cmdstr.empty()) {
+    if (cmdstr.empty()) {
         return;
     }
     DoExec(cmdstr, working_directory, env);
@@ -486,10 +492,10 @@ void clCodeLiteRemoteProcess::Exec(const wxString& cmd, const wxString& working_
 
 void clCodeLiteRemoteProcess::Write(const wxString& str)
 {
-    if(IsRunning()) {
+    if (IsRunning()) {
         return;
     }
-    if(!str.EndsWith("\n")) {
+    if (!str.EndsWith("\n")) {
         m_process->Write(str + "\n");
     } else {
         m_process->Write(str);
@@ -500,7 +506,7 @@ IProcess* clCodeLiteRemoteProcess::CreateAsyncProcess(wxEvtHandler* handler, con
                                                       const wxString& working_directory, const clEnvList_t& env)
 {
     CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(handler, this);
-    if(DoExec(cmd, working_directory, env, p)) {
+    if (DoExec(cmd, working_directory, env, p)) {
         return p;
     }
     wxDELETE(p);
@@ -512,7 +518,7 @@ void clCodeLiteRemoteProcess::CreateAsyncProcessCB(const wxString& cmd, std::fun
 {
     CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(nullptr, this);
     p->SetCallback(std::move(callback));
-    if(DoExec(cmd, working_directory, env, p)) {
+    if (DoExec(cmd, working_directory, env, p)) {
         return;
     }
     wxDELETE(p);
@@ -532,7 +538,7 @@ void clCodeLiteRemoteProcess::OnListLSPsOutput(const wxString& output, bool is_c
     event.SetString(output);
     AddPendingEvent(event);
 
-    if(is_completed) {
+    if (is_completed) {
         clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LIST_LSPS_DONE);
         AddPendingEvent(event_done);
     }
@@ -549,7 +555,7 @@ void clCodeLiteRemoteProcess::OnListFilesOutput(const wxString& output, bool is_
     event.GetStrings().swap(files);
     AddPendingEvent(event);
 
-    if(is_completed) {
+    if (is_completed) {
         clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE);
         AddPendingEvent(event_done);
     }
@@ -566,7 +572,7 @@ void clCodeLiteRemoteProcess::OnFindPathOutput(const wxString& output, bool is_c
     event.SetString(fullpath);
     AddPendingEvent(event);
 
-    if(is_completed) {
+    if (is_completed) {
         clCommandEvent event_done(wxEVT_CODELITE_REMOTE_FINDPATH_DONE);
         AddPendingEvent(event_done);
     }
@@ -583,7 +589,7 @@ void clCodeLiteRemoteProcess::OnLocateOutput(const wxString& output, bool is_com
     event.SetFileName(fullpath);
     AddPendingEvent(event);
 
-    if(is_completed) {
+    if (is_completed) {
         clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LOCATE_DONE);
         AddPendingEvent(event_done);
     }
@@ -599,7 +605,7 @@ bool split_line(wxString& line, wxString* filename, long* line_number, wxString*
     *pattern = line.AfterFirst(':');
 
     *line_number = 0;
-    if(!str_line_number.ToCLong(line_number)) {
+    if (!str_line_number.ToCLong(line_number)) {
         return false;
     }
     return true;
@@ -609,7 +615,7 @@ bool split_line(wxString& line, wxString* filename, long* line_number, wxString*
 void clCodeLiteRemoteProcess::OnReplaceOutput(const wxString& output, bool is_completed)
 {
     wxArrayString lines = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
-    if(lines.empty()) {
+    if (lines.empty()) {
         return;
     }
 
@@ -618,7 +624,7 @@ void clCodeLiteRemoteProcess::OnReplaceOutput(const wxString& output, bool is_co
     event_progress.GetStrings() = lines;
     AddPendingEvent(event_progress);
 
-    if(is_completed) {
+    if (is_completed) {
         clFindInFilesEvent event_done(wxEVT_CODELITE_REMOTE_REPLACE_DONE);
         AddPendingEvent(event_done);
     }
@@ -627,19 +633,19 @@ void clCodeLiteRemoteProcess::OnReplaceOutput(const wxString& output, bool is_co
 void clCodeLiteRemoteProcess::OnFindOutput(const wxString& output, bool is_completed)
 {
     wxArrayString lines = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
-    if(!lines.empty()) {
+    if (!lines.empty()) {
         clFindInFilesEvent::Match::vec_t matches;
         matches.reserve(lines.size());
         wxString curfile;
         clFindInFilesEvent::Match match;
-        for(wxString& line : lines) {
+        for (wxString& line : lines) {
             wxString filename, pattern;
             long line_number;
-            if(!split_line(line, &filename, &line_number, &pattern)) {
+            if (!split_line(line, &filename, &line_number, &pattern)) {
                 continue;
             }
 
-            if(match.file != filename && !match.locations.empty()) {
+            if (match.file != filename && !match.locations.empty()) {
                 // switching files
                 matches.push_back(match);
                 match.locations.clear();
@@ -655,19 +661,19 @@ void clCodeLiteRemoteProcess::OnFindOutput(const wxString& output, bool is_compl
             ++m_fif_matches_count;
         }
 
-        if(!match.file.empty() && !match.locations.empty()) {
+        if (!match.file.empty() && !match.locations.empty()) {
             matches.push_back(match);
             match.locations.clear();
         }
 
-        if(!matches.empty()) {
+        if (!matches.empty()) {
             clFindInFilesEvent event(wxEVT_CODELITE_REMOTE_FIND_RESULTS);
             event.SetMatches(matches);
             AddPendingEvent(event);
         }
     }
 
-    if(is_completed) {
+    if (is_completed) {
         clFindInFilesEvent event_done(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE);
         event_done.SetInt(0);
         AddPendingEvent(event_done);
@@ -676,13 +682,13 @@ void clCodeLiteRemoteProcess::OnFindOutput(const wxString& output, bool is_compl
 
 void clCodeLiteRemoteProcess::OnExecOutput(const wxString& buffer, bool is_completed)
 {
-    if(!buffer.empty()) {
+    if (!buffer.empty()) {
         clProcessEvent output_event(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT);
         output_event.SetOutput(buffer);
         AddPendingEvent(output_event);
     }
 
-    if(is_completed) {
+    if (is_completed) {
         clProcessEvent end_event(wxEVT_CODELITE_REMOTE_EXEC_DONE);
         AddPendingEvent(end_event);
     }
@@ -691,18 +697,18 @@ void clCodeLiteRemoteProcess::OnExecOutput(const wxString& buffer, bool is_compl
 bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
                                        wxString* output)
 {
-    if(!m_completionCallbacks.empty()) {
+    if (!m_completionCallbacks.empty()) {
         clWARNING() << "unable to run SyncExec() for command:" << cmd << "async queue is not empty" << endl;
         return false;
     }
-    if(!m_process) {
+    if (!m_process) {
         clWARNING() << "unable to run SyncExec() for command:" << cmd << "no process" << endl;
         return false;
     }
     // disable the background reader thread
     m_process->SuspendAsyncReads();
 
-    if(!DoExec(cmd, working_directory, env)) {
+    if (!DoExec(cmd, working_directory, env)) {
         return false;
     }
 
@@ -716,10 +722,10 @@ bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& work
     m_outputRead.clear();
 
     wxString complete_output;
-    while(m_process->Read(buff_out, buff_err, raw_buff, raw_buff_err)) {
+    while (m_process->Read(buff_out, buff_err, raw_buff, raw_buff_err)) {
         m_outputRead << buff_out;
         size_t where = m_outputRead.find(msg_terminator);
-        if(where == wxString::npos) {
+        if (where == wxString::npos) {
             continue;
         }
 
@@ -742,7 +748,7 @@ bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& work
 void clCodeLiteRemoteProcess::Replace(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
                                       const wxString& replace_with, bool whole_word, bool icase)
 {
-    if(!m_process) {
+    if (!m_process) {
         return;
     }
 

@@ -21,6 +21,8 @@
 #include <wx/infobar.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/stc/stc.h>
+#include "clThemedSTC.hpp"
 #include <wx/panel.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
@@ -98,6 +100,8 @@ protected:
     wxTextCtrl* m_textCtrlPassword;
     wxStaticText* m_staticText110;
     wxTextCtrl* m_textCtrlHomeFolder;
+    wxStaticText* m_staticText217;
+    clThemedSTC* m_additionalFiles;
     wxButton* m_button51;
     wxButton* m_button27;
     wxButton* m_button25;
@@ -122,6 +126,8 @@ public:
     wxTextCtrl* GetTextCtrlPassword() { return m_textCtrlPassword; }
     wxStaticText* GetStaticText110() { return m_staticText110; }
     wxTextCtrl* GetTextCtrlHomeFolder() { return m_textCtrlHomeFolder; }
+    wxStaticText* GetStaticText217() { return m_staticText217; }
+    clThemedSTC* GetAdditionalFiles() { return m_additionalFiles; }
     wxButton* GetButton51() { return m_button51; }
     wxButton* GetButton27() { return m_button27; }
     wxButton* GetButton25() { return m_button25; }

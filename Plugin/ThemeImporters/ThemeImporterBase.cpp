@@ -295,14 +295,14 @@ void ThemeImporterBase::GetEditorVSCodeColour(JSONItem& colours, const wxString&
     }
 }
 
-void ThemeImporterBase::GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map, const std::vector<wxString>& scopes,
-                                        Property& colour)
+void ThemeImporterBase::GetVSCodeColour(const std::unordered_map<wxString, VSCodeScope>& lookup,
+                                        const std::vector<wxString>& scopes, Property& colour)
 {
     // default use editor settings
     colour = m_editor;
     for (const wxString& scope : scopes) {
-        if (scopes_to_colours_map.count(scope)) {
-            colour.fg_colour = scopes_to_colours_map.find(scope)->second;
+        if (lookup.count(scope.Lower())) {
+            colour.fg_colour = lookup.find(scope.Lower())->second.fg_colour;
         }
     }
 }
@@ -525,23 +525,45 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
     // Build the tokenColoursMap object
     auto colours = json["colors"];
+
+    // read the base properties
+    m_editor = {};
+    GetEditorVSCodeColour(colours, "editor.background", "editor.foreground", m_editor);
+
+    // in case no fg colour provided, guess it
+    if (m_editor.fg_colour.empty()) {
+        if (DrawingUtils::IsDark(m_editor.bg_colour)) {
+            // if its dark colour, use light text
+            wxColour fg_colour = wxColour("WHITE").ChangeLightness(90);
+            m_editor.fg_colour = fg_colour.GetAsString(wxC2S_HTML_SYNTAX);
+        } else {
+            m_editor.fg_colour = "#000000";
+        }
+    }
+
     auto tokenColors = json["tokenColors"];
     int size = tokenColors.arraySize();
-    wxStringMap_t tokenColoursMap;
+    std::unordered_map<wxString, VSCodeScope> lookup;
     for (int i = 0; i < size; ++i) {
         auto token = tokenColors[i];
-        auto elem_scope = token["scope"];
+        if (!token.hasNamedObject("scope")) {
+            continue;
+        }
+
+        // Read the "scope" property. Notice that it can be either a string or an array
+        // we cover both cases here
+        auto scope = token["scope"];
         wxArrayString outer_scopes;
-        if (elem_scope.isArray()) {
+        if (scope.isArray()) {
             // if `scope` is array, collect only
             // complete entries
-            int scope_count = elem_scope.arraySize();
+            int scope_count = scope.arraySize();
             for (int j = 0; j < scope_count; ++j) {
-                outer_scopes.Add(elem_scope[j].toString());
+                outer_scopes.Add(scope[j].toString());
             }
         } else {
             // scopes is a string, split it by space|,|; and add them all
-            wxString scopes_str = elem_scope.toString();
+            wxString scopes_str = scope.toString();
             wxArrayString tmparr = ::wxStringTokenize(scopes_str, " ;,", wxTOKEN_STRTOK);
             outer_scopes.insert(outer_scopes.end(), tmparr.begin(), tmparr.end());
         }
@@ -557,7 +579,9 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
         for (const wxString& scope : scopes) {
             if (token.hasNamedObject("settings") && token["settings"].hasNamedObject("foreground")) {
-                tokenColoursMap.insert({ scope, token["settings"]["foreground"].toString() });
+                lookup.insert({ scope.Lower(), VSCodeScope(m_editor, token["settings"]["foreground"].toString()) });
+            } else {
+                lookup.insert({ scope.Lower(), VSCodeScope(m_editor, wxEmptyString) });
             }
         }
     }
@@ -567,20 +591,6 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
     // Add the lexer basic properties (laguage, file extensions, keywords, name)
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
-
-    // read the base properties
-    m_editor = {};
-    GetEditorVSCodeColour(colours, "editor.background", "editor.foreground", m_editor);
-    // in case no fg colour provided, guess it
-    if (m_editor.fg_colour.empty()) {
-        if (DrawingUtils::IsDark(m_editor.bg_colour)) {
-            // if its dark colour, use light text
-            wxColour fg_colour = wxColour("WHITE").ChangeLightness(90);
-            m_editor.fg_colour = fg_colour.GetAsString(wxC2S_HTML_SYNTAX);
-        } else {
-            m_editor.fg_colour = "#000000";
-        }
-    }
 
     m_isDarkTheme = DrawingUtils::IsDark(m_editor.bg_colour);
 
@@ -595,30 +605,30 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
     GetEditorVSCodeColour(colours, "editor.lineHighlightBackground", "editor.foreground", m_lineNumberActive);
 
     // token colours
-    GetVSCodeColour(tokenColoursMap, { "comment", "comments" }, m_singleLineComment);
-    GetVSCodeColour(tokenColoursMap, { "comments", "comment" }, m_multiLineComment);
-    GetVSCodeColour(tokenColoursMap, { "constant.numeric" }, m_number);
-    GetVSCodeColour(tokenColoursMap, { "string" }, m_string);
-    GetVSCodeColour(tokenColoursMap, { "punctuation" }, m_oper);
-    GetVSCodeColour(tokenColoursMap,
-                    { "keyword.operator.expression.delete", "keyword.operator.expression.void", "keyword",
-                      "keyword.control", "storage" },
-                    m_keyword);
+    GetVSCodeColour(lookup, { "comment", "comments" }, m_singleLineComment);
+    GetVSCodeColour(lookup, { "comments", "comment" }, m_multiLineComment);
+    GetVSCodeColour(lookup, { "constant.numeric" }, m_number);
+    GetVSCodeColour(lookup, { "string" }, m_string);
+    GetVSCodeColour(lookup, { "punctuation" }, m_oper);
+    GetVSCodeColour(
+        lookup,
+        { "keyword.operator.expression.delete", "keyword.operator.expression.void", "keyword", "keyword.control" },
+        m_keyword);
 
     // search for class names
-    GetVSCodeColour(tokenColoursMap,
-                    { "storage.type.class", "entity.name.type.class", "entity.name.type.class.cpp",
+    GetVSCodeColour(lookup,
+                    { "storage", "storage.type.class", "entity.name.type.class", "entity.name.type.class.cpp",
                       "entity.name.type.class.php", "meta.block.class.cpp", "entity.name.type.namespace",
                       "entity.name.type", "entity.name.class", "entity.name.type", "class", "entity.name",
                       "entity.name.scope-resolution" },
                     m_klass);
-    GetVSCodeColour(tokenColoursMap,
+
+    GetVSCodeColour(lookup,
                     { "entity.name.function", "meta.function-call", "entity.name.function.call.cpp",
                       "entity.name.function.call.php" },
                     m_function);
 
-    GetVSCodeColour(tokenColoursMap, { "variable", "variable.member", "meta.parameter", "variable.parameter" },
-                    m_variable);
+    GetVSCodeColour(lookup, { "variable", "variable.member", "meta.parameter", "variable.parameter" }, m_variable);
 
     m_field = m_variable;
     m_enum = m_klass;

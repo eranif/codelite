@@ -54,6 +54,26 @@ public:
         bool isItalic = false;
     };
 
+    struct VSCodeScope {
+        wxString scope_name;
+        wxString bg_colour;
+        wxString fg_colour;
+
+        VSCodeScope() = default;
+        VSCodeScope(const Property& editor, const wxString& fg, const wxString& bg = wxEmptyString)
+        {
+            bg_colour = editor.bg_colour;
+            fg_colour = editor.fg_colour;
+
+            if (!fg.empty()) {
+                fg_colour = fg;
+            }
+            if (!bg.empty()) {
+                bg_colour = bg;
+            }
+        }
+    };
+
     using Ptr_t = std::unique_ptr<ThemeImporterBase>;
     using List_t = std::list<ThemeImporterBase::Ptr_t>;
 
@@ -143,7 +163,7 @@ protected:
     LexerConf::Ptr_t ImportVSCodeJSON(const wxFileName& theme_file, const wxString& langName, int langId);
     LexerConf::Ptr_t ImportAlacrittyThemeYAML(const wxFileName& theme_file, const wxString& langName, int langId);
     LexerConf::Ptr_t ImportAlacrittyThemeToml(const wxFileName& theme_file, const wxString& langName, int langId);
-    void GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map, const std::vector<wxString>& scopes,
+    void GetVSCodeColour(const std::unordered_map<wxString, VSCodeScope>& lookup, const std::vector<wxString>& scopes,
                          Property& colour);
     void GetEditorVSCodeColour(JSONItem& colours, const wxString& bg_prop, const wxString& fg_prop, Property& colour);
 

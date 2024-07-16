@@ -145,6 +145,7 @@ constexpr int NUMBER_MARGIN_ID = 1;
 constexpr int EDIT_TRACKER_MARGIN_ID = 2;
 constexpr int SYMBOLS_MARGIN_ID = 3;
 constexpr int SYMBOLS_MARGIN_SEP_ID = 4;
+constexpr int LAST_MARGIN_ID = 4;
 
 /// A helper class that sets the cursor of the current control to
 /// left pointing arrow and restores it once its destroyed
@@ -840,6 +841,7 @@ void clEditor::SetProperties()
     //---------------------------------------------------
     // Fold settings
     //---------------------------------------------------
+    SetMarginCursor(FOLD_MARGIN_ID, 8);
     StyleSetBackground(wxSTC_STYLE_FOLDDISPLAYTEXT, StyleGetBackground(wxSTC_STYLE_DEFAULT));
     StyleSetForeground(wxSTC_STYLE_FOLDDISPLAYTEXT, DrawingUtils::IsDark(bg_colour) ? "GOLD" : "ORANGE");
 
@@ -1958,7 +1960,7 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
     // Always cancel the previous tooltip...
     DoCancelCodeCompletionBox();
 
-    for (int n = 0; n < FOLD_MARGIN_ID; ++n) {
+    for (int n = 0; n < LAST_MARGIN_ID; ++n) {
         margin += GetMarginWidth(n);
     }
 
@@ -3501,10 +3503,11 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
 
         // If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
         int margin = 0;
-        for (int n = 0; n < FOLD_MARGIN_ID;
+        for (int n = 0; n < LAST_MARGIN_ID;
              ++n) { // Assume a click anywhere to the left of the fold margin is for markers
             margin += GetMarginWidth(n);
         }
+
         if (clientPt.x < margin) {
             GotoPos(PositionFromPoint(clientPt));
             DoBreakptContextMenu(clientPt);

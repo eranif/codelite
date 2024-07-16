@@ -3,7 +3,7 @@
 
 === "Windows / MSYS2 - (recommended)"
     - Prepare a working [MSYS2 environment][2]
-    - Open `MSYS2` terminal and type: `pacman -S mingw-w64-clang-x86_64-rust`
+    - Open `MSYS2` terminal and type: `pacman -S mingw-w64-clang-x86_64-rust mingw-w64-clang-x86_64-rust-src`
 
 === "Windows"
     - Download installer for Windows from [here][1]

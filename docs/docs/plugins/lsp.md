@@ -95,12 +95,8 @@ select the ones you are interested in and then [configure them in CodeLite][14]
         - On `Windows`, we build it from sources. Open `MSYS2` terminal and type:
 
             ```bash
-            cd ~
-            git clone https://github.com/rust-lang/rust-analyzer.git
-            cd rust-analyzer
-            cargo build --release \
-                && mkdir -p ~/.cargo/bin \
-                && cp target/release/rust-analyzer.exe target/release/rust-analyzer-proc-macro-srv.exe ~/.cargo/bin```
+            pacman -Sy mingw-w64-clang-x86_64-rust mingw-w64-clang-x86_64-rust-src
+            ```
 
     You should now have `rust-analyzer` installed under `rustup` local folder, for example, under `Linux` or `macOS`,
     it can be found here:

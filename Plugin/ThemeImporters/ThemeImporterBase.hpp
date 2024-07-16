@@ -165,7 +165,8 @@ protected:
     LexerConf::Ptr_t ImportAlacrittyThemeToml(const wxFileName& theme_file, const wxString& langName, int langId);
     void GetVSCodeColour(const std::unordered_map<wxString, VSCodeScope>& lookup, const std::vector<wxString>& scopes,
                          Property& colour);
-    void GetEditorVSCodeColour(JSONItem& colours, const wxString& bg_prop, const wxString& fg_prop, Property& colour);
+    void GetEditorVSCodeColour(const std::unordered_map<std::string_view, JSONItem>& colours, const wxString& bg_prop,
+                               const wxString& fg_prop, Property& colour);
 
 private:
     /**

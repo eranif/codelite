@@ -282,16 +282,22 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
     return lexer;
 }
 
-void ThemeImporterBase::GetEditorVSCodeColour(JSONItem& colours, const wxString& bg_prop, const wxString& fg_prop,
-                                              Property& colour)
+void ThemeImporterBase::GetEditorVSCodeColour(const std::unordered_map<std::string_view, JSONItem>& colours,
+                                              const wxString& bg_prop, const wxString& fg_prop, Property& colour)
 {
     colour = m_editor;
-    if (!fg_prop.empty() && colours.hasNamedObject(fg_prop)) {
-        colour.fg_colour = colours[fg_prop].toString();
+
+    std::string str_fg = fg_prop.ToStdString();
+    std::string str_bg = bg_prop.ToStdString();
+    std::string_view sv_fg(str_fg.c_str());
+    std::string_view sv_bg(str_bg.c_str());
+
+    if (!fg_prop.empty() && colours.count(sv_fg)) {
+        colour.fg_colour = colours.find(sv_fg)->second.toString();
     }
 
-    if (!bg_prop.empty() && colours.hasNamedObject(bg_prop)) {
-        colour.bg_colour = colours[bg_prop].toString();
+    if (!bg_prop.empty() && colours.count(sv_bg)) {
+        colour.bg_colour = colours.find(sv_bg)->second.toString();
     }
 }
 
@@ -303,6 +309,7 @@ void ThemeImporterBase::GetVSCodeColour(const std::unordered_map<wxString, VSCod
     for (const wxString& scope : scopes) {
         if (lookup.count(scope.Lower())) {
             colour.fg_colour = lookup.find(scope.Lower())->second.fg_colour;
+            break;
         }
     }
 }
@@ -407,18 +414,6 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeToml(const wxFileName& t
     colours.magenta = ini_parser[section_name]["magenta"].GetValue();
     colours.cyan = ini_parser[section_name]["cyan"].GetValue();
     colours.white = ini_parser[section_name]["white"].GetValue();
-
-#if 0
-    clSYSTEM() << "black=[" << colours.black << "]" << endl;
-    clSYSTEM() << "red=[" << colours.red << "]" << endl;
-    clSYSTEM() << "yellow=[" << colours.yellow << "]" << endl;
-    clSYSTEM() << "blue=[" << colours.blue << "]" << endl;
-    clSYSTEM() << "green=[" << colours.green << "]" << endl;
-    clSYSTEM() << "green=[" << colours.green << "]" << endl;
-    clSYSTEM() << "magenta=[" << colours.magenta << "]" << endl;
-    clSYSTEM() << "cyan=[" << colours.cyan << "]" << endl;
-    clSYSTEM() << "white=[" << colours.white << "]" << endl;
-#endif
 
     if (colours.black.empty() || colours.red.empty() || colours.green.empty() || colours.yellow.empty() ||
         colours.blue.empty() || colours.magenta.empty() || colours.cyan.empty() || colours.white.empty()) {
@@ -525,10 +520,11 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
     // Build the tokenColoursMap object
     auto colours = json["colors"];
+    auto colours_map = colours.GetAsMap();
 
     // read the base properties
     m_editor = {};
-    GetEditorVSCodeColour(colours, "editor.background", "editor.foreground", m_editor);
+    GetEditorVSCodeColour(colours_map, "editor.background", "editor.foreground", m_editor);
 
     // in case no fg colour provided, guess it
     if (m_editor.fg_colour.empty()) {
@@ -578,11 +574,11 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
         }
 
         for (const wxString& scope : scopes) {
-            if (token.hasNamedObject("settings") && token["settings"].hasNamedObject("foreground")) {
-                lookup.insert({ scope.Lower(), VSCodeScope(m_editor, token["settings"]["foreground"].toString()) });
-            } else {
-                lookup.insert({ scope.Lower(), VSCodeScope(m_editor, wxEmptyString) });
+            wxString fg_colour = token["settings"]["foreground"].toString();
+            if (fg_colour.empty()) {
+                fg_colour = m_editor.fg_colour;
             }
+            lookup.insert({ scope.Lower(), VSCodeScope(m_editor, fg_colour) });
         }
     }
 
@@ -596,13 +592,13 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
     // set the selection colour
     SetSelectionColour(m_isDarkTheme, m_selection);
-    GetEditorVSCodeColour(colours, "editor.background", "editorLineNumber.foreground", m_lineNumber);
+    GetEditorVSCodeColour(colours_map, "editor.background", "editorLineNumber.foreground", m_lineNumber);
 
     // read the caret colours
-    GetEditorVSCodeColour(colours, "editorCursor.background", "editorCursor.foreground", m_caret);
+    GetEditorVSCodeColour(colours_map, "editorCursor.background", "editorCursor.foreground", m_caret);
 
     // active line colours
-    GetEditorVSCodeColour(colours, "editor.lineHighlightBackground", "editor.foreground", m_lineNumberActive);
+    GetEditorVSCodeColour(colours_map, "editor.lineHighlightBackground", "editor.foreground", m_lineNumberActive);
 
     // token colours
     GetVSCodeColour(lookup, { "comment", "comments" }, m_singleLineComment);
@@ -617,12 +613,11 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
     // search for class names
     GetVSCodeColour(lookup,
-                    { "storage", "storage.type.class", "entity.name.type.class", "entity.name.type.class.cpp",
-                      "entity.name.type.class.php", "meta.block.class.cpp", "entity.name.type.namespace",
-                      "entity.name.type", "entity.name.class", "entity.name.type", "class", "entity.name",
-                      "entity.name.scope-resolution" },
+                    { "storage.type", "storage", "storage.type.class", "entity.name.type.class",
+                      "entity.name.type.class.cpp", "entity.name.type.class.php", "meta.block.class.cpp",
+                      "entity.name.type.namespace", "entity.name.type", "entity.name.class", "entity.name.type",
+                      "class", "entity.name", "entity.name.scope-resolution" },
                     m_klass);
-
     GetVSCodeColour(lookup,
                     { "entity.name.function", "meta.function-call", "entity.name.function.call.cpp",
                       "entity.name.function.call.php" },

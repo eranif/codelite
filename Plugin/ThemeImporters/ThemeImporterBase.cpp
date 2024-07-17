@@ -246,7 +246,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
         child = child->GetNext();
     }
 
-    // Add the lexer basic properties (laguage, file extensions, keywords, name)
+    // Add the lexer basic properties (language, file extensions, keywords, name)
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
 
     // Read the basic properties ("m_editor")
@@ -256,17 +256,18 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
     // set the selection colour
     SetSelectionColour(m_isDarkTheme, m_selection);
 
+    m_oper = m_editor;
+
     GetEclipseXmlProperty(wxEmptyString, "lineNumber", m_lineNumber);
     GetEclipseXmlProperty(wxEmptyString, "singleLineComment", m_singleLineComment);
     GetEclipseXmlProperty(wxEmptyString, "multiLineComment", m_multiLineComment);
     GetEclipseXmlProperty(wxEmptyString, "number", m_number);
     GetEclipseXmlProperty(wxEmptyString, "string", m_string);
-    GetEclipseXmlProperty(wxEmptyString, "operator", m_oper);
     GetEclipseXmlProperty(wxEmptyString, "keyword", m_keyword);
     GetEclipseXmlProperty(wxEmptyString, "class", m_klass);
     GetEclipseXmlProperty(wxEmptyString, "localVariable", m_variable);
-    GetEclipseXmlProperty(wxEmptyString, "javadocKeyword", m_javadocKeyword);
-    GetEclipseXmlProperty(wxEmptyString, "method", m_function);
+    GetEclipseXmlProperty(wxEmptyString, "javadocTag", m_javadocKeyword);
+    GetEclipseXmlProperty(wxEmptyString, "methodDeclaration", m_function);
     GetEclipseXmlProperty(wxEmptyString, "field", m_field);
     GetEclipseXmlProperty(wxEmptyString, "enum", m_enum);
     GetEclipseXmlProperty(wxEmptyString, "commentTaskTag", m_task);

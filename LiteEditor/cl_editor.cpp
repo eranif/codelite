@@ -146,6 +146,7 @@ constexpr int EDIT_TRACKER_MARGIN_ID = 2;
 constexpr int SYMBOLS_MARGIN_ID = 3;
 constexpr int SYMBOLS_MARGIN_SEP_ID = 4;
 constexpr int LAST_MARGIN_ID = 4;
+constexpr int MARGIN_WIDTH = 24;
 
 /// A helper class that sets the cursor of the current control to
 /// left pointing arrow and restores it once its destroyed
@@ -813,7 +814,7 @@ void clEditor::SetProperties()
                         DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(120) : bgColour.ChangeLightness(60));
 
     // Set margins' width
-    SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? FromDIP(16) : 0); // Symbol margin
+    SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? FromDIP(MARGIN_WIDTH) : 0); // Symbol margin
 
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
@@ -871,7 +872,7 @@ void clEditor::SetProperties()
     SetMarginMask(FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);
     SetMarginType(FOLD_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
     SetMarginSensitive(FOLD_MARGIN_ID, true);
-    SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? FromDIP(16) : 0);
+    SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? FromDIP(MARGIN_WIDTH) : 0);
     StyleSetBackground(FOLD_MARGIN_ID, StyleGetBackground(wxSTC_STYLE_DEFAULT));
 
     if (options->GetFoldStyle() == wxT("Flatten Tree Square Headers")) {

@@ -144,25 +144,22 @@ source $HOME/.$(basename $SHELL)rc
  - Finally, Build CodeLite:
 
 ```bash
-    mkdir -p $HOME/src
-    cd $HOME/src
+    mkdir -p $HOME/devl
+    cd $_
     git clone https://github.com/eranif/codelite.git
     cd codelite
     git submodule update --init --recursive
-
-    # build CodeLite release configuration
     mkdir build-release
-    cd build-release
+    cd $_
     cmake .. -DCMAKE_BUILD_TYPE=Release
-    cmake --build . -j $(sysctl -n hw.physicalcpu)
-    cmake --build . --target install
+    make -j$(sysctl -n hw.physicalcpu) install
 ```
 
-You should now have an app bundle `$HOME/src/codelite/build-release/codelite.app`
+You should now have an app bundle `$HOME/devl/codelite/build-release/codelite.app`
 
 To launch CodeLite:
 
-- `open $HOME/src/codelite/build-release/codelite.app`
+- `open $HOME/devl/codelite/build-release/codelite.app`
 
 ----------
 

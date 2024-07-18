@@ -98,15 +98,14 @@ make -j$(nproc) && sudo make install
 #### Build wxWidgets
 
 ```bash
-mkdir $HOME/src
-cd $HOME/src
+mkdir -p $HOME/devl
+cd $_
 git clone https://github.com/wxWidgets/wxWidgets.git
-cd $HOME/src/wxWidgets
-git submodule init
-git submodule update
+cd wxWidgets
+git submodule update --init
 mkdir build-release
-cd build-release
-../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++17 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl --enable-stl
+cd $_
+../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++17 -stdlib=libc++' CC=clang --disable-debug --disable-mediactrl --enable-stl --with-libtiff=no --enable-utf8
 make -j$(sysctl -n hw.physicalcpu)
 sudo make install
 ```

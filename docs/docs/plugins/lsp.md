@@ -132,7 +132,7 @@ and configure any server the follows the LSP protocol. You will however, need to
 - Install the LSP you want on your computer. You can [visit this site][2] to get a complete list of all LSP implementations out there
 - From the main menu, `Plugins` &#8594; `Language Server` &#8594; `Settings...`
 - Click on the `Add` button
-- In the dialog that opens, fill the mandatory fields:
+- In the dialogue that opens, fill the mandatory fields:
 
 Field   | Mandatory | Description
 --------|-----------|-------------

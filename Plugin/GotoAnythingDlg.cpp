@@ -1,18 +1,12 @@
 #include "GotoAnythingDlg.h"
 
-#include "bitmap_loader.h"
 #include "clAnagram.h"
-#include "clKeyboardManager.h"
-#include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "imanager.h"
 #include "macros.h"
-#include "windowattrmanager.h"
 
-#include <algorithm>
 #include <wx/app.h>
 
 GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry>& entries)
@@ -23,31 +17,27 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     CallAfter(&GotoAnythingDlg::UpdateLastSearch);
 
     ::clSetDialogBestSizeAndPosition(this);
-    CenterOnParent();
 }
 
-GotoAnythingDlg::~GotoAnythingDlg()
-{
-    // clConfig::Get().Write("GotoAnything/LastSearch", m_textCtrlSearch->GetValue());
-}
+GotoAnythingDlg::~GotoAnythingDlg() {}
 
 void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.GetKeyCode() == WXK_ESCAPE) {
+    if (event.GetKeyCode() == WXK_ESCAPE) {
         event.Skip(false);
         EndModal(wxID_CANCEL);
-    } else if(event.GetKeyCode() == WXK_DOWN) {
+    } else if (event.GetKeyCode() == WXK_DOWN) {
         event.Skip(false);
         int row = m_dvListCtrl->GetSelectedRow();
-        if((size_t)(row + 1) < m_dvListCtrl->GetItemCount()) {
+        if ((size_t)(row + 1) < m_dvListCtrl->GetItemCount()) {
             row++;
             DoSelectItem(m_dvListCtrl->RowToItem(row));
         }
-    } else if(event.GetKeyCode() == WXK_UP) {
+    } else if (event.GetKeyCode() == WXK_UP) {
         event.Skip(false);
         int row = m_dvListCtrl->GetSelectedRow();
-        if((row - 1) >= 0) {
+        if ((row - 1) >= 0) {
             row--;
             DoSelectItem(m_dvListCtrl->RowToItem(row));
         }
@@ -64,7 +54,7 @@ void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const 
 {
     m_dvListCtrl->DeleteAllItems();
     m_dvListCtrl->Begin();
-    for(size_t i = 0; i < entries.size(); ++i) {
+    for (size_t i = 0; i < entries.size(); ++i) {
         const clGotoEntry& entry = entries[i];
         wxVector<wxVariant> cols;
         cols.push_back(wxT("\u2022 ") + entry.GetDesc());
@@ -72,7 +62,7 @@ void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const 
         m_dvListCtrl->AppendItem(cols, indexes.empty() ? i : indexes[i]);
     }
     m_dvListCtrl->Commit();
-    if(!entries.empty()) {
+    if (!entries.empty()) {
         m_dvListCtrl->SelectRow(0);
     }
 }
@@ -80,7 +70,7 @@ void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const 
 void GotoAnythingDlg::DoExecuteActionAndClose()
 {
     int row = m_dvListCtrl->GetSelectedRow();
-    if(row == wxNOT_FOUND)
+    if (row == wxNOT_FOUND)
         return;
 
     // Execute the action
@@ -106,12 +96,12 @@ void GotoAnythingDlg::ApplyFilter()
 {
     // Create a list the matches the typed text
     wxString filter = m_textCtrlSearch->GetValue();
-    if(m_currentFilter == filter)
+    if (m_currentFilter == filter)
         return;
 
     // Update the last applied filter
     m_currentFilter = filter;
-    if(filter.IsEmpty()) {
+    if (filter.IsEmpty()) {
         DoPopulate(m_allEntries);
     } else {
 
@@ -119,9 +109,9 @@ void GotoAnythingDlg::ApplyFilter()
         clAnagram anagram(filter);
         std::vector<clGotoEntry> matchedEntries;
         std::vector<int> matchedEntriesIndex;
-        for(size_t i = 0; i < m_allEntries.size(); ++i) {
+        for (size_t i = 0; i < m_allEntries.size(); ++i) {
             const clGotoEntry& entry = m_allEntries[i];
-            if(anagram.MatchesInOrder(entry.GetDesc())) {
+            if (anagram.MatchesInOrder(entry.GetDesc())) {
                 matchedEntries.push_back(entry);
                 matchedEntriesIndex.push_back(i);
             }

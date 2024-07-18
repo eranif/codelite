@@ -23,7 +23,6 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
     : LSPOutlineViewDlgBase(parent)
 {
     clSetDialogBestSizeAndPosition(this);
-    CenterOnParent();
     DoInitialise();
 }
 
@@ -36,7 +35,7 @@ void LSPOutlineViewDlg::DoInitialise()
     m_dvTreeCtrll->SetSortFunction(nullptr);
     m_textCtrlFilter->ClearAll();
 
-    if(m_symbols.empty()) {
+    if (m_symbols.empty()) {
         clAnsiEscapeCodeColourBuilder builder;
         builder.SetTheme(lexer->IsDark() ? eColourTheme::DARK : eColourTheme::LIGHT);
         builder.Add(_("Language Server is still not ready... "), AnsiColours::NormalText(), false);
@@ -62,14 +61,14 @@ void LSPOutlineViewDlg::DoInitialise()
     std::vector<std::pair<wxString, int>> containers;
 
     clAnsiEscapeCodeColourBuilder builder;
-    for(const SymbolInformation& si : m_symbols) {
+    for (const SymbolInformation& si : m_symbols) {
         const wxString& symbol_container = si.GetContainerName();
-        if(symbol_container.empty()) {
+        if (symbol_container.empty()) {
             containers.push_back({ si.GetName(), 1 });
         } else {
             int parent_depth = 0;
-            while(!containers.empty()) {
-                if(containers.back().first == symbol_container) {
+            while (!containers.empty()) {
+                if (containers.back().first == symbol_container) {
                     parent_depth = containers.back().second;
                     break;
                 }
@@ -81,7 +80,7 @@ void LSPOutlineViewDlg::DoInitialise()
         builder.Clear();
 
         // determine the symbol
-        switch(si.GetKind()) {
+        switch (si.GetKind()) {
         case kSK_File:
         case kSK_Module:
         case kSK_Package:
@@ -100,7 +99,7 @@ void LSPOutlineViewDlg::DoInitialise()
         case kSK_Function:
         case kSK_Constructor:
             builder.Add(FUNCTION_SYMBOL + " ", AnsiColours::NormalText());
-            if(si.GetName().Contains("(") && si.GetName().Contains(")")) {
+            if (si.GetName().Contains("(") && si.GetName().Contains(")")) {
                 // the name also has the signature
                 wxString signature = si.GetName().AfterFirst('(');
                 signature = signature.BeforeLast(')');
@@ -126,7 +125,7 @@ void LSPOutlineViewDlg::DoInitialise()
         }
         m_dvTreeCtrll->AddLine(builder.GetString(), false, (wxUIntPtr)&si);
     }
-    if(!m_dvTreeCtrll->IsEmpty()) {
+    if (!m_dvTreeCtrll->IsEmpty()) {
         m_dvTreeCtrll->SelectRow(0);
     }
     m_dvTreeCtrll->Commit();
@@ -148,7 +147,7 @@ void LSPOutlineViewDlg::OnTextUpdated(wxCommandEvent& event)
     wxDataViewItem starting_item =
         m_dvTreeCtrll->GetSelection().IsOk() ? m_dvTreeCtrll->GetSelection() : wxDataViewItem{ nullptr };
     auto match = m_dvTreeCtrll->FindNext(starting_item, filter_text, 0, wxTR_SEARCH_DEFAULT);
-    if(match.IsOk()) {
+    if (match.IsOk()) {
         m_dvTreeCtrll->Select(match);
         m_dvTreeCtrll->HighlightText(match, true);
         m_dvTreeCtrll->EnsureVisible(match);
@@ -162,7 +161,7 @@ void LSPOutlineViewDlg::OnItemActivated(wxDataViewEvent& event)
 
 void LSPOutlineViewDlg::OnKeyDown(wxKeyEvent& event)
 {
-    switch(event.GetKeyCode()) {
+    switch (event.GetKeyCode()) {
     case WXK_ESCAPE:
         Hide();
         break;
@@ -175,15 +174,15 @@ void LSPOutlineViewDlg::OnKeyDown(wxKeyEvent& event)
     default: {
         int modifier_key = event.GetModifiers();
         wxChar ch = event.GetUnicodeKey();
-        if(modifier_key == wxMOD_CONTROL && ch == 'U') {
+        if (modifier_key == wxMOD_CONTROL && ch == 'U') {
             m_dvTreeCtrll->PageUp();
             DoFindNext();
-        } else if(modifier_key == wxMOD_CONTROL && ch == 'D') {
+        } else if (modifier_key == wxMOD_CONTROL && ch == 'D') {
             m_dvTreeCtrll->PageDown();
             DoFindPrev();
-        } else if(modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
+        } else if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
             DoFindNext();
-        } else if(modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
+        } else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
             DoFindPrev();
         } else {
             event.Skip();
@@ -198,13 +197,13 @@ void LSPOutlineViewDlg::DoFindNext()
     m_dvTreeCtrll->ClearAllHighlights();
 
     int sel_row = m_dvTreeCtrll->GetSelectedRow();
-    if((sel_row + 1) >= m_dvTreeCtrll->GetItemCount()) {
+    if ((sel_row + 1) >= m_dvTreeCtrll->GetItemCount()) {
         return;
     }
 
     wxDataViewItem next_item = m_dvTreeCtrll->RowToItem(sel_row + 1);
     wxString find_what = m_textCtrlFilter->GetValue();
-    if(find_what.empty()) {
+    if (find_what.empty()) {
         m_dvTreeCtrll->Select(next_item);
         m_dvTreeCtrll->EnsureVisible(next_item);
     } else {
@@ -220,13 +219,13 @@ void LSPOutlineViewDlg::DoFindPrev()
     m_dvTreeCtrll->ClearAllHighlights();
 
     int sel_row = m_dvTreeCtrll->GetSelectedRow();
-    if(sel_row < 1) {
+    if (sel_row < 1) {
         return;
     }
 
     wxDataViewItem prev_item = m_dvTreeCtrll->RowToItem(sel_row - 1);
     wxString find_what = m_textCtrlFilter->GetValue();
-    if(find_what.empty()) {
+    if (find_what.empty()) {
         m_dvTreeCtrll->Select(prev_item);
         m_dvTreeCtrll->EnsureVisible(prev_item);
     } else {
@@ -239,7 +238,7 @@ void LSPOutlineViewDlg::DoFindPrev()
 
 void LSPOutlineViewDlg::OnListKeyDown(wxKeyEvent& event)
 {
-    if(event.GetKeyCode() == WXK_ESCAPE) {
+    if (event.GetKeyCode() == WXK_ESCAPE) {
         Hide();
     } else {
         event.Skip();
@@ -255,7 +254,7 @@ void LSPOutlineViewDlg::SetSymbols(const std::vector<SymbolInformation>& symbols
 void LSPOutlineViewDlg::DoSelectionActivate()
 {
     auto selection = m_dvTreeCtrll->GetSelection();
-    if(!selection.IsOk()) {
+    if (!selection.IsOk()) {
         return;
     }
 
@@ -268,7 +267,7 @@ void LSPOutlineViewDlg::DoSelectionActivate()
     CHECK_PTR_RET(active_editor);
 
     int sci_line = loc.GetRange().GetStart().GetLine();
-    if(loc.GetRange().GetStart().GetLine() != loc.GetRange().GetEnd().GetLine()) {
+    if (loc.GetRange().GetStart().GetLine() != loc.GetRange().GetEnd().GetLine()) {
         // different lines, don't select the entire function
         // just place the caret at the beginning of the function
         int position = active_editor->PosFromLine(sci_line);  // start of line

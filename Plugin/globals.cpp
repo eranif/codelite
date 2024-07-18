@@ -1648,6 +1648,9 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     tlw->SetMinSize(frameSize.GetSize());
     tlw->SetSize(frameSize.GetSize());
     tlw->CentreOnParent();
+#if defined(__WXMAC__)
+    tlw->Move(wxNOT_FOUND, parent_tlw->GetPosition().y);
+#endif
     tlw->PostSizeEvent();
 }
 
@@ -1656,6 +1659,7 @@ static void DoSetDialogSize(wxDialog* win, double factor)
     if (!win) {
         return;
     }
+
     if (factor <= 0.0) {
         factor = 1.0;
     }
@@ -1674,6 +1678,9 @@ static void DoSetDialogSize(wxDialog* win, double factor)
         win->SetSize(parentSize);
         win->GetSizer()->Layout();
         win->CentreOnParent();
+#if defined(__WXMAC__)
+        win->Move(wxNOT_FOUND, parent->GetPosition().y);
+#endif
     }
 }
 

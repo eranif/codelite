@@ -856,7 +856,8 @@ void LanguageServerCluster::OnShowQuickOutlineDlg(LSPEvent& event)
     }
     if (!m_quick_outline_dlg->IsShown()) {
         m_quick_outline_dlg->Show();
-        m_quick_outline_dlg->CenterOnParent();
+        // reposition the window
+        ::clSetDialogBestSizeAndPosition(m_quick_outline_dlg);
     }
     m_quick_outline_dlg->SetSymbols({});
 }

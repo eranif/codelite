@@ -20,14 +20,14 @@ def run_command_and_return_output(command, throw_err=False, working_directory=No
             return ""
 
 
-brew_install_prefix = (
-    run_command_and_return_output(
-        "brew --prefix --installed openssl pcre2 libssh hunspell",
-        throw_err=True,
-    )
-    .strip()
-    .split("\n")
-)
+#brew_install_prefix = (
+#    run_command_and_return_output(
+#        "brew --prefix --installed openssl pcre2 libssh hunspell",
+#        throw_err=True,
+#    )
+#    .strip()
+#    .split("\n")
+#)
 
 
 def run_install_name_tool(file: str):
@@ -41,7 +41,7 @@ def run_install_name_tool(file: str):
         "libwxshapeframework",
         "libdatabaselayersqlite",
     ]
-    patterns = patterns + brew_install_prefix
+#    patterns = patterns + brew_install_prefix
 
     grep_E = "|".join(patterns)
     otool_output = run_command_and_return_output(

@@ -12,7 +12,7 @@ jobs:
     steps:
     # WxWidgets
     - name: install dependencies for wxWidgets
-      run: sudo apt-get install build-essential clang-format-12 cmake git libedit-dev libgtk-3-dev libhunspell-dev libsqlite3-dev libssh-dev pkg-config xterm
+      run: sudo apt-get install build-essential cmake git libedit-dev libgtk-3-dev libhunspell-dev libsqlite3-dev libssh-dev pkg-config xterm
 
     - name: Checkout WxWidgets
       uses: actions/checkout@v4

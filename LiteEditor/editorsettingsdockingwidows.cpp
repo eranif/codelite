@@ -32,7 +32,6 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
 {
     AddHeader(_("Tabs"));
 
-#if 1
     const std::unordered_map<wxString, int> tab_height_map = { { "TALL", OptionsConfig::nbTabHt_Tall },
                                                                { "MEDIUM", OptionsConfig::nbTabHt_Medium },
                                                                { "SHORT", OptionsConfig::nbTabHt_Short },
@@ -52,7 +51,6 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
                         m_options->SetNotebookTabHeight(tab_height_map.find(value_str)->second);
                     }
                 });
-#endif
 
     std::unordered_map<wxString, wxDirection> orientation_map = {
         { "UP", wxUP }, { "DOWN", wxDOWN }, { "LEFT", wxLEFT }, { "RIGHT", wxRIGHT }, { "VERTICAL", wxLEFT }

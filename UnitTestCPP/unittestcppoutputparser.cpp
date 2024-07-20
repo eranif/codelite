@@ -24,12 +24,14 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "unittestcppoutputparser.h"
-#include "wx/log.h"
-#include <wx/crt.h>
-#include <wx/regex.h>
 
 #include "compiler.h"
+
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+#include <wx/crt.h>
+#include <wx/log.h>
+#include <wx/regex.h>
+
 WX_DEFINE_OBJARRAY(ErrorLineInfoArray);
 
 UnitTestCppOutputParser::~UnitTestCppOutputParser() {}

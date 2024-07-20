@@ -26,10 +26,11 @@
 #define DIRPICKER_H
 
 #include "codelite_exports.h"
-#include "wx/button.h"
-#include "wx/combobox.h"
-#include "wx/panel.h"
-#include "wx/textctrl.h"
+
+#include <wx/button.h>
+#include <wx/combobox.h>
+#include <wx/panel.h>
+#include <wx/textctrl.h>
 
 enum { wxDP_USE_TEXTCTRL = 1, wxDP_USE_COMBOBOX = 2 };
 

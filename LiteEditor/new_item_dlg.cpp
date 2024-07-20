@@ -29,10 +29,11 @@
 #include "new_item_dlg.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
-#include "wx/xrc/xmlres.h"
+
 #include <wx/dirdlg.h>
 #include <wx/imaglist.h>
 #include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 ///////////////////////////////////////////////////////////////////////////
 

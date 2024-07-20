@@ -26,24 +26,24 @@
 #ifndef ERDCOMMITWIZARD_H
 #define ERDCOMMITWIZARD_H
 
-#include <wx/wx.h>
-#include <wx/treectrl.h>
-#include <wx/wizard.h>
-#include <wx/imaglist.h>
-#include <wx/filepicker.h>
-#include <wx/statline.h>
-#include <wx/txtstrm.h>
-#include <wx/wfstream.h>
-#include <wx/dblayer/include/DatabaseLayer.h>
-#include <wx/dblayer/include/DatabaseLayerException.h>
-#include "wx/wxxmlserializer/XmlSerializer.h"
-
-#include "dbconnection.h"
+#include "CodePreviewDialog.h"
 #include "database.h"
+#include "dbconnection.h"
 #include "dbitem.h"
 #include "dumpclass.h"
 #include "view.h"
-#include "CodePreviewDialog.h"
+
+#include <wx/dblayer/include/DatabaseLayer.h>
+#include <wx/dblayer/include/DatabaseLayerException.h>
+#include <wx/filepicker.h>
+#include <wx/imaglist.h>
+#include <wx/statline.h>
+#include <wx/treectrl.h>
+#include <wx/txtstrm.h>
+#include <wx/wfstream.h>
+#include <wx/wizard.h>
+#include <wx/wx.h>
+#include <wx/wxxmlserializer/XmlSerializer.h>
 
 /*! \brief Wizard for commiting database structure from ERD diagrom to database server. */
 class ErdCommitWizard : public wxWizard {

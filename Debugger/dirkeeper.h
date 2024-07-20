@@ -25,7 +25,7 @@
  #ifndef DIRKEEPER_H
 #define DIRKEEPER_H
 
-#include "wx/string.h"
+#include <wx/string.h>
 
 class DirKeeper
 {

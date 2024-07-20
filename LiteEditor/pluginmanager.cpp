@@ -56,14 +56,14 @@
 #include "procutils.h"
 #include "sessionmanager.h"
 #include "workspacetab.h"
-#include "wx/filename.h"
-#include "wx/xrc/xmlres.h"
 
 #include <memory>
 #include <wx/dir.h>
+#include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include <wx/toolbook.h>
+#include <wx/xrc/xmlres.h>
 
 namespace
 {

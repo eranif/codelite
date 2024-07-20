@@ -27,13 +27,13 @@
 
 #include "JSON.h"
 #include "codelite_exports.h"
-#include "wx/string.h"
 
 #include <list>
 #include <map>
 #include <vector>
 #include <wx/colour.h>
 #include <wx/stc/stc.h>
+#include <wx/string.h>
 
 // Special attributes IDs
 #define FOLD_MARGIN_ATTR_ID -1

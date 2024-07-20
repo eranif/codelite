@@ -25,14 +25,15 @@
 #ifndef WORKER_THREAD_H
 #define WORKER_THREAD_H
 
-#include <deque>
-#include "wx/thread.h"
-#include "wx/event.h"
 #include "codelite_exports.h"
-#include <wx/msgqueue.h>
-#include <queue>
+
 #include <condition_variable>
+#include <deque>
 #include <mutex>
+#include <queue>
+#include <wx/event.h>
+#include <wx/msgqueue.h>
+#include <wx/thread.h>
 
 /**
  * Base class for thread requests,

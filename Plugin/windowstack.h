@@ -27,12 +27,12 @@
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "wx/panel.h"
-#include "wx/sizer.h"
 
 #include <set>
 #include <vector>
+#include <wx/panel.h>
 #include <wx/simplebook.h>
+#include <wx/sizer.h>
 
 #define wxUSE_WINDOWSTACK_SIMPLEBOOK 0
 

@@ -28,7 +28,6 @@
 
 #include "cl_standard_paths.h"
 #include "file_logger.h"
-#include "wx/tokenzr.h"
 
 #include <atomic>
 #include <libssh/sftp.h>
@@ -36,6 +35,7 @@
 #include <sys/stat.h>
 #include <wx/ffile.h>
 #include <wx/filefn.h>
+#include <wx/tokenzr.h>
 
 class SFTPDirCloser
 {

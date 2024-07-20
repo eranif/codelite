@@ -36,13 +36,13 @@
 #ifndef _IHUNSPELL_
 #define _IHUNSPELL_
 // ------------------------------------------------------------
-#include "wx/arrstr.h"
 #include "wxStringHash.h"
 
 #include <hunspell/hunspell.h>
 #include <unordered_set>
 #include <utility>
 #include <vector>
+#include <wx/arrstr.h>
 #include <wx/hashmap.h>
 // ------------------------------------------------------------
 WX_DECLARE_STRING_HASH_MAP(wxString, languageMap);

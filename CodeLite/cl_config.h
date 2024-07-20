@@ -28,9 +28,10 @@
 
 #include "JSON.h"
 #include "codelite_exports.h"
-#include "wx/filename.h"
+
 #include <functional>
 #include <map>
+#include <wx/filename.h>
 
 ////////////////////////////////////////////////////////
 

@@ -1,10 +1,12 @@
+#include "WordCompletionThread.h"
+
 #include "WordCompletionDictionary.h"
 #include "WordCompletionSettings.h"
-#include "WordCompletionThread.h"
 #include "WordTokenizerAPI.h"
 #include "macros.h"
 #include "wordcompletion.h"
-#include "wx/strconv.h"
+
+#include <wx/strconv.h>
 
 WordCompletionThread::WordCompletionThread(WordCompletionDictionary* dict)
     : m_dict(dict)

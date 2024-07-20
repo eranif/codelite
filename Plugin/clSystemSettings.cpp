@@ -8,8 +8,8 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
-#include "wx/app.h"
 
+#include <wx/app.h>
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/settings.h>

@@ -39,12 +39,13 @@
 #include "imanager.h"
 #include "plugin_version.h"
 #include "plugindata.h"
-#include "wx/event.h"
-#include "wx/notebook.h"
-#include "wx/toolbar.h"
+
 #include <wx/app.h>
+#include <wx/event.h>
 #include <wx/menu.h>
+#include <wx/notebook.h>
 #include <wx/pen.h>
+#include <wx/toolbar.h>
 
 #ifdef _WIN32
 #define STDCALL __stdcall

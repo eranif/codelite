@@ -35,9 +35,9 @@
 #include "context_html.h"
 #include "editor_config.h"
 #include "generic_context.h"
-#include "wx/versioninfo.h"
 
 #include <wx/tokenzr.h>
+#include <wx/versioninfo.h>
 
 ContextManager::ContextManager() { Initialize(); }
 

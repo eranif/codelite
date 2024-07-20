@@ -1,7 +1,5 @@
 #include "mdparser.hpp"
 
-#include "wx/string.h"
-
 #include <cctype>
 #include <iostream>
 #include <memory>
@@ -12,6 +10,7 @@
 #include <unordered_set>
 #include <vector>
 #include <wx/crt.h>
+#include <wx/string.h>
 
 wxChar mdparser::Tokenizer::safe_get_char(size_t pos) const
 {

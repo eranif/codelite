@@ -3,7 +3,8 @@
 #include <vector>
 
 #ifdef __WXMSW__
-#include "wx/msw/registry.h"
+#include <wx/msw/registry.h>
+
 static wxSharedPtr<wxRegKey> TryCreateRegKey(wxRegKey::StdKey stdKey, wxRegKey::WOW64ViewMode mode, const wxString& key)
 {
     wxSharedPtr<wxRegKey> regKey(new wxRegKey(stdKey, key, mode));

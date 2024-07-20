@@ -26,9 +26,9 @@
 #define SYNC_QUEUE_H
 
 #include "codelite_exports.h"
-#include "wx/thread.h"
 
 #include <deque>
+#include <wx/thread.h>
 
 /**
  * A thread safe queue implementation

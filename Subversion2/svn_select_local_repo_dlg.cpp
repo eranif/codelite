@@ -23,10 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "wx/menu.h"
 #include "svn_select_local_repo_dlg.h"
-#include "windowattrmanager.h"
+
 #include "subversion2.h"
+#include "windowattrmanager.h"
+
+#include <wx/menu.h>
 
 SvnSelectLocalRepoDlg::SvnSelectLocalRepoDlg( wxWindow* parent, Subversion2 *plugin, const wxString &curpath )
 	: SvnSelectLocalRepoBase( parent )

@@ -29,7 +29,8 @@
 #include "event_notifier.h"
 #include "ieditor.h"
 #include "plugin.h"
-#include "wx/xrc/xmlres.h"
+
+#include <wx/xrc/xmlres.h>
 
 BookmarkManager::BookmarkManager()
     : m_activeBookmarkType(smt_bookmark1)

@@ -22,13 +22,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "cscope.h"
 #include "cscopedbbuilderthread.h"
+
+#include "cscope.h"
 #include "cscopestatusmessage.h"
 #include "dirsaver.h"
 #include "file_logger.h"
 #include "procutils.h"
-#include "wx/filefn.h"
+
+#include <wx/filefn.h>
 
 int wxEVT_CSCOPE_THREAD_DONE = wxNewId();
 int wxEVT_CSCOPE_THREAD_UPDATE_STATUS = wxNewId();

@@ -23,10 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "winprocess.h"
+
 #ifdef __WXMSW__
-#include "wx/filefn.h"
 
 #include <memory>
+#include <wx/filefn.h>
 
 /*static*/
 WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxString& workingDir)

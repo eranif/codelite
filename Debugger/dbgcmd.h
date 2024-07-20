@@ -27,8 +27,9 @@
 
 #include "debugger.h"
 #include "debuggerobserver.h"
-#include "wx/event.h"
-#include "wx/string.h"
+
+#include <wx/event.h>
+#include <wx/string.h>
 
 class IDebugger;
 class DbgGdb;

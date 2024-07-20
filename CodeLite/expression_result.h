@@ -26,8 +26,8 @@
 #ifndef EXPRESSION_RESULT_H
 #define EXPRESSION_RESULT_H
 
-#include "string"
-#include <stdio.h>
+#include <cstdio>
+#include <string>
 
 #ifndef WXDLLIMPEXP_CL
 

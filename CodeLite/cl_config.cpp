@@ -30,10 +30,10 @@
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "wx/filename.h"
 
 #include <algorithm>
 #include <wx/filefn.h>
+#include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/stdpaths.h>
 

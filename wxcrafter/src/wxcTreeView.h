@@ -4,9 +4,9 @@
 #include "NewFormWizard.h"
 #include "wxcrafter.h"
 
-#include "wx/defs.h"
+#include <wx/defs.h>
 #ifdef __WINDOWS__          // __WINDOWS__ defined by wx/defs.h
-#include "wx/msw/wrapwin.h" // includes windows.h
+#include <wx/msw/wrapwin.h> // includes windows.h
 
 // macro and function name crash fix
 #if defined(AddForm)

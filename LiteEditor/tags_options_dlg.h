@@ -30,7 +30,8 @@
 #include "serialized_object.h"
 #include "tags_options_base_dlg.h"
 #include "tags_options_data.h"
-#include "wx/filename.h"
+
+#include <wx/filename.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class CodeCompletionSettingsDialog

@@ -22,14 +22,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "newworkspacedlg.h"
+
 #include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "globals.h"
-#include "newworkspacedlg.h"
 #include "windowattrmanager.h"
-#include "wx/dirdlg.h"
-#include "wx/filename.h"
-#include "wx/msgdlg.h"
+
+#include <wx/dirdlg.h>
+#include <wx/filename.h>
+#include <wx/msgdlg.h>
 
 NewWorkspaceDlg::NewWorkspaceDlg(wxWindow* parent)
     : NewWorkspaceBase(parent)

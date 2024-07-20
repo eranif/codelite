@@ -32,9 +32,6 @@
 #include "optionsconfig.h"
 #include "project_settings.h"
 #include "serialized_object.h"
-#include "wx/filename.h"
-#include "wx/string.h"
-#include "wx/treectrl.h"
 #include "xmlutils.h"
 
 #include <list>
@@ -43,7 +40,10 @@
 #include <set>
 #include <tree.h>
 #include <vector>
+#include <wx/filename.h>
 #include <wx/sharedptr.h>
+#include <wx/string.h>
+#include <wx/treectrl.h>
 #include <wx/xml/xml.h>
 
 #define PROJECT_TYPE_STATIC_LIBRARY "Static Library"

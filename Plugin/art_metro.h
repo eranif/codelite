@@ -38,13 +38,14 @@
 #define _WX_RIBBON_METRO_ART_H_
 
 #include "codelite_exports.h"
-#include "wx/bitmap.h"
-#include "wx/brush.h"
-#include "wx/colour.h"
-#include "wx/defs.h"
-#include "wx/font.h"
-#include "wx/pen.h"
-#include "wx/ribbon/art.h"
+
+#include <wx/bitmap.h>
+#include <wx/brush.h>
+#include <wx/colour.h>
+#include <wx/defs.h>
+#include <wx/font.h>
+#include <wx/pen.h>
+#include <wx/ribbon/art.h>
 
 class WXDLLIMPEXP_FWD_CORE wxDC;
 class WXDLLIMPEXP_FWD_CORE wxWindow;

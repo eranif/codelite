@@ -26,7 +26,8 @@
 #define GENERALINFO_H
 
 #include "serialized_object.h"
-#include "wx/string.h"
+
+#include <wx/string.h>
 
 enum {
     CL_MAXIMIZE_FRAME = (1 << 0),

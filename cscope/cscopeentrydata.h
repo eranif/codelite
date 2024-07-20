@@ -25,7 +25,7 @@
  #ifndef __cscopeentrydata__
 #define __cscopeentrydata__
 
-#include "wx/string.h"
+#include <wx/string.h>
 
 enum {
 	KindFileNode = 0,

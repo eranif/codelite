@@ -496,7 +496,7 @@ const wxString tokenizer_sample_file_2 = R"(#include "TextView.h"
 #include "wxTerminalCtrl.h"
 
 #ifdef __WXMSW__
-#include "wx/msw/wrapwin.h" // includes windows.h
+#include <wx/msw/wrapwin.h> // includes windows.h
 #endif
 #include <fileutils.h>
 #include <wx/tokenzr.h>

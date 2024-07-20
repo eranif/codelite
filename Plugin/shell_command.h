@@ -29,7 +29,8 @@
 #include "codelite_exports.h"
 #include "project.h"
 #include "queuecommand.h"
-#include "wx/event.h"
+
+#include <wx/event.h>
 
 class IManager;
 class IProcess;

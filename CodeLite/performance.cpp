@@ -28,11 +28,11 @@
 
 #ifdef __WXMSW__
 
-#include "wx/msw/wrapwin.h" // includes windows.h
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 #include <string>
 #include <vector>
+#include <wx/msw/wrapwin.h> // includes windows.h
 
 #if 0
 static FILE* dbgFile(NULL);

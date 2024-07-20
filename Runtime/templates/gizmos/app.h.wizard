@@ -1,7 +1,7 @@
 #ifndef __$(AppName)__
 #define __$(AppName)__
 
-#include "wx/app.h"
+#include <wx/app.h>
 
 class $(AppName) : public wxApp {
 	

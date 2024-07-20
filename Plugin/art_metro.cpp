@@ -34,28 +34,28 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
-
 #include <wx/frame.h>
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif
 
 #include "art_metro.h"
-#include "wx/ribbon/art.h"
-#include "wx/ribbon/art_internal.h"
-#include "wx/ribbon/bar.h"
-#include "wx/ribbon/buttonbar.h"
-#include "wx/ribbon/gallery.h"
-#include "wx/ribbon/toolbar.h"
+
+#include <wx/ribbon/art.h>
+#include <wx/ribbon/art_internal.h>
+#include <wx/ribbon/bar.h>
+#include <wx/ribbon/buttonbar.h>
+#include <wx/ribbon/gallery.h>
+#include <wx/ribbon/toolbar.h>
 
 #ifndef WX_PRECOMP
-#include "wx/dcmemory.h"
+#include <wx/dcmemory.h>
 #endif
 
 #ifdef __WXMSW__
-#include "wx/msw/private.h"
+#include <wx/msw/private.h>
 #endif
 
 static const char* const gallery_up_xpm[] = { "5 5 2 1", "  c None", "x c #FF00FF", "     ",

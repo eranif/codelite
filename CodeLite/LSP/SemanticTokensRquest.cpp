@@ -4,10 +4,10 @@
 #include "LSP/basic_types.h"
 #include "file_logger.h"
 #include "json_rpc_params.h"
-#include "wx/vector.h"
 
 #include <thread>
 #include <vector>
+#include <wx/vector.h>
 
 LSP::SemanticTokensRquest::SemanticTokensRquest(const wxString& filename)
     : m_filename(filename)

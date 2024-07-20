@@ -1,7 +1,7 @@
 #ifndef MYTREECTRL_H
 #define MYTREECTRL_H
 
-#include "wx/dataview.h" // Base class: wxDataViewTreeCtrl
+#include <wx/dataview.h> // Base class: wxDataViewTreeCtrl
 
 // Proxy class for wxTreeCtrl based on wxDataViewTreeCtrl
 class MyTreeCtrl : public wxDataViewTreeCtrl

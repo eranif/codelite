@@ -25,6 +25,7 @@
 #include "fileexplorer.h"
 
 #include "OpenFolderDlg.h"
+#include "SideBar.hpp"
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButton.h"
 #include "clTreeCtrlPanel.h"
@@ -39,13 +40,12 @@
 #include "macros.h"
 #include "manager.h"
 #include "plugin.h"
-#include "SideBar.hpp"
-#include "wx/sizer.h"
-#include "wx/tokenzr.h"
-#include "wx/xrc/xmlres.h"
 
 #include <wx/arrstr.h>
 #include <wx/dirdlg.h>
+#include <wx/sizer.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 FileExplorer::FileExplorer(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))

@@ -30,13 +30,13 @@
 #include "findinfilesdlg.h"
 #include "outputtabwindow.h"
 #include "search_thread.h"
-#include "wx/debug.h"
 #include "wx_ordered_map.h"
 
 #include <map>
 #include <unordered_map>
 #include <vector>
 #include <wx/aui/auibar.h>
+#include <wx/debug.h>
 #include <wx/stc/stc.h>
 
 // Map between the line numbers and a search results

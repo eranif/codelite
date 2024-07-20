@@ -29,7 +29,8 @@
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
 #include "codelite_exports.h"
 #include "compiler.h"
-#include "wx/filename.h"
+
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_SDK CompilerLocatorCLANG : public ICompilerLocator
 {

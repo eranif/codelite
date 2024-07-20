@@ -27,8 +27,9 @@
 
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
-#include "wx/panel.h"
-#include <imanager.h>
+#include "imanager.h"
+
+#include <wx/panel.h>
 
 class wxTreeCtrl;
 class clTreeCtrlPanel;

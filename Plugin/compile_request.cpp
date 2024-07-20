@@ -40,11 +40,11 @@
 #include "macros.h"
 #include "plugin.h"
 #include "workspace.h"
-#include "wx/process.h"
 
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
+#include <wx/process.h>
 #include <wx/regex.h>
 
 CompileRequest::CompileRequest(const QueueCommand& buildInfo, const wxString& fileName, bool runPremakeOnly,

@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "buildtabsettingsdata.h"
 
-#include "wx/settings.h"
+#include <wx/settings.h>
 
 BuildTabSettingsData::BuildTabSettingsData() {}
 

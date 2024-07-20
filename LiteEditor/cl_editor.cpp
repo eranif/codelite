@@ -95,7 +95,7 @@
 // #include "clFileOrFolderDropTarget.h"
 
 #if wxUSE_PRINTING_ARCHITECTURE
-#include "wx/paper.h"
+#include <wx/paper.h>
 #endif // wxUSE_PRINTING_ARCHITECTURE
 
 #if defined(USE_UCHARDET)

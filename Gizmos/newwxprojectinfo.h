@@ -25,7 +25,7 @@
  #ifndef __newwxprojectinfo__
 #define __newwxprojectinfo__
 
-#include "wx/string.h"
+#include <wx/string.h>
 
 //wxWidgets settings
 enum {

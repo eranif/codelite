@@ -32,13 +32,13 @@
 #include "globals.h"
 #include "simpletable.h"
 #include "windowattrmanager.h"
-#include "wx/persist/window.h"
-#include "wx/popupwin.h"
 
 #include <cmath>
 #include <wx/cursor.h>
 #include <wx/log.h>
 #include <wx/menu.h>
+#include <wx/persist/window.h>
+#include <wx/popupwin.h>
 #include <wx/timer.h>
 #include <wx/xrc/xmlres.h>
 

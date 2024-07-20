@@ -22,16 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "wx/msgdlg.h"
-#include "wx/filename.h"
-#include "drawingutils.h"
 #include "movefuncimpldlg.h"
-#include "lexer_configuration.h"
+
 #include "ColoursAndFontsManager.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
+#include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
+#include "lexer_configuration.h"
+
+#include <wx/filename.h>
+#include <wx/msgdlg.h>
 
 MoveFuncImplDlg::MoveFuncImplDlg(wxWindow* parent, const wxString& text, const wxString& fileName)
     : MoveFuncImplBaseDlg(parent)

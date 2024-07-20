@@ -28,8 +28,11 @@
 #include "AddOptionsDialog.h"
 #include "ColoursAndFontsManager.h"
 #include "GCCMetadata.hpp"
+#include "ICompilerLocator.h"
+#include "build_settings_config.h"
 #include "clSingleChoiceDialog.h"
 #include "cl_config.h"
+#include "compiler.h"
 #include "ctags_manager.h"
 #include "globals.h"
 #include "ieditor.h"
@@ -38,11 +41,7 @@
 #include "pluginmanager.h"
 #include "pptable.h"
 #include "windowattrmanager.h"
-#include "wx/tokenzr.h"
 
-#include <ICompilerLocator.h>
-#include <build_settings_config.h>
-#include <compiler.h>
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>

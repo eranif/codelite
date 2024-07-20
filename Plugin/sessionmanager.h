@@ -30,9 +30,9 @@
 #include "codelite_exports.h"
 #include "debugger.h"
 #include "serialized_object.h"
-#include "wx/xml/xml.h"
 
 #include <vector>
+#include <wx/xml/xml.h>
 
 namespace
 {

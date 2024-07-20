@@ -3,9 +3,9 @@
 
 #include "IPathConverter.hpp"
 #include "LSP/MessageWithParams.h"
-#include "wx/string.h"
 
 #include <wx/filename.h>
+#include <wx/string.h>
 
 namespace LSP
 {

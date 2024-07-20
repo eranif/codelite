@@ -22,13 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "wx/xrc/xmlres.h"
-#include "windowattrmanager.h"
-#include "imanager.h"
-#include "globals.h"
 #include "newwxprojectdlg.h"
-#include "wx/msgdlg.h"
+
+#include "imanager.h"
+#include "windowattrmanager.h"
 #include "workspace.h"
+
+#include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 NewWxProjectDlg::NewWxProjectDlg(wxWindow* parent, IManager* mgr)
     : NewWxProjectBaseDlg(parent)

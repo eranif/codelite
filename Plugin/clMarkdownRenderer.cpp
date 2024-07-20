@@ -5,7 +5,8 @@
 #include "drawingutils.h"
 #include "file_logger.h"
 #include "mdparser.hpp"
-#include "wx/settings.h"
+
+#include <wx/settings.h>
 
 namespace
 {

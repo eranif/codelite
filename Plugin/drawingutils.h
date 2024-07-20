@@ -28,9 +28,9 @@
 #include "clColours.h"
 #include "codelite_exports.h"
 #include "ieditor.h"
-#include "wx/colour.h"
-#include "wx/dc.h"
 
+#include <wx/colour.h>
+#include <wx/dc.h>
 #include <wx/dcgraph.h>
 
 enum class eButtonState {

@@ -27,9 +27,9 @@
 
 #include "Notebook.h"
 #include "cl_config.h"
-#include "wx/panel.h"
 
 #include <wx/imaglist.h>
+#include <wx/panel.h>
 
 class DebuggerCallstackView;
 class LocalsTable;

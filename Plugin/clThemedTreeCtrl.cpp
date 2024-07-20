@@ -1,6 +1,7 @@
 #include "clThemedTreeCtrl.h"
 
 #include "ColoursAndFontsManager.h"
+#include "clColours.h"
 #include "clSystemSettings.h"
 #include "clThemedCtrl.hpp"
 #include "cl_config.h"
@@ -8,10 +9,9 @@
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
-#include "wx/treebase.h"
 
-#include <clColours.h>
 #include <wx/settings.h>
+#include <wx/treebase.h>
 
 #ifdef __WXMSW__
 #define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_MULTIPLE | wxTR_ROW_LINES

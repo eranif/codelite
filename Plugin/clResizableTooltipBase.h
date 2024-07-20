@@ -8,7 +8,6 @@
 #define _CODELITE_PLUGIN_CLRESIZABLETOOLTIPBASE_BASE_CLASSES_H
 
 #include "clThemedTreeCtrl.h"
-#include "wx/frame.h"
 
 #include <wx/artprov.h>
 #include <wx/frame.h>

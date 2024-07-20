@@ -34,10 +34,11 @@
 // Licence:		GNU General Public Licence
 /////////////////////////////////////////////////////////////////////////////
 #include "event_notifier.h"
-#include "wx/wxprec.h"
+
+#include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
+#include <wx/wx.h>
 #endif
 
 #include "editsnippetsdlg.h"
@@ -46,6 +47,7 @@
 #include "templateclassdlg.h"
 #include "workspace.h"
 #include "wxSerialize.h"
+
 #include <wx/clipbrd.h>
 #include <wx/filename.h>
 #include <wx/numdlg.h>

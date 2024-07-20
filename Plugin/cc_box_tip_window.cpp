@@ -28,17 +28,17 @@
 #include "clMarkdownRenderer.hpp"
 #include "globals.h"
 #include "ieditor.h"
-#include "wx/arrstr.h"
-#include "wx/dcclient.h"
-#include "wx/regex.h"
 
 #include <algorithm>
 #include <memory>
+#include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/display.h>
+#include <wx/regex.h>
 #include <wx/settings.h>
 #include <wx/spinctrl.h>
 #include <wx/stc/stc.h>

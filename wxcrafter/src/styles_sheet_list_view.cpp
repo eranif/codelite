@@ -1,8 +1,10 @@
 #include "styles_sheet_list_view.h"
+
+#include "event_notifier.h"
 #include "wxc_widget.h"
 #include "wxgui_defs.h"
 #include "wxguicraft_main_view.h"
-#include <event_notifier.h>
+
 #include <wx/wupdlock.h>
 
 StylesSheetListView::StylesSheetListView()

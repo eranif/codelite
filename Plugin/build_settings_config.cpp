@@ -27,16 +27,16 @@
 
 #include "ICompilerLocator.h"
 #include "JSON.h"
+#include "cl_command_event.h"
 #include "codelite_events.h"
 #include "conffilelocator.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
 #include "macros.h"
 #include "xmlutils.h"
 
 #include <algorithm>
-#include <cl_command_event.h>
-#include <event_notifier.h>
-#include <globals.h>
 #include <wx/ffile.h>
 #include <wx/sstream.h>
 

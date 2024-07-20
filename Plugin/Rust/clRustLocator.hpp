@@ -1,7 +1,7 @@
 #ifndef CLRUSTLOCATOR_HPP
 #define CLRUSTLOCATOR_HPP
 
-#include <codelite_exports.h>
+#include "codelite_exports.h"
 #include <wx/string.h>
 
 class WXDLLIMPEXP_SDK clRustLocator

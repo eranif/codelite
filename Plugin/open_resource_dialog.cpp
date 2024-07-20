@@ -41,9 +41,9 @@
 #include "window_locker.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
+#include "codelite_events.h"
 
 #include <algorithm>
-#include <codelite_events.h>
 #include <vector>
 #include <wx/event.h>
 #include <wx/filefn.h>

@@ -27,6 +27,7 @@
 
 #include "IWorkspace.h"
 #include "JSON.h"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "configuration_mapping.h"
 #include "localworkspace.h"
@@ -35,7 +36,6 @@
 #include "singleton.h"
 #include "wxStringHash.h"
 
-#include <cl_command_event.h>
 #include <map>
 #include <wx/event.h>
 #include <wx/filename.h>

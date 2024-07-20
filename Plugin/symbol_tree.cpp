@@ -28,11 +28,11 @@
 #include "ctags_manager.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "imanager.h"
 #include "precompiled_header.h"
 #include "tokenizer.h"
 
 #include <functional>
-#include <imanager.h>
 #include <wx/wupdlock.h>
 
 SymbolTree::SymbolTree()

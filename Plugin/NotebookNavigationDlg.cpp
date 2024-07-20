@@ -2,9 +2,9 @@
 
 #include "Notebook.h"
 #include "file_logger.h"
+#include "imanager.h"
 #include "windowattrmanager.h"
 
-#include <imanager.h>
 #include <wx/app.h>
 #include <wx/dynarray.h>
 

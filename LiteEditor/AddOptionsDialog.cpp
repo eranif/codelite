@@ -3,8 +3,8 @@
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
 #include "file_logger.h"
+#include "globals.h"
 
-#include <globals.h>
 #include <wx/sstream.h>
 #include <wx/tokenzr.h>
 #include <wx/txtstrm.h>

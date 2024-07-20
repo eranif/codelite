@@ -1,15 +1,17 @@
+#include "designer_panel.h"
+
 #include "DirectoryChanger.h"
 #include "allocator_mgr.h"
 #include "designer_container_panel.h"
-#include "designer_panel.h"
+#include "drawingutils.h"
+#include "event_notifier.h"
 #include "gui.h"
 #include "menu_bar.h"
 #include "tool_bar.h"
 #include "wxcTreeView.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
-#include <drawingutils.h>
-#include <event_notifier.h>
+
 #include <wx/app.h>
 #include <wx/bookctrl.h>
 #include <wx/choicebk.h>
@@ -22,7 +24,7 @@
 #include <wx/dirctrl.h>
 #include <wx/filepicker.h>
 #include <wx/gbsizer.h>
-//#include <wx/grid.h>
+// #include <wx/grid.h>
 #include <wx/listbook.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>

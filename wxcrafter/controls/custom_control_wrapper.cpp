@@ -2,10 +2,10 @@
 
 #include "allocator_mgr.h"
 #include "file_logger.h"
+#include "macromanager.h"
 #include "wxc_settings.h"
 #include "xmlutils.h"
 
-#include <macromanager.h>
 #include <wx/regex.h>
 
 CustomControlWrapper::CustomControlWrapper()

@@ -26,10 +26,10 @@
 #ifndef LOCALSVIEW_H
 #define LOCALSVIEW_H
 
+#include "macros.h"
 #include "php_ui.h"
 #include "wxStringHash.h"
 #include "xdebugevent.h"
-#include <macros.h>
 
 class clThemedTreeCtrl;
 class LocalsView : public LocalsViewBase

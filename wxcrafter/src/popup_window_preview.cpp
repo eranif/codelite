@@ -1,9 +1,11 @@
 #include "popup_window_preview.h"
+
 #include "DirectoryChanger.h"
+#include "event_notifier.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
-#include <event_notifier.h>
+
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>

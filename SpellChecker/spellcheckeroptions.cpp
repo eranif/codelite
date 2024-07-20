@@ -33,7 +33,8 @@
 // License:
 /////////////////////////////////////////////////////////////////////////////
 #include "spellcheckeroptions.h"
-#include <cl_standard_paths.h>
+
+#include "cl_standard_paths.h"
 // ------------------------------------------------------------
 SpellCheckerOptions::SpellCheckerOptions()
 {

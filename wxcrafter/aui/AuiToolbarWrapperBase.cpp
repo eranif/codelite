@@ -1,9 +1,10 @@
 #include "AuiToolbarWrapperBase.h"
+
+#include "macros.h"
 #include "tool_bar_item_wrapper.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
-#include <macros.h>
 
 AuiToolbarWrapperBase::AuiToolbarWrapperBase() {}
 

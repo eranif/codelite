@@ -1,9 +1,9 @@
 #ifndef NODESTDINTHREAD_H
 #define NODESTDINTHREAD_H
 
-#include <clJoinableThread.h>
-#include <cl_command_event.h>
-#include <codelite_exports.h>
+#include "clJoinableThread.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
 
 class NodeStdinThread : public clJoinableThread
 {

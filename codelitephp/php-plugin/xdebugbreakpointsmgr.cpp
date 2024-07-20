@@ -1,15 +1,17 @@
 #include "xdebugbreakpointsmgr.h"
+
 #include "PHPUserWorkspace.h"
 #include "XDebugManager.h"
+#include "bookmark_manager.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "php_project.h"
 #include "php_workspace.h"
+#include "plugin.h"
 #include "xdebugevent.h"
+
 #include <algorithm>
-#include <bookmark_manager.h>
-#include <event_notifier.h>
-#include <file_logger.h>
-#include <plugin.h>
 #include <wx/stc/stc.h>
 
 XDebugBreakpointsMgr::XDebugBreakpointsMgr()

@@ -28,11 +28,11 @@
 
 #include "PhpSFTPHandler.h"
 #include "XDebugManager.h"
+#include "cl_command_event.h"
 #include "php_event.h"
 #include "plugin.h"
 #include "plugin_settings.h"
 
-#include <cl_command_event.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
 

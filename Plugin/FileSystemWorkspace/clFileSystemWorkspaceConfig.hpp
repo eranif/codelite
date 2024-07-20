@@ -6,11 +6,11 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "macros.h"
+#include "wxStringHash.h"
 
 #include <map>
 #include <wx/arrstr.h>
 #include <wx/sharedptr.h>
-#include <wxStringHash.h>
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceConfig
 {

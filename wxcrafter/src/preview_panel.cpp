@@ -1,8 +1,10 @@
 #include "preview_panel.h"
+
 #include "DirectoryChanger.h"
+#include "event_notifier.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
-#include <event_notifier.h>
+
 #include <wx/app.h>
 #include <wx/sizer.h>
 #include <wx/sstream.h>

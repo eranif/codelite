@@ -1,8 +1,10 @@
 #include "XDebugUnknownCommand.h"
+
+#include "event_notifier.h"
+#include "xdebugevent.h"
+
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
-#include "xdebugevent.h"
-#include <event_notifier.h>
 
 XDebugUnknownCommand::XDebugUnknownCommand(XDebugManager* mgr, int transcationId)
     : XDebugCommandHandler(mgr, transcationId)

@@ -26,9 +26,8 @@
 #ifndef __memoryview__
 #define __memoryview__
 
+#include "codelite_exports.h"
 #include "memoryviewbase.h"
-
-#include <codelite_exports.h>
 
 /** Implementing MemoryViewBase */
 class WXDLLIMPEXP_SDK MemoryView : public MemoryViewBase

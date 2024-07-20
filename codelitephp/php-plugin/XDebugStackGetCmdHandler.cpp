@@ -1,12 +1,15 @@
 #include "XDebugStackGetCmdHandler.h"
+
+#include "XDebugManager.h"
+#include "cl_command_event.h"
+#include "event_notifier.h"
+#include "php_utils.h"
+#include "xdebugevent.h"
+#include "xmlutils.h"
+
 #include <wx/socket.h>
 #include <wx/xml/xml.h>
-#include <xmlutils.h>
-#include <cl_command_event.h>
-#include <event_notifier.h>
-#include "XDebugManager.h"
-#include "xdebugevent.h"
-#include "php_utils.h"
+
 XDebugStackGetCmdHandler::XDebugStackGetCmdHandler(XDebugManager* mgr, int transcationId, int requestedStack)
     : XDebugCommandHandler(mgr, transcationId)
     , m_requestedStack(requestedStack)

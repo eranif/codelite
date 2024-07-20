@@ -2,6 +2,7 @@
 
 #include "choice_property.h"
 #include "color_property.h"
+#include "event_notifier.h"
 #include "file_picker_ctrl.h"
 #include "font_property.h"
 #include "multi_string_ctrl.h"
@@ -10,7 +11,6 @@
 #include "winid_property.h"
 #include "wxguicraft_main_view.h"
 
-#include <event_notifier.h>
 #include <wx/app.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>

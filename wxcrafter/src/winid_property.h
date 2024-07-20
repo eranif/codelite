@@ -1,8 +1,9 @@
 #ifndef COMBOXPROPERTY_H
 #define COMBOXPROPERTY_H
 
+#include "macros.h"
 #include "property_base.h"
-#include <macros.h>
+
 #include <wx/arrstr.h>
 
 extern const wxEventType wxEVT_WINID_UPDATED;

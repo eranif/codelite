@@ -34,6 +34,7 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
+#include "wxStringHash.h"
 
 #include <set>
 #include <unordered_set>
@@ -42,7 +43,6 @@
 #include <wx/stopwatch.h>
 #include <wx/string.h>
 #include <wx/wxsqlite3.h>
-#include <wxStringHash.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_STARTED, clParseEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_ENDED, clParseEvent);

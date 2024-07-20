@@ -4,23 +4,23 @@
 #include "XDebugCommThread.h"
 #include "XDebugEvalCmdHandler.h"
 #include "XDebugUnknownCommand.h"
+#include "bookmark_manager.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "php.h"
 #include "php_configuration_data.h"
 #include "php_utils.h"
 #include "php_workspace.h"
+#include "plugin.h"
 #include "ssh_workspace_settings.h"
+#include "xmlutils.h"
 
-#include <bookmark_manager.h>
-#include <event_notifier.h>
-#include <file_logger.h>
-#include <plugin.h>
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>
 #include <wx/sckaddr.h>
 #include <wx/sstream.h>
 #include <wx/stc/stc.h>
 #include <wx/uri.h>
-#include <xmlutils.h>
 
 // Handlers
 #include "XDebugBreakpointCmdHandler.h"

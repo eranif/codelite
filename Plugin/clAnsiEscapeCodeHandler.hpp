@@ -1,7 +1,8 @@
 #ifndef CLASCIIESCAPCODEHANDLER_HPP
 #define CLASCIIESCAPCODEHANDLER_HPP
 
-#include <codelite_exports.h>
+#include "codelite_exports.h"
+
 #include <map>
 #include <unordered_map>
 #include <vector>

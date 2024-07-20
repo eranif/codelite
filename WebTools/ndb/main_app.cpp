@@ -1,7 +1,9 @@
 #include "main_app.h"
-#include <SocketAPI/clSocketBase.h>
-#include <SocketAPI/clSocketServer.h>
-#include <clJoinableThread.h>
+
+#include "SocketAPI/clSocketBase.h"
+#include "SocketAPI/clSocketServer.h"
+#include "clJoinableThread.h"
+
 #include <iostream>
 #include <wx/filename.h>
 

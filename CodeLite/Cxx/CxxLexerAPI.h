@@ -26,9 +26,9 @@
 #ifndef CppLexerAPI_H__
 #define CppLexerAPI_H__
 
+#include "codelite_exports.h"
 #include "wxStringHash.h"
 
-#include <codelite_exports.h>
 #include <list>
 #include <map>
 #include <string.h>

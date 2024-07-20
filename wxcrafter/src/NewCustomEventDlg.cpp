@@ -1,5 +1,6 @@
 #include "NewCustomEventDlg.h"
-#include <windowattrmanager.h>
+
+#include "windowattrmanager.h"
 
 NewCustomEventDlg::NewCustomEventDlg(wxWindow* parent)
     : NewCustomEventBaseDlg(parent)

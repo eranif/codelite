@@ -27,6 +27,7 @@
 #include "archive.h"
 #include "envvarlist.h"
 #include "macromanager.h"
+#include "xmlutils.h"
 
 #include <algorithm>
 #include <wx/filename.h>
@@ -34,7 +35,6 @@
 #include <wx/regex.h>
 #include <wx/utils.h>
 #include <wx/window.h>
-#include <xmlutils.h>
 
 const wxString __NO_SUCH_ENV__ = wxT("__NO_SUCH_ENV__");
 

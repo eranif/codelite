@@ -1,5 +1,6 @@
 #include "new_file_dlg.h"
-#include <windowattrmanager.h>
+
+#include "windowattrmanager.h"
 
 NewFileDlg::NewFileDlg( wxWindow* parent, const wxString &path )
     : NewFileDlgBase( parent )

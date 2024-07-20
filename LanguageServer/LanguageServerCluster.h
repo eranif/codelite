@@ -9,12 +9,12 @@
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "database/entry.h"
+#include "wxStringHash.h"
 
 #include <unordered_set>
 #include <vector>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
-#include <wxStringHash.h>
 
 class LSPOutlineViewDlg;
 class LanguageServerPlugin;

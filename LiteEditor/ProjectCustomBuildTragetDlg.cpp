@@ -24,8 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ProjectCustomBuildTragetDlg.h"
+
+#include "globals.h"
 #include "windowattrmanager.h"
-#include <globals.h>
 
 const wxString ProjectCustomBuildTragetDlg::CUSTOM_TARGET_BUILD               = wxT("Build");
 const wxString ProjectCustomBuildTragetDlg::CUSTOM_TARGET_CLEAN               = wxT("Clean");

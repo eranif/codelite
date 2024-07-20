@@ -1,19 +1,19 @@
 #include "wxgui_helpers.h"
 
 #include "StdToWX.h"
+#include "cl_command_event.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "macros.h"
 #include "main.h"
+#include "map"
+#include "plugin.h"
+#include "project.h"
+#include "workspace.h"
 #include "wxc_project_metadata.h"
 #include "xmlutils.h"
 
 #include <algorithm>
-#include <cl_command_event.h>
-#include <event_notifier.h>
-#include <macros.h>
-#include <map>
-#include <plugin.h>
-#include <project.h>
-#include <workspace.h>
 #include <wx/app.h>
 #include <wx/arrstr.h>
 #include <wx/ffile.h>

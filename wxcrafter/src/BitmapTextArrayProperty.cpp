@@ -1,5 +1,6 @@
 #include "BitmapTextArrayProperty.h"
-#include <json_node.h>
+
+#include "json_node.h"
 
 BitmapTextArrayProperty::BitmapTextArrayProperty(const wxString& label, const wxString& value, const wxString& tooltip)
     : PropertyBase(tooltip)

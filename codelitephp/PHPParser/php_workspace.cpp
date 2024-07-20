@@ -2,21 +2,20 @@
 
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
+#include "dirtraverser.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
+#include "macros.h"
 #include "php_code_completion.h"
 #include "php_configuration_data.h"
 #include "php_event.h"
 #include "php_parser_thread.h"
 #include "php_strings.h"
+#include "plugin.h"
 #include "wxCodeCompletionBox.h"
 
 #include <algorithm>
-#include <cl_command_event.h>
-#include <dirtraverser.h>
-#include <event_notifier.h>
-#include <globals.h>
-#include <macros.h>
-#include <plugin.h>
 #include <wx/busyinfo.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>

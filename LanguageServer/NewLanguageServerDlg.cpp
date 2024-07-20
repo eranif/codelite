@@ -3,8 +3,8 @@
 #include "LSP/LanguageServerProtocol.h"
 #include "LanguageServerPage.h"
 #include "globals.h"
+#include "macros.h"
 
-#include <macros.h>
 
 NewLanguageServerDlg::NewLanguageServerDlg(wxWindow* parent)
     : NewLanguageServerDlgBase(parent)

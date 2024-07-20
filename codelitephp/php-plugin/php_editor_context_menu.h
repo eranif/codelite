@@ -26,9 +26,10 @@
 #ifndef PHPEDITORCONTEXTMENU_H
 #define PHPEDITORCONTEXTMENU_H
 
-#include <ieditor.h>
-#include <wx/event.h>
 #include "cl_command_event.h"
+#include "ieditor.h"
+
+#include <wx/event.h>
 
 enum PhpEditorEventIds {
     wxID_OPEN_PHP_FILE = 10105,

@@ -8,9 +8,9 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
+#include "imanager.h"
 
 #include <algorithm>
-#include <imanager.h>
 #include <wx/dcbuffer.h>
 #include <wx/simplebook.h>
 

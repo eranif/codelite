@@ -24,8 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilersModifiedDlg.h"
-#include <build_settings_config.h>
-#include <windowattrmanager.h>
+
+#include "build_settings_config.h"
+#include "windowattrmanager.h"
 
 #define SELECT_COMPILER _("<Click to select a compiler...>")
 

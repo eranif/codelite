@@ -1,8 +1,10 @@
 #include "NewPHPClass.h"
-#include <windowattrmanager.h>
+
+#include "windowattrmanager.h"
+
 #include <wx/dirdlg.h>
-#include <wx/tokenzr.h>
 #include <wx/textdlg.h>
+#include <wx/tokenzr.h>
 
 NewPHPClass::NewPHPClass(wxWindow* parent, const wxString& classPath)
     : NewPHPClassBase(parent)

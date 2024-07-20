@@ -1,6 +1,7 @@
 #include "PHPUserWorkspace.h"
-#include <globals.h>
+
 #include "JSON.h"
+#include "globals.h"
 
 PHPUserWorkspace::PHPUserWorkspace(const wxString& workspacePath)
     : m_workspacePath(workspacePath)

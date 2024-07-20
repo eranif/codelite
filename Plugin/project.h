@@ -32,13 +32,13 @@
 #include "optionsconfig.h"
 #include "project_settings.h"
 #include "serialized_object.h"
+#include "tree.h"
 #include "xmlutils.h"
 
 #include <list>
 #include <memory>
 #include <queue>
 #include <set>
-#include <tree.h>
 #include <vector>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>

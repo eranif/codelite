@@ -6,9 +6,10 @@
 #include "FontPickerDlg.h"
 #include "VirtualDirectorySelectorDlg.h"
 #include "enter_strings_dlg.h"
+#include "workspace.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
-#include <workspace.h>
+
 #include <wx/app.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>

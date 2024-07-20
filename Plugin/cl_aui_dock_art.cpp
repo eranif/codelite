@@ -33,11 +33,11 @@
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
+#include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
 
-#include <editor_config.h>
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

@@ -27,9 +27,9 @@
 
 #include "clFilesCollector.h"
 #include "file_logger.h"
+#include "globals.h"
 #include "procutils.h"
 
-#include <globals.h>
 #include <wx/dir.h>
 #include <wx/filefn.h>
 #include <wx/tokenzr.h>

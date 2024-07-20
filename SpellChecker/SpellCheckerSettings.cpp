@@ -36,8 +36,8 @@
 #include "SpellCheckerSettings.h"
 
 #include "IHunSpell.h"
+#include "windowattrmanager.h"
 
-#include <windowattrmanager.h>
 #include <wx/valgen.h>
 
 // ------------------------------------------------------------

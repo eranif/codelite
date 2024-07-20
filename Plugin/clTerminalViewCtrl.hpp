@@ -4,8 +4,8 @@
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clDataViewListCtrl.h"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
 
-#include <codelite_exports.h>
 #include <wx/font.h>
 
 class WXDLLIMPEXP_SDK clTerminalViewCtrl : public clDataViewListCtrl

@@ -1,6 +1,8 @@
 #include "DeleteCustomControlDlg.h"
+
+#include "windowattrmanager.h"
 #include "wxc_settings.h"
-#include <windowattrmanager.h>
+
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>
 

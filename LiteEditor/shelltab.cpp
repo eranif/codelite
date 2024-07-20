@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "editor_config.h"
-#include <wx/xrc/xmlres.h>
+#include "shelltab.h"
 
 #include "ColoursAndFontsManager.h"
 #include "async_executable_cmd.h"
@@ -31,13 +30,14 @@
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "frame.h"
+#include "imanager.h"
 #include "lexer_configuration.h"
 #include "macros.h"
 #include "manager.h"
 #include "pluginmanager.h"
-#include "shelltab.h"
 #include "wxterminal.h"
-#include <imanager.h>
+
+#include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(ShellTab, OutputTabWindow)
 EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, ShellTab::OnProcStarted)

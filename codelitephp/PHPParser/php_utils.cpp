@@ -2,14 +2,14 @@
 
 #include "JSON.h"
 #include "PHP/PHPSourceFile.h"
+#include "editor_config.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
+#include "lexer_configuration.h"
 #include "php_project.h"
 #include "php_workspace.h"
 
-#include <editor_config.h>
-#include <lexer_configuration.h>
 #include <map>
 #include <wx/base64.h>
 #include <wx/filename.h>

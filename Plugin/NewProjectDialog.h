@@ -2,9 +2,9 @@
 #define NEWPROJECTDIALOG_H
 
 #include "NewProjectDialogBase.h"
+#include "codelite_exports.h"
 #include "project.h"
 
-#include <codelite_exports.h>
 #include <list>
 #include <map>
 #include <unordered_map>

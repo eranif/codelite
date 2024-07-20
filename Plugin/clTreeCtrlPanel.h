@@ -33,9 +33,8 @@
 #include "clToolBar.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
+#include "imanager.h"
 #include "wxcrafter_plugin.h"
-
-#include <imanager.h>
 
 class clTreeCtrlPanelDefaultPage;
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase

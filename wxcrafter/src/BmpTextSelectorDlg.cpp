@@ -1,7 +1,8 @@
 #include "BmpTextSelectorDlg.h"
+
 #include "SingleBitmapAndTextDlg.h"
-#include <json_node.h>
-#include <windowattrmanager.h>
+#include "json_node.h"
+#include "windowattrmanager.h"
 
 BmpTextSelectorDlg::BmpTextSelectorDlg(wxWindow* parent, const wxString& initialValue)
     : BmpTextSelectorDlgBase(parent)

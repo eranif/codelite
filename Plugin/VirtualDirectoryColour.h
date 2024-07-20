@@ -1,7 +1,8 @@
 #ifndef VIRTUALDIRECTORYCOLOUR_H
 #define VIRTUALDIRECTORYCOLOUR_H
 
-#include <codelite_exports.h>
+#include "codelite_exports.h"
+
 #include <list>
 #include <map>
 #include <wx/colour.h>

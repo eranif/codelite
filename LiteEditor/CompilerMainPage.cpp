@@ -26,18 +26,18 @@
 #include "CompilerMainPage.h"
 
 #include "EditCmpTemplateDialog.h"
+#include "EditDlg.h"
 #include "NewFileTemplateDialog.h"
 #include "advanced_settings.h"
+#include "build_config.h"
+#include "build_settings_config.h"
 #include "compiler.h"
+#include "event_notifier.h"
+#include "globals.h"
 #include "imanager.h"
+#include "windowattrmanager.h"
+#include "workspace.h"
 
-#include <EditDlg.h>
-#include <build_config.h>
-#include <build_settings_config.h>
-#include <event_notifier.h>
-#include <globals.h>
-#include <windowattrmanager.h>
-#include <workspace.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>

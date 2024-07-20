@@ -8,13 +8,13 @@
 #include "globals.h"
 #include "macros.h"
 #include "plugindata.h"
+#include "wxStringHash.h"
 
 #include <algorithm>
 #include <vector>
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
-#include <wxStringHash.h>
 
 namespace
 {

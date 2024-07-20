@@ -26,8 +26,9 @@
 #ifndef PHP_UTILS_H
 #define PHP_UTILS_H
 
+#include "ieditor.h"
+
 #include <wx/wx.h>
-#include <ieditor.h>
 
 /**
  * @brief return true of the editor holds a file of type PHP

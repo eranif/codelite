@@ -31,10 +31,10 @@
 #include "cl_config.h"
 #include "codelite_exports.h"
 #include "compiler.h"
+#include "macros.h"
 #include "singleton.h"
 #include "wxStringHash.h"
 
-#include <macros.h>
 #include <map>
 #include <vector>
 #include <wx/filename.h>

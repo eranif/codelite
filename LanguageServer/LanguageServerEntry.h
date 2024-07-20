@@ -4,11 +4,11 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "LSP/LSPNetwork.h"
 #include "cl_config.h"
+#include "wxStringHash.h"
 
 #include <map>
 #include <vector>
 #include <wx/string.h>
-#include <wxStringHash.h>
 
 class LanguageServerEntry
 {

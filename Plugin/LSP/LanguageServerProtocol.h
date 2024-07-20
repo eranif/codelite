@@ -14,6 +14,7 @@
 #include "codelite_exports.h"
 #include "fileextmanager.h"
 #include "macros.h"
+#include "wxStringHash.h"
 
 #include <functional>
 #include <map>
@@ -23,7 +24,6 @@
 #include <wx/arrstr.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
-#include <wxStringHash.h>
 
 typedef std::function<void()> LSPOnConnectedCallback_t;
 

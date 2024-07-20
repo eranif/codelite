@@ -2,7 +2,8 @@
 #define IPATHCONVERTER_HPP
 
 #include "LSP/FilePath.hpp"
-#include <codelite_exports.h>
+#include "codelite_exports.h"
+
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 

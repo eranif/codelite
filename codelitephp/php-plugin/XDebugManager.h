@@ -26,16 +26,17 @@
 #ifndef XDEBUGMANAGER_H
 #define XDEBUGMANAGER_H
 
-#include <wx/event.h>
-#include <cl_command_event.h>
-#include <wx/socket.h>
-#include <wx/sharedptr.h>
 #include "XDebugCommandHandler.h"
-#include "xdebugbreakpointsmgr.h"
+#include "cl_command_event.h"
+#include "macros.h"
 #include "php_event.h"
-#include <macros.h>
 #include "php_project.h"
+#include "xdebugbreakpointsmgr.h"
+
+#include <wx/event.h>
 #include <wx/msgqueue.h>
+#include <wx/sharedptr.h>
+#include <wx/socket.h>
 
 class XDebugComThread;
 class IEditor;

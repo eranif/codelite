@@ -1,7 +1,8 @@
 #include "new_php_workspace_dlg.h"
-#include <windowattrmanager.h>
-#include "php_strings.h"
+
 #include "cl_standard_paths.h"
+#include "php_strings.h"
+#include "windowattrmanager.h"
 
 NewPHPWorkspaceDlg::NewPHPWorkspaceDlg(wxWindow* parent)
     : NewPHPWorkspaceBaseDlg(parent)

@@ -30,6 +30,7 @@
 #include "database/entry.h"
 #include "wxCodeCompletionBoxBase.h"
 #include "wxCodeCompletionBoxEntry.hpp"
+#include "wxStringHash.h"
 
 #include <vector>
 #include <wx/arrstr.h>
@@ -39,7 +40,6 @@
 #include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
 #include <wx/timer.h>
-#include <wxStringHash.h>
 
 class CCBoxTipWindow;
 class wxCodeCompletionBox;

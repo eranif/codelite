@@ -37,19 +37,19 @@
 #include "lexer_configuration.h"
 #include "macros.h"
 #include "manager.h"
+#include "project.h"
 #include "replaceinfilespanel.h"
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
+#include "wxStringHash.h"
 
 #include <algorithm>
-#include <project.h>
 #include <wx/dirdlg.h>
 #include <wx/fontmap.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
-#include <wxStringHash.h>
 
 namespace
 {

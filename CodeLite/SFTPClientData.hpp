@@ -1,7 +1,8 @@
 #ifndef SFTPCLIENTDATA_HPP
 #define SFTPCLIENTDATA_HPP
 
-#include <codelite_exports.h>
+#include "codelite_exports.h"
+
 #include <wx/clntdata.h>
 #include <wx/string.h>
 

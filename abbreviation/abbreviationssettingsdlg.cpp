@@ -24,11 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "abbreviationssettingsdlg.h"
+
 #include "abbreviationentry.h"
 #include "cl_config.h"
 #include "imanager.h"
+#include "macrosdlg.h"
 #include "windowattrmanager.h"
-#include <macrosdlg.h>
+
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>

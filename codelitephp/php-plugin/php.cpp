@@ -9,9 +9,15 @@
 #include "clSFTPEvent.h"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
+#include "cl_config.h"
 #include "cl_standard_paths.h"
+#include "ctags_manager.h"
+#include "detachedpanesinfo.h"
+#include "dockablepane.h"
 #include "editor_config.h"
 #include "evalpane.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "localsview.h"
 #include "new_php_workspace_dlg.h"
@@ -25,19 +31,12 @@
 #include "php_utils.h"
 #include "php_workspace.h"
 #include "php_workspace_view.h"
+#include "plugin.h"
 #include "quick_outline_dlg.h"
 #include "ssh_workspace_settings.h"
 #include "wxCodeCompletionBox.h"
 #include "xdebugevent.h"
 
-#include <cl_config.h>
-#include <cl_standard_paths.h>
-#include <ctags_manager.h>
-#include <detachedpanesinfo.h>
-#include <dockablepane.h>
-#include <event_notifier.h>
-#include <file_logger.h>
-#include <plugin.h>
 #include <wx/app.h>
 #include <wx/filedlg.h>
 #include <wx/regex.h>

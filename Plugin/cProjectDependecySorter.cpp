@@ -2,9 +2,9 @@
 
 #include "cl_exception.h"
 #include "macros.h"
+#include "workspace.h"
 
 #include <algorithm>
-#include <workspace.h>
 
 clProjectDependecySorter::clProjectDependecySorter() {}
 

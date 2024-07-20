@@ -27,9 +27,10 @@
 #define COMPILERSMODIFIEDDLG_H
 
 #include "CompilersFoundDlgBase.h"
-#include <macros.h>
-#include <wx/vector.h>
+#include "macros.h"
+
 #include <wx/propgrid/property.h>
+#include <wx/vector.h>
 
 class CompilersModifiedDlg : public CompilersModifiedDlgBase
 {

@@ -27,14 +27,14 @@
 
 #include "cl_editor.h"
 #include "debugger.h"
-#include "list"
 #include "sessionmanager.h"
-#include "vector"
-#include "wx/arrstr.h"
-#include "wx/dragimag.h"
-#include "wx/string.h"
 
+#include <list>
 #include <set>
+#include <vector>
+#include <wx/arrstr.h>
+#include <wx/dragimag.h>
+#include <wx/string.h>
 
 class myDragImage;
 

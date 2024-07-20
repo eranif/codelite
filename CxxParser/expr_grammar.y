@@ -4,11 +4,12 @@
 
 %{
 /*************** Includes and Defines *****************************/
-#include "string"
-#include "vector"
-#include "stdio.h"
-#include "map"
 #include "expression_result.h"
+
+#include <cstdio>
+#include <map>
+#include <string>
+#include <vector>
 
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/

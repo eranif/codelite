@@ -28,15 +28,15 @@
 #include "cl_config.h"
 #include "codelite_exports.h"
 #include "lexer_configuration.h"
-#include "map"
 #include "optionsconfig.h"
 #include "plugin.h"
 #include "serialized_object.h"
 #include "singleton.h"
-#include "wx/xml/xml.h"
 
+#include <map>
 #include <vector>
 #include <wx/filename.h>
+#include <wx/xml/xml.h>
 
 enum {
     View_Show_Workspace_Tab = 0x00000001,

@@ -1,10 +1,11 @@
 %{
 /* Included code before lex code */
-#include "string"
+#include <string>
 #define YYSTYPE std::string
 #include "gdb_result_parser.h"
-#include <vector>
+
 #include <sstream>
+#include <vector>
 
 
 static std::vector<YY_BUFFER_STATE> gs_bufferStack;

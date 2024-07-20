@@ -2,17 +2,16 @@
 /* Included code before lex code */
 /*************** Includes and Defines *****************************/
 
-
-#include "map"
 #include "cpp_lexer.h"		// YACC generated definitions based on C++ grammar
-#include "errno.h"
 
 #define YYSTYPE std::string
 #define ECHO
 
-#include "string"
-#include <stdlib.h>
-#include <string.h>
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
+#include <map>
+#include <string>
 #include <vector>
 
 extern std::string cl_expr_lval;

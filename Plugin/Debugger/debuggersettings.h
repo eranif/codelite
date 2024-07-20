@@ -27,7 +27,8 @@
 
 #include "codelite_exports.h"
 #include "serialized_object.h"
-#include "vector"
+
+#include <vector>
 
 class WXDLLIMPEXP_SDK DebuggerCmdData : public SerializedObject
 {

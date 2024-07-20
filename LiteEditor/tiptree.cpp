@@ -22,10 +22,11 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "tiptree.h"
-#include "map"
-#include "wx/settings.h"
-#include "list"
+#include "tiptree.h"
+
+#include <list>
+#include <map>
+#include <wx/settings.h>
 
 TipTree::TipTree(wxWindow *parent, wxWindowID id, long style)
 : wxTreeCtrl(parent, id, wxDefaultPosition, wxDefaultSize, style)

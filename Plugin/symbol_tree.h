@@ -24,13 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 #ifndef CODELITE_SYMBOL_TREE_H
 #define CODELITE_SYMBOL_TREE_H
+
 #include "bitmap_loader.h"
 #include "clThemedTreeCtrl.h"
 #include "codelite_exports.h"
 #include "ctags_manager.h"
 #include "database/entry.h"
-#include "map"
-#include "wx/filename.h"
+
+#include <map>
+#include <wx/filename.h>
 
 /**
  * Class MyTreeItemData, a user defined class which keeps the full name of a tree item.

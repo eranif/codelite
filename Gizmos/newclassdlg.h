@@ -27,7 +27,8 @@
 
 #include "new_class_dlg_data.h"
 #include "newclassbasedlg.h"
-#include "vector"
+
+#include <vector>
 
 class IManager;
 

@@ -4,12 +4,13 @@
 
 %{
 /*************** Includes and Defines *****************************/
-#include "string"
-#include "vector"
-#include "stdio.h"
-#include "map"
-#include "variable.h"
 #include "cl_typedef.h"
+#include "variable.h"
+
+#include <cstdio>
+#include <map>
+#include <string>
+#include <vector>
 
 #ifdef yylex
 #undef yylex

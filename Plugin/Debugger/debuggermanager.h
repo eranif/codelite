@@ -29,10 +29,10 @@
 #include "codelite_exports.h"
 #include "debugger.h"
 #include "dynamiclibrary.h"
-#include "list"
-#include "map"
 #include "serialized_object.h"
 
+#include <list>
+#include <map>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/string.h>

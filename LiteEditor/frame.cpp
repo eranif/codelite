@@ -1015,8 +1015,7 @@ void clMainFrame::AddKeyboardAccelerators()
     mgr->AddAccelerator(_("C++"), { { "swap_files", _("Swap Header/Implementation file"), "F12" },
                                     { "find_decl", _("Goto Declaration") },
                                     { "find_impl", _("Goto Implementation") },
-                                    { "open_include_file", _("Open Include File") },
-                                    { "add_include_file", _("Add Include File"), "Ctrl-Shift-I" } });
+                                    { "open_include_file", _("Open Include File") } });
     mgr->AddAccelerator(_("C++ | Code Generation / Refactoring"),
                         { { "setters_getters", _("Generate Setters/Getters...") },
                           { "move_impl", _("Move Function Implementation to...") },
@@ -5457,9 +5456,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     m_mainFrameTitleTemplate = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
 }
 
-void clMainFrame::OnDetachEditor(wxCommandEvent& e)
-{ /*GetMainBook()->DetachActiveEditor();*/
-}
+void clMainFrame::OnDetachEditor(wxCommandEvent& e) { /*GetMainBook()->DetachActiveEditor();*/ }
 
 void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != NULL); }
 

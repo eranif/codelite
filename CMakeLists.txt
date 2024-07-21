@@ -906,6 +906,8 @@ add_subdirectory(cc-wrapper)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/yaml-cpp/include")
+add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp")
+add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main")
 
 if(WXC_APP)
     add_subdirectory(wxcrafter)
@@ -965,6 +967,7 @@ else()
         add_subdirectory(HelpPlugin)
         add_subdirectory(WebTools)
         add_subdirectory(SmartCompletion)
+        add_subdirectory(assistance.ai)
 
         if(UNIX
            AND NOT APPLE

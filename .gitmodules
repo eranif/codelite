@@ -28,3 +28,6 @@
 [submodule "hunspell"]
 	path = submodules/hunspell
 	url = https://github.com/hunspell/hunspell.git
+[submodule "submodules/llama.cpp"]
+	path = submodules/llama.cpp
+	url = https://github.com/ggerganov/llama.cpp.git

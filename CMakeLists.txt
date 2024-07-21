@@ -906,9 +906,14 @@ add_subdirectory(cc-wrapper)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/yaml-cpp/include")
-if (UNIX)
-    # On Windows, this is default. Set it for Linux / macOS
+if(UNIX)
+    # On Windows, this is default. Set it OFF for Linux / macOS as well
     set(BUILD_SHARED_LIBS OFF)
+endif()
+
+if(APPLE)
+    set(CMAKE_INSTALL_PREFIX ${CL_INSTALL_BIN})
+    set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
 add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp")

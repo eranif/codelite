@@ -906,6 +906,11 @@ add_subdirectory(cc-wrapper)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/yaml-cpp/include")
+if (UNIX)
+    # On Windows, this is default. Set it for Linux / macOS
+    set(BUILD_SHARED_LIBS OFF)
+endif()
+
 add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp")
 add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main")
 

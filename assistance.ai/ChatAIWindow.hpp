@@ -13,6 +13,7 @@ protected:
     void OnSendUI(wxUpdateUIEvent& event) override;
     void OnUpdateTheme(wxCommandEvent& event);
     void UpdateTheme();
+    void OnKeyDown(wxKeyEvent& event);
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, wxCommandEvent);

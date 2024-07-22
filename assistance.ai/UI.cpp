@@ -187,7 +187,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
     m_splitter30->SetSashGravity(1);
     m_splitter30->SetMinimumPaneSize(150);
 
-    boxSizer27->Add(m_splitter30, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer27->Add(m_splitter30, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitterPage32 = new wxPanel(m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)),
                                    wxTAB_TRAVERSAL);
@@ -195,8 +195,8 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage32->SetSizer(boxSizer35);
 
-    m_stcOutput = new wxStyledTextCtrl(m_splitterPage32, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcOutput = new clThemedSTC(m_splitterPage32, wxID_ANY, wxDefaultPosition,
+                                  wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -242,8 +242,8 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxHORIZONTAL);
     m_splitterPage34->SetSizer(boxSizer36);
 
-    m_stcInput = new wxStyledTextCtrl(m_splitterPage34, wxID_ANY, wxDefaultPosition,
-                                      wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxBORDER_STATIC);
+    m_stcInput = new clThemedSTC(m_splitterPage34, wxID_ANY, wxDefaultPosition,
+                                 wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxBORDER_STATIC);
     m_stcInput->SetFocus();
     // Configure the fold margin
     m_stcInput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);

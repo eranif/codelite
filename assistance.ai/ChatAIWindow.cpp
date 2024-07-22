@@ -3,6 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "globals.h"
 
 wxDEFINE_EVENT(wxEVT_CHATAI_SEND, wxCommandEvent);
 
@@ -10,6 +11,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     : AssistanceAIChatWindowBase(parent)
 {
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
+    m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
 }
 
 ChatAIWindow::~ChatAIWindow() {}
@@ -35,7 +37,21 @@ void ChatAIWindow::UpdateTheme()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     CHECK_PTR_RET(lexer);
 
-    lexer->Apply(m_stcInput);
-    lexer->Apply(m_stcOutput);
+    lexer->ApplySystemColours(m_stcInput);
+    lexer->ApplySystemColours(m_stcOutput);
     m_stcInput->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
+}
+
+void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
+{
+    if (event.GetKeyCode() == WXK_ESCAPE) {
+        clGetManager()->ToggleOutputPane();
+        auto editor = clGetManager()->GetActiveEditor();
+        CHECK_PTR_RET(editor);
+
+        // Set the focus to the active editor
+        editor->GetCtrl()->CallAfter(&wxStyledTextCtrl::SetFocus);
+    } else {
+        event.Skip();
+    }
 }

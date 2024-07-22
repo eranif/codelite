@@ -24,6 +24,7 @@
 #include <wx/textctrl.h>
 #include <wx/splitter.h>
 #include <wx/stc/stc.h>
+#include "clThemedSTC.hpp"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -93,9 +94,9 @@ class AssistanceAIChatWindowBase : public wxPanel
 protected:
     wxSplitterWindow* m_splitter30;
     wxPanel* m_splitterPage32;
-    wxStyledTextCtrl* m_stcOutput;
+    clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPage34;
-    wxStyledTextCtrl* m_stcInput;
+    clThemedSTC* m_stcInput;
     wxButton* m_button37;
 
 protected:
@@ -103,9 +104,9 @@ protected:
     virtual void OnSendUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
+    clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxPanel* GetSplitterPage32() { return m_splitterPage32; }
-    wxStyledTextCtrl* GetStcInput() { return m_stcInput; }
+    clThemedSTC* GetStcInput() { return m_stcInput; }
     wxButton* GetButton37() { return m_button37; }
     wxPanel* GetSplitterPage34() { return m_splitterPage34; }
     wxSplitterWindow* GetSplitter30() { return m_splitter30; }

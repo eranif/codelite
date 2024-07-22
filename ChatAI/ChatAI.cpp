@@ -25,6 +25,7 @@
 #include "ChatAI.hpp"
 
 #include "clKeyboardManager.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "macromanager.h"
 
@@ -77,8 +78,11 @@ ChatAI::ChatAI(IManager* manager)
                                              });
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("show_ai_chat_window"));
 
-    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR));
+    m_cli.GetConfig().Load();
+    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_cli.GetConfig());
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_chatWindow, _("Chat AI"));
+    EventNotifier::Get()->Bind(wxEVT_CHATAI_SEND, &ChatAI::OnPrompt, this);
+    EventNotifier::Get()->Bind(wxEVT_CHATAI_STOP, &ChatAI::OnStopLlamaCli, this);
 }
 
 ChatAI::~ChatAI() {}
@@ -91,6 +95,9 @@ void ChatAI::UnPlug()
         m_chatWindow->Destroy();
     }
     m_chatWindow = nullptr;
+
+    EventNotifier::Get()->Unbind(wxEVT_CHATAI_SEND, &ChatAI::OnPrompt, this);
+    EventNotifier::Get()->Unbind(wxEVT_CHATAI_STOP, &ChatAI::OnStopLlamaCli, this);
 }
 
 void ChatAI::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -108,4 +115,27 @@ void ChatAI::OnShowChatWindow(wxCommandEvent& event)
     wxUnusedVar(event);
     clGetManager()->ShowOutputPane(_("Chat AI"));
     m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
+}
+
+void ChatAI::OnStopLlamaCli(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_cli.Stop();
+}
+
+void ChatAI::OnPrompt(clCommandEvent& event)
+{
+    if (!m_cli.IsOk()) {
+        wxString message;
+        message << _("llama-cli is not configured properly!\n") << _("Please ensure the following is set:\n")
+                << wxT("•") << _(" Path to llama-cli executable\n") << wxT("•") << _(" An active model is selected\n")
+                << wxT("•") << _(" The active model contains the path to the local model file\n");
+        ::wxMessageBox(message, "CodeLite - ChatAI", wxOK | wxCENTRE | wxICON_WARNING);
+        m_chatWindow->CallAfter(&ChatAIWindow::ShowSettings);
+        return;
+    } else if (m_cli.IsRunning()) {
+        return;
+    }
+
+    m_cli.Send(event.GetString());
 }

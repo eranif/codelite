@@ -7,6 +7,11 @@
 ChatAIConfig::ChatAIConfig()
     : clConfigItem("chat-ai")
 {
+    wxFileName defaultCli = clStandardPaths::Get().GetBinaryFullPath("llama-cli");
+#ifdef __WXMSW__
+    defaultCli.AppendDir("bin");
+#endif
+    m_llamaCli = defaultCli.GetFullPath();
 }
 
 ChatAIConfig::~ChatAIConfig() {}
@@ -17,14 +22,31 @@ void ChatAIConfig::Save() { clConfig::Get().WriteItem(this); }
 
 void ChatAIConfig::FromJSON(const JSONItem& json)
 {
-    wxString defaultCli = clStandardPaths::Get().GetBinaryFullPath("llama-cli");
-    m_llamaCli = json.namedObject("cli").toString(defaultCli);
+    m_llamaCli = json.namedObject("cli").toString(m_llamaCli);
+
+    m_models.clear();
+    auto selection = json.namedObject("selected_model").toString();
+    auto models = json.namedObject("models");
+    for (int i = 0; i < models.arraySize(); ++i) {
+        std::shared_ptr<Model> m(new Model());
+        m->FromJSON(models[i]);
+        if (m->m_name == selection) {
+            m_selectedModel = m;
+        }
+        m_models.push_back(m);
+    }
 }
 
 JSONItem ChatAIConfig::ToJSON() const
 {
     auto obj = JSONItem::createObject(GetName());
-    obj.addProperty("cli", m_llamaCli);
+    obj.addProperty("cli", m_llamaCli)
+        .addProperty("selected_model", m_selectedModel != nullptr ? m_selectedModel->m_name : wxString{});
+
+    auto models = obj.AddArray("models");
+    for (auto model : m_models) {
+        models.arrayAppend(model->ToJSON());
+    }
     return obj;
 }
 

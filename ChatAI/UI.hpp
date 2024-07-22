@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_ASSISTANCE_AI_UI_BASE_CLASSES_HPP
-#define _CODELITE_ASSISTANCE_AI_UI_BASE_CLASSES_HPP
+#ifndef _CODELITE_CHATAI_UI_BASE_CLASSES_HPP
+#define _CODELITE_CHATAI_UI_BASE_CLASSES_HPP
 
 // clang-format off
 #include <wx/settings.h>
@@ -20,8 +20,11 @@
 #include <wx/imaglist.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
+#include <wx/toolbar.h>
 #include <wx/splitter.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
@@ -50,6 +53,8 @@ protected:
     wxPanel* m_generalSettings;
     wxStaticText* m_staticText12;
     wxFilePickerCtrl* m_filePickerCLI;
+    wxStaticText* m_staticText39;
+    wxChoice* m_choiceModels;
     wxButton* m_buttonNew;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_button3;
@@ -57,15 +62,19 @@ protected:
 
 protected:
     virtual void OnNewModel(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText12() { return m_staticText12; }
     wxFilePickerCtrl* GetFilePickerCLI() { return m_filePickerCLI; }
+    wxStaticText* GetStaticText39() { return m_staticText39; }
+    wxChoice* GetChoiceModels() { return m_choiceModels; }
     wxPanel* GetGeneralSettings() { return m_generalSettings; }
     wxNotebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonNew() { return m_buttonNew; }
-    AssistanceAISettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"),
-                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    AssistanceAISettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                const wxString& title = _("Chat AI Settings"), const wxPoint& pos = wxDefaultPosition,
+                                const wxSize& size = wxSize(-1, -1),
                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~AssistanceAISettingsBaseDlg();
 };
@@ -92,22 +101,29 @@ public:
 class AssistanceAIChatWindowBase : public wxPanel
 {
 protected:
+    wxToolBar* m_toolbar;
     wxSplitterWindow* m_splitter30;
     wxPanel* m_splitterPage32;
     clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPage34;
     clThemedSTC* m_stcInput;
     wxButton* m_button37;
+    wxButton* m_buttonStop;
 
 protected:
+    virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSend(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSendUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnStopUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnStop(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxPanel* GetSplitterPage32() { return m_splitterPage32; }
     clThemedSTC* GetStcInput() { return m_stcInput; }
     wxButton* GetButton37() { return m_button37; }
+    wxButton* GetButtonStop() { return m_buttonStop; }
     wxPanel* GetSplitterPage34() { return m_splitterPage34; }
     wxSplitterWindow* GetSplitter30() { return m_splitter30; }
     AssistanceAIChatWindowBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

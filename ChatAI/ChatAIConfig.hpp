@@ -25,6 +25,19 @@ public:
         }
 
         bool IsOk() const { return !m_name.empty() && ::wxFileExists(m_modelFile); }
+
+        JSONItem ToJSON() const
+        {
+            auto item = JSONItem::createObject();
+            item.addProperty("name", m_name).addProperty("file", m_modelFile);
+            return item;
+        }
+
+        void FromJSON(const JSONItem& json)
+        {
+            m_name = json.namedObject("name").toString();
+            m_modelFile = json.namedObject("file").toString();
+        }
     };
 
     void SetLlamaCli(const wxString& llamCli) { this->m_llamaCli = llamCli; }
@@ -33,7 +46,7 @@ public:
     const wxString& GetLlamaCli() const { return m_llamaCli; }
     std::vector<std::shared_ptr<Model>> GetModels() const { return m_models; }
     std::shared_ptr<Model> GetSelectedModel() const { return m_selectedModel; }
-    
+
     void Load();
     void Save();
 

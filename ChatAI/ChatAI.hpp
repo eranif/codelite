@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ChatAIWindow.hpp"
+#include "LLAMCli.hpp"
 #include "plugin.h"
 
 class ChatAI : public IPlugin
@@ -39,6 +40,9 @@ public:
 
 private:
     void OnShowChatWindow(wxCommandEvent& event);
+    void OnPrompt(clCommandEvent& event);
+    void OnStopLlamaCli(clCommandEvent& event);
 
     ChatAIWindow* m_chatWindow = nullptr;
+    LLAMCli m_cli;
 };

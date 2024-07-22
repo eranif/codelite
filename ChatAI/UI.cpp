@@ -59,13 +59,25 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
     m_staticText12 = new wxStaticText(m_generalSettings, wxID_ANY, _("llama-cli:"), wxDefaultPosition,
                                       wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)), 0);
 
-    flexGridSizer11->Add(m_staticText12, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer11->Add(m_staticText12, 0, wxALL | wxALIGN_RIGHT | wxALIGN_BOTTOM, WXC_FROM_DIP(5));
 
     m_filePickerCLI = new wxFilePickerCtrl(m_generalSettings, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"),
                                            wxDefaultPosition, wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)),
                                            wxFLP_DEFAULT_STYLE | wxFLP_SMALL);
+    m_filePickerCLI->SetFocus();
 
     flexGridSizer11->Add(m_filePickerCLI, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText39 = new wxStaticText(m_generalSettings, wxID_ANY, _("Active model:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)), 0);
+
+    flexGridSizer11->Add(m_staticText39, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceModelsArr;
+    m_choiceModels = new wxChoice(m_generalSettings, wxID_ANY, wxDefaultPosition,
+                                  wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)), m_choiceModelsArr, 0);
+
+    flexGridSizer11->Add(m_choiceModels, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer23 = new wxBoxSizer(wxVERTICAL);
 
@@ -81,6 +93,7 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
     boxSizer1->Add(m_stdBtnSizer2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
     m_button3 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button3->SetDefault();
     m_stdBtnSizer2->AddButton(m_button3);
 
     m_button4 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -112,11 +125,13 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
     }
     // Connect events
     m_buttonNew->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnNewModel, this);
+    m_button3->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnOK, this);
 }
 
 AssistanceAISettingsBaseDlg::~AssistanceAISettingsBaseDlg()
 {
     m_buttonNew->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnNewModel, this);
+    m_button3->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnOK, this);
 }
 
 ModelPageBase::ModelPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -146,7 +161,7 @@ ModelPageBase::ModelPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     m_textCtrlModelName->SetHint(wxT(""));
 #endif
 
-    flexGridSizer16->Add(m_textCtrlModelName, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer16->Add(m_textCtrlModelName, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText19 =
         new wxStaticText(this, wxID_ANY, _("Model file:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -157,7 +172,7 @@ ModelPageBase::ModelPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
         new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
                              wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_SMALL);
 
-    flexGridSizer16->Add(m_filePickerModelFile, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer16->Add(m_filePickerModelFile, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("ModelPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -181,6 +196,11 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
 
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer27);
+
+    m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer27->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitter30 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                         wxSP_LIVE_UPDATE | wxSP_3D);
@@ -233,7 +253,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
     m_stcOutput->SetKeyWords(3, wxT(""));
     m_stcOutput->SetKeyWords(4, wxT(""));
 
-    boxSizer35->Add(m_stcOutput, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer35->Add(m_stcOutput, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitterPage34 = new wxPanel(m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)),
                                    wxTAB_TRAVERSAL);
@@ -283,10 +303,21 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
 
     boxSizer36->Add(m_stcInput, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer36->Add(boxSizer42, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     m_button37 = new wxButton(m_splitterPage34, wxID_ANY, _("Send"), wxDefaultPosition,
                               wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+    m_button37->SetDefault();
+    m_button37->SetToolTip(_("Send prompt\nShift+ENTER"));
 
-    boxSizer36->Add(m_button37, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer42->Add(m_button37, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonStop = new wxButton(m_splitterPage34, wxID_ANY, _("Stop"), wxDefaultPosition,
+                                wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+
+    boxSizer42->Add(m_buttonStop, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("AssistanceAIChatWindowBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -294,12 +325,18 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
         GetSizer()->Fit(this);
     }
     // Connect events
+    m_stcInput->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
     m_button37->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnSend, this);
     m_button37->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnSendUI, this);
+    m_buttonStop->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnStopUI, this);
+    m_buttonStop->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnStop, this);
 }
 
 AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
 {
+    m_stcInput->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
     m_button37->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnSend, this);
     m_button37->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnSendUI, this);
+    m_buttonStop->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnStopUI, this);
+    m_buttonStop->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnStop, this);
 }

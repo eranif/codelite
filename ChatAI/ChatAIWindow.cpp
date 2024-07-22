@@ -1,30 +1,58 @@
 #include "ChatAIWindow.hpp"
 
+#include "ChatAISettingsDlg.hpp"
 #include "ColoursAndFontsManager.h"
+#include "LLAMCli.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
 
-wxDEFINE_EVENT(wxEVT_CHATAI_SEND, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CHATAI_STOP, clCommandEvent);
 
-ChatAIWindow::ChatAIWindow(wxWindow* parent)
+ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAIConfig& config)
     : AssistanceAIChatWindowBase(parent)
+    , m_config(config)
 {
+    auto images = clGetManager()->GetStdIcons();
+
+    m_toolbar->AddTool(wxID_PREFERENCES, _("Settings"), images->LoadBitmap("cog", 24));
+    m_toolbar->SetToolBitmapSize(FromDIP(wxSize(24, 24)));
+    m_toolbar->Realize();
+
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
+
+    EventNotifier::Get()->Bind(wxEVT_LLAMACLI_STARTED, &ChatAIWindow::OnChatAIStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_LLAMACLI_STDOUT, &ChatAIWindow::OnChatAIOutput, this);
+    EventNotifier::Get()->Bind(wxEVT_LLAMACLI_STDERR, &ChatAIWindow::OnChatAIStderr, this);
+    EventNotifier::Get()->Bind(wxEVT_LLAMACLI_TERMINATED, &ChatAIWindow::OnChatAITerminated, this);
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_PREFERENCES);
 }
 
-ChatAIWindow::~ChatAIWindow() {}
+ChatAIWindow::~ChatAIWindow()
+{
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
+    EventNotifier::Get()->Unbind(wxEVT_LLAMACLI_STARTED, &ChatAIWindow::OnChatAIStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_LLAMACLI_STDOUT, &ChatAIWindow::OnChatAIOutput, this);
+    EventNotifier::Get()->Unbind(wxEVT_LLAMACLI_STDERR, &ChatAIWindow::OnChatAIStderr, this);
+    EventNotifier::Get()->Unbind(wxEVT_LLAMACLI_TERMINATED, &ChatAIWindow::OnChatAITerminated, this);
+}
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    SendPromptEvent();
+}
+
+void ChatAIWindow::SendPromptEvent()
+{
     clCommandEvent sendEvent{ wxEVT_CHATAI_SEND };
     sendEvent.SetString(m_stcInput->GetText());
     EventNotifier::Get()->AddPendingEvent(sendEvent);
 }
 
-void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event) { event.Enable(!m_stcInput->IsEmpty()); }
+void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event) { event.Enable(!m_llamaCliRunning && !m_stcInput->IsEmpty()); }
 
 void ChatAIWindow::OnUpdateTheme(wxCommandEvent& event)
 {
@@ -34,24 +62,83 @@ void ChatAIWindow::OnUpdateTheme(wxCommandEvent& event)
 
 void ChatAIWindow::UpdateTheme()
 {
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("markdown");
     CHECK_PTR_RET(lexer);
 
-    lexer->ApplySystemColours(m_stcInput);
-    lexer->ApplySystemColours(m_stcOutput);
+    lexer->Apply(m_stcInput);
+    lexer->Apply(m_stcOutput);
     m_stcInput->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
+    m_stcOutput->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
 }
 
 void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
 {
-    if (event.GetKeyCode() == WXK_ESCAPE) {
+    switch (event.GetKeyCode()) {
+    case WXK_ESCAPE: {
         clGetManager()->ToggleOutputPane();
         auto editor = clGetManager()->GetActiveEditor();
         CHECK_PTR_RET(editor);
 
         // Set the focus to the active editor
         editor->GetCtrl()->CallAfter(&wxStyledTextCtrl::SetFocus);
-    } else {
+
+    } break;
+    case WXK_RETURN:
+    case WXK_NUMPAD_ENTER:
+        if (event.GetModifiers() == wxMOD_SHIFT) {
+            // Send the command
+            SendPromptEvent();
+        } else {
+            event.Skip();
+        }
+        break;
+    default:
         event.Skip();
+        break;
     }
+}
+
+void ChatAIWindow::OnSettings(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    ShowSettings();
+}
+
+void ChatAIWindow::ShowSettings()
+{
+    ChatAISettingsDlg dlg(this, m_config);
+    dlg.ShowModal();
+}
+
+void ChatAIWindow::OnChatAIStarted(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_llamaCliRunning = true;
+}
+
+void ChatAIWindow::OnChatAITerminated(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_llamaCliRunning = false;
+    m_stcOutput->AppendText("\n----\n");
+    m_stcOutput->ScrollToEnd();
+    m_stcInput->Enable(true);
+    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
+}
+
+void ChatAIWindow::OnChatAIOutput(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_stcOutput->AppendText(event.GetString());
+    m_stcOutput->ScrollToEnd();
+}
+
+void ChatAIWindow::OnChatAIStderr(clCommandEvent& event) { clERROR() << "ChatAI:" << event.GetString() << endl; }
+void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(!m_llamaCliRunning); }
+void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_llamaCliRunning); }
+void ChatAIWindow::OnStop(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    clCommandEvent event_stop{ wxEVT_CHATAI_STOP };
+    EventNotifier::Get()->AddPendingEvent(event_stop);
 }

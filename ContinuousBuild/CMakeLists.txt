@@ -1,5 +1,5 @@
 # set the plugin name here
-set(PLUGIN_NAME "ContinuousBuild")
+set(PLUGIN_NAME "ContinuousBuildPlugin")
 
 # Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
 project(${PLUGIN_NAME})
@@ -35,6 +35,7 @@ endif()
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
+set_target_properties(${PLUGIN_NAME} PROPERTIES OUTPUT_NAME "ContinuousBuild")
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

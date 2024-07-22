@@ -57,7 +57,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
     info.SetAuthor("Eran Ifrah");
-    info.SetName("AssistanceAI");
+    info.SetName("ChatAI");
     info.SetDescription(_("A built-in AI assistance"));
     info.SetVersion("v1.0");
     return &info;
@@ -71,7 +71,7 @@ ChatAI::ChatAI(IManager* manager)
     m_longName = _("A built-in AI assistance");
     m_shortName = _("A built-in AI assistance");
 
-    clKeyboardManager::Get()->AddAccelerator(_("Assistance AI"),
+    clKeyboardManager::Get()->AddAccelerator(_("Chat AI"),
                                              {
                                                  { "show_ai_chat_window", _("Show AI Chat Window"), "Ctrl-Shift-I" },
                                              });

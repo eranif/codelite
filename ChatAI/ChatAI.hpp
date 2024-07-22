@@ -25,7 +25,6 @@
 #pragma once
 
 #include "ChatAIWindow.hpp"
-#include "cl_command_event.h"
 #include "plugin.h"
 
 class ChatAI : public IPlugin

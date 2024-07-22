@@ -977,7 +977,7 @@ else()
         add_subdirectory(HelpPlugin)
         add_subdirectory(WebTools)
         add_subdirectory(SmartCompletion)
-        add_subdirectory(assistance.ai)
+        add_subdirectory(ChatAI)
 
         if(UNIX
            AND NOT APPLE

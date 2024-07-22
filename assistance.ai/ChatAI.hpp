@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2024 by Eran Ifrah
-// file name            : AssistanceAI.h
+// file name            : ChatAI.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -24,16 +24,22 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include "ChatAIWindow.hpp"
 #include "cl_command_event.h"
 #include "plugin.h"
 
-class AssistanceAI : public IPlugin
+class ChatAI : public IPlugin
 {
 public:
-    AssistanceAI(IManager* manager);
-    virtual ~AssistanceAI();
+    ChatAI(IManager* manager);
+    virtual ~ChatAI();
     virtual void CreateToolBar(clToolBarGeneric* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
+
+private:
+    void OnShowChatWindow(wxCommandEvent& event);
+
+    ChatAIWindow* m_chatWindow = nullptr;
 };

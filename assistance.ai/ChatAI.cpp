@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "AssistanceAI.hpp"
+#include "ChatAI.hpp"
 
 #include "clKeyboardManager.h"
 #include "globals.h"
@@ -40,7 +40,7 @@
 
 namespace
 {
-AssistanceAI* thePlugin = NULL;
+ChatAI* thePlugin = NULL;
 }
 
 // Allocate the code formatter on the heap, it will be freed by
@@ -48,7 +48,7 @@ AssistanceAI* thePlugin = NULL;
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if (thePlugin == 0) {
-        thePlugin = new AssistanceAI(manager);
+        thePlugin = new ChatAI(manager);
     }
     return thePlugin;
 }
@@ -65,26 +65,47 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-AssistanceAI::AssistanceAI(IManager* manager)
+ChatAI::ChatAI(IManager* manager)
     : IPlugin(manager)
 {
     m_longName = _("A built-in AI assistance");
     m_shortName = _("A built-in AI assistance");
 
     clKeyboardManager::Get()->AddAccelerator(_("Assistance AI"),
-                                             { { "show_ai_chat", _("Show AI Chat Window"), "Ctrl-Shift-I" } });
+                                             {
+                                                 { "show_ai_chat_window", _("Show AI Chat Window"), "Ctrl-Shift-I" },
+                                             });
+    wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("show_ai_chat_window"));
+
+    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR));
+    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_chatWindow, _("Chat AI"));
 }
 
-AssistanceAI::~AssistanceAI() {}
+ChatAI::~ChatAI() {}
 
-void AssistanceAI::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
+void ChatAI::UnPlug()
+{
+    wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("show_ai_chat_window"));
+    // before this plugin is un-plugged we must remove the tab we added
+    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_chatWindow)) {
+        m_chatWindow->Destroy();
+    }
+    m_chatWindow = nullptr;
+}
 
-void AssistanceAI::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
+void ChatAI::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
-void AssistanceAI::HookPopupMenu(wxMenu* menu, MenuType type)
+void ChatAI::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
+
+void ChatAI::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     wxUnusedVar(type);
     wxUnusedVar(menu);
 }
 
-void AssistanceAI::UnPlug() {}
+void ChatAI::OnShowChatWindow(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    clGetManager()->ShowOutputPane(_("Chat AI"));
+    m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
+}

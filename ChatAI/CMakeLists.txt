@@ -1,5 +1,5 @@
 # set the plugin name here
-set(PLUGIN_NAME "AssistanceAI")
+set(PLUGIN_NAME "ChatAI")
 
 # Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
 project(${PLUGIN_NAME})

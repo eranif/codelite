@@ -25,6 +25,15 @@
 
 #include "app.h"
 
+#ifdef __WXGTK__
+#include "exelocator.h"
+#endif
+
+#ifdef __WXMSW__
+#include "cl_registry.h"
+#include "procutils.h"
+#endif
+
 #include "ColoursAndFontsManager.h"
 #include "SideBar.hpp"
 #include "SocketAPI/clSocketClient.h"

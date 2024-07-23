@@ -268,9 +268,6 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
-    wxArrayString kinds;
-    kinds.Add(wxT("namespace"));
-
     OpenResourceDialog dlg(this, m_mgr, "");
     if(dlg.ShowModal() == wxID_OK) {
         std::vector<OpenResourceDialogItemData*> selections = dlg.GetSelections();
@@ -429,10 +426,6 @@ wxString NewClassDlg::CreateFileName() const
 void NewClassDlg::OnBrowseParentClass(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
-    wxArrayString kinds;
-    kinds.Add(wxT("class"));
-    kinds.Add(wxT("struct"));
 
     OpenResourceDialog dlg(this, m_mgr, "");
     if(dlg.ShowModal() == wxID_OK) {

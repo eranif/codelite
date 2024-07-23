@@ -1,6 +1,7 @@
 #include "LSPTypeScriptDetector.hpp"
 
 #include "NodeJSLocator.h"
+#include "StdToWX.h"
 #include "clNodeJS.h"
 #include "fileutils.h"
 #include "globals.h"
@@ -36,10 +37,7 @@ bool LSPTypeScriptDetector::DoLocate()
 
     command << " --stdio";
     SetCommand(command);
-    wxArrayString langs;
-    langs.Add("javascript");
-    langs.Add("typescript");
-    SetLangugaes(langs);
+    SetLangugaes(StdToWX::ToArrayString({ "javascript", "typescript" }));
     SetConnectionString("stdio");
     return true;
 }

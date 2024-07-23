@@ -1,6 +1,9 @@
 #include "aui_pane_info.h"
+
+#include "StdToWX.h"
 #include "json_node.h"
 #include "wxgui_helpers.h"
+
 #include <wx/propgrid/propgrid.h>
 
 #define BOOL_TO_STR(b) (b ? "true" : "false")
@@ -63,12 +66,8 @@ void AuiPaneInfo::Construct(wxPropertyGrid* pg) const
     wxPGProperty* dockings = pg->Append(new wxPropertyCategory(_("Docking")));
     pg->Expand(dockings);
 
-    wxArrayString directions;
-    directions.Add("wxAUI_DOCK_TOP");
-    directions.Add("wxAUI_DOCK_RIGHT");
-    directions.Add("wxAUI_DOCK_BOTTOM");
-    directions.Add("wxAUI_DOCK_LEFT");
-    directions.Add("wxAUI_DOCK_CENTER");
+    const wxArrayString directions = StdToWX::ToArrayString(
+        { "wxAUI_DOCK_TOP", "wxAUI_DOCK_RIGHT", "wxAUI_DOCK_BOTTOM", "wxAUI_DOCK_LEFT", "wxAUI_DOCK_CENTER" });
     wxEnumProperty* dir = (wxEnumProperty*)pg->Append(new wxEnumProperty(_("Direction"), wxPG_LABEL, directions));
     pg->Expand(dir);
     dir->SetChoiceSelection(directions.Index(m_dockDirection));

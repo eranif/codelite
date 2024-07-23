@@ -1,4 +1,6 @@
 #include "aui_manager_wrapper.h"
+
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "color_property.h"
@@ -36,10 +38,7 @@ AuiManagerWrapper::AuiManagerWrapper()
     AddProperty(new IntProperty(PROP_AUI_SASH_SIZE, -1, _("Set the wxAUI sash size")));
 
     AddProperty(new CategoryProperty(_("Caption")));
-    wxArrayString gradientTypes;
-    gradientTypes.Add("wxAUI_GRADIENT_NONE");
-    gradientTypes.Add("wxAUI_GRADIENT_VERTICAL");
-    gradientTypes.Add("wxAUI_GRADIENT_HORIZONTAL");
+    wxArrayString gradientTypes = StdToWX::ToArrayString({"wxAUI_GRADIENT_NONE", "wxAUI_GRADIENT_VERTICAL", "wxAUI_GRADIENT_HORIZONTAL"});
     AddProperty(new ChoiceProperty(PROP_AUI_GRADIENT_TYPE, gradientTypes, 0, _("Gradient type")));
 
     AddProperty(new ColorProperty(PROP_AUI_CAPTION_COLOUR, "<Default>", _("Active caption colour")));

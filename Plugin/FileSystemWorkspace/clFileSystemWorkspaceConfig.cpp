@@ -2,6 +2,7 @@
 
 #include "Debugger/debuggermanager.h"
 #include "ICompilerLocator.h"
+#include "StdToWX.h"
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
 #include "compiler_command_line_parser.h"
@@ -169,15 +170,13 @@ clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
 
 static wxArrayString GetExtraFlags(CompilerPtr compiler)
 {
-    wxArrayString flags;
     if(compiler->HasMetadata()) {
         auto md = compiler->GetMetadata();
         if(!md.GetTarget().IsEmpty()) {
-            flags.Add("-target");
-            flags.Add(md.GetTarget());
+            return StdToWX::ToArrayString({ "-target", md.GetTarget() });
         }
     }
-    return flags;
+    return {};
 }
 
 wxArrayString clFileSystemWorkspaceConfig::GetCompilerOptions(clBacktickCache::ptr_t backticks) const

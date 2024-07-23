@@ -1,4 +1,6 @@
 #include "bitmap_wrapepr.h"
+
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "file_ficker_property.h"
 #include "wxc_bitmap_code_generator.h"
@@ -29,12 +31,7 @@ wxcWidget* BitmapWrapepr::Clone() const { return new BitmapWrapepr(); }
 
 wxString BitmapWrapepr::CppCtorCode() const
 {
-    wxArrayString exts;
-    exts.Add("");
-    exts.Add("@2x");
-    exts.Add("@1.25x");
-    exts.Add("@1.5x");
-
+    const wxArrayString exts = StdToWX::ToArrayString({ "", "@2x", "@1.25x", "@1.5x" });
     wxString bmpPath = PropertyString(PROP_BITMAP_PATH);
     wxFileName fn(bmpPath);
     // Support for hi-res images

@@ -13,6 +13,7 @@
 #include "multi_strings_property.h"
 #include "notebook_base_wrapper.h"
 #include "notebook_page_wrapper.h"
+#include "StdToWX.h"
 #include "top_level_win_wrapper.h"
 #include "winid_property.h"
 #include "wx_collapsible_pane_pane_wrapper.h"
@@ -26,7 +27,6 @@
 #include <wx/regex.h>
 
 size_t wxcWidget::s_objCounter = 0;
-wxcWidget::AntiGroupMap_t wxcWidget::s_antiGroup;
 wxcWidget::SizerFlagsValueSet_t wxcWidget::s_sizerFlagsValue;
 CustomControlTemplateMap_t wxcWidget::ms_customControlsUsed;
 int wxcWidget::m_copyCounter = 0;
@@ -40,32 +40,6 @@ wxcWidget::wxcWidget(int type)
     , m_eventsMenu(NULL)
     , m_copyReason(CR_Copy)
 {
-    if(s_antiGroup.empty()) {
-        s_antiGroup.insert(std::make_pair("wxALIGN_LEFT", wxArrayString()));
-        s_antiGroup["wxALIGN_LEFT"].Add("wxALIGN_CENTER_HORIZONTAL");
-        s_antiGroup["wxALIGN_LEFT"].Add("wxALIGN_RIGHT");
-
-        s_antiGroup.insert(std::make_pair("wxALIGN_CENTER_HORIZONTAL", wxArrayString()));
-        s_antiGroup["wxALIGN_CENTER_HORIZONTAL"].Add("wxALIGN_LEFT");
-        s_antiGroup["wxALIGN_CENTER_HORIZONTAL"].Add("wxALIGN_RIGHT");
-
-        s_antiGroup.insert(std::make_pair("wxALIGN_RIGHT", wxArrayString()));
-        s_antiGroup["wxALIGN_RIGHT"].Add("wxALIGN_LEFT");
-        s_antiGroup["wxALIGN_RIGHT"].Add("wxALIGN_CENTER_HORIZONTAL");
-
-        s_antiGroup.insert(std::make_pair("wxALIGN_TOP", wxArrayString()));
-        s_antiGroup["wxALIGN_TOP"].Add("wxALIGN_CENTER_VERTICAL");
-        s_antiGroup["wxALIGN_TOP"].Add("wxALIGN_BOTTOM");
-
-        s_antiGroup.insert(std::make_pair("wxALIGN_CENTER_VERTICAL", wxArrayString()));
-        s_antiGroup["wxALIGN_CENTER_VERTICAL"].Add("wxALIGN_TOP");
-        s_antiGroup["wxALIGN_CENTER_VERTICAL"].Add("wxALIGN_BOTTOM");
-
-        s_antiGroup.insert(std::make_pair("wxALIGN_BOTTOM", wxArrayString()));
-        s_antiGroup["wxALIGN_BOTTOM"].Add("wxALIGN_TOP");
-        s_antiGroup["wxALIGN_BOTTOM"].Add("wxALIGN_CENTER_VERTICAL");
-    }
-
     if(s_sizerFlagsValue.empty()) {
         s_sizerFlagsValue.insert(std::make_pair(wxALL, SZ_ALL));
         s_sizerFlagsValue.insert(std::make_pair(wxLEFT, SZ_LEFT));
@@ -2354,16 +2328,23 @@ void wxcWidget::SetStyles(size_t value)
 
 void wxcWidget::EnableSizerFlag(const wxString& flag, bool enable)
 {
-    if(m_sizerFlags.Contains(flag)) {
+    static const std::map<wxString, wxArrayString> s_antiGroup = {
+        { "wxALIGN_LEFT", StdToWX::ToArrayString({ "wxALIGN_CENTER_HORIZONTAL", "wxALIGN_RIGHT" }) },
+        { "wxALIGN_CENTER_HORIZONTAL", StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_RIGHT" }) },
+        { "wxALIGN_RIGHT", StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_CENTER_HORIZONTAL" }) },
+        { "wxALIGN_TOP", StdToWX::ToArrayString({ "wxALIGN_CENTER_VERTICAL", "wxALIGN_BOTTOM" }) },
+        { "wxALIGN_CENTER_VERTICAL", StdToWX::ToArrayString({ "wxALIGN_TOP", "wxALIGN_BOTTOM" }) },
+        { "wxALIGN_BOTTOM", StdToWX::ToArrayString({ "wxALIGN_TOP", "wxALIGN_CENTER_VERTICAL" }) }
+    };
+
+    if (m_sizerFlags.Contains(flag)) {
         m_sizerFlags.Item(flag).is_set = enable;
 
-        if(enable) {
+        if (enable) {
             // Uncheck all "grouped" flags
-            AntiGroupMap_t::const_iterator iter = s_antiGroup.find(flag);
-            if(iter != s_antiGroup.end()) {
-                const wxArrayString& arr = iter->second;
-                for(size_t i = 0; i < arr.GetCount(); ++i) {
-                    EnableSizerFlag(arr.Item(i), false); // since it false, the recursion can not occur more than once
+            if (auto iter = s_antiGroup.find(flag); iter != s_antiGroup.end()) {
+                for (const auto& item : iter->second) {
+                    EnableSizerFlag(item, false); // since it false, the recursion can not occur more than once
                 }
             }
         }

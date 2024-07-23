@@ -192,7 +192,5 @@ int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);
     wxLogNull NOLOG;
-    Tester::Instance()->RunTests();
-    //    fgetc(stdin);
-    return 0;
+    return Tester::Instance()->RunTests();
 }

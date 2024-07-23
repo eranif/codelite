@@ -875,7 +875,6 @@ void PluginManager::ShowManagementWindow(const wxString& selectedWindow, bool sh
     // locate the window
     wxWindow* page = BookGetPage(PaneId::SIDE_BAR, selectedWindow);
     if (page) {
-        clSYSTEM() << "Window:" << selectedWindow << "found in SIDE_BAR" << endl;
         if (show) {
             ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
         } else {
@@ -884,7 +883,6 @@ void PluginManager::ShowManagementWindow(const wxString& selectedWindow, bool sh
     } else {
         page = BookGetPage(PaneId::BOTTOM_BAR, selectedWindow);
         if (page) {
-            clSYSTEM() << "Window:" << selectedWindow << "found BOTTOM_BAR" << endl;
             if (show) {
                 ShowOutputPane(selectedWindow);
             } else {
@@ -893,8 +891,6 @@ void PluginManager::ShowManagementWindow(const wxString& selectedWindow, bool sh
         } else {
             page = BookGetPage(PaneId::SECONDARY_SIDE_BAR, selectedWindow);
             if (page) {
-                clSYSTEM() << "Window:" << selectedWindow << "found SECONDARY_SIDE_BAR" << endl;
-
                 if (show) {
                     ManagerST::Get()->ShowSecondarySideBarPane(selectedWindow);
                 } else {

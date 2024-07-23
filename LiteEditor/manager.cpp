@@ -1639,12 +1639,10 @@ void Manager::ShowDebuggerPane(bool show)
 void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
 {
     // make the output pane visible
-    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(PANE_LEFT_SIDEBAR);
+    auto& aui = clMainFrame::Get()->GetDockingManager();
+    wxAuiPaneInfo& info = aui.GetPane(PANE_LEFT_SIDEBAR);
     if (info.IsOk() && !info.IsShown()) {
-        info.Show();
-        if (commit) {
-            clMainFrame::Get()->GetDockingManager().Update();
-        }
+        DockablePaneMenuManager::HackShowPane(info, &aui);
     }
 
     // set the selection to focus win
@@ -1660,12 +1658,10 @@ void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
 void Manager::ShowSecondarySideBarPane(wxString focusWin, bool commit)
 {
     // make the output pane visible
-    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(PANE_RIGHT_SIDEBAR);
+    auto& aui = clMainFrame::Get()->GetDockingManager();
+    wxAuiPaneInfo& info = aui.GetPane(PANE_RIGHT_SIDEBAR);
     if (info.IsOk() && !info.IsShown()) {
-        info.Show();
-        if (commit) {
-            clMainFrame::Get()->GetDockingManager().Update();
-        }
+        DockablePaneMenuManager::HackShowPane(info, &aui);
     }
 
     // set the selection to focus win

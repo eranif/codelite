@@ -66,13 +66,14 @@ jobs:
       with:
         submodules: recursive
 
-    - name: build and install Codelite
+    - name: build, test and install Codelite
       shell: msys2 {0}
       run: |
         mkdir build-release
         cd build-release
-        MSYS2_BASE=/d/a/_temp/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev
+        MSYS2_BASE=/d/a/_temp/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DBUILD_TESTING=1
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
+        ctest --output-on-failure
 
     # Upload artefact
     - name: artifact

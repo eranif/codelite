@@ -38,13 +38,14 @@ jobs:
       with:
         submodules: recursive
 
-    - name: build and install Codelite
+    - name: build, test and install Codelite
       run: |
         mkdir build-release
         cd build-release
-        cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1
+        cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1
         make -j$(nproc)
         sudo make install
+        ctest --output-on-failure
 
     - name: codelite --version
       run: xvfb-run -a codelite --version || exit 0 # codelite --version returns -1

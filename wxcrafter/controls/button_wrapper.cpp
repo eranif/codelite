@@ -1,4 +1,6 @@
 #include "button_wrapper.h"
+
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "choice_property.h"
@@ -11,6 +13,7 @@
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 #include "xy_pair.h"
+
 #include <wx/button.h>
 
 ButtonWrapper::ButtonWrapper()
@@ -22,11 +25,7 @@ ButtonWrapper::ButtonWrapper()
     PREPEND_STYLE(wxBU_RIGHT, false);
     PREPEND_STYLE(wxBU_TOP, false);
 
-    wxArrayString directions;
-    directions.Add("wxLEFT");
-    directions.Add("wxRIGHT");
-    directions.Add("wxTOP");
-    directions.Add("wxBOTTOM");
+    const wxArrayString directions = StdToWX::ToArrayString({ "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM" });
 
     RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),

@@ -1,5 +1,6 @@
 #include "task_bar_icon_wrapper.h"
 
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "bitmap_picker_property.h"
 #include "choice_property.h"
@@ -14,10 +15,8 @@ TaskBarIconWrapper::TaskBarIconWrapper()
 {
     m_styles.Clear();
     AddText(PROP_TOOLTIP, _("Set the wxTaskBarIcon tooltip"));
-    wxArrayString types;
-    types.Add("wxTBI_DEFAULT_TYPE");
-    types.Add("wxTBI_DOCK");
-    types.Add("wxTBI_CUSTOM_STATUSITEM");
+    const wxArrayString types =
+        StdToWX::ToArrayString({ "wxTBI_DEFAULT_TYPE", "wxTBI_DOCK", "wxTBI_CUSTOM_STATUSITEM" });
 
     SetPropertyString(_("Common Settings"), "wxTaskBarIcon");
     AddProperty(

@@ -1,4 +1,6 @@
 #include "styled_text_ctrl_wrapper.h"
+
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "category_property.h"
@@ -6,6 +8,7 @@
 #include "font_property.h"
 #include "multi_strings_property.h"
 #include "wxgui_helpers.h"
+
 #include <wx/stc/stc.h>
 
 StyledTextCtrlWrapper::LexersMap_t StyledTextCtrlWrapper::m_lexers;
@@ -14,6 +17,9 @@ StyledTextCtrlWrapper::LexersMap_t StyledTextCtrlWrapper::m_lexers;
 
 StyledTextCtrlWrapper::StyledTextCtrlWrapper()
     : wxcWidget(ID_WXSTC)
+    , m_wrapOptions(StdToWX::ToArrayString({ "None", "Word", "Char" }))
+    , m_eolMode(StdToWX::ToArrayString({ "CRLF", "CR", "LF", "Default" }))
+    , m_indentGuides(StdToWX::ToArrayString({ "None", "Real", "Look Forward", "Look Both" }))
 {
     // Register the known lexers
     if(m_lexers.empty()) {
@@ -179,24 +185,12 @@ StyledTextCtrlWrapper::StyledTextCtrlWrapper()
     AddProperty(new BoolProperty(PROP_STC_MARGIN_SEPARATOR, false, ""));
     AddProperty(new BoolProperty(PROP_STC_MARGIN_SYMBOL, false, ""));
 
-    m_wrapOptions.Add("None"); // 0
-    m_wrapOptions.Add("Word"); // 1
-    m_wrapOptions.Add("Char"); // 2
 
     AddProperty(new ChoiceProperty(PROP_STC_WRAP, m_wrapOptions, 0, _("Wrap text")));
-
-    m_indentGuides.Add("None");
-    m_indentGuides.Add("Real");
-    m_indentGuides.Add("Look Forward");
-    m_indentGuides.Add("Look Both");
 
     AddProperty(new ChoiceProperty(PROP_STC_INDENT_GUIDES, m_indentGuides, 0,
                                    _("Display indentation guides (vertical lines)")));
 
-    m_eolMode.Add("CRLF");    // 0
-    m_eolMode.Add("CR");      // 1
-    m_eolMode.Add("LF");      // 2
-    m_eolMode.Add("Default"); // 3
 
     AddProperty(new ChoiceProperty(PROP_STC_EOL_MODE, m_eolMode, 3, _("EOL Mode")));
     AddProperty(new BoolProperty(PROP_STC_VIEW_EOL, false, _("Display the line endings characters")));

@@ -28,6 +28,7 @@ class IProcess;
 
 #include "asyncprocess.h"
 
+#include "StdToWX.h"
 #include "StringUtils.h"
 #include "clTempFile.hpp"
 #include "cl_command_event.h"
@@ -106,7 +107,6 @@ static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
     }
 
     wxString cmd = wxJoin(tmparr, ' ', 0);
-    wxArrayString command;
 
     bool is_ssh = flags & IProcessCreateSSH;
     if (shell_is_cmd && !is_ssh) {
@@ -114,16 +114,10 @@ static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
         if (shell.IsEmpty()) {
             shell = "CMD.EXE";
         }
-        command.Add(shell);
-        command.Add("/C");
-        command.Add("\"" + cmd + "\"");
-
+        return StdToWX::ToArrayString({ shell, "/C", "\"" + cmd + "\"" });
     } else {
-        command.Add("/bin/sh");
-        command.Add("-c");
-        command.Add("'" + cmd + "'");
+        return StdToWX::ToArrayString({ "/bin/sh", "-c", "'" + cmd + "'" });
     }
-    return command;
 }
 
 static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& wd, const wxString& sshAccountName,

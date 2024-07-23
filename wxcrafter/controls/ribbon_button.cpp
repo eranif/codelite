@@ -1,5 +1,6 @@
 #include "ribbon_button.h"
 
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "file_ficker_property.h"
@@ -10,11 +11,8 @@
 RibbonButtonBase::RibbonButtonBase(int type)
     : wxcWidget(type)
 {
-    wxArrayString kind;
-    kind.Add("wxRIBBON_BUTTON_NORMAL");
-    kind.Add("wxRIBBON_BUTTON_DROPDOWN");
-    kind.Add("wxRIBBON_BUTTON_HYBRID");
-    kind.Add("wxRIBBON_BUTTON_TOGGLE");
+    const wxArrayString kind = StdToWX::ToArrayString(
+        { "wxRIBBON_BUTTON_NORMAL", "wxRIBBON_BUTTON_DROPDOWN", "wxRIBBON_BUTTON_HYBRID", "wxRIBBON_BUTTON_TOGGLE" });
 
     m_isButtonBar = !(type == ID_WXRIBBONTOOL || type == ID_WXRIBBONDROPDOWNTOOL || type == ID_WXRIBBONHYBRIDTOOL ||
                       type == ID_WXRIBBONTOGGLETOOL);

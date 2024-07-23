@@ -27,6 +27,7 @@
 #include "BuildTab.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "SideBar.hpp"
+#include "StdToWX.h"
 #include "app.h"
 #include "bitmap_loader.h"
 #include "build_settings_config.h"
@@ -288,10 +289,7 @@ void PluginManager::Load()
 
     // Now that all the plugins are loaded, load from the configuration file
     // list of visible tabs
-    static wxArrayString DefaultArray;
-    if (DefaultArray.IsEmpty()) {
-        DefaultArray.Add("NOT-FOUND");
-    }
+    static const wxArrayString DefaultArray = StdToWX::ToArrayString({ "NOT-FOUND" });
 
     DetachedPanesInfo dpi;
     GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);

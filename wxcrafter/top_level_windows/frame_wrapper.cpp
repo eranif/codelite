@@ -1,4 +1,6 @@
 #include "frame_wrapper.h"
+
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "file_ficker_property.h"
@@ -9,6 +11,7 @@
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
 #include <wx/docview.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
@@ -34,13 +37,8 @@ FrameWrapper::FrameWrapper()
     RegisterEvent(wxT("wxEVT_ACTIVATE_APP"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE_APP event"));
 
     AddCategory(_("Frame Type"));
-    wxArrayString frameTypes;
-    frameTypes.Add("wxFrame");
-    frameTypes.Add("wxDocMDIParentFrame");
-    frameTypes.Add("wxDocMDIChildFrame");
-    frameTypes.Add("wxDocParentFrame");
-    frameTypes.Add("wxDocChildFrame");
-    frameTypes.Add("wxMiniFrame");
+    const wxArrayString frameTypes = StdToWX::ToArrayString({ "wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame",
+                                                              "wxDocParentFrame", "wxDocChildFrame", "wxMiniFrame" });
     AddProperty(new ChoiceProperty(PROP_FRAME_TYPE, frameTypes, 0, _("Select the wxFrame type you want")));
 
     AddCategory(_("Frame Icons"));

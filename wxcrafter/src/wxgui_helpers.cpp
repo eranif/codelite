@@ -1,5 +1,6 @@
 #include "wxgui_helpers.h"
 
+#include "StdToWX.h"
 #include "file_logger.h"
 #include "main.h"
 #include "wxc_project_metadata.h"
@@ -336,40 +337,62 @@ wxString wxCrafter::CamelCase(const wxString& str)
     return fooname;
 }
 
-static wxArrayString s_colorNames;
-static wxArrayString s_colorSysNames;
+static const wxArrayString s_colorNames = StdToWX::ToArrayString({ "AppWorkspace",
+                                                                   "ActiveBorder",
+                                                                   "ActiveCaption",
+                                                                   "ButtonFace",
+                                                                   "ButtonHighlight",
+                                                                   "ButtonShadow",
+                                                                   "ButtonText",
+                                                                   "CaptionText",
+                                                                   "ControlDark",
+                                                                   "ControlLight",
+                                                                   "Desktop",
+                                                                   "GrayText",
+                                                                   "Highlight",
+                                                                   "HighlightText",
+                                                                   "InactiveBorder",
+                                                                   "InactiveCaption",
+                                                                   "InactiveCaptionText",
+                                                                   "Menu",
+                                                                   "Scrollbar",
+                                                                   "Tooltip",
+                                                                   "TooltipText",
+                                                                   "Window",
+                                                                   "WindowFrame",
+                                                                   "WindowText",
+                                                                   "Custom" });
+
+static const wxArrayString s_colorSysNames = StdToWX::ToArrayString({
+    "wxSYS_COLOUR_APPWORKSPACE",
+    "wxSYS_COLOUR_ACTIVEBORDER",
+    "wxSYS_COLOUR_ACTIVECAPTION",
+    "wxSYS_COLOUR_BTNFACE",
+    "wxSYS_COLOUR_BTNHIGHLIGHT",
+    "wxSYS_COLOUR_BTNSHADOW",
+    "wxSYS_COLOUR_BTNTEXT",
+    "wxSYS_COLOUR_CAPTIONTEXT",
+    "wxSYS_COLOUR_3DDKSHADOW",
+    "wxSYS_COLOUR_3DLIGHT",
+    "wxSYS_COLOUR_BACKGROUND",
+    "wxSYS_COLOUR_GRAYTEXT",
+    "wxSYS_COLOUR_HIGHLIGHT",
+    "wxSYS_COLOUR_HIGHLIGHTTEXT",
+    "wxSYS_COLOUR_INACTIVEBORDER",
+    "wxSYS_COLOUR_INACTIVECAPTION",
+    "wxSYS_COLOUR_INACTIVECAPTIONTEXT",
+    "wxSYS_COLOUR_MENU",
+    "wxSYS_COLOUR_SCROLLBAR",
+    "wxSYS_COLOUR_INFOBK",
+    "wxSYS_COLOUR_INFOTEXT",
+    "wxSYS_COLOUR_WINDOW",
+    "wxSYS_COLOUR_WINDOWFRAME",
+    "wxSYS_COLOUR_WINDOWTEXT",
+});
 static wxArrayInt s_colorIdx;
 
 static void init_color_indexes()
 {
-    if(s_colorNames.IsEmpty()) {
-        s_colorNames.Add("AppWorkspace");
-        s_colorNames.Add("ActiveBorder");
-        s_colorNames.Add("ActiveCaption");
-        s_colorNames.Add("ButtonFace");
-        s_colorNames.Add("ButtonHighlight");
-        s_colorNames.Add("ButtonShadow");
-        s_colorNames.Add("ButtonText");
-        s_colorNames.Add("CaptionText");
-        s_colorNames.Add("ControlDark");
-        s_colorNames.Add("ControlLight");
-        s_colorNames.Add("Desktop");
-        s_colorNames.Add("GrayText");
-        s_colorNames.Add("Highlight");
-        s_colorNames.Add("HighlightText");
-        s_colorNames.Add("InactiveBorder");
-        s_colorNames.Add("InactiveCaption");
-        s_colorNames.Add("InactiveCaptionText");
-        s_colorNames.Add("Menu");
-        s_colorNames.Add("Scrollbar");
-        s_colorNames.Add("Tooltip");
-        s_colorNames.Add("TooltipText");
-        s_colorNames.Add("Window");
-        s_colorNames.Add("WindowFrame");
-        s_colorNames.Add("WindowText");
-        s_colorNames.Add("Custom");
-    }
-
     if(s_colorIdx.IsEmpty()) {
         s_colorIdx.Add(wxSYS_COLOUR_APPWORKSPACE);
         s_colorIdx.Add(wxSYS_COLOUR_ACTIVEBORDER);
@@ -396,33 +419,6 @@ static void init_color_indexes()
         s_colorIdx.Add(wxSYS_COLOUR_WINDOWFRAME);
         s_colorIdx.Add(wxSYS_COLOUR_WINDOWTEXT);
         s_colorIdx.Add(wxPG_COLOUR_CUSTOM);
-    }
-
-    if(s_colorSysNames.IsEmpty()) {
-        s_colorSysNames.Add("wxSYS_COLOUR_APPWORKSPACE");
-        s_colorSysNames.Add("wxSYS_COLOUR_ACTIVEBORDER");
-        s_colorSysNames.Add("wxSYS_COLOUR_ACTIVECAPTION");
-        s_colorSysNames.Add("wxSYS_COLOUR_BTNFACE");
-        s_colorSysNames.Add("wxSYS_COLOUR_BTNHIGHLIGHT");
-        s_colorSysNames.Add("wxSYS_COLOUR_BTNSHADOW");
-        s_colorSysNames.Add("wxSYS_COLOUR_BTNTEXT");
-        s_colorSysNames.Add("wxSYS_COLOUR_CAPTIONTEXT");
-        s_colorSysNames.Add("wxSYS_COLOUR_3DDKSHADOW");
-        s_colorSysNames.Add("wxSYS_COLOUR_3DLIGHT");
-        s_colorSysNames.Add("wxSYS_COLOUR_BACKGROUND");
-        s_colorSysNames.Add("wxSYS_COLOUR_GRAYTEXT");
-        s_colorSysNames.Add("wxSYS_COLOUR_HIGHLIGHT");
-        s_colorSysNames.Add("wxSYS_COLOUR_HIGHLIGHTTEXT");
-        s_colorSysNames.Add("wxSYS_COLOUR_INACTIVEBORDER");
-        s_colorSysNames.Add("wxSYS_COLOUR_INACTIVECAPTION");
-        s_colorSysNames.Add("wxSYS_COLOUR_INACTIVECAPTIONTEXT");
-        s_colorSysNames.Add("wxSYS_COLOUR_MENU");
-        s_colorSysNames.Add("wxSYS_COLOUR_SCROLLBAR");
-        s_colorSysNames.Add("wxSYS_COLOUR_INFOBK");
-        s_colorSysNames.Add("wxSYS_COLOUR_INFOTEXT");
-        s_colorSysNames.Add("wxSYS_COLOUR_WINDOW");
-        s_colorSysNames.Add("wxSYS_COLOUR_WINDOWFRAME");
-        s_colorSysNames.Add("wxSYS_COLOUR_WINDOWTEXT");
     }
 }
 
@@ -1234,60 +1230,60 @@ int wxCrafter::ColumnFlagsFromString(const wxString& col_flags)
 bool wxCrafter::IsArtProviderBitmap(const wxString& bmpString, wxString& artId, wxString& clientID, wxString& sizeHint)
 {
     static wxArrayString arr;
-    if(arr.IsEmpty()) {
-        arr.Add(wxT("wxART_ERROR"));
-        arr.Add(wxT("wxART_QUESTION"));
-        arr.Add(wxT("wxART_WARNING"));
-        arr.Add(wxT("wxART_INFORMATION"));
-        arr.Add(wxT("wxART_ADD_BOOKMARK"));
-        arr.Add(wxT("wxART_DEL_BOOKMARK"));
-        arr.Add(wxT("wxART_HELP_SIDE_PANEL"));
-        arr.Add(wxT("wxART_HELP_SETTINGS"));
-        arr.Add(wxT("wxART_HELP_BOOK"));
-        arr.Add(wxT("wxART_HELP_FOLDER"));
-        arr.Add(wxT("wxART_HELP_PAGE"));
-        arr.Add(wxT("wxART_GO_BACK"));
-        arr.Add(wxT("wxART_GO_FORWARD"));
-        arr.Add(wxT("wxART_GO_UP"));
-        arr.Add(wxT("wxART_GO_DOWN"));
-        arr.Add(wxT("wxART_GO_TO_PARENT"));
-        arr.Add(wxT("wxART_GO_HOME"));
-        arr.Add(wxT("wxART_GOTO_FIRST"));
-        arr.Add(wxT("wxART_GOTO_LAST"));
-        arr.Add(wxT("wxART_PRINT"));
-        arr.Add(wxT("wxART_HELP"));
-        arr.Add(wxT("wxART_TIP"));
-        arr.Add(wxT("wxART_REPORT_VIEW"));
-        arr.Add(wxT("wxART_LIST_VIEW"));
-        arr.Add(wxT("wxART_NEW_DIR"));
-        arr.Add(wxT("wxART_FOLDER"));
-        arr.Add(wxT("wxART_FOLDER_OPEN"));
-        arr.Add(wxT("wxART_GO_DIR_UP"));
-        arr.Add(wxT("wxART_EXECUTABLE_FILE"));
-        arr.Add(wxT("wxART_NORMAL_FILE"));
-        arr.Add(wxT("wxART_TICK_MARK"));
-        arr.Add(wxT("wxART_CROSS_MARK"));
-        arr.Add(wxT("wxART_MISSING_IMAGE"));
-        arr.Add(wxT("wxART_NEW"));
-        arr.Add(wxT("wxART_FILE_OPEN"));
-        arr.Add(wxT("wxART_FILE_SAVE"));
-        arr.Add(wxT("wxART_FILE_SAVE_AS"));
-        arr.Add(wxT("wxART_DELETE"));
-        arr.Add(wxT("wxART_COPY"));
-        arr.Add(wxT("wxART_CUT"));
-        arr.Add(wxT("wxART_PASTE"));
-        arr.Add(wxT("wxART_UNDO"));
-        arr.Add(wxT("wxART_REDO"));
-        arr.Add(wxT("wxART_PLUS"));
-        arr.Add(wxT("wxART_MINUS"));
-        arr.Add(wxT("wxART_CLOSE"));
-        arr.Add(wxT("wxART_QUIT"));
-        arr.Add(wxT("wxART_FIND"));
-        arr.Add(wxT("wxART_FIND_AND_REPLACE"));
-        arr.Add(wxT("wxART_HARDDISK"));
-        arr.Add(wxT("wxART_FLOPPY"));
-        arr.Add(wxT("wxART_CDROM"));
-        arr.Add(wxT("wxART_REMOVABLE"));
+    if (arr.IsEmpty()) {
+        arr = StdToWX::ToArrayString({ wxT("wxART_ERROR"),
+                                       wxT("wxART_QUESTION"),
+                                       wxT("wxART_WARNING"),
+                                       wxT("wxART_INFORMATION"),
+                                       wxT("wxART_ADD_BOOKMARK"),
+                                       wxT("wxART_DEL_BOOKMARK"),
+                                       wxT("wxART_HELP_SIDE_PANEL"),
+                                       wxT("wxART_HELP_SETTINGS"),
+                                       wxT("wxART_HELP_BOOK"),
+                                       wxT("wxART_HELP_FOLDER"),
+                                       wxT("wxART_HELP_PAGE"),
+                                       wxT("wxART_GO_BACK"),
+                                       wxT("wxART_GO_FORWARD"),
+                                       wxT("wxART_GO_UP"),
+                                       wxT("wxART_GO_DOWN"),
+                                       wxT("wxART_GO_TO_PARENT"),
+                                       wxT("wxART_GO_HOME"),
+                                       wxT("wxART_GOTO_FIRST"),
+                                       wxT("wxART_GOTO_LAST"),
+                                       wxT("wxART_PRINT"),
+                                       wxT("wxART_HELP"),
+                                       wxT("wxART_TIP"),
+                                       wxT("wxART_REPORT_VIEW"),
+                                       wxT("wxART_LIST_VIEW"),
+                                       wxT("wxART_NEW_DIR"),
+                                       wxT("wxART_FOLDER"),
+                                       wxT("wxART_FOLDER_OPEN"),
+                                       wxT("wxART_GO_DIR_UP"),
+                                       wxT("wxART_EXECUTABLE_FILE"),
+                                       wxT("wxART_NORMAL_FILE"),
+                                       wxT("wxART_TICK_MARK"),
+                                       wxT("wxART_CROSS_MARK"),
+                                       wxT("wxART_MISSING_IMAGE"),
+                                       wxT("wxART_NEW"),
+                                       wxT("wxART_FILE_OPEN"),
+                                       wxT("wxART_FILE_SAVE"),
+                                       wxT("wxART_FILE_SAVE_AS"),
+                                       wxT("wxART_DELETE"),
+                                       wxT("wxART_COPY"),
+                                       wxT("wxART_CUT"),
+                                       wxT("wxART_PASTE"),
+                                       wxT("wxART_UNDO"),
+                                       wxT("wxART_REDO"),
+                                       wxT("wxART_PLUS"),
+                                       wxT("wxART_MINUS"),
+                                       wxT("wxART_CLOSE"),
+                                       wxT("wxART_QUIT"),
+                                       wxT("wxART_FIND"),
+                                       wxT("wxART_FIND_AND_REPLACE"),
+                                       wxT("wxART_HARDDISK"),
+                                       wxT("wxART_FLOPPY"),
+                                       wxT("wxART_CDROM"),
+                                       wxT("wxART_REMOVABLE") });
         arr.Sort();
     }
 

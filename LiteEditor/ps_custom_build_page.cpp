@@ -24,14 +24,17 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ps_custom_build_page.h"
-#include "project_settings_dlg.h"
-#include "dirsaver.h"
-#include "project.h"
-#include "globals.h"
-#include "manager.h"
-#include <wx/log.h>
+
 #include "ProjectCustomBuildTragetDlg.h"
+#include "dirsaver.h"
+#include "globals.h"
 #include "macros.h"
+#include "manager.h"
+#include "project.h"
+#include "project_settings_dlg.h"
+
+#include <wx/dirdlg.h>
+#include <wx/log.h>
 
 PSCustomBuildPage::PSCustomBuildPage(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg)
     : PSCustomBuildBasePage(parent)
@@ -59,21 +62,21 @@ void PSCustomBuildPage::OnBrowseCustomBuildWD(wxCommandEvent& event)
     // Since all paths are relative to the project, set the working directory to the
     // current project path
     ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
-    if(p) {
+    if (p) {
         wxSetWorkingDirectory(p->GetFileName().GetPath());
     }
 
     wxFileName fn(m_textCtrlCustomBuildWD->GetValue());
     wxString initPath(wxEmptyString);
 
-    if(fn.DirExists()) {
+    if (fn.DirExists()) {
         fn.MakeAbsolute();
         initPath = fn.GetFullPath();
     }
 
     wxString new_path =
         wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if(new_path.IsEmpty() == false) {
+    if (new_path.IsEmpty() == false) {
         m_textCtrlCustomBuildWD->SetValue(new_path);
     }
 }
@@ -83,13 +86,11 @@ void PSCustomBuildPage::OnNewTarget(wxCommandEvent& event)
     wxUnusedVar(event);
 
     ProjectCustomBuildTragetDlg dlg(this, "", "");
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         GetDlg()->SetIsDirty(true);
-        if(GetTargetCommand(dlg.GetName()).IsEmpty() == false) {
-            wxMessageBox(wxString::Format(_("Target '%s' already exist!"), dlg.GetName().c_str()),
-                         _("CodeLite"),
-                         wxICON_WARNING | wxCENTER | wxOK,
-                         this);
+        if (GetTargetCommand(dlg.GetName()).IsEmpty() == false) {
+            wxMessageBox(wxString::Format(_("Target '%s' already exist!"), dlg.GetName().c_str()), _("CodeLite"),
+                         wxICON_WARNING | wxCENTER | wxOK, this);
             return;
         }
         wxVector<wxVariant> cols;
@@ -117,7 +118,7 @@ void PSCustomBuildPage::OnDeleteTarget(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxDataViewItem item = m_dvListCtrlTargets->GetSelection();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         m_dvListCtrlTargets->DeleteItem(m_dvListCtrlTargets->ItemToRow(item));
         GetDlg()->SetIsDirty(true);
     }
@@ -126,7 +127,7 @@ void PSCustomBuildPage::OnDeleteTarget(wxCommandEvent& event)
 void PSCustomBuildPage::OnDeleteTargetUI(wxUpdateUIEvent& event)
 {
     wxDataViewItem item = m_dvListCtrlTargets->GetSelection();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         wxVariant vTarget;
         m_dvListCtrlTargets->GetValue(vTarget, m_dvListCtrlTargets->ItemToRow(item), 0);
         wxString name = vTarget.GetString();
@@ -149,7 +150,7 @@ void PSCustomBuildPage::DoEditTarget(wxDataViewItem item)
     wxString target = varname.GetString();
     wxString cmd = varcommand.GetString();
     ProjectCustomBuildTragetDlg dlg(this, target, cmd);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         DoUpdateTarget(item, dlg.GetTargetName(), dlg.GetTargetCommand());
         GetDlg()->SetIsDirty(true);
     }
@@ -177,10 +178,10 @@ ProjectSettingsDlg* PSCustomBuildPage::GetDlg() { return m_dlg; }
 
 wxString PSCustomBuildPage::GetTargetCommand(const wxString& target)
 {
-    for(int i = 0; i < m_dvListCtrlTargets->GetItemCount(); i++) {
+    for (int i = 0; i < m_dvListCtrlTargets->GetItemCount(); i++) {
         wxVariant variantTarget;
         m_dvListCtrlTargets->GetValue(variantTarget, i, 0);
-        if(variantTarget.GetString() == target) {
+        if (variantTarget.GetString() == target) {
             wxVariant command;
             m_dvListCtrlTargets->GetValue(command, i, 1);
             return command.GetString();
@@ -226,9 +227,10 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
     // Initialize the custom build targets
     std::map<wxString, wxString> targets = buildConf->GetCustomTargets();
     std::map<wxString, wxString>::iterator titer = targets.begin();
-    for(; titer != targets.end(); ++titer) {
+    for (; titer != targets.end(); ++titer) {
 
-        if(ProjectCustomBuildTragetDlg::IsPredefinedTarget(titer->first)) continue;
+        if (ProjectCustomBuildTragetDlg::IsPredefinedTarget(titer->first))
+            continue;
 
         cols.clear();
         cols.push_back(titer->first);
@@ -242,11 +244,12 @@ void PSCustomBuildPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
 {
     // loop over the list and create the targets map
     std::map<wxString, wxString> targets;
-    for(int i = 0; i < m_dvListCtrlTargets->GetItemCount(); i++) {
+    for (int i = 0; i < m_dvListCtrlTargets->GetItemCount(); i++) {
         wxVariant vTarget, vCommand;
         m_dvListCtrlTargets->GetValue(vTarget, i, 0);
         m_dvListCtrlTargets->GetValue(vCommand, i, 1);
-        if(ProjectCustomBuildTragetDlg::IsPredefinedTarget(vTarget.GetString())) continue;
+        if (ProjectCustomBuildTragetDlg::IsPredefinedTarget(vTarget.GetString()))
+            continue;
 
         targets[vTarget.GetString()] = vCommand.GetString();
     }
@@ -276,7 +279,4 @@ void PSCustomBuildPage::OnTargetActivated(wxDataViewEvent& event)
     wxCommandEvent dummy;
     OnEditTarget(dummy);
 }
-void PSCustomBuildPage::OnEnableTableUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkEnableCustomBuild->IsChecked());
-}
+void PSCustomBuildPage::OnEnableTableUI(wxUpdateUIEvent& event) { event.Enable(m_checkEnableCustomBuild->IsChecked()); }

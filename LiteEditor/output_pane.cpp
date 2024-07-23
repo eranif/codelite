@@ -157,7 +157,7 @@ void OutputPane::OnEditorFocus(wxCommandEvent& e)
         if(m_buildInProgress)
             return;
 
-        wxAuiPaneInfo& info = PluginManager::Get()->GetDockingManager()->GetPane(wxT("Output View"));
+        wxAuiPaneInfo& info = PluginManager::Get()->GetDockingManager()->GetPane(PANE_OUTPUT);
         DockablePaneMenuManager::HackHidePane(true, info, PluginManager::Get()->GetDockingManager());
     }
 }

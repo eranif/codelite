@@ -28,10 +28,8 @@
 #include "clPersistenceManager.h"
 #include "frame.h"
 
-#include <set>
 #include <wx/cmdline.h>
-
-class wxSingleInstanceChecker;
+#include <wx/snglinst.h>
 
 class CodeLiteApp : public wxApp
 {

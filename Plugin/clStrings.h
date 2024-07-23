@@ -11,4 +11,10 @@
 #define SHOW_USAGE _("References")
 #define TERMINAL_TAB _("Terminal")
 
+// Panes
+#define PANE_LEFT_SIDEBAR wxT("Workspace View")
+#define PANE_RIGHT_SIDEBAR wxT("Secondary Sidebar")
+#define PANE_DEBUGGER wxT("Debugger")
+#define PANE_OUTPUT wxT("Output View")
+
 #endif // CL_STRINGS_H

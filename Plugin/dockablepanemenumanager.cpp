@@ -33,7 +33,7 @@
 
 void DockablePaneMenuManager::HackShowPane(wxAuiPaneInfo& pane_info, wxAuiManager* pAui)
 {
-    if(pane_info.IsOk() && pAui && pane_info.best_size != wxDefaultSize)  {
+    if (pane_info.IsOk() && pAui && pane_info.best_size != wxDefaultSize) {
         pane_info.MinSize(pane_info.best_size); // saved while hiding
         pane_info.Show();
         pAui->Update();
@@ -44,14 +44,14 @@ void DockablePaneMenuManager::HackShowPane(wxAuiPaneInfo& pane_info, wxAuiManage
 
 void DockablePaneMenuManager::HackHidePane(bool commit, wxAuiPaneInfo& pane_info, wxAuiManager* pAui)
 {
-    if(pane_info.IsOk() && pAui) {
+    if (pane_info.IsOk() && pAui) {
         int width = 0;
         int height = 0;
         pane_info.window->GetSize(&width, &height);
         pane_info.BestSize(width, height); // save for later subsequent show
         pane_info.Hide();
 
-        if(commit) {
+        if (commit) {
             pAui->Update();
         }
     }
@@ -68,7 +68,7 @@ void DockablePaneMenuManager::RemoveMenu(const wxString& name)
 {
     int itemId = wxXmlResource::GetXRCID(name.c_str());
     std::map<int, wxString>::iterator iter = m_id2nameMap.find(itemId);
-    if(iter != m_id2nameMap.end()) {
+    if (iter != m_id2nameMap.end()) {
         m_id2nameMap.erase(iter);
     }
 }
@@ -81,8 +81,8 @@ void DockablePaneMenuManager::AddMenu(const wxString& name)
 
 wxString DockablePaneMenuManager::NameById(int id)
 {
-    std::map<int, wxString>::iterator iter = m_id2nameMap.find(id);
-    if(iter != m_id2nameMap.end()) {
+    auto iter = m_id2nameMap.find(id);
+    if (iter != m_id2nameMap.end()) {
         return iter->second;
     }
     return wxEmptyString;
@@ -92,8 +92,8 @@ void DockablePaneMenuManager::OnDockpaneMenuItem(wxCommandEvent& e)
 {
     wxString name = NameById(e.GetId());
     wxAuiPaneInfo& info = m_aui->GetPane(name);
-    if(info.IsOk()) {
-        if(e.IsChecked()) {
+    if (info.IsOk()) {
+        if (e.IsChecked()) {
             HackShowPane(info, m_aui);
         } else {
             HackHidePane(true, info, m_aui);
@@ -105,8 +105,8 @@ void DockablePaneMenuManager::OnDockpaneMenuItemUI(wxUpdateUIEvent& e)
 {
     wxString name = NameById(e.GetId());
     wxAuiPaneInfo& info = m_aui->GetPane(name);
-    if(info.IsOk()) {
-        if(info.IsShown()) {
+    if (info.IsOk()) {
+        if (info.IsShown()) {
             e.Check(true);
         } else {
             e.Check(false);
@@ -118,7 +118,7 @@ wxArrayString DockablePaneMenuManager::GetDeatchedPanesList()
 {
     wxArrayString arr;
     std::map<int, wxString>::iterator iter = m_id2nameMap.begin();
-    for(; iter != m_id2nameMap.end(); iter++) {
+    for (; iter != m_id2nameMap.end(); ++iter) {
         arr.Add(iter->second);
     }
     return arr;
@@ -126,9 +126,9 @@ wxArrayString DockablePaneMenuManager::GetDeatchedPanesList()
 
 bool DockablePaneMenuManager::IsPaneDetached(const wxString& name)
 {
-    std::map<int, wxString>::iterator iter = m_id2nameMap.begin();
-    for(; iter != m_id2nameMap.end(); iter++) {
-        if(iter->second == name) {
+    auto iter = m_id2nameMap.begin();
+    for (; iter != m_id2nameMap.end(); ++iter) {
+        if (iter->second == name) {
             return true;
         }
     }

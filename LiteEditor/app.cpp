@@ -26,14 +26,12 @@
 #include "app.h"
 
 #include "ColoursAndFontsManager.h"
-#include "CompilerLocator/CompilerLocatorCygwin.h"
 #include "SideBar.hpp"
 #include "SocketAPI/clSocketClient.h"
 #include "autoversion.h"
 #include "clKeyboardManager.h"
 #include "clSystemSettings.h"
 #include "cl_config.h"
-#include "cl_registry.h"
 #include "conffilelocator.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
@@ -45,14 +43,20 @@
 #include "globals.h"
 #include "manager.h"
 #include "pluginmanager.h"
-#include "procutils.h"
 #include "singleinstancethreadjob.h"
-#include "exelocator.h"
 #include "stack_walker.h"
 
+#include <wx/crt.h>
+#include <wx/dir.h>
+#include <wx/fontmap.h>
 #include <wx/imagjpeg.h>
 #include <wx/persist.h>
 #include <wx/regex.h>
+#include <wx/socket.h>
+#include <wx/stream.h>
+#include <wx/sysopt.h>
+#include <wx/txtstrm.h>
+#include <wx/wfstream.h>
 
 // #define __PERFORMANCE
 #include "performance.h"

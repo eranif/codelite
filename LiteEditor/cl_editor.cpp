@@ -82,11 +82,13 @@
 #include <wx/display.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
+#include <wx/fontmap.h>
 #include <wx/log.h>
 #include <wx/printdlg.h>
 #include <wx/regex.h>
 #include <wx/richtooltip.h> // wxRichToolTip
 #include <wx/stc/stc.h>
+#include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/wxcrt.h>
 
@@ -3695,9 +3697,6 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
                 clEditorStateLocker editor(this);
                 ClearSelections();
             }
-#if 0
-            clMainFrame::Get()->ViewPane(wxT("Output View"), false);
-#endif
         }
     }
     m_context->OnKeyDown(event);

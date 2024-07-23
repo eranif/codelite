@@ -45,6 +45,7 @@
 
 #include <algorithm>
 #include <project.h>
+#include <wx/dirdlg.h>
 #include <wx/fontmap.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
@@ -135,19 +136,19 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     static std::unordered_map<wxString, int> encodingMap;
     static int selection(0);
 
-    if(astrEncodings.empty()) {
+    if (astrEncodings.empty()) {
         wxFontEncoding fontEnc;
         size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
         astrEncodings.reserve(iEncCnt);
-        for(size_t i = 0; i < iEncCnt; i++) {
+        for (size_t i = 0; i < iEncCnt; i++) {
             fontEnc = wxFontMapper::GetEncoding(i);
-            if(wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+            if (wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
                 continue;
             }
             wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
             size_t pos = astrEncodings.Add(encodingName);
             encodingMap.insert({ encodingName, (int)pos });
-            if(m_data.encoding == encodingName) {
+            if (m_data.encoding == encodingName) {
                 selection = static_cast<int>(pos);
             }
         }
@@ -156,7 +157,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     }
 
     m_comboBoxEncoding->Append(astrEncodings);
-    if(m_comboBoxEncoding->GetCount()) {
+    if (m_comboBoxEncoding->GetCount()) {
         m_comboBoxEncoding->SetSelection(selection);
     }
 
@@ -207,7 +208,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
 {
     SearchData data;
     wxString findStr(m_data.find_what);
-    if(!m_findString->GetValue().IsEmpty()) {
+    if (!m_findString->GetValue().IsEmpty()) {
         findStr = m_findString->GetValue();
     }
 
@@ -219,7 +220,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
 
     // If the 'Skip comments' is ON, remove the
     // 'colour comments' flag
-    if(flags & wxFRD_SKIP_COMMENTS) {
+    if (flags & wxFRD_SKIP_COMMENTS) {
         flags &= ~wxFRD_COLOUR_COMMENTS;
     }
 
@@ -234,10 +235,10 @@ SearchData FindInFilesDialog::DoGetSearchData()
     data.SetEnablePipeSupport(flags & wxFRD_ENABLE_PIPE_SUPPORT);
 
     size_t search_flags = clFilesScanner::SF_DEFAULT;
-    if(m_checkBoxFollowSymlinks->IsChecked()) {
+    if (m_checkBoxFollowSymlinks->IsChecked()) {
         search_flags &= ~clFilesScanner::SF_DONT_FOLLOW_SYMLINKS;
     }
-    if(m_checkBoxIncludeHiddenFolders->IsChecked()) {
+    if (m_checkBoxIncludeHiddenFolders->IsChecked()) {
         search_flags &= ~clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS;
     }
     data.SetFileScannerFlags(search_flags);
@@ -250,58 +251,58 @@ SearchData FindInFilesDialog::DoGetSearchData()
     wxArrayString rootDirs;
     wxArrayString excludePattern;
 
-    for(size_t i = 0; i < searchWhere.GetCount(); ++i) {
+    for (size_t i = 0; i < searchWhere.GetCount(); ++i) {
         const wxString& rootDir = searchWhere.Item(i);
-        if(rootDir.StartsWith("-")) {
+        if (rootDir.StartsWith("-")) {
             // An exclude pattern
             excludePattern.Add(rootDir.Mid(1));
-        } else if(rootDir.StartsWith("F: ")) {
+        } else if (rootDir.StartsWith("F: ")) {
             // a file
             files.Add(rootDir.Mid(3));
-        } else if(rootDir.StartsWith("W: ")) {
+        } else if (rootDir.StartsWith("W: ")) {
             // Add all project files
             wxArrayString projects;
             clCxxWorkspaceST::Get()->GetProjectList(projects);
-            for(size_t n = 0; n < projects.size(); ++n) {
+            for (size_t n = 0; n < projects.size(); ++n) {
                 DoAddProjectFiles(projects.Item(n), files);
             }
-        } else if(rootDir.StartsWith("V: ")) {
+        } else if (rootDir.StartsWith("V: ")) {
             // a virtual folder
-            if(clCxxWorkspaceST::Get()->IsOpen()) {
+            if (clCxxWorkspaceST::Get()->IsOpen()) {
                 wxString vd = rootDir.Mid(3);
                 vd.Replace("/", ":"); // Virtual directory is expecting colons as the separator
                 wxString projectName = vd.BeforeFirst(':');
                 vd = vd.AfterFirst(':');
                 ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
-                if(p) {
+                if (p) {
                     wxArrayString vdFiles;
                     p->GetFilesByVirtualDir(vd, vdFiles, true);
                     files.insert(files.end(), vdFiles.begin(), vdFiles.end());
                 }
             }
-        } else if(rootDir.StartsWith("P: ")) {
+        } else if (rootDir.StartsWith("P: ")) {
             // Project
             wxString projectName = rootDir.Mid(3);
             DoAddProjectFiles(projectName, files);
 
-        } else if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)) ||
-                  (rootDir == SEARCH_IN_WORKSPACE_FOLDER)) {
-            if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        } else if ((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)) ||
+                   (rootDir == SEARCH_IN_WORKSPACE_FOLDER)) {
+            if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
                 continue;
             }
             // Add the workspace folder
             rootDirs.Add(clWorkspaceManager::Get().GetWorkspace()->GetDir());
 
-        } else if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) || (rootDir == SEARCH_IN_WORKSPACE)) {
-            if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        } else if ((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) || (rootDir == SEARCH_IN_WORKSPACE)) {
+            if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
                 continue;
             }
             clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
 
-        } else if((rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) || (rootDir == SEARCH_IN_PROJECT)) {
-            if(!clWorkspaceManager::Get().IsWorkspaceOpened())
+        } else if ((rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) || (rootDir == SEARCH_IN_PROJECT)) {
+            if (!clWorkspaceManager::Get().IsWorkspaceOpened())
                 continue;
-            if(clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported()) {
+            if (clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported()) {
                 // get the active project files
                 clWorkspaceManager::Get().GetWorkspace()->GetProjectFiles("", files);
             } else {
@@ -309,16 +310,16 @@ SearchData FindInFilesDialog::DoGetSearchData()
                 clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
             }
 
-        } else if((rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) ||
-                  (rootDir == SEARCH_IN_CURR_FILE_PROJECT)) {
+        } else if ((rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) ||
+                   (rootDir == SEARCH_IN_CURR_FILE_PROJECT)) {
 
-            if(!clWorkspaceManager::Get().IsWorkspaceOpened())
+            if (!clWorkspaceManager::Get().IsWorkspaceOpened())
                 continue;
             IEditor* editor = clGetManager()->GetActiveEditor();
-            if(!editor)
+            if (!editor)
                 continue;
 
-            if(clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported()) {
+            if (clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported()) {
                 wxString projectName =
                     clWorkspaceManager::Get().GetWorkspace()->GetProjectFromFile(editor->GetFileName());
                 clWorkspaceManager::Get().GetWorkspace()->GetProjectFiles(projectName, files);
@@ -327,22 +328,22 @@ SearchData FindInFilesDialog::DoGetSearchData()
                 clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
             }
 
-        } else if((rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE)) || (rootDir == SEARCH_IN_CURRENT_FILE)) {
+        } else if ((rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE)) || (rootDir == SEARCH_IN_CURRENT_FILE)) {
             clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-            if(editor) {
+            if (editor) {
                 files.Add(editor->GetFileName().GetFullPath());
             }
-        } else if((rootDir == wxGetTranslation(SEARCH_IN_OPEN_FILES)) || (rootDir == SEARCH_IN_OPEN_FILES)) {
+        } else if ((rootDir == wxGetTranslation(SEARCH_IN_OPEN_FILES)) || (rootDir == SEARCH_IN_OPEN_FILES)) {
             std::vector<clEditor*> editors;
             clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
 
-            for(size_t n = 0; n < editors.size(); ++n) {
+            for (size_t n = 0; n < editors.size(); ++n) {
                 clEditor* editor = dynamic_cast<clEditor*>(*(editors.begin() + n));
-                if(editor) {
+                if (editor) {
                     files.Add(editor->GetFileName().GetFullPath());
                 }
             }
-        } else if(wxFileName::DirExists(searchWhere.Item(i))) {
+        } else if (wxFileName::DirExists(searchWhere.Item(i))) {
             rootDirs.Add(searchWhere.Item(i));
         }
     }
@@ -352,8 +353,8 @@ SearchData FindInFilesDialog::DoGetSearchData()
     wxArrayString uniqueFiles;
     // Unique files may contain up to files.size() elements
     uniqueFiles.Alloc(files.size());
-    for(const wxString& file : files) {
-        if(filesSet.count(file) == 0) {
+    for (const wxString& file : files) {
+        if (filesSet.count(file) == 0) {
             filesSet.insert(file);
             uniqueFiles.Add(file);
         }
@@ -402,14 +403,14 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     wxPoint menuPos(0, size.GetHeight());
     int selection = m_btnAddPath->GetPopupMenuSelectionFromUser(menu, menuPos);
 
-    if(selection == wxID_NONE)
+    if (selection == wxID_NONE)
         return;
 
-    if(selection == (firstItem + 7)) {
+    if (selection == (firstItem + 7)) {
         // Add exclude pattern
         wxString current_content = m_comboBoxWhere->GetValue();
         current_content.Trim();
-        if(!current_content.empty() && !current_content.EndsWith(";")) {
+        if (!current_content.empty() && !current_content.EndsWith(";")) {
             current_content << ";";
         }
 
@@ -420,13 +421,13 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
         m_comboBoxWhere->SetValue(current_content);
         m_comboBoxWhere->CallAfter(&clComboBox::SetFocus);
 
-    } else if(selection == (firstItem + 6)) {
+    } else if (selection == (firstItem + 6)) {
         wxString folder = ::wxDirSelector();
-        if(folder.IsEmpty())
+        if (folder.IsEmpty())
             return;
         DoAppendSearchPath(folder);
 
-    } else if(options.count(selection)) {
+    } else if (options.count(selection)) {
         DoAppendSearchPath(options.find(selection)->second);
     }
 }
@@ -439,10 +440,10 @@ int FindInFilesDialog::ShowDialog()
     m_findString->SetValue(m_data.find_what);
 
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         // if we have an open editor, and a selected text, make this text the search string
         wxString selText = editor->GetSelectedText();
-        if(!selText.IsEmpty()) {
+        if (!selText.IsEmpty()) {
             m_findString->SetValue(selText);
         }
     }
@@ -453,7 +454,7 @@ int FindInFilesDialog::ShowDialog()
 
 void FindInFilesDialog::DoSaveOpenFiles()
 {
-    if(m_checkBoxSaveFilesBeforeSearching->IsChecked()) {
+    if (m_checkBoxSaveFilesBeforeSearching->IsChecked()) {
         clMainFrame::Get()->GetMainBook()->SaveAll(false, false);
     }
 }
@@ -486,15 +487,15 @@ void FindInFilesDialog::OnButtonClose(wxCommandEvent& event) { EndModal(wxID_CAN
 size_t FindInFilesDialog::GetSearchFlags()
 {
     size_t flags = 0;
-    if(m_matchCase->IsChecked())
+    if (m_matchCase->IsChecked())
         flags |= wxFRD_MATCHCASE;
-    if(m_matchWholeWord->IsChecked())
+    if (m_matchWholeWord->IsChecked())
         flags |= wxFRD_MATCHWHOLEWORD;
-    if(m_regualrExpression->IsChecked())
+    if (m_regualrExpression->IsChecked())
         flags |= wxFRD_REGULAREXPRESSION;
-    if(m_checkBoxSaveFilesBeforeSearching->IsChecked())
+    if (m_checkBoxSaveFilesBeforeSearching->IsChecked())
         flags |= wxFRD_SAVE_BEFORE_SEARCH;
-    if(m_checkBoxPipeForGrep->IsChecked())
+    if (m_checkBoxPipeForGrep->IsChecked())
         flags |= wxFRD_ENABLE_PIPE_SUPPORT;
     return flags;
 }
@@ -511,7 +512,7 @@ void FindInFilesDialog::DoAppendSearchPath(const wxString& path)
 {
     wxString current_value = m_comboBoxWhere->GetValue();
     wxArrayString paths = ::wxStringTokenize(current_value, ";\n", wxTOKEN_STRTOK);
-    if(paths.Index(path) != wxNOT_FOUND) {
+    if (paths.Index(path) != wxNOT_FOUND) {
         return;
     }
     paths.Add(path);
@@ -529,13 +530,13 @@ void FindInFilesDialog::OnLookInKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArrayString& files)
 {
-    if(!clCxxWorkspaceST::Get()->IsOpen()) {
+    if (!clCxxWorkspaceST::Get()->IsOpen()) {
         return;
     }
     ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
-    if(p) {
+    if (p) {
         const Project::FilesMap_t& filesMap = p->GetFiles();
-        if(!filesMap.empty()) {
+        if (!filesMap.empty()) {
             wxArrayString tmpArr;
             tmpArr.Alloc(filesMap.size());
             std::for_each(filesMap.begin(), filesMap.end(),
@@ -559,7 +560,7 @@ wxArrayString GetComboBoxStrings(clComboBox* cb)
     wxArrayString arr = cb->GetStrings();
     wxString value = cb->GetValue();
     int loc = arr.Index(value);
-    if(loc != wxNOT_FOUND) {
+    if (loc != wxNOT_FOUND) {
         arr.RemoveAt(loc);
     }
     arr.Insert(value, 0);
@@ -569,7 +570,7 @@ wxArrayString GetComboBoxStrings(clComboBox* cb)
 
 void FindInFilesDialog::SaveFindReplaceData()
 {
-    if(m_presetSearch && !m_userChangedRegexManually) {
+    if (m_presetSearch && !m_userChangedRegexManually) {
         // restore the regex value
         m_regualrExpression->SetValue(m_oldRegexValue);
     }
@@ -591,7 +592,7 @@ void FindInFilesDialog::SaveFindReplaceData()
     m_data.files_array = masks;
 
     // store the "Where"
-    if(!m_transient) {
+    if (!m_transient) {
         wxArrayString where_arr =
             StringUtils::AppendAndMakeUnique(m_comboBoxWhere->GetStrings(), m_comboBoxWhere->GetValue());
         m_data.where_array = where_arr;
@@ -599,10 +600,10 @@ void FindInFilesDialog::SaveFindReplaceData()
     }
 
     size_t search_flags = clFilesScanner::SF_DEFAULT;
-    if(m_checkBoxFollowSymlinks->IsChecked()) {
+    if (m_checkBoxFollowSymlinks->IsChecked()) {
         search_flags &= ~clFilesScanner::SF_DONT_FOLLOW_SYMLINKS;
     }
-    if(m_checkBoxIncludeHiddenFolders->IsChecked()) {
+    if (m_checkBoxIncludeHiddenFolders->IsChecked()) {
         search_flags &= ~clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS;
     }
     m_data.files_scanner_flags = search_flags;
@@ -613,9 +614,9 @@ void FindInFilesDialog::SaveFindReplaceData()
 
 void FindInFilesDialog::SetFileMask(const wxString& mask)
 {
-    if(!mask.IsEmpty()) {
+    if (!mask.IsEmpty()) {
         int where = m_fileTypes->FindString(mask);
-        if(where == wxNOT_FOUND) {
+        if (where == wxNOT_FOUND) {
             // Add it
             where = m_fileTypes->Append(mask);
         }
@@ -666,29 +667,29 @@ void FindInFilesDialog::OnRegex(wxCommandEvent& event)
 void FindInFilesDialog::SetPresets()
 {
     wxString pattern;
-    if(m_checkBoxATTN->IsChecked()) {
+    if (m_checkBoxATTN->IsChecked()) {
         pattern << RE_ATTN << "|";
     }
 
-    if(m_checkBoxBUG->IsChecked()) {
+    if (m_checkBoxBUG->IsChecked()) {
         pattern << RE_BUG << "|";
     }
 
-    if(m_checkBoxFIXME->IsChecked()) {
+    if (m_checkBoxFIXME->IsChecked()) {
         pattern << RE_FIXME << "|";
     }
 
-    if(m_checkBoxTODO->IsChecked()) {
+    if (m_checkBoxTODO->IsChecked()) {
         pattern << RE_TODO << "|";
     }
 
-    if(!pattern.empty()) {
+    if (!pattern.empty()) {
         // remove the trailing pipe
         pattern.RemoveLast();
     }
 
     m_findString->SetValue(pattern);
-    if(!m_regualrExpression->IsChecked()) {
+    if (!m_regualrExpression->IsChecked()) {
         // enable regex
         m_regualrExpression->SetValue(true);
         m_presetSearch = true;

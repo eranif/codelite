@@ -44,6 +44,7 @@
 #include "clProfileHandler.h"
 #include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
+#include "clStrings.h"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
 #include "cl_command_event.h"
@@ -62,6 +63,7 @@
 #include "environmentconfig.h"
 #include "envvarlist.h"
 #include "event_notifier.h"
+#include "exelocator.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
@@ -84,7 +86,6 @@
 #include "threadlistpanel.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
-#include "exelocator.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -1638,7 +1639,7 @@ void Manager::ShowDebuggerPane(bool show)
 void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
 {
     // make the output pane visible
-    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Workspace View"));
+    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(PANE_LEFT_SIDEBAR);
     if (info.IsOk() && !info.IsShown()) {
         info.Show();
         if (commit) {
@@ -1653,6 +1654,25 @@ void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
         book->SetSelection((size_t)index);
     } else if (index == wxNOT_FOUND) {
         clMainFrame::Get()->GetWorkspacePane()->ShowTab(focusWin, true);
+    }
+}
+
+void Manager::ShowSecondarySideBarPane(wxString focusWin, bool commit)
+{
+    // make the output pane visible
+    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(PANE_RIGHT_SIDEBAR);
+    if (info.IsOk() && !info.IsShown()) {
+        info.Show();
+        if (commit) {
+            clMainFrame::Get()->GetDockingManager().Update();
+        }
+    }
+
+    // set the selection to focus win
+    auto book = clMainFrame::Get()->GetSecondarySideBar()->GetNotebook();
+    int index = book->GetPageIndex(focusWin);
+    if (index != wxNOT_FOUND && index != book->GetSelection()) {
+        book->SetSelection((size_t)index);
     }
 }
 
@@ -1829,7 +1849,7 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
     DebuggerPane* pane = clMainFrame::Get()->GetDebuggerPane();
 
     // make sure that the debugger pane is visible
-    if (!IsPaneVisible(wxT("Debugger")))
+    if (!IsPaneVisible(PANE_DEBUGGER))
         return;
 
     if (curpage == (wxWindow*)pane->GetBreakpointView() || IsPaneVisible(wxGetTranslation(DebuggerPane::BREAKPOINTS))) {
@@ -2371,7 +2391,7 @@ void Manager::DbgDoSimpleCommand(int cmd)
 
 void Manager::DbgSetFrame(int frame, int lineno)
 {
-    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
+    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(PANE_DEBUGGER);
     if (info.IsShown()) {
         IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
         if (dbgr && dbgr->IsRunning() && DbgCanInteract()) {
@@ -2506,7 +2526,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
         dlg.ShowModal();
 
         // Print the stack trace
-        wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
+        wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(PANE_DEBUGGER);
         if (info.IsShown()) {
             clMainFrame::Get()->GetDebuggerPane()->SelectTab(wxGetTranslation(DebuggerPane::FRAMES));
             CallAfter(&Manager::UpdateDebuggerPane);
@@ -2594,7 +2614,7 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 
     Variable variable;
     if (LanguageST::Get()->VariableFromPattern(expression, wxT("someValidName"), variable)) {
-        expression_type = _U(variable.m_type.c_str());
+        expression_type = variable.m_type.c_str();
         for (size_t i = 0; i < cmds.size(); i++) {
             DebuggerCmdData cmd = cmds.at(i);
             if (cmd.GetName() == expression_type) {
@@ -2608,7 +2628,8 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
                 // Special handling for the templates
                 //---------------------------------------------------
 
-                wxArrayString types = DoGetTemplateTypes(_U(variable.m_templateDecl.c_str()));
+                wxArrayString types = DoGetTemplateTypes(variable.m_templateDecl);
+
                 // Case 1: list
                 // The user defined scripts requires that we pass info like this:
                 // plist <list name> <T>

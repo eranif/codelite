@@ -26,10 +26,6 @@
 #ifndef PERSPECTIVEMANAGER_H
 #define PERSPECTIVEMANAGER_H
 
-#include "precompiled_header.h"
-#include "wxStringHash.h"
-
-#include <map>
 #include <wx/arrstr.h>
 #include <wx/aui/framemanager.h>
 #include <wx/event.h>

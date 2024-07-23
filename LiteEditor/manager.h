@@ -161,10 +161,10 @@ protected:
     //--------------------------- Workspace Loading -----------------------------
 public:
     /*!
-     * \brief
+     * @brief
      * check if a workspace is open
      *
-     * \returns
+     * @returns
      * true if a workspace is open
      */
     bool IsWorkspaceOpen() const;
@@ -172,13 +172,13 @@ public:
     const bool& IsWorkspaceClosing() const { return m_workspceClosing; }
 
     /*!
-     * \brief
+     * @brief
      * Create a workspace with a given name and path
      *
-     * \param name
+     * @param name
      * workspace name
      *
-     * \param path
+     * @param path
      * workspace path
      *
      */
@@ -190,7 +190,7 @@ public:
     void OpenWorkspace(const wxString& path);
 
     /**
-     * \brief close the currently opened workspace and reload it without saving any modifications made to it, if no
+     * @brief close the currently opened workspace and reload it without saving any modifications made to it, if no
      * workspace is opened, this functiond does anything
      */
     void ReloadWorkspace();
@@ -202,13 +202,13 @@ public:
     void CloseWorkspace();
 
     /**
-     * \brief clear the recent workspaces list
+     * @brief clear the recent workspaces list
      */
     void ClearWorkspaceHistory();
 
     /**
      * Return list of recently opened workspaces from the configuration file
-     * \param files [output]
+     * @param files [output]
      */
     void GetRecentlyOpenedWorkspaces(wxArrayString& files);
 
@@ -249,27 +249,27 @@ public:
     /**
      * Add an existing project to the workspace. If no workspace is open,
      * this function does nothing
-     * \param path project file path name to add
+     * @param path project file path name to add
      */
     void AddProject(const wxString& path);
 
     /**
      * Checks the active project for file entries that no longer exist on the filesystem,
      * and for existing files that are missing from the project
-     * \param projectName the name of the project to reconcile. If "" do the currently-active project
+     * @param projectName the name of the project to reconcile. If "" do the currently-active project
      */
     void ReconcileProject(const wxString& projectName = "");
 
     /**
      * Import a MS Solution file and open it in the editor
-     * \param path path to the .sln file
+     * @param path path to the .sln file
      */
     void ImportMSVSSolution(const wxString& path, const wxString& defaultCompiler);
 
     /**
      * Remove the a project from the workspace
-     * \param name project name to remove
-     * \return true on success false otherwise
+     * @param name project name to remove
+     * @return true on success false otherwise
      */
     bool RemoveProject(const wxString& name, bool notify);
 
@@ -284,13 +284,13 @@ public:
     ProjectPtr GetProject(const wxString& name) const;
 
     /**
-     * \return active project name
+     * @return active project name
      */
     wxString GetActiveProjectName();
 
     /**
      * Set project as active
-     * \param name project name to set as active
+     * @param name project name to set as active
      */
     void SetActiveProject(const wxString& name);
 
@@ -328,7 +328,7 @@ public:
 
     /**
      * check if a file is part of the workspace
-     * \param fileName the file name in absolute path
+     * @param fileName the file name in absolute path
      */
     bool IsFileInWorkspace(const wxString& fileName);
 
@@ -343,14 +343,14 @@ public:
     void RetagWorkspace(TagsManager::RetagType type);
 
     /**
-     * \brief retag a given file
-     * \param filename
+     * @brief retag a given file
+     * @param filename
      */
     void RetagFile(const wxString& filename);
 
     /**
-     * \brief Launch the ParseThread to update the preprocessor vizualisation
-     * \param filename
+     * @brief Launch the ParseThread to update the preprocessor vizualisation
+     * @param filename
      */
     void UpdatePreprocessorFile(clEditor* editor);
 
@@ -361,55 +361,55 @@ protected:
 public:
     /**
      * Add new virtual directory to the workspace.
-     * \param virtualDirFullPath a dot separated string of the new virtual directory full path up to the parent project
+     * @param virtualDirFullPath a dot separated string of the new virtual directory full path up to the parent project
      *        for example: to add a new VD name VD3 under: Project1->VD1->VD2 path should contain: Project1.VD1.VD2.VD3
      */
     int AddVirtualDirectory(const wxString& virtualDirFullPath, bool createIt);
 
     /**
      * Remove virtual directory from the workspace.
-     * \param virtualDirFullPath a dot separated string of the virtual directory to be removed
+     * @param virtualDirFullPath a dot separated string of the virtual directory to be removed
      */
     void RemoveVirtualDirectory(const wxString& virtualDirFullPath);
 
     /**
      * Create new file on the disk and open it in the main editor
-     * \param fileName file full path (including directories)
-     * \param vdFullPath path of the virtual directory
+     * @param fileName file full path (including directories)
+     * @param vdFullPath path of the virtual directory
      */
     bool AddNewFileToProject(const wxString& fileName, const wxString& vdFullPath, bool openIt = true);
 
     /**
      * Add an existing file to workspace
-     * \param fileName file full path (including directories)
-     * \param vdFullPath path of the virtual directory
+     * @param fileName file full path (including directories)
+     * @param vdFullPath path of the virtual directory
      */
     bool AddFileToProject(const wxString& fileName, const wxString& vdFullPath, bool openIt = false);
 
     /**
-     * \brief
-     * \param files
-     * \param vdFullPath
-     * \param actualAdded
-     * \return
+     * @brief
+     * @param files
+     * @param vdFullPath
+     * @param actualAdded
+     * @return
      */
     void AddFilesToProject(const wxArrayString& files, const wxString& vdFullPath, wxArrayString& actualAdded);
 
     /**
      * remove file from the workspace
-     * \param fileName the full path of the file to be removed
-     * \param vdFullPath the files' virtual directory path (including project)
-     * \param fullpathRemoved [output] set the full path of the file removed
-     * \param notify if set to true, this function will also fire the wxEVT_PROJ_FILE_REMOVED event
+     * @param fileName the full path of the file to be removed
+     * @param vdFullPath the files' virtual directory path (including project)
+     * @param fullpathRemoved [output] set the full path of the file removed
+     * @param notify if set to true, this function will also fire the wxEVT_PROJ_FILE_REMOVED event
      */
     bool RemoveFile(const wxString& fileName, const wxString& vdFullPath, wxString& fullpathRemoved,
                     bool notify = true);
 
     /**
      * remove file from the workspace
-     * \param origName the full path of the file to be renamed
-     * \param newName the full path the file must be renamed to
-     * \param vdFullPath the files' virtual directory path (including project)
+     * @param origName the full path of the file to be renamed
+     * @param newName the full path the file must be renamed to
+     * @param vdFullPath the files' virtual directory path (including project)
      */
     bool RenameFile(const wxString& origName, const wxString& newName, const wxString& vdFullPath);
 
@@ -418,13 +418,13 @@ public:
     /**
      * Rebuild the database by removing all entries from the database
      * that belongs to a given project, and then re-index all files
-     * \param projectName project to re-tag
+     * @param projectName project to re-tag
      */
     void RetagProject(const wxString& projectName, bool quickRetag);
 
     /**
      * return list of files in absolute path of a given project
-     * \param project project name
+     * @param project project name
      */
     void GetProjectFiles(const wxString& project, wxArrayString& files);
 
@@ -442,15 +442,15 @@ public:
     /**
      * @brief return the project name that 'fullPathFileName' belongs to. if 2 matches are found, return
      * the first one, or empty string if no match is found
-     * \param fullPathFileName the filepath to search with
-     * \param caseSensitive do a case-sensitive search
+     * @param fullPathFileName the filepath to search with
+     * @param caseSensitive do a case-sensitive search
      */
     wxString GetProjectNameByFile(const wxString& fullPathFileName, bool caseSensitive = false);
     /**
      * @brief return the project name that 'fullPathFileName' belongs to. if 2 matches are found, return
      * the first one, or empty string if no match is found
-     * \param fullPathFileName the filepath to search with
-     * \param caseSensitive do a case-sensitive search
+     * @param fullPathFileName the filepath to search with
+     * @param caseSensitive do a case-sensitive search
      */
     wxString GetProjectNameByFile(wxString& fullPathFileName, bool caseSensitive = false);
 
@@ -465,39 +465,39 @@ public:
 
     /**
      * Return a project working directory
-     * \param project project name
+     * @param project project name
      */
     wxString GetProjectCwd(const wxString& project) const;
 
     /**
      * Return project settings by name
-     * \param projectName project name
-     * \return project settings smart prt
+     * @param projectName project name
+     * @return project settings smart prt
      */
     ProjectSettingsPtr GetProjectSettings(const wxString& projectName) const;
 
     /**
      * Set project settings
-     * \param projectName project name
-     * \param settings settings to update
+     * @param projectName project name
+     * @param settings settings to update
      */
     void SetProjectSettings(const wxString& projectName, ProjectSettingsPtr settings);
 
     /**
      * Set project global settings
-     * \param projectName project name
-     * \param settings global settings to update
+     * @param projectName project name
+     * @param settings global settings to update
      */
     void SetProjectGlobalSettings(const wxString& projectName, BuildConfigCommonPtr settings);
 
     /**
-     * \brief return the project excution command as it appears in the project settings
-     * \param projectName
-     * \param wd the working directory that the command should be running from
-     * \param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set
+     * @brief return the project excution command as it appears in the project settings
+     * @param projectName
+     * @param wd the working directory that the command should be running from
+     * @param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set
      * in the project
      * settings 'Pause when execution ends'
-     * \return project execution command or wxEmptyString if the project does not exist
+     * @return project execution command or wxEmptyString if the project does not exist
      */
     wxString GetProjectExecutionCommand(const wxString& projectName, wxString& wd,
                                         bool considerPauseWhenExecuting = true);
@@ -507,16 +507,16 @@ public:
     //--------------------------- Top Level Pane Management -----------------------------
 public:
     /**
-     * \brief test if pane_name is resides in the wxAuiManager and is visible
-     * \param pane_name pane name to search for
-     * \return true on success (exist in the AUI manager and visible), false otherwise
+     * @brief test if pane_name is resides in the wxAuiManager and is visible
+     * @param pane_name pane name to search for
+     * @return true on success (exist in the AUI manager and visible), false otherwise
      */
     bool IsPaneVisible(const wxString& pane_name);
 
     /**
      * Show output pane and set focus to focusWin
-     * \param focusWin tab name to set the focus
-     * \return return true if the output pane was hidden and this function forced it to appear. false if the window was
+     * @param focusWin tab name to set the focus
+     * @return return true if the output pane was hidden and this function forced it to appear. false if the window was
      * already
      * shown and nothing needed to be done
      */
@@ -529,9 +529,15 @@ public:
 
     /**
      * Show the workspace pane and set focus to focusWin
-     * \param focusWin tab name to set the focus
+     * @param focusWin tab name to set the focus
      */
     void ShowWorkspacePane(wxString focusWin = wxEmptyString, bool commit = true);
+
+    /**
+     * Show the secondary side bar pane and set focus to focusWin
+     * @param focusWin tab name to set the focus
+     */
+    void ShowSecondarySideBarPane(wxString focusWin = wxEmptyString, bool commit = true);
 
     /**
      * Hide pane
@@ -552,7 +558,7 @@ public:
     //--------------------------- Menu and Accelerator Mmgt -----------------------------
 public:
     /**
-     * \brief update the menu bar accelerators
+     * @brief update the menu bar accelerators
      */
     void UpdateMenuAccelerators(wxFrame* frame = NULL);
 
@@ -662,40 +668,40 @@ public:
     void StopBuild();
 
     /**
-     * \brief add build job to the internal queue
-     * \param buildInfo
+     * @brief add build job to the internal queue
+     * @param buildInfo
      */
     void PushQueueCommand(const QueueCommand& buildInfo);
 
     /**
-     * \brief process the next build job
+     * @brief process the next build job
      */
     void ProcessCommandQueue();
 
     /**
-     * \brief build the entire workspace. This operation is equal to
+     * @brief build the entire workspace. This operation is equal to
      * manually right clicking on each project in the workspace and selecting
      * 'build'
      */
     void BuildWorkspace();
 
     /**
-     * \brief clean the entire workspace. This operation is equal to
+     * @brief clean the entire workspace. This operation is equal to
      * manually right clicking on each project in the workspace and selecting
      * 'clean'
      */
     void CleanWorkspace();
 
     /**
-     * \brief clean, followed by buid of the entire workspace. This operation is equal to
+     * @brief clean, followed by buid of the entire workspace. This operation is equal to
      * manually right clicking on each project in the workspace and selecting
      * 'clean'
      */
     void RebuildWorkspace();
 
     /**
-     * \brief when building using custom build, execute the makefile generation command provided by the user
-     * \param project project to execute it for
+     * @brief when building using custom build, execute the makefile generation command provided by the user
+     * @param project project to execute it for
      */
     void RunCustomPreMakeCommand(const wxString& project);
 

@@ -32,6 +32,7 @@
 #include "buildmanager.h"
 #include "clEditorBar.h"
 #include "clInfoBar.h"
+#include "clStrings.h"
 #include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "ctags_manager.h"
@@ -64,9 +65,9 @@
 
 namespace
 {
-const wxString SIDEBAR = wxT("Workspace View");
-const wxString SECONDARY_SIDEBAR = wxT("Secondary Sidebar");
-const wxString BOTTOM_BAR = wxT("Output View");
+const wxString SIDEBAR = PANE_LEFT_SIDEBAR;
+const wxString SECONDARY_SIDEBAR = PANE_RIGHT_SIDEBAR;
+const wxString BOTTOM_BAR = PANE_OUTPUT;
 } // namespace
 
 PluginManager* PluginManager::Get()
@@ -874,6 +875,7 @@ void PluginManager::ShowManagementWindow(const wxString& selectedWindow, bool sh
     // locate the window
     wxWindow* page = BookGetPage(PaneId::SIDE_BAR, selectedWindow);
     if (page) {
+        clSYSTEM() << "Window:" << selectedWindow << "found in SIDE_BAR" << endl;
         if (show) {
             ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
         } else {
@@ -882,6 +884,7 @@ void PluginManager::ShowManagementWindow(const wxString& selectedWindow, bool sh
     } else {
         page = BookGetPage(PaneId::BOTTOM_BAR, selectedWindow);
         if (page) {
+            clSYSTEM() << "Window:" << selectedWindow << "found BOTTOM_BAR" << endl;
             if (show) {
                 ShowOutputPane(selectedWindow);
             } else {
@@ -890,8 +893,10 @@ void PluginManager::ShowManagementWindow(const wxString& selectedWindow, bool sh
         } else {
             page = BookGetPage(PaneId::SECONDARY_SIDE_BAR, selectedWindow);
             if (page) {
+                clSYSTEM() << "Window:" << selectedWindow << "found SECONDARY_SIDE_BAR" << endl;
+
                 if (show) {
-                    ShowOutputPane(SECONDARY_SIDEBAR);
+                    ManagerST::Get()->ShowSecondarySideBarPane(selectedWindow);
                 } else {
                     ManagerST::Get()->HidePane(SECONDARY_SIDEBAR);
                 }
@@ -939,8 +944,8 @@ void PluginManager::ShowPane(const wxString& pane_name, bool show)
 
 void PluginManager::ToggleSecondarySidebarPane(const wxString& selectedWindow)
 {
-    if (ManagerST::Get()->IsPaneVisible(wxT("Secondary Sidebar"))) {
-        ManagerST::Get()->HidePane(wxT("Secondary Sidebar"));
+    if (ManagerST::Get()->IsPaneVisible(PANE_RIGHT_SIDEBAR)) {
+        ManagerST::Get()->HidePane(PANE_RIGHT_SIDEBAR);
     } else {
         ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
     }
@@ -948,7 +953,7 @@ void PluginManager::ToggleSecondarySidebarPane(const wxString& selectedWindow)
 
 void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
 {
-    if (ManagerST::Get()->IsPaneVisible(wxT("Output View"))) {
+    if (ManagerST::Get()->IsPaneVisible(PANE_OUTPUT)) {
         if (!selectedWindow.IsEmpty()) {
             wxString selectedTabName;
             Notebook* book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
@@ -958,7 +963,7 @@ void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
             }
             if (selectedTabName == selectedWindow) {
                 // The requested tab is already selected, just hide the pane
-                ManagerST::Get()->HidePane("Output View");
+                ManagerST::Get()->HidePane(PANE_OUTPUT);
             } else {
                 // The output pane is visible, but the selected tab is not the one we wanted
                 // Select it
@@ -967,7 +972,7 @@ void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
         } else {
             // The output pane is visible and the selected tab is the one we requested
             // So just hide it
-            ManagerST::Get()->HidePane("Output View");
+            ManagerST::Get()->HidePane(PANE_OUTPUT);
         }
     } else {
         // The output pane is hidden, show it and select the requested tab

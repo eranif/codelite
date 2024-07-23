@@ -37,6 +37,7 @@
 #include "GitUserEmailDialog.h"
 #include "StringUtils.h"
 #include "bitmap_loader.h"
+#include "clStrings.h"
 #if MAINBOOK_AUIBOOK
 #include "clAuiBook.hpp"
 #endif
@@ -1383,7 +1384,7 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
     if (!m_currentBranch.IsEmpty()) {
         GIT_MESSAGE1(wxT("Current branch ") + m_currentBranch);
         m_mgr->GetDockingManager()
-            ->GetPane(wxT("Workspace View"))
+            ->GetPane(PANE_LEFT_SIDEBAR)
             .Caption(_("Workspace View [") + m_currentBranch + wxT("]"));
         m_mgr->GetDockingManager()->Update();
     }
@@ -2045,7 +2046,7 @@ void GitPlugin::DoCleanup()
     m_commandOutput.Clear();
     m_bActionRequiresTreUpdate = false;
     wxDELETE(m_process);
-    m_mgr->GetDockingManager()->GetPane(wxT("Workspace View")).Caption(wxT("Workspace View"));
+    m_mgr->GetDockingManager()->GetPane(PANE_LEFT_SIDEBAR).Caption(PANE_LEFT_SIDEBAR);
     m_mgr->GetDockingManager()->Update();
     m_filesSelected.Clear();
     m_selectedFolder.Clear();

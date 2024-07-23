@@ -32,8 +32,6 @@
 #include "buildmanager.h"
 #include "clEditorBar.h"
 #include "clInfoBar.h"
-#include "clKeyboardManager.h"
-#include "clToolBarButtonBase.h"
 #include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "ctags_manager.h"
@@ -47,7 +45,6 @@
 #include "fileview.h"
 #include "findinfilesdlg.h"
 #include "frame.h"
-#include "generalinfo.h"
 #include "language.h"
 #include "macromanager.h"
 #include "manager.h"
@@ -60,11 +57,17 @@
 #include "wx/xrc/xmlres.h"
 
 #include <memory>
-#include <tuple>
 #include <wx/dir.h>
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include <wx/toolbook.h>
+
+namespace
+{
+const wxString SIDEBAR = wxT("Workspace View");
+const wxString SECONDARY_SIDEBAR = wxT("Secondary Sidebar");
+const wxString BOTTOM_BAR = wxT("Output View");
+} // namespace
 
 PluginManager* PluginManager::Get()
 {
@@ -866,6 +869,37 @@ void PluginManager::ShowOutputPane(const wxString& selectedWindow)
     ManagerST::Get()->ShowOutputPane(selectedWindow, true, false);
 }
 
+void PluginManager::ShowManagementWindow(const wxString& selectedWindow, bool show)
+{
+    // locate the window
+    wxWindow* page = BookGetPage(PaneId::SIDE_BAR, selectedWindow);
+    if (page) {
+        if (show) {
+            ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
+        } else {
+            ManagerST::Get()->HidePane(SIDEBAR);
+        }
+    } else {
+        page = BookGetPage(PaneId::BOTTOM_BAR, selectedWindow);
+        if (page) {
+            if (show) {
+                ShowOutputPane(selectedWindow);
+            } else {
+                ManagerST::Get()->HidePane(BOTTOM_BAR);
+            }
+        } else {
+            page = BookGetPage(PaneId::SECONDARY_SIDE_BAR, selectedWindow);
+            if (page) {
+                if (show) {
+                    ShowOutputPane(SECONDARY_SIDEBAR);
+                } else {
+                    ManagerST::Get()->HidePane(SECONDARY_SIDEBAR);
+                }
+            }
+        }
+    }
+}
+
 size_t PluginManager::GetAllTabs(clTab::Vec_t& tabs)
 {
     clMainFrame::Get()->GetMainBook()->GetAllTabs(tabs);
@@ -882,8 +916,8 @@ clStatusBar* PluginManager::GetStatusBar()
 
 void PluginManager::ToggleSidebarPane(const wxString& selectedWindow)
 {
-    if (ManagerST::Get()->IsPaneVisible(wxT("Workspace View"))) {
-        ManagerST::Get()->HidePane(wxT("Workspace View"));
+    if (ManagerST::Get()->IsPaneVisible(SIDEBAR)) {
+        ManagerST::Get()->HidePane(SIDEBAR);
     } else {
         ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
     }
@@ -1013,6 +1047,9 @@ void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& 
     case PaneId::DEBUG_BAR:
         clMainFrame::Get()->GetDebuggerPane()->GetNotebook()->AddPage(page, label, true);
         break;
+    case PaneId::SECONDARY_SIDE_BAR:
+        clMainFrame::Get()->GetSecondarySideBar()->GetNotebook()->AddPage(page, label, bmpname, true);
+        break;
     }
 }
 
@@ -1073,6 +1110,8 @@ wxWindow* PluginManager::BookGetPage(PaneId pane_id, const wxString& label)
         return find_page(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), label);
     case PaneId::DEBUG_BAR:
         return find_page(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), label);
+    case PaneId::SECONDARY_SIDE_BAR:
+        return find_page(clMainFrame::Get()->GetSecondarySideBar()->GetNotebook(), label);
     }
     return nullptr;
 }
@@ -1089,8 +1128,10 @@ wxWindow* PluginManager::BookRemovePage(PaneId pane_id, const wxString& label)
         page->Hide();
         return page;
     } break;
+    case PaneId::SECONDARY_SIDE_BAR:
     case PaneId::SIDE_BAR: {
-        auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+        auto book = pane_id == PaneId::SIDE_BAR ? clMainFrame::Get()->GetWorkspacePane()->GetNotebook()
+                                                : clMainFrame::Get()->GetSecondarySideBar()->GetNotebook();
         int index = find_page_index(book, label);
         CHECK_COND_RET_NULL(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
@@ -1121,6 +1162,9 @@ wxWindow* PluginManager::BookRemovePage(PaneId pane_id, wxWindow* page)
     case PaneId::SIDE_BAR:
         find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
         break;
+    case PaneId::SECONDARY_SIDE_BAR:
+        find_page_label(clMainFrame::Get()->GetSecondarySideBar()->GetNotebook(), page, &label);
+        break;
     case PaneId::DEBUG_BAR:
         find_page_label(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), page, &label);
         break;
@@ -1139,6 +1183,8 @@ wxWindow* PluginManager::BookGet(PaneId pane_id)
         return clMainFrame::Get()->GetOutputPane()->GetNotebook();
     case PaneId::SIDE_BAR:
         return clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+    case PaneId::SECONDARY_SIDE_BAR:
+        return clMainFrame::Get()->GetSecondarySideBar()->GetNotebook();
     case PaneId::DEBUG_BAR:
         return clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
     }
@@ -1154,6 +1200,9 @@ bool PluginManager::BookDeletePage(PaneId pane_id, wxWindow* page)
         break;
     case PaneId::SIDE_BAR:
         find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
+        break;
+    case PaneId::SECONDARY_SIDE_BAR:
+        find_page_label(clMainFrame::Get()->GetSecondarySideBar()->GetNotebook(), page, &label);
         break;
     case PaneId::DEBUG_BAR:
         find_page_label(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), page, &label);
@@ -1177,8 +1226,10 @@ bool PluginManager::BookDeletePage(PaneId pane_id, const wxString& label)
         book->DeletePage(index, false);
         return true;
     } break;
-    case PaneId::SIDE_BAR: {
-        auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+    case PaneId::SIDE_BAR:
+    case PaneId::SECONDARY_SIDE_BAR: {
+        auto book = pane_id == PaneId::SIDE_BAR ? clMainFrame::Get()->GetWorkspacePane()->GetNotebook()
+                                                : clMainFrame::Get()->GetSecondarySideBar()->GetNotebook();
         int index = find_page_index(book, label);
         CHECK_COND_RET_FALSE(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
@@ -1207,8 +1258,10 @@ void PluginManager::BookSelectPage(PaneId pane_id, const wxString& label)
         CHECK_COND_RET(index != wxNOT_FOUND);
         book->SetSelection(index);
     } break;
-    case PaneId::SIDE_BAR: {
-        auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+    case PaneId::SIDE_BAR:
+    case PaneId::SECONDARY_SIDE_BAR: {
+        auto book = pane_id == PaneId::SIDE_BAR ? clMainFrame::Get()->GetWorkspacePane()->GetNotebook()
+                                                : clMainFrame::Get()->GetSecondarySideBar()->GetNotebook();
         index = find_page_index(book, label);
         CHECK_COND_RET(index != wxNOT_FOUND);
         book->SetSelection(index);
@@ -1231,6 +1284,9 @@ void PluginManager::BookSelectPage(PaneId pane_id, wxWindow* page)
         break;
     case PaneId::SIDE_BAR:
         find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
+        break;
+    case PaneId::SECONDARY_SIDE_BAR:
+        find_page_label(clMainFrame::Get()->GetSecondarySideBar()->GetNotebook(), page, &label);
         break;
     case PaneId::DEBUG_BAR:
         find_page_label(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), page, &label);

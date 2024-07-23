@@ -98,6 +98,7 @@ enum class PaneId {
     BOTTOM_BAR,
     SIDE_BAR,
     DEBUG_BAR,
+    SECONDARY_SIDE_BAR,
 };
 
 //------------------------------------------------------------------
@@ -169,6 +170,12 @@ public:
      * the selection
      */
     virtual void ToggleSidebarPane(const wxString& selectWindow = "") = 0;
+
+    /**
+     * @brief locate the management window `selectedWindow` and make it visible (or hide it)
+     * This function does not care where the `selectedWindow` is located
+     */
+    virtual void ShowManagementWindow(const wxString& selectedWindow, bool show) = 0;
 
     /**
      * @brief toggle the secondary pane and if provided, select 'selectedWindow'

@@ -42,6 +42,7 @@
 namespace
 {
 ChatAI* thePlugin = NULL;
+const wxString CHAT_AI_LABEL = _("Chat AI");
 }
 
 // Allocate the code formatter on the heap, it will be freed by
@@ -79,8 +80,8 @@ ChatAI::ChatAI(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("show_ai_chat_window"));
 
     m_cli.GetConfig().Load();
-    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_cli.GetConfig());
-    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_chatWindow, _("Chat AI"));
+    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), m_cli.GetConfig());
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_CHATAI_SEND, &ChatAI::OnPrompt, this);
     EventNotifier::Get()->Bind(wxEVT_CHATAI_STOP, &ChatAI::OnStopLlamaCli, this);
 }
@@ -91,7 +92,7 @@ void ChatAI::UnPlug()
 {
     wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("show_ai_chat_window"));
     // before this plugin is un-plugged we must remove the tab we added
-    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_chatWindow)) {
+    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_chatWindow)) {
         m_chatWindow->Destroy();
     }
     m_chatWindow = nullptr;
@@ -113,7 +114,7 @@ void ChatAI::HookPopupMenu(wxMenu* menu, MenuType type)
 void ChatAI::OnShowChatWindow(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clGetManager()->ShowOutputPane(_("Chat AI"));
+    clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, true);
     m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 

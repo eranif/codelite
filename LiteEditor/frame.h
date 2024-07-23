@@ -277,6 +277,11 @@ public:
     SideBar* GetWorkspacePane() { return m_sidebar; }
 
     /**
+     * @return the workspace pane (the one that contained the Symbol view & class view)
+     */
+    SecondarySideBar* GetSecondarySideBar() { return m_secondary_sidebar; }
+
+    /**
      * return the workspace tab pane
      */
     WorkspaceTab* GetWorkspaceTab();

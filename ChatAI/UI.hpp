@@ -24,10 +24,10 @@
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
-#include <wx/toolbar.h>
 #include <wx/splitter.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
+#include <wx/toolbar.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -101,11 +101,11 @@ public:
 class AssistanceAIChatWindowBase : public wxPanel
 {
 protected:
-    wxToolBar* m_toolbar;
     wxSplitterWindow* m_splitter30;
     wxPanel* m_splitterPage32;
     clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPage34;
+    wxToolBar* m_toolbar;
     clThemedSTC* m_stcInput;
     wxButton* m_button37;
     wxButton* m_buttonStop;
@@ -118,9 +118,9 @@ protected:
     virtual void OnStop(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxPanel* GetSplitterPage32() { return m_splitterPage32; }
+    wxToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcInput() { return m_stcInput; }
     wxButton* GetButton37() { return m_button37; }
     wxButton* GetButtonStop() { return m_buttonStop; }

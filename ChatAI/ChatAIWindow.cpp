@@ -10,6 +10,11 @@
 wxDEFINE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CHATAI_STOP, clCommandEvent);
 
+namespace
+{
+const wxString CHAT_AI_LABEL = _("Chat AI");
+}
+
 ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAIConfig& config)
     : AssistanceAIChatWindowBase(parent)
     , m_config(config)
@@ -17,6 +22,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAIConfig& config)
     auto images = clGetManager()->GetStdIcons();
 
     m_toolbar->AddTool(wxID_PREFERENCES, _("Settings"), images->LoadBitmap("cog", 24));
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear content"), images->LoadBitmap("clear", 24));
     m_toolbar->SetToolBitmapSize(FromDIP(wxSize(24, 24)));
     m_toolbar->Realize();
 
@@ -28,6 +34,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAIConfig& config)
     EventNotifier::Get()->Bind(wxEVT_LLAMACLI_TERMINATED, &ChatAIWindow::OnChatAITerminated, this);
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_PREFERENCES);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnClear, this, wxID_CLEAR);
 }
 
 ChatAIWindow::~ChatAIWindow()
@@ -75,7 +82,7 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
 {
     switch (event.GetKeyCode()) {
     case WXK_ESCAPE: {
-        clGetManager()->ToggleOutputPane();
+        clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, false);
         auto editor = clGetManager()->GetActiveEditor();
         CHECK_PTR_RET(editor);
 
@@ -102,6 +109,12 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     ShowSettings();
+}
+
+void ChatAIWindow::OnClear(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_stcOutput->ClearAll();
 }
 
 void ChatAIWindow::ShowSettings()

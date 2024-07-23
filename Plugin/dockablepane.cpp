@@ -95,6 +95,9 @@ void DockablePane::ClosePane(wxCommandEvent& e)
             case PaneId::DEBUG_BAR:
                 clGetManager()->BookAddPage(PaneId::DEBUG_BAR, m_child, m_text, wxEmptyString);
                 break;
+            case PaneId::SECONDARY_SIDE_BAR:
+                clGetManager()->BookAddPage(PaneId::SECONDARY_SIDE_BAR, m_child, m_text, wxEmptyString);
+                break;
             }
         }
 

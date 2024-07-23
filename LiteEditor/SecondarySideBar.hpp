@@ -22,6 +22,8 @@ public:
     void SetSideBar(SideBar* sb);
     void AddPage(wxWindow* win, const wxString& bmpname, const wxString& label);
     void SetSelection(int selection);
+    clSideBarCtrl* GetNotebook() { return m_book; }
+    
 };
 
 #endif // SECONDARYSIDEBAR_HPP

@@ -197,11 +197,6 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer27);
 
-    m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer27->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
-
     m_splitter30 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                         wxSP_LIVE_UPDATE | wxSP_3D);
     m_splitter30->SetSashGravity(1);
@@ -259,11 +254,21 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
                                    wxTAB_TRAVERSAL);
     m_splitter30->SplitHorizontally(m_splitterPage32, m_splitterPage34, 0);
 
+    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage34->SetSizer(boxSizer43);
+
+    m_toolbar = new wxToolBar(m_splitterPage34, wxID_ANY, wxDefaultPosition,
+                              wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer43->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxHORIZONTAL);
-    m_splitterPage34->SetSizer(boxSizer36);
+
+    boxSizer43->Add(boxSizer36, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_stcInput = new clThemedSTC(m_splitterPage34, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxBORDER_STATIC);
+                                 wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxBORDER_NONE);
     m_stcInput->SetFocus();
     // Configure the fold margin
     m_stcInput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -301,11 +306,11 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
     m_stcInput->SetKeyWords(3, wxT(""));
     m_stcInput->SetKeyWords(4, wxT(""));
 
-    boxSizer36->Add(m_stcInput, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer36->Add(m_stcInput, 1, wxTOP | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer36->Add(boxSizer42, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer36->Add(boxSizer42, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_button37 = new wxButton(m_splitterPage34, wxID_ANY, _("Send"), wxDefaultPosition,
                               wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);

@@ -20,6 +20,7 @@ protected:
     void OnUpdateTheme(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnSettings(wxCommandEvent& event);
+    void OnClear(wxCommandEvent& event);
     void UpdateTheme();
     void SendPromptEvent();
     void OnChatAIStarted(clCommandEvent& event);

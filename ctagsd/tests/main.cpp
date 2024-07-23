@@ -1559,6 +1559,5 @@ int main(int argc, char** argv)
 
     // ensure that the user data dir exists
     wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxPosixPermissions::wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    Tester::Instance()->RunTests();
-    return 0;
+    return Tester::Instance()->RunTests();
 }

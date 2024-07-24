@@ -319,6 +319,7 @@ void SideBar::OnContextMenu(wxContextMenuEvent& event)
         [pos, this](wxCommandEvent& e) {
             wxUnusedVar(e);
             MoveToSecondarySideBar(pos);
+            clGetManager()->ShowPane(SECONDARY_VIEW_NAME, true);
         },
         XRCID("sidebar-detach-tab"));
     m_book->PopupMenu(&menu);

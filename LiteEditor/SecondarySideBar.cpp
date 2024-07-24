@@ -46,10 +46,6 @@ void SecondarySideBar::SetSideBar(SideBar* sb) { m_sidebar = sb; }
 
 void SecondarySideBar::AddPage(wxWindow* win, const wxString& bmpname, const wxString& label)
 {
-    if (m_book->GetPageCount() == 0) {
-        clGetManager()->ShowPane(VIEW_NAME, true);
-    }
-
     m_book->AddPage(win, label, bmpname, true);
     m_book->Realize();
     m_book->GetSizer()->Layout();

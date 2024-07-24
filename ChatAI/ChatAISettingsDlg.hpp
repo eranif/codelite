@@ -10,6 +10,7 @@ public:
     virtual ~ChatAISettingsDlg();
 
 protected:
+    void OnSearchModels(wxHyperlinkEvent& event) override;
     void OnDelete(wxCommandEvent& event) override;
     void OnDeleteUI(wxUpdateUIEvent& event) override;
     void OnOK(wxCommandEvent& event) override;

@@ -42,6 +42,7 @@ private:
     void OnShowChatWindow(wxCommandEvent& event);
     void OnPrompt(clCommandEvent& event);
     void OnStopLlamaCli(clCommandEvent& event);
+    void OnSettings(wxCommandEvent& event);
 
     ChatAIWindow* m_chatWindow = nullptr;
     LLAMCli m_cli;

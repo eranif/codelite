@@ -79,6 +79,17 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
 
     flexGridSizer11->Add(m_choiceModels, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    flexGridSizer11->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_hyperLink46 =
+        new wxHyperlinkCtrl(m_generalSettings, wxID_ANY, _("Search Models"),
+                            wxT("https://huggingface.co/models?sort=downloads&search=gguf"), wxDefaultPosition,
+                            wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)), wxHL_DEFAULT_STYLE);
+    m_hyperLink46->SetToolTip(
+        _("Search the web for models to download.\n\nhttps://huggingface.co/models?sort=downloads&search=gguf"));
+
+    flexGridSizer11->Add(m_hyperLink46, 0, wxALL, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer23 = new wxBoxSizer(wxVERTICAL);
 
     boxSizer5->Add(boxSizer23, 0, wxEXPAND, WXC_FROM_DIP(5));
@@ -128,6 +139,7 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
+    m_hyperLink46->Bind(wxEVT_COMMAND_HYPERLINK, &AssistanceAISettingsBaseDlg::OnSearchModels, this);
     m_buttonNew->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnNewModel, this);
     m_button44->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnDelete, this);
     m_button44->Bind(wxEVT_UPDATE_UI, &AssistanceAISettingsBaseDlg::OnDeleteUI, this);
@@ -136,6 +148,7 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
 
 AssistanceAISettingsBaseDlg::~AssistanceAISettingsBaseDlg()
 {
+    m_hyperLink46->Unbind(wxEVT_COMMAND_HYPERLINK, &AssistanceAISettingsBaseDlg::OnSearchModels, this);
     m_buttonNew->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnNewModel, this);
     m_button44->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnDelete, this);
     m_button44->Unbind(wxEVT_UPDATE_UI, &AssistanceAISettingsBaseDlg::OnDeleteUI, this);

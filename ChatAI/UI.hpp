@@ -22,6 +22,7 @@
 #include <wx/filepicker.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/hyperlink.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #include <wx/splitter.h>
@@ -55,6 +56,7 @@ protected:
     wxFilePickerCtrl* m_filePickerCLI;
     wxStaticText* m_staticText39;
     wxChoice* m_choiceModels;
+    wxHyperlinkCtrl* m_hyperLink46;
     wxButton* m_buttonNew;
     wxButton* m_button44;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
@@ -62,6 +64,7 @@ protected:
     wxButton* m_button4;
 
 protected:
+    virtual void OnSearchModels(wxHyperlinkEvent& event) { event.Skip(); }
     virtual void OnNewModel(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -72,6 +75,7 @@ public:
     wxFilePickerCtrl* GetFilePickerCLI() { return m_filePickerCLI; }
     wxStaticText* GetStaticText39() { return m_staticText39; }
     wxChoice* GetChoiceModels() { return m_choiceModels; }
+    wxHyperlinkCtrl* GetHyperLink46() { return m_hyperLink46; }
     wxPanel* GetGeneralSettings() { return m_generalSettings; }
     wxNotebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonNew() { return m_buttonNew; }

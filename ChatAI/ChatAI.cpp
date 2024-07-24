@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "ChatAI.hpp"
 
+#include "ChatAISettingsDlg.hpp"
 #include "clKeyboardManager.h"
 #include "event_notifier.h"
 #include "globals.h"
@@ -43,7 +44,7 @@ namespace
 {
 ChatAI* thePlugin = NULL;
 const wxString CHAT_AI_LABEL = _("Chat AI");
-}
+} // namespace
 
 // Allocate the code formatter on the heap, it will be freed by
 // the application
@@ -75,9 +76,9 @@ ChatAI::ChatAI(IManager* manager)
 
     clKeyboardManager::Get()->AddAccelerator(_("Chat AI"),
                                              {
-                                                 { "show_ai_chat_window", _("Show AI Chat Window"), "Ctrl-Shift-I" },
+                                                 { "chatai_show_window", _("Show AI Chat Window"), "Ctrl-Shift-I" },
                                              });
-    wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("show_ai_chat_window"));
+    wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
 
     m_cli.GetConfig().Load();
     m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), m_cli.GetConfig());
@@ -90,7 +91,7 @@ ChatAI::~ChatAI() {}
 
 void ChatAI::UnPlug()
 {
-    wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("show_ai_chat_window"));
+    wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
     // before this plugin is un-plugged we must remove the tab we added
     if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_chatWindow)) {
         m_chatWindow->Destroy();
@@ -99,11 +100,22 @@ void ChatAI::UnPlug()
 
     EventNotifier::Get()->Unbind(wxEVT_CHATAI_SEND, &ChatAI::OnPrompt, this);
     EventNotifier::Get()->Unbind(wxEVT_CHATAI_STOP, &ChatAI::OnStopLlamaCli, this);
+    wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnSettings, this, XRCID("chatai_settings"));
 }
 
 void ChatAI::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
-void ChatAI::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
+void ChatAI::CreatePluginMenu(wxMenu* pluginsMenu)
+{
+    wxMenu* menu = new wxMenu();
+    wxMenuItem* item = nullptr;
+
+    item = new wxMenuItem(menu, XRCID("chatai_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
+    menu->Append(item);
+
+    pluginsMenu->Append(wxID_ANY, _("Chat AI"), menu);
+    wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnSettings, this, XRCID("chatai_settings"));
+}
 
 void ChatAI::HookPopupMenu(wxMenu* menu, MenuType type)
 {
@@ -139,4 +151,10 @@ void ChatAI::OnPrompt(clCommandEvent& event)
     }
 
     m_cli.Send(event.GetString());
+}
+
+void ChatAI::OnSettings(wxCommandEvent& event)
+{
+    ChatAISettingsDlg dlg(wxTheApp->GetTopWindow(), m_cli.GetConfig());
+    dlg.ShowModal();
 }

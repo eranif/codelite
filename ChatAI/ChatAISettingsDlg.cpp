@@ -114,3 +114,5 @@ void ChatAISettingsDlg::Save()
     m_config.SetLlamaCli(m_filePickerCLI->GetPath());
     m_config.Save();
 }
+
+void ChatAISettingsDlg::OnSearchModels(wxHyperlinkEvent& event) { ::wxLaunchDefaultBrowser(event.GetURL()); }

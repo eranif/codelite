@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	44,
+		"m_objCounter":	46,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCF667InitBitmapResources",
 		"m_bitmapsFile":	"UI_assistance.ai_bitmaps.cpp",
@@ -687,6 +687,118 @@
 																	"m_value":	""
 																}],
 															"m_events":	[],
+															"m_children":	[]
+														}, {
+															"m_type":	4454,
+															"proportion":	1,
+															"border":	5,
+															"gbSpan":	"1,1",
+															"gbPosition":	"0,0",
+															"m_styles":	[],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+															"m_properties":	[{
+																	"type":	"string",
+																	"m_label":	"Name:",
+																	"m_value":	"Spacer45"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Size:",
+																	"m_value":	"0,0"
+																}],
+															"m_events":	[],
+															"m_children":	[]
+														}, {
+															"m_type":	4438,
+															"proportion":	0,
+															"border":	5,
+															"gbSpan":	"1,1",
+															"gbPosition":	"0,0",
+															"m_styles":	["wxHL_DEFAULT_STYLE"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+															"m_properties":	[{
+																	"type":	"winid",
+																	"m_label":	"ID:",
+																	"m_winid":	"wxID_ANY"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Minimum Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Name:",
+																	"m_value":	"m_hyperLink46"
+																}, {
+																	"type":	"multi-string",
+																	"m_label":	"Tooltip:",
+																	"m_value":	"Search the web for models to download.\\n\\nhttps://huggingface.co/models?sort=downloads&search=gguf"
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Bg Colour:",
+																	"colour":	"<Default>"
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Fg Colour:",
+																	"colour":	"<Default>"
+																}, {
+																	"type":	"font",
+																	"m_label":	"Font:",
+																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
+																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Label:",
+																	"m_value":	"Search Models"
+																}, {
+																	"type":	"string",
+																	"m_label":	"URL:",
+																	"m_value":	"https://huggingface.co/models?sort=downloads&search=gguf"
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Normal Colour:",
+																	"colour":	"<Default>"
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Visited Colour:",
+																	"colour":	"<Default>"
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Hover Colour:",
+																	"colour":	"<Default>"
+																}],
+															"m_events":	[{
+																	"m_eventName":	"wxEVT_COMMAND_HYPERLINK",
+																	"m_eventClass":	"wxHyperlinkEvent",
+																	"m_functionNameAndSignature":	"OnSearchModels(wxHyperlinkEvent& event)",
+																	"m_description":	"The hyperlink was (left) clicked. If this event is not handled in user's code (or it's skipped; see wxEvent::Skip)\nthen a call to wxLaunchDefaultBrowser is done with the hyperlink's URL.",
+																	"m_noBody":	false
+																}],
 															"m_children":	[]
 														}]
 												}]

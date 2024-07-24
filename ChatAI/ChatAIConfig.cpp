@@ -55,11 +55,11 @@ void ChatAIConfig::SetSelectedModelName(const wxString& selectedModel)
     auto iter = std::find_if(m_models.begin(), m_models.end(),
                              [&selectedModel](std::shared_ptr<Model> m) { return m->m_name == selectedModel; });
 
-    if (iter == m_models.end()) {
-        return;
+    if (iter != m_models.end()) {
+        m_selectedModel = (*iter);
+    } else {
+        m_selectedModel.reset();
     }
-
-    m_selectedModel = (*iter);
 }
 
 bool ChatAIConfig::ContainsModel(const wxString& modelName) const

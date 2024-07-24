@@ -49,12 +49,28 @@ endif(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 
 file(GLOB SRCS "php-plugin/*.cpp" "php-plugin/*.c")
 file(GLOB LIBSRC "PHPParser/*.cpp")
-file(GLOB UNIT_TESTS_SRC "PHPParserUnitTests/*.cpp")
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
 add_library(PHPParser STATIC ${LIBSRC})
-add_executable(PHPUnitTests ${UNIT_TESTS_SRC})
+
+include(CTest)
+if(BUILD_TESTING)
+    file(GLOB UNIT_TESTS_SRC "PHPParserUnitTests/*.cpp")
+    add_executable(PHPUnitTests ${UNIT_TESTS_SRC})
+
+    target_link_libraries(PHPUnitTests
+        ${LINKER_OPTIONS}
+        -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+        -L"${CL_LIBPATH}"
+        PHPParser
+        libcodelite
+        plugin
+        ${ADDITIONAL_LIBRARIES}
+        ${wxWidgets_LIBRARIES})
+
+    add_test(NAME "PHPUnitTests" COMMAND PHPUnitTests WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/PHPParserUnitTests/Tests)
+endif(BUILD_TESTING)
 
 if(UNIX AND NOT APPLE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
@@ -76,14 +92,3 @@ target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} PH
 # Installation destination
 cl_install_plugin(${PLUGIN_NAME})
 cl_install_file_shared("${CL_SRC_ROOT}/Runtime/PHP.zip")
-
-target_link_libraries(
-    PHPUnitTests
-    ${LINKER_OPTIONS}
-    -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
-    -L"${CL_LIBPATH}"
-    PHPParser
-    libcodelite
-    plugin
-    ${ADDITIONAL_LIBRARIES}
-    ${wxWidgets_LIBRARIES})

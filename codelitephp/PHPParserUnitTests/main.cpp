@@ -869,6 +869,7 @@ static const wxString PERFORMANCE_CODE =
 
 int main(int argc, char** argv)
 {
+    int errorCount = 0;
     wxInitialize(argc, argv);
 #if 0
     PHPLookupTable table;
@@ -887,9 +888,9 @@ int main(int argc, char** argv)
         symbolsDBPath.Normalize();
         lookup.Open(symbolsDBPath.GetPath());
         lookup.ClearAll();
-        Tester::Instance()->RunTests(); // Run all tests
+        errorCount = Tester::Instance()->RunTests(); // Run all tests
     }
 #endif
     wxUninitialize();
-    return 0;
+    return errorCount;
 }

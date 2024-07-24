@@ -30,6 +30,7 @@
 #endif
 
 #ifdef __WXMSW__
+#include "CompilerLocator/CompilerLocatorCygwin.h"
 #include "cl_registry.h"
 #include "procutils.h"
 #endif

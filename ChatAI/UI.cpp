@@ -86,7 +86,11 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
     m_buttonNew = new wxButton(this, wxID_ANY, _("&New"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonNew->SetToolTip(_("Add new model"));
 
-    boxSizer23->Add(m_buttonNew, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer23->Add(m_buttonNew, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button44 = new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer23->Add(m_button44, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
 
@@ -125,12 +129,16 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
     }
     // Connect events
     m_buttonNew->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnNewModel, this);
+    m_button44->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnDelete, this);
+    m_button44->Bind(wxEVT_UPDATE_UI, &AssistanceAISettingsBaseDlg::OnDeleteUI, this);
     m_button3->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnOK, this);
 }
 
 AssistanceAISettingsBaseDlg::~AssistanceAISettingsBaseDlg()
 {
     m_buttonNew->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnNewModel, this);
+    m_button44->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnDelete, this);
+    m_button44->Unbind(wxEVT_UPDATE_UI, &AssistanceAISettingsBaseDlg::OnDeleteUI, this);
     m_button3->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAISettingsBaseDlg::OnOK, this);
 }
 

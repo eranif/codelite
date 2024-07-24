@@ -40,14 +40,64 @@ void ChatAISettingsDlg::OnNewModel(wxCommandEvent& event)
         return;
     }
 
+    if (m_config.ContainsModel(name)) {
+        ::wxMessageBox(_("A model with this name already exists"), "CodeLite", wxOK | wxCENTRE | wxICON_WARNING);
+        return;
+    }
+
     std::shared_ptr<ChatAIConfig::Model> model(new ChatAIConfig::Model(name, wxEmptyString));
     ModelPage* page = new ModelPage(m_notebook, model);
     m_notebook->AddPage(page, name, true);
+    m_choiceModels->Append(name);
+
+    if (m_choiceModels->GetCount() == 1) {
+        // first model
+        m_choiceModels->SetSelection(0);
+    }
 }
 
 void ChatAISettingsDlg::OnOK(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    Save();
+    EndModal(wxID_OK);
+}
+
+void ChatAISettingsDlg::OnDelete(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    int sel = m_notebook->GetSelection();
+    if (sel == wxNOT_FOUND) {
+        return;
+    }
+    wxString label = m_notebook->GetPageText(sel);
+
+    if (::wxMessageBox(wxString() << _("You are about to delete model: ") << label << _("\nContinue?"), "CodeLite",
+                       wxOK | wxCENTRE | wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
+        return;
+    }
+    m_notebook->DeletePage(sel);
+
+    bool deletingActive = m_choiceModels->GetStringSelection() == label;
+    sel = m_choiceModels->FindString(label);
+    if (sel != wxNOT_FOUND) {
+        m_choiceModels->Delete((unsigned int)sel);
+    }
+
+    if (deletingActive && !m_choiceModels->IsEmpty()) {
+        m_choiceModels->SetSelection(0);
+    }
+    Save();
+}
+
+void ChatAISettingsDlg::OnDeleteUI(wxUpdateUIEvent& event)
+{
+    // do not allow deleting the "General" page
+    event.Enable(m_notebook->GetSelection() != 0);
+}
+
+void ChatAISettingsDlg::Save()
+{
     wxString selected_model = m_choiceModels->GetStringSelection();
     std::vector<std::shared_ptr<ChatAIConfig::Model>> models;
     models.reserve(m_notebook->GetPageCount() - 1);
@@ -63,5 +113,4 @@ void ChatAISettingsDlg::OnOK(wxCommandEvent& event)
     m_config.SetSelectedModelName(selected_model);
     m_config.SetLlamaCli(m_filePickerCLI->GetPath());
     m_config.Save();
-    EndModal(wxID_OK);
 }

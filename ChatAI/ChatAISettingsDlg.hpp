@@ -10,8 +10,11 @@ public:
     virtual ~ChatAISettingsDlg();
 
 protected:
-    virtual void OnOK(wxCommandEvent& event);
-    virtual void OnNewModel(wxCommandEvent& event);
+    void OnDelete(wxCommandEvent& event) override;
+    void OnDeleteUI(wxUpdateUIEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
+    void OnNewModel(wxCommandEvent& event) override;
+    void Save();
 
 private:
     ChatAIConfig& m_config;

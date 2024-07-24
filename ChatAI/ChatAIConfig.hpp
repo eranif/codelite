@@ -43,6 +43,7 @@ public:
     void SetLlamaCli(const wxString& llamCli) { this->m_llamaCli = llamCli; }
     void SetModels(const std::vector<std::shared_ptr<Model>>& models) { this->m_models = models; }
     void SetSelectedModelName(const wxString& selectedModel);
+    bool ContainsModel(const wxString& modelName) const;
     const wxString& GetLlamaCli() const { return m_llamaCli; }
     std::vector<std::shared_ptr<Model>> GetModels() const { return m_models; }
     std::shared_ptr<Model> GetSelectedModel() const { return m_selectedModel; }

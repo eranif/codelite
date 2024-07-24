@@ -56,12 +56,15 @@ protected:
     wxStaticText* m_staticText39;
     wxChoice* m_choiceModels;
     wxButton* m_buttonNew;
+    wxButton* m_button44;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_button3;
     wxButton* m_button4;
 
 protected:
     virtual void OnNewModel(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -72,6 +75,7 @@ public:
     wxPanel* GetGeneralSettings() { return m_generalSettings; }
     wxNotebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonNew() { return m_buttonNew; }
+    wxButton* GetButton44() { return m_button44; }
     AssistanceAISettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
                                 const wxString& title = _("Chat AI Settings"), const wxPoint& pos = wxDefaultPosition,
                                 const wxSize& size = wxSize(-1, -1),

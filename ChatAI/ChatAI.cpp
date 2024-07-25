@@ -76,7 +76,7 @@ ChatAI::ChatAI(IManager* manager)
 
     clKeyboardManager::Get()->AddAccelerator(_("Chat AI"),
                                              {
-                                                 { "chatai_show_window", _("Show AI Chat Window"), "Ctrl-Shift-I" },
+                                                 { "chatai_show_window", _("Show AI Chat Window"), "Ctrl-Shift-H" },
                                              });
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
 

@@ -1,7 +1,9 @@
 #include "LLAMCli.hpp"
 
 #include "AsyncProcess/processreaderthread.h"
+#include "StringUtils.h"
 #include "event_notifier.h"
+#include "globals.h"
 
 wxDEFINE_EVENT(wxEVT_LLAMACLI_STARTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LLAMACLI_STDOUT, clCommandEvent);
@@ -74,18 +76,16 @@ void LLAMCli::Send(const wxString& prompt)
 
     wxString prompt_file = wxFileName(clStandardPaths::Get().GetTempDir(), PromptFile).GetFullPath();
     FileUtils::WriteFileContent(prompt_file, prompt);
+
+    wxString llama_cli = StringUtils::WrapWithDoubleQuotes(GetConfig().GetLlamaCli());
     std::vector<wxString> command = {
-        GetConfig().GetLlamaCli(),
-        "--log-disable",
-        "--simple-io",
-        "-m",
-        GetConfig().GetSelectedModel()->m_modelFile,
-        "-f",
-        prompt_file,
+        llama_cli, "--log-disable", "--simple-io", "-m", GetConfig().GetSelectedModel()->m_modelFile, "-f", prompt_file,
     };
 
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateWithHiddenConsole | IProcessStderrEvent);
     if (!m_process) {
+        ::wxMessageBox(wxString() << _("Failed to launch command: '") << llama_cli << "'", "CodeLite",
+                       wxOK | wxCENTER | wxICON_ERROR);
         FileUtils::Deleter deleter{ prompt_file };
         return;
     }

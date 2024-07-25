@@ -146,7 +146,12 @@ void ChatAIWindow::OnChatAIOutput(clCommandEvent& event)
     m_stcOutput->ScrollToEnd();
 }
 
-void ChatAIWindow::OnChatAIStderr(clCommandEvent& event) { clERROR() << "ChatAI:" << event.GetString() << endl; }
+void ChatAIWindow::OnChatAIStderr(clCommandEvent& event)
+{
+    ::wxMessageBox(event.GetString(), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
+    clERROR() << "ChatAI:" << event.GetString() << endl;
+}
+
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(!m_llamaCliRunning); }
 void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_llamaCliRunning); }
 void ChatAIWindow::OnStop(wxCommandEvent& event)

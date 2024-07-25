@@ -1030,6 +1030,11 @@ else()
     cl_scan_for_plugins()
 endif() # NOT WXC_APP
 
+include(CTest)
+if(BUILD_TESTING)
+    add_subdirectory(CxxParserTests)
+endif(BUILD_TESTING)
+
 message(STATUS "CL_INSTALL_BIN is set to ${CL_INSTALL_BIN}")
 install(TARGETS cc-wrapper DESTINATION ${CL_INSTALL_BIN})
 

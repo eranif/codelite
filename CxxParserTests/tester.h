@@ -49,7 +49,7 @@ public:
     static void Release();
 
     void AddTest(ITest* t);
-    void RunTests();
+    std::size_t RunTests();
 
 private:
     Tester();

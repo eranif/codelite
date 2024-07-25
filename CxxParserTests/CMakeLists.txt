@@ -38,3 +38,5 @@ target_precompile_headers(CxxLocalVariables REUSE_FROM abbreviation)
 target_link_libraries(CxxLocalVariables ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin)
 add_definitions(-DCXX_TEST_DIR=\"${CL_SRC_ROOT}/CxxParserTests/Test/\")
 cl_install_executable(CxxLocalVariables)
+
+add_test(NAME "CxxParserTests" COMMAND CxxLocalVariables)

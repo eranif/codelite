@@ -31,7 +31,7 @@ void Tester::Release()
 
 void Tester::AddTest(ITest* t) { m_tests.push_back(t); }
 
-void Tester::RunTests()
+std::size_t Tester::RunTests()
 {
 #ifdef _WIN32
     SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), ENABLE_VIRTUAL_TERMINAL_PROCESSING | ENABLE_PROCESSED_OUTPUT);
@@ -82,4 +82,5 @@ void Tester::RunTests()
             wxPrintf("%s\n", message);
         }
     }
+    return failures.size();
 }

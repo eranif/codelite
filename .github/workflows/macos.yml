@@ -38,14 +38,15 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Build and install Codelite
+    - name: Build, test and install Codelite
       run: |
         mkdir build-release
         cd build-release
         brew install autoconf automake libtool gettext
-        cmake .. -DCMAKE_BUILD_TYPE=Release -Wno-dev
+        cmake .. -DCMAKE_BUILD_TYPE=Release -Wno-dev -DBUILD_TESTING=1
         cmake --build . -j $(sysctl -n hw.physicalcpu)
         cmake --build . --target install
+        ctest --output-on-failure
 
 # Not the right command/path for codelite
 #    - name: codelite --version

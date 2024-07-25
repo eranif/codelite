@@ -36,9 +36,15 @@ target_include_directories(libgdbparser
     PUBLIC "${CL_SRC_ROOT}/gdbparser" "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
-# "testing" application
-add_executable(gdbparser
-    main.cpp
-)
+include(CTest)
+if(BUILD_TESTING)
 
-target_link_libraries(gdbparser PRIVATE libgdbparser)
+    # "testing" application
+    add_executable(gdbparser
+        main.cpp
+    )
+    target_link_libraries(gdbparser PRIVATE libgdbparser)
+
+    add_test(NAME "gdbparser" COMMAND gdbparser)
+
+endif(BUILD_TESTING)

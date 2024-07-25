@@ -62,16 +62,21 @@ target_link_libraries(
   plugin
   ${UTIL_LIB})
 
-add_executable(ctagsd-tests "tests/main.cpp" "tests/tester.cpp")
-target_link_libraries(
-  ctagsd-tests
-  ctagdslib
-  ${LINKER_OPTIONS}
-  ${wxWidgets_LIBRARIES}
-  -L"${CL_LIBPATH}"
-  libcodelite
-  plugin
-  ${UTIL_LIB})
-
 cl_install_executable(ctagsd)
-cl_install_executable(ctagsd-tests)
+
+include(CTest)
+if(BUILD_TESTING)
+  add_executable(ctagsd-tests "tests/main.cpp" "tests/tester.cpp")
+  target_link_libraries(ctagsd-tests
+    ctagdslib
+    ${LINKER_OPTIONS}
+    ${wxWidgets_LIBRARIES}
+    -L"${CL_LIBPATH}"
+    libcodelite
+    plugin
+    ${UTIL_LIB})
+
+  add_test(NAME "ctagsd-tests" COMMAND ctagsd-tests)
+
+  cl_install_executable(ctagsd-tests)
+endif(BUILD_TESTING)

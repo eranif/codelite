@@ -32,9 +32,9 @@ void Tester::AddTest(ITest *t)
     m_tests.push_back( t );
 }
 
-void Tester::RunTests()
+std::size_t Tester::RunTests()
 {
-    size_t totalTests = m_tests.size();
+    const size_t totalTests = m_tests.size();
     size_t success    = 0;
     size_t errors     = 0;
     for(size_t i=0; i<m_tests.size(); i++) {
@@ -50,4 +50,5 @@ void Tester::RunTests()
         printf("    %u of %u tests passed\n", (int)success, (int)totalTests);
         printf("    %u of %u tests failed\n", (int)errors,  (int)totalTests);
     }
+    return errors;
 }

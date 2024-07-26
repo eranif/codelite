@@ -1065,11 +1065,12 @@ if(MINGW)
     # install DLLs required by MinGW
     msys_list_deps(${MSYS2_BASE}/clang64/bin/libhunspell-1.7-0.dll LIBHUNSPELL_DEPS)
     msys_list_deps(${MSYS2_BASE}/clang64/bin/libssh.dll LIBSSH_DEPS)
-
+    
     list(
         APPEND
         SYSTEM_DLLS
         libc++.dll
+        libomp.dll
         libssh.dll
         libsqlite3-0.dll
         libhunspell-1.7-0.dll

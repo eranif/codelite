@@ -8,9 +8,6 @@ ChatAIConfig::ChatAIConfig()
     : clConfigItem("chat-ai")
 {
     wxFileName defaultCli = clStandardPaths::Get().GetBinaryFullPath("llama-cli");
-#ifdef __WXMSW__
-    defaultCli.AppendDir("bin");
-#endif
     m_llamaCli = defaultCli.GetFullPath();
 }
 

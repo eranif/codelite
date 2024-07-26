@@ -77,14 +77,19 @@ void LLAMCli::Send(const wxString& prompt)
     wxString prompt_file = wxFileName(clStandardPaths::Get().GetTempDir(), PromptFile).GetFullPath();
     FileUtils::WriteFileContent(prompt_file, prompt);
 
-    wxString llama_cli = StringUtils::WrapWithDoubleQuotes(GetConfig().GetLlamaCli());
     std::vector<wxString> command = {
-        llama_cli, "--log-disable", "--simple-io", "-m", GetConfig().GetSelectedModel()->m_modelFile, "-f", prompt_file,
+        GetConfig().GetLlamaCli(),
+        "--log-disable",
+        "--simple-io",
+        "-m",
+        GetConfig().GetSelectedModel()->m_modelFile,
+        "-f",
+        prompt_file,
     };
 
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateWithHiddenConsole | IProcessStderrEvent);
     if (!m_process) {
-        ::wxMessageBox(wxString() << _("Failed to launch command: '") << llama_cli << "'", "CodeLite",
+        ::wxMessageBox(wxString() << _("Failed to launch command: '") << GetConfig().GetLlamaCli() << "'", "CodeLite",
                        wxOK | wxCENTER | wxICON_ERROR);
         FileUtils::Deleter deleter{ prompt_file };
         return;

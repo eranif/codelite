@@ -39,6 +39,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 ; the INSTALL_DIR is created by `make install`
 Source: "{#INSTALL_DIR}\*"; Excludes: "*.a"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
+Source: "{#INSTALL_DIR}\bin\*.exe"; Excludes: "*.a"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\codelite.exe"; WorkingDir: "{app}"

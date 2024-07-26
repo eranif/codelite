@@ -726,7 +726,6 @@ void Manager::ImportMSVSSolution(const wxString& path, const wxString& defaultCo
     wxBusyInfo info(_("Importing IDE solution/workspace..."), clMainFrame::Get());
 
     wxString errMsg;
-    // VcImporter importer(path, defaultCompiler);
     WSImporter importer;
     importer.Load(path, defaultCompiler);
     if (importer.Import(errMsg)) {

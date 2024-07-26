@@ -18,6 +18,7 @@ pacman -S mingw-w64-clang-x86_64-zlib     \
           mingw-w64-clang-x86_64-hunspell \
           mingw-w64-clang-x86_64-openssl  \
           mingw-w64-clang-x86_64-sqlite3  \
+          mingw-w64-clang-x86_64-llvm-openmp \
           flex bison
 ```
 

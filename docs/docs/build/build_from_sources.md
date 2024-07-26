@@ -16,7 +16,7 @@ pacman -S mingw-w64-clang-x86_64-zlib     \
           mingw-w64-clang-x86_64-hunspell \
           mingw-w64-clang-x86_64-openssl  \
           mingw-w64-clang-x86_64-sqlite3  \
-          flex
+          flex bison
 ```
 
 - Download and build `wx-config.exe` from sources:

@@ -436,7 +436,7 @@ void Manager::DoSetupWorkspace(const wxString& path)
     EventNotifier::Get()->ProcessEvent(evtWorkspaceLoaded);
 
     // Update the refactoring cache
-    wxFileList_t allfiles;
+    std::vector<wxFileName> allfiles;
     GetWorkspaceFiles(allfiles, true);
     clGetManager()->LoadWorkspaceSession(path);
 
@@ -451,9 +451,6 @@ void Manager::DoSetupWorkspace(const wxString& path)
         wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
     }
-
-    // Set the encoding for the tags manager
-    TagsManagerST::Get()->SetEncoding(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
 
     // Ensure that the "C++" view is selected
     clGetManager()->GetWorkspaceView()->SelectPage(clCxxWorkspaceST::Get()->GetWorkspaceType());

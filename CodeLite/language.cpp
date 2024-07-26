@@ -762,81 +762,6 @@ void Language::ParseTemplateInitList(const wxString& argListStr, wxArrayString& 
     typeName.Empty();
 }
 
-void Language::ParseComments(const wxFileName& fileName, std::vector<CommentPtr>* comments)
-{
-    wxString content;
-    try {
-        wxFFile f(fileName.GetFullPath().GetData());
-        if(!f.IsOpened())
-            return;
-
-        // read the content of the file and parse it
-        f.ReadAll(&content);
-        f.Close();
-    } catch(...) {
-        return;
-    }
-
-    m_scanner->Reset();
-    m_scanner->SetText(_C(content));
-    m_scanner->KeepComment(1);
-
-    int type(0);
-
-    wxString comment(_T(""));
-    int line(-1);
-
-    while(true) {
-        type = m_scanner->yylex();
-        if(type == 0) // eof
-            break;
-
-        // we keep only comments
-        if(type == CPPComment) {
-            // incase the previous comment was one line above this one,
-            // concatenate them to a single comment
-            if(m_scanner->lineno() - 1 == line) {
-                comment << m_scanner->GetComment();
-                line = m_scanner->lineno();
-                m_scanner->ClearComment();
-                continue;
-            }
-
-            // save the previous comment buffer
-            if(comment.IsEmpty() == false) {
-                comments->push_back(std::make_unique<Comment>(comment, fileName.GetFullPath(), line - 1));
-                comment.Empty();
-                line = -1;
-            }
-
-            // first time or no comment is buffer
-            if(comment.IsEmpty()) {
-                comment = m_scanner->GetComment();
-                line = m_scanner->lineno();
-                m_scanner->ClearComment();
-                continue;
-            }
-
-            comments->push_back(std::make_unique<Comment>(m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno() - 1));
-            comment.Empty();
-            line = -1;
-            m_scanner->ClearComment();
-
-        } else if(type == CComment) {
-            comments->push_back(std::make_unique<Comment>(m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno()));
-            m_scanner->ClearComment();
-        }
-    }
-
-    if(comment.IsEmpty() == false) {
-        comments->push_back(std::make_unique<Comment>(comment, fileName.GetFullPath(), line - 1));
-    }
-
-    // reset the scanner
-    m_scanner->KeepComment(0);
-    m_scanner->Reset();
-}
-
 wxString Language::GetScopeName(const wxString& in, std::vector<wxString>* additionlNS)
 {
     std::vector<std::string> moreNS;
@@ -1986,18 +1911,6 @@ void Language::UpdateAdditionalScopesCache(const wxString& filename, const std::
 }
 
 void Language::ClearAdditionalScopesCache() { m_additionalScopesCache.clear(); }
-
-CxxVariable::Ptr_t Language::FindLocalVariable(const wxString& name)
-{
-    if(m_locals.empty()) {
-        return nullptr;
-    }
-    CxxVariable::Map_t::iterator iter = m_locals.find(name);
-    if(iter == m_locals.end()) {
-        return nullptr;
-    }
-    return iter->second;
-}
 
 CxxVariable::Ptr_t Language::FindVariableInScope(const wxString& scope, const wxString& name)
 {

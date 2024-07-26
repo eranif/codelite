@@ -1378,9 +1378,6 @@ void clMainFrame::CreateGUIControls()
     // update ctags options
     TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
 
-    // set this frame as the event handler for any events
-    TagsManagerST::Get()->SetEvtHandler(this);
-
     // We must do Layout() before loading the toolbars, otherwise they're broken in >=wxGTK-2.9
     Layout();
 

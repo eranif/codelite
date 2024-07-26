@@ -112,7 +112,6 @@ private:
 protected:
     void SetVisibleScope(const wxString& visibleScope) { this->m_visibleScope = visibleScope; }
     const wxString& GetVisibleScope() const { return m_visibleScope; }
-    CxxVariable::Ptr_t FindLocalVariable(const wxString& name);
     CxxVariable::Ptr_t FindVariableInScope(const wxString& scope, const wxString& name);
 
 public:
@@ -190,13 +189,6 @@ public:
      * @return
      */
     TagsManager* GetTagsManager();
-
-    /**
-     * Parse comments from source file
-     * @param name file name
-     * @param comments [output] returned vector of comments
-     */
-    void ParseComments(const wxFileName& fileName, std::vector<CommentPtr>* comments);
 
     //==========================================================
     // New API based on the yacc grammar files

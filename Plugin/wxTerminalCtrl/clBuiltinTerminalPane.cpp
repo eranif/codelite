@@ -33,10 +33,14 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     m_toolbar->AddTool(wxID_NEW, _("New"), image_list->Add("file_new"), wxEmptyString, wxITEM_DROPDOWN);
 
     // Get list of terminals
-    m_terminal_types = new wxChoice(m_toolbar, wxID_ANY);
+    m_terminal_types = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(150), wxNOT_FOUND));
     UpdateTerminalsChoice(false);
     m_toolbar->AddControl(m_terminal_types);
+
+#ifdef __WXMSW__
     m_toolbar->AddTool(wxID_REFRESH, _("Scan"), image_list->Add("debugger_restart"), wxEmptyString, wxITEM_NORMAL);
+#endif
+
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &clBuiltinTerminalPane::OnNewDropdown, this, wxID_NEW);
@@ -294,21 +298,29 @@ void clBuiltinTerminalPane::OnScanForTerminals(wxCommandEvent& event)
 void clBuiltinTerminalPane::UpdateTerminalsChoice(bool scan)
 {
     auto terminals = GetTerminalsOptions(scan);
+#ifdef __WXMSW__
     int choiceWidth = 60;
+#endif
 
     int initial_value = 0;
     wxString last_selection = clConfig::Get().Read("terminal/last_used_terminal", wxString());
 
     m_terminal_types->Clear();
     for (const auto& [name, command] : terminals) {
+#ifdef __WXMSW__
         choiceWidth = wxMax(choiceWidth, GetTextExtent(name).GetWidth());
+#endif
         int item_pos = m_terminal_types->Append(name, new wxStringClientData(command));
         if (!last_selection.empty() && last_selection == name) {
             initial_value = item_pos;
         }
     }
 
-    m_terminal_types->SetSize(choiceWidth == wxNOT_FOUND ? wxNOT_FOUND : FromDIP(choiceWidth), wxNOT_FOUND);
+#ifdef __WXMSW__
+    int controlWidth = choiceWidth == wxNOT_FOUND ? wxNOT_FOUND : FromDIP(choiceWidth);
+    m_terminal_types->SetSize(controlWidth, wxNOT_FOUND);
+    m_terminal_types->SetSizeHints(controlWidth, wxNOT_FOUND);
+#endif
 
     if (!m_terminal_types->IsEmpty()) {
         m_terminal_types->SetSelection(initial_value);

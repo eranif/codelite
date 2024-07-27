@@ -922,9 +922,9 @@ add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main")
 if(WXC_APP)
     add_subdirectory(wxcrafter)
 else()
-    if(UNIX OR APPLE)
-        add_subdirectory(ctags)
-    endif()
+    add_subdirectory(ctags)
+    install(TARGETS ctags DESTINATION ${CL_INSTALL_BIN})
+    install(TARGETS llama-cli DESTINATION ${CL_INSTALL_BIN})
 
     if(MINGW)
         # build wx-config for Windows
@@ -1042,7 +1042,7 @@ if(NOT WXC_APP)
     # building CodeLite, install the SVGs
     codelite_install_svgs()
 
-    if(UNIX AND NOT APPLE)
+    if(NOT APPLE)
         set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
         install(
             TARGETS ctags
@@ -1055,6 +1055,7 @@ if(NOT WXC_APP)
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
             PERMISSIONS ${EXE_PERM})
     endif()
+
 endif()
 
 if(MINGW)
@@ -1065,7 +1066,7 @@ if(MINGW)
     # install DLLs required by MinGW
     msys_list_deps(${MSYS2_BASE}/clang64/bin/libhunspell-1.7-0.dll LIBHUNSPELL_DEPS)
     msys_list_deps(${MSYS2_BASE}/clang64/bin/libssh.dll LIBSSH_DEPS)
-    
+
     list(
         APPEND
         SYSTEM_DLLS

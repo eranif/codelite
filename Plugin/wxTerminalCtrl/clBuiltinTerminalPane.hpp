@@ -12,7 +12,7 @@ class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
     wxTerminalCtrl* m_terminal = nullptr;
     clToolBar* m_toolbar = nullptr;
     Notebook* m_book = nullptr;
-    std::map<wxString, wxString> m_options_map = { { "bash", "bash" }, { "CMD", "CMD" } };
+    wxChoice* m_terminal_types = nullptr;
 
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
@@ -21,9 +21,12 @@ protected:
     void UpdateTextAttributes();
     void OnNewDropdown(wxCommandEvent& event);
     void OnNew(wxCommandEvent& event);
-    void DetectTerminals();
-    bool ReadTerminalOptionsFromDisk();
-    void WriteTerminalOptionsToDisk();
+    void DetectTerminals(std::map<wxString, wxString>& terminals);
+    bool ReadTerminalOptionsFromDisk(std::map<wxString, wxString>& terminals);
+    void WriteTerminalOptionsToDisk(const std::map<wxString, wxString>& terminals);
+    std::map<wxString, wxString> GetTerminalsOptions(bool scan = false);
+    void OnScanForTerminals(wxCommandEvent& event);
+    void UpdateTerminalsChoice(bool scan);
 
 public:
     clBuiltinTerminalPane(wxWindow* parent, wxWindowID id = wxID_ANY);

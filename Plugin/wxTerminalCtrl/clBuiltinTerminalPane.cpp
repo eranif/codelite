@@ -7,13 +7,11 @@
 #include "clFileName.hpp"
 #include "clWorkspaceManager.h"
 #include "event_notifier.h"
-#include "globals.h"
 #include "imanager.h"
 #include "macros.h"
 #include "ssh/ssh_account_info.h"
 #include "wxTerminalOutputCtrl.hpp"
 
-#include <thread>
 #include <wx/app.h>
 #include <wx/choicdlg.h>
 #include <wx/sizer.h>
@@ -33,10 +31,17 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
     auto image_list = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(wxID_NEW, _("New"), image_list->Add("file_new"), wxEmptyString, wxITEM_DROPDOWN);
+
+    // Get list of terminals
+    m_terminal_types = new wxChoice(m_toolbar, wxID_ANY);
+    UpdateTerminalsChoice(false);
+    m_toolbar->AddControl(m_terminal_types);
+    m_toolbar->AddTool(wxID_REFRESH, _("Scan"), image_list->Add("debugger_restart"), wxEmptyString, wxITEM_NORMAL);
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &clBuiltinTerminalPane::OnNewDropdown, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnNew, this, wxID_NEW);
+    m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnScanForTerminals, this, wxID_REFRESH);
 
     GetSizer()->Fit(this);
     UpdateTextAttributes();
@@ -50,11 +55,12 @@ clBuiltinTerminalPane::~clBuiltinTerminalPane()
     wxTheApp->Unbind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
+    clConfig::Get().Write("terminal/last_used_terminal", m_terminal_types->GetStringSelection());
 }
 
 void clBuiltinTerminalPane::UpdateTextAttributes()
 {
-    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
         auto terminal = static_cast<wxTerminalCtrl*>(m_book->GetPage(i));
         auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
         auto default_style = lexer->GetProperty(0);
@@ -62,7 +68,7 @@ void clBuiltinTerminalPane::UpdateTextAttributes()
         wxColour fg_colour = default_style.GetFgColour();
 
         wxFont text_font;
-        if(default_style.GetFontInfoDesc().empty()) {
+        if (default_style.GetFontInfoDesc().empty()) {
             text_font = FontUtils::GetDefaultMonospacedFont();
         } else {
             text_font.SetNativeFontInfo(default_style.GetFontInfoDesc());
@@ -76,7 +82,7 @@ void clBuiltinTerminalPane::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.S
 
 void clBuiltinTerminalPane::Focus()
 {
-    if(GetActiveTerminal()) {
+    if (GetActiveTerminal()) {
         GetActiveTerminal()->GetInputCtrl()->SetFocus();
     }
 }
@@ -84,7 +90,7 @@ void clBuiltinTerminalPane::Focus()
 wxTerminalCtrl* clBuiltinTerminalPane::GetActiveTerminal()
 {
     // when we add tabs, return the active selected tab's terminal
-    if(m_book->GetPageCount() == 0) {
+    if (m_book->GetPageCount() == 0) {
         return nullptr;
     }
     return static_cast<wxTerminalCtrl*>(m_book->GetPage(m_book->GetSelection()));
@@ -93,7 +99,7 @@ wxTerminalCtrl* clBuiltinTerminalPane::GetActiveTerminal()
 void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
 {
     // now show the menu for choosing the location for this terminal
-    if(!GetActiveTerminal()) {
+    if (!GetActiveTerminal()) {
         // this functionality requires an active terminal running
         return;
     }
@@ -102,18 +108,18 @@ void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
     wxString default_path;          // contains the wd for the terminal
     wxString workspace_ssh_account; // if remote workspace is loaded, this variable will contains its account
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if(workspace) {
-        if(workspace->IsRemote()) {
+    if (workspace) {
+        if (workspace->IsRemote()) {
             workspace_ssh_account = workspace->GetSshAccount();
         }
         default_path = wxFileName(workspace->GetFileName()).GetPath();
         default_path.Replace("\\", "/");
     }
 
-    if(!default_path.empty()) {
+    if (!default_path.empty()) {
         wxString label;
         label << "Workspace: " << default_path;
-        if(!workspace_ssh_account.empty()) {
+        if (!workspace_ssh_account.empty()) {
             label << "@" << workspace_ssh_account;
         }
 
@@ -121,7 +127,7 @@ void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
         menu.Bind(
             wxEVT_MENU,
             [this, default_path, workspace_ssh_account](wxCommandEvent& event) {
-                if(workspace_ssh_account.empty()) {
+                if (workspace_ssh_account.empty()) {
                     GetActiveTerminal()->SetTerminalWorkingDirectory(default_path);
                 } else {
                     GetActiveTerminal()->SSHAndSetWorkingDirectory(workspace_ssh_account, default_path);
@@ -133,7 +139,7 @@ void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
     }
 
     auto all_accounts = SSHAccountInfo::Load();
-    for(const auto& account : all_accounts) {
+    for (const auto& account : all_accounts) {
         auto item = menu.Append(wxID_ANY, "SSH: " + account.GetAccountName());
         menu.Bind(
             wxEVT_MENU,
@@ -153,52 +159,25 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     wxString working_directory;
     wxString shell;
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if(workspace && !workspace->IsRemote()) {
+    if (workspace && !workspace->IsRemote()) {
         wxFileName fn{ workspace->GetFileName() };
         working_directory = clFileName::ToMSYS2(fn.GetPath());
     }
 
-#ifdef __WXMSW__
-    static wxString DLG_ID = "scan-for-vs-terminals";
-    if(!ReadTerminalOptionsFromDisk()) {
-        auto answer = ::PromptForYesNoDialogWithCheckbox(_("Scan for Visual Studio terminals?"), DLG_ID);
-        if(answer == wxID_YES) {
-            DetectTerminals();
-        }
-    }
-
-    wxArrayString options;
-    options.reserve(m_options_map.size());
-    for(const auto& [name, _] : m_options_map) {
-        options.Add(name);
-    }
-
-    int initial_value = 0;
-    wxString last_selection = clConfig::Get().Read("terminal/last_used_terminal", wxString());
-    if(!last_selection.empty() && options.Index(last_selection) != wxNOT_FOUND) {
-        initial_value = options.Index(last_selection);
-    }
-
-    wxString selected_shell = ::wxGetSingleChoice(_("Choose a shell:"), _("New Terminal"), options, initial_value);
-    if(selected_shell.empty()) {
+    int selection = m_terminal_types->GetSelection();
+    if (selection == wxNOT_FOUND) {
         return;
     }
 
-    // persist our selection
-    clConfig::Get().Write("terminal/last_used_terminal", selected_shell);
-    shell = m_options_map[selected_shell];
-
-#else
-    // Linux / macOS
-    shell = "bash";
-#endif
+    wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
+    const wxString& cmd = cd->GetData();
 
     wxTerminalCtrl* ctrl = new wxTerminalCtrl(m_book, wxID_ANY, working_directory);
     static size_t terminal_id = 0;
-    ctrl->SetShellCommand(shell);
+    ctrl->SetShellCommand(cmd);
 
     m_book->AddPage(ctrl, wxString::Format("Terminal %d", ++terminal_id), true);
-    m_book->SetPageToolTip(m_book->GetPageCount() - 1, shell);
+    m_book->SetPageToolTip(m_book->GetPageCount() - 1, cmd);
 
     Focus();
 }
@@ -209,8 +188,8 @@ void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
     wxWindow* win = dynamic_cast<wxWindow*>(event.GetEventObject());
     CHECK_PTR_RET(win);
 
-    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        if(win == m_book->GetPage(i)) {
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        if (win == m_book->GetPage(i)) {
             m_book->SetPageText(i, event.GetString());
             break;
         }
@@ -225,66 +204,113 @@ void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)
 
 bool clBuiltinTerminalPane::IsFocused()
 {
-    if(GetActiveTerminal()) {
+    if (GetActiveTerminal()) {
         return IsShown() && GetActiveTerminal()->IsFocused();
     } else {
         return IsShown();
     }
 }
 
-void clBuiltinTerminalPane::DetectTerminals()
+void clBuiltinTerminalPane::DetectTerminals(std::map<wxString, wxString>& terminals)
 {
 #ifdef __WXMSW__
-    // Check to see if we already scanned this machine before
-    if(ReadTerminalOptionsFromDisk()) {
-        return;
-    }
-
-    wxBusyCursor bc{};
-    m_options_map.clear();
-    m_options_map = { { "bash", "bash" }, { "CMD", "CMD" } };
+    terminals.clear();
+    terminals = { { "bash", "bash" }, { "CMD", "CMD" } };
     CompilerLocatorMSVC locator_msvc{};
-    if(locator_msvc.Locate()) {
+    if (locator_msvc.Locate()) {
         // attempt to locate MSVC compilers
         const auto& compilers = locator_msvc.GetCompilers();
-        for(auto compiler : compilers) {
+        for (auto compiler : compilers) {
             wxString build_tool = compiler->GetTool("MAKE");
             build_tool = build_tool.BeforeLast('>');
             build_tool.Prepend("CMD /K ");
-            m_options_map.insert({ "CMD for " + compiler->GetName(), build_tool });
+            terminals.insert({ "CMD for " + compiler->GetName(), build_tool });
         }
     }
-    WriteTerminalOptionsToDisk();
+    WriteTerminalOptionsToDisk(terminals);
 #endif
 }
 
-bool clBuiltinTerminalPane::ReadTerminalOptionsFromDisk()
+bool clBuiltinTerminalPane::ReadTerminalOptionsFromDisk(std::map<wxString, wxString>& terminals)
 {
     wxArrayString results = clConfig::Get().Read("terminal/options", wxArrayString{});
-    if(results.empty() || results.size() % 2 != 0) {
+    if (results.empty() || results.size() % 2 != 0) {
         return false;
     }
 
-    m_options_map.clear();
+    terminals.clear();
     // we serialise the map into array as pairs of: [key,value,key2,value...]
-    for(size_t i = 0; i < results.size() / 2; ++i) {
+    for (size_t i = 0; i < results.size() / 2; ++i) {
         wxString name = results[i * 2];
         wxString command = results[i * 2 + 1];
-        m_options_map.insert({ name, command });
+        terminals.insert({ name, command });
     }
     return true;
 }
 
-void clBuiltinTerminalPane::WriteTerminalOptionsToDisk()
+void clBuiltinTerminalPane::WriteTerminalOptionsToDisk(const std::map<wxString, wxString>& terminals)
 {
     wxArrayString result;
-    result.reserve(m_options_map.size() * 2);
+    result.reserve(terminals.size() * 2);
 
-    for(const auto& [name, command] : m_options_map) {
+    for (const auto& [name, command] : terminals) {
         result.Add(name);
         result.Add(command);
     }
 
     // persist the results
     clConfig::Get().Write("terminal/options", result);
+}
+
+std::map<wxString, wxString> clBuiltinTerminalPane::GetTerminalsOptions(bool scan)
+{
+    std::map<wxString, wxString> terminals;
+#ifdef __WXMSW__
+    terminals.insert({ "bash", "bash" });
+    terminals.insert({ "CMD", "CMD" });
+    if (scan) {
+        terminals.clear();
+        DetectTerminals(terminals);
+
+    } else {
+        // Try to read the terminals from previous scans. If we never scanned for terminals
+        // before, this function does not affect "terminals" variable
+        ReadTerminalOptionsFromDisk(terminals);
+    }
+#else
+    wxUnusedVar(scan);
+    terminals.insert({ "bash", "bash" });
+#endif
+    return terminals;
+}
+
+void clBuiltinTerminalPane::OnScanForTerminals(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxBusyCursor bc{};
+    UpdateTerminalsChoice(true);
+}
+
+void clBuiltinTerminalPane::UpdateTerminalsChoice(bool scan)
+{
+    auto terminals = GetTerminalsOptions(scan);
+    int choiceWidth = 60;
+
+    int initial_value = 0;
+    wxString last_selection = clConfig::Get().Read("terminal/last_used_terminal", wxString());
+
+    m_terminal_types->Clear();
+    for (const auto& [name, command] : terminals) {
+        choiceWidth = wxMax(choiceWidth, GetTextExtent(name).GetWidth());
+        int item_pos = m_terminal_types->Append(name, new wxStringClientData(command));
+        if (!last_selection.empty() && last_selection == name) {
+            initial_value = item_pos;
+        }
+    }
+
+    m_terminal_types->SetSize(choiceWidth == wxNOT_FOUND ? wxNOT_FOUND : FromDIP(choiceWidth), wxNOT_FOUND);
+
+    if (!m_terminal_types->IsEmpty()) {
+        m_terminal_types->SetSelection(initial_value);
+    }
 }

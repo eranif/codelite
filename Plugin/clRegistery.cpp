@@ -51,8 +51,9 @@ wxString clRegistery::ReadValueString(const wxString& valueName)
     wxString value;
     m_regKey->QueryValue(valueName, value);
     return value;
-#endif
+#else
     return wxEmptyString;
+#endif
 }
 
 wxString clRegistery::GetFirstChild()

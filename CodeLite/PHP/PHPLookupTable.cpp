@@ -1203,7 +1203,6 @@ bool PHPLookupTable::CheckDiskImage(wxSQLite3Database& db, const wxFileName& fil
         clWARNING() << "PHP: database image is corrupted:" << filename.GetFullPath() << clEndl;
         return false;
     }
-    return true;
 }
 
 void PHPLookupTable::EnsureIntegrity(const wxFileName& filename)

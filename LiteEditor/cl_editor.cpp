@@ -148,7 +148,7 @@ constexpr int EDIT_TRACKER_MARGIN_ID = 2;
 constexpr int SYMBOLS_MARGIN_ID = 3;
 constexpr int SYMBOLS_MARGIN_SEP_ID = 4;
 constexpr int LAST_MARGIN_ID = 4;
-constexpr int MARGIN_WIDTH = 24;
+constexpr int MARGIN_WIDTH = 16;
 
 /// A helper class that sets the cursor of the current control to
 /// left pointing arrow and restores it once its destroyed
@@ -838,7 +838,7 @@ void clEditor::SetProperties()
     //---------------------------------------------------
     SetMarginCursor(FOLD_MARGIN_ID, 8);
     StyleSetBackground(wxSTC_STYLE_FOLDDISPLAYTEXT, StyleGetBackground(wxSTC_STYLE_DEFAULT));
-    StyleSetForeground(wxSTC_STYLE_FOLDDISPLAYTEXT, DrawingUtils::IsDark(bg_colour) ? "GOLD" : "ORANGE");
+    StyleSetForeground(wxSTC_STYLE_FOLDDISPLAYTEXT, DrawingUtils::IsDark(bg_colour) ? "YELLOW" : "ORANGE");
 
     // Determine the folding symbols colours
     wxColour foldFgColour = wxColor(0xff, 0xff, 0xff);

@@ -69,8 +69,9 @@
  *
  * @note Only "Unix Makefiles" generator is supported now.
  */
-struct CMakeProjectSettings
+class CMakeProjectSettings
 {
+public:
     /// If CMake build is enabled.
     bool enabled;
 

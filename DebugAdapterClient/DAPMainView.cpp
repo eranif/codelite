@@ -210,7 +210,6 @@ void DAPMainView::OnScopeItemExpanding(wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     CHECK_ITEM_RET(item);
 
-    wxTreeItemIdValue cookie;
     m_variablesTree->Begin();
     if(m_variablesTree->ItemHasChildren(item)) {
         m_variablesTree->DeleteChildren(item);

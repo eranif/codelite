@@ -986,9 +986,9 @@ void DebugAdapterClient::OnDapInitializeResponse(DAPEvent& event)
     LOG_DEBUG(LOG) << "working directory:" << m_session.working_directory << endl;
 
     // FIXME: apply the environment here
-    auto v = m_session.command;
-    LOG_DEBUG(LOG) << "Calling Launch() with command:" << v << endl;
+    LOG_DEBUG(LOG) << "Calling Launch() with command:" << m_session.command << endl;
     if (m_session.dap_server.GetLaunchType() == DapLaunchType::LAUNCH) {
+        auto v = m_session.command;
         m_client.Launch(std::move(v), m_session.working_directory, m_session.MakeEnvironment());
 
     } else {

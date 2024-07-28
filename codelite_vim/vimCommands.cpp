@@ -1267,7 +1267,6 @@ bool VimCommand::Command_call()
 
     case COMMANDVI::y0: {
         int pos_init_yw = m_ctrl->GetCurrentPos();
-        int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
         m_ctrl->Home();
         int pos_end_yw = m_ctrl->GetCurrentPos();
         m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
@@ -1279,7 +1278,6 @@ bool VimCommand::Command_call()
     } break;
     case COMMANDVI::y$: {
         int pos_init_yw = m_ctrl->GetCurrentPos();
-        int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
         m_ctrl->LineEnd();
         int pos_end_yw = m_ctrl->GetCurrentPos();
         m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
@@ -1291,7 +1289,6 @@ bool VimCommand::Command_call()
     } break;
     case COMMANDVI::y_caret: {
         int pos_init_yw = m_ctrl->GetCurrentPos();
-        int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
         m_ctrl->Home();
         if(m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
             m_ctrl->WordRight();
@@ -1896,10 +1893,9 @@ bool VimCommand::command_call_visual_block_mode()
 
 wxString VimCommand::get_text_at_position(VimCommand::eTypeTextSearch typeTextToSearch)
 {
-
-    long pos, start, end;
-
-    pos = m_ctrl->GetCurrentPos();
+    const long pos = m_ctrl->GetCurrentPos();
+    long start = 0;
+    long end = 0;
 
     switch(typeTextToSearch) {
     case kAllWord:
@@ -3071,7 +3067,6 @@ long VimCommand::goToMatchingParentesis(long start_pos)
         '\"',
         '\"',
     };
-    SEARCH_DIRECTION direction;
     long pos = start_pos;
     long max_n_char = m_ctrl->GetTextLength();
     wxChar currChar = m_ctrl->GetCharAt(pos);

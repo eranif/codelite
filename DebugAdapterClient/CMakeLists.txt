@@ -8,15 +8,6 @@ add_subdirectory("${CL_SRC_ROOT}/submodules/wxdap/dap" ${CMAKE_LIBRARY_OUTPUT_DI
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
 
-# Include paths
-include_directories(
-    "${CL_SRC_ROOT}/Plugin"
-    "${CL_SRC_ROOT}/Interfaces"
-    "${CL_SRC_ROOT}/submodules/wxdap")
-# Definitions
-add_definitions(-DWXUSINGDLL_SDK)
-add_definitions(-DWXUSINGDLL_DAP)
-
 # By default, use the sources under the current folder
 file(GLOB PLUGIN_SRCS "*.cpp")
 
@@ -33,6 +24,7 @@ target_link_libraries(
     libcodelite
     plugin
     dapcxx)
+target_include_directories(${PLUGIN_NAME} PRIVATE "${CL_SRC_ROOT}/submodules/wxdap")
 # Installation destination
 cl_install_plugin(${PLUGIN_NAME})
 codelite_install_library_target(dapcxx)

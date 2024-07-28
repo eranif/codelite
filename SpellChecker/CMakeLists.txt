@@ -35,11 +35,7 @@ else()
     # Include paths
     include_directories(
         "${CL_SRC_ROOT}/SpellChecker"
-        "${CL_SRC_ROOT}/Plugin"
-        "${CL_SRC_ROOT}/Interfaces"
         "${HUNSPELL_H}")
-
-    add_definitions(-DWXUSINGDLL_SDK)
 
     if(USE_PCH AND NOT MINGW)
         add_definitions(-include "${CL_PCH_FILE}")

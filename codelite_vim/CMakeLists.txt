@@ -9,11 +9,6 @@ project(${PLUGIN_NAME})
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
 
-# Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces")
-
-add_definitions(-DWXUSINGDLL_SDK)
-
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")        ## No optimization, debug info
 
 if(USE_PCH AND NOT MINGW)

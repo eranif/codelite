@@ -7,9 +7,7 @@ include(${wxWidgets_USE_FILE})
 # prepare list of files
 file(GLOB SRCS "codelite-generate-themes/*.cpp")
 
-include_directories("${CL_SRC_ROOT}/Plugin"
-                    "${CL_SRC_ROOT}/Plugin/ThemeImporters"
-                    "${CL_SRC_ROOT}/Interfaces")
+include_directories("${CL_SRC_ROOT}/Plugin/ThemeImporters")
 
 add_definitions(-DwxDEBUG_LEVEL=0)
 

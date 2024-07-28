@@ -7,15 +7,10 @@ project(codelite)
 include("${wxWidgets_USE_FILE}")
 include(UtilsHelper)
 
-# Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces")
-
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
 endif()
-
-add_definitions(-DWXUSINGDLL_SDK)
 
 if(MINGW)
     # disables the part of urlmon.h that defines IsLoggingEnabled

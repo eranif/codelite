@@ -7,8 +7,6 @@ include(${wxWidgets_USE_FILE})
 # prepare list of files
 file(GLOB SRCS "*.cpp")
 
-# and finally prepare list of includes directories
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces")
 add_definitions(-DwxDEBUG_LEVEL=0)
 
 # Define the output

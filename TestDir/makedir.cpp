@@ -41,8 +41,8 @@ int main(int argc, char** argv)
             argument.Replace(wxT("\\"), wxT("/"));
             wxArrayString arr = wxStringTokenize(argument, wxT("/"), wxTOKEN_STRTOK);
             wxString path;
-            for(size_t i = 0; i < arr.GetCount(); i++) {
-                path << arr.Item(i) << wxT("/");
+            for (const auto& subdir : arr) {
+                path << subdir << wxT("/");
                 wxMkdir(path, 0777);
             }
         }

@@ -88,7 +88,9 @@ public:
  * @class MemCheckErrorLocation
  * @brief Represents on record from error stacktrace.
  */
-struct MemCheckErrorLocation {
+class MemCheckErrorLocation
+{
+public:
     bool operator==(const MemCheckErrorLocation & other) const;
     bool operator!=(const MemCheckErrorLocation & other) const;
     
@@ -140,7 +142,9 @@ struct MemCheckErrorLocation {
  *
  * Aditional records have also stacttrace, so they are implemented same as errors. Auxiliary record implemented as list of error. Some tool have more than one auxiliary section. Type is used to distinguish between them.
  */
-struct MemCheckError {
+class MemCheckError
+{
+public:
     enum Type { TYPE_ERROR, TYPE_AUXILIARY };
     MemCheckError();
     

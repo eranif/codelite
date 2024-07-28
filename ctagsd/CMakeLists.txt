@@ -36,10 +36,6 @@ endif()
 # includes directories
 include_directories(
   "${CL_SRC_ROOT}/Plugin"
-  "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-  "${CL_SRC_ROOT}/CodeLite"
-  "${CL_SRC_ROOT}/CodeLite/ssh"
-  "${CL_SRC_ROOT}/PCH"
   "${CL_SRC_ROOT}/Interfaces"
   "${CL_SRC_ROOT}/ctagsd/lib")
 
@@ -50,6 +46,7 @@ endif(UNIX)
 
 file(GLOB LIBSRC "lib/*.cpp")
 add_library(ctagdslib STATIC "${LIBSRC}")
+target_link_libraries(ctagdslib PRIVATE libcodelite)
 
 add_executable(ctagsd "main.cpp")
 target_link_libraries(

@@ -10,11 +10,8 @@ project(${PLUGIN_NAME})
 include("${wxWidgets_USE_FILE}")
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
-                    "${CL_SRC_ROOT}/CodeLite/ssh" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
+include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces")
 
-add_definitions(-DWXUSINGDLL_WXSQLITE3)
-add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")        ## No optimization, debug info
@@ -25,8 +22,6 @@ if(USE_PCH AND NOT MINGW)
 endif()
 
 file(GLOB SRCS "*.cpp")
-
-# add_dependencies(plugin libcodelite)
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})

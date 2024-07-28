@@ -9,10 +9,6 @@ file(GLOB SRCS "codelite-generate-themes/*.cpp")
 
 include_directories("${CL_SRC_ROOT}/Plugin"
                     "${CL_SRC_ROOT}/Plugin/ThemeImporters"
-                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-                    "${CL_SRC_ROOT}/CodeLite"
-                    "${CL_SRC_ROOT}/CodeLite/ssh"
-                    "${CL_SRC_ROOT}/PCH"
                     "${CL_SRC_ROOT}/Interfaces")
 
 add_definitions(-DwxDEBUG_LEVEL=0)

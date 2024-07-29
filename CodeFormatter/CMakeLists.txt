@@ -43,8 +43,6 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin)
 
 cl_install_plugin(${PLUGIN_NAME})
-cl_install_file_shared(${CL_SRC_ROOT}/Runtime/astyle.sample)
-cl_install_file_shared(${CL_SRC_ROOT}/Runtime/php.sample)
 
 if(MINGW)
     # install clang-format

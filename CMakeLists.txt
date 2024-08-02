@@ -214,6 +214,10 @@ if(UNIX)
     endif()
 endif()
 
+#Appstream metadata
+set(METAINFO_FILE "${CMAKE_SOURCE_DIR}/Runtime/org.codelite.codelite.metainfo.xml")
+install(FILES ${METAINFO_FILE} DESTINATION share/metainfo)
+
 if(WITH_WXPATH)
     set(ENV{PATH} ${WITH_WXPATH}:$ENV{PATH})
 endif()

@@ -2245,19 +2245,6 @@ void ContextCpp::SemicolonShift()
         }
     }
 }
-void ContextCpp::DoSetProjectPaths()
-{
-    wxArrayString projects;
-    wxArrayString projectPaths;
-    ManagerST::Get()->GetProjectList(projects);
-    for (size_t i = 0; i < projects.GetCount(); i++) {
-        ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
-        if (p) {
-            projectPaths.Add(p->GetFileName().GetPath());
-        }
-    }
-    TagsManagerST::Get()->SetProjectPaths(projectPaths);
-}
 
 wxString ContextCpp::GetCurrentScopeName()
 {

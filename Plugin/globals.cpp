@@ -1537,7 +1537,6 @@ void clSetEditorFontEncoding(const wxString& encoding)
 {
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     options->SetFileFontEncoding(encoding);
-    TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
     EditorConfigST::Get()->SetOptions(options);
 }
 

@@ -144,7 +144,6 @@ private:
     int FindLineToAddInclude();
     void MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags);
     void DoOpenWorkspaceFile();
-    void DoSetProjectPaths();
     bool DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl);
     /**
      * @brief add missing implementaions. If line_number is provided

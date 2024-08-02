@@ -23,17 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "qmakegenerator.h"
+
 #include "build_settings_config.h"
 #include "compiler.h"
 #include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macromanager.h"
+#include "md5/wxmd5.h"
 #include "project.h"
-#include "qmakegenerator.h"
 #include "qmakeplugindata.h"
 #include "workspace.h"
-#include "wxmd5.h"
+
 #include <wx/ffile.h>
 #include <wx/tokenzr.h>
 

@@ -26,7 +26,7 @@
 
 #include "Cxx/cpptoken.h"
 #include "Cxx/cppwordscanner.h"
-#include "clKeyboardManager.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "copyrights_options_dlg.h"
 #include "copyrights_proj_sel_dlg.h"
 #include "copyrightsconfigdata.h"

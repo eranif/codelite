@@ -26,9 +26,9 @@
 #include "quickdebugdlg.h"
 
 #include "ColoursAndFontsManager.h"
+#include "Debugger/debuggermanager.h"
 #include "SFTPBrowserDlg.h"
 #include "codelite_events.h"
-#include "debuggermanager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"

@@ -26,11 +26,12 @@
 #ifndef __localstable__
 #define __localstable__
 
-#include "simpletablebase.h"
-#include <wx/arrstr.h>
-#include "debuggerobserver.h"
-#include "debuggersettings.h"
+#include "Debugger/debuggersettings.h"
 #include "cl_command_event.h"
+#include "debuggerobserver.h"
+#include "simpletablebase.h"
+
+#include <wx/arrstr.h>
 
 #define LIST_LOCALS_CHILDS 600
 #define QUERY_LOCALS_CHILDS 601

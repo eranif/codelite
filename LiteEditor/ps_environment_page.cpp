@@ -24,9 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ps_environment_page.h"
-#include "environmentconfig.h"
-#include "debuggersettings.h"
+
+#include "Debugger/debuggersettings.h"
 #include "debuggerconfigtool.h"
+#include "environmentconfig.h"
 
 PSEnvironmentPage::PSEnvironmentPage(wxWindow* parent, ProjectSettingsDlg* dlg)
     : PSEnvironmentBasePage(parent)

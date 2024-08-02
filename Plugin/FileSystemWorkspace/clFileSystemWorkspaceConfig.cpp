@@ -1,11 +1,11 @@
 #include "clFileSystemWorkspaceConfig.hpp"
 
+#include "Debugger/debuggermanager.h"
 #include "ICompilerLocator.h"
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
 #include "compiler_command_line_parser.h"
 #include "ctags_manager.h"
-#include "debuggermanager.h"
 #include "dirsaver.h"
 #include "event_notifier.h"
 #include "file_logger.h"

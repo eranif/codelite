@@ -26,8 +26,8 @@
 #include "databaseexplorer.h"
 
 #include "ErdPanel.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "SqlCommandPanel.h"
-#include "clKeyboardManager.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "event_notifier.h"

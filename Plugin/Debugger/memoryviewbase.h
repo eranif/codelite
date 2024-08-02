@@ -4,24 +4,25 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_PLUGIN_MEMORYVIEWBASE_BASE_CLASSES_H
-#define _CODELITE_PLUGIN_MEMORYVIEWBASE_BASE_CLASSES_H
+#ifndef _PLUGIN_DEBUGGER_MEMORYVIEWBASE_BASE_CLASSES_H
+#define _PLUGIN_DEBUGGER_MEMORYVIEWBASE_BASE_CLASSES_H
 
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/button.h>
-#include <wx/choice.h>
-#include <wx/panel.h>
+// clang-format off
 #include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -33,6 +34,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class MemoryViewBase : public wxPanel
 {

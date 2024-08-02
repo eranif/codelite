@@ -25,6 +25,7 @@
 #include "pluginmanager.h"
 
 #include "BuildTab.hpp"
+#include "Keyboard/clKeyboardManager.h"
 #include "SideBar.hpp"
 #include "app.h"
 #include "bitmap_loader.h"

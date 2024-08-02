@@ -1,9 +1,9 @@
 #include "phprefactoring.h"
 
 #include "AsyncProcess/asyncprocess.h"
+#include "Diff/clPatch.h"
 #include "PHPRefactoringPreviewDlg.h"
 #include "clEditorStateLocker.h"
-#include "clPatch.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"

@@ -1,11 +1,13 @@
 #include "XDebugTester.h"
-#include "cl_standard_paths.h"
-#include <wx/filename.h>
-#include "clZipReader.h"
-#include "phpexecutor.h"
-#include <wx/msgdlg.h>
+
 #include "JSON.h"
+#include "Zip/clZipReader.h"
+#include "cl_standard_paths.h"
 #include "php_configuration_data.h"
+#include "phpexecutor.h"
+
+#include <wx/filename.h>
+#include <wx/msgdlg.h>
 
 XDebugTester::XDebugTester() {}
 

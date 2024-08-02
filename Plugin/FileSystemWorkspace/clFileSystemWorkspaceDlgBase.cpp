@@ -27,7 +27,7 @@ clFileSystemWorkspaceDlgBase::clFileSystemWorkspaceDlgBase(wxWindow* parent, wxW
                                                            const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB09InitBitmapResources();
@@ -72,7 +72,7 @@ clFileSystemWorkspaceDlgBase::clFileSystemWorkspaceDlgBase(wxWindow* parent, wxW
     m_stdBtnSizer4->Realize();
 
 #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook)) {
+    if (!wxPersistenceManager::Get().Find(m_notebook)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
     } else {
         wxPersistenceManager::Get().Restore(m_notebook);
@@ -81,15 +81,15 @@ clFileSystemWorkspaceDlgBase::clFileSystemWorkspaceDlgBase(wxWindow* parent, wxW
 
     SetName(wxT("clFileSystemWorkspaceDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -113,7 +113,7 @@ BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wx
                                        const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB09InitBitmapResources();
@@ -201,15 +201,15 @@ BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("BuildTargetDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -223,7 +223,7 @@ BuildTargetDlgBase::~BuildTargetDlgBase() { m_button54->Unbind(wxEVT_UPDATE_UI, 
 FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB09InitBitmapResources();
@@ -717,7 +717,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     SetName(wxT("FSConfigPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -766,7 +766,7 @@ NewFileSystemWorkspaceDialogBase::NewFileSystemWorkspaceDialogBase(wxWindow* par
                                                                    const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB09InitBitmapResources();
@@ -821,15 +821,15 @@ NewFileSystemWorkspaceDialogBase::NewFileSystemWorkspaceDialogBase(wxWindow* par
 
     SetName(wxT("NewFileSystemWorkspaceDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -849,7 +849,7 @@ clFSWNewConfigDlgBase::clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id, co
                                              const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB09InitBitmapResources();
@@ -904,15 +904,15 @@ clFSWNewConfigDlgBase::clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("clFSWNewConfigDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);

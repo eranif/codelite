@@ -28,7 +28,6 @@
 #include "async_executable_cmd.h"
 #include "breakpointsmgr.h"
 #include "clDebuggerTerminal.h"
-#include "clKeyboardManager.h"
 #include "cl_command_event.h"
 #include "ctags_manager.h"
 #include "debuggerobserver.h"

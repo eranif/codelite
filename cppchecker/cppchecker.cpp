@@ -27,12 +27,12 @@
 
 #include "AsyncProcess/processreaderthread.h"
 #include "IWorkspace.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "Notebook.h"
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "build_settings_config.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
-#include "clKeyboardManager.h"
 #include "clWorkspaceManager.h"
 #include "cl_process.h"
 #include "codelite_events.h"

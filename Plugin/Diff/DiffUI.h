@@ -4,29 +4,29 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_PLUGIN_DIFFUI_BASE_CLASSES_H
-#define _CODELITE_PLUGIN_DIFFUI_BASE_CLASSES_H
+#ifndef _PLUGIN_DIFF_DIFFUI_BASE_CLASSES_H
+#define _PLUGIN_DIFF_DIFFUI_BASE_CLASSES_H
 
-#include "clThemedListCtrl.h"
-#include "clToolBar.h"
-
-#include <wx/artprov.h>
-#include <wx/button.h>
-#include <wx/dataview.h>
-#include <wx/dialog.h>
-#include <wx/filepicker.h>
-#include <wx/iconbndl.h>
-#include <wx/panel.h>
+// clang-format off
 #include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/toolbar.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/panel.h>
+#include <wx/stattext.h>
+#include <wx/filepicker.h>
+#include <wx/button.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -38,6 +38,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class DiffSelectFoldersBaseDlg : public wxDialog
 {
@@ -64,7 +66,7 @@ public:
     virtual ~DiffSelectFoldersBaseDlg();
 };
 
-class DiffFoldersBaseDlg : public wxFrame
+class DiffFoldersBaseDlg : public wxDialog
 {
 protected:
     wxPanel* m_panel4;
@@ -81,7 +83,7 @@ public:
     wxPanel* GetPanel4() { return m_panel4; }
     DiffFoldersBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Diff Folders"),
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
-                       long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DiffFoldersBaseDlg();
 };
 

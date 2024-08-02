@@ -30,6 +30,7 @@
 #include "art_metro.h"
 #include "bookmark_manager.h"
 #include "clDTL.h"
+#include "clPluginsFindBar.h"
 #include "clToolBar.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -43,7 +44,6 @@
 #include "clSFTPManager.hpp"
 #endif
 
-#include <clPluginsFindBar.h>
 #include <wx/filedlg.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>

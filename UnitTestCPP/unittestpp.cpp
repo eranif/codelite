@@ -26,8 +26,8 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "bitmap_loader.h"
-#include "clKeyboardManager.h"
 #include "codelite_events.h"
 #include "ctags_manager.h"
 #include "dirsaver.h"

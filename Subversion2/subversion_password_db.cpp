@@ -24,13 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "subversion_password_db.h"
-#include "wxmd5.h"
-#include <wx/log.h>
+
+#include "cl_standard_paths.h"
+#include "md5/wxmd5.h"
+#include "xor_string.h"
+
 #include <wx/filefn.h>
 #include <wx/filename.h>
+#include <wx/log.h>
 #include <wx/stdpaths.h>
-#include "cl_standard_paths.h"
-#include "xor_string.h"
 
 SubversionPasswordDb::SubversionPasswordDb()
 {

@@ -1,8 +1,8 @@
 #include "clGotoAnythingManager.h"
 
 #include "GotoAnythingDlg.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "bitmap_loader.h"
-#include "clKeyboardManager.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"

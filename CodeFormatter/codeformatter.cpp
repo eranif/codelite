@@ -25,11 +25,11 @@
 #include "codeformatter.h"
 
 #include "JSON.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "SFTPClientData.hpp"
 #include "clEditorStateLocker.h"
 #include "clFileSystemEvent.h"
 #include "clFilesCollector.h"
-#include "clKeyboardManager.h"
 #include "clSFTPManager.hpp"
 #include "clSTCLineKeeper.h"
 #include "codeformatterdlg.h"

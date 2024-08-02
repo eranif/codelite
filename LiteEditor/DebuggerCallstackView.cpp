@@ -23,14 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "DebuggerCallstackView.h"
+
+#include "Debugger/debuggermanager.h"
+#include "debugger.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "manager.h"
 #include "pluginmanager.h"
 
-#include "debugger.h"
-#include "debuggermanager.h"
-#include "event_notifier.h"
-#include "globals.h"
 #include <memory>
 #include <wx/imaglist.h>
 #include <wx/wupdlock.h>

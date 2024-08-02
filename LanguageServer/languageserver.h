@@ -1,7 +1,6 @@
 #ifndef __LanguageServerPlugin__
 #define __LanguageServerPlugin__
 
-#include "CompileCommandsGenerator.h"
 #include "LanguageServerCluster.h"
 #include "LanguageServerLogView.h"
 #include "clTabTogglerHelper.h"

@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "attachdbgprocdlg.h"
+
 #include "cl_config.h"
-#include "debuggermanager.h"
+#include "Debugger/debuggermanager.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "procutils.h"
 #include "windowattrmanager.h"
+
 #include <algorithm>
 #include <wx/wupdlock.h>
 

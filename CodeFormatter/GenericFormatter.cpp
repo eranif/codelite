@@ -1,8 +1,8 @@
 #include "GenericFormatter.hpp"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "StringUtils.h"
 #include "clDirChanger.hpp"
-#include "clFileSystemWorkspace.hpp"
 #include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
 #include "clTempFile.hpp"

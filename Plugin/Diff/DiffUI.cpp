@@ -9,13 +9,25 @@
 // Declare the bitmap loading function
 extern void wxCrafterIlcShpInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 DiffSelectFoldersBaseDlg::DiffSelectFoldersBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
                                                    const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterIlcShpInitBitmapResources();
@@ -63,35 +75,33 @@ DiffSelectFoldersBaseDlg::DiffSelectFoldersBaseDlg(wxWindow* parent, wxWindowID 
 
     SetName(wxT("DiffSelectFoldersBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSelectFoldersBaseDlg::OnOKUI), NULL, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &DiffSelectFoldersBaseDlg::OnOKUI, this);
 }
 
 DiffSelectFoldersBaseDlg::~DiffSelectFoldersBaseDlg()
 {
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSelectFoldersBaseDlg::OnOKUI), NULL, this);
+    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &DiffSelectFoldersBaseDlg::OnOKUI, this);
 }
 
 DiffFoldersBaseDlg::DiffFoldersBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                        const wxSize& size, long style)
-    : wxFrame(parent, id, title, pos, size, style)
+    : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterIlcShpInitBitmapResources();
@@ -125,32 +135,26 @@ DiffFoldersBaseDlg::DiffFoldersBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("DiffFoldersBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(DiffFoldersBaseDlg::OnItemActivated), NULL, this);
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                          wxDataViewEventHandler(DiffFoldersBaseDlg::OnItemContextMenu), NULL, this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &DiffFoldersBaseDlg::OnItemActivated, this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &DiffFoldersBaseDlg::OnItemContextMenu, this);
 }
 
 DiffFoldersBaseDlg::~DiffFoldersBaseDlg()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(DiffFoldersBaseDlg::OnItemActivated), NULL, this);
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                             wxDataViewEventHandler(DiffFoldersBaseDlg::OnItemContextMenu), NULL, this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &DiffFoldersBaseDlg::OnItemActivated, this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &DiffFoldersBaseDlg::OnItemContextMenu, this);
 }

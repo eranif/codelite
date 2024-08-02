@@ -28,14 +28,14 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "CargoToml.hpp"
 #include "CompilerLocator/CompilerLocatorRustc.hpp"
-#include "NewFileSystemWorkspaceDialog.h"
+#include "FileSystemWorkspace/NewFileSystemWorkspaceDialog.h"
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "FileSystemWorkspace/clFileSystemWorkspaceConfig.hpp"
 #include "Platform/Platform.hpp"
+#include "Rust/clRustLocator.hpp"
 #include "RustWorkspace.hpp"
 #include "build_settings_config.h"
-#include "clFileSystemWorkspace.hpp"
-#include "clFileSystemWorkspaceConfig.hpp"
 #include "clFilesCollector.h"
-#include "clRustLocator.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_standard_paths.h"
 #include "environmentconfig.h"
@@ -43,7 +43,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
-#include "wxmd5.h"
+#include "md5/wxmd5.h"
 
 #include <wx/dir.h>
 #include <wx/msgdlg.h>

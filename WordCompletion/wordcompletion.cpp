@@ -1,10 +1,10 @@
 #include "wordcompletion.h"
 
 #include "ColoursAndFontsManager.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "WordCompletionDictionary.h"
 #include "WordCompletionSettingsDlg.h"
 #include "WordCompletionThread.h"
-#include "clKeyboardManager.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "globals.h"

@@ -25,9 +25,9 @@
 #include "cscope.h"
 
 #include "CScopeSettingsDlg.h"
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "Keyboard/clKeyboardManager.h"
 #include "bitmap_loader.h"
-#include "clFileSystemWorkspace.hpp"
-#include "clKeyboardManager.h"
 #include "cscopedbbuilderthread.h"
 #include "cscopestatusmessage.h"
 #include "cscopetab.h"

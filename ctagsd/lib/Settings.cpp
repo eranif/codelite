@@ -1,11 +1,11 @@
 #include "Settings.hpp"
 
-#include "CompileCommandsJSON.h"
-#include "CompileFlagsTxt.h"
 #include "GCCMetadata.hpp"
 #include "JSON.h"
 #include "Platform/Platform.hpp"
 #include "clTempFile.hpp"
+#include "clangd/CompileCommandsJSON.h"
+#include "clangd/CompileFlagsTxt.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
 #include "fileutils.h"

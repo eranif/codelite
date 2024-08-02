@@ -26,8 +26,8 @@
 #include "macromanager.h"
 
 #include "IWorkspace.h"
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "build_config.h"
-#include "clFileSystemWorkspace.hpp"
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
 #include "globals.h"

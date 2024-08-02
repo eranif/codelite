@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "simpletable.h"
 
+#include "Debugger/debuggermanager.h"
 #include "debugger.h"
-#include "debuggermanager.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "manager.h"

@@ -24,10 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "build_config.h"
 
+#include "Debugger/debuggermanager.h"
 #include "StringUtils.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
-#include "debuggermanager.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
 #include "file_logger.h"

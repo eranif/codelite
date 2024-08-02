@@ -84,7 +84,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:Keyboard"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

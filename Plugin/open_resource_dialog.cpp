@@ -25,8 +25,8 @@
 #include "open_resource_dialog.h"
 
 #include "ColoursAndFontsManager.h"
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "bitmap_loader.h"
-#include "clFileSystemWorkspace.hpp"
 #include "clWorkspaceManager.h"
 #include "ctags_manager.h"
 #include "editor_config.h"

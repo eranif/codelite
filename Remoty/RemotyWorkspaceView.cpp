@@ -2,10 +2,10 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
+#include "FileSystemWorkspace/clFileSystemWorkspaceConfig.hpp"
+#include "FileSystemWorkspace/clFileSystemWorkspaceDlg.h"
 #include "RemotyWorkspace.hpp"
 #include "SFTPClientData.hpp"
-#include "clFileSystemWorkspaceConfig.hpp"
-#include "clFileSystemWorkspaceDlg.h"
 #include "clRemoteFindDialog.h"
 #include "clSFTPManager.hpp"
 #include "codelite_events.h"

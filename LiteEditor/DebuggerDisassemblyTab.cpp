@@ -24,9 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "DebuggerDisassemblyTab.h"
+
 #include "BreakpointsView.hpp"
+#include "Debugger/debuggermanager.h"
 #include "breakpointsmgr.h"
-#include "debuggermanager.h"
 #include "debuggerobserver.h"
 #include "debuggerpane.h"
 #include "editor_config.h"

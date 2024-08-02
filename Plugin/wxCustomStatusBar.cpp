@@ -97,7 +97,7 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
 #if defined(__WXOSX__) || defined(__WXMSW__)
             m_parent->Refresh();
             return;
-#endif
+#else
             // Make sure we draw only when the "art" objects are in sync with the field
             // and with the bar itself
             if((m_rect.GetHeight() > 0) && (m_rect.GetWidth() > 0)) {
@@ -141,6 +141,7 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
                 m_parent->PrepareDC(cdc);
                 cdc.DrawBitmap(bmp, m_rect.GetTopLeft(), true);
             }
+#endif
         }
     }
 }

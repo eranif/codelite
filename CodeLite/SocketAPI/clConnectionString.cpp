@@ -22,8 +22,9 @@ void clConnectionString::DoParse(const wxString& connectionString)
 #ifdef __WXMSW__
         clWARNING() << "unix protocol is not suppported on Windows" << clEndl;
         return;
-#endif
+#else
         m_protocol = kUnixLocalSocket;
+#endif
     } else {
         clWARNING() << "Invalid protocol in connection string:" << connectionString << clEndl;
         return;

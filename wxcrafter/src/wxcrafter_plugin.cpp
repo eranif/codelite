@@ -999,11 +999,13 @@ bool wxCrafterPlugin::IsMainViewActive()
 {
     return true; // IIUC this function was protecting against outside events being caught when in Tabbed mode and a
                  // different tab was active
+#if 0
     if(!m_mgr) {
         return true;
     } else {
         return IsTabMode() && m_mainPanel && m_mgr->GetActivePage() == m_mainPanel;
     }
+#endif
 }
 
 // plugin menu

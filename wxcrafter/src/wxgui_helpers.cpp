@@ -454,7 +454,6 @@ wxString wxCrafter::ColourToCpp(const wxString& guiname)
         }
         return code;
     }
-    return "";
 }
 
 wxString wxCrafter::ESCAPE(const wxString& s)

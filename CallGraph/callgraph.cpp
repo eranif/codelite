@@ -290,11 +290,11 @@ wxString CallGraph::GetGprofPath()
     return wxEmptyString;
 #else
     gprofPath = LocateApp(GPROF_FILENAME_EXE);
-#endif
 
     confData.SetGprofPath(gprofPath);
     m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
     return gprofPath;
+#endif
 }
 
 //---- Get Dot Path -----------------------------------------------------------
@@ -313,13 +313,13 @@ wxString CallGraph::GetDotPath()
     return wxEmptyString;
 #else
     dotPath = LocateApp(DOT_FILENAME_EXE);
-#endif
 
     confData.SetDotPath(dotPath);
 
     m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
 
     return dotPath;
+#endif
 }
 
 //---- Show CallGraph event ---------------------------------------------------

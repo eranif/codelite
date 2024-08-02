@@ -202,7 +202,6 @@ void ExternalToolsPlugin::DoRecreateToolbar()
     }
 
     // Add the tools
-    int where = XRCID("external_tools_monitor");
     for(size_t i = 0; i < tools.size(); i++) {
         const ToolInfo& ti = tools[i];
 

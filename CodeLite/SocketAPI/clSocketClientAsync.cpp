@@ -65,7 +65,6 @@ void* clSocketAsyncThread::Entry()
     } else {
         return ServerMain();
     }
-    return nullptr;
 }
 
 void* clSocketAsyncThread::ServerMain()

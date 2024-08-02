@@ -1869,7 +1869,6 @@ bool TagsStorageSQLite::CheckIntegrity() const
         // this can only happen if we have a corrupt disk image
         return false;
     }
-    return true;
 }
 
 void TagsStorageSQLite::GetTagsByPathAndKind(const wxString& path, std::vector<TagEntryPtr>& tags,

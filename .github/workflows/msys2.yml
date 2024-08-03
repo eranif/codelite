@@ -33,9 +33,9 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: wxWidgets/wxWidgets
-        path: wxWidgets
-        # ref: 3.2.4 # use master
+        ref: v3.2.5
         submodules: recursive
+        path: wxWidgets
 
     - name: build and install wxWidgets
       shell: msys2 {0}

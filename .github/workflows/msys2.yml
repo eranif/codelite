@@ -33,7 +33,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: wxWidgets/wxWidgets
-        ref: v3.2.5
+        ref: 3737245c5195d84f0c788e650c6ad7992eec03d7 # requires a v3.3.0
         submodules: recursive
         path: wxWidgets
 

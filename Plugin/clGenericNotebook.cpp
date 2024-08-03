@@ -1473,7 +1473,7 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
         if (!sourceBook || !targetBook)
             return false;
 
-        // To allow moving tabs betwen notebooks, both must have the kNotebook_AllowForeignDnD style bit enabled
+        // To allow moving tabs between notebooks, both must have the kNotebook_AllowForeignDnD style bit enabled
         if (!(sourceBook->GetStyle() & kNotebook_AllowForeignDnD))
             return false;
         if (!(targetBook->GetStyle() & kNotebook_AllowForeignDnD))

@@ -61,7 +61,7 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
             }
 
             if(!ssh::result_ok(stdout_res)) {
-                // error occured (but not timeout)
+                // error occurred (but not timeout)
                 break;
             }
 
@@ -72,7 +72,7 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
             }
 
             if(!ssh::result_ok(stdout_res)) {
-                // error occured (but not timeout)
+                // error occurred (but not timeout)
                 break;
             }
 

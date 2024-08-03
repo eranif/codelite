@@ -485,12 +485,12 @@ void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)
     time_t curtime = time(nullptr);
     CrashInfo& crash_info = iter->second;
     if ((curtime - crash_info.last_crash) >= 60) {
-        // if the last crash occured over 1 min ago, reset the crash counters
+        // if the last crash occurred over 1 min ago, reset the crash counters
         crash_info.times = 0;
     }
 
     crash_info.times++;              // increase the restart counter
-    crash_info.last_crash = curtime; // remember when the crash occured
+    crash_info.last_crash = curtime; // remember when the crash occurred
     if (crash_info.times > 3) {
         LSP_WARNING() << "Too many restart failures for LSP:" << event.GetServerName() << ". Will not restart it again"
                       << endl;

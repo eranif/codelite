@@ -96,7 +96,7 @@ public:
 
     /**
      * @brief return list of tags based on scope and name
-     * @param scope the scope to search. If 'scope' is empty the scope is ommited from the search
+     * @param scope the scope to search. If 'scope' is empty the scope is omitted from the search
      * @param name
      * @param partialNameAllowed
      */

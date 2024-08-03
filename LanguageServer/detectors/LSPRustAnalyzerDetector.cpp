@@ -30,7 +30,7 @@ bool LSPRustAnalyzerDetector::DoLocate()
     SetCommand(command);
 
     // Add support for the languages
-    GetLangugaes().Add("rust");
+    GetLanguages().Add("rust");
     SetConnectionString("stdio");
     return true;
 }

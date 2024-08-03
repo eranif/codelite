@@ -56,7 +56,7 @@ public:
             }
 
             if(!ssh::result_ok(stdout_res)) {
-                // error occured
+                // error occurred
                 break;
             }
         }

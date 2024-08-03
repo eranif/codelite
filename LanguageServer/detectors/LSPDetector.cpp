@@ -9,7 +9,7 @@ LSPDetector::~LSPDetector() {}
 
 void LSPDetector::GetLanguageServerEntry(LanguageServerEntry& entry)
 {
-    entry.SetLanguages(GetLangugaes());
+    entry.SetLanguages(GetLanguages());
     entry.SetCommand(GetCommand());
     entry.SetEnabled(IsEnabled());
     entry.SetDisaplayDiagnostics(true);
@@ -27,7 +27,7 @@ bool LSPDetector::Locate()
 void LSPDetector::DoClear()
 {
     m_command.Clear();
-    m_langugaes.Clear();
+    m_languages.Clear();
     m_connectionString.Clear();
     m_priority = 50;
 }

@@ -3091,7 +3091,7 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
             cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
         }
 
-        // Get the prefered compiler type
+        // Get the preferred compiler type
         wxString compilerName = wxGetSingleChoice(_("Select the compiler to use:"), _("Choose compiler"), cmps);
         ManagerST::Get()->ImportMSVSSolution(dlg.GetPath(), compilerName);
     }

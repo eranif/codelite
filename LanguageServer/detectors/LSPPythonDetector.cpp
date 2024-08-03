@@ -57,6 +57,6 @@ void LSPPythonDetector::ConfigurePylsp(const wxString& pylsp)
 {
     SetCommand(pylsp);
     // Add support for the languages
-    GetLangugaes().Add("python");
+    GetLanguages().Add("python");
     SetConnectionString("stdio");
 }

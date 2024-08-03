@@ -41,7 +41,7 @@
 
 #include "lineparser.h"
 
-WX_DECLARE_HASH_MAP(int, int, wxIntegerHash, wxIntegerEqual, OccurenceMap);
+WX_DECLARE_HASH_MAP(int, int, wxIntegerHash, wxIntegerEqual, OccurrenceMap);
 
 /**
  * @class GprofParser
@@ -62,7 +62,7 @@ private:
 	bool isplus;	
 	bool isspontaneous;	
 	
-	OccurenceMap calls;
+	OccurrenceMap calls;
 	wxArrayInt sortedCalls;
 	
 public:

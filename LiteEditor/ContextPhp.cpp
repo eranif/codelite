@@ -125,7 +125,7 @@ void ContextPhp::AutoIndent(const wxChar& nChar)
             return;
         }
 
-        // User typed 'ENTER' immediatly after closing brace ')'
+        // User typed 'ENTER' immediately after closing brace ')'
         if (prevpos != wxNOT_FOUND && ch == wxT(')')) {
 
             long openBracePos(wxNOT_FOUND);
@@ -148,7 +148,7 @@ void ContextPhp::AutoIndent(const wxChar& nChar)
             }
         }
 
-        // User typed 'ENTER' immediatly after colons ':'
+        // User typed 'ENTER' immediately after colons ':'
         if (prevpos != wxNOT_FOUND && ch == wxT(':')) {
             int posWordBeforeColons(wxNOT_FOUND);
 

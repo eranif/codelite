@@ -117,7 +117,7 @@ public:
     static wxString SafeExecuteCommand(const wxString& command);
 
     /**
-     * @brief execute command and search the output for the first occurance of `find_what`
+     * @brief execute command and search the output for the first occurrence of `find_what`
      */
     static wxString GrepCommandOutput(const std::vector<wxString>& cmd, const wxString& find_what);
 

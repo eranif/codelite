@@ -106,7 +106,7 @@ public:
 	 * \return brighten colour
 	 */
 	static wxColor LightColour(const wxColour& color, int percent);
-	static wxColor DarkColour(const wxColour &color, int precent);
+	static wxColor DarkColour(const wxColour &color, int percent);
 
 	/**
 	 * Paint rectangle with gradient colouring

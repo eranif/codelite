@@ -33,8 +33,8 @@ void LSPCTagsdDetector::ConfigureFile(const wxFileName& ctagsd_exe)
     command << " --port 45634 --log-level ERR";
     SetCommand(command);
     // Add support for the languages
-    GetLangugaes().Add("c");
-    GetLangugaes().Add("cpp");
+    GetLanguages().Add("c");
+    GetLanguages().Add("cpp");
     SetConnectionString("tcp://127.0.0.1:45634");
     SetEnabled(false);
 }

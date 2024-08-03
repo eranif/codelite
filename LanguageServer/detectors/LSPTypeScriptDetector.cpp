@@ -37,7 +37,7 @@ bool LSPTypeScriptDetector::DoLocate()
 
     command << " --stdio";
     SetCommand(command);
-    SetLangugaes(StdToWX::ToArrayString({ "javascript", "typescript" }));
+    SetLanguages(StdToWX::ToArrayString({ "javascript", "typescript" }));
     SetConnectionString("stdio");
     return true;
 }

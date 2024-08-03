@@ -53,7 +53,7 @@ public:
 	 */
 	virtual ~Comment() {};
 
-	/// asgginment operator
+	/// assignment operator
 	Comment& operator=(const Comment& rhs);
 
 	/// accessors

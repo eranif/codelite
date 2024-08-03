@@ -127,7 +127,7 @@ public:
 	//----------------------------------------------
 	/**
 	* Add new child node to this node.
-	* Duplicate nodes are allowed. However, Remove() will remove the first occurance of a node by a given key.
+	* Duplicate nodes are allowed. However, Remove() will remove the first occurrence of a node by a given key.
 	* \param key Node key
 	* \param data Node data
 	* \return newly added node
@@ -142,7 +142,7 @@ public:
 	TreeNode* AddChild(TreeNode* newNode);
 
 	/**
-	* Remove first occurance of node with a given key.
+	* Remove first occurrence of node with a given key.
 	* If the node to be removed is the root, a std::exception* is thrown, which must be deleted by caller.
 	* Remove does not delete the memory allocated for the node. The user must delete the removed node.
 	* \param key Node key

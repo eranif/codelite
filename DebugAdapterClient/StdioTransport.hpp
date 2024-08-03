@@ -21,7 +21,7 @@ public:
     /**
      * @brief return a buffer from the network with a given timeout
      * @returns true on success, false in case of an error. True is also returned when timeout occurs, The caller should
-     * check the buffer length: if it is 0, than timeout occured.
+     * check the buffer length: if it is 0, than timeout occurred.
      */
     bool Read(wxString& buffer, int msTimeout) override;
 

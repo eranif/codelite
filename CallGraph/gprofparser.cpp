@@ -277,7 +277,7 @@ int GprofParser::GetSuggestedNodeThreshold()
 {
 	sortedCalls.Clear();
 	
-	for( OccurenceMap::iterator it = calls.begin(); it != calls.end(); ++it )
+	for( OccurrenceMap::iterator it = calls.begin(); it != calls.end(); ++it )
 		sortedCalls.Add( it->first );
 		
 	sortedCalls.Sort(cmpint);

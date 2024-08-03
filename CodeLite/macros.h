@@ -186,7 +186,7 @@
 #define clPATH_SEPARATOR ":"
 #endif
 
-// ----------------------------- usefule typedefs -------------------------------
+// ----------------------------- useful typedefs -------------------------------
 typedef std::unordered_map<wxString, bool> wxStringBoolMap_t;
 typedef std::unordered_map<wxString, wxString> wxStringTable_t;
 typedef std::unordered_set<wxString> wxStringSet_t;

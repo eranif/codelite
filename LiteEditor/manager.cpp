@@ -2569,7 +2569,7 @@ void Manager::UpdateLostControl()
     SendCmdEvent(wxEVT_DEBUG_EDITOR_LOST_CONTROL);
 }
 
-void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name)
+void Manager::UpdateTypeResolved(const wxString& expr, const wxString& type_name)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     // Sanity
@@ -3043,7 +3043,7 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
 
         } else {
             // Default
-            UpdateTypeReolsved(event.m_expression, event.m_evaluated);
+            UpdateTypeResolved(event.m_expression, event.m_evaluated);
         }
         break;
 
@@ -3095,7 +3095,7 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
                     expression.Append(wxT(")"));
                 }
             }
-            UpdateTypeReolsved(expression, event.m_variableObject.typeName);
+            UpdateTypeResolved(expression, event.m_variableObject.typeName);
         } else if (event.m_userReason == DBG_USERR_WATCHTABLE) {
             // Double clicked on the 'Watches' table
             clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnCreateVariableObject(event);

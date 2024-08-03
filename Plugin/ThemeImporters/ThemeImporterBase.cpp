@@ -366,7 +366,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeBase(AlacrittyColours& c
     lexer->SetUseCustomTextSelectionFgColour(false);
     m_themeName = "Alacritty: " + colours.theme_name;
 
-    // Add the lexer basic properties (laguage, file extensions, keywords, name)
+    // Add the lexer basic properties (language, file extensions, keywords, name)
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
     clDEBUG() << "theme imported:" << m_themeName << endl;
     return lexer;
@@ -586,7 +586,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
     LexerConf::Ptr_t lexer(new LexerConf());
     lexer->SetUseCustomTextSelectionFgColour(false);
 
-    // Add the lexer basic properties (laguage, file extensions, keywords, name)
+    // Add the lexer basic properties (language, file extensions, keywords, name)
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
 
     m_isDarkTheme = DrawingUtils::IsDark(m_editor.bg_colour);

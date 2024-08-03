@@ -264,7 +264,7 @@ void PHPSourceFile::OnUse()
             }
 
             if(!fullname.IsEmpty() && !alias.IsEmpty()) {
-                // Use namespace is alway refered as fullpath namespace
+                // Use namespace is always referred as fullpath namespace
                 // So writing:
                 // use Zend\Mvc\Controll\Action;
                 // is equal for writing:
@@ -304,7 +304,7 @@ void PHPSourceFile::OnNamespace()
             break;
         }
 
-        // Make sure that the namespace path is alway set in absolute path
+        // Make sure that the namespace path is always set in absolute path
         // i.e. starts with kPHP_T_NS_SEPARATOR
         if(path.IsEmpty() && token.type != kPHP_T_NS_SEPARATOR) {
             path << "\\";
@@ -1360,7 +1360,7 @@ void PHPSourceFile::ParseUseTraitsBody()
             }
 
             if(!fullname.IsEmpty() && !alias.IsEmpty()) {
-                // Use namespace is alway refered as fullpath namespace
+                // Use namespace is always referred as fullpath namespace
                 // So writing:
                 // use Zend\Mvc\Controll\Action;
                 // is equal for writing:

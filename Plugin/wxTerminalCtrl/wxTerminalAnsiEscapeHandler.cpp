@@ -974,7 +974,7 @@ wxHandlResultStringView wxTerminalAnsiEscapeHandler::handle_csi(wxStringView sv,
 
 namespace
 {
-/// return the view before the first occurance of ch.
+/// return the view before the first occurrence of ch.
 /// return the whole string if ch is not found
 wxHandlResultStringView before_first(wxStringView sv, wxChar ch)
 {

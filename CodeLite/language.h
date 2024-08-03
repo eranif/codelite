@@ -61,7 +61,7 @@ public:
     ~TemplateHelper() {}
 
     void SetTemplateDeclaration(const wxString& templateDeclaration);
-    void SetTemplateInstantiation(const wxString& tempalteInstantiation);
+    void SetTemplateInstantiation(const wxString& templateInstantiation);
 
     void SetTemplateDeclaration(const wxArrayString& templateDeclaration)
     {
@@ -174,7 +174,7 @@ public:
      * @param typeName [output]
      * @param typeScope [output]
      * @param oper [output] return the operator used (::, ., ->)
-     * @param scopeTemplateInitList [output] return the scope tempalte intialization (e.g. "std::auto_ptr<wxString>
+     * @param scopeTemplateInitList [output] return the scope template intialization (e.g. "std::auto_ptr<wxString>
      * str;" -> <wxString>
      * @return true on success, false otherwise. The output fields are only to be checked with the return
      * valus is 'true'
@@ -303,7 +303,7 @@ private:
 
     void ParseTemplateArgs(const wxString& argListStr, wxArrayString& argsList);
     void ParseTemplateInitList(const wxString& argListStr, wxArrayString& argsList);
-    void DoRemoveTempalteInitialization(wxString& str, wxArrayString& tmplInitList);
+    void DoRemoveTemplateInitialization(wxString& str, wxArrayString& tmplInitList);
     void DoResolveTemplateInitializationList(wxArrayString& tmpInitList);
     wxArrayString DoExtractTemplateDeclarationArgs(ParsedToken* token);
     wxArrayString DoExtractTemplateDeclarationArgs(TagEntryPtr tag);

@@ -33,6 +33,6 @@ void LSPJdtlsDetector::ConfigureFile(const wxFileName& jdtls)
     ::WrapWithQuotes(command);
 
     SetCommand(command);
-    GetLangugaes().Add("java");
+    GetLanguages().Add("java");
     SetConnectionString("stdio");
 }

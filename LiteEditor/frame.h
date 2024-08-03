@@ -305,7 +305,7 @@ public:
 
     /**
      * Compelete the main frame initialization
-     * this method is called immediatly after the
+     * this method is called immediately after the
      * main frame construction is over.
      */
     void CompleteInitialization();

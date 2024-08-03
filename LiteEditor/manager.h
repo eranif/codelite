@@ -644,7 +644,7 @@ public:
     void UpdateGotControl(const DebuggerEventData& e);
     void UpdateLostControl();
     void UpdateRemoteTargetConnected(const wxString& line);
-    void UpdateTypeReolsved(const wxString& expression, const wxString& type);
+    void UpdateTypeResolved(const wxString& expression, const wxString& type);
     void UpdateAsciiViewer(const wxString& expression, const wxString& tip);
 
     //---------------------------------------------------

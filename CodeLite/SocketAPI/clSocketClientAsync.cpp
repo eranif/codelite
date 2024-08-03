@@ -122,7 +122,7 @@ void* clSocketAsyncThread::ClientMain()
                     connected = true;
                     break;
                 } else if(rc == clSocketBase::kError) {
-                    // an error occured
+                    // an error occurred
                     break;
                 } else {
                     // Timeout

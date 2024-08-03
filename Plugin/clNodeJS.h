@@ -49,7 +49,7 @@ protected:
 protected:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
-    void ProcessLintOuput(const wxFileName& fn, const wxString& output);
+    void ProcessLintOutput(const wxFileName& fn, const wxString& output);
 
 private:
     clNodeJS();

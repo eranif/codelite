@@ -90,7 +90,7 @@ public:
                          const wxString& confToBuild = wxEmptyString);
 
     /**
-     * @brief search for variableName and replace all its occurance with 'replaceWith'
+     * @brief search for variableName and replace all its occurrence with 'replaceWith'
      * This function supports the following formats:
      * $variableName
      * ${variableName}

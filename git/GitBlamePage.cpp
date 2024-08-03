@@ -164,7 +164,7 @@ void GitBlamePage::ParseBlameOutput(const wxString& blame)
     SetMarginWidth(TEXT_MARGIN_ID, maxChars * char_width);
     SetMarginWidth(LINENUMBER_MARGIN_ID, char_width * line_number_margin_width_in_chars);
 
-    // In case we're re-entering, ensure we're r/w. For a wxSTC 'readonly' also means can't append text programatically
+    // In case we're re-entering, ensure we're r/w. For a wxSTC 'readonly' also means can't append text programmatically
     SetReadOnly(false);
     ClearAll();
 

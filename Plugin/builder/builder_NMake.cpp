@@ -1253,7 +1253,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     text << "User                   =" << wxGetUserId() << "\n";
     text << "Date                   =" << wxDateTime::Now().FormatDate() << "\n";
     text << "CodeLitePath           =" << ::WrapWithQuotes(startupDir) << "\n";
-    // replace all occurence of forward slash with double backslash
+    // replace all occurrence of forward slash with double backslash
     wxString linkerStr(cmp->GetTool("LinkerName"));
     if(OS_WINDOWS) {
         linkerStr = ReplaceBackslashes(linkerStr);

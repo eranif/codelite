@@ -1270,7 +1270,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         break;
     case '\n': {
         long matchedPos(wxNOT_FOUND);
-        // incase ENTER was hit immediatly after we inserted '{' into the code...
+        // incase ENTER was hit immediately after we inserted '{' into the code...
         if (m_lastCharEntered == wxT('{') &&                         // Last char entered was {
             m_autoAddMatchedCurlyBrace &&                            // auto-add-match-brace option is enabled
             !m_disableSmartIndent &&                                 // the disable smart indent option is NOT enabled

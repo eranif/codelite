@@ -243,7 +243,7 @@ WXDLLIMPEXP_SDK void WrapInShell(wxString& cmd);
 WXDLLIMPEXP_SDK wxString clGetUserName();
 
 /**
- * @brief return list of projects available based on the installed tempaltes
+ * @brief return list of projects available based on the installed templates
  * @param list list of projects
  * @param imageMap when provided, returns the image index (set in the lstImages) mapped to the project type
  */
@@ -522,7 +522,7 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
 
 /**
  * @brief locate an executable on the system using the PATH environment variable
- * @param name the exe name to locate (you can ommit the .exe on Windows, it will be added automatically)
+ * @param name the exe name to locate (you can omit the .exe on Windows, it will be added automatically)
  * @param exepath [output]
  * @param hint list of directories to search
  */

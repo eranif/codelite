@@ -20,15 +20,10 @@
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
 
-static PHPRefactoring* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new PHPRefactoring(manager);
-    }
-    return thePlugin;
+    return new PHPRefactoring(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

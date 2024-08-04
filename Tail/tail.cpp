@@ -8,15 +8,10 @@
 
 #include <wx/xrc/xmlres.h>
 
-static Tail* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new Tail(manager);
-    }
-    return thePlugin;
+    return new Tail(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

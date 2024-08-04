@@ -51,17 +51,12 @@
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
 
-static Cscope* thePlugin = NULL;
-
 static const wxString CSCOPE_NAME = _("CScope");
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new Cscope(manager);
-    }
-    return thePlugin;
+    return new Cscope(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

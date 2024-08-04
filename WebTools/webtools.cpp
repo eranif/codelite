@@ -27,15 +27,10 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
-static WebTools* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new WebTools(manager);
-    }
-    return thePlugin;
+    return new WebTools(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

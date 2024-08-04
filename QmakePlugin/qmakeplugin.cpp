@@ -52,15 +52,10 @@
 #include <wx/stdpaths.h>
 #include <wx/xrc/xmlres.h>
 
-static QMakePlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new QMakePlugin(manager);
-    }
-    return thePlugin;
+    return new QMakePlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

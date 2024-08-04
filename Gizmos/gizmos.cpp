@@ -55,15 +55,10 @@ static wxString MI_NEW_NEW_CLASS = "Create new C++ class...";
 
 enum { ID_MI_NEW_WX_PROJECT = 9000, ID_MI_NEW_CODELITE_PLUGIN, ID_MI_NEW_NEW_CLASS };
 
-static WizardsPlugin* theGismos = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(theGismos == 0) {
-        theGismos = new WizardsPlugin(manager);
-    }
-    return theGismos;
+    return new WizardsPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

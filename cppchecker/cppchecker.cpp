@@ -62,15 +62,10 @@
 #include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
 
-static CppCheckPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
-        thePlugin = new CppCheckPlugin(manager);
-    }
-    return thePlugin;
+    return new CppCheckPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

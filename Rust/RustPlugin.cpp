@@ -50,14 +50,10 @@
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
 
-static RustPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
-        thePlugin = new RustPlugin(manager);
-    }
-    return thePlugin;
+    return new RustPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

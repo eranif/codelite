@@ -15,13 +15,10 @@
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
-static EOSWiki* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new EOSWiki(manager); }
-    return thePlugin;
+    return new EOSWiki(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

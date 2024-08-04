@@ -15,13 +15,10 @@
 #include <wx/uri.h>
 #include <wx/xrc/xmlres.h>
 
-static HelpPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new HelpPlugin(manager); }
-    return thePlugin;
+    return new HelpPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

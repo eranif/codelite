@@ -58,15 +58,10 @@
 #include <wx/msw/registry.h>
 #endif
 
-static UnitTestPP* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new UnitTestPP(manager);
-    }
-    return thePlugin;
+    return new UnitTestPP(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

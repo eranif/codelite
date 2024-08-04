@@ -31,8 +31,6 @@
 #include "wx/wx.h"
 #include "wx/xrc/xmlres.h"
 
-static MacBundler* thePlugin = NULL;
-
 // TODO: accept file drops
 class IconPicker : public wxPanel
 {
@@ -287,8 +285,7 @@ public:
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new MacBundler(manager); }
-    return thePlugin;
+    return new MacBundler(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

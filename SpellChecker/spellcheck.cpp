@@ -65,8 +65,6 @@
 namespace
 {
 
-SpellCheck* thePlugin = NULL;
-
 constexpr size_t maxSuggestions = 15;
 
 const int SPC_IGNORE_WORD = XRCID("spellcheck_ignore_word");
@@ -82,10 +80,7 @@ constexpr int PARSE_TIME = 500;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new SpellCheck(manager);
-    }
-    return thePlugin;
+    return new SpellCheck(manager);
 }
 // ------------------------------------------------------------
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

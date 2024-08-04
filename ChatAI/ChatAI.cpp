@@ -42,7 +42,6 @@
 
 namespace
 {
-ChatAI* thePlugin = NULL;
 const wxString CHAT_AI_LABEL = _("Chat AI");
 } // namespace
 
@@ -50,10 +49,7 @@ const wxString CHAT_AI_LABEL = _("Chat AI");
 // the application
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
-        thePlugin = new ChatAI(manager);
-    }
-    return thePlugin;
+    return new ChatAI(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

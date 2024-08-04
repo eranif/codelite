@@ -15,15 +15,10 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
-static WordCompletionPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new WordCompletionPlugin(manager);
-    }
-    return thePlugin;
+    return new WordCompletionPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

@@ -9,15 +9,10 @@
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 
-static EditorConfigPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new EditorConfigPlugin(manager);
-    }
-    return thePlugin;
+    return new EditorConfigPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

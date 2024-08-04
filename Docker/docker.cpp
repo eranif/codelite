@@ -11,15 +11,10 @@
 #include <imanager.h>
 #include <wx/xrc/xmlres.h>
 
-static Docker* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new Docker(manager);
-    }
-    return thePlugin;
+    return new Docker(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

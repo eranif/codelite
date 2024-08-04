@@ -99,8 +99,6 @@
 /* VARIABLES                                                                */
 /* ************************************************************************ */
 
-static CMakePlugin* g_plugin = NULL;
-
 /* ************************************************************************ */
 
 const wxString CMakePlugin::CMAKELISTS_FILE = "CMakeLists.txt";
@@ -122,11 +120,7 @@ static const wxString HELP_TAB_NAME = _("CMake");
  */
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (!g_plugin) {
-        g_plugin = new CMakePlugin(manager);
-    }
-
-    return g_plugin;
+    return new CMakePlugin(manager);
 }
 
 /* ************************************************************************ */

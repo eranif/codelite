@@ -11,13 +11,10 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 
-static CodeliteVim* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new CodeliteVim(manager); }
-    return thePlugin;
+    return new CodeliteVim(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

@@ -144,6 +144,4 @@ protected:
     // wxString        m_ProfiledBinFullName;
 };
 
-extern CallGraph* thePlugin;
-
 #endif // CallGraph

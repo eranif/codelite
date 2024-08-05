@@ -29,7 +29,7 @@ brew tap eranif/codelite
 brew update
 
 # install CodeLite
-brew reinstall --cask codelite-official
+brew reinstall --cask codelite
 
 # in order to avoid macOS errors about "damaged app can't be opened"...
 xattr -cr /Applications/codelite.app/

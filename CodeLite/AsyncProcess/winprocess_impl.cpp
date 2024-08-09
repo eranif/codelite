@@ -253,7 +253,7 @@ HRESULT PrepareStartupInformation(HPCON hpc, STARTUPINFOEX* psi)
     si.StartupInfo.cb = sizeof(STARTUPINFOEX);
 
     // Discover the size required for the list
-    size_t bytesRequired;
+    SIZE_T bytesRequired;
     InitializeProcThreadAttributeList(NULL, 1, 0, &bytesRequired);
 
     // Allocate memory to represent the list

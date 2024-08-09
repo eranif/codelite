@@ -474,9 +474,8 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
 
     wxString difftool = data.GetDifftool();
     if(difftool.empty()) {
-        const std::vector<wxString> options = { "built-in", "vimdiff", "vimdiff1", "vimdiff2", "vimdiff3", "winmerge" };
-        wxArrayString wx_options;
-        StdToWX::ToArrayString(options, &wx_options);
+        const wxArrayString wx_options =
+            StdToWX::ToArrayString({ "built-in", "vimdiff", "vimdiff1", "vimdiff2", "vimdiff3", "winmerge" });
         difftool = ::wxGetSingleChoice(_("Choose a tool to use:"), "CodeLite", wx_options, 0);
         if(difftool.empty()) {
             // user hit cancel

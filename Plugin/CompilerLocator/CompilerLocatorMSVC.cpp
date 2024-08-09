@@ -25,17 +25,17 @@
 
 #include "CompilerLocatorMSVC.h"
 
+#include "StdToWX.h"
 #include "compiler.h"
+#include "globals.h"
 
-#include <globals.h>
 #include <wx/regex.h>
 
 CompilerLocatorMSVC::CompilerLocatorMSVC()
+    : // We only deal with x86/x64 Native Tools here for simplicity
+      // Other platforms (such as ARM64 Cross Tools) can be added manually by cloning the compiler
+    m_vcPlatforms(StdToWX::ToArrayString({ "x86", "x64" }))
 {
-    // We only deal with x86/x64 Native Tools here for simplicity
-    // Other platforms (such as ARM64 Cross Tools) can be added manually by cloning the compiler
-    m_vcPlatforms.Add("x86");
-    m_vcPlatforms.Add("x64");
 }
 
 CompilerLocatorMSVC::~CompilerLocatorMSVC() {}

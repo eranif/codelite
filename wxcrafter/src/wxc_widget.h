@@ -140,10 +140,8 @@ public:
     typedef wxOrderedMap<wxString, PropertyBase*> MapProperties_t;
     typedef wxOrderedMap<wxString, ConnectDetails> MapEvents_t;
     typedef std::map<wxString, ConnectDetails> Map_t;
-    typedef std::map<wxString, wxArrayString> AntiGroupMap_t;
     typedef std::map<int, int> SizerFlagsValueSet_t;
 
-    static AntiGroupMap_t s_antiGroup;
     static SizerFlagsValueSet_t s_sizerFlagsValue;
 
 protected:

@@ -1,4 +1,6 @@
 #include "grid_wrapper.h"
+
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "choice_property.h"
@@ -13,14 +15,8 @@ GridWrapper::GridWrapper()
 {
     EnableStyle(wxT("wxWANTS_CHARS"), true);
 
-    wxArrayString vOpts, hOpts;
-    vOpts.Add("wxALIGN_TOP");
-    vOpts.Add("wxALIGN_CENTRE");
-    vOpts.Add("wxALIGN_BOTTOM");
-
-    hOpts.Add("wxALIGN_LEFT");
-    hOpts.Add("wxALIGN_CENTRE");
-    hOpts.Add("wxALIGN_RIGHT");
+    const wxArrayString vOpts = StdToWX::ToArrayString({ "wxALIGN_TOP", "wxALIGN_CENTRE", "wxALIGN_BOTTOM" });
+    const wxArrayString hOpts = StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_CENTRE", "wxALIGN_RIGHT" });
 
     SetPropertyString(_("Common Settings"), "wxGrid");
     AddProperty(new CategoryProperty(_("wxGrid Header")));

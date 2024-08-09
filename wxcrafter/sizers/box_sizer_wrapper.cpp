@@ -1,5 +1,6 @@
 #include "box_sizer_wrapper.h"
 
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "wxgui_defs.h"
@@ -11,9 +12,7 @@ BoxSizerWrapper::BoxSizerWrapper()
     m_type = ID_WXBOXSIZER;
     m_styles.Clear(); // Sizer has no styles
 
-    wxArrayString arr;
-    arr.Add("wxVERTICAL");
-    arr.Add("wxHORIZONTAL");
+    const wxArrayString arr = StdToWX::ToArrayString({ "wxVERTICAL", "wxHORIZONTAL" });
 
     SetPropertyString(_("Common Settings"), "wxBoxSizer");
     AddProperty(new ChoiceProperty(PROP_ORIENTATION, arr, 0, _("Sizer orientation")));

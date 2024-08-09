@@ -1,5 +1,6 @@
 #include "clConsoleBase.h"
 
+#include "StdToWX.h"
 #include "clConsoleAlacritty.hpp"
 #include "clConsoleCMD.h"
 #include "clConsoleGnomeTerminal.h"
@@ -95,25 +96,16 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
 
 wxArrayString clConsoleBase::GetAvailableTerminals()
 {
-    wxArrayString terminals;
+    return StdToWX::ToArrayString({
 #ifdef __WXMSW__
-    terminals.Add("CMD");
+        "CMD",
 #elif defined(__WXGTK__)
-    terminals.Add("konsole");
-    terminals.Add("gnome-terminal");
-    terminals.Add("lxterminal");
-    terminals.Add("mate-terminal");
-    terminals.Add("qterminal");
-    terminals.Add("xfce4-terminal");
-    terminals.Add("rxvt-unicode");
-    terminals.Add("Kitty");
+        "konsole", "gnome-terminal", "lxterminal", "mate-terminal", "qterminal", "xfce4-terminal", "rxvt-unicode",
+        "Kitty",
 #else
-    terminals.Add("Terminal");
-    terminals.Add("iTerm2");
-    terminals.Add("Kitty");
+        "Terminal", "iTerm2", "Kitty",
 #endif
-    terminals.Add("alacritty");
-    return terminals;
+        "alacritty" });
 }
 
 void clConsoleBase::AddEnvVariable(const wxString& name, const wxString& value)

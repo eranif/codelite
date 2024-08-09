@@ -1,5 +1,6 @@
 #include "ribbon_bar_wrapper.h"
 
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "ribbon_page_wrapper.h"
@@ -38,11 +39,7 @@ RibbonBarWrapper::RibbonBarWrapper()
     DelProperty(PROP_CONTROL_SPECIFIC_SETTINGS);
     AddProperty(new CategoryProperty("wxRibbonBar"));
 
-    wxArrayString themes;
-    themes.Add("Default");
-    themes.Add("Generic");
-    themes.Add("MSW");
-
+    const wxArrayString themes = StdToWX::ToArrayString({ "Default", "Generic", "MSW" });
     AddProperty(new ChoiceProperty(PROP_RIBBON_THEME, themes, 0, _("Select the ribbon bar theme")));
     m_namePattern = "m_ribbonBar";
     SetName(GenerateName());

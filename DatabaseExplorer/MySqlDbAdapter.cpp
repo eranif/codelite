@@ -24,11 +24,14 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "MySqlDbAdapter.h"
+
+#include "StdToWX.h"
 #include "constraint.h"
 #include "database.h"
 #include "dbconnection.h"
 #include "table.h"
 #include "view.h"
+
 #include <wx/regex.h>
 
 MySqlDbAdapter::MySqlDbAdapter()
@@ -183,28 +186,10 @@ IDbType* MySqlDbAdapter::GetDbTypeByName(const wxString& typeName)
 
 wxArrayString* MySqlDbAdapter::GetDbTypes()
 {
-    wxArrayString* pNames = new wxArrayString();
-    pNames->Add(wxT("INT"));
-    pNames->Add(wxT("SMALLINT"));
-    pNames->Add(wxT("BIGINT"));
-    pNames->Add(wxT("TINYINT"));
-    pNames->Add(wxT("VARCHAR"));
-    pNames->Add(wxT("DOUBLE"));
-    pNames->Add(wxT("FLOAT"));
-    pNames->Add(wxT("DECIMAL"));
-    pNames->Add(wxT("BOOL"));
-    pNames->Add(wxT("DATETIME"));
-    pNames->Add(wxT("CHAR"));
-    pNames->Add(wxT("TIMESTAMP"));
-    pNames->Add(wxT("ENUM"));
-    pNames->Add(wxT("SET"));
-    pNames->Add(wxT("LONGBLOB"));
-    pNames->Add(wxT("BLOB"));
-    pNames->Add(wxT("MEDIUMTEXT"));
-    pNames->Add(wxT("TEXT"));
-    pNames->Add(wxT("LONGTEXT"));
-
-    return pNames;
+    return new wxArrayString(StdToWX::ToArrayString(
+        { wxT("INT"), wxT("SMALLINT"), wxT("BIGINT"), wxT("TINYINT"), wxT("VARCHAR"), wxT("DOUBLE"), wxT("FLOAT"),
+          wxT("DECIMAL"), wxT("BOOL"), wxT("DATETIME"), wxT("CHAR"), wxT("TIMESTAMP"), wxT("ENUM"), wxT("SET"),
+          wxT("LONGBLOB"), wxT("BLOB"), wxT("MEDIUMTEXT"), wxT("TEXT"), wxT("LONGTEXT") }));
 }
 wxString MySqlDbAdapter::GetDefaultSelect(const wxString& dbName, const wxString& tableName)
 {

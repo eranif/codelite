@@ -62,8 +62,6 @@ copy %RUNTIME_DIR%\codelite.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-make.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-terminal.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\rm.exe "%TARGET_DIR%\CodeLite\" /Y
-copy %RUNTIME_DIR%\astyle.sample "%TARGET_DIR%\CodeLite\" /Y
-copy %RUNTIME_DIR%\php.sample "%TARGET_DIR%\CodeLite\" /Y
 copy %WX_CONFIG_DIR%\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 
 :END

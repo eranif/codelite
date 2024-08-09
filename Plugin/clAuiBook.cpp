@@ -37,23 +37,25 @@ public:
         wxAuiGenericTabArt::DrawButton(dc, wnd, in_rect, bitmap_id, button_state, orientation, out_rect);
     }
 
+#if wxCHECK_VERSION(3, 3, 0)
+    wxSize GetTabSize(wxReadOnlyDC& dcRef, wxWindow* wnd, const wxString& caption, const wxBitmapBundle& bitmap,
+                      bool WXUNUSED(active), int close_button_state, int* x_extent) override
+#else
     wxSize GetTabSize(wxDC& dcRef, wxWindow* wnd, const wxString& caption, const wxBitmapBundle& bitmap,
                       bool WXUNUSED(active), int close_button_state, int* x_extent) override
+#endif
     {
-        wxGCDC gcdc;
-        wxDC& dc = DrawingUtils::GetGCDC(dcRef, gcdc);
         wxCoord measured_textx, measured_texty, tmp;
 
         const int xPadding = wnd->FromDIP(X_SPACER);
         wxFont font = clTabRenderer::GetTabFont(true);
-        dc.SetFont(font);
-        dc.GetTextExtent(caption, &measured_textx, &measured_texty);
-        dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
+        dcRef.SetFont(font);
+        dcRef.GetTextExtent(caption, &measured_textx, &measured_texty);
+        dcRef.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
 
         // add padding around the text
         // [ _ | text | _ | bmp | _ | x | _ ]
         wxCoord tab_width = xPadding + measured_textx + xPadding;
-        wxCoord tab_height = measured_texty;
 
         // if there's a bitmap, add space for it
         if (bitmap.IsOk()) {
@@ -71,8 +73,8 @@ public:
             tab_width += m_activeCloseBmp.GetBitmapFor(wnd).GetLogicalWidth() + xPadding;
         }
 
-        // add padding
-        tab_height = DrawingUtils::GetTabHeight(dc, wnd, Y_SPACER);
+        dcRef.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
+        int tab_height = measured_texty + (4 * Y_SPACER);
 
         if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
             tab_width = m_fixedTabWidth;

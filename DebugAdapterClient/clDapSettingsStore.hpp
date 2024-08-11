@@ -94,7 +94,6 @@ public:
     void Save(const wxFileName& file);
     bool IsEmpty() const { return m_entries.empty(); }
     bool Get(const wxString& name, DapEntry* entry) const;
-    bool Contains(const wxString& name) const;
     bool Set(const DapEntry& entry);
 
     /**

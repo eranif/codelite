@@ -35,37 +35,6 @@ wxArrayString PHPProjectSettingsData::GetCCIncludePathAsArray() const
     return paths;
 }
 
-wxArrayString PHPProjectSettingsData::GetAllIncludePaths()
-{
-    std::multimap<wxString, wxArrayString> extraIncludePaths;
-    wxStringSet_t setIncludePaths;
-
-    const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
-    PHPProject::Map_t::const_iterator itp = projects.begin();
-    for(; itp != projects.end(); ++itp) {
-        const PHPProjectSettingsData& settings = itp->second->GetSettings();
-
-        extraIncludePaths.insert(std::make_pair(itp->second->GetName(), settings.GetIncludePathAsArray()));
-        extraIncludePaths.insert(std::make_pair(itp->second->GetName(), settings.GetCCIncludePathAsArray()));
-    }
-
-    std::map<wxString, wxArrayString>::const_iterator iter = extraIncludePaths.begin();
-    for(; iter != extraIncludePaths.end(); iter++) {
-        setIncludePaths.insert(iter->second.begin(), iter->second.end());
-    }
-
-    wxArrayString includes;
-    wxStringSet_t::const_iterator iterSet = setIncludePaths.begin();
-    for(; iterSet != setIncludePaths.end(); ++iterSet) {
-        wxString path = *iterSet;
-        path.Trim().Trim(false);
-        if(wxFileName::DirExists(path)) {
-            includes.Add(path);
-        }
-    }
-    return includes;
-}
-
 void PHPProjectSettingsData::FromJSON(const JSONItem& ele)
 {
     m_runAs = ele.namedObject("m_runAs").toInt(0);

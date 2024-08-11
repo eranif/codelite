@@ -77,25 +77,6 @@ bool IsPHPFileByExt(const wxString& filename)
     // return false;
 }
 
-wxString GetResourceDirectory()
-{
-    wxFileName fn;
-#ifdef __WXGTK__
-    fn = wxFileName(PLUGINS_DIR, "");
-    fn.AppendDir("resources");
-#else
-#ifdef USE_POSIX_LAYOUT
-    fn = wxFileName(clStandardPaths::Get().GetPluginsDirectory());
-#else
-    fn = wxFileName(clStandardPaths::Get().GetExecutablePath());
-    fn.AppendDir("plugins");
-#endif
-    fn.AppendDir("resources");
-#endif
-    fn.AppendDir("php");
-    return fn.GetPath();
-}
-
 wxString URIToFileName(const wxString& uriFileName)
 {
     wxString filename = wxURI::Unescape(uriFileName);

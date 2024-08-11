@@ -1485,22 +1485,6 @@ void ProtocolHandler::on_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     do_definition(std::move(msg), channel, true);
 }
 
-wxArrayString ProtocolHandler::FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const
-{
-    wxArrayString scopes;
-    scopes.reserve(namespace_arr.size());
-
-    for(const wxString& scope : namespace_arr) {
-        // filter internal scopes from std
-        if(!scope.StartsWith("std::_")) {
-            scopes.Add(scope);
-        }
-    }
-    // the global namespace is **always** last
-    scopes.Add("<global>"); // always include the global namespace
-    return scopes;
-}
-
 void ProtocolHandler::build_search_path()
 {
     // build the workspace file list

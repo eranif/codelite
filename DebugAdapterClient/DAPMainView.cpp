@@ -294,37 +294,6 @@ int DAPMainView::GetThreadId(const wxTreeItemId& item)
     return wxNOT_FOUND;
 }
 
-int DAPMainView::GetFrameId(const wxTreeItemId& item)
-{
-    auto cd = GetFrameClientData(item);
-    if(!cd) {
-        return wxNOT_FOUND;
-    }
-
-    if(cd->IsFrame()) {
-        return cd->GetId();
-    }
-    return wxNOT_FOUND;
-}
-
-std::unordered_set<int> DAPMainView::GetExpandedThreads()
-{
-    std::unordered_set<int> result = { m_plugin->GetClient().GetActiveThreadId() };
-    wxTreeItemIdValue cookie;
-    wxTreeItemId root = m_threadsTree->GetRootItem();
-    auto curitem = m_threadsTree->GetFirstChild(root, cookie);
-    while(curitem.IsOk()) {
-        if(m_threadsTree->IsExpanded(curitem)) {
-            int cur_thread_id = GetThreadId(curitem);
-            if(cur_thread_id != wxNOT_FOUND) {
-                result.insert(cur_thread_id);
-            }
-        }
-        curitem = m_threadsTree->GetNextChild(root, cookie);
-    }
-    return result;
-}
-
 // O(n)
 wxTreeItemId DAPMainView::FindVariableNode(int refId)
 {
@@ -352,12 +321,6 @@ wxTreeItemId DAPMainView::FindVariableNode(int refId)
         }
     }
     return wxTreeItemId(nullptr);
-}
-
-void DAPMainView::Clear()
-{
-    m_variablesTree->DeleteAllItems();
-    m_threadsTree->DeleteAllItems();
 }
 
 FrameOrThreadClientData* DAPMainView::GetFrameClientData(const wxTreeItemId& item)

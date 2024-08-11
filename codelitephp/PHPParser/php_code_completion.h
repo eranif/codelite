@@ -141,17 +141,6 @@ public:
     void Close();
 
     /**
-     * @brief called by the PHP symbols cache job.
-     * This is to optimize the searching the database (loading the symbols into the
-     * memory forces a kernel caching)
-     */
-    void OnSymbolsCached();
-
-    /**
-     * @brief same as the above function, but the caching went bad...
-     */
-    void OnSymbolsCacheError();
-    /**
      * @brief expand 'require_once' line (or any require) by replacing __file__ etc with the proper
      * values and appending everything
      */

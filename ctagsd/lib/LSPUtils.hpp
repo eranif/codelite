@@ -35,8 +35,6 @@ public:
     static LSP::CompletionItem::eCompletionItemKind get_completion_kind(const TagEntry* tag);
     static std::vector<LSP::SymbolInformation> to_symbol_information_array(const std::vector<TagEntryPtr>& tags,
                                                                            bool for_tree_view);
-    static std::vector<LSP::SymbolInformation> to_symbol_information_array(const std::vector<TagEntry>& tags,
-                                                                           bool for_tree_view);
 };
 
 #endif // LSPUTILS_HPP

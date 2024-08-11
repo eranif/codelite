@@ -85,7 +85,6 @@ protected:
     void OnTimerCheckCanInteract(wxTimerEvent& event);
     int GetThreadId(const wxTreeItemId& item);
     int GetVariableId(const wxTreeItemId& item);
-    int GetFrameId(const wxTreeItemId& item);
 
     void DoThreadExpanding(const wxTreeItemId& item);
     bool DoCopyBacktrace(const wxTreeItemId& item, wxString* content);
@@ -94,7 +93,6 @@ protected:
     void OnThreadsListMenu(wxTreeEvent& event);
     void OnVariablesMenu(wxTreeEvent& event);
     void OnScopeItemExpanding(wxTreeEvent& event);
-    void Clear();
 
 public:
     DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log);
@@ -104,10 +102,6 @@ public:
     void UpdateFrames(int threadId, dap::StackTraceResponse* response);
     void UpdateScopes(int frameId, dap::ScopesResponse* response);
     void UpdateVariables(int parentRef, dap::VariablesResponse* response);
-    /**
-     * @brief return list of thread-id that are expanded in the UI
-     */
-    std::unordered_set<int> GetExpandedThreads();
 
     void SetDisabled(bool b);
     bool IsDisabled() const;

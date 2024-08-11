@@ -80,7 +80,6 @@ public:
     }
     virtual ~GitClientData() {}
 
-    void SetPath(const wxString& path) { this->m_path = path; }
     const wxString& GetPath() const { return m_path; }
     eGitFile GetKind() const { return m_kind; }
 };

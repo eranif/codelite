@@ -21,7 +21,6 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
-#include "new_file_dlg.h"
 #include "php_configuration_data.h"
 #include "php_project_settings_dlg.h"
 #include "php_strings.h"
@@ -1038,8 +1037,6 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
     }
 }
 
-void PHPWorkspaceView::OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }
-
 void PHPWorkspaceView::OnRenameWorkspace(wxCommandEvent& e)
 {
     wxString new_name = ::wxGetTextFromUser(_("New workspace name:"), _("Rename workspace"));
@@ -1159,8 +1156,6 @@ void PHPWorkspaceView::OnPhpParserProgress(clParseEvent& event)
     event.Skip();
     ReportParseThreadProgress(event.GetCurfileIndex(), event.GetTotalFiles());
 }
-
-void PHPWorkspaceView::OnPhpParserStarted(clParseEvent& event) { event.Skip(); }
 
 void PHPWorkspaceView::OnSyncWorkspaceWithFileSystem(wxCommandEvent& e)
 {

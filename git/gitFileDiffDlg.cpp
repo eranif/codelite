@@ -49,12 +49,6 @@ GitFileDiffDlg::GitFileDiffDlg(wxWindow* parent)
 GitFileDiffDlg::~GitFileDiffDlg() {}
 
 /*******************************************************************************/
-void GitFileDiffDlg::SetDiff(const wxString& diff)
-{
-    m_editor->SetText(diff);
-    m_editor->SetReadOnly(true);
-}
-
 void GitFileDiffDlg::OnSaveAsPatch(wxCommandEvent& event)
 {
     wxString path = ::wxFileSelector(_("Save as"), "", "untitled", "patch", wxFileSelectorDefaultWildcardStr,

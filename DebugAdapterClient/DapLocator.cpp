@@ -31,18 +31,6 @@ wxString wrap_string(const wxString& str)
     return s;
 }
 
-wxString get_exe_name(const wxString& base, size_t counter = wxString::npos)
-{
-    wxString exename = base;
-    if(counter != wxString::npos) {
-        exename << "-" << counter;
-    }
-#ifdef __WXMSW__
-    exename << ".exe";
-#endif
-    return exename;
-}
-
 DapEntry create_entry(const wxString& name, int port, const std::vector<wxString>& cmd, DapLaunchType launch_type)
 {
     DapEntry entry;

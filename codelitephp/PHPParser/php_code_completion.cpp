@@ -47,13 +47,6 @@ struct PHPCCUserData : public wxClientData {
 };
 
 /// Ascending sorting function
-struct _SDescendingSort {
-    bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
-    {
-        return rStart->GetName().Cmp(rEnd->GetName()) > 0;
-    }
-};
-
 struct _SAscendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
@@ -638,10 +631,6 @@ void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
         }
     }
 }
-
-void PHPCodeCompletion::OnSymbolsCached() { clLogMessage("PHP Symbols cached into OS cache"); }
-
-void PHPCodeCompletion::OnSymbolsCacheError() { clLogMessage("Error encountered while caching PHP symbols"); }
 
 void PHPCodeCompletion::OnQuickJump(clCodeCompletionEvent& e)
 {

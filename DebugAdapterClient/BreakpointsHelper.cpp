@@ -12,11 +12,6 @@ bool is_source_breakpoint(const clDebuggerBreakpoint& bp)
     return bp.bp_type == BreakpointType::BP_type_break && !bp.file.empty() && bp.lineno > 0;
 }
 
-bool is_function_breakpoint(const clDebuggerBreakpoint& bp)
-{
-    return bp.bp_type == BreakpointType::BP_type_break && !bp.function_name.empty();
-}
-
 dap::SourceBreakpoint to_dap_source_bp(const clDebuggerBreakpoint& bp)
 {
     dap::SourceBreakpoint d;

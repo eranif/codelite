@@ -54,11 +54,3 @@ GitLogDlg::GitLogDlg(wxWindow* parent, const wxString title)
 
 GitLogDlg::~GitLogDlg() {}
 
-void GitLogDlg::SetLog(const wxString& log)
-{
-    wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
-    wxTextAttr atr = m_editor->GetDefaultStyle();
-    atr.SetFont(font);
-    m_editor->SetDefaultStyle(atr);
-    m_editor->AppendText(log);
-}

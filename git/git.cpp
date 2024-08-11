@@ -439,8 +439,6 @@ void GitPlugin::UnPlug()
     /*Context Menu*/
     m_eventHandler->Disconnect(XRCID("git_add_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileAddSelected),
                                NULL, this);
-    // m_eventHandler->Disconnect( ID_DELETE_FILE, wxEVT_MENU, wxCommandEventHandler(
-    // GitPlugin::OnFileDeleteSelected), NULL, this );
     m_eventHandler->Disconnect(XRCID("git_reset_file"), wxEVT_MENU,
                                wxCommandEventHandler(GitPlugin::OnFileResetSelected), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
@@ -462,12 +460,6 @@ void GitPlugin::UnPlug()
     m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
 
     m_tabToggler.reset(NULL);
-}
-
-void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    DoSetRepoPath();
 }
 
 void GitPlugin::DoSetRepoPath(const wxString& repo_path)
@@ -570,8 +562,6 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     GetConsole()->AddText(commandOutput);
     RefreshFileListView();
 }
-
-void GitPlugin::OnFileDeleteSelected(wxCommandEvent& e) { RefreshFileListView(); }
 
 void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
 {
@@ -907,20 +897,6 @@ wxString GitPlugin::GetEditorRelativeFilepath() const // Called by OnGitBlame or
 void GitPlugin::DoGitBlame(const wxString& args) // Called by OnGitBlame or the git blame dialog
 {
     gitAction ga(gitBlame, args);
-    m_gitActionQueue.push_back(ga);
-    ProcessGitActionQueue();
-}
-
-void GitPlugin::OnGitBlameRevList(const wxString& arg, const wxString& filepath,
-                                  const wxString& commit) // Called by the git blame dialog
-{
-    wxString cmt(commit);
-    if (cmt.empty()) {
-        cmt = "HEAD";
-    }
-    wxString args = arg + ' ' + cmt + " -- " + filepath;
-
-    gitAction ga(gitRevlist, args);
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
@@ -2131,34 +2107,6 @@ void GitPlugin::RefreshFileListView()
     ProcessGitActionQueue();
 }
 
-void GitPlugin::DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo)
-{
-    files.Clear();
-    clTreeCtrl* tree = m_mgr->GetWorkspaceTree();
-    if (!tree)
-        return;
-
-    wxArrayTreeItemIds items;
-    tree->GetSelections(items);
-
-    for (size_t i = 0; i < items.GetCount(); ++i) {
-        FilewViewTreeItemData* itemData = dynamic_cast<FilewViewTreeItemData*>(tree->GetItemData(items.Item(i)));
-        if (itemData && itemData->GetData().GetKind() == ProjectItem::TypeFile) {
-            // we got a file
-            wxFileName fn(itemData->GetData().GetFile());
-            if (relativeToRepo && fn.IsAbsolute()) {
-                fn.MakeRelativeTo(m_repositoryDirectory);
-            }
-
-            wxString filename = fn.GetFullPath();
-            if (filename.Contains(" ")) {
-                filename.Prepend("\"").Append("\"");
-            }
-            files.Add(filename);
-        }
-    }
-}
-
 void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files, bool useFileAsBase)
 {
     for (const wxString& file : files) {
@@ -3044,15 +2992,6 @@ void GitPlugin::OnFindPath(clCommandEvent& event)
             DoSetRepoPath(new_path);
             RefreshFileListView();
         }
-    }
-}
-
-void GitPlugin::OnSftpFileSaved(clCommandEvent& event)
-{
-    event.Skip();
-    if (IsGitEnabled()) {
-        // file saved remotely, refresh the view
-        RefreshFileListView();
     }
 }
 

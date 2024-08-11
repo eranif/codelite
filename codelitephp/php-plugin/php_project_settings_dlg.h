@@ -37,7 +37,6 @@ private:
 
 protected:
     virtual void OnPgmgrviewPgChanged(wxPropertyGridEvent& event);
-    virtual void OnTextctrlviewfilterTextUpdated(wxCommandEvent& event);
     virtual void OnFileMappingItemActivated(wxDataViewEvent& event);
     virtual void OnFileMappingMenu(wxDataViewEvent& event);
     virtual void OnUseSystemBrowser(wxCommandEvent& event);
@@ -45,7 +44,6 @@ protected:
     virtual void OnUpdateApplyUI(wxCommandEvent& event);
     virtual void OnAddCCPath(wxCommandEvent& event);
     virtual void OnAddIncludePath(wxCommandEvent& event);
-    virtual void OnArgumentsEntered(wxCommandEvent& event);
     virtual void OnIndexFileSelected(wxFileDirPickerEvent& event);
     virtual void OnPHPExecChanged(wxFileDirPickerEvent& event);
     virtual void OnPageChanged(wxChoicebookEvent& event);

@@ -26,19 +26,9 @@ public:
     bool find_by_id(int id, dap::Breakpoint* bp);
 
     /**
-     * @brief return all breakpoints belonged to path
-     */
-    size_t find_by_path(const wxString& path, std::vector<dap::Breakpoint>* bps);
-
-    /**
      * @brief update or insert. this is done by the id property of bp
      */
     bool update_or_insert(const dap::Breakpoint& bp);
-
-    /**
-     * @brief update list of breakpoints
-     */
-    void bulk_update(const std::vector<dap::Breakpoint>& list);
 
     // getters
     const std::vector<dap::Breakpoint>& get_breakpoints() const { return m_breakpoints; }

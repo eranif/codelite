@@ -147,7 +147,6 @@ class GitEntry : public clConfigItem
     int m_gitConsoleSashPos;
     int m_gitCommitDlgHSashPos;
     int m_gitCommitDlgVSashPos;
-    wxArrayString m_recentCommits;
     wxString m_gitShellCommand;
     bool m_gitBlameShowLogControls;
     bool m_gitBlameShowParentCommit;
@@ -190,8 +189,6 @@ public:
 
     void Save();
     GitEntry& Load();
-    wxArrayString& GetRecentCommit() { return m_recentCommits; }
-    void AddRecentCommit(const wxString& commitMessage);
 
     void SetGitShellCommand(const wxString& gitShellCommand) { this->m_gitShellCommand = gitShellCommand; }
     const wxString& GetGitShellCommand() const { return m_gitShellCommand; }
@@ -214,7 +211,6 @@ public:
     const wxStringMap_t& GetEntries() const { return m_entries; }
     size_t GetFlags() const { return m_flags; }
     void SetEntry(const wxString& workspace, const wxString& repo) { this->m_entries[workspace] = repo; }
-    void DeleteEntry(const wxString& workspace);
 
     GitCommandsEntriesMap_t GetCommandsMap() const { return m_commandsMap; }
     void SetTrackedFileColour(const wxColour& colour) { this->m_colourTrackedFile = colour; }

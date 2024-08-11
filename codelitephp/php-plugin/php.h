@@ -31,7 +31,6 @@
 #include "cl_command_event.h"
 #include "php_event.h"
 #include "plugin.h"
-#include "plugin_settings.h"
 
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
@@ -79,7 +78,6 @@ public:
     PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
 
 protected:
-    bool IsWorkspaceViewDetached();
     void DoOpenWorkspace(const wxString& filename, bool createIfMissing = false, bool createProjectFromSources = false);
     void DoPlaceMenuBar(wxMenuBar* menuBar);
     void DoEnsureXDebugPanesVisible(const wxString& selectWindow = "");
@@ -120,9 +118,7 @@ public:
     void OnNewProjectFinish(clNewProjectEvent& e);
     void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
-    void OnXDebugShowBreakpointsWindow(wxCommandEvent& e);
     void OnXDebugDeleteAllBreakpoints(clDebugEvent& e);
-    void OnXDebugSettings(wxCommandEvent& e);
     void OnLoadURL(PHPEvent& e);
     void OnAllEditorsClosed(wxCommandEvent& e);
     void OnGoingDown(clCommandEvent& event);

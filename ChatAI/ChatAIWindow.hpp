@@ -27,10 +27,13 @@ protected:
     void OnChatAIOutput(clCommandEvent& event);
     void OnChatAIStderr(clCommandEvent& event);
     void OnChatAITerminated(clCommandEvent& event);
+    void PopulateModels();
+    void OnActiveModelChanged(wxCommandEvent& event);
 
 private:
     ChatAIConfig& m_config;
     bool m_llamaCliRunning = false;
+    wxChoice* m_activeModel = nullptr;
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);

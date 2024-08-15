@@ -23,6 +23,10 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAIConfig& config)
 
     m_toolbar->AddTool(wxID_PREFERENCES, _("Settings"), images->LoadBitmap("cog", 24));
     m_toolbar->AddTool(wxID_CLEAR, _("Clear content"), images->LoadBitmap("clear", 24));
+    m_activeModel = new wxChoice(m_toolbar, wxID_ANY);
+    m_toolbar->AddControl(m_activeModel);
+    PopulateModels();
+
     m_toolbar->SetToolBitmapSize(FromDIP(wxSize(24, 24)));
     m_toolbar->Realize();
 
@@ -35,6 +39,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAIConfig& config)
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_PREFERENCES);
     Bind(wxEVT_MENU, &ChatAIWindow::OnClear, this, wxID_CLEAR);
+    m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnActiveModelChanged, this);
 }
 
 ChatAIWindow::~ChatAIWindow()
@@ -120,7 +125,9 @@ void ChatAIWindow::OnClear(wxCommandEvent& event)
 void ChatAIWindow::ShowSettings()
 {
     ChatAISettingsDlg dlg(this, m_config);
-    dlg.ShowModal();
+    if (dlg.ShowModal() == wxID_OK) {
+        PopulateModels();
+    }
 }
 
 void ChatAIWindow::OnChatAIStarted(clCommandEvent& event)
@@ -159,4 +166,26 @@ void ChatAIWindow::OnStop(wxCommandEvent& event)
     wxUnusedVar(event);
     clCommandEvent event_stop{ wxEVT_CHATAI_STOP };
     EventNotifier::Get()->AddPendingEvent(event_stop);
+}
+
+void ChatAIWindow::PopulateModels()
+{
+    m_activeModel->Clear();
+    auto models = m_config.GetModels();
+    for (auto model : models) {
+        m_activeModel->Append(model->m_name);
+    }
+
+    auto activeModelName = m_config.GetSelectedModel() ? m_config.GetSelectedModel()->m_name : wxString();
+    if (!activeModelName.empty()) {
+        m_activeModel->SetStringSelection(activeModelName);
+    }
+}
+
+void ChatAIWindow::OnActiveModelChanged(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString activeModel = m_activeModel->GetStringSelection();
+    m_config.SetSelectedModelName(activeModel);
+    m_config.Save();
 }

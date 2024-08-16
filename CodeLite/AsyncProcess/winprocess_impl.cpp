@@ -41,7 +41,9 @@
 
 typedef VOID* HPCON;
 
-#if !defined(_MSC_VER)
+#if 1
+#include <wincon.h>
+#else // !defined(_MSC_VER) // Check version of MINGW?
 typedef HRESULT(WINAPI* CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
 typedef VOID(WINAPI* ClosePseudoConsole_T)(HPCON hPC);
 
@@ -310,7 +312,7 @@ IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const wxString& cm
         return nullptr;
     }
 
-#if !defined(_MSC_VER)
+#if 0 // !defined(_MSC_VER)
     // Create the Pseudo Console, using the pipes
     if(loadOnce) {
         loadOnce = false;

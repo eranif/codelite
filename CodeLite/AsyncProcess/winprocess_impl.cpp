@@ -46,8 +46,8 @@ typedef HRESULT(WINAPI* CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE
 typedef VOID(WINAPI* ClosePseudoConsole_T)(HPCON hPC);
 
 thread_local bool loadOnce = true;
-thread_local CreatePseudoConsole_T CreatePseudoConsole = nullptr;
-thread_local ClosePseudoConsole_T ClosePseudoConsole = nullptr;
+thread_local CreatePseudoConsole_T CreatePseudoConsoleFunc = nullptr;
+thread_local ClosePseudoConsole_T ClosePseudoConsoleFunc = nullptr;
 #endif
 
 #ifndef PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE
@@ -316,21 +316,21 @@ IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const wxString& cm
         loadOnce = false;
         auto hDLL = ::LoadLibrary(L"Kernel32.dll");
         if(hDLL) {
-            CreatePseudoConsole = (CreatePseudoConsole_T)::GetProcAddress(hDLL, "CreatePseudoConsole");
-            ClosePseudoConsole = (ClosePseudoConsole_T)::GetProcAddress(hDLL, "ClosePseudoConsole");
+            CreatePseudoConsoleFunc = (CreatePseudoConsole_T)::GetProcAddress(hDLL, "CreatePseudoConsole");
+            ClosePseudoConsoleFunc = (ClosePseudoConsole_T)::GetProcAddress(hDLL, "ClosePseudoConsole");
             FreeLibrary(hDLL);
         }
     }
 #endif
 
-    if(!CreatePseudoConsole || !ClosePseudoConsole) {
+    if(!CreatePseudoConsoleFunc || !ClosePseudoConsoleFunc) {
         ::CloseHandle(inputReadSide);
         ::CloseHandle(outputWriteSide);
         ::CloseHandle(inputWriteSide);
         ::CloseHandle(outputReadSide);
         return nullptr;
     }
-    auto hr = CreatePseudoConsole({ 1000, 32 }, inputReadSide, outputWriteSide, 0, &hPC);
+    auto hr = CreatePseudoConsoleFunc({ 1000, 32 }, inputReadSide, outputWriteSide, 0, &hPC);
     if(FAILED(hr)) {
         ::CloseHandle(inputReadSide);
         ::CloseHandle(outputWriteSide);
@@ -697,7 +697,7 @@ void WinProcessImpl::Cleanup()
     }
 
     if(m_hPseudoConsole) {
-        ClosePseudoConsole(m_hPseudoConsole);
+        ClosePseudoConsoleFunc(m_hPseudoConsole);
         m_hPseudoConsole = nullptr;
     }
 

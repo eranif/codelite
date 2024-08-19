@@ -3,7 +3,7 @@ add_definitions(-std=c++17)
 set(PLUGIN_NAME "DebugAdapterClient")
 project(DebugAdapterClient)
 
-add_subdirectory("${CL_SRC_ROOT}/wxdap/dap" ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+add_subdirectory("${CL_SRC_ROOT}/submodules/wxdap/dap" ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
@@ -16,7 +16,7 @@ include_directories(
     "${CL_SRC_ROOT}/CodeLite/ssh"
     "${CL_SRC_ROOT}/PCH"
     "${CL_SRC_ROOT}/Interfaces"
-    "${CL_SRC_ROOT}/wxdap")
+    "${CL_SRC_ROOT}/submodules/wxdap")
 # Definitions
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)

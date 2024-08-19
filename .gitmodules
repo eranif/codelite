@@ -8,7 +8,7 @@
 	path = submodules/wx-config-msys2
 	url = https://github.com/eranif/wx-config-msys2.git
 [submodule "yaml-cpp"]
-	path = yaml-cpp
+	path = submodules/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
 [submodule "cc-wrapper"]
 	path = cc-wrapper

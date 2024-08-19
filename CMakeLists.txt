@@ -896,7 +896,7 @@ add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
 
 if(NOT APPLE)
-    add_subdirectory(yaml-cpp)
+    add_subdirectory(submodules/yaml-cpp)
     set(LIBYAML_CPP "yaml-cpp")
 endif()
 
@@ -909,7 +909,7 @@ set(WITHOUT_INSTALL ON)
 add_subdirectory(cc-wrapper)
 
 # include the yaml-cpp directory
-include_directories("${CL_SRC_ROOT}/yaml-cpp/include")
+include_directories("${CL_SRC_ROOT}/submodules/yaml-cpp/include")
 if(UNIX)
     # On Windows, this is default. Set it OFF for Linux / macOS as well
     set(BUILD_SHARED_LIBS OFF)

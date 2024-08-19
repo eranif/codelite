@@ -14,7 +14,7 @@
 	path = submodules/cc-wrapper
 	url = https://github.com/eranif/cc-wrapper
 [submodule "dtl"]
-	path = dtl
+	path = submodules/dtl
 	url = https://github.com/eranif/dtl.git
 [submodule "openssl-cmake"]
 	path = submodules/openssl-cmake

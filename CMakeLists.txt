@@ -889,7 +889,7 @@ if(APPLE)
 endif()
 
 # add the dtl module include path before we include Plugin folder
-include_directories(dtl)
+include_directories(submodules/dtl)
 
 add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/wxshapeframework)

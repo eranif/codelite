@@ -11,7 +11,7 @@
 	path = submodules/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
 [submodule "cc-wrapper"]
-	path = cc-wrapper
+	path = submodules/cc-wrapper
 	url = https://github.com/eranif/cc-wrapper
 [submodule "dtl"]
 	path = dtl

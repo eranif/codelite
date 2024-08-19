@@ -906,7 +906,7 @@ add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
 set(WITHOUT_INSTALL ON)
-add_subdirectory(cc-wrapper)
+add_subdirectory(submodules/cc-wrapper)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/submodules/yaml-cpp/include")

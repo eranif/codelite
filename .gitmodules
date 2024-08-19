@@ -5,7 +5,7 @@
 	path = submodules/wxdap
 	url = https://github.com/eranif/wxdap
 [submodule "wx-config-msys2"]
-	path = wx-config-msys2
+	path = submodules/wx-config-msys2
 	url = https://github.com/eranif/wx-config-msys2.git
 [submodule "yaml-cpp"]
 	path = yaml-cpp

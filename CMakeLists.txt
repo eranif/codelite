@@ -932,7 +932,7 @@ else()
 
     if(MINGW)
         # build wx-config for Windows
-        add_subdirectory(wx-config-msys2)
+        add_subdirectory(submodules/wx-config-msys2)
         install(TARGETS wx-config DESTINATION ${CL_INSTALL_BIN})
     endif()
 

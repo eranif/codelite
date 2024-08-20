@@ -1,68 +1,70 @@
 #include "BitmapSelectorDlg.h"
+
+#include "StdToWX.h"
+#include "windowattrmanager.h"
 #include "wxc_project_metadata.h"
 #include "wxc_settings.h"
 #include "wxgui_helpers.h"
-#include <windowattrmanager.h>
+
 #include <wx/filedlg.h>
 #include <wx/filename.h>
 
 BitmapSelectorDlg::BitmapSelectorDlg(wxWindow* parent, const wxString& selection)
     : BitmapSelectorDlgBase(parent)
 {
-    wxArrayString arr;
-    arr.Add(wxT("wxART_ERROR"));
-    arr.Add(wxT("wxART_QUESTION"));
-    arr.Add(wxT("wxART_WARNING"));
-    arr.Add(wxT("wxART_INFORMATION"));
-    arr.Add(wxT("wxART_ADD_BOOKMARK"));
-    arr.Add(wxT("wxART_DEL_BOOKMARK"));
-    arr.Add(wxT("wxART_HELP_SIDE_PANEL"));
-    arr.Add(wxT("wxART_HELP_SETTINGS"));
-    arr.Add(wxT("wxART_HELP_BOOK"));
-    arr.Add(wxT("wxART_HELP_FOLDER"));
-    arr.Add(wxT("wxART_HELP_PAGE"));
-    arr.Add(wxT("wxART_GO_BACK"));
-    arr.Add(wxT("wxART_GO_FORWARD"));
-    arr.Add(wxT("wxART_GO_UP"));
-    arr.Add(wxT("wxART_GO_DOWN"));
-    arr.Add(wxT("wxART_GO_TO_PARENT"));
-    arr.Add(wxT("wxART_GO_HOME"));
-    arr.Add(wxT("wxART_GOTO_FIRST"));
-    arr.Add(wxT("wxART_GOTO_LAST"));
-    arr.Add(wxT("wxART_PRINT"));
-    arr.Add(wxT("wxART_HELP"));
-    arr.Add(wxT("wxART_TIP"));
-    arr.Add(wxT("wxART_REPORT_VIEW"));
-    arr.Add(wxT("wxART_LIST_VIEW"));
-    arr.Add(wxT("wxART_NEW_DIR"));
-    arr.Add(wxT("wxART_FOLDER"));
-    arr.Add(wxT("wxART_FOLDER_OPEN"));
-    arr.Add(wxT("wxART_GO_DIR_UP"));
-    arr.Add(wxT("wxART_EXECUTABLE_FILE"));
-    arr.Add(wxT("wxART_NORMAL_FILE"));
-    arr.Add(wxT("wxART_TICK_MARK"));
-    arr.Add(wxT("wxART_CROSS_MARK"));
-    arr.Add(wxT("wxART_MISSING_IMAGE"));
-    arr.Add(wxT("wxART_NEW"));
-    arr.Add(wxT("wxART_FILE_OPEN"));
-    arr.Add(wxT("wxART_FILE_SAVE"));
-    arr.Add(wxT("wxART_FILE_SAVE_AS"));
-    arr.Add(wxT("wxART_DELETE"));
-    arr.Add(wxT("wxART_COPY"));
-    arr.Add(wxT("wxART_CUT"));
-    arr.Add(wxT("wxART_PASTE"));
-    arr.Add(wxT("wxART_UNDO"));
-    arr.Add(wxT("wxART_REDO"));
-    arr.Add(wxT("wxART_PLUS"));
-    arr.Add(wxT("wxART_MINUS"));
-    arr.Add(wxT("wxART_CLOSE"));
-    arr.Add(wxT("wxART_QUIT"));
-    arr.Add(wxT("wxART_FIND"));
-    arr.Add(wxT("wxART_FIND_AND_REPLACE"));
-    arr.Add(wxT("wxART_HARDDISK"));
-    arr.Add(wxT("wxART_FLOPPY"));
-    arr.Add(wxT("wxART_CDROM"));
-    arr.Add(wxT("wxART_REMOVABLE"));
+    wxArrayString arr = StdToWX::ToArrayString({ wxT("wxART_ERROR"),
+                                                 wxT("wxART_QUESTION"),
+                                                 wxT("wxART_WARNING"),
+                                                 wxT("wxART_INFORMATION"),
+                                                 wxT("wxART_ADD_BOOKMARK"),
+                                                 wxT("wxART_DEL_BOOKMARK"),
+                                                 wxT("wxART_HELP_SIDE_PANEL"),
+                                                 wxT("wxART_HELP_SETTINGS"),
+                                                 wxT("wxART_HELP_BOOK"),
+                                                 wxT("wxART_HELP_FOLDER"),
+                                                 wxT("wxART_HELP_PAGE"),
+                                                 wxT("wxART_GO_BACK"),
+                                                 wxT("wxART_GO_FORWARD"),
+                                                 wxT("wxART_GO_UP"),
+                                                 wxT("wxART_GO_DOWN"),
+                                                 wxT("wxART_GO_TO_PARENT"),
+                                                 wxT("wxART_GO_HOME"),
+                                                 wxT("wxART_GOTO_FIRST"),
+                                                 wxT("wxART_GOTO_LAST"),
+                                                 wxT("wxART_PRINT"),
+                                                 wxT("wxART_HELP"),
+                                                 wxT("wxART_TIP"),
+                                                 wxT("wxART_REPORT_VIEW"),
+                                                 wxT("wxART_LIST_VIEW"),
+                                                 wxT("wxART_NEW_DIR"),
+                                                 wxT("wxART_FOLDER"),
+                                                 wxT("wxART_FOLDER_OPEN"),
+                                                 wxT("wxART_GO_DIR_UP"),
+                                                 wxT("wxART_EXECUTABLE_FILE"),
+                                                 wxT("wxART_NORMAL_FILE"),
+                                                 wxT("wxART_TICK_MARK"),
+                                                 wxT("wxART_CROSS_MARK"),
+                                                 wxT("wxART_MISSING_IMAGE"),
+                                                 wxT("wxART_NEW"),
+                                                 wxT("wxART_FILE_OPEN"),
+                                                 wxT("wxART_FILE_SAVE"),
+                                                 wxT("wxART_FILE_SAVE_AS"),
+                                                 wxT("wxART_DELETE"),
+                                                 wxT("wxART_COPY"),
+                                                 wxT("wxART_CUT"),
+                                                 wxT("wxART_PASTE"),
+                                                 wxT("wxART_UNDO"),
+                                                 wxT("wxART_REDO"),
+                                                 wxT("wxART_PLUS"),
+                                                 wxT("wxART_MINUS"),
+                                                 wxT("wxART_CLOSE"),
+                                                 wxT("wxART_QUIT"),
+                                                 wxT("wxART_FIND"),
+                                                 wxT("wxART_FIND_AND_REPLACE"),
+                                                 wxT("wxART_HARDDISK"),
+                                                 wxT("wxART_FLOPPY"),
+                                                 wxT("wxART_CDROM"),
+                                                 wxT("wxART_REMOVABLE") });
     arr.Sort();
 
     m_choiceArtID->Append(arr);

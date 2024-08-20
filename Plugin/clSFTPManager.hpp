@@ -264,8 +264,7 @@ public:
     ReadOutput_t AwaitExecute(const wxString& accountName, const std::vector<wxString>& command, const wxString& wd,
                               clEnvList_t* env = nullptr)
     {
-        wxArrayString arr;
-        StdToWX::ToArrayString(command, &arr);
+        const wxArrayString arr = StdToWX::ToArrayString(command);
         return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env);
     }
 
@@ -282,8 +281,7 @@ public:
     void AsyncExecute(wxEvtHandler* sink, const wxString& accountName, const std::vector<wxString>& command,
                       const wxString& wd, clEnvList_t* env = nullptr)
     {
-        wxArrayString arr;
-        StdToWX::ToArrayString(command, &arr);
+        const wxArrayString arr = StdToWX::ToArrayString(command);
         return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env);
     }
 };

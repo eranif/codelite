@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "PostgreSqlDbAdapter.h"
+
+#include "StdToWX.h"
 #include "constraint.h"
 #include "database.h"
 #include "dbconnection.h"
@@ -251,69 +253,42 @@ IDbType* PostgreSqlDbAdapter::GetDbTypeByName(const wxString& typeName)
 
 wxArrayString* PostgreSqlDbAdapter::GetDbTypes()
 {
-    wxArrayString* pNames = new wxArrayString();
+    return new wxArrayString(StdToWX::ToArrayString(
+        { wxT("SMALLINT"), wxT("INTEGER"), wxT("BIGINT"), wxT("DECIMAL"), wxT("NUMERIC"), wxT("REAL"),
+          wxT("DOUBLE PRECISION"), wxT("SERIAL"), wxT("BIGSERIAL"),
 
-    pNames->Add(wxT("SMALLINT"));
-    pNames->Add(wxT("INTEGER"));
-    pNames->Add(wxT("BIGINT"));
-    pNames->Add(wxT("DECIMAL"));
-    pNames->Add(wxT("NUMERIC"));
-    pNames->Add(wxT("REAL"));
-    pNames->Add(wxT("DOUBLE PRECISION"));
-    pNames->Add(wxT("SERIAL"));
-    pNames->Add(wxT("BIGSERIAL"));
+          // Monetary types
+          wxT("CHARACTER VARYING"),
 
-    // Monetary types
-    pNames->Add(wxT("CHARACTER VARYING"));
-    // Character types
-    pNames->Add(wxT("VARCHAR"));
-    pNames->Add(wxT("CHARACTER"));
-    pNames->Add(wxT("CHAR"));
-    pNames->Add(wxT("TEXT"));
+          // Character types
+          wxT("VARCHAR"), wxT("CHARACTER"), wxT("CHAR"), wxT("TEXT"),
 
-    // Binary types
-    pNames->Add(wxT("BYTEA"));
+          // Binary types
+          wxT("BYTEA"),
 
-    // Date/Time types
-    pNames->Add(wxT("TIMESTAMP"));
-    pNames->Add(wxT("DATE"));
-    pNames->Add(wxT("TIME"));
-    pNames->Add(wxT("INTERVAL"));
+          // Date/Time types
+          wxT("TIMESTAMP"), wxT("DATE"), wxT("TIME"), wxT("INTERVAL"),
 
-    // Boolean types
-    pNames->Add(wxT("BOOLEAN"));
+          // Boolean types
+          wxT("BOOLEAN"),
 
-    // Geometric types
-    pNames->Add(wxT("POINT"));
-    pNames->Add(wxT("LINE"));
-    pNames->Add(wxT("LSEG"));
-    pNames->Add(wxT("BOX"));
-    pNames->Add(wxT("PATH"));
-    pNames->Add(wxT("POLYGON"));
-    pNames->Add(wxT("CIRCLE"));
+          // Geometric types
+          wxT("POINT"), wxT("LINE"), wxT("LSEG"), wxT("BOX"), wxT("PATH"), wxT("POLYGON"), wxT("CIRCLE"),
 
-    // Network address types
-    pNames->Add(wxT("CIDR"));
-    pNames->Add(wxT("INET"));
-    pNames->Add(wxT("MACADDR"));
+          // Network address types
+          wxT("CIDR"), wxT("INET"), wxT("MACADDR"),
 
-    // Bit String types
-    pNames->Add(wxT("BIT"));
-    pNames->Add(wxT("BIT VARYING"));
+          // Bit String types
+          wxT("BIT"), wxT("BIT VARYING"),
 
-    // UUID type
-    pNames->Add(wxT("UUID"));
+          // UUID type
+          wxT("UUID"),
 
-    // XML type
-    pNames->Add(wxT("XML"));
+          // XML type
+          wxT("XML"),
 
-    // OTHER TYPES
-    pNames->Add(wxT("OID"));
-    pNames->Add(wxT("XID"));
-    pNames->Add(wxT("ARRAY"));
-    pNames->Add(wxT("REGPROX"));
-
-    return pNames;
+          // OTHER TYPES
+          wxT("OID"), wxT("XID"), wxT("ARRAY"), wxT("REGPROX") }));
 }
 wxString PostgreSqlDbAdapter::GetDefaultSelect(const wxString& dbName, const wxString& tableName)
 {

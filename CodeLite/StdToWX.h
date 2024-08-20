@@ -64,7 +64,7 @@ public:
     /**
      * @brief convert std::vector into wxArrayString
      */
-    static void ToArrayString(const std::vector<wxString>& vec, wxArrayString* arr);
+    static wxArrayString ToArrayString(const std::vector<wxString>& vec);
 };
 
 #endif // STDTOWX_H

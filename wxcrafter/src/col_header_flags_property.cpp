@@ -1,5 +1,8 @@
 #include "col_header_flags_property.h"
+
+#include "StdToWX.h"
 #include "wxgui_helpers.h"
+
 #include <wx/headercol.h>
 #include <wx/dataview.h>
 
@@ -10,10 +13,12 @@ ColHeaderFlagsProperty::ColHeaderFlagsProperty(const wxString& label, int initia
 {
     SetLabel(label);
     if(kind == eColumnKind::kListCtrl) {
-        m_names.Add("wxCOL_RESIZABLE");
-        m_names.Add("wxCOL_SORTABLE");
-        m_names.Add("wxCOL_REORDERABLE");
-        m_names.Add("wxCOL_HIDDEN");
+        m_names = StdToWX::ToArrayString({
+            "wxCOL_RESIZABLE",
+            "wxCOL_SORTABLE",
+            "wxCOL_REORDERABLE",
+            "wxCOL_HIDDEN",
+        });
 
         m_values.Add(wxCOL_RESIZABLE);
         m_values.Add(wxCOL_SORTABLE);
@@ -21,11 +26,8 @@ ColHeaderFlagsProperty::ColHeaderFlagsProperty(const wxString& label, int initia
         m_values.Add(wxCOL_HIDDEN);
 
     } else {
-        m_names.Add("wxDATAVIEW_COL_RESIZABLE");
-        m_names.Add("wxDATAVIEW_COL_SORTABLE");
-        m_names.Add("wxDATAVIEW_COL_REORDERABLE");
-        m_names.Add("wxDATAVIEW_COL_HIDDEN");
-
+        m_names = StdToWX::ToArrayString({ "wxDATAVIEW_COL_RESIZABLE", "wxDATAVIEW_COL_SORTABLE",
+                                           "wxDATAVIEW_COL_REORDERABLE", "wxDATAVIEW_COL_HIDDEN" });
         m_values.Add(wxDATAVIEW_COL_RESIZABLE);
         m_values.Add(wxDATAVIEW_COL_SORTABLE);
         m_values.Add(wxDATAVIEW_COL_REORDERABLE);

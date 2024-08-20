@@ -1,5 +1,6 @@
 #include "top_level_win_wrapper.h"
 
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "virtual_folder_property.h"
@@ -51,12 +52,7 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
                 true);
     }
 
-    wxArrayString arr;
-    arr.Add("");
-    arr.Add("wxBOTH");
-    arr.Add("wxVERTICAL");
-    arr.Add("wxHORIZONTAL");
-
+    const wxArrayString arr = StdToWX::ToArrayString({ "", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL" });
     AddProperty(new StringProperty(PROP_TITLE, "", _("The title, if any")));
     AddProperty(
         new VirtualFolderProperty(PROP_VIRTUAL_FOLDER, "", _("CodeLite's virtual folder for the generated files")));

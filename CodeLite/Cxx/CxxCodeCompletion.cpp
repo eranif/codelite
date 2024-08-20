@@ -4,6 +4,7 @@
 #include "CxxExpression.hpp"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
+#include "StdToWX.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -213,15 +214,8 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, std::unordered_map<wx
     }
 
     // we also include the anonymous entries for this scope
-    wxArrayString kinds;
-    kinds.Add("class");
-    kinds.Add("struct");
-    kinds.Add("namespace");
-    kinds.Add("member");
-    kinds.Add("function");
-    kinds.Add("variable");
-    kinds.Add("enum");
-    kinds.Add("macro");
+    const wxArrayString kinds =
+        StdToWX::ToArrayString({ "class", "struct", "namespace", "member", "function", "variable", "enum", "macro" });
     std::vector<TagEntryPtr> anonymous_tags;
     get_anonymous_tags(wxEmptyString, kinds, anonymous_tags);
 

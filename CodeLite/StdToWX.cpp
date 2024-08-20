@@ -37,10 +37,7 @@ void StdToWX::RemoveLast(std::string& str, size_t count)
     }
 }
 
-void StdToWX::ToArrayString(const std::vector<wxString>& vec, wxArrayString* arr)
+wxArrayString StdToWX::ToArrayString(const std::vector<wxString>& vec)
 {
-    arr->reserve(vec.size());
-    for(const wxString& s : vec) {
-        arr->Add(s);
-    }
+    return { vec.size(), vec.data() };
 }

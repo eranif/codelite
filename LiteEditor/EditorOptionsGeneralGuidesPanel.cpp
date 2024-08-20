@@ -1,5 +1,6 @@
 #include "EditorOptionsGeneralGuidesPanel.h"
 
+#include "StdToWX.h"
 #include "cl_config.h"
 #include "editor_config.h"
 
@@ -57,11 +58,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     }
 
     {
-        wxArrayString options;
-        options.Add("Default");
-        options.Add("Mac (CR)");
-        options.Add("Unix (LF)");
-        options.Add("Windows (CRLF)");
+        const wxArrayString options = StdToWX::ToArrayString({ "Default", "Mac (CR)", "Unix (LF)", "Windows (CRLF)" });
         AddProperty(_("EOL Style"), options, m_options->GetEolMode(), UPDATE_TEXT_CB(SetEolMode));
     }
 

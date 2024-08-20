@@ -1,5 +1,6 @@
 #include "data_view_list_ctrl_column.h"
 
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "choice_property.h"
@@ -16,23 +17,11 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
     m_sizerFlags.Clear();
     m_properties.DeleteValues();
 
-    wxArrayString coltype;
-    coltype.Add("bitmap");
-    coltype.Add("check");
-    coltype.Add("text");
-    coltype.Add("icontext");
-    coltype.Add("progress");
-    coltype.Add("choice");
-
-    wxArrayString alignment;
-    alignment.Add("wxALIGN_LEFT");
-    alignment.Add("wxALIGN_RIGHT");
-    alignment.Add("wxALIGN_CENTER");
-
-    wxArrayString cellType;
-    cellType.Add("wxDATAVIEW_CELL_INERT");
-    cellType.Add("wxDATAVIEW_CELL_ACTIVATABLE");
-    cellType.Add("wxDATAVIEW_CELL_EDITABLE");
+    const wxArrayString coltype =
+        StdToWX::ToArrayString({ "bitmap", "check", "text", "icontext", "progress", "choice" });
+    const wxArrayString alignment = StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER" });
+    const wxArrayString cellType =
+        StdToWX::ToArrayString({ "wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE" });
 
     AddProperty(new CategoryProperty(_("wxDataViewListCtrl Column")));
     AddProperty(new StringProperty(PROP_NAME, _("My Column"), _("Column Caption")));

@@ -1,5 +1,6 @@
 #include "property_grid_wrapper.h"
 
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "choice_property.h"
@@ -26,16 +27,17 @@ PropertyGridWrapper::PropertyGridWrapper()
     m_styles.Clear();
     static int labelCount = 0;
 
-    wxArrayString customEditors;
-    customEditors.Add("");                  // 0
-    customEditors.Add("TextCtrl");          // 1
-    customEditors.Add("Choice");            // 2
-    customEditors.Add("ComboBox");          // 3
-    customEditors.Add("CheckBox");          // 4
-    customEditors.Add("TextCtrlAndButton"); // 5 (default)
-    customEditors.Add("ChoiceAndButton");   // 6
-    customEditors.Add("SpinCtrl");          // 7
-    customEditors.Add("DatePickerCtrl");    // 8
+    const wxArrayString customEditors = StdToWX::ToArrayString({
+        "",                  // 0
+        "TextCtrl",          // 1
+        "Choice",            // 2
+        "ComboBox",          // 3
+        "CheckBox",          // 4
+        "TextCtrlAndButton", // 5 (default)
+        "ChoiceAndButton",   // 6
+        "SpinCtrl",          // 7
+        "DatePickerCtrl",    // 8
+    });
 
     SetPropertyString(_("Common Settings"), "wxPropertyGrid");
     AddProperty(new CategoryProperty("wxPGProperty"));
@@ -45,23 +47,24 @@ PropertyGridWrapper::PropertyGridWrapper()
     AddProperty(new ColorProperty(PROP_BG, "<Default>", _("Property background colour")));
     AddProperty(new ChoiceProperty(PROP_CUSTOM_EDITOR, customEditors, 0, _("Set custom editor control to a property")));
 
-    wxArrayString kindArr;
-    kindArr.Add("wxPropertyCategory");     // 0
-    kindArr.Add("wxIntProperty");          // 1
-    kindArr.Add("wxFloatProperty");        // 2
-    kindArr.Add("wxBoolProperty");         // 3
-    kindArr.Add("wxStringProperty");       // 4 (default)
-    kindArr.Add("wxLongStringProperty");   // 5
-    kindArr.Add("wxDirProperty");          // 6
-    kindArr.Add("wxArrayStringProperty");  // 7
-    kindArr.Add("wxFileProperty");         // 8
-    kindArr.Add("wxEnumProperty");         // 9
-    kindArr.Add("wxEditEnumProperty");     // 10
-    kindArr.Add("wxFlagsProperty");        // 11
-    kindArr.Add("wxDateProperty");         // 12
-    kindArr.Add("wxImageFileProperty");    // 13
-    kindArr.Add("wxFontProperty");         // 14
-    kindArr.Add("wxSystemColourProperty"); // 15
+    const wxArrayString kindArr = StdToWX::ToArrayString({
+        "wxPropertyCategory",     // 0
+        "wxIntProperty",          // 1
+        "wxFloatProperty",        // 2
+        "wxBoolProperty",         // 3
+        "wxStringProperty",       // 4 (default)
+        "wxLongStringProperty",   // 5
+        "wxDirProperty",          // 6
+        "wxArrayStringProperty",  // 7
+        "wxFileProperty",         // 8
+        "wxEnumProperty",         // 9
+        "wxEditEnumProperty",     // 10
+        "wxFlagsProperty",        // 11
+        "wxDateProperty",         // 12
+        "wxImageFileProperty",    // 13
+        "wxFontProperty",         // 14
+        "wxSystemColourProperty", // 15
+    });
 
     AddProperty(new ChoiceProperty(PROP_KIND, kindArr, 4, _("The property kind")));
 

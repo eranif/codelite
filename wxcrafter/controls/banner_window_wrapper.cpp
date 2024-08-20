@@ -1,5 +1,6 @@
 #include "banner_window_wrapper.h"
 
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "color_property.h"
@@ -13,11 +14,7 @@
 BannerWindowWrapper::BannerWindowWrapper()
     : wxcWidget(ID_WXBANNERWINDOW)
 {
-    wxArrayString options;
-    options.Add("wxTOP");
-    options.Add("wxBOTTOM");
-    options.Add("wxLEFT");
-    options.Add("wxRIGHT");
+    const wxArrayString options = StdToWX::ToArrayString({ "wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT" });
 
     SetPropertyString(_("Common Settings"), "wxBannerWindow");
     AddProperty(new MultiStringsProperty(

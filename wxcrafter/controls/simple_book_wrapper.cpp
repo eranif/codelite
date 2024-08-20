@@ -1,4 +1,6 @@
 #include "simple_book_wrapper.h"
+
+#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "wxgui_defs.h"
@@ -18,19 +20,11 @@ SimpleBookWrapper::SimpleBookWrapper()
     RegisterEvent(wxT("wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING"), wxT("wxNotebookEvent"),
                   _("The page selection is about to be changed. This event can be vetoed"));
 
-    wxArrayString effects;
-    effects.Add("wxSHOW_EFFECT_NONE");
-    effects.Add("wxSHOW_EFFECT_ROLL_TO_LEFT");
-    effects.Add("wxSHOW_EFFECT_ROLL_TO_RIGHT");
-    effects.Add("wxSHOW_EFFECT_ROLL_TO_TOP");
-    effects.Add("wxSHOW_EFFECT_ROLL_TO_BOTTOM");
-    effects.Add("wxSHOW_EFFECT_SLIDE_TO_LEFT");
-    effects.Add("wxSHOW_EFFECT_SLIDE_TO_RIGHT");
-    effects.Add("wxSHOW_EFFECT_SLIDE_TO_TOP");
-    effects.Add("wxSHOW_EFFECT_SLIDE_TO_BOTTOM");
-    effects.Add("wxSHOW_EFFECT_BLEND");
-    effects.Add("wxSHOW_EFFECT_EXPAND");
-
+    const wxArrayString effects = StdToWX::ToArrayString(
+        { "wxSHOW_EFFECT_NONE", "wxSHOW_EFFECT_ROLL_TO_LEFT", "wxSHOW_EFFECT_ROLL_TO_RIGHT",
+          "wxSHOW_EFFECT_ROLL_TO_TOP", "wxSHOW_EFFECT_ROLL_TO_BOTTOM", "wxSHOW_EFFECT_SLIDE_TO_LEFT",
+          "wxSHOW_EFFECT_SLIDE_TO_RIGHT", "wxSHOW_EFFECT_SLIDE_TO_TOP", "wxSHOW_EFFECT_SLIDE_TO_BOTTOM",
+          "wxSHOW_EFFECT_BLEND", "wxSHOW_EFFECT_EXPAND" });
     SetPropertyString(_("Common Settings"), "wxSimplebook");
     AddProperty(new ChoiceProperty(PROP_EFFECT, effects, 0,
                                    _("Set the same effect to use for both showing and hiding the pages")));

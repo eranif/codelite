@@ -207,9 +207,9 @@ else(APPLE)
 endif()
 
 if(UNIX)
-    find_path(CTAGS_SUBMODULE CMakeLists.txt PATHS ${CMAKE_SOURCE_DIR}/ctags/)
+    find_path(CTAGS_SUBMODULE CMakeLists.txt PATHS ${CMAKE_SOURCE_DIR}/submodules/ctags/)
     if(NOT CTAGS_SUBMODULE)
-        message(STATUS "Could not locate `${CMAKE_SOURCE_DIR}/ctags/CMakeLists.txt` file")
+        message(STATUS "Could not locate `${CMAKE_SOURCE_DIR}/submodules/ctags/CMakeLists.txt` file")
         message(FATAL_ERROR "Please make sure you have run `git submodule update --init`")
     endif()
 endif()
@@ -889,14 +889,14 @@ if(APPLE)
 endif()
 
 # add the dtl module include path before we include Plugin folder
-include_directories(dtl)
+include_directories(submodules/dtl)
 
 add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
 
 if(NOT APPLE)
-    add_subdirectory(yaml-cpp)
+    add_subdirectory(submodules/yaml-cpp)
     set(LIBYAML_CPP "yaml-cpp")
 endif()
 
@@ -906,10 +906,10 @@ add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
 set(WITHOUT_INSTALL ON)
-add_subdirectory(cc-wrapper)
+add_subdirectory(submodules/cc-wrapper)
 
 # include the yaml-cpp directory
-include_directories("${CL_SRC_ROOT}/yaml-cpp/include")
+include_directories("${CL_SRC_ROOT}/submodules/yaml-cpp/include")
 if(UNIX)
     # On Windows, this is default. Set it OFF for Linux / macOS as well
     set(BUILD_SHARED_LIBS OFF)
@@ -926,13 +926,13 @@ add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main")
 if(WXC_APP)
     add_subdirectory(wxcrafter)
 else()
-    add_subdirectory(ctags)
+    add_subdirectory(submodules/ctags)
     install(TARGETS ctags DESTINATION ${CL_INSTALL_BIN})
     install(TARGETS llama-cli DESTINATION ${CL_INSTALL_BIN})
 
     if(MINGW)
         # build wx-config for Windows
-        add_subdirectory(wx-config-msys2)
+        add_subdirectory(submodules/wx-config-msys2)
         install(TARGETS wx-config DESTINATION ${CL_INSTALL_BIN})
     endif()
 

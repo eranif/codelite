@@ -52,7 +52,7 @@ if(APPLE)
 
         # Configure, build and & install yaml-cpp
         message(STATUS "Building yaml-cpp...")
-        build_and_install_submodule("${CMAKE_SOURCE_DIR}/yaml-cpp" "${CMAKE_BINARY_DIR}/yaml-cpp-build"
+        build_and_install_submodule("${CMAKE_SOURCE_DIR}/submodules/yaml-cpp" "${CMAKE_BINARY_DIR}/yaml-cpp-build"
                                     "-DBUILD_SHARED_LIBS=OFF")
 
         # Configure & build HunSpell (no CMake)

@@ -1,20 +1,20 @@
 [submodule "ctags"]
-	path = ctags
+	path = submodules/ctags
 	url = https://github.com/eranif/ctags
 [submodule "wxdap"]
-	path = wxdap
+	path = submodules/wxdap
 	url = https://github.com/eranif/wxdap
 [submodule "wx-config-msys2"]
-	path = wx-config-msys2
+	path = submodules/wx-config-msys2
 	url = https://github.com/eranif/wx-config-msys2.git
 [submodule "yaml-cpp"]
-	path = yaml-cpp
+	path = submodules/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
 [submodule "cc-wrapper"]
-	path = cc-wrapper
+	path = submodules/cc-wrapper
 	url = https://github.com/eranif/cc-wrapper
 [submodule "dtl"]
-	path = dtl
+	path = submodules/dtl
 	url = https://github.com/eranif/dtl.git
 [submodule "openssl-cmake"]
 	path = submodules/openssl-cmake

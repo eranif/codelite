@@ -28,15 +28,10 @@
 #include <wx/busyinfo.h>
 #include <wx/filedlg.h>
 
-static MemCheckPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new MemCheckPlugin(manager);
-    }
-    return thePlugin;
+    return new MemCheckPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

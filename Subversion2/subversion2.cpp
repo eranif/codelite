@@ -69,8 +69,6 @@
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
-static Subversion2* thePlugin = NULL;
-
 // Convert to Windows EOL
 static void ConvertToWindowsEOL(wxString& str)
 {
@@ -131,10 +129,7 @@ static void ConvertToUnixEOL(wxString& str)
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new Subversion2(manager);
-    }
-    return thePlugin;
+    return new Subversion2(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

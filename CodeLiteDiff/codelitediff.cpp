@@ -38,15 +38,10 @@
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 
-static CodeLiteDiff* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new CodeLiteDiff(manager);
-    }
-    return thePlugin;
+    return new CodeLiteDiff(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

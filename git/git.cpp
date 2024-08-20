@@ -79,7 +79,6 @@
 #include <sys/wait.h>
 #endif
 
-static GitPlugin* thePlugin = NULL;
 namespace
 {
 wxString GetDirFromPath(const wxString& path)
@@ -104,10 +103,7 @@ wxString GetDirFromPath(const wxString& path)
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
-        thePlugin = new GitPlugin(manager);
-    }
-    return thePlugin;
+    return new GitPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

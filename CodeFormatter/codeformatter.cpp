@@ -59,8 +59,6 @@ namespace
 int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
 //------------------------------------------------------------------------
-CodeFormatter* theFormatter = NULL;
-
 JSONItem json_get_formatter_object(JSON* root, const wxString& formatter_name)
 {
     auto json = root->toElement();
@@ -109,10 +107,7 @@ void inc_save_count(const wxString& filepath)
 // the application
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (theFormatter == 0) {
-        theFormatter = new CodeFormatter(manager);
-    }
-    return theFormatter;
+    return new CodeFormatter(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

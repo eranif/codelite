@@ -50,15 +50,10 @@
 // Plugin Interface
 //--------------------------------------------
 
-static SymbolViewPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
-        thePlugin = new SymbolViewPlugin(manager);
-    }
-    return thePlugin;
+    return new SymbolViewPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
@@ -88,7 +83,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
     m_mgr->AddWorkspaceTab(_("Outline"));
 }
 
-SymbolViewPlugin::~SymbolViewPlugin() { thePlugin = NULL; }
+SymbolViewPlugin::~SymbolViewPlugin() {}
 
 void SymbolViewPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 

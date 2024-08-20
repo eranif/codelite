@@ -65,16 +65,11 @@
 #define TMP_ESC_CARET_STR wxT("%ESC_CARET%")
 #define TMP_ESC_SELECTION_STR wxT("%ESC_SELECTION%")
 
-////------------------------------------------------------------
-static SnipWiz* thePlugin = NULL;
-
+//------------------------------------------------------------
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new SnipWiz(manager);
-    }
-    return thePlugin;
+    return new SnipWiz(manager);
 }
 //------------------------------------------------------------
 

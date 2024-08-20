@@ -56,13 +56,10 @@
 
 #define myLog(...) LogFn(wxString::Format(__VA_ARGS__))
 
-CallGraph* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new CallGraph(manager); }
-    return thePlugin;
+    return new CallGraph(manager);
 }
 
 wxString wxbuildinfo()

@@ -44,15 +44,10 @@
 #include <wx/richmsgdlg.h>
 #include <wx/xrc/xmlres.h>
 
-static PhpPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new PhpPlugin(manager);
-    }
-    return thePlugin;
+    return new PhpPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

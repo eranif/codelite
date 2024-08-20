@@ -51,7 +51,6 @@
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
-static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_SETTINGS = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING = ::wxNewEventType();
@@ -72,10 +71,7 @@ const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
-        thePlugin = new SFTP(manager);
-    }
-    return thePlugin;
+    return new SFTP(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

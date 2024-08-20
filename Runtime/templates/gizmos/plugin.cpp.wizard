@@ -1,15 +1,10 @@
 #include "$(BaseFileName).h"
 #include <wx/xrc/xmlres.h>
 
-static $(PluginName)* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin *CreatePlugin(IManager *manager)
 {
-    if (thePlugin == NULL) {
-        thePlugin = new $(PluginName)(manager);
-    }
-    return thePlugin;
+    return new $(PluginName)(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

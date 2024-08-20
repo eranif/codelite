@@ -20,15 +20,10 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
-static LanguageServerPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == NULL) {
-        thePlugin = new LanguageServerPlugin(manager);
-    }
-    return thePlugin;
+    return new LanguageServerPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

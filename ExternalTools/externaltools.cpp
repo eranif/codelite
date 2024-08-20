@@ -51,8 +51,6 @@
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
-static ExternalToolsPlugin* thePlugin = NULL;
-
 struct DecSort {
     bool operator()(const ToolInfo& t1, const ToolInfo& t2) { return t1.GetName().CmpNoCase(t2.GetName()) < 0; }
 };
@@ -60,10 +58,7 @@ struct DecSort {
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new ExternalToolsPlugin(manager);
-    }
-    return thePlugin;
+    return new ExternalToolsPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

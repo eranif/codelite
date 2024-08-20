@@ -44,7 +44,6 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
-static ZoomNavigator* thePlugin = NULL;
 #define CHECK_CONDITION(cond) \
     if (!cond)                \
         return;
@@ -54,10 +53,7 @@ const wxString ZOOM_PANE_TITLE(_("Zoom"));
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
-        thePlugin = new ZoomNavigator(manager);
-    }
-    return thePlugin;
+    return new ZoomNavigator(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

@@ -39,15 +39,10 @@
 
 #include <wx/msgdlg.h>
 
-static RemotyPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new RemotyPlugin(manager);
-    }
-    return thePlugin;
+    return new RemotyPlugin(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

@@ -72,15 +72,10 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
-static wxCrafterPlugin* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new wxCrafterPlugin(manager, false);
-    }
-    return thePlugin;
+    return new wxCrafterPlugin(manager, false);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

@@ -64,8 +64,6 @@
 #include "sftp_settings.h"
 #endif
 
-static DebugAdapterClient* thePlugin = NULL;
-
 namespace
 {
 clModuleLogger LOG;
@@ -128,10 +126,7 @@ wxString get_dap_settings_file()
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
-        thePlugin = new DebugAdapterClient(manager);
-    }
-    return thePlugin;
+    return new DebugAdapterClient(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

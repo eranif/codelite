@@ -46,14 +46,10 @@
 #include <wx/log.h>
 #include <wx/xrc/xmlres.h>
 
-static ContinuousBuild* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new ContinuousBuild(manager);
-    }
-    return thePlugin;
+    return new ContinuousBuild(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

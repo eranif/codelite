@@ -42,15 +42,10 @@
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
-static wxFormBuilder* thePlugin = NULL;
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new wxFormBuilder(manager);
-    }
-    return thePlugin;
+    return new wxFormBuilder(manager);
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()

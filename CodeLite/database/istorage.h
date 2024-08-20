@@ -49,7 +49,6 @@ class ITagsStorage
 protected:
     wxFileName m_fileName;
     int m_singleSearchLimit;
-    int m_maxWorkspaceTagToColour;
     bool m_useCache;
     bool m_enableCaseInsensitive;
 
@@ -59,7 +58,6 @@ public:
 public:
     ITagsStorage()
         : m_singleSearchLimit(MAX_SEARCH_LIMIT)
-        , m_maxWorkspaceTagToColour(1000)
         , m_useCache(false)
         , m_enableCaseInsensitive(true)
     {
@@ -91,13 +89,6 @@ public:
     }
 
     int GetSingleSearchLimit() const { return m_singleSearchLimit; }
-
-    void SetMaxWorkspaceTagToColour(int maxWorkspaceTagToColour)
-    {
-        this->m_maxWorkspaceTagToColour = maxWorkspaceTagToColour;
-    }
-
-    int GetMaxWorkspaceTagToColour() const { return m_maxWorkspaceTagToColour; }
 
     // -----------------------------------------------------------------
     // -------------------- API pure virtual ---------------------------
@@ -180,11 +171,6 @@ public:
     virtual void GetTagsByFileAndLine(const wxString& file, int line, std::vector<TagEntryPtr>& tags) = 0;
 
     /**
-     * @brief return tag entry above (or equal) line
-     */
-    virtual TagEntryPtr GetTagAboveFileAndLine(const wxString& file, int line) = 0;
-
-    /**
      * @brief return list by kind and scope
      * @param scope
      * @param kinds
@@ -211,12 +197,6 @@ public:
      */
     virtual void GetTagsByKindAndFile(const wxArrayString& kind, const wxString& fileName,
                                       const wxString& orderingColumn, int order, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief return list of all global functions
-     * @param tags  [output]
-     */
-    virtual void GetGlobalFunctions(std::vector<TagEntryPtr>& tags) = 0;
 
     /**
      * @brief
@@ -269,15 +249,6 @@ public:
     /**
      * @brief return true if type exist under a given scope.
      * Incase it exist but under the <global> scope, 'scope' will be modified
-     * @param typeName type to search [intput/output]
-     * @param scope [intput/output]
-     * @return true on success
-     */
-    virtual bool IsTypeAndScopeContainer(wxString& typeName, wxString& scope) = 0;
-
-    /**
-     * @brief return true if type exist under a given scope.
-     * Incase it exist but under the <global> scope, 'scope' will be modified
      * @param typeName type to search
      * @param scope [intput/output]
      * @return true on success
@@ -291,13 +262,6 @@ public:
      * @return
      */
     virtual bool IsTypeAndScopeExistLimitOne(const wxString& typeName, const wxString& scope) = 0;
-
-    /**
-     * @brief return list of given scopes of file in ascending order
-     * @param fileName
-     * @param scopes
-     */
-    virtual void GetScopesFromFileAsc(const wxFileName& fileName, std::vector<wxString>& scopes) = 0;
 
     /**
      * Return the current version of the database library .
@@ -317,35 +281,12 @@ public:
     virtual TagEntryPtr GetScope(const wxString& filename, int line_number) = 0;
 
     /**
-     * @brief
-     * @param fileName
-     * @param scopeName
-     * @param tags
-     */
-    virtual void GetTagsByFileScopeAndKind(const wxFileName& fileName, const wxString& scopeName,
-                                           const wxArrayString& kind, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief return a unique list of names
-     * @param kind
-     * @param names
-     */
-    virtual void GetTagsNames(const wxArrayString& kind, wxArrayString& names) = 0;
-
-    /**
      * Store tree of tags into db.
      * @param tree Tags tree to store
      * @param path Database file name
      * @param autoCommit handle the Store operation inside a transaction or let the user hadle it
      */
     virtual void Store(const std::vector<TagEntryPtr>& tags, bool auto_commit = true) = 0;
-
-    /**
-     * A very dengerous API call, which drops all tables from the database
-     * and recreate the schema from fresh. It is used when upgrading database between different
-     * versions
-     */
-    virtual void RecreateDatabase() = 0;
 
     /**
      * return list of files from the database. The returned list is ordered
@@ -383,26 +324,6 @@ public:
     virtual void DeleteByFileName(const wxFileName& path, const wxString& fileName, bool autoCommit = true) = 0;
 
     /**
-     * @brief delete all files from FILES table which starts with filePrefix
-     * @param dbpath database file name
-     * @param filePrefix prefix criterion
-     */
-    virtual void DeleteFromFilesByPrefix(const wxFileName& dbpath, const wxString& filePrefix) = 0;
-
-    /**
-     * @brief delete files from FILES table
-     * @param files
-     */
-    virtual void DeleteFromFiles(const wxArrayString& files) = 0;
-
-    /**
-     * @brief delete all tags from database which their file's path begins with a given prefix
-     * @param dbpath database file name
-     * @param filePrefix prefix criterion
-     */
-    virtual void DeleteByFilePrefix(const wxFileName& dbpath, const wxString& filePrefix) = 0;
-
-    /**
      * Open sqlite database.
      * @param fileName Database file name
      */
@@ -432,70 +353,10 @@ public:
                                                std::vector<TagEntryPtr>& tags) = 0;
 
     /**
-     * @brief return list of tags by typerefs and kinds
-     * @param typerefs array of possible typerefs
-     * @param kinds array of possible kinds
-     * @param tags [output]
-     */
-    virtual void GetTagsByTyperefAndKind(const wxArrayString& typerefs, const wxArrayString& kinds,
-                                         std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief return tags by files / scope
-     * @param files
-     * @param scope
-     * @param tags
-     */
-    virtual void GetTagsByFilesAndScope(const wxArrayString& files, const wxString& scope,
-                                        std::vector<TagEntryPtr>& tags) = 0;
-    /**
-     * @brief return tags by files / kinds / scope (the relation between the three is AND)
-     * @param files
-     * @param kinds
-     * @param scope
-     * @param tags
-     */
-    virtual void GetTagsByFilesKindAndScope(const wxArrayString& files, const wxArrayString& kinds,
-                                            const wxString& scope, std::vector<TagEntryPtr>& tags) = 0;
-    /**
-     * @brief
-     * @param files
-     * @param kinds
-     * @param scope
-     * @param typeref
-     * @param tags
-     */
-    virtual void GetTagsByFilesScopeTyperefAndKind(const wxArrayString& files, const wxArrayString& kinds,
-                                                   const wxString& scope, const wxString& typeref,
-                                                   std::vector<TagEntryPtr>& tags) = 0;
-    /**
-     * @brief return tags by files
-     * @param files
-     * @param tags
-     */
-    virtual void GetTagsByFiles(const wxArrayString& files, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
      * @brief return macro evaluation
      * @param name macro to search
      */
     virtual PPToken GetMacro(const wxString& name) = 0;
-
-    /**
-     * @brief store macros table as they are produced from the PPTable
-     */
-    virtual void StoreMacros(const std::map<wxString, PPToken>& table) = 0;
-
-    /**
-     * @brief return the macros defined by some files.
-     * The macro return must match the given used macros.
-     *
-     * @param files The files which define the macros we are looking for
-     * @param usedMacros The macros wee are looking for
-     * @param defMacros [out] The real defined macros
-     */
-    virtual void GetMacrosDefined(const std::set<std::string>& files, const std::set<wxString>& usedMacros,
-                                  wxArrayString& defMacros) = 0;
 
     /**
      * @brief return list of tags for a given prefix
@@ -517,17 +378,6 @@ public:
      */
     virtual TagEntryPtr GetTagsByNameLimitOne(const wxString& name) = 0;
 
-    /**
-     * @brief this function takes as input argument array of symbols and removes from it all the
-     * symbols that are not part of the workspace
-     */
-    virtual void RemoveNonWorkspaceSymbols(const std::vector<wxString>& symbols,
-                                           std::vector<wxString>& workspaceSymbols,
-                                           std::vector<wxString>& nonWorkspaceSymbols) = 0;
-    /**
-     * @brief check the integrity of the database to avoid "malformed disk" errors
-     */
-    virtual bool CheckIntegrity() const = 0;
     /**
      * @brief return list of tags only visible to `filepath`
      * this usually includes static members, or any entity

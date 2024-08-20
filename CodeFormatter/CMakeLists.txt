@@ -16,7 +16,6 @@ include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/includ
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
-add_definitions(-DASTYLE_LIB)
 
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")
@@ -44,8 +43,6 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin)
 
 cl_install_plugin(${PLUGIN_NAME})
-cl_install_file_shared(${CL_SRC_ROOT}/Runtime/astyle.sample)
-cl_install_file_shared(${CL_SRC_ROOT}/Runtime/php.sample)
 
 if(MINGW)
     # install clang-format

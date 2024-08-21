@@ -5,6 +5,8 @@
 #include "event_notifier.h"
 #include "globals.h"
 
+#include <wx/msgdlg.h>
+
 wxDEFINE_EVENT(wxEVT_LLAMACLI_STARTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LLAMACLI_STDOUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LLAMACLI_STDERR, clCommandEvent);

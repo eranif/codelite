@@ -38,6 +38,7 @@
 #include <vector>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
+#include <wx/msgdlg.h>
 #include <wx/regex.h>
 
 PSGeneralPage::PSGeneralPage(wxWindow* parent, const wxString& projectName, const wxString& conf,

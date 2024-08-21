@@ -2,6 +2,7 @@
 #include <wx/ffile.h>
 #include <wx/init.h>	//wxInitializer
 #include <wx/string.h>	//wxString
+#include <wx/wxcrtvararg.h>
 
 wxString Bin2C(wxString filename)
 {

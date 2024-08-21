@@ -25,6 +25,7 @@
 #ifndef CODELITE_ENTRY_H
 #define CODELITE_ENTRY_H
 
+#include <wx/setup.h>
 #if wxUSE_GUI
 #include <wx/treectrl.h>
 #endif

@@ -7,6 +7,8 @@
 #include "cl_command_event.h"
 #include "cl_config.h"
 
+#include <wx/choice.h>
+
 class clThemedButton;
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceView : public clTreeCtrlPanel
 {

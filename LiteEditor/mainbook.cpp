@@ -49,6 +49,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <wx/aui/framemanager.h>
+#include <wx/msgdlg.h>
 #include <wx/regex.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>

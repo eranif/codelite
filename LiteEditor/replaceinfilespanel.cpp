@@ -41,6 +41,7 @@
 #include <vector>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
+#include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/renderer.h>
 #include <wx/xrc/xmlres.h>

@@ -35,6 +35,7 @@
 
 #include <wx/dirdlg.h>
 #include <wx/log.h>
+#include <wx/msgdlg.h>
 
 PSCustomBuildPage::PSCustomBuildPage(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg)
     : PSCustomBuildBasePage(parent)

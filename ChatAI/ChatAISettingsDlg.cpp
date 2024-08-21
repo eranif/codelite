@@ -4,6 +4,8 @@
 #include "ModelPage.hpp"
 #include "globals.h"
 
+#include <wx/msgdlg.h>
+
 ChatAISettingsDlg::ChatAISettingsDlg(wxWindow* parent, ChatAIConfig& config)
     : AssistanceAISettingsBaseDlg(parent)
     , m_config(config)

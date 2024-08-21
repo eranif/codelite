@@ -6,7 +6,9 @@
 
 #include <wx/dynlib.h>
 #include <wx/module.h>
+#include <wx/msw/wrapwin.h>
 #include <wx/string.h>
+#include <wx/window.h>
 
 typedef BOOL(WINAPI* AllowDarkModeForApp_t)(BOOL allow);                       // AllowDarkModeForApp
 typedef BOOL(WINAPI* AllowDarkModeForWindow_t)(HWND window, BOOL allow);       // AllowDarkModeForWindow

@@ -52,7 +52,6 @@ endif(UNIX)
 if(WIN32)
     add_definitions(-DWXMAKINGDLL_CL)
 endif(WIN32)
-add_definitions(-DwxUSE_GUI=1)
 
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")

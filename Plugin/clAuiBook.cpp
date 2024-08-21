@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <wx/aui/tabart.h>
+#include <wx/wupdlock.h>
 
 #ifdef __WXGTK__
 static constexpr size_t X_SPACER = 15;

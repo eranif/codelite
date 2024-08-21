@@ -16,6 +16,7 @@
 #include "shell_command.h"
 
 #include <wx/app.h>
+#include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/tokenzr.h>

@@ -14,6 +14,10 @@
 #include <wx/textctrl.h>
 #include <wx/window.h>
 
+#ifdef __WXMSW__
+#include <wx/msw/wrapwin.h> // <windows.h> defines ResetDC :-(, so do it consistently
+#endif
+
 enum class eColourHandlerState {
     kNormal = 0,
     kInEscape,          // found ESC char

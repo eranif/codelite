@@ -96,6 +96,7 @@
 #include <wx/busyinfo.h>
 #include <wx/dir.h>
 #include <wx/file.h>
+#include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/regex.h>
 #include <wx/stdpaths.h>

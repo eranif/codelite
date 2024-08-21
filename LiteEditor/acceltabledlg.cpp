@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <wx/ffile.h>
 #include <wx/imaglist.h>
+#include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 

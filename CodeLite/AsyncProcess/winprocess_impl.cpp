@@ -24,9 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #ifdef __WXMSW__
-#ifdef NTDDI_VERSION
-#undef NTDDI_VERSION
-#endif
 
 #ifdef NTDDI_VERSION
 #undef NTDDI_VERSION
@@ -39,21 +36,6 @@
 #define NTDDI_VERSION 0x0A000006
 #define _WIN32_WINNT 0x0600
 
-typedef VOID* HPCON;
-
-#if !defined(_MSC_VER)
-typedef HRESULT(WINAPI* CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
-typedef VOID(WINAPI* ClosePseudoConsole_T)(HPCON hPC);
-
-thread_local bool loadOnce = true;
-thread_local CreatePseudoConsole_T CreatePseudoConsoleFunc = nullptr;
-thread_local ClosePseudoConsole_T ClosePseudoConsoleFunc = nullptr;
-#endif
-
-#ifndef PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE
-#define PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE 0x00020016
-#endif
-
 #include "winprocess_impl.h"
 
 #include "file_logger.h"
@@ -63,9 +45,28 @@ thread_local ClosePseudoConsole_T ClosePseudoConsoleFunc = nullptr;
 
 #include <atomic>
 #include <memory>
+#include <wincon.h>
 #include <wx/filefn.h>
 #include <wx/msgqueue.h>
 #include <wx/string.h>
+
+typedef VOID* HPCON;
+
+#ifndef PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE
+#define PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE 0x00020016
+#endif
+
+#if defined(_MSC_VER)
+constexpr auto CreatePseudoConsoleFunc = &CreatePseudoConsole;
+constexpr auto ClosePseudoConsoleFunc = &ClosePseudoConsole;
+#else
+typedef HRESULT(WINAPI* CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
+typedef VOID(WINAPI* ClosePseudoConsole_T)(HPCON hPC);
+
+thread_local bool loadOnce = true;
+thread_local CreatePseudoConsole_T CreatePseudoConsoleFunc = nullptr;
+thread_local ClosePseudoConsole_T ClosePseudoConsoleFunc = nullptr;
+#endif
 
 class MyDirGuard
 {

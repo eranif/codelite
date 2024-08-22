@@ -1044,7 +1044,7 @@ void wxTerminalAnsiEscapeHandler::handle_sgr(wxStringView sv, wxTerminalAnsiRend
     for(size_t i = 0; i < props.size(); ++i) {
         long curnum = props[i];
         switch(state) {
-        STATE_SET_FG:
+        case STATE_SET_FG:
             switch(curnum) {
             case 5: { // number from the list
                 int num = NEXT_NUMBER(i + 1);
@@ -1065,7 +1065,7 @@ void wxTerminalAnsiEscapeHandler::handle_sgr(wxStringView sv, wxTerminalAnsiRend
                 break;
             }
             break;
-        STATE_SET_BG:
+        case STATE_SET_BG:
             switch(curnum) {
             case 5: { // number from the list
                 int num = NEXT_NUMBER(i + 1);
@@ -1087,7 +1087,7 @@ void wxTerminalAnsiEscapeHandler::handle_sgr(wxStringView sv, wxTerminalAnsiRend
             }
             break;
         default:
-        STATE_NORMAL:
+        case STATE_NORMAL:
             switch(curnum) {
             case 0:
                 renderer->ResetStyle();

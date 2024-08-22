@@ -1,5 +1,5 @@
 // rust support was added in wx3.1
-#include "wx/versioninfo.h"
+#include <wx/versioninfo.h>
 #if wxCHECK_VERSION(3, 1, 0)
 #include "ThemeImporterRust.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef SOURCEPANEL_H
 #define SOURCEPANEL_H
 
-#include "wx/notebook.h"
+#include <wx/notebook.h>
 #include <wx/stc/stc.h>
 
 class OutputNBook : public wxNotebook

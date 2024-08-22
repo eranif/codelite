@@ -6,19 +6,19 @@
 #include "ThemeImporters/ThemeImporterManager.hpp"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
+#include "codelite_events.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "imanager.h"
 #include "macros.h"
 #include "wxStringHash.h"
 #include "xmlutils.h"
 
 #include <algorithm>
-#include <codelite_events.h>
-#include <imanager.h>
 #include <wx/busyinfo.h>
 #include <wx/dir.h>
 #include <wx/filename.h>

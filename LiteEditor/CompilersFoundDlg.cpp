@@ -24,11 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilersFoundDlg.h"
+
+#include "GCCMetadata.hpp"
 #include "ICompilerLocator.h"
+#include "compiler.h"
 #include "globals.h"
-#include <GCCMetadata.hpp>
-#include <compiler.h>
-#include <windowattrmanager.h>
+#include "windowattrmanager.h"
 
 CompilersFoundDlg::CompilersFoundDlg(wxWindow* parent, const ICompilerLocator::CompilerVec_t& compilers)
     : CompilersFoundDlgBase(parent)

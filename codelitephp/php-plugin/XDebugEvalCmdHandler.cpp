@@ -1,9 +1,11 @@
 #include "XDebugEvalCmdHandler.h"
+
 #include "XVariable.h"
-#include <wx/xml/xml.h>
-#include <xmlutils.h>
+#include "event_notifier.h"
 #include "xdebugevent.h"
-#include <event_notifier.h>
+#include "xmlutils.h"
+
+#include <wx/xml/xml.h>
 
 XDebugEvalCmdHandler::XDebugEvalCmdHandler(const wxString& expression, int evalReason, XDebugManager* mgr, int transcationId)
     : XDebugCommandHandler(mgr, transcationId)

@@ -25,19 +25,20 @@
 #ifndef ARCHIVE_H
 #define ARCHIVE_H
 
-#include "wx/string.h"
-#include "wx/hashmap.h"
-#include <wx/arrstr.h>
-#include "wx/filename.h"
-#if wxUSE_GUI
-#include <wx/gdicmn.h>
-#include <wx/font.h>
-#endif
-#include <vector>
-#include <map>
-#include <set>
 #include "codelite_exports.h"
 #include "macros.h"
+
+#include <map>
+#include <set>
+#include <vector>
+#include <wx/arrstr.h>
+#include <wx/filename.h>
+#include <wx/hashmap.h>
+#include <wx/string.h>
+#if wxUSE_GUI
+#include <wx/font.h>
+#include <wx/gdicmn.h>
+#endif
 
 class wxXmlNode;
 class SerializedObject;

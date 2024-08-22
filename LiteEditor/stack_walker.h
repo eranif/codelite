@@ -25,8 +25,8 @@
  #ifndef STACK_WALKER_H
 #define STACK_WALKER_H
 
-#include "wx/string.h"
 #include <wx/stackwalk.h>
+#include <wx/string.h>
 
 #if wxUSE_STACKWALKER
 class wxTextOutputStream;

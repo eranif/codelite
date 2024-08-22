@@ -4,9 +4,10 @@
 #include "clCodeLiteRemoteProcess.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "wx/arrstr.h"
-#include "wx/event.h"
-#include "wx/stopwatch.h"
+
+#include <wx/arrstr.h>
+#include <wx/event.h>
+#include <wx/stopwatch.h>
 
 class WXDLLIMPEXP_SDK clRemoteFinderHelper
 {

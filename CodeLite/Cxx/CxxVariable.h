@@ -4,6 +4,7 @@
 #include "CxxLexerAPI.h"
 #include "codelite_exports.h"
 #include "macros.h"
+#include "wxStringHash.h"
 
 #include <map>
 #include <memory>
@@ -11,7 +12,6 @@
 #include <unordered_map>
 #include <vector>
 #include <wx/string.h>
-#include <wxStringHash.h>
 
 class WXDLLIMPEXP_CL CxxVariable
 {

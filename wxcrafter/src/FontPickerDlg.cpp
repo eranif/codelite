@@ -1,6 +1,7 @@
 #include "FontPickerDlg.h"
+
+#include "windowattrmanager.h"
 #include "wxgui_helpers.h"
-#include <windowattrmanager.h>
 
 FontPickerDlg::FontPickerDlg(wxWindow* parent, const wxString& font)
     : FontPickerDlgBaseClass(parent)

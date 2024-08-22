@@ -3,9 +3,9 @@
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "wx/dir.h"
 #include "xmlutils.h"
 
+#include <wx/dir.h>
 #include <wx/stc/stc.h>
 
 ThemeImporterJavaScript::ThemeImporterJavaScript()

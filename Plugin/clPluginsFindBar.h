@@ -28,9 +28,9 @@
 #include "clEditorEditEventsHandler.h"
 #include "clTerminalHistory.h"
 #include "clToolBar.h"
+#include "codelite_exports.h"
 #include "quickfindbarbase.h"
 
-#include <codelite_exports.h>
 #include <wx/combobox.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>

@@ -26,9 +26,9 @@
 #include "ps_debugger_page.h"
 
 #include "globals.h"
+#include "project.h"
+#include "workspace.h"
 
-#include <project.h>
-#include <workspace.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/filename.h>

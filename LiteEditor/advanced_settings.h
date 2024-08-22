@@ -33,11 +33,11 @@
 #define __advanced_settings__
 
 #include "CompilerMainPage.h"
+#include "CompilersDetectorManager.h"
+#include "ICompilerLocator.h"
 #include "advance_settings_base.h"
 #include "compiler.h"
 
-#include <CompilersDetectorManager.h>
-#include <ICompilerLocator.h>
 #include <map>
 #include <vector>
 #include <wx/button.h>

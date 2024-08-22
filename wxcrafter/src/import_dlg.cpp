@@ -1,8 +1,10 @@
 #include "import_dlg.h"
+
 #include "VirtualDirectorySelectorDlg.h"
+#include "windowattrmanager.h"
+#include "workspace.h"
 #include "wxgui_helpers.h"
-#include <windowattrmanager.h>
-#include <workspace.h>
+
 #include <wx/app.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>

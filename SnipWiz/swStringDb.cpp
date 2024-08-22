@@ -38,17 +38,18 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/filename.h>
 #include <wx/zstream.h>
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif
 
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
+#include <wx/wx.h>
 #endif
 
 #include "swStringDb.h"
+
 #include <wx/listimpl.cpp>
 #include <wx/wfstream.h>
 

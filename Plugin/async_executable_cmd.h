@@ -27,8 +27,9 @@
 
 #include "cl_process.h"
 #include "codelite_exports.h"
-#include "wx/event.h"
-#include "wx/timer.h"
+
+#include <wx/event.h>
+#include <wx/timer.h>
 
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SDK, wxEVT_ASYNC_PROC_ADDLINE, wxID_ANY)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SDK, wxEVT_ASYNC_PROC_ADDERRLINE, wxID_ANY)

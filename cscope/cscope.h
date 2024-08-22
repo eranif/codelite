@@ -25,12 +25,13 @@
 #ifndef __Cscope__
 #define __Cscope__
 
-#include "plugin.h"
-#include "map"
-#include "vector"
-#include "cscopeentrydata.h"
-#include "cl_command_event.h"
 #include "clTabTogglerHelper.h"
+#include "cl_command_event.h"
+#include "cscopeentrydata.h"
+#include "plugin.h"
+
+#include <map>
+#include <vector>
 
 class CscopeTab;
 

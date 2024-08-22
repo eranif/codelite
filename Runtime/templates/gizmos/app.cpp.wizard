@@ -1,8 +1,11 @@
 #include "$(AppFile).h"
-#include "wx/image.h"
-#include "wx/sysopt.h"
-#include "wx/xrc/xmlres.h"
+
 #include "$(MainFrameFile).h"
+
+#include <wx/image.h>
+#include <wx/sysopt.h>
+#include <wx/xrc/xmlres.h>
+
 
 IMPLEMENT_APP($(AppName))
 

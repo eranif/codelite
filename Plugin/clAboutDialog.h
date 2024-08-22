@@ -2,8 +2,7 @@
 #define CLABOUTDIALOG_H
 
 #include "clAboutDialogBase.h"
-
-#include <codelite_exports.h>
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK clAboutDialog : public clAboutDialogBase
 {

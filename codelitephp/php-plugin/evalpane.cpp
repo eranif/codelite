@@ -1,9 +1,10 @@
+#include "evalpane.h"
+
 #include "XDebugEvalCmdHandler.h"
 #include "XDebugManager.h"
-#include "evalpane.h"
-#include <editor_config.h>
-#include <event_notifier.h>
-#include <lexer_configuration.h>
+#include "editor_config.h"
+#include "event_notifier.h"
+#include "lexer_configuration.h"
 
 EvalPane::EvalPane(wxWindow* parent)
     : EvalPaneBase(parent)

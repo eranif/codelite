@@ -1,8 +1,10 @@
 #include "XDebugContextGetCmdHandler.h"
+
 #include "XDebugManager.h"
-#include <wx/xml/xml.h>
+#include "event_notifier.h"
 #include "xdebugevent.h"
-#include <event_notifier.h>
+
+#include <wx/xml/xml.h>
 
 XDebugContextGetCmdHandler::XDebugContextGetCmdHandler(XDebugManager* mgr, int transcationId, int requestedStack)
     : XDebugCommandHandler(mgr, transcationId)

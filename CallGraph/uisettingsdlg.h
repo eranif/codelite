@@ -36,11 +36,11 @@
 #ifndef __uisettingsdlg__
 #define __uisettingsdlg__
 
-#include "wx/wx.h"
-#include "wx/string.h"
-#include "uisettings.h"
 #include "confcallgraph.h"
+#include "uisettings.h"
 
+#include <wx/wx.h>
+#include <wx/string.h>
 
 class IManager;
 //class CallGraph;

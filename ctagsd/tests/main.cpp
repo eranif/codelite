@@ -18,12 +18,12 @@
 #include "macros.h"
 #include "strings.hpp"
 #include "tester.hpp"
+#include "wxStringHash.h"
 
 #include <iostream>
 #include <stdio.h>
 #include <unordered_set>
 #include <wx/log.h>
-#include <wxStringHash.h>
 
 using namespace std;
 namespace

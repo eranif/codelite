@@ -1,10 +1,11 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-#include "string"
-#include "list"
 #include "variable.h"
-#include <stdio.h>
+
+#include <cstdio>
+#include <list>
+#include <string>
 
 #ifndef WXDLLIMPEXP_CL
 

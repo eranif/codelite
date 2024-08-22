@@ -26,7 +26,8 @@
 #define __configurationtoolbase__
 
 #include "codelite_exports.h"
-#include "wx/xml/xml.h"
+
+#include <wx/xml/xml.h>
 
 class SerializedObject;
 

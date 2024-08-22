@@ -1,5 +1,6 @@
 #include "FileMappingDlg.h"
-#include <windowattrmanager.h>
+
+#include "windowattrmanager.h"
 
 FileMappingDlg::FileMappingDlg(wxWindow* parent)
     : FileMappingDlgBase(parent)

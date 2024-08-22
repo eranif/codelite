@@ -25,9 +25,10 @@
 #ifndef CODELITE_TAGSPROCESS_H
 #define CODELITE_TAGSPROCESS_H
 
-#include "wx/process.h"
-#include "wx/string.h"
 #include "codelite_exports.h"
+
+#include <wx/process.h>
+#include <wx/string.h>
 #include <wx/utils.h>
 
 /**

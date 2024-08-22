@@ -26,12 +26,12 @@
 
 #include "file_logger.h"
 #include "macros.h"
-#include "wx/dir.h"
-#include "wx/filename.h"
-#include "wx/log.h"
-#include "wx/sizer.h"
 
+#include <wx/dir.h>
 #include <wx/dirdlg.h>
+#include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/sizer.h>
 
 BEGIN_EVENT_TABLE(DirPicker, wxPanel)
 EVT_TEXT(wxID_ANY, DirPicker::OnText)

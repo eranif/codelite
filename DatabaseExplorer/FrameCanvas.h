@@ -27,21 +27,22 @@
 #define FRAMECANVAS_H
 
 #include "ErdPanel.h"
-#include <wx/wx.h>
-#include <wx/list.h>
-#include "wx/wxsf/ShapeCanvas.h" // Base class: wxSFShapeCanvas
-#include <wx/wxsf/DiagramManager.h>
-#include <wx/hashmap.h>
+
 #include <wx/clipbrd.h>
+#include <wx/hashmap.h>
+#include <wx/list.h>
+#include <wx/wx.h>
+#include <wx/wxsf/DiagramManager.h>
+#include <wx/wxsf/ShapeCanvas.h> // Base class: wxSFShapeCanvas
 
 #ifdef DBL_MYSQL
 #include "../Main/MySqlDbAdapter.h"
 #endif
 
+#include "DnDTableShape.h"
+#include "IDbAdapter.h"
 #include "TableSettings.h"
 #include "ViewSettings.h"
-#include "IDbAdapter.h"
-#include "DnDTableShape.h"
 
 class ErdPanel;
 /*! \brief Frame canvas. */

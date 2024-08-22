@@ -27,7 +27,8 @@
 
 #include "codelite_exports.h"
 #include "serialized_object.h"
-#include "wx/xml/xml.h"
+
+#include <wx/xml/xml.h>
 
 /// A collection of XML utils
 class WXDLLIMPEXP_SDK XmlUtils

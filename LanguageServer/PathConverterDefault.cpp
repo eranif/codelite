@@ -5,8 +5,8 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
+#include "imanager.h"
 
-#include <imanager.h>
 #include <wx/filesys.h>
 #include <wx/regex.h>
 

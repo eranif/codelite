@@ -15,7 +15,6 @@
 #include "imanager.h"
 #include "macros.h"
 
-#include <imanager.h>
 #include <wx/app.h>
 #include <wx/dir.h>
 #include <wx/filename.h>

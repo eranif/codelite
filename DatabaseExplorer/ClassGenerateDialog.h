@@ -26,21 +26,21 @@
 #ifndef CLASSGENERATEDIALOG_H
 #define CLASSGENERATEDIALOG_H
 
-#include "GUI.h" // Base class: _ClassGenerateDialog
-#include "ErdTable.h"
-#include "ErdView.h"
-#include "table.h"
-#include "IDbAdapter.h"
-#include "wx/wxxmlserializer/XmlSerializer.h"
-#include <wx/textfile.h>
-#include <wx/stdpaths.h>
-#include <wx/init.h>
-#include <wx/hashmap.h>
-
 #include "../Interfaces/imanager.h"
 #include "../Plugin/VirtualDirectorySelectorDlg.h"
 #include "../Plugin/project.h"
 #include "../Plugin/workspace.h"
+#include "ErdTable.h"
+#include "ErdView.h"
+#include "GUI.h" // Base class: _ClassGenerateDialog
+#include "IDbAdapter.h"
+#include "table.h"
+
+#include <wx/hashmap.h>
+#include <wx/init.h>
+#include <wx/stdpaths.h>
+#include <wx/textfile.h>
+#include <wx/wxxmlserializer/XmlSerializer.h>
 
 WX_DECLARE_STRING_HASH_MAP(wxString, TemplateMap);
 

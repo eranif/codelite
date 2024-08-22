@@ -1,9 +1,11 @@
 #include "EditCustomControlDlg.h"
+
 #include "NewCustomEventDlg.h"
+#include "windowattrmanager.h"
 #include "wxc_settings.h"
-#include <windowattrmanager.h>
-#include <wx/app.h>
 #include "wxgui_helpers.h"
+
+#include <wx/app.h>
 
 EditCustomControlDlg::EditCustomControlDlg(wxWindow* parent)
     : EditCustomControlDlgBaseClass(parent)

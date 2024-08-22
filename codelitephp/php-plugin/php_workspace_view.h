@@ -26,14 +26,15 @@
 #ifndef __php_workspace_view__
 #define __php_workspace_view__
 
+#include "bitmap_loader.h"
 #include "clFileSystemEvent.h"
+#include "cl_command_event.h"
 #include "php_event.h"
 #include "php_ui.h"
 #include "php_workspace.h"
 #include "wxStringHash.h"
 #include "wx_ordered_map.h"
-#include <bitmap_loader.h>
-#include <cl_command_event.h>
+
 #include <set>
 
 class IManager;

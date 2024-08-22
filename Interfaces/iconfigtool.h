@@ -27,7 +27,8 @@
 #define ICONFIGTOOL_H
 
 #include "serialized_object.h"
-#include "wx/string.h"
+
+#include <wx/string.h>
 
 //------------------------------------------------------------------
 // The configuration tool interface

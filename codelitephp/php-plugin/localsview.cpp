@@ -2,12 +2,10 @@
 
 #include "XDebugManager.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
-
-#include <editor_config.h>
-#include <event_notifier.h>
-#include <file_logger.h>
-#include <lexer_configuration.h>
+#include "lexer_configuration.h"
 
 class MyStringData : public wxTreeItemData
 {

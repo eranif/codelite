@@ -24,11 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "svn_checkout_dialog.h"
-#include <wx/dirdlg.h>
-#include "wx/msgdlg.h"
-#include "subversion2.h"
+
 #include "imanager.h"
+#include "subversion2.h"
 #include "windowattrmanager.h"
+
+#include <wx/dirdlg.h>
+#include <wx/msgdlg.h>
 
 SvnCheckoutDialog::SvnCheckoutDialog(wxWindow* parent, Subversion2* plugin)
     : SvnCheckoutDialogBase(parent)

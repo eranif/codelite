@@ -25,7 +25,7 @@
 #ifndef CONF_OBJECT_H
 #define CONF_OBJECT_H
 
-#include "wx/xml/xml.h"
+#include <wx/xml/xml.h>
 
 #ifdef WXMAKINGDLL_LE_SDK
 #define WXDLLIMPEXP_LE_SDK WXEXPORT

@@ -1,6 +1,7 @@
 #include "NodeJSWorkspaceUserConfiguration.h"
-#include <globals.h>
+
 #include "JSON.h"
+#include "globals.h"
 
 NodeJSWorkspaceUser::NodeJSWorkspaceUser(const wxString& workspacePath)
     : m_workspacePath(workspacePath)

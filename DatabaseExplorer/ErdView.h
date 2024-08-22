@@ -26,18 +26,20 @@
 #ifndef ERDVIEW_H
 #define ERDVIEW_H
 
-#include <wx/wx.h>
-#include <wx/wxxmlserializer/XmlSerializer.h>
-#include "wx/wxsf/RoundRectShape.h" // Base class: wxSFRoundRectShape
-#include "wx/wxsf/TextShape.h"
-#include "wx/wxsf/FlexGridShape.h"
-#include "wx/wxsf/DiagramManager.h"
 #include "view.h"
+
+#include <wx/wx.h>
+#include <wx/wxsf/DiagramManager.h>
+#include <wx/wxsf/FlexGridShape.h>
+#include <wx/wxsf/RoundRectShape.h> // Base class: wxSFRoundRectShape
+#include <wx/wxsf/TextShape.h>
+#include <wx/wxxmlserializer/XmlSerializer.h>
+
 /*! \brief Class representing graphical wiev in ERD diagram, for more info see wxSF manual. */
 class ErdView : public wxSFRoundRectShape {
 
 public:
-	XS_DECLARE_CLONABLE_CLASS(ErdView);	
+	XS_DECLARE_CLONABLE_CLASS(ErdView);
 	ErdView();
 	ErdView(const ErdView& obj);
 	ErdView(View* pView);

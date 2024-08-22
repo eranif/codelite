@@ -25,10 +25,10 @@
 
 #include "addoptioncheckdlg.h"
 
+#include "globals.h"
 #include "windowattrmanager.h"
 
 #include <algorithm> // std::find
-#include <globals.h>
 #include <list>
 #include <wx/sstream.h>
 #include <wx/tokenzr.h>

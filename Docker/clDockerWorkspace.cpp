@@ -9,9 +9,9 @@
 #include "docker.h"
 #include "event_notifier.h"
 #include "globals.h"
+#include "imanager.h"
 #include "tags_options_data.h"
 
-#include <imanager.h>
 #include <wx/msgdlg.h>
 
 #define CHECK_EVENT(e) \

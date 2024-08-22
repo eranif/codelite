@@ -25,7 +25,7 @@
  #ifndef COMMENT_CREATOT_H
 #define COMMENT_CREATOT_H
 
-#include "wx/string.h"
+#include <wx/string.h>
 
 /**
  * \ingroup CodeLite

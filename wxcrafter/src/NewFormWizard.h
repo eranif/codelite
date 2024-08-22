@@ -1,7 +1,8 @@
 #ifndef NEWFORMWIZARD_H
 #define NEWFORMWIZARD_H
+
+#include "imanager.h"
 #include "wxcrafter_gui.h"
-#include <imanager.h>
 
 struct NewFormDetails {
     wxString virtualFolder;

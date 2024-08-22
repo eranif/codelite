@@ -27,10 +27,11 @@
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "wx/event.h"
-#include "wx/thread.h"
+
 #include <atomic>
 #include <deque>
+#include <wx/event.h>
+#include <wx/thread.h>
 
 class IProcess;
 /**

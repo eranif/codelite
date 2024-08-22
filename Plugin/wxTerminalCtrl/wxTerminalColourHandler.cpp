@@ -1,14 +1,13 @@
 #include "wxTerminalColourHandler.h"
 
 #include "drawingutils.h"
+#include "fileutils.h"
 #include "wxTerminalCtrl.h"
 #include "wxTerminalOutputCtrl.hpp"
 
 #ifdef __WXMSW__
-#include "wx/msw/wrapwin.h" // includes windows.h
+#include <wx/msw/wrapwin.h> // includes windows.h
 #endif
-
-#include "fileutils.h"
 
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>

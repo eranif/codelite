@@ -24,14 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "debuggerasciiviewer.h"
-#include "frame.h"
-#include "debuggerpane.h"
-#include "manager.h"
+
 #include "debugger.h"
-#include <event_notifier.h>
-#include <plugin.h>
-#include <lexer_configuration.h>
-#include <editor_config.h>
+#include "debuggerpane.h"
+#include "editor_config.h"
+#include "event_notifier.h"
+#include "frame.h"
+#include "lexer_configuration.h"
+#include "manager.h"
+#include "plugin.h"
 
 static void sDefineMarker(wxStyledTextCtrl *s, int marker, int markerType, wxColor fore, wxColor back)
 {

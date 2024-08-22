@@ -26,11 +26,12 @@
 #ifndef PHPPROJECTSETTINGSDATA_H
 #define PHPPROJECTSETTINGSDATA_H
 
-#include <wx/string.h>
-#include <wx/arrstr.h>
 #include "JSON.h"
-#include <macros.h>
 #include "XDebugBreakpoint.h"
+#include "macros.h"
+
+#include <wx/arrstr.h>
+#include <wx/string.h>
 
 class PHPProjectSettingsData
 {

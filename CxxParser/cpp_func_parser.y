@@ -4,11 +4,12 @@
 
 %{
 /*************** Includes and Defines *****************************/
-#include "string"
-#include "vector"
-#include "stdio.h"
-#include "map"
 #include "function.h"
+
+#include <cstdio>
+#include <string>
+#include <vector>
+#include <map>
 
 #define YYDEBUG_LEXER_TEXT (cl_func_lval)
 #define YYSTYPE std::string

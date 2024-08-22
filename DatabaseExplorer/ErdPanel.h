@@ -26,17 +26,18 @@
 #ifndef ERDPANEL_H
 #define ERDPANEL_H
 
-#include "GUI.h" // Base class: _ErdPanel
-#include <wx/wx.h>
-#include <wx/textfile.h>
-#include "wx/wxsf/wxShapeFramework.h"
-#include "wx/wxsf/ShapeBase.h"
-#include "FrameCanvas.h"
+#include "ErdCommitWizard.h"
 #include "ErdTable.h"
 #include "ErdView.h"
+#include "FrameCanvas.h"
+#include "GUI.h" // Base class: _ErdPanel
 #include "IDbAdapter.h"
 #include "dbeclasstype.h"
-#include "ErdCommitWizard.h"
+
+#include <wx/textfile.h>
+#include <wx/wx.h>
+#include <wx/wxsf/ShapeBase.h>
+#include <wx/wxsf/wxShapeFramework.h>
 
 class FrameCanvas;
 

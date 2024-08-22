@@ -1,7 +1,8 @@
 #ifndef FONTUTILS_HPP
 #define FONTUTILS_HPP
 
-#include <codelite_exports.h>
+#include "codelite_exports.h"
+
 #include <wx/font.h>
 
 namespace FontUtils

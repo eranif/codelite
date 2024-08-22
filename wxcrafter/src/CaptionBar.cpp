@@ -1,7 +1,9 @@
 #include "CaptionBar.h"
+
+#include "event_notifier.h"
 #include "gui.h"
 #include "wxguicraft_main_view.h"
-#include <event_notifier.h>
+
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>

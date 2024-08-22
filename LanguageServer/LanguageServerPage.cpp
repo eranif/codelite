@@ -3,8 +3,8 @@
 #include "ColoursAndFontsManager.h"
 #include "JSON.h"
 #include "LSP/LanguageServerProtocol.h"
+#include "macros.h"
 
-#include <macros.h>
 #include <wx/choicdlg.h>
 #include <wx/dirdlg.h>
 #include <wx/tokenzr.h>

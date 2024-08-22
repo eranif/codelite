@@ -1,5 +1,6 @@
 #include "text_editor.h"
-#include <event_notifier.h>
+
+#include "event_notifier.h"
 
 const wxEventType wxEVT_CMD_TEXT_EDITOR = ::wxNewEventType();
 

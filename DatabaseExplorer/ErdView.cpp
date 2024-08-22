@@ -24,9 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ErdView.h"
-#include "wx/wxsf/CommonFcn.h"
 
 #include <wx/recguard.h>
+#include <wx/wxsf/CommonFcn.h>
 
 using namespace wxSFCommonFcn;
 

@@ -25,7 +25,8 @@
 #include "filepicker.h"
 
 #include "macros.h"
-#include "wx/sizer.h"
+
+#include <wx/sizer.h>
 
 FilePicker::FilePicker(wxWindow* parent, wxWindowID id, const wxString& defaultFile, const wxString& message,
                        const wxString& wildCard, const wxString& buttonCaption, const wxPoint& pos, const wxSize& size,

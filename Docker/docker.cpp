@@ -6,9 +6,9 @@
 #include "clDockerWorkspace.h"
 #include "clWorkspaceManager.h"
 #include "event_notifier.h"
+#include "imanager.h"
 #include "wxterminal.h"
 
-#include <imanager.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point

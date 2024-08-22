@@ -24,13 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ErdTable.h"
-#include "wx/wxsf/CommonFcn.h"
-#include "wx/wxsf/ShapeCanvas.h"
+
+#include "res/gui/key-f.xpm"
+#include "res/gui/key-p.xpm"
 
 #include <wx/recguard.h>
-
-#include "res/gui/key-p.xpm"
-#include "res/gui/key-f.xpm"
+#include <wx/wxsf/CommonFcn.h>
+#include <wx/wxsf/ShapeCanvas.h>
 
 using namespace wxSFCommonFcn;
 

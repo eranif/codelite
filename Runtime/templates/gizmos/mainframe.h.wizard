@@ -1,7 +1,7 @@
 #ifndef __$(MainFrameName)__
 #define __$(MainFrameName)__
 
-#include "wx/frame.h"
+#include <wx/frame.h>
 
 class $(MainFrameName) : public wxFrame {
 

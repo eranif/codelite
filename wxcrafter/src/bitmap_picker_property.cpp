@@ -1,5 +1,6 @@
 #include "bitmap_picker_property.h"
-#include <json_node.h>
+
+#include "json_node.h"
 
 BitmapPickerProperty::BitmapPickerProperty(const wxString& label, const wxString& path, const wxString& tooltip)
     : PropertyBase(tooltip)

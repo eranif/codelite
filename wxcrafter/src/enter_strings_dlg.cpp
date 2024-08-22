@@ -1,7 +1,8 @@
 #include "enter_strings_dlg.h"
-#include <ColoursAndFontsManager.h>
-#include <lexer_configuration.h>
-#include <windowattrmanager.h>
+
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
+#include "windowattrmanager.h"
 
 EnterStringsDlg::EnterStringsDlg(wxWindow* parent, const wxString& value)
     : EnterStringsDlgBase(parent)

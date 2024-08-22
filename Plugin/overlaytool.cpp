@@ -29,9 +29,9 @@
 #include "drawingutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "wx/rawbmp.h"
 
 #include <wx/dcmemory.h>
+#include <wx/rawbmp.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 

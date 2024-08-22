@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "wx/msgdlg.h"
 #include "renamesymboldlg.h"
-#include "globals.h"
+
 #include "editor_config.h"
-#include "windowattrmanager.h"
+#include "globals.h"
 #include "macros.h"
+#include "windowattrmanager.h"
+
+#include <wx/msgdlg.h>
 
 class RenameSymbolData : public wxClientData
 {

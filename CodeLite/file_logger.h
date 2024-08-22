@@ -28,6 +28,7 @@
 
 #include "codelite_exports.h"
 #include "macros.h"
+#include "wxStringHash.h"
 
 #include <vector>
 #include <wx/colour.h>
@@ -36,7 +37,6 @@
 #include <wx/gdicmn.h>
 #include <wx/stopwatch.h>
 #include <wx/thread.h>
-#include <wxStringHash.h>
 
 // manipulator function
 class FileLogger;

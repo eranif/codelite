@@ -1,6 +1,8 @@
 #include "menu_bar.h"
+
 #include "allocator_mgr.h"
-#include <event_notifier.h>
+#include "event_notifier.h"
+
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>

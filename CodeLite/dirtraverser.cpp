@@ -23,10 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "dirtraverser.h"
-#include "wx/tokenzr.h"
-#include "wx/filename.h"
-#include "wx/log.h"
 #include "fileutils.h"
+
+#include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/tokenzr.h>
 
 DirTraverser::DirTraverser(const wxString &filespec, bool includeExtLessFiles)
     : wxDirTraverser()

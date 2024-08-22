@@ -6,10 +6,10 @@
 #include "buildmanager.h"
 #include "clWorkspaceManager.h"
 #include "cl_config.h"
+#include "globals.h"
 #include "macros.h"
 #include "wxStringHash.h"
 
-#include <globals.h>
 #include <unordered_set>
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>

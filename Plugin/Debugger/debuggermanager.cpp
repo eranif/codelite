@@ -33,9 +33,9 @@
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "wx/filename.h"
 
 #include <wx/dir.h>
+#include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 

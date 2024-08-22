@@ -28,9 +28,10 @@
 #include "editor_config.h"
 #include "globals.h"
 #include "serialized_object.h"
-#include "wx/ffile.h"
-#include "wx/filename.h"
 #include "xmlutils.h"
+
+#include <wx/ffile.h>
+#include <wx/filename.h>
 
 ConfigTool::ConfigTool()
     : m_fileName(wxEmptyString)

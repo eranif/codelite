@@ -1,12 +1,14 @@
+#include "clDockerWorkspaceView.h"
+
 #include "DockerfileSettingsDlg.h"
 #include "clDockerSettings.h"
 #include "clDockerWorkspace.h"
 #include "clDockerWorkspaceSettings.h"
-#include "clDockerWorkspaceView.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "macros.h"
+
 #include <wx/menu.h>
-#include <macros.h>
 
 clDockerWorkspaceView::clDockerWorkspaceView(wxWindow* parent)
     : clTreeCtrlPanel(parent)

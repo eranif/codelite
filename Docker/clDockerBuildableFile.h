@@ -2,9 +2,10 @@
 #define CLDOCKERBUILDABLEFILE_H
 
 #include "JSON.h"
+#include "wxStringHash.h"
+
 #include <wx/sharedptr.h>
 #include <wx/string.h>
-#include <wxStringHash.h>
 
 enum class eDockerFileType {
     kDockerfile = 0,

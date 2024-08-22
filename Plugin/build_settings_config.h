@@ -31,15 +31,15 @@
 #include "cl_config.h"
 #include "codelite_exports.h"
 #include "compiler.h"
+#include "macros.h"
 #include "singleton.h"
-#include "wx/filename.h"
-#include "wx/string.h"
-#include "wx/xml/xml.h"
+#include "wxStringHash.h"
 
-#include <macros.h>
 #include <map>
 #include <vector>
-#include <wxStringHash.h>
+#include <wx/filename.h>
+#include <wx/string.h>
+#include <wx/xml/xml.h>
 
 // Cookie class for the editor to provide reentrance operations
 // on various methods (such as iteration)

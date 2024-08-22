@@ -1,7 +1,9 @@
 #include "DefineCustomControlWizard.h"
+
 #include "NewCustomEventDlg.h"
-#include <globals.h>
-#include <json_node.h>
+#include "globals.h"
+#include "json_node.h"
+
 #include <wx/msgdlg.h>
 
 DefineCustomControlWizard::DefineCustomControlWizard(wxWindow* parent)

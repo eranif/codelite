@@ -25,7 +25,7 @@
  #ifndef FILE_HISTORY_H
 #define FILE_HISTORY_H
 
-#include "wx/docview.h"
+#include <wx/docview.h>
 
 class FileHistory : public wxFileHistory
 {

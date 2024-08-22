@@ -26,10 +26,11 @@
 #ifndef PHPCONFIGURATIONDATA_H
 #define PHPCONFIGURATIONDATA_H
 
+#include "cl_config.h"
+#include "phpoptions.h"
+
 #include <wx/arrstr.h>
 #include <wx/string.h>
-#include <cl_config.h>
-#include "phpoptions.h"
 
 class PHPConfigurationData : public clConfigItem
 {

@@ -27,9 +27,10 @@
 #define TABGROUPSPANE_H
 
 #include "clWorkspaceEvent.hpp"
-#include "wx/panel.h"
+
 #include <utility>
 #include <vector>
+#include <wx/panel.h>
 #include <wx/treectrl.h>
 
 class clThemedTreeCtrl;

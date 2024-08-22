@@ -1,16 +1,18 @@
-#include "FilesCollector.h"
-#include "file_logger.h"
 #include "php_project.h"
+
+#include "FilesCollector.h"
+#include "clFileSystemEvent.h"
+#include "cl_command_event.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "macros.h"
 #include "php_workspace.h"
-#include <cl_command_event.h>
-#include <event_notifier.h>
-#include <macros.h>
-#include <plugin.h>
+#include "plugin.h"
+
 #include <wx/busyinfo.h>
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
-#include "clFileSystemEvent.h"
 
 wxDEFINE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_END, clCommandEvent);

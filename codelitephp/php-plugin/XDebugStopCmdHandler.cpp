@@ -1,10 +1,10 @@
 #include "XDebugStopCmdHandler.h"
 
 #include "XDebugManager.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "xdebugevent.h"
 
-#include <event_notifier.h>
-#include <file_logger.h>
 #include <wx/socket.h>
 #include <wx/xml/xml.h>
 

@@ -1,11 +1,12 @@
 #ifndef CLFILECACHE_HPP
 #define CLFILECACHE_HPP
 
-#include <codelite_exports.h>
+#include "codelite_exports.h"
+#include "wxStringHash.h"
+
 #include <unordered_set>
 #include <vector>
 #include <wx/filename.h>
-#include <wxStringHash.h>
 
 class WXDLLIMPEXP_SDK clFileCache
 {

@@ -5,12 +5,12 @@
 #include "clHeaderItem.h"
 #include "clSystemSettings.h"
 #include "clTreeCtrl.h"
+#include "drawingutils.h"
 #include "file_logger.h"
+#include "functional"
+#include "globals.h"
 
 #include <algorithm>
-#include <drawingutils.h>
-#include <functional>
-#include <globals.h>
 #include <wx/dataview.h>
 #include <wx/dc.h>
 #include <wx/renderer.h>

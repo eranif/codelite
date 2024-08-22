@@ -31,6 +31,7 @@
 
 #include "advanced_settings.h"
 
+#include "CompilersDetectorManager.h"
 #include "CompilersFoundDlg.h"
 #include "NewCompilerDlg.h"
 #include "advance_settings_base.h"
@@ -43,7 +44,6 @@
 #include "manager.h"
 #include "windowattrmanager.h"
 
-#include <CompilersDetectorManager.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
 

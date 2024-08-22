@@ -29,9 +29,9 @@
 #include "cl_command_event.h"
 #include "consolefinder.h"
 #include "debugger.h"
-#include "list"
 #include "ssh/ssh_account_info.h"
 
+#include <list>
 #include <wx/event.h>
 #include <wx/hashmap.h>
 #include <wx/string.h>

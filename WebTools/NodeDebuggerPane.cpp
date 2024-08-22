@@ -1,7 +1,8 @@
+#include "NodeDebuggerPane.h"
+
 #include "CallFrame.h"
 #include "CallFrameScope.h"
 #include "NodeDebugger.h"
-#include "NodeDebuggerPane.h"
 #include "NodeDebuggerTooltip.h"
 #include "NodeFileManager.h"
 #include "NodeJSDebuggerBreakpoint.h"
@@ -11,9 +12,10 @@
 #include "bitmap_loader.h"
 #include "event_notifier.h"
 #include "globals.h"
+#include "imanager.h"
 #include "macros.h"
 #include "wxterminal.h"
-#include <imanager.h>
+
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
 

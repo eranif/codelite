@@ -27,10 +27,10 @@
 
 #include "build_config.h"
 #include "codelite_exports.h"
-#include "wx/string.h"
 
 #include <map>
 #include <memory>
+#include <wx/string.h>
 
 /**
  * \ingroup SDK

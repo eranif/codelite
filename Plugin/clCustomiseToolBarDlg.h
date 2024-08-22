@@ -3,9 +3,9 @@
 
 #include "ToolBarUI.h"
 #include "clToolBar.h"
+#include "codelite_exports.h"
 #include "wxCustomControls.hpp"
 
-#include <codelite_exports.h>
 #include <vector>
 
 class WXDLLIMPEXP_SDK clCustomiseToolBarDlg : public clCustomiseToolBarBaseDlg

@@ -26,12 +26,13 @@
 #ifndef XMLLexerAPI_H__
 #define XMLLexerAPI_H__
 
+#include "codelite_exports.h"
+
+#include <map>
+#include <vector>
 #include <wx/filename.h>
 #include <wx/string.h>
 #include <wx/variant.h>
-#include <map>
-#include <vector>
-#include <codelite_exports.h>
 
 struct WXDLLIMPEXP_CL XMLLexerToken {
     int lineNumber;

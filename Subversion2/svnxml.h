@@ -25,9 +25,10 @@
 #ifndef SVNXMLPARSER_H
 #define SVNXMLPARSER_H
 
-#include "wx/string.h"
-#include "wx/arrstr.h"
 #include "svninfo.h"
+
+#include <wx/string.h>
+#include <wx/arrstr.h>
 
 class SvnXML
 {

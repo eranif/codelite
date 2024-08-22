@@ -42,6 +42,7 @@
 #include "gauge_wrapper.h"
 #include "generic_dir_ctrl_wrapper.h"
 #include "gl_canvas_wrapper.h"
+#include "globals.h"
 #include "grid_bag_sizer_wrapper.h"
 #include "grid_column_wrapper.h"
 #include "grid_row_wrapper.h"
@@ -118,7 +119,6 @@
 #include "wxcrafter_plugin.h"
 #include "wxgui_bitmaploader.h"
 
-#include <globals.h>
 #include <wx/menu.h>
 
 Allocator* Allocator::ms_instance = 0;

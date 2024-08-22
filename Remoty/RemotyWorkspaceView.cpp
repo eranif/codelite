@@ -16,12 +16,12 @@
 #include "imanager.h"
 #include "search_thread.h"
 #include "ssh/ssh_account_info.h"
-#include "wx/event.h"
-#include "wx/tokenzr.h"
-#include "wx/wxcrt.h"
 
 #include <wx/arrstr.h>
+#include <wx/event.h>
 #include <wx/msgdlg.h>
+#include <wx/tokenzr.h>
+#include <wx/wxcrt.h>
 #include <wx/xrc/xmlres.h>
 
 RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace)

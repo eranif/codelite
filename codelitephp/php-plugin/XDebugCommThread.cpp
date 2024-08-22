@@ -1,8 +1,8 @@
 #include "XDebugCommThread.h"
 
 #include "XDebugManager.h"
+#include "file_logger.h"
 
-#include <file_logger.h>
 #include <string>
 #include <wx/buffer.h>
 #include <wx/log.h>

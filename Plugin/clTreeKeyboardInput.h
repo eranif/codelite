@@ -28,10 +28,10 @@
 
 #include "clTreeCtrl.h"
 #include "codelite_exports.h"
-#include "wx/event.h"
 
 #include <list>
 #include <vector>
+#include <wx/event.h>
 #include <wx/sharedptr.h>
 
 class WXDLLIMPEXP_SDK clTreeKeyboardInput : public wxEvtHandler

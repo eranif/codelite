@@ -35,10 +35,10 @@
 #endif
 #include "codelite_exports.h"
 
-#include "wx/defs.h"
+#include <wx/defs.h>
 #ifdef __WINDOWS__ // __WINDOWS__ defined by wx/defs.h
 // includes windows.h and if wxUSE_WINSOCK2 is true includes winsock2.h
-#include "wx/msw/wrapwin.h"
+#include <wx/msw/wrapwin.h>
 
 typedef SOCKET socket_t;
 typedef int socklen_t;

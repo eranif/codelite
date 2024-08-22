@@ -1,9 +1,9 @@
 #include "XDebugPropertyGetHandler.h"
-#include <macros.h>
+#include "macros.h"
 #include "XVariable.h"
 #include <wx/xml/xml.h>
 #include "xdebugevent.h"
-#include <event_notifier.h>
+#include "event_notifier.h"
 
 XDebugPropertyGetHandler::XDebugPropertyGetHandler(XDebugManager* mgr, int transcationId, const wxString &property)
     : XDebugCommandHandler(mgr, transcationId)

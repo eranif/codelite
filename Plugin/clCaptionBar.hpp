@@ -1,10 +1,10 @@
 #ifndef CLCAPTIONBAR_HPP
 #define CLCAPTIONBAR_HPP
 
+#include "clColours.h"
+#include "codelite_exports.h"
 #include "wxCustomControls.hpp"
 
-#include <clColours.h>
-#include <codelite_exports.h>
 #include <unordered_map>
 #include <vector>
 #include <wx/control.h>

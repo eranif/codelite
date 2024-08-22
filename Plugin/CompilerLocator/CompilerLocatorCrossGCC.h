@@ -27,8 +27,7 @@
 #define COMPILERLOCATORCROSSGCC_H
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
-
-#include <macros.h>
+#include "macros.h"
 
 class WXDLLIMPEXP_SDK CompilerLocatorCrossGCC : public ICompilerLocator
 {

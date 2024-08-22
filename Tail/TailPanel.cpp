@@ -7,10 +7,10 @@
 #include "event_notifier.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "imanager.h"
 #include "lexer_configuration.h"
 #include "tail.h"
 
-#include <imanager.h>
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
 

@@ -1,9 +1,9 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-#include "string"
-#include "list"
-#include <stdio.h>
+#include <cstdio>
+#include <list>
+#include <string>
 
 #ifndef WXDLLIMPEXP_CL
 

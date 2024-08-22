@@ -1,8 +1,9 @@
 #ifndef _WXGUI_HELPERS_H_
 #define _WXGUI_HELPERS_H_
 
-#include <event_notifier.h>
-#include <macros.h>
+#include "event_notifier.h"
+#include "macros.h"
+
 #include <set>
 #include <vector>
 #include <wx/colour.h>

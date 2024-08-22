@@ -41,12 +41,12 @@
 #include "macros.h"
 #include "plugin.h"
 #include "project.h"
-#include "wx/regex.h"
 #include "xmlutils.h"
 
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
+#include <wx/regex.h>
 #include <wx/sstream.h>
 #include <wx/stc/stc.h>
 #include <wx/thread.h>

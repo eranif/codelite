@@ -1,9 +1,10 @@
 #include "php_project_settings_dlg.h"
-#include <globals.h>
-#include <windowattrmanager.h>
-#include "php_workspace.h"
-#include <event_notifier.h>
+
 #include "FileMappingDlg.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "php_workspace.h"
+#include "windowattrmanager.h"
 
 PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& projectName)
     : PHPProjectSettingsBase(parent)

@@ -1,6 +1,7 @@
 #include "LanguageServerConfig.h"
 
-#include <NodeJSLocator.h>
+#include "NodeJSLocator.h"
+
 #include <algorithm>
 
 LanguageServerConfig::LanguageServerConfig()

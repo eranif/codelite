@@ -27,19 +27,19 @@
 
 #include "IWorkspace.h"
 #include "JSON.h"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "configuration_mapping.h"
 #include "localworkspace.h"
 #include "optionsconfig.h"
 #include "project.h"
 #include "singleton.h"
-#include "wx/filename.h"
-#include "wx/string.h"
 #include "wxStringHash.h"
 
-#include <cl_command_event.h>
 #include <map>
 #include <wx/event.h>
+#include <wx/filename.h>
+#include <wx/string.h>
 #include <wx/xml/xml.h>
 
 #define CURRENT_WORKSPACE_VERSION 11000

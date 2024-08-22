@@ -1,8 +1,7 @@
-#include "wx/cmdline.h"
-#include "wx/dir.h"
-#include "wx/filefn.h"
-
 #include <wx/arrstr.h>
+#include <wx/cmdline.h>
+#include <wx/dir.h>
+#include <wx/filefn.h>
 #include <wx/init.h> //wxInitializer
 #include <wx/log.h>
 #include <wx/string.h> //wxString

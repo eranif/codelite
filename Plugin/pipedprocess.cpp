@@ -25,9 +25,9 @@
 #include "pipedprocess.h"
 
 #include "cl_standard_paths.h"
-#include "wx/msgdlg.h"
 
 #include <wx/filename.h>
+#include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/stdpaths.h>
 #include <wx/txtstrm.h>

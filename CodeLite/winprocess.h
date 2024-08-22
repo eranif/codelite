@@ -27,7 +27,7 @@
 
 #ifdef __WXMSW__
 
-#include "wx/msw/wrapwin.h" // includes windows.h
+#include <wx/msw/wrapwin.h> // includes windows.h
 #include <wx/string.h>
 
 class WinProcess

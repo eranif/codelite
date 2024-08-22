@@ -31,11 +31,11 @@
 #include "PHPWrokspaceStorageInterface.h"
 #include "XDebugBreakpoint.h"
 #include "imanager.h"
+#include "macros.h"
 #include "php_project.h"
 #include "php_project_settings_data.h"
 #include "phpexecutor.h"
 
-#include <macros.h>
 #include <map>
 #include <set>
 #include <vector>

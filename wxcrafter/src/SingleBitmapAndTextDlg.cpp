@@ -1,6 +1,7 @@
 #include "SingleBitmapAndTextDlg.h"
+
 #include "BitmapSelectorDlg.h"
-#include <windowattrmanager.h>
+#include "windowattrmanager.h"
 
 SingleBitmapAndTextDlg::SingleBitmapAndTextDlg(wxWindow* parent, const wxString& bmp, const wxString& text)
     : SingleBitmapAndTextDlgBase(parent)

@@ -27,9 +27,10 @@
 #define VARIABLE_H
 
 #include "codelite_exports.h"
-#include "list"
-#include "string"
-#include <stdio.h>
+
+#include <cstdio>
+#include <list>
+#include <string>
 
 class WXDLLIMPEXP_CL Variable
 {

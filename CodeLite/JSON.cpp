@@ -28,9 +28,9 @@
 #include "StringUtils.h"
 #include "clFontHelper.h"
 #include "fileutils.h"
-#include "wx/dynarray.h"
 
 #include <stdlib.h>
+#include <wx/dynarray.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
 

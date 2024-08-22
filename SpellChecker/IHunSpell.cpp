@@ -37,12 +37,13 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
-#include "wx/wxprec.h"
+
+#include <wx/wxprec.h>
 
 #include <wx/log.h>
 
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
+#include <wx/wx.h>
 #endif
 
 #include "CorrectSpellingDlg.h"

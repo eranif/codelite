@@ -1,7 +1,9 @@
 #include "virtual_folder_picker_ctrl.h"
+
 #include "VirtualDirectorySelectorDlg.h"
-#include <event_notifier.h>
-#include <workspace.h>
+#include "event_notifier.h"
+#include "workspace.h"
+
 #include <wx/filedlg.h>
 #include <wx/filename.h>
 

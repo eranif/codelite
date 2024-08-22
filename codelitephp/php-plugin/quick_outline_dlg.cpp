@@ -1,11 +1,10 @@
 #include "quick_outline_dlg.h"
-#include "globals.h"
-#include "precompiled_header.h"
 
-#include <globals.h>
-#include <ieditor.h>
-#include <imanager.h>
-#include <windowattrmanager.h>
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include "precompiled_header.h"
+#include "windowattrmanager.h"
 
 PHPQuickOutlineDlg::PHPQuickOutlineDlg(wxWindow* parent, IEditor* editor, IManager* manager)
     : QuickOutlineDlgBase(parent)

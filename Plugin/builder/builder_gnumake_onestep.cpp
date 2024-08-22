@@ -34,12 +34,12 @@
 #include "globals.h"
 #include "macros.h"
 #include "project.h"
-#include "wx/sstream.h"
-#include "wx/tokenzr.h"
 
 #include <wx/app.h>
 #include <wx/msgdlg.h>
+#include <wx/sstream.h>
 #include <wx/stopwatch.h>
+#include <wx/tokenzr.h>
 
 // wxStopWatch g_sw;
 

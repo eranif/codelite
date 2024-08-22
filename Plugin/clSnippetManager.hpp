@@ -1,7 +1,8 @@
 #ifndef CLSNIPPETMANAGER_HPP
 #define CLSNIPPETMANAGER_HPP
 
-#include <codelite_exports.h>
+#include "codelite_exports.h"
+
 #include <wx/stc/stc.h>
 #include <wx/string.h>
 

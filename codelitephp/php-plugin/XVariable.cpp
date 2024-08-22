@@ -1,5 +1,7 @@
 #include "XVariable.h"
-#include <xmlutils.h>
+
+#include "xmlutils.h"
+
 #include <wx/base64.h>
 
 ///-----------------------------------------------------

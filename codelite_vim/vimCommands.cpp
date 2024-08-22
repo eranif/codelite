@@ -7,7 +7,7 @@
 
 #include <cmath>
 /*EXPERIMENTAL*/
-#include "wx/uiaction.h"
+#include <wx/uiaction.h>
 
 VimCommand::VimCommand(IManager* m_mgr)
     : m_currentCommandPart(COMMAND_PART::REPEAT_NUM)

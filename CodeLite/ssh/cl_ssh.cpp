@@ -32,7 +32,7 @@
 #include <wx/thread.h>
 #include <wx/translation.h>
 #ifdef __WXMSW__
-#include "wx/msw/winundef.h"
+#include <wx/msw/winundef.h>
 #endif
 #include "clEnvironment.hpp"
 #include "cl_ssh.h"

@@ -25,7 +25,8 @@
 
 #include "AdapterSelectDlg.h"
 #include "ErdPanel.h"
-#include "wx/wxxmlserializer/XmlSerializer.h"
+
+#include <wx/wxxmlserializer/XmlSerializer.h>
 
 
 AdapterSelectDlg::AdapterSelectDlg(wxWindow* parent, wxWindow* pParentBook, IManager* pManager , xsSerializable* pConnections) : _AdapterSelectDlg(parent) {

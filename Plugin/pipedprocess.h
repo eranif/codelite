@@ -26,8 +26,9 @@
 #define PipedProcess_H
 
 #include "codelite_exports.h"
-#include "wx/process.h"
-#include "wx/string.h"
+
+#include <wx/process.h>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_SDK PipedProcess : public wxProcess
 {

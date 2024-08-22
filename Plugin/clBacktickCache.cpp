@@ -1,8 +1,8 @@
 #include "clBacktickCache.hpp"
 
 #include "fileutils.h"
-#include "wx/filename.h"
 
+#include <wx/filename.h>
 #include <wx/tokenzr.h>
 
 clBacktickCache::clBacktickCache(const wxString& directory)

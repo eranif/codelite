@@ -1,11 +1,13 @@
+#include "php_settings_dlg.h"
+
 #include "ColoursAndFontsManager.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "php_configuration_data.h"
-#include "php_settings_dlg.h"
 #include "php_workspace.h"
-#include <event_notifier.h>
-#include <windowattrmanager.h>
+#include "windowattrmanager.h"
+
 #include <wx/dirdlg.h>
 
 PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)

@@ -40,13 +40,13 @@
 #include "frame.h"
 #include "globals.h"
 #include "ieditor.h"
+#include "imanager.h"
 #include "macros.h"
 #include "manager.h"
 #include "pluginmanager.h"
 #include "quickfindbar.h"
 
 #include <algorithm>
-#include <imanager.h>
 #include <unordered_map>
 #include <wx/aui/framemanager.h>
 #include <wx/regex.h>

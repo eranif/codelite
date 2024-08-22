@@ -25,9 +25,10 @@
  #ifndef TIPTREE_H
 #define TIPTREE_H
 
-#include "wx/treectrl.h"
 #include "debuggerobserver.h"
 #include "tree_node.h"
+
+#include <wx/treectrl.h>
 
 class TipTreeData : public wxTreeItemData
 {

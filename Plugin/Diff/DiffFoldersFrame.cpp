@@ -10,12 +10,12 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
+#include "wxStringHash.h"
 
 #include <algorithm>
 #include <atomic>
 #include <wx/dir.h>
 #include <wx/wupdlock.h>
-#include <wxStringHash.h>
 
 static int nCallCounter = 0;
 static std::atomic_bool checksumThreadStop;

@@ -8,9 +8,9 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "workspace.h"
 
 #include <algorithm>
-#include <workspace.h>
 #include <wx/app.h>
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>

@@ -28,12 +28,13 @@
 #include "cscopeentrydata.h"
 #include "singleton.h"
 #include "worker_thread.h"
-#include "wx/event.h"
-#include "wx/thread.h"
+
 #include <map>
 #include <vector>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
+#include <wx/thread.h>
 
 extern int wxEVT_CSCOPE_THREAD_DONE;
 extern int wxEVT_CSCOPE_THREAD_UPDATE_STATUS;

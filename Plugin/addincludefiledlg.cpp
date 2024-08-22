@@ -30,10 +30,10 @@
 #include "lexer_configuration.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
-#include "wx/filename.h"
-#include "wx/regex.h"
 
 #include <algorithm>
+#include <wx/filename.h>
+#include <wx/regex.h>
 #include <wx/wupdlock.h>
 
 wxArrayString AddIncludeFileDlg::m_includePath;

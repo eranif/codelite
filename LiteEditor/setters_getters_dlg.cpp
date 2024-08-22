@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "setters_getters_dlg.h"
+
 #include "bitmap_loader.h"
 #include "cl_config.h"
 #include "ctags_manager.h"
@@ -34,7 +35,8 @@
 #include "pluginmanager.h"
 #include "precompiled_header.h"
 #include "windowattrmanager.h"
-#include "wx/tokenzr.h"
+
+#include <wx/tokenzr.h>
 
 //----------------------------------------------------
 

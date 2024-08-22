@@ -24,9 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "SvnBlameFrame.h"
-#include <windowattrmanager.h>
-#include <lexer_configuration.h>
-#include <editor_config.h>
+
+#include "editor_config.h"
+#include "lexer_configuration.h"
+#include "windowattrmanager.h"
 
 SvnBlameFrame::SvnBlameFrame(wxWindow* parent, const wxFileName& filename, const wxString& content)
     : SvnBlameFrameBase(parent)

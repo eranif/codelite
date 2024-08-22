@@ -24,8 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
  #ifndef __colourrequest__
 #define __colourrequest__
-#include "wx/filename.h"
+
 #include "worker_thread.h"
+
+#include <wx/filename.h>
 
 class ColourRequest : public ThreadRequest
 {

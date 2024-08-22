@@ -28,10 +28,10 @@
 #include "editor_config.h"
 #include "globals.h"
 #include "serialized_object.h"
-#include "wx/ffile.h"
-#include "wx/filename.h"
 #include "xmlutils.h"
 
+#include <wx/ffile.h>
+#include <wx/filename.h>
 #include <wx/stdpaths.h>
 
 ConfigurationToolBase::ConfigurationToolBase()

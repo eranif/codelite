@@ -35,13 +35,13 @@
 #include "open_resource_dialog.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
-#include "wx/dir.h"
-#include "wx/xrc/xmlres.h"
 
+#include <wx/dir.h>
 #include <wx/dirdlg.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     : NewClassBaseDlg(parent)

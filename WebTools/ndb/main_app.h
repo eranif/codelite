@@ -3,7 +3,8 @@
 
 #include "NodeStdinThread.h"
 #include "clNodeProcess.h"
-#include <cl_command_event.h>
+#include "cl_command_event.h"
+
 #include <wx/app.h>
 #include <wx/cmdline.h>
 

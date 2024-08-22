@@ -26,15 +26,15 @@
 #define PROCUTILS_H
 
 #include "codelite_exports.h"
-#include "wx/defs.h"
 
 #include <map>
 #include <vector>
 #include <wx/arrstr.h>
+#include <wx/defs.h>
 #include <wx/process.h>
 #include <wx/string.h>
 #ifdef __WINDOWS__          // __WINDOWS__ defined by wx/defs.h
-#include "wx/msw/wrapwin.h" // includes windows.h
+#include <wx/msw/wrapwin.h> // includes windows.h
 // #include <devpropdef.h>
 #include <Psapi.h>
 #include <SetupAPI.h>

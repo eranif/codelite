@@ -31,9 +31,9 @@
 #include "clFilesCollector.h"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "globals.h"
 #include "procutils.h"
 
-#include <globals.h>
 #include <wx/regex.h>
 
 #ifdef __WXMSW__

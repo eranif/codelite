@@ -5,13 +5,13 @@
 #include "database/istorage.h"
 #include "event_notifier.h"
 #include "imanager.h"
+#include "windowattrmanager.h"
 #include "wxc_project_metadata.h"
 #include "wxc_widget.h"
 #include "wxcrafter_plugin.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 
-#include <windowattrmanager.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
 

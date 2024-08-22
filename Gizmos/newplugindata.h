@@ -25,7 +25,7 @@
  #ifndef NEW_PLUGIN_DATA_H
 #define NEW_PLUGIN_DATA_H
 
-#include "wx/string.h"
+#include <wx/string.h>
 
 class NewPluginData 
 {

@@ -47,7 +47,7 @@ public:
 
     /**
      * update node property. If multiple properties with the same name exist, this function updates
-     * the first occurance
+     * the first occurrence
      * \param node
      * \param name property name
      * \param value new value to set

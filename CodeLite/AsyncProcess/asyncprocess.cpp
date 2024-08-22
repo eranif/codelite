@@ -92,7 +92,7 @@ static void __WrapSpacesForShell(wxString& str, size_t flags)
     auto tmpArgs = StringUtils::BuildArgv(str);
     if (tmpArgs.size() > 1) {
         if (!shell_is_cmd || (flags & IProcessCreateSSH)) {
-            // escape any occurances of "
+            // escape any occurrences of "
             str.Replace("\"", "\\\"");
         }
         str.Append("\"").Prepend("\"");

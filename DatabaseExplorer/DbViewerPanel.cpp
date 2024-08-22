@@ -378,7 +378,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                 Database* pDb = (Database*)wxDynamicCast(data->GetData(), Database);
                 if(pDb) {
                     pDb = (Database*)pDb->Clone();
-                    // NOTE: the refresh functions must be here for propper code generation (they translate views into
+                    // NOTE: the refresh functions must be here for proper code generation (they translate views into
                     // tables)
                     pDb->RefreshChildren(true);
                     pDb->RefreshChildrenDetails();

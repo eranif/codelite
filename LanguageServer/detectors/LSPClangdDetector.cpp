@@ -49,7 +49,7 @@ void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
 
     SetCommand(command);
     // Add support for the languages
-    GetLangugaes().Add("c");
-    GetLangugaes().Add("cpp");
+    GetLanguages().Add("c");
+    GetLanguages().Add("cpp");
     SetConnectionString("stdio");
 }

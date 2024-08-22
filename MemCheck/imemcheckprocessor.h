@@ -43,14 +43,14 @@ class MemCheckSettings;
  * @brief Interface for any future error processor - parser.
  *
  * Main goal is to fetch error log from extern analyzer tool to internaly used structure - ErrorList.
- * Plugin creates right type of processor acording to settings.
+ * Plugin creates right type of processor according to settings.
  * At this time internal data storage for error is property of processor.
  */
 class IMemCheckProcessor
 {
 public:
     /**
-     * @brief ctor saves reference to settings and inicilizes other properties
+     * @brief ctor saves reference to settings and initializes other properties
      * @param settings reference to global plugin setting, each processor uses what part it needs
      */
     IMemCheckProcessor(MemCheckSettings* const settings)

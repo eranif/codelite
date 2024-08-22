@@ -346,7 +346,7 @@ and the plugin is NOT one of the official plugins (see list below):
 
 - Abbreviation
 - CodeFormatter
-- ContinousBuild
+- ContinuousBuild
 - Copyright
 - Cscope
 - ExternalTools

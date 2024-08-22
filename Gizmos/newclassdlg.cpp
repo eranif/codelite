@@ -204,7 +204,7 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo& info) const
     info.isAssignable = this->IsCopyableClass();
     info.isMovable = this->IsMovableClass();
     info.isInheritable = this->IsInheritable();
-    info.fileName = wxFileName(GetClassFile()).GetName(); // Ommit any suffix the user might have typed in
+    info.fileName = wxFileName(GetClassFile()).GetName(); // Omit any suffix the user might have typed in
     info.isVirtualDtor = m_checkBoxVirtualDtor->IsChecked();
     info.usePragmaOnce = m_checkBoxPragmaOnce->IsChecked();
     info.virtualDirectory = m_textCtrlVD->GetValue().Trim().Trim(false);

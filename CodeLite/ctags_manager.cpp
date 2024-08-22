@@ -581,10 +581,10 @@ wxString TagsManager::GetScopeName(const wxString& scope)
 
 bool TagsManager::ProcessExpression(const wxFileName& filename, int lineno, const wxString& expr,
                                     const wxString& scopeText, wxString& typeName, wxString& typeScope, wxString& oper,
-                                    wxString& scopeTempalteInitiList)
+                                    wxString& scopeTemplateInitList)
 {
     return GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper,
-                                            scopeTempalteInitiList);
+                                            scopeTemplateInitList);
 }
 
 void TagsManager::GetFiles(const wxString& partialName, std::vector<FileEntryPtr>& files)

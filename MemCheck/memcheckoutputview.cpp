@@ -852,7 +852,7 @@ void MemCheckOutputView::ApplyFilterSupp(unsigned int mode)
     m_listCtrlErrors->SetItemCount(m_filterResults.size());
     UpdateStatusSupp();
     itemsInvalidSupp = false;
-    // If tooltip is shown, LEAVE event isnt raised. This should help in most cases, because if filter is reset, this
+    // If tooltip is shown, LEAVE event isn't raised. This should help in most cases, because if filter is reset, this
     // means mouse leaved list.
     // m_lastToolTipItem = wxNOT_FOUND;
 }

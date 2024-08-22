@@ -767,12 +767,12 @@ public:
     wxArrayString GetCUnPreProcessors(bool clearCache = false);
 
     /**
-     * @brief return the compiler. Optionally ommit the defines/include paths
+     * @brief return the compiler. Optionally omit the defines/include paths
      */
     wxArrayString GetCXXCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
 
     /**
-     * @brief return the C compiler. Optionally ommit the defines/include paths
+     * @brief return the C compiler. Optionally omit the defines/include paths
      */
     wxArrayString GetCCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
 

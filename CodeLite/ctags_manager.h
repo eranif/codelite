@@ -512,7 +512,7 @@ protected:
                       size_t flags = PartialMatch);
     void TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<wxString>& tips);
     bool ProcessExpression(const wxFileName& filename, int lineno, const wxString& expr, const wxString& scopeText,
-                           wxString& typeName, wxString& typeScope, wxString& oper, wxString& scopeTempalteInitiList);
+                           wxString& typeName, wxString& typeScope, wxString& oper, wxString& scopeTemplateInitList);
     wxString DoReplaceMacros(const wxString& name);
     wxArrayString BreakToOuterScopes(const wxString& scope);
     wxString DoReplaceMacrosFromDatabase(const wxString& name);

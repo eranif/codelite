@@ -1121,8 +1121,8 @@ void PHPWorkspaceView::ReportParseThreadProgress(size_t curIndex, size_t total)
     }
 
     if(total) {
-        int precent = (curIndex * 100) / total;
-        m_gaugeParseProgress->SetValue(precent);
+        int percent = (curIndex * 100) / total;
+        m_gaugeParseProgress->SetValue(percent);
     }
 }
 

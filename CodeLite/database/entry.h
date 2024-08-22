@@ -234,7 +234,7 @@ public:
     virtual ~TagEntry();
 
     /**
-     * @brief return if this tag entry is a function tempalte
+     * @brief return if this tag entry is a function template
      */
     bool IsTemplateFunction() const;
 

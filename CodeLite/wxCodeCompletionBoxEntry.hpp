@@ -53,7 +53,7 @@ protected:
     wxString m_text;
     wxString m_comment;
     wxString m_insertText;
-    LSP::Range m_insertRage;
+    LSP::Range m_insertRange;
     int m_imgIndex;
     wxClientData* m_clientData;
     wxRect m_itemRect;
@@ -119,9 +119,9 @@ public:
         m_text.Clear();
     }
 
-    void SetInsertRange(const LSP::Range& insertRage) { this->m_insertRage = insertRage; }
+    void SetInsertRange(const LSP::Range& insertRange) { this->m_insertRange = insertRange; }
     void SetInsertText(const wxString& insertText) { this->m_insertText = insertText; }
-    const LSP::Range& GetInsertRange() const { return m_insertRage; }
+    const LSP::Range& GetInsertRange() const { return m_insertRange; }
     const wxString& GetInsertText() const { return m_insertText; }
 
     void SetIsFunction(bool isFunction) { EnableFlag(isFunction, kIsFunction); }

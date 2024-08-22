@@ -792,7 +792,7 @@ bool Language::CorrectUsingNamespace(wxString& type, wxString& typeScope, const 
 {
     wxString strippedScope(typeScope);
     wxArrayString tmplInitList;
-    DoRemoveTempalteInitialization(strippedScope, tmplInitList);
+    DoRemoveTemplateInitialization(strippedScope, tmplInitList);
 
     if(typeScope == wxT("<global>") && GetAdditionalScopes().empty() == false) {
         // Incase the typeScope is "global" and we got additional-scopes
@@ -993,7 +993,7 @@ TagsManager* Language::GetTagsManager()
     }
 }
 
-void Language::DoRemoveTempalteInitialization(wxString& str, wxArrayString& tmplInitList)
+void Language::DoRemoveTemplateInitialization(wxString& str, wxArrayString& tmplInitList)
 {
     CppScanner sc;
     sc.SetText(_C(str));
@@ -1070,7 +1070,7 @@ void Language::CheckForTemplateAndTypedef(ParsedToken* token)
                 TagEntryPtr t = tags.at(0);
                 wxString pattern(t->GetPattern());
                 wxArrayString tmpInitList;
-                DoRemoveTempalteInitialization(pattern, tmpInitList);
+                DoRemoveTemplateInitialization(pattern, tmpInitList);
 
                 // Incase any of the template initialization list is a
                 // typedef, resolve it as well
@@ -1189,11 +1189,11 @@ void TemplateHelper::SetTemplateDeclaration(const wxString& templateDeclaration)
     LanguageST::Get()->ParseTemplateArgs(templateDeclaration, this->templateDeclaration);
 }
 
-void TemplateHelper::SetTemplateInstantiation(const wxString& tempalteInstantiation)
+void TemplateHelper::SetTemplateInstantiation(const wxString& templateInstantiation)
 {
     this->templateInstantiationVector.clear();
     wxArrayString l;
-    LanguageST::Get()->ParseTemplateInitList(tempalteInstantiation, l);
+    LanguageST::Get()->ParseTemplateInitList(templateInstantiation, l);
     this->templateInstantiationVector.push_back(l);
 }
 
@@ -1201,7 +1201,7 @@ void TemplateHelper::SetTemplateInstantiation(const wxArrayString& templInstanti
 {
     // incase we are using template argument as template instantiation,
     // we should perform the replacement or else we will lose
-    // the actual tempalte instantiation list
+    // the actual template instantiation list
     // an example for such cases:
     // template <class _Tp> class vector {
     //    typedef Something<_Tp> reference;
@@ -1350,7 +1350,7 @@ bool Language::RunUserTypes(ParsedToken* token, const wxString& entryPath)
         wxString argsString = where->second.AfterFirst(wxT('<'));
         argsString.Prepend(wxT("<"));
 
-        DoRemoveTempalteInitialization(argsString, argList);
+        DoRemoveTemplateInitialization(argsString, argList);
         if(argList.IsEmpty() == false) {
             // If we already got a concrete template initialization list
             // do not override it with the dummy one taken from the user
@@ -1446,7 +1446,7 @@ void Language::DoExtractTemplateInitListFromInheritance(TagEntryPtr tag, ParsedT
         wxArrayString inheritsNoTemplate = tag->GetInheritsAsArrayNoTemplates();
         size_t i = 0;
         for(; i < inherits.size(); i++) {
-            DoRemoveTempalteInitialization(inherits.Item(i), initList);
+            DoRemoveTemplateInitialization(inherits.Item(i), initList);
             if(initList.IsEmpty() == false) {
                 break;
             }

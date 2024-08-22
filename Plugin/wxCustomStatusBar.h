@@ -298,7 +298,7 @@ protected:
 
     // Event handlers
     void OnPaint(wxPaintEvent& event);
-    void OnEraseBackround(wxEraseEvent& event);
+    void OnEraseBackground(wxEraseEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnMouseMotion(wxMouseEvent& event);
     void OnTimer(wxTimerEvent& event);

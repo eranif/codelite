@@ -29,7 +29,7 @@ void LSPCMakeDetector::ConfigureFile(const wxFileName& cmakelsp)
 
     SetCommand(command);
     // Add support for the languages
-    GetLangugaes().Add("cmake");
+    GetLanguages().Add("cmake");
     SetConnectionString("stdio");
     SetEnabled(true);
 }

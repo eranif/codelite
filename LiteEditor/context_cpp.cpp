@@ -393,7 +393,7 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
             return;
         }
 
-        // User typed 'ENTER' immediatly after closing brace ')'
+        // User typed 'ENTER' immediately after closing brace ')'
         if (prevpos != wxNOT_FOUND && ch == ')') {
 
             long openBracePos(wxNOT_FOUND);
@@ -416,7 +416,7 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
             }
         }
 
-        // User typed 'ENTER' immediatly after colons ':'
+        // User typed 'ENTER' immediately after colons ':'
         if (prevpos != wxNOT_FOUND && ch == ':') {
             int posWordBeforeColons(wxNOT_FOUND);
             rCtrl.PreviousChar(prevpos, posWordBeforeColons);
@@ -1707,7 +1707,7 @@ void ContextCpp::OnFileSaved()
 void ContextCpp::ApplySettings()
 {
     //-----------------------------------------------
-    // Load laguage settings from configuration file
+    // Load language settings from configuration file
     //-----------------------------------------------
     SetName("C++");
 

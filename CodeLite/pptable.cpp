@@ -166,7 +166,7 @@ void PPToken::processArgs(const wxString& argsList)
 {
     args = wxStringTokenize(argsList, wxT(","), wxTOKEN_STRTOK);
 
-    // replace all occurances of 'arg' with %1, %2 etc
+    // replace all occurrences of 'arg' with %1, %2 etc
     for(size_t i = 0; i < args.GetCount(); i++) {
         wxString replaceWith = wxString::Format(wxT("%%%d"), (int)i);
         std::string res = ReplaceWordA(

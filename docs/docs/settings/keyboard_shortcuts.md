@@ -25,7 +25,7 @@ The table below lists a useful keyboard shortcuts:
  ++ctrl+shift+r++   | Open a resource. a resource can be file, class, function, variable etc
  ++ctrl+shift+o++   | Show current file class layout 
  ++ctrl+k++         | If a text is selected in the editor, use this shortcut to find and select another match in the editor (so you will end of with two selections). You can then edit these selections simultaneously
- ++ctrl+shift+k++   | Similar to the above, but select **all** occurances in the editor instead of doing it incrementally 
+ ++ctrl+shift+k++   | Similar to the above, but select **all** occurrences in the editor instead of doing it incrementally 
  ++ctrl+shift+f++   | Open the find in files dialogue 
  ++ctrl+m++         | Toggle all the panes 
  ++ctrl+f11++       | Toggle the minimal view 

@@ -269,7 +269,7 @@ wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTextAlignment(wxALIGN_LEFT);
 
     Bind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);
-    Bind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
+    Bind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackground, this);
     Bind(wxEVT_LEFT_DOWN, &wxCustomStatusBar::OnLeftDown, this);
     Bind(wxEVT_MOTION, &wxCustomStatusBar::OnMouseMotion, this);
     m_timer = new wxTimer(this);
@@ -289,7 +289,7 @@ wxCustomStatusBar::~wxCustomStatusBar()
     wxDELETE(m_timer);
 
     Unbind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);
-    Unbind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
+    Unbind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackground, this);
     Unbind(wxEVT_LEFT_DOWN, &wxCustomStatusBar::OnLeftDown, this);
     Unbind(wxEVT_MOTION, &wxCustomStatusBar::OnMouseMotion, this);
 }
@@ -333,7 +333,7 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     }
 }
 
-void wxCustomStatusBar::OnEraseBackround(wxEraseEvent& event) { wxUnusedVar(event); }
+void wxCustomStatusBar::OnEraseBackground(wxEraseEvent& event) { wxUnusedVar(event); }
 
 size_t wxCustomStatusBar::DoGetFieldsWidth()
 {

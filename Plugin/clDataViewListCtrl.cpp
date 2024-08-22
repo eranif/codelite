@@ -479,7 +479,7 @@ void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
         child->SetPrev(nullptr);
     }
 
-    // Step 2: disconect the root
+    // Step 2: disconnect the root
     root->SetNext(nullptr);
 
     // Step 3: sort the children

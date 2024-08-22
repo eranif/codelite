@@ -107,7 +107,7 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
             return;
         }
 
-        // User typed 'ENTER' immediatly after closing brace ')'
+        // User typed 'ENTER' immediately after closing brace ')'
         if (prevpos != wxNOT_FOUND && ch == wxT(')')) {
 
             long openBracePos(wxNOT_FOUND);

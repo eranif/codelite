@@ -783,7 +783,7 @@ public:
                 a << m_name << m_address << m_age;
 
                 // in partial mode, the following will return false, not saving
-                // any hierachie information of objects
+                // any hierarchy information of objects
                 if(a.IsFullSerialize())
                 {
                     a << m_items.Count();
@@ -797,7 +797,7 @@ public:
                 a >> m_name >> m_address >> m_age;
 
                 // in partial mode, the following will return false, not restoring
-                // any hierachie information of objects
+                // any hierarchy information of objects
                 if(a.IsFullSerialize())
                 {
                     size_t count = 0;

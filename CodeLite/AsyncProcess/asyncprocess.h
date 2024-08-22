@@ -217,7 +217,7 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vec
  * @param cmd command to execute
  * @param flags process creation flags
  * @param workingDir working directory for the new process
- * @return IPorcess handle on succcess
+ * @return IProcess handle on success
  */
 WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = IProcessCreateDefault,
                                            const wxString& workingDir = wxEmptyString,

@@ -640,7 +640,7 @@ public:
     // Replace all
     bool ReplaceAll();
     bool ReplaceAllExactMatch(const wxString& what, const wxString& replaceWith);
-    // mark all occurances
+    // mark all occurrences
     bool MarkAllFinds();
 
     // Folding API
@@ -681,7 +681,7 @@ public:
     void QuickAddNext();
 
     /**
-     * @brief find all occurances of the selected text and select
+     * @brief find all occurrences of the selected text and select
      */
     void QuickFindAll();
 

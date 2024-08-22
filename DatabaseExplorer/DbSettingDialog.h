@@ -43,8 +43,8 @@
 #include "PostgreSqlDbAdapter.h"
 #endif
 
-/*! \brief Dialog for connection to the database server. It should be change everytime, if new database server typ is
- * add. */
+/*! \brief Dialog for connection to the database server. It should be changed every time, if new database server type is
+ * added. */
 class DbSettingDialog : public _DBSettingsDialog
 {
 protected:

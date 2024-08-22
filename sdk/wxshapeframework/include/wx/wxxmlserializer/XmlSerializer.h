@@ -580,7 +580,7 @@ public:
 
     // public functions
 	/**
-	 * \brief Get last occured error state/message.
+	 * \brief Get last occurred error state/message.
 	 * \return Error message
 	 */
 	const wxString& GetErrMessage() const { return m_sErr; }

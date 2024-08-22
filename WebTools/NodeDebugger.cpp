@@ -403,7 +403,7 @@ void NodeDebugger::OnWebSocketConnected(clCommandEvent& event)
 
 void NodeDebugger::OnWebSocketError(clCommandEvent& event)
 {
-    // an error occured!, terminate the debug session
+    // an error occurred!, terminate the debug session
     if(m_process) {
         m_process->Terminate();
     }

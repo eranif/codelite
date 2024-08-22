@@ -64,7 +64,7 @@ public:
 
     void OnSettings(wxCommandEvent& e);
     void OnCheck(wxCommandEvent& e);
-    void OnContinousCheck(wxCommandEvent& e);
+    void OnContinuousCheck(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& e);
     void OnWspLoaded(clWorkspaceEvent& e);
     void OnWspClosed(clWorkspaceEvent& e);

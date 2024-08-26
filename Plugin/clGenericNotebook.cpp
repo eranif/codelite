@@ -425,7 +425,20 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     GetArt()->DrawBackground(this, gcdc, rect, m_colours, m_style);
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 
-    UpdateVisibleTabs();
+    // Update the tabs coordinates before, unless the paint was triggered by "left click" operation
+    // where we can be sure that the clicked tab is visible
+    switch (m_changeSelectionReason) {
+    case ChangeSelectionReason::kDefault:
+    case ChangeSelectionReason::kProgrammatically:
+        UpdateVisibleTabs();
+        break;
+    case ChangeSelectionReason::kLeftClick:
+        break;
+    }
+
+    // reset the change selection reason
+    m_changeSelectionReason = ChangeSelectionReason::kDefault;
+
     gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - m_chevronRect.GetWidth(), clientRect.height);
 
     // check if the mouse is over a visible tab
@@ -533,7 +546,7 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     // If the click was not on the active tab, set the clicked
     // tab as the new selection and leave this function
     if (!clickWasOnActiveTab) {
-        SetSelection(realPos);
+        SetSelectionWithReason(realPos, ChangeSelectionReason::kLeftClick);
     }
 
     // We clicked on a tab, so prepare to start DnD operation
@@ -569,6 +582,13 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
 
 int clTabCtrl::SetSelection(size_t tabIdx)
 {
+    DoChangeSelection(tabIdx);
+    return wxNOT_FOUND;
+}
+
+int clTabCtrl::SetSelectionWithReason(size_t tabIdx, ChangeSelectionReason reason)
+{
+    m_changeSelectionReason = reason;
     DoChangeSelection(tabIdx);
     return wxNOT_FOUND;
 }

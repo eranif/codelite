@@ -51,14 +51,6 @@ public:
  */
 class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
 {
-public:
-    enum ChangeSelectionReason {
-        kDefault,
-        kLeftClick,
-        kProgrammatically,
-    };
-
-private:
     int m_nHeight;
     int m_nWidth;
 
@@ -81,7 +73,6 @@ private:
     clBitmapList* m_bitmaps = nullptr;
     clButton* m_fileListButton = nullptr;
     clButton* m_actionButton = nullptr;
-    ChangeSelectionReason m_changeSelectionReason = ChangeSelectionReason::kDefault;
 
 protected:
     void DoChangeSelection(size_t index);
@@ -137,11 +128,6 @@ protected:
 
     void OnBeginDrag();
 
-    /**
-     * @brief change the selection to `tabIdx` with a reason
-     */
-    int SetSelectionWithReason(size_t tabIdx, ChangeSelectionReason reason);
-
 public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
@@ -150,7 +136,7 @@ public:
     size_t GetLabelFixedWidth() const;
     size_t GetLabelFixedWidth(wxDC& dc) const;
 
-    /// bitmaps management
+    /// bitmaps mangement
     clBitmapList* GetBitmaps() const { return m_bitmaps; }
 
     /**

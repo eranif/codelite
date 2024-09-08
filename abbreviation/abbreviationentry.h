@@ -26,22 +26,22 @@
 #ifndef __abbreviationentry__
 #define __abbreviationentry__
 
-#include "cl_config.h"
 #include "JSON.h"
+#include "cl_config.h"
 #include "serialized_object.h"
 
 class AbbreviationEntry : public SerializedObject
 {
     wxStringMap_t m_entries;
-    bool m_autoInsert;
+    bool m_autoInsert = false;
 
 public:
-    AbbreviationEntry();
-    virtual ~AbbreviationEntry();
+    AbbreviationEntry() = default;
+    ~AbbreviationEntry() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     // Setters
     void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
@@ -55,19 +55,18 @@ public:
 class AbbreviationJSONEntry : public clConfigItem
 {
     wxStringMap_t m_entries;
-    bool m_autoInsert;
+    bool m_autoInsert = false;
 
 public:
     AbbreviationJSONEntry()
         : clConfigItem("Abbreviations")
-        , m_autoInsert(false)
     {
     }
 
-    virtual ~AbbreviationJSONEntry() {}
+    ~AbbreviationJSONEntry() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
     const wxStringMap_t& GetEntries() const { return m_entries; }

@@ -40,24 +40,24 @@ class AbbreviationsSettingsDlg : public AbbreviationsSettingsBase
 {
     IManager* m_mgr;
     AbbreviationJSONEntry m_data;
-    bool m_dirty;
+    bool m_dirty = false;
     wxString m_activeItemName;
-    int m_currSelection;
+    int m_currSelection = wxNOT_FOUND;
     clConfig m_config;
 
 protected:
-    virtual void OnImmediateInsert(wxCommandEvent& event);
-    virtual void OnHelp(wxCommandEvent& event);
-    virtual void OnExport(wxCommandEvent& event);
-    virtual void OnImport(wxCommandEvent& event);
-    virtual void OnMarkDirty(wxStyledTextEvent& event);
-    virtual void OnSaveUI(wxUpdateUIEvent& event);
+    void OnImmediateInsert(wxCommandEvent& event) override;
+    void OnHelp(wxCommandEvent& event) override;
+    void OnExport(wxCommandEvent& event) override;
+    void OnImport(wxCommandEvent& event) override;
+    void OnMarkDirty(wxStyledTextEvent& event) override;
+    void OnSaveUI(wxUpdateUIEvent& event) override;
     // Handlers for AbbreviationsSettingsBase events.
-    void OnItemSelected(wxCommandEvent& event);
-    void OnNew(wxCommandEvent& e);
-    void OnDelete(wxCommandEvent& event);
-    void OnDeleteUI(wxUpdateUIEvent& event);
-    void OnSave(wxCommandEvent& event);
+    void OnItemSelected(wxCommandEvent& event) override;
+    void OnNew(wxCommandEvent& e) override;
+    void OnDelete(wxCommandEvent& event) override;
+    void OnDeleteUI(wxUpdateUIEvent& event) override;
+    void OnSave(wxCommandEvent& event) override;
 
 private:
     void DoPopulateItems();
@@ -68,7 +68,7 @@ private:
 public:
     /** Constructor */
     AbbreviationsSettingsDlg(wxWindow* parent, IManager* mgr);
-    virtual ~AbbreviationsSettingsDlg();
+    ~AbbreviationsSettingsDlg() override = default;
 };
 
 #endif // __abbreviationssettingsdlg__

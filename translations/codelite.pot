@@ -16361,7 +16361,7 @@ msgstr ""
 #: abbreviation/abbreviationssettingsdlg.cpp:227
 msgid ""
 "This folder already contains a file named 'abbreviations.conf' - would you "
-"like to overrite it?"
+"like to overwrite it?"
 msgstr ""
 
 #: abbreviation/abbreviationssettingsdlg.cpp:232

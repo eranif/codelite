@@ -17080,7 +17080,7 @@ msgstr "'%s' を削除しますか"
 #: abbreviation/abbreviationssettingsdlg.cpp:227
 msgid ""
 "This folder already contains a file named 'abbreviations.conf' - would you "
-"like to overrite it?"
+"like to overwrite it?"
 msgstr ""
 "このフォルダーには、既に 'abbreviations.conf' という名前のファイルが含まれて"
 "います - 上書きしますか？"

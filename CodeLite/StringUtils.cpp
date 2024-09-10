@@ -1,6 +1,5 @@
 #include "StringUtils.h"
 
-
 #include <vector>
 #include <wx/tokenzr.h>
 
@@ -8,15 +7,15 @@ namespace
 {
 bool is_env_variable(const wxString& str, wxString* env_name)
 {
-    if(str.empty() || str[0] != '$') {
+    if (str.empty() || str[0] != '$') {
         return false;
     }
     env_name->reserve(str.length());
 
     // start from 1 to skip the prefix $
-    for(size_t i = 1; i < str.length(); ++i) {
+    for (size_t i = 1; i < str.length(); ++i) {
         wxChar ch = str[i];
-        if(ch == '(' || ch == ')' || ch == '{' || ch == '}')
+        if (ch == '(' || ch == ')' || ch == '{' || ch == '}')
             continue;
         env_name->Append(ch);
     }
@@ -33,12 +32,12 @@ wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& 
     // split the value into its parts
     wxArrayString parts = wxStringTokenize(value, wxPATH_SEP, wxTOKEN_STRTOK);
     wxString resolved;
-    for(const wxString& part : parts) {
+    for (const wxString& part : parts) {
         wxArrayString resovled_array;
         wxString env_name;
-        if(is_env_variable(part, &env_name)) {
+        if (is_env_variable(part, &env_name)) {
             // try the environment variables first
-            if(env_map.find(env_name) != env_map.end()) {
+            if (env_map.find(env_name) != env_map.end()) {
                 resolved << env_map.find(env_name)->second;
             }
         } else {
@@ -47,7 +46,7 @@ wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& 
         }
         resolved << wxPATH_SEP;
     }
-    if(!resolved.empty()) {
+    if (!resolved.empty()) {
         resolved.RemoveLast();
     }
     return resolved;
@@ -57,10 +56,10 @@ clEnvList_t split_env_string(const wxString& env_str)
 {
     clEnvList_t result;
     wxArrayString lines = ::wxStringTokenize(env_str, "\r\n", wxTOKEN_STRTOK);
-    for(wxString& line : lines) {
+    for (wxString& line : lines) {
         wxString key = line.BeforeFirst('=');
         wxString value = line.AfterFirst('=');
-        if(key.empty()) {
+        if (key.empty()) {
             continue;
         }
         result.push_back({ key, value });
@@ -72,12 +71,12 @@ clEnvList_t split_env_string(const wxString& env_str)
 std::string StringUtils::ToStdString(const wxString& str)
 {
     const char* data = str.mb_str(wxConvUTF8).data();
-    if(!data) {
+    if (!data) {
         data = str.To8BitData();
     }
 
     std::string res;
-    if(!data) {
+    if (!data) {
         return res;
     }
     res = data;
@@ -93,17 +92,17 @@ void StringUtils::StripTerminalColouring(const std::string& buffer, std::string&
 {
     modbuffer.reserve(buffer.length());
     short state = BUFF_STATE_NORMAL;
-    for(const char& ch : buffer) {
-        switch(state) {
+    for (const char& ch : buffer) {
+        switch (state) {
         case BUFF_STATE_NORMAL:
-            if(ch == 0x1B) { // found ESC char
+            if (ch == 0x1B) { // found ESC char
                 state = BUFF_STATE_IN_ESC;
             } else {
                 modbuffer += ch;
             }
             break;
         case BUFF_STATE_IN_ESC:
-            switch(ch) {
+            switch (ch) {
             case 'm':
             case 'K':
             case 'G':
@@ -125,7 +124,7 @@ void StringUtils::StripTerminalColouring(const std::string& buffer, std::string&
             }
             break;
         case BUFF_STATE_IN_OSC:
-            if(ch == '\a') {
+            if (ch == '\a') {
                 // bell, leave the current state
                 state = BUFF_STATE_NORMAL;
             }
@@ -140,9 +139,9 @@ void StringUtils::StripTerminalColouring(const wxString& buffer, wxString& modbu
     std::string source = ToStdString(buffer);
     std::string output;
     StripTerminalColouring(source, output);
-    if(!output.empty()) {
+    if (!output.empty()) {
         modbuffer = wxString(output.c_str(), wxConvUTF8);
-        if(modbuffer.IsEmpty()) {
+        if (modbuffer.IsEmpty()) {
             modbuffer = wxString::From8BitData(output.c_str());
         }
     } else {
@@ -171,7 +170,7 @@ void StringUtils::DisableMarkdownStyling(wxString& buffer)
 
 #define PUSH_CURTOKEN()          \
     {                            \
-        if(!curstr.empty()) {    \
+        if (!curstr.empty()) {   \
             A.push_back(curstr); \
             curstr.clear();      \
         }                        \
@@ -181,7 +180,7 @@ namespace
 {
 int get_current_state(const std::vector<int>& states)
 {
-    if(states.empty()) {
+    if (states.empty()) {
         return ARGV_STATE_NORMAL;
     }
     return states[0];
@@ -189,7 +188,7 @@ int get_current_state(const std::vector<int>& states)
 
 int get_prev_state(const std::vector<int>& states)
 {
-    if(states.size() < 2) {
+    if (states.size() < 2) {
         return ARGV_STATE_NORMAL;
     }
     return states[1];
@@ -205,10 +204,10 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
     int dollar_paren_depth = 0;
     std::vector<int> states = { ARGV_STATE_NORMAL };
     wxString curstr;
-    for(wxChar ch : str) {
-        switch(get_current_state(states)) {
+    for (wxChar ch : str) {
+        switch (get_current_state(states)) {
         case ARGV_STATE_NORMAL: {
-            switch(ch) {
+            switch (ch) {
             case '$':
                 curstr << ch;
                 push_state(states, ARGV_STATE_DOLLAR);
@@ -240,7 +239,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             }
         } break;
         case ARGV_STATE_DOLLAR: {
-            switch(ch) {
+            switch (ch) {
             case '(':
                 curstr << ch;
                 push_state(states, ARGV_STATE_PAREN);
@@ -259,7 +258,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             }
         } break;
         case ARGV_STATE_PAREN: {
-            switch(ch) {
+            switch (ch) {
             case '(':
                 curstr << ch;
                 dollar_paren_depth++; // increase the depth
@@ -268,7 +267,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 curstr << ch;
                 dollar_paren_depth--; // reduce the depth
                 // if the depth reached 0, we should leave this state
-                if(dollar_paren_depth == 0) {
+                if (dollar_paren_depth == 0) {
                     // leave the state
                     pop_state(states);
                 }
@@ -279,12 +278,12 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             }
         } break;
         case ARGV_STATE_ESCAPE: {
-            if(get_prev_state(states) == ARGV_STATE_NORMAL) {
+            if (get_prev_state(states) == ARGV_STATE_NORMAL) {
                 curstr << ch;
                 pop_state(states);
                 break;
-            } else if(get_prev_state(states) == ARGV_STATE_DQUOTE) {
-                switch(ch) {
+            } else if (get_prev_state(states) == ARGV_STATE_DQUOTE) {
+                switch (ch) {
                 case '"':
                     curstr << "\"";
                     pop_state(states);
@@ -294,8 +293,8 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                     pop_state(states);
                     break;
                 }
-            } else if(get_prev_state(states) == ARGV_STATE_BACKTICK) {
-                switch(ch) {
+            } else if (get_prev_state(states) == ARGV_STATE_BACKTICK) {
+                switch (ch) {
                 case '`':
                     curstr << "`";
                     pop_state(states);
@@ -306,7 +305,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                     break;
                 }
             } else { // single quote
-                switch(ch) {
+                switch (ch) {
                 case '\'':
                     curstr << "'";
                     pop_state(states);
@@ -319,7 +318,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             }
         } break;
         case ARGV_STATE_DQUOTE: {
-            switch(ch) {
+            switch (ch) {
             case '\\':
                 push_state(states, ARGV_STATE_ESCAPE);
                 break;
@@ -333,7 +332,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             }
         } break;
         case ARGV_STATE_SQUOTE: {
-            switch(ch) {
+            switch (ch) {
             case '\\':
                 push_state(states, ARGV_STATE_ESCAPE);
                 break;
@@ -347,7 +346,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             }
         } break;
         case ARGV_STATE_BACKTICK: {
-            switch(ch) {
+            switch (ch) {
             case '\\':
                 push_state(states, ARGV_STATE_ESCAPE);
                 break;
@@ -363,17 +362,17 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
         }
     }
 
-    if(!curstr.IsEmpty()) {
+    if (!curstr.IsEmpty()) {
         A.push_back(curstr);
     }
 
-    if(A.empty()) {
+    if (A.empty()) {
         return nullptr;
     }
 
     char** argv = new char*[A.size() + 1];
     argv[A.size()] = NULL;
-    for(size_t i = 0; i < A.size(); ++i) {
+    for (size_t i = 0; i < A.size(); ++i) {
         argv[i] = strdup(A[i].mb_str(wxConvUTF8).data());
     }
     argc = (int)A.size();
@@ -382,7 +381,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
 
 void StringUtils::FreeArgv(char** argv, int argc)
 {
-    for(int i = 0; i < argc; ++i) {
+    for (int i = 0; i < argc; ++i) {
         free(argv[i]);
     }
     delete[] argv;
@@ -390,16 +389,23 @@ void StringUtils::FreeArgv(char** argv, int argc)
 
 wxArrayString StringUtils::BuildArgv(const wxString& str)
 {
+    // Don't bother with an empty command line
+    wxString trimmed_str = str;
+    trimmed_str.Trim().Trim(false);
+    if (trimmed_str.empty()) {
+        return {};
+    }
+
     int argc = 0;
-    char** argv = BuildArgv(str, argc);
+    char** argv = BuildArgv(trimmed_str, argc);
     wxArrayString arrArgv;
-    for(int i = 0; i < argc; ++i) {
+    for (int i = 0; i < argc; ++i) {
         arrArgv.Add(argv[i]);
     }
     FreeArgv(argv, argc);
 
-    for(wxString& s : arrArgv) {
-        if((s.length() > 1) && s.StartsWith("\"") && s.EndsWith("\"")) {
+    for (wxString& s : arrArgv) {
+        if ((s.length() > 1) && s.StartsWith("\"") && s.EndsWith("\"")) {
             s.RemoveLast().Remove(0, 1);
         }
     }
@@ -413,7 +419,7 @@ clEnvList_t StringUtils::ResolveEnvList(const clEnvList_t& env_list)
     wxEnvVariableHashMap current_env;
     ::wxGetEnvMap(&current_env);
 
-    for(auto [env_var_name, env_var_value] : env_list) {
+    for (auto [env_var_name, env_var_value] : env_list) {
         env_var_value = expand_env_variable(env_var_value, current_env);
         current_env.erase(env_var_name);
         current_env.insert({ env_var_name, env_var_value });
@@ -423,7 +429,7 @@ clEnvList_t StringUtils::ResolveEnvList(const clEnvList_t& env_list)
     result.reserve(current_env.size());
 
     // convert the hash map into list and return it
-    for(const auto& [env_var_name, env_var_value] : current_env) {
+    for (const auto& [env_var_name, env_var_value] : current_env) {
         result.push_back({ env_var_name, env_var_value });
     }
     return result;
@@ -442,9 +448,9 @@ wxArrayString StringUtils::BuildCommandArrayFromString(const wxString& command)
     wxArrayString command_array;
     command_array.reserve(lines.size());
 
-    for(auto& line : lines) {
+    for (auto& line : lines) {
         line.Trim().Trim(false);
-        if(line.StartsWith("#") || line.IsEmpty()) {
+        if (line.StartsWith("#") || line.IsEmpty()) {
             continue;
         }
 
@@ -452,7 +458,7 @@ wxArrayString StringUtils::BuildCommandArrayFromString(const wxString& command)
 
         int count = 0;
         auto argv = BuildArgv(line, count);
-        for(int i = 0; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             command_array.push_back(argv[i]);
         }
         StringUtils::FreeArgv(argv, count);
@@ -467,7 +473,7 @@ wxString StringUtils::BuildCommandStringFromArray(const wxArrayString& command_a
     bool span_multiple_lines = !(flags & ONE_LINER);
     bool include_comment_block = (flags & WITH_COMMENT_PREFIX);
 
-    if(span_multiple_lines && include_comment_block) {
+    if (span_multiple_lines && include_comment_block) {
         command << "# Command to execute:\n";
         command << "\n";
     }
@@ -475,8 +481,8 @@ wxString StringUtils::BuildCommandStringFromArray(const wxArrayString& command_a
     const wxString SPACE = span_multiple_lines ? "  " : " ";
     const wxString COMMAND_SEPARATOR = span_multiple_lines ? "\n" : " ";
 
-    for(size_t i = 0; i < command_arr.size(); ++i) {
-        if(i > 0) {
+    for (size_t i = 0; i < command_arr.size(); ++i) {
+        if (i > 0) {
             command << SPACE;
         }
         command << command_arr[i] << COMMAND_SEPARATOR;
@@ -486,7 +492,7 @@ wxString StringUtils::BuildCommandStringFromArray(const wxArrayString& command_a
 
 wxString StringUtils::WrapWithDoubleQuotes(const wxString& str)
 {
-    if(str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
+    if (str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
         return "\"" + str + "\"";
     }
     return str;
@@ -495,11 +501,11 @@ wxString StringUtils::WrapWithDoubleQuotes(const wxString& str)
 wxString StringUtils::StripDoubleQuotes(const wxString& str)
 {
     wxString s = str;
-    if(str.StartsWith("\"")) {
+    if (str.StartsWith("\"")) {
         s.Remove(0, 1);
     }
 
-    if(str.EndsWith("\"")) {
+    if (str.EndsWith("\"")) {
         s.RemoveLast();
     }
     return s;
@@ -510,14 +516,14 @@ wxArrayString StringUtils::AppendAndMakeUnique(const wxArrayString& arr, const w
     wxArrayString unique_arr;
     unique_arr.reserve(arr.size());
 
-    for(const auto& s : arr) {
-        if(s != str) {
+    for (const auto& s : arr) {
+        if (s != str) {
             unique_arr.push_back(s);
         }
     }
 
     unique_arr.Insert(str, 0);
-    if(unique_arr.size() > truncate_size) {
+    if (unique_arr.size() > truncate_size) {
         unique_arr.resize(truncate_size);
     }
     return unique_arr;
@@ -525,30 +531,30 @@ wxArrayString StringUtils::AppendAndMakeUnique(const wxArrayString& arr, const w
 
 wxString StringUtils::FindCommonPrefix(const wxArrayString& strings)
 {
-    if(strings.empty()) {
+    if (strings.empty()) {
         return wxEmptyString;
     }
 
     wxString prefix;
     size_t col = 0;
     bool cont = true;
-    while(cont) {
+    while (cont) {
         wxChar curchar = 0;
-        for(const auto& str : strings) {
-            if(col >= str.length()) {
+        for (const auto& str : strings) {
+            if (col >= str.length()) {
                 cont = false;
                 break;
             }
 
-            if(curchar == 0) {
+            if (curchar == 0) {
                 // starting a new column
                 curchar = str[col];
-            } else if(str[col] != curchar) {
+            } else if (str[col] != curchar) {
                 cont = false;
                 break;
             }
         }
-        if(cont) {
+        if (cont) {
             prefix << curchar;
             ++col;
         }

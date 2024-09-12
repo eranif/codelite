@@ -8,7 +8,6 @@
 
 NewPHPClass::NewPHPClass(wxWindow* parent, const wxString& classPath)
     : NewPHPClassBase(parent)
-    , m_userModifiedFileName(false)
     , m_outputPath(classPath)
 {
     SetName("NewPHPClass");
@@ -55,14 +54,10 @@ void NewPHPClass::OnFolderPerNamespace(wxCommandEvent& event) { wxUnusedVar(even
 
 void NewPHPClass::OnNamespaceTextUpdated(wxCommandEvent& event) { wxUnusedVar(event); }
 
-void NewPHPClass::OnFileNameUpdated(wxCommandEvent& event) { m_userModifiedFileName = true; }
-
 void NewPHPClass::OnMakeSingletonUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_choiceType->GetStringSelection() == "class");
 }
-
-void NewPHPClass::OnFolderUpdated(wxCommandEvent& event) { wxUnusedVar(event); }
 
 void NewPHPClass::OnEditExtends(wxCommandEvent& event)
 {

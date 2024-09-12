@@ -69,7 +69,6 @@ protected:
     virtual void OnSetupRemoteUpload(wxCommandEvent& event);
     virtual void OnSetupRemoteUploadMenu(wxCommandEvent& event);
 #endif
-    virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
     virtual void OnActiveProjectSettings(wxCommandEvent& event);
     virtual void OnProjectSettings(wxCommandEvent& event);
     virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event);
@@ -166,7 +165,6 @@ protected:
     void OnActiveProjectChanged(clProjectSettingsEvent& e);
 
     // Php parser events
-    void OnPhpParserStarted(clParseEvent& event);
     void OnPhpParserProgress(clParseEvent& event);
     void OnPhpParserDone(clParseEvent& event);
 

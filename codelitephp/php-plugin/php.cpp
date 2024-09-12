@@ -184,14 +184,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
 PhpPlugin::~PhpPlugin() {}
 
-bool PhpPlugin::IsWorkspaceViewDetached()
-{
-    DetachedPanesInfo dpi;
-    m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
-    wxArrayString detachedPanes = dpi.GetPanes();
-    return detachedPanes.Index(PHPStrings::PHP_WORKSPACE_VIEW_TITLE) != wxNOT_FOUND;
-}
-
 void PhpPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void PhpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
@@ -571,8 +563,6 @@ void PhpPlugin::OnXDebugDeleteAllBreakpoints(clDebugEvent& e)
     EventNotifier::Get()->AddPendingEvent(eventDelAllBP);
 }
 
-void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e) { DoEnsureXDebugPanesVisible(_("Breakpoints")); }
-
 void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
 {
     // Save the current layout to be the normal layout
@@ -648,8 +638,6 @@ void PhpPlugin::OnNewProjectFinish(clNewProjectEvent& e)
         m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, cd);
     }
 }
-
-void PhpPlugin::OnXDebugSettings(wxCommandEvent& e) {}
 
 void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 {

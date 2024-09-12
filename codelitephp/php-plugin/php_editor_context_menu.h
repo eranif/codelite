@@ -54,27 +54,15 @@ class PHPEditorContextMenu : public wxEvtHandler
     static PHPEditorContextMenu* ms_instance;
     wxString m_selectedWord;
     IManager* m_manager;
-    wxString m_comment_line_1;
-    wxString m_comment_line_2;
-    wxString m_start_comment;
-    wxString m_close_comment;
-
-protected:
-    // Helpers
-    void DoContextMenu(IEditor* editor, wxCommandEvent& e);
-    wxStyledTextCtrl* DoGetActiveScintila();
 
 protected:
     // Event handlers
     void OnContextMenu(clContextMenuEvent& e);
     void OnMarginContextMenu(clContextMenuEvent& e);
-    void OnContextOpenDocument(wxCommandEvent& event);
     void OnPopupClicked(wxCommandEvent& event);
 
     // Helpers
     void DoOpenPHPFile();
-    void DoGotoBeginningOfScope();
-    void DoGotoEndOfScope();
     void DoGotoDefinition();
     void OnInsertDoxyComment(wxCommandEvent& e);
     void OnGenerateSettersGetters(wxCommandEvent& e);
@@ -87,7 +75,6 @@ public:
     void SetManager(IManager* manager) { this->m_manager = manager; }
 
     bool IsPHPSection(int styleAtPos) const;
-    bool IsPHPCommentOrString(int styleAtPos) const;
 
 private:
     PHPEditorContextMenu();
@@ -99,12 +86,6 @@ private:
     void DoBuildMenu(wxMenu* menu, IEditor* editor);
     bool IsIncludeOrRequireStatement(wxString& includeWhat);
     bool GetIncludeOrRequireFileName(wxString& fn);
-    bool IsLineMarked(); // does a bookmark exist in the current lines
-    int
-    RemoveComment(wxStyledTextCtrl* sci, int posFrom, const wxString& value); // return the number of characters removed
-    void CommentSingleLine(wxStyledTextCtrl* sci, int style, int line_number, int& caret_pos);
-    bool RemoveSingleLineComment(wxStyledTextCtrl* sci, int& caret_pos);
-    bool RemoveTokenFirstIteration(wxStyledTextCtrl* sci, const wxString& token, bool direction, int& caret_pos);
     int GetTokenPosInScope(wxStyledTextCtrl* sci,
                            const wxString& token,
                            int start_pos,

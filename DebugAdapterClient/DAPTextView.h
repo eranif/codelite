@@ -35,7 +35,6 @@ public:
     void SetMarker(int line_number) { SetMarker(m_stcTextView, line_number); }
 
     void SetText(const dap::Source& source, const wxString& text, const wxString& path, const wxString& mimeType);
-    void LoadFile(const dap::Source& source, const wxString& filepath);
 
     const wxString& GetFilePath() const { return m_filepath; }
     bool IsSame(const dap::Source& source) const { return m_current_source == source; }

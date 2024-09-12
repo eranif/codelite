@@ -75,8 +75,6 @@ class DebugAdapterClient : public IPlugin
 
     bool m_raisOnBpHit;
     bool m_isPerspectiveLoaded;
-    bool m_showThreadNames;
-    bool m_showFileNamesOnly;
 
     friend class LLDBTooltip;
 
@@ -118,16 +116,6 @@ public:
     ~DebugAdapterClient();
 
     IManager* GetManager() { return m_mgr; }
-
-    /**
-     * @brief Should thread name column be shown in thread pane?
-     */
-    bool ShowThreadNames() const;
-
-    /**
-     * @brief Maybe convert a path to filename only for display.
-     */
-    wxString GetFilenameForDisplay(const wxString& fileName) const;
 
 protected:
     // Other codelite events

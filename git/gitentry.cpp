@@ -119,8 +119,6 @@ void GitEntry::FromJSON(const JSONItem& json)
         m_colourDiffFile = diff;
     }
 
-    m_recentCommits = json.namedObject("m_recentCommits").toArrayString();
-
     // read the git commands
     JSONItem arrCommands = json.namedObject("Commands");
     for(int i = 0; i < arrCommands.arraySize(); ++i) {
@@ -163,7 +161,6 @@ JSONItem GitEntry::ToJSON() const
     json.addProperty("m_gitConsoleSashPos", m_gitConsoleSashPos);
     json.addProperty("m_gitCommitDlgHSashPos", m_gitCommitDlgHSashPos);
     json.addProperty("m_gitCommitDlgVSashPos", m_gitCommitDlgVSashPos);
-    json.addProperty("m_recentCommits", m_recentCommits);
     json.addProperty("m_gitShellCommand", m_gitShellCommand);
     json.addProperty("gitBlameShowLogControls", m_gitBlameShowLogControls);
     json.addProperty("m_gitBlameShowParentCommit", m_gitBlameShowParentCommit);
@@ -348,29 +345,6 @@ void GitEntry::Save()
 {
     clConfig conf("git.conf");
     conf.WriteItem(this);
-}
-
-void GitEntry::AddRecentCommit(const wxString& commitMessage)
-{
-    wxString msg = commitMessage;
-    msg.Trim().Trim(false);
-    if(msg.IsEmpty())
-        return;
-
-    if(m_recentCommits.Index(msg) == wxNOT_FOUND) {
-        m_recentCommits.Insert(msg, 0);
-    }
-
-    if(m_recentCommits.size() > 20) {
-        m_recentCommits.RemoveAt(m_recentCommits.size() - 1); // Remove the last commit
-    }
-}
-
-void GitEntry::DeleteEntry(const wxString& workspace)
-{
-    if(m_entries.count(workspace)) {
-        m_entries.erase(workspace);
-    }
 }
 
 wxString GitEntry::GetProjectUserEnteredRepoPath(const wxString& nameHash)

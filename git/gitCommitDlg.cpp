@@ -202,8 +202,6 @@ void GitCommitDlg::OnCommitHistory(wxCommandEvent& event)
     }
 }
 
-void GitCommitDlg::OnCommitHistoryUI(wxUpdateUIEvent& event) { event.Enable(!m_history.IsEmpty()); }
-
 void GitCommitDlg::OnAmendClicked(wxCommandEvent& event)
 {
     if(event.IsChecked()) {

@@ -115,8 +115,6 @@ void PHPProjectSettingsDlg::OnAddIncludePath(wxCommandEvent& event)
     }
 }
 
-void PHPProjectSettingsDlg::OnArgumentsEntered(wxCommandEvent& event) { SetDirty(true); }
-
 void PHPProjectSettingsDlg::OnIndexFileSelected(wxFileDirPickerEvent& event) { SetDirty(true); }
 
 void PHPProjectSettingsDlg::OnPHPExecChanged(wxFileDirPickerEvent& event) { SetDirty(true); }
@@ -248,7 +246,7 @@ void PHPProjectSettingsDlg::EditItem(const wxDataViewItem& item)
         SetDirty(true);
     }
 }
-void PHPProjectSettingsDlg::OnTextctrlviewfilterTextUpdated(wxCommandEvent& event) { SetDirty(true); }
+
 void PHPProjectSettingsDlg::OnPgmgrviewPgChanged(wxPropertyGridEvent& event)
 {
     event.Skip();

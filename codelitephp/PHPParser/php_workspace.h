@@ -96,8 +96,6 @@ public:
     virtual ~PHPWorkspace();
 
 protected:
-    void DoNotifyFilesRemoved(const wxArrayString& files);
-    void DoPromptWorkspaceModifiedDialog();
     void OnProjectSyncEnd(clCommandEvent& event);
 
 public:
@@ -195,14 +193,6 @@ public:
     void Rename(const wxString& newname);
 
     /////////////////////////////////////
-    // Sanity
-    /////////////////////////////////////
-    /**
-     * @brief synonym to HasProject()
-     */
-    bool IsProjectExists(const wxString& project);
-
-    /////////////////////////////////////
     // Workspace construction
     /////////////////////////////////////
     void CreateProject(const PHPProject::CreateData& createData);
@@ -215,28 +205,14 @@ public:
     bool AddProject(const wxFileName& projectFile, wxString& errmsg);
 
     /**
-     * @brief delete a file from a project/folder
-     */
-    void DelFile(const wxString& project, const wxString& filename);
-
-    /**
      * @brief return map with all projects
      */
     const PHPProject::Map_t& GetProjects() const;
-    /**
-     * @brief return list of files from the entire workspace that matches given filter (Contains())
-     * note that files are returned as fullpath
-     */
-    void GetWorkspaceFiles(wxStringSet_t& workspaceFiles, const wxString& filter) const;
     /**
      * @brief return list of files from the entire workspace
      * note that files are returned as fullpath
      */
     void GetWorkspaceFiles(wxStringSet_t& workspaceFiles, wxProgressDialog* progress = NULL) const;
-    /**
-     * @brief same as above, but return the files in the form of an array
-     */
-    void GetWorkspaceFiles(wxArrayString& workspaceFiles, wxProgressDialog* progress) const;
     /**
      * @brief return the active project name
      */

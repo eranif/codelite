@@ -50,7 +50,6 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitCommitListDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitCommitListDlg::OnProcessTerminated, this);
-    // Bind(wxEVT_CHAR_HOOK, &GitCommitListDlg::OnCharHook, this);
 
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
     if(lex) {
@@ -182,8 +181,6 @@ void GitCommitListDlg::OnClose(wxCloseEvent& event)
     Destroy();
 }
 
-void GitCommitListDlg::OnOK(wxCommandEvent& event) { Destroy(); }
-
 void GitCommitListDlg::DoLoadCommits(const wxString& filter)
 {
     ClearAll();
@@ -299,21 +296,6 @@ void GitCommitListDlg::OnPrevious(wxCommandEvent& event)
     }
 }
 
-void GitCommitListDlg::OnExtraArgsTextEnter(wxCommandEvent& event)
-{
-    // Add any text to the combobox, uniqued
-    wxString extraArgs = m_comboExtraArgs->GetValue();
-    if(!extraArgs.empty()) {
-        int pos = m_comboExtraArgs->FindString(extraArgs);
-        if(pos != 0 && pos != wxNOT_FOUND) { // 0 == already the first item in the list
-            m_comboExtraArgs->Delete(pos);
-        }
-        m_comboExtraArgs->Insert(extraArgs, 0);
-    }
-
-    OnSearchCommitList(event);
-}
-
 void GitCommitListDlg::OnPreviousUI(wxUpdateUIEvent& event) { event.Enable(m_skip >= 100); }
 
 void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
@@ -323,10 +305,3 @@ void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
 
 void GitCommitListDlg::OnBtnClose(wxCommandEvent& event) { Destroy(); }
 
-void GitCommitListDlg::OnCharHook(wxKeyEvent& event) // Needed to catch ESC
-{
-    event.Skip();
-    if(event.GetKeyCode() == WXK_ESCAPE) {
-        Destroy();
-    }
-}

@@ -82,12 +82,6 @@ bool clDapSettingsStore::Get(const wxString& name, DapEntry* entry) const
     return true;
 }
 
-bool clDapSettingsStore::Contains(const wxString& name) const
-{
-    DapEntry entry;
-    return Get(name, &entry);
-}
-
 bool clDapSettingsStore::Set(const DapEntry& entry)
 {
     m_entries.erase(entry.GetName());

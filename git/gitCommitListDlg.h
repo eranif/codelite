@@ -54,10 +54,8 @@ class GitCommitListDlg : public GitCommitListDlgBase
     std::map<int, wxString> m_history;
 
 protected:
-    virtual void OnCharHook(wxKeyEvent& event);
     virtual void OnBtnClose(wxCommandEvent& event);
     virtual void OnNextUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnExtraArgsTextEnter(wxCommandEvent& event);
     virtual void OnNext(wxCommandEvent& event);
     virtual void OnPrevious(wxCommandEvent& event);
     virtual void OnPreviousUI(wxUpdateUIEvent& event);
@@ -83,7 +81,6 @@ private:
     void OnProcessOutput(clProcessEvent& event);
 
 protected:
-    virtual void OnOK(wxCommandEvent& event);
     virtual void OnClose(wxCloseEvent& event);
     virtual void OnContextMenu(wxDataViewEvent& event);
     virtual void OnSelectionChanged(wxDataViewEvent& event);

@@ -17,7 +17,6 @@ public:
     {
     }
     virtual ~MyStringData() {}
-    void SetData(const wxString& data) { this->m_data = data; }
     const wxString& GetData() const { return m_data; }
 };
 

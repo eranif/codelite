@@ -85,19 +85,6 @@ const int lldbRunToCursorContextMenuId = XRCID("dbg_run_to_cursor");
 const int lldbJumpToCursorContextMenuId = XRCID("dbg_jump_cursor");
 const int lldbAddWatchContextMenuId = XRCID("lldb_add_watch");
 
-wxString GetWatchWord(IEditor* editor)
-{
-    CHECK_PTR_RET_EMPTY_STRING(editor);
-    auto word = editor->GetSelection();
-    if (word.IsEmpty()) {
-        word = editor->GetWordAtCaret();
-    }
-
-    // Remove leading and trailing whitespace.
-    word.Trim(true).Trim(false);
-    return word;
-}
-
 std::vector<wxString> to_string_array(const clEnvList_t& env_list)
 {
     std::vector<wxString> arr;
@@ -300,17 +287,6 @@ void DebugAdapterClient::RegisterDebuggers()
         debuggers.Add(entry.first);
     }
     DebuggerMgr::Get().RegisterDebuggers(m_shortName, debuggers);
-}
-
-bool DebugAdapterClient::ShowThreadNames() const { return m_showThreadNames; }
-
-wxString DebugAdapterClient::GetFilenameForDisplay(const wxString& fileName) const
-{
-    if (m_showFileNamesOnly) {
-        return wxFileName(fileName).GetFullName();
-    } else {
-        return fileName;
-    }
 }
 
 void DebugAdapterClient::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }

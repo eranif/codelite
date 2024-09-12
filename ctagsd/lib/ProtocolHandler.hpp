@@ -75,7 +75,6 @@ private:
     bool do_comments_exist_for_file(const wxString& filepath) const;
     std::vector<wxString> update_additional_scopes_for_file(const wxString& filepath);
 
-    wxArrayString FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const;
     void do_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel, bool try_definition_first);
     size_t do_find_definition_tags(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel, bool try_definition_first,
                                    std::vector<TagEntryPtr>& tags, wxString* file_match);

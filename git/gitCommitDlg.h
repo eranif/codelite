@@ -71,7 +71,6 @@ private:
 protected:
     virtual void OnAmendClicked(wxCommandEvent& event);
     virtual void OnCommitHistory(wxCommandEvent& event);
-    virtual void OnCommitHistoryUI(wxUpdateUIEvent& event);
     virtual void OnToggleCheckAll(wxCommandEvent& event);
     virtual void OnCommitOK(wxCommandEvent& event);
 };

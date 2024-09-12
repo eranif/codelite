@@ -211,7 +211,6 @@ private:
     void DoCleanup();
     void DoAddFiles(const wxArrayString& files);
     void DoResetFiles(const wxArrayString& files);
-    void DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo);
     void DoShowDiffsForFiles(const wxArrayString& files, bool useFileAsBase = false);
     void DoSetRepoPath(const wxString& repo_path = wxEmptyString);
     void DoRecoverFromGitCommandError(bool clear_queue = true);
@@ -238,12 +237,10 @@ private:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnWorkspaceConfigurationChanged(wxCommandEvent& e);
     void OnMainFrameTitle(clCommandEvent& e);
-    void OnSetGitRepoPath(wxCommandEvent& e);
     void OnSettings(wxCommandEvent& e);
     void OnFileDiffSelected(wxCommandEvent& e);
     void OnFileResetSelected(wxCommandEvent& e);
     void OnFileAddSelected(wxCommandEvent& e);
-    void OnFileDeleteSelected(wxCommandEvent& e);
     void OnSwitchLocalBranch(wxCommandEvent& e);
     void OnSwitchRemoteBranch(wxCommandEvent& e);
     void OnCreateBranch(wxCommandEvent& e);
@@ -270,7 +267,6 @@ private:
     void OnEditorClosed(wxCommandEvent& event);
     void OnEnableGitRepoExists(wxUpdateUIEvent& e);
     void OnClone(wxCommandEvent& e);
-    void OnSftpFileSaved(clCommandEvent& event);
 
     // Event handlers from folder context menu
     void OnFolderPullRebase(wxCommandEvent& event);
@@ -352,8 +348,6 @@ public:
 
     void DoGitBlame(const wxString& args);      // Called by OnGitBlame or the git blame dialog
     wxString GetEditorRelativeFilepath() const; // Called by OnGitBlame or the git blame dialog
-    void OnGitBlameRevList(const wxString& arg, const wxString& filepath,
-                           const wxString& commit = ""); // Called by the git blame dialog
 
     /**
      * @brief simple git command executioin completed. Display its output etc

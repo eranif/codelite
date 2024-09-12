@@ -218,8 +218,6 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
     ParseWorkspace(false);
 }
 
-bool PHPWorkspace::IsProjectExists(const wxString& project) { return HasProject(project); }
-
 const PHPProject::Map_t& PHPWorkspace::GetProjects() const { return m_projects; }
 
 void PHPWorkspace::DeleteProject(const wxString& project)
@@ -270,34 +268,6 @@ void PHPWorkspace::GetWorkspaceFiles(wxStringSet_t& workspaceFiles, wxProgressDi
     }
 }
 
-void PHPWorkspace::GetWorkspaceFiles(wxStringSet_t& workspaceFiles, const wxString& filter) const
-{
-    wxStringSet_t all_files;
-    GetWorkspaceFiles(all_files);
-    if(filter.IsEmpty()) {
-        workspaceFiles.swap(all_files);
-
-    } else {
-        wxStringSet_t::iterator iter = all_files.begin();
-        for(; iter != all_files.end(); ++iter) {
-            wxFileName fn(*iter);
-            if(fn.GetName().Contains(filter)) {
-                workspaceFiles.insert(*iter);
-            }
-        }
-    }
-}
-
-void PHPWorkspace::DoNotifyFilesRemoved(const wxArrayString& files)
-{
-    if(!files.IsEmpty()) {
-
-        wxBusyInfo info(_("Updating workspace..."));
-        wxYieldIfNeeded();
-        EventNotifier::Get()->PostFileRemovedEvent(files);
-    }
-}
-
 wxString PHPWorkspace::GetActiveProjectName() const
 {
     PHPProject::Map_t::const_iterator iter = m_projects.begin();
@@ -307,16 +277,6 @@ wxString PHPWorkspace::GetActiveProjectName() const
         }
     }
     return "";
-}
-
-void PHPWorkspace::DelFile(const wxString& project, const wxString& filename)
-{
-    PHPProject::Ptr_t proj = GetProject(project);
-    CHECK_PTR_RET(proj);
-
-    wxArrayString files;
-    files.Add(filename);
-    proj->FilesDeleted(files, true);
 }
 
 bool PHPWorkspace::RunProject(bool debugging, const wxString& urlOrFilePath, const wxString& projectName,
@@ -480,30 +440,6 @@ void PHPWorkspace::Rename(const wxString& newname)
     // trigger a workspace parsing
     wxCommandEvent evtRetag(wxEVT_CMD_RETAG_WORKSPACE_FULL);
     EventNotifier::Get()->AddPendingEvent(evtRetag);
-}
-
-void PHPWorkspace::DoPromptWorkspaceModifiedDialog()
-{
-    wxMessageDialog dlg(FRAME, _("Workspace file modified externally. Would you like to reload the workspace?"),
-                        "CodeLite", wxYES_NO | wxCENTER);
-    dlg.SetYesNoLabels(_("Reload Workspace"), _("Ignore"));
-
-    int answer = dlg.ShowModal();
-    if(answer == wxID_YES) {
-        wxCommandEvent evtReload(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-        FRAME->GetEventHandler()->AddPendingEvent(evtReload);
-    }
-}
-
-void PHPWorkspace::GetWorkspaceFiles(wxArrayString& workspaceFiles, wxProgressDialog* progress) const
-{
-    wxStringSet_t files;
-    GetWorkspaceFiles(files, progress);
-    workspaceFiles.clear();
-    wxStringSet_t::const_iterator iter = files.begin();
-    for(; iter != files.end(); ++iter) {
-        workspaceFiles.Add(*iter);
-    }
 }
 
 void PHPWorkspace::ParseWorkspace(bool full)

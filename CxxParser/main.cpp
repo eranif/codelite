@@ -16,10 +16,6 @@ void testPureLexer(const char *buf);
 void testIsPrimitive(char *buf);
 
 char *loadFile(const char *fileName);
-void testColorLocals()
-{
-
-}
 
 int main()
 {
@@ -76,10 +72,6 @@ void testExprParser(char *buf)
     printf("===== Testing expression parser ======\n");
     ExpressionResult res = parse_expression(buf);
     res.Print();
-}
-
-void doo(int ii, int value, int stat)
-{
 }
 
 void testScopeParser(char *buf)

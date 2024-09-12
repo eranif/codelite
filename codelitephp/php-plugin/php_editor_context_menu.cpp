@@ -4,7 +4,6 @@
 #include "PHP/PHPEntityClass.h"
 #include "PHP/PHPLookupTable.h"
 #include "PHP/PHPSourceFile.h"
-#include "PHPRefactoring.h"
 #include "PHPSettersGettersDialog.h"
 #include "StdToWX.h"
 #include "clEditorStateLocker.h"
@@ -29,10 +28,6 @@ PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = 0;
 PHPEditorContextMenu::PHPEditorContextMenu()
     : m_manager(NULL)
 {
-    m_comment_line_1 = wxT("//");
-    m_comment_line_2 = wxT("#");
-    m_start_comment = wxT("/*");
-    m_close_comment = wxT("*/");
 }
 
 PHPEditorContextMenu::~PHPEditorContextMenu()
@@ -110,14 +105,6 @@ void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)
     }
 }
 
-bool PHPEditorContextMenu::IsPHPCommentOrString(int styleAtPos) const
-{
-    if((styleAtPos == wxSTC_HPHP_HSTRING) || (styleAtPos == wxSTC_HPHP_SIMPLESTRING) ||
-       (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE))
-        return true;
-    return false;
-}
-
 bool PHPEditorContextMenu::IsPHPSection(int styleAtPos) const
 {
     if((styleAtPos == wxSTC_HPHP_DEFAULT) || (styleAtPos == wxSTC_HPHP_HSTRING) ||
@@ -127,18 +114,6 @@ bool PHPEditorContextMenu::IsPHPSection(int styleAtPos) const
        (styleAtPos == wxSTC_HPHP_OPERATOR))
         return true;
     return false;
-}
-
-bool PHPEditorContextMenu::IsLineMarked()
-{
-    GET_EDITOR_SCI_BOOL();
-
-    int nPos = sci->GetCurrentPos();
-    int nLine = sci->LineFromPosition(nPos);
-    int nBits = sci->MarkerGet(nLine);
-
-    // 128 is the mask representing a bookmark (refer to enum marker_mask_type in cl_editor.h)
-    return (nBits & 128 ? true : false);
 }
 
 bool PHPEditorContextMenu::IsIncludeOrRequireStatement(wxString& includeWhat)
@@ -181,35 +156,6 @@ void PHPEditorContextMenu::DoOpenPHPFile()
     if(!outFile.IsEmpty()) {
         m_manager->OpenFile(outFile);
     }
-}
-
-void PHPEditorContextMenu::DoGotoBeginningOfScope()
-{
-    GET_EDITOR_SCI_VOID();
-
-    int caret_pos = sci->GetCurrentPos();
-    const wxArrayString tokensBlackList = StdToWX::ToArrayString({
-        // there isn't a black list for '}'
-        wxT("{$"),   // T_CURLY_OPEN: complex variable parsed syntax
-        wxT("${"),   // T_DOLLAR_OPEN_CURLY_BRACES: complex variable parsed syntax
-        wxT("\"${a") // T_STRING_VARNAME: complex variable parsed syntax
-    });
-    int startOfScopePos = GetTokenPosInScope(sci, wxT("{"), 0, caret_pos, false, tokensBlackList);
-    if(startOfScopePos == wxSTC_INVALID_POSITION)
-        startOfScopePos = caret_pos;
-    SET_CARET_POS(startOfScopePos);
-}
-void PHPEditorContextMenu::DoGotoEndOfScope()
-{
-    GET_EDITOR_SCI_VOID();
-
-    int caret_pos = sci->GetCurrentPos();
-    int end_of_file_pos = sci->GetLineEndPosition(sci->GetLineCount() - 1); // get the file last sel pos
-    wxArrayString tokensBlackList;                                          // there isn't a black list for '}'
-    int endOfScopePos = GetTokenPosInScope(sci, wxT("}"), caret_pos, end_of_file_pos, true, tokensBlackList);
-    if(endOfScopePos == wxSTC_INVALID_POSITION)
-        endOfScopePos = caret_pos;
-    SET_CARET_POS(endOfScopePos);
 }
 
 void PHPEditorContextMenu::DoGotoDefinition()
@@ -260,32 +206,6 @@ bool PHPEditorContextMenu::IsTokenInBlackList(wxStyledTextCtrl* sci, const wxStr
     }
     return false;
 }
-void PHPEditorContextMenu::DoContextMenu(IEditor* editor, wxCommandEvent& e)
-{
-    long closePos = editor->GetCurrentPosition();
-    if(closePos != wxNOT_FOUND) {
-        if(!editor->GetSelection().IsEmpty()) {
-            // If the selection text is placed under the cursor,
-            // keep it selected, else, unselect the text
-            // and place the caret to be under cursor
-            int selStart = editor->GetSelectionStart();
-            int selEnd = editor->GetSelectionEnd();
-            if(closePos < selStart || closePos > selEnd) {
-                // Cursor is not over the selected text, unselect and re-position caret
-                editor->SetCaretAt(closePos);
-            }
-        } else {
-            // No selection, just place the caret
-            editor->SetCaretAt(closePos);
-        }
-    }
-
-    // Create the context menu.
-    // Menu can be allocated on the stack otherwise we need to delete it later
-    wxMenu menu;
-    DoBuildMenu(&menu, editor);
-    editor->GetCtrl()->PopupMenu(&menu);
-}
 
 void PHPEditorContextMenu::OnContextMenu(clContextMenuEvent& e)
 {
@@ -331,90 +251,6 @@ void PHPEditorContextMenu::OnMarginContextMenu(clContextMenuEvent& e)
     }
 }
 
-void PHPEditorContextMenu::OnContextOpenDocument(wxCommandEvent& event) { wxUnusedVar(event); }
-
-bool PHPEditorContextMenu::RemoveTokenFirstIteration(wxStyledTextCtrl* sci, const wxString& token, bool direction,
-                                                     int& caret_pos)
-{
-    // initialization of start_pos & end_pos
-    int line_number = sci->LineFromPosition(sci->GetCurrentPos());
-    int start_pos, end_pos;
-    if(direction) {
-        start_pos = sci->GetCurrentPos() - token.length();
-        end_pos = sci->GetLineEndPosition(line_number);
-    } else {
-        start_pos = sci->PositionFromLine(line_number);
-        end_pos = sci->GetCurrentPos() + token.length();
-    }
-
-    // loop until the token is found
-    int token_pos = wxSTC_INVALID_POSITION;
-    while(token_pos == wxSTC_INVALID_POSITION) {
-        sci->SetTargetStart(start_pos);
-        sci->SetTargetEnd(end_pos);
-        token_pos = sci->SearchInTarget(token);
-        if(token_pos != wxSTC_INVALID_POSITION) { // match
-            int res = RemoveComment(sci, token_pos, token);
-            if(!direction) {
-                caret_pos -= res;
-                if(caret_pos < token_pos)
-                    caret_pos = token_pos;
-            } else {
-                if(caret_pos > token_pos)
-                    caret_pos = token_pos;
-            }
-            return true;
-        }
-
-        if(direction)
-            line_number++;
-        else
-            line_number--;
-
-        start_pos = sci->PositionFromLine(line_number);
-        end_pos = sci->GetLineEndPosition(line_number);
-    }
-
-    return false;
-}
-// this function search and remove single lines comments: '//' and '#'
-// the currentPos is required in order to avoid cases in which the comment start after the caret
-bool PHPEditorContextMenu::RemoveSingleLineComment(wxStyledTextCtrl* sci, int& caret_pos)
-{
-    int currentPos = sci->GetCurrentPos();
-    int line_number = sci->LineFromPosition(currentPos);
-    int line_start_pos = sci->PositionFromLine(line_number);
-
-    // search for a single line comment
-    sci->SetTargetStart(line_start_pos);
-    sci->SetTargetEnd(currentPos);
-    int start_comment_pos = sci->SearchInTarget(m_comment_line_1);
-    if(start_comment_pos != wxSTC_INVALID_POSITION) {
-        caret_pos -= RemoveComment(sci, start_comment_pos, m_comment_line_1);
-        return true;
-    }
-
-    start_comment_pos = sci->SearchInTarget(m_comment_line_2);
-    if(start_comment_pos != wxSTC_INVALID_POSITION) {
-        caret_pos -= RemoveComment(sci, start_comment_pos, m_comment_line_2);
-        return true;
-    }
-
-    return false;
-}
-
-int PHPEditorContextMenu::RemoveComment(wxStyledTextCtrl* sci, int posFrom, const wxString& value)
-{
-    sci->SetAnchor(posFrom);
-    int posTo = posFrom;
-    for(int i = 0; i < (int)value.Length(); i++)
-        posTo = sci->PositionAfter(posTo);
-
-    sci->SetSelection(posFrom, posTo);
-    sci->DeleteBack();
-    return posTo - posFrom;
-}
-
 void PHPEditorContextMenu::OnPopupClicked(wxCommandEvent& event)
 {
     IEditor* editor = m_manager->GetActiveEditor();
@@ -436,15 +272,6 @@ void PHPEditorContextMenu::OnPopupClicked(wxCommandEvent& event)
     } else {
         event.Skip();
     }
-}
-
-wxStyledTextCtrl* PHPEditorContextMenu::DoGetActiveScintila()
-{
-    IEditor* editor = m_manager->GetActiveEditor();
-    if(editor) {
-        return editor->GetCtrl();
-    }
-    return NULL;
 }
 
 void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)

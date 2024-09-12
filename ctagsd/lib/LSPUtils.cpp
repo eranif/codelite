@@ -127,21 +127,6 @@ std::vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const 
     return result;
 }
 
-std::vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const std::vector<TagEntry>& tags,
-                                                                          bool for_tree_view)
-{
-    std::vector<LSP::SymbolInformation> result;
-    result.reserve(tags.size());
-
-    wxStringSet_t parent_seen;
-    for(const auto& tag : tags) {
-        LSP::SymbolInformation symbol_information;
-        to_symbol_information(&tag, symbol_information, for_tree_view ? &parent_seen : nullptr);
-        result.push_back(symbol_information);
-    }
-    return result;
-}
-
 void LSPUtils::to_symbol_information(const TagEntry* tag, LSP::SymbolInformation& symbol_information,
                                      std::unordered_set<wxString>* parents_seen)
 {

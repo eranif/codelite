@@ -47,6 +47,7 @@
 #include "search_thread.h"
 
 #include <algorithm>
+#include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>

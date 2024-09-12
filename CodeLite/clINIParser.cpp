@@ -3,6 +3,7 @@
 #include "fileutils.h"
 
 #include <algorithm>
+#include <iostream>
 
 namespace
 {

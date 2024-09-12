@@ -60,6 +60,7 @@
 #include <wx/dir.h>
 #include <wx/fontmap.h>
 #include <wx/imagjpeg.h>
+#include <wx/msgdlg.h>
 #include <wx/persist.h>
 #include <wx/regex.h>
 #include <wx/socket.h>

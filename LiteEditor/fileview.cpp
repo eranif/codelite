@@ -73,6 +73,7 @@
 #include <wx/textdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/treectrl.h>
+#include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
 static const wxString gsCustomTargetsMenu("Custom Build Targets");

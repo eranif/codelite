@@ -7,6 +7,8 @@
 #include "event_notifier.h"
 #include "globals.h"
 
+#include <wx/msgdlg.h>
+
 wxDEFINE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CHATAI_STOP, clCommandEvent);
 

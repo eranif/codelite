@@ -38,6 +38,7 @@
 
 #include <algorithm>
 #include <wx/accel.h>
+#include <wx/filedlg.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
 #include <wx/regex.h>

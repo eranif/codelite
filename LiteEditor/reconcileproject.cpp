@@ -41,6 +41,7 @@
 #include <wx/dir.h>
 #include <wx/dirdlg.h>
 #include <wx/log.h>
+#include <wx/msgdlg.h>
 #include <wx/regex.h>
 #include <wx/textdlg.h>
 #include <wx/tokenzr.h>

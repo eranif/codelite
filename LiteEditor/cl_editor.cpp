@@ -80,10 +80,12 @@
 #include <wx/dataobj.h>
 #include <wx/dcmemory.h>
 #include <wx/display.h>
+#include <wx/filedlg.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/fontmap.h>
 #include <wx/log.h>
+#include <wx/msgdlg.h>
 #include <wx/printdlg.h>
 #include <wx/regex.h>
 #include <wx/richtooltip.h> // wxRichToolTip

@@ -2,6 +2,9 @@
 
 #include "cl_config.h"
 
+#include <memory>
+#include <vector>
+
 class ChatAIConfig : clConfigItem
 {
 public:

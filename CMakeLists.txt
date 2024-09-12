@@ -543,7 +543,6 @@ endif(LIBUCHARDET_LIB AND LIBUCHARDET_INCLUDE_DIR)
 osx_make_bundle_directory()
 
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
-add_definitions(-DwxUSE_GUI=1)
 
 if(NOT MINGW)
     add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")

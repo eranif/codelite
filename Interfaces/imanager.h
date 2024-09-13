@@ -589,11 +589,6 @@ public:
     virtual BitmapLoader* GetStdIcons() = 0;
 
     /**
-     * @brief return the compilation flags for a file in a given project
-     */
-    virtual wxArrayString GetProjectCompileFlags(const wxString& projectName, bool isCppFile) = 0;
-
-    /**
      * @brief return the selected project item. Note that this is different than
      * returning the *active* project. A selected project, is the project that it is
      * selected in the tree "blue highlight" or the parent of the selected item

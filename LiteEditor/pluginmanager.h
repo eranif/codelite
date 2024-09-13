@@ -147,7 +147,6 @@ public:
     bool CloseEditor(IEditor* editor, bool prompt = true) override;
     bool IsShutdownInProgress() const override;
     BitmapLoader* GetStdIcons() override;
-    wxArrayString GetProjectCompileFlags(const wxString& projectName, bool isCppFile) override;
     void AddEditorPage(wxWindow* page, const wxString& name, const wxString& tooltip = wxEmptyString) override;
     wxPanel* GetEditorPaneNotebook() override;
     wxWindow* GetActivePage() override;

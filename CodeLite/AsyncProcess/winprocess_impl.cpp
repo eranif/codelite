@@ -38,6 +38,7 @@
 
 #include "winprocess_impl.h"
 
+#include "clDirChanger.hpp"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "processreaderthread.h"
@@ -67,18 +68,6 @@ thread_local bool loadOnce = true;
 thread_local CreatePseudoConsole_T CreatePseudoConsoleFunc = nullptr;
 thread_local ClosePseudoConsole_T ClosePseudoConsoleFunc = nullptr;
 #endif
-
-class MyDirGuard
-{
-    wxString _d;
-
-public:
-    MyDirGuard()
-        : _d(wxGetCwd())
-    {
-    }
-    ~MyDirGuard() { wxSetWorkingDirectory(_d); }
-};
 
 typedef HANDLE HPCON;
 
@@ -395,13 +384,12 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
     SECURITY_ATTRIBUTES saAttr;
     BOOL fSuccess;
 
-    MyDirGuard dg;
 
     wxString wd(workingDir);
     if(workingDir.IsEmpty()) {
         wd = wxGetCwd();
     }
-    wxSetWorkingDirectory(wd);
+    clDirChanger dg(wd);
 
     // Set the bInheritHandle flag so pipe handles are inherited.
     saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);

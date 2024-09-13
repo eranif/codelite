@@ -343,14 +343,6 @@ public:
      */
     virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds,
                                         std::vector<TagEntryPtr>& tags) = 0;
-    /**
-     * @brief return list of tags by scopes and kinds with no LIMIT applied
-     * @param scopes array of possible scopes
-     * @param kinds array of possible kinds
-     * @param tags [output]
-     */
-    virtual void GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds,
-                                               std::vector<TagEntryPtr>& tags) = 0;
 
     /**
      * @brief return macro evaluation

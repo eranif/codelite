@@ -102,7 +102,6 @@ public:
 
     // Event handlers
     void OnDwellEnd(wxStyledTextEvent& event) override;
-    bool GetHoverTip(int pos) override;
     void OnDbgDwellEnd(wxStyledTextEvent& event) override;
     void OnDbgDwellStart(wxStyledTextEvent& event) override;
     void OnSciUpdateUI(wxStyledTextEvent& event) override;

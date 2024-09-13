@@ -437,8 +437,6 @@ public:
      */
     virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds,
                                         std::vector<TagEntryPtr>& tags);
-    virtual void GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds,
-                                               std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief get list of tags by kind and file

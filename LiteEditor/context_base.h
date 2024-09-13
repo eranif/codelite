@@ -147,7 +147,6 @@ public:
         wxUnusedVar(pos);
         return false;
     }
-    virtual bool GetHoverTip(int pos) { return false; }
     virtual bool GotoDefinition() { return false; }
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) { return NULL; }
     virtual wxString GetCurrentScopeName() { return wxEmptyString; }

@@ -1,8 +1,10 @@
 #include "preview_dialog.h"
-#include "DirectoryChanger.h"
+
+#include "clDirChanger.hpp"
 #include "wxc_aui_manager.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
+
 #include <wx/app.h>
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
@@ -23,7 +25,7 @@ PreviewDialog::PreviewDialog(wxWindow* parent, const DialogWrapper& dw)
 
     wxString xrcFilePath = wxFileName(wxCrafter::GetUserDataDir(), wxT("mydlg.xrc")).GetFullPath();
     doc.Save(xrcFilePath);
-    DirectoryChanger dc(wxcProjectMetadata::Get().GetProjectPath());
+    clDirChanger dc(wxcProjectMetadata::Get().GetProjectPath());
 
     wxXmlResource::Get()->Load(xrcFilePath);
     wxXmlResource::Get()->LoadDialog(this, parent, dw.GetName());

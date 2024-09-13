@@ -1,6 +1,6 @@
 #include "popup_window_preview.h"
 
-#include "DirectoryChanger.h"
+#include "clDirChanger.hpp"
 #include "event_notifier.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
@@ -28,7 +28,7 @@ PopupWindowPreview::PopupWindowPreview(wxWindow* parent, const PopupWindowWrappe
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
 
-    DirectoryChanger dc(wxcProjectMetadata::Get().GetProjectPath());
+    clDirChanger dc(wxcProjectMetadata::Get().GetProjectPath());
 
     wxXmlResource::Get()->Load(xrcFilePath);
     wxPanel* panel = wxXmlResource::Get()->LoadPanel(this, wrapper.GetName());

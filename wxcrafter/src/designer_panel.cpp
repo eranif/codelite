@@ -1,7 +1,7 @@
 #include "designer_panel.h"
 
-#include "DirectoryChanger.h"
 #include "allocator_mgr.h"
+#include "clDirChanger.hpp"
 #include "designer_container_panel.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
@@ -644,7 +644,7 @@ void DesignerPanel::DoLoadXRC(int topLeveWinType)
     wxFileName fn = wxCrafter::LoadXRC(m_xrcLoaded, wxT("DesignerPanel.xrc"), caption, styleString, bmpIcon);
 
     // We must be in the directory of the project to be able to load the bitmaps properly
-    DirectoryChanger dc(wxcProjectMetadata::Get().GetProjectPath());
+    clDirChanger dc(wxcProjectMetadata::Get().GetProjectPath());
     panel = wxXmlResource::Get()->LoadPanel(m_mainPanel, wxT("PreviewPanel"));
 
     if(panel) {

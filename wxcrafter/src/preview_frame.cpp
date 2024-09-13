@@ -1,8 +1,10 @@
 #include "preview_frame.h"
-#include "DirectoryChanger.h"
+
+#include "clDirChanger.hpp"
 #include "wxc_aui_manager.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
+
 #include <wx/app.h>
 #include <wx/sizer.h>
 #include <wx/sstream.h>
@@ -24,7 +26,7 @@ PreviewFrame::PreviewFrame(wxWindow* parent, const TopLevelWinWrapper& fw)
 
     wxString xrcFilePath = wxFileName(wxCrafter::GetUserDataDir(), wxT("myframe.xrc")).GetFullPath();
     doc.Save(xrcFilePath);
-    DirectoryChanger dc(wxcProjectMetadata::Get().GetProjectPath());
+    clDirChanger dc(wxcProjectMetadata::Get().GetProjectPath());
 
     wxXmlResource::Get()->Load(xrcFilePath);
     wxXmlResource::Get()->LoadFrame(this, parent, fw.GetName());

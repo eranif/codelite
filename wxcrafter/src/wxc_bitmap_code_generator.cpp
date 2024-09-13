@@ -1,7 +1,6 @@
 #include "wxc_bitmap_code_generator.h"
 
 #include "AsyncProcess/processreaderthread.h"
-#include "DirectoryChanger.h"
 #include "StdToWX.h"
 #include "environmentconfig.h"
 #include "globals.h"

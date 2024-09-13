@@ -49,7 +49,7 @@ WX_DECLARE_STRING_HASH_MAP(wxString, StringMap);
 
 /**
  * \class Archive
- * \brief an auxulariy class which serializes variables into XML format
+ * \brief an auxiliary class which serializes variables into XML format
  * \author Eran
  * \date 07/20/07
  */

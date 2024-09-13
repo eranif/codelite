@@ -213,7 +213,7 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vec
                                             const wxString& sshAccountName = wxEmptyString);
 
 /**
- * @brief create synchronus process
+ * @brief create synchronous process
  * @param cmd command to execute
  * @param flags process creation flags
  * @param workingDir working directory for the new process

@@ -823,7 +823,7 @@ public:
      * @param pattern pattern to search in the editor
      * @param what    sub string of pattern to select
      * @param pos     start the search from 'pos'
-     * @param navmgr  Navigation manager to place browsing recrods
+     * @param navmgr  Navigation manager to place browsing records
      * @return return true if a match was found, false otherwise
      */
     bool FindAndSelect(const wxString& pattern, const wxString& what, int pos, NavMgr* navmgr) override;
@@ -1010,15 +1010,15 @@ public:
     wxString FormatTextKeepIndent(const wxString& text, int pos, size_t flags = 0) override;
 
     /**
-     * @brief return the line numebr containing 'pos'
+     * @brief return the line number containing 'pos'
      * @param pos the position
      */
     int LineFromPos(int pos) override;
 
     /**
-     * @brief return the start pos of line nummber
+     * @brief return the start pos of line number
      * @param line the line number
-     * @return line nummber or 0 if the document is empty
+     * @return line number or 0 if the document is empty
      */
     int PosFromLine(int line) override;
 

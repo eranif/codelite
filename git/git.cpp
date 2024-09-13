@@ -101,10 +101,7 @@ wxString GetDirFromPath(const wxString& path)
     }
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new GitPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new GitPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -2490,15 +2487,18 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
         if (dlg.GetSelectedFiles().IsEmpty() && !dlg.IsAmending())
             return;
         wxString message = dlg.GetCommitMessage();
-        if (!message.IsEmpty() || dlg.IsAmending()) {
-
+        if (!message.empty() || dlg.IsAmending()) {
             // amending?
             if (dlg.IsAmending()) {
                 commitArgs << " --amend ";
             }
 
+            if (dlg.IsSignedOffBy()) {
+                commitArgs << " -s ";
+            }
+
             // Add the message
-            if (!message.IsEmpty()) {
+            if (!message.empty()) {
                 wxString messagefile = GetCommitMessageFile();
                 ::WrapWithQuotes(messagefile);
                 commitArgs << "--file=";

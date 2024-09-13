@@ -64,6 +64,7 @@ public:
     void SetPreviousCommitMessage(const wxString& previous) { m_previousCommitMessage = previous; }
     void SetHistory(const wxString& history) { m_history = wxStringTokenize(history, "\n"); }
     bool IsAmending() const { return m_checkBoxAmend->IsChecked(); }
+    bool IsSignedOffBy() const { return m_checkBoxSignedOff->IsChecked(); }
 
 private:
     void OnChangeFile(wxDataViewEvent& e);

@@ -61,7 +61,7 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     m_splitterMain->CallAfter(&wxSplitterWindow::SetSashPosition, data.GetGitCommitDlgVSashPos(), true);
 
     LexerConf::Ptr_t diffLexer = ColoursAndFontsManager::Get().GetLexer("diff");
-    if(diffLexer) {
+    if (diffLexer) {
         diffLexer->Apply(m_stcDiff);
     }
 
@@ -75,7 +75,7 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     CentreOnParent();
 
     wxFileName temp_commit = GetTempCommitFile();
-    if(temp_commit.FileExists()) {
+    if (temp_commit.FileExists()) {
         wxString content;
         FileUtils::ReadFileContent(temp_commit, content);
         m_stcCommitMessage->SetText(content);
@@ -98,9 +98,9 @@ GitCommitDlg::~GitCommitDlg()
     conf.WriteItem(&data);
 
     // if the dialog was dimissed with "OK", remove the commit file
-    if(m_dismissedWithOk) {
+    if (m_dismissedWithOk) {
         FileUtils::RemoveFile(GetTempCommitFile());
-    } else if(!m_stcCommitMessage->IsEmpty()) {
+    } else if (!m_stcCommitMessage->IsEmpty()) {
         // otherwise, write the content to the file, we will load it later
         FileUtils::WriteFileContent(GetTempCommitFile(), m_stcCommitMessage->GetText());
     }
@@ -116,19 +116,19 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
     BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
     std::vector<wxString> names;
     names.reserve(m_diffMap.size());
-    for(const wxStringMap_t::value_type& vt : m_diffMap) {
+    for (const wxStringMap_t::value_type& vt : m_diffMap) {
         names.push_back(vt.first);
     }
 
     std::sort(names.begin(), names.end(), [](const wxString& a, const wxString& b) { return a.CmpNoCase(b) < 0; });
 
-    for(const wxString& filename : names) {
+    for (const wxString& filename : names) {
         cols.clear();
         cols.push_back(::MakeCheckboxVariant(filename, true, bitmaps->GetMimeImageId(filename)));
         m_dvListCtrlFiles->AppendItem(cols);
     }
 
-    if(!names.empty()) {
+    if (!names.empty()) {
         m_dvListCtrlFiles->Select(m_dvListCtrlFiles->RowToItem(0));
         wxStringMap_t::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);
@@ -140,9 +140,9 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
 wxArrayString GitCommitDlg::GetSelectedFiles()
 {
     wxArrayString ret;
-    for(size_t i = 0; i < m_dvListCtrlFiles->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrlFiles->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrlFiles->RowToItem(i);
-        if(m_dvListCtrlFiles->IsItemChecked(item, 0)) {
+        if (m_dvListCtrlFiles->IsItemChecked(item, 0)) {
             ret.Add(m_dvListCtrlFiles->GetItemText(item, 0));
         }
     }
@@ -168,7 +168,7 @@ void GitCommitDlg::OnChangeFile(wxDataViewEvent& e)
 
 void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
 {
-    if(m_stcCommitMessage->GetText().IsEmpty() && !IsAmending()) {
+    if (m_stcCommitMessage->GetText().IsEmpty() && !IsAmending()) {
         ::wxMessageBox(_("Git requires a commit message"), "codelite", wxICON_WARNING | wxOK | wxCENTER);
         return;
     }
@@ -179,7 +179,7 @@ void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
 /*******************************************************************************/
 void GitCommitDlg::OnToggleCheckAll(wxCommandEvent& event)
 {
-    for(size_t i = 0; i < m_dvListCtrlFiles->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrlFiles->GetItemCount(); ++i) {
         m_dvListCtrlFiles->SetItemChecked(m_dvListCtrlFiles->RowToItem(i), m_toggleChecks, 0);
     }
     m_toggleChecks = !m_toggleChecks;
@@ -189,14 +189,14 @@ void GitCommitDlg::OnCommitHistory(wxCommandEvent& event)
 {
     clSingleChoiceDialog dlg(this, m_history);
     dlg.SetLabel(_("Choose a commit"));
-    if(dlg.ShowModal() != wxID_OK)
+    if (dlg.ShowModal() != wxID_OK)
         return;
 
     wxString commitHash = dlg.GetSelection().BeforeFirst(' ');
-    if(!commitHash.empty()) {
+    if (!commitHash.empty()) {
         wxString selectedCommit;
         m_plugin->DoExecuteCommandSync("log -1 --pretty=format:\"%B\" " + commitHash, &selectedCommit);
-        if(!selectedCommit.empty()) {
+        if (!selectedCommit.empty()) {
             m_stcCommitMessage->SetText(selectedCommit);
         }
     }
@@ -204,13 +204,13 @@ void GitCommitDlg::OnCommitHistory(wxCommandEvent& event)
 
 void GitCommitDlg::OnAmendClicked(wxCommandEvent& event)
 {
-    if(event.IsChecked()) {
-        if(!m_previousCommitMessage.empty()) {
+    if (event.IsChecked()) {
+        if (!m_previousCommitMessage.empty()) {
             m_stashedMessage = m_stcCommitMessage->GetText();
             m_stcCommitMessage->SetText(m_previousCommitMessage);
         }
     } else {
-        if(!m_stashedMessage.empty()) {
+        if (!m_stashedMessage.empty()) {
             m_stcCommitMessage->SetText(m_stashedMessage);
         }
     }

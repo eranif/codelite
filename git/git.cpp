@@ -94,7 +94,7 @@ wxString GetDirFromPath(const wxString& path)
         m_console->AddText(wxString::Format(__VA_ARGS__)); \
     }
 #define GIT_MESSAGE(...) GIT_MESSAGE_IF(true, __VA_ARGS__)
-#define GIT_MESSAGE1(...) GIT_MESSAGE_IF(m_configFlags& GitEntry::Git_Verbose_Log, __VA_ARGS__)
+#define GIT_MESSAGE1(...) GIT_MESSAGE_IF(m_configFlags& GitEntry::VerboseLog, __VA_ARGS__)
 #define CHECK_ENABLED_RETURN() \
     if (!IsGitEnabled()) {     \
         return;                \
@@ -1209,7 +1209,7 @@ void GitPlugin::ProcessGitActionQueue()
 #ifdef __WXMSW__
     if (ga.action == gitClone || ga.action == gitPush || ga.action == gitPull) {
         createFlags |=
-            data.GetFlags() & GitEntry::Git_Show_Terminal ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
+            data.GetFlags() & GitEntry::ShowTerminal ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
 
     } else {
         createFlags |= IProcessCreateWithHiddenConsole;
@@ -1255,7 +1255,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
     GitEntry data;
     conf.ReadItem(&data);
 
-    if (!(data.GetFlags() & GitEntry::Git_Colour_Tree_View))
+    if (!(data.GetFlags() & GitEntry::ColourTreeView))
         return;
 
     wxArrayString tmpArray = wxStringTokenize(m_commandOutput, wxT("\n"), wxTOKEN_STRTOK);
@@ -1898,7 +1898,7 @@ void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, Ove
     GitEntry data;
     conf.ReadItem(&data);
 
-    if (!(data.GetFlags() & GitEntry::Git_Colour_Tree_View))
+    if (!(data.GetFlags() & GitEntry::ColourTreeView))
         return;
 
     std::stack<wxTreeItemId> items;
@@ -2768,7 +2768,7 @@ void GitPlugin::OnEditorChanged(wxCommandEvent& event)
 void GitPlugin::DoLoadBlameInfo(bool clearCache)
 {
     CHECK_ENABLED_RETURN();
-    if (!(m_configFlags & GitEntry::Git_Show_Commit_Info))
+    if (!(m_configFlags & GitEntry::ShowCommitInfo))
         return;
 
     if (!IsGitEnabled()) {
@@ -2827,7 +2827,7 @@ void GitPlugin::OnUpdateNavBar(clCodeCompletionEvent& event)
     event.Skip();
     CHECK_ENABLED_RETURN();
 
-    if (!(m_configFlags & GitEntry::Git_Show_Commit_Info)) {
+    if (!(m_configFlags & GitEntry::ShowCommitInfo)) {
         return;
     }
 

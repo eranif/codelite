@@ -43,8 +43,8 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, 
     m_pathGITK->SetPath(data.GetGITKExecutablePath());
     m_textCtrlGitShell->ChangeValue(data.GetGitShellCommand());
 
-    m_checkBoxLog->SetValue(data.GetFlags() & GitEntry::Git_Verbose_Log);
-    m_checkBoxTerminal->SetValue(data.GetFlags() & GitEntry::Git_Show_Terminal);
+    m_checkBoxLog->SetValue(data.GetFlags() & GitEntry::VerboseLog);
+    m_checkBoxTerminal->SetValue(data.GetFlags() & GitEntry::ShowTerminal);
     m_checkBoxShowBlameInStatusBar->SetValue(data.IsShowBlameInfoInStatusBar());
     GitEntry::GitProperties props = GitEntry::ReadGitProperties(localRepoPath);
 
@@ -92,13 +92,13 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
 
     size_t flags = 0;
     if(m_checkBoxLog->IsChecked())
-        flags |= GitEntry::Git_Verbose_Log;
+        flags |= GitEntry::VerboseLog;
 
     if(m_checkBoxTerminal->IsChecked())
-        flags |= GitEntry::Git_Show_Terminal;
+        flags |= GitEntry::ShowTerminal;
 
     if(m_checkBoxShowBlameInStatusBar->IsChecked())
-        flags |= GitEntry::Git_Show_Commit_Info;
+        flags |= GitEntry::ShowCommitInfo;
 
     data.SetFlags(flags);
     data.Save();

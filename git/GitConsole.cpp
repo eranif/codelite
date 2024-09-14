@@ -180,7 +180,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
+    m_isVerbose = (data.GetFlags() & GitEntry::VerboseLog);
 
     // Toolbar
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
@@ -312,7 +312,7 @@ void GitConsole::OnConfigurationChanged(wxCommandEvent& e)
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
+    m_isVerbose = (data.GetFlags() & GitEntry::VerboseLog);
 }
 
 void GitConsole::UpdateTreeView(const wxString& output)

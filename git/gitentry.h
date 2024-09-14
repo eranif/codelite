@@ -90,7 +90,7 @@ public:
     const wxString GetDefaultCommand() const
     {
         wxString str;
-        if(m_lastUsed >= 0 && m_lastUsed < (int)m_commands.size()) {
+        if (m_lastUsed >= 0 && m_lastUsed < (int)m_commands.size()) {
             str = m_commands.at(m_lastUsed).command;
         }
         return str;
@@ -157,10 +157,11 @@ class GitEntry : public clConfigItem
 
 public:
     enum {
-        Git_Verbose_Log = (1 << 0),
-        Git_Show_Terminal = (1 << 1),
-        Git_Colour_Tree_View = (1 << 2),
-        Git_Show_Commit_Info = (1 << 4),
+        VerboseLog = (1 << 0),
+        ShowTerminal = (1 << 1),
+        ColourTreeView = (1 << 2),
+        ShowCommitInfo = (1 << 4),
+        CheckSignedOffBy = (1 << 5),
     };
 
     struct GitProperties {
@@ -180,7 +181,7 @@ public:
 
     void EnableFlag(size_t flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;
@@ -252,7 +253,7 @@ public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
 
-    bool IsShowBlameInfoInStatusBar() const { return m_flags & Git_Show_Commit_Info; }
+    bool IsShowBlameInfoInStatusBar() const { return m_flags & ShowCommitInfo; }
     void SetDifftool(const wxString& difftool) { this->m_difftool = difftool; }
     const wxString& GetDifftool() const { return m_difftool; }
 };

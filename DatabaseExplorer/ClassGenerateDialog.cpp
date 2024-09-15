@@ -176,25 +176,22 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
     int colCount = 0;
     int lastEditParam = 0;
 
-    SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-    while(node) {
+    for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
         Constraint* pConstr = wxDynamicCast(node->GetData(), Constraint);
         if(pConstr) {
             if(pConstr->GetType() == Constraint::primaryKey) pPK = pConstr;
         } else
             colCount++;
-        node = node->GetNext();
     }
     Column* pPKCol = NULL;
 
     if(pPK) {
-        SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-        while(node) {
+        for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext())
+        {
             Column* pCol = wxDynamicCast(node->GetData(), Column);
             if(pCol) {
                 if(pCol->GetName() == pPK->GetLocalColumn()) pPKCol = pCol;
             }
-            node = node->GetNext();
         }
     }
 
@@ -205,8 +202,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
 
     for(wxString str = htmpFile.GetFirstLine(); !htmpFile.Eof(); str = htmpFile.GetNextLine()) {
         if(str.Contains(wxT("%%classItemGetters%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << wxString::Format(wxT("\tconst %s Get%s() const {"),
@@ -215,24 +211,20 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                     hFile << wxString::Format(wxT("\t\treturn m_%s;"), pCol->GetName().c_str()) << "\n";
                     hFile << wxString::Format(wxT("\t\t}")) << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classItemVariables%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << wxString::Format(wxT("\t%s m_%s;"),
                                  GetTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str())
                           << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classItemLoading%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << wxString::Format(wxT("\t\tm_%s = pResult->%s(wxT(\"%s\"));"), pCol->GetName().c_str(),
@@ -240,23 +232,19 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                                  pCol->GetName().c_str())
                           << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classItemBindings%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << GetDebeaBinding(pCol) << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classItemAddParameters%%"))) {
             bool first = true;
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     if(first) {
@@ -272,23 +260,20 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                               << "\n";
                     }
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classItemSetParams%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << wxT("\tm_") + pCol->GetName() + wxT(" = ") + pCol->GetName() + wxT(";") << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classColLabelFillGrid%%"))) {
             int i = 0;
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << wxT("\t\tpGrid->AppendCols(1);") << "\n";
@@ -296,18 +281,16 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                                  wxT("\t\tpGrid->SetColLabelValue(%i,wxT(\"%s\"));"), i++, pCol->GetName().c_str())
                           << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classColDataFillGrid%%"))) {
             int i = 0;
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext())
+            {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << GetFillData(pCol, i++) << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%primaryKeyHeader%%"))) {
@@ -356,27 +339,24 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             }
 
         } else if(str.Contains(wxT("%%classUtilsAddParameters%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << wxString::Format(wxT("\t\t\t,%s %s"),
                                  GetParamTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str())
                           << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classUtilsAddParametersWithoutPK%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol && (!pPKCol || (pCol->GetName() != pPKCol->GetName()))) {
                     hFile << wxString::Format(wxT("\t\t\t,%s %s"),
                                  GetParamTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str())
                           << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classUtilsDeleteParameters%%"))) {
@@ -387,8 +367,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
 
         } else if(str.Contains(wxT("%%classUtilsAddSetParams%%"))) {
             int i = 1;
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"),
@@ -396,14 +375,13 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                                  pCol->GetName().c_str())
                           << "\n";
                 }
-                node = node->GetNext();
+                
             }
             lastEditParam = i;
 
         } else if(str.Contains(wxT("%%classUtilsEditSetParams%%"))) {
             int i = 1;
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol && (!pPKCol || (pCol->GetName() != pPKCol->GetName()))) {
                     hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"),
@@ -411,18 +389,16 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                                  pCol->GetName().c_str())
                           << "\n";
                 }
-                node = node->GetNext();
             }
             lastEditParam = i;
 
         } else if(str.Contains(wxT("%%classUtilsAddSetDebeaParams%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol && (!pPKCol || (pCol->GetName() != pPKCol->GetName()))) {
                     hFile << wxT("\t\tc.m_") + pCol->GetName() + wxT(" = ") + pCol->GetName() + wxT(";") << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classUtilsAddDelParams%%"))) {
@@ -435,8 +411,8 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
         } else if(str.Contains(wxT("%%classUtilsAddStatement%%"))) {
             wxString cols = wxT("");
             wxString params = wxT("");
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol) {
                     if(!cols.IsEmpty()) cols = cols + wxT(",");
@@ -445,7 +421,6 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                     if(!params.IsEmpty()) params += wxT(",");
                     params += wxT("?");
                 }
-                node = node->GetNext();
             }
             hFile << wxString::Format(wxT("\t\tPreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT(\"INSERT "
                                           "INTO %s (%s) VALUES (%s)\"));"),
@@ -455,14 +430,12 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
         } else if(str.Contains(wxT("%%classUtilsEditStatement%%"))) {
             wxString cols = wxT("");
             wxString params = wxT("");
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol && (!pPKCol || (pCol->GetName() != pPKCol->GetName()))) {
                     if(!cols.IsEmpty()) cols = cols + wxT(",");
                     cols += pCol->GetName() + wxT(" = ?");
                 }
-                node = node->GetNext();
             }
             if(pPKCol)
                 hFile << wxString::Format(wxT("\t\tPreparedStatement* pStatement = "
@@ -473,14 +446,12 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                 hFile << wxT("\t\tPreparedStatement* pStatement = NULL;") << "\n";
 
         } else if(str.Contains(wxT("%%classUtilsEditDebeaStatement%%"))) {
-            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-            while(node) {
+            for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
                 Column* pCol = wxDynamicCast(node->GetData(), Column);
                 if(pCol && (!pPKCol || (pCol->GetName() != pPKCol->GetName()))) {
                     hFile << wxT("\t\t\tc->setMember(c->m_") + pCol->GetName() + wxT(", ") + pCol->GetName() + wxT(");")
                           << "\n";
                 }
-                node = node->GetNext();
             }
 
         } else if(str.Contains(wxT("%%classUtilsDeleteStatement%%"))) {

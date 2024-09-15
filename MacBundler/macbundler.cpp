@@ -363,13 +363,11 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
     wxArrayString choices;
 
     // TODO: allow putting the rules in the config root and not in every target
-    BuildConfigPtr buildConfig = settings->GetFirstBuildConfiguration(cookie);
-    while(buildConfig) {
+    for (auto buildConfig = settings->GetFirstBuildConfiguration(cookie); buildConfig;
+         buildConfig = settings->GetNextBuildConfiguration(cookie)) {
 
         configs[buildConfig->GetName()] = buildConfig;
         choices.Add(buildConfig->GetName());
-
-        buildConfig = settings->GetNextBuildConfiguration(cookie);
     }
 
     bool accepted = false;

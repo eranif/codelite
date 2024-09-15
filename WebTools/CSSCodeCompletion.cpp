@@ -36,8 +36,8 @@ CSSCodeCompletion::CSSCodeCompletion(WebTools* plugin)
         m_entries.push_back(e);
 
         // collect the values and make them a unique set
-        for(size_t i = 0; i < e.values.size(); ++i) {
-            valuesSet.insert(e.values.Item(i));
+        for (const auto& s : e.values) {
+            valuesSet.insert(s);
         }
     }
 

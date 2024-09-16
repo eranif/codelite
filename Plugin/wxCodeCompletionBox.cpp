@@ -25,6 +25,8 @@
 #include <wx/font.h>
 #include <wx/stc/stc.h>
 
+const size_t MAX_TOOLTIP_SIZE = 1 << 10; // 1KB
+
 wxCodeCompletionBox::BmpVec_t wxCodeCompletionBox::m_defaultBitmaps;
 thread_local bool strip_html_tags = false;
 
@@ -234,6 +236,11 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
 void wxCodeCompletionBox::OnTooltipWindowTimer(wxTimerEvent& event)
 {
     wxUnusedVar(event);
+    if (!IsShown()) {
+        DoDestroyTipWindow();
+        return;
+    }
+
     // Display the tooltip
     if (m_list->GetItemCount() == 0) {
         DoDestroyTipWindow();
@@ -263,6 +270,12 @@ void wxCodeCompletionBox::OnTooltipWindowTimer(wxTimerEvent& event)
         } else if (!docComment.IsEmpty() && docComment != m_displayedTip) {
             // destroy old tip window
             DoDestroyTipWindow();
+
+            // Don't allow too large tooltips
+            if (docComment.size() > MAX_TOOLTIP_SIZE) {
+                docComment = docComment.Mid(0, MAX_TOOLTIP_SIZE);
+                docComment << "\n...truncated...";
+            }
 
             // keep the old tip
             m_displayedTip = docComment;
@@ -524,7 +537,7 @@ void wxCodeCompletionBox::DoDestroyTipWindow()
     if (m_tipWindow) {
         m_tipWindow->Hide();
         m_tipWindow->Destroy();
-        m_tipWindow = NULL;
+        m_tipWindow = nullptr;
         m_displayedTip.Clear();
     }
 }

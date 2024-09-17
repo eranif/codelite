@@ -31,3 +31,6 @@
 [submodule "submodules/llama.cpp"]
 	path = submodules/llama.cpp
 	url = https://github.com/ggerganov/llama.cpp.git
+[submodule "submodules/websocketpp"]
+	path = submodules/websocketpp
+	url = https://github.com/zaphoyd/websocketpp.git

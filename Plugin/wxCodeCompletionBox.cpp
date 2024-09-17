@@ -274,7 +274,7 @@ void wxCodeCompletionBox::OnTooltipWindowTimer(wxTimerEvent& event)
             // Don't allow too large tooltips
             if (docComment.size() > MAX_TOOLTIP_SIZE) {
                 docComment = docComment.Mid(0, MAX_TOOLTIP_SIZE);
-                docComment << "\n...truncated...";
+                docComment << "** ...truncated**";
             }
 
             // keep the old tip

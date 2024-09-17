@@ -21,11 +21,6 @@
 
 wxString NodeDebugger::NODE_CLI_DEBUGGER_NAME = "Node.js - CLI";
 
-#define CHECK_RUNNING() \
-    if(!IsRunning()) {  \
-        return;         \
-    }
-
 #define CHECK_SHOULD_HANDLE(evt)            \
     evt.Skip();                             \
     if(!IsRunning()) {                      \
@@ -295,8 +290,6 @@ void NodeDebugger::StartDebugger(const wxString& command, const wxString& comman
     }
 }
 
-bool NodeDebugger::IsCanInteract() const { return m_process && m_canInteract; }
-
 void NodeDebugger::OnToggleBreakpoint(clDebugEvent& event)
 {
     event.Skip();
@@ -368,19 +361,6 @@ void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
     }
     m_bptManager.DeleteBreakpoint(bp.GetFilename(), bp.GetLine());
     NodeJSDevToolsProtocol::Get().DeleteBreakpoint(m_socket, bp);
-}
-
-void NodeDebugger::ListBreakpoints() {}
-
-wxString NodeDebugger::GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const
-{
-    wxFileName fn(bp.GetFilename());
-    fn.MakeRelativeTo(GetWorkingDirectory());
-    wxString file_path = fn.GetFullPath();
-
-    // We need to escapte backslashes, otherwise, it wont work...
-    file_path.Replace("\\", "\\\\");
-    return file_path;
 }
 
 void NodeDebugger::ApplyAllBerakpoints()

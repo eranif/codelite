@@ -297,9 +297,9 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     CHECK_ITEM_RET(item);
 
-    clTreeCtrlData* cd = GetItemData(item);
-    CHECK_PTR_RET(cd);
-    CHECK_COND_RET(cd->IsFolder());
+    clTreeCtrlData* itemData = GetItemData(item);
+    CHECK_PTR_RET(itemData);
+    CHECK_COND_RET(itemData->IsFolder());
 
     int imageIndex = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeProject);
     CHECK_COND_RET(imageIndex != wxNOT_FOUND);
@@ -308,7 +308,7 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
 
     {
         // change the icon for the parent folder as well
-        wxFileName packageJSON(cd->GetPath(), "package.json");
+        wxFileName packageJSON(itemData->GetPath(), "package.json");
         if(packageJSON.FileExists()) {
             GetTreeCtrl()->SetItemImage(item, imageIndex, imageIndexExpanded);
         }

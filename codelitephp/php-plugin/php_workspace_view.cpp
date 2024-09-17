@@ -548,18 +548,18 @@ void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
     wxTreeItemId parent = m_treeCtrlView->GetFocusedItem();
     CHECK_ITEM_RET(parent);
 
-    ItemData* itemData = DoGetItemData(parent);
-    CHECK_PTR_RET(itemData);
+    ItemData* parentItemData = DoGetItemData(parent);
+    CHECK_PTR_RET(parentItemData);
 
-    if(!itemData->IsFolder() && !itemData->IsProject())
+    if (!parentItemData->IsFolder() && !parentItemData->IsProject())
         return;
 
     PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(project);
     CHECK_PTR_RET(proj);
 
     wxString base;
-    if(itemData->IsFolder()) {
-        base = itemData->GetFolderPath();
+    if (parentItemData->IsFolder()) {
+        base = parentItemData->GetFolderPath();
     } else {
         base = proj->GetFilename().GetPath();
     }

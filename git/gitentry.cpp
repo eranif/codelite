@@ -70,7 +70,6 @@ GitEntry::~GitEntry() {}
 
 void GitEntry::FromJSON(const JSONItem& json)
 {
-    GitLocator locator;
     m_entries = json.namedObject("m_entries").toStringMap();
     wxString track, diff;
     track = json.namedObject("m_colourTrackedFile").toString();
@@ -104,6 +103,7 @@ void GitEntry::FromJSON(const JSONItem& json)
     m_gitBlameDlgVSashPos = json.namedObject("m_gitBlameDlgVSashPos").toInt(m_gitBlameDlgVSashPos);
 
     wxString defaultGitShell;
+    GitLocator locator;
     locator.MSWGetGitShellCommand(defaultGitShell);
     if (updateGitShell) {
         m_gitShellCommand = defaultGitShell;

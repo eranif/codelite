@@ -1553,8 +1553,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         wxString commitArgs;
         DoShowCommitDialog(m_commandOutput, commitArgs);
         if (!commitArgs.IsEmpty()) {
-            gitAction ga(gitCommit, commitArgs);
-            m_gitActionQueue.push_back(ga);
+            m_gitActionQueue.emplace_back(gitCommit, commitArgs);
             AddDefaultActions();
         }
     } break;
@@ -1619,8 +1618,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
                         if (selection.IsEmpty())
                             return;
 
-                        gitAction ga(gitRebase, selection);
-                        m_gitActionQueue.push_back(ga);
+                        m_gitActionQueue.emplace_back(gitRebase, selection);
                     }
                 } else if (m_commandOutput.Contains(wxT("CONFLICT"))) {
                     // Do nothing, will be coloured in the console view
@@ -1638,10 +1636,8 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             }
         } else if (ga.action == gitBranchSwitch || ga.action == gitBranchSwitchRemote) {
             // update the tree
-            gitAction ga(gitListAll, wxT(""));
-            m_gitActionQueue.push_back(ga);
-            ga.action = gitListModified;
-            m_gitActionQueue.push_back(ga);
+            m_gitActionQueue.emplace_back(gitListAll, wxT(""));
+            m_gitActionQueue.emplace_back(gitListModified, wxT(""));
         }
 
         clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_PULLED);
@@ -1895,10 +1891,10 @@ void GitPlugin::AddDefaultActions()
 void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
 {
     clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
+    GitEntry entry;
+    conf.ReadItem(&entry);
 
-    if (!(data.GetFlags() & GitEntry::ColourTreeView))
+    if (!(entry.GetFlags() & GitEntry::ColourTreeView))
         return;
 
     std::stack<wxTreeItemId> items;

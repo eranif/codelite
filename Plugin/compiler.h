@@ -122,13 +122,9 @@ protected:
     wxString m_compilerFamily;
     bool m_isDefault;
     wxString m_installationPath;
-    wxArrayString m_compilerBuiltinDefinitions;
     std::map<wxString, LinkLine> m_linkerLines;
 
 private:
-    wxString GetGCCVersion() const;
-    wxString GetIncludePath(const wxString& pathSuffix) const;
-    wxArrayString POSIXGetIncludePaths() const;
     bool IsMatchesPattern(CmpInfoPattern& pattern, eSeverity severity, const wxString& line,
                           PatternMatch* match_result) const;
 
@@ -147,11 +143,6 @@ public:
      * @brief return { "PATH", "/compiler/bin:$PATH"} pair
      */
     void CreatePathEnv(clEnvList_t* env_list);
-
-    /**
-     * @brief check if this compiler is a 64 bit compiler
-     */
-    bool Is64BitCompiler();
 
     /**
      * @brief return the compiler default include paths
@@ -183,12 +174,6 @@ public:
 
     wxString GetLinkLine(const wxString& type, bool inputFromFile) const;
     void SetLinkLine(const wxString& type, const wxString& line, bool inputFromFile);
-
-    /**
-     * @brief return list of builtin macros for this compiler instance
-     * @return
-     */
-    const wxArrayString& GetBuiltinMacros();
 
     //---------------------------------------------------
     // setters/getters

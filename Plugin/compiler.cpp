@@ -699,57 +699,6 @@ wxArrayString Compiler::GetDefaultIncludePaths()
     }
 }
 
-wxString Compiler::GetGCCVersion() const
-{
-    // Get the compiler version
-    static wxRegEx reVersion("([0-9]+\\.[0-9]+\\.[0-9]+)");
-    wxString command;
-    command << GetTool("CXX") << " --version";
-    wxArrayString out;
-    ProcUtils::SafeExecuteCommand(command, out);
-    if(out.IsEmpty()) {
-        return "";
-    }
-
-    if(reVersion.Matches(out.Item(0))) {
-        return reVersion.GetMatch(out.Item(0));
-    }
-    return "";
-}
-
-wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
-{
-    wxString fullpath;
-    fullpath << GetInstallationPath() << "/" << pathSuffix;
-    wxFileName fn(fullpath, "");
-    return fn.GetPath();
-}
-
-wxArrayString Compiler::POSIXGetIncludePaths() const
-{
-    clDEBUG() << "POSIXGetIncludePaths called" << endl;
-    GCCMetadata cmd = GetMetadata();
-    return cmd.GetSearchPaths();
-}
-
-const wxArrayString& Compiler::GetBuiltinMacros()
-{
-    if(!m_compilerBuiltinDefinitions.IsEmpty()) {
-        LOG_IF_TRACE { clDEBUG1() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl; }
-        return m_compilerBuiltinDefinitions;
-    }
-
-    wxArrayString definitions;
-    // Command example: "echo | clang -dM -E - > /tmp/pp"
-
-    if(IsGnuCompatibleCompiler()) {
-        definitions = GetMetadata().GetMacros();
-    }
-    m_compilerBuiltinDefinitions.swap(definitions);
-    LOG_IF_TRACE { clDEBUG1() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl; }
-    return m_compilerBuiltinDefinitions;
-}
-
 wxString Compiler::GetLinkLine(const wxString& type, bool inputFromFile) const
 {
     wxString customType = type;
@@ -772,18 +721,6 @@ void Compiler::SetLinkLine(const wxString& type, const wxString& line, bool inpu
     } else {
         where->second.line = line;
     }
-}
-
-bool Compiler::Is64BitCompiler()
-{
-    wxArrayString macros = GetBuiltinMacros();
-    for(wxString& macro : macros) {
-        macro.MakeLower();
-        if(macro.Contains("_win64") || macro.Contains("x86_64") || macro.Contains("amd64")) {
-            return true;
-        }
-    }
-    return false;
 }
 
 void Compiler::CreatePathEnv(clEnvList_t* env_list)

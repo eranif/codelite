@@ -257,7 +257,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 
         text = editor->FormatTextKeepIndent(text, selStart, Format_Text_Save_Empty_Lines);
 
-        // remove the first line indenation that might have been placed by CL
+        // remove the first line indentation that might have been placed by CL
         text.Trim(false).Trim();
         text = textLeadingSpaces + text;
 

@@ -355,7 +355,7 @@ public:
      * @brief add files to a virtual folder in the project
      * @param item a tree item which represents the tree item of the virtual folder
      * @param paths an array of files to add
-     * @return true on sucesss, false otherwise
+     * @return true on success, false otherwise
      */
     virtual bool AddFilesToVirtualFolder(wxTreeItemId& item, wxArrayString& paths) = 0;
 
@@ -363,7 +363,7 @@ public:
      * @brief add files to a virtual folder in the project
      * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
      * @param paths an array of files to add
-     * @return true on sucesss, false otherwise
+     * @return true on success, false otherwise
      */
     virtual bool AddFilesToVirtualFolder(const wxString& vdFullPath, wxArrayString& paths) = 0;
 
@@ -371,7 +371,7 @@ public:
      * @brief Add a pair of cpp/h files to the :src/include folders, if these exist
      * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
      * @param paths an array of files to add
-     * @return true on sucesss, false otherwise
+     * @return true on success, false otherwise
      */
     virtual bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths) = 0;
 
@@ -418,7 +418,7 @@ public:
     /**
      * @brief return the project execution command as set in the project's settings
      * @param projectName the project
-     * @param wd starting dirctory
+     * @param wd starting directory
      * @return the execution command or wxEmptyString if the project does not exist
      */
     virtual wxString GetProjectExecutionCommand(const wxString& projectName, wxString& wd) = 0;

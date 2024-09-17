@@ -592,7 +592,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     set(CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_dbg.h")
     set(CL_PCH_TARGET "precompiled_header_dbg.h.gch")
 
-    # Set the libraries outout directory
+    # Set the libraries output directory
     set(CL_BIN_DIR bin)
     set(CL_LIB_DIR lib)
     if(APPLE)
@@ -662,7 +662,7 @@ else()
         add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=release clean)
     endif(APPLE)
 
-    # Set the libraries outout directory
+    # Set the libraries output directory
     set(CL_BIN_DIR bin)
     set(CL_LIB_DIR lib)
 

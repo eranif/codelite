@@ -305,7 +305,7 @@ public:
 
     /// process new websocket connection bytes
     /**
-     * WebSocket connections are a continous stream of bytes that must be
+     * WebSocket connections are a continuous stream of bytes that must be
      * interpreted by a protocol processor into discrete frames.
      *
      * @param buf Buffer from which bytes should be read.

@@ -36,7 +36,7 @@
 #include <wx/hashmap.h>
 #include <wx/string.h>
 
-#ifdef MSVC_VER
+#ifdef _MSC_VER
 // declare the debugger function creation
 extern "C++" IDebugger* CreateDebuggerGDB();
 // declare the function that will be called by host application

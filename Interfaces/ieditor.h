@@ -398,7 +398,7 @@ public:
      * inside the pattern and will select it
      * @param pattern pattern to search in the editor
      * @param what    sub string of pattern to select
-     * @param navmgr  Navigation manager to place browsing recrods
+     * @param navmgr  Navigation manager to place browsing records
      * @return return true if a match was found, false otherwise
      */
     virtual bool FindAndSelect(const wxString& pattern, const wxString& what, int from_pos, NavMgr* navmgr) = 0;
@@ -429,14 +429,14 @@ public:
     virtual void SetLexerName(const wxString& lexerName) = 0;
 
     /**
-     * @brief return the line numebr containing 'pos'
+     * @brief return the line number containing 'pos'
      * @param pos the position
      */
     virtual int LineFromPos(int pos) = 0;
     /**
-     * @brief return the start pos of line nummber
+     * @brief return the start pos of line number
      * @param line the line number
-     * @return line nummber or 0 if the document is empty
+     * @return line number or 0 if the document is empty
      */
     virtual int PosFromLine(int line) = 0;
 

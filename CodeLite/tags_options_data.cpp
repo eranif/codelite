@@ -33,7 +33,6 @@
 #include <wx/ffile.h>
 #include <wx/tokenzr.h>
 
-wxString TagsOptionsData::CLANG_CACHE_LAZY = "Lazy";
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 
 size_t TagsOptionsData::CURRENT_VERSION = 7100;
@@ -443,7 +442,6 @@ TagsOptionsData::TagsOptionsData()
     // Initialize defaults
     m_languages.Add("C++");
     AddDefaultTokens();
-    AddDefaultTypes();
 
     SyncData();
 }
@@ -457,8 +455,6 @@ void TagsOptionsData::AddDefaultTokens()
         m_tokens.Add(token);
     }
 }
-
-void TagsOptionsData::AddDefaultTypes() {}
 
 wxString TagsOptionsData::ToString() const
 {
@@ -550,19 +546,6 @@ std::map<std::string, std::string> TagsOptionsData::GetTokensMap() const
 
 const wxStringTable_t& TagsOptionsData::GetTokensWxMap() const { return m_tokensWxMap; }
 
-wxStringTable_t TagsOptionsData::GetTypesMap() const
-{
-    wxStringTable_t tokens;
-    for(size_t i = 0; i < m_types.GetCount(); i++) {
-        wxString item = m_types.Item(i);
-        item.Trim().Trim(false);
-        wxString k = item.BeforeFirst('=');
-        wxString v = item.AfterFirst('=');
-        tokens[k] = v;
-    }
-    return tokens;
-}
-
 void TagsOptionsData::SetTokens(const wxString& tokens)
 {
     this->m_tokens = ::wxStringTokenize(tokens, "\r\n", wxTOKEN_STRTOK);
@@ -593,8 +576,6 @@ void TagsOptionsData::DoUpdateTokensWxMapReversed()
         }
     }
 }
-
-const wxStringTable_t& TagsOptionsData::GetTokensReversedWxMap() const { return m_tokensWxMapReversed; }
 
 void TagsOptionsData::FromJSON(const JSONItem& json)
 {

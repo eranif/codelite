@@ -1,8 +1,9 @@
 #include "notebook_page_wrapper.h"
-#include "DirectoryChanger.h"
+
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "choice_book_wrapper.h"
+#include "clDirChanger.hpp"
 #include "file_ficker_property.h"
 #include "notebook_base_wrapper.h"
 #include "string_property.h"
@@ -177,7 +178,7 @@ void NotebookPageWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 
 wxSize NotebookPageWrapper::GetImageSize() const
 {
-    DirectoryChanger dc(wxcProjectMetadata::Get().GetProjectPath());
+    clDirChanger dc(wxcProjectMetadata::Get().GetProjectPath());
     wxString bmp = PropertyFile(PROP_BITMAP_PATH);
     wxFileName fn(bmp);
     if(fn.FileExists()) {

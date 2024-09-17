@@ -1,6 +1,6 @@
 #include "preview_panel.h"
 
-#include "DirectoryChanger.h"
+#include "clDirChanger.hpp"
 #include "event_notifier.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
@@ -29,7 +29,7 @@ PreviewPanel::PreviewPanel(wxWindow* parent, const TopLevelWinWrapper& fw)
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
 
-    DirectoryChanger dc(wxcProjectMetadata::Get().GetProjectPath());
+    clDirChanger dc(wxcProjectMetadata::Get().GetProjectPath());
 
     wxXmlResource::Get()->Load(xrcFilePath);
     wxString previewPanelName = fw.GetName();

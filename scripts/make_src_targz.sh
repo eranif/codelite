@@ -39,8 +39,6 @@ git submodule foreach  "SubModPath=\"${tmpdir}${codelite_ver}/\${name}\" &&  mkd
 $(./git-revision.sh)
 cp ./LiteEditor/autoversion.cpp ${tmpdir}/${codelite_ver}/LiteEditor/
 
-rm -fr ${tmpdir}/${codelite_ver}/sdk/curl
-
 echo "Creating tarballs"
 cd ${tmpdir}
 

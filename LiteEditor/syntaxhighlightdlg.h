@@ -42,7 +42,6 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
 {
     bool m_isModified = false;
     bool m_globalThemeChanged = false;
-    bool m_globalBgColourChanged = false;
     bool m_promptForRestart = false;
     LexerConf::Ptr_t m_lexer;
 
@@ -51,7 +50,6 @@ protected:
     void OnImportEclipseTheme(wxCommandEvent& event);
     void OnRestoreDefaults(wxCommandEvent& event);
     void OnExportAll(wxCommandEvent& event);
-    void OnToolExportAll(wxCommandEvent& event);
     void OnExportSelective(wxCommandEvent& event);
     void OnImport(wxCommandEvent& event);
     void OnNewTheme(wxCommandEvent& event);
@@ -60,7 +58,6 @@ protected:
     void OnCodeLiteAppearance(wxCommandEvent& event) override;
     void OnGlobalFontSelected(wxFontPickerEvent& event) override;
     void OnGlobalThemeSelected(wxCommandEvent& event) override;
-    void OnLoadEclipseThemeWebsite(wxCommandEvent& event);
     void OnSelTextFgChanged(wxColourPickerEvent& event) override;
     void OnTextSelFgUI(wxUpdateUIEvent& event) override;
     void OnButtonApplyUI(wxUpdateUIEvent& event) override;
@@ -74,7 +71,6 @@ protected:
     void OnEolFilled(wxCommandEvent& event) override;
     void OnFontChanged(wxFontPickerEvent& event) override;
     void OnItemSelected(wxCommandEvent& event) override;
-    void OnOutputViewColourChanged(wxColourPickerEvent& event);
     void OnSelTextChanged(wxColourPickerEvent& event) override;
     void OnStyleWithinPreprocessor(wxCommandEvent& event) override;
     void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event) override;
@@ -97,7 +93,6 @@ protected:
 
     void DoUpdatePreview();
     void DoSetGlobalBgColour(const wxColour& colour);
-    void DoShowTooltipForGlobalBgColourChanged();
     void DoExport(const wxArrayString& lexers = wxArrayString());
     void UpdateTextSelectionColours();
 

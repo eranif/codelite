@@ -24,37 +24,30 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "callgraph.h"
+
+#include "fileutils.h"
 #include "macromanager.h"
 #include "string.h"
 #include "toolbaricons.h"
 #include "uicallgraphpanel.h"
 #include "uisettingsdlg.h"
 #include "workspace.h"
+
 #include <wx/aboutdlg.h>
 #include <wx/artprov.h>
 #include <wx/bitmap.h>
 #include <wx/datetime.h>
 #include <wx/image.h>
-#include <wx/xrc/xmlres.h>
-
+#include <wx/msgdlg.h>
 #include <wx/mstream.h>
 #include <wx/sstream.h>
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
-
-#include "file_logger.h"
-#include "fileutils.h"
-#include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 /*!
  * brief Class for include plugin to CodeLite.
  */
-
-#ifndef nil
-#define nil 0
-#endif
-
-#define myLog(...) LogFn(wxString::Format(__VA_ARGS__))
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
@@ -99,9 +92,6 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 CallGraph::CallGraph(IManager* manager)
     : IPlugin(manager)
 {
-    // will be created on-demand
-    m_LogFile = nil;
-
     m_longName = _("Create application call graph from profiling information provided by gprof tool.");
     m_shortName = wxT("CallGraph");
 
@@ -125,15 +115,6 @@ CallGraph::~CallGraph()
 
     m_mgr->GetTheApp()->Disconnect(XRCID("cg_show_callgraph"), wxEVT_COMMAND_TOOL_CLICKED,
                                    wxCommandEventHandler(CallGraph::OnShowCallGraph), NULL, this);
-
-    wxDELETE(m_LogFile);
-}
-
-//-----------------------------------------------------------------------------
-
-void CallGraph::LogFn(wxString s)
-{
-    return; // (log disabled)
 }
 
 //-----------------------------------------------------------------------------
@@ -236,39 +217,6 @@ wxString CallGraph::LocateApp(const wxString& app_name)
         return out[0];
     else
         return "";
-
-    //    // myLog("LocateApp(\"%s\")", app_name);
-    //
-    //    wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
-    //
-    //    wxString cmd = "which " + app_name;
-    //
-    //    // Q: HOW BIG IS INTERNAL BUFFER ???
-    //    int err = wxExecute(cmd, wxEXEC_SYNC, proc);
-    //    // ignore -1 error due to CL signal handler overload
-    //
-    //    /*int	pid = proc->GetPid();
-    //
-    //    myLog("  wxExecute(\"%s\") returned err %d, had pid %d", cmd, err, pid);
-    //    */
-    //
-    //    // get process output
-    //    wxInputStream* pis = proc->GetInputStream();
-    //    if(!pis || !pis->CanRead()) {
-    //        delete proc;
-    //        return "<ERROR>";
-    //    }
-    //
-    //    // read from it
-    //    wxTextInputStream tis(*pis);
-    //
-    //    wxString out_str = tis.ReadLine();
-    //
-    //    delete proc;
-    //
-    //    // myLog("  returned \"%s\"", out_str);
-    //
-    //    return out_str;
 }
 
 //---- Get Gprof Path ---------------------------------------------------------
@@ -323,8 +271,6 @@ wxString CallGraph::GetDotPath()
 
 void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 {
-    // myLog("wxThread::IsMain(%d)", (int)wxThread::IsMain());
-
     IConfigTool* config_tool = m_mgr->GetConfigTool();
     MacroManager* macro = MacroManager::Instance();
     wxASSERT(macro);
@@ -358,12 +304,6 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 #ifdef __WXMSW__
     if(!projOutputFn.Lower().EndsWith(wxT(".exe"))) projOutputFn += wxT(".exe");
 #endif //__WXMSW__
-
-    //    myLog("WorkspaceFileName = \"%s\"", ws_cfn.GetFullPath());
-    //    myLog("projectName \"%s\"", projectName);
-    //    myLog("build_config_name = \"%s\"", build_config_name);
-    //    myLog("projOutputFn = \"%s\"", projOutputFn);
-    //    myLog("projPath = \"%s\"", projPath);
 
     wxFileName cfn(projPath + wxFileName::GetPathSeparator() + projOutputFn);
     cfn.Normalize();
@@ -401,8 +341,6 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
     wxString cmdgprof = wxString::Format("%s %s %s", bin, arg1, arg2);
 
-    // myLog("about to wxExecute(\"%s\")", cmdgprof);
-
     wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
 
     // wxStopWatch	sw;
@@ -410,8 +348,6 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     const int err = ::wxExecute(cmdgprof, wxEXEC_SYNC, proc);
     wxUnusedVar(err);
     // on sync returns 0 (success), -1 (failure / "couldn't be started")
-
-    // myLog("wxExecute() returned err %d, had pid %d", err, (int)proc->GetPid());
 
     wxInputStream* process_is = proc->GetInputStream();
     if(!process_is || !process_is->CanRead())
@@ -421,8 +357,6 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     GprofParser pgp;
 
     pgp.GprofParserStream(process_is);
-
-    // myLog("gprof done (read %d lines)", (int) pgp.lines.GetCount());
 
     delete proc;
 
@@ -478,11 +412,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
     cmddot_ln << GetDotPath() << " -Tpng -o" << output_png_fn << " " << dot_fn;
 
-    // myLog("wxExecute(\"%s\")", cmddot_ln);
-
     wxExecute(cmddot_ln, wxEXEC_SYNC | wxEXEC_HIDE_CONSOLE);
-
-    // myLog("dot done");
 
     if(!wxFileExists(output_png_fn))
         return MessageBox(_("Failed to open file CallGraph.png. Please check the project settings, rebuild the project "

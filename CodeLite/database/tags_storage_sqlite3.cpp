@@ -901,24 +901,6 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes, cons
     }
 }
 
-void TagsStorageSQLite::GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds,
-                                                      std::vector<TagEntryPtr>& tags)
-{
-    if(kinds.empty() || scopes.empty()) {
-        return;
-    }
-
-    wxString sql;
-    sql << wxT("select * from tags where scope in (");
-    for(size_t i = 0; i < scopes.GetCount(); i++) {
-        sql << wxT("'") << scopes.Item(i) << wxT("',");
-    }
-    sql.RemoveLast();
-    sql << wxT(") ORDER BY NAME");
-
-    DoFetchTags(sql, tags, kinds);
-}
-
 void TagsStorageSQLite::GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags, int limit)
 {
     if(path.empty())

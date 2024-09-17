@@ -161,8 +161,6 @@ public:
      */
     void SetCtagsOptions(const TagsOptionsData& options);
 
-    void SetEncoding(const wxFontEncoding& encoding);
-
     /**
      * Locate symbol by name in database
      * @param name name to search
@@ -222,22 +220,6 @@ public:
     void FindByPath(const wxString& path, std::vector<TagEntryPtr>& tags);
 
     /**
-     * Get tags related to a scope.
-     * @param scope scope to search for members
-     * @param tags [output] vector of tags
-     */
-    void TagsByScope(const wxString& scope, std::vector<TagEntryPtr>& tags);
-
-    /**
-     *	Get tags related to a scope and name (name can be partial name
-     * @param scope scope to search for members
-     * @param name partial tag name
-     * @param tags [output] vector of tags
-     */
-    void TagsByScopeAndName(const wxString& scope, const wxString& name, std::vector<TagEntryPtr>& tags,
-                            size_t flags = PartialMatch);
-
-    /**
      * Delete all tags related to these files
      * @param files list of files, in absolute path
      */
@@ -258,28 +240,6 @@ public:
      * @brief trigger an incremental workspace parsing
      */
     void ParseWorkspaceIncremental();
-
-    /**
-     * Get a hover tip. This function is a wrapper around the Language::GetHoverTip.
-     * @param expr the current expression
-     * @param word the token under the cursor
-     * @param text scope where token was found
-     * @param scopeName scope name
-     * @param isFunc is token is a function
-     * @param tips array of tip strings
-     */
-    void GetHoverTip(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& word,
-                     const wxString& text, std::vector<wxString>& tips);
-
-    /**
-     * return tags belongs to given scope and kind
-     * @param scopeName the scope to search
-     * @param kind tags's kind to return
-     * @param tags [output] the result vector
-     * @param inherits set to true if you want inherited members as well members
-     */
-    void TagsByScope(const wxString& scopeName, const wxString& kind, std::vector<TagEntryPtr>& tags,
-                     bool includeInherits = false, bool applyLimit = true);
 
     /**
      * return tags belongs to given scope and kind
@@ -321,15 +281,6 @@ public:
      * @return pointer to the tage which matches the line number & files
      */
     TagEntryPtr FunctionFromFileLine(const wxFileName& fileName, int lineno, bool nextFunction = false);
-
-    /**
-     * @brief Return function that is close to current line number
-     * this is done by parsing `buffer`
-     * @param buffer input source file as string
-     * @param lineno the end buffer line number
-     * @param file_name the returned tag `GetFile()` value
-     */
-    TagEntryPtr FunctionFromBufferLine(const wxString& buffer, int lineno, const wxString& file_name);
 
     /**
      * @brief
@@ -400,15 +351,6 @@ public:
      * @return
      */
     bool IsTypeAndScopeExists(wxString& typeName, wxString& scope);
-
-    /**
-     * @brief try to process a given expression and evaluate it into type & typescope
-     * @param expression
-     * @param type
-     * @param typeScope
-     * @return true on success false otherwise
-     */
-    bool ProcessExpression(const wxString& expression, wxString& type, wxString& typeScope);
 
     /**
      * @brief return normalize function signature. This function strips any default values or variable
@@ -506,13 +448,6 @@ public:
 
 protected:
     void DoFindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags);
-    void RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
-    void GetGlobalTags(const wxString& name, std::vector<TagEntryPtr>& tags, size_t flags = PartialMatch);
-    void GetLocalTags(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags, bool isFuncSignature,
-                      size_t flags = PartialMatch);
-    void TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<wxString>& tips);
-    bool ProcessExpression(const wxFileName& filename, int lineno, const wxString& expr, const wxString& scopeText,
-                           wxString& typeName, wxString& typeScope, wxString& oper, wxString& scopeTemplateInitList);
     wxString DoReplaceMacros(const wxString& name);
     wxArrayString BreakToOuterScopes(const wxString& scope);
     wxString DoReplaceMacrosFromDatabase(const wxString& name);

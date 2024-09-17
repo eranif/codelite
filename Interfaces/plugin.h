@@ -166,33 +166,6 @@ public:
     };
 
     /**
-     * @brief load image file from /path/to/install/plugins/resources/
-     * @param name file name (name+extension)
-     * @return Bitmap of wxNullBitmap if no match was found
-     */
-    virtual wxBitmap LoadBitmapFile(const wxString& name, wxBitmapType type = wxBITMAP_TYPE_PNG)
-    {
-        wxBitmap bmp;
-#ifdef __WXGTK__
-        // /usr/share/codelite
-        wxString pluginsDir = clStandardPaths::Get().GetDataDir();
-#else
-#ifdef USE_POSIX_LAYOUT
-        wxString pluginsDir(clStandardPaths::Get().GetDataDir());
-#else
-        wxString pluginsDir(m_mgr->GetInstallDirectory() + wxT("/plugins"));
-#endif
-#endif
-        wxString basePath(pluginsDir + wxT("/resources/"));
-
-        bmp.LoadFile(basePath + name, type);
-        if(bmp.IsOk()) {
-            return bmp;
-        }
-        return wxNullBitmap;
-    }
-
-    /**
      * @brief allow the plugins to hook a tab in the project settings
      * @param notebook the parent
      * @param configName the associated configuration name

@@ -1,6 +1,5 @@
 #include "clSystemSettings.h"
 
-#include "ColoursAndFontsManager.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
@@ -18,16 +17,10 @@ wxColour clSystemSettings::btn_face;
 wxColour clSystemSettings::panel_face;
 
 #ifdef __WXMSW__
-#define IS_MSW 1
-#define IS_MAC 0
 #define IS_GTK 0
 #elif defined(__WXOSX__)
-#define IS_MSW 0
-#define IS_MAC 1
 #define IS_GTK 0
 #else
-#define IS_MSW 0
-#define IS_MAC 0
 #define IS_GTK 1
 #endif
 
@@ -161,14 +154,6 @@ void clSystemSettings::OnAppActivated(wxActivateEvent& event)
         /// external theme change detected, fire an event
         DoColourChangedEvent();
     }
-}
-
-void clSystemSettings::SampleColoursFromControls() {}
-
-bool clSystemSettings::IsLexerThemeDark()
-{
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    return lexer && lexer->IsDark();
 }
 
 bool clSystemSettings::IsDark() { return DrawingUtils::IsDark(GetDefaultPanelColour()); }

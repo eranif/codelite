@@ -39,6 +39,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAIConfig& config)
     EventNotifier::Get()->Bind(wxEVT_LLAMACLI_STDERR, &ChatAIWindow::OnChatAIStderr, this);
     EventNotifier::Get()->Bind(wxEVT_LLAMACLI_TERMINATED, &ChatAIWindow::OnChatAITerminated, this);
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
+    m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_PREFERENCES);
     Bind(wxEVT_MENU, &ChatAIWindow::OnClear, this, wxID_CLEAR);
     m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnActiveModelChanged, this);
@@ -87,6 +88,7 @@ void ChatAIWindow::UpdateTheme()
 
 void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
 {
+    wxWindow* win = dynamic_cast<wxWindow*>(event.GetEventObject());
     switch (event.GetKeyCode()) {
     case WXK_ESCAPE: {
         clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, false);
@@ -94,12 +96,12 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
         CHECK_PTR_RET(editor);
 
         // Set the focus to the active editor
-        editor->GetCtrl()->CallAfter(&wxStyledTextCtrl::SetFocus);
+        CallAfter(&ChatAIWindow::SetFocusToActiveEditor);
 
     } break;
     case WXK_RETURN:
     case WXK_NUMPAD_ENTER:
-        if (event.GetModifiers() == wxMOD_SHIFT) {
+        if (win && win == m_stcInput && event.GetModifiers() == wxMOD_SHIFT) {
             // Send the command
             SendPromptEvent();
         } else {
@@ -190,4 +192,11 @@ void ChatAIWindow::OnActiveModelChanged(wxCommandEvent& event)
     wxString activeModel = m_activeModel->GetStringSelection();
     m_config.SetSelectedModelName(activeModel);
     m_config.Save();
+}
+
+void ChatAIWindow::SetFocusToActiveEditor()
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    editor->SetActive();
 }

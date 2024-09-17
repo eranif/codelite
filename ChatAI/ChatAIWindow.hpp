@@ -29,6 +29,7 @@ protected:
     void OnChatAITerminated(clCommandEvent& event);
     void PopulateModels();
     void OnActiveModelChanged(wxCommandEvent& event);
+    void SetFocusToActiveEditor();
 
 private:
     ChatAIConfig& m_config;

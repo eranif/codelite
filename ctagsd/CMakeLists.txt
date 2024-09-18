@@ -74,6 +74,7 @@ if(BUILD_TESTING)
     -L"${CL_LIBPATH}"
     libcodelite
     plugin
+    wxsqlite3
     ${UTIL_LIB})
 
   add_test(NAME "ctagsd-tests" COMMAND ctagsd-tests)

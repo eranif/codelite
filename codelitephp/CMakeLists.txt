@@ -67,7 +67,9 @@ if(BUILD_TESTING)
         libcodelite
         plugin
         ${ADDITIONAL_LIBRARIES}
-        ${wxWidgets_LIBRARIES})
+        ${wxWidgets_LIBRARIES}
+        wxsqlite3
+    )
 
     add_test(NAME "PHPUnitTests" COMMAND PHPUnitTests WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/PHPParserUnitTests/Tests)
 endif(BUILD_TESTING)

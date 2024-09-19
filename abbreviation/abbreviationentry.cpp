@@ -24,13 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "abbreviationentry.h"
-AbbreviationEntry::AbbreviationEntry()
-    : m_entries()
-    , m_autoInsert(false)
-{
-}
-
-AbbreviationEntry::~AbbreviationEntry() {}
 
 void AbbreviationEntry::DeSerialize(Archive& arch)
 {

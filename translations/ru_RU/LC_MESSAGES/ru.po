@@ -17277,7 +17277,7 @@ msgstr "Вы уверены, что хотите удалить «%s»?"
 #: abbreviation/abbreviationssettingsdlg.cpp:227
 msgid ""
 "This folder already contains a file named 'abbreviations.conf' - would you "
-"like to overrite it?"
+"like to overwrite it?"
 msgstr ""
 "Эта папка уже содержит файл с именем «abbreviations.conf». Перезаписать его?"
 

@@ -16165,7 +16165,7 @@ msgstr "你确定要删除“%s”"
 #: abbreviation/abbreviationssettingsdlg.cpp:252
 msgid ""
 "This folder already contains a file named 'abbreviations.conf' - would you "
-"like to overrite it?"
+"like to overwrite it?"
 msgstr "该文件夹已包含一个名为“abbreviations.conf”的文件 - 你想要覆盖它吗？"
 
 #: abbreviation/abbreviationssettingsdlg.cpp:256

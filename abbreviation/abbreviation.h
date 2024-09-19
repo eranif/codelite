@@ -29,35 +29,31 @@
 #include "cl_command_event.h"
 #include "plugin.h"
 
-class AbbreviationPlugin;
 class AbbreviationPlugin : public IPlugin
 {
-    wxEvtHandler* m_topWindow;
+    wxEvtHandler* m_topWindow = nullptr;
     clConfig m_config;
-    // AbbreviationServiceProvider* m_helper = nullptr;
-
-    friend class AbbreviationServiceProvider;
 
 protected:
     void OnSettings(wxCommandEvent& e);
     void OnShowAbbvreviations(wxCommandEvent& e);
-    void GetAbbreviations(wxCodeCompletionBoxEntry::Vec_t& entries, const wxString& filter);
+    wxCodeCompletionBoxEntry::Vec_t GetAbbreviations(const wxString& filter);
     void OnAbbrevSelected(clCodeCompletionEvent& e);
     void InitDefaults();
     bool InsertExpansion(const wxString& abbreviation);
     void OnCompletionBoxShowing(clCodeCompletionEvent& event);
 
 public:
-    AbbreviationPlugin(IManager* manager);
-    ~AbbreviationPlugin();
+    explicit AbbreviationPlugin(IManager* manager);
+    ~AbbreviationPlugin() override = default;
 
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void UnPlug() override;
 };
 
 #endif // abbreviation

@@ -40,13 +40,11 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg(wxWindow* parent, IManager* m
     : AbbreviationsSettingsBase(parent)
     , m_mgr(mgr)
     , m_data()
-    , m_dirty(false)
-    , m_currSelection(wxNOT_FOUND)
     , m_config("abbreviations.conf")
 {
     SetName("AbbreviationsSettingsDlg");
     WindowAttrManager::Load(this);
-    if(!m_config.ReadItem(&m_data)) {
+    if (!m_config.ReadItem(&m_data)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
@@ -58,21 +56,23 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg(wxWindow* parent, IManager* m
     DoPopulateItems();
 }
 
-AbbreviationsSettingsDlg::~AbbreviationsSettingsDlg() {}
-
 void AbbreviationsSettingsDlg::OnItemSelected(wxCommandEvent& event)
 {
-    if(m_dirty) { DoSaveCurrent(); }
+    if (m_dirty) {
+        DoSaveCurrent();
+    }
     DoSelectItem(event.GetSelection());
 }
 
 void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
 {
-    if(m_dirty) { DoSaveCurrent(); }
+    if (m_dirty) {
+        DoSaveCurrent();
+    }
 
     wxString name = wxGetTextFromUser(_("Abbreviation Name:"), _("New abbreviation..."), wxT(""), this);
-    if(name.IsEmpty() == false) {
-        if(m_listBoxAbbreviations->FindString(name) != wxNOT_FOUND) {
+    if (name.IsEmpty() == false) {
+        if (m_listBoxAbbreviations->FindString(name) != wxNOT_FOUND) {
             wxMessageBox(wxString::Format(_("An abbreviation with this name already exists!")));
             return;
         }
@@ -91,10 +91,12 @@ void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
 
 void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
 {
-    if(m_activeItemName.IsEmpty() || m_currSelection == wxNOT_FOUND) { return; }
+    if (m_activeItemName.IsEmpty() || m_currSelection == wxNOT_FOUND) {
+        return;
+    }
 
-    if(wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'"), m_activeItemName.c_str()),
-                    _("CodeLite"), wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION, this) != wxYES) {
+    if (wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'"), m_activeItemName.c_str()),
+                     _("CodeLite"), wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION, this) != wxYES) {
         return;
     }
 
@@ -107,8 +109,8 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
     m_textCtrlName->Clear();
 
     // select the previous item in the list
-    if(m_listBoxAbbreviations->IsEmpty() == false) {
-        switch(m_currSelection) {
+    if (m_listBoxAbbreviations->IsEmpty() == false) {
+        switch (m_currSelection) {
         case 0:
             m_currSelection = 0;
             m_activeItemName = m_listBoxAbbreviations->GetString(0);
@@ -123,7 +125,7 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
         m_currSelection = wxNOT_FOUND;
     }
 
-    if(m_currSelection != wxNOT_FOUND) {
+    if (m_currSelection != wxNOT_FOUND) {
         m_listBoxAbbreviations->SetSelection(m_currSelection);
         DoSelectItem(m_currSelection);
     }
@@ -138,7 +140,9 @@ void AbbreviationsSettingsDlg::OnDeleteUI(wxUpdateUIEvent& event)
 void AbbreviationsSettingsDlg::OnSave(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_dirty) { DoSaveCurrent(); }
+    if (m_dirty) {
+        DoSaveCurrent();
+    }
     m_data.SetAutoInsert(m_checkBoxImmediateInsert->IsChecked());
     m_config.WriteItem(&m_data);
 }
@@ -147,13 +151,11 @@ void AbbreviationsSettingsDlg::DoPopulateItems()
 {
     m_listBoxAbbreviations->Clear();
     m_stc->ClearAll();
-    wxStringMap_t entries = m_data.GetEntries();
-    wxStringMap_t::iterator iter = entries.begin();
-    for(; iter != entries.end(); ++iter) {
-        m_listBoxAbbreviations->Append(iter->first);
+    for (const auto& [name, code] : m_data.GetEntries()) {
+        m_listBoxAbbreviations->Append(name);
     }
 
-    if(m_listBoxAbbreviations->IsEmpty() == false) {
+    if (m_listBoxAbbreviations->IsEmpty() == false) {
         m_listBoxAbbreviations->Select(0);
         DoSelectItem(0);
     }
@@ -164,7 +166,7 @@ void AbbreviationsSettingsDlg::DoPopulateItems()
 
 void AbbreviationsSettingsDlg::DoSelectItem(int item)
 {
-    if(item >= 0) {
+    if (item >= 0) {
         wxString name = m_listBoxAbbreviations->GetString(item);
         m_activeItemName = name;
         m_currSelection = item;
@@ -173,19 +175,25 @@ void AbbreviationsSettingsDlg::DoSelectItem(int item)
 
         wxStringMap_t entries = m_data.GetEntries();
         wxStringMap_t::iterator iter = entries.find(name);
-        if(iter != entries.end()) { m_stc->SetText(iter->second); }
+        if (iter != entries.end()) {
+            m_stc->SetText(iter->second);
+        }
         m_dirty = false;
     }
 }
 
 void AbbreviationsSettingsDlg::DoSaveCurrent()
 {
-    if(m_currSelection == wxNOT_FOUND) { return; }
+    if (m_currSelection == wxNOT_FOUND) {
+        return;
+    }
 
     // search for the old item
     wxStringMap_t entries = m_data.GetEntries();
     wxStringMap_t::iterator iter = entries.find(m_activeItemName);
-    if(iter != entries.end()) { entries.erase(iter); }
+    if (iter != entries.end()) {
+        entries.erase(iter);
+    }
 
     // insert the new item
     entries[m_textCtrlName->GetValue()] = m_stc->GetText();
@@ -205,7 +213,9 @@ void AbbreviationsSettingsDlg::DoDeleteEntry(const wxString& name)
     // search for the old item
     wxStringMap_t entries = m_data.GetEntries();
     wxStringMap_t::iterator iter = entries.find(name);
-    if(iter != entries.end()) { entries.erase(iter); }
+    if (iter != entries.end()) {
+        entries.erase(iter);
+    }
     m_data.SetEntries(entries);
 }
 
@@ -214,20 +224,23 @@ void AbbreviationsSettingsDlg::OnSaveUI(wxUpdateUIEvent& event) { event.Enable(m
 void AbbreviationsSettingsDlg::OnMarkDirty(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(m_activeItemName.IsEmpty() == false) { m_dirty = true; }
+    if (m_activeItemName.IsEmpty() == false) {
+        m_dirty = true;
+    }
 }
 
 void AbbreviationsSettingsDlg::OnExport(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector();
-    if(path.IsEmpty()) return;
+    if (path.IsEmpty())
+        return;
 
     // Construct the output file name
     wxFileName fn(path, "abbreviations.conf");
-    if(fn.FileExists()) {
-        if(::wxMessageBox(
-               _("This folder already contains a file named 'abbreviations.conf' - would you like to overrite it?"),
-               "wxCrafter", wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION) != wxYES)
+    if (fn.FileExists()) {
+        if (::wxMessageBox(
+                _("This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"),
+                "wxCrafter", wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION) != wxYES)
             return;
     }
     m_config.Save(fn);
@@ -238,12 +251,13 @@ void AbbreviationsSettingsDlg::OnExport(wxCommandEvent& event)
 void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
 {
     wxString path = ::wxFileSelector();
-    if(path.IsEmpty()) return;
+    if (path.IsEmpty())
+        return;
 
     // load the imported configuration
     clConfig cfg(path);
     AbbreviationJSONEntry data, curData;
-    if(!cfg.ReadItem(&data)) {
+    if (!cfg.ReadItem(&data)) {
         ::wxMessageBox(_("The file does not seem to contain a valid abbreviations entries"), "wxCrafter",
                        wxOK | wxICON_WARNING | wxCENTER);
         return;
@@ -263,7 +277,7 @@ void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
 }
 void AbbreviationsSettingsDlg::OnHelp(wxCommandEvent& event)
 {
-    MacrosDlg dlg(this, MacrosDlg::MacrosProject, NULL, NULL);
+    MacrosDlg dlg(this, MacrosDlg::MacrosProject, nullptr, nullptr);
     dlg.ShowModal();
 }
 

@@ -26,7 +26,7 @@ set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FL
 # Include paths
 include_directories(
     "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-    "${CL_SRC_ROOT}/sdk/websocketpp"
+    "${CL_SRC_ROOT}/submodules/websocketpp"
     "${CL_SRC_ROOT}/sdk/asio-1.12.1"
     "${CL_SRC_ROOT}/CodeLite"
     "${CL_SRC_ROOT}/CodeLite/ssh"

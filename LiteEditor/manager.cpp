@@ -255,7 +255,6 @@ Manager::Manager(void)
     , m_programProcess(NULL)
     , m_breakptsmgr(new BreakptMgr)
     , m_isShutdown(false)
-    , m_workspceClosing(false)
     , m_dbgCanInteract(false)
     , m_useTipWin(false)
     , m_tipWinPos(wxNOT_FOUND)
@@ -294,9 +293,6 @@ Manager::Manager(void)
     // Instantiate the remote host manager executor
     clRemoteHost::Instance();
 #endif
-
-    // extract and install clang-tools if needed (GTK only)
-    InstallClangTools();
 }
 
 Manager::~Manager(void)
@@ -460,7 +456,6 @@ void Manager::DoSetupWorkspace(const wxString& path)
 
 void Manager::CloseWorkspace()
 {
-    m_workspceClosing = true;
     if (!IsShutdownInProgress()) {
         clWorkspaceEvent closing_event(wxEVT_WORKSPACE_CLOSING);
         EventNotifier::Get()->ProcessEvent(closing_event);
@@ -511,7 +506,6 @@ void Manager::CloseWorkspace()
         clWorkspaceEvent closed_event(wxEVT_WORKSPACE_CLOSED);
         EventNotifier::Get()->ProcessEvent(closed_event);
     }
-    m_workspceClosing = false;
 }
 
 void Manager::AddToRecentlyOpenedWorkspaces(const wxString& fileName)
@@ -885,13 +879,6 @@ void Manager::GetWorkspaceFiles(std::vector<wxFileName>& files, bool absPath)
             p->GetFilesAsVectorOfFileName(files, absPath);
         }
     }
-}
-
-bool Manager::IsFileInWorkspace(const wxString& fileName)
-{
-    std::set<wxString> files;
-    GetWorkspaceFiles(files);
-    return files.find(fileName) != files.end();
 }
 
 void Manager::GetWorkspaceFiles(std::set<wxString>& files)
@@ -1573,19 +1560,6 @@ bool Manager::IsPaneVisible(const wxString& pane_name)
     wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(pane_name);
     if (info.IsOk() && info.IsShown()) {
         return true;
-    }
-    return false;
-}
-
-bool Manager::DoFindDockInfo(const wxString& saved_perspective, const wxString& dock_name, wxString& dock_info)
-{
-    // search for the 'Output View' perspective
-    wxArrayString panes = wxStringTokenize(saved_perspective, wxT("|"), wxTOKEN_STRTOK);
-    for (size_t i = 0; i < panes.GetCount(); i++) {
-        if (panes.Item(i).StartsWith(dock_name)) {
-            dock_info = panes.Item(i);
-            return true;
-        }
     }
     return false;
 }
@@ -3324,45 +3298,6 @@ void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
 
 void Manager::UpdatePreprocessorFile(clEditor* editor) { wxUnusedVar(editor); }
 
-BuildConfigPtr Manager::GetCurrentBuildConf()
-{
-    wxString project, conf;
-    GetActiveProjectAndConf(project, conf);
-    if (project.IsEmpty())
-        return NULL;
-
-    return clCxxWorkspaceST::Get()->GetProjBuildConf(project, conf);
-}
-
-void Manager::GetActiveFileProjectFiles(wxArrayString& files)
-{
-    // Send an event to the plugins to get a list of the current file's project files
-    // If no plugin has replied, use the default GetProjectFiles method
-    wxCommandEvent getFilesEevet(wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES);
-    getFilesEevet.SetEventObject(this);
-    getFilesEevet.SetClientData(&files);
-    if (!EventNotifier::Get()->ProcessEvent(getFilesEevet)) {
-        // Set default project name
-        wxString project = GetActiveProjectName();
-        if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
-            // use the active file's project
-            wxFileName activeFile = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
-            project = GetProjectNameByFile(activeFile.GetFullPath());
-        }
-        GetProjectFiles(project, files);
-    }
-}
-
-void Manager::GetActiveProjectFiles(wxArrayString& files)
-{
-    wxCommandEvent getFilesEevet(wxEVT_CMD_GET_ACTIVE_PROJECT_FILES);
-    getFilesEevet.SetEventObject(this);
-    getFilesEevet.SetClientData(&files);
-    if (!EventNotifier::Get()->ProcessEvent(getFilesEevet)) {
-        GetProjectFiles(GetActiveProjectName(), files);
-    }
-}
-
 bool Manager::DbgCanInteract()
 {
     /// First, we also propogate this question to the plugins
@@ -3374,17 +3309,6 @@ bool Manager::DbgCanInteract()
     }
     return m_dbgCanInteract;
 }
-
-void Manager::OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e)
-{
-    // We don't call e.Skip() here
-    wxFileName fn(e.GetString());
-    if (fn.FileExists()) {
-        AddToRecentlyOpenedWorkspaces(fn.GetFullPath());
-    }
-}
-
-void Manager::GenerateCompileCommands() {}
 
 void Manager::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 
@@ -3629,5 +3553,3 @@ void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
         SetRepositionEditor(true);
     }
 }
-
-void Manager::InstallClangTools() {}

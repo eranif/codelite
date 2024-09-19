@@ -543,8 +543,7 @@ public:
      */
     virtual bool SetCommands(const clDebuggerBreakpoint& bp) = 0;
     /**
-     * \brief ask the debugger to query about its file & line. Once the result arrives, the observer's UpdateFileLine()
-     * will be invoked
+     * \brief ask the debugger to query about its file & line.
      */
     virtual bool QueryFileLine() = 0;
 

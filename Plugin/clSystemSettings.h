@@ -28,7 +28,6 @@ public:
      */
     static wxColour GetDefaultPanelColour();
 
-    static bool IsLexerThemeDark();
     static bool IsDark();
 
 protected:
@@ -37,7 +36,6 @@ protected:
     void OnColoursChanged(clCommandEvent& event);
     void OnSystemColourChanged(wxSysColourChangedEvent& event);
     void DoColourChangedEvent();
-    static void SampleColoursFromControls();
 
 private:
     static wxColour btn_face;

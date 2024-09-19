@@ -65,15 +65,7 @@ bool OSXFindBrewClang(wxFileName& clang)
 }
 #endif
 
-CompilerLocatorCLANG::CompilerLocatorCLANG()
-{
-    m_msys2Envs.push_back({ 32, "clang32" });
-    m_msys2Envs.push_back({ 64, "clang64" });
-    m_msys2Envs.push_back({ 64, "clangarm64" });
-    m_msys2Envs.push_back({ 32, "mingw32" });
-    m_msys2Envs.push_back({ 64, "mingw64" });
-    m_msys2Envs.push_back({ 64, "ucrt64" });
-}
+CompilerLocatorCLANG::CompilerLocatorCLANG() {}
 
 CompilerLocatorCLANG::~CompilerLocatorCLANG() {}
 
@@ -140,8 +132,6 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
     }
     return NULL;
 }
-
-void CompilerLocatorCLANG::MSWLocate() {}
 
 void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
                                    const wxString& extraArgs)
@@ -224,21 +214,6 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString& instal
 #endif
 }
 
-wxString CompilerLocatorCLANG::GetClangVersion(const wxString& clangBinary)
-{
-    wxString command;
-    wxArrayString stdoutArr;
-    command << clangBinary << " --version";
-    ProcUtils::SafeExecuteCommand(command, stdoutArr);
-    if (!stdoutArr.IsEmpty()) {
-        wxString versionString = stdoutArr.Item(0);
-        versionString = versionString.AfterLast('(');
-        versionString = versionString.BeforeLast(')');
-        return versionString;
-    }
-    return "";
-}
-
 wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
 {
     wxString fullname;
@@ -250,14 +225,6 @@ wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
         fullname << "-" << version_string;
     }
     return fullname;
-}
-
-bool CompilerLocatorCLANG::ReadMSWInstallLocation(const wxString& regkey, wxString& installPath, wxString& llvmVersion)
-{
-    wxUnusedVar(regkey);
-    wxUnusedVar(installPath);
-    wxUnusedVar(llvmVersion);
-    return false;
 }
 
 void CompilerLocatorCLANG::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,

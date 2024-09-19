@@ -32,10 +32,8 @@ public:
     NodeDebugger();
     virtual ~NodeDebugger();
     bool IsRunning() const;
-    bool IsCanInteract() const;
     void StartDebugger(const wxString& command, const wxString& command_args, const wxString& workingDirectory);
     void StopDebugger();
-    void ListBreakpoints();
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
     void SendToDebuggee(const wxString& command);
@@ -75,7 +73,6 @@ protected:
     void OnTooltip(clDebugEvent& event);
     // Helpers
     void DoCleanup();
-    wxString GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const;
     void ApplyAllBerakpoints();
     void DoHighlightLine(const wxString& filename, int lineNo);
 };

@@ -432,14 +432,6 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
     }
 }
 
-void SyntaxHighlightDlg::OnOutputViewColourChanged(wxColourPickerEvent& event)
-{
-    CHECK_PTR_RET(m_lexer);
-    event.Skip();
-    m_isModified = true;
-    m_globalBgColourChanged = true;
-}
-
 void SyntaxHighlightDlg::OnSelTextChanged(wxColourPickerEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
@@ -642,8 +634,6 @@ void SyntaxHighlightDlg::OnExportSelective(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event) { DoExport(); }
 
-void SyntaxHighlightDlg::OnToolExportAll(wxCommandEvent& event) { DoExport(); }
-
 void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 {
     // Ask for confirmation
@@ -717,12 +707,6 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
     }
 }
 
-void SyntaxHighlightDlg::OnLoadEclipseThemeWebsite(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    ::wxLaunchDefaultBrowser("https://eclipse-color-themes.web.app/");
-}
-
 void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
 {
     DoUpdatePreview();
@@ -755,8 +739,6 @@ void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
     // update the style background colour as well
     m_bgColourPicker->SetColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 }
-
-void SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged() {}
 
 void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
 {

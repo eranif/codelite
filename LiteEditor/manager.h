@@ -98,7 +98,6 @@ protected:
     IProcess* m_programProcess;
     BreakptMgr* m_breakptsmgr;
     bool m_isShutdown;
-    bool m_workspceClosing;
     bool m_dbgCanInteract;
     bool m_useTipWin;
     long m_tipWinPos;
@@ -144,7 +143,6 @@ public:
 
     void OnRestart(clCommandEvent& event);
     void OnCmdRestart(wxCommandEvent& event);
-    void GenerateCompileCommands();
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnUpdateDebuggerActiveView(clDebugEvent& event);
@@ -155,7 +153,6 @@ public:
 
 protected:
     void DoRestartCodeLite();
-    void InstallClangTools();
 
     //--------------------------- Workspace Loading -----------------------------
 public:
@@ -167,8 +164,6 @@ public:
      * true if a workspace is open
      */
     bool IsWorkspaceOpen() const;
-
-    const bool& IsWorkspaceClosing() const { return m_workspceClosing; }
 
     /*!
      * @brief
@@ -226,8 +221,6 @@ public:
 
 protected:
     void DoSetupWorkspace(const wxString& path);
-
-    void OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e);
 
     /**
      * @brief a project was renamed, reload the workspace
@@ -326,12 +319,6 @@ public:
     void GetWorkspaceFiles(std::vector<wxFileName>& files, bool absPath = false);
 
     /**
-     * check if a file is part of the workspace
-     * @param fileName the file name in absolute path
-     */
-    bool IsFileInWorkspace(const wxString& fileName);
-
-    /**
      * Search for (non-absolute) file in the workspace
      */
     wxFileName FindFile(const wxString& fileName, const wxString& project = wxEmptyString);
@@ -428,17 +415,6 @@ public:
     void GetProjectFiles(const wxString& project, wxArrayString& files);
 
     /**
-     * @brief return list of files belonged the active project (same as running: GetProjectFiles(GetActiveProjectName(),
-     * files)
-     */
-    void GetActiveProjectFiles(wxArrayString& files);
-
-    /**
-     * @brief return the currently opened file's project files
-     */
-    void GetActiveFileProjectFiles(wxArrayString& files);
-
-    /**
      * @brief return the project name that 'fullPathFileName' belongs to. if 2 matches are found, return
      * the first one, or empty string if no match is found
      * @param fullPathFileName the filepath to search with
@@ -455,13 +431,6 @@ public:
 
     //--------------------------- Project Settings Mgmt -----------------------------
 public:
-    /**
-     * @brief if a workspace is opened, return the current build configuration
-     * of the active project
-     * @return active build configuration or NULL
-     */
-    BuildConfigPtr GetCurrentBuildConf();
-
     /**
      * Return a project working directory
      * @param project project name
@@ -500,8 +469,6 @@ public:
      */
     wxString GetProjectExecutionCommand(const wxString& projectName, wxString& wd,
                                         bool considerPauseWhenExecuting = true);
-
-    bool DoFindDockInfo(const wxString& saved_perspective, const wxString& dock_name, wxString& dock_info);
 
     //--------------------------- Top Level Pane Management -----------------------------
 public:
@@ -591,7 +558,6 @@ protected:
     //--------------------------- Debugger Support -----------------------------
 protected:
     void DoUpdateDebuggerTabControl(wxWindow* curpage);
-    bool DebuggerPaneWasShown;
 
 public:
     BreakptMgr* GetBreakpointsMgr() { return m_breakptsmgr; }
@@ -607,16 +573,6 @@ public:
     void UpdateDebuggerPane();
 
     void SetMemory(const wxString& address, size_t count, const wxString& hex_value);
-
-    /**
-     * Stores the debugger pane status when the debug session started
-     */
-    void SetDebuggerPaneOriginallyVisible(bool shown) { DebuggerPaneWasShown = shown; }
-
-    /**
-     * Returns true if the debugger pane was already shown when the debug session started
-     */
-    bool GetDebuggerPaneOriginallyVisible() const { return DebuggerPaneWasShown; }
 
     //---------------------------------------------------
     // Debugging API
@@ -640,7 +596,6 @@ public:
     //---------------------------------------------------
 
     void UpdateAddLine(const wxString& line, const bool OnlyIfLoggingOn = false);
-    void UpdateFileLine(const wxString& file, int lineno, bool repositionEditor = true);
     void UpdateGotControl(const DebuggerEventData& e);
     void UpdateLostControl();
     void UpdateRemoteTargetConnected(const wxString& line);

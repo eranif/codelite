@@ -14,7 +14,6 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     , m_allEntries(entries)
 {
     DoPopulate(m_allEntries);
-    CallAfter(&GotoAnythingDlg::UpdateLastSearch);
 
     ::clSetDialogBestSizeAndPosition(this);
 }
@@ -89,8 +88,6 @@ void GotoAnythingDlg::OnIdle(wxIdleEvent& e)
     e.Skip();
     ApplyFilter();
 }
-
-void GotoAnythingDlg::UpdateLastSearch() {}
 
 void GotoAnythingDlg::ApplyFilter()
 {

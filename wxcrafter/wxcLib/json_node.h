@@ -26,15 +26,16 @@
 #ifndef WXC_JSONNODE_H
 #define WXC_JSONNODE_H
 
+#include "../CodeLite/macros.h"
+
+#include <cJSON.h>
+#include <map>
+#include <wx/arrstr.h>
+#include <wx/colour.h>
+#include <wx/filename.h>
+#include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <wx/variant.h>
-#include <wx/filename.h>
-#include <wx/arrstr.h>
-#include <wx/gdicmn.h>
-#include <map>
-#include "cJSON.h"
-#include <wx/colour.h>
-#include "../CodeLite/macros.h"
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////

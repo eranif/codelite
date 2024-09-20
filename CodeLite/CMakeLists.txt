@@ -113,7 +113,9 @@ target_link_libraries(
     ${LIBSSH_LIB}
     ${GTK_LIBS}
     ${ADDITIONAL_LIBRARIES}
-    ${LIBUCHARDET_LIB})
+    ${LIBUCHARDET_LIB}
+    cJSON
+)
 
 if(MINGW)
     set_target_properties(

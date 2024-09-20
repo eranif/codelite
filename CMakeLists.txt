@@ -206,14 +206,6 @@ else(APPLE)
     set(WX_COMPONENTS "std aui propgrid stc ribbon richtext")
 endif()
 
-if(UNIX)
-    find_path(CTAGS_SUBMODULE CMakeLists.txt PATHS ${CMAKE_SOURCE_DIR}/submodules/ctags/)
-    if(NOT CTAGS_SUBMODULE)
-        message(STATUS "Could not locate `${CMAKE_SOURCE_DIR}/submodules/ctags/CMakeLists.txt` file")
-        message(FATAL_ERROR "Please make sure you have run `git submodule update --init`")
-    endif()
-endif()
-
 # Appstream metadata
 set(METAINFO_FILE "${CMAKE_SOURCE_DIR}/Runtime/org.codelite.codelite.metainfo.xml")
 install(FILES ${METAINFO_FILE} DESTINATION share/metainfo)
@@ -889,6 +881,9 @@ endif()
 
 # add the dtl module include path before we include Plugin folder
 include_directories(submodules/dtl)
+
+add_subdirectory(submodules)
+include_directories(submodules/cJSON)
 
 add_subdirectory(sdk/wxsqlite3 SYSTEM) # EXCLUDE_FROM_ALL)
 add_subdirectory(sdk/wxshapeframework SYSTEM EXCLUDE_FROM_ALL)

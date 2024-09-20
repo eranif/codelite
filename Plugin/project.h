@@ -342,9 +342,6 @@ private:
 
     clProjectFolder::Ptr_t GetRootFolder();
 
-    /// Upgrade the project settings to match the new builder system
-    void UpgradeBuildSystem();
-
 public:
     /**
      * @brief return list of files that are excluded from *any* build configuration

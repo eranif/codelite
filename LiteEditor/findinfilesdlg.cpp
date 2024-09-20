@@ -164,8 +164,6 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     m_checkBoxFollowSymlinks->SetValue(!(m_data.files_scanner_flags & clFilesScanner::SF_DONT_FOLLOW_SYMLINKS));
     m_checkBoxIncludeHiddenFolders->SetValue(!(m_data.files_scanner_flags & clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS));
 
-    // Set the file mask
-    DoSetFileMask();
     SetName("FindInFilesDialog");
     CallAfter(&FindInFilesDialog::DoSelectAll);
 
@@ -177,8 +175,6 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
 }
 
 FindInFilesDialog::~FindInFilesDialog() { SaveFindReplaceData(); }
-
-void FindInFilesDialog::DoSetFileMask() {}
 
 void FindInFilesDialog::DoSearchReplace()
 {

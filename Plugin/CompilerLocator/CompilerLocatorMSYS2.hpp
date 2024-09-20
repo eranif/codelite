@@ -16,7 +16,6 @@ protected:
     wxString m_repository;
 
 protected:
-    void AddTool(const wxString& tool_name, const wxString& value);
     wxFileName GetFileName(const wxString& bin_dir, const wxString& fullname) const;
 
     CompilerLocatorMSYS2();

@@ -145,8 +145,6 @@ CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
     return nullptr;
 }
 
-void CompilerLocatorMSYS2::AddTool(const wxString& tool_name, const wxString& value) {}
-
 wxFileName CompilerLocatorMSYS2::GetFileName(const wxString& bin_dir, const wxString& fullname) const
 {
     wxFileName tool(bin_dir, fullname);

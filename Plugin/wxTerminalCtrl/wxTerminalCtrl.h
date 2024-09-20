@@ -102,11 +102,6 @@ public:
     void GenerateCtrlC();
 
     /**
-     * @brief send TAB char to the terminal
-     */
-    void SendTab();
-
-    /**
      * @brief clear the display (Ctrl-L)
      */
     void ClearScreen();

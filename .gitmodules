@@ -40,3 +40,6 @@
 [submodule "submodules/cJSON"]
 	path = submodules/cJSON
 	url = https://github.com/DaveGamble/cJSON
+[submodule "submodules/wxsf-code"]
+	path = submodules/wxsf-code
+	url = https://github.com/wxShaper/wxsf-code.git

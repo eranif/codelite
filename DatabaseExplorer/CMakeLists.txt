@@ -65,7 +65,6 @@ include_directories(
     "${CL_SRC_ROOT}/CodeLite/ssh"
     "${CL_SRC_ROOT}/PCH"
     "${CL_SRC_ROOT}/Interfaces"
-    "${CL_SRC_ROOT}/sdk/wxshapeframework/include"
     "${CL_SRC_ROOT}/sdk/databaselayer/include")
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)

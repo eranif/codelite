@@ -890,12 +890,12 @@ endif()
 # add the dtl module include path before we include Plugin folder
 include_directories(submodules/dtl)
 
-add_subdirectory(sdk/wxsqlite3)
-add_subdirectory(sdk/wxshapeframework)
-add_subdirectory(sdk/databaselayer)
+add_subdirectory(sdk/wxsqlite3 SYSTEM) # EXCLUDE_FROM_ALL)
+add_subdirectory(sdk/wxshapeframework SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory(sdk/databaselayer SYSTEM EXCLUDE_FROM_ALL)
 
 if(NOT APPLE)
-    add_subdirectory(submodules/yaml-cpp)
+    add_subdirectory(submodules/yaml-cpp SYSTEM EXCLUDE_FROM_ALL)
     set(LIBYAML_CPP "yaml-cpp")
 endif()
 
@@ -905,7 +905,7 @@ add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
 set(WITHOUT_INSTALL ON)
-add_subdirectory(submodules/cc-wrapper)
+add_subdirectory(submodules/cc-wrapper SYSTEM EXCLUDE_FROM_ALL)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/submodules/yaml-cpp/include")
@@ -919,19 +919,19 @@ if(APPLE)
     set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp")
-add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main")
+add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp" SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main" SYSTEM EXCLUDE_FROM_ALL)
 
 if(WXC_APP)
     add_subdirectory(wxcrafter)
 else()
-    add_subdirectory(submodules/ctags)
+    add_subdirectory(submodules/ctags SYSTEM EXCLUDE_FROM_ALL)
     install(TARGETS ctags DESTINATION ${CL_INSTALL_BIN})
     install(TARGETS llama-cli DESTINATION ${CL_INSTALL_BIN})
 
     if(MINGW)
         # build wx-config for Windows
-        add_subdirectory(submodules/wx-config-msys2)
+        add_subdirectory(submodules/wx-config-msys2 SYSTEM EXCLUDE_FROM_ALL)
         install(TARGETS wx-config DESTINATION ${CL_INSTALL_BIN})
     endif()
 
@@ -1020,8 +1020,13 @@ else()
     add_dependencies(libcodelite wxshapeframework databaselayersqlite wxsqlite3)
     add_dependencies(plugin libcodelite)
     add_dependencies(codelite plugin)
+    add_dependencies(codelite ctags)
     add_dependencies(codelite ctagsd)
-
+    add_dependencies(codelite llama-cli)
+    add_dependencies(codelite cc-wrapper)
+    if(MINGW)
+        add_dependencies(codelite wx-config)
+    endif()
     if(NOT APPLE)
         add_dependencies(codelite yaml-cpp)
     endif()

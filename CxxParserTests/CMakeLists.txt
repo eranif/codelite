@@ -34,7 +34,7 @@ add_executable(CxxLocalVariables ${SRCS})
 target_precompile_headers(CxxLocalVariables REUSE_FROM abbreviation)
 
 # Remove the "lib" prefix from the plugin name
-target_link_libraries(CxxLocalVariables ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin)
+target_link_libraries(CxxLocalVariables ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin wxsqlite3)
 add_definitions(-DCXX_TEST_DIR=\"${CL_SRC_ROOT}/CxxParserTests/Test/\")
 cl_install_executable(CxxLocalVariables)
 

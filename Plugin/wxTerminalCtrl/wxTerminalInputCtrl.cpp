@@ -428,8 +428,6 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
 
     // we got something, consume the flag
     m_waitingForCompgenOutput = false;
-    int start_pos = m_ctrl->WordStartPosition(m_ctrl->GetCurrentPos(), true);
-    int end_pos = m_ctrl->GetCurrentPos();
 
     m_completionType = CompletionType::FOLDERS;
     // display the box

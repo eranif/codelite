@@ -214,12 +214,9 @@ bool BuilderGnuMake::Export(const wxString& project, const wxString& confToBuild
         }
     }
 
-    wxString fn;
-    fn << "Makefile";
-    wxString text;
-
     wxFileName wspfile(clCxxWorkspaceST::Get()->GetWorkspaceFileName());
 
+    wxString text;
     text << ".PHONY: clean All\n\n";
     text << "All:\n";
 
@@ -469,7 +466,7 @@ bool BuilderGnuMake::Export(const wxString& project, const wxString& confToBuild
     }
 
     // dump the content to file
-    wxFileOutputStream output(fn);
+    wxFileOutputStream output("Makefile");
     wxStringInputStream content(text);
     output << content;
 

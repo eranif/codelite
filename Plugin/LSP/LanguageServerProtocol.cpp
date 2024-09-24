@@ -598,8 +598,6 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor, bool userTriggered)
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    const wxString& filename = GetEditorFilePath(editor);
-
     wxString fileContent = editor->GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
@@ -654,7 +652,6 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missi
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    const wxString& filename = GetEditorFilePath(editor);
     wxString fileContent = editor->GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 

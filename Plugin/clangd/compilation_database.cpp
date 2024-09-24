@@ -78,7 +78,7 @@ void CompilationDatabase::Open()
         m_db->Open(dbfile.GetFullPath());
         CreateDatabase();
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception&) {
 
         delete m_db;
         m_db = NULL;

@@ -561,8 +561,7 @@ bool clCxxWorkspace::RemoveProject(const wxString& name, wxString& errMsg, const
                 // the removed project was active,
                 // select new project to be active
                 if(!m_projects.empty()) {
-                    ProjectMap_t::iterator iter = m_projects.begin();
-                    SetActiveProject(iter->first);
+                    SetActiveProject(m_projects.begin()->first);
                 }
             }
             root->RemoveChild(child);

@@ -491,8 +491,6 @@ wxRect wxCustomStatusBar::DoGetMainFieldRect()
     }
 
     // Calculate the fields length
-    size_t totalLength = rect.GetWidth();
-    size_t fieldsLength = DoGetFieldsWidth();
     wxRect mainRect(offset_x, rect.y, m_mainText->IsAutoWidth() ? m_mainText->GetAutoWidth() : m_mainText->GetWidth(),
                     rect.height);
     return mainRect;

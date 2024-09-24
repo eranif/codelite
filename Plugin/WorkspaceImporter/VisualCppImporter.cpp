@@ -93,8 +93,7 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                 line = tis.ReadLine();
                 index = line.Find(wxT("Project_Dep_Name"));
                 if(index != wxNOT_FOUND) {
-                    wxString value = line.Mid(index + 16, end).Trim().Trim(false);
-                    deps += value + wxT(";");
+                    deps += line.Mid(index + 16, end).Trim().Trim(false) + wxT(";");
                 }
 
                 index = line.Find(wxT("##########"));
@@ -182,8 +181,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
         while(!projectFIS.Eof()) {
             line = projectTIS.ReadLine();
 
-            int index = line.Find(wxT("\"$(CFG)\" == "));
-            if(index != wxNOT_FOUND) {
+            if (int index = line.Find(wxT("\"$(CFG)\" == ")); index != wxNOT_FOUND) {
                 wxString projectCfgName = line.Mid(index + 12).Trim().Trim(false);
                 projectCfgName.Replace(genericProjectData[wxT("projectName")] + wxT(" - "), wxT(""));
                 projectCfgName.Replace(wxT("\""), wxT(""));
@@ -193,8 +191,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
             }
 
             if(genericProjectCfg) {
-                index = line.Find(wxT("PROP Intermediate_Dir"));
-                if(index != wxNOT_FOUND) {
+                if (int index = line.Find(wxT("PROP Intermediate_Dir")); index != wxNOT_FOUND) {
                     wxString intermediateDirectory = line.Mid(index + 21).Trim().Trim(false);
                     intermediateDirectory.Replace(wxT("\\"), wxT("/"));
                     intermediateDirectory.Replace(wxT("\""), wxT(""));
@@ -203,8 +200,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     genericProjectCfg->intermediateDirectory = wxT("./") + intermediateDirectory;
                 }
 
-                index = line.Find(wxT("ADD CPP"));
-                if(index != wxNOT_FOUND) {
+                if (int index = line.Find(wxT("ADD CPP")); index != wxNOT_FOUND) {
                     line = line.Mid(index + 7).Trim().Trim(false);
                     wxStringTokenizer options(line, wxT(" "));
 
@@ -231,8 +227,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     }
                 }
 
-                index = line.Find(wxT("ADD LIB32"));
-                if(index != wxNOT_FOUND) {
+                if (int index = line.Find(wxT("ADD LIB32")); index != wxNOT_FOUND) {
                     line = line.Mid(index + 9).Trim().Trim(false);
                     wxStringTokenizer options(line, wxT(" "));
 
@@ -251,8 +246,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     }
                 }
 
-                index = line.Find(wxT("ADD LINK32"));
-                if(index != wxNOT_FOUND) {
+                if (int index = line.Find(wxT("ADD LINK32")); index != wxNOT_FOUND) {
                     line = line.Mid(index + 10).Trim().Trim(false);
                     wxStringTokenizer options(line, wxT(" "));
 
@@ -279,8 +273,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     }
                 }
 
-                index = line.Find(wxT("PROP Cmd_Line"));
-                if(index != wxNOT_FOUND) {
+                if (int index = line.Find(wxT("PROP Cmd_Line")); index != wxNOT_FOUND) {
                     wxString cmdLine = line.Mid(index + 13).Trim().Trim(false);
                     cmdLine.Replace(wxT("\""), wxT(""));
 
@@ -288,8 +281,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     genericProjectCfg->customBuildCmd = cmdLine;
                 }
 
-                index = line.Find(wxT("Begin Group"));
-                if(index != wxNOT_FOUND) {
+                if (int index = line.Find(wxT("Begin Group")); index != wxNOT_FOUND) {
                     wxString vpName = line.Mid(index + 11).Trim().Trim(false);
                     vpName.Replace(wxT("\""), wxT(""));
 
@@ -300,8 +292,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     }
                 }
 
-                index = line.Find(wxT("End Group"));
-                if(index != wxNOT_FOUND) {
+                if (int index = line.Find(wxT("End Group")); index != wxNOT_FOUND) {
                     int posSeparator = virtualPath.Find(wxT("/"));
 
                     if(posSeparator == wxNOT_FOUND) {
@@ -311,14 +302,13 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     }
                 }
 
-                index = line.Find(wxT("Begin Source File"));
-                if(index != wxNOT_FOUND) {
+                if (int index = line.Find(wxT("Begin Source File")); index != wxNOT_FOUND) {
                     GenericProjectFilePtr genericProjectFile;
 
                     while(!projectFIS.Eof()) {
                         line = projectTIS.ReadLine();
 
-                        int index = line.Find(wxT("\"$(CFG)\" == "));
+                        index = line.Find(wxT("\"$(CFG)\" == "));
                         if(index != wxNOT_FOUND) {
                             wxString projectCfgName = line.Mid(index + 12).Trim().Trim(false);
                             projectCfgName.Replace(genericProjectData[wxT("projectName")] + wxT(" - "), wxT(""));
@@ -386,9 +376,9 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
             }
         }
 
-        for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfg : genericProjectCfgMap) {
-            if(genericProjectCfg.second) {
-                genericProject->cfgs.push_back(genericProjectCfg.second);
+        for (const auto& p : genericProjectCfgMap) {
+            if (p.second) {
+                genericProject->cfgs.push_back(p.second);
             }
         }
 

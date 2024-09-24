@@ -373,10 +373,10 @@ void Project::Save()
 
 void Project::GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& files, bool recurse)
 {
-    wxXmlNode* vd = GetVirtualDir(vdFullPath);
-    if (vd) {
+    wxXmlNode* root = GetVirtualDir(vdFullPath);
+    if (root) {
         std::vector<wxXmlNode*> Q;
-        Q.push_back(vd);
+        Q.push_back(root);
         while (!Q.empty()) {
             wxXmlNode* vd = Q.back();
             Q.pop_back();

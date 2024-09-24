@@ -549,18 +549,18 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
         // Read the "scope" property. Notice that it can be either a string or an array
         // we cover both cases here
-        auto scope = token["scope"];
+        auto scopeItem = token["scope"];
         wxArrayString outer_scopes;
-        if (scope.isArray()) {
+        if (scopeItem.isArray()) {
             // if `scope` is array, collect only
             // complete entries
-            int scope_count = scope.arraySize();
+            int scope_count = scopeItem.arraySize();
             for (int j = 0; j < scope_count; ++j) {
-                outer_scopes.Add(scope[j].toString());
+                outer_scopes.Add(scopeItem[j].toString());
             }
         } else {
             // scopes is a string, split it by space|,|; and add them all
-            wxString scopes_str = scope.toString();
+            wxString scopes_str = scopeItem.toString();
             wxArrayString tmparr = ::wxStringTokenize(scopes_str, " ;,", wxTOKEN_STRTOK);
             outer_scopes.insert(outer_scopes.end(), tmparr.begin(), tmparr.end());
         }

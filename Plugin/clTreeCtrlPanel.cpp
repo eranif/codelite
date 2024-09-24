@@ -436,8 +436,7 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     if (GetConfig() && IsTopLevelFolder(itemFolder)) {
         wxArrayString pinnedFolders;
         pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
-        int where = pinnedFolders.Index(cd->GetPath());
-        if (where == wxNOT_FOUND) {
+        if (pinnedFolders.Index(cd->GetPath()) == wxNOT_FOUND) {
             pinnedFolders.Add(cd->GetPath());
         }
         GetConfig()->Write("ExplorerFolders", pinnedFolders);

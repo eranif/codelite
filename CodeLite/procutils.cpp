@@ -86,7 +86,7 @@ ProcUtils::ProcUtils() {}
 
 ProcUtils::~ProcUtils() {}
 
-void ProcUtils::GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid)
+std::set<unsigned long> ProcUtils::GetProcTree(long pid)
 {
 #ifdef __WXMSW__
     OSVERSIONINFO osver;
@@ -95,17 +95,17 @@ void ProcUtils::GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid)
     // Windows NT.
     osver.dwOSVersionInfoSize = sizeof(osver);
     if(!GetVersionEx(&osver)) {
-        return;
+        return {};
     }
 
     if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
-        return;
+        return {};
     }
 
     // get child processes of this node
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if(!hProcessSnap) {
-        return;
+        return {};
     }
 
     // Fill in the size of the structure before using it.
@@ -118,10 +118,10 @@ void ProcUtils::GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid)
     if(!Process32First(hProcessSnap, &pe)) {
         // Can't get first process.
         CloseHandle(hProcessSnap);
-        return;
+        return {};
     }
 
-    parentsMap[pid] = true;
+    std::set<unsigned long> parentsMap{ static_cast<unsigned long>(pid) };
 
     do {
         if(parentsMap.find(pe.th32ParentProcessID) != parentsMap.end()) {
@@ -132,13 +132,14 @@ void ProcUtils::GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid)
             if(hProcess != NULL) {
                 CloseHandle(hProcess);
                 // dont kill the process, just keep its ID
-                parentsMap[pe.th32ProcessID] = true;
+                parentsMap.insert(pe.th32ProcessID);
             }
         }
     } while(Process32Next(hProcessSnap, &pe));
     CloseHandle(hProcessSnap);
+    return parentsMap;
 #else
-    parentsMap[pid] = true;
+    return { static_cast<unsigned long>(pid) };
 #endif
 }
 

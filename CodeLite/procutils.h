@@ -28,6 +28,7 @@
 #include "codelite_exports.h"
 
 #include <map>
+#include <set>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/defs.h>
@@ -88,7 +89,7 @@ public:
 
     static wxString& WrapInShell(wxString& cmd);
 
-    static void GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid);
+    static std::set<unsigned long> GetProcTree(long pid);
     static void ExecuteCommand(const wxString& command, wxArrayString& output,
                                long flags = wxEXEC_NODISABLE | wxEXEC_SYNC);
     static void ExecuteInteractiveCommand(const wxString& command);

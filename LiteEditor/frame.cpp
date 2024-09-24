@@ -4145,15 +4145,9 @@ void clMainFrame::OnBatchBuild(wxCommandEvent& e)
     BatchBuildDlg* batchBuild = new BatchBuildDlg(this);
     if (batchBuild->ShowModal() == wxID_OK) {
         // build the projects
-        std::list<QueueCommand> buildInfoList;
-        batchBuild->GetBuildInfoList(buildInfoList);
-        if (buildInfoList.empty() == false) {
-            std::list<QueueCommand>::iterator iter = buildInfoList.begin();
-
-            // add all build items to queue
-            for (; iter != buildInfoList.end(); iter++) {
-                ManagerST::Get()->PushQueueCommand(*iter);
-            }
+        // add all build items to queue
+        for (const auto& queueCommand : batchBuild->GetBuildInfoList()) {
+            ManagerST::Get()->PushQueueCommand(queueCommand);
         }
     }
     batchBuild->Destroy();

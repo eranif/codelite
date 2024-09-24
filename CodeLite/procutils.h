@@ -94,7 +94,7 @@ public:
                                long flags = wxEXEC_NODISABLE | wxEXEC_SYNC);
     static void ExecuteInteractiveCommand(const wxString& command);
     static wxString GetProcessNameByPid(long pid);
-    static void GetProcessList(std::vector<ProcessEntry>& proclist);
+    static std::vector<ProcessEntry> GetProcessList();
     static void GetChildren(long pid, std::vector<long>& children);
     static bool Shell(const wxString& programConsoleCommand);
     static bool Locate(const wxString& name, wxString& where);

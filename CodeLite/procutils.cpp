@@ -295,7 +295,7 @@ void ProcUtils::ExecuteCommand(const wxString& command, wxArrayString& output, l
 
 void ProcUtils::ExecuteInteractiveCommand(const wxString& command) { wxShell(command); }
 
-void ProcUtils::GetProcessList(std::vector<ProcessEntry>& proclist)
+std::vector<ProcessEntry> ProcUtils::GetProcessList()
 {
 #ifdef __WXMSW__
     OSVERSIONINFO osver;
@@ -304,17 +304,17 @@ void ProcUtils::GetProcessList(std::vector<ProcessEntry>& proclist)
     // Windows NT.
     osver.dwOSVersionInfoSize = sizeof(osver);
     if(!GetVersionEx(&osver)) {
-        return;
+        return {};
     }
 
     if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
-        return;
+        return {};
     }
 
     // get child processes of this node
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if(!hProcessSnap) {
-        return;
+        return {};
     }
 
     // Fill in the size of the structure before using it.
@@ -327,9 +327,10 @@ void ProcUtils::GetProcessList(std::vector<ProcessEntry>& proclist)
     if(!Process32First(hProcessSnap, &pe)) {
         // Can't get first process.
         CloseHandle(hProcessSnap);
-        return;
+        return {};
     }
 
+    std::vector<ProcessEntry> proclist;
     do {
         ProcessEntry entry;
         entry.name = pe.szExeFile;
@@ -344,13 +345,14 @@ void ProcUtils::GetProcessList(std::vector<ProcessEntry>& proclist)
     int nof_procs, i;
 
     if(!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
-        return;
+        return {};
 
     if(!(ki = kvm_getprocs(kvd, KERN_PROC_PROC, 0, &nof_procs))) {
         kvm_close(kvd);
-        return;
+        return {};
     }
 
+    std::vector<ProcessEntry> proclist;
     for(i = 0; i < nof_procs; i++) {
         ProcessEntry entry;
         entry.pid = ki[i].ki_pid;
@@ -368,7 +370,8 @@ void ProcUtils::GetProcessList(std::vector<ProcessEntry>& proclist)
     // Mac does not like the --no-heading...
     ExecuteCommand(wxT("ps -A -o pid,command "), output);
 #endif
-    for(size_t i = 0; i < output.GetCount(); i++) {
+    std::vector<ProcessEntry> proclist;
+    for (size_t i = 0; i < output.GetCount(); i++) {
         wxString line = output.Item(i);
         // remove whitespaces
         line = line.Trim().Trim(false);
@@ -390,6 +393,7 @@ void ProcUtils::GetProcessList(std::vector<ProcessEntry>& proclist)
         }
     }
 #endif
+    return proclist;
 }
 
 void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)

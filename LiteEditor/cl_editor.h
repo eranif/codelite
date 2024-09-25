@@ -1087,7 +1087,7 @@ public:
     /**
      * Get a vector of relevant position changes. Used for 'GoTo next/previous FindInFiles match'
      */
-    void GetChanges(std::vector<int>& changes);
+    std::vector<int> GetChanges();
 
     /**
      * Tells the EditorDeltasHolder that there's been (another) FindInFiles call

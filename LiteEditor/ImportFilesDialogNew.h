@@ -51,7 +51,7 @@ protected:
 public:
     ImportFilesDialogNew(wxWindow* parent);
     virtual ~ImportFilesDialogNew();
-    void GetDirectories(wxStringBoolMap_t &dirs);
+    wxStringBoolMap_t GetDirectories();
     bool ExtlessFiles();
     wxString GetFileMask();
     wxString GetBaseDir();

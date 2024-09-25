@@ -730,7 +730,6 @@ static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<P
                                              bool loadDefaults = true)
 {
     // read all files under this directory
-    wxArrayString files;
     if (wxFileName::DirExists(folder)) {
         DirTraverser dt("*.project");
 
@@ -761,7 +760,7 @@ static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<P
         }
     }
 
-    if (loadDefaults && files.IsEmpty()) {
+    if (loadDefaults && list.empty()) {
         // if we ended up here, it means the installation got screwed up since
         // there should be at least 8 project templates !
         // create 3 default empty projects

@@ -101,9 +101,8 @@ void DebuggerDisassemblyTab::OnOutput(clCommandEvent& e)
     DoClearDisassembleView();
     m_stc->SetReadOnly(false);
 
-    clDebuggerBreakpoint::Vec_t memBps;
     wxStringSet_t addressSet;
-    ManagerST::Get()->GetBreakpointsMgr()->GetAllMemoryBreakpoints(memBps);
+    const auto memBps = ManagerST::Get()->GetBreakpointsMgr()->GetAllMemoryBreakpoints();
     for(size_t i = 0; i < memBps.size(); ++i) {
         addressSet.insert(memBps.at(i).memory_address);
     }

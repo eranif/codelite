@@ -204,9 +204,8 @@ public:
     bool AddBreakpointByAddress(const wxString& address);
     /**
      * @brief return list of allmemory breakpoints
-     * @param memoryBps
      */
-    void GetAllMemoryBreakpoints(clDebuggerBreakpoint::Vec_t& memoryBps);
+    clDebuggerBreakpoint::Vec_t GetAllMemoryBreakpoints();
 
     /**
      * Summon the BreakptProperties dialog for a bp

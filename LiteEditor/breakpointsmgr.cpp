@@ -1170,8 +1170,9 @@ int BreakptMgr::DelBreakpointByAddress(const wxString& address)
     return breakpointsRemoved;
 }
 
-void BreakptMgr::GetAllMemoryBreakpoints(clDebuggerBreakpoint::Vec_t& memoryBps)
+clDebuggerBreakpoint::Vec_t BreakptMgr::GetAllMemoryBreakpoints()
 {
+    clDebuggerBreakpoint::Vec_t memoryBps;
     clDebuggerBreakpoint::Vec_t allBps; // Start by finding all on the line
     GetBreakpoints(allBps);
 
@@ -1181,6 +1182,7 @@ void BreakptMgr::GetAllMemoryBreakpoints(clDebuggerBreakpoint::Vec_t& memoryBps)
             memoryBps.push_back(bp);
         }
     }
+    return memoryBps;
 }
 
 void BreakptMgr::OnWorkspaceClosed(wxCommandEvent& event)

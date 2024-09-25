@@ -224,8 +224,7 @@ void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip,
 // Done before refreshing after a delete or edit, lest it was the last bp in a file
 void BreakptMgr::DeleteAllBreakpointMarkers()
 {
-    clEditor::Vec_t editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+    auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors(MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); ++i) {
         editors.at(i)->DelAllBreakpointMarkers();
     }
@@ -234,8 +233,7 @@ void BreakptMgr::DeleteAllBreakpointMarkers()
 // Refresh all line-type breakpoint markers in all editors
 void BreakptMgr::RefreshBreakpointMarkers()
 {
-    std::vector<clEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+    auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors(MainBook::kGetAll_Default);
 
     for (size_t i = 0; i < editors.size(); i++) {
         DoRefreshFileBreakpoints(editors.at(i));

@@ -642,13 +642,12 @@ size_t PluginManager::GetPageCount() const { return clMainFrame::Get()->GetMainB
 
 size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
 {
-    clEditor::Vec_t tmpEditors;
     size_t flags = MainBook::kGetAll_IncludeDetached;
     if (inOrder) {
         flags |= MainBook::kGetAll_RetainOrder;
     }
 
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(tmpEditors, flags);
+    clEditor::Vec_t tmpEditors = clMainFrame::Get()->GetMainBook()->GetAllEditors(flags);
     editors.insert(editors.end(), tmpEditors.begin(), tmpEditors.end());
     return editors.size();
 }

@@ -6316,8 +6316,7 @@ void clEditor::OnZoom(wxStyledTextEvent& event)
     // User triggered this zoom
     int curzoom = GetZoom();
 
-    clEditor::Vec_t editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+    auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors(MainBook::kGetAll_Default);
 
     for (auto editor : editors) {
         editor->SetZoomFactor(curzoom);

@@ -1995,8 +1995,7 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
     LoadTabGroupDlg dlg(this, path, previousgroups);
 
     // Disable the 'Replace' checkbox if there aren't any editors to replace
-    std::vector<clEditor*> editors;
-    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+    const auto editors = GetMainBook()->GetAllEditors(MainBook::kGetAll_Default);
     dlg.EnableReplaceCheck(editors.size());
 
     if (dlg.ShowModal() != wxID_OK) {
@@ -2203,11 +2202,10 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 
     SaveTabGroupDlg dlg(this, previousgroups);
 
-    std::vector<clEditor*> editors;
     wxArrayString filepaths;
-    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_RetainOrder); // We'll want the order of intArr
-                                                                          // to match the order in
-                                                                          // MainBook::SaveSession
+    const auto editors = GetMainBook()->GetAllEditors(MainBook::kGetAll_RetainOrder); // We'll want the order of intArr
+                                                                                      // to match the order in
+                                                                                      // MainBook::SaveSession
     for (size_t i = 0; i < editors.size(); ++i) {
         filepaths.Add(editors[i]->GetFileName().GetFullPath());
     }
@@ -5437,8 +5435,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     m_pluginsToolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_pluginsToolbar->Realize();
 
-    clEditor::Vec_t editors;
-    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
+    auto editors = GetMainBook()->GetAllEditors(MainBook::kGetAll_IncludeDetached);
 
     std::for_each(editors.begin(), editors.end(), [&](clEditor* editor) { editor->PreferencesChanged(); });
     m_mainFrameTitleTemplate = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));

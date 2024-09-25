@@ -221,8 +221,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     // We need to tell all editors that there's been a (new) search
     // This lets them clear any already-saved line-changes,
     // which a new save will have taken into account
-    clEditor::Vec_t editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
+    auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors(MainBook::kGetAll_IncludeDetached);
     for(size_t n = 0; n < editors.size(); ++n) {
         clEditor* editor = dynamic_cast<clEditor*>(*(editors.begin() + n));
         if(editor) {

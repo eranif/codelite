@@ -655,8 +655,7 @@ size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
 
 size_t PluginManager::GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints)
 {
-    breakpoints.clear();
-    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(breakpoints);
+    breakpoints = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints();
     return breakpoints.size();
 }
 
@@ -938,7 +937,7 @@ void PluginManager::DisplayMessage(const wxString& message, int flags,
 
 void PluginManager::GetBreakpoints(std::vector<clDebuggerBreakpoint>& bpList)
 {
-    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bpList);
+    bpList = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints();
 }
 
 void PluginManager::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId)

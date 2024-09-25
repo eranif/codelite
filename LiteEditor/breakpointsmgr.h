@@ -220,7 +220,7 @@ public:
     /**
      * return list of breakpoints
      */
-    void GetBreakpoints(clDebuggerBreakpoint::Vec_t& li);
+    clDebuggerBreakpoint::Vec_t GetBreakpoints();
 
     /**
      * When a breakpoint is added, the debugger_id it returns finally arrives here

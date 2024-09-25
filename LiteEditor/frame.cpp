@@ -3240,8 +3240,7 @@ void clMainFrame::OnDebugStopUI(wxUpdateUIEvent& e)
 void clMainFrame::OnDebugManageBreakpointsUI(wxUpdateUIEvent& e)
 {
     if (e.GetId() == XRCID("delete_all_breakpoints")) {
-        std::vector<clDebuggerBreakpoint> bps;
-        ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bps);
+        const std::vector<clDebuggerBreakpoint> bps = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints();
         e.Enable(bps.size());
     } else if (e.GetId() == XRCID("disable_all_breakpoints")) {
         e.Enable(ManagerST::Get()->GetBreakpointsMgr()->AreThereEnabledBreakpoints());
@@ -4357,8 +4356,7 @@ void clMainFrame::OnStartQuickDebug(clDebugEvent& e)
             return;
         }
 
-        clDebuggerBreakpoint::Vec_t bpList;
-        ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bpList);
+        clDebuggerBreakpoint::Vec_t bpList = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints();
         if (!eventStarting.GetBreakpoints().empty()) {
             // one or some plugins sent us list of breakpoints, use them instead
             bpList.swap(eventStarting.GetBreakpoints());

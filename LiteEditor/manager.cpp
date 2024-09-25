@@ -2092,11 +2092,10 @@ void Manager::DbgStart(long attachPid)
     }
 
     // We can now get all the gathered breakpoints from the manager
-    std::vector<clDebuggerBreakpoint> bps;
 
     // since files may have been updated and the breakpoints may have been moved,
     // delete all the information
-    GetBreakpointsMgr()->GetBreakpoints(bps);
+    std::vector<clDebuggerBreakpoint> bps = GetBreakpointsMgr()->GetBreakpoints();
 
     // notify plugins that we're about to start debugging
     clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);

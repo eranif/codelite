@@ -143,10 +143,10 @@ void BreakptMgr::AddBreakpoint()
     }
 }
 
-void BreakptMgr::GetBreakpoints(clDebuggerBreakpoint::Vec_t& li)
+clDebuggerBreakpoint::Vec_t BreakptMgr::GetBreakpoints()
 {
     DoRemoveDuplicateBreakpoints();
-    li = m_bps;
+    return m_bps;
 }
 
 // Get all known breakpoints for this line/file
@@ -1150,12 +1150,11 @@ void BreakptMgr::DoRemoveDuplicateBreakpoints()
 
 int BreakptMgr::DelBreakpointByAddress(const wxString& address)
 {
-    std::vector<clDebuggerBreakpoint> allBps; // Start by finding all on the line
-    GetBreakpoints(allBps);
+    const auto allBps = GetBreakpoints(); // Start by finding all on the line
 
     int breakpointsRemoved = 0;
     for (size_t i = 0; i < allBps.size(); i++) {
-        clDebuggerBreakpoint& bp = allBps.at(i);
+        const clDebuggerBreakpoint& bp = allBps.at(i);
         if (bp.memory_address == address) {
             int bpId = (bp.debugger_id == -1 ? bp.internal_id : bp.debugger_id);
 
@@ -1173,11 +1172,10 @@ int BreakptMgr::DelBreakpointByAddress(const wxString& address)
 clDebuggerBreakpoint::Vec_t BreakptMgr::GetAllMemoryBreakpoints()
 {
     clDebuggerBreakpoint::Vec_t memoryBps;
-    clDebuggerBreakpoint::Vec_t allBps; // Start by finding all on the line
-    GetBreakpoints(allBps);
+    const auto allBps = GetBreakpoints(); // Start by finding all on the line
 
     for (size_t i = 0; i < allBps.size(); i++) {
-        clDebuggerBreakpoint& bp = allBps.at(i);
+        const clDebuggerBreakpoint& bp = allBps.at(i);
         if (!bp.memory_address.IsEmpty()) {
             memoryBps.push_back(bp);
         }

@@ -84,7 +84,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:sftp_ui"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -999,7 +999,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:sftp_ui"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -2459,7 +2459,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"../bitmaps/16-connected.png"
+									"m_path":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Direction",
@@ -2790,7 +2790,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:sftp_ui"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -4140,7 +4140,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:sftp_ui"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

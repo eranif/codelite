@@ -134,13 +134,12 @@ public:
     /**
      * Collect local variables from given scope text (in) and an optional symbol name
      * @param in scope to search for
-     * @param tags output, since we dont have full information about each token, all local variables returned are of
-     *type
-     *			   'variable' with public access
      * @param name optional name to look for (name can be partial).
+     * @return since we dont have full information about each token,
+     * all local variables returned are of type 'variable' with public access
      */
-    void GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& tags, bool isFuncSignature,
-                           const wxString& name = wxEmptyString, size_t flag = PartialMatch);
+    std::vector<TagEntryPtr> GetLocalVariables(const wxString& in, bool isFuncSignature,
+                                               const wxString& name = wxEmptyString, size_t flag = PartialMatch);
 
     wxString ApplyCtagsReplacementTokens(const wxString& in);
 

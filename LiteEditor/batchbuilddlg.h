@@ -63,7 +63,7 @@ protected:
 public:
 	/** Constructor */
 	BatchBuildDlg( wxWindow* parent );
-	void GetBuildInfoList(std::list<QueueCommand> &buildInfoList);
+	std::list<QueueCommand> GetBuildInfoList() const;
 
 };
 

@@ -5352,7 +5352,7 @@ int clEditor::GetCharAtPos(int pos) { return wxStyledTextCtrl::GetCharAt(pos); }
 
 int clEditor::PositionBeforePos(int pos) { return wxStyledTextCtrl::PositionBefore(pos); }
 
-void clEditor::GetChanges(std::vector<int>& changes) { m_deltas->GetChanges(changes); }
+std::vector<int> clEditor::GetChanges() { return m_deltas->GetChanges(); }
 
 void clEditor::OnFindInFiles() { m_deltas->Clear(); }
 
@@ -6316,8 +6316,7 @@ void clEditor::OnZoom(wxStyledTextEvent& event)
     // User triggered this zoom
     int curzoom = GetZoom();
 
-    clEditor::Vec_t editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+    auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors(MainBook::kGetAll_Default);
 
     for (auto editor : editors) {
         editor->SetZoomFactor(curzoom);

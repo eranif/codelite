@@ -143,10 +143,10 @@ void BreakptMgr::AddBreakpoint()
     }
 }
 
-void BreakptMgr::GetBreakpoints(clDebuggerBreakpoint::Vec_t& li)
+clDebuggerBreakpoint::Vec_t BreakptMgr::GetBreakpoints()
 {
     DoRemoveDuplicateBreakpoints();
-    li = m_bps;
+    return m_bps;
 }
 
 // Get all known breakpoints for this line/file
@@ -224,8 +224,7 @@ void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip,
 // Done before refreshing after a delete or edit, lest it was the last bp in a file
 void BreakptMgr::DeleteAllBreakpointMarkers()
 {
-    clEditor::Vec_t editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+    auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors(MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); ++i) {
         editors.at(i)->DelAllBreakpointMarkers();
     }
@@ -234,8 +233,7 @@ void BreakptMgr::DeleteAllBreakpointMarkers()
 // Refresh all line-type breakpoint markers in all editors
 void BreakptMgr::RefreshBreakpointMarkers()
 {
-    std::vector<clEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+    auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors(MainBook::kGetAll_Default);
 
     for (size_t i = 0; i < editors.size(); i++) {
         DoRefreshFileBreakpoints(editors.at(i));
@@ -1150,12 +1148,11 @@ void BreakptMgr::DoRemoveDuplicateBreakpoints()
 
 int BreakptMgr::DelBreakpointByAddress(const wxString& address)
 {
-    std::vector<clDebuggerBreakpoint> allBps; // Start by finding all on the line
-    GetBreakpoints(allBps);
+    const auto allBps = GetBreakpoints(); // Start by finding all on the line
 
     int breakpointsRemoved = 0;
     for (size_t i = 0; i < allBps.size(); i++) {
-        clDebuggerBreakpoint& bp = allBps.at(i);
+        const clDebuggerBreakpoint& bp = allBps.at(i);
         if (bp.memory_address == address) {
             int bpId = (bp.debugger_id == -1 ? bp.internal_id : bp.debugger_id);
 
@@ -1170,17 +1167,18 @@ int BreakptMgr::DelBreakpointByAddress(const wxString& address)
     return breakpointsRemoved;
 }
 
-void BreakptMgr::GetAllMemoryBreakpoints(clDebuggerBreakpoint::Vec_t& memoryBps)
+clDebuggerBreakpoint::Vec_t BreakptMgr::GetAllMemoryBreakpoints()
 {
-    clDebuggerBreakpoint::Vec_t allBps; // Start by finding all on the line
-    GetBreakpoints(allBps);
+    clDebuggerBreakpoint::Vec_t memoryBps;
+    const auto allBps = GetBreakpoints(); // Start by finding all on the line
 
     for (size_t i = 0; i < allBps.size(); i++) {
-        clDebuggerBreakpoint& bp = allBps.at(i);
+        const clDebuggerBreakpoint& bp = allBps.at(i);
         if (!bp.memory_address.IsEmpty()) {
             memoryBps.push_back(bp);
         }
     }
+    return memoryBps;
 }
 
 void BreakptMgr::OnWorkspaceClosed(wxCommandEvent& event)

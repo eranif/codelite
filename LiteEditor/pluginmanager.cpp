@@ -642,21 +642,19 @@ size_t PluginManager::GetPageCount() const { return clMainFrame::Get()->GetMainB
 
 size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
 {
-    clEditor::Vec_t tmpEditors;
     size_t flags = MainBook::kGetAll_IncludeDetached;
     if (inOrder) {
         flags |= MainBook::kGetAll_RetainOrder;
     }
 
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(tmpEditors, flags);
+    clEditor::Vec_t tmpEditors = clMainFrame::Get()->GetMainBook()->GetAllEditors(flags);
     editors.insert(editors.end(), tmpEditors.begin(), tmpEditors.end());
     return editors.size();
 }
 
 size_t PluginManager::GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints)
 {
-    breakpoints.clear();
-    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(breakpoints);
+    breakpoints = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints();
     return breakpoints.size();
 }
 
@@ -938,7 +936,7 @@ void PluginManager::DisplayMessage(const wxString& message, int flags,
 
 void PluginManager::GetBreakpoints(std::vector<clDebuggerBreakpoint>& bpList)
 {
-    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bpList);
+    bpList = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints();
 }
 
 void PluginManager::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId)

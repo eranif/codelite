@@ -57,9 +57,8 @@ wxString CppCommentCreator::FunctionComment()
     wxString comment;
 
     // parse the function signature
-    std::vector<TagEntryPtr> tags;
     Language* lang = LanguageST::Get();
-    lang->GetLocalVariables(m_tag->GetSignature(), tags, true);
+    const std::vector<TagEntryPtr> tags = lang->GetLocalVariables(m_tag->GetSignature(), true);
 
     comment << wxT("$(FunctionPattern)\n");
     for(size_t i = 0; i < tags.size(); i++)

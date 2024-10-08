@@ -1562,7 +1562,6 @@ void FileViewTree::OnImportDirectory(wxCommandEvent& e)
     ProjectPtr proj = ManagerST::Get()->GetProject(project);
 
     bool extlessFiles(false);
-    wxStringBoolMap_t dirs;
     wxArrayString files;
     wxArrayString all_files;
     wxString filespec;
@@ -1573,7 +1572,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent& e)
     }
 
     extlessFiles = dlg.ExtlessFiles();
-    dlg.GetDirectories(dirs);
+    wxStringBoolMap_t dirs = dlg.GetDirectories();
     filespec = dlg.GetFileMask();
 
     // get list of all files based on the checked directories

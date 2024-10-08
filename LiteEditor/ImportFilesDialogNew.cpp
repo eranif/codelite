@@ -244,7 +244,12 @@ void ImportFilesDialogNew::OnItemExpanding(wxDataViewEvent& event)
     }
 }
 
-void ImportFilesDialogNew::GetDirectories(wxStringBoolMap_t& dirs) { DoGetCheckedDirs(m_root, dirs); }
+wxStringBoolMap_t ImportFilesDialogNew::GetDirectories()
+{
+    wxStringBoolMap_t dirs;
+    DoGetCheckedDirs(m_root, dirs);
+    return dirs;
+}
 
 void ImportFilesDialogNew::DoGetCheckedDirs(const wxDataViewItem& parent, wxStringBoolMap_t& dirs)
 {

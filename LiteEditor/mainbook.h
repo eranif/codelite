@@ -186,10 +186,9 @@ public:
     clEditor* GetActiveEditor();
     /**
      * @brief return vector of all editors in the notebook. This function only returns instances of type clEditor
-     * @param editors [output]
      * @param flags kGetAll_*
      */
-    void GetAllEditors(clEditor::Vec_t& editors, size_t flags);
+    clEditor::Vec_t GetAllEditors(size_t flags);
     /**
      * @brief return vector of all tabs in the notebook
      * @param tabs [output]

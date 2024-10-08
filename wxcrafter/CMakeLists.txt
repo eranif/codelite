@@ -78,11 +78,7 @@ file(
     "xrc_handlers/*.cpp"
     "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
 
-if(NOT WXC_APP)
-    file(GLOB WXCLIB_SRCS "wxcLib/json_node.cpp" "wxcLib/cJSON.cpp" "wxcLib/wxc*.cpp")
-else(NOT WXC_APP)
-    file(GLOB WXCLIB_SRCS "wxcLib/*.cpp")
-endif(NOT WXC_APP)
+set(WXCLIB_SRCS "wxcLib/json_node.cpp")
 
 include_directories(
     "${CMAKE_CURRENT_LIST_DIR}"
@@ -96,6 +92,7 @@ include_directories(
 
 add_definitions(-fPIC)
 add_library(wxcLib STATIC ${WXCLIB_SRCS})
+target_link_libraries(wxcLib PUBLIC cJSON)
 
 set(RES_FILE "")
 # Define the output

@@ -37,3 +37,6 @@
 [submodule "submodules/asio"]
 	path = submodules/asio
 	url = https://github.com/chriskohlhoff/asio.git
+[submodule "submodules/cJSON"]
+	path = submodules/cJSON
+	url = https://github.com/DaveGamble/cJSON

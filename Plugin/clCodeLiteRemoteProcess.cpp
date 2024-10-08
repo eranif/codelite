@@ -5,7 +5,6 @@
 #include "JSON.h"
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
-#include "cJSON.h"
 #include "clSFTPManager.hpp"
 #include "cl_command_event.h"
 #include "environmentconfig.h"
@@ -13,6 +12,7 @@
 #include "fileutils.h"
 #include "globals.h"
 
+#include <cJSON.h>
 #include <functional>
 #include <unordered_map>
 #include <wx/event.h>

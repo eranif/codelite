@@ -78,7 +78,7 @@ protected:
 	 * @param end
 	 * @return
 	 */
-	bool GetOuterTempleate(const wxString& txt, int *start, int *end);
+	bool GetOuterTemplate(const wxString& txt, int *start, int *end);
 
 public:
 	/**

@@ -217,7 +217,7 @@ wxString DotWriter::OptionsShortNameAndParameters(const wxString& name)
             wxRegEx re;
             // remove STL
             int start, end;
-            while(GetOuterTempleate(out, &start, &end)) {
+            while(GetOuterTemplate(out, &start, &end)) {
                 out.Replace(out.Mid(start, end - start + 1), wxT("%STL%"));
             }
             out.Replace(wxT("%STL%"), wxT("<...>"));
@@ -344,7 +344,7 @@ wxString DotWriter::DefineColorForLabel(int index)
     }
 }
 
-bool DotWriter::GetOuterTempleate(const wxString& txt, int* start, int* end)
+bool DotWriter::GetOuterTemplate(const wxString& txt, int* start, int* end)
 {
     int cnt = 0;
     int pos = 0;

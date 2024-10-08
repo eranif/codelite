@@ -29,29 +29,17 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifdef WX_PRECOMP
-
-#include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif //__BORLANDC__
-
-#else
-#include <wx/wx.h>
-#endif // WX_PRECOMP
-
 #include "free_text_dialog.h"
+
+#include "globals.h"
+
+#include <wx/wx.h>
+#include <wx/wxprec.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
-FreeTextDialog::FreeTextDialog(wxWindow* parent,
-                               wxString value,
-                               int id,
-                               wxString title,
-                               wxPoint pos,
-                               wxSize size,
-                               int style)
+FreeTextDialog::FreeTextDialog(wxWindow* parent, const wxString& value, int id, const wxString& title, wxPoint pos,
+                               wxSize size, int style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     this->SetSizeHints(wxDefaultSize, wxDefaultSize);
@@ -59,14 +47,11 @@ FreeTextDialog::FreeTextDialog(wxWindow* parent,
     wxBoxSizer* bSizer23;
     bSizer23 = new wxBoxSizer(wxVERTICAL);
 
-    m_text = new wxTextCtrl(this,
-                            wxID_ANY,
-                            wxEmptyString,
-                            wxDefaultPosition,
-                            wxDefaultSize,
-                            wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_PROCESS_TAB | wxTE_RICH2);
+    m_text = new clThemedSTC(this, wxID_ANY, value, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    m_text->SetWrapMode(wxSTC_WRAP_WORD);
+
     bSizer23->Add(m_text, 1, wxALL | wxEXPAND, 5);
-    m_text->SetValue(value);
+    m_text->CallAfter(&clThemedSTC::SetFocus);
 
     m_staticline9 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL);
     bSizer23->Add(m_staticline9, 0, wxEXPAND | wxALL, 5);
@@ -85,4 +70,5 @@ FreeTextDialog::FreeTextDialog(wxWindow* parent,
     this->SetSizer(bSizer23);
     this->Layout();
     m_text->SetFocus();
+    ::clSetDialogBestSizeAndPosition(this);
 }

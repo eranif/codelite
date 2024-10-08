@@ -22,43 +22,28 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  5 2007)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
 
-#ifndef __free_text_dialog__
-#define __free_text_dialog__
+#pragma once
 
+#include "clThemedSTC.hpp"
+
+#include <wx/button.h>
+#include <wx/statline.h>
 #include <wx/wx.h>
 
-#include <wx/statline.h>
-#include <wx/button.h>
-
 ///////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class FreeTextDialog
-///////////////////////////////////////////////////////////////////////////////
 class FreeTextDialog : public wxDialog
 {
 protected:
-    wxTextCtrl* m_text;
-    wxStaticLine* m_staticline9;
-    wxButton* m_buttonOK;
-    wxButton* m_buttonCancel;
+    clThemedSTC* m_text = nullptr;
+    wxStaticLine* m_staticline9 = nullptr;
+    wxButton* m_buttonOK = nullptr;
+    wxButton* m_buttonCancel = nullptr;
 
 public:
-    FreeTextDialog(wxWindow* parent,
-                   wxString value = wxEmptyString,
-                   int id = wxID_ANY,
-                   wxString title = _("Edit"),
-                   wxPoint pos = wxDefaultPosition,
-                   wxSize size = wxSize(481, 299),
-                   int style = wxDEFAULT_DIALOG_STYLE);
+    FreeTextDialog(wxWindow* parent, const wxString& value = wxEmptyString, int id = wxID_ANY,
+                   const wxString& title = _("Edit"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize(481, 299),
+                   int style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     wxString GetValue() const { return m_text->GetValue(); }
 };
-
-#endif //__free_text_dialog__

@@ -273,7 +273,7 @@ public:
     wxString GetRealClassName() const;
 
 protected:
-    void DoGetConnectedEventsRecrusively(wxcWidget::Map_t& events, const wxcWidget* wb) const;
+    void DoGetConnectedEventsRecursively(wxcWidget::Map_t& events, const wxcWidget* wb) const;
 
     // Helpers
     wxString XRCPrefix(const wxString& class_name = wxEmptyString) const;

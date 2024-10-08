@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_RECONCILEPROJECT_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_RECONCILEPROJECT_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -45,6 +46,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
 
 class ReconcileProjectDlgBaseClass : public wxDialog
 {
@@ -108,10 +110,12 @@ public:
     wxPanel* GetPanel222() { return m_panel222; }
     wxNotebook* GetNotebook214() { return m_notebook214; }
     wxButton* GetButton258() { return m_button258; }
-    ReconcileProjectDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Reconcile Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    ReconcileProjectDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                 const wxString& title = _("Reconcile Project"), const wxPoint& pos = wxDefaultPosition,
+                                 const wxSize& size = wxSize(-1, -1),
+                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ReconcileProjectDlgBaseClass();
 };
-
 
 class ReconcileProjectFiletypesDlgBaseClass : public wxDialog
 {
@@ -164,10 +168,12 @@ public:
     wxListCtrl* GetListCtrlRegexes() { return m_listCtrlRegexes; }
     wxButton* GetButton119216() { return m_button119216; }
     wxButton* GetButton1257() { return m_button1257; }
-    ReconcileProjectFiletypesDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select filetypes to reconcile"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    ReconcileProjectFiletypesDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                          const wxString& title = _("Select filetypes to reconcile"),
+                                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ReconcileProjectFiletypesDlgBaseClass();
 };
-
 
 class ReconcileByRegexDlgBaseClass : public wxDialog
 {
@@ -192,7 +198,10 @@ public:
     wxStaticText* GetStaticText147() { return m_staticText147; }
     wxTextCtrl* GetTextCtrlVirtualFolder() { return m_textCtrlVirtualFolder; }
     wxBitmapButton* GetBmpButton21010() { return m_bmpButton21010; }
-    ReconcileByRegexDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Allocate by regex"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    ReconcileByRegexDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                 const wxString& title = _("Allocate by regex"), const wxPoint& pos = wxDefaultPosition,
+                                 const wxSize& size = wxSize(-1, -1),
+                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ReconcileByRegexDlgBaseClass();
 };
 

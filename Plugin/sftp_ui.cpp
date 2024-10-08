@@ -279,10 +279,6 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
 
     m_button51 =
         new wxButton(this, wxID_ANY, _("Test Connection"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 2904
-    m_button51->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("16-connected")), wxLEFT);
-    m_button51->SetBitmapMargins(5, 5);
-#endif
 
     boxSizer23->Add(m_button51, 0, wxALL | wxEXPAND, WXC_FROM_DIP(10));
 

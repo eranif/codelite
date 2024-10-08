@@ -640,7 +640,7 @@ void PluginManager::EnableClangCodeCompletion(bool b) { wxUnusedVar(b); }
 
 size_t PluginManager::GetPageCount() const { return clMainFrame::Get()->GetMainBook()->GetPageCount(); }
 
-size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
+size_t PluginManager::GetAllEditors(IEditor::List_t& editors)
 {
     clEditor::Vec_t tmpEditors = clMainFrame::Get()->GetMainBook()->GetAllEditors();
     editors.insert(editors.end(), tmpEditors.begin(), tmpEditors.end());

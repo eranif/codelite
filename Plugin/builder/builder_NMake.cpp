@@ -204,12 +204,9 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
         }
     }
 
-    wxString fn;
-    fn << "Makefile";
-    wxString text;
-
     wxFileName wspfile(clCxxWorkspaceST::Get()->GetWorkspaceFileName());
 
+    wxString text;
     text << "All:\n";
 
     // iterate over the dependencies projects and generate makefile
@@ -460,7 +457,7 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
 
     text << ".PHONY: clean All\n\n";
     // dump the content to file
-    wxFileOutputStream output(fn);
+    wxFileOutputStream output("Makefile");
     wxStringInputStream content(text);
     output << content;
 

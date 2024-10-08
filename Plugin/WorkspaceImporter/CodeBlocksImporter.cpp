@@ -79,9 +79,8 @@ void CodeBlocksImporter::GenerateFromWorkspace(GenericWorkspacePtr genericWorksp
                             while(projectChild) {
                                 if(projectChild->GetName() == wxT("Depends") &&
                                    projectChild->HasAttribute(wxT("filename"))) {
-                                    wxString filename = projectChild->GetAttribute(wxT("filename"));
-                                    wxString projectFullPath =
-                                        wsInfo.GetPath() + wxFileName::GetPathSeparator() + filename;
+                                    wxString projectFullPath = wsInfo.GetPath() + wxFileName::GetPathSeparator() +
+                                                               projectChild->GetAttribute(wxT("filename"));
 
                                     wxXmlDocument depsProject;
                                     if(depsProject.Load(projectFullPath)) {

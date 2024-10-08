@@ -278,7 +278,6 @@ wxTreeItemId VirtualDirectorySelectorDlg::FindItemForPath(const wxString& path)
     for(size_t i = 1; i < tokens.GetCount(); ++i) {
         if(item.IsOk() && m_treeCtrl->HasChildren(item)) {
             // loop over the children of this node, and search for a match
-            wxTreeItemIdValue cookie;
             wxTreeItemId child = m_treeCtrl->GetFirstChild(item, cookie);
             while(child.IsOk()) {
                 if(m_treeCtrl->GetItemText(child) == tokens.Item(i)) {

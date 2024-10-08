@@ -309,8 +309,7 @@ bool clTabCtrl::ShiftRight(clTabInfo::Vec_t& tabs)
     // Move the first tab from the list and adjust the remainder
     // of the tabs x coordiate
     if (!tabs.empty()) {
-        clTabInfo::Ptr_t t = tabs.at(0);
-        int width = t->GetWidth();
+        const int width = tabs.at(0)->GetWidth();
         tabs.erase(tabs.begin() + 0);
 
         for (size_t i = 0; i < tabs.size(); ++i) {
@@ -1315,8 +1314,7 @@ bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
         return false;
     }
 
-    clTabInfo::Ptr_t t = tabs.at(0);
-    int height = t->GetHeight();
+    int height = tabs.at(0)->GetHeight();
     tabs.erase(tabs.begin() + 0);
 
     for (auto t : tabs) {

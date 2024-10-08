@@ -155,7 +155,7 @@ void wxTerminalOutputCtrl::ReloadSettings() { ApplyTheme(); }
 
 void wxTerminalOutputCtrl::StyleAndAppend(wxStringView buffer, wxString* window_title)
 {
-    size_t consumed = m_outputHandler.ProcessBuffer(buffer, m_stcRenderer);
+    m_outputHandler.ProcessBuffer(buffer, m_stcRenderer);
     if (window_title) {
         *window_title = m_stcRenderer->GetWindowTitle();
     }

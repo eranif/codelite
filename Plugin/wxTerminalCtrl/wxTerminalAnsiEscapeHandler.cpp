@@ -721,7 +721,6 @@ wxTerminalAnsiEscapeHandler::~wxTerminalAnsiEscapeHandler() {}
 size_t wxTerminalAnsiEscapeHandler::ProcessBuffer(wxStringView input, wxTerminalAnsiRendererInterface* renderer)
 {
     wxStringView sv = input;
-    size_t consumed = 0;
     while(!sv.empty()) {
         switch(ansi_sequence_type(sv)) {
         case AnsiSequenceType::NEED_MORE_DATA:

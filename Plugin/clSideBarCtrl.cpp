@@ -271,7 +271,6 @@ void clSideBarCtrl::DoRemovePage(size_t pos, bool delete_it)
         m_book->RemovePage(pos);
     }
 
-    int tool_id = tool->GetId();
     bool was_selection = TOOL_IS_CHECKED(tool);
 
     m_toolbar->DeleteTool(tool->GetId());

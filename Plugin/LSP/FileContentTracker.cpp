@@ -96,9 +96,9 @@ bool FileContentTracker::find(const wxString& filepath, FileState** state)
 
 void FileContentTracker::update_content(const wxString& filepath, const wxString& content)
 {
-    FileState* state = nullptr;
-    if(find(filepath, &state)) {
-        state->content = content;
+    FileState* statePtr = nullptr;
+    if(find(filepath, &statePtr)) {
+        statePtr->content = content;
     } else {
         FileState state;
         state.content = content;

@@ -463,21 +463,11 @@ clRowEntry* clTreeCtrlModel::GetNextSibling(clRowEntry* item) const
     if(children.empty()) {
         return nullptr;
     }
-    size_t where = -1;
-    for(size_t i = 0; i < children.size(); ++i) {
-        if(item == children[i]) {
-            where = i;
-            break;
-        }
-    }
-
     // if we couldnt find 'item' in the children list or if it's the last child
     // return nullptr
-    if((where == (size_t)-1) || (where == (children.size() - 1))) {
-        return nullptr;
-    }
-    ++where;
-    return children[where];
+    auto it = std::find(children.begin(), std::prev(children.end()), item);
+    ++it;
+    return it == children.end() ? nullptr : *it;
 }
 
 clRowEntry* clTreeCtrlModel::GetPrevSibling(clRowEntry* item) const
@@ -489,22 +479,11 @@ clRowEntry* clTreeCtrlModel::GetPrevSibling(clRowEntry* item) const
     if(children.empty()) {
         return nullptr;
     }
-    size_t where = -1;
-    for(size_t i = 0; i < children.size(); ++i) {
-        if(item == children[i]) {
-            where = i;
-            break;
-        }
-    }
-
     // if we couldnt find item in the children list or if it's the first child
     // we return nullptr
-    if((where == (size_t)-1) || (where == (size_t)0)) {
-        return nullptr;
-    }
-
-    --where;
-    return children[where];
+    auto rit = std::find(children.rbegin(), std::prev(children.rend()), item);
+    ++rit;
+    return rit == children.rend() ? nullptr : *rit;
 }
 
 void clTreeCtrlModel::AddSelection(const wxTreeItemId& item)

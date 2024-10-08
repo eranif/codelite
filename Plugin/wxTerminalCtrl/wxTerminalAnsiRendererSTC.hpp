@@ -10,7 +10,8 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 
-class wxSTCStyleProvider;
+struct wxSTCStyleProvider;
+
 class WXDLLIMPEXP_SDK wxTerminalAnsiRendererSTC : public wxTerminalAnsiRendererInterface
 {
     wxStyledTextCtrl* m_ctrl = nullptr;

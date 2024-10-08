@@ -121,7 +121,7 @@ void BuildSettingsConfig::SetCompiler(CompilerPtr cmp)
         node->AddChild(cmp->ToXml());
 
     } else {
-        wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compilers"));
+        node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compilers"));
         m_doc->GetRoot()->AddChild(node);
         node->AddChild(cmp->ToXml());
     }

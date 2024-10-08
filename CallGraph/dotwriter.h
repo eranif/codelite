@@ -82,11 +82,11 @@ protected:
 
 public:
 	/**
-	 * @brief Defautl constructor.
+	 * @brief Default constructor.
 	 */
 	DotWriter();
 	/**
-	 * @brief Defautl destructor.
+	 * @brief Default destructor.
 	 */
 	~DotWriter();
 	/**

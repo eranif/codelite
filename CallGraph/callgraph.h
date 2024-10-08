@@ -54,12 +54,12 @@ class CallGraph : public IPlugin
 {
 public:
     /**
-     * @brief Defautl constructor.
+     * @brief Default constructor.
      * @param manager
      */
     CallGraph(IManager* manager);
     /**
-     * @brief Defautl destructor.
+     * @brief Default destructor.
      */
     ~CallGraph();
     //--------------------------------------------

@@ -258,7 +258,7 @@ public:
      * Unlike other WrapperBase::Map_t, the key in this map is the function name
      * and the value is the ConnectDetails
      */
-    wxcWidget::Map_t GetConnectedEventsRecrusively() const;
+    wxcWidget::Map_t GetConnectedEventsRecursively() const;
 
     /**
      * @brief return property by its name

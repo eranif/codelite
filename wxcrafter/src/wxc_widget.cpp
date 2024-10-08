@@ -2283,7 +2283,7 @@ void wxcWidget::DoGetConnectedEventsRecrusively(wxcWidget::Map_t& events, const 
     }
 }
 
-wxcWidget::Map_t wxcWidget::GetConnectedEventsRecrusively() const
+wxcWidget::Map_t wxcWidget::GetConnectedEventsRecursively() const
 {
     wxcWidget::Map_t events;
     DoGetConnectedEventsRecrusively(events, this);

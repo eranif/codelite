@@ -263,8 +263,6 @@ void wxTerminalCtrl::Logout()
 #endif
 }
 
-void wxTerminalCtrl::SendTab() {}
-
 void wxTerminalCtrl::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip(); // allways skip this event

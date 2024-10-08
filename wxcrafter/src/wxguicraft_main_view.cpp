@@ -3053,11 +3053,6 @@ void GUICraftMainPanel::OnAuiPaneInfoChanged(wxPropertyGridEvent& event)
 
 void GUICraftMainPanel::DoGenerateCode(bool silent)
 {
-    // Show the nag dialog if needed
-    if(!silent) {
-        wxcSettings::Get().ShowNagDialogIfNeeded();
-    }
-
     if(!wxcProjectMetadata::Get().GetGenerateCPPCode() && !wxcProjectMetadata::Get().GetGenerateXRC()) {
         if(silent) {
             return;
@@ -3256,9 +3251,6 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
 
 void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
 {
-    // SHow the nag dialog if needed
-    wxcSettings::Get().ShowNagDialogIfNeeded();
-
     wxArrayString projectsGenerated;
     wxArrayString wxcpFiles;
 

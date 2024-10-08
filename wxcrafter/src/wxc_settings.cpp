@@ -134,8 +134,6 @@ JSONElement wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) 
     return arr;
 }
 
-void wxcSettings::ShowNagDialogIfNeeded() {}
-
 // ----------------------------------------------------------------------
 // CustomControlTemplate
 // ----------------------------------------------------------------------

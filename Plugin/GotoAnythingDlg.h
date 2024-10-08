@@ -9,17 +9,6 @@
 
 #include <vector>
 
-// class WXDLLIMPEXP_SDK GotoAnythingItemData
-// {
-// public:
-//     wxString m_desc;
-//     GotoAnythingItemData(const wxString& desc)
-//         : m_desc(desc)
-//     {
-//     }
-//     ~GotoAnythingItemData() {}
-// };
-//
 class WXDLLIMPEXP_SDK GotoAnythingDlg : public GotoAnythingBaseDlg
 {
     const std::vector<clGotoEntry>& m_allEntries;
@@ -28,10 +17,9 @@ class WXDLLIMPEXP_SDK GotoAnythingDlg : public GotoAnythingBaseDlg
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event);
-    // GotoAnythingItemData* GetSelectedItemData();
+
     void DoPopulate(const std::vector<clGotoEntry>& entries, const std::vector<int>& indexes = std::vector<int>());
     void DoExecuteActionAndClose();
-    void UpdateLastSearch();
     void ApplyFilter();
 
 public:

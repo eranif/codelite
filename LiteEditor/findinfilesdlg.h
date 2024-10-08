@@ -62,7 +62,6 @@ protected:
     void DoSearchReplace();
     SearchData DoGetSearchData();
     void DoSaveOpenFiles();
-    void DoSetFileMask();
     void DoAddProjectFiles(const wxString& projectName, wxArrayString& files);
     void DoSelectAll();
 

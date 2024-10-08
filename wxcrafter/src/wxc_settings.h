@@ -91,7 +91,6 @@ public:
         }
     }
 
-    void ShowNagDialogIfNeeded();
     void SetInitCompleted(bool initCompleted) { this->m_initCompleted = initCompleted; }
     bool IsInitCompleted() const { return m_initCompleted; }
 

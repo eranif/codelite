@@ -307,7 +307,7 @@ void clTabCtrl::DoSetBestSize()
 bool clTabCtrl::ShiftRight(clTabInfo::Vec_t& tabs)
 {
     // Move the first tab from the list and adjust the remainder
-    // of the tabs x coordiate
+    // of the tabs x coordinate
     if (!tabs.empty()) {
         const int width = tabs.at(0)->GetWidth();
         tabs.erase(tabs.begin() + 0);
@@ -1309,7 +1309,7 @@ bool clTabCtrl::IsVerticalTabs() const { return false; }
 bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
 {
     // Move the first tab from the list and adjust the remainder
-    // of the tabs y coordiate
+    // of the tabs y coordinate
     if (tabs.empty()) {
         return false;
     }

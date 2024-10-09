@@ -37,7 +37,7 @@ wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 
 size_t TagsOptionsData::CURRENT_VERSION = 7100;
 
-static bool _IsValidCppIndetifier(const wxString& id)
+static bool _IsValidCppIdentifier(const wxString& id)
 {
     if(id.IsEmpty()) {
         return false;
@@ -571,7 +571,7 @@ void TagsOptionsData::DoUpdateTokensWxMapReversed()
         wxString item = m_tokens.Item(i).Trim().Trim(false);
         wxString k = item.AfterFirst('=');
         wxString v = item.BeforeFirst('=');
-        if(_IsValidCppIndetifier(k) && !_IsCppKeyword(k)) {
+        if(_IsValidCppIdentifier(k) && !_IsCppKeyword(k)) {
             m_tokensWxMapReversed[k] = v;
         }
     }

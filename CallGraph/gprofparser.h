@@ -67,11 +67,11 @@ private:
 	
 public:
 	/**
-	 * @brief Defautl constructor.
+	 * @brief Default constructor.
 	 */
 	GprofParser();
 	/**
-	 * @brief Defautl destructor.
+	 * @brief Default destructor.
 	 */
 	~GprofParser();
 	/**

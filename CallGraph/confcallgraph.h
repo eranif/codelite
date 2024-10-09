@@ -59,11 +59,11 @@ class ConfCallGraph : public SerializedObject
 
 public:
 	/**
-	 * @brief Defautl constructor.
+	 * @brief Default constructor.
 	 */
 	ConfCallGraph();
 	/**
-	 * @brief Defautl destructor.
+	 * @brief Default destructor.
 	 */
 	virtual ~ConfCallGraph();
 

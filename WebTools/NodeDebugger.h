@@ -73,7 +73,7 @@ protected:
     void OnTooltip(clDebugEvent& event);
     // Helpers
     void DoCleanup();
-    void ApplyAllBerakpoints();
+    void ApplyAllBreakpoints();
     void DoHighlightLine(const wxString& filename, int lineNo);
 };
 

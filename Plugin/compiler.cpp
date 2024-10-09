@@ -81,11 +81,11 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         if(!node->HasAttribute(wxT("GenerateDependenciesFiles"))) {
             if(m_name == wxT("gnu g++") || m_name == wxT("gnu gcc")) {
-                m_generateDependeciesFile = true;
+                m_generateDependenciesFile = true;
             } else
-                m_generateDependeciesFile = false;
+                m_generateDependenciesFile = false;
         } else {
-            m_generateDependeciesFile = XmlUtils::ReadBool(node, wxT("GenerateDependenciesFiles"));
+            m_generateDependenciesFile = XmlUtils::ReadBool(node, wxT("GenerateDependenciesFiles"));
         }
 
         if(!node->HasAttribute(wxT("ReadObjectsListFromFile"))) {
@@ -286,12 +286,12 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         m_globalIncludePath = wxEmptyString;
         m_globalLibPath = wxEmptyString;
         m_pathVariable = wxEmptyString;
-        m_generateDependeciesFile = false;
+        m_generateDependenciesFile = false;
         m_readObjectFilesFromList = true;
         m_objectNameIdenticalToFileName = false;
     }
 
-    if(m_generateDependeciesFile && m_dependSuffix.IsEmpty()) {
+    if(m_generateDependenciesFile && m_dependSuffix.IsEmpty()) {
         m_dependSuffix = m_objectSuffix + wxT(".d");
     }
 
@@ -370,7 +370,7 @@ wxXmlNode* Compiler::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
     node->AddAttribute(wxT("Name"), m_name);
-    node->AddAttribute(wxT("GenerateDependenciesFiles"), BoolToString(m_generateDependeciesFile));
+    node->AddAttribute(wxT("GenerateDependenciesFiles"), BoolToString(m_generateDependenciesFile));
     node->AddAttribute(wxT("ReadObjectsListFromFile"), BoolToString(m_readObjectFilesFromList));
     node->AddAttribute(wxT("ObjectNameIdenticalToFileName"), BoolToString(m_objectNameIdenticalToFileName));
     node->AddAttribute("CompilerFamily", m_compilerFamily);

@@ -855,7 +855,7 @@ void wxCrafterPlugin::DoUpdateDerivedClassEventHandlers()
     wxcWidget* topLevelWin = m_mainPanel->GetActiveTopLevelWin();
     CHECK_POINTER(topLevelWin);
 
-    wxcWidget::Map_t connectedEvents = topLevelWin->GetConnectedEventsRecrusively();
+    wxcWidget::Map_t connectedEvents = topLevelWin->GetConnectedEventsRecursively();
     FunctionsParser parser(connectedEvents, m_generatedClassInfo.classname, headerContent);
     parser.Parse();
 

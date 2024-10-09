@@ -792,7 +792,7 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
             // word completion
             // ----------------------------------
             wxStringSet_t visible_files;
-            get_includes_recrusively(filepath, &visible_files);
+            get_includes_recursively(filepath, &visible_files);
             m_completer->word_complete(filepath, line, expression, minimized_buffer, visible_scopes, false, candidates,
                                        visible_files);
         }
@@ -1578,7 +1578,7 @@ wxArrayString ProtocolHandler::get_first_level_includes(const wxString& filepath
     return files;
 }
 
-size_t ProtocolHandler::get_includes_recrusively(const wxString& filepath, wxStringSet_t* output)
+size_t ProtocolHandler::get_includes_recursively(const wxString& filepath, wxStringSet_t* output)
 {
     std::deque<wxString> Q;
     Q.push_back(filepath);

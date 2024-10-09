@@ -280,7 +280,7 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
             wxString tagName = tag->GetName();
             wxString tmpInhr = inherits;
 
-            bool isTempplate = (tag->GetPattern().Find(wxT("template")) != wxNOT_FOUND);
+            bool isTemplate = (tag->GetPattern().Find(wxT("template")) != wxNOT_FOUND);
             tagName.MakeLower();
             tmpInhr.MakeLower();
 
@@ -296,7 +296,7 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
                     bool testForTemplate = !IsTypeAndScopeExists(inherits, possibleScope);
 
                     // If the type does not exists, check for templates
-                    if(testForTemplate && derivedClassTag && isTempplate) {
+                    if(testForTemplate && derivedClassTag && isTemplate) {
                         TemplateHelper th;
 
                         // e.g. template<typename T> class MyClass

@@ -101,7 +101,9 @@ else()
         ${ADDITIONAL_LIBRARIES})
 endif()
 
-codelite_add_pch(codelite)
+if(USE_PCH)
+    codelite_add_pch(plugin)
+endif()
 
 # ######################################################################################################################
 # Install

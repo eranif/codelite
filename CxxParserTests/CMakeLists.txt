@@ -31,7 +31,10 @@ file(GLOB SRCS "*.cpp")
 
 # Define the output
 add_executable(CxxLocalVariables ${SRCS})
-target_precompile_headers(CxxLocalVariables REUSE_FROM abbreviation)
+
+if(USE_PCH)
+    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+endif()
 
 # Remove the "lib" prefix from the plugin name
 target_link_libraries(CxxLocalVariables ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin wxsqlite3)

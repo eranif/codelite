@@ -6,6 +6,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "sftp_settings.h"
 
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
@@ -13,9 +14,10 @@
 
 namespace
 {
-template <typename T> void UpdateSelection(T* ctrl, const wxString& str)
+template <typename T>
+void UpdateSelection(T* ctrl, const wxString& str)
 {
-    if((int)ctrl->FindString(str) == wxNOT_FOUND) {
+    if ((int)ctrl->FindString(str) == wxNOT_FOUND) {
         ctrl->Append(str);
     }
     ctrl->SetStringSelection(str);
@@ -38,7 +40,7 @@ RemotySwitchToWorkspaceDlg::RemotySwitchToWorkspaceDlg(wxWindow* parent)
 RemotySwitchToWorkspaceDlg::~RemotySwitchToWorkspaceDlg()
 {
     RemotyConfig config;
-    if(IsRemote()) {
+    if (IsRemote()) {
         RemoteWorkspaceInfo wi{ m_choiceAccount->GetStringSelection(), m_comboBoxPath->GetStringSelection() };
         config.UpdateRecentWorkspaces(wi);
     }
@@ -49,9 +51,9 @@ void RemotySwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!
 
 void RemotySwitchToWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
-    if(IsRemote()) {
+    if (IsRemote()) {
         auto res = ::clRemoteFileSelector(_("Choose a file"), wxEmptyString, "*.workspace", this);
-        if(res.first.empty()) {
+        if (res.first.empty()) {
             return;
         }
         const wxString& account_name = res.first;
@@ -63,7 +65,7 @@ void RemotySwitchToWorkspaceDlg::OnBrowse(wxCommandEvent& event)
     } else {
         wxString path = ::wxFileSelector(_("Choose a file"), wxEmptyString, wxEmptyString, wxEmptyString,
                                          "CodeLite Workspace files (*.workspace)|*.workspace");
-        if(path.empty()) {
+        if (path.empty()) {
             return;
         }
         UpdateSelection(m_comboBoxPath, path);
@@ -83,7 +85,7 @@ bool RemotySwitchToWorkspaceDlg::IsRemote() const { return m_choiceWorkspaceType
 void RemotySwitchToWorkspaceDlg::SyncPathToAccount()
 {
     int path_index = static_cast<int>(m_comboBoxPath->GetSelection());
-    if(wxNOT_FOUND == path_index || path_index >= static_cast<int>(m_remoteWorkspaces.size())) {
+    if (wxNOT_FOUND == path_index || path_index >= static_cast<int>(m_remoteWorkspaces.size())) {
         return;
     }
 
@@ -103,24 +105,34 @@ void RemotySwitchToWorkspaceDlg::InitialiseDialog()
     m_comboBoxPath->Clear();
     m_choiceAccount->Clear();
 
-    if(workspace_type_local) {
+    if (workspace_type_local) {
         auto local_paths = clConfig::Get().GetRecentWorkspaces();
         m_comboBoxPath->Append(local_paths);
-        if(!local_paths.empty()) {
+        if (!local_paths.empty()) {
             m_comboBoxPath->SetSelection(0);
         }
     } else {
-        // remote workspaces
+        // Remote workspaces
         std::set<wxString> S;
-        if(m_remoteWorkspaces.empty()) {
+        if (m_remoteWorkspaces.empty()) {
             return;
         }
-        for(size_t i = 0; i < m_remoteWorkspaces.size(); ++i) {
+
+        for (size_t i = 0; i < m_remoteWorkspaces.size(); ++i) {
             m_comboBoxPath->Append(m_remoteWorkspaces[i].path);
             S.insert(m_remoteWorkspaces[i].account);
         }
 
-        for(const auto& account : S) {
+        // Add accounts that do not have an associated workspace
+        SFTPSettings settings;
+        settings.Load();
+
+        for (const auto& account : settings.GetAccounts()) {
+            S.insert(account.GetAccountName());
+        }
+
+        // Add accounts that do not have an account here
+        for (const auto& account : S) {
             m_choiceAccount->Append(account);
         }
         m_comboBoxPath->SetSelection(0);
@@ -131,11 +143,11 @@ void RemotySwitchToWorkspaceDlg::InitialiseDialog()
 void RemotySwitchToWorkspaceDlg::OnPathChanged(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(!IsRemote()) {
+    if (!IsRemote()) {
         return;
     }
     int sel = m_comboBoxPath->GetSelection();
-    if(sel == wxNOT_FOUND || sel >= (int)m_remoteWorkspaces.size()) {
+    if (sel == wxNOT_FOUND || sel >= (int)m_remoteWorkspaces.size()) {
         return;
     }
     m_choiceAccount->SetStringSelection(m_remoteWorkspaces[sel].account);

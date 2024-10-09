@@ -28,7 +28,6 @@
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
 #include "cl_defs.h"
-#include "editor_config.h"
 #include "event_notifier.h"
 #include "fileextmanager.h"
 #include "frame.h"
@@ -38,8 +37,6 @@
 #include "manager.h"
 #include "plugin.h"
 #include "pluginmanager.h"
-#include "window_locker.h"
-#include "wxStringHash.h"
 
 #include <wx/arrstr.h>
 #include <wx/clntdata.h>
@@ -65,6 +62,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, &WelcomePage::OnThemeChanged, this);
 
     m_dvTreeCtrlWorkspaces->AddHeader(_("Name"));
+    m_dvTreeCtrlWorkspaces->AddHeader(_("Account"));
     m_dvTreeCtrlWorkspaces->AddHeader(_("Type"));
     m_dvTreeCtrlWorkspaces->AddHeader(_("Path"));
 
@@ -213,12 +211,13 @@ void WelcomePage::UpdateRecentWorkspaces()
         cd->type = WorkspaceSource::BUILTIN;
         cd->path = fn.GetFullPath();
         auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(locals, fn.GetName(), image_index, image_index, cd);
-        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, workspace_type, 1);
-        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, filepath, 2);
+        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, "localhost", 1);
+        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, workspace_type, 2);
+        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, filepath, 3);
     }
     m_dvTreeCtrlWorkspaces->Expand(locals);
 
-    // add the plugin base workspaces
+    // Add the plugin base workspaces
     auto other_workspaces = other_workspaces_event.GetWorkspaces();
     std::unordered_map<wxString, std::vector<RecentWorkspace>> M;
     for (const auto& e : other_workspaces) {
@@ -243,8 +242,9 @@ void WelcomePage::UpdateRecentWorkspaces()
             name = name.BeforeLast('.');
 
             auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(parent_item, name, image_index, image_index, cd);
-            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, _("Other"), 1);
-            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, w.path, 2);
+            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, cd->account, 1);
+            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, _("Other"), 2);
+            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, w.path, 3);
         }
         m_dvTreeCtrlWorkspaces->Expand(parent_item);
     }

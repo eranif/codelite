@@ -1831,3 +1831,19 @@ bool IsChildOf(wxWindow* child, wxWindow* parent)
     }
     return false;
 }
+
+wxColour GetRandomColour()
+{
+    int r = std::rand() % 256;
+    int g = std::rand() % 256;
+    int b = std::rand() % 256;
+
+    wxColour c(r, g, b);
+    if (clSystemSettings::GetAppearance().IsDark() && DrawingUtils::IsDark(c)) {
+        return c.ChangeLightness(130);
+    } else if (!clSystemSettings::GetAppearance().IsDark() && !DrawingUtils::IsDark(c)) {
+        return c.ChangeLightness(70);
+    } else {
+        return c;
+    }
+}

@@ -48,6 +48,18 @@ void get_caption_colours(wxColour* bg_colour, wxColour* text_colour)
     *bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     *text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
 }
+
+std::unordered_map<wxString, wxColour> colours;
+
+/// Return a random colour for account
+wxColour GetColourForAccount(const wxString& accountName)
+{
+    if (colours.count(accountName) == 0) {
+        colours.insert({ accountName, ::GetRandomColour() });
+    }
+    return colours.find(accountName)->second;
+}
+
 } // namespace
 
 WelcomePage::WelcomePage(wxWindow* parent)
@@ -171,9 +183,13 @@ void WelcomePage::UpdateRecentWorkspaces()
     clRecentWorkspaceEvent other_workspaces_event{ wxEVT_RECENT_WORKSPACE };
     EventNotifier::Get()->ProcessEvent(other_workspaces_event);
 
+    wxColour local_workspace_colour{ "GOLD" };
+    wxColour remote_workspace_colour{ "CYAN" };
+
     // TODO: fire event here to collect other workspaces as well
     auto locals = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(), _("Local workspaces"));
     int image_index = wxNOT_FOUND;
+
     for (const wxString& filepath : files) {
 
         wxFileName fn{ filepath };
@@ -210,9 +226,13 @@ void WelcomePage::UpdateRecentWorkspaces()
         auto cd = new WelcomePageItemData();
         cd->type = WorkspaceSource::BUILTIN;
         cd->path = fn.GetFullPath();
+
         auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(locals, fn.GetName(), image_index, image_index, cd);
         m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, "localhost", 1);
+        m_dvTreeCtrlWorkspaces->SetItemTextColour(workspaceItem, GetColourForAccount("localhost"), 1);
+
         m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, workspace_type, 2);
+        m_dvTreeCtrlWorkspaces->SetItemTextColour(workspaceItem, clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 2);
         m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, filepath, 3);
     }
     m_dvTreeCtrlWorkspaces->Expand(locals);
@@ -241,9 +261,17 @@ void WelcomePage::UpdateRecentWorkspaces()
             name = name.AfterLast('/');
             name = name.BeforeLast('.');
 
+            if (colours.count(cd->account) == 0) {
+                colours.insert({ cd->account, ::GetRandomColour() });
+            }
+
             auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(parent_item, name, image_index, image_index, cd);
             m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, cd->account, 1);
+            m_dvTreeCtrlWorkspaces->SetItemTextColour(workspaceItem, GetColourForAccount(cd->account), 1);
+
             m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, _("Other"), 2);
+            m_dvTreeCtrlWorkspaces->SetItemTextColour(workspaceItem, clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT),
+                                                      2);
             m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, w.path, 3);
         }
         m_dvTreeCtrlWorkspaces->Expand(parent_item);

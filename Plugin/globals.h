@@ -597,4 +597,7 @@ WXDLLIMPEXP_SDK Notebook* FindNotebookParentOf(wxWindow* child);
 
 /// Return true if `child` is a child (does not have to be a direct child) of `parent`
 WXDLLIMPEXP_SDK bool IsChildOf(wxWindow* child, wxWindow* parent);
+
+/// Return a random colour suited for the current theme
+WXDLLIMPEXP_SDK wxColour GetRandomColour();
 #endif // GLOBALS_H

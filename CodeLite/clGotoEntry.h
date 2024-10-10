@@ -2,7 +2,9 @@
 #define CLGOTOENTRY_H
 
 #include "codelite_exports.h"
+
 #include <vector>
+#include <wx/setup.h>
 #if wxUSE_GUI
 #include <wx/bitmap.h>
 #endif

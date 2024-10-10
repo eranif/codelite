@@ -27,6 +27,8 @@
 #define CLFONTHELPER_H
 
 #include "codelite_exports.h"
+
+#include <wx/setup.h>
 #if wxUSE_GUI
 #include <wx/font.h>
 

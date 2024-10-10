@@ -66,6 +66,7 @@
 #include <wx/socket.h>
 #include <wx/stream.h>
 #include <wx/sysopt.h>
+#include <wx/tooltip.h>
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
 

@@ -104,7 +104,9 @@ target_link_libraries(
 target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}"
                       libcodelite)
 
-codelite_add_pch(plugin)
+if(USE_PCH)
+    codelite_add_pch(plugin)
+endif()
 
 if(NOT MINGW)
     if(APPLE)

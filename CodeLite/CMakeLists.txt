@@ -126,7 +126,9 @@ if(MINGW)
                    ARCHIVE_OUTPUT_NAME codelite)
 endif()
 
-codelite_add_pch(libcodelite)
+if(USE_PCH)
+    codelite_add_pch(plugin)
+endif()
 
 if(NOT MINGW)
     if(APPLE)

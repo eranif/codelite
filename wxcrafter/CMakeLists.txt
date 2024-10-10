@@ -109,7 +109,7 @@ else()
     add_executable(${PLUGIN_NAME} ${SRCS} ${RES_FILES})
 endif()
 
-if(NOT WXC_APP)
+if(NOT WXC_APP AND USE_PCH)
     target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
 endif()
 

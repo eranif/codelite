@@ -221,8 +221,6 @@ public:
               const wxFileName& configFile = {});
 
     // Quick Find Bar history
-    void AddQuickFindSearchItem(const wxString& str);
-    void AddQuickFindReplaceItem(const wxString& str);
     wxArrayString GetQuickFindSearchItems() const;
     wxArrayString GetQuickFindReplaceItems() const;
     void SetQuickFindSearchItems(const wxArrayString& items);

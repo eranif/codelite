@@ -368,17 +368,6 @@ public:
                                std::vector<TagEntryPtr>& tags);
 
     /**
-     * \brief
-     * \param kinds
-     * \param orderingColumn
-     * \param order
-     * \param limit
-     * \param tags
-     */
-    virtual void GetTagsByKindLimit(const wxArrayString& kinds, const wxString& orderingColumn, int order, int limit,
-                                    const wxString& partName, std::vector<TagEntryPtr>& tags);
-
-    /**
      * @brief return array of items by path
      * @param path
      * @param tags

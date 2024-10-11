@@ -709,12 +709,6 @@ void TagsManager::GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayStr
     GetDatabase()->GetTagsByKind(kind, wxEmptyString, ITagsStorage::OrderNone, tags);
 }
 
-void TagsManager::GetTagsByKindLimit(std::vector<TagEntryPtr>& tags, const wxArrayString& kind, int limit,
-                                     const wxString& partName)
-{
-    GetDatabase()->GetTagsByKindLimit(kind, wxEmptyString, ITagsStorage::OrderNone, limit, partName, tags);
-}
-
 void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
     std::vector<std::pair<wxString, int>> derivationList;

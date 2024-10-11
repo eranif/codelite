@@ -93,12 +93,6 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspace
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-void ProjectSettingsDlg::DoClearDialog()
-{
-    m_choiceConfig->Clear();
-    ClearValues();
-}
-
 void ProjectSettingsDlg::BuildTree()
 {
     PSGeneralPage* gp = new PSGeneralPage(m_treebook, m_projectName, m_choiceConfig->GetStringSelection(), this);

@@ -108,20 +108,6 @@ wxArrayString clConsoleBase::GetAvailableTerminals()
         "alacritty" });
 }
 
-void clConsoleBase::AddEnvVariable(const wxString& name, const wxString& value)
-{
-    m_environment.erase(name);
-    m_environment.insert({ name, value });
-}
-
-wxString clConsoleBase::GetEnvironmentPrefix() const
-{
-    wxString strline;
-    std::for_each(m_environment.begin(), m_environment.end(),
-                  [&](const wxStringMap_t::value_type& vt) { strline << vt.first << "=" << vt.second << " "; });
-    return strline;
-}
-
 wxString clConsoleBase::WrapWithQuotesIfNeeded(const wxString& s) const
 {
     wxString strimmed = s;
@@ -130,13 +116,6 @@ wxString clConsoleBase::WrapWithQuotesIfNeeded(const wxString& s) const
         strimmed.Prepend("\"").Append("\"");
     }
     return strimmed;
-}
-
-wxString clConsoleBase::EscapeString(const wxString& str, const wxString& c) const
-{
-    wxString escaped = str;
-    escaped.Replace(c, wxString() << "\\" << c);
-    return escaped;
 }
 
 bool clConsoleBase::StartProcess(const wxString& command)

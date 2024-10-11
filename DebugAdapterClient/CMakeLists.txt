@@ -3,7 +3,7 @@ add_definitions(-std=c++17)
 set(PLUGIN_NAME "DebugAdapterClient")
 project(DebugAdapterClient)
 
-add_subdirectory("${CL_SRC_ROOT}/submodules/wxdap/dap" ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory("${CL_SRC_ROOT}/submodules/wxdap/dap" ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")

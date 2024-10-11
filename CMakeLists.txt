@@ -885,12 +885,12 @@ include_directories(submodules/dtl)
 add_subdirectory(submodules)
 include_directories(submodules/cJSON)
 
-add_subdirectory(sdk/wxsqlite3 SYSTEM) # EXCLUDE_FROM_ALL)
-add_subdirectory(sdk/wxshapeframework SYSTEM EXCLUDE_FROM_ALL)
-add_subdirectory(sdk/databaselayer SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory(sdk/wxsqlite3)
+add_subdirectory(sdk/wxshapeframework)
+add_subdirectory(sdk/databaselayer)
 
 if(NOT APPLE)
-    add_subdirectory(submodules/yaml-cpp SYSTEM EXCLUDE_FROM_ALL)
+    add_subdirectory(submodules/yaml-cpp)
     set(LIBYAML_CPP "yaml-cpp")
 endif()
 
@@ -900,7 +900,7 @@ add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
 set(WITHOUT_INSTALL ON)
-add_subdirectory(submodules/cc-wrapper SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory(submodules/cc-wrapper)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/submodules/yaml-cpp/include")
@@ -914,19 +914,19 @@ if(APPLE)
     set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp" SYSTEM EXCLUDE_FROM_ALL)
-add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main" SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp")
+add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main")
 
 if(WXC_APP)
     add_subdirectory(wxcrafter)
 else()
-    add_subdirectory(submodules/ctags SYSTEM EXCLUDE_FROM_ALL)
+    add_subdirectory(submodules/ctags)
     install(TARGETS ctags DESTINATION ${CL_INSTALL_BIN})
     install(TARGETS llama-cli DESTINATION ${CL_INSTALL_BIN})
 
     if(MINGW)
         # build wx-config for Windows
-        add_subdirectory(submodules/wx-config-msys2 SYSTEM EXCLUDE_FROM_ALL)
+        add_subdirectory(submodules/wx-config-msys2)
         install(TARGETS wx-config DESTINATION ${CL_INSTALL_BIN})
     endif()
 

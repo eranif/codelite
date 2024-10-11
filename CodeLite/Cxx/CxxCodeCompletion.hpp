@@ -191,10 +191,6 @@ private:
 
     const wxStringMap_t& get_tokens_map() const;
 
-    wxString do_get_return_value(const wxString& pattern, const wxString& name) const;
-
-    bool read_template_definition(CxxTokenizer& tokenizer, wxString* definition) const;
-
     /**
      * @brief apply user hacks
      */
@@ -339,11 +335,6 @@ public:
      * @brief return the local variables available for the current scope (passed in the c-tor)
      */
     std::vector<TagEntryPtr> get_locals(const wxString& filter) const;
-
-    /**
-     * @brief return list local functions
-     */
-    size_t get_local_tags(const wxString& filter, const wxStringSet_t& kinds, std::vector<TagEntryPtr>& tags) const;
 
     /**
      * @brief return list of completions filtered by name for a given parent

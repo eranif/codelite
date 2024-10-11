@@ -399,8 +399,6 @@ void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
     }
 }
 
-int QuickFindBar::GetCloseButtonId() { return ID_TOOL_CLOSE; }
-
 bool QuickFindBar::Show(const wxString& findWhat, bool showReplace)
 {
     // Same as Show() but set the 'findWhat' field with findWhat

@@ -145,7 +145,7 @@ protected:
 public:
     clPluginsFindBar(wxWindow* parent, wxWindowID id = wxID_ANY);
     virtual ~clPluginsFindBar();
-    int GetCloseButtonId();
+
     bool ShowForPlugins();
     bool Show(bool s = true);
     bool Show(const wxString& findWhat, bool showReplace);

@@ -47,10 +47,7 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     bool m_sortItems = false;
 
 protected:
-    wxString GetEditorPath(wxDataViewItem item);
-    bool IsEditor(wxDataViewItem item) const;
     void DoSaveItem(wxDataViewItem item);
-    void DoCloseItem(wxDataViewItem item);
     void DoSelectItem(IEditor* editor);
     void DoSelectItem(wxWindow* win);
     void SortAlphabetically();

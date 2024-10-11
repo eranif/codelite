@@ -100,29 +100,6 @@ public:
     void reset();
     void append(wxChar ch);
 
-    /**
-     * @brief store the token into the datbase.
-     * @param db database pointer
-     * @param fileId the file ID for this token
-     */
-    int store(wxSQLite3Database* db, wxLongLong fileId) const;
-
-    /**
-     * @brief load tokens from the cache by file/name
-     * @param db
-     * @param name
-     * @param file_name
-     * @return
-     */
-    static CppToken::Vec_t loadByNameAndFile(wxSQLite3Database* db, const wxString& name, wxLongLong fileID);
-    /**
-     * @brief
-     * @param db
-     * @param name
-     * @return
-     */
-    static CppToken::Vec_t loadByName(wxSQLite3Database* db, const wxString& name);
-
     void setName(const wxString& name) { this->name = name; }
 
     void setOffset(const size_t& offset) { this->offset = offset; }
@@ -142,8 +119,6 @@ public:
 
     void setLineNumber(size_t lineNo) { lineNumber = lineNo; }
 
-    void print();
-
     // Provide lower-than operator so we can use std::vector::sort method
     bool operator<(const CppToken& rhs) { return filename < rhs.filename; }
 };
@@ -157,27 +132,11 @@ public:
     ~CppTokensMap();
 
     /**
-     * @brief return true if any token with given name exists in the map
-     * @param name token's name to search
-     */
-    bool contains(const wxString& name);
-    /**
-     * @brief return list of tokens with given name
-     * @param name token name
-     * @param tokens [output]
-     */
-    void findTokens(const wxString& name, std::vector<CppToken>& tokens);
-    /**
      * @brief add token to the map. if token with same name already exists, it will be appended so multiple tokens with
      * same name is allowed
      * @param token token to add
      */
     void addToken(const CppToken& token);
-
-    /**
-     * @brief add list of tokens for a given name to the map
-     */
-    void addToken(const wxString& name, const CppToken::Vec_t& list);
 
     /**
      * @brief clear all token

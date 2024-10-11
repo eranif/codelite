@@ -51,42 +51,6 @@ void CxxTokenizer::Reset(const wxString& buffer)
     }
 }
 
-bool CxxTokenizer::ReadUntilClosingBracket(int delim, wxString& bufferRead)
-{
-    CxxLexerToken tok;
-    int depth = 0;
-    while(NextToken(tok)) {
-        if(IsInPreProcessorSection()) {
-            // pre-processor tokens
-            continue;
-        }
-        switch(tok.GetType()) {
-        case '<':
-        case '(':
-        case '[':
-        case '{':
-            depth++;
-            bufferRead << tok.GetWXString() << " ";
-            break;
-        case '>':
-        case ')':
-        case ']':
-        case '}':
-            depth--;
-            bufferRead << tok.GetWXString() << " ";
-            if((tok.GetType() == delim) && (depth == 0)) {
-                ::LexerUnget(m_scanner);
-                return true;
-            }
-            break;
-        default:
-            bufferRead << tok.GetWXString() << " ";
-            break;
-        }
-    }
-    return false;
-}
-
 int CxxTokenizer::PeekToken(wxString& text)
 {
     CxxLexerToken tok;

@@ -20,8 +20,6 @@ void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
     }
 }
 
-void PHPEntityBase::RecursivePrintStdout(PHPEntityBase::Ptr_t parent, int indent) { PrintStdout(indent); }
-
 PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrependingDollar) const
 {
     PHPEntityBase::Map_t::const_iterator iter = m_childrenMap.find(name);

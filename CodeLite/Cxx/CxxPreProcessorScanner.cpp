@@ -192,26 +192,6 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
     }
 }
 
-bool CxxPreProcessorScanner::CheckIfDefined(const CxxPreProcessorToken::Map_t& table)
-{
-    CxxLexerToken token;
-    if(m_scanner && ::LexerNext(m_scanner, token)) {
-        if(token.GetType() == T_PP_STATE_EXIT) {
-            return false;
-        }
-        switch(token.GetType()) {
-        case T_PP_IDENTIFIER:
-            return table.count(token.GetWXString());
-        case '(':
-            // ignore
-            break;
-        default:
-            break;
-        }
-    }
-    return false;
-}
-
 #define SET_CUR_EXPR_VALUE_RET_FALSE(v) \
     if(cur->IsValueSet())               \
         return false;                   \

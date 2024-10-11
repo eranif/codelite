@@ -42,7 +42,6 @@ public:
     }
 
     inline bool IsRemote() const { return m_isRemote; }
-    const wxString& GetRemoteFullPath() const;
 };
 
 #endif // CLFILENAME_HPP

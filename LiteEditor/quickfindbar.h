@@ -161,7 +161,6 @@ protected:
     int DoReplace(const TargetRange& range = {});
 
     void DoSetCaretAtEndOfText();
-    void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();
     void DoSelectAll();
     TargetRange::Vec_t DoFindAll(const TargetRange& target);

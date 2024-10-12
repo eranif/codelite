@@ -149,15 +149,11 @@ public:
     void SetFileSpec(const wxString& filespec) { m_fileSpec = filespec; }
 
     void SetLanguages(const wxArrayString& langs) { m_languages = langs; }
-
-    void SetLanguageSelection(const wxString& lang);
-
     const wxArrayString& GetLanguages() const { return m_languages; }
 
     void SetTokens(const wxString& tokens);
     void SetTypes(const wxString& types) { this->m_types = ::wxStringTokenize(types, "\r\n", wxTOKEN_STRTOK); }
     wxString GetTokens() const { return DoJoinArray(m_tokens); }
-    std::vector<std::pair<wxString, wxString>> GetTypes() const;
 
     std::map<std::string, std::string> GetTokensMap() const;
 

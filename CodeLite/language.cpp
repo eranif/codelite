@@ -333,18 +333,6 @@ TagsManager* Language::GetTagsManager()
     }
 }
 
-wxArrayString Language::DoExtractTemplateDeclarationArgs(ParsedToken* token)
-{
-    // Find a tag in the database that matches this find and
-    // extract the template declaration for it
-    std::vector<TagEntryPtr> tags;
-    GetTagsManager()->FindByPath(token->GetPath(), tags);
-    if(tags.size() != 1)
-        return wxArrayString();
-
-    return DoExtractTemplateDeclarationArgs(tags.at(0));
-}
-
 wxArrayString Language::DoExtractTemplateDeclarationArgs(TagEntryPtr tag)
 {
     wxString pattern = tag->GetPattern();

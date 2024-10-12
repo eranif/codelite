@@ -35,22 +35,11 @@
 #include "codelite_exports.h"
 
 /**
- * StringTokenizer helps you to break a string up into a number of tokens. 
- * It replaces the standard C function strtok() and also extends it in a number of ways.
+ * StringTokenizer helps you to break a string up into a number of tokens.
  *
  * Usage example:
  *
  * \code
- * StringTokenizer tok(_T("first second third"), _T(" "));
- * while( tok.HasMore() )
- * {
- *		wxString token = tok.Next();
- * }
- * \endcode
- * 
- * An alternate way to iterate over the tokenizer:
- *
- * \code 
  * StringTokenizer tok(_T("first second third"), _T(" "));
  * for(int i=0; i<tok.GetCount(); i++)
  * {
@@ -77,10 +66,9 @@
  * \date 09-02-2006
  * \author Eran
  */
-class WXDLLIMPEXP_CL StringTokenizer  
+class WXDLLIMPEXP_CL StringTokenizer
 {
 	std::vector<wxString> m_tokensArr;
-	int m_nCurr;
 
 public:
 	/**
@@ -119,43 +107,10 @@ public:
 	//-----------------------------------------------------
 
 	/**
-	 * Return the last token 
-	 * \return last token
-	 */
-	wxString Last();
-	/**
 	 * Get the number of tokens
 	 * \return number of tokens
 	 */
 	const int Count() const;
-	/**
-	 * Return the current token without progressing the internal pointer
-	 * \return current token
-	 */
-	wxString Current();
-
-	/**
-	 * Return the first token and progress the internal pointer
-	 * \return First token
-	 */
-	wxString First();
-	/**
-	 * Do we have more tokens?
-	 * \return true if the next call to Next() will return a token
-	 */
-	bool HasMore();
-	/** 
-	 * Return the previous string, this function moves the internal pointer backward.
-	 * So, subsequent calls to this function, will eventually return us to the start of the tokenizer
-	 * \return previous token of empty string if we are already at start
-	 */
-	wxString Previous();
-	/**
-	 * Return next token, usually combined with HasMore() function. This function progress the 
-	 * internal pointer to next token
-	 * \return next token
-	 */
-	wxString Next();
 	/**
 	 * Random acess operator, statring from zero
 	 * \param nIndex token index

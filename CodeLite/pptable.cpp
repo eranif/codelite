@@ -162,24 +162,6 @@ void TokenizeWords(const wxString& str, std::list<wxString>& outputList)
 
 static PPTable* ms_instance = NULL;
 
-void PPToken::processArgs(const wxString& argsList)
-{
-    args = wxStringTokenize(argsList, wxT(","), wxTOKEN_STRTOK);
-
-    // replace all occurrences of 'arg' with %1, %2 etc
-    for(size_t i = 0; i < args.GetCount(); i++) {
-        wxString replaceWith = wxString::Format(wxT("%%%d"), (int)i);
-        std::string res = ReplaceWordA(
-            replacement.To8BitData().data(), args.Item(i).To8BitData().data(), replaceWith.To8BitData().data());
-        if(res.empty()) {
-            replacement.clear();
-
-        } else {
-            replacement = wxString::From8BitData(res.c_str());
-        }
-    }
-}
-
 void PPToken::print(wxFFile& fp)
 {
     wxString buff;
@@ -397,22 +379,6 @@ void PPToken::expandOnce(const wxArrayString& initList)
     }
 }
 
-wxString PPToken::signature() const
-{
-    wxString sig;
-    if(flags & IsFunctionLike) {
-        sig << wxT("(");
-        for(size_t i = 0; i < args.size(); i++) {
-            sig << wxT("%") << i << wxT(",");
-        }
-        if(args.size()) {
-            sig.RemoveLast();
-        }
-        sig << wxT(")");
-    }
-    return sig;
-}
-
 ///////////////////////////////////////////////////
 
 PPTable::PPTable() {}
@@ -443,130 +409,6 @@ PPToken PPTable::Token(const wxString& name)
     }
 
     return iter->second;
-}
-
-void PPTable::Add(const PPToken& token)
-{
-    if(token.name.IsEmpty()) return;
-
-    wxString name = token.name;
-    name.Trim().Trim(false);
-    std::map<wxString, PPToken>::iterator iter = m_table.find(name);
-    if(iter == m_table.end())
-        m_table[name] = token;
-    else {
-        // if the new token's replacement is empty and the current one is NOT empty,
-        // replace the two (we prefer empty replacements)
-        if(iter->second.flags & PPToken::IsOverridable && !iter->second.replacement.IsEmpty() &&
-           token.replacement.IsEmpty()) {
-            m_table[name] = token;
-        }
-    }
-}
-
-void PPTable::AddUsed(const wxString& name)
-{
-    if(name.IsEmpty()) {
-        return;
-    }
-    m_namesUsed.insert(name);
-}
-
-void PPTable::Print(wxFFile& fp)
-{
-    std::map<wxString, PPToken>::iterator iter = m_table.begin();
-    for(; iter != m_table.end(); iter++) {
-        iter->second.print(fp);
-    }
-}
-
-bool PPTable::Contains(const wxString& name)
-{
-    std::map<wxString, PPToken>::iterator iter = m_table.find(name);
-    return iter != m_table.end();
-}
-
-wxString PPTable::Export()
-{
-    wxString table;
-    std::map<wxString, PPToken>::iterator iter = m_table.begin();
-    for(; iter != m_table.end(); iter++) {
-        iter->second.squeeze();
-        wxString replacement = iter->second.replacement;
-        replacement.Trim().Trim(false);
-
-        // remove extra whitespaces
-        while(replacement.Replace(wxT("  "), wxT(" "))) {
-        }
-
-        if(replacement.IsEmpty()) {
-            table << iter->second.fullname() << wxT("\n");
-
-        } else if(iter->second.flags & PPToken::IsFunctionLike) {
-            table << iter->second.fullname() << wxT("=") << replacement << wxT("\n");
-
-        } else {
-            // macros with replacement but they are not in a form of a function
-            // we take only macros that thier replacement is not a number
-            long v(-1);
-            if(!replacement.ToLong(&v) && !replacement.ToLong(&v, 8) && !replacement.ToLong(&v, 16) &&
-               replacement.find(wxT('"')) == wxString::npos && !replacement.StartsWith(wxT("0x"))) {
-                table << iter->second.fullname() << wxT("=") << replacement << wxT("\n");
-            }
-        }
-    }
-    return table;
-}
-
-void PPTable::Squeeze()
-{
-    std::map<wxString, PPToken>::iterator iter = m_table.begin();
-    for(; iter != m_table.end(); iter++) {
-        m_table[iter->first].squeeze();
-    }
-}
-
-void PPTable::Clear() { m_table.clear(); }
-
-void PPTable::ClearNamesUsed() { m_namesUsed.clear(); }
-
-bool CLReplacePattern(const wxString& in, const wxString& pattern, const wxString& replaceWith, wxString& outStr)
-{
-    int where = pattern.Find(wxT("%0"));
-    if(where != wxNOT_FOUND) {
-        wxString replacement(replaceWith);
-
-        // a patterened expression
-        wxString searchFor = pattern.BeforeFirst(wxT('('));
-        where = in.Find(searchFor);
-        if(where == wxNOT_FOUND) {
-            return false;
-        }
-
-        wxString initList;
-        wxArrayString initListArr;
-        if(PPToken::readInitList(in, searchFor.Length() + where, initList, initListArr) == false) return false;
-
-        outStr = in;
-        // update the 'replacement' with the actual values ( replace %0..%n)
-        for(size_t i = 0; i < initListArr.size(); i++) {
-            wxString placeHolder;
-            placeHolder << wxT("%") << i;
-            replacement.Replace(placeHolder, initListArr.Item(i));
-        }
-
-        outStr.Remove(where, searchFor.Length() + initList.Length());
-        outStr.insert(where, replacement);
-        return true;
-
-    } else {
-        if(in.Find(pattern) == wxNOT_FOUND) {
-            return false;
-        }
-        // simple replacement
-        outStr = ReplaceWord(in, pattern, replaceWith);
-        return outStr != in;
-    }
 }
 
 std::string replacement;

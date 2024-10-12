@@ -39,7 +39,6 @@
 #include "lexer_configuration.h"
 #include "macros.h"
 #include "pluginmanager.h"
-#include "pptable.h"
 #include "windowattrmanager.h"
 
 #include <wx/dirdlg.h>

@@ -118,35 +118,6 @@ void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
     m_debuggerCommands = json["debuggerCommands"].toString();
 }
 
-void clFileSystemWorkspaceConfig::FromJSONOld(const JSONItem& json)
-{
-    FromSharedJSON(json);
-    FromLocalJSON(json);
-}
-
-wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& workspaceFile) const
-{
-    // Update the parser search paths (the default compiler paths)
-    auto backticks_cache = clFileSystemWorkspace::Get().GetBackticksCache();
-    wxArrayString searchPaths = TagsManagerST::Get()->GetCtagsOptions().GetParserSearchPaths();
-    wxArrayString userPaths = ExpandUserCompletionFlags(workspaceFile.GetPath(), backticks_cache, false);
-
-    // Append the lists
-    searchPaths.insert(searchPaths.end(), userPaths.begin(), userPaths.end());
-
-    wxArrayString uniquePaths;
-    std::unordered_set<wxString> S;
-    for(const wxString& path : searchPaths) {
-        wxFileName fn(path, "");
-        wxString fixedPath = fn.GetPath();
-        if(S.count(fixedPath) == 0) {
-            S.insert(fixedPath);
-            uniquePaths.Add(fixedPath);
-        }
-    }
-    return uniquePaths;
-}
-
 wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const
 {
     wxString s;
@@ -156,11 +127,6 @@ wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const
         }
     }
     return s.Trim();
-}
-
-void clFileSystemWorkspaceConfig::SetCompileFlags(const wxString& compileFlags)
-{
-    m_compileFlags = ::wxStringTokenize(compileFlags, "\r\n", wxTOKEN_STRTOK);
 }
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
@@ -272,36 +238,6 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
         path = MacroManager::Instance()->Expand(path, nullptr, "", "");
     }
     return searchPaths;
-}
-
-wxArrayString clFileSystemWorkspaceConfig::GetWorkspaceIncludes(bool withPrefix) const
-{
-    auto all_files = clFileSystemWorkspace::Get().GetFiles();
-
-    // collect list of paths from the workspace
-    wxArrayString workspaceDirsArr;
-    wxStringSet_t workspaceDirsSet;
-    for(const auto& file : all_files) {
-        if(!FileExtManager::IsCxxFile(file.GetFullName())) {
-            continue;
-        }
-        wxString path = file.GetPath();
-        if(path.Contains("/CMakeFiles")) {
-            // CMake internal folder, ignore it
-            continue;
-        }
-        if(workspaceDirsSet.count(path) == 0) {
-            workspaceDirsSet.insert(path);
-
-            wxString fixedPath;
-            if(withPrefix) {
-                fixedPath << "-I";
-            }
-            fixedPath << path;
-            workspaceDirsArr.Add(fixedPath);
-        }
-    }
-    return workspaceDirsArr;
 }
 
 void clFileSystemWorkspaceConfig::SetLastExecutables(const wxArrayString& lastExecutables)

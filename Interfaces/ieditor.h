@@ -518,13 +518,6 @@ public:
     virtual void SetErrorMarker(int lineno, CompilerMessage&& msg) = 0;
 
     /**
-     * @brief set a code completion annotation at the given line. code completion
-     * annotations are automatically cleared on the next char added
-     * @param text
-     * @param lineno
-     */
-    virtual void SetCodeCompletionAnnotation(const wxString& text, int lineno) = 0;
-    /**
      * @brief delete all compiler markers (warnings/errors)
      */
     virtual void DelAllCompilerMarkers() = 0;

@@ -338,7 +338,6 @@ private:
     clProjectFile::Ptr_t FileFromXml(wxXmlNode* node, const wxString& vd);
     wxArrayString DoGetCompilerOptions(bool cxxOptions, bool clearCache = false, bool noDefines = true,
                                        bool noIncludePaths = true);
-    wxArrayString DoGetUnPreProcessors(bool clearCache, const wxString& cmpOptions);
 
     clProjectFolder::Ptr_t GetRootFolder();
 
@@ -450,12 +449,6 @@ public:
      */
     wxString GetName() const;
 
-    /**
-     * \brief return the project description as appears in the XML file
-     * \return project description
-     */
-    wxString GetDescription() const;
-
     //-----------------------------------
     // Project operations
     //-----------------------------------
@@ -500,14 +493,6 @@ public:
      * \return
      */
     bool RemoveFile(const wxString& fileName, const wxString& virtualDir = wxEmptyString);
-
-    /**
-     * Rename file from the project
-     * \param fileName file full path
-     * \param virtualDir owner virtual directory
-     * \return true on success, false otherwise
-     */
-    bool RenameFile(const wxString& oldName, const wxString& virtualDir, const wxString& newName);
 
     /**
      * \brief change the name of a virtual folder
@@ -569,16 +554,6 @@ public:
      * @brief return list of files as wxArrayString
      */
     void GetFilesAsStringArray(wxArrayString& files, bool absPath = true) const;
-
-    /**
-     * Return a node pointing to any project-wide editor preferences
-     */
-    wxXmlNode* GetProjectEditorOptions() const;
-
-    /**
-     * Add or update local project options
-     */
-    void SetProjectEditorOptions(LocalOptionsConfigPtr opts);
 
     /**
      * Return the project build settings object by name
@@ -663,22 +638,6 @@ public:
     TreeNode<wxString, VisualWorkspaceNode>* GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspace);
 
     /**
-     * @brief return the user saved information for custom data
-     * @param name the object key
-     * @param obj [output] container for the output
-     * @return true on success.
-     */
-    bool GetUserData(const wxString& name, SerializedObject* obj);
-
-    /**
-     * @brief save user data in the project settings
-     * @param name the name under which the data is to be saved
-     * @param obj the data
-     * @return true on success.
-     */
-    bool SetUserData(const wxString& name, SerializedObject* obj);
-
-    /**
      * @brief set the project internal type (usually used to indicate internal types for the project
      * like 'GUI' or 'UnitTest++' etc.
      * @param internalType
@@ -690,10 +649,6 @@ public:
      */
     wxString GetProjectInternalType() const;
 
-    /**
-     * @brief return the project icon index (used by the NewProjectDialog)
-     */
-    wxString GetProjectIconName() const;
     /**
      * @brief return the plugins' data. This data is copied when using 'save project as template' functionality
      * @param plugin plugin name
@@ -752,18 +707,6 @@ public:
     wxArrayString GetPreProcessors(bool clearCache = false);
 
     /**
-     * @brief return the C++ Undefined Pre preprocessors
-     * These are the defined by -U__SOMETHING__
-     */
-    wxArrayString GetCxxUnPreProcessors(bool clearCache = false);
-
-    /**
-     * @brief return the C Undefined Pre preprocessors
-     * These are the defined by -U__SOMETHING__
-     */
-    wxArrayString GetCUnPreProcessors(bool clearCache = false);
-
-    /**
      * @brief return the compiler. Optionally omit the defines/include paths
      */
     wxArrayString GetCXXCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
@@ -783,29 +726,6 @@ public:
                                       const wxString& filenamePlaceholder = "$FileName", size_t flags = kCxxFile);
 
     void ClearAllVirtDirs();
-
-    /**
-     * @brief sets the flags of a file
-     * @param fileName the fullpath of the file
-     * @param virtualDirPath virtual folder path (a:b:c)
-     * @param flags the flags to set
-     */
-    void SetFileFlags(const wxString& fileName, const wxString& virtualDirPath, size_t flags);
-
-    /**
-     * @brief return the flags for a specific file in the project
-     * @param fileName the fullpath of the file
-     * @param virtualDirPath virtual folder path (a:b:c)
-     * @return the virtual flags of a file or if the file does not exists, return 0
-     */
-    size_t GetFileFlags(const wxString& fileName, const wxString& virtualDirPath);
-
-    /**
-     * @brief return list of configurations for whom the current file is excluded from the build
-     * @param fileName the fullpath of the file
-     * @param virtualDirPath virtual folder path (a:b:c)
-     */
-    const wxStringSet_t& GetExcludeConfigForFile(const wxString& filename) const;
 
     /**
      * @brief set the exclude config list for a file
@@ -858,9 +778,6 @@ private:
      */
     void AssociateToWorkspace(clCxxWorkspace* workspace);
 
-    wxString DoFormatVirtualFolderName(const wxXmlNode* node) const;
-
-    void DoDeleteVDFromCache(const wxString& vd);
     wxArrayString DoBacktickToIncludePath(const wxString& backtick);
     wxArrayString DoBacktickToPreProcessors(const wxString& backtick);
     wxString DoExpandBacktick(const wxString& backtick);

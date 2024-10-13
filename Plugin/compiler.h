@@ -116,7 +116,7 @@ protected:
     wxString m_globalIncludePath;
     wxString m_globalLibPath;
     wxString m_pathVariable;
-    bool m_generateDependeciesFile;
+    bool m_generateDependenciesFile;
     bool m_readObjectFilesFromList;
     bool m_objectNameIdenticalToFileName;
     wxString m_compilerFamily;
@@ -224,9 +224,9 @@ public:
 
     void SetGenerateDependeciesFile(bool generateDependeciesFile)
     {
-        this->m_generateDependeciesFile = generateDependeciesFile;
+        this->m_generateDependenciesFile = generateDependeciesFile;
     }
-    bool GetGenerateDependeciesFile() const { return IsGnuCompatibleCompiler() && m_generateDependeciesFile; }
+    bool GetGenerateDependeciesFile() const { return IsGnuCompatibleCompiler() && m_generateDependenciesFile; }
     void SetReadObjectFilesFromList(bool readObjectFilesFromList)
     {
         this->m_readObjectFilesFromList = readObjectFilesFromList;

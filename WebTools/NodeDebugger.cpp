@@ -363,7 +363,7 @@ void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
     NodeJSDevToolsProtocol::Get().DeleteBreakpoint(m_socket, bp);
 }
 
-void NodeDebugger::ApplyAllBerakpoints()
+void NodeDebugger::ApplyAllBreakpoints()
 {
     const NodeJSBreakpoint::Vec_t& breakpoints = m_bptManager.GetBreakpoints();
     std::for_each(breakpoints.begin(), breakpoints.end(),
@@ -378,7 +378,7 @@ void NodeDebugger::OnWebSocketConnected(clCommandEvent& event)
     NodeJSDevToolsProtocol::Get().SendStartCommands(m_socket);
 
     // Apply all breakpoints
-    ApplyAllBerakpoints();
+    ApplyAllBreakpoints();
 }
 
 void NodeDebugger::OnWebSocketError(clCommandEvent& event)

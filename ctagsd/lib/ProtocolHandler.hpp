@@ -93,7 +93,7 @@ private:
      */
     wxArrayString get_first_level_includes(const wxString& filepath);
 
-    size_t get_includes_recrusively(const wxString& filepath, wxStringSet_t* output);
+    size_t get_includes_recursively(const wxString& filepath, wxStringSet_t* output);
     wxString minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string,
                              CompletionHelper::eTruncateStyle flag = CompletionHelper::TRUNCATE_EXACT_POS);
 

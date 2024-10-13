@@ -258,7 +258,7 @@ public:
      * Unlike other WrapperBase::Map_t, the key in this map is the function name
      * and the value is the ConnectDetails
      */
-    wxcWidget::Map_t GetConnectedEventsRecrusively() const;
+    wxcWidget::Map_t GetConnectedEventsRecursively() const;
 
     /**
      * @brief return property by its name
@@ -273,7 +273,7 @@ public:
     wxString GetRealClassName() const;
 
 protected:
-    void DoGetConnectedEventsRecrusively(wxcWidget::Map_t& events, const wxcWidget* wb) const;
+    void DoGetConnectedEventsRecursively(wxcWidget::Map_t& events, const wxcWidget* wb) const;
 
     // Helpers
     wxString XRCPrefix(const wxString& class_name = wxEmptyString) const;

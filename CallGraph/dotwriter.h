@@ -78,15 +78,15 @@ protected:
 	 * @param end
 	 * @return
 	 */
-	bool GetOuterTempleate(const wxString& txt, int *start, int *end);
+	bool GetOuterTemplate(const wxString& txt, int *start, int *end);
 
 public:
 	/**
-	 * @brief Defautl constructor.
+	 * @brief Default constructor.
 	 */
 	DotWriter();
 	/**
-	 * @brief Defautl destructor.
+	 * @brief Default destructor.
 	 */
 	~DotWriter();
 	/**

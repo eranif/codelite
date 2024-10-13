@@ -49,7 +49,7 @@ class ClassGenerateDialog : public _ClassGenerateDialog
 {
 
 public:
-    /*! \brief Defautl constructor.  */
+    /*! \brief Default constructor.  */
     ClassGenerateDialog(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pItems, IManager* pMgr);
 
     /*! \brief Return string with type name on UNIVERSAL TYPE base */

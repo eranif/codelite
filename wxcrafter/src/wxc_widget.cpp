@@ -2267,7 +2267,7 @@ wxSize wxcWidget::GetSize() const
     return sz;
 }
 
-void wxcWidget::DoGetConnectedEventsRecrusively(wxcWidget::Map_t& events, const wxcWidget* wb) const
+void wxcWidget::DoGetConnectedEventsRecursively(wxcWidget::Map_t& events, const wxcWidget* wb) const
 {
     wxcWidget::MapEvents_t::const_iterator iter = wb->m_connectedEvents.begin();
     for(; iter != wb->m_connectedEvents.end(); ++iter) {
@@ -2279,14 +2279,14 @@ void wxcWidget::DoGetConnectedEventsRecrusively(wxcWidget::Map_t& events, const 
 
     wxcWidget::List_t::const_iterator childIter = wb->m_children.begin();
     for(; childIter != wb->m_children.end(); ++childIter) {
-        DoGetConnectedEventsRecrusively(events, *childIter);
+        DoGetConnectedEventsRecursively(events, *childIter);
     }
 }
 
-wxcWidget::Map_t wxcWidget::GetConnectedEventsRecrusively() const
+wxcWidget::Map_t wxcWidget::GetConnectedEventsRecursively() const
 {
     wxcWidget::Map_t events;
-    DoGetConnectedEventsRecrusively(events, this);
+    DoGetConnectedEventsRecursively(events, this);
     return events;
 }
 

@@ -221,8 +221,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     // We need to tell all editors that there's been a (new) search
     // This lets them clear any already-saved line-changes,
     // which a new save will have taken into account
-    clEditor::Vec_t editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
+    auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors(MainBook::kGetAll_IncludeDetached);
     for(size_t n = 0; n < editors.size(); ++n) {
         clEditor* editor = dynamic_cast<clEditor*>(*(editors.begin() + n));
         if(editor) {
@@ -347,8 +346,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
         if(editor && result.GetLen() >= 0) {
             // Update the destination position if there have been subsequent changes in the editor
             int position = editor->PositionFromLine(result.GetLineNumber() - 1) + result.GetColumn();
-            std::vector<int> changes;
-            editor->GetChanges(changes);
+            const std::vector<int> changes = editor->GetChanges();
             unsigned int changesTotal = changes.size();
             int changePosition = 0;
             int changeLength = 0;
@@ -542,7 +540,7 @@ void FindResultsTab::BindSearchEvents(wxEvtHandler* binder)
 
 /////////////////////////////////////////////////////////////////////////////////
 
-void EditorDeltasHolder::GetChanges(std::vector<int>& changes)
+std::vector<int> EditorDeltasHolder::GetChanges()
 {
     // There may have been net +ve or -ve position changes (i.e. undos) subsequent to a last save
     // and some of these may have then been overwritten by different ones. So we need to add both the originals and
@@ -552,10 +550,11 @@ void EditorDeltasHolder::GetChanges(std::vector<int>& changes)
     // none since the last save,
     // but it may also mean that there have been n undos, followed by n different alterations. So we have to treat all
     // array sizes the same
-    changes.clear();
+    std::vector<int> changes;
     for(int index = m_changesForCurrentMatches.size() - 2; index >= 0; index -= 2) {
         changes.push_back(m_changesForCurrentMatches.at(index));      // position
         changes.push_back(-m_changesForCurrentMatches.at(index + 1)); // length
     }
     changes.insert(changes.end(), m_changes.begin(), m_changes.end());
+    return changes;
 }

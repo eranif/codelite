@@ -171,7 +171,7 @@ public:
 
     void OnFileSaved() { m_changesAtLastSave = m_changes; }
     void OnFileInFiles() { m_changesForCurrentMatches = m_changesAtLastSave; }
-    void GetChanges(std::vector<int>& changes);
+    std::vector<int> GetChanges();
 
 protected:
     std::vector<int> m_changes;

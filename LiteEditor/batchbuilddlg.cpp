@@ -163,8 +163,9 @@ void BatchBuildDlg::OnClose( wxCommandEvent& event )
     EndModal(wxID_CANCEL);
 }
 
-void BatchBuildDlg::GetBuildInfoList(std::list<QueueCommand>& buildInfoList)
+std::list<QueueCommand> BatchBuildDlg::GetBuildInfoList() const
 {
+    std::list<QueueCommand> buildInfoList;
     bool clean_log(true);
     for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
         if (m_checkListConfigurations->IsChecked(i)) {
@@ -198,6 +199,7 @@ void BatchBuildDlg::GetBuildInfoList(std::list<QueueCommand>& buildInfoList)
             }
         }
     }
+    return buildInfoList;
 }
 
 void BatchBuildDlg::DoInitialize()

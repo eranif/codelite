@@ -268,8 +268,8 @@ bool Language::VariableFromPattern(const wxString& in, const wxString& name, Var
 
 bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction& foo) { return false; }
 
-void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& tags, bool isFuncSignature,
-                                 const wxString& name, size_t flags)
+std::vector<TagEntryPtr> Language::GetLocalVariables(const wxString& in, bool isFuncSignature, const wxString& name,
+                                                     size_t flags)
 {
     wxString pattern(in);
     pattern = pattern.Trim().Trim(false);
@@ -283,6 +283,7 @@ void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& t
                                isFuncSignature);
     CxxVariable::Vec_t locals = scanner.GetVariables(false);
 
+    std::vector<TagEntryPtr> tags;
     for(CxxVariable::Ptr_t local : locals) {
         const wxString& tagName = local->GetName();
 
@@ -316,6 +317,7 @@ void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& t
         tag->SetPattern(local->ToString());
         tags.push_back(tag);
     }
+    return tags;
 }
 
 void Language::SetTagsManager(TagsManager* tm) { m_tm = tm; }

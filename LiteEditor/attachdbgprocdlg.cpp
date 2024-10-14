@@ -70,8 +70,7 @@ void AttachDbgProcDlg::RefreshProcessesList(wxString filter)
     filter.Trim().Trim(false);
 
     // Populate the list with list of processes
-    std::vector<ProcessEntry> proclist;
-    ProcUtils::GetProcessList(proclist);
+    const std::vector<ProcessEntry> proclist = ProcUtils::GetProcessList();
 
     filter.MakeLower();
     for(size_t i = 0; i < proclist.size(); ++i) {

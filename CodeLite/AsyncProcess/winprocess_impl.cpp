@@ -700,17 +700,16 @@ void WinProcessImpl::Cleanup()
 
     // terminate the process
     if(IsAlive()) {
-        std::map<unsigned long, bool> tree;
-        ProcUtils::GetProcTree(tree, GetPid());
+        const auto tree = ProcUtils::GetProcTree(GetPid());
 
-        for(const auto& vt : tree) {
+        for (const auto& pid : tree) {
             // don't kill ourself
-            if((long)vt.first == GetPid()) {
+            if ((long)pid == GetPid()) {
                 continue;
             }
             wxLogNull NoLog;
             wxKillError rc;
-            wxKill(vt.first, wxSIGKILL, &rc);
+            wxKill(pid, wxSIGKILL, &rc);
         }
         ::TerminateProcess(piProcInfo.hProcess, 0);
     }
@@ -790,16 +789,15 @@ void WinProcessImpl::Terminate()
 {
     // terminate the process
     if(IsAlive()) {
-        std::map<unsigned long, bool> tree;
-        ProcUtils::GetProcTree(tree, GetPid());
+        const std::set<unsigned long> tree = ProcUtils::GetProcTree(GetPid());
 
-        for(const auto& vt : tree) {
-            if((long)vt.first == GetPid()) {
+        for (const auto& pid : tree) {
+            if ((long)pid == GetPid()) {
                 continue;
             }
             wxLogNull NoLOG;
             wxKillError rc;
-            wxKill(vt.first, wxSIGKILL, &rc);
+            wxKill(pid, wxSIGKILL, &rc);
         }
         TerminateProcess(piProcInfo.hProcess, 0);
     }

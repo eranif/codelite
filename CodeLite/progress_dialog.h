@@ -25,6 +25,8 @@
 
 #ifndef __progress_dialog__
 #define __progress_dialog__
+
+#include <wx/setup.h>
 #if wxUSE_GUI
 /**
 @file

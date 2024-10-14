@@ -894,10 +894,14 @@ if(NOT APPLE)
     set(LIBYAML_CPP "yaml-cpp")
 endif()
 
+add_compile_definitions(wxUSE_GUI=1) # Missing `#include <wx/setup.h>` before `#if wxUse_GUI` for some generated files
+
 add_subdirectory(CxxParser)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
-add_subdirectory(PCH)
+if(USE_PCH)
+    add_subdirectory(PCH)
+endif()
 
 set(WITHOUT_INSTALL ON)
 add_subdirectory(submodules/cc-wrapper)

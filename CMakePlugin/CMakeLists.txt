@@ -51,7 +51,9 @@ file(GLOB SRCS "*.cpp")
 # Define the output - shared library
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
-target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+if(USE_PCH)
+    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+endif()
 
 # Codelite plugins doesn't use the "lib" prefix.
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

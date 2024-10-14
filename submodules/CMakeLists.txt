@@ -41,23 +41,11 @@ if(WIN32)
 endif(WIN32)
 
 if(APPLE)
-    target_compile_options(wxshapeframework PRIVATE -fPIC)
+	target_compile_options(wxshapeframework PRIVATE -fPIC)
 elseif(UNIX)
-    target_compile_options(wxshapeframework PRIVATE -fPIC)
+	target_compile_options(wxshapeframework PRIVATE -fPIC)
 endif()
 
 target_link_libraries(wxshapeframework PRIVATE ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
 
-if(MINGW)
-    install(
-        TARGETS wxshapeframework
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-else()
-    if(APPLE)
-        install(TARGETS wxshapeframework DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-    else()
-        install(TARGETS wxshapeframework DESTINATION ${PLUGINS_DIR})
-    endif()
-endif()
+codelite_install_library_target(wxshapeframework)

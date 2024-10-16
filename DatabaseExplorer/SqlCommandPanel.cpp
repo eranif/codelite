@@ -256,7 +256,7 @@ void SQLCommandPanel::ExecuteSql()
                 GetSizer()->Layout();
                 Layout();
 
-            } catch(DatabaseLayerException& e) {
+            } catch (const DatabaseLayerException& e) {
                 // for some reason an exception is thrown even if the error code is 0...
                 if(e.GetErrorCode() != 0) {
                     wxString errorMessage =
@@ -265,7 +265,7 @@ void SQLCommandPanel::ExecuteSql()
                     dlg.ShowModal();
                 }
 
-            } catch(...) {
+            } catch (...) {
                 wxMessageDialog dlg(this, _("Unknown error."), _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
                 dlg.ShowModal();
             }

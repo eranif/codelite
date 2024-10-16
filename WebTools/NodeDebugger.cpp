@@ -241,7 +241,7 @@ void NodeDebugger::OnProcessOutput(clProcessEvent& event)
             m_socket.Initialise();
             // Start a helper thread to listen on the this socket
             m_socket.StartLoop(websocketAddress);
-        } catch(clSocketException& e) {
+        } catch (const clSocketException& e) {
             clWARNING() << e.what();
         }
     } else if(lcOutput.Contains("address already in use")) {

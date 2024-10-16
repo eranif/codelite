@@ -382,11 +382,11 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
             EventNotifier::Get()->AddPendingEvent(event);
         }
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         try {
             m_db.Rollback();
 
-        } catch(...) {
+        } catch (...) {
         }
 
         {

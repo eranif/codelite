@@ -168,7 +168,7 @@ clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_
         sftp->Write(tmpfile.GetFullPath(), remote_path);
         // set execute permissions to the file
         sftp->Chmod(remote_path, 0755);
-    } catch(clException& e) {
+    } catch (const clException& e) {
         wxString errmsg;
         errmsg << ssh_get_error(ssh->GetSession()) << ". " << e.What();
         return clResultBool::make_error(std::move(errmsg));

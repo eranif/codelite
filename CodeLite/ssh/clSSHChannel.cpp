@@ -153,7 +153,7 @@ IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter
     try {
         channel = new clSSHChannel(ssh, std::move(deleter_cb), owner, wantStderr);
         channel->Open();
-    } catch(clException& e) {
+    } catch (const clException& e) {
         LOG_ERROR(LOG()) << "failed to open channel." << e.What() << endl;
         wxDELETE(channel);
         return nullptr;

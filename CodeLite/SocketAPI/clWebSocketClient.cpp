@@ -52,7 +52,7 @@ public:
                 // will exit when this connection is closed.
                 m_client->run();
 
-            } catch(websocketpp::exception& e) {
+            } catch (const websocketpp::exception& e) {
                 // Report an error
                 clCommandEvent event(wxEVT_WEBSOCKET_ERROR);
                 event.SetString(e.what());
@@ -129,7 +129,7 @@ void clWebSocketClient::StartLoop(const wxString& url)
         // Note that connect here only requests a connection. No network messages are
         // exchanged until the event loop starts running in the next line.
         c->connect(con);
-    } catch(websocketpp::exception& e) {
+    } catch (const websocketpp::exception& e) {
         m_connection_handle.reset();
         throw clSocketException(e.what());
     }
@@ -154,7 +154,7 @@ void clWebSocketClient::Send(const wxString& data)
         websocketpp::lib::error_code ec;
         c->send(GetConnectionHandle(), str, websocketpp::frame::opcode::TEXT, ec);
 
-    } catch(websocketpp::exception& e) {
+    } catch (const websocketpp::exception& e) {
         throw clSocketException(e.what());
     }
 }
@@ -203,7 +203,7 @@ void clWebSocketClient::DoInit()
         c->set_message_handler(bind(&on_ws_message, this, ::_1, ::_2));
         c->set_open_handler(bind(&on_ws_open_handler, this, ::_1));
         c->set_fail_handler(bind(&on_ws_fail_handler, this, ::_1));
-    } catch(websocketpp::exception& e) {
+    } catch (const websocketpp::exception& e) {
         clERROR() << e.what();
     }
 }

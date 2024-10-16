@@ -86,7 +86,7 @@ void* XDebugComThread::Entry()
                 m_xdebugMgr->CallAfter(&XDebugManager::OnSocketInput, reply);
             }
         }
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clDEBUG() << "XDebugComThread caught an exception:" << e.what() << endl;
         m_xdebugMgr->CallAfter(&XDebugManager::OnCommThreadTerminated);
         return NULL;
@@ -131,7 +131,7 @@ bool XDebugComThread::DoReadReply(std::string& reply, clSocketBase::Ptr_t client
         reply.swap(content);
         wxDELETEA(buffer);
 
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         wxUnusedVar(e);
         return false;
     }

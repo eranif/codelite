@@ -223,7 +223,7 @@ bool LanguageServerProtocol::DoStart()
         m_startupInfo.SetEnv(m_env);
         m_network->Open(m_startupInfo);
         return true;
-    } catch (clException& e) {
+    } catch (const clException& e) {
         LSP_WARNING() << e.What();
         return false;
     }

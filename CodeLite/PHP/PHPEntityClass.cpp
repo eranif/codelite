@@ -55,7 +55,7 @@ void PHPEntityClass::Store(PHPLookupTable* lookup)
         std::for_each(
             m_varPhpDocs.begin(), m_varPhpDocs.end(), [&](PHPDocVar::Ptr_t doc) { doc->Store(db, GetDbId()); });
         lookup->UpdateClassCache(GetFullName());
-    } catch(wxSQLite3Exception& exc) {
+    } catch (const wxSQLite3Exception& exc) {
         wxUnusedVar(exc);
     }
 }

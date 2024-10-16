@@ -93,7 +93,7 @@ void* clSocketAsyncThread::ServerMain()
         } else {
             BufferLoop(conn);
         }
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clCommandEvent event(wxEVT_ASYNC_SOCKET_CONNECT_ERROR);
         event.SetString(e.what());
         m_sink->AddPendingEvent(event);
@@ -201,7 +201,7 @@ void clSocketAsyncThread::MessageLoop(clSocketBase::Ptr_t socket)
             }
             ++counter;
         }
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clCommandEvent event(wxEVT_ASYNC_SOCKET_ERROR);
         event.SetString(e.what());
         m_sink->AddPendingEvent(event);
@@ -253,7 +253,7 @@ void clSocketAsyncThread::BufferLoop(clSocketBase::Ptr_t socket)
                 }
             }
         }
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clCommandEvent event(wxEVT_ASYNC_SOCKET_ERROR);
         event.SetString(e.what());
         m_sink->AddPendingEvent(event);

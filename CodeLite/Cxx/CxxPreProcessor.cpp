@@ -23,7 +23,7 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
         if(!scanner.IsNull()) {
             scanner.Parse(this);
         }
-    } catch(CxxLexerException& e) {
+    } catch (const CxxLexerException& e) {
         wxUnusedVar(e);
     }
 

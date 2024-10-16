@@ -150,7 +150,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
         event.SetAccount(account.GetAccountName());
         EventNotifier::Get()->AddPendingEvent(event);
 
-    } catch (clException& e) {
+    } catch (const clException& e) {
         clERROR() << "AddConnection() error:" << e.What();
         return false;
     }
@@ -257,7 +257,7 @@ bool clSFTPManager::DoSyncReadFile(const wxString& remotePath, const wxString& a
             wxUnusedVar(fileAttr);
             read_promise.set_value(buffer);
 
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "Failed to read remote file:" << remotePath << "." << e.What();
             wxDELETE(buffer);
             read_promise.set_value(nullptr);
@@ -301,7 +301,7 @@ void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& 
             event_read.SetContent(content);
             sink->QueueEvent(event_read.Clone());
 
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "Failed to read remote file:" << remotePath << "." << e.What();
         }
     };
@@ -328,7 +328,7 @@ bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& l
                 clDEBUG() << "Using cached local file (checksum are the same)" << endl;
                 return true;
             }
-        } catch (clException& e) {
+        } catch (const clException& e) {
             wxUnusedVar(e);
         }
     }
@@ -375,7 +375,7 @@ void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& r
                 success_event.SetSshAccount(conn->GetAccount());
                 sink->AddPendingEvent(success_event);
             }
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "(AsyncSaveFile): Failed to write file:" << remotePath << "." << e.What();
             clCommandEvent fail_event(wxEVT_SFTP_ASYNC_SAVE_ERROR);
             fail_event.SetFileName(remotePath);
@@ -401,7 +401,7 @@ bool clSFTPManager::DoSyncSaveFileWithConn(clSFTP::Ptr_t conn, const wxString& l
         try {
             conn->Write(localPath, remotePath);
             save_promise.set_value(true);
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "Failed to write file:" << remotePath << "." << e.What();
             save_promise.set_value(false);
         }
@@ -532,7 +532,7 @@ clResult<SFTPAttribute::List_t, bool> clSFTPManager::List(const wxString& path, 
             auto attr = conn->List(path, clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
             result.swap(attr);
             promise.set_value(true);
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "List error." << e.What();
             promise.set_value(false);
         }
@@ -556,7 +556,7 @@ bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountI
         try {
             conn->CreateEmptyFile(path);
             promise.set_value(true);
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clDEBUG() << "NewFile() error." << e.What();
             promise.set_value(false);
         }
@@ -584,7 +584,7 @@ bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accoun
         try {
             conn->CreateDir(path);
             promise.set_value(true);
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clDEBUG() << "NewFolder() error." << e.What();
             promise.set_value(false);
         }
@@ -605,7 +605,7 @@ bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, con
         try {
             conn->Rename(oldpath, newpath);
             promise.set_value(true);
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "Rename() error." << e.What();
             promise.set_value(false);
         }
@@ -626,7 +626,7 @@ bool clSFTPManager::DeleteDir(const wxString& fullpath, const SSHAccountInfo& ac
         try {
             conn->RemoveDir(fullpath);
             promise.set_value(true);
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "Rename() error." << e.What();
             promise.set_value(false);
         }
@@ -648,7 +648,7 @@ bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& a
         try {
             conn->UnlinkFile(fullpath);
             promise.set_value(true);
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "Rename() error." << e.What();
             promise.set_value(false);
         }
@@ -672,7 +672,7 @@ void clSFTPManager::OnTimer(wxTimerEvent& event)
         auto func = [conn]() {
             try {
                 conn->SendKeepAlive();
-            } catch (clException& e) {
+            } catch (const clException& e) {
                 clERROR() << "failed to send keep-alive message for account:" << e.What() << endl;
             }
         };
@@ -692,7 +692,7 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo&
         try {
             auto d = conn->Stat(fullpath);
             promise.set_value(d->IsFile());
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clDEBUG() << "IsFileExists() error." << e.What();
             promise.set_value(false);
         }
@@ -713,7 +713,7 @@ bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& 
         try {
             auto d = conn->Stat(fullpath);
             promise.set_value(d->IsFolder());
-        } catch (clException& e) {
+        } catch (const clException& e) {
             clERROR() << "IsDirExists() error." << e.What();
             promise.set_value(false);
         }

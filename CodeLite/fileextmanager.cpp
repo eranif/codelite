@@ -128,6 +128,7 @@ void FileExtManager::Init()
         m_map[wxT("js")] = TypeJS;
         m_map[wxT("javascript")] = TypeJS;
         m_map[wxT("ts")] = TypeTypeScript;
+        m_map[wxT("tsx")] = TypeTypeScript;
         m_map[wxT("py")] = TypePython;
         m_map[wxT("pyi")] = TypePython;
         m_map["json"] = TypeJSON;

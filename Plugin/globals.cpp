@@ -1574,14 +1574,7 @@ wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
         glue = "\n";
         break;
     }
-    wxString result;
-    for (size_t i = 0; i < lines.size(); ++i) {
-        if (!result.IsEmpty()) {
-            result << glue;
-        }
-        result << lines.Item(i);
-    }
-    return result;
+    return clJoin(lines, glue);
 }
 
 wxSize clGetDisplaySize()

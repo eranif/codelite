@@ -62,7 +62,7 @@ ThemeImporterJavaScript::ThemeImporterJavaScript()
     SetOthersWordSetIndex(4);
     SetLangName("javascript");
     SetLocalsWordSetIndex(LexerConf::WS_VARIABLES, true);
-    SetFileExtensions("*.js;*.javascript;*.qml;*.json;*.ts");
+    SetFileExtensions("*.js;*.javascript;*.qml;*.json;*.ts;*.tsx");
 }
 
 ThemeImporterJavaScript::~ThemeImporterJavaScript() {}

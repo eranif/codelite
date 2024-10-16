@@ -11,6 +11,7 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
+#include "globals.h"
 #include "macros.h"
 
 #include <algorithm>
@@ -193,13 +194,14 @@ void AddLexerKeywords(LexerConf::Ptr_t lexer, int setIndex, const std::vector<wx
 void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
 {
     wxString spec = lexer->GetFileSpec();
-    wxString as_str;
     auto extensions = ::wxStringTokenize(spec, ";,", wxTOKEN_STRTOK);
-    if (extensions.Index(extension) != wxNOT_FOUND) {
+    std::set<wxString> S{ extensions.begin(), extensions.end() };
+    if (!S.insert(extension).second) {
+        // Already exists
         return;
     }
-    extensions.Add(extension);
-    as_str = ::wxJoin(extensions, ';');
+
+    wxString as_str = ::clJoin(S, ";");
     lexer->SetFileSpec(as_str);
 }
 
@@ -915,18 +917,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         }
 #else
         // wxCrafter files
-        if (!lexer->GetFileSpec().Contains(".wxcp")) {
-            lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
-        }
-
+        AddFileExtension(lexer, "*.wxcp");
 #endif
-        if (!lexer->GetFileSpec().Contains(".qml")) {
-            lexer->SetFileSpec(lexer->GetFileSpec() + ";*.qml");
-        }
-        // typescript
-        if (!lexer->GetFileSpec().Contains(".ts")) {
-            lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ts");
-        }
+        AddFileExtension(lexer, "*.qml");
+        AddFileExtension(lexer, "*.ts");
+        AddFileExtension(lexer, "*.tsx");
+
         const wxString ts_keywords = "break as any "
                                      "case implements boolean "
                                      "catch interface constructor "

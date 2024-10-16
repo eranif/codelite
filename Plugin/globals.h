@@ -536,7 +536,7 @@ WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name, wxFileName& exepath,
 WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
 
 /**
- * @brief join strings with "\n" or "\r\n" (depends on eol)
+ * @brief join strings with `\n` or `\r\n` (depends on eol)
  * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
  */
 WXDLLIMPEXP_SDK wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
@@ -600,4 +600,21 @@ WXDLLIMPEXP_SDK bool IsChildOf(wxWindow* child, wxWindow* parent);
 
 /// Return a random colour suited for the current theme
 WXDLLIMPEXP_SDK wxColour GetRandomColour();
+
+/// Join elements of a container into a string using `glue` as the elements separator
+/// `Container` any container that can be "range looped"
+template <typename Container>
+wxString clJoin(const Container& c, const wxString& glue = "\n")
+{
+    wxString output;
+    for (const auto& ele : c) {
+        output << ele << glue;
+    }
+
+    if (!output.empty()) {
+        output.RemoveLast(glue.length());
+    }
+    return output;
+}
+
 #endif // GLOBALS_H

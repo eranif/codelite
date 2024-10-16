@@ -71,22 +71,10 @@ protected:
      */
     bool skip_parenthesis_block(Scanner_t scanner);
 
-    /**
-     * @brief move the scanner until we find the closing parenthesis `}`
-     * @param scanner
-     * @return true if found, false, when reached EOF
-     */
-    bool skip_curly_brackets_block(Scanner_t scanner);
-
 public:
     CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros,
                        bool isFuncSignature);
     virtual ~CxxVariableScanner();
-
-    /**
-     * @brief helper method to join variable type into a single string
-     */
-    static wxString ToString(CxxVariable::LexerToken::Vec_t& vartype);
 
     /**
      * @brief return the optimized buffer

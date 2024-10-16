@@ -137,14 +137,6 @@ void BuildMatrix::SelectFirstConfiguration()
     }
 }
 
-void BuildMatrix::RenameProject(const wxString& oldname, const wxString& newname)
-{
-    std::list<WorkspaceConfigurationPtr>::iterator iter = m_configurationList.begin();
-    for(; iter != m_configurationList.end(); ++iter) {
-        (*iter)->RenameProject(oldname, newname);
-    }
-}
-
 //------------------------------------------------
 // WorkspaceConfiguration object
 //------------------------------------------------

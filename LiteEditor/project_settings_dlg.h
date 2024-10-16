@@ -101,7 +101,6 @@ protected:
     void ClearValues();
     void LoadValues(const wxString& configName);
     void BuildTree();
-    void DoClearDialog();
     void DoGetAllBuildConfigs();
 
 public:

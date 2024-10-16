@@ -169,12 +169,6 @@ public:
     const wxString& GetShortName() const { return m_shortName; }
 
     /**
-     * @brief recursive print to stdout this object and all its children
-     * @param parent
-     */
-    void RecursivePrintStdout(PHPEntityBase::Ptr_t parent, int indent);
-
-    /**
      * @brief print this object to the stdout
      */
     virtual void PrintStdout(int indent) const = 0;

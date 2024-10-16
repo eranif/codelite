@@ -67,7 +67,6 @@ private:
     void ReadUntilMatch(int type, CxxLexerToken& token);
 
     void GetRestOfPPLine(wxString& rest, bool collectNumberOnly = false);
-    bool CheckIfDefined(const CxxPreProcessorToken::Map_t& table);
     bool CheckIf(const CxxPreProcessorToken::Map_t& table);
     bool IsTokenExists(const CxxPreProcessorToken::Map_t& table, const CxxLexerToken& token);
 

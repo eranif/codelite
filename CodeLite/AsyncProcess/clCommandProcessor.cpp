@@ -123,15 +123,3 @@ void clCommandProcessor::Terminate()
         first = first->m_next;
     }
 }
-
-clCommandProcessor* clCommandProcessor::GetActiveProcess()
-{
-    clCommandProcessor* first = GetFirst();
-    while(first) {
-        if(first->m_process) {
-            return first;
-        }
-        first = first->m_next;
-    }
-    return NULL;
-}

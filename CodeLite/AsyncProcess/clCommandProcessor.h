@@ -58,7 +58,6 @@ class WXDLLIMPEXP_CL clCommandProcessor : public wxEvtHandler
 protected:
     void DeleteChain();
     clCommandProcessor* GetFirst();
-    clCommandProcessor* GetActiveProcess();
 
 public:
     clCommandProcessor(const wxString& command, const wxString& wd, size_t processFlags = IProcessCreateDefault);

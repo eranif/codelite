@@ -2955,10 +2955,6 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     activeEditor->SetActive();
 }
 
-wxString clMainFrame::CreateWorkspaceTable() { return wxEmptyString; }
-
-wxString clMainFrame::CreateFilesTable() { return wxEmptyString; }
-
 void clMainFrame::CreateRecentlyOpenedFilesMenu()
 {
     wxArrayString files;
@@ -3887,8 +3883,6 @@ void clMainFrame::OnConfigureAccelerators(wxCommandEvent& e)
     AccelTableDlg dlg(this);
     dlg.ShowModal();
 }
-
-void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e) { wxUnusedVar(e); }
 
 void clMainFrame::OnHighlightWordUI(wxUpdateUIEvent& event) { event.Check(m_highlightWord); }
 
@@ -5165,29 +5159,8 @@ void clMainFrame::OnWebSearchSelectionUI(wxUpdateUIEvent& e)
     e.Enable(editor && !editor->GetSelectedText().IsEmpty());
 }
 
-void clMainFrame::OnPchCacheEnded(wxCommandEvent& e) { e.Skip(); }
-void clMainFrame::OnPchCacheStarted(wxCommandEvent& e) { e.Skip(); }
 
 ///////////////////// Helper methods /////////////////////////////
-
-void clMainFrame::DoEnableWorkspaceViewFlag(bool enable, int flag)
-{
-    long flags = View_Show_Default;
-    flags = EditorConfigST::Get()->GetInteger("view_workspace_view", flags);
-    if (enable) {
-        flags |= flag;
-    } else {
-        flags &= ~flag;
-    }
-    EditorConfigST::Get()->SetInteger("view_workspace_view", flags);
-}
-
-bool clMainFrame::IsWorkspaceViewFlagEnabled(int flag)
-{
-    long flags = View_Show_Default;
-    flags = EditorConfigST::Get()->GetInteger("view_workspace_view", flags);
-    return (flags & flag);
-}
 
 void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
@@ -5400,18 +5373,6 @@ void clMainFrame::OnShowDebuggerWindowUI(wxUpdateUIEvent& e)
 
     if (winid != DebuggerPaneConfig::None) {
         e.Check(item.IsDebuggerWindowShown(winid));
-    }
-}
-void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
-{
-    e.Skip();
-    if (e.GetInt() == 0) {
-        // start
-        clLogMessage(wxString() << "Initializing refactoring database for workspace: "
-                                << clCxxWorkspaceST::Get()->GetName());
-    } else {
-        clLogMessage(wxString() << "Initializing refactoring database for workspace: "
-                                << clCxxWorkspaceST::Get()->GetName() << "... done");
     }
 }
 
@@ -5988,56 +5949,6 @@ void clMainFrame::OnFindSelectionPrev(wxCommandEvent& event)
         editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
     find_bar->SetFindWhat(selection);
     find_bar->FindPrevious();
-}
-
-void clMainFrame::OnFindWordAtCaret(wxCommandEvent& event)
-{
-    event.Skip();
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-
-    wxString selection;
-    wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    if (ctrl->GetSelectedText().IsEmpty()) {
-        // Select the current word
-        long pos = ctrl->GetCurrentPos();
-        long start = ctrl->WordStartPosition(pos, true);
-        long end = ctrl->WordEndPosition(pos, true);
-
-        selection = ctrl->GetTextRange(start, end);
-        if (!selection.IsEmpty()) {
-            ctrl->SetCurrentPos(start);
-        }
-    }
-    if (selection.IsEmpty()) {
-        return;
-    }
-    OnFindSelection(event);
-}
-
-void clMainFrame::OnFindWordAtCaretPrev(wxCommandEvent& event)
-{
-    event.Skip();
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-
-    wxString selection;
-    wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    if (ctrl->GetSelectedText().IsEmpty()) {
-        // Select the current word
-        long pos = ctrl->GetCurrentPos();
-        long start = ctrl->WordStartPosition(pos, true);
-        long end = ctrl->WordEndPosition(pos, true);
-
-        selection = ctrl->GetTextRange(start, end);
-        if (!selection.IsEmpty()) {
-            ctrl->SetCurrentPos(start);
-        }
-    }
-    if (selection.IsEmpty()) {
-        return;
-    }
-    OnFindSelectionPrev(event);
 }
 
 void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event)

@@ -164,10 +164,6 @@ public:
      * @brief rebuild the class cache
      */
     void RebuildClassCache();
-    /**
-     * @brief return the function closest to a given function and line number
-     */
-    PHPEntityBase::Ptr_t FindFunctionNearLine(const wxFileName& filename, int lineNumber);
 
     /**
      * @brief add class name to the class cache
@@ -181,10 +177,6 @@ public:
     bool ClassExists(const wxString& classname) const;
 
     void SetSizeLimit(size_t sizeLimit) { this->m_sizeLimit = sizeLimit; }
-    /**
-     * @brief return the entity at a given file/line
-     */
-    PHPEntityBase::Ptr_t FindFunctionByLineAndFile(const wxFileName& filename, int line);
 
     /**
      * @brief return list of functiosn from a given file
@@ -238,11 +230,6 @@ public:
     PHPEntityBase::Ptr_t FindClass(const wxString& fullname);
 
     /**
-     * @brief find a class with a given database ID
-     */
-    PHPEntityBase::Ptr_t FindClass(wxLongLong id);
-
-    /**
      * @brief find a member of parentDbId with name that matches 'exactName'
      */
     PHPEntityBase::Ptr_t FindMemberOf(wxLongLong parentDbId, const wxString& exactName, size_t flags = 0);
@@ -287,11 +274,6 @@ public:
     template <typename GoindDownFunc>
     void RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode, GoindDownFunc pFuncGoingDown,
                                  bool parseFuncBodies = true);
-
-    /**
-     * @brief parse folder
-     */
-    void ParseFolder(const wxString& folder, const wxString& filemask, eUpdateMode updateMode);
 
     /**
      * @brief delete all entries belonged to filename.

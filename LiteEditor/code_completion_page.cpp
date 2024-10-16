@@ -100,4 +100,3 @@ void CodeCompletionPage::Save()
 }
 
 void CodeCompletionPage::OnCCContentModified(wxStyledTextEvent& event) { m_ccChanged = true; }
-bool CodeCompletionPage::IsCpp11Enabled() const { return m_choiceStandard->GetStringSelection() == "C++11"; }

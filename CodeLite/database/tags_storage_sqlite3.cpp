@@ -979,41 +979,6 @@ void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope, const wxArr
     DoFetchTags(sql, tags);
 }
 
-void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds, const wxString& orderingColumn, int order,
-                                           int limit, const wxString& partName, std::vector<TagEntryPtr>& tags)
-{
-    wxString sql;
-    sql << wxT("select * from tags where kind in (");
-    for(size_t i = 0; i < kinds.GetCount(); i++) {
-        sql << wxT("'") << kinds.Item(i) << wxT("',");
-    }
-    sql.RemoveLast();
-    sql << wxT(") ");
-
-    if(orderingColumn.IsEmpty() == false) {
-        sql << wxT("order by ") << orderingColumn;
-        switch(order) {
-        case ITagsStorage::OrderAsc:
-            sql << wxT(" ASC");
-            break;
-        case ITagsStorage::OrderDesc:
-            sql << wxT(" DESC");
-            break;
-        case ITagsStorage::OrderNone:
-        default:
-            break;
-        }
-    }
-
-    DoAddNamePartToQuery(sql, partName, true, true);
-    if(limit > 0) {
-        sql << wxT(" LIMIT ") << limit;
-    }
-
-    size_t tags_limit = limit < 100 ? 100 : limit;
-    tags.reserve(tags_limit);
-    DoFetchTags(sql, tags);
-}
 bool TagsStorageSQLite::IsTypeAndScopeExistLimitOne(const wxString& typeName, const wxString& scope)
 {
     wxString sql;

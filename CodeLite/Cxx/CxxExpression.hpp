@@ -66,8 +66,6 @@ public:
     const wxString& type_name() const { return m_type_name; }
     wxString& type_name() { return m_type_name; }
 
-    wxString template_placeholder_to_type(const wxString& placeholder) const;
-
     /**
      * @brief given a template definition line, parse and build the template placeholders list
      * e.g. `template<typename Key, typename Value> class A {...}` -> we build the placeholders list `{"Key", "Value"}`

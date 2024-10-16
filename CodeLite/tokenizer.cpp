@@ -109,76 +109,12 @@ StringTokenizer& StringTokenizer::operator =(const StringTokenizer &src)
 	m_tokensArr.clear();
 	for( int i=0; i<(int)src.m_tokensArr.size() ; i++)
 		m_tokensArr.push_back(src.m_tokensArr[i]);
-	m_nCurr = src.m_nCurr;
 	return *this;
 }
 
 StringTokenizer::~StringTokenizer()
 {
 	m_tokensArr.clear();
-	m_nCurr = 0;
-}
-
-// Return current token and advance to the next. If there are no more tokens, return empty string.
-wxString StringTokenizer::Next()
-{
-	if( m_nCurr == (int)m_tokensArr.size() )
-	{
-		// We are at the end of the tokens array
-		return wxEmptyString;
-	}
-	wxString strToken = m_tokensArr[m_nCurr];
-	m_nCurr++;
-	return strToken;
-}
-
-// We return the previous token, if we are already at the start, return empty string.
-wxString StringTokenizer::Previous()
-{
-	if(m_nCurr == 0)
-	{
-		return wxEmptyString;
-	}
-	if(m_tokensArr.size() == 0)
-	{
-		return wxEmptyString;
-	}
-	m_nCurr--;
-	return m_tokensArr[m_nCurr];
-}
-
-bool StringTokenizer::HasMore()
-{
-	if(m_nCurr < (int)m_tokensArr.size())
-	{
-		return true;
-	}
-	return false;
-}
-
-wxString StringTokenizer::First()
-{
-	if(m_tokensArr.size()>0)
-	{
-		m_nCurr = 1;	//The next one
-		return m_tokensArr[0];
-	}
-	else
-	{
-		return wxEmptyString;
-	}
-}
-
-// This function is much similar to the 'next()' function with one difference, 
-// it does not advance the pointer to the next token.
-wxString StringTokenizer::Current()
-{
-	if( m_nCurr == (int)m_tokensArr.size() )
-	{
-		// We are at the end of the tokens array
-		return wxEmptyString;
-	}
-	return m_tokensArr[m_nCurr];
 }
 
 const int StringTokenizer::Count() const
@@ -189,16 +125,6 @@ const int StringTokenizer::Count() const
 void StringTokenizer::Initialize()
 {
 	m_tokensArr.clear();
-	m_nCurr = 0;
-}
-
-// Return last token
-wxString StringTokenizer::Last()
-{
-	if(m_tokensArr.size() == 0)
-		return wxEmptyString;
-	m_nCurr = (int)m_tokensArr.size()-1;
-	return m_tokensArr[m_tokensArr.size()-1];
 }
 
 wxString StringTokenizer::operator[](const int nIndex)

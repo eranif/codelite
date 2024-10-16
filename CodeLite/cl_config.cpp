@@ -393,64 +393,6 @@ void clConfig::SetQuickFindReplaceItems(const wxArrayString& items)
     Save();
 }
 
-void clConfig::AddQuickFindReplaceItem(const wxString& str)
-{
-    ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
-
-    JSONItem quickFindBar = m_root->toElement().namedObject("QuickFindBar");
-    ADD_ARR_IF_NOT_EXISTS(quickFindBar, "ReplaceHistory");
-
-    JSONItem arr = quickFindBar.namedObject("ReplaceHistory");
-    wxArrayString items = arr.toArrayString();
-
-    // Update the array
-    int where = items.Index(str);
-    if (where != wxNOT_FOUND) {
-        items.RemoveAt(where);
-        items.Insert(str, 0);
-
-    } else {
-        // remove overflow items if needed
-        if (items.GetCount() > 20) {
-            // remove last item
-            items.RemoveAt(items.GetCount() - 1);
-        }
-        items.Insert(str, 0);
-    }
-
-    quickFindBar.removeProperty("ReplaceHistory");
-    quickFindBar.addProperty("ReplaceHistory", items);
-    Save();
-}
-
-void clConfig::AddQuickFindSearchItem(const wxString& str)
-{
-    ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
-
-    JSONItem quickFindBar = m_root->toElement().namedObject("QuickFindBar");
-    ADD_ARR_IF_NOT_EXISTS(quickFindBar, "SearchHistory");
-
-    JSONItem arr = quickFindBar.namedObject("SearchHistory");
-    wxArrayString items = arr.toArrayString();
-
-    // Update the array
-    int where = items.Index(str);
-    if (where != wxNOT_FOUND) {
-        items.RemoveAt(where);
-    }
-    items.Insert(str, 0);
-
-    // Reudce to size to max of 20
-    while (items.size() > 20) {
-        items.RemoveAt(items.size() - 1);
-    }
-
-    // Update the array
-    quickFindBar.removeProperty("SearchHistory");
-    quickFindBar.addProperty("SearchHistory", items);
-    Save();
-}
-
 wxArrayString clConfig::GetQuickFindReplaceItems() const
 {
     ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");

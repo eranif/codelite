@@ -61,7 +61,6 @@ protected:
     // Delete all line-type breakpoint markers in all editors
     // Done before refreshing after a delete, lest it was the last bp in a file
     void DeleteAllBreakpointMarkers();
-    std::set<wxString> GetFilesWithBreakpointMarkers();
 
     /**
      * Return the index of the bp with the passed id, in the vector that will normally be m_bps

@@ -117,9 +117,6 @@ public:
     /// Append `str` to `arr`. If the array size exceed the truncation size, shrink it to fit
     static wxArrayString AppendAndMakeUnique(const wxArrayString& arr, const wxString& str, size_t truncate_size = 15);
 
-    /// Given `strings` return the longest common prefix for them
-    static wxString FindCommonPrefix(const wxArrayString& strings);
-
     /// Given `Container` create an array with unique entries
     template <typename Container>
     static wxArrayString MakeUniqueArray(const Container& container)

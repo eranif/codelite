@@ -513,15 +513,6 @@ wxString TagsOptionsData::ToString() const
     return options;
 }
 
-void TagsOptionsData::SetLanguageSelection(const wxString& lang)
-{
-    int where = m_languages.Index(lang);
-    if(where != wxNOT_FOUND) {
-        m_languages.RemoveAt(where);
-    }
-    m_languages.Insert(lang, 0);
-}
-
 std::map<std::string, std::string> TagsOptionsData::GetTokensMap() const
 {
     std::map<std::string, std::string> tokens;
@@ -666,18 +657,4 @@ void TagsOptionsData::SyncData()
 {
     DoUpdateTokensWxMap();
     DoUpdateTokensWxMapReversed();
-}
-
-std::vector<std::pair<wxString, wxString>> TagsOptionsData::GetTypes() const
-{
-    std::vector<std::pair<wxString, wxString>> arr;
-    arr.reserve(m_types.size());
-
-    for(const auto& line : m_types) {
-        std::pair<wxString, wxString> p;
-        p.first = line.BeforeFirst('=');
-        p.second = line.AfterFirst('=');
-        arr.emplace_back(p);
-    }
-    return arr;
 }

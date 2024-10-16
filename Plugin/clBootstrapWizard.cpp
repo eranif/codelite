@@ -125,30 +125,6 @@ public:
 };)";
 } // namespace
 
-class clBootstrapWizardPluginData : public wxClientData
-{
-public:
-    bool checked;
-    PluginInfo pluginInfo;
-
-public:
-    clBootstrapWizardPluginData(const PluginInfo& pi)
-        : checked(true)
-        , pluginInfo(pi)
-    {
-    }
-    virtual ~clBootstrapWizardPluginData() {}
-
-    wxString GetPluginSummary() const
-    {
-        wxString summary;
-        summary << pluginInfo.GetName() << " " << pluginInfo.GetVersion() << "\n"
-                << _("By: ") << pluginInfo.GetAuthor() << "\n\n"
-                << pluginInfo.GetDescription();
-        return summary;
-    }
-};
-
 #define DARK_THEME "Atom One-Dark"
 #define NO_SO_LIGHT_THEME "Roboticket"
 #define LIGHT_THEME "Atom One Light"

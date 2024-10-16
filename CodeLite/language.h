@@ -32,7 +32,6 @@
 #include "expression_result.h"
 #include "function.h"
 #include "macros.h"
-#include "parsedtoken.h"
 #include "variable.h"
 
 #include <set>
@@ -167,7 +166,6 @@ private:
 
     void ParseTemplateArgs(const wxString& argListStr, wxArrayString& argsList);
     void ParseTemplateInitList(const wxString& argListStr, wxArrayString& argsList);
-    wxArrayString DoExtractTemplateDeclarationArgs(ParsedToken* token);
     wxArrayString DoExtractTemplateDeclarationArgs(TagEntryPtr tag);
 
     /**

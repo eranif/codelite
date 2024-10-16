@@ -32,12 +32,6 @@ public:
      */
     void Reset(const wxString& buffer);
 
-    /**
-     * @brief read until 'delim' is found. Return true if 'delim' found
-     * also, return the data read
-     */
-    bool ReadUntilClosingBracket(int delim, wxString& bufferRead);
-
     const CxxLexerToken& GetLastToken() const { return m_lastToken; }
     /**
      * @brief peek at the next token and return its type

@@ -875,16 +875,6 @@ bool CxxVariableScanner::SkipToClosingParenthesis(Scanner_t scanner)
     return false;
 }
 
-wxString CxxVariableScanner::ToString(CxxVariable::LexerToken::Vec_t& vartype)
-{
-    wxString str;
-    for(const auto& token : vartype) {
-        str << token.text << " ";
-    }
-    str.Trim();
-    return str;
-}
-
 bool CxxVariableScanner::skip_parenthesis_block(Scanner_t scanner)
 {
     int depth = 0;
@@ -896,29 +886,6 @@ bool CxxVariableScanner::skip_parenthesis_block(Scanner_t scanner)
             depth++;
             break;
         case ')':
-            if(depth == 0) {
-                return true;
-            }
-            depth--;
-            break;
-        default:
-            break;
-        }
-    }
-    return false;
-}
-
-bool CxxVariableScanner::skip_curly_brackets_block(Scanner_t scanner)
-{
-    int depth = 0;
-    CxxLexerToken token;
-    while(::LexerNext(scanner, token)) {
-        // Skip prep processing state
-        switch(token.GetType()) {
-        case '{':
-            depth++;
-            break;
-        case '}':
             if(depth == 0) {
                 return true;
             }

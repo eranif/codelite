@@ -399,8 +399,6 @@ void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
     }
 }
 
-int QuickFindBar::GetCloseButtonId() { return ID_TOOL_CLOSE; }
-
 bool QuickFindBar::Show(const wxString& findWhat, bool showReplace)
 {
     // Same as Show() but set the 'findWhat' field with findWhat
@@ -723,22 +721,6 @@ wxString QuickFindBar::DoGetSelectedText()
 
 size_t QuickFindBar::DoGetSearchFlags() const { return m_searchFlags; }
 void QuickFindBar::OnFindAll(wxCommandEvent& e) { DoSelectAll(); }
-
-void QuickFindBar::DoFixRegexParen(wxString& findwhat)
-{
-    // Scintilla's REGEX group markers are \( and \)
-    // while wxRegEx is usig bare ( and ) and the escaped version for
-    // non regex manner
-    findwhat.Replace("\\(", "/<!@#$");
-    findwhat.Replace("\\)", "/>!@#$");
-    findwhat.Replace("(", "<!@#$");
-    findwhat.Replace(")", ">!@#$");
-
-    findwhat.Replace("/<!@#$", "(");
-    findwhat.Replace("/>!@#$", ")");
-    findwhat.Replace("<!@#$", "\\(");
-    findwhat.Replace(">!@#$", "\\)");
-}
 
 void QuickFindBar::DoSetCaretAtEndOfText() { m_textCtrlFind->SetInsertionPointEnd(); }
 

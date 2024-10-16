@@ -391,20 +391,6 @@ void Project::GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& fi
     }
 }
 
-wxXmlNode* Project::GetProjectEditorOptions() const { return XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Options"); }
-
-void Project::SetProjectEditorOptions(LocalOptionsConfigPtr opts)
-{
-    wxXmlNode* parent = m_doc.GetRoot();
-    wxXmlNode* oldOptions = XmlUtils::FindFirstByTagName(parent, "Options");
-    if (oldOptions) {
-        oldOptions->GetParent()->RemoveChild(oldOptions);
-        delete oldOptions;
-    }
-    parent->AddChild(opts->ToXml());
-    SaveXmlFile();
-}
-
 ProjectSettingsPtr Project::GetSettings() const { return m_settings; }
 
 void Project::SetSettings(ProjectSettingsPtr settings)
@@ -451,18 +437,6 @@ wxArrayString Project::GetDependencies() const
 void Project::SetModified(bool mod) { m_isModified = mod; }
 
 bool Project::IsModified() { return m_isModified; }
-
-wxString Project::GetDescription() const
-{
-    wxXmlNode* root = m_doc.GetRoot();
-    if (root) {
-        wxXmlNode* node = XmlUtils::FindFirstByTagName(root, "Description");
-        if (node) {
-            return node->GetNodeContent();
-        }
-    }
-    return wxEmptyString;
-}
 
 void Project::CopyTo(const wxString& new_path, const wxString& new_name, const wxString& description)
 {
@@ -674,21 +648,6 @@ void Project::SetFiles(ProjectPtr src)
     DoBuildCacheFromXml();
 }
 
-bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, const wxString& newName)
-{
-    if (m_virtualFoldersTable.count(virtualDir) == 0) {
-        return false;
-    }
-    clProjectFolder::Ptr_t folder = m_virtualFoldersTable[virtualDir];
-    folder->RenameFile(this, oldName, newName);
-
-    if (InTransaction()) {
-        return true;
-    } else {
-        return SaveXmlFile();
-    }
-}
-
 wxString Project::GetVDByFileName(const wxString& file)
 {
     if (m_filesTable.count(file) == 0) {
@@ -806,57 +765,6 @@ Project::GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspac
     DoGetVirtualDirectories(m_doc.GetRoot(), parent);
     workspace->AddChild(parent);
     return parent;
-}
-
-bool Project::GetUserData(const wxString& name, SerializedObject* obj)
-{
-    if (!m_doc.IsOk()) {
-        return false;
-    }
-
-    Archive arch;
-    wxXmlNode* userData = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "UserData");
-    if (userData) {
-        wxXmlNode* dataNode = XmlUtils::FindNodeByName(userData, "Data", name);
-        if (dataNode) {
-            arch.SetXmlNode(dataNode);
-            obj->DeSerialize(arch);
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Project::SetUserData(const wxString& name, SerializedObject* obj)
-{
-    if (!m_doc.IsOk()) {
-        return false;
-    }
-
-    Archive arch;
-
-    // locate the 'UserData' node
-    wxXmlNode* userData = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "UserData");
-    if (!userData) {
-        userData = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, "UserData");
-    }
-
-    // try to find a previous data stored under the same name, if we succeed - remove it
-    wxXmlNode* dataNode = XmlUtils::FindNodeByName(userData, "Data", name);
-    if (dataNode) {
-        // remove old node
-        userData->RemoveChild(dataNode);
-        delete dataNode;
-    }
-
-    // create a new node and set the userData node as the parent
-    dataNode = new wxXmlNode(userData, wxXML_ELEMENT_NODE, "Data");
-    dataNode->AddAttribute("Name", name);
-
-    // serialize the data
-    arch.SetXmlNode(dataNode);
-    obj->Serialize(arch);
-    return SaveXmlFile();
 }
 
 void Project::SetProjectInternalType(const wxString& internalType)
@@ -1139,15 +1047,6 @@ wxArrayString Project::DoBacktickToIncludePath(const wxString& backtick)
     return cclp.GetIncludes();
 }
 
-void Project::DoDeleteVDFromCache(const wxString& vd)
-{
-    clProjectFolder::Ptr_t folder = GetFolder(vd);
-    if (folder) {
-        folder->DeleteRecursive(this);
-        SaveXmlFile();
-    }
-}
-
 void Project::ClearAllVirtDirs()
 {
     // remove all the virtual directories from this project
@@ -1158,8 +1057,6 @@ void Project::ClearAllVirtDirs()
     SetModified(true);
     SaveXmlFile();
 }
-
-wxString Project::GetProjectIconName() const { return m_doc.GetRoot()->GetAttribute("IconIndex", "gear16"); }
 
 void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& ignoreFiles,
                                     wxArrayString& excludePaths, wxArrayString& regexes)
@@ -1265,82 +1162,6 @@ void Project::SetReconciliationData(const wxString& toplevelDir, const wxString&
         XmlUtils::SetNodeContent(itemnode, regexes.Item(n));
     }
     SaveXmlFile();
-}
-
-wxString Project::DoFormatVirtualFolderName(const wxXmlNode* node) const
-{
-    // we assume that 'node' is a 'File' element
-    wxString name;
-    wxXmlNode* p = node->GetParent();
-    std::list<wxString> q;
-    while (p) {
-        if (p->GetName() == "VirtualDirectory") {
-            q.push_front(p->GetAttribute("Name", ""));
-        } else {
-            break;
-        }
-        p = p->GetParent();
-    }
-
-    while (!q.empty()) {
-        name << q.front() << ":";
-        q.pop_front();
-    }
-
-    if (name.IsEmpty() == false) {
-        name.RemoveLast();
-    }
-    return name;
-}
-
-void Project::SetFileFlags(const wxString& fileName, const wxString& virtualDirPath, size_t flags)
-{
-    wxXmlNode* vdNode = GetVirtualDir(virtualDirPath);
-    if (!vdNode) {
-        return;
-    }
-
-    // locate our file
-    wxFileName tmp(fileName);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
-    wxXmlNode* fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
-    if (!fileNode) {
-        return;
-    }
-
-    // we have located the file node
-    // updat the flags
-    XmlUtils::UpdateProperty(fileNode, "Flags", wxString() << flags);
-    SaveXmlFile();
-}
-
-size_t Project::GetFileFlags(const wxString& fileName, const wxString& virtualDirPath)
-{
-    wxXmlNode* vdNode = GetVirtualDir(virtualDirPath);
-    if (!vdNode) {
-        return 0;
-    }
-
-    // locate our file
-    wxFileName tmp(fileName);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
-    wxXmlNode* fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
-    if (!fileNode) {
-        return 0;
-    }
-
-    return XmlUtils::ReadLong(fileNode, "Flags", 0);
-}
-
-const wxStringSet_t& Project::GetExcludeConfigForFile(const wxString& filename) const
-{
-    clProjectFile::Ptr_t pfile = GetFile(filename);
-    if (!pfile) {
-        return emptySet;
-    }
-    return pfile->GetExcludeConfigs();
 }
 
 void Project::SetExcludeConfigsForFile(const wxString& filename, const wxStringSet_t& configs)
@@ -1830,53 +1651,6 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
 }
 
 void Project::ClearIncludePathCache() { m_cachedIncludePaths.clear(); }
-
-wxArrayString Project::GetCxxUnPreProcessors(bool clearCache)
-{
-    BuildConfigPtr buildConf = GetBuildConfiguration();
-    // for non custom projects, take the settings from the build configuration
-    if (!buildConf) {
-        return wxArrayString();
-    }
-    return DoGetUnPreProcessors(clearCache, buildConf->GetCompileOptions());
-}
-
-wxArrayString Project::GetCUnPreProcessors(bool clearCache)
-{
-    BuildConfigPtr buildConf = GetBuildConfiguration();
-    // for non custom projects, take the settings from the build configuration
-    if (!buildConf) {
-        return wxArrayString();
-    }
-    return DoGetUnPreProcessors(clearCache, buildConf->GetCCompileOptions());
-}
-
-wxArrayString Project::DoGetUnPreProcessors(bool clearCache, const wxString& cmpOptions)
-{
-    wxArrayString pps;
-    BuildConfigPtr buildConf = GetBuildConfiguration();
-    // for non custom projects, take the settings from the build configuration
-    if (!buildConf) {
-        return pps;
-    }
-
-    // Apply the environment
-    EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
-
-    // Atm, we can only "set" undefined in the compiler options
-    wxArrayString projectCompileOptionsArr = ::wxStringTokenize(cmpOptions, ";", wxTOKEN_STRTOK);
-    for (size_t i = 0; i < projectCompileOptionsArr.GetCount(); i++) {
-
-        wxString cmpOption(projectCompileOptionsArr.Item(i));
-        cmpOption.Trim().Trim(false);
-
-        wxString rest;
-        if (cmpOption.StartsWith("-U", &rest)) {
-            pps.Add(rest);
-        }
-    }
-    return pps;
-}
 
 wxString Project::GetFilesAsString(bool absPath) const
 {

@@ -202,18 +202,6 @@ void OpenWindowsPanel::DoSaveItem(wxDataViewItem item)
     }
 }
 
-void OpenWindowsPanel::DoCloseItem(wxDataViewItem item)
-{
-    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
-    if(data) {
-        if(data->IsFile()) {
-            m_mgr->ClosePage(data->tab.filename);
-        } else {
-            m_mgr->ClosePage(data->tab.text);
-        }
-    }
-}
-
 void OpenWindowsPanel::DoSelectItem(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
@@ -346,12 +334,6 @@ void OpenWindowsPanel::AppendEditor(const clTab& tab)
     MarkItemModified(item, is_modified, saved_before);
 }
 
-wxString OpenWindowsPanel::GetEditorPath(wxDataViewItem item)
-{
-    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
-    return data->tab.text;
-}
-
 void OpenWindowsPanel::Clear()
 {
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
@@ -388,12 +370,6 @@ void OpenWindowsPanel::OnMenu(wxDataViewEvent& event)
     }
     m_dvListCtrl->PopupMenu(menu);
     wxDELETE(menu);
-}
-
-bool OpenWindowsPanel::IsEditor(wxDataViewItem item) const
-{
-    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
-    return data->IsFile();
 }
 
 void OpenWindowsPanel::DoSelectItem(wxWindow* win)

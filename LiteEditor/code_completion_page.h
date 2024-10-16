@@ -50,7 +50,6 @@ public:
     wxArrayString GetIncludePaths() const;
     wxString GetMacros() const;
     wxString GetIncludePathsAsString() const;
-    bool IsCpp11Enabled() const;
 };
 
 #endif // CODECOMPLETIONPAGE_H

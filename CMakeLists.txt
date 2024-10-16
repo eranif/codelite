@@ -53,6 +53,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(WITH_CHATAI "Enable ChatAI plugin" ON)
+
 # Set this option to "ON" in order to get CMake standard/expected behavior
 set(RETAIN_CACHED_VALUES
     OFF
@@ -918,16 +920,22 @@ if(APPLE)
     set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp")
-add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main")
+if(WITH_CHATAI)
+    message(STATUS "ChatAI Plugin is enabled")
+    add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp")
+    add_subdirectory("${CL_SRC_ROOT}/submodules/llama.cpp/examples/main")
+else()
+    message(STATUS "ChatAI Plugin is disabled")
+endif()
 
 if(WXC_APP)
     add_subdirectory(wxcrafter)
 else()
     add_subdirectory(submodules/ctags)
     install(TARGETS ctags DESTINATION ${CL_INSTALL_BIN})
-    install(TARGETS llama-cli DESTINATION ${CL_INSTALL_BIN})
-
+    if(WITH_CHATAI)
+        install(TARGETS llama-cli DESTINATION ${CL_INSTALL_BIN})
+    endif()
     if(MINGW)
         # build wx-config for Windows
         add_subdirectory(submodules/wx-config-msys2)
@@ -979,8 +987,9 @@ else()
         add_subdirectory(HelpPlugin)
         add_subdirectory(WebTools)
         add_subdirectory(SmartCompletion)
-        add_subdirectory(ChatAI)
-
+        if(WITH_CHATAI)
+            add_subdirectory(ChatAI)
+        endif()
         if(UNIX
            AND NOT APPLE
            AND NOT DISABLE_CXX)
@@ -1021,7 +1030,9 @@ else()
     add_dependencies(codelite plugin)
     add_dependencies(codelite ctags)
     add_dependencies(codelite ctagsd)
-    add_dependencies(codelite llama-cli)
+    if(WITH_CHATAI)
+        add_dependencies(codelite llama-cli)
+    endif()
     add_dependencies(codelite cc-wrapper)
     if(MINGW)
         add_dependencies(codelite wx-config)
@@ -1174,3 +1185,5 @@ elseif(MINGW AND WXC_APP)
             WORKING_DIRECTORY "${CL_SRC_ROOT}/InnoSetup")
     endif()
 endif()
+
+unset(WITH_CHATAI CACHE)

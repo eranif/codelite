@@ -641,7 +641,7 @@ bool clSFTP::GetChecksum(const wxString& remoteFile, size_t* checksum)
         }
         *checksum = ck;
         return true;
-    } catch(clException& e) {
+    } catch (const clException& e) {
         clWARNING() << e.What() << endl;
         return false;
     }

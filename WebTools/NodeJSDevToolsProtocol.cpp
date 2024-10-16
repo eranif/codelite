@@ -33,7 +33,7 @@ void NodeJSDevToolsProtocol::SendSimpleCommand(clWebSocketClient& socket, const 
         wxString command = e.format(false);
         clDEBUG() << "-->" << command;
         socket.Send(command);
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clWARNING() << e.what();
     }
 }
@@ -108,7 +108,7 @@ void NodeJSDevToolsProtocol::SetBreakpoint(clWebSocketClient& socket, const Node
             }
         });
         m_waitingReplyCommands.insert({ handler.m_commandID, handler });
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clWARNING() << e.what();
     }
 }
@@ -127,7 +127,7 @@ void NodeJSDevToolsProtocol::DeleteBreakpoint(clWebSocketClient& socket, const N
             EventNotifier::Get()->AddPendingEvent(bpEvent);
         });
         m_waitingReplyCommands.insert({ handler.m_commandID, handler });
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clWARNING() << e.what();
     }
 }
@@ -215,7 +215,7 @@ void NodeJSDevToolsProtocol::DeleteBreakpointByID(clWebSocketClient& socket, con
         params.addProperty("breakpointId", bpid);
         // Send the command
         SendSimpleCommand(socket, "Debugger.removeBreakpoint", params);
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clWARNING() << e.what();
     }
 }

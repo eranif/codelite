@@ -110,7 +110,7 @@ clSSH::Ptr_t clRemoteHost::CreateSession(const wxString& account_name)
             ssh_session->AcceptServerAuthentication();
         }
         ssh_session->Login();
-    } catch (clException& e) {
+    } catch (const clException& e) {
         LOG_ERROR(LOG()) << "Failed to open ssh channel to account:" << account.GetAccountName() << "." << e.What()
                          << endl;
         return nullptr;

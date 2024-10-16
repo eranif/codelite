@@ -109,7 +109,7 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
         ssh->Login();
         ::wxMessageBox(_("Successfully connected to host!"));
 
-    } catch (clException& e) {
+    } catch (const clException& e) {
         ::wxMessageBox(e.What(), "SSH", wxICON_WARNING | wxOK, this);
     }
 }

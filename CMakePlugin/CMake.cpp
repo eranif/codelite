@@ -253,7 +253,7 @@ void CMake::PrepareDatabase()
         // Everything is OK
         m_dbInitialized = true;
 
-    } catch(const wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         // Unable to use SQLite database
         clERROR() << "CMake DoPrepareDatabase error" << e.GetMessage() << endl;
     }
@@ -355,7 +355,7 @@ bool CMake::LoadFromDatabase()
             }
         }
 
-    } catch(const wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         clERROR() << "Error occurred while loading data from CMake database" << e.GetMessage();
     }
 
@@ -438,7 +438,7 @@ void CMake::StoreIntoDatabase()
 
         db.Commit();
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         clERROR() << "An error occurred while storing CMake data into database:" << e.GetMessage();
     }
 }

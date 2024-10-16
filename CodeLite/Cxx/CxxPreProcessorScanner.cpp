@@ -87,7 +87,7 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
                     if(!scanner.IsNull()) {
                         scanner.Parse(pp);
                     }
-                } catch(CxxLexerException& e) {
+                } catch (const CxxLexerException& e) {
                     // catch the exception
                     clDEBUG() << "Exception caught:" << e.message << endl;
                 }

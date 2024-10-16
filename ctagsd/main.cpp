@@ -94,7 +94,7 @@ int main(int argc, char** argv)
             }
         }
 
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clERROR() << "Uncaught exception:" << e.what() << endl;
         exit(1);
     }

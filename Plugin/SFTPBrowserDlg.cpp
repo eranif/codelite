@@ -220,7 +220,7 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
         }
         m_dataview->SetFocus();
 
-    } catch (clException& e) {
+    } catch (const clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK);
         DoCloseSession();
     }
@@ -450,7 +450,7 @@ void SFTPBrowserDlg::DoBrowse()
 
         DoDisplayEntriesForPath();
 
-    } catch (clException& e) {
+    } catch (const clException& e) {
         ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
         DoCloseSession();
     }
@@ -472,7 +472,7 @@ void SFTPBrowserDlg::OnNewFolder(wxCommandEvent& event)
         m_sftp->CreateDir(path);
         ClearView();
         DoDisplayEntriesForPath();
-    } catch (clException& e) {
+    } catch (const clException& e) {
         ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
     }
 }

@@ -55,7 +55,7 @@ void PHPEntityNamespace::Store(PHPLookupTable* lookup)
             statement.ExecuteUpdate();
             SetDbId(db.GetLastRowId());
         }
-    } catch(wxSQLite3Exception& exc) {
+    } catch (const wxSQLite3Exception& exc) {
         wxUnusedVar(exc);
     }
 }
@@ -105,7 +105,7 @@ void PHPEntityNamespace::DoEnsureNamespacePathExists(wxSQLite3Database& db, cons
             // SetDbId(db.GetLastRowId());
         }
 
-    } catch(wxSQLite3Exception& exc) {
+    } catch (const wxSQLite3Exception& exc) {
         wxUnusedVar(exc);
     }
 }

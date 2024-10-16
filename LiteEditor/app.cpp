@@ -864,7 +864,7 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& m_parser)
                 client.WriteMessage(json.toElement().format());
                 return false;
 
-            } catch (clSocketException& e) {
+            } catch (const clSocketException& e) {
                 clERROR() << "Failed to send single instance request" << e.what() << endl;
             }
         }

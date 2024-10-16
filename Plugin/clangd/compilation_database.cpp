@@ -134,7 +134,7 @@ void CompilationDatabase::CompilationLine(const wxString& filename, wxString& co
             }
         }
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }
@@ -147,7 +147,7 @@ void CompilationDatabase::Close()
             m_db->Close();
             delete m_db;
 
-        } catch(wxSQLite3Exception& e) {
+        } catch (const wxSQLite3Exception& e) {
             wxUnusedVar(e);
         }
     }
@@ -206,7 +206,7 @@ void CompilationDatabase::CreateDatabase()
                    << "')";
         m_db->ExecuteUpdate(versionSql);
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }
@@ -222,7 +222,7 @@ void CompilationDatabase::DropTables()
         m_db->ExecuteUpdate("DROP TABLE COMPILATION_TABLE");
         m_db->ExecuteUpdate("DROP TABLE SCHEMA_VERSION");
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }
@@ -245,7 +245,7 @@ wxString CompilationDatabase::GetDbVersion()
             return schemaVersion;
         }
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
     return wxT("");
@@ -266,7 +266,7 @@ bool CompilationDatabase::IsDbVersionUpToDate(const wxFileName& fn)
         }
         return false;
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
     return false;
@@ -363,7 +363,7 @@ void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& comp
 
         m_db->ExecuteUpdate("COMMIT");
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }

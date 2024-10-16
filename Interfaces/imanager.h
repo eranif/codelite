@@ -615,7 +615,7 @@ public:
      * @brief return list of all open editors in the main notebook.
      * This function returns only instances of IEditor (i.e. a file text editor)
      */
-    virtual size_t GetAllEditors(IEditor::List_t& editors, bool inOrder = false) = 0;
+    virtual size_t GetAllEditors(IEditor::List_t& editors) = 0;
 
     /**
      * @brief return list of open tabs in the main notebook. If you need only editors, use GetAllEditors

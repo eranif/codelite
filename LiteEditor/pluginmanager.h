@@ -157,7 +157,7 @@ public:
     ProjectPtr GetSelectedProject() const override;
     void RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files) override;
     IEditor* FindEditor(const wxString& filename) const override;
-    size_t GetAllEditors(IEditor::List_t& editors, bool inOrder = false) override;
+    size_t GetAllEditors(IEditor::List_t& editors) override;
     size_t GetAllTabs(clTab::Vec_t& tabs) override;
     size_t GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints) override;
     clDebuggerBreakpoint CreateBreakpoint(const wxString& filepath, int line_number) override;

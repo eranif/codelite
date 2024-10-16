@@ -64,13 +64,6 @@ private:
     std::unordered_map<wxString, CallbackVec_t> m_callbacksTable;
     bool m_initDone = false;
 
-public:
-    enum {
-        kGetAll_Default = 0,                       // Default
-        kGetAll_IncludeDetached = kGetAll_Default, // for backward compatability, keep this symbol
-        kGetAll_RetainOrder = (1 << 0),            // Order must be kept
-    };
-
 private:
     FilesModifiedDlg* GetFilesModifiedDlg();
     void DoShowTabLabelContextMenu();
@@ -186,9 +179,8 @@ public:
     clEditor* GetActiveEditor();
     /**
      * @brief return vector of all editors in the notebook. This function only returns instances of type clEditor
-     * @param flags kGetAll_*
      */
-    clEditor::Vec_t GetAllEditors(size_t flags);
+    clEditor::Vec_t GetAllEditors();
     /**
      * @brief return vector of all tabs in the notebook
      * @param tabs [output]

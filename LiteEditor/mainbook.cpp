@@ -415,7 +415,7 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
 #endif
 }
 
-clEditor::Vec_t MainBook::GetAllEditors(size_t flags)
+clEditor::Vec_t MainBook::GetAllEditors()
 {
     clEditor::Vec_t editors;
     editors.reserve(m_book->GetPageCount());
@@ -785,7 +785,7 @@ bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName, bool>>& files, 
 bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 {
     // turn the 'saving all' flag on so we could 'Veto' all focus events
-    clEditor::Vec_t editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    clEditor::Vec_t editors = GetAllEditors();
 
     std::vector<std::pair<wxFileName, bool>> files;
     size_t n = 0;
@@ -829,7 +829,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
         return;
     }
 
-    clEditor::Vec_t editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    clEditor::Vec_t editors = GetAllEditors();
 
     time_t workspaceModifiedTimeBefore = clCxxWorkspaceST::Get()->GetFileLastModifiedTime();
 
@@ -892,7 +892,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
     }
 
     // See issue: https://github.com/eranif/codelite/issues/663
-    clEditor::Vec_t editorsAgain = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    clEditor::Vec_t editorsAgain = GetAllEditors();
 
     // Make sure that the tabs that we have opened
     // are still available in the main book
@@ -941,7 +941,7 @@ bool MainBook::CloseAllButThis(wxWindow* page)
     wxBusyCursor bc;
     wxWindowUpdateLocker locker{ m_book };
 
-    clEditor::Vec_t editors = GetAllEditors(kGetAll_IncludeDetached);
+    clEditor::Vec_t editors = GetAllEditors();
 
     std::vector<std::pair<wxFileName, bool>> files;
     std::unordered_map<wxString, clEditor*> M;
@@ -982,7 +982,7 @@ bool MainBook::CloseAll(bool cancellable)
     wxBusyCursor bc;
     clWindowUpdateLocker locker{ m_book };
 
-    clEditor::Vec_t editors = GetAllEditors(kGetAll_IncludeDetached);
+    clEditor::Vec_t editors = GetAllEditors();
 
     // filter list of editors for any that need to be saved
     std::vector<std::pair<wxFileName, bool>> files;
@@ -1058,7 +1058,7 @@ void MainBook::SetPageTitle(wxWindow* page, const wxString& name)
 void MainBook::ApplySettingsChanges()
 {
     DoUpdateEditorsThemes();
-    clEditor::Vec_t allEditors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    clEditor::Vec_t allEditors = GetAllEditors();
     for (auto editor : allEditors) {
         editor->UpdateOptions();
     }
@@ -1077,7 +1077,7 @@ void MainBook::ApplyTabLabelChanges()
         EditorConfigST::Get()->GetOptions()->IsTabShowPath() != (bool)previousShowParentPath) {
         previousShowParentPath = EditorConfigST::Get()->GetOptions()->IsTabShowPath();
 
-        std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+        std::vector<clEditor*> editors = GetAllEditors();
         for (size_t i = 0; i < editors.size(); i++) {
             SetPageTitle(editors[i], editors[i]->GetFileName(), editors[i]->IsEditorModified());
         }
@@ -1086,7 +1086,7 @@ void MainBook::ApplyTabLabelChanges()
 
 void MainBook::UnHighlightAll()
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UnHighlightAll();
     }
@@ -1094,7 +1094,7 @@ void MainBook::UnHighlightAll()
 
 void MainBook::DelAllBreakpointMarkers()
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->DelAllBreakpointMarkers();
     }
@@ -1102,7 +1102,7 @@ void MainBook::DelAllBreakpointMarkers()
 
 void MainBook::SetViewEOL(bool visible)
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetViewEOL(visible);
     }
@@ -1110,7 +1110,7 @@ void MainBook::SetViewEOL(bool visible)
 
 void MainBook::HighlightWord(bool hl)
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->HighlightWord(hl);
     }
@@ -1118,7 +1118,7 @@ void MainBook::HighlightWord(bool hl)
 
 void MainBook::ShowWhitespace(int ws)
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetViewWhiteSpace(ws);
     }
@@ -1126,7 +1126,7 @@ void MainBook::ShowWhitespace(int ws)
 
 void MainBook::UpdateColours()
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UpdateColours();
     }
@@ -1134,7 +1134,7 @@ void MainBook::UpdateColours()
 
 void MainBook::UpdateBreakpoints()
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UpdateBreakpoints();
     }
@@ -1215,7 +1215,7 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
     }
 
     // Cancel any tooltip
-    clEditor::Vec_t editors = GetAllEditors(MainBook::kGetAll_IncludeDetached);
+    clEditor::Vec_t editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); ++i) {
         // Cancel any calltip when switching from the editor
         editors.at(i)->DoCancelCalltip();
@@ -1271,7 +1271,7 @@ void MainBook::OnPageChanging(wxBookCtrlEvent& e)
 
 void MainBook::SetViewWordWrap(bool b)
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_Default);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetWrapMode(b ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
     }
@@ -1335,7 +1335,7 @@ FilesModifiedDlg* MainBook::GetFilesModifiedDlg()
 
 void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
 {
-    std::vector<clEditor*> editors = GetAllEditors(kGetAll_RetainOrder);
+    std::vector<clEditor*> editors = GetAllEditors();
 
     // Remove editors which belong to the SFTP
     std::vector<clEditor*> editorsTmp;
@@ -1543,7 +1543,7 @@ void MainBook::OnColoursAndFontsChanged(clCommandEvent& e)
 
 void MainBook::DoUpdateEditorsThemes()
 {
-    std::vector<clEditor*> editors = GetAllEditors(MainBook::kGetAll_Default);
+    std::vector<clEditor*> editors = GetAllEditors();
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
     }

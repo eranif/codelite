@@ -148,7 +148,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 break;
             }
             }
-        } catch (clException& e) {
+        } catch (const clException& e) {
 
             msg.Clear();
             msg << "SFTP error: " << e.What();
@@ -198,7 +198,7 @@ void SFTPWorkerThread::DoConnect(SFTPThreadRequet* req)
         msg << "Successfully connected to " << accountName;
         DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
 
-    } catch (clException& e) {
+    } catch (const clException& e) {
         wxString msg;
         msg << "Connect error. " << e.What();
         DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_ERROR);

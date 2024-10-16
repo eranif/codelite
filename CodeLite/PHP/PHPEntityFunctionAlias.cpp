@@ -38,7 +38,7 @@ void PHPEntityFunctionAlias::Store(PHPLookupTable* lookup)
         statement.ExecuteUpdate();
         SetDbId(db.GetLastRowId());
 
-    } catch(wxSQLite3Exception& exc) {
+    } catch (const wxSQLite3Exception& exc) {
         clWARNING() << "PHPEntityFunctionAlias::Store:" << exc.GetMessage() << endl;
     }
 }

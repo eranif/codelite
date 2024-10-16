@@ -360,14 +360,14 @@ void WriteStructurePage::OnBtnWriteClick(wxCommandEvent& event)
             commited = true;
         }
 
-    } catch(DatabaseLayerException& e) {
+    } catch (const DatabaseLayerException& e) {
         if(pDbLayer) {
             pDbLayer->RollBack();
             pDbLayer->Close();
         }
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
         m_txLog->SetValue(errorMessage);
-    } catch(...) {
+    } catch (...) {
         if(pDbLayer) {
             pDbLayer->RollBack();
             pDbLayer->Close();
@@ -480,7 +480,7 @@ void RestorePage::OnBtnRestoreClick(wxCommandEvent& event)
         }
         pDbLayer->Commit();
         pDbLayer->Close();
-    } catch(DatabaseLayerException& e) {
+    } catch (const DatabaseLayerException& e) {
         if(pDbLayer) {
             pDbLayer->RollBack();
             pDbLayer->Close();
@@ -491,7 +491,7 @@ void RestorePage::OnBtnRestoreClick(wxCommandEvent& event)
         AppendComment(errorMessage);
         wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
-    } catch(...) {
+    } catch (...) {
         if(pDbLayer) {
             pDbLayer->RollBack();
             pDbLayer->Close();

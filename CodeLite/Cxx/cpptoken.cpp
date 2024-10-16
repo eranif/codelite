@@ -61,7 +61,7 @@ int CppToken::store(wxSQLite3Database* db, wxLongLong fileID) const
         st.ExecuteUpdate();
         return db->GetLastRowId().ToLong();
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
     return wxNOT_FOUND;
@@ -80,7 +80,7 @@ CppToken::Vec_t CppToken::loadByNameAndFile(wxSQLite3Database* db, const wxStrin
             matches.push_back(token);
         }
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
     return matches;
@@ -120,7 +120,7 @@ CppToken::Vec_t CppToken::loadByName(wxSQLite3Database* db, const wxString& name
             matches.push_back(token);
         }
 
-    } catch(wxSQLite3Exception& e) {
+    } catch (const wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
     return matches;

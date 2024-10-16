@@ -47,7 +47,7 @@ bool alacritty_read_colour(const YAML::Node& node, const std::string& prop_name,
             *value = str;
             return true;
         }
-    } catch (YAML::Exception& e) {
+    } catch (const YAML::Exception& e) {
         clDEBUG() << "exception thrown while searching for node[" << prop_name << "]." << e.msg << endl;
     } catch (...) {
         clDEBUG() << "exception thrown while searching for node[" << prop_name << "]" << endl;
@@ -435,7 +435,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeYAML(const wxFileName& t
     YAML::Node config;
     try {
         config = YAML::LoadFile(filename);
-    } catch (YAML::Exception& e) {
+    } catch (const YAML::Exception& e) {
         clERROR() << "failed loading file:" << filename << "." << e.msg << endl;
         return nullptr;
     } catch (...) {

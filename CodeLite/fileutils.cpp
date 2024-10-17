@@ -24,8 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "fileutils.h"
-
 #include "AsyncProcess/asyncprocess.h"
 #include "Console/clConsoleBase.h"
 #include "StringUtils.h"
@@ -33,6 +31,7 @@
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "macros.h"
 #include "procutils.h"
 #include "wxStringHash.h"
@@ -312,7 +311,6 @@ static void SplitMask(const wxString& maskString, wxArrayString& includeMask, wx
 
 bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
 {
-
     wxArrayString incMasks;
     wxArrayString excMasks;
     SplitMask(mask, incMasks, excMasks);
@@ -327,7 +325,7 @@ bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
     for (size_t i = 0; i < excMasks.size(); ++i) {
         const wxString& pattern = excMasks.Item(i);
         if ((!pattern.Contains("*") && lcFilename == pattern) ||
-            (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+            (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename, false))) {
             // use exact match
             return false;
         }
@@ -336,7 +334,7 @@ bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
     for (size_t i = 0; i < incMasks.size(); ++i) {
         const wxString& pattern = incMasks.Item(i);
         if ((!pattern.Contains("*") && lcFilename == pattern) ||
-            (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+            (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename, false))) {
             // use exact match
             return true;
         }
@@ -457,7 +455,7 @@ bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
     for (size_t i = 0; i < masks.size(); ++i) {
         const wxString& pattern = masks.Item(i);
         if ((!pattern.Contains("*") && filename == pattern) ||
-            (pattern.Contains("*") && ::wxMatchWild(pattern, filename))) {
+            (pattern.Contains("*") && ::wxMatchWild(pattern, filename, false))) {
             // use exact match
             return true;
         }

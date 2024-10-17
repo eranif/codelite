@@ -49,7 +49,7 @@ ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexe
     wxString lex_name = lexerName;
     lex_name.MakeLower();
     auto iter = m_contextPool.find(lex_name);
-    if(iter == m_contextPool.end()) {
+    if (iter == m_contextPool.end()) {
         return ContextBasePtr(m_contextPool["text"]->NewInstance(parent));
     }
 
@@ -59,7 +59,7 @@ ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexe
 ContextBasePtr ContextManager::NewContextByFileName(clEditor* parent, const wxFileName& fileName)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(fileName.GetFullPath());
-    if(!lexer) {
+    if (!lexer) {
         // could not locate a lexer for this file name, return the default text lexer
         return ContextManager::Get()->NewContext(parent, wxT("Text"));
     }
@@ -82,14 +82,14 @@ void ContextManager::Initialize()
 
     // load generic lexers
     wxArrayString names = ColoursAndFontsManager::Get().GetAllLexersNames();
-    for(const auto& name : names) {
-        if(m_contextPool.count(name) == 0) {
+    for (const auto& name : names) {
+        if (m_contextPool.count(name) == 0) {
             m_contextPool.insert({ name, std::make_shared<ContextGeneric>(name) });
         }
     }
 
     // make sure there is a "fallback" lexer for unrecognized file types
-    if(m_contextPool.find("text") == m_contextPool.end()) {
+    if (m_contextPool.find("text") == m_contextPool.end()) {
         m_contextPool[wxT("text")] = std::make_shared<ContextGeneric>(wxT("text"));
     }
 }

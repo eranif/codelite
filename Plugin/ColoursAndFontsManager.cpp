@@ -434,8 +434,18 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     // try and find a match for the current theme
     const wxString& theme_name = GetGlobalTheme();
 
-    // Scan the list of lexers, locate the active lexer for it and return it
+    // Get list of all lexers - without the "text" lexer
+    ColoursAndFontsManager::Vec_t allLexersNoText;
+    allLexersNoText.reserve(m_allLexers.size());
+
     for (auto lexer : m_allLexers) {
+        if (lexer->GetName() != "text") {
+            allLexersNoText.push_back(lexer);
+        }
+    }
+
+    // Scan the list of lexers, locate the active lexer for it and return it
+    for (auto lexer : allLexersNoText) {
         wxString fileMask = lexer->GetFileSpec();
         if (FileUtils::WildMatch(fileMask, filename)) {
             if (lexer->IsActive()) {

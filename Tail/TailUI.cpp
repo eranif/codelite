@@ -9,12 +9,24 @@
 // Declare the bitmap loading function
 extern void wxCB60EInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB60EInitBitmapResources();
@@ -69,7 +81,9 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     SetName(wxT("TailPanelBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
 }
 
 TailPanelBase::~TailPanelBase() {}
@@ -78,51 +92,33 @@ TailFrameBase::TailFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
                              const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB60EInitBitmapResources();
         bBitmapLoaded = true;
     }
-    // Set icon(s) to the application/dialog
-    wxIconBundle app_icons;
-    {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-find"));
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-    {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-find@2x"));
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-    SetIcons(app_icons);
 
     wxBoxSizer* boxSizer37 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer37);
 
     SetName(wxT("TailFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TailFrameBase::OnClose), NULL, this);
+    this->Bind(wxEVT_CLOSE_WINDOW, &TailFrameBase::OnClose, this);
 }
 
-TailFrameBase::~TailFrameBase()
-{
-    this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TailFrameBase::OnClose), NULL, this);
-}
+TailFrameBase::~TailFrameBase() { this->Unbind(wxEVT_CLOSE_WINDOW, &TailFrameBase::OnClose, this); }

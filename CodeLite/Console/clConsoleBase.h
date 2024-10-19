@@ -49,13 +49,8 @@ protected:
     wxString m_callbackUID;
 
 protected:
-    /**
-     * @brief create an environment list to be used before we execute our terminal
-     */
-    wxString GetEnvironmentPrefix() const;
 
     wxString WrapWithQuotesIfNeeded(const wxString& s) const;
-    wxString EscapeString(const wxString& str, const wxString& c = "\"") const;
     virtual bool StartProcess(const wxString& command);
     void MacAddArgsIfNeeded(wxString* outcmd);
 
@@ -79,11 +74,6 @@ public:
      * @brief split command line arguments taking double quotes and escaping into account
      */
     static wxArrayString SplitArguments(const wxString& args);
-
-    /**
-     * @brief add an environment variable to be applied before we start the terminal
-     */
-    void AddEnvVariable(const wxString& name, const wxString& value);
 
     /**
      * @brief start terminal with a given command and an optional working directory

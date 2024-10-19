@@ -95,8 +95,6 @@ protected:
     void SelectFirstConfiguration();
 
 public:
-    void RenameProject(const wxString& oldname, const wxString& newname);
-
     BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration);
     virtual ~BuildMatrix();
     wxXmlNode* ToXml() const;

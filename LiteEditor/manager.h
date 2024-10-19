@@ -309,19 +309,9 @@ public:
     void GetWorkspaceFiles(wxArrayString& files);
 
     /**
-     * @brief return list of files in a form of std::set
-     */
-    void GetWorkspaceFiles(std::set<wxString>& files);
-
-    /**
      * return list of files that are part of the workspace
      */
     void GetWorkspaceFiles(std::vector<wxFileName>& files, bool absPath = false);
-
-    /**
-     * Search for (non-absolute) file in the workspace
-     */
-    wxFileName FindFile(const wxString& fileName, const wxString& project = wxEmptyString);
 
     /**
      * retag workspace
@@ -339,9 +329,6 @@ public:
      * @param filename
      */
     void UpdatePreprocessorFile(clEditor* editor);
-
-protected:
-    wxFileName FindFile(const wxArrayString& files, const wxFileName& fn);
 
     //--------------------------- Project Files Mgmt -----------------------------
 public:

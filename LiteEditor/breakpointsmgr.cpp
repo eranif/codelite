@@ -808,23 +808,6 @@ void BreakptMgr::BreakpointHit(double id)
 
 /*------------------------------- Implementation -------------------------------*/
 
-// Construct set of files containing bps
-std::set<wxString> BreakptMgr::GetFilesWithBreakpointMarkers()
-{
-    // Make a set of all filenames containing a file-relevant variety of breakpoint
-    std::set<wxString> filenames;
-    std::vector<clDebuggerBreakpoint>::iterator iter = m_bps.begin();
-    for (; iter != m_bps.end(); ++iter) {
-        // If this bp is a lineno or function type, add its file to the set
-        wxString fileName = iter->file;
-        if ((!fileName.IsEmpty()) && (iter->memory_address.IsEmpty())) {
-            filenames.insert(fileName);
-        }
-    }
-
-    return filenames;
-}
-
 int BreakptMgr::FindBreakpointById(double id, const std::vector<clDebuggerBreakpoint>& li)
 {
     std::vector<clDebuggerBreakpoint>::const_iterator iter = li.begin();

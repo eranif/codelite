@@ -133,8 +133,6 @@ void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
     }
 }
 
-bool PerspectiveManager::IsDefaultActive() const { return GetActive().CmpNoCase(NORMAL_LAYOUT) == 0; }
-
 void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
 {
     bool needUpdate = false;

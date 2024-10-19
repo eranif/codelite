@@ -369,8 +369,6 @@ private:
                 long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU |
                              wxRESIZE_BORDER | wxCLIP_CHILDREN);
     void AddKeyboardAccelerators();
-    wxString CreateWorkspaceTable();
-    wxString CreateFilesTable();
     void StartTimer();
 
 private:
@@ -411,8 +409,6 @@ private:
     void CreateRecentlyOpenedFilesMenu();
     void CreateWelcomePage();
     bool ReloadExternallyModifiedProjectFiles();
-    void DoEnableWorkspaceViewFlag(bool enable, int flag);
-    bool IsWorkspaceViewFlagEnabled(int flag);
     /**
      * @brief show the startup wizard
      * @return true if a restart is needed
@@ -614,7 +610,6 @@ protected:
     void OnCloseAllButThis(wxCommandEvent& e);
     void OnCloseTabsToTheRight(wxCommandEvent& e);
     void OnWorkspaceMenuUI(wxUpdateUIEvent& e);
-    void OnUpdateBuildRefactorIndexBar(wxCommandEvent& e);
     void OnBuildWorkspace(wxCommandEvent& e);
     void OnBuildWorkspaceUI(wxUpdateUIEvent& e);
     void OnCleanWorkspace(wxCommandEvent& e);
@@ -666,10 +661,6 @@ protected:
     void OnSetActivePoject(wxCommandEvent& e);
     void OnSetActivePojectUI(wxUpdateUIEvent& e);
 
-    // Clang
-    void OnPchCacheStarted(wxCommandEvent& e);
-    void OnPchCacheEnded(wxCommandEvent& e);
-
     void OnMainToolBarHide(wxCommandEvent& event);
     void OnMainToolBarHideUI(wxUpdateUIEvent& event);
     void OnMainToolBarPlaceTop(wxCommandEvent& event);
@@ -686,7 +677,6 @@ protected:
     void OnActiveEditorChanged(wxCommandEvent& e);
     void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
-    void OnRefactoringCacheStatus(wxCommandEvent& e);
     void OnChangeActiveBookmarkType(wxCommandEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
     void OnEditMenuOpened(wxMenuEvent& e);
@@ -695,8 +685,7 @@ protected:
     // Search handlers
     void OnFindSelection(wxCommandEvent& event);
     void OnFindSelectionPrev(wxCommandEvent& event);
-    void OnFindWordAtCaret(wxCommandEvent& event);
-    void OnFindWordAtCaretPrev(wxCommandEvent& event);
+
     DECLARE_EVENT_TABLE()
 };
 

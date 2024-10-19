@@ -338,7 +338,6 @@ public:
      * @brief are the CC annotations visible?
      */
     bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
-    void ClearCCAnnotations();
 
     void SetEditorBitmap(int editorBitmap) { this->m_editorBitmap = editorBitmap; }
     int GetEditorBitmap() const { return m_editorBitmap; }
@@ -464,10 +463,6 @@ public:
 
     // User clicked Ctrl+.
     void GotoDefinition();
-    /**
-     * find declaration file for the current expression
-     */
-    void FindDeclarationFile();
 
     // return the EOL according to the content
     int GetEOLByContent();
@@ -541,11 +536,6 @@ public:
 
     // Bookmark API
     //-----------------------------------------
-    /**
-     * @brief return true if this editor has at least one compiler
-     * marker (warning or error)
-     */
-    bool HasCompilerMarkers();
 
     /**
      * @brief center the line in the editor
@@ -883,13 +873,6 @@ public:
     void UpdateColours();
 
     /**
-     * @brief display completion box. This function also moves the completion box to the current position
-     * @param tags list of tags to work with
-     * @param word part of the word
-     */
-    void ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word);
-
-    /**
      * @brief return true if the completion box is visible
      */
     bool IsCompletionBoxShown() override;
@@ -919,14 +902,6 @@ public:
      *--------------------------------------------------
      */
     wxStyledTextCtrl* GetCtrl() override { return static_cast<wxStyledTextCtrl*>(this); }
-
-    /**
-     * @brief set a code completion annotation at the given line. code completion
-     * annotations are automatically cleared on the next char added
-     * @param text
-     * @param lineno
-     */
-    void SetCodeCompletionAnnotation(const wxString& text, int lineno) override;
 
     wxString GetEditorText() override { return GetText(); }
     size_t GetEditorTextRaw(std::string& text) override;
@@ -1097,11 +1072,6 @@ public:
     void OnFindInFiles();
 
     /**
-     * @brief paste the clipboard content one line above the caret position
-     */
-    void PasteLineAbove();
-
-    /**
      * @brief update editor options based on the global + workspace settings
      */
     void UpdateOptions();
@@ -1170,7 +1140,6 @@ private:
     size_t SearchFlags(const FindReplaceData& data);
 
     void AddDebuggerContextMenu(wxMenu* menu);
-    void RemoveDebuggerContextMenu(wxMenu* menu);
     void DoBreakptContextMenu(wxPoint clientPt);
     void DoMarkHyperlink(wxMouseEvent& event, bool isMiddle);
     void DoQuickJump(wxMouseEvent& event, bool isMiddle);

@@ -161,7 +161,6 @@ protected:
     int DoReplace(const TargetRange& range = {});
 
     void DoSetCaretAtEndOfText();
-    void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();
     void DoSelectAll();
     TargetRange::Vec_t DoFindAll(const TargetRange& target);
@@ -199,7 +198,7 @@ protected:
 public:
     QuickFindBar(wxWindow* parent, wxWindowID id = wxID_ANY);
     virtual ~QuickFindBar();
-    int GetCloseButtonId();
+
     bool ShowForPlugins();
     bool Show(bool s = true);
     bool Show(const wxString& findWhat, bool showReplace);

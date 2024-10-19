@@ -161,18 +161,6 @@ public:
     LexerConf::Ptr_t GetLexerForFile(const wxString& filename);
 
     /**
-     * Get the outputview's foreground colour, which is global to a theme
-     * \return the colour as a wxString
-     */
-    wxString GetCurrentOutputviewFgColour() const;
-
-    /**
-     * Get the outputview's background colour, which is global to a theme
-     * \return the colour as a wxString
-     */
-    wxString GetCurrentOutputviewBgColour() const;
-
-    /**
      * Test if this configuration is loaded properly
      * \return true of a file is loaded into the configuration manager false otherwise
      */
@@ -188,18 +176,6 @@ public:
      * Set options to the configuration file, override them if they does not exist
      */
     void SetOptions(OptionsConfigPtr opts);
-
-    /**
-     * Return the database that should be used by the editor
-     * \return
-     */
-    wxString GetTagsDatabase() const;
-
-    /**
-     * Set tags database to be use by editor (in addition to the workspace one)
-     * \param &dbName
-     */
-    void SetTagsDatabase(const wxString& dbName);
 
     /**
      * save lexers settings
@@ -234,15 +210,6 @@ public:
      */
     virtual bool ReadObject(const wxString& name, SerializedObject* obj);
 
-    /**
-     * Return the configuration version
-     */
-    wxString GetRevision() const;
-
-    /**
-     * Set the current configuration revision
-     */
-    void SetRevision(const wxString& rev);
     void SetInstallDir(const wxString& instlDir);
 
     /**
@@ -292,7 +259,6 @@ public:
 private:
     EditorConfig();
     virtual ~EditorConfig();
-    wxXmlNode* GetLexerNode(const wxString& lexer);
 };
 
 class WXDLLIMPEXP_SDK EditorConfigST

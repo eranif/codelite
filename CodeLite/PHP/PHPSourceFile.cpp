@@ -586,21 +586,6 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
     }
 }
 
-void PHPSourceFile::PrintStdout()
-{
-    // print the alias table
-    wxPrintf("Alias table:\n");
-    wxPrintf("===========\n");
-    std::map<wxString, wxString>::iterator iter = m_aliases.begin();
-    for(; iter != m_aliases.end(); ++iter) {
-        wxPrintf("%s => %s\n", iter->first, iter->second);
-    }
-    wxPrintf("===========\n");
-    if(m_scopes.empty())
-        return;
-    m_scopes.front()->PrintStdout(0);
-}
-
 bool PHPSourceFile::ReadUntilFound(int delim, phpLexerToken& token)
 {
     // loop until we find the open brace
@@ -698,27 +683,6 @@ PHPEntityBase::Ptr_t PHPSourceFile::Namespace()
         return CurrentScope();
     }
     return *m_scopes.begin();
-}
-
-wxString PHPSourceFile::LookBackForTypeHint()
-{
-    if(m_lookBackTokens.empty())
-        return wxEmptyString;
-    wxArrayString tokens;
-
-    for(int i = (int)m_lookBackTokens.size() - 1; i >= 0; --i) {
-        if(m_lookBackTokens.at(i).type == kPHP_T_IDENTIFIER || m_lookBackTokens.at(i).type == kPHP_T_NS_SEPARATOR) {
-            tokens.Insert(m_lookBackTokens.at(i).Text(), 0);
-        } else {
-            break;
-        }
-    }
-
-    wxString type;
-    for(size_t i = 0; i < tokens.GetCount(); ++i) {
-        type << tokens.Item(i);
-    }
-    return type;
 }
 
 void PHPSourceFile::PhaseTwo()
@@ -858,36 +822,6 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
             break;
         }
     }
-}
-
-bool PHPSourceFile::ReadCommaSeparatedIdentifiers(int delim, wxArrayString& list)
-{
-    phpLexerToken token;
-    wxString temp;
-    while(NextToken(token)) {
-        if(token.IsAnyComment())
-            continue;
-        if(token.type == delim) {
-            if(!temp.IsEmpty() && list.Index(temp) == wxNOT_FOUND) {
-                list.Add(MakeIdentifierAbsolute(temp));
-            }
-            UngetToken(token);
-            return true;
-        }
-
-        switch(token.type) {
-        case ',':
-            if(list.Index(temp) == wxNOT_FOUND) {
-                list.Add(MakeIdentifierAbsolute(temp));
-            }
-            temp.clear();
-            break;
-        default:
-            temp << token.Text();
-            break;
-        }
-    }
-    return false;
 }
 
 bool PHPSourceFile::ConsumeUntil(int delim)

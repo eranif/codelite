@@ -469,8 +469,6 @@ void clPluginsFindBar::SetEditor(wxStyledTextCtrl* sci)
     }
 }
 
-int clPluginsFindBar::GetCloseButtonId() { return ID_TOOL_CLOSE; }
-
 bool clPluginsFindBar::Show(const wxString& findWhat, bool showReplace)
 {
     // Same as Show() but set the 'findWhat' field with findWhat

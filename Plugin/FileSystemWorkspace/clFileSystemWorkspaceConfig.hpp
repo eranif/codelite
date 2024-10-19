@@ -48,7 +48,6 @@ public:
      * local configuration file
      */
     std::pair<JSONItem, JSONItem> ToJSON() const;
-    void FromJSONOld(const JSONItem& json);
     void FromLocalJSON(const JSONItem& json);
     void FromSharedJSON(const JSONItem& json);
 
@@ -59,7 +58,6 @@ public:
     const wxString& GetExcludeFilesPattern() const { return m_excludeFilesPattern; }
     void SetBuildTargets(const std::map<wxString, wxString>& buildTargets) { this->m_buildTargets = buildTargets; }
     void SetCompileFlags(const wxArrayString& compileFlags) { this->m_compileFlags = compileFlags; }
-    void SetCompileFlags(const wxString& compileFlags);
     void SetFileExtensions(const wxString& fileExtensions) { this->m_fileExtensions = fileExtensions; }
     void SetFlags(size_t flags) { this->m_flags = flags; }
     void SetName(const wxString& name) { this->m_name = name; }
@@ -75,7 +73,6 @@ public:
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetEnvironment() const { return m_environment; }
     const wxString& GetExecutable() const { return m_executable; }
-    wxArrayString GetSearchPaths(const wxFileName& workspaceFile) const;
     bool IsRemoteEnabled() const { return m_flags & kEnableRemoteSync; }
     void SetRemoteEnabled(bool b)
     {
@@ -113,11 +110,6 @@ public:
     wxArrayString ExpandUserCompletionFlags(const wxString& workingDirectory, clBacktickCache::ptr_t backticks,
                                             bool withPrefix = false) const;
     wxArrayString GetCompilerOptions(clBacktickCache::ptr_t backticks) const;
-    /**
-     * @brief based on the workspace directory, return list of all folders that contain
-     * C/C++ header file
-     */
-    wxArrayString GetWorkspaceIncludes(bool withPrefix = false) const;
     void SetDebuggerCommands(const wxString& debuggerCommands) { this->m_debuggerCommands = debuggerCommands; }
     void SetDebuggerPath(const wxString& debuggerPath) { this->m_debuggerPath = debuggerPath; }
     const wxString& GetDebuggerCommands() const { return m_debuggerCommands; }

@@ -135,12 +135,3 @@ wxString clFileName::FromMSYS2(const wxString& fullpath)
     }
     return ProcUtils::SafeExecuteCommand(cygpath + " " + StringUtils::WrapWithDoubleQuotes(fullpath));
 }
-
-const wxString& clFileName::GetRemoteFullPath() const
-{
-    if(!IsRemote()) {
-        static wxString empty_path;
-        return empty_path;
-    }
-    return m_remotePath;
-}

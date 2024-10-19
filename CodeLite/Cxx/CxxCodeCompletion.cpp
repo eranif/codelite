@@ -709,13 +709,6 @@ const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const { return m_macros
 wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
 {
     return tag->GetTypename();
-    // wxString pattern = normalize_pattern(tag);
-    // wxString return_value = do_get_return_value(pattern, tag->GetName());
-    // if(return_value.empty()) {
-    //
-    //     return_value = do_get_return_value(pattern, tag->GetName());
-    // }
-    // return return_value;
 }
 
 namespace
@@ -753,112 +746,6 @@ void remove_template_instantiation(std::vector<std::pair<int, wxString>>& tokens
     }
 }
 } // namespace
-wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const wxString& name) const
-{
-    // parse the function and extract the return type
-    CxxTokenizer tokenizer;
-    CxxLexerToken token;
-    tokenizer.Reset(pattern);
-
-    // strip template definition if any
-    wxString definition;
-    read_template_definition(tokenizer, &definition);
-
-    // when to stop?
-    // when we find our function name
-    int depth = 0;
-    bool cont = true;
-    std::vector<std::pair<int, wxString>> tokens;
-    const wxString& function_name = name;
-    wxString peeked_token;
-    while(cont && tokenizer.NextToken(token)) {
-        wxString token_str = token.GetWXString();
-        switch(token.GetType()) {
-        case T_OPERATOR:
-            // operator method, we can stop now
-            cont = false;
-            break;
-        case T_IDENTIFIER:
-            if(depth == 0) {
-                if(token_str == function_name && tokenizer.PeekToken(peeked_token) == '(') {
-                    // found "foo("
-                    cont = false;
-                    break;
-                } else {
-                    tokens.push_back({ token.GetType(), token_str });
-                }
-            } else {
-                tokens.push_back({ token.GetType(), token_str });
-            }
-            break;
-        case '<':
-        case '[':
-        case '{':
-        case '(':
-            depth++;
-            tokens.push_back({ token.GetType(), token_str });
-            break;
-        case '>':
-        case ']':
-        case '}':
-        case ')':
-            depth--;
-            tokens.push_back({ token.GetType(), token_str });
-            break;
-        default:
-            tokens.push_back({ token.GetType(), token_str });
-            break;
-        }
-    }
-
-    if(tokens.empty()) {
-        return "";
-    }
-
-    // remove the scope tokens
-    // assume the signature looks like this:
-    //
-    //  ```
-    //  vector<string> foo::bar::baz::koo::kookoo::
-    //  ```
-    //
-    // check if the last token is T_DOUBLE_COLONS ->
-    // remove it and the next one after it
-    // another case:
-    //  ```
-    //  template<typename T> T* CLASS<T>::FUNC
-    //  ```
-    while(!tokens.empty()) {
-        if(tokens.back().first == T_DOUBLE_COLONS) {
-            tokens.pop_back();
-            // handle template instantiation e.g. `template<typename T> T* CLASS<T>::FUNC`
-            remove_template_instantiation(tokens);
-            if(!tokens.empty()) {
-                tokens.pop_back();
-            }
-        } else {
-            break;
-        }
-    }
-
-    // conver the array into string
-    wxString as_str;
-    int last_type = 0;
-    for(const auto& d : tokens) {
-        CxxLexerToken t;
-        t.SetType(d.first);
-        if(t.is_keyword() || t.is_builtin_type()) {
-            as_str << d.second << " ";
-        } else if(d.first == T_IDENTIFIER && last_type == T_IDENTIFIER) {
-            as_str << " " << d.second;
-        } else {
-            as_str << d.second;
-        }
-
-        last_type = d.first;
-    }
-    return as_str;
-}
 
 void CxxCodeCompletion::prepend_scope(std::vector<wxString>& scopes, const wxString& scope) const
 {
@@ -1009,12 +896,6 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
         }
     }
     return typedef_str.Trim();
-}
-
-size_t CxxCodeCompletion::get_local_tags(const wxString& filter, const wxStringSet_t& kinds,
-                                         std::vector<TagEntryPtr>& tags) const
-{
-    return 0;
 }
 
 std::vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
@@ -1728,54 +1609,6 @@ size_t CxxCodeCompletion::get_keywords_tags(const wxString& name, std::vector<Ta
     }
     return tags.size();
 }
-
-#define CHECK_EXPECTED(Token, ExpectedType)              \
-    if(Token.IsEOF() || Token.GetType() != ExpectedType) \
-        return false;
-
-bool CxxCodeCompletion::read_template_definition(CxxTokenizer& tokenizer, wxString* definition) const
-{
-    CxxLexerToken token;
-    tokenizer.NextToken(token);
-    if(token.GetType() != T_TEMPLATE || token.IsEOF()) {
-        tokenizer.UngetToken();
-        return false;
-    }
-
-    definition->clear();
-
-    // we are now expecting an open brace
-    tokenizer.NextToken(token);
-    CHECK_EXPECTED(token, '<');
-
-    int depth = 1;
-    while(tokenizer.NextToken(token)) {
-        if(token.is_keyword() || token.is_builtin_type()) {
-            definition->Append(" ");
-            definition->Append(token.GetWXString());
-            continue;
-        }
-        switch(token.GetType()) {
-        case '<':
-            depth++;
-            definition->Append(token.GetWXString());
-            break;
-        case '>':
-            depth--;
-            if(depth == 0) {
-                return true;
-            } else {
-                definition->Append(token.GetWXString());
-            }
-            break;
-        default:
-            definition->Append(token.GetWXString());
-            break;
-        }
-    }
-    return false;
-}
-#undef CHECK_EXPECTED
 
 size_t CxxCodeCompletion::get_class_constructors(TagEntryPtr tag, std::vector<TagEntryPtr>& tags)
 {

@@ -1945,18 +1945,6 @@ void clEditor::CodeComplete()
     EventNotifier::Get()->AddPendingEvent(evt);
 }
 
-void clEditor::FindDeclarationFile()
-{
-    // Let the plugins process this first
-    wxString word = GetWordAtCaret();
-    clCodeCompletionEvent event(wxEVT_CC_FIND_HEADER_FILE, GetId());
-    event.SetWord(word);
-    event.SetPosition(GetCurrentPosition());
-    event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-    event.SetFileName(CLRealPath(GetFileName().GetFullPath()));
-    EventNotifier::Get()->ProcessEvent(event);
-}
-
 void clEditor::GotoDefinition()
 {
     // Let the plugins process this first
@@ -2929,14 +2917,6 @@ void clEditor::DelAllMarkers(int which_type)
 
     // Notify about marker changes
     NotifyMarkerChanged();
-}
-
-bool clEditor::HasCompilerMarkers()
-{
-    // try to locate *any* compiler marker
-    int mask = mmt_compiler;
-    int nFoundLine = MarkerNext(0, mask);
-    return nFoundLine >= 0;
 }
 
 size_t clEditor::GetFindMarkers(std::vector<std::pair<int, wxString>>& bookmarksVector)
@@ -4228,29 +4208,6 @@ void clEditor::AddDebuggerContextMenu(wxMenu* menu)
     m_dynItems.push_back(item);
 }
 
-void clEditor::RemoveDebuggerContextMenu(wxMenu* menu)
-{
-    std::vector<wxMenuItem*>::iterator iter = m_dynItems.begin();
-
-    // disconnect all event handlers
-    for (; iter != m_dynItems.end(); iter++) {
-        Disconnect((*iter)->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnDbgCustomWatch),
-                   NULL, this);
-        menu->Remove(*iter);
-    }
-
-    wxMenuItem* item = menu->FindItem(XRCID("debugger_watches"));
-    while (item) {
-        if (item) {
-            menu->Destroy(item);
-        }
-        item = menu->FindItem(XRCID("debugger_watches"));
-    }
-
-    m_dynItems.clear();
-    m_customCmds.clear();
-}
-
 void clEditor::OnDbgAddWatch(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -4316,17 +4273,6 @@ void clEditor::OnDragEnd(wxStyledTextEvent& e)
     m_isDragging = false; // Turn on calltips again
 
     e.Skip();
-}
-
-void clEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word)
-{
-    if (tags.empty()) {
-        return;
-    }
-
-    // When using this method, use an automated refresh completion box
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(this, tags, wxCodeCompletionBox::kRefreshOnKeyType,
-                                                        wxNOT_FOUND);
 }
 
 int clEditor::GetCurrLineHeight()
@@ -5398,27 +5344,6 @@ void clEditor::OnHighlightWordChecked(wxCommandEvent& e)
 #endif
 }
 
-void clEditor::PasteLineAbove()
-{
-    // save the current column / line
-    int curpos = GetCurrentPos();
-    int col = GetColumn(curpos);
-    int line = GetCurrentLine();
-
-    int pasteLine = line;
-    if (pasteLine > 0) {
-        ++line;
-    }
-
-    int pastePos = PositionFromLine(pasteLine);
-    SetCaretAt(pastePos);
-    Paste();
-
-    // restore caret position
-    int newpos = FindColumn(line, col);
-    SetCaretAt(newpos);
-}
-
 void clEditor::OnKeyUp(wxKeyEvent& event)
 {
     event.Skip();
@@ -5836,14 +5761,6 @@ void clEditor::DoCancelCodeCompletionBox()
     // wxCodeCompletionBoxManager::Get().DestroyCCBox();
 }
 
-void clEditor::SetCodeCompletionAnnotation(const wxString& text, int lineno)
-{
-    AnnotationClearAll();
-    m_hasCCAnnotation = true;
-    AnnotationSetText(lineno, text);
-    AnnotationSetStyle(lineno, ANNOTATION_STYLE_CC_ERROR);
-}
-
 int clEditor::GetFirstSingleLineCommentPos(int from, int commentStyle)
 {
     int lineNu = LineFromPos(from);
@@ -6129,13 +6046,6 @@ void clEditor::OnMouseWheel(wxMouseEvent& event)
     } else if (IsCompletionBoxShown()) {
         event.Skip(false);
         // wxCodeCompletionBoxManager::Get().GetCCWindow()->DoMouseScroll(event);
-    }
-}
-
-void clEditor::ClearCCAnnotations()
-{
-    if (IsHasCCAnnotation()) {
-        AnnotationClearAll();
     }
 }
 

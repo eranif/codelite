@@ -25,6 +25,7 @@
 
 #include "imageexportdialog.h"
 
+#include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 
 ImageExportDialog::ImageExportDialog(wxWindow* parent)

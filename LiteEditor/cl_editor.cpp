@@ -1436,13 +1436,13 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     UpdateLineNumbers(false);
 
     // Get current position
-    long pos = GetCurrentPos();
+    long curpos = GetCurrentPos();
 
     // ignore << and >>
-    int charAfter = SafeGetChar(PositionAfter(pos));
-    int charBefore = SafeGetChar(PositionBefore(pos));
-    int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
-    int charCurrnt = SafeGetChar(pos);
+    int charAfter = SafeGetChar(PositionAfter(curpos));
+    int charBefore = SafeGetChar(PositionBefore(curpos));
+    int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(curpos)));
+    int charCurrnt = SafeGetChar(curpos);
 
     int selectionSize = std::abs(GetSelectionEnd() - GetSelectionStart());
     int mainSelectionPos = GetSelectionNCaret(GetMainSelection());
@@ -1455,25 +1455,50 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     }
 
     SetIndicatorCurrent(INDICATOR_MATCH);
-    IndicatorClearRange(0, pos);
+    IndicatorClearRange(0, curpos);
 
     int end = PositionFromLine(curLine + 1);
-    if (end >= pos && end < GetTextLength()) {
+    if (end >= curpos && end < GetTextLength()) {
         IndicatorClearRange(end, GetTextLength() - end);
     }
 
     // get the current position
-    if ((curLine != lastLine)) {
+    if (curLine != lastLine) {
         clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
         evtUpdateNavBar.SetLineNumber(curLine);
         evtUpdateNavBar.SetFileName(CLRealPath(GetFileName().GetFullPath()));
         EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
     }
 
+    if (curpos != m_lastUpdatePosition) {
+        // update the status bar
+        m_lastUpdatePosition = curpos;
+        wxString message;
+        int curLine = LineFromPosition(curpos);
+
+        if (m_statusBarFields & kShowLine) {
+            message << "Ln " << curLine + 1;
+        }
+        if (m_statusBarFields & kShowColumn) {
+            message << (!message.empty() ? ", " : "") << "Col " << GetColumn(curpos);
+        }
+        if (m_statusBarFields & kShowPosition) {
+            message << (!message.empty() ? ", " : "") << "Pos " << curpos;
+        }
+        if (m_statusBarFields & kShowLen) {
+            message << (!message.empty() ? ", " : "") << "Len " << GetLength();
+        }
+
+        if ((m_statusBarFields & kShowSelectedChars) && selectionSize) {
+            message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
+        }
+
+        // Always update the status bar with event, calling it directly causes performance degredation
+        m_mgr->GetStatusBar()->SetLinePosColumn(message);
+    }
+
     // let the context handle this as well
     m_context->OnSciUpdateUI(event);
-
-    // TODO:: mark the current line
 
     // Keep the current state
     m_editorState = EditorViewState::From(this);
@@ -6575,32 +6600,6 @@ void clEditor::OnIdle(wxIdleEvent& event)
         }
     }
 
-    wxString message;
-    int curLine = LineFromPosition(current_pos);
-
-    if (m_statusBarFields & kShowLine) {
-        message << "Ln " << curLine + 1;
-    }
-    if (m_statusBarFields & kShowColumn) {
-        message << (!message.empty() ? ", " : "") << "Col " << GetColumn(current_pos);
-    }
-    if (m_statusBarFields & kShowPosition) {
-        message << (!message.empty() ? ", " : "") << "Pos " << current_pos;
-    }
-    if (m_statusBarFields & kShowLen) {
-        message << (!message.empty() ? ", " : "") << "Len " << GetLength();
-    }
-
-    if ((m_statusBarFields & kShowSelectedChars) && selectionSize) {
-        message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
-    }
-
-    // Always update the status bar with event, calling it directly causes performance degredation
-    m_mgr->GetStatusBar()->SetLinePosColumn(message);
-
-#if defined(__WXGTK__)
-    m_mgr->GetStatusBar()->Refresh();
-#endif
     GetContext()->ProcessIdleActions();
 }
 

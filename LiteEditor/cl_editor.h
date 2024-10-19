@@ -313,6 +313,8 @@ protected:
 
     // track the position between Idle event calls
     long m_lastIdlePosition = wxNOT_FOUND;
+    // track the position between OnSciUpdateUI calls
+    long m_lastUpdatePosition = wxNOT_FOUND;
     uint64_t m_lastIdleEvent = 0;
     BuildTabSettingsData m_buildOptions;
 

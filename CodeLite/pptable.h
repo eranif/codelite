@@ -97,8 +97,6 @@ struct WXDLLIMPEXP_CL PPToken {
     static bool readInitList(const wxString& in, int from, wxString& initList, wxArrayString& initListArr);
     static bool
     readInitList(const std::string& in, size_t from, std::string& initList, std::vector<std::string>& initListArr);
-    void squeeze();
-    wxString fullname() const;
 };
 
 class WXDLLIMPEXP_CL PPTable

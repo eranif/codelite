@@ -99,8 +99,6 @@ private:
     void StopProcess();
     void RestoreUI();
 
-    /// Place breakpoint markers for a given editor
-    void RefreshBreakpointsMarkersForEditor(IEditor* editor);
     wxString NormaliseReceivedPath(const wxString& path) const;
     void RegisterDebuggers();
     /**

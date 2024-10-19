@@ -152,16 +152,6 @@ const CMakeProjectSettings* CMakeSettingsManager::GetProjectSettings(const wxStr
 
 /* ************************************************************************ */
 
-bool CMakeSettingsManager::IsProjectEnabled(const wxString& project, const wxString& config) const
-{
-    // Get project settings
-    const CMakeProjectSettings* settings = GetProjectSettings(project, config);
-
-    return settings && settings->enabled;
-}
-
-/* ************************************************************************ */
-
 void CMakeSettingsManager::SaveProjects()
 {
     clCxxWorkspace* workspace = m_plugin->GetManager()->GetWorkspace();

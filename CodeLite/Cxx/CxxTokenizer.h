@@ -59,11 +59,6 @@ public:
     wxString GetVisibleScope(const wxString& inputString);
 
     /**
-     * @brief return true if the current scanner position is placed inside a PP section
-     */
-    bool IsInPreProcessorSection() const;
-
-    /**
      * @brief read until we find `type_1` or `type_2`. Return the string consumed. This function
      * consumes the delimiter found (`type_1` or `type_2`)
      * @param what_was_found return value

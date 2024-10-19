@@ -195,7 +195,6 @@ VIM_MODI VimCommand::get_current_modus() { return m_currentModus; }
 wxString VimCommand::getTmpBuf() { return m_tmpbuf; }
 
 /**
- * Getter for the number of action for the modifier command.
  * NOTE:
  * most of the commands in vi have the following abstract structure:
  * <repetition of command > + < base command > + [ <extra> ].
@@ -207,7 +206,6 @@ wxString VimCommand::getTmpBuf() { return m_tmpbuf; }
  * command >> 5d3w
  * means [5] times [d]elete [3] [w]ords
  */
-int VimCommand::getNumActions() { return m_actions; }
 
 void VimCommand::insert_modus(wxChar ch) { m_tmpbuf.Append(ch); }
 
@@ -1941,22 +1939,6 @@ bool VimCommand::is_space_following()
     return false;
 }
 
-/*FIXME start is right pos?
- * @return true is a space preciding or we reached the start of the file*/
-bool VimCommand::is_space_preceding(bool onlyWordChar, bool cross_line)
-{
-    long pos = m_ctrl->GetCurrentPos();
-    if(pos == 0)
-        return true;
-    long start = m_ctrl->WordStartPosition(pos, onlyWordChar);
-    if(m_ctrl->GetCharAt(start) == ' ')
-        return true;
-    if(cross_line && m_ctrl->GetCharAt(start) == '\n')
-        return true;
-
-    return false;
-}
-
 wxString VimCommand::add_following_spaces()
 {
     wxString white_spaces_buf;
@@ -1965,20 +1947,6 @@ wxString VimCommand::add_following_spaces()
     while(m_ctrl->GetCharAt(end) == ' ') {
         white_spaces_buf.Append(' ');
         end++;
-    }
-
-    return white_spaces_buf;
-}
-
-/*FIXME start is right pos*/
-wxString VimCommand::add_preceding_spaces()
-{
-    wxString white_spaces_buf;
-    long pos = m_ctrl->GetCurrentPos();
-    long start = m_ctrl->WordStartPosition(pos, true);
-    while(m_ctrl->GetCharAt(start) == ' ') {
-        white_spaces_buf.Append(' ');
-        start--;
     }
 
     return white_spaces_buf;
@@ -2990,8 +2958,6 @@ bool VimCommand::is_cmd_complete()
 }
 
 void VimCommand::set_current_modus(VIM_MODI modus) { m_currentModus = modus; }
-
-void VimCommand::append_command(wxChar ch) { m_tmpbuf.Append(ch); }
 
 bool VimCommand::repeat_last_cmd() { return m_repeatCommand; }
 

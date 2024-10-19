@@ -24,8 +24,6 @@ bool clBitset::test(size_t pos) const
     return bits[pos] == 1;
 }
 
-void clBitset::rese() { memset(bits, 0, sizeof(bits)); }
-
 wxString clBitset::to_string() const
 {
     wxString str;

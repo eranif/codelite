@@ -14,6 +14,7 @@ namespace
 std::once_flag cygpath_once;
 wxString cygpath; // contains path to cygpth or empty string if not found
 
+#ifdef __WXMSW__
 /// helper method:
 /// run `uname -s` command and cache the output
 const wxString& __uname()
@@ -39,6 +40,7 @@ const wxString& __uname()
     }
     return uname_output;
 }
+#endif
 
 bool is_cygwin_env()
 {

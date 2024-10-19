@@ -592,35 +592,10 @@ wxString Subversion2::GetSvnExeName()
     return exeName;
 }
 
-wxString Subversion2::DoGetFileExplorerFilesAsString()
-{
-    wxString s;
-    wxArrayString files = DoGetFileExplorerFiles();
-    for(size_t i = 0; i < files.GetCount(); i++) {
-        s << " \"" << files.Item(i) << "\" ";
-    }
-    return s;
-}
-
 wxArrayString Subversion2::DoGetFileExplorerFiles()
 {
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
     return item.m_paths;
-}
-
-wxString Subversion2::DoGetFileExplorerItemFullPath()
-{
-    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
-    wxString filename(item.m_fileName.GetFullPath());
-    filename.Trim().Trim(false);
-
-    if(filename.EndsWith("\\")) {
-        filename.RemoveLast();
-
-    } else if(filename.EndsWith("/")) {
-        filename.RemoveLast();
-    }
-    return filename;
 }
 
 wxString Subversion2::DoGetFileExplorerItemPath()
@@ -1137,39 +1112,6 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
         }
         GetConsole()->Execute(command, workingDirectory, new SvnCommitHandler(this, event.GetId(), this));
     }
-}
-
-wxArrayString Subversion2::DoGetFileExplorerFilesToCommitRelativeTo(const wxString& wd)
-{
-    wxArrayString files;
-    TreeItemInfo itemInfo = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
-    files.swap(itemInfo.m_paths);
-
-    for(size_t i = 0; i < files.GetCount(); i++) {
-        if(wxDir::Exists(files.Item(i))) {
-            // Get the list of modified files from the directory
-            wxArrayString modFiles = DoGetSvnStatusQuiet(files.Item(i));
-
-            for(size_t j = 0; j < modFiles.GetCount(); j++) {
-                wxFileName fn(modFiles.Item(j));
-                fn.MakeAbsolute(files.Item(i));
-                fn.MakeRelativeTo(wd);
-
-                if(files.Index(fn.GetFullPath()) == wxNOT_FOUND) {
-                    files.Add(fn.GetFullPath());
-                }
-            }
-
-        } else {
-            wxFileName fn(files.Item(i));
-            fn.MakeRelativeTo(wd);
-
-            if(files.Index(fn.GetFullPath()) == wxNOT_FOUND) {
-                files.Add(fn.GetFullPath());
-            }
-        }
-    }
-    return files;
 }
 
 wxArrayString Subversion2::DoGetSvnStatusQuiet(const wxString& wd)

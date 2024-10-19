@@ -711,42 +711,6 @@ wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
     return tag->GetTypename();
 }
 
-namespace
-{
-void remove_template_instantiation(std::vector<std::pair<int, wxString>>& tokens)
-{
-    bool is_template_inst = !tokens.empty() && tokens.back().first == '>';
-    if(!is_template_inst) {
-        return;
-    }
-
-    // remove the open angle bracket
-    tokens.pop_back();
-
-    int depth = 1;
-    bool cont = true;
-    while(cont && !tokens.empty()) {
-        int type = tokens.back().first;
-        switch(type) {
-        case '<':
-            depth--;
-            if(depth == 0) {
-                cont = false;
-            }
-            tokens.pop_back();
-            break;
-        case '>':
-            depth++;
-            tokens.pop_back();
-            break;
-        default:
-            tokens.pop_back();
-            break;
-        }
-    }
-}
-} // namespace
-
 void CxxCodeCompletion::prepend_scope(std::vector<wxString>& scopes, const wxString& scope) const
 {
     auto find_and_erase_cb = [&scopes](const wxString& scope_name) {

@@ -189,27 +189,6 @@ void clNodeJS::ProcessLintOutput(const wxFileName& fn, const wxString& output)
     }
 }
 
-bool clNodeJS::NpmSilentInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
-                                wxEvtHandler* sink, const wxString& uid)
-{
-    if(!IsInitialised()) {
-        return false;
-    }
-    wxString command;
-    command << GetNpm().GetFullPath();
-    ::WrapWithQuotes(command);
-
-    command << " install " << package << " --silent --quiet " << args;
-    IProcess* process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
-    if(process) {
-        ProcessData d;
-        d.SetUid(uid);
-        d.SetSink(sink);
-        m_processes.insert({ process, d });
-    }
-    return (process != nullptr);
-}
-
 wxProcess* clNodeJS::RunScript(const wxArrayString& argv, const wxString& workingDirectory, size_t execFlags)
 {
     if(!IsInitialised() || argv.IsEmpty()) {

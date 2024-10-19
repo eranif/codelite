@@ -90,8 +90,6 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
 
 WorkspaceSettingsDlg::~WorkspaceSettingsDlg() {}
 
-wxArrayString WorkspaceSettingsDlg::GetExcludePaths() const { return wxArrayString(); }
-
 wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const { return m_ccPage->GetIncludePaths(); }
 
 void WorkspaceSettingsDlg::OnButtonOK(wxCommandEvent& event)

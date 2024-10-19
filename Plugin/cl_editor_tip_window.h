@@ -60,7 +60,6 @@ protected:
 
 protected:
     wxSize DoGetTipSize();
-    int DoGetTextLen(wxDC& dc, const wxString& txt);
     void DoAdjustPosition();
     void DoLayoutTip();
     /**
@@ -75,7 +74,6 @@ public:
     // API
     ///////////////////////////////////////////////////
     void AddCallTip(clCallTipPtr tip);
-    void SelectSignature(const wxString& signature);
     void Remove();
     clCallTipPtr GetTip();
     bool IsEmpty();

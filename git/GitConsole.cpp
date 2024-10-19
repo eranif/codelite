@@ -117,8 +117,8 @@ void PopulateToolbarOverflow(clToolBar* toolbar)
                                        { wxTRANSLATE("Clone a git repository"), XRCID("git_clone"), "copy" } };
 
     auto images = toolbar->GetBitmapsCreateIfNeeded();
-    for(auto item : items) {
-        if(item.id == wxID_SEPARATOR) {
+    for (auto item : items) {
+        if (item.id == wxID_SEPARATOR) {
             toolbar->AddSeparator();
         } else {
             toolbar->AddTool(item.id, wxGetTranslation(item.label), images->Add(item.bmp));
@@ -263,11 +263,11 @@ void GitConsole::OnClearGitLog(wxCommandEvent& event)
 
 void GitConsole::OnStopGitProcess(wxCommandEvent& event)
 {
-    if(m_git->GetProcess()) {
+    if (m_git->GetProcess()) {
         m_git->GetProcess()->Terminate();
     }
 
-    if(m_git->GetFolderProcess()) {
+    if (m_git->GetFolderProcess()) {
         m_git->GetFolderProcess()->Terminate();
     }
 }
@@ -282,8 +282,8 @@ void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event) { event.Enable(!m_dvLis
 bool GitConsole::IsPatternFound(const wxString& buffer, const std::unordered_set<wxString>& m) const
 {
     wxString lc = buffer.Lower();
-    for(const auto& s : m) {
-        if(lc.Contains(s)) {
+    for (const auto& s : m) {
+        if (lc.Contains(s)) {
             return true;
         }
     }
@@ -299,7 +299,7 @@ bool GitConsole::HasAnsiEscapeSequences(const wxString& buffer) const
 void GitConsole::AddText(const wxString& text)
 {
     auto lines = ::wxStringTokenize(text, "\n", wxTOKEN_STRTOK);
-    for(const auto& line : lines) {
+    for (const auto& line : lines) {
         AddLine(line);
     }
 }
@@ -325,7 +325,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
     std::vector<GitFileEntry> lines;
     lines.reserve(files.size());
 
-    for(wxString& filename : files) {
+    for (wxString& filename : files) {
 
         filename.Trim().Trim(false);
         filename.Replace("\t", " ");
@@ -335,7 +335,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
         filename = filename.AfterFirst(' ');
 
         filename.Trim().Trim(false);
-        if(filename.EndsWith("/"))
+        if (filename.EndsWith("/"))
             // a directory
             continue;
 
@@ -350,13 +350,13 @@ void GitConsole::UpdateTreeView(const wxString& output)
     };
     std::sort(lines.begin(), lines.end(), std::move(sort_cb));
 
-    for(const auto& d : lines) {
+    for (const auto& d : lines) {
         wxString filename = d.fullname;
         wxChar chX = d.prefix[0];
 
         wxBitmap statusBmp;
         eGitFile kind = eGitFile::kUntrackedFile;
-        switch(chX) {
+        switch (chX) {
         case 'M':
             statusBmp = m_modifiedBmp;
             kind = eGitFile::kModifiedFile;
@@ -379,7 +379,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
             break;
         }
 
-        if(kind == eGitFile::kUntrackedFile) {
+        if (kind == eGitFile::kUntrackedFile) {
             // untracked
             cols.clear();
             cols.push_back(MakeFileBitmapLabel(d.path));
@@ -397,7 +397,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
 void GitConsole::OnContextMenu(wxDataViewEvent& event)
 {
     bool hasSelection = (m_dvListCtrl->GetSelectedItemsCount() > 0);
-    if(!hasSelection) {
+    if (!hasSelection) {
         return;
     }
 
@@ -417,34 +417,35 @@ void GitConsole::OnResetFile(wxCommandEvent& event)
     m_dvListCtrl->GetSelections(items);
     wxArrayString filesToRevert, filesToRemove;
 
-    for(size_t i = 0; i < items.GetCount(); ++i) {
+    for (size_t i = 0; i < items.GetCount(); ++i) {
         GitClientData* gcd = GIT_ITEM_DATA(items.Item(i));
-        if(gcd) {
-            if(gcd->GetKind() == eGitFile::kNewFile) {
+        if (gcd) {
+            if (gcd->GetKind() == eGitFile::kNewFile) {
                 filesToRemove.push_back(gcd->GetPath());
 
-            } else if((gcd->GetKind() == eGitFile::kModifiedFile) || (gcd->GetKind() == eGitFile::kRenamedFile)) {
+            } else if ((gcd->GetKind() == eGitFile::kModifiedFile) || (gcd->GetKind() == eGitFile::kRenamedFile) ||
+                       (gcd->GetKind() == eGitFile::kDeletedFile)) {
                 filesToRevert.push_back(gcd->GetPath());
             }
         }
     }
-    if(filesToRevert.IsEmpty() && filesToRemove.IsEmpty()) {
+    if (filesToRevert.IsEmpty() && filesToRemove.IsEmpty()) {
         return;
     }
 
     GitResetDlg dlg(EventNotifier::Get()->TopFrame(), filesToRevert, filesToRemove);
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return;
     }
 
     filesToRevert = dlg.GetItemsToRevert();
     filesToRemove = dlg.GetItemsToRemove();
 
-    if(!filesToRevert.IsEmpty()) {
+    if (!filesToRevert.IsEmpty()) {
         m_git->ResetFiles(filesToRevert);
     }
 
-    if(!filesToRemove.IsEmpty()) {
+    if (!filesToRemove.IsEmpty()) {
         m_git->UndoAddFiles(filesToRemove);
     }
 }
@@ -472,11 +473,11 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
     conf.ReadItem(&data);
 
     wxString difftool = data.GetDifftool();
-    if(difftool.empty()) {
+    if (difftool.empty()) {
         const wxArrayString wx_options =
             StdToWX::ToArrayString({ "built-in", "vimdiff", "vimdiff1", "vimdiff2", "vimdiff3", "winmerge" });
         difftool = ::wxGetSingleChoice(_("Choose a tool to use:"), "CodeLite", wx_options, 0);
-        if(difftool.empty()) {
+        if (difftool.empty()) {
             // user hit cancel
             return;
         }
@@ -490,7 +491,7 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
         ::wxMessageBox(message);
     }
 
-    if(difftool == "built-in") {
+    if (difftool == "built-in") {
         wxArrayString files;
         files.push_back(gcd->GetPath());
         m_git->ShowDiff(files);
@@ -504,20 +505,20 @@ void GitConsole::OnOpenFile(wxCommandEvent& e)
     wxDataViewItemArray items;
     m_dvListCtrl->GetSelections(items);
     wxArrayString files;
-    for(size_t i = 0; i < items.GetCount(); ++i) {
+    for (size_t i = 0; i < items.GetCount(); ++i) {
         GitClientData* gcd = GIT_ITEM_DATA(items.Item(i));
-        if(gcd) {
+        if (gcd) {
             files.push_back(gcd->GetPath());
         }
     }
 
-    if(files.IsEmpty()) {
+    if (files.IsEmpty()) {
         e.Skip();
         return;
     }
 
     // open the files
-    for(size_t i = 0; i < files.GetCount(); ++i) {
+    for (size_t i = 0; i < files.GetCount(); ++i) {
         GIT_MESSAGE("Opening file: %s", files.Item(i).c_str());
         m_git->OpenFile(files.Item(i));
     }
@@ -550,7 +551,7 @@ void GitConsole::DoOnDropdown(const wxString& commandName, int id)
 
     wxArrayString arr;
     wxMenu menu;
-    for(size_t n = 0; n < entries.size(); ++n) {
+    for (size_t n = 0; n < entries.size(); ++n) {
         wxMenuItem* item = menu.AppendRadioItem(n, entries.at(n).label);
         item->Check(n == (size_t)lastUsed);
         arr.Add(entries.at(n).command);
@@ -584,7 +585,7 @@ void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)
 
 void GitConsole::HideProgress()
 {
-    if(m_gauge->IsShown()) {
+    if (m_gauge->IsShown()) {
         m_gauge->SetValue(0);
         m_gauge->Hide();
         GetSizer()->Layout();
@@ -593,12 +594,12 @@ void GitConsole::HideProgress()
 
 void GitConsole::ShowProgress(const wxString& message, bool pulse)
 {
-    if(!m_gauge->IsShown()) {
+    if (!m_gauge->IsShown()) {
         m_gauge->Show();
         GetSizer()->Layout();
     }
 
-    if(pulse) {
+    if (pulse) {
         m_gauge->Pulse();
         m_gauge->Update();
 
@@ -627,14 +628,14 @@ void GitConsole::Clear()
 {
     m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
         GitClientData* cd = reinterpret_cast<GitClientData*>(d);
-        if(cd) {
+        if (cd) {
             wxDELETE(cd);
         }
     });
 
     m_dvListCtrlUnversioned->DeleteAllItems([](wxUIntPtr d) {
         GitClientData* cd = reinterpret_cast<GitClientData*>(d);
-        if(cd) {
+        if (cd) {
             wxDELETE(cd);
         }
     });
@@ -662,7 +663,7 @@ void GitConsole::OnUnversionedFileContextMenu(wxDataViewEvent& event)
 
 wxArrayString GitConsole::GetSelectedModifiedFiles() const
 {
-    if(m_dvListCtrl->GetSelectedItemsCount() == 0) {
+    if (m_dvListCtrl->GetSelectedItemsCount() == 0) {
         return {};
     }
 
@@ -670,14 +671,14 @@ wxArrayString GitConsole::GetSelectedModifiedFiles() const
     wxDataViewItemArray items;
     int count = m_dvListCtrl->GetSelections(items);
     paths.reserve(count);
-    for(int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
         wxDataViewItem item = items.Item(i);
-        if(item.IsOk() == false) {
+        if (item.IsOk() == false) {
             continue;
         }
 
         GitClientData* cd = reinterpret_cast<GitClientData*>(m_dvListCtrl->GetItemData(item));
-        if(cd && cd->GetKind() == eGitFile::kModifiedFile) {
+        if (cd && cd->GetKind() == eGitFile::kModifiedFile) {
             paths.Add(cd->GetPath());
         }
     }
@@ -686,21 +687,21 @@ wxArrayString GitConsole::GetSelectedModifiedFiles() const
 
 wxArrayString GitConsole::GetSelectedUnversionedFiles() const
 {
-    if(m_dvListCtrlUnversioned->GetSelectedItemsCount() == 0) {
+    if (m_dvListCtrlUnversioned->GetSelectedItemsCount() == 0) {
         return wxArrayString();
     }
     wxArrayString paths;
     wxDataViewItemArray items;
     int count = m_dvListCtrlUnversioned->GetSelections(items);
     paths.reserve(count);
-    for(int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
         wxDataViewItem item = items.Item(i);
-        if(item.IsOk() == false) {
+        if (item.IsOk() == false) {
             continue;
         }
 
         GitClientData* cd = reinterpret_cast<GitClientData*>(m_dvListCtrlUnversioned->GetItemData(item));
-        if(cd && cd->GetKind() == eGitFile::kUntrackedFile) {
+        if (cd && cd->GetKind() == eGitFile::kUntrackedFile) {
             paths.Add(cd->GetPath());
         }
     }
@@ -711,12 +712,12 @@ void GitConsole::OnOpenUnversionedFiles(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxArrayString paths = GetSelectedUnversionedFiles();
-    if(paths.IsEmpty()) {
+    if (paths.IsEmpty()) {
         return;
     }
 
-    for(const wxString& filepath : paths) {
-        if(!filepath.EndsWith("/")) {
+    for (const wxString& filepath : paths) {
+        if (!filepath.EndsWith("/")) {
             m_git->OpenFile(filepath);
         }
     }
@@ -739,7 +740,7 @@ wxString GitConsole::GetPrompt() const
     wxString prompt_str = m_git->GetRepositoryPath();
 #ifndef __WXMSW__
     wxString home_dir = ::wxGetHomeDir();
-    if(prompt_str.StartsWith(home_dir)) {
+    if (prompt_str.StartsWith(home_dir)) {
         prompt_str.Replace(home_dir, "~", false);
     }
 #endif
@@ -756,14 +757,14 @@ void GitConsole::AddLine(const wxString& line)
     auto& builder = m_dvListCtrlLog->GetBuilder();
     builder.Clear();
 
-    if(HasAnsiEscapeSequences(tmp)) {
+    if (HasAnsiEscapeSequences(tmp)) {
         builder.Add(tmp, AnsiColours::NormalText());
     } else {
-        if(IsPatternFound(tmp, m_errorPatterns)) {
+        if (IsPatternFound(tmp, m_errorPatterns)) {
             builder.Add(tmp, AnsiColours::Red());
-        } else if(IsPatternFound(tmp, m_warningPatterns)) {
+        } else if (IsPatternFound(tmp, m_warningPatterns)) {
             builder.Add(tmp, AnsiColours::Yellow());
-        } else if(IsPatternFound(tmp, m_successPatterns)) {
+        } else if (IsPatternFound(tmp, m_successPatterns)) {
             builder.Add(tmp, AnsiColours::Green());
         } else {
             builder.Add(tmp, AnsiColours::NormalText());
@@ -799,7 +800,7 @@ void GitConsole::OnLogMenu(wxContextMenuEvent& event)
             m_dvListCtrlLog->GetSelections(selected_items);
 
             wxArrayString lines;
-            for(auto item : selected_items) {
+            for (auto item : selected_items) {
                 wxString line = m_dvListCtrlLog->GetItemText(item);
                 line.Trim();
                 wxString mod_buffer;

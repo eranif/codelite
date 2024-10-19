@@ -412,12 +412,11 @@ void wxCodeCompletionBox::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t entry)
                 CxxTemplateFunction tf(match->m_tag);
                 if (!tf.CanTemplateArgsDeduced()) {
                     // Insert a template function
-                    wxCodeCompletionBoxManager::Get().CallAfter(
-                        &wxCodeCompletionBoxManager::InsertSelectionTemplateFunction, match->GetText());
+                    wxCodeCompletionBoxManager::Get().InsertSelectionTemplateFunction(match->GetText());
                     return;
                 }
             }
-            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, match, true);
+            wxCodeCompletionBoxManager::Get().InsertSelection(match, true);
         }
     }
 }

@@ -658,7 +658,7 @@ void XDebugManager::OnBreakpointsViewUpdated(XDebugEvent& e)
 {
     e.Skip();
     IEditor::List_t editors;
-    m_plugin->GetManager()->GetAllEditors(editors, true);
+    m_plugin->GetManager()->GetAllEditors(editors);
     IEditor::List_t::iterator iter = editors.begin();
     for(; iter != editors.end(); ++iter) {
         DoRefreshBreakpointsMarkersForEditor(*iter);

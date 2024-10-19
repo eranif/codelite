@@ -12,22 +12,6 @@ clAnagram::clAnagram(const wxString& needle, size_t flags)
 
 clAnagram::~clAnagram() {}
 
-bool clAnagram::Matches(const wxString& haystack) const
-{
-    std::unordered_map<wxChar, int> charsCount = m_charCounts;
-    for(size_t i = 0; i < haystack.size(); ++i) {
-        wxChar ch = haystack[i];
-        ch = wxTolower(ch);
-        if(charsCount.count(ch)) {
-            int& counter = charsCount[ch];
-            counter--;
-            if(counter == 0) { charsCount.erase(ch); }
-            if(charsCount.empty()) { return true; }
-        }
-    }
-    return false;
-}
-
 bool clAnagram::MatchesInOrder(const wxString& haystack) const
 {
     if(m_needle.IsEmpty()) { return true; }

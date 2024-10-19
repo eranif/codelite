@@ -86,10 +86,3 @@ void CppScanner::Reset()
 	m_comment = wxEmptyString;
 	yylineno = 1;
 }
-
-void CppScanner::Restart()
-{
-	char* p = strdup(m_data);
-	SetText( p );
-	free(p);
-}

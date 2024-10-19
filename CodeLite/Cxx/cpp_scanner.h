@@ -53,7 +53,6 @@ public:
 	inline const wxChar* GetComment() const { return m_comment.GetData(); }
 	inline void KeepComment(const int& keep) { m_keepComments = keep; }
 	inline void ReturnWhite(const int& rw) { m_returnWhite = rw; }
-	void Restart();
 
 private:
 	char *m_data;

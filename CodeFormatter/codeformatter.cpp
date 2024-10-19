@@ -273,13 +273,6 @@ bool CodeFormatter::DoFormatString(const wxString& content, const wxString& file
     return formatter->FormatString(content, fileName, output);
 }
 
-void CodeFormatter::ReloadCurrentEditor()
-{
-    // reload the current editor
-    wxCommandEvent reload_event{ wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT };
-    EventNotifier::Get()->ProcessEvent(reload_event);
-}
-
 bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format)
 {
     auto f = FindFormatter(fileName);

@@ -55,15 +55,6 @@ void ContinousBuildPane::OnStopUI(wxUpdateUIEvent& event)
     event.Enable(!m_listBoxQueue->IsEmpty() /* || !m_listBoxFailedFiles->IsEmpty()*/);
 }
 
-void ContinousBuildPane::DoUpdateConf()
-{
-    ContinousBuildConf conf;
-    m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
-
-    conf.SetEnabled(m_checkBox1->IsChecked());
-    m_mgr->GetConfigTool()->WriteObject(wxT("ContinousBuildConf"), &conf);
-}
-
 void ContinousBuildPane::RemoveFile(const wxString& file)
 {
     int where = m_listBoxQueue->FindString(file);

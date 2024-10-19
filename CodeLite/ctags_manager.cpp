@@ -154,17 +154,6 @@ void TagsManager::FindSymbol(const wxString& name, std::vector<TagEntryPtr>& tag
     GetDatabase()->GetTagsByName(name, tags, true);
 }
 
-void TagsManager::DeleteFilesTags(const wxArrayString& files)
-{
-    std::vector<wxFileName> files_;
-    for(size_t i = 0; i < files.GetCount(); i++) {
-        files_.push_back(files.Item(i));
-    }
-    DeleteFilesTags(files_);
-}
-
-void TagsManager::DeleteFilesTags(const std::vector<wxFileName>& projectFiles) { wxUnusedVar(projectFiles); }
-
 void TagsManager::FindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
     wxString _name = DoReplaceMacros(name);
@@ -173,11 +162,6 @@ void TagsManager::FindByNameAndScope(const wxString& name, const wxString& scope
 
     // Sort the results base on their name
     std::sort(tags.begin(), tags.end(), SAscendingSort());
-}
-
-void TagsManager::FindByPath(const wxString& path, std::vector<TagEntryPtr>& tags)
-{
-    GetDatabase()->GetTagsByPath(path, tags);
 }
 
 void TagsManager::DoFindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags)
@@ -703,12 +687,6 @@ wxString TagsManager::GetFunctionReturnValueFromPattern(TagEntryPtr tag)
     return return_value;
 }
 
-void TagsManager::GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayString& kind, const wxString& partName)
-{
-    wxUnusedVar(partName);
-    GetDatabase()->GetTagsByKind(kind, wxEmptyString, ITagsStorage::OrderNone, tags);
-}
-
 void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
     std::vector<std::pair<wxString, int>> derivationList;
@@ -754,13 +732,6 @@ void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEnt
             break;
         }
     }
-}
-
-void TagsManager::ClearAllCaches()
-{
-    m_cachedFile.Clear();
-    m_cachedFileFunctionsTags.clear();
-    GetDatabase()->ClearCache();
 }
 
 bool TagsManager::IsBinaryFile(const wxString& filepath, const TagsOptionsData& tod)
@@ -821,11 +792,6 @@ wxArrayString TagsManager::BreakToOuterScopes(const wxString& scope)
 }
 
 ITagsStoragePtr TagsManager::GetDatabase() { return m_db; }
-
-void TagsManager::GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr>& tags)
-{
-    GetDatabase()->GetTagsByName(prefix, tags);
-}
 
 wxString TagsManager::DoReplaceMacrosFromDatabase(const wxString& name)
 {

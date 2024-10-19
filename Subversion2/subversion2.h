@@ -181,12 +181,9 @@ protected:
     std::vector<wxString> GetFilesMarkedBinary(const wxString& wd);
     std::vector<wxString> RemoveExcludeExts(const std::vector<wxString>& aryInFiles, const wxString& excludeExtensions);
 
-    wxString DoGetFileExplorerItemFullPath();
     wxString DoGetFileExplorerItemPath();
 
     wxArrayString DoGetFileExplorerFiles();
-    wxString DoGetFileExplorerFilesAsString();
-    wxArrayString DoGetFileExplorerFilesToCommitRelativeTo(const wxString& wd);
 };
 
 #endif // Subversion2

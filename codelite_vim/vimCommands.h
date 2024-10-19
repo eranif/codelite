@@ -293,14 +293,10 @@ public:
 private:
     /*~~~~~~~~ PRIVATE METHODS ~~~~~~~~~*/
     int getNumRepeat();
-    int getNumActions();
     void evidentiate_word();
-    void append_command(wxChar ch);
     wxString get_text_at_position(VimCommand::eTypeTextSearch typeSearch = VimCommand::eTypeTextSearch::kAllWord);
     bool is_space_following();
-    bool is_space_preceding(bool onlyWordChar = true, bool cross_line = false);
     wxString add_following_spaces();
-    wxString add_preceding_spaces();
     bool search_word(SEARCH_DIRECTION direction, int flag = 0);
     bool search_word(SEARCH_DIRECTION direction, int flag, long pos);
     long goToMatchingParentesis(long start_pos);

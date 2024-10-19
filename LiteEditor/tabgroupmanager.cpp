@@ -70,15 +70,6 @@ bool TabgroupManager::FindTabgroup(bool isGlobal, const wxString& tabgroupname, 
 
 wxString TabgroupManager::GetTabgroupDirectory() { return m_tabgroupdir; }
 
-void TabgroupManager::SetTabgroupDirectory()
-{
-    wxFileName TabgrpPath = wxFileName::DirName(clCxxWorkspaceST::Get()->GetPrivateFolder() + wxT("/tabgroups/"));
-    if(!TabgrpPath.DirExists()) {
-        TabgrpPath.Mkdir(0777, wxPATH_MKDIR_FULL);
-    }
-    m_tabgroupdir = TabgrpPath.GetPath();
-}
-
 void TabgroupManager::LoadKnownTabgroups(bool isGlobal /*=false*/)
 {
     wxArrayString Tabgrpfiles;

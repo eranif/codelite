@@ -129,7 +129,7 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
             }
         }
 
-    } catch(DatabaseLayerException& e) {
+    } catch (const DatabaseLayerException& e) {
         ::wxMessageBox(wxString() << "Error occurred while opening SQL panel: " << e.GetErrorMessage(),
                        "Database Explorer", wxOK | wxICON_ERROR | wxCENTER);
     }
@@ -141,7 +141,7 @@ void DbViewerPanel::OnRefreshClick(wxCommandEvent& event)
     try {
         RefreshDbView();
 
-    } catch(DatabaseLayerException& e) {
+    } catch (const DatabaseLayerException& e) {
         ::wxMessageBox(e.GetErrorMessage(), "Database Explorer", wxOK | wxCENTER | wxICON_ERROR);
     }
 }
@@ -567,11 +567,11 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
         } else {
             evt.Skip();
         }
-    } catch(DatabaseLayerException& e) {
+    } catch (const DatabaseLayerException& e) {
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
         wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
-    } catch(...) {
+    } catch (...) {
         wxMessageDialog dlg(this, _("Unknown error."), _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
     }
@@ -614,7 +614,7 @@ bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
         }
         pDbLayer->Commit();
         pDbLayer->Close();
-    } catch(DatabaseLayerException& e) {
+    } catch (const DatabaseLayerException& e) {
         if(pDbLayer) {
             pDbLayer->RollBack();
             pDbLayer->Close();
@@ -625,7 +625,7 @@ bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
         dialog.AppendComment(errorMessage);
         wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
-    } catch(...) {
+    } catch (...) {
         if(pDbLayer) {
             pDbLayer->RollBack();
             pDbLayer->Close();
@@ -792,10 +792,10 @@ void DbViewerPanel::OpenSQLiteFile(const wxFileName& fileName, bool openDefaultS
             CallAfter(&DbViewerPanel::AddEditorPage, sqlpage, fileName.GetFullPath());
         }
 
-    } catch(DatabaseLayerException& e) {
+    } catch (const DatabaseLayerException& e) {
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
         ::wxMessageBox(errorMessage, "CodeLite", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
-    } catch(...) {
+    } catch (...) {
         ::wxMessageBox(_("Unknown error."), "CodeLite", wxICON_ERROR | wxCENTER | wxOK,
                        EventNotifier::Get()->TopFrame());
     }

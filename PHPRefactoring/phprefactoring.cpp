@@ -357,7 +357,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
             clPatch patcher;
             // We pass "--verbose" otherwise it crashes oftenly on Windows... go figure...
             patcher.Patch(tmpfile, "", "--ignore-whitespace --verbose -p1 < ");
-        } catch(clException& e) {
+        } catch (const clException& e) {
             wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
         }
     }

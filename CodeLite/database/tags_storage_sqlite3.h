@@ -252,7 +252,7 @@ public:
     {
         try {
             m_db->Begin();
-        } catch(wxSQLite3Exception& e) {
+        } catch (const wxSQLite3Exception& e) {
             wxUnusedVar(e);
         }
     }
@@ -264,7 +264,7 @@ public:
     {
         try {
             m_db->Commit();
-        } catch(wxSQLite3Exception& e) {
+        } catch (const wxSQLite3Exception& e) {
             wxUnusedVar(e);
         }
     }

@@ -76,7 +76,7 @@ void* clSingleInstanceThread::Entry()
                 EventNotifier::Get()->AddPendingEvent(event);
             }
         }
-    } catch(clSocketException& e) {
+    } catch (const clSocketException& e) {
         clDEBUG() << "Failed to create single instance socket:" << e.what() << endl;
         clDEBUG() << "Another instance is already running" << endl;
     }

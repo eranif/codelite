@@ -76,7 +76,7 @@ void PHPDocVar::Store(wxSQLite3Database& db, wxLongLong parentDdId)
         statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
         statement.ExecuteUpdate();
         SetDbId(db.GetLastRowId());
-    } catch(wxSQLite3Exception& exc) {
+    } catch (const wxSQLite3Exception& exc) {
         wxUnusedVar(exc);
     }
 }

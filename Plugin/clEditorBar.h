@@ -44,7 +44,6 @@ private:
 
 private:
     void DoRefreshColoursAndFonts();
-    void DoRefresh();
     void CreateBookmarksBitmap();
     const clEditorBar::ScopeEntry& FindByLine(int lineNumber) const;
     void UpdateScope();

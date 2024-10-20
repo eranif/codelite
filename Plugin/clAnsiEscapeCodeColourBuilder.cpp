@@ -54,14 +54,6 @@ clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::SetTheme(eColourTh
     return *this;
 }
 
-wxString& clAnsiEscapeCodeColourBuilder::WrapWithColour(wxString& line, int colour, bool bold_font) const
-{
-    wxString buffer;
-    DoAddTextToBuffer(&buffer, line, colour, bold_font);
-    line.swap(buffer);
-    return line;
-}
-
 void clAnsiEscapeCodeColourBuilder::DoAddTextToBuffer(wxString* buffer, const wxString& text, int textColour,
                                                       bool bold) const
 {

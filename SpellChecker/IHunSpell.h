@@ -118,8 +118,6 @@ public:
     wxArrayString GetSuggestions(const wxString& misspelled);
     /// makes a spell check for the given plain text. Canceled is set to true when the user cancels.
     void CheckSpelling();
-    /// retrieves all predefined language names, used as key to get the filename
-    void GetAllLanguageKeyNames(wxArrayString& lang);
     /// checks for predefined language names, which could be found in path
     void GetAvailableLanguageKeyNames(const wxString& path, wxArrayString& lang);
     /// returns the base filename for language key without extension
@@ -176,18 +174,9 @@ public:
         kDox2 = 0x10
     };
 
-    enum // CheckCppType return values
-    {
-        kNoSpellingError = 0,
-        kSpellingError,
-        kSpellingCanceled
-    };
-
 protected:
     using CustomDictionary = std::unordered_set<wxString, StringHashOptionalCase, StringCompareOptionalCase>;
 
-    int CheckCppType(IEditor* pEditor);
-    int MarkErrors(IEditor* pEditor);
     void InitLanguageList();
 
     bool LoadUserDict(const wxString& filename);

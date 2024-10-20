@@ -475,17 +475,6 @@ void clFileSystemWorkspace::Parse(bool fullParse)
 
 void clFileSystemWorkspace::Close() { DoClose(); }
 
-wxString clFileSystemWorkspace::CompileFlagsAsString(const wxArrayString& arr) const
-{
-    wxString s;
-    for (const wxString& l : arr) {
-        if (!l.IsEmpty()) {
-            s << l << "\n";
-        }
-    }
-    return s.Trim();
-}
-
 wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
 {
     if (!GetConfig()) {
@@ -920,12 +909,6 @@ void clFileSystemWorkspace::OnSourceControlPulled(clSourceControlEvent& event)
 
     // Re-Cache the files and trigger a workspace parse
     CacheFiles(true);
-}
-
-void clFileSystemWorkspace::TriggerQuickParse()
-{
-    wxCommandEvent eventParse(wxEVT_MENU, XRCID("retag_workspace"));
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->QueueEvent(eventParse.Clone());
 }
 
 void clFileSystemWorkspace::FileSystemUpdated() { CacheFiles(true); }

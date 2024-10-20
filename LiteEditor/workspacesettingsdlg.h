@@ -53,7 +53,6 @@ public:
 	virtual ~WorkspaceSettingsDlg();
 
 	wxArrayString GetIncludePaths() const;
-	wxArrayString GetExcludePaths() const;
 };
 
 #endif // __workspacesettingsdlg__

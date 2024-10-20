@@ -55,9 +55,6 @@ public:
      */
     bool get_last_content(const wxString& filepath, wxString* content);
     void clear() { m_files.clear(); }
-
-    void add_flag(const wxString& filepath, size_t flag);
-    void remove_flag(const wxString& filepath, size_t flag);
 };
 
 #endif // FILECONTENTTRACKER_HPP

@@ -122,8 +122,6 @@ public:
 	bool IsSet( const wxString & set );
 	/// returns all sets
 	void GetAllSets( wxArrayString &sets );
-	/// checks if key exists
-	bool IsKey( const wxString & set, const wxString & key );
 	/// sets string at set, key
 	bool SetString( const wxString & set, const wxString& key, const wxString& value );
 	/// gets string at set, key
@@ -144,9 +142,6 @@ public:
 	wxString GetSnippetString( const wxString& key );
 	/// deletes single key
 	void DeleteSnippetKey( const wxString& key );
-	/// deletes all
-	void DeleteSnippetAll();
-
 
 	swStringDb();
 	virtual ~swStringDb();

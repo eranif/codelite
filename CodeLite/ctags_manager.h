@@ -134,11 +134,6 @@ public:
     void ClearCachedFile(const wxString& fileName);
 
     /**
-     4* @brief clear all the cached tags information stored in this class
-     */
-    void ClearAllCaches();
-
-    /**
      * @brief load fileName into cache, note that this call will clear perivous
      * cache
      */
@@ -211,20 +206,6 @@ public:
      * @return true on success false otherwise
      */
     void FindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags);
-
-    /**
-     * Find tags with given path
-     * @param path path to search
-     * @param tags [output] output tags
-     */
-    void FindByPath(const wxString& path, std::vector<TagEntryPtr>& tags);
-
-    /**
-     * Delete all tags related to these files
-     * @param files list of files, in absolute path
-     */
-    void DeleteFilesTags(const std::vector<wxFileName>& files);
-    void DeleteFilesTags(const wxArrayString& files);
 
     /**
      * Close the workspace database
@@ -303,22 +284,6 @@ public:
      * classes from the external database as well
      */
     void GetClasses(std::vector<TagEntryPtr>& tags, bool onlyWorkspace = true);
-
-    /**
-     * @brief return list of tags by KIND
-     * @param tags [output]
-     * @param kind the kind of the tags to fetch from the database
-     * @param partName name criterion (partial)
-     */
-    void GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayString& kind,
-                       const wxString& partName = wxEmptyString);
-
-    /**
-     * @brief return list of tags by name
-     * @param prefix
-     * @param tags
-     */
-    void GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief return list of tags by their partial names

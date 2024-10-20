@@ -309,16 +309,6 @@ void SubversionView::BuildTree(const wxString& root)
     m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL), m_plugin);
 }
 
-void SubversionView::BuildExplorerTree(const wxString& root)
-{
-    if (root.IsEmpty())
-        return;
-
-    wxString command;
-    command << m_plugin->GetSvnExeName() << wxT(" status");
-    m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL, true, root), m_plugin);
-}
-
 void SubversionView::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
@@ -426,17 +416,6 @@ void SubversionView::DoAddChangedFiles(const wxString& status, const wxArrayStri
         cols.push_back(::MakeBitmapIndexText(filepath, GetImageIndex(fn)));
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new SvnTreeData(SvnTreeData::SvnNodeTypeFile, filepath));
     }
-}
-
-int SubversionView::DoGetIconIndex(const wxString& filename)
-{
-    FileExtManager::Init();
-    int iconIndex = m_plugin->GetManager()->GetStdIcons()->GetMimeImageId(filename);
-    if (iconIndex == wxNOT_FOUND)
-        iconIndex =
-            m_plugin->GetManager()->GetStdIcons()->GetMimeImageId(wxT("file.txt")); // text file icon is the default
-
-    return iconIndex;
 }
 
 void SubversionView::CreateFileMenu(wxMenu* menu)

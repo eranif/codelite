@@ -1,33 +1,33 @@
 {
- "workspace_type": "File System Workspace",
- "name": "CodeLiteIDE-Linux",
- "configs": [{
-   "name": "Debug",
-   "targets": [["Run CMake", "mkdir -p build-debug\ncd build-debug\ncmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root -Wno-dev"], ["build", "cd build-debug\nmake -j$(nproc) install"], ["clean", "cd build-debug\nmake -j$(nproc) clean"], ["install", "cd build-debug\nmake -j$(nproc) install"]],
-   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.xrc;*.rc;*.plist;*.iss;*.md;*.l",
-   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
-   "excludePaths": "$(WorkspacePath)/build-debug-native-book;$(WorkspacePath)/build-release-gtk2;$(WorkspacePath)/bitmaps-dark;$(WorkspacePath)/bitmaps-light;$(WorkspacePath)/build-debug;$(WorkspacePath)/build-release;$(WorkspacePath)/codelite-icons-dark;$(WorkspacePath)/codelite-icons-fresh-farm;$(WorkspacePath)/CxxParser",
-   "debugger": "GNU gdb debugger"
-  }, {
-   "name": "Debug GTK2",
-   "targets": [["CMake", "mkdir -p build-debug-gtk2\ncd build-debug-gtk2\ncmake .. -DWITH_WXPATH=$HOME/devl/wxWidgets/build-release-gtk2 -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 -DCMAKE_BUILD_TYPE=Debug -DCL_PREFIX=$HOME/root"], ["build", "mkdir -p build-debug-gtk2\ncd build-debug-gtk2\nmake -j$(nproc) install"], ["clean", "mkdir -p build-debug-gtk2\ncd build-debug-gtk2\nmake -j$(nproc) clean"]],
-   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.py;*.php;*.rb;*.html;*.js",
-   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
-   "excludePaths": "/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm;CxxParser",
-   "debugger": "GNU gdb debugger"
-  }, {
-   "name": "Release",
-   "targets": [["Make package", "cd build-release\nmake -j$(nproc) package"], ["Run CMake", "mkdir -p build-release\ncd build-release\ncmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -Wno-dev"], ["build", "cd build-release\nmake -j$(nproc)"], ["clean", "cd build-release\nmake -j$(nproc) clean"]],
-   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.plist;*.iss",
-   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
-   "excludePaths": "/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm;CxxParser",
-   "debugger": "GNU gdb debugger"
-  }, {
-   "name": "Release GTK2",
-   "targets": [["CMake", "mkdir -p build-release-gtk2\ncd build-release-gtk2\ncmake .. -DWITH_WXPATH=$HOME/devl/wxWidgets/build-release-gtk2 -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 -DCMAKE_BUILD_TYPE=Release"], ["build", "mkdir -p build-release-gtk2\ncd build-release-gtk2\nmake -j$(nproc)"], ["clean", "mkdir -p build-release-gtk2\ncd build-release-gtk2\nmake -j$(nproc) clean"], ["package", "mkdir -p build-release-gtk2\ncd build-release-gtk2\nmake -j$(nproc) package"]],
-   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
-   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
-   "excludePaths": "/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm;CxxParser",
-   "debugger": "GNU gdb debugger"
-  }]
+	"workspace_type":	"File System Workspace",
+	"name":	"CodeLiteIDE-Linux",
+	"configs":	[{
+			"name":	"Debug",
+			"targets":	[["Run CMake", "mkdir -p build-debug\ncd build-debug\ncmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root -Wno-dev"], ["build", "cd build-debug\nmake -j$(nproc) install"], ["clean", "cd build-debug\nmake -j$(nproc) clean"], ["install", "cd build-debug\nmake -j$(nproc) install"]],
+			"file_extensions":	"*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.xrc;*.rc;*.plist;*.iss;*.md;*.l",
+			"excludeFilesPattern":	"*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
+			"excludePaths":	"$(WorkspacePath)/build-debug-native-book;$(WorkspacePath)/build-release-gtk2;$(WorkspacePath)/bitmaps-dark;$(WorkspacePath)/bitmaps-light;$(WorkspacePath)/build-debug;$(WorkspacePath)/build-release;$(WorkspacePath)/codelite-icons-dark;$(WorkspacePath)/codelite-icons-fresh-farm;$(WorkspacePath)/CxxParser",
+			"debugger":	"GNU gdb debugger"
+		}, {
+			"name":	"Debug GTK2",
+			"targets":	[["CMake", "mkdir -p build-debug-gtk2\ncd build-debug-gtk2\ncmake .. -DWITH_WXPATH=$HOME/devl/wxWidgets/build-release-gtk2 -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 -DCMAKE_BUILD_TYPE=Debug -DCL_PREFIX=$HOME/root"], ["build", "mkdir -p build-debug-gtk2\ncd build-debug-gtk2\nmake -j$(nproc) install"], ["clean", "mkdir -p build-debug-gtk2\ncd build-debug-gtk2\nmake -j$(nproc) clean"]],
+			"file_extensions":	"*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.py;*.php;*.rb;*.html;*.js",
+			"excludeFilesPattern":	"*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
+			"excludePaths":	"/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm;CxxParser",
+			"debugger":	"GNU gdb debugger"
+		}, {
+			"name":	"Release",
+			"targets":	[["Make package", "cd build-release\nmake -j$(nproc) package"], ["Run CMake", "mkdir -p build-release\ncd build-release\ncmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -Wno-dev"], ["build", "cd build-release\nmake -j$(nproc)"], ["clean", "cd build-release\nmake -j$(nproc) clean"]],
+			"file_extensions":	"*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.plist;*.iss",
+			"excludeFilesPattern":	"*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
+			"excludePaths":	"/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm;CxxParser",
+			"debugger":	"GNU gdb debugger"
+		}, {
+			"name":	"Release GTK2",
+			"targets":	[["CMake", "mkdir -p build-release-gtk2\ncd build-release-gtk2\ncmake .. -DWITH_WXPATH=$HOME/devl/wxWidgets/build-release-gtk2 -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 -DCMAKE_BUILD_TYPE=Release"], ["build", "mkdir -p build-release-gtk2\ncd build-release-gtk2\nmake -j$(nproc)"], ["clean", "mkdir -p build-release-gtk2\ncd build-release-gtk2\nmake -j$(nproc) clean"], ["package", "mkdir -p build-release-gtk2\ncd build-release-gtk2\nmake -j$(nproc) package"]],
+			"file_extensions":	"*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
+			"excludeFilesPattern":	"*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
+			"excludePaths":	"/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm;CxxParser",
+			"debugger":	"GNU gdb debugger"
+		}]
 }

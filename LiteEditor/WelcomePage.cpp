@@ -348,3 +348,5 @@ void WelcomePage::DoSomethingSomething()
     // for now, select the "Open workspace" button
     m_buttonOpenWorkspace->SetFocus();
 }
+
+void WelcomePage::GrabFocus() { CallAfter(&WelcomePage::SetFocus); }

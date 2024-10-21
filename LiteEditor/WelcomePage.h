@@ -70,6 +70,7 @@ public:
     bool Show(bool show = true) override;
     wxWindow* GetList() { return m_dvTreeCtrlWorkspaces; }
     void SelectSomething();
+    void GrabFocus();
 
 protected:
     void OnSize(wxSizeEvent& event) override;

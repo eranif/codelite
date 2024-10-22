@@ -40,10 +40,8 @@ if(WIN32)
 	target_compile_definitions(wxshapeframework INTERFACE WXUSINGDLL)
 endif(WIN32)
 
-if(APPLE)
-	target_compile_options(wxshapeframework PRIVATE -fPIC)
-elseif(UNIX)
-	target_compile_options(wxshapeframework PRIVATE -fPIC)
+if(UNIX OR APPLE)
+    set_target_properties(wxshapeframework PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 target_link_libraries(wxshapeframework PRIVATE ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})

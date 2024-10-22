@@ -58,15 +58,6 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
-if(UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
-
-if(APPLE)
-    add_definitions(-fPIC)
-endif()
-
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 
 # Add RPATH
@@ -102,6 +93,11 @@ endif()
 
 # Define the output
 add_library(libcodelite SHARED ${SRCS} ${FlexSrcs})
+
+if(UNIX OR APPLE)
+    set_target_properties(libcodelite PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 target_link_libraries(
     libcodelite
     ${LINKER_OPTIONS}

@@ -24,21 +24,16 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
-if(UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
-
-if(APPLE)
-    add_definitions(-fPIC)
-endif()
-
 file(GLOB SRCS "*.cpp")
 
 # add_dependencies(plugin libcodelite)
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
+
+if(UNIX OR APPLE)
+    set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 if(USE_PCH)
     target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)

@@ -9,15 +9,6 @@ project(${PLUGIN_NAME})
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
 
-if(UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
-
-if(APPLE)
-    add_definitions(-fPIC)
-endif()
-
 if(WITH_MYSQL)
     find_library(LIBMYSQLCLIENT NAMES libmysqlclient.so)
     if(${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND")
@@ -76,6 +67,10 @@ file(GLOB SRCS "*.cpp")
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
+
+if(UNIX OR APPLE)
+    set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 if(USE_PCH)
     target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)

@@ -1,6 +1,8 @@
 # Our project is called 'databaselayersqlite' this is how it will be called in visual studio, and in our makefiles.
 project(databaselayersqlite)
 
+option(WITH_MYSQL "Enable support of MySQL for DatabaseExplorer plugin" ON)
+
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 
 # wxWidgets include (this will do all the magic to configure everything)

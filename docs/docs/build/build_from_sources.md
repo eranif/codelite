@@ -16,6 +16,7 @@ pacman -S mingw-w64-clang-x86_64-zlib     \
           mingw-w64-clang-x86_64-hunspell \
           mingw-w64-clang-x86_64-openssl  \
           mingw-w64-clang-x86_64-sqlite3  \
+          mingw-w64-clang-x86_64-libmariadbclient \
           flex bison
 ```
 
@@ -62,8 +63,9 @@ cd build-release/install
 
 ```bash
     sudo apt install build-essential            \
-                     git cmake flex             \
+                     git cmake                  \
                      libssh-dev libsqlite3-dev  \
+                     libmariadb-dev             \
                      libpcre2-dev bison flex
 ```
 
@@ -130,6 +132,7 @@ brew install git        \
              autoconf   \
              automake   \
              libtool    \
+             mariadb    \
              gettext
 ```
 

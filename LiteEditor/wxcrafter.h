@@ -28,7 +28,6 @@
 #include <wx/button.h>
 #include <wx/filepicker.h>
 #include "clThemedSplitterWindow.h"
-#include <wx/stattext.h>
 #include <wx/treectrl.h>
 #include "clThemedTreeCtrl.h"
 #include <wx/simplebook.h>
@@ -36,6 +35,7 @@
 #include "clToolBar.h"
 #include "clConfigurationSelectionCtrl.h"
 #include "fileview.h"
+#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/statbmp.h>
 #include <wx/bannerwindow.h>
@@ -143,8 +143,6 @@ protected:
     wxPanel* m_buttonsPage;
     wxGridSizer* buttons_sizer;
     wxPanel* m_listPage;
-    wxPanel* m_panelList;
-    wxStaticText* m_staticText0;
     clThemedTreeCtrl* m_dvTreeCtrlWorkspaces;
 
 protected:
@@ -153,9 +151,7 @@ protected:
 
 public:
     wxPanel* GetButtonsPage() { return m_buttonsPage; }
-    wxStaticText* GetStaticText0() { return m_staticText0; }
     clThemedTreeCtrl* GetDvTreeCtrlWorkspaces() { return m_dvTreeCtrlWorkspaces; }
-    wxPanel* GetPanelList() { return m_panelList; }
     wxPanel* GetListPage() { return m_listPage; }
     clThemedSplitterWindow* GetMainPanel() { return m_mainPanel; }
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

@@ -121,10 +121,6 @@ WelcomePage::WelcomePage(wxWindow* parent)
 
     wxColour bg_colour, text_colour;
     get_caption_colours(&bg_colour, &text_colour);
-
-    m_panelList->SetBackgroundColour(bg_colour);
-    m_panelList->SetForegroundColour(text_colour);
-    m_staticText0->SetForegroundColour(text_colour);
 }
 
 WelcomePage::~WelcomePage()
@@ -139,10 +135,6 @@ void WelcomePage::OnThemeChanged(clCommandEvent& e)
     e.Skip();
     wxColour bg_colour, text_colour;
     get_caption_colours(&bg_colour, &text_colour);
-
-    m_panelList->SetBackgroundColour(bg_colour);
-    m_panelList->SetForegroundColour(text_colour);
-    m_staticText0->SetForegroundColour(text_colour);
 
 #ifndef __WXMAC__
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());

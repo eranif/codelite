@@ -26,6 +26,10 @@ if(WITH_MYSQL)
         message("-- LIBMYSQLCLIENT is set to ${LIBMYSQLCLIENT}")
     endif(${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND")
     add_definitions(-DDBL_USE_MYSQL=1)
+
+    if(MINGW)
+        install(FILES "${MSYS2_BASE}/clang64/bin/libmariadb.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    endif()
 endif(WITH_MYSQL)
 
 # On UNIX we require GTK

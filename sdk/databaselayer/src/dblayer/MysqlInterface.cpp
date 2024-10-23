@@ -3,7 +3,7 @@
 bool MysqlInterface::Init()
 {
 #ifdef __WIN32__
-  bool bLoaded = m_MysqlDLL.Load(wxT("libmySQL.dll"), wxDL_VERBATIM);
+  bool bLoaded = m_MysqlDLL.Load(wxT("libmariadb.dll"), wxDL_VERBATIM);
 #else
   bool bLoaded = m_MysqlDLL.Load(wxDynamicLibrary::CanonicalizeName(wxT("mysqlclient")));
 #endif

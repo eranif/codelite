@@ -247,7 +247,7 @@ public:
     /**
      * @brief update accelerators
      */
-    void Update(wxFrame* frame = NULL);
+    void Update();
 
     /**
      * @brief restore keyboard shortcuts to defaults

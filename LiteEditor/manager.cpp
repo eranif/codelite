@@ -1555,10 +1555,10 @@ void Manager::TogglePanes()
 
 //--------------------------- Menu and Accelerator Mmgt -----------------------------
 
-void Manager::UpdateMenuAccelerators(wxFrame* frame)
+void Manager::UpdateMenuAccelerators()
 {
     // Load the accelerators (this function merges the old settings with the new settings)
-    clKeyboardManager::Get()->Update(frame);
+    clKeyboardManager::Get()->Update();
 }
 
 //--------------------------- Run Program (No Debug) -----------------------------

@@ -370,3 +370,5 @@ void SideBar::AddPage(wxWindow* win, const wxString& bmpname, const wxString& la
     m_book->GetSizer()->Layout();
     clGetManager()->ShowPane(VIEW_NAME, true);
 }
+
+void SideBar::GrabFocus() { m_book->GetToolBar()->CallAfter(&SideBarToolBar::SetFocus); }

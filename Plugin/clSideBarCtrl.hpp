@@ -104,6 +104,9 @@ public:
     clSideBarCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clSideBarCtrl();
+    
+    /// Return the toolbar
+    SideBarToolBar* GetToolBar() { return m_toolbar; }
 
     /// Book API
     void AddPage(wxWindow* page, const wxString& label, const wxString& bmpname, bool selected = false);

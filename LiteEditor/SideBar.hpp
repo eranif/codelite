@@ -95,7 +95,7 @@ protected:
 
 public:
     SideBar(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style);
-    ~SideBar();
+    virtual ~SideBar();
 
     void UpdateProgress(int val);
     void ClearProgress();
@@ -103,12 +103,17 @@ public:
     void SaveWorkspaceViewTabOrder() const;
     bool IsTabVisible(int flag);
 
+    /// Set the focus to this control (we set the focus to the toolbar)
+    void GrabFocus();
+
     // Getters
     const wxString& GetCaption() const { return m_caption; }
     clSideBarCtrl* GetNotebook() { return m_book; }
     WorkspaceTab* GetWorkspaceTab() { return m_workspaceTab; }
     FileExplorer* GetFileExplorer() { return m_explorer; }
     TabgroupsPane* GetTabgroupsTab() { return m_TabgroupsPane; }
+    SideBarToolBar* GetToolBar() { return GetNotebook()->GetToolBar(); }
+
     /**
      * @brief set an active tab by its title
      * @param tabTitle the tab to select

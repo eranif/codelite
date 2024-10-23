@@ -513,7 +513,7 @@ public:
     /**
      * @brief update the menu bar accelerators
      */
-    void UpdateMenuAccelerators(wxFrame* frame = NULL);
+    void UpdateMenuAccelerators();
 
     //--------------------------- Run Program (No Debug) -----------------------------
 public:

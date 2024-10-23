@@ -12,100 +12,38 @@
 
 // ctor
 MysqlDatabaseLayer::MysqlDatabaseLayer()
- : DatabaseLayer()
+    : MysqlDatabaseLayer(wxT("localhost:3306"), wxT(""), wxT(""), wxT(""))
 {
-#ifndef DONT_USE_DYNAMIC_DATABASE_LAYER_LINKING
-  m_pInterface = new MysqlInterface();
-  if (!m_pInterface->Init())
-  {
-    SetErrorCode(DATABASE_LAYER_ERROR_LOADING_LIBRARY);
-    SetErrorMessage(wxT("Error loading MySQL library"));
-    ThrowDatabaseException();
-    return;
-  }
-#endif
-  InitDatabase();
-  m_strServer = _("localhost");
-  m_iPort = 3306; // default
-  m_strDatabase = wxT("");
-  m_strUser = wxT("");
-  m_strPassword = wxT("");
 }
 
 MysqlDatabaseLayer::MysqlDatabaseLayer(const wxString& strDatabase)
- : DatabaseLayer()
+    : MysqlDatabaseLayer(wxT("localhost:3306"), strDatabase, wxT(""), wxT(""))
 {
-#ifndef DONT_USE_DYNAMIC_DATABASE_LAYER_LINKING
-  m_pInterface = new MysqlInterface();
-  if (!m_pInterface->Init())
-  {
-    SetErrorCode(DATABASE_LAYER_ERROR_LOADING_LIBRARY);
-    SetErrorMessage(wxT("Error loading MySQL library"));
-    ThrowDatabaseException();
-    return;
-  }
-#endif
-  InitDatabase();
-  m_strServer = _("localhost");
-  m_iPort = 3306; // default
-  m_strUser = wxT("");
-  m_strPassword = wxT("");
-  Open(strDatabase);
 }
 
 MysqlDatabaseLayer::MysqlDatabaseLayer(const wxString& strServer, const wxString& strDatabase)
- : DatabaseLayer()
+    : MysqlDatabaseLayer(strServer, strDatabase, wxT(""), wxT(""))
 {
-#ifndef DONT_USE_DYNAMIC_DATABASE_LAYER_LINKING
-  m_pInterface = new MysqlInterface();
-  if (!m_pInterface->Init())
-  {
-    SetErrorCode(DATABASE_LAYER_ERROR_LOADING_LIBRARY);
-    SetErrorMessage(wxT("Error loading MySQL library"));
-    ThrowDatabaseException();
-    return;
-  }
-#endif
-  InitDatabase();
-  ParseServerAndPort(strServer);
-  m_strUser = wxT("");
-  m_strPassword = wxT("");
-  Open(strDatabase);
 }
 
 MysqlDatabaseLayer::MysqlDatabaseLayer(const wxString& strDatabase, const wxString& strUser, const wxString& strPassword)
- : DatabaseLayer()
+    : MysqlDatabaseLayer(wxT("localhost:3306"), strDatabase, strUser, strPassword)
 {
-#ifndef DONT_USE_DYNAMIC_DATABASE_LAYER_LINKING
-  m_pInterface = new MysqlInterface();
-  if (!m_pInterface->Init())
-  {
-    SetErrorCode(DATABASE_LAYER_ERROR_LOADING_LIBRARY);
-    SetErrorMessage(wxT("Error loading MySQL library"));
-    ThrowDatabaseException();
-    return;
-  }
-#endif
-  InitDatabase();
-  m_strServer = _("localhost");
-  m_iPort = 3306; // default
-  m_strUser = strUser;
-  m_strPassword = strPassword;
-  Open(strDatabase);
 }
 
 MysqlDatabaseLayer::MysqlDatabaseLayer(const wxString& strServer, const wxString& strDatabase, const wxString& strUser, const wxString& strPassword)
  : DatabaseLayer()
 {
 #ifndef DONT_USE_DYNAMIC_DATABASE_LAYER_LINKING
-  m_pInterface = new MysqlInterface();
-  if (!m_pInterface->Init())
-  {
-    SetErrorCode(DATABASE_LAYER_ERROR_LOADING_LIBRARY);
-    SetErrorMessage(wxT("Error loading MySQL library5"));
-    ThrowDatabaseException();
-    return;
-  }
+    try {
+        m_pInterface = new MysqlInterface();
+        m_pInterface->Init();
+    } catch (const wxString& error) {
+        SetErrorCode(DATABASE_LAYER_ERROR_LOADING_LIBRARY);
+        SetErrorMessage(wxT("Error loading MySQL library : ") + error);
+        ThrowDatabaseException();
+        return;
+    }
 #endif
   InitDatabase();
   ParseServerAndPort(strServer);

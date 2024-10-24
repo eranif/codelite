@@ -116,19 +116,3 @@ bool FileContentTracker::get_last_content(const wxString& filepath, wxString* co
     }
     return false;
 }
-
-void FileContentTracker::add_flag(const wxString& filepath, size_t flag)
-{
-    FileState* state = nullptr;
-    if(find(filepath, &state)) {
-        state->flags |= flag;
-    }
-}
-
-void FileContentTracker::remove_flag(const wxString& filepath, size_t flag)
-{
-    FileState* state = nullptr;
-    if(find(filepath, &state)) {
-        state->flags &= ~flag;
-    }
-}

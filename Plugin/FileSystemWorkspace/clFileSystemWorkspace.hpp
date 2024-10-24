@@ -42,7 +42,6 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
 
 protected:
     void CacheFiles(bool force = false);
-    wxString CompileFlagsAsString(const wxArrayString& arr) const;
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
     clEnvList_t GetEnvList();
@@ -87,7 +86,6 @@ protected:
     void DoCreate(const wxString& name, const wxString& path, bool loadIfExists);
     void RestoreSession();
     void DoBuild(const wxString& target);
-    void TriggerQuickParse();
     clFileSystemWorkspaceConfig::Ptr_t GetConfig() const;
 
 public:

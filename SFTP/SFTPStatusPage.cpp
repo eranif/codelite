@@ -195,8 +195,6 @@ void SFTPStatusPage::OnHotspotClicked(wxStyledTextEvent& event)
 
 void SFTPStatusPage::ShowSearchTab() { m_notebook->SetSelection(GetTabIndex(_("Search"))); }
 
-void SFTPStatusPage::ShowLogTab() { m_notebook->SetSelection(GetTabIndex(_("Log"))); }
-
 void SFTPStatusPage::AddSearchText(const wxString& text)
 {
     m_stcSearch->SetReadOnly(false);

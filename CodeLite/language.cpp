@@ -34,38 +34,6 @@
 
 #include <algorithm>
 
-static wxString PathFromNameAndScope(const wxString& typeName, const wxString& typeScope)
-{
-    wxString path;
-    if(typeScope != wxT("<global>"))
-        path << typeScope << wxT("::");
-
-    path << typeName;
-    return path;
-}
-
-static wxString NameFromPath(const wxString& path)
-{
-    wxString name = path.AfterLast(wxT(':'));
-    return name;
-}
-
-static wxString ScopeFromPath(const wxString& path)
-{
-    wxString scope = path.BeforeLast(wxT(':'));
-    if(scope.IsEmpty())
-        return wxT("<global>");
-
-    if(scope.EndsWith(wxT(":"))) {
-        scope.RemoveLast();
-    }
-
-    if(scope.IsEmpty())
-        return wxT("<global>");
-
-    return scope;
-}
-
 Language::Language()
     : m_expression(wxEmptyString)
     , m_tm(NULL)

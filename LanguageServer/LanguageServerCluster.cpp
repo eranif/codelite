@@ -211,16 +211,6 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor*
     return LanguageServerProtocol::Ptr_t{ nullptr };
 }
 
-LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxString& filepath)
-{
-    for (const auto& [_, server] : m_servers) {
-        if (server->CanHandle(FileExtManager::GetType(filepath))) {
-            return server;
-        }
-    }
-    return LanguageServerProtocol::Ptr_t{ nullptr };
-}
-
 void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 {
     // if we have more than one location - prompt the user

@@ -124,21 +124,6 @@ bool CodeFormatterManager::CanFormat(const wxString& filepath) const
     return false;
 }
 
-bool CodeFormatterManager::CanFormatByContent(const wxString& content) const
-{
-    FileExtManager::FileType file_type;
-    if (!FileExtManager::GetContentType(content, file_type)) {
-        return false;
-    }
-
-    for (auto f : m_formatters) {
-        if (f->IsEnabled() && f->CanHandle(file_type)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void CodeFormatterManager::RestoreDefaults()
 {
     clear();

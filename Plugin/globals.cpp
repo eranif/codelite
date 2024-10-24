@@ -638,6 +638,7 @@ time_t GetFileModificationTime(const wxString& filename)
 
 namespace
 {
+#ifdef __WXMSW__
 /// helper method:
 /// run `uname -s` command and cache the output
 const wxString& __uname()
@@ -661,6 +662,7 @@ const wxString& __uname()
     }
     return uname_output;
 }
+#endif
 } // namespace
 bool clIsMSYSEnvironment()
 {

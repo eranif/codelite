@@ -100,46 +100,6 @@ std::string ReplaceWordA(const std::string& str, const std::string& word, const 
     return output;
 }
 
-// Helper string find metho
-wxString ReplaceWord(const wxString& str, const wxString& word, const wxString& replaceWith)
-{
-    wxString currChar;
-    wxString nextChar;
-    wxString currentWord;
-    wxString output;
-    for(size_t i = 0; i < str.Length(); i++) {
-        // Look ahead
-        if(str.Length() > i + 1) {
-            nextChar = str[i + 1];
-        } else {
-            // we are at the end of buffer
-            nextChar = wxT('\0');
-        }
-
-        currChar = str[i];
-        if(!IsWordChar(currChar, currentWord.Length())) {
-            output << str[i];
-            currentWord.Clear();
-
-        } else {
-
-            currentWord << currChar;
-            if(IsWordChar(nextChar, currentWord.Length())) {
-                // do nothing
-
-            } else if(!IsWordChar(nextChar, currentWord.Length()) && currentWord == word) {
-                output << replaceWith;
-                currentWord.Clear();
-
-            } else {
-                output << currentWord;
-                currentWord.Clear();
-            }
-        }
-    }
-    return output;
-}
-
 void TokenizeWords(const wxString& str, std::list<wxString>& outputList)
 {
     outputList.clear();
@@ -167,85 +127,6 @@ void PPToken::print(wxFFile& fp)
     wxString buff;
     buff << name << wxT("(") << (flags & IsFunctionLike) << wxT(")") << wxT("=") << replacement << wxT("\n");
     fp.Write(buff);
-}
-
-wxString PPToken::fullname() const
-{
-    wxString fullname;
-    fullname << name;
-    if(flags & IsFunctionLike) {
-        fullname << wxT("(");
-        for(size_t i = 0; i < args.size(); i++) {
-            fullname << wxT("%") << i << wxT(",");
-        }
-        if(args.size()) {
-            fullname.RemoveLast();
-        }
-        fullname << wxT(")");
-    }
-    return fullname;
-}
-
-void PPToken::squeeze()
-{
-    std::set<wxString> alreadyReplacedMacros;
-
-    // perform the squeeze 5 times max
-    for(size_t count = 0; count < 5; count++) {
-        bool modified(false);
-
-        // get list of possible macros in the replacement
-        std::list<wxString> tmpWords;
-        TokenizeWords(replacement, tmpWords);
-        wxArrayString words;
-        if(tmpWords.empty()) break;
-        
-        // Make room for at least tmpWords.size() items
-        words.Alloc(tmpWords.size());
-        
-        // make sure that a word is not been replaced more than once
-        // this will avoid recursion
-        // an example (taken from qglobal.h of the Qt library):
-        //
-        // #define qDebug QT_NO_QDEBUG_MACRO
-        // #define QT_NO_QDEBUG_MACRO if(1); else qDebug
-        //
-        std::for_each(tmpWords.begin(), tmpWords.end(), [&](const wxString& word){
-            if(alreadyReplacedMacros.count(word) == 0) {
-                alreadyReplacedMacros.insert(word);
-                words.Add(word);
-            }
-        });
-
-        for(size_t i = 0; i < words.size(); i++) {
-            PPToken tok = PPTable::Instance()->Token(words.Item(i));
-            if(tok.flags & IsValid) {
-                if(tok.flags & IsFunctionLike) {
-                    int where = replacement.Find(words.Item(i));
-                    if(where != wxNOT_FOUND) {
-                        wxString initList;
-                        wxArrayString initListArr;
-                        if(readInitList(replacement, where + words.Item(i).Length(), initList, initListArr)) {
-                            tok.expandOnce(initListArr);
-
-                            replacement.Remove(where, words.Item(i).Length() + initList.Length());
-                            tok.replacement.Replace(wxT("##"), wxT(""));
-                            replacement.insert(where, tok.replacement);
-                            modified = true;
-                        }
-                    }
-
-                } else {
-                    if(replacement.Replace(words.Item(i), tok.replacement)) {
-                        modified = true;
-                    }
-                }
-            }
-        }
-
-        if(!modified) break;
-    }
-    replacement.Replace(wxT("##"), wxT(""));
 }
 
 bool

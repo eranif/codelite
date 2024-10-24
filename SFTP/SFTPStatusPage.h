@@ -50,7 +50,6 @@ public:
     void SetStatusBarMessage(const wxString& message);
     void ClearSearchOutput();
     void ShowSearchTab();
-    void ShowLogTab();
     void AddSearchText(const wxString& text);
     
 protected:

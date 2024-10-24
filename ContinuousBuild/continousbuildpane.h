@@ -51,8 +51,6 @@ protected:
      */
     virtual void OnEnableCB(wxCommandEvent& event);
 
-    void DoUpdateConf();
-
     /**
      * @brief
      * @param event

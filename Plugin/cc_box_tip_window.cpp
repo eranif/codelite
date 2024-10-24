@@ -348,20 +348,6 @@ void CCBoxTipWindow::PositionAt(const wxPoint& pt, IEditor* focusEdior)
     }
 }
 
-void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
-{
-    // Move the tip to the left
-    wxPoint pt = win->GetScreenPosition();
-    pt.x -= GetSize().x;
-
-    SetSize(wxRect(pt, GetSize()));
-    Show();
-
-    if (focusEditor) {
-        focusEditor->SetActive();
-    }
-}
-
 void CCBoxTipWindow::DoDrawTip(wxDC& dc)
 {
     clMarkdownRenderer renderer;

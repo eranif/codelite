@@ -389,33 +389,6 @@ clKeyboardShortcut::Vec_t clKeyboardManager::GetAllUnassignedKeyboardShortcuts()
     return allUnassigned;
 }
 
-MenuItemDataMap_t clKeyboardManager::DoLoadAccelerators(const wxFileName& filename) const
-{
-    MenuItemDataMap_t entries;
-    if (filename.Exists()) {
-        wxString content;
-        if (!FileUtils::ReadFileContent(filename, content)) {
-            return entries;
-        }
-        wxArrayString lines = ::wxStringTokenize(content, "\r\n", wxTOKEN_STRTOK);
-        for (size_t i = 0; i < lines.GetCount(); ++i) {
-            wxArrayString parts = ::wxStringTokenize(lines.Item(i), "|", wxTOKEN_RET_EMPTY);
-            if (parts.GetCount() < 3) {
-                continue;
-            }
-            MenuItemData binding;
-            binding.resourceID = parts.Item(0);
-            binding.parentMenu = parts.Item(1);
-            binding.action = parts.Item(2);
-            if (parts.GetCount() == 4) {
-                binding.accel.FromString(parts.Item(3));
-            }
-            entries.insert(std::make_pair(binding.resourceID, binding));
-        }
-    }
-    return entries;
-}
-
 bool clKeyboardShortcut::operator==(const clKeyboardShortcut& rhs) const
 {
     return this->GetControl() == rhs.GetControl() && this->GetAlt() == rhs.GetAlt() &&

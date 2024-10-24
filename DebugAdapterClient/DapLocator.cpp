@@ -15,7 +15,7 @@ DapLocator::~DapLocator() {}
 
 size_t DapLocator::Locate(std::vector<DapEntry>* entries)
 {
-    find_lldb_vscode(entries);
+    find_lldb_dap(entries);
     find_debugpy(entries);
     return entries->size();
 }
@@ -25,7 +25,7 @@ namespace
 wxString wrap_string(const wxString& str)
 {
     wxString s = str;
-    if(s.Contains(" ")) {
+    if (s.Contains(" ")) {
         s.Prepend("\"").Append("\"");
     }
     return s;
@@ -47,7 +47,7 @@ DapEntry create_entry(const wxString& name, int port, const std::vector<wxString
     entry.SetConnectionString(connection_string);
 
     wxString command;
-    for(const wxString& c : cmd) {
+    for (const wxString& c : cmd) {
         command << wrap_string(c) << " ";
     }
     command.RemoveLast();
@@ -58,15 +58,20 @@ DapEntry create_entry(const wxString& name, int port, const std::vector<wxString
 }
 } // namespace
 
-void DapLocator::find_lldb_vscode(std::vector<DapEntry>* entries)
+void DapLocator::find_lldb_dap(std::vector<DapEntry>* entries)
 {
     wxArrayString paths;
-    wxString lldb_vscode;
-    if(!ThePlatform->Which("lldb-vscode", &lldb_vscode)) {
+    wxString lldb_debugger;
+
+    wxArrayString names;
+    names.Add("lldb-dap");
+    names.Add("lldb-vscode"); // Since LLVM-18, lldb-vscode was renamed to lldb-dap, try to find it as well
+    if (!ThePlatform->AnyWhich(names, &lldb_debugger)) {
         return;
     }
 
-    auto entry = create_entry("lldb-vscode", 12345, { lldb_vscode, "--port", "12345" }, DapLaunchType::LAUNCH);
+    wxString entry_name = wxFileName(lldb_debugger).GetName();
+    auto entry = create_entry(entry_name, 12345, { lldb_debugger, "--port", "12345" }, DapLaunchType::LAUNCH);
     entry.SetEnvFormat(dap::EnvFormat::LIST);
     entries->push_back(entry);
 }
@@ -78,13 +83,13 @@ void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
     wxString python;
 
     // locate python3
-    if(!ThePlatform->Which("python", &python) && !ThePlatform->Which("python3", &python)) {
+    if (!ThePlatform->Which("python", &python) && !ThePlatform->Which("python3", &python)) {
         return;
     }
 
     // we got pip
     wxString line = ProcUtils::GrepCommandOutput({ python, "-m", "pip", "list" }, "debugpy");
-    if(line.empty())
+    if (line.empty())
         return;
 
     // we have a match

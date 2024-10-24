@@ -154,7 +154,7 @@ source $HOME/.$(basename $SHELL)rc
     git submodule update --init --recursive
     mkdir build-release
     cd $_
-    cmake .. -DCMAKE_BUILD_TYPE=Release
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_MYSQL=1
     make -j$(sysctl -n hw.physicalcpu) install
 ```
 

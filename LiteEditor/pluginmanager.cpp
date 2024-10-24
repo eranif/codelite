@@ -957,16 +957,16 @@ void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& 
 {
     switch (pane_id) {
     case PaneId::BOTTOM_BAR:
-        clMainFrame::Get()->GetOutputPane()->GetNotebook()->AddPage(page, label, true);
+        clMainFrame::Get()->GetOutputPane()->GetNotebook()->AddPage(page, label, false);
         break;
     case PaneId::SIDE_BAR:
-        clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label, bmpname, true);
+        clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label, bmpname, false);
         break;
     case PaneId::DEBUG_BAR:
-        clMainFrame::Get()->GetDebuggerPane()->GetNotebook()->AddPage(page, label, true);
+        clMainFrame::Get()->GetDebuggerPane()->GetNotebook()->AddPage(page, label, false);
         break;
     case PaneId::SECONDARY_SIDE_BAR:
-        clMainFrame::Get()->GetSecondarySideBar()->GetNotebook()->AddPage(page, label, bmpname, true);
+        clMainFrame::Get()->GetSecondarySideBar()->GetNotebook()->AddPage(page, label, bmpname, false);
         break;
     }
 }

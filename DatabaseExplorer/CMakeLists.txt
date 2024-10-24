@@ -29,6 +29,10 @@ if(WITH_MYSQL)
 
     if(MINGW)
         install(FILES "${MSYS2_BASE}/clang64/bin/libmariadb.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+        msys_list_deps(${MSYS2_BASE}/clang64/bin/libmariadb.dll LIBMARIA_DEPS)
+        foreach(DEP ${LIBMARIA_DEPS})
+            install(FILES "${DEP}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+        endforeach()
     endif()
 endif(WITH_MYSQL)
 

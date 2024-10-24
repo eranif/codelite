@@ -39,7 +39,6 @@ add_definitions(-DWXUSINGDLL_SDK)
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
-    add_definitions(-fPIC)
 endif()
 
 # Add RPATH When building an application, set the install library to the proper location which is now under
@@ -90,8 +89,12 @@ include_directories(
     "${CMAKE_CURRENT_LIST_DIR}/top_level_windows"
     "${CMAKE_CURRENT_LIST_DIR}/xrc_handlers")
 
-add_definitions(-fPIC)
 add_library(wxcLib STATIC ${WXCLIB_SRCS})
+
+if(UNIX OR APPLE)
+    set_target_properties(wxcLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 target_link_libraries(wxcLib PUBLIC cJSON)
 
 set(RES_FILE "")
@@ -107,6 +110,10 @@ if(NOT WXC_APP)
 else()
     # executable
     add_executable(${PLUGIN_NAME} ${SRCS} ${RES_FILES})
+endif()
+
+if(UNIX OR APPLE)
+    set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 if(NOT WXC_APP AND USE_PCH)

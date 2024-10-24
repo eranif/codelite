@@ -20,11 +20,6 @@ if(LIBHUNSPELL STREQUAL "LIBHUNSPELL-NOTFOUND" OR HUNSPELL_H STREQUAL "HUNSPELL_
     message("    ** NOTICE ** Try installing libhunspell-dev package")
     message("    **")
 else()
-    if(UNIX AND NOT APPLE)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    endif()
-
     # set the plugin name here
     set(PLUGIN_NAME "SpellCheck")
     message("-- Found libhunspell: ${LIBHUNSPELL}, ${HUNSPELL_H}")
@@ -61,6 +56,10 @@ else()
 
     # Define the output
     add_library(${PLUGIN_NAME} SHARED ${SRCS})
+
+    if(UNIX OR APPLE)
+        set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    endif()
 
     if(USE_PCH)
         target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)

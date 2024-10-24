@@ -54,6 +54,11 @@ file(GLOB LIBSRC "PHPParser/*.cpp")
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
 add_library(PHPParser STATIC ${LIBSRC})
 
+if(UNIX OR APPLE)
+    set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    set_target_properties(PHPParser PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 include(CTest)
 if(BUILD_TESTING)
     file(GLOB UNIT_TESTS_SRC "PHPParserUnitTests/*.cpp")
@@ -73,15 +78,6 @@ if(BUILD_TESTING)
 
     add_test(NAME "PHPUnitTests" COMMAND PHPUnitTests WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/PHPParserUnitTests/Tests)
 endif(BUILD_TESTING)
-
-if(UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
-
-if(APPLE)
-    add_definitions(-fPIC)
-endif()
 
 set(ADDITIONAL_LIBRARIES "")
 if(UNIX)

@@ -7,7 +7,9 @@ include("${wxWidgets_USE_FILE}")
 file(GLOB SRCS "dummy.cpp")
 add_library(PCH STATIC ${SRCS})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+if(UNIX OR APPLE)
+    set_target_properties(PCH PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 # generate PCH for this project, we will reuse it later
 codelite_add_exported_pch(PCH)

@@ -133,7 +133,7 @@ wxString MysqlPreparedStatementResultSet::GetResultString(int nField)
   MYSQL_BIND* pResultBinding = GetResultBinding(nField);
   if (pResultBinding != NULL)
   {
-    if ((*(pResultBinding->is_null) == false))
+    if (*(pResultBinding->is_null) == false)
     {
       strValue = ConvertFromUnicodeStream((char*)(pResultBinding->buffer));
     }
@@ -147,7 +147,7 @@ long MysqlPreparedStatementResultSet::GetResultLong(int nField)
   MYSQL_BIND* pResultBinding = GetResultBinding(nField);
   if (pResultBinding != NULL)
   {
-    if ((*(pResultBinding->is_null) == false))
+    if (*(pResultBinding->is_null) == false)
     {
       int nType = pResultBinding->buffer_type;/*
       if (nType == MYSQL_TYPE_LONGLONG)
@@ -189,7 +189,7 @@ bool MysqlPreparedStatementResultSet::GetResultBool(int nField)
   MYSQL_BIND* pResultBinding = GetResultBinding(nField);
   if (pResultBinding != NULL)
   {
-    if ((*(pResultBinding->is_null) == false))
+    if (*(pResultBinding->is_null) == false)
       bValue = (*((int*)(pResultBinding->buffer)) != 0);
   }
   return bValue;
@@ -201,7 +201,7 @@ wxDateTime MysqlPreparedStatementResultSet::GetResultDate(int nField)
   MYSQL_BIND* pResultBinding = GetResultBinding(nField);
   if (pResultBinding != NULL)
   {
-    if ((*(pResultBinding->is_null) == false))
+    if (*(pResultBinding->is_null) == false)
     {
       MYSQL_TIME* pDate = (MYSQL_TIME*)(pResultBinding->buffer);
 	  if(pDate->year > 0 && pDate->month > 0 && pDate->day > 0)
@@ -217,7 +217,7 @@ void* MysqlPreparedStatementResultSet::GetResultBlob(int nField, wxMemoryBuffer&
   MYSQL_BIND* pResultBinding = GetResultBinding(nField);
   if (pResultBinding != NULL)
   {
-    if ((*(pResultBinding->is_null) == false))
+    if (*(pResultBinding->is_null) == false)
     {
       unsigned long nBufferLength = 0;
       if (pResultBinding->length)
@@ -260,7 +260,7 @@ double MysqlPreparedStatementResultSet::GetResultDouble(int nField)
   MYSQL_BIND* pResultBinding = GetResultBinding(nField);
   if (pResultBinding != NULL)
   {
-    if ((*(pResultBinding->is_null) == false))
+    if (*(pResultBinding->is_null) == false)
     {
       int nType = pResultBinding->buffer_type;
       switch (nType)

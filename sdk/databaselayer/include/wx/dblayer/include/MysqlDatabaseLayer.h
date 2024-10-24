@@ -85,15 +85,15 @@ private:
   void ParseServerAndPort(const wxString& strServer);
 
 #ifndef DONT_USE_DYNAMIC_DATABASE_LAYER_LINKING
-  MysqlInterface* m_pInterface;
+  MysqlInterface* m_pInterface = nullptr;
 #endif
   wxString m_strServer;
   wxString m_strDatabase;
   wxString m_strUser;
   wxString m_strPassword;
-  int m_iPort;
-    
-  void* m_pDatabase;
+  int m_iPort = 0;
+
+  void* m_pDatabase = nullptr;
 
 #if wxUSE_UNICODE
   PointerLookupMap m_ResultSets;

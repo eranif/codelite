@@ -1,306 +1,57 @@
 #include "../include/MysqlInterface.h"
 
+namespace
+{
+template <typename SigPtr>
+SigPtr loadSymbol(wxDynamicLibrary& dll, const wxString& symbol)
+{
+    if (!dll.HasSymbol(symbol)) {
+        throw wxT("Cannot find symbol ") + symbol;
+    }
+    return reinterpret_cast<SigPtr>(dll.GetSymbol(symbol));
+}
+} // namespace
+
 bool MysqlInterface::Init()
 {
 #ifdef __WIN32__
-  bool bLoaded = m_MysqlDLL.Load(wxT("libmySQL.dll"), wxDL_VERBATIM);
+    bool bLoaded = m_MysqlDLL.Load(wxT("libmariadb.dll"), wxDL_VERBATIM);
 #else
-  bool bLoaded = m_MysqlDLL.Load(wxDynamicLibrary::CanonicalizeName(wxT("mysqlclient")));
+    bool bLoaded = m_MysqlDLL.Load(wxDynamicLibrary::CanonicalizeName(wxT("mysqlclient")));
 #endif
-  if (!bLoaded)
-  {
-    return false;
-  }
+    if (!bLoaded) {
+        throw wxString(wxT("dll not found"));
+    }
 
-  wxString symbol = wxT("mysql_server_end");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlServerEnd = (MysqlServerEndType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
+    m_pMysqlServerEnd = loadSymbol<MysqlServerEndType>(m_MysqlDLL, wxT("mysql_server_end"));
+    m_pMysqlInit = loadSymbol<MysqlInitType>(m_MysqlDLL, wxT("mysql_init"));
+    m_pMysqlRealConnect = loadSymbol<MysqlRealConnectType>(m_MysqlDLL, wxT("mysql_real_connect"));
+    m_pMysqlRealQuery = loadSymbol<MysqlRealQueryType>(m_MysqlDLL, wxT("mysql_real_query"));
+    m_pMysqlError = loadSymbol<MysqlErrorType>(m_MysqlDLL, wxT("mysql_error"));
+    m_pMysqlErrno = loadSymbol<MysqlErrnoType>(m_MysqlDLL, wxT("mysql_errno"));
+    m_pMysqlClose = loadSymbol<MysqlCloseType>(m_MysqlDLL, wxT("mysql_close"));
+    m_pMysqlAutoCommit = loadSymbol<MysqlAutoCommitType>(m_MysqlDLL, wxT("mysql_autocommit"));
+    m_pMysqlCommit = loadSymbol<MysqlCommitType>(m_MysqlDLL, wxT("mysql_commit"));
+    m_pMysqlRollback = loadSymbol<MysqlRollbackType>(m_MysqlDLL, wxT("mysql_rollback"));
+    m_pMysqlQuery = loadSymbol<MysqlQueryType>(m_MysqlDLL, wxT("mysql_query"));
+    m_pMysqlAffectedRows = loadSymbol<MysqlAffectedRowsType>(m_MysqlDLL, wxT("mysql_affected_rows"));
+    m_pMysqlStmtInit = loadSymbol<MysqlStmtInitType>(m_MysqlDLL, wxT("mysql_stmt_init"));
+    m_pMysqlStmtPrepare = loadSymbol<MysqlStmtPrepareType>(m_MysqlDLL, wxT("mysql_stmt_prepare"));
+    m_pMysqlStmtExecute = loadSymbol<MysqlStmtExecuteType>(m_MysqlDLL, wxT("mysql_stmt_execute"));
+    m_pMysqlStmtError = loadSymbol<MysqlStmtErrorType>(m_MysqlDLL, wxT("mysql_stmt_error"));
+    m_pMysqlStmtErrno = loadSymbol<MysqlStmtErrnoType>(m_MysqlDLL, wxT("mysql_stmt_errno"));
+    m_pMysqlStmtFreeResult = loadSymbol<MysqlStmtFreeResultType>(m_MysqlDLL, wxT("mysql_stmt_free_result"));
+    m_pMysqlStmtClose = loadSymbol<MysqlStmtCloseType>(m_MysqlDLL, wxT("mysql_stmt_close"));
+    m_pMysqlListTables = loadSymbol<MysqlListTablesType>(m_MysqlDLL, wxT("mysql_list_tables"));
+    m_pMysqlFetchRow = loadSymbol<MysqlFetchRowType>(m_MysqlDLL, wxT("mysql_fetch_row"));
+    m_pMysqlFreeResult = loadSymbol<MysqlFreeResultType>(m_MysqlDLL, wxT("mysql_free_result"));
+    m_pMysqlGetServerVersion = loadSymbol<MysqlGetServerVersionType>(m_MysqlDLL, wxT("mysql_get_server_version"));
+    m_pMysqlStmtResultMetadata = loadSymbol<MysqlStmtResultMetadataType>(m_MysqlDLL, wxT("mysql_stmt_result_metadata"));
+    m_pMysqlNumFields = loadSymbol<MysqlNumFieldsType>(m_MysqlDLL, wxT("mysql_num_fields"));
+    m_pMysqlStmtParamCount = loadSymbol<MysqlStmtParamCountType>(m_MysqlDLL, wxT("mysql_stmt_param_count"));
+    m_pMysqlStmtBindParam = loadSymbol<MysqlStmtBindParamType>(m_MysqlDLL, wxT("mysql_stmt_bind_param"));
+    m_pMysqlStmtFetch = loadSymbol<MysqlStmtFetchType>(m_MysqlDLL, wxT("mysql_stmt_fetch"));
+    m_pMysqlStmtBindResult = loadSymbol<MysqlStmtBindResultType>(m_MysqlDLL, wxT("mysql_stmt_bind_result"));
 
-  symbol = wxT("mysql_init");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlInit = (MysqlInitType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_real_connect");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlRealConnect = (MysqlRealConnectType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_real_query");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlRealQuery = (MysqlRealQueryType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_error");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlError = (MysqlErrorType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_errno");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlErrno = (MysqlErrnoType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_close");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlClose = (MysqlCloseType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_autocommit");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlAutoCommit = (MysqlAutoCommitType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_commit");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlCommit = (MysqlCommitType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_rollback");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlRollback = (MysqlRollbackType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_query");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlQuery = (MysqlQueryType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_affected_rows");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlAffectedRows = (MysqlAffectedRowsType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_init");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtInit = (MysqlStmtInitType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_prepare");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtPrepare = (MysqlStmtPrepareType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_execute");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtExecute = (MysqlStmtExecuteType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_error");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtError = (MysqlStmtErrorType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_errno");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtErrno = (MysqlStmtErrnoType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_free_result");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtFreeResult = (MysqlStmtFreeResultType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_close");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtClose = (MysqlStmtCloseType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_list_tables");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlListTables = (MysqlListTablesType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_fetch_row");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlFetchRow = (MysqlFetchRowType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_free_result");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlFreeResult = (MysqlFreeResultType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_get_server_version");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlGetServerVersion = (MysqlGetServerVersionType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_result_metadata");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtResultMetadata = (MysqlStmtResultMetadataType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_num_fields");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlNumFields = (MysqlNumFieldsType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_param_count");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtParamCount = (MysqlStmtParamCountType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_bind_param");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtBindParam = (MysqlStmtBindParamType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_fetch");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtFetch = (MysqlStmtFetchType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  symbol = wxT("mysql_stmt_bind_result");
-  if (m_MysqlDLL.HasSymbol(symbol))
-  {
-    m_pMysqlStmtBindResult = (MysqlStmtBindResultType)m_MysqlDLL.GetSymbol(symbol);
-  }
-  else
-  {
-    return false;
-  }
-
-  return true;
+    return true;
 }

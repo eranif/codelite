@@ -24,15 +24,6 @@ if(WIN32)
     add_definitions(-DWXMAKINGDLL_DATABASELAYER)
 endif(WIN32)
 
-if(UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
-
-if(APPLE)
-    add_definitions(-fPIC)
-endif()
-
 file(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp")
 
 if(WITH_MYSQL)
@@ -75,6 +66,11 @@ endif(WITH_MYSQL)
 
 # Define the output
 add_library(databaselayersqlite SHARED ${SRCS} ${MYSQL_SRCS})
+
+if(UNIX OR APPLE)
+    set_target_properties(databaselayersqlite PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${SQLite3_LIBRARIES})
 
 codelite_install_library_target(databaselayersqlite)

@@ -22,15 +22,6 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
-if(UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
-
-if(APPLE)
-    add_definitions(-fPIC)
-endif()
-
 FLEX_TARGET(WordFlex "WordTokenizer.l" "${CMAKE_CURRENT_BINARY_DIR}/WordTokenizer.cpp"
             COMPILE_FLAGS "-Pword --noline --yylineno --batch")
 
@@ -40,6 +31,10 @@ file(GLOB SRCS "*.cpp")
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS} ${FlexSrcs})
+
+if(UNIX OR APPLE)
+    set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 if(USE_PCH)
     target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)

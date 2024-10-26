@@ -11,10 +11,6 @@ include(UtilsHelper)
 include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
                     "${CL_SRC_ROOT}/CodeLite/ssh" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
 
-if(NOT MINGW)
-    add_definitions(-fPIC)
-endif(NOT MINGW)
-
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
@@ -46,6 +42,10 @@ if(MINGW)
     set(RES_FILES "code_parser.rc")
 endif()
 add_executable(codelite ${SRCS} ${RES_FILES})
+
+if(UNIX OR APPLE)
+    set_target_properties(codelite PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 set(ADDITIONAL_LIBRARIES "")
 

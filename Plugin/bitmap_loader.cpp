@@ -578,7 +578,7 @@ static wxBitmap LoadSidebarBitmapInternal(const wxString& name, wxWindow* win, b
         return wxNullBitmap;
     }
 
-    wxSize button_size{ 32, 32 };
+    wxSize button_size{ 24, 24 };
 
     auto bmpbundle = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), button_size);
     if (!bmpbundle.IsOk()) {

@@ -100,8 +100,17 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
     // get the toolchain from the event and attempt to load the compiler
     const wxString& toolchain = e.GetToolchain();
     if(!toolchain.empty() && BuildSettingsConfigST::Get()->IsCompilerExist(toolchain)) {
-        m_activeCompiler = BuildSettingsConfigST::Get()->GetCompiler(toolchain);
-        clDEBUG() << "Active compiler is set to:" << m_activeCompiler->GetName() << endl;
+      m_activeCompiler = BuildSettingsConfigST::Get()->GetCompiler(toolchain);
+      clDEBUG() << "Active compiler is set to:" << m_activeCompiler->GetName() << endl;
+
+    } else {
+      clDEBUG() << "Compiler not selected in the workspace build settings or not available" << endl;
+
+      // toolchain not selected in build configuration or unavailable
+      m_view->AppendItem(_("\n"));
+      m_view->AppendItem(WrapLineInColour(_("> WARNING: No toolchain selected. Build log highlighting will not be available!\n"), AnsiColours::Yellow()));
+      m_view->AppendItem(WrapLineInColour(_("           Check toolchain properly selected in the workspace build settings.\n"), AnsiColours::Yellow()));
+      m_view->AppendItem(_("\n"));
     }
 
     // notify the plugins that the build had started

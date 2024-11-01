@@ -123,11 +123,11 @@ This allows you to select which to install using apt (or aptitude or synaptic).
 ### CodeLite RPMs
 ---
 
-There are rpms available for fedora 37 & 38 and 39 & 40, and openSUSE Leap 15.4 15.5 & 15.6:
+There are rpms available for fedora 37 & 38, 39 & 40, 41 and openSUSE Leap 15.4 15.5 & 15.6:
 
 Distro	| x86_64 GTK+3
 --------|----------------
-fedora	| [`37 and 38`][10]  [`39 and 40`][11]  [41`][12] 
+fedora	| [`37 and 38`][10]  [`39 and 40`][11]  [`41`][12] 
 openSUSE | [`15.4`][13] [`15.5`][14] [`15.6`][15]
 
 
@@ -174,7 +174,7 @@ As the above CodeLite 17.0 packages already contain wxCrafter, its gui-designer 
 
 [10]: https://repos.codelite.org/rpms-17.0/fedora/37/codelite-17.0-1.fc37.x86_64.rpm
 [11]: https://repos.codelite.org/rpms-17.0/fedora/39/codelite-17.0-1.fc39.x86_64.rpm
-[12]: https://repos.codelite.org/rpms-17.0/fedora/39/codelite-17.0-1.fc39.x86_64.rpm
+[12]: https://repos.codelite.org/rpms-17.0/fedora/41/codelite-17.0-1.fc41.x86_64.rpm
 
 [13]: https://repos.codelite.org/rpms-17.0/suse/15.4/codelite-17.0-1.suse.x86_64.rpm
 [14]: https://repos.codelite.org/rpms-17.0/suse/15.5/codelite-17.0-1.suse.x86_64.rpm

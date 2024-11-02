@@ -42,6 +42,8 @@ public:
      * @brief initialise the view by syncing the data with the store
      */
     void RefreshView(const SessionBreakpoints& breakpoints);
+
+    void Clear();
 };
 
 #endif // DAPBREAKPOINTSVIEW_H

@@ -1,13 +1,13 @@
 #ifndef DAPMAINVIEW_H
 #define DAPMAINVIEW_H
 
+#include "DAPOutputPane.hpp"
 #include "UI.h"
 #include "clModuleLogger.hpp"
 #include "dap/Client.hpp"
 #include "dap/DAPEvent.hpp"
 #include "dap/dap.hpp"
 
-#include <unordered_set>
 #include <wx/timer.h>
 
 class wxTimer;
@@ -25,42 +25,41 @@ struct VariableClientData : public wxTreeItemData {
     virtual ~VariableClientData() {}
 };
 
-enum class FrameOrThread {
-    THREAD,
-    FRAME,
+struct ThreadInfo {
+    dap::Thread thread_info;
+    std::vector<dap::StackFrame> frames;
+
+    ThreadInfo(const dap::Thread& t)
+        : thread_info(t)
+    {
+    }
+    bool has_frames() const { return !frames.empty(); }
+    int thread_id() const { return thread_info.id; }
+
+    /// Return this thread backtrace as a string
+    wxString GetBacktrace() const
+    {
+        wxString backtrace;
+        backtrace << "Thread: " << thread_info.id << ":" << thread_info.name << "\n";
+        for (const auto& frame : frames) {
+            wxString source;
+            if (!frame.source.path.empty()) {
+                source << frame.source.path << ":" << frame.line;
+            } else {
+                source = frame.source.name;
+            }
+            backtrace << frame.id << ", " << frame.name << ", " << source << "\n";
+        }
+        backtrace << "\n";
+        return backtrace;
+    }
 };
 
-// every entry in the threads tree has this item data
-struct FrameOrThreadClientData : public wxTreeItemData {
-    FrameOrThread type;
-    dap::StackFrame frame_info;
-    dap::Thread thread_info;
-    bool loaded = false;
-
-    FrameOrThreadClientData(const dap::StackFrame& frameInfo)
-        : type(FrameOrThread::FRAME)
-        , frame_info(frameInfo)
+struct FrameInfo {
+    dap::StackFrame frame;
+    FrameInfo(const dap::StackFrame& f)
+        : frame(f)
     {
-    }
-
-    FrameOrThreadClientData(const dap::Thread& threadInfo)
-        : type(FrameOrThread::THREAD)
-        , thread_info(threadInfo)
-    {
-    }
-
-    virtual ~FrameOrThreadClientData() {}
-
-    bool IsFrame() const { return type == FrameOrThread::FRAME; }
-    bool IsThread() const { return type == FrameOrThread::THREAD; }
-
-    int GetId() const
-    {
-        if(IsFrame()) {
-            return frame_info.id;
-        } else {
-            return thread_info.id;
-        }
     }
 };
 
@@ -68,44 +67,49 @@ struct FrameOrThreadClientData : public wxTreeItemData {
 
 class DAPMainView : public DAPMainViewBase
 {
-    DebugAdapterClient* m_plugin = nullptr;
-    wxTimer* m_timer = nullptr;
-    // the variables displayed in the view are owned by this frame Id
-    int m_scopesFrameId = wxNOT_FOUND;
-
-    clModuleLogger& LOG;
-
-protected:
-    wxTreeItemId FindThreadNode(int threadId);
-    wxTreeItemId FindVariableNode(int refId);
-
-    FrameOrThreadClientData* GetFrameClientData(const wxTreeItemId& item);
-    VariableClientData* GetVariableClientData(const wxTreeItemId& item);
-
-    void OnTimerCheckCanInteract(wxTimerEvent& event);
-    int GetThreadId(const wxTreeItemId& item);
-    int GetVariableId(const wxTreeItemId& item);
-
-    void DoThreadExpanding(const wxTreeItemId& item);
-    bool DoCopyBacktrace(const wxTreeItemId& item, wxString* content);
-    void OnThreadItemExpanding(wxTreeEvent& event);
-    void OnFrameItemSelected(wxTreeEvent& event);
-    void OnThreadsListMenu(wxTreeEvent& event);
-    void OnVariablesMenu(wxTreeEvent& event);
-    void OnScopeItemExpanding(wxTreeEvent& event);
-
 public:
     DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log);
     virtual ~DAPMainView();
 
     void UpdateThreads(int activeThreadId, dap::ThreadsResponse* response);
     void UpdateFrames(int threadId, dap::StackTraceResponse* response);
+    void DoUpdateFrames(int threadId, const std::vector<dap::StackFrame>& frames);
     void UpdateScopes(int frameId, dap::ScopesResponse* response);
     void UpdateVariables(int parentRef, dap::VariablesResponse* response);
 
     void SetDisabled(bool b);
     bool IsDisabled() const;
+    void Clear();
 
     int GetCurrentFrameId() const { return m_scopesFrameId; }
+    DAPOutputPane* GetOutputPane() const { return m_outputPane; }
+
+protected:
+    void OnFrameChanged(wxDataViewEvent& event) override;
+    void OnThreadIdChanged(wxDataViewEvent& event) override;
+    wxDataViewItem FindThread(int threadId) const;
+    wxTreeItemId FindVariableNode(int refId);
+
+    ThreadInfo* GetThreadInfo(const wxDataViewItem& item);
+    FrameInfo* GetFrameInfo(const wxDataViewItem& item);
+    VariableClientData* GetVariableClientData(const wxTreeItemId& item);
+
+    void OnTimerCheckCanInteract(wxTimerEvent& event);
+    int GetVariableId(const wxTreeItemId& item);
+
+    void OnThreadsListMenu(wxDataViewEvent& event) override;
+    void OnVariablesMenu(wxTreeEvent& event);
+    void OnScopeItemExpanding(wxTreeEvent& event);
+    void DoCopyAllThreadsBacktrace();
+
+private:
+    DebugAdapterClient* m_plugin = nullptr;
+    wxTimer* m_timer = nullptr;
+    // the variables displayed in the view are owned by this frame Id
+    int m_scopesFrameId = wxNOT_FOUND;
+
+    clModuleLogger& LOG;
+    DAPOutputPane* m_outputPane = nullptr;
+    std::vector<size_t> m_getFramesRequests;
 };
 #endif // DAPMAINVIEW_H

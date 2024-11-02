@@ -55,9 +55,9 @@ void DAPBreakpointsView::RefreshView(const SessionBreakpoints& breakpoints)
 {
     // keep the previous breakpoints
     std::unordered_map<int, dap::Breakpoint> old_breakpoints;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         auto cd = GetItemData(m_dvListCtrl->RowToItem(i));
-        if(!cd || cd->m_breapoint.id <= 0) {
+        if (!cd || cd->m_breapoint.id <= 0) {
             continue;
         }
         old_breakpoints.insert({ cd->m_breapoint.id, cd->m_breapoint });
@@ -66,21 +66,21 @@ void DAPBreakpointsView::RefreshView(const SessionBreakpoints& breakpoints)
     m_dvListCtrl->Begin();
     m_dvListCtrl->DeleteAllItems();
 
-    for(auto bp : breakpoints.get_breakpoints()) {
+    for (auto bp : breakpoints.get_breakpoints()) {
 
         wxString& path = bp.source.path;
-        if(path.empty()) {
+        if (path.empty()) {
             // use the path from the previous time we saw it
-            if(old_breakpoints.count(bp.id)) {
+            if (old_breakpoints.count(bp.id)) {
                 path = old_breakpoints[bp.id].source.path;
             }
         }
 
         // still empty?
-        if(path.empty()) {
-            if(!bp.source.name.empty()) {
+        if (path.empty()) {
+            if (!bp.source.name.empty()) {
                 path = bp.source.name;
-            } else if(bp.source.sourceReference > 0) {
+            } else if (bp.source.sourceReference > 0) {
                 path << "source ref: " << bp.source.sourceReference;
             }
         }
@@ -128,7 +128,7 @@ void DAPBreakpointsView::OnNewFunctionBreakpoint(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString funcname = clGetTextFromUser(_("Set breakpoint in function"), _("Function name"));
-    if(funcname.empty()) {
+    if (funcname.empty()) {
         return;
     }
 
@@ -136,7 +136,7 @@ void DAPBreakpointsView::OnNewFunctionBreakpoint(wxCommandEvent& event)
     new_bp.name = funcname;
     auto iter = std::find_if(m_functionBreakpoints.begin(), m_functionBreakpoints.end(),
                              [&funcname](const dap::FunctionBreakpoint& bp) { return bp.name == funcname; });
-    if(iter != m_functionBreakpoints.end()) {
+    if (iter != m_functionBreakpoints.end()) {
         return;
     }
     m_functionBreakpoints.push_back(new_bp);
@@ -147,26 +147,26 @@ void DAPBreakpointsView::OnNewSourceBreakpoint(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString location = clGetTextFromUser(_("Set breakpoint in source file"), _("Location (source:line)"));
-    if(location.empty()) {
+    if (location.empty()) {
         return;
     }
 
     wxString source;
     long line_numner;
     source = location.BeforeFirst(':');
-    if(!location.AfterLast(':').ToCLong(&line_numner)) {
+    if (!location.AfterLast(':').ToCLong(&line_numner)) {
         wxMessageBox(_("Invalid line number"), "CodeLite", wxOK | wxICON_ERROR | wxOK_DEFAULT);
         return;
     }
 
     // get all breakpoints for the requested source file
     std::vector<dap::SourceBreakpoint> source_breakpoints;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         auto cd = GetItemData(m_dvListCtrl->RowToItem(i));
-        if(!cd) {
+        if (!cd) {
             continue;
         }
-        if(cd->m_breapoint.source.path == source) {
+        if (cd->m_breapoint.source.path == source) {
             source_breakpoints.push_back({ cd->m_breapoint.line, "" });
         }
     }
@@ -179,22 +179,30 @@ void DAPBreakpointsView::OnDeleteAllBreakpoints(wxCommandEvent& event)
     wxUnusedVar(event);
     // collect all source file
     std::unordered_set<wxString> paths;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         auto cd = GetItemData(m_dvListCtrl->RowToItem(i));
-        if(!cd) {
+        if (!cd) {
             continue;
         }
         LOG_DEBUG(LOG) << "Will delete breakpoint:" << cd->m_breapoint.source.sourceReference << ","
                        << cd->m_breapoint.source.path << endl;
-        if(cd->m_breapoint.source.path.empty()) {
+        if (cd->m_breapoint.source.path.empty()) {
             continue;
         }
 
         paths.insert(cd->m_breapoint.source.path);
     }
 
-    for(const wxString& path : paths) {
+    for (const wxString& path : paths) {
         LOG_DEBUG(LOG) << "Deleting breakpoints with path:" << path << endl;
         m_plugin->GetClient().SetBreakpointsFile(path, {});
     }
+}
+
+void DAPBreakpointsView::Clear()
+{
+    m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
+        BreakpointClientData* ptr = reinterpret_cast<BreakpointClientData*>(d);
+        delete ptr;
+    });
 }

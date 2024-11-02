@@ -41,18 +41,18 @@ void DAPWatchesView::Update(int current_frame_id)
     wxArrayString words;
 
     // two loops, to avoid manipulating the tree while we are adding entries
-    while(item.IsOk()) {
+    while (item.IsOk()) {
         wxString word = m_list->GetItemText(item);
         words.Add(word);
         item = m_list->GetNextChild(m_list->GetRootItem(), cookie);
     }
 
     m_list->DeleteChildren(m_list->GetRootItem());
-    for(const auto& word : words) {
+    for (const auto& word : words) {
         m_plugin->GetClient().EvaluateExpression(
             word, current_frame_id, dap::EvaluateContext::WATCH,
             [this, word](bool success, const wxString& result, const wxString& type, int variablesReference) {
-                if(!success) {
+                if (!success) {
                     m_list->AddWatch(word, wxEmptyString, wxEmptyString, 0);
                 } else {
                     m_list->AddWatch(word, result, type, variablesReference);
@@ -71,7 +71,7 @@ void DAPWatchesView::OnNewWatch(wxCommandEvent& event)
 
     wxString selected_text = editor->GetSelection();
     wxString expression = ::clGetTextFromUser(_("Add watch"), _("Expression:"), selected_text);
-    if(expression.empty()) {
+    if (expression.empty()) {
         return;
     }
 
@@ -84,7 +84,7 @@ void DAPWatchesView::OnDeleteWatch(wxCommandEvent& event)
     wxArrayTreeItemIds items;
     m_list->GetSelections(items);
     m_list->Begin();
-    for(auto item : items) {
+    for (auto item : items) {
         m_list->Delete(item);
     }
     m_list->Commit();
@@ -99,7 +99,7 @@ void DAPWatchesView::OnDeleteAll(wxCommandEvent& event)
 
 void DAPWatchesView::UpdateChildren(int varId, dap::VariablesResponse* response)
 {
-    if(!m_list) {
+    if (!m_list) {
         return;
     }
     m_list->UpdateChildren(varId, response);
@@ -117,4 +117,11 @@ void DAPWatchesView::OnDeleteWatchUI(wxUpdateUIEvent& event)
     wxArrayTreeItemIds items;
     m_list->GetSelections(items);
     event.Enable(!items.empty());
+}
+
+void DAPWatchesView::Clear()
+{
+    m_list->Begin();
+    m_list->DeleteChildren(m_list->GetRootItem());
+    m_list->Commit();
 }

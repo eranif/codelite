@@ -28,6 +28,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "BreakpointsHelper.hpp"
+#include "DAPDebuggerPane.h"
 #include "DAPOutputPane.hpp"
 #include "DAPTextView.h"
 #include "DebugSession.hpp"
@@ -66,22 +67,18 @@ class DebugAdapterClient : public IPlugin
     /// ------------------------------------
     /// UI elements
     /// ------------------------------------
-    DAPMainView* m_threadsView = nullptr;
-    DAPBreakpointsView* m_breakpointsView = nullptr;
     DAPTextView* m_textView = nullptr;
-    DAPOutputPane* m_outputView = nullptr;
     DAPTooltip* m_tooltip = nullptr;
-    DAPWatchesView* m_watchesView = nullptr;
-
-    bool m_raisOnBpHit;
-    bool m_isPerspectiveLoaded;
+    DAPDebuggerPane* m_debuggerPane = nullptr;
+    bool m_raisOnBpHit = true;
+    bool m_isPerspectiveLoaded = false;
 
     friend class LLDBTooltip;
 
 private:
     wxString ReplacePlaceholders(const wxString& str) const;
     void UpdateWatches();
-    void DestroyUI();
+    void HideDebuggerUI();
     void InitializeUI();
     void LoadPerspective();
     void ShowPane(const wxString& paneName, bool show);
@@ -110,6 +107,10 @@ private:
     bool IsDebuggerOwnedByPlugin(const wxString& name) const;
 
     void DestroyTooltip();
+    DAPMainView* GetThreadsView() const { return m_debuggerPane->GetMainView(); }
+    DAPBreakpointsView* GetBreakpointsView() const { return m_debuggerPane->GetBreakpointsView(); }
+    DAPWatchesView* GetWatchesView() const { return m_debuggerPane->GetWatchesView(); }
+    DAPOutputPane* GetOutputView() const { return m_debuggerPane->GetOutputView(); }
 
 public:
     DebugAdapterClient(IManager* manager);

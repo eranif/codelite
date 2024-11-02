@@ -23,6 +23,8 @@ public:
     DAPWatchesView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log);
     virtual ~DAPWatchesView();
 
+    void Clear();
+
     /**
      * @brief update the watches in the context of the current frame
      * @param current_frame_id

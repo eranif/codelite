@@ -9,12 +9,24 @@
 // Declare the bitmap loading function
 extern void wxCrafternz79PnInitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafternz79PnInitBitmapResources();
@@ -24,50 +36,102 @@ DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer237 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer237);
 
-    m_splitter238 = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                               wxSP_LIVE_UPDATE | wxSP_3DSASH);
-    m_splitter238->SetSashGravity(0.5);
-    m_splitter238->SetMinimumPaneSize(10);
+    m_splitterHorizontal = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                                wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_splitterHorizontal->SetSashGravity(0.5);
+    m_splitterHorizontal->SetMinimumPaneSize(100);
 
-    boxSizer237->Add(m_splitter238, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer237->Add(m_splitterHorizontal, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage240 = new wxPanel(m_splitter238, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_splitter238, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitterPageTop = new wxPanel(m_splitterHorizontal, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitterHorizontal, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    wxBoxSizer* boxSizer243 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage240->SetSizer(boxSizer243);
+    wxBoxSizer* boxSizer289 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageTop->SetSizer(boxSizer289);
 
-    m_threadsTree = new clThemedTreeCtrl(m_splitterPage240, wxID_ANY, wxDefaultPosition,
-                                         wxDLG_UNIT(m_splitterPage240, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_splitterVertical =
+        new clThemedSplitterWindow(m_splitterPageTop, wxID_ANY, wxDefaultPosition,
+                                   wxDLG_UNIT(m_splitterPageTop, wxSize(-1, -1)), wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_splitterVertical->SetSashGravity(0.5);
+    m_splitterVertical->SetMinimumPaneSize(100);
 
-    boxSizer243->Add(m_threadsTree, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer289->Add(m_splitterVertical, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage242 = new wxPanel(m_splitter238, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_splitter238, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter238->SplitVertically(m_splitterPage240, m_splitterPage242, 0);
+    m_splitterPageBacktrace = new wxPanel(m_splitterVertical, wxID_ANY, wxDefaultPosition,
+                                          wxDLG_UNIT(m_splitterVertical, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    wxBoxSizer* boxSizer243 = new wxBoxSizer(wxHORIZONTAL);
+    m_splitterPageBacktrace->SetSizer(boxSizer243);
+
+    m_dvListCtrlThreadId =
+        new clThemedListCtrl(m_splitterPageBacktrace, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageBacktrace, wxSize(150, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer243->Add(m_dvListCtrlThreadId, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlThreadId->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(50), wxALIGN_LEFT,
+                                           wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlThreadId->AppendTextColumn(_("Active"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(24), wxALIGN_LEFT,
+                                           wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlThreadId->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                           wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlFrames =
+        new clThemedListCtrl(m_splitterPageBacktrace, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageBacktrace, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer243->Add(m_dvListCtrlFrames, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlFrames->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(50), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlFrames->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlFrames->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlFrames->AppendTextColumn(_("Source"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_splitterPageLocals = new wxPanel(m_splitterVertical, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_splitterVertical, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitterVertical->SplitVertically(m_splitterPageBacktrace, m_splitterPageLocals, 0);
 
     wxBoxSizer* boxSizer244 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage242->SetSizer(boxSizer244);
+    m_splitterPageLocals->SetSizer(boxSizer244);
 
-    m_variablesTree = new clThemedTreeCtrl(m_splitterPage242, wxID_ANY, wxDefaultPosition,
-                                           wxDLG_UNIT(m_splitterPage242, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_variablesTree = new clThemedTreeCtrl(m_splitterPageLocals, wxID_ANY, wxDefaultPosition,
+                                           wxDLG_UNIT(m_splitterPageLocals, wxSize(-1, -1)),
+                                           wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE);
 
     boxSizer244->Add(m_variablesTree, 1, wxEXPAND, WXC_FROM_DIP(5));
 
+    m_splitterPageBottom = new wxPanel(m_splitterHorizontal, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_splitterHorizontal, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitterHorizontal->SplitHorizontally(m_splitterPageTop, m_splitterPageBottom, 0);
+
+    wxBoxSizer* boxSizer290 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageBottom->SetSizer(boxSizer290);
+
     SetName(wxT("DAPMainViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
+    // Connect events
+    m_dvListCtrlThreadId->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &DAPMainViewBase::OnThreadIdChanged, this);
+    m_dvListCtrlThreadId->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &DAPMainViewBase::OnThreadsListMenu, this);
+    m_dvListCtrlFrames->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &DAPMainViewBase::OnFrameChanged, this);
 }
 
-DAPMainViewBase::~DAPMainViewBase() {}
+DAPMainViewBase::~DAPMainViewBase()
+{
+    m_dvListCtrlThreadId->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &DAPMainViewBase::OnThreadIdChanged, this);
+    m_dvListCtrlThreadId->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &DAPMainViewBase::OnThreadsListMenu, this);
+    m_dvListCtrlFrames->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &DAPMainViewBase::OnFrameChanged, this);
+}
 
 DapDebuggerSettingsDlgBase::DapDebuggerSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                        const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafternz79PnInitBitmapResources();
@@ -109,7 +173,7 @@ DapDebuggerSettingsDlgBase::DapDebuggerSettingsDlgBase(wxWindow* parent, wxWindo
     m_stdBtnSizer250->Realize();
 
 #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook)) {
+    if (!wxPersistenceManager::Get().Find(m_notebook)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
     } else {
         wxPersistenceManager::Get().Restore(m_notebook);
@@ -118,15 +182,15 @@ DapDebuggerSettingsDlgBase::DapDebuggerSettingsDlgBase(wxWindow* parent, wxWindo
 
     SetName(wxT("DapDebuggerSettingsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -139,7 +203,7 @@ DAPBreakpointsViewBase::DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id, 
                                                long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafternz79PnInitBitmapResources();
@@ -156,7 +220,7 @@ DAPBreakpointsViewBase::DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id, 
     boxSizer264->Add(m_toolbar, 0, 0, WXC_FROM_DIP(5));
 
     m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxDV_ROW_LINES | wxDV_SINGLE);
+                                        wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE);
 
     boxSizer264->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -168,7 +232,7 @@ DAPBreakpointsViewBase::DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("DAPBreakpointsViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -185,7 +249,7 @@ DAPBreakpointsViewBase::~DAPBreakpointsViewBase()
 DAPTextViewBase::DAPTextViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafternz79PnInitBitmapResources();
@@ -236,7 +300,7 @@ DAPTextViewBase::DAPTextViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     SetName(wxT("DAPTextViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
 }
@@ -247,7 +311,7 @@ DAPWatchesViewBase::DAPWatchesViewBase(wxWindow* parent, wxWindowID id, const wx
                                        long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafternz79PnInitBitmapResources();
@@ -265,7 +329,7 @@ DAPWatchesViewBase::DAPWatchesViewBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("DAPWatchesViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
 }

@@ -25,6 +25,7 @@ if(WITH_MYSQL)
             install(FILES "${DEP}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
         endforeach()
     endif()
+    unset(WITH_MYSQL CACHE)
 endif(WITH_MYSQL)
 
 # On UNIX we require GTK

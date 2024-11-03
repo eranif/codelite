@@ -1,11 +1,11 @@
 # Our project is called 'databaselayersqlite' this is how it will be called in visual studio, and in our makefiles.
 project(databaselayersqlite)
 
-if (APPLE)
+if(UNIX)
     option(WITH_MYSQL "Enable support of MySQL for DatabaseExplorer plugin" OFF)
-else ()
+else()
     option(WITH_MYSQL "Enable support of MySQL for DatabaseExplorer plugin" ON)
-endif ()
+endif()
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 
@@ -62,7 +62,9 @@ if(WITH_MYSQL)
         endif(NOT ${MARIADBSERVER_INCLUDE} STREQUAL "MARIADBSERVER_INCLUDE-NOTFOUND")
     endif(UNIX AND NOT APPLE)
 
-endif(WITH_MYSQL)
+else()
+    message(STATUS "MySQL is execluded from build")
+endif()
 
 # Define the output
 add_library(databaselayersqlite SHARED ${SRCS} ${MYSQL_SRCS})

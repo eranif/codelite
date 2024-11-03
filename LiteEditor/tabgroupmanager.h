@@ -79,7 +79,6 @@ protected:
     ~TabgroupManager();
 
     void LoadKnownTabgroups(bool isGlobal = false);
-    void SetTabgroupDirectory();
 
     wxString m_tabgroupdir;
     vTabGrps m_tabgroups;

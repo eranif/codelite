@@ -83,12 +83,6 @@ public:
                     wxEvtHandler* sink = nullptr, const wxString& uid = "");
 
     /**
-     * @brief install package without user interference
-     */
-    bool NpmSilentInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
-                          wxEvtHandler* sink = nullptr, const wxString& uid = "");
-
-    /**
      * @brief run npm init in a directory
      */
     bool NpmInit(const wxString& workingDirectory, wxEvtHandler* sink = nullptr);

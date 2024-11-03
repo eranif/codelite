@@ -162,8 +162,6 @@ void clEditorBar::DoRefreshColoursAndFonts()
     GetParent()->GetSizer()->Layout();
 }
 
-void clEditorBar::DoRefresh() { Refresh(); }
-
 void clEditorBar::OnMarkerChanged(clCommandEvent& event) { event.Skip(); }
 
 void clEditorBar::CreateBookmarksBitmap()

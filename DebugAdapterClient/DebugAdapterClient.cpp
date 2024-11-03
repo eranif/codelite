@@ -1099,8 +1099,6 @@ void DebugAdapterClient::UpdateWatches()
     GetWatchesView()->Update(GetThreadsView()->GetCurrentFrameId());
 }
 
-void DebugAdapterClient::RefreshBreakpointsMarkersForEditor(IEditor* editor) { CHECK_PTR_RET(editor); }
-
 bool DebugAdapterClient::StartSocketDap()
 {
     m_dap_server.reset();

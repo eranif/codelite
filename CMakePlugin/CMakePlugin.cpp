@@ -194,55 +194,6 @@ CMakePlugin::~CMakePlugin()
 
 /* ************************************************************************ */
 
-wxFileName CMakePlugin::GetWorkspaceDirectory() const
-{
-    const clCxxWorkspace* workspace = m_mgr->GetWorkspace();
-    wxASSERT(workspace);
-
-    return wxFileName::DirName(workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME));
-}
-
-/* ************************************************************************ */
-
-wxFileName CMakePlugin::GetProjectDirectory(const wxString& projectName) const
-{
-    const clCxxWorkspace* workspace = m_mgr->GetWorkspace();
-    wxASSERT(workspace);
-
-    wxString errMsg;
-    const ProjectPtr proj = workspace->FindProjectByName(projectName, errMsg);
-    wxASSERT(proj);
-
-    return wxFileName::DirName(proj->GetFileName().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME));
-}
-
-/* ************************************************************************ */
-
-wxString CMakePlugin::GetSelectedProjectConfig() const
-{
-    BuildConfigPtr configPtr = GetSelectedBuildConfig();
-
-    if (configPtr)
-        return configPtr->GetName();
-
-    return wxEmptyString;
-}
-
-/* ************************************************************************ */
-
-BuildConfigPtr CMakePlugin::GetSelectedBuildConfig() const
-{
-    const clCxxWorkspace* workspace = m_mgr->GetWorkspace();
-    wxASSERT(workspace);
-
-    const ProjectPtr projectPtr = GetSelectedProject();
-    wxASSERT(projectPtr);
-
-    return workspace->GetProjBuildConf(projectPtr->GetName(), wxEmptyString);
-}
-
-/* ************************************************************************ */
-
 wxArrayString CMakePlugin::GetSupportedGenerators() const
 {
 #ifdef __WXMSW__
@@ -301,27 +252,6 @@ void CMakePlugin::UnPlug()
 
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &CMakePlugin::OnCMakeOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CMakePlugin::OnCMakeTerminated, this);
-}
-
-/* ************************************************************************ */
-
-bool CMakePlugin::ExistsCMakeLists(wxFileName directory) const
-{
-    // Add CMakeLists.txt
-    directory.SetFullName(CMAKELISTS_FILE);
-
-    return directory.Exists();
-}
-
-/* ************************************************************************ */
-
-void CMakePlugin::OpenCMakeLists(wxFileName filename) const
-{
-    filename.SetFullName(CMAKELISTS_FILE);
-
-    if (!m_mgr->OpenFile(filename.GetFullPath()))
-        wxMessageBox("Unable to open \"" + filename.GetFullPath() + "\"", wxMessageBoxCaptionStr,
-                     wxOK | wxCENTER | wxICON_ERROR);
 }
 
 /* ************************************************************************ */

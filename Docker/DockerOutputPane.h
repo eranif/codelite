@@ -28,7 +28,6 @@ protected:
 
 protected:
     size_t GetSelectedContainers(clDockerContainer::Vect_t& containers);
-    void DoContainerCommand(const wxString& command);
 
 public:
     DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t driver);

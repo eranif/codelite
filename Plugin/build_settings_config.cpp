@@ -374,19 +374,6 @@ CompilerPtr BuildSettingsConfig::GetDefaultCompiler(const wxString& compilerFami
     return defaultComp;
 }
 
-CompilerPtrVec_t BuildSettingsConfig::GetAllCompilers(const wxString& family) const
-{
-    CompilerPtrVec_t all;
-    std::for_each(m_compilers.begin(), m_compilers.end(), [&](const std::pair<wxString, CompilerPtr>& p) {
-        if(!family.IsEmpty() && p.second->GetCompilerFamily() == family) {
-            all.push_back(p.second);
-        } else if(family.IsEmpty()) {
-            all.push_back(p.second);
-        }
-    });
-    return all;
-}
-
 std::unordered_map<wxString, wxArrayString> BuildSettingsConfig::GetCompilersGlobalPaths() const
 {
     std::unordered_map<wxString, wxArrayString> M;

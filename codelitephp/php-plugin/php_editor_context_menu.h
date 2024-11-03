@@ -86,12 +86,6 @@ private:
     void DoBuildMenu(wxMenu* menu, IEditor* editor);
     bool IsIncludeOrRequireStatement(wxString& includeWhat);
     bool GetIncludeOrRequireFileName(wxString& fn);
-    int GetTokenPosInScope(wxStyledTextCtrl* sci,
-                           const wxString& token,
-                           int start_pos,
-                           int end_pos,
-                           bool direction,
-                           const wxArrayString& tokensBlackList);
     bool IsTokenInBlackList(wxStyledTextCtrl* sci,
                             const wxString& token,
                             int token_pos,

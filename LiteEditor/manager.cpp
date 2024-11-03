@@ -753,7 +753,6 @@ bool Manager::RemoveProject(const wxString& name, bool notify)
         // remove symbols from the database
         std::vector<wxFileName> projectFiles;
         proj->GetFilesAsVectorOfFileName(projectFiles);
-        TagsManagerST::Get()->DeleteFilesTags(projectFiles);
         wxArrayString prjfls;
         for (size_t i = 0; i < projectFiles.size(); i++) {
             prjfls.Add(projectFiles[i].GetFullPath());

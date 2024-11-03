@@ -393,18 +393,6 @@ void swStringDb::Serialize(wxSerialize& ar)
 }
 
 //------------------------------------------------------------
-bool swStringDb::IsKey(const wxString& set, const wxString& key)
-{
-	swStringSet* pSet = NULL;
-
-	pSet = m_list[set];
-	if(pSet != NULL)
-		return pSet->IsKey(key);
-	else
-		return false;
-}
-
-//------------------------------------------------------------
 void swStringDb::GetAllSets(wxArrayString& sets)
 {
 	sets.Clear();
@@ -424,13 +412,6 @@ bool swStringDb::IsSet(const wxString& set)
 	return true;
 }
 
-//------------------------------------------------------------
-// root
-//------------------------------------------------------------
-void swStringDb::DeleteSnippetAll()
-{
-	m_snippetSet.DeleteAll();
-}
 //------------------------------------------------------------
 void swStringDb::DeleteSnippetKey(const wxString& key)
 {

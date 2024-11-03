@@ -45,12 +45,6 @@ public:
     clAnsiEscapeCodeColourBuilder& Add(const wxString& text, const wxColour& colour, bool bold = false);
 
     /**
-     * @brief wrap "line" with colour and optionally, bold font
-     * @return reference to `line`
-     */
-    wxString& WrapWithColour(wxString& line, int colour, bool bold_font = false) const;
-
-    /**
      * @brief should be used when working with the default constructor
      * @return
      */

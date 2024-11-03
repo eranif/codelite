@@ -217,15 +217,6 @@ size_t DockerOutputPane::GetSelectedContainers(clDockerContainer::Vect_t& contai
     return containers.size();
 }
 
-void DockerOutputPane::DoContainerCommand(const wxString& command)
-{
-    clDockerContainer::Vect_t containers;
-    if(GetSelectedContainers(containers) != 1)
-        return;
-    m_driver->ExecContainerCommand(containers[0].GetName(), command);
-    m_driver->ListContainers();
-}
-
 void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
 {
     clDockerContainer::Vect_t containers;

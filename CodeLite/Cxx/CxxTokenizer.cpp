@@ -226,13 +226,6 @@ CppLexerUserData* CxxTokenizer::GetUserData() const
     return ::LexerGetUserData(m_scanner);
 }
 
-bool CxxTokenizer::IsInPreProcessorSection() const
-{
-    if(!GetUserData())
-        return false;
-    return GetUserData()->IsInPreProcessorSection();
-}
-
 void CxxTokenizer::read_until_find(CxxLexerToken& token, int type_1, int type_2, int* what_was_found,
                                    wxString* consumed)
 {

@@ -63,12 +63,6 @@ public:
     void PositionRelativeTo(wxWindow* win, wxPoint caretPos, int start_position, IEditor* focusEdior = NULL);
 
     /**
-     * @brief position this window to the left of 'win'
-     * if focusEditor is NOT null, the editor will gain the focus once
-     * the tip is shown
-     */
-    void PositionLeftTo(wxWindow* win, IEditor* focusEditor = NULL);
-    /**
      * @brief position and show the tip at a given location
      */
     void PositionAt(const wxPoint& pt, IEditor* focusEdior = NULL);

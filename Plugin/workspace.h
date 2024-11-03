@@ -178,11 +178,6 @@ public:
      */
     cJSON* CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxArrayString* generated_paths) const;
 
-    /**
-     * @brief generate compile_flags.txt for each project
-     */
-    void CreateCompileFlags() const;
-
     wxString GetFileName() const override { return GetWorkspaceFileName().GetFullPath(); }
     wxString GetDir() const override { return GetWorkspaceFileName().GetPath(); }
 
@@ -231,15 +226,6 @@ public:
      * true on success false otherwise
      */
     bool OpenWorkspace(const wxString& fileName, wxString& errMsg);
-
-    /**
-     * @brief this function opens the workspace, but does not open the tags
-     * completion database etc. It only loads the XML and then adds all the
-     * projects XML. It is mainly needed when you just need to explore the
-     * workspace from a secondary thread with no events / UI to get in the
-     * way
-     */
-    bool OpenReadOnly(const wxString& fileName, wxString& errMsg);
 
     /**
      * Close the currently opened workspace
@@ -322,11 +308,6 @@ public:
     wxString GetActiveProjectName() const override;
 
     /**
-     * @brief return the paths of all projects in the workspace (full paths)
-     */
-    wxArrayString GetAllProjectPaths();
-
-    /**
      * Set project as active
      * \param name  project name
      */
@@ -375,16 +356,6 @@ public:
      * Save workspace & projects settings
      */
     void Save();
-
-    /**
-     * Return a node pointing to any workspace-wide editor preferences
-     */
-    wxXmlNode* GetWorkspaceEditorOptions() const;
-
-    /**
-     * Add or update local workspace options
-     */
-    void SetWorkspaceEditorOptions(LocalOptionsConfigPtr opts);
 
     /**
      * Return the configuration mapping for the workspace. 'Configuration Mapping' is

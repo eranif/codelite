@@ -180,7 +180,6 @@ protected:
     void DoUpdateMenu(wxMenu* menu, MenuItemDataIntMap_t& accels, std::vector<wxAcceleratorEntry>& table);
     void DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& accels);
     void DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuItemDataIntMap_t& intMap);
-    MenuItemDataMap_t DoLoadAccelerators(const wxFileName& filename) const;
 
     clKeyboardManager();
     virtual ~clKeyboardManager();

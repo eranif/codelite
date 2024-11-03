@@ -93,35 +93,6 @@ void clCxxWorkspace::CloseWorkspace()
     TagsManagerST::Get()->CloseDatabase();
 }
 
-bool clCxxWorkspace::OpenReadOnly(const wxString& fileName, wxString& errMsg)
-{
-    m_buildMatrix = nullptr;
-    wxFileName workSpaceFile(fileName);
-    if(!workSpaceFile.FileExists()) {
-        return false;
-    }
-    m_fileName = workSpaceFile;
-    m_doc.Load(m_fileName.GetFullPath());
-    if(!m_doc.IsOk()) {
-        return false;
-    }
-
-    m_saveOnExit = false;
-
-    // Make sure we have the WORKSPACE/.codelite folder exists
-    {
-        wxLogNull nolog;
-        wxMkdir(GetPrivateFolder());
-    }
-
-    // Load all projects from the XML file
-    std::vector<wxXmlNode*> removedChildren;
-    DoLoadProjectsFromXml(m_doc.GetRoot(), "", removedChildren);
-
-    DoUpdateBuildMatrix();
-    return true;
-}
-
 bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
 {
     if(!DoLoadWorkspace(fileName, errMsg)) {
@@ -140,23 +111,6 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
 }
 
 BuildMatrixPtr clCxxWorkspace::GetBuildMatrix() const { return m_buildMatrix; }
-
-wxXmlNode* clCxxWorkspace::GetWorkspaceEditorOptions() const
-{
-    return XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Options"));
-}
-
-void clCxxWorkspace::SetWorkspaceEditorOptions(LocalOptionsConfigPtr opts)
-{
-    wxXmlNode* parent = m_doc.GetRoot();
-    wxXmlNode* oldOptions = XmlUtils::FindFirstByTagName(parent, wxT("Options"));
-    if(oldOptions) {
-        oldOptions->GetParent()->RemoveChild(oldOptions);
-        delete oldOptions;
-    }
-    parent->AddChild(opts->ToXml());
-    SaveXmlFile();
-}
 
 void clCxxWorkspace::SetBuildMatrix(BuildMatrixPtr mapping)
 {
@@ -1010,16 +964,6 @@ void clCxxWorkspace::SetEnvironmentVariabels(const wxString& envvars)
     SaveXmlFile();
 }
 
-wxArrayString clCxxWorkspace::GetAllProjectPaths()
-{
-    wxArrayString projects;
-    ProjectMap_t::iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); iter++) {
-        projects.Add(iter->second->GetFileName().GetFullPath());
-    }
-    return projects;
-}
-
 bool clCxxWorkspace::IsOpen() const { return m_doc.IsOk(); }
 
 bool clCxxWorkspace::IsVirtualDirectoryExists(const wxString& vdFullPath)
@@ -1582,30 +1526,6 @@ size_t clCxxWorkspace::GetExcludeFilesForConfig(std::vector<wxString>& files, co
         }
     });
     return files.size();
-}
-
-void clCxxWorkspace::CreateCompileFlags() const
-{
-    // Build the global compiler paths, we will need this later on...
-    wxStringMap_t compilersGlobalPaths;
-    std::unordered_map<wxString, wxArrayString> pathsMap = BuildSettingsConfigST::Get()->GetCompilersGlobalPaths();
-    for(const std::unordered_map<wxString, wxArrayString>::value_type& vt : pathsMap) {
-        wxString compiler_name = vt.first;
-        wxArrayString pathsArr = vt.second;
-        wxString paths;
-        std::for_each(pathsArr.begin(), pathsArr.end(), [&](wxString& path) {
-            path.Trim().Trim(false);
-            if(path.EndsWith("\\")) {
-                path.RemoveLast();
-            }
-            paths << path << ";";
-        });
-        compilersGlobalPaths.insert({ compiler_name, paths });
-    }
-
-    for(const ProjectMap_t::value_type& vt : m_projects) {
-        vt.second->CreateCompileFlags(compilersGlobalPaths);
-    }
 }
 
 void clCxxWorkspace::ClearBacktickCache() { m_backticks.clear(); }

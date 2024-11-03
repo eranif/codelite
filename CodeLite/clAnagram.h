@@ -34,11 +34,6 @@ public:
     void Reset(const wxString& needle, size_t flags = 0);
 
     /**
-     * @brief check haystack contains this anagram
-     */
-    bool Matches(const wxString& haystack) const;
-
-    /**
      * @brief search for needle in haystack in order
      */
     bool MatchesInOrder(const wxString& haystack) const;

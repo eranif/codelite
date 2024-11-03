@@ -165,36 +165,6 @@ void PHPEditorContextMenu::DoGotoDefinition()
                                                   m_manager->GetActiveEditor()->GetCtrl()->GetCurrentPos());
 }
 
-int PHPEditorContextMenu::GetTokenPosInScope(wxStyledTextCtrl* sci, const wxString& token, int start_pos, int end_pos,
-                                             bool direction, const wxArrayString& tokensBlackList)
-{
-    sci->SetTargetStart(start_pos);
-    sci->SetTargetEnd(end_pos);
-    int token_pos = wxSTC_INVALID_POSITION;
-
-    if(direction) { // search down
-        sci->SetCurrentPos(start_pos);
-        sci->SearchAnchor();
-        token_pos = sci->SearchNext(sci->GetSearchFlags(), token);
-        while(token_pos != wxSTC_INVALID_POSITION && IsTokenInBlackList(sci, token, token_pos, tokensBlackList)) {
-            sci->SetCurrentPos(token_pos + 1);
-            sci->SearchAnchor();
-            token_pos = sci->SearchNext(sci->GetSearchFlags(), token);
-        }
-    } else { // search up
-        sci->SetCurrentPos(end_pos);
-        sci->SearchAnchor();
-        token_pos = sci->SearchPrev(sci->GetSearchFlags(), token);
-        while(token_pos != wxSTC_INVALID_POSITION && IsTokenInBlackList(sci, token, token_pos, tokensBlackList)) {
-            sci->SetCurrentPos(token_pos - 1);
-            sci->SearchAnchor();
-            token_pos = sci->SearchPrev(sci->GetSearchFlags(), token);
-        }
-    }
-
-    return token_pos;
-}
-
 bool PHPEditorContextMenu::IsTokenInBlackList(wxStyledTextCtrl* sci, const wxString& token, int token_pos,
                                               const wxArrayString& tokensBlackList)
 {

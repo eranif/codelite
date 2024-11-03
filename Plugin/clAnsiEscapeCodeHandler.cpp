@@ -355,17 +355,6 @@ wxChar look_ahead(const wxString& buffer, size_t curpos, size_t count)
     }
     return wxChar(0);
 }
-
-bool check_string_from_curpos_ahead(const wxString& buffer, size_t curpos, const wxString& str)
-{
-    for(size_t i = 0; i < str.length(); ++i) {
-        if(curpos >= buffer.length() || buffer[curpos] != str[i]) {
-            return false;
-        }
-        curpos += 1;
-    }
-    return true;
-}
 } // namespace
 
 void clAnsiEscapeCodeHandler::Parse(const wxString& buffer)

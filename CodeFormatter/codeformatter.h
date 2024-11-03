@@ -48,7 +48,6 @@ private:
     bool DoFormatString(const wxString& content, const wxString& fileName, wxString* output);
     bool DoFormatEditor(IEditor* editor);
     void OnScanFilesCompleted(const std::vector<wxString>& files);
-    void ReloadCurrentEditor();
     void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnFileSaved(clCommandEvent& e);

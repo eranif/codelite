@@ -23,19 +23,49 @@ FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XML/XMLLexer.l" "${CMAKE_CURRE
 
 set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}" "${FLEX_XmlFlex_OUTPUTS}")
 
+file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
+
+add_library(libcodelite SHARED ${SRCS} ${FlexSrcs})
+
 # Include paths
-include_directories(
+target_include_directories(libcodelite
+    PUBLIC
     "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-    "${CL_SRC_ROOT}/submodules/websocketpp"
-    "${CL_SRC_ROOT}/submodules/asio/asio/include"
     "${CL_SRC_ROOT}/CodeLite"
     "${CL_SRC_ROOT}/CodeLite/ssh"
     "${CL_SRC_ROOT}/PCH"
-    "${CL_SRC_ROOT}/Interfaces"
-    "${CL_SRC_ROOT}/CodeLite/ssh")
+    PRIVATE
+    "${CL_SRC_ROOT}/submodules/asio/asio/include"
+    "${CL_SRC_ROOT}/submodules/websocketpp"
+)
+# Macros
+if(WIN32)
+    target_compile_definitions(libcodelite PRIVATE WXMAKINGDLL_CL INTERFACE WXUSINGDLL_CL)
+    target_compile_definitions(libcodelite PUBLIC WXUSINGDLL_WXSQLITE3)
+endif()
+
+if(USE_PCH AND NOT MINGW)
+    add_definitions(-include "${CL_PCH_FILE}")
+    add_definitions(-Winvalid-pch)
+endif()
+
+# Add RPATH
+if(NOT MINGW AND WXC_APP)
+    string(REPLACE "codelite" "wxcrafter" WXC_LIBS_DIR ${PLUGINS_DIR})
+    set(LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
+    message("-- libcodelite.so is using RPATH set to ${WXC_LIBS_DIR}")
+endif()
+
+# Define GTK libraries
+if(GTK2_FOUND)
+    set(GTK_LIBS "${GTK2_LIBRARIES}")
+elseif(GTK3_FOUND)
+    set(GTK_LIBS "${GTK3_LIBRARIES}")
+else()
+    set(GTK_LIBS "")
+endif()
 
 set(ADDITIONAL_LIBRARIES "")
-
 if(UNIX)
     if(IS_FREEBSD)
         set(ADDITIONAL_LIBRARIES "-lkvm -lutil")
@@ -47,52 +77,6 @@ if(UNIX)
 else(UNIX)
     set(ADDITIONAL_LIBRARIES "-lws2_32")
 endif(UNIX)
-
-# Macros
-if(WIN32)
-    add_definitions(-DWXMAKINGDLL_CL)
-endif(WIN32)
-
-if(USE_PCH AND NOT MINGW)
-    add_definitions(-include "${CL_PCH_FILE}")
-    add_definitions(-Winvalid-pch)
-endif()
-
-add_definitions(-DWXUSINGDLL_WXSQLITE3)
-
-# Add RPATH
-if(NOT MINGW AND WXC_APP)
-    string(REPLACE "codelite" "wxcrafter" WXC_LIBS_DIR ${PLUGINS_DIR})
-    set(LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
-    message("-- libcodelite.so is using RPATH set to ${WXC_LIBS_DIR}")
-endif()
-
-file(
-    GLOB
-    SRCS
-    "*.cpp"
-    "AsyncProcess/*.cpp"
-    "Console/*.cpp"
-    "Cxx/*.cpp"
-    "LSP/*.cpp"
-    "PHP/*.cpp"
-    "Platform/*.cpp"
-    "SocketAPI/*.cpp"
-    "XML/*.cpp"
-    "database/*.cpp"
-    "ssh/*.cpp")
-
-# Define GTK libraries
-if(GTK2_FOUND)
-    set(GTK_LIBS "${GTK2_LIBRARIES}")
-elseif(GTK3_FOUND)
-    set(GTK_LIBS "${GTK3_LIBRARIES}")
-else()
-    set(GTK_LIBS "")
-endif()
-
-# Define the output
-add_library(libcodelite SHARED ${SRCS} ${FlexSrcs})
 
 if(UNIX OR APPLE)
     set_target_properties(libcodelite PROPERTIES POSITION_INDEPENDENT_CODE ON)

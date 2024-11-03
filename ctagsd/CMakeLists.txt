@@ -32,16 +32,8 @@ endif()
 # OUTPUT_STRIP_TRAILING_WHITESPACE) endif() set (CMAKE_CXX_FLAGS
 # "${CMAKE_CXX_FLAGS} ${WX_CXX_FLAGS}") message("${WX_CXX_FLAGS}")
 
-# and finally prepare list of includes directories and finally prepare list of
-# includes directories
-include_directories(
-  "${CL_SRC_ROOT}/Plugin"
-  "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-  "${CL_SRC_ROOT}/CodeLite"
-  "${CL_SRC_ROOT}/CodeLite/ssh"
-  "${CL_SRC_ROOT}/PCH"
-  "${CL_SRC_ROOT}/Interfaces"
-  "${CL_SRC_ROOT}/ctagsd/lib")
+# and finally prepare list of includes directories
+include_directories("${CL_SRC_ROOT}/ctagsd/lib")
 
 set(UTIL_LIB "")
 if(UNIX)
@@ -50,6 +42,7 @@ endif(UNIX)
 
 file(GLOB LIBSRC "lib/*.cpp")
 add_library(ctagdslib STATIC "${LIBSRC}")
+target_link_libraries(ctagdslib PRIVATE libcodelite plugin)
 
 target_include_directories(
     ctagdslib

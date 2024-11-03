@@ -15,21 +15,6 @@ project(${PLUGIN_NAME})
 # wxWidgets include
 include("${wxWidgets_USE_FILE}")
 
-# Include paths
-include_directories(
-    "${CL_SRC_ROOT}/Plugin"
-    "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-    "${CL_SRC_ROOT}/CodeLite"
-    "${CL_SRC_ROOT}/CodeLite/ssh"
-    "${CL_SRC_ROOT}/LiteEditor"
-    "${CL_SRC_ROOT}/PCH"
-    "${CL_SRC_ROOT}/Interfaces")
-
-# Define some macros about DLL
-add_definitions(-DWXUSINGDLL_CL)
-add_definitions(-DWXUSINGDLL_SDK)
-add_definitions(-DWXUSINGDLL_SDK)
-
 # Only with precompiled headers
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")

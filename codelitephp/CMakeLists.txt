@@ -21,19 +21,9 @@ endif(NOT CL_SRC_ROOT)
 
 # Include paths
 include_directories(
-    "${CL_SRC_ROOT}/Plugin"
-    "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-    "${CL_SRC_ROOT}/CodeLite"
-    "${CL_SRC_ROOT}/CodeLite/ssh"
-    "${CL_SRC_ROOT}/PCH"
-    "${CL_SRC_ROOT}/Interfaces"
     "${CL_SRC_ROOT}/codelitephp/PHPParser"
     "${CL_SRC_ROOT}/codelitephp/php-plugin"
     "${CL_SRC_ROOT}/codelitephp/PHPParserUnitTests")
-
-add_definitions(-DWXUSINGDLL_WXSQLITE3)
-add_definitions(-DWXUSINGDLL_CL)
-add_definitions(-DWXUSINGDLL_SDK)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     # Debug build of codelite
@@ -52,7 +42,9 @@ file(GLOB LIBSRC "PHPParser/*.cpp")
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
+
 add_library(PHPParser STATIC ${LIBSRC})
+target_link_libraries(PHPParser PRIVATE libcodelite plugin)
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)

@@ -49,7 +49,7 @@ if(WITH_MYSQL)
     file(GLOB MYSQL_SRCS "src/dblayer/Mysql*.cpp")
 
     if(UNIX AND NOT APPLE)
-        # Recent (2019) versions of debian and Arch have mariadb 10.3 which, it seems, isn't directly compatable with
+        # Recent (2019) versions of debian and Arch have mariadb 10.3 which, it seems, isn't directly compatible with
         # the included dblayer source It has a necessary header file in /usr/include/mariadb/server/ so flag to #include
         # it if it exists See https://github.com/eranif/codelite/issues/2215
         find_path(

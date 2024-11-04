@@ -80,6 +80,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     wxArrayString m_choiceAppearanceArr;
     m_choiceAppearanceArr.Add(_("System default"));
     m_choiceAppearanceArr.Add(_("Force dark"));
+    m_choiceAppearanceArr.Add(_("Force light"));
     m_choiceAppearance = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceAppearanceArr, 0);
     m_choiceAppearance->SetSelection(0);

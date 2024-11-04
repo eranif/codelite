@@ -62,7 +62,7 @@ class clAuiBook;
 #if defined(__WXMSW__) || defined(__WXMAC__)
 #define MAINBOOK_AUIBOOK 0
 #else
-#define MAINBOOK_AUIBOOK 1
+#define MAINBOOK_AUIBOOK 0
 #endif
 
 #if MAINBOOK_AUIBOOK

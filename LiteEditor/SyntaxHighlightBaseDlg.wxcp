@@ -588,7 +588,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Choices:",
-																					"m_value":	"System default;Force dark"
+																					"m_value":	"System default;Force dark;Force light"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Selection:",
@@ -2708,10 +2708,6 @@
 																																	"type":	"string",
 																																	"m_label":	"Max Length:",
 																																	"m_value":	"0"
-																																}, {
-																																	"type":	"bool",
-																																	"m_label":	"Enable Spell Checking",
-																																	"m_value":	false
 																																}, {
 																																	"type":	"bool",
 																																	"m_label":	"Auto Complete Directories:",
@@ -4874,10 +4870,6 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
-										}, {
-											"type":	"bool",
-											"m_label":	"Enable Spell Checking",
-											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",

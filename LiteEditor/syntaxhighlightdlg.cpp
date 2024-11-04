@@ -67,6 +67,7 @@ namespace
 enum CodeLiteAppearance : int {
     SYSTEM_DEFAULT = 0,
     FORCE_DARK = 1,
+    FORCE_LIGHT = 2,
 };
 }
 
@@ -150,13 +151,8 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnRestoreDefaults, this, XRCID("revert_changes"));
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnImportEclipseTheme, this, XRCID("import_eclipse_theme"));
 
-#if !defined(__WXMSW__)
-    m_choiceAppearance->SetSelection(CodeLiteAppearance::SYSTEM_DEFAULT);
-    m_choiceAppearance->Enable(false);
-#else
     int appearance = clConfig::Get().Read("CodeLiteAppearance", CodeLiteAppearance::SYSTEM_DEFAULT);
     m_choiceAppearance->SetSelection(appearance);
-#endif
 
     // Use a default big size for this dialog
     ::clSetDialogBestSizeAndPosition(this);
@@ -287,9 +283,7 @@ void SyntaxHighlightDlg::SaveChanges()
     }
 
     // Save the base colour changes
-#if defined(__WXMSW__)
     clConfig::Get().Write("CodeLiteAppearance", m_choiceAppearance->GetSelection());
-#endif
 
     // Update the text selection colours
     UpdateTextSelectionColours();
@@ -774,22 +768,21 @@ void SyntaxHighlightDlg::DoFontChanged(StyleProperty& sp, const wxFont& font)
 
 void SyntaxHighlightDlg::OnCodeLiteAppearance(wxCommandEvent& event)
 {
-#if defined(__WXMSW__)
     int selection = event.GetSelection();
     switch (selection) {
-    default:
-    case CodeLiteAppearance::SYSTEM_DEFAULT:
-        // in case it was something else..
+    case CodeLiteAppearance::FORCE_DARK:
+        break;
+    case CodeLiteAppearance::FORCE_LIGHT:
         selection = CodeLiteAppearance::SYSTEM_DEFAULT;
         break;
-    case CodeLiteAppearance::FORCE_DARK:
+    case CodeLiteAppearance::SYSTEM_DEFAULT:
+    default:
+        // in case it was something else..
+        selection = CodeLiteAppearance::SYSTEM_DEFAULT;
         break;
     }
 
     // save the new value
     clConfig::Get().Write("CodeLiteAppearance", selection);
     m_promptForRestart = true;
-#else
-    wxUnusedVar(event);
-#endif
 }

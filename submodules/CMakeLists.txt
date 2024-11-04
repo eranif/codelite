@@ -24,6 +24,26 @@ add_library(cJSON STATIC ${CMAKE_CURRENT_SOURCE_DIR}/cJSON/cJSON.c ${CMAKE_CURRE
 target_include_directories(cJSON PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cJSON)
 
 # ######################################################################################################################
+# ctags
+# ######################################################################################################################
+if(NOT WXC_APP)
+  add_subdirectory(ctags)
+  install(TARGETS ctags DESTINATION ${CL_INSTALL_BIN})
+  set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
+  if(APPLE)
+    install(
+      TARGETS ctags
+      DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
+      PERMISSIONS ${EXE_PERM})
+  else()
+    install(
+      TARGETS ctags
+      DESTINATION ${CL_PREFIX}/bin
+      PERMISSIONS ${EXE_PERM})
+  endif()
+endif()
+
+# ######################################################################################################################
 # doctest
 # a library header for test framework
 # ######################################################################################################################

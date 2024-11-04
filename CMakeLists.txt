@@ -1039,8 +1039,6 @@ add_subdirectory("${CL_SRC_ROOT}/submodules/assistant")
 if(WXC_APP)
   add_subdirectory(wxcrafter)
 else()
-  add_subdirectory(submodules/ctags)
-  install(TARGETS ctags DESTINATION ${CL_INSTALL_BIN})
   if(MINGW)
     # build wx-config for Windows
     add_subdirectory(submodules/wx-config-msys2)
@@ -1167,21 +1165,6 @@ message(STATUS "CL_INSTALL_BIN is set to ${CL_INSTALL_BIN}")
 if(NOT WXC_APP)
   # building CodeLite, install the SVGs
   codelite_install_svgs()
-
-  if(NOT APPLE)
-    set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
-    install(
-      TARGETS ctags
-      DESTINATION ${CL_PREFIX}/bin
-      PERMISSIONS ${EXE_PERM})
-  elseif(APPLE)
-    set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
-    install(
-      TARGETS ctags
-      DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
-      PERMISSIONS ${EXE_PERM})
-  endif()
-
 endif()
 
 if(MINGW)

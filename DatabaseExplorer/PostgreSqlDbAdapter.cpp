@@ -434,7 +434,7 @@ void PostgreSqlDbAdapter::GetTables(Database* db, bool includeViews)
         if(dbLayer) {
             if(!dbLayer->IsOpen())
                 return;
-            // lading tables for database
+            // loading tables for database
             // TODO:SQL:
 
             // DatabaseResultSet *tabulky = dbLayer->RunQueryWithResults(wxString::Format(wxT("SHOW TABLES IN `%s`"),
@@ -538,7 +538,7 @@ void PostgreSqlDbAdapter::GetViews(Database* db)
         if(dbLayer) {
             if(!dbLayer->IsOpen())
                 return;
-            // lading tables for database
+            // loading tables for database
             // TODO:SQL:
 
             // DatabaseResultSet *tabulky = dbLayer->RunQueryWithResults(wxString::Format(wxT("SHOW TABLES IN `%s`"),

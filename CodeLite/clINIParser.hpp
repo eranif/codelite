@@ -29,7 +29,7 @@ struct WXDLLIMPEXP_CL clINISection {
     void SetName(const wxString& name) { this->m_name = name; }
     const wxString& GetName() const { return m_name; }
     void Clear() { m_name.clear(); }
-    void Serialise(std::ostream& string) const;
+    void Serialize(std::ostream& string) const;
     void AddKeyValue(const wxString& key, const wxString& value);
     void AddComment(const wxString& comment);
     clINIKeyValue operator[](const char* key_name) const;
@@ -48,7 +48,7 @@ public:
 
     bool ParseFile(const wxString& filepath);
     bool ParseString(const wxString& content);
-    void Serialise(std::ostream& string) const;
+    void Serialize(std::ostream& string) const;
 
     const clINISection& operator[](const char* section) const;
     const clINISection& operator[](const wxString& section) const;

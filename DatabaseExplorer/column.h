@@ -46,16 +46,16 @@ protected:
 	
 public:
 	// -------------------------------------------------
-	// Konstruktor
+	// Constructor
 	// -------------------------------------------------
 	XS_DECLARE_CLONABLE_CLASS(Column);
-	/*! \brief Default constuctor*/
+	/*! \brief Default constructor*/
 	Column();
 	Column(const Column& obj);
 	Column(const wxString& name,
 			const wxString& parentName,
 			IDbType* type);
-	/*! \brief Default destruktor */
+	/*! \brief Default destructor */
 	virtual ~Column();
 	
 	wxString FormatName() {

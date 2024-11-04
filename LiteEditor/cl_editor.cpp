@@ -1493,7 +1493,7 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
             message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
         }
 
-        // Always update the status bar with event, calling it directly causes performance degredation
+        // Always update the status bar with event, calling it directly causes performance degradation
         m_mgr->GetStatusBar()->SetLinePosColumn(message);
 #ifdef __WXGTK__
         // the status bar does not refresh on Linux automatically

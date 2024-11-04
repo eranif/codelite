@@ -235,7 +235,7 @@ void WatchesTable::RefreshValues(bool repositionEditor)
     if(!dbgr)
         return;
 
-    // rese tree items colour to black
+    // reset tree items colour to black
     DoResetItemColour(root, 0);
 
     // Send command to update all variable objects of this tree

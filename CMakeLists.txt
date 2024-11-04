@@ -972,9 +972,6 @@ if(MINGW AND USE_PCH)
   endif()
 endif()
 
-# add the dtl module include path before we include Plugin folder
-include_directories(submodules/dtl)
-
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES
                                             "AppleClang")
   set(IS_CLANG 1)

@@ -63,7 +63,7 @@ public:
 
     virtual ~IDbAdapter() {}
     
-    /*! \brief Return opened DatabaseLayer for selected database. If dbName is empty, DatabaseLayer will be opend without defalut database. */
+    /*! \brief Return opened DatabaseLayer for selected database. If dbName is empty, DatabaseLayer will be opened without default database. */
     virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName) = 0;
 
     /*! \brief Return true if dbAdapter is connected. DEPRECATED!!! */
@@ -90,7 +90,7 @@ public:
 
     /*! \brief Return wxString with USE DB statement for dbName */
     virtual wxString GetUseDb(const wxString& dbName) = 0;
-    /*! \brief Return wxString with defalut SELECT for defined table and db */
+    /*! \brief Return wxString with default SELECT for defined table and db */
     virtual wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName) = 0;
     virtual wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName) = 0;
     /*! \brief Return Create table sql statement */

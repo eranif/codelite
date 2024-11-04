@@ -31,7 +31,7 @@
 
 
 // -------------------------------------------------
-// Trida databaze
+// Trida database
 // -------------------------------------------------
 class IDbAdapter;
 /*! \brief Class representing one database */

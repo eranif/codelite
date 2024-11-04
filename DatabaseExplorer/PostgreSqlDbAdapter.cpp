@@ -414,12 +414,12 @@ void PostgreSqlDbAdapter::GetDatabases(DbConnection* dbCon)
 
             // loading databases
             // TODO:SQL:
-            DatabaseResultSet* databaze =
+            DatabaseResultSet* database =
                 dbLayer->RunQueryWithResults(wxT("SELECT datname FROM pg_database WHERE datallowconn = 't' "));
-            while(databaze->Next()) {
-                dbCon->AddChild(new Database(this, databaze->GetResultString(1)));
+            while(database->Next()) {
+                dbCon->AddChild(new Database(this, database->GetResultString(1)));
             }
-            dbLayer->CloseResultSet(databaze);
+            dbLayer->CloseResultSet(database);
             dbLayer->Close();
         }
     }

@@ -307,11 +307,11 @@ void MySqlDbAdapter::GetDatabases(DbConnection* dbCon)
 
             // loading databases
             // TODO:SQL:
-            DatabaseResultSet* databaze = dbLayer->RunQueryWithResults(wxT("SHOW DATABASES"));
-            while(databaze->Next()) {
-                dbCon->AddChild(new Database(this, databaze->GetResultString(1)));
+            DatabaseResultSet* database = dbLayer->RunQueryWithResults(wxT("SHOW DATABASES"));
+            while(database->Next()) {
+                dbCon->AddChild(new Database(this, database->GetResultString(1)));
             }
-            dbLayer->CloseResultSet(databaze);
+            dbLayer->CloseResultSet(database);
             dbLayer->Close();
         }
     }

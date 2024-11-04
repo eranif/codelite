@@ -512,7 +512,7 @@ int Language::DoReadClassName(CppScanner& scanner, wxString& clsname) const
 bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
                                   int visibility)
 {
-    // detemine the visibility requested
+    // determine the visibility requested
     int typeVisibility = lexPUBLIC;
     wxString strVisibility = wxT("public:\n");
     switch(visibility) {

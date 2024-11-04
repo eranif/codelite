@@ -138,7 +138,7 @@ public:
 	 */
 	wxString DefineColorForLabel(int index);
 	/**
-	 * @brief Function return bool value if index is exist in the array.
+	 * @brief Function return bool value if index exists in the array.
 	 * @param index of the function stored in the list of objects.
 	 * @param array of index by nodes added to the call graph.
 	 */

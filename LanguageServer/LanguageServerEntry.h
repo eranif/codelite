@@ -20,7 +20,7 @@ class LanguageServerEntry
     wxArrayString m_languages;
     wxString m_connectionString;
     int m_priority = 50;
-    bool m_disaplayDiagnostics = true;
+    bool m_displayDiagnostics = true;
     wxString m_command;
     wxString m_remoteCommand;
     wxString m_initOptions;
@@ -44,12 +44,12 @@ public:
     void SetInitOptions(const wxString& initOptions);
     wxString GetInitOptions() const;
 
-    LanguageServerEntry& SetDisaplayDiagnostics(bool disaplayDiagnostics)
+    LanguageServerEntry& SetDisplayDiagnostics(bool displayDiagnostics)
     {
-        this->m_disaplayDiagnostics = disaplayDiagnostics;
+        this->m_displayDiagnostics = displayDiagnostics;
         return *this;
     }
-    bool IsDisaplayDiagnostics() const { return m_disaplayDiagnostics; }
+    bool IsDisplayDiagnostics() const { return m_displayDiagnostics; }
     LanguageServerEntry& SetConnectionString(const wxString& connectionString)
     {
         this->m_connectionString = connectionString;

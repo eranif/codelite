@@ -80,7 +80,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
     LSPRequestMessageQueue m_pendingQueue;
 
     wxStringSet_t m_providers;
-    bool m_disaplayDiagnostics = true;
+    bool m_displayDiagnostics = true;
     int m_lastCompletionRequestId = wxNOT_FOUND;
     wxArrayString m_semanticTokensTypes;
     LSPOnConnectedCallback_t m_onServerStartedCallback = nullptr;
@@ -188,12 +188,12 @@ public:
      */
     const wxString& GetSemanticToken(size_t index) const;
 
-    LanguageServerProtocol& SetDisaplayDiagnostics(bool disaplayDiagnostics)
+    LanguageServerProtocol& SetDisplayDiagnostics(bool displayDiagnostics)
     {
-        this->m_disaplayDiagnostics = disaplayDiagnostics;
+        this->m_displayDiagnostics = displayDiagnostics;
         return *this;
     }
-    bool IsDisaplayDiagnostics() const { return m_disaplayDiagnostics; }
+    bool IsDisplayDiagnostics() const { return m_displayDiagnostics; }
 
     LanguageServerProtocol& SetName(const wxString& name)
     {

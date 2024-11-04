@@ -554,7 +554,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     }
 
     LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
-    lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
+    lsp->SetDisplayDiagnostics(entry.IsDisplayDiagnostics());
 
     if (lsp->GetName() == "ctagsd") {
         // set startup callback

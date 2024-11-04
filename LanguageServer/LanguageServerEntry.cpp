@@ -21,7 +21,7 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_languages = json.namedObject("languages").toArrayString();
     m_enabled = json.namedObject("enabled").toBool(m_enabled);
     m_connectionString = json.namedObject("connectionString").toString("stdio");
-    m_disaplayDiagnostics = json.namedObject("displayDiagnostics").toBool(m_disaplayDiagnostics); // defaults to true
+    m_displayDiagnostics = json.namedObject("displayDiagnostics").toBool(m_displayDiagnostics); // defaults to true
     m_initOptions = json["initOptions"].toString();
 
     // we no longer are using exepath + args, instead a single "command" is used
@@ -45,7 +45,7 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("enabled", m_enabled);
     json.addProperty("workingDirectory", m_workingDirectory);
     json.addProperty("connectionString", m_connectionString);
-    json.addProperty("displayDiagnostics", m_disaplayDiagnostics);
+    json.addProperty("displayDiagnostics", m_displayDiagnostics);
     json.addProperty("command", m_command);
     json.addProperty("initOptions", m_initOptions);
     return json;

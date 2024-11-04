@@ -1016,9 +1016,6 @@ if(USE_PCH)
   add_subdirectory(PCH)
 endif()
 
-set(WITHOUT_INSTALL ON)
-add_subdirectory(submodules/cc-wrapper)
-
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/submodules/yaml-cpp/include")
 if(UNIX)
@@ -1166,7 +1163,6 @@ if(BUILD_TESTING)
 endif(BUILD_TESTING)
 
 message(STATUS "CL_INSTALL_BIN is set to ${CL_INSTALL_BIN}")
-install(TARGETS cc-wrapper DESTINATION ${CL_INSTALL_BIN})
 
 if(NOT WXC_APP)
   # building CodeLite, install the SVGs

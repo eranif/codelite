@@ -51,7 +51,10 @@ protected:
     wxPanel* m_splitterPageTop;
     clThemedSplitterWindow* m_splitterVertical;
     wxPanel* m_splitterPageBacktrace;
+    wxSplitterWindow* m_splitterThreadsFrames;
+    wxPanel* m_splitterPageThreads;
     clThemedListCtrl* m_dvListCtrlThreadId;
+    wxPanel* m_splitterPageFrames;
     clThemedListCtrl* m_dvListCtrlFrames;
     wxPanel* m_splitterPageLocals;
     clThemedTreeCtrl* m_variablesTree;
@@ -64,7 +67,10 @@ protected:
 
 public:
     clThemedListCtrl* GetDvListCtrlThreadId() { return m_dvListCtrlThreadId; }
+    wxPanel* GetSplitterPageThreads() { return m_splitterPageThreads; }
     clThemedListCtrl* GetDvListCtrlFrames() { return m_dvListCtrlFrames; }
+    wxPanel* GetSplitterPageFrames() { return m_splitterPageFrames; }
+    wxSplitterWindow* GetSplitterThreadsFrames() { return m_splitterThreadsFrames; }
     wxPanel* GetSplitterPageBacktrace() { return m_splitterPageBacktrace; }
     clThemedTreeCtrl* GetVariablesTree() { return m_variablesTree; }
     wxPanel* GetSplitterPageLocals() { return m_splitterPageLocals; }

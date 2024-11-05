@@ -19,7 +19,7 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
@@ -63,11 +63,25 @@ DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer243 = new wxBoxSizer(wxHORIZONTAL);
     m_splitterPageBacktrace->SetSizer(boxSizer243);
 
-    m_dvListCtrlThreadId =
-        new clThemedListCtrl(m_splitterPageBacktrace, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPageBacktrace, wxSize(150, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_splitterThreadsFrames =
+        new wxSplitterWindow(m_splitterPageBacktrace, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageBacktrace, wxSize(-1, -1)), wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_splitterThreadsFrames->SetSashGravity(0);
+    m_splitterThreadsFrames->SetMinimumPaneSize(50);
 
-    boxSizer243->Add(m_dvListCtrlThreadId, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer243->Add(m_splitterThreadsFrames, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_splitterPageThreads = new wxPanel(m_splitterThreadsFrames, wxID_ANY, wxDefaultPosition,
+                                        wxDLG_UNIT(m_splitterThreadsFrames, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    wxBoxSizer* boxSizer298 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageThreads->SetSizer(boxSizer298);
+
+    m_dvListCtrlThreadId =
+        new clThemedListCtrl(m_splitterPageThreads, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageThreads, wxSize(150, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer298->Add(m_dvListCtrlThreadId, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrlThreadId->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(50), wxALIGN_LEFT,
                                            wxDATAVIEW_COL_RESIZABLE);
@@ -75,11 +89,18 @@ DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
                                            wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlThreadId->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                            wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlFrames =
-        new clThemedListCtrl(m_splitterPageBacktrace, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPageBacktrace, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_splitterPageFrames = new wxPanel(m_splitterThreadsFrames, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_splitterThreadsFrames, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitterThreadsFrames->SplitVertically(m_splitterPageThreads, m_splitterPageFrames, 200);
 
-    boxSizer243->Add(m_dvListCtrlFrames, 1, wxEXPAND, WXC_FROM_DIP(5));
+    wxBoxSizer* boxSizer299 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageFrames->SetSizer(boxSizer299);
+
+    m_dvListCtrlFrames =
+        new clThemedListCtrl(m_splitterPageFrames, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageFrames, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer299->Add(m_dvListCtrlFrames, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrlFrames->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(50), wxALIGN_LEFT,
                                          wxDATAVIEW_COL_RESIZABLE);

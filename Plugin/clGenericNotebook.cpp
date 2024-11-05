@@ -189,11 +189,7 @@ bool clGenericNotebook::MoveActivePage(int newIndex)
     return m_tabCtrl->MoveActiveToIndex(newIndex, GetSelection() > newIndex ? eDirection::kLeft : eDirection::kRight);
 }
 
-void clGenericNotebook::OnSize(wxSizeEvent& event)
-{
-    event.Skip();
-    // CallAfter(&clGenericNotebook::PositionControls);
-}
+void clGenericNotebook::OnSize(wxSizeEvent& event) { event.Skip(); }
 
 void clGenericNotebook::OnPreferencesChanged(wxCommandEvent& event)
 {

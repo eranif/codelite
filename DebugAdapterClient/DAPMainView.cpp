@@ -54,6 +54,12 @@ DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleL
     m_variablesTree->Bind(wxEVT_TREE_ITEM_MENU, &DAPMainView::OnVariablesMenu, this);
     m_timer->Start(250);
 
+    wxClientDC dc(this);
+    dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+
+    auto width = dc.GetTextExtent("1234567890 X Thread Name").GetWidth();
+    m_splitterThreadsFrames->SetSashPosition(width);
+
     m_outputPane = new DAPOutputPane(m_splitterPageBottom, LOG);
     m_splitterPageBottom->GetSizer()->Add(m_outputPane, 1, wxEXPAND);
 }

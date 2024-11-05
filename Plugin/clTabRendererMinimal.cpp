@@ -26,15 +26,21 @@ constexpr int SIDE_PEN_LIGHNTESS_WHEN_LIGHT = 80;
 
 void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTabBgColour, wxColour* bgColour)
 {
-    *bgColour = colours.tabAreaColour;
-    *activeTabBgColour = colours.activeTabBgColour;
-
+    if (!wxSystemSettings::GetAppearance().IsDark()) {
+        // light theme
+        *bgColour = clSystemSettings::GetDefaultPanelColour();
+        *activeTabBgColour = *wxWHITE;
+    } else {
+        // dark
+        *bgColour = colours.tabAreaColour;
+        *activeTabBgColour = colours.activeTabBgColour;
 #ifdef __WXMAC__
-    // Make the active tab a bit brighther
-    if (wxSystemSettings::GetAppearance().IsDark()) {
-        *activeTabBgColour = (*activeTabBgColour).ChangeLightness(110);
-    }
+        // Make the active tab a bit brighter
+        if (wxSystemSettings::GetAppearance().IsDark()) {
+            *activeTabBgColour = (*activeTabBgColour).ChangeLightness(110);
+        }
 #endif
+    }
 }
 } // namespace
 
@@ -116,7 +122,7 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
     // the visible tab is the part of the rect that is actually seen
     // on the tab area. the tabRect might have negative coordinates for
     // hiding unwanted curves parts of the rect
-    // we use the visible tab for centering text
+    // we use the visible tab for centring text
     wxRect visibleTab = tabRect;
 
 #ifdef __WXMAC__
@@ -138,11 +144,22 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
     dc.DrawRoundedRectangle(tabRect, TAB_RADIUS);
 
     if (!tabInfo.IsActive() && (tabIndex + 1) != activeTabIndex /* not to the LEFT of the active tab */) {
-        // draw a line at the bottom of the tab
+        // draw a line at the right side of the tab
         wxColour marker_colour = brush_colour.ChangeLightness(is_dark ? 105 : 95);
         wxDCPenChanger pc(dc, marker_colour);
 
         auto from = tabRect.GetRightTop();
+        auto to = tabRect.GetRightBottom();
+
+        dc.DrawLine(from, to);
+    }
+
+    if (!tabInfo.IsActive()) {
+        // draw a line at the right side of the tab
+        wxColour pen_colour = is_dark ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+        wxDCPenChanger pc(dc, pen_colour);
+
+        auto from = tabRect.GetLeftBottom();
         auto to = tabRect.GetRightBottom();
 
         dc.DrawLine(from, to);

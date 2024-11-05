@@ -5,6 +5,7 @@
 #include "macros.h"
 
 #include <unordered_set>
+#include <wx/dcclient.h>
 
 namespace
 {

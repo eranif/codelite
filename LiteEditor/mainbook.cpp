@@ -64,11 +64,25 @@ wxString create_platform_filepath(const wxString& fullpath)
     return fullpath;
 #endif
 }
+
+int FrameTimerId = wxNewId();
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if defined(__WXMAC__) || defined(__WXMSW__)
+    if (clSystemSettings::GetAppearance().IsDark()) {
+        return wxBORDER_SIMPLE;
+    } else {
+        return wxBORDER_THEME;
+    }
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // get_border_simple_theme_aware_bit
 } // namespace
 
 MainBook::MainBook(wxWindow* parent)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxTAB_TRAVERSAL)
-    , m_navBar(NULL)
+    : m_navBar(NULL)
     , m_book(NULL)
     , m_useBuffereLimit(true)
     , m_isWorkspaceReloading(false)
@@ -77,7 +91,11 @@ MainBook::MainBook(wxWindow* parent)
     , m_welcomePage(NULL)
     , m_findBar(NULL)
 {
+
+    wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                    get_border_simple_theme_aware_bit() | wxTAB_TRAVERSAL);
     Hide();
+
     CreateGuiControls();
     ConnectEvents();
 }

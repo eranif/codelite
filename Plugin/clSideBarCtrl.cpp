@@ -38,7 +38,7 @@ wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
 namespace
 {
 
-// return the wxBORDER_SIMPLE that matches the current application theme
+// Return the wxBORDER_SIMPLE that matches the current application theme
 wxBorder border_simple_theme_aware_bit()
 {
 #ifdef __WXMAC__
@@ -46,9 +46,10 @@ wxBorder border_simple_theme_aware_bit()
 #elif defined(__WXGTK__)
     return wxBORDER_STATIC;
 #else
-    return wxBORDER_SIMPLE;
+    // Windows
+    return wxBORDER_NONE;
 #endif
-} // DoGetBorderSimpleBit
+} // border_simple_theme_aware_bit
 
 /// Return true if we are running under Windows 11 in dark mode
 bool IsWindows11DarkMode()

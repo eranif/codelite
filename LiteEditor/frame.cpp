@@ -161,12 +161,12 @@ wxBorder get_border_simple_theme_aware_bit()
     if (clSystemSettings::GetAppearance().IsDark()) {
         return wxBORDER_SIMPLE;
     } else {
-        return wxBORDER_STATIC;
+        return wxBORDER_THEME;
     }
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 } // namespace
 
 const wxEventType wxEVT_LOAD_PERSPECTIVE = XRCID("load_perspective");
@@ -1304,10 +1304,10 @@ void clMainFrame::CreateGUIControls()
 
     // Add the workspace pane
     m_sidebar =
-        new SideBar(m_mainPanel, "Workspace View", &m_mgr, wxTAB_TRAVERSAL /* | get_border_simple_theme_aware_bit()*/);
+        new SideBar(m_mainPanel, "Workspace View", &m_mgr, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
     RegisterDockWindow(XRCID("workspace_pane"), "Workspace View");
 
-    m_secondary_sidebar = new SecondarySideBar(m_mainPanel, wxTAB_TRAVERSAL /* | get_border_simple_theme_aware_bit()*/);
+    m_secondary_sidebar = new SecondarySideBar(m_mainPanel, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
     RegisterDockWindow(XRCID("secondary_side_bar"), "Secondary Sidebar");
 
     // link between the side bars

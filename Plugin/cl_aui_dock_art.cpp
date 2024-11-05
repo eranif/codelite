@@ -296,8 +296,9 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
     wxUnusedVar(orientation);
     wxUnusedVar(window);
 
-    auto colour = clSystemSettings::GetDefaultPanelColour().ChangeLightness(
-        clSystemSettings::GetAppearance().IsDark() ? 120 : 80);
+    bool isDark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    auto colour = isDark ? clSystemSettings::GetDefaultPanelColour().ChangeLightness(120)
+                         : clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     dc.SetPen(colour);
     dc.SetBrush(colour);
     dc.DrawRectangle(rect);

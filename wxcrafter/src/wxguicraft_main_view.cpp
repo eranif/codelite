@@ -77,11 +77,11 @@ namespace {
 // return the wxBORDER_SIMPLE that matches the current application theme
 wxBorder get_border_simple_theme_aware_bit() {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
-    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
@@ -303,13 +303,13 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
     this->Connect(ID_FORM_TYPE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnNewFormUI), NULL, this);
 
     int sashPos = wxcSettings::Get().GetSashPosition();
-    if(sashPos != wxNOT_FOUND) {
+    if (sashPos != wxNOT_FOUND) {
         m_mainSplitter->SetSashPosition(sashPos);
     }
 
     // Use codelite's coloring settings
     LexerConf::Ptr_t cppLexer = EditorConfigST::Get()->GetLexer("C++");
-    if(cppLexer) {
+    if (cppLexer) {
         cppLexer->Apply(m_textCtrlCppSource);
         cppLexer->Apply(m_textCtrlHeaderSource);
         m_textCtrlCppSource->SetProperty("lexer.cpp.track.preprocessor", "0");
@@ -320,7 +320,7 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
     }
 
     LexerConf::Ptr_t xmlLexer = EditorConfigST::Get()->GetLexer("XML");
-    if(xmlLexer) {
+    if (xmlLexer) {
         xmlLexer->Apply(m_textCtrlXrc);
     }
 
@@ -378,7 +378,7 @@ GUICraftMainPanel::~GUICraftMainPanel()
     // Only disconnect the events in Tabbed mode,
     // in the "frame" mode, the main panel and the tree view have the same
     // parent
-    if(false) {
+    if (false) {
         m_treeControls->Disconnect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnBeginDrag),
                                    NULL, this);
         m_treeControls->Disconnect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnEndDrag), NULL,
@@ -457,7 +457,7 @@ void GUICraftMainPanel::OnShowContextMenu(wxCommandEvent& e)
     GUICraftItemData* data = GetSelItemData();
 
     wxString title;
-    if(data && data->m_wxcWidget) {
+    if (data && data->m_wxcWidget) {
         title = data->m_wxcWidget->GetName();
     }
     wxMenu menu(title.IsEmpty() ? "" : title);
@@ -471,7 +471,7 @@ void GUICraftMainPanel::OnItemSelected(wxTreeEvent& event)
     wxUnusedVar(event);
     GUICraftItemData* data = GetSelItemData();
 
-    if(!data) {
+    if (!data) {
         // Clear all properties
         DoUpdatPropertiesFlags(NULL);
         m_propertiesPage->Construct(NULL);
@@ -484,7 +484,7 @@ void GUICraftMainPanel::OnItemSelected(wxTreeEvent& event)
     CHECK_POINTER(data->m_wxcWidget);
 
     DoUpdateNotebookSelection(m_treeControls->GetSelection());
-    if(!bManualSelection) {
+    if (!bManualSelection) {
         NotifyPreviewChanged();
     }
     DoUpdatePropertiesView();
@@ -497,7 +497,7 @@ void GUICraftMainPanel::OnItemSelected(wxTreeEvent& event)
 void GUICraftMainPanel::DoUpdatePropertiesView()
 {
     GUICraftItemData* data = GetSelItemData();
-    if(!data) {
+    if (!data) {
         // Clear all properties
         DoUpdatPropertiesFlags(NULL);
         m_propertiesPage->Construct(NULL);
@@ -514,7 +514,7 @@ void GUICraftMainPanel::DoUpdatePropertiesView()
 GUICraftItemData* GUICraftMainPanel::GetSelItemData()
 {
     wxTreeItemId itemId = m_treeControls->GetSelection();
-    if(itemId.IsOk() == false) {
+    if (itemId.IsOk() == false) {
         return NULL;
     }
 
@@ -540,28 +540,28 @@ void GUICraftMainPanel::OnShowPreview(wxCommandEvent& e)
 
     wxWindow* parent = GetTopFrame();
     FrameWrapper* fw = dynamic_cast<FrameWrapper*>(data->m_wxcWidget);
-    if(fw) {
+    if (fw) {
         PreviewFrame* frame = new PreviewFrame(parent, *fw);
         m_previewAlive = true;
         frame->Show();
     }
 
     PanelWrapperTopLevel* pw = dynamic_cast<PanelWrapperTopLevel*>(data->m_wxcWidget);
-    if(pw) {
+    if (pw) {
         PreviewPanel* frame = new PreviewPanel(parent, *pw);
         m_previewAlive = true;
         frame->Show();
     }
 
     AuiToolBarTopLevelWrapper* aui = dynamic_cast<AuiToolBarTopLevelWrapper*>(data->m_wxcWidget);
-    if(aui) {
+    if (aui) {
         PreviewPanel* frame = new PreviewPanel(parent, *aui);
         m_previewAlive = true;
         frame->Show();
     }
 
     DialogWrapper* dw = dynamic_cast<DialogWrapper*>(data->m_wxcWidget);
-    if(dw) {
+    if (dw) {
         // Show the dialog
         PreviewDialog* dlg = new PreviewDialog(parent, *dw);
         m_previewAlive = true;
@@ -569,7 +569,7 @@ void GUICraftMainPanel::OnShowPreview(wxCommandEvent& e)
     }
 
     WizardWrapper* ww = dynamic_cast<WizardWrapper*>(data->m_wxcWidget);
-    if(ww) {
+    if (ww) {
         // Show the dialog
         PreviewWizard dlg(parent, *ww);
         m_previewAlive = true;
@@ -577,7 +577,7 @@ void GUICraftMainPanel::OnShowPreview(wxCommandEvent& e)
     }
 
     PopupWindowWrapper* pop = dynamic_cast<PopupWindowWrapper*>(data->m_wxcWidget);
-    if(pop) {
+    if (pop) {
         PopupWindowPreview* frame = new PopupWindowPreview(parent, *pop);
         m_previewAlive = true;
         frame->Show();
@@ -603,13 +603,13 @@ void GUICraftMainPanel::DoUpdateSizerFlags(wxcWidget* data)
     m_auiPaneInfo.Construct(m_pgMgrAuiProperties->GetGrid(), data);
     m_sizerFlags.Construct(m_pgMgrSizerFlags->GetGrid(), data);
 
-    if(!data) {
+    if (!data) {
         DoShowPropertiesPage(m_panelAuiPaneInfo, "wxAuiPaneInfo", false);
         DoShowPropertiesPage(m_panelSizerFlags, _("Sizer Flags"), false);
 
     } else {
         int cursel = m_notebook2->GetSelection();
-        if(data->IsAuiPane()) {
+        if (data->IsAuiPane()) {
             DoShowPropertiesPage(m_panelAuiPaneInfo, "wxAuiPaneInfo", true);
             DoShowPropertiesPage(m_panelSizerFlags, _("Sizer Flags"), false);
 
@@ -632,15 +632,15 @@ void GUICraftMainPanel::NotifyPreviewChanged(int eventType)
 
     // If the selected item is notebook page, make sure we select this page again after the update
     NotebookPageWrapper* bookPage = dynamic_cast<NotebookPageWrapper*>(data->m_wxcWidget);
-    if(bookPage) {
+    if (bookPage) {
         NotebookBaseWrapper* book = dynamic_cast<NotebookBaseWrapper*>(bookPage->GetParent());
-        if(book) {
+        if (book) {
             book->SetSelection(bookPage);
         }
     }
 
     wxcWidget* parent = data->m_wxcWidget;
-    while(parent && !parent->IsTopWindow()) {
+    while (parent && !parent->IsTopWindow()) {
         parent = parent->GetParent();
     }
 
@@ -648,7 +648,7 @@ void GUICraftMainPanel::NotifyPreviewChanged(int eventType)
 
     wxCommandEvent evt(eventType);
     TopLevelWinWrapper* topWin = dynamic_cast<TopLevelWinWrapper*>(parent);
-    if(topWin) {
+    if (topWin) {
         evt.SetString(topWin->DesignerXRC(false));
         evt.SetInt(topWin->GetType());
         EventNotifier::Get()->AddPendingEvent(evt);
@@ -669,48 +669,48 @@ void GUICraftMainPanel::OnPropertyChanged(wxCommandEvent& e)
     CHECK_POINTER(itemData->m_wxcWidget);
     wxTreeItemId item;
     wxcWidget* modifiedWidget = reinterpret_cast<wxcWidget*>(e.GetClientData());
-    if(modifiedWidget && modifiedWidget != itemData->m_wxcWidget) {
+    if (modifiedWidget && modifiedWidget != itemData->m_wxcWidget) {
         // Locate the proper wxTreeItemId to update
         item = DoFindItemByWxcWidget(modifiedWidget, m_treeControls->GetRootItem());
 
     } else {
         item = m_treeControls->GetSelection();
-        if(item.IsOk()) {
+        if (item.IsOk()) {
             GUICraftItemData* data = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
-            if(data) {
+            if (data) {
                 modifiedWidget = dynamic_cast<wxcWidget*>(data->m_wxcWidget);
             }
         }
     }
 
     wxString newname = e.GetString();
-    if(item.IsOk() && !newname.IsEmpty() && (newname != m_treeControls->GetItemText(item))) {
+    if (item.IsOk() && !newname.IsEmpty() && (newname != m_treeControls->GetItemText(item))) {
         m_treeControls->SetItemText(item, newname);
     }
 
     // Special case: An auitoolbar item changing kind
-    if(modifiedWidget && modifiedWidget->IsParentAuiToolbar()) {
+    if (modifiedWidget && modifiedWidget->IsParentAuiToolbar()) {
         ToolBarItemWrapper* auiItem = dynamic_cast<ToolBarItemWrapper*>(modifiedWidget);
-        if(auiItem) {
+        if (auiItem) {
             auiItem->UpdateRegisteredEventsIfNeeded(); // Switch the event between wxEVT_COMMAND_MENU_SELECTED and
                                                        // wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN
             auiItem->OnPropertiesUpdated();
             DoUpdatePropertiesView();
 
             wxCrafter::TOOL_TYPE toolType = wxCrafter::GetToolType(auiItem->PropertyString(PROP_KIND));
-            if(toolType == wxCrafter::TOOL_TYPE_DROPDOWN && auiItem->PropertyString(PROP_DROPDOWN_MENU) == "1") {
+            if (toolType == wxCrafter::TOOL_TYPE_DROPDOWN && auiItem->PropertyString(PROP_DROPDOWN_MENU) == "1") {
                 // We're a dropdown item, and the user wants to construct its menu inside wxC
-                if(auiItem->GetChildren().empty()) {
+                if (auiItem->GetChildren().empty()) {
                     wxcWidget* menu = Allocator::Instance()->Create(ID_WXMENU);
                     menu->SetParent(auiItem);
                     DoInsertControl(menu, auiItem, Allocator::INSERT_CHILD,
                                     Allocator::Instance()->GetImageId(ID_WXMENU));
                 }
-            } else if(!auiItem->GetChildren().empty()) {
+            } else if (!auiItem->GetChildren().empty()) {
                 // There's a redundant menu, either because user switched to DIY, or because it's no longer a dropdown
                 wxTreeItemIdValue cookie;
                 wxTreeItemId menuitem = m_treeControls->GetFirstChild(item, cookie);
-                if(menuitem.IsOk()) {
+                if (menuitem.IsOk()) {
                     DoUnsetItemData(menuitem);
                     delete auiItem->GetChildren().front();
                     m_treeControls->DeleteChildren(menuitem);
@@ -728,7 +728,7 @@ void GUICraftMainPanel::OnPropertyChanged(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnNewControl(wxCommandEvent& e)
 {
-    if(e.GetId() == ID_WXCUSTOMCONTROL) {
+    if (e.GetId() == ID_WXCUSTOMCONTROL) {
         // Custom Controls are handled differently
         e.Skip();
         return;
@@ -740,14 +740,14 @@ void GUICraftMainPanel::OnNewControl(wxCommandEvent& e)
     bool isTopLevel = (e.GetId() == ID_WXDIALOG || e.GetId() == ID_WXFRAME || e.GetId() == ID_WXWIZARD ||
                        e.GetId() == ID_WXPANEL_TOPLEVEL || e.GetId() == ID_WXPOPUPWINDOW ||
                        e.GetId() == ID_WXIMAGELIST || e.GetId() == ID_WXAUITOOLBARTOPLEVEL);
-    if(isTopLevel) {
+    if (isTopLevel) {
 
         // Use the Wizard instead of adding the form directly
         wxCommandEvent createFormEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("wxcp_new_form"));
         createFormEvent.SetInt(e.GetId());
         wxTheApp->AddPendingEvent(createFormEvent);
 
-    } else if(data && data->m_wxcWidget) {
+    } else if (data && data->m_wxcWidget) {
         // Non toplevel window
         wxcWidget* control = Allocator::Instance()->Create(e.GetId());
         CHECK_POINTER(control);
@@ -755,13 +755,13 @@ void GUICraftMainPanel::OnNewControl(wxCommandEvent& e)
         int insertType;
 
         // Special handling for treebook
-        if(e.GetId() == ID_WXTREEBOOK_SUB_PAGE) {
+        if (e.GetId() == ID_WXTREEBOOK_SUB_PAGE) {
             insertType = Allocator::INSERT_CHILD;
 
-        } else if(e.GetId() == ID_WXPGPROPERTY_SUB) {
+        } else if (e.GetId() == ID_WXPGPROPERTY_SUB) {
             insertType = Allocator::INSERT_CHILD;
 
-        } else if(e.GetId() == ID_WXSPACER) {
+        } else if (e.GetId() == ID_WXSPACER) {
             // A spacer has no proportion by default, but this one's supposed to stretch
             control->SizerItem().SetProportion(1);
             insertType =
@@ -800,7 +800,7 @@ bool GUICraftMainPanel::GenerateCppOutput(wxString& cpp, wxString& header, wxArr
     // If onlySelection, just produce output for the currently selected tree branch. By default do everything
     wxTreeItemId start, item;
     wxTreeItemId selectedItem = DoGetTopLevelTreeItem();
-    if((flags & kGenCodeSelectionOnly) && selectedItem.IsOk()) {
+    if ((flags & kGenCodeSelectionOnly) && selectedItem.IsOk()) {
         start = selectedItem;
     } else {
         start = m_treeControls->GetRootItem();
@@ -808,7 +808,7 @@ bool GUICraftMainPanel::GenerateCppOutput(wxString& cpp, wxString& header, wxArr
     wxCHECK(start.IsOk(), "Invalid tree root");
 
     wxTreeItemIdValue cookie;
-    if(start == m_treeControls->GetRootItem()) {
+    if (start == m_treeControls->GetRootItem()) {
         item = m_treeControls->GetFirstChild(start, cookie);
         flags &= ~kGenCodeSelectionOnly; // in case onlySelection was asked for, but selectedItem wasn't Ok
 
@@ -816,17 +816,17 @@ bool GUICraftMainPanel::GenerateCppOutput(wxString& cpp, wxString& header, wxArr
         item = start;
     }
 
-    while(item.IsOk()) {
+    while (item.IsOk()) {
         GUICraftItemData* data = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
-        if(data) {
+        if (data) {
             wxcWidget* wb = dynamic_cast<wxcWidget*>(data->m_wxcWidget);
-            if(wb) {
+            if (wb) {
                 TopLevelWinWrapper* tl = dynamic_cast<TopLevelWinWrapper*>(wb);
-                if(tl) {
+                if (tl) {
                     tl->GenerateCode(wxcProjectMetadata::Get(), !(flags & kGenCodeForPreview),
                                      (flags & kGenCodeSelectionOnly) || (item != selectedItem), // output base only
                                      cpp, header, headers, additionalFiles);
-                    if(flags & kGenCodeSelectionOnly) {
+                    if (flags & kGenCodeSelectionOnly) {
                         break; // We only want a single tlw, so don't loop
                     }
                 }
@@ -842,7 +842,7 @@ void GUICraftMainPanel::GenerateXrcOutput(wxString& output, size_t flags) const
     // If onlySelection, just produce output for the currently selected tree branch. By default do everything
     wxTreeItemId start, item;
     wxTreeItemId sel = DoGetTopLevelTreeItem();
-    if((flags & kGenCodeSelectionOnly) && sel.IsOk()) {
+    if ((flags & kGenCodeSelectionOnly) && sel.IsOk()) {
         start = sel;
     } else {
         start = m_treeControls->GetRootItem();
@@ -850,7 +850,7 @@ void GUICraftMainPanel::GenerateXrcOutput(wxString& output, size_t flags) const
     wxCHECK_RET(start.IsOk(), "Invalid tree root");
 
     wxTreeItemIdValue cookie;
-    if(start == m_treeControls->GetRootItem()) {
+    if (start == m_treeControls->GetRootItem()) {
         item = m_treeControls->GetFirstChild(start, cookie);
         flags &= ~kGenCodeSelectionOnly; // in case onlySelection was asked for, but sel wasn't Ok
 
@@ -858,17 +858,17 @@ void GUICraftMainPanel::GenerateXrcOutput(wxString& output, size_t flags) const
         item = start;
     }
 
-    while(item.IsOk()) {
+    while (item.IsOk()) {
         GUICraftItemData* data = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
-        if(data) {
+        if (data) {
             wxcWidget* wb = dynamic_cast<wxcWidget*>(data->m_wxcWidget);
-            if(wb) {
+            if (wb) {
                 TopLevelWinWrapper* tl = dynamic_cast<TopLevelWinWrapper*>(wb);
-                if(tl) {
+                if (tl) {
                     wxString text;
                     tl->ToXRC(text, wxcWidget::XRC_LIVE);
                     output << text;
-                    if(flags & kGenCodeSelectionOnly) {
+                    if (flags & kGenCodeSelectionOnly) {
                         break; // We only want a single tlw, so don't loop
                     }
                 }
@@ -885,13 +885,13 @@ void GUICraftMainPanel::OnSizerTool(wxCommandEvent& e)
     CHECK_POINTER(itemData->m_wxcWidget);
 
     wxString bitname = GetStyleFromGuiID(e.GetId());
-    if(bitname.IsEmpty()) {
+    if (bitname.IsEmpty()) {
         return;
     }
 
     itemData->m_wxcWidget->EnableSizerFlag(bitname, e.IsChecked());
 
-    if(bitname == "wxALL") {
+    if (bitname == "wxALL") {
         itemData->m_wxcWidget->EnableSizerFlag("wxLEFT", e.IsChecked());
         itemData->m_wxcWidget->EnableSizerFlag("wxRIGHT", e.IsChecked());
         itemData->m_wxcWidget->EnableSizerFlag("wxTOP", e.IsChecked());
@@ -905,13 +905,13 @@ void GUICraftMainPanel::OnSizerTool(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnSizerToolUI(wxUpdateUIEvent& e)
 {
-    if(!wxcProjectMetadata::Get().IsLoaded()) {
+    if (!wxcProjectMetadata::Get().IsLoaded()) {
         e.Enable(false);
         return;
     }
 
     GUICraftItemData* itemData = GetSelItemData();
-    if(!itemData || !itemData->m_wxcWidget || !itemData->m_wxcWidget->IsSizerItem()) {
+    if (!itemData || !itemData->m_wxcWidget || !itemData->m_wxcWidget->IsSizerItem()) {
         e.Enable(false);
         e.Check(false);
         return;
@@ -919,12 +919,12 @@ void GUICraftMainPanel::OnSizerToolUI(wxUpdateUIEvent& e)
 
     e.Enable(true);
     wxString bitname = GetStyleFromGuiID(e.GetId());
-    if(bitname.IsEmpty()) {
+    if (bitname.IsEmpty()) {
         e.Enable(false);
         return;
     }
 
-    if(bitname == "wxALL") {
+    if (bitname == "wxALL") {
         bool previous = itemData->m_wxcWidget->GetSizerFlags().Item("wxALL").is_set;
         bool current = itemData->m_wxcWidget->GetSizerFlags().Item("wxLEFT").is_set &&
                        itemData->m_wxcWidget->GetSizerFlags().Item("wxRIGHT").is_set &&
@@ -932,7 +932,7 @@ void GUICraftMainPanel::OnSizerToolUI(wxUpdateUIEvent& e)
                        itemData->m_wxcWidget->GetSizerFlags().Item("wxBOTTOM").is_set;
 
         e.Check(current);
-        if(current != previous) {
+        if (current != previous) {
             itemData->m_wxcWidget->EnableSizerFlag("wxALL", current);
             DoUpdatPropertiesFlags(itemData->m_wxcWidget);
             NotifyPreviewChanged();
@@ -940,8 +940,8 @@ void GUICraftMainPanel::OnSizerToolUI(wxUpdateUIEvent& e)
         return;
     }
 
-    if(itemData->m_wxcWidget->GetSizerFlags().Contains(bitname) &&
-       itemData->m_wxcWidget->GetSizerFlags().Item(bitname).is_set) {
+    if (itemData->m_wxcWidget->GetSizerFlags().Contains(bitname) &&
+        itemData->m_wxcWidget->GetSizerFlags().Item(bitname).is_set) {
         e.Check(true);
 
     } else {
@@ -953,7 +953,7 @@ void GUICraftMainPanel::OnSizerToolUI(wxUpdateUIEvent& e)
 
 wxString GUICraftMainPanel::GetStyleFromGuiID(int guiId) const
 {
-    switch(guiId) {
+    switch (guiId) {
     case ID_TOOL_ALIGN_LEFT:
         return STRINGFY(wxALIGN_LEFT);
 
@@ -1001,10 +1001,10 @@ JSONElement GUICraftMainPanel::ToJSON(const wxTreeItemId& fromItem)
     wxTreeItemIdValue cookie;
     wxTreeItemId rootItem = fromItem.IsOk() ? fromItem : m_treeControls->GetRootItem();
     wxTreeItemId child = m_treeControls->GetFirstChild(rootItem, cookie);
-    while(child.IsOk()) {
+    while (child.IsOk()) {
 
         GUICraftItemData* itemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(child));
-        if(itemData && itemData->m_wxcWidget) {
+        if (itemData && itemData->m_wxcWidget) {
             JSONElement obj = JSONElement::createObject();
             itemData->m_wxcWidget->FixPaths(
                 wxcProjectMetadata::Get().GetProjectPath()); // Fix abs paths to fit the new project file
@@ -1021,11 +1021,11 @@ JSONElement GUICraftMainPanel::ToJSON(const wxTreeItemId& fromItem)
 void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
 {
     wxArrayString customControls = GetCustomControlsUsed();
-    if(wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
+    if (wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
         wxString path =
             wxFileSelector(_("Save as"), wxEmptyString, _("my_gui.wxcp"), "wxCrafter Project File(*.wxcp)|*.wxcp",
                            wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_CHANGE_DIR | wxFD_OVERWRITE_PROMPT);
-        if(path.IsEmpty()) {
+        if (path.IsEmpty()) {
             return;
         }
 
@@ -1036,7 +1036,7 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
     JSONRoot root(cJSON_Object);
 
     // If we dont have bitmap function assigned to this project, create new one
-    if(wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
+    if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
         wxcProjectMetadata::Get().GenerateBitmapFunctionName();
     }
 
@@ -1045,7 +1045,7 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
     root.toElement().append(metadata);
 
     wxFFile fp(wxcProjectMetadata::Get().GetProjectFile(), "w+b");
-    if(fp.IsOpened()) {
+    if (fp.IsOpened()) {
         root.toElement().append(ToJSON());
 
         fp.Write(root.toElement().format(), wxConvUTF8);
@@ -1067,26 +1067,26 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
 void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
 {
     wxcSettings::Get().SetInitCompleted(true);
-    if(!e.GetString().IsEmpty() && wxcProjectMetadata::Get().IsLoaded() &&
-       e.GetString() == wxcProjectMetadata::Get().GetProjectFile()) {
+    if (!e.GetString().IsEmpty() && wxcProjectMetadata::Get().IsLoaded() &&
+        e.GetString() == wxcProjectMetadata::Get().GetProjectFile()) {
         // the currently loaded file is the same as this one
         // do nothing
-        if(!IsShown()) {
+        if (!IsShown()) {
             Show();
         }
         Raise();
         return;
     }
 
-    if(wxcProjectMetadata::Get().IsLoaded() && wxcEditManager::Get().IsDirty()) {
-        if(::wxMessageBox(_("Current file has been modified\nContinue?"), "wxCrafter", wxYES_NO | wxCANCEL | wxCENTER,
-                          wxCrafter::TopFrame()) != wxYES) {
+    if (wxcProjectMetadata::Get().IsLoaded() && wxcEditManager::Get().IsDirty()) {
+        if (::wxMessageBox(_("Current file has been modified\nContinue?"), "wxCrafter", wxYES_NO | wxCANCEL | wxCENTER,
+                           wxCrafter::TopFrame()) != wxYES) {
             return;
         }
     }
 
     wxString path = e.GetString();
-    if(path.IsEmpty()) {
+    if (path.IsEmpty()) {
         // User request
         path = wxFileSelector(_("Open wxCrafter project"), wxEmptyString, wxEmptyString, wxEmptyString,
                               "wxCrafter Project File(*.wxcp)|*.wxcp", wxFD_OPEN);
@@ -1099,16 +1099,16 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
         wxString p1, p2;
         p1 = curfile.GetFullPath();
         p2 = path;
-        if(curfile == path) {
+        if (curfile == path) {
             return;
         }
     }
 
-    if(path.IsEmpty() == false) {
+    if (path.IsEmpty() == false) {
 
         /// update the history list
         wxArrayString history = wxcSettings::Get().GetHistory();
-        if(history.Index(path) == wxNOT_FOUND) {
+        if (history.Index(path) == wxNOT_FOUND) {
             history.Add(path);
             wxcSettings::Get().SetHistory(history);
             wxcSettings::Get().Save();
@@ -1116,7 +1116,7 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
 
         wxFileName fn(path);
         wxFFile fp(fn.GetFullPath(), "r+b");
-        if(fp.IsOpened()) {
+        if (fp.IsOpened()) {
             wxString content;
             fp.ReadAll(&content, wxConvUTF8);
             fp.Close();
@@ -1147,7 +1147,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     bool deleteAllItems = false;
     wxFileName project_file = fn;
     JSONRoot json(fileContent);
-    if(!lightLoad) {
+    if (!lightLoad) {
         Clear();
 
         // Read the metadata first
@@ -1166,7 +1166,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(m_treeControls);
 #endif
-    if(deleteAllItems) {
+    if (deleteAllItems) {
         m_treeControls->DeleteAllItems();
         m_treeControls->AddRoot(_("wxCrafter Project"), 0, 0);
         project_file = wxcProjectMetadata::Get().GetProjectFile();
@@ -1176,7 +1176,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     }
 
     wxTreeItemId dummy;
-    for(int i = 0; i < nCount; i++) {
+    for (int i = 0; i < nCount; i++) {
         wxcWidget* wrapper = Allocator::Instance()->CreateWrapperFromJSON(windows.arrayItem(i));
         DoBuildTree(dummy, wrapper, m_treeControls->GetRootItem());
     }
@@ -1184,7 +1184,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     wxTreeItemIdValue cookie;
     wxTreeItemId rootItem = m_treeControls->GetRootItem();
     wxTreeItemId firstChild = m_treeControls->GetFirstChild(rootItem, cookie);
-    if(firstChild.IsOk()) {
+    if (firstChild.IsOk()) {
         m_treeControls->SelectItem(firstChild);
     }
     NotifyPreviewChanged(wxEVT_WXGUI_PROJECT_LOADED);
@@ -1195,7 +1195,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     wxcWidget::SetObjCounter(wxcProjectMetadata::Get().GetObjCounter());
 
     // Expand the top level root item
-    if(rootItem.IsOk() && m_treeControls->ItemHasChildren(rootItem)) {
+    if (rootItem.IsOk() && m_treeControls->ItemHasChildren(rootItem)) {
         m_treeControls->Expand(rootItem);
     }
 }
@@ -1207,51 +1207,51 @@ void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapp
     int imgId = Allocator::Instance()->GetImageId(wrapper->GetType());
     wxTreeItemId item;
 
-    if(beforeItem.IsOk()) {
+    if (beforeItem.IsOk()) {
 
         wxTreeItemId insertionItem = beforeItem;
-        if(insertBefore) {
+        if (insertBefore) {
             insertionItem = m_treeControls->GetPrevSibling(beforeItem);
-            if(insertionItem.IsOk() == false) {
+            if (insertionItem.IsOk() == false) {
                 insertionItem = parent;
             }
         }
 
         item = m_treeControls->InsertItem(parent, insertionItem, wrapper->GetName(), imgId, imgId,
                                           new GUICraftItemData(wrapper));
-        if(itemToSelect.IsOk() == false) {
+        if (itemToSelect.IsOk() == false) {
             itemToSelect = item;
         }
 
     } else {
 
         item = m_treeControls->AppendItem(parent, wrapper->GetName(), imgId, imgId, new GUICraftItemData(wrapper));
-        if(itemToSelect.IsOk() == false) {
+        if (itemToSelect.IsOk() == false) {
             itemToSelect = item;
         }
     }
 
     wxcWidget::List_t::const_iterator iter = wrapper->GetChildren().begin();
-    for(; iter != wrapper->GetChildren().end(); ++iter) {
+    for (; iter != wrapper->GetChildren().end(); ++iter) {
         DoBuildTree(itemToSelect, (*iter), item);
     }
 }
 
 void GUICraftMainPanel::DoUnsetItemData(const wxTreeItemId& item)
 {
-    if(item.IsOk()) {
+    if (item.IsOk()) {
 
         // Remove the WrapperBase item associated with this item-data
         // by setting it to NULL
         GUICraftItemData* itemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
-        if(itemData) {
+        if (itemData) {
             itemData->m_wxcWidget = NULL;
         }
 
-        if(m_treeControls->ItemHasChildren(item)) {
+        if (m_treeControls->ItemHasChildren(item)) {
             wxTreeItemIdValue cookie;
             wxTreeItemId child = m_treeControls->GetFirstChild(item, cookie);
-            while(child.IsOk()) {
+            while (child.IsOk()) {
                 DoUnsetItemData(child);
                 child = m_treeControls->GetNextChild(item, cookie);
             }
@@ -1269,7 +1269,7 @@ void GUICraftMainPanel::DoMoveToplevelWindow(wxcWidget* tlw, int direction)
     wxTreeItemId target;
     bool doPrepend(false);
 
-    if(direction == ID_MOVE_NODE_DOWN) {
+    if (direction == ID_MOVE_NODE_DOWN) {
         target = m_treeControls->GetNextSibling(treeItem);
         CHECK_TREEITEM(target);
 
@@ -1278,7 +1278,7 @@ void GUICraftMainPanel::DoMoveToplevelWindow(wxcWidget* tlw, int direction)
         target = m_treeControls->GetPrevSibling(treeItem);
         CHECK_TREEITEM(target);
         wxTreeItemId previous = m_treeControls->GetPrevSibling(target);
-        if(previous.IsOk()) {
+        if (previous.IsOk()) {
             target = previous;
         } else {
             // The exception: we can't go up by 2 if the second item is moving above the first. So:
@@ -1296,7 +1296,7 @@ void GUICraftMainPanel::DoMoveToplevelWindow(wxcWidget* tlw, int direction)
     m_treeControls->Delete(treeItem);
 
     wxTreeItemId insertedItem;
-    if(!doPrepend) {
+    if (!doPrepend) {
         insertedItem = m_treeControls->InsertItem(root, target, text, image, image, new GUICraftItemData(tlw));
     } else {
         insertedItem = m_treeControls->AppendItem(root, text, image, image, new GUICraftItemData(tlw));
@@ -1308,7 +1308,7 @@ void GUICraftMainPanel::DoMoveToplevelWindow(wxcWidget* tlw, int direction)
     wxTreeItemId dummy;
     const wxcWidget::List_t& list = tlw->GetChildren();
     wxcWidget::List_t::const_iterator iter = list.begin();
-    for(; iter != list.end(); ++iter) {
+    for (; iter != list.end(); ++iter) {
         DoBuildTree(dummy, *iter, insertedItem);
     }
 
@@ -1322,9 +1322,9 @@ void GUICraftMainPanel::DoMoveToplevelWindow(wxcWidget* tlw, int direction)
 void GUICraftMainPanel::OnMoveItem(wxCommandEvent& e)
 {
     GUICraftItemData* itemData = GetSelItemData();
-    if(!itemData || !itemData->m_wxcWidget) {
+    if (!itemData || !itemData->m_wxcWidget) {
         return;
-    } else if(!itemData->m_wxcWidget->GetParent()) {
+    } else if (!itemData->m_wxcWidget->GetParent()) {
         return DoMoveToplevelWindow(itemData->m_wxcWidget, e.GetId());
     }
 
@@ -1340,7 +1340,7 @@ void GUICraftMainPanel::OnMoveItem(wxCommandEvent& e)
     CHECK_POINTER(nodeToMove->GetParent());
     wxcWidget* subTree(NULL);
 
-    switch(e.GetId()) {
+    switch (e.GetId()) {
     case ID_MOVE_NODE_DOWN:
         nodeToMove->MoveDown();
         subTree = nodeToMove->GetParent();
@@ -1379,13 +1379,13 @@ void GUICraftMainPanel::OnMoveItem(wxCommandEvent& e)
     m_treeControls->SetItemData(treeItemParent, new GUICraftItemData(subTree));
     const wxcWidget::List_t& list = subTree->GetChildren();
     wxcWidget::List_t::const_iterator iter = list.begin();
-    for(; iter != list.end(); ++iter) {
+    for (; iter != list.end(); ++iter) {
         DoBuildTree(dummy, *iter, treeItemParent);
     }
 
     wxTreeItemId where;
     DoFindName(treeItemParent, itemName, where);
-    if(where.IsOk()) {
+    if (where.IsOk()) {
         m_treeControls->EnsureVisible(where);
         m_treeControls->SelectItem(where);
     }
@@ -1397,9 +1397,9 @@ void GUICraftMainPanel::OnMoveItem(wxCommandEvent& e)
 void GUICraftMainPanel::OnDelete(wxCommandEvent& e)
 {
     GUICraftItemData* data = GetSelItemData();
-    if(data) {
+    if (data) {
         int eventType = wxEVT_UPDATE_PREVIEW;
-        if(data->m_wxcWidget->IsTopWindow()) {
+        if (data->m_wxcWidget->IsTopWindow()) {
             // Notify the preview that we are about to delete the entire preview page
             NotifyPreviewChanged(wxEVT_WXGUI_PROJECT_CLOSED);
             eventType = wxEVT_WXGUI_PROJECT_LOADED;
@@ -1409,7 +1409,7 @@ void GUICraftMainPanel::OnDelete(wxCommandEvent& e)
 
         m_treeControls->DeleteChildren(m_treeControls->GetSelection());
         m_treeControls->Delete(m_treeControls->GetSelection());
-        if(newSel.IsOk()) {
+        if (newSel.IsOk()) {
             m_treeControls->SelectItem(newSel);
         }
         CallAfter(&GUICraftMainPanel::DoRefresh, eventType);
@@ -1427,13 +1427,13 @@ void GUICraftMainPanel::DoRefresh(int eventType)
 
 void GUICraftMainPanel::ExpandToItem(const wxString& name, wxTreeItemId& searchFromItem)
 {
-    if(!searchFromItem.IsOk()) {
+    if (!searchFromItem.IsOk()) {
         searchFromItem = m_treeControls->GetRootItem();
     }
 
     wxTreeItemId item;
     DoFindName(searchFromItem, name, item);
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         m_treeControls->Expand(item);
         m_treeControls->EnsureVisible(item);
         m_treeControls->SelectItem(item);
@@ -1442,25 +1442,25 @@ void GUICraftMainPanel::ExpandToItem(const wxString& name, wxTreeItemId& searchF
 
 void GUICraftMainPanel::DoFindName(const wxTreeItemId& parent, const wxString& name, wxTreeItemId& item)
 {
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         return;
     }
 
-    if(parent.IsOk() == false) {
+    if (parent.IsOk() == false) {
         return;
     }
 
-    if(m_treeControls->GetItemText(parent) == name) {
+    if (m_treeControls->GetItemText(parent) == name) {
         item = parent;
         return;
     }
 
-    if(m_treeControls->ItemHasChildren(parent)) {
+    if (m_treeControls->ItemHasChildren(parent)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_treeControls->GetFirstChild(parent, cookie);
-        while(child.IsOk()) {
+        while (child.IsOk()) {
             DoFindName(child, name, item);
-            if(item.IsOk()) {
+            if (item.IsOk()) {
                 return;
             }
             child = m_treeControls->GetNextChild(parent, cookie);
@@ -1477,46 +1477,46 @@ void GUICraftMainPanel::OnMoveItemUI(wxUpdateUIEvent& e)
     wxcWidget* control = d->m_wxcWidget;
     CHECK_POINTER(control);
 
-    if(e.GetId() == ID_MOVE_NODE_DOWN) {
-        if(control->GetParent()) {
+    if (e.GetId() == ID_MOVE_NODE_DOWN) {
+        if (control->GetParent()) {
             e.Enable(control->CanMoveDown());
-        } else if(control->IsTopWindow()) {
+        } else if (control->IsTopWindow()) {
             wxTreeItemId item;
             DoFindName(m_treeControls->GetRootItem(), control->GetName(), item);
-            if(item.IsOk()) {
+            if (item.IsOk()) {
                 e.Enable(m_treeControls->GetNextSibling(item).IsOk());
             }
         }
 
-    } else if(e.GetId() == ID_MOVE_NODE_UP) {
-        if(control->GetParent()) {
+    } else if (e.GetId() == ID_MOVE_NODE_UP) {
+        if (control->GetParent()) {
             e.Enable(control->CanMoveUp());
-        } else if(control->IsTopWindow()) {
+        } else if (control->IsTopWindow()) {
             wxTreeItemId item;
             DoFindName(m_treeControls->GetRootItem(), control->GetName(), item);
-            if(item.IsOk()) {
+            if (item.IsOk()) {
                 e.Enable(m_treeControls->GetPrevSibling(item).IsOk());
             }
         }
-    } else if(e.GetId() == ID_MOVE_NODE_INTO_SIZER) {
-        if(!control->IsSizerItem()) {
+    } else if (e.GetId() == ID_MOVE_NODE_INTO_SIZER) {
+        if (!control->IsSizerItem()) {
             return;
         }
         wxcWidget* parent = control->GetParent();
         CHECK_POINTER(parent);
-        if(parent->IsSizer()) {
+        if (parent->IsSizer()) {
             wxcWidget* grandparent = parent->GetParent();
             e.Enable(grandparent && grandparent->IsSizer());
         }
-    } else if(e.GetId() == ID_MOVE_NODE_INTO_SIBLING) {
-        if(!control->IsSizerItem()) {
+    } else if (e.GetId() == ID_MOVE_NODE_INTO_SIBLING) {
+        if (!control->IsSizerItem()) {
             return;
         }
-        if(control->CanMoveRight()) {
+        if (control->CanMoveRight()) {
             bool isAbove;
             control->GetAdjacentSiblingSizer(&isAbove); // Which icon should we use? upper-right or lower-right?
             wxCrafter::ResourceLoader bmps;
-            if(isAbove) {
+            if (isAbove) {
                 m_toolbar->SetToolBitmap(ID_MOVE_NODE_INTO_SIBLING, bmps.Bitmap("move-upper-right"));
             } else {
                 m_toolbar->SetToolBitmap(ID_MOVE_NODE_INTO_SIBLING, bmps.Bitmap("move-lower-right"));
@@ -1533,7 +1533,7 @@ void GUICraftMainPanel::OnSetSizerProp1(wxCommandEvent& e)
     CHECK_POINTER(d);
     CHECK_POINTER(d->m_wxcWidget);
 
-    if(e.IsChecked()) {
+    if (e.IsChecked()) {
         d->m_wxcWidget->SizerItem().SetProportion(1);
         m_sizerFlags.Construct(m_pgMgrSizerFlags->GetGrid(), d->m_wxcWidget);
 
@@ -1549,7 +1549,7 @@ void GUICraftMainPanel::OnSetSizerProp1(wxCommandEvent& e)
 void GUICraftMainPanel::OnSetSizerProp1UI(wxUpdateUIEvent& e)
 {
     GUICraftItemData* d = GetSelItemData();
-    if(!d || !d->m_wxcWidget || !d->m_wxcWidget->IsSizerItem()) {
+    if (!d || !d->m_wxcWidget || !d->m_wxcWidget->IsSizerItem()) {
         e.Check(false);
         e.Enable(false);
         return;
@@ -1563,16 +1563,16 @@ void GUICraftMainPanel::OnSetSizerProp1UI(wxUpdateUIEvent& e)
 wxTreeItemId GUICraftMainPanel::DoGetTopLevelTreeItem() const
 {
     wxTreeItemId item = m_treeControls->GetSelection();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return wxTreeItemId();
     }
 
     wxTreeItemId parent = item;
 
-    while(true) {
+    while (true) {
 
         wxTreeItemId tmpParent = m_treeControls->GetItemParent(parent);
-        if(tmpParent.IsOk() && tmpParent != m_treeControls->GetRootItem()) {
+        if (tmpParent.IsOk() && tmpParent != m_treeControls->GetRootItem()) {
             parent = tmpParent;
 
         } else {
@@ -1585,16 +1585,16 @@ wxTreeItemId GUICraftMainPanel::DoGetTopLevelTreeItem() const
 void GUICraftMainPanel::OnMenuItemClicked(wxCommandEvent& e)
 {
     GUICraftItemData* itemData = GetSelItemData();
-    if(!itemData || !itemData->m_wxcWidget) {
+    if (!itemData || !itemData->m_wxcWidget) {
         e.Skip();
         return;
     }
 
-    if(Allocator::GetCommonEvents().Exists(e.GetId())) {
+    if (Allocator::GetCommonEvents().Exists(e.GetId())) {
         ConnectDetails eventDetails = Allocator::GetCommonEvents().Item(e.GetId());
         itemData->m_wxcWidget->AddEvent(eventDetails);
 
-    } else if(itemData->m_wxcWidget->GetControlEvents().Exists(e.GetId())) {
+    } else if (itemData->m_wxcWidget->GetControlEvents().Exists(e.GetId())) {
         ConnectDetails eventDetails = itemData->m_wxcWidget->GetControlEvents().Item(e.GetId());
         itemData->m_wxcWidget->AddEvent(eventDetails);
 
@@ -1609,11 +1609,11 @@ void GUICraftMainPanel::OnMenuItemUI(wxUpdateUIEvent& e)
     CHECK_POINTER(itemData);
     CHECK_POINTER(itemData->m_wxcWidget);
 
-    if(Allocator::GetCommonEvents().Exists(e.GetId())) {
+    if (Allocator::GetCommonEvents().Exists(e.GetId())) {
         ConnectDetails eventDetails = Allocator::GetCommonEvents().Item(e.GetId());
         e.Check(itemData->m_wxcWidget->HasEvent(eventDetails.GetEventName()));
 
-    } else if(itemData->m_wxcWidget->GetControlEvents().Exists(e.GetId())) {
+    } else if (itemData->m_wxcWidget->GetControlEvents().Exists(e.GetId())) {
         ConnectDetails eventDetails = itemData->m_wxcWidget->GetControlEvents().Item(e.GetId());
         e.Check(itemData->m_wxcWidget->HasEvent(eventDetails.GetEventName()));
 
@@ -1634,14 +1634,14 @@ void GUICraftMainPanel::OnEventEditorCommon(wxCommandEvent& e) { wxUnusedVar(e);
 
 wxTreeItemId GUICraftMainPanel::DoFindBestSelection(const wxTreeItemId& item)
 {
-    if(item.IsOk() == false) {
+    if (item.IsOk() == false) {
         return wxTreeItemId();
     }
 
     wxTreeItemId newSel = m_treeControls->GetPrevSibling(item);
-    if(newSel.IsOk() == false) {
+    if (newSel.IsOk() == false) {
         newSel = m_treeControls->GetNextSibling(item);
-        if(newSel.IsOk() == false && m_treeControls->GetItemParent(item)) {
+        if (newSel.IsOk() == false && m_treeControls->GetItemParent(item)) {
             newSel = m_treeControls->GetItemParent(item);
         }
     }
@@ -1650,7 +1650,7 @@ wxTreeItemId GUICraftMainPanel::DoFindBestSelection(const wxTreeItemId& item)
 
 bool GUICraftMainPanel::DoUpdateNotebookSelection(const wxTreeItemId& item)
 {
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return false;
     }
 
@@ -1662,30 +1662,30 @@ bool GUICraftMainPanel::DoUpdateNotebookSelection(const wxTreeItemId& item)
     wxcWidget* wrapper = itemData->m_wxcWidget;
     NotebookPageWrapper* page = NULL;
     RibbonPageWrapper* ribbonPage = NULL;
-    while(wrapper) {
+    while (wrapper) {
         page = dynamic_cast<NotebookPageWrapper*>(wrapper);
-        if(page) {
+        if (page) {
             break;
         }
         wrapper = wrapper->GetParent();
     }
 
-    if(!page) {
+    if (!page) {
         wrapper = itemData->m_wxcWidget;
-        while(wrapper) {
+        while (wrapper) {
             ribbonPage = dynamic_cast<RibbonPageWrapper*>(wrapper);
-            if(ribbonPage) {
+            if (ribbonPage) {
                 break;
             }
             wrapper = wrapper->GetParent();
         }
     }
 
-    if(!page && !ribbonPage) {
+    if (!page && !ribbonPage) {
         return false;
     }
 
-    if(page) {
+    if (page) {
         // Page is an actual notebook page, get the notebook that it represents
         NotebookBaseWrapper* book = page->GetNotebook();
         CHECK_POINTER_RET_FALSE(book);
@@ -1714,10 +1714,10 @@ void GUICraftMainPanel::OnPreviewItemSelected(wxCommandEvent& e)
     e.Skip();
     wxString controlName = e.GetString();
     wxTreeItemId item = DoGetTopLevelTreeItem();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         wxTreeItemId sel;
         DoFindName(item, controlName, sel);
-        if(sel.IsOk()) {
+        if (sel.IsOk()) {
             m_treeControls->EnsureVisible(sel);
             bManualSelection = true;
             m_treeControls->SelectItem(sel);
@@ -1730,7 +1730,7 @@ void GUICraftMainPanel::OnPreviewItemSelected(wxCommandEvent& e)
 void GUICraftMainPanel::OnSelectToplevelItem(wxCommandEvent& e)
 {
     wxTreeItemId item = DoGetTopLevelTreeItem();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         bManualSelection = true;
         m_treeControls->EnsureVisible(item);
         m_treeControls->SelectItem(item);
@@ -1743,7 +1743,7 @@ void GUICraftMainPanel::OnBookPageSelected(wxCommandEvent& e)
 {
     wxTreeItemId item;
     DoFindName(DoGetTopLevelTreeItem(), e.GetString(), item);
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         GUICraftItemData* d = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
         CHECK_POINTER(d);
         CHECK_POINTER(d->m_wxcWidget);
@@ -1766,7 +1766,7 @@ void GUICraftMainPanel::OnRibbonPageSelected(wxCommandEvent& e)
 {
     wxTreeItemId item;
     DoFindName(DoGetTopLevelTreeItem(), e.GetString(), item);
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         GUICraftItemData* d = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
         CHECK_POINTER(d);
         CHECK_POINTER(d->m_wxcWidget);
@@ -1787,12 +1787,12 @@ void GUICraftMainPanel::OnRibbonPageSelected(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnCut(wxCommandEvent& e)
 {
-    if(!m_plugin->IsMainViewActive()) {
+    if (!m_plugin->IsMainViewActive()) {
         e.Skip(); // This event is nothing to do with us
         return;
     }
 
-    if(!IsTreeViewSelected()) {
+    if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't cut its selection!
         return;
     }
@@ -1816,7 +1816,7 @@ void GUICraftMainPanel::OnCut(wxCommandEvent& e)
     // disconnect this item from the its parent
     m_clipboardItem->RemoveFromParent();
 
-    if(m_treeControls->ItemHasChildren(item)) {
+    if (m_treeControls->ItemHasChildren(item)) {
         m_treeControls->DeleteChildren(item);
     }
     m_treeControls->Delete(item);
@@ -1831,12 +1831,12 @@ void GUICraftMainPanel::OnCut(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnCopy(wxCommandEvent& e)
 {
-    if(!m_plugin->IsMainViewActive()) {
+    if (!m_plugin->IsMainViewActive()) {
         e.Skip(); // This event is nothing to do with us
         return;
     }
 
-    if(!IsTreeViewSelected()) {
+    if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't copy its selection unnecessarily
         return;
     }
@@ -1856,12 +1856,12 @@ void GUICraftMainPanel::OnCopy(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
 {
-    if(!m_plugin->IsMainViewActive()) {
+    if (!m_plugin->IsMainViewActive()) {
         e.Skip(); // This event is nothing to do with us
         return;
     }
 
-    if(!IsTreeViewSelected()) {
+    if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't make an unintented paste into it
         return;
     }
@@ -1873,7 +1873,7 @@ void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
     wxcWidget* destTLW = NULL;
     GUICraftItemData* sel = GetSelItemData();
 
-    if(!sel) {
+    if (!sel) {
         // pasting on the root item
         target = NULL;
 
@@ -1883,7 +1883,7 @@ void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
         destinationItem = sel->m_wxcWidget;
 
         // Check if we can paste it here
-        if(!Allocator::Instance()->CanPaste(m_clipboardItem, destinationItem)) {
+        if (!Allocator::Instance()->CanPaste(m_clipboardItem, destinationItem)) {
             wxMessageBox(_("Can't paste it here"));
             return;
         }
@@ -1895,17 +1895,17 @@ void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
     int options(DO_renameAllChildren);
 
     DuplicateTLWDlg dlg(this);
-    if(m_clipboardItem->IsTopWindow()) {
-        while(true) {
-            if(dlg.ShowModal() != wxID_OK) {
+    if (m_clipboardItem->IsTopWindow()) {
+        while (true) {
+            if (dlg.ShowModal() != wxID_OK) {
                 return; // Presumably the user meant cancel the whole process
             }
             newname = dlg.GetBaseName();
             wxTreeItemId match;
             DoFindName(m_treeControls->GetRootItem(), newname, match);
-            if(match.IsOk()) {
-                if(wxMessageBox(_("This name is already in use. Try again?"), _("wxCrafter"),
-                                wxYES_NO | wxICON_QUESTION, this) == wxYES) {
+            if (match.IsOk()) {
+                if (wxMessageBox(_("This name is already in use. Try again?"), _("wxCrafter"),
+                                 wxYES_NO | wxICON_QUESTION, this) == wxYES) {
                     continue;
                 } else {
                     return;
@@ -1915,7 +1915,7 @@ void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
         }
         newinheritedname = dlg.GetInheritedName();
         newfilename = dlg.GetFilename();
-    } else if(target) {
+    } else if (target) {
         // try to locate an item with this name inside the destination TLW
         // If we got a match - force a rename
         destTLW = target->GetTopLevel();
@@ -1927,17 +1927,17 @@ void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
         differentTLW = (sameNameChild == NULL) || (sameNameChild != m_clipboardItem);
     }
 
-    if(m_clipboardItem->IsTopWindow() || differentTLW) {
-        if(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_ALL_NAMES)) {
+    if (m_clipboardItem->IsTopWindow() || differentTLW) {
+        if (wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_ALL_NAMES)) {
             options = DO_renameNone;
-        } else if(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES)) {
+        } else if (wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES)) {
             options = DO_renameAllChildrenExceptUsernamed;
         }
         options |= (wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_EVENTHANDLERS_TOO) ? DO_copyEventsToo : 0);
     }
 
     std::set<wxString> existingNames;
-    if(destTLW) {
+    if (destTLW) {
         destTLW->StoreNames(existingNames);
     }
     // Don't place the actual item, but rather a copy of it
@@ -1952,7 +1952,7 @@ void GUICraftMainPanel::OnDuplicate(wxCommandEvent& e)
     wxcWidget* destinationItem = NULL;
     GUICraftItemData* sel = GetSelItemData();
 
-    if(!sel) {
+    if (!sel) {
         // pasting on the root item
         target = NULL;
 
@@ -1962,7 +1962,7 @@ void GUICraftMainPanel::OnDuplicate(wxCommandEvent& e)
         destinationItem = sel->m_wxcWidget;
 
         // Check if we can paste it here
-        if(!Allocator::Instance()->CanPaste(destinationItem, destinationItem)) {
+        if (!Allocator::Instance()->CanPaste(destinationItem, destinationItem)) {
             wxMessageBox(_("Can't paste it here"));
             return;
         }
@@ -1973,19 +1973,19 @@ void GUICraftMainPanel::OnDuplicate(wxCommandEvent& e)
     int options(DO_renameAllChildren);
 
     // We're duplicating, not pasting, so only TLWs can possibly retain old names for child-controls
-    if(destinationItem->IsTopWindow()) {
+    if (destinationItem->IsTopWindow()) {
 
         DuplicateTLWDlg dlg(this);
-        while(true) {
-            if(dlg.ShowModal() != wxID_OK) {
+        while (true) {
+            if (dlg.ShowModal() != wxID_OK) {
                 return; // Presumably the user meant cancel the whole process
             }
             newname = dlg.GetBaseName();
             wxTreeItemId match;
             DoFindName(m_treeControls->GetRootItem(), newname, match);
-            if(match.IsOk()) {
-                if(wxMessageBox(_("This name is already in use. Try again?"), _("wxCrafter"),
-                                wxYES_NO | wxICON_QUESTION, this) == wxYES) {
+            if (match.IsOk()) {
+                if (wxMessageBox(_("This name is already in use. Try again?"), _("wxCrafter"),
+                                 wxYES_NO | wxICON_QUESTION, this) == wxYES) {
                     continue;
                 } else {
                     return;
@@ -1996,9 +1996,9 @@ void GUICraftMainPanel::OnDuplicate(wxCommandEvent& e)
         newinheritedname = dlg.GetInheritedName();
         newfilename = dlg.GetFilename();
 
-        if(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_ALL_NAMES)) {
+        if (wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_ALL_NAMES)) {
             options = DO_renameNone;
-        } else if(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES)) {
+        } else if (wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES)) {
             options = DO_renameAllChildrenExceptUsernamed;
         }
     }
@@ -2016,27 +2016,27 @@ void GUICraftMainPanel::DoPasteOrDuplicate(wxcWidget* source, wxcWidget* target,
 {
     wxWindowUpdateLocker locker(m_treeControls);
 
-    if((!target && source->IsTopWindow()) || // pasting on the root item a top level window
-       (source->IsTopWindow() && target->IsTopWindow())) {
+    if ((!target && source->IsTopWindow()) || // pasting on the root item a top level window
+        (source->IsTopWindow() && target->IsTopWindow())) {
         // top level window copy/paste
         DoAppendItem(wxTreeItemId(), m_treeControls->GetRootItem(), source);
 
     } else {
 
         int insertType = Allocator::Instance()->GetInsertionType(source->GetType(), target->GetType(), true);
-        if(duplicating && (insertType == Allocator::INSERT_CHILD) &&
-           (wxcWidget::GetWidgetType(target->GetType()) == TYPE_SIZER) && target->IsSizerItem()) {
+        if (duplicating && (insertType == Allocator::INSERT_CHILD) &&
+            (wxcWidget::GetWidgetType(target->GetType()) == TYPE_SIZER) && target->IsSizerItem()) {
             // If we're duplicating a (child) sizer, don't insert the dup into the original; make it a sibling
             insertType = Allocator::INSERT_SIBLING;
         }
 
-        if(insertType == Allocator::INSERT_SIBLING) {
+        if (insertType == Allocator::INSERT_SIBLING) {
             DoInsertBefore(wxTreeItemId(), m_treeControls->GetSelection(), source);
 
-        } else if(insertType == Allocator::INSERT_CHILD) {
+        } else if (insertType == Allocator::INSERT_CHILD) {
 
             // trying to paste a wxAUI manager on a control with wxAUI manager?
-            if(target->IsAuiManaged() && source->GetType() == ID_WXAUIMANAGER) {
+            if (target->IsAuiManaged() && source->GetType() == ID_WXAUIMANAGER) {
                 wxMessageBox(_("Only one wxAui Manager is allowed"), "wxCrafter", wxOK | wxICON_WARNING | wxCENTER);
                 wxDELETE(source);
                 return;
@@ -2044,13 +2044,13 @@ void GUICraftMainPanel::DoPasteOrDuplicate(wxcWidget* source, wxcWidget* target,
 
             DoAppendItem(wxTreeItemId(), m_treeControls->GetSelection(), source);
 
-        } else if(insertType == Allocator::INSERT_MAIN_SIZER) {
-            if(target->HasMainSizer()) {
+        } else if (insertType == Allocator::INSERT_MAIN_SIZER) {
+            if (target->HasMainSizer()) {
                 wxDELETE(source);
                 wxMessageBox(_("Can't insert this item here\nThere is already a main sizer"));
                 return;
 
-            } else if(target->IsAuiManaged()) {
+            } else if (target->IsAuiManaged()) {
                 wxDELETE(source);
                 wxMessageBox(_("Can't insert this item here\nThis item is managed by wxAUI"));
                 return;
@@ -2069,7 +2069,7 @@ void GUICraftMainPanel::OnBeginDrag(wxTreeEvent& event)
 {
     // event.Skip();
     m_draggedItem = m_treeControls->GetSelection();
-    if(m_draggedItem.IsOk()) {
+    if (m_draggedItem.IsOk()) {
         event.Allow();
     }
 }
@@ -2077,7 +2077,7 @@ void GUICraftMainPanel::OnBeginDrag(wxTreeEvent& event)
 void GUICraftMainPanel::OnEndDrag(wxTreeEvent& event)
 {
     wxTreeItemId itemDst = event.GetItem();
-    if(!itemDst.IsOk() || !m_draggedItem.IsOk()) {
+    if (!itemDst.IsOk() || !m_draggedItem.IsOk()) {
         return;
     }
 
@@ -2093,17 +2093,17 @@ void GUICraftMainPanel::OnEndDrag(wxTreeEvent& event)
     source = guiSourceItem->m_wxcWidget;
 
     // source and targets are the same?
-    if(source == target) {
+    if (source == target) {
         return;
     }
 
     // target is child of source?
-    if(target->IsDirectOrIndirectChildOf(source)) {
+    if (target->IsDirectOrIndirectChildOf(source)) {
         return;
     }
 
     // Can we paste the item to the new location?
-    if(!Allocator::Instance()->CanPaste(source, target)) {
+    if (!Allocator::Instance()->CanPaste(source, target)) {
         return;
     }
 
@@ -2124,11 +2124,11 @@ void GUICraftMainPanel::OnEndDrag(wxTreeEvent& event)
     const wxcWidget* sameNameChild = destTLW->FindChildByName(source->GetName());
     bool differentTLW = (sameNameChild == NULL) || (sameNameChild != source);
 
-    if(Pasting) {
-        if(source->IsTopWindow() || differentTLW) {
-            if(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_ALL_NAMES)) {
+    if (Pasting) {
+        if (source->IsTopWindow() || differentTLW) {
+            if (wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_ALL_NAMES)) {
                 options = DO_renameNone;
-            } else if(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES)) {
+            } else if (wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES)) {
                 options = DO_renameAllChildrenExceptUsernamed;
             }
         }
@@ -2136,7 +2136,7 @@ void GUICraftMainPanel::OnEndDrag(wxTreeEvent& event)
         options = DO_renameNone;
     }
 
-    if(Pasting) {
+    if (Pasting) {
         options |= (wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_EVENTHANDLERS_TOO) ? DO_copyEventsToo : 0);
     } else {
         // If we're moving, always retain any eventhandlers
@@ -2144,16 +2144,16 @@ void GUICraftMainPanel::OnEndDrag(wxTreeEvent& event)
     }
 
     wxTreeItemId itemSrc;
-    if(Pasting) {
+    if (Pasting) {
         // If this is a Paste rather than a Move, we need to copy the source
         source = source->Copy((DuplicatingOptions)options, existingNames);
 
     } else {
-        if(!source->IsTopWindow() && differentTLW) {
+        if (!source->IsTopWindow() && differentTLW) {
             // Even if it's a Move, we still may need rename to avoid a name-clash
             // So, though it's a bit clunky, Copy() the source, then steal any new name from the copy
             wxcWidget* clone = source->Copy((DuplicatingOptions)options, existingNames);
-            if(source->GetName() != clone->GetName()) {
+            if (source->GetName() != clone->GetName()) {
                 source->SetName(clone->GetName());
             }
 
@@ -2166,14 +2166,14 @@ void GUICraftMainPanel::OnEndDrag(wxTreeEvent& event)
     wxWindowUpdateLocker locker(m_treeControls);
 
     int insertType = Allocator::Instance()->GetInsertionType(source->GetType(), target->GetType(), true);
-    if(insertType == Allocator::INSERT_SIBLING) {
+    if (insertType == Allocator::INSERT_SIBLING) {
         // We want to insert where the marker is, so pass 'false' for insert-after
         // (That means we can't insert above the top item: there's no place for the marker to go except onto the
         // containing sizer,
         // so the item gets appended to the that instead. However the top item can always be moved down...)
         DoInsertBefore(itemSrc, itemDst, source, false);
 
-    } else if(insertType == Allocator::INSERT_CHILD || insertType == Allocator::INSERT_MAIN_SIZER) {
+    } else if (insertType == Allocator::INSERT_CHILD || insertType == Allocator::INSERT_MAIN_SIZER) {
         DoAppendItem(itemSrc, itemDst, source);
     }
 
@@ -2187,11 +2187,11 @@ void GUICraftMainPanel::DoAppendItem(const wxTreeItemId& sourceItem, const wxTre
     wxcWidget *source, *target = NULL;
     GUICraftItemData* guiTargetItem = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(targetItem));
 
-    if(guiTargetItem && guiTargetItem->m_wxcWidget) {
+    if (guiTargetItem && guiTargetItem->m_wxcWidget) {
         target = guiTargetItem->m_wxcWidget;
     }
 
-    if(sourceItem.IsOk()) {
+    if (sourceItem.IsOk()) {
         GUICraftItemData* guiSourceItem = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(sourceItem));
         CHECK_POINTER(guiSourceItem);
         CHECK_POINTER(guiSourceItem->m_wxcWidget);
@@ -2202,7 +2202,7 @@ void GUICraftMainPanel::DoAppendItem(const wxTreeItemId& sourceItem, const wxTre
         DoUnsetItemData(sourceItem);
 
         // Delete the UI of the dragged item
-        if(m_treeControls->ItemHasChildren(sourceItem)) {
+        if (m_treeControls->ItemHasChildren(sourceItem)) {
             m_treeControls->DeleteChildren(sourceItem);
         }
         m_treeControls->Delete(sourceItem);
@@ -2213,7 +2213,7 @@ void GUICraftMainPanel::DoAppendItem(const wxTreeItemId& sourceItem, const wxTre
     }
 
     // Paste it as a child of the target item
-    if(target) {
+    if (target) {
         // the only case where "target" is NULL is when a top level item is being appended
         // in this case it has no one to be added to as a child
         target->AddChild(source);
@@ -2221,7 +2221,7 @@ void GUICraftMainPanel::DoAppendItem(const wxTreeItemId& sourceItem, const wxTre
 
     wxTreeItemId selection;
     DoBuildTree(selection, source, targetItem);
-    if(selection.IsOk()) {
+    if (selection.IsOk()) {
         m_treeControls->SelectItem(selection);
         m_treeControls->EnsureVisible(selection);
     }
@@ -2238,14 +2238,14 @@ void GUICraftMainPanel::DoInsertBefore(const wxTreeItemId& sourceItem, const wxT
 
     CHECK_POINTER(target->GetParent());
 
-    if(sourceItem.IsOk()) {
+    if (sourceItem.IsOk()) {
         GUICraftItemData* guiSourceItem = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(sourceItem));
         CHECK_POINTER(guiSourceItem);
         CHECK_POINTER(guiSourceItem->m_wxcWidget);
         source = guiSourceItem->m_wxcWidget;
 
         // Check if we can perform the insert action
-        if(!DoCheckInsert(source, target)) {
+        if (!DoCheckInsert(source, target)) {
             return;
         }
 
@@ -2254,7 +2254,7 @@ void GUICraftMainPanel::DoInsertBefore(const wxTreeItemId& sourceItem, const wxT
         DoUnsetItemData(sourceItem);
 
         // Delete the UI of the dragged item
-        if(m_treeControls->ItemHasChildren(sourceItem)) {
+        if (m_treeControls->ItemHasChildren(sourceItem)) {
             m_treeControls->DeleteChildren(sourceItem);
         }
         m_treeControls->Delete(sourceItem);
@@ -2264,13 +2264,13 @@ void GUICraftMainPanel::DoInsertBefore(const wxTreeItemId& sourceItem, const wxT
         CHECK_POINTER(source);
 
         // Check if we can perform the insert action
-        if(!DoCheckInsert(source, target)) {
+        if (!DoCheckInsert(source, target)) {
             return;
         }
     }
 
     // Paste it as a child of the target item
-    if(insertBefore) {
+    if (insertBefore) {
         target->GetParent()->InsertBefore(source, target);
 
     } else {
@@ -2280,7 +2280,7 @@ void GUICraftMainPanel::DoInsertBefore(const wxTreeItemId& sourceItem, const wxT
     wxTreeItemId selection;
     DoBuildTree(selection, source, m_treeControls->GetItemParent(targetItem), targetItem, insertBefore);
 
-    if(selection.IsOk()) {
+    if (selection.IsOk()) {
         m_treeControls->SelectItem(selection);
         m_treeControls->EnsureVisible(selection);
     }
@@ -2312,12 +2312,12 @@ void GUICraftMainPanel::OnShowPreviewUI(wxUpdateUIEvent& e)
 wxcWidget* GUICraftMainPanel::GetActiveWizardPage() const
 {
     wxTreeItemId topLevel = DoGetTopLevelTreeItem();
-    if(topLevel.IsOk() == false) {
+    if (topLevel.IsOk() == false) {
         return NULL;
     }
 
     wxTreeItemId sel = m_treeControls->GetSelection();
-    if(sel.IsOk() == false) {
+    if (sel.IsOk() == false) {
         return NULL;
     }
 
@@ -2325,7 +2325,7 @@ wxcWidget* GUICraftMainPanel::GetActiveWizardPage() const
     GUICraftItemData* topLevelItemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(topLevel));
     CHECK_POINTER_RET_NULL(topLevelItemData);
     CHECK_POINTER_RET_NULL(topLevelItemData->m_wxcWidget);
-    if(topLevelItemData->m_wxcWidget->GetType() != ID_WXWIZARD) {
+    if (topLevelItemData->m_wxcWidget->GetType() != ID_WXWIZARD) {
         return NULL;
     }
 
@@ -2334,14 +2334,14 @@ wxcWidget* GUICraftMainPanel::GetActiveWizardPage() const
     CHECK_POINTER_RET_NULL(itemData->m_wxcWidget);
 
     wxcWidget* p = itemData->m_wxcWidget;
-    while(p && p->GetType() != ID_WXWIZARDPAGE) {
+    while (p && p->GetType() != ID_WXWIZARDPAGE) {
         p = p->GetParent();
     }
 
-    if(p && p->GetType() == ID_WXWIZARDPAGE) {
+    if (p && p->GetType() == ID_WXWIZARDPAGE) {
         return p;
 
-    } else if(!p && m_treeControls->ItemHasChildren(topLevel)) {
+    } else if (!p && m_treeControls->ItemHasChildren(topLevel)) {
         wxTreeItemIdValue cookie;
         GUICraftItemData* itemData = dynamic_cast<GUICraftItemData*>(
             m_treeControls->GetItemData(m_treeControls->GetFirstChild(topLevel, cookie)));
@@ -2360,9 +2360,9 @@ void GUICraftMainPanel::OnRefreshView(wxCommandEvent& e)
 void GUICraftMainPanel::OnCloseProject(wxCommandEvent& e)
 {
     e.Skip();
-    if(wxcEditManager::Get().IsDirty()) {
-        if(::wxMessageBox(_("Current file has been modified\nClose anyway?"), "wxCrafter",
-                          wxYES_NO | wxCANCEL | wxCENTER, wxCrafter::TopFrame()) != wxYES) {
+    if (wxcEditManager::Get().IsDirty()) {
+        if (::wxMessageBox(_("Current file has been modified\nClose anyway?"), "wxCrafter",
+                           wxYES_NO | wxCANCEL | wxCENTER, wxCrafter::TopFrame()) != wxYES) {
             return;
         }
     }
@@ -2389,11 +2389,11 @@ void GUICraftMainPanel::OnBarItemSelected(wxCommandEvent& e)
     wxString parentname = e.GetString().BeforeFirst(wxT(':'));
 
     const wxcWidget* parnt = NULL;
-    if(parentname == "TOOL_BAR_ID") {
+    if (parentname == "TOOL_BAR_ID") {
         // direct toolbar child of the main frame
         parnt = tlid->FindFirstDirectChildOfType(ID_WXTOOLBAR);
 
-    } else if(parentname == "MENU_BAR_ID") {
+    } else if (parentname == "MENU_BAR_ID") {
         // direct toolbar child of the main frame
         parnt = tlid->FindFirstDirectChildOfType(ID_WXMENUBAR);
 
@@ -2405,8 +2405,8 @@ void GUICraftMainPanel::OnBarItemSelected(wxCommandEvent& e)
     wxString toolname = e.GetString().AfterFirst(wxT(':'));
     const wxcWidget::List_t& tools = parnt->GetChildren();
     wxcWidget::List_t::const_iterator menuIter = tools.begin();
-    for(; menuIter != tools.end(); ++menuIter) {
-        if((*menuIter)->PropertyString(PROP_LABEL) == toolname) {
+    for (; menuIter != tools.end(); ++menuIter) {
+        if ((*menuIter)->PropertyString(PROP_LABEL) == toolname) {
 
             // Select this item
             wxCommandEvent evt(wxEVT_PREVIEW_CTRL_SELECTED);
@@ -2420,7 +2420,7 @@ void GUICraftMainPanel::OnBarItemSelected(wxCommandEvent& e)
 
 wxcWidget* GUICraftMainPanel::DoGetItemData(const wxTreeItemId& item) const
 {
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return NULL;
     }
 
@@ -2435,20 +2435,20 @@ wxcWidget* GUICraftMainPanel::DoGetItemData(const wxTreeItemId& item) const
 
 void GUICraftMainPanel::OnRedo(wxCommandEvent& e)
 {
-    if(!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
         e.Skip();
         return; // Otherwise, in non-tabbed mode, there'll be contamination between us and clMainFrame
     }
 
-    if(IsPropertyGridPropertySelected()) {
+    if (IsPropertyGridPropertySelected()) {
         e.Skip();
         return; // Otherwise Ctrl-Y in the EventsTableListView may do unwanted things to the tree
     }
 
-    if(wxcEditManager::Get().CanRedo()) {
+    if (wxcEditManager::Get().CanRedo()) {
 
         State::Ptr_t state = wxcEditManager::Get().Redo();
-        if(state) {
+        if (state) {
             LoadProject(wxFileName(), state->project_json, true);
             DoSelectItemByName(state->selection, state->parentTLW);
         }
@@ -2462,20 +2462,20 @@ void GUICraftMainPanel::OnRedoUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::
 
 void GUICraftMainPanel::OnUndo(wxCommandEvent& e)
 {
-    if(!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
         e.Skip();
         return; // Otherwise, in non-tabbed mode, there'll be contamination between us and clMainFrame
     }
 
-    if(IsPropertyGridPropertySelected()) {
+    if (IsPropertyGridPropertySelected()) {
         e.Skip();
         return; // Otherwise Ctrl-Z in the EventsTableListView may do unwanted things to the tree
     }
 
-    if(wxcEditManager::Get().CanUndo()) {
+    if (wxcEditManager::Get().CanUndo()) {
 
         State::Ptr_t state = wxcEditManager::Get().Undo();
-        if(state) {
+        if (state) {
             LoadProject(wxFileName(), state->project_json, true);
             DoSelectItemByName(state->selection, state->parentTLW);
         }
@@ -2489,7 +2489,7 @@ void GUICraftMainPanel::OnUndoUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::
 
 void GUICraftMainPanel::OnLabelCurrentState(wxCommandEvent& event)
 {
-    if(!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
         event.Skip();
         return; // Otherwise, in non-tabbed mode, there'll be contamination between us and clMainFrame
     }
@@ -2503,7 +2503,7 @@ void GUICraftMainPanel::OnLabelCurrentState(wxCommandEvent& event)
 
 void GUICraftMainPanel::OnEditMenuOpened(wxMenuEvent& event)
 {
-    if(m_plugin->IsTabMode() && !m_plugin->IsMainViewActive()) {
+    if (m_plugin->IsTabMode() && !m_plugin->IsMainViewActive()) {
         event.Skip(); // This event is nothing to do with us
         return;
     }
@@ -2514,7 +2514,7 @@ void GUICraftMainPanel::OnLoadCurrentState(
     wxCommandEvent& WXUNUSED(event)) // Called after a multiple unredo has changed the GetCurrentState() value
 {
     State::Ptr_t state = wxcEditManager::Get().GetCurrentState();
-    if(!state) {
+    if (!state) {
         return;
     }
     LoadProject(wxFileName(), state->project_json, true);
@@ -2526,7 +2526,7 @@ State::Ptr_t GUICraftMainPanel::CurrentState()
     JSONRoot root(cJSON_Object);
 
     // If we dont have bitmap function assigned to this project, create new one
-    if(wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
+    if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
         wxcProjectMetadata::Get().GenerateBitmapFunctionName();
     }
 
@@ -2542,10 +2542,10 @@ State::Ptr_t GUICraftMainPanel::CurrentState()
     state->project_json = root.toElement().format();
 
     wxTreeItemId item = m_treeControls->GetSelection();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         state->selection = m_treeControls->GetItemText(item);
         GUICraftItemData* control = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
-        if(control && control->m_wxcWidget) {
+        if (control && control->m_wxcWidget) {
             state->parentTLW = control->m_wxcWidget->GetTopLevel()->GetName();
         }
     }
@@ -2554,22 +2554,22 @@ State::Ptr_t GUICraftMainPanel::CurrentState()
 
 void GUICraftMainPanel::DoSelectItemByName(const wxString& name, const wxString& parentTLW)
 {
-    if(name.IsEmpty()) {
+    if (name.IsEmpty()) {
         return;
     }
 
     wxTreeItemId startpoint = m_treeControls->GetRootItem();
-    if(!parentTLW.IsEmpty()) {
+    if (!parentTLW.IsEmpty()) {
         wxTreeItemId sp;
         DoFindName(startpoint, parentTLW, sp);
-        if(sp.IsOk()) {
+        if (sp.IsOk()) {
             startpoint = sp;
         }
     }
 
     wxTreeItemId where;
     DoFindName(startpoint, name, where);
-    if(where.IsOk()) {
+    if (where.IsOk()) {
         m_treeControls->SelectItem(where);
         m_treeControls->EnsureVisible(where);
 
@@ -2586,7 +2586,7 @@ bool GUICraftMainPanel::IsPropertyGridPropertySelected() const
     // This function tests if the parent of an item is a propertygrid. The idea is to avoid
     // e.g. Ctrl-Z affecting the tree when the user was actually trying to edit a property
     wxWindow* win = wxWindow::FindFocus();
-    if(!win) {
+    if (!win) {
         return false;
     }
 
@@ -2596,7 +2596,7 @@ bool GUICraftMainPanel::IsPropertyGridPropertySelected() const
 wxcWidget* GUICraftMainPanel::GetActiveTopLevelWin() const
 {
     wxTreeItemId topLevel = DoGetTopLevelTreeItem();
-    if(topLevel.IsOk() == false) {
+    if (topLevel.IsOk() == false) {
         return NULL;
     }
 
@@ -2607,7 +2607,7 @@ wxcWidget* GUICraftMainPanel::GetActiveTopLevelWin() const
 
 void GUICraftMainPanel::OnGenerateCodeMenu(wxAuiToolBarEvent& e)
 {
-    if(e.IsDropDownClicked()) {
+    if (e.IsDropDownClicked()) {
         wxMenu menu(_("Code Generation"));
         wxMenuItem* item = menu.AppendCheckItem(XRCID("GenerateCPP"), _("Generate C++ code"));
         item->Check(wxcProjectMetadata::Get().GetGenerateCPPCode());
@@ -2626,10 +2626,10 @@ void GUICraftMainPanel::OnGenerateCodeMenu(wxAuiToolBarEvent& e)
 
 void GUICraftMainPanel::OnCodeGenerationTypeChanged(wxCommandEvent& event)
 {
-    if(event.GetId() == XRCID("GenerateCPP")) {
+    if (event.GetId() == XRCID("GenerateCPP")) {
         wxcProjectMetadata::Get().SetGenerateCPPCode(event.IsChecked());
     }
-    if(event.GetId() == XRCID("GenerateXRC")) {
+    if (event.GetId() == XRCID("GenerateXRC")) {
         wxcProjectMetadata::Get().SetGenerateXRC(event.IsChecked());
     }
 }
@@ -2640,8 +2640,8 @@ void GUICraftMainPanel::OnNewCustomControlMenu(wxCommandEvent& e)
     const CustomControlTemplateMap_t& controls = wxcSettings::Get().GetTemplateClasses();
     CustomControlTemplateMap_t::const_iterator iter = controls.begin();
 
-    if(controls.empty() == false) {
-        for(; iter != controls.end(); ++iter) {
+    if (controls.empty() == false) {
+        for (; iter != controls.end(); ++iter) {
             menu.Append(iter->second.GetControlId(), iter->first);
             menu.Connect(iter->second.GetControlId(), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(GUICraftMainPanel::OnNewCustomControl), NULL, this);
@@ -2651,7 +2651,7 @@ void GUICraftMainPanel::OnNewCustomControlMenu(wxCommandEvent& e)
     menu.Append(XRCID("define_custom_controls"), _("Define custom control..."));
 
     wxButton* button = dynamic_cast<wxButton*>(e.GetEventObject());
-    if(button) {
+    if (button) {
         wxPoint pt = button->GetScreenPosition();
         pt.y += button->GetSize().GetHeight();
         pt = ScreenToClient(pt);
@@ -2667,38 +2667,38 @@ void GUICraftMainPanel::OnNewCustomControl(wxCommandEvent& e)
 
 void GUICraftMainPanel::DoInsertControl(wxcWidget* control, wxcWidget* parent, int insertType, int imgId)
 {
-    if(control->GetType() == ID_WXAUIMANAGER && parent->IsAuiManaged()) {
+    if (control->GetType() == ID_WXAUIMANAGER && parent->IsAuiManaged()) {
         wxDELETE(control);
         wxMessageBox(_("Only one wxAui Manager is allowed"), "wxCrafter", wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
 
-    if(control->GetType() == ID_WXAUIMANAGER && parent->HasMainSizer()) {
+    if (control->GetType() == ID_WXAUIMANAGER && parent->HasMainSizer()) {
         wxDELETE(control);
         wxMessageBox(_("wxAui Manager can not be placed onto a control with a main sizer"), "wxCrafter",
                      wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
 
-    if(parent->GetType() == ID_WXRIBBONPANEL && !parent->GetChildren().empty() &&
-       insertType == Allocator::INSERT_CHILD) {
+    if (parent->GetType() == ID_WXRIBBONPANEL && !parent->GetChildren().empty() &&
+        insertType == Allocator::INSERT_CHILD) {
         wxDELETE(control);
         wxMessageBox(_("wxRibbonPanel can only have one direct child"), "wxCrafter", wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
 
-    if(insertType == Allocator::INSERT_SIBLING) {
+    if (insertType == Allocator::INSERT_SIBLING) {
         DoInsertBefore(wxTreeItemId(), m_treeControls->GetSelection(), control, false);
 
-    } else if(insertType == Allocator::INSERT_CHILD || insertType == Allocator::INSERT_MAIN_SIZER) {
+    } else if (insertType == Allocator::INSERT_CHILD || insertType == Allocator::INSERT_MAIN_SIZER) {
 
         // We need to place a main sizer, check that we dont have one already...
-        if(parent->HasMainSizer() && insertType == Allocator::INSERT_MAIN_SIZER) {
+        if (parent->HasMainSizer() && insertType == Allocator::INSERT_MAIN_SIZER) {
             wxDELETE(control);
             wxMessageBox(_("Can't insert this item here\nThere is already a main sizer"));
             return;
 
-        } else if(parent->IsAuiManaged() && insertType == Allocator::INSERT_MAIN_SIZER) {
+        } else if (parent->IsAuiManaged() && insertType == Allocator::INSERT_MAIN_SIZER) {
             wxDELETE(control);
             wxMessageBox(_("A Main Sizer can not be placed into a wxAui managed window"), "wxCrafter",
                          wxOK | wxICON_WARNING | wxCENTER);
@@ -2723,8 +2723,8 @@ size_t GUICraftMainPanel::DoFindPropertiesPage(wxWindow* win)
 {
     // locate the page index
     size_t pageIdx = wxString::npos;
-    for(size_t i = 0; i < m_notebook2->GetPageCount(); ++i) {
-        if(win == m_notebook2->GetPage(i)) {
+    for (size_t i = 0; i < m_notebook2->GetPageCount(); ++i) {
+        if (win == m_notebook2->GetPage(i)) {
             pageIdx = i;
             break;
         }
@@ -2735,10 +2735,10 @@ size_t GUICraftMainPanel::DoFindPropertiesPage(wxWindow* win)
 void GUICraftMainPanel::DoShowPropertiesPage(wxWindow* win, const wxString& text, bool show)
 {
     size_t where = DoFindPropertiesPage(win);
-    if(show && where == wxString::npos) {
+    if (show && where == wxString::npos) {
         m_notebook2->AddPage(win, text);
 
-    } else if(!show && where != wxString::npos) {
+    } else if (!show && where != wxString::npos) {
         m_notebook2->RemovePage(where);
     }
 }
@@ -2754,10 +2754,10 @@ wxArrayString GUICraftMainPanel::GetCustomControlsUsed() const
     wxTreeItemIdValue cookie;
     wxTreeItemId rootItem = m_treeControls->GetRootItem();
     wxTreeItemId child = m_treeControls->GetFirstChild(rootItem, cookie);
-    while(child.IsOk()) {
+    while (child.IsOk()) {
 
         GUICraftItemData* itemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(child));
-        if(itemData && itemData->m_wxcWidget) {
+        if (itemData && itemData->m_wxcWidget) {
             itemData->m_wxcWidget->GetCustomControlsName(customControls);
         }
         child = m_treeControls->GetNextChild(rootItem, cookie);
@@ -2783,11 +2783,11 @@ void GUICraftMainPanel::DoUpdateCppPreview()
     // Notify about code editor {de}selected
     wxCommandEvent event(wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED);
     int sel = m_mainBook->GetSelection();
-    if(sel == 1) { // C++
+    if (sel == 1) { // C++
         event.SetClientData(m_notebookCpp->GetSelection() == 0 ? m_textCtrlCppSource : m_textCtrlHeaderSource);
         m_mainBook->CppPageSelected(m_textCtrlCppSource, m_textCtrlHeaderSource);
 
-    } else if(sel == 2) { // XRC
+    } else if (sel == 2) { // XRC
         m_mainBook->XrcPageSelected(m_textCtrlXrc);
         event.SetClientData(m_textCtrlXrc);
 
@@ -2800,14 +2800,14 @@ void GUICraftMainPanel::DoUpdateCppPreview()
 void GUICraftMainPanel::OnFindBar(clFindEvent& e)
 {
     e.Skip();
-    if(IsShown()) {
+    if (IsShown()) {
         int sel = m_mainBook->GetSelection();
-        if(sel == 1) { // C++
+        if (sel == 1) { // C++
             e.Skip(false);
             sel = m_notebookCpp->GetSelection();
             e.SetCtrl(sel == 0 ? m_textCtrlCppSource : m_textCtrlHeaderSource);
 
-        } else if(sel == 2) { // XRC
+        } else if (sel == 2) { // XRC
             e.Skip(false);
             e.SetCtrl(m_textCtrlXrc);
         }
@@ -2838,7 +2838,7 @@ void GUICraftMainPanel::DoDismissFindBar()
 
 void GUICraftMainPanel::OnRename(wxCommandEvent& event)
 {
-    if(m_treeControls->GetSelection().IsOk()) {
+    if (m_treeControls->GetSelection().IsOk()) {
         GUICraftItemData* itemData =
             dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(m_treeControls->GetSelection()));
         CHECK_POINTER(itemData);
@@ -2847,7 +2847,7 @@ void GUICraftMainPanel::OnRename(wxCommandEvent& event)
         wxString msg;
         msg << _("Rename '") << itemData->m_wxcWidget->GetName() << _("'");
         wxString new_name = ::wxGetTextFromUser(_("Enter the new name:"), msg, itemData->m_wxcWidget->GetName(), this);
-        if(new_name.empty()) {
+        if (new_name.empty()) {
             return;
         }
 
@@ -2867,22 +2867,22 @@ void GUICraftMainPanel::OnRefreshPropertiesView(wxCommandEvent& e)
 wxTreeItemId GUICraftMainPanel::DoFindItemByWxcWidget(wxcWidget* widget, const wxTreeItemId& item) const
 {
     GUICraftItemData* itemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
-    if(itemData && itemData->m_wxcWidget == widget) {
+    if (itemData && itemData->m_wxcWidget == widget) {
         return item;
     }
 
-    if(!m_treeControls->HasChildren(item)) {
+    if (!m_treeControls->HasChildren(item)) {
         return wxTreeItemId();
     }
 
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_treeControls->GetFirstChild(item, cookie);
-    while(child.IsOk()) {
+    while (child.IsOk()) {
 
         GUICraftItemData* itemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(child));
-        if(itemData && itemData->m_wxcWidget) {
+        if (itemData && itemData->m_wxcWidget) {
             wxTreeItemId matchedItem = DoFindItemByWxcWidget(widget, child);
-            if(matchedItem.IsOk()) {
+            if (matchedItem.IsOk()) {
                 return matchedItem;
             }
         }
@@ -2894,7 +2894,7 @@ wxTreeItemId GUICraftMainPanel::DoFindItemByWxcWidget(wxcWidget* widget, const w
 void GUICraftMainPanel::AddCustomControl(int controlId)
 {
     CustomControlTemplate templateInfo = wxcSettings::Get().FindByControlId(controlId);
-    if(templateInfo.IsValid() == false) {
+    if (templateInfo.IsValid() == false) {
         return;
     }
 
@@ -2916,9 +2916,9 @@ void GUICraftMainPanel::AddCustomControl(int controlId)
 wxWindow* GUICraftMainPanel::GetTopFrame() const
 {
     wxWindow* top = wxCrafter::TopFrame();
-    if(!m_plugin->IsTabMode() && m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown()) {
+    if (!m_plugin->IsTabMode() && m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown()) {
         top = m_plugin->GetMainFrame();
-    } else if(m_plugin->IsTabMode()) {
+    } else if (m_plugin->IsTabMode()) {
         top = wxDynamicCast(top, wxFrame);
     }
 
@@ -2938,7 +2938,7 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
     CHECK_TREEITEM(itemId);
 
     int widgetType = wxNOT_FOUND;
-    switch(id) {
+    switch (id) {
     case ID_CHANGE_SIZER_BOXSIZER:
     case ID_INSERT_INTO_SIZER_BOXSIZER:
         widgetType = ID_WXBOXSIZER;
@@ -2961,14 +2961,14 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
         break;
     }
 
-    if(widgetType == wxNOT_FOUND) {
+    if (widgetType == wxNOT_FOUND) {
         return;
     }
 
     wxString label;
     wxcWidget* newWidget = Allocator::Instance()->Create(widgetType);
 
-    if(id < ID_CHANGE_SIZER_LAST) { // Changing the sizer type
+    if (id < ID_CHANGE_SIZER_LAST) { // Changing the sizer type
         wxcWidget::ReplaceWidget(data->m_wxcWidget, newWidget);
         // delete the old widget
         wxDELETE(data->m_wxcWidget);
@@ -2987,7 +2987,7 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
 
         label = "sizer type change";
 
-    } else if(id < ID_INSERT_INTO_SIZER_LAST) { // Inserting into a new sizer
+    } else if (id < ID_INSERT_INTO_SIZER_LAST) { // Inserting into a new sizer
         wxString widgetName = m_treeControls->GetItemText(itemId);
         wxcWidget* parentWidget = data->m_wxcWidget->GetParent();
         CHECK_POINTER(parentWidget);
@@ -3006,7 +3006,7 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
         m_treeControls->SetItemData(treeItemParent, new GUICraftItemData(parentWidget));
         const wxcWidget::List_t& list = parentWidget->GetChildren();
         wxcWidget::List_t::const_iterator iter = list.begin();
-        for(; iter != list.end(); ++iter) {
+        for (; iter != list.end(); ++iter) {
             DoBuildTree(dummy, *iter, treeItemParent);
         }
 
@@ -3023,7 +3023,7 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
 
 wxStyledTextCtrl* GUICraftMainPanel::GetPreviewEditor() const
 {
-    if(m_mainBook->GetSelection() == 1) {
+    if (m_mainBook->GetSelection() == 1) {
         // C++ tab is selected
         wxStyledTextCtrl* stc = m_notebookCpp->GetSelection() == 0 ? m_textCtrlCppSource : m_textCtrlHeaderSource;
         return stc;
@@ -3053,8 +3053,8 @@ void GUICraftMainPanel::OnAuiPaneInfoChanged(wxPropertyGridEvent& event)
 
 void GUICraftMainPanel::DoGenerateCode(bool silent)
 {
-    if(!wxcProjectMetadata::Get().GetGenerateCPPCode() && !wxcProjectMetadata::Get().GetGenerateXRC()) {
-        if(silent) {
+    if (!wxcProjectMetadata::Get().GetGenerateCPPCode() && !wxcProjectMetadata::Get().GetGenerateXRC()) {
+        if (silent) {
             return;
         }
         wxString msg;
@@ -3065,8 +3065,8 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
 
     wxFileName outputDir(wxcProjectMetadata::Get().GetGeneratedFilesDir(), "");
     wxCrafter::MakeAbsToProject(outputDir);
-    if(!outputDir.DirExists()) {
-        if(silent) {
+    if (!outputDir.DirExists()) {
+        if (silent) {
             return;
         }
         wxString msg;
@@ -3076,8 +3076,8 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         return;
     }
 
-    if(wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
-        if(silent) {
+    if (wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
+        if (silent) {
             return;
         }
         wxString msg;
@@ -3118,8 +3118,8 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
 
     blockGuard = "_"; // Ensure that the blockguard does not start with a number
     wxArrayString dirs = projectFile.GetDirs();
-    if(!dirs.IsEmpty()) {
-        if(dirs.size() > 2) {
+    if (!dirs.IsEmpty()) {
+        if (dirs.size() > 2) {
             blockGuard << dirs.Item(dirs.size() - 2) << "_";
         }
         blockGuard << dirs.Last() << "_";
@@ -3141,7 +3141,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
     GenerateCppOutput(baseCpp, baseHeader, headers, additionalFiles);
 
     wxcProjectMetadata::Get().SetAdditionalFiles(additionalFiles);
-    if(wxcProjectMetadata::Get().GetGenerateCPPCode() && (baseCpp.IsEmpty() == false)) {
+    if (wxcProjectMetadata::Get().GetGenerateCPPCode() && (baseCpp.IsEmpty() == false)) {
 
         // Write the base cpp/header
         headers = wxCrafter::MakeUnique(headers);
@@ -3174,7 +3174,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         // Prepare the project additional include files
         wxString projectIncludes;
         const wxArrayString& includes = wxcProjectMetadata::Get().GetIncludeFiles();
-        for(size_t i = 0; i < includes.GetCount(); i++) {
+        for (size_t i = 0; i < includes.GetCount(); i++) {
             projectIncludes << "#include " << wxCrafter::AddQuotes(includes.Item(i)) << "\n";
         }
         prefix << projectIncludes;
@@ -3183,7 +3183,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         baseHeader.Prepend(prefix);
         baseHeader.Append("#endif\n");
 
-        if(wxCrafter::IsTheSame(baseHeader, headerFile) == false) {
+        if (wxCrafter::IsTheSame(baseHeader, headerFile) == false) {
             wxCrafter::WriteFile(headerFile, baseHeader, true);
             wxCrafter::FormatFile(headerFile);
             wxCrafter::NotifyFileSaved(headerFile);
@@ -3199,21 +3199,21 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         cppPrefix << SIMPLE_BORDER_CODE;
 
         baseCpp.Prepend(cppPrefix);
-        if(wxCrafter::IsTheSame(baseCpp, sourceFile) == false) {
+        if (wxCrafter::IsTheSame(baseCpp, sourceFile) == false) {
             wxCrafter::WriteFile(sourceFile, baseCpp, true);
             wxCrafter::FormatFile(sourceFile);
             wxCrafter::NotifyFileSaved(sourceFile);
         }
     }
 
-    if(wxcProjectMetadata::Get().GetGenerateCPPCode() && !additionalFiles.empty()) {
+    if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !additionalFiles.empty()) {
         wxStringMap_t::const_iterator itr = additionalFiles.begin();
-        for(; itr != additionalFiles.end(); ++itr) {
+        for (; itr != additionalFiles.end(); ++itr) {
             wxFileName additionalFile = wxcProjectMetadata::Get().BaseHeaderFile();
             additionalFile.SetFullName(itr->first);
             wxCrafter::MakeAbsToProject(additionalFile);
 
-            if(wxCrafter::IsTheSame(itr->second, additionalFile) == false) {
+            if (wxCrafter::IsTheSame(itr->second, additionalFile) == false) {
                 wxCrafter::WriteFile(additionalFile, itr->second, true);
                 wxCrafter::FormatFile(additionalFile);
                 wxCrafter::NotifyFileSaved(additionalFile);
@@ -3222,18 +3222,18 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
     }
 
     // Export the XRC output if required
-    if(wxcProjectMetadata::Get().GetGenerateXRC()) {
+    if (wxcProjectMetadata::Get().GetGenerateXRC()) {
         wxString xrcFilePath = wxcProjectMetadata::Get().GetXrcFileName();
-        if(!xrcFilePath.empty()) {
+        if (!xrcFilePath.empty()) {
             wxString XrcOutput;
             GenerateXrcOutput(XrcOutput);
-            if(!XrcOutput.empty()) {
+            if (!XrcOutput.empty()) {
                 TopLevelWinWrapper::WrapXRC(XrcOutput);
                 // Format the output and make it human readable
                 wxStringInputStream str(XrcOutput);
                 wxStringOutputStream out;
                 wxXmlDocument doc(str);
-                if(!doc.Save(out)) {
+                if (!doc.Save(out)) {
                     wxMessageBox(XrcOutput);
                 }
 
@@ -3258,7 +3258,7 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
     wxUnusedVar(files);
     wxFileDialog openFileDialog(this, _("Select wxCrafter files:"), "", "", "wxCrafter Project Files (*.wxcp)|*.wxcp",
                                 wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
-    if(openFileDialog.ShowModal() != wxID_OK) {
+    if (openFileDialog.ShowModal() != wxID_OK) {
         return;
     }
     openFileDialog.GetPaths(wxcpFiles);
@@ -3266,10 +3266,10 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
     wxcpFiles = files;
 #endif
 
-    if(wxcpFiles.IsEmpty()) {
+    if (wxcpFiles.IsEmpty()) {
         return;
     }
-    if(wxcProjectMetadata::Get().IsLoaded()) {
+    if (wxcProjectMetadata::Get().IsLoaded()) {
         ::wxMessageBox(_("Please close the current wxCrafter project before batch generating code"), "wxCrafter",
                        wxOK | wxCENTER | wxICON_ERROR);
         return;
@@ -3282,9 +3282,9 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
         // Lock the UI
         wxWindowUpdateLocker locker(EventNotifier::Get()->TopFrame());
 
-        for(size_t i = 0; i < wxcpFiles.size(); ++i) {
+        for (size_t i = 0; i < wxcpFiles.size(); ++i) {
             wxString fileContent;
-            if(FileUtils::ReadFileContent(wxcpFiles.Item(i), fileContent)) {
+            if (FileUtils::ReadFileContent(wxcpFiles.Item(i), fileContent)) {
                 LoadProject(wxcpFiles.Item(i), fileContent);
                 DoGenerateCode(true);
                 projectsGenerated.Add(wxcpFiles.Item(i));
@@ -3292,12 +3292,12 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
         }
 
         // Close any project
-        if(wxcProjectMetadata::Get().IsLoaded()) {
+        if (wxcProjectMetadata::Get().IsLoaded()) {
             wxCommandEvent e;
             OnCloseProject(e);
         }
     }
-    if(!projectsGenerated.IsEmpty()) {
+    if (!projectsGenerated.IsEmpty()) {
         wxString message;
         message << _("Generated Code For the following projects:\n") << wxImplode(projectsGenerated, "\n");
         ::wxMessageBox(message, "wxCrafter");

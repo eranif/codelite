@@ -151,8 +151,13 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnRestoreDefaults, this, XRCID("revert_changes"));
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnImportEclipseTheme, this, XRCID("import_eclipse_theme"));
 
+#if wxCHECK_VERSION(3, 3, 0)
     int appearance = clConfig::Get().Read("CodeLiteAppearance", CodeLiteAppearance::SYSTEM_DEFAULT);
     m_choiceAppearance->SetSelection(appearance);
+#else
+    m_choiceAppearance->SetSelection((int)CodeLiteAppearance::SYSTEM_DEFAULT);
+    m_choiceAppearance->Disable();
+#endif
 
     // Use a default big size for this dialog
     ::clSetDialogBestSizeAndPosition(this);

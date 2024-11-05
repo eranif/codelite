@@ -1637,10 +1637,7 @@ bool clMainFrame::StartSetupWizard(bool firstTime)
             options->SetIndentUsesTabs(data.useTabs);
             options->SetShowWhitspaces(data.whitespaceVisibility);
             EditorConfigST::Get()->SetOptions(options);
-
-#ifdef __WXMSW__
-            clConfig::Get().Write("CodeLiteAppearance", data.forceDarkAppearance ? 1 : 0);
-#endif
+            clConfig::Get().Write("CodeLiteAppearance", data.forceDarkAppearance ? 1 : 0 /* system */);
 
             // Update the theme
             ColoursAndFontsManager::Get().SetTheme(data.selectedTheme);
@@ -5399,9 +5396,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     m_mainFrameTitleTemplate = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
 }
 
-void clMainFrame::OnDetachEditor(wxCommandEvent& e)
-{ /*GetMainBook()->DetachActiveEditor();*/
-}
+void clMainFrame::OnDetachEditor(wxCommandEvent& e) { wxUnusedVar(e); }
 
 void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != NULL); }
 

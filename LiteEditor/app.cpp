@@ -376,20 +376,22 @@ bool CodeLiteApp::OnInit()
     wxXmlResource::Get()->InitAllHandlers();
 
     ::wxInitAllImageHandlers();
+#if wxCHECK_VERSION(3, 3, 0)
     int appearance = clConfig::Get().Read("CodeLiteAppearance", 0);
     switch (appearance) {
     case 1:
         // force dark
-        SetAppearance(wxApp::Appearance::Dark);
+        SetAppearance(Appearance::Dark);
         break;
     case 2:
-        SetAppearance(wxApp::Appearance::Light);
+        SetAppearance(Appearance::Light);
         break;
     default:
         // use system default
-        SetAppearance(wxApp::Appearance::System);
+        SetAppearance(Appearance::System);
         break;
     }
+#endif
 
 #ifndef CL_DEBUG_BUILD
     // dont show the splash in debug builds

@@ -1400,6 +1400,15 @@ void clTabCtrl::PositionFilelistButton()
     wxDC& cdc = DrawingUtils::GetGCDC(memDC, gcdc);
 
     wxRect button_rect;
+#if !wxUSE_NATIVE_BUTTON
+    wxRect button_rect_base = GetFileListButtonRect(this, m_style, cdc);
+    m_chevronRect = button_rect_base;
+
+    button_rect = button_rect_base;
+    button_rect.Deflate(2);
+    button_rect = button_rect.CenterIn(m_chevronRect);
+#endif
+
     if (m_fileListButton == nullptr) {
 #if wxUSE_NATIVE_BUTTON
         m_fileListButton =
@@ -1410,12 +1419,6 @@ void clTabCtrl::PositionFilelistButton()
         button_rect.Deflate(2);
         button_rect = button_rect.CenterIn(m_chevronRect);
 #else
-        wxRect button_rect_base = GetFileListButtonRect(this, m_style, cdc);
-        m_chevronRect = button_rect_base;
-
-        button_rect = button_rect_base;
-        button_rect.Deflate(2);
-        button_rect = button_rect.CenterIn(m_chevronRect);
         m_fileListButton =
             new clButton(this, wxID_ANY, BUTTON_FILE_LIST_SYMBOL, wxDefaultPosition, button_rect.GetSize());
 #endif

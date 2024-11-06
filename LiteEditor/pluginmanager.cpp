@@ -1215,3 +1215,11 @@ void PluginManager::BookSelectPage(PaneId pane_id, wxWindow* page)
 }
 
 wxPanel* PluginManager::GetMainPanel() { return clMainFrame::Get()->GetMainPanel(); }
+
+IEditor* PluginManager::GetEditorFromWindow(wxWindow* win)
+{
+    clEditor* editor = dynamic_cast<clEditor*>(win);
+    CHECK_COND_RET_NULL(editor);
+
+    return dynamic_cast<IEditor*>(editor);
+}

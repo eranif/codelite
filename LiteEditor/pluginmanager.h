@@ -88,6 +88,7 @@ public:
     //------------------------------------
     void EnableClangCodeCompletion(bool b) override;
     IEditor* GetActiveEditor() override;
+    IEditor* GetEditorFromWindow(wxWindow* win) override;
     bool SelectEditor(IEditor* editor) override;
     clToolBarGeneric* GetToolBar() override;
     wxMenuBar* GetMenuBar() override;

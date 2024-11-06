@@ -38,11 +38,35 @@
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 
-// Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
+namespace
 {
-    return new CodeLiteDiff(manager);
+/// Return the window associated with the event or the active window
+wxWindow* GetWindowFromEvent(wxEvent& event)
+{
+    // Check if the menu contains the window to close, if not close the active tab
+    auto menu = dynamic_cast<wxMenu*>(event.GetEventObject());
+    while (menu && menu->GetParent()) {
+        menu = menu->GetParent();
+    }
+    auto win = clGetManager()->GetMainNotebook()->GetCurrentPage();
+    if (menu && menu->GetClientData()) {
+        win = reinterpret_cast<wxWindow*>(menu->GetClientData());
+    }
+    return win;
 }
+
+/// Return the editor associated with the event or the active editor
+IEditor* GetEditorFromEvent(wxEvent& event)
+{
+    auto win = GetWindowFromEvent(event);
+    CHECK_PTR_RET_NULL(win);
+
+    return clGetManager()->GetEditorFromWindow(win);
+}
+} // namespace
+
+// Define the plugin entry point
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new CodeLiteDiff(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -86,7 +110,7 @@ void CodeLiteDiff::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void CodeLiteDiff::UnPlug()
 {
-    wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
+    wxTheApp->Unbind(wxEVT_MENU, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_TAB_LABEL, &CodeLiteDiff::OnTabContextMenu, this);
     Unbind(wxEVT_MENU, &CodeLiteDiff::OnDiff, this, XRCID("diff_compare_with"));
 }
@@ -101,7 +125,11 @@ void CodeLiteDiff::OnTabContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
     DoClear();
-    IEditor* activeEditor = m_mgr->GetActiveEditor();
+
+    auto activeWin = dynamic_cast<wxWindow*>(event.GetEditor());
+    CHECK_PTR_RET(activeWin);
+
+    auto activeEditor = clGetManager()->GetEditorFromWindow(activeWin);
     CHECK_PTR_RET(activeEditor);
 
     m_leftFile = activeEditor->GetFileName();
@@ -120,25 +148,26 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
 {
     bool tempfile(false);
     NewFileComparison dlg(EventNotifier::Get()->TopFrame(), m_leftFile);
-    if(dlg.ShowModal() == wxID_OK) {
-        if(m_leftFile.GetName().StartsWith(_("Untitled"))) {
+    if (dlg.ShowModal() == wxID_OK) {
+        if (m_leftFile.GetName().StartsWith(_("Untitled"))) {
             tempfile = true;
-            m_leftFile = SaveEditorToTmpfile(m_mgr->GetActiveEditor());
-            if(!m_leftFile.IsOk()) {
+            auto leftEditor = GetEditorFromEvent(event);
+            m_leftFile = SaveEditorToTmpfile(leftEditor);
+            if (!m_leftFile.IsOk()) {
                 clDEBUG() << "CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for m_leftFile" << endl;
                 return;
             }
         }
         wxString secondFile = dlg.GetTextCtrlFileName()->GetValue();
-        if(secondFile.StartsWith(_("Untitled"))) {
+        if (secondFile.StartsWith(_("Untitled"))) {
             tempfile = true;
             IEditor* editor = m_mgr->FindEditor(secondFile);
-            if(!editor) {
+            if (!editor) {
                 clDEBUG() << "CodeLiteDiff::OnDiff: call to FindEditor() failed" << endl;
                 return;
             }
             wxFileName rightFn = SaveEditorToTmpfile(editor);
-            if(!rightFn.IsOk()) {
+            if (!rightFn.IsOk()) {
                 clDEBUG() << "CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile" << endl;
                 return;
             }
@@ -147,11 +176,11 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
 
         // Check that we're not trying to diff an editor against itself
         // If we are and it's been edited, diff against the unaltered version
-        if(m_leftFile.GetFullPath() == secondFile) {
+        if (m_leftFile.GetFullPath() == secondFile) {
             IEditor* editor = m_mgr->FindEditor(secondFile);
-            if(editor && editor->IsEditorModified()) {
+            if (editor && editor->IsEditorModified()) {
                 wxFileName rightFn = SaveEditorToTmpfile(editor);
-                if(!rightFn.IsOk()) {
+                if (!rightFn.IsOk()) {
                     clDEBUG() << "CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile" << endl;
                     return;
                 }
@@ -171,7 +200,7 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
 wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
 {
     wxString content = editor->GetEditorText();
-    if(content.empty()) {
+    if (content.empty()) {
         return wxFileName(); // Nothing to diff
     }
 
@@ -179,13 +208,13 @@ wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
     tpath << wxFileName::GetPathSeparator() << "CLdiff" << wxFileName::GetPathSeparator();
     wxFileName::Mkdir(tpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     wxFileName tmpFile(wxFileName::CreateTempFileName(tpath + editor->GetFileName().GetName()));
-    if(!tmpFile.IsOk()) {
+    if (!tmpFile.IsOk()) {
         return wxFileName();
     }
 
     tmpFile.SetExt(editor->GetFileName().GetExt());
     wxFFile fp(tmpFile.GetFullPath(), "w+b");
-    if(fp.IsOpened()) {
+    if (fp.IsOpened()) {
         fp.Write(content);
         fp.Close();
     } else {
@@ -197,6 +226,6 @@ wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
 
 void CodeLiteDiff::OnNewDiffFolder(wxCommandEvent& e)
 {
-    DiffFoldersFrame *dlg = new DiffFoldersFrame(EventNotifier::Get()->TopFrame());
+    DiffFoldersFrame* dlg = new DiffFoldersFrame(EventNotifier::Get()->TopFrame());
     dlg->Show();
 }

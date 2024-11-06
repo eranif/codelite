@@ -221,6 +221,11 @@ public:
     virtual bool SelectEditor(IEditor* editor) = 0;
 
     /**
+     * @brief Convert `win` into `IEditor`. If the conversion fails, return `nullptr`
+     */
+    virtual IEditor* GetEditorFromWindow(wxWindow* win) = 0;
+
+    /**
      * @brief return the main frame's status bar
      */
     virtual clStatusBar* GetStatusBar() = 0;

@@ -709,6 +709,38 @@ namespace
 /// we use this to detect any theme changes done to the system
 /// the checks are done in the OnAppAcitvated event
 wxColour startupBackgroundColour;
+
+wxWindow* GetWindowFromEvent(MainBook* book, wxEvent& event)
+{
+    // Check if the menu contains the window to close, if not close the active tab
+    auto menu = dynamic_cast<wxMenu*>(event.GetEventObject());
+    while (menu && menu->GetParent()) {
+        menu = menu->GetParent();
+    }
+    auto win = book->GetCurrentPage();
+    if (menu && menu->GetClientData()) {
+        win = reinterpret_cast<wxWindow*>(menu->GetClientData());
+    }
+    return win;
+}
+
+clEditor* GetEditorFromEvent(MainBook* book, wxEvent& event)
+{
+    // Check if the menu contains the window to close, if not close the active tab
+    auto win = GetWindowFromEvent(book, event);
+    return dynamic_cast<clEditor*>(win);
+}
+
+IEditor* GetIEditorFromEvent(MainBook* book, wxEvent& event)
+{
+    // Check if the menu contains the window to close, if not close the active tab
+    auto win = GetWindowFromEvent(book, event);
+    auto cl_editor = dynamic_cast<clEditor*>(win);
+    if (!cl_editor) {
+        return nullptr;
+    }
+    return dynamic_cast<IEditor*>(cl_editor);
+}
 } // namespace
 
 clMainFrame* clMainFrame::m_theFrame = NULL;
@@ -1847,7 +1879,8 @@ void clMainFrame::DispatchUpdateUIEvent(wxUpdateUIEvent& event)
 void clMainFrame::OnFileExistUpdateUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    event.Enable(GetMainBook()->GetActiveEditor() != NULL);
+    auto editor = GetEditorFromEvent(GetMainBook(), event);
+    event.Enable(editor != nullptr);
 }
 
 void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
@@ -1953,8 +1986,7 @@ void clMainFrame::LoadSession(const wxString& sessionName)
 
 void clMainFrame::OnSave(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
-    clEditor* editor = GetMainBook()->GetActiveEditor();
+    clEditor* editor = GetEditorFromEvent(GetMainBook(), event);
     if (editor) {
         editor->SaveFile();
 
@@ -2024,19 +2056,18 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 void clMainFrame::OnFileReload(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        if (editor->GetModify()) {
-            // Ask user if he really wants to lose all changes
-            wxString msg;
-            msg << _("File '") << editor->GetFileName().GetFullName() << _("' is modified\nContinue with reload?");
-            if (::wxMessageBox(msg, _("Reload File"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) !=
-                wxYES) {
-                return;
-            }
+    clEditor* editor = GetEditorFromEvent(GetMainBook(), event);
+    CHECK_PTR_RET(editor);
+
+    if (editor->GetModify()) {
+        // Ask user if he really wants to lose all changes
+        wxString msg;
+        msg << _("File '") << editor->GetFileName().GetFullName() << _("' is modified\nContinue with reload?");
+        if (::wxMessageBox(msg, _("Reload File"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
+            return;
         }
-        editor->ReloadFromDisk(true);
     }
+    editor->ReloadFromDisk(true);
 }
 
 void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
@@ -2179,9 +2210,8 @@ void clMainFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnFileClose(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
-    if (GetMainBook()->GetCurrentPage()) {
-        wxWindow* winToClose = GetMainBook()->GetCurrentPage();
+    auto winToClose = GetWindowFromEvent(GetMainBook(), event);
+    if (winToClose) {
         GetMainBook()->CallAfter(&MainBook::ClosePageVoid, winToClose);
     }
 }
@@ -3726,8 +3756,8 @@ void clMainFrame::OnDebugAttach(wxCommandEvent& event)
 void clMainFrame::OnCloseAllButThis(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    wxWindow* win = GetMainBook()->GetCurrentPage();
-    if (win != NULL) {
+    auto win = GetWindowFromEvent(GetMainBook(), e);
+    if (win != nullptr) {
         GetMainBook()->CallAfter(&MainBook::CloseAllButThisVoid, win);
     }
 }
@@ -3739,7 +3769,8 @@ FileExplorer* clMainFrame::GetFileExplorer() { return GetWorkspacePane()->GetFil
 void clMainFrame::OnFileCloseUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    event.Enable(GetMainBook()->GetCurrentPage() != NULL);
+    auto win = GetWindowFromEvent(GetMainBook(), event);
+    event.Enable(win != NULL);
 }
 
 void clMainFrame::OnConvertEol(wxCommandEvent& e)
@@ -3789,58 +3820,28 @@ void clMainFrame::OnViewDisplayEOL_UI(wxUpdateUIEvent& e)
 
 void clMainFrame::OnCopyFileName(wxCommandEvent& event)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        wxString fileName = editor->GetFileName().GetFullName();
-#if wxUSE_CLIPBOARD
-        if (wxTheClipboard->Open()) {
-            wxTheClipboard->UsePrimarySelection(false);
-            if (!wxTheClipboard->SetData(new wxTextDataObject(fileName))) {
-                // wxPrintf("Failed to insert data %s to clipboard", textToCopy.GetData());
-            }
-            wxTheClipboard->Close();
-        } else {
-            wxPrintf("Failed to open the clipboard");
-        }
-#endif
-    }
+    clEditor* editor = GetEditorFromEvent(GetMainBook(), event);
+    CHECK_PTR_RET(editor);
+
+    wxString fileName = editor->GetFileName().GetFullName();
+    ::CopyToClipboard(fileName);
 }
 
 void clMainFrame::OnCopyFilePath(wxCommandEvent& event)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        wxString fileName = editor->GetFileName().GetFullPath();
-#if wxUSE_CLIPBOARD
-        if (wxTheClipboard->Open()) {
-            wxTheClipboard->UsePrimarySelection(false);
-            if (!wxTheClipboard->SetData(new wxTextDataObject(fileName))) {
-                // wxPrintf("Failed to insert data %s to clipboard", textToCopy.GetData());
-            }
-            wxTheClipboard->Close();
-        } else {
-            wxPrintf("Failed to open the clipboard");
-        }
-#endif
-    }
+    clEditor* editor = GetEditorFromEvent(GetMainBook(), event);
+    CHECK_PTR_RET(editor);
+
+    wxString fileName = editor->GetFileName().GetFullPath();
+    ::CopyToClipboard(fileName);
 }
+
 void clMainFrame::OnCopyFilePathOnly(wxCommandEvent& event)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        wxString fileName = editor->GetFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-#if wxUSE_CLIPBOARD
-        if (wxTheClipboard->Open()) {
-            wxTheClipboard->UsePrimarySelection(false);
-            if (!wxTheClipboard->SetData(new wxTextDataObject(fileName))) {
-                // wxPrintf("Failed to insert data %s to clipboard", textToCopy.GetData());
-            }
-            wxTheClipboard->Close();
-        } else {
-            wxPrintf("Failed to open the clipboard");
-        }
-#endif
-    }
+    clEditor* editor = GetEditorFromEvent(GetMainBook(), event);
+    CHECK_PTR_RET(editor);
+    wxString fileName = editor->GetFileName().GetPath(wxPATH_GET_VOLUME);
+    ::CopyToClipboard(fileName);
 }
 
 void clMainFrame::OnWorkspaceMenuUI(wxUpdateUIEvent& e)
@@ -4269,7 +4270,7 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 {
     // get the file path
     wxString filepath;
-    clEditor* editor = GetMainBook()->GetActiveEditor();
+    clEditor* editor = GetEditorFromEvent(GetMainBook(), e);
     if (editor) {
         filepath = editor->GetFileName().GetPath();
     }
@@ -4277,6 +4278,7 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
     if (filepath.IsEmpty()) {
         return;
     }
+
     DirSaver ds;
     wxSetWorkingDirectory(filepath);
 
@@ -5429,10 +5431,9 @@ void clMainFrame::ShowOrHideCaptions()
 
 void clMainFrame::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        FileUtils::OpenFileExplorerAndSelect(editor->GetFileName());
-    }
+    clEditor* editor = GetEditorFromEvent(GetMainBook(), e);
+    CHECK_PTR_RET(editor);
+    FileUtils::OpenFileExplorerAndSelect(editor->GetFileName());
 }
 
 void clMainFrame::OnSwitchWorkspaceUI(wxUpdateUIEvent& event)
@@ -5480,8 +5481,7 @@ void clMainFrame::OnRunSetupWizard(wxCommandEvent& e)
 
 void clMainFrame::OnCloseTabsToTheRight(wxCommandEvent& e)
 {
-    wxUnusedVar(e);
-    wxWindow* win = GetMainBook()->GetCurrentPage();
+    wxWindow* win = GetWindowFromEvent(GetMainBook(), e);
     if (win) {
         GetMainBook()->CallAfter(&MainBook::CloseTabsToTheRight, win);
     }
@@ -5489,8 +5489,7 @@ void clMainFrame::OnCloseTabsToTheRight(wxCommandEvent& e)
 
 void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e)
 {
-    wxUnusedVar(e);
-    clEditor* editor = GetMainBook()->GetActiveEditor();
+    auto editor = GetEditorFromEvent(GetMainBook(), e);
     CHECK_PTR_RET(editor);
 
     editor->SetReadOnly(e.IsChecked());
@@ -5499,7 +5498,7 @@ void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e)
 
 void clMainFrame::OnMarkEditorReadonlyUI(wxUpdateUIEvent& e)
 {
-    clEditor* editor = GetMainBook()->GetActiveEditor();
+    auto editor = GetEditorFromEvent(GetMainBook(), e);
     CHECK_PTR_RET(editor);
 
     e.Check(!editor->IsEditable());
@@ -5624,7 +5623,7 @@ void clMainFrame::OnToggleReverseDebuggingRecordingUI(wxUpdateUIEvent& e)
 void clMainFrame::OnCopyFilePathRelativeToWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    IEditor* editor = clGetManager()->GetActiveEditor();
+    IEditor* editor = GetIEditorFromEvent(GetMainBook(), event);
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(clWorkspaceManager::Get().IsWorkspaceOpened());
 
@@ -5650,19 +5649,20 @@ void clMainFrame::InitializeLogo()
 void clMainFrame::OnDuplicateTab(wxCommandEvent& event)
 {
     // Create a new empty tab
-    IEditor* currentFile = clGetManager()->GetActiveEditor();
-    if (currentFile) {
-        IEditor* newEditor = clGetManager()->NewEditor();
-        if (newEditor) {
-            newEditor->GetCtrl()->SetText(currentFile->GetCtrl()->GetText());
-            // Open the 'Save As' dialog, with some sensible defaults
-            if (!newEditor->SaveAs(currentFile->GetFileName().GetFullName(), currentFile->GetFileName().GetPath())) {
-                // If the "Save As" failed for any reason, remove the current editor
-                clGetManager()->CloseEditor(newEditor, false);
-                // Set the editor back to the current editor
-                GetMainBook()->GetFindBar()->SetEditor(currentFile->GetCtrl());
-            }
-        }
+    IEditor* currentFile = GetIEditorFromEvent(GetMainBook(), event);
+    CHECK_PTR_RET(currentFile);
+
+    IEditor* newEditor = clGetManager()->NewEditor();
+    CHECK_PTR_RET(newEditor);
+
+    newEditor->GetCtrl()->SetText(currentFile->GetCtrl()->GetText());
+
+    // Open the 'Save As' dialog, with some sensible defaults
+    if (!newEditor->SaveAs(currentFile->GetFileName().GetFullName(), currentFile->GetFileName().GetPath())) {
+        // If the "Save As" failed for any reason, remove the current editor
+        clGetManager()->CloseEditor(newEditor, false);
+        // Set the editor back to the current editor
+        GetMainBook()->GetFindBar()->SetEditor(currentFile->GetCtrl());
     }
 }
 

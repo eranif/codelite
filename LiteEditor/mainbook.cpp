@@ -1173,17 +1173,6 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
                        wxOK | wxCENTER | wxICON_WARNING, this);
         return;
     }
-
-#if 0
-    int lockBmp = m_book->GetBitmaps()->Add("lock");
-    for (size_t i = 0; i < m_book->GetPageCount(); i++) {
-        int orig_bmp = editor->GetEditorBitmap();
-        if (editor == m_book->GetPage(i)) {
-            m_book->SetPageBitmap(i, readOnly ? lockBmp : orig_bmp);
-            break;
-        }
-    }
-#endif
 }
 
 long MainBook::GetBookStyle() { return 0; }
@@ -1525,14 +1514,8 @@ void MainBook::OnTabLabelContextMenu(wxBookCtrlEvent& e)
     wxWindow* book = static_cast<wxWindow*>(e.GetEventObject());
     if (book == m_book) {
         e.Skip(false);
-        if (e.GetSelection() == m_book->GetSelection()) {
-            // The tab requested for context menu is the active one
-            DoShowTabLabelContextMenu();
-        } else {
-            // Make this tab the active one and requeue the context menu event
-            m_book->SetSelection(e.GetSelection());
-            DoShowTabLabelContextMenu();
-        }
+        // trigger the context menu for the tab that it was used on
+        DoShowTabLabelContextMenu(e.GetSelection());
     }
 }
 
@@ -1596,15 +1579,21 @@ clEditor* MainBook::OpenFile(const BrowseRecord& rec)
     return editor;
 }
 
-void MainBook::DoShowTabLabelContextMenu()
+void MainBook::DoShowTabLabelContextMenu(size_t tabIdx)
 {
+    if (tabIdx >= m_book->GetPageCount()) {
+        return;
+    }
+
     wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
 
     // Notify the plugins about the tab label context menu
     clContextMenuEvent event(wxEVT_CONTEXT_MENU_TAB_LABEL);
     event.SetMenu(contextMenu);
+    event.SetEditor(m_book->GetPage(tabIdx));
     EventNotifier::Get()->ProcessEvent(event);
 
+    contextMenu->SetClientData((void*)m_book->GetPage(tabIdx));
     contextMenu = event.GetMenu();
     m_book->PopupMenu(contextMenu);
     wxDELETE(contextMenu);

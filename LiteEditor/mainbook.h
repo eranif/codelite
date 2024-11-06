@@ -66,7 +66,7 @@ private:
 
 private:
     FilesModifiedDlg* GetFilesModifiedDlg();
-    void DoShowTabLabelContextMenu();
+    void DoShowTabLabelContextMenu(size_t tabIdx);
     void CreateGuiControls();
     void ConnectEvents();
     void DoUpdateNotebookTheme();

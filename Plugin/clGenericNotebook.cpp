@@ -1401,7 +1401,7 @@ void clTabCtrl::PositionFilelistButton()
 
     wxRect button_rect;
     if (m_fileListButton == nullptr) {
-#ifdef __WXGTK__
+#if wxUSE_NATIVE_BUTTON
         m_fileListButton =
             new clButton(this, wxID_ANY, BUTTON_FILE_LIST_SYMBOL, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
         wxRect button_rect_base = GetFileListButtonRect(this, m_style, cdc);
@@ -1430,7 +1430,7 @@ void clTabCtrl::PositionFilelistButton()
     colours.SetBgColour(GetBackgroundColour());
     colours.SetBorderColour(GetBackgroundColour());
     m_fileListButton->SetColours(colours);
-#ifdef __WXGTK__
+#if wxUSE_NATIVE_BUTTON
     m_fileListButton->SetSize(wxNOT_FOUND, GetClientRect().GetHeight());
     wxPoint pos{ GetClientRect().GetWidth() - m_fileListButton->GetSize().GetWidth(), 0 };
     m_fileListButton->Move(pos);

@@ -393,10 +393,14 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     options.insert(std::make_pair(firstItem + 4, wxGetTranslation(SEARCH_IN_CURRENT_FILE)));
     options.insert(std::make_pair(firstItem + 5, wxGetTranslation(SEARCH_IN_OPEN_FILES)));
 
+#ifdef __WXGTK__
+    int selection = m_btnAddPath->GetPopupMenuSelectionFromUser(menu);
+#else
     // Menu will be shown in client coordinates
     wxRect size = m_btnAddPath->GetSize();
     wxPoint menuPos(0, size.GetHeight());
     int selection = m_btnAddPath->GetPopupMenuSelectionFromUser(menu, menuPos);
+#endif
 
     if (selection == wxID_NONE)
         return;

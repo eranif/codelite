@@ -745,6 +745,7 @@ void clButtonBase::ShowMenu(wxMenu& menu, wxPoint* point)
     Refresh();
 #endif
 
+#ifndef __WXGTK__
     wxPoint menuPos;
     if (point) {
         menuPos = *point;
@@ -755,6 +756,10 @@ void clButtonBase::ShowMenu(wxMenu& menu, wxPoint* point)
 #endif
     }
     PopupMenu(&menu, menuPos);
+#else
+    PopupMenu(&menu);
+#endif
+
 #if !wxUSE_NATIVE_BUTTON
     SetNormal();
     Refresh();

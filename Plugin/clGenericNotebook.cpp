@@ -1399,16 +1399,26 @@ void clTabCtrl::PositionFilelistButton()
     wxGCDC gcdc;
     wxDC& cdc = DrawingUtils::GetGCDC(memDC, gcdc);
 
-    wxRect button_rect_base = GetFileListButtonRect(this, m_style, cdc);
-    m_chevronRect = button_rect_base;
-
-    wxRect button_rect = button_rect_base;
-    button_rect.Deflate(2);
-    button_rect = button_rect.CenterIn(m_chevronRect);
-
+    wxRect button_rect;
     if (m_fileListButton == nullptr) {
+#ifdef __WXGTK__
+        m_fileListButton =
+            new clButton(this, wxID_ANY, BUTTON_FILE_LIST_SYMBOL, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        wxRect button_rect_base = GetFileListButtonRect(this, m_style, cdc);
+        button_rect_base.SetSize(m_fileListButton->GetSize());
+        button_rect = button_rect_base;
+        button_rect.Deflate(2);
+        button_rect = button_rect.CenterIn(m_chevronRect);
+#else
+        wxRect button_rect_base = GetFileListButtonRect(this, m_style, cdc);
+        m_chevronRect = button_rect_base;
+
+        button_rect = button_rect_base;
+        button_rect.Deflate(2);
+        button_rect = button_rect.CenterIn(m_chevronRect);
         m_fileListButton =
             new clButton(this, wxID_ANY, BUTTON_FILE_LIST_SYMBOL, wxDefaultPosition, button_rect.GetSize());
+#endif
         m_fileListButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
             wxUnusedVar(event);
             DoShowTabList();
@@ -1420,8 +1430,14 @@ void clTabCtrl::PositionFilelistButton()
     colours.SetBgColour(GetBackgroundColour());
     colours.SetBorderColour(GetBackgroundColour());
     m_fileListButton->SetColours(colours);
+#ifdef __WXGTK__
+    m_fileListButton->SetSize(wxNOT_FOUND, GetClientRect().GetHeight());
+    wxPoint pos{ GetClientRect().GetWidth() - m_fileListButton->GetSize().GetWidth(), 0 };
+    m_fileListButton->Move(pos);
+#else
     m_fileListButton->SetSize(button_rect.GetSize());
     m_fileListButton->Move(button_rect.GetTopLeft());
+#endif
 }
 
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)

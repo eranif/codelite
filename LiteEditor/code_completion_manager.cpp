@@ -179,7 +179,6 @@ void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
 void CodeCompletionManager::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
-    LanguageST::Get()->ClearAdditionalScopesCache();
 }
 
 void CodeCompletionManager::OnEnvironmentVariablesModified(clCommandEvent& event)

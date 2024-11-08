@@ -91,7 +91,6 @@ class WXDLLIMPEXP_CL Language
 private:
     wxString m_expression;
     TagsManager* m_tm;
-    std::map<wxString, std::vector<wxString>> m_additionalScopesCache; // collected by parsing 'using namespace XXX'
     CxxVariable::Map_t m_locals;
 
 public:
@@ -101,11 +100,6 @@ public:
      * statement
      */
     int GetBestLineForForwardDecl(const wxString& fileContent) const;
-
-    /**
-     * @brief clear the additional scopes cache
-     */
-    void ClearAdditionalScopesCache();
 
     /**
      * @brief set the tags manager to be used by this language instance

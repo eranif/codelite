@@ -39,17 +39,10 @@ class CodeCompletionManager : public wxEvtHandler
 {
 protected:
     size_t m_options = 0;
-    bool m_wordCompletionRefreshNeeded = false;
     bool m_buildInProgress = false;
-    std::thread* m_compileCommandsThread = nullptr;
-    wxFileName m_compileCommands;
-    time_t m_compileCommandsLastModified = 0;
     CompileCommandsGenerator::Ptr_t m_compileCommandsGenerator;
 
 protected:
-    void DoProcessCompileCommands();
-    static void ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder);
-    void CompileCommandsFileProcessed(const wxArrayString& includePaths);
     size_t CreateBlockCommentKeywordsList(wxCodeCompletionBoxEntry::Vec_t& entries) const;
 
 protected:
@@ -73,12 +66,6 @@ public:
     CodeCompletionManager();
     virtual ~CodeCompletionManager();
 
-    void SetWordCompletionRefreshNeeded(bool wordCompletionRefreshNeeded)
-    {
-        this->m_wordCompletionRefreshNeeded = wordCompletionRefreshNeeded;
-    }
-
-    bool GetWordCompletionRefreshNeeded() const { return m_wordCompletionRefreshNeeded; }
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }
 

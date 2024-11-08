@@ -387,11 +387,6 @@ private:
     void PostConstruct();
 
     /**
-     * \brief update the path & name of the build tool
-     * on windows, try to locate make, followed by mingw32-make
-     */
-    void UpdateBuildTools();
-    /**
      * Helper function that prompt user with a simple wxTextEntry dialog
      * @param msg message to display to user
      * @return user's string or wxEmptyString if 'Cancel' pressed.

@@ -1446,13 +1446,6 @@ void clMainFrame::CreateGUIControls()
     // add the managed panel to the AUI manager
     GetSizer()->Add(m_mainPanel, 1, wxEXPAND);
 
-    // try to locate the build tools
-    long fix(1);
-    fix = EditorConfigST::Get()->GetInteger("FixBuildToolOnStartup", fix);
-    if (fix) {
-        UpdateBuildTools();
-    }
-
     ::clSetTLWindowBestSizeAndPosition(this);
 
     // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
@@ -1717,8 +1710,6 @@ void clMainFrame::Bootstrap()
     // and finally, find the best window to give focus to
     codelite_initialised = true;
 }
-
-void clMainFrame::UpdateBuildTools() {}
 
 void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) { Close(); }
 

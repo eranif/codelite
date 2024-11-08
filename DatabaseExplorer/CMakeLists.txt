@@ -28,6 +28,20 @@ if(WITH_MYSQL)
     unset(WITH_MYSQL CACHE)
 endif(WITH_MYSQL)
 
+if(WITH_POSTGRES)
+    find_package(PostgreSQL REQUIRED)
+
+    add_compile_definitions(DBL_USE_POSTGRES=1)
+
+    if(MINGW)
+        install(FILES "${MSYS2_BASE}/clang64/bin/libpq.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+        msys_list_deps(${MSYS2_BASE}/clang64/bin/libpq.dll LIBPOSTGRES_DEPS)
+        foreach(DEP ${LIBPOSTGRES_DEPS})
+            install(FILES "${DEP}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+        endforeach()
+    endif()
+endif()
+
 # On UNIX we require GTK
 if(UNIX AND NOT APPLE)
 

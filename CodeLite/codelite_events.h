@@ -97,7 +97,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PROJ_ADDED, clCommandEvent);
 
 // the following 2 events are used as "transaction"
 // the first event indicates that any "wxEVT_FILE_SAVED" event sent from this point
-// is due to build process which is about to starte
+// is due to build process which is about to start
 // the later event, indicates the end of that transaction
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEvent);

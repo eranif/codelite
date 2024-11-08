@@ -1092,7 +1092,7 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
                               "wxCrafter Project File(*.wxcp)|*.wxcp", wxFD_OPEN);
 
     } else {
-        // Progrematically
+        // Programmatically
         wxFileName curfile = wxcProjectMetadata::Get().GetProjectFile();
         wxFileName newfile = path;
 

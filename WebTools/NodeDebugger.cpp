@@ -181,7 +181,7 @@ void NodeDebugger::DoCleanup()
     NodeFileManager::Get().Clear();
     NodeJSDevToolsProtocol::Get().Clear();
 
-    // Serialise the breakpoints
+    // Serialize the breakpoints
     m_bptManager.Save();
     m_activeFrame.Clear();
 }

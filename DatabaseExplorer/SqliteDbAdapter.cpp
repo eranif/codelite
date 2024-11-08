@@ -252,11 +252,11 @@ void SQLiteDbAdapter::GetDatabases(DbConnection* dbCon)
             return;
 
         // TODO:SQL:
-        DatabaseResultSet* databaze = dbLayer->RunQueryWithResults(wxT("PRAGMA database_list;"));
-        while(databaze->Next()) {
-            dbCon->AddChild(new Database(this, databaze->GetResultString(2)));
+        DatabaseResultSet* database = dbLayer->RunQueryWithResults(wxT("PRAGMA database_list;"));
+        while(database->Next()) {
+            dbCon->AddChild(new Database(this, database->GetResultString(2)));
         }
-        dbLayer->CloseResultSet(databaze);
+        dbLayer->CloseResultSet(database);
         dbLayer->Close();
     }
 }

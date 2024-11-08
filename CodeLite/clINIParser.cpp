@@ -27,7 +27,7 @@ void clINISection::AddKeyValue(const wxString& key, const wxString& value)
     m_entries.push_back(kv);
 }
 
-void clINISection::Serialise(std::ostream& string) const
+void clINISection::Serialize(std::ostream& string) const
 {
     if (GetName().empty() && m_entries.empty())
         return;
@@ -219,10 +219,10 @@ bool clINIParser::ParseString(const wxString& content)
     return false;
 }
 
-void clINIParser::Serialise(std::ostream& string) const
+void clINIParser::Serialize(std::ostream& string) const
 {
     for (const auto& section : m_sections) {
-        section.Serialise(string);
+        section.Serialize(string);
     }
 }
 

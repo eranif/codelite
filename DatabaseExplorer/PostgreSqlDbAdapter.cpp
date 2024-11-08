@@ -414,12 +414,12 @@ void PostgreSqlDbAdapter::GetDatabases(DbConnection* dbCon)
 
             // loading databases
             // TODO:SQL:
-            DatabaseResultSet* databaze =
+            DatabaseResultSet* database =
                 dbLayer->RunQueryWithResults(wxT("SELECT datname FROM pg_database WHERE datallowconn = 't' "));
-            while(databaze->Next()) {
-                dbCon->AddChild(new Database(this, databaze->GetResultString(1)));
+            while(database->Next()) {
+                dbCon->AddChild(new Database(this, database->GetResultString(1)));
             }
-            dbLayer->CloseResultSet(databaze);
+            dbLayer->CloseResultSet(database);
             dbLayer->Close();
         }
     }
@@ -434,7 +434,7 @@ void PostgreSqlDbAdapter::GetTables(Database* db, bool includeViews)
         if(dbLayer) {
             if(!dbLayer->IsOpen())
                 return;
-            // lading tables for database
+            // loading tables for database
             // TODO:SQL:
 
             // DatabaseResultSet *tabulky = dbLayer->RunQueryWithResults(wxString::Format(wxT("SHOW TABLES IN `%s`"),
@@ -538,7 +538,7 @@ void PostgreSqlDbAdapter::GetViews(Database* db)
         if(dbLayer) {
             if(!dbLayer->IsOpen())
                 return;
-            // lading tables for database
+            // loading tables for database
             // TODO:SQL:
 
             // DatabaseResultSet *tabulky = dbLayer->RunQueryWithResults(wxString::Format(wxT("SHOW TABLES IN `%s`"),

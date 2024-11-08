@@ -512,7 +512,7 @@ int Language::DoReadClassName(CppScanner& scanner, wxString& clsname) const
 bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
                                   int visibility)
 {
-    // detemine the visibility requested
+    // determine the visibility requested
     int typeVisibility = lexPUBLIC;
     wxString strVisibility = wxT("public:\n");
     switch(visibility) {
@@ -648,7 +648,7 @@ bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& funct
 int Language::GetBestLineForForwardDecl(const wxString& fileContent) const
 {
     // Locating the place for adding forward declaration is one line on top of the first non comment/preprocessor
-    // code. So basically we constrcut our lexer and call yylex() once (it will skip all whitespaces/comments/pp...
+    // code. So basically we construct our lexer and call yylex() once (it will skip all whitespaces/comments/pp...
     // )
     CppLexer lexer(fileContent.mb_str(wxConvISO8859_1).data());
 

@@ -185,7 +185,6 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     , m_wxcView(NULL)
     , m_treeView(NULL)
     , m_findReplaceDialog(NULL)
-    , m_exiting(false)
 {
     m_mainToolbar->SetMiniToolBar(false);
     auto images = m_mainToolbar->GetBitmapsCreateIfNeeded();
@@ -609,7 +608,6 @@ void MainFrame::OnHide(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 #if STANDALONE_BUILD
-    m_exiting = true;
     Close();
 #else
     HideDesigner();

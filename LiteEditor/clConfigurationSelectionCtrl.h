@@ -28,7 +28,6 @@ protected:
     void OnActiveProjectChanged(clProjectSettingsEvent& event);
 
 protected:
-    void DoUpdateChoiceWithProjects();
     void DoWorkspaceConfig();
     void DoOpenConfigurationManagerDlg();
     void DoConfigChanged(const wxString& newConfigName);

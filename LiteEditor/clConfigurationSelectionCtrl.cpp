@@ -89,8 +89,6 @@ void clConfigurationSelectionCtrl::OnChoice(wxCommandEvent& event)
     }
 }
 
-void clConfigurationSelectionCtrl::Clear() {}
-
 void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& configurations, const wxString& activeConfig)
 {
     m_configurations = configurations;
@@ -115,7 +113,6 @@ void clConfigurationSelectionCtrl::OnWorkspaceLoaded(clWorkspaceEvent& event)
 void clConfigurationSelectionCtrl::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
-    Clear();
     Enable(false);
 }
 

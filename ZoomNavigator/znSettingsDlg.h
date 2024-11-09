@@ -33,9 +33,10 @@ wxDECLARE_EVENT(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEvent);
 class znSettingsDlg : public znSettingsDlgBase
 {
 public:
-    znSettingsDlg(wxWindow* parent);
-    virtual ~znSettingsDlg();
+    explicit znSettingsDlg(wxWindow* parent);
+    ~znSettingsDlg() override = default;
+
 protected:
-    virtual void OnOK(wxCommandEvent& event);
+    void OnOK(wxCommandEvent& event) override;
 };
 #endif // ZNSETTINGSDLG_H

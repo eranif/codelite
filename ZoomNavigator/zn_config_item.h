@@ -31,17 +31,17 @@
 class znConfigItem : public clConfigItem
 {
     wxString m_highlightColour;
-    bool m_enabled;
-    int m_zoomFactor;
-    bool m_useScrollbar;
+    bool m_enabled = false;
+    int m_zoomFactor = -10;
+    bool m_useScrollbar = true;
 
 public:
-    znConfigItem(); 
-    virtual ~znConfigItem();
+    znConfigItem();
+    ~znConfigItem() override = default;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void SetEnabled(bool enabled) { this->m_enabled = enabled; }
     void SetHighlightColour(const wxString& highlightColour) { this->m_highlightColour = highlightColour; }

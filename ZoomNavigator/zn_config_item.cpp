@@ -28,13 +28,8 @@
 znConfigItem::znConfigItem()
     : clConfigItem("ZoomNavigator")
     , m_highlightColour("LIGHT GREY")
-    , m_enabled(false)
-    , m_zoomFactor(-10)
-    , m_useScrollbar(true)
 {
 }
-
-znConfigItem::~znConfigItem() {}
 
 void znConfigItem::FromJSON(const JSONItem& json)
 {

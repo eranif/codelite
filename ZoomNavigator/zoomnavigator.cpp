@@ -34,13 +34,14 @@
 
 #include "bookmark_manager.h"
 #include "event_notifier.h"
-#include "globals.h"
+#include "zoomtext.h"
 #include "znSettingsDlg.h"
 #include "zn_config_item.h"
 
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
+#include <wx/timer.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
@@ -48,13 +49,10 @@
     if (!cond)                \
         return;
 
-const wxString ZOOM_PANE_TITLE(_("Zoom"));
+static const wxString ZOOM_PANE_TITLE(_("Zoom"));
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new ZoomNavigator(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new ZoomNavigator(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -72,46 +70,37 @@ namespace
 {
 /// @[param]in ctrl the control
 /// @[param]in marker_mask marker type to check
-/// @[param]out lines
-size_t GetMarkers(wxStyledTextCtrl* ctrl, int marker_mask, std::vector<int>* lines)
+std::vector<int> GetMarkers(wxStyledTextCtrl& ctrl, marker_mask_type marker_mask)
 {
+    std::vector<int> lines;
     int nFoundLine = 0;
     while (true) {
-        nFoundLine = ctrl->MarkerNext(nFoundLine, marker_mask);
+        nFoundLine = ctrl.MarkerNext(nFoundLine, marker_mask);
         if (nFoundLine == wxNOT_FOUND) {
             break;
         }
-        lines->push_back(nFoundLine);
+        lines.push_back(nFoundLine);
         ++nFoundLine;
     }
-    return lines->size();
+    return lines;
 }
 } // namespace
 
 ZoomNavigator::ZoomNavigator(IManager* manager)
     : IPlugin(manager)
-    , mgr(manager)
-    , m_zoompane(NULL)
-    , m_topWindow(NULL)
-    , m_text(NULL)
-    , m_markerFirstLine(wxNOT_FOUND)
-    , m_markerLastLine(wxNOT_FOUND)
-    , m_enabled(false)
-    , m_lastLine(wxNOT_FOUND)
-    , m_startupCompleted(false)
+    , m_config(new clConfig("zoom-navigator.conf"))
 {
-    m_config = new clConfig("zoom-navigator.conf");
     m_longName = _("Zoom Navigator");
     m_shortName = wxT("ZoomNavigator");
     m_topWindow = m_mgr->GetTheApp();
 
-    m_topWindow->Connect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
+    m_topWindow->Connect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ZoomNavigator::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ZoomNavigator::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_ZN_SETTINGS_UPDATED, &ZoomNavigator::OnSettingsChanged, this);
 
     m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
+                         wxCommandEventHandler(ZoomNavigator::OnSettings), nullptr, this);
 
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &ZoomNavigator::OnTimer, this, m_timer->GetId());
@@ -128,9 +117,9 @@ void ZoomNavigator::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ZoomNavigator::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ZoomNavigator::OnFileSaved, this);
 
-    m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
+    m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), nullptr, this);
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
+                            wxCommandEventHandler(ZoomNavigator::OnSettings), nullptr, this);
     // cancel the timer
     Unbind(wxEVT_TIMER, &ZoomNavigator::OnTimer, this, m_timer->GetId());
     m_timer->Stop();
@@ -148,9 +137,7 @@ void ZoomNavigator::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolb
 void ZoomNavigator::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
-    item = new wxMenuItem(menu, XRCID("zn_settings"), _("Settings"), _("Settings"), wxITEM_NORMAL);
-    menu->Append(item);
+    menu->Append(new wxMenuItem(menu, XRCID("zn_settings"), _("Settings"), _("Settings"), wxITEM_NORMAL));
     pluginsMenu->Append(wxID_ANY, _("Zoom Navigator"), menu);
 }
 
@@ -158,7 +145,6 @@ void ZoomNavigator::OnShowHideClick(wxCommandEvent& e) {}
 
 void ZoomNavigator::DoInitialize()
 {
-
     znConfigItem data;
     if (m_config->ReadItem(&data)) {
         m_enabled = data.IsEnabled();
@@ -196,27 +182,19 @@ void ZoomNavigator::DoUpdate()
     CHECK_CONDITION(stc->IsShown());
 
     // locate any error and warning markers in the main editor and duplicate then into the zoomed view
-    std::vector<int> error_lines;
-    std::vector<int> warning_lines;
-    m_text->DeleteAllMarkers();
-    if (GetMarkers(stc, mmt_error, &error_lines)) {
-        m_text->UpdateMarkers(error_lines, ZoomText::MARKER_ERROR);
-    }
-
-    if (GetMarkers(stc, mmt_warning, &warning_lines)) {
-        m_text->UpdateMarkers(warning_lines, ZoomText::MARKER_WARNING);
-    }
+    m_text->UpdateMarkers(GetMarkers(*stc, mmt_error), ZoomText::MarkerType::Error);
+    m_text->UpdateMarkers(GetMarkers(*stc, mmt_warning), ZoomText::MarkerType::Warning);
 
     if (curEditor->GetFileName().GetFullPath() != m_curfile) {
         SetEditorText(curEditor);
     }
 
-    int first = stc->GetFirstVisibleLine();
-    int last = stc->LinesOnScreen() + first;
+    const int first = stc->GetFirstVisibleLine();
+    const int last = stc->LinesOnScreen() + first;
 
     if (m_markerFirstLine != first || m_markerLastLine != last) {
         PatchUpHighlights(first, last);
-        SetZoomTextScrollPosToMiddle(stc);
+        SetZoomTextScrollPosToMiddle(*stc);
     }
 }
 
@@ -230,14 +208,14 @@ void ZoomNavigator::SetEditorText(IEditor* editor)
     }
 }
 
-void ZoomNavigator::SetZoomTextScrollPosToMiddle(wxStyledTextCtrl* stc)
+void ZoomNavigator::SetZoomTextScrollPosToMiddle(wxStyledTextCtrl& stc)
 {
     // make the middle line of editor text centered in the zoomview
-    int first = stc->GetFirstVisibleLine() + (stc->LinesOnScreen() / 2);
+    int first = stc.GetFirstVisibleLine() + (stc.LinesOnScreen() / 2);
 
     // we want to make 'first' centered
-    int numLinesOnScreen = m_text->LinesOnScreen();
-    int linesAboveIt = numLinesOnScreen / 2;
+    const int numLinesOnScreen = m_text->LinesOnScreen();
+    const int linesAboveIt = numLinesOnScreen / 2;
 
     first = first - linesAboveIt;
     if (first < 0)
@@ -266,18 +244,18 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
     CHECK_CONDITION(m_enabled);
 
     // the first line is taken from the preview
-    int pos = m_text->PositionFromPoint(e.GetPosition());
+    const int pos = m_text->PositionFromPoint(e.GetPosition());
     if (pos == wxSTC_INVALID_POSITION) {
         return;
     }
     int first = m_text->LineFromPosition(pos);
-    int nLinesOnScreen = curEditor->GetCtrl()->LinesOnScreen();
+    const int nLinesOnScreen = curEditor->GetCtrl()->LinesOnScreen();
     first -= (nLinesOnScreen / 2);
     if (first < 0)
         first = 0;
 
     // however, the last line is set according to the actual editor
-    int last = nLinesOnScreen + first;
+    const int last = nLinesOnScreen + first;
 
     PatchUpHighlights(first, last);
     curEditor->GetCtrl()->SetFirstVisibleLine(first);
@@ -290,10 +268,10 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 
 void ZoomNavigator::DoCleanup()
 {
-    SetEditorText(NULL);
+    SetEditorText(nullptr);
     m_markerFirstLine = wxNOT_FOUND;
     m_markerLastLine = wxNOT_FOUND;
-    m_text->UpdateLexer(NULL);
+    m_text->UpdateLexer(nullptr);
 }
 
 void ZoomNavigator::OnSettings(wxCommandEvent& e)
@@ -312,7 +290,7 @@ void ZoomNavigator::OnSettingsChanged(wxCommandEvent& e)
 
         if (!m_enabled) {
             // Clear selection
-            m_text->UpdateText(NULL);
+            m_text->UpdateText(nullptr);
 
         } else {
             DoCleanup();

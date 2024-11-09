@@ -27,7 +27,6 @@
 
 #include "cl_config.h"
 #include "event_notifier.h"
-#include "windowattrmanager.h"
 #include "zn_config_item.h"
 
 wxDEFINE_EVENT(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEvent);
@@ -37,7 +36,7 @@ znSettingsDlg::znSettingsDlg(wxWindow* parent)
 {
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    if(conf.ReadItem(&data)) {
+    if (conf.ReadItem(&data)) {
         m_checkBoxEnableZN->SetValue(data.IsEnabled());
         m_colourPickerHighlightColour->SetColour(wxColour(data.GetHighlightColour()));
         m_checkBoxUseVScrollbar->SetValue(data.IsUseScrollbar());
@@ -47,8 +46,6 @@ znSettingsDlg::znSettingsDlg(wxWindow* parent)
     GetSizer()->Fit(this);
     CentreOnParent();
 }
-
-znSettingsDlg::~znSettingsDlg() {}
 
 void znSettingsDlg::OnOK(wxCommandEvent& event)
 {

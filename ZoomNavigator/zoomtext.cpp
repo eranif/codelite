@@ -48,24 +48,36 @@
 #include <vector>
 #include <wx/app.h>
 #include <wx/settings.h>
+#include <wx/timer.h>
 #include <wx/xrc/xmlres.h>
 
 namespace
 {
 static constexpr int TIMER_DELAY = 150;
 static constexpr int FIRST_LINE_MARKER = 1;
+
+sci_marker_types ToSciMarkerTypes(ZoomText::MarkerType type)
+{
+    switch (type) {
+    default:
+    case ZoomText::MarkerType::Error:
+        return smt_error;
+    case ZoomText::MarkerType::Warning:
+        return smt_warning;
+    }
+}
 } // namespace
 
 ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                    const wxString& name)
 {
     Hide();
-    if(!wxStyledTextCtrl::Create(parent, id, pos, size, style | wxNO_BORDER, name)) {
+    if (!wxStyledTextCtrl::Create(parent, id, pos, size, style | wxNO_BORDER, name)) {
         return;
     }
 
     wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+    for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
         StyleSetBackground(i, bgColour);
     }
 
@@ -84,7 +96,6 @@ ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
 
     m_zoomFactor = data.GetZoomFactor();
     m_colour = data.GetHighlightColour();
-    MarkerSetBackground(1, m_colour);
     SetZoom(m_zoomFactor);
     EventNotifier::Get()->Bind(wxEVT_ZN_SETTINGS_UPDATED, &ZoomText::OnSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ZoomText::OnThemeChanged, this);
@@ -118,7 +129,7 @@ ZoomText::~ZoomText()
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ZoomText::OnThemeChanged, this);
     Unbind(wxEVT_TIMER, &ZoomText::OnTimer, this, m_timer->GetId());
 
-    if(m_timer->IsRunning()) {
+    if (m_timer->IsRunning()) {
         m_timer->Stop();
     }
     wxDELETE(m_timer);
@@ -126,10 +137,10 @@ ZoomText::~ZoomText()
 
 void ZoomText::UpdateLexer(IEditor* editor)
 {
-    if(!editor) {
+    if (!editor) {
         editor = clGetManager()->GetActiveEditor();
     }
-    if(!editor) {
+    if (!editor) {
         DoClear();
         return;
     }
@@ -140,7 +151,7 @@ void ZoomText::UpdateLexer(IEditor* editor)
 
     m_filename = editor->GetFileName().GetFullPath();
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(m_filename);
-    if(!lexer) {
+    if (!lexer) {
         lexer = EditorConfigST::Get()->GetLexer("Text");
     }
     lexer->Apply(this, true);
@@ -160,7 +171,7 @@ void ZoomText::OnSettingsChanged(wxCommandEvent& e)
     e.Skip();
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    if(conf.ReadItem(&data)) {
+    if (conf.ReadItem(&data)) {
         m_zoomFactor = data.GetZoomFactor();
         m_colour = data.GetHighlightColour();
 
@@ -174,7 +185,7 @@ void ZoomText::OnSettingsChanged(wxCommandEvent& e)
 
 void ZoomText::UpdateText(IEditor* editor)
 {
-    if(!editor) {
+    if (!editor) {
         DoClear();
 
     } else {
@@ -187,18 +198,18 @@ void ZoomText::UpdateText(IEditor* editor)
 
 void ZoomText::HighlightLines(int start, int end)
 {
-    int nLineCount = end - start;
-    int lastLine = LineFromPosition(GetLength());
-    if(lastLine < end) {
+    const int nLineCount = end - start;
+    const int lastLine = LineFromPosition(GetLength());
+    if (lastLine < end) {
         end = lastLine;
         start = end - nLineCount;
-        if(start < 0)
+        if (start < 0)
             start = 0;
     }
 
     MarkerDeleteAll(FIRST_LINE_MARKER);
 
-    for(int i = start; i <= end; ++i) {
+    for (int i = start; i <= end; ++i) {
         MarkerAdd(i, FIRST_LINE_MARKER);
     }
 }
@@ -212,18 +223,18 @@ void ZoomText::OnThemeChanged(wxCommandEvent& e)
 void ZoomText::OnTimer(wxTimerEvent& event)
 {
     // sanity
-    if(IsEmpty()) {
+    if (IsEmpty()) {
         m_timer->Start(TIMER_DELAY, true);
         return;
     }
 
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(!editor || !editor->GetCtrl()->IsShown()) {
+    if (!editor || !editor->GetCtrl()->IsShown()) {
         m_timer->Start(TIMER_DELAY, true);
         return;
     }
 
-    if(!editor->GetKeywordClasses().IsEmpty() && (editor->GetFileName().GetFullPath() == m_filename)) {
+    if (!editor->GetKeywordClasses().IsEmpty() && (editor->GetFileName().GetFullPath() == m_filename)) {
         // Sync between the keywords
         SetSemanticTokens(editor->GetKeywordClasses(), editor->GetKeywordLocals(), editor->GetKeywordMethods(),
                           wxEmptyString);
@@ -242,29 +253,11 @@ void ZoomText::Startup() { m_timer->Start(TIMER_DELAY, true); }
 
 void ZoomText::UpdateMarkers(const std::vector<int>& lines, MarkerType type)
 {
-    int marker_mask = wxNOT_FOUND;
-    int marker_number = wxNOT_FOUND;
-    switch(type) {
-    case MARKER_ERROR:
-        marker_number = smt_error;
-        marker_mask = mmt_error;
-        break;
-    case MARKER_WARNING:
-        marker_number = smt_warning;
-        marker_mask = mmt_warning;
-        break;
-    }
-
+    const int marker_number = ToSciMarkerTypes(type);
     MarkerDeleteAll(marker_number);
-    for(int line : lines) {
+    for (int line : lines) {
         MarkerAdd(line, marker_number);
     }
-}
-
-void ZoomText::DeleteAllMarkers()
-{
-    MarkerDeleteAll(smt_error);
-    MarkerDeleteAll(smt_warning);
 }
 
 void ZoomText::SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
@@ -287,7 +280,7 @@ void ZoomText::SetSemanticTokens(const wxString& classes, const wxString& variab
     auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullName());
     CHECK_PTR_RET(lexer);
 
-    if(lexer->GetWordSet(LexerConf::WS_CLASS).is_ok()) {
+    if (lexer->GetWordSet(LexerConf::WS_CLASS).is_ok()) {
         lexer->ApplyWordSet(this, LexerConf::WS_CLASS, flatStrClasses);
         lexer->ApplyWordSet(this, LexerConf::WS_FUNCTIONS, flatStrMethods);
         lexer->ApplyWordSet(this, LexerConf::WS_VARIABLES, flatStrLocals);
@@ -298,7 +291,7 @@ void ZoomText::SetSemanticTokens(const wxString& classes, const wxString& variab
         int keywords_class = wxNOT_FOUND;
         int keywords_variables = wxNOT_FOUND;
 
-        switch(lexer->GetLexerId()) {
+        switch (lexer->GetLexerId()) {
         case wxSTC_LEX_CPP:
             keywords_class = 1;
             keywords_variables = 3;
@@ -315,11 +308,11 @@ void ZoomText::SetSemanticTokens(const wxString& classes, const wxString& variab
         default:
             break;
         }
-        if(!flatStrClasses.empty() && keywords_class != wxNOT_FOUND) {
+        if (!flatStrClasses.empty() && keywords_class != wxNOT_FOUND) {
             SetKeyWords(keywords_class, flatStrClasses);
         }
 
-        if(!flatStrLocals.empty() && keywords_variables != wxNOT_FOUND) {
+        if (!flatStrLocals.empty() && keywords_variables != wxNOT_FOUND) {
             SetKeyWords(keywords_variables, flatStrLocals);
         }
     }

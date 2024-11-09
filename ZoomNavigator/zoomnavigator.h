@@ -35,27 +35,20 @@
 
 #include "cl_command_event.h"
 #include "plugin.h"
-#include "zoomtext.h"
 
-#include <set>
-#include <wx/timer.h>
-
-extern const wxString ZOOM_PANE_TITLE;
-
-class ZoomNavUpdateTimer;
+class wxTimer;
+class ZoomText;
 
 class ZoomNavigator : public IPlugin
 {
-    IManager* mgr;
-    wxPanel* m_zoompane;
-    wxEvtHandler* m_topWindow;
-    ZoomText* m_text;
+    wxPanel* m_zoompane = nullptr;
+    wxEvtHandler* m_topWindow = nullptr;
+    ZoomText* m_text = nullptr;
     int m_markerFirstLine = wxNOT_FOUND;
     int m_markerLastLine = wxNOT_FOUND;
-    bool m_enabled;
-    clConfig* m_config;
-    int m_lastLine;
-    bool m_startupCompleted;
+    bool m_enabled = false;
+    clConfig* m_config = nullptr;
+    bool m_startupCompleted = false;
     wxString m_curfile;
     wxTimer* m_timer = nullptr;
 
@@ -63,25 +56,24 @@ protected:
     void DoInitialize();
     void PatchUpHighlights(const int first, const int last);
     void SetEditorText(IEditor* editor);
-    void SetZoomTextScrollPosToMiddle(wxStyledTextCtrl* stc);
+    void SetZoomTextScrollPosToMiddle(wxStyledTextCtrl& stc);
     void DoUpdate();
     void DoCleanup();
     void OnTimer(wxTimerEvent& event);
 
 public:
-    ZoomNavigator(IManager* manager);
-    ~ZoomNavigator();
+    explicit ZoomNavigator(IManager* manager);
+    ~ZoomNavigator() override;
 
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void UnPlug() override;
 
     void OnIdle(wxIdleEvent& e);
-
     void OnShowHideClick(wxCommandEvent& e);
     void OnPreviewClicked(wxMouseEvent& e);
     void OnSettings(wxCommandEvent& e);

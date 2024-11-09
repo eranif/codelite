@@ -57,7 +57,6 @@ protected:
     void DoImportFB(const wxString& filename = "");
     void DoInitDone(wxObject* obj = NULL);
     void DoLoadWxcProject(const wxFileName& filename);
-    void UpdateFileNameInStatusBar();
 
 protected:
     // Event handlers

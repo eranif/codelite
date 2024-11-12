@@ -286,7 +286,6 @@ protected:
     wxTimer* m_timerHighlightMarkers;
     IManager* m_mgr;
     OptionsConfigPtr m_options;
-    bool m_hasCCAnnotation;
     wxRichToolTip* m_richTooltip;
     wxString m_keywordClasses;
     wxString m_keywordMethods;
@@ -334,10 +333,6 @@ public:
      * @brief CodeLite preferences updated
      */
     void PreferencesChanged();
-    /**
-     * @brief are the CC annotations visible?
-     */
-    bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
 
     void SetEditorBitmap(int editorBitmap) { this->m_editorBitmap = editorBitmap; }
     int GetEditorBitmap() const { return m_editorBitmap; }

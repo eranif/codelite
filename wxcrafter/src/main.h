@@ -18,7 +18,6 @@ protected:
     wxcTreeView* m_treeView = nullptr;
     wxFindReplaceDialog* m_findReplaceDialog = nullptr;
     wxFindReplaceData m_findData;
-    bool m_exiting = false;
 
 protected:
     virtual void OnFileOpen(wxCommandEvent& event);

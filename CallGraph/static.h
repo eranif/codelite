@@ -43,14 +43,7 @@ extern const wxString DOT_FILENAME_PNG;
 extern const wxString DOT_FILENAME_TXT;
 extern const wxString CALLGRAPH_DIR;
 
-#ifdef __WXMSW__
 extern const wxString GPROF_FILENAME_EXE;
 extern const wxString DOT_FILENAME_EXE;
-extern const wxString EXECUTABLE_EXTENSION;
-#else
-extern const wxString GPROF_FILENAME_EXE;
-extern const wxString DOT_FILENAME_EXE;
-extern const wxString EXECUTABLE_EXTENSION;
-#endif
 
 #endif // __CALLGRAPH_STATIC_H__

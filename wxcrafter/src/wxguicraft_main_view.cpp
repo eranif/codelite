@@ -1096,9 +1096,6 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
         wxFileName curfile = wxcProjectMetadata::Get().GetProjectFile();
         wxFileName newfile = path;
 
-        wxString p1, p2;
-        p1 = curfile.GetFullPath();
-        p2 = path;
         if (curfile == path) {
             return;
         }

@@ -13,9 +13,6 @@
   <ArchiveObject Name="highlight_word">
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
-  <ArchiveObject Name="FixBuildToolOnStartup">
-    <long Value="0" Name="m_value"/>
-  </ArchiveObject>
   <ArchiveObject Name="GenerateFullPathMakefile">
     <long Value="1" Name="m_value"/>
   </ArchiveObject>

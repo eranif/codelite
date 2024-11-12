@@ -89,8 +89,6 @@ void clConfigurationSelectionCtrl::OnChoice(wxCommandEvent& event)
     }
 }
 
-void clConfigurationSelectionCtrl::Clear() {}
-
 void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& configurations, const wxString& activeConfig)
 {
     m_configurations = configurations;
@@ -109,30 +107,24 @@ void clConfigurationSelectionCtrl::OnWorkspaceLoaded(clWorkspaceEvent& event)
     if(ManagerST::Get()->IsWorkspaceOpen()) {
         Enable(true);
         DoWorkspaceConfig();
-        DoUpdateChoiceWithProjects();
     }
 }
 
 void clConfigurationSelectionCtrl::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
-    Clear();
     Enable(false);
 }
 
 void clConfigurationSelectionCtrl::OnProjectAdded(clCommandEvent& event)
 {
     event.Skip();
-    DoUpdateChoiceWithProjects();
 }
 
 void clConfigurationSelectionCtrl::OnProjectRemoved(clCommandEvent& event)
 {
     event.Skip();
-    DoUpdateChoiceWithProjects();
 }
-
-void clConfigurationSelectionCtrl::DoUpdateChoiceWithProjects() {}
 
 void clConfigurationSelectionCtrl::DoWorkspaceConfig()
 {
@@ -166,7 +158,6 @@ void clConfigurationSelectionCtrl::DoOpenConfigurationManagerDlg()
 
     // in case user added configurations, update the choice control
     DoWorkspaceConfig();
-    DoUpdateChoiceWithProjects();
 
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
     SetActiveConfiguration(matrix->GetSelectedConfigurationName());

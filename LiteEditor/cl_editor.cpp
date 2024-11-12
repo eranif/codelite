@@ -448,7 +448,6 @@ clEditor::clEditor(wxWindow* parent)
     , m_isFocused(true)
     , m_findBookmarksActive(false)
     , m_mgr(PluginManager::Get())
-    , m_hasCCAnnotation(false)
     , m_richTooltip(NULL)
     , m_lastEndLine(0)
     , m_lastLineCount(0)
@@ -4854,12 +4853,6 @@ void clEditor::OnChange(wxStyledTextEvent& event)
                 line_numbers_margin_updated = true;
             }
         }
-    }
-
-    // Remove any code completion annotations if we have some...
-    if (m_hasCCAnnotation) {
-        CallAfter(&clEditor::AnnotationClearAll);
-        m_hasCCAnnotation = false;
     }
 
     // Notify about this editor being changed

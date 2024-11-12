@@ -28,7 +28,6 @@ protected:
     void OnActiveProjectChanged(clProjectSettingsEvent& event);
 
 protected:
-    void DoUpdateChoiceWithProjects();
     void DoWorkspaceConfig();
     void DoOpenConfigurationManagerDlg();
     void DoConfigChanged(const wxString& newConfigName);
@@ -42,11 +41,6 @@ public:
      * @brief update the list of projects and configurations available
      */
     void Update(const wxArrayString& projects, const wxArrayString& configurations);
-
-    /**
-     * @brief clear everything
-     */
-    void Clear();
 
     void SetActiveConfiguration(const wxString& activeConfiguration);
     void SetConfigurations(const wxArrayString& configurations, const wxString& activeConfig);

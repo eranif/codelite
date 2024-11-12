@@ -71,7 +71,6 @@ struct EditorDimmerDisabler {
 
 CodeCompletionManager::CodeCompletionManager()
     : m_options(CC_CTAGS_ENABLED)
-    , m_wordCompletionRefreshNeeded(false)
     , m_buildInProgress(false)
 {
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &CodeCompletionManager::OnBuildStarted, this);
@@ -120,11 +119,6 @@ CodeCompletionManager::~CodeCompletionManager()
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
     EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED,
                                  &CodeCompletionManager::OnEnvironmentVariablesModified, this);
-
-    if(m_compileCommandsThread) {
-        m_compileCommandsThread->join();
-        wxDELETE(m_compileCommandsThread);
-    }
 }
 
 CodeCompletionManager& CodeCompletionManager::Get()
@@ -179,7 +173,6 @@ void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
 void CodeCompletionManager::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
-    LanguageST::Get()->ClearAdditionalScopesCache();
 }
 
 void CodeCompletionManager::OnEnvironmentVariablesModified(clCommandEvent& event)
@@ -187,34 +180,6 @@ void CodeCompletionManager::OnEnvironmentVariablesModified(clCommandEvent& event
     event.Skip();
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         clCxxWorkspaceST::Get()->ClearBacktickCache();
-    }
-}
-
-void CodeCompletionManager::DoProcessCompileCommands()
-{
-    // return; // for now, dont use it
-    if(m_compileCommandsThread) {
-        return;
-    }
-
-    // Create a thread that will process the current workspace folder and search for any compile_commands.json file
-    m_compileCommandsThread = new std::thread(&CodeCompletionManager::ThreadProcessCompileCommandsEntry, this,
-                                              clCxxWorkspaceST::Get()->GetDir());
-}
-
-void CodeCompletionManager::ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder)
-{
-    // Search for compile_commands file, process it and send back the results to the main thread
-    wxArrayString includePaths = CompilationDatabase::FindIncludePaths(rootFolder, owner->m_compileCommands,
-                                                                       owner->m_compileCommandsLastModified);
-    owner->CallAfter(&CodeCompletionManager::CompileCommandsFileProcessed, includePaths);
-}
-
-void CodeCompletionManager::CompileCommandsFileProcessed(const wxArrayString& includePaths)
-{
-    if(m_compileCommandsThread) {
-        m_compileCommandsThread->join();
-        wxDELETE(m_compileCommandsThread);
     }
 }
 

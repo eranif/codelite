@@ -666,6 +666,3 @@ int Language::GetBestLineForForwardDecl(const wxString& fileContent) const
         --line;
     return line;
 }
-
-void Language::ClearAdditionalScopesCache() { m_additionalScopesCache.clear(); }
-

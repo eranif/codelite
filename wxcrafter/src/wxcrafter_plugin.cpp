@@ -815,14 +815,9 @@ void wxCrafterPlugin::OnPageChanged(wxCommandEvent& e)
         wxWindow* win = reinterpret_cast<wxWindow*>(e.GetClientData());
         if(win && (win == m_mainPanel)) {
             DoSelectWorkspaceTab();
-            if(wxcProjectMetadata::Get().IsLoaded()) {
-                CallAfter(&wxCrafterPlugin::UpdateFileNameInStatusBar);
-            }
         }
     }
 }
-
-void wxCrafterPlugin::UpdateFileNameInStatusBar() {}
 
 void wxCrafterPlugin::OnDesignerItemSelected(wxCommandEvent& e)
 {

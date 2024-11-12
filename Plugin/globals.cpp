@@ -1672,7 +1672,7 @@ static void DoSetDialogSize(wxDialog* win, double factor)
         win->SetSize(parentSize);
         win->GetSizer()->Layout();
         win->CentreOnParent();
-#if defined(__WXMAC__)
+#if defined(__WXMAC__) || defined(__WXMSW__)
         win->Move(wxNOT_FOUND, parent->GetPosition().y);
 #endif
     }

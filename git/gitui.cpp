@@ -19,7 +19,7 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
@@ -614,7 +614,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     wxArrayString m_fileListBoxArr;
     m_fileListBox =
         new wxListBox(m_splitterPage795, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage795, wxSize(-1, -1)),
-                      m_fileListBoxArr, get_border_simple_theme_aware_bit());
+                      m_fileListBoxArr, wxLB_SORT | get_border_simple_theme_aware_bit());
 
     boxSizer208->Add(m_fileListBox, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -1691,7 +1691,7 @@ GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString
     wxArrayString m_checkListBoxChangedArr;
     m_checkListBoxChanged =
         new wxCheckListBox(m_panel759, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel759, wxSize(-1, -1)),
-                           m_checkListBoxChangedArr, wxLB_SINGLE | get_border_simple_theme_aware_bit());
+                           m_checkListBoxChangedArr, wxLB_SORT | wxLB_SINGLE | get_border_simple_theme_aware_bit());
     m_checkListBoxChanged->SetToolTip(_("These are the files that are altered. Select which you want to reset."));
 
     boxSizer565->Add(m_checkListBoxChanged, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -1714,7 +1714,7 @@ GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString
     wxArrayString m_checkListBoxNewArr;
     m_checkListBoxNew =
         new wxCheckListBox(m_panel759, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel759, wxSize(-1, -1)),
-                           m_checkListBoxNewArr, wxLB_SINGLE | get_border_simple_theme_aware_bit());
+                           m_checkListBoxNewArr, wxLB_SORT | wxLB_SINGLE | get_border_simple_theme_aware_bit());
     m_checkListBoxNew->SetToolTip(_("These are the files that have been added. Select which you want to remove."));
 
     boxSizer5651->Add(m_checkListBoxNew, 1, wxEXPAND, WXC_FROM_DIP(5));

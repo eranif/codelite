@@ -5739,7 +5739,7 @@
 																													"border":	5,
 																													"gbSpan":	",",
 																													"gbPosition":	",",
-																													"m_styles":	["wxBORDER_SIMPLE"],
+																													"m_styles":	["wxLB_SORT", "wxBORDER_SIMPLE"],
 																													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																													"m_properties":	[{
 																															"type":	"winid",
@@ -14424,7 +14424,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxLB_SINGLE", "wxBORDER_SIMPLE"],
+															"m_styles":	["wxLB_SORT", "wxLB_SINGLE", "wxBORDER_SIMPLE"],
 															"m_sizerFlags":	["wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -14657,7 +14657,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxLB_SINGLE", "wxBORDER_SIMPLE"],
+															"m_styles":	["wxLB_SORT", "wxLB_SINGLE", "wxBORDER_SIMPLE"],
 															"m_sizerFlags":	["wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",

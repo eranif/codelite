@@ -66,6 +66,16 @@ add_library(dtl INTERFACE)
 target_include_directories(dtl INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/dtl)
 
 # ######################################################################################################################
+# wx-config-msys2
+# ######################################################################################################################
+
+if(NOT WXC_APP AND MINGW)
+  # build wx-config for Windows
+  add_subdirectory(wx-config-msys2)
+  install(TARGETS wx-config DESTINATION ${CL_INSTALL_BIN})
+endif()
+
+# ######################################################################################################################
 # For wxWidgets dependencies
 # ######################################################################################################################
 include("${wxWidgets_USE_FILE}")

@@ -25,22 +25,19 @@
 #include "lexer_configuration.h"
 
 #include "FontUtils.hpp"
-#include "StringUtils.h"
-#include "bookmark_manager.h"
 #include "clSystemSettings.h"
 #include "cl_config.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "file_logger.h"
-#include "fileutils.h"
 #include "globals.h"
 #include "macros.h"
-#include "xmlutils.h"
 
 #include <algorithm>
 #include <wx/settings.h>
 #include <wx/stc/stc.h>
 #include <wx/utils.h>
+
 namespace
 {
 /**
@@ -513,4 +510,16 @@ void LexerConf::ApplyFont(wxWindow* cb)
     auto curfont = cb->GetFont();
     font.SetPointSize(curfont.GetPointSize());
     cb->SetFont(font);
+}
+
+void LexerConf::SetProperty(const StyleProperty& prop)
+{
+    auto iter = std::find_if(m_properties.begin(), m_properties.end(),
+                             [&](const StyleProperty& p) { return prop.GetId() == p.GetId(); });
+
+    if (iter != m_properties.end()) {
+        *iter = prop;
+    } else {
+        m_properties.push_back(prop);
+    }
 }

@@ -69,7 +69,7 @@ public:
 protected:
     inline void EnableFlag(eStyleFlags flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;

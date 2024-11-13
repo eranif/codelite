@@ -69,7 +69,7 @@ struct WXDLLIMPEXP_SDK WordSetIndex {
 
     void from_json(const JSONItem& json)
     {
-        if(json.isNumber()) {
+        if (json.isNumber()) {
             // old style, for migration purposes
             index = json.toInt(wxNOT_FOUND);
         } else {
@@ -118,7 +118,7 @@ protected:
 
     inline void EnableFlag(eLexerConfFlags flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;
@@ -247,6 +247,9 @@ public:
      */
     StyleProperty& GetProperty(int propertyId);
     const StyleProperty& GetProperty(int propertyId) const;
+
+    /// Set or replace property
+    void SetProperty(const StyleProperty& prop);
 
     /**
      * @brief set the line numbers colour

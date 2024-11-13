@@ -18,9 +18,12 @@ LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_DIFF_POSITION, "Position", m_function);
 
     // Use pink and forest green
-    if(IsDarkTheme()) {
-        AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "#FF8080", m_editor.bg_colour, true);
-        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "#80FF80", m_editor.bg_colour, true);
+    if (IsDarkTheme()) {
+        // Use more appropriate diff colours
+        AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted",
+                    wxColour("RED").ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX), m_editor.bg_colour, true);
+        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added",
+                    wxColour("GREEN").ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX), m_editor.bg_colour, true);
     } else {
         AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "RED", m_editor.bg_colour, true);
         AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "rgb(0, 128, 64)", m_editor.bg_colour, true);

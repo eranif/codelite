@@ -856,6 +856,16 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         lexer->SetFileSpec(filespec);
     }
 
+    if (lexer->GetName() == "diff") {
+        if (lexer->IsDark()) {
+            // Use more appropriate diff colours
+            lexer->GetProperty(wxSTC_DIFF_DELETED)
+                .SetFgColour(wxColour("RED").ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
+            lexer->GetProperty(wxSTC_DIFF_ADDED)
+                .SetFgColour(wxColour("GREEN").ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
+        }
+    }
+
     if (lexer->GetName() == "javascript") {
         AddLexerKeywords(lexer, 0, { "async", "await" });
     }

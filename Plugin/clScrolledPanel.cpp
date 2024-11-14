@@ -379,14 +379,11 @@ void clScrolledPanel::DoCancelDrag()
 wxFont clScrolledPanel::GetDefaultFont()
 {
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#if defined(__WXMAC__)
-    float pointSize = f.GetFractionalPointSize() * 1.2;
-    f.SetFractionalPointSize(pointSize);
-#elif defined(__WXMSW__)
-    // wxMSW
     float pointSize = f.GetFractionalPointSize();
-    f.SetFractionalPointSize(pointSize);
+#if defined(__WXMAC__)
+    pointSize *= 1.2;
 #endif
+    f.SetFractionalPointSize(pointSize);
     return f;
 }
 

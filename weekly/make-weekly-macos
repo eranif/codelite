@@ -2,7 +2,7 @@
 
 . $(dirname $(readlink -f $0))/make-weekly-common
 
-CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release
+CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release-weekly
 OSX_VER=macOS_$(sw_vers |grep ProductVersion|cut -d":" -f2|tr -d [:space:])
 package_file=codelite-${OSX_VER}-${arch}.app.tar.gz
 
@@ -11,7 +11,7 @@ mkdir -p ${CODELITE_BUILD_DIR}
 cd ${CODELITE_BUILD_DIR}
 rm -fr codelite.app/
 rm -f ${package_file}
-cmake -DCMAKE_BUILD_TYPE=Release .. -Wno-dev
+cmake -DCMAKE_BUILD_TYPE=Release .. -Wno-dev -DWITH_CHATAI=ON
 make -j${cpu_count} install
 
 # Sign the app

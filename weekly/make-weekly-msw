@@ -2,8 +2,8 @@
 
 . $(dirname $(readlink -f $0))/make-weekly-common
 
-WXCRAFTER_BUILD_DIR=${CODELITE_HOME}/build-release-wxcapp
-CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release
+WXCRAFTER_BUILD_DIR=${CODELITE_HOME}/build-release-weekly-wxcapp
+CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release-weekly
 
 echo "-- CodeLite build dir is: ${CODELITE_BUILD_DIR}"
 
@@ -13,7 +13,7 @@ function build_codelite() {
     cd ${CODELITE_BUILD_DIR}
 
     echo "-- Building CodeLite. PWD: ${CODELITE_BUILD_DIR}"
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DWXWIN=$HOME/root -G"MinGW Makefiles"
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DWXWIN=$HOME/root -G"MinGW Makefiles" -DWITH_CHATAI=ON
     mingw32-make -j${cpu_count} install
 }
 

@@ -2,14 +2,14 @@
 
 . $(dirname $(readlink -f $0))/make-weekly-common
 
-WXCRAFTER_BUILD_DIR=${CODELITE_HOME}/build-release-wxcapp
-CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release
+WXCRAFTER_BUILD_DIR=${CODELITE_HOME}/build-release-weekly-wxcapp
+CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release-weekly
 
 function linux_build_codelite() {
     mkdir -p ${CODELITE_BUILD_DIR}
     cd ${CODELITE_BUILD_DIR}
     rm -fr *.deb
-    cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+    cmake -DCMAKE_BUILD_TYPE=Release -DWITH_CHATAI=ON -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
     make -j${cpu_count} package
     package_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
     upload_path="/var/www/html/downloads/codelite/${version}"
@@ -24,7 +24,7 @@ function linux_build_wxcrafter() {
     mkdir -p ${WXCRAFTER_BUILD_DIR}
     cd ${WXCRAFTER_BUILD_DIR}
     rm -fr *.deb
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXC_APP=1 -Wno-dev
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCOPY_WX_LIBS=1 -DWXC_APP=1 -Wno-dev 
     make -j${cpu_count} package
     rm -f *Unspecified.deb
     package_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`

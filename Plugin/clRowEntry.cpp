@@ -33,7 +33,7 @@
 // macOS
 #define SELECTION_RECT_DEFLATE_X 1
 #define SELECTION_RECT_DEFLATE_Y 0
-#define SELECTION_RADIUS 5.0
+#define SELECTION_RADIUS 0.0
 #endif
 
 namespace
@@ -119,13 +119,12 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
     wxUnusedVar(win);
     wxUnusedVar(win);
 
-    wxColour selectionPen = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-    wxColour selectionBg = selectionPen.ChangeLightness(DrawingUtils::IsDark(selectionPen) ? 130 : 80);
+    wxColour selectionBg = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+    wxColour selectionPen = selectionBg;
 
     wxRect r = rect;
-    r.Deflate(SELECTION_RECT_DEFLATE_X, SELECTION_RECT_DEFLATE_Y);
     r = r.CenterIn(rect);
-    draw_item_selected_rect(win, dc, r, selectionPen, selectionBg, SELECTION_RADIUS);
+    draw_item_selected_rect(win, dc, r, selectionPen, selectionBg, 0.0);
 }
 
 void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clCellValue& cell)
@@ -834,13 +833,13 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
     wxColour text_colour = GetTextColour(col);
     if (!text_colour.IsOk()) {
         if (IsSelected()) {
-            text_colour = colours.GetSelItemTextColour();
+            text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
         } else {
             text_colour = colours.GetItemTextColour();
         }
     } else if (IsSelected()) {
         // when selected, override the user provided colour
-        text_colour = colours.GetSelItemTextColour();
+        text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     }
 
     dc.SetTextForeground(text_colour);

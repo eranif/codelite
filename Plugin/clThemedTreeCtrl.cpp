@@ -26,7 +26,7 @@ clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoin
 
 bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
-    if(!clTreeCtrl::Create(parent, id, pos, size, style | TREE_STYLE)) {
+    if (!clTreeCtrl::Create(parent, id, pos, size, style | TREE_STYLE)) {
         return false;
     }
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);

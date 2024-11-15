@@ -426,16 +426,16 @@ bool FileUtils::FuzzyMatch(const wxString& needle, const wxString& haystack)
 
 bool FileUtils::IsHidden(const wxString& filename)
 {
+    wxString fullname = wxFileName(filename).GetFullName();
 #ifdef __WXMSW__
     DWORD dwAttrs = GetFileAttributes(filename.c_str());
     if (dwAttrs == INVALID_FILE_ATTRIBUTES) {
         return false;
     }
-    return (dwAttrs & FILE_ATTRIBUTE_HIDDEN) || (wxFileName(filename).GetFullName().StartsWith("."));
+    return (dwAttrs & FILE_ATTRIBUTE_HIDDEN) || (fullname.StartsWith(".") || fullname.StartsWith("_"));
 #else
     // is it enough to test for file name?
-    wxFileName fn(filename);
-    return fn.GetFullName().StartsWith(".");
+    return fullname.StartsWith(".") || fullname.StartsWith("_");
 #endif
 }
 

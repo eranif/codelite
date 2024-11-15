@@ -27,7 +27,7 @@ void init_from_colour(clColours* colours, const wxColour& baseColour)
     }
     bool is_dark = DrawingUtils::IsDark(baseColour);
     bool is_light = !is_dark;
-    colours->bgColour = is_dark ? baseColour.ChangeLightness(107) : baseColour;
+    colours->bgColour = is_dark ? baseColour : *wxWHITE;
 
     // determine the text colour
     colours->itemTextColour =

@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "imanager.h"
 
+#include <optional>
 #include <wx/app.h>
 #include <wx/button.h>
 #include <wx/panel.h>
@@ -156,4 +157,15 @@ void clSystemSettings::OnAppActivated(wxActivateEvent& event)
     }
 }
 
-bool clSystemSettings::IsDark() { return DrawingUtils::IsDark(GetDefaultPanelColour()); }
+bool clSystemSettings::IsDark()
+{
+#if wxCHECK_VERSION(3, 3, 0)
+    return GetAppearance().IsDark();
+#else
+    static std::optional<bool> isDark;
+    if (!isDark.has_value()) {
+        isDark = DrawingUtils::IsDark(GetDefaultPanelColour());
+    }
+    return isDark.value();
+#endif
+}

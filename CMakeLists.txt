@@ -53,7 +53,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(WITH_CHATAI "Enable ChatAI plugin" ON)
+option(WITH_CHATAI "Enable ChatAI plugin" OFF)
 
 # Set this option to "ON" in order to get CMake standard/expected behavior
 set(RETAIN_CACHED_VALUES
@@ -585,6 +585,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     set(DEBUG_BUILD 1)
     set(CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_dbg.h")
     set(CL_PCH_TARGET "precompiled_header_dbg.h.gch")
+    set(BUILD_TYPE "Debug")
 
     # Set the libraries output directory
     set(CL_BIN_DIR bin)
@@ -895,6 +896,11 @@ if(NOT APPLE)
     set(LIBYAML_CPP "yaml-cpp")
 endif()
 
+if(DEBUG_BUILD)
+    set(CMAKE_CXX_FLAGS_RELEASE "")
+    message(STATUS "CMAKE_CXX_FLAGS_RELEASE=${CMAKE_CXX_FLAGS_RELEASE}")
+endif()
+
 add_compile_definitions(wxUSE_GUI=1) # Missing `#include <wx/setup.h>` before `#if wxUse_GUI` for some generated files
 
 add_subdirectory(CxxParser)
@@ -1186,3 +1192,4 @@ elseif(MINGW AND WXC_APP)
 endif()
 
 unset(WITH_CHATAI CACHE)
+unset(DEBUG_BUILD CACHE)

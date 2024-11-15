@@ -51,9 +51,6 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     , m_newfileTemplate("Untitled.txt")
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
 {
-    ::MSWSetNativeTheme(GetTreeCtrl());
-    GetTreeCtrl()->SetFont(DrawingUtils::GetDefaultGuiFont());
-
     m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER | wxTB_FLAT);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();

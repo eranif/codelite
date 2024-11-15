@@ -73,7 +73,6 @@
 #include "setters_getters_dlg.h"
 #include "symbols_dialog.h"
 #include "workspacetab.h"
-#include "wxCodeCompletionBoxManager.h"
 
 #include <algorithm>
 #include <wx/choicdlg.h>
@@ -106,13 +105,6 @@ static bool IsSource(const wxString& ext)
     wxString e(ext);
     e = e.MakeLower();
     return e == "cpp" || e == "cxx" || e == "c" || e == "c++" || e == "cc" || e == "ipp";
-}
-
-static bool IsHeader(const wxString& ext)
-{
-    wxString e(ext);
-    e = e.MakeLower();
-    return e == "hpp" || e == "h" || e == "hxx";
 }
 
 #define VALIDATE_PROJECT(ctrl)         \
@@ -214,69 +206,6 @@ void ContextCpp::OnDwellEnd(wxStyledTextEvent& event)
     clEditor& rCtrl = GetCtrl();
     rCtrl.DoCancelCalltip();
     event.Skip();
-}
-
-wxString ContextCpp::GetFileImageString(const wxString& ext)
-{
-    if (IsSource(ext)) {
-        return "?15";
-    }
-    if (IsHeader(ext)) {
-        return "?16";
-    }
-    return "?17";
-}
-
-wxString ContextCpp::GetImageString(const TagEntry& entry)
-{
-    if (entry.GetKind() == "class") {
-        return "?1";
-    }
-    if (entry.GetKind() == "struct") {
-        return "?2";
-    }
-    if (entry.GetKind() == "namespace") {
-        return "?3";
-    }
-    if (entry.GetKind() == "variable") {
-        return "?4";
-    }
-    if (entry.GetKind() == "typedef") {
-        return "?5";
-    }
-    if (entry.GetKind() == "member" && entry.GetAccess().Contains("private")) {
-        return "?6";
-    }
-    if (entry.GetKind() == "member" && entry.GetAccess().Contains("public")) {
-        return "?7";
-    }
-    if (entry.GetKind() == "member" && entry.GetAccess().Contains("protected")) {
-        return "?8";
-    }
-    // member with no access? (maybe part of namespace??)
-    if (entry.GetKind() == "member") {
-        return "?7";
-    }
-    if ((entry.GetKind() == "function" || entry.GetKind() == "prototype") && entry.GetAccess().Contains("private")) {
-        return "?9";
-    }
-    if ((entry.GetKind() == "function" || entry.GetKind() == "prototype") &&
-        (entry.GetAccess().Contains("public") || entry.GetAccess().IsEmpty())) {
-        return "?10";
-    }
-    if ((entry.GetKind() == "function" || entry.GetKind() == "prototype") && entry.GetAccess().Contains("protected")) {
-        return "?11";
-    }
-    if (entry.GetKind() == "macro") {
-        return "?12";
-    }
-    if (entry.GetKind() == "enum") {
-        return "?13";
-    }
-    if (entry.GetKind() == "enumerator") {
-        return "?14";
-    }
-    return wxEmptyString;
 }
 
 void ContextCpp::AutoIndent(const wxChar& nChar)
@@ -433,30 +362,6 @@ bool ContextCpp::CodeComplete(long pos)
         from = GetCtrl().GetCurrentPos();
     }
     return DoCodeComplete(from);
-}
-
-void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
-{
-    CHECK_JS_RETURN_VOID();
-    for (size_t i = 0; i < src.size(); i++) {
-        if (i == 0) {
-            target.push_back(src.at(0));
-        } else {
-            if (src.at(i)->GetName() != target.at(target.size() - 1)->GetName()) {
-                target.push_back(src.at(i));
-            }
-        }
-    }
-}
-
-wxString ContextCpp::GetWordUnderCaret()
-{
-    clEditor& rCtrl = GetCtrl();
-    // Get the partial word that we have
-    long pos = rCtrl.GetCurrentPos();
-    long start = rCtrl.WordStartPosition(pos, true);
-    long end = rCtrl.WordEndPosition(pos, true);
-    return rCtrl.GetTextRange(start, end);
 }
 
 void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
@@ -652,56 +557,6 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
 }
 
 bool ContextCpp::CompleteWord() { return false; }
-
-void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
-{
-    CHECK_JS_RETURN_VOID();
-    wxString list;
-
-    wxString fileName(word);
-    wxArrayString files;
-    TagsManagerST::Get()->GetFilesForCC(fileName, files);
-    files.Sort();
-
-    if (!files.IsEmpty()) {
-        // Show completion box for files
-        wxCodeCompletionBoxEntry::Vec_t entries;
-        wxCodeCompletionBox::BmpVec_t bitmaps;
-        bitmaps.push_back(m_cppFileBmp);
-        bitmaps.push_back(m_hFileBmp);
-        bitmaps.push_back(m_otherFileBmp);
-        // Make sure that the file list is unique
-        wxStringSet_t matches;
-        for (size_t i = 0; i < files.GetCount(); ++i) {
-            wxFileName fn(files.Item(i));
-            if (matches.count(files.Item(i))) {
-                continue; // we already have this file in the list, don't add another one
-            }
-            matches.insert(files.Item(i));
-
-            int imgID = 0;
-            switch (FileExtManager::GetType(fn.GetFullName())) {
-            case FileExtManager::TypeSourceC:
-            case FileExtManager::TypeSourceCpp:
-                imgID = 0;
-                break;
-            case FileExtManager::TypeHeader:
-                imgID = 1;
-                break;
-            default:
-                imgID = 2; // other
-                break;
-            }
-
-            if (FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeHeader ||
-                FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeOther) {
-                entries.push_back(wxCodeCompletionBoxEntry::New(files.Item(i), imgID));
-            }
-        }
-        wxCodeCompletionBoxManager::Get().ShowCompletionBox(&GetCtrl(), entries, bitmaps, wxCodeCompletionBox::kNone,
-                                                            wxNOT_FOUND, this);
-    }
-}
 
 //=============================================================================
 // <<<<<<<<<<<<<<<<<<<<<<<<<<< CodeCompletion API - END
@@ -1858,80 +1713,6 @@ bool ContextCpp::IsComment(long pos)
             style == wxSTC_C_COMMENTDOCKEYWORDERROR);
 }
 
-void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
-{
-    int off = 0;
-    wxString fileName(wxEmptyString);
-    bool success(false);
-
-    // Disable the "Limit opened buffers" feature for during replacements
-    clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(false);
-
-    // Try to maintain as far as possible the editor and line within it that the user started from.
-    // Otherwise a different editor may be selected, and the original one will have scrolled to the last replacement
-    int current_line = wxSTC_INVALID_POSITION;
-    clEditor* current = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (current) {
-        current_line = current->GetCurrentLine();
-    }
-
-    clEditor* previous = NULL;
-    for (CppToken::Vec_t::const_iterator iter = li.begin(); iter != li.end(); ++iter) {
-        CppToken cppToken = *iter;
-        wxString file_name(cppToken.getFilename());
-        if (fileName == file_name) {
-            // update next token offset in case we are still in the same file
-            cppToken.setOffset(cppToken.getOffset() + off);
-        } else {
-            // switched file
-            off = 0;
-            fileName = file_name;
-        }
-
-        // Open the file only once
-        clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-        if (!editor || editor->GetFileName().GetFullPath() != file_name) {
-            editor = clMainFrame::Get()->GetMainBook()->OpenFile(file_name, wxEmptyString, 0);
-            // We've loaded a new editor, so start a new bulk undo action for it
-            // (this can only be done per editor, not per refactor :( )
-            // First end any previous one
-            if (previous) {
-                previous->EndUndoAction();
-            }
-            editor->BeginUndoAction();
-            previous = editor;
-        }
-
-        if (editor) {
-            editor->SetSelection(cppToken.getOffset(), cppToken.getOffset() + cppToken.getName().length());
-            if (editor->GetSelectionStart() != editor->GetSelectionEnd()) {
-                editor->ReplaceSelection(word);
-                off += word.Len() - cppToken.getName().length();
-                success = true; // Flag that there's been at least one replacement
-            }
-        }
-    }
-
-    // The last editor won't have this done otherwise
-    if (previous) {
-        previous->EndUndoAction();
-    }
-
-    if (current) {
-        clMainFrame::Get()->GetMainBook()->SelectPage(current);
-        if (current_line != wxSTC_INVALID_POSITION) {
-            current->GotoLine(current_line);
-        }
-    }
-
-    // re-enable the feature again
-    clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
-
-    if (success) {
-        clGetManager()->GetStatusBar()->SetMessage(_("Symbol renamed"));
-    }
-}
-
 void ContextCpp::OnRetagFile(wxCommandEvent& e)
 {
     CHECK_JS_RETURN_VOID();
@@ -1970,54 +1751,6 @@ void ContextCpp::OnUserTypedXChars(const wxString& word)
     }
 }
 
-void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags)
-{
-    // C++ keywords are handled differently
-    if (!IsJavaScript()) {
-        return;
-    }
-
-    LexerConf::Ptr_t lexPtr;
-    // Read the configuration file
-    if (EditorConfigST::Get()->IsOk()) {
-        lexPtr = EditorConfigST::Get()->GetLexer(this->GetName());
-    }
-
-    wxString cppWords;
-
-    if (lexPtr) {
-        cppWords = lexPtr->GetKeyWords(1);
-
-    } else {
-        cppWords = "abstract boolean break byte case catch char class "
-                   "const continue debugger default delete do double else enum export extends "
-                   "final finally float for function goto if implements import in instanceof "
-                   "int interface long native new package private protected public "
-                   "return short static super switch synchronized this throw throws "
-                   "transient try typeof var void volatile while with";
-    }
-
-    wxString s1(word);
-    std::set<wxString> uniqueWords;
-    wxArrayString wordsArr = wxStringTokenize(cppWords, " \r\t\n");
-    for (size_t i = 0; i < wordsArr.GetCount(); i++) {
-
-        // Dont add duplicate words
-        if (uniqueWords.find(wordsArr.Item(i)) != uniqueWords.end()) {
-            continue;
-        }
-
-        uniqueWords.insert(wordsArr.Item(i));
-        wxString s2(wordsArr.Item(i));
-        if (s2.StartsWith(s1) || s2.Lower().StartsWith(s1.Lower())) {
-            TagEntryPtr tag(new TagEntry());
-            tag->SetName(wordsArr.Item(i));
-            tag->SetKind("cpp_keyword");
-            tags.push_back(tag);
-        }
-    }
-}
-
 wxString ContextCpp::CallTipContent()
 {
     // if we have an active call tip, return its content
@@ -2028,72 +1761,6 @@ wxString ContextCpp::CallTipContent()
 }
 
 bool ContextCpp::DoCodeComplete(long pos) { return false; }
-
-void ContextCpp::DoOpenWorkspaceFile()
-{
-    wxFileName fileName(m_selectedWord);
-    wxString tmpName(m_selectedWord);
-
-    tmpName.Replace("\\", "/");
-    if (tmpName.Contains("..")) {
-        tmpName = fileName.GetFullName();
-    }
-
-#ifdef __WXMSW__
-    // On windows, files are case in-sensitive
-    tmpName.MakeLower();
-#endif
-
-    std::vector<wxFileName> files, files2;
-
-#ifdef __WXMSW__
-    wxString lcNameOnly = fileName.GetFullName();
-    lcNameOnly.MakeLower();
-    TagsManagerST::Get()->GetFiles(lcNameOnly, files);
-#else
-    TagsManagerST::Get()->GetFiles(fileName.GetFullName(), files);
-#endif
-
-    // filter out the all files that does not have an exact match
-    for (size_t i = 0; i < files.size(); i++) {
-        wxString curFileName = files.at(i).GetFullPath();
-
-#ifdef __WXMSW__
-        // On windows, files are case in-sensitive
-        curFileName.MakeLower();
-#endif
-
-        curFileName.Replace("\\", "/");
-        if (curFileName.EndsWith(tmpName)) {
-            files2.push_back(files.at(i));
-        }
-    }
-
-    wxString fileToOpen;
-    if (files2.size() > 1) {
-        wxArrayString choices;
-        wxStringSet_t uniqueFileSet;
-        for (size_t i = 0; i < files2.size(); i++) {
-            wxString fullPath = files2.at(i).GetFullPath();
-            wxString fullPathLc = (wxGetOsVersion() & wxOS_WINDOWS) ? fullPath.Lower() : fullPath;
-
-            // Dont add duplicate entries.
-            // On Windows, we have a non case sensitive file system
-            if (uniqueFileSet.count(fullPathLc) == 0) {
-                uniqueFileSet.insert(fullPathLc);
-                choices.Add(fullPath);
-            }
-        }
-
-        fileToOpen = wxGetSingleChoice(_("Select file to open:"), _("Select file"), choices, &GetCtrl());
-    } else if (files2.size() == 1) {
-        fileToOpen = files2.at(0).GetFullPath();
-    }
-
-    if (fileToOpen.IsEmpty() == false) {
-        clMainFrame::Get()->GetMainBook()->OpenFile(fileToOpen);
-    }
-}
 
 void ContextCpp::DoCreateFile(const wxFileName& fn)
 {
@@ -2349,68 +2016,6 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
 }
 
 bool ContextCpp::IsDefaultContext() const { return false; }
-
-bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl)
-{
-    CHECK_JS_RETURN_FALSE();
-    start = wxNOT_FOUND;
-    end = wxNOT_FOUND;
-
-    int nStart = ctrl->PositionFromLine(line);
-    int nLen = ctrl->GetLength();
-    int nCur = nStart;
-
-    while (nCur < nLen) {
-        wxChar ch = ctrl->SafeGetChar(nCur);
-        if (IsCommentOrString(nCur)) {
-            nCur++;
-            continue;
-        }
-
-        if (ch == '(') {
-            start = nCur;
-            nCur++;
-            break;
-        }
-        nCur++;
-    }
-
-    if (start == wxNOT_FOUND) {
-        return false;
-    }
-
-    // search for the function end position
-    int nDepth = 1;
-    while ((nCur < nLen) && nDepth > 0) {
-
-        wxChar ch = ctrl->SafeGetChar(nCur);
-        if (ctrl->GetContext()->IsCommentOrString(nCur)) {
-            nCur++;
-            continue;
-        }
-
-        switch (ch) {
-        case '(':
-            nDepth++;
-            break;
-        case ')':
-            nDepth--;
-            if (nDepth == 0) {
-                nCur++;
-                end = nCur;
-            }
-            break;
-        default:
-            break;
-        }
-        nCur++;
-    }
-
-    if (end == wxNOT_FOUND) {
-        return false;
-    }
-    return true;
-}
 
 bool ContextCpp::IsJavaScript() const
 {

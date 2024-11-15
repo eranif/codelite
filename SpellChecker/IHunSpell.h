@@ -112,8 +112,6 @@ public:
     bool ChangeLanguage(const wxString& language);
     /// check spelling for one word. Return true if the word was found.
     bool CheckWord(const wxString& word) const;
-    /// is a word in the tags database?
-    bool IsTag(const wxString& word) const;
     /// returns an array with suggestions for the misspelled word.
     wxArrayString GetSuggestions(const wxString& misspelled);
     /// makes a spell check for the given plain text. Canceled is set to true when the user cancels.
@@ -139,8 +137,6 @@ public:
     }
     /// gets whether to ignore words that match ctags symbols
     bool GetIgnoreSymbolsInTagsDatabase() const { return m_ignoreSymbolsInTagsDatabase; }
-    ///
-    void AddWord(const wxString& word);
 
     void SetUserDictPath(const wxString& userDictPath) { this->m_userDictPath = userDictPath; }
     const wxString& GetUserDictPath() const { return m_userDictPath; }
@@ -181,7 +177,6 @@ protected:
 
     bool LoadUserDict(const wxString& filename);
     bool SaveUserDict(const wxString& filename);
-    wxString GetCharacterEncoding();
 
     wxString m_dicPath;      // dictionary path
     wxString m_dictionary;   // dictionary base filename

@@ -178,11 +178,6 @@ public:
     void SetOptions(OptionsConfigPtr opts);
 
     /**
-     * save lexers settings
-     */
-    void SaveLexers();
-
-    /**
      * get an array of recently opened items e.g. workspaces
      * \param files  [output] a place holder for the output
      * \param nodename  the type of item to get

@@ -26,18 +26,12 @@
 #ifndef CLPLATFORM_H
 #define CLPLATFORM_H
 
-#include <wx/string.h>
 #include <wx/wxchar.h>
 
 class clPlatform
 {
 public:
-    enum eOS { kGtk, kWindows, kMac, kUnknown };
-    static wxChar PathSeparator;
-    static wxChar DirSeparator;
-
-public:
-    static clPlatform::eOS GetOS();
+    static const wxChar PathSeparator;
 };
 
 #endif // CLPLATFORM_H

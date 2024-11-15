@@ -32,17 +32,6 @@
 #include <set>
 #include <wx/tokenzr.h>
 
-bool IsWordChar(const wxString& s, int strSize)
-{
-    if(strSize) {
-        return s.find_first_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_")) !=
-               wxString::npos;
-
-    } else {
-        return s.find_first_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")) != wxString::npos;
-    }
-}
-
 bool IsWordCharA(char c, int strSize)
 {
     if(strSize) {
@@ -99,28 +88,6 @@ std::string ReplaceWordA(const std::string& str, const std::string& word, const 
     }
     return output;
 }
-
-void TokenizeWords(const wxString& str, std::list<wxString>& outputList)
-{
-    outputList.clear();
-    Scanner_t scanner = ::LexerNew(str);
-    if(scanner) {
-        CxxLexerToken token;
-        while(::LexerNext(scanner, token)) {
-            if(token.GetType() == T_IDENTIFIER || token.GetType() == T_PP_IDENTIFIER) {
-                outputList.push_back(token.GetWXString());
-                // put a limit or we might run into memory issues
-                if(outputList.size() >= 1000) {
-                    break;
-                }
-            }
-        }
-        // Destroy the lexer
-        ::LexerDestroy(&scanner);
-    }
-}
-
-static PPTable* ms_instance = NULL;
 
 void PPToken::print(wxFFile& fp)
 {
@@ -261,37 +228,6 @@ void PPToken::expandOnce(const wxArrayString& initList)
 }
 
 ///////////////////////////////////////////////////
-
-PPTable::PPTable() {}
-
-PPTable::~PPTable() {}
-
-PPTable* PPTable::Instance()
-{
-    if(ms_instance == NULL) {
-        ms_instance = new PPTable();
-    }
-    return ms_instance;
-}
-
-void PPTable::Release()
-{
-    if(ms_instance) {
-        delete ms_instance;
-    }
-    ms_instance = NULL;
-}
-
-PPToken PPTable::Token(const wxString& name)
-{
-    std::map<wxString, PPToken>::iterator iter = m_table.find(name);
-    if(iter == m_table.end()) {
-        return PPToken();
-    }
-
-    return iter->second;
-}
-
 std::string replacement;
 
 bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::string& outStr)

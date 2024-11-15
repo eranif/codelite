@@ -3041,8 +3041,8 @@ void Manager::DoRestartCodeLite()
 
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-    app->SetRestartCodeLite(true);
-    app->SetRestartCommand(restartCodeLiteCommand, workingDirectory);
+    CodeLiteApp::SetRestartCodeLite(true);
+    CodeLiteApp::SetRestartCommand(restartCodeLiteCommand, workingDirectory);
 }
 
 void Manager::OnRestart(clCommandEvent& event)

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef LITEEDITOR_APP_H
-#define LITEEDITOR_APP_H
+#pragma once
 
 #include "clPersistenceManager.h"
 #include "frame.h"
@@ -50,9 +49,9 @@ protected:
     wxString m_exeToDebug;
     wxString m_debuggerArgs;
     wxString m_debuggerWorkingDirectory;
-    bool m_restartCodeLite = false;
-    wxString m_restartCommand;
-    wxString m_restartWD;
+    static bool m_restartCodeLite;
+    static wxString m_restartCommand;
+    static wxString m_restartWD;
     wxCmdLineParser m_parser;
 
 private: // Methods
@@ -69,6 +68,7 @@ public:
     CodeLiteApp(void);
     virtual ~CodeLiteApp(void);
 
+    static void FinalizeShutdown();
     void SetAllowedPlugins(const wxArrayString& allowedPlugins) { this->m_allowedPlugins = allowedPlugins; }
     void SetPluginLoadPolicy(const PluginPolicy& pluginLoadPolicy) { this->m_pluginLoadPolicy = pluginLoadPolicy; }
     const wxArrayString& GetAllowedPlugins() const { return m_allowedPlugins; }
@@ -91,14 +91,15 @@ public:
     const wxString& GetDebuggerWorkingDirectory() const { return m_debuggerWorkingDirectory; }
     const wxString& GetExeToDebug() const { return m_exeToDebug; }
 
-    void SetRestartCodeLite(bool restartCodeLite) { this->m_restartCodeLite = restartCodeLite; }
-    void SetRestartCommand(const wxString& restartCommand, const wxString& workingDirectory)
+    // Restart related variables
+    static void SetRestartCodeLite(bool restartCodeLite) { m_restartCodeLite = restartCodeLite; }
+    static void SetRestartCommand(const wxString& restartCommand, const wxString& workingDirectory)
     {
-        this->m_restartCommand = restartCommand;
-        this->m_restartWD = workingDirectory;
+        m_restartCommand = restartCommand;
+        m_restartWD = workingDirectory;
     }
-    bool IsRestartCodeLite() const { return m_restartCodeLite; }
-    const wxString& GetRestartCommand() const { return m_restartCommand; }
+    static bool IsRestartCodeLite() { return m_restartCodeLite; }
+    static const wxString& GetRestartCommand() { return m_restartCommand; }
 
     void ProcessCommandLineParams();
 
@@ -110,5 +111,3 @@ protected:
     void OpenFile(const wxString& path, long lineNumber);
     void OpenItem(const wxString& path, long lineNumber);
 };
-
-#endif // LITEEDITOR_APP_H

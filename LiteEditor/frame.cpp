@@ -884,6 +884,12 @@ clMainFrame::~clMainFrame(void)
 
     // Remove the temporary folder and its content
     clStandardPaths::Get().RemoveTempDir();
+
+    //  Finalize the shutdown
+    CodeLiteApp::FinalizeShutdown();
+
+    // Exit
+    wxTheApp->ExitMainLoop();
 }
 
 void clMainFrame::Construct()
@@ -1918,12 +1924,14 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
+    clSYSTEM() << "Closing main frame" << endl;
     if (!SaveLayoutAndSession()) {
         event.Veto();
         event.Skip(false);
         return;
     }
 
+    clSYSTEM() << "..Saving general settings" << endl;
     SaveGeneralSettings();
 
     event.Skip();
@@ -1932,22 +1940,28 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     ManagerST::Get()->SetShutdownInProgress(true);
 
     // Notify the plugins that we are going down
+    clSYSTEM() << "..Notifying plugins to terminate" << endl;
     clCommandEvent eventGoingDown(wxEVT_GOING_DOWN);
     EventNotifier::Get()->ProcessEvent(eventGoingDown);
+    clSYSTEM() << "..Notifying plugins to terminate...done" << endl;
 
     // Stop the search thread
+    clSYSTEM() << "..Stopping search threads" << endl;
     ManagerST::Get()->KillProgram();
     SearchThreadST::Get()->StopSearch();
 
     // Stop any debugging session if any
+    clSYSTEM() << "..Stopping any running debugger" << endl;
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
     if (debugger && debugger->IsRunning()) {
         ManagerST::Get()->DbgStop();
     }
 
+    clSYSTEM() << "..Flushing clipboard" << endl;
     // In case we got some data in the clipboard, flush it so it will be available
     // after our process exits
     wxTheClipboard->Flush();
+    clSYSTEM() << "Closing main frame...done" << endl;
 }
 
 void clMainFrame::LoadSession(const wxString& sessionName)

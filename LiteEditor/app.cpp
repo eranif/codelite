@@ -779,28 +779,7 @@ void CodeLiteApp::ProcessCommandLineParams()
     }
 }
 
-int CodeLiteApp::OnExit()
-{
-    clDEBUG() << "Bye" << endl;
-    EditorConfigST::Free();
-    ConfFileLocator::Release();
-
-    // flush any saved changes to the configuration file
-    clConfig::Get().Save();
-
-    if (IsRestartCodeLite()) {
-        // Execute new CodeLite instance
-        clSYSTEM() << "Restarting CodeLite:" << GetRestartCommand();
-        if (!this->m_restartWD.empty()) {
-            ::wxSetWorkingDirectory(this->m_restartWD);
-        }
-        wxExecute(GetRestartCommand(), wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
-    }
-
-    // Delete the temp folder
-    wxFileName::Rmdir(clStandardPaths::Get().GetTempDir(), wxPATH_RMDIR_RECURSIVE);
-    return 0;
-}
+int CodeLiteApp::OnExit() { return 0; }
 
 bool CodeLiteApp::CopySettings(const wxString& destDir, wxString& installPath)
 {
@@ -1145,4 +1124,33 @@ void CodeLiteApp::OpenItem(const wxString& path, long lineNumber)
             OpenFile(fn.GetFullPath(), lineNumber);
         }
     }
+}
+
+// Restart related code
+bool CodeLiteApp::m_restartCodeLite = false;
+wxString CodeLiteApp::m_restartCommand;
+wxString CodeLiteApp::m_restartWD;
+
+void CodeLiteApp::FinalizeShutdown()
+{
+    clDEBUG() << "Finalizing shutdown..." << endl;
+
+    EditorConfigST::Free();
+    ConfFileLocator::Release();
+
+    // flush any saved changes to the configuration file
+    clConfig::Get().Save();
+
+    if (m_restartCodeLite) {
+        // Execute new CodeLite instance
+        clDEBUG() << "Restarting CodeLite:" << GetRestartCommand();
+        if (!m_restartWD.empty()) {
+            ::wxSetWorkingDirectory(m_restartWD);
+        }
+        ::wxExecute(GetRestartCommand(), wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
+    }
+
+    // Delete the temp folder
+    wxFileName::Rmdir(clStandardPaths::Get().GetTempDir(), wxPATH_RMDIR_RECURSIVE);
+    clDEBUG() << "Finalizing shutdown...success" << endl;
 }

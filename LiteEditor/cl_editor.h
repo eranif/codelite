@@ -478,9 +478,6 @@ public:
     // try to match a brace from the current caret pos and select the region
     void MatchBraceAndSelect(bool selRegion);
 
-    // Popup a find/replace dialog
-    void DoFindAndReplace(bool isReplaceDlg);
-
     // set this page as active, this usually happened when user changed the notebook
     // page to this one
     void SetActive() override;

@@ -162,10 +162,12 @@ bool clSystemSettings::IsDark()
 #if wxCHECK_VERSION(3, 3, 0)
     return GetAppearance().IsDark();
 #else
-    static std::optional<bool> isDark;
-    if (!isDark.has_value()) {
+    static bool isDark = false;
+    static bool once = true;
+    if (once) {
+        once = false;
         isDark = DrawingUtils::IsDark(GetDefaultPanelColour());
     }
-    return isDark.value();
+    return isDark;
 #endif
 }

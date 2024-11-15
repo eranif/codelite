@@ -1,7 +1,6 @@
 #include "CompileCommandsGenerator.h"
 
 #include "AsyncProcess/processreaderthread.h"
-#include "CompileCommandsJSON.h"
 #include "CompileFlagsTxt.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "JSON.h"

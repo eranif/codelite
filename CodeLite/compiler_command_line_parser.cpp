@@ -175,52 +175,12 @@ CompilerCommandLineParser::~CompilerCommandLineParser()
     m_argc = 0;
 }
 
-wxString CompilerCommandLineParser::GetCompileLine() const
-{
-    wxString s;
-    for(size_t i = 0; i < m_includes.GetCount(); i++) {
-        s << "-I" << m_includes.Item(i) << " ";
-    }
-
-    for(size_t i = 0; i < m_macros.GetCount(); i++) {
-        s << "-D" << m_macros.Item(i) << " ";
-    }
-
-    for(size_t i = 0; i < m_sysroots.size(); ++i) {
-        s << "-isysroot " << m_sysroots.Item(i) << " ";
-    }
-    s.Trim().Trim(false);
-    return s;
-}
-
 wxString CompilerCommandLineParser::GetStandardWithPrefix() const
 {
     if(m_standard.IsEmpty()) {
         return "";
     }
     return "-std=" + m_standard;
-}
-
-void CompilerCommandLineParser::MakeAbsolute(const wxString& path)
-{
-    wxArrayString incls;
-    incls.reserve(m_includes.size());
-
-    for(size_t i = 0; i < m_includes.GetCount(); ++i) {
-        wxFileName fn(m_includes.Item(i), "");
-        fn.MakeAbsolute(path);
-        incls.Add(fn.GetPath());
-    }
-    m_includes.swap(incls);
-
-    m_includesWithPrefix.Clear();
-    for(size_t i = 0; i < m_framworks.GetCount(); ++i) {
-        m_includesWithPrefix.Add("-F" + m_framworks.Item(i));
-    }
-
-    for(size_t i = 0; i < m_includes.GetCount(); ++i) {
-        m_includesWithPrefix.Add("-I" + m_includes.Item(i));
-    }
 }
 
 void CompilerCommandLineParser::AddIncludesFromFile(const wxFileName& includeFile)

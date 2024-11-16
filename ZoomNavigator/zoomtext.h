@@ -36,19 +36,21 @@
 #include "ieditor.h"
 
 #include <wx/stc/stc.h>
-#include <wx/timer.h>
+
+class wxTimer;
+class wxTimerEvent;
 
 class ZoomText : public wxStyledTextCtrl
 {
     int m_zoomFactor;
     wxColour m_colour;
     wxString m_filename;
-    wxTimer* m_timer;
+    wxTimer* m_timer = nullptr;
 
 public:
-    enum MarkerType {
-        MARKER_ERROR,
-        MARKER_WARNING,
+    enum class MarkerType {
+        Error,
+        Warning,
     };
 
 protected:
@@ -59,15 +61,14 @@ protected:
                            const wxString& others);
 
 public:
-    ZoomText(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxSTCNameStr);
-    virtual ~ZoomText();
+    explicit ZoomText(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxSTCNameStr);
+    ~ZoomText() override;
     void UpdateLexer(IEditor* editor);
     void OnSettingsChanged(wxCommandEvent& e);
     void UpdateText(IEditor* editor);
     void HighlightLines(int start, int end);
     void UpdateMarkers(const std::vector<int>& lines, MarkerType type);
-    void DeleteAllMarkers();
     void Startup();
 };
 

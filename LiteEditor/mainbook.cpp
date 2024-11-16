@@ -69,12 +69,14 @@ int FrameTimerId = wxNewId();
 // return the wxBORDER_SIMPLE that matches the current application theme
 wxBorder get_border_simple_theme_aware_bit()
 {
-#if defined(__WXMAC__) || defined(__WXMSW__)
+#if defined(__WXMSW__)
     if (clSystemSettings::GetAppearance().IsDark()) {
         return wxBORDER_SIMPLE;
     } else {
         return wxBORDER_THEME;
     }
+#elif defined(__WXMAC__)
+    return wxBORDER_NONE;
 #else
     return wxBORDER_DEFAULT;
 #endif

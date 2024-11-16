@@ -81,6 +81,28 @@ wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
     ret += wxT("...");
     return ret;
 }
+
+void Draw3DSash(wxDC& dc, const wxRect& rect, int orientation, const wxColour& bg, const wxColour& light_colour,
+                const wxColour& dark_colour)
+{
+    dc.SetPen(bg);
+    dc.SetBrush(bg);
+    dc.DrawRectangle(rect);
+
+    if (orientation == wxVERTICAL) {
+        dc.SetPen(light_colour);
+        dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
+
+        dc.SetPen(dark_colour);
+        dc.DrawLine(rect.GetTopLeft(), rect.GetBottomLeft());
+    } else {
+        dc.SetPen(light_colour);
+        dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+
+        dc.SetPen(dark_colour);
+        dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
+    }
+}
 } // namespace
 
 // ------------------------------------------------------------
@@ -297,16 +319,33 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
     wxUnusedVar(window);
 
     bool isDark = clSystemSettings::IsDark();
-#ifdef __WXGTK__
+#if defined(__WXGTK__)
     auto colour = isDark ? clSystemSettings::GetDefaultPanelColour().ChangeLightness(120)
                          : clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
-#else
-    auto colour = isDark ? clSystemSettings::GetDefaultPanelColour().ChangeLightness(120)
-                         : clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-#endif
+
     dc.SetPen(colour);
     dc.SetBrush(colour);
     dc.DrawRectangle(rect);
+#elif defined(__WXMAC__)
+    if (isDark) {
+        auto bg_colour = clSystemSettings::GetDefaultPanelColour().ChangeLightness(120);
+        auto light_col = bg_colour.ChangeLightness(50);
+        auto dark_col = bg_colour.ChangeLightness(50);
+        Draw3DSash(dc, rect, orientation, bg_colour, light_col, dark_col);
+
+    } else {
+        auto dark_col = wxColour("LIGHT GREY");
+        auto light_col = wxColour("WHITE");
+        auto bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        Draw3DSash(dc, rect, orientation, bg_colour, light_col, dark_col);
+    }
+#else
+    auto colour = isDark ? clSystemSettings::GetDefaultPanelColour().ChangeLightness(120)
+                         : clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    dc.SetPen(colour);
+    dc.SetBrush(colour);
+    dc.DrawRectangle(rect);
+#endif
 }
 
 void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)

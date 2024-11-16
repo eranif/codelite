@@ -19,10 +19,8 @@ class WXDLLIMPEXP_CL clConsoleEnvironment
 
 public:
     clConsoleEnvironment(const wxStringMap_t& env);
-    clConsoleEnvironment();
     ~clConsoleEnvironment();
 
-    void Add(const wxString& name, const wxString& value);
     void Apply();
     void UnApply();
 };

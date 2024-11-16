@@ -116,11 +116,14 @@ namespace
 
 void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
-    wxUnusedVar(win);
-    wxUnusedVar(win);
-
     wxColour selectionBg = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     wxColour selectionPen = selectionBg;
+
+#ifdef __WXMSW__
+    if (!clSystemSettings::IsDark() && DrawingUtils::IsDark(selectionBg)) {
+        selectionBg = selectionBg.ChangeLightness(150);
+    }
+#endif
 
     wxRect r = rect;
     r = r.CenterIn(rect);
@@ -784,42 +787,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 void clRowEntry::RenderText(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y,
                             size_t col)
 {
-    if (IsHighlight()) {
-        const clMatchResult& hi = GetHighlightInfo();
-        Str3Arr_t arr;
-        if (!hi.Get(col, arr)) {
-            RenderTextSimple(win, dc, colours, text, x, y, col);
-            return;
-        }
-        dc.SetFont(m_tree->GetDefaultFont());
-        const wxColour& defaultTextColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour();
-        const wxColour& matchBgColour = colours.GetMatchedItemBgText();
-        const wxColour& matchTextColour = colours.GetMatchedItemText();
-        int xx = x;
-        wxRect rowRect = GetItemRect();
-        for (size_t i = 0; i < arr.size(); ++i) {
-            wxString str = arr[i];
-            bool is_match = (i == 1); // the middle entry is always the matched string
-            wxSize sz = dc.GetTextExtent(str);
-            rowRect.SetX(xx);
-            rowRect.SetWidth(sz.GetWidth());
-            if (is_match) {
-                // draw a match rectangle
-                dc.SetPen(matchBgColour.IsOk() ? matchBgColour : GetBgColour());
-                dc.SetBrush(matchBgColour.IsOk() ? matchBgColour : GetBgColour());
-                dc.SetTextForeground(matchTextColour.IsOk() ? matchTextColour : defaultTextColour);
-                rowRect.Deflate(1);
-                dc.DrawRoundedRectangle(rowRect, 0);
-            } else {
-                dc.SetTextForeground(defaultTextColour);
-            }
-            dc.DrawText(str, xx, y);
-            xx += sz.GetWidth();
-        }
-    } else {
-        // No match
-        RenderTextSimple(win, dc, colours, text, x, y, col);
-    }
+    RenderTextSimple(win, dc, colours, text, x, y, col);
 }
 
 void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y,

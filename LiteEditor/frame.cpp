@@ -4969,13 +4969,18 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 
 void clMainFrame::DoSuggestRestart()
 {
-    if (::wxMessageBox(_("Restart is required for changes to take effect\rContinue with restart?"), "CodeLite",
+#ifdef __WXMSW__
+    ::wxMessageBox(_("A restart is required for changes to take effect"), "CodeLite",
+                   wxICON_INFORMATION | wxOK | wxCENTER);
+#else
+    if (::wxMessageBox(_("A restart is required for changes to take effect\rContinue with restart?"), "CodeLite",
                        wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION, this) != wxYES) {
         return;
     }
 
     wxCommandEvent event_dummy;
     ManagerST::Get()->OnCmdRestart(event_dummy);
+#endif
 }
 
 void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)

@@ -1141,14 +1141,17 @@ void CodeLiteApp::FinalizeShutdown()
     // flush any saved changes to the configuration file
     clConfig::Get().Save();
 
+#if 0
     if (m_restartCodeLite) {
         // Execute new CodeLite instance
-        clDEBUG() << "Restarting CodeLite:" << GetRestartCommand();
         if (!m_restartWD.empty()) {
             ::wxSetWorkingDirectory(m_restartWD);
         }
+        clSYSTEM() << "Restarting CodeLite:" << GetRestartCommand() << endl;
         ::wxExecute(GetRestartCommand(), wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
+        wxSleep(1);
     }
+#endif
 
     // Delete the temp folder
     wxFileName::Rmdir(clStandardPaths::Get().GetTempDir(), wxPATH_RMDIR_RECURSIVE);

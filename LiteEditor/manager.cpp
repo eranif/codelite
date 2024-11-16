@@ -3011,11 +3011,15 @@ void Manager::DbgRestoreWatches()
 
 void Manager::DoRestartCodeLite()
 {
+#if defined(__WXMSW__)
+    return;
+#else
+
     wxString restartCodeLiteCommand;
     wxString workingDirectory;
     CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxTheApp);
 
-#if defined(__WXGTK__) || defined(__WXMSW__)
+#if defined(__WXGTK__)
     // The Shell is our friend
     restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
 
@@ -3043,6 +3047,7 @@ void Manager::DoRestartCodeLite()
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
     CodeLiteApp::SetRestartCodeLite(true);
     CodeLiteApp::SetRestartCommand(restartCodeLiteCommand, workingDirectory);
+#endif
 }
 
 void Manager::OnRestart(clCommandEvent& event)

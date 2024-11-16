@@ -20,9 +20,9 @@ git submodule update --init
 ```bash
 mkdir build-release
 cd build-release
-cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release                 \
-         -DwxBUILD_DEBUG_LEVEL=0                                        \
-         -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1    \
+cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
+         -DwxBUILD_DEBUG_LEVEL=0                        \
+         -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME  \
          -DCMAKE_INSTALL_PREFIX=$HOME/root
 mingw32-make -j$(nproc) install
 ```
@@ -33,8 +33,8 @@ mingw32-make -j$(nproc) install
 mkdir build-debug
 cd build-debug
 cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DwxBUILD_DEBUG_LEVEL=1 \
-    -DwxBUILD_SAMPLES=SOME  -DwxBUILD_MONOLITHIC=1  -DwxUSE_STL=1             \
-    -DCMAKE_INSTALL_PREFIX=$HOME/root  
+    -DwxBUILD_SAMPLES=SOME  -DwxBUILD_MONOLITHIC=1                            \
+    -DCMAKE_INSTALL_PREFIX=$HOME/root
 mingw32-make -j$(nproc) install
 ```
 

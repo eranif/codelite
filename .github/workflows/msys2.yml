@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wx-version: ['v3.2.5', 'master']
+        wx-version: ['fd0f60daea24e9c62d372d774be9e32ce2b0849d', 'master'] # <v3.2.7 cannot be compiled with clang-19
 
     steps:
     - uses: msys2/setup-msys2@v2

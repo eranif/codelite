@@ -44,7 +44,7 @@ jobs:
       run: |
         mkdir build-release
         cd build-release
-        cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_MYSQL=1 -DWITH_POSTGRES=1 -DWITH_CHATAI=1 -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1
         make -j$(nproc)
         sudo make install
         ctest --output-on-failure

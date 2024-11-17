@@ -1252,8 +1252,16 @@ void clMainFrame::CreateGUIControls()
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
     // Get the best caption size
+#ifndef __WXMAC__
     int captionSize = GetBestXButtonSize(this);
     captionSize += 4; // 2 pixles space for bottom and top
+#else
+    auto font = DrawingUtils::GetDefaultGuiFont();
+    wxClientDC client_dc{ this };
+    client_dc.SetFont(font);
+    double height = client_dc.GetTextExtent("Tp").GetHeight();
+    int captionSize = (int)(height * 1.5);
+#endif
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR, DrawingUtils::GetPanelBgColour());
@@ -4946,8 +4954,8 @@ void clMainFrame::DoSuggestRestart()
         return;
     }
 
-    wxCommandEvent event_dummy;
-    ManagerST::Get()->OnCmdRestart(event_dummy);
+    clCommandEvent event_dummy;
+    ManagerST::Get()->OnRestart(event_dummy);
 #endif
 }
 

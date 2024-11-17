@@ -755,7 +755,6 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_highlightWord(false)
     , m_workspaceRetagIsRequired(false)
     , m_bookmarksDropDownMenu(NULL)
-    , m_noSavePerspectivePrompt(false)
     , m_singleInstanceThread(NULL)
 #ifdef __WXGTK__
     , m_isWaylandSession(false)
@@ -800,12 +799,6 @@ clMainFrame::~clMainFrame(void)
     // Free the code completion manager
     CodeCompletionManager::Release();
 
-// this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
-// see this wxWidgets bug report for more details:
-//  http://trac.wxwidgets.org/ticket/14292
-#if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
-    delete m_myMenuBar;
-#endif
     m_infoBar->Unbind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
     wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED,
@@ -1260,8 +1253,7 @@ void clMainFrame::CreateGUIControls()
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
     // Get the best caption size
     int captionSize = GetBestXButtonSize(this);
-    int extra = ::clGetSize(8, this);
-    captionSize += extra;
+    captionSize += 4; // 2 pixles space for bottom and top
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR, DrawingUtils::GetPanelBgColour());
@@ -1678,12 +1670,8 @@ bool clMainFrame::StartSetupWizard(bool firstTime)
         }
 
         if (wiz.IsRestartRequired()) {
-            // Don't annoy the user by showing the 'Save Perspective' dialog,
-            // especially as he hasn't yet had a chance to set it!
-            // Also, the dialog would probably get hidden behind the new CL instance
-            SetNoSavePerspectivePrompt(true);
-
-            clCommandEvent restartEvent(wxEVT_RESTART_CODELITE);
+            // Force a CodeLite restart
+            clCommandEvent restartEvent(wxEVT_FORCE_RESTART_CODELITE);
             ManagerST::Get()->AddPendingEvent(restartEvent);
             return true;
         }
@@ -3590,17 +3578,6 @@ void clMainFrame::CompleteInitialization()
         }
     }
 
-    // Prompt the user to adjust his colours
-    bool colourAdjusted = clConfig::Get().Read("ColoursAdjusted", false);
-    if (!colourAdjusted) {
-        // Adjust the user colour
-        GetMessageBar()->DisplayMessage(
-            _("CodeLite now offers a better editor colour theme support, would you like to fix this now?"),
-            wxICON_QUESTION, { { XRCID("adjust-current-theme"), _("Yes") }, { wxID_NO, "" } });
-
-        // regardless of the answer, dont bug the user again
-        clConfig::Get().Write("ColoursAdjusted", true);
-    }
     MSWSetWindowDarkTheme(this);
 
     // time to create the file explorer
@@ -5972,7 +5949,8 @@ void clMainFrame::OnInfobarButton(wxCommandEvent& event)
     event.Skip(); // needed to make sure that the bar is hidden
     int buttonID = event.GetId();
     if (buttonID == XRCID("restart-codelite")) {
-        ManagerST::Get()->OnCmdRestart(event);
+        clCommandEvent restartEvent{ wxEVT_FORCE_RESTART_CODELITE };
+        ManagerST::Get()->OnForcedRestart(restartEvent);
     } else {
         clCommandEvent buttonEvent(wxEVT_INFO_BAR_BUTTON);
         buttonEvent.SetInt(buttonID);

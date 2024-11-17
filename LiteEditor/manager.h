@@ -49,8 +49,6 @@ class IProcess;
 // The Manager class
 // ====================================================================
 
-extern const wxEventType wxEVT_CMD_RESTART_CODELITE;
-
 class DisplayVariableDlg;
 
 class DbgStackInfo
@@ -67,7 +65,6 @@ public:
     }
 
     ~DbgStackInfo() { Clear(); }
-
     void Clear()
     {
         func.Clear();
@@ -75,9 +72,7 @@ public:
     }
 
     bool operator==(const DbgStackInfo& rhs) { return func == rhs.func && depth == rhs.depth; }
-
     bool operator!=(const DbgStackInfo& rhs) { return func != rhs.func || depth != rhs.depth; }
-
     bool IsValid() const { return !func.IsEmpty() && depth != wxString::npos; }
 };
 
@@ -142,7 +137,7 @@ public:
     void SetRepositionEditor(bool b) { m_repositionEditor = b; }
 
     void OnRestart(clCommandEvent& event);
-    void OnCmdRestart(wxCommandEvent& event);
+    void OnForcedRestart(clCommandEvent& event);
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnUpdateDebuggerActiveView(clDebugEvent& event);
@@ -152,7 +147,7 @@ public:
     void OnDebuggerStopping(clDebugEvent& event);
 
 protected:
-    void DoRestartCodeLite();
+    void DoRestartCodeLite(bool force = false);
 
     //--------------------------- Workspace Loading -----------------------------
 public:

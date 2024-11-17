@@ -410,21 +410,6 @@ private:
      */
     bool StartSetupWizard(bool firstTime);
 
-    /**
-     * @brief see if the wizard changed developer profile
-     * @return true if the 'Save Perspective' dialog should not be shown
-     */
-    bool GetAndResetNoSavePerspectivePrompt()
-    {
-        bool ans = m_noSavePerspectivePrompt;
-        m_noSavePerspectivePrompt = false;
-        return ans;
-    }
-    /**
-     * @brief mark not to show the 'Save Perspective' dialog on next close
-     */
-    void SetNoSavePerspectivePrompt(bool devProfileChanged) { m_noSavePerspectivePrompt = devProfileChanged; }
-
     void DoShowCaptions(bool show);
 
 public:

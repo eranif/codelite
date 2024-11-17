@@ -855,6 +855,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DND_FILE_DROPPED, clCommandEvent)
 // a codelite restart is required
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_RESTART_CODELITE, clCommandEvent);
 
+// A forced restart is required
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FORCE_RESTART_CODELITE, clCommandEvent);
+
 // Event: clCommandEvent
 // Toggle workspace view tab. Use event.IsSelected() to test whether we should hide/show the tab
 // In anycase, you should not destroy the window, just hide it

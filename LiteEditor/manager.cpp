@@ -106,8 +106,6 @@
 #include <sys/wait.h>
 #endif
 
-const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
-
 //---------------------------------------------------------------
 // Debugger helper method
 //---------------------------------------------------------------
@@ -264,10 +262,9 @@ Manager::Manager(void)
     , m_repositionEditor(true)
 {
     Bind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
+    Bind(wxEVT_FORCE_RESTART_CODELITE, &Manager::OnForcedRestart, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
-
-    Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
                                   clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
@@ -299,10 +296,9 @@ Manager::~Manager(void)
 {
     EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
     Unbind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
+    Unbind(wxEVT_FORCE_RESTART_CODELITE, &Manager::OnForcedRestart, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
-
-    Disconnect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
 
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
                                      clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
@@ -3009,20 +3005,22 @@ void Manager::DbgRestoreWatches()
     }
 }
 
-void Manager::DoRestartCodeLite()
+void Manager::DoRestartCodeLite([[maybe_unused]] bool force)
 {
-#if defined(__WXMSW__)
-    return;
-#else
-
     wxString restartCodeLiteCommand;
     wxString workingDirectory;
     CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxTheApp);
 
-#if defined(__WXGTK__)
-    // The Shell is our friend
-    restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
+#if defined(__WXMSW__) || defined(__WXGTK__)
+#ifdef __WXMSW__
+    // We only support force restarts on Windows
+    if (!force) {
+        CodeLiteApp::SetRestartCodeLite(false);
+        return;
+    }
+#endif
 
+    restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
     // Restore the original working dir and any paramters
     for (int i = 1; i < wxTheApp->argc; ++i) {
         wxString cmdArg = wxTheApp->argv[i];
@@ -3043,18 +3041,15 @@ void Manager::DoRestartCodeLite()
     ::WrapInShell(restartCodeLiteCommand);
 #endif
 
-    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
+    // Fire an exit event (the restart takes place just before CodeLite exits)
+    wxCommandEvent event(wxEVT_MENU, wxID_EXIT);
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
     CodeLiteApp::SetRestartCodeLite(true);
     CodeLiteApp::SetRestartCommand(restartCodeLiteCommand, workingDirectory);
-#endif
 }
 
-void Manager::OnRestart(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoRestartCodeLite();
-}
+void Manager::OnRestart(clCommandEvent& event) { DoRestartCodeLite(false); }
+void Manager::OnForcedRestart(clCommandEvent& event) { DoRestartCodeLite(true); }
 
 void Manager::DoShowQuickWatchDialog(const DebuggerEventData& event)
 {
@@ -3297,12 +3292,6 @@ void Manager::OnFindInFilesDismissed(clFindInFilesEvent& event)
         clConfig::Get().Write("FindInFiles/CXX/Mask", event.GetFileMask());
         clConfig::Get().Write("FindInFiles/CXX/LookIn", event.GetPaths());
     }
-}
-
-void Manager::OnCmdRestart(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    CallAfter(&Manager::DoRestartCodeLite);
 }
 
 bool Manager::IsDebuggerViewVisible(const wxString& name)

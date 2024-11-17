@@ -25,15 +25,10 @@
 
 #include "cl_aui_dock_art.h"
 
-#include "ColoursAndFontsManager.h"
 #include "clStatusBar.h"
 #include "clSystemSettings.h"
-#include "clTabRenderer.h"
 #include "cl_command_event.h"
-#include "cl_config.h"
-#include "codelite_events.h"
 #include "drawingutils.h"
-#include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
@@ -90,16 +85,16 @@ void Draw3DSash(wxDC& dc, const wxRect& rect, int orientation, const wxColour& b
     dc.DrawRectangle(rect);
 
     if (orientation == wxVERTICAL) {
-        dc.SetPen(light_colour);
+        dc.SetPen(dark_colour);
         dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
 
-        dc.SetPen(dark_colour);
+        dc.SetPen(light_colour);
         dc.DrawLine(rect.GetTopLeft(), rect.GetBottomLeft());
     } else {
-        dc.SetPen(light_colour);
+        dc.SetPen(dark_colour);
         dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 
-        dc.SetPen(dark_colour);
+        dc.SetPen(light_colour);
         dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
     }
 }
@@ -334,9 +329,9 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
     }
 #elif defined(__WXMAC__)
     if (isDark) {
-        auto bg_colour = clSystemSettings::GetDefaultPanelColour().ChangeLightness(120);
-        auto light_col = bg_colour.ChangeLightness(50);
-        auto dark_col = bg_colour.ChangeLightness(50);
+        auto bg_colour = clSystemSettings::GetDefaultPanelColour().ChangeLightness(110);
+        auto light_col = bg_colour.ChangeLightness(120);
+        auto dark_col = bg_colour.ChangeLightness(60);
         Draw3DSash(dc, rect, orientation, bg_colour, light_col, dark_col);
 
     } else {

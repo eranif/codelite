@@ -1141,7 +1141,7 @@ void CodeLiteApp::FinalizeShutdown()
     // flush any saved changes to the configuration file
     clConfig::Get().Save();
 
-#if 0
+#if defined(__WXMAC__) || defined(__WXGTK__)
     if (m_restartCodeLite) {
         // Execute new CodeLite instance
         if (!m_restartWD.empty()) {
@@ -1149,7 +1149,6 @@ void CodeLiteApp::FinalizeShutdown()
         }
         clSYSTEM() << "Restarting CodeLite:" << GetRestartCommand() << endl;
         ::wxExecute(GetRestartCommand(), wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
-        wxSleep(1);
     }
 #endif
 

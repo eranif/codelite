@@ -50,7 +50,7 @@ jobs:
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
         sed -i "s/typedef wxUint32 wxChar32;/#include <uchar.h>\n    typedef char32_t wxChar32;/g" ../include/wx/defs.h
-        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME
+        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1
         mingw32-make -j$(nproc) && PATH="/clang64/bin:$PATH" mingw32-make install
 
     # wx-config-msys2

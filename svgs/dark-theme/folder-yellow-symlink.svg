@@ -1,74 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-
 <svg
-   width="800px"
-   height="800px"
-   viewBox="0 0 512 512"
    version="1.1"
-   id="svg7"
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
+   xml:space="preserve"
+   id="svg10"
    sodipodi:docname="folder-yellow-symlink.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <defs
-     id="defs11" />
-  <sodipodi:namedview
-     id="namedview9"
-     pagecolor="#505050"
-     bordercolor="#eeeeee"
-     borderopacity="1"
-     inkscape:pageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="0"
-     showgrid="false"
-     inkscape:zoom="0.97375"
-     inkscape:cx="399.48652"
-     inkscape:cy="399.48652"
-     inkscape:window-width="3840"
-     inkscape:window-height="2080"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg7" />
-  <title
-     id="title2">folder-filled</title>
-  <g
-     id="Page-1"
-     stroke="none"
-     stroke-width="1"
-     fill="none"
-     fill-rule="evenodd"
-     style="fill:#d3d3d3"
-     transform="matrix(1.05,0,0,1,-12.800002,2e-6)">
-    <g
-       id="folder-outline"
-       fill="#000000"
-       transform="translate(42.666667,85.333333)"
-       style="fill:#d3d3d3">
-      <polygon
-         id="Shape"
-         points="178.08341,1.4210855e-14 232.04181,42.666667 426.66667,42.666667 426.66667,341.33333 3.5527137e-14,341.33333 3.5527137e-14,1.4210855e-14 "
-         style="fill:#d3d3d3" />
-    </g>
-  </g>
-  <metadata
-     id="metadata828">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:title>folder-filled</dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <path
-     fill="#000000"
-     d="M 314.36996,249.47453 H 180.41579 a 7.2072681,6.526485 0 1 0 0,13.05297 h 133.95417 l -52.56977,47.59108 a 7.2163677,6.5347246 0 0 0 10.20549,9.24149 l 64.86535,-58.73831 a 7.2072614,6.5264789 0 0 0 0,-9.2415 l -64.86535,-58.73831 a 7.2163709,6.5347275 0 1 0 -10.20549,9.2415 z"
-     id="path2-2"
-     style="fill:#696969;stroke:#696969;stroke-width:13.1463;stroke-miterlimit:4;stroke-dasharray:none" />
-</svg>
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+   id="namedview12"
+   pagecolor="#505050"
+   bordercolor="#eeeeee"
+   borderopacity="1"
+   inkscape:pageshadow="0"
+   inkscape:pageopacity="0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="3.0429688"
+   inkscape:cx="12.980744"
+   inkscape:cy="128"
+   inkscape:window-width="2429"
+   inkscape:window-height="1195"
+   inkscape:window-x="1059"
+   inkscape:window-y="325"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="svg10" />
+
+<defs
+   id="defs2">
+</defs>
+<g
+   style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;"
+   transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"
+   id="g8">
+	<path
+   d="M 0 68.798 v 11.914 c 0 1.713 1.401 3.114 3.114 3.114 h 0 c 3.344 0 4.805 -2.642 4.805 -2.642 L 8.14 29.281 l 2.739 -2.827 l 72.894 -2.977 v -1.482 c 0 -2.396 -1.942 -4.338 -4.338 -4.338 H 50.236 c -1.15 0 -2.254 -0.457 -3.067 -1.27 l -8.943 -8.943 c -0.813 -0.813 -1.917 -1.27 -3.067 -1.27 H 4.338 C 1.942 6.174 0 8.116 0 10.512 v 7.146 v 2.332 V 68.798"
+   style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(224,173,49); fill-rule: nonzero; opacity: 1;"
+   transform=" matrix(1 0 0 1 0 0) "
+   stroke-linecap="round"
+   id="path4" />
+	<path
+   d="M 3.114 83.826 L 3.114 83.826 c 1.713 0 3.114 -1.401 3.114 -3.114 V 27.81 c 0 -2.393 1.94 -4.333 4.333 -4.333 h 75.107 c 2.393 0 4.333 1.94 4.333 4.333 v 51.684 c 0 2.393 -1.94 4.333 -4.333 4.333 C 85.667 83.826 3.114 83.826 3.114 83.826 z"
+   style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(255,200,67); fill-rule: nonzero; opacity: 1;"
+   transform=" matrix(1 0 0 1 0 0) "
+   stroke-linecap="round"
+   id="path6" />
+</g>
+<path
+   fill="#000000"
+   d="M 168.2766,149.6589 H 75.691887 a 4.9814235,3.8134155 0 1 0 0,7.62683 H 168.2766 l -36.33449,27.80741 a 4.9877158,3.8182321 0 0 0 7.05369,5.39979 l 44.8328,-34.32072 a 4.9814218,3.8134141 0 0 0 0,-5.3998 l -44.8328,-34.32072 a 4.9877158,3.8182321 0 1 0 -7.05369,5.39979 z"
+   id="path2-5"
+   style="fill:#ffffff;stroke:#ffffff;stroke-width:8.35436;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" /></svg>

@@ -1,11 +1,8 @@
 #include "clTabRendererMinimal.hpp"
 
-#include "clColours.h"
-#include "clGenericNotebook.hpp"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
 #include "globals.h"
-#include "imanager.h"
 
 #include <wx/dcmemory.h>
 #include <wx/font.h>
@@ -198,8 +195,12 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
             dc.DrawLine(tabRect.GetRightTop(), tabRect.GetRightBottom());
         }
         {
-            wxDCPenChanger pen_changer(dc, bottom_pen);
-            dc.DrawLine(tabRect.GetBottomLeft(), tabRect.GetBottomRight());
+            wxDCPenChanger pen_changer(dc, side_pen);
+            if (style & kNotebook_BottomTabs) {
+                dc.DrawLine(tabRect.GetTopLeft(), tabRect.GetTopRight());
+            } else {
+                dc.DrawLine(tabRect.GetBottomLeft(), tabRect.GetBottomRight());
+            }
         }
     }
 

@@ -28,6 +28,7 @@
 #include "clScrolledPanel.h"
 #include "clSystemSettings.h"
 #include "clTabRenderer.h"
+#include "editor_config.h"
 
 #include <wx/app.h>
 #include <wx/dc.h>
@@ -245,14 +246,16 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const 
     dc.SetBrush(savedBrush);
 }
 
-int DrawingUtils::GetTabHeight(wxDC& dc, wxWindow* win, int requestedHeight)
+int DrawingUtils::GetTabHeight(wxDC& dc, wxWindow* win)
 {
+    // get the label height + add spacer based on the notebook requested height
+    int spacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
     wxFont font = clTabRenderer::GetTabFont(true);
     wxDCFontChanger font_changer{ dc, font };
-    wxCoord measured_texty, tmp;
-    dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
-
-    int tab_height = measured_texty + (4 * requestedHeight);
+    wxCoord yy, xx;
+    dc.GetTextExtent(wxT("Tp"), &xx, &yy);
+    wxUnusedVar(xx);
+    int tab_height = yy + (2 * spacer);
     return tab_height;
 }
 

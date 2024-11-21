@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DRAWINGUTILS_H
-#define DRAWINGUTILS_H
+#pragma once
 
 #include "clColours.h"
 #include "codelite_exports.h"
@@ -73,10 +72,9 @@ public:
     static void DrawTabBackgroundArea(wxDC& dc, wxWindow* wnd, const wxRect& rect);
 
     /**
-     * @brief return the height of tab control
-     * @param requestedHeight - the value from `ptions->GetNotebookTabHeight()`
+     * @brief return the height of the tab control
      */
-    static int GetTabHeight(wxDC& dc, wxWindow* win, int requestedHeight);
+    static int GetTabHeight(wxDC& dc, wxWindow* win);
 
     /**
      * @brief return a fallback fixed font incase we could not locate one in the
@@ -190,5 +188,3 @@ public:
     /// return GCDC, this function never fails
     static wxDC& GetGCDC(wxDC& dc, wxGCDC& gdc);
 };
-
-#endif // DRAWINGUTILS_H

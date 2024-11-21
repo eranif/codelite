@@ -1,10 +1,8 @@
 #include "clGenericNotebook.hpp"
 
-#include "ColoursAndFontsManager.h"
 #include "JSON.h"
 #include "clColours.h"
 #include "clSystemSettings.h"
-#include "clTabRendererMinimal.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
@@ -291,7 +289,7 @@ void clTabCtrl::DoSetBestSize()
     wxSize sz = dc.GetTextExtent(text);
     int bmpHeight = clTabRenderer::GetDefaultBitmapHeight(GetArt()->ySpacer);
 
-    m_nHeight = DrawingUtils::GetTabHeight(dc, this, GetArt()->ySpacer);
+    m_nHeight = DrawingUtils::GetTabHeight(dc, this);
     m_nHeight = wxMax(m_nHeight, bmpHeight);
     m_nWidth = sz.GetWidth();
 

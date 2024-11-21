@@ -25,6 +25,7 @@
 #include "workspacetab.h"
 
 #include "DefaultWorkspacePage.h"
+#include "SideBar.hpp"
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButtonBase.h"
 #include "clTreeCtrlPanel.h"
@@ -41,13 +42,13 @@
 #include "plugin.h"
 #include "pluginmanager.h"
 #include "project_settings_dlg.h"
-#include "SideBar.hpp"
 
 #include <algorithm>
 #include <wx/button.h>
 #include <wx/combobox.h>
 #include <wx/dcbuffer.h>
 #include <wx/sizer.h>
+#include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
 static bool SortPinnedProjects(clRowEntry* a, clRowEntry* b)
@@ -119,7 +120,7 @@ WorkspaceTab::~WorkspaceTab()
 void WorkspaceTab::CreateGUIControls()
 {
     int index = m_simpleBook->FindPage(m_panelCxx);
-    if(index != wxNOT_FOUND) {
+    if (index != wxNOT_FOUND) {
         // set the C++ workspace view name to fit its workspace type
         //// Construct the tree
         m_simpleBook->SetPageText(index, clCxxWorkspaceST::Get()->GetWorkspaceType());
@@ -151,7 +152,7 @@ void WorkspaceTab::FreezeThaw(bool freeze /*=true*/)
     wxCHECK_RET(!(!freeze && !frozen), wxT("Trying to thaw a warm workspace tab"));
     frozen = freeze;
 
-    if(freeze) {
+    if (freeze) {
         was_linked = m_isLinkedToEditor;
         m_isLinkedToEditor = false;
     } else {
@@ -201,7 +202,7 @@ void WorkspaceTab::OnLinkEditor(wxCommandEvent& e)
 {
     m_isLinkedToEditor = e.IsChecked();
     EditorConfigST::Get()->SetInteger(wxT("LinkWorkspaceViewToEditor"), m_isLinkedToEditor ? 1 : 0);
-    if(m_isLinkedToEditor) {
+    if (m_isLinkedToEditor) {
         OnActiveEditorChanged(e);
     }
 }
@@ -209,7 +210,7 @@ void WorkspaceTab::OnLinkEditor(wxCommandEvent& e)
 void WorkspaceTab::OnCollapseAll(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!m_fileView->GetRootItem().IsOk())
+    if (!m_fileView->GetRootItem().IsOk())
         return;
     m_fileView->CollapseAll();
 
@@ -221,9 +222,9 @@ void WorkspaceTab::OnCollapseAll(wxCommandEvent& e)
 
     wxArrayTreeItemIds arr;
     size_t count = m_fileView->GetSelections(arr);
-    if(count == 1) {
+    if (count == 1) {
         wxTreeItemId sel = arr.Item(0);
-        if(sel.IsOk()) {
+        if (sel.IsOk()) {
             m_fileView->EnsureVisible(sel);
         }
     }
@@ -235,16 +236,16 @@ void WorkspaceTab::OnGoHome(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     wxString activeProject = ManagerST::Get()->GetActiveProjectName();
-    if(activeProject.IsEmpty())
+    if (activeProject.IsEmpty())
         return;
     m_fileView->ExpandToPath(activeProject, wxFileName());
 
     wxArrayTreeItemIds arr;
     size_t count = m_fileView->GetSelections(arr);
 
-    if(count == 1) {
+    if (count == 1) {
         wxTreeItemId sel = arr.Item(0);
-        if(sel.IsOk() && m_fileView->ItemHasChildren(sel))
+        if (sel.IsOk() && m_fileView->ItemHasChildren(sel))
             m_fileView->Expand(sel);
     }
     ManagerST::Get()->ShowWorkspacePane(m_caption);
@@ -267,7 +268,7 @@ void WorkspaceTab::OnProjectSettingsUI(wxUpdateUIEvent& e)
 void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 {
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(editor && !editor->GetProject().IsEmpty()) {
+    if (editor && !editor->GetProject().IsEmpty()) {
         m_fileView->ExpandToPath(editor->GetProject(), editor->GetFileName());
         ManagerST::Get()->ShowWorkspacePane(m_caption);
     }
@@ -283,10 +284,10 @@ void WorkspaceTab::OnShowFileUI(wxUpdateUIEvent& e)
 void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-    if(m_isLinkedToEditor) {
+    if (m_isLinkedToEditor) {
         MainBook* mainbook = clMainFrame::Get()->GetMainBook();
         clEditor* editor = mainbook->GetActiveEditor();
-        if(editor && !editor->GetProject().IsEmpty()) {
+        if (editor && !editor->GetProject().IsEmpty()) {
             m_fileView->CallAfter(&FileViewTree::ExpandToPath, editor->GetProject(), editor->GetFileName());
         }
     }
@@ -295,7 +296,7 @@ void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
 void WorkspaceTab::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
-    if(ManagerST::Get()->IsWorkspaceOpen()) {
+    if (ManagerST::Get()->IsWorkspaceOpen()) {
         // Tree construction
         m_fileView->BuildTree();
         CallAfter(&WorkspaceTab::DoGoHome);
@@ -310,12 +311,23 @@ void WorkspaceTab::OnEditorClosing(wxCommandEvent& e) { e.Skip(); }
 void WorkspaceTab::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
+    wxWindowUpdateLocker locker{ this };
+
+    SaveCxxPinnedProjects();
+    m_cxxPinnedProjects.clear();
     m_fileView->DeleteAllItems();
+
+    m_splitterPageTreeView->GetSizer()->Detach(m_fileView);
+    m_fileView->Destroy();
+
+    m_fileView = new FileViewTree(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition,
+                                  wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1, -1)),
+                                  wxTR_MULTIPLE | wxTR_NO_LINES | wxTR_HAS_BUTTONS);
+    m_splitterPageTreeView->GetSizer()->Add(m_fileView, 1, wxEXPAND, WXC_FROM_DIP(5));
+    m_splitterPageTreeView->GetSizer()->Layout();
 
     // Clear the pinned projects view
     m_dvListCtrlPinnedProjects->DeleteAllItems();
-    SaveCxxPinnedProjects();
-    m_cxxPinnedProjects.clear();
     SendCmdEvent(wxEVT_FILE_VIEW_INIT_DONE);
 }
 
@@ -324,7 +336,7 @@ void WorkspaceTab::OnProjectAdded(clCommandEvent& e)
     e.Skip();
     const wxString& projName = e.GetString();
     m_fileView->BuildTree();
-    if(!projName.IsEmpty()) {
+    if (!projName.IsEmpty()) {
         m_fileView->ExpandToPath(projName, wxFileName());
     }
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
@@ -355,7 +367,7 @@ void WorkspaceTab::OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Enable(Mana
 
 void WorkspaceTab::OpenProjectSettings(const wxString& project)
 {
-    if(m_dlg) {
+    if (m_dlg) {
         m_dlg->Raise();
         return;
     }
@@ -367,7 +379,7 @@ void WorkspaceTab::OpenProjectSettings(const wxString& project)
     // Allow plugins to process this event first
     clCommandEvent openEvent(wxEVT_CMD_OPEN_PROJ_SETTINGS);
     openEvent.SetString(project);
-    if(EventNotifier::Get()->ProcessEvent(openEvent)) {
+    if (EventNotifier::Get()->ProcessEvent(openEvent)) {
         return;
     }
 
@@ -394,7 +406,7 @@ void WorkspaceTab::OpenProjectSettings(const wxString& project)
 
     // Mark this project as modified
     ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
-    if(proj) {
+    if (proj) {
         proj->SetModified(true);
     }
 }
@@ -404,16 +416,16 @@ void WorkspaceTab::ProjectSettingsDlgClosed() { m_dlg = NULL; }
 void WorkspaceTab::DoGoHome()
 {
     wxString activeProject = ManagerST::Get()->GetActiveProjectName();
-    if(activeProject.IsEmpty())
+    if (activeProject.IsEmpty())
         return;
     m_fileView->ExpandToPath(activeProject, wxFileName());
 
     wxArrayTreeItemIds arr;
     size_t count = m_fileView->GetSelections(arr);
 
-    if(count == 1) {
+    if (count == 1) {
         wxTreeItemId sel = arr.Item(0);
-        if(sel.IsOk() && m_fileView->ItemHasChildren(sel))
+        if (sel.IsOk() && m_fileView->ItemHasChildren(sel))
             m_fileView->Expand(sel);
     }
     // ManagerST::Get()->ShowWorkspacePane(m_caption);
@@ -431,21 +443,21 @@ void WorkspaceTab::LoadCxxPinnedProjects()
     clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetPinnedProjects(m_cxxPinnedProjects);
 
     // We got the pinned projects loaded, update the view
-    if(m_cxxPinnedProjects.empty()) {
+    if (m_cxxPinnedProjects.empty()) {
         // hide the to view
-        if(m_splitter->IsSplit()) {
+        if (m_splitter->IsSplit()) {
             m_splitter->Unsplit(m_splitterPagePinnedProjects);
         }
     } else {
         // ensure the view is visible
-        if(!m_splitter->IsSplit()) {
+        if (!m_splitter->IsSplit()) {
             m_splitter->SplitHorizontally(m_splitterPagePinnedProjects, m_splitterPageTreeView, 150);
             m_splitter->CallAfter(&wxSplitterWindow::UpdateSize);
         }
 
         m_dvListCtrlPinnedProjects->DeleteAllItems();
         m_dvListCtrlPinnedProjects->SetSortFunction(nullptr);
-        for(const wxString& project : m_cxxPinnedProjects) {
+        for (const wxString& project : m_cxxPinnedProjects) {
             wxVector<wxVariant> V;
             V.push_back(::MakeBitmapIndexText(project, 0));
             m_dvListCtrlPinnedProjects->AppendItem(V);
@@ -463,7 +475,7 @@ void WorkspaceTab::SaveCxxPinnedProjects()
 void WorkspaceTab::OnPinnedCxxProjectContextMenu(wxDataViewEvent& event)
 {
     wxDataViewItem item = event.GetItem();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
     SyncPinnedProjectsView(event.GetItem());
@@ -481,7 +493,7 @@ void WorkspaceTab::OnPinnedCxxProjectSelected(wxDataViewEvent& event)
 
 void WorkspaceTab::AddPinnedProject(const wxString& project)
 {
-    if(m_cxxPinnedProjects.Index(project) != wxNOT_FOUND) {
+    if (m_cxxPinnedProjects.Index(project) != wxNOT_FOUND) {
         return;
     }
     m_cxxPinnedProjects.Add(project);
@@ -495,7 +507,7 @@ void WorkspaceTab::AddPinnedProject(const wxString& project)
 
 void WorkspaceTab::SyncPinnedProjectsView(const wxDataViewItem& item)
 {
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
 
@@ -511,12 +523,12 @@ void WorkspaceTab::ShowPinnedProjectMenu(const wxString& project)
     // Build the rest of the menu
     m_fileView->CreateProjectContextMenu(menu, project, false);
     menu.Bind(wxEVT_MENU, [&](wxCommandEvent& menuEvent) {
-        if(menuEvent.GetId() == XRCID("unpin_project")) {
+        if (menuEvent.GetId() == XRCID("unpin_project")) {
             wxDataViewItem item = m_dvListCtrlPinnedProjects->GetSelection();
-            if(item.IsOk()) {
+            if (item.IsOk()) {
                 m_dvListCtrlPinnedProjects->DeleteItem(m_dvListCtrlPinnedProjects->ItemToRow(item));
                 int where = m_cxxPinnedProjects.Index(project);
-                if(where != wxNOT_FOUND) {
+                if (where != wxNOT_FOUND) {
                     m_cxxPinnedProjects.RemoveAt(where);
                     SaveCxxPinnedProjects();
                     CallAfter(&WorkspaceTab::LoadCxxPinnedProjects);
@@ -545,7 +557,7 @@ void WorkspaceTab::OnBuildEnded(clBuildEvent& event)
 void WorkspaceTab::OnBuildActiveProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_buildInProgress) {
+    if (m_buildInProgress) {
         wxCommandEvent stopEvent(wxEVT_TOOL, XRCID("stop_active_project_build"));
         stopEvent.SetEventObject(m_toolbar580);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(stopEvent);
@@ -559,7 +571,7 @@ void WorkspaceTab::OnBuildActiveProject(wxCommandEvent& event)
 void WorkspaceTab::OnExecuteNoDebug(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(!m_runInProgress) {
+    if (!m_runInProgress) {
         wxCommandEvent runEvent(wxEVT_TOOL, XRCID("execute_no_debug"));
         runEvent.SetEventObject(m_toolbar580);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(runEvent);
@@ -574,7 +586,7 @@ void WorkspaceTab::OnBuildActiveProjectDropdown(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     // we dont allow showing the dropdown during build process
-    if(m_buildInProgress) {
+    if (m_buildInProgress) {
         return;
     }
     clMainFrame::Get()->ShowBuildMenu(m_toolbar580, XRCID("ID_BUILD_PROJECT"));

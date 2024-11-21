@@ -124,11 +124,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_workspaceTabsDirection(wxLEFT)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
-#ifdef __WXMAC__
-    , m_nbTabHeight(nbTabHt_Tiny)
-#else
-    , m_nbTabHeight(nbTabHt_Medium)
-#endif
+    , m_nbTabHeight(nbTabHt_Short)
     , m_webSearchPrefix(wxT("https://www.google.com/search?q="))
     , m_smartParen(true)
 {

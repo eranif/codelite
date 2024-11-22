@@ -94,17 +94,17 @@ std::set<unsigned long> ProcUtils::GetProcTree(long pid)
     // Check to see if were running under Windows95 or
     // Windows NT.
     osver.dwOSVersionInfoSize = sizeof(osver);
-    if(!GetVersionEx(&osver)) {
+    if (!GetVersionEx(&osver)) {
         return {};
     }
 
-    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
+    if (osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
         return {};
     }
 
     // get child processes of this node
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(!hProcessSnap) {
+    if (!hProcessSnap) {
         return {};
     }
 
@@ -115,7 +115,7 @@ std::set<unsigned long> ProcUtils::GetProcTree(long pid)
 
     // Walk the snapshot of the processes, and for each process,
     // kill it if its parent is pid.
-    if(!Process32First(hProcessSnap, &pe)) {
+    if (!Process32First(hProcessSnap, &pe)) {
         // Can't get first process.
         CloseHandle(hProcessSnap);
         return {};
@@ -124,18 +124,18 @@ std::set<unsigned long> ProcUtils::GetProcTree(long pid)
     std::set<unsigned long> parentsMap{ static_cast<unsigned long>(pid) };
 
     do {
-        if(parentsMap.find(pe.th32ParentProcessID) != parentsMap.end()) {
+        if (parentsMap.find(pe.th32ParentProcessID) != parentsMap.end()) {
             // get the process handle
             HANDLE hProcess = ::OpenProcess(SYNCHRONIZE | PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION,
                                             FALSE, // not inheritable
                                             (DWORD)pid);
-            if(hProcess != NULL) {
+            if (hProcess != NULL) {
                 CloseHandle(hProcess);
                 // dont kill the process, just keep its ID
                 parentsMap.insert(pe.th32ProcessID);
             }
         }
-    } while(Process32Next(hProcessSnap, &pe));
+    } while (Process32Next(hProcessSnap, &pe));
     CloseHandle(hProcessSnap);
     return parentsMap;
 #else
@@ -166,7 +166,7 @@ PidVec_t ProcUtils::PS(const wxString& name)
 
     wxString processOutput;
     IProcess::Ptr_t p(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
-    if(p) {
+    if (p) {
         p->WaitForTerminate(processOutput);
     }
 
@@ -186,17 +186,17 @@ PidVec_t ProcUtils::PS(const wxString& name)
     //  2920    ?        Ss     0:00 ssh-agent
 
     wxArrayString lines = ::wxStringTokenize(processOutput, "\n", wxTOKEN_STRTOK);
-    for(wxString& line : lines) {
+    for (wxString& line : lines) {
         line.Trim().Trim(false);
         wxArrayString parts = ::wxStringTokenize(line, " \t", wxTOKEN_STRTOK);
-        if(parts.size() < MIN_COLUMNS_NUMBER) {
+        if (parts.size() < MIN_COLUMNS_NUMBER) {
             continue;
         }
         wxString& imageName = parts.Item(IMGNAME_COL);
         wxString& pid = parts.Item(PID_COL);
-        if(FileUtils::FuzzyMatch(name, imageName)) {
+        if (FileUtils::FuzzyMatch(name, imageName)) {
             long nPid = -1;
-            if(pid.ToCLong(&nPid)) {
+            if (pid.ToCLong(&nPid)) {
                 V.push_back({ imageName, nPid });
             }
         }
@@ -214,7 +214,7 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
 
     //  Take a snapshot of all modules in the specified process.
     hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, (DWORD)pid);
-    if(hModuleSnap == INVALID_HANDLE_VALUE) {
+    if (hModuleSnap == INVALID_HANDLE_VALUE) {
         return wxEmptyString;
     }
 
@@ -223,7 +223,7 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
 
     //  Retrieve information about the first module,
     //  and exit if unsuccessful
-    if(!Module32First(hModuleSnap, &me32)) {
+    if (!Module32First(hModuleSnap, &me32)) {
         CloseHandle(hModuleSnap); // Must clean up the
         // snapshot object!
         return wxEmptyString;
@@ -239,10 +239,10 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
     int nof_procs;
     wxString cmd;
 
-    if(!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
+    if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
         return wxEmptyString;
 
-    if(!(ki = kvm_getprocs(kvd, KERN_PROC_PID, pid, &nof_procs))) {
+    if (!(ki = kvm_getprocs(kvd, KERN_PROC_PID, pid, &nof_procs))) {
         kvm_close(kvd);
         return wxEmptyString;
     }
@@ -255,7 +255,7 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
     wxArrayString output;
     ExecuteCommand(wxT("ps -A -o pid,command --no-heading"), output);
     // parse the output and search for our process ID
-    for(size_t i = 0; i < output.GetCount(); i++) {
+    for (size_t i = 0; i < output.GetCount(); i++) {
         wxString line = output.Item(i);
         // remove whitespaces
         line = line.Trim();
@@ -264,7 +264,7 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
         wxString spid = line.BeforeFirst(wxT(' '));
         long cpid(0);
         spid.ToLong(&cpid);
-        if(cpid == pid) {
+        if (cpid == pid) {
             // we got a match, extract the command, it is in the second column
             wxString command = line.AfterFirst(wxT(' '));
             return command;
@@ -283,8 +283,8 @@ void ProcUtils::ExecuteCommand(const wxString& command, wxArrayString& output, l
     char line[512];
     memset(line, 0, sizeof(line));
     fp = popen(command.mb_str(wxConvUTF8), "r");
-    if(fp) {
-        while(fgets(line, sizeof(line), fp)) {
+    if (fp) {
+        while (fgets(line, sizeof(line), fp)) {
             output.Add(wxString(line, wxConvUTF8));
             memset(line, 0, sizeof(line));
         }
@@ -303,17 +303,17 @@ std::vector<ProcessEntry> ProcUtils::GetProcessList()
     // Check to see if were running under Windows95 or
     // Windows NT.
     osver.dwOSVersionInfoSize = sizeof(osver);
-    if(!GetVersionEx(&osver)) {
+    if (!GetVersionEx(&osver)) {
         return {};
     }
 
-    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
+    if (osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
         return {};
     }
 
     // get child processes of this node
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(!hProcessSnap) {
+    if (!hProcessSnap) {
         return {};
     }
 
@@ -324,7 +324,7 @@ std::vector<ProcessEntry> ProcUtils::GetProcessList()
 
     // Walk the snapshot of the processes, and for each process,
     // kill it if its parent is pid.
-    if(!Process32First(hProcessSnap, &pe)) {
+    if (!Process32First(hProcessSnap, &pe)) {
         // Can't get first process.
         CloseHandle(hProcessSnap);
         return {};
@@ -336,7 +336,7 @@ std::vector<ProcessEntry> ProcUtils::GetProcessList()
         entry.name = pe.szExeFile;
         entry.pid = (long)pe.th32ProcessID;
         proclist.push_back(entry);
-    } while(Process32Next(hProcessSnap, &pe));
+    } while (Process32Next(hProcessSnap, &pe));
     CloseHandle(hProcessSnap);
 
 #elif defined(__FreeBSD__)
@@ -344,16 +344,16 @@ std::vector<ProcessEntry> ProcUtils::GetProcessList()
     struct kinfo_proc* ki;
     int nof_procs, i;
 
-    if(!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
+    if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
         return {};
 
-    if(!(ki = kvm_getprocs(kvd, KERN_PROC_PROC, 0, &nof_procs))) {
+    if (!(ki = kvm_getprocs(kvd, KERN_PROC_PROC, 0, &nof_procs))) {
         kvm_close(kvd);
         return {};
     }
 
     std::vector<ProcessEntry> proclist;
-    for(i = 0; i < nof_procs; i++) {
+    for (i = 0; i < nof_procs; i++) {
         ProcessEntry entry;
         entry.pid = ki[i].ki_pid;
         entry.name = wxString(ki[i].ki_ocomm, wxConvUTF8);
@@ -382,7 +382,7 @@ std::vector<ProcessEntry> ProcUtils::GetProcessList()
         spid.ToLong(&entry.pid);
         entry.name = line.AfterFirst(wxT(' '));
 
-        if(entry.pid == 0 && i > 0) {
+        if (entry.pid == 0 && i > 0) {
             // probably this line belongs to the provious one
             ProcessEntry e = proclist.back();
             proclist.pop_back();
@@ -404,17 +404,17 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
     // Check to see if were running under Windows95 or
     // Windows NT.
     osver.dwOSVersionInfoSize = sizeof(osver);
-    if(!GetVersionEx(&osver)) {
+    if (!GetVersionEx(&osver)) {
         return;
     }
 
-    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
+    if (osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
         return;
     }
 
     // get child processes of this node
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(!hProcessSnap) {
+    if (!hProcessSnap) {
         return;
     }
 
@@ -425,7 +425,7 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
 
     // Walk the snapshot of the processes, and for each process,
     // kill it if its parent is pid.
-    if(!Process32First(hProcessSnap, &pe)) {
+    if (!Process32First(hProcessSnap, &pe)) {
         // Can't get first process.
         CloseHandle(hProcessSnap);
         return;
@@ -434,10 +434,10 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
     // loop over all processes and collect all the processes their parent
     // pid matches PID
     do {
-        if((long)pe.th32ParentProcessID == pid) {
+        if ((long)pe.th32ParentProcessID == pid) {
             proclist.push_back((long)pe.th32ProcessID);
         }
-    } while(Process32Next(hProcessSnap, &pe));
+    } while (Process32Next(hProcessSnap, &pe));
     CloseHandle(hProcessSnap);
 
 #elif defined(__FreeBSD__)
@@ -445,16 +445,16 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
     struct kinfo_proc* ki;
     int nof_procs, i;
 
-    if(!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
+    if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
         return;
 
-    if(!(ki = kvm_getprocs(kvd, KERN_PROC_PROC, pid, &nof_procs))) {
+    if (!(ki = kvm_getprocs(kvd, KERN_PROC_PROC, pid, &nof_procs))) {
         kvm_close(kvd);
         return;
     }
 
-    for(i = 0; i < nof_procs; i++) {
-        if(ki[i].ki_ppid == pid)
+    for (i = 0; i < nof_procs; i++) {
+        if (ki[i].ki_ppid == pid)
             proclist.push_back(ki[i].ki_pid);
     }
 
@@ -469,7 +469,7 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
     ExecuteCommand(wxT("ps -A -o pid,ppid "), output);
 #endif
     // parse the output and search for our process ID
-    for(size_t i = 0; i < output.GetCount(); i++) {
+    for (size_t i = 0; i < output.GetCount(); i++) {
         long lpid(0);
         long lppid(0);
         wxString line = output.Item(i);
@@ -484,7 +484,7 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
         // get the process Parent ID
         wxString sppid = line.AfterFirst(wxT(' '));
         sppid.ToLong(&lppid);
-        if(lppid == pid) {
+        if (lppid == pid) {
             proclist.push_back(lpid);
         }
     }
@@ -496,7 +496,7 @@ bool ProcUtils::Shell(const wxString& programConsoleCommand)
     wxString cmd;
 #ifdef __WXMSW__
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
-    if(!shell) {
+    if (!shell) {
         shell = (wxChar*)wxT("CMD.EXE");
     }
 
@@ -514,19 +514,19 @@ bool ProcUtils::Shell(const wxString& programConsoleCommand)
     wxArrayString configuredTerminal;
 
     terminal = wxT("xterm");
-    if(!programConsoleCommand.IsEmpty()) {
+    if (!programConsoleCommand.IsEmpty()) {
         tokens = wxStringTokenize(programConsoleCommand, wxT(" "), wxTOKEN_STRTOK);
-        if(!tokens.IsEmpty()) {
+        if (!tokens.IsEmpty()) {
             configuredTerminal = wxStringTokenize(tokens.Item(0), wxT("/"), wxTOKEN_STRTOK);
-            if(!configuredTerminal.IsEmpty()) {
+            if (!configuredTerminal.IsEmpty()) {
                 terminal = configuredTerminal.Last();
                 tokens.Clear();
                 configuredTerminal.Clear();
             }
         }
     }
-    if(Locate(terminal, where)) {
-        if(terminal == wxT("konsole")) {
+    if (Locate(terminal, where)) {
+        if (terminal == wxT("konsole")) {
             wxString path = wxGetCwd();
             terminal.Clear();
             terminal << where << wxT(" --workdir \"") << path << wxT("\"");
@@ -549,14 +549,14 @@ bool ProcUtils::Locate(const wxString& name, wxString& where)
     command << wxT("which \"") << name << wxT("\"");
     ProcUtils::ExecuteCommand(command, output);
 
-    if(output.IsEmpty() == false) {
+    if (output.IsEmpty() == false) {
         wxString interstingLine = output.Item(0);
 
-        if(interstingLine.Trim().Trim(false).IsEmpty()) {
+        if (interstingLine.Trim().Trim(false).IsEmpty()) {
             return false;
         }
 
-        if(!interstingLine.StartsWith(wxT("which: no "))) {
+        if (!interstingLine.StartsWith(wxT("which: no "))) {
             where = output.Item(0);
             where = where.Trim().Trim(false);
             return true;
@@ -571,7 +571,7 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
     wxString errMsg;
     LOG_IF_TRACE { clDEBUG1() << "executing process:" << command << endl; }
     std::unique_ptr<WinProcess> proc{ WinProcess::Execute(command, errMsg) };
-    if(!proc) {
+    if (!proc) {
         return;
     }
 
@@ -580,9 +580,9 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
     wxString buff;
 
     LOG_IF_TRACE { clDEBUG1() << "reading process output..." << endl; }
-    while(proc->IsAlive()) {
+    while (proc->IsAlive()) {
         tmpbuf.Clear();
-        if(proc->Read(tmpbuf)) {
+        if (proc->Read(tmpbuf)) {
             // as long as we read something, dont sleep...
             buff << tmpbuf;
         } else {
@@ -597,7 +597,7 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
         clDEBUG1() << "reading process output remainder..." << endl;
     }
     proc->Read(tmpbuf);
-    while(!tmpbuf.IsEmpty()) {
+    while (!tmpbuf.IsEmpty()) {
         buff << tmpbuf;
         tmpbuf.Clear();
         proc->Read(tmpbuf);
@@ -618,11 +618,11 @@ wxString ProcUtils::SafeExecuteCommand(const wxString& command)
     wxArrayString arr;
     SafeExecuteCommand(command, arr);
 
-    for(size_t i = 0; i < arr.GetCount(); ++i) {
+    for (size_t i = 0; i < arr.GetCount(); ++i) {
         strOut << arr.Item(i) << "\n";
     }
 
-    if(!strOut.IsEmpty()) {
+    if (!strOut.IsEmpty()) {
         strOut.RemoveLast();
     }
     return strOut;
@@ -631,20 +631,38 @@ wxString ProcUtils::SafeExecuteCommand(const wxString& command)
 wxString ProcUtils::GrepCommandOutput(const std::vector<wxString>& cmd, const wxString& find_what)
 {
     IProcess::Ptr_t proc(::CreateAsyncProcess(nullptr, cmd, IProcessCreateDefault | IProcessCreateSync));
-    if(!proc) {
+    if (!proc) {
         return wxEmptyString;
     }
 
     wxString output;
     proc->WaitForTerminate(output);
     auto lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
-    for(wxString& line : lines) {
+    for (wxString& line : lines) {
         line.Trim();
-        if(line.Contains(find_what)) {
+        if (line.Contains(find_what)) {
             return line;
         }
     }
     return wxEmptyString;
+}
+
+void ProcUtils::GrepCommandOutputWithCallback(const std::vector<wxString>& cmd,
+                                              std::function<bool(const wxString&)> callback)
+{
+    IProcess::Ptr_t proc(::CreateAsyncProcess(nullptr, cmd, IProcessCreateDefault | IProcessCreateSync));
+    if (!proc) {
+        return;
+    }
+
+    wxString output;
+    proc->WaitForTerminate(output);
+    auto lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+    for (const wxString& line : lines) {
+        if (callback(line)) {
+            break;
+        }
+    }
 }
 
 namespace
@@ -673,7 +691,7 @@ public:
     // Notify about the process termination
     void OnTerminate(int pid, int status) override
     {
-        if(status == 0) {
+        if (status == 0) {
             ReadOutput();
         }
 
@@ -693,7 +711,7 @@ bool ProcUtils::ShellExecAsync(const wxString& command, long* pid, wxEvtHandler*
     wxString theCommand = wxString::Format("%s > \"%s\" 2>&1", command, filename);
     WrapInShell(theCommand);
     long rc = ::wxExecute(theCommand, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE, new ProcessHelper(sink, filename), nullptr);
-    if(rc > 0) {
+    if (rc > 0) {
         *pid = rc;
     }
     return rc > 0;
@@ -720,11 +738,11 @@ wxString& ProcUtils::WrapInShell(wxString& cmd)
     wxString command;
 #ifdef __WXMSW__
     wxString shell = wxGetenv("COMSPEC");
-    if(shell.IsEmpty()) {
+    if (shell.IsEmpty()) {
         shell = "CMD.EXE";
     }
     command << shell << " /C ";
-    if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
+    if (cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
         command << "\"" << cmd << "\"";
     } else {
         command << cmd;

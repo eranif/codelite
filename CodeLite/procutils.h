@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef PROCUTILS_H
-#define PROCUTILS_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -118,6 +117,12 @@ public:
     static wxString SafeExecuteCommand(const wxString& command);
 
     /**
+     * @brief execute command and execute the callback on each line until the callback returns true
+     */
+    static void GrepCommandOutputWithCallback(const std::vector<wxString>& cmd,
+                                              std::function<bool(const wxString&)> callback);
+
+    /**
      * @brief execute command and search the output for the first occurrence of `find_what`
      */
     static wxString GrepCommandOutput(const std::vector<wxString>& cmd, const wxString& find_what);
@@ -140,5 +145,3 @@ public:
      */
     static int ShellExecSync(const wxString& command, wxString* output);
 };
-
-#endif // PROCUTILS_H

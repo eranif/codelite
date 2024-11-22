@@ -54,6 +54,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "macromanager.h"
+#include "wx/msgqueue.h"
 
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>
@@ -100,6 +101,52 @@ wxString get_dap_settings_file()
     return fn.GetFullPath();
 }
 
+class StdioTransport : public dap::Transport
+{
+public:
+    StdioTransport() {}
+    ~StdioTransport() override {}
+
+    void SetProcess(DapProcess::Ptr_t process) { m_dap_server = process; }
+
+    /**
+     * @brief return from the network with a given timeout
+     * @returns true on success, false in case of an error. True is also returned when timeout occurs, check the buffer
+     * length if it is 0, timeout occurred
+     */
+    bool Read(wxString& buffer, int msTimeout) override
+    {
+        if (wxThread::IsMain()) {
+            LOG_ERROR(LOG) << "StdioTransport::Read is called from the main thread!" << endl;
+            return false;
+        }
+
+        wxString msg;
+        switch (m_dap_server->Queue().ReceiveTimeout(msTimeout, msg)) {
+        case wxMSGQUEUE_NO_ERROR:
+        case wxMSGQUEUE_TIMEOUT:
+            buffer.swap(msg);
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * @brief send data over the network
+     * @return number of bytes written
+     */
+    size_t Send(const wxString& buffer) override
+    {
+        if (!m_dap_server->Write(buffer)) {
+            return 0;
+        }
+        return buffer.length();
+    }
+
+private:
+    DapProcess::Ptr_t m_dap_server;
+};
 } // namespace
 
 #define CHECK_IS_DAP_CONNECTED()   \
@@ -843,7 +890,6 @@ void DebugAdapterClient::OnDapLog(DAPEvent& event)
 
 void DebugAdapterClient::OnDapOutputEvent(DAPEvent& event)
 {
-    LOG_DEBUG(LOG) << "Received output event" << endl;
     if (GetOutputView()) {
         GetOutputView()->AddEvent(event.GetDapEvent()->As<dap::OutputEvent>());
     }
@@ -851,7 +897,6 @@ void DebugAdapterClient::OnDapOutputEvent(DAPEvent& event)
 
 void DebugAdapterClient::OnDapModuleEvent(DAPEvent& event)
 {
-    LOG_DEBUG(LOG) << "Received module event" << endl;
     CHECK_IS_DAP_CONNECTED();
     if (GetOutputView()) {
         GetOutputView()->AddEvent(event.GetDapEvent()->As<dap::ModuleEvent>());
@@ -1110,19 +1155,52 @@ bool DebugAdapterClient::StartSocketDap()
     if (m_session.debug_over_ssh) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
-        m_dap_server.reset(::CreateAsyncProcess(this, command,
-                                                IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
-                                                wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName()));
+        m_dap_server.reset(new DapProcess(
+            ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
+                                 wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName())));
     } else {
         // launch local process
         EnvSetter env; // apply CodeLite env variables
         auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
-        m_dap_server.reset(::CreateAsyncProcess(
+        m_dap_server.reset(new DapProcess(::CreateAsyncProcess(
             this, command, IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole, wxEmptyString,
-            &env_list));
+            &env_list)));
     }
-    m_dap_server->SetHardKill(true);
-    return m_dap_server != nullptr;
+    return m_dap_server->IsOk();
+}
+
+dap::Transport* DebugAdapterClient::StartStdioDap()
+{
+    m_dap_server.reset();
+    const DapEntry& dap_server = m_session.dap_server;
+    wxString command = ReplacePlaceholders(dap_server.GetCommand());
+
+    LOG_DEBUG(LOG) << "starting dap with command:" << command << endl;
+
+    auto transport = new StdioTransport();
+
+    if (m_session.debug_over_ssh) {
+        // launch ssh process
+        auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
+        m_dap_server.reset(new DapProcess(
+            ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
+                                 wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName())));
+    } else {
+        // launch local process
+        EnvSetter env; // apply CodeLite env variables
+        auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
+        m_dap_server.reset(new DapProcess(::CreateAsyncProcess(
+            this, command, IProcessWrapInShell | IProcessStderrEvent | IProcessCreateWithHiddenConsole, wxEmptyString,
+            &env_list)));
+    }
+
+    transport->SetProcess(m_dap_server);
+    if (!m_dap_server->IsOk()) {
+        m_dap_server.reset();
+        wxDELETE(transport);
+        return nullptr;
+    }
+    return transport;
 }
 
 bool DebugAdapterClient::InitialiseSession(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
@@ -1170,31 +1248,34 @@ void DebugAdapterClient::StartAndConnectToDapServer()
     LOG_DEBUG(LOG) << "working_directory:" << m_session.working_directory << endl;
     LOG_DEBUG(LOG) << "env:" << to_string_array(m_session.environment) << endl;
 
-    dap::SocketTransport* transport = nullptr;
+    dap::Transport* transport = nullptr;
     if (m_session.dap_server.GetConnectionString().CmpNoCase("stdio") == 0) {
-        // using stdio transport
-        LOG_WARNING(LOG) << "DAP with stdio is not supported" << endl;
-        return;
+        // start the dap server (for the current session)
+        transport = StartStdioDap();
+        if (transport == nullptr) {
+            return;
+        }
     } else {
         // start the dap server (for the current session)
         if (!StartSocketDap()) {
+            LOG_WARNING(LOG) << "Failed to start dap server" << endl;
             return;
         }
-
+        LOG_DEBUG(LOG) << "dap server started!" << endl;
         wxBusyCursor cursor;
-        // For this demo, we use socket transport. But you may choose
-        // to write your own transport that implements the dap::Transport interface
-        // This is useful when the user wishes to use stdin/out for communicating with
-        // the dap and not over socket
-        transport = new dap::SocketTransport();
-        if (!transport->Connect(m_session.dap_server.GetConnectionString(), 10)) {
+        // Using socket transport
+        auto socket_transport = new dap::SocketTransport();
+        LOG_DEBUG(LOG) << "Connecting to dap server:" << m_session.dap_server.GetConnectionString() << endl;
+        if (!socket_transport->Connect(m_session.dap_server.GetConnectionString(), 10)) {
             wxMessageBox("Failed to connect to DAP server using socket", DAP_MESSAGE_BOX_TITLE,
                          wxICON_ERROR | wxOK | wxCENTRE);
-            wxDELETE(transport);
+            wxDELETE(socket_transport);
             m_client.Reset();
             m_dap_server.reset();
             return;
         }
+        LOG_DEBUG(LOG) << "Success" << endl;
+        transport = socket_transport;
     }
 
     wxDELETE(m_breakpointsHelper);
@@ -1213,6 +1294,7 @@ void DebugAdapterClient::StartAndConnectToDapServer()
     // construct new client with the transport
     m_client.SetTransport(transport);
 
+    LOG_DEBUG(LOG) << "Sending Initialize request" << endl;
     // send protocol Initialize request
     dap::InitializeRequestArguments init_request_args;
     init_request_args.clientID = "CodeLite";
@@ -1230,17 +1312,20 @@ bool DebugAdapterClient::IsDebuggerOwnedByPlugin(const wxString& name) const
 
 void DebugAdapterClient::OnProcessOutput(clProcessEvent& event)
 {
-    wxUnusedVar(event);
-    LOG_DEBUG(LOG) << "server output:" << event.GetOutput() << endl;
+    event.Skip();
+    if (m_dap_server && m_dap_server->IsRedirect()) {
+        m_dap_server->Queue().Post(event.GetOutput());
+    }
 }
 
 void DebugAdapterClient::OnProcessTerminated(clProcessEvent& event)
 {
-    wxUnusedVar(event);
+    event.Skip();
     m_client.Reset();
     m_dap_server.reset();
 
     RestoreUI();
+    LOG_DEBUG(LOG) << event.GetOutput() << endl;
     LOG_DEBUG(LOG) << "dap-server terminated" << endl;
 
     clDebugEvent e(wxEVT_DEBUG_ENDED);

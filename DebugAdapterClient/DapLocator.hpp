@@ -1,5 +1,4 @@
-#ifndef DAPLOCATOR_HPP
-#define DAPLOCATOR_HPP
+#pragma once
 
 #include "clDapSettingsStore.hpp"
 
@@ -10,6 +9,7 @@ class DapLocator
 private:
     void find_lldb_dap(std::vector<DapEntry>* entries);
     void find_debugpy(std::vector<DapEntry>* entries);
+    void find_gdb(std::vector<DapEntry>* entries);
 
 public:
     DapLocator();
@@ -17,5 +17,3 @@ public:
 
     size_t Locate(std::vector<DapEntry>* entries);
 };
-
-#endif // DAPLOCATOR_HPP

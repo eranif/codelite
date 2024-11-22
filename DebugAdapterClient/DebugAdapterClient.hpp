@@ -22,9 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
-#ifndef DAP_DEBUGGER_CLIENT_HPP
-#define DAP_DEBUGGER_CLIENT_HPP
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "BreakpointsHelper.hpp"
@@ -38,10 +36,12 @@
 #include "clModuleLogger.hpp"
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
+#include "dap/DAPEvent.hpp"
 #include "plugin.h"
 #include "ssh/ssh_account_info.h"
 
 #include <vector>
+#include <wx/msgqueue.h>
 #include <wx/stc/stc.h>
 
 class DAPMainView;
@@ -52,17 +52,52 @@ class DAPBreakpointsView;
 class IProcess;
 class DAPWatchesView;
 
+struct DapProcess {
+    DapProcess(IProcess* process)
+    {
+        m_process.reset(process);
+        if (m_process) {
+            m_process->SetHardKill(true);
+        }
+    }
+
+    bool IsOk() const { return m_process != nullptr; }
+
+    void Terminate()
+    {
+        if (m_process) {
+            m_process->Terminate();
+        }
+    }
+
+    bool Write(const wxString& buffer)
+    {
+        if (m_process) {
+            return m_process->WriteRaw(buffer);
+        }
+        return false;
+    }
+
+    bool IsRedirect() const { return m_process && m_process->IsRedirect(); }
+    wxMessageQueue<wxString>& Queue() { return m_readQueue; }
+    typedef std::shared_ptr<DapProcess> Ptr_t;
+
+private:
+    IProcess::Ptr_t m_process = nullptr;
+    wxMessageQueue<wxString> m_readQueue;
+};
+
 class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
     wxString m_defaultPerspective;
     DebugSession m_session;
     clDapSettingsStore m_dap_store;
-    IProcess::Ptr_t m_dap_server = nullptr;
     RunInTerminalHelper m_terminal_helper;
     wxFileName m_breakpointsFile;
     BreakpointsHelper* m_breakpointsHelper = nullptr;
     SessionBreakpoints m_sessionBreakpoints;
+    DapProcess::Ptr_t m_dap_server;
 
     /// ------------------------------------
     /// UI elements
@@ -86,6 +121,7 @@ private:
     void DoCleanup();
     void StartAndConnectToDapServer();
     bool StartSocketDap();
+    dap::Transport* StartStdioDap();
     void RefreshBreakpointsView();
     bool InitialiseSession(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
                            const wxString& working_directory, const wxString& ssh_account, const clEnvList_t& env);
@@ -186,5 +222,3 @@ public:
     int GetCurrentFrameId() const;
     void LoadFile(const dap::Source& sourceId, int line_number);
 };
-
-#endif // LLDBDebuggerPlugin

@@ -9,7 +9,7 @@ function linux_build_codelite() {
     mkdir -p ${CODELITE_BUILD_DIR}
     cd ${CODELITE_BUILD_DIR}
     rm -fr *.deb
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 .. -DWITH_CHATAI=ON
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 -DWITH_CHATAI=ON
     make -j${cpu_count} package
     package_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
     upload_path="/var/www/html/downloads/codelite/${version}"

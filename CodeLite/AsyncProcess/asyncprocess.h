@@ -56,6 +56,7 @@ enum IProcessCreateFlags {
     IProcessInteractiveSSH = (1 << 9),
     IProcessWrapInShell = (1 << 10),   // wrap the command in the OS shell (CMD, BASH)
     IProcessPseudoConsole = (1 << 11), // MSW only: use CreatePseudoConsole API for creating the process
+    IProcessNoPty = (1 << 12),        // Unix only: do not use forkpty, use normal fork()
 };
 
 class WXDLLIMPEXP_CL IProcess;

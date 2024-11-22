@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __unixprocessimpl__
-#define __unixprocessimpl__
+#pragma once
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 #include "asyncprocess.h"
@@ -79,4 +78,3 @@ public:
     void Signal(wxSignal sig) override;
 };
 #endif // #if defined(__WXMAC )||defined(__WXGTK__)
-#endif // __unixprocessimpl__

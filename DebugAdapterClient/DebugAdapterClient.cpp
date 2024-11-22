@@ -1155,16 +1155,16 @@ bool DebugAdapterClient::StartSocketDap()
     if (m_session.debug_over_ssh) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
-        m_dap_server.reset(new DapProcess(
-            ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
-                                 wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName())));
+        m_dap_server.reset(new DapProcess(::CreateAsyncProcess(
+            this, command, IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell | IProcessNoPty,
+            wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName())));
     } else {
         // launch local process
         EnvSetter env; // apply CodeLite env variables
         auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
         m_dap_server.reset(new DapProcess(::CreateAsyncProcess(
-            this, command, IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole, wxEmptyString,
-            &env_list)));
+            this, command, IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole | IProcessNoPty,
+            wxEmptyString, &env_list)));
     }
     return m_dap_server->IsOk();
 }
@@ -1182,16 +1182,16 @@ dap::Transport* DebugAdapterClient::StartStdioDap()
     if (m_session.debug_over_ssh) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
-        m_dap_server.reset(new DapProcess(
-            ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
-                                 wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName())));
+        m_dap_server.reset(new DapProcess(::CreateAsyncProcess(
+            this, command, IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell | IProcessNoPty,
+            wxEmptyString, &env_list, m_session.ssh_acount.GetAccountName())));
     } else {
         // launch local process
         EnvSetter env; // apply CodeLite env variables
         auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
         m_dap_server.reset(new DapProcess(::CreateAsyncProcess(
-            this, command, IProcessWrapInShell | IProcessStderrEvent | IProcessCreateWithHiddenConsole, wxEmptyString,
-            &env_list)));
+            this, command, IProcessWrapInShell | IProcessStderrEvent | IProcessCreateWithHiddenConsole | IProcessNoPty,
+            wxEmptyString, &env_list)));
     }
 
     transport->SetProcess(m_dap_server);

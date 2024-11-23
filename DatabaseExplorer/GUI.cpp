@@ -9,147 +9,24 @@
 // Declare the bitmap loading function
 extern void wxCrafterwyt5ghInitBitmapResources();
 
-static bool bBitmapLoaded = false;
-
-_ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                       const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
+namespace
 {
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterwyt5ghInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(mainSizer);
-
-    m_staticText34 =
-        new wxStaticText(this, wxID_ANY, _("Output file:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, -1)), 0);
-
-    mainSizer->Add(m_staticText34, 0, wxALL, WXC_FROM_DIP(5));
-    m_staticText34->SetMinSize(wxSize(400, -1));
-
-    wxBoxSizer* fpSizer = new wxBoxSizer(wxHORIZONTAL);
-
-    mainSizer->Add(fpSizer, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_textCtrlPath =
-        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlPath->SetHint(wxT(""));
-#endif
-
-    fpSizer->Add(m_textCtrlPath, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_button29 = new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    fpSizer->Add(m_button29, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxStaticBoxSizer* scaleSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Scale")), wxVERTICAL);
-
-    mainSizer->Add(scaleSizer, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_radioBtnDefaultScale = new wxRadioButton(this, wxID_ANY, _("Current canvas scale"), wxDefaultPosition,
-                                               wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_radioBtnDefaultScale->SetValue(0);
-
-    scaleSizer->Add(m_radioBtnDefaultScale, 0, wxALL, WXC_FROM_DIP(5));
-
-    wxBoxSizer* customScaleSizer = new wxBoxSizer(wxHORIZONTAL);
-
-    scaleSizer->Add(customScaleSizer, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_radioBtnScaleCustom =
-        new wxRadioButton(this, wxID_ANY, _("Custom scale"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_radioBtnScaleCustom->SetValue(0);
-
-    customScaleSizer->Add(m_radioBtnScaleCustom, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_textCtrlScale = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(100, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlScale->SetHint(wxT(""));
-#endif
-
-    customScaleSizer->Add(m_textCtrlScale, 1, wxLEFT | wxRIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    m_textCtrlScale->SetMinSize(wxSize(100, -1));
-
-    m_checkBoxBackground = new wxCheckBox(this, wxID_ANY, _("Export canvas background"), wxDefaultPosition,
-                                          wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxBackground->SetValue(false);
-
-    mainSizer->Add(m_checkBoxBackground, 0, wxALL, WXC_FROM_DIP(5));
-
-    mainSizer->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_sdbSizer2 = new wxStdDialogButtonSizer();
-
-    mainSizer->Add(m_sdbSizer2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-
-    m_button126 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_sdbSizer2->AddButton(m_button126);
-
-    m_button127 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_sdbSizer2->AddButton(m_button127);
-    m_sdbSizer2->Realize();
-
-    SetName(wxT("_ImageExportDialog"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
-    // Connect events
-    this->Connect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(_ImageExportDialog::OnInit), NULL, this);
-    m_button29->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ImageExportDialog::OnBowseClick), NULL,
-                        this);
-    m_textCtrlScale->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_ImageExportDialog::OnUpdateCustomScale), NULL,
-                             this);
-}
-
-_ImageExportDialog::~_ImageExportDialog()
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
 {
-    this->Disconnect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(_ImageExportDialog::OnInit), NULL, this);
-    m_button29->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ImageExportDialog::OnBowseClick), NULL,
-                           this);
-    m_textCtrlScale->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_ImageExportDialog::OnUpdateCustomScale), NULL,
-                                this);
-}
-
-_ThumbPane::_ThumbPane(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterwyt5ghInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(mainSizer);
-
-    SetName(wxT("_ThumbPane"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-}
-
-_ThumbPane::~_ThumbPane() {}
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_STATIC;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // DoGetBorderSimpleBit
+bool bBitmapLoaded = false;
+} // namespace
 
 _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterwyt5ghInitBitmapResources();
@@ -229,70 +106,17 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
 
     SetName(wxT("_SqlCommandPanel"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
 }
 
 _SqlCommandPanel::~_SqlCommandPanel() {}
 
-_AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                     const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterwyt5ghInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(bSizer9);
-
-    m_btnSqlite = new wxButton(this, wxID_ANY, _("SQLite"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_btnSqlite->SetDefault();
-    m_btnSqlite->SetFocus();
-
-    bSizer9->Add(m_btnSqlite, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_btnMySql = new wxButton(this, wxID_ANY, _("MySql"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(175, -1)), 0);
-
-    bSizer9->Add(m_btnMySql, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button24 = new wxButton(this, wxID_ANY, _("PostgreSQL"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    bSizer9->Add(m_button24, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    SetName(wxT("_AdapterSelectDlg"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-    // Connect events
-    m_btnSqlite->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnSqliteClick), NULL,
-                         this);
-    m_btnMySql->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnMysqlClick), NULL,
-                        this);
-    m_button24->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnPostgresClick), NULL,
-                        this);
-}
-
-_AdapterSelectDlg::~_AdapterSelectDlg()
-{
-    m_btnSqlite->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnSqliteClick), NULL,
-                            this);
-    m_btnMySql->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnMysqlClick), NULL,
-                           this);
-    m_button24->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnPostgresClick),
-                           NULL, this);
-}
-
 _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterwyt5ghInitBitmapResources();
@@ -309,38 +133,31 @@ _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     SetName(wxT("_DbViewerPanel"));
     SetSize(wxDLG_UNIT(this, wxSize(200, 100)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
-    m_treeDatabases->Connect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(_DbViewerPanel::OnDnDStart), NULL, this);
-    m_treeDatabases->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(_DbViewerPanel::OnItemActivate),
-                             NULL, this);
-    m_treeDatabases->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(_DbViewerPanel::OnItemSelectionChange),
-                             NULL, this);
-    m_treeDatabases->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(_DbViewerPanel::OnContextMenu), NULL,
-                             this);
-    m_treeDatabases->Connect(wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler(_DbViewerPanel::OnItemRightClick),
-                             NULL, this);
+    m_treeDatabases->Bind(wxEVT_COMMAND_TREE_BEGIN_DRAG, &_DbViewerPanel::OnDnDStart, this);
+    m_treeDatabases->Bind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &_DbViewerPanel::OnItemActivate, this);
+    m_treeDatabases->Bind(wxEVT_COMMAND_TREE_SEL_CHANGED, &_DbViewerPanel::OnItemSelectionChange, this);
+    m_treeDatabases->Bind(wxEVT_COMMAND_TREE_ITEM_MENU, &_DbViewerPanel::OnContextMenu, this);
+    m_treeDatabases->Bind(wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, &_DbViewerPanel::OnItemRightClick, this);
 }
 
 _DbViewerPanel::~_DbViewerPanel()
 {
-    m_treeDatabases->Disconnect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(_DbViewerPanel::OnDnDStart), NULL,
-                                this);
-    m_treeDatabases->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(_DbViewerPanel::OnItemActivate),
-                                NULL, this);
-    m_treeDatabases->Disconnect(wxEVT_COMMAND_TREE_SEL_CHANGED,
-                                wxTreeEventHandler(_DbViewerPanel::OnItemSelectionChange), NULL, this);
-    m_treeDatabases->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(_DbViewerPanel::OnContextMenu), NULL,
-                                this);
-    m_treeDatabases->Disconnect(wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK,
-                                wxTreeEventHandler(_DbViewerPanel::OnItemRightClick), NULL, this);
+    m_treeDatabases->Unbind(wxEVT_COMMAND_TREE_BEGIN_DRAG, &_DbViewerPanel::OnDnDStart, this);
+    m_treeDatabases->Unbind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &_DbViewerPanel::OnItemActivate, this);
+    m_treeDatabases->Unbind(wxEVT_COMMAND_TREE_SEL_CHANGED, &_DbViewerPanel::OnItemSelectionChange, this);
+    m_treeDatabases->Unbind(wxEVT_COMMAND_TREE_ITEM_MENU, &_DbViewerPanel::OnContextMenu, this);
+    m_treeDatabases->Unbind(wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, &_DbViewerPanel::OnItemRightClick, this);
 }
 
 _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                      const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterwyt5ghInitBitmapResources();
@@ -579,7 +396,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     bSizer28->Add(m_button35, 0, wxALL, WXC_FROM_DIP(5));
 
 #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook2)) {
+    if (!wxPersistenceManager::Get().Find(m_notebook2)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook2);
     } else {
         wxPersistenceManager::Get().Restore(m_notebook2);
@@ -588,256 +405,55 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
 
     SetName(wxT("_DBSettingsDialog"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_listCtrlRecentFiles->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                   wxListEventHandler(_DBSettingsDialog::OnItemActivated), NULL, this);
-    m_listCtrlRecentFiles->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
-                                   wxListEventHandler(_DBSettingsDialog::OnItemSelected), NULL, this);
-    m_listCtrlRecentFiles->Connect(wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler(_DBSettingsDialog::OnItemKeyDown),
-                                   NULL, this);
-    m_txPassword->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(_DBSettingsDialog::OnMySqlPassKeyDown), NULL, this);
-    m_listBox2->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(_DBSettingsDialog::OnHistoryClick), NULL,
-                        this);
-    m_listBox2->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(_DBSettingsDialog::OnHistoryDClick),
-                        NULL, this);
-    m_listBox2->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_DBSettingsDialog::OnHistoruUI), NULL, this);
-    m_txPgPassword->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(_DBSettingsDialog::OnPgSqlKeyDown), NULL, this);
-    m_listBoxPg->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(_DBSettingsDialog::OnPgHistoryClick),
-                         NULL, this);
-    m_listBoxPg->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,
-                         wxCommandEventHandler(_DBSettingsDialog::OnPgHistoryDClick), NULL, this);
-    m_listBoxPg->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_DBSettingsDialog::OnHistoruUI), NULL, this);
-    m_button35->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_DBSettingsDialog::OnDlgOK), NULL, this);
+    m_listCtrlRecentFiles->Bind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &_DBSettingsDialog::OnItemActivated, this);
+    m_listCtrlRecentFiles->Bind(wxEVT_COMMAND_LIST_ITEM_SELECTED, &_DBSettingsDialog::OnItemSelected, this);
+    m_listCtrlRecentFiles->Bind(wxEVT_COMMAND_LIST_KEY_DOWN, &_DBSettingsDialog::OnItemKeyDown, this);
+    m_txPassword->Bind(wxEVT_KEY_DOWN, &_DBSettingsDialog::OnMySqlPassKeyDown, this);
+    m_listBox2->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &_DBSettingsDialog::OnHistoryClick, this);
+    m_listBox2->Bind(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, &_DBSettingsDialog::OnHistoryDClick, this);
+    m_listBox2->Bind(wxEVT_UPDATE_UI, &_DBSettingsDialog::OnHistoruUI, this);
+    m_txPgPassword->Bind(wxEVT_KEY_DOWN, &_DBSettingsDialog::OnPgSqlKeyDown, this);
+    m_listBoxPg->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &_DBSettingsDialog::OnPgHistoryClick, this);
+    m_listBoxPg->Bind(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, &_DBSettingsDialog::OnPgHistoryDClick, this);
+    m_listBoxPg->Bind(wxEVT_UPDATE_UI, &_DBSettingsDialog::OnHistoruUI, this);
+    m_button35->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &_DBSettingsDialog::OnDlgOK, this);
 }
 
 _DBSettingsDialog::~_DBSettingsDialog()
 {
-    m_listCtrlRecentFiles->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                                      wxListEventHandler(_DBSettingsDialog::OnItemActivated), NULL, this);
-    m_listCtrlRecentFiles->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
-                                      wxListEventHandler(_DBSettingsDialog::OnItemSelected), NULL, this);
-    m_listCtrlRecentFiles->Disconnect(wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler(_DBSettingsDialog::OnItemKeyDown),
-                                      NULL, this);
-    m_txPassword->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(_DBSettingsDialog::OnMySqlPassKeyDown), NULL, this);
-    m_listBox2->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(_DBSettingsDialog::OnHistoryClick),
-                           NULL, this);
-    m_listBox2->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,
-                           wxCommandEventHandler(_DBSettingsDialog::OnHistoryDClick), NULL, this);
-    m_listBox2->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_DBSettingsDialog::OnHistoruUI), NULL, this);
-    m_txPgPassword->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(_DBSettingsDialog::OnPgSqlKeyDown), NULL, this);
-    m_listBoxPg->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(_DBSettingsDialog::OnPgHistoryClick),
-                            NULL, this);
-    m_listBoxPg->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,
-                            wxCommandEventHandler(_DBSettingsDialog::OnPgHistoryDClick), NULL, this);
-    m_listBoxPg->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_DBSettingsDialog::OnHistoruUI), NULL, this);
-    m_button35->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_DBSettingsDialog::OnDlgOK), NULL, this);
-}
-
-_ErdPanel::_ErdPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterwyt5ghInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* erdSizer = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(erdSizer);
-
-    m_toolBarErd = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                    wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
-    m_toolBarErd->SetToolBitmapSize(wxSize(16, 16));
-
-    erdSizer->Add(m_toolBarErd, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    SetName(wxT("_ErdPanel"));
-    SetSize(wxDLG_UNIT(this, wxSize(640, 480)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    // Connect events
-    this->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(_ErdPanel::OnMouseWheel), NULL, this);
-}
-
-_ErdPanel::~_ErdPanel()
-{
-    this->Disconnect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(_ErdPanel::OnMouseWheel), NULL, this);
-}
-
-_CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                     const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterwyt5ghInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxFlexGridSizer* fgSizer12 = new wxFlexGridSizer(0, 3, 0, 0);
-    fgSizer12->SetFlexibleDirection(wxBOTH);
-    fgSizer12->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    fgSizer12->AddGrowableCol(0);
-    fgSizer12->AddGrowableCol(2);
-    fgSizer12->AddGrowableRow(0);
-    this->SetSizer(fgSizer12);
-
-    wxStaticBoxSizer* sbSizer7 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
-
-    fgSizer12->Add(sbSizer7, 1, wxLEFT | wxTOP | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText15 = new wxStaticText(this, wxID_ANY, _("Referencing table:"), wxDefaultPosition,
-                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    sbSizer7->Add(m_staticText15, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_txSrcTable =
-        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(150, -1)), wxTE_READONLY);
-#if wxVERSION_NUMBER >= 3000
-    m_txSrcTable->SetHint(wxT(""));
-#endif
-
-    sbSizer7->Add(m_txSrcTable, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText17 =
-        new wxStaticText(this, wxID_ANY, _("Column:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    sbSizer7->Add(m_staticText17, 0, wxALL, WXC_FROM_DIP(5));
-
-    wxArrayString m_cmbSrcColArr;
-    m_cmbSrcCol = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_cmbSrcColArr, 0);
-
-    sbSizer7->Add(m_cmbSrcCol, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxGridBagSizer* gbSizer1 = new wxGridBagSizer(0, 0);
-
-    fgSizer12->Add(gbSizer1, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxArrayString m_radioRelationArr;
-    m_radioRelationArr.Add(_("N :1"));
-    m_radioRelationArr.Add(_("N : M"));
-    m_radioRelation = new wxRadioBox(this, wxID_ANY, _("Relation"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                     m_radioRelationArr, 1, wxRA_SPECIFY_ROWS);
-    m_radioRelation->SetSelection(0);
-
-    gbSizer1->Add(m_radioRelation, wxGBPosition(0, 0), wxGBSpan(1, 2), wxALL | wxEXPAND | wxALIGN_CENTER_HORIZONTAL,
-                  WXC_FROM_DIP(5));
-
-    wxArrayString m_radioOnDeleteArr;
-    m_radioOnDeleteArr.Add(_("restrict"));
-    m_radioOnDeleteArr.Add(_("cascade"));
-    m_radioOnDeleteArr.Add(_("set null"));
-    m_radioOnDeleteArr.Add(_("no action"));
-    m_radioOnDelete = new wxRadioBox(this, wxID_ANY, _("OnDelete"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                     m_radioOnDeleteArr, 1, wxRA_SPECIFY_COLS);
-    m_radioOnDelete->SetSelection(0);
-
-    gbSizer1->Add(m_radioOnDelete, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, WXC_FROM_DIP(5));
-
-    wxArrayString m_radioOnUpdateArr;
-    m_radioOnUpdateArr.Add(_("restrict"));
-    m_radioOnUpdateArr.Add(_("cascade"));
-    m_radioOnUpdateArr.Add(_("set null"));
-    m_radioOnUpdateArr.Add(_("no action"));
-    m_radioOnUpdate = new wxRadioBox(this, wxID_ANY, _("OnUpdate"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                     m_radioOnUpdateArr, 1, wxRA_SPECIFY_COLS);
-    m_radioOnUpdate->SetSelection(0);
-
-    gbSizer1->Add(m_radioOnUpdate, wxGBPosition(1, 1), wxGBSpan(1, 1), wxALL, WXC_FROM_DIP(5));
-    gbSizer1->AddGrowableCol(0);
-    gbSizer1->AddGrowableRow(0);
-    wxStaticBoxSizer* sbSizer8 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
-
-    fgSizer12->Add(sbSizer8, 1, wxRIGHT | wxTOP | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText16 = new wxStaticText(this, wxID_ANY, _("Referenced table:"), wxDefaultPosition,
-                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    sbSizer8->Add(m_staticText16, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_txDstTable =
-        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(150, -1)), wxTE_READONLY);
-#if wxVERSION_NUMBER >= 3000
-    m_txDstTable->SetHint(wxT(""));
-#endif
-
-    sbSizer8->Add(m_txDstTable, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText18 =
-        new wxStaticText(this, wxID_ANY, _("Column:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    sbSizer8->Add(m_staticText18, 0, wxALL, WXC_FROM_DIP(5));
-
-    wxArrayString m_cmbDstColArr;
-    m_cmbDstCol = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_cmbDstColArr, 0);
-
-    sbSizer8->Add(m_cmbDstCol, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    fgSizer12->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    fgSizer12->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
-
-    fgSizer12->Add(bSizer12, 1, wxEXPAND | wxALIGN_RIGHT, WXC_FROM_DIP(5));
-
-    m_btnCancel = new wxButton(this, wxID_ANY, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    bSizer12->Add(m_btnCancel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_btnOK = new wxButton(this, wxID_ANY, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    bSizer12->Add(m_btnOK, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    SetName(wxT("_CreateForeignKey"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
-    // Connect events
-    m_btnCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CreateForeignKey::OnCancelClick), NULL,
-                         this);
-    m_btnOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CreateForeignKey::OnOKClick), NULL, this);
-    m_btnOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_CreateForeignKey::OnOKUI), NULL, this);
-}
-
-_CreateForeignKey::~_CreateForeignKey()
-{
-    m_btnCancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CreateForeignKey::OnCancelClick), NULL,
-                            this);
-    m_btnOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CreateForeignKey::OnOKClick), NULL, this);
-    m_btnOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_CreateForeignKey::OnOKUI), NULL, this);
+    m_listCtrlRecentFiles->Unbind(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, &_DBSettingsDialog::OnItemActivated, this);
+    m_listCtrlRecentFiles->Unbind(wxEVT_COMMAND_LIST_ITEM_SELECTED, &_DBSettingsDialog::OnItemSelected, this);
+    m_listCtrlRecentFiles->Unbind(wxEVT_COMMAND_LIST_KEY_DOWN, &_DBSettingsDialog::OnItemKeyDown, this);
+    m_txPassword->Unbind(wxEVT_KEY_DOWN, &_DBSettingsDialog::OnMySqlPassKeyDown, this);
+    m_listBox2->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &_DBSettingsDialog::OnHistoryClick, this);
+    m_listBox2->Unbind(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, &_DBSettingsDialog::OnHistoryDClick, this);
+    m_listBox2->Unbind(wxEVT_UPDATE_UI, &_DBSettingsDialog::OnHistoruUI, this);
+    m_txPgPassword->Unbind(wxEVT_KEY_DOWN, &_DBSettingsDialog::OnPgSqlKeyDown, this);
+    m_listBoxPg->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &_DBSettingsDialog::OnPgHistoryClick, this);
+    m_listBoxPg->Unbind(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, &_DBSettingsDialog::OnPgHistoryDClick, this);
+    m_listBoxPg->Unbind(wxEVT_UPDATE_UI, &_DBSettingsDialog::OnHistoruUI, this);
+    m_button35->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &_DBSettingsDialog::OnDlgOK, this);
 }
 
 _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
                        long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterwyt5ghInitBitmapResources();
@@ -872,149 +488,35 @@ _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, c
     SetName(wxT("_LogDialog"));
     SetMinClientSize(wxSize(640, 460));
     SetSize(wxDLG_UNIT(this, wxSize(640, 460)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button18->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_LogDialog::OnCloseClick), NULL, this);
-    m_button18->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_LogDialog::OnCloseUI), NULL, this);
+    m_button18->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &_LogDialog::OnCloseClick, this);
+    m_button18->Bind(wxEVT_UPDATE_UI, &_LogDialog::OnCloseUI, this);
 }
 
 _LogDialog::~_LogDialog()
 {
-    m_button18->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_LogDialog::OnCloseClick), NULL, this);
-    m_button18->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_LogDialog::OnCloseUI), NULL, this);
-}
-
-_ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                             const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterwyt5ghInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* bSizer15 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(bSizer15);
-
-    wxFlexGridSizer* fgSizer14 = new wxFlexGridSizer(0, 1, 0, 0);
-    fgSizer14->SetFlexibleDirection(wxBOTH);
-    fgSizer14->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    fgSizer14->AddGrowableCol(0);
-    fgSizer14->AddGrowableRow(1);
-
-    bSizer15->Add(fgSizer14, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* bSizer14 = new wxBoxSizer(wxHORIZONTAL);
-
-    fgSizer14->Add(bSizer14, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText19 =
-        new wxStaticText(this, wxID_ANY, _("View name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    bSizer14->Add(m_staticText19, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_txName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_txName->SetHint(wxT(""));
-#endif
-
-    bSizer14->Add(m_txName, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_scintilla2 = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    // Configure the fold margin
-    m_scintilla2->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_scintilla2->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_scintilla2->SetMarginSensitive(4, true);
-    m_scintilla2->SetMarginWidth(4, 16);
-
-    m_scintilla2->SetProperty(wxT("fold"), wxT("1"));
-    m_scintilla2->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN);
-    m_scintilla2->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW);
-    m_scintilla2->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
-    m_scintilla2->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
-    m_scintilla2->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW);
-    m_scintilla2->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
-    m_scintilla2->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
-    // Configure the tracker margin
-    m_scintilla2->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_scintilla2->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_scintilla2->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_scintilla2->SetMarginWidth(2, 0);
-    m_scintilla2->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    int m_scintilla2_PixelWidth = 4 + 5 * m_scintilla2->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
-    m_scintilla2->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_scintilla2->SetMarginWidth(0, m_scintilla2_PixelWidth);
-
-    // Configure the line symbol margin
-    m_scintilla2->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_scintilla2->SetMarginMask(3, 0);
-    m_scintilla2->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_scintilla2->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_scintilla2->StyleClearAll();
-    m_scintilla2->SetWrapMode(0);
-    m_scintilla2->SetIndentationGuides(0);
-    m_scintilla2->SetKeyWords(0, wxT(""));
-    m_scintilla2->SetKeyWords(1, wxT(""));
-    m_scintilla2->SetKeyWords(2, wxT(""));
-    m_scintilla2->SetKeyWords(3, wxT(""));
-    m_scintilla2->SetKeyWords(4, wxT(""));
-
-    fgSizer14->Add(m_scintilla2, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_btnOK = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    fgSizer14->Add(m_btnOK, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
-
-    SetName(wxT("_ViewSettings"));
-    SetMinClientSize(wxSize(650, 450));
-    SetSize(wxDLG_UNIT(this, wxSize(650, 450)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
-    // Connect events
-    m_btnOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ViewSettings::OnOKClick), NULL, this);
-}
-
-_ViewSettings::~_ViewSettings()
-{
-    m_btnOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ViewSettings::OnOKClick), NULL, this);
+    m_button18->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &_LogDialog::OnCloseClick, this);
+    m_button18->Unbind(wxEVT_UPDATE_UI, &_LogDialog::OnCloseUI, this);
 }
 
 _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                            const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterwyt5ghInitBitmapResources();
@@ -1094,10 +596,10 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     fgSizer19->Add(m_staticText36, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceTemplatesArr;
-    m_choiceTemplatesArr.Add(wxT("DatabaseLayer (wxWidgets)"));
-    m_choiceTemplatesArr.Add(wxT("Debea (STL)"));
-    m_choiceTemplatesArr.Add(wxT("wxDebea (wxWidgets)"));
-    m_choiceTemplatesArr.Add(wxT("Generic classes (STL)"));
+    m_choiceTemplatesArr.Add(_("DatabaseLayer (wxWidgets)"));
+    m_choiceTemplatesArr.Add(_("Debea (STL)"));
+    m_choiceTemplatesArr.Add(_("wxDebea (wxWidgets)"));
+    m_choiceTemplatesArr.Add(_("Generic classes (STL)"));
     m_choiceTemplates =
         new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceTemplatesArr, 0);
     m_choiceTemplates->SetSelection(0);
@@ -1131,471 +633,37 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("_ClassGenerateDialog"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_btnBrowseVirtualDir->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                   wxCommandEventHandler(_ClassGenerateDialog::OnBtnBrowseClick), NULL, this);
-    m_button26->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ClassGenerateDialog::OnCancelClick), NULL,
-                        this);
-    m_button25->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ClassGenerateDialog::OnGenerateClick),
-                        NULL, this);
+    m_btnBrowseVirtualDir->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &_ClassGenerateDialog::OnBtnBrowseClick, this);
+    m_button26->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &_ClassGenerateDialog::OnCancelClick, this);
+    m_button25->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &_ClassGenerateDialog::OnGenerateClick, this);
 }
 
 _ClassGenerateDialog::~_ClassGenerateDialog()
 {
-    m_btnBrowseVirtualDir->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                      wxCommandEventHandler(_ClassGenerateDialog::OnBtnBrowseClick), NULL, this);
-    m_button26->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ClassGenerateDialog::OnCancelClick),
-                           NULL, this);
-    m_button25->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ClassGenerateDialog::OnGenerateClick),
-                           NULL, this);
-}
-
-_CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                       const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterwyt5ghInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer10);
-
-    m_scintilla3 = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    // Configure the fold margin
-    m_scintilla3->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_scintilla3->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_scintilla3->SetMarginSensitive(4, true);
-    m_scintilla3->SetMarginWidth(4, 16);
-
-    m_scintilla3->SetProperty(wxT("fold"), wxT("1"));
-    m_scintilla3->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN);
-    m_scintilla3->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW);
-    m_scintilla3->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
-    m_scintilla3->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
-    m_scintilla3->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW);
-    m_scintilla3->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
-    m_scintilla3->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
-    // Configure the tracker margin
-    m_scintilla3->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_scintilla3->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_scintilla3->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_scintilla3->SetMarginWidth(2, 0);
-    m_scintilla3->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    int m_scintilla3_PixelWidth = 4 + 5 * m_scintilla3->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
-    m_scintilla3->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_scintilla3->SetMarginWidth(0, m_scintilla3_PixelWidth);
-
-    // Configure the line symbol margin
-    m_scintilla3->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_scintilla3->SetMarginMask(3, 0);
-    m_scintilla3->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_scintilla3->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_scintilla3->StyleClearAll();
-    m_scintilla3->SetWrapMode(0);
-    m_scintilla3->SetIndentationGuides(0);
-    m_scintilla3->SetKeyWords(0, wxT(""));
-    m_scintilla3->SetKeyWords(1, wxT(""));
-    m_scintilla3->SetKeyWords(2, wxT(""));
-    m_scintilla3->SetKeyWords(3, wxT(""));
-    m_scintilla3->SetKeyWords(4, wxT(""));
-
-    boxSizer10->Add(m_scintilla3, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button14 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    boxSizer10->Add(m_button14, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
-
-    SetName(wxT("_CodePreviewDialog"));
-    SetMinClientSize(wxSize(500, 470));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 470)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
-    // Connect events
-    m_button14->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CodePreviewDialog::OnOKClick), NULL, this);
-}
-
-_CodePreviewDialog::~_CodePreviewDialog()
-{
-    m_button14->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CodePreviewDialog::OnOKClick), NULL,
-                           this);
-}
-
-_TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                               const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterwyt5ghInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer19);
-
-    m_infobar = new wxInfoBar(this, wxID_ANY);
-    m_infobar->SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-
-    boxSizer19->Add(m_infobar, 0, wxLEFT | wxRIGHT | wxTOP | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxHORIZONTAL);
-
-    boxSizer19->Add(boxSizer21, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText23 =
-        new wxStaticText(this, wxID_ANY, _("Table name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    boxSizer21->Add(m_staticText23, 0, wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textName->SetHint(wxT(""));
-#endif
-
-    boxSizer21->Add(m_textName, 1, wxTOP | wxBOTTOM, WXC_FROM_DIP(5));
-
-    m_splitter27 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxSP_LIVE_UPDATE | wxSP_3DSASH);
-    m_splitter27->SetSashGravity(0.5);
-    m_splitter27->SetMinimumPaneSize(10);
-
-    boxSizer19->Add(m_splitter27, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_splitterPage31 = new wxPanel(m_splitter27, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter27, wxSize(-1, -1)),
-                                   wxTAB_TRAVERSAL);
-
-    wxBoxSizer* boxSizer37 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage31->SetSizer(boxSizer37);
-
-    m_staticText55 = new wxStaticText(m_splitterPage31, wxID_ANY, _("Columns:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_splitterPage31, wxSize(-1, -1)), 0);
-
-    boxSizer37->Add(m_staticText55, 0, wxLEFT | wxRIGHT | wxTOP, WXC_FROM_DIP(5));
-
-    m_auibar39 =
-        new wxAuiToolBar(m_splitterPage31, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage31, wxSize(-1, -1)),
-                         wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
-    m_auibar39->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer37->Add(m_auibar39, 0, wxLEFT | wxRIGHT | wxTOP | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_auibar39->AddTool(XRCID("IDT_DBE_TS_ADD_COLUMN"), _("Add column"),
-                        wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL,
-                        _("Add new column"), wxT(""), NULL);
-
-    m_auibar39->AddTool(XRCID("IDT_DBE_TS_REMOVE_COLUMN"), _("Remove column"),
-                        wxXmlResource::Get()->LoadBitmap(wxT("16-minus")), wxNullBitmap, wxITEM_NORMAL,
-                        _("Remove selected column"), wxT(""), NULL);
-
-    m_auibar39->AddSeparator();
-
-    m_auibar39->AddTool(XRCID("IDT_DBE_TS_MOVE_UP"), _("Move column up"),
-                        wxXmlResource::Get()->LoadBitmap(wxT("16-up")), wxNullBitmap, wxITEM_NORMAL,
-                        _("Move selected column up"), wxT(""), NULL);
-
-    m_auibar39->AddTool(XRCID("IDT_DBE_TS_MOVE_DOWN"), _("Move column down"),
-                        wxXmlResource::Get()->LoadBitmap(wxT("16-down")), wxNullBitmap, wxITEM_NORMAL,
-                        _("Move selected column down"), wxT(""), NULL);
-    m_auibar39->Realize();
-
-    m_dvColumns = new wxDataViewListCtrl(m_splitterPage31, wxID_ANY, wxDefaultPosition,
-                                         wxDLG_UNIT(m_splitterPage31, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
-
-    boxSizer37->Add(m_dvColumns, 1, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dvColumns->AppendTextColumn(_("Column name"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                  wxDATAVIEW_COL_RESIZABLE);
-    m_dvColumns->AppendTextColumn(_("Type"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                  wxDATAVIEW_COL_RESIZABLE);
-    m_dvColumns->AppendTextColumn(_("Size"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                  wxDATAVIEW_COL_RESIZABLE);
-    m_dvColumns->AppendToggleColumn(_("Not null"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                    wxDATAVIEW_COL_RESIZABLE);
-    m_dvColumns->AppendToggleColumn(_("Autoincrement"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                    wxDATAVIEW_COL_RESIZABLE);
-    m_dvColumns->AppendToggleColumn(_("Primary key"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                    wxDATAVIEW_COL_RESIZABLE);
-    m_splitterPage35 = new wxPanel(m_splitter27, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter27, wxSize(-1, -1)),
-                                   wxTAB_TRAVERSAL);
-    m_splitter27->SplitHorizontally(m_splitterPage31, m_splitterPage35, 0);
-
-    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage35->SetSizer(boxSizer43);
-
-    m_staticText57 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Foreign keys:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), 0);
-
-    boxSizer43->Add(m_staticText57, 0, wxLEFT | wxRIGHT | wxTOP, WXC_FROM_DIP(5));
-
-    m_auibar45 =
-        new wxAuiToolBar(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)),
-                         wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
-    m_auibar45->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer43->Add(m_auibar45, 0, wxLEFT | wxRIGHT | wxTOP | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_auibar45->AddTool(XRCID("IDT_DBE_TS_ADD_KEY"), _("Add foreign key"),
-                        wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL,
-                        _("Add new foreign key"), wxT(""), NULL);
-
-    m_auibar45->AddTool(XRCID("IDT_DBE_TS_REMOVE_KEY"), _("Remove foreign key"),
-                        wxXmlResource::Get()->LoadBitmap(wxT("16-minus")), wxNullBitmap, wxITEM_NORMAL,
-                        _("Remove selected foreign key"), wxT(""), NULL);
-    m_auibar45->Realize();
-
-    wxFlexGridSizer* flexGridSizer143 = new wxFlexGridSizer(1, 4, 0, 0);
-    flexGridSizer143->SetFlexibleDirection(wxBOTH);
-    flexGridSizer143->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer143->AddGrowableCol(0);
-    flexGridSizer143->AddGrowableRow(0);
-
-    boxSizer43->Add(flexGridSizer143, 1, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dvKeys = new wxDataViewListCtrl(m_splitterPage35, wxID_ANY, wxDefaultPosition,
-                                      wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
-
-    flexGridSizer143->Add(m_dvKeys, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dvKeys->AppendTextColumn(_("Key name"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                               wxDATAVIEW_COL_RESIZABLE);
-    wxBoxSizer* boxSizer163 = new wxBoxSizer(wxVERTICAL);
-
-    flexGridSizer143->Add(boxSizer163, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxFlexGridSizer* flexGridSizer147 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer147->SetFlexibleDirection(wxBOTH);
-    flexGridSizer147->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer147->AddGrowableCol(1);
-
-    boxSizer163->Add(flexGridSizer147, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText125 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Local column:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), 0);
-
-    flexGridSizer147->Add(m_staticText125, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
-                          WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceLocalColArr;
-    m_choiceLocalCol = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), m_choiceLocalColArr, 0);
-
-    flexGridSizer147->Add(m_choiceLocalCol, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND | wxALIGN_CENTER_VERTICAL,
-                          WXC_FROM_DIP(5));
-
-    m_staticText131 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Ref. table:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), 0);
-
-    flexGridSizer147->Add(m_staticText131, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
-                          WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceRefTableArr;
-    m_choiceRefTable = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), m_choiceRefTableArr, 0);
-
-    flexGridSizer147->Add(m_choiceRefTable, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND | wxALIGN_CENTER_VERTICAL,
-                          WXC_FROM_DIP(5));
-
-    m_staticText135 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Ref. column:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), 0);
-
-    flexGridSizer147->Add(m_staticText135, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
-                          WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceRefColArr;
-    m_choiceRefCol = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition,
-                                  wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), m_choiceRefColArr, 0);
-
-    flexGridSizer147->Add(m_choiceRefCol, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND | wxALIGN_CENTER_VERTICAL,
-                          WXC_FROM_DIP(5));
-
-    wxArrayString m_radioOnUpdateArr;
-    m_radioOnUpdateArr.Add(_("restrict"));
-    m_radioOnUpdateArr.Add(_("cascade"));
-    m_radioOnUpdateArr.Add(_("set null"));
-    m_radioOnUpdateArr.Add(_("no action"));
-    m_radioOnUpdate =
-        new wxRadioBox(m_splitterPage35, wxID_ANY, _("On update"), wxDefaultPosition,
-                       wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), m_radioOnUpdateArr, 1, wxRA_SPECIFY_ROWS);
-    m_radioOnUpdate->SetSelection(0);
-
-    boxSizer163->Add(m_radioOnUpdate, 0, wxLEFT | wxRIGHT | wxTOP | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxArrayString m_radioOnDeleteArr;
-    m_radioOnDeleteArr.Add(_("restrict"));
-    m_radioOnDeleteArr.Add(_("cascade"));
-    m_radioOnDeleteArr.Add(_("set null"));
-    m_radioOnDeleteArr.Add(_("no action"));
-    m_radioOnDelete =
-        new wxRadioBox(m_splitterPage35, wxID_ANY, _("On delete"), wxDefaultPosition,
-                       wxDLG_UNIT(m_splitterPage35, wxSize(-1, -1)), m_radioOnDeleteArr, 1, wxRA_SPECIFY_ROWS);
-    m_radioOnDelete->SetSelection(0);
-
-    boxSizer163->Add(m_radioOnDelete, 0, wxLEFT | wxRIGHT | wxTOP | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
-
-    boxSizer19->Add(boxSizer49, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-
-    m_button51 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    boxSizer49->Add(m_button51, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_button53 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    boxSizer49->Add(m_button53, 0, wxALL, WXC_FROM_DIP(5));
-
-    SetName(wxT("_TableSettings"));
-    SetMinClientSize(wxSize(600, -1));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
-    // Connect events
-    this->Connect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(_TableSettings::OnInit), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_ADD_COLUMN"), wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(_TableSettings::OnAddColumnClick), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_REMOVE_COLUMN"), wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(_TableSettings::OnRemoveColumnClick), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_REMOVE_COLUMN"), wxEVT_UPDATE_UI,
-                  wxUpdateUIEventHandler(_TableSettings::OnUpdateColumns), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_MOVE_UP"), wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(_TableSettings::OnMoveUpClick), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_MOVE_UP"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateMoveUp),
-                  NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_MOVE_DOWN"), wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(_TableSettings::OnMoveDownClick), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_MOVE_DOWN"), wxEVT_UPDATE_UI,
-                  wxUpdateUIEventHandler(_TableSettings::OnUpdateMoveDown), NULL, this);
-    m_dvColumns->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
-                         wxDataViewEventHandler(_TableSettings::OnColumnChanged), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_ADD_KEY"), wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(_TableSettings::OnAddKeyClick), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_REMOVE_KEY"), wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(_TableSettings::OnRemoveKeyClick), NULL, this);
-    this->Connect(XRCID("IDT_DBE_TS_REMOVE_KEY"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys),
-                  NULL, this);
-    m_dvKeys->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(_TableSettings::OnKeySelected),
-                      NULL, this);
-    m_dvKeys->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, wxDataViewEventHandler(_TableSettings::OnKeyChanged),
-                      NULL, this);
-    m_choiceLocalCol->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(_TableSettings::OnLocalColSelected),
-                              NULL, this);
-    m_choiceLocalCol->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_choiceRefTable->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(_TableSettings::OnRefTableSelected),
-                              NULL, this);
-    m_choiceRefTable->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_choiceRefCol->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(_TableSettings::OnRefColSelected),
-                            NULL, this);
-    m_choiceRefCol->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_radioOnUpdate->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED,
-                             wxCommandEventHandler(_TableSettings::OnRadioUpdateSelected), NULL, this);
-    m_radioOnUpdate->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_radioOnDelete->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED,
-                             wxCommandEventHandler(_TableSettings::OnRadioDeleteSelected), NULL, this);
-    m_radioOnDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_button51->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_TableSettings::OnCancelClick), NULL, this);
-    m_button53->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_TableSettings::OnOKClick), NULL, this);
-}
-
-_TableSettings::~_TableSettings()
-{
-    this->Disconnect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(_TableSettings::OnInit), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_ADD_COLUMN"), wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(_TableSettings::OnAddColumnClick), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_REMOVE_COLUMN"), wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(_TableSettings::OnRemoveColumnClick), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_REMOVE_COLUMN"), wxEVT_UPDATE_UI,
-                     wxUpdateUIEventHandler(_TableSettings::OnUpdateColumns), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_MOVE_UP"), wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(_TableSettings::OnMoveUpClick), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_MOVE_UP"), wxEVT_UPDATE_UI,
-                     wxUpdateUIEventHandler(_TableSettings::OnUpdateMoveUp), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_MOVE_DOWN"), wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(_TableSettings::OnMoveDownClick), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_MOVE_DOWN"), wxEVT_UPDATE_UI,
-                     wxUpdateUIEventHandler(_TableSettings::OnUpdateMoveDown), NULL, this);
-    m_dvColumns->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
-                            wxDataViewEventHandler(_TableSettings::OnColumnChanged), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_ADD_KEY"), wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(_TableSettings::OnAddKeyClick), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_REMOVE_KEY"), wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(_TableSettings::OnRemoveKeyClick), NULL, this);
-    this->Disconnect(XRCID("IDT_DBE_TS_REMOVE_KEY"), wxEVT_UPDATE_UI,
-                     wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_dvKeys->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                         wxDataViewEventHandler(_TableSettings::OnKeySelected), NULL, this);
-    m_dvKeys->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
-                         wxDataViewEventHandler(_TableSettings::OnKeyChanged), NULL, this);
-    m_choiceLocalCol->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(_TableSettings::OnLocalColSelected), NULL, this);
-    m_choiceLocalCol->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_choiceRefTable->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(_TableSettings::OnRefTableSelected), NULL, this);
-    m_choiceRefTable->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_choiceRefCol->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(_TableSettings::OnRefColSelected),
-                               NULL, this);
-    m_choiceRefCol->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_radioOnUpdate->Disconnect(wxEVT_COMMAND_RADIOBOX_SELECTED,
-                                wxCommandEventHandler(_TableSettings::OnRadioUpdateSelected), NULL, this);
-    m_radioOnUpdate->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_radioOnDelete->Disconnect(wxEVT_COMMAND_RADIOBOX_SELECTED,
-                                wxCommandEventHandler(_TableSettings::OnRadioDeleteSelected), NULL, this);
-    m_radioOnDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_button51->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_TableSettings::OnCancelClick), NULL,
-                           this);
-    m_button53->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_TableSettings::OnOKClick), NULL, this);
+    m_btnBrowseVirtualDir->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &_ClassGenerateDialog::OnBtnBrowseClick, this);
+    m_button26->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &_ClassGenerateDialog::OnCancelClick, this);
+    m_button25->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &_ClassGenerateDialog::OnGenerateClick, this);
 }
 
 DbExplorerFrameBase::DbExplorerFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                          const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterwyt5ghInitBitmapResources();
@@ -1604,25 +672,7 @@ DbExplorerFrameBase::DbExplorerFrameBase(wxWindow* parent, wxWindowID id, const 
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-database"));
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-    {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-database@2x"));
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-    {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("24-database"));
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-    {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("24-database@2x"));
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("database"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon(icn);
@@ -1634,19 +684,19 @@ DbExplorerFrameBase::DbExplorerFrameBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("DbExplorerFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 DbExplorerFrameBase::~DbExplorerFrameBase() {}

@@ -7,7 +7,7 @@ on:
 
 jobs:
   macos:
-    runs-on: macos-14
+    runs-on: macos-latest
 
     steps:
 
@@ -24,7 +24,7 @@ jobs:
           ref: v3.2.5
           submodules: recursive
           path: wxWidgets
-    
+
     - name: Build and install wxWidgets
       run: |
         mkdir wxWidgets/build-release

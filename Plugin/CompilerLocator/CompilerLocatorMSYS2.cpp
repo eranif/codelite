@@ -71,12 +71,12 @@ bool CompilerLocatorMSYS2::Locate()
 
     // try some defaults
     wxString gcc_exe;
-    if(!m_msys2.Which("gcc", &gcc_exe)) {
+    if (!m_msys2.Which("gcc", &gcc_exe)) {
         return false;
     }
 
     auto compiler = Locate(wxFileName(gcc_exe).GetPath());
-    if(compiler) {
+    if (compiler) {
         m_compilers.push_back(compiler);
     }
     return !m_compilers.empty();
@@ -98,23 +98,20 @@ CompilerPtr CompilerLocatorMSYS2::TryToolchain(const wxString& folder,
     wxFileName gdb = GetFileName(folder, toolchain.at("DEBUGGER"));
 
     // make sure that both gcc & g++ exist
-    if(!(gcc.FileExists() && gxx.FileExists())) {
+    if (!(gcc.FileExists() && gxx.FileExists())) {
         return nullptr;
     }
 
     // define the toolchain name
     wxString basename = m_repository;
-    if(!basename.empty()) {
+    if (!basename.empty()) {
         basename << "/";
     }
     basename << "gcc";
-    GCCMetadata cmd(basename);
-
-    cmd.Load(gcc.GetFullPath(), folder);
 
     // create new compiler
     CompilerPtr compiler(new Compiler(nullptr));
-    compiler->SetName(cmd.GetName());
+    compiler->SetName(gxx.GetFullPath());
     compiler->SetCompilerFamily(COMPILER_FAMILY_MSYS2);
     compiler->SetInstallationPath(folder);
 
@@ -136,9 +133,9 @@ CompilerPtr CompilerLocatorMSYS2::TryToolchain(const wxString& folder,
 CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
 {
     // check for g++
-    for(const auto& toolchain : TOOLCHAINS) {
+    for (const auto& toolchain : TOOLCHAINS) {
         auto cmp = TryToolchain(folder, toolchain);
-        if(cmp) {
+        if (cmp) {
             return cmp;
         }
     }

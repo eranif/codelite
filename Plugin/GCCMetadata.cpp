@@ -47,7 +47,7 @@ static wxCriticalSection s_cs;
 void GCCMetadata::GetMetadataFromCache(const wxString& tool, const wxString& rootDir, bool is_cygwin, GCCMetadata* md)
 {
     wxCriticalSectionLocker locker(s_cs);
-    if(s_cache.count(tool) == 0) {
+    if (s_cache.count(tool) == 0) {
         GCCMetadata tmp(md->m_basename);
         tmp.DoLoad(tool, rootDir, is_cygwin);
         s_cache.insert({ tool, tmp });
@@ -94,7 +94,7 @@ void GCCMetadata::DoLoad(const wxString& tool, const wxString& rootDir, bool is_
     envlist.push_back({ "PATH", pathenv });
 
 #ifdef __WXMSW__
-    if(::clIsCygwinEnvironment()) {
+    if (::clIsCygwinEnvironment()) {
         command << cxx.GetFullName() << " -v -x c++ /dev/null -fsyntax-only";
     } else {
 
@@ -112,27 +112,27 @@ void GCCMetadata::DoLoad(const wxString& tool, const wxString& rootDir, bool is_
     wxArrayString outputArr = wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
     // Analyze the output
     bool collect(false);
-    for(wxString& line : outputArr) {
+    for (wxString& line : outputArr) {
         line.Trim().Trim(false);
 
         // search the scan starting point
-        if(line.Contains(wxT("#include <...> search starts here:"))) {
+        if (line.Contains(wxT("#include <...> search starts here:"))) {
             collect = true;
             continue;
         }
 
-        if(line.Contains(wxT("End of search list."))) {
+        if (line.Contains(wxT("End of search list."))) {
             break;
         }
 
-        if(collect) {
+        if (collect) {
             line.Replace("(framework directory)", wxEmptyString);
 #ifdef __WXMSW__
-            if(is_cygwin && line.StartsWith("/usr/lib")) {
+            if (is_cygwin && line.StartsWith("/usr/lib")) {
                 line.Replace("/usr/lib", "/lib");
             }
 
-            if(line.StartsWith("/")) {
+            if (line.StartsWith("/")) {
                 // probably MSYS2 or Cygwin
                 // replace the "/" with the root folder
                 line.Prepend(rootDir);
@@ -149,7 +149,7 @@ void GCCMetadata::DoLoad(const wxString& tool, const wxString& rootDir, bool is_
     // get the target
     m_target = RunCommand(cxx.GetFullName() + " -dumpmachine", wxFileName(tool).GetPath(), &envlist);
     wxString versionString = RunCommand(cxx.GetFullName() + " -dumpversion", wxFileName(tool).GetPath(), &envlist);
-    m_name << m_basename << "-" << versionString;
+    m_name = m_basename;
 
     // load macros
     clTempFile macrosFile;
@@ -182,7 +182,7 @@ wxString GCCMetadata::RunCommand(const wxString& command, const wxString& workin
     clDEBUG() << "Running command:" << command << endl;
     wxString outputStr;
     IProcess::Ptr_t proc(::CreateSyncProcess(command, IProcessCreateDefault, working_directory, env));
-    if(proc) {
+    if (proc) {
         proc->WaitForTerminate(outputStr);
     }
     LOG_IF_TRACE { clDEBUG1() << "Output is:" << outputStr << endl; }

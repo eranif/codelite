@@ -30,6 +30,7 @@
 #include "fileutils.h"
 #include "globals.h"
 
+#include <optional>
 #include <wx/filename.h>
 #include <wx/regex.h>
 
@@ -44,7 +45,7 @@ CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
     wxFileName tmpfn(folder, "");
 
     wxString name;
-    if(tmpfn.GetDirCount() > 1 && tmpfn.GetDirs().Last() == "bin") {
+    if (tmpfn.GetDirCount() > 1 && tmpfn.GetDirs().Last() == "bin") {
         tmpfn.RemoveLastDir();
         name = tmpfn.GetDirs().Last();
     }
@@ -54,13 +55,13 @@ CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
 #endif
 
     bool found = gcc.FileExists();
-    if(!found) {
+    if (!found) {
         // try to see if we have a bin folder here
         gcc.AppendDir("bin");
         found = gcc.FileExists();
     }
 
-    if(found) {
+    if (found) {
         CompilerPtr compiler(new Compiler(NULL));
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
 
@@ -69,8 +70,8 @@ CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
         compiler->SetGenerateDependeciesFile(true);
         m_compilers.push_back(compiler);
 
-        // we path the bin folder
-        AddTools(compiler, gcc.GetPath());
+        // we pass the bin folder
+        AddTools(compiler, gcc);
         return compiler;
     }
     return NULL;
@@ -85,115 +86,134 @@ bool CompilerLocatorGCC::Locate()
     wxArrayString paths = GetPaths();
     clFilesScanner scanner;
     clFilesScanner::EntryData::Vec_t outputFiles, tmpFiles;
-    for(const wxString& path : paths) {
-        if(scanner.ScanNoRecurse(path, tmpFiles, "gcc*")) {
+    for (const wxString& path : paths) {
+        if (scanner.ScanNoRecurse(path, tmpFiles, "gcc*")) {
             outputFiles.insert(outputFiles.end(), tmpFiles.begin(), tmpFiles.end());
         }
     }
 
     m_compilers.clear();
     wxStringMap_t map;
-    for(const auto& d : outputFiles) {
-        if(d.flags & clFilesScanner::kIsFile) {
+    for (const auto& d : outputFiles) {
+        if (d.flags & clFilesScanner::kIsFile) {
             wxFileName gcc(d.fullpath);
 #ifdef __CYGWIN__
             wxString fullname = gcc.GetName(); // no extension
 #else
             wxString fullname = gcc.GetFullName(); // name + extension
 #endif
-            if(reGcc.IsValid() && reGcc.Matches(fullname)) {
+            if (reGcc.IsValid() && reGcc.Matches(fullname)) {
                 wxString acceptableName = "gcc" + reGcc.GetMatch(fullname, 1);
-                if(fullname == acceptableName) {
+                if (fullname == acceptableName) {
                     // keep unique paths only + the suffix
                     map.insert({ d.fullpath, reGcc.GetMatch(fullname, 1) });
                 }
             }
         }
     }
-    for(const auto& vt : map) {
+
+    for (const auto& vt : map) {
         // add this compiler
-        wxFileName gcc(vt.first);
+        const wxFileName& gcc = vt.first;
         CompilerPtr compiler(new Compiler(NULL));
-        compiler->SetName(gcc.GetFullName().Upper());
+        compiler->SetName(gcc.GetFullPath());
         compiler->SetGenerateDependeciesFile(true);
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
         m_compilers.push_back(compiler);
-        AddTools(compiler, "/usr/bin", vt.second);
+        AddTools(compiler, gcc);
     }
 
+#ifdef __WXMAC__
     // XCode GCC is installed under /Applications/Xcode.app/Contents/Developer/usr/bin
     wxFileName xcodeGcc("/Applications/Xcode.app/Contents/Developer/usr/bin", "gcc");
-    if(xcodeGcc.FileExists()) {
+    if (xcodeGcc.FileExists()) {
         // add this compiler
         CompilerPtr compiler(new Compiler(NULL));
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
         compiler->SetName("GCC ( XCode )");
         m_compilers.push_back(compiler);
-        AddTools(compiler, xcodeGcc.GetPath());
+        AddTools(compiler, xcodeGcc);
     }
+#endif
 
     return !m_compilers.empty();
 }
 
-void CompilerLocatorGCC::AddTools(CompilerPtr compiler, const wxString& binFolder, const wxString& suffix)
+namespace
 {
-    wxFileName masterPath(binFolder, "");
-    wxString defaultBinFolder = "/usr/bin";
+/// Given gcc full path, try to locate `toolname` at the same location
+/// For example if `gcc` is `/usr/bin/gcc-17` and `toolname` is `g++`
+/// This method will try to locate `/usr/bin/g++-17`
+std::optional<wxFileName> GetTool(const wxFileName& gcc, const wxString& toolname)
+{
+    wxString fullpath = gcc.GetFullPath();
+    fullpath.Replace("gcc", toolname);
+    wxFileName fn(fullpath);
+    if (fn.FileExists()) {
+        return fn;
+    } else {
+        return {};
+    }
+}
+} // namespace
+
+void CompilerLocatorGCC::AddTools(CompilerPtr compiler, const wxFileName& gcc)
+{
     compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
-    compiler->SetInstallationPath(binFolder);
+    compiler->SetInstallationPath(gcc.GetPath());
 
-    clDEBUG() << "Found GNU GCC compiler under:" << masterPath.GetPath() << compiler->GetName();
-    wxFileName toolFile(binFolder, "");
+    clDEBUG() << "Found GNU GCC compiler:" << gcc << endl;
 
-    // ++++-----------------------------------------------------------------
+    // ====-----------------------------------------------------------------
     // With XCode installation, only
     // g++, gcc, and make are installed under the Xcode installation folder
     // the rest (mainly ar and as) are taken from /usr/bin
-    // ++++-----------------------------------------------------------------
+    // ====-----------------------------------------------------------------
 
-    toolFile.SetFullName("g++");
-    AddTool(compiler, "CXX", toolFile.GetFullPath(), suffix);
-    AddTool(compiler, "LinkerName", toolFile.GetFullPath(), suffix);
+    wxFileName gxx = GetTool(gcc, "g++").value_or(gcc);
+    AddTool(compiler, "CXX", gxx);
+    AddTool(compiler, "LinkerName", gxx);
 #ifndef __WXMAC__
-    AddTool(compiler, "SharedObjectLinkerName", toolFile.GetFullPath(), suffix, "-shared -fPIC");
+    AddTool(compiler, "SharedObjectLinkerName", gxx, "-shared -fPIC");
 #else
-    AddTool(compiler, "SharedObjectLinkerName", toolFile.GetFullPath(), suffix, "-dynamiclib -fPIC");
+    AddTool(compiler, "SharedObjectLinkerName", gxx, "-dynamiclib -fPIC");
 #endif
-    toolFile.SetFullName("gcc");
-    AddTool(compiler, "CC", toolFile.GetFullPath(), suffix);
-    toolFile.SetFullName("make");
-    wxString makeExtraArgs;
-    if(wxThread::GetCPUCount() > 1) {
-        makeExtraArgs << "-j" << wxThread::GetCPUCount();
-    }
-    AddTool(compiler, "MAKE", toolFile.GetFullPath(), "", makeExtraArgs);
+
+    AddTool(compiler, "CC", gcc);
 
     // ++++-----------------------------------------------------------------
     // From this point on, we use /usr/bin only
     // ++++-----------------------------------------------------------------
+    wxFileName toolFile("/usr/bin", wxEmptyString);
 
-    toolFile.AssignDir(defaultBinFolder);
+    toolFile.SetFullName("make");
+    wxString makeExtraArgs;
+    if (wxThread::GetCPUCount() > 1) {
+        makeExtraArgs << "-j" << wxThread::GetCPUCount();
+    }
+    AddTool(compiler, "MAKE", toolFile, makeExtraArgs);
+
     toolFile.SetFullName("ar");
-    AddTool(compiler, "AR", toolFile.GetFullPath(), "", "rcu");
+    AddTool(compiler, "AR", toolFile, "rcu");
 
     toolFile.SetFullName("windres");
-    AddTool(compiler, "ResourceCompiler", "", "");
+    AddTool(compiler, "ResourceCompiler", {});
 
     toolFile.SetFullName("as");
-    AddTool(compiler, "AS", toolFile.GetFullPath(), "");
+    AddTool(compiler, "AS", toolFile);
 
     toolFile.SetFullName("gdb");
-    if(toolFile.Exists()) {
-        AddTool(compiler, "Debugger", toolFile.GetFullPath(), "");
+    if (toolFile.Exists()) {
+        AddTool(compiler, "Debugger", toolFile);
     }
 }
 
-void CompilerLocatorGCC::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
-                                 const wxString& suffix, const wxString& extraArgs)
+void CompilerLocatorGCC::AddTool(CompilerPtr compiler, const wxString& toolname, const wxFileName& toolpath,
+                                 const wxString& extraArgs)
 {
-    wxString tool = toolpath + suffix;
+    wxString tool = toolpath.GetFullPath();
     ::WrapWithQuotes(tool);
-    if(!extraArgs.IsEmpty()) {
+    if (!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;
     }
     compiler->SetTool(toolname, tool);

@@ -44,12 +44,12 @@ bool CompilerLocatorMSYS2Clang::Locate()
 
     // try some defaults
     wxString clang_exe;
-    if(!m_msys2.Which("clang", &clang_exe)) {
+    if (!m_msys2.Which("clang", &clang_exe)) {
         return false;
     }
 
     auto compiler = Locate(wxFileName(clang_exe).GetPath());
-    if(compiler) {
+    if (compiler) {
         m_compilers.push_back(compiler);
     }
     return !m_compilers.empty();
@@ -68,23 +68,20 @@ CompilerPtr CompilerLocatorMSYS2Clang::Locate(const wxString& folder)
     wxFileName gdb = GetFileName(folder, "gdb");
 
     // make sure that both clang & g++ exist
-    if(!(clang.FileExists() && clangxx.FileExists())) {
+    if (!(clang.FileExists() && clangxx.FileExists())) {
         return nullptr;
     }
 
     // define the toolchain name
     wxString basename = m_repository;
-    if(!basename.empty()) {
+    if (!basename.empty()) {
         basename << "/";
     }
     basename << "clang";
-    GCCMetadata cmd(basename);
-
-    cmd.Load(clang.GetFullPath(), folder);
 
     // create new compiler
     CompilerPtr compiler(new Compiler(nullptr));
-    compiler->SetName(cmd.GetName());
+    compiler->SetName(clang.GetFullPath());
     compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
     compiler->SetInstallationPath(folder);
 

@@ -509,6 +509,7 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
     }
 
     // start the debugger
+    LOG_DEBUG(LOG) << "Initializing debugger for executable:" << exepath << endl;
     if (!InitialiseSession(dap_server, exepath, args, working_directory, ssh_account, env)) {
         return;
     }

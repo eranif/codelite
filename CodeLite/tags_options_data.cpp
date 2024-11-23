@@ -436,7 +436,7 @@ TagsOptionsData::TagsOptionsData()
     , m_clangOptions(0)
     , m_clangBinary("")
     , m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
-    , m_ccNumberOfDisplayItems(150)
+    , m_ccNumberOfDisplayItems(500)
     , m_version(0)
 {
     // Initialize defaults

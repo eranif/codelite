@@ -20,42 +20,16 @@ namespace
 #ifdef __WXMAC__
 /// Homebrew install formulas in a specific location, this function
 /// attempts to discover this location
-bool macos_find_homebrew_cellar_path_for_formula(const wxString& formula, wxString* install_path)
+bool macos_find_homebrew_opt_formula_dir(const wxString& formula, wxString* install_path)
 {
-    wxString cellar_path = "/opt/homebrew/Cellar";
-    if (!wxFileName::DirExists(cellar_path)) {
-        cellar_path = "/usr/local/Cellar";
+    wxFileName fn("/opt/homebrew/opt", wxEmptyString);
+    fn.AppendDir(formula);
+    fn.AppendDir("bin");
+    if (fn.DirExists()) {
+        *install_path = fn.GetPath();
+        return true;
     }
-
-    cellar_path << "/" << formula;
-
-    if (!wxFileName::DirExists(cellar_path)) {
-        return false;
-    }
-
-    // we take the string with the highest value
-    clFilesScanner fs;
-    clFilesScanner::EntryData::Vec_t results;
-    if (fs.ScanNoRecurse(cellar_path, results) == 0) {
-        return false;
-    }
-
-    // we are only interested in the name part
-    for (auto& result : results) {
-        result.fullpath = result.fullpath.AfterLast('/');
-    }
-
-    std::sort(results.begin(), results.end(),
-              [](const clFilesScanner::EntryData& a, const clFilesScanner::EntryData& b) {
-                  clVersionString vs_a{ a.fullpath };
-                  clVersionString vs_b{ b.fullpath };
-                  // want to sort in descending order
-                  return vs_b.to_number() < vs_a.to_number();
-              });
-
-    *install_path << cellar_path << "/" << results[0].fullpath;
-    clDEBUG() << "Using cellar path:" << *install_path << endl;
-    return true;
+    return false;
 }
 #endif
 } // namespace
@@ -159,8 +133,8 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     // llvm is placed under a special location
     // if we find it, we place it first
     wxString llvm_path;
-    if (macos_find_homebrew_cellar_path_for_formula("llvm", &llvm_path)) {
-        paths.Insert(llvm_path + "/bin", 0);
+    if (macos_find_homebrew_opt_formula_dir("llvm", &llvm_path)) {
+        paths.Insert(llvm_path, 0);
     }
 #endif
 

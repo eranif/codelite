@@ -96,9 +96,15 @@ void DapLocator::find_lldb_dap(std::vector<DapEntry>* entries)
     }
 
     wxString entry_name = wxFileName(lldb_debugger).GetName();
+#ifdef __WXMAC__
+    auto entry = create_entry(entry_name, 12345, { lldb_debugger, "--port", "12345" }, DapLaunchType::LAUNCH);
+    entry.SetEnvFormat(dap::EnvFormat::LIST);
+    entries->push_back(entry);
+#else
     auto entry = create_entry_stdio(entry_name, { lldb_debugger }, DapLaunchType::LAUNCH);
     entry.SetEnvFormat(dap::EnvFormat::LIST);
     entries->push_back(entry);
+#endif
 }
 
 void DapLocator::find_debugpy(std::vector<DapEntry>* entries)

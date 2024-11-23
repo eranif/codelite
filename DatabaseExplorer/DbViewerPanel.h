@@ -46,7 +46,6 @@
 #include <wx/wx.h>
 
 // other
-#include "DnDTableShape.h"
 #include "IDbAdapter.h"
 #include "IDbItem.h"
 #include "column.h"

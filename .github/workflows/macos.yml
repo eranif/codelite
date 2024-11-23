@@ -24,7 +24,7 @@ jobs:
           ref: v3.2.5
           submodules: recursive
           path: wxWidgets
-    
+
     - name: Build and install wxWidgets
       run: |
         mkdir wxWidgets/build-release

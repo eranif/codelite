@@ -1652,7 +1652,7 @@ void Manager::OnProcessEnd(clProcessEvent& event)
     EventNotifier::Get()->AddPendingEvent(stopEvent);
 
     // Raise CodeLite
-    clMainFrame::Get()->Raise();
+    clMainFrame::Get()->CallAfter(&wxFrame::Raise);
 
     // return the focus back to the editor
     if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {

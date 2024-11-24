@@ -1651,6 +1651,9 @@ void Manager::OnProcessEnd(clProcessEvent& event)
     clExecuteEvent stopEvent(wxEVT_PROGRAM_TERMINATED);
     EventNotifier::Get()->AddPendingEvent(stopEvent);
 
+    // Raise CodeLite
+    clMainFrame::Get()->Raise();
+
     // return the focus back to the editor
     if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
         clMainFrame::Get()->GetMainBook()->GetActiveEditor()->SetActive();

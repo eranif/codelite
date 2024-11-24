@@ -6,14 +6,7 @@
 #include "EditDlg.h"
 #include "StringUtils.h"
 #include "build_settings_config.h"
-#include "clFileSystemWorkspace.hpp"
-#include "clangd/CompileCommandsGenerator.h"
-#include "event_notifier.h"
-#include "file_logger.h"
-#include "fileextmanager.h"
-#include "fileutils.h"
 #include "globals.h"
-#include "macromanager.h"
 #include "macros.h"
 
 #include <wx/dirdlg.h>
@@ -50,11 +43,18 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_stcCCFlags->SetText(m_config->GetCompileFlagsAsString());
     m_textCtrlFileExt->ChangeValue(m_config->GetFileExtensions());
 
-    if (m_config->GetLastExecutables().empty()) {
-        m_comboBoxExecutable->Append(m_config->GetExecutable());
-    } else {
-        m_comboBoxExecutable->Append(m_config->GetLastExecutables());
+    wxArrayString values;
+    if (!m_config->GetLastExecutables().empty()) {
+        values.insert(values.end(), m_config->GetLastExecutables().begin(), m_config->GetLastExecutables().end());
     }
+
+    if (!m_config->GetExecutable().empty()) {
+        values.Add(m_config->GetExecutable());
+    }
+    values.Sort(); // Sort the items, ascending order
+    values = StringUtils::MakeUniqueArray(values);
+
+    m_comboBoxExecutable->Append(values);
     m_comboBoxExecutable->SetValue(m_config->GetExecutable());
 
     m_textCtrlArgs->ChangeValue(m_config->GetArgs());
@@ -145,18 +145,18 @@ void FSConfigPage::Save()
     m_config->SetBuildTargets(targets);
     m_config->SetCompileFlags(::wxStringTokenize(m_stcCCFlags->GetText(), "\r\n", wxTOKEN_STRTOK));
     m_config->SetFileExtensions(m_textCtrlFileExt->GetValue());
-    m_config->SetExecutable(m_comboBoxExecutable->GetStringSelection());
 
     wxArrayString last_executables = m_comboBoxExecutable->GetStrings();
-    if (last_executables.Index(m_comboBoxExecutable->GetValue()) == wxNOT_FOUND) {
-        last_executables.Insert(m_comboBoxExecutable->GetValue(), 0);
-    }
-    if (last_executables.size() > 10) {
+    last_executables.Add(m_comboBoxExecutable->GetValue());
+
+    const size_t MAX_SIZE = 20;
+    if (last_executables.size() > MAX_SIZE) {
         wxArrayString small_arr;
-        small_arr.insert(small_arr.end(), last_executables.begin(), last_executables.begin() + 9);
+        small_arr.insert(small_arr.end(), last_executables.begin(), last_executables.begin() + MAX_SIZE - 1);
         last_executables.swap(small_arr);
     }
 
+    m_config->SetExecutable(m_comboBoxExecutable->GetStringSelection());
     m_config->SetLastExecutables(last_executables);
     m_config->SetEnvironment(m_stcEnv->GetText());
     m_config->SetArgs(m_textCtrlArgs->GetValue());

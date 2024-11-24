@@ -12,6 +12,7 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "macromanager.h"
+#include "macros.h"
 #include "procutils.h"
 
 #define DEFAULT_FILE_EXTENSIONS                                                                                        \
@@ -30,7 +31,7 @@ clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
     m_buildTargets.insert({ "clean", "" });
     m_debugger = DebuggerMgr::Get().GetActiveDebuggerName();
     CompilerPtr compiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
-    if(compiler) {
+    if (compiler) {
         m_compiler = compiler->GetName();
     }
 }
@@ -48,7 +49,7 @@ std::pair<JSONItem, JSONItem> clFileSystemWorkspaceConfig::ToJSON() const
     shared.addProperty("name", GetName());
     JSONItem arrTargets = shared.AddArray("targets");
 
-    for(const auto& vt : m_buildTargets) {
+    for (const auto& vt : m_buildTargets) {
         JSONItem target = JSONItem::createArray();
         arrTargets.arrayAppend(target);
         target.arrayAppend(vt.first);
@@ -84,9 +85,9 @@ void clFileSystemWorkspaceConfig::FromSharedJSON(const JSONItem& json)
     JSONItem arrTargets = json.namedObject("targets");
     int nCount = arrTargets.arraySize();
     m_buildTargets.clear();
-    for(int i = 0; i < nCount; ++i) {
+    for (int i = 0; i < nCount; ++i) {
         JSONItem target = arrTargets.arrayItem(i);
-        if(target.arraySize() != 2) {
+        if (target.arraySize() != 2) {
             continue;
         }
         m_buildTargets.insert({ target[0].toString(), target[1].toString() });
@@ -121,8 +122,8 @@ void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
 wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const
 {
     wxString s;
-    for(const wxString& l : m_compileFlags) {
-        if(!l.IsEmpty()) {
+    for (const wxString& l : m_compileFlags) {
+        if (!l.IsEmpty()) {
             s << l << "\n";
         }
     }
@@ -136,9 +137,9 @@ clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
 
 static wxArrayString GetExtraFlags(CompilerPtr compiler)
 {
-    if(compiler->HasMetadata()) {
+    if (compiler->HasMetadata()) {
         auto md = compiler->GetMetadata();
-        if(!md.GetTarget().IsEmpty()) {
+        if (!md.GetTarget().IsEmpty()) {
             return StdToWX::ToArrayString({ "-target", md.GetTarget() });
         }
     }
@@ -151,20 +152,20 @@ wxArrayString clFileSystemWorkspaceConfig::GetCompilerOptions(clBacktickCache::p
     wxUnusedVar(backticks);
     // Add the compiler paths
     CompilerPtr compiler = BuildSettingsConfigST::Get()->GetCompiler(GetCompiler());
-    if(compiler) {
+    if (compiler) {
         wxArrayString compilerPaths = compiler->GetDefaultIncludePaths();
-        if(!compiler->GetGlobalIncludePath().IsEmpty()) {
+        if (!compiler->GetGlobalIncludePath().IsEmpty()) {
             wxArrayString globalIncludePaths =
                 ::wxStringTokenize(compiler->GetGlobalIncludePath(), ";", wxTOKEN_STRTOK);
             compilerPaths.insert(compilerPaths.end(), globalIncludePaths.begin(), globalIncludePaths.end());
         }
-        for(wxString& compilerPath : compilerPaths) {
+        for (wxString& compilerPath : compilerPaths) {
             compilerPath.Prepend("-I");
         }
         searchPaths.insert(searchPaths.end(), compilerPaths.begin(), compilerPaths.end());
 
         auto extraFlags = GetExtraFlags(compiler);
-        if(!extraFlags.empty()) {
+        if (!extraFlags.empty()) {
             searchPaths.insert(searchPaths.end(), extraFlags.begin(), extraFlags.end());
         }
     }
@@ -176,22 +177,22 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
                                                                      bool withPrefix) const
 {
     wxArrayString searchPaths;
-    for(const auto& line : m_compileFlags) {
+    for (const auto& line : m_compileFlags) {
         // we support up to one backtick in a line
         wxString backtick = line.AfterFirst('`');
         backtick = backtick.BeforeLast('`');
 
         wxString prefix;
         wxString suffix;
-        if(line.Index('`') != wxString::npos) {
+        if (line.Index('`') != wxString::npos) {
             prefix = line.BeforeFirst('`');
             suffix = line.AfterLast('`');
         } else {
             prefix = line;
         }
         wxString backtick_expanded;
-        if(!backtick.empty()) {
-            if(backticks && backticks->HasCommand(backtick)) {
+        if (!backtick.empty()) {
+            if (backticks && backticks->HasCommand(backtick)) {
                 backtick_expanded = backticks->GetExpanded(backtick);
             } else {
                 // we got backtick, expand it
@@ -204,7 +205,7 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
                 backtick_expanded = ProcUtils::SafeExecuteCommand(backtick);
                 backtick_expanded.Trim().Trim(false);
                 // keep the result for future lookups
-                if(backticks) {
+                if (backticks) {
                     backticks->SetCommand(backtick, backtick_expanded);
                     backticks->Save();
                 }
@@ -217,7 +218,7 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
         CompilerCommandLineParser cclp(line_expanded, workingDirectory);
 
         // Get the include paths (-I)
-        if(withPrefix) {
+        if (withPrefix) {
             searchPaths.insert(searchPaths.end(), cclp.GetIncludesWithPrefix().begin(),
                                cclp.GetIncludesWithPrefix().end());
         } else {
@@ -225,7 +226,7 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
         }
         // Get the macros (-D)
         searchPaths.insert(searchPaths.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
-        if(!cclp.GetStandard().empty()) {
+        if (!cclp.GetStandard().empty()) {
             // -std=NNN
             searchPaths.push_back(cclp.GetStandardWithPrefix());
         }
@@ -234,7 +235,7 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
     }
 
     // expand any macro
-    for(auto& path : searchPaths) {
+    for (auto& path : searchPaths) {
         path = MacroManager::Instance()->Expand(path, nullptr, "", "");
     }
     return searchPaths;
@@ -244,12 +245,17 @@ void clFileSystemWorkspaceConfig::SetLastExecutables(const wxArrayString& lastEx
 {
     m_lastExecutables.clear();
     m_lastExecutables.reserve(lastExecutables.size());
-    for(auto path : lastExecutables) {
+    wxStringSet_t unique;
+    for (auto path : lastExecutables) {
         path.Trim().Trim(false);
-        if(path.empty()) {
+        if (path.empty()) {
             continue;
         }
-        m_lastExecutables.Add(path);
+
+        // Keep unique entries only
+        if (unique.insert(path).second) {
+            m_lastExecutables.Add(path);
+        }
     }
 }
 
@@ -274,7 +280,7 @@ void clFileSystemWorkspaceSettings::ToJSON(JSONItem& shared, JSONItem& local) co
     // Add the shared items
     {
         JSONItem configs = shared.AddArray("configs");
-        for(const auto& config : m_configsMap) {
+        for (const auto& config : m_configsMap) {
             configs.arrayAppend(config.second->ToJSON().first);
         }
     }
@@ -283,7 +289,7 @@ void clFileSystemWorkspaceSettings::ToJSON(JSONItem& shared, JSONItem& local) co
     {
         local.addProperty("selected_config", m_selectedConfig);
         JSONItem configs = local.AddArray("configs");
-        for(const auto& config : m_configsMap) {
+        for (const auto& config : m_configsMap) {
             configs.arrayAppend(config.second->ToJSON().second);
         }
     }
@@ -299,7 +305,7 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     // load the configurations
     JSONItem sharedConfigs = shared.namedObject("configs");
     JSONItem localConfigs = local.namedObject("configs");
-    if(sharedConfigs.arraySize() != localConfigs.arraySize()) {
+    if (sharedConfigs.arraySize() != localConfigs.arraySize()) {
         clSYSTEM() << "Notice: File System Workspace: local config and shared configs do not match!" << endl;
     }
 
@@ -311,7 +317,7 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     std::unordered_map<wxString, JSONItem> localConfigsMap;
 
     int localCount = localConfigs.arraySize();
-    for(int i = 0; i < localCount; ++i) {
+    for (int i = 0; i < localCount; ++i) {
         auto c = localConfigs[i];
         localConfigsMap.insert({ c["name"].toString(), c });
     }
@@ -320,24 +326,24 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     wxString firstConfig;
     bool selectedConfigFound = false;
     m_configsMap.clear();
-    for(int i = 0; i < nCount; ++i) {
+    for (int i = 0; i < nCount; ++i) {
         clFileSystemWorkspaceConfig::Ptr_t conf(new clFileSystemWorkspaceConfig);
         conf->FromSharedJSON(sharedConfigs.arrayItem(i));
         auto iter = localConfigsMap.find(conf->GetName());
-        if(iter != localConfigsMap.end()) {
+        if (iter != localConfigsMap.end()) {
             conf->FromLocalJSON(iter->second);
         }
 
-        if(firstConfig.empty()) {
+        if (firstConfig.empty()) {
             firstConfig = conf->GetName();
         }
-        if(!selectedConfigFound && (conf->GetName() == m_selectedConfig)) {
+        if (!selectedConfigFound && (conf->GetName() == m_selectedConfig)) {
             selectedConfigFound = true;
         }
         m_configsMap.insert({ conf->GetName(), conf });
     }
 
-    if(!selectedConfigFound && !firstConfig.IsEmpty()) {
+    if (!selectedConfigFound && !firstConfig.IsEmpty()) {
         m_selectedConfig = firstConfig;
     }
 }
@@ -347,7 +353,7 @@ bool clFileSystemWorkspaceSettings::Save(const wxFileName& filename, const wxFil
     // store the
     wxFileName localWorkspace;
 
-    if(localSettings.IsOk()) {
+    if (localSettings.IsOk()) {
         localWorkspace = localSettings;
     } else {
         localWorkspace = filename;
@@ -371,7 +377,7 @@ bool clFileSystemWorkspaceSettings::Save(const wxFileName& filename, const wxFil
 bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename, const wxFileName& localSettings)
 {
     wxFileName localWorkspace;
-    if(localSettings.IsOk()) {
+    if (localSettings.IsOk()) {
         localWorkspace = localSettings;
     } else {
         localWorkspace = filename;
@@ -379,12 +385,12 @@ bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename, const wxFil
     };
 
     JSON root_shared(filename);
-    if(!root_shared.isOk()) {
+    if (!root_shared.isOk()) {
         clWARNING() << "Invalid File System Workspace file:" << filename << endl;
         return false;
     }
     JSON root_local(localWorkspace);
-    if(!root_local.isOk()) {
+    if (!root_local.isOk()) {
         // old version
         clDEBUG() << "clFileSystemWorkspaceSettings: no local file found. Loading from shared file" << clEndl;
         auto iShared = root_shared.toElement();
@@ -403,14 +409,14 @@ bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename, const wxFil
 
 bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name, const wxString& copyfrom)
 {
-    if(m_configsMap.count(name)) {
+    if (m_configsMap.count(name)) {
         // already exists
         clWARNING() << "Can't add new configurtion:" << name << ". Already exists" << endl;
         return false;
     }
 
     clFileSystemWorkspaceConfig::Ptr_t conf;
-    if(!copyfrom.IsEmpty() && GetConfig(copyfrom)) {
+    if (!copyfrom.IsEmpty() && GetConfig(copyfrom)) {
         // clone the config
         conf = GetConfig(copyfrom)->Clone();
     } else {
@@ -419,7 +425,7 @@ bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name, const wxStri
     }
     conf->SetName(name);
     m_configsMap.insert({ name, conf });
-    if(m_configsMap.size() == 1) {
+    if (m_configsMap.size() == 1) {
         m_selectedConfig = conf->GetName();
     }
     return true;
@@ -427,13 +433,13 @@ bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name, const wxStri
 
 bool clFileSystemWorkspaceSettings::DeleteConfig(const wxString& name)
 {
-    if(m_configsMap.count(name) == 0) {
+    if (m_configsMap.count(name) == 0) {
         return false;
     }
     m_configsMap.erase(name);
-    if(m_selectedConfig == name) {
+    if (m_selectedConfig == name) {
         m_selectedConfig.clear();
-        if(!m_configsMap.empty()) {
+        if (!m_configsMap.empty()) {
             m_selectedConfig = m_configsMap.begin()->second->GetName();
         }
     }
@@ -443,10 +449,10 @@ bool clFileSystemWorkspaceSettings::DeleteConfig(const wxString& name)
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceSettings::GetSelectedConfig() const
 {
     // sanity
-    if(m_configsMap.empty()) {
+    if (m_configsMap.empty()) {
         return clFileSystemWorkspaceConfig::Ptr_t(nullptr);
     }
-    if(m_selectedConfig.empty() || (m_configsMap.count(m_selectedConfig) == 0)) {
+    if (m_selectedConfig.empty() || (m_configsMap.count(m_selectedConfig) == 0)) {
         return clFileSystemWorkspaceConfig::Ptr_t(nullptr);
     }
     return m_configsMap.find(m_selectedConfig)->second;
@@ -454,10 +460,10 @@ clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceSettings::GetSelectedCon
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceSettings::GetConfig(const wxString& name) const
 {
-    if(name.empty()) {
+    if (name.empty()) {
         return GetSelectedConfig();
     }
-    if(m_configsMap.count(name) == 0) {
+    if (m_configsMap.count(name) == 0) {
         return clFileSystemWorkspaceConfig::Ptr_t(nullptr);
     }
     return m_configsMap.find(name)->second;
@@ -473,7 +479,7 @@ void clFileSystemWorkspaceSettings::Clear()
 
 bool clFileSystemWorkspaceSettings::SetSelectedConfig(const wxString& name)
 {
-    if(m_configsMap.count(name) == 0) {
+    if (m_configsMap.count(name) == 0) {
         return false;
     }
     m_selectedConfig = name;
@@ -483,7 +489,7 @@ bool clFileSystemWorkspaceSettings::SetSelectedConfig(const wxString& name)
 bool clFileSystemWorkspaceSettings::IsOk(const wxFileName& filename)
 {
     JSON root(filename);
-    if(!root.isOk()) {
+    if (!root.isOk()) {
         return false;
     }
     return root.toElement().namedObject("workspace_type").toString() == WORKSPACE_TYPE;
@@ -492,7 +498,7 @@ bool clFileSystemWorkspaceSettings::IsOk(const wxFileName& filename)
 wxArrayString clFileSystemWorkspaceSettings::GetConfigs() const
 {
     wxArrayString arr;
-    for(const auto& vt : m_configsMap) {
+    for (const auto& vt : m_configsMap) {
         arr.Add(vt.first);
     }
     return arr;

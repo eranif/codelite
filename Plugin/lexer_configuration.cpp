@@ -258,11 +258,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         wxColour line_number_bg_colour = lineNumberProp.GetBgColour();
         if (!line_number_text_colour.IsOk() || !line_number_bg_colour.IsOk()) {
             clSYSTEM() << "Invalid colour!" << endl;
+        } else {
+            ctrl->StyleSetBackground(wxSTC_STYLE_LINENUMBER, line_number_bg_colour);
+            ctrl->StyleSetForeground(wxSTC_STYLE_LINENUMBER, line_number_text_colour);
         }
-
-        wxColour bg = line_number_bg_colour.ChangeLightness(95);
-        ctrl->StyleSetBackground(wxSTC_STYLE_LINENUMBER, bg);
-        ctrl->StyleSetForeground(wxSTC_STYLE_LINENUMBER, line_number_text_colour);
     }
 
     // set the calltip font

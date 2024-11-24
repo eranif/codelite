@@ -210,7 +210,7 @@ void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
     AddProperty(lexer, "-3", "Caret Colour", m_caret);
     AddProperty(lexer, "-4", "Whitespace", whitespaceColour, m_editor.bg_colour);
     AddProperty(lexer, "38", "Calltip", m_editor);
-    AddProperty(lexer, "33", "Line Numbers", m_lineNumber);
+    AddProperty(lexer, "33", "Line Numbers", m_lineNumber.fg_colour, m_editor.bg_colour);
 }
 
 void ThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& words)

@@ -25,7 +25,6 @@
 
 #include "DbViewerPanel.h"
 
-#include "AdapterSelectDlg.h"
 #include "DbExplorerFrame.h"
 #include "DbSettingDialog.h"
 #include "SqlCommandPanel.h"

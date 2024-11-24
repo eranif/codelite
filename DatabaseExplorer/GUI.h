@@ -7,46 +7,36 @@
 #ifndef _CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
 #define _CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
 
-#include "clTableWithPagination.h"
-#include "clThemedTreeCtrl.h"
-#include <map>
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/aui/auibar.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/dataview.h>
-#include <wx/dialog.h>
-#include <wx/filepicker.h>
-#include <wx/frame.h>
-#include <wx/gbsizer.h>
-#include <wx/iconbndl.h>
-#include <wx/imaglist.h>
-#include <wx/infobar.h>
-#include <wx/listbox.h>
-#include <wx/listctrl.h>
-#include <wx/menu.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
-#include <wx/pen.h>
-#include <wx/radiobox.h>
-#include <wx/radiobut.h>
+// clang-format off
 #include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
-#include <wx/statbox.h>
-#include <wx/stattext.h>
 #include <wx/stc/stc.h>
-#include <wx/textctrl.h>
-#include <wx/toolbar.h>
+#include "clTableWithPagination.h"
 #include <wx/treectrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include "clThemedTreeCtrl.h"
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
+#include <wx/stattext.h>
+#include <wx/filepicker.h>
+#include <wx/listctrl.h>
+#include <wx/textctrl.h>
+#include <wx/listbox.h>
+#include <wx/button.h>
+#include <wx/statbox.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/frame.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -59,48 +49,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-class _ImageExportDialog : public wxDialog
-{
-protected:
-    wxStaticText* m_staticText34;
-    wxTextCtrl* m_textCtrlPath;
-    wxButton* m_button29;
-    wxRadioButton* m_radioBtnDefaultScale;
-    wxRadioButton* m_radioBtnScaleCustom;
-    wxTextCtrl* m_textCtrlScale;
-    wxCheckBox* m_checkBoxBackground;
-    wxStdDialogButtonSizer* m_sdbSizer2;
-    wxButton* m_button126;
-    wxButton* m_button127;
-
-protected:
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnBowseClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUpdateCustomScale(wxUpdateUIEvent& event) { event.Skip(); }
-
-public:
-    wxStaticText* GetStaticText34() { return m_staticText34; }
-    wxTextCtrl* GetTextCtrlPath() { return m_textCtrlPath; }
-    wxButton* GetButton29() { return m_button29; }
-    wxRadioButton* GetRadioBtnDefaultScale() { return m_radioBtnDefaultScale; }
-    wxRadioButton* GetRadioBtnScaleCustom() { return m_radioBtnScaleCustom; }
-    wxTextCtrl* GetTextCtrlScale() { return m_textCtrlScale; }
-    wxCheckBox* GetCheckBoxBackground() { return m_checkBoxBackground; }
-    _ImageExportDialog(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Export image"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                       long style = wxDEFAULT_DIALOG_STYLE);
-    virtual ~_ImageExportDialog();
-};
-
-class _ThumbPane : public wxPanel
-{
-protected:
-protected:
-public:
-    _ThumbPane(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
-    virtual ~_ThumbPane();
-};
+// clang-format on
 
 class _SqlCommandPanel : public wxPanel
 {
@@ -121,28 +70,6 @@ public:
     _SqlCommandPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~_SqlCommandPanel();
-};
-
-class _AdapterSelectDlg : public wxDialog
-{
-protected:
-    wxButton* m_btnSqlite;
-    wxButton* m_btnMySql;
-    wxButton* m_button24;
-
-protected:
-    virtual void OnSqliteClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnMysqlClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPostgresClick(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxButton* GetBtnSqlite() { return m_btnSqlite; }
-    wxButton* GetBtnMySql() { return m_btnMySql; }
-    wxButton* GetButton24() { return m_button24; }
-    _AdapterSelectDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select dbAdapter"),
-                      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                      long style = wxDEFAULT_DIALOG_STYLE);
-    virtual ~_AdapterSelectDlg();
 };
 
 class _DbViewerPanel : public wxPanel
@@ -250,63 +177,6 @@ public:
     virtual ~_DBSettingsDialog();
 };
 
-class _ErdPanel : public wxPanel
-{
-protected:
-    wxAuiToolBar* m_toolBarErd;
-
-protected:
-    virtual void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
-
-public:
-    wxAuiToolBar* GetToolBarErd() { return m_toolBarErd; }
-    _ErdPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-              const wxSize& size = wxSize(640, 480), long style = wxTAB_TRAVERSAL);
-    virtual ~_ErdPanel();
-};
-
-class _CreateForeignKey : public wxDialog
-{
-protected:
-    wxStaticText* m_staticText15;
-    wxTextCtrl* m_txSrcTable;
-    wxStaticText* m_staticText17;
-    wxChoice* m_cmbSrcCol;
-    wxRadioBox* m_radioRelation;
-    wxRadioBox* m_radioOnDelete;
-    wxRadioBox* m_radioOnUpdate;
-    wxStaticText* m_staticText16;
-    wxTextCtrl* m_txDstTable;
-    wxStaticText* m_staticText18;
-    wxChoice* m_cmbDstCol;
-    wxButton* m_btnCancel;
-    wxButton* m_btnOK;
-
-protected:
-    virtual void OnCancelClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOKClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
-
-public:
-    wxStaticText* GetStaticText15() { return m_staticText15; }
-    wxTextCtrl* GetTxSrcTable() { return m_txSrcTable; }
-    wxStaticText* GetStaticText17() { return m_staticText17; }
-    wxChoice* GetCmbSrcCol() { return m_cmbSrcCol; }
-    wxRadioBox* GetRadioRelation() { return m_radioRelation; }
-    wxRadioBox* GetRadioOnDelete() { return m_radioOnDelete; }
-    wxRadioBox* GetRadioOnUpdate() { return m_radioOnUpdate; }
-    wxStaticText* GetStaticText16() { return m_staticText16; }
-    wxTextCtrl* GetTxDstTable() { return m_txDstTable; }
-    wxStaticText* GetStaticText18() { return m_staticText18; }
-    wxChoice* GetCmbDstCol() { return m_cmbDstCol; }
-    wxButton* GetBtnCancel() { return m_btnCancel; }
-    wxButton* GetBtnOK() { return m_btnOK; }
-    _CreateForeignKey(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create foreign key"),
-                      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                      long style = wxDEFAULT_DIALOG_STYLE);
-    virtual ~_CreateForeignKey();
-};
-
 class _LogDialog : public wxDialog
 {
 protected:
@@ -324,28 +194,6 @@ public:
                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(640, 460),
                long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX);
     virtual ~_LogDialog();
-};
-
-class _ViewSettings : public wxDialog
-{
-protected:
-    wxStaticText* m_staticText19;
-    wxTextCtrl* m_txName;
-    wxStyledTextCtrl* m_scintilla2;
-    wxButton* m_btnOK;
-
-protected:
-    virtual void OnOKClick(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxStaticText* GetStaticText19() { return m_staticText19; }
-    wxTextCtrl* GetTxName() { return m_txName; }
-    wxStyledTextCtrl* GetScintilla2() { return m_scintilla2; }
-    wxButton* GetBtnOK() { return m_btnOK; }
-    _ViewSettings(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("View settings"),
-                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(650, 450),
-                  long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX | wxMINIMIZE_BOX);
-    virtual ~_ViewSettings();
 };
 
 class _ClassGenerateDialog : public wxDialog
@@ -392,102 +240,6 @@ public:
                          const wxString& title = _("Class generator dialog"), const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~_ClassGenerateDialog();
-};
-
-class _CodePreviewDialog : public wxDialog
-{
-protected:
-    wxStyledTextCtrl* m_scintilla3;
-    wxButton* m_button14;
-
-protected:
-    virtual void OnOKClick(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxStyledTextCtrl* GetScintilla3() { return m_scintilla3; }
-    wxButton* GetButton14() { return m_button14; }
-    _CodePreviewDialog(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SQL Preview"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 470),
-                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
-    virtual ~_CodePreviewDialog();
-};
-
-class _TableSettings : public wxDialog
-{
-protected:
-    wxInfoBar* m_infobar;
-    wxStaticText* m_staticText23;
-    wxTextCtrl* m_textName;
-    wxSplitterWindow* m_splitter27;
-    wxPanel* m_splitterPage31;
-    wxStaticText* m_staticText55;
-    wxAuiToolBar* m_auibar39;
-    wxDataViewListCtrl* m_dvColumns;
-    wxPanel* m_splitterPage35;
-    wxStaticText* m_staticText57;
-    wxAuiToolBar* m_auibar45;
-    wxDataViewListCtrl* m_dvKeys;
-    wxStaticText* m_staticText125;
-    wxChoice* m_choiceLocalCol;
-    wxStaticText* m_staticText131;
-    wxChoice* m_choiceRefTable;
-    wxStaticText* m_staticText135;
-    wxChoice* m_choiceRefCol;
-    wxRadioBox* m_radioOnUpdate;
-    wxRadioBox* m_radioOnDelete;
-    wxButton* m_button51;
-    wxButton* m_button53;
-
-protected:
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnAddColumnClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRemoveColumnClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUpdateColumns(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnMoveUpClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUpdateMoveUp(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnMoveDownClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUpdateMoveDown(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnColumnChanged(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnAddKeyClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRemoveKeyClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUpdateKeys(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnKeySelected(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnKeyChanged(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnLocalColSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRefTableSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRefColSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRadioUpdateSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRadioDeleteSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCancelClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOKClick(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxInfoBar* GetInfobar() { return m_infobar; }
-    wxStaticText* GetStaticText23() { return m_staticText23; }
-    wxTextCtrl* GetTextName() { return m_textName; }
-    wxStaticText* GetStaticText55() { return m_staticText55; }
-    wxAuiToolBar* GetAuibar39() { return m_auibar39; }
-    wxDataViewListCtrl* GetDvColumns() { return m_dvColumns; }
-    wxPanel* GetSplitterPage31() { return m_splitterPage31; }
-    wxStaticText* GetStaticText57() { return m_staticText57; }
-    wxAuiToolBar* GetAuibar45() { return m_auibar45; }
-    wxDataViewListCtrl* GetDvKeys() { return m_dvKeys; }
-    wxStaticText* GetStaticText125() { return m_staticText125; }
-    wxChoice* GetChoiceLocalCol() { return m_choiceLocalCol; }
-    wxStaticText* GetStaticText131() { return m_staticText131; }
-    wxChoice* GetChoiceRefTable() { return m_choiceRefTable; }
-    wxStaticText* GetStaticText135() { return m_staticText135; }
-    wxChoice* GetChoiceRefCol() { return m_choiceRefCol; }
-    wxRadioBox* GetRadioOnUpdate() { return m_radioOnUpdate; }
-    wxRadioBox* GetRadioOnDelete() { return m_radioOnDelete; }
-    wxPanel* GetSplitterPage35() { return m_splitterPage35; }
-    wxSplitterWindow* GetSplitter27() { return m_splitter27; }
-    wxButton* GetButton51() { return m_button51; }
-    wxButton* GetButton53() { return m_button53; }
-    _TableSettings(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Table settings"),
-                   const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                   long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
-    virtual ~_TableSettings();
 };
 
 class DbExplorerFrameBase : public wxFrame

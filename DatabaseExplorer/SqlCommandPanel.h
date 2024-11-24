@@ -32,6 +32,7 @@
 #include "clToolBar.h"
 
 #include <map>
+#include <wx/aui/auibar.h>
 #include <wx/dblayer/include/DatabaseErrorCodes.h>
 #include <wx/dblayer/include/DatabaseLayer.h>
 #include <wx/dblayer/include/DatabaseLayerException.h>

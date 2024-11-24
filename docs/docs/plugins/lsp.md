@@ -33,7 +33,8 @@ select the ones you are interested in and then [configure them in CodeLite][14]
 
     ```bash
     sudo apt-get update
-    sudo apt-get install clang-tools```
+    sudo apt-get install clang-tools
+    ```
 
     Once installed, follow the steps in the [manual configuration section](#manual-configuration)
 
@@ -43,7 +44,14 @@ select the ones you are interested in and then [configure them in CodeLite][14]
 
     **macOS**
 
-    Like Windows, `clangd` in part of CodeLite bundle
+    On macOS, `clangd` is provided as part of the `llvm` formula. To install it (via `brew`):
+
+    ```bash
+    brew install llvm
+    ```
+
+    on ARM based macOS, `clangd` is placed under: `/opt/homebrew/opt/llvm/bin/clangd`
+
 
 === "ctagsd"
     `ctagsd` is CodeLite's builtin code completion engine for `C/C++` that implements the Language Server Protocol.
@@ -60,13 +68,15 @@ select the ones you are interested in and then [configure them in CodeLite][14]
     - pip3 installed
 
     ```bash
-    pip install python-lsp-server```
+    pip install python-lsp-server
+    ```
 
     On Windows / MSYS2, use this command:
 
     ```bash
     pacman -S mingw-w64-clang-x86_64-python mingw-w64-clang-x86_64-python-pip mingw-w64-clang-x86_64-python-ujson
-    pip install python-lsp-server```
+    pip install python-lsp-server
+    ```
 
     Visit the [project home page][3]
 
@@ -75,35 +85,39 @@ select the ones you are interested in and then [configure them in CodeLite][14]
     - Type:
 
     ```bash
-    npm install -g typescript typescript-language-server```
+    npm install -g typescript typescript-language-server
+    ```
 
     If you choose to [configure it manually][12] in CodeLite, use this as the command:
 
     ```bash
-    typescript-language-server --stdio```
+    typescript-language-server --stdio
+    ```
 
 === "rust-analyzer"
     `rust-analyzer` is the recommended LSP for the rust language. To install it, follow these steps:
 
     - [Install rust][13]
     - Open a terminal and type:
-        - On `macOS` and `Linux`:
-            ```bash
-            rustup update
-            rustup +nightly component add rust-src rust-analyzer-preview```
-            
-        - On `Windows`, we build it from sources. Open `MSYS2` terminal and type:
 
-            ```bash
-            pacman -Sy mingw-w64-clang-x86_64-rust mingw-w64-clang-x86_64-rust-src
-            ```
+        - On `macOS` and `Linux`:
+        ```bash
+        rustup update
+        rustup +nightly component add rust-src rust-analyzer-preview
+        ```
+
+        - On `Windows`, we build it from sources. Open `MSYS2` terminal and type:
+        ```bash
+        pacman -Sy mingw-w64-clang-x86_64-rust mingw-w64-clang-x86_64-rust-src
+        ```
 
     You should now have `rust-analyzer` installed under `rustup` local folder, for example, under `Linux` or `macOS`,
     it can be found here:
 
     ```bash
     TARGET=$(rustup target list|grep installed|cut -d" " -f1)
-    $HOME/.rustup/toolchains/nightly-$TARGET/bin/rust-analyzer```
+    $HOME/.rustup/toolchains/nightly-$TARGET/bin/rust-analyzer
+    ```
 
 === "gopls"
     `gopls` (pronounced "Go Please") is the official LSP for `golang`
@@ -157,8 +171,9 @@ But make sure you only have one enabled at at time
 
 ### `compile_flags.txt` & `compile_commands.json`
 
-`clangd` and `ctagsd` uses these two files as instructions for how to build any source file.
-`clangd` and `ctagsd` will searche for these files from the active file folder and going up to the parent until it finds a match (or it can't go up any more)
+`clangd` and `ctagsd` are using these two files as instructions for "how to build" any source file.
+`clangd` and `ctagsd` will search for these files from the active file folder and going up to the parent until it finds a match (or it can't go up any more)
+
 In case both files are found on the same directory, `compile_flags.txt` takes precedence.
 
 When using CodeLite's [default C++ workspace](../workspaces/default.md) CodeLite generate these files for your automatically once the build process is completed
@@ -171,6 +186,12 @@ If you are using `cmake` as your build system, you can add these two commands in
 
 ```cmake
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+```
+
+- Or alternatively, you can pass this variable as part of `CMake` invocation line:
+
+```bash
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 <other arguments here>
 ```
 
 - and somewhere at the bottom of the top level `CMakeLists.txt` file, add this command:

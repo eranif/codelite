@@ -1048,7 +1048,7 @@ endif() # NOT WXC_APP
 
 include(CTest)
 if(BUILD_TESTING)
-    add_subdirectory(CxxParserTests)
+    add_subdirectory(CxxParserTests EXCLUDE_FROM_ALL)
 endif(BUILD_TESTING)
 
 message(STATUS "CL_INSTALL_BIN is set to ${CL_INSTALL_BIN}")

@@ -54,6 +54,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(WITH_CHATAI "Enable ChatAI plugin" OFF)
+option(BUILD_TESTING "Build test executables" OFF)
 
 # Set this option to "ON" in order to get CMake standard/expected behavior
 set(RETAIN_CACHED_VALUES
@@ -1047,8 +1048,11 @@ else()
 endif() # NOT WXC_APP
 
 include(CTest)
+
+message(STATUS "BUILD_TESTING=${BUILD_TESTING}")
+
 if(BUILD_TESTING)
-    add_subdirectory(CxxParserTests EXCLUDE_FROM_ALL)
+    add_subdirectory(CxxParserTests)
 endif(BUILD_TESTING)
 
 message(STATUS "CL_INSTALL_BIN is set to ${CL_INSTALL_BIN}")
@@ -1186,3 +1190,5 @@ endif()
 
 unset(WITH_CHATAI CACHE)
 unset(DEBUG_BUILD CACHE)
+unset(BUILD_TESTING CACHE)
+

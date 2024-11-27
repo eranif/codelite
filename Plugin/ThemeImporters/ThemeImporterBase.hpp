@@ -271,15 +271,6 @@ public:
      * @param codeliteXml [output] the output file name
      */
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file) = 0;
-    wxColour Black(bool dark_theme, bool bright = false);
-    wxColour Red(bool dark_theme, bool bright = false);
-    wxColour Green(bool dark_theme, bool bright = false);
-    wxColour Yellow(bool dark_theme, bool bright = false);
-    wxColour Blue(bool dark_theme, bool bright = false);
-    wxColour Magenta(bool dark_theme, bool bright = false);
-    wxColour Cyan(bool dark_theme, bool bright = false);
-    wxColour Grey(bool dark_theme, bool bright = false);
-    wxColour White(bool dark_theme, bool bright = false);
 };
 
 #endif // ECLIPSETHEMEIMPORTERBASE_H

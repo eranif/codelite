@@ -4,6 +4,7 @@
 #include "FontUtils.hpp"
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
+#include "ThemeImporters/ThemeImporterBase.hpp"
 #include "clIdleEventThrottler.hpp"
 #include "clModuleLogger.hpp"
 #include "clSystemSettings.h"
@@ -95,7 +96,9 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
     auto lexer = ColoursAndFontsManager::Get().GetLexer("errorlist");
     if (lexer) {
         lexer->Apply(m_ctrl);
+        m_ctrl->IndicatorSetForeground(INDICATOR_HYPERLINK, clColours::Blue(lexer->IsDark()));
     }
+
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
     CallAfter(&wxTerminalOutputCtrl::ReloadSettings);

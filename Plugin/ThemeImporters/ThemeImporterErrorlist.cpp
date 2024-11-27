@@ -41,13 +41,17 @@ LexerConf::Ptr_t ThemeImporterErrorlist::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_ERR_GCC_INCLUDED_FROM, "GCC 'included from'", Grey(is_dark), m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_ESCSEQ, "ANSI escape sequence", m_editor);
     AddProperty(lexer, wxSTC_ERR_ESCSEQ_UNKNOWN, "ANSI escape sequence unknown", Red(is_dark), m_editor.bg_colour);
+
+#if wxCHECK_VERSION(3, 3, 0)
     AddProperty(lexer, wxSTC_ERR_GCC_EXCERPT, "GCC code excerpt and pointer to issue", Cyan(is_dark),
                 m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_BASH, "Bash diagnostic line", Red(is_dark), m_editor.bg_colour);
+#endif
+
     AddProperty(lexer, wxSTC_ERR_ES_BLACK, "ANSI escape black", Black(is_dark), m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_ES_RED, "ANSI escape red", Red(is_dark), m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_ES_GREEN, "ANSI escape green", Green(is_dark), m_editor.bg_colour);
-    AddProperty(lexer, wxSTC_ERR_ES_BROWN, "ANSI escape brown", Magenta(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_BROWN, "ANSI escape brown", Yellow(is_dark), m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_ES_BLUE, "ANSI escape blue", Blue(is_dark), m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_ES_MAGENTA, "ANSI escape magenta", Magenta(is_dark), m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_ES_CYAN, "ANSI escape cyan", Cyan(is_dark), m_editor.bg_colour);

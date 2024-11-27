@@ -26,8 +26,11 @@
 #include <wx/xrc/xmlres.h>
 
 // Upgrade macros
-#define LEXERS_VERSION_STRING "LexersVersion"
-#define LEXERS_VERSION 7
+namespace
+{
+constexpr const char* LEXERS_VERSION_STRING = "LexersVersion";
+constexpr int LEXERS_VERSION = 8;
+} // namespace
 
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_END, clCommandEvent);
@@ -679,11 +682,22 @@ void ColoursAndFontsManager::LoadLexersFromFile()
     m_allLexers.clear();
     m_lexersMap.clear();
 
-    const auto& file_to_load = fnUserLexers.FileExists() ? fnUserLexers : fnInstallLexers;
+    clSYSTEM() << "Loading lexers..." << endl;
+    if (m_lexersVersion < LEXERS_VERSION || !fnUserLexers.FileExists()) {
+        clSYSTEM() << "Loading default lexers. CodeLite expected version:" << LEXERS_VERSION
+                   << ". Current version found in configuration file:" << m_lexersVersion << endl;
+        // The loaded version from the configuration file is less than the compiled version
+        // merge the lexers (or the user file does not exist)
+        LoadJSON(fnInstallLexers);
+    }
 
     // Load the user settings
-    LoadJSON(file_to_load);
+    if (fnUserLexers.FileExists()) {
+        // Any duplicate lexer found here, will override the default lexer
+        LoadJSON(fnUserLexers);
+    }
 
+    clSYSTEM() << "Success" << endl;
     // Update lexers versions
     clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION);
 }
@@ -838,7 +852,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     lexer->FromJSON(json);
 
     wxString lexerName = lexer->GetName().Lower();
-    if (lexerName.IsEmpty())
+    if (lexerName.empty())
         return NULL;
 
     // ensure that the theme name is capitalized - this helps
@@ -925,7 +939,6 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
 
     // Add wxcp file extension to the JavaScript lexer
     if (lexer->GetName() == "javascript") {
-#if wxCHECK_VERSION(3, 1, 0)
         // remove the JSON file from the JavaScript
         if (lexer->GetFileSpec().Contains("*.json")) {
             auto specs = ::wxStringTokenize(lexer->GetFileSpec(), ";,", wxTOKEN_STRTOK);
@@ -935,10 +948,8 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
             }
             lexer->SetFileSpec(wxJoin(specs, ';'));
         }
-#else
         // wxCrafter files
         AddFileExtension(lexer, "*.wxcp");
-#endif
         AddFileExtension(lexer, "*.qml");
         AddFileExtension(lexer, "*.ts");
         AddFileExtension(lexer, "*.tsx");

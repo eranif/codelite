@@ -94,10 +94,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
-#if wxCHECK_VERSION(3, 1, 0)
     ctrl->FoldDisplayTextSetStyle(wxSTC_FOLDDISPLAYTEXT_BOXED);
     ctrl->SetIdleStyling(wxSTC_IDLESTYLING_TOVISIBLE);
-#endif
 
 #ifndef __WXMSW__
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
@@ -133,6 +131,15 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     if (GetName() == "scss") {
         // Enable SCSS property (will tell the lexer to search for variables)
         ctrl->SetProperty("lexer.css.scss.language", "1");
+    }
+
+    if (GetLexerId() == wxSTC_LEX_ERRORLIST) {
+        ctrl->SetProperty("lexer.errorlist.escape.sequences", "1");
+        ctrl->SetProperty("lexer.errorlist.value.separate", "1");
+
+        // Hide escape sequence styles
+        ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ, false);
+        ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ_UNKNOWN, false);
     }
 
     // Find the default style

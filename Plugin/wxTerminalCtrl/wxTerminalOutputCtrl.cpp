@@ -88,11 +88,14 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
 
     m_ctrl->UsePopUp(1);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
-    m_ctrl->StartStyling(0);
     m_ctrl->SetWrapMode(wxSTC_WRAP_CHAR);
     m_ctrl->SetEditable(false);
     m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-)#");
     m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("errorlist");
+    if (lexer) {
+        lexer->Apply(m_ctrl);
+    }
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
     CallAfter(&wxTerminalOutputCtrl::ReloadSettings);
@@ -101,7 +104,6 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &wxTerminalOutputCtrl::OnKeyDown, this);
     m_ctrl->Bind(wxEVT_IDLE, &wxTerminalOutputCtrl::OnIdle, this);
     m_ctrl->Bind(wxEVT_LEFT_UP, &wxTerminalOutputCtrl::OnLeftUp, this);
-    m_stcRenderer = new wxTerminalAnsiRendererSTC(m_ctrl);
 }
 
 wxTerminalOutputCtrl::~wxTerminalOutputCtrl()
@@ -153,12 +155,11 @@ wxString wxTerminalOutputCtrl::GetLineText(int lineNumber) const { return m_ctrl
 
 void wxTerminalOutputCtrl::ReloadSettings() { ApplyTheme(); }
 
-void wxTerminalOutputCtrl::StyleAndAppend(wxStringView buffer, wxString* window_title)
+void wxTerminalOutputCtrl::StyleAndAppend(wxStringView buffer, [[maybe_unused]] wxString* window_title)
 {
-    m_outputHandler.ProcessBuffer(buffer, m_stcRenderer);
-    if (window_title) {
-        *window_title = m_stcRenderer->GetWindowTitle();
-    }
+    EditorEnabler enabler{ m_ctrl };
+    m_ctrl->AppendText(buffer.data());
+    RequestScrollToEnd();
 }
 
 void wxTerminalOutputCtrl::ShowCommandLine()
@@ -194,7 +195,6 @@ int wxTerminalOutputCtrl::GetCurrentStyle() { return 0; }
 
 void wxTerminalOutputCtrl::Clear()
 {
-    m_stcRenderer->Clear();
     EditorEnabler d{ m_ctrl };
     m_ctrl->ClearAll();
 }
@@ -222,15 +222,10 @@ void wxTerminalOutputCtrl::OnThemeChanged(clCommandEvent& event)
 
 void wxTerminalOutputCtrl::ApplyTheme()
 {
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    lexer->Apply(m_ctrl);
-
-    auto style = lexer->GetProperty(0);
-    wxTextAttr defaultAttr = wxTextAttr(style.GetFgColour(), style.GetBgColour(), lexer->GetFontForStyle(0, m_ctrl));
-    SetDefaultStyle(defaultAttr);
-    m_stcRenderer->SetDefaultAttributes(defaultAttr);
-    m_stcRenderer->SetUseDarkThemeColours(lexer->IsDark());
-    m_ctrl->IndicatorSetForeground(INDICATOR_HYPERLINK, lexer->IsDark() ? wxColour("WHITE") : wxColour("BLUE"));
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("errorlist");
+    if (lexer) {
+        lexer->Apply(m_ctrl);
+    }
     m_ctrl->Refresh();
 }
 

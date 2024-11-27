@@ -24,8 +24,10 @@
 
 namespace
 {
-void import_files(const wxString& input_dir, const wxString& output_dir)
+size_t import_files(const wxString& input_dir, const wxString& output_dir)
 {
+    wxBusyCursor bc;
+
     wxFileName output_file(output_dir, "lexers.json");
     if (output_file.FileExists()) {
         wxRenameFile(output_file.GetFullPath(), output_file.GetFullPath() + ".orig");
@@ -36,6 +38,7 @@ void import_files(const wxString& input_dir, const wxString& output_dir)
 
     ThemeImporterManager importer;
 
+    size_t count = 0;
     // get list XML files
     {
         wxArrayString xml_files;
@@ -43,6 +46,8 @@ void import_files(const wxString& input_dir, const wxString& output_dir)
         for (const wxString& file : xml_files) {
             clDEBUG() << "Importing Eclipse Theme:" << file << "..." << importer.Import(file) << endl;
         }
+
+        count += xml_files.size();
     }
     {
         wxArrayString json_files;
@@ -50,6 +55,7 @@ void import_files(const wxString& input_dir, const wxString& output_dir)
         for (const wxString& file : json_files) {
             clDEBUG() << "Importing VSCode Theme:" << file << "..." << importer.Import(file) << endl;
         }
+        count += json_files.size();
     }
 
     {
@@ -58,11 +64,13 @@ void import_files(const wxString& input_dir, const wxString& output_dir)
         for (const wxString& file : toml_files) {
             clDEBUG() << "Importing Alacritty Theme (toml):" << file << "..." << importer.Import(file) << endl;
         }
+        count += toml_files.size();
     }
 
     // save the changes
     wxFileName lexer_json(output_dir, "lexers.json");
     ColoursAndFontsManager::Get().Save(lexer_json);
+    return count;
 }
 } // namespace
 
@@ -86,6 +94,7 @@ public:
             FreeLibrary(user32Dll);
         }
 #endif
+
         // Add the common image handlers
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);
@@ -94,8 +103,10 @@ public:
         if (dlg.ShowModal() == wxID_OK) {
             wxString input_dir = dlg.GetInputDirectory();
             wxString output_dir = dlg.GetOutputDirectory();
-            import_files(input_dir, output_dir);
-            ::wxMessageBox("CodeLite themes generated successfully!");
+            size_t count = import_files(input_dir, output_dir);
+            wxString message;
+            message << "Successfully generated " << count << " themes";
+            ::wxMessageBox(message);
         }
         return false;
     }

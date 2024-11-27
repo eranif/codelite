@@ -1,12 +1,19 @@
 #include "ThemeImporterErrorlist.hpp"
 
-ThemeImporterErrorlist::ThemeImporterErrorlist() { SetFileExtensions("*.log"); }
+#include "drawingutils.h"
+
+ThemeImporterErrorlist::ThemeImporterErrorlist()
+{
+    SetFileExtensions("*.log");
+    m_langName = "errorlist";
+}
 
 ThemeImporterErrorlist::~ThemeImporterErrorlist() {}
 LexerConf::Ptr_t ThemeImporterErrorlist::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "batch", wxSTC_LEX_ERRORLIST);
-    bool is_dark = lexer->IsDark();
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, m_langName, wxSTC_LEX_ERRORLIST);
+    bool is_dark = DrawingUtils::IsDark(m_editor.bg_colour);
+
     AddProperty(lexer, wxSTC_ERR_DEFAULT, "Default", m_editor);
     AddProperty(lexer, wxSTC_ERR_PYTHON, "Python error message", Red(is_dark), m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_GCC, "GCC like error message", Red(is_dark), m_editor.bg_colour);
@@ -38,6 +45,21 @@ LexerConf::Ptr_t ThemeImporterErrorlist::Import(const wxFileName& theme_file)
                 m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_BASH, "Bash diagnostic line", Red(is_dark), m_editor.bg_colour);
     AddProperty(lexer, wxSTC_ERR_ES_BLACK, "ANSI escape black", Black(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_RED, "ANSI escape red", Red(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_GREEN, "ANSI escape green", Green(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_BROWN, "ANSI escape brown", Magenta(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_BLUE, "ANSI escape blue", Blue(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_MAGENTA, "ANSI escape magenta", Magenta(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_CYAN, "ANSI escape cyan", Cyan(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_GRAY, "ANSI escape grey", Grey(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_YELLOW, "ANSI escape yellow", Yellow(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_DARK_GRAY, "ANSI escape dark grey", Grey(is_dark), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_BRIGHT_RED, "ANSI escape bright red", Red(is_dark, true), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_BRIGHT_GREEN, "ANSI escape bright green", Green(is_dark, true), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_BRIGHT_BLUE, "ANSI escape bright blue", Blue(is_dark, true), m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_BRIGHT_MAGENTA, "ANSI escape bright magenta", Magenta(is_dark, true),
+                m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_ERR_ES_BRIGHT_CYAN, "ANSI escape bright cyan", Cyan(is_dark, true), m_editor.bg_colour);
     FinalizeImport(lexer);
     return lexer;
 }

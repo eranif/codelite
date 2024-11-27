@@ -684,12 +684,22 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
     return lexer;
 }
 
-const wxColour& ThemeImporterBase::Black(bool dark_theme) { return dark_theme ? dark_black : black; }
-const wxColour& ThemeImporterBase::Red(bool dark_theme) { return dark_theme ? dark_red : red; }
-const wxColour& ThemeImporterBase::Green(bool dark_theme) { return dark_theme ? dark_green : green; }
-const wxColour& ThemeImporterBase::Yellow(bool dark_theme) { return dark_theme ? dark_yellow : yellow; }
-const wxColour& ThemeImporterBase::Blue(bool dark_theme) { return dark_theme ? dark_blue : blue; }
-const wxColour& ThemeImporterBase::Magenta(bool dark_theme) { return dark_theme ? dark_magenta : magenta; }
-const wxColour& ThemeImporterBase::Cyan(bool dark_theme) { return dark_theme ? dark_cyan : cyan; }
-const wxColour& ThemeImporterBase::Grey(bool dark_theme) { return dark_theme ? dark_grey : grey; }
-const wxColour& ThemeImporterBase::White(bool dark_theme) { return dark_theme ? dark_white : white; }
+#define RETURN_COLOUR(name)                   \
+    wxColour colour = name;                   \
+    if (dark_theme) {                         \
+        colour = dark_##name;                 \
+    }                                         \
+    if (bright) {                             \
+        colour = colour.ChangeLightness(110); \
+    }                                         \
+    return colour
+
+wxColour ThemeImporterBase::Black(bool dark_theme, bool bright) { RETURN_COLOUR(black); }
+wxColour ThemeImporterBase::Red(bool dark_theme, bool bright) { RETURN_COLOUR(red); }
+wxColour ThemeImporterBase::Green(bool dark_theme, bool bright) { RETURN_COLOUR(green); }
+wxColour ThemeImporterBase::Yellow(bool dark_theme, bool bright) { RETURN_COLOUR(yellow); }
+wxColour ThemeImporterBase::Blue(bool dark_theme, bool bright) { RETURN_COLOUR(blue); }
+wxColour ThemeImporterBase::Magenta(bool dark_theme, bool bright) { RETURN_COLOUR(magenta); }
+wxColour ThemeImporterBase::Cyan(bool dark_theme, bool bright) { RETURN_COLOUR(cyan); }
+wxColour ThemeImporterBase::Grey(bool dark_theme, bool bright) { RETURN_COLOUR(grey); }
+wxColour ThemeImporterBase::White(bool dark_theme, bool bright) { RETURN_COLOUR(white); }

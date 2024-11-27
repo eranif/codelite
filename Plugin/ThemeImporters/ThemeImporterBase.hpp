@@ -155,6 +155,13 @@ protected:
         AddProperty(lexer, wxString() << id, name, colour, bgColour, bold, italic, isEOLFilled);
     }
 
+    void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const wxColour& colour,
+                     const wxColour& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false)
+    {
+        AddProperty(lexer, wxString() << id, name, colour.GetAsString(wxC2S_HTML_SYNTAX),
+                    bgColour.GetAsString(wxC2S_HTML_SYNTAX), bold, italic, isEOLFilled);
+    }
+
     void AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id);
 
     void AddCommonProperties(LexerConf::Ptr_t lexer);
@@ -228,7 +235,6 @@ public:
         m_othersIndex.index = index;
     }
 
-public:
     ThemeImporterBase();
     virtual ~ThemeImporterBase();
     /**
@@ -265,6 +271,15 @@ public:
      * @param codeliteXml [output] the output file name
      */
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file) = 0;
+    const wxColour& Black(bool dark_theme);
+    const wxColour& Red(bool dark_theme);
+    const wxColour& Green(bool dark_theme);
+    const wxColour& Yellow(bool dark_theme);
+    const wxColour& Blue(bool dark_theme);
+    const wxColour& Magenta(bool dark_theme);
+    const wxColour& Cyan(bool dark_theme);
+    const wxColour& Grey(bool dark_theme);
+    const wxColour& White(bool dark_theme);
 };
 
 #endif // ECLIPSETHEMEIMPORTERBASE_H

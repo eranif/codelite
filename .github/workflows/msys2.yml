@@ -3,7 +3,15 @@ name: msys2
 on:
   workflow_dispatch:
   push:
+    paths:
+      - '**'
+      - '!.github/**'
+      - '.github/workflows/msys2.yml'
   pull_request:
+    paths:
+      - '**'
+      - '!.github/**'
+      - '.github/workflows/msys2.yml'
 
 jobs:
   msys2:
@@ -12,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wx-version: ['fd0f60daea24e9c62d372d774be9e32ce2b0849d', 'master'] # <v3.2.7 cannot be compiled with clang-19
+        wx-version: ['3.2', 'master'] # <v3.2.7 cannot be compiled with clang-19
 
     steps:
     - uses: msys2/setup-msys2@v2
@@ -49,7 +57,6 @@ jobs:
       run: |
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
-        sed -i "s/typedef wxUint32 wxChar32;/#include <uchar.h>\n    typedef char32_t wxChar32;/g" ../include/wx/defs.h
         cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1
         mingw32-make -j$(nproc) && PATH="/clang64/bin:$PATH" mingw32-make install
 

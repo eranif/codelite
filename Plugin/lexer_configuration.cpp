@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "lexer_configuration.h"
 
+#include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
 #include "clSystemSettings.h"
 #include "cl_config.h"
@@ -142,21 +143,31 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ_UNKNOWN, false);
     }
 
-    // Find the default style
+    // Define a default font
     wxFont defaultFont = FontUtils::GetDefaultMonospacedFont();
+    auto text_lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if (text_lexer) {
+        wxFont textFont;
+        text_lexer->GetProperty(0).FromAttributes(&textFont);
+        if (textFont.IsOk()) {
+            defaultFont = textFont;
+        }
+    }
+
     bool foundDefaultStyle = false;
 
+    // Find the default style
     StyleProperty defaultStyle;
     for (const auto& prop : GetLexerProperties()) {
         if (prop.GetId() == 0 && !prop.IsSubstyle()) {
             defaultStyle = prop;
-            prop.FromAttributes(&defaultFont);
+            wxFont styleFont;
+            prop.FromAttributes(&styleFont);
             foundDefaultStyle = true;
-            if (!defaultFont.IsOk()) {
-                clWARNING() << "Found default font, but the font is NOT OK !?" << endl;
-                // make sure we have a font...
-                defaultFont = FontUtils::GetDefaultMonospacedFont();
+            if (styleFont.IsOk()) {
+                defaultFont = styleFont;
             }
+            // Keep the default font defined earlier
             break;
         }
     }
@@ -331,6 +342,15 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // caret width and blink
     ctrl->SetCaretWidth(options->GetCaretWidth());
     ctrl->SetCaretPeriod(options->GetCaretBlinkPeriod());
+
+    // Do not allow for "black" colour on dark theme and white colour on light theme
+    if (GetLexerId() == wxSTC_LEX_ERRORLIST) {
+        if (IsDark()) {
+            ctrl->StyleSetForeground(wxSTC_ERR_ES_BLACK, ctrl->StyleGetForeground(wxSTC_ERR_ES_WHITE));
+        } else {
+            ctrl->StyleSetForeground(wxSTC_ERR_ES_WHITE, ctrl->StyleGetForeground(wxSTC_ERR_ES_BLACK));
+        }
+    }
 }
 
 const StyleProperty& LexerConf::GetProperty(int propertyId) const

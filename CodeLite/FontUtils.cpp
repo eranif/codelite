@@ -9,7 +9,7 @@ const wxString DEFAULT_FACE_NAME = "Consolas";
 constexpr int DEFAULT_FONT_SIZE = 14;
 #elif defined(__WXMAC__)
 const wxString DEFAULT_FACE_NAME = "monaco";
-constexpr int DEFAULT_FONT_SIZE = 14;
+constexpr int DEFAULT_FONT_SIZE = 16;
 #else // GTK, FreeBSD etc
 const wxString DEFAULT_FACE_NAME = "Monospace";
 constexpr int DEFAULT_FONT_SIZE = 14;

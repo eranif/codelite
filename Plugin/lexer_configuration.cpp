@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "lexer_configuration.h"
 
-#include "ColoursAndFontsManager.h"
 #include "FontUtils.hpp"
 #include "clSystemSettings.h"
 #include "cl_config.h"
@@ -143,31 +142,21 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ_UNKNOWN, false);
     }
 
-    // Define a default font
+    // Find the default style
     wxFont defaultFont = FontUtils::GetDefaultMonospacedFont();
-    auto text_lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if (text_lexer) {
-        wxFont textFont;
-        text_lexer->GetProperty(0).FromAttributes(&textFont);
-        if (textFont.IsOk()) {
-            defaultFont = textFont;
-        }
-    }
-
     bool foundDefaultStyle = false;
 
-    // Find the default style
     StyleProperty defaultStyle;
     for (const auto& prop : GetLexerProperties()) {
         if (prop.GetId() == 0 && !prop.IsSubstyle()) {
             defaultStyle = prop;
-            wxFont styleFont;
-            prop.FromAttributes(&styleFont);
+            prop.FromAttributes(&defaultFont);
             foundDefaultStyle = true;
-            if (styleFont.IsOk()) {
-                defaultFont = styleFont;
+            if (!defaultFont.IsOk()) {
+                clWARNING() << "Found default font, but the font is NOT OK !?" << endl;
+                // make sure we have a font...
+                defaultFont = FontUtils::GetDefaultMonospacedFont();
             }
-            // Keep the default font defined earlier
             break;
         }
     }

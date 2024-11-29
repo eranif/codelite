@@ -34,24 +34,28 @@ struct ReadResult {
 
 void channel_read_internal(SSHChannel_t channel, ReadResult* result, bool isStderr, bool wantStderr)
 {
-    int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 1);
-    if(bytes == SSH_ERROR) {
+    int bytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer) - 1, isStderr ? 1 : 0, 10);
+    if (bytes == SSH_ERROR) {
         // an error
         LOG_DEBUG(LOG()) << "channel read error" << endl;
         int exit_code = ssh_channel_get_exit_status(channel);
         result->exit_code = exit_code;
         result->rc = ssh::read_result::SSH_IO_ERROR;
 
-    } else if(bytes == SSH_EOF) {
+    } else if (bytes == SSH_EOF) {
         // channel closed
         LOG_DEBUG(LOG()) << "channel read eof" << endl;
         int exit_code = ssh_channel_get_exit_status(channel);
         result->exit_code = exit_code;
         result->rc = ssh::read_result::SSH_CONN_CLOSED;
 
-    } else if(bytes == 0) {
+    } else if (bytes == SSH_AGAIN) {
+        LOG_DEBUG(LOG()) << "Timeout occurred" << endl;
+        result->exit_code = 0;
+        result->rc = ssh::read_result::SSH_TIMEOUT;
+    } else if (bytes == 0) {
         // timeout
-        if(ssh_channel_is_eof(channel)) {
+        if (ssh_channel_is_eof(channel)) {
             LOG_DEBUG(LOG()) << "channel eof detected" << endl;
             int exit_code = ssh_channel_get_exit_status(channel);
             result->exit_code = exit_code;
@@ -81,7 +85,7 @@ read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStd
     ReadResult res;
     channel_read_internal(channel, &res, isStderr, wantStderr);
 
-    switch(res.rc) {
+    switch (res.rc) {
     case read_result::SSH_IO_ERROR: {
         clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
         event.SetInt(res.exit_code);
@@ -106,22 +110,22 @@ read_result channel_read(SSHChannel_t channel, wxEvtHandler* handler, bool isStd
 wxString build_command(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env)
 {
     wxString cmd;
-    if(!env.empty()) {
+    if (!env.empty()) {
         // build each env in its own "export" statement
-        for(const auto& e : env) {
+        for (const auto& e : env) {
             cmd << "export " << e.first << "=" << e.second << ";";
         }
     }
 
-    if(!wd.empty()) {
+    if (!wd.empty()) {
         cmd << "cd " << StringUtils::WrapWithDoubleQuotes(wd) << " && ";
     }
 
-    for(const wxString& c : command) {
+    for (const wxString& c : command) {
         cmd << StringUtils::WrapWithDoubleQuotes(c) << " ";
     }
 
-    if(cmd.EndsWith(" ")) {
+    if (cmd.EndsWith(" ")) {
         cmd.RemoveLast();
     }
     return cmd;
@@ -131,22 +135,22 @@ wxString build_script_content(const std::vector<wxString>& command, const wxStri
 {
     wxString content;
     content << "#!/bin/bash\n\n";
-    if(!env.empty()) {
+    if (!env.empty()) {
         // build each env in its own "export" statement
-        for(const auto& e : env) {
+        for (const auto& e : env) {
             content << "export " << e.first << "=" << e.second << "\n";
         }
     }
 
-    if(!wd.empty()) {
+    if (!wd.empty()) {
         content << "cd " << StringUtils::WrapWithDoubleQuotes(wd) << "\n";
     }
 
-    for(const wxString& c : command) {
+    for (const wxString& c : command) {
         content << StringUtils::WrapWithDoubleQuotes(c) << " ";
     }
 
-    if(content.EndsWith(" ")) {
+    if (content.EndsWith(" ")) {
         content.RemoveLast();
     }
     content << "\n";
@@ -156,7 +160,7 @@ wxString build_script_content(const std::vector<wxString>& command, const wxStri
 clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_path, const wxString& content)
 {
     clTempFile tmpfile;
-    if(!tmpfile.Write(content, wxConvUTF8)) {
+    if (!tmpfile.Write(content, wxConvUTF8)) {
         return clResultBool::make_error("failed to write file");
     }
 
@@ -182,7 +186,7 @@ read_result channel_read(SSHChannel_t channel, std::string* output, bool isStder
     ReadResult res;
     channel_read_internal(channel, &res, isStderr, wantStderr);
 
-    switch(res.rc) {
+    switch (res.rc) {
     case read_result::SSH_IO_ERROR:
     case read_result::SSH_CONN_CLOSED:
     case read_result::SSH_TIMEOUT:
@@ -199,7 +203,7 @@ int channel_read_all(SSHChannel_t channel, std::string* output, bool isStderr)
 {
     int nbytes = 0;
     nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), isStderr ? 1 : 0);
-    while(nbytes > 0) {
+    while (nbytes > 0) {
         output->reserve(output->size() + nbytes);
         output->append(buffer, nbytes);
         nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), isStderr ? 1 : 0);

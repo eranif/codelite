@@ -107,7 +107,7 @@ if(MINGW)
 endif()
 
 if(USE_PCH)
-    codelite_add_pch(plugin)
+    codelite_add_pch(libcodelite)
 endif()
 
 if(NOT MINGW)

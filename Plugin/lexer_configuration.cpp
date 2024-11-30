@@ -39,6 +39,12 @@
 #include <wx/stc/stc.h>
 #include <wx/utils.h>
 
+#if wxCHECK_VERSION(3, 3, 0)
+#define HAS_ILEXER 1
+#else
+#define HAS_ILEXER 0
+#endif
+
 namespace
 {
 /**
@@ -93,6 +99,7 @@ wxColour to_wx_colour(const wxString& colour_as_string) { return wxColour(colour
 
 void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
+#if HAS_ILEXER
     // Apply the lexer
     switch (GetLexerId()) {
     case wxSTC_LEX_TERMINAL: {
@@ -105,6 +112,19 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetLexer(GetLexerId());
         break;
     }
+#else
+    // Apply the lexer
+    switch (GetLexerId()) {
+    case wxSTC_LEX_TERMINAL:
+        // use the old lexer
+        ctrl->SetLexer(wxSTC_LEX_ERRORLIST);
+        break;
+    default:
+        // Standard lexers
+        ctrl->SetLexer(GetLexerId());
+        break;
+    }
+#endif
 
     ctrl->StyleClearAll();
     ctrl->FoldDisplayTextSetStyle(wxSTC_FOLDDISPLAYTEXT_BOXED);
@@ -146,7 +166,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetProperty("lexer.css.scss.language", "1");
     }
 
-    if (GetLexerId() == wxSTC_LEX_TERMINAL) {
+#if HAS_ILEXER
+    if (ctrl->GetLexer() == wxSTC_LEX_TERMINAL) {
         ctrl->SetProperty("lexer.terminal.escape.sequences", "1");
         ctrl->SetProperty("lexer.terminal.value.separate", "1");
 
@@ -154,6 +175,16 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->StyleSetVisible(wxSTC_TERMINAL_ESCSEQ, false);
         ctrl->StyleSetVisible(wxSTC_TERMINAL_ESCSEQ_UNKNOWN, false);
     }
+#else
+    if (ctrl->GetLexer() == wxSTC_LEX_ERRORLIST) {
+        ctrl->SetProperty("lexer.errorlist.escape.sequences", "1");
+        ctrl->SetProperty("lexer.errorlist.value.separate", "1");
+
+        // Hide escape sequence styles
+        ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ, false);
+        ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ_UNKNOWN, false);
+    }
+#endif
 
     // Find the default style
     wxFont defaultFont = FontUtils::GetDefaultMonospacedFont();

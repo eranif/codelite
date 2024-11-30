@@ -10,7 +10,6 @@
 #include "ThemeImporterCobraAlt.hpp"
 #include "ThemeImporterDiff.hpp"
 #include "ThemeImporterDockerfile.hpp"
-#include "ThemeImporterErrorlist.hpp"
 #include "ThemeImporterFortran.hpp"
 #include "ThemeImporterGo.hpp"
 #include "ThemeImporterINI.hpp"
@@ -29,6 +28,7 @@
 #include "ThemeImporterSQL.hpp"
 #include "ThemeImporterScript.hpp"
 #include "ThemeImporterTCL.hpp"
+#include "ThemeImporterTerminal.hpp"
 #include "ThemeImporterText.hpp"
 #include "ThemeImporterXML.hpp"
 #include "ThemeImporterYAML.hpp"
@@ -67,7 +67,7 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(std::make_unique<ThemeImporterRust>());
     m_importers.push_back(std::make_unique<ThemeImporterJson>());
     m_importers.push_back(std::make_unique<ThemeImporterGo>());
-    m_importers.push_back(std::make_unique<ThemeImporterErrorlist>());
+    m_importers.push_back(std::make_unique<ThemeImporterTerminal>());
 }
 
 ThemeImporterManager::~ThemeImporterManager() {}

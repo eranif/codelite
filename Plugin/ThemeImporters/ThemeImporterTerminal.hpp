@@ -27,10 +27,10 @@
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK ThemeImporterErrorlist : public ThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterTerminal : public ThemeImporterBase
 {
 public:
     LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
-    ThemeImporterErrorlist();
-    ~ThemeImporterErrorlist() override;
+    ThemeImporterTerminal();
+    ~ThemeImporterTerminal() override;
 };

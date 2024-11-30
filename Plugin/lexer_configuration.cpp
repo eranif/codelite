@@ -377,7 +377,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetCaretPeriod(options->GetCaretBlinkPeriod());
 
     // Do not allow for "black" colour on dark theme and white colour on light theme
-    if (GetLexerId() == wxSTC_LEX_ERRORLIST) {
+    if (ctrl->GetLexer() == wxSTC_LEX_ERRORLIST || ctrl->GetLexer() == wxSTC_LEX_TERMINAL) {
         if (IsDark()) {
             ctrl->StyleSetForeground(wxSTC_ERR_ES_BLACK, ctrl->StyleGetForeground(wxSTC_ERR_ES_WHITE));
         } else {

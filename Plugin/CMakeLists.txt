@@ -90,6 +90,7 @@ target_link_libraries(
     ${wxWidgets_LIBRARIES}
     ${LIBYAML_CPP}
     -L"${CL_LIBPATH}"
+    lexers_extra
     libcodelite)
 
 if(USE_PCH)

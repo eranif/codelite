@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "lexer_configuration.h"
 
+#include "ExtraLexers.h"
 #include "FontUtils.hpp"
 #include "clSystemSettings.h"
 #include "cl_config.h"
@@ -92,7 +93,19 @@ wxColour to_wx_colour(const wxString& colour_as_string) { return wxColour(colour
 
 void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
-    ctrl->SetLexer(GetLexerId());
+    // Apply the lexer
+    switch (GetLexerId()) {
+    case wxSTC_LEX_TERMINAL: {
+        // Allocate custom lexer
+        auto plexer = CreateExtraLexerTerminal();
+        ctrl->SetILexer(plexer);
+    } break;
+    default:
+        // Standard lexers
+        ctrl->SetLexer(GetLexerId());
+        break;
+    }
+
     ctrl->StyleClearAll();
     ctrl->FoldDisplayTextSetStyle(wxSTC_FOLDDISPLAYTEXT_BOXED);
     ctrl->SetIdleStyling(wxSTC_IDLESTYLING_TOVISIBLE);
@@ -133,13 +146,13 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetProperty("lexer.css.scss.language", "1");
     }
 
-    if (GetLexerId() == wxSTC_LEX_ERRORLIST) {
-        ctrl->SetProperty("lexer.errorlist.escape.sequences", "1");
-        ctrl->SetProperty("lexer.errorlist.value.separate", "1");
+    if (GetLexerId() == wxSTC_LEX_TERMINAL) {
+        ctrl->SetProperty("lexer.terminal.escape.sequences", "1");
+        ctrl->SetProperty("lexer.terminal.value.separate", "1");
 
         // Hide escape sequence styles
-        ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ, false);
-        ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ_UNKNOWN, false);
+        ctrl->StyleSetVisible(wxSTC_TERMINAL_ESCSEQ, false);
+        ctrl->StyleSetVisible(wxSTC_TERMINAL_ESCSEQ_UNKNOWN, false);
     }
 
     // Find the default style

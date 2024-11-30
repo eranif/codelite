@@ -43,3 +43,6 @@
 [submodule "submodules/wxsf-code"]
 	path = submodules/wxsf-code
 	url = https://github.com/eranif/wxsf-code.git
+[submodule "submodules/lexilla"]
+	path = submodules/lexilla
+	url = https://github.com/eranif/lexilla.git

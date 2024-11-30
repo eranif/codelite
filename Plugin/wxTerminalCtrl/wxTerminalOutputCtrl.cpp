@@ -93,7 +93,7 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
     m_ctrl->SetEditable(false);
     m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-)#");
     m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("errorlist");
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("terminal");
     if (lexer) {
         lexer->Apply(m_ctrl);
         m_ctrl->IndicatorSetForeground(INDICATOR_HYPERLINK, clColours::Blue(lexer->IsDark()));
@@ -225,7 +225,7 @@ void wxTerminalOutputCtrl::OnThemeChanged(clCommandEvent& event)
 
 void wxTerminalOutputCtrl::ApplyTheme()
 {
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("errorlist");
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("terminal");
     if (lexer) {
         lexer->Apply(m_ctrl);
     }

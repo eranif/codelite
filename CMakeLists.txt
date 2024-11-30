@@ -879,6 +879,9 @@ endif()
 # add the dtl module include path before we include Plugin folder
 include_directories(submodules/dtl)
 
+# Extran lexers required by CodeLite
+add_subdirectory(submodules/lexilla)
+
 add_subdirectory(submodules)
 include_directories(submodules/cJSON)
 
@@ -1191,4 +1194,3 @@ endif()
 unset(WITH_CHATAI CACHE)
 unset(DEBUG_BUILD CACHE)
 unset(BUILD_TESTING CACHE)
-

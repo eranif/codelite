@@ -41,7 +41,7 @@ class WXDLLIMPEXP_SDK wxTerminalOutputCtrl : public wxWindow
 
         IndicatorRange& operator=(const IndicatorRange& other)
         {
-            if(this == &other) {
+            if (this == &other) {
                 return *this;
             }
             this->m_start = other.m_start;
@@ -71,6 +71,7 @@ class WXDLLIMPEXP_SDK wxTerminalOutputCtrl : public wxWindow
     wxTerminalCtrl* m_terminal = nullptr;
     clEditEventsHandler::Ptr_t m_editEvents;
     IndicatorRange m_indicatorHyperlink;
+    friend class wxTerminalCtrl;
 
 protected:
     int GetCurrentStyle();
@@ -83,7 +84,7 @@ protected:
     void Initialise(const wxFont& font = wxNullFont, const wxColour& bg_colour = *wxBLACK,
                     const wxColour& text_colour = *wxWHITE);
     void ClearIndicators();
-    void OnIdle(wxIdleEvent& event);
+    void ProcessIdle();
     void OnEnterWindow(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
     void DoPatternClicked(const wxString& pattern);

@@ -346,3 +346,9 @@ void wxTerminalCtrl::ProcessOutputBuffer()
     // see if we need to prompt for password
     m_inputCtrl->CallAfter(&wxTerminalInputCtrl::NotifyTerminalOutput);
 }
+
+void wxTerminalCtrl::ProcessIdle()
+{
+    // Pass it to the output control
+    m_outputView->ProcessIdle();
+}

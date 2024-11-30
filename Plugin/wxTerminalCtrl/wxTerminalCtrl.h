@@ -32,37 +32,6 @@ enum {
 
 class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 {
-protected:
-    long m_style = 0;
-    IProcess* m_shell = nullptr;
-    wxTerminalOutputCtrl* m_outputView = nullptr;
-    wxTerminalInputCtrl* m_inputCtrl = nullptr;
-    std::unordered_set<long> m_initialProcesses;
-    wxTextAttr m_preEchoOffAttr;
-    bool m_pauseOnExit = false;
-    bool m_printTTY = false;
-    wxString m_startupCommand;
-    wxString m_logfile;
-    wxString m_ttyfile;
-    bool m_terminating = false;
-    wxString m_processOutput;
-    wxString m_startingDirectory;
-    wxString m_shellCommand;
-
-protected:
-    void StartShell();
-    void AppendText(wxStringView text);
-    void OnProcessOutput(clProcessEvent& event);
-    void OnProcessError(clProcessEvent& event);
-    void OnProcessTerminated(clProcessEvent& event);
-    bool PromptForPasswordIfNeeded(const wxString& line_lowercase);
-    void OnWorkspaceLoaded(clWorkspaceEvent& event);
-    void ProcessOutputBuffer();
-    wxStringView GetNextLine();
-
-protected:
-    void DoProcessTerminated();
-
 public:
     wxTerminalCtrl();
     wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxString& working_directory,
@@ -113,6 +82,37 @@ public:
 
     void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
     const wxString& GetLogfile() const { return m_logfile; }
+
+protected:
+    void StartShell();
+    void AppendText(wxStringView text);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessError(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
+    bool PromptForPasswordIfNeeded(const wxString& line_lowercase);
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
+    void ProcessOutputBuffer();
+    wxStringView GetNextLine();
+    void DoProcessTerminated();
+    void ProcessIdle();
+
+protected:
+    long m_style = 0;
+    IProcess* m_shell = nullptr;
+    wxTerminalOutputCtrl* m_outputView = nullptr;
+    wxTerminalInputCtrl* m_inputCtrl = nullptr;
+    std::unordered_set<long> m_initialProcesses;
+    wxTextAttr m_preEchoOffAttr;
+    bool m_pauseOnExit = false;
+    bool m_printTTY = false;
+    wxString m_startupCommand;
+    wxString m_logfile;
+    wxString m_ttyfile;
+    bool m_terminating = false;
+    wxString m_processOutput;
+    wxString m_startingDirectory;
+    wxString m_shellCommand;
+    friend class clBuiltinTerminalPane;
 };
 
 #endif // WXTERMINALCTRL_H

@@ -9,10 +9,13 @@
 
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
-    wxTerminalCtrl* m_terminal = nullptr;
-    clToolBar* m_toolbar = nullptr;
-    Notebook* m_book = nullptr;
-    wxChoice* m_terminal_types = nullptr;
+
+public:
+    clBuiltinTerminalPane(wxWindow* parent, wxWindowID id = wxID_ANY);
+    virtual ~clBuiltinTerminalPane();
+
+    void Focus();
+    bool IsFocused();
 
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
@@ -27,14 +30,14 @@ protected:
     std::map<wxString, wxString> GetTerminalsOptions(bool scan = false);
     void OnScanForTerminals(wxCommandEvent& event);
     void UpdateTerminalsChoice(bool scan);
+    void OnIdle(wxIdleEvent& event);
 
-public:
-    clBuiltinTerminalPane(wxWindow* parent, wxWindowID id = wxID_ANY);
-    virtual ~clBuiltinTerminalPane();
-
-    void Focus();
-    bool IsFocused();
+private:
     wxTerminalCtrl* GetActiveTerminal();
+    wxTerminalCtrl* m_terminal = nullptr;
+    clToolBar* m_toolbar = nullptr;
+    Notebook* m_book = nullptr;
+    wxChoice* m_terminal_types = nullptr;
 };
 
 #endif // CLBUILTINTERMINALPANE_HPP

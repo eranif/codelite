@@ -19,6 +19,8 @@
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
+    Bind(wxEVT_IDLE, &clBuiltinTerminalPane::OnIdle, this);
+
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                           kNotebook_CloseButtonOnActiveTab | kNotebook_ShowFileListButton |
@@ -56,6 +58,7 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
+    Unbind(wxEVT_IDLE, &clBuiltinTerminalPane::OnIdle, this);
     wxTheApp->Unbind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
@@ -325,4 +328,14 @@ void clBuiltinTerminalPane::UpdateTerminalsChoice(bool scan)
     if (!m_terminal_types->IsEmpty()) {
         m_terminal_types->SetSelection(initial_value);
     }
+}
+
+void clBuiltinTerminalPane::OnIdle(wxIdleEvent& event)
+{
+    CHECK_COND_RET(EventNotifier::Get()->TopFrame()->IsActive());
+    event.Skip();
+
+    // pass it to the active tab
+    CHECK_PTR_RET(GetActiveTerminal());
+    GetActiveTerminal()->ProcessIdle();
 }

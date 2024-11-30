@@ -105,7 +105,6 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalOutputCtrl::OnThemeChanged, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &wxTerminalOutputCtrl::OnKeyDown, this);
-    m_ctrl->Bind(wxEVT_IDLE, &wxTerminalOutputCtrl::OnIdle, this);
     m_ctrl->Bind(wxEVT_LEFT_UP, &wxTerminalOutputCtrl::OnLeftUp, this);
 }
 
@@ -113,7 +112,6 @@ wxTerminalOutputCtrl::~wxTerminalOutputCtrl()
 {
     wxDELETE(m_stcRenderer);
     m_ctrl->Unbind(wxEVT_CHAR_HOOK, &wxTerminalOutputCtrl::OnKeyDown, this);
-    m_ctrl->Unbind(wxEVT_IDLE, &wxTerminalOutputCtrl::OnIdle, this);
     m_ctrl->Unbind(wxEVT_LEFT_UP, &wxTerminalOutputCtrl::OnLeftUp, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalOutputCtrl::OnThemeChanged, this);
 }
@@ -245,9 +243,8 @@ void wxTerminalOutputCtrl::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void wxTerminalOutputCtrl::OnIdle(wxIdleEvent& event)
+void wxTerminalOutputCtrl::ProcessIdle()
 {
-    event.Skip();
     static clIdleEventThrottler event_throttler{ 200 };
     if (!event_throttler.CanHandle()) {
         return;

@@ -11,6 +11,7 @@ Below is a list of supported macros by CodeLite:
  `$(WorkspaceName)`|The current workspace name
  `$(WorkspaceConfiguration)`|The workspace configuration (e.g. `Debug`)
  `$(WorkspacePath)`|The workspace path. For remote workspaces, this expands to the remote workspace path
+ `$(WorkspaceRealPath)`|The workspace path (with symlinks resolved). For remote workspaces, this expands to the remote workspace path
  `$(ProjectName)`|Current project name
  `$(IntermediateDirectory)`|The location where CodeLite places object files (`.o`)
  `$(ConfigurationName)`|The current **project** configuration name. e.g. (`Debug`)
@@ -30,8 +31,3 @@ Below is a list of supported macros by CodeLite:
  `$(SSH_AccountName)`| When a remote workspace is loaded, this expands to the current account name connected
  `$(SSH_Host)`| When a remote workspace is loaded, this expands to the current host connected
  `$(SSH_User)`| When a remote workspace is loaded, this expands to the SSH'd user
-
-
-
-
-

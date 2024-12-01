@@ -81,6 +81,19 @@ wxString json_get_server_config_command(JSON* root, const wxString& server_name)
     return json["command"].toString();
 }
 
+wxArrayString json_get_server_config_command_array(JSON* root, const wxString& server_name)
+{
+    auto json = json_get_server_config(root, server_name);
+    if (!json.isOk()) {
+        return {};
+    }
+
+    if (json.hasNamedObject("command") && json["command"].isArray()) {
+        return json["command"].toArrayString();
+    }
+    return {};
+}
+
 wxString json_get_server_config_working_directory(JSON* root, const wxString& server_name)
 {
     auto json = json_get_server_config(root, server_name);
@@ -619,6 +632,8 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     wxString working_directory;
     wxString project;
     clEnvList_t env_list;
+    // Expand the working directory (which is later used as the rootUri)
+    wxArrayString lspCommandArray;
     if (is_remote) {
         // remote workspace
         // read the commands from the codelite-remote.json file (the m_remoteHelper does that for us)
@@ -628,7 +643,11 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             return;
         }
 
-        command = json_get_server_config_command(root, entry.GetName());
+        // Try to new way
+        lspCommandArray = json_get_server_config_command_array(root, entry.GetName());
+        if (lspCommandArray.empty()) {
+            command = json_get_server_config_command(root, entry.GetName());
+        }
         working_directory = json_get_server_config_working_directory(root, entry.GetName());
         working_directory = m_remoteHelper->ReplaceMacros(working_directory);
         env_list = json_get_server_config_env(root, entry.GetName());
@@ -643,15 +662,20 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         working_directory = MacroManager::Instance()->Expand(working_directory, clGetManager(), project);
     }
 
-    // Expand the working directory (which is later used as the rootUri)
-    wxArrayString lspCommand;
-    lspCommand = StringUtils::BuildCommandArrayFromString(command);
+    if (lspCommandArray.empty()) {
+        lspCommandArray = StringUtils::BuildCommandArrayFromString(command);
+    }
 
-    if (!is_remote && !lspCommand.empty()) {
-        wxString mainCommand = StringUtils::StripDoubleQuotes(lspCommand[0]);
+    // Expand any command macro
+    for (auto& cmd : lspCommandArray) {
+        cmd = MacroManager::Instance()->Expand(cmd, clGetManager(), project);
+    }
+
+    if (!is_remote && !lspCommandArray.empty()) {
+        wxString mainCommand = StringUtils::StripDoubleQuotes(lspCommandArray[0]);
         if (!wxFileExists(mainCommand)) {
             LSP_WARNING() << "Disabling lsp:" << entry.GetName() << endl;
-            LSP_WARNING() << lspCommand[0] << ". No such file" << endl;
+            LSP_WARNING() << lspCommandArray[0] << ". No such file" << endl;
             LanguageServerConfig::Get().GetServer(entry.GetName()).SetEnabled(false);
             LanguageServerConfig::Get().Save();
             return;
@@ -662,7 +686,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     LSP_DEBUG() << "Connection string:" << entry.GetConnectionString() << endl;
 
     if (entry.IsAutoRestart()) {
-        LSP_DEBUG() << "lspCommand:" << lspCommand;
+        LSP_DEBUG() << "lspCommand:" << lspCommandArray;
         LSP_DEBUG() << "entry.GetWorkingDirectory():" << working_directory;
     }
     LSP_DEBUG() << "working_directory:" << working_directory;
@@ -679,7 +703,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
     LSPStartupInfo startup_info;
     startup_info.SetConnectioString(entry.GetConnectionString());
-    startup_info.SetLspServerCommand(lspCommand);
+    startup_info.SetLspServerCommand(lspCommandArray);
     startup_info.SetFlags(flags);
     startup_info.SetWorkingDirectory(working_directory);
 

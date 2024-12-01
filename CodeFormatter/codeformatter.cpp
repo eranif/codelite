@@ -105,10 +105,7 @@ void inc_save_count(const wxString& filepath)
 
 // Allocate the code formatter on the heap, it will be freed by
 // the application
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new CodeFormatter(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new CodeFormatter(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -478,7 +475,20 @@ void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
             continue;
         }
 
-        wxString cmd = json["command"].toString();
+        // Try both array and string name
+        wxArrayString cmdArray;
+        wxString cmd;
+
+        if (json.hasNamedObject("command") && json["command"].isArray()) {
+            cmdArray = json["command"].toArrayString();
+        } else {
+            cmd = json["command"].toString();
+        }
+
+        if (!cmdArray.empty()) {
+            cmd = StringUtils::BuildCommandStringFromArray(cmdArray);
+        }
+
         wxString wd = json["working_directory"].toString();
 
         wxString remote_cmd;

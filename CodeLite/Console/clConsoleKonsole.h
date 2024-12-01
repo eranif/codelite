@@ -1,13 +1,19 @@
-#ifndef CLCONSOLEKONSOLE_H
-#define CLCONSOLEKONSOLE_H
+#include <iostream>
+#include <string>
 
-#include "clConsoleGnomeTerminal.h"
+void printFavoriteColorMessage(const std::string& color) {
+    std::cout << "Your favorite color is: " << color << std::endl;
+}
 
-class WXDLLIMPEXP_CL clConsoleKonsole : public clConsoleGnomeTerminal
-{
-public:
-    clConsoleKonsole();
-    virtual ~clConsoleKonsole();
-};
+int main() {
+    std::string yourfavoriteColor;
 
-#endif // CLCONSOLEKONSOLE_H
+
+    std::cout << "What is your favorite color? "<< std::endl;
+    std::getline(std::cin, yourfavoriteColor); 
+    
+    printFavoriteColorMessage(yourfavoriteColor);
+
+    return 0;
+}
+

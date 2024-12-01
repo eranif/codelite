@@ -35,6 +35,7 @@
 #include "project.h"
 #include "workspace.h"
 #include "wxStringHash.h"
+#include "fileutils.h"
 
 #include <wx/regex.h>
 
@@ -156,6 +157,7 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
     "WorkspaceName",
     "WorkspaceConfiguration",
     "WorkspacePath",
+    "WorkspaceRealPath",
     "OutputDirectory",
     "ProjectOutputFile",
     "OutputFile",
@@ -254,6 +256,8 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         wspName = clWorkspaceManager::Get().GetWorkspace()->GetName();
     }
 
+    wxString wspRealPath = FileUtils::RealPath(wspPath);
+
     size_t retries = 0;
     wxString dummyname, dummfullname;
     while((retries < 5) && FindVariable(expandedString, dummyname, dummyname)) {
@@ -262,6 +266,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         expandedString.Replace("$(WorkspaceName)", wspName);
         expandedString.Replace("$(WorkspaceConfiguration)", wspConfig);
         expandedString.Replace("$(WorkspacePath)", wspPath);
+        expandedString.Replace("$(WorkspaceRealPath)", wspRealPath);
 
         if(workspace) {
             ProjectPtr proj = workspace->GetProject(project);

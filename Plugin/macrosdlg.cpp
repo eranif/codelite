@@ -81,6 +81,7 @@ void MacrosDlg::Initialize()
     case MacrosProject:
         AddMacro("$(ProjectPath)", _("Expands to project's path"));
         AddMacro("$(WorkspacePath)", _("Expands to workspace's path"));
+        AddMacro("$(WorkspaceRealPath)", _("Expands to workspace's real path (with symlinks resolved)"));
         AddMacro("$(WorkspaceConfiguration)", _("Expands to the workspace selected configuration"));
         AddMacro("$(ProjectName)", _("Expands to the current project name as appears in the 'File View'"));
         AddMacro("$(IntermediateDirectory)",

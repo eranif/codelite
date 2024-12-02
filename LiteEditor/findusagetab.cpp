@@ -171,7 +171,7 @@ void FindUsageTab::UpdateStyle()
     m_ctrl->SetColours(lexer_colours);
 
     m_headerColour = lexer->GetProperty(wxSTC_C_GLOBALCLASS).GetFgColour();
-    m_matchColour = lexer->GetProperty(wxSTC_C_DEFAULT).GetFgColour();
+    m_matchColour = lexer->IsDark() ? clColours::White(true) : clColours::Black(false);
 
     wxColour match_colour_fg = lexer->GetProperty(wxSTC_C_WORD2).GetFgColour();
     auto& colours = m_ctrl->GetColours();

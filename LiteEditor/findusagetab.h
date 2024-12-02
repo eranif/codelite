@@ -41,6 +41,7 @@ class FindUsageTab : public wxPanel
     std::vector<LSP::Location> m_locations;
     clThemedTreeCtrl* m_ctrl = nullptr;
     wxColour m_headerColour;
+    wxColour m_matchColour;
 
 private:
     void DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches);

@@ -135,8 +135,8 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
     m_locations = locations;
     // sort by file / location
     std::map<wxString, std::vector<const LSP::Location*>> sorted_entries;
-    for(const LSP::Location& location : m_locations) {
-        if(sorted_entries.count(location.GetPath()) == 0) {
+    for (const LSP::Location& location : m_locations) {
+        if (sorted_entries.count(location.GetPath()) == 0) {
             sorted_entries.insert({ location.GetPath(), {} });
         }
         std::vector<const LSP::Location*>& file_matches = sorted_entries[location.GetPath()];
@@ -144,7 +144,7 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
     }
 
     // add the entries to the view
-    for(const auto& vt : sorted_entries) {
+    for (const auto& vt : sorted_entries) {
         const wxString& filename = vt.first;
         const std::vector<const LSP::Location*>& locations_vec = vt.second;
         DoAddFileEntries(filename, locations_vec);
@@ -171,6 +171,7 @@ void FindUsageTab::UpdateStyle()
     m_ctrl->SetColours(lexer_colours);
 
     m_headerColour = lexer->GetProperty(wxSTC_C_GLOBALCLASS).GetFgColour();
+    m_matchColour = lexer->GetProperty(wxSTC_C_DEFAULT).GetFgColour();
 
     wxColour match_colour_fg = lexer->GetProperty(wxSTC_C_WORD2).GetFgColour();
     auto& colours = m_ctrl->GetColours();
@@ -188,13 +189,16 @@ void FindUsageTab::OnWorkspaceClosed(clWorkspaceEvent& event)
 void FindUsageTab::DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches)
 {
     wxTreeItemId child = m_ctrl->AppendItem(m_ctrl->GetRootItem(), filename);
-    if(m_headerColour.IsOk()) {
+    if (m_headerColour.IsOk()) {
         m_ctrl->SetItemTextColour(child, m_headerColour);
     }
 
     // append dummy child
-    for(const LSP::Location* location : matches) {
-        m_ctrl->AppendItem(child, "dummy_child", wxNOT_FOUND, wxNOT_FOUND, new FindUsageItemData(location));
+    for (const LSP::Location* location : matches) {
+        auto item = m_ctrl->AppendItem(child, "dummy_child", wxNOT_FOUND, wxNOT_FOUND, new FindUsageItemData(location));
+        if (m_matchColour.IsOk()) {
+            m_ctrl->SetItemTextColour(item, m_matchColour);
+        }
     }
 }
 
@@ -219,10 +223,10 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     CHECK_ITEM_RET(event.GetItem());
 
     FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(event.GetItem()));
-    if(!item_data) {
+    if (!item_data) {
         // header entry
         DoExpandItem(event.GetItem());
-        if(!m_ctrl->IsExpanded(event.GetItem())) {
+        if (!m_ctrl->IsExpanded(event.GetItem())) {
             m_ctrl->Expand(event.GetItem());
         }
         return;
@@ -238,14 +242,14 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
         editor->SelectRangeAfter(range);
     };
 
-    if(fn.FileExists()) {
+    if (fn.FileExists()) {
         clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(callback));
 
     } else {
         // the file does not exist
         clCommandEvent open_file_event{ wxEVT_OPEN_FILE };
         open_file_event.SetFileName(item_data->location->GetPath());
-        if(!EventNotifier::Get()->ProcessEvent(open_file_event)) {
+        if (!EventNotifier::Get()->ProcessEvent(open_file_event)) {
             ::wxMessageBox(_("Failed to open file: ") + item_data->location->GetPath(), "CodeLite",
                            wxOK | wxOK_DEFAULT | wxICON_ERROR);
             event.Veto();
@@ -260,7 +264,7 @@ void FindUsageTab::OnItemExpanding(wxTreeEvent& event)
     event.Skip();
 
     wxBusyCursor bc;
-    if(!DoExpandItem(event.GetItem())) {
+    if (!DoExpandItem(event.GetItem())) {
         event.Veto();
     }
 }
@@ -272,23 +276,23 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
 
     wxTreeItemIdValue cookie;
     wxTreeItemId first_child = m_ctrl->GetFirstChild(item, cookie);
-    if(!first_child) {
+    if (!first_child) {
         return true;
     }
 
     // if the child text is not "dummy_child" -> return
-    if(m_ctrl->GetItemText(first_child) != "dummy_child") {
+    if (m_ctrl->GetItemText(first_child) != "dummy_child") {
         return true;
     }
 
     wxString content;
     wxString filepath = m_ctrl->GetItemText(item);
-    if(!wxFileName::Exists(filepath)) {
+    if (!wxFileName::Exists(filepath)) {
         // not a local file, request for file download
         clCommandEvent event_download{ wxEVT_DOWNLOAD_FILE };
         event_download.SetFileName(filepath);
         clDEBUG() << "Sending event wxEVT_DOWNLOAD_FILE" << endl;
-        if(!EventNotifier::Get()->ProcessEvent(event_download)) {
+        if (!EventNotifier::Get()->ProcessEvent(event_download)) {
             ::wxMessageBox(_("Failed to download file: ") + filepath, "CodeLite", wxOK | wxOK_DEFAULT | wxICON_ERROR);
             return false;
         }
@@ -297,7 +301,7 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
 
     // load the file into wxTextBuffer
     wxTextFile text_buffer(filepath);
-    if(!text_buffer.Open()) {
+    if (!text_buffer.Open()) {
         ::wxMessageBox(_("Failed to open file: ") + filepath, "CodeLite", wxOK | wxOK_DEFAULT | wxICON_ERROR);
         return false;
     }
@@ -305,14 +309,14 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
     // go over the entries and set the actual line
     wxTreeItemIdValue cookie2;
     wxTreeItemId child = m_ctrl->GetFirstChild(item, cookie2);
-    while(child.IsOk()) {
+    while (child.IsOk()) {
 
         FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(child));
         // incase this was a remote file, update the filepath
         const_cast<LSP::Location*>(item_data->location)->SetPath(filepath);
 
         size_t line_number = item_data->location->GetRange().GetStart().GetLine();
-        if(line_number < text_buffer.GetLineCount()) {
+        if (line_number < text_buffer.GetLineCount()) {
             // update the text
             m_ctrl->SetItemText(child, text_buffer.GetLine(line_number));
 
@@ -320,7 +324,7 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
             const auto& start = item_data->location->GetRange().GetStart();
             const auto& end = item_data->location->GetRange().GetEnd();
 
-            if(start.GetLine() == end.GetLine()) {
+            if (start.GetLine() == end.GetLine()) {
                 m_ctrl->SetItemHighlightInfo(child, start.GetCharacter(), end.GetCharacter() - start.GetCharacter());
                 m_ctrl->HighlightText(child, true);
             }

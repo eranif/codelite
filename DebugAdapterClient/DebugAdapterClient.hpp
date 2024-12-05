@@ -70,7 +70,7 @@ struct DapProcess {
         }
     }
 
-    bool Write(const wxString& buffer)
+    bool Write(const std::string& buffer)
     {
         if (m_process) {
             return m_process->WriteRaw(buffer);
@@ -79,12 +79,12 @@ struct DapProcess {
     }
 
     bool IsRedirect() const { return m_process && m_process->IsRedirect(); }
-    wxMessageQueue<wxString>& Queue() { return m_readQueue; }
+    wxMessageQueue<std::string>& Queue() { return m_readQueue; }
     typedef std::shared_ptr<DapProcess> Ptr_t;
 
 private:
     IProcess::Ptr_t m_process = nullptr;
-    wxMessageQueue<wxString> m_readQueue;
+    wxMessageQueue<std::string> m_readQueue;
 };
 
 class DebugAdapterClient : public IPlugin

@@ -114,14 +114,14 @@ public:
      * @returns true on success, false in case of an error. True is also returned when timeout occurs, check the buffer
      * length if it is 0, timeout occurred
      */
-    bool Read(wxString& buffer, int msTimeout) override
+    bool Read(std::string& buffer, int msTimeout) override
     {
         if (wxThread::IsMain()) {
             LOG_ERROR(LOG) << "StdioTransport::Read is called from the main thread!" << endl;
             return false;
         }
 
-        wxString msg;
+        std::string msg;
         switch (m_dap_server->Queue().ReceiveTimeout(msTimeout, msg)) {
         case wxMSGQUEUE_NO_ERROR:
         case wxMSGQUEUE_TIMEOUT:
@@ -136,7 +136,7 @@ public:
      * @brief send data over the network
      * @return number of bytes written
      */
-    size_t Send(const wxString& buffer) override
+    size_t Send(const std::string& buffer) override
     {
         if (!m_dap_server->Write(buffer)) {
             return 0;
@@ -1267,7 +1267,7 @@ void DebugAdapterClient::StartAndConnectToDapServer()
         // Using socket transport
         auto socket_transport = new dap::SocketTransport();
         LOG_DEBUG(LOG) << "Connecting to dap server:" << m_session.dap_server.GetConnectionString() << endl;
-        if (!socket_transport->Connect(m_session.dap_server.GetConnectionString(), 10)) {
+        if (!socket_transport->Connect(m_session.dap_server.GetConnectionString().ToStdString(), 10)) {
             wxMessageBox("Failed to connect to DAP server using socket", DAP_MESSAGE_BOX_TITLE,
                          wxICON_ERROR | wxOK | wxCENTRE);
             wxDELETE(socket_transport);
@@ -1315,7 +1315,7 @@ void DebugAdapterClient::OnProcessOutput(clProcessEvent& event)
 {
     event.Skip();
     if (m_dap_server && m_dap_server->IsRedirect()) {
-        m_dap_server->Queue().Post(event.GetOutput());
+        m_dap_server->Queue().Post(event.GetOutputRaw());
     }
 }
 

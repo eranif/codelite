@@ -100,6 +100,8 @@ void wxTerminalCtrl::StartShell()
     env.push_back({ "WD", wxFileName(shell_exec).GetPath() });
 #endif
 
+    // required to get colours
+    env.push_back({ "TERM", "xterm-256color" });
     LOG_DEBUG(TERM_LOG()) << "Starting shell process:" << shell_exec << endl;
     if (m_shellCommand == "bash") {
         m_shell = ::CreateAsyncProcess(this, shell_exec + " --login -i", IProcessRawOutput, wxEmptyString, &env);

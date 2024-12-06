@@ -138,8 +138,6 @@ bool EditorConfig::Load()
     return true;
 }
 
-void EditorConfig::SaveLexers() { ColoursAndFontsManager::Get().Save(); }
-
 LexerConf::Ptr_t EditorConfig::GetLexerForFile(const wxString& filename)
 {
     return ColoursAndFontsManager::Get().GetLexerForFile(filename);

@@ -504,28 +504,6 @@ size_t FileUtils::GetFileSize(const wxFileName& filename)
     }
 }
 
-wxString FileUtils::EscapeString(const wxString& str)
-{
-    wxString modstr = str;
-    modstr.Replace(" ", "\\ ");
-    modstr.Replace("\"", "\\\"");
-    return modstr;
-}
-
-wxString FileUtils::GetOSXTerminalCommand(const wxString& command, const wxString& workingDirectory)
-{
-    wxFileName script(clStandardPaths::Get().GetBinFolder(), "osx-terminal.sh");
-
-    wxString cmd;
-    cmd << EscapeString(script.GetFullPath()) << " \"";
-    if (!workingDirectory.IsEmpty()) {
-        cmd << "cd " << EscapeString(workingDirectory) << " && ";
-    }
-    cmd << EscapeString(command) << "\"";
-    clDEBUG() << "GetOSXTerminalCommand returned:" << cmd << clEndl;
-    return cmd;
-}
-
 wxString FileUtils::NormaliseName(const wxString& name)
 {
     static bool initialised = false;
@@ -583,17 +561,6 @@ bool FileUtils::NextWord(const wxString& str, size_t& offset, wxString& word, bo
     return false;
 }
 
-size_t FileUtils::SplitWords(const wxString& str, wxStringSet_t& outputSet, bool makeLower)
-{
-    size_t offset = 0;
-    wxString word;
-    outputSet.clear();
-    while (NextWord(str, offset, word, makeLower)) {
-        outputSet.insert(word);
-    }
-    return outputSet.size();
-}
-
 bool FileUtils::RemoveFile(const wxString& filename, const wxString& context)
 {
     LOG_IF_TRACE { clDEBUG1() << "Deleting file:" << filename << "(" << context << ")"; }
@@ -648,30 +615,6 @@ wxString FileUtils::RealPath(const wxString& filepath)
 #endif // defined(__WXGTK__) || defined(__WXOSX__)
 
     return filepath;
-}
-
-void FileUtils::OpenBuiltInTerminal(const wxString& wd, const wxString& user_command, bool pause_when_exit)
-{
-    wxString title(user_command);
-
-    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
-    fnCodeliteTerminal.SetFullName("codelite-terminal");
-
-    wxString newCommand;
-    newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-    if (pause_when_exit) {
-        newCommand << " --wait ";
-    }
-    if (wxDirExists(wd)) {
-        wxString workingDirectory = wd;
-        workingDirectory.Trim().Trim(false);
-        if (workingDirectory.Contains(" ") && !workingDirectory.StartsWith("\"")) {
-            workingDirectory.Prepend("\"").Append("\"");
-        }
-        newCommand << " --working-directory " << wd;
-    }
-    newCommand << " --cmd " << title;
-    ::wxExecute(newCommand, wxEXEC_ASYNC);
 }
 
 std::string FileUtils::ToStdString(const wxString& str) { return StringUtils::ToStdString(str); }
@@ -849,43 +792,6 @@ size_t FileUtils::FindSimilar(const wxFileName& filename, const std::vector<wxSt
         }
     }
     return vout.size();
-}
-
-bool FileUtils::ParseURI(const wxString& uri, wxString& path, wxString& scheme, wxString& user, wxString& host,
-                         wxString& port)
-{
-    if (uri.StartsWith("file://")) {
-        path = uri.Mid(7);
-        scheme = "file://";
-        return true;
-    } else if (uri.StartsWith("ssh://")) {
-        // expected syntax:
-        // ssh://user@host:port:/path
-        scheme = "ssh://";
-        wxString remainder = uri.Mid(6);
-        user = remainder.BeforeFirst('@');
-        remainder = remainder.AfterFirst('@');
-        host = remainder.BeforeFirst(':');
-        remainder = remainder.AfterFirst(':');
-
-        // at this point we got:
-        // port:/path
-        // OR -
-        // /path
-        if (remainder.empty()) {
-            return true;
-        }
-
-        if (remainder[0] == '/') {
-            path = remainder;
-        } else {
-            port = remainder.BeforeFirst(':');
-            path = remainder.AfterFirst(':');
-        }
-        return true;
-    } else {
-        return false;
-    }
 }
 
 wxString FileUtils::FilePathToURI(const wxString& filepath)

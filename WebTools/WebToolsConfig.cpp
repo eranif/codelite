@@ -59,67 +59,8 @@ JSONItem WebToolsConfig::ToJSON() const
     return element;
 }
 
-wxString WebToolsConfig::GetTernProjectFile() const
-{
-    JSON root(cJSON_Object);
-    JSONItem libs = JSONItem::createArray("libs");
-    root.toElement().append(libs);
-
-    JSONItem plugins = JSONItem::createObject("plugins");
-    root.toElement().append(plugins);
-
-    std::vector<wxString> pluginsToLoad;
-
-    // basic plugins that should always get loaded
-    pluginsToLoad.push_back("commonjs");
-    pluginsToLoad.push_back("modules");
-
-    std::set<wxString> uniquePlugins;
-    std::for_each(pluginsToLoad.begin(), pluginsToLoad.end(), [&](const wxString& name) {
-        if(uniquePlugins.count(name) == 0) {
-            uniquePlugins.insert(name);
-            JSONItem node = JSONItem::createObject(name);
-            plugins.append(node);
-        }
-    });
-    return root.toElement().format();
-}
-
 WebToolsConfig& WebToolsConfig::Get()
 {
     static WebToolsConfig webtoolsConfig;
     return webtoolsConfig;
-}
-
-bool WebToolsConfig::IsNodeInstalled() const
-{
-    wxFileName fn(GetNodejs());
-    return fn.IsOk() && fn.FileExists();
-}
-
-bool WebToolsConfig::IsNpmInstalled() const
-{
-    wxFileName fn(GetNpm());
-    return fn.IsOk() && fn.FileExists();
-}
-
-wxFileName WebToolsConfig::GetTernScript() const
-{
-    wxFileName fn(GetTempFolder(false), "tern");
-    fn.AppendDir("node_modules");
-    fn.AppendDir("tern");
-    fn.AppendDir("bin");
-    return fn;
-}
-
-bool WebToolsConfig::IsTernInstalled() const { return GetTernScript().FileExists(); }
-
-wxString WebToolsConfig::GetTempFolder(bool create) const
-{
-    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "");
-    fn.AppendDir("webtools");
-    if(create) {
-        fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    }
-    return fn.GetPath();
 }

@@ -58,14 +58,12 @@ public:
     TemplateHelper() {}
     ~TemplateHelper() {}
 
-    void SetTemplateDeclaration(const wxString& templateDeclaration);
     void SetTemplateInstantiation(const wxString& templateInstantiation);
 
     void SetTemplateDeclaration(const wxArrayString& templateDeclaration)
     {
         this->templateDeclaration = templateDeclaration;
     }
-    void SetTemplateInstantiation(const wxArrayString& templateInstantiation);
 
     const wxArrayString& GetTemplateDeclaration() const { return templateDeclaration; }
     bool IsTemplate() const { return templateDeclaration.IsEmpty() == false; }

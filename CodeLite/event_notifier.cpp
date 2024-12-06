@@ -89,13 +89,6 @@ void EventNotifier::PostReloadExternallyModifiedEvent(bool prompt)
     AddPendingEvent(event);
 }
 
-void EventNotifier::PostFileRemovedEvent(const wxArrayString& files)
-{
-    clCommandEvent filesRemovedEvent(wxEVT_PROJ_FILE_REMOVED);
-    filesRemovedEvent.SetStrings(files);
-    AddPendingEvent(filesRemovedEvent);
-}
-
 void EventNotifier::NotifyWorkspaceReloadEndEvent(const wxString& workspaceFile)
 {
     clWorkspaceEvent event(wxEVT_WORKSPACE_RELOAD_ENDED);

@@ -44,7 +44,6 @@
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "cl_editor_tip_window.h"
-#include "code_completion_api.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
 #include "commentconfigdata.h"

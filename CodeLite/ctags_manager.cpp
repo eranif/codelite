@@ -30,7 +30,6 @@
 #include "Cxx/cpp_comment_creator.h"
 #include "StdToWX.h"
 #include "cl_command_event.h"
-#include "code_completion_api.h"
 #include "codelite_events.h"
 #include "database/tags_storage_sqlite3.h"
 #include "event_notifier.h"

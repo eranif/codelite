@@ -143,7 +143,7 @@ void Language::ParseTemplateInitList(const wxString& argListStr, wxArrayString& 
     typeName.Empty();
 }
 
-wxString Language::GetScopeName(const wxString& in, std::vector<wxString>* additionlNS)
+wxString Language::GetScopeName(const wxString& in)
 {
     std::vector<std::string> moreNS;
 
@@ -157,36 +157,6 @@ wxString Language::GetScopeName(const wxString& in, std::vector<wxString>* addit
     if(scope.IsEmpty()) {
         scope = wxT("<global>");
     }
-
-    if(additionlNS) {
-        for(size_t i = 0; i < moreNS.size(); i++) {
-            additionlNS->push_back(_U(moreNS.at(i).c_str()));
-        }
-
-        // In case we are found some 'using namesapce XXX;' statement
-        // we should scan the following scopes:
-        // XXX
-        // and also:
-        // XXX::CurrentScope (assuming that CurrentScope != <global>)
-        if(scope != wxT("<global>")) {
-            std::vector<wxString> tmpScopes;
-            for(size_t i = 0; i < additionlNS->size(); i++) {
-                tmpScopes.push_back(additionlNS->at(i));
-                tmpScopes.push_back(additionlNS->at(i) + wxT("::") + scope);
-            }
-            additionlNS->clear();
-            additionlNS->insert(additionlNS->begin(), tmpScopes.begin(), tmpScopes.end());
-        }
-
-        wxArrayString moreScopes = GetTagsManager()->BreakToOuterScopes(scope);
-        for(size_t i = 0; i < moreScopes.GetCount(); i++) {
-            if(moreScopes.Item(i) != scope &&
-               std::find(additionlNS->begin(), additionlNS->end(), moreScopes.Item(i)) == additionlNS->end()) {
-                additionlNS->push_back(moreScopes.Item(i));
-            }
-        }
-    }
-
     return scope;
 }
 

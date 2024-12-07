@@ -120,7 +120,7 @@ public:
      * @param in input string
      * @return scope name or empty string
      */
-    wxString GetScopeName(const wxString& in, std::vector<wxString>* additionlNS);
+    wxString GetScopeName(const wxString& in);
 
     /**
      * Collect local variables from given scope text (in) and an optional symbol name

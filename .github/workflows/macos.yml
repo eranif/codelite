@@ -3,7 +3,15 @@ name: macos
 on:
   workflow_dispatch:
   push:
+    paths:
+      - '**'
+      - '!.github/**'
+      - '.github/workflows/macos.yml'
   pull_request:
+    paths:
+      - '**'
+      - '!.github/**'
+      - '.github/workflows/macos.yml'
 
 jobs:
   macos:
@@ -44,8 +52,9 @@ jobs:
         mkdir build-release
         cd $_
         brew install autoconf automake libtool gettext
-        cmake .. -DCMAKE_BUILD_TYPE=Release -Wno-dev -DWITH_MYSQL=1 -DWITH_POSTGRES=1 -DWITH_CHATAI=1
+        cmake .. -DCMAKE_BUILD_TYPE=Release -Wno-dev -DWITH_MYSQL=1 -DWITH_POSTGRES=1 -DWITH_CHATAI=1 -DBUILD_TESTING=1
         make -j$(sysctl -n hw.physicalcpu) VERBOSE=1 install
+        ctest --output-on-failure
 
 #    - name: codelite --version
 #      run: codelite.app/Contents/MacOS/codelite --version || exit 0 # codelite --version returns -1

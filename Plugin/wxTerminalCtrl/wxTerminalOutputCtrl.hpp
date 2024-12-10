@@ -81,17 +81,21 @@ protected:
     void OnLeftUp(wxMouseEvent& event);
     void ApplyTheme();
     void OnKeyDown(wxKeyEvent& event);
-    void Initialise(const wxFont& font = wxNullFont, const wxColour& bg_colour = *wxBLACK,
+    void Initialise(const wxFont& font = wxNullFont,
+                    const wxColour& bg_colour = *wxBLACK,
                     const wxColour& text_colour = *wxWHITE);
     void ClearIndicators();
     void ProcessIdle();
     void OnEnterWindow(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
     void DoPatternClicked(const wxString& pattern);
+    void OnMenu(wxContextMenuEvent& event);
 
 public:
-    explicit wxTerminalOutputCtrl(wxTerminalCtrl* parent, wxWindowID winid = wxNOT_FOUND,
-                                  const wxFont& font = wxNullFont, const wxColour& bg_colour = *wxBLACK,
+    explicit wxTerminalOutputCtrl(wxTerminalCtrl* parent,
+                                  wxWindowID winid = wxNOT_FOUND,
+                                  const wxFont& font = wxNullFont,
+                                  const wxColour& bg_colour = *wxBLACK,
                                   const wxColour& text_colour = *wxWHITE);
     explicit wxTerminalOutputCtrl(wxWindow* parent, wxWindowID winid = wxNOT_FOUND);
     virtual ~wxTerminalOutputCtrl();

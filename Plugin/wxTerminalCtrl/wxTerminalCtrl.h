@@ -60,7 +60,7 @@ public:
     const wxString& GetShellCommand() const { return m_shellCommand; }
 
     /**
-     * @brief execute a command in the temrinal
+     * @brief execute a command in the terminal
      * @param command
      */
     void Run(const wxString& command);

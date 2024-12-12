@@ -117,11 +117,6 @@ public:
                                                  long& pid);
 
     /**
-     * @brief return the command needed to open OSX terminal at a given directory and launch a command
-     */
-    static wxString GetOSXTerminalCommand(const wxString& command, const wxString& workingDirectory);
-
-    /**
      * @brief file masking search
      */
     static bool WildMatch(const wxString& mask, const wxString& filename);
@@ -160,11 +155,6 @@ public:
     static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
 
     /**
-     * @brief split a string by whitespace
-     */
-    static size_t SplitWords(const wxString& str, wxStringSet_t& outputSet, bool makeLower = false);
-
-    /**
      * @brief decode URI using percent encoding
      */
     static wxString DecodeURI(const wxString& uri);
@@ -173,11 +163,6 @@ public:
      * @brief encode URI using percent encoding
      */
     static wxString EncodeURI(const wxString& uri);
-
-    /**
-     * @brief escape string. Each space and double quotes marker is escaped with backslash
-     */
-    static wxString EscapeString(const wxString& str);
 
     /**
      * @brief is the file or folder a hidden file?
@@ -304,12 +289,6 @@ public:
      */
     static size_t FindSimilar(const wxFileName& filename, const std::vector<wxString>& extensions,
                               std::vector<wxFileName>& vout);
-
-    /**
-     * @brief given URI, parse it into its basic parts
-     */
-    static bool ParseURI(const wxString& uri, wxString& path, wxString& scheme, wxString& user, wxString& host,
-                         wxString& port);
 
     /**
      * @brief convert path to uri

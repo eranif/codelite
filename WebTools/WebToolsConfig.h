@@ -86,17 +86,6 @@ public:
     bool IsLintOnSave() const { return HasFlag(m_nodeOptions, kLintOnSave); }
     void SetLintOnSave(bool b) { EnableFlag(m_nodeOptions, kLintOnSave, b); }
 
-    bool IsNodeInstalled() const;
-    bool IsNpmInstalled() const;
-
-    wxFileName GetTernScript() const;
-    bool IsTernInstalled() const;
-    wxString GetTempFolder(bool create = false) const;
-
-    /**
-     * @brief create tern project file content based on the settings
-     */
-    wxString GetTernProjectFile() const;
     WebToolsConfig& Load();
     WebToolsConfig& SaveConfig();
 };

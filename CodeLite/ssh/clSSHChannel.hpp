@@ -137,13 +137,6 @@ public:
                                    const wxString& command, bool wantStderr = false);
 
     /**
-     * @brief create a remote script with the content `content` at `script_path` and execute it
-     */
-    static IProcess::Ptr_t CreateAndExecuteScript(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner,
-                                                  const wxString& content, const wxString& script_path,
-                                                  bool wantStderr = false);
-
-    /**
      * @brief Send a signal to remote process
      */
     void Signal(wxSignal sig) override;

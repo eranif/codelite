@@ -405,7 +405,6 @@ public:
 protected:
     void DoFindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags);
     wxString DoReplaceMacros(const wxString& name);
-    wxArrayString BreakToOuterScopes(const wxString& scope);
     wxString DoReplaceMacrosFromDatabase(const wxString& name);
     void GetScopesByScopeName(const wxString& scopeName, wxArrayString& scopes);
 };

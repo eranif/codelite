@@ -940,10 +940,15 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     dinfo.breakAtWinMain = false;
     dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
     dbgr->SetDebuggerInformation(dinfo);
-    dbgr->SetIsRemoteDebugging(false);
+    
+    // Setup remote debugging
+    if (GetConfig()->GetDebuggerRemoteEnabled()) {
+        dbgr->SetIsRemoteDebugging(GetConfig()->GetDebuggerRemoteEnabled());
+        dbgr->SetIsRemoteExtended(GetConfig()->GetDebuggerRemoteExtended());
+        dbgr->SetPostRemoteConnectCommands(GetConfig()->GetDebuggerRemoteCommands());
+    }
 
     // Setup the debug session
-
     wxString exe, args, wd;
     GetExecutable(exe, args, wd);
 
@@ -955,6 +960,7 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     session_info.exeName = exe;
     session_info.cwd = wd;
     session_info.init_file_content = GetConfig()->GetDebuggerCommands();
+    
     clGetManager()->GetBreakpoints(bpList);
     session_info.bpList = bpList;
 
@@ -999,8 +1005,30 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
     eventStarted.SetClientData(&session_info);
     EventNotifier::Get()->ProcessEvent(eventStarted);
-    // Now run the debuggee
-    dbgr->Run(args, "");
+    
+    if (dbgr->GetIsRemoteDebugging()) {
+        // debugging remote target
+        wxString comm;
+        wxString host = GetConfig()->GetDebuggerRemoteHost();
+        wxString port = GetConfig()->GetDebuggerRemotePort();
+        
+        comm << host;
+
+        host = host.Trim().Trim(false);
+        port = port.Trim().Trim(false);
+
+        if (port.IsEmpty() == false) {
+            comm << wxT(":") << port;
+        }
+        
+        // Now run the debuggee (remote)
+        dbgr->Run(args, comm);
+
+    } else {
+        // Now run the debuggee (local)
+        dbgr->Run(args, "");
+        
+    }
 }
 
 void clFileSystemWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)

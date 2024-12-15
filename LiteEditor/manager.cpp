@@ -2502,19 +2502,31 @@ void Manager::UpdateAsciiViewer(const wxString& expression, const wxString& tip)
 void Manager::UpdateRemoteTargetConnected(const wxString& line)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if (dbgr && dbgr->IsRunning() && IsWorkspaceOpen()) {
-        // we currently do not support this feature when debugging using 'Quick debug'
-        wxString errMsg;
-        ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(GetActiveProjectName(), errMsg);
-        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), wxEmptyString);
-        if (bldConf) {
-            wxArrayString dbg_cmds =
-                wxStringTokenize(bldConf->GetDebuggerPostRemoteConnectCmds(), wxT("\n"), wxTOKEN_STRTOK);
-            for (size_t i = 0; i < dbg_cmds.GetCount(); i++) {
-                dbgr->ExecuteCmd(dbg_cmds.Item(i));
+    
+    if (dbgr && dbgr->IsRunning()) {
+        wxString commands;
+        // An old behavior for legacy workspace
+        if (IsWorkspaceOpen()) {
+            // we currently do not support this feature when debugging using 'Quick debug'
+            wxString errMsg;
+            ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(GetActiveProjectName(), errMsg);
+            BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), wxEmptyString);
+            if (bldConf) {
+                commands = bldConf->GetDebuggerPostRemoteConnectCmds();
             }
+            
+        // Filesystem workspace and so on
+        } else if (!dbgr->GetPostRemoteConnectCommands().empty()) {
+            commands = dbgr->GetPostRemoteConnectCommands();
+        }
+        
+        // - Execute commands
+        wxArrayString dbg_cmds = wxStringTokenize(commands, wxT("\n"), wxTOKEN_STRTOK);
+        for (size_t i = 0; i < dbg_cmds.GetCount(); i++) {
+            dbgr->ExecuteCmd(dbg_cmds.Item(i));
         }
     }
+
     // log the line
     UpdateAddLine(line);
 }

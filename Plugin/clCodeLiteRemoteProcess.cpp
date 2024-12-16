@@ -159,7 +159,8 @@ clCodeLiteRemoteProcess::~clCodeLiteRemoteProcess()
     wxDELETE(m_process);
 }
 
-void clCodeLiteRemoteProcess::StartInteractive(const wxString& account, const wxString& scriptPath,
+void clCodeLiteRemoteProcess::StartInteractive(const wxString& account,
+                                               const wxString& scriptPath,
                                                const wxString& contextString)
 {
     auto ssh_account = SSHAccountInfo::LoadAccount(account);
@@ -203,7 +204,8 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessRawOutput);
 }
 
-void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath,
+void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account,
+                                               const wxString& scriptPath,
                                                const wxString& contextString)
 {
     if (m_process) {
@@ -306,7 +308,12 @@ void clCodeLiteRemoteProcess::ProcessOutput()
         }
 
         auto p = m_completionCallbacks.front();
-        if (p.handler) {
+        if (p.user_callback != nullptr) {
+            p.aggregated_output << buffer;
+            if (is_completed) {
+                p.user_callback(p.aggregated_output);
+            }
+        } else if (p.handler) {
             auto handler = static_cast<CodeLiteRemoteProcess*>(p.handler);
             handler->PostOutputEvent(buffer);
             if (is_completed) {
@@ -341,7 +348,7 @@ void clCodeLiteRemoteProcess::ListLSPs()
     m_process->Write(item.format(false) + "\n");
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListLSPsOutput, nullptr });
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListLSPsOutput, nullptr, nullptr });
 }
 
 void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString& extensions)
@@ -360,11 +367,11 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
     m_process->Write(item.format(false) + "\n");
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListFilesOutput, nullptr });
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListFilesOutput, nullptr, nullptr });
 }
 
-void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
-                                     bool whole_word, bool icase)
+void clCodeLiteRemoteProcess::Search(
+    const wxString& root_dir, const wxString& extensions, const wxString& find_what, bool whole_word, bool icase)
 {
     if (!m_process) {
         return;
@@ -385,10 +392,12 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& e
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindOutput, nullptr });
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindOutput, nullptr, nullptr });
 }
 
-void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name, const wxString& ext,
+void clCodeLiteRemoteProcess::Locate(const wxString& path,
+                                     const wxString& name,
+                                     const wxString& ext,
                                      const std::vector<wxString>& versions)
 {
     if (!m_process) {
@@ -418,7 +427,7 @@ void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name,
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnLocateOutput, nullptr });
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnLocateOutput, nullptr, nullptr });
 }
 
 void clCodeLiteRemoteProcess::FindPath(const wxString& path)
@@ -438,7 +447,7 @@ void clCodeLiteRemoteProcess::FindPath(const wxString& path)
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindPathOutput, nullptr });
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindPathOutput, nullptr, nullptr });
 }
 
 void clCodeLiteRemoteProcess::ResetStates()
@@ -447,8 +456,8 @@ void clCodeLiteRemoteProcess::ResetStates()
     m_fif_files_scanned = 0;
 }
 
-bool clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
-                                     IProcess* handler)
+bool clCodeLiteRemoteProcess::DoExec(
+    const wxString& cmd, const wxString& working_directory, const clEnvList_t& env, IProcess* handler, UserCallback cb)
 {
     if (!m_process) {
         return false;
@@ -472,7 +481,7 @@ bool clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& workin
     m_process->Write(command + "\n");
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnExecOutput, handler });
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnExecOutput, handler, cb });
     return true;
 }
 
@@ -483,6 +492,18 @@ void clCodeLiteRemoteProcess::Exec(const wxArrayString& args, const wxString& wo
         return;
     }
     DoExec(cmdstr, working_directory, env);
+}
+
+void clCodeLiteRemoteProcess::ExecWithCallback(const wxArrayString& args,
+                                               UserCallback cb,
+                                               const wxString& working_directory,
+                                               const clEnvList_t& env)
+{
+    wxString cmdstr = GetCmdString(args);
+    if (cmdstr.empty()) {
+        return;
+    }
+    DoExec(cmdstr, working_directory, env, nullptr, std::move(cb));
 }
 
 void clCodeLiteRemoteProcess::Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env)
@@ -502,8 +523,10 @@ void clCodeLiteRemoteProcess::Write(const wxString& str)
     }
 }
 
-IProcess* clCodeLiteRemoteProcess::CreateAsyncProcess(wxEvtHandler* handler, const wxString& cmd,
-                                                      const wxString& working_directory, const clEnvList_t& env)
+IProcess* clCodeLiteRemoteProcess::CreateAsyncProcess(wxEvtHandler* handler,
+                                                      const wxString& cmd,
+                                                      const wxString& working_directory,
+                                                      const clEnvList_t& env)
 {
     CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(handler, this);
     if (DoExec(cmd, working_directory, env, p)) {
@@ -513,8 +536,10 @@ IProcess* clCodeLiteRemoteProcess::CreateAsyncProcess(wxEvtHandler* handler, con
     return nullptr;
 }
 
-void clCodeLiteRemoteProcess::CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString&)> callback,
-                                                   const wxString& working_directory, const clEnvList_t& env)
+void clCodeLiteRemoteProcess::CreateAsyncProcessCB(const wxString& cmd,
+                                                   std::function<void(const wxString&)> callback,
+                                                   const wxString& working_directory,
+                                                   const clEnvList_t& env)
 {
     CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(nullptr, this);
     p->SetCallback(std::move(callback));
@@ -694,7 +719,9 @@ void clCodeLiteRemoteProcess::OnExecOutput(const wxString& buffer, bool is_compl
     }
 }
 
-bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
+bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd,
+                                       const wxString& working_directory,
+                                       const clEnvList_t& env,
                                        wxString* output)
 {
     if (!m_completionCallbacks.empty()) {
@@ -745,8 +772,12 @@ bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& work
     return false;
 }
 
-void clCodeLiteRemoteProcess::Replace(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
-                                      const wxString& replace_with, bool whole_word, bool icase)
+void clCodeLiteRemoteProcess::Replace(const wxString& root_dir,
+                                      const wxString& extensions,
+                                      const wxString& find_what,
+                                      const wxString& replace_with,
+                                      bool whole_word,
+                                      bool icase)
 {
     if (!m_process) {
         return;
@@ -768,5 +799,5 @@ void clCodeLiteRemoteProcess::Replace(const wxString& root_dir, const wxString& 
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnReplaceOutput, nullptr });
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnReplaceOutput, nullptr, nullptr });
 }

@@ -292,6 +292,14 @@ void wxTerminalOutputCtrl::ProcessIdle()
     int pos = m_ctrl->PositionFromPoint(client_pt);
     int word_start_pos = m_ctrl->WordStartPosition(pos, true);
     int word_end_pos = m_ctrl->WordEndPosition(pos, true);
+
+    // Make sure we only pick visible chars (embedded ANSI colour can break the selected word)
+    for (; word_start_pos < word_end_pos; word_start_pos++) {
+        if (m_ctrl->StyleGetVisible(m_ctrl->GetStyleAt(word_start_pos))) {
+            break;
+        }
+    }
+
     IndicatorRange range{ word_start_pos, word_end_pos };
     if (m_indicatorHyperlink.ok() && m_indicatorHyperlink == range) {
         // already marked
@@ -327,7 +335,9 @@ void wxTerminalOutputCtrl::OnLeftUp(wxMouseEvent& event)
 
     // fire an event
     wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.start(), m_indicatorHyperlink.end());
-    CallAfter(&wxTerminalOutputCtrl::DoPatternClicked, pattern);
+    wxString modbuffer;
+    StringUtils::StripTerminalColouring(pattern, modbuffer);
+    CallAfter(&wxTerminalOutputCtrl::DoPatternClicked, modbuffer);
 }
 
 void wxTerminalOutputCtrl::OnEnterWindow(wxMouseEvent& event)

@@ -630,7 +630,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GET_TAB_BORDER_COLOUR, clColourEv
 // it simply needs to connect the event and avoid calling 'event.Skip();
 //----------------------------------------------------------------------
 wxDECLARE_EXPORTED_EVENT(
-    WXDLLIMPEXP_CL, wxEVT_DBG_UI_START,
+    WXDLLIMPEXP_CL,
+    wxEVT_DBG_UI_START,
     clDebugEvent); // Start. This event is fired when a debug session is starting. The plugin should also set the
                    // "feaures" field to indicate which features are available by the debugger
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_CONTINUE, clDebugEvent);  // Continue
@@ -641,11 +642,13 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_STEP_OUT, clDebugEvent);  
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_NEXT, clDebugEvent);      // Next line
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_NEXT_INST, clDebugEvent); // Next instruction
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_INTERRUPT, clDebugEvent); // Interrupt the debugger execution
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_SHOW_CURSOR,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
+                         wxEVT_DBG_UI_SHOW_CURSOR,
                          clDebugEvent); // Set the focus to the current debugger file/line
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_RESTART, clDebugEvent); // Restart the debug session
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_IS_RUNNING, clDebugEvent); // Use evet.SetAnswer() method to reply
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_TOGGLE_BREAKPOINT,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
+                         wxEVT_DBG_UI_TOGGLE_BREAKPOINT,
                          clDebugEvent); // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
 
 /// User added breakpoint from the UI
@@ -670,18 +673,22 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_EXPR_TOOLTIP, clDebugEvent);
 // etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEvent);
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_QUICK_DEBUG,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
+                         wxEVT_DBG_UI_QUICK_DEBUG,
                          clDebugEvent); // User clicked on the 'Quick Debug' button. Event type is clDebugEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_CORE_FILE,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
+                         wxEVT_DBG_UI_CORE_FILE,
                          clDebugEvent); // User selected to debug a core file. Event type is clDebugEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_ATTACH_TO_PROCESS,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
+                         wxEVT_DBG_UI_ATTACH_TO_PROCESS,
                          clDebugEvent); // Attach to process. Use clDebugEvent::GetInt() to get the process ID
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, clDebugEvent);  // Delete all breakpoints
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEvent);  // Enable all breakpoints
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, clDebugEvent); // Disable all breakpoints
 
 // -------------------Debugger events end------------------------------------------------
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_OPEN_PROJ_SETTINGS,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
+                         wxEVT_CMD_OPEN_PROJ_SETTINGS,
                          clCommandEvent); // clCommandEvent. Use event.GetString() to get the project name
 
 // event type: clNewProjectEvent
@@ -984,5 +991,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_MODIFIED_EXTERNALLY, clFileS
 
 // User clicked on a margin with user data
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_MARGIN_CLICKED, clEditorEvent);
+
+// The output view tab changed. The new active tab can be retrieved from event.GetString()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_OUTPUT_VIEW_TAB_CHANGED, clCommandEvent);
 
 #endif // CODELITE_EVENTS_H

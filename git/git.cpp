@@ -45,6 +45,7 @@
 #include "clEditorBar.h"
 #include "clSFTPManager.hpp"
 #include "clStatusBar.h"
+#include "clStrings.h"
 #include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
 #include "dirsaver.h"
@@ -79,9 +80,9 @@
 #include <sys/wait.h>
 #endif
 
-#define CHECK_VIEW_SHOWN()          \
-    if (!GetConsole()->IsShown()) { \
-        return;                     \
+#define CHECK_VIEW_SHOWN()                                         \
+    if (!clGetManager()->IsPaneShown(PANE_OUTPUT, GIT_TAB_NAME)) { \
+        return;                                                    \
     }
 
 namespace

@@ -381,8 +381,10 @@ IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& bmpRe
     return editor;
 }
 
-IEditor* PluginManager::OpenRemoteFile(const wxString& local_path, const wxString& remote_path,
-                                       const wxString& ssh_account, const wxString& tooltip)
+IEditor* PluginManager::OpenRemoteFile(const wxString& local_path,
+                                       const wxString& remote_path,
+                                       const wxString& ssh_account,
+                                       const wxString& tooltip)
 {
     return clMainFrame::Get()->GetMainBook()->OpenRemoteFile(local_path, remote_path, ssh_account, tooltip);
 }
@@ -564,8 +566,8 @@ bool PluginManager::ClosePage(const wxFileName& filename)
 
 wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
-bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip,
-                            const wxString& bmpResourceName, bool selected)
+bool PluginManager::AddPage(
+    wxWindow* win, const wxString& text, const wxString& tooltip, const wxString& bmpResourceName, bool selected)
 {
     int bmp_index = clMainFrame::Get()->GetMainBook()->GetBitmapIndexOrAdd(bmpResourceName);
     return clMainFrame::Get()->GetMainBook()->AddBookPage(win, text, tooltip, bmp_index, selected, wxNOT_FOUND);
@@ -577,7 +579,8 @@ IEditor* PluginManager::OpenFile(const BrowseRecord& rec) { return clMainFrame::
 
 NavMgr* PluginManager::GetNavigationMgr() { return NavMgr::Get(); }
 
-void PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName,
+void PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book,
+                                           const wxString& projectName,
                                            const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
@@ -586,7 +589,8 @@ void PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString&
     }
 }
 
-void PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName,
+void PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book,
+                                             const wxString& projectName,
                                              const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
@@ -855,6 +859,18 @@ void PluginManager::ShowPane(const wxString& pane_name, bool show)
     }
 }
 
+bool PluginManager::IsPaneShown(const wxString& pane_name, const wxString& tab)
+{
+    bool is_pane_shown = ManagerST::Get()->IsPaneVisible(pane_name);
+    if (tab.empty()) {
+        return is_pane_shown;
+    }
+
+    auto notebook = clMainFrame::Get()->GetOutputPane()->GetNotebook();
+    return is_pane_shown && (notebook->GetPageIndex(tab) != wxNOT_FOUND) &&
+           (notebook->GetPageIndex(tab) == notebook->GetSelection());
+}
+
 void PluginManager::ToggleSecondarySidebarPane(const wxString& selectedWindow)
 {
     if (ManagerST::Get()->IsPaneVisible(PANE_RIGHT_SIDEBAR)) {
@@ -923,7 +939,8 @@ clToolBarGeneric* PluginManager::GetToolBar() { return clMainFrame::Get()->GetPl
 
 clInfoBar* PluginManager::GetInfoBar() { return clMainFrame::Get()->GetMessageBar(); }
 
-void PluginManager::DisplayMessage(const wxString& message, int flags,
+void PluginManager::DisplayMessage(const wxString& message,
+                                   int flags,
                                    const std::vector<std::pair<wxWindowID, wxString>>& buttons)
 {
     return clMainFrame::Get()->GetMessageBar()->DisplayMessage(message, flags, buttons);

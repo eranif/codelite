@@ -37,20 +37,6 @@
 class GitPlugin;
 class GitConsole : public GitConsoleBase
 {
-    GitPlugin* m_git;
-    bool m_isVerbose;
-    BitmapLoader* m_bitmapLoader;
-    wxBitmap m_modifiedBmp;
-    wxBitmap m_untrackedBmp;
-    wxBitmap m_folderBmp;
-    wxBitmap m_newBmp;
-    wxBitmap m_deleteBmp;
-    size_t m_indent = 0;
-    std::unordered_set<wxString> m_errorPatterns;
-    std::unordered_set<wxString> m_successPatterns;
-    std::unordered_set<wxString> m_warningPatterns;
-    wxString m_buffer;
-
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);
     virtual ~GitConsole();
@@ -112,8 +98,24 @@ protected:
     void DoOnDropdown(const wxString& commandName, int id);
     void OnDropDownMenuEvent(wxCommandEvent& e);
     void Clear();
+    void OnOutputViewTabChanged(clCommandEvent& event);
 
+private:
     wxArrayString GetSelectedUnversionedFiles() const;
     wxArrayString GetSelectedModifiedFiles() const;
+
+    GitPlugin* m_git = nullptr;
+    bool m_isVerbose = false;
+    BitmapLoader* m_bitmapLoader = nullptr;
+    wxBitmap m_modifiedBmp;
+    wxBitmap m_untrackedBmp;
+    wxBitmap m_folderBmp;
+    wxBitmap m_newBmp;
+    wxBitmap m_deleteBmp;
+    size_t m_indent = 0;
+    std::unordered_set<wxString> m_errorPatterns;
+    std::unordered_set<wxString> m_successPatterns;
+    std::unordered_set<wxString> m_warningPatterns;
+    wxString m_buffer;
 };
 #endif // GITCONSOLE_H

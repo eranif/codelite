@@ -175,6 +175,7 @@ public:
     void OpenFindInFileForPath(const wxString& path) override;
     void OpenFindInFileForPaths(const wxArrayString& paths) override;
     void ShowOutputPane(const wxString& selectedWindow = "") override;
+    bool IsPaneShown(const wxString& pane_name, const wxString& tab = wxEmptyString) override;
     void ShowManagementWindow(const wxString& selectWindow, bool show) override;
     void ShowPane(const wxString& pane_name, bool show) override;
     void ToggleSidebarPane(const wxString& selectedWindow = "") override;

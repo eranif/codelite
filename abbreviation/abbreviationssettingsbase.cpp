@@ -11,11 +11,11 @@ extern void wxC94E5InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                     const wxPoint& pos, const wxSize& size, long style)
+AbbreviationsSettingsBase::AbbreviationsSettingsBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC94E5InitBitmapResources();
@@ -27,36 +27,58 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
 
     m_banner4 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1, -1), wxBORDER_THEME);
     m_banner4->SetBitmap(wxNullBitmap);
-    m_banner4->SetText(wxT(""), _("You can use the '|' (pipe) character to set the caret position\nYou may also use "
-                                  "any of the known macros to CodeLite (click the 'Help' button)"));
+    m_banner4->SetText(wxT(""),
+                       _("You can use the '|' (pipe) character to set the caret position\nYou may also use "
+                         "any of the known macros to CodeLite (click the 'Help' button)"));
     m_banner4->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK),
                            wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     m_banner4->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
     mainSizer->Add(m_banner4, 0, wxALL | wxEXPAND, 5);
 
-    m_auibar9 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1),
-                                 wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
+    m_auibar9 = new wxAuiToolBar(
+        this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
     m_auibar9->SetToolBitmapSize(wxSize(16, 16));
 
     mainSizer->Add(m_auibar9, 0, wxEXPAND, 5);
 
-    m_auibar9->AddTool(ID_TOOL_NEW, _("New..."), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Create a new abbreviation"), _("Create a new abbreviation"), NULL);
+    m_auibar9->AddTool(ID_TOOL_NEW,
+                       _("New..."),
+                       wxXmlResource::Get()->LoadBitmap(wxT("16-plus")),
+                       wxNullBitmap,
+                       wxITEM_NORMAL,
+                       _("Create a new abbreviation"),
+                       _("Create a new abbreviation"),
+                       NULL);
 
-    m_auibar9->AddTool(ID_TOOL_DELETE, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("16-minus")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Delete the currently selected abbreviation"),
-                       _("Delete the currently selected abbreviation"), NULL);
+    m_auibar9->AddTool(ID_TOOL_DELETE,
+                       _("Delete"),
+                       wxXmlResource::Get()->LoadBitmap(wxT("16-minus")),
+                       wxNullBitmap,
+                       wxITEM_NORMAL,
+                       _("Delete the currently selected abbreviation"),
+                       _("Delete the currently selected abbreviation"),
+                       NULL);
 
     m_auibar9->AddSeparator();
 
-    m_auibar9->AddTool(ID_TOOL_IMPORT, _("Import"), wxXmlResource::Get()->LoadBitmap(wxT("16-down")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Import abbreviations from the file system..."),
-                       _("Import abbreviations from the file system..."), NULL);
+    m_auibar9->AddTool(ID_TOOL_IMPORT,
+                       _("Import"),
+                       wxXmlResource::Get()->LoadBitmap(wxT("16-down")),
+                       wxNullBitmap,
+                       wxITEM_NORMAL,
+                       _("Import abbreviations from the file system..."),
+                       _("Import abbreviations from the file system..."),
+                       NULL);
 
-    m_auibar9->AddTool(ID_TOOL_EXPORT, _("Export"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_save")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Export abbreviations to the file system..."),
-                       _("Export abbreviations to the file system..."), NULL);
+    m_auibar9->AddTool(ID_TOOL_EXPORT,
+                       _("Export"),
+                       wxXmlResource::Get()->LoadBitmap(wxT("16-file_save")),
+                       wxNullBitmap,
+                       wxITEM_NORMAL,
+                       _("Export abbreviations to the file system..."),
+                       _("Export abbreviations to the file system..."),
+                       NULL);
     m_auibar9->Realize();
 
     wxBoxSizer* mainSizer_Inner = new wxBoxSizer(wxHORIZONTAL);
@@ -132,7 +154,7 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     m_stc->SetLexer(wxSTC_LEX_CPP);
     // Set default font / styles
     m_stc->StyleClearAll();
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+    for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
         m_stc->StyleSetFont(i, m_stcFont);
     }
     m_stc->SetWrapMode(0);
@@ -177,63 +199,86 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("AbbreviationsSettingsBase"));
     SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
 #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
-    this->Connect(ID_TOOL_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnNew),
-                  NULL, this);
-    this->Connect(ID_TOOL_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnDeleteUI), NULL,
+    this->Connect(
+        ID_TOOL_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnNew), NULL, this);
+    this->Connect(
+        ID_TOOL_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnDeleteUI), NULL, this);
+    this->Connect(ID_TOOL_DELETE,
+                  wxEVT_COMMAND_TOOL_CLICKED,
+                  wxCommandEventHandler(AbbreviationsSettingsBase::OnDelete),
+                  NULL,
                   this);
-    this->Connect(ID_TOOL_DELETE, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(AbbreviationsSettingsBase::OnDelete), NULL, this);
-    this->Connect(ID_TOOL_IMPORT, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(AbbreviationsSettingsBase::OnImport), NULL, this);
-    this->Connect(ID_TOOL_EXPORT, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(AbbreviationsSettingsBase::OnExport), NULL, this);
-    m_listBoxAbbreviations->Connect(wxEVT_COMMAND_LISTBOX_SELECTED,
-                                    wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
+    this->Connect(ID_TOOL_IMPORT,
+                  wxEVT_COMMAND_TOOL_CLICKED,
+                  wxCommandEventHandler(AbbreviationsSettingsBase::OnImport),
+                  NULL,
+                  this);
+    this->Connect(ID_TOOL_EXPORT,
+                  wxEVT_COMMAND_TOOL_CLICKED,
+                  wxCommandEventHandler(AbbreviationsSettingsBase::OnExport),
+                  NULL,
+                  this);
+    m_listBoxAbbreviations->Connect(
+        wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
     m_stc->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
     m_checkBoxImmediateInsert->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                       wxCommandEventHandler(AbbreviationsSettingsBase::OnImmediateInsert), NULL, this);
-    m_buttonSave->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL,
-                          this);
+                                       wxCommandEventHandler(AbbreviationsSettingsBase::OnImmediateInsert),
+                                       NULL,
+                                       this);
+    m_buttonSave->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL, this);
     m_buttonSave->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnSaveUI), NULL, this);
-    m_buttonHelp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnHelp), NULL,
-                          this);
+    m_buttonHelp->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnHelp), NULL, this);
 }
 
 AbbreviationsSettingsBase::~AbbreviationsSettingsBase()
 {
-    this->Disconnect(ID_TOOL_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnNew),
-                     NULL, this);
-    this->Disconnect(ID_TOOL_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnDeleteUI),
-                     NULL, this);
-    this->Disconnect(ID_TOOL_DELETE, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(AbbreviationsSettingsBase::OnDelete), NULL, this);
-    this->Disconnect(ID_TOOL_IMPORT, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(AbbreviationsSettingsBase::OnImport), NULL, this);
-    this->Disconnect(ID_TOOL_EXPORT, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(AbbreviationsSettingsBase::OnExport), NULL, this);
-    m_listBoxAbbreviations->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED,
-                                       wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
+    this->Disconnect(
+        ID_TOOL_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnNew), NULL, this);
+    this->Disconnect(
+        ID_TOOL_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnDeleteUI), NULL, this);
+    this->Disconnect(ID_TOOL_DELETE,
+                     wxEVT_COMMAND_TOOL_CLICKED,
+                     wxCommandEventHandler(AbbreviationsSettingsBase::OnDelete),
+                     NULL,
+                     this);
+    this->Disconnect(ID_TOOL_IMPORT,
+                     wxEVT_COMMAND_TOOL_CLICKED,
+                     wxCommandEventHandler(AbbreviationsSettingsBase::OnImport),
+                     NULL,
+                     this);
+    this->Disconnect(ID_TOOL_EXPORT,
+                     wxEVT_COMMAND_TOOL_CLICKED,
+                     wxCommandEventHandler(AbbreviationsSettingsBase::OnExport),
+                     NULL,
+                     this);
+    m_listBoxAbbreviations->Disconnect(
+        wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
     m_stc->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
     m_checkBoxImmediateInsert->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                          wxCommandEventHandler(AbbreviationsSettingsBase::OnImmediateInsert), NULL,
+                                          wxCommandEventHandler(AbbreviationsSettingsBase::OnImmediateInsert),
+                                          NULL,
                                           this);
-    m_buttonSave->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave),
-                             NULL, this);
+    m_buttonSave->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL, this);
     m_buttonSave->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnSaveUI), NULL, this);
-    m_buttonHelp->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnHelp),
-                             NULL, this);
+    m_buttonHelp->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnHelp), NULL, this);
 }

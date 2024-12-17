@@ -191,6 +191,10 @@ public:
     /// - "Output View"
     virtual void ShowPane(const wxString& pane_name, bool show) = 0;
 
+    /// Return true if `pane_name` is shown. If `tab` is not empty, also check that it is the
+    /// selected tab
+    virtual bool IsPaneShown(const wxString& pane_name, const wxString& tab = wxEmptyString) = 0;
+
     /**
      * @brief show the toolbar. This only works when using the native toolbar
      */
@@ -243,20 +247,24 @@ public:
      * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
      * @return Pointer to the newly opened editor or nullptr
      */
-    virtual IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString,
-                              int lineno = wxNOT_FOUND, OF_extra flags = OF_AddJump) = 0;
+    virtual IEditor* OpenFile(const wxString& fileName,
+                              const wxString& projectName = wxEmptyString,
+                              int lineno = wxNOT_FOUND,
+                              OF_extra flags = OF_AddJump) = 0;
 
     /**
      * @brief open a file with a given tooltip and bitmap
      */
-    virtual IEditor* OpenFile(const wxString& fileName, const wxString& bmpResourceName,
-                              const wxString& tooltip = wxEmptyString) = 0;
+    virtual IEditor*
+    OpenFile(const wxString& fileName, const wxString& bmpResourceName, const wxString& tooltip = wxEmptyString) = 0;
 
     /**
      * @brief load a remote file content (represented by the local_path) into an `IEdtor`
      */
-    virtual IEditor* OpenRemoteFile(const wxString& local_path, const wxString& remote_path,
-                                    const wxString& ssh_account, const wxString& tooltip = wxEmptyString) = 0;
+    virtual IEditor* OpenRemoteFile(const wxString& local_path,
+                                    const wxString& remote_path,
+                                    const wxString& ssh_account,
+                                    const wxString& tooltip = wxEmptyString) = 0;
 
     /**
      * @brief open or select ((if the file is already loaded in CodeLite) editor with a given `file_name` to the
@@ -564,8 +572,11 @@ public:
     /**
      * @brief add a page to the mainbook
      */
-    virtual bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,
-                         const wxString& bmpResourceName = wxEmptyString, bool selected = false) = 0;
+    virtual bool AddPage(wxWindow* win,
+                         const wxString& text,
+                         const wxString& tooltip = wxEmptyString,
+                         const wxString& bmpResourceName = wxEmptyString,
+                         bool selected = false) = 0;
 
     /**
      * @brief select a window in mainbook
@@ -705,7 +716,8 @@ public:
     /**
      * @brief display message to the user using the info bar
      */
-    virtual void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
+    virtual void DisplayMessage(const wxString& message,
+                                int flags = wxICON_INFORMATION,
                                 const std::vector<std::pair<wxWindowID, wxString>>& buttons = {}) = 0;
 
     /**
@@ -728,8 +740,8 @@ public:
     ///--------------------
 
     /// Add a book page
-    virtual void BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label,
-                             const wxString& bmp = wxEmptyString) = 0;
+    virtual void
+    BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label, const wxString& bmp = wxEmptyString) = 0;
 
     /// Find a book page by its label
     virtual wxWindow* BookGetPage(PaneId pane_id, const wxString& label) = 0;

@@ -96,7 +96,9 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
     }
 
     if (wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'"), m_activeItemName.c_str()),
-                     _("CodeLite"), wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION, this) != wxYES) {
+                     _("CodeLite"),
+                     wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION,
+                     this) != wxYES) {
         return;
     }
 
@@ -240,12 +242,13 @@ void AbbreviationsSettingsDlg::OnExport(wxCommandEvent& event)
     if (fn.FileExists()) {
         if (::wxMessageBox(
                 _("This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"),
-                "wxCrafter", wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION) != wxYES)
+                "wxCrafter",
+                wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION) != wxYES)
             return;
     }
     m_config.Save(fn);
-    ::wxMessageBox(_("Abbreviations were exported to '") + fn.GetFullPath() + _("'"), "wxCrafter",
-                   wxICON_INFORMATION | wxOK);
+    ::wxMessageBox(
+        _("Abbreviations were exported to '") + fn.GetFullPath() + _("'"), "wxCrafter", wxICON_INFORMATION | wxOK);
 }
 
 void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
@@ -258,7 +261,8 @@ void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
     clConfig cfg(path);
     AbbreviationJSONEntry data, curData;
     if (!cfg.ReadItem(&data)) {
-        ::wxMessageBox(_("The file does not seem to contain a valid abbreviations entries"), "wxCrafter",
+        ::wxMessageBox(_("The file does not seem to contain a valid abbreviations entries"),
+                       "wxCrafter",
                        wxOK | wxICON_WARNING | wxCENTER);
         return;
     }

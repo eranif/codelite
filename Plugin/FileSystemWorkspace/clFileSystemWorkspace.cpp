@@ -1008,18 +1008,20 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
     if (dbgr->GetIsRemoteDebugging()) {
         // debugging remote target
-        wxString remote_address;
-        wxString host = GetConfig()->GetDebuggerRemoteHost().Trim(false).Trim();
-        wxString port = GetConfig()->GetDebuggerRemotePort().Trim(false).Trim();
+        wxString host = GetConfig()->GetDebuggerRemoteHost();
+        wxString port = GetConfig()->GetDebuggerRemotePort();
 
-        remote_address << host;
+        // Trim whitespaces
+        host = host.Trim(false).Trim();
+        port = port.Trim(false).Trim();
 
+        // Add port
         if (!port.IsEmpty()) {
-          remote_address << wxT(":") << port;
+          host << wxT(":") << port;
         }
 
         // Now run the debuggee (remote)
-        dbgr->Run(args, remote_address);
+        dbgr->Run(args, host);
 
     } else {
         // Now run the debuggee (local)

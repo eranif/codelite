@@ -2072,17 +2072,18 @@ void Manager::DbgStart(long attachPid)
 
     if (dbgr->GetIsRemoteDebugging()) {
         // debugging remote target
-        wxString remote_address;
-        wxString port = bldConf->GetDbgHostPort().Trim(false).Trim();
-        wxString host = bldConf->GetDbgHostName().Trim(false).Trim();
+        wxString host = bldConf->GetDbgHostName();
+        wxString port = bldConf->GetDbgHostPort();
 
-        remote_address << host;
+        // Trim whitespaces
+        host = host.Trim(false).Trim();
+        port = port.Trim(false).Trim();
 
         if (!port.IsEmpty()) {
-            remote_address << wxT(":") << port;
+            host << wxT(":") << port;
         }
 
-        dbgr->Run(args, remote_address);
+        dbgr->Run(args, host);
 
     } else if (attachPid == wxNOT_FOUND) {
 

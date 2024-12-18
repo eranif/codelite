@@ -80,9 +80,9 @@
 #include <sys/wait.h>
 #endif
 
-#define CHECK_VIEW_SHOWN()                                         \
-    if (!clGetManager()->IsPaneShown(PANE_OUTPUT, GIT_TAB_NAME)) { \
-        return;                                                    \
+#define CHECK_VIEW_SHOWN()                                                                \
+    if (m_isRemoteWorkspace || !clGetManager()->IsPaneShown(PANE_OUTPUT, GIT_TAB_NAME)) { \
+        return;                                                                           \
     }
 
 namespace
@@ -1109,6 +1109,7 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     RefreshFileListView();
 
     // Try to set the repo, usually to the workspace path
+    CHECK_VIEW_SHOWN();
     CallAfter(&GitPlugin::DoRefreshView, false);
 }
 
@@ -2545,6 +2546,7 @@ void GitPlugin::OnCommandEnded(clCommandEvent& event)
     m_commandProcessor = NULL;
 
     // Perform a tree refresh
+    CHECK_VIEW_SHOWN();
     DoRefreshView(false);
 }
 
@@ -2891,13 +2893,16 @@ void GitPlugin::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     CHECK_ENABLED_RETURN();
-    // Git the basic git blame
+    CHECK_VIEW_SHOWN();
+
+    // Get the basic git blame
     DoLoadBlameInfo(false);
 }
 
 void GitPlugin::DoLoadBlameInfo(bool clearCache)
 {
     CHECK_ENABLED_RETURN();
+
     if (!(m_configFlags & GitEntry::ShowCommitInfo))
         return;
 

@@ -32,6 +32,7 @@
 #include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
+#include "clStrings.h"
 #include "clToolBar.h"
 #include "cl_aui_tool_stickness.h"
 #include "cl_config.h"
@@ -862,6 +863,10 @@ void GitConsole::OnResetFileUI(wxUpdateUIEvent& event)
 void GitConsole::OnOutputViewTabChanged(clCommandEvent& event)
 {
     event.Skip();
+    // Avoid auto refreshing the view on a remote workspace, this could lead to non responsive UI
+    if (m_git->m_isRemoteWorkspace || !clGetManager()->IsPaneShown(PANE_OUTPUT, GIT_TAB_NAME)) {
+        return;
+    }
     if (m_git && event.GetString() == GIT_TAB_NAME) {
         m_git->DoRefreshView(false);
     }

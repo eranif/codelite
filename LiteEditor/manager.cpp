@@ -2071,22 +2071,18 @@ void Manager::DbgStart(long attachPid)
     DebugMessage(_("Debug session started successfully!\n"));
 
     if (dbgr->GetIsRemoteDebugging()) {
-
         // debugging remote target
-        wxString comm;
-        wxString port = bldConf->GetDbgHostPort();
-        wxString host = bldConf->GetDbgHostName();
+        wxString remote_address;
+        wxString port = bldConf->GetDbgHostPort().Trim(false).Trim();
+        wxString host = bldConf->GetDbgHostName().Trim(false).Trim();
 
-        comm << host;
+        remote_address << host;
 
-        host = host.Trim().Trim(false);
-        port = port.Trim().Trim(false);
-
-        if (port.IsEmpty() == false) {
-            comm << wxT(":") << port;
+        if (!port.IsEmpty()) {
+            remote_address << wxT(":") << port;
         }
 
-        dbgr->Run(args, comm);
+        dbgr->Run(args, remote_address);
 
     } else if (attachPid == wxNOT_FOUND) {
 
@@ -2502,7 +2498,7 @@ void Manager::UpdateAsciiViewer(const wxString& expression, const wxString& tip)
 void Manager::UpdateRemoteTargetConnected(const wxString& line)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    
+
     if (dbgr && dbgr->IsRunning()) {
         wxString commands;
         // An old behavior for legacy workspace
@@ -2514,12 +2510,12 @@ void Manager::UpdateRemoteTargetConnected(const wxString& line)
             if (bldConf) {
                 commands = bldConf->GetDebuggerPostRemoteConnectCmds();
             }
-            
+
         // Filesystem workspace and so on
         } else if (!dbgr->GetPostRemoteConnectCommands().empty()) {
             commands = dbgr->GetPostRemoteConnectCommands();
         }
-        
+
         // - Execute commands
         wxArrayString dbg_cmds = wxStringTokenize(commands, wxT("\n"), wxTOKEN_STRTOK);
         for (size_t i = 0; i < dbg_cmds.GetCount(); i++) {

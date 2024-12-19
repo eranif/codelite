@@ -39,6 +39,13 @@ protected:
     wxString m_excludePaths;
     wxString m_debuggerPath;
     wxString m_debuggerCommands;
+    
+    bool     m_debuggerRemoteEnabled    = false;
+    bool     m_debuggerRemoteExtended   = true;
+    wxString m_debuggerRemoteCommands;
+    wxString m_debuggerRemoteHost       = "localhost";
+    wxString m_debuggerRemotePort       = "2345";
+    
     wxArrayString m_lastExecutables;
 
 public:
@@ -110,10 +117,25 @@ public:
     wxArrayString ExpandUserCompletionFlags(const wxString& workingDirectory, clBacktickCache::ptr_t backticks,
                                             bool withPrefix = false) const;
     wxArrayString GetCompilerOptions(clBacktickCache::ptr_t backticks) const;
-    void SetDebuggerCommands(const wxString& debuggerCommands) { this->m_debuggerCommands = debuggerCommands; }
+    
     void SetDebuggerPath(const wxString& debuggerPath) { this->m_debuggerPath = debuggerPath; }
-    const wxString& GetDebuggerCommands() const { return m_debuggerCommands; }
+    void SetDebuggerCommands(const wxString& debuggerCommands) { this->m_debuggerCommands = debuggerCommands; }
+    
+    void SetDebuggerRemoteEnabled(bool enabled) { this->m_debuggerRemoteEnabled = enabled; }
+    void SetDebuggerRemoteExtended(bool extended) { this->m_debuggerRemoteExtended = extended; }
+    void SetDebuggerRemoteHost(const wxString& host) { this->m_debuggerRemoteHost = host; }
+    void SetDebuggerRemotePort(const wxString& port) { this->m_debuggerRemotePort = port; }
+    void SetDebuggerRemoteCommands(const wxString& debuggerRemoteCommands) { this->m_debuggerRemoteCommands = debuggerRemoteCommands; }
+    
     const wxString& GetDebuggerPath() const { return m_debuggerPath; }
+    const wxString& GetDebuggerCommands() const { return m_debuggerCommands; }
+    
+    bool GetDebuggerRemoteEnabled() const { return m_debuggerRemoteEnabled; }
+    bool GetDebuggerRemoteExtended() const { return m_debuggerRemoteExtended; }
+    const wxString& GetDebuggerRemoteHost() const { return m_debuggerRemoteHost; }
+    const wxString& GetDebuggerRemotePort() const { return m_debuggerRemotePort; }
+    const wxString& GetDebuggerRemoteCommands() const { return m_debuggerRemoteCommands; }
+    
     void SetLastExecutables(const wxArrayString& lastExecutables);
     const wxArrayString& GetLastExecutables() const;
 };

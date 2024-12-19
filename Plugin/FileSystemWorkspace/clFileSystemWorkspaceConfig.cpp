@@ -75,6 +75,13 @@ std::pair<JSONItem, JSONItem> clFileSystemWorkspaceConfig::ToJSON() const
     local.addProperty("workingDirectory", m_workingDirectory);
     local.addProperty("debuggerPath", m_debuggerPath);
     local.addProperty("debuggerCommands", m_debuggerCommands);
+    
+    local.addProperty("debuggerRemoteEnabled",  m_debuggerRemoteEnabled);
+    local.addProperty("debuggerRemoteExtended", m_debuggerRemoteExtended);
+    local.addProperty("debuggerRemoteHost",     m_debuggerRemoteHost);
+    local.addProperty("debuggerRemotePort",     m_debuggerRemotePort);
+    local.addProperty("debuggerRemoteCommands", m_debuggerRemoteCommands);
+    
     local.addProperty("last_executables", m_lastExecutables);
     return { shared, local };
 }
@@ -115,8 +122,15 @@ void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
     m_remoteFolder = json["remoteFolder"].toString();
     m_remoteAccount = json["remoteAccount"].toString();
     m_workingDirectory = json["workingDirectory"].toString();
-    m_debuggerPath = json["debuggerPath"].toString();
-    m_debuggerCommands = json["debuggerCommands"].toString();
+    
+    m_debuggerPath              = json["debuggerPath"].toString();
+    m_debuggerCommands          = json["debuggerCommands"].toString();
+    
+    m_debuggerRemoteEnabled     = json["debuggerRemoteEnabled"].toBool();
+    m_debuggerRemoteExtended    = json["debuggerRemoteExtended"].toBool(true);
+    m_debuggerRemoteHost        = json["debuggerRemoteHost"].toString();
+    m_debuggerRemotePort        = json["debuggerRemotePort"].toString();
+    m_debuggerRemoteCommands    = json["debuggerRemoteCommands"].toString();
 }
 
 wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const

@@ -72,12 +72,10 @@ public:
     wxChoicebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    clFileSystemWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                                 const wxString& title = _("Workspace Settings"),
-                                 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    clFileSystemWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~clFileSystemWorkspaceDlgBase();
 };
+
 
 class BuildTargetDlgBase : public wxDialog
 {
@@ -98,11 +96,10 @@ public:
     wxTextCtrl* GetTextCtrlaName() { return m_textCtrlaName; }
     wxStaticText* GetStaticText62() { return m_staticText62; }
     clThemedSTC* GetTextCtrlValue() { return m_textCtrlValue; }
-    BuildTargetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Target"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    BuildTargetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Target"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~BuildTargetDlgBase();
 };
+
 
 class FSConfigPageBase : public wxPanel
 {
@@ -139,6 +136,14 @@ protected:
     wxButton* m_button262;
     wxStaticText* m_staticText265;
     clThemedSTC* m_stcCommands;
+    wxCheckBox* m_checkRemoteEnabled;
+    wxCheckBox* m_checkRemoteExtended;
+    wxStaticText* m_staticText275;
+    wxTextCtrl* m_textRemoteTargetHost;
+    wxStaticText* m_staticText278;
+    wxTextCtrl* m_textRemoteTargetPort;
+    wxStaticText* m_staticText284;
+    clThemedSTC* m_stcRemoteCommands;
     wxPanel* m_panelCodeCompletion;
     wxStaticText* m_staticText26;
     clThemedSTC* m_stcCCFlags;
@@ -201,6 +206,14 @@ public:
     wxButton* GetButton262() { return m_button262; }
     wxStaticText* GetStaticText265() { return m_staticText265; }
     clThemedSTC* GetStcCommands() { return m_stcCommands; }
+    wxCheckBox* GetCheckRemoteEnabled() { return m_checkRemoteEnabled; }
+    wxCheckBox* GetCheckRemoteExtended() { return m_checkRemoteExtended; }
+    wxStaticText* GetStaticText275() { return m_staticText275; }
+    wxTextCtrl* GetTextRemoteTargetHost() { return m_textRemoteTargetHost; }
+    wxStaticText* GetStaticText278() { return m_staticText278; }
+    wxTextCtrl* GetTextRemoteTargetPort() { return m_textRemoteTargetPort; }
+    wxStaticText* GetStaticText284() { return m_staticText284; }
+    clThemedSTC* GetStcRemoteCommands() { return m_stcRemoteCommands; }
     wxPanel* GetDebugger() { return Debugger; }
     wxStaticText* GetStaticText26() { return m_staticText26; }
     clThemedSTC* GetStcCCFlags() { return m_stcCCFlags; }
@@ -217,10 +230,10 @@ public:
     wxCheckBox* GetCheckBoxRemoteBuild() { return m_checkBoxRemoteBuild; }
     wxPanel* GetPanelRemote() { return m_panelRemote; }
     wxNotebook* GetNotebook() { return m_notebook; }
-    FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(500, -1), long style = wxTAB_TRAVERSAL);
+    FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,-1), long style = wxTAB_TRAVERSAL);
     virtual ~FSConfigPageBase();
 };
+
 
 class NewFileSystemWorkspaceDialogBase : public wxDialog
 {
@@ -242,12 +255,10 @@ public:
     wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
     wxStaticText* GetStaticText145() { return m_staticText145; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
-    NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                                     const wxString& title = _("Create workspace"),
-                                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewFileSystemWorkspaceDialogBase();
 };
+
 
 class clFSWNewConfigDlgBase : public wxDialog
 {
@@ -268,9 +279,7 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText235() { return m_staticText235; }
     wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }
-    clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Configurtion"),
-                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Configurtion"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~clFSWNewConfigDlgBase();
 };
 

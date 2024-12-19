@@ -8,6 +8,7 @@
 #include "codelite_exports.h"
 #include "ssh/cl_ssh.h"
 
+#include <optional>
 #include <wx/msgqueue.h>
 
 class clJoinableThread;
@@ -133,14 +134,25 @@ public:
     /**
      * @brief execute remote command
      */
-    static IProcess::Ptr_t Execute(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner,
-                                   const wxString& command, bool wantStderr = false);
+    static IProcess::Ptr_t Execute(clSSH::Ptr_t ssh,
+                                   clSSHDeleterFunc deleter_cb,
+                                   wxEvtHandler* owner,
+                                   const wxString& command,
+                                   bool wantStderr = false);
+
+    /**
+     * @brief execute remote command
+     */
+    static std::optional<std::string> Execute(clSSH::Ptr_t ssh, const wxString& command, const wxString& wd);
 
     /**
      * @brief create a remote script with the content `content` at `script_path` and execute it
      */
-    static IProcess::Ptr_t CreateAndExecuteScript(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner,
-                                                  const wxString& content, const wxString& script_path,
+    static IProcess::Ptr_t CreateAndExecuteScript(clSSH::Ptr_t ssh,
+                                                  clSSHDeleterFunc deleter_cb,
+                                                  wxEvtHandler* owner,
+                                                  const wxString& content,
+                                                  const wxString& script_path,
                                                   bool wantStderr = false);
 
     /**

@@ -43,6 +43,7 @@
 #include "clAuiBook.hpp"
 #endif
 #include "clEditorBar.h"
+#include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
 #include "clStatusBar.h"
 #include "clStrings.h"
@@ -851,7 +852,7 @@ void GitPlugin::OnCommit(wxCommandEvent& e)
     wxUnusedVar(e);
     gitAction ga(gitDiffRepoCommit, wxT(""));
     m_gitActionQueue.push_back(ga);
-    m_mgr->ShowOutputPane("Git");
+    m_mgr->ShowOutputPane(GIT_TAB_NAME);
     ProcessGitActionQueue();
 }
 
@@ -1077,6 +1078,7 @@ void GitPlugin::OnFilesRemovedFromProject(clCommandEvent& e)
 void GitPlugin::ClearCodeLiteRemoteInfo()
 {
     m_isRemoteWorkspace = false;
+    m_ssh.reset();
     m_remoteWorkspaceAccount.clear();
     m_remoteProcess.Stop();
     m_codeliteRemoteScriptPath.clear();
@@ -1107,6 +1109,12 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     DoSetRepoPath();
     InitDefaults();
     RefreshFileListView();
+
+#if USE_SFTP
+    if (m_isRemoteWorkspace) {
+        m_ssh = clRemoteHost::Instance()->TakeSession();
+    }
+#endif
 
     // Try to set the repo, usually to the workspace path
     CHECK_VIEW_SHOWN();
@@ -2128,6 +2136,9 @@ void GitPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
     m_lastBlameMessage.clear();
     ClearCodeLiteRemoteInfo();
     clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, wxEmptyString, wxEmptyString, wxEmptyString);
+#if USE_SFTP
+    m_ssh.reset();
+#endif
 }
 
 void GitPlugin::DoCleanup()
@@ -2674,7 +2685,7 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
     if (diff.empty()) {
         DoExecuteCommandSync("diff --no-color --cached", &diff);
     }
-    if (!diff.IsEmpty()) {
+    if (!diff.empty()) {
         wxString commitArgs;
         DoShowCommitDialog(diff, commitArgs);
         if (!commitArgs.IsEmpty()) {
@@ -2710,12 +2721,20 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandO
         clEnvList_t env;
         wxString git_command = "git --no-pager ";
         git_command << command;
-        GIT_MESSAGE(git_command);
-        if (!m_remoteProcess.SyncExec(
-                git_command, workingDir.empty() ? m_repositoryDirectory : workingDir, env, commandOutput)) {
-            commandOutput->clear();
+        auto cb = [commandOutput](const std::string& output, clRemoteCommandStatus status) { *commandOutput = output; };
+        auto args = StringUtils::BuildCommandArrayFromString(git_command);
+
+        clDEBUG() << "Git (remote)->" << args << endl;
+        std::vector<wxString> vArgs{ args.begin(), args.end() };
+
+        auto output =
+            clSSHChannel::Execute(m_ssh, git_command, workingDir.empty() ? m_repositoryDirectory : workingDir);
+        if (!output.has_value()) {
             return false;
         }
+
+        clDEBUG() << "<-" << output.value() << endl;
+        *commandOutput = output.value();
     }
 
     const wxString lcOutput = commandOutput->Lower();
@@ -3017,30 +3036,14 @@ IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler,
                                  bool logMessage)
 {
     if (m_isRemoteWorkspace) {
-        wxArrayString args = StringUtils::BuildCommandArrayFromString(command_args);
-        args.Insert("git", 0);
+        wxString command;
+        command << "git " << command_args;
 
         clEnvList_t env;
         if (logMessage) {
             m_console->PrintPrompt();
         }
-
-        MockProcess* mock_process = new MockProcess(handler);
-        auto callback = [handler, mock_process](const wxString& output) {
-            // Post output event
-            clProcessEvent event_output(wxEVT_ASYNC_PROCESS_OUTPUT);
-            event_output.SetProcess(mock_process);
-            event_output.SetOutput(output);
-            handler->AddPendingEvent(event_output);
-
-            // Post terminate event
-            clProcessEvent event_terminated(wxEVT_ASYNC_PROCESS_TERMINATED);
-            event_terminated.SetProcess(mock_process);
-            handler->AddPendingEvent(event_terminated);
-        };
-        m_remoteProcess.ExecWithCallback(args, std::move(callback), working_directory, env);
-        return mock_process;
-
+        return m_remoteProcess.CreateAsyncProcess(handler, command, working_directory, env);
     } else {
         wxString command = m_pathGITExecutable;
 

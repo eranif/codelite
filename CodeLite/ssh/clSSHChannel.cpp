@@ -11,6 +11,7 @@
 #include "cl_sftp.h"
 
 #include <libssh/libssh.h>
+#include <sstream>
 
 //===-------------------------------------------------------------
 // This thread is used when requesting a non interactive command
@@ -36,26 +37,26 @@ public:
 
     void* Entry()
     {
-        while(!TestDestroy()) {
+        while (!TestDestroy()) {
             // Poll the channel for output
             auto stdout_res = ssh::channel_read(m_channel, m_handler, false, m_wantStderr);
-            if(stdout_res == ssh::read_result::SSH_SUCCESS) {
+            if (stdout_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
             }
 
             // if we got an error, do not attempt to read stderr
-            if(!ssh::result_ok(stdout_res)) {
+            if (!ssh::result_ok(stdout_res)) {
                 break;
             }
 
             auto stderrr_res = ssh::channel_read(m_channel, m_handler, true, m_wantStderr);
-            if(stderrr_res == ssh::read_result::SSH_SUCCESS) {
+            if (stderrr_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
             }
 
-            if(!ssh::result_ok(stdout_res)) {
+            if (!ssh::result_ok(stdout_res)) {
                 // error occurred
                 break;
             }
@@ -93,19 +94,19 @@ clSSHChannel::~clSSHChannel()
 
 void clSSHChannel::Open()
 {
-    if(IsOpen()) {
+    if (IsOpen()) {
         return;
     }
-    if(!m_ssh) {
+    if (!m_ssh) {
         throw clException("ssh session is not opened");
     }
     m_channel = ssh_channel_new(m_ssh->GetSession());
-    if(!m_channel) {
+    if (!m_channel) {
         throw clException(BuildError("ssh_channel_new error."));
     }
 
     int rc = ssh_channel_open_session(m_channel);
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         ssh_channel_free(m_channel);
         m_channel = NULL;
         throw clException(BuildError("ssh_channel_open_session error."));
@@ -117,13 +118,13 @@ void clSSHChannel::Close()
     // Stop the worker thread
     wxDELETE(m_thread);
 
-    if(IsOpen()) {
+    if (IsOpen()) {
         ssh_channel_close(m_channel);
         ssh_channel_free(m_channel);
         m_channel = NULL;
     }
 
-    if(m_hadErrors) {
+    if (m_hadErrors) {
         // log this
         LOG_DEBUG(LOG()) << "ssh session had errors. discarding it" << endl;
 
@@ -135,19 +136,70 @@ void clSSHChannel::Close()
     m_ssh.reset();
 }
 
-IProcess::Ptr_t clSSHChannel::CreateAndExecuteScript(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner,
-                                                     const wxString& content, const wxString& script_path,
+IProcess::Ptr_t clSSHChannel::CreateAndExecuteScript(clSSH::Ptr_t ssh,
+                                                     clSSHDeleterFunc deleter_cb,
+                                                     wxEvtHandler* owner,
+                                                     const wxString& content,
+                                                     const wxString& script_path,
                                                      bool wantStderr)
 {
-    if(!ssh::write_remote_file_content(ssh, script_path, content)) {
+    if (!ssh::write_remote_file_content(ssh, script_path, content)) {
         LOG_ERROR(LOG()) << "failed to write remote file:" << script_path << endl;
         return nullptr;
     }
     return Execute(ssh, std::move(deleter_cb), owner, script_path, wantStderr);
 }
 
-IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner,
-                                      const wxString& command, bool wantStderr)
+std::optional<std::string> clSSHChannel::Execute(clSSH::Ptr_t ssh, const wxString& command, const wxString& wd)
+{
+    auto channel = ssh_channel_new(ssh->GetSession());
+    if (!channel) {
+        return {};
+    }
+
+    int rc = ssh_channel_open_session(channel);
+    if (rc != SSH_OK) {
+        ssh_channel_free(channel);
+        return {};
+    }
+
+    std::stringstream ss;
+    ss << "bash -c 'cd " << wd << " && " << command.mb_str(wxConvUTF8).data() << "'";
+    clDEBUG() << "Running command:" << ss.str() << endl;
+    rc = ssh_channel_request_exec(channel, ss.str().c_str());
+    if (rc != SSH_OK) {
+        clWARNING() << "ssh_channel_request_exec error: " << rc << endl;
+        ssh_channel_free(channel);
+        return {};
+    }
+
+    // read the result
+    char buffer[1024];
+    int nbytes = 0;
+
+    std::string result;
+    nbytes = ssh_channel_read(channel, buffer, sizeof(buffer) - 1, 0);
+    while (nbytes > 0) {
+        buffer[nbytes] = 0;
+        result.append(buffer, nbytes);
+        nbytes = ssh_channel_read(channel, buffer, sizeof(buffer) - 1, 0);
+    }
+
+    if (nbytes < 0) {
+        // error
+        ssh_channel_free(channel);
+        clWARNING() << "ssh_channel_request_exec read error: " << rc << endl;
+        return {};
+    }
+
+    // eof
+    ssh_channel_send_eof(channel);
+    ssh_channel_free(channel);
+    return result;
+}
+
+IProcess::Ptr_t clSSHChannel::Execute(
+    clSSH::Ptr_t ssh, clSSHDeleterFunc deleter_cb, wxEvtHandler* owner, const wxString& command, bool wantStderr)
 {
     clSSHChannel* channel = nullptr;
     try {
@@ -160,7 +212,7 @@ IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter
     }
 
     int rc = ssh_channel_request_exec(channel->m_channel, command.mb_str(wxConvUTF8).data());
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         // mark the channel + ssh session as "broken"
         channel->m_hadErrors = true;
         wxDELETE(channel);
@@ -174,7 +226,7 @@ IProcess::Ptr_t clSSHChannel::Execute(clSSH::Ptr_t ssh, clSSHDeleterFunc deleter
 
 wxString clSSHChannel::BuildError(const wxString& prefix)
 {
-    if(!m_ssh) {
+    if (!m_ssh) {
         return prefix;
     }
 
@@ -203,15 +255,15 @@ void clSSHChannel::OnChannelPty(clCommandEvent& event) { m_owner->AddPendingEven
 
 void clSSHChannel::Signal(wxSignal sig)
 {
-    if(!m_ssh) {
+    if (!m_ssh) {
         throw clException("ssh session is not opened");
     }
-    if(!m_channel) {
+    if (!m_channel) {
         throw clException("ssh channel is not opened");
     }
 
     const char* prefix = nullptr;
-    switch(sig) {
+    switch (sig) {
     case wxSIGABRT:
         prefix = "ABRT";
         break;
@@ -248,11 +300,11 @@ void clSSHChannel::Signal(wxSignal sig)
     default:
         break;
     }
-    if(!prefix) {
+    if (!prefix) {
         throw clException("Requested to send an unknown signal");
     }
     int rc = ssh_channel_request_send_signal(m_channel, prefix);
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         throw clException(BuildError("Failed to send signal"));
     }
 }

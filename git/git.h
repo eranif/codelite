@@ -50,6 +50,9 @@
 #include <set>
 #include <vector>
 #include <wx/progdlg.h>
+#if USE_SFTP
+#include "cl_ssh.h"
+#endif
 
 class clTreeCtrl;
 class clCommandProcessor;
@@ -180,6 +183,9 @@ class GitPlugin : public IPlugin
     wxString m_codeliteRemoteScriptPath;
     bool m_isEnabled = false;
     bool m_commitDialogIsShown = false;
+#if USE_SFTP
+    clSSH::Ptr_t m_ssh;
+#endif
 
 private:
     void StartCodeLiteRemote();

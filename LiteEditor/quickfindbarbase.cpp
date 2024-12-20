@@ -19,137 +19,14 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
-
-QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafteryhjh4ZInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(mainSizer);
-
-    m_toolbar =
-        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    mainSizer->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(0));
-
-    wxFlexGridSizer* flexGridSizer107 = new wxFlexGridSizer(0, 4, 0, 0);
-    flexGridSizer107->SetFlexibleDirection(wxBOTH);
-    flexGridSizer107->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer107->AddGrowableCol(0);
-
-    mainSizer->Add(flexGridSizer107, 1, wxEXPAND, WXC_FROM_DIP(0));
-
-    m_textCtrlFind = new clThemedTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxTE_PROCESS_ENTER);
-    m_textCtrlFind->SetFocus();
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlFind->SetHint(wxT(""));
-#endif
-
-    flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-
-    m_buttonFind =
-        new clThemedButton(this, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_buttonFind->SetDefault();
-
-    flexGridSizer107->Add(m_buttonFind, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
-    m_buttonFindPrev =
-        new clThemedButton(this, wxID_BACKWARD, _("Find Prev"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer107->Add(m_buttonFindPrev, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
-    m_buttonFindAll =
-        new clThemedButton(this, wxID_FIND_ALL, _("Find All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
-    m_textCtrlReplace = new clThemedTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition,
-                                             wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlReplace->SetHint(wxT(""));
-#endif
-
-    flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-
-    m_buttonReplace =
-        new clThemedButton(this, wxID_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer107->Add(m_buttonReplace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
-    m_buttonReplaceAll = new clThemedButton(this, wxID_REPLACE_ALL, _("Replace All"), wxDefaultPosition,
-                                            wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
-    SetName(wxT("QuickFindBarBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
-    // Connect events
-    m_textCtrlFind->Bind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBarBase::OnEnter, this);
-    m_textCtrlFind->Bind(wxEVT_COMMAND_TEXT_UPDATED, &QuickFindBarBase::OnText, this);
-    m_textCtrlFind->Bind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnKeyDown, this);
-    m_buttonFind->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnFind, this);
-    m_buttonFind->Bind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnFindUI, this);
-    m_buttonFind->Bind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-    m_buttonFindPrev->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnFindPrev, this);
-    m_buttonFindPrev->Bind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnFindPrevUI, this);
-    m_buttonFindPrev->Bind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-    m_buttonFindAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnFindAll, this);
-    m_buttonFindAll->Bind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnFindAllUI, this);
-    m_buttonFindAll->Bind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-    m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_UPDATED, &QuickFindBarBase::OnReplaceTextUpdated, this);
-    m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBarBase::OnReplaceTextEnter, this);
-    m_textCtrlReplace->Bind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnReplaceKeyDown, this);
-    m_buttonReplace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnReplace, this);
-    m_buttonReplace->Bind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnReplaceUI, this);
-    m_buttonReplace->Bind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-    m_buttonReplaceAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnReplaceAll, this);
-    m_buttonReplaceAll->Bind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnReplaceAllUI, this);
-    m_buttonReplaceAll->Bind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-}
-
-QuickFindBarBase::~QuickFindBarBase()
-{
-    m_textCtrlFind->Unbind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBarBase::OnEnter, this);
-    m_textCtrlFind->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &QuickFindBarBase::OnText, this);
-    m_textCtrlFind->Unbind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnKeyDown, this);
-    m_buttonFind->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnFind, this);
-    m_buttonFind->Unbind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnFindUI, this);
-    m_buttonFind->Unbind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-    m_buttonFindPrev->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnFindPrev, this);
-    m_buttonFindPrev->Unbind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnFindPrevUI, this);
-    m_buttonFindPrev->Unbind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-    m_buttonFindAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnFindAll, this);
-    m_buttonFindAll->Unbind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnFindAllUI, this);
-    m_buttonFindAll->Unbind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-    m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &QuickFindBarBase::OnReplaceTextUpdated, this);
-    m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBarBase::OnReplaceTextEnter, this);
-    m_textCtrlReplace->Unbind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnReplaceKeyDown, this);
-    m_buttonReplace->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnReplace, this);
-    m_buttonReplace->Unbind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnReplaceUI, this);
-    m_buttonReplace->Unbind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-    m_buttonReplaceAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &QuickFindBarBase::OnReplaceAll, this);
-    m_buttonReplaceAll->Unbind(wxEVT_UPDATE_UI, &QuickFindBarBase::OnReplaceAllUI, this);
-    m_buttonReplaceAll->Unbind(wxEVT_KEY_DOWN, &QuickFindBarBase::OnButtonKeyDown, this);
-}
 
 QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent, long style)
     : wxPopupTransientWindow(parent, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafteryhjh4ZInitBitmapResources();
@@ -159,7 +36,10 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent, long 
     wxBoxSizer* boxSizer60 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer60);
 
-    m_panel71 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+    m_panel71 = new wxPanel(this,
+                            wxID_ANY,
+                            wxDefaultPosition,
+                            wxDLG_UNIT(this, wxSize(-1, -1)),
                             wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
 
     boxSizer60->Add(m_panel71, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -167,36 +47,40 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent, long 
     wxGridSizer* gridSizer49 = new wxGridSizer(0, 2, 0, 0);
     m_panel71->SetSizer(gridSizer49);
 
-    m_checkBoxCase = new wxCheckBox(m_panel71, wxID_ANY, _("Case Sensitive"), wxDefaultPosition,
-                                    wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
+    m_checkBoxCase = new wxCheckBox(
+        m_panel71, wxID_ANY, _("Case Sensitive"), wxDefaultPosition, wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
     m_checkBoxCase->SetValue(false);
     m_checkBoxCase->SetToolTip(_("Use case sensitive match"));
 
     gridSizer49->Add(m_checkBoxCase, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(3));
 
-    m_checkBoxRegex = new wxCheckBox(m_panel71, wxID_ANY, _("Regular Expression"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
+    m_checkBoxRegex = new wxCheckBox(
+        m_panel71, wxID_ANY, _("Regular Expression"), wxDefaultPosition, wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
     m_checkBoxRegex->SetValue(false);
     m_checkBoxRegex->SetToolTip(_("Use regular expression"));
 
     gridSizer49->Add(m_checkBoxRegex, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(3));
 
-    m_checkBoxWord = new wxCheckBox(m_panel71, wxID_ANY, _("Match a whole word"), wxDefaultPosition,
-                                    wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
+    m_checkBoxWord = new wxCheckBox(
+        m_panel71, wxID_ANY, _("Match a whole word"), wxDefaultPosition, wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
     m_checkBoxWord->SetValue(false);
     m_checkBoxWord->SetToolTip(_("Match a whole word only"));
 
     gridSizer49->Add(m_checkBoxWord, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(3));
 
-    m_checkBoxWildcard = new wxCheckBox(m_panel71, wxID_ANY, _("Use wildcard syntax"), wxDefaultPosition,
-                                        wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
+    m_checkBoxWildcard = new wxCheckBox(
+        m_panel71, wxID_ANY, _("Use wildcard syntax"), wxDefaultPosition, wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
     m_checkBoxWildcard->SetValue(false);
     m_checkBoxWildcard->SetToolTip(_("Use wildcard syntax (* and ?)"));
 
     gridSizer49->Add(m_checkBoxWildcard, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(3));
 
-    m_checkBoxMultipleSelections = new wxCheckBox(m_panel71, wxID_ANY, _("Enable multiple selections"),
-                                                  wxDefaultPosition, wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
+    m_checkBoxMultipleSelections = new wxCheckBox(m_panel71,
+                                                  wxID_ANY,
+                                                  _("Enable multiple selections"),
+                                                  wxDefaultPosition,
+                                                  wxDLG_UNIT(m_panel71, wxSize(-1, -1)),
+                                                  0);
     m_checkBoxMultipleSelections->SetValue(false);
     m_checkBoxMultipleSelections->SetToolTip(_("Select each match without de-selectiing the previous match"));
 
@@ -204,7 +88,7 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent, long 
 
     SetName(wxT("QuickFindBarOptionsMenuBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -223,7 +107,7 @@ QuickFindBarImages::QuickFindBarImages()
     , m_imagesWidth(16)
     , m_imagesHeight(16)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafteryhjh4ZInitBitmapResources();
@@ -234,8 +118,8 @@ QuickFindBarImages::QuickFindBarImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpMenu"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -247,8 +131,8 @@ QuickFindBarImages::QuickFindBarImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("marker-16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -260,8 +144,8 @@ QuickFindBarImages::QuickFindBarImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("case-sensitive"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -273,8 +157,8 @@ QuickFindBarImages::QuickFindBarImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("word"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -286,8 +170,8 @@ QuickFindBarImages::QuickFindBarImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("regex"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -299,8 +183,8 @@ QuickFindBarImages::QuickFindBarImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("replace-controls"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -312,8 +196,8 @@ QuickFindBarImages::QuickFindBarImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("find-bar-close-16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -323,3 +207,150 @@ QuickFindBarImages::QuickFindBarImages()
 }
 
 QuickFindBarImages::~QuickFindBarImages() {}
+
+clFindReplaceDialogBase::clFindReplaceDialogBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafteryhjh4ZInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer162 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer162);
+
+    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    boxSizer162->Add(m_mainPanel, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer159 = new wxBoxSizer(wxVERTICAL);
+    m_mainPanel->SetSizer(boxSizer159);
+
+    wxFlexGridSizer* flexGridSizer107 = new wxFlexGridSizer(0, 4, 0, 0);
+    flexGridSizer107->SetFlexibleDirection(wxBOTH);
+    flexGridSizer107->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer107->AddGrowableCol(0);
+
+    boxSizer159->Add(flexGridSizer107, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_textCtrlFind = new clThemedTextCtrl(m_mainPanel,
+                                          wxID_ANY,
+                                          wxT(""),
+                                          wxDefaultPosition,
+                                          wxDLG_UNIT(m_mainPanel, wxSize(350, -1)),
+                                          wxTE_PROCESS_ENTER);
+    m_textCtrlFind->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlFind->SetHint(wxT(""));
+#endif
+
+    flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+
+    m_buttonFind = new clThemedButton(
+        m_mainPanel, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+    m_buttonFind->SetDefault();
+
+    flexGridSizer107->Add(m_buttonFind, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_buttonFindPrev = new clThemedButton(
+        m_mainPanel, wxID_BACKWARD, _("Find Prev"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+
+    flexGridSizer107->Add(m_buttonFindPrev, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_buttonFindAll = new clThemedButton(
+        m_mainPanel, wxID_FIND_ALL, _("Find All"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+
+    flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_textCtrlReplace = new clThemedTextCtrl(
+        m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlReplace->SetHint(wxT(""));
+#endif
+
+    flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+
+    m_buttonReplace = new clThemedButton(
+        m_mainPanel, wxID_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+
+    flexGridSizer107->Add(m_buttonReplace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_buttonReplaceAll = new clThemedButton(
+        m_mainPanel, wxID_REPLACE_ALL, _("Replace All"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+
+    flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_toolbar =
+        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(24, 24));
+
+    boxSizer162->Add(m_toolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    SetName(wxT("clFindReplaceDialogBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+    // Connect events
+    m_textCtrlFind->Bind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnEnter, this);
+    m_textCtrlFind->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnText, this);
+    m_textCtrlFind->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnKeyDown, this);
+    m_buttonFind->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFind, this);
+    m_buttonFind->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindUI, this);
+    m_buttonFind->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    m_buttonFindPrev->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFindPrev, this);
+    m_buttonFindPrev->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindPrevUI, this);
+    m_buttonFindPrev->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    m_buttonFindAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFindAll, this);
+    m_buttonFindAll->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindAllUI, this);
+    m_buttonFindAll->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnReplaceTextUpdated, this);
+    m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnReplaceTextEnter, this);
+    m_textCtrlReplace->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnReplaceKeyDown, this);
+    m_textCtrlReplace->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
+    m_buttonReplace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplace, this);
+    m_buttonReplace->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
+    m_buttonReplace->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    m_buttonReplaceAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplaceAll, this);
+    m_buttonReplaceAll->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceAllUI, this);
+    m_buttonReplaceAll->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+}
+
+clFindReplaceDialogBase::~clFindReplaceDialogBase()
+{
+    m_textCtrlFind->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnEnter, this);
+    m_textCtrlFind->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnText, this);
+    m_textCtrlFind->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnKeyDown, this);
+    m_buttonFind->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFind, this);
+    m_buttonFind->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindUI, this);
+    m_buttonFind->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    m_buttonFindPrev->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFindPrev, this);
+    m_buttonFindPrev->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindPrevUI, this);
+    m_buttonFindPrev->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    m_buttonFindAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFindAll, this);
+    m_buttonFindAll->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindAllUI, this);
+    m_buttonFindAll->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnReplaceTextUpdated, this);
+    m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnReplaceTextEnter, this);
+    m_textCtrlReplace->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnReplaceKeyDown, this);
+    m_textCtrlReplace->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
+    m_buttonReplace->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplace, this);
+    m_buttonReplace->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
+    m_buttonReplace->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    m_buttonReplaceAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplaceAll, this);
+    m_buttonReplaceAll->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceAllUI, this);
+    m_buttonReplaceAll->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+}

@@ -91,6 +91,9 @@ protected:
     void DoPatternClicked(const wxString& pattern);
     void OnMenu(wxContextMenuEvent& event);
 
+    void OnFocusLost(wxFocusEvent& event);
+    void OnFocus(wxFocusEvent& event);
+
 public:
     explicit wxTerminalOutputCtrl(wxTerminalCtrl* parent,
                                   wxWindowID winid = wxNOT_FOUND,

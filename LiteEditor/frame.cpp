@@ -748,8 +748,8 @@ IEditor* GetIEditorFromEvent(MainBook* book, wxEvent& event)
 clMainFrame* clMainFrame::m_theFrame = NULL;
 bool clMainFrame::m_initCompleted = false;
 
-clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                         const wxSize& size, long style)
+clMainFrame::clMainFrame(
+    wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : m_postBuildEndAction(ePostBuildEndAction::kNone)
     , m_cppMenu(NULL)
     , m_highlightWord(false)
@@ -801,42 +801,46 @@ clMainFrame::~clMainFrame(void)
 
     m_infoBar->Unbind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
-    wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Disconnect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Disconnect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
+    wxTheApp->Disconnect(
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Disconnect(wxID_SELECTALL,
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
+                         NULL,
                          this);
-    wxTheApp->Disconnect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                         this);
-    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent),
-                         NULL, this);
-    wxTheApp->Disconnect(wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                         this);
-    EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified,
-                                 this);
+    wxTheApp->Disconnect(
+        wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_ENDED, &clMainFrame::OnBuildEnded, this);
     EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clMainFrame::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
-                                     wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged),
-                                 this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged), this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
-                                 wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt), this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles,
+                                 wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt),
                                  this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
-                                 wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
 
     if (m_mainToolbar) {
         m_mainToolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
@@ -844,8 +848,8 @@ clMainFrame::~clMainFrame(void)
         m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
         m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
     }
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL,
-                                     this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
     wxDELETE(m_timer);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
 
@@ -924,42 +928,46 @@ void clMainFrame::Construct()
     m_timer = new wxTimer(this, FrameTimerId);
 
     // connect common edit events
-    wxTheApp->Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
-                      NULL, this);
-    wxTheApp->Connect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
-                      NULL, this);
-    wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Connect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
-                      NULL, this);
+    wxTheApp->Connect(
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Connect(
+        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Connect(wxID_SELECTALL,
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
+                      NULL,
+                      this);
+    wxTheApp->Connect(
+        wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
 
-    wxTheApp->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                      this);
-    wxTheApp->Connect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                      this);
-    wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                      this);
-    wxTheApp->Connect(wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                      this);
+    wxTheApp->Connect(
+        wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+    wxTheApp->Connect(
+        wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+    wxTheApp->Connect(
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+    wxTheApp->Connect(
+        wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
-    EventNotifier::Get()->Bind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified,
-                               this);
+    EventNotifier::Get()->Bind(
+        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified, this);
     EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_PROCESS_ENDED, &clMainFrame::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clMainFrame::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,
-                                  wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged),
-                               this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged), this);
     EventNotifier::Get()->Bind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
-                               wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt), this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
-                               wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles,
+                               wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt),
                                this);
+    EventNotifier::Get()->Bind(
+        wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
+    EventNotifier::Get()->Bind(
+        wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
     if (m_mainToolbar) {
         m_mainToolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
@@ -1022,7 +1030,11 @@ void clMainFrame::PostConstruct()
 
 void clMainFrame::Initialize(bool loadLastSession)
 {
-    m_theFrame = new clMainFrame(NULL, wxID_ANY, "CodeLite", wxDefaultPosition, wxDefaultSize,
+    m_theFrame = new clMainFrame(NULL,
+                                 wxID_ANY,
+                                 "CodeLite",
+                                 wxDefaultPosition,
+                                 wxDefaultSize,
                                  wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
     m_theFrame->m_loadLastSession = loadLastSession;
 }
@@ -1046,81 +1058,85 @@ void clMainFrame::AddKeyboardAccelerators()
                           { "rebuild_active_project", _("Rebuild Project") },
                           { "build_n_run_active_project", _("Build and Run Project"), "Ctrl-F9" },
                           { "next_build_error", _("Next Build Error"), "F4" } });
-    mgr->AddAccelerator(_("C++"), { { "swap_files", _("Swap Header/Implementation file"), "F12" },
-                                    { "find_decl", _("Goto Declaration") },
-                                    { "find_impl", _("Goto Implementation") },
-                                    { "open_include_file", _("Open Include File") } });
+    mgr->AddAccelerator(_("C++"),
+                        { { "swap_files", _("Swap Header/Implementation file"), "F12" },
+                          { "find_decl", _("Goto Declaration") },
+                          { "find_impl", _("Goto Implementation") },
+                          { "open_include_file", _("Open Include File") } });
     mgr->AddAccelerator(_("C++ | Code Generation / Refactoring"),
                         { { "setters_getters", _("Generate Setters/Getters...") },
                           { "move_impl", _("Move Function Implementation to...") },
                           { "add_impl", _("Add Function Implementation...") },
                           { "add_multi_impl", _("Implement all Un-implemented Functions...") } });
-    mgr->AddAccelerator(_("Debugger"), { { "start_debugger", _("Start/Continue Debugger"), "F5" },
-                                         { "restart_debugger", _("Restart Debugger"), "Ctrl-Shift-F5" },
-                                         { "attach_debugger", _("Attach to process...") },
-                                         { "pause_debugger", _("Pause debugger") },
-                                         { "stop_debugger", _("Stop debugger"), "Shift-F5" },
-                                         { "dbg_stepin", _("Step Into"), "F11" },
-                                         { "dbg_stepout", _("Step Out"), "Shift-F11" },
-                                         { "dbg_stepi", _("Step Into Instruction") },
-                                         { "dbg_next", _("Next"), "F10" },
-                                         { "dbg_nexti", _("Next Instruction"), "Ctrl-F10" },
-                                         { "show_cursor", _("Show Cursor") },
-                                         { "dbg_run_to_cursor", _("Run to Caret Line") },
-                                         { "dbg_jump_cursor", _("Jump to Caret Line") },
-                                         { "insert_breakpoint", _("Toggle Breakpoint"), "F9" },
-                                         { "disable_all_breakpoints", _("Disable All Breakpoints") },
-                                         { "enable_all_breakpoints", _("Enable All Breakpoints") },
-                                         { "delete_all_breakpoints", _("Delete All Breakpoints") },
-                                         { "quick_debug", _("Quick Debug...") } });
-    mgr->AddAccelerator(_("Edit"), { { "wxID_UNDO", _("Undo"), "Ctrl-Z" },
-                                     { "wxID_REDO", _("Redo"), "Ctrl-Y" },
-                                     { "wxID_CUT", _("Cut"), "Ctrl-X" },
-                                     { "wxID_COPY", _("Copy"), "Ctrl-C" },
-                                     { "wxID_PASTE", _("Paste"), "Ctrl-V" },
-                                     { "wxID_DUPLICATE", _("Duplicate Selection / Line"), "Ctrl-D" },
-                                     { "delete_line_end", _("Delete to Line End") },
-                                     { "delete_line_start", _("Delete to Line Start") },
-                                     { "delete_line", _("Delete Line"), "Ctrl-L" },
-                                     { "copy_line", _("Copy Line") },
-                                     { "cut_line", _("Cut Line") },
-                                     { "selection_to_multi_caret", _("Split selection into lines"), "Ctrl-Shift-L" },
-                                     { "to_lower", _("Make Lowercase"), "Ctrl-U" },
-                                     { "to_upper", _("Make Uppercase"), "Ctrl-Shift-U" },
-                                     { "insert_doxy_comment", _("Insert Comment Block"), "Ctrl-Shift-D" },
-                                     { "comment_line", _("Comment Line"), "Ctrl-/" },
-                                     { "comment_selection", _("Comment Selection"), "Ctrl-Shift-/" },
-                                     { "transpose_lines", _("Transpose Lines"), "Ctrl-T" },
-                                     { "move_line_up", _("Move Line Up"), "Ctrl-Shift-UP" },
-                                     { "move_line_down", _("Move Line Down"), "Ctrl-Shift-DOWN" },
-                                     { "convert_indent_to_tabs", _("Convert Indentation to Tabs") },
-                                     { "convert_indent_to_spaces", _("Convert Indentation to Spaces") },
-                                     { "center_line_roll", _("Center Line in Editor") },
-                                     { "wxID_SELECTALL", _("Select All"), "Ctrl-A" },
-                                     { "match_brace", _("Match Brace"), "Ctrl-]" },
-                                     { "select_to_brace", _("Select to Brace"), "Ctrl-Shift-E" },
-                                     { "complete_word", _("Code Complete"), "Ctrl-SPACE" },
-                                     { "simple_word_completion", _("Complete Word"), "Ctrl-ENTER" },
-                                     { "function_call_tip", _("Display Function Calltip"), "Ctrl-Shift-SPACE" },
-                                     { "convert_eol_win", _("Convert to Windows Format") },
-                                     { "convert_eol_unix", _("Convert to Unix Format") },
-                                     { "trim_trailing", _("Trim Trailing Spaces") },
-                                     { "copy_file_relative_path_to_workspace", _("Copy Path Relative to Workspace"),
-                                       "Ctrl-Alt-Shift-C" },
-                                     { "copy_file_name", _("Copy Path to Clipboard") },
-                                     { "copy_file_path", _("Copy Full Path to Clipboard") },
-                                     { "copy_file_name_only", _("Copy File Name to Clipboard") } });
-    mgr->AddAccelerator(_("File"), { { "new_file", _("New File"), "Ctrl-N" },
-                                     { "open_file", _("Open File..."), "Ctrl-O" },
-                                     { "refresh_file", _("Reload File"), "Ctrl-R" },
-                                     { "save_file", _("Save File"), "Ctrl-S" },
-                                     { "duplicate_tab", _("Duplicate Tab") },
-                                     { "save_file_as", _("Save As..."), "Ctrl-Shift-S" },
-                                     { "save_all", _("Save all files") },
-                                     { "close_file", _("Close"), "Ctrl-W" },
-                                     { "wxID_CLOSE_ALL", _("Close All") },
-                                     { "wxID_PRINT", _("Print..."), "Ctrl-P" },
-                                     { "wxID_EXIT", _("Exit"), "Alt-X" } });
+    mgr->AddAccelerator(_("Debugger"),
+                        { { "start_debugger", _("Start/Continue Debugger"), "F5" },
+                          { "restart_debugger", _("Restart Debugger"), "Ctrl-Shift-F5" },
+                          { "attach_debugger", _("Attach to process...") },
+                          { "pause_debugger", _("Pause debugger") },
+                          { "stop_debugger", _("Stop debugger"), "Shift-F5" },
+                          { "dbg_stepin", _("Step Into"), "F11" },
+                          { "dbg_stepout", _("Step Out"), "Shift-F11" },
+                          { "dbg_stepi", _("Step Into Instruction") },
+                          { "dbg_next", _("Next"), "F10" },
+                          { "dbg_nexti", _("Next Instruction"), "Ctrl-F10" },
+                          { "show_cursor", _("Show Cursor") },
+                          { "dbg_run_to_cursor", _("Run to Caret Line") },
+                          { "dbg_jump_cursor", _("Jump to Caret Line") },
+                          { "insert_breakpoint", _("Toggle Breakpoint"), "F9" },
+                          { "disable_all_breakpoints", _("Disable All Breakpoints") },
+                          { "enable_all_breakpoints", _("Enable All Breakpoints") },
+                          { "delete_all_breakpoints", _("Delete All Breakpoints") },
+                          { "quick_debug", _("Quick Debug...") } });
+    mgr->AddAccelerator(
+        _("Edit"),
+        { { "wxID_UNDO", _("Undo"), "Ctrl-Z" },
+          { "wxID_REDO", _("Redo"), "Ctrl-Y" },
+          { "wxID_CUT", _("Cut"), "Ctrl-X" },
+          { "wxID_COPY", _("Copy"), "Ctrl-C" },
+          { "wxID_PASTE", _("Paste"), "Ctrl-V" },
+          { "wxID_DUPLICATE", _("Duplicate Selection / Line"), "Ctrl-D" },
+          { "delete_line_end", _("Delete to Line End") },
+          { "delete_line_start", _("Delete to Line Start") },
+          { "delete_line", _("Delete Line"), "Ctrl-L" },
+          { "copy_line", _("Copy Line") },
+          { "cut_line", _("Cut Line") },
+          { "selection_to_multi_caret", _("Split selection into lines"), "Ctrl-Shift-L" },
+          { "to_lower", _("Make Lowercase"), "Ctrl-U" },
+          { "to_upper", _("Make Uppercase"), "Ctrl-Shift-U" },
+          { "insert_doxy_comment", _("Insert Comment Block"), "Ctrl-Shift-D" },
+          { "comment_line", _("Comment Line"), "Ctrl-/" },
+          { "comment_selection", _("Comment Selection"), "Ctrl-Shift-/" },
+          { "transpose_lines", _("Transpose Lines"), "Ctrl-T" },
+          { "move_line_up", _("Move Line Up"), "Ctrl-Shift-UP" },
+          { "move_line_down", _("Move Line Down"), "Ctrl-Shift-DOWN" },
+          { "convert_indent_to_tabs", _("Convert Indentation to Tabs") },
+          { "convert_indent_to_spaces", _("Convert Indentation to Spaces") },
+          { "center_line_roll", _("Center Line in Editor") },
+          { "wxID_SELECTALL", _("Select All"), "Ctrl-A" },
+          { "match_brace", _("Match Brace"), "Ctrl-]" },
+          { "select_to_brace", _("Select to Brace"), "Ctrl-Shift-E" },
+          { "complete_word", _("Code Complete"), "Ctrl-SPACE" },
+          { "simple_word_completion", _("Complete Word"), "Ctrl-ENTER" },
+          { "function_call_tip", _("Display Function Calltip"), "Ctrl-Shift-SPACE" },
+          { "convert_eol_win", _("Convert to Windows Format") },
+          { "convert_eol_unix", _("Convert to Unix Format") },
+          { "trim_trailing", _("Trim Trailing Spaces") },
+          { "copy_file_relative_path_to_workspace", _("Copy Path Relative to Workspace"), "Ctrl-Alt-Shift-C" },
+          { "copy_file_name", _("Copy Path to Clipboard") },
+          { "copy_file_path", _("Copy Full Path to Clipboard") },
+          { "copy_file_name_only", _("Copy File Name to Clipboard") } });
+    mgr->AddAccelerator(_("File"),
+                        { { "new_file", _("New File"), "Ctrl-N" },
+                          { "open_file", _("Open File..."), "Ctrl-O" },
+                          { "refresh_file", _("Reload File"), "Ctrl-R" },
+                          { "save_file", _("Save File"), "Ctrl-S" },
+                          { "duplicate_tab", _("Duplicate Tab") },
+                          { "save_file_as", _("Save As..."), "Ctrl-Shift-S" },
+                          { "save_all", _("Save all files") },
+                          { "close_file", _("Close"), "Ctrl-W" },
+                          { "wxID_CLOSE_ALL", _("Close All") },
+                          { "wxID_PRINT", _("Print..."), "Ctrl-P" },
+                          { "wxID_EXIT", _("Exit"), "Alt-X" } });
     mgr->AddAccelerator(_("Help"), { { "wxID_ABOUT", _("About...") } });
     mgr->AddAccelerator(_("Plugins"), { { "manage_plugins", _("Manage Plugins...") } });
     mgr->AddAccelerator(_("Search"),
@@ -1152,60 +1168,66 @@ void clMainFrame::AddKeyboardAccelerators()
                           { "find_next", _("Find Next"), "F3" },
                           { "find_next_at_caret", _("Find Word At Caret") },
                           { "find_previous_at_caret", _("Find Word At Caret Backward") } });
-    mgr->AddAccelerator(_("Search | Go To"), { { "id_backward", _("Go To Previous Location"), "Ctrl-," },
-                                               { "id_forward", _("Go To Forward Location"), "Ctrl-." },
-                                               { "goto_linenumber", _("Go To Line..."), "Ctrl-G" } });
-    mgr->AddAccelerator(_("Settings"), { { "wxID_PREFERENCES", _("Preferences"), "Alt-O" },
-                                         { "syntax_highlight", _("Colours and Fonts...") },
-                                         { "configure_accelerators", _("Keyboard shortcuts...") },
-                                         { "add_envvar", _("Environment Variables..."), "Ctrl-Shift-V" },
-                                         { "advance_settings", _("Build Settings...") },
-                                         { "debuger_settings", _("GDB Settings...") },
-                                         { "tags_options", _("Code Completion...") } });
-    mgr->AddAccelerator(_("Tab"), { { "wxEVT_BOOK_NAV_PREV", _("Show Recent Tabs Dialog"), "RawCtrl-TAB" },
-                                    { "wxEVT_BOOK_MOVE_TAB_LEFT", _("Move Tab Left"), "RawCtrl-Shift-PGUP" },
-                                    { "wxEVT_BOOK_MOVE_TAB_RIGHT", _("Move Tab Right"), "RawCtrl-Shift-PGDN" } });
+    mgr->AddAccelerator(_("Search | Go To"),
+                        { { "id_backward", _("Go To Previous Location"), "Ctrl-," },
+                          { "id_forward", _("Go To Forward Location"), "Ctrl-." },
+                          { "goto_linenumber", _("Go To Line..."), "Ctrl-G" } });
+    mgr->AddAccelerator(_("Settings"),
+                        { { "wxID_PREFERENCES", _("Preferences"), "Alt-O" },
+                          { "syntax_highlight", _("Colours and Fonts...") },
+                          { "configure_accelerators", _("Keyboard shortcuts...") },
+                          { "add_envvar", _("Environment Variables..."), "Ctrl-Shift-V" },
+                          { "advance_settings", _("Build Settings...") },
+                          { "debuger_settings", _("GDB Settings...") },
+                          { "tags_options", _("Code Completion...") } });
+    mgr->AddAccelerator(_("Tab"),
+                        { { "wxEVT_BOOK_NAV_PREV", _("Show Recent Tabs Dialog"), "RawCtrl-TAB" },
+                          { "wxEVT_BOOK_MOVE_TAB_LEFT", _("Move Tab Left"), "RawCtrl-Shift-PGUP" },
+                          { "wxEVT_BOOK_MOVE_TAB_RIGHT", _("Move Tab Right"), "RawCtrl-Shift-PGDN" } });
 
-    mgr->AddAccelerator(_("View"), { { "word_wrap", _("Word Wrap") },
-                                     { "toggle_fold", _("Toggle Current Fold"), "Alt-RIGHT" },
-                                     { "fold_all", _("Toggle All Folds") },
-                                     { "fold_topmost_in_selection", _("Toggle All Topmost Folds in Selection") },
-                                     { "fold_all_in_selection", _("Toggle Every Fold in Selection") },
-                                     { "display_eol", _("Display EOL") },
-                                     { "next_tab", _("Next tab"), "Ctrl-Alt-RIGHT" },
-                                     { "prev_tab", _("Previous tab"), "Ctrl-Alt-LEFT" },
-                                     { "full_screen", _("Full Screen..."), "Alt-M" },
-                                     { "output_pane", _("Output Pane"), "Ctrl-`" },
-                                     { "show_terminal_pane", _("Show Builtin Terminal"), "F6" },
-                                     { "workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W" },
-                                     { "debugger_pane", _("Debugger Pane"), "Ctrl-Alt-D" },
-                                     { "show_nav_toolbar", _("Navigation Bar"), "Ctrl-Alt-N" },
-                                     { "toggle_panes", _("Toggle All Panes"), "Ctrl-M" },
-                                     { "distraction_free_mode", _("Toggle Minimal View"), "Ctrl-F11" },
+    mgr->AddAccelerator(_("View"),
+                        { { "word_wrap", _("Word Wrap") },
+                          { "toggle_fold", _("Toggle Current Fold"), "Alt-RIGHT" },
+                          { "fold_all", _("Toggle All Folds") },
+                          { "fold_topmost_in_selection", _("Toggle All Topmost Folds in Selection") },
+                          { "fold_all_in_selection", _("Toggle Every Fold in Selection") },
+                          { "display_eol", _("Display EOL") },
+                          { "next_tab", _("Next tab"), "Ctrl-Alt-RIGHT" },
+                          { "prev_tab", _("Previous tab"), "Ctrl-Alt-LEFT" },
+                          { "full_screen", _("Full Screen..."), "Alt-M" },
+                          { "output_pane", _("Output Pane"), "Ctrl-`" },
+                          { "show_terminal_pane", _("Show Builtin Terminal"), "F6" },
+                          { "workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W" },
+                          { "debugger_pane", _("Debugger Pane"), "Ctrl-Alt-D" },
+                          { "show_nav_toolbar", _("Navigation Bar"), "Ctrl-Alt-N" },
+                          { "toggle_panes", _("Toggle All Panes"), "Ctrl-M" },
+                          { "distraction_free_mode", _("Toggle Minimal View"), "Ctrl-F11" },
 #ifdef __WXGTK__
-                                     { "show_menu_bar", _("Show Menu Bar"), "Alt-`" },
+                          { "show_menu_bar", _("Show Menu Bar"), "Alt-`" },
 #endif
-                                     { "hide_status_bar", _("Show Status Bar") },
-                                     { "hide_tool_bar", _("Show Tool Bar"), "F1" } });
+                          { "hide_status_bar", _("Show Status Bar") },
+                          { "hide_tool_bar", _("Show Tool Bar"), "F1" } });
     mgr->AddAccelerator(_("View | Show Whitespace"),
                         { { "whitepsace_invisible", _("Invisible"), "Alt-F1" },
                           { "whitepsace_always", _("Show Always"), "Alt-F2" },
                           { "whitespace_visiable_after_indent", _("Visible After First Indent"), "Alt-F3" },
                           { "whitespace_indent_only", _("Indentation Only") } });
-    mgr->AddAccelerator(_("View | Zoom"), { { "wxID_ZOOM_IN", _("Zoom In") },
-                                            { "wxID_ZOOM_OUT", _("Zoom Out") },
-                                            { "wxID_ZOOM_FIT", _("Reset Zoom"), "Ctrl-0" } });
-    mgr->AddAccelerator(_("Workspace"), { { "new_workspace", _("New Workspace...") },
-                                          { "switch_to_workspace", _("Open Workspace...") },
-                                          { "close_workspace", _("Close Workspace") },
-                                          { "reload_workspace", _("Reload Workspace") },
-                                          { "local_workspace_settings", _("Workspace Settings...") },
-                                          { "local_workspace_prefs", _("Workspace Editor Preferences...") },
-                                          { "import_from_msvs", _("Import other IDEs solution/workspace files...") },
-                                          { "project_properties", _("Open Active Project Settings..."), "Alt-F7" },
-                                          { "new_project", _("Create New Project") },
-                                          { "add_project", _("Add an Existing Project") },
-                                          { "full_retag_workspace", _("Parse Workspace") } });
+    mgr->AddAccelerator(_("View | Zoom"),
+                        { { "wxID_ZOOM_IN", _("Zoom In") },
+                          { "wxID_ZOOM_OUT", _("Zoom Out") },
+                          { "wxID_ZOOM_FIT", _("Reset Zoom"), "Ctrl-0" } });
+    mgr->AddAccelerator(_("Workspace"),
+                        { { "new_workspace", _("New Workspace...") },
+                          { "switch_to_workspace", _("Open Workspace...") },
+                          { "close_workspace", _("Close Workspace") },
+                          { "reload_workspace", _("Reload Workspace") },
+                          { "local_workspace_settings", _("Workspace Settings...") },
+                          { "local_workspace_prefs", _("Workspace Editor Preferences...") },
+                          { "import_from_msvs", _("Import other IDEs solution/workspace files...") },
+                          { "project_properties", _("Open Active Project Settings..."), "Alt-F7" },
+                          { "new_project", _("Create New Project") },
+                          { "add_project", _("Add an Existing Project") },
+                          { "full_retag_workspace", _("Parse Workspace") } });
 }
 
 clMainFrame* clMainFrame::Get() { return m_theFrame; }
@@ -1386,10 +1408,7 @@ void clMainFrame::CreateGUIControls()
     m_infoBar = new clInfoBar(container);
     container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);
     container->GetSizer()->Add(m_infoBar, 0, wxEXPAND);
-    QuickFindBar* findbar = new QuickFindBar(container);
-    findbar->Hide();
-    container->GetSizer()->Add(findbar, 0, wxEXPAND | wxALL, 2);
-    container->GetSizer()->Fit(container);
+    QuickFindBar* findbar = new QuickFindBar(this);
     m_mainBook->SetFindBar(findbar);
     m_mainBook->SetEditorBar(navbar);
 
@@ -1404,7 +1423,7 @@ void clMainFrame::CreateGUIControls()
 
     if (!BuildSettingsConfigST::Get()->Load("2.1")) {
         clERROR() << "Could not locate build configuration! CodeLite installation is broken this might cause unwanted "
-                     "behavior!"
+                     "behaviour!"
                   << endl;
     }
     clConfig ccConfig("code-completion.conf");
@@ -1436,12 +1455,19 @@ void clMainFrame::CreateGUIControls()
 
     // Connect the custom build target events range: !USE_AUI_TOOLBAR only
     if (m_mainToolbar) {
-        m_mainToolbar->Connect(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, wxEVT_COMMAND_MENU_SELECTED,
-                               wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
+        m_mainToolbar->Connect(ID_MENU_CUSTOM_TARGET_FIRST,
+                               ID_MENU_CUSTOM_TARGET_MAX,
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(clMainFrame::OnBuildCustomTarget),
+                               NULL,
+                               this);
     }
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnChangeActiveBookmarkType), this,
-         XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
+    Bind(wxEVT_COMMAND_MENU_SELECTED,
+         wxCommandEventHandler(clMainFrame::OnChangeActiveBookmarkType),
+         this,
+         XRCID("BookmarkTypes[start]"),
+         XRCID("BookmarkTypes[end]"));
 
     GetDebuggerPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("debugger_view_rmenu"));
     GetOutputPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("outputview_view_rmenu"));
@@ -1507,10 +1533,12 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
         }
 
         if (undoing) {
-            menu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem),
+            menu->Bind(wxEVT_COMMAND_MENU_SELECTED,
+                       wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem),
                        &editor->GetCommandsProcessor());
         } else {
-            menu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem),
+            menu->Bind(wxEVT_COMMAND_MENU_SELECTED,
+                       wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem),
                        &editor->GetCommandsProcessor());
         }
         m_mainToolbar->SetDropdownMenu(event.GetId(), menu);
@@ -1531,8 +1559,8 @@ wxBitmap load_bitmap_from_bundle(const wxString& name, int toolsize, wxWindow* w
     return bundle.GetBitmapFor(win);
 }
 
-void add_main_toolbar_item(wxToolBar* tb, const wxString& xrcstr, const wxString& label, const wxString& bmpname,
-                           int toolsize)
+void add_main_toolbar_item(
+    wxToolBar* tb, const wxString& xrcstr, const wxString& label, const wxString& bmpname, int toolsize)
 {
     // load the bitmap using the bundle
     wxBitmap bmp = load_bitmap_from_bundle(bmpname, toolsize, tb);
@@ -1822,16 +1850,11 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
     if (editor) {
         editor->OnMenuCommand(event);
     } else if (event.GetId() == XRCID("id_find")) {
-        auto stc = CurrentSTC(this);
+        wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(wxWindow::FindFocus());
         if (stc) {
-            // Try generic handling first
             GetMainBook()->GetFindBar()->SetEditor(stc);
             GetMainBook()->ShowQuickBar(true);
-            return;
         }
-
-        // Let the plugins handle this
-        GetMainBook()->ShowQuickBarForPlugins();
     } else if (event.GetId() == XRCID("goto_linenumber")) {
         auto stc = CurrentSTC(this);
         CHECK_PTR_RET(stc);
@@ -2190,8 +2213,13 @@ void clMainFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
         }
     }
 
-    wxFileDialog* dlg = new wxFileDialog(this, _("Open File"), open_path, wxEmptyString, ALL,
-                                         wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
+    wxFileDialog* dlg = new wxFileDialog(this,
+                                         _("Open File"),
+                                         open_path,
+                                         wxEmptyString,
+                                         ALL,
+                                         wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE,
+                                         wxDefaultPosition);
     if (dlg->ShowModal() == wxID_OK) {
         wxArrayString paths;
         dlg->GetPaths(paths);
@@ -2238,8 +2266,9 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 
         wxString sessionName = dlg.GetTabgroupName();
         if (sessionName.IsEmpty()) {
-            if (wxMessageBox(_("Please enter a name for the tab group"), _("CodeLite"), wxICON_ERROR | wxOK | wxCANCEL,
-                             this) != wxOK) {
+            if (wxMessageBox(
+                    _("Please enter a name for the tab group"), _("CodeLite"), wxICON_ERROR | wxOK | wxCANCEL, this) !=
+                wxOK) {
                 return;
             } else {
                 continue;
@@ -2255,7 +2284,9 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
         wxString filepath(path + sessionName + ".tabgroup");
         if (wxFileName::FileExists(filepath)) {
             if (wxMessageBox(_("There is already a file with this name. Do you want to overwrite it?"),
-                             _("Are you sure?"), wxICON_EXCLAMATION | wxOK | wxCANCEL, this) != wxOK) {
+                             _("Are you sure?"),
+                             wxICON_EXCLAMATION | wxOK | wxCANCEL,
+                             this) != wxOK) {
                 return;
             }
         }
@@ -2358,8 +2389,13 @@ void clMainFrame::OnProjectAddProject(wxCommandEvent& event)
     // Prompt user for project path
     const wxString ALL("CodeLite Projects (*.project)|*.project|"
                        "All Files (*)|*");
-    wxFileDialog* dlg = new wxFileDialog(this, _("Open Project"), wxEmptyString, wxEmptyString, ALL,
-                                         wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
+    wxFileDialog* dlg = new wxFileDialog(this,
+                                         _("Open Project"),
+                                         wxEmptyString,
+                                         wxEmptyString,
+                                         ALL,
+                                         wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+                                         wxDefaultPosition);
     if (dlg->ShowModal() == wxID_OK) {
         // Open it
         ManagerST::Get()->AddProject(dlg->GetPath());
@@ -2577,7 +2613,9 @@ void clMainFrame::OnBuildEnded(clBuildEvent& event)
             // The build ended with errors, but the user requested to `Build & Run`
             // prompt the user whether we should continue
             answer = ::PromptForYesNoDialogWithCheckbox(_("Build ended with errors\nContinue with execute?"),
-                                                        "BuildAndRunWithErrors", _(" Execute "), _(" Cancel "),
+                                                        "BuildAndRunWithErrors",
+                                                        _(" Execute "),
+                                                        _(" Cancel "),
                                                         _("Remember my answer and don't annoy me again"),
                                                         wxYES_NO | wxCENTER | wxICON_QUESTION | wxNO_DEFAULT);
         }
@@ -2657,8 +2695,8 @@ void clMainFrame::OnBuildCustomTarget(wxCommandEvent& event)
                 clDEBUG() << "Failed to find Custom Build Target for event ID:" << event.GetId();
                 return;
             }
-            QueueCommand info(CustomTargetsMgr::Get().GetProjectName(), bldConf->GetName(), false,
-                              QueueCommand::kCustomBuild);
+            QueueCommand info(
+                CustomTargetsMgr::Get().GetProjectName(), bldConf->GetName(), false, QueueCommand::kCustomBuild);
             info.SetCustomBuildTarget(target.first);
 
             ManagerST::Get()->PushQueueCommand(info);
@@ -2823,8 +2861,11 @@ void clMainFrame::ExecuteNoDebug(bool promptToBuild)
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
     if (promptToBuild) {
         wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(
-            _("Would you like to build the active project\nbefore executing it?"), "PromptForBuildBeforeExecute",
-            _("Build and Execute"), _("Execute"), _("Cancel"));
+            _("Would you like to build the active project\nbefore executing it?"),
+            "PromptForBuildBeforeExecute",
+            _("Build and Execute"),
+            _("Execute"),
+            _("Cancel"));
         if (res == wxID_CANCEL) {
             return;
         }
@@ -3092,8 +3133,13 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
                        "Borland C++ Builder Solution File (*.bpr)|*.bpr|"
                        "Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace");
 
-    wxFileDialog dlg(this, _("Open IDE Solution/Workspace File"), wxEmptyString, wxEmptyString, ALL,
-                     wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
+    wxFileDialog dlg(this,
+                     _("Open IDE Solution/Workspace File"),
+                     wxEmptyString,
+                     wxEmptyString,
+                     ALL,
+                     wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+                     wxDefaultPosition);
     if (dlg.ShowModal() == wxID_OK) {
 
         wxArrayString cmps;
@@ -3177,7 +3223,9 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
 
         wxStandardID res =
             ::PromptForYesNoDialogWithCheckbox(_("Would you like to build the project before debugging it?"),
-                                               "BuildBeforeDebug", _("Build and Debug"), _("Debug"));
+                                               "BuildBeforeDebug",
+                                               _("Build and Debug"),
+                                               _("Debug"));
         // Don't do anything if "X" is pressed
         if (res != wxID_CANCEL) {
             if (res == wxID_YES) {
@@ -3447,46 +3495,50 @@ void clMainFrame::CompleteInitialization()
     int bestHeight = frameSize.GetHeight() / 4;
     int bestWidth = frameSize.GetWidth() / 5;
 
-    m_mgr.AddPane(m_sidebar, wxAuiPaneInfo()
-                                 .CaptionVisible(false)
-                                 .Name(m_sidebar->GetCaption())
-                                 .Caption(m_sidebar->GetCaption())
-                                 .Left()
-                                 .Layer(1)
-                                 .Position(0)
-                                 .MinSize(FromDIP(200), -1)
-                                 .CloseButton(false)
-                                 .Show(true));
+    m_mgr.AddPane(m_sidebar,
+                  wxAuiPaneInfo()
+                      .CaptionVisible(false)
+                      .Name(m_sidebar->GetCaption())
+                      .Caption(m_sidebar->GetCaption())
+                      .Left()
+                      .Layer(1)
+                      .Position(0)
+                      .MinSize(FromDIP(200), -1)
+                      .CloseButton(false)
+                      .Show(true));
 
-    m_mgr.AddPane(m_secondary_sidebar, wxAuiPaneInfo()
-                                           .CaptionVisible(false)
-                                           .Name(m_secondary_sidebar->GetCaption())
-                                           .Caption(m_secondary_sidebar->GetCaption())
-                                           .Right()
-                                           .Layer(1)
-                                           .MinSize(FromDIP(200), -1)
-                                           .Position(0)
-                                           .CloseButton(false)
-                                           .Show(true));
+    m_mgr.AddPane(m_secondary_sidebar,
+                  wxAuiPaneInfo()
+                      .CaptionVisible(false)
+                      .Name(m_secondary_sidebar->GetCaption())
+                      .Caption(m_secondary_sidebar->GetCaption())
+                      .Right()
+                      .Layer(1)
+                      .MinSize(FromDIP(200), -1)
+                      .Position(0)
+                      .CloseButton(false)
+                      .Show(true));
 
-    m_mgr.AddPane(m_debuggerPane, wxAuiPaneInfo()
-                                      .CaptionVisible(false)
-                                      .Name(m_debuggerPane->GetCaption())
-                                      .Caption(m_debuggerPane->GetCaption())
-                                      .Bottom()
-                                      .Layer(1)
-                                      .Position(1)
-                                      .CloseButton(false)
-                                      .Hide());
+    m_mgr.AddPane(m_debuggerPane,
+                  wxAuiPaneInfo()
+                      .CaptionVisible(false)
+                      .Name(m_debuggerPane->GetCaption())
+                      .Caption(m_debuggerPane->GetCaption())
+                      .Bottom()
+                      .Layer(1)
+                      .Position(1)
+                      .CloseButton(false)
+                      .Hide());
 
-    m_mgr.AddPane(m_outputPane, wxAuiPaneInfo()
-                                    .CaptionVisible(false)
-                                    .Name("Output View")
-                                    .Caption("Output View")
-                                    .Bottom()
-                                    .Layer(1)
-                                    .Position(0)
-                                    .Show(false));
+    m_mgr.AddPane(m_outputPane,
+                  wxAuiPaneInfo()
+                      .CaptionVisible(false)
+                      .Name("Output View")
+                      .Caption("Output View")
+                      .Bottom()
+                      .Layer(1)
+                      .Position(0)
+                      .Show(false));
     UpdateAUI();
     m_defaultLayout = m_mgr.SavePerspective();
     Layout();
@@ -3579,8 +3631,8 @@ void clMainFrame::CompleteInitialization()
     auto& buttons = m_pluginsToolbar->GetButtons();
     for (size_t i = 0; i < hiddenItems.size(); ++i) {
         const wxString& label = hiddenItems.Item(i);
-        auto iter = std::find_if(buttons.begin(), buttons.end(),
-                                 [&](clToolBarButtonBase* button) { return button->GetLabel() == label; });
+        auto iter = std::find_if(
+            buttons.begin(), buttons.end(), [&](clToolBarButtonBase* button) { return button->GetLabel() == label; });
         if (iter != buttons.end()) {
             (*iter)->Show(false);
         }
@@ -3623,8 +3675,8 @@ void clMainFrame::RestoreFrameSizeAndPosition()
     SetSize(m_frameGeneralInfo.GetFrameSize());
     Maximize(m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME);
     if (m_frameGeneralInfo.GetFlags() & CL_FULLSCREEN) {
-        ShowFullScreen(true, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER |
-                                 wxFULLSCREEN_NOCAPTION);
+        ShowFullScreen(
+            true, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION);
     }
 }
 
@@ -3940,7 +3992,9 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
         WebUpdateJobData* data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
         if (data) {
             if (data->IsUpToDate() == false) {
-                wxRichMessageDialog dlg(this, _("A new version of CodeLite is available for download"), "CodeLite",
+                wxRichMessageDialog dlg(this,
+                                        _("A new version of CodeLite is available for download"),
+                                        "CodeLite",
                                         wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTRE | wxICON_INFORMATION);
                 dlg.SetYesNoLabels(_("Download"), _("No"));
                 if (dlg.ShowModal() == wxID_YES) {
@@ -4424,8 +4478,8 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             wxString tty;
 #ifndef __WXMSW__
             if (!ManagerST::Get()->StartTTY(clDebuggerTerminalPOSIX::MakeCoreTitle(dlg->GetCore()), tty)) {
-                wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"),
-                             wxOK | wxCENTER | wxICON_ERROR);
+                wxMessageBox(
+                    _("Could not start TTY console for debugger!"), _("codelite"), wxOK | wxCENTER | wxICON_ERROR);
             }
 #endif
             dbgr->SetIsRemoteDebugging(false);
@@ -4623,8 +4677,8 @@ void clMainFrame::OnShowFullScreen(wxCommandEvent& e)
         ShowFullScreen(false);
 
     } else {
-        ShowFullScreen(true, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER |
-                                 wxFULLSCREEN_NOCAPTION);
+        ShowFullScreen(
+            true, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION);
 
         // Re-apply the menu accelerators
         ManagerST::Get()->UpdateMenuAccelerators();
@@ -4684,10 +4738,11 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
         return false;
     }
 
-    wxStandardID res =
-        ::PromptForYesNoDialogWithCheckbox(_("Workspace or project settings have been modified outside "
-                                             "of CodeLite\nWould you like to reload the workspace?"),
-                                           "ReloadWorkspaceWhenAltered", _("Reload workspace"), _("Not now"));
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Workspace or project settings have been modified outside "
+                                                            "of CodeLite\nWould you like to reload the workspace?"),
+                                                          "ReloadWorkspaceWhenAltered",
+                                                          _("Reload workspace"),
+                                                          _("Not now"));
     // Don't do anything if "X" is pressed
     if (res != wxID_CANCEL) {
         if (res == wxID_YES) {
@@ -4946,11 +5001,13 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 void clMainFrame::DoSuggestRestart()
 {
 #ifdef __WXMSW__
-    ::wxMessageBox(_("A restart is required for changes to take effect"), "CodeLite",
-                   wxICON_INFORMATION | wxOK | wxCENTER);
+    ::wxMessageBox(
+        _("A restart is required for changes to take effect"), "CodeLite", wxICON_INFORMATION | wxOK | wxCENTER);
 #else
-    if (::wxMessageBox(_("A restart is required for changes to take effect\rContinue with restart?"), "CodeLite",
-                       wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION, this) != wxYES) {
+    if (::wxMessageBox(_("A restart is required for changes to take effect\rContinue with restart?"),
+                       "CodeLite",
+                       wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION,
+                       this) != wxYES) {
         return;
     }
 
@@ -5225,7 +5282,8 @@ void clMainFrame::OnWorkspaceClosed(clWorkspaceEvent& e)
 void clMainFrame::OnIncrementalSearchUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    event.Enable(m_mainBook->GetCurrentPage() != NULL);
+    event.Enable(true);
+    event.Skip();
 }
 
 void clMainFrame::OnBuildProjectOnly(wxCommandEvent& event)
@@ -5758,7 +5816,8 @@ void clMainFrame::OnDebugRunToCursor(wxCommandEvent& e)
     IEditor* editor = clGetManager()->GetActiveEditor();
     if (editor && dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
         clDebuggerBreakpoint bp;
-        bp.Create(editor->GetRemotePathOrLocal(), editor->GetCurrentLine() + 1,
+        bp.Create(editor->GetRemotePathOrLocal(),
+                  editor->GetCurrentLine() + 1,
                   ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
         bp.bp_type = BP_type_tempbreak;
         dbgr->Break(bp);
@@ -5832,7 +5891,8 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
     }
 
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        editor->GetCtrl(), entries,
+        editor->GetCtrl(),
+        entries,
         wxCodeCompletionBox::kNoShowingEvent, // Don't fire the "wxEVT_CCBOX_SHOWING event
         wxNOT_FOUND);
 }

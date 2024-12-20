@@ -100,9 +100,13 @@ BEGIN_EVENT_TABLE(GUICraftMainPanel, GUICraftMainPanelBase)
 
 EVT_MENU(ID_GENERATE_CODE, GUICraftMainPanel::OnGenerateCode)
 EVT_COMMAND_RANGE(ID_FIRST_CONTROL, ID_LAST_CONTROL - 1, wxEVT_COMMAND_BUTTON_CLICKED, GUICraftMainPanel::OnNewControl)
-EVT_COMMAND_RANGE(ID_CHANGE_SIZER_FIRST, ID_CHANGE_SIZER_LAST - 1, wxEVT_COMMAND_MENU_SELECTED,
+EVT_COMMAND_RANGE(ID_CHANGE_SIZER_FIRST,
+                  ID_CHANGE_SIZER_LAST - 1,
+                  wxEVT_COMMAND_MENU_SELECTED,
                   GUICraftMainPanel::OnChangeSizerType)
-EVT_COMMAND_RANGE(ID_INSERT_INTO_SIZER_FIRST, ID_INSERT_INTO_SIZER_LAST - 1, wxEVT_COMMAND_MENU_SELECTED,
+EVT_COMMAND_RANGE(ID_INSERT_INTO_SIZER_FIRST,
+                  ID_INSERT_INTO_SIZER_LAST - 1,
+                  wxEVT_COMMAND_MENU_SELECTED,
                   GUICraftMainPanel::OnInsertIntoSizer)
 EVT_COMMAND(ID_WXCUSTOMCONTROL, wxEVT_COMMAND_BUTTON_CLICKED, GUICraftMainPanel::OnNewCustomControlMenu)
 EVT_MENU_RANGE(ID_FIRST_CONTROL, ID_LAST_CONTROL - 1, GUICraftMainPanel::OnNewControl)
@@ -201,39 +205,50 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
     m_toolbar->AddTool(ID_DELETE_NODE, _("Delete Item"), bmps.Bitmap("delete"), _("Delete Item"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(ID_TOOL_ALIGN_LEFT, _("Align Left"), bmps.Bitmap("align-left"), _("Align Left"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_HCENTER, _("Align Center"), bmps.Bitmap("align-center-horizontal"),
-                       _("Align Center Horizontally"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_RIGHT, _("Align Right"), bmps.Bitmap("align-right"), _("Align Right"),
+    m_toolbar->AddTool(ID_TOOL_ALIGN_HCENTER,
+                       _("Align Center"),
+                       bmps.Bitmap("align-center-horizontal"),
+                       _("Align Center Horizontally"),
                        wxITEM_CHECK);
+    m_toolbar->AddTool(
+        ID_TOOL_ALIGN_RIGHT, _("Align Right"), bmps.Bitmap("align-right"), _("Align Right"), wxITEM_CHECK);
     m_toolbar->AddSeparator();
 
     m_toolbar->AddTool(ID_TOOL_ALIGN_TOP, _("Align Top"), bmps.Bitmap("align-top"), _("Align Top"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_VCENTER, _("Align Middle"), bmps.Bitmap("align-center-vertical"),
-                       _("Align Center Vertically"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_BOTTOM, _("Align Bottom"), bmps.Bitmap("align-bottom"), _("Align Bottom"),
+    m_toolbar->AddTool(ID_TOOL_ALIGN_VCENTER,
+                       _("Align Middle"),
+                       bmps.Bitmap("align-center-vertical"),
+                       _("Align Center Vertically"),
                        wxITEM_CHECK);
+    m_toolbar->AddTool(
+        ID_TOOL_ALIGN_BOTTOM, _("Align Bottom"), bmps.Bitmap("align-bottom"), _("Align Bottom"), wxITEM_CHECK);
     m_toolbar->AddSeparator();
 
     m_toolbar->AddTool(ID_TOOL_BORDER_ALL, _("All Borders"), bmps.Bitmap("wxall"), _("All Borders"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_BORDER_LEFT, _("Left Border"), bmps.Bitmap("border-left"), _("Left Border"),
-                       wxITEM_CHECK);
+    m_toolbar->AddTool(
+        ID_TOOL_BORDER_LEFT, _("Left Border"), bmps.Bitmap("border-left"), _("Left Border"), wxITEM_CHECK);
     m_toolbar->AddTool(ID_TOOL_BORDER_TOP, _("Top Border"), bmps.Bitmap("border-top"), _("Top Border"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_BORDER_RIGHT, _("Right Border"), bmps.Bitmap("border-right"), _("Right Border"),
-                       wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_BORDER_BOTTOM, _("Bottom Border"), bmps.Bitmap("border-bottom"), _("Bottom Border"),
-                       wxITEM_CHECK);
+    m_toolbar->AddTool(
+        ID_TOOL_BORDER_RIGHT, _("Right Border"), bmps.Bitmap("border-right"), _("Right Border"), wxITEM_CHECK);
+    m_toolbar->AddTool(
+        ID_TOOL_BORDER_BOTTOM, _("Bottom Border"), bmps.Bitmap("border-bottom"), _("Bottom Border"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(ID_TOOL_PROP1, _("Set Sizer Proportion to 1"), bmps.Bitmap("proportion-1"),
-                       _("Set Sizer Proportion to 1"), wxITEM_CHECK);
+    m_toolbar->AddTool(ID_TOOL_PROP1,
+                       _("Set Sizer Proportion to 1"),
+                       bmps.Bitmap("proportion-1"),
+                       _("Set Sizer Proportion to 1"),
+                       wxITEM_CHECK);
     m_toolbar->AddTool(ID_TOOL_WXEXPAND, _("Expand Item"), bmps.Bitmap("expand"), _("Expand Item"), wxITEM_CHECK);
     m_toolbar->AddSeparator();
 
     m_toolbar->AddTool(ID_MOVE_NODE_UP, _("Move Up"), bmps.Bitmap("move-up"), _("Move Up"));
     m_toolbar->AddTool(ID_MOVE_NODE_DOWN, _("Move Down"), bmps.Bitmap("move-down"), _("Move Down"));
-    m_toolbar->AddTool(ID_MOVE_NODE_INTO_SIZER, _("Move Left"), bmps.Bitmap("move-left"),
-                       _("Move Left into parent sizer"));
-    m_toolbar->AddTool(ID_MOVE_NODE_INTO_SIBLING, _("Move Right"), bmps.Bitmap("move-upper-right"),
+    m_toolbar->AddTool(
+        ID_MOVE_NODE_INTO_SIZER, _("Move Left"), bmps.Bitmap("move-left"), _("Move Left into parent sizer"));
+    m_toolbar->AddTool(ID_MOVE_NODE_INTO_SIBLING,
+                       _("Move Right"),
+                       bmps.Bitmap("move-upper-right"),
                        _("Move Right into a sibling sizer"));
 
     wxAuiToolBarItem* item = m_toolbar->FindTool(ID_GENERATE_CODE);
@@ -245,60 +260,65 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
     m_panelProperties->GetSizer()->Add(m_propertiesPage, 1, wxEXPAND);
     m_panelProperties->GetSizer()->Layout();
     EventNotifier::Get()->Bind(wxEVT_WXC_CMD_BATCH_GENERATE_CODE, &GUICraftMainPanel::OnBatchGenerateCode, this);
-    EventNotifier::Get()->Connect(wxEVT_PROPERTIES_MODIFIED,
-                                  wxCommandEventHandler(GUICraftMainPanel::OnPropertyChanged), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PREVIEW_CTRL_SELECTED,
-                                  wxCommandEventHandler(GUICraftMainPanel::OnPreviewItemSelected), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WXC_SELECT_TREE_TLW,
-                                  wxCommandEventHandler(GUICraftMainPanel::OnSelectToplevelItem), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PREVIEW_BOOKPAGE_SELECTED,
-                                  wxCommandEventHandler(GUICraftMainPanel::OnBookPageSelected), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PREVIEW_RIBBON_PAGE_SELECTED,
-                                  wxCommandEventHandler(GUICraftMainPanel::OnRibbonPageSelected), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PREVIEW_CLOSED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewClosed), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WXC_OPEN_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnOpenProject), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WXC_SAVE_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnSaveProject), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnCloseProject),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WXC_CMD_GENERATE_CODE, wxCommandEventHandler(GUICraftMainPanel::OnGenerateCode),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_REFRESH_DESIGNER, wxCommandEventHandler(GUICraftMainPanel::OnRefreshView), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_PREVIEW_BAR_SELECTED,
-                                  wxCommandEventHandler(GUICraftMainPanel::OnBarItemSelected), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_SHOW_CONTEXT_MENU, wxCommandEventHandler(GUICraftMainPanel::OnShowContextMenu),
-                                  NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PROPERTIES_MODIFIED, wxCommandEventHandler(GUICraftMainPanel::OnPropertyChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PREVIEW_CTRL_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewItemSelected), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXC_SELECT_TREE_TLW, wxCommandEventHandler(GUICraftMainPanel::OnSelectToplevelItem), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PREVIEW_BOOKPAGE_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnBookPageSelected), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PREVIEW_RIBBON_PAGE_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRibbonPageSelected), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PREVIEW_CLOSED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewClosed), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXC_OPEN_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnOpenProject), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXC_SAVE_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnSaveProject), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnCloseProject), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXC_CMD_GENERATE_CODE, wxCommandEventHandler(GUICraftMainPanel::OnGenerateCode), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_REFRESH_DESIGNER, wxCommandEventHandler(GUICraftMainPanel::OnRefreshView), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PREVIEW_BAR_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnBarItemSelected), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_SHOW_CONTEXT_MENU, wxCommandEventHandler(GUICraftMainPanel::OnShowContextMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DELETE_CONTROL, wxCommandEventHandler(GUICraftMainPanel::OnDelete), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(GUICraftMainPanel::OnUpdatePreview), NULL,
-                                  this);
+    EventNotifier::Get()->Connect(
+        wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(GUICraftMainPanel::OnUpdatePreview), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_FINDBAR_ABOUT_TO_SHOW, &GUICraftMainPanel::OnFindBar, this);
-    EventNotifier::Get()->Connect(wxEVT_REFRESH_PROPERTIES_VIEW,
-                                  wxCommandEventHandler(GUICraftMainPanel::OnRefreshPropertiesView), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_REFRESH_PROPERTIES_VIEW, wxCommandEventHandler(GUICraftMainPanel::OnRefreshPropertiesView), NULL, this);
     m_MainPanel = this;
 
-    m_treeControls->Connect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnBeginDrag), NULL,
-                            this);
+    m_treeControls->Connect(
+        wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnBeginDrag), NULL, this);
     m_treeControls->Connect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnEndDrag), NULL, this);
     m_treeControls->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(GUICraftMainPanel::OnMenu), NULL, this);
-    m_treeControls->Connect(wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK,
-                            wxTreeEventHandler(GUICraftMainPanel::OnItemRightClick), NULL, this);
-    m_treeControls->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(GUICraftMainPanel::OnItemSelected), NULL,
-                            this);
-    m_treeControls->Connect(ID_DELETE_NODE, wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(GUICraftMainPanel::OnDelete), NULL,
+    m_treeControls->Connect(
+        wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler(GUICraftMainPanel::OnItemRightClick), NULL, this);
+    m_treeControls->Connect(
+        wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(GUICraftMainPanel::OnItemSelected), NULL, this);
+    m_treeControls->Connect(ID_DELETE_NODE,
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GUICraftMainPanel::OnDelete),
+                            NULL,
                             this); // Translated from a DEL keypress
 
-    wxTheApp->Connect(wxID_UNDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnUndo), NULL,
-                      this);
-    wxTheApp->Connect(wxID_REDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRedo), NULL,
-                      this);
+    wxTheApp->Connect(
+        wxID_UNDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnUndo), NULL, this);
+    wxTheApp->Connect(
+        wxID_REDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRedo), NULL, this);
     wxTheApp->Connect(wxID_UNDO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnUndoUI), NULL, this);
     wxTheApp->Connect(wxID_REDO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnRedoUI), NULL, this);
-    wxTheApp->Connect(XRCID("label_current_state"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(GUICraftMainPanel::OnLabelCurrentState), NULL, this);
+    wxTheApp->Connect(XRCID("label_current_state"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(GUICraftMainPanel::OnLabelCurrentState),
+                      NULL,
+                      this);
     wxTheApp->Connect(wxEVT_MULTIPLE_UNREDO, wxCommandEventHandler(GUICraftMainPanel::OnLoadCurrentState), NULL, this);
     this->Connect(ID_FORM_TYPE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnNewFormUI), NULL, this);
 
@@ -324,11 +344,27 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
         xmlLexer->Apply(m_textCtrlXrc);
     }
 
-    wxTheApp->Connect(XRCID("save_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnSaveProjectUI),
-                      NULL, this);
+    wxTheApp->Connect(
+        XRCID("save_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnSaveProjectUI), NULL, this);
 
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrAuiProperties->GetGrid());
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrSizerFlags->GetGrid());
+    m_textCtrlCppSource->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+        e.Skip();
+        clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+        EventNotifier::Get()->AddPendingEvent(focus_event);
+    });
+
+    m_textCtrlHeaderSource->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+        e.Skip();
+        clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+        EventNotifier::Get()->AddPendingEvent(focus_event);
+    });
+    m_textCtrlXrc->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+        e.Skip();
+        clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+        EventNotifier::Get()->AddPendingEvent(focus_event);
+    });
 }
 
 GUICraftMainPanel::~GUICraftMainPanel()
@@ -342,75 +378,81 @@ GUICraftMainPanel::~GUICraftMainPanel()
     wxcSettings::Get().SetSashPosition(m_mainSplitter->GetSashPosition());
     wxcSettings::Get().Save();
 
-    EventNotifier::Get()->Disconnect(wxEVT_PROPERTIES_MODIFIED,
-                                     wxCommandEventHandler(GUICraftMainPanel::OnPropertyChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PREVIEW_CTRL_SELECTED,
-                                     wxCommandEventHandler(GUICraftMainPanel::OnPreviewItemSelected), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PREVIEW_BOOKPAGE_SELECTED,
-                                     wxCommandEventHandler(GUICraftMainPanel::OnBookPageSelected), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PREVIEW_RIBBON_PAGE_SELECTED,
-                                     wxCommandEventHandler(GUICraftMainPanel::OnRibbonPageSelected), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PREVIEW_CLOSED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewClosed),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WXC_OPEN_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnOpenProject),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WXC_SAVE_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnSaveProject),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WXC_CMD_GENERATE_CODE,
-                                     wxCommandEventHandler(GUICraftMainPanel::OnGenerateCode), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PROPERTIES_MODIFIED, wxCommandEventHandler(GUICraftMainPanel::OnPropertyChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PREVIEW_CTRL_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewItemSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PREVIEW_BOOKPAGE_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnBookPageSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PREVIEW_RIBBON_PAGE_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRibbonPageSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PREVIEW_CLOSED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WXC_OPEN_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnOpenProject), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WXC_SAVE_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnSaveProject), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WXC_CMD_GENERATE_CODE, wxCommandEventHandler(GUICraftMainPanel::OnGenerateCode), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WXC_CMD_BATCH_GENERATE_CODE, &GUICraftMainPanel::OnBatchGenerateCode, this);
-    EventNotifier::Get()->Disconnect(wxEVT_REFRESH_DESIGNER, wxCommandEventHandler(GUICraftMainPanel::OnRefreshView),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnCloseProject),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PREVIEW_BAR_SELECTED,
-                                     wxCommandEventHandler(GUICraftMainPanel::OnBarItemSelected), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_SHOW_CONTEXT_MENU,
-                                     wxCommandEventHandler(GUICraftMainPanel::OnShowContextMenu), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DELETE_CONTROL, wxCommandEventHandler(GUICraftMainPanel::OnDelete), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(GUICraftMainPanel::OnUpdatePreview),
-                                     NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_REFRESH_DESIGNER, wxCommandEventHandler(GUICraftMainPanel::OnRefreshView), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(GUICraftMainPanel::OnCloseProject), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PREVIEW_BAR_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnBarItemSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_SHOW_CONTEXT_MENU, wxCommandEventHandler(GUICraftMainPanel::OnShowContextMenu), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_DELETE_CONTROL, wxCommandEventHandler(GUICraftMainPanel::OnDelete), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(GUICraftMainPanel::OnUpdatePreview), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDBAR_ABOUT_TO_SHOW, &GUICraftMainPanel::OnFindBar, this);
-    EventNotifier::Get()->Disconnect(wxEVT_REFRESH_PROPERTIES_VIEW,
-                                     wxCommandEventHandler(GUICraftMainPanel::OnRefreshPropertiesView), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_REFRESH_PROPERTIES_VIEW, wxCommandEventHandler(GUICraftMainPanel::OnRefreshPropertiesView), NULL, this);
 
     // Only disconnect the events in Tabbed mode,
     // in the "frame" mode, the main panel and the tree view have the same
     // parent
     if (false) {
-        m_treeControls->Disconnect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnBeginDrag),
-                                   NULL, this);
-        m_treeControls->Disconnect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnEndDrag), NULL,
+        m_treeControls->Disconnect(
+            wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnBeginDrag), NULL, this);
+        m_treeControls->Disconnect(
+            wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnEndDrag), NULL, this);
+        m_treeControls->Disconnect(
+            wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(GUICraftMainPanel::OnMenu), NULL, this);
+        m_treeControls->Disconnect(
+            wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler(GUICraftMainPanel::OnItemRightClick), NULL, this);
+        m_treeControls->Disconnect(
+            wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(GUICraftMainPanel::OnItemSelected), NULL, this);
+        m_treeControls->Disconnect(ID_DELETE_NODE,
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(GUICraftMainPanel::OnDelete),
+                                   NULL,
                                    this);
-        m_treeControls->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(GUICraftMainPanel::OnMenu), NULL,
-                                   this);
-        m_treeControls->Disconnect(wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK,
-                                   wxTreeEventHandler(GUICraftMainPanel::OnItemRightClick), NULL, this);
-        m_treeControls->Disconnect(wxEVT_COMMAND_TREE_SEL_CHANGED,
-                                   wxTreeEventHandler(GUICraftMainPanel::OnItemSelected), NULL, this);
-        m_treeControls->Disconnect(ID_DELETE_NODE, wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(GUICraftMainPanel::OnDelete), NULL, this);
-        wxTheApp->Disconnect(ID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnCopy),
-                             NULL, this);
-        wxTheApp->Disconnect(ID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnCut), NULL,
-                             this);
-        wxTheApp->Disconnect(ID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnPaste),
-                             NULL, this);
+        wxTheApp->Disconnect(
+            ID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnCopy), NULL, this);
+        wxTheApp->Disconnect(
+            ID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnCut), NULL, this);
+        wxTheApp->Disconnect(
+            ID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnPaste), NULL, this);
     }
 
-    wxTheApp->Disconnect(wxID_UNDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnUndo), NULL,
-                         this);
-    wxTheApp->Disconnect(wxID_REDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRedo), NULL,
-                         this);
+    wxTheApp->Disconnect(
+        wxID_UNDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnUndo), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_REDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRedo), NULL, this);
     wxTheApp->Disconnect(wxID_UNDO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnUndoUI), NULL, this);
     wxTheApp->Disconnect(wxID_REDO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnRedoUI), NULL, this);
-    wxTheApp->Disconnect(XRCID("label_current_state"), wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(GUICraftMainPanel::OnLabelCurrentState), NULL, this);
-    wxTheApp->Disconnect(wxEVT_MULTIPLE_UNREDO, wxCommandEventHandler(GUICraftMainPanel::OnLoadCurrentState), NULL,
+    wxTheApp->Disconnect(XRCID("label_current_state"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(GUICraftMainPanel::OnLabelCurrentState),
+                         NULL,
                          this);
-    wxTheApp->Disconnect(XRCID("save_file"), wxEVT_UPDATE_UI,
-                         wxUpdateUIEventHandler(GUICraftMainPanel::OnSaveProjectUI), NULL, this);
+    wxTheApp->Disconnect(
+        wxEVT_MULTIPLE_UNREDO, wxCommandEventHandler(GUICraftMainPanel::OnLoadCurrentState), NULL, this);
+    wxTheApp->Disconnect(
+        XRCID("save_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnSaveProjectUI), NULL, this);
 
     m_treeControls = NULL;
     m_MainPanel = NULL;
@@ -703,8 +745,8 @@ void GUICraftMainPanel::OnPropertyChanged(wxCommandEvent& e)
                 if (auiItem->GetChildren().empty()) {
                     wxcWidget* menu = Allocator::Instance()->Create(ID_WXMENU);
                     menu->SetParent(auiItem);
-                    DoInsertControl(menu, auiItem, Allocator::INSERT_CHILD,
-                                    Allocator::Instance()->GetImageId(ID_WXMENU));
+                    DoInsertControl(
+                        menu, auiItem, Allocator::INSERT_CHILD, Allocator::Instance()->GetImageId(ID_WXMENU));
                 }
             } else if (!auiItem->GetChildren().empty()) {
                 // There's a redundant menu, either because user switched to DIY, or because it's no longer a dropdown
@@ -794,8 +836,8 @@ void GUICraftMainPanel::OnGenerateCode(wxCommandEvent& e)
     DoGenerateCode(false);
 }
 
-bool GUICraftMainPanel::GenerateCppOutput(wxString& cpp, wxString& header, wxArrayString& headers,
-                                          wxStringMap_t& additionalFiles, size_t flags) const
+bool GUICraftMainPanel::GenerateCppOutput(
+    wxString& cpp, wxString& header, wxArrayString& headers, wxStringMap_t& additionalFiles, size_t flags) const
 {
     // If onlySelection, just produce output for the currently selected tree branch. By default do everything
     wxTreeItemId start, item;
@@ -823,9 +865,13 @@ bool GUICraftMainPanel::GenerateCppOutput(wxString& cpp, wxString& header, wxArr
             if (wb) {
                 TopLevelWinWrapper* tl = dynamic_cast<TopLevelWinWrapper*>(wb);
                 if (tl) {
-                    tl->GenerateCode(wxcProjectMetadata::Get(), !(flags & kGenCodeForPreview),
+                    tl->GenerateCode(wxcProjectMetadata::Get(),
+                                     !(flags & kGenCodeForPreview),
                                      (flags & kGenCodeSelectionOnly) || (item != selectedItem), // output base only
-                                     cpp, header, headers, additionalFiles);
+                                     cpp,
+                                     header,
+                                     headers,
+                                     additionalFiles);
                     if (flags & kGenCodeSelectionOnly) {
                         break; // We only want a single tlw, so don't loop
                     }
@@ -1022,9 +1068,12 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
 {
     wxArrayString customControls = GetCustomControlsUsed();
     if (wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
-        wxString path =
-            wxFileSelector(_("Save as"), wxEmptyString, _("my_gui.wxcp"), "wxCrafter Project File(*.wxcp)|*.wxcp",
-                           wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_CHANGE_DIR | wxFD_OVERWRITE_PROMPT);
+        wxString path = wxFileSelector(_("Save as"),
+                                       wxEmptyString,
+                                       _("my_gui.wxcp"),
+                                       "wxCrafter Project File(*.wxcp)|*.wxcp",
+                                       wxFileSelectorDefaultWildcardStr,
+                                       wxFD_SAVE | wxFD_CHANGE_DIR | wxFD_OVERWRITE_PROMPT);
         if (path.IsEmpty()) {
             return;
         }
@@ -1079,7 +1128,9 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
     }
 
     if (wxcProjectMetadata::Get().IsLoaded() && wxcEditManager::Get().IsDirty()) {
-        if (::wxMessageBox(_("Current file has been modified\nContinue?"), "wxCrafter", wxYES_NO | wxCANCEL | wxCENTER,
+        if (::wxMessageBox(_("Current file has been modified\nContinue?"),
+                           "wxCrafter",
+                           wxYES_NO | wxCANCEL | wxCENTER,
                            wxCrafter::TopFrame()) != wxYES) {
             return;
         }
@@ -1088,8 +1139,12 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
     wxString path = e.GetString();
     if (path.IsEmpty()) {
         // User request
-        path = wxFileSelector(_("Open wxCrafter project"), wxEmptyString, wxEmptyString, wxEmptyString,
-                              "wxCrafter Project File(*.wxcp)|*.wxcp", wxFD_OPEN);
+        path = wxFileSelector(_("Open wxCrafter project"),
+                              wxEmptyString,
+                              wxEmptyString,
+                              wxEmptyString,
+                              "wxCrafter Project File(*.wxcp)|*.wxcp",
+                              wxFD_OPEN);
 
     } else {
         // Programmatically
@@ -1197,8 +1252,11 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     }
 }
 
-void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapper, const wxTreeItemId& parent,
-                                    const wxTreeItemId& beforeItem, bool insertBefore)
+void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect,
+                                    wxcWidget* wrapper,
+                                    const wxTreeItemId& parent,
+                                    const wxTreeItemId& beforeItem,
+                                    bool insertBefore)
 {
     CHECK_PTR_RET(wrapper);
     int imgId = Allocator::Instance()->GetImageId(wrapper->GetType());
@@ -1214,8 +1272,8 @@ void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapp
             }
         }
 
-        item = m_treeControls->InsertItem(parent, insertionItem, wrapper->GetName(), imgId, imgId,
-                                          new GUICraftItemData(wrapper));
+        item = m_treeControls->InsertItem(
+            parent, insertionItem, wrapper->GetName(), imgId, imgId, new GUICraftItemData(wrapper));
         if (itemToSelect.IsOk() == false) {
             itemToSelect = item;
         }
@@ -1901,8 +1959,10 @@ void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
             wxTreeItemId match;
             DoFindName(m_treeControls->GetRootItem(), newname, match);
             if (match.IsOk()) {
-                if (wxMessageBox(_("This name is already in use. Try again?"), _("wxCrafter"),
-                                 wxYES_NO | wxICON_QUESTION, this) == wxYES) {
+                if (wxMessageBox(_("This name is already in use. Try again?"),
+                                 _("wxCrafter"),
+                                 wxYES_NO | wxICON_QUESTION,
+                                 this) == wxYES) {
                     continue;
                 } else {
                     return;
@@ -1981,8 +2041,10 @@ void GUICraftMainPanel::OnDuplicate(wxCommandEvent& e)
             wxTreeItemId match;
             DoFindName(m_treeControls->GetRootItem(), newname, match);
             if (match.IsOk()) {
-                if (wxMessageBox(_("This name is already in use. Try again?"), _("wxCrafter"),
-                                 wxYES_NO | wxICON_QUESTION, this) == wxYES) {
+                if (wxMessageBox(_("This name is already in use. Try again?"),
+                                 _("wxCrafter"),
+                                 wxYES_NO | wxICON_QUESTION,
+                                 this) == wxYES) {
                     continue;
                 } else {
                     return;
@@ -2178,7 +2240,8 @@ void GUICraftMainPanel::OnEndDrag(wxTreeEvent& event)
     wxcEditManager::Get().PushState(Pasting ? "paste" : "move");
 }
 
-void GUICraftMainPanel::DoAppendItem(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem,
+void GUICraftMainPanel::DoAppendItem(const wxTreeItemId& sourceItem,
+                                     const wxTreeItemId& targetItem,
                                      wxcWidget* sourceItemData)
 {
     wxcWidget *source, *target = NULL;
@@ -2224,8 +2287,10 @@ void GUICraftMainPanel::DoAppendItem(const wxTreeItemId& sourceItem, const wxTre
     }
 }
 
-void GUICraftMainPanel::DoInsertBefore(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem,
-                                       wxcWidget* sourceItemData, bool insertBefore)
+void GUICraftMainPanel::DoInsertBefore(const wxTreeItemId& sourceItem,
+                                       const wxTreeItemId& targetItem,
+                                       wxcWidget* sourceItemData,
+                                       bool insertBefore)
 {
     wxcWidget *source, *target;
     GUICraftItemData* guiTargetItem = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(targetItem));
@@ -2358,8 +2423,10 @@ void GUICraftMainPanel::OnCloseProject(wxCommandEvent& e)
 {
     e.Skip();
     if (wxcEditManager::Get().IsDirty()) {
-        if (::wxMessageBox(_("Current file has been modified\nClose anyway?"), "wxCrafter",
-                           wxYES_NO | wxCANCEL | wxCENTER, wxCrafter::TopFrame()) != wxYES) {
+        if (::wxMessageBox(_("Current file has been modified\nClose anyway?"),
+                           "wxCrafter",
+                           wxYES_NO | wxCANCEL | wxCENTER,
+                           wxCrafter::TopFrame()) != wxYES) {
             return;
         }
     }
@@ -2640,8 +2707,11 @@ void GUICraftMainPanel::OnNewCustomControlMenu(wxCommandEvent& e)
     if (controls.empty() == false) {
         for (; iter != controls.end(); ++iter) {
             menu.Append(iter->second.GetControlId(), iter->first);
-            menu.Connect(iter->second.GetControlId(), wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(GUICraftMainPanel::OnNewCustomControl), NULL, this);
+            menu.Connect(iter->second.GetControlId(),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(GUICraftMainPanel::OnNewCustomControl),
+                         NULL,
+                         this);
         }
         menu.AppendSeparator();
     }
@@ -2672,7 +2742,8 @@ void GUICraftMainPanel::DoInsertControl(wxcWidget* control, wxcWidget* parent, i
 
     if (control->GetType() == ID_WXAUIMANAGER && parent->HasMainSizer()) {
         wxDELETE(control);
-        wxMessageBox(_("wxAui Manager can not be placed onto a control with a main sizer"), "wxCrafter",
+        wxMessageBox(_("wxAui Manager can not be placed onto a control with a main sizer"),
+                     "wxCrafter",
                      wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
@@ -2697,14 +2768,15 @@ void GUICraftMainPanel::DoInsertControl(wxcWidget* control, wxcWidget* parent, i
 
         } else if (parent->IsAuiManaged() && insertType == Allocator::INSERT_MAIN_SIZER) {
             wxDELETE(control);
-            wxMessageBox(_("A Main Sizer can not be placed into a wxAui managed window"), "wxCrafter",
+            wxMessageBox(_("A Main Sizer can not be placed into a wxAui managed window"),
+                         "wxCrafter",
                          wxOK | wxICON_WARNING | wxCENTER);
             return;
         }
 
         parent->AddChild(control);
-        wxTreeItemId item = m_treeControls->AppendItem(m_treeControls->GetSelection(), control->GetName(), imgId, imgId,
-                                                       new GUICraftItemData(control));
+        wxTreeItemId item = m_treeControls->AppendItem(
+            m_treeControls->GetSelection(), control->GetName(), imgId, imgId, new GUICraftItemData(control));
         m_treeControls->SelectItem(item);
     } else {
         wxDELETE(control);
@@ -3253,7 +3325,11 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
 
 #ifdef STANDALONE_BUILD
     wxUnusedVar(files);
-    wxFileDialog openFileDialog(this, _("Select wxCrafter files:"), "", "", "wxCrafter Project Files (*.wxcp)|*.wxcp",
+    wxFileDialog openFileDialog(this,
+                                _("Select wxCrafter files:"),
+                                "",
+                                "",
+                                "wxCrafter Project Files (*.wxcp)|*.wxcp",
                                 wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (openFileDialog.ShowModal() != wxID_OK) {
         return;
@@ -3267,7 +3343,8 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
         return;
     }
     if (wxcProjectMetadata::Get().IsLoaded()) {
-        ::wxMessageBox(_("Please close the current wxCrafter project before batch generating code"), "wxCrafter",
+        ::wxMessageBox(_("Please close the current wxCrafter project before batch generating code"),
+                       "wxCrafter",
                        wxOK | wxCENTER | wxICON_ERROR);
         return;
     }

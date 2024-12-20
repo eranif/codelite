@@ -182,6 +182,11 @@ public:
     int GetMimeImageId(const wxString& filename, bool disabled = false);
 
     /**
+     * @brief return bitmap bundle by name
+     */
+    const wxBitmapBundle& GetBundle(const wxString& name) const;
+
+    /**
      * @brief return the image index in the image list prepared by GetStandardMimeBitmapListPtr()
      * @return wxNOT_FOUND if no match is found, the index otherwise
      */
@@ -223,8 +228,8 @@ public:
 };
 
 /// Helper load function
-WXDLLIMPEXP_SDK void clLoadSidebarBitmap(const wxString& name, wxWindow* win, wxBitmap* light_theme_bmp,
-                                         wxBitmap* dark_theme_bmp);
+WXDLLIMPEXP_SDK void
+clLoadSidebarBitmap(const wxString& name, wxWindow* win, wxBitmap* light_theme_bmp, wxBitmap* dark_theme_bmp);
 
 /// Clear the sidebar bitmaps cache
 void WXDLLIMPEXP_SDK clClearSidebarBitmapCache();

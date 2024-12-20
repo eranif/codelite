@@ -11,21 +11,23 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
+#include <wx/popupwin.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/toolbar.h>
-#include "clToolBar.h"
-#include <wx/textctrl.h>
-#include "clThemedTextCtrl.hpp"
-#include <wx/button.h>
-#include "clThemedButton.h"
-#include <wx/popupwin.h>
+#include <wx/panel.h>
 #include <wx/checkbox.h>
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
 #include <wx/icon.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/textctrl.h>
+#include "clThemedTextCtrl.hpp"
+#include <wx/button.h>
+#include "clThemedButton.h"
+#include <wx/toolbar.h>
+#include "clToolBar.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -43,56 +45,6 @@
 #endif
 
 // clang-format on
-
-class QuickFindBarBase : public wxPanel
-{
-public:
-    enum {
-        wxID_FIND_ALL = 1001,
-    };
-
-protected:
-    clToolBar* m_toolbar;
-    clThemedTextCtrl* m_textCtrlFind;
-    clThemedButton* m_buttonFind;
-    clThemedButton* m_buttonFindPrev;
-    clThemedButton* m_buttonFindAll;
-    clThemedTextCtrl* m_textCtrlReplace;
-    clThemedButton* m_buttonReplace;
-    clThemedButton* m_buttonReplaceAll;
-
-protected:
-    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnButtonKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnFindPrev(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindPrevUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnFindAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindAllUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnReplaceTextUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceTextEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnReplaceAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceAllUI(wxUpdateUIEvent& event) { event.Skip(); }
-
-public:
-    clToolBar* GetToolbar() { return m_toolbar; }
-    clThemedTextCtrl* GetTextCtrlFind() { return m_textCtrlFind; }
-    clThemedButton* GetButtonFind() { return m_buttonFind; }
-    clThemedButton* GetButtonFindPrev() { return m_buttonFindPrev; }
-    clThemedButton* GetButtonFindAll() { return m_buttonFindAll; }
-    clThemedTextCtrl* GetTextCtrlReplace() { return m_textCtrlReplace; }
-    clThemedButton* GetButtonReplace() { return m_buttonReplace; }
-    clThemedButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
-    QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxTRANSPARENT_WINDOW);
-    virtual ~QuickFindBarBase();
-};
 
 class QuickFindBarOptionsMenuBase : public wxPopupTransientWindow
 {
@@ -134,7 +86,7 @@ public:
     QuickFindBarImages();
     const wxBitmap& Bitmap(const wxString& name) const
     {
-        if(!m_bitmaps.count(name + m_resolution))
+        if (!m_bitmaps.count(name + m_resolution))
             return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
@@ -142,6 +94,62 @@ public:
     void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
 
     virtual ~QuickFindBarImages();
+};
+
+class clFindReplaceDialogBase : public wxDialog
+{
+public:
+    enum {
+        wxID_FIND_ALL = 1001,
+    };
+
+protected:
+    wxPanel* m_mainPanel;
+    clThemedTextCtrl* m_textCtrlFind;
+    clThemedButton* m_buttonFind;
+    clThemedButton* m_buttonFindPrev;
+    clThemedButton* m_buttonFindAll;
+    clThemedTextCtrl* m_textCtrlReplace;
+    clThemedButton* m_buttonReplace;
+    clThemedButton* m_buttonReplaceAll;
+    clToolBar* m_toolbar;
+
+protected:
+    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnText(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnButtonKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnFindPrev(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFindPrevUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnFindAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFindAllUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnReplaceTextUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceTextEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceAllUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    clThemedTextCtrl* GetTextCtrlFind() { return m_textCtrlFind; }
+    clThemedButton* GetButtonFind() { return m_buttonFind; }
+    clThemedButton* GetButtonFindPrev() { return m_buttonFindPrev; }
+    clThemedButton* GetButtonFindAll() { return m_buttonFindAll; }
+    clThemedTextCtrl* GetTextCtrlReplace() { return m_textCtrlReplace; }
+    clThemedButton* GetButtonReplace() { return m_buttonReplace; }
+    clThemedButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
+    wxPanel* GetMainPanel() { return m_mainPanel; }
+    clToolBar* GetToolbar() { return m_toolbar; }
+    clFindReplaceDialogBase(wxWindow* parent,
+                            wxWindowID id = wxID_ANY,
+                            const wxString& title = _("Find / Replace"),
+                            const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1),
+                            long style = wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP | wxRESIZE_BORDER);
+    virtual ~clFindReplaceDialogBase();
 };
 
 #endif

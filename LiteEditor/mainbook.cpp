@@ -94,8 +94,8 @@ MainBook::MainBook(wxWindow* parent)
     , m_findBar(NULL)
 {
 
-    wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                    get_border_simple_theme_aware_bit() | wxTAB_TRAVERSAL);
+    wxPanel::Create(
+        parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, get_border_simple_theme_aware_bit() | wxTAB_TRAVERSAL);
     Hide();
 
     CreateGuiControls();
@@ -569,7 +569,9 @@ static bool IsFileExists(const wxFileName& filename)
 #endif
 }
 
-clEditor* MainBook::OpenRemoteFile(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account,
+clEditor* MainBook::OpenRemoteFile(const wxString& local_path,
+                                   const wxString& remote_path,
+                                   const wxString& ssh_account,
                                    const wxString& tooltip)
 {
     if (!IsFileExists(local_path)) {
@@ -612,9 +614,14 @@ clEditor* MainBook::OpenRemoteFile(const wxString& local_path, const wxString& r
     return editor;
 }
 
-clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectName, int lineno, long position,
-                             OF_extra extra /*=OF_AddJump*/, bool preserveSelection /*=true*/,
-                             int bmp /*= wxNullBitmap*/, const wxString& tooltip /* wxEmptyString */)
+clEditor* MainBook::OpenFile(const wxString& file_name,
+                             const wxString& projectName,
+                             int lineno,
+                             long position,
+                             OF_extra extra /*=OF_AddJump*/,
+                             bool preserveSelection /*=true*/,
+                             int bmp /*= wxNullBitmap*/,
+                             const wxString& tooltip /* wxEmptyString */)
 {
     wxFileName fileName(CLRealPath(file_name));
     fileName.MakeAbsolute();
@@ -749,8 +756,8 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
     return editor;
 }
 
-bool MainBook::AddBookPage(wxWindow* win, const wxString& text, const wxString& tooltip, int bmp, bool selected,
-                           int insert_at_index)
+bool MainBook::AddBookPage(
+    wxWindow* win, const wxString& text, const wxString& tooltip, int bmp, bool selected, int insert_at_index)
 {
     ShowWelcomePage(false);
     if (m_book->GetPageIndex(win) != wxNOT_FOUND)
@@ -787,8 +794,10 @@ bool MainBook::SelectPage(wxWindow* win)
     return DoSelectPage(win);
 }
 
-bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName, bool>>& files, const wxString& title,
-                               const wxString& caption, bool cancellable)
+bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName, bool>>& files,
+                               const wxString& title,
+                               const wxString& caption,
+                               bool cancellable)
 {
     if (files.empty())
         return true;
@@ -821,7 +830,8 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
     }
     editors.resize(n);
 
-    bool res = !askUser || UserSelectFiles(files, _("Save Modified Files"),
+    bool res = !askUser || UserSelectFiles(files,
+                                           _("Save Modified Files"),
                                            _("Some files are modified.\nChoose the files you would like to save."));
     if (res) {
         for (size_t i = 0; i < files.size(); i++) {
@@ -899,8 +909,10 @@ void MainBook::ReloadExternallyModified(bool prompt)
 
         if (res == FilesModifiedDlg::kID_BUTTON_CHOOSE) {
             UserSelectFiles(
-                files, _("Reload Modified Files"),
-                _("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
+                files,
+                _("Reload Modified Files"),
+                _("Files have been modified outside the editor.\nChoose which files you would like to reload."),
+                false);
         }
     }
 
@@ -919,8 +931,8 @@ void MainBook::ReloadExternallyModified(bool prompt)
     clEditor::Vec_t realEditorsList;
     std::sort(editors.begin(), editors.end());
     std::sort(editorsAgain.begin(), editorsAgain.end());
-    std::set_intersection(editorsAgain.begin(), editorsAgain.end(), editors.begin(), editors.end(),
-                          std::back_inserter(realEditorsList));
+    std::set_intersection(
+        editorsAgain.begin(), editorsAgain.end(), editors.begin(), editors.end(), std::back_inserter(realEditorsList));
 
     // Update the "files" list
     if (editors.size() != realEditorsList.size()) {
@@ -974,7 +986,8 @@ bool MainBook::CloseAllButThis(wxWindow* page)
         }
     }
 
-    if (!files.empty() && !UserSelectFiles(files, _("Save Modified Files"),
+    if (!files.empty() && !UserSelectFiles(files,
+                                           _("Save Modified Files"),
                                            _("Some files are modified.\nChoose the files you would like to save."))) {
         return false;
     }
@@ -1015,8 +1028,10 @@ bool MainBook::CloseAll(bool cancellable)
     }
     editors.resize(n);
 
-    if (!UserSelectFiles(files, _("Save Modified Files"),
-                         _("Some files are modified.\nChoose the files you would like to save."), cancellable)) {
+    if (!UserSelectFiles(files,
+                         _("Save Modified Files"),
+                         _("Some files are modified.\nChoose the files you would like to save."),
+                         cancellable)) {
         return false;
     }
 
@@ -1171,8 +1186,10 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
     if (readOnly && editor->GetModify()) {
         // an attempt to mark a modified file as read-only
         // ask the user to save his changes before
-        ::wxMessageBox(_("Please save your changes before marking the file as read only"), "CodeLite",
-                       wxOK | wxCENTER | wxICON_WARNING, this);
+        ::wxMessageBox(_("Please save your changes before marking the file as read only"),
+                       "CodeLite",
+                       wxOK | wxCENTER | wxICON_WARNING,
+                       this);
         return;
     }
 }
@@ -1232,23 +1249,7 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
     DoUpdateNotebookTheme();
 }
 
-void MainBook::DoUpdateNotebookTheme()
-{
-#if 0
-    size_t initialStyle = m_book->GetStyle();
-    size_t style = m_book->GetStyle();
-    // Close button
-    if (!EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
-        style &= ~(kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
-    } else {
-        style |= (kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
-    }
-    if (initialStyle != style) {
-        m_book->SetStyle(style);
-    }
-#endif
-}
-
+void MainBook::DoUpdateNotebookTheme() {}
 wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }
 int MainBook::GetCurrentPageIndex() { return m_book->GetSelection(); }
 

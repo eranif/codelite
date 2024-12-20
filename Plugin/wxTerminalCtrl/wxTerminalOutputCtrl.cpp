@@ -7,6 +7,7 @@
 #include "clIdleEventThrottler.hpp"
 #include "clSystemSettings.h"
 #include "clWorkspaceManager.h"
+#include "codelite_events.h"
 #include "dirsaver.h"
 #include "event_notifier.h"
 #include "globals.h"
@@ -143,6 +144,9 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalOutputCtrl::OnThemeChanged, this);
     m_ctrl->Bind(wxEVT_CHAR_HOOK, &wxTerminalOutputCtrl::OnKeyDown, this);
     m_ctrl->Bind(wxEVT_LEFT_UP, &wxTerminalOutputCtrl::OnLeftUp, this);
+
+    m_ctrl->Bind(wxEVT_KILL_FOCUS, &wxTerminalOutputCtrl::OnFocusLost, this);
+    m_ctrl->Bind(wxEVT_SET_FOCUS, &wxTerminalOutputCtrl::OnFocus, this);
 }
 
 wxTerminalOutputCtrl::~wxTerminalOutputCtrl()
@@ -150,7 +154,10 @@ wxTerminalOutputCtrl::~wxTerminalOutputCtrl()
     wxDELETE(m_stcRenderer);
     m_ctrl->Unbind(wxEVT_CHAR_HOOK, &wxTerminalOutputCtrl::OnKeyDown, this);
     m_ctrl->Unbind(wxEVT_LEFT_UP, &wxTerminalOutputCtrl::OnLeftUp, this);
+
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &wxTerminalOutputCtrl::OnThemeChanged, this);
+    m_ctrl->Unbind(wxEVT_KILL_FOCUS, &wxTerminalOutputCtrl::OnFocusLost, this);
+    m_ctrl->Unbind(wxEVT_SET_FOCUS, &wxTerminalOutputCtrl::OnFocus, this);
 }
 
 void wxTerminalOutputCtrl::AppendText(const wxString& buffer)
@@ -507,4 +514,16 @@ void wxTerminalOutputCtrl::OnMenu(wxContextMenuEvent& event)
         },
         wxID_CLEAR);
     PopupMenu(&menu);
+}
+
+void wxTerminalOutputCtrl::OnFocusLost(wxFocusEvent& event)
+{
+    clCommandEvent focus_event{ wxEVT_STC_LOST_FOCUS };
+    EventNotifier::Get()->AddPendingEvent(focus_event);
+}
+
+void wxTerminalOutputCtrl::OnFocus(wxFocusEvent& event)
+{
+    clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+    EventNotifier::Get()->AddPendingEvent(focus_event);
 }

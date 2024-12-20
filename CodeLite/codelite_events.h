@@ -572,8 +572,14 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CODEFORMATTER_INDENT_COMPLETED, w
 // event.GetString() will return the name of the indented file
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEvent);
 
-// Sent when codelite's main frame gained the focus
+// Sent when codelite's main frame gains the focus
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, wxCommandEvent);
+
+// Fired when an STC got the focus
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_STC_GOT_FOCUS, clCommandEvent);
+
+// Fired when an STC loses the focus
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_STC_LOST_FOCUS, clCommandEvent);
 
 // User clicked on a project item in the treeview
 // the event.GetString() contains the project name that was clicked

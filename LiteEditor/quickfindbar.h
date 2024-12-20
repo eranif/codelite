@@ -22,17 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __quickfindbar__
-#define __quickfindbar__
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "clTerminalHistory.h"
-#include "clToolBar.h"
 #include "quickfindbarbase.h"
+#include "wxCustomStatusBar.h"
 
 #include <vector>
 #include <wx/combobox.h>
 #include <wx/panel.h>
+#include <wx/statusbr.h>
+#include <wx/timer.h>
 
 class wxStaticText;
 class wxStyledTextCtrl;
@@ -64,7 +65,7 @@ struct TargetRange {
     typedef std::vector<TargetRange> Vec_t;
 };
 
-class QuickFindBar : public QuickFindBarBase
+class QuickFindBar : public clFindReplaceDialogBase
 {
 public:
     enum eRegexType {
@@ -83,18 +84,20 @@ protected:
         FIND_GOTOLINE = (1 << 2),
     };
 
-    wxStyledTextCtrl* m_sci;
+    wxStyledTextCtrl* m_sci = nullptr;
     wxString m_lastText;
-    wchar_t* m_lastTextPtr;
-    bool m_eventsConnected;
-    bool m_onNextPrev;
+    wchar_t* m_lastTextPtr = nullptr;
+    bool m_eventsConnected = false;
+    bool m_onNextPrev = false;
     eRegexType m_regexType;
     bool m_disableTextUpdateEvent;
     size_t m_searchFlags = 0;
-    bool m_highlightMatches;
-    bool m_inSelection;
+    bool m_highlightMatches = false;
+    bool m_inSelection = false;
     clTerminalHistory m_searchHistory;
     clTerminalHistory m_replaceHistory;
+    wxCustomStatusBar* m_statusBar = nullptr;
+    wxTimer* m_timer = nullptr;
 
 protected:
     virtual void OnButtonKeyDown(wxKeyEvent& event);
@@ -191,6 +194,10 @@ protected:
     void OnFindNextCaret(wxCommandEvent& e);
     void OnFindPreviousCaret(wxCommandEvent& e);
 
+    void OnFocusGained(clCommandEvent& e);
+    void OnFocusLost(clCommandEvent& e);
+    void OnTimer(wxTimerEvent& event);
+
 protected:
     bool DoShow(bool s, const wxString& findWhat, bool showReplace = false);
     wxStyledTextCtrl* DoCheckPlugins();
@@ -214,5 +221,3 @@ public:
     wxString GetFindWhat() const { return m_textCtrlFind->GetValue(); }
     void SetFindWhat(const wxString& findwhat) { m_textCtrlFind->ChangeValue(findwhat); }
 };
-
-#endif // __quickfindbar__

@@ -242,6 +242,20 @@ const wxBitmap& BitmapLoader::GetBitmapForFile(const wxString& filename, bool di
     return m_mimeBitmaps.GetBitmap(ft, disabled);
 }
 
+const wxBitmapBundle& BitmapLoader::GetBundle(const wxString& name) const
+{
+    static wxBitmapBundle NullBundle;
+    bool darkTheme = clSystemSettings::Get().IsDark();
+    auto bitmap_bundle_cache = GetBundles(darkTheme);
+
+    auto bundle = bitmap_bundle_cache->find(name);
+    if (bundle == bitmap_bundle_cache->end()) {
+        return NullBundle;
+    } else {
+        return bundle->second;
+    }
+}
+
 //===---------------------------
 // clMimeBitmaps
 //===---------------------------

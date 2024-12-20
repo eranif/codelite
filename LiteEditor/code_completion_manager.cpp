@@ -30,7 +30,6 @@
 #include "bitmap_loader.h"
 #include "clangd/compilation_database.h"
 #include "cl_editor.h"
-#include "code_completion_api.h"
 #include "compiler_command_line_parser.h"
 #include "ctags_manager.h"
 #include "database/entry.h"

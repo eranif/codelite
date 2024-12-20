@@ -617,4 +617,8 @@ wxString clJoin(const Container& c, const wxString& glue = "\n")
     return output;
 }
 
+/// Return the selected text in a wxSTC. This function ensures that only
+/// visible text is returned (for example, if the selected text contains
+/// ANSI code style hidden - it will be dropped)
+WXDLLIMPEXP_SDK wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl);
 #endif // GLOBALS_H

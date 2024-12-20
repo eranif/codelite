@@ -1847,14 +1847,14 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
     }
 
     clEditor* editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        editor->OnMenuCommand(event);
-    } else if (event.GetId() == XRCID("id_find")) {
+    if (event.GetId() == XRCID("id_find")) {
         wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(wxWindow::FindFocus());
         if (stc) {
             GetMainBook()->GetFindBar()->SetEditor(stc);
-            GetMainBook()->ShowQuickBar(true);
+            GetMainBook()->ShowQuickBar(::clGetVisibleSelection(stc), true);
         }
+    } else if (editor) {
+        editor->OnMenuCommand(event);
     } else if (event.GetId() == XRCID("goto_linenumber")) {
         auto stc = CurrentSTC(this);
         CHECK_PTR_RET(stc);

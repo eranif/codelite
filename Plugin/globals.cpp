@@ -120,8 +120,11 @@ void MSWSetWindowDarkTheme(wxWindow* win)
 // Internal handler to handle queuing requests... end
 // --------------------------------------------------------
 
-static wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
-                                     const wxString& confToBuild, const wxString& fileName);
+static wxString DoExpandAllVariables(const wxString& expression,
+                                     clCxxWorkspace* workspace,
+                                     const wxString& projectName,
+                                     const wxString& confToBuild,
+                                     const wxString& fileName);
 
 #if defined(__WXGTK__)
 #include <dirent.h>
@@ -328,8 +331,11 @@ wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* e
 }
 
 // This functions accepts expression and expand all variables in it
-wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
-                            const wxString& selConf, const wxString& fileName)
+wxString ExpandAllVariables(const wxString& expression,
+                            clCxxWorkspace* workspace,
+                            const wxString& projectName,
+                            const wxString& selConf,
+                            const wxString& fileName)
 {
     // add support for backticks commands
     wxString tmpExp;
@@ -378,8 +384,11 @@ wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspac
     return DoExpandAllVariables(tmpExp, workspace, projectName, selConf, fileName);
 }
 
-wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
-                              const wxString& confToBuild, const wxString& fileName)
+wxString DoExpandAllVariables(const wxString& expression,
+                              clCxxWorkspace* workspace,
+                              const wxString& projectName,
+                              const wxString& confToBuild,
+                              const wxString& fileName)
 {
     wxString errMsg;
     wxString output(expression);
@@ -728,8 +737,8 @@ wxString clGetUserName()
     return (squashedname.IsEmpty() ? wxString("someone") : squashedname);
 }
 
-static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list,
-                                             bool loadDefaults = true)
+static void
+DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list, bool loadDefaults = true)
 {
     // read all files under this directory
     if (wxFileName::DirExists(folder)) {
@@ -792,7 +801,9 @@ void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 #endif
 }
 
-void StringManager::AddStrings(size_t size, const wxString* strings, const wxString& current,
+void StringManager::AddStrings(size_t size,
+                               const wxString* strings,
+                               const wxString& current,
                                wxControlWithItems* control)
 {
     m_size = size;
@@ -1338,10 +1349,14 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
 #endif // !__WXMSW__
 }
 
-wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message, const wxString& dlgId,
-                                                    const wxString& yesLabel, const wxString& noLabel,
-                                                    const wxString& cancelLabel, const wxString& checkboxLabel,
-                                                    long style, bool checkboxInitialValue)
+wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message,
+                                                    const wxString& dlgId,
+                                                    const wxString& yesLabel,
+                                                    const wxString& noLabel,
+                                                    const wxString& cancelLabel,
+                                                    const wxString& checkboxLabel,
+                                                    long style,
+                                                    bool checkboxInitialValue)
 {
     int res = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND);
     if (res == wxNOT_FOUND) {
@@ -1364,12 +1379,16 @@ wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message, con
     return static_cast<wxStandardID>(res);
 }
 
-wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& dlgId, const wxString& yesLabel,
-                                              const wxString& noLabel, const wxString& checkboxLabel, long style,
+wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
+                                              const wxString& dlgId,
+                                              const wxString& yesLabel,
+                                              const wxString& noLabel,
+                                              const wxString& checkboxLabel,
+                                              long style,
                                               bool checkboxInitialValue)
 {
-    return PromptForYesNoCancelDialogWithCheckbox(message, dlgId, yesLabel, noLabel, "", checkboxLabel, style,
-                                                  checkboxInitialValue);
+    return PromptForYesNoCancelDialogWithCheckbox(
+        message, dlgId, yesLabel, noLabel, "", checkboxLabel, style, checkboxInitialValue);
 }
 
 wxString& WrapWithQuotes(wxString& str)
@@ -1455,11 +1474,11 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
         ctrl->SetScrollWidth(maxPixel);
     }
 }
-wxString clGetTextFromUser(const wxString& title, const wxString& message, const wxString& initialValue,
-                           int charsToSelect, wxWindow* parent)
+wxString clGetTextFromUser(
+    const wxString& title, const wxString& message, const wxString& initialValue, int charsToSelect, wxWindow* parent)
 {
-    clGetTextFromUserDialog dialog(parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message,
-                                   initialValue, charsToSelect);
+    clGetTextFromUserDialog dialog(
+        parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message, initialValue, charsToSelect);
     if (dialog.ShowModal() == wxID_OK) {
         return dialog.GetValue();
     }
@@ -1541,7 +1560,9 @@ void clSetEditorFontEncoding(const wxString& encoding)
     EditorConfigST::Get()->SetOptions(options);
 }
 
-bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint,
+bool clFindExecutable(const wxString& name,
+                      wxFileName& exepath,
+                      const wxArrayString& hint,
                       const wxArrayString& suffix_list)
 {
     return FileUtils::FindExe(name, exepath, hint, suffix_list);
@@ -1678,8 +1699,8 @@ static void DoSetDialogSize(wxDialog* win, double factor)
     }
 }
 
-std::pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, const wxString& accountName,
-                                                     wxWindow* parent)
+std::pair<wxString, wxString>
+clRemoteFolderSelector(const wxString& title, const wxString& accountName, wxWindow* parent)
 {
 #if USE_SFTP
     SFTPBrowserDlg dlg(parent, title, wxEmptyString, clSFTP::SFTP_BROWSE_FOLDERS, accountName);
@@ -1692,8 +1713,8 @@ std::pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, cons
 #endif
 }
 
-std::pair<wxString, wxString> clRemoteFileSelector(const wxString& title, const wxString& accountName,
-                                                   const wxString& filter, wxWindow* parent)
+std::pair<wxString, wxString>
+clRemoteFileSelector(const wxString& title, const wxString& accountName, const wxString& filter, wxWindow* parent)
 {
 #if USE_SFTP
     SFTPBrowserDlg dlg(parent, title, filter, clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES, accountName);
@@ -1841,4 +1862,23 @@ wxColour GetRandomColour()
     } else {
         return c;
     }
+}
+
+wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl)
+{
+    CHECK_PTR_RET_EMPTY_STRING(ctrl);
+
+    int start_pos = ctrl->GetSelectionStart();
+    int end_pos = ctrl->GetSelectionEnd();
+    CHECK_COND_RET_EMPTY_STRING(end_pos > start_pos);
+
+    // Make sure we only pick visible chars (embedded ANSI colour can break the selected word)
+    wxString res;
+    res.reserve(end_pos - start_pos + 1);
+    for (; start_pos < end_pos; start_pos++) {
+        if (ctrl->StyleGetVisible(ctrl->GetStyleAt(start_pos))) {
+            res << (wxChar)ctrl->GetCharAt(start_pos);
+        }
+    }
+    return res;
 }

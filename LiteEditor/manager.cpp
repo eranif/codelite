@@ -2071,22 +2071,19 @@ void Manager::DbgStart(long attachPid)
     DebugMessage(_("Debug session started successfully!\n"));
 
     if (dbgr->GetIsRemoteDebugging()) {
-
         // debugging remote target
-        wxString comm;
-        wxString port = bldConf->GetDbgHostPort();
         wxString host = bldConf->GetDbgHostName();
+        wxString port = bldConf->GetDbgHostPort();
 
-        comm << host;
+        // Trim whitespaces
+        host = host.Trim(false).Trim();
+        port = port.Trim(false).Trim();
 
-        host = host.Trim().Trim(false);
-        port = port.Trim().Trim(false);
-
-        if (port.IsEmpty() == false) {
-            comm << wxT(":") << port;
+        if (!port.IsEmpty()) {
+            host << wxT(":") << port;
         }
 
-        dbgr->Run(args, comm);
+        dbgr->Run(args, host);
 
     } else if (attachPid == wxNOT_FOUND) {
 
@@ -2502,19 +2499,31 @@ void Manager::UpdateAsciiViewer(const wxString& expression, const wxString& tip)
 void Manager::UpdateRemoteTargetConnected(const wxString& line)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if (dbgr && dbgr->IsRunning() && IsWorkspaceOpen()) {
-        // we currently do not support this feature when debugging using 'Quick debug'
-        wxString errMsg;
-        ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(GetActiveProjectName(), errMsg);
-        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), wxEmptyString);
-        if (bldConf) {
-            wxArrayString dbg_cmds =
-                wxStringTokenize(bldConf->GetDebuggerPostRemoteConnectCmds(), wxT("\n"), wxTOKEN_STRTOK);
-            for (size_t i = 0; i < dbg_cmds.GetCount(); i++) {
-                dbgr->ExecuteCmd(dbg_cmds.Item(i));
+
+    if (dbgr && dbgr->IsRunning()) {
+        wxString commands;
+        // An old behavior for legacy workspace
+        if (IsWorkspaceOpen()) {
+            // we currently do not support this feature when debugging using 'Quick debug'
+            wxString errMsg;
+            ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(GetActiveProjectName(), errMsg);
+            BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), wxEmptyString);
+            if (bldConf) {
+                commands = bldConf->GetDebuggerPostRemoteConnectCmds();
             }
+
+        // Filesystem workspace and so on
+        } else if (!dbgr->GetPostRemoteConnectCommands().empty()) {
+            commands = dbgr->GetPostRemoteConnectCommands();
+        }
+
+        // - Execute commands
+        wxArrayString dbg_cmds = wxStringTokenize(commands, wxT("\n"), wxTOKEN_STRTOK);
+        for (size_t i = 0; i < dbg_cmds.GetCount(); i++) {
+            dbgr->ExecuteCmd(dbg_cmds.Item(i));
         }
     }
+
     // log the line
     UpdateAddLine(line);
 }

@@ -371,13 +371,18 @@ protected:
     bool m_isSSHDebugging = false;
     wxString m_debuggeeProjectName;
     wxString m_sshAccount;
+    
+    //! Command to execute right after connect to the remote target
+    wxString m_debuggerPostRemoteConnectCommands;
 
 public:
     IDebugger()
         : m_observer(NULL)
         , m_env(NULL)
         , m_isRemoteDebugging(false)
-        , m_isRemoteExtended(false){};
+        , m_isRemoteExtended(false)
+    {}
+
     virtual ~IDebugger(){};
     void SetProjectName(const wxString& project) { m_debuggeeProjectName = project; }
     void SetName(const wxString& name) { m_name = name; }
@@ -395,9 +400,14 @@ public:
     DebuggerInformation GetDebuggerInformation() { return m_info; }
 
     void SetIsRemoteDebugging(bool isRemoteDebugging) { this->m_isRemoteDebugging = isRemoteDebugging; }
-    bool GetIsRemoteDebugging() const { return m_isRemoteDebugging; }
     void SetIsRemoteExtended(bool isRemoteExtended) { this->m_isRemoteExtended = isRemoteExtended; }
+    void SetPostRemoteConnectCommands(const wxString& commands) { this->m_debuggerPostRemoteConnectCommands = commands; }
+    
+    
+    bool GetIsRemoteDebugging() const { return m_isRemoteDebugging; }
     bool GetIsRemoteExtended() const { return m_isRemoteExtended; }
+    const wxString& GetPostRemoteConnectCommands() const { return this->m_debuggerPostRemoteConnectCommands; }
+    
     void SetIsSSHDebugging(bool isSSHDebugging) { this->m_isSSHDebugging = isSSHDebugging; }
     bool IsSSHDebugging() const { return m_isSSHDebugging; }
     void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }

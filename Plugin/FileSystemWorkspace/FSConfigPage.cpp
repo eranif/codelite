@@ -32,6 +32,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
         lexer->Apply(m_stcCCFlags);
         lexer->Apply(m_stcEnv);
         lexer->Apply(m_stcCommands);
+        lexer->Apply(m_stcRemoteCommands);
     }
 
     m_dvListCtrlTargets->SetSortFunction([](clRowEntry* a, clRowEntry* b) {
@@ -79,8 +80,15 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_textCtrlExcludeFiles->ChangeValue(config->GetExcludeFilesPattern());
     m_textCtrlExcludePaths->ChangeValue(config->GetExecludePaths());
     m_textCtrlWD->ChangeValue(config->GetWorkingDirectory());
+
     m_textCtrlDebugger->ChangeValue(config->GetDebuggerPath());
     m_stcCommands->SetText(config->GetDebuggerCommands());
+
+    m_checkRemoteEnabled->SetValue(config->GetDebuggerRemoteEnabled());
+    m_checkRemoteExtended->SetValue(config->GetDebuggerRemoteExtended());
+    m_textRemoteTargetHost->SetValue(config->GetDebuggerRemoteHost());
+    m_textRemoteTargetPort->SetValue(config->GetDebuggerRemotePort());
+    m_stcRemoteCommands->SetText(config->GetDebuggerRemoteCommands());
 
     if (!m_enableRemotePage) {
         m_checkBoxEnableRemote->Disable();
@@ -156,7 +164,7 @@ void FSConfigPage::Save()
         last_executables.swap(small_arr);
     }
 
-    m_config->SetExecutable(m_comboBoxExecutable->GetStringSelection());
+    m_config->SetExecutable(m_comboBoxExecutable->GetValue());
     m_config->SetLastExecutables(last_executables);
     m_config->SetEnvironment(m_stcEnv->GetText());
     m_config->SetArgs(m_textCtrlArgs->GetValue());
@@ -169,8 +177,15 @@ void FSConfigPage::Save()
     m_config->SetExcludeFilesPattern(m_textCtrlExcludeFiles->GetValue());
     m_config->SetExcludePaths(m_textCtrlExcludePaths->GetValue());
     m_config->SetWorkingDirectory(m_textCtrlWD->GetValue());
+
     m_config->SetDebuggerPath(m_textCtrlDebugger->GetValue());
     m_config->SetDebuggerCommands(m_stcCommands->GetText());
+
+    m_config->SetDebuggerRemoteEnabled(m_checkRemoteEnabled->IsChecked());
+    m_config->SetDebuggerRemoteExtended(m_checkRemoteExtended->IsChecked());
+    m_config->SetDebuggerRemoteHost(m_textRemoteTargetHost->GetValue());
+    m_config->SetDebuggerRemotePort(m_textRemoteTargetPort->GetValue());
+    m_config->SetDebuggerRemoteCommands(m_stcRemoteCommands->GetText());
 }
 
 void FSConfigPage::OnTargetActivated(wxDataViewEvent& event)

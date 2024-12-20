@@ -4,9 +4,7 @@
 #include "FontUtils.hpp"
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
-#include "ThemeImporters/ThemeImporterBase.hpp"
 #include "clIdleEventThrottler.hpp"
-#include "clModuleLogger.hpp"
 #include "clSystemSettings.h"
 #include "clWorkspaceManager.h"
 #include "dirsaver.h"
@@ -25,6 +23,25 @@
 
 namespace
 {
+/// given range, [start, end), return the string in this range without any ANSI escape codes
+wxString GetSelectedRange(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
+{
+    if (start_pos >= end_pos) {
+        return wxEmptyString;
+    }
+
+    // Make sure we only pick visible chars (embedded ANSI colour can break the selected word)
+    wxString res;
+    res.reserve(end_pos - start_pos + 1);
+    for (; start_pos < end_pos; start_pos++) {
+        if (ctrl->StyleGetVisible(ctrl->GetStyleAt(start_pos))) {
+            res << (wxChar)ctrl->GetCharAt(start_pos);
+        }
+    }
+
+    return res;
+}
+
 class MyEventsHandler : public clEditEventsHandler
 {
     wxTerminalInputCtrl* m_input_ctrl = nullptr;
@@ -51,14 +68,11 @@ public:
             return;
         }
 
-        wxString text = m_stc->GetSelectedText();
+        auto text = GetSelectedRange(m_stc, m_stc->GetSelectionStart(), m_stc->GetSelectionEnd());
         if (text.empty()) {
             return;
         }
-        wxString modbuffer;
-        StringUtils::StripTerminalColouring(text, modbuffer);
-
-        ::CopyToClipboard(modbuffer);
+        ::CopyToClipboard(text);
     }
 };
 
@@ -290,17 +304,13 @@ void wxTerminalOutputCtrl::ProcessIdle()
     }
 
     int pos = m_ctrl->PositionFromPoint(client_pt);
-    int word_start_pos = m_ctrl->WordStartPosition(pos, true);
-    int word_end_pos = m_ctrl->WordEndPosition(pos, true);
-
-    // Make sure we only pick visible chars (embedded ANSI colour can break the selected word)
-    for (; word_start_pos < word_end_pos; word_start_pos++) {
-        if (m_ctrl->StyleGetVisible(m_ctrl->GetStyleAt(word_start_pos))) {
-            break;
-        }
+    int start_pos = m_ctrl->WordStartPosition(pos, true);
+    int end_pos = m_ctrl->WordEndPosition(pos, true);
+    if (start_pos == end_pos) {
+        return;
     }
 
-    IndicatorRange range{ word_start_pos, word_end_pos };
+    IndicatorRange range{ start_pos, end_pos };
     if (m_indicatorHyperlink.ok() && m_indicatorHyperlink == range) {
         // already marked
         return;
@@ -334,10 +344,8 @@ void wxTerminalOutputCtrl::OnLeftUp(wxMouseEvent& event)
     }
 
     // fire an event
-    wxString pattern = m_ctrl->GetTextRange(m_indicatorHyperlink.start(), m_indicatorHyperlink.end());
-    wxString modbuffer;
-    StringUtils::StripTerminalColouring(pattern, modbuffer);
-    CallAfter(&wxTerminalOutputCtrl::DoPatternClicked, modbuffer);
+    auto pattern = GetSelectedRange(m_ctrl, m_indicatorHyperlink.start(), m_indicatorHyperlink.end());
+    CallAfter(&wxTerminalOutputCtrl::DoPatternClicked, pattern);
 }
 
 void wxTerminalOutputCtrl::OnEnterWindow(wxMouseEvent& event)
@@ -463,7 +471,7 @@ void wxTerminalOutputCtrl::OnMenu(wxContextMenuEvent& event)
         wxEVT_MENU,
         [this](wxCommandEvent& event) {
             wxUnusedVar(event);
-            wxString text = m_ctrl->GetSelectedText();
+            wxString text = GetSelectedRange(m_ctrl, m_ctrl->GetSelectionStart(), m_ctrl->GetSelectionEnd());
             if (text.empty()) {
                 return;
             }

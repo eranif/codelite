@@ -210,12 +210,21 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
 
-    int w = wxNOT_FOUND;
-    int h = wxNOT_FOUND;
-    if (clConfig::Get().Read("FindBar/Width", w) && clConfig::Get().Read("FindBar/Height", h)) {
-        SetSize(w, h);
-        SetSizeHints(w, h);
+    int dlg_width = wxNOT_FOUND;
+    int dlg_height = wxNOT_FOUND;
+
+    int display_width, display_height;
+    wxDisplaySize(&display_width, &display_height);
+    wxSize min_size(display_width / 4, GetSizer()->CalcMin().GetHeight());
+
+    if (clConfig::Get().Read("FindBar/Width", dlg_width) && clConfig::Get().Read("FindBar/Height", dlg_height)) {
+        SetSize(dlg_width, dlg_height);
+        SetSizeHints(dlg_width, dlg_height);
+        SetMinClientSize(min_size);
     } else {
+        // first time, place it at the top
+        Move(wxNOT_FOUND, parent->GetPosition().y);
+        SetMinClientSize(min_size);
         GetSizer()->Fit(this);
     }
     Layout();
@@ -425,6 +434,13 @@ bool QuickFindBar::DoShow([[maybe_unused]] bool s, const wxString& findWhat, boo
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
+
+    int dummy = wxNOT_FOUND;
+    if (!clConfig::Get().Read("FindBar/Height", dummy)) {
+        // first time, place it at the top
+        Move(wxNOT_FOUND, GetParent()->GetPosition().y);
+    }
+
     bool res = wxDialog::Show(s);
     if (s && m_sci) {
         // Delete the indicators

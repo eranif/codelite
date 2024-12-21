@@ -29,7 +29,6 @@ protected:
 public:
     EventsEditorPane(wxWindow* parent, wxcWidget* control, wxCrafterPlugin* plugin);
     virtual ~EventsEditorPane();
-    void OpenFunction(const wxString& kind, const wxString& fooname);
     void Save();
     void InitEventsForWidget(wxcWidget* control);
     void Clear();

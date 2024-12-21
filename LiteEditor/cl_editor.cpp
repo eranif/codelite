@@ -55,7 +55,6 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "findreplacedlg.h"
 #include "findresultstab.h"
 #include "frame.h"
 #include "globals.h"
@@ -2359,54 +2358,6 @@ void clEditor::SetActive()
 
     wxStyledTextEvent dummy;
     OnSciUpdateUI(dummy);
-}
-
-// Popup a Find/Replace dialog
-/**
- * \brief
- * \param isReplaceDlg
- */
-void clEditor::DoFindAndReplace(bool isReplaceDlg)
-{
-    if (m_findReplaceDlg == NULL) {
-        // Create the dialog
-        m_findReplaceDlg = new FindReplaceDialog(clMainFrame::Get(), m_findReplaceData);
-        m_findReplaceDlg->SetEventOwner(this->GetEventHandler());
-    }
-
-    if (m_findReplaceDlg->IsShown()) {
-        // make sure that dialog has focus and that this instace
-        // of clEditor is the owner for the events
-        m_findReplaceDlg->SetEventOwner(this->GetEventHandler());
-        m_findReplaceDlg->SetFocus();
-        return;
-    }
-
-    // the search always starts from the current line
-    // if there is a selection, set it
-    if (GetSelectedText().IsEmpty() == false) {
-        // if this string does not exist in the array add it
-        wxString Selection(GetSelectedText());
-        if (isReplaceDlg) {
-            if (!Selection.Contains(wxT("\n"))) {
-                // Don't try to use a multiline selection as the 'find' token. It looks ugly and
-                // it won't be what the user wants (it'll be the 'Replace in Selection' selection)
-                m_findReplaceDlg->GetData().SetFindString(GetSelectedText());
-            } else {
-                m_findReplaceDlg->GetData().SetFlags(m_findReplaceDlg->GetData().GetFlags() | wxFRD_SELECTIONONLY);
-            }
-        } else {
-            // always set the find string in 'Find' dialog
-            m_findReplaceDlg->GetData().SetFindString(GetSelectedText());
-        }
-    }
-
-    if (isReplaceDlg) { // Zeroise
-        m_findReplaceDlg->ResetReplacedCount();
-        m_findReplaceDlg->SetReplacementsMessage(frd_dontshowzeros);
-    }
-
-    m_findReplaceDlg->Show(isReplaceDlg ? REPLACE_DLG : FIND_DLG);
 }
 
 void clEditor::OnFindDialog(wxCommandEvent& event)

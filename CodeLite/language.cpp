@@ -350,47 +350,12 @@ wxArrayString Language::DoExtractTemplateDeclarationArgs(TagEntryPtr tag)
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-void TemplateHelper::SetTemplateDeclaration(const wxString& templateDeclaration)
-{
-    LanguageST::Get()->ParseTemplateArgs(templateDeclaration, this->templateDeclaration);
-}
-
 void TemplateHelper::SetTemplateInstantiation(const wxString& templateInstantiation)
 {
     this->templateInstantiationVector.clear();
     wxArrayString l;
     LanguageST::Get()->ParseTemplateInitList(templateInstantiation, l);
     this->templateInstantiationVector.push_back(l);
-}
-
-void TemplateHelper::SetTemplateInstantiation(const wxArrayString& templInstantiation)
-{
-    // incase we are using template argument as template instantiation,
-    // we should perform the replacement or else we will lose
-    // the actual template instantiation list
-    // an example for such cases:
-    // template <class _Tp> class vector {
-    //    typedef Something<_Tp> reference;
-    //  reference get();
-    // };
-    // Now, by attempting to resolve this:
-    // vector<wxString> v;
-    // v.get()->
-    // we should replace Something<_Tp> into Something<wxString> *before* we continue with
-    // the resolving
-
-    wxArrayString newInstantiationList = templInstantiation;
-    // search for 'name' in the declaration list
-    for(size_t i = 0; i < newInstantiationList.GetCount(); i++) {
-        int where = this->templateDeclaration.Index(newInstantiationList.Item(i));
-        if(where != wxNOT_FOUND) {
-            wxString name = Substitute(newInstantiationList.Item(i));
-            if(!name.IsEmpty())
-                newInstantiationList[i] = name;
-        }
-    }
-
-    templateInstantiationVector.push_back(newInstantiationList);
 }
 
 wxString TemplateHelper::Substitute(const wxString& name)

@@ -100,12 +100,6 @@ void EventsEditorPane::Save()
     }
 }
 
-void EventsEditorPane::OpenFunction(const wxString& kind, const wxString& fooname)
-{
-    wxUnusedVar(kind);
-    wxUnusedVar(fooname);
-}
-
 void EventsEditorPane::OnWidgetSelected(wxCommandEvent& e)
 {
     e.Skip();

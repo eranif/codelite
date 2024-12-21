@@ -259,18 +259,6 @@ bool IHunSpell::CheckWord(const wxString& word) const
     return Hunspell_spell(m_pSpell, word.ToUTF8()) != 0;
 }
 // ------------------------------------------------------------
-bool IHunSpell::IsTag(const wxString& word) const
-{
-    if (GetIgnoreSymbolsInTagsDatabase()) {
-        std::vector<TagEntryPtr> tags;
-        TagsManagerST::Get()->FindSymbol(word, tags);
-        if (!tags.empty())
-            return true;
-    }
-
-    return false;
-}
-// ------------------------------------------------------------
 wxArrayString IHunSpell::GetSuggestions(const wxString& misspelled)
 {
     wxArrayString suggestions;
@@ -401,14 +389,6 @@ void IHunSpell::CheckSpelling()
 // ------------------------------------------------------------
 // tools
 // ------------------------------------------------------------
-wxString IHunSpell::GetCharacterEncoding()
-{
-    if (m_pSpell == NULL)
-        return wxEmptyString;
-
-    wxString encoding(wxConvUTF8.cMB2WC(Hunspell_get_dic_encoding(m_pSpell)), *wxConvCurrent);
-    return encoding;
-}
 
 // ------------------------------------------------------------
 void IHunSpell::AddWordToIgnoreList(const wxString& word)
@@ -595,14 +575,3 @@ void IHunSpell::SetCaseSensitiveUserDictionary(const bool caseSensitiveUserDicti
         m_ignoreList.swap(ignoreList);
     }
 }
-
-void IHunSpell::AddWord(const wxString& word)
-{
-#if wxUSE_STL
-    // Implicit conversions are disabled when building with wxUSE_STL=1
-    Hunspell_add(m_pSpell, word.mb_str().data());
-#else
-    Hunspell_add(m_pSpell, word);
-#endif
-}
-// ------------------------------------------------------------

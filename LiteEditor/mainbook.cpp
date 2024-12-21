@@ -36,7 +36,6 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "filechecklist.h"
-#include "findreplacedlg.h"
 #include "frame.h"
 #include "globals.h"
 #include "ieditor.h"

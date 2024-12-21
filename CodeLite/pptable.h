@@ -98,25 +98,4 @@ struct WXDLLIMPEXP_CL PPToken {
     static bool
     readInitList(const std::string& in, size_t from, std::string& initList, std::vector<std::string>& initListArr);
 };
-
-class WXDLLIMPEXP_CL PPTable
-{
-    std::map<wxString, PPToken> m_table;
-    std::set<wxString> m_namesUsed;
-
-public:
-    static PPTable* Instance();
-    static void Release();
-
-private:
-    PPTable();
-    ~PPTable();
-
-public:
-    PPToken Token(const wxString& name);
-
-    const std::map<wxString, PPToken>& GetTable() const { return m_table; }
-
-    const std::set<wxString>& GetNamesUsed() const { return m_namesUsed; }
-};
 #endif // PPTABLE_H

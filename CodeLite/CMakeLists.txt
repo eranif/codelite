@@ -34,6 +34,8 @@ target_include_directories(libcodelite
     "${CL_SRC_ROOT}/CodeLite"
     "${CL_SRC_ROOT}/CodeLite/ssh"
     "${CL_SRC_ROOT}/PCH"
+    "${CL_SRC_ROOT}/Interfaces"
+    "${CL_SRC_ROOT}/Plugin"
     PRIVATE
     "${CL_SRC_ROOT}/submodules/asio/asio/include"
     "${CL_SRC_ROOT}/submodules/websocketpp"

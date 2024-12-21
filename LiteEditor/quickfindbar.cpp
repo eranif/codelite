@@ -123,7 +123,9 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
         XRCID("highlight-matches"), _("Highlight matches"), TB_ADD_BITMAP("marker"), wxEmptyString, wxITEM_CHECK);
     m_toolbar->AddTool(
         XRCID("replace-in-selection"), _("In Selection"), TB_ADD_BITMAP("text_selection"), wxEmptyString, wxITEM_CHECK);
-
+    m_toolbar->AddStretchableSpace();
+    m_message = new wxStaticText(m_toolbar, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
+    m_toolbar->AddControl(m_message);
 #undef TB_ADD_BITMAP
 
     m_toolbar->Realize();
@@ -207,16 +209,11 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
-
-    constexpr int FIELDS_COUNT = 2;
-    int styles[FIELDS_COUNT] = { wxSB_FLAT, wxSB_FLAT };
-    m_statusBar = new wxCustomStatusBar(this);
-    wxCustomStatusBarField::Ptr_t second_field(new wxCustomStatusBarFieldText(m_statusBar, 100));
-    second_field->SetAutoWidth(true);
-    m_statusBar->AddField(second_field);
-    GetSizer()->Add(m_statusBar, 0, wxEXPAND);
     GetSizer()->Fit(this);
+
+#if !defined(__WXMAC__)
     SetSize(parent->GetSize().GetWidth() / 2, wxNOT_FOUND);
+#endif
     Layout();
 }
 
@@ -529,7 +526,7 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 
 void QuickFindBar::DoSelectAll()
 {
-    m_statusBar->SetText(wxEmptyString);
+    m_message->SetLabel(wxEmptyString);
     if (!m_sci) {
         return;
     }
@@ -539,7 +536,7 @@ void QuickFindBar::DoSelectAll()
 
     auto matches = DoFindAll(target);
     if (matches.empty()) {
-        m_statusBar->SetText(_("No matches found"), 0);
+        m_message->SetLabel(_("No matches found"));
         return;
     }
 
@@ -555,7 +552,7 @@ void QuickFindBar::DoSelectAll()
         }
     }
     Show(false);
-    m_statusBar->SetText(wxString::Format(_("Selected %lu matches"), matches.size()), 0);
+    m_message->SetLabel(wxString::Format(_("Selected %lu matches"), matches.size()));
     m_sci->SetMainSelection(0);
 }
 
@@ -616,7 +613,7 @@ void QuickFindBar::DoHighlightMatches(bool checked)
 
         wxString message;
         message << _("Found ") << matches.size() << wxPLURAL(" result", " results", matches.size());
-        m_statusBar->SetText(message, 0);
+        m_message->SetLabel(message);
 
     } else {
         editor->SetFindBookmarksActive(false);
@@ -629,7 +626,7 @@ void QuickFindBar::DoHighlightMatches(bool checked)
             pEditor->GetCtrl()->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
             pEditor->GetCtrl()->IndicatorClearRange(0, pEditor->GetCtrl()->GetLength());
         });
-        m_statusBar->SetText(wxEmptyString);
+        m_message->SetLabel(wxEmptyString);
     }
     clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
 }
@@ -784,7 +781,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
         CenterLine(m_sci, pos, pos);
     }
 
-    m_statusBar->SetText(wxString::Format(_("Made %d replacements"), replacements_done), 0);
+    m_message->SetLabel(wxString::Format(_("Made %d replacements"), replacements_done));
     Show(false);
     m_sci->SetFocus();
 }
@@ -1011,13 +1008,13 @@ bool QuickFindBar::IsReplacementRegex() const
 
 TargetRange QuickFindBar::DoFindWithMessage(size_t find_flags, const TargetRange& target)
 {
-    m_statusBar->SetText(wxEmptyString);
+    m_message->SetLabel(wxEmptyString);
     auto res = DoFind(find_flags, target);
     if (!res.IsOk()) {
         if (find_flags & FIND_PREV) {
-            m_statusBar->SetText(_("Reached the start of the document"), 0);
+            m_message->SetLabel(_("Reached the start of the document"));
         } else {
-            m_statusBar->SetText(_("Reached the end of the document"), 0);
+            m_message->SetLabel(_("Reached the end of the document"));
         }
     }
     return res;

@@ -32,6 +32,7 @@
 #include <vector>
 #include <wx/combobox.h>
 #include <wx/panel.h>
+#include <wx/stattext.h>
 #include <wx/statusbr.h>
 #include <wx/timer.h>
 
@@ -96,8 +97,7 @@ protected:
     bool m_inSelection = false;
     clTerminalHistory m_searchHistory;
     clTerminalHistory m_replaceHistory;
-    wxCustomStatusBar* m_statusBar = nullptr;
-    wxTimer* m_timer = nullptr;
+    wxStaticText* m_message = nullptr;
 
 protected:
     virtual void OnButtonKeyDown(wxKeyEvent& event);

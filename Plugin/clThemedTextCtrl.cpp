@@ -26,16 +26,19 @@
 #define BORDER_STYLE wxBORDER_DEFAULT
 #endif
 
-clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos,
-                                   const wxSize& size, long style)
+clThemedTextCtrl::clThemedTextCtrl(
+    wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size, long style)
 {
     wxUnusedVar(style);
-    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, BORDER_STYLE);
+#if USE_TEXT_CTRL
+    wxTextCtrl::Create(parent, id, value, wxDefaultPosition, wxDefaultSize, BORDER_STYLE);
+#else
+    clThemedTextCtrlBase::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, BORDER_STYLE);
     ApplySettings();
 
     SetYCaretPolicy(0, 0);
     SetMarginLeft(0);
-    for(size_t i = 0; i < wxSTC_MAX_MARGIN; ++i) {
+    for (size_t i = 0; i < wxSTC_MAX_MARGIN; ++i) {
         SetMarginWidth(i, 0);
     }
     SetUseHorizontalScrollBar(false);
@@ -49,7 +52,7 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     auto options = EditorConfigST::Get()->GetOptions();
 
     // Set CamelCase caret movement
-    if(options->GetCaretUseCamelCase()) {
+    if (options->GetCaretUseCamelCase()) {
         // selection
         CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDPARTLEFTEXTEND);
         CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDPARTRIGHTEXTEND);
@@ -73,17 +76,20 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
 #if wxCHECK_VERSION(3, 1, 5)
     Bind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
 #endif
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
     m_editEventsHandler = std::make_unique<clEditEventsHandler>(this);
+#endif
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }
 
 clThemedTextCtrl::~clThemedTextCtrl()
 {
+#if !USE_TEXT_CTRL
     // Unbind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Unbind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Unbind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
 #if wxCHECK_VERSION(3, 1, 5)
     Unbind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
+#endif
 #endif
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }
@@ -91,14 +97,14 @@ clThemedTextCtrl::~clThemedTextCtrl()
 void clThemedTextCtrl::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
+    if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
         event.Skip(false);
         wxCommandEvent text_enter(wxEVT_COMMAND_TEXT_ENTER);
         text_enter.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(text_enter);
-    } else if(event.GetKeyCode() == WXK_TAB) {
+    } else if (event.GetKeyCode() == WXK_TAB) {
         event.Skip(false);
-        if(event.GetModifiers() == wxMOD_SHIFT) {
+        if (event.GetModifiers() == wxMOD_SHIFT) {
             // navigate backward
             Navigate(wxNavigationKeyEvent::IsBackward);
         } else {
@@ -112,7 +118,7 @@ void clThemedTextCtrl::OnAddChar(wxStyledTextEvent& event) { event.Skip(); }
 void clThemedTextCtrl::OnChange(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(event.GetModificationType() & (wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT)) {
+    if (event.GetModificationType() & (wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT)) {
         wxCommandEvent text_enter(wxEVT_COMMAND_TEXT_UPDATED);
         text_enter.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(text_enter);
@@ -128,6 +134,15 @@ void clThemedTextCtrl::OnSysColours(clCommandEvent& event)
 void clThemedTextCtrl::ApplySettings()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    wxUnusedVar(lexer);
+
+#if USE_TEXT_CTRL
+#if !defined(__WXMAC__)
+    wxFont font = lexer->GetFontForStyle(0, this);
+    font.SetFractionalPointSize(font.GetFractionalPointSize() * 0.8);
+    SetFont(font);
+#endif
+#else
     lexer->ApplySystemColours(this);
 
     // Create wxGCDC from wxMemoryDC
@@ -142,6 +157,7 @@ void clThemedTextCtrl::ApplySettings()
     rect.Inflate(1);
 
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
+#endif
 }
 
 void clThemedTextCtrl::OnPaste(wxStyledTextEvent& event)
@@ -162,22 +178,30 @@ wxString clThemedTextCtrl::TrimText(const wxString& text) const
 
 void clThemedTextCtrl::TrimCurrentText()
 {
-    if(GetText().Contains("\n")) {
+#if !USE_TEXT_CTRL
+    if (GetText().Contains("\n")) {
         wxString text = TrimText(GetText());
         // replace the text
         clThemedTextCtrl::SetText(text);
     }
+#endif
 }
 
 void clThemedTextCtrl::SetText(const wxString& value)
 {
+#if !USE_TEXT_CTRL
     wxString text = TrimText(value);
     ClearAll();
     wxStyledTextCtrl::SetText(text);
     SetCurrentPos(GetLastPosition());
     SetSelection(GetLastPosition(), GetLastPosition());
+#else
+    // Set the value and clear the selection
+    ChangeValue(value);
+    SetSelection(GetInsertionPoint(), GetInsertionPoint());
+#endif
 }
 
 void clThemedTextCtrl::SetValue(const wxString& value) { clThemedTextCtrl::SetText(value); }
 
-void clThemedTextCtrl::SelectAll() { wxStyledTextCtrl::SelectAll(); }
+void clThemedTextCtrl::SelectAll() { clThemedTextCtrlBase::SelectAll(); }

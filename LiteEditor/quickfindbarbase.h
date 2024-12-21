@@ -22,12 +22,12 @@
 #include <wx/icon.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/textctrl.h>
 #include "clThemedTextCtrl.hpp"
 #include <wx/button.h>
 #include "clThemedButton.h"
-#include <wx/toolbar.h>
-#include "clToolBar.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -104,6 +104,7 @@ public:
     };
 
 protected:
+    clToolBar* m_toolbar;
     wxPanel* m_mainPanel;
     clThemedTextCtrl* m_textCtrlFind;
     clThemedButton* m_buttonFind;
@@ -112,7 +113,6 @@ protected:
     clThemedTextCtrl* m_textCtrlReplace;
     clThemedButton* m_buttonReplace;
     clThemedButton* m_buttonReplaceAll;
-    clToolBar* m_toolbar;
 
 protected:
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
@@ -134,6 +134,7 @@ protected:
     virtual void OnReplaceAllUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedTextCtrl* GetTextCtrlFind() { return m_textCtrlFind; }
     clThemedButton* GetButtonFind() { return m_buttonFind; }
     clThemedButton* GetButtonFindPrev() { return m_buttonFindPrev; }
@@ -142,7 +143,6 @@ public:
     clThemedButton* GetButtonReplace() { return m_buttonReplace; }
     clThemedButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
-    clToolBar* GetToolbar() { return m_toolbar; }
     clFindReplaceDialogBase(wxWindow* parent,
                             wxWindowID id = wxID_ANY,
                             const wxString& title = _("Find / Replace"),

@@ -222,14 +222,19 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
     wxBoxSizer* boxSizer162 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer162);
 
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(24, 24));
+
+    boxSizer162->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer162->Add(m_mainPanel, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer162->Add(m_mainPanel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer159 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer159);
 
-    wxFlexGridSizer* flexGridSizer107 = new wxFlexGridSizer(0, 4, 0, 0);
+    wxFlexGridSizer* flexGridSizer107 = new wxFlexGridSizer(0, 4, 2, 2);
     flexGridSizer107->SetFlexibleDirection(wxBOTH);
     flexGridSizer107->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer107->AddGrowableCol(0);
@@ -244,10 +249,11 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
                                           wxTE_PROCESS_ENTER);
     m_textCtrlFind->SetFocus();
 #if wxVERSION_NUMBER >= 3000
-    m_textCtrlFind->SetHint(wxT(""));
+    m_textCtrlFind->SetHint(_("Find what..."));
 #endif
 
     flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    m_textCtrlFind->SetMinSize(wxSize(350, -1));
 
     m_buttonFind = new clThemedButton(
         m_mainPanel, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
@@ -265,13 +271,18 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 
     flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_textCtrlReplace = new clThemedTextCtrl(
-        m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+    m_textCtrlReplace = new clThemedTextCtrl(m_mainPanel,
+                                             wxID_ANY,
+                                             wxT(""),
+                                             wxDefaultPosition,
+                                             wxDLG_UNIT(m_mainPanel, wxSize(350, -1)),
+                                             wxTE_PROCESS_ENTER);
 #if wxVERSION_NUMBER >= 3000
-    m_textCtrlReplace->SetHint(wxT(""));
+    m_textCtrlReplace->SetHint(_("Replace with..."));
 #endif
 
     flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    m_textCtrlReplace->SetMinSize(wxSize(350, -1));
 
     m_buttonReplace = new clThemedButton(
         m_mainPanel, wxID_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
@@ -282,12 +293,6 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
         m_mainPanel, wxID_REPLACE_ALL, _("Replace All"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
     flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
-    m_toolbar =
-        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(24, 24));
-
-    boxSizer162->Add(m_toolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("clFindReplaceDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

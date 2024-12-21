@@ -66,7 +66,7 @@ public:
         mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
         m_textCtrl = new clThemedTextCtrl(mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
         m_textCtrl->SetUseVerticalScrollBar(false); // don't show v-scrollbar
-        m_textCtrl->SetWrapMode(wxSTC_WRAP_CHAR);   // this will effectivley hide the v-scrollbar
+        m_textCtrl->SetWrapMode(wxSTC_WRAP_CHAR);   // this will effectively hide the v-scrollbar
         mainPanel->GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
         m_textCtrl->Bind(wxEVT_STC_MODIFIED, &clSearchControl::OnTextUpdated, this);
         m_textCtrl->Bind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);

@@ -209,11 +209,15 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
-    GetSizer()->Fit(this);
 
-#if !defined(__WXMAC__)
-    SetSize(parent->GetSize().GetWidth() / 2, wxNOT_FOUND);
-#endif
+    int w = wxNOT_FOUND;
+    int h = wxNOT_FOUND;
+    if (clConfig::Get().Read("FindBar/Width", w) && clConfig::Get().Read("FindBar/Height", h)) {
+        SetSize(w, h);
+        SetSizeHints(w, h);
+    } else {
+        GetSizer()->Fit(this);
+    }
     Layout();
 }
 
@@ -222,6 +226,8 @@ QuickFindBar::~QuickFindBar()
     // Remember the buttons clicked
     clConfig::Get().Write("FindBar/SearchFlags", (int)DoGetSearchFlags());
     clConfig::Get().Write("FindBar/HighlightOccurences", m_highlightMatches);
+    clConfig::Get().Write("FindBar/Width", GetSize().GetWidth());
+    clConfig::Get().Write("FindBar/Height", GetSize().GetHeight());
 
     wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindNextCaret, this, XRCID("find_next_at_caret"));
     wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
@@ -788,6 +794,10 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
 
 TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
 {
+    if (!m_sci) {
+        return {};
+    }
+
     // define the target range
     size_t search_options = DoGetSearchFlags();
     int target_start = wxNOT_FOUND, target_end = wxNOT_FOUND;
@@ -1008,6 +1018,10 @@ bool QuickFindBar::IsReplacementRegex() const
 
 TargetRange QuickFindBar::DoFindWithMessage(size_t find_flags, const TargetRange& target)
 {
+    if (!m_sci) {
+        return {};
+    }
+
     m_message->SetLabel(wxEmptyString);
     auto res = DoFind(find_flags, target);
     if (!res.IsOk()) {

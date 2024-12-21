@@ -41,6 +41,10 @@ public:
     void SetWrapMode(int) {}
     wxString GetText() const { return GetValue(); }
     void ClearAll() { Clear(); }
+#else
+    // wxSTC does not provide "SetHint", what it does, it sets the text to the hint
+    // which triggers an event (an unwanted one)
+    bool SetHint(const wxString&) override { return false; }
 #endif
 
 protected:

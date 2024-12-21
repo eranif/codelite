@@ -245,7 +245,7 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
                                           wxID_ANY,
                                           wxT(""),
                                           wxDefaultPosition,
-                                          wxDLG_UNIT(m_mainPanel, wxSize(350, -1)),
+                                          wxDLG_UNIT(m_mainPanel, wxSize(400, -1)),
                                           wxTE_PROCESS_ENTER);
     m_textCtrlFind->SetFocus();
 #if wxVERSION_NUMBER >= 3000
@@ -253,7 +253,6 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 #endif
 
     flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-    m_textCtrlFind->SetMinSize(wxSize(350, -1));
 
     m_buttonFind = new clThemedButton(
         m_mainPanel, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
@@ -271,18 +270,13 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 
     flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_textCtrlReplace = new clThemedTextCtrl(m_mainPanel,
-                                             wxID_ANY,
-                                             wxT(""),
-                                             wxDefaultPosition,
-                                             wxDLG_UNIT(m_mainPanel, wxSize(350, -1)),
-                                             wxTE_PROCESS_ENTER);
+    m_textCtrlReplace = new clThemedTextCtrl(
+        m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlReplace->SetHint(_("Replace with..."));
 #endif
 
     flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-    m_textCtrlReplace->SetMinSize(wxSize(350, -1));
 
     m_buttonReplace = new clThemedButton(
         m_mainPanel, wxID_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);

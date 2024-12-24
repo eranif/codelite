@@ -1556,7 +1556,8 @@ void clCxxWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
 
     wxFileName fn(event.GetFileName());
     if(fn.IsAbsolute()) {
-        // there is a built in mechansim to handle full path files, let it process it
+        // there is a built in mechanism to handle full path files, let it process it
+        clDEBUG() << "C++ workspace: letting built-in handler to open the file" << endl;
         event.Skip();
         return;
     }

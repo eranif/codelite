@@ -59,7 +59,9 @@ namespace
 wxString create_platform_filepath(const wxString& fullpath)
 {
 #ifdef __WXMSW__
-    return fullpath.Lower();
+    wxString fixed_path = fullpath.Lower();
+    fixed_path.Replace("\\", "/");
+    return fixed_path;
 #else
     return fullpath;
 #endif
@@ -1802,14 +1804,14 @@ void MainBook::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
 
-    // The internval between idle events can not be under 200ms
+    // The interval between idle events can not be under 200ms
     static clIdleEventThrottler event_throttler{ 200 };
     if (!event_throttler.CanHandle()) {
         return;
     }
 
     // avoid processing if not really needed
-    if (!m_initDone || (m_book->GetPageCount() == 0)) {
+    if (!m_initDone || (m_book->GetPageCount() == 0) || m_callbacksTable.empty()) {
         return;
     }
 

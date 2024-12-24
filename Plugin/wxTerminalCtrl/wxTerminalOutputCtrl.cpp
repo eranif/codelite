@@ -129,8 +129,8 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     m_ctrl->SetWrapMode(wxSTC_WRAP_CHAR);
     m_ctrl->SetEditable(false);
-    m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-)#");
-    m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_PLAIN);
+    m_ctrl->SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-+)#");
+    m_ctrl->IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_COMPOSITIONTHICK);
     auto lexer = ColoursAndFontsManager::Get().GetLexer("terminal");
     if (lexer) {
         lexer->Apply(m_ctrl);

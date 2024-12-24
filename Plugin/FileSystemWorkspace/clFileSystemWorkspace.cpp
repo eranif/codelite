@@ -517,7 +517,7 @@ void clFileSystemWorkspace::DoPrintBuildMessage(const wxString& message)
 {
     clBuildEvent e(wxEVT_BUILD_PROCESS_ADDLINE);
     e.SetString(message);
-    EventNotifier::Get()->AddPendingEvent(e);
+    EventNotifier::Get()->ProcessEvent(e);
 }
 
 void clFileSystemWorkspace::OnSaveSession(clCommandEvent& event)

@@ -41,7 +41,7 @@
 
 #define CHECK_EVENT(e)     \
     {                      \
-        if(!IsOpened()) {  \
+        if (!IsOpened()) { \
             e.Skip();      \
             return;        \
         }                  \
@@ -92,7 +92,7 @@ void RemotyWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
     files.clear();
     files.reserve(m_workspaceFiles.size());
-    for(const wxString& file : m_workspaceFiles) {
+    for (const wxString& file : m_workspaceFiles) {
         files.Add(file);
     }
 }
@@ -105,7 +105,7 @@ bool RemotyWorkspace::IsProjectSupported() const { return false; }
 
 void RemotyWorkspace::BindEvents()
 {
-    if(m_eventsConnected) {
+    if (m_eventsConnected) {
         return;
     }
 
@@ -138,30 +138,30 @@ void RemotyWorkspace::BindEvents()
 
     // finder
     m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_RESTARTED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress,
-                                this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
-                                this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_REPLACE_DONE, &RemotyWorkspace::OnCodeLiteRemoteReplaceDone,
-                                this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_REPLACE_RESULTS,
-                                &RemotyWorkspace::OnCodeLiteRemoteReplaceProgress, this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
-                                this);
-    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
-                                this);
+    m_codeliteRemoteFinder.Bind(
+        wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress, this);
+    m_codeliteRemoteFinder.Bind(
+        wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone, this);
+    m_codeliteRemoteFinder.Bind(
+        wxEVT_CODELITE_REMOTE_REPLACE_DONE, &RemotyWorkspace::OnCodeLiteRemoteReplaceDone, this);
+    m_codeliteRemoteFinder.Bind(
+        wxEVT_CODELITE_REMOTE_REPLACE_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteReplaceProgress, this);
+    m_codeliteRemoteFinder.Bind(
+        wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress, this);
+    m_codeliteRemoteFinder.Bind(
+        wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
 
     // builder
-    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
-                                 this);
-    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone,
-                                 this);
+    m_codeliteRemoteBuilder.Bind(
+        wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput, this);
+    m_codeliteRemoteBuilder.Bind(
+        wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone, this);
     m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_RESTARTED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
 }
 
 void RemotyWorkspace::UnbindEvents()
 {
-    if(!m_eventsConnected) {
+    if (!m_eventsConnected) {
         return;
     }
     EventNotifier::Get()->Unbind(wxEVT_SWITCHING_TO_WORKSPACE, &RemotyWorkspace::OnOpenWorkspace, this);
@@ -189,28 +189,28 @@ void RemotyWorkspace::UnbindEvents()
     // codelite-remote events
 
     // finder
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress,
-                                  this);
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
-                                  this);
+    m_codeliteRemoteFinder.Unbind(
+        wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress, this);
+    m_codeliteRemoteFinder.Unbind(
+        wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone, this);
     m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_RESTARTED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
-                                  this);
-    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE,
-                                  &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
+    m_codeliteRemoteFinder.Unbind(
+        wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress, this);
+    m_codeliteRemoteFinder.Unbind(
+        wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
 
     // builder
-    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
-                                   this);
-    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone,
-                                   this);
+    m_codeliteRemoteBuilder.Unbind(
+        wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput, this);
+    m_codeliteRemoteBuilder.Unbind(
+        wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone, this);
     m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_RESTARTED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
     m_eventsConnected = false;
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteTerminated(clCommandEvent& event)
 {
-    if(event.GetEventObject() == &m_codeliteRemoteBuilder) {
+    if (event.GetEventObject() == &m_codeliteRemoteBuilder) {
         clWARNING() << "codelite-remote (builder) terminated" << endl;
         m_buildInProgress = false;
     }
@@ -219,11 +219,11 @@ void RemotyWorkspace::OnCodeLiteRemoteTerminated(clCommandEvent& event)
 void RemotyWorkspace::OnOpenWorkspace(clCommandEvent& event)
 {
     RemotySwitchToWorkspaceDlg dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return;
     }
 
-    if(!dlg.IsRemote()) {
+    if (!dlg.IsRemote()) {
         event.Skip();
         event.SetFileName(dlg.GetPath());
 
@@ -242,7 +242,7 @@ void RemotyWorkspace::OnCloseWorkspace(clCommandEvent& event)
 
 void RemotyWorkspace::Initialise()
 {
-    if(m_eventsConnected) {
+    if (m_eventsConnected) {
         return;
     }
     BindEvents();
@@ -255,7 +255,7 @@ bool RemotyWorkspace::IsOpened() const { return !m_account.GetAccountName().empt
 void RemotyWorkspace::DoClose(bool notify)
 {
     m_listLspOutput.clear();
-    if(!IsOpened()) {
+    if (!IsOpened()) {
         clDEBUG() << "Remoty: DoClose() -> not opened..." << endl;
         return;
     }
@@ -277,7 +277,7 @@ void RemotyWorkspace::DoClose(bool notify)
     //    clLanguageServerEvent stop_event(wxEVT_LSP_STOP_ALL);
     //    EventNotifier::Get()->ProcessEvent(stop_event);
 
-    if(notify) {
+    if (notify) {
         // notify codelite to close all opened files
         wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
         eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
@@ -291,7 +291,7 @@ void RemotyWorkspace::DoClose(bool notify)
 
 void RemotyWorkspace::SaveSettings()
 {
-    if(m_remoteWorkspaceFile.empty() || m_localWorkspaceFile.empty() || m_account.GetAccountName().empty()) {
+    if (m_remoteWorkspaceFile.empty() || m_localWorkspaceFile.empty() || m_account.GetAccountName().empty()) {
         return;
     }
 
@@ -303,7 +303,7 @@ void RemotyWorkspace::SaveSettings()
 void RemotyWorkspace::OnBuildStarting(clBuildEvent& event)
 {
     event.Skip();
-    if(IsOpened()) {
+    if (IsOpened()) {
         event.Skip(false);
         // before we start the build, save all modified files
         clGetManager()->SaveAll(false);
@@ -313,11 +313,11 @@ void RemotyWorkspace::OnBuildStarting(clBuildEvent& event)
 
 wxString RemotyWorkspace::GetTargetCommand(const wxString& target) const
 {
-    if(!m_settings.GetSelectedConfig()) {
+    if (!m_settings.GetSelectedConfig()) {
         return wxEmptyString;
     }
     const auto& M = m_settings.GetSelectedConfig()->GetBuildTargets();
-    if(M.count(target)) {
+    if (M.count(target)) {
         wxString cmd = M.find(target)->second;
         return cmd;
     }
@@ -328,15 +328,16 @@ void RemotyWorkspace::BuildTarget(const wxString& target)
 {
     wxBusyCursor bc;
     auto conf = m_settings.GetSelectedConfig();
-    if(!conf) {
+    if (!conf) {
         ::wxMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
                          "settings and add one"),
-                       "CodeLite", wxICON_ERROR | wxCENTER);
+                       "CodeLite",
+                       wxICON_ERROR | wxCENTER);
         return;
     }
 
     wxString cmd = GetTargetCommand(target);
-    if(cmd.empty()) {
+    if (cmd.empty()) {
         ::wxMessageBox(_("Don't know how to run '") + target + "'", "CodeLite", wxICON_ERROR | wxCENTER);
         return;
     }
@@ -350,18 +351,18 @@ void RemotyWorkspace::BuildTarget(const wxString& target)
     // we pass the selected compiler in the event
     clBuildEvent e(wxEVT_BUILD_PROCESS_STARTED);
     e.SetToolchain(conf->GetCompiler());
-    EventNotifier::Get()->AddPendingEvent(e);
+    EventNotifier::Get()->ProcessEvent(e);
 
     // Notify about build process started
     clBuildEvent eventStart(wxEVT_BUILD_STARTED);
-    EventNotifier::Get()->AddPendingEvent(eventStart);
+    EventNotifier::Get()->ProcessEvent(eventStart);
 }
 
 void RemotyWorkspace::DoPrintBuildMessage(const wxString& message)
 {
     clBuildEvent e(wxEVT_BUILD_PROCESS_ADDLINE);
     e.SetString(message);
-    EventNotifier::Get()->AddPendingEvent(e);
+    EventNotifier::Get()->ProcessEvent(e);
 }
 
 void RemotyWorkspace::OnIsBuildInProgress(clBuildEvent& event)
@@ -390,7 +391,7 @@ void RemotyWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
     const auto& targets = m_settings.GetSelectedConfig()->GetBuildTargets();
 
     std::unordered_map<int, wxString> M;
-    for(const auto& vt : targets) {
+    for (const auto& vt : targets) {
         const wxString& name = vt.first;
         int menuId = wxXmlResource::GetXRCID(vt.first);
         M.insert({ menuId, name });
@@ -399,7 +400,7 @@ void RemotyWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
             wxEVT_MENU,
             [=](wxCommandEvent& e) {
                 auto iter = M.find(e.GetId());
-                if(iter == M.end()) {
+                if (iter == M.end()) {
                     return;
                 }
                 this->CallAfter(&RemotyWorkspace::BuildTarget, iter->second);
@@ -419,7 +420,7 @@ void RemotyWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
     clDEBUG() << "Remoty: build directory:" << basepath << endl;
 
     wxFileName fn(filename);
-    if(fn.IsRelative(wxPATH_UNIX)) {
+    if (fn.IsRelative(wxPATH_UNIX)) {
         // attempt to make it absolute
         basepath = basepath.empty() ? GetRemoteWorkingDir() : basepath;
         fn.MakeAbsolute(basepath, wxPATH_UNIX);
@@ -435,7 +436,7 @@ void RemotyWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
     wxBusyCursor bc;
     clGetManager()->GetStatusBar()->SetStatusText(_("Downloading file: ") + filename);
     auto editor = clSFTPManager::Get().OpenFile(filename, m_account.GetAccountName());
-    if(editor) {
+    if (editor) {
         // the compiler report line numbers from 1
         // clEditor start counting lines from 0
         // hence the -1
@@ -455,11 +456,11 @@ void RemotyWorkspace::SetFocusToActiveEditor()
 void RemotyWorkspace::OnNewWorkspace(clCommandEvent& event)
 {
     event.Skip();
-    if(event.GetString() == GetWorkspaceType()) {
+    if (event.GetString() == GetWorkspaceType()) {
         event.Skip(false);
         // Prompt the user for folder and name
         RemotyNewWorkspaceDlg dlg(EventNotifier::Get()->TopFrame());
-        if(dlg.ShowModal() != wxID_OK) {
+        if (dlg.ShowModal() != wxID_OK) {
             return;
         }
 
@@ -477,8 +478,9 @@ void RemotyWorkspace::OnNewWorkspace(clCommandEvent& event)
         remote_path << "/" << name << ".workspace";
         // upload this file to the remote location
         clDEBUG() << "Writing file: [" << account << "]" << tmpfile.GetFullPath() << "->" << remote_path << endl;
-        if(!clSFTPManager::Get().AwaitSaveFile(tmpfile.GetFullPath(), remote_path, account)) {
-            ::wxMessageBox(wxString() << _("Failed to create new workspace file:\n") << remote_path, "CodeLite",
+        if (!clSFTPManager::Get().AwaitSaveFile(tmpfile.GetFullPath(), remote_path, account)) {
+            ::wxMessageBox(wxString() << _("Failed to create new workspace file:\n") << remote_path,
+                           "CodeLite",
                            wxOK | wxICON_ERROR);
             return;
         }
@@ -500,26 +502,27 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     // Load the account
     auto ssh_account = SSHAccountInfo::LoadAccount(account);
 
-    if(ssh_account.GetAccountName().empty()) {
-        ::wxMessageBox(_("Could not find a matching SSH account to load the workspace!"), "CodeLite",
-                       wxICON_ERROR | wxCENTER);
+    if (ssh_account.GetAccountName().empty()) {
+        ::wxMessageBox(
+            _("Could not find a matching SSH account to load the workspace!"), "CodeLite", wxICON_ERROR | wxCENTER);
         return;
     }
 
     wxBusyCursor bc;
     wxFileName localFile;
-    for(size_t i = 0; i < MAX_LOAD_WORKSPACE_RETRIES; ++i) {
+    for (size_t i = 0; i < MAX_LOAD_WORKSPACE_RETRIES; ++i) {
         // first: attempt to download the workspace file and store it locally
         localFile = clSFTPManager::Get().Download(file_path, account);
-        if(localFile.IsOk()) {
+        if (localFile.IsOk()) {
             break;
         }
 
         // check if we can do another retry
-        if((i + 1) >= MAX_LOAD_WORKSPACE_RETRIES) {
+        if ((i + 1) >= MAX_LOAD_WORKSPACE_RETRIES) {
             // retries exhausted
             ::wxMessageBox(_("Failed to download remote workspace file!\n") + clSFTPManager::Get().GetLastError(),
-                           "CodeLite", wxICON_ERROR | wxCENTER);
+                           "CodeLite",
+                           wxICON_ERROR | wxCENTER);
             return;
         }
         clGetManager()->SetStatusMessage(_("Retrying to load workspace..."));
@@ -530,9 +533,9 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     userSettings.AppendDir("LocalWorkspaces");
     userSettings.Mkdir(wxPATH_MKDIR_FULL);
     clDEBUG() << "User workspace file is set:" << userSettings << endl;
-    if(!m_settings.Load(localFile, userSettings)) {
-        ::wxMessageBox(_("Failed to load workspace file: ") + m_localWorkspaceFile, "CodeLite",
-                       wxICON_ERROR | wxCENTER);
+    if (!m_settings.Load(localFile, userSettings)) {
+        ::wxMessageBox(
+            _("Failed to load workspace file: ") + m_localWorkspaceFile, "CodeLite", wxICON_ERROR | wxCENTER);
         return;
     }
 
@@ -544,7 +547,7 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     wxString fixed_path = file_path;
     fixed_path.Replace("\\", "/");
     wxString workspacePath = GetRemoteWorkingDir();
-    if(workspacePath.empty()) {
+    if (workspacePath.empty()) {
         ::wxMessageBox(_("Invalid empty remote path provided"), "CodeLite", wxICON_ERROR | wxCENTER);
         return;
     }
@@ -557,11 +560,12 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     // wrap the command in ssh
     wxString ssh_exe;
     EnvSetter setter;
-    if(!ThePlatform->Which("ssh", &ssh_exe)) {
+    if (!ThePlatform->Which("ssh", &ssh_exe)) {
         ::wxMessageBox(
             _("Could not locate ssh executable in your PATH!\nUpdate your PATH from 'settings -> environment "
               "variables' to a location that contains your 'ssh' executable"),
-            "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            "CodeLite",
+            wxICON_ERROR | wxOK | wxCENTER);
     }
 
     RestartCodeLiteRemote(&m_codeliteRemoteBuilder, CONTEXT_BUILDER);
@@ -599,13 +603,13 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
 
     DebuggerMgr::Get().SetActiveDebugger(conf->GetDebugger());
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(!dbgr) {
+    if (!dbgr) {
         return;
     }
 
     // if already running, skip this
     // the default behaviour is to "continue"
-    if(dbgr->IsRunning()) {
+    if (dbgr->IsRunning()) {
         event.Skip();
         return;
     }
@@ -638,9 +642,10 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
 
     // open new terminal on the remote host
     m_remote_terminal.reset(new clRemoteTerminal(m_account));
-    if(!m_remote_terminal->Start()) {
+    if (!m_remote_terminal->Start()) {
         ::wxMessageBox(_("Failed to start remote terminal process. Do you have `ssh` client installed and in PATH?"),
-                       "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
+                       "CodeLite",
+                       wxICON_ERROR | wxOK | wxOK_DEFAULT);
         return;
     }
 
@@ -650,9 +655,9 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     wxString tty;
 
     clDEBUG() << "Waiting for tty..." << endl;
-    while(--count) {
+    while (--count) {
         tty = m_remote_terminal->ReadTty();
-        if(tty.empty()) {
+        if (tty.empty()) {
             wxMilliSleep(100);
         } else {
             break;
@@ -668,7 +673,7 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     envmap.insert(envlist.begin(), envlist.end());
 
     // override the gdb executable with the one provided with the GDB environment variable
-    if(envmap.count("GDB")) {
+    if (envmap.count("GDB")) {
         const wxString& gdbpath = envmap["GDB"];
         sesstion_info.debuggerPath = gdbpath;
     }
@@ -678,7 +683,7 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     sesstion_info.enablePrettyPrinting = true;
 
     clDEBUG() << "Starting gdb:" << sesstion_info.debuggerPath << endl;
-    if(!dbgr->Start(sesstion_info, &envlist)) {
+    if (!dbgr->Start(sesstion_info, &envlist)) {
         // message box about this and cancel the debugge session
         ::wxMessageBox(_("Failed to start debugger!"), "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
         clDebugEvent eventStarted(wxEVT_DEBUG_ENDED);
@@ -710,7 +715,7 @@ IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool s
     wxString path = UploadScript(scriptContent);
     std::vector<wxString> args = { "/bin/bash", path };
     size_t flags = IProcessCreateDefault | IProcessCreateSSH;
-    if(sync) {
+    if (sync) {
         flags |= IProcessCreateSync;
     }
     return ::CreateAsyncProcess(this, args, flags, wxEmptyString, nullptr, m_account.GetAccountName());
@@ -732,7 +737,7 @@ void RemotyWorkspace::OnRun(clExecuteEvent& event)
 
     wxString command;
     command = conf->GetExecutable();
-    if(command.empty()) {
+    if (command.empty()) {
         ::wxMessageBox(_("Please specify an executable to run"), "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
         return;
     }
@@ -746,7 +751,7 @@ void RemotyWorkspace::OnRun(clExecuteEvent& event)
     auto args_arr = StringUtils::BuildArgv(args);
 
     // append the args
-    for(auto& arg : args_arr) {
+    for (auto& arg : args_arr) {
         arg.Trim().Trim(false);
         // wrap with quotes if required
         ::WrapWithQuotes(arg);
@@ -757,7 +762,7 @@ void RemotyWorkspace::OnRun(clExecuteEvent& event)
     wxString wd = conf->GetWorkingDirectory();
     wd.Trim().Trim(false);
 
-    if(wd.empty()) {
+    if (wd.empty()) {
         wd = GetRemoteWorkingDir();
     }
 
@@ -789,7 +794,7 @@ void RemotyWorkspace::OnRun(clExecuteEvent& event)
 void RemotyWorkspace::OnStop(clExecuteEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_execPID != wxNOT_FOUND) {
+    if (m_execPID != wxNOT_FOUND) {
         ::clKill(m_execPID, wxSIGTERM, true, false);
         m_execPID = wxNOT_FOUND;
     }
@@ -805,7 +810,7 @@ wxString RemotyWorkspace::CreateEnvScriptContent() const
 
     wxString content;
     content << "# prepare the environment variables\n";
-    for(auto& vt : envmap) {
+    for (auto& vt : envmap) {
         content << "export " << vt.first << "=" << ::WrapWithQuotes(vt.second) << "\n";
     }
     return content;
@@ -821,11 +826,11 @@ wxString RemotyWorkspace::UploadScript(const wxString& content, const wxString& 
     default_path << "/tmp/codelite-remoty." << clGetUserName() << ".sh";
 
     wxString path = default_path;
-    if(!script_path.empty()) {
+    if (!script_path.empty()) {
         path = script_path;
     }
 
-    if(!clSFTPManager::Get().AwaitWriteFile(script_content, path, m_account.GetAccountName())) {
+    if (!clSFTPManager::Get().AwaitWriteFile(script_content, path, m_account.GetAccountName())) {
         ::wxMessageBox(_("Failed to write remote script on the remote machine!"), "CodeLite", wxICON_ERROR | wxCENTER);
         return wxEmptyString;
     }
@@ -847,11 +852,11 @@ void RemotyWorkspace::OnExecProcessTerminated(clProcessEvent& event)
 void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
 {
     auto editor = clGetManager()->GetActiveEditor();
-    if(!editor) {
+    if (!editor) {
         event.Skip();
         return;
     }
-    if(!editor->IsRemoteFile()) {
+    if (!editor->IsRemoteFile()) {
         event.Skip();
         return;
     }
@@ -860,7 +865,7 @@ void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
 
     // replace the file extension
     auto type = FileExtManager::GetTypeFromExtension(editor->GetFileName().GetFullName());
-    if(type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp) {
+    if (type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp) {
         // try to find a header file
         exts.push_back("h");
         exts.push_back("hpp");
@@ -877,10 +882,10 @@ void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
     }
 
     wxString remote_path = editor->GetRemotePath();
-    for(const auto& other_ext : exts) {
+    for (const auto& other_ext : exts) {
         remote_path = remote_path.BeforeLast('.');
         remote_path << "." << other_ext;
-        if(clSFTPManager::Get().IsFileExists(remote_path, m_account)) {
+        if (clSFTPManager::Get().IsFileExists(remote_path, m_account)) {
             // open this file
             auto other_editor = clSFTPManager::Get().OpenFile(remote_path, m_account);
             event.SetPath(other_editor->GetFileName().GetFullPath());
@@ -893,13 +898,13 @@ void RemotyWorkspace::RestartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const
     CHECK_PTR_RET(proc);
 
     // if running and restart is true, restart codelite-remote
-    if(proc->IsRunning() && restart) {
+    if (proc->IsRunning() && restart) {
         clDEBUG() << "Stopping codelite-remote..." << endl;
         proc->Stop();
     }
 
     // make sure we are not running
-    if(proc->IsRunning()) {
+    if (proc->IsRunning()) {
         clDEBUG() << "codelite-remote is already running" << endl;
         return;
     }
@@ -949,7 +954,7 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
     S.insert("Rakefile");
 
     file_extensions.clear();
-    for(const auto& s : S) {
+    for (const auto& s : S) {
         file_extensions << s << ";";
     }
     m_workspaceFiles.clear();
@@ -964,7 +969,7 @@ void RemotyWorkspace::OnOpenResourceFile(clCommandEvent& event)
 
     // our event
     auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), m_account);
-    if(editor) {
+    if (editor) {
         editor->GetCtrl()->GotoLine(event.GetLineNumber());
     }
 }
@@ -977,32 +982,35 @@ void RemotyWorkspace::OnShutdown(clCommandEvent& event)
 
 void RemotyWorkspace::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
-void RemotyWorkspace::ReplaceInFiles(const wxString& root_dir, const wxString& file_extensions,
-                                     const wxString& find_what, const wxString& replace_with, bool whole_word,
+void RemotyWorkspace::ReplaceInFiles(const wxString& root_dir,
+                                     const wxString& file_extensions,
+                                     const wxString& find_what,
+                                     const wxString& replace_with,
+                                     bool whole_word,
                                      bool icase)
 {
     m_replaceInFilesModifiedFiles.clear();
     wxString search_folder = root_dir;
-    if(search_folder == "<Workspace Folder>") {
+    if (search_folder == "<Workspace Folder>") {
         search_folder = GetRemoteWorkingDir();
     }
 
     wxStandardID answer = ::PromptForYesNoCancelDialogWithCheckbox(
         _("You are about to execute a remote replace in files\nDo you wish to continue?"),
         "remoty-prompt-before-replace-in-files");
-    if(answer != wxID_YES) {
+    if (answer != wxID_YES) {
         return;
     }
 
     m_codeliteRemoteFinder.Replace(search_folder, file_extensions, find_what, replace_with, whole_word, icase);
 }
 
-void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
-                                  bool whole_word, bool icase)
+void RemotyWorkspace::FindInFiles(
+    const wxString& root_dir, const wxString& file_extensions, const wxString& find_what, bool whole_word, bool icase)
 {
     m_remoteFinder.SetCodeLiteRemote(&m_codeliteRemoteFinder);
     wxString search_folder = root_dir;
-    if(search_folder == "<Workspace Folder>") {
+    if (search_folder == "<Workspace Folder>") {
         search_folder = GetRemoteWorkingDir();
     }
     m_remoteFinder.Search(search_folder, find_what, file_extensions, whole_word, icase);
@@ -1011,7 +1019,7 @@ void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file
 void RemotyWorkspace::OnCodeLiteRemoteReplaceProgress(clFindInFilesEvent& event)
 {
     event.Skip();
-    for(const wxString& file : event.GetStrings()) {
+    for (const wxString& file : event.GetStrings()) {
         m_replaceInFilesModifiedFiles.insert(file);
     }
 }
@@ -1026,8 +1034,8 @@ void RemotyWorkspace::OnCodeLiteRemoteReplaceDone(clFindInFilesEvent& event)
 
     std::unordered_set<IEditor*> open_editors;
     open_editors.reserve(editors.size());
-    for(auto editor : editors) {
-        if(editor->IsRemoteFile() && m_replaceInFilesModifiedFiles.count(editor->GetRemotePath())) {
+    for (auto editor : editors) {
+        if (editor->IsRemoteFile() && m_replaceInFilesModifiedFiles.count(editor->GetRemotePath())) {
             open_editors.insert(editor);
         }
     }
@@ -1038,19 +1046,24 @@ void RemotyWorkspace::OnCodeLiteRemoteReplaceDone(clFindInFilesEvent& event)
 
     wxString message;
     message << _("Remote replace in files completed, would you like to reload the following modified files:\n");
-    for(auto editor : editors) {
+    for (auto editor : editors) {
         message << editor->GetRemotePath() << "\n";
     }
 
-    wxStandardID answer = ::PromptForYesNoCancelDialogWithCheckbox(
-        message, "remoty-reload-after-replace-in-files", _("Reload"), _("No"), _("Cancel"),
-        _("Remember my answer and don't ask me again"), wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCANCEL_DEFAULT);
-    if(answer != wxID_YES) {
+    wxStandardID answer =
+        ::PromptForYesNoCancelDialogWithCheckbox(message,
+                                                 "remoty-reload-after-replace-in-files",
+                                                 _("Reload"),
+                                                 _("No"),
+                                                 _("Cancel"),
+                                                 _("Remember my answer and don't ask me again"),
+                                                 wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCANCEL_DEFAULT);
+    if (answer != wxID_YES) {
         return;
     }
 
     wxBusyCursor bc;
-    for(auto editor : editors) {
+    for (auto editor : editors) {
         editor->ReloadFromDisk();
     }
 }
@@ -1078,11 +1091,11 @@ void RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone(clProcessEvent& event)
 
 void RemotyWorkspace::DoProcessBuildOutput(const wxString& output, bool is_completed)
 {
-    if(!output.empty()) {
+    if (!output.empty()) {
         DoPrintBuildMessage(output);
     }
 
-    if(is_completed) {
+    if (is_completed) {
         clBuildEvent e(wxEVT_BUILD_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
 
@@ -1096,7 +1109,7 @@ void RemotyWorkspace::OnLSPOpenFile(LSPEvent& event)
 {
     CHECK_EVENT(event);
     auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), m_account);
-    if(!editor) {
+    if (!editor) {
         event.Skip();
         return;
     }
@@ -1119,11 +1132,11 @@ void LSPParams::From(const JSONItem& json)
     this->priority = json["priority"].toSize_t(80);
 
     int env_list_size = json["env"].arraySize();
-    for(int i = 0; i < env_list_size; ++i) {
+    for (int i = 0; i < env_list_size; ++i) {
         auto env_entry = json["env"][i];
         wxString name = env_entry["name"].toString();
         wxString value = env_entry["value"].toString();
-        if(!name.empty()) {
+        if (!name.empty()) {
             this->env.push_back({ name, value });
         }
     }
@@ -1136,7 +1149,7 @@ void RemotyWorkspace::OnDownloadFile(clCommandEvent& event)
     clDEBUG() << "Downloading file:" << event.GetFileName() << "using account:" << m_account.GetName() << endl;
     CHECK_EVENT(event);
     auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), m_account);
-    if(editor) {
+    if (editor) {
         // update the event with the local file's fullpath
         event.SetFileName(editor->GetFileName().GetFullPath());
         event.Skip(false);
@@ -1146,7 +1159,7 @@ void RemotyWorkspace::OnDownloadFile(clCommandEvent& event)
 void RemotyWorkspace::OpenWorkspace(const wxString& path, const wxString& account) { DoOpen(path, account); }
 void RemotyWorkspace::CloseWorkspace()
 {
-    if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+    if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
         // nothing is opened
         return;
     }
@@ -1176,7 +1189,7 @@ void RemotyWorkspace::OnReloadWorkspace(clCommandEvent& event)
 
 IEditor* RemotyWorkspace::OpenFile(const wxString& remote_file_path)
 {
-    if(!IsOpened())
+    if (!IsOpened())
         return nullptr;
     return clSFTPManager::Get().OpenFile(remote_file_path, m_account);
 }
@@ -1186,29 +1199,30 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
     wxString remote_file_path = GetRemoteWorkingDir();
     remote_file_path << "/.codelite/codelite-remote.json";
     IEditor* editor = OpenFile(remote_file_path);
-    if(editor) {
+    if (editor) {
         return;
     }
     // Could not find the file, prompt the user
-    if(wxMessageBox(_("Could not find codelite-remote.json file\nWould you like to create one?"), "CodeLite",
-                    wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTRE) != wxYES) {
+    if (wxMessageBox(_("Could not find codelite-remote.json file\nWould you like to create one?"),
+                     "CodeLite",
+                     wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTRE) != wxYES) {
         return;
     }
 
     wxString remote_file_dir = GetRemoteWorkingDir() + "/.codelite";
-    if(!clSFTPManager::Get().NewFolder(remote_file_dir, m_account)) {
+    if (!clSFTPManager::Get().NewFolder(remote_file_dir, m_account)) {
         wxMessageBox(_("Failed to create directory: ") + remote_file_dir, "CodeLite", wxICON_ERROR | wxOK);
         return;
     }
 
     // create a new file
-    if(!clSFTPManager::Get().NewFile(remote_file_path, m_account)) {
+    if (!clSFTPManager::Get().NewFile(remote_file_path, m_account)) {
         wxMessageBox(_("Failed to create file: ") + remote_file_path, "CodeLite", wxICON_ERROR | wxOK);
         return;
     }
 
     editor = OpenFile(remote_file_path);
-    if(!editor) {
+    if (!editor) {
         wxMessageBox(_("Failed to open file: ") + remote_file_path, "CodeLite", wxICON_ERROR | wxOK);
         return;
     }
@@ -1219,7 +1233,7 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
 void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)
 {
     event.Skip();
-    if(IsOpened() && m_codeliteRemoteFinder.IsRunning()) {
+    if (IsOpened() && m_codeliteRemoteFinder.IsRunning()) {
         RestartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER, true);
         // send event notifying that the search has been cancelled
         m_remoteFinder.NotifySearchCancelled();
@@ -1240,7 +1254,7 @@ void RemotyWorkspace::RestoreSession()
 
 wxString RemotyWorkspace::GetDebuggerName() const
 {
-    if(m_settings.GetSelectedConfig()) {
+    if (m_settings.GetSelectedConfig()) {
         return m_settings.GetSelectedConfig()->GetDebugger();
     } else {
         return wxEmptyString;
@@ -1250,7 +1264,7 @@ wxString RemotyWorkspace::GetDebuggerName() const
 void RemotyWorkspace::OnSftpSaveError(clCommandEvent& event)
 {
     event.Skip();
-    if(!IsOpened()) {
+    if (!IsOpened()) {
         return;
     }
 
@@ -1258,10 +1272,11 @@ void RemotyWorkspace::OnSftpSaveError(clCommandEvent& event)
     wxBusyCursor bc;
     clGetManager()->SetStatusMessage(wxString() << _("Reconnecting to: ") << event.GetSshAccount());
     wxYield();
-    if(clSFTPManager::Get().AddConnection(event.GetSshAccount(), true)) {
+    if (clSFTPManager::Get().AddConnection(event.GetSshAccount(), true)) {
         clGetManager()->GetActiveEditor()->Save();
     } else {
-        ::wxMessageBox(_("Failed to save file: ") + event.GetFileName() + "\n" + event.GetString(), "CodeLite (Remoty)",
+        ::wxMessageBox(_("Failed to save file: ") + event.GetFileName() + "\n" + event.GetString(),
+                       "CodeLite (Remoty)",
                        wxICON_WARNING | wxOK | wxCENTRE);
     }
 }
@@ -1269,7 +1284,7 @@ void RemotyWorkspace::OnSftpSaveError(clCommandEvent& event)
 void RemotyWorkspace::OnSftpSaveSuccess(clCommandEvent& event)
 {
     event.Skip();
-    if(!IsOpened()) {
+    if (!IsOpened()) {
         return;
     }
     clGetManager()->SetStatusMessage(_("Remote file: ") + event.GetFileName() + _(" successfully saved"));

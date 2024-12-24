@@ -51,7 +51,7 @@ void ShellCommand::AppendLine(const wxString& line)
 {
     clBuildEvent add_line_event(wxEVT_BUILD_PROCESS_ADDLINE);
     add_line_event.SetString(line);
-    EventNotifier::Get()->AddPendingEvent(add_line_event);
+    EventNotifier::Get()->ProcessEvent(add_line_event);
 }
 
 void ShellCommand::Stop()

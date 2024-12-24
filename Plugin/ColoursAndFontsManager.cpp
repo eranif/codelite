@@ -29,7 +29,7 @@
 namespace
 {
 constexpr const char* LEXERS_VERSION_STRING = "LexersVersion";
-constexpr int LEXERS_VERSION = 9;
+constexpr int LEXERS_VERSION = 10;
 } // namespace
 
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
@@ -265,11 +265,11 @@ void ColoursAndFontsManager::Load()
         }
     }
 
-    // Load the lexers from the old format (json)
-    LoadLexersFromDb();
-
     // read the global font property
     m_globalFont = clConfig::Get().Read("GlobalThemeFont", FontUtils::GetDefaultMonospacedFont());
+
+    // Load the lexers from the old format (json)
+    LoadLexersFromDb();
 }
 
 wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString& lexerName) const
@@ -595,8 +595,8 @@ void ColoursAndFontsManager::SaveGlobalSettings(bool notify)
     }
 }
 
-LexerConf::Ptr_t ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName,
-                                                   const wxString& sourceTheme)
+LexerConf::Ptr_t
+ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme)
 {
     LexerConf::Ptr_t sourceLexer = GetLexer(lexerName, sourceTheme);
     CHECK_PTR_RET_NULL(sourceLexer);
@@ -689,6 +689,7 @@ void ColoursAndFontsManager::LoadLexersFromFile()
         // The loaded version from the configuration file is less than the compiled version
         // merge the lexers (or the user file does not exist)
         LoadJSON(fnInstallLexers);
+        Save();
     }
 
     // Load the user settings
@@ -1087,13 +1088,21 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         vec.erase(iter);
     }
 
-    iter = std::find_if(m_allLexers.begin(), m_allLexers.end(),
-                        LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
+    iter = std::find_if(
+        m_allLexers.begin(), m_allLexers.end(), LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
     if (iter != m_allLexers.end()) {
         m_allLexers.erase(iter);
     }
     vec.push_back(lexer);
     m_allLexers.push_back(lexer);
+
+    if (m_globalFont.IsOk()) {
+        const wxString font_desc = FontUtils::GetFontInfo(m_globalFont);
+        auto& props = lexer->GetLexerProperties();
+        for (auto& prop : props) {
+            prop.SetFontInfoDesc(font_desc);
+        }
+    }
     return lexer;
 }
 
@@ -1148,7 +1157,9 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
     if (prompt) {
         if (::wxMessageBox(_("Importing syntax highlight file will override any duplicate syntax highlight "
                              "settings.\nContinue?"),
-                           "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT, NULL) != wxYES) {
+                           "CodeLite",
+                           wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT,
+                           NULL) != wxYES) {
             return false;
         }
     }
@@ -1188,8 +1199,8 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
     // Rebuild "m_allLexers" after the merge
     m_allLexers.clear();
     std::for_each(m_lexersMap.begin(), m_lexersMap.end(), [&](ColoursAndFontsManager::Map_t::value_type& vt) {
-        std::for_each(vt.second.begin(), vt.second.end(),
-                      [&](LexerConf::Ptr_t lexer) { m_allLexers.push_back(lexer); });
+        std::for_each(
+            vt.second.begin(), vt.second.end(), [&](LexerConf::Ptr_t lexer) { m_allLexers.push_back(lexer); });
     });
     Save();
     Reload();
@@ -1199,8 +1210,8 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
 wxArrayString ColoursAndFontsManager::GetAllThemes() const
 {
     wxStringSet_t themes;
-    std::for_each(m_allLexers.begin(), m_allLexers.end(),
-                  [&](LexerConf::Ptr_t lexer) { themes.insert(lexer->GetThemeName()); });
+    std::for_each(
+        m_allLexers.begin(), m_allLexers.end(), [&](LexerConf::Ptr_t lexer) { themes.insert(lexer->GetThemeName()); });
     wxArrayString arr;
     arr.reserve(themes.size());
     std::for_each(themes.begin(), themes.end(), [&](const wxString& name) { arr.push_back(name); });
@@ -1255,8 +1266,10 @@ bool ColoursAndFontsManager::IsDarkTheme() const
     return lexer->IsDark();
 }
 
-void ColoursAndFontsManager::SetThemeTextSelectionColours(const wxString& theme_name, const wxColour& bg,
-                                                          const wxColour& fg, bool useCustomerFgColour)
+void ColoursAndFontsManager::SetThemeTextSelectionColours(const wxString& theme_name,
+                                                          const wxColour& bg,
+                                                          const wxColour& fg,
+                                                          bool useCustomerFgColour)
 {
     wxString theme_name_lc = theme_name.Lower();
     for (auto& lexer : m_allLexers) {

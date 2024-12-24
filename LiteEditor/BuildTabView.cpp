@@ -102,8 +102,8 @@ void BuildTabView::InitialiseView()
         IndicatorSetForeground(INDICATOR_HYPERLINK, clColours::Blue(lexer->IsDark()));
         // Mark current line
         MarkerDefine(LINE_MARKER, wxSTC_MARK_BACKGROUND);
-        MarkerSetBackground(LINE_MARKER, lexer->IsDark() ? *wxWHITE : *wxGREEN);
-        MarkerSetForeground(LINE_MARKER, lexer->IsDark() ? *wxWHITE : *wxGREEN);
+        MarkerSetBackground(LINE_MARKER, lexer->IsDark() ? *wxWHITE : wxColour("GRAY"));
+        MarkerSetForeground(LINE_MARKER, lexer->IsDark() ? *wxWHITE : wxColour("GRAY"));
         MarkerSetAlpha(LINE_MARKER, 40);
     }
 

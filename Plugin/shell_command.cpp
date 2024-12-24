@@ -69,9 +69,10 @@ void ShellCommand::SendStartMsg(const wxString& toolchain)
     start_event.SetConfigurationName(m_info.GetConfiguration());
     start_event.SetFlag(clBuildEvent::kCustomProject, m_info.GetKind() == QueueCommand::kCustomBuild);
     start_event.SetToolchain(toolchain);
-    start_event.SetFlag(clBuildEvent::kClean, m_info.GetKind() == QueueCommand::kClean ||
-                                                  (start_event.HasFlag(clBuildEvent::kCustomProject) &&
-                                                   m_info.GetCustomBuildTarget() == wxT("clean")));
+    start_event.SetFlag(
+        clBuildEvent::kClean,
+        m_info.GetKind() == QueueCommand::kClean ||
+            (start_event.HasFlag(clBuildEvent::kCustomProject) && m_info.GetCustomBuildTarget() == wxT("clean")));
     EventNotifier::Get()->AddPendingEvent(start_event);
 }
 
@@ -96,27 +97,27 @@ void ShellCommand::CleanUp()
 void ShellCommand::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly)
 {
     // when using custom build, user can select different working directory
-    if(proj) {
-        if(isCustom) {
+    if (proj) {
+        if (isCustom) {
             // first set the path to the project working directory
             ::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 
             BuildConfigPtr buildConf =
                 clCxxWorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
-            if(buildConf) {
+            if (buildConf) {
                 wxString wd = buildConf->GetCustomBuildWorkingDir();
-                if(wd.IsEmpty()) {
+                if (wd.IsEmpty()) {
                     // use the project path
                     wd = proj->GetFileName().GetPath();
                 } else {
                     // expand macros from path
-                    wd = ExpandAllVariables(wd, clCxxWorkspaceST::Get(), proj->GetName(), buildConf->GetName(),
-                                            wxEmptyString);
+                    wd = ExpandAllVariables(
+                        wd, clCxxWorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
                 }
                 ::wxSetWorkingDirectory(wd);
             }
         } else {
-            if(m_info.GetProjectOnly() || isFileOnly) {
+            if (m_info.GetProjectOnly() || isFileOnly) {
                 // first set the path to the project working directory
                 ::wxSetWorkingDirectory(proj->GetFileName().GetPath());
             }
@@ -139,7 +140,7 @@ bool ShellCommand::StartProcess(const wxString& cmd, size_t create_flags)
 #endif
 
     m_proc = ::CreateAsyncProcess(this, cmd, create_flags);
-    if(!m_proc) {
+    if (!m_proc) {
         return false;
     }
     return true;

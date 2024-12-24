@@ -137,15 +137,6 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
 
 void BuildTab::ProcessBuffer(bool last_line)
 {
-    const long cur_time = m_buffer_sw.Time();
-
-    // Limit data process frequency.
-    if (!last_line) {
-        if ((cur_time - m_buffer_time) < PROCESSBUFFER_FLUSH_TIME)
-            return;
-        m_buffer_time = cur_time;
-    }
-
     auto remainder = m_viewStc->Add(m_buffer, last_line);
     m_viewStc->ScrollToEnd();
 

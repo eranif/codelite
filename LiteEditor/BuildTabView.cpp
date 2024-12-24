@@ -122,6 +122,8 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
     const size_t line_count = lines.Count();
     bool is_dark_theme = DrawingUtils::IsDark(StyleGetBackground(0));
     size_t cur_line_number = GetLineCount() - 1;
+
+    wxString textToAppend;
     for (size_t i = 0; i < line_count; i++, cur_line_number++) {
         auto& line = lines[i];
         if (!process_last_line && !line.EndsWith("\n")) {
@@ -137,10 +139,10 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
             lcLine.Contains(CLEAN_PROJECT_PREFIX)) {
             StringUtils::StripTerminalColouring(line, line);
             line = WrapLineInColour(line, AnsiColours::Gray(), false, is_dark_theme);
-            AppendText(line + "\n");
+            textToAppend << line << "\n";
 
-        } else if (lcLine.Contains(BUILD_END_MSG) || lcLine.StartsWith("=== build completed") ||
-                   lcLine.StartsWith("=== build ended")) {
+        } else if (lcLine.Contains(BUILD_END_MSG) || lcLine.Contains("=== build completed") ||
+                   lcLine.Contains("=== build ended")) {
             StringUtils::StripTerminalColouring(line, line);
             if (m_errorCount > 0) {
                 // build ended with error
@@ -152,16 +154,16 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
                 // clean build
                 line = WrapLineInColour(line, AnsiColours::Green(), false, is_dark_theme);
             }
-            AppendText(line + "\n");
+            textToAppend << line << "\n";
 
         } else if (lcLine.Contains(BUILD_PROJECT_PREFIX)) {
             m_currentProject = ProcessBuildingProjectLine(line);
             line = WrapLineInColour(line, AnsiColours::Gray(), false, is_dark_theme);
-            AppendText(line + "\n");
+            textToAppend << line << "\n";
 
         } else if (line_count > PROCESSBUFFER_FMT_LINES_MAX) {
             // Do not heavy process big lines count, no one will read results.
-            AppendText(line);
+            textToAppend << line;
 
         } else {
             std::shared_ptr<LineClientData> line_data(new LineClientData);
@@ -208,9 +210,14 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
                 clDEBUG() << "Storing line info for line:" << cur_line_number << endl;
                 m_lineInfo.insert({ cur_line_number, line_data });
             }
-            AppendText(line + "\n");
+            textToAppend << line << "\n";
         }
     }
+
+    if (!textToAppend.empty()) {
+        AppendText(textToAppend);
+    }
+
     SetEditable(false);
     return remainder;
 }

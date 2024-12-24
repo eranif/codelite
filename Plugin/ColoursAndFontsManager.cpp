@@ -29,7 +29,7 @@
 namespace
 {
 constexpr const char* LEXERS_VERSION_STRING = "LexersVersion";
-constexpr int LEXERS_VERSION = 8;
+constexpr int LEXERS_VERSION = 9;
 } // namespace
 
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);

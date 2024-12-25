@@ -108,7 +108,7 @@ void BuildTabView::InitialiseView()
     }
 
     SetScrollWidthTracking(true);
-    SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-+)#");
+    SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-+@)#");
     SetEditable(false);
 }
 #define PROCESSBUFFER_FMT_LINES_MAX 8192

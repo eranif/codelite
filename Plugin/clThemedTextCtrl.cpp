@@ -31,7 +31,7 @@ clThemedTextCtrl::clThemedTextCtrl(
 {
     wxUnusedVar(style);
 #if USE_TEXT_CTRL
-    wxTextCtrl::Create(parent, id, value, wxDefaultPosition, wxDefaultSize, BORDER_STYLE);
+    wxTextCtrl::Create(parent, id, value, wxDefaultPosition, wxDefaultSize, BORDER_STYLE | wxTE_PROCESS_ENTER);
 #else
     clThemedTextCtrlBase::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, BORDER_STYLE);
     ApplySettings();

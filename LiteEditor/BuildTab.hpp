@@ -24,7 +24,7 @@ public:
     // a synonym to ClearView()
     void Clear() { ClearView(); }
 
-    bool GetBuildEndedSuccessfully() const { return m_error_count == 0 && !m_buildInterrupted; }
+    bool GetBuildEndedSuccessfully() const { return m_viewStc->GetErrorCount() == 0 && !m_buildInterrupted; }
     void SetBuildInterrupted(bool b) { m_buildInterrupted = b; }
 
 protected:
@@ -51,8 +51,6 @@ private:
     wxStopWatch m_buffer_sw;
     long m_buffer_time = 0;
     CompilerPtr m_activeCompiler;
-    size_t m_error_count = 0;
-    size_t m_warn_count = 0;
     bool m_buildInterrupted = false;
     wxString m_currentProjectName;
     wxString m_currentRootDir;

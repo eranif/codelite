@@ -66,7 +66,6 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
 
     // clean the last used compiler
     m_activeCompiler = nullptr;
-    m_error_count = m_warn_count = 0;
 
     // get the toolchain from the event and attempt to load the compiler
     const wxString& toolchain = e.GetToolchain();
@@ -124,8 +123,8 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
 
     // notify the plugins that the build has ended
     clBuildEvent build_ended_event(wxEVT_BUILD_ENDED);
-    build_ended_event.SetErrorCount(m_error_count);
-    build_ended_event.SetWarningCount(m_warn_count);
+    build_ended_event.SetErrorCount(m_viewStc->GetErrorCount());
+    build_ended_event.SetWarningCount(m_viewStc->GetWarnCount());
     EventNotifier::Get()->AddPendingEvent(build_ended_event);
 
     m_currentProjectName.clear();
@@ -153,8 +152,6 @@ void BuildTab::Cleanup()
     m_buffer.clear();
     ClearView();
     m_activeCompiler = nullptr;
-    m_error_count = 0;
-    m_warn_count = 0;
     m_buildInterrupted = false;
     m_currentProjectName.clear();
 }
@@ -223,17 +220,17 @@ wxString BuildTab::CreateSummaryLine()
 
         // at this point, m_buffer is empty
         text << "\n";
-        if (m_error_count) {
+        if (m_viewStc->GetErrorCount()) {
             text = _("==== build ended with ");
             text << WrapLineInColour(_("errors"), AnsiColours::Red(), true);
-        } else if (m_warn_count) {
+        } else if (m_viewStc->GetWarnCount()) {
             text = _("=== build ended with ");
             text << WrapLineInColour(_("warnings"), AnsiColours::Yellow(), true);
         } else {
             text = _("=== build completed ");
             text << WrapLineInColour(_("successfully"), AnsiColours::Green(), true);
         }
-        text << " (" << m_error_count << _(" errors, ") << m_warn_count << _(" warnings)");
+        text << " (" << m_viewStc->GetErrorCount() << _(" errors, ") << m_viewStc->GetWarnCount() << _(" warnings)");
         if (!total_time.empty()) {
             text << total_time;
         }

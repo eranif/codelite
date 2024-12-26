@@ -37,11 +37,11 @@ public:
 
     /// Initialise the view, preparing it for the next build process. This method should be called when a new build
     /// is starting
-    void Initialise(CompilerPtr compiler, bool jump_through_errors_only)
+    void Initialise(CompilerPtr compiler, bool only_erros)
     {
         Clear();
         m_activeCompiler = compiler; // maybe null
-        m_jumpThroughErrorsOnly = jump_through_errors_only;
+        m_onlyErrors = only_erros;
     }
 
     size_t GetErrorCount() const { return m_errorCount; }
@@ -68,7 +68,7 @@ protected:
 private:
     std::map<size_t, std::shared_ptr<LineClientData>> m_lineInfo;
     CompilerPtr m_activeCompiler;
-    bool m_jumpThroughErrorsOnly = false;
+    bool m_onlyErrors = false;
     size_t m_errorCount = 0;
     size_t m_warnCount = 0;
     wxString m_currentProject;

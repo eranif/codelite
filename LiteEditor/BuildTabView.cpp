@@ -362,7 +362,7 @@ void BuildTabView::OnNextBuildError(wxCommandEvent& event)
         ++from;
     }
     clDEBUG() << "searching error from line:" << from << endl;
-    SelectFirstErrorOrWarning(from, m_jumpThroughErrorsOnly);
+    SelectFirstErrorOrWarning(from, m_onlyErrors);
 }
 
 void BuildTabView::OnNextBuildErrorUI(wxUpdateUIEvent& event) { event.Enable(m_warnCount || m_errorCount); }
@@ -392,14 +392,24 @@ BuildTabView::GetNextLineWithErrorOrWarning(size_t from, bool errors_only) const
         clDEBUG() << "Empty line info" << endl;
         return {};
     }
-    auto iter = m_lineInfo.lower_bound(from);
-    if (iter == m_lineInfo.end()) {
-        clDEBUG() << "Could not find an error / warning info for line >=" << from << endl;
-        return {};
-    }
 
-    clDEBUG() << "Found:" << iter->second->message << endl;
-    return *iter;
+    auto iter = m_lineInfo.lower_bound(from);
+    while (iter != m_lineInfo.end()) {
+        switch (iter->second->match_pattern.sev) {
+        case Compiler::kSevWarning:
+        case Compiler::kSevNote:
+            if (errors_only) {
+                // items are sorted, move forward to the next match
+                ++iter;
+                continue;
+            }
+            // fall through
+        case Compiler::kSevError:
+            clDEBUG() << "Found:" << iter->second->message << endl;
+            return *iter;
+        }
+    }
+    return {};
 }
 
 void BuildTabView::ClearLineMarker() { MarkerDeleteAll(LINE_MARKER); }

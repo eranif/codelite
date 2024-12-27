@@ -509,7 +509,7 @@ void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
 void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event)
 {
     if (event.GetProcess() == m_buildProcess) {
-        DoPrintBuildMessage(event.GetOutput());
+        DoPrintBuildMessage(event.GetOutputRaw());
     }
 }
 

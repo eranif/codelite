@@ -209,6 +209,7 @@ void CompileRequest::Process(IManager* manager)
 
     // Avoid Unicode chars coming from the compiler by setting LC_ALL to "C"
     om["LC_ALL"] = "C";
+    om["TERM"] = "xterm-256color"; // this will allow coloured output from the compiler
 
     EnvSetter envir(env, &om, proj->GetName(), m_info.GetConfiguration());
     if(!StartProcess(cmd, IProcessCreateDefault | IProcessWrapInShell)) {

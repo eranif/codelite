@@ -74,8 +74,8 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
         EventNotifier::Get()->Bind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clFileSystemWorkspace::OnIsBuildInProgress, this);
-        EventNotifier::Get()->Bind(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &clFileSystemWorkspace::OnCustomTargetMenu,
-                                   this);
+        EventNotifier::Get()->Bind(
+            wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &clFileSystemWorkspace::OnCustomTargetMenu, this);
 
         Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
@@ -87,8 +87,8 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &clFileSystemWorkspace::OnStopExecute, this);
         // Debug events
         EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG_DLG_SHOWING, &clFileSystemWorkspace::OnQuickDebugDlgShowing, this);
-        EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, &clFileSystemWorkspace::OnQuickDebugDlgDismissed,
-                                   this);
+        EventNotifier::Get()->Bind(
+            wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
 
         EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
         EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
@@ -117,8 +117,8 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clFileSystemWorkspace::OnIsBuildInProgress, this);
         EventNotifier::Get()->Unbind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
-        EventNotifier::Get()->Unbind(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING,
-                                     &clFileSystemWorkspace::OnCustomTargetMenu, this);
+        EventNotifier::Get()->Unbind(
+            wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &clFileSystemWorkspace::OnCustomTargetMenu, this);
 
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
@@ -130,10 +130,10 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &clFileSystemWorkspace::OnStopExecute, this);
 
         // Debug events
-        EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG_DLG_SHOWING, &clFileSystemWorkspace::OnQuickDebugDlgShowing,
-                                     this);
-        EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK,
-                                     &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
+        EventNotifier::Get()->Unbind(
+            wxEVT_QUICK_DEBUG_DLG_SHOWING, &clFileSystemWorkspace::OnQuickDebugDlgShowing, this);
+        EventNotifier::Get()->Unbind(
+            wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
         EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
         EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
 
@@ -707,7 +707,8 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
     if (!GetConfig()) {
         ::wxMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
                          "settings and add one"),
-                       "CodeLite", wxICON_WARNING | wxCENTER);
+                       "CodeLite",
+                       wxICON_WARNING | wxCENTER);
         return;
     }
 
@@ -735,6 +736,9 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
 
     // Build the environment to use
     clEnvList_t envList = GetEnvList();
+
+    // pass TERM to get colours from the build process
+    envList.push_back({ "TERM", "xterm-256color" });
 
     // Start the process with the environemt
     wxString ssh_account;
@@ -1017,7 +1021,7 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
         // Add port
         if (!port.IsEmpty()) {
-          host << wxT(":") << port;
+            host << wxT(":") << port;
         }
 
         // Now run the debuggee (remote)
@@ -1026,7 +1030,6 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     } else {
         // Now run the debuggee (local)
         dbgr->Run(args, "");
-
     }
 }
 
@@ -1217,7 +1220,8 @@ void clFileSystemWorkspace::CheckForCMakeLists()
     // Prompt the user for configuring the workspace
     auto answer =
         ::wxMessageBox(_("A CMakeLists.txt file was found in the workspace folder, would you like to use it?"),
-                       "CodeLite", wxYES_NO | wxYES_DEFAULT | wxCENTER);
+                       "CodeLite",
+                       wxYES_NO | wxYES_DEFAULT | wxCENTER);
     if (answer != wxYES) {
         return;
     }
@@ -1259,11 +1263,11 @@ void clFileSystemWorkspace::CheckForCMakeLists()
         }
 
         clDEBUG() << "Configuring workspace config:" << config_name << endl;
-        config->SetBuildTargets(
-            { { "build", wxString() << "cd " << build_dir << " && " << make_command },
-              { "clean", wxString() << "cd " << build_dir << " && " << make_command << " clean" },
-              { "cmake", wxString() << "mkdir -p " << build_dir << " && cd " << build_dir << " && cmake -G"
-                                    << cmake_generator << " .. -DCMAKE_BUILD_TYPE=" << config_name } });
+        config->SetBuildTargets({ { "build", wxString() << "cd " << build_dir << " && " << make_command },
+                                  { "clean", wxString() << "cd " << build_dir << " && " << make_command << " clean" },
+                                  { "cmake",
+                                    wxString() << "mkdir -p " << build_dir << " && cd " << build_dir << " && cmake -G"
+                                               << cmake_generator << " .. -DCMAKE_BUILD_TYPE=" << config_name } });
         config->SetCompiler(cmpiler_name);
     }
     settings.Save(m_filename.GetFullPath());

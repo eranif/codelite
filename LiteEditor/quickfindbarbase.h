@@ -27,7 +27,6 @@
 #include <wx/textctrl.h>
 #include "clThemedTextCtrl.hpp"
 #include <wx/button.h>
-#include "clThemedButton.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -107,12 +106,12 @@ protected:
     clToolBar* m_toolbar;
     wxPanel* m_mainPanel;
     clThemedTextCtrl* m_textCtrlFind;
-    clThemedButton* m_buttonFind;
-    clThemedButton* m_buttonFindPrev;
-    clThemedButton* m_buttonFindAll;
+    wxButton* m_buttonFind;
+    wxButton* m_buttonFindPrev;
+    wxButton* m_buttonFindAll;
     clThemedTextCtrl* m_textCtrlReplace;
-    clThemedButton* m_buttonReplace;
-    clThemedButton* m_buttonReplaceAll;
+    wxButton* m_buttonReplace;
+    wxButton* m_buttonReplaceAll;
 
 protected:
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
@@ -136,12 +135,12 @@ protected:
 public:
     clToolBar* GetToolbar() { return m_toolbar; }
     clThemedTextCtrl* GetTextCtrlFind() { return m_textCtrlFind; }
-    clThemedButton* GetButtonFind() { return m_buttonFind; }
-    clThemedButton* GetButtonFindPrev() { return m_buttonFindPrev; }
-    clThemedButton* GetButtonFindAll() { return m_buttonFindAll; }
+    wxButton* GetButtonFind() { return m_buttonFind; }
+    wxButton* GetButtonFindPrev() { return m_buttonFindPrev; }
+    wxButton* GetButtonFindAll() { return m_buttonFindAll; }
     clThemedTextCtrl* GetTextCtrlReplace() { return m_textCtrlReplace; }
-    clThemedButton* GetButtonReplace() { return m_buttonReplace; }
-    clThemedButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
+    wxButton* GetButtonReplace() { return m_buttonReplace; }
+    wxButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     clFindReplaceDialogBase(wxWindow* parent,
                             wxWindowID id = wxID_ANY,

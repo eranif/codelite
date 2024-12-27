@@ -1306,11 +1306,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	"clThemedButton"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	"clThemedButton.h"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",
@@ -1412,11 +1412,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	"clThemedButton"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	"clThemedButton.h"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",
@@ -1518,11 +1518,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	"clThemedButton"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	"clThemedButton.h"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",
@@ -1739,11 +1739,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	"clThemedButton"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	"clThemedButton.h"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",
@@ -1845,11 +1845,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	"clThemedButton"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	"clThemedButton.h"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",

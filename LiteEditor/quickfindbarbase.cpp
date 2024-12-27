@@ -254,18 +254,18 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 
     flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
 
-    m_buttonFind = new clThemedButton(
-        m_mainPanel, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
+    m_buttonFind =
+        new wxButton(m_mainPanel, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
     m_buttonFind->SetDefault();
 
     flexGridSizer107->Add(m_buttonFind, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_buttonFindPrev = new clThemedButton(
+    m_buttonFindPrev = new wxButton(
         m_mainPanel, wxID_BACKWARD, _("Find Prev"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
     flexGridSizer107->Add(m_buttonFindPrev, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_buttonFindAll = new clThemedButton(
+    m_buttonFindAll = new wxButton(
         m_mainPanel, wxID_FIND_ALL, _("Find All"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
     flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
@@ -278,12 +278,12 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 
     flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
 
-    m_buttonReplace = new clThemedButton(
+    m_buttonReplace = new wxButton(
         m_mainPanel, wxID_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
     flexGridSizer107->Add(m_buttonReplace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_buttonReplaceAll = new clThemedButton(
+    m_buttonReplaceAll = new wxButton(
         m_mainPanel, wxID_REPLACE_ALL, _("Replace All"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 
     flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));

@@ -62,14 +62,40 @@ constexpr int LINE_MARKER = 7;
 constexpr int NUMBER_MARGIN_ID = 1;
 constexpr int SYMBOLS_MARGIN_SEP_ID = 4;
 
+/// Provide a helper that strips ANSI codes from the text
+class MyEventsHandler : public clEditEventsHandler
+{
+public:
+    MyEventsHandler(wxStyledTextCtrl* ctrl)
+        : clEditEventsHandler(ctrl)
+    {
+    }
+
+    void OnCopy(wxCommandEvent& event) override
+    {
+        if (!m_stc->CanCopy()) {
+            return;
+        }
+
+        auto text = ::clGetVisibleSelection(m_stc);
+        if (text.empty()) {
+            return;
+        }
+        ::CopyToClipboard(text);
+    }
+};
+
 } // namespace
 
 BuildTabView::BuildTabView(wxWindow* parent)
     : wxStyledTextCtrl(parent)
 {
     InitialiseView();
+    m_editEvents.reset(new MyEventsHandler(this));
+
     Bind(wxEVT_LEFT_DOWN, &BuildTabView::OnLeftDown, this);
     Bind(wxEVT_LEFT_UP, &BuildTabView::OnLeftUp, this);
+    Bind(wxEVT_CONTEXT_MENU, &BuildTabView::OnContextMenu, this);
 
     wxTheApp->Bind(wxEVT_MENU, &BuildTabView::OnNextBuildError, this, XRCID("next_build_error"));
     wxTheApp->Bind(wxEVT_UPDATE_UI, &BuildTabView::OnNextBuildErrorUI, this, XRCID("next_build_error"));
@@ -86,6 +112,7 @@ BuildTabView::~BuildTabView()
 {
     Unbind(wxEVT_LEFT_DOWN, &BuildTabView::OnLeftDown, this);
     Unbind(wxEVT_LEFT_UP, &BuildTabView::OnLeftUp, this);
+    Unbind(wxEVT_CONTEXT_MENU, &BuildTabView::OnContextMenu, this);
 
     wxTheApp->Unbind(wxEVT_MENU, &BuildTabView::OnNextBuildError, this, XRCID("next_build_error"));
     wxTheApp->Unbind(wxEVT_UPDATE_UI, &BuildTabView::OnNextBuildErrorUI, this, XRCID("next_build_error"));
@@ -110,7 +137,9 @@ void BuildTabView::InitialiseView()
     SetScrollWidthTracking(true);
     SetWordChars(R"#(\:~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$/.-+@)#");
     SetEditable(false);
+    UsePopUp(0);
 }
+
 #define PROCESSBUFFER_FMT_LINES_MAX 8192
 #define PROCESSBUFFER_FLUSH_TIME 200 // ms
 
@@ -464,4 +493,46 @@ void BuildTabView::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
     InitialiseView();
+}
+
+void BuildTabView::OnContextMenu(wxContextMenuEvent& e)
+{
+    e.Skip();
+    wxMenu menu;
+
+    menu.Append(XRCID("buildtabview_copy"), _("Copy"));
+    menu.Append(XRCID("buildtabview_select_all"), _("Select All"));
+    menu.AppendSeparator();
+    menu.Append(XRCID("buildtabview_clear_all"), _("Clear"));
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            auto text = ::clGetVisibleSelection(this);
+            ::CopyToClipboard(text);
+        },
+        XRCID("buildtabview_copy"));
+    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(HasSelection()); }, XRCID("buildtabview_copy"));
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            SelectAll();
+        },
+        XRCID("buildtabview_select_all"));
+    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(!IsEmpty()); }, XRCID("buildtabview_select_all"));
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            SetEditable(true);
+            ClearAll();
+            SetEditable(false);
+        },
+        XRCID("buildtabview_clear_all"));
+    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(!IsEmpty()); }, XRCID("buildtabview_clear_all"));
+    PopupMenu(&menu);
 }

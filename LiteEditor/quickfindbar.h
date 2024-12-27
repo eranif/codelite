@@ -24,10 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "clEditorEditEventsHandler.h"
 #include "clTerminalHistory.h"
 #include "quickfindbarbase.h"
-#include "wxCustomStatusBar.h"
 
 #include <vector>
 #include <wx/combobox.h>

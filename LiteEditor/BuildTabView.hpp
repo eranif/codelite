@@ -1,5 +1,6 @@
 #pragma once
 
+#include "clEditorEditEventsHandler.h"
 #include "compiler.h"
 
 #include <map>
@@ -51,6 +52,7 @@ public:
     void SelectFirstErrorOrWarning(size_t from, bool errors_only);
 
 protected:
+    void OnContextMenu(wxContextMenuEvent& e);
     void OnLeftDown(wxMouseEvent& e);
     void OnLeftUp(wxMouseEvent& e);
     void DoPatternClicked(const wxString& pattern, int pattern_line);
@@ -74,4 +76,5 @@ private:
     wxString m_currentProject;
     int m_indicatorStartPos = wxNOT_FOUND;
     int m_indicatorEndPos = wxNOT_FOUND;
+    clEditEventsHandler::Ptr_t m_editEvents;
 };

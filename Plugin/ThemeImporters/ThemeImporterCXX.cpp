@@ -58,7 +58,7 @@ LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);
     CHECK_PTR_RET_NULL(lexer);
 
-    // Covnert to codelite's XML properties
+    // Convert to CodeLite's XML properties
     AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_editor);
     AddProperty(lexer, wxSTC_C_COMMENT, "Common C style comment", m_multiLineComment);
     AddProperty(lexer, wxSTC_C_COMMENTLINE, "Common C++ style comment", m_singleLineComment);

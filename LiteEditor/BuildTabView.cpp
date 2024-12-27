@@ -259,7 +259,7 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
                 line_data->project_name = m_currentProject;
                 line_data->match_pattern.file_path = MakeAbsolute(line_data->match_pattern.file_path);
 
-                clDEBUG() << "Storing line info for line:" << cur_line_number << endl;
+                clDEBUG() << "(Build Tab View) Storing line info for line:" << cur_line_number << endl;
                 m_lineInfo.insert({ cur_line_number, line_data });
             }
             textToAppend << line << "\n";
@@ -331,13 +331,13 @@ void BuildTabView::OnLeftUp(wxMouseEvent& e)
 
 void BuildTabView::DoPatternClicked(const wxString& pattern, int pattern_line)
 {
-    clDEBUG() << "Searching for line info for view line:" << pattern_line << endl;
+    clDEBUG() << "(Build Tab View) Searching for line info for view line:" << pattern_line << endl;
     if (m_lineInfo.count(pattern_line)) {
         clDEBUG() << "Using parsed data for view line:" << pattern_line << endl;
         const auto& line_info = m_lineInfo[pattern_line];
         OpenEditor(line_info);
     } else {
-        clDEBUG() << "No line info for view line:" << pattern_line << endl;
+        clDEBUG() << "(Build Tab View) No line info for view line:" << pattern_line << endl;
         // if the pattern matches a URL, open it
         if (pattern.StartsWith("https://") || pattern.StartsWith("http://")) {
             ::wxLaunchDefaultBrowser(pattern);
@@ -416,7 +416,7 @@ void BuildTabView::OnNextBuildError(wxCommandEvent& event)
     } else {
         ++from;
     }
-    clDEBUG() << "searching error from line:" << from << endl;
+    clDEBUG() << "(Build Tab View) searching error from line:" << from << endl;
     SelectFirstErrorOrWarning(from, m_onlyErrors);
 }
 
@@ -444,7 +444,7 @@ BuildTabView::GetNextLineWithErrorOrWarning(size_t from, bool errors_only) const
     }
 
     if (m_lineInfo.empty()) {
-        clDEBUG() << "Empty line info" << endl;
+        clDEBUG() << "(Build Tab View) no errors collected" << endl;
         return {};
     }
 
@@ -460,7 +460,7 @@ BuildTabView::GetNextLineWithErrorOrWarning(size_t from, bool errors_only) const
             }
             // fall through
         case Compiler::kSevError:
-            clDEBUG() << "Found:" << iter->second->message << endl;
+            clDEBUG() << "(Build Tab View) Found:" << iter->second->message << endl;
             return *iter;
         }
     }
@@ -503,11 +503,16 @@ void BuildTabView::OpenEditor(std::shared_ptr<LineClientData> line_info)
     eventErrorClicked.SetFileName(line_info->match_pattern.file_path);
     eventErrorClicked.SetLineNumber(line_info->match_pattern.line_number);
     eventErrorClicked.SetProjectName(line_info->project_name);
-    clDEBUG1() << "Letting plugins process it first (" << line_info->match_pattern.file_path << ":"
-               << line_info->match_pattern.line_number << ")" << endl;
+    clDEBUG() << "(Build Tab View) Sending 'wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED' event for file:"
+              << line_info->match_pattern.file_path << ":" << line_info->match_pattern.line_number << "to plugins"
+              << endl;
     if (EventNotifier::Get()->ProcessEvent(eventErrorClicked)) {
+        clDEBUG() << "(Build Tab View) event was handled by plugin" << endl;
         return;
     }
+
+    clDEBUG() << "(Build Tab View) Opening editor for file:" << line_info->match_pattern.file_path << ":"
+              << line_info->match_pattern.line_number << endl;
 
     OpenEditor(line_info->match_pattern.file_path,
                line_info->match_pattern.line_number,
@@ -578,7 +583,7 @@ void BuildTabView::Initialise(CompilerPtr compiler, bool only_erros, const wxStr
         workspace_file.Replace("\\", "/");
         wxString workspace_dir = workspace_file.BeforeLast('/');
 
-        if (clCxxWorkspaceST::Get()) {
+        if (clCxxWorkspaceST::Get() && clCxxWorkspaceST::Get()->IsOpen()) {
             auto project = clCxxWorkspaceST::Get()->GetProject(m_buildingProject);
             if (project) {
                 auto build_conf = project->GetBuildConfiguration(wxEmptyString);
@@ -605,6 +610,7 @@ void BuildTabView::Initialise(CompilerPtr compiler, bool only_erros, const wxStr
 wxString BuildTabView::MakeAbsolute(const wxString& filepath)
 {
     if (!filepath.StartsWith("..")) {
+        clDEBUG() << "(Build Tab View) file:" << filepath << "is already in absolute path" << endl;
         return filepath; // already absolute path
     }
 

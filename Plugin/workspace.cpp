@@ -1549,44 +1549,8 @@ bool clCxxWorkspace::GetBacktickValue(const wxString& backtick, wxString& value)
 
 void clCxxWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
 {
-    if(!IsOpen()) {
-        event.Skip();
-        return;
-    }
-
-    wxFileName fn(event.GetFileName());
-    if(fn.IsAbsolute()) {
-        // there is a built in mechanism to handle full path files, let it process it
-        clDEBUG() << "C++ workspace: letting built-in handler to open the file" << endl;
-        event.Skip();
-        return;
-    }
-
-    clDEBUG() << "Handling OnBuildHotspotClicked event" << endl;
-    clDEBUG() << "File:" << event.GetFileName() << endl;
-    clDEBUG() << "Line:" << event.GetLineNumber() << endl;
-    clDEBUG() << "Project:" << event.GetProjectName() << endl;
-
-    event.Skip(false);
-    const wxString& project_name = event.GetProjectName();
-    auto p = GetProject(project_name);
-    if(!p) {
-        clDEBUG() << "Could not find project:" << project_name << "." << endl;
-        return;
-    }
-
-    fn.MakeAbsolute(p->GetFileName().GetPath());
-    clDEBUG() << "Path made abs:" << event.GetFileName() << "->" << fn.GetFullPath() << endl;
-    // attempt to open this file
-
-    auto editor = clGetManager()->FindEditor(fn.GetFullPath());
-    if(!editor) {
-        editor = clGetManager()->OpenFile(fn.GetFullPath(), wxEmptyString, event.GetLineNumber());
-    }
-    if(editor) {
-        clGetManager()->SelectPage(editor->GetCtrl());
-        editor->CenterLine(event.GetLineNumber());
-    }
+    // Let the generic code to handle the file open
+    event.Skip();
 }
 
 void clCxxWorkspace::SetProjectActive(const wxString& project) { SetActiveProject(project); }

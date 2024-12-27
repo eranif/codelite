@@ -88,7 +88,7 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
         m_viewStc->ScrollToEnd();
     }
 
-    m_viewStc->Initialise(m_activeCompiler, m_buildTabSettings.IsSkipWarnings());
+    m_viewStc->Initialise(m_activeCompiler, m_buildTabSettings.IsSkipWarnings(), e.GetProjectName());
 
     // notify the plugins that the build had started
     clBuildEvent build_started_event(wxEVT_BUILD_STARTED);

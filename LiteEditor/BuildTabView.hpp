@@ -3,6 +3,7 @@
 #include "clEditorEditEventsHandler.h"
 #include "compiler.h"
 
+#include <deque>
 #include <map>
 #include <memory>
 #include <optional>
@@ -38,12 +39,7 @@ public:
 
     /// Initialise the view, preparing it for the next build process. This method should be called when a new build
     /// is starting
-    void Initialise(CompilerPtr compiler, bool only_erros)
-    {
-        Clear();
-        m_activeCompiler = compiler; // maybe null
-        m_onlyErrors = only_erros;
-    }
+    void Initialise(CompilerPtr compiler, bool only_erros, const wxString& project);
 
     size_t GetErrorCount() const { return m_errorCount; }
     size_t GetWarnCount() const { return m_warnCount; }
@@ -67,6 +63,9 @@ protected:
     void InitialiseView();
     void OnThemeChanged(wxCommandEvent& e);
 
+    /// Attempt to convert 'filepath' into absolute path
+    wxString MakeAbsolute(const wxString& filepath);
+
 private:
     std::map<size_t, std::shared_ptr<LineClientData>> m_lineInfo;
     CompilerPtr m_activeCompiler;
@@ -77,4 +76,7 @@ private:
     int m_indicatorStartPos = wxNOT_FOUND;
     int m_indicatorEndPos = wxNOT_FOUND;
     clEditEventsHandler::Ptr_t m_editEvents;
+    std::deque<wxString> m_workingDirectories;
+    bool m_isRemoteBuild = false;
+    wxString m_buildingProject; // only relevant for C++ workspace
 };

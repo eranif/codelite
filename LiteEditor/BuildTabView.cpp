@@ -11,6 +11,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "macros.h"
+#include "workspace.h"
 
 #include <wx/app.h>
 #include <wx/msgdlg.h>
@@ -164,8 +165,28 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
 
         // easy path: check for common makefile messages
         wxString lcLine = line.Lower();
-        if (lcLine.Contains("entering directory") || lcLine.Contains("leaving directory") ||
-            lcLine.Contains(CLEAN_PROJECT_PREFIX)) {
+        if (lcLine.Contains("entering directory") || lcLine.Contains("leaving directory")) {
+            StringUtils::StripTerminalColouring(line, line);
+
+            wxString directory_name = line.AfterFirst('\'');
+            directory_name = directory_name.BeforeLast('\'');
+
+            // this functions as a stack, so we "push_front"
+            if (lcLine.Contains("entering directory")) {
+                m_workingDirectories.push_front(directory_name);
+
+            } else { // "Leaving directory"
+                if (!m_workingDirectories.empty()) {
+                    m_workingDirectories.pop_front();
+                } else {
+                    clWARNING() << "Leaving directory found, but no matching 'Entering directory'?" << endl;
+                }
+            }
+
+            line = WrapLineInColour(line, AnsiColours::Gray(), false, is_dark_theme);
+            textToAppend << line << "\n";
+
+        } else if (lcLine.Contains(CLEAN_PROJECT_PREFIX)) {
             StringUtils::StripTerminalColouring(line, line);
             line = WrapLineInColour(line, AnsiColours::Gray(), false, is_dark_theme);
             textToAppend << line << "\n";
@@ -236,6 +257,8 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
                 // set the line project name
                 line_data->toolchain = m_activeCompiler ? m_activeCompiler->GetName() : wxString();
                 line_data->project_name = m_currentProject;
+                line_data->match_pattern.file_path = MakeAbsolute(line_data->match_pattern.file_path);
+
                 clDEBUG() << "Storing line info for line:" << cur_line_number << endl;
                 m_lineInfo.insert({ cur_line_number, line_data });
             }
@@ -261,6 +284,9 @@ void BuildTabView::Clear()
     m_warnCount = 0;
     m_currentProject = wxEmptyString;
     m_activeCompiler = nullptr;
+    m_workingDirectories.clear();
+    m_isRemoteBuild = false;
+    m_buildingProject.clear();
     ClearLineMarker();
 }
 
@@ -346,10 +372,10 @@ void BuildTabView::DoPatternClicked(const wxString& pattern, int pattern_line)
             file = pattern;
         }
 
-        clDEBUG() << "Build tab view: firing hostspot event for:" << endl;
-        clDEBUG() << "Build tab view: file:" << file << endl;
-        clDEBUG() << "Build tab view: line:" << line << endl;
-        clDEBUG() << "Build tab view: column:" << col << endl;
+        clDEBUG() << "(Build Tab View) firing hotspot event for:" << endl;
+        clDEBUG() << "(Build Tab View) file:" << file << endl;
+        clDEBUG() << "(Build Tab View) line:" << line << endl;
+        clDEBUG() << "(Build Tab View) column:" << col << endl;
 
         clBuildEvent event_clicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
         event_clicked.SetBuildDir(wxEmptyString); // can be empty
@@ -369,7 +395,7 @@ void BuildTabView::DoPatternClicked(const wxString& pattern, int pattern_line)
         // Default handling for opening files
         // change dir to the active workspace directory
         DirSaver ds;
-        clDEBUG() << "Build tab view: using default open file handler" << endl;
+        clDEBUG() << "(Build Tab View) using default open file handler" << endl;
         auto workspace = clWorkspaceManager::Get().GetWorkspace();
         if (workspace && !workspace->IsRemote()) {
             ::wxSetWorkingDirectory(wxFileName(workspace->GetFileName()).GetPath());
@@ -535,4 +561,75 @@ void BuildTabView::OnContextMenu(wxContextMenuEvent& e)
         XRCID("buildtabview_clear_all"));
     menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(!IsEmpty()); }, XRCID("buildtabview_clear_all"));
     PopupMenu(&menu);
+}
+
+void BuildTabView::Initialise(CompilerPtr compiler, bool only_erros, const wxString& project)
+{
+    Clear();
+    m_activeCompiler = compiler; // maybe null
+    m_onlyErrors = only_erros;
+    m_isRemoteBuild = false;
+    m_buildingProject = project;
+
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace) {
+        m_isRemoteBuild = workspace->IsRemote();
+        wxString workspace_file = workspace->GetFileName();
+        workspace_file.Replace("\\", "/");
+        wxString workspace_dir = workspace_file.BeforeLast('/');
+
+        if (clCxxWorkspaceST::Get()) {
+            auto project = clCxxWorkspaceST::Get()->GetProject(m_buildingProject);
+            if (project) {
+                auto build_conf = project->GetBuildConfiguration(wxEmptyString);
+                if (build_conf && build_conf->IsCustomBuild() && !build_conf->GetCustomBuildWorkingDir().empty()) {
+                    // use the custom build's working directory
+                    wxFileName custom_wd(build_conf->GetCustomBuildWorkingDir(), wxEmptyString);
+                    if (custom_wd.IsRelative()) {
+                        custom_wd.MakeAbsolute(project->GetProjectPath());
+                    }
+                    m_workingDirectories.push_front(custom_wd.GetPath());
+                } else {
+                    // use the project path
+                    m_workingDirectories.push_front(project->GetProjectPath());
+                }
+            } else {
+                clWARNING() << "Could not locate project:" << m_buildingProject << endl;
+            }
+        } else {
+            m_workingDirectories.push_front(workspace_dir);
+        }
+    }
+}
+
+wxString BuildTabView::MakeAbsolute(const wxString& filepath)
+{
+    if (!filepath.StartsWith("..")) {
+        return filepath; // already absolute path
+    }
+
+    if (m_isRemoteBuild) {
+        if (!m_workingDirectories.empty()) {
+            wxFileName fn(filepath, wxPATH_UNIX);
+            if (fn.MakeAbsolute(m_workingDirectories.front(), wxPATH_UNIX)) {
+                clDEBUG() << "(Build Tab View) File path modified from:" << filepath << "->"
+                          << fn.GetFullPath(wxPATH_UNIX) << endl;
+                return fn.GetFullPath(wxPATH_UNIX);
+            }
+        }
+    } else {
+        for (const auto& path : m_workingDirectories) {
+            wxFileName fn(filepath);
+            clDEBUG() << "(Build Tab View) Trying to convert file:" << filepath << "into abs path using wd:" << path
+                      << endl;
+            if (fn.MakeAbsolute(path) && fn.FileExists()) {
+                clDEBUG() << "(Build Tab View) File path modified from:" << filepath << "->" << fn.GetFullPath()
+                          << endl;
+                return fn.GetFullPath();
+            }
+        }
+    }
+
+    // default: do not modify the path
+    return filepath;
 }

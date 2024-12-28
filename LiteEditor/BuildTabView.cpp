@@ -225,7 +225,12 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
             StringUtils::StripTerminalColouring(line, modified_line);
             bool lineHasColours = (line.length() != modified_line.length());
 
-            if (!m_activeCompiler || !m_activeCompiler->Matches(line, &line_data->match_pattern)) {
+            if (!m_activeCompiler) {
+                clWARNING() << "(Build Tab View) No active compiler" << endl;
+            }
+
+            // Pass the "clean" line to the regex processor
+            if (!m_activeCompiler || !m_activeCompiler->Matches(modified_line, &line_data->match_pattern)) {
                 line_data.reset();
             } else {
                 switch (line_data->match_pattern.sev) {

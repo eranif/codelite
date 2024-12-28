@@ -72,8 +72,10 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
     if (!toolchain.empty() && BuildSettingsConfigST::Get()->IsCompilerExist(toolchain)) {
         m_activeCompiler = BuildSettingsConfigST::Get()->GetCompiler(toolchain);
         clDEBUG() << "Active compiler is set to:" << m_activeCompiler->GetName() << endl;
+    }
 
-    } else {
+    m_viewStc->Initialise(m_activeCompiler, m_buildTabSettings.IsSkipWarnings(), e.GetProjectName());
+    if (!m_activeCompiler) {
         clDEBUG() << "Compiler not selected in the workspace build settings or not available" << endl;
 
         // toolchain not selected in build configuration or unavailable
@@ -87,8 +89,6 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
         m_viewStc->Add(_("\n"));
         m_viewStc->ScrollToEnd();
     }
-
-    m_viewStc->Initialise(m_activeCompiler, m_buildTabSettings.IsSkipWarnings(), e.GetProjectName());
 
     // notify the plugins that the build had started
     clBuildEvent build_started_event(wxEVT_BUILD_STARTED);

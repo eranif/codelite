@@ -1078,7 +1078,9 @@ void GitPlugin::OnFilesRemovedFromProject(clCommandEvent& e)
 void GitPlugin::ClearCodeLiteRemoteInfo()
 {
     m_isRemoteWorkspace = false;
+#if USE_SFTP
     m_ssh.reset();
+#endif
     m_remoteWorkspaceAccount.clear();
     m_remoteProcess.Stop();
     m_codeliteRemoteScriptPath.clear();
@@ -2718,15 +2720,9 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandO
         }
 
     } else {
-        clEnvList_t env;
+#if USE_SFTP
         wxString git_command = "git --no-pager ";
         git_command << command;
-        auto cb = [commandOutput](const std::string& output, clRemoteCommandStatus status) { *commandOutput = output; };
-        auto args = StringUtils::BuildCommandArrayFromString(git_command);
-
-        clDEBUG() << "Git (remote)->" << args << endl;
-        std::vector<wxString> vArgs{ args.begin(), args.end() };
-
         auto output =
             clSSHChannel::Execute(m_ssh, git_command, workingDir.empty() ? m_repositoryDirectory : workingDir);
         if (!output.has_value()) {
@@ -2735,6 +2731,7 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandO
 
         clDEBUG() << "<-" << output.value() << endl;
         *commandOutput = output.value();
+#endif
     }
 
     const wxString lcOutput = commandOutput->Lower();

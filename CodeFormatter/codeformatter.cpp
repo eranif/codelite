@@ -27,6 +27,7 @@
 #include "JSON.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "SFTPClientData.hpp"
+#include "StringUtils.h"
 #include "clEditorStateLocker.h"
 #include "clFileSystemEvent.h"
 #include "clFilesCollector.h"
@@ -154,8 +155,8 @@ void CodeFormatter::CreateToolBar(clToolBarGeneric* toolbar)
     clBitmapList* images = toolbar->GetBitmapsCreateIfNeeded();
     toolbar->AddSpacer();
     toolbar->AddTool(XRCID("format_source"), _("Format Source"), images->Add("format"), _("Format Source Code"));
-    toolbar->AddTool(XRCID("formatter_options"), _("Format Options"), images->Add("cog"),
-                     _("Source Code Formatter Options..."));
+    toolbar->AddTool(
+        XRCID("formatter_options"), _("Format Options"), images->Add("cog"), _("Source Code Formatter Options..."));
     // Connect the events to us
 
     // format the current editor
@@ -170,8 +171,8 @@ void CodeFormatter::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
-    item = new wxMenuItem(menu, XRCID("format_source"), _("Format Current Source"), _("Format Current Source"),
-                          wxITEM_NORMAL);
+    item = new wxMenuItem(
+        menu, XRCID("format_source"), _("Format Current Source"), _("Format Current Source"), wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("formatter_options"), _("Options..."), wxEmptyString, wxITEM_NORMAL);
@@ -385,7 +386,8 @@ void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
             }
             formatter->CallAfter(&CodeFormatter::OnScanFilesCompleted, arrfiles);
         },
-        m_selectedFolder, this);
+        m_selectedFolder,
+        this);
     thr.detach();
 }
 

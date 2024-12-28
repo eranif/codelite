@@ -156,16 +156,6 @@ void WebTools::OnThemeChanged(wxCommandEvent& event)
     m_mgr->GetAllEditors(editors);
 }
 
-bool WebTools::IsJavaScriptFile(const wxFileName& filename)
-{
-    return FileExtManager::GetType(filename.GetFullName()) == FileExtManager::TypeJS;
-}
-
-bool WebTools::IsJavaScriptFile(const wxString& filename)
-{
-    return FileExtManager::GetType(filename) == FileExtManager::TypeJS;
-}
-
 void WebTools::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
 
 void WebTools::OnEditorChanged(wxCommandEvent& event)
@@ -218,24 +208,6 @@ bool WebTools::InsideJSComment(IEditor* editor)
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_COMMENT || styleAtCurPos == wxSTC_HJ_COMMENTLINE ||
                    styleAtCurPos == wxSTC_HJ_COMMENTDOC;
-        }
-    }
-    return false;
-}
-
-bool WebTools::InsideJSString(IEditor* editor)
-{
-    int curpos = editor->PositionBeforePos(editor->GetCurrentPosition());
-    int styleAtCurPos = editor->GetCtrl()->GetStyleAt(curpos);
-    if(FileExtManager::IsJavascriptFile(editor->GetFileName())) {
-        // Use the Cxx macros
-        return styleAtCurPos == wxSTC_C_STRING || styleAtCurPos == wxSTC_C_CHARACTER ||
-               styleAtCurPos == wxSTC_C_STRINGEOL || styleAtCurPos == wxSTC_C_STRINGRAW ||
-               styleAtCurPos == wxSTC_C_HASHQUOTEDSTRING;
-    } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-        if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
-            return styleAtCurPos == wxSTC_HJ_DOUBLESTRING || styleAtCurPos == wxSTC_HJ_SINGLESTRING ||
-                   styleAtCurPos == wxSTC_HJ_STRINGEOL;
         }
     }
     return false;

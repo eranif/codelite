@@ -159,15 +159,7 @@ wxString clConsoleBase::GetSelectedTerminalName()
     return terminalName;
 }
 
-clConsoleEnvironment::clConsoleEnvironment() {}
-
 clConsoleEnvironment::~clConsoleEnvironment() { UnApply(); }
-
-void clConsoleEnvironment::Add(const wxString& name, const wxString& value)
-{
-    m_environment.erase(name);
-    m_environment.insert({ name, value });
-}
 
 void clConsoleEnvironment::Apply()
 {

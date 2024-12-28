@@ -59,8 +59,6 @@ public:
     CompilerCommandLineParser(const wxString& cmdline, const wxString& workingDirectory = wxEmptyString);
     virtual ~CompilerCommandLineParser();
 
-    wxString GetCompileLine() const;
-    void MakeAbsolute(const wxString& path);
     const wxString& GetStandard() const { return m_standard; }
 
     wxString GetStandardWithPrefix() const;

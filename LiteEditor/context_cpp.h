@@ -55,7 +55,6 @@ private:
     bool TryOpenFile(const wxFileName& fileName, bool lookInEntireWorkspace = true);
     bool IsJavaScript() const;
 
-    void DisplayFilesCompletionBox(const wxString& word);
     bool DoGetFunctionBody(long curPos, long& blockStartPos, long& blockEndPos, wxString& content);
     void Initialize();
     bool DoCodeComplete(long pos);
@@ -133,17 +132,10 @@ public:
     DECLARE_EVENT_TABLE()
 
 private:
-    wxString GetWordUnderCaret();
-    wxString GetFileImageString(const wxString& ext);
-    wxString GetImageString(const TagEntry& entry);
     wxString GetExpression(long pos, bool onlyWord, clEditor* editor = NULL, bool forCC = true);
     bool DoGotoSymbol(TagEntryPtr tag);
     bool IsIncludeStatement(const wxString& line, wxString* fileName = NULL, wxString* fileNameUpToCaret = NULL);
-    void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
     int FindLineToAddInclude();
-    void MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags);
-    void DoOpenWorkspaceFile();
-    bool DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl);
     /**
      * @brief add missing implementaions. If line_number is provided
      * then only add the function found on this line number
@@ -152,12 +144,6 @@ private:
 
 public:
     void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix, wxChar keywordPrefix);
-    /**
-     * \brief replace list of tokens representd by li with 'word'
-     * \param li
-     * \return
-     */
-    static void ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li);
 
 private:
     /**

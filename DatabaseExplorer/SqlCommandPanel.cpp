@@ -307,7 +307,6 @@ void SQLCommandPanel::OnSaveClick(wxCommandEvent& event)
     }
 }
 
-void SQLCommandPanel::OnTeplatesLeftDown(wxMouseEvent& event) {}
 void SQLCommandPanel::OnTemplatesBtnClick(wxAuiToolBarEvent& event)
 {
     wxMenu menu;

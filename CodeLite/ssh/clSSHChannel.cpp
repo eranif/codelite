@@ -136,20 +136,6 @@ void clSSHChannel::Close()
     m_ssh.reset();
 }
 
-IProcess::Ptr_t clSSHChannel::CreateAndExecuteScript(clSSH::Ptr_t ssh,
-                                                     clSSHDeleterFunc deleter_cb,
-                                                     wxEvtHandler* owner,
-                                                     const wxString& content,
-                                                     const wxString& script_path,
-                                                     bool wantStderr)
-{
-    if (!ssh::write_remote_file_content(ssh, script_path, content)) {
-        LOG_ERROR(LOG()) << "failed to write remote file:" << script_path << endl;
-        return nullptr;
-    }
-    return Execute(ssh, std::move(deleter_cb), owner, script_path, wantStderr);
-}
-
 std::optional<std::string> clSSHChannel::Execute(clSSH::Ptr_t ssh, const wxString& command, const wxString& wd)
 {
     auto channel = ssh_channel_new(ssh->GetSession());

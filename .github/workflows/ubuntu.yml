@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    # WxWidgets
-    - name: install dependencies for wxWidgets
+    # wxWidgets
+    - name: Install dependencies for wxWidgets
       run: |
         sudo apt-get update
         sudo apt-get install build-essential cmake git libedit-dev libgtk-3-dev libhunspell-dev libsqlite3-dev libssh-dev pkg-config xterm libmariadb-dev libpq-dev
@@ -24,23 +24,23 @@ jobs:
         submodules: recursive
         path: wxWidgets
 
-    - name: build and install wxWidgets
+    - name: Build and install wxWidgets
       run: |
         mkdir -p wxWidgets/build-release
         cd wxWidgets/build-release
         ../configure --disable-debug_flag --with-gtk=3 --enable-stl
         make -j$(nproc) && sudo make install
 
-    # Codelite
-    - name: install Codelite's dependencies
+    # CodeLite
+    - name: Install CodeLite's dependencies
       run: sudo apt-get install build-essential cmake git libpcre2-dev libsqlite3-dev libssh-dev bison flex
 
-    - name: Checkout Codelite
+    - name: Checkout CodeLite
       uses: actions/checkout@v4
       with:
         submodules: recursive
 
-    - name: build, test and install Codelite
+    - name: Build, test and install CodeLite
       run: |
         mkdir build-release
         cd build-release
@@ -51,3 +51,10 @@ jobs:
 
     - name: codelite --version
       run: xvfb-run -a codelite --version || exit 0 # codelite --version returns -1
+
+    - name: Build CodeLite without SFTP support
+      run: |
+        mkdir build-release-no-sftp
+        cd build-release-no-sftp
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DENABLE_SFTP=0
+        make -j$(nproc)

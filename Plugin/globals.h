@@ -336,7 +336,7 @@ WXDLLIMPEXP_SDK wxFileName wxReadLink(const wxFileName& filename);
 /**
  * @brief makes-absolute filepath, and dereferences it and any symlinked dirs in the path
  */
-WXDLLIMPEXP_SDK wxString CLRealPath(const wxString& filepath);
+WXDLLIMPEXP_SDK wxString CLRealPath(const wxString& filepath, bool force=false);
 
 /**
  * @brief convert string to integer using range validation and default value

@@ -104,6 +104,8 @@
 #include "SFTPBrowserDlg.h"
 #endif
 
+static const char* pEnv_CL_RealPath = getenv("CL_REALPATH");
+
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 
@@ -928,7 +930,7 @@ wxFileName wxReadLink(const wxFileName& filename)
     if (wxIsFileSymlink(filename)) {
 #if defined(__WXGTK__)
         // Use 'realpath' on Linux, otherwise this breaks on relative symlinks, and (untested) on symlinks-to-symlinks
-        return wxFileName(CLRealPath(filename.GetFullPath()));
+        return wxFileName(CLRealPath(filename.GetFullPath(), true));
 
 #else  // OSX
         wxFileName realFileName;
@@ -948,10 +950,14 @@ wxFileName wxReadLink(const wxFileName& filename)
 #endif
 }
 
-wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: it also makes-absolute, and dereferences
+wxString CLRealPath(const wxString& filepath, bool force) // This is readlink on steroids: it also makes-absolute, and dereferences
                                               // any symlinked dirs in the path
 {
-    return FileUtils::RealPath(filepath);
+    if (force || pEnv_CL_RealPath) {
+        return FileUtils::RealPath(filepath);
+    } else {
+        return filepath;
+    }
 }
 
 int wxStringToInt(const wxString& str, int defval, int minval, int maxval)

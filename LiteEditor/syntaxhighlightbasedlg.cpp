@@ -19,12 +19,12 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
-SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
-                                               const wxPoint& pos, const wxSize& size, long style)
+SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -53,7 +53,10 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer173 = new wxBoxSizer(wxVERTICAL);
     m_panel171->SetSizer(boxSizer173);
 
-    m_toolbar = new wxToolBar(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
+    m_toolbar = new wxToolBar(m_panel171,
+                              wxID_ANY,
+                              wxDefaultPosition,
+                              wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
                               wxTB_HORZ_TEXT | wxTB_NOICONS | wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
@@ -81,16 +84,24 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_choiceAppearanceArr.Add(_("System default"));
     m_choiceAppearanceArr.Add(_("Force dark"));
     m_choiceAppearanceArr.Add(_("Force light"));
-    m_choiceAppearance = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceAppearanceArr, 0);
+    m_choiceAppearance = new wxChoice(m_panelGeneral,
+                                      wxID_ANY,
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                      m_choiceAppearanceArr,
+                                      0);
     m_choiceAppearance->SetSelection(0);
 
     staticBoxSizer190->Add(m_choiceAppearance, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxStaticBoxSizer* staticBoxSizer188 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panelGeneral, wxID_ANY, _("Text selection")), wxVERTICAL);
+    wxGridSizer* gridSizer200 = new wxGridSizer(0, 1, 0, 0);
 
-    boxSizer198->Add(staticBoxSizer188, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer198->Add(gridSizer200, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* staticBoxSizer188 =
+        new wxStaticBoxSizer(new wxStaticBox(m_panelGeneral, wxID_ANY, _("Global overrides:")), wxVERTICAL);
+
+    gridSizer200->Add(staticBoxSizer188, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer3->SetFlexibleDirection(wxBOTH);
@@ -99,67 +110,121 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     staticBoxSizer188->Add(fgSizer3, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText9 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Background:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_staticText9 = new wxStaticText(m_panelGeneral,
+                                     wxID_ANY,
+                                     _("Text selection background colour:"),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                     0);
 
     fgSizer3->Add(m_staticText9, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_colourPickerSelTextBgColour = new wxColourPickerCtrl(
-        m_panelGeneral, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT), wxDefaultPosition,
-        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), wxCLRP_SHOW_LABEL | wxCLRP_DEFAULT_STYLE);
+    m_colourPickerSelTextBgColour = new wxColourPickerCtrl(m_panelGeneral,
+                                                           wxID_ANY,
+                                                           wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT),
+                                                           wxDefaultPosition,
+                                                           wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                                           wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL);
 
     fgSizer3->Add(m_colourPickerSelTextBgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText84 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Foreground:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_staticText84 = new wxStaticText(m_panelGeneral,
+                                      wxID_ANY,
+                                      _("Text selection foreground colour:"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                      0);
 
     fgSizer3->Add(m_staticText84, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_colourPickerSelTextFgColour = new wxColourPickerCtrl(
-        m_panelGeneral, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT), wxDefaultPosition,
-        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), wxCLRP_SHOW_LABEL | wxCLRP_DEFAULT_STYLE);
+    m_colourPickerSelTextFgColour = new wxColourPickerCtrl(m_panelGeneral,
+                                                           wxID_ANY,
+                                                           wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT),
+                                                           wxDefaultPosition,
+                                                           wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                                           wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL);
 
     fgSizer3->Add(m_colourPickerSelTextFgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxStaticBoxSizer* staticBoxSizer182 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panelGeneral, wxID_ANY, _("Syntax Highlight")), wxVERTICAL);
+    m_staticText155 = new wxStaticText(m_panelGeneral,
+                                       wxID_ANY,
+                                       _("Line number colour (dark theme):"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                       0);
 
-    boxSizer198->Add(staticBoxSizer182, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    fgSizer3->Add(m_staticText155, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer4->SetFlexibleDirection(wxBOTH);
-    fgSizer4->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    fgSizer4->AddGrowableCol(1);
+    m_colourPickerLineNumbersDark = new wxColourPickerCtrl(m_panelGeneral,
+                                                           wxID_ANY,
+                                                           *wxBLACK,
+                                                           wxDefaultPosition,
+                                                           wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                                           wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL);
 
-    staticBoxSizer182->Add(fgSizer4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    fgSizer3->Add(m_colourPickerLineNumbersDark, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText159 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Global font:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_staticText204 = new wxStaticText(m_panelGeneral,
+                                       wxID_ANY,
+                                       _("Line number colour (light theme):"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                       0);
 
-    fgSizer4->Add(m_staticText159, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    fgSizer3->Add(m_staticText204, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_fontPickerGlobal = new wxFontPickerCtrl(m_panelGeneral, wxID_ANY, wxNullFont, wxDefaultPosition,
-                                              wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), wxFNTP_DEFAULT_STYLE);
+    m_colourPickerLineNumbersLight = new wxColourPickerCtrl(m_panelGeneral,
+                                                            wxID_ANY,
+                                                            *wxBLACK,
+                                                            wxDefaultPosition,
+                                                            wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                                            wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL);
+
+    fgSizer3->Add(m_colourPickerLineNumbersLight, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText159 = new wxStaticText(
+        m_panelGeneral, wxID_ANY, _("Global font:"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText159, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_fontPickerGlobal = new wxFontPickerCtrl(m_panelGeneral,
+                                              wxID_ANY,
+                                              wxNullFont,
+                                              wxDefaultPosition,
+                                              wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                              wxFNTP_DEFAULT_STYLE);
     m_fontPickerGlobal->SetToolTip(_("Set a global font for all the  supported languages"));
 
-    fgSizer4->Add(m_fontPickerGlobal, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    fgSizer3->Add(m_fontPickerGlobal, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText155 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Text theme:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_staticText203 = new wxStaticText(
+        m_panelGeneral, wxID_ANY, _("Global theme:"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
 
-    fgSizer4->Add(m_staticText155, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    fgSizer3->Add(m_staticText203, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceGlobalThemeArr;
-    m_choiceGlobalTheme = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceGlobalThemeArr, 0);
+    m_choiceGlobalTheme = new wxChoice(m_panelGeneral,
+                                       wxID_ANY,
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                       m_choiceGlobalThemeArr,
+                                       0);
     m_choiceGlobalTheme->SetToolTip(
         _("Set a global theme for all the supported languages.\nIf the theme is not available for a given language, "
           "CodeLite will use the next available theme from\nthe same family"));
 
-    fgSizer4->Add(m_choiceGlobalTheme, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    fgSizer3->Add(m_choiceGlobalTheme, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcPreview = new clThemedSTC(m_panelGeneral, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_panelGeneral, wxSize(250, 150)), wxBORDER_STATIC);
+    wxStaticBoxSizer* staticBoxSizer202 =
+        new wxStaticBoxSizer(new wxStaticBox(m_panelGeneral, wxID_ANY, _("Preview:")), wxVERTICAL);
+
+    boxSizer198->Add(staticBoxSizer202, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stcPreview = new clThemedSTC(m_panelGeneral,
+                                   wxID_ANY,
+                                   wxDefaultPosition,
+                                   wxDLG_UNIT(m_panelGeneral, wxSize(250, 150)),
+                                   wxBORDER_NONE | wxBORDER_STATIC);
     // Configure the fold margin
     m_stcPreview->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcPreview->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -195,12 +260,12 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_stcPreview->SetKeyWords(3, wxT(""));
     m_stcPreview->SetKeyWords(4, wxT(""));
 
-    staticBoxSizer182->Add(m_stcPreview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    staticBoxSizer202->Add(m_stcPreview, 1, wxEXPAND, WXC_FROM_DIP(5));
     m_stcPreview->SetMinSize(wxSize(250, 150));
 
     m_panelAdvanced =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelAdvanced, _("Advanced"), false);
+    m_notebook->AddPage(m_panelAdvanced, _("Customised"), false);
 
     wxBoxSizer* boxSizer199 = new wxBoxSizer(wxVERTICAL);
     m_panelAdvanced->SetSizer(boxSizer199);
@@ -210,13 +275,17 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     boxSizer199->Add(boxSizer21, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_listBoxArr;
-    m_listBox = new wxListBox(m_panelAdvanced, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)),
-                              m_listBoxArr, wxLB_SORT | wxLB_SINGLE | get_border_simple_theme_aware_bit());
+    m_listBox = new wxListBox(m_panelAdvanced,
+                              wxID_ANY,
+                              wxDefaultPosition,
+                              wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)),
+                              m_listBoxArr,
+                              wxLB_SORT | wxLB_SINGLE | get_border_simple_theme_aware_bit());
 
     boxSizer21->Add(m_listBox, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel25 = new wxPanel(m_panelAdvanced, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)),
-                            wxTAB_TRAVERSAL);
+    m_panel25 = new wxPanel(
+        m_panelAdvanced, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     boxSizer21->Add(m_panel25, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -243,8 +312,12 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     bSizer6->Add(fgSizer2, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText70 = new wxStaticText(m_panelGlobalSettings, wxID_ANY, _("Available Themes:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)), 0);
+    m_staticText70 = new wxStaticText(m_panelGlobalSettings,
+                                      wxID_ANY,
+                                      _("Available Themes:"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
+                                      0);
 
     fgSizer2->Add(m_staticText70, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -253,29 +326,47 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     fgSizer2->Add(boxSizer95, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceLexerThemesArr;
-    m_choiceLexerThemes = new wxChoice(m_panelGlobalSettings, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)), m_choiceLexerThemesArr, 0);
+    m_choiceLexerThemes = new wxChoice(m_panelGlobalSettings,
+                                       wxID_ANY,
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
+                                       m_choiceLexerThemesArr,
+                                       0);
 
     boxSizer95->Add(m_choiceLexerThemes, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText6 = new wxStaticText(m_panelGlobalSettings, wxID_ANY, _("Global Font:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)), 0);
+    m_staticText6 = new wxStaticText(m_panelGlobalSettings,
+                                     wxID_ANY,
+                                     _("Global Font:"),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
+                                     0);
 
     fgSizer2->Add(m_staticText6, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_globalFontPicker =
-        new wxFontPickerCtrl(m_panelGlobalSettings, wxID_ANY, wxNullFont, wxDefaultPosition,
-                             wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)), wxFNTP_USEFONT_FOR_LABEL);
+    m_globalFontPicker = new wxFontPickerCtrl(m_panelGlobalSettings,
+                                              wxID_ANY,
+                                              wxNullFont,
+                                              wxDefaultPosition,
+                                              wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
+                                              wxFNTP_USEFONT_FOR_LABEL);
     m_globalFontPicker->SetToolTip(_("Use this to select a font to be used by *all* styles of this lexer"));
 
     fgSizer2->Add(m_globalFontPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText7 = new wxStaticText(m_panelGlobalSettings, wxID_ANY, _("Global background Colour:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)), 0);
+    m_staticText7 = new wxStaticText(m_panelGlobalSettings,
+                                     wxID_ANY,
+                                     _("Global background Colour:"),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
+                                     0);
 
     fgSizer2->Add(m_staticText7, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_globalBgColourPicker = new wxColourPickerCtrl(m_panelGlobalSettings, wxID_ANY, *wxBLACK, wxDefaultPosition,
+    m_globalBgColourPicker = new wxColourPickerCtrl(m_panelGlobalSettings,
+                                                    wxID_ANY,
+                                                    *wxBLACK,
+                                                    wxDefaultPosition,
                                                     wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
                                                     wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
     m_globalBgColourPicker->SetToolTip(
@@ -283,13 +374,21 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     fgSizer2->Add(m_globalBgColourPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText8 = new wxStaticText(m_panelGlobalSettings, wxID_ANY, _("File Extensions:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)), 0);
+    m_staticText8 = new wxStaticText(m_panelGlobalSettings,
+                                     wxID_ANY,
+                                     _("File Extensions:"),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
+                                     0);
 
     fgSizer2->Add(m_staticText8, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_fileSpec = new wxTextCtrl(m_panelGlobalSettings, wxID_ANY, wxT(""), wxDefaultPosition,
-                                wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)), 0);
+    m_fileSpec = new wxTextCtrl(m_panelGlobalSettings,
+                                wxID_ANY,
+                                wxT(""),
+                                wxDefaultPosition,
+                                wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
+                                0);
     m_fileSpec->SetToolTip(_("Associate this lexer with files which have these extensions"));
 #if wxVERSION_NUMBER >= 3000
     m_fileSpec->SetHint(wxT(""));
@@ -309,9 +408,12 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     bSizer51->Add(bSizer8, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_propertiesArr;
-    m_properties =
-        new wxListBox(m_panelCustomize, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
-                      m_propertiesArr, wxLB_SORT | wxLB_SINGLE | get_border_simple_theme_aware_bit());
+    m_properties = new wxListBox(m_panelCustomize,
+                                 wxID_ANY,
+                                 wxDefaultPosition,
+                                 wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                                 m_propertiesArr,
+                                 wxLB_SORT | wxLB_SINGLE | get_border_simple_theme_aware_bit());
 
     bSizer8->Add(m_properties, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -326,35 +428,57 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     bSizer9->Add(fgSizer1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText2 = new wxStaticText(m_panelCustomize, wxID_ANY, _("Style Font:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), 0);
+    m_staticText2 = new wxStaticText(m_panelCustomize,
+                                     wxID_ANY,
+                                     _("Style Font:"),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                                     0);
 
     fgSizer1->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_fontPicker = new wxFontPickerCtrl(m_panelCustomize, wxID_ANY, wxNullFont, wxDefaultPosition,
-                                        wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), wxFNTP_USEFONT_FOR_LABEL);
+    m_fontPicker = new wxFontPickerCtrl(m_panelCustomize,
+                                        wxID_ANY,
+                                        wxNullFont,
+                                        wxDefaultPosition,
+                                        wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                                        wxFNTP_USEFONT_FOR_LABEL);
     m_fontPicker->SetToolTip(_("Select a font to be used with the selected style"));
 
     fgSizer1->Add(m_fontPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText3 = new wxStaticText(m_panelCustomize, wxID_ANY, _("Foreground Colour:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), 0);
+    m_staticText3 = new wxStaticText(m_panelCustomize,
+                                     wxID_ANY,
+                                     _("Foreground Colour:"),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                                     0);
 
     fgSizer1->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_colourPicker = new wxColourPickerCtrl(m_panelCustomize, wxID_ANY, *wxBLACK, wxDefaultPosition,
+    m_colourPicker = new wxColourPickerCtrl(m_panelCustomize,
+                                            wxID_ANY,
+                                            *wxBLACK,
+                                            wxDefaultPosition,
                                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
                                             wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
     m_colourPicker->SetToolTip(_("Select the foreground colour for the selected style"));
 
     fgSizer1->Add(m_colourPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText4 = new wxStaticText(m_panelCustomize, wxID_ANY, _("Background Colour:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), 0);
+    m_staticText4 = new wxStaticText(m_panelCustomize,
+                                     wxID_ANY,
+                                     _("Background Colour:"),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                                     0);
 
     fgSizer1->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_bgColourPicker = new wxColourPickerCtrl(m_panelCustomize, wxID_ANY, *wxBLACK, wxDefaultPosition,
+    m_bgColourPicker = new wxColourPickerCtrl(m_panelCustomize,
+                                              wxID_ANY,
+                                              *wxBLACK,
+                                              wxDefaultPosition,
                                               wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
                                               wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
     m_bgColourPicker->SetToolTip(_("Select the background colour for the selected style"));
@@ -363,8 +487,12 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     fgSizer1->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_eolFilled = new wxCheckBox(m_panelCustomize, wxID_ANY, _("Style is EOL Filled"), wxDefaultPosition,
-                                 wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), 0);
+    m_eolFilled = new wxCheckBox(m_panelCustomize,
+                                 wxID_ANY,
+                                 _("Style is EOL Filled"),
+                                 wxDefaultPosition,
+                                 wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                                 0);
     m_eolFilled->SetValue(false);
     m_eolFilled->SetToolTip(_("If a line ends with a character/word which has this style, the remaining of the line "
                               "will be coloured with this style background colour"));
@@ -373,19 +501,27 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     fgSizer1->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_styleWithinPreProcessor = new wxCheckBox(m_panelCustomize, wxID_ANY, _("Styling Within Pre-processor Line"),
-                                               wxDefaultPosition, wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), 0);
+    m_styleWithinPreProcessor = new wxCheckBox(m_panelCustomize,
+                                               wxID_ANY,
+                                               _("Styling Within Pre-processor Line"),
+                                               wxDefaultPosition,
+                                               wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                                               0);
     m_styleWithinPreProcessor->SetValue(false);
 
     fgSizer1->Add(m_styleWithinPreProcessor, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_staticline1 = new wxStaticLine(m_panelCustomize, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), wxLI_HORIZONTAL);
+    m_staticline1 = new wxStaticLine(
+        m_panelCustomize, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), wxLI_HORIZONTAL);
 
     bSizer9->Add(m_staticline1, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText1 = new wxStaticText(m_panelCustomize, wxID_ANY, _("Edit Lexer Keyword Sets:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), 0);
+    m_staticText1 = new wxStaticText(m_panelCustomize,
+                                     wxID_ANY,
+                                     _("Edit Lexer Keyword Sets:"),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                                     0);
 
     bSizer9->Add(m_staticText1, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -393,28 +529,48 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     bSizer9->Add(bSizer5, 0, wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
-    m_button5 = new wxButton(m_panelCustomize, wxID_ANY, _("Set &0"), wxDefaultPosition,
-                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button5 = new wxButton(m_panelCustomize,
+                             wxID_ANY,
+                             _("Set &0"),
+                             wxDefaultPosition,
+                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                             wxBU_EXACTFIT);
 
     bSizer5->Add(m_button5, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_button6 = new wxButton(m_panelCustomize, wxID_ANY, _("Set &1"), wxDefaultPosition,
-                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button6 = new wxButton(m_panelCustomize,
+                             wxID_ANY,
+                             _("Set &1"),
+                             wxDefaultPosition,
+                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                             wxBU_EXACTFIT);
 
     bSizer5->Add(m_button6, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_button7 = new wxButton(m_panelCustomize, wxID_ANY, _("Set &2"), wxDefaultPosition,
-                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button7 = new wxButton(m_panelCustomize,
+                             wxID_ANY,
+                             _("Set &2"),
+                             wxDefaultPosition,
+                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                             wxBU_EXACTFIT);
 
     bSizer5->Add(m_button7, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_button8 = new wxButton(m_panelCustomize, wxID_ANY, _("Set &3"), wxDefaultPosition,
-                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button8 = new wxButton(m_panelCustomize,
+                             wxID_ANY,
+                             _("Set &3"),
+                             wxDefaultPosition,
+                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                             wxBU_EXACTFIT);
 
     bSizer5->Add(m_button8, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_button9 = new wxButton(m_panelCustomize, wxID_ANY, _("Set &4"), wxDefaultPosition,
-                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button9 = new wxButton(m_panelCustomize,
+                             wxID_ANY,
+                             _("Set &4"),
+                             wxDefaultPosition,
+                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
+                             wxBU_EXACTFIT);
 
     bSizer5->Add(m_button9, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -469,12 +625,16 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     }
     // Connect events
     m_choiceAppearance->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnCodeLiteAppearance, this);
-    m_colourPickerSelTextBgColour->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextChanged,
-                                        this);
+    m_colourPickerSelTextBgColour->Bind(
+        wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextChanged, this);
     m_staticText84->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
     m_colourPickerSelTextFgColour->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
-    m_colourPickerSelTextFgColour->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextFgChanged,
-                                        this);
+    m_colourPickerSelTextFgColour->Bind(
+        wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextFgChanged, this);
+    m_colourPickerLineNumbersDark->Bind(
+        wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnLineNumberColourChanngedDark, this);
+    m_colourPickerLineNumbersLight->Bind(
+        wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnLineNumberColourChanngedLight, this);
     m_fontPickerGlobal->Bind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnGlobalFontSelected, this);
     m_choiceGlobalTheme->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnGlobalThemeSelected, this);
     m_listBox->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnLexerSelected, this);
@@ -487,8 +647,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_colourPicker->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
     m_bgColourPicker->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
     m_eolFilled->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnEolFilled, this);
-    m_styleWithinPreProcessor->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnStyleWithinPreprocessor,
-                                    this);
+    m_styleWithinPreProcessor->Bind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnStyleWithinPreprocessor, this);
     m_styleWithinPreProcessor->Bind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnStyleWithingPreProcessorUI, this);
     m_button5->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton0, this);
     m_button6->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton1, this);
@@ -504,12 +664,16 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
 {
     m_choiceAppearance->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnCodeLiteAppearance, this);
-    m_colourPickerSelTextBgColour->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextChanged,
-                                          this);
+    m_colourPickerSelTextBgColour->Unbind(
+        wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextChanged, this);
     m_staticText84->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
     m_colourPickerSelTextFgColour->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnTextSelFgUI, this);
-    m_colourPickerSelTextFgColour->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                          &SyntaxHighlightBaseDlg::OnSelTextFgChanged, this);
+    m_colourPickerSelTextFgColour->Unbind(
+        wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnSelTextFgChanged, this);
+    m_colourPickerLineNumbersDark->Unbind(
+        wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnLineNumberColourChanngedDark, this);
+    m_colourPickerLineNumbersLight->Unbind(
+        wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnLineNumberColourChanngedLight, this);
     m_fontPickerGlobal->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnGlobalFontSelected, this);
     m_choiceGlobalTheme->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &SyntaxHighlightBaseDlg::OnGlobalThemeSelected, this);
     m_listBox->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnLexerSelected, this);
@@ -522,8 +686,8 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_colourPicker->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
     m_bgColourPicker->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
     m_eolFilled->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnEolFilled, this);
-    m_styleWithinPreProcessor->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                      &SyntaxHighlightBaseDlg::OnStyleWithinPreprocessor, this);
+    m_styleWithinPreProcessor->Unbind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnStyleWithinPreprocessor, this);
     m_styleWithinPreProcessor->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnStyleWithingPreProcessorUI, this);
     m_button5->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton0, this);
     m_button6->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SyntaxHighlightBaseDlg::OnEditKeyWordsButton1, this);
@@ -536,8 +700,8 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_buttonApply->Unbind(wxEVT_UPDATE_UI, &SyntaxHighlightBaseDlg::OnButtonApplyUI, this);
 }
 
-NewThemeDialogBase::NewThemeDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                       const wxSize& size, long style)
+NewThemeDialogBase::NewThemeDialogBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {

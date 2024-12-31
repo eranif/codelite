@@ -55,6 +55,8 @@ protected:
     void OnNewTheme(wxCommandEvent& event);
 
     // other ui events
+    void OnLineNumberColourChanngedDark(wxColourPickerEvent& event) override;
+    void OnLineNumberColourChanngedLight(wxColourPickerEvent& event) override;
     void OnCodeLiteAppearance(wxCommandEvent& event) override;
     void OnGlobalFontSelected(wxFontPickerEvent& event) override;
     void OnGlobalThemeSelected(wxCommandEvent& event) override;

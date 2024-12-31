@@ -1121,6 +1121,8 @@ void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
         auto& props = lexer->GetLexerProperties();
         for (auto& sp : props) {
             sp.SetFontInfoDesc(FontUtils::GetFontInfo(font));
+            sp.SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
+            sp.SetItalic(font.GetStyle() == wxFONTSTYLE_ITALIC);
         }
     }
 }
@@ -1310,5 +1312,16 @@ void ColoursAndFontsManager::LoadLexersFromDb()
     if (!db_file.FileExists()) {
         // load the lexers from the file
         LoadLexersFromFile();
+    }
+}
+
+void ColoursAndFontsManager::SetGlobalLineNumbersColour(const wxColour& col, bool dark_theme)
+{
+    // Loop for every lexer and update the font per style
+    for (auto lexer : m_allLexers) {
+        if ((lexer->IsDark() && dark_theme) || (!lexer->IsDark() && !dark_theme)) {
+            auto& prop = lexer->GetProperty(LINE_NUMBERS_ATTR_ID);
+            prop.SetFgColour(col.GetAsString(wxC2S_HTML_SYNTAX));
+        }
     }
 }

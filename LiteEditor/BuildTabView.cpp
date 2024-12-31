@@ -558,7 +558,7 @@ void BuildTabView::OnContextMenu(wxContextMenuEvent& e)
             SelectAll();
         },
         XRCID("buildtabview_select_all"));
-    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(!IsEmpty()); }, XRCID("buildtabview_select_all"));
+    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(GetLength() > 0); }, XRCID("buildtabview_select_all"));
 
     menu.Bind(
         wxEVT_MENU,
@@ -569,7 +569,7 @@ void BuildTabView::OnContextMenu(wxContextMenuEvent& e)
             SetEditable(false);
         },
         XRCID("buildtabview_clear_all"));
-    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(!IsEmpty()); }, XRCID("buildtabview_clear_all"));
+    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(GetLength() > 0); }, XRCID("buildtabview_clear_all"));
     PopupMenu(&menu);
 }
 

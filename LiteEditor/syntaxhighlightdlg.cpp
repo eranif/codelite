@@ -126,9 +126,20 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_choiceGlobalTheme->Append(ColoursAndFontsManager::Get().GetAvailableThemesForLexer("c++"));
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
 
+    wxColour line_numbers_dark = clConfig::Get().Read("GloabLineNumbersColour/DarkTheme", wxNullColour);
+    wxColour line_numbers_light = clConfig::Get().Read("GloabLineNumbersColour/LightTheme", wxNullColour);
+
+    if (line_numbers_dark.IsOk()) {
+        m_colourPickerLineNumbersDark->SetColour(line_numbers_dark);
+    }
+    if (line_numbers_light.IsOk()) {
+        m_colourPickerLineNumbersLight->SetColour(line_numbers_light);
+    }
+
     // Set the current editor font to the default one
     wxFont font = clConfig::Get().Read("GlobalThemeFont", FontUtils::GetDefaultMonospacedFont());
     m_fontPickerGlobal->SetSelectedFont(font);
+
     DoUpdatePreview();
 
     m_isModified = true;
@@ -438,7 +449,8 @@ void SyntaxHighlightDlg::OnSelTextChanged(wxColourPickerEvent& event)
     m_isModified = true;
     ColoursAndFontsManager::Get().SetThemeTextSelectionColours(m_lexer->GetThemeName(),
                                                                m_colourPickerSelTextBgColour->GetColour(),
-                                                               m_colourPickerSelTextFgColour->GetColour(), true);
+                                                               m_colourPickerSelTextFgColour->GetColour(),
+                                                               true);
 }
 
 void SyntaxHighlightDlg::OnStyleWithinPreprocessor(wxCommandEvent& event)
@@ -542,8 +554,9 @@ StyleProperty::Vec_t::iterator SyntaxHighlightDlg::GetSelectedStyle()
 {
     wxString selectedProperty = m_properties->GetStringSelection();
     StyleProperty::Vec_t& lexerProperties = m_lexer->GetLexerProperties();
-    return std::find_if(lexerProperties.begin(), lexerProperties.end(),
-                        [&selectedProperty](const StyleProperty& prop) { return prop.GetName() == selectedProperty; });
+    return std::find_if(lexerProperties.begin(), lexerProperties.end(), [&selectedProperty](const StyleProperty& prop) {
+        return prop.GetName() == selectedProperty;
+    });
 }
 
 void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
@@ -577,7 +590,8 @@ void SyntaxHighlightDlg::UpdateTextSelectionColours()
 {
     ColoursAndFontsManager::Get().SetThemeTextSelectionColours(m_lexer->GetThemeName(),
                                                                m_colourPickerSelTextBgColour->GetColour(),
-                                                               m_colourPickerSelTextFgColour->GetColour(), true);
+                                                               m_colourPickerSelTextFgColour->GetColour(),
+                                                               true);
 }
 
 void SyntaxHighlightDlg::OnNewTheme(wxCommandEvent& event)
@@ -638,7 +652,9 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
     // Ask for confirmation
     if (::wxMessageBox(_("Are you sure you want to restore colours to factory defaults?\nBy choosing 'Yes', you will "
                          "lose all your local modifications"),
-                       _("Confirm"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER, this) != wxYES) {
+                       _("Confirm"),
+                       wxICON_WARNING | wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER,
+                       this) != wxYES) {
         return;
     }
 
@@ -655,7 +671,10 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
 {
     wxFileDialog selector(
-        this, _("Select theme to import"), "", "",
+        this,
+        _("Select theme to import"),
+        "",
+        "",
         "All Files (*.*)|*.*|VSCode JSON Theme (*.json)|*.json|Eclipse Theme Files (*.xml)|*.xml|Alacritty Theme "
         "(*.yaml)|*.yaml|Alacritty Theme (*.yml)|*.yml|Alacritty Theme (*.toml)|*.toml",
         wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
@@ -687,8 +706,8 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
             }
         }
 
-        wxNotificationMessage notif("CodeLite", message, nullptr,
-                                    themes_imported.empty() ? wxICON_WARNING : wxICON_INFORMATION);
+        wxNotificationMessage notif(
+            "CodeLite", message, nullptr, themes_imported.empty() ? wxICON_WARNING : wxICON_INFORMATION);
         notif.Show(5);
 
         if (!themes_imported.empty()) {
@@ -742,8 +761,8 @@ void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
 void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
 {
     // Select the 'save' path
-    wxString path = ::wxFileSelector(_("Save as"), "", "MySettings.zip", "", wxFileSelectorDefaultWildcardStr,
-                                     wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    wxString path = ::wxFileSelector(
+        _("Save as"), "", "MySettings.zip", "", wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
     if (path.IsEmpty()) {
         return;
     }
@@ -769,6 +788,8 @@ bool SyntaxHighlightDlg::IsRestartRequired() const { return m_promptForRestart; 
 void SyntaxHighlightDlg::DoFontChanged(StyleProperty& sp, const wxFont& font)
 {
     sp.SetFontInfoDesc(FontUtils::GetFontInfo(font));
+    sp.SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
+    sp.SetItalic(font.GetStyle() == wxFONTSTYLE_ITALIC);
 }
 
 void SyntaxHighlightDlg::OnCodeLiteAppearance(wxCommandEvent& event)
@@ -790,4 +811,20 @@ void SyntaxHighlightDlg::OnCodeLiteAppearance(wxCommandEvent& event)
     // save the new value
     clConfig::Get().Write("CodeLiteAppearance", selection);
     m_promptForRestart = true;
+}
+
+void SyntaxHighlightDlg::OnLineNumberColourChanngedDark(wxColourPickerEvent& event)
+{
+    wxBusyCursor bc;
+    clConfig::Get().Write("GloabLineNumbersColour/DarkTheme", event.GetColour());
+    ColoursAndFontsManager::Get().SetGlobalLineNumbersColour(event.GetColour(), true);
+    m_isModified = true;
+}
+
+void SyntaxHighlightDlg::OnLineNumberColourChanngedLight(wxColourPickerEvent& event)
+{
+    wxBusyCursor bc;
+    clConfig::Get().Write("GloabLineNumbersColour/LightTheme", event.GetColour());
+    ColoursAndFontsManager::Get().SetGlobalLineNumbersColour(event.GetColour(), false);
+    m_isModified = true;
 }

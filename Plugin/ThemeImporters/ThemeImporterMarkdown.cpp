@@ -47,9 +47,10 @@ LexerConf::Ptr_t ThemeImporterMarkdown::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_MARKDOWN_CODEBK, "Code Block", m_editor);
 
     // bold font
-    const std::vector<int> emphasis = { wxSTC_MARKDOWN_STRONG1, wxSTC_MARKDOWN_STRONG2, wxSTC_MARKDOWN_EM1,
-                                        wxSTC_MARKDOWN_EM2 };
-    for(auto state : emphasis) {
+    const std::vector<int> emphasis = {
+        wxSTC_MARKDOWN_STRONG1, wxSTC_MARKDOWN_STRONG2, wxSTC_MARKDOWN_EM1, wxSTC_MARKDOWN_EM2
+    };
+    for (auto state : emphasis) {
         auto& prop = lexer->GetProperty(state);
         prop.SetBold(true);
     }
@@ -62,7 +63,7 @@ LexerConf::Ptr_t ThemeImporterMarkdown::Import(const wxFileName& theme_file)
     const std::vector<int> headings = { wxSTC_MARKDOWN_HEADER1, wxSTC_MARKDOWN_HEADER2, wxSTC_MARKDOWN_HEADER3,
                                         wxSTC_MARKDOWN_HEADER4, wxSTC_MARKDOWN_HEADER5, wxSTC_MARKDOWN_HEADER6 };
 
-    for(auto state : headings) {
+    for (auto state : headings) {
         auto& prop_heading = lexer->GetProperty(state);
         prop_heading.SetBold(true);
         prop_heading.SetEolFilled(true);
@@ -71,7 +72,7 @@ LexerConf::Ptr_t ThemeImporterMarkdown::Import(const wxFileName& theme_file)
     // code style
     const std::vector<int> codes = { wxSTC_MARKDOWN_CODE2, wxSTC_MARKDOWN_CODE, wxSTC_MARKDOWN_CODEBK };
     bool is_dark = lexer->IsDark();
-    for(auto state : codes) {
+    for (auto state : codes) {
         auto& prop_code = lexer->GetProperty(state);
         // use different background colour for code sections
         wxColour code_bg_colour = wxColour(prop_code.GetBgColour()).ChangeLightness(is_dark ? 110 : 90);

@@ -282,6 +282,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 
                 // always set the font
                 ctrl->StyleSetFont(style_id, font);
+                ctrl->StyleSetBold(style_id, sp.IsBold());
+                ctrl->StyleSetItalic(style_id, sp.GetItalic());
                 ctrl->StyleSetEOLFilled(style_id, sp.GetEolFilled());
 
                 if (style_id != LINE_NUMBERS_ATTR_ID) {
@@ -573,8 +575,8 @@ void LexerConf::ApplyFont(wxWindow* cb)
 
 void LexerConf::SetProperty(const StyleProperty& prop)
 {
-    auto iter = std::find_if(m_properties.begin(), m_properties.end(),
-                             [&](const StyleProperty& p) { return prop.GetId() == p.GetId(); });
+    auto iter = std::find_if(
+        m_properties.begin(), m_properties.end(), [&](const StyleProperty& p) { return prop.GetId() == p.GetId(); });
 
     if (iter != m_properties.end()) {
         *iter = prop;

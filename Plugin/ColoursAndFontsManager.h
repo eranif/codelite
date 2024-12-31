@@ -73,7 +73,6 @@ private:
     void LoadDb(const wxFileName& path);
     bool IsBackupRequired() const;
     void BackupUserOldJsonFileIfNeeded();
-    void LoadDefaultLexers();
 
     /**
      * @brief load lexers from lexers.json
@@ -130,6 +129,8 @@ public:
     void SetGlobalFont(const wxFont& font);
     const wxFont& GetGlobalFont() const;
 
+    void SetGlobalLineNumbersColour(const wxColour& col, bool dark_theme);
+
     void SetGlobalTheme(const wxString& globalTheme) { this->m_globalTheme = globalTheme; }
     const wxString& GetGlobalTheme() const { return m_globalTheme; }
     /**
@@ -156,7 +157,9 @@ public:
     /**
      * @brief update a theme text selection colours
      */
-    void SetThemeTextSelectionColours(const wxString& theme_name, const wxColour& bg, const wxColour& fg,
+    void SetThemeTextSelectionColours(const wxString& theme_name,
+                                      const wxColour& bg,
+                                      const wxColour& fg,
                                       bool useCustomerFgColour = true);
 
     /**

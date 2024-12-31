@@ -62,9 +62,13 @@ protected:
     wxColourPickerCtrl* m_colourPickerSelTextBgColour;
     wxStaticText* m_staticText84;
     wxColourPickerCtrl* m_colourPickerSelTextFgColour;
+    wxStaticText* m_staticText155;
+    wxColourPickerCtrl* m_colourPickerLineNumbersDark;
+    wxStaticText* m_staticText204;
+    wxColourPickerCtrl* m_colourPickerLineNumbersLight;
     wxStaticText* m_staticText159;
     wxFontPickerCtrl* m_fontPickerGlobal;
-    wxStaticText* m_staticText155;
+    wxStaticText* m_staticText203;
     wxChoice* m_choiceGlobalTheme;
     clThemedSTC* m_stcPreview;
     wxPanel* m_panelAdvanced;
@@ -107,6 +111,8 @@ protected:
     virtual void OnSelTextChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnTextSelFgUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSelTextFgChanged(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnLineNumberColourChanngedDark(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnLineNumberColourChanngedLight(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
@@ -135,9 +141,13 @@ public:
     wxColourPickerCtrl* GetColourPickerSelTextBgColour() { return m_colourPickerSelTextBgColour; }
     wxStaticText* GetStaticText84() { return m_staticText84; }
     wxColourPickerCtrl* GetColourPickerSelTextFgColour() { return m_colourPickerSelTextFgColour; }
+    wxStaticText* GetStaticText155() { return m_staticText155; }
+    wxColourPickerCtrl* GetColourPickerLineNumbersDark() { return m_colourPickerLineNumbersDark; }
+    wxStaticText* GetStaticText204() { return m_staticText204; }
+    wxColourPickerCtrl* GetColourPickerLineNumbersLight() { return m_colourPickerLineNumbersLight; }
     wxStaticText* GetStaticText159() { return m_staticText159; }
     wxFontPickerCtrl* GetFontPickerGlobal() { return m_fontPickerGlobal; }
-    wxStaticText* GetStaticText155() { return m_staticText155; }
+    wxStaticText* GetStaticText203() { return m_staticText203; }
     wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
     clThemedSTC* GetStcPreview() { return m_stcPreview; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
@@ -173,8 +183,11 @@ public:
     wxPanel* GetPanelAdvanced() { return m_panelAdvanced; }
     wxNotebook* GetNotebook() { return m_notebook; }
     wxPanel* GetPanel171() { return m_panel171; }
-    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"),
-                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    SyntaxHighlightBaseDlg(wxWindow* parent,
+                           wxWindowID id = wxID_ANY,
+                           const wxString& title = _("Colours and Fonts"),
+                           const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1),
                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SyntaxHighlightBaseDlg();
 };
@@ -203,8 +216,11 @@ public:
     wxChoice* GetChoiceLanguage() { return m_choiceLanguage; }
     wxStaticText* GetStaticText135() { return m_staticText135; }
     wxChoice* GetChoiceBaseTheme() { return m_choiceBaseTheme; }
-    NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    NewThemeDialogBase(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& title = _("New Theme"),
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewThemeDialogBase();
 };

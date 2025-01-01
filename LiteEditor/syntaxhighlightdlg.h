@@ -55,6 +55,8 @@ protected:
     void OnNewTheme(wxCommandEvent& event);
 
     // other ui events
+    void OnStyleFontBold(wxCommandEvent& event) override;
+    void OnStyleFontItalic(wxCommandEvent& event) override;
     void OnLineNumberColourChanngedDark(wxColourPickerEvent& event) override;
     void OnLineNumberColourChanngedLight(wxColourPickerEvent& event) override;
     void OnCodeLiteAppearance(wxCommandEvent& event) override;
@@ -93,7 +95,7 @@ protected:
     StyleProperty::Vec_t::iterator GetSelectedStyle();
     void EditKeyWords(int set);
 
-    void DoUpdatePreview();
+    void DoUpdatePreview(const wxColour& lineNumberColour = wxNullColour);
     void DoSetGlobalBgColour(const wxColour& colour);
     void DoExport(const wxArrayString& lexers = wxArrayString());
     void UpdateTextSelectionColours();

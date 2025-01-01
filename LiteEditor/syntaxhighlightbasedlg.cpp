@@ -124,7 +124,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                                            wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT),
                                                            wxDefaultPosition,
                                                            wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
-                                                           wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL);
+                                                           wxCLRP_USE_TEXTCTRL);
 
     fgSizer3->Add(m_colourPickerSelTextBgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -142,7 +142,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                                            wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT),
                                                            wxDefaultPosition,
                                                            wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
-                                                           wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL);
+                                                           wxCLRP_USE_TEXTCTRL);
 
     fgSizer3->Add(m_colourPickerSelTextFgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -160,7 +160,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                                            *wxBLACK,
                                                            wxDefaultPosition,
                                                            wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
-                                                           wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL);
+                                                           wxCLRP_USE_TEXTCTRL);
 
     fgSizer3->Add(m_colourPickerLineNumbersDark, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -178,7 +178,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                                             *wxBLACK,
                                                             wxDefaultPosition,
                                                             wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
-                                                            wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL);
+                                                            wxCLRP_USE_TEXTCTRL);
 
     fgSizer3->Add(m_colourPickerLineNumbersLight, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -192,7 +192,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                               wxNullFont,
                                               wxDefaultPosition,
                                               wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
-                                              wxFNTP_DEFAULT_STYLE);
+                                              wxFNTP_USE_TEXTCTRL);
     m_fontPickerGlobal->SetToolTip(_("Set a global font for all the  supported languages"));
 
     fgSizer3->Add(m_fontPickerGlobal, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -241,8 +241,9 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
     m_stcPreview->SetMarginSensitive(2, true);
 
     // Configure the line numbers margin
+    int m_stcPreview_PixelWidth = 4 + 5 * m_stcPreview->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
     m_stcPreview->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcPreview->SetMarginWidth(0, 0);
+    m_stcPreview->SetMarginWidth(0, m_stcPreview_PixelWidth);
 
     // Configure the line symbol margin
     m_stcPreview->SetMarginType(3, wxSTC_MARGIN_FORE);
@@ -252,7 +253,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
     m_stcPreview->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stcPreview->StyleClearAll();
-    m_stcPreview->SetWrapMode(0);
+    m_stcPreview->SetWrapMode(2);
     m_stcPreview->SetIndentationGuides(0);
     m_stcPreview->SetKeyWords(0, wxT(""));
     m_stcPreview->SetKeyWords(1, wxT(""));
@@ -349,7 +350,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                               wxNullFont,
                                               wxDefaultPosition,
                                               wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
-                                              wxFNTP_USEFONT_FOR_LABEL);
+                                              wxFNTP_USE_TEXTCTRL);
     m_globalFontPicker->SetToolTip(_("Use this to select a font to be used by *all* styles of this lexer"));
 
     fgSizer2->Add(m_globalFontPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -368,7 +369,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                                     *wxBLACK,
                                                     wxDefaultPosition,
                                                     wxDLG_UNIT(m_panelGlobalSettings, wxSize(-1, -1)),
-                                                    wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+                                                    wxCLRP_USE_TEXTCTRL);
     m_globalBgColourPicker->SetToolTip(
         _("Use this to select a background colour to be used by *all* styles of this lexer"));
 
@@ -442,10 +443,28 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                         wxNullFont,
                                         wxDefaultPosition,
                                         wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
-                                        wxFNTP_USEFONT_FOR_LABEL);
+                                        wxFNTP_USE_TEXTCTRL);
     m_fontPicker->SetToolTip(_("Select a font to be used with the selected style"));
 
     fgSizer1->Add(m_fontPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    fgSizer1->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer208 = new wxBoxSizer(wxHORIZONTAL);
+
+    fgSizer1->Add(boxSizer208, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxBoldFont = new wxCheckBox(
+        m_panelCustomize, wxID_ANY, _("Bold"), wxDefaultPosition, wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), 0);
+    m_checkBoxBoldFont->SetValue(false);
+
+    boxSizer208->Add(m_checkBoxBoldFont, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxItalicFont = new wxCheckBox(
+        m_panelCustomize, wxID_ANY, _("Italic"), wxDefaultPosition, wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)), 0);
+    m_checkBoxItalicFont->SetValue(false);
+
+    boxSizer208->Add(m_checkBoxItalicFont, 0, wxALL, WXC_FROM_DIP(5));
 
     m_staticText3 = new wxStaticText(m_panelCustomize,
                                      wxID_ANY,
@@ -461,7 +480,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                             *wxBLACK,
                                             wxDefaultPosition,
                                             wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
-                                            wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+                                            wxCLRP_USE_TEXTCTRL);
     m_colourPicker->SetToolTip(_("Select the foreground colour for the selected style"));
 
     fgSizer1->Add(m_colourPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -480,7 +499,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
                                               *wxBLACK,
                                               wxDefaultPosition,
                                               wxDLG_UNIT(m_panelCustomize, wxSize(-1, -1)),
-                                              wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+                                              wxCLRP_USE_TEXTCTRL);
     m_bgColourPicker->SetToolTip(_("Select the background colour for the selected style"));
 
     fgSizer1->Add(m_bgColourPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -644,6 +663,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(
     m_fileSpec->Bind(wxEVT_COMMAND_TEXT_UPDATED, &SyntaxHighlightBaseDlg::OnText, this);
     m_properties->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnItemSelected, this);
     m_fontPicker->Bind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnFontChanged, this);
+    m_checkBoxBoldFont->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnStyleFontBold, this);
+    m_checkBoxItalicFont->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnStyleFontItalic, this);
     m_colourPicker->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
     m_bgColourPicker->Bind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
     m_eolFilled->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnEolFilled, this);
@@ -683,6 +704,8 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_fileSpec->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &SyntaxHighlightBaseDlg::OnText, this);
     m_properties->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &SyntaxHighlightBaseDlg::OnItemSelected, this);
     m_fontPicker->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnFontChanged, this);
+    m_checkBoxBoldFont->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnStyleFontBold, this);
+    m_checkBoxItalicFont->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnStyleFontItalic, this);
     m_colourPicker->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
     m_bgColourPicker->Unbind(wxEVT_COMMAND_COLOURPICKER_CHANGED, &SyntaxHighlightBaseDlg::OnColourChanged, this);
     m_eolFilled->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SyntaxHighlightBaseDlg::OnEolFilled, this);

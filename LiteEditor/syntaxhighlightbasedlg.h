@@ -88,6 +88,8 @@ protected:
     wxListBox* m_properties;
     wxStaticText* m_staticText2;
     wxFontPickerCtrl* m_fontPicker;
+    wxCheckBox* m_checkBoxBoldFont;
+    wxCheckBox* m_checkBoxItalicFont;
     wxStaticText* m_staticText3;
     wxColourPickerCtrl* m_colourPicker;
     wxStaticText* m_staticText4;
@@ -121,6 +123,8 @@ protected:
     virtual void OnColourChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnText(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStyleFontBold(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStyleFontItalic(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEolFilled(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStyleWithinPreprocessor(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -164,6 +168,8 @@ public:
     wxListBox* GetProperties() { return m_properties; }
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxFontPickerCtrl* GetFontPicker() { return m_fontPicker; }
+    wxCheckBox* GetCheckBoxBoldFont() { return m_checkBoxBoldFont; }
+    wxCheckBox* GetCheckBoxItalicFont() { return m_checkBoxItalicFont; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
     wxColourPickerCtrl* GetColourPicker() { return m_colourPicker; }
     wxStaticText* GetStaticText4() { return m_staticText4; }

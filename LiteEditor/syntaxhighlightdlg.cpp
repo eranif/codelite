@@ -74,7 +74,7 @@ enum CodeLiteAppearance : int {
 const wxString sampleText = R"(class Demo {
 private:
     std::string m_str;
-    int m_integer = 0;
+    int m_integer = 12345;
 
 public:
     /**
@@ -177,7 +177,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     CentreOnParent();
 }
 
-void SyntaxHighlightDlg::DoUpdatePreview()
+void SyntaxHighlightDlg::DoUpdatePreview(const wxColour& lineNumberColour)
 {
     // Populate the preview
     LexerConf::Ptr_t previewLexer =
@@ -190,11 +190,14 @@ void SyntaxHighlightDlg::DoUpdatePreview()
         previewLexer->ApplyWordSet(m_stcPreview, LexerConf::WS_FUNCTIONS, "CallMethod GetPointer");
     }
 
+    if (lineNumberColour.IsOk()) {
+        m_stcPreview->StyleSetForeground(wxSTC_STYLE_LINENUMBER, lineNumberColour);
+    }
+
     m_stcPreview->SetEditable(true);
     m_stcPreview->SetText(sampleText);
     m_stcPreview->HideSelection(true);
     m_stcPreview->SetEditable(false);
-    ::clRecalculateSTCHScrollBar(m_stcPreview);
 }
 
 void SyntaxHighlightDlg::OnButtonOK(wxCommandEvent& event)
@@ -438,6 +441,8 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
             m_bgColourPicker->SetColour(bgColour);
             m_colourPicker->SetColour(colour);
             m_eolFilled->SetValue(p.GetEolFilled());
+            m_checkBoxBoldFont->SetValue(p.IsBold());
+            m_checkBoxItalicFont->SetValue(p.GetItalic());
         }
     }
 }
@@ -819,6 +824,9 @@ void SyntaxHighlightDlg::OnLineNumberColourChanngedDark(wxColourPickerEvent& eve
     clConfig::Get().Write("GloabLineNumbersColour/DarkTheme", event.GetColour());
     ColoursAndFontsManager::Get().SetGlobalLineNumbersColour(event.GetColour(), true);
     m_isModified = true;
+    if (m_lexer && m_lexer->IsDark()) {
+        DoUpdatePreview(event.GetColour());
+    }
 }
 
 void SyntaxHighlightDlg::OnLineNumberColourChanngedLight(wxColourPickerEvent& event)
@@ -827,4 +835,27 @@ void SyntaxHighlightDlg::OnLineNumberColourChanngedLight(wxColourPickerEvent& ev
     clConfig::Get().Write("GloabLineNumbersColour/LightTheme", event.GetColour());
     ColoursAndFontsManager::Get().SetGlobalLineNumbersColour(event.GetColour(), false);
     m_isModified = true;
+    if (m_lexer && !m_lexer->IsDark()) {
+        DoUpdatePreview(event.GetColour());
+    }
+}
+
+void SyntaxHighlightDlg::OnStyleFontBold(wxCommandEvent& event)
+{
+    CHECK_PTR_RET(m_lexer);
+    m_isModified = true;
+
+    // update f
+    StyleProperty::Vec_t::iterator iter = GetSelectedStyle();
+    iter->SetBold(event.IsChecked());
+}
+
+void SyntaxHighlightDlg::OnStyleFontItalic(wxCommandEvent& event)
+{
+    CHECK_PTR_RET(m_lexer);
+    m_isModified = true;
+
+    // update f
+    StyleProperty::Vec_t::iterator iter = GetSelectedStyle();
+    iter->SetItalic(event.IsChecked());
 }

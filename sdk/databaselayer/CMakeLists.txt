@@ -84,7 +84,7 @@ if(WITH_POSTGRES)
     endif()
     file(GLOB POSTGRES_SRCS "src/dblayer/Postgres*.cpp" "src/dblayer/Postgres*.h")
     target_sources(databaselayersqlite PRIVATE ${POSTGRES_SRCS})
-    target_link_libraries(databaselayersqlite PostgreSQL::PostgreSQL)
+    target_link_libraries(databaselayersqlite PUBLIC PostgreSQL::PostgreSQL)
 endif()
 
 codelite_install_library_target(databaselayersqlite)

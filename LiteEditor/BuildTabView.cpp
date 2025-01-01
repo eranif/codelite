@@ -4,6 +4,7 @@
 #include "StringUtils.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clColours.h"
+#include "clSTCHelper.hpp"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
 #include "dirsaver.h"
@@ -478,6 +479,8 @@ void BuildTabView::SetLineMarker(size_t line)
     ClearSelections();
     MarkerDeleteAll(LINE_MARKER);
     MarkerAdd(line, LINE_MARKER);
+    // Bring the error line into the view
+    clSTCHelper::CenterLine(this, line);
 }
 
 void BuildTabView::OpenEditor(const wxString& filename, int line, int col, const wxString& wd)
@@ -558,7 +561,8 @@ void BuildTabView::OnContextMenu(wxContextMenuEvent& e)
             SelectAll();
         },
         XRCID("buildtabview_select_all"));
-    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(GetLength() > 0); }, XRCID("buildtabview_select_all"));
+    menu.Bind(
+        wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(GetLength() > 0); }, XRCID("buildtabview_select_all"));
 
     menu.Bind(
         wxEVT_MENU,
@@ -569,7 +573,8 @@ void BuildTabView::OnContextMenu(wxContextMenuEvent& e)
             SetEditable(false);
         },
         XRCID("buildtabview_clear_all"));
-    menu.Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(GetLength() > 0); }, XRCID("buildtabview_clear_all"));
+    menu.Bind(
+        wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& e) { e.Enable(GetLength() > 0); }, XRCID("buildtabview_clear_all"));
     PopupMenu(&menu);
 }
 

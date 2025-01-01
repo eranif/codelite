@@ -16,13 +16,6 @@ if(UNIX)
     set(UTIL_LIB "-lutil")
 endif(UNIX)
 
-target_link_libraries(
-    codelite-make
-    ${LINKER_OPTIONS}
-    ${wxWidgets_LIBRARIES}
-    -L"${CL_LIBPATH}"
-    libcodelite
-    plugin
-    ${UTIL_LIB})
+target_link_libraries(codelite-make ${LINKER_OPTIONS} -L"${CL_LIBPATH}" libcodelite plugin ${UTIL_LIB})
 
 cl_install_executable(codelite-make)

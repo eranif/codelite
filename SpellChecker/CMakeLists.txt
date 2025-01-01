@@ -33,9 +33,7 @@ else()
     include("${wxWidgets_USE_FILE}")
 
     # Include paths
-    include_directories(
-        "${CL_SRC_ROOT}/SpellChecker"
-        "${HUNSPELL_H}")
+    include_directories("${CL_SRC_ROOT}/SpellChecker" "${HUNSPELL_H}")
 
     if(USE_PCH AND NOT MINGW)
         add_definitions(-include "${CL_PCH_FILE}")
@@ -57,7 +55,7 @@ else()
 
     # Codelite plugins doesn't use the "lib" prefix.
     set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${LIBHUNSPELL} libcodelite plugin)
+    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${LIBHUNSPELL} libcodelite plugin)
 
     # Installation destination
     cl_install_plugin(${PLUGIN_NAME})

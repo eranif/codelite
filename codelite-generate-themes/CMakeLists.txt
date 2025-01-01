@@ -20,11 +20,6 @@ endif()
 # Define the output
 add_executable(codelite-generate-themes ${SRCS} ${CGT_RES_FILE})
 
-target_link_libraries(
-    codelite-generate-themes
-    ${wxWidgets_LIBRARIES}
-    libcodelite
-    plugin
-    ${LINKER_OPTIONS})
+target_link_libraries(codelite-generate-themes libcodelite plugin ${LINKER_OPTIONS})
 
 install(TARGETS codelite-generate-themes DESTINATION ${CL_INSTALL_BIN})

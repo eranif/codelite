@@ -118,16 +118,9 @@ target_link_libraries(${PLUGIN_NAME} wxcLib)
 
 if(NOT WXC_APP)
     if(NOT OFFICIAL_CL_BUILD)
-        target_link_libraries(
-            ${PLUGIN_NAME}
-            ${LINKER_OPTIONS}
-            ${wxWidgets_LIBRARIES}
-            wxsqlite3
-            ${SQLite3_LIBRARIES}
-            libcodelite
-            plugin)
+        target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} wxsqlite3 ${SQLite3_LIBRARIES} libcodelite plugin)
     else(OFFICIAL_CL_BUILD)
-        target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
+        target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS})
     endif(NOT OFFICIAL_CL_BUILD)
 else()
     set(WXC_EXTRA_LIBS "")
@@ -137,14 +130,7 @@ else()
         set(WXC_EXTRA_LIBS "-mwindows")
     endif()
 
-    target_link_libraries(
-        ${PLUGIN_NAME}
-        ${LINKER_OPTIONS}
-        ${wxWidgets_LIBRARIES}
-        wxsqlite3
-        libcodelite
-        plugin
-        ${WXC_EXTRA_LIBS})
+    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin ${WXC_EXTRA_LIBS})
 endif()
 
 if(NOT WXC_APP)

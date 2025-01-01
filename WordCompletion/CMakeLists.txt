@@ -14,7 +14,7 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
-FLEX_TARGET(WordFlex "WordTokenizer.l" "${CMAKE_CURRENT_BINARY_DIR}/WordTokenizer.cpp"
+flex_target(WordFlex "WordTokenizer.l" "${CMAKE_CURRENT_BINARY_DIR}/WordTokenizer.cpp"
             COMPILE_FLAGS "-Pword --noline --yylineno --batch")
 
 set(FlexSrcs "${FLEX_WordFlex_OUTPUTS}")
@@ -36,5 +36,5 @@ target_include_directories(${PLUGIN_NAME} PRIVATE .)
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} libcodelite plugin)
+target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 cl_install_plugin(${PLUGIN_NAME})

@@ -72,8 +72,7 @@ if(USE_PCH AND NOT MINGW)
 endif()
 
 # Include paths
-include_directories(
-    "${CL_SRC_ROOT}/sdk/databaselayer/include")
+include_directories("${CL_SRC_ROOT}/sdk/databaselayer/include")
 
 add_definitions(-DDBL_USE_SQLITE)
 
@@ -102,7 +101,6 @@ endif()
 target_link_libraries(
     ${PLUGIN_NAME}
     ${LINKER_OPTIONS}
-    ${wxWidgets_LIBRARIES}
     ${GTK_LIBS}
     libcodelite
     plugin

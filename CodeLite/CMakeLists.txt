@@ -12,35 +12,34 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 # Flex files
-FLEX_TARGET(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/CxxScanner.l" "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
+flex_target(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/CxxScanner.l" "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
             COMPILE_FLAGS "--noline --yylineno --batch")
-FLEX_TARGET(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/include_finder.l" "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp"
-            COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
-FLEX_TARGET(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
+flex_target(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/include_finder.l"
+            "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp" COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
+flex_target(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
             COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
-FLEX_TARGET(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XML/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
+flex_target(XmlFlex "${CMAKE_SOURCE_DIR}/CodeLite/XML/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
             COMPILE_FLAGS "-Pxml --noline --yylineno --batch")
 
-set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}" "${FLEX_XmlFlex_OUTPUTS}")
+set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}"
+             "${FLEX_XmlFlex_OUTPUTS}")
 
 file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
 
 add_library(libcodelite SHARED ${SRCS} ${FlexSrcs})
 
 # Include paths
-target_include_directories(libcodelite
-    PUBLIC
-    "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
-    "${CL_SRC_ROOT}/CodeLite"
-    "${CL_SRC_ROOT}/CodeLite/ssh"
-    "${CL_SRC_ROOT}/PCH"
-    PRIVATE
-    "${CL_SRC_ROOT}/submodules/asio/asio/include"
-    "${CL_SRC_ROOT}/submodules/websocketpp"
-)
+target_include_directories(
+    libcodelite
+    PUBLIC "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/CodeLite/ssh"
+           "${CL_SRC_ROOT}/PCH"
+    PRIVATE "${CL_SRC_ROOT}/submodules/asio/asio/include" "${CL_SRC_ROOT}/submodules/websocketpp")
 # Macros
 if(WIN32)
-    target_compile_definitions(libcodelite PRIVATE WXMAKINGDLL_CL INTERFACE WXUSINGDLL_CL)
+    target_compile_definitions(
+        libcodelite
+        PRIVATE WXMAKINGDLL_CL
+        INTERFACE WXUSINGDLL_CL)
     target_compile_definitions(libcodelite PUBLIC WXUSINGDLL_WXSQLITE3)
 endif()
 
@@ -85,7 +84,6 @@ endif()
 target_link_libraries(
     libcodelite
     ${LINKER_OPTIONS}
-    ${wxWidgets_LIBRARIES}
     -L"${CL_LIBPATH}"
     ${SQLite3_LIBRARIES}
     libCxxParser
@@ -94,8 +92,7 @@ target_link_libraries(
     ${GTK_LIBS}
     ${ADDITIONAL_LIBRARIES}
     ${LIBUCHARDET_LIB}
-    cJSON
-)
+    cJSON)
 
 if(MINGW)
     set_target_properties(

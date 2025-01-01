@@ -20,10 +20,8 @@ else(NOT CL_SRC_ROOT)
 endif(NOT CL_SRC_ROOT)
 
 # Include paths
-include_directories(
-    "${CL_SRC_ROOT}/codelitephp/PHPParser"
-    "${CL_SRC_ROOT}/codelitephp/php-plugin"
-    "${CL_SRC_ROOT}/codelitephp/PHPParserUnitTests")
+include_directories("${CL_SRC_ROOT}/codelitephp/PHPParser" "${CL_SRC_ROOT}/codelitephp/php-plugin"
+                    "${CL_SRC_ROOT}/codelitephp/PHPParserUnitTests")
 
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     # Debug build of codelite
@@ -56,7 +54,8 @@ if(BUILD_TESTING)
     file(GLOB UNIT_TESTS_SRC "PHPParserUnitTests/*.cpp")
     add_executable(PHPUnitTests ${UNIT_TESTS_SRC})
 
-    target_link_libraries(PHPUnitTests
+    target_link_libraries(
+        PHPUnitTests
         ${LINKER_OPTIONS}
         -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
         -L"${CL_LIBPATH}"
@@ -64,11 +63,12 @@ if(BUILD_TESTING)
         libcodelite
         plugin
         ${ADDITIONAL_LIBRARIES}
-        ${wxWidgets_LIBRARIES}
-        wxsqlite3
-    )
+        wxsqlite3)
 
-    add_test(NAME "PHPUnitTests" COMMAND PHPUnitTests WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/PHPParserUnitTests/Tests)
+    add_test(
+        NAME "PHPUnitTests"
+        COMMAND PHPUnitTests
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/PHPParserUnitTests/Tests)
 endif(BUILD_TESTING)
 
 set(ADDITIONAL_LIBRARIES "")
@@ -78,7 +78,7 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} PHPParser libcodelite plugin)
+target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} PHPParser libcodelite plugin)
 # Installation destination
 cl_install_plugin(${PLUGIN_NAME})
 cl_install_file_shared("${CL_SRC_ROOT}/Runtime/PHP.zip")

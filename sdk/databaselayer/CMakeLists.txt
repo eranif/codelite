@@ -75,7 +75,7 @@ if(UNIX OR APPLE)
     set_target_properties(databaselayersqlite PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
-target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${SQLite3_LIBRARIES})
+target_link_libraries(databaselayersqlite PRIVATE ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${SQLite3_LIBRARIES})
 
 if(WITH_POSTGRES)
     find_package(PostgreSQL REQUIRED)

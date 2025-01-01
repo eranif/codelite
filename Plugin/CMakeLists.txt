@@ -11,19 +11,18 @@ file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
 add_library(plugin SHARED ${SRCS})
 
 # Include paths
-target_include_directories(plugin
-    PUBLIC
-    "${CL_SRC_ROOT}/Plugin"
-    "${CL_SRC_ROOT}/Interfaces"
-    PRIVATE
-    "${CL_SRC_ROOT}/submodules/yaml-cpp/include"
-    "${CL_SRC_ROOT}/ThemeImporters"
-    "${CL_SRC_ROOT}/wxTerminalCtrl"
-)
+target_include_directories(
+    plugin
+    PUBLIC "${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces"
+    PRIVATE "${CL_SRC_ROOT}/submodules/yaml-cpp/include" "${CL_SRC_ROOT}/ThemeImporters"
+            "${CL_SRC_ROOT}/wxTerminalCtrl")
 
 # Macros
 if(WIN32)
-    target_compile_definitions(plugin PRIVATE WXMAKINGDLL_SDK INTERFACE WXUSINGDLL_SDK)
+    target_compile_definitions(
+        plugin
+        PRIVATE WXMAKINGDLL_SDK
+        INTERFACE WXUSINGDLL_SDK)
 endif(WIN32)
 
 if(USE_PCH AND NOT MINGW)
@@ -87,7 +86,6 @@ target_link_libraries(
     ${LINKER_OPTIONS}
     ${ADDITIONAL_LIBRARIES}
     ${GTK3_LIBRARIES}
-    ${wxWidgets_LIBRARIES}
     ${LIBYAML_CPP}
     -L"${CL_LIBPATH}"
     lexers_extra

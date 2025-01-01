@@ -1,5 +1,4 @@
-# CodeLite plugin function.
-# Usage:
+# CodeLite plugin function. Usage:
 #
 # CL_PLUGIN( "MyPlugin" )
 
@@ -20,13 +19,13 @@ function(CL_PLUGIN PLUGIN_NAME)
     # wxWidgets include (this will do all the magic to configure everything)
     include("${wxWidgets_USE_FILE}")
 
-    ## PreCompiled header support
+    # PreCompiled header support
     if(USE_PCH)
         add_definitions(-include "${CL_PCH_FILE}")
         add_definitions(-Winvalid-pch)
     endif(USE_PCH)
 
-    ## By default, use the sources under the current folder
+    # By default, use the sources under the current folder
     file(GLOB_RECURSE PLUGIN_SRCS "${CMAKE_CURRENT_LIST_DIR}/*.cpp" "${CMAKE_CURRENT_LIST_DIR}/*.c")
 
     # Define the output - shared library
@@ -34,20 +33,14 @@ function(CL_PLUGIN PLUGIN_NAME)
 
     # Codelite plugins doesn't use the "lib" prefix.
     set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-    target_link_libraries(
-        ${PLUGIN_NAME}
-        ${LINKER_OPTIONS}
-        ${wxWidgets_LIBRARIES}
-        libcodelite
-        plugin
-        wxsqlite3)
+    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin wxsqlite3)
 
     # Installation destination
     install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
 endfunction()
 
-# Scan the top level folders of the source tree, if a folder exists and it contains the a file
-# named "codelite-plugin.cmake" in it, automatically include it
+# Scan the top level folders of the source tree, if a folder exists and it contains the a file named
+# "codelite-plugin.cmake" in it, automatically include it
 function(CL_SCAN_FOR_PLUGINS)
     message("-- CMAKE_SOURCE_DIR is set to ${CMAKE_SOURCE_DIR}")
     file(

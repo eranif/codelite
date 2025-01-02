@@ -6449,7 +6449,7 @@ void clEditor::OnIdle(wxIdleEvent& event)
 
     event.Skip();
 
-    // The internval between idle events can not be under 250ms
+    // The interval between idle events can not be under 250ms
     static clIdleEventThrottler event_throttler{ 250 };
     if (!event_throttler.CanHandle()) {
         return;

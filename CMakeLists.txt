@@ -92,7 +92,7 @@ elseif(UNIX AND NOT APPLE)
 endif()
 
 message(STATUS "CMAKE_INSTALL_PREFIX is set to ${CMAKE_INSTALL_PREFIX}")
-set(CODELITE_VERSION "18.00.0")
+set(CODELITE_VERSION "18.01.0")
 
 # for now, we keep wxCrafter version to be the same as CodeLite version this allows for better support
 set(WXCRAFTER_VERSION ${CODELITE_VERSION})

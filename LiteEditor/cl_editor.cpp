@@ -4375,7 +4375,7 @@ void clEditor::HighlightWord(bool highlight)
     if (highlight) {
         DoHighlightWord();
 
-    } else {
+    } else if (m_highlightedWordInfo.IsHasMarkers()) {
         SetIndicatorCurrent(INDICATOR_WORD_HIGHLIGHT);
         IndicatorClearRange(0, GetLength());
         m_highlightedWordInfo.Clear();
@@ -6450,7 +6450,7 @@ void clEditor::OnIdle(wxIdleEvent& event)
     event.Skip();
 
     // The interval between idle events can not be under 250ms
-    static clIdleEventThrottler event_throttler{ 250 };
+    static clIdleEventThrottler event_throttler{ 100 };
     if (!event_throttler.CanHandle()) {
         return;
     }

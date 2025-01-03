@@ -127,6 +127,13 @@ void BuildTabView::InitialiseView()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("terminal");
     if (lexer) {
         lexer->Apply(this);
+        // Determine the text colour
+        if (lexer->IsDark()) {
+            StyleSetForeground(0, wxColour("WHITE").ChangeLightness(85));
+        } else {
+            StyleSetForeground(0, wxColour("BLACK").ChangeLightness(115));
+        }
+
         IndicatorSetStyle(INDICATOR_HYPERLINK, wxSTC_INDIC_COMPOSITIONTHICK);
         IndicatorSetForeground(INDICATOR_HYPERLINK, clColours::Blue(lexer->IsDark()));
         // Mark current line
@@ -301,7 +308,7 @@ void BuildTabView::OnLeftDown(wxMouseEvent& e)
     e.Skip();
 
     int pos = PositionFromPoint(e.GetPosition());
-    SetLineMarker(LineFromPosition(pos));
+    SetLineMarker(LineFromPosition(pos), false);
 
     int start_pos = WordStartPosition(pos, true);
     int end_pos = WordEndPosition(pos, true);
@@ -423,16 +430,16 @@ void BuildTabView::OnNextBuildError(wxCommandEvent& event)
         ++from;
     }
     clDEBUG() << "(Build Tab View) searching error from line:" << from << endl;
-    SelectFirstErrorOrWarning(from, m_onlyErrors);
+    SelectFirstErrorOrWarning(from, m_onlyErrors, true);
 }
 
 void BuildTabView::OnNextBuildErrorUI(wxUpdateUIEvent& event) { event.Enable(m_warnCount || m_errorCount); }
 
-void BuildTabView::SelectFirstErrorOrWarning(size_t from, bool errors_only)
+void BuildTabView::SelectFirstErrorOrWarning(size_t from, bool errors_only, bool center_line)
 {
     auto line_info = GetNextLineWithErrorOrWarning(from, errors_only);
     if (line_info.has_value()) {
-        SetLineMarker(line_info.value().first);
+        SetLineMarker(line_info.value().first, center_line);
         OpenEditor(line_info.value().second);
     }
 }
@@ -474,13 +481,16 @@ BuildTabView::GetNextLineWithErrorOrWarning(size_t from, bool errors_only) const
 }
 
 void BuildTabView::ClearLineMarker() { MarkerDeleteAll(LINE_MARKER); }
-void BuildTabView::SetLineMarker(size_t line)
+void BuildTabView::SetLineMarker(size_t line, bool center_line)
 {
     ClearSelections();
     MarkerDeleteAll(LINE_MARKER);
     MarkerAdd(line, LINE_MARKER);
-    // Bring the error line into the view
-    clSTCHelper::CenterLine(this, line);
+
+    if (center_line) {
+        // Bring the error line into the view
+        clSTCHelper::CenterLine(this, line);
+    }
 }
 
 void BuildTabView::OpenEditor(const wxString& filename, int line, int col, const wxString& wd)

@@ -45,7 +45,7 @@ public:
     size_t GetWarnCount() const { return m_warnCount; }
 
     /// Select the first error / warning message starting from line `from`
-    void SelectFirstErrorOrWarning(size_t from, bool errors_only);
+    void SelectFirstErrorOrWarning(size_t from, bool errors_only, bool center_line);
 
 protected:
     void OnContextMenu(wxContextMenuEvent& e);
@@ -57,7 +57,7 @@ protected:
     std::optional<std::pair<int, std::shared_ptr<LineClientData>>>
     GetNextLineWithErrorOrWarning(size_t from, bool errors_only) const;
     void ClearLineMarker();
-    void SetLineMarker(size_t line);
+    void SetLineMarker(size_t line, bool center_line);
     void OpenEditor(const wxString& filename, int line, int col, const wxString& wd = {});
     void OpenEditor(std::shared_ptr<LineClientData> line_info);
     void InitialiseView();

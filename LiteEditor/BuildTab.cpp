@@ -118,7 +118,7 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
     ProcessBuffer(true);
 
     if (m_buildTabSettings.GetScrollTo() == BuildTabSettingsData::SCROLL_TO_FIRST_ERROR) {
-        m_viewStc->SelectFirstErrorOrWarning(0, m_buildTabSettings.IsSkipWarnings());
+        m_viewStc->SelectFirstErrorOrWarning(0, m_buildTabSettings.IsSkipWarnings(), true);
     }
 
     // notify the plugins that the build has ended

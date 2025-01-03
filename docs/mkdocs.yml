@@ -46,6 +46,7 @@ nav:
       - Remoty: plugins/remoty.md
       - Rust: plugins/rust.md
       - Source Code Formatter: plugins/codeformatter.md
+      - Chat AI: plugins/chatai.md
   - Debugging:
       - gdb: debuggers/gdb.md
       - Debug Adapter Client (dap): plugins/dap.md

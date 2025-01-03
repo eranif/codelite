@@ -2,10 +2,10 @@
 
 Install the following
 
-- python3
-- pip3
-- install mkdocs + extensions
-- If you are under MSYS2, make sure to install libcrypt-devel & python3:
+- `python3`
+- `pip3`
+- install `mkdocs` + `extensions`
+- If you are under MSYS2, make sure to install `libcrypt-devel` & `python3`:
 
 # MSYS2:
 
@@ -43,5 +43,5 @@ To start the local webserver:
 mkdocs serve
 ```
 
-To view the docs, open the URL: http://127.0.0.1:8000/
+To view the docs, open the URL: `http://127.0.0.1:8000/`
 

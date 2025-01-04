@@ -51,7 +51,7 @@ ConsoleLexer::ConsoleLexer(wxStyledTextCtrl* stc)
     CallAfter(&ConsoleLexer::SetStyles);
 }
 
-ConsoleLexer::~ConsoleLexer() { m_stc->Unbind(wxEVT_STC_STYLENEEDED, &ConsoleLexer::OnStyleNeeded, this); }
+ConsoleLexer::~ConsoleLexer() {}
 
 /// Apply the lexer's "terminal" styles for this instance managed wxSTC
 void ConsoleLexer::SetStyles()

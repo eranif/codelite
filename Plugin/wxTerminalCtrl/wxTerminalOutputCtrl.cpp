@@ -271,6 +271,7 @@ void wxTerminalOutputCtrl::ApplyTheme()
     if (lexer) {
         lexer->Apply(m_ctrl);
     }
+    m_ctrl->SetEOLMode(wxSTC_EOL_LF);
     m_ctrl->Refresh();
 }
 

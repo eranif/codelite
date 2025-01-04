@@ -27,8 +27,13 @@ INITIALISE_MODULE_LOG(TERM_LOG, "Terminal", "terminal.log");
 
 wxTerminalCtrl::wxTerminalCtrl() {}
 
-wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxString& working_directory,
-                               const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent,
+                               wxWindowID winid,
+                               const wxString& working_directory,
+                               const wxPoint& pos,
+                               const wxSize& size,
+                               long style,
+                               const wxString& name)
 {
     if (!Create(parent, winid, pos, size, style)) {
         return;
@@ -61,15 +66,18 @@ wxTerminalCtrl::~wxTerminalCtrl()
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
 }
 
-bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
-                            const wxString& name)
+bool wxTerminalCtrl::Create(
+    wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessError, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &wxTerminalCtrl::OnWorkspaceLoaded, this);
     m_style = style & ~wxWINDOW_STYLE_MASK; // Remove all wxWindow style masking (Hi Word)
-    return wxPanel::Create(parent, winid, pos, size,
+    return wxPanel::Create(parent,
+                           winid,
+                           pos,
+                           size,
                            style & wxWINDOW_STYLE_MASK); // Pass only the Windows related styles
 }
 
@@ -78,7 +86,8 @@ void wxTerminalCtrl::StartShell()
     wxString shell_exec;
     if (m_shellCommand.CmpNoCase("bash") == 0) {
         if (!ThePlatform->Which(m_shellCommand, &shell_exec)) {
-            wxMessageBox(wxString() << _("Unable to find ") << m_shellCommand << ". Can't start a terminal", "CodeLite",
+            wxMessageBox(wxString() << _("Unable to find ") << m_shellCommand << ". Can't start a terminal",
+                         "CodeLite",
                          wxICON_WARNING | wxOK | wxCENTRE | wxOK_DEFAULT);
             return;
         }
@@ -192,7 +201,9 @@ void wxTerminalCtrl::SetAttributes(const wxColour& bg_colour, const wxColour& te
 
 void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event)
 {
-    m_processOutput << event.GetOutput();
+    wxString s = event.GetOutput();
+    s.Replace("\r", "");
+    m_processOutput << s;
     ProcessOutputBuffer();
 }
 

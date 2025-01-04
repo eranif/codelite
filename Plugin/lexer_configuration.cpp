@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "lexer_configuration.h"
 
+#include "ConsoleLexer.hpp"
 #include "ExtraLexers.h"
 #include "FontUtils.hpp"
 #include "clSystemSettings.h"
@@ -99,6 +100,7 @@ wxColour to_wx_colour(const wxString& colour_as_string) { return wxColour(colour
 
 void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
+    ConsoleLexerClientData* console_lexer = nullptr;
 #if HAS_ILEXER
     // Apply the lexer
     switch (GetLexerId()) {
@@ -116,8 +118,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // Apply the lexer
     switch (GetLexerId()) {
     case wxSTC_LEX_TERMINAL:
-        // use the old lexer
-        ctrl->SetLexer(wxSTC_LEX_ERRORLIST);
+        // Use a container lexer and attach it to the control
+        ctrl->SetLexer(wxSTC_LEX_CONTAINER);
+        console_lexer = new ConsoleLexerClientData(ctrl);
+        ctrl->SetClientObject(console_lexer);
         break;
     default:
         // Standard lexers
@@ -127,6 +131,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 #endif
 
     ctrl->StyleClearAll();
+    if (console_lexer) {
+        console_lexer->GetLexer().SetStyles();
+    }
+
     ctrl->FoldDisplayTextSetStyle(wxSTC_FOLDDISPLAYTEXT_BOXED);
     ctrl->SetIdleStyling(wxSTC_IDLESTYLING_TOVISIBLE);
 
@@ -174,15 +182,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         // Hide escape sequence styles
         ctrl->StyleSetVisible(wxSTC_TERMINAL_ESCSEQ, false);
         ctrl->StyleSetVisible(wxSTC_TERMINAL_ESCSEQ_UNKNOWN, false);
-    }
-#else
-    if (ctrl->GetLexer() == wxSTC_LEX_ERRORLIST) {
-        ctrl->SetProperty("lexer.errorlist.escape.sequences", "1");
-        ctrl->SetProperty("lexer.errorlist.value.separate", "1");
-
-        // Hide escape sequence styles
-        ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ, false);
-        ctrl->StyleSetVisible(wxSTC_ERR_ESCSEQ_UNKNOWN, false);
     }
 #endif
 

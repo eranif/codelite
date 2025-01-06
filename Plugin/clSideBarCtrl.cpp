@@ -223,11 +223,7 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
         clWARNING() << "clSideBarCtrl::AddPage(): Invalid bitmap:" << bmpname << endl;
     }
 
-    const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark()
-                              // Under Windows 11, the toolbar selection is "very light"
-                              // so use the light theme bitmap
-                              ? (IsWindows11DarkMode() ? light_theme_bmp : dark_theme_bmp)
-                              : light_theme_bmp;
+    const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp;
 
     auto tool = m_toolbar->AddTool(wxID_ANY, label, wxBitmapBundle(bmp), label, wxITEM_CHECK);
     auto tool_id = tool->GetId();

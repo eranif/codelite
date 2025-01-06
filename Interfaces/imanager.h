@@ -30,6 +30,7 @@
 #include "clStatusBar.h"
 #include "clTab.h"
 #include "clToolBar.h"
+#include "cl_defs.h"
 #include "debugger.h"
 #include "iconfigtool.h"
 #include "ieditor.h"
@@ -58,15 +59,12 @@ class wxAuiManager;
 class clInfoBar;
 class clGenericNotebook;
 class clAuiBook;
-
-#if defined(__WXMSW__) || defined(__WXMAC__)
-#define MAINBOOK_AUIBOOK 0
-#else
-#define MAINBOOK_AUIBOOK 0
-#endif
+class clNativeNotebook;
 
 #if MAINBOOK_AUIBOOK
 using MainNotebook = clAuiBook;
+#elif CL_USE_NATIVEBOOK
+using MainNotebook = clNativeNotebook;
 #else
 using MainNotebook = clGenericNotebook;
 #endif

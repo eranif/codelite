@@ -412,9 +412,6 @@ clEditor* MainBook::GetActiveEditor()
 void MainBook::GetAllTabs(clTab::Vec_t& tabs)
 {
     tabs.clear();
-#if USE_AUI_NOTEBOOK
-    m_book->GetAllTabs(tabs);
-#else
     clTabInfo::Vec_t tabsInfo;
     m_book->GetAllTabs(tabsInfo);
 
@@ -433,7 +430,6 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
         }
         tabs.push_back(t);
     });
-#endif
 }
 
 clEditor::Vec_t MainBook::GetAllEditors()

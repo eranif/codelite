@@ -176,14 +176,10 @@ void OutputPane::OnBuildEnded(clBuildEvent& e)
 
 void OutputPane::SaveTabOrder()
 {
-#if USE_AUI_NOTEBOOK
-    wxArrayString panes = m_book->GetAllTabsLabels();
-#else
     wxArrayString panes;
     clTabInfo::Vec_t tabs;
     m_book->GetAllTabs(tabs);
     std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
-#endif
     clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
 }
 

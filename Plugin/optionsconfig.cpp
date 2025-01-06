@@ -206,8 +206,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_disableSemicolonShift = XmlUtils::ReadBool(node, wxT("DisableSemicolonShift"), m_disableSemicolonShift);
         m_caretLineAlpha = XmlUtils::ReadLong(node, wxT("CaretLineAlpha"), m_caretLineAlpha);
         m_dontAutoFoldResults = XmlUtils::ReadBool(node, wxT("DontAutoFoldResults"), m_dontAutoFoldResults);
-        m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(node, wxT("DontOverrideSearchStringWithSelection"),
-                                                                     m_dontOverrideSearchStringWithSelection);
+        m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(
+            node, wxT("DontOverrideSearchStringWithSelection"), m_dontOverrideSearchStringWithSelection);
         m_showDebugOnRun = XmlUtils::ReadBool(node, wxT("ShowDebugOnRun"), m_showDebugOnRun);
         m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
         m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
@@ -222,8 +222,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         if (XmlUtils::ReadStringIfExists(node, "options_bits", options)) {
             m_options.from_string(options);
         }
-        m_debuggerMarkerLine = XmlUtils::ReadString(node, wxT("m_debuggerMarkerLine"),
-                                                    m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+        m_debuggerMarkerLine = XmlUtils::ReadString(
+            node, wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
         m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
 
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include
@@ -483,23 +483,7 @@ void OptionsConfig::UpdateFromEditorConfig(const clEditorConfigSection& section)
     }
 }
 
-bool OptionsConfig::IsTabColourDark() const
-{
-#if USE_AUI_NOTEBOOK
-    return false;
-#else
-    return HasOption(Opt_TabColourDark);
-#endif
-}
-
-bool OptionsConfig::IsTabColourMatchesTheme() const
-{
-#if USE_AUI_NOTEBOOK
-    return true;
-#else
-    return !HasOption(Opt_TabColourPersistent);
-#endif
-}
-
+bool OptionsConfig::IsTabColourDark() const { return HasOption(Opt_TabColourDark); }
+bool OptionsConfig::IsTabColourMatchesTheme() const { return !HasOption(Opt_TabColourPersistent); }
 void OptionsConfig::EnableOption(size_t flag, bool b) { m_options.set(flag, b); }
 bool OptionsConfig::HasOption(size_t flag) const { return m_options.test(flag); }

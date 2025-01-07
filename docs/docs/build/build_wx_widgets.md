@@ -49,38 +49,33 @@ To build wxWidgets on you computer you will need these packages:
 - `git`
 - `cmake`
 
-Use the following command to install the prerequisites for Ubuntu 18.04:
+Use the following command to install the prerequisites for `Ubuntu`:
 
 ```bash
-sudo apt-get install libgtk-3-dev \
-                     pkg-config \
-                     build-essential \
-                     git \
-                     cmake \
-                     libsqlite3-dev \
-                     libssh-dev \
-                     libedit-dev \
-                     libhunspell-dev \
-                     clang-format-12 \
+sudo apt-get install libgtk-3-dev       \
+                     pkg-config         \
+                     build-essential    \
+                     git                \
+                     cmake              \
+                     libsqlite3-dev     \
+                     libssh-dev         \
+                     libedit-dev        \
+                     libhunspell-dev    \
                      xterm
 ```
-
-!!! Tip
-    If your distro provides a newer version of `clang-format`, install it. The higher, the better
 
 ```bash
 mkdir -p $HOME/devl
 cd $HOME/devl
 
-# download wxWidgets 3.2.0 & extract it
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxWidgets-3.2.0.tar.bz2
-bzip2 -d wxWidgets-3.2.0.tar.bz2
-tar xvf wxWidgets-3.2.0.tar.bz2
+# Checkout sources
+git clone https://github.com/wxWidgets/wxWidgets
+cd wxWidgets
+git submodule update --init
 
-# build and install it
-cd wxWidgets-3.2.0
 mkdir -p build-release
 cd build-release
+
 ../configure --disable-debug_flag --with-gtk=3 --enable-stl
 make -j$(nproc) && sudo make install
 ```

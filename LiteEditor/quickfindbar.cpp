@@ -771,31 +771,25 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     unsigned int utfLen = ::clUTF8Length(input_buffer.ToStdWstring().c_str(), input_buffer.length());
     isUTF8 = (utfLen != input_buffer.length());
 
-    if (!(m_searchFlags & wxSTC_FIND_REGEXP) && !IsReplacementRegex() && !isUTF8) {
-        // simple search, we can optimize it by applying the replacement on
-        // a buffer instead of the editor
-        replacements_done = DoReplaceInBuffer(target);
-
-    } else {
-        // perform a search
-        m_sci->BeginUndoAction();
-        while (true) {
-            auto target_result = DoFind(FIND_DEFAULT, target);
-            if (!target_result.IsOk()) {
-                break;
-            }
-            int match_len = DoReplace(target_result);
-            if (match_len == wxNOT_FOUND) {
-                break;
-            }
-            replacements_done++;
-            target.start_pos += match_len;
-            if (target.start_pos >= target_result.end_pos) {
-                break;
-            }
+    // perform a search
+    m_sci->BeginUndoAction();
+    while (true) {
+        auto target_result = DoFind(FIND_DEFAULT, target);
+        if (!target_result.IsOk()) {
+            break;
         }
-        m_sci->EndUndoAction();
+        int match_len = DoReplace(target_result);
+        if (match_len == wxNOT_FOUND) {
+            break;
+        }
+        replacements_done++;
+        target.start_pos += match_len;
+        if (target.start_pos >= target_result.end_pos) {
+            break;
+        }
     }
+    m_sci->EndUndoAction();
+
     double ms = sw.Time();
     clDEBUG() << "Replace all took:" << (double)(ms / 1000.0) << "seconds" << endl;
     if (replacements_done) {

@@ -119,6 +119,9 @@ public:
     /// Similar to `ToString` but convert `rawctrl` & `ctrl` into `Ctrl` & `Cmd` accordingly
     wxString DisplayString() const;
 
+    /// Convert this into wxAcceleratorEntry
+    std::shared_ptr<wxAcceleratorEntry> ToAccelerator(const wxString& label) const;
+
     using Vec_t = std::vector<clKeyboardShortcut>;
     using Set_t = std::set<clKeyboardShortcut>;
 };
@@ -220,7 +223,9 @@ public:
      * @brief add keyboard shortcut by specifying the action ID + the shortcut combination
      * For example: AddAccelerator("wxID_COPY", _("Edit"), _("Copy the current selection"), "Ctrl-Shift-C");
      */
-    void AddAccelerator(const wxString& resourceID, const wxString& parentMenu, const wxString& action,
+    void AddAccelerator(const wxString& resourceID,
+                        const wxString& parentMenu,
+                        const wxString& action,
                         const clKeyboardShortcut& accel = {});
 
     /**
@@ -252,6 +257,11 @@ public:
      * @brief restore keyboard shortcuts to defaults
      */
     void RestoreDefaults();
+
+    /**
+     * @brief return keyboard shortcut for given XRCID
+     */
+    clKeyboardShortcut GetShortcutForCommand(const wxString& xrcid_string) const;
 };
 
 #endif // KEYBOARDMANAGER_H

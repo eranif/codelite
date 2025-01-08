@@ -25,6 +25,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "quickfindbar.h"
 
+#include "Keyboard/clKeyboardManager.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "clSystemSettings.h"
@@ -185,6 +186,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     wxTheApp->Bind(wxEVT_MENU, &QuickFindBar::OnFindNextCaret, this, XRCID("find_next_at_caret"));
     wxTheApp->Bind(wxEVT_MENU, &QuickFindBar::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
+    wxTheApp->Bind(wxEVT_MENU, &QuickFindBar::OnFindNext, this, XRCID("find_next"));
 
     EventNotifier::Get()->Bind(wxEVT_FINDBAR_RELEASE_EDITOR, &QuickFindBar::OnReleaseEditor, this);
     Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(QuickFindBar::OnQuickFindCommandEvent), NULL, this);
@@ -240,6 +242,7 @@ QuickFindBar::~QuickFindBar()
 
     wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindNextCaret, this, XRCID("find_next_at_caret"));
     wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
+    wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindNext, this, XRCID("id_find"));
     EventNotifier::Get()->Unbind(wxEVT_FINDBAR_RELEASE_EDITOR, &QuickFindBar::OnReleaseEditor, this);
     EventNotifier::Get()->Unbind(wxEVT_STC_GOT_FOCUS, &QuickFindBar::OnFocusGained, this);
     EventNotifier::Get()->Unbind(wxEVT_STC_LOST_FOCUS, &QuickFindBar::OnFocusLost, this);
@@ -277,6 +280,10 @@ void QuickFindBar::OnText(wxCommandEvent& e)
 
 void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 {
+    if (HandleKeyboardShortcuts(e)) {
+        return;
+    }
+
     switch (e.GetKeyCode()) {
     case WXK_DOWN: {
         // DoArrowDown(m_searchHistory, m_textCtrlFind);
@@ -300,6 +307,10 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 }
 void QuickFindBar::OnReplaceKeyDown(wxKeyEvent& e)
 {
+    if (HandleKeyboardShortcuts(e)) {
+        return;
+    }
+
     switch (e.GetKeyCode()) {
     case WXK_DOWN: {
         // DoArrowDown(m_replaceHistory, m_textCtrlReplace);
@@ -429,12 +440,8 @@ bool QuickFindBar::Show(const wxString& findWhat, bool showReplace)
     return DoShow(true, findWhat, showReplace);
 }
 
-bool QuickFindBar::DoShow([[maybe_unused]] bool s, const wxString& findWhat, bool showReplace)
+bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
 {
-#ifdef __WXMSW__
-    wxWindowUpdateLocker locker(this);
-#endif
-
     int dummy = wxNOT_FOUND;
     if (!clConfig::Get().Read("FindBar/Height", dummy)) {
         // first time, place it at the top
@@ -521,6 +528,13 @@ void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
 
     m_textCtrlFind->ChangeValue(selection);
     DoFind(FIND_DEFAULT | FIND_GOTOLINE);
+}
+
+void QuickFindBar::OnFindNext(wxCommandEvent& e)
+{
+    clSYSTEM() << "Find next" << endl;
+    CHECK_FOCUS_WIN(e);
+    DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE);
 }
 
 void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
@@ -973,6 +987,9 @@ void QuickFindBar::DoArrowUp(clTerminalHistory& history, wxTextCtrl* ctrl)
 
 void QuickFindBar::OnButtonKeyDown(wxKeyEvent& event)
 {
+    if (HandleKeyboardShortcuts(event)) {
+        return;
+    }
     switch (event.GetKeyCode()) {
     case WXK_ESCAPE: {
         wxCommandEvent dummy;
@@ -1109,3 +1126,23 @@ void QuickFindBar::OnFocusLost(clCommandEvent& e)
 void QuickFindBar::OnTimer(wxTimerEvent& event) { event.Skip(); }
 
 void QuickFindBar::OnReplaceTextUI(wxUpdateUIEvent& event) { event.Enable(true); }
+
+bool QuickFindBar::HandleKeyboardShortcuts(wxKeyEvent& event)
+{
+    auto accl_find = clKeyboardManager::Get()->GetShortcutForCommand("find_next");
+    auto accl_find_prev = clKeyboardManager::Get()->GetShortcutForCommand("find_previous");
+
+    auto find_next = accl_find.ToAccelerator("Find Next");
+    auto find_prev = accl_find_prev.ToAccelerator("Find Previous");
+
+    // Note that we compare here: GetFlags() (wxACCL_*) against GetModifiers() (wxMOD_*)
+    // the primary modifiers: Ctrl, Shift, Alt are the same so we don't care...
+    if (find_next->GetKeyCode() == event.GetKeyCode() && find_next->GetFlags() == event.GetModifiers()) {
+        DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE);
+        return true;
+    } else if (find_prev->GetKeyCode() == event.GetKeyCode() && find_prev->GetFlags() == event.GetModifiers()) {
+        DoFindWithWrap(FIND_PREV | FIND_GOTOLINE);
+        return true;
+    }
+    return false;
+}

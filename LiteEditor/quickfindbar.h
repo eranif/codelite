@@ -192,14 +192,15 @@ protected:
     void OnPaint(wxPaintEvent& e);
     void OnFindNextCaret(wxCommandEvent& e);
     void OnFindPreviousCaret(wxCommandEvent& e);
+    void OnFindNext(wxCommandEvent& e);
 
     void OnFocusGained(clCommandEvent& e);
     void OnFocusLost(clCommandEvent& e);
     void OnTimer(wxTimerEvent& event);
 
-protected:
     bool DoShow(bool s, const wxString& findWhat, bool showReplace = false);
     wxStyledTextCtrl* DoCheckPlugins();
+    bool HandleKeyboardShortcuts(wxKeyEvent& event);
 
 public:
     QuickFindBar(wxWindow* parent, wxWindowID id = wxID_ANY);

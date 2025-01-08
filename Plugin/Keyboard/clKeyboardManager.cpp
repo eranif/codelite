@@ -301,7 +301,9 @@ bool clKeyboardManager::Exists(const clKeyboardShortcut& accel) const
     return false;
 }
 
-void clKeyboardManager::AddAccelerator(const wxString& resourceID, const wxString& parentMenu, const wxString& action,
+void clKeyboardManager::AddAccelerator(const wxString& resourceID,
+                                       const wxString& parentMenu,
+                                       const wxString& action,
                                        const clKeyboardShortcut& accel)
 {
     wxASSERT_MSG(m_defaultAccelTable.count(resourceID) == 0, "An accelerator with this resourceID already exists");
@@ -384,7 +386,10 @@ clKeyboardShortcut::Vec_t clKeyboardManager::GetAllUnassignedKeyboardShortcuts()
 
     // Remove all duplicate entries
     clKeyboardShortcut::Vec_t allUnassigned;
-    std::set_difference(m_allShortcuts.begin(), m_allShortcuts.end(), usedShortcuts.begin(), usedShortcuts.end(),
+    std::set_difference(m_allShortcuts.begin(),
+                        m_allShortcuts.end(),
+                        usedShortcuts.begin(),
+                        usedShortcuts.end(),
                         std::back_inserter(allUnassigned));
     return allUnassigned;
 }
@@ -532,3 +537,22 @@ wxString clKeyboardShortcut::to_string(bool for_ui) const
 
 wxString clKeyboardShortcut::ToString() const { return to_string(false); }
 wxString clKeyboardShortcut::DisplayString() const { return to_string(true); }
+
+clKeyboardShortcut clKeyboardManager::GetShortcutForCommand(const wxString& xrcid_string) const
+{
+    if (m_accelTable.count(xrcid_string)) {
+        return m_accelTable.find(xrcid_string)->second.accel;
+    }
+    if (m_defaultAccelTable.count(xrcid_string)) {
+        return m_defaultAccelTable.find(xrcid_string)->second.accel;
+    }
+    return {};
+}
+
+std::shared_ptr<wxAcceleratorEntry> clKeyboardShortcut::ToAccelerator(const wxString& label) const
+{
+    wxString dummyText;
+    dummyText << label << "\t" << ToString();
+    wxAcceleratorEntry* entry = wxAcceleratorEntry::Create(dummyText);
+    return std::shared_ptr<wxAcceleratorEntry>(entry);
+}

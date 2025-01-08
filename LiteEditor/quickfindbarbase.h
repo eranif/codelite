@@ -127,8 +127,9 @@ protected:
     virtual void OnReplaceTextUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplaceTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplaceKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnReplaceTextUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnReplaceAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplaceAllUI(wxUpdateUIEvent& event) { event.Skip(); }
 

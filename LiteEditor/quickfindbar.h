@@ -74,6 +74,7 @@ public:
     };
 
 protected:
+    virtual void OnReplaceTextUI(wxUpdateUIEvent& event);
     virtual void OnReplaceTextEnter(wxCommandEvent& event);
     virtual void OnReplaceTextUpdated(wxCommandEvent& event);
     enum eFindFlags {

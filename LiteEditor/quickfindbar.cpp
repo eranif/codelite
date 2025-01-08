@@ -1095,3 +1095,5 @@ void QuickFindBar::OnFocusLost(clCommandEvent& e)
 }
 
 void QuickFindBar::OnTimer(wxTimerEvent& event) { event.Skip(); }
+
+void QuickFindBar::OnReplaceTextUI(wxUpdateUIEvent& event) { event.Enable(true); }

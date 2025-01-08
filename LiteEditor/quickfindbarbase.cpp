@@ -319,7 +319,7 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
     m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnReplaceTextUpdated, this);
     m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnReplaceTextEnter, this);
     m_textCtrlReplace->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnReplaceKeyDown, this);
-    m_textCtrlReplace->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
+    m_textCtrlReplace->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceTextUI, this);
     m_buttonReplace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplace, this);
     m_buttonReplace->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
     m_buttonReplace->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
@@ -345,7 +345,7 @@ clFindReplaceDialogBase::~clFindReplaceDialogBase()
     m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnReplaceTextUpdated, this);
     m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnReplaceTextEnter, this);
     m_textCtrlReplace->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnReplaceKeyDown, this);
-    m_textCtrlReplace->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
+    m_textCtrlReplace->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceTextUI, this);
     m_buttonReplace->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplace, this);
     m_buttonReplace->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
     m_buttonReplace->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);

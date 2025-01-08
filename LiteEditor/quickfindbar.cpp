@@ -752,7 +752,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
         target = { 0, static_cast<int>(m_sci->GetLastPosition()) };
     }
 
-    // keep the current line, we will restore it after the replacment is done
+    // keep the current line, we will restore it after the replacement is done
     int starting_line = m_sci->GetCurrentLine();
 
     int replacements_done = 0;
@@ -773,18 +773,36 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
 
     // perform a search
     m_sci->BeginUndoAction();
+
     while (true) {
-        auto target_result = DoFind(FIND_DEFAULT, target);
-        if (!target_result.IsOk()) {
+        int before_replace_doc_len = m_sci->GetLength();
+        auto find_result = DoFind(FIND_DEFAULT, target);
+        if (!find_result.IsOk()) {
             break;
         }
-        int match_len = DoReplace(target_result);
-        if (match_len == wxNOT_FOUND) {
+        int replacement_len = DoReplace(find_result);
+        if (replacement_len == wxNOT_FOUND) {
             break;
         }
+
         replacements_done++;
-        target.start_pos += match_len;
-        if (target.start_pos >= target_result.end_pos) {
+
+        // Adjust the target range
+        int after_replace_doc_len = m_sci->GetLength();
+        if (after_replace_doc_len > before_replace_doc_len) {
+            // the "replace with" is longer than the "find what"
+            // e.g. replacing "A" -> "AB"
+            target.end_pos += (after_replace_doc_len - before_replace_doc_len);
+        } else if (after_replace_doc_len < before_replace_doc_len) {
+            // the "find what" is larger than the "replace with"
+            // e.g. replacing "AB" -> "A"
+            target.end_pos -= (before_replace_doc_len - after_replace_doc_len);
+        }
+
+        // We resume the search from the first position after the replacement
+        target.start_pos = find_result.start_pos + replacement_len;
+
+        if (target.start_pos >= target.end_pos) {
             break;
         }
     }

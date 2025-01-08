@@ -6070,8 +6070,9 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
         if (IsRemoteFile()) {
             wxMemoryBuffer content;
             if (!clSFTPManager::Get().AwaitReadFile(GetRemotePath(), GetRemoteData()->GetAccountName(), &content)) {
-                wxMessageBox(
-                    _("Failed to reload remote file:" + GetRemotePath()), "CodeLite", wxICON_WARNING | wxCENTRE | wxOK);
+                wxString message;
+                message << _("Failed to reload remote file: ") << GetRemotePath();
+                wxMessageBox(message, "CodeLite", wxICON_WARNING | wxCENTRE | wxOK);
                 return;
             }
             text = wxString((const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen());

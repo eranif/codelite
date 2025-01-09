@@ -77,8 +77,11 @@ public:
     clThemedSTC* GetStcCredits() { return m_stcCredits; }
     wxPanel* GetPanelCredits() { return m_panelCredits; }
     wxNotebook* GetNotebook8() { return m_notebook8; }
-    clAboutDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("About"),
-                      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    clAboutDialogBase(wxWindow* parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxString& title = _("About"),
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(-1, -1),
                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clAboutDialogBase();
 };

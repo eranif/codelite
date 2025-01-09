@@ -27,6 +27,7 @@
 
 #include "JSON.h"
 #include "autoversion.h"
+#include "clVersionString.hpp"
 #include "file_logger.h"
 #include "precompiled_header.h"
 #include "procutils.h"
@@ -48,36 +49,38 @@ struct CodeLiteVersion {
     wxString m_codename;
     wxString m_arch;
     wxString m_url;
-    int m_version;
+    wxString m_version;
     bool m_isReleaseVersion;
     CodeLiteVersion(const JSONItem& json)
-        : m_version(wxNOT_FOUND)
-        , m_isReleaseVersion(false)
+        : m_isReleaseVersion(false)
     {
         m_os = json.namedObject("os").toString();
         m_codename = json.namedObject("codename").toString();
         m_arch = json.namedObject("arch").toString();
         m_url = json.namedObject("url").toString();
-        m_version = json.namedObject("version").toInt();
+        if (json.namedObject("version").isNumber()) {
+            m_version = "18.0.0"; // the last version supporting number was 18.0.0
+        } else {
+            m_version = json.namedObject("version").toString();
+        }
         m_isReleaseVersion = json.namedObject("isRelease").toBool(m_isReleaseVersion);
     }
 
     void Print() { clDEBUG() << "--->" << m_os << "," << m_codename << "," << m_arch << "," << m_version << clEndl; }
 
     /**
-     * @brief return true of this codelite version object is newer than the provided input
+     * @brief return true of this CodeLite version object is newer than the provided input
      */
     bool IsNewer(const wxString& os, const wxString& codename, const wxString& arch) const
     {
-        wxString strVersionNumer = CURRENT_CODELITE_VERSION;
-        strVersionNumer.Replace(".", "");
-        long nVersionNumber = -1;
-        strVersionNumer.ToCLong(&nVersionNumber);
+        clVersionString this_version{ CURRENT_CODELITE_VERSION };
+        clVersionString version_from_web{ m_version };
 
         if ((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
-            bool res = (m_version > nVersionNumber);
+            bool res = version_from_web.Compare(CURRENT_CODELITE_VERSION) > 0;
             if (res) {
-                clDEBUG() << "Found new version!" << clEndl;
+                clSYSTEM() << "A newer version of CodeLite is available for download. Current version is:"
+                           << this_version.GetVersionString() << ", new version:" << m_version << endl;
             }
             return res;
         }
@@ -89,7 +92,6 @@ struct CodeLiteVersion {
     const wxString& GetCodename() const { return m_codename; }
     const wxString& GetOs() const { return m_os; }
     const wxString& GetUrl() const { return m_url; }
-    int GetVersion() const { return m_version; }
 };
 
 WebUpdateJob::WebUpdateJob(wxEvtHandler* parent, bool userRequest, bool onlyRelease)
@@ -118,7 +120,7 @@ void WebUpdateJob::ParseFile()
         if (!v.IsReleaseVersion() && m_onlyRelease) {
             // User wishes to be prompted for new releases only
             // skip weekly builds
-            clDEBUG() << "Found version:" << v.GetVersion()
+            clDEBUG() << "Found version:" << v.m_version
                       << ", a non release version. However, use requested for stable releases only" << endl;
             continue;
         }
@@ -126,8 +128,8 @@ void WebUpdateJob::ParseFile()
         if (v.IsNewer(os, codename, arch)) {
             clDEBUG() << "A new version of CodeLite found" << clEndl;
             wxCommandEvent event(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-            event.SetClientData(new WebUpdateJobData("https://codelite.org/support.php", v.GetUrl(),
-                                                     CURRENT_CODELITE_VERSION, "", false, true));
+            event.SetClientData(new WebUpdateJobData(
+                "https://codelite.org/support.php", v.GetUrl(), CURRENT_CODELITE_VERSION, "", false, true));
             m_parent->AddPendingEvent(event);
             return;
         }

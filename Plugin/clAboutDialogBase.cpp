@@ -19,12 +19,12 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
-clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                     const wxSize& size, long style)
+clAboutDialogBase::clAboutDialogBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -49,17 +49,20 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     m_panelAbout->SetSizer(boxSizer16);
 
-    m_staticTextTitle = new wxStaticText(m_panelAbout, wxID_ANY,
+    m_staticTextTitle = new wxStaticText(m_panelAbout,
+                                         wxID_ANY,
                                          _("CodeLite, a free, open source, C/C++/Rust/Python/PHP and JavaScript IDE"),
-                                         wxDefaultPosition, wxDLG_UNIT(m_panelAbout, wxSize(-1, -1)), 0);
+                                         wxDefaultPosition,
+                                         wxDLG_UNIT(m_panelAbout, wxSize(-1, -1)),
+                                         0);
     wxFont m_staticTextTitleFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextTitleFont.SetStyle(wxFONTSTYLE_ITALIC);
     m_staticTextTitle->SetFont(m_staticTextTitleFont);
 
     boxSizer16->Add(m_staticTextTitle, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
-    m_panel22 = new wxPanel(m_panelAbout, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelAbout, wxSize(-1, -1)),
-                            wxTAB_TRAVERSAL);
+    m_panel22 = new wxPanel(
+        m_panelAbout, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelAbout, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     boxSizer16->Add(m_panel22, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -72,8 +75,8 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     boxSizer26->Add(flexGridSizer32, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText34 = new wxStaticText(m_panel22, wxID_ANY, _("Author:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
+    m_staticText34 = new wxStaticText(
+        m_panel22, wxID_ANY, _("Author:"), wxDefaultPosition, wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
     wxFont m_staticText34Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText34Font.SetStyle(wxFONTSTYLE_ITALIC);
     m_staticText34Font.SetWeight(wxFONTWEIGHT_BOLD);
@@ -81,13 +84,17 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     flexGridSizer32->Add(m_staticText34, 0, wxRIGHT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2024, by Eran Ifrah"), wxDefaultPosition,
-                                            wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
+    m_staticTextSubtitle = new wxStaticText(m_panel22,
+                                            wxID_ANY,
+                                            _("2007 - 2025, by Eran Ifrah"),
+                                            wxDefaultPosition,
+                                            wxDLG_UNIT(m_panel22, wxSize(-1, -1)),
+                                            0);
 
     flexGridSizer32->Add(m_staticTextSubtitle, 0, wxLEFT | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticText36 = new wxStaticText(m_panel22, wxID_ANY, _("Version:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
+    m_staticText36 = new wxStaticText(
+        m_panel22, wxID_ANY, _("Version:"), wxDefaultPosition, wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
     wxFont m_staticText36Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText36Font.SetStyle(wxFONTSTYLE_ITALIC);
     m_staticText36Font.SetWeight(wxFONTWEIGHT_BOLD);
@@ -100,8 +107,8 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     flexGridSizer32->Add(m_staticTextVersion, 0, wxLEFT | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText40 = new wxStaticText(m_panel22, wxID_ANY, _("Home Page:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
+    m_staticText40 = new wxStaticText(
+        m_panel22, wxID_ANY, _("Home Page:"), wxDefaultPosition, wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
     wxFont m_staticText40Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText40Font.SetStyle(wxFONTSTYLE_ITALIC);
     m_staticText40Font.SetWeight(wxFONTWEIGHT_BOLD);
@@ -109,8 +116,13 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     flexGridSizer32->Add(m_staticText40, 0, wxRIGHT | wxALIGN_RIGHT, WXC_FROM_DIP(5));
 
-    m_hyperLink44 = new wxHyperlinkCtrl(m_panel22, wxID_ANY, _("CodeLite IDE"), wxT("https://codelite.org"),
-                                        wxDefaultPosition, wxDLG_UNIT(m_panel22, wxSize(-1, -1)), wxHL_DEFAULT_STYLE);
+    m_hyperLink44 = new wxHyperlinkCtrl(m_panel22,
+                                        wxID_ANY,
+                                        _("CodeLite IDE"),
+                                        wxT("https://codelite.org"),
+                                        wxDefaultPosition,
+                                        wxDLG_UNIT(m_panel22, wxSize(-1, -1)),
+                                        wxHL_DEFAULT_STYLE);
 
     flexGridSizer32->Add(m_hyperLink44, 0, wxLEFT, WXC_FROM_DIP(5));
 
@@ -121,9 +133,11 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
     m_paneLicense->SetSizer(boxSizer18);
 
-    m_stcLicense =
-        new clThemedSTC(m_paneLicense, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_paneLicense, wxSize(300, 200)),
-                        wxBORDER_NONE | get_border_simple_theme_aware_bit());
+    m_stcLicense = new clThemedSTC(m_paneLicense,
+                                   wxID_ANY,
+                                   wxDefaultPosition,
+                                   wxDLG_UNIT(m_paneLicense, wxSize(300, 200)),
+                                   wxBORDER_NONE | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcLicense->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLicense->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -168,9 +182,11 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panelCredits->SetSizer(boxSizer20);
 
-    m_stcCredits =
-        new clThemedSTC(m_panelCredits, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCredits, wxSize(-1, -1)),
-                        wxBORDER_NONE | get_border_simple_theme_aware_bit());
+    m_stcCredits = new clThemedSTC(m_panelCredits,
+                                   wxID_ANY,
+                                   wxDefaultPosition,
+                                   wxDLG_UNIT(m_panelCredits, wxSize(-1, -1)),
+                                   wxBORDER_NONE | get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stcCredits->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCredits->SetMarginMask(4, wxSTC_MASK_FOLDERS);

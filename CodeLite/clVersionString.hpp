@@ -5,11 +5,9 @@
 #include <vector>
 #include <wx/string.h>
 
-/// Utility class converting between version string -> number
-/// Example: 1.2.3 -> 1*10^2 + 2*10^3 + 3*10^0 -> 123
+/// Utility class for comparing between version string in the format of X.Y.Z
 class WXDLLIMPEXP_CL clVersionString
 {
-
 public:
     clVersionString(const wxString& version_string);
     ~clVersionString();
@@ -18,7 +16,10 @@ public:
     /// Return `0` if they are equal
     int Compare(const wxString& other) const;
 
+    const wxString& GetVersionString() const { return m_versionString; }
+
 private:
     long number_at(size_t index) const;
     std::vector<long> m_numbers;
+    wxString m_versionString;
 };

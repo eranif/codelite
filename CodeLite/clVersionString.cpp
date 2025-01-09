@@ -1,14 +1,16 @@
 #include "clVersionString.hpp"
 
+#include "file_logger.h"
+
 #include <algorithm>
-#include <cmath>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
 clVersionString::clVersionString(const wxString& version_string)
+    : m_versionString(version_string)
 {
-    auto parts = ::wxStringTokenize(version_string, ".", wxTOKEN_STRTOK);
+    auto parts = ::wxStringTokenize(m_versionString, ".", wxTOKEN_STRTOK);
     for (const auto& str : parts) {
         long n = 0;
         str.ToCLong(&n);
@@ -21,6 +23,7 @@ clVersionString::~clVersionString() {}
 int clVersionString::Compare(const wxString& other) const
 {
     clVersionString ver_other(other);
+    clDEBUG() << "Comparing:" << other << "against:" << m_versionString << endl;
     size_t elements_count = std::max(ver_other.m_numbers.size(), m_numbers.size());
     for (size_t i = 0; i < elements_count; ++i) {
         if (number_at(i) > ver_other.number_at(i)) {

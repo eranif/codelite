@@ -99,4 +99,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
     AddProperty(_("When searching, don't override search string with current selection"),
                 m_options->GetDontOverrideSearchStringWithSelection(),
                 UPDATE_BOOL_CB(SetDontOverrideSearchStringWithSelection));
+    AddHeader(_("Find next/Find previous"));
+    AddProperty(_("Find next/Find previous actions override search string with current selection (like Find next at caret/prev at caret)"),
+                m_options->GetFindNextOrPreviousUseSelection(),
+                UPDATE_BOOL_CB(SetFindNextOrPreviousUseSelection));
 }

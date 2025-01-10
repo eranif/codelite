@@ -114,6 +114,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_caretLineAlpha(15)
     , m_dontAutoFoldResults(true)
     , m_dontOverrideSearchStringWithSelection(false)
+    , m_findNextOrPreviousUseSelection(true)
     , m_showDebugOnRun(true)
     , m_caretUseCamelCase(true)
     , m_wordWrap(false)
@@ -208,6 +209,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_dontAutoFoldResults = XmlUtils::ReadBool(node, wxT("DontAutoFoldResults"), m_dontAutoFoldResults);
         m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(
             node, wxT("DontOverrideSearchStringWithSelection"), m_dontOverrideSearchStringWithSelection);
+        m_findNextOrPreviousUseSelection = XmlUtils::ReadBool(
+            node, wxT("FindNextOrPreviousUseSelection"), m_findNextOrPreviousUseSelection);
         m_showDebugOnRun = XmlUtils::ReadBool(node, wxT("ShowDebugOnRun"), m_showDebugOnRun);
         m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
         m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
@@ -310,6 +313,8 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("DontAutoFoldResults"), BoolToString(m_dontAutoFoldResults));
     n->AddAttribute(wxT("DontOverrideSearchStringWithSelection"),
                     BoolToString(m_dontOverrideSearchStringWithSelection));
+    n->AddAttribute(wxT("FindNextOrPreviousUseSelection"),
+                    BoolToString(m_findNextOrPreviousUseSelection));
     n->AddAttribute(wxT("ShowDebugOnRun"), BoolToString(m_showDebugOnRun));
     n->AddAttribute(wxT("ConsoleCommand"), m_programConsoleCommand);
     n->AddAttribute(wxT("EOLMode"), m_eolMode);

@@ -141,6 +141,7 @@ protected:
     int m_caretLineAlpha;
     bool m_dontAutoFoldResults;
     bool m_dontOverrideSearchStringWithSelection;
+    bool m_findNextOrPreviousUseSelection;
     bool m_showDebugOnRun;
     bool m_caretUseCamelCase;
     bool m_dontTrimCaretLine;
@@ -226,6 +227,11 @@ public:
         m_dontOverrideSearchStringWithSelection = dontOverrideSearchStringWithSelection;
     }
     bool GetDontOverrideSearchStringWithSelection() const { return m_dontOverrideSearchStringWithSelection; }
+    void SetFindNextOrPreviousUseSelection(bool findNextOrPreviousUseSelection)
+    {
+        m_findNextOrPreviousUseSelection = findNextOrPreviousUseSelection;
+    }
+    bool GetFindNextOrPreviousUseSelection() const { return m_findNextOrPreviousUseSelection; }
     void SetShowDebugOnRun(bool showDebugOnRun) { this->m_showDebugOnRun = showDebugOnRun; }
     bool GetShowDebugOnRun() const { return m_showDebugOnRun; }
     bool GetDisableSemicolonShift() const { return m_disableSemicolonShift; }

@@ -194,11 +194,9 @@ void clThemedTextCtrl::SetText(const wxString& value)
     ClearAll();
     wxStyledTextCtrl::SetText(text);
     SetCurrentPos(GetLastPosition());
-    SetSelection(GetLastPosition(), GetLastPosition());
 #else
     // Set the value and clear the selection
     ChangeValue(value);
-    SetSelection(GetInsertionPoint(), GetInsertionPoint());
 #endif
 }
 

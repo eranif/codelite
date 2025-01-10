@@ -225,7 +225,7 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
     m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(24, 24));
 
-    boxSizer162->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer162->Add(m_toolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
@@ -241,18 +241,18 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 
     boxSizer159->Add(flexGridSizer107, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_textCtrlFind = new clThemedTextCtrl(m_mainPanel,
-                                          wxID_ANY,
-                                          wxT(""),
-                                          wxDefaultPosition,
-                                          wxDLG_UNIT(m_mainPanel, wxSize(400, -1)),
-                                          wxTE_PROCESS_ENTER);
-    m_textCtrlFind->SetFocus();
+    m_textCtrlFind = new wxTextCtrl(m_mainPanel,
+                                    wxID_ANY,
+                                    wxT(""),
+                                    wxDefaultPosition,
+                                    wxDLG_UNIT(m_mainPanel, wxSize(400, -1)),
+                                    wxTE_PROCESS_ENTER);
+    m_textCtrlFind->SetToolTip(_("Use the Up / Down arrows to show the search history list"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlFind->SetHint(_("Find what..."));
 #endif
 
-    flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_buttonFind =
         new wxButton(m_mainPanel, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
@@ -270,13 +270,14 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 
     flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_textCtrlReplace = new clThemedTextCtrl(
+    m_textCtrlReplace = new wxTextCtrl(
         m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+    m_textCtrlReplace->SetToolTip(_("Use the Up / Down arrows to show the replacement history list"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlReplace->SetHint(_("Replace with..."));
 #endif
 
-    flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_buttonReplace = new wxButton(
         m_mainPanel, wxID_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
@@ -319,7 +320,6 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
     m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnReplaceTextUpdated, this);
     m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnReplaceTextEnter, this);
     m_textCtrlReplace->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnReplaceKeyDown, this);
-    m_textCtrlReplace->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceTextUI, this);
     m_buttonReplace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplace, this);
     m_buttonReplace->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
     m_buttonReplace->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
@@ -345,7 +345,6 @@ clFindReplaceDialogBase::~clFindReplaceDialogBase()
     m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnReplaceTextUpdated, this);
     m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnReplaceTextEnter, this);
     m_textCtrlReplace->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnReplaceKeyDown, this);
-    m_textCtrlReplace->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceTextUI, this);
     m_buttonReplace->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplace, this);
     m_buttonReplace->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
     m_buttonReplace->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);

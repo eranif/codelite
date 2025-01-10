@@ -25,7 +25,9 @@
 #pragma once
 
 #include "clTerminalHistory.h"
+#include "clThemedTextCtrl.hpp"
 #include "quickfindbarbase.h"
+#include "wxTerminalCtrl/wxTerminalHistory.hpp"
 
 #include <vector>
 #include <wx/combobox.h>
@@ -94,9 +96,9 @@ protected:
     size_t m_searchFlags = 0;
     bool m_highlightMatches = false;
     bool m_inSelection = false;
-    clTerminalHistory m_searchHistory;
-    clTerminalHistory m_replaceHistory;
     wxStaticText* m_message = nullptr;
+    wxTerminalHistory m_findHistory;
+    wxTerminalHistory m_replaceHistory;
 
 protected:
     virtual void OnButtonKeyDown(wxKeyEvent& event);
@@ -107,9 +109,6 @@ protected:
     virtual void OnFindPrev(wxCommandEvent& event);
     virtual void OnFindPrevUI(wxUpdateUIEvent& event);
     virtual void OnFindUI(wxUpdateUIEvent& event);
-
-    void DoArrowDown(clTerminalHistory& history, wxTextCtrl* ctrl);
-    void DoArrowUp(clTerminalHistory& history, wxTextCtrl* ctrl);
 
     /**
      * @brief find text in the editor the select it
@@ -201,6 +200,8 @@ protected:
     bool DoShow(bool s, const wxString& findWhat, bool showReplace = false);
     wxStyledTextCtrl* DoCheckPlugins();
     bool HandleKeyboardShortcuts(wxKeyEvent& event);
+    void ShowMenuForFindCtrl();
+    void ShowMenuForReplaceCtrl();
 
 public:
     QuickFindBar(wxWindow* parent, wxWindowID id = wxID_ANY);

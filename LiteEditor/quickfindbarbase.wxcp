@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	175,
+		"m_objCounter":	179,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafteryhjh4ZInitBitmapResources",
 		"m_bitmapsFile":	"quickfindbarbase_liteeditor_bitmaps.cpp",
@@ -947,7 +947,7 @@
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	["wxTB_FLAT"],
-							"m_sizerFlags":	["wxEXPAND"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
 									"m_label":	"ID:",
@@ -1149,7 +1149,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	["wxTE_PROCESS_ENTER"],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -1169,7 +1169,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
-															"m_value":	""
+															"m_value":	"Use the Up / Down arrows to show the search history list"
 														}, {
 															"type":	"colour",
 															"m_label":	"Bg Colour:",
@@ -1193,15 +1193,15 @@
 														}, {
 															"type":	"bool",
 															"m_label":	"Focused",
-															"m_value":	true
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	"clThemedTextCtrl"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	"clThemedTextCtrl.hpp"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",
@@ -1576,7 +1576,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	["wxTE_PROCESS_ENTER"],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -1596,7 +1596,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
-															"m_value":	""
+															"m_value":	"Use the Up / Down arrows to show the replacement history list"
 														}, {
 															"type":	"colour",
 															"m_label":	"Bg Colour:",
@@ -1624,11 +1624,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	"clThemedTextCtrl"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	"clThemedTextCtrl.hpp"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",
@@ -1675,12 +1675,6 @@
 															"m_eventClass":	"wxKeyEvent",
 															"m_functionNameAndSignature":	"OnReplaceKeyDown(wxKeyEvent& event)",
 															"m_description":	"Process a wxEVT_KEY_DOWN event (any key has been pressed)",
-															"m_noBody":	false
-														}, {
-															"m_eventName":	"wxEVT_UPDATE_UI",
-															"m_eventClass":	"wxUpdateUIEvent",
-															"m_functionNameAndSignature":	"OnReplaceTextUI(wxUpdateUIEvent& event)",
-															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
 														}],
 													"m_children":	[]

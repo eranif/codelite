@@ -1,5 +1,4 @@
-#ifndef WXTERMINALHISTORY_HPP
-#define WXTERMINALHISTORY_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -9,6 +8,7 @@ struct WXDLLIMPEXP_SDK wxTerminalHistory {
     wxArrayString m_commands;
     int m_current = wxNOT_FOUND;
     void Add(const wxString& command);
+    void Set(const wxArrayString& commands);
     void Up();
     void Down();
     wxString Get() const;
@@ -17,5 +17,3 @@ struct WXDLLIMPEXP_SDK wxTerminalHistory {
     void Load();
     wxArrayString ForCompletion(const wxString& filter) const;
 };
-
-#endif // WXTERMINALHISTORY_HPP

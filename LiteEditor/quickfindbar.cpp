@@ -1137,6 +1137,9 @@ bool QuickFindBar::HandleKeyboardShortcuts(wxKeyEvent& event)
 
 void QuickFindBar::ShowMenuForFindCtrl()
 {
+    if (m_findHistory.m_commands.empty()) {
+        return;
+    }
     wxMenu menu;
     for (const auto& word : m_findHistory.m_commands) {
         int resource_id = wxXmlResource::GetXRCID(word);
@@ -1146,6 +1149,7 @@ void QuickFindBar::ShowMenuForFindCtrl()
             [this, word](wxCommandEvent& event) {
                 wxUnusedVar(event);
                 m_textCtrlFind->SetValue(word);
+                m_textCtrlFind->SetInsertionPointEnd();
             },
             resource_id);
     }
@@ -1155,6 +1159,10 @@ void QuickFindBar::ShowMenuForFindCtrl()
 
 void QuickFindBar::ShowMenuForReplaceCtrl()
 {
+    if (m_replaceHistory.m_commands.empty()) {
+        return;
+    }
+
     wxMenu menu;
     for (const auto& word : m_replaceHistory.m_commands) {
         int resource_id = wxXmlResource::GetXRCID(word);
@@ -1164,6 +1172,7 @@ void QuickFindBar::ShowMenuForReplaceCtrl()
             [this, word](wxCommandEvent& event) {
                 wxUnusedVar(event);
                 m_textCtrlReplace->SetValue(word);
+                m_textCtrlReplace->SetInsertionPointEnd();
             },
             resource_id);
     }

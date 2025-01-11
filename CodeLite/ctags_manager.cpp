@@ -30,7 +30,6 @@
 #include "Cxx/cpp_comment_creator.h"
 #include "StdToWX.h"
 #include "cl_command_event.h"
-#include "code_completion_api.h"
 #include "codelite_events.h"
 #include "database/tags_storage_sqlite3.h"
 #include "event_notifier.h"
@@ -348,7 +347,7 @@ void TagsManager::SetCtagsOptions(const TagsOptionsData& options)
 wxString TagsManager::GetScopeName(const wxString& scope)
 {
     Language* lang = GetLanguage();
-    return lang->GetScopeName(scope, NULL);
+    return lang->GetScopeName(scope);
 }
 
 void TagsManager::GetFiles(const wxString& partialName, std::vector<FileEntryPtr>& files)
@@ -772,23 +771,6 @@ bool TagsManager::IsBinaryFile(const wxString& filepath, const TagsOptionsData& 
 
     // if we could not open it, return true
     return true;
-}
-
-wxArrayString TagsManager::BreakToOuterScopes(const wxString& scope)
-{
-    wxArrayString outerScopes;
-    wxArrayString scopes = wxStringTokenize(scope, wxT(":"), wxTOKEN_STRTOK);
-    for(size_t i = 1; i < scopes.GetCount(); i++) {
-        wxString newScope;
-        for(size_t j = 0; j < i; j++) {
-            newScope << scopes.Item(j) << wxT("::");
-        }
-        if(newScope.Len() >= 2) {
-            newScope.RemoveLast(2);
-        }
-        outerScopes.Add(newScope);
-    }
-    return outerScopes;
 }
 
 ITagsStoragePtr TagsManager::GetDatabase() { return m_db; }

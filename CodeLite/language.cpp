@@ -143,7 +143,7 @@ void Language::ParseTemplateInitList(const wxString& argListStr, wxArrayString& 
     typeName.Empty();
 }
 
-wxString Language::GetScopeName(const wxString& in, std::vector<wxString>* additionlNS)
+wxString Language::GetScopeName(const wxString& in)
 {
     std::vector<std::string> moreNS;
 
@@ -157,36 +157,6 @@ wxString Language::GetScopeName(const wxString& in, std::vector<wxString>* addit
     if(scope.IsEmpty()) {
         scope = wxT("<global>");
     }
-
-    if(additionlNS) {
-        for(size_t i = 0; i < moreNS.size(); i++) {
-            additionlNS->push_back(_U(moreNS.at(i).c_str()));
-        }
-
-        // In case we are found some 'using namesapce XXX;' statement
-        // we should scan the following scopes:
-        // XXX
-        // and also:
-        // XXX::CurrentScope (assuming that CurrentScope != <global>)
-        if(scope != wxT("<global>")) {
-            std::vector<wxString> tmpScopes;
-            for(size_t i = 0; i < additionlNS->size(); i++) {
-                tmpScopes.push_back(additionlNS->at(i));
-                tmpScopes.push_back(additionlNS->at(i) + wxT("::") + scope);
-            }
-            additionlNS->clear();
-            additionlNS->insert(additionlNS->begin(), tmpScopes.begin(), tmpScopes.end());
-        }
-
-        wxArrayString moreScopes = GetTagsManager()->BreakToOuterScopes(scope);
-        for(size_t i = 0; i < moreScopes.GetCount(); i++) {
-            if(moreScopes.Item(i) != scope &&
-               std::find(additionlNS->begin(), additionlNS->end(), moreScopes.Item(i)) == additionlNS->end()) {
-                additionlNS->push_back(moreScopes.Item(i));
-            }
-        }
-    }
-
     return scope;
 }
 
@@ -236,45 +206,18 @@ bool Language::VariableFromPattern(const wxString& in, const wxString& name, Var
 
 bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction& foo) { return false; }
 
-std::vector<TagEntryPtr> Language::GetLocalVariables(const wxString& in, bool isFuncSignature, const wxString& name,
-                                                     size_t flags)
+std::vector<TagEntryPtr> Language::GetLocalVariables(const wxString& in)
 {
     wxString pattern(in);
     pattern = pattern.Trim().Trim(false);
 
-    if(flags & ReplaceTokens) {
-        // Apply ctags replcements table on the current input string
-        pattern = ApplyCtagsReplacementTokens(in);
-    }
-
     CxxVariableScanner scanner(pattern, eCxxStandard::kCxx11, GetTagsManager()->GetCtagsOptions().GetTokensWxMap(),
-                               isFuncSignature);
+                               true);
     CxxVariable::Vec_t locals = scanner.GetVariables(false);
 
     std::vector<TagEntryPtr> tags;
     for(CxxVariable::Ptr_t local : locals) {
         const wxString& tagName = local->GetName();
-
-        // if we have name, collect only tags that matches name
-        if(!name.IsEmpty()) {
-            // incase CaseSensitive is not required, make both string lower case
-            wxString tmpName(name);
-            wxString tmpTagName(tagName);
-            if(flags & IgnoreCaseSensitive) {
-                tmpName.MakeLower();
-                tmpTagName.MakeLower();
-            }
-
-            if((flags & PartialMatch) && !tmpTagName.StartsWith(tmpName))
-                continue;
-            // Don't suggest what we have typed so far
-            if((flags & PartialMatch) && tmpTagName == tmpName)
-                continue;
-            ;
-            if((flags & ExactMatch) && tmpTagName != tmpName)
-                continue;
-            ;
-        } // else no name is specified, collect all tags
 
         TagEntryPtr tag(new TagEntry());
         tag->SetName(tagName);
@@ -407,46 +350,6 @@ Language* LanguageST::Get()
     if(gs_Language == NULL)
         gs_Language = new Language();
     return gs_Language;
-}
-
-wxString Language::ApplyCtagsReplacementTokens(const wxString& in)
-{
-    // First, get the replacement map
-    CLReplacementList replacements;
-    const wxStringTable_t& replacementMap = GetTagsManager()->GetCtagsOptions().GetTokensWxMap();
-    wxStringTable_t::const_iterator iter = replacementMap.begin();
-    for(; iter != replacementMap.end(); ++iter) {
-
-        if(iter->second.IsEmpty())
-            continue;
-
-        wxString pattern = iter->first;
-        wxString replace = iter->second;
-        pattern.Trim().Trim(false);
-        replace.Trim().Trim(false);
-        CLReplacement repl;
-        repl.construct(pattern.To8BitData().data(), replace.To8BitData().data());
-        if(repl.is_ok) {
-            replacements.push_back(repl);
-        }
-    }
-
-    if(replacements.empty())
-        return in;
-
-    // Now, apply the replacements
-    wxString outputStr;
-    wxArrayString lines = ::wxStringTokenize(in, wxT("\r\n"), wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.GetCount(); i++) {
-        std::string outStr = lines.Item(i).mb_str(wxConvUTF8).data();
-        CLReplacementList::iterator iter = replacements.begin();
-        for(; iter != replacements.end(); iter++) {
-            ::CLReplacePatternA(outStr, *iter, outStr);
-        }
-
-        outputStr << wxString(outStr.c_str(), wxConvUTF8) << wxT("\n");
-    }
-    return outputStr;
 }
 
 int Language::DoReadClassName(CppScanner& scanner, wxString& clsname) const

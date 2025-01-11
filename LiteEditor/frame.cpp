@@ -416,9 +416,9 @@ EVT_UPDATE_UI(XRCID("id_replace"), clMainFrame::OnIncrementalSearchUI)
 EVT_UPDATE_UI(XRCID("select_previous"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("select_next"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("find_next"), clMainFrame::OnFileExistUpdateUI)
-EVT_MENU(XRCID("find_next"), clMainFrame::OnFindSelection)
+EVT_MENU(XRCID("find_next"), clMainFrame::OnFindNext)
 EVT_UPDATE_UI(XRCID("find_previous"), clMainFrame::OnFileExistUpdateUI)
-EVT_MENU(XRCID("find_previous"), clMainFrame::OnFindSelectionPrev)
+EVT_MENU(XRCID("find_previous"), clMainFrame::OnFindPrevious)
 EVT_UPDATE_UI(XRCID("find_next_at_caret"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("find_previous_at_caret"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("incremental_search"), clMainFrame::OnIncrementalSearchUI)
@@ -5965,33 +5965,40 @@ void clMainFrame::OnMainBookMovePage(wxCommandEvent& e)
     GetMainBook()->MovePage(e.GetId() == XRCID("wxEVT_BOOK_MOVE_TAB_RIGHT"));
 }
 
-void clMainFrame::OnFindSelection(wxCommandEvent& event)
+void clMainFrame::OnFindNext(wxCommandEvent& event)
 {
     event.Skip();
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
+    auto stc = dynamic_cast<wxStyledTextCtrl*>(wxWindow::FindFocus());
+    CHECK_PTR_RET(stc);
     event.Skip(false);
 
     auto find_bar = GetMainBook()->GetFindBar();
-    wxString selection =
-        editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
-    find_bar->SetFindWhat(selection);
+    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+    if (opts->GetFindNextOrPreviousUseSelection()) {
+        wxString selection =
+            stc->GetSelectedText().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : stc->GetSelectedText();
+        find_bar->SetFindWhat(selection);
+    }
     find_bar->FindNext();
 }
 
-void clMainFrame::OnFindSelectionPrev(wxCommandEvent& event)
+void clMainFrame::OnFindPrevious(wxCommandEvent& event)
 {
     event.Skip();
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
+    auto stc = dynamic_cast<wxStyledTextCtrl*>(wxWindow::FindFocus());
+    CHECK_PTR_RET(stc);
     event.Skip(false);
 
     auto find_bar = GetMainBook()->GetFindBar();
-    wxString selection =
-        editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
-    find_bar->SetFindWhat(selection);
+    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+    if (opts->GetFindNextOrPreviousUseSelection()) {
+        wxString selection =
+            stc->GetSelectedText().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : stc->GetSelectedText();
+        find_bar->SetFindWhat(selection);
+    }
     find_bar->FindPrevious();
 }
+
 
 void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event)
 {

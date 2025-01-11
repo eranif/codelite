@@ -663,8 +663,8 @@ protected:
     void OnProjectRenamed(clCommandEvent& event);
 
     // Search handlers
-    void OnFindSelection(wxCommandEvent& event);
-    void OnFindSelectionPrev(wxCommandEvent& event);
+    void OnFindNext(wxCommandEvent& event);
+    void OnFindPrevious(wxCommandEvent& event);
 
     DECLARE_EVENT_TABLE()
 };

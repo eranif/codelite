@@ -503,7 +503,7 @@ wxString Compiler::GetSwitch(const wxString& name) const
 
 wxString Compiler::GetTool(const wxString& name) const
 {
-    std::map<wxString, wxString>::const_iterator iter = m_tools.find(name);
+    auto iter = m_tools.find(name);
     if (iter == m_tools.end()) {
         if (name == wxT("CC")) {
             // an upgrade, return the CXX

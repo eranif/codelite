@@ -757,7 +757,7 @@ DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& 
                     continue;
                 }
                 list.push_back(proj);
-                clSYSTEM() << "Found template project:" << files[i] << "." << proj->GetName() << endl;
+                clDEBUG() << "Found template project:" << files[i] << "." << proj->GetName() << endl;
                 // load template icon
                 wxFileName fn(files.Item(i));
                 fn.SetFullName("icon.png");

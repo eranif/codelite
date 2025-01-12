@@ -1,11 +1,9 @@
-#ifndef COMPILERLOCATORMSYS2_HPP
-#define COMPILERLOCATORMSYS2_HPP
+#pragma once
 
 #include "ICompilerLocator.h"
 #include "Platform/MSYS2.hpp"
 
 #include <unordered_map>
-#include <vector>
 #include <wx/filename.h>
 
 /// Locate for GCC compilers
@@ -13,7 +11,6 @@ class WXDLLIMPEXP_SDK CompilerLocatorMSYS2 : public ICompilerLocator
 {
 protected:
     MSYS2 m_msys2;
-    wxString m_repository;
 
 protected:
     wxFileName GetFileName(const wxString& bin_dir, const wxString& fullname) const;
@@ -55,4 +52,15 @@ public:
     CompilerLocatorMSYS2Mingw64();
     virtual ~CompilerLocatorMSYS2Mingw64();
 };
-#endif // COMPILERLOCATORMSYS2_HPP
+
+class WXDLLIMPEXP_SDK CompilerLocatorMSYS2Env : public CompilerLocatorMSYS2
+{
+public:
+    CompilerLocatorMSYS2Env();
+    virtual ~CompilerLocatorMSYS2Env();
+
+    /**
+     * @brief locate all compilers based on the PATH env variable
+     */
+    bool Locate() override;
+};

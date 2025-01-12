@@ -62,6 +62,7 @@ CompilersDetectorManager::CompilersDetectorManager()
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2ClangUsr()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2ClangClang64()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2ClangMingw64()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2Env()));
 
 #elif defined(__WXGTK__)
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorGCC()));
@@ -91,9 +92,9 @@ bool CompilersDetectorManager::Locate()
     wxStringSet_t S;
 
     clDEBUG() << "scanning for compilers..." << endl;
-    for(auto locator : m_detectors) {
-        if(locator->Locate()) {
-            for(auto compiler : locator->GetCompilers()) {
+    for (auto locator : m_detectors) {
+        if (locator->Locate()) {
+            for (auto compiler : locator->GetCompilers()) {
                 /* Resolve symlinks and detect compiler duplication, e.g.:
                  *   /usr/bin/g++ (GCC)
                  *     -> /usr/bin/g++-9 (GCC-9)
@@ -103,8 +104,8 @@ bool CompilersDetectorManager::Locate()
                  * separate environment (vcvars*.bat) and its CXX is just
                  * 'cl.exe' */
                 wxString cxxPath = GetRealCXXPath(compiler);
-                if(compiler->GetCompilerFamily() == COMPILER_FAMILY_VC ||
-                   (!cxxPath.IsEmpty() && S.count(cxxPath) == 0)) {
+                if (compiler->GetCompilerFamily() == COMPILER_FAMILY_VC ||
+                    (!cxxPath.IsEmpty() && S.count(cxxPath) == 0)) {
                     S.insert(cxxPath);
                     m_compilersFound.push_back(compiler);
                 }
@@ -112,7 +113,7 @@ bool CompilersDetectorManager::Locate()
         }
     }
 
-    for(auto compiler : m_compilersFound) {
+    for (auto compiler : m_compilersFound) {
         MSWFixClangToolChain(compiler, m_compilersFound);
     }
 
@@ -123,9 +124,9 @@ bool CompilersDetectorManager::Locate()
 CompilerPtr CompilersDetectorManager::Locate(const wxString& folder)
 {
     m_compilersFound.clear();
-    for(auto detector : m_detectors) {
+    for (auto detector : m_detectors) {
         CompilerPtr comp = detector->Locate(folder);
-        if(comp) {
+        if (comp) {
             MSWFixClangToolChain(comp);
             return comp;
         }
@@ -135,9 +136,9 @@ CompilerPtr CompilersDetectorManager::Locate(const wxString& folder)
 
 bool CompilersDetectorManager::FoundMinGWCompiler() const
 {
-    for(size_t i = 0; i < m_compilersFound.size(); ++i) {
+    for (size_t i = 0; i < m_compilersFound.size(); ++i) {
         CompilerPtr compiler = m_compilersFound.at(i);
-        if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
+        if (compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
             // we found at least one MinGW compiler
             return true;
         }
@@ -148,16 +149,17 @@ bool CompilersDetectorManager::FoundMinGWCompiler() const
 void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
 {
 #ifdef __WXMSW__
-    if(!prompt ||
-       ::wxMessageBox(_("Could not locate any MinGW compiler installed on your machine, would you like to "
-                        "install one now?"),
-                      "CodeLite", wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER | wxICON_QUESTION) == wxYES) {
+    if (!prompt || ::wxMessageBox(_("Could not locate any MinGW compiler installed on your machine, would you like to "
+                                    "install one now?"),
+                                  "CodeLite",
+                                  wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER | wxICON_QUESTION) == wxYES) {
 
         // open the install compiler page
         ::wxLaunchDefaultBrowser("https://docs.codelite.org/build/mingw_builds/#prepare-a-working-environment");
 
         // Prompt the user on how to proceed
-        ::wxMessageBox(_("After the installation process is done\nClick the 'Scan' button"), "CodeLite",
+        ::wxMessageBox(_("After the installation process is done\nClick the 'Scan' button"),
+                       "CodeLite",
                        wxOK | wxCENTER | wxICON_INFORMATION);
     }
 #endif // __WXMSW__
@@ -169,10 +171,10 @@ void CompilersDetectorManager::MSWFixClangToolChain(CompilerPtr compiler,
 // Update the toolchain (if Windows)
 #ifdef __WXMSW__
     ICompilerLocator::CompilerVec_t compilers;
-    if(allCompilers.empty()) {
+    if (allCompilers.empty()) {
         BuildSettingsConfigCookie cookie;
         CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
-        while(cmp) {
+        while (cmp) {
             compilers.push_back(cmp);
             cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
         }
@@ -180,20 +182,20 @@ void CompilersDetectorManager::MSWFixClangToolChain(CompilerPtr compiler,
         compilers.insert(compilers.end(), allCompilers.begin(), allCompilers.end());
     }
 
-    if(compiler->GetCompilerFamily() == COMPILER_FAMILY_CLANG) {
-        for(size_t i = 0; i < compilers.size(); ++i) {
+    if (compiler->GetCompilerFamily() == COMPILER_FAMILY_CLANG) {
+        for (size_t i = 0; i < compilers.size(); ++i) {
             CompilerPtr mingwCmp = compilers.at(i);
-            if(mingwCmp->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
+            if (mingwCmp->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
                 // Update the make and windres tool if no effective path is set
-                if(compiler->GetTool("MAKE").StartsWith("mingw32-make.exe")) {
+                if (compiler->GetTool("MAKE").StartsWith("mingw32-make.exe")) {
                     compiler->SetTool("MAKE", mingwCmp->GetTool("MAKE"));
                 }
-                if(compiler->GetTool("ResourceCompiler") == "windres.exe") {
+                if (compiler->GetTool("ResourceCompiler") == "windres.exe") {
                     compiler->SetTool("ResourceCompiler", mingwCmp->GetTool("ResourceCompiler"));
                 }
 
                 // MSYS2 Clang comes with its own headers and libraries
-                if(!compiler->GetName().Matches("CLANG ??bit ( MSYS2* )")) {
+                if (!compiler->GetName().Matches("CLANG ??bit ( MSYS2* )")) {
                     // Update the include paths
                     GCCMetadata compiler_md("MinGW");
                     wxArrayString includePaths;
@@ -217,7 +219,7 @@ void CompilersDetectorManager::MSWFixClangToolChain(CompilerPtr compiler,
 
 wxString CompilersDetectorManager::GetRealCXXPath(const CompilerPtr compiler) const
 {
-    if(compiler->GetName() == "rustc") {
+    if (compiler->GetName() == "rustc") {
         // rustc is a dummy compiler, do not touch it
         return compiler->GetTool("CXX");
     }

@@ -25,6 +25,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "quickfindbar.h"
 
+#include "ColoursAndFontsManager.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
@@ -213,11 +214,24 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_highlightMatches = clConfig::Get().Read("FindBar/HighlightOccurences", false);
 
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
+
+#ifdef __WXMSW__
+    auto set_font_cb = [this]() {
+        auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+        if (lexer) {
+            auto font = lexer->GetFontForStyle(0, this);
+            font.SetFractionalPointSize(font.GetFractionalPointSize() * 0.8);
+            m_textCtrlFind->SetFont(font);
+            m_textCtrlReplace->SetFont(font);
+        }
+    };
+    set_font_cb();
+
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, [this, set_font_cb](clCommandEvent& e) {
         e.Skip();
-        SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-        Refresh();
+        set_font_cb();
     });
+#endif
 
     EventNotifier::Get()->Bind(wxEVT_STC_GOT_FOCUS, &QuickFindBar::OnFocusGained, this);
     EventNotifier::Get()->Bind(wxEVT_STC_LOST_FOCUS, &QuickFindBar::OnFocusLost, this);

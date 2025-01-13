@@ -45,7 +45,7 @@ CompilerLocatorMSYS2Mingw64::~CompilerLocatorMSYS2Mingw64() {}
 CompilerLocatorMSYS2Clang64::CompilerLocatorMSYS2Clang64() { m_msys2.SetChroot("\\clang64"); }
 CompilerLocatorMSYS2Clang64::~CompilerLocatorMSYS2Clang64() {}
 
-CompilerLocatorMSYS2Env::CompilerLocatorMSYS2Env() {}
+CompilerLocatorMSYS2Env::CompilerLocatorMSYS2Env() { m_cmdShell = true; }
 CompilerLocatorMSYS2Env::~CompilerLocatorMSYS2Env() {}
 
 bool CompilerLocatorMSYS2Env::Locate()
@@ -128,7 +128,13 @@ CompilerPtr CompilerLocatorMSYS2::TryToolchain(const wxString& folder,
     compiler->SetTool("AS", as.GetFullPath());
 
     size_t cpu_count = wxThread::GetCPUCount();
-    compiler->SetTool("MAKE", wxString() << make.GetFullPath() << " -j" << cpu_count);
+    wxString make_extra_args;
+    make_extra_args << "-j" << cpu_count;
+    if (m_cmdShell) {
+        make_extra_args << " SHELL=cmd.exe";
+    }
+
+    compiler->SetTool("MAKE", wxString() << make.GetFullPath() << " " << make_extra_args);
     compiler->SetTool("ResourceCompiler", windres.GetFullPath());
     compiler->SetTool("Debugger", gdb.GetFullPath());
     return compiler;

@@ -163,7 +163,9 @@ wxTerminalOutputCtrl::~wxTerminalOutputCtrl()
 void wxTerminalOutputCtrl::AppendText(const wxString& buffer)
 {
     EditorEnabler d{ m_ctrl };
-    m_ctrl->AppendText(buffer);
+
+    // Remove unwanted ANSI OSC escape sequences
+    m_ctrl->AppendText(StringUtils::StripTerminalOSC(buffer));
     RequestScrollToEnd();
 }
 

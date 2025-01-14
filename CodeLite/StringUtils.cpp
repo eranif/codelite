@@ -134,6 +134,48 @@ void StringUtils::StripTerminalColouring(const std::string& buffer, std::string&
     modbuffer.shrink_to_fit();
 }
 
+namespace
+{
+wxChar SafeGetChar(const wxString& buf, size_t pos)
+{
+    if (pos >= buf.length()) {
+        return '\0';
+    }
+    return buf[pos];
+}
+} // namespace
+
+// see : https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences
+//  Operating System Command (OSC)
+wxString StringUtils::StripTerminalOSC(const wxString& buffer)
+{
+    wxString output;
+    output.reserve(buffer.length());
+
+    short state = BUFF_STATE_NORMAL;
+    for (size_t i = 0; i < buffer.length(); ++i) {
+        wxChar ch = SafeGetChar(buffer, i);
+        wxChar next_ch = SafeGetChar(buffer, i + 1);
+        switch (state) {
+        case BUFF_STATE_NORMAL:
+            if (ch == 0x1B && next_ch == ']') {
+                state = BUFF_STATE_IN_OSC;
+                i++;
+            } else {
+                output << ch;
+            }
+            break;
+        case BUFF_STATE_IN_OSC:
+            if (ch == '\a') {
+                // BELL, leave the current state
+                state = BUFF_STATE_NORMAL;
+            }
+            break;
+        }
+    }
+    return output;
+}
+
 void StringUtils::StripTerminalColouring(const wxString& buffer, wxString& modbuffer)
 {
     std::string source = ToStdString(buffer);

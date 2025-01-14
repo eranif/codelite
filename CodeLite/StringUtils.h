@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef STRINGUTILS_H
-#define STRINGUTILS_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "codelite_exports.h"
@@ -60,6 +59,11 @@ public:
      * @param modbuffer
      */
     static void StripTerminalColouring(const wxString& buffer, wxString& modbuffer);
+
+    /**
+     * @brief strip ANSI OSC ("Operating System Command sequences")sequence from `buffer`
+     */
+    static wxString StripTerminalOSC(const wxString& buffer);
 
     /**
      * @brief add backslash to markdown styling characters
@@ -124,13 +128,11 @@ public:
         wxArrayString arr;
         std::unordered_set<wxString> unique_set;
         arr.reserve(container.size());
-        for(const auto& str : container) {
-            if(unique_set.insert(str).second) {
+        for (const auto& str : container) {
+            if (unique_set.insert(str).second) {
                 arr.Add(str);
             }
         }
         return arr;
     }
 };
-
-#endif // STRINGUTILS_H

@@ -171,6 +171,9 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
         }
         line.Trim();
 
+        // Remove unwanted ANSI OSC escape sequences
+        line = StringUtils::StripTerminalOSC(line);
+
         // easy path: check for common makefile messages
         wxString lcLine = line.Lower();
         if (lcLine.Contains("entering directory") || lcLine.Contains("leaving directory")) {

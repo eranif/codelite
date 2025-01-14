@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef LITEEDITOR_EDITOR_H
-#define LITEEDITOR_EDITOR_H
+#pragma once
 
 #include "Debugger/debuggermanager.h"
 #include "LSP/CompletionItem.h"
@@ -240,83 +239,6 @@ private:
         LINE_SAVED,
     };
 
-protected:
-    wxFileName m_fileName;
-    wxString m_project;
-    wxStopWatch m_watch;
-    ContextBasePtr m_context;
-    EditorDeltasHolder* m_deltas; // Holds any text position changes, in case they affect FindinFiles results
-    std::vector<wxMenuItem*> m_dynItems;
-    std::vector<BPtoMarker> m_BPstoMarkers;
-    static FindReplaceDialog* m_findReplaceDlg;
-    static FindReplaceData m_findReplaceData;
-    int m_lastMatchPos;
-    static std::map<wxString, int> ms_bookmarkShapes;
-    bool m_popupIsOn;
-    bool m_isDragging;
-    time_t m_modifyTime;
-    wxUint64 m_modificationCount;
-    std::map<int, wxString> m_customCmds;
-    bool m_isVisible;
-    int m_hyperLinkIndicatroStart;
-    int m_hyperLinkIndicatroEnd;
-    bool m_hightlightMatchedBraces;
-    bool m_autoAddMatchedCurlyBrace;
-    bool m_autoAddNormalBraces;
-    bool m_smartParen = true;
-    std::map<int, std::vector<clDebuggerBreakpoint>> m_breakpointsInfo;
-    bool m_autoAdjustHScrollbarWidth;
-    bool m_reloadingFile;
-    bool m_disableSmartIndent;
-    bool m_disableSemicolonShift;
-    clEditorTipWindow* m_functionTip;
-    CCBoxTipWindow* m_calltip;
-    wxChar m_lastCharEntered;
-    int m_lastCharEnteredPos;
-    bool m_isFocused;
-    BOM m_fileBom;
-    bool m_preserveSelection;
-    std::vector<std::pair<int, int>> m_savedMarkers;
-    bool m_findBookmarksActive;
-    std::map<int, CompilerMessage> m_compilerMessagesMap;
-    CLCommandProcessor m_commandsProcessor;
-    wxString m_preProcessorsWords;
-    SelectionInfo m_prevSelectionInfo;
-    MarkWordInfo m_highlightedWordInfo;
-    wxTimer* m_timerHighlightMarkers;
-    IManager* m_mgr;
-    OptionsConfigPtr m_options;
-    wxRichToolTip* m_richTooltip;
-    wxString m_keywordClasses;
-    wxString m_keywordMethods;
-    wxString m_keywordOthers;
-    wxString m_keywordLocals;
-    int m_editorBitmap = wxNOT_FOUND;
-    size_t m_statusBarFields;
-    EditorViewState m_editorState;
-    int m_lastEndLine;
-    int m_lastLineCount;
-    wxColour m_selTextColour;
-    wxColour m_selTextBgColour;
-    bool m_zoomProgrammatically = false;
-    std::unordered_map<size_t, eLineStatus> m_modifiedLines;
-    bool m_trackChanges = false;
-    std::unordered_map<int, wxString> m_breakpoints_tooltips;
-    size_t m_default_text_width = wxNOT_FOUND;
-    bool m_scrollbar_recalc_is_required = false;
-    // we keep an integer that will check whether a CC needs to be triggered
-    // in the given location. This is done inside OnSciUpdateUI() method
-    // after the styles have been updated
-    int m_trigger_cc_at_pos = wxNOT_FOUND;
-    bool m_clearModifiedLines = false;
-
-    // track the position between Idle event calls
-    long m_lastIdlePosition = wxNOT_FOUND;
-    // track the position between OnSciUpdateUI calls
-    long m_lastUpdatePosition = wxNOT_FOUND;
-    uint64_t m_lastIdleEvent = 0;
-    BuildTabSettingsData m_buildOptions;
-
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
@@ -401,7 +323,9 @@ public:
     /**
      * @brief set semantic tokens for this editor
      */
-    void SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+    void SetSemanticTokens(const wxString& classes,
+                           const wxString& variables,
+                           const wxString& methods,
                            const wxString& others) override;
 
     /**
@@ -635,7 +559,8 @@ public:
      * Toggles *all* folds within the selection, not just the outer one of each function
      */
     void ToggleAllFoldsInSelection();
-    void DoRecursivelyExpandFolds(bool expand, int startline,
+    void DoRecursivelyExpandFolds(bool expand,
+                                  int startline,
                                   int endline); // Helper function for ToggleAllFoldsInSelection()
                                                 /**
                                                  *  Find the topmost fold level within the selection, and toggle all selected folds of that level
@@ -675,7 +600,9 @@ public:
     bool SelectLocation(const LSP::Location& range) override;
     bool FindAndSelect(const FindReplaceData& data);
     bool FindAndSelect(const wxString& pattern, const wxString& name);
-    void FindAndSelectV(const wxString& pattern, const wxString& name, int pos = 0,
+    void FindAndSelectV(const wxString& pattern,
+                        const wxString& name,
+                        int pos = 0,
                         NavMgr* unused = NULL) override; // The same but returns void, so usable with CallAfter()
     void DoFindAndSelectV(const wxArrayString& strings, int pos); // Called with CallAfter()
 
@@ -788,7 +715,9 @@ public:
      * Add a breakpoint at the current line & file
      * Optionally make it temporary, disabled or conditional
      */
-    void AddBreakpoint(int lineno = -1, const wxString& conditions = wxT(""), const bool is_temp = false,
+    void AddBreakpoint(int lineno = -1,
+                       const wxString& conditions = wxT(""),
+                       const bool is_temp = false,
                        const bool is_disabled = false);
 
     /**
@@ -817,7 +746,9 @@ public:
     //--------------------------------
     // breakpoint visualisation
     //--------------------------------
-    virtual void SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_disabled,
+    virtual void SetBreakpointMarker(int lineno,
+                                     BreakpointType bptype,
+                                     bool is_disabled,
                                      const std::vector<clDebuggerBreakpoint>& li);
     virtual void DelAllBreakpointMarkers();
 
@@ -1191,6 +1122,83 @@ private:
     void OnColoursAndFontsUpdated(clCommandEvent& event);
     void OnModifiedExternally(clFileSystemEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
-};
+    void DoBraceMatching();
+    void DoClearBraceHighlight();
+    
+    wxFileName m_fileName;
+    wxString m_project;
+    wxStopWatch m_watch;
+    ContextBasePtr m_context;
+    EditorDeltasHolder* m_deltas; // Holds any text position changes, in case they affect FindinFiles results
+    std::vector<wxMenuItem*> m_dynItems;
+    std::vector<BPtoMarker> m_BPstoMarkers;
+    static FindReplaceDialog* m_findReplaceDlg;
+    static FindReplaceData m_findReplaceData;
+    int m_lastMatchPos;
+    static std::map<wxString, int> ms_bookmarkShapes;
+    bool m_popupIsOn;
+    bool m_isDragging;
+    time_t m_modifyTime;
+    wxUint64 m_modificationCount;
+    std::map<int, wxString> m_customCmds;
+    bool m_isVisible;
+    int m_hyperLinkIndicatroStart;
+    int m_hyperLinkIndicatroEnd;
+    bool m_hightlightMatchedBraces;
+    bool m_autoAddMatchedCurlyBrace;
+    bool m_autoAddNormalBraces;
+    bool m_smartParen = true;
+    std::map<int, std::vector<clDebuggerBreakpoint>> m_breakpointsInfo;
+    bool m_autoAdjustHScrollbarWidth;
+    bool m_reloadingFile;
+    bool m_disableSmartIndent;
+    bool m_disableSemicolonShift;
+    clEditorTipWindow* m_functionTip;
+    CCBoxTipWindow* m_calltip;
+    wxChar m_lastCharEntered;
+    int m_lastCharEnteredPos;
+    bool m_isFocused;
+    BOM m_fileBom;
+    bool m_preserveSelection;
+    std::vector<std::pair<int, int>> m_savedMarkers;
+    bool m_findBookmarksActive;
+    std::map<int, CompilerMessage> m_compilerMessagesMap;
+    CLCommandProcessor m_commandsProcessor;
+    wxString m_preProcessorsWords;
+    SelectionInfo m_prevSelectionInfo;
+    MarkWordInfo m_highlightedWordInfo;
+    wxTimer* m_timerHighlightMarkers;
+    IManager* m_mgr;
+    OptionsConfigPtr m_options;
+    wxRichToolTip* m_richTooltip;
+    wxString m_keywordClasses;
+    wxString m_keywordMethods;
+    wxString m_keywordOthers;
+    wxString m_keywordLocals;
+    int m_editorBitmap = wxNOT_FOUND;
+    size_t m_statusBarFields;
+    EditorViewState m_editorState;
+    int m_lastEndLine;
+    int m_lastLineCount;
+    wxColour m_selTextColour;
+    wxColour m_selTextBgColour;
+    bool m_zoomProgrammatically = false;
+    std::unordered_map<size_t, eLineStatus> m_modifiedLines;
+    bool m_trackChanges = false;
+    std::unordered_map<int, wxString> m_breakpoints_tooltips;
+    size_t m_default_text_width = wxNOT_FOUND;
+    bool m_scrollbar_recalc_is_required = false;
+    // we keep an integer that will check whether a CC needs to be triggered
+    // in the given location. This is done inside OnSciUpdateUI() method
+    // after the styles have been updated
+    int m_trigger_cc_at_pos = wxNOT_FOUND;
+    bool m_clearModifiedLines = false;
 
-#endif // LITEEDITOR_EDITOR_H
+    // track the position between Idle event calls
+    long m_lastIdlePosition = wxNOT_FOUND;
+    // track the position between OnSciUpdateUI calls
+    long m_lastUpdatePosition = wxNOT_FOUND;
+    uint64_t m_lastIdleEvent = 0;
+    BuildTabSettingsData m_buildOptions;
+    bool m_hasBraceHighlight = false;
+};

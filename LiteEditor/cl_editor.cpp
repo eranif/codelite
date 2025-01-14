@@ -1511,6 +1511,8 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 #endif
     }
 
+    DoBraceMatching();
+
     // let the context handle this as well
     m_context->OnSciUpdateUI(event);
 
@@ -2288,6 +2290,7 @@ void clEditor::MatchBraceAndSelect(bool selRegion)
 void clEditor::BraceMatch(long pos)
 {
     // Check if we have a match
+    m_hasBraceHighlight = true; // it can be good or bad highlight
     int indentCol = 0;
     long endPos = wxStyledTextCtrl::BraceMatch(pos);
     if (endPos != wxSTC_INVALID_POSITION) {
@@ -6468,40 +6471,8 @@ void clEditor::OnIdle(wxIdleEvent& event)
         return;
     }
     m_lastIdlePosition = current_pos;
-
     if (GetHighlightGuide() != wxNOT_FOUND) {
         SetHighlightGuide(0);
-    }
-
-    int selectionSize = std::abs(GetSelectionEnd() - GetSelectionStart());
-    if (m_hightlightMatchedBraces) {
-        long pos = GetCurrentPosition();
-        int charBefore = SafeGetChar(PositionBefore(pos));
-        int charAfter = SafeGetChar(PositionAfter(pos));
-        int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
-        int charCurrnt = SafeGetChar(pos);
-        if (selectionSize) {
-            wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
-        } else if ((beforeBefore == '-' && charBefore == '>') || //->
-                   (charCurrnt == '>' && charBefore == '-')) {   //->
-            wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
-        } else {
-            if ((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') &&
-                !m_context->IsCommentOrString(pos)) {
-                BraceMatch((long)pos);
-            } else if ((charBefore == '{' || charBefore == '<' || charBefore == '[' || charBefore == '(') &&
-                       !m_context->IsCommentOrString(PositionBefore(pos))) {
-                BraceMatch((long)PositionBefore(pos));
-            } else if ((charCurrnt == '}' || charCurrnt == ']' || charCurrnt == '>' || charCurrnt == ')') &&
-                       !m_context->IsCommentOrString(pos)) {
-                BraceMatch((long)pos);
-            } else if ((charBefore == '}' || charBefore == '>' || charBefore == ']' || charBefore == ')') &&
-                       !m_context->IsCommentOrString(PositionBefore(pos))) {
-                BraceMatch((long)PositionBefore(pos));
-            } else {
-                wxStyledTextCtrl::BraceBadLight(wxSTC_INVALID_POSITION);
-            }
-        }
     }
 
     GetContext()->ProcessIdleActions();
@@ -6545,4 +6516,46 @@ void clEditor::DrawLineNumbers(bool force)
 {
     UpdateLineNumberMarginWidth();
     UpdateLineNumbers(force);
+}
+
+void clEditor::DoClearBraceHighlight()
+{
+    if (m_hasBraceHighlight) {
+        m_hasBraceHighlight = false;
+        wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
+    }
+}
+
+void clEditor::DoBraceMatching()
+{
+    if (!m_hightlightMatchedBraces) {
+        DoClearBraceHighlight();
+        return;
+    }
+
+    long current_position = GetCurrentPosition();
+    if (HasSelection()) {
+        DoClearBraceHighlight();
+        return;
+    }
+
+    if (m_context->IsCommentOrString(PositionBefore(current_position))) {
+        DoClearBraceHighlight();
+        return;
+    }
+
+    int ch = SafeGetChar(current_position);
+    static std::vector<int> braces = { '<', '>', '{', '}', '(', ')', '[', ']' };
+    auto found = std::find_if(braces.begin(), braces.end(), [ch](const char c) { return c == ch; });
+    if (found == braces.end()) {
+        current_position = PositionBefore(current_position);
+        ch = SafeGetChar(current_position);
+        found = std::find_if(braces.begin(), braces.end(), [ch](const char c) { return c == ch; });
+        if (found == braces.end()) {
+            DoClearBraceHighlight();
+            return;
+        }
+    }
+
+    BraceMatch(current_position);
 }

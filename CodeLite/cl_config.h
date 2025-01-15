@@ -93,6 +93,7 @@ public:
 #define kConfigWorkspaceTabSashPosition "WorkspaceTabSashPosition"
 #define kConfigTabsPaneSortAlphabetically "TabsPaneSortAlphabetically"
 #define kConfigFileExplorerBookmarks "FileExplorerBookmarks"
+#define kRealPathResolveSymlinks "RealPathResolveSymlinks"
 
 class WXDLLIMPEXP_CL clConfig
 {

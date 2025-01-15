@@ -247,7 +247,9 @@ public:
     /**
      * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
      */
-    static wxString RealPath(const wxString& filepath);
+    static wxString RealPath(const wxString& filepath, bool forced=false);
+    static bool RealPathGetModeResolveSymlinks();
+    static void RealPathSetModeResolveSymlinks(bool resolveSymlinks);
 
     /**
      * @brief convert string into std::string

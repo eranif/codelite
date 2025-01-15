@@ -149,7 +149,7 @@ wxChar SafeGetChar(wxStringView buf, size_t pos)
 //  Operating System Command (OSC)
 wxString StringUtils::StripTerminalOSC(const wxString& buffer)
 {
-    wxStringView sv(buffer);
+    wxStringView sv{ buffer.wc_str(), buffer.length() };
     return StripTerminalOSC(sv);
 }
 

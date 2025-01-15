@@ -6471,10 +6471,6 @@ void clEditor::OnIdle(wxIdleEvent& event)
         return;
     }
     m_lastIdlePosition = current_pos;
-    if (GetHighlightGuide() != wxNOT_FOUND) {
-        SetHighlightGuide(0);
-    }
-
     GetContext()->ProcessIdleActions();
 }
 
@@ -6523,6 +6519,7 @@ void clEditor::DoClearBraceHighlight()
     if (m_hasBraceHighlight) {
         m_hasBraceHighlight = false;
         wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
+        wxStyledTextCtrl::SetHighlightGuide(0); // clear any indent lines highlight
     }
 }
 

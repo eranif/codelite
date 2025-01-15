@@ -28,9 +28,12 @@
 #include "codelite_exports.h"
 
 #include <sstream>
+#include <string>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/string.h>
+
+typedef std::basic_string_view<wxChar> wxStringView;
 
 class WXDLLIMPEXP_CL StringUtils
 {
@@ -64,6 +67,7 @@ public:
      * @brief strip ANSI OSC ("Operating System Command sequences")sequence from `buffer`
      */
     static wxString StripTerminalOSC(const wxString& buffer);
+    static wxString StripTerminalOSC(wxStringView buffer);
 
     /**
      * @brief add backslash to markdown styling characters

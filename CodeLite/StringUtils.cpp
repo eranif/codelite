@@ -136,7 +136,7 @@ void StringUtils::StripTerminalColouring(const std::string& buffer, std::string&
 
 namespace
 {
-wxChar SafeGetChar(const wxString& buf, size_t pos)
+wxChar SafeGetChar(wxStringView buf, size_t pos)
 {
     if (pos >= buf.length()) {
         return '\0';
@@ -148,6 +148,14 @@ wxChar SafeGetChar(const wxString& buf, size_t pos)
 // see : https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences
 //  Operating System Command (OSC)
 wxString StringUtils::StripTerminalOSC(const wxString& buffer)
+{
+    wxStringView sv(buffer);
+    return StripTerminalOSC(sv);
+}
+
+// see : https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences
+//  Operating System Command (OSC)
+wxString StringUtils::StripTerminalOSC(wxStringView buffer)
 {
     wxString output;
     output.reserve(buffer.length());
@@ -166,9 +174,13 @@ wxString StringUtils::StripTerminalOSC(const wxString& buffer)
             }
             break;
         case BUFF_STATE_IN_OSC:
-            if (ch == '\a') {
+            // possible terminators for this state
+            if (ch == 0x07 /* BELL */) {
                 // BELL, leave the current state
                 state = BUFF_STATE_NORMAL;
+            } else if (ch == 0x1B /* ESC */ && next_ch == 0x5C /* \\ */) {
+                state = BUFF_STATE_NORMAL;
+                ++i;
             }
             break;
         }

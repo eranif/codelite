@@ -1,12 +1,12 @@
 #ifndef CLRESULT_HPP
 #define CLRESULT_HPP
 
-#include <string>
+#include "StringUtils.h" // wxStringView
+
 #include <wx/string.h>
 
-typedef std::basic_string_view<wxChar> wxStringView;
-
-template <typename T, typename E> class clResult
+template <typename T, typename E>
+class clResult
 {
     T m_result;
     bool m_ok = false;

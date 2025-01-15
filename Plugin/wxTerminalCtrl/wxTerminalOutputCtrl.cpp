@@ -205,7 +205,7 @@ void wxTerminalOutputCtrl::ReloadSettings() { ApplyTheme(); }
 void wxTerminalOutputCtrl::StyleAndAppend(wxStringView buffer, [[maybe_unused]] wxString* window_title)
 {
     EditorEnabler enabler{ m_ctrl };
-    m_ctrl->AppendText(buffer.data());
+    m_ctrl->AppendText(StringUtils::StripTerminalOSC(buffer));
     RequestScrollToEnd();
 }
 

@@ -739,6 +739,9 @@ bool CodeLiteApp::OnInit()
     // If running under Cygwin terminal, adjust the environment variables
     AdjustPathForMSYSIfNeeded();
 
+    // Ensure that FileUtils::RealPath handling is setup according to config
+    FileUtils::RealPathSetModeResolveSymlinks(clConfig::Get().Read(kRealPathResolveSymlinks, true));
+
     // Make sure that the colours and fonts manager is instantiated
     ColoursAndFontsManager::Get().Load();
 

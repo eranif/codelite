@@ -57,7 +57,17 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
 #endif
     AddProperty(_("Frame title"), clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath")),
                 UPDATE_CLCONFIG_TEXT_CB(kConfigFrameTitlePattern));
-
+    AddHeader(_("File path handling"));
+    AddProperty(_("Resolve symlinks in file paths"),
+                clConfig::Get().Read(kRealPathResolveSymlinks, true),
+                [](const wxString& label, const wxAny& value) {
+                    wxUnusedVar(label);
+                    bool value_bool = true;
+                    if (value.GetAs(&value_bool)) {
+                        clConfig::Get().Write(kRealPathResolveSymlinks, value_bool);
+                    }
+                    FileUtils::RealPathSetModeResolveSymlinks(value_bool);
+                });
     AddHeader(_("Startup"));
     AddProperty(_("Check for new version on startup"), clConfig::Get().Read(kConfigCheckForNewVersion, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigCheckForNewVersion));

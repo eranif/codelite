@@ -62,6 +62,8 @@
 #include <memory>
 #include <wx/filename.h>
 
+static bool bRealPathModeResolveSymlinks = true;
+
 thread_local std::unordered_set<wxChar> VALID_CHARS = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
     'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
@@ -212,7 +214,9 @@ void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)
 #endif
 }
 
-void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxString& appname, wxString& tty,
+void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path,
+                                                 const wxString& appname,
+                                                 wxString& tty,
                                                  long& pid)
 {
     tty.Clear();
@@ -274,7 +278,9 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxS
     clDEBUG() << "TTY is:" << tty;
 }
 
-void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password,
+void FileUtils::OpenSSHTerminal(const wxString& sshClient,
+                                const wxString& connectString,
+                                const wxString& password,
                                 int port)
 {
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
@@ -595,10 +601,10 @@ unsigned int FileUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
 }
 
 // This is readlink on steroids: it also makes-absolute, and dereferences any symlinked dirs in the path
-wxString FileUtils::RealPath(const wxString& filepath)
+wxString FileUtils::RealPath(const wxString& filepath, bool forced)
 {
 #if defined(__WXGTK__) || defined(__WXOSX__)
-    if (!filepath.empty()) {
+    if (!filepath.empty() && (forced || bRealPathModeResolveSymlinks)) {
 #if defined(__FreeBSD__) || defined(__WXOSX__)
         wxStructStat stbuff;
         if ((::wxLstat(filepath, &stbuff) != 0) || !S_ISLNK(stbuff.st_mode)) {
@@ -616,6 +622,10 @@ wxString FileUtils::RealPath(const wxString& filepath)
 
     return filepath;
 }
+
+bool FileUtils::RealPathGetModeResolveSymlinks() { return bRealPathModeResolveSymlinks; }
+
+void FileUtils::RealPathSetModeResolveSymlinks(bool resolveSymlinks) { bRealPathModeResolveSymlinks = resolveSymlinks; }
 
 std::string FileUtils::ToStdString(const wxString& str) { return StringUtils::ToStdString(str); }
 
@@ -741,7 +751,9 @@ bool DoFindExe(const wxString& name, wxFileName& exepath, const wxArrayString& h
 }
 } // namespace
 
-bool FileUtils::FindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint,
+bool FileUtils::FindExe(const wxString& name,
+                        wxFileName& exepath,
+                        const wxArrayString& hint,
                         const wxArrayString& suffix_list)
 {
     wxArrayString possible_suffix;
@@ -780,7 +792,8 @@ wxFileName FileUtils::CreateTempFileName(const wxString& folder, const wxString&
     return wxFileName(folder, full_name);
 }
 
-size_t FileUtils::FindSimilar(const wxFileName& filename, const std::vector<wxString>& extensions,
+size_t FileUtils::FindSimilar(const wxFileName& filename,
+                              const std::vector<wxString>& extensions,
                               std::vector<wxFileName>& vout)
 {
     wxFileName fn(filename);

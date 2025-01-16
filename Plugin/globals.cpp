@@ -928,7 +928,7 @@ wxFileName wxReadLink(const wxFileName& filename)
     if (wxIsFileSymlink(filename)) {
 #if defined(__WXGTK__)
         // Use 'realpath' on Linux, otherwise this breaks on relative symlinks, and (untested) on symlinks-to-symlinks
-        return wxFileName(CLRealPath(filename.GetFullPath()));
+        return wxFileName(FileUtils::RealPath(filename.GetFullPath(), true));
 
 #else  // OSX
         wxFileName realFileName;

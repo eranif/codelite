@@ -29,7 +29,6 @@
 #include "Cxx/cpp_scanner.h"
 #include "codelite_exports.h"
 #include "database/entry.h"
-#include "expression_result.h"
 #include "function.h"
 #include "macros.h"
 #include "variable.h"
@@ -120,19 +119,15 @@ public:
      * @param in input string
      * @return scope name or empty string
      */
-    wxString GetScopeName(const wxString& in, std::vector<wxString>* additionlNS);
+    wxString GetScopeName(const wxString& in);
 
     /**
-     * Collect local variables from given scope text (in) and an optional symbol name
+     * Collect local variables from given scope text (in (a function signature))
      * @param in scope to search for
-     * @param name optional name to look for (name can be partial).
      * @return since we dont have full information about each token,
      * all local variables returned are of type 'variable' with public access
      */
-    std::vector<TagEntryPtr> GetLocalVariables(const wxString& in, bool isFuncSignature,
-                                               const wxString& name = wxEmptyString, size_t flag = PartialMatch);
-
-    wxString ApplyCtagsReplacementTokens(const wxString& in);
+    std::vector<TagEntryPtr> GetLocalVariables(const wxString& in);
 
     bool VariableFromPattern(const wxString& pattern, const wxString& name, Variable& var);
     bool FunctionFromPattern(TagEntryPtr tag, clFunction& foo);

@@ -231,11 +231,12 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         if (regexType == kRegexGNU) {
             AddPattern(kSevError, "undefined reference to", -1, -1, -1);
-            AddPattern(kSevError, "^(.+?):(\\d+):(\\d+)?(?:\\{\\d:-\\}+)?(?:.*) (error): (.*)$", 1, 2, 3);
-            AddPattern(kSevError, "^(?:.*referenced by .+?:\\d+ )\\((.+?):(\\d+)\\).*$", 1, 2, -1);
+            AddPattern(kSevError, R"#(^(.+?):(\d+):(\d+)?(?:\{\d:-\}+)?(?:.*) (error): (.*)$)#", 1, 2, 3);
+            AddPattern(kSevError, R"#(^(?:.*referenced by .+?:\d+ )\((.+?):(\d+)\).*$)#", 1, 2, -1);
+            AddPattern(kSevError, R"#(make(.*?)(\*\*\*))#", -1, -1, -1);
 
-            AddPattern(kSevWarning, "^(.+?):(\\d+):(\\d+)?(?:\\{\\d:-\\}+)?(?:.*) (note|warning): (.*)$", 1, 2, 3);
-            AddPattern(kSevWarning, "^(?:In file included from *)(.+?):(\\d+):.*$", 1, 2, -1);
+            AddPattern(kSevWarning, R"#(^(.+?):(\d+):(\d+)?(?:\{\d:-\}+)?(?:.*) (note|warning): (.*)$)#", 1, 2, 3);
+            AddPattern(kSevWarning, R"#(^(?:In file included from *)(.+?):(\d+):.*$)#", 1, 2, -1);
 
             AddDefaultGnuCompilerOptions();
             AddDefaultGnuLinkerOptions();

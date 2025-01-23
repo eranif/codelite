@@ -256,7 +256,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         wspName = clWorkspaceManager::Get().GetWorkspace()->GetName();
     }
 
-    wxString wspRealPath = FileUtils::RealPath(wspPath);
+    wxString wspRealPath = FileUtils::RealPath(wspPath, true);
 
     size_t retries = 0;
     wxString dummyname, dummfullname;

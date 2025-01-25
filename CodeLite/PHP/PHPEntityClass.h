@@ -51,7 +51,7 @@ public:
     JSONItem ToJSON() const;
     
     /**
-     * @brief return an array of inheritance (extends, implementes and traits)
+     * @brief return an array of inheritance (extends, implements and traits)
      */
     wxArrayString GetInheritanceArray() const;
 

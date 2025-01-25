@@ -75,7 +75,7 @@ public:
     /**
      * @brief read data from stdout and error
      * @param buff check the buffer when true is returned
-     * @return return true on success or timeout, flase otherwise, incase of false the reader thread will terminate
+     * @return return true on success or timeout, false otherwise, incase of false the reader thread will terminate
      */
     bool Read(wxString& buff, wxString& buffErr, std::string& raw_buff, std::string& raw_buff_err) override;
 

@@ -38,10 +38,10 @@ You might change the menu entry from: `wxT("` to `wxT("$")` and the code from: `
 Now if you highlight the word `foo` in the editor, and select `wxT("$")` from the context menu, you should now see `wxT("foo")`
 
 If you press the ++ctrl++ key while clicking on the snippet menu, the snippet is not inserted at the current caret position, 
-but instead is copied to the clipboard and also to an internal buffer. You can do the insertion elsewhere, perhaps repeatdly, by pasting in the usual way (e.g. ++ctrl+v++), 
+but instead is copied to the clipboard and also to an internal buffer. You can do the insertion elsewhere, perhaps repeatedly, by pasting in the usual way (e.g. ++ctrl+v++),
 or from that buffer (via the context menu). Note however that the original text selection is retained: selecting `wxT("$")` from the 
 context menu while ++ctrl++ is being pressed and foo selected will copy `wxT("foo")` to the clipboard; 
-and so multiple pastes will insert multiple `wxT("foo")`s, irrespective of what is subsequently hightlit. 
+and so multiple pastes will insert multiple `wxT("foo")`s, irrespective of what is subsequently highlight.
 
 !!! TIP
     If you have a multi-line snippet, you should paste from the internal buffer, since this will retain the correct indentation. 
@@ -101,7 +101,7 @@ You should now have a dialog with the following content:
 - Switch to the `Generate` tab
 - Under the `Class` section select the template (in our case `MyDialog`)
 - Give a name to your class (this will replace the `%CLASS%` place holder)
-- Under the Files section, set the file name (header and implementation), path and (optinally) a project tree folder
+- Under the Files section, set the file name (header and implementation), path and (optionally) a project tree folder
 - Click `Generate`
 
 You should now have 2 new files generated: header and implementation files with the class definition

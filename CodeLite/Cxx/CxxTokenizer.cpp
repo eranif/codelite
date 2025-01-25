@@ -115,7 +115,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
                 parenthesisDepth++;
                 currentScope << "(";
                 // Handle lambda
-                // If we are enterting lamda function defenition, collect the locals
+                // If we are entering lambda function definition, collect the locals
                 // this is exactly what we in 'catch' hence the state change to SCP_STATE_IN_CATCH
                 if(GetLastToken().GetType() == ']') {
                     state = SCP_STATE_IN_CATCH;

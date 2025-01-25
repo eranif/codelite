@@ -26,7 +26,7 @@ public:
     virtual void FromJSON(const JSONItem& json);
 
     /**
-     * @brief is this request position dependant? (i.e. the response should be diplsayed where the request was
+     * @brief is this request position dependant? (i.e. the response should be displayed where the request was
      * triggered?)
      */
     virtual bool IsPositionDependantRequest() const { return false; }

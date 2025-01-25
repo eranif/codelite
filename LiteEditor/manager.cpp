@@ -3032,7 +3032,7 @@ void Manager::DoRestartCodeLite([[maybe_unused]] bool force)
 #endif
 
     restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
-    // Restore the original working dir and any paramters
+    // Restore the original working dir and any parameters
     for (int i = 1; i < wxTheApp->argc; ++i) {
         wxString cmdArg = wxTheApp->argv[i];
         ::WrapWithQuotes(cmdArg);

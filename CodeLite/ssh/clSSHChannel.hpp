@@ -122,7 +122,7 @@ public:
     void Cleanup() override { Close(); }
 
     // Terminate the process. It is recommended to use this method
-    // so it will invoke the 'Cleaup' procedure and the process
+    // so it will invoke the 'Cleanup' procedure and the process
     // termination event will be sent out
     void Terminate() override { Close(); }
 

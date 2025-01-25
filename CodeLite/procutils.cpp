@@ -208,7 +208,7 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
 {
 #ifdef __WXMSW__
     // go over the process modules and get the full path of
-    // the executeable
+    // the executable
     HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
     MODULEENTRY32 me32;
 
@@ -383,7 +383,7 @@ std::vector<ProcessEntry> ProcUtils::GetProcessList()
         entry.name = line.AfterFirst(wxT(' '));
 
         if (entry.pid == 0 && i > 0) {
-            // probably this line belongs to the provious one
+            // probably this line belongs to the previous one
             ProcessEntry e = proclist.back();
             proclist.pop_back();
             e.name << entry.name;
@@ -654,7 +654,7 @@ wxString& ProcUtils::WrapInShell(wxString& cmd)
     }
 #else
     command << "/bin/sh -c '";
-    // escape any single quoutes
+    // escape any single quotes
     cmd.Replace("'", "\\'");
     command << cmd << "'";
 #endif

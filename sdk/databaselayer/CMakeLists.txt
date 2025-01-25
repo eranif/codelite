@@ -65,7 +65,7 @@ if(WITH_MYSQL)
     endif(UNIX AND NOT APPLE)
 
 else()
-    message(STATUS "MySQL is execluded from build")
+    message(STATUS "MySQL is excluded from build")
 endif()
 
 # Define the output

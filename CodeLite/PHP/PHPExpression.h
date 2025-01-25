@@ -89,13 +89,13 @@ public:
 
     const phpLexerToken::Vet_t& GetExpression() const { return m_expression; }
     /**
-     * @brief return the parse expression as string. Useful for debuggin purposes
+     * @brief return the parse expression as string. Useful for debugging purposes
      */
     wxString GetExpressionAsString() const;
 
     /**
      * @brief suggest matches for this expression.
-     * This function must be called after a successfull call to 'Resolve'
+     * This function must be called after a successful call to 'Resolve'
      * @param resolved the resolved object from the previous call to 'Resolve'
      * @param matches [output]
      */
@@ -130,7 +130,7 @@ public:
     const wxString& GetFilter() const { return m_filter; }
 
     /**
-     * @brief get the lookup flags to pass to the lookup table for feteching members
+     * @brief get the lookup flags to pass to the lookup table for fetching members
      */
     size_t GetLookupFlags() const;
 };

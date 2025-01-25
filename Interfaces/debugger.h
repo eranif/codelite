@@ -393,7 +393,7 @@ public:
     /**
      * \brief Run the program under the debugger. This method must be called *after* Start() has been called
      * \param args arguments to pass to the debuggee process
-     * \param comm the preferemd communication string, if this string is not empty, the debugger assumes remote
+     * \param comm the preferred communication string, if this string is not empty, the debugger assumes remote
      * debugging is on
      * and will execute a different set of commands for connecting to the debuggee.
      * comm is in the format of HOST:PORT or tty for serial debugging - this feature is currently enabled in GDB only
@@ -474,7 +474,7 @@ public:
      */
     virtual bool Break(const clDebuggerBreakpoint& bp) = 0;
     /**
-     * @brief restart the debuggin session. (similar to 'run' command on GDB)
+     * @brief restart the debugging session. (similar to 'run' command on GDB)
      * @return true on success false otherwise
      */
     virtual bool Restart() = 0;
@@ -578,7 +578,7 @@ public:
      */
     virtual bool ResolveType(const wxString& expression, int userReason) = 0;
 
-    // We provide two ways of evulating an expressions:
+    // We provide two ways of evaluating an expression:
     // The short one, which returns a string, and long one
     // which returns a tree of the result
     virtual bool EvaluateExpressionToString(const wxString& expression, const wxString& format) = 0;
@@ -613,7 +613,7 @@ public:
     // ----------------------------------------------------------------------------------------
     // Variable object manipulation (GDB only)
     // If you wish to implement a debugger other than
-    // GDB, implement all the 'Variable Object' releated method
+    // GDB, implement all the 'Variable Object' related method
     // with an empty implementation
     // ----------------------------------------------------------------------------------------
     /**
@@ -625,7 +625,7 @@ public:
     /**
      * @brief create variable object from a given expression
      * @param expression the expression to create a variable object for
-     * @param persistent make a presistent watch, else create a floating watch which is not bound to the creation frame
+     * @param persistent make a persistent watch, else create a floating watch which is not bound to the creation frame
      */
     virtual bool CreateVariableObject(const wxString& expression, bool persistent, int userReason) = 0;
 

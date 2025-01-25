@@ -70,7 +70,7 @@ using MainNotebook = clGenericNotebook;
 #endif
 
 //--------------------------
-// Auxulary class
+// Auxilary class
 //--------------------------
 
 class TreeItemInfo
@@ -152,7 +152,7 @@ public:
     /// Return the plugins' toolbar managed by CodeLite
     virtual clToolBarGeneric* GetToolBar() = 0;
 
-    /// Return applicaion menu bar
+    /// Return application menu bar
     virtual wxMenuBar* GetMenuBar() = 0;
 
     /**
@@ -408,7 +408,7 @@ public:
     virtual int GetToolbarIconSize() = 0;
 
     /**
-     * @brief return true if toobars are allowed for plugins. This is useful for the Mac port of
+     * @brief return true if toolbars are allowed for plugins. This is useful for the Mac port of
      * codelite. On Mac, only single toolbar is allowed in the application (otherwise, the application
      * does not feet into the environment)
      * @return true if plugin can create a toolbar, false otherwise
@@ -515,7 +515,7 @@ public:
     virtual bool IsShutdownInProgress() const = 0;
 
     /**
-     * return true if the last buid ended successfully
+     * return true if the last build ended successfully
      */
     virtual bool IsBuildEndedSuccessfully() const = 0;
 
@@ -557,7 +557,7 @@ public:
     /**
      * @brief close 'editor' from the notebook
      * @param editor editor to close
-     * @param prompt if set to 'true' prompt if editor is modified, otherwise, close withotu prompting
+     * @param prompt if set to 'true' prompt if editor is modified, otherwise, close without prompting
      */
     virtual bool CloseEditor(IEditor* editor, bool prompt = true) = 0;
 
@@ -591,7 +591,7 @@ public:
     virtual wxString GetPageTitle(wxWindow* win) const = 0;
 
     /**
-     * @brief open new editor "untitiled"
+     * @brief open new editor "untitled"
      * @return pointer to the editor
      */
     virtual IEditor* NewEditor() = 0;

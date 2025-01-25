@@ -134,7 +134,7 @@ public:
     void ClearCachedFile(const wxString& fileName);
 
     /**
-     * @brief load fileName into cache, note that this call will clear perivous
+     * @brief load fileName into cache, note that this call will clear previous
      * cache
      */
     void CacheFile(const wxString& fileName);
@@ -256,7 +256,7 @@ public:
      * file name
      * @param fileName file to search for
      * @param lineno the line number
-     * @return pointer to the tage which matches the line number & files
+     * @return pointer to the tag which matches the line number & files
      */
     TagEntryPtr FunctionFromFileLine(const wxFileName& fileName, int lineno);
 
@@ -306,7 +306,7 @@ public:
                                   std::vector<std::pair<int, int>>* paramLen = NULL);
 
     /**
-     * @brief fileter a recently tagged files from the strFiles array
+     * @brief filter a recently tagged files from the strFiles array
      * @param strFiles
      * @param db
      */
@@ -314,7 +314,7 @@ public:
 
     /**
      * @brief insert functionBody into clsname. This function will search for best location
-     * to place the function body. set visibility to 0 for 'pubilc' function, 1 for 'protected' and 2 for private
+     * to place the function body. set visibility to 0 for 'public' function, 1 for 'protected' and 2 for private
      * return true if this function succeeded, false otherwise
      */
     bool InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,

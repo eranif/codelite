@@ -313,7 +313,7 @@ bool CodeLiteApp::OnInit()
     CodeLiteBlockSigChild();
 
 #ifdef __WXGTK__
-    // Insall signal handlers
+    // Install signal handlers
     signal(SIGSEGV, WaitForDebugger);
     signal(SIGABRT, WaitForDebugger);
 #endif
@@ -330,7 +330,7 @@ bool CodeLiteApp::OnInit()
     wxLog::SetActiveTarget(new wxLogStderr());
 
 #if wxUSE_ON_FATAL_EXCEPTION
-    // trun on fatal exceptions handler
+    // turn on fatal exceptions handler
     wxHandleFatalExceptions(true);
 #endif
 
@@ -630,7 +630,7 @@ bool CodeLiteApp::OnInit()
     wxString strVersion = CODELITE_VERSION_STRING;
     cfg->Init(strVersion, wxT("2.0.2"));
     if (!cfg->Load()) {
-        clERROR() << "Failed to load configuration file: config/codelite.xml. Workding directory:" << wxGetCwd()
+        clERROR() << "Failed to load configuration file: config/codelite.xml. Working directory:" << wxGetCwd()
                   << endl;
         return false;
     }
@@ -715,7 +715,7 @@ bool CodeLiteApp::OnInit()
             // However I couldn't find a way to do this
         }
     } else {
-        // For proper encoding handling by system libraries it's needed to inialize locale even if UI translation is
+        // For proper encoding handling by system libraries it's needed to initialize locale even if UI translation is
         // turned off
         m_locale.Init(wxLANGUAGE_ENGLISH, wxLOCALE_DONT_LOAD_DEFAULT);
     }
@@ -909,7 +909,7 @@ void CodeLiteApp::MSWReadRegistry()
         registry.Read(wxT("mingw"), strMingw);
         registry.Read(wxT("unittestpp"), strUnitTestPP);
 
-        // Supprot for wxWidgets
+        // Support for wxWidgets
         if (strWx.IsEmpty() == false) {
             // we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
             EnvMap envs = vars.GetVariables(wxT("Default"), false, wxEmptyString, wxEmptyString);

@@ -127,7 +127,7 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(std::vector<CxxExpres
         // return a dummy entry representing the global scope
         return create_global_scope_tag();
     } else if(expression.size() >= 2 && expression[0].type_name().empty() && expression[0].operand_string() == "::") {
-        // explicity requesting for the global namespace
+        // explicitly requesting for the global namespace
         // clear the `scopes` and use only the global namespace (empty string)
         scopes.clear();
         scopes.push_back(wxEmptyString);
@@ -174,7 +174,7 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, std::unordered_map<wx
         m_lookup->GetParameters(m_current_function_tag->GetPath(), parameters);
         m_lookup->GetLambdas(m_current_function_tag->GetPath(), all_lambdas);
 
-        // read all lambdas paramteres
+        // read all lambdas parameters
         std::unordered_map<wxString, TagEntryPtr> lambda_parameters_map;
         std::unordered_map<wxString, TagEntryPtr> function_parameters_map;
 
@@ -188,12 +188,12 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, std::unordered_map<wx
                 std::vector<TagEntryPtr> lambda_parameters;
                 m_lookup->GetParameters(lambda->GetPath(), lambda_parameters);
                 for(auto param : lambda_parameters) {
-                    // if a function parameter with this name alrady exists, skip it
+                    // if a function parameter with this name already exists, skip it
                     if(function_parameters_map.count(param->GetName())) {
                         continue;
                     }
 
-                    // if we already encoutered a lambda parameter with this name, replace it
+                    // if we already encountered a lambda parameter with this name, replace it
                     if(lambda_parameters_map.count(param->GetName())) {
                         lambda_parameters_map.erase(param->GetName());
                     }
@@ -202,7 +202,7 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, std::unordered_map<wx
             }
         }
 
-        // all the lambda paramters to the list of parameters
+        // all the lambda parameters to the list of parameters
         for(const auto& vt : lambda_parameters_map) {
             parameters.emplace_back(vt.second);
         }
@@ -382,7 +382,7 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
         return;
     }
 
-    // simple template instantiaion line
+    // simple template instantiation line
     if(curexpr.is_template()) {
         curexpr.parse_template_placeholders(resolved->GetTemplateDefinition());
         wxStringMap_t M = curexpr.get_template_placeholders_map();
@@ -670,7 +670,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
 TagEntryPtr CxxCodeCompletion::on_typedef(CxxExpression& curexp, TagEntryPtr tag,
                                           const std::vector<wxString>& visible_scopes)
 {
-    // substitude the type with the typeref
+    // substitute the type with the typedef
     wxString new_expr;
     if(!resolve_user_type(tag->GetPath(), visible_scopes, &new_expr)) {
         new_expr = typedef_from_tag(tag);
@@ -1102,7 +1102,7 @@ void TemplateManager::add_placeholders(const wxStringMap_t& table, const std::ve
             // lets try and avoid pushing values that are templates
             // consider
             // template <typename _Tp> class vector : protected _Vector_base<_Tp> {..}
-            // Looking at the definitio of _Vector_base:
+            // Looking at the definition of _Vector_base:
             // template <typename _Tp> class _Vector_base {...}
             // this will cause us to push {"_Tp", "_Tp"} (where _Tp is both the key and value)
             // if the resolve will fail, it will return vt.second unmodified
@@ -1210,7 +1210,7 @@ void CxxCodeCompletion::sort_tags(const std::vector<TagEntryPtr>& tags, std::vec
         } else if(access == "public") {
             if(tag->GetName().StartsWith("_") || tag->GetName().Contains("operator")) {
                 // methods starting with _ usually are meant to be private
-                // and also, put the "operator" methdos at the bottom
+                // and also, put the "operator" methods at the bottom
                 privateTags.push_back(tag);
             } else {
                 publicTags.push_back(tag);
@@ -1385,7 +1385,7 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
         word_complete(filepath, line, expression, text, visible_scopes, true, candidates);
         // filter all the tags
         if(candidates.empty() || (candidates.size() == 1 && (candidates[0]->GetLine() == wxNOT_FOUND))) {
-            clDEBUG() << "Unable to complete, checking on the current lcoation" << endl;
+            clDEBUG() << "Unable to complete, checking on the current location" << endl;
             candidates.clear();
             m_lookup->GetTagsByFileAndLine(filepath, line, candidates);
             if(candidates.empty()) {

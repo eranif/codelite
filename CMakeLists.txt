@@ -879,7 +879,7 @@ endif()
 # add the dtl module include path before we include Plugin folder
 include_directories(submodules/dtl)
 
-# Extran lexers required by CodeLite
+# Extra lexers required by CodeLite
 add_subdirectory(submodules/lexilla)
 
 add_subdirectory(submodules)

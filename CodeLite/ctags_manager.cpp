@@ -275,7 +275,7 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
                 // dont attempt to fix it
                 if(inherits.Contains(wxT("::")) == false) {
 
-                    // Correc the type/scope
+                    // Correct the type/scope
                     bool testForTemplate = !IsTypeAndScopeExists(inherits, possibleScope);
 
                     // If the type does not exists, check for templates
@@ -293,7 +293,7 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
                         // this is done to make sure that the new type is not a macro...
                         if(!newType.IsEmpty() && newType != inherits) {
 
-                            // check the user defined types for a replcement token
+                            // check the user defined types for a replacement token
                             wxString replacement = DoReplaceMacros(newType);
                             if(replacement == newType) {
                                 // No match was found in the user defined replacements
@@ -529,7 +529,7 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
         // does the file exist in both lists?
         std::unordered_set<wxString>::iterator iter = files_set.find(fe->GetFile());
         if(iter != files_set.end()) {
-            // get the actual modifiaction time of the file from the disk
+            // get the actual modification time of the file from the disk
             struct stat buff;
             int modified(0);
 

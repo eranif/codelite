@@ -12,7 +12,7 @@ namespace
 {
 
 std::once_flag cygpath_once;
-wxString cygpath; // contains path to cygpth or empty string if not found
+wxString cygpath; // contains path to cygpath or empty string if not found
 
 #ifdef __WXMSW__
 /// helper method:

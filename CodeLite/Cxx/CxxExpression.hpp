@@ -15,7 +15,7 @@
 /// std::string::size_
 ///
 /// Passing the above to CxxExpression::from_expression
-/// and assuming that the it succeed, the mainder will be:
+/// and assuming that the it succeed, the remainder will be:
 /// filter -> size_
 /// operand_string -> "::"
 struct WXDLLIMPEXP_CL CxxRemainder {
@@ -73,7 +73,7 @@ public:
     void parse_template_placeholders(const wxString& expr);
 
     /**
-     * @brief reutn template placeholders map
+     * @brief return template placeholders map
      */
     wxStringMap_t get_template_placeholders_map() const;
     /**

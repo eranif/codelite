@@ -175,7 +175,7 @@ public:
 
     /**
      * @brief close the currently opened workspace and reload it without saving any modifications made to it, if no
-     * workspace is opened, this functiond does anything
+     * workspace is opened, this function does anything
      */
     void ReloadWorkspace();
 
@@ -204,7 +204,7 @@ public:
 
     /**
      * @brief update the C++ parser search / exclude paths with the global paths
-     * and the workspace specifc ones
+     * and the workspace specific ones
      * @return true if the paths were modified, false otherwise
      */
     void UpdateParserPaths(bool notify);
@@ -315,7 +315,7 @@ public:
     void RetagFile(const wxString& filename);
 
     /**
-     * @brief Launch the ParseThread to update the preprocessor vizualisation
+     * @brief Launch the ParseThread to update the preprocessor visualization
      * @param filename
      */
     void UpdatePreprocessorFile(clEditor* editor);
@@ -436,7 +436,7 @@ public:
     void SetProjectGlobalSettings(const wxString& projectName, BuildConfigCommonPtr settings);
 
     /**
-     * @brief return the project excution command as it appears in the project settings
+     * @brief return the project execution command as it appears in the project settings
      * @param projectName
      * @param wd the working directory that the command should be running from
      * @param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set
@@ -493,7 +493,7 @@ public:
     void ShowPane(const wxString& paneName, bool commit = true);
 
     /**
-     * Hide/Show all panes. This function saves the current prespective and
+     * Hide/Show all panes. This function saves the current perspective and
      * then hides all panes, when called again, all panes are restored
      */
     void TogglePanes();
@@ -569,7 +569,7 @@ public:
     DbgStackInfo DbgGetCurrentFrameInfo() { return m_dbgCurrentFrameInfo; }
 
     //---------------------------------------------------
-    // Internal implementaion for various debugger events
+    // Internal implementation for various debugger events
     //---------------------------------------------------
 
     void UpdateAddLine(const wxString& line, const bool OnlyIfLoggingOn = false);
@@ -624,7 +624,7 @@ public:
     void CleanWorkspace();
 
     /**
-     * @brief clean, followed by buid of the entire workspace. This operation is equal to
+     * @brief clean, followed by build of the entire workspace. This operation is equal to
      * manually right clicking on each project in the workspace and selecting
      * 'clean'
      */
@@ -643,7 +643,7 @@ public:
     void CompileFile(const wxString& project, const wxString& fileName, bool preprocessOnly = false);
 
     /**
-     * return true if the last buid ended successfully
+     * return true if the last build ended successfully
      */
     bool IsBuildEndedSuccessfully() const;
 
@@ -655,7 +655,7 @@ public:
     void GetActiveProjectAndConf(wxString& project, wxString& conf);
     /**
      * @brief return true if debugger view is visible
-     * This can be true incase the view is the selected tab in the debuggger pane notebook
+     * This can be true incase the view is the selected tab in the debugger pane notebook
      * or incase it is detached and visible
      */
     bool IsDebuggerViewVisible(const wxString& name);

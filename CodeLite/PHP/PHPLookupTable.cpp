@@ -1151,7 +1151,7 @@ PHPEntityBase::List_t PHPLookupTable::FindNamespaces(const wxString& fullnameSta
 void PHPLookupTable::ResetDatabase()
 {
     wxFileName curfile = m_filename;
-    Close(); // Close the databse releasing any file capture we have
+    Close(); // Close the database releasing any file capture we have
     // Delete the file
     if(curfile.IsOk() && curfile.Exists()) {
         // Delete it from the file system

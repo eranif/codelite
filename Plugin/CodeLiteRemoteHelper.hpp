@@ -37,7 +37,7 @@ public:
     JSON* GetPluginConfig(const wxString& plugin_name) const;
 
     /**
-     * @brief return true if a remote workspce is loaded
+     * @brief return true if a remote workspace is loaded
      */
     bool IsRemoteWorkspaceOpened() const;
 

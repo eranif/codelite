@@ -42,7 +42,7 @@ class EnvironmentConfig;
 // sent when a "QueryLocals" command is completed (only for locals - not for function arguments)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_QUERY_LOCALS, clCommandEvent);
 
-// sent when a variable object createion is completed
+// sent when a variable object creation is completed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_VAROBJECT_CREATED, clCommandEvent);
 
 // sent by codelite when a pane is needed to refresh its content
@@ -51,13 +51,13 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_UPDATE_VIEWS, clCommand
 // sent by the debugger when a "ListChildren" command is completed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_LIST_CHILDREN, clCommandEvent);
 
-// sent by the debugger after a successfull evaluation of variable object
+// sent by the debugger after a successful evaluation of variable object
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_VAROBJ_EVALUATED, clCommandEvent);
 
-// sent by the debugger when a "disasseble" command returned
+// sent by the debugger when a "disassemble" command returned
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_DISASSEBLE_OUTPUT, clCommandEvent);
 
-// sent by the debugger when a "disasseble" current line command returns
+// sent by the debugger when a "disassemble" current line command returns
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_DISASSEBLE_CURLINE, clCommandEvent);
 
 // sent by the debugger when a "QueryFileLine" command has completed
@@ -103,7 +103,7 @@ public:
     const wxString& GetActiveDebuggerName() const { return m_activeDebuggerName; }
     /**
      * Load all available debuggers. This functions searches for dll/so/sl
-     * which are located udner $(HOME)/.liteeditor/debuggers/ on Linux, and on Windows
+     * which are located under $(HOME)/.liteeditor/debuggers/ on Linux, and on Windows
      * under C:\Program Files\LiteEditor\debuggers\
      */
     bool LoadDebuggers(IDebuggerObserver* observer);

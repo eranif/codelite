@@ -143,7 +143,7 @@ JSONElement WinIdProperty::Serialize() const
 void WinIdProperty::UnSerialize(const JSONElement& json)
 {
     DoBaseUnSerialize(json);
-    // Backward compatability
+    // Backward compatibility
     if(json.hasNamedObject(wxT("m_winid")))
         m_winid = json.namedObject(wxT("m_winid")).toString();
     else

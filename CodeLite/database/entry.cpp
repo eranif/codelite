@@ -128,7 +128,7 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
             if(!tmpname.StartsWith("__anon")) {
                 UpdatePath(path);
             } else {
-                // anonymouse union, remove the anonymous part from its name
+                // anonymous union, remove the anonymous part from its name
                 path = path.BeforeLast(':');
                 path = path.BeforeLast(':');
                 UpdatePath(path);
@@ -269,7 +269,7 @@ wxString TagEntry::GetPattern() const
 void TagEntry::FromLine(const wxString& line)
 {
     // label	C:\src\wxCustomControls\clTreeCtrl\clChoice.cpp	/^        const wxString& label = m_choices[i];$/;"
-    // local line:116	type:constwxString
+    // local line:116	type:const wxString
     wxString pattern, kind;
     wxString strLine = line;
     long lineNumber = wxNOT_FOUND;

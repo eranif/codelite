@@ -21,7 +21,7 @@ public:
 
     ~clTempFile();
     /**
-     * @brief wite content to the temp file
+     * @brief write content to the temp file
      */
     bool Write(const wxString& content, wxMBConv& conv = wxConvUTF8);
     /**

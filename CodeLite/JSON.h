@@ -107,7 +107,7 @@ public:
     std::vector<int> toIntArray(const std::vector<int>& defaultValue = {}) const;
     JSONItem arrayItem(int pos) const;
 
-    // Retuen the object type
+    // Return the object type
     bool isNull() const;
     bool isBool() const;
     bool isString() const;
@@ -152,12 +152,12 @@ public:
     static JSONItem createArray(const wxString& name = wxT(""));
 
     /**
-     * @brief add array to this json and return a referece to the newly added array
+     * @brief add array to this json and return a reference to the newly added array
      */
     JSONItem AddArray(const wxString& name);
 
     /**
-     * @brief add object to this json and return a referece to the newly added object
+     * @brief add object to this json and return a reference to the newly added object
      */
     JSONItem AddObject(const wxString& name);
 

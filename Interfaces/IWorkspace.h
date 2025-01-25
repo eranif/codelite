@@ -111,7 +111,7 @@ public:
      */
     virtual void GetWorkspaceFiles(wxArrayString& files) const = 0;
     /**
-     * @brief return list of files belonged to the prokect. If the workspace does not support
+     * @brief return list of files belonged to the project. If the workspace does not support
      * projects, do not modify 'files'
      * @param projectName the project name
      * @param files [output] list of files in absolute path
@@ -140,7 +140,7 @@ public:
     virtual wxArrayString GetWorkspaceProjects() const = 0;
 
     /**
-     * @brief returm true if this workspace is a remote one
+     * @brief return true if this workspace is a remote one
      */
     virtual bool IsRemote() const { return false; }
     /**

@@ -269,14 +269,14 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
                 bool isExprStartsWithOpenTag = expr->IsExprStartsWithOpenTag();
                 PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
                 if(entity) {
-                    // Suggets members for the resolved entity
+                    // Suggest members for the resolved entity
                     PHPEntityBase::List_t matches;
                     expr->Suggest(entity, m_lookupTable, matches);
                     if(!expr->GetFilter().IsEmpty() && (expr->GetCount() == 0)) {
                         // Word completion
                         PHPEntityBase::List_t keywords = PhpKeywords(expr->GetFilter());
 
-                        // Preprend the keywords
+                        // Prepend the keywords
                         matches.insert(matches.end(), keywords.begin(), keywords.end());
 
                         // Did user typed "<?ph" or "<?php" ??
@@ -768,7 +768,7 @@ int PHPCodeCompletion::GetLocationForSettersGetters(const wxString& filecontent,
     int depth = 0;
     int line = wxNOT_FOUND;
 
-    // searc for the open brace
+    // search for the open brace
     while(::phpLexerNext(scanner, token)) {
         if(token.type == '{') {
             ++depth;
@@ -909,7 +909,7 @@ void PHPCodeCompletion::OnActiveEditorChanged(wxCommandEvent& e)
             continue;
         }
 
-        // preapre a display string, exclude the function signature (it takes too much space)
+        // prepare a display string, exclude the function signature (it takes too much space)
         clEditorBar::ScopeEntry scope_entry;
         scope_entry.line_number = entity->GetLine();
         scope_entry.display_string = entity->GetFullName();

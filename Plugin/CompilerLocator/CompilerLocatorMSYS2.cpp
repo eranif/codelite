@@ -59,7 +59,7 @@ bool CompilerLocatorMSYS2Env::Locate()
 
     wxArrayString paths_to_try = ::wxStringTokenize(path_env, ";", wxTOKEN_STRTOK);
     for (const auto& path : paths_to_try) {
-        clDEBUG() << "Tyring to locate compiler at:" << path << endl;
+        clDEBUG() << "Trying to locate compiler at:" << path << endl;
         auto cmp = CompilerLocatorMSYS2::Locate(path);
         if (cmp) {
             clDEBUG() << "Found compiler:" << cmp->GetName() << endl;

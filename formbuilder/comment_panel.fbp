@@ -886,7 +886,7 @@
                         <property name="font" />
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
-                        <property name="label">The following macros are available:&#x0A;$(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name)&#x0A;$(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorksapceName)</property>
+                        <property name="label">The following macros are available:&#x0A;$(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name)&#x0A;$(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)</property>
                         <property name="maximum_size" />
                         <property name="minimum_size" />
                         <property name="name">m_staticText12</property>

@@ -40,7 +40,7 @@ extern bool setLexerInput(const std::string &in, const std::map<std::string, std
 extern int cl_scope_lineno;
 extern std::vector<std::string> currentScope;
 extern void printScopeName();	//print the current scope name
-extern void increaseScope();	//increase scope with anonymouse value
+extern void increaseScope();	//increase scope with anonymous value
 extern std::string getCurrentScope();
 extern void cl_scope_lex_clean();
 extern void cl_scope_less(int count);
@@ -234,7 +234,7 @@ namespace_decl	:	stmnt_starter LE_NAMESPACE nested_scope_specifier LE_IDENTIFIER
                         }
                     |	stmnt_starter LE_NAMESPACE '{'
                         {
-                            //anonymouse namespace
+                            //anonymous namespace
                             increaseScope();
                             
                         }

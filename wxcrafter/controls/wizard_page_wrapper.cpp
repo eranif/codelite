@@ -39,7 +39,7 @@ wxString WizardPageWrapper::CppCtorCode() const
     if(!wizard) { return code; }
 
     // If this is the last page, perform the 'Chain' call
-    // We use |@@| as a sepcial delimiter here (to avoid indenting this code)
+    // We use |@@| as a special delimiter here (to avoid indenting this code)
     // it will be replaced later by the TopLevelWindowWrapper to an empty string
     const wxcWidget::List_t& siblings = wizard->GetChildren();
     const wxcWidget* lastChild = siblings.back();

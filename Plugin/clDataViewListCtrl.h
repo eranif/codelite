@@ -92,7 +92,7 @@ public:
                             size_t searchFlags = wxDV_SEARCH_DEFAULT);
 
     /**
-     * @brief highlight matched string of an item. This call should be called after a successfull call to
+     * @brief highlight matched string of an item. This call should be called after a successful call to
      * FindNext or FindPrev
      */
     void HighlightText(const wxDataViewItem& item, bool b);
@@ -103,7 +103,7 @@ public:
     void ClearHighlight(const wxDataViewItem& item);
 
     ///===--------------------
-    /// wxDV compatilibty API
+    /// wxDV compatibility API
     ///===--------------------
 
     /**

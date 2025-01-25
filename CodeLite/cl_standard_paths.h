@@ -101,7 +101,7 @@ public:
     wxString GetBinaryFullPath(const wxString& toolname, bool unixStylePath = false) const;
 
     /**
-     * @brief get CodeLite executale path
+     * @brief get CodeLite executable path
      */
     wxString GetExecutablePath() const;
 
@@ -116,7 +116,7 @@ public:
     wxString GetLexersDir() const;
 
     /**
-     * @brief return the project templates dircectory
+     * @brief return the project templates directory
      */
     wxString GetProjectTemplatesDir() const;
 

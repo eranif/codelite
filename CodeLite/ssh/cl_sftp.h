@@ -156,7 +156,7 @@ public:
     void Mkpath(const wxString& remoteDirFullpath);
 
     /**
-     * @brief Remove a directoy.
+     * @brief Remove a directory.
      * @param dirname
      */
     void RemoveDir(const wxString& dirname);

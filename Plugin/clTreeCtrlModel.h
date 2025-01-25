@@ -89,7 +89,7 @@ public:
     void AddSelection(const wxTreeItemId& item);
 
     /**
-     * @brief clear all selections, return true on sucess, this function fires the changing event
+     * @brief clear all selections, return true on success, this function fires the changing event
      */
     bool ClearSelections(bool notify);
 
@@ -99,7 +99,7 @@ public:
     bool IsVisible(const wxTreeItemId& item) const;
 
     /**
-     * @brief select the children of 'item' this functin fires the changing and changed events
+     * @brief select the children of 'item' this function fires the changing and changed events
      */
     void SelectChildren(const wxTreeItemId& item);
 

@@ -83,7 +83,7 @@ public:
     void Close();
 
     /**
-     * @brief do we have worksapce opened?
+     * @brief do we have workspace opened?
      */
     bool IsOpen() const;
 

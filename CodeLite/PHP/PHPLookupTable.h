@@ -179,7 +179,7 @@ public:
     void SetSizeLimit(size_t sizeLimit) { this->m_sizeLimit = sizeLimit; }
 
     /**
-     * @brief return list of functiosn from a given file
+     * @brief return list of functions from a given file
      */
     size_t FindFunctionsByFile(const wxFileName& filename, PHPEntityBase::List_t& functions);
 

@@ -69,7 +69,7 @@ protected:
     void PrepareHtmlCompletions();
     wxString GetCompletePattern(const wxString& tag) const;
     /**
-     * @brief Does 'tag' has a sepcial insert pattern?
+     * @brief Does 'tag' has a special insert pattern?
      * an example is the <a>: "<a href=""></a>"
      */
     bool HasSpecialInsertPattern(const wxString& tag) const;

@@ -186,7 +186,7 @@ public:
                               const wxString& working_directory,
                               const clEnvList_t& env);
     /**
-     * @brief call 'exec' and return an instance of IProcess. This method is for compatability with the
+     * @brief call 'exec' and return an instance of IProcess. This method is for compatibility with the
      * CreateAsyncProcess family of functions
      * @note it is up to the caller to delete the return process object
      */

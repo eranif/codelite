@@ -17,8 +17,8 @@ public:
     virtual ~CxxTokenizer();
 
     /**
-     * @brief get the next token from the toknizer
-     * @reutrn false when reached EOF
+     * @brief get the next token from the tokenizer
+     * @return false when reached EOF
      */
     bool NextToken(CxxLexerToken& token);
 

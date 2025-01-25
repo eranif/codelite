@@ -246,7 +246,7 @@ void DebuggerDisassemblyTab::OnRefreshView(clCommandEvent& e)
     e.Skip();
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
     if(debugger && debugger->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-        // Only update disass view if the view is visible
+        // Only update disassemble view if the view is visible
         if(ManagerST::Get()->IsDebuggerViewVisible(wxGetTranslation(DebuggerPane::DISASSEMBLY))) {
             debugger->ListRegisters();
             debugger->Disassemble("", -1);

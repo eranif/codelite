@@ -96,7 +96,7 @@ public:
         e.SetEventObject(GetParent());
         m_searchedCtrl->GetEventHandler()->AddPendingEvent(e);
 
-        // remove ourself from the paren't sizer
+        // remove ourself from the parent's sizer
         GetParent()->GetSizer()->Detach(this);
         GetParent()->GetSizer()->Layout();
 
@@ -532,7 +532,7 @@ clHeaderBar* clControlWithItems::GetHeader() const { return m_viewHeader; }
 void clControlWithItems::DoPositionVScrollbar()
 {
     if (IsHeaderVisible()) {
-        // When the heaer is visible place the vertical scrollbar under it
+        // When the header is visible place the vertical scrollbar under it
         wxRect clientRect = GetClientRect();
         wxSize vsbSize = GetVScrollBar()->GetSize();
 

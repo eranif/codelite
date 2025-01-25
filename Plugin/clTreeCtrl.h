@@ -127,7 +127,7 @@ public:
                           size_t searchFlags = wxTR_SEARCH_DEFAULT);
 
     /**
-     * @brief highlight matched string of an item. This call should be called after a successfull call to
+     * @brief highlight matched string of an item. This call should be called after a successful call to
      * FindNext or FindPrev
      */
     void HighlightText(const wxTreeItemId& item, bool b);
@@ -219,7 +219,7 @@ public:
     wxTreeItemId HitTest(const wxPoint& point, int& flags, int& column) const;
 
     /**
-     * @brief ppends an item to the end of the branch identified by parent, return a new item id.
+     * @brief Appends an item to the end of the branch identified by parent, return a new item id.
      */
     wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, int image = -1, int selImage = -1,
                             wxTreeItemData* data = NULL);

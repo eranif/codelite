@@ -1169,7 +1169,7 @@ void LanguageServerCluster::UpdateNavigationBar()
     scopes.reserve(symbols.size());
 
     for (const LSP::SymbolInformation& symbol : symbols) {
-        // only collect methdos
+        // only collect methods
         if (symbol.GetKind() != LSP::kSK_Function && symbol.GetKind() != LSP::kSK_Method &&
             symbol.GetKind() != LSP::kSK_Constructor)
             continue;

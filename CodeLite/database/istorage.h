@@ -144,7 +144,7 @@ public:
                                         std::vector<TagEntryPtr>& tags) = 0;
 
     /**
-     * @brief reutnr array of tags by kind and path
+     * @brief return array of tags by kind and path
      * @param kinds array of kind
      * @param path
      * @param tags  [output]
@@ -265,7 +265,7 @@ public:
      * Store tree of tags into db.
      * @param tree Tags tree to store
      * @param path Database file name
-     * @param autoCommit handle the Store operation inside a transaction or let the user hadle it
+     * @param autoCommit handle the Store operation inside a transaction or let the user handle it
      */
     virtual void Store(const std::vector<TagEntryPtr>& tags, bool auto_commit = true) = 0;
 
@@ -300,7 +300,7 @@ public:
      * Delete all entries from database that are related to filename.
      * @param path Database name
      * @param fileName File name
-     * @param autoCommit handle the Delete operation inside a transaction or let the user hadle it
+     * @param autoCommit handle the Delete operation inside a transaction or let the user handle it
      */
     virtual void DeleteByFileName(const wxFileName& path, const wxString& fileName, bool autoCommit = true) = 0;
 

@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     int i = 1;
     for(; i < argc; ++i) {
         if(strstr(argv[i], " ") || strstr(argv[i], "\t")) {
-            // escape with double quoutes
+            // escape with double quotes
             fprintf(stdout, "\"%s\" ", argv[i]);
         } else {
             // print it as it is

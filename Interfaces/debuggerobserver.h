@@ -57,7 +57,7 @@ enum DebuggerReasons {
 enum DebuggerUpdateReason {
     DBG_UR_INVALID = -1,            // Invalid
     DBG_UR_GOT_CONTROL,             // Application gains the control back from the debugger
-    DBG_UR_LOST_CONTROL,            // Appliecation lost control to the debugge, and it can not interact (atm) with it
+    DBG_UR_LOST_CONTROL,            // Application lost control to the debugger, and it can not interact (atm) with it
     DBG_UR_ADD_LINE,                // Log line
     DBG_UR_BP_ADDED,                // Breakpoint was added
     DBG_UR_STOPPED,                 // Debugger stopped
@@ -137,7 +137,7 @@ public:
     virtual void DebuggerUpdate(const DebuggerEventData& event) = 0;
 
 public:
-    // For convinience
+    // For convenience
     /**
      * @brief this function is called when the debugger plugin got the control back from the debugger
      * @param reason the reason why the debugger gave the control to the plugin.
@@ -225,7 +225,7 @@ public:
     }
 
     /**
-     * @brief an expression has been evaludated
+     * @brief an expression has been evaluated
      * @param expression the expression that the debugger was requested to evaluate
      * @param evaluated evaluated expression as string
      */
@@ -239,7 +239,7 @@ public:
     }
 
     /**
-     * @brief debugger connected to the remote target sucessfully
+     * @brief debugger connected to the remote target successfully
      * @param line debugger output
      */
     void UpdateRemoteTargetConnected(const wxString& line)

@@ -87,8 +87,8 @@ public:
 	 * Compare this tree against another tree.
 	 * \param targetTree Target tree to compare with
 	 * \param deletedItems Array of pairs of items which exist in this tree and not in target tree
-	 * \param modifiedItems Array of pairs of items which have the same key but differnt data
-	 * \param newItems Aarray of pairs of items which exist in the target tree but not in this tree
+	 * \param modifiedItems Array of pairs of items which have the same key but different data
+	 * \param newItems Array of pairs of items which exist in the target tree but not in this tree
 	 * \param fromNode If its set to null, comparison will start from this tree root node, if not null,
 	 * comparison will compare sub-tree which root of its fromNode
 	 */

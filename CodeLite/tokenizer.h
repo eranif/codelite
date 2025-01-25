@@ -50,14 +50,14 @@
  * StringTokenizer also allows you to break string with number of delimiters:
  *
  * \code
- * wxArrayString dlimArr;
+ * wxArrayString delimArr;
  * delimArr.Add("_T(" "));
  * delimArr.Add("_T("-"));
  * delimArr.Add("_T(":"));
  * StringTokenizer tok(_T("first-second:third"), delimArr);
  * \endcode 
  * 
- * The above exmple will result with: first, second and third.
+ * The above example will result with: first, second and third.
  *
  * \ingroup CodeLite
  * \version 1.0
@@ -112,7 +112,7 @@ public:
 	 */
 	const int Count() const;
 	/**
-	 * Random acess operator, statring from zero
+	 * Random access operator, starting from zero
 	 * \param nIndex token index
 	 * \return token at nIndex (copy of it)
 	 */

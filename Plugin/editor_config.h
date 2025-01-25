@@ -208,14 +208,14 @@ public:
     void SetInstallDir(const wxString& instlDir);
 
     /**
-     * \brief convinience methods to store a single long value
+     * \brief convenience methods to store a single long value
      * \param name variable name
      * \param value value to store
      */
     void SetInteger(const wxString& name, long value);
 
     /**
-     * \brief convinience methods to retrieve a single long value stored using
+     * \brief convenience methods to retrieve a single long value stored using
      * the 'SaveLongValue()' method
      * \param name variable name
      * \param value value
@@ -225,7 +225,7 @@ public:
 
     /**
      * \brief get string from the configuration identified by key
-     * \param key key identifiying the string
+     * \param key key identifying the string
      * \return wxEmptyString or the value
      */
     wxString GetString(const wxString& key, const wxString& defaultValue = "");

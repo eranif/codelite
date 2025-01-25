@@ -104,7 +104,7 @@ public:
 
     /**
      * \brief a safe function that executes 'command' and returns its output. This function
-     * is safed to be called from secondary thread (hence, SafeExecuteCommand)
+     * is safe to be called from secondary thread (hence, SafeExecuteCommand)
      * \param command
      * \param output
      */

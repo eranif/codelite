@@ -76,7 +76,7 @@ public:
     }
 
     /**
-     * @brief return all function paramters that match the filter
+     * @brief return all function parameters that match the filter
      * if filter is empty, return all of the parameters
      */
     std::vector<TagEntryPtr> get_function_parameters(const wxString& filter) const

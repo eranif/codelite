@@ -86,7 +86,7 @@ protected:
     bool DoGetNextLine(wxString& line);
     void DoCleanup();
 
-    // wrapper for convinience
+    // wrapper for convenience
     void DoProcessAsyncCommand(wxString& line, wxString& id);
 
 protected:

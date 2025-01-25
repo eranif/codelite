@@ -220,7 +220,7 @@ public:
      * Open an existing workspace
      *
      * \param fileName
-     * Workspace file name (including extesion)
+     * Workspace file name (including extension)
      *
      * \returns
      * true on success false otherwise
@@ -259,12 +259,12 @@ public:
     /**
      * @brief rename a project
      * @param oldname current name
-     * @param newname new name for the proejct
+     * @param newname new name for the project
      */
     void RenameProject(const wxString& oldname, const wxString& newname);
 
     /**
-     * \brief get a string property from the worksapce file
+     * \brief get a string property from the workspace file
      * \returns property value or wxEmptyString
      */
     wxString GetStringProperty(const wxString& propName, wxString& errMsg);
@@ -314,7 +314,7 @@ public:
     void SetActiveProject(const wxString& name);
 
     /**
-     * Add new virtual directoy to workspace
+     * Add new virtual directory to workspace
      * \param vdFullPath virtual directory full path
      * \param errMsg [output] incase an error, report the error to the caller
      * \return true on success false otherwise
@@ -327,7 +327,7 @@ public:
     bool IsVirtualDirectoryExists(const wxString& vdFullPath);
 
     /**
-     * Remove virtual directoy to workspace
+     * Remove virtual directory to workspace
      * \param vdFullPath virtual directory full path
      * \param errMsg [output] incase an error, report the error to the caller
      * \return true on success false otherwise
@@ -336,7 +336,7 @@ public:
 
     /**
      * Add new file to project. The project name is taken from the virtual directory full path
-     * \param vdFullPath vritual directory full path including project
+     * \param vdFullPath virtual directory full path including project
      * \param fileName file name to add
      * \param errMsg output
      * \return true on success, false otherwise
@@ -345,7 +345,7 @@ public:
 
     /**
      * Remove file from a project. The project name is taken from the virtual directory full path
-     * \param vdFullPath vritual directory full path including project
+     * \param vdFullPath virtual directory full path including project
      * \param fileName file name to remove
      * \param errMsg output
      * \return true on success, false otherwise
@@ -474,12 +474,12 @@ public:
     wxArrayString GetWorkspaceProjects() const override;
 
     /**
-     * @brief return list of files that are exluded for a given workspace configuration
+     * @brief return list of files that are excluded for a given workspace configuration
      */
     size_t GetExcludeFilesForConfig(std::vector<wxString>& files, const wxString& workspaceConfigName = "");
 
     /**
-     * @brief return the workspce environment
+     * @brief return the workspace environment
      */
     clEnvList_t GetEnvironment() const override;
 

@@ -67,10 +67,10 @@ enum NotebookStyle {
     /// Allow DnD between different book controls
     kNotebook_AllowForeignDnD = (1 << 10),
 
-    /// We keep this flag for backward compatability
+    /// We keep this flag for backward compatibility
     kNotebook_RightTabs = 0,
 
-    /// We keep this flag for backward compatability
+    /// We keep this flag for backward compatibility
     kNotebook_LeftTabs = 0,
 
     /// Fixed width tabs
@@ -245,7 +245,7 @@ public:
     virtual void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const wxRect& activeTabRect,
                                     const clTabColours& colours, size_t style);
     /**
-     * @brief reutrn font suitable for drawing the tab label
+     * @brief return font suitable for drawing the tab label
      */
     static wxFont GetTabFont(bool bold);
 
@@ -256,7 +256,7 @@ public:
                            eButtonState state);
 
     /**
-     * @brief draw cheveron button
+     * @brief draw chevron button
      */
     static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
 
@@ -274,7 +274,7 @@ public:
      */
     static clTabRenderer::Ptr_t CreateRenderer(const wxWindow* win, size_t tabStyle);
     /**
-     * @brief return list of availale renderers
+     * @brief return list of available renderers
      */
     static wxArrayString GetRenderers();
 

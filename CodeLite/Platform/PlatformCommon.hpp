@@ -29,7 +29,7 @@ public:
     bool WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath);
 
     /**
-     * @brief locaate rustup bin folder (on platforms that this is available)
+     * @brief locate rustup bin folder (on platforms that this is available)
      */
     bool FindRustupToolchainBinDir(wxString* rustup_bin_dir);
 

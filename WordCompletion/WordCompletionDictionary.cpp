@@ -99,7 +99,7 @@ void WordCompletionDictionary::DoCacheActiveEditor(bool overwrite)
     // Queue this file
     wxStyledTextCtrl* stc = activeEditor->GetCtrl();
     
-    // Invoke the thread to parse and suggets words for this file
+    // Invoke the thread to parse and suggest words for this file
     WordCompletionThreadRequest* req = new WordCompletionThreadRequest;
     req->buffer = stc->GetText();
     req->filename = activeEditor->GetFileName();

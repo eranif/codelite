@@ -54,20 +54,18 @@ enum {
 
 struct CompilerMessage {
     wxString message;
-    wxClientData* userData = nullptr;
+    std::unique_ptr<wxClientData> userData;
 
-    ~CompilerMessage() { wxDELETE(userData); }
-    CompilerMessage() {}
-    CompilerMessage(CompilerMessage&& other)
-    {
-        message = std::move(other.message);
-        std::swap(userData, other.userData);
-    }
+    ~CompilerMessage() = default;
+    CompilerMessage() = default;
+    CompilerMessage(CompilerMessage&&) noexcept = default;
+
     // do not allow copy constructor
     CompilerMessage(const CompilerMessage&) = delete;
-    CompilerMessage(const wxString& msg, wxClientData* data = nullptr)
+
+    CompilerMessage(const wxString& msg, std::unique_ptr<wxClientData> data = nullptr)
         : message(msg)
-        , userData(data)
+        , userData(std::move(data))
     {
     }
 };
@@ -85,22 +83,16 @@ struct CompilerMessage {
 class IEditor
 {
 public:
-    typedef std::list<IEditor*> List_t;
-    typedef std::map<wxString, wxClientData*> ClientDataMap_t;
+    using List_t = std::list<IEditor*>;
 
 protected:
-    IEditor::ClientDataMap_t m_data;
+    using ClientDataMap_t = std::map<wxString, std::unique_ptr<wxClientData>>;
+
+    ClientDataMap_t m_data;
 
 public:
-    IEditor() {}
-    virtual ~IEditor()
-    {
-        IEditor::ClientDataMap_t::iterator iter = m_data.begin();
-        for (; iter != m_data.end(); ++iter) {
-            wxDELETE(iter->second);
-        }
-        m_data.clear();
-    }
+    IEditor() = default;
+    virtual ~IEditor() = default;
 
     /**
      * @brief toggle line comment
@@ -527,18 +519,13 @@ public:
     //-------------------------------------------------
     /**
      * @brief set client data to this editor with key. If client data with this key
-     * already exists, delete and replace  it
+     * already exists, delete and replace it
      * @param key
      * @param data
      */
-    void SetClientData(const wxString& key, wxClientData* data)
+    void SetClientData(const wxString& key, std::unique_ptr<wxClientData> data)
     {
-        IEditor::ClientDataMap_t::iterator iter = m_data.find(key);
-        if (iter != m_data.end()) {
-            wxDELETE(iter->second);
-            m_data.erase(iter);
-        }
-        m_data.insert(std::make_pair(key, data));
+        m_data[key] = std::move(data);
     }
 
     /**
@@ -549,15 +536,15 @@ public:
     /**
      * @brief return the client data associated with this editor and identified by key
      * @param key
-     * @return client data or NULL
+     * @return client data or nullptr
      */
     wxClientData* GetClientData(const wxString& key) const
     {
-        IEditor::ClientDataMap_t::const_iterator iter = m_data.find(key);
+        auto iter = m_data.find(key);
         if (iter != m_data.end()) {
-            return iter->second;
+            return iter->second.get();
         }
-        return NULL;
+        return nullptr;
     }
 
     /**
@@ -567,9 +554,8 @@ public:
      */
     void DeleteClientData(const wxString& key)
     {
-        IEditor::ClientDataMap_t::iterator iter = m_data.find(key);
+        auto iter = m_data.find(key);
         if (iter != m_data.end()) {
-            wxDELETE(iter->second);
             m_data.erase(iter);
         }
     }
@@ -643,7 +629,9 @@ public:
     /**
      * @brief set semantic tokens for this editor
      */
-    virtual void SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+    virtual void SetSemanticTokens(const wxString& classes,
+                                   const wxString& variables,
+                                   const wxString& methods,
                                    const wxString& others) = 0;
 
     /**

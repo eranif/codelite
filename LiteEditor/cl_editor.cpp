@@ -1531,7 +1531,7 @@ void clEditor::OnMarginClick(wxStyledTextEvent& event)
             if ((MarkerGet(nLine) & mmt_compiler) && m_compilerMessagesMap.count(nLine)) {
                 // user clicked on compiler error, fire an event
                 clEditorEvent event_error_clicked{ wxEVT_EDITOR_MARGIN_CLICKED };
-                event_error_clicked.SetUserData(m_compilerMessagesMap.find(nLine)->second.userData);
+                event_error_clicked.SetUserData(m_compilerMessagesMap.find(nLine)->second.userData.get());
                 event_error_clicked.SetFileName(GetRemotePathOrLocal());
                 event_error_clicked.SetLineNumber(nLine);
                 // use process here and not AddPendingEvent or QueueEvent
@@ -3408,7 +3408,7 @@ void clEditor::CreateRemote(const wxString& local_path, const wxString& remote_p
     SetProject(wxEmptyString);
     SetSyntaxHighlight(false);
     // mark this file as remote by setting a remote data
-    IEditor::SetClientData("sftp", new SFTPClientData(local_path, remote_path, ssh_account));
+    IEditor::SetClientData("sftp", std::make_unique<SFTPClientData>(local_path, remote_path, ssh_account));
     OpenFile();
 }
 

@@ -67,59 +67,46 @@ struct StackEntry {
     wxString function;
     wxString file;
     wxString line;
-    bool active;
+    bool active = false;
 };
 
 struct ThreadEntry {
-    bool active;
-    long dbgid;
+    bool active = false;
+    long dbgid = 0;
     wxString file;
     wxString line;
     wxString function;
 };
 
 struct VariableObjChild {
-    int numChilds;    // If this child has children (i.e. is this child a node or leaf)
-    wxString varName; // the name of the variable object node
-    wxString gdbId;   // A unique name given by gdb which holds this node information for further queries
+    int numChilds = 0; // If this child has children (i.e. is this child a node or leaf)
+    wxString varName;  // the name of the variable object node
+    wxString gdbId;    // A unique name given by gdb which holds this node information for further queries
     wxString value;
-    bool isAFake; // Sets to true of this variable object is a fake node
+    bool isAFake = false; // Sets to true of this variable object is a fake node
     wxString type;
-    VariableObjChild()
-        : numChilds(0)
-        , isAFake(false)
-    {
-    }
+
+    VariableObjChild() = default;
 };
 
 struct VariableObject {
-    bool isPtr;        // if this variable object is of type pointer
-    bool isPtrPtr;     // if this variable object is of type pointer pointer
-    wxString gdbId;    // GDB unique identifier for this variable object
-    wxString typeName; // the type of this variable object
-    int numChilds;     // Number of children
-    bool has_more;     // has_nore?
-    VariableObject()
-        : isPtr(false)
-        , isPtrPtr(false)
-        , numChilds(0)
-        , has_more(false)
-    {
-    }
+    bool isPtr = false;    // if this variable object is of type pointer
+    bool isPtrPtr = false; // if this variable object is of type pointer pointer
+    wxString gdbId;        // GDB unique identifier for this variable object
+    wxString typeName;     // the type of this variable object
+    int numChilds = 0;     // Number of children
+    bool has_more = false; // has_more?
+    VariableObject() = default;
 };
 
 struct LocalVariable {
     wxString name;
     wxString value;
     wxString type;
-    bool updated;
+    bool updated = false;
     wxString gdbId; // Mac generates variable object for locals as well...
 
-    LocalVariable()
-        : updated(false)
-    {
-    }
-    ~LocalVariable() {}
+    LocalVariable() = default;
 };
 
 struct VariableObjectUpdateInfo {
@@ -128,7 +115,6 @@ struct VariableObjectUpdateInfo {
 };
 
 struct DisassembleEntry {
-public:
     wxString m_address;
     wxString m_function;
     wxString m_offset;
@@ -140,17 +126,17 @@ struct DbgRegister {
     wxString reg_value;
 };
 
-typedef std::vector<VariableObjChild> VariableObjChildren;
-typedef std::vector<StackEntry> StackEntryArray;
-typedef std::vector<ThreadEntry> ThreadEntryArray;
-typedef std::vector<LocalVariable> LocalVariables;
-typedef std::vector<DisassembleEntry> DisassembleEntryVec_t;
-typedef std::vector<DbgRegister> DbgRegistersVec_t;
+using VariableObjChildren = std::vector<VariableObjChild>;
+using StackEntryArray = std::vector<StackEntry>;
+using ThreadEntryArray = std::vector<ThreadEntry>;
+using LocalVariables = std::vector<LocalVariable>;
+using DisassembleEntryVec_t = std::vector<DisassembleEntry>;
+using DbgRegistersVec_t = std::vector<DbgRegister>;
 
 #define READ_CONFIG_PARAM(name, value) \
     {                                  \
         decltype(value) dummy;         \
-        if(arch.Read(name, dummy)) {   \
+        if (arch.Read(name, dummy)) {  \
             value = dummy;             \
         }                              \
     }
@@ -165,56 +151,32 @@ public:
 
     wxString name;
     wxString path;
-    bool enableDebugLog;
-    bool enablePendingBreakpoints;
-    bool breakAtWinMain;
-    bool showTerminal;
-    wxString consoleCommand;
-    bool useRelativeFilePaths;
-    int maxCallStackFrames;
-    bool catchThrow;
-    bool showTooltipsOnlyWithControlKeyIsDown;
-    bool debugAsserts;
+    bool enableDebugLog = false;
+    bool enablePendingBreakpoints = true;
+    bool breakAtWinMain = false;
+    bool showTerminal = false;
+    wxString consoleCommand = TERMINAL_CMD;
+    bool useRelativeFilePaths = false;
+    int maxCallStackFrames = 500;
+    bool catchThrow = false;
+    bool showTooltipsOnlyWithControlKeyIsDown = true;
+    bool debugAsserts = false;
     wxString initFileCommands;
     int maxDisplayStringSize = 200;
     int maxDisplayElements = 100;
-    bool resolveLocals;
-    bool autoExpandTipItems;
-    bool applyBreakpointsAfterProgramStarted;
-    bool whenBreakpointHitRaiseCodelite;
+    bool resolveLocals = true;
+    bool autoExpandTipItems = true;
+    bool applyBreakpointsAfterProgramStarted = false;
+    bool whenBreakpointHitRaiseCodelite = true;
     wxString cygwinPathCommand;
-    bool charArrAsPtr;
-    bool enableGDBPrettyPrinting;
-    bool defaultHexDisplay;
-    size_t flags; // see eGdbFlags
+    bool charArrAsPtr = false;
+    bool enableGDBPrettyPrinting = true;
+    bool defaultHexDisplay = false;
+    size_t flags = 0; // see eGdbFlags
 
 public:
-    DebuggerInformation()
-        : name(wxEmptyString)
-        , path(wxEmptyString)
-        , enableDebugLog(false)
-        , enablePendingBreakpoints(true)
-        , breakAtWinMain(false)
-        , showTerminal(false)
-        , consoleCommand(TERMINAL_CMD)
-        , useRelativeFilePaths(false)
-        , maxCallStackFrames(500)
-        , catchThrow(false)
-        , showTooltipsOnlyWithControlKeyIsDown(true)
-        , debugAsserts(false)
-        , initFileCommands(wxEmptyString)
-        , resolveLocals(true)
-        , autoExpandTipItems(true)
-        , applyBreakpointsAfterProgramStarted(false)
-        , whenBreakpointHitRaiseCodelite(true)
-        , charArrAsPtr(false)
-        , enableGDBPrettyPrinting(true)
-        , defaultHexDisplay(false)
-        , flags(0)
-    {
-    }
-
-    virtual ~DebuggerInformation() {}
+    DebuggerInformation() = default;
+    ~DebuggerInformation() override = default;
 
     void Serialize(Archive& arch)
     {
@@ -291,28 +253,19 @@ class DebuggerStartupInfo
 public:
     enum DebugType { DebugProject = 1, AttachProcess = 2, QuickDebug = 3 };
 
-    long pid;
+    long pid = wxNOT_FOUND;
     wxString project;
-    IDebugger* debugger;
+    IDebugger* debugger = nullptr;
 
-    DebuggerStartupInfo()
-        : pid(wxNOT_FOUND)
-        , project(wxEmptyString)
-        , debugger(NULL)
-    {
-    }
+    DebuggerStartupInfo() = default;
 
-    DebuggerStartupInfo(long pid)
+    explicit DebuggerStartupInfo(long pid)
         : pid(pid)
-        , project(wxEmptyString)
-        , debugger(NULL)
     {
     }
 
-    DebuggerStartupInfo(const wxString& project)
-        : pid(wxNOT_FOUND)
-        , project(project)
-        , debugger(NULL)
+    explicit DebuggerStartupInfo(const wxString& project)
+        : project(project)
     {
     }
 
@@ -362,28 +315,23 @@ class EnvironmentConfig;
 class IDebugger
 {
 protected:
-    IDebuggerObserver* m_observer;
+    IDebuggerObserver* m_observer = nullptr;
     DebuggerInformation m_info;
-    EnvironmentConfig* m_env;
+    EnvironmentConfig* m_env = nullptr;
     wxString m_name;
-    bool m_isRemoteDebugging;
-    bool m_isRemoteExtended;
+    bool m_isRemoteDebugging = false;
+    bool m_isRemoteExtended = false;
     bool m_isSSHDebugging = false;
     wxString m_debuggeeProjectName;
     wxString m_sshAccount;
-    
+
     //! Command to execute right after connect to the remote target
     wxString m_debuggerPostRemoteConnectCommands;
 
 public:
-    IDebugger()
-        : m_observer(NULL)
-        , m_env(NULL)
-        , m_isRemoteDebugging(false)
-        , m_isRemoteExtended(false)
-    {}
+    IDebugger() = default;
 
-    virtual ~IDebugger(){};
+    virtual ~IDebugger() = default;
     void SetProjectName(const wxString& project) { m_debuggeeProjectName = project; }
     void SetName(const wxString& name) { m_name = name; }
     wxString GetName() const { return m_name; }
@@ -401,13 +349,15 @@ public:
 
     void SetIsRemoteDebugging(bool isRemoteDebugging) { this->m_isRemoteDebugging = isRemoteDebugging; }
     void SetIsRemoteExtended(bool isRemoteExtended) { this->m_isRemoteExtended = isRemoteExtended; }
-    void SetPostRemoteConnectCommands(const wxString& commands) { this->m_debuggerPostRemoteConnectCommands = commands; }
-    
-    
+    void SetPostRemoteConnectCommands(const wxString& commands)
+    {
+        this->m_debuggerPostRemoteConnectCommands = commands;
+    }
+
     bool GetIsRemoteDebugging() const { return m_isRemoteDebugging; }
     bool GetIsRemoteExtended() const { return m_isRemoteExtended; }
     const wxString& GetPostRemoteConnectCommands() const { return this->m_debuggerPostRemoteConnectCommands; }
-    
+
     void SetIsSSHDebugging(bool isSSHDebugging) { this->m_isSSHDebugging = isSSHDebugging; }
     bool IsSSHDebugging() const { return m_isSSHDebugging; }
     void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }
@@ -720,7 +670,7 @@ public:
 //-----------------------------------------------------------
 // Each debugger module must implement these two functions
 //-----------------------------------------------------------
-typedef IDebugger* (*GET_DBG_CREATE_FUNC)();
-typedef DebuggerInfo (*GET_DBG_INFO_FUNC)();
+using GET_DBG_CREATE_FUNC = IDebugger* (*)();
+using GET_DBG_INFO_FUNC = DebuggerInfo (*)();
 
 #endif // DEBUGGER_H

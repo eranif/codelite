@@ -116,8 +116,8 @@ class IManager
     wxArrayString m_outputTabs;
 
 public:
-    IManager() {}
-    virtual ~IManager() {}
+    IManager() = default;
+    virtual ~IManager() = default;
 
     /**
      * @brief return a list of all possible output tabs registered by the user
@@ -257,7 +257,7 @@ public:
     OpenFile(const wxString& fileName, const wxString& bmpResourceName, const wxString& tooltip = wxEmptyString) = 0;
 
     /**
-     * @brief load a remote file content (represented by the local_path) into an `IEdtor`
+     * @brief load a remote file content (represented by the local_path) into an `IEditor`
      */
     virtual IEditor* OpenRemoteFile(const wxString& local_path,
                                     const wxString& remote_path,
@@ -296,7 +296,6 @@ public:
     virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type) = 0;
     /**
      * @brief returns a pointer to wxTreeCtrl by type
-     * @param type the type of tree
      * @sa TreeType
      */
     virtual clTreeCtrl* GetFileExplorerTree() = 0;
@@ -577,7 +576,7 @@ public:
                          bool selected = false) = 0;
 
     /**
-     * @brief select a window in mainbook
+     * @brief select a page in mainbook
      */
     virtual bool SelectPage(wxWindow* win) = 0;
 
@@ -587,7 +586,7 @@ public:
     virtual void SetPageTitle(wxWindow* win, const wxString& title) = 0;
 
     /**
-     * @brief set the page's title
+     * @brief get the page's title
      */
     virtual wxString GetPageTitle(wxWindow* win) const = 0;
 
@@ -611,7 +610,7 @@ public:
 
     /**
      * @brief search the mainbook for an editor representing a given filename
-     * return IEditor* or NULL if no match was found
+     * return IEditor* or nullptr if no match was found
      */
     virtual IEditor* FindEditor(const wxString& filename) const = 0;
 
@@ -663,7 +662,7 @@ public:
     virtual void SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints) = 0;
 
     /**
-     * @brief process a standard edit event ( wxID_COPY, wxID_PASTE etc)
+     * @brief process a standard edit event (wxID_COPY, wxID_PASTE etc)
      * @param e the event to process
      * @param editor the editor
      */

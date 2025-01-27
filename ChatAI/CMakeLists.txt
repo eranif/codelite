@@ -32,8 +32,3 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 
 cl_install_plugin(${PLUGIN_NAME})
-
-if(MINGW)
-    # install clang-format
-    msys_install_clang64_tool(clang-format.exe ${CL_INSTALL_BIN})
-endif()

@@ -27,7 +27,7 @@
 wxXmlNode* XmlUtils::FindNodeByName(const wxXmlNode* parent, const wxString& tagName, const wxString& name)
 {
     if(!parent) {
-        return NULL;
+        return nullptr;
     }
 
     wxXmlNode* child = parent->GetChildren();
@@ -40,13 +40,13 @@ wxXmlNode* XmlUtils::FindNodeByName(const wxXmlNode* parent, const wxString& tag
         }
         child = child->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 wxXmlNode* XmlUtils::FindFirstByTagName(const wxXmlNode* parent, const wxString& tagName)
 {
     if(!parent) {
-        return NULL;
+        return nullptr;
     }
 
     wxXmlNode* child = parent->GetChildren();
@@ -56,12 +56,12 @@ wxXmlNode* XmlUtils::FindFirstByTagName(const wxXmlNode* parent, const wxString&
         }
         child = child->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 wxXmlNode* XmlUtils::FindLastByTagName(const wxXmlNode* parent, const wxString& tagName)
 {
-    wxXmlNode* last_node = NULL;
+    wxXmlNode* last_node = nullptr;
     wxXmlNode* child = parent->GetChildren();
     while(child) {
         if(child->GetName() == tagName) {
@@ -211,7 +211,7 @@ wxString XmlUtils::ChildNodesContentToString(const wxXmlNode* node, const wxStri
 void XmlUtils::SetNodeContent(wxXmlNode* node, const wxString& text)
 {
     wxXmlNode* n = node->GetChildren();
-    wxXmlNode* contentNode = NULL;
+    wxXmlNode* contentNode = nullptr;
     while(n) {
         if(n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE) {
             contentNode = n;
@@ -246,7 +246,7 @@ void XmlUtils::RemoveChildren(wxXmlNode* node)
 void XmlUtils::SetCDATANodeContent(wxXmlNode* node, const wxString& text)
 {
     wxXmlNode* n = node->GetChildren();
-    wxXmlNode* contentNode = NULL;
+    wxXmlNode* contentNode = nullptr;
     while(n) {
         if(n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE) {
             contentNode = n;
@@ -304,7 +304,7 @@ bool XmlUtils::StaticWriteObject(wxXmlNode* root, const wxString& name, Serializ
     }
 
     // create new xml node for this object
-    child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("ArchiveObject"));
+    child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("ArchiveObject"));
     root->AddChild(child);
 
     wxString objectVersion = obj->GetVersion();

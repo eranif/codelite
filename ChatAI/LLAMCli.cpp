@@ -85,7 +85,8 @@ bool LLAMCli::StartProcess()
                                       "--ctx-size",
                                       "8192",
                                       "-p",
-                                      CHATAI_PROMPT_STRING };
+                                      CHATAI_PROMPT_STRING,
+                                      "-cnv" /* converstion mode */ };
 
     m_process = ::CreateAsyncProcess(
         this, command, IProcessCreateWithHiddenConsole | IProcessStderrEvent | IProcessWrapInShell);

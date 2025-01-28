@@ -44,6 +44,6 @@ void wxCF667InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/UI_assistance.ai_bitmaps.cpp$C__msys64_home_eran_devl_codelite_assistance.ai_UI_assistance.ai_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_assistance.ai_bitmaps.cpp$C__msys64_home_eran_devl_codelite_assistance.ai_UI_assistance.ai_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_assistance.ai_bitmaps.cpp$C__msys64_home_eran_devl_codelite_ChatAI_UI_assistance.ai_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_assistance.ai_bitmaps.cpp$C__msys64_home_eran_devl_codelite_ChatAI_UI_assistance.ai_bitmaps.xrc"));
 }

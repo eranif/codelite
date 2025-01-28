@@ -12,6 +12,8 @@ public:
 
     ChatAIConfig& GetConfig() { return m_config; }
     void Send(const wxString& prompt);
+    void Interrupt();
+    bool StartProcess();
     void Stop();
     bool IsRunning() const { return m_process != nullptr; }
 

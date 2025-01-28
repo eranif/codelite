@@ -37,11 +37,15 @@ public:
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
+    ChatAIConfig& GetConfig() { return m_cli.GetConfig(); }
+    bool IsRunning() const { return m_cli.IsRunning(); }
 
 private:
     void OnShowChatWindow(wxCommandEvent& event);
     void OnPrompt(clCommandEvent& event);
+    void OnInterrupt(clCommandEvent& event);
     void OnStopLlamaCli(clCommandEvent& event);
+    void OnStartLlamCli(clCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
 
     ChatAIWindow* m_chatWindow = nullptr;

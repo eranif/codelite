@@ -12,10 +12,15 @@ wxDEFINE_EVENT(wxEVT_LLAMACLI_STDOUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LLAMACLI_STDERR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LLAMACLI_TERMINATED, clCommandEvent);
 
+#ifdef __WXMSW__
+#include <windows.h>
+#endif
+
 namespace
 {
 const wxString PromptFile = "ChatAI.prompt";
-}
+const wxString CHATAI_PROMPT_STRING = "ChatAI is ready to assist!";
+} // namespace
 
 LLAMCli::LLAMCli()
 {
@@ -56,12 +61,7 @@ void LLAMCli::OnProcessTerminated(clProcessEvent& event)
     FileUtils::Deleter deleter{ prompt_file };
 }
 
-void LLAMCli::OnProcessStderr(clProcessEvent& event)
-{
-    clCommandEvent event_stderr{ wxEVT_LLAMACLI_STDERR };
-    event_stderr.SetString(event.GetOutput());
-    EventNotifier::Get()->AddPendingEvent(event_stderr);
-}
+void LLAMCli::OnProcessStderr(clProcessEvent& event) { clDEBUG() << event.GetOutput() << endl; }
 
 void LLAMCli::Stop()
 {
@@ -70,33 +70,58 @@ void LLAMCli::Stop()
     }
 }
 
-void LLAMCli::Send(const wxString& prompt)
+bool LLAMCli::StartProcess()
 {
-    if (IsRunning() || !IsOk()) {
-        return;
+    if (IsRunning()) {
+        // already running
+        return true;
     }
 
-    wxString prompt_file = wxFileName(clStandardPaths::Get().GetTempDir(), PromptFile).GetFullPath();
-    FileUtils::WriteFileContent(prompt_file, prompt);
+    std::vector<wxString> command = { GetConfig().GetLlamaCli(),
+                                      "-m",
+                                      GetConfig().GetSelectedModel()->m_modelFile,
+                                      "-t",
+                                      "2",
+                                      "--ctx-size",
+                                      "8192",
+                                      "-p",
+                                      CHATAI_PROMPT_STRING };
 
-    std::vector<wxString> command = {
-        GetConfig().GetLlamaCli(),
-        "--log-disable",
-        "--simple-io",
-        "-m",
-        GetConfig().GetSelectedModel()->m_modelFile,
-        "-f",
-        prompt_file,
-    };
-
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateWithHiddenConsole | IProcessStderrEvent);
+    m_process = ::CreateAsyncProcess(
+        this, command, IProcessCreateWithHiddenConsole | IProcessStderrEvent | IProcessWrapInShell);
     if (!m_process) {
-        ::wxMessageBox(wxString() << _("Failed to launch command: '") << GetConfig().GetLlamaCli() << "'", "CodeLite",
+        ::wxMessageBox(wxString() << _("Failed to launch command: '") << GetConfig().GetLlamaCli() << "'",
+                       "CodeLite",
                        wxOK | wxCENTER | wxICON_ERROR);
-        FileUtils::Deleter deleter{ prompt_file };
-        return;
+        return false;
     }
 
     clCommandEvent event_start{ wxEVT_LLAMACLI_STARTED };
     EventNotifier::Get()->AddPendingEvent(event_start);
+
+    return true;
+}
+
+void LLAMCli::Send(const wxString& prompt)
+{
+    if (!IsOk() || !IsRunning()) {
+        return;
+    }
+    m_process->Write(prompt);
+}
+
+void LLAMCli::Interrupt()
+{
+    if (!IsRunning()) {
+        return;
+    }
+
+    wxString ctrlc;
+    ctrlc.append(1, (char)0x3);
+
+#ifdef __WXMSW__
+    // Send CTRL+C signal to the child process
+    ctrlc << "\n";
+#endif
+    m_process->WriteRaw(ctrlc);
 }

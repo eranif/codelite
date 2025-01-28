@@ -4,16 +4,15 @@
 #include "UI.hpp"
 #include "cl_command_event.h"
 
+class ChatAI;
 class ChatAIWindow : public AssistanceAIChatWindowBase
 {
 public:
-    ChatAIWindow(wxWindow* parent, ChatAIConfig& config);
+    ChatAIWindow(wxWindow* parent, ChatAI* plugin);
     virtual ~ChatAIWindow();
     void ShowSettings();
 
 protected:
-    void OnStop(wxCommandEvent& event) override;
-    void OnStopUI(wxUpdateUIEvent& event) override;
     void OnInputUI(wxUpdateUIEvent& event) override;
     void OnSend(wxCommandEvent& event) override;
     void OnSendUI(wxUpdateUIEvent& event) override;
@@ -21,6 +20,12 @@ protected:
     void OnKeyDown(wxKeyEvent& event);
     void OnSettings(wxCommandEvent& event);
     void OnClear(wxCommandEvent& event);
+    void OnStartModel(wxCommandEvent& event);
+    void OnStartModelUI(wxUpdateUIEvent& event);
+    void OnStopModel(wxCommandEvent& event);
+    void OnStopModelUI(wxUpdateUIEvent& event);
+    void OnRestartModel(wxCommandEvent& event);
+    void OnRestartModelUI(wxUpdateUIEvent& event);
     void UpdateTheme();
     void SendPromptEvent();
     void OnChatAIStarted(clCommandEvent& event);
@@ -32,10 +37,13 @@ protected:
     void SetFocusToActiveEditor();
 
 private:
-    ChatAIConfig& m_config;
+    ChatAI* m_plugin = nullptr;
     bool m_llamaCliRunning = false;
     wxChoice* m_activeModel = nullptr;
+    bool m_autoRestart = false;
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);
 wxDECLARE_EVENT(wxEVT_CHATAI_STOP, clCommandEvent);
+wxDECLARE_EVENT(wxEVT_CHATAI_START, clCommandEvent);
+wxDECLARE_EVENT(wxEVT_CHATAI_INTERRUPT, clCommandEvent);

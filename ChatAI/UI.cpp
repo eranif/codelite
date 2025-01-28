@@ -19,12 +19,12 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
-AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                         const wxPoint& pos, const wxSize& size, long style)
+AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -56,35 +56,55 @@ AssistanceAISettingsBaseDlg::AssistanceAISettingsBaseDlg(wxWindow* parent, wxWin
     flexGridSizer11->AddGrowableCol(1);
     m_generalSettings->SetSizer(flexGridSizer11);
 
-    m_staticText12 = new wxStaticText(m_generalSettings, wxID_ANY, _("llama-cli:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)), 0);
+    m_staticText12 = new wxStaticText(m_generalSettings,
+                                      wxID_ANY,
+                                      _("llama-cli:"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)),
+                                      0);
 
     flexGridSizer11->Add(m_staticText12, 0, wxALL | wxALIGN_RIGHT | wxALIGN_BOTTOM, WXC_FROM_DIP(5));
 
-    m_filePickerCLI = new wxFilePickerCtrl(m_generalSettings, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"),
-                                           wxDefaultPosition, wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)),
+    m_filePickerCLI = new wxFilePickerCtrl(m_generalSettings,
+                                           wxID_ANY,
+                                           wxEmptyString,
+                                           _("Select a file"),
+                                           wxT("*"),
+                                           wxDefaultPosition,
+                                           wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)),
                                            wxFLP_DEFAULT_STYLE | wxFLP_SMALL);
     m_filePickerCLI->SetFocus();
 
     flexGridSizer11->Add(m_filePickerCLI, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText39 = new wxStaticText(m_generalSettings, wxID_ANY, _("Active model:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)), 0);
+    m_staticText39 = new wxStaticText(m_generalSettings,
+                                      wxID_ANY,
+                                      _("Active model:"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)),
+                                      0);
 
     flexGridSizer11->Add(m_staticText39, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceModelsArr;
-    m_choiceModels = new wxChoice(m_generalSettings, wxID_ANY, wxDefaultPosition,
-                                  wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)), m_choiceModelsArr, 0);
+    m_choiceModels = new wxChoice(m_generalSettings,
+                                  wxID_ANY,
+                                  wxDefaultPosition,
+                                  wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)),
+                                  m_choiceModelsArr,
+                                  0);
 
     flexGridSizer11->Add(m_choiceModels, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     flexGridSizer11->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
-    m_hyperLink46 =
-        new wxHyperlinkCtrl(m_generalSettings, wxID_ANY, _("Search Models"),
-                            wxT("https://huggingface.co/models?sort=downloads&search=gguf"), wxDefaultPosition,
-                            wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)), wxHL_DEFAULT_STYLE);
+    m_hyperLink46 = new wxHyperlinkCtrl(m_generalSettings,
+                                        wxID_ANY,
+                                        _("Search Models"),
+                                        wxT("https://huggingface.co/models?sort=downloads&search=gguf"),
+                                        wxDefaultPosition,
+                                        wxDLG_UNIT(m_generalSettings, wxSize(-1, -1)),
+                                        wxHL_DEFAULT_STYLE);
     m_hyperLink46->SetToolTip(
         _("Search the web for models to download.\n\nhttps://huggingface.co/models?sort=downloads&search=gguf"));
 
@@ -189,9 +209,14 @@ ModelPageBase::ModelPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     flexGridSizer16->Add(m_staticText19, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_filePickerModelFile =
-        new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
-                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_SMALL);
+    m_filePickerModelFile = new wxFilePickerCtrl(this,
+                                                 wxID_ANY,
+                                                 wxEmptyString,
+                                                 _("Select a file"),
+                                                 wxT("*"),
+                                                 wxDefaultPosition,
+                                                 wxDLG_UNIT(this, wxSize(-1, -1)),
+                                                 wxFLP_DEFAULT_STYLE | wxFLP_SMALL);
 
     flexGridSizer16->Add(m_filePickerModelFile, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -204,8 +229,8 @@ ModelPageBase::ModelPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
 ModelPageBase::~ModelPageBase() {}
 
-AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,
-                                                       const wxSize& size, long style)
+AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -218,21 +243,30 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer27);
 
-    m_splitter30 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxSP_LIVE_UPDATE | wxSP_3D);
+    m_splitter30 = new wxSplitterWindow(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_LIVE_UPDATE | wxSP_3D);
     m_splitter30->SetSashGravity(1);
     m_splitter30->SetMinimumPaneSize(150);
 
     boxSizer27->Add(m_splitter30, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage32 = new wxPanel(m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)),
-                                   wxTAB_TRAVERSAL);
+    m_splitterPage32 = new wxPanel(
+        m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage32->SetSizer(boxSizer35);
 
-    m_stcOutput = new clThemedSTC(m_splitterPage32, wxID_ANY, wxDefaultPosition,
-                                  wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)), wxBORDER_NONE);
+    m_toolbar = new clToolBar(m_splitterPage32,
+                              wxID_ANY,
+                              wxDefaultPosition,
+                              wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)),
+                              wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer35->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stcOutput = new clThemedSTC(
+        m_splitterPage32, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -271,25 +305,19 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
 
     boxSizer35->Add(m_stcOutput, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage34 = new wxPanel(m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)),
-                                   wxTAB_TRAVERSAL);
+    m_splitterPage34 = new wxPanel(
+        m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter30->SplitHorizontally(m_splitterPage32, m_splitterPage34, 0);
 
     wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage34->SetSizer(boxSizer43);
 
-    m_toolbar = new wxToolBar(m_splitterPage34, wxID_ANY, wxDefaultPosition,
-                              wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer43->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
-
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer43->Add(boxSizer36, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcInput = new clThemedSTC(m_splitterPage34, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcInput = new clThemedSTC(
+        m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxBORDER_NONE);
     m_stcInput->SetFocus();
     // Configure the fold margin
     m_stcInput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -333,17 +361,12 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
 
     boxSizer36->Add(boxSizer42, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_button37 = new wxButton(m_splitterPage34, wxID_ANY, _("Send"), wxDefaultPosition,
-                              wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+    m_button37 = new wxButton(
+        m_splitterPage34, wxID_ANY, _("Send"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
     m_button37->SetDefault();
     m_button37->SetToolTip(_("Send prompt\nShift+ENTER"));
 
     boxSizer42->Add(m_button37, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_buttonStop = new wxButton(m_splitterPage34, wxID_ANY, _("Stop"), wxDefaultPosition,
-                                wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
-
-    boxSizer42->Add(m_buttonStop, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("AssistanceAIChatWindowBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -354,8 +377,6 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(wxWindow* parent, wxWindo
     m_stcInput->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
     m_button37->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnSend, this);
     m_button37->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnSendUI, this);
-    m_buttonStop->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnStopUI, this);
-    m_buttonStop->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnStop, this);
 }
 
 AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
@@ -363,6 +384,4 @@ AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
     m_stcInput->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
     m_button37->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnSend, this);
     m_button37->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnSendUI, this);
-    m_buttonStop->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnStopUI, this);
-    m_buttonStop->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnStop, this);
 }

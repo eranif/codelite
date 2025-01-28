@@ -47,10 +47,7 @@ const wxString CHAT_AI_LABEL = _("Chat AI");
 
 // Allocate the code formatter on the heap, it will be freed by
 // the application
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new ChatAI(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new ChatAI(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -77,10 +74,13 @@ ChatAI::ChatAI(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
 
     m_cli.GetConfig().Load();
-    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), m_cli.GetConfig());
-    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_CHATAI_SEND, &ChatAI::OnPrompt, this);
+    EventNotifier::Get()->Bind(wxEVT_CHATAI_INTERRUPT, &ChatAI::OnInterrupt, this);
     EventNotifier::Get()->Bind(wxEVT_CHATAI_STOP, &ChatAI::OnStopLlamaCli, this);
+    EventNotifier::Get()->Bind(wxEVT_CHATAI_START, &ChatAI::OnStartLlamCli, this);
+
+    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
+    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_chatWindow, CHAT_AI_LABEL, wxEmptyString);
 }
 
 ChatAI::~ChatAI() {}
@@ -89,7 +89,7 @@ void ChatAI::UnPlug()
 {
     wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
     // before this plugin is un-plugged we must remove the tab we added
-    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_chatWindow)) {
+    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_chatWindow)) {
         m_chatWindow->Destroy();
     }
     m_chatWindow = nullptr;
@@ -132,6 +132,18 @@ void ChatAI::OnStopLlamaCli(clCommandEvent& event)
     m_cli.Stop();
 }
 
+void ChatAI::OnStartLlamCli(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_cli.StartProcess();
+}
+
+void ChatAI::OnInterrupt(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_cli.Interrupt();
+}
+
 void ChatAI::OnPrompt(clCommandEvent& event)
 {
     if (!m_cli.IsOk()) {
@@ -142,7 +154,7 @@ void ChatAI::OnPrompt(clCommandEvent& event)
         ::wxMessageBox(message, "CodeLite - ChatAI", wxOK | wxCENTRE | wxICON_WARNING);
         m_chatWindow->CallAfter(&ChatAIWindow::ShowSettings);
         return;
-    } else if (m_cli.IsRunning()) {
+    } else if (!m_cli.IsRunning()) {
         return;
     }
 

@@ -26,9 +26,10 @@
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #include <wx/splitter.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
-#include <wx/toolbar.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -80,8 +81,10 @@ public:
     wxNotebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButton44() { return m_button44; }
-    AssistanceAISettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
-                                const wxString& title = _("Chat AI Settings"), const wxPoint& pos = wxDefaultPosition,
+    AssistanceAISettingsBaseDlg(wxWindow* parent,
+                                wxWindowID id = wxID_ANY,
+                                const wxString& title = _("Chat AI Settings"),
+                                const wxPoint& pos = wxDefaultPosition,
                                 const wxSize& size = wxSize(-1, -1),
                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~AssistanceAISettingsBaseDlg();
@@ -101,8 +104,11 @@ public:
     wxTextCtrl* GetTextCtrlModelName() { return m_textCtrlModelName; }
     wxStaticText* GetStaticText19() { return m_staticText19; }
     wxFilePickerCtrl* GetFilePickerModelFile() { return m_filePickerModelFile; }
-    ModelPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    ModelPageBase(wxWindow* parent,
+                  wxWindowID id = wxID_ANY,
+                  const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxSize(-1, -1),
+                  long style = wxTAB_TRAVERSAL);
     virtual ~ModelPageBase();
 };
 
@@ -111,31 +117,30 @@ class AssistanceAIChatWindowBase : public wxPanel
 protected:
     wxSplitterWindow* m_splitter30;
     wxPanel* m_splitterPage32;
+    clToolBar* m_toolbar;
     clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPage34;
-    wxToolBar* m_toolbar;
     clThemedSTC* m_stcInput;
     wxButton* m_button37;
-    wxButton* m_buttonStop;
 
 protected:
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSend(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSendUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnStopUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnStop(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxPanel* GetSplitterPage32() { return m_splitterPage32; }
-    wxToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcInput() { return m_stcInput; }
     wxButton* GetButton37() { return m_button37; }
-    wxButton* GetButtonStop() { return m_buttonStop; }
     wxPanel* GetSplitterPage34() { return m_splitterPage34; }
     wxSplitterWindow* GetSplitter30() { return m_splitter30; }
-    AssistanceAIChatWindowBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                               const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    AssistanceAIChatWindowBase(wxWindow* parent,
+                               wxWindowID id = wxID_ANY,
+                               const wxPoint& pos = wxDefaultPosition,
+                               const wxSize& size = wxSize(-1, -1),
+                               long style = wxTAB_TRAVERSAL);
     virtual ~AssistanceAIChatWindowBase();
 };
 

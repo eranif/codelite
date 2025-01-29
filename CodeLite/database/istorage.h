@@ -161,22 +161,13 @@ public:
     virtual void GetTagsByFileAndLine(const wxString& file, int line, std::vector<TagEntryPtr>& tags) = 0;
 
     /**
-     * @brief return list by kind and scope
-     * @param scope
-     * @param kinds
-     * @param tags [output]
-     */
-    virtual void GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds,
-                                       std::vector<TagEntryPtr>& tags, bool applyLimit = true) = 0;
-
-    /**
      * @brief return list by kind and scope while using a filter
      * @param scope
      * @param kinds
      * @param tags [output]
      */
     virtual void GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
-                                       std::vector<TagEntryPtr>& tags, bool applyLimit = true) = 0;
+                                       std::vector<TagEntryPtr>& tags) = 0;
 
     /**
      * @brief get list of tags by kind and file

@@ -35,6 +35,8 @@ protected:
     void PopulateModels();
     void OnActiveModelChanged(wxCommandEvent& event);
     void SetFocusToActiveEditor();
+    void AppendOutputText(const wxString& message);
+    void PromptForModelReplace(const wxString& message);
 
 private:
     ChatAI* m_plugin = nullptr;

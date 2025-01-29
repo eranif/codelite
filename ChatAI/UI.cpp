@@ -265,8 +265,8 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer35->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcOutput = new clThemedSTC(
-        m_splitterPage32, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcOutput =
+        new clThemedSTC(m_splitterPage32, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -316,8 +316,9 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer43->Add(boxSizer36, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcInput = new clThemedSTC(
-        m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcInput =
+        new clThemedSTC(m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+    m_stcInput->SetToolTip(_("Use Shift-ENTER to submit"));
     m_stcInput->SetFocus();
     // Configure the fold margin
     m_stcInput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -362,9 +363,9 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     boxSizer36->Add(boxSizer42, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_button37 = new wxButton(
-        m_splitterPage34, wxID_ANY, _("Send"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+        m_splitterPage34, wxID_ANY, _("Submit"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
     m_button37->SetDefault();
-    m_button37->SetToolTip(_("Send prompt\nShift+ENTER"));
+    m_button37->SetToolTip(_("Submit prompt\nShift+ENTER"));
 
     boxSizer42->Add(m_button37, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

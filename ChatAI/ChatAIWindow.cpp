@@ -4,6 +4,7 @@
 #include "ChatAISettingsDlg.hpp"
 #include "ColoursAndFontsManager.h"
 #include "LLAMCli.hpp"
+#include "clSTCHelper.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
@@ -152,6 +153,9 @@ void ChatAIWindow::OnClear(wxCommandEvent& event)
 void ChatAIWindow::OnStartModel(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    auto activeModelName =
+        m_plugin->GetConfig().GetSelectedModel() ? m_plugin->GetConfig().GetSelectedModel()->m_name : wxString();
+    AppendOutputText(wxString() << _("Starting model...") << activeModelName << "\n");
     clCommandEvent start_event{ wxEVT_CHATAI_START };
     EventNotifier::Get()->AddPendingEvent(start_event);
 }
@@ -181,15 +185,14 @@ void ChatAIWindow::OnChatAITerminated(clCommandEvent& event)
 {
     wxUnusedVar(event);
     m_llamaCliRunning = false;
-    m_stcOutput->AppendText("\n----\n");
-    m_stcOutput->ScrollToEnd();
+    AppendOutputText("\n---\n");
     m_stcInput->Enable(true);
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
 
     if (m_autoRestart) {
-        // we are restarting the model
-        clCommandEvent start_event{ wxEVT_CHATAI_START };
-        EventNotifier::Get()->AddPendingEvent(start_event);
+        // Restarting the model
+        wxCommandEvent dummy;
+        OnStartModel(dummy);
     }
     m_autoRestart = false;
 }
@@ -197,8 +200,7 @@ void ChatAIWindow::OnChatAITerminated(clCommandEvent& event)
 void ChatAIWindow::OnChatAIOutput(clCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_stcOutput->AppendText(event.GetString());
-    m_stcOutput->ScrollToEnd();
+    AppendOutputText(event.GetString());
 }
 
 void ChatAIWindow::OnChatAIStderr(clCommandEvent& event)
@@ -229,6 +231,14 @@ void ChatAIWindow::OnActiveModelChanged(wxCommandEvent& event)
     wxString activeModel = m_activeModel->GetStringSelection();
     m_plugin->GetConfig().SetSelectedModelName(activeModel);
     m_plugin->GetConfig().Save();
+
+    if (m_llamaCliRunning) {
+        // A model is running, prompt the user to switch
+        wxString message;
+        message << _("Would you also like to change the running model to: ") << activeModel << " ?";
+
+        CallAfter(&ChatAIWindow::PromptForModelReplace, message);
+    }
 }
 
 void ChatAIWindow::SetFocusToActiveEditor()
@@ -253,3 +263,29 @@ void ChatAIWindow::OnRestartModel(wxCommandEvent& event)
 }
 
 void ChatAIWindow::OnRestartModelUI(wxUpdateUIEvent& event) { event.Enable(m_llamaCliRunning); }
+
+void ChatAIWindow::AppendOutputText(const wxString& message)
+{
+    bool scroll_to_end = true;
+    if (wxWindow::FindFocus() == m_stcOutput &&
+        m_stcOutput->GetCurrentLine() != m_stcOutput->LineFromPosition(m_stcOutput->GetLastPosition())) {
+        scroll_to_end = false;
+    }
+
+    m_stcOutput->AppendText(message);
+    if (scroll_to_end) {
+        m_stcOutput->ScrollToEnd();
+        clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
+    }
+}
+
+void ChatAIWindow::PromptForModelReplace(const wxString& message)
+{
+    if (::wxMessageBox(message, "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION, nullptr) !=
+        wxYES) {
+        return;
+    }
+
+    wxCommandEvent dummy;
+    OnRestartModel(dummy);
+}

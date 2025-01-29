@@ -1979,7 +1979,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxBORDER_NONE"],
+													"m_styles":	[],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -2228,7 +2228,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxBORDER_NONE"],
+															"m_styles":	[],
 															"m_sizerFlags":	["wxTOP", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -2249,7 +2249,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	""
+																	"m_value":	"Use Shift-ENTER to submit"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Hidden",
@@ -2405,7 +2405,7 @@
 																		}, {
 																			"type":	"multi-string",
 																			"m_label":	"Tooltip:",
-																			"m_value":	"Send prompt\\nShift+ENTER"
+																			"m_value":	"Submit prompt\\nShift+ENTER"
 																		}, {
 																			"type":	"colour",
 																			"m_label":	"Bg Colour:",
@@ -2445,7 +2445,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Label:",
-																			"m_value":	"Send"
+																			"m_value":	"Submit"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",

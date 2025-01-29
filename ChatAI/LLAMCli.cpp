@@ -6,6 +6,7 @@
 #include "globals.h"
 
 #include <wx/msgdlg.h>
+#include <wx/tokenzr.h>
 
 wxDEFINE_EVENT(wxEVT_LLAMACLI_STARTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LLAMACLI_STDOUT, clCommandEvent);
@@ -108,7 +109,11 @@ void LLAMCli::Send(const wxString& prompt)
     if (!IsOk() || !IsRunning()) {
         return;
     }
-    m_process->Write(prompt);
+
+    wxString modified_prompt = prompt;
+    modified_prompt.Replace("\r\n", "\n");
+    modified_prompt.Replace("\n", "\\\n");
+    m_process->Write(modified_prompt);
 }
 
 void LLAMCli::Interrupt()

@@ -367,7 +367,7 @@ void TagsManager::GetFiles(const wxString& partialName, std::vector<wxFileName>&
     }
 }
 
-TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int lineno, bool nextFunction /*false*/)
+TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int lineno)
 {
     if(!GetDatabase()) {
         return NULL;
@@ -377,22 +377,12 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int li
         CacheFile(fileName.GetFullPath());
     }
 
-    TagEntryPtr foo = NULL;
-    for(size_t i = 0; i < m_cachedFileFunctionsTags.size(); i++) {
-        TagEntryPtr t = m_cachedFileFunctionsTags.at(i);
-
-        if(nextFunction && t->GetLine() > lineno) {
-            // keep the last non matched method
-            foo = t;
-        } else if(t->GetLine() <= lineno) {
-            if(nextFunction) {
-                return foo;
-            } else {
-                return t;
-            }
+    for (TagEntryPtr t : m_cachedFileFunctionsTags) {
+        if (t->GetLine() <= lineno) {
+            return t;
         }
     }
-    return foo;
+    return nullptr;
 }
 
 wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxString& scope)

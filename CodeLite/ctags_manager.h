@@ -261,7 +261,7 @@ public:
      * @param lineno the line number
      * @return pointer to the tage which matches the line number & files
      */
-    TagEntryPtr FunctionFromFileLine(const wxFileName& fileName, int lineno, bool nextFunction = false);
+    TagEntryPtr FunctionFromFileLine(const wxFileName& fileName, int lineno);
 
     /**
      * @brief

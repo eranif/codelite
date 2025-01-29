@@ -204,8 +204,6 @@ bool Language::VariableFromPattern(const wxString& in, const wxString& name, Var
     return false;
 }
 
-bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction& foo) { return false; }
-
 std::vector<TagEntryPtr> Language::GetLocalVariables(const wxString& in)
 {
     wxString pattern(in);

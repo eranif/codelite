@@ -291,16 +291,6 @@ public:
     void GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags);
 
     /**
-     * @brief generate function body/impl based on a tag
-     * @param tag the input tag which represents the requested tag
-     * @param impl set to true if you need an implementation, false otherwise. Default is set to false
-     * @param scope real function scope to use
-     * @return the function impl/decl
-     */
-    wxString FormatFunction(TagEntryPtr tag, size_t flags = FunctionFormat_WithVirtual,
-                            const wxString& scope = wxEmptyString);
-
-    /**
      * @brief return true if type & scope do exist in the symbols database
      * @param typeName
      * @param scope
@@ -322,23 +312,11 @@ public:
                                   std::vector<std::pair<int, int>>* paramLen = NULL);
 
     /**
-     * @brief accept as input ctags pattern of a function and tries to evaluate the
-     * return value of the function
-     * @param pattern ctags pattern of the method
-     * @return return value of the method from the pattern of empty string
-     */
-    wxString GetFunctionReturnValueFromPattern(TagEntryPtr tag);
-    /**
      * @brief fileter a recently tagged files from the strFiles array
      * @param strFiles
      * @param db
      */
     void FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITagsStoragePtr db);
-
-    /**
-     * @brief return true of v1 cotnains the same tags as v2
-     */
-    bool AreTheSame(const TagEntryPtrVector_t& v1, const TagEntryPtrVector_t& v2) const;
 
     /**
      * @brief insert functionBody into clsname. This function will search for best location

@@ -279,11 +279,8 @@ public:
     /**
      * @brief return list of all classes.
      * @param tags [output] vector of tags for the classes
-     * @param onlyWorkspace set to true if you wish to accept only classes belongs to the workspace, false if you would
-     * like to receive
-     * classes from the external database as well
      */
-    void GetClasses(std::vector<TagEntryPtr>& tags, bool onlyWorkspace = true);
+    void GetClasses(std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief return list of tags by their partial names

@@ -487,7 +487,7 @@ Language* TagsManager::GetLanguage()
     }
 }
 
-void TagsManager::GetClasses(std::vector<TagEntryPtr>& tags, bool onlyWorkspace)
+void TagsManager::GetClasses(std::vector<TagEntryPtr>& tags)
 {
     const wxArrayString kind = StdToWX::ToArrayString({ wxT("class"), wxT("struct"), wxT("union") });
 

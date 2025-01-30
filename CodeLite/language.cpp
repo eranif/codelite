@@ -249,7 +249,7 @@ wxArrayString Language::DoExtractTemplateDeclarationArgs(TagEntryPtr tag)
     wxString pattern = tag->GetPattern();
     wxString templateString;
 
-    // extract the template declartion list
+    // extract the template declaration list
     CppScanner declScanner;
     declScanner.ReturnWhite(1);
     declScanner.SetText(_C(pattern));

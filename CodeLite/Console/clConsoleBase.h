@@ -89,7 +89,7 @@ public:
     virtual wxString PrepareCommand() = 0;
 
     /**
-     * @brief return the best terminal for the OS. Pass an empty string to return the default temrinal for the OS
+     * @brief return the best terminal for the OS. Pass an empty string to return the default terminal for the OS
      */
     static clConsoleBase::Ptr_t GetTerminal();
 

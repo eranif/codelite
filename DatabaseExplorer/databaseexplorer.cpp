@@ -118,7 +118,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"), "dbexplorer-button");
     m_mgr->AddWorkspaceTab(_("DbExplorer"));
 
-    // configure autolayout algorithns
+    // configure autolayout algorithms
     wxSFAutoLayout layout;
 
     wxSFLayoutHorizontalTree* pHTreeAlg =
@@ -207,7 +207,7 @@ void DatabaseExplorer::OnOpenWithDBE(clCommandEvent& e)
     e.Skip();
     if (FileExtManager::IsFileType(e.GetFileName(), FileExtManager::TypeDatabase)) {
         e.Skip(false);
-        // Open the databse file
+        // Open the database file
         DoOpenFile(e.GetFileName());
     }
 }

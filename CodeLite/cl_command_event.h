@@ -471,7 +471,7 @@ public:
     // Special features not available by all the debuggers
     enum eFeatures {
         kStepInst = (1 << 0),         // single step instruction
-        kInterrupt = (1 << 1),        // interrup the running process
+        kInterrupt = (1 << 1),        // interrupt the running process
         kShowCursor = (1 << 2),       // show the current active line
         kJumpToCursor = (1 << 3),     // Jump to the caret line, without executing the code in between
         kRunToCursor = (1 << 4),      // execute all the code until reaching the caret
@@ -625,7 +625,7 @@ typedef void (wxEvtHandler::*clGotoEventFunction)(clGotoEvent&);
 #define clGotoEventHandler(func) wxEVENT_HANDLER_CAST(clGotoEventFunction, func)
 
 // --------------------------------------------------------------
-// Processs event
+// Process event
 // --------------------------------------------------------------
 class IProcess;
 class WXDLLIMPEXP_CL clProcessEvent : public clCommandEvent

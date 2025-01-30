@@ -187,7 +187,7 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
 
     // remote servers might often return some prompt messages
     // in order to filter these messages out, we send a echo
-    // command and wait for the reponse
+    // command and wait for the response
     std::string message;
     message.append("echo ").append(START_MARKER).append("\n");
     process->Write(message);

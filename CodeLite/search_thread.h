@@ -249,7 +249,7 @@ public:
         }
     }
 
-    // return a foramtted message
+    // return a formatted message
     wxString GetMessage() const
     {
         wxString msg;
@@ -395,7 +395,7 @@ private:
 
     /**
      * Do the actual search operation
-     * \param data inpunt contains information about the search
+     * \param data input contains information about the search
      */
     void DoSearchFiles(ThreadRequest* data);
 

@@ -425,7 +425,7 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
                 }
             }
 
-            // Pipe filtes OK?
+            // Pipe filters OK?
             if(!allFiltersOK)
                 return;
 
@@ -509,7 +509,7 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
         SEND_ST_EVENT();
 
     } else if((type == wxEVT_SEARCH_THREAD_SEARCHEND) || (type == wxEVT_SEARCH_THREAD_SEARCHCANCELED)) {
-        // search eneded, if we got any matches "buffered" send them before the
+        // search ended, if we got any matches "buffered" send them before the
         // the summary event
         if(m_results.empty() == false) {
             wxCommandEvent evt(wxEVT_SEARCH_THREAD_MATCHFOUND, GetId());

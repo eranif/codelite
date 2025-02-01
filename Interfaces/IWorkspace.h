@@ -44,11 +44,11 @@ protected:
     wxString m_workspaceType;
 
 public:
-    typedef std::list<IWorkspace*> List_t;
+    using List_t = std::list<IWorkspace*>;
 
 public:
-    IWorkspace() {}
-    virtual ~IWorkspace() {}
+    IWorkspace() = default;
+    ~IWorkspace() override = default;
 
     /**
      * @brief return the workspace name
@@ -101,7 +101,7 @@ public:
     /**
      * @brief return the project name of a file.
      * If the workspace does not support projects, return an empty string
-     * If the we could not match a project for the given filename, return empty string
+     * If we could not match a project for the given filename, return empty string
      */
     virtual wxString GetProjectFromFile(const wxFileName& filename) const = 0;
 

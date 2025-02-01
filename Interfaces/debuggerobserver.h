@@ -88,51 +88,34 @@ enum UserReason { DBG_USERR_QUICKWACTH = 0, DBG_USERR_WATCHTABLE, DBG_USERR_LOCA
 class DebuggerEventData : public wxClientData
 {
 public:
-    DebuggerUpdateReason m_updateReason; // Event reason - the reason why this event was sent
+    DebuggerUpdateReason m_updateReason = DBG_UR_INVALID; // Event reason - the reason why this event was sent
     // ==================================================
     // Available when the following UpdateReason are set:
     // ==================================================
-    DebuggerReasons m_controlReason; // DBG_UR_GOT_CONTROL
-    wxString m_file;                 //
-    int m_line;                      //
-    wxString m_text;                 // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_ASCII_VIEWER
-    int m_bpInternalId;              // DBG_UR_BP_ADDED
-    int m_bpDebuggerId;              // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
-    LocalVariables m_locals;         // DBG_UR_LOCALS
-    wxString m_expression; // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY,
-                           // DBG_UR_VARIABLEOBJ
-    // DBG_UR_EVALVARIABLEOBJ, DBG_UR_FUNCTIONFINISHED
+    DebuggerReasons m_controlReason = DBG_UNKNOWN; // DBG_UR_GOT_CONTROL
+    wxString m_file;                               //
+    int m_line = wxNOT_FOUND;                      //
+    wxString m_text;                  // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_ASCII_VIEWER
+    int m_bpInternalId = wxNOT_FOUND; // DBG_UR_BP_ADDED
+    int m_bpDebuggerId = wxNOT_FOUND; // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
+    LocalVariables m_locals;          // DBG_UR_LOCALS
+    wxString m_expression;   // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY,
+                             // DBG_UR_VARIABLEOBJ, DBG_UR_EVALVARIABLEOBJ, DBG_UR_FUNCTIONFINISHED
     wxString m_evaluated;    // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
     StackEntryArray m_stack; // DBG_UR_UPDATE_STACK_LIST
     std::vector<clDebuggerBreakpoint> m_bpInfoList; // DBG_UR_RECONCILE_BPTS
-    bool m_onlyIfLogging;                           // DBG_UR_ADD_LINE
+    bool m_onlyIfLogging = false;                   // DBG_UR_ADD_LINE
     ThreadEntryArray m_threads;                     // DBG_UR_LISTTHRAEDS
     VariableObjChildren m_varObjChildren;           // DBG_UR_LISTCHILDREN
     VariableObject m_variableObject;                // DBG_UR_VARIABLEOBJ
-    int m_userReason;       // User reason as provided in the calling API which triggered the DebuggerUpdate call
+    int m_userReason =
+        wxNOT_FOUND;        // User reason as provided in the calling API which triggered the DebuggerUpdate call
     StackEntry m_frameInfo; // DBG_UR_FRAMEINFO
     VariableObjectUpdateInfo m_varObjUpdateInfo; // DBG_UR_VAROBJUPDATE
     DisassembleEntryVec_t m_disassembleLines;    // None
     DbgRegistersVec_t m_registers;               // Sent with event wxEVT_DEBUGGER_LIST_REGISTERS
-    DebuggerEventData()
-        : m_updateReason(DBG_UR_INVALID)
-        , m_controlReason(DBG_UNKNOWN)
-        , m_file(wxEmptyString)
-        , m_line(wxNOT_FOUND)
-        , m_text(wxEmptyString)
-        , m_bpInternalId(wxNOT_FOUND)
-        , m_bpDebuggerId(wxNOT_FOUND)
-        , m_expression(wxEmptyString)
-        , m_evaluated(wxEmptyString)
-        , m_onlyIfLogging(false)
-        , m_userReason(wxNOT_FOUND)
-    {
-        m_stack.clear();
-        m_bpInfoList.clear();
-        m_threads.clear();
-        m_varObjChildren.clear();
-        m_registers.clear();
-    }
+
+    DebuggerEventData() = default;
 };
 
 /**
@@ -144,8 +127,8 @@ public:
 class IDebuggerObserver
 {
 public:
-    IDebuggerObserver(){};
-    virtual ~IDebuggerObserver(){};
+    IDebuggerObserver() = default;
+    virtual ~IDebuggerObserver() = default;
 
     /**
      * @brief the reporting method of the debugger. Must be implemented by any 'DebuggerObserver'

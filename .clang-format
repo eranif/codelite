@@ -51,7 +51,7 @@ SortIncludes: true
 IncludeBlocks: Regroup
 AlwaysBreakTemplateDeclarations: true
 AlwaysBreakBeforeMultilineStrings: false
-AlignEscapedNewlines: LeftWithLastLine
+#AlignEscapedNewlines: LeftWithLastLine
 AlignOperands: true
 BinPackParameters: false
 BinPackArguments: false

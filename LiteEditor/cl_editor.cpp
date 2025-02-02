@@ -1409,9 +1409,8 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     event.Skip();
 }
 
-void clEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/, bool forceDelay /*=false*/)
+void clEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/)
 {
-    wxUnusedVar(forceDelay);
     DoEnsureCaretIsVisible(pos, preserveSelection);
 }
 

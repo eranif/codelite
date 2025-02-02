@@ -434,14 +434,13 @@ public:
     ContextBasePtr GetContext() const { return m_context; }
 
     /**
-     * If word-wrap isn't on, and forceDelay is false, this calls DoEnsureCaretIsVisible() immediately. Otherwise it
+     * If word-wrap isn't on, this calls DoEnsureCaretIsVisible() immediately. Otherwise it
      * stores a position for OnScnPainted() to ensure-is-visible in the next scintilla paint event
      * This doesn't happen until scintilla painting is complete, so it isn't ruined by e.g. word-wrap
      * @param position the position to ensure is visible
      * @param preserveSelection preserve any selection
-     * @param forceDelay wait for the next paint event even if word-wrap is off
      */
-    void SetEnsureCaretIsVisible(int pos, bool preserveSelection = true, bool forceDelay = false);
+    void SetEnsureCaretIsVisible(int pos, bool preserveSelection = true);
 
     /**
      * Does the necessary things to ensure that the destination line of a GoTo is visible

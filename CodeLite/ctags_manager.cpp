@@ -536,7 +536,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
             toStringFlags |= CxxVariable::kToString_DefaultValue;
         }
 
-        str_output << var->ToString(toStringFlags, {});
+        str_output << var->ToString(toStringFlags);
         // keep the length of this argument
         if(paramLen) {
             paramLen->push_back({ start_offset, str_output.length() - start_offset });

@@ -51,8 +51,6 @@ public:
         // Include the default value
         kToString_DefaultValue = (1 << 1),
         kToString_Default = kToString_Name,
-        // Revert back type->macro (e.g. wxWindowMSW -> wxWindow)
-        kToString_ReverseMacros = (1 << 2),
     };
 
 protected:
@@ -114,11 +112,8 @@ public:
     /**
      * @brief return a string representation for this variable
      * @param flags see values in eFlags
-     * @param table macros table - reversed. i.e. the actual type is the key and the value is the macro name
-     * this table is used when the flag kToString_ReverseMacros is passed
      */
-    wxString ToString(size_t flags = CxxVariable::kToString_Default,
-                      const wxStringTable_t& table = wxStringTable_t()) const;
+    wxString ToString(size_t flags = CxxVariable::kToString_Default) const;
 
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }
     const wxString& GetDefaultValue() const { return m_defaultValue; }

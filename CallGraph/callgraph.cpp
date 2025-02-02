@@ -27,21 +27,16 @@
 
 #include "fileutils.h"
 #include "macromanager.h"
-#include "string.h"
-#include "toolbaricons.h"
 #include "uicallgraphpanel.h"
 #include "uisettingsdlg.h"
 #include "workspace.h"
 
 #include <wx/aboutdlg.h>
-#include <wx/artprov.h>
 #include <wx/bitmap.h>
 #include <wx/datetime.h>
 #include <wx/image.h>
 #include <wx/msgdlg.h>
 #include <wx/mstream.h>
-#include <wx/sstream.h>
-#include <wx/txtstrm.h>
 #include <wx/wfstream.h>
 #include <wx/xrc/xmlres.h>
 

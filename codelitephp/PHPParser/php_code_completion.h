@@ -112,17 +112,16 @@ public:
     /**
      * @brief go to the definition of the word starting at pos
      * @param editor
-     * @param pos
      */
-    void GotoDefinition(IEditor* editor, int pos);
+    void GotoDefinition(IEditor* editor);
 
     void SetManager(IManager* manager) { this->m_manager = manager; }
     /**
      * @brief return a PHPLocation::Ptr_t for the declaration of the
-     * expression in the given editor / position
+     * expression in the given editor
      * @return a valid PHPLocation or NULL
      */
-    PHPLocation::Ptr_t FindDefinition(IEditor* editor, int pos);
+    PHPLocation::Ptr_t FindDefinition(IEditor* editor);
 
     /**
      * @brief return the PHPEntity under the caret

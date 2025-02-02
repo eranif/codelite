@@ -259,7 +259,6 @@ Manager::Manager(void)
     , m_frameLineno(wxNOT_FOUND)
     , m_watchDlg(NULL)
     , m_retagInProgress(false)
-    , m_repositionEditor(true)
 {
     Bind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
     Bind(wxEVT_FORCE_RESTART_CODELITE, &Manager::OnForcedRestart, this);
@@ -3425,6 +3424,5 @@ void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
 
         DbgMarkDebuggerLine(fileName, lineNumber);
         UpdateDebuggerPane();
-        SetRepositionEditor(true);
     }
 }

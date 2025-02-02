@@ -101,8 +101,6 @@ protected:
     wxArrayString m_dbgWatchExpressions;
     DisplayVariableDlg* m_watchDlg;
     bool m_retagInProgress;
-    bool m_repositionEditor; // flag used for debugging, should editor be repositioned after user updates like "add
-                             // watch"
     DbgStackInfo m_dbgCurrentFrameInfo;
     PerspectiveManager m_perspectiveManager;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
@@ -132,9 +130,6 @@ public:
 
     bool IsShutdownInProgress() const { return m_isShutdown; }
     void SetShutdownInProgress(bool b) { m_isShutdown = b; }
-
-    bool GetRepositionEditor() const { return m_repositionEditor; }
-    void SetRepositionEditor(bool b) { m_repositionEditor = b; }
 
     void OnRestart(clCommandEvent& event);
     void OnForcedRestart(clCommandEvent& event);

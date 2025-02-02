@@ -59,7 +59,7 @@ private: // Methods
     bool IsSingleInstance(const wxCmdLineParser& parser);
     void DoCopyGdbPrinters();
     void MSWReadRegistry();
-    wxString DoFindMenuFile(const wxString& installDirectory, const wxString& requiredVersion);
+    wxString DoFindMenuFile(const wxString& installDirectory);
     void AdjustPathForCygwinIfNeeded();
     void AdjustPathForMSYSIfNeeded();
     void PrintUsage(const wxCmdLineParser& parser);

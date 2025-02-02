@@ -227,11 +227,8 @@ public:
      * @param scopeName the scope to search
      * @param kind list of tags kind to return
      * @param tags [output] the result vector
-     * @param inherits set to true if you want inherited members as well members
-     * @param include_anon included anonymous members (of Unions/structs/enums)
      */
-    void TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags,
-                     bool include_anon = false);
+    void TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief get the scope name. CodeLite assumes that the caret is placed at the end of the 'scope'

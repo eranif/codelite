@@ -494,11 +494,8 @@ void TagsManager::GetClasses(std::vector<TagEntryPtr>& tags)
     GetDatabase()->GetTagsByKind(kind, wxT("name"), ITagsStorage::OrderAsc, tags);
 }
 
-void TagsManager::TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags,
-                              bool include_anon)
+void TagsManager::TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags)
 {
-    wxUnusedVar(include_anon);
-
     wxArrayString scopes;
     GetScopesByScopeName(scopeName, scopes);
     // make enough room for max of 500 elements in the vector

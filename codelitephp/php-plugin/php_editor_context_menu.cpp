@@ -161,8 +161,7 @@ void PHPEditorContextMenu::DoOpenPHPFile()
 void PHPEditorContextMenu::DoGotoDefinition()
 {
     CHECK_PTR_RET(m_manager->GetActiveEditor());
-    PHPCodeCompletion::Instance()->GotoDefinition(m_manager->GetActiveEditor(),
-                                                  m_manager->GetActiveEditor()->GetCtrl()->GetCurrentPos());
+    PHPCodeCompletion::Instance()->GotoDefinition(m_manager->GetActiveEditor());
 }
 
 bool PHPEditorContextMenu::IsTokenInBlackList(wxStyledTextCtrl* sci, const wxString& token, int token_pos,

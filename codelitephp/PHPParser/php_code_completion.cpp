@@ -406,9 +406,8 @@ void PHPCodeCompletion::OnTypeinfoTip(clCodeCompletionEvent& e)
     }
 }
 
-PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
+PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor)
 {
-    wxUnusedVar(pos);
     CHECK_PHP_WORKSPACE_RET_NULL();
     PHPLocation::Ptr_t loc; // Null
     if(IsPHPFile(editor)) {
@@ -646,16 +645,16 @@ void PHPCodeCompletion::OnQuickJump(clCodeCompletionEvent& e)
     CHECK_EXPECTED_RETURN(IsPHPFile(editor), true);
 
     e.Skip(false);
-    GotoDefinition(editor, editor->GetCurrentPosition());
+    GotoDefinition(editor);
 }
 
-void PHPCodeCompletion::GotoDefinition(IEditor* editor, int pos)
+void PHPCodeCompletion::GotoDefinition(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     wxStyledTextCtrl* sci = editor->GetCtrl();
     CHECK_PTR_RET(sci);
 
-    PHPLocation::Ptr_t definitionLocation = FindDefinition(editor, pos);
+    PHPLocation::Ptr_t definitionLocation = FindDefinition(editor);
     CHECK_PTR_RET(definitionLocation);
 
     // Open the file (make sure we use the 'OpenFile' so we will get a browsing record)

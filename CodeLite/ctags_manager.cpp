@@ -367,7 +367,7 @@ void TagsManager::GetFiles(const wxString& partialName, std::vector<wxFileName>&
     }
 }
 
-TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int lineno, bool nextFunction /*false*/)
+TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int lineno)
 {
     if(!GetDatabase()) {
         return NULL;
@@ -377,22 +377,12 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int li
         CacheFile(fileName.GetFullPath());
     }
 
-    TagEntryPtr foo = NULL;
-    for(size_t i = 0; i < m_cachedFileFunctionsTags.size(); i++) {
-        TagEntryPtr t = m_cachedFileFunctionsTags.at(i);
-
-        if(nextFunction && t->GetLine() > lineno) {
-            // keep the last non matched method
-            foo = t;
-        } else if(t->GetLine() <= lineno) {
-            if(nextFunction) {
-                return foo;
-            } else {
-                return t;
-            }
+    for (TagEntryPtr t : m_cachedFileFunctionsTags) {
+        if (t->GetLine() <= lineno) {
+            return t;
         }
     }
-    return foo;
+    return nullptr;
 }
 
 wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxString& scope)
@@ -497,18 +487,15 @@ Language* TagsManager::GetLanguage()
     }
 }
 
-void TagsManager::GetClasses(std::vector<TagEntryPtr>& tags, bool onlyWorkspace)
+void TagsManager::GetClasses(std::vector<TagEntryPtr>& tags)
 {
     const wxArrayString kind = StdToWX::ToArrayString({ wxT("class"), wxT("struct"), wxT("union") });
 
     GetDatabase()->GetTagsByKind(kind, wxT("name"), ITagsStorage::OrderAsc, tags);
 }
 
-void TagsManager::TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags,
-                              bool include_anon)
+void TagsManager::TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags)
 {
-    wxUnusedVar(include_anon);
-
     wxArrayString scopes;
     GetScopesByScopeName(scopeName, scopes);
     // make enough room for max of 500 elements in the vector
@@ -549,7 +536,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
             toStringFlags |= CxxVariable::kToString_DefaultValue;
         }
 
-        str_output << var->ToString(toStringFlags, {});
+        str_output << var->ToString(toStringFlags);
         // keep the length of this argument
         if(paramLen) {
             paramLen->push_back({ start_offset, str_output.length() - start_offset });

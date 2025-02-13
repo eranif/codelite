@@ -47,7 +47,6 @@ class WXDLLIMPEXP_CL DirTraverser : public wxDirTraverser
     wxString m_filespec;
     wxArrayString m_specArray;
 
-    bool m_extlessFiles;
     wxArrayString m_excludeDirs;
 
 public:
@@ -55,7 +54,7 @@ public:
     /**
      * Construct a DirTraverser with a given file spec
      */
-    DirTraverser(const wxString &filespec, bool includExtLessFiles = false);
+    DirTraverser(const wxString &filespec);
     virtual ~DirTraverser();
 
     /**

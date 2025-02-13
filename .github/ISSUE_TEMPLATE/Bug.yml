@@ -28,6 +28,8 @@ body:
         - 16.0.0
         - 17.0.0
         - 17.10.0
+        - 18.0.0
+        - 18.1.0
         - Other
     validations:
       required: true

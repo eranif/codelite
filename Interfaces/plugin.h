@@ -55,12 +55,7 @@
 #define EXPORT
 #endif
 
-#if defined(__WXMSW__) || defined(__WXGTK__)
 #define CL_PLUGIN_API extern "C" EXPORT
-#else
-// OSX
-#define CL_PLUGIN_API extern "C" EXPORT
-#endif
 
 class IManager;
 
@@ -102,10 +97,10 @@ protected:
      */
     void DeletePluginMenu(wxWindowID id)
     {
-        if(!GetPluginsMenu()) {
+        if (!GetPluginsMenu()) {
             return;
         }
-        if(GetPluginsMenu()->FindItem(id)) {
+        if (GetPluginsMenu()->FindItem(id)) {
             GetPluginsMenu()->Delete(id);
         }
     }
@@ -115,7 +110,7 @@ public:
         : m_mgr(manager)
     {
     }
-    virtual ~IPlugin() {}
+    ~IPlugin() override = default;
 
     //-----------------------------------------------
     // The interface
@@ -170,8 +165,8 @@ public:
      * @param notebook the parent
      * @param configName the associated configuration name
      */
-    virtual void HookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName,
-                                        const wxString& configName)
+    virtual void
+    HookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName)
     {
         wxUnusedVar(notebook);
         wxUnusedVar(projectName);
@@ -183,8 +178,8 @@ public:
      * @param notebook the parent
      * @param configName the associated configuration name
      */
-    virtual void UnHookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName,
-                                          const wxString& configName)
+    virtual void
+    UnHookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName)
     {
         wxUnusedVar(notebook);
         wxUnusedVar(projectName);
@@ -192,14 +187,14 @@ public:
     }
 };
 
-#define CHECK_CL_SHUTDOWN()               \
-    {                                     \
-        if(m_mgr->IsShutdownInProgress()) \
-            return;                       \
+#define CHECK_CL_SHUTDOWN()                \
+    {                                      \
+        if (m_mgr->IsShutdownInProgress()) \
+            return;                        \
     }
 
 // Every dll must contain at least this function
-typedef IPlugin* (*GET_PLUGIN_CREATE_FUNC)(IManager*);
-typedef PluginInfo* (*GET_PLUGIN_INFO_FUNC)();
-typedef int (*GET_PLUGIN_INTERFACE_VERSION_FUNC)();
+using GET_PLUGIN_CREATE_FUNC = IPlugin* (*)(IManager*);
+using GET_PLUGIN_INFO_FUNC = PluginInfo* (*)();
+using GET_PLUGIN_INTERFACE_VERSION_FUNC = int (*)();
 #endif // PLUGIN_H

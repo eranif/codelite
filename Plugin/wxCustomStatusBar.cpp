@@ -417,7 +417,7 @@ void wxCustomStatusBar::Finalize()
 void wxCustomStatusBar::SetText(const wxString& message, int secondsToLive)
 {
     if(message.empty()) {
-        // passing an empty string suggets that we want to clear the text field completely
+        // passing an empty string suggests that we want to clear the text field completely
         ClearText();
         return;
     }

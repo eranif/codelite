@@ -38,7 +38,7 @@
 
 /**
  * TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
- * It allows caller to query and populate the SQLite database for tags with a set of convinient functions.
+ * It allows caller to query and populate the SQLite database for tags with a set of convenient functions.
  * this class is responsible for creating the schema for the CodeLite library.
  *
  * The tables are automatically created once a database is created
@@ -59,7 +59,7 @@
  * |Pattern       | String | pattern that can be used to located this tag in the file
  * |Parent        | String | tag direct parent, can be its class parent (for members or functions), namespace or the
  * literal "<global>"
- * |Inherits      | String | If this class/struct inherits from other class, it will cotain the name of the base class
+ * |Inherits      | String | If this class/struct inherits from other class, it will contain the name of the base class
  * |Path          | String | full name including path, (e.g. Project::ClassName::FunctionName
  * |Typeref       | String | Special type of tag, that points to other Tag (i.e. typedef)
  *
@@ -205,7 +205,7 @@ public:
 
     /**
      * store list of tags to store. The list is considered complete and all files
-     * afftected will be erased from the db first
+     * affected will be erased from the db first
      */
     void Store(const std::vector<TagEntryPtr>& tags, bool auto_commit = true);
 
@@ -222,7 +222,7 @@ public:
      * Delete all entries from database that are related to filename.
      * @param path Database name
      * @param fileName File name
-     * @param autoCommit handle the Delete operation inside a transaction or let the user hadle it
+     * @param autoCommit handle the Delete operation inside a transaction or let the user handle it
      */
     void DeleteByFileName(const wxFileName& path, const wxString& fileName, bool autoCommit = true);
 
@@ -281,7 +281,7 @@ public:
     const bool IsOpen() const;
 
     /**
-     * Return SQLite3 preapre statement object
+     * Return SQLite3 prepare statement object
      * @param sql sql
      * @return wxSQLite3ResultSet object
      */
@@ -384,7 +384,7 @@ public:
     virtual void GetTagsByNameAndParent(const wxString& name, const wxString& parent, std::vector<TagEntryPtr>& tags);
 
     /**
-     * @brief reutnr array of tags by kind and path
+     * @brief return array of tags by kind and path
      * @param kinds array of kind
      * @param path
      * @param tags  [output]

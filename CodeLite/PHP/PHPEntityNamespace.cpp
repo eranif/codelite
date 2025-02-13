@@ -137,6 +137,6 @@ void PHPEntityNamespace::FromJSON(const JSONItem& json)
 
 JSONItem PHPEntityNamespace::ToJSON() const
 {
-    JSONItem json = BaseToJSON("n"); // n stands for namesapce
+    JSONItem json = BaseToJSON("n"); // n stands for namespace
     return json;
 }

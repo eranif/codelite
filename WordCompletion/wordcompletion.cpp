@@ -91,7 +91,7 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
         return;
     }
 
-    // Build the suggetsion list
+    // Build the suggestion list
     static wxBitmap sBmp = wxNullBitmap;
     if(!sBmp.IsOk()) {
         sBmp = m_mgr->GetStdIcons()->LoadBitmap("word");
@@ -106,7 +106,7 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
     wxString filter = event.GetWord().Lower(); // stc->GetTextRange(start, curPos);
 
     wxStringSet_t words = m_dictionary->GetWords();
-    // Parse the current bufer (if modified), to include non saved words
+    // Parse the current buffer (if modified), to include non saved words
     if(activeEditor->IsEditorModified()) {
         // For performance (this parsing is done in the main thread)
         // only parse the visible area of the document

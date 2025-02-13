@@ -119,7 +119,7 @@ public:
     /// If string contains space, wrap it with double quotes
     static wxString WrapWithDoubleQuotes(const wxString& str);
 
-    /// If a string is wrapped with double quoutes -> strip them
+    /// If a string is wrapped with double quotes -> strip them
     static wxString StripDoubleQuotes(const wxString& str);
 
     /// Append `str` to `arr`. If the array size exceed the truncation size, shrink it to fit

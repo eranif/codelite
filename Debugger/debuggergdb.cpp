@@ -405,7 +405,7 @@ void DbgGdb::DoCleanup()
     m_bpList.clear();
     m_debuggeeProjectName.Clear();
 
-    // Clear any bufferd output
+    // Clear any buffer output
     m_gdbOutputIncompleteLine.Clear();
 
     // Free allocated console for this session
@@ -465,7 +465,7 @@ void DbgGdb::SetBreakpoints()
 {
     for(size_t i = 0; i < m_bpList.size(); i++) {
         // Without the 'unnecessary' cast in the next line, bpinfo.bp_type is seen as (e.g.) 4 instead of
-        // BP_type_tempbreak, ruining switch statments :/
+        // BP_type_tempbreak, ruining switch statements :/
         clDebuggerBreakpoint bpinfo = (clDebuggerBreakpoint)m_bpList.at(i);
         Break(bpinfo);
     }
@@ -496,7 +496,7 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
         command = "-break-watch ";
         switch(bp.watchpoint_type) {
         case WP_watch:
-            // nothing to add, simple watchpoint - trigrred when BP is write
+            // nothing to add, simple watchpoint - triggered when BP is write
             break;
         case WP_rwatch:
             // read watchpoint
@@ -620,7 +620,7 @@ bool DbgGdb::SetCommands(const clDebuggerBreakpoint& bp)
     if(bp.debugger_id == -1) { // Sanity check
         return false;
     }
-    // There isn't (currentl) a MI command-list command, so use the CLI one
+    // There isn't (currently) a MI command-list command, so use the CLI one
     // This doesn't actually work either, but at least the commands are visible in -break-list
     wxString command("commands ");
     command << bp.debugger_id << '\n' << bp.commandlist << "\nend";
@@ -1535,7 +1535,7 @@ void DbgGdb::OnKillGDB(wxCommandEvent& e)
 
 bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
 {
-    // Trigger a "disasseble" call
+    // Trigger a "disassemble" call
     if(/*filename.IsEmpty() || lineNumber == wxNOT_FOUND*/ true) {
         // Use the $pc
         if(!WriteCommand("-data-disassemble -s \"$pc -100\" -e \"$pc + 100\" -- 0",

@@ -173,7 +173,7 @@ wxString clFunctionImplDetails::GetImpl(ImplementParentVirtualFunctionsDialog* d
 
     wxString impl;
     tag->SetScope(dlg->m_scope);
-    impl << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl) << wxT("\n");
+    impl << wxT("\n");
     impl.Trim().Trim(false);
     impl << "\n\n";
 
@@ -208,7 +208,6 @@ wxString clFunctionImplDetails::GetDecl(ImplementParentVirtualFunctionsDialog* d
     if(IsAppendOverrideKeyword()) { format |= FunctionFormat_WithOverride; }
 
     tag->SetScope(dlg->m_scope);
-    decl << TagsManagerST::Get()->FormatFunction(tag, format);
     decl.Trim().Trim(false);
     decl << "\n";
     return decl;

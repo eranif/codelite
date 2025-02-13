@@ -221,10 +221,6 @@ void WatchesTable::UpdateVariableObjects()
 
 void WatchesTable::RefreshValues(bool repositionEditor)
 {
-    // indicate in the global manager if we want to actually reposition the editor's position after the
-    // dbgr->QueryFileLine() refresh
-    ManagerST::Get()->SetRepositionEditor(repositionEditor);
-
     // loop over the childrens, if we got a valid variable object, re-evaluate it
     wxTreeItemId root = m_listTable->GetRootItem();
     if(root.IsOk() == false)

@@ -142,10 +142,6 @@ struct SFileSort {
 
 //----------------------------------------------------------------------------------
 
-wxBitmap ContextCpp::m_cppFileBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_hFileBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_otherFileBmp = wxNullBitmap;
-
 BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 EVT_UPDATE_UI(XRCID("find_decl"), ContextCpp::OnUpdateUI)
 EVT_UPDATE_UI(XRCID("find_impl"), ContextCpp::OnUpdateUI)
@@ -1535,15 +1531,6 @@ void ContextCpp::ApplySettings()
     rCtrl.SetKeyWords(2, doxyKeyWords);
 
     DoApplySettings(lexPtr);
-
-    // create all images used by the cpp context
-    if (!m_cppFileBmp.IsOk()) {
-        // Initialise the file bitmaps
-        BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
-        m_cppFileBmp = bmpLoader->LoadBitmap("mime-cpp");
-        m_hFileBmp = bmpLoader->LoadBitmap("mime-h");
-        m_otherFileBmp = bmpLoader->LoadBitmap("mime-txt");
-    }
 
     // delete uneeded commands
     rCtrl.CmdKeyClear('/', wxSTC_KEYMOD_CTRL);

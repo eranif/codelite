@@ -42,10 +42,6 @@ class ContextCpp : public ContextBase
     std::map<wxString, int> m_propertyInt;
     wxMenu* m_rclickMenu;
 
-    static wxBitmap m_cppFileBmp;
-    static wxBitmap m_hFileBmp;
-    static wxBitmap m_otherFileBmp;
-
 protected:
     void OnShowCodeNavMenu(clCodeCompletionEvent& e);
     void OnCodeCompleteFiles(clCodeCompletionEvent& event);

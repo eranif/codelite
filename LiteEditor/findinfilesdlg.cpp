@@ -239,7 +239,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
     }
     data.SetFileScannerFlags(search_flags);
 
-    // for persisntency
+    // for persistence
     m_data.files_scanner_flags = search_flags;
 
     wxArrayString searchWhere = GetPathsAsArray();
@@ -538,8 +538,9 @@ void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArraySt
         if (!filesMap.empty()) {
             wxArrayString tmpArr;
             tmpArr.Alloc(filesMap.size());
-            std::for_each(filesMap.begin(), filesMap.end(),
-                          [&](const Project::FilesMap_t::value_type& vt) { tmpArr.Add(vt.second->GetFilename()); });
+            std::for_each(filesMap.begin(), filesMap.end(), [&](const Project::FilesMap_t::value_type& vt) {
+                tmpArr.Add(vt.second->GetFilename());
+            });
             files.insert(files.end(), tmpArr.begin(), tmpArr.end());
         }
     }

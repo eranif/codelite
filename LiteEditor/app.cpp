@@ -593,9 +593,9 @@ bool CodeLiteApp::OnInit()
     ::wxSetWorkingDirectory(homeDir);
     // Load all of the XRC files that will be used. You can put everything
     // into one giant XRC file if you wanted, but then they become more
-    // diffcult to manage, and harder to reuse in later projects.
+    // difficult to manage, and harder to reuse in later projects.
     // The menubar
-    if (!wxXmlResource::Get()->Load(DoFindMenuFile(ManagerST::Get()->GetInstallDir(), wxT("2.0"))))
+    if (!wxXmlResource::Get()->Load(DoFindMenuFile(ManagerST::Get()->GetInstallDir())))
         return false;
 
     // keep the startup directory
@@ -950,9 +950,8 @@ void CodeLiteApp::MSWReadRegistry()
 #endif
 }
 
-wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxString& requiredVersion)
+wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory)
 {
-    wxUnusedVar(requiredVersion);
     wxFileName menu_xrc{ installDirectory, MENU_XRC };
     menu_xrc.AppendDir("rc");
     return menu_xrc.GetFullPath();

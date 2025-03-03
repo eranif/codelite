@@ -37,7 +37,6 @@
 
 struct tagCallTipInfo {
     wxString sig;
-    wxString retValue;
     std::vector<std::pair<int, int>> paramLen;
 };
 
@@ -215,9 +214,6 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
 
                 wxString raw_sig(t->GetSignature().Trim().Trim(false));
 
-                // evaluate the return value of the tag
-                cti.retValue = TagsManagerST::Get()->GetFunctionReturnValueFromPattern(t);
-
                 bool hasDefaultValues = (raw_sig.Find(wxT("=")) != wxNOT_FOUND);
 
                 // the key for unique entries is the function prototype without the variables names and
@@ -274,9 +270,6 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
         // Rust & Php have "self" or other variant of it in the argument
         // list, so lets filter it
         tip.Trim().Trim(false);
-        if (iter->second.retValue.empty() == false) {
-            tip << " -> " << iter->second.retValue.Trim(false).Trim();
-        }
 
         clTipInfo ti;
         ti.paramLen = iter->second.paramLen;

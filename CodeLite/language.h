@@ -130,7 +130,6 @@ public:
     std::vector<TagEntryPtr> GetLocalVariables(const wxString& in);
 
     bool VariableFromPattern(const wxString& pattern, const wxString& name, Variable& var);
-    bool FunctionFromPattern(TagEntryPtr tag, clFunction& foo);
 
     /**
      * @brief insert functionBody into clsname. This function will search for best location

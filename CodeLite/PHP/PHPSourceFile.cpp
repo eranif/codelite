@@ -269,7 +269,7 @@ void PHPSourceFile::OnUse()
                 // use Zend\Mvc\Controll\Action;
                 // is equal for writing:
                 // use \Zend\Mvc\Controll\Action;
-                // For simplicitiy, we change it to fully qualified path
+                // For simplicity, we change it to fully qualified path
                 // so parsing is easier
                 if(!fullname.StartsWith("\\")) {
                     fullname.Prepend("\\");
@@ -1070,7 +1070,7 @@ void PHPSourceFile::OnDefine(const phpLexerToken& tok)
         var->SetLine(tok.lineNumber);
 
         // We keep the defines in a special list
-        // this is because 'define' does not obay to the current scope
+        // this is because 'define' does not obey to the current scope
         m_defines.push_back(var);
     }
     // Always consume the 'define' statement
@@ -1299,7 +1299,7 @@ void PHPSourceFile::ParseUseTraitsBody()
                 // use Zend\Mvc\Controll\Action;
                 // is equal for writing:
                 // use \Zend\Mvc\Controll\Action;
-                // For simplicitiy, we change it to fully qualified path
+                // For simplicity, we change it to fully qualified path
                 // so parsing is easier
                 if(!fullname.StartsWith("\\")) {
                     fullname.Prepend("\\");
@@ -1328,7 +1328,7 @@ void PHPSourceFile::ParseUseTraitsBody()
         } break;
         case kPHP_T_INSTEADOF: {
             // For now, we are not interested in
-            // A insteadof b; statements, so just clear the collected data so far
+            // A instead of b; statements, so just clear the collected data so far
             fullname.clear();
             temp.clear();
             alias.clear();
@@ -1562,7 +1562,7 @@ wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exac
     }
 
     if(exactMatch && m_lookup && !typeWithNS.Contains("\\") && !m_lookup->ClassExists(ns + typeWithNS)) {
-        // Only when "exactMatch" apply this logic, otherwise, we might be getting a partialy typed string
+        // Only when "exactMatch" apply this logic, otherwise, we might be getting a partially typed string
         // which we will not find by calling FindChild()
         typeWithNS.Prepend("\\"); // Use the global NS
     } else {

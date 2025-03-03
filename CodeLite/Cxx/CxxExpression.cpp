@@ -187,7 +187,7 @@ bool CxxExpression::handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_t
         break;
     }
 
-    // did not find cast epxression
+    // did not find cast expression
     if(state == STATE_NORMAL) {
         tokenizer.UngetToken();
         return false;

@@ -43,7 +43,7 @@ void LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& respons
             event.SetFileName(m_filename);
             EventNotifier::Get()->AddPendingEvent(event);
         } else {
-            // We send the same event for declaraion as we do for definition
+            // We send the same event for declaration as we do for definition
             LSPEvent event{ wxEVT_LSP_DEFINITION };
             event.SetLocation(loc);
             event.SetFileName(m_filename);

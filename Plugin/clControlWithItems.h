@@ -180,7 +180,7 @@ public:
 
     /**
      * @brief sets a column width. If the width is less than 0, this function does nothing. If the column is out of
-     * bound this function does nothing. Two sepcial values are allowed here: wxCOL_WIDTH_DEFAULT and
+     * bound this function does nothing. Two special values are allowed here: wxCOL_WIDTH_DEFAULT and
      * wxCOL_WIDTH_AUTOSIZE
      * @param col the column index
      * @param width the width. Can contain one of the special values: wxCOL_WIDTH_DEFAULT and wxCOL_WIDTH_AUTOSIZE
@@ -192,13 +192,13 @@ public:
      */
     void SetShowHeader(bool b);
     /**
-     * @brief is the heaer bar visible?
+     * @brief is the header bar visible?
      */
     bool IsHeaderVisible() const;
 
     /**
      * @brief update the scrollbar with the current view status
-     * subclass should call this method whenver the view changes (re-sized, items are expanding, collapsing etc)
+     * subclass should call this method whenever the view changes (re-sized, items are expanding, collapsing etc)
      */
     virtual void UpdateScrollBar();
 
@@ -220,7 +220,7 @@ public:
     virtual bool IsEmpty() const = 0;
     /**
      * @brief return the total of numbers of items we can scroll
-     * If the view has collpased items, the range _excludes_ them
+     * If the view has collapsed items, the range _excludes_ them
      */
     virtual int GetRange() const = 0;
 

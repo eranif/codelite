@@ -186,7 +186,7 @@ public:
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }
     /**
-     * @brief return true if this file should be execluded from the build of a specific configuration
+     * @brief return true if this file should be excluded from the build of a specific configuration
      */
     bool IsExcludeFromConfiguration(const wxString& config) const { return m_excludeConfigs.count(config); }
     void Rename(Project* project, const wxString& newName);
@@ -259,7 +259,7 @@ public:
     bool IsFolderExists(Project* project, const wxString& name) const;
 
     /**
-     * @brief reutrn child folder. Can be nullptr
+     * @brief return child folder. Can be nullptr
      */
     clProjectFolder::Ptr_t GetChild(Project* project, const wxString& name) const;
 
@@ -392,18 +392,18 @@ public:
     void ClearIncludePathCache();
 
     /**
-     * @brief a project was renamed - update our dependeices if needed
+     * @brief a project was renamed - update our dependencies if needed
      */
     void ProjectRenamed(const wxString& oldname, const wxString& newname);
     void SetIconPath(const wxString& iconPath) { this->m_iconPath = iconPath; }
     const wxString& GetIconPath() const { return m_iconPath; }
     /**
-     * @brief return set of compilers used by this project for the active build configuraion
+     * @brief return set of compilers used by this project for the active build configuration
      */
     void GetCompilers(wxStringSet_t& compilers);
 
     /**
-     * @brief replace compilers by name. compilers contains a map of the "olbd" compiler
+     * @brief replace compilers by name. compilers contains a map of the "old" compiler
      * name and the new compiler name
      */
     void ReplaceCompilers(const wxStringMap_t& compilers);
@@ -811,7 +811,7 @@ class WXDLLIMPEXP_SDK ProjectData
 {
 public:
     wxString m_name;           //< project name
-    wxString m_path;           //< project directoy
+    wxString m_path;           //< project directory
     ProjectPtr m_srcProject;   //< source project
     wxString m_cmpType;        //< Project compiler type
     wxString m_debuggerType;   //< Selected debugger

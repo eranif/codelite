@@ -161,7 +161,7 @@ WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString& expression, ProjectPtr 
 
 /**
  * * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
- * \brief accepts expression string and expand all known marcos (e.g. $(ProjectName))
+ * \brief accepts expression string and expand all known macros (e.g. $(ProjectName))
  * \param expression expression
  * \param projectName project name (to be used for $(ProjectName) macro)
  * \param fileName file name, to help expand the $(CurrentFile) macro family
@@ -172,7 +172,7 @@ WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression, clCxxWor
                                             const wxString& fileName);
 
 /**
- * \brief copy entire directory content (recursievly) from source to target
+ * \brief copy entire directory content (recursively) from source to target
  * \param src source path
  * \param target target path
  * \return true on success, false otherwise
@@ -186,7 +186,7 @@ WXDLLIMPEXP_SDK bool CopyDir(const wxString& src, const wxString& target);
 WXDLLIMPEXP_SDK void Mkdir(const wxString& path);
 
 /**
- * \brief write file content with optinal backup
+ * \brief write file content with optional backup
  * \param file_name
  * \param content
  * \param backup
@@ -257,7 +257,7 @@ WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = "E
 
 /**
  * @brief under Windows 10 and later, enable dark mode controls (where it is implemented)
- * based on the selected editor theme. This is dont recursievly on win
+ * based on the selected editor theme. This is dont recursively on win
  */
 WXDLLIMPEXP_SDK void MSWSetWindowDarkTheme(wxWindow* win);
 
@@ -368,7 +368,7 @@ WXDLLIMPEXP_SDK wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex
 WXDLLIMPEXP_SDK wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex);
 
 /**
- * @brief split lines (using CR|LF as the separator), taking into considertaion line continuation
+ * @brief split lines (using CR|LF as the separator), taking into consideration line continuation
  * @param trim trim the lines with set to true
  */
 WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString& inString, bool trim = true);
@@ -472,7 +472,7 @@ WXDLLIMPEXP_SDK std::pair<wxString, wxString> clRemoteFileSelector(const wxStrin
                                                                    const wxString& filter = wxEmptyString,
                                                                    wxWindow* parent = NULL);
 /**
- * @brief return the instance to the plugin manager. A convinience method
+ * @brief return the instance to the plugin manager. A convenience method
  */
 WXDLLIMPEXP_SDK IManager* clGetManager();
 /**
@@ -507,7 +507,7 @@ WXDLLIMPEXP_SDK int clGetScaledSize(int size);
 WXDLLIMPEXP_SDK int clGetSize(int size, const wxWindow* win);
 
 /**
- * @param signo singal number
+ * @param signo signal number
  * @brief send signo to the
  * @param processID the process ID to kill
  * @param kill_whole_group kill the process group
@@ -552,7 +552,7 @@ WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);
 WXDLLIMPEXP_SDK wxSize clGetDisplaySize();
 
 /**
- * @brief returna top level window best size using its parent's size as reference
+ * @brief return a top level window best size using its parent's size as reference
  */
 WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxWindow* win);
 

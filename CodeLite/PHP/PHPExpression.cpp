@@ -276,7 +276,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
 
         // If the current "part" of the expression ends with a scope resolving operator ("::") or
         // an object operator ("->") we need to resolve the operator to the actual type (
-        // incase of a functin it will be the return value, and in case of a variable it will be
+        // incase of a function it will be the return value, and in case of a variable it will be
         // the type hint)
         if(currentToken) {
             if(part.m_operator == kPHP_T_OBJECT_OPERATOR || part.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
@@ -381,7 +381,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 // $this->getQuery()->fetchAll()->
                 // However, $this also need a replacement so eventually, it becomes like this:
                 // \MyClass->getQuery->fetchAll-> and this is something that we can evaluate easily using
-                // our lookup tables (note that the parenthessis are missing on purpose)
+                // our lookup tables (note that the parenthesis are missing on purpose)
                 PHPEntityBase::Ptr_t local = scope->FindChild(token.Text());
                 if(local && local->Cast<PHPEntityVariable>()) {
                     if(!local->Cast<PHPEntityVariable>()->GetTypeHint().IsEmpty()) {
@@ -448,7 +448,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
             if(!currentText.IsEmpty() && part.m_text.IsEmpty()) {
                 if(m_parts.empty() && token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
                     // The first token in the "parts" list has a scope resolving operator ("::")
-                    // we need to make sure that the indetifier is provided in fullpath
+                    // we need to make sure that the identifier is provided in fullpath
                     part.m_text = sourceFile->MakeIdentifierAbsolute(currentText);
                 } else {
                     part.m_text = currentText;
@@ -456,7 +456,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
             }
 
             if(m_parts.empty()) {
-                // If the first token before the simplication was 'parent'
+                // If the first token before the simplification was 'parent'
                 // keyword, we need to carry this over
                 part.m_textType = firstTokenType;
             }

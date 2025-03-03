@@ -29,10 +29,9 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 
-DirTraverser::DirTraverser(const wxString &filespec, bool includeExtLessFiles)
+DirTraverser::DirTraverser(const wxString &filespec)
     : wxDirTraverser()
     , m_filespec(filespec)
-    , m_extlessFiles(includeExtLessFiles)
 {
     m_specArray = wxStringTokenize(filespec, wxT(";"), wxTOKEN_STRTOK);
 }
@@ -41,18 +40,10 @@ wxDirTraverseResult DirTraverser::OnFile(const wxString& filename)
 {
     // add the file to our array
     wxFileName fn(filename);
-    
-    if(FileUtils::WildMatch(m_filespec, fn)) {
-        m_files.Add(filename);
-        return wxDIR_CONTINUE;
-    }
 
-    // if we reached this point, no pattern was suitable for our file
-    // test for extensionless file flag
-    if (fn.GetExt().IsEmpty() && m_extlessFiles) {
+    if (FileUtils::WildMatch(m_filespec, fn)) {
         m_files.Add(filename);
     }
-
     return wxDIR_CONTINUE;
 }
 

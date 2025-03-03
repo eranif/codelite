@@ -1003,7 +1003,7 @@ std::vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr pa
             scope = tag->GetScope();
         }
         std::vector<TagEntryPtr> parent_tags;
-        m_lookup->GetTagsByScopeAndKind(scope, to_wx_array_string(kinds), filter, parent_tags, true);
+        m_lookup->GetTagsByScopeAndKind(scope, to_wx_array_string(kinds), filter, parent_tags);
         tags.reserve(tags.size() + parent_tags.size());
         tags.insert(tags.end(), parent_tags.begin(), parent_tags.end());
     }

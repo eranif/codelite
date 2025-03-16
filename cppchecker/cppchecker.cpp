@@ -224,7 +224,7 @@ wxString CppCheckPlugin::DoGetCommand()
         // Create the cache dir if required
         wxString cache_dir;
         if (line.StartsWith("--cppcheck-build-dir=", &cache_dir)) {
-            cache_dir.Trim().Trim(false);
+            cache_dir.Trim().Trim(false).Replace("\"", "");
             wxFileName::Mkdir(cache_dir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         }
         cmd << line << " ";

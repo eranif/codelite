@@ -1192,7 +1192,7 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
 
     ExecuteCmd("set width 0");
     ExecuteCmd("set height 0");
-    ExecuteCmd("set pagingation off");
+    ExecuteCmd("set pagination off");
 
     // do not prompt for loading symbols
     ExecuteCmd("set debuginfod enabled off");

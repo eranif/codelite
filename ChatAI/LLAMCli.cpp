@@ -87,7 +87,7 @@ bool LLAMCli::StartProcess()
                                       "8192",
                                       "-p",
                                       CHATAI_PROMPT_STRING,
-                                      "-cnv" /* converstion mode */ };
+                                      "-cnv" /* conversation mode */ };
 
     m_process = ::CreateAsyncProcess(
         this, command, IProcessCreateWithHiddenConsole | IProcessStderrEvent | IProcessWrapInShell);

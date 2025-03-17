@@ -3,18 +3,23 @@
   <id>org.codelite.codelite</id>
   
   <name>CodeLite</name>
-  <summary>CodeLite is a free, open source, cross platform IDE specialized in C, C++, PHP and JavaScript (mainly for backend developers using Node.js) programming languages, which runs best on all major platforms (Windows, macOS and Linux).</summary>
+  <summary>IDE specialized in C, C++, PHP and JavaScript</summary>
+  <developer_name>codelite</developer_name>
   
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0-or-later</project_license>
   
   <description>
     <p>
-      CodeLite is a free, open source, cross platform IDE specialized in C, C++, PHP and JavaScript (mainly for backend developers using Node.js) programming languages, which runs best on all major platforms (Windows, macOS and Linux).
+      CodeLite is a free, open source, cross platform IDE specialized in C, C++, PHP
+      and JavaScript (mainly for backend developers using Node.js) programming languages,
+      which runs best on all major platforms (Windows, macOS and Linux).
     </p>
   </description>
   
+  <url type="homepage">https://codelite.org/</url>
   <launchable type="desktop-id">codelite.desktop</launchable>
+
   <screenshots>
     <screenshot type="default">
       <image>https://codelite.org/downloads/codelite/screenshots/codelite-linux.png</image>
@@ -23,4 +28,16 @@
       <image>https://codelite.org/downloads/codelite/screenshots/codelite-linux-2.png</image>
     </screenshot>
   </screenshots>
+
+  <provides>
+    <binary>codelite</binary>
+  </provides>
+
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-info">mild</content_attribute>
+  </content_rating>
+  <releases>
+	<release version="18.1.0" date="2025-01-16"></release>
+  </releases>
+
 </component>

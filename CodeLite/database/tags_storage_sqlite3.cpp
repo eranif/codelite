@@ -690,12 +690,6 @@ void TagsStorageSQLite::GetTagsByFileAndLine(const wxString& file, int line, std
     DoFetchTags(sql, tags);
 }
 
-void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds,
-                                              std::vector<TagEntryPtr>& tags, bool applyLimit)
-{
-    GetTagsByScopeAndKind(scope, kinds, wxEmptyString, tags, applyLimit);
-}
-
 void TagsStorageSQLite::GetTagsByKindAndFile(const wxArrayString& kind, const wxString& fileName,
                                              const wxString& orderingColumn, int order, std::vector<TagEntryPtr>& tags)
 {
@@ -948,7 +942,7 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 }
 
 void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
-                                              std::vector<TagEntryPtr>& tags, bool applyLimit)
+                                              std::vector<TagEntryPtr>& tags)
 {
     if(kinds.empty()) {
         return;
@@ -973,9 +967,7 @@ void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope, const wxArr
         sql << kinds_buffer;
     }
 
-    if(applyLimit) {
-        sql << " LIMIT " << GetSingleSearchLimit();
-    }
+    sql << " LIMIT " << GetSingleSearchLimit();
     DoFetchTags(sql, tags);
 }
 

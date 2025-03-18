@@ -227,11 +227,8 @@ public:
      * @param scopeName the scope to search
      * @param kind list of tags kind to return
      * @param tags [output] the result vector
-     * @param inherits set to true if you want inherited members as well members
-     * @param include_anon included anonymous members (of Unions/structs/enums)
      */
-    void TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags,
-                     bool include_anon = false);
+    void TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief get the scope name. CodeLite assumes that the caret is placed at the end of the 'scope'
@@ -261,7 +258,7 @@ public:
      * @param lineno the line number
      * @return pointer to the tage which matches the line number & files
      */
-    TagEntryPtr FunctionFromFileLine(const wxFileName& fileName, int lineno, bool nextFunction = false);
+    TagEntryPtr FunctionFromFileLine(const wxFileName& fileName, int lineno);
 
     /**
      * @brief
@@ -279,11 +276,8 @@ public:
     /**
      * @brief return list of all classes.
      * @param tags [output] vector of tags for the classes
-     * @param onlyWorkspace set to true if you wish to accept only classes belongs to the workspace, false if you would
-     * like to receive
-     * classes from the external database as well
      */
-    void GetClasses(std::vector<TagEntryPtr>& tags, bool onlyWorkspace = true);
+    void GetClasses(std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief return list of tags by their partial names

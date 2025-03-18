@@ -1453,7 +1453,10 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(curpos)));
     int charCurrnt = SafeGetChar(curpos);
 
-    int selectionSize = std::abs(GetSelectionEnd() - GetSelectionStart());
+    const int selectionStart = GetSelectionStart();
+    const int selectionEnd = GetSelectionEnd();
+    const int selectionSize = std::abs(selectionEnd - selectionStart);
+    const int selectionLn = std::abs(LineFromPosition(selectionEnd) - LineFromPosition(selectionStart)) + 1;
     int mainSelectionPos = GetSelectionNCaret(GetMainSelection());
     int curLine = LineFromPosition(mainSelectionPos);
 
@@ -1499,7 +1502,7 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
         }
 
         if ((m_statusBarFields & kShowSelectedChars) && selectionSize) {
-            message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
+            message << (!message.empty() ? ", " : "") << "Sel " << selectionSize << ", SelLn " << selectionLn;
         }
 
         // Always update the status bar with event, calling it directly causes performance degradation

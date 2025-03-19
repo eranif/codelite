@@ -60,7 +60,6 @@
 #include "findusagetab.h"
 #include "frame.h"
 #include "globals.h"
-#include "implement_parent_virtual_functions.h"
 #include "language.h"
 #include "manager.h"
 #include "movefuncimpldlg.h"
@@ -1228,10 +1227,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
     CHECK_EXPECTED_RETURN(DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content), true);
 
     // create the functions body
-    wxString body = TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
-    // remove the empty content provided by this function
-    body = body.BeforeLast('{');
-    body = body.Trim().Trim(false);
+    wxString body = wxEmptyString;
     body.Prepend("\n");
     body << content << "\n";
 

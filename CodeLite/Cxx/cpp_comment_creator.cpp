@@ -64,17 +64,7 @@ wxString CppCommentCreator::FunctionComment()
     for(size_t i = 0; i < tags.size(); i++)
         comment << wxT(" * ") << m_keyPrefix << wxT("param ") << tags.at(i)->GetName() << wxT("\n");
 
-    if(m_tag->GetKind() == wxT("function")) {
-        clFunction f;
-        if(lang->FunctionFromPattern(m_tag, f)) {
-            wxString type = _U(f.m_returnValue.m_type.c_str());
-            trimMe(type);
-            if(type != wxT("void")) { // void has no return value
-                comment << wxT(" * ") << m_keyPrefix << wxT("return \n");
-            }
-        }
-
-    } else {
+    if (m_tag->GetKind() != wxT("function")) {
         Variable var;
         lang->VariableFromPattern(m_tag->GetPattern(), m_tag->GetName(), var);
         wxString type = _U(var.m_type.c_str());

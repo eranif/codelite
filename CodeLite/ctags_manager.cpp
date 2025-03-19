@@ -385,95 +385,6 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int li
     return nullptr;
 }
 
-wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxString& scope)
-{
-    clFunction foo;
-    if(!GetLanguage()->FunctionFromPattern(tag, foo)) {
-        return wxEmptyString;
-    }
-
-    wxString body;
-    // add virtual keyword to declarations only && if the flags is set
-    if(foo.m_isVirtual && (flags & FunctionFormat_WithVirtual) && !(flags & FunctionFormat_Impl)) {
-        body << wxT("virtual\n");
-    }
-
-    if(tag->IsTemplateFunction()) {
-        // a template function, add the template definition
-        body << "template <";
-        CxxTemplateFunction helper(tag);
-        helper.ParseDefinitionList();
-        for(size_t i = 0; i < helper.GetList().GetCount(); ++i) {
-            body << "  typename " << helper.GetList().Item(i) << ", \n";
-        }
-        if(body.EndsWith(", \n")) {
-            body.RemoveLast(3);
-        }
-        body << ">\n";
-    }
-
-    wxString retValue = tag->GetTypename();
-    if(retValue.IsEmpty() == false) {
-        body << retValue << wxT(" ");
-    }
-
-    if(flags & FunctionFormat_Impl) {
-        if(scope.IsEmpty()) {
-            if(tag->GetScope() != wxT("<global>")) {
-                body << tag->GetScope() << wxT("::");
-            }
-        } else {
-            body << scope << wxT("::");
-        }
-    }
-
-    // Build the flags required by the NormalizeFunctionSig() method
-    size_t tmpFlags(0);
-    if(flags & FunctionFormat_Impl) {
-        tmpFlags |= Normalize_Func_Name;
-    } else {
-        tmpFlags |= Normalize_Func_Name | Normalize_Func_Default_value;
-    }
-
-    if(flags & FunctionFormat_Arg_Per_Line)
-        tmpFlags |= Normalize_Func_Arg_Per_Line;
-
-    if(flags & FunctionFormat_Arg_Per_Line)
-        body << wxT("\n");
-
-    body << tag->GetName();
-    if(tag->GetFlags() & TagEntry::Tag_No_Signature_Format) {
-        body << tag->GetSignature();
-
-    } else {
-        body << NormalizeFunctionSig(tag->GetSignature(), tmpFlags);
-    }
-
-    if(foo.m_isConst) {
-        body << wxT(" const");
-    }
-
-    if(!foo.m_throws.empty()) {
-        body << wxT(" throw (") << wxString(foo.m_throws.c_str(), wxConvUTF8) << wxT(")");
-    }
-
-    if(flags & FunctionFormat_Impl) {
-        body << wxT("\n{\n}\n");
-    } else {
-        if(foo.m_isVirtual && (flags & FunctionFormat_WithOverride)) {
-            body << wxT(" override");
-        }
-        body << wxT(";\n");
-    }
-
-    // convert \t to spaces
-    body.Replace(wxT("\t"), wxT(" "));
-
-    // remove any extra spaces from the tip
-    while(body.Replace(wxT("  "), wxT(" "))) {}
-    return body;
-}
-
 void TagsManager::SetLanguage(Language* lang) { m_lang = lang; }
 
 Language* TagsManager::GetLanguage()
@@ -643,36 +554,6 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
     }
 }
 
-wxString TagsManager::GetFunctionReturnValueFromPattern(TagEntryPtr tag)
-{
-    // evaluate the return value of the tag
-    clFunction foo;
-    wxString return_value;
-    if(GetLanguage()->FunctionFromPattern(tag, foo)) {
-        if(foo.m_retrunValusConst.empty() == false) {
-            return_value << _U(foo.m_retrunValusConst.c_str()) << wxT(" ");
-        }
-
-        if(foo.m_returnValue.m_typeScope.empty() == false) {
-            return_value << _U(foo.m_returnValue.m_typeScope.c_str()) << wxT("::");
-        }
-
-        if(foo.m_returnValue.m_type.empty() == false) {
-            return_value << _U(foo.m_returnValue.m_type.c_str());
-            if(foo.m_returnValue.m_templateDecl.empty() == false) {
-                return_value << wxT("<") << _U(foo.m_returnValue.m_templateDecl.c_str()) << wxT(">");
-            }
-            return_value << _U(foo.m_returnValue.m_starAmp.c_str());
-            return_value << wxT(" ");
-        }
-
-        if(!foo.m_returnValue.m_rightSideConst.empty()) {
-            return_value << foo.m_returnValue.m_rightSideConst << " ";
-        }
-    }
-    return return_value;
-}
-
 void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
     std::vector<std::pair<wxString, int>> derivationList;
@@ -785,8 +666,6 @@ wxString TagsManager::DoReplaceMacrosFromDatabase(const wxString& name)
     }
     return newName;
 }
-
-bool TagsManager::AreTheSame(const TagEntryPtrVector_t& v1, const TagEntryPtrVector_t& v2) const { return false; }
 
 bool TagsManager::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
                                      int visibility)

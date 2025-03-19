@@ -177,10 +177,6 @@ void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t
         // Load the new tags from the database
         db->SelectTagsByFile(fileName.GetFullPath(), newTags);
 
-        // Compare the new tags with the old ones
-        if(!forceBuild && TagsManagerST::Get()->AreTheSame(newTags, m_currentTags))
-            return;
-
         m_currentTags.clear();
         m_currentTags.insert(m_currentTags.end(), newTags.begin(), newTags.end());
 

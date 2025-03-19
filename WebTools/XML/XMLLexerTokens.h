@@ -37,7 +37,7 @@ enum {
     kXML_T_COMMENT_END,
     kXML_T_CDATA_START,
     kXML_T_CDATA_END,
-    // XML entitites
+    // XML entities
     kXML_T_ENTITY_LT,
     kXML_T_ENTITY_GT,
     kXML_T_ENTITY_AMP,

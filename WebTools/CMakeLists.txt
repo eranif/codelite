@@ -14,10 +14,15 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
+flex_target(XmlFlex "XML/XMLLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/XmlLexer.cpp"
+            COMPILE_FLAGS "-Pxml --noline --yylineno --batch")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${FLEX_XmlFlex_OUTPUTS})
+
+target_include_directories(${PLUGIN_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)

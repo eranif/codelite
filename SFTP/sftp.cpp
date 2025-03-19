@@ -340,8 +340,7 @@ void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
     IEditor* editor = m_mgr->OpenFile(cd.GetLocalPath(), "download", tooltip);
     if (editor) {
         // Tag this editor as a remote file
-        SFTPClientData* pcd = new SFTPClientData(cd);
-        editor->SetClientData("sftp", pcd);
+        editor->SetClientData("sftp", std::make_unique<SFTPClientData>(cd));
         // set the line number
         if (cd.GetLineNumber() != wxNOT_FOUND) {
             editor->GetCtrl()->GotoLine(cd.GetLineNumber());

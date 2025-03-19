@@ -45,8 +45,8 @@
 class IConfigTool
 {
 public:
-    IConfigTool() {}
-    virtual ~IConfigTool() {}
+    IConfigTool() = default;
+    virtual ~IConfigTool() = default;
 
     /**
      * @brief read an object from the configuration file and place it into obj

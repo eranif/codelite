@@ -894,7 +894,7 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
 
         for (const LSP::Diagnostic& d : event.GetDiagnostics()) {
             // LSP uses 1 based line numbers
-            CompilerMessage cm{ d.GetMessage(), new DiagnosticsData(d) };
+            CompilerMessage cm{ d.GetMessage(), std::make_unique<DiagnosticsData>(d) };
             switch (d.GetSeverity()) {
             case LSP::DiagnosticSeverity::Error:
                 editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), std::move(cm));

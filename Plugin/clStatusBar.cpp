@@ -99,7 +99,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
         new wxCustomStatusBarBitmapField(this, clGetScaledSize(30) + lable_width));
     STATUSBAR_SCM_IDX = AddField(sourceControl);
 
-    int lineColWidth = GetTextWidth("Ln 100000, Col 999, Pos 12345678, Len 4821182");
+    const int lineColWidth = GetTextWidth("Ln 123456, Col 123, Pos 12345678, Len 12345678, Sel 1234567, SelLn 12345");
     wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, lineColWidth));
     STATUSBAR_LINE_COL_IDX = AddField(lineCol);
 

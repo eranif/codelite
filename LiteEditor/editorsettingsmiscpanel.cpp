@@ -89,6 +89,8 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowLength));
     AddProperty(_("Show number of selected chars"), clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowSelectedChars));
+    AddProperty(_("Show number of selected lines"), clConfig::Get().Read(kConfigStatusbarShowSelectedLines, true),
+                UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowSelectedLines));
 
     AddHeader(_("Tool bar"));
     AddProperty(_("Space between button groups"), clConfig::Get().Read(kConfigToolbarGroupSpacing, 30),

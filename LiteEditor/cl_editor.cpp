@@ -1500,9 +1500,11 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
         if (m_statusBarFields & kShowLen) {
             message << (!message.empty() ? ", " : "") << "Len " << GetLength();
         }
-
         if ((m_statusBarFields & kShowSelectedChars) && selectionSize) {
-            message << (!message.empty() ? ", " : "") << "Sel " << selectionSize << ", SelLn " << selectionLn;
+            message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
+        }
+        if ((m_statusBarFields & kShowSelectedLines) && selectionSize && selectionLn) {
+            message << (!message.empty() ? ", " : "") << "SelLn " << selectionLn;
         }
 
         // Always update the status bar with event, calling it directly causes performance degradation
@@ -6134,6 +6136,9 @@ void clEditor::PreferencesChanged()
     }
     if (clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true)) {
         m_statusBarFields |= kShowSelectedChars;
+    }
+    if (clConfig::Get().Read(kConfigStatusbarShowSelectedLines, true)) {
+        m_statusBarFields |= kShowSelectedLines;
     }
 }
 

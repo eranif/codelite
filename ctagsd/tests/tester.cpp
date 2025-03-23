@@ -1,11 +1,13 @@
-#include <wx/init.h>
 #include "tester.hpp"
 
 #include "clAnsiEscapeCodeColourBuilder.hpp"
+
+#include <wx/init.h>
+#include <wx/wxcrtvararg.h>
+
 #ifdef _WIN32
 #include <Windows.h>
 #endif
-#include <stdio.h>
 
 Tester* Tester::ms_instance = 0;
 
@@ -40,7 +42,7 @@ std::size_t Tester::RunTests()
     clAnsiEscapeCodeColourBuilder builder;
     builder.SetTheme(eColourTheme::DARK);
 
-    vector<wxString> failures;
+    std::vector<wxString> failures;
     size_t total_checks = 0;
     for(size_t i = 0; i < m_tests.size(); i++) {
         ITest* test = m_tests[i];

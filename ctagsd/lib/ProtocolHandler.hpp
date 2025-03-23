@@ -11,7 +11,6 @@
 #include "database/istorage.h"
 #include "macros.h"
 
-#include <algorithm>
 #include <memory>
 #include <wx/string.h>
 

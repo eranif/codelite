@@ -4,13 +4,10 @@
 #include "ctags_manager.h"
 #include "file_logger.h"
 
-#include <iostream>
-#include <stdio.h>
 #include <unordered_map>
 #include <wx/cmdline.h>
 #include <wx/filename.h>
 #include <wx/init.h>
-#include <wx/stdpaths.h>
 #include <wx/wxcrtvararg.h>
 
 namespace

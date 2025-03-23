@@ -3,7 +3,6 @@
 #include "Cxx/CxxLexerAPI.h"
 #include "Cxx/CxxScannerTokens.h"
 #include "Cxx/CxxTokenizer.h"
-#include "file_logger.h"
 #include "fileutils.h"
 
 Scanner::Scanner() {}

@@ -3,18 +3,14 @@
 #include "GCCMetadata.hpp"
 #include "JSON.h"
 #include "Platform/Platform.hpp"
-#include "clTempFile.hpp"
 #include "clangd/CompileCommandsJSON.h"
 #include "clangd/CompileFlagsTxt.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
-#include "fileutils.h"
-#include "procutils.h"
 #include "tags_options_data.h"
 
 #include <set>
 #include <wx/string.h>
-#include <wx/tokenzr.h>
 
 namespace
 {

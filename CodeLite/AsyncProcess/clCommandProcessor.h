@@ -30,6 +30,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
+#include <memory>
 #include <wx/event.h>
 #include <wx/string.h>
 
@@ -44,16 +45,16 @@ class clCommandProcessor;
 typedef bool (wxEvtHandler::*clCommandProcessorFunc)(const clCommandProcessor* processor);
 class WXDLLIMPEXP_CL clCommandProcessor : public wxEvtHandler
 {
-    clCommandProcessor* m_next;
-    clCommandProcessor* m_prev;
-    IProcess* m_process;
+    clCommandProcessor* m_next = nullptr;
+    clCommandProcessor* m_prev = nullptr;
+    std::unique_ptr<IProcess> m_process;
     wxString m_command;
     wxString m_workingDirectory;
     size_t m_processFlags;
     wxString m_output;
 
-    clCommandProcessorFunc m_postExecCallback;
-    wxEvtHandler* m_obj;
+    clCommandProcessorFunc m_postExecCallback = nullptr;
+    wxEvtHandler* m_obj = nullptr;
 
 protected:
     void DeleteChain();
@@ -61,7 +62,7 @@ protected:
 
 public:
     clCommandProcessor(const wxString& command, const wxString& wd, size_t processFlags = IProcessCreateDefault);
-    virtual ~clCommandProcessor();
+    ~clCommandProcessor() override = default;
 
     void ExecuteCommand();
 
@@ -77,7 +78,7 @@ public:
     clCommandProcessor* GetNext() { return m_next; }
     void SetNext(clCommandProcessor* next) { this->m_next = next; }
 
-    IProcess* GetProcess() { return m_process; }
+    IProcess* GetProcess() { return m_process.get(); }
     /**
      * @brief set a callback to be called by the processor when the current command execution
      * is completed. The callback signature is:

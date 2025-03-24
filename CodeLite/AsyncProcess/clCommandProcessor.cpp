@@ -7,21 +7,14 @@ wxDEFINE_EVENT(wxEVT_COMMAND_PROCESSOR_ENDED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_COMMAND_PROCESSOR_OUTPUT, clCommandEvent);
 
 clCommandProcessor::clCommandProcessor(const wxString& command, const wxString& wd, size_t processFlags)
-    : m_next(NULL)
-    , m_prev(NULL)
-    , m_process(NULL)
-    , m_command(command)
+    : m_command(command)
     , m_workingDirectory(wd)
     , m_processFlags(processFlags)
-    , m_postExecCallback(NULL)
-    , m_obj(NULL)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clCommandProcessor::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clCommandProcessor::OnProcessTerminated, this);
     
 }
-
-clCommandProcessor::~clCommandProcessor() { wxDELETE(m_process); }
 
 void clCommandProcessor::ExecuteCommand()
 {
@@ -33,7 +26,7 @@ void clCommandProcessor::ExecuteCommand()
     GetFirst()->ProcessEvent(eventStart);
     
     m_output.Clear();
-    m_process = ::CreateAsyncProcess(this, m_command, m_processFlags, m_workingDirectory);
+    m_process.reset(::CreateAsyncProcess(this, m_command, m_processFlags, m_workingDirectory));
     if(!m_process) {
         clCommandEvent eventEnd(wxEVT_COMMAND_PROCESSOR_ENDED);
         eventEnd.SetString(wxString::Format(_("Failed to execute command: %s"), m_command));
@@ -69,7 +62,7 @@ void clCommandProcessor::OnProcessTerminated(clProcessEvent& event)
     }
 
     if(m_next) {
-        wxDELETE(m_process);
+        m_process.reset();
         // more commands, don't report an 'END' event
         m_next->ExecuteCommand();
 

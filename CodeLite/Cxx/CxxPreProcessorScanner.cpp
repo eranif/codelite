@@ -198,15 +198,6 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
     else                                \
         cur->SetValue((double)v);
 
-struct ExpressionLocker {
-    CxxPreProcessorExpression* m_expr;
-    ExpressionLocker(CxxPreProcessorExpression* expr)
-        : m_expr(expr)
-    {
-    }
-    ~ExpressionLocker() { wxDELETE(m_expr); }
-};
-
 bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
 {
     // we currently support
@@ -215,9 +206,8 @@ bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
     // #if (cond) && (cond) || !(cond)
     // anything else, returns false
     CxxLexerToken token;
-    CxxPreProcessorExpression* cur = new CxxPreProcessorExpression(false);
-    ExpressionLocker locker(cur);
-    CxxPreProcessorExpression* head = cur;
+    auto head = std::make_unique<CxxPreProcessorExpression>(false);
+    CxxPreProcessorExpression* cur = head.get();
     while(m_scanner && ::LexerNext(m_scanner, token)) {
         if(token.GetType() == T_PP_STATE_EXIT) {
             bool res = head->IsTrue();

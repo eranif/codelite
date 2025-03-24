@@ -3,18 +3,8 @@
 #include <wx/utils.h>
 
 CxxPreProcessorExpression::CxxPreProcessorExpression(bool value)
-    : m_next(NULL)
-    , m_isNot(false)
-    , m_operand(kNONE)
-    , m_defined(false)
-    , m_valueSet(false)
-    , m_valueLong(value ? 1 : 0)
+    : m_valueLong(value ? 1 : 0)
 {
-}
-
-CxxPreProcessorExpression::~CxxPreProcessorExpression()
-{
-    wxDELETE(m_next);
 }
 
 bool CxxPreProcessorExpression::IsTrue()
@@ -52,11 +42,11 @@ bool CxxPreProcessorExpression::DoIsTrue()
 }
 
 CxxPreProcessorExpression* CxxPreProcessorExpression::SetNext(CxxPreProcessorExpression::eOperand operand,
-                                                        CxxPreProcessorExpression* expr)
+                                                              std::unique_ptr<CxxPreProcessorExpression> expr)
 {
-    m_next = expr;
+    m_next = std::move(expr);
     m_operand = operand;
-    return m_next;
+    return m_next.get();
 }
 
 void CxxPreProcessorExpression::SetNot()

@@ -26,8 +26,9 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
-#include <cstdlib>
 #include "codelite_exports.h"
+
+#include <memory>
 
 class WXDLLIMPEXP_CL CxxPreProcessorExpression
 {
@@ -43,11 +44,11 @@ public:
     };
 
 protected:
-    CxxPreProcessorExpression* m_next;
-    bool m_isNot;
-    eOperand m_operand;
-    bool m_defined;
-    bool m_valueSet;
+    std::unique_ptr<CxxPreProcessorExpression> m_next;
+    bool m_isNot = false;
+    eOperand m_operand = kNONE;
+    bool m_defined = false;
+    bool m_valueSet = false;
     double m_valueLong;
 private:
     /**
@@ -62,7 +63,7 @@ private:
     
 public:
     CxxPreProcessorExpression(bool value);
-    virtual ~CxxPreProcessorExpression();
+    virtual ~CxxPreProcessorExpression() = default;
 
     bool IsTrue();
 
@@ -96,7 +97,8 @@ public:
     /**
      * @brief set the next expression in the chain
      */
-    CxxPreProcessorExpression* SetNext(CxxPreProcessorExpression::eOperand operand, CxxPreProcessorExpression* expr);
+    CxxPreProcessorExpression* SetNext(CxxPreProcessorExpression::eOperand operand,
+                                       std::unique_ptr<CxxPreProcessorExpression> expr);
 
     /**
      * @brief set value to the current expression

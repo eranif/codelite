@@ -43,15 +43,12 @@ EVT_TIMER(AsyncExeTimerID, AsyncExeCmd::OnTimer)
 END_EVENT_TABLE()
 
 AsyncExeCmd::AsyncExeCmd(wxEvtHandler* owner)
-    : m_proc(NULL)
-    , m_owner(owner)
-    , m_busy(false)
-    , m_stop(false)
+    : m_owner(owner)
 {
 #ifndef __WXMSW__
     EventNotifier::Get()->Bind(wxEVT_CL_PROCESS_TERMINATED, &AsyncExeCmd::OnZombieReaperProcessTerminated, this);
 #endif
-    m_timer = new wxTimer(this, AsyncExeTimerID);
+    m_timer = std::make_unique<wxTimer>(this, AsyncExeTimerID);
 }
 
 AsyncExeCmd::~AsyncExeCmd()
@@ -59,8 +56,6 @@ AsyncExeCmd::~AsyncExeCmd()
 #ifndef __WXMSW__
     EventNotifier::Get()->Unbind(wxEVT_CL_PROCESS_TERMINATED, &AsyncExeCmd::OnZombieReaperProcessTerminated, this);
 #endif
-    wxDELETE(m_timer);
-    wxDELETE(m_proc);
 };
 
 void AsyncExeCmd::AppendLine(const wxString& line, bool isErr)
@@ -178,10 +173,10 @@ void AsyncExeCmd::Execute(const wxString& cmdLine, bool hide, bool redirect)
     SetBusy(true);
     SendStartMsg();
 
-    m_proc = new clProcess(wxNewId(), m_cmdLine, redirect);
+    m_proc = std::make_unique<clProcess>(wxNewId(), m_cmdLine, redirect);
     if(m_proc) {
         if(m_proc->Start(hide) == 0) {
-            wxDELETE(m_proc);
+            m_proc.reset();
             SetBusy(false);
 
         } else {

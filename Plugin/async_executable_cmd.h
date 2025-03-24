@@ -28,6 +28,7 @@
 #include "cl_process.h"
 #include "codelite_exports.h"
 
+#include <memory>
 #include <wx/event.h>
 #include <wx/timer.h>
 
@@ -39,11 +40,11 @@ DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SDK, wxEVT_ASYNC_PROC_ENDED, wxID_ANY)
 class WXDLLIMPEXP_SDK AsyncExeCmd : public wxEvtHandler
 {
 protected:
-    clProcess* m_proc;
+    std::unique_ptr<clProcess> m_proc;
     wxEvtHandler* m_owner;
-    wxTimer* m_timer;
-    bool m_busy;
-    bool m_stop;
+    std::unique_ptr<wxTimer> m_timer;
+    bool m_busy = false;
+    bool m_stop = false;
     wxString m_cmdLine;
 
 protected:
@@ -62,7 +63,7 @@ public:
     void SetBusy(bool busy) { m_busy = busy; }
     void Stop();
     void ProcessEnd(wxProcessEvent& event);
-    clProcess* GetProcess() { return m_proc; }
+    clProcess* GetProcess() { return m_proc.get(); }
 
 public:
     // construct a compiler action

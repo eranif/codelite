@@ -30,7 +30,6 @@ END_EVENT_TABLE()
 OpenResourceDlg::OpenResourceDlg(wxWindow* parent, const ResourceVector_t& items, IManager* manager)
     : OpenResourceDlgBase(parent)
     , m_mgr(manager)
-    , m_timer(NULL)
 {
     m_resources = items;
     m_textCtrlFilter->Hide();
@@ -45,7 +44,6 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, const ResourceVector_t& items
 OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     : OpenResourceDlgBase(parent)
     , m_mgr(manager)
-    , m_timer(NULL)
 {
     wxStringSet_t files;
     PHPWorkspace::Get()->GetWorkspaceFiles(files);
@@ -68,7 +66,7 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     }
 
     DoInitialize();
-    m_timer = new wxTimer(this, TIMER_ID);
+    m_timer = std::make_unique<wxTimer>(this, TIMER_ID);
     m_timer->Start(50, true);
 
     wxString lastStringTyped = clConfig::Get().Read("PHP/OpenResourceDialog/SearchString", wxString());
@@ -105,7 +103,6 @@ void OpenResourceDlg::DoInitialize()
 
 OpenResourceDlg::~OpenResourceDlg()
 {
-    wxDELETE(m_timer);
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         ResourceItem* data = (ResourceItem*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         wxDELETE(data);

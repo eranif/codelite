@@ -24,7 +24,6 @@ clRemoteBuilder::~clRemoteBuilder()
 {
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteBuilder::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteBuilder::OnProcessTerminated, this);
-    wxDELETE(m_remoteProcess);
 }
 
 bool clRemoteBuilder::IsRunning() const { return m_remoteProcess != nullptr; }
@@ -78,7 +77,7 @@ void clRemoteBuilder::OnProcessOutput(clProcessEvent& event)
 void clRemoteBuilder::OnProcessTerminated(clProcessEvent& event)
 {
     clGetManager()->AppendOutputTabText(kOutputTab_Build, "==== Done ====\n");
-    wxDELETE(m_remoteProcess);
+    m_remoteProcess.reset();
 
     clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
     EventNotifier::Get()->AddPendingEvent(eventStopped);

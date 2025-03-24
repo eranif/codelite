@@ -8,12 +8,9 @@
 #include "detectors/LSPDetector.hpp"
 #include "plugin.h"
 
-#include <wx/notifmsg.h>
-#include <wx/sharedptr.h>
-
 class LanguageServerPlugin : public IPlugin
 {
-    LanguageServerCluster* m_servers = nullptr;
+    std::unique_ptr<LanguageServerCluster> m_servers;
     IProcess* m_process = nullptr;
     clTabTogglerHelper::Ptr_t m_tabToggler;
     LanguageServerLogView* m_logView = nullptr;
@@ -49,7 +46,7 @@ protected:
 
 public:
     LanguageServerPlugin(IManager* manager);
-    virtual ~LanguageServerPlugin();
+    ~LanguageServerPlugin() override = default;
 
     //--------------------------------------------
     // Abstract methods

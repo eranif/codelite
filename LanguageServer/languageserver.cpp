@@ -5,8 +5,6 @@
 #include "LanguageServerSettingsDlg.h"
 #include "StringUtils.h"
 #include "clInfoBar.h"
-#include "cl_standard_paths.h"
-#include "clangd/CompileCommandsGenerator.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -16,8 +14,7 @@
 #include <thread>
 #include <wx/app.h>
 #include <wx/datetime.h>
-#include <wx/notifmsg.h>
-#include <wx/stc/stc.h>
+#include <wx/defs.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
@@ -46,10 +43,10 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     // Load the configuration
     LanguageServerConfig::Get().Load();
-    m_servers = new LanguageServerCluster(this);
+    m_servers = std::make_unique<LanguageServerCluster>(this);
 
     // add log view
-    m_logView = new LanguageServerLogView(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_servers);
+    m_logView = new LanguageServerLogView(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_servers.get());
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("Language Server"));
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
 
@@ -78,8 +75,6 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     CallAfter(&LanguageServerPlugin::CheckServers);
 }
-
-LanguageServerPlugin::~LanguageServerPlugin() { wxDELETE(m_servers); }
 
 void LanguageServerPlugin::CheckServers()
 {
@@ -143,7 +138,7 @@ void LanguageServerPlugin::UnPlug()
         m_logView->Destroy();
     }
     m_logView = nullptr;
-    wxDELETE(m_servers);
+    m_servers.reset();
 }
 
 void LanguageServerPlugin::OnSettings(wxCommandEvent& e)

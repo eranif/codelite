@@ -57,7 +57,7 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
     clGetManager()->AppendOutputTabText(
         kOutputTab_Build, wxString() << "Remote build started using ssh account: " << account.GetAccountName() << "\n");
     clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
-    m_remoteProcess = ::CreateAsyncProcess(this, cmd);
+    m_remoteProcess.reset(::CreateAsyncProcess(this, cmd));
 
     clBuildEvent eventStart(wxEVT_BUILD_STARTED);
     EventNotifier::Get()->AddPendingEvent(eventStart);

@@ -8,7 +8,7 @@
 
 #include <deque>
 #include <functional>
-#include <queue>
+#include <memory>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h>
@@ -36,7 +36,7 @@ protected:
     };
 
 protected:
-    IProcess* m_process = nullptr;
+    std::unique_ptr<IProcess> m_process;
     std::deque<CallbackOptions> m_completionCallbacks;
     wxString m_outputRead;
     size_t m_fif_matches_count = 0;

@@ -6,7 +6,6 @@
 #include "clRowEntry.h"
 #include "clScrolledPanel.h"
 
-#include <array>
 #include <memory>
 #include <wx/imaglist.h>
 
@@ -82,7 +81,7 @@ protected:
     int m_lineHeight = 0;
     int m_indent = 0;
     BitmapVec_t* m_bitmaps = nullptr;
-    BitmapVec_t* m_bitmapsInternal = nullptr;
+    std::unique_ptr<BitmapVec_t> m_bitmapsInternal;
     int m_scrollTick = SCROLL_TICK;
     clSearchText m_search;
     clSearchControl* m_searchControl = nullptr;

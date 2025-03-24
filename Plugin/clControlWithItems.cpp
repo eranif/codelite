@@ -179,7 +179,6 @@ clControlWithItems::~clControlWithItems()
 {
     m_searchControl = nullptr;
     Unbind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
-    wxDELETE(m_bitmapsInternal);
 }
 
 void clControlWithItems::SetShowHeader(bool b)
@@ -584,17 +583,17 @@ void clControlWithItems::SetNativeTheme(bool nativeTheme)
 
 void clControlWithItems::SetImageList(wxImageList* images)
 {
-    wxDELETE(m_bitmapsInternal);
     if (!images || images->GetImageCount() <= 0) {
+        m_bitmapsInternal.reset();
         return;
     }
 
-    m_bitmapsInternal = new BitmapVec_t();
+    m_bitmapsInternal = std::make_unique<BitmapVec_t>();
     m_bitmapsInternal->reserve(images->GetImageCount());
     for (size_t i = 0; i < (size_t)images->GetImageCount(); ++i) {
         m_bitmapsInternal->push_back(images->GetBitmap(i));
     }
-    SetBitmaps(m_bitmapsInternal);
+    SetBitmaps(m_bitmapsInternal.get());
 }
 
 void clControlWithItems::SetColours(const clColours& colours)

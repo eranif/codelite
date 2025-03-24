@@ -9,22 +9,22 @@
 #endif
 
 #include "asyncprocess.h"
-#include "cl_command_event.h"
 #include "codelite_exports.h"
 
+#include <memory>
 #include <wx/arrstr.h>
 #include <wx/event.h>
 
 class WXDLLIMPEXP_CL ChildProcess : public wxEvtHandler
 {
 #if USE_IPROCESS
-    IProcess* m_process = nullptr;
+    std::unique_ptr<IProcess> m_process;
 #else
-    UnixProcess* m_childProcess = nullptr;
+    std::unique_ptr<UnixProcess> m_childProcess;
 #endif
 public:
     ChildProcess();
-    virtual ~ChildProcess();
+    ~ChildProcess() override;
 
     void Start(const wxArrayString& args);
     void Write(const wxString& message);

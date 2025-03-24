@@ -2,9 +2,7 @@
 
 #include "asyncprocess.h"
 #include "cl_exception.h"
-#include "file_logger.h"
 #include "fileutils.h"
-#include "processreaderthread.h"
 
 #if !USE_IPROCESS
 #include "UnixProcess.h"
@@ -18,12 +16,10 @@ ChildProcess::~ChildProcess()
     if(m_process) {
         m_process->Detach();
     }
-    wxDELETE(m_process);
 #else
     if(m_childProcess) {
         m_childProcess->Detach();
     }
-    wxDELETE(m_childProcess);
 #endif
 }
 
@@ -56,12 +52,12 @@ void ChildProcess::Start(const wxArrayString& args)
     }
 
     // Launch the process
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessStderrEvent);
+    m_process.reset(::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessStderrEvent));
     if(!m_process) {
         throw clException(wxString() << "Failed to execute process: " << command);
     };
 #else
-    m_childProcess = new UnixProcess(this, args);
+    m_childProcess = std::make_unique<UnixProcess>(this, args);
 #endif
 }
 

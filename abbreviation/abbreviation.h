@@ -36,7 +36,7 @@ class AbbreviationPlugin : public IPlugin
 
 protected:
     void OnSettings(wxCommandEvent& e);
-    void OnShowAbbvreviations(wxCommandEvent& e);
+    void OnShowAbbreviations(wxCommandEvent& e);
     wxCodeCompletionBoxEntry::Vec_t GetAbbreviations(const wxString& filter);
     void OnAbbrevSelected(clCodeCompletionEvent& e);
     void InitDefaults();

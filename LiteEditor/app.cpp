@@ -560,10 +560,10 @@ bool CodeLiteApp::OnInit()
         homeDir = ::wxGetCwd();
 #endif
     }
-    wxFileName fnHomdDir(homeDir, "");
+    wxFileName fnHomeDir(homeDir, "");
 
     //    // Set the standard path with the new data dir
-    //    clStandardPaths::Get().SetDataDir(fnHomdDir.GetPath());
+    //    clStandardPaths::Get().SetDataDir(fnHomeDir.GetPath());
 
     // try to locate the menu/rc.xrc file
     wxFileName fn(homeDir + wxT("/rc"), MENU_XRC);
@@ -573,9 +573,9 @@ bool CodeLiteApp::OnInit()
         homeDir = appFn.GetPath();
     }
 
-    if (fnHomdDir.IsRelative()) {
-        fnHomdDir.MakeAbsolute();
-        homeDir = fnHomdDir.GetPath();
+    if (fnHomeDir.IsRelative()) {
+        fnHomeDir.MakeAbsolute();
+        homeDir = fnHomeDir.GetPath();
     }
 
     ManagerST::Get()->SetInstallDir(homeDir);

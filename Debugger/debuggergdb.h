@@ -156,7 +156,7 @@ public:
     virtual bool CreateVariableObject(const wxString& expression, bool persistent, int userReason);
     virtual bool DeleteVariableObject(const wxString& name);
     virtual bool EvaluateVariableObject(const wxString& name, int userReason);
-    virtual bool SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat);
+    virtual bool SetVariableObjectDisplayFormat(const wxString& name, DisplayFormat displayFormat);
     virtual bool UpdateVariableObject(const wxString& name, int userReason);
     virtual void AssignValue(const wxString& expression, const wxString& newValue);
     virtual bool Jump(wxString filename, int line);

@@ -82,7 +82,7 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 m_macros.insert(m_macros.end(), cclp.GetMacros().begin(), cclp.GetMacros().end());
                 m_macrosWithPrefix.insert(m_macrosWithPrefix.end(), cclp.GetMacrosWithPrefix().begin(),
                                           cclp.GetMacrosWithPrefix().end());
-                m_framworks.insert(m_framworks.end(), cclp.GetFramworks().begin(), cclp.GetFramworks().end());
+                m_frameworks.insert(m_frameworks.end(), cclp.GetFrameworks().begin(), cclp.GetFrameworks().end());
             } else if(opt.StartsWith("@") && (opt.Contains("includes_C.rsp") || opt.Contains("includes_CXX.rsp"))) {
 
                 // The include folders are inside the file - read the file and process its content
@@ -148,7 +148,7 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
 
                 m_includesWithPrefix.Add(opt);
                 rest.Trim().Trim(false);
-                m_framworks.Add(rest);
+                m_frameworks.Add(rest);
 
             }
 

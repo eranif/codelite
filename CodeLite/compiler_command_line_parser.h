@@ -42,7 +42,7 @@ protected:
     wxArrayString m_macros;
     wxArrayString m_macrosWithPrefix;
     wxArrayString m_includesWithPrefix;
-    wxArrayString m_framworks;
+    wxArrayString m_frameworks;
     wxArrayString m_sysroots; // -isysroot
     wxString m_standard;
     wxArrayString m_otherOptions;
@@ -65,7 +65,7 @@ public:
 
     const wxArrayString& GetSysroots() const { return m_sysroots; }
     const wxArrayString& GetOtherOptions() const { return m_otherOptions; }
-    const wxArrayString& GetFramworks() const { return m_framworks; }
+    const wxArrayString& GetFrameworks() const { return m_frameworks; }
     const wxString& GetPchFile() const { return m_pchFile; }
     void SetArgc(int argc) { this->m_argc = argc; }
     void SetArgv(char** argv) { this->m_argv = argv; }

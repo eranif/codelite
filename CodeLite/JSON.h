@@ -53,7 +53,7 @@ class WXDLLIMPEXP_CL JSONItem
 protected:
     cJSON* m_json = nullptr;
     cJSON* m_walker = nullptr;
-    wxString m_properytName;
+    wxString m_propertyName;
     int m_type = wxNOT_FOUND;
 
     // Values
@@ -77,8 +77,8 @@ public:
     ////////////////////////////////////////////////
     void setType(int m_type) { this->m_type = m_type; }
     int getType() const { return m_type; }
-    const wxString& GetPropertyName() const { return m_properytName; }
-    void SetPropertyName(const wxString& name) { m_properytName = name; }
+    const wxString& GetPropertyName() const { return m_propertyName; }
+    void SetPropertyName(const wxString& name) { m_propertyName = name; }
 
     // Readers
     ////////////////////////////////////////////////

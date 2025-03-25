@@ -240,11 +240,11 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, std::unordered_map<wx
 
     for(auto var : variables) {
         __local local;
-        wxString assignement_expr_raw = var->GetDefaultValue();
+        wxString assignment_expr_raw = var->GetDefaultValue();
         // strip it from any keywords etc and only keep interesting parts
 
-        local.set_assignment_raw(assignement_expr_raw);
-        local.set_assignment(assignement_expr_raw);
+        local.set_assignment_raw(assignment_expr_raw);
+        local.set_assignment(assignment_expr_raw);
         local.set_type_name(var->GetTypeAsString());
         local.set_is_auto(var->IsAuto());
         local.set_name(var->GetName());

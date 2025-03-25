@@ -220,7 +220,7 @@ public:
     /**
      * @brief start LSP server and connect to it (e.g. clangd)
      * @param LSPStartupInfo which contains the command to execute, working directory and other process related stuff
-     * @param env environment vriables for this LSP
+     * @param env environment variables for this LSP
      * @param initOptions initialization options to pass to the LSP
      * @param rootFolder the LSP root folder (to be passed during the 'initialize' request)
      * @param languages supported languages by this LSP
@@ -248,7 +248,7 @@ public:
      */
     void FindDefinition(IEditor* editor);
     /**
-     * @brief find the implementatin of a symbol at the caret position
+     * @brief find the implementation of a symbol at the caret position
      */
     void FindImplementation(IEditor* editor);
     /**

@@ -74,7 +74,7 @@ public:
     void AddVariable(const wxString& setName, const wxString& name, const wxString& value);
 
     /**
-     * \brief inser variable into the set. If a variable is already exist with this name, replace it
+     * \brief insert variable into the set. If a variable already exists with this name, replace it
      * \param setName
      * \param name
      * \param value

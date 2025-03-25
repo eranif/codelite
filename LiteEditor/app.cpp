@@ -181,14 +181,14 @@ void ChildTerminatedSignalHandler(int signo)
 }
 
 // Block/Restore sigchild
-struct sigaction old_behvior;
-struct sigaction new_behvior;
+struct sigaction old_behavior;
+struct sigaction new_behavior;
 void CodeLiteBlockSigChild()
 {
-    sigfillset(&new_behvior.sa_mask);
-    new_behvior.sa_handler = ChildTerminatedSignalHandler;
-    new_behvior.sa_flags = 0;
-    sigaction(SIGCHLD, &new_behvior, &old_behvior);
+    sigfillset(&new_behavior.sa_mask);
+    new_behavior.sa_handler = ChildTerminatedSignalHandler;
+    new_behavior.sa_flags = 0;
+    sigaction(SIGCHLD, &new_behavior, &old_behavior);
 }
 
 void on_sigpipe(int sig)

@@ -178,7 +178,7 @@ public:
     virtual ~LanguageServerProtocol();
 
     /**
-     * @brief set a callnack to be executed once the LSP is up and running
+     * @brief set a callback to be executed once the LSP is up and running
      * but before the `initialize` request has been sent
      */
     void SetStartedCallback(LSPOnConnectedCallback_t&& cb);

@@ -390,9 +390,9 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
     }
 
     // Check if one of the parents is a template class
-    std::vector<wxString> inhertiance_expressions =
+    std::vector<wxString> inheritance_expressions =
         CxxExpression::split_subclass_expression(normalize_pattern(resolved));
-    for(const wxString& inherit : inhertiance_expressions) {
+    for (const wxString& inherit : inheritance_expressions) {
         std::vector<CxxExpression> more_expressions = from_expression(inherit + ".", nullptr);
         if(more_expressions.empty()) {
             continue;

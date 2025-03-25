@@ -216,7 +216,7 @@ bool CMakeGenerator::Generate(ProjectPtr p)
 
     // Environment variables
     {
-        wxString variables = workspace->GetEnvironmentVariabels(); // Nice typo
+        wxString variables = workspace->GetEnvironmentVariables();
         variables.Trim().Trim(false);
 
         if(!variables.IsEmpty()) {

@@ -404,13 +404,13 @@ public:
     /**
      * @brief return the workspace environment variables
      */
-    wxString GetEnvironmentVariabels();
+    wxString GetEnvironmentVariables();
 
     /**
      * @brief set the workspace environment variables. These environment variables
      * will be kept in the workspace file (i.e. they are portable)
      */
-    void SetEnvironmentVariabels(const wxString& envvars);
+    void SetEnvironmentVariables(const wxString& envvars);
 
     /**
      * @brief return the selected workspace configuration

@@ -913,7 +913,7 @@ wxString clCxxWorkspace::GetParserMacros()
     return wxEmptyString;
 }
 
-wxString clCxxWorkspace::GetEnvironmentVariabels()
+wxString clCxxWorkspace::GetEnvironmentVariables()
 {
     if(!m_doc.IsOk())
         return wxEmptyString;
@@ -936,7 +936,7 @@ wxString clCxxWorkspace::GetEnvironmentVariabels()
     return wxEmptyString;
 }
 
-void clCxxWorkspace::SetEnvironmentVariabels(const wxString& envvars)
+void clCxxWorkspace::SetEnvironmentVariables(const wxString& envvars)
 {
     if(!m_doc.IsOk())
         return;

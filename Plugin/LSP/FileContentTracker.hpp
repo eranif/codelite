@@ -41,7 +41,7 @@ public:
     void erase(const wxString& filepath);
 
     /**
-     * @brief return the changes needed in otder to change `before` into `after`
+     * @brief return the changes needed in order to change `before` into `after`
      */
     std::vector<LSP::TextDocumentContentChangeEvent> changes_from(const wxString& before, const wxString& after);
 

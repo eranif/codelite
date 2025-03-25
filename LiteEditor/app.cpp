@@ -165,7 +165,7 @@ static void massCopy(const wxString& sourceDir, const wxString& spec, const wxSt
 #ifndef __WXMSW__
 namespace
 {
-void ChildTerminatedSingalHandler(int signo)
+void ChildTerminatedSignalHandler(int signo)
 {
     int status;
     while (true) {
@@ -186,7 +186,7 @@ struct sigaction new_behvior;
 void CodeLiteBlockSigChild()
 {
     sigfillset(&new_behvior.sa_mask);
-    new_behvior.sa_handler = ChildTerminatedSingalHandler;
+    new_behvior.sa_handler = ChildTerminatedSignalHandler;
     new_behvior.sa_flags = 0;
     sigaction(SIGCHLD, &new_behvior, &old_behvior);
 }

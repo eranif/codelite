@@ -154,7 +154,7 @@ void UnixProcessImpl::Cleanup()
 
     if (GetPid() != wxNOT_FOUND) {
         wxKill(GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM, NULL, wxKILL_CHILDREN);
-        // The Zombie cleanup is done in app.cpp in ::ChildTerminatedSingalHandler() signal handler
+        // The Zombie cleanup is done in app.cpp in ::ChildTerminatedSignalHandler() signal handler
         int status(0);
         waitpid(-1, &status, WNOHANG);
     }
@@ -483,7 +483,7 @@ void UnixProcessImpl::Terminate()
 {
     wxKill(GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM, NULL, wxKILL_CHILDREN);
     int status(0);
-    // The real cleanup is done inside ::ChildTerminatedSingalHandler() signal handler (app.cpp)
+    // The real cleanup is done inside ::ChildTerminatedSignalHandler() signal handler (app.cpp)
     waitpid(-1, &status, WNOHANG);
 }
 

@@ -172,7 +172,7 @@ ContextCpp::ContextCpp(clEditor* container)
     SetName("c++");
     EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU,
                                   clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclaraionFound, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclarationFound, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
 }
 
@@ -183,7 +183,7 @@ ContextCpp::ContextCpp()
     EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU,
                                   clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclaraionFound, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclarationFound, this);
 }
 
 ContextCpp::~ContextCpp()
@@ -2049,9 +2049,9 @@ wxMenu* ContextCpp::GetMenu()
     return menu;
 }
 
-void ContextCpp::OnSymbolDeclaraionFound(LSPEvent& event)
+void ContextCpp::OnSymbolDeclarationFound(LSPEvent& event)
 {
-    clDEBUG() << "OnSymbolDeclaraionFound() is called for path:" << event.GetFileName() << endl;
+    clDEBUG() << "OnSymbolDeclarationFound() is called for path:" << event.GetFileName() << endl;
     const wxString& filepath = event.GetFileName();
     if (filepath != GetCtrl().GetFileName().GetFullPath()) {
         event.Skip();

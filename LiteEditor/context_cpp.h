@@ -45,7 +45,7 @@ class ContextCpp : public ContextBase
 protected:
     void OnShowCodeNavMenu(clCodeCompletionEvent& e);
     void OnCodeCompleteFiles(clCodeCompletionEvent& event);
-    void OnSymbolDeclaraionFound(LSPEvent& event);
+    void OnSymbolDeclarationFound(LSPEvent& event);
 
 private:
     bool TryOpenFile(const wxFileName& fileName, bool lookInEntireWorkspace = true);

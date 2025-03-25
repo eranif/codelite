@@ -41,7 +41,7 @@ std::unordered_map<wxThreadIdType, wxString> FileLogger::m_threads;
 wxCriticalSection FileLogger::m_cs;
 
 FileLogger::FileLogger(int verbosity)
-    : m_logEntryVersbosity(verbosity)
+    : m_logEntryVerbosity(verbosity)
     , m_fp(nullptr)
 {
 }

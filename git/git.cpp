@@ -1920,7 +1920,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
                 process->WriteToConsole(pass);
             }
         } break;
-        case GitStatusCode::ERROR_AUTHENTICITIY: {
+        case GitStatusCode::ERROR_AUTHENTICITY: {
             if (::wxMessageBox(tmpOutput,
                                _("Are you sure you want to continue connecting"),
                                wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {

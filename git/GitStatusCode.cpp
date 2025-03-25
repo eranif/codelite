@@ -13,7 +13,7 @@ GitStatusCode::GitStatusCode(const wxString& message)
         m_code = Code::ERROR_PASSWORD_REQUIRED;
     } else if((msg.Contains("the authenticity of host") && msg.Contains("can't be established")) ||
               msg.Contains("key fingerprint")) {
-        m_code = Code::ERROR_AUTHENTICITIY;
+        m_code = Code::ERROR_AUTHENTICITY;
     } else if(msg.Contains("fatal: unable to update url base from redirection")) {
         m_code = Code::ERROR_REDIRECT;
         int where = message.Find("redirect:");

@@ -773,12 +773,12 @@ TEST_FUNC(test_ctags_locals)
     TagEntryPtr tag_auto_var = find_tag("MyClass::Foo::auto_var", tags);
     CHECK_NOT_NULL(tag_auto_var);
     CHECK_BOOL(tag_auto_var->is_auto());
-    CHECK_STRING(tag_auto_var->get_assigment(), "V[0]");
+    CHECK_STRING(tag_auto_var->get_assignment(), "V[0]");
 
     TagEntryPtr tag_item = find_tag("MyClass::Foo::item", tags);
     CHECK_NOT_NULL(tag_item);
     CHECK_BOOL(tag_item->is_auto());
-    CHECK_STRING(tag_item->get_assigment(), "V.begin()");
+    CHECK_STRING(tag_item->get_assignment(), "V.begin()");
     return true;
 }
 #endif

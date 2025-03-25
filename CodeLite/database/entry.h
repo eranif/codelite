@@ -184,7 +184,7 @@ public:
     bool is_scoped_enum() const;
     bool is_auto() const;
     bool is_lambda() const;
-    const wxString& get_assigment() const { return m_assignment; }
+    const wxString& get_assignment() const { return m_assignment; }
 
     void SetTagProperties(const wxString& prop);
     const wxString& GetTagProperties() const { return m_tag_properties; }

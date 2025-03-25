@@ -55,7 +55,7 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
     // Check for makefile directory changes lines
     if(cmdline.Contains("Entering directory `")) {
         wxString currentDir = cmdline.AfterFirst('`');
-        m_diretory = currentDir.BeforeLast('\'');
+        m_directory = currentDir.BeforeLast('\'');
 
     } else {
 

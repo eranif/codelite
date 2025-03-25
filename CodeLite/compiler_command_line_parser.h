@@ -49,7 +49,7 @@ protected:
 
     int m_argc;
     char** m_argv;
-    wxString m_diretory;
+    wxString m_directory;
     wxString m_pchFile;
 
 protected:
@@ -76,7 +76,7 @@ public:
     char** GetArgv() { return m_argv; }
 
     int GetArgc() const { return m_argc; }
-    const wxString& GetDiretory() const { return m_diretory; }
+    const wxString& GetDirectory() const { return m_directory; }
     const wxArrayString& GetIncludesWithPrefix() const { return m_includesWithPrefix; }
     const wxArrayString& GetMacrosWithPrefix() const { return m_macrosWithPrefix; }
 };

@@ -243,7 +243,7 @@ def get_grep_command(cmd):
 
     find_what = cmd["find_what"]
 
-    command += f'"{find_what}" '
+    command += f"'{find_what}' "
     command += "%FILE%"
 
     return command

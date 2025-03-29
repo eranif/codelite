@@ -31,24 +31,17 @@
 #include "DAPConsoleOutput.hpp"
 #include "DAPDebuggerPane.h"
 #include "DAPMainView.h"
-#include "DAPModuleView.h"
 #include "DAPOutputPane.hpp"
 #include "DAPTextView.h"
 #include "DAPTooltip.hpp"
 #include "DAPWatchesView.h"
 #include "DapDebuggerSettingsDlg.h"
 #include "DapLocator.hpp"
-#include "DapLoggingHelper.hpp"
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "StringUtils.h"
-#include "bookmark_manager.h"
-#include "clAuiBook.hpp"
 #include "clResizableTooltip.h"
 #include "clWorkspaceManager.h"
-#include "cl_config.h"
-#include "clcommandlineparser.h"
-#include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -59,7 +52,6 @@
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
-#include <wx/platinfo.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 

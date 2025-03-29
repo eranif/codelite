@@ -44,23 +44,19 @@
 #include "procutils.h"
 #include "subversion2.h"
 #include "subversion2_ui.h"
-#include "subversion_strings.h"
 #include "svn_checkout_dialog.h"
 #include "svn_command_handlers.h"
 #include "svn_console.h"
 #include "svn_copy_dialog.h"
 #include "svn_default_command_handler.h"
 #include "svn_local_properties.h"
-#include "svn_login_dialog.h"
 #include "svn_overlay_tool.h"
 #include "svn_props_dialog.h"
-#include "svn_select_local_repo_dlg.h"
 #include "svnsettingsdata.h"
 #include "svnstatushandler.h"
 #include "svntreedata.h"
 #include "workspace.h"
 #include "workspacesvnsettings.h"
-#include "wx_tree_traverser.h"
 
 #include <map>
 #include <wx/app.h>
@@ -70,9 +66,7 @@
 #include <wx/filedlg.h>
 #include <wx/imaglist.h>
 #include <wx/menu.h>
-#include <wx/settings.h>
 #include <wx/textdlg.h>
-#include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)

@@ -6,12 +6,8 @@
 #include "JSON.h"
 #include "LSP/basic_types.h" // needed for the debugging macros
 #include "cl_exception.h"
-#include "clcommandlineparser.h"
 #include "dirsaver.h"
 #include "file_logger.h"
-#include "sftp_settings.h"
-
-#include <sstream>
 
 LSPNetworkSTDIO::LSPNetworkSTDIO() { LSP::Initialise(); }
 

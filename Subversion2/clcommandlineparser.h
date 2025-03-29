@@ -28,9 +28,8 @@
 
 #include <wx/string.h>
 #include <wx/arrstr.h>
-#include "codelite_exports.h"
 
-class WXDLLIMPEXP_CL clCommandLineParser
+class clCommandLineParser
 {
     wxString m_commandline;
     size_t m_flags;

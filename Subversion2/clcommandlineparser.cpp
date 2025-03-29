@@ -25,14 +25,11 @@
 
 #include "clcommandlineparser.h"
 
-clCommandLineParser::clCommandLineParser(const wxString& str, size_t flags)
+clCommandLineParser::clCommandLineParser(const wxString& str)
     : m_commandline(str)
-    , m_flags(flags)
 {
     DoParse();
 }
-
-clCommandLineParser::~clCommandLineParser() {}
 
 #define STATE_NORMAL 0
 #define STATE_IN_SINGLE_QUOTES 1
@@ -41,9 +38,6 @@ clCommandLineParser::~clCommandLineParser() {}
 #define PUSH_TOKEN()                                    \
     if(!curtoken.IsEmpty()) { m_tokens.Add(curtoken); } \
     curtoken.Clear();
-
-#define HANDLE_NEWLINE() \
-    if(!(m_flags & kIgnoreNewLines)) { curtoken << ch; }
 
 void clCommandLineParser::DoParse()
 {
@@ -58,7 +52,6 @@ void clCommandLineParser::DoParse()
             switch(ch) {
             case '\n':
             case '\r':
-                HANDLE_NEWLINE();
                 break;
             case ' ':
             case '\t':

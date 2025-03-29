@@ -57,7 +57,7 @@ extern char** environ;
 #include <libutil.h>
 #include <sys/ioctl.h>
 #include <termios.h>
-#elif defined(__NetBSD__)
+#elif defined(__NetBSD__) || defined(__OpenBSD__)
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <util.h>

@@ -47,7 +47,7 @@
 #define SHELL_WRAPPER wxT("")
 #else
 
-#if defined(__WXMAC__) || defined(__FreeBSD__) || defined(__NetBSD__)
+#if defined(__WXMAC__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
 #include <sys/wait.h>
 #else
 #include <wait.h>
@@ -63,7 +63,7 @@
 #include <libutil.h>
 #include <sys/ioctl.h>
 #include <termios.h>
-#elif __NetBSD__
+#elif defined(__NetBSD__) || defined(__OpenBSD__)
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <util.h>

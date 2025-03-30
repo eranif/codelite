@@ -239,8 +239,7 @@ if(NOT APPLE)
     codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
 
     install(
-        DIRECTORY ${CL_SRC_ROOT}/Runtime/images
-                  ${CL_SRC_ROOT}/Runtime/gdb_printers
+        DIRECTORY ${CL_SRC_ROOT}/Runtime/gdb_printers
                   ${CL_SRC_ROOT}/Runtime/src/
                   ${CL_SRC_ROOT}/Runtime/lexers
                   ${CL_SRC_ROOT}/Runtime/templates

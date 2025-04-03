@@ -72,7 +72,7 @@ jobs:
       run: |
         mkdir wx-config-msys2/build-release
         cd wx-config-msys2/build-release
-        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root"
+        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         mingw32-make -j$(nproc) install
         #add $HOME/root/bin to PATH
 
@@ -87,7 +87,7 @@ jobs:
       run: |
         mkdir build-release
         cd build-release
-        MSYS2_BASE=/d/a/_temp/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DBUILD_TESTING=0
+        MSYS2_BASE=/d/a/_temp/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
     #    ctest --output-on-failure # Missing dll near test executables

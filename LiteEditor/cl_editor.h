@@ -232,6 +232,7 @@ private:
         kShowLen = (1 << 3),
         kShowSelectedChars = (1 << 4),
         kShowSelectedLines = (1 << 5),
+        kShowLineCount = (1 << 6),
     };
 
     enum eLineStatus : short {

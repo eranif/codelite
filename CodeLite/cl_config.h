@@ -79,6 +79,7 @@ public:
 #define kConfigFrameTitlePattern "FrameTitlePattern"
 #define kConfigStatusbarShowLine "StatusbarShowLine"
 #define kConfigStatusbarShowColumn "StatusbarShowColumn"
+#define kConfigStatusbarShowLineCount "StatusbarShowLineCount"
 #define kConfigStatusbarShowPosition "StatusbarShowPosition"
 #define kConfigStatusbarShowLength "StatusbarShowLength"
 #define kConfigStatusbarShowSelectedChars "StatusbarShowSelChars"

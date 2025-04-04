@@ -1494,6 +1494,9 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
         if (m_statusBarFields & kShowColumn) {
             message << (!message.empty() ? ", " : "") << "Col " << GetColumn(curpos);
         }
+        if (m_statusBarFields & kShowLineCount) {
+            message << (!message.empty() ? ", " : "") << "Lns " << GetLineCount();
+        }
         if (m_statusBarFields & kShowPosition) {
             message << (!message.empty() ? ", " : "") << "Pos " << curpos;
         }
@@ -6127,6 +6130,9 @@ void clEditor::PreferencesChanged()
     }
     if (clConfig::Get().Read(kConfigStatusbarShowColumn, true)) {
         m_statusBarFields |= kShowColumn;
+    }
+    if (clConfig::Get().Read(kConfigStatusbarShowLineCount, false)) {
+        m_statusBarFields |= kShowLineCount;
     }
     if (clConfig::Get().Read(kConfigStatusbarShowPosition, false)) {
         m_statusBarFields |= kShowPosition;

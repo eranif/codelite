@@ -138,34 +138,34 @@ JSONItem::JSONItem(cJSON* json)
     : m_json(json)
 {
     if (m_json) {
-        m_properytName = m_json->string ? m_json->string : "";
+        m_propertyName = m_json->string ? m_json->string : "";
         m_type = m_json->type;
     }
 }
 
 JSONItem::JSONItem(const wxString& name, double val)
-    : m_properytName(name)
+    : m_propertyName(name)
     , m_type(cJSON_Number)
     , m_valueNumer(val)
 {
 }
 
 JSONItem::JSONItem(const wxString& name, const std::string& val)
-    : m_properytName(name)
+    : m_propertyName(name)
     , m_type(cJSON_String)
     , m_valueString(val)
 {
 }
 
 JSONItem::JSONItem(const wxString& name, const char* pval, size_t len)
-    : m_properytName(name)
+    : m_propertyName(name)
     , m_type(cJSON_String)
     , m_valueString(pval, len)
 {
 }
 
 JSONItem::JSONItem(const wxString& name, bool val)
-    : m_properytName(name)
+    : m_propertyName(name)
     , m_type(val ? cJSON_True : cJSON_False)
 {
 }

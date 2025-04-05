@@ -42,14 +42,14 @@ protected:
     wxArrayString m_macros;
     wxArrayString m_macrosWithPrefix;
     wxArrayString m_includesWithPrefix;
-    wxArrayString m_framworks;
+    wxArrayString m_frameworks;
     wxArrayString m_sysroots; // -isysroot
     wxString m_standard;
     wxArrayString m_otherOptions;
 
     int m_argc;
     char** m_argv;
-    wxString m_diretory;
+    wxString m_directory;
     wxString m_pchFile;
 
 protected:
@@ -65,7 +65,7 @@ public:
 
     const wxArrayString& GetSysroots() const { return m_sysroots; }
     const wxArrayString& GetOtherOptions() const { return m_otherOptions; }
-    const wxArrayString& GetFramworks() const { return m_framworks; }
+    const wxArrayString& GetFrameworks() const { return m_frameworks; }
     const wxString& GetPchFile() const { return m_pchFile; }
     void SetArgc(int argc) { this->m_argc = argc; }
     void SetArgv(char** argv) { this->m_argv = argv; }
@@ -76,7 +76,7 @@ public:
     char** GetArgv() { return m_argv; }
 
     int GetArgc() const { return m_argc; }
-    const wxString& GetDiretory() const { return m_diretory; }
+    const wxString& GetDirectory() const { return m_directory; }
     const wxArrayString& GetIncludesWithPrefix() const { return m_includesWithPrefix; }
     const wxArrayString& GetMacrosWithPrefix() const { return m_macrosWithPrefix; }
 };

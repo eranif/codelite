@@ -172,7 +172,7 @@ ContextCpp::ContextCpp(clEditor* container)
     SetName("c++");
     EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU,
                                   clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclaraionFound, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclarationFound, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
 }
 
@@ -183,7 +183,7 @@ ContextCpp::ContextCpp()
     EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU,
                                   clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclaraionFound, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclarationFound, this);
 }
 
 ContextCpp::~ContextCpp()
@@ -262,7 +262,7 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
                 if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                     word = rCtrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
-                    // c++ expression with single current_line and should be treated separatly
+                    // c++ expression with single current_line and should be treated separately
                     if (word == "if" || word == "while" || word == "for") {
                         int prevLine = rCtrl.LineFromPosition(prevpos);
                         rCtrl.SetLineIndentation(current_line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
@@ -321,7 +321,7 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
         int matchPos = wxNOT_FOUND;
         wxChar previousChar = rCtrl.PreviousChar(rCtrl.PositionBefore(curpos), matchPos);
         if (previousChar != '{' && lineString == "{") {
-            // indent this line accroding to the previous line
+            // indent this line according to the previous line
             int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
             rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
             rCtrl.ChooseCaretX();
@@ -1353,7 +1353,7 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
         return 0;
     }
 
-    // Find the implementatin file and read all it's content
+    // Find the implementation file and read all it's content
     // if the file is opened in an editor, take the content from the open editor, otherwise,
     // read it from the file system
     auto editor = clGetManager()->FindEditor(otherfile);
@@ -1440,7 +1440,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
         clEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(otherfile);
         CHECK_PTR_RET(implEditor);
 
-        // Inser the new functions at the proper location
+        // Insert the new functions at the proper location
         {
             clEditorStateLocker locker(implEditor->GetCtrl());
             implEditor->AppendText("\n" + body);
@@ -1528,7 +1528,7 @@ void ContextCpp::ApplySettings()
 
     DoApplySettings(lexPtr);
 
-    // delete uneeded commands
+    // delete unneeded commands
     rCtrl.CmdKeyClear('/', wxSTC_KEYMOD_CTRL);
     rCtrl.CmdKeyClear('/', wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT);
 
@@ -1812,7 +1812,7 @@ void ContextCpp::SemicolonShift()
             if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                 wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
-                // c++ expression with single line and should be treated separatly
+                // c++ expression with single line and should be treated separately
                 if (word == "for") {
                     return;
                 }
@@ -2049,9 +2049,9 @@ wxMenu* ContextCpp::GetMenu()
     return menu;
 }
 
-void ContextCpp::OnSymbolDeclaraionFound(LSPEvent& event)
+void ContextCpp::OnSymbolDeclarationFound(LSPEvent& event)
 {
-    clDEBUG() << "OnSymbolDeclaraionFound() is called for path:" << event.GetFileName() << endl;
+    clDEBUG() << "OnSymbolDeclarationFound() is called for path:" << event.GetFileName() << endl;
     const wxString& filepath = event.GetFileName();
     if (filepath != GetCtrl().GetFileName().GetFullPath()) {
         event.Skip();

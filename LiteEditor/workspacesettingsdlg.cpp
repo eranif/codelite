@@ -81,7 +81,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
         EnvironmentConfig::Instance()->SetSettings(vars);
     }
 
-    wxString envvars = clCxxWorkspaceST::Get()->GetEnvironmentVariabels();
+    wxString envvars = clCxxWorkspaceST::Get()->GetEnvironmentVariables();
     envvars.Trim().Trim(false);
 
     m_textCtrlWspEnvVars->SetValue(envvars);
@@ -95,7 +95,7 @@ wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const { return m_ccPage->G
 void WorkspaceSettingsDlg::OnButtonOK(wxCommandEvent& event)
 {
     m_localWorkspace->SetActiveEnvironmentSet(m_choiceEnvSets->GetStringSelection());
-    clCxxWorkspaceST::Get()->SetEnvironmentVariabels(m_textCtrlWspEnvVars->GetValue());
+    clCxxWorkspaceST::Get()->SetEnvironmentVariables(m_textCtrlWspEnvVars->GetValue());
     m_ccPage->Save();
     event.Skip();
 }

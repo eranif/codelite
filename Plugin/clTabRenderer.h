@@ -210,7 +210,7 @@ public:
     int xSpacer = DEFAULT_XSPACER;
     int ySpacer = DEFAULT_YSPACER;
     wxString m_name;
-    static std::unordered_map<wxString, clTabRenderer*> ms_Renderes;
+    static std::unordered_map<wxString, clTabRenderer*> ms_Renderers;
     bool use_bold_font = false;
 
 protected:

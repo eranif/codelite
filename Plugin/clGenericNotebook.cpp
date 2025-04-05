@@ -1229,7 +1229,7 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex, eDirection direction)
 
     if (movingTabRight) {
         ++iter;
-        // inser the new tab _after_
+        // insert the new tab _after_
         if (iter != m_tabs.end()) {
             m_tabs.insert(iter, movingTab);
         } else {

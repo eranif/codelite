@@ -18,7 +18,7 @@ class WXDLLIMPEXP_SDK CompileCommandsGenerator : public wxEvtHandler
     wxString m_capturedOutput;
 
 protected:
-    void OnProcessTeraminated(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
 
 public:

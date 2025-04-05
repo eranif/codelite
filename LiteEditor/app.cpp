@@ -165,7 +165,7 @@ static void massCopy(const wxString& sourceDir, const wxString& spec, const wxSt
 #ifndef __WXMSW__
 namespace
 {
-void ChildTerminatedSingalHandler(int signo)
+void ChildTerminatedSignalHandler(int signo)
 {
     int status;
     while (true) {
@@ -181,14 +181,14 @@ void ChildTerminatedSingalHandler(int signo)
 }
 
 // Block/Restore sigchild
-struct sigaction old_behvior;
-struct sigaction new_behvior;
+struct sigaction old_behavior;
+struct sigaction new_behavior;
 void CodeLiteBlockSigChild()
 {
-    sigfillset(&new_behvior.sa_mask);
-    new_behvior.sa_handler = ChildTerminatedSingalHandler;
-    new_behvior.sa_flags = 0;
-    sigaction(SIGCHLD, &new_behvior, &old_behvior);
+    sigfillset(&new_behavior.sa_mask);
+    new_behavior.sa_handler = ChildTerminatedSignalHandler;
+    new_behavior.sa_flags = 0;
+    sigaction(SIGCHLD, &new_behavior, &old_behavior);
 }
 
 void on_sigpipe(int sig)
@@ -560,10 +560,10 @@ bool CodeLiteApp::OnInit()
         homeDir = ::wxGetCwd();
 #endif
     }
-    wxFileName fnHomdDir(homeDir, "");
+    wxFileName fnHomeDir(homeDir, "");
 
     //    // Set the standard path with the new data dir
-    //    clStandardPaths::Get().SetDataDir(fnHomdDir.GetPath());
+    //    clStandardPaths::Get().SetDataDir(fnHomeDir.GetPath());
 
     // try to locate the menu/rc.xrc file
     wxFileName fn(homeDir + wxT("/rc"), MENU_XRC);
@@ -573,9 +573,9 @@ bool CodeLiteApp::OnInit()
         homeDir = appFn.GetPath();
     }
 
-    if (fnHomdDir.IsRelative()) {
-        fnHomdDir.MakeAbsolute();
-        homeDir = fnHomdDir.GetPath();
+    if (fnHomeDir.IsRelative()) {
+        fnHomeDir.MakeAbsolute();
+        homeDir = fnHomeDir.GetPath();
     }
 
     ManagerST::Get()->SetInstallDir(homeDir);

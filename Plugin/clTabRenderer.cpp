@@ -221,7 +221,7 @@ bool clTabInfo::HasDisableBitmap() const
 }
 bool clTabInfo::HasBitmap() const { return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_bitmap, false).IsOk(); }
 
-std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderes;
+std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderers;
 
 clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     : bottomAreaHeight(0)
@@ -334,7 +334,7 @@ int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
 
 clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t tabStyle)
 {
-    if (ms_Renderes.empty()) {
+    if (ms_Renderers.empty()) {
         RegisterRenderer(new clTabRendererMinimal(win));
     }
     clTabRenderer::Ptr_t renderer;
@@ -344,14 +344,14 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
 
 wxArrayString clTabRenderer::GetRenderers()
 {
-    if (ms_Renderes.empty()) {
+    if (ms_Renderers.empty()) {
         RegisterRenderer(new clTabRendererMinimal(nullptr));
     }
 
     wxArrayString renderers;
-    renderers.reserve(ms_Renderes.size());
+    renderers.reserve(ms_Renderers.size());
 
-    for (auto vt : ms_Renderes) {
+    for (auto vt : ms_Renderers) {
         renderers.Add(vt.first);
     }
     renderers.Sort();
@@ -522,16 +522,16 @@ void clTabRenderer::RegisterRenderer(clTabRenderer* renderer)
     if (!renderer) {
         return;
     }
-    if (ms_Renderes.count(renderer->GetName())) {
+    if (ms_Renderers.count(renderer->GetName())) {
         return;
     }
-    ms_Renderes.insert({ renderer->GetName(), renderer });
+    ms_Renderers.insert({ renderer->GetName(), renderer });
 }
 
 clTabRenderer* clTabRenderer::Create(const wxWindow* parent, const wxString& name)
 {
-    if (ms_Renderes.count(name) == 0) {
+    if (ms_Renderers.count(name) == 0) {
         return nullptr;
     }
-    return ms_Renderes.find(name)->second->New(parent);
+    return ms_Renderers.find(name)->second->New(parent);
 }

@@ -93,7 +93,7 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
     pluginsMenu->Append(XRCID("abbreviations_plugin_menu"), _("Abbreviation"), menu);
     m_topWindow->Bind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
-    m_topWindow->Bind(wxEVT_MENU, &AbbreviationPlugin::OnShowAbbvreviations, this, XRCID("abbrev_insert"));
+    m_topWindow->Bind(wxEVT_MENU, &AbbreviationPlugin::OnShowAbbreviations, this, XRCID("abbrev_insert"));
 }
 
 void AbbreviationPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -106,7 +106,7 @@ void AbbreviationPlugin::UnPlug()
 {
     DeletePluginMenu(XRCID("abbreviations_plugin_menu"));
     m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
-    m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnShowAbbvreviations, this, XRCID("abbrev_insert"));
+    m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnShowAbbreviations, this, XRCID("abbrev_insert"));
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SHOWING, &AbbreviationPlugin::OnCompletionBoxShowing, this);
 }
@@ -308,7 +308,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 
 void AbbreviationPlugin::OnCompletionBoxShowing(clCodeCompletionEvent& event) { event.Skip(); }
 
-void AbbreviationPlugin::OnShowAbbvreviations(wxCommandEvent& e)
+void AbbreviationPlugin::OnShowAbbreviations(wxCommandEvent& e)
 {
     e.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();

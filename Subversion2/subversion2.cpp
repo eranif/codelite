@@ -1377,10 +1377,10 @@ void Subversion2::FinishSyncProcess(ProjectPtr& proj, const wxString& workDir, b
 wxString Subversion2::GetSvnExeNameNoConfigDir()
 {
     SvnSettingsData ssd = GetSettings();
-    wxString executeable = ssd.GetExecutable();
-    ::WrapWithQuotes(executeable);
-    executeable << " ";
-    return executeable;
+    wxString executable = ssd.GetExecutable();
+    ::WrapWithQuotes(executable);
+    executable << " ";
+    return executable;
 }
 
 void Subversion2::OnRevertToRevision(wxCommandEvent& event)

@@ -487,9 +487,9 @@ TEST_FUNC(test_define_with_namespace)
 }
 
 // test code completion for local variables
-TEST_FUNC(test_word_completion_local_variale_1)
+TEST_FUNC(test_word_completion_local_variable_1)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_local_variale_1.php"), &lookup);
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_local_variable_1.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);

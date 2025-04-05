@@ -90,7 +90,7 @@ int PHPFileLayoutTree::GetImageId(PHPEntityBase::Ptr_t entry)
     } else if(entry->Is(kEntityTypeVariable)) {
         PHPEntityVariable* var = entry->Cast<PHPEntityVariable>();
         if(!var->IsMember() && !var->IsConst()) {
-            // A global variale
+            // A global variable
             return 6;
 
         } else if(var->IsMember()) {

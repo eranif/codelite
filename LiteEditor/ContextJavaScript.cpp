@@ -118,7 +118,7 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
                 if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                     word = rCtrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
-                    // c++ expression with single line and should be treated separatly
+                    // c++ expression with single line and should be treated separately
                     if (word == wxT("if") || word == wxT("while") || word == wxT("for")) {
                         int prevLine = rCtrl.LineFromPosition(prevpos);
                         rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
@@ -158,7 +158,7 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
         int matchPos = wxNOT_FOUND;
         wxChar previousChar = rCtrl.PreviousChar(rCtrl.PositionBefore(curpos), matchPos);
         if (previousChar != wxT('{') && lineString == wxT("{")) {
-            // indent this line accroding to the previous line
+            // indent this line according to the previous line
             int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
             rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
             rCtrl.ChooseCaretX();

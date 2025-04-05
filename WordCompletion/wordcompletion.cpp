@@ -133,26 +133,26 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
         words.insert(langWords.begin(), langWords.end());
     }
 
-    wxStringSet_t filterdSet;
+    wxStringSet_t filteredSet;
     if(filter.IsEmpty()) {
-        filterdSet.swap(words);
+        filteredSet.swap(words);
     } else {
         for(wxStringSet_t::iterator iter = words.begin(); iter != words.end(); ++iter) {
             wxString word = *iter;
             wxString lcWord = word.Lower();
             if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
                 if(lcWord.StartsWith(filter) && filter != word) {
-                    filterdSet.insert(word);
+                    filteredSet.insert(word);
                 }
             } else {
                 if(lcWord.Contains(filter) && filter != word) {
-                    filterdSet.insert(word);
+                    filteredSet.insert(word);
                 }
             }
         }
     }
     wxCodeCompletionBoxEntry::Vec_t entries;
-    for(wxStringSet_t::iterator iter = filterdSet.begin(); iter != filterdSet.end(); ++iter) {
+    for (wxStringSet_t::iterator iter = filteredSet.begin(); iter != filteredSet.end(); ++iter) {
         entries.push_back(wxCodeCompletionBoxEntry::New(*iter, sBmp));
     }
     event.GetEntries().insert(event.GetEntries().end(), entries.begin(), entries.end());

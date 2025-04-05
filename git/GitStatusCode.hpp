@@ -12,7 +12,7 @@ public:
         ERROR_HOOK,
         ERROR_REDIRECT,
         ERROR_WHO_ARE_YOU,
-        ERROR_AUTHENTICITIY,
+        ERROR_AUTHENTICITY,
         ERROR_OTHER,
     };
 

@@ -75,7 +75,7 @@ void SFTPAttribute::DoConstruct()
         m_flags |= TYPE_REGULAR_FILE;
         break;
     case SSH_FILEXFER_TYPE_SPECIAL:
-        m_flags |= TYPE_SEPCIAL;
+        m_flags |= TYPE_SPECIAL;
         break;
 
     case SSH_FILEXFER_TYPE_UNKNOWN:

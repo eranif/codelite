@@ -50,7 +50,7 @@ public:
 protected:
     static int m_globalLogVerbosity;
     static wxString m_logfile;
-    int m_logEntryVersbosity;
+    int m_logEntryVerbosity;
     FILE* m_fp = nullptr;
     wxString m_buffer;
     static std::unordered_map<wxThreadIdType, wxString> m_threads;
@@ -66,11 +66,11 @@ public:
 
     FileLogger& SetLogEntryVerbosity(int verbosity)
     {
-        m_logEntryVersbosity = verbosity;
+        m_logEntryVerbosity = verbosity;
         return *this;
     }
 
-    int GetLogEntryVerbosity() const { return m_logEntryVersbosity; }
+    int GetLogEntryVerbosity() const { return m_logEntryVerbosity; }
     static int GetGlobalLogVerbosity() { return m_globalLogVerbosity; }
 
     /**

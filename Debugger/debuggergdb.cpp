@@ -1386,7 +1386,7 @@ void DbgGdb::SetInternalMainBpID(int bpId) { m_internalBpId = bpId; }
 
 bool DbgGdb::Restart() { return WriteCommand("-exec-run ", new DbgCmdHandlerExecRun(m_observer, this)); }
 
-bool DbgGdb::SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat)
+bool DbgGdb::SetVariableObjectDisplayFormat(const wxString& name, DisplayFormat displayFormat)
 {
     wxString df, cmd;
     switch(displayFormat) {

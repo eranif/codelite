@@ -241,16 +241,16 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
     if(tag && tag->IsOk()) {
 
         // Get the template instantiation list from the child class
-        wxArrayString ineheritsList = tag->GetInheritsAsArrayNoTemplates();
+        wxArrayString inheritsList = tag->GetInheritsAsArrayNoTemplates();
 
         wxString templateInstantiationLine;
         if(derivedClassTag) {
-            wxArrayString p_ineheritsListT = derivedClassTag->GetInheritsAsArrayWithTemplates();
-            wxArrayString p_ineheritsList = derivedClassTag->GetInheritsAsArrayNoTemplates();
+            wxArrayString p_inheritsListT = derivedClassTag->GetInheritsAsArrayWithTemplates();
+            wxArrayString p_inheritsList = derivedClassTag->GetInheritsAsArrayNoTemplates();
 
-            for(size_t i = 0; i < p_ineheritsList.GetCount(); i++) {
-                if(p_ineheritsList.Item(i) == tag->GetName()) {
-                    templateInstantiationLine = p_ineheritsListT.Item(i);
+            for(size_t i = 0; i < p_inheritsList.GetCount(); i++) {
+                if(p_inheritsList.Item(i) == tag->GetName()) {
+                    templateInstantiationLine = p_inheritsListT.Item(i);
                     templateInstantiationLine = templateInstantiationLine.AfterFirst(wxT('<'));
                     templateInstantiationLine.Prepend(wxT("<"));
                     break;
@@ -258,8 +258,8 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
             }
         }
 
-        for(size_t i = 0; i < ineheritsList.GetCount(); i++) {
-            wxString inherits = ineheritsList.Item(i);
+        for(size_t i = 0; i < inheritsList.GetCount(); i++) {
+            wxString inherits = inheritsList.Item(i);
             wxString tagName = tag->GetName();
             wxString tmpInhr = inherits;
 

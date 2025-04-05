@@ -21,15 +21,15 @@ void WordCompletionThread::ProcessRequest(ThreadRequest* request)
     WordCompletionThreadRequest* req = dynamic_cast<WordCompletionThreadRequest*>(request);
     CHECK_PTR_RET(req);
 
-    wxStringSet_t suggestsions;
-    ParseBuffer(req->buffer, suggestsions);
+    wxStringSet_t suggestions;
+    ParseBuffer(req->buffer, suggestions);
 
     // Parse and send back the reply
     WordCompletionThreadReply reply;
     reply.filename = req->filename;
     reply.filter = req->filter;
     reply.insertSingleMatch = req->insertSingleMatch;
-    reply.suggest.swap(suggestsions);
+    reply.suggest.swap(suggestions);
     m_dict->CallAfter(&WordCompletionDictionary::OnSuggestThread, reply);
 }
 

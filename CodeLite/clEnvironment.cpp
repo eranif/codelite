@@ -13,7 +13,7 @@
 
 namespace
 {
-static const wxString VARIARBLE_REG_EXPR = R"#(\$[\(\{]?([\w]+)[\\/\)\}]?)#";
+static const wxString VARIABLE_REG_EXPR = R"#(\$[\(\{]?([\w]+)[\\/\)\}]?)#";
 
 /// Return vector of [{var_name, pattern}]
 /// where:
@@ -22,7 +22,7 @@ static const wxString VARIARBLE_REG_EXPR = R"#(\$[\(\{]?([\w]+)[\\/\)\}]?)#";
 /// pattern -> `${HOME}`
 std::vector<std::pair<wxString, wxString>> FindVariablesInString(wxString str)
 {
-    wxRegEx re{ VARIARBLE_REG_EXPR };
+    wxRegEx re{ VARIABLE_REG_EXPR };
     std::vector<std::pair<wxString, wxString>> result;
     bool cont = true;
     while(cont) {

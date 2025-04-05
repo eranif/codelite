@@ -647,7 +647,7 @@ public:
      * @param displayFormat
      * @return
      */
-    virtual bool SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat) = 0;
+    virtual bool SetVariableObjectDisplayFormat(const wxString& name, DisplayFormat displayFormat) = 0;
 
     /**
      * @brief update the variable object content

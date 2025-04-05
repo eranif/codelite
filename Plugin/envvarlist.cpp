@@ -95,7 +95,7 @@ EnvMap EnvVarList::GetVariables(const wxString& setName, bool includeWorkspaceEn
     if(includeWorkspaceEnvs && !clCxxWorkspaceST::Get()->GetName().IsEmpty()) {
         currentValueStr.Trim().Trim(false);
         currentValueStr << wxT("\n");
-        currentValueStr << clCxxWorkspaceST::Get()->GetEnvironmentVariabels();
+        currentValueStr << clCxxWorkspaceST::Get()->GetEnvironmentVariables();
 
         if(projectName.IsEmpty() == false) {
             currentValueStr.Trim().Trim(false);

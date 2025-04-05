@@ -24,7 +24,6 @@ clRemoteBuilder::~clRemoteBuilder()
 {
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteBuilder::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteBuilder::OnProcessTerminated, this);
-    wxDELETE(m_remoteProcess);
 }
 
 bool clRemoteBuilder::IsRunning() const { return m_remoteProcess != nullptr; }
@@ -58,7 +57,7 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
     clGetManager()->AppendOutputTabText(
         kOutputTab_Build, wxString() << "Remote build started using ssh account: " << account.GetAccountName() << "\n");
     clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
-    m_remoteProcess = ::CreateAsyncProcess(this, cmd);
+    m_remoteProcess.reset(::CreateAsyncProcess(this, cmd));
 
     clBuildEvent eventStart(wxEVT_BUILD_STARTED);
     EventNotifier::Get()->AddPendingEvent(eventStart);
@@ -78,7 +77,7 @@ void clRemoteBuilder::OnProcessOutput(clProcessEvent& event)
 void clRemoteBuilder::OnProcessTerminated(clProcessEvent& event)
 {
     clGetManager()->AppendOutputTabText(kOutputTab_Build, "==== Done ====\n");
-    wxDELETE(m_remoteProcess);
+    m_remoteProcess.reset();
 
     clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
     EventNotifier::Get()->AddPendingEvent(eventStopped);

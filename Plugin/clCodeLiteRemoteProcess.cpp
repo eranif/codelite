@@ -156,7 +156,6 @@ clCodeLiteRemoteProcess::~clCodeLiteRemoteProcess()
 {
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clCodeLiteRemoteProcess::OnProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clCodeLiteRemoteProcess::OnProcessOutput, this);
-    wxDELETE(m_process);
 }
 
 void clCodeLiteRemoteProcess::StartInteractive(const wxString& account,
@@ -201,7 +200,7 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
 
     clDEBUG() << "Starting codelite-remote:" << command << endl;
     // start the process
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessRawOutput);
+    m_process.reset(::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessRawOutput));
 }
 
 void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account,
@@ -260,7 +259,7 @@ void clCodeLiteRemoteProcess::Stop()
     if (m_process) {
         m_process->Write(wxString("exit\n"));
     }
-    wxDELETE(m_process);
+    m_process.reset();
     Cleanup();
 }
 
@@ -269,7 +268,7 @@ void clCodeLiteRemoteProcess::Cleanup()
     while (!m_completionCallbacks.empty()) {
         m_completionCallbacks.pop_back();
     }
-    wxDELETE(m_process);
+    m_process.reset();
 }
 
 bool clCodeLiteRemoteProcess::GetNextBuffer(wxString& raw_input_buffer, wxString& buffer, bool& is_completed)

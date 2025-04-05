@@ -26,12 +26,10 @@
 #include "cl_config.h"
 
 #include "FontUtils.hpp"
-#include "cl_defs.h"
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "fileutils.h"
 
-#include <algorithm>
 #include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/log.h>
@@ -69,13 +67,13 @@ clConfig::clConfig(const wxString& filename)
     }
 
     if (m_filename.FileExists()) {
-        m_root = new JSON(m_filename);
+        m_root = std::make_unique<JSON>(m_filename);
 
     } else {
         if (!m_filename.DirExists()) {
             m_filename.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         }
-        m_root = new JSON(cJSON_Object);
+        m_root = std::make_unique<JSON>(cJSON_Object);
     }
 
     // Load the "Recent Items" cache
@@ -97,8 +95,6 @@ clConfig::clConfig(const wxString& filename)
         }
     }
 }
-
-clConfig::~clConfig() { wxDELETE(m_root); }
 
 clConfig& clConfig::Get()
 {
@@ -216,8 +212,7 @@ void clConfig::Reload()
     if (m_filename.FileExists() == false)
         return;
 
-    delete m_root;
-    m_root = new JSON(m_filename);
+    m_root = std::make_unique<JSON>(m_filename);
 }
 
 wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const

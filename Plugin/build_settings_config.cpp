@@ -26,30 +26,17 @@
 #include "build_settings_config.h"
 
 #include "ICompilerLocator.h"
-#include "JSON.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "conffilelocator.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "macros.h"
 #include "xmlutils.h"
-
-#include <algorithm>
-#include <wx/ffile.h>
-#include <wx/sstream.h>
 
 BuildSettingsConfig::BuildSettingsConfig()
 {
-    m_doc = new wxXmlDocument();
-    m_compilers.clear();
-}
-
-BuildSettingsConfig::~BuildSettingsConfig()
-{
-    wxDELETE(m_doc);
-    m_compilers.clear();
+    m_doc = std::make_unique<wxXmlDocument>();
 }
 
 bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFilePath)
@@ -58,7 +45,7 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
     m_version = version;
     if(xmlFilePath.IsEmpty()) {
         wxString initialSettings = ConfFileLocator::Instance()->Locate(wxT("config/build_settings.xml"));
-        loaded = LoadXmlFile(m_doc, initialSettings);
+        loaded = LoadXmlFile(m_doc.get(), initialSettings);
         if(m_doc->GetRoot() == nullptr) {
             clERROR() << "Failed to load XML file:" << initialSettings << endl;
             return false;
@@ -66,7 +53,7 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
 
         wxString xmlVersion = m_doc->GetRoot()->GetAttribute(wxT("Version"), wxEmptyString);
         if(xmlVersion != version) {
-            loaded = LoadXmlFile(m_doc, ConfFileLocator::Instance()->GetDefaultCopy(wxT("config/build_settings.xml")));
+            loaded = LoadXmlFile(m_doc.get(), ConfFileLocator::Instance()->GetDefaultCopy(wxT("config/build_settings.xml")));
         }
         m_fileName = ConfFileLocator::Instance()->GetLocalCopy(wxT("config/build_settings.xml"));
 
@@ -75,7 +62,7 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
         }
     } else {
         wxFileName xmlPath(xmlFilePath);
-        loaded = LoadXmlFile(m_doc, xmlPath.GetFullPath());
+        loaded = LoadXmlFile(m_doc.get(), xmlPath.GetFullPath());
         if(loaded) {
             DoUpdateCompilers();
             m_fileName = xmlPath;
@@ -250,9 +237,8 @@ void BuildSettingsConfig::RestoreDefaults()
     // Delete the local copy of the build settings
     ConfFileLocator::Instance()->DeleteLocalCopy(wxT("config/build_settings.xml"));
 
-    // free the XML dodcument loaded into the memory and allocate new one
-    wxDELETE(m_doc);
-    m_doc = new wxXmlDocument();
+    // free the XML document loaded into the memory and allocate new one
+    m_doc = std::make_unique<wxXmlDocument>();
 
     // call Load again, this time the default settings will be loaded
     // since we just deleted the local settings
@@ -329,7 +315,7 @@ bool BuildSettingsConfig::SaveXmlFile()
         return true;
     }
 
-    return ::SaveXmlToFile(m_doc, m_fileName.GetFullPath());
+    return ::SaveXmlToFile(m_doc.get(), m_fileName.GetFullPath());
 }
 
 static BuildSettingsConfig* gs_buildSettingsInstance = NULL;

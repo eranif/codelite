@@ -31,6 +31,7 @@
 
 #include <functional>
 #include <map>
+#include <memory>
 #include <wx/filename.h>
 
 ////////////////////////////////////////////////////////
@@ -101,7 +102,7 @@ class WXDLLIMPEXP_CL clConfig
 {
 protected:
     wxFileName m_filename;
-    JSON* m_root;
+    std::unique_ptr<JSON> m_root;
     std::map<wxString, wxArrayString> m_cacheRecentItems;
 
 protected:
@@ -116,7 +117,7 @@ public:
     // We provide a global configuration
     // and the ability to allocate a private copy with a different file
     clConfig(const wxString& filename = "codelite.conf");
-    virtual ~clConfig();
+    ~clConfig() = default;
     static clConfig& Get();
 
     // Re-read the content from the disk

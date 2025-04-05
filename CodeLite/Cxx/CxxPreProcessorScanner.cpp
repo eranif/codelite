@@ -198,15 +198,6 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
     else                                \
         cur->SetValue((double)v);
 
-struct ExpressionLocker {
-    CxxPreProcessorExpression* m_expr;
-    ExpressionLocker(CxxPreProcessorExpression* expr)
-        : m_expr(expr)
-    {
-    }
-    ~ExpressionLocker() { wxDELETE(m_expr); }
-};
-
 bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
 {
     // we currently support
@@ -215,9 +206,8 @@ bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
     // #if (cond) && (cond) || !(cond)
     // anything else, returns false
     CxxLexerToken token;
-    CxxPreProcessorExpression* cur = new CxxPreProcessorExpression(false);
-    ExpressionLocker locker(cur);
-    CxxPreProcessorExpression* head = cur;
+    auto head = std::make_unique<CxxPreProcessorExpression>(false);
+    CxxPreProcessorExpression* cur = head.get();
     while(m_scanner && ::LexerNext(m_scanner, token)) {
         if(token.GetType() == T_PP_STATE_EXIT) {
             bool res = head->IsTrue();
@@ -282,23 +272,23 @@ bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
             break;
         case T_PP_AND:
             // And operand
-            cur = cur->SetNext(CxxPreProcessorExpression::kAND, new CxxPreProcessorExpression(false));
+            cur = cur->SetNext(CxxPreProcessorExpression::kAND, std::make_unique<CxxPreProcessorExpression>(false));
             break;
         case T_PP_OR:
             // OR operand
-            cur = cur->SetNext(CxxPreProcessorExpression::kOR, new CxxPreProcessorExpression(false));
+            cur = cur->SetNext(CxxPreProcessorExpression::kOR, std::make_unique<CxxPreProcessorExpression>(false));
             break;
         case T_PP_GT:
-            cur = cur->SetNext(CxxPreProcessorExpression::kGreaterThan, new CxxPreProcessorExpression(0));
+            cur = cur->SetNext(CxxPreProcessorExpression::kGreaterThan, std::make_unique<CxxPreProcessorExpression>(0));
             break;
         case T_PP_GTEQ:
-            cur = cur->SetNext(CxxPreProcessorExpression::kGreaterThanEqual, new CxxPreProcessorExpression(0));
+            cur = cur->SetNext(CxxPreProcessorExpression::kGreaterThanEqual, std::make_unique<CxxPreProcessorExpression>(0));
             break;
         case T_PP_LT:
-            cur = cur->SetNext(CxxPreProcessorExpression::kLowerThan, new CxxPreProcessorExpression(0));
+            cur = cur->SetNext(CxxPreProcessorExpression::kLowerThan, std::make_unique<CxxPreProcessorExpression>(0));
             break;
         case T_PP_LTEQ:
-            cur = cur->SetNext(CxxPreProcessorExpression::kLowerThanEqual, new CxxPreProcessorExpression(0));
+            cur = cur->SetNext(CxxPreProcessorExpression::kLowerThanEqual, std::make_unique<CxxPreProcessorExpression>(0));
             break;
         default:
             break;

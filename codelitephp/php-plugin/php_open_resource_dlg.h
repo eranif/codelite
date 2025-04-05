@@ -30,9 +30,9 @@
 #include "PHP/PHPEntityVariable.h"
 #include "PHP/PHPLookupTable.h"
 #include "php_ui.h"
-#include "bitmap_loader.h"
+
+#include <memory>
 #include <vector>
-#include <wx/propgrid/manager.h>
 
 struct ResourceItem {
     enum { kRI_Invalid = -1, kRI_File, kRI_Class, kRI_Constant, kRI_Function, kRI_Member, kRI_Variable, kRI_Namespace };
@@ -98,10 +98,10 @@ class OpenResourceDlg : public OpenResourceDlgBase
 public:
     wxString m_lastFilter;
     IManager* m_mgr;
-    wxTimer* m_timer;
+    std::unique_ptr<wxTimer> m_timer;
     ResourceVector_t m_allFiles;
     ResourceVector_t m_resources;
-    ResourceItem* m_selectedItem;
+    ResourceItem* m_selectedItem = nullptr;
     PHPLookupTable m_table;
 
 protected:

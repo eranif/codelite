@@ -136,7 +136,7 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
             PATTERN ".git" EXCLUDE)
 
         install(
-            DIRECTORY ${CL_SRC_ROOT}/Runtime/images ${CL_SRC_ROOT}/Runtime/gdb_printers ${CL_SRC_ROOT}/Runtime/src/
+            DIRECTORY ${CL_SRC_ROOT}/Runtime/gdb_printers ${CL_SRC_ROOT}/Runtime/src/
                       ${CL_SRC_ROOT}/Runtime/lexers ${CL_SRC_ROOT}/Runtime/templates ${CL_SRC_ROOT}/Runtime/rc
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/
             USE_SOURCE_PERMISSIONS

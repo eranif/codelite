@@ -173,26 +173,22 @@ WinProcess::~WinProcess() {}
 
 bool WinProcess::Read(wxString& buff)
 {
-    DWORD dwRead;
-    DWORD dwMode;
-    DWORD dwTimeout;
-    char* chBuf = new char[65536 + 1]; // 64K should be sufficient buffer
-    memset(chBuf, 0, 65536 + 1);
-
-    std::unique_ptr<char> sp(chBuf);
+    constexpr auto bufferSize = 65536; // 64K should be sufficient buffer
+    std::vector<char> chBuf(bufferSize + 1, '\0'); 
 
     // Make the pipe to non-blocking mode
-    dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
-    dwTimeout = 1000;
-    SetNamedPipeHandleState(hChildStdoutRdDup, &dwMode, NULL,
+    DWORD dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
+    DWORD dwTimeout = 1000;
+    SetNamedPipeHandleState(hChildStdoutRdDup, &dwMode, nullptr,
                             &dwTimeout); // Timeout of 30 seconds
-    if(ReadFile(hChildStdoutRdDup, chBuf, 65536, &dwRead, NULL) || dwRead == 0) {
-        chBuf[dwRead / sizeof(char)] = 0;
-        // printf("%s\n", chBuf);
-        buff = wxString(chBuf, wxConvUTF8);
-        if(buff.IsEmpty() && dwRead > 0) {
+    DWORD dwRead;
+    if (ReadFile(hChildStdoutRdDup, chBuf.data(), bufferSize, &dwRead, nullptr) || dwRead == 0) {
+        chBuf[dwRead / sizeof(char)] = '\0';
+        // printf("%s\n", chBuf.data());
+        buff = wxString(chBuf.data(), wxConvUTF8);
+        if (buff.IsEmpty() && dwRead > 0) {
             // conversion failed
-            buff = wxString::From8BitData(chBuf);
+            buff = wxString::From8BitData(chBuf.data());
         }
         return true;
     }

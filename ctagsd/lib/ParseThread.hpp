@@ -1,17 +1,12 @@
 #ifndef PARSETHREAD_HPP
 #define PARSETHREAD_HPP
 
-#include "macros.h"
-
 #include <atomic>
 #include <condition_variable>
 #include <functional>
 #include <thread>
 #include <vector>
-#include <wx/arrstr.h>
-#include <wx/msgqueue.h>
 #include <wx/string.h>
-#include <wx/thread.h>
 
 enum class eParseThreadCallbackRC {
     RC_SUCCESS,

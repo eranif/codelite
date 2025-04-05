@@ -2,9 +2,7 @@
 
 #include "LSP/Message.h"
 #include "file_logger.h"
-#include "macros.h"
 
-#include <array>
 #include <iostream>
 #include <sstream>
 #include <string>

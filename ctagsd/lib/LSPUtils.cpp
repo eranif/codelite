@@ -4,7 +4,6 @@
 #include "macros.h"
 
 #include <array>
-#include <wx/filesys.h>
 
 LSPUtils::LSPUtils() {}
 

@@ -1,4 +1,3 @@
-#include <wx/init.h>
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "Cxx/CxxCodeCompletion.hpp"
@@ -10,20 +9,17 @@
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
-#include "clTempFile.hpp"
-#include "clWildMatch.hpp"
 #include "ctags_manager.h"
 #include "database/tags_storage_sqlite3.h"
 #include "fileutils.h"
 #include "macros.h"
 #include "strings.hpp"
 #include "tester.hpp"
-#include "wxStringHash.h"
 
 #include <iostream>
-#include <stdio.h>
-#include <unordered_set>
+#include <wx/init.h>
 #include <wx/log.h>
+#include <wx/wxcrtvararg.h>
 
 using namespace std;
 namespace

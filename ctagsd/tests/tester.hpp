@@ -29,9 +29,6 @@
 #include <vector>
 #include <wx/filename.h>
 #include <wx/string.h>
-#include <wx/wxcrtvararg.h>
-
-using namespace std;
 
 class ITest;
 /**
@@ -44,7 +41,7 @@ class ITest;
 class Tester
 {
     static Tester* ms_instance;
-    vector<ITest*> m_tests;
+    std::vector<ITest*> m_tests;
 
 public:
     static Tester* Instance();

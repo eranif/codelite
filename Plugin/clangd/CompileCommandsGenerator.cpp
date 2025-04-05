@@ -1,13 +1,9 @@
 #include "CompileCommandsGenerator.h"
 
 #include "AsyncProcess/processreaderthread.h"
-#include "CompileFlagsTxt.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "JSON.h"
-#include "clFilesCollector.h"
 #include "cl_config.h"
-#include "clcommandlineparser.h"
-#include "compiler_command_line_parser.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"

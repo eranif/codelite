@@ -28,26 +28,17 @@
 
 #include <wx/string.h>
 #include <wx/arrstr.h>
-#include "codelite_exports.h"
 
-class WXDLLIMPEXP_CL clCommandLineParser
+class clCommandLineParser
 {
     wxString m_commandline;
-    size_t m_flags;
     wxArrayString m_tokens;
-
-public:
-    enum {
-        // ignore both \r and \n
-        kIgnoreNewLines = 0x00000001,
-    };
 
 protected:
     void DoParse();
 
 public:
-    clCommandLineParser(const wxString& str, size_t flags = kIgnoreNewLines);
-    virtual ~clCommandLineParser();
+    clCommandLineParser(const wxString& str);
 
     const wxArrayString& ToArray() const { return m_tokens; }
 };

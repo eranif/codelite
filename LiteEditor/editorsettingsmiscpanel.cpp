@@ -83,6 +83,8 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowLine));
     AddProperty(_("Show current column"), clConfig::Get().Read(kConfigStatusbarShowColumn, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowColumn));
+    AddProperty(_("Show number of lines"), clConfig::Get().Read(kConfigStatusbarShowLineCount, false),
+                UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowLineCount));
     AddProperty(_("Show current position"), clConfig::Get().Read(kConfigStatusbarShowPosition, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowPosition));
     AddProperty(_("Show file length"), clConfig::Get().Read(kConfigStatusbarShowLength, false),

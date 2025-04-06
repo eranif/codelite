@@ -72,7 +72,7 @@ jobs:
       run: |
         mkdir wx-config-msys2/build-release
         cd wx-config-msys2/build-release
-        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root"
         mingw32-make -j$(nproc) install
         #add $HOME/root/bin to PATH
 

@@ -61,7 +61,7 @@ public:
     /**
      * @brief Default destructor.
      */
-    ~CallGraph();
+    ~CallGraph() override;
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
@@ -70,19 +70,19 @@ public:
      * @param parent
      * @return
      */
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
     /**
      * @brief Function create plugin menu for Call graph used in menu Plugins of Codelite.
      * @param pluginsMenu
      */
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
 
     /**
      * @brief Function unplug the plugin from CodeLite IDE.
      */
-    virtual void UnPlug();
+    void UnPlug() override;
 
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
 
     /**
      * @brief Return string with value path for external application gprof which is stored in configuration data.

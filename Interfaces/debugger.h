@@ -178,7 +178,7 @@ public:
     DebuggerInformation() = default;
     ~DebuggerInformation() override = default;
 
-    void Serialize(Archive& arch)
+    void Serialize(Archive& arch) override
     {
         arch.Write("name", name);
         arch.Write("path", path);
@@ -206,7 +206,7 @@ public:
         arch.Write("cygwinPathCommand", cygwinPathCommand);
     }
 
-    void DeSerialize(Archive& arch)
+    void DeSerialize(Archive& arch) override
     {
         READ_CONFIG_PARAM("name", name);
         READ_CONFIG_PARAM("path", path);

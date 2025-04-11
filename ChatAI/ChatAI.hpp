@@ -32,11 +32,11 @@ class ChatAI : public IPlugin
 {
 public:
     ChatAI(IManager* manager);
-    virtual ~ChatAI();
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    ~ChatAI() override;
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void UnPlug() override;
     ChatAIConfig& GetConfig() { return m_cli.GetConfig(); }
     bool IsRunning() const { return m_cli.IsRunning(); }
 

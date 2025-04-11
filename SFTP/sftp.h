@@ -52,7 +52,7 @@ class SFTP : public IPlugin
 
 public:
     SFTP(IManager* manager);
-    ~SFTP();
+    ~SFTP() override;
 
     void FileDownloadedSuccessfully(const SFTPClientData& cd);
     void OpenWithDefaultApp(const wxString& localFileName);
@@ -111,10 +111,10 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void UnPlug() override;
     IManager* GetManager() { return m_mgr; }
 
     // Callbacks

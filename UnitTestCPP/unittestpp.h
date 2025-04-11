@@ -47,14 +47,14 @@ class UnitTestPP : public IPlugin
     
 public:
     UnitTestPP(IManager* manager);
-    ~UnitTestPP();
+    ~UnitTestPP() override;
 
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void UnPlug() override;
     bool IsUnitTestProject(ProjectPtr p);
     /**
      * @brief return list of the projects which are identified as UnitTests project

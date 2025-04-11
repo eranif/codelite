@@ -40,7 +40,7 @@ class wxFormBuilder : public IPlugin
 
 public:
     wxFormBuilder(IManager* manager);
-    ~wxFormBuilder();
+    ~wxFormBuilder() override;
 
 protected:
 
@@ -63,10 +63,10 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void UnPlug() override;
 };
 
 #endif // wxFormBuilder

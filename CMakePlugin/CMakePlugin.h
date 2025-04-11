@@ -120,7 +120,7 @@ public:
     /**
      * @brief Destructor.
      */
-    virtual ~CMakePlugin();
+    ~CMakePlugin() override;
 
     // Public Accessors
 public:
@@ -171,19 +171,19 @@ public:
      *
      * @return Codelite tool bar or NULL.
      */
-    void CreateToolBar(clToolBarGeneric* toolbar);
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
 
     /**
      * @brief Creates a menu for plugin.
      *
      * @param pluginsMenu
      */
-    void CreatePluginMenu(wxMenu* pluginsMenu);
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
 
     /**
      * @brief Unplug plugin.
      */
-    void UnPlug();
+    void UnPlug() override;
 
     // Public Events
 public:

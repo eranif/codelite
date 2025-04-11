@@ -148,7 +148,7 @@ private:
 
 public:
     DebugAdapterClient(IManager* manager);
-    ~DebugAdapterClient();
+    ~DebugAdapterClient() override;
 
     IManager* GetManager() { return m_mgr; }
 

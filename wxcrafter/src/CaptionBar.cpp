@@ -6,7 +6,6 @@
 
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
-#include <wx/renderer.h>
 #include <wx/settings.h>
 
 CaptionBar::CaptionBar(wxWindow* parent, const wxString& caption, const wxString& style, const wxBitmap& icon)

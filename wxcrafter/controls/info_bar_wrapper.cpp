@@ -1,8 +1,6 @@
 #include "info_bar_wrapper.h"
 
 #include "allocator_mgr.h"
-#include "choice_property.h"
-#include "wxgui_helpers.h"
 
 InfoBarWrapper::InfoBarWrapper()
     : wxcWidget(ID_WXINFOBAR)

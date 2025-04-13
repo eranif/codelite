@@ -2,9 +2,7 @@
 #define __properties_sheet__
 
 #include "gui.h"
-#include "wx_ordered_map.h"
 #include "wxc_widget.h"
-#include <wx/filepicker.h>
 
 class PropertiesListView;
 class PropertiesSheet : public PropertiesSheetBase

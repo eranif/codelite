@@ -2,7 +2,6 @@
 #define GRIDBAGSIZERWRAPPER_H
 
 #include "sizer_wrapper_base.h"
-#include "string_property.h"
 #include "wxc_widget.h" // Base class: WrapperBase
 
 class GridBagSizerWrapper : public SizerWrapperBase

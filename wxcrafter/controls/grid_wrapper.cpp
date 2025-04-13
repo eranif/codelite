@@ -6,7 +6,6 @@
 #include "choice_property.h"
 #include "grid_column_wrapper.h"
 #include "grid_row_wrapper.h"
-#include "multi_strings_property.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 

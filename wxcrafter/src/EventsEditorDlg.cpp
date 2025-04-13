@@ -1,19 +1,10 @@
 #include "EventsEditorDlg.h"
 
 #include "allocator_mgr.h"
-#include "ctags_manager.h"
-#include "database/istorage.h"
 #include "event_notifier.h"
-#include "imanager.h"
-#include "windowattrmanager.h"
-#include "wxc_project_metadata.h"
 #include "wxc_widget.h"
 #include "wxcrafter_plugin.h"
-#include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
-
-#include <wx/msgdlg.h>
-#include <wx/stc/stc.h>
 
 wxString EventsEditorPane::PANE_NAME = "Control Events";
 

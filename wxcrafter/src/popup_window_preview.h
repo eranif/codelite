@@ -3,7 +3,6 @@
 
 #include "popup_window_wrapper.h"
 #include <wx/frame.h>
-#include <wx/popupwin.h>
 
 class PopupWindowPreview : public wxFrame
 {

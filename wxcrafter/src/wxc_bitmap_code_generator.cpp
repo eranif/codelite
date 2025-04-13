@@ -1,12 +1,9 @@
 #include "wxc_bitmap_code_generator.h"
 
-#include "AsyncProcess/processreaderthread.h"
 #include "StdToWX.h"
-#include "environmentconfig.h"
-#include "globals.h"
+#include "event_notifier.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_project_metadata.h"
-#include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 #include "wxrc.h"

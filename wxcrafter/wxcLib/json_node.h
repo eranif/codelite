@@ -29,7 +29,6 @@
 #include "../CodeLite/macros.h"
 
 #include <cJSON.h>
-#include <map>
 #include <wx/arrstr.h>
 #include <wx/colour.h>
 #include <wx/filename.h>

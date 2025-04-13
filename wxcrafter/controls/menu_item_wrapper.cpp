@@ -1,9 +1,9 @@
 #include "menu_item_wrapper.h"
 
 #include "allocator_mgr.h"
+#include "bitmap_picker_property.h"
 #include "bool_property.h"
 #include "choice_property.h"
-#include "file_ficker_property.h"
 #include "import_from_wxFB.h"
 #include "import_from_xrc.h"
 #include "winid_property.h"

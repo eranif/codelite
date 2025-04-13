@@ -1,9 +1,11 @@
 #include "dialog_wrapper.h"
+
 #include "allocator_mgr.h"
-#include "file_ficker_property.h"
+#include "bitmap_picker_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
 #include <wx/dialog.h>
 
 DialogWrapper::DialogWrapper()

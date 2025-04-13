@@ -1,7 +1,6 @@
 #ifndef MYPANEL_H
 #define MYPANEL_H
 
-#include "wxc_aui_manager.h"
 #include <wx/panel.h>
 
 class MyPanel : public wxPanel

@@ -1,7 +1,6 @@
 #include "choice_book_wrapper.h"
+
 #include "allocator_mgr.h"
-#include "wxgui_defs.h"
-#include <wx/choicebk.h>
 
 ChoiceBookWrapper::ChoiceBookWrapper()
     : NotebookBaseWrapper(ID_WXCHOICEBOOK)

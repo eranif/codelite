@@ -6,7 +6,6 @@
 #endif
 
 #include "myxh_mediactrl.h"
-#include <wx/panel.h>
 
 MyWxMediaCtrlXmlHandler::MyWxMediaCtrlXmlHandler()
     : wxXmlResourceHandler()

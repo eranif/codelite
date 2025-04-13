@@ -1,10 +1,11 @@
 #include "output_nbook.h"
+
 #include "event_notifier.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
-#include <wx/debug.h>
+
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>

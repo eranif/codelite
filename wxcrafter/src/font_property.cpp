@@ -1,7 +1,4 @@
 #include "font_property.h"
-#include "FontPickerDlg.h"
-#include "wxgui_helpers.h"
-#include <wx/app.h>
 
 const wxEventType wxEVT_FONT_UPDATE = wxNewEventType();
 

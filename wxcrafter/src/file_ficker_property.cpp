@@ -1,6 +1,7 @@
 #include "file_ficker_property.h"
-#include "file_picker_ctrl.h"
+
 #include "wxc_project_metadata.h"
+
 #include <wx/filename.h>
 
 FilePickerProperty::FilePickerProperty(const wxString& label, const wxString& path, const wxString& tooltip)

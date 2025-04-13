@@ -1,8 +1,7 @@
 #include "wxgui_globals.h"
-#include <wx/busyinfo.h>
+
 #include <wx/log.h>
 #include <wx/wfstream.h>
-#include <wx/zipstrm.h>
 
 namespace wxCrafter
 {

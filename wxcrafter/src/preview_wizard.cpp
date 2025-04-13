@@ -1,6 +1,7 @@
 #include "preview_wizard.h"
 
 #include "clDirChanger.hpp"
+#include "event_notifier.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 

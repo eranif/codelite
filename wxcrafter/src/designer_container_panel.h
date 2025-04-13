@@ -3,8 +3,8 @@
 
 #include "menu_bar.h"
 #include "tool_bar.h"
+
 #include <set>
-#include <wx/menu.h>
 #include <wx/panel.h>
 #include <wx/statusbr.h>
 

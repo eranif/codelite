@@ -1,10 +1,8 @@
 #ifndef __WXGUI_GLOBALS__H__
 #define __WXGUI_GLOBALS__H__
 
-#include <map>
-#include <wx/string.h>
-#include <wx/buffer.h>
 #include <wx/listctrl.h>
+#include <wx/string.h>
 
 namespace wxCrafter
 {

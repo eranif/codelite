@@ -8,6 +8,7 @@
 #include "gui.h"
 #include "menu_bar.h"
 #include "tool_bar.h"
+#include "wxc_project_metadata.h"
 #include "wxcTreeView.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"

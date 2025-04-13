@@ -1,10 +1,11 @@
 #include "splitter_window_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
-#include <wx/menu.h>
+
 #include <wx/splitter.h>
 
 SplitterWindowWrapper::SplitterWindowWrapper()

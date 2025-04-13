@@ -6,7 +6,6 @@
 #include "wxcTreeView.h"
 #include "wxguicraft_main_view.h"
 
-#include <wx/dcbuffer.h>
 #include <wx/settings.h>
 
 DesignerContainerPanel::DesignerContainerPanel(wxWindow* parent)

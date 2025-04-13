@@ -1,9 +1,9 @@
 #include "scrolled_window_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
-#include <wx/scrolwin.h>
 
 ScrolledWindowWrapper::ScrolledWindowWrapper()
     : wxcWidget(ID_WXSCROLLEDWIN)

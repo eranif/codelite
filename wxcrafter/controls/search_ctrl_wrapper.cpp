@@ -1,8 +1,8 @@
 #include "search_ctrl_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "wxgui_defs.h"
-#include <wx/textctrl.h>
 
 SearchCtrlWrapper::SearchCtrlWrapper()
     : wxcWidget(ID_WXSEARCHCTRL)

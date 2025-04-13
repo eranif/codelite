@@ -4,7 +4,6 @@
 #include "wx_ordered_map.h"
 #include "wxcLib/json_node.h"
 
-#include <map>
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/string.h>

@@ -1,7 +1,6 @@
 #ifndef __designer_panel__
 #define __designer_panel__
 
-#include "menu_bar.h"
 #include <map>
 #include <wx/aui/auibook.h>
 #include <wx/choicebk.h>

@@ -10,14 +10,12 @@
 #include "imanager.h"
 #include "plugin.h"
 #include "windowattrmanager.h"
-#include "wxc_aui_tool_stickiness.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
 #include "wxguicraft_main_view.h"
 
-#include <wx/dcmemory.h>
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
 #include <wx/frame.h>

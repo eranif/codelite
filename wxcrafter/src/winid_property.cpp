@@ -4,8 +4,6 @@
 #include "wxgui_defs.h"
 
 #include <algorithm>
-#include <wx/choice.h>
-#include <wx/combobox.h>
 
 const wxEventType wxEVT_WINID_UPDATED = ::wxNewEventType();
 

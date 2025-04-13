@@ -2,7 +2,6 @@
 
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "bool_property.h"
 #include "choice_property.h"
 #include "col_header_flags_property.h"
 #include "multi_strings_property.h"

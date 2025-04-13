@@ -1,10 +1,8 @@
 #ifndef PROPERTIESLISTVIEW_H
 #define PROPERTIESLISTVIEW_H
 
-#include "custom_pg_properties.h"
 #include "wxc_widget.h"
-#include "wxgui_helpers.h"
-#include <map>
+
 #include <vector>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/propgrid.h>

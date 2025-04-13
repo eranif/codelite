@@ -3,8 +3,6 @@
 
 #include "frame_wrapper.h"
 #include <wx/frame.h> // Base class: wxFrame
-#include <wx/panel.h>
-#include <wx/xrc/xmlres.h>
 
 class PreviewFrame : public wxFrame
 {

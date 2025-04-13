@@ -1,20 +1,20 @@
 #include "notebook_page_wrapper.h"
 
 #include "allocator_mgr.h"
+#include "bitmap_picker_property.h"
 #include "bool_property.h"
 #include "choice_book_wrapper.h"
 #include "clDirChanger.hpp"
-#include "file_ficker_property.h"
 #include "notebook_base_wrapper.h"
 #include "string_property.h"
 #include "tree_book_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_notebook_code_helper.h"
 #include "wxc_project_metadata.h"
-#include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
 #include <wx/panel.h>
 
 NotebookPageWrapper::NotebookPageWrapper()

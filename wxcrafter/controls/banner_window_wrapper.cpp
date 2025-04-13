@@ -2,9 +2,9 @@
 
 #include "StdToWX.h"
 #include "allocator_mgr.h"
+#include "bitmap_picker_property.h"
 #include "choice_property.h"
 #include "color_property.h"
-#include "file_ficker_property.h"
 #include "multi_strings_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_helpers.h"

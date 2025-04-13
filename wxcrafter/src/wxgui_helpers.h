@@ -1,7 +1,6 @@
 #ifndef _WXGUI_HELPERS_H_
 #define _WXGUI_HELPERS_H_
 
-#include "event_notifier.h"
 #include "macros.h"
 
 #include <set>
@@ -10,7 +9,6 @@
 #include <wx/filename.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
-#include <wx/settings.h>
 #include <wx/string.h>
 #include <wx/tokenzr.h>
 

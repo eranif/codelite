@@ -2,12 +2,10 @@
 
 #include "StdToWX.h"
 #include "cl_command_event.h"
-#include "event_notifier.h"
 #include "file_logger.h"
 #include "macros.h"
 #include "main.h"
 #include "map"
-#include "plugin.h"
 #include "project.h"
 #include "workspace.h"
 #include "wxc_project_metadata.h"
@@ -30,6 +28,11 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
+
+#if !STANDALONE_BUILD
+#include "codelite_events.h"
+#include "event_notifier.h"
+#endif
 
 namespace
 {

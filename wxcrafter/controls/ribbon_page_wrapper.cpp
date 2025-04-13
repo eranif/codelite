@@ -1,13 +1,11 @@
 #include "ribbon_page_wrapper.h"
 
 #include "allocator_mgr.h"
+#include "bitmap_picker_property.h"
 #include "bool_property.h"
-#include "file_ficker_property.h"
 #include "string_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
-
-#include <wx/ribbon/page.h>
 
 RibbonPageWrapper::RibbonPageWrapper()
     : wxcWidget(ID_WXRIBBONPAGE)

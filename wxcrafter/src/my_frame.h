@@ -1,7 +1,6 @@
 #ifndef MYFRAME_H
 #define MYFRAME_H
 
-#include "wxc_aui_manager.h"
 #include <wx/frame.h>
 
 class MyFrame : public wxFrame

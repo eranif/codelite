@@ -6,7 +6,6 @@
 #include "choice_property.h"
 #include "color_property.h"
 #include "font_property.h"
-#include "int_property.h"
 #include "multi_strings_property.h"
 #include "string_property.h"
 #include "wxgui_helpers.h"

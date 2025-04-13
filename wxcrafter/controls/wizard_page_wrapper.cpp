@@ -1,12 +1,12 @@
 #include "wizard_page_wrapper.h"
+
 #include "allocator_mgr.h"
-#include "file_ficker_property.h"
+#include "bitmap_picker_property.h"
 #include "import_from_wxFB.h"
 #include "import_from_xrc.h"
 #include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
-#include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 #include "xmlutils.h"
 

@@ -3,7 +3,6 @@
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "wxgui_defs.h"
-#include "wxgui_helpers.h"
 
 #include <wx/collpane.h>
 

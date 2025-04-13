@@ -1,5 +1,4 @@
 #include "bool_property.h"
-#include <wx/checkbox.h>
 
 BoolProperty::BoolProperty(const wxString& label, bool checked, const wxString& tooltip)
     : PropertyBase(tooltip)

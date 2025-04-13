@@ -3,8 +3,6 @@
 #include "allocator_mgr.h"
 #include "int_property.h"
 
-#include <wx/ribbon/toolbar.h>
-
 RibbonToolBarWrapper::RibbonToolBarWrapper()
     : wxcWidget(ID_WXRIBBONTOOLBAR)
 {

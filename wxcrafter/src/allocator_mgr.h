@@ -3,11 +3,10 @@
 
 #include "events_database.h"
 #include "json_node.h"
-#include "wx_ordered_map.h"
 #include "wxc_widget.h"
 #include "wxgui_bitmaploader.h"
+
 #include <map>
-#include <set>
 #include <wx/imaglist.h>
 
 // Widgets IDS

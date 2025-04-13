@@ -1,10 +1,11 @@
 #include "panel_wrapper_top_level.h"
+
 #include "allocator_mgr.h"
 #include "xmlutils.h"
+
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
-#include <wx/tokenzr.h>
 
 PanelWrapperTopLevel::PanelWrapperTopLevel()
     : TopLevelWinWrapper(ID_WXPANEL_TOPLEVEL)

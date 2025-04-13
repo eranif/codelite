@@ -2,8 +2,6 @@
 
 #include "allocator_mgr.h"
 
-#include <wx/ribbon/gallery.h>
-
 RibbonGalleryWrapper::RibbonGalleryWrapper()
     : wxcWidget(ID_WXRIBBONGALLERY)
 {

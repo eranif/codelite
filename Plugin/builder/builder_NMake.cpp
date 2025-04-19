@@ -653,12 +653,11 @@ void BuilderNMake::CreateSrcList(ProjectPtr proj, const wxString& confToBuild, w
     const Project::FilesMap_t& all_files = proj->GetFiles();
 
     // Remove excluded files
-    std::for_each(all_files.begin(), all_files.end(), [&](const Project::FilesMap_t::value_type& vt) {
-        clProjectFile::Ptr_t f = vt.second;
+    for (const auto& [_, f] : all_files) {
         if (!f->IsExcludeFromConfiguration(confToBuild)) {
             files.push_back(wxFileName(f->GetFilenameRelpath()));
         }
-    });
+    }
 
     text << "Srcs=";
 
@@ -706,12 +705,12 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
     m_objectChunks = 1;
     std::vector<wxFileName> files;
 
-    std::for_each(m_allFiles.begin(), m_allFiles.end(), [&](clProjectFile::Ptr_t file) {
+    for (const auto& file : m_allFiles) {
         // Include only files that don't have the 'exclude from build' flag set
         if (!file->IsExcludeFromConfiguration(confToBuild)) {
             files.push_back(wxFileName(file->GetFilename()));
         }
-    });
+    }
 
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
@@ -1132,10 +1131,10 @@ void BuilderNMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf
     bldConf->GetPostBuildCommands(cmds);
 
     // Loop over the commands and replace any macros
-    std::for_each(cmds.begin(), cmds.end(), [&](BuildCommand& cmd) {
+    for (BuildCommand& cmd : cmds) {
         cmd.SetCommand(
             MacroManager::Instance()->Expand(cmd.GetCommand(), clGetManager(), proj->GetName(), bldConf->GetName()));
-    });
+    }
 
     text << "\n";
     text << "PostBuild:\n";
@@ -1195,10 +1194,10 @@ void BuilderNMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf,
     bldConf->GetPreBuildCommands(cmds);
 
     // Loop over the commands and replace any macros
-    std::for_each(cmds.begin(), cmds.end(), [&](BuildCommand& cmd) {
+    for (BuildCommand& cmd : cmds) {
         cmd.SetCommand(
             MacroManager::Instance()->Expand(cmd.GetCommand(), clGetManager(), proj->GetName(), bldConf->GetName()));
-    });
+    }
 
     bool first(true);
     text << "PreBuild:\n";

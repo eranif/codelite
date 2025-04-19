@@ -744,12 +744,12 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
     std::vector<clDebuggerBreakpoint> uniqueBreakpoints;
     uniqueBreakpoints.reserve(li.size());
 
-    std::for_each(li.begin(), li.end(), [&](const clDebuggerBreakpoint& bp) {
+    for (const auto& bp : li) {
         if(bp.debugger_id == bp.debugger_id) {
             // real breakpoint ID
             uniqueBreakpoints.push_back(bp);
         }
-    });
+    }
 
     // Update the UI
     clDebugEvent event_breakpoints(wxEVT_DEBUG_BREAKPOINTS_LIST);

@@ -41,11 +41,11 @@ CSSCodeCompletion::CSSCodeCompletion(WebTools* plugin)
         }
     }
 
-    std::for_each(valuesSet.begin(), valuesSet.end(), [&](const wxString& v) {
+    for (const wxString& v : valuesSet) {
         Entry e;
         e.property = v;
         m_entries.push_back(e);
-    });
+    }
 
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &CSSCodeCompletion::OnCodeComplete, this);
 }

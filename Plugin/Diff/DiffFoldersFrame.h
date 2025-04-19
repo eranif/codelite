@@ -89,8 +89,9 @@ public:
     DiffViewEntry::Vect_t ToSortedVector() const
     {
         DiffViewEntry::Vect_t V;
-        std::for_each(m_table.begin(), m_table.end(),
-                      [&](const DiffViewEntry::Hash_t::value_type& vt) { V.push_back(vt.second); });
+        for (const auto& p : m_table) {
+            V.push_back(p.second);
+        }
         // sort the vector
         std::sort(V.begin(), V.end(), [&](const DiffViewEntry& a, const DiffViewEntry& b) {
             return a.GetFullName().CmpNoCase(b.GetFullName()) < 0;

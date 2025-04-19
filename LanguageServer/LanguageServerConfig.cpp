@@ -54,8 +54,9 @@ JSONItem LanguageServerConfig::ToJSON() const
     JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("flags", m_flags);
     JSONItem servers = JSONItem::createArray("servers");
-    std::for_each(m_servers.begin(), m_servers.end(),
-                  [&](const LanguageServerEntry::Map_t::value_type& vt) { servers.append(vt.second.ToJSON()); });
+    for (const auto& p : m_servers) {
+        servers.append(p.second.ToJSON());
+    }
     json.append(servers);
     return json;
 }

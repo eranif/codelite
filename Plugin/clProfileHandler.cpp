@@ -81,11 +81,11 @@ bool clProfileHandler::IsPageExistsInBook(PaneId pane_id, const wxString& label)
 
 void clProfileHandler::RestoreTabs(wxStringSet_t& tabs, wxEventType eventType)
 {
-    std::for_each(tabs.begin(), tabs.end(), [&](const wxString& tab) {
+    for (const wxString& tab : tabs) {
         clCommandEvent eventShow(eventType);
         eventShow.SetSelected(true).SetString(tab);
         EventNotifier::Get()->AddPendingEvent(eventShow);
-    });
+    }
     tabs.clear();
 }
 

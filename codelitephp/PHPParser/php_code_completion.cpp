@@ -355,7 +355,7 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
             } else {
                 // Convert the matches to clSelectSymbolDialogEntry::List_t
                 clSelectSymbolDialogEntry::List_t entries;
-                std::for_each(symbols.begin(), symbols.end(), [&](PHPEntityBase::Ptr_t entry) {
+                for (auto& entry : symbols) {
                     TagEntryPtr tag = DoPHPEntityToTagEntry(entry);
                     wxBitmap bmp = wxCodeCompletionBox::GetBitmap(tag);
 
@@ -365,7 +365,7 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
                     m.clientData = new PHPFindSymbol_ClientData(entry);
                     m.help = tag->GetKind();
                     entries.push_back(m);
-                });
+                }
 
                 // Show selection dialog
                 clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame(), entries);

@@ -76,9 +76,9 @@ std::vector<clGotoEntry> clGotoAnythingManager::GetActions()
 {
     Initialise();
     std::vector<clGotoEntry> actions;
-    std::for_each(
-        m_actions.begin(), m_actions.end(),
-        [&](const std::unordered_map<wxString, clGotoEntry>::value_type& vt) { actions.push_back(vt.second); });
+    for (const auto& p : m_actions) {
+        actions.push_back(p.second);
+    }
     std::sort(actions.begin(), actions.end(),
               [&](const clGotoEntry& a, const clGotoEntry& b) { return a.GetDesc() < b.GetDesc(); });
     return actions;

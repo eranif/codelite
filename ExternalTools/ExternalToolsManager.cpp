@@ -42,12 +42,12 @@ void ExternalToolsManager::DoPopulateTable()
     DoClear();
     BitmapLoader* b = clGetManager()->GetStdIcons();
     const ExternalToolItemData::Map_t& tools = ToolsTaskManager::Instance()->GetTools();
-    std::for_each(tools.begin(), tools.end(), [&](const std::pair<int, ExternalToolItemData>& p) {
+    for (const auto& p : tools) {
         wxVector<wxVariant> cols;
         cols.push_back(::MakeIconText(wxString() << p.first, b->LoadBitmap("cog")));
         cols.push_back(p.second.m_command);
         m_dvListCtrlTasks->AppendItem(cols, (wxUIntPtr)p.second.Clone());
-    });
+    }
 }
 
 void ExternalToolsManager::DoClear()

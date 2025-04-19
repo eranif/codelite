@@ -416,7 +416,7 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
     m_book->GetAllTabs(tabsInfo);
 
     // Convert into "clTab" array
-    std::for_each(tabsInfo.begin(), tabsInfo.end(), [&](clTabInfo::Ptr_t tabInfo) {
+    for (const auto& tabInfo: tabsInfo) {
         clTab t;
         t.bitmap = tabInfo->GetBitmap();
         t.text = tabInfo->GetLabel();
@@ -429,7 +429,7 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
             t.filename = editor->GetFileName();
         }
         tabs.push_back(t);
-    });
+    }
 }
 
 clEditor::Vec_t MainBook::GetAllEditors()
@@ -1354,12 +1354,12 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
 
     // Remove editors which belong to the SFTP
     std::vector<clEditor*> editorsTmp;
-    std::for_each(editors.begin(), editors.end(), [&](clEditor* editor) {
+    for (clEditor* editor : editors) {
         IEditor* ieditor = dynamic_cast<IEditor*>(editor);
         if (ieditor->GetClientData("sftp") == NULL) {
             editorsTmp.push_back(editor);
         }
-    });
+    }
 
     editors.swap(editorsTmp);
 

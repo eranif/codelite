@@ -23,10 +23,9 @@ void NodeFileManager::Clear()
 {
     m_files.clear();
     // Loop over the m_remoteFiles cache and delete the files from the file system
-    std::for_each(m_remoteFiles.begin(), m_remoteFiles.end(),
-                  [&](const std::unordered_map<wxString, wxString>::value_type& vt) {
-                      FileUtils::RemoveFile(vt.second, "NodeFileManager::Clear()");
-                  });
+    for (const auto& p : m_remoteFiles) {
+        FileUtils::RemoveFile(p.second, "NodeFileManager::Clear()");
+    }
     m_remoteFiles.clear();
 }
 

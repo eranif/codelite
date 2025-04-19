@@ -11,11 +11,11 @@ NewFileComparison::NewFileComparison(wxWindow* parent, const wxFileName& leftFil
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
     m_textCtrlLeftFile->ChangeValue(leftFile.GetFullPath());
-    std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
+    for (IEditor* editor : editors) {
         if(editor->GetFileName() != leftFile) {
             m_listBox16->Append(editor->GetFileName().GetFullPath());
         }
-    });
+    }
 }
 
 NewFileComparison::~NewFileComparison() {}

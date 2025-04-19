@@ -5136,7 +5136,7 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
         ManagerST::Get()->GetWorkspaceFiles(files);
         wxStringSet_t masks;
         // Build a mask that matches the workspace content
-        std::for_each(files.begin(), files.end(), [&](const wxString& filename) {
+        for (const wxString& filename : files) {
             wxFileName fn(filename);
             wxString curfileMask = fn.GetExt();
             if (fn.GetExt().IsEmpty()) {
@@ -5149,7 +5149,7 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
                 masks.insert(curfileMask);
                 mask << curfileMask << ";";
             }
-        });
+        }
     }
 
     data.SetRootDirs(rootDirs);
@@ -5438,9 +5438,9 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     m_pluginsToolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_pluginsToolbar->Realize();
 
-    auto editors = GetMainBook()->GetAllEditors();
-
-    std::for_each(editors.begin(), editors.end(), [&](clEditor* editor) { editor->PreferencesChanged(); });
+    for (clEditor* editor : GetMainBook()->GetAllEditors()) {
+        editor->PreferencesChanged();
+    }
     m_mainFrameTitleTemplate = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
 }
 

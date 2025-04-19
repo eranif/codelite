@@ -137,8 +137,9 @@ void clConfigurationSelectionCtrl::DoWorkspaceConfig()
     });
 
     wxArrayString configurations;
-    std::for_each(confs.begin(), confs.end(),
-                  [&](WorkspaceConfigurationPtr conf) { configurations.push_back(conf->GetName()); });
+    for (const auto& conf : confs) {
+        configurations.push_back(conf->GetName());
+    }
 
     wxString activeConfig = configurations.IsEmpty() ? "" : matrix->GetSelectedConfigurationName();
     SetConfigurations(configurations, activeConfig);

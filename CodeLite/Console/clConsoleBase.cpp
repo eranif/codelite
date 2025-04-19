@@ -173,7 +173,7 @@ void clConsoleEnvironment::Apply()
 
     // keep a copy of the old environment before we apply the new values
     m_oldEnvironment.clear();
-    std::for_each(m_environment.begin(), m_environment.end(), [&](const wxStringMap_t::value_type& vt) {
+    for (const auto& vt : m_environment) {
         wxString envvalue;
         if(::wxGetEnv(vt.first, &envvalue)) {
             m_oldEnvironment[vt.first] = envvalue;
@@ -181,7 +181,7 @@ void clConsoleEnvironment::Apply()
             m_oldEnvironment[vt.first] = "__no_such_env__";
         }
         ::wxSetEnv(vt.first, vt.second);
-    });
+    }
 }
 
 void clConsoleEnvironment::UnApply()
@@ -189,13 +189,13 @@ void clConsoleEnvironment::UnApply()
     if(m_oldEnvironment.empty()) {
         return;
     }
-    std::for_each(m_oldEnvironment.begin(), m_oldEnvironment.end(), [&](const wxStringMap_t::value_type& vt) {
+    for (const auto& vt : m_oldEnvironment) {
         if(vt.second == "__no_such_env__") {
             ::wxUnsetEnv(vt.second);
         } else {
             ::wxSetEnv(vt.first, vt.second);
         }
-    });
+    }
     m_oldEnvironment.clear();
 }
 

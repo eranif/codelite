@@ -538,9 +538,9 @@ void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArraySt
         if (!filesMap.empty()) {
             wxArrayString tmpArr;
             tmpArr.Alloc(filesMap.size());
-            std::for_each(filesMap.begin(), filesMap.end(), [&](const Project::FilesMap_t::value_type& vt) {
-                tmpArr.Add(vt.second->GetFilename());
-            });
+            for (const auto& p : filesMap) {
+                tmpArr.Add(p.second->GetFilename());
+            }
             files.insert(files.end(), tmpArr.begin(), tmpArr.end());
         }
     }

@@ -1254,11 +1254,11 @@ void wxCrafterPlugin::OnReGenerateForProject(wxCommandEvent& e)
         wxCrafter::GetProjectFiles(activeProject->GetName(), all_files);
 
         // Filter out and keep only wxcp files
-        std::for_each(all_files.begin(), all_files.end(), [&](const wxString& file) {
+        for (const wxString& file : all_files) {
             if(FileExtManager::GetType(file) == FileExtManager::TypeWxCrafter) {
                 wxcpFiles.Add(file);
             }
-        });
+        }
 
         if(wxcpFiles.IsEmpty()) {
             ::wxMessageBox(_("This project does not contain any wxCrafter files"), "wxCrafter");

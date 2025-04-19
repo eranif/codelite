@@ -239,8 +239,9 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
     result.Replace(wxT("___MAKE___"), wxT("$(MAKE)"));
 
     // and restore all those unresolved variables
-    std::for_each(unresolvedVars.begin(), unresolvedVars.end(),
-                  [&](const std::pair<wxString, wxString>& p) { result.Replace(p.first, p.second); });
+    for (const auto& [placeHolder, value] : unresolvedVars) {
+        result.Replace(placeHolder, value);
+    }
     return result;
 }
 

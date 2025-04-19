@@ -449,11 +449,11 @@ void FindResultsTab::OnRecentSearches(wxCommandEvent& e)
     const int firstID = 8000;
     int counter = 0;
     std::map<int, History> entries;
-    std::for_each(m_history.Begin(), m_history.End(), [&](const std::pair<wxString, History>& p) {
+    for (const auto& p : m_history) {
         menu.Prepend(firstID + counter, p.first, "", wxITEM_CHECK)->Check(m_searchTitle == p.first);
         entries.insert(std::make_pair(firstID + counter, p.second));
         ++counter;
-    });
+    }
 
     auto button = m_tb->FindById(e.GetId());
     CHECK_PTR_RET(button);
@@ -502,8 +502,9 @@ void FindResultsTab::LoadSearch(const History& h)
     m_sci->SetText(h.text);
 
     // restore the indicators
-    std::for_each(h.indicators.begin(), h.indicators.end(),
-                  [&](int pos) { m_sci->IndicatorFillRange(pos, h.title.length()); });
+    for (int pos : h.indicators) {
+        m_sci->IndicatorFillRange(pos, h.title.length());
+    }
     m_sci->SetFirstVisibleLine(0);
     m_sci->SetEditable(false);
 }

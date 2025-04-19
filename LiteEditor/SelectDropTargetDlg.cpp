@@ -18,11 +18,11 @@ SelectDropTargetDlg::~SelectDropTargetDlg() {}
 void SelectDropTargetDlg::Initialize()
 {
     m_views = clGetManager()->GetWorkspaceView()->GetAllPages();
-    std::for_each(m_views.begin(), m_views.end(), [&](const std::pair<wxString, wxWindow*>& p) {
+    for (const auto&p : m_views) {
         wxVector<wxVariant> cols;
         cols.push_back(p.first);
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)p.second);
-    });
+    }
 }
 
 void SelectDropTargetDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->HasSelection()); }

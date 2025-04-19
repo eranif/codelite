@@ -31,9 +31,9 @@ JSONItem clDockerWorkspaceSettings::ToJSON() const
     json.addProperty("Version", DOCKER_VERSION);
     JSONItem files = JSONItem::createArray("files");
     json.append(files);
-    std::for_each(m_files.begin(), m_files.end(), [&](const clDockerBuildableFile::Map_t::value_type& vt) {
-        files.arrayAppend(vt.second->ToJSON(m_workspaceFile.GetPath()));
-    });
+    for (const auto& p : m_files) {
+        files.arrayAppend(p.second->ToJSON(m_workspaceFile.GetPath()));
+    }
     return json;
 }
 

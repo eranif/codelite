@@ -143,15 +143,15 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
     // so we split the list into 2: entries with weight geater than 0 and 0
     std::vector<std::pair<int, clGotoEntry>> importantEntries;
     clGotoEntry::Vec_t normalEntries;
-    std::for_each(entries.begin(), entries.end(), [&](const clGotoEntry& entry) {
-        if(T.count(entry.GetDesc())) {
+    for (const clGotoEntry& entry : entries) {
+        if (T.count(entry.GetDesc())) {
             // This item has weight
             int weight = T[entry.GetDesc()];
             importantEntries.push_back({ weight, entry });
         } else {
             normalEntries.push_back(entry);
         }
-    });
+    }
 
     // the list should now contains all the list *wihtout* weight
     entries.swap(normalEntries);
@@ -162,8 +162,9 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
         [&](const std::pair<int, clGotoEntry>& a, const std::pair<int, clGotoEntry>& b) { return a.first < b.first; });
 
     // Step 3: prepend the important entries (it actually reverse the sorting)
-    std::for_each(importantEntries.begin(), importantEntries.end(),
-                  [&](const std::pair<int, clGotoEntry>& p) { entries.insert(entries.begin(), p.second); });
+    for (const auto& p : importantEntries) {
+        entries.insert(entries.begin(), p.second);
+    }
 }
 
 void SmartCompletion::OnGotoAnythingSelectionMade(clGotoEvent& event)

@@ -41,13 +41,13 @@ void clAnagram::Reset(const wxString& needle, size_t flags)
     }
 
     m_charCounts.clear();
-    std::for_each(m_needle.begin(), m_needle.end(), [&](wxChar ch) {
+    for (wxChar ch : m_needle) {
         if(m_charCounts.count(ch) == 0) {
             m_charCounts[ch] = 1;
         } else {
             m_charCounts[ch]++;
         }
-    });
+    }
 }
 
 bool clAnagram::IsEmpty() const { return m_needle.IsEmpty(); }

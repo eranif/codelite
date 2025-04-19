@@ -356,7 +356,7 @@ bool SFTPTreeView::GetAccountFromUser(SSHAccountInfo& account)
 //            // we have a session for this account, load it
 //            // Load the files
 //            const std::vector<wxString>& files = sess.GetFiles();
-//            std::for_each(files.begin(), files.end(), [&](const wxString& path) { DoOpenFile(path); });
+//            for (const wxString& path : files) { DoOpenFile(path); }
 //
 //            const wxString& rootFolder = sess.GetRootFolder();
 //            if(!rootFolder.IsEmpty()) {

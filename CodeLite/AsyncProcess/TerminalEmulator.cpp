@@ -59,10 +59,10 @@ TerminalEmulator::~TerminalEmulator()
 {
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &TerminalEmulator::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &TerminalEmulator::OnProcessTerminated, this);
-    std::for_each(m_myProcesses.begin(), m_myProcesses.end(), [&](wxProcess* proc) {
+    for (wxProcess* proc : m_myProcesses) {
         MyProcess* myproc = dynamic_cast<MyProcess*>(proc);
         myproc->m_parent = NULL;
-    });
+    }
 }
 
 bool TerminalEmulator::ExecuteConsole(const wxString& command, bool waitOnExit, const wxString& command_args,

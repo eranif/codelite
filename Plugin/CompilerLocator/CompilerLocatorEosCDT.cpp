@@ -15,12 +15,12 @@ bool CompilerLocatorEosCDT::Locate()
 {
     clDEBUG() << "CompilerLocatorEosCDT locate..." << endl;
     std::vector<wxString> possiblePaths{ "/usr/bin", "/usr/local/bin" };
-    std::for_each(possiblePaths.begin(), possiblePaths.end(), [&](const wxString& path) {
+    for (const wxString& path : possiblePaths) {
         wxString foundPath;
-        if(CheckExists(path, foundPath)) {
+        if (CheckExists(path, foundPath)) {
             m_compilers.push_back(CreateCompiler(foundPath));
         }
-    });
+    }
     clDEBUG() << "CompilerLocatorEosCDT locate...done" << endl;
     return !m_compilers.empty();
 }

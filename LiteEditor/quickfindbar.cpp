@@ -674,11 +674,11 @@ void QuickFindBar::DoHighlightMatches(bool checked)
 
         IEditor::List_t editors;
         clGetManager()->GetAllEditors(editors);
-        std::for_each(editors.begin(), editors.end(), [&](IEditor* pEditor) {
+        for (IEditor* pEditor : editors) {
             pEditor->GetCtrl()->MarkerDeleteAll(smt_find_bookmark);
             pEditor->GetCtrl()->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
             pEditor->GetCtrl()->IndicatorClearRange(0, pEditor->GetCtrl()->GetLength());
-        });
+        }
         m_message->SetLabel(wxEmptyString);
     }
     clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display

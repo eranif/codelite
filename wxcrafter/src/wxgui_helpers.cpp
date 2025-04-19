@@ -1390,8 +1390,9 @@ void wxCrafter::GetProjectFiles(const wxString& projectName, wxStringSet_t& file
     }
     const Project::FilesMap_t& filesMap = p->GetFiles();
     files.reserve(filesMap.size());
-    std::for_each(filesMap.begin(), filesMap.end(),
-                  [&](const Project::FilesMap_t::value_type& vt) { files.insert(vt.first); });
+    for (const auto& p : filesMap) {
+        files.insert(p.first);
+    }
 }
 
 void wxCrafter::FormatString(wxString& content, const wxFileName& filename)

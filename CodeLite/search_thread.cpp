@@ -552,14 +552,14 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
     std::set<wxString> uniqueFiles;
     const wxArrayString& excludePatterns = data->GetExcludePatterns();
     const wxString& mask = data->GetExtensions();
-    std::for_each(files.begin(), files.end(), [&](const wxString& filename) {
+    for (const wxString& filename : files) {
         if (uniqueFiles.count(filename))
             return;
         uniqueFiles.insert(filename);
         if (FileUtils::WildMatch(mask, filename) && !FileUtils::WildMatch(excludePatterns, filename)) {
             tmpFiles.Add(filename);
         }
-    });
+    }
     files.swap(tmpFiles);
     files.Sort([](const wxString& f1, const wxString& f2) -> int { return f1.CmpNoCase(f2); });
 }

@@ -1022,8 +1022,9 @@ void clTabCtrl::OnMouseMiddleClick(wxMouseEvent& event)
 
 void clTabCtrl::GetAllPages(std::vector<wxWindow*>& pages)
 {
-    std::for_each(m_tabs.begin(), m_tabs.end(),
-                  [&](clTabInfo::Ptr_t tabInfo) { pages.push_back(tabInfo->GetWindow()); });
+    for (const auto& tabInfo : m_tabs) {
+        pages.push_back(tabInfo->GetWindow());
+    }
 }
 
 void clTabCtrl::SetMenu(wxMenu* menu)

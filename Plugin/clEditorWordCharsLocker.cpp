@@ -6,7 +6,7 @@ clEditorXmlHelper::clEditorXmlHelper(wxStyledTextCtrl* stc)
     : m_stc(stc)
 {
     static const wxString wordChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-";
-    std::for_each(wordChars.begin(), wordChars.end(), [&](const wxChar& ch) { m_chars.insert((int)ch); });
+    m_chars.insert(wordChars.begin(), wordChars.end());
 }
 
 clEditorXmlHelper::~clEditorXmlHelper() {}

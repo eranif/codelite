@@ -52,8 +52,9 @@ void PHPEntityClass::Store(PHPLookupTable* lookup)
         SetDbId(db.GetLastRowId());
 
         // Now that we got the class saved, store any PHPDocVar
-        std::for_each(
-            m_varPhpDocs.begin(), m_varPhpDocs.end(), [&](PHPDocVar::Ptr_t doc) { doc->Store(db, GetDbId()); });
+        for (auto& doc : m_varPhpDocs) {
+            doc->Store(db, GetDbId());
+        }
         lookup->UpdateClassCache(GetFullName());
     } catch (const wxSQLite3Exception& exc) {
         wxUnusedVar(exc);

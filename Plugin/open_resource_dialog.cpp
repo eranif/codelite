@@ -102,10 +102,10 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
                 if (p) {
                     const Project::FilesMap_t& files = p->GetFiles();
                     // convert std::vector to wxArrayString
-                    std::for_each(files.begin(), files.end(), [&](const Project::FilesMap_t::value_type& vt) {
-                        wxFileName fn(vt.second->GetFilename());
+                    for (const auto& p : files) {
+                        wxFileName fn(p.second->GetFilename());
                         m_files.insert(std::make_pair(fn.GetFullName(), fn.GetFullPath()));
-                    });
+                    }
                 }
             }
         } else if (clFileSystemWorkspace::Get().IsOpen()) {

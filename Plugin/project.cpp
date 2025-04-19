@@ -503,8 +503,8 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
     wxXmlNode* rcNode(NULL);
 
     // copy the files to their new location
-    std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
-        wxFileName fn = vt.first;
+    for (const auto& p : m_filesTable) {
+        wxFileName fn = p.first;
         wxCopyFile(fn.GetFullPath(), new_path + "/" + fn.GetFullName());
 
         wxXmlNode* file_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "File");
@@ -543,7 +543,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
             rcNode->AddChild(file_node);
             break;
         }
-    });
+    }
 
     doc.Save(newFile.GetFullPath());
 }
@@ -1019,15 +1019,17 @@ wxArrayString Project::GetIncludePaths()
             // unchanged
             wxArrayString includePaths = DoBacktickToIncludePath(cmpOption);
             if (!includePaths.IsEmpty()) {
-                std::for_each(includePaths.begin(), includePaths.end(), [&](const wxString& path) {
+                for (const wxString& path : includePaths) {
                     wxFileName fn(path, "");
                     paths.insert(fn.GetPath());
-                });
+                }
             }
         }
     }
 
-    std::for_each(paths.begin(), paths.end(), [&](const wxString& path) { m_cachedIncludePaths.Add(path); });
+    for (const wxString& path : paths) {
+        m_cachedIncludePaths.Add(path);
+    }
     return m_cachedIncludePaths;
 }
 
@@ -1176,7 +1178,9 @@ void Project::SetExcludeConfigsForFile(const wxString& filename, const wxStringS
 
     // Convert to string and update the XML
     wxString excludeConfigs;
-    std::for_each(configs.begin(), configs.end(), [&](const wxString& config) { excludeConfigs << config << ";"; });
+    for (const wxString& config : configs) {
+        excludeConfigs << config << ";";
+    }
     XmlUtils::UpdateProperty(fileNode, EXCLUDE_FROM_BUILD_FOR_CONFIG, excludeConfigs);
     SaveXmlFile();
 }
@@ -1372,8 +1376,8 @@ void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStri
         wxString cxxFilePattern =
             GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", kCxxFile | kWrapIncludesWithSpace);
         wxString workingDirectory = m_fileName.GetPath();
-        std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
-            const wxString& fullpath = vt.second->GetFilename();
+        for (const auto& p : m_filesTable) {
+            const wxString& fullpath = p.second->GetFilename();
             wxString compilePattern;
             FileExtManager::FileType fileType = FileExtManager::GetType(fullpath);
             if (fileType == FileExtManager::TypeSourceC) {
@@ -1397,7 +1401,7 @@ void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStri
                 json.addProperty("command", compilePattern);
                 compile_commands.append(json);
             }
-        });
+        }
     }
 }
 
@@ -1655,13 +1659,13 @@ void Project::ClearIncludePathCache() { m_cachedIncludePaths.clear(); }
 wxString Project::GetFilesAsString(bool absPath) const
 {
     wxString str;
-    std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
+    for (const auto& p : m_filesTable) {
         if (absPath) {
-            str << vt.first << " ";
+            str << p.first << " ";
         } else {
-            str << vt.second->GetFilenameRelpath() << " ";
+            str << p.second->GetFilenameRelpath() << " ";
         }
-    });
+    }
 
     if (!str.IsEmpty()) {
         str.RemoveLast();
@@ -1675,8 +1679,9 @@ void Project::GetFilesAsVector(clProjectFile::Vec_t& files) const
         return;
     }
     files.reserve(m_filesTable.size());
-    std::for_each(m_filesTable.begin(), m_filesTable.end(),
-                  [&](const FilesMap_t::value_type& vt) { files.push_back(vt.second); });
+    for (const auto& p : m_filesTable) {
+        files.push_back(p.second);
+    }
 }
 
 void Project::GetFilesAsStringArray(wxArrayString& files, bool absPath) const
@@ -1685,9 +1690,9 @@ void Project::GetFilesAsStringArray(wxArrayString& files, bool absPath) const
         return;
     }
     files.reserve(m_filesTable.size());
-    std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
-        files.Add(absPath ? vt.second->GetFilename() : vt.second->GetFilenameRelpath());
-    });
+    for (const auto& p : m_filesTable) {
+        files.Add(absPath ? p.second->GetFilename() : p.second->GetFilenameRelpath());
+    }
 }
 
 clProjectFolder::Ptr_t Project::GetRootFolder()
@@ -1720,9 +1725,9 @@ void Project::GetFilesAsVectorOfFileName(std::vector<wxFileName>& files, bool ab
         return;
     }
     files.reserve(m_filesTable.size());
-    std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
-        files.push_back(absPath ? vt.second->GetFilename() : vt.second->GetFilenameRelpath());
-    });
+    for (const auto& p : m_filesTable) {
+        files.push_back(absPath ? p.second->GetFilename() : p.second->GetFilenameRelpath());
+    }
 }
 
 bool Project::IsEmpty() const { return m_virtualFoldersTable.empty() && m_filesTable.empty(); }
@@ -1748,7 +1753,9 @@ void Project::GetFiles(const wxString& vdFullPath, wxArrayString& files)
     }
     const wxStringSet_t& filesSet = parentFolder->GetFiles();
     files.Alloc(filesSet.size());
-    std::for_each(filesSet.begin(), filesSet.end(), [&](const wxString& s) { files.Add(s); });
+    for (const wxString& s : filesSet) {
+        files.Add(s);
+    }
 }
 
 bool Project::IsVirtualDirectoryEmpty(const wxString& vdFullPath) const
@@ -1962,12 +1969,12 @@ bool clProjectFolder::Rename(Project* project, const wxString& newName)
         // Update the cache
 
         // Update all the files that are related to this folder
-        std::for_each(m_files.begin(), m_files.end(), [&](const wxString& filename) {
+        for (const wxString& filename : m_files) {
             if (project->m_filesTable.count(filename)) {
                 clProjectFile::Ptr_t file = project->m_filesTable[filename];
                 file->SetVirtualFolder(GetFullpath());
             }
-        });
+        }
 
         // Next, the folder path in the cache
         clProjectFolder::Ptr_t p = project->m_virtualFoldersTable[oldnameFullpath];
@@ -2041,7 +2048,9 @@ void clProjectFolder::GetSubfolders(wxArrayString& folders, bool recursive) cons
     }
 
     folders.Alloc(foldersV.size());
-    std::for_each(foldersV.begin(), foldersV.end(), [&](const wxString& s) { folders.Add(s); });
+    for (const wxString& s : foldersV) {
+        folders.Add(s);
+    }
 }
 
 void clProjectFolder::DeleteRecursive(Project* project)
@@ -2076,12 +2085,12 @@ void clProjectFolder::DeleteRecursive(Project* project)
 void clProjectFolder::DeleteAllFiles(Project* project)
 {
     // Remove all children files
-    std::for_each(m_files.begin(), m_files.end(), [&](const wxString& filename) {
+    for (const wxString& filename : m_files) {
         clProjectFile::Ptr_t file = project->GetFile(filename);
         if (file) {
             file->Delete(project, true);
         }
-    });
+    }
     m_files.clear();
 }
 

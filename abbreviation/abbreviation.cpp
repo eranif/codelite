@@ -291,7 +291,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
             editor->GetCtrl()->ClearSelections();
 
             bool first = true;
-            std::for_each(carets.begin(), carets.end(), [&](int where) {
+            for (int where : carets) {
                 int caretPos = curPos + where - typedWordLen;
                 if (first) {
                     editor->GetCtrl()->SetSelection(caretPos, caretPos + 1);
@@ -299,7 +299,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
                 } else {
                     editor->GetCtrl()->AddSelection(caretPos, caretPos + 1);
                 }
-            });
+            }
         }
         return true;
     } else

@@ -1139,12 +1139,14 @@ bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, co
     JSON root(cJSON_Array);
     JSONItem arr = root.toElement();
     std::vector<LexerConf::Ptr_t> Lexers;
-    std::for_each(m_allLexers.begin(), m_allLexers.end(), [&](LexerConf::Ptr_t lexer) {
+    for (const auto& lexer : m_allLexers) {
         if (M.empty() || M.count(lexer->GetThemeName().Lower())) {
             Lexers.push_back(lexer);
         }
-    });
-    std::for_each(Lexers.begin(), Lexers.end(), [&](LexerConf::Ptr_t lexer) { arr.append(lexer->ToJSON(true)); });
+    }
+    for (const auto& lexer : Lexers) {
+        arr.append(lexer->ToJSON(true));
+    }
     return FileUtils::WriteFileContent(outputFile, root.toElement().format());
 }
 
@@ -1176,7 +1178,7 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
         Lexers.push_back(lexer);
     }
 
-    std::for_each(Lexers.begin(), Lexers.end(), [&](LexerConf::Ptr_t lexer) {
+    for (const auto& lexer : Lexers) {
         if (m_lexersMap.count(lexer->GetName()) == 0) {
             m_lexersMap[lexer->GetName()] = Vec_t();
         }
@@ -1196,14 +1198,15 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
                 v.push_back(lexer);
             }
         }
-    });
+    }
 
     // Rebuild "m_allLexers" after the merge
     m_allLexers.clear();
-    std::for_each(m_lexersMap.begin(), m_lexersMap.end(), [&](ColoursAndFontsManager::Map_t::value_type& vt) {
-        std::for_each(
-            vt.second.begin(), vt.second.end(), [&](LexerConf::Ptr_t lexer) { m_allLexers.push_back(lexer); });
-    });
+    for (const auto& p : m_lexersMap) {
+        for (const auto& lexer : p.second) {
+            m_allLexers.push_back(lexer);
+        }
+    }
     Save();
     Reload();
     return true;
@@ -1212,11 +1215,14 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
 wxArrayString ColoursAndFontsManager::GetAllThemes() const
 {
     wxStringSet_t themes;
-    std::for_each(
-        m_allLexers.begin(), m_allLexers.end(), [&](LexerConf::Ptr_t lexer) { themes.insert(lexer->GetThemeName()); });
+    for (const auto& lexer : m_allLexers) {
+        themes.insert(lexer->GetThemeName());
+    }
     wxArrayString arr;
     arr.reserve(themes.size());
-    std::for_each(themes.begin(), themes.end(), [&](const wxString& name) { arr.push_back(name); });
+    for (const wxString& name : themes) {
+        arr.push_back(name);
+    }
     return arr;
 }
 

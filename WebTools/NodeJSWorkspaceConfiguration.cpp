@@ -66,11 +66,11 @@ wxArrayString NodeJSWorkspaceConfiguration::GetFolders() const
 {
     // Convert the folders to absolute path
     wxArrayString folders;
-    std::for_each(this->m_folders.begin(), this->m_folders.end(), [&](const wxString& folder) {
+    for (const wxString& folder : this->m_folders) {
         wxFileName fnFolder(folder, "dummy.txt");
         fnFolder.MakeAbsolute(m_filename.GetPath());
         folders.Add(fnFolder.GetPath());
-    });
+    }
     return folders;
 }
 

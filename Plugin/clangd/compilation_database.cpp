@@ -444,13 +444,14 @@ wxArrayString CompilationDatabase::FindIncludePaths(const wxString& rootFolder, 
             wxString cwd = element.namedObject("directory").toString();
             CompilerCommandLineParser cclp(cmd, cwd);
             const wxArrayString& includes = cclp.GetIncludes();
-            std::for_each(includes.begin(), includes.end(),
-                          [&](const wxString& includePath) { paths.insert(includePath); });
+            paths.insert(includes.begin(), includes.end());
         }
     }
     // Convert the set back to array
     wxArrayString includePaths;
-    std::for_each(paths.begin(), paths.end(), [&](const wxString& path) { includePaths.Add(path); });
+    for (const wxString& path : paths) {
+        includePaths.Add(path);
+    }
     return includePaths;
 }
 

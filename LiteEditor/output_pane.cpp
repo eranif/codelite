@@ -179,7 +179,9 @@ void OutputPane::SaveTabOrder()
     wxArrayString panes;
     clTabInfo::Vec_t tabs;
     m_book->GetAllTabs(tabs);
-    std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
+    for (const auto& t : tabs) {
+        panes.Add(t->GetLabel());
+    }
     clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
 }
 

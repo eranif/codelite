@@ -15,12 +15,13 @@ BitmapWrapepr::BitmapWrapepr()
     m_styles.Clear();
     m_sizerFlags.Clear();
 
-    AddProperty(new CategoryProperty(_("wxBitmap")));
-    AddProperty(new StringProperty(
-        PROP_NAME, wxT(""),
+    Add<CategoryProperty>(_("wxBitmap"));
+    Add<StringProperty>(
+        PROP_NAME,
+        wxT(""),
         _("A unique name for the bitmap (across your project)\nThis name can be used later to load the bitmap from the "
-          "generated class\nby simply calling: wxBitmap bmp = myimglist.Bitmap(\"my-bitmap-name\")")));
-    AddProperty(new FilePickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file")));
+          "generated class\nby simply calling: wxBitmap bmp = myimglist.Bitmap(\"my-bitmap-name\")"));
+    Add<FilePickerProperty>(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file"));
     m_namePattern = "m_bmp";
     SetName(GenerateName());
 }

@@ -101,34 +101,37 @@ wxcWidget::wxcWidget(int type)
         ADD_SIZER_FLAG(wxRESERVE_SPACE_EVEN_IF_HIDDEN, false);
     }
 
-    AddProperty(new CategoryProperty(_("Common Settings")));
-    AddProperty(new WinIdProperty());
-    AddProperty(new StringProperty(PROP_SIZE, "-1,-1",
-                                   _("The control's size. It is recommended to leave it as -1,-1 and "
-                                     "let\nthe sizers calculate the best size for the window")));
-    AddProperty(new StringProperty(PROP_MINSIZE, "-1,-1",
-                                   _("The control's minimum size, to indicate to the sizer layout "
-                                     "mechanism that this is the minimum required size")));
-    AddProperty(new StringProperty(PROP_NAME, "", _("C++ member name")));
-    AddProperty(new MultiStringsProperty(PROP_TOOLTIP, _("Tooltip"), "\\n", _("Tooltip text:")));
-    AddProperty(new ColorProperty(PROP_BG, "<Default>", _("Set the control's background colour")));
-    AddProperty(new ColorProperty(PROP_FG, "<Default>", _("Set the control's foreground colour")));
-    AddProperty(new FontProperty(PROP_FONT, "", _("Set the control's font")));
+    Add<CategoryProperty>(_("Common Settings"));
+    Add<WinIdProperty>();
+    Add<StringProperty>(PROP_SIZE,
+                        "-1,-1",
+                        _("The control's size. It is recommended to leave it as -1,-1 and let\n"
+                          "the sizers calculate the best size for the window"));
+    Add<StringProperty>(PROP_MINSIZE,
+                        "-1,-1",
+                        _("The control's minimum size, to indicate to the sizer layout "
+                          "mechanism that this is the minimum required size"));
+    Add<StringProperty>(PROP_NAME, "", _("C++ member name"));
+    Add<MultiStringsProperty>(PROP_TOOLTIP, _("Tooltip"), "\\n", _("Tooltip text:"));
+    Add<ColorProperty>(PROP_BG, "<Default>", _("Set the control's background colour"));
+    Add<ColorProperty>(PROP_FG, "<Default>", _("Set the control's foreground colour"));
+    Add<FontProperty>(PROP_FONT, "", _("Set the control's font"));
 
-    AddProperty(new CategoryProperty(_("Initial State")));
-    AddProperty(new BoolProperty(PROP_STATE_HIDDEN, false, _("Sets the control initial state to 'Hidden'")));
-    AddProperty(new BoolProperty(PROP_STATE_DISABLED, false, _("Sets the control initial state to 'Disabled'")));
-    AddProperty(new BoolProperty(PROP_HAS_FOCUS, false, _("This control should have keyboard focus")));
+    Add<CategoryProperty>(_("Initial State"));
+    Add<BoolProperty>(PROP_STATE_HIDDEN, false, _("Sets the control initial state to 'Hidden'"));
+    Add<BoolProperty>(PROP_STATE_DISABLED, false, _("Sets the control initial state to 'Disabled'"));
+    Add<BoolProperty>(PROP_HAS_FOCUS, false, _("This control should have keyboard focus"));
 
-    AddProperty(new CategoryProperty(_("Subclass")));
-    AddProperty(new StringProperty(PROP_SUBCLASS_NAME, "",
-                                   _("The name of the derived class. Used both for C++ and XRC generated code.")));
-    AddProperty(
-        new StringProperty(PROP_SUBCLASS_INCLUDE, "",
-                           _("(C++ only) The name of any extra header file to be #included e.g. mydialog.hpp")));
-    AddText(PROP_SUBCLASS_STYLE,
-            _("Override the default class style with the content of this field.\nThe style should be | separated"));
-    AddProperty(new CategoryProperty(_("Control Specific Settings")));
+    Add<CategoryProperty>(_("Subclass"));
+    Add<StringProperty>(
+        PROP_SUBCLASS_NAME, "", _("The name of the derived class. Used both for C++ and XRC generated code."));
+    Add<StringProperty>(
+        PROP_SUBCLASS_INCLUDE, "", _("(C++ only) The name of any extra header file to be #included e.g. mydialog.hpp"));
+    Add<StringProperty>(
+        PROP_SUBCLASS_STYLE,
+        "",
+        _("Override the default class style with the content of this field.\nThe style should be | separated"));
+    Add<CategoryProperty>(_("Control Specific Settings"));
 }
 
 wxcWidget::~wxcWidget()

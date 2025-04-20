@@ -10,64 +10,60 @@ GLCanvasWrapper::GLCanvasWrapper()
 
     SetPropertyString(_("Common Settings"), "wxGLCanvas");
     DelProperty(PROP_CONTROL_SPECIFIC_SETTINGS);
-    AddCategory(_("wxGLCanvas Attribute List"));
+    Add<CategoryProperty>(_("wxGLCanvas Attribute List"));
 
-    AddProperty(new StringProperty("WX_GL_RGBA", _("Use true color palette (on if no attrs specified)")));
+    Add<StringProperty>("WX_GL_RGBA", _("Use true color palette (on if no attrs specified)"));
     m_attrs.Add("WX_GL_RGBA");
 
-    AddProperty(new StringProperty("WX_GL_BUFFER_SIZE", _("bits for buffer if not WX_GL_RGBA")));
+    Add<StringProperty>("WX_GL_BUFFER_SIZE", _("bits for buffer if not WX_GL_RGBA"));
     m_attrs.Add("WX_GL_BUFFER_SIZE");
 
-    AddProperty(new StringProperty("WX_GL_LEVEL", _("0 for main buffer, >0 for overlay, <0 for underlay")));
+    Add<StringProperty>("WX_GL_LEVEL", _("0 for main buffer, >0 for overlay, <0 for underlay"));
     m_attrs.Add("WX_GL_LEVEL");
 
-    AddProperty(new StringProperty("WX_GL_DOUBLEBUFFER", _("use double buffering (on if no attrs specified)")));
+    Add<StringProperty>("WX_GL_DOUBLEBUFFER", _("use double buffering (on if no attrs specified)"));
     m_attrs.Add("WX_GL_DOUBLEBUFFER");
 
-    AddProperty(new StringProperty("WX_GL_STEREO", _("use stereoscopic display")));
+    Add<StringProperty>("WX_GL_STEREO", _("use stereoscopic display"));
     m_attrs.Add("WX_GL_STEREO");
 
-    AddProperty(new StringProperty("WX_GL_AUX_BUFFERS", _("number of auxiliary buffers")));
+    Add<StringProperty>("WX_GL_AUX_BUFFERS", _("number of auxiliary buffers"));
     m_attrs.Add("WX_GL_AUX_BUFFERS");
 
-    AddProperty(new StringProperty("WX_GL_MIN_RED", _("use red buffer with most bits (> MIN_RED bits)")));
+    Add<StringProperty>("WX_GL_MIN_RED", _("use red buffer with most bits (> MIN_RED bits)"));
     m_attrs.Add("WX_GL_MIN_RED");
 
-    AddProperty(new StringProperty("WX_GL_MIN_GREEN", _("use green buffer with most bits (> MIN_GREEN bits)")));
+    Add<StringProperty>("WX_GL_MIN_GREEN", _("use green buffer with most bits (> MIN_GREEN bits)"));
     m_attrs.Add("WX_GL_MIN_GREEN");
 
-    AddProperty(new StringProperty("WX_GL_MIN_BLUE", _("use blue buffer with most bits (> MIN_BLUE bits)")));
+    Add<StringProperty>("WX_GL_MIN_BLUE", _("use blue buffer with most bits (> MIN_BLUE bits)"));
     m_attrs.Add("WX_GL_MIN_BLUE");
 
-    AddProperty(new StringProperty("WX_GL_MIN_ALPHA", _("use alpha buffer with most bits (> MIN_ALPHA bits)")));
+    Add<StringProperty>("WX_GL_MIN_ALPHA", _("use alpha buffer with most bits (> MIN_ALPHA bits)"));
     m_attrs.Add("WX_GL_MIN_ALPHA");
 
-    AddProperty(new StringProperty("WX_GL_DEPTH_SIZE", _("bits for Z-buffer (0,16,32)")));
+    Add<StringProperty>("WX_GL_DEPTH_SIZE", _("bits for Z-buffer (0,16,32)"));
     m_attrs.Add("WX_GL_DEPTH_SIZE");
 
-    AddProperty(new StringProperty("WX_GL_STENCIL_SIZE", _("bits for stencil buffer")));
+    Add<StringProperty>("WX_GL_STENCIL_SIZE", _("bits for stencil buffer"));
     m_attrs.Add("WX_GL_STENCIL_SIZE");
 
-    AddProperty(
-        new StringProperty("WX_GL_MIN_ACCUM_RED", _("use red accum buffer with most bits (> MIN_ACCUM_RED bits)")));
+    Add<StringProperty>("WX_GL_MIN_ACCUM_RED", _("use red accum buffer with most bits (> MIN_ACCUM_RED bits)"));
     m_attrs.Add("WX_GL_MIN_ACCUM_RED");
 
-    AddProperty(
-        new StringProperty("WX_GL_MIN_ACCUM_GREEN", _("use green buffer with most bits (> MIN_ACCUM_GREEN bits)")));
+    Add<StringProperty>("WX_GL_MIN_ACCUM_GREEN", _("use green buffer with most bits (> MIN_ACCUM_GREEN bits)"));
     m_attrs.Add("WX_GL_MIN_ACCUM_GREEN");
 
-    AddProperty(
-        new StringProperty("WX_GL_MIN_ACCUM_BLUE", _("use blue buffer with most bits (> MIN_ACCUM_BLUE bits)")));
+    Add<StringProperty>("WX_GL_MIN_ACCUM_BLUE", _("use blue buffer with most bits (> MIN_ACCUM_BLUE bits)"));
     m_attrs.Add("WX_GL_MIN_ACCUM_BLUE");
 
-    AddProperty(
-        new StringProperty("WX_GL_MIN_ACCUM_ALPHA", _("use alpha buffer with most bits (> MIN_ACCUM_ALPHA bits)")));
+    Add<StringProperty>("WX_GL_MIN_ACCUM_ALPHA", _("use alpha buffer with most bits (> MIN_ACCUM_ALPHA bits)"));
     m_attrs.Add("WX_GL_MIN_ACCUM_ALPHA");
 
-    AddProperty(new StringProperty("WX_GL_SAMPLE_BUFFERS", _("1 for multisampling support (antialiasing)")));
+    Add<StringProperty>("WX_GL_SAMPLE_BUFFERS", _("1 for multisampling support (antialiasing)"));
     m_attrs.Add("WX_GL_SAMPLE_BUFFERS");
 
-    AddProperty(new StringProperty("WX_GL_SAMPLES", _("4 for 2x2 antialiasing supersampling on most graphics cards")));
+    Add<StringProperty>("WX_GL_SAMPLES", _("4 for 2x2 antialiasing supersampling on most graphics cards"));
     m_attrs.Add("WX_GL_SAMPLES");
 
     SetName(GenerateName());

@@ -20,19 +20,20 @@ HyperLinkCtrlWrapper::HyperLinkCtrlWrapper()
                     "see wxEvent::Skip)\nthen a call to wxLaunchDefaultBrowser is done with the hyperlink's URL."));
 
     SetPropertyString(_("Common Settings"), "wxHyperLinkCtrl");
-    AddProperty(new StringProperty(PROP_LABEL, wxT("codelite IDE"), _("The label of the hyperlink")));
-    AddProperty(
-        new StringProperty(PROP_URL, wxT("http://www.codelite.org"), _("The URL associated with the given label")));
-    AddProperty(
-        new ColorProperty(PROP_NORMAL_COLOR, wxT("#0000FF"),
-                          _("Sets the colour used to print the label when the link has never been clicked "
-                            "before\n(i.e. the link has not been visited) and the mouse is not over the control.")));
-    AddProperty(new ColorProperty(PROP_VISITED_COLOR, wxT("#FF0000"),
-                                  _("Sets the colour used to print the label when the mouse is not over the control "
-                                    "and the link has already been clicked before\n(i.e. the link has been visited)")));
-    AddProperty(new ColorProperty(
-        PROP_HOVER_COLOR, wxT("#0000FF"),
-        _("Sets the colour used to print the label of the hyperlink when the mouse is over the control")));
+    Add<StringProperty>(PROP_LABEL, wxT("codelite IDE"), _("The label of the hyperlink"));
+    Add<StringProperty>(PROP_URL, wxT("http://www.codelite.org"), _("The URL associated with the given label"));
+    Add<ColorProperty>(PROP_NORMAL_COLOR,
+                       wxT("#0000FF"),
+                       _("Sets the colour used to print the label when the link has never been clicked "
+                         "before\n(i.e. the link has not been visited) and the mouse is not over the control."));
+    Add<ColorProperty>(PROP_VISITED_COLOR,
+                       wxT("#FF0000"),
+                       _("Sets the colour used to print the label when the mouse is not over the control "
+                         "and the link has already been clicked before\n(i.e. the link has been visited)"));
+    Add<ColorProperty>(
+        PROP_HOVER_COLOR,
+        wxT("#0000FF"),
+        _("Sets the colour used to print the label of the hyperlink when the mouse is over the control"));
 
     m_namePattern = wxT("m_hyperLink");
     SetName(GenerateName());

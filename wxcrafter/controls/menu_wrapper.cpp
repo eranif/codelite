@@ -19,9 +19,9 @@ MenuWrapper::MenuWrapper()
     RegisterEvent("wxEVT_MENU_CLOSE", "wxMenuEvent", _("The menu is about to close"));
 
     SetPropertyString(_("Common Settings"), "wxMenu");
-    AddProperty(new CategoryProperty(_("Menu")));
-    AddProperty(new StringProperty(PROP_NAME, "", _("C++ variable name")));
-    AddProperty(new StringProperty(PROP_LABEL, _("Menu"), _("A title for the popup menu")));
+    Add<CategoryProperty>(_("Menu"));
+    Add<StringProperty>(PROP_NAME, "", _("C++ variable name"));
+    Add<StringProperty>(PROP_LABEL, _("Menu"), _("A title for the popup menu"));
 
     m_namePattern = wxT("m_menu");
     SetName(GenerateName());

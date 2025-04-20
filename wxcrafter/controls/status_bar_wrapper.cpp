@@ -16,7 +16,7 @@ StatusBarWrapper::StatusBarWrapper()
     PREPEND_STYLE_TRUE(wxSTB_DEFAULT_STYLE);
 
     SetPropertyString(_("Common Settings"), "wxStatusBar");
-    AddProperty(new StringProperty(PROP_FIELD_COUNT, wxT("1"), _("Sets the number of fields")));
+    Add<StringProperty>(PROP_FIELD_COUNT, wxT("1"), _("Sets the number of fields"));
 
     m_namePattern = wxT("m_statusBar");
     SetName(GenerateName());

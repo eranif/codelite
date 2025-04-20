@@ -19,11 +19,11 @@ StdButtonWrapper::StdButtonWrapper()
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
                   wxT("wxCommandEventHandler"));
 
-    AddProperty(new CategoryProperty(_("Standard wxButton")));
-    AddProperty(new ChoiceProperty(PROP_WINDOW_ID, ids, 0, _("Button ID")));
-    AddProperty(new StringProperty(PROP_NAME, wxT(""), _("C++ member name")));
-    AddProperty(new MultiStringsProperty(PROP_TOOLTIP, _("Tooltip"), wxT("\\n"), _("Tooltip text:")));
-    AddProperty(new BoolProperty(PROP_DEFAULT_BUTTON, false, wxT("Make this button the default button")));
+    Add<CategoryProperty>(_("Standard wxButton"));
+    Add<ChoiceProperty>(PROP_WINDOW_ID, ids, 0, _("Button ID"));
+    Add<StringProperty>(PROP_NAME, wxT(""), _("C++ member name"));
+    Add<MultiStringsProperty>(PROP_TOOLTIP, _("Tooltip"), wxT("\\n"), _("Tooltip text:"));
+    Add<BoolProperty>(PROP_DEFAULT_BUTTON, false, wxT("Make this button the default button"));
     m_namePattern = "m_button";
     SetName(GenerateName());
 }

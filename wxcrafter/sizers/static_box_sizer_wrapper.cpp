@@ -15,8 +15,8 @@ StaticBoxSizerWrapper::StaticBoxSizerWrapper()
     const wxArrayString arr = StdToWX::ToArrayString({ "Vertical", "Horizontal" });
 
     SetPropertyString(_("Common Settings"), "wxStaticBoxSizer");
-    AddProperty(new ChoiceProperty(PROP_ORIENTATION, arr, 0, _("Sizer orientation")));
-    AddProperty(new StringProperty(PROP_LABEL, _("My Label"), _("Label")));
+    Add<ChoiceProperty>(PROP_ORIENTATION, arr, 0, _("Sizer orientation"));
+    Add<StringProperty>(PROP_LABEL, _("My Label"), _("Label"));
 
     m_namePattern = "staticBoxSizer";
     SetName(GenerateName());

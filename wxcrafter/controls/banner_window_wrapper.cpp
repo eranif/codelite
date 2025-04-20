@@ -17,22 +17,25 @@ BannerWindowWrapper::BannerWindowWrapper()
     const wxArrayString options = StdToWX::ToArrayString({ "wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT" });
 
     SetPropertyString(_("Common Settings"), "wxBannerWindow");
-    AddProperty(new MultiStringsProperty(
-        PROP_TITLE, _("The Title\nTitle is rendered in bold and should be single line"), "\\n", ""));
-    AddProperty(new MultiStringsProperty(PROP_MESSAGE,
-                                         _("Message can have multiple lines but is not wrapped automatically\ninclude "
-                                           "explicit line breaks in the string if you want to have multiple lines"),
-                                         "\\n", ""));
-    AddProperty(
-        new ChoiceProperty(PROP_ORIENTATION, options, 2,
-                           _("The banner orientation changes how the text in it is displayed and also defines where is "
-                             "the bitmap truncated if it's too big to fit\nbut doesn't do anything for the banner "
-                             "position, this is supposed to be taken care of in the usual way, e.g. using sizers")));
-    AddProperty(new BitmapPickerProperty(
-        PROP_BITMAP_PATH, "",
-        _("Select the bitmap file\nImportant: You can set text and title OR a bitmap, but not both")));
-    AddProperty(new ColorProperty(PROP_COLOR_GRADIENT_START));
-    AddProperty(new ColorProperty(PROP_COLOR_GRADIENT_END));
+    Add<MultiStringsProperty>(
+        PROP_TITLE, _("The Title\nTitle is rendered in bold and should be single line"), "\\n", "");
+    Add<MultiStringsProperty>(PROP_MESSAGE,
+                              _("Message can have multiple lines but is not wrapped automatically\ninclude "
+                                "explicit line breaks in the string if you want to have multiple lines"),
+                              "\\n",
+                              "");
+    Add<ChoiceProperty>(PROP_ORIENTATION,
+                        options,
+                        2,
+                        _("The banner orientation changes how the text in it is displayed and also defines where is "
+                          "the bitmap truncated if it's too big to fit\nbut doesn't do anything for the banner "
+                          "position, this is supposed to be taken care of in the usual way, e.g. using sizers"));
+    Add<BitmapPickerProperty>(
+        PROP_BITMAP_PATH,
+        "",
+        _("Select the bitmap file\nImportant: You can set text and title OR a bitmap, but not both"));
+    Add<ColorProperty>(PROP_COLOR_GRADIENT_START);
+    Add<ColorProperty>(PROP_COLOR_GRADIENT_END);
 
     SetPropertyString(PROP_TITLE, "Title");
     SetPropertyString(PROP_MESSAGE, "Descriptive message");

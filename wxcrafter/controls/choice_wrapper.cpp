@@ -11,9 +11,8 @@ ChoiceWrapper::ChoiceWrapper()
     : wxcWidget(ID_WXCHOICE)
 {
     SetPropertyString(_("Common Settings"), "wxChoice");
-    AddProperty(
-        new MultiStringsProperty(PROP_OPTIONS, _("The Choice drop down options. A semi-colon list of strings")));
-    AddProperty(new StringProperty(PROP_SELECTION, wxT(""), _("Selected string index")));
+    Add<MultiStringsProperty>(PROP_OPTIONS, _("The Choice drop down options. A semi-colon list of strings"));
+    Add<StringProperty>(PROP_SELECTION, wxT(""), _("Selected string index"));
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_CHOICE_SELECTED"),
                          _("Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected."));

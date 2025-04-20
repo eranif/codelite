@@ -10,8 +10,8 @@ CheckBoxWrapper::CheckBoxWrapper()
     : wxcWidget(ID_WXCHECKBOX)
 {
     SetPropertyString(_("Common Settings"), "wxCheckBox");
-    AddProperty(new StringProperty(PROP_LABEL, _("My CheckBox"), _("The Checkbox label")));
-    AddProperty(new BoolProperty(PROP_VALUE, false, _("Value")));
+    Add<StringProperty>(PROP_LABEL, _("My CheckBox"), _("The Checkbox label"));
+    Add<BoolProperty>(PROP_VALUE, false, _("Value"));
 
     PREPEND_STYLE(wxCHK_2STATE, false);
     PREPEND_STYLE(wxCHK_3STATE, false);

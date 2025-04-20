@@ -11,11 +11,12 @@ BitmapComboxWrapper::BitmapComboxWrapper()
     : wxcWidget(ID_WXBITMAPCOMBOBOX)
 {
     SetPropertyString(_("Common Settings"), "wxBitmapComboBox");
-    AddProperty(new BitmapTextArrayProperty(PROP_CB_CHOICES, "", _("Combobox drop down choices")));
-    AddProperty(new StringProperty(
-        PROP_SELECTION, "-1",
-        _("The zero-based position of any initially selected string, or -1 if none are to be selected")));
-    AddProperty(new StringProperty(PROP_VALUE, "", _("The combobox initial value")));
+    Add<BitmapTextArrayProperty>(PROP_CB_CHOICES, "", _("Combobox drop down choices"));
+    Add<StringProperty>(
+        PROP_SELECTION,
+        "-1",
+        _("The zero-based position of any initially selected string, or -1 if none are to be selected"));
+    Add<StringProperty>(PROP_VALUE, "", _("The combobox initial value"));
 
     RegisterEventCommand("wxEVT_COMMAND_COMBOBOX_SELECTED",
                          _("Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is selected. "

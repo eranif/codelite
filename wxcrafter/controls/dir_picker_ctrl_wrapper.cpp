@@ -9,8 +9,8 @@ DirPickerCtrlWrapper::DirPickerCtrlWrapper()
     : wxcWidget(ID_WXDIRPICKER)
 {
     SetPropertyString(_("Common Settings"), "wxDirPickerCtrl");
-    AddProperty(new StringProperty(PROP_VALUE, wxT(""), _("Value")));
-    AddProperty(new StringProperty(PROP_MESSAGE, _("Select a folder"), _("Message to show to the user")));
+    Add<StringProperty>(PROP_VALUE, wxT(""), _("Value"));
+    Add<StringProperty>(PROP_MESSAGE, _("Select a folder"), _("Message to show to the user"));
 
     PREPEND_STYLE(wxDIRP_CHANGE_DIR, false);
     PREPEND_STYLE(wxDIRP_DIR_MUST_EXIST, false);

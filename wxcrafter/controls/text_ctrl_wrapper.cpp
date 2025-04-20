@@ -39,23 +39,26 @@ TextCtrlWrapper::TextCtrlWrapper()
                          _("A mouse event occurred over an URL in the text control (wxMSW and wxGTK2 only)"));
 
     SetPropertyString(_("Common Settings"), "wxTextCtrl");
-    AddProperty(new StringProperty(PROP_VALUE, wxT(""), _("Default text control value")));
-    AddProperty(new StringProperty(PROP_HINT, "", _("Sets a hint shown in an empty unfocused text control")));
-    AddProperty(new StringProperty(PROP_MAXLENGTH, wxT("0"),
-                                   _("The maximum length of user entered text. Only for single-line wxTextCtrls.")));
+    Add<StringProperty>(PROP_VALUE, wxT(""), _("Default text control value"));
+    Add<StringProperty>(PROP_HINT, "", _("Sets a hint shown in an empty unfocused text control"));
+    Add<StringProperty>(
+        PROP_MAXLENGTH, wxT("0"), _("The maximum length of user entered text. Only for single-line wxTextCtrls."));
 #if wxUSE_SPELLCHECK
-    AddProperty(new BoolProperty(PROP_SPELLCHECK, false, 
-        _("Enable spell checking using the operating system provided text proofing tools. "
-          "This function is only available on OSX, Windows 8 (or newer), and GTK3 (or newer).")));
+    Add<BoolProperty>(PROP_SPELLCHECK,
+                      false,
+                      _("Enable spell checking using the operating system provided text proofing tools. "
+                        "This function is only available on OSX, Windows 8 (or newer), and GTK3 (or newer)."));
 #endif // wxUSE_SPELLCHECK
-    AddProperty(new BoolProperty(
-        PROP_AUTO_COMPLETE_DIRS, false,
+    Add<BoolProperty>(
+        PROP_AUTO_COMPLETE_DIRS,
+        false,
         _("Enable auto-completion of the text using the file system directories. Notice that currently this function "
-          "is only implemented in wxMSW port and does nothing under the other platforms.")));
-    AddProperty(new BoolProperty(PROP_AUTO_COMPLETE_FILES, false,
-                                 _("Enable auto-completion of the text typed in a single-line text control using all "
-                                   "valid file system path. Notice that currently this function is only implemented in "
-                                   "wxMSW port and does nothing under the other platforms.")));
+          "is only implemented in wxMSW port and does nothing under the other platforms."));
+    Add<BoolProperty>(PROP_AUTO_COMPLETE_FILES,
+                      false,
+                      _("Enable auto-completion of the text typed in a single-line text control using all "
+                        "valid file system path. Notice that currently this function is only implemented in "
+                        "wxMSW port and does nothing under the other platforms."));
     m_namePattern = wxT("m_textCtrl");
     SetName(GenerateName());
 }

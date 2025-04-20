@@ -30,29 +30,31 @@ ToolbarBaseWrapper::ToolbarBaseWrapper(int type)
     PREPEND_STYLE_FALSE(wxTB_HORZ_TEXT);
 
     m_properties.DeleteValues();
-    AddProperty(new CategoryProperty(_("Common Settings"), "wxToolBar"));
-    AddProperty(new WinIdProperty());
-    AddProperty(new StringProperty(PROP_SIZE, wxT("-1,-1"),
-                                   _("The control size. It is recommended to leave it as -1,-1 and "
-                                     "let\nthe sizers calculate the best size for the window")));
-    AddProperty(new StringProperty(PROP_NAME, wxT(""), _("C++ member name")));
-    AddProperty(new StringProperty(PROP_TOOLTIP, wxT(""), _("Tooltip")));
+    Add<CategoryProperty>(_("Common Settings"), "wxToolBar");
+    Add<WinIdProperty>();
+    Add<StringProperty>(PROP_SIZE,
+                        wxT("-1,-1"),
+                        _("The control size. It is recommended to leave it as -1,-1 and let\n"
+                          "the sizers calculate the best size for the window"));
+    Add<StringProperty>(PROP_NAME, wxT(""), _("C++ member name"));
+    Add<StringProperty>(PROP_TOOLTIP, wxT(""), _("Tooltip"));
 
-    AddProperty(new CategoryProperty(_("ToolBar")));
-    AddProperty(new StringProperty(PROP_BITMAP_SIZE, wxT("16,16"), _("Sets the default size of each tool bitmap")));
-    AddProperty(
-        new StringProperty(PROP_MARGINS, wxT("-1,-1"), _("Sets the values to be used as margins for the toolbar.")));
-    AddProperty(new StringProperty(PROP_PADDING, wxT("1"), _("Sets the space between tools.")));
-    AddProperty(new StringProperty(PROP_SEPARATOR_SIZE, wxT("5"), _("Sets the width of separators.")));
+    Add<CategoryProperty>(_("ToolBar"));
+    Add<StringProperty>(PROP_BITMAP_SIZE, wxT("16,16"), _("Sets the default size of each tool bitmap"));
+    Add<StringProperty>(PROP_MARGINS, wxT("-1,-1"), _("Sets the values to be used as margins for the toolbar."));
+    Add<StringProperty>(PROP_PADDING, wxT("1"), _("Sets the space between tools."));
+    Add<StringProperty>(PROP_SEPARATOR_SIZE, wxT("5"), _("Sets the width of separators."));
 
-    AddProperty(new CategoryProperty(_("Subclass")));
-    AddProperty(new StringProperty(PROP_SUBCLASS_NAME, wxT(""),
-                                   _("The name of the derived class. Used both for C++ and XRC generated code.")));
-    AddProperty(
-        new StringProperty(PROP_SUBCLASS_INCLUDE, wxT(""),
-                           _("(C++ only) The name of any extra header file to be #included e.g. mydialog.hpp")));
-    AddText(PROP_SUBCLASS_STYLE,
-            _("Override the default class style with the content of this field.\nThe style should be | separated"));
+    Add<CategoryProperty>(_("Subclass"));
+    Add<StringProperty>(
+        PROP_SUBCLASS_NAME, wxT(""), _("The name of the derived class. Used both for C++ and XRC generated code."));
+    Add<StringProperty>(PROP_SUBCLASS_INCLUDE,
+                        wxT(""),
+                        _("(C++ only) The name of any extra header file to be #included e.g. mydialog.hpp"));
+    Add<StringProperty>(
+        PROP_SUBCLASS_STYLE,
+        "",
+        _("Override the default class style with the content of this field.\nThe style should be | separated"));
     m_namePattern = wxT("m_toolbar");
     SetName(GenerateName());
 }
@@ -207,18 +209,18 @@ AuiToolbarWrapper::AuiToolbarWrapper()
     m_properties.DeleteValues();
     EnableSizerFlag(wxT("wxEXPAND"), true);
 
-    AddProperty(new CategoryProperty(_("Common Settings")));
-    AddProperty(new WinIdProperty());
-    AddProperty(new StringProperty(PROP_SIZE, wxT("-1,-1"),
-                                   _("The control size. It is recommended to leave it as -1,-1 and "
-                                     "let\nthe sizers calculate the best size for the window")));
-    AddProperty(new StringProperty(PROP_NAME, wxT(""), _("C++ member name")));
-    AddProperty(new StringProperty(PROP_TOOLTIP, wxT(""), _("Tooltip")));
+    Add<CategoryProperty>(_("Common Settings"));
+    Add<WinIdProperty>();
+    Add<StringProperty>(PROP_SIZE,
+                        wxT("-1,-1"),
+                        _("The control size. It is recommended to leave it as -1,-1 and let\n"
+                          "the sizers calculate the best size for the window"));
+    Add<StringProperty>(PROP_NAME, wxT(""), _("C++ member name"));
+    Add<StringProperty>(PROP_TOOLTIP, wxT(""), _("Tooltip"));
 
-    AddProperty(new CategoryProperty(_("wxAuiToolBar")));
-    AddProperty(new StringProperty(PROP_BITMAP_SIZE, wxT("16,16"), _("Sets the default size of each tool bitmap")));
-    AddProperty(
-        new StringProperty(PROP_MARGINS, wxT("-1,-1"), _("Set the values to be used as margins for the toolbar.")));
+    Add<CategoryProperty>(_("wxAuiToolBar"));
+    Add<StringProperty>(PROP_BITMAP_SIZE, wxT("16,16"), _("Sets the default size of each tool bitmap"));
+    Add<StringProperty>(PROP_MARGINS, wxT("-1,-1"), _("Set the values to be used as margins for the toolbar."));
 
     PREPEND_STYLE_FALSE(wxAUI_TB_TEXT);
     PREPEND_STYLE_FALSE(wxAUI_TB_NO_TOOLTIPS);

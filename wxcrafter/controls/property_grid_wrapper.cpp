@@ -40,12 +40,12 @@ PropertyGridWrapper::PropertyGridWrapper()
     });
 
     SetPropertyString(_("Common Settings"), "wxPropertyGrid");
-    AddProperty(new CategoryProperty("wxPGProperty"));
-    AddProperty(new StringProperty(PROP_NAME, "", _("The property name")));
-    AddProperty(new StringProperty(PROP_LABEL, wxString("My Label") << ++labelCount, _("The property label")));
-    AddProperty(new MultiStringsProperty(PROP_TOOLTIP, _("The property help string")));
-    AddProperty(new ColorProperty(PROP_BG, "<Default>", _("Property background colour")));
-    AddProperty(new ChoiceProperty(PROP_CUSTOM_EDITOR, customEditors, 0, _("Set custom editor control to a property")));
+    Add<CategoryProperty>("wxPGProperty");
+    Add<StringProperty>(PROP_NAME, "", _("The property name"));
+    Add<StringProperty>(PROP_LABEL, wxString("My Label") << ++labelCount, _("The property label"));
+    Add<MultiStringsProperty>(PROP_TOOLTIP, _("The property help string"));
+    Add<ColorProperty>(PROP_BG, "<Default>", _("Property background colour"));
+    Add<ChoiceProperty>(PROP_CUSTOM_EDITOR, customEditors, 0, _("Set custom editor control to a property"));
 
     const wxArrayString kindArr = StdToWX::ToArrayString({
         "wxPropertyCategory",     // 0
@@ -66,29 +66,29 @@ PropertyGridWrapper::PropertyGridWrapper()
         "wxSystemColourProperty", // 15
     });
 
-    AddProperty(new ChoiceProperty(PROP_KIND, kindArr, 4, _("The property kind")));
+    Add<ChoiceProperty>(PROP_KIND, kindArr, 4, _("The property kind"));
 
-    AddProperty(new CategoryProperty("wxPGProperty"));
-    AddProperty(new StringProperty(PROP_PG_STRING_VALUE, "", _("Initial string value")));
-    AddProperty(new MultiStringsProperty(PROP_PG_CHOICES,
-                                         _("For properties that accepts array of strings (wxEnumProperty, "
-                                           "wxEditEnumProperty and wxFlagsProperty) set the strings display name")));
-    AddProperty(new MultiStringsProperty(
+    Add<CategoryProperty>("wxPGProperty");
+    Add<StringProperty>(PROP_PG_STRING_VALUE, "", _("Initial string value"));
+    Add<MultiStringsProperty>(PROP_PG_CHOICES,
+                              _("For properties that accepts array of strings (wxEnumProperty, "
+                                "wxEditEnumProperty and wxFlagsProperty) set the strings display name"));
+    Add<MultiStringsProperty>(
         PROP_PG_CHOICES_VALUES,
         _("For properties that accepts array of strings (wxEnumProperty, wxEditEnumProperty and wxFlagsProperty) set "
-          "the strings values (optional for wxEnumProperty and wxEditEnumProperty)")));
+          "the strings values (optional for wxEnumProperty and wxEditEnumProperty)"));
 
-    AddProperty(new CategoryProperty("wxBoolProperty"));
-    AddProperty(new BoolProperty(PROP_PG_BOOL_VALUE, true, _("Initial value, relevant to wxBoolProperty")));
+    Add<CategoryProperty>("wxBoolProperty");
+    Add<BoolProperty>(PROP_PG_BOOL_VALUE, true, _("Initial value, relevant to wxBoolProperty"));
 
-    AddProperty(new CategoryProperty("wxFileProperty"));
-    AddProperty(new StringProperty(PROP_PG_WILDCARD, "", _("wxFileProperty's wildcard")));
+    Add<CategoryProperty>("wxFileProperty");
+    Add<StringProperty>(PROP_PG_WILDCARD, "", _("wxFileProperty's wildcard"));
 
-    AddProperty(new CategoryProperty("wxFontProperty"));
-    AddProperty(new FontProperty(PROP_FONT, "", _("Initial font")));
+    Add<CategoryProperty>("wxFontProperty");
+    Add<FontProperty>(PROP_FONT, "", _("Initial font"));
 
-    AddProperty(new CategoryProperty("wxSystemColourProperty"));
-    AddProperty(new ColorProperty(PROP_PG_COLOUR_DEFAULT, "<Default>", _("Initial Colour")));
+    Add<CategoryProperty>("wxSystemColourProperty");
+    Add<ColorProperty>(PROP_PG_COLOUR_DEFAULT, "<Default>", _("Initial Colour"));
 
     m_namePattern = "m_pgProp";
     SetName(GenerateName());

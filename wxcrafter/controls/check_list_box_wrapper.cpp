@@ -28,7 +28,7 @@ CheckListBoxWrapper::CheckListBoxWrapper()
                            "is checked or unchecked."));
 
     SetPropertyString(_("Common Settings"), "wxCheckListBox");
-    AddProperty(new MultiStringsProperty(PROP_OPTIONS, _("The List Box Items. A semi-colon list of strings")));
+    Add<MultiStringsProperty>(PROP_OPTIONS, _("The List Box Items. A semi-colon list of strings"));
 
     m_namePattern = wxT("m_checkListBox");
     SetName(GenerateName());

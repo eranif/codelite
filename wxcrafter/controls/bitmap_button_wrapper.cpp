@@ -24,8 +24,8 @@ BitmapButtonWrapper::BitmapButtonWrapper()
 
     m_namePattern = wxT("m_bmpButton");
     SetPropertyString(_("Common Settings"), "wxBitmapButton");
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file")));
-    AddProperty(new BoolProperty(PROP_DEFAULT_BUTTON, false, _("Make this button the default button")));
+    Add<BitmapPickerProperty>(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file"));
+    Add<BoolProperty>(PROP_DEFAULT_BUTTON, false, _("Make this button the default button"));
 
     wxCrafter::ResourceLoader bl;
     m_properties.Item(PROP_BITMAP_PATH)->SetValue(bl.GetPlaceHolder16ImagePath().GetFullPath());

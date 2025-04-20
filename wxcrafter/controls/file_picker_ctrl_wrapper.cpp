@@ -9,9 +9,9 @@ FilePickerCtrlWrapper::FilePickerCtrlWrapper()
     : wxcWidget(ID_WXFILEPICKER)
 {
     SetPropertyString(_("Common Settings"), "wxFilePickerCtrl");
-    AddProperty(new StringProperty(PROP_VALUE, wxT(""), _("Default value")));
-    AddProperty(new StringProperty(PROP_MESSAGE, _("Select a file"), _("Message to show to the user")));
-    AddProperty(new StringProperty(PROP_WILDCARD, wxT("*"), _("Wildcard")));
+    Add<StringProperty>(PROP_VALUE, wxT(""), _("Default value"));
+    Add<StringProperty>(PROP_MESSAGE, _("Select a file"), _("Message to show to the user"));
+    Add<StringProperty>(PROP_WILDCARD, wxT("*"), _("Wildcard"));
 
     PREPEND_STYLE(wxFLP_OPEN, false);
     PREPEND_STYLE(wxFLP_SAVE, false);

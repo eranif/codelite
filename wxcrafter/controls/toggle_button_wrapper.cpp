@@ -10,8 +10,8 @@ ToggleButtonWrapper::ToggleButtonWrapper()
     : wxcWidget(ID_WXTOGGLEBUTTON)
 {
     SetPropertyString(_("Common Settings"), "wxToggleButton");
-    AddProperty(new StringProperty(PROP_LABEL, _("My Button"), _("The button label")));
-    AddProperty(new BoolProperty(PROP_CHECKED, false, _("The button initial state")));
+    Add<StringProperty>(PROP_LABEL, _("My Button"), _("The button label"));
+    Add<BoolProperty>(PROP_CHECKED, false, _("The button initial state"));
 
     PREPEND_STYLE(wxBU_BOTTOM, false);
     PREPEND_STYLE(wxBU_EXACTFIT, false);

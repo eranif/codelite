@@ -10,9 +10,9 @@ GridRowWrapper::GridRowWrapper()
     m_properties.DeleteValues();
 
     SetPropertyString(_("Common Settings"), "wxGridRow");
-    AddProperty(new CategoryProperty(_("wxGrid Row")));
-    AddText(PROP_NAME, _("The Row Label"), _("My Row"));
-    AddInteger(PROP_HEIGHT, _("Sets the height of the row\nDefault -1 fits to the label height"), -1);
+    Add<CategoryProperty>(_("wxGrid Row"));
+    Add<StringProperty>(PROP_NAME, _("My Row"), _("The Row Label"));
+    Add<IntProperty>(PROP_HEIGHT, -1, _("Sets the height of the row\nDefault -1 fits to the label height"));
 
     m_namePattern = "Row";
     SetName(GenerateName());

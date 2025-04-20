@@ -19,9 +19,9 @@ RibbonPanelWrapper::RibbonPanelWrapper()
     PREPEND_STYLE_FALSE(wxRIBBON_PANEL_FLEXIBLE);
 
     SetPropertyString(_("Common Settings"), "wxRibbonPanel");
-    AddProperty(new StringProperty(PROP_LABEL, _("My Label"), _("The Label")));
-    AddProperty(new BitmapPickerProperty(
-        PROP_BITMAP_PATH, "", _("Icon to be used in place of the panel's children when the panel is minimised")));
+    Add<StringProperty>(PROP_LABEL, _("My Label"), _("The Label"));
+    Add<BitmapPickerProperty>(
+        PROP_BITMAP_PATH, "", _("Icon to be used in place of the panel's children when the panel is minimised"));
 
     RegisterEvent("wxEVT_COMMAND_RIBBONPANEL_EXTBUTTON_ACTIVATED", "wxRibbonPanelEvent",
                   _("Triggered when the user activate the panel extension button"));

@@ -37,10 +37,10 @@ RibbonBarWrapper::RibbonBarWrapper()
 
     SetPropertyString(_("Common Settings"), "wxRibbonBar");
     DelProperty(PROP_CONTROL_SPECIFIC_SETTINGS);
-    AddProperty(new CategoryProperty("wxRibbonBar"));
+    Add<CategoryProperty>("wxRibbonBar");
 
     const wxArrayString themes = StdToWX::ToArrayString({ "Default", "Generic", "MSW" });
-    AddProperty(new ChoiceProperty(PROP_RIBBON_THEME, themes, 0, _("Select the ribbon bar theme")));
+    Add<ChoiceProperty>(PROP_RIBBON_THEME, themes, 0, _("Select the ribbon bar theme"));
     m_namePattern = "m_ribbonBar";
     SetName(GenerateName());
 }

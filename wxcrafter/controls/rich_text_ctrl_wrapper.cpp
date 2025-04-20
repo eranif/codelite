@@ -58,7 +58,7 @@ RichTextCtrlWrapper::RichTextCtrlWrapper()
                            "control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated)."));
 
     SetPropertyString(_("Common Settings"), "wxRichTextCtrl");
-    AddProperty(new StringProperty(PROP_VALUE, wxT("wxRichTextCtrl!"), _("Value")));
+    Add<StringProperty>(PROP_VALUE, wxT("wxRichTextCtrl!"), _("Value"));
 
     m_namePattern = wxT("m_richTextCtrl");
     SetName(GenerateName());

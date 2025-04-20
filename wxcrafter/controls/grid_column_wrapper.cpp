@@ -11,12 +11,13 @@ GridColumnWrapper::GridColumnWrapper()
     m_properties.DeleteValues();
 
     SetPropertyString(_("Common Settings"), "wxGridColumn");
-    AddProperty(new CategoryProperty(_("wxGrid Column")));
-    AddText(PROP_NAME, _("The Column Label"), _("My Column"));
-    AddInteger(PROP_WIDTH,
-               _("Sets the width of the specified column.\nThe new column width in pixels, 0 to hide the column or -1 "
-                 "to fit the column width to its label width"),
-               -1);
+    Add<CategoryProperty>(_("wxGrid Column"));
+    Add<StringProperty>(PROP_NAME, _("My Column"), _("The Column Label"));
+    Add<IntProperty>(
+        PROP_WIDTH,
+        -1,
+        _("Sets the width of the specified column.\nThe new column width in pixels, 0 to hide the column or -1 "
+          "to fit the column width to its label width"));
 
     m_namePattern = "Column";
     SetName(GenerateName());

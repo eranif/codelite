@@ -61,9 +61,10 @@ PropertyGridManagerWrapper::PropertyGridManagerWrapper()
     RegisterEvent("wxEVT_COMMAND_BUTTON_CLICKED", "wxCommandEvent",
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked."));
 
-    AddInteger(PROP_SASH_POS, _("Sets x coordinate of the splitter"), -1);
-    AddBool(PROP_SPLITTER_LEFT,
-            _("Moves splitter as left as possible, while still allowing all labels to be shown in full"), false);
+    Add<IntProperty>(PROP_SASH_POS, -1, _("Sets x coordinate of the splitter"));
+    Add<BoolProperty>(PROP_SPLITTER_LEFT,
+                      false,
+                      _("Moves splitter as left as possible, while still allowing all labels to be shown in full"));
 
     m_namePattern = "m_pgMgr";
     SetName(GenerateName());

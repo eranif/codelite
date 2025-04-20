@@ -11,8 +11,8 @@ RibbonToolSeparator::RibbonToolSeparator()
     m_properties.DeleteValues();
     m_sizerFlags.Clear();
 
-    AddProperty(new CategoryProperty(_("wxRibbonToolBar Separator")));
-    AddProperty(new StringProperty(PROP_NAME, wxT(""), _("Name")));
+    Add<CategoryProperty>(_("wxRibbonToolBar Separator"));
+    Add<StringProperty>(PROP_NAME, wxT(""), _("Name"));
 
     m_namePattern = "m_separator";
     SetName(GenerateName());

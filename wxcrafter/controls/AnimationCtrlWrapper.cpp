@@ -16,10 +16,10 @@ AnimationCtrlWrapper::AnimationCtrlWrapper()
 
     SetPropertyString(_("Common Settings"), "wxAnimationCtrl");
 
-    AddBool(PROP_ANIM_AUTO_PLAY, _("Load and play animation on creation"), false);
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", _("Select the animation file")));
-    AddProperty(new BitmapPickerProperty(
-        PROP_DISABLED_BITMAP_PATH, "", _("Sets the bitmap to show on the control when it's not playing an animation")));
+    Add<BoolProperty>(PROP_ANIM_AUTO_PLAY, false, _("Load and play animation on creation"));
+    Add<BitmapPickerProperty>(PROP_BITMAP_PATH, "", _("Select the animation file"));
+    Add<BitmapPickerProperty>(
+        PROP_DISABLED_BITMAP_PATH, "", _("Sets the bitmap to show on the control when it's not playing an animation"));
 
     m_namePattern = "m_animationCtrl";
     SetName(GenerateName());

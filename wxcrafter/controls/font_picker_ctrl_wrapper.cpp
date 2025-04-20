@@ -19,7 +19,7 @@ FontPickerCtrlWrapper::FontPickerCtrlWrapper()
 
     RegisterEvent(wxT("wxEVT_COMMAND_FONTPICKER_CHANGED"), wxT("wxFontPickerEvent"),
                   _("Generated whenever the selected font changes."));
-    AddProperty(new FontProperty(PROP_VALUE, wxEmptyString, _("Initial font")));
+    Add<FontProperty>(PROP_VALUE, wxEmptyString, _("Initial font"));
     m_namePattern = wxT("m_fontPicker");
     SetName(GenerateName());
 }

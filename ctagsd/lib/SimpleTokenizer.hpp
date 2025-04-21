@@ -1,8 +1,6 @@
 #ifndef SIMPLETOKENIZER_HPP
 #define SIMPLETOKENIZER_HPP
 
-#include "codelite_exports.h"
-
 #include <wx/string.h>
 
 enum eSimpleTokenizerState {
@@ -21,7 +19,7 @@ enum eSimpleTokenizerMode {
     TOKNZR_MODE_COMMENTS = 1,
 };
 
-class WXDLLIMPEXP_CL SimpleTokenizer
+class SimpleTokenizer
 {
 public:
     struct Token {
@@ -70,7 +68,7 @@ public:
         void clear() { m_token_length = m_token_column = m_token_line = wxNOT_FOUND; }
         wxString to_string(const wxString& source_string) const
         {
-            if(!ok() || length() == 0) {
+            if (!ok() || length() == 0) {
                 return wxEmptyString;
             }
             return source_string.Mid(m_token_position, m_token_length);

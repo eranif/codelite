@@ -35,7 +35,7 @@ public:
     void DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_rect, int bitmap_id, int button_state, int orientation,
                     wxRect* out_rect) override
     {
-        wxAuiGenericTabArt::DrawButton(dc, wnd, in_rect, bitmap_id, button_state, orientation, out_rect);
+        wxAuiDefaultTabArt::DrawButton(dc, wnd, in_rect, bitmap_id, button_state, orientation, out_rect);
     }
 
 #if wxCHECK_VERSION(3, 3, 0)
@@ -236,7 +236,7 @@ private:
         wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
 
         if (bitmapId != wxAUI_BUTTON_CLOSE) {
-            wxAuiGenericTabArt::DrawButton(dc, wnd, inRect, bitmapId, buttonState, orientation, outRect);
+            wxAuiDefaultTabArt::DrawButton(dc, wnd, inRect, bitmapId, buttonState, orientation, outRect);
             return;
         }
 

@@ -51,7 +51,7 @@ public:
     // Constructors/Destructors
     //--------------------------------------------
     SymbolViewPlugin(IManager* manager);
-    ~SymbolViewPlugin();
+    ~SymbolViewPlugin() override;
 
     //--------------------------------------------
     // Abstract methods

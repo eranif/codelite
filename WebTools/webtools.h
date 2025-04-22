@@ -77,14 +77,14 @@ public:
 
 public:
     WebTools(IManager* manager);
-    ~WebTools();
+    ~WebTools() override;
 
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void UnPlug() override;
 };
 
 #endif // WebTools

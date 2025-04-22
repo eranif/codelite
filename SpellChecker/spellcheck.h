@@ -53,14 +53,14 @@ public:
     IEditor* GetEditor();
 
     SpellCheck(IManager* manager);
-    ~SpellCheck();
+    ~SpellCheck() override;
 
     // --------------------------------------------
     // Abstract methods
     // --------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar) override;
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu) override;
-    virtual void UnPlug() override;
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void UnPlug() override;
 
     void OnSettings(wxCommandEvent& e);
     void OnCheck(wxCommandEvent& e);

@@ -32,21 +32,22 @@ private:
 
 public:
     PHPRefactoring(IManager* manager);
-    ~PHPRefactoring();
+    ~PHPRefactoring() override;
 
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
     /**
      * @brief Add plugin menu to the "Plugins" menu item in the menu bar
      */
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
 
     /**
      * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
      */
-    virtual void UnPlug();
+    void UnPlug() override;
+
     void OnEditorContextMenu(clContextMenuEvent& event);
     void OnExtractMethod(wxCommandEvent& e);
     void OnRenameLocalVariable(wxCommandEvent& e);

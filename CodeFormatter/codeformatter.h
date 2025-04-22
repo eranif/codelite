@@ -64,11 +64,11 @@ public:
     void OnContextMenu(clContextMenuEvent& event);
 
     CodeFormatter(IManager* manager);
-    virtual ~CodeFormatter();
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    ~CodeFormatter() override;
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void UnPlug() override;
 
     IManager* GetManager();
     // event handlers

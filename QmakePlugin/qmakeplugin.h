@@ -47,18 +47,17 @@ protected:
 
 public:
     QMakePlugin(IManager* manager);
-    ~QMakePlugin();
+    ~QMakePlugin() override;
 
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
-    virtual void UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName,
-                                          const wxString& configName);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName) override;
+    void UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName) override;
+    void UnPlug() override;
 
     // event handlers
     void OnSaveConfig(clProjectSettingsEvent& event);

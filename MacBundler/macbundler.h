@@ -38,7 +38,7 @@ class MacBundler : public IPlugin
 
 public:
     MacBundler(IManager* manager);
-    ~MacBundler();
+    ~MacBundler() override;
 
     void onBundleInvoked_active(wxCommandEvent& evt);
     void onBundleInvoked_selected(wxCommandEvent& evt);
@@ -46,10 +46,10 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual void CreateToolBar(clToolBarGeneric* toolbar);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    void CreateToolBar(clToolBarGeneric* toolbar) override;
+    void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    void HookPopupMenu(wxMenu* menu, MenuType type) override;
+    void UnPlug() override;
 };
 
 #endif // MacBundler

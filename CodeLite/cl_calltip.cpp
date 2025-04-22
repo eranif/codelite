@@ -29,12 +29,6 @@
 
 #include <map>
 
-#ifdef __VISUALC__
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-#endif
-
 struct tagCallTipInfo {
     wxString sig;
     std::vector<std::pair<int, int>> paramLen;

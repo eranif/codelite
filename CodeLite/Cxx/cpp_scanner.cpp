@@ -25,12 +25,6 @@
 #include "precompiled_header.h"
 #include "cpp_scanner.h"
 
-#ifdef __VISUALC__
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-#endif
-
 CppScanner::CppScanner()
 : m_curr(0)
 {

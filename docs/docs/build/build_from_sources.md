@@ -42,7 +42,7 @@ cd codelite
 git submodule update --init --recursive
 mkdir build-release
 cd $_
-cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN="$HOME/root" -Wno-dev
+cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN="$HOME/root" -Wno-dev -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 mingw32-make -j$(nproc) install
 ```
 
@@ -85,7 +85,7 @@ cd build-release/install
  cd codelite
  mkdir build-release
  cd build-release
- cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1
+ cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
  make -j$(nproc)
  sudo make install
 ```
@@ -157,7 +157,7 @@ source $HOME/.$(basename $SHELL)rc
     git submodule update --init --recursive
     mkdir build-release
     cd $_
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_MYSQL=1 -DWITH_POSTGRES=1
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_MYSQL=1 -DWITH_POSTGRES=1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
     make -j$(sysctl -n hw.physicalcpu) install
 ```
 

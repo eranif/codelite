@@ -52,7 +52,7 @@ jobs:
         mkdir build-release
         cd $_
         brew install autoconf automake libtool gettext
-        cmake .. -DCMAKE_BUILD_TYPE=Release -Wno-dev -DWITH_MYSQL=1 -DWITH_POSTGRES=1 -DWITH_CHATAI=1 -DBUILD_TESTING=1
+        cmake .. -DCMAKE_BUILD_TYPE=Release -Wno-dev -DWITH_MYSQL=1 -DWITH_POSTGRES=1 -DWITH_CHATAI=1 -DBUILD_TESTING=1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         make -j$(sysctl -n hw.physicalcpu) VERBOSE=1 install
         ctest --output-on-failure
 

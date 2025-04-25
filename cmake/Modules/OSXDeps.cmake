@@ -31,7 +31,7 @@ if(APPLE)
 
         # Configure, build & install OpenSSL
         message(STATUS "Building OpenSSL...")
-        build_and_install_submodule("${SUBMODULES_DIR}/openssl-cmake" "${CMAKE_BINARY_DIR}/openssl-cmake-build" "")
+        build_and_install_submodule("${SUBMODULES_DIR}/openssl-cmake" "${CMAKE_BINARY_DIR}/openssl-cmake-build" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5")
 
         # Configure, build and & install libssh
         message(STATUS "Building libssh...")

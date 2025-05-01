@@ -43,6 +43,7 @@
 #include "plugin.h"
 #include "stringhighlighterjob.h"
 
+#include <cstdint>
 #include <map>
 #include <unordered_map>
 #include <vector>
@@ -1125,7 +1126,7 @@ private:
     void OnActiveEditorChanged(wxCommandEvent& event);
     void DoBraceMatching();
     void DoClearBraceHighlight();
-    
+
     wxFileName m_fileName;
     wxString m_project;
     wxStopWatch m_watch;

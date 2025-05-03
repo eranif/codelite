@@ -628,12 +628,12 @@ bool LocalWorkspace::SetFolderColours(const FolderColour::Map_t& vdColours)
     FolderColour::List_t coloursList;
     FolderColour::SortToList(vdColours, coloursList);
 
-    std::for_each(coloursList.begin(), coloursList.end(), [&](const FolderColour& vdc) {
+    for (const FolderColour& vdc : coloursList) {
         wxXmlNode* folderNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualFolder"));
         folderNode->AddAttribute("Path", vdc.GetPath());
         folderNode->AddAttribute("Colour", vdc.GetColour().GetAsString(wxC2S_HTML_SYNTAX));
         coloursNode->AddChild(folderNode);
-    });
+    }
     return SaveXmlFile();
 }
 

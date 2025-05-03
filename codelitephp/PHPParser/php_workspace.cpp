@@ -603,8 +603,9 @@ void PHPWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString& f
 
 void PHPWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
-    std::for_each(m_projects.begin(), m_projects.end(),
-                  [&](const PHPProject::Map_t::value_type& v) { v.second->GetFilesArray(files); });
+    for (const auto& p : m_projects) {
+        p.second->GetFilesArray(files);
+    }
 }
 
 void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
@@ -672,8 +673,9 @@ wxArrayString PHPWorkspace::GetWorkspaceProjects() const
 {
     wxArrayString projectArr;
     PHPProject::Map_t projects = GetProjects();
-    std::for_each(projects.begin(), projects.end(),
-                  [&](PHPProject::Map_t::value_type p) { projectArr.Add(p.second->GetName()); });
+    for (const auto& p : projects) {
+        projectArr.Add(p.second->GetName());
+    }
     return projectArr;
 }
 

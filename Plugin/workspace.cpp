@@ -584,10 +584,10 @@ void clCxxWorkspace::SetActiveProject(const wxString& name)
     DoUnselectActiveProject();
 
     std::list<wxXmlNode*> xmls = DoGetProjectsXmlNodes();
-    std::for_each(xmls.begin(), xmls.end(), [&](wxXmlNode* node) {
+    for (wxXmlNode* node : xmls) {
         XmlUtils::UpdateProperty(node, "Active",
                                  (node->GetAttribute(wxT("Name"), wxEmptyString) == name) ? "Yes" : "No");
-    });
+    }
 
     SaveXmlFile();
 
@@ -1038,13 +1038,13 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxA
         wxString compiler_name = vt.first;
         wxArrayString pathsArr = vt.second;
         wxString paths;
-        std::for_each(pathsArr.begin(), pathsArr.end(), [&](wxString& path) {
+        for (wxString& path : pathsArr) {
             path.Trim().Trim(false);
             if(path.EndsWith("\\")) {
                 path.RemoveLast();
             }
             paths << path << ";";
-        });
+        }
         compilersGlobalPaths.insert({ compiler_name, paths });
     }
 
@@ -1205,26 +1205,26 @@ void clCxxWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString&
         return;
     }
     files.Alloc(filesMap.size());
-    std::for_each(filesMap.begin(), filesMap.end(),
-                  [&](const Project::FilesMap_t::value_type& vt) { files.Add(vt.first); });
+    for (const auto& p : filesMap) {
+        files.Add(p.first);
+    }
 }
 
 void clCxxWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
     size_t totalFiles = 0;
-    std::for_each(m_projects.begin(), m_projects.end(), [&](const clCxxWorkspace::ProjectMap_t::value_type& v) {
-        totalFiles += v.second->GetFiles().size();
-    });
+    for (const auto& p : m_projects) {
+        totalFiles += p.second->GetFiles().size();
+    }
 
-    if(totalFiles) {
+    if (totalFiles) {
         files.Alloc(totalFiles);
-        std::for_each(m_projects.begin(), m_projects.end(), [&](const clCxxWorkspace::ProjectMap_t::value_type& v) {
-            const Project::FilesMap_t& filesMap = v.second->GetFiles();
-
+        for (const auto& p : m_projects) {
             // Convert the set wxArrayString
-            std::for_each(filesMap.begin(), filesMap.end(),
-                          [&](const Project::FilesMap_t::value_type& vt) { files.Add(vt.first); });
-        });
+            for (const auto& [file, _] : p.second->GetFiles()) {
+                files.Add(file);
+            }
+        }
     }
 }
 
@@ -1238,8 +1238,9 @@ WorkspaceConfigurationPtr clCxxWorkspace::GetSelectedConfig() const
 
 void clCxxWorkspace::ClearIncludePathCache()
 {
-    std::for_each(m_projects.begin(), m_projects.end(),
-                  [&](const clCxxWorkspace::ProjectMap_t::value_type& v) { v.second->ClearIncludePathCache(); });
+    for (const auto& p : m_projects) {
+        p.second->ClearIncludePathCache();
+    }
 }
 
 void clCxxWorkspace::DoUnselectActiveProject()
@@ -1247,8 +1248,9 @@ void clCxxWorkspace::DoUnselectActiveProject()
     if(!m_doc.IsOk())
         return;
 
-    std::list<wxXmlNode*> xmls = DoGetProjectsXmlNodes();
-    std::for_each(xmls.begin(), xmls.end(), [&](wxXmlNode* node) { XmlUtils::UpdateProperty(node, "Active", "No"); });
+    for (wxXmlNode* node : DoGetProjectsXmlNodes()) {
+        XmlUtils::UpdateProperty(node, "Active", "No");
+    }
 }
 
 void clCxxWorkspace::DoLoadProjectsFromXml(wxXmlNode* parentNode, const wxString& folder,
@@ -1511,8 +1513,7 @@ wxArrayString clCxxWorkspace::GetWorkspaceProjects() const
 
 size_t clCxxWorkspace::GetExcludeFilesForConfig(std::vector<wxString>& files, const wxString& workspaceConfigName)
 {
-    std::for_each(m_projects.begin(), m_projects.end(), [&](const ProjectMap_t::value_type& vt) {
-        ProjectPtr proj = vt.second;
+    for (const auto& [_, proj] : m_projects) {
         BuildConfigPtr conf = GetProjBuildConf(proj->GetName(), workspaceConfigName);
         if(conf) {
             const wxString& confname = conf->GetName();
@@ -1524,7 +1525,7 @@ size_t clCxxWorkspace::GetExcludeFilesForConfig(std::vector<wxString>& files, co
                 }
             }
         }
-    });
+    }
     return files.size();
 }
 

@@ -17,7 +17,9 @@ struct SvnShowDiffChunk {
     void Finalize()
     {
         // Build the comment from the array of strings
-        std::for_each(commentArr.begin(), commentArr.end(), [&](wxString& line) { line.Trim(); });
+        for (wxString& line : commentArr) {
+            line.Trim();
+        }
         comment = ::wxJoin(commentArr, '\n');
         commentArr.Clear();
         // Extract the revision number

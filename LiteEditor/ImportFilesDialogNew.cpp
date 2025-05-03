@@ -124,7 +124,7 @@ void ImportFilesDialogNew::DoBuildTree(const wxDataViewItem& parent, const wxDir
     std::sort(D.begin(), D.end());
 
     // Now build the tree
-    std::for_each(D.begin(), D.end(), [&](const wxString& path) {
+    for (const wxString& path : D) {
         wxDir childDir(path);
         wxVector<wxVariant> cols;
         cols.push_back(initialState);
@@ -139,7 +139,7 @@ void ImportFilesDialogNew::DoBuildTree(const wxDataViewItem& parent, const wxDir
             dummyCols.push_back(MakeIconText("dummy", folderBmp));
             m_dataviewModel->AppendItem(child, dummyCols, new ImportFilesDlgData("", false, true));
         }
-    });
+    }
 }
 
 void ImportFilesDialogNew::OnDirChanged(wxCommandEvent& event)

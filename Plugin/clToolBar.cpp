@@ -217,13 +217,13 @@ void clToolBarGeneric::RenderGroup(int& xx, const clToolBarGeneric::ToolVect_t& 
 
     // Calculate the group size
     int groupWidth = 0;
-    std::for_each(G.begin(), G.end(), [&](clToolBarButtonBase* button) {
+    for (clToolBarButtonBase* button : G) {
         wxSize buttonSize = button->CalculateSize(gcdc);
         groupWidth += buttonSize.GetWidth();
-    });
+    }
 
     // Now draw the buttons
-    std::for_each(G.begin(), G.end(), [&](clToolBarButtonBase* button) {
+    for (clToolBarButtonBase* button : G) {
         wxSize buttonSize = button->CalculateSize(gcdc);
         if ((xx + buttonSize.GetWidth()) > clientRect.GetRight()) {
             if (button->IsControl()) {
@@ -239,7 +239,7 @@ void clToolBarGeneric::RenderGroup(int& xx, const clToolBarGeneric::ToolVect_t& 
             m_visibleButtons.push_back(button);
         }
         xx += buttonSize.GetWidth();
-    });
+    }
 }
 
 void clToolBarGeneric::OnEraseBackground(wxEraseEvent& event) { wxUnusedVar(event); }
@@ -247,11 +247,11 @@ void clToolBarGeneric::OnEraseBackground(wxEraseEvent& event) { wxUnusedVar(even
 wxRect clToolBarGeneric::CalculateRect(wxDC& dc) const
 {
     wxRect rect;
-    std::for_each(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* button) {
+    for (clToolBarButtonBase* button : m_buttons) {
         wxSize buttonSize = button->CalculateSize(dc);
         rect.width += buttonSize.GetWidth();
         rect.height = wxMax(rect.GetHeight(), buttonSize.GetHeight());
-    });
+    }
     if (m_hasOverflowButton) {
         rect.width += CL_TOOL_BAR_CHEVRON_SIZE;
     }

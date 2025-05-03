@@ -45,7 +45,9 @@ const wxString& clTerminalHistory::ArrowDown()
 wxArrayString clTerminalHistory::GetItems() const
 {
     wxArrayString items;
-    std::for_each(m_history.begin(), m_history.end(), [&](const wxString& item) { items.Add(item); });
+    for (const wxString& item : m_history) {
+        items.Add(item);
+    }
     return items;
 }
 

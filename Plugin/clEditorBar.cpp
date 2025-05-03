@@ -247,11 +247,11 @@ void clEditorBar::OnButtonBookmarks(wxCommandEvent& event)
         // Show bookmarks menu
         wxMenu menu;
         std::unordered_map<int, int> M;
-        std::for_each(V.begin(), V.end(), [&](const std::pair<int, wxString>& p) {
+        for (const auto& p : V) {
             wxString text = wxString::Format("%5u: ", p.first);
             text << p.second;
             M[menu.Append(wxID_ANY, text)->GetId()] = p.first; // Make the menu item ID with the line number
-        });
+        }
 
         // We got something to display
         int selection = wxID_NONE;

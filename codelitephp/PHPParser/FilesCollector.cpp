@@ -67,5 +67,7 @@ void FilesCollector::Collect(const wxString& rootFolder)
     }
 
     m_filesAndFolders.Alloc(V.size());
-    std::for_each(V.begin(), V.end(), [&](const wxString& f) { m_filesAndFolders.push_back(f); });
+    for (const wxString& f : V) {
+        m_filesAndFolders.push_back(f);
+    }
 }

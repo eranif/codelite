@@ -13,7 +13,9 @@ clWorkspaceManager::clWorkspaceManager()
 
 clWorkspaceManager::~clWorkspaceManager()
 {
-    std::for_each(m_workspaces.begin(), m_workspaces.end(), [&](IWorkspace* workspace) { wxDELETE(workspace); });
+    for (IWorkspace*& workspace : m_workspaces) {
+        wxDELETE(workspace);
+    }
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceManager::OnWorkspaceClosed, this);
 }
 
@@ -34,15 +36,17 @@ void clWorkspaceManager::OnWorkspaceClosed(clWorkspaceEvent& e)
 wxArrayString clWorkspaceManager::GetAllWorkspaces() const
 {
     wxArrayString all;
-    std::for_each(m_workspaces.begin(), m_workspaces.end(),
-                  [&](IWorkspace* workspace) { all.Add(workspace->GetWorkspaceType()); });
+    for (IWorkspace* workspace : m_workspaces) {
+        all.Add(workspace->GetWorkspaceType());
+    }
     return all;
 }
 
 wxArrayString clWorkspaceManager::GetUnifiedFilesMask() const
 {
     wxArrayString all;
-    std::for_each(m_workspaces.begin(), m_workspaces.end(),
-                  [&](IWorkspace* workspace) { all.Add(workspace->GetFilesMask()); });
+    for (IWorkspace* workspace : m_workspaces) {
+        all.Add(workspace->GetFilesMask());
+    }
     return all;
 }

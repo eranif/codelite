@@ -227,8 +227,9 @@ size_t CodeCompletionManager::CreateBlockCommentKeywordsList(wxCodeCompletionBox
                                        "param",      "property", "property-read", "property-write", "return",
                                        "see",        "since",    "source",        "subpackage",     "throws",
                                        "todo",       "uses",     "var",           "version" };
-    std::for_each(keywords.begin(), keywords.end(),
-                  [&](const wxString& keyword) { entries.push_back(wxCodeCompletionBoxEntry::New(keyword, 0)); });
+    for (const wxString& keyword : keywords) {
+        entries.push_back(wxCodeCompletionBoxEntry::New(keyword, 0));
+    }
     return entries.size();
 }
 

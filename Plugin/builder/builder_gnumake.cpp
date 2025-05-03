@@ -599,14 +599,12 @@ void BuilderGNUMakeClassic::CreateSrcList(ProjectPtr proj, const wxString& confT
 {
     std::vector<wxFileName> files;
 
-    std::for_each(m_projectFilesMetadata->begin(), m_projectFilesMetadata->end(),
-                  [&](const Project::FilesMap_t::value_type& vt) {
-                      clProjectFile::Ptr_t file = vt.second;
-                      // Include only files that don't have the 'exclude from build' flag set
-                      if(!file->IsExcludeFromConfiguration(confToBuild)) {
-                          files.push_back(wxFileName(file->GetFilenameRelpath()));
-                      }
-                  });
+    for (const auto& [_, file] : *m_projectFilesMetadata) {
+        // Include only files that don't have the 'exclude from build' flag set
+        if (!file->IsExcludeFromConfiguration(confToBuild)) {
+            files.push_back(wxFileName(file->GetFilenameRelpath()));
+        }
+    }
 
     text << wxT("Srcs=");
 
@@ -653,14 +651,12 @@ void BuilderGNUMakeClassic::CreateObjectList(ProjectPtr proj, const wxString& co
     m_objectChunks = 1;
     std::vector<wxFileName> files;
 
-    std::for_each(m_projectFilesMetadata->begin(), m_projectFilesMetadata->end(),
-                  [&](const Project::FilesMap_t::value_type& vt) {
-                      clProjectFile::Ptr_t file = vt.second;
-                      // Include only files that don't have the 'exclude from build' flag set
-                      if(!file->IsExcludeFromConfiguration(confToBuild)) {
-                          files.push_back(wxFileName(file->GetFilename()));
-                      }
-                  });
+    for (const auto& [_, file] : *m_projectFilesMetadata) {
+        // Include only files that don't have the 'exclude from build' flag set
+        if (!file->IsExcludeFromConfiguration(confToBuild)) {
+            files.push_back(wxFileName(file->GetFilename()));
+        }
+    }
 
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
@@ -753,15 +749,13 @@ void BuilderGNUMakeClassic::CreateFileTargets(ProjectPtr proj, const wxString& c
     abs_files.reserve(m_projectFilesMetadata->size());
     rel_paths.reserve(m_projectFilesMetadata->size());
 
-    std::for_each(m_projectFilesMetadata->begin(), m_projectFilesMetadata->end(),
-                  [&](const Project::FilesMap_t::value_type& vt) {
-                      clProjectFile::Ptr_t file = vt.second;
-                      // Include only files that don't have the 'exclude from build' flag set
-                      if(!file->IsExcludeFromConfiguration(confToBuild)) {
-                          abs_files.push_back(wxFileName(file->GetFilename()));
-                          rel_paths.push_back(wxFileName(file->GetFilenameRelpath()));
-                      }
-                  });
+    for (const auto& [_, file] : *m_projectFilesMetadata) {
+        // Include only files that don't have the 'exclude from build' flag set
+        if (!file->IsExcludeFromConfiguration(confToBuild)) {
+            abs_files.push_back(wxFileName(file->GetFilename()));
+            rel_paths.push_back(wxFileName(file->GetFilenameRelpath()));
+        }
+    }
 
     text << wxT("\n\n");
     // create rule per object
@@ -1071,10 +1065,10 @@ void BuilderGNUMakeClassic::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPt
     bldConf->GetPostBuildCommands(cmds);
 
     // Loop over the commands and replace any macros
-    std::for_each(cmds.begin(), cmds.end(), [&](BuildCommand& cmd) {
+    for (BuildCommand& cmd : cmds) {
         cmd.SetCommand(
             MacroManager::Instance()->Expand(cmd.GetCommand(), clGetManager(), proj->GetName(), bldConf->GetName()));
-    });
+    }
 
     text << wxT("\n");
     text << wxT("PostBuild:\n");
@@ -1134,10 +1128,10 @@ void BuilderGNUMakeClassic::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr
     bldConf->GetPreBuildCommands(cmds);
 
     // Loop over the commands and replace any macros
-    std::for_each(cmds.begin(), cmds.end(), [&](BuildCommand& cmd) {
+    for (BuildCommand& cmd : cmds) {
         cmd.SetCommand(
             MacroManager::Instance()->Expand(cmd.GetCommand(), clGetManager(), proj->GetName(), bldConf->GetName()));
-    });
+    }
 
     bool first(true);
     text << wxT("PreBuild:\n");

@@ -103,13 +103,11 @@ void clNodeJS::Shutdown()
     // Unbind before we kill the process
     UnBindEvents();
 
-    std::for_each(m_processes.begin(), m_processes.end(),
-                  [&](const std::unordered_map<IProcess*, ProcessData>::value_type& vt) {
-                      IProcess* p = vt.first;
-                      // Terminate the process
-                      p->Terminate();
-                      wxDELETE(p);
-                  });
+    for (auto& [p, _] : m_processes) {
+        // Terminate the process
+        p->Terminate();
+        delete p;
+    }
     m_processes.clear();
 }
 

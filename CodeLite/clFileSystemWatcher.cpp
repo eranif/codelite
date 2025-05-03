@@ -91,8 +91,7 @@ void clFileSystemWatcher::Clear()
 void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
 {
     std::set<wxString> nonExistingFiles;
-    std::for_each(m_files.begin(), m_files.end(), [&](const std::pair<wxString, clFileSystemWatcher::File>& p) {
-        const File& f = p.second;
+    for (const auto& [_, f] : m_files) {
         const wxFileName& fn = f.filename;
         if(!fn.Exists()) {
 
@@ -133,10 +132,12 @@ void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
 #endif
             m_files[fn.GetFullPath()] = updatdFile;
         }
-    });
+    }
 
     // Remove the non existing files
-    std::for_each(nonExistingFiles.begin(), nonExistingFiles.end(), [&](const wxString& fn) { m_files.erase(fn); });
+    for (const wxString& fn : nonExistingFiles) {
+        m_files.erase(fn);
+    }
 
     if(m_timer) {
         m_timer->Start(FILE_CHECK_INTERVAL, true);

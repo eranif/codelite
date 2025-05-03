@@ -185,7 +185,7 @@ void SFTPSettings::MSWImportPuTTYAccounts()
         }
     }
 
-    std::for_each(puttyAccounts.begin(), puttyAccounts.end(), [&](const SSHAccountInfo& acc) {
+    for (const SSHAccountInfo& acc : puttyAccounts) {
         SSHAccountInfo::Vect_t::iterator iter =
             std::find_if(m_accounts.begin(), m_accounts.end(),
                          [&](const SSHAccountInfo& a) { return a.GetAccountName() == acc.GetAccountName(); });
@@ -194,7 +194,7 @@ void SFTPSettings::MSWImportPuTTYAccounts()
             // add it
             m_accounts.push_back(acc);
         }
-    });
+    }
 #endif
 }
 #endif // USE_SFTP

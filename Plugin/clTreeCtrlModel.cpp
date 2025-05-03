@@ -450,8 +450,9 @@ void clTreeCtrlModel::SelectChildren(const wxTreeItemId& item)
     if(!ClearSelections(true)) {
         return;
     }
-    std::for_each(parent->GetChildren().begin(), parent->GetChildren().end(),
-                  [&](clRowEntry* child) { AddSelection(wxTreeItemId(child)); });
+    for (clRowEntry* child : parent->GetChildren()) {
+        AddSelection(wxTreeItemId(child));
+    }
 }
 
 clRowEntry* clTreeCtrlModel::GetNextSibling(clRowEntry* item) const

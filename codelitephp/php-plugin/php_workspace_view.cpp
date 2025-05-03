@@ -1570,17 +1570,17 @@ void PHPWorkspaceView::OnProjectSyncCompleted(clCommandEvent& event)
     DoGetFilesAndFolders(pProject->GetName(), folders, files);
 
     // Clear these items from the cache
-    std::for_each(files.begin(), files.end(), [&](const wxString& s) {
+    for (const wxString& s : files) {
         if(m_filesItems.count(s)) {
             m_filesItems.erase(s);
         }
-    });
+    }
 
-    std::for_each(folders.begin(), folders.end(), [&](const wxString& s) {
+    for (const wxString& s : folders) {
         if(m_foldersItems.count(s)) {
             m_foldersItems.erase(s);
         }
-    });
+    }
 
     wxWindowUpdateLocker locker(m_treeCtrlView);
     // Now we can delete the subtree

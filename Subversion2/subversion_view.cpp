@@ -391,13 +391,13 @@ int SubversionView::GetImageIndex(const wxFileName& filepath) const
 
 void SubversionView::DoAddUnVersionedFiles(const wxArrayString& files)
 {
-    std::for_each(files.begin(), files.end(), [&](const wxString& filepath) {
+    for (const wxString& filepath : files) {
         wxFileName fn(DoGetCurRepoPath() + wxFileName::GetPathSeparator() + filepath);
         wxVector<wxVariant> cols;
         cols.push_back(::MakeBitmapIndexText(fn.GetFullName(), GetImageIndex(fn)));
         cols.push_back(filepath);
         m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new SvnTreeData(SvnTreeData::SvnNodeTypeFile, filepath));
-    });
+    }
     m_notebook80->SetPageText(1, wxString() << _("Unversioned files (") << files.size() << ")");
 }
 

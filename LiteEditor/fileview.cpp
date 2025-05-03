@@ -2610,12 +2610,12 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
 
 void FileViewTree::UnselectAllProject()
 {
-    std::for_each(m_projectsMap.begin(), m_projectsMap.end(), [&](std::pair<wxString, wxTreeItemId> p) {
+    for (const auto& p : m_projectsMap) {
         wxFont f = GetDefaultFont();
         f.SetWeight(wxFONTWEIGHT_NORMAL);
         f.SetStyle(wxFONTSTYLE_NORMAL);
         SetItemFont(p.second, f);
-    });
+    }
 }
 
 wxTreeItemId FileViewTree::AddWorkspaceFolder(const wxString& folderPath)
@@ -3122,10 +3122,9 @@ void FileViewTree::OnBuildConfigChanged(wxCommandEvent& e)
 {
     e.Skip();
     // Remove the Gray text from the all the "Exclude files"
-    std::for_each(m_excludeBuildFiles.begin(), m_excludeBuildFiles.end(),
-                  [&](const std::unordered_map<wxString, wxTreeItemId>::value_type& vt) {
-                      SetItemTextColour(vt.second, DrawingUtils::GetOutputPaneFgColour());
-                  });
+    for (const auto& p : m_excludeBuildFiles) {
+        SetItemTextColour(p.second, DrawingUtils::GetOutputPaneFgColour());
+    }
     m_excludeBuildFiles.clear();
 
     std::unordered_map<wxString, wxTreeItemId> allFiles;

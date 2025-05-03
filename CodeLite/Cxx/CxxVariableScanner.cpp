@@ -588,11 +588,11 @@ CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
 {
     CxxVariable::Vec_t l = GetVariables(true);
     CxxVariable::Map_t m;
-    std::for_each(l.begin(), l.end(), [&](CxxVariable::Ptr_t v) {
+    for (const auto& v : l) {
         if(m.count(v->GetName()) == 0) {
             m.insert(std::make_pair(v->GetName(), v));
         }
-    });
+    }
     return m;
 }
 

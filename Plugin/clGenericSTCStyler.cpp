@@ -99,15 +99,12 @@ void clGenericSTCStyler::AddUserStyle(const wxArrayString& words, const wxColour
 
 void clGenericSTCStyler::ApplyStyles()
 {
-    std::for_each(m_styleInfo.begin(), m_styleInfo.end(), [&](const std::tuple<int, wxColour, wxColour>& t) {
-        int style = std::get<0>(t);
-        const wxColour& fgColour = std::get<1>(t);
-        const wxColour& bgColour = std::get<2>(t);
+    for (const auto& [style, fgColour, bgColour] : m_styleInfo) {
         m_ctrl->StyleSetForeground(style, fgColour);
-        if(bgColour.IsOk()) {
+        if (bgColour.IsOk()) {
             m_ctrl->StyleSetBackground(style, bgColour);
         }
-    });
+    }
 }
 
 void clGenericSTCStyler::OnThemChanged(wxCommandEvent& event)

@@ -81,7 +81,9 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
 
 DbViewerPanel::~DbViewerPanel()
 {
-    std::for_each(m_frames.begin(), m_frames.end(), [&](DbExplorerFrame* frame) { wxDELETE(frame); });
+    for (auto* frame : m_frames) {
+        wxDELETE(frame);
+    }
 
     m_toolbar->Unbind(wxEVT_TOOL, &DbViewerPanel::OnConnectClick, this, XRCID("IDT_DBE_CONNECT"));
     m_toolbar->Unbind(wxEVT_TOOL, &DbViewerPanel::OnToolCloseClick, this, XRCID("IDT_DBE_CLOSE_CONNECTION"));

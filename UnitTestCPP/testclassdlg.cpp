@@ -172,12 +172,12 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
 
     wxStringSet_t uniqueNames;
     wxArrayString methods;
-    std::for_each(matches.begin(), matches.end(), [&](TagEntryPtr m) {
+    for (const auto& m : matches) {
         if(uniqueNames.count(m->GetName()) == 0) {
             methods.push_back(m->GetName());
             uniqueNames.insert(m->GetName());
         }
-    });
+    }
 
     m_checkListMethods->Clear();
     m_checkListMethods->Append(methods);

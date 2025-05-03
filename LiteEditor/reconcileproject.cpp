@@ -122,9 +122,7 @@ bool ReconcileProjectDlg::LoadData()
 
         clFilesScanner scanner;
         std::vector<wxString> filesOutput;
-        wxStringSet_t excludeFoldersSet;
-        std::for_each(excludeFolders.begin(), excludeFolders.end(),
-                      [&](const wxString& folder) { excludeFoldersSet.insert(folder); });
+        const wxStringSet_t excludeFoldersSet{ excludeFolders.begin(), excludeFolders.end() };
         if (scanner.Scan(toplevelDir, filesOutput, filespec, ignorefilespec, excludeFoldersSet)) {
             m_allfiles.insert(filesOutput.begin(), filesOutput.end());
             DoFindFiles();
@@ -234,20 +232,21 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
     {
         std::vector<clProjectFile::Ptr_t> staleFiles;
         staleFiles.reserve(m_stalefiles.size());
-        std::for_each(m_stalefiles.begin(), m_stalefiles.end(),
-                      [&](const Project::FilesMap_t::value_type& vt) { staleFiles.push_back(vt.second); });
+        for (const auto& p : m_stalefiles) {
+            staleFiles.push_back(p.second);
+        }
         std::sort(staleFiles.begin(), staleFiles.end(), [&](clProjectFile::Ptr_t a, clProjectFile::Ptr_t b) {
             return a->GetFilename() < b->GetFilename();
         }); // Sort the files
 
         m_dataviewStaleFilesModel->Clear();
 
-        std::for_each(staleFiles.begin(), staleFiles.end(), [&](clProjectFile::Ptr_t file) {
+        for (const auto& file : staleFiles) {
             wxVector<wxVariant> cols;
             cols.push_back(::MakeIconText(file->GetFilename(), GetBitmap(file->GetFilename())));
             m_dataviewStaleFilesModel->AppendItem(
                 wxDataViewItem(0), cols, new ReconcileFileItemData(file->GetFilename(), file->GetVirtualFolder()));
-        });
+        }
     }
 }
 
@@ -315,18 +314,18 @@ void ReconcileProjectDlg::DoFindFiles()
     // get list of files from the project
     const Project::FilesMap_t& files = proj->GetFiles();
     wxStringSet_t projectfilesSet;
-    std::for_each(files.begin(), files.end(), [&](const Project::FilesMap_t::value_type& vt) {
-        projectfilesSet.insert(vt.first);
-        if (!wxFileName::FileExists(vt.second->GetFilename())) {
-            m_stalefiles.insert({ vt.second->GetFilename(), vt.second });
+    for (const auto&p : files) {
+        projectfilesSet.insert(p.first);
+        if (!wxFileName::FileExists(p.second->GetFilename())) {
+            m_stalefiles.insert({ p.second->GetFilename(), p.second });
         }
-    });
+    }
 
-    std::for_each(m_allfiles.begin(), m_allfiles.end(), [&](const wxString& file) {
+    for (const wxString& file : m_allfiles) {
         if (projectfilesSet.count(file) == 0) {
             m_newfiles.insert(file);
         }
-    });
+    }
 }
 
 wxBitmap ReconcileProjectDlg::GetBitmap(const wxString& filename) const

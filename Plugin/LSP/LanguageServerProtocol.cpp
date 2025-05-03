@@ -239,7 +239,7 @@ bool LanguageServerProtocol::Start(const LSPStartupInfo& startupInfo, const clEn
     DoClear();
 
     m_languages.clear();
-    std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
+    m_languages.insert(languages.begin(), languages.end());
     m_startupInfo = startupInfo;
 
     m_rootFolder = rootFolder;

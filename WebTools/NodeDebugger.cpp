@@ -101,8 +101,9 @@ void NodeDebugger::ClearDebuggerMarker()
 {
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
-    std::for_each(editors.begin(), editors.end(),
-                  [&](IEditor* editor) { editor->GetCtrl()->MarkerDeleteAll(smt_indicator); });
+    for (IEditor* editor : editors) {
+        editor->GetCtrl()->MarkerDeleteAll(smt_indicator);
+    }
 }
 
 void NodeDebugger::DoHighlightLine(const wxString& filename, int lineNo)
@@ -365,9 +366,9 @@ void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 
 void NodeDebugger::ApplyAllBreakpoints()
 {
-    const NodeJSBreakpoint::Vec_t& breakpoints = m_bptManager.GetBreakpoints();
-    std::for_each(breakpoints.begin(), breakpoints.end(),
-                  [&](const NodeJSBreakpoint& bp) { SetBreakpoint(bp.GetFilename(), bp.GetLine()); });
+    for (const NodeJSBreakpoint& bp : m_bptManager.GetBreakpoints()) {
+        SetBreakpoint(bp.GetFilename(), bp.GetLine());
+    }
     clDebugEvent bpEvent(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
     EventNotifier::Get()->AddPendingEvent(bpEvent);
 }

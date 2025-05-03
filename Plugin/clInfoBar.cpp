@@ -11,8 +11,9 @@ clInfoBar::~clInfoBar() {}
 
 void clInfoBar::Clear()
 {
-    std::for_each(m_buttons.begin(), m_buttons.end(),
-                  [&](const std::pair<wxWindowID, wxString>& btn) { RemoveButton(btn.first); });
+    for (const auto& [btnId, _] : m_buttons) {
+        RemoveButton(btnId);
+    }
 }
 
 void clInfoBar::DisplayMessage(const wxString& message, int flags,

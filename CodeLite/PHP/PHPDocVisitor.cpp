@@ -27,25 +27,25 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
             PHPDocComment docComment(m_sourceFile, entity->GetDocComment());
             if(!docComment.GetProperties().empty()) {
                 // Got some @properties
-                std::for_each(docComment.GetProperties().begin(), docComment.GetProperties().end(),
-                    [&](PHPDocComment::Property::Map_t::value_type& p) {
-                        PHPEntityBase::Ptr_t child = entity->FindChild(p.second.name);
-                        if(!child) {
-                            // No child of this type, create a new property and add it
-                            child = std::make_shared<PHPEntityVariable>();
-                            child->SetFilename(m_sourceFile.GetFilename());
-                            child->SetLine(entity->GetLine());
-                            child->Cast<PHPEntityVariable>()->SetTypeHint(p.second.type);
-                            child->Cast<PHPEntityVariable>()->SetFlag(kVar_Member); // Member variable
-                            child->Cast<PHPEntityVariable>()->SetFlag(kVar_Public); // Public access
-                            child->SetShortName(p.second.name);
-                            child->SetFullName(p.second.name);
-                            entity->AddChild(child);
-                        }
-                    });
+                for (const auto& p : docComment.GetProperties()) {
+                    PHPEntityBase::Ptr_t child = entity->FindChild(p.second.name);
+                    if (!child) {
+                        // No child of this type, create a new property and add it
+                        child = std::make_shared<PHPEntityVariable>();
+                        child->SetFilename(m_sourceFile.GetFilename());
+                        child->SetLine(entity->GetLine());
+                        child->Cast<PHPEntityVariable>()->SetTypeHint(p.second.type);
+                        child->Cast<PHPEntityVariable>()->SetFlag(kVar_Member); // Member variable
+                        child->Cast<PHPEntityVariable>()->SetFlag(kVar_Public); // Public access
+                        child->SetShortName(p.second.name);
+                        child->SetFullName(p.second.name);
+                        entity->AddChild(child);
+                    }
+                }
             } else if(!docComment.GetMethods().empty()) {
-                std::for_each(docComment.GetMethods().begin(), docComment.GetMethods().end(),
-                    [&](PHPEntityBase::Ptr_t method) { entity->AddChild(method); });
+                for (const auto& method : docComment.GetMethods()) {
+                    entity->AddChild(method);
+                }
             }
         }
     } else {

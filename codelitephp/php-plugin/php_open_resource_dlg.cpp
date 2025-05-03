@@ -148,7 +148,7 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
         // and sort the results
         wxString lcFilter = m_lastFilter.Lower();
         ResourceVector_t v1, v2, v3, v4, v5;
-        std::for_each(allVec.begin(), allVec.end(), [&](const ResourceItem& a) {
+        for (const ResourceItem& a : allVec) {
             if(a.displayName == m_lastFilter) {
                 v1.push_back(a); // Exact match
             } else if(a.displayName.Lower() == lcFilter) {
@@ -161,7 +161,7 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
                 // other
                 v5.push_back(a);
             }
-        });
+        }
 
         allVec.clear();
         allVec.insert(allVec.end(), v1.begin(), v1.end());

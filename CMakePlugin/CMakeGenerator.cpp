@@ -286,8 +286,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     resourceFiles.reserve(allFiles.size());
     asmSources.reserve(allFiles.size());
 
-    std::for_each(allFiles.begin(), allFiles.end(), [&](const Project::FilesMap_t::value_type& vt) {
-        clProjectFile::Ptr_t file = vt.second;
+    for (const auto& [_, file] : allFiles) {
         if(!file->IsExcludeFromConfiguration(buildConf->GetName())) {
             wxFileName fn(file->GetFilename());
             // Append each file with the "${CMAKE_CURRENT_LIST_DIR}/" prefix
@@ -305,7 +304,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
                 asmSources.Add(file_name);
             }
         }
-    });
+    }
 
     // Get project directory
     wxString projectDir = project->GetFileName().GetPath();
@@ -641,7 +640,7 @@ void CMakeGenerator::AddBuildCommands(const wxString& buildType, const BuildComm
         wxString projectPathVariableValue;
         projectPathVariableValue << "${PROJECT_" << project->GetName() << "_PATH}";
         content << "\n# Adding " << buildType << " commands\n";
-        std::for_each(commands.begin(), commands.end(), [&](const BuildCommand& buildCommand) {
+        for (const BuildCommand& buildCommand : commands) {
             if(buildCommand.GetEnabled()) {
                 wxString cmd = buildCommand.GetCommand();
                 cmd.Replace("$(WorkspacePath)", "${WORKSPACE_PATH}");
@@ -651,7 +650,7 @@ void CMakeGenerator::AddBuildCommands(const wxString& buildType, const BuildComm
                         << "    " << buildType << "\n"
                         << "    COMMAND " << cmd << ")\n";
             }
-        });
+        }
         content << "\n";
     }
 }

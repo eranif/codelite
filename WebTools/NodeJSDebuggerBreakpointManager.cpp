@@ -177,7 +177,9 @@ void NodeJSBptManager::OnDebuggerStopped(clDebugEvent& event)
 {
     event.Skip();
     // Clear the node's breakpoint ID
-    std::for_each(m_breakpoints.begin(), m_breakpoints.end(), [&](NodeJSBreakpoint& bp) { bp.SetNodeBpID(""); });
+    for (NodeJSBreakpoint& bp : m_breakpoints) {
+        bp.SetNodeBpID("");
+    }
 }
 
 void NodeJSBptManager::OnFileSaved(clCommandEvent& event)
@@ -231,8 +233,9 @@ void NodeJSBptManager::DeleteAll()
 {
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
-    std::for_each(editors.begin(), editors.end(),
-                  [&](IEditor* editor) { editor->GetCtrl()->MarkerDeleteAll(smt_breakpoint); });
+    for (IEditor* editor : editors) {
+        editor->GetCtrl()->MarkerDeleteAll(smt_breakpoint);
+    }
     m_breakpoints.clear();
 
     // Tell the UI to refresh its view
@@ -243,9 +246,9 @@ void NodeJSBptManager::DeleteAll()
 wxArrayString NodeJSBptManager::GetAllAppliedBreakpoints() const
 {
     wxArrayString arr;
-    std::for_each(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
+    for (const NodeJSBreakpoint& bp : m_breakpoints) {
         if(!bp.GetNodeBpID().IsEmpty()) { arr.Add(bp.GetNodeBpID()); }
-    });
+    }
     return arr;
 }
 

@@ -34,7 +34,9 @@ void clDockerDriver::Stop()
 {
     if(IsRunning()) {
         // Stop each process
-        std::for_each(m_processes.begin(), m_processes.end(), [&](IProcess* process) { process->Terminate(); });
+        for (IProcess* process : m_processes) {
+            process->Terminate();
+        }
     }
 }
 

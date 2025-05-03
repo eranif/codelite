@@ -405,8 +405,9 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
                     // Range selection
                     clRowEntry::Vec_t range;
                     m_model.GetRange(pNode, m_model.ToPtr(m_model.GetSingleSelection()), range);
-                    std::for_each(range.begin(), range.end(),
-                                  [&](clRowEntry* p) { m_model.AddSelection(wxTreeItemId(p)); });
+                    for (clRowEntry* p : range) {
+                        m_model.AddSelection(wxTreeItemId(p));
+                    }
                 } else {
                     // The default, single selection
                     if (!has_multiple_selection && pNode->IsSelected()) {
@@ -952,7 +953,9 @@ size_t clTreeCtrl::GetSelections(wxArrayTreeItemIds& selections) const
     if (items.empty()) {
         return 0;
     }
-    std::for_each(items.begin(), items.end(), [&](clRowEntry* item) { selections.Add(wxTreeItemId(item)); });
+    for (clRowEntry* item : items) {
+        selections.Add(wxTreeItemId(item));
+    }
     return selections.size();
 }
 

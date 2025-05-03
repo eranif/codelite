@@ -1298,7 +1298,7 @@ void PHPLookupTable::DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongL
     }
 
     // Let the PHPDOC table content override the matches' type
-    std::for_each(matches.begin(), matches.end(), [&](PHPEntityBase::Ptr_t match) {
+    for (auto& match : matches) {
         if(match->Is(kEntityTypeVariable)) {
             if(docs.count(match->GetShortName())) {
                 PHPDocVar::Ptr_t docvar = docs.find(match->GetShortName())->second;
@@ -1307,7 +1307,7 @@ void PHPLookupTable::DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongL
                 }
             }
         }
-    });
+    }
 }
 
 void PHPLookupTable::UpdateClassCache(const wxString& classname)

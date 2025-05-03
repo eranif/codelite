@@ -15,14 +15,18 @@ void SFTPSessionInfo::FromJSON(const JSONItem& json)
     m_account = json.namedObject("name").toString();
     m_rootFolder = json.namedObject("rootFolder").toString();
     wxArrayString files = json.namedObject("files").toArrayString();
-    std::for_each(files.begin(), files.end(), [&](const wxString& file) { m_files.push_back(file); });
+    for (const wxString& file : files) {
+        m_files.push_back(file);
+    }
 }
 
 JSONItem SFTPSessionInfo::ToJSON() const
 {
     JSONItem json = JSONItem::createObject();
     wxArrayString files;
-    std::for_each(m_files.begin(), m_files.end(), [&](const wxString& file) { files.Add(file); });
+    for (const wxString& file : m_files) {
+        files.Add(file);
+    }
     json.addProperty("name", m_account);
     json.addProperty("rootFolder", m_rootFolder);
     json.addProperty("files", files);
@@ -82,10 +86,9 @@ void SFTPSessionInfoList::FromJSON(const JSONItem& json)
 JSONItem SFTPSessionInfoList::ToJSON() const
 {
     JSONItem json = JSONItem::createArray(GetName());
-    std::for_each(m_sessions.begin(), m_sessions.end(), [&](const SFTPSessionInfo::Map_t::value_type& vt) {
-        const SFTPSessionInfo& sess = vt.second;
+    for (const auto& [_, sess] : m_sessions) {
         json.arrayAppend(sess.ToJSON());
-    });
+    }
     return json;
 }
 

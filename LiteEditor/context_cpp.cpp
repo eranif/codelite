@@ -594,7 +594,9 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
     if (file_options.size() > 1) {
         // More than one option
         wxArrayString fileArr;
-        std::for_each(file_options.begin(), file_options.end(), [&](const wxString& s) { fileArr.Add(s); });
+        for (const wxString& s : file_options) {
+            fileArr.Add(s);
+        }
         file_to_open = ::wxGetSingleChoice(_("Multiple candidates found. Select a file to open:"),
                                            _("Swap Header/Source Implementation"), fileArr, 0);
 
@@ -664,13 +666,13 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
     }
 
     // Try to locate a file in the same folder first
-    std::for_each(exts.begin(), exts.end(), [&](const wxString& ext) {
+    for (const wxString& ext : exts) {
         wxFileName otherFile = rhs;
         otherFile.SetExt(ext);
         if (otherFile.FileExists()) {
             others.insert(otherFile.GetFullPath());
         }
-    });
+    }
 
     // if we found a match on the same folder, don't bother continue searching
     if (others.empty()) {

@@ -61,10 +61,10 @@ void WindowStack::Select(wxWindow* win)
 
 void WindowStack::Clear()
 {
-    std::for_each(m_windows.begin(), m_windows.end(), [&](wxWindow* w) {
+    for (wxWindow* w : m_windows) {
         w->Hide();
         w->Destroy();
-    });
+    }
     m_windows.clear();
     m_activeWin = nullptr;
 }

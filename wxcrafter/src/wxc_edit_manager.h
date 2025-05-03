@@ -2,8 +2,8 @@
 #define WXCEDITMANAGER_H
 
 #include "unredobase.h"
+
 #include <list>
-#include <vector>
 #include <wx/string.h>
 
 wxDECLARE_EVENT(wxEVT_MULTIPLE_UNREDO, wxCommandEvent);

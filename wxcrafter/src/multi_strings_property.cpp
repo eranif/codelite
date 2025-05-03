@@ -1,5 +1,4 @@
 #include "multi_strings_property.h"
-#include "multi_string_ctrl.h"
 
 MultiStringsProperty::MultiStringsProperty(const wxString& label, const wxString& tooltip, const wxString& delim,
                                            const wxString& msg)

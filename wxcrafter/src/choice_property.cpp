@@ -1,5 +1,5 @@
 #include "choice_property.h"
-#include "wxgui_defs.h"
+
 #include <wx/choice.h>
 
 ChoiceProperty::ChoiceProperty()

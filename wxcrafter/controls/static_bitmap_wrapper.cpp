@@ -1,6 +1,7 @@
 #include "static_bitmap_wrapper.h"
+
 #include "allocator_mgr.h"
-#include "file_ficker_property.h"
+#include "bitmap_picker_property.h"
 #include "import_from_wxFB.h"
 #include "import_from_xrc.h"
 #include "wxc_bitmap_code_generator.h"

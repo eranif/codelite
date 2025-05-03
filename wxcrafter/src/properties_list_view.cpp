@@ -1,18 +1,18 @@
 #include "properties_list_view.h"
 
+#include "custom_pg_properties.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "int_property.h"
+#include "wxc_project_metadata.h"
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 
 #include <unordered_set>
-#include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
 #include <wx/propgrid/advprops.h>
 #include <wx/regex.h>
-#include <wx/renderer.h>
 
 /////////////////////////////////////////////////////////////////////////
 

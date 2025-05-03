@@ -5,20 +5,15 @@
 #include "DefineCustomControlWizard.h"
 #include "DeleteCustomControlDlg.h"
 #include "EditCustomControlDlg.h"
-#include "EventsEditorDlg.h"
-#include "Keyboard/clKeyboardManager.h"
-#include "MessageDlg.h"
 #include "MyComboBoxXmlHandler.h"
 #include "MyRearrangeListXmlHandler.h"
 #include "NewFormWizard.h"
-#include "VirtualDirectorySelectorDlg.h"
 #include "allocator_mgr.h"
 #include "clStatusBar.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "ctags_manager.h"
 #include "database/entry.h"
-#include "editor_config.h"
 #include "event_notifier.h"
 #include "functions_parser.h"
 #include "globals.h"
@@ -26,7 +21,6 @@
 #include "import_from_wxFB.h"
 #include "import_from_wxSmith.h"
 #include "import_from_xrc.h"
-#include "myxh_auibook.h"
 #include "myxh_auimgr.h"
 #include "myxh_auitoolb.h"
 #include "myxh_cmdlinkbtn.h"
@@ -58,6 +52,7 @@
 #include "wxcSettingsDlg.h"
 #include "wxcTreeView.h"
 #include "wxc_bitmap_code_generator.h"
+#include "wxc_project_metadata.h"
 #include "wxc_settings.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_globals.h"
@@ -66,11 +61,14 @@
 
 #include <wx/choicdlg.h>
 #include <wx/dataview.h>
-#include <wx/module.h>
 #include <wx/msgdlg.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
+
+#if !STANDALONE_BUILD
+#include "Keyboard/clKeyboardManager.h"
+#endif
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)

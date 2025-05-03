@@ -3,11 +3,9 @@
 
 #include "events_database.h"
 #include "wxc_widget.h"
+
 #include <wx/bitmap.h>
-#include <wx/button.h>
-#include <wx/dc.h>
 #include <wx/propgrid/manager.h>
-#include <wx/renderer.h>
 
 class EventsEditorPane;
 class EventsTableListView : public wxPropertyGridManager

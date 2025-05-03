@@ -2,7 +2,6 @@
 #define WRAPPERBASE_H
 
 #include "aui_pane_info.h"
-#include "bitmap_picker_property.h"
 #include "bool_property.h"
 #include "category_property.h"
 #include "events_database.h"

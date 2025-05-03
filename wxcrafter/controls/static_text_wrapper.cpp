@@ -1,8 +1,11 @@
 #include "static_text_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "multi_strings_property.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
+#include <wx/stattext.h>
 
 StaticTextWrapper::StaticTextWrapper()
     : wxcWidget(ID_WXSTATICTEXT)

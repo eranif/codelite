@@ -1,5 +1,4 @@
 #include "string_property.h"
-#include <wx/textctrl.h>
 
 StringProperty::StringProperty()
     : MultiStringsProperty("", "", "\n", "")

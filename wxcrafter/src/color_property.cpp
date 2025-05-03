@@ -1,8 +1,6 @@
 #include "color_property.h"
+
 #include "json_node.h"
-#include "wxgui_globals.h"
-#include "wxgui_helpers.h"
-#include <wx/app.h>
 
 const wxEventType wxEVT_COLOR_UPDATE = wxNewEventType();
 

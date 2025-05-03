@@ -1,7 +1,7 @@
 #include "ribbon_gallery_item_wrapper.h"
 
 #include "allocator_mgr.h"
-#include "file_ficker_property.h"
+#include "bitmap_picker_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"

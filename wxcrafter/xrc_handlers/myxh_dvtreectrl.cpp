@@ -1,6 +1,6 @@
 #include "myxh_dvtreectrl.h"
+
 #include <wx/dataview.h>
-#include <wx/imaglist.h>
 
 MyWxDataViewTreeCtrlHandler::MyWxDataViewTreeCtrlHandler()
     : wxXmlResourceHandler()

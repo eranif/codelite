@@ -1,9 +1,6 @@
 #include "panel_wrapper.h"
+
 #include "allocator_mgr.h"
-#include <wx/ffile.h>
-#include <wx/filename.h>
-#include <wx/msgdlg.h>
-#include <wx/tokenzr.h>
 
 PanelWrapper::PanelWrapper()
     : wxcWidget(ID_WXPANEL)

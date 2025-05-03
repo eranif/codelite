@@ -1,6 +1,6 @@
 #include "ToolBoxPanel.h"
+
 #include "allocator_mgr.h"
-#include "wxc_settings.h"
 #include "wxguicraft_main_view.h"
 
 ToolBoxPanel::ToolBoxPanel(wxWindow* parent, GUICraftMainPanel* mainView)

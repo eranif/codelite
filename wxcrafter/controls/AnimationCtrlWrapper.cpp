@@ -1,12 +1,12 @@
 #include "AnimationCtrlWrapper.h"
 
 #include "allocator_mgr.h"
+#include "bitmap_picker_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 
 #include <wx/animate.h>
-#include <wx/mstream.h>
 
 AnimationCtrlWrapper::AnimationCtrlWrapper()
     : wxcWidget(ID_WXANIMATIONCTRL)

@@ -2,7 +2,6 @@
 
 #include "allocator_mgr.h"
 #include "bool_property.h"
-#include "data_view_list_ctrl_wrapper.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"

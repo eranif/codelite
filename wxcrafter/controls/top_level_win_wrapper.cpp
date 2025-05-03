@@ -3,13 +3,13 @@
 #include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "choice_property.h"
+#include "event_notifier.h"
 #include "virtual_folder_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_notebook_code_helper.h"
 #include "wxgui_helpers.h"
 
 #include <wx/arrstr.h>
-#include <wx/ffile.h>
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>
 #include <wx/tokenzr.h>

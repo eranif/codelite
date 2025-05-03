@@ -1,7 +1,5 @@
 #include "MessageDlg.h"
 
-#include "windowattrmanager.h"
-
 MessageDlg::MessageDlg(wxWindow* parent, const wxString& msg, const wxString& title)
     : MessageDlgBaseClass(parent)
 {

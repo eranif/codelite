@@ -4,13 +4,10 @@
 #include "aui_pane_info_list_view.h"
 #include "clTreeCtrl.h"
 #include "cl_command_event.h"
-#include "events_database.h"
 #include "gui.h"
-#include "properties_sheet.h"
 #include "sizer_flags_list_view.h"
 #include "styles_sheet_list_view.h"
 #include "wxc_edit_manager.h"
-#include "wxc_project_metadata.h"
 #include "wxc_widget.h"
 
 #include <wx/aui/auibar.h>
@@ -18,6 +15,8 @@
 
 class EventsEditorPane;
 class EventsEditorDlg;
+class PropertiesSheet;
+
 extern const wxEventType wxEVT_UPDATE_PREVIEW;
 extern const wxEventType wxEVT_UPDATE_EVENTSEDITORPANE;
 wxDECLARE_EVENT(wxEVT_EVENTS_PROPERTIES_UPDATED, wxCommandEvent);

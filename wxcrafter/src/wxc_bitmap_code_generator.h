@@ -1,7 +1,6 @@
 #ifndef WXCBITMAPCODEGENERATOR_H
 #define WXCBITMAPCODEGENERATOR_H
 
-#include "AsyncProcess/asyncprocess.h"
 #include "macros.h"
 
 #include <wx/arrstr.h>

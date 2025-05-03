@@ -2,8 +2,8 @@
 
 #include "StdToWX.h"
 #include "allocator_mgr.h"
+#include "bitmap_picker_property.h"
 #include "choice_property.h"
-#include "file_ficker_property.h"
 #include "menu_bar_wrapper.h"
 #include "status_bar_wrapper.h"
 #include "toolbar_base_wrapper.h"
@@ -17,7 +17,6 @@
 #include <wx/filename.h>
 #include <wx/frame.h>
 #include <wx/msgdlg.h>
-#include <wx/tokenzr.h>
 #include <wx/toplevel.h>
 
 FrameWrapper::FrameWrapper()

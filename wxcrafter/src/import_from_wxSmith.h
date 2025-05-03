@@ -3,7 +3,7 @@
 
 #include "import_dlg.h"
 #include "wxc_widget.h"
-#include "wxgui_defs.h"
+
 #include <map>
 
 class wxWindow;

@@ -1,11 +1,8 @@
 #include "events_table_list_view.h"
 
 #include "EventsEditorDlg.h"
-#include "wxc_project_metadata.h"
-#include "wxgui_bitmaploader.h"
+#include "event_notifier.h"
 #include "wxgui_helpers.h"
-
-#include <wx/wxcrtvararg.h>
 
 namespace
 {

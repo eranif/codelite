@@ -2,13 +2,10 @@
 
 #include "event_notifier.h"
 #include "notebook_page_wrapper.h"
-#include "wxc_project_metadata.h"
 #include "wxc_widget.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
-
-#include <algorithm>
 
 SizerFlagsListView::SizerFlagsListView()
     : m_wxcWidget(NULL)

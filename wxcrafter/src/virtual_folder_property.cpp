@@ -1,5 +1,4 @@
 #include "virtual_folder_property.h"
-#include "virtual_folder_picker_ctrl.h"
 
 VirtualFolderProperty::VirtualFolderProperty(const wxString& label, const wxString& path, const wxString& tooltip)
     : PropertyBase(tooltip)

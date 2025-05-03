@@ -1,7 +1,7 @@
 #include "rich_text_ctrl_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
-#include <wx/richtext/richtextctrl.h>
 
 RichTextCtrlWrapper::RichTextCtrlWrapper()
     : wxcWidget(ID_WXRICHTEXT)

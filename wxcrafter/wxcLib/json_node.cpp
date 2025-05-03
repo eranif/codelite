@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "json_node.h"
-#include <stdlib.h>
+
 #include <wx/filename.h>
 #include <wx/ffile.h>
 

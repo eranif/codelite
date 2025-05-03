@@ -2,9 +2,9 @@
 #define PROPERTYBASE_H
 
 #include "wxcLib/json_node.h"
-#include <wx/stattext.h>
+
+#include <wx/event.h>
 #include <wx/string.h>
-#include <wx/window.h>
 
 enum PropertyeType {
     PT_BOOL,

@@ -3,9 +3,7 @@
 #include "Zip/clZipReader.h"
 #include "clFilesCollector.h"
 #include "wxc_project_metadata.h"
-#include "wxgui_globals.h"
 
-#include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 

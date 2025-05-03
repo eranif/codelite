@@ -1,19 +1,19 @@
 #include "tool_bar_item_wrapper.h"
+
 #include "allocator_mgr.h"
+#include "bitmap_picker_property.h"
+#include "category_property.h"
 #include "choice_property.h"
-#include "event_notifier.h"
 #include "file_ficker_property.h"
 #include "import_from_wxFB.h"
 #include "import_from_xrc.h"
-#include "menu_item_wrapper.h"
-#include "menu_wrapper.h"
 #include "multi_strings_property.h"
+#include "string_property.h"
 #include "winid_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
-#include <wx/aui/auibar.h>
 
 wxDECLARE_EVENT(wxEVT_EVENTS_PROPERTIES_UPDATED, wxCommandEvent);
 

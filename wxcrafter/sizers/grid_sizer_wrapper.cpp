@@ -1,7 +1,6 @@
 #include "grid_sizer_wrapper.h"
 
 #include "allocator_mgr.h"
-#include "wxgui_helpers.h"
 #include "xmlutils.h"
 
 GridSizerWrapper::GridSizerWrapper()

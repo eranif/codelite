@@ -1,12 +1,11 @@
 #include "preview_frame.h"
 
 #include "clDirChanger.hpp"
+#include "event_notifier.h"
 #include "wxc_aui_manager.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 
-#include <wx/app.h>
-#include <wx/sizer.h>
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
 

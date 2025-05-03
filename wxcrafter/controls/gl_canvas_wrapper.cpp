@@ -1,7 +1,6 @@
 #include "gl_canvas_wrapper.h"
+
 #include "allocator_mgr.h"
-//#include <wx/glcanvas.h>
-#include "int_property.h"
 
 GLCanvasWrapper::GLCanvasWrapper()
     : wxcWidget(ID_WXGLCANVAS)

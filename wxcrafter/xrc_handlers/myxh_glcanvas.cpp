@@ -6,7 +6,6 @@
 #endif
 
 #include "myxh_glcanvas.h"
-#include <wx/panel.h>
 
 MyWxGLCanvasXmlHandler::MyWxGLCanvasXmlHandler()
     : wxXmlResourceHandler()

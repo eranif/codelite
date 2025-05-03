@@ -6,8 +6,6 @@
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 
-#include <wx/mediactrl.h>
-
 MediaCtrlWrapper::MediaCtrlWrapper()
     : wxcWidget(ID_WXMEDIACTRL)
 {

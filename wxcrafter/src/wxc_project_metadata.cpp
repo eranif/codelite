@@ -1,7 +1,5 @@
 #include "wxc_project_metadata.h"
 
-#include "event_notifier.h"
-
 #include <wx/ffile.h>
 #include <wx/filename.h>
 

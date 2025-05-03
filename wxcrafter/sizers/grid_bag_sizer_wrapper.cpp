@@ -9,10 +9,10 @@ GridBagSizerWrapper::GridBagSizerWrapper()
     m_type = ID_WXGRIDBAGSIZER;
     m_styles.Clear(); // Sizer has no styles
     SetPropertyString(_("Common Settings"), "wxGridBagSizer");
-    AddProperty(new StringProperty(PROP_GROW_COLS, "", _("Which columns are allowed to grow. Comma separated list")));
-    AddProperty(new StringProperty(PROP_GROW_ROWS, "", _("Which rows are allowed to grow. Comma separated list")));
-    AddProperty(new StringProperty(PROP_HGAP, "0", _("The horizontal gap between grid cells")));
-    AddProperty(new StringProperty(PROP_VGAP, "0", _("The vertical gap between grid cells")));
+    Add<StringProperty>(PROP_GROW_COLS, "", _("Which columns are allowed to grow. Comma separated list"));
+    Add<StringProperty>(PROP_GROW_ROWS, "", _("Which rows are allowed to grow. Comma separated list"));
+    Add<StringProperty>(PROP_HGAP, "0", _("The horizontal gap between grid cells"));
+    Add<StringProperty>(PROP_VGAP, "0", _("The vertical gap between grid cells"));
 
     EnableSizerFlag("wxEXPAND", true);
     m_sizerItem.SetProportion(1);

@@ -20,9 +20,9 @@ SpinCtrlWrapper::SpinCtrlWrapper()
                          _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."));
 
     SetPropertyString(_("Common Settings"), "wxSpinCtrl");
-    AddProperty(new StringProperty(PROP_VALUE, wxT("0"), _("The initial value")));
-    AddProperty(new StringProperty(PROP_MINVALUE, wxT("0"), _("Minimal value")));
-    AddProperty(new StringProperty(PROP_MAXVALUE, wxT("100"), _("Maximal value")));
+    Add<StringProperty>(PROP_VALUE, wxT("0"), _("The initial value"));
+    Add<StringProperty>(PROP_MINVALUE, wxT("0"), _("Minimal value"));
+    Add<StringProperty>(PROP_MAXVALUE, wxT("100"), _("Maximal value"));
 
     m_namePattern = wxT("m_spinCtrl");
     SetName(GenerateName());

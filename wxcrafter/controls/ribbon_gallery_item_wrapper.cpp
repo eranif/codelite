@@ -11,7 +11,7 @@ RibbonGalleryItemWrapper::RibbonGalleryItemWrapper()
     : wxcWidget(ID_WXRIBBONGALLERYITME)
 {
     SetPropertyString(_("Common Settings"), "wxRibbonGalleryItem");
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", _("Select the bitmap file")));
+    Add<BitmapPickerProperty>(PROP_BITMAP_PATH, "", _("Select the bitmap file"));
 
     wxCrafter::ResourceLoader bl;
     m_properties.Item(PROP_BITMAP_PATH)->SetValue(bl.GetPlaceHolderImagePath().GetFullPath());

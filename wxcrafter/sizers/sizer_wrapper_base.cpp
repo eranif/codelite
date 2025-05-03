@@ -5,8 +5,8 @@
 SizerWrapperBase::SizerWrapperBase()
     : wxcWidget(-1)
 {
-    AddProperty(new BoolProperty(PROP_KEEP_CLASS_MEMBER, false,
-                                 _("When enabled, this sizer is kept as a class member and become accessible")));
+    Add<BoolProperty>(
+        PROP_KEEP_CLASS_MEMBER, false, _("When enabled, this sizer is kept as a class member and become accessible"));
 
     DelProperty(PROP_WINDOW_ID);
     DelProperty(PROP_SIZE);

@@ -20,11 +20,12 @@ SimpleHtmlListBoxWrapper::SimpleHtmlListBoxWrapper()
     RegisterEvent("wxEVT_HTML_LINK_CLICKED", "wxHtmlLinkEvent",
                   _("A wxHtmlCell which contains an hyperlink was clicked. See wxHtmlLinkEvent"));
     SetPropertyString(_("Common Settings"), "wxSimpleHtmlListBox");
-    AddProperty(new MultiStringsProperty(
-        PROP_OPTIONS, _("The List Box Items. A semi-colon list of strings. This list may contain HTML fragments")));
-    AddProperty(new StringProperty(
-        PROP_SELECTION, wxT("-1"),
-        _("The zero-based position of any initially selected string, or -1 if none are to be selected")));
+    Add<MultiStringsProperty>(
+        PROP_OPTIONS, _("The List Box Items. A semi-colon list of strings. This list may contain HTML fragments"));
+    Add<StringProperty>(
+        PROP_SELECTION,
+        wxT("-1"),
+        _("The zero-based position of any initially selected string, or -1 if none are to be selected"));
 
     // Basic name pattern
     m_namePattern = "m_htmlListBox";

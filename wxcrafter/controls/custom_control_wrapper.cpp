@@ -12,7 +12,7 @@ CustomControlWrapper::CustomControlWrapper()
     : wxcWidget(ID_WXCUSTOMCONTROL)
 {
     DelProperty(_("Control Specific Settings"));
-    AddProperty(new CategoryProperty(m_templInfoName, "Custom Control"));
+    Add<CategoryProperty>(m_templInfoName, "Custom Control");
     m_namePattern = wxT("m_custom");
 
     // Generate a name if there isn't one; but don't overwrite e.g. an imported one

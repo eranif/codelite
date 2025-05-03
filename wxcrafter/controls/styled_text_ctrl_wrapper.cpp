@@ -180,34 +180,32 @@ StyledTextCtrlWrapper::StyledTextCtrlWrapper()
                   _("The user deleted a character while auto-completion list was active"));
 
     SetPropertyString(_("Common Settings"), "wxStyledTextCtrl");
-    AddProperty(new BoolProperty(PROP_STC_MARGIN_FOLD, true, ""));
-    AddProperty(new BoolProperty(PROP_STC_MARGIN_LINE_NUMBERS, true, ""));
-    AddProperty(new BoolProperty(PROP_STC_MARGIN_SEPARATOR, false, ""));
-    AddProperty(new BoolProperty(PROP_STC_MARGIN_SYMBOL, false, ""));
+    Add<BoolProperty>(PROP_STC_MARGIN_FOLD, true, "");
+    Add<BoolProperty>(PROP_STC_MARGIN_LINE_NUMBERS, true, "");
+    Add<BoolProperty>(PROP_STC_MARGIN_SEPARATOR, false, "");
+    Add<BoolProperty>(PROP_STC_MARGIN_SYMBOL, false, "");
 
+    Add<ChoiceProperty>(PROP_STC_WRAP, m_wrapOptions, 0, _("Wrap text"));
 
-    AddProperty(new ChoiceProperty(PROP_STC_WRAP, m_wrapOptions, 0, _("Wrap text")));
+    Add<ChoiceProperty>(PROP_STC_INDENT_GUIDES, m_indentGuides, 0, _("Display indentation guides (vertical lines)"));
 
-    AddProperty(new ChoiceProperty(PROP_STC_INDENT_GUIDES, m_indentGuides, 0,
-                                   _("Display indentation guides (vertical lines)")));
-
-
-    AddProperty(new ChoiceProperty(PROP_STC_EOL_MODE, m_eolMode, 3, _("EOL Mode")));
-    AddProperty(new BoolProperty(PROP_STC_VIEW_EOL, false, _("Display the line endings characters")));
+    Add<ChoiceProperty>(PROP_STC_EOL_MODE, m_eolMode, 3, _("EOL Mode"));
+    Add<BoolProperty>(PROP_STC_VIEW_EOL, false, _("Display the line endings characters"));
 
     wxArrayString lexersArr = GetLexers();
     int sel = lexersArr.Index("wxSTC_LEX_NULL");
-    AddProperty(
-        new ChoiceProperty(PROP_STC_LEXER, lexersArr, sel,
-                           _("Set the wxStyledTextCtrl lexer.\nThe lexer affects the syntax highlight of control")));
-    AddProperty(new FontProperty(PROP_FONT, "", _("Set the basic styles font")));
+    Add<ChoiceProperty>(PROP_STC_LEXER,
+                        lexersArr,
+                        sel,
+                        _("Set the wxStyledTextCtrl lexer.\nThe lexer affects the syntax highlight of control"));
+    Add<FontProperty>(PROP_FONT, "", _("Set the basic styles font"));
 
-    AddProperty(new CategoryProperty(_("Keywords")));
-    AddProperty(new MultiStringsProperty(PROP_KEYWORDS_SET_1, _("Keywords set 1"), " "));
-    AddProperty(new MultiStringsProperty(PROP_KEYWORDS_SET_2, _("Keywords set 2"), " "));
-    AddProperty(new MultiStringsProperty(PROP_KEYWORDS_SET_3, _("Keywords set 3"), " "));
-    AddProperty(new MultiStringsProperty(PROP_KEYWORDS_SET_4, _("Keywords set 4"), " "));
-    AddProperty(new MultiStringsProperty(PROP_KEYWORDS_SET_5, _("Keywords set 5"), " "));
+    Add<CategoryProperty>(_("Keywords"));
+    Add<MultiStringsProperty>(PROP_KEYWORDS_SET_1, _("Keywords set 1"), " ");
+    Add<MultiStringsProperty>(PROP_KEYWORDS_SET_2, _("Keywords set 2"), " ");
+    Add<MultiStringsProperty>(PROP_KEYWORDS_SET_3, _("Keywords set 3"), " ");
+    Add<MultiStringsProperty>(PROP_KEYWORDS_SET_4, _("Keywords set 4"), " ");
+    Add<MultiStringsProperty>(PROP_KEYWORDS_SET_5, _("Keywords set 5"), " ");
 
     m_namePattern = "m_stc";
     SetName(GenerateName());

@@ -66,7 +66,7 @@ DataViewTreeListCtrlWrapper::DataViewTreeListCtrlWrapper()
 
     SetPropertyString(_("Common Settings"), "wxDataViewTreeListCtrl");
     DelProperty(_("Control Specific Settings"));
-    AddProperty(new CategoryProperty(_("Inherited C++ Class Properties")));
+    Add<CategoryProperty>(_("Inherited C++ Class Properties"));
 
     wxString tip;
     tip << _("The generated model class name\n")
@@ -79,10 +79,11 @@ DataViewTreeListCtrlWrapper::DataViewTreeListCtrlWrapper()
     if(name.Left(2) == "m_") {
         name = name.Mid(2);
     }
-    AddProperty(new StringProperty(PROP_DV_MODEL_CLASS_NAME, name + "Model", tip));
-    AddProperty(new BoolProperty(PROP_DV_CONTAINER_ITEM_HAS_COLUMNS, true,
-                                 _("Indicate if a container item merely acts as a headline (or for categorisation) or "
-                                   "if it also acts a normal item with entries for further columns")));
+    Add<StringProperty>(PROP_DV_MODEL_CLASS_NAME, name + "Model", tip);
+    Add<BoolProperty>(PROP_DV_CONTAINER_ITEM_HAS_COLUMNS,
+                      true,
+                      _("Indicate if a container item merely acts as a headline (or for categorisation) or "
+                        "if it also acts a normal item with entries for further columns"));
 }
 
 DataViewTreeListCtrlWrapper::~DataViewTreeListCtrlWrapper() {}

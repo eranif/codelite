@@ -10,10 +10,10 @@ SpacerWrapper::SpacerWrapper()
     m_styles.Clear();
     m_properties.DeleteValues();
 
-    AddProperty(new CategoryProperty(_("Spacer")));
-    AddProperty(new StringProperty(PROP_NAME, wxT("Spacer"), wxT("")));
+    Add<CategoryProperty>(_("Spacer"));
+    Add<StringProperty>(PROP_NAME, wxT("Spacer"), wxT(""));
     // This was removed above because sizers don't do 'size'. But wxSpacer does...
-    AddProperty(new StringProperty(PROP_SIZE, wxT("0,0"), _("The spacer's size: width,height")));
+    Add<StringProperty>(PROP_SIZE, wxT("0,0"), _("The spacer's size: width,height"));
 
     m_namePattern = wxT("Spacer");
     SetName(GenerateName());

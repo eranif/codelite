@@ -15,8 +15,8 @@ WizardPageWrapper::WizardPageWrapper()
     SetPropertyString(_("Common Settings"), "wxWizardPage");
     m_type = ID_WXWIZARDPAGE;
     m_namePattern = wxT("m_wizardPage");
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""),
-                                         _("The page-specific bitmap if different from the global one")));
+    Add<BitmapPickerProperty>(
+        PROP_BITMAP_PATH, wxT(""), _("The page-specific bitmap if different from the global one"));
     DoSetPropertyStringValue(PROP_SIZE, wxT("500,300"));
     SetName(GenerateName());
 }

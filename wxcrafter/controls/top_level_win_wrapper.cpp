@@ -46,31 +46,35 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
     DoSetPropertyStringValue(PROP_SIZE, "500,300");
     if(IsWxTopLevelWindow()) {
         // Add a persistency object support
-        AddBool(PROP_PERSISTENT,
-                _("When enabled, the generated code will add support for wxPersistenceManager (i.e. the Window will "
-                  "remember its size, position and any child wxBookCtrlBase control will remember its selection)"),
-                true);
+        Add<BoolProperty>(
+            PROP_PERSISTENT,
+            true,
+            _("When enabled, the generated code will add support for wxPersistenceManager (i.e. the Window will "
+              "remember its size, position and any child wxBookCtrlBase control will remember its selection)"));
     }
 
     const wxArrayString arr = StdToWX::ToArrayString({ "", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL" });
-    AddProperty(new StringProperty(PROP_TITLE, "", _("The title, if any")));
-    AddProperty(
-        new VirtualFolderProperty(PROP_VIRTUAL_FOLDER, "", _("CodeLite's virtual folder for the generated files")));
-    AddProperty(new ChoiceProperty(PROP_CENTRE_ON_SCREEN, arr, 1,
-                                   _("Centre on parent. This may be in both dimensions (the default); only "
-                                     "vertically or horizontally; or not at all.")));
+    Add<StringProperty>(PROP_TITLE, "", _("The title, if any"));
+    Add<VirtualFolderProperty>(PROP_VIRTUAL_FOLDER, "", _("CodeLite's virtual folder for the generated files"));
+    Add<ChoiceProperty>(PROP_CENTRE_ON_SCREEN,
+                        arr,
+                        1,
+                        _("Centre on parent. This may be in both dimensions (the default); only "
+                          "vertically or horizontally; or not at all."));
 
-    AddProperty(new CategoryProperty(_("Inherited C++ Class Properties")));
-    AddProperty(new StringProperty(PROP_INHERITED_CLASS, "",
-                                   _("Inherited class name\nFill this field to generate a class that inherits from the "
-                                     "base class,\nwhere you should place all your application logic.\ne.g. for a "
-                                     "generated class 'FooDialogBase', you might enter 'FooDialog' here.")));
-    AddProperty(new StringProperty(PROP_FILE, "",
-                                   _("The name for the inherited class's files (without any file "
-                                     "extension).\nwxCrafter will generate a $(FILE).cpp and $(FILE).hpp\ne.g. "
-                                     "for an inherited class 'FooDialog', you might enter 'foodialog' here.")));
-    AddProperty(new StringProperty(PROP_CLASS_DECORATOR, "",
-                                   _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL")));
+    Add<CategoryProperty>(_("Inherited C++ Class Properties"));
+    Add<StringProperty>(PROP_INHERITED_CLASS,
+                        "",
+                        _("Inherited class name\nFill this field to generate a class that inherits from the "
+                          "base class,\nwhere you should place all your application logic.\ne.g. for a "
+                          "generated class 'FooDialogBase', you might enter 'FooDialog' here."));
+    Add<StringProperty>(PROP_FILE,
+                        "",
+                        _("The name for the inherited class's files (without any file extension).\n"
+                          "wxCrafter will generate a $(FILE).cpp and $(FILE).hpp\ne.g. "
+                          "for an inherited class 'FooDialog', you might enter 'foodialog' here."));
+    Add<StringProperty>(
+        PROP_CLASS_DECORATOR, "", _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL"));
 
     if(m_properties.Contains(PROP_NAME)) {
         m_properties.Item(PROP_NAME)->SetTooltip(_("The generated C++ class name"));

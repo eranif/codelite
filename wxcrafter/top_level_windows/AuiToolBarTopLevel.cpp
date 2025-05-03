@@ -15,36 +15,38 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
 
     SetPropertyString(_("Common Settings"), "wxAuiToolBar");
 
-    AddCategory(_("wxAuiToolBar"));
-    AddProperty(new WinIdProperty());
-    AddProperty(new StringProperty(PROP_NAME, "", _("The generated C++ class name")));
-    AddProperty(new StringProperty(PROP_SIZE, "-1,-1",
-                                   _("The control size. It is recommended to leave it as -1,-1 and "
-                                     "let\nthe sizers calculate the best size for the window")));
-    AddProperty(new StringProperty(PROP_TOOLTIP, "", _("Tooltip")));
+    Add<CategoryProperty>(_("wxAuiToolBar"));
+    Add<WinIdProperty>();
+    Add<StringProperty>(PROP_NAME, "", _("The generated C++ class name"));
+    Add<StringProperty>(PROP_SIZE,
+                        "-1,-1",
+                        _("The control size. It is recommended to leave it as -1,-1 and let\n"
+                          "the sizers calculate the best size for the window"));
+    Add<StringProperty>(PROP_TOOLTIP, "", _("Tooltip"));
 
-    AddCategory(_("Inherited C++ Class Properties"));
-    AddProperty(new StringProperty(PROP_INHERITED_CLASS, "",
-                                   _("Inherited class name\nFill this field to generate a class that inherits from the "
-                                     "base class,\nwhere you should place all your application logic.\ne.g. for a "
-                                     "generated class 'FooDialogBase', you might enter 'FooDialog' here.")));
-    AddProperty(new StringProperty(
-        PROP_FILE, "",
+    Add<CategoryProperty>(_("Inherited C++ Class Properties"));
+    Add<StringProperty>(PROP_INHERITED_CLASS,
+                        "",
+                        _("Inherited class name\nFill this field to generate a class that inherits from the "
+                          "base class,\nwhere you should place all your application logic.\ne.g. for a "
+                          "generated class 'FooDialogBase', you might enter 'FooDialog' here."));
+    Add<StringProperty>(
+        PROP_FILE,
+        "",
         _("The name for the inherited class's files (without any file extension).\nwxCrafter will generate a "
-          "$(FILE).cpp and $(FILE).hpp\ne.g. for an inherited class 'FooDialog', you might enter 'foodialog' here.")));
-    AddProperty(new StringProperty(PROP_CLASS_DECORATOR, "",
-                                   _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL")));
+          "$(FILE).cpp and $(FILE).hpp\ne.g. for an inherited class 'FooDialog', you might enter 'foodialog' here."));
+    Add<StringProperty>(
+        PROP_CLASS_DECORATOR, "", _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL"));
 
     if(m_properties.Contains(PROP_NAME)) {
         m_properties.Item(PROP_NAME)->SetTooltip(_("The generated C++ class name"));
     }
 
-    AddProperty(
-        new VirtualFolderProperty(PROP_VIRTUAL_FOLDER, "", _("codelite's virtual folder for the generated files")));
+    Add<VirtualFolderProperty>(PROP_VIRTUAL_FOLDER, "", _("codelite's virtual folder for the generated files"));
 
-    AddCategory(_("Control Specific Settings"));
-    AddProperty(new StringProperty(PROP_BITMAP_SIZE, "16,16", _("Sets the default size of each tool bitmap")));
-    AddProperty(new StringProperty(PROP_MARGINS, "-1,-1", _("Set the values to be used as margins for the toolbar.")));
+    Add<CategoryProperty>(_("Control Specific Settings"));
+    Add<StringProperty>(PROP_BITMAP_SIZE, "16,16", _("Sets the default size of each tool bitmap"));
+    Add<StringProperty>(PROP_MARGINS, "-1,-1", _("Set the values to be used as margins for the toolbar."));
 
     PREPEND_STYLE_FALSE(wxAUI_TB_TEXT);
     PREPEND_STYLE_FALSE(wxAUI_TB_NO_TOOLTIPS);

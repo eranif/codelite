@@ -19,25 +19,23 @@ GridWrapper::GridWrapper()
     const wxArrayString hOpts = StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_CENTRE", "wxALIGN_RIGHT" });
 
     SetPropertyString(_("Common Settings"), "wxGrid");
-    AddProperty(new CategoryProperty(_("wxGrid Header")));
-    AddProperty(new BoolProperty(PROP_AUTOSIZE_COL, true, _("Auto size column content to fit the column header")));
-    AddProperty(
-        new BoolProperty(PROP_GRID_NATIVE_LOOK, true, _("Enable the use of native header window for column labels")));
-    // AddProperty(new BoolProperty(PROP_GRID_NATIVE_COL_LABELS, true, _("Call this in order to make the column labels
-    // use a native look")));
+    Add<CategoryProperty>(_("wxGrid Header"));
+    Add<BoolProperty>(PROP_AUTOSIZE_COL, true, _("Auto size column content to fit the column header"));
+    Add<BoolProperty>(PROP_GRID_NATIVE_LOOK, true, _("Enable the use of native header window for column labels"));
+    // Add<BoolProperty>(PROP_GRID_NATIVE_COL_LABELS, true, _("Call this in order to make the column labels use a native look"));
 
-    AddProperty(new CategoryProperty(_("wxGrid Columns Labels")));
-    AddInteger(PROP_HEIGHT, _("Sets the height of the column label"), -1);
-    AddProperty(new ChoiceProperty(PROP_COL_LABEL_H_ALIGN, hOpts, 1, _("Sets the horizontal alignment of the label")));
-    AddProperty(new ChoiceProperty(PROP_COL_LABEL_V_ALIGN, vOpts, 1, _("Sets the vertical alignment of the label")));
+    Add<CategoryProperty>(_("wxGrid Columns Labels"));
+    Add<IntProperty>(PROP_HEIGHT, -1, _("Sets the height of the column label"));
+    Add<ChoiceProperty>(PROP_COL_LABEL_H_ALIGN, hOpts, 1, _("Sets the horizontal alignment of the label"));
+    Add<ChoiceProperty>(PROP_COL_LABEL_V_ALIGN, vOpts, 1, _("Sets the vertical alignment of the label"));
 
-    AddProperty(new CategoryProperty(_("wxGrid Rows Labels")));
-    AddInteger(PROP_WIDTH, _("Sets the width of the row labels"), -1);
-    AddProperty(new ChoiceProperty(PROP_ROW_LABEL_H_ALIGN, hOpts, 2, _("Sets the horizontal alignment of the label")));
-    AddProperty(new ChoiceProperty(PROP_ROW_LABEL_V_ALIGN, vOpts, 1, _("Sets the vertical alignment of the label")));
+    Add<CategoryProperty>(_("wxGrid Rows Labels"));
+    Add<IntProperty>(PROP_WIDTH, -1, _("Sets the width of the row labels"));
+    Add<ChoiceProperty>(PROP_ROW_LABEL_H_ALIGN, hOpts, 2, _("Sets the horizontal alignment of the label"));
+    Add<ChoiceProperty>(PROP_ROW_LABEL_V_ALIGN, vOpts, 1, _("Sets the vertical alignment of the label"));
 
-    AddProperty(new CategoryProperty(_("wxGrid Cells")));
-    AddProperty(new BoolProperty(PROP_ALLOW_EDITING, true, _("Allow editing grid content")));
+    Add<CategoryProperty>(_("wxGrid Cells"));
+    Add<BoolProperty>(PROP_ALLOW_EDITING, true, _("Allow editing grid content"));
 
     RegisterEvent(wxT("wxEVT_GRID_CELL_CHANGING"), wxT("wxGridEvent"),
                   _("The user is about to change the data in a cell. The new cell value as string is available from "

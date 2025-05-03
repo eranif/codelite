@@ -18,9 +18,9 @@ SpinButtonWrapper::SpinButtonWrapper()
     RegisterEvent(wxT("wxEVT_SPIN"), wxT("wxSpinEvent"), _("Generated whenever an arrow is pressed."));
 
     SetPropertyString(_("Common Settings"), "wxSpinButton");
-    AddProperty(new StringProperty(PROP_VALUE, wxT("0"), _("The initial value")));
-    AddProperty(new StringProperty(PROP_MINVALUE, wxT("0"), _("Minimal value")));
-    AddProperty(new StringProperty(PROP_MAXVALUE, wxT("100"), _("Maximal value")));
+    Add<StringProperty>(PROP_VALUE, wxT("0"), _("The initial value"));
+    Add<StringProperty>(PROP_MINVALUE, wxT("0"), _("Minimal value"));
+    Add<StringProperty>(PROP_MAXVALUE, wxT("100"), _("Maximal value"));
 
     m_namePattern = wxT("m_spinButton");
     SetName(GenerateName());

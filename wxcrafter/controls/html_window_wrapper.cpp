@@ -14,8 +14,8 @@ HtmlWindowWrapper::HtmlWindowWrapper()
     PREPEND_STYLE(wxHW_NO_SELECTION, false);
 
     SetPropertyString(_("Common Settings"), "wxHtmlWindow");
-    AddProperty(new StringProperty(PROP_HTMLCODE, wxT("<b>wxHtmlWindow control!</b>"), _("HTML code to load")));
-    AddProperty(new StringProperty(PROP_URL, wxT(""), _("URL to load")));
+    Add<StringProperty>(PROP_HTMLCODE, wxT("<b>wxHtmlWindow control!</b>"), _("HTML code to load"));
+    Add<StringProperty>(PROP_URL, wxT(""), _("URL to load"));
 
     RegisterEvent(wxT("wxEVT_COMMAND_HTML_CELL_CLICKED"), wxT("wxHtmlCellEvent"), _("A wxHtmlCell was clicked."));
     RegisterEvent(wxT("wxEVT_COMMAND_HTML_CELL_HOVER"), wxT("wxHtmlCellEvent"),

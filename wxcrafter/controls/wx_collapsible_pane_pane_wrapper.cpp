@@ -9,7 +9,7 @@ wxCollapsiblePanePaneWrapper::wxCollapsiblePanePaneWrapper()
     m_styles.Clear();
     m_sizerFlags.Clear();
 
-    AddProperty(new StringProperty(PROP_NAME, _("Name"), _("Name")));
+    Add<StringProperty>(PROP_NAME, _("Name"), _("Name"));
     m_namePattern = "m_collpaneWin";
     SetName(GenerateName());
 }

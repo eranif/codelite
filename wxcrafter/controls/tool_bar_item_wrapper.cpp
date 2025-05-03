@@ -32,21 +32,19 @@ ToolBarItemWrapper::ToolBarItemWrapper(int type)
     m_properties.DeleteValues();
 
     wxCrafter::ResourceLoader bmps;
-    AddProperty(new CategoryProperty(_("Common Settings"), "wxToolBarItem"));
-    AddProperty(new WinIdProperty());
-    AddProperty(new StringProperty(PROP_NAME, "", _("C++ variable name")));
+    Add<CategoryProperty>(_("Common Settings"), "wxToolBarItem");
+    Add<WinIdProperty>();
+    Add<StringProperty>(PROP_NAME, "", _("C++ variable name"));
 
-    AddProperty(new CategoryProperty(_("ToolBar Item")));
-    AddProperty(new StringProperty(PROP_LABEL, _("Tool Label"), _("The tool label")));
-    AddProperty(new MultiStringsProperty(PROP_TOOLTIP, _("Tooltip"), wxT("\\n"),
-                                         _("Short help string. This will appear as the tool's tooltip")));
-    AddProperty(new StringProperty(PROP_HELP, "", _("Long help string. This will be displayed in the statusbar")));
-    AddProperty(
-        new BitmapPickerProperty(PROP_BITMAP_PATH, bmps.GetPlaceHolder16ImagePath().GetFullPath(), _("Bitmap")));
-    AddProperty(new FilePickerProperty(PROP_DISABLED_BITMAP_PATH, "", _("Disabled bitmap")));
-    AddProperty(new ChoiceProperty(PROP_KIND, wxCrafter::GetToolTypes(true), 0, _("The tool kind")));
-    AddProperty(
-        new BoolProperty(PROP_DROPDOWN_MENU, true, _("Use wxCrafter to construct the menu called by the dropdown")));
+    Add<CategoryProperty>(_("ToolBar Item"));
+    Add<StringProperty>(PROP_LABEL, _("Tool Label"), _("The tool label"));
+    Add<MultiStringsProperty>(
+        PROP_TOOLTIP, _("Tooltip"), wxT("\\n"), _("Short help string. This will appear as the tool's tooltip"));
+    Add<StringProperty>(PROP_HELP, "", _("Long help string. This will be displayed in the statusbar"));
+    Add<BitmapPickerProperty>(PROP_BITMAP_PATH, bmps.GetPlaceHolder16ImagePath().GetFullPath(), _("Bitmap"));
+    Add<FilePickerProperty>(PROP_DISABLED_BITMAP_PATH, "", _("Disabled bitmap"));
+    Add<ChoiceProperty>(PROP_KIND, wxCrafter::GetToolTypes(true), 0, _("The tool kind"));
+    Add<BoolProperty>(PROP_DROPDOWN_MENU, true, _("Use wxCrafter to construct the menu called by the dropdown"));
 
     m_namePattern = wxT("m_toolbarItem");
     SetName(GenerateName());
@@ -373,9 +371,9 @@ ToolBarItemSeparatorWrapper::ToolBarItemSeparatorWrapper()
     wxArrayString kinds;
     kinds.Add(ITEM_SEPARATOR);
 
-    AddCategory(_("ToolBar Item Separator"));
-    AddProperty(new StringProperty(PROP_NAME, "", "Name"));
-    AddProperty(new ChoiceProperty(PROP_KIND, kinds, 0, _("The tool kind")));
+    Add<CategoryProperty>(_("ToolBar Item Separator"));
+    Add<StringProperty>(PROP_NAME, "", "Name");
+    Add<ChoiceProperty>(PROP_KIND, kinds, 0, _("The tool kind"));
 
     m_namePattern = "m_tbSeparator";
     SetName(GenerateName());
@@ -401,9 +399,9 @@ ToolBarItemSpaceWrapper::ToolBarItemSpaceWrapper()
     wxArrayString kinds;
     kinds.Add(ITEM_SPACE);
 
-    AddCategory(_("ToolBar Item Space"));
-    AddProperty(new StringProperty(PROP_NAME, "", "Name"));
-    AddProperty(new ChoiceProperty(PROP_KIND, kinds, 0, _("The tool kind")));
+    Add<CategoryProperty>(_("ToolBar Item Space"));
+    Add<StringProperty>(PROP_NAME, "", "Name");
+    Add<ChoiceProperty>(PROP_KIND, kinds, 0, _("The tool kind"));
 
     m_namePattern = "m_toolbarSpacer";
     SetName(GenerateName());
@@ -424,9 +422,9 @@ AuiToolBarItemNonStretchSpaceWrapper::AuiToolBarItemNonStretchSpaceWrapper()
     m_properties.DeleteValues();
     m_sizerFlags.Clear();
 
-    AddCategory(_("AuiToolBar Item Space"));
-    AddProperty(new StringProperty(PROP_NAME, "", "Name"));
-    AddProperty(new StringProperty(PROP_WIDTH, "0", _("The width of the space in pixels")));
+    Add<CategoryProperty>(_("AuiToolBar Item Space"));
+    Add<StringProperty>(PROP_NAME, "", "Name");
+    Add<StringProperty>(PROP_WIDTH, "0", _("The width of the space in pixels"));
 
     m_namePattern = "m_auitbarNonstretchSpace";
     SetName(GenerateName());
@@ -453,9 +451,9 @@ AuiToolBarItemSpaceWrapper::AuiToolBarItemSpaceWrapper()
     m_properties.DeleteValues();
     m_sizerFlags.Clear();
 
-    AddCategory(_("ToolBar Item Space"));
-    AddProperty(new StringProperty(PROP_NAME, "", "Name"));
-    AddProperty(new StringProperty(PROP_PROPORTION, "1", _("How stretchable the space is. The normal value is 1.")));
+    Add<CategoryProperty>(_("ToolBar Item Space"));
+    Add<StringProperty>(PROP_NAME, "", "Name");
+    Add<StringProperty>(PROP_PROPORTION, "1", _("How stretchable the space is. The normal value is 1."));
 
     m_namePattern = "m_auitbarStretchSpace";
     SetName(GenerateName());
@@ -483,11 +481,11 @@ AuiToolBarLabelWrapper::AuiToolBarLabelWrapper(int type)
     m_properties.DeleteValues();
 
     wxCrafter::ResourceLoader bmps;
-    AddProperty(new CategoryProperty(_("wxAuiToolBar Label")));
-    AddProperty(new WinIdProperty());
-    AddProperty(new StringProperty(PROP_NAME, "", _("C++ variable name")));
-    AddProperty(new StringProperty(PROP_LABEL, _("My toolbar label"), _("The label's text")));
-    AddProperty(new StringProperty(PROP_WIDTH, "-1", _("Optionally, specify the label's width")));
+    Add<CategoryProperty>(_("wxAuiToolBar Label"));
+    Add<WinIdProperty>();
+    Add<StringProperty>(PROP_NAME, "", _("C++ variable name"));
+    Add<StringProperty>(PROP_LABEL, _("My toolbar label"), _("The label's text"));
+    Add<StringProperty>(PROP_WIDTH, "-1", _("Optionally, specify the label's width"));
 
     m_namePattern = wxT("m_auitbarLabel");
     SetName(GenerateName());

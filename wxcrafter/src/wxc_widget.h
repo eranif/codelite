@@ -188,29 +188,10 @@ protected:
     const wxString& GetCondname() const { return m_condname; }
 
     /// aliases for adding property
-    void AddCategory(const wxString& name) { AddProperty(new CategoryProperty(name)); }
-    /**
-     * @brief add string property
-     */
-    void AddText(const wxString& name, const wxString& description, const wxString& defaultValue = wxEmptyString)
+    template <typename T, typename... Ts>
+    void Add(Ts&&... args)
     {
-        AddProperty(new StringProperty(name, defaultValue, description));
-    }
-
-    /**
-     * @brief add bool property
-     */
-    void AddBool(const wxString& name, const wxString& description, bool defaultValue)
-    {
-        AddProperty(new BoolProperty(name, defaultValue, description));
-    }
-
-    /**
-     * @brief add integer property
-     */
-    void AddInteger(const wxString& name, const wxString& description, int defaultValue)
-    {
-        AddProperty(new IntProperty(name, defaultValue, description));
+        AddProperty(new T{ std::forward<Ts>(args)... });
     }
 
     void DelProperty(const wxString& name);

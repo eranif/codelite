@@ -23,12 +23,12 @@ NotebookPageWrapper::NotebookPageWrapper()
 {
 
     SetPropertyString(_("Common Settings"), "wxNotebookPage");
-    AddProperty(new StringProperty(PROP_LABEL, _("Page"), _("The tab's label")));
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Tab Image")));
-    AddProperty(new BoolProperty(PROP_SELECTED, false, _("Select this page")));
-    AddProperty(
-        new BoolProperty(PROP_NULL_BOOK_PAGE, false,
-                         _("Add a NULL page. This is only makes sense when the notebook is of type wxTreebook")));
+    Add<StringProperty>(PROP_LABEL, _("Page"), _("The tab's label"));
+    Add<BitmapPickerProperty>(PROP_BITMAP_PATH, wxT(""), _("Tab Image"));
+    Add<BoolProperty>(PROP_SELECTED, false, _("Select this page"));
+    Add<BoolProperty>(PROP_NULL_BOOK_PAGE,
+                      false,
+                      _("Add a NULL page. This is only makes sense when the notebook is of type wxTreebook"));
 
     // Enable the 'wxTAB_TRAVERSAL' style
     EnableStyle(wxT("wxTAB_TRAVERSAL"), true);
@@ -200,7 +200,7 @@ void NotebookPageWrapper::SetParent(wxcWidget* parent)
         DelProperty(PROP_BITMAP_PATH);
 
     } else if(IsTreebookPage()) {
-        AddProperty(new BoolProperty(PROP_EXPANDED, true, _("Expand this node")));
+        Add<BoolProperty>(PROP_EXPANDED, true, _("Expand this node"));
     }
 }
 

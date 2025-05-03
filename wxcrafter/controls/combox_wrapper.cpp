@@ -11,12 +11,13 @@ ComboxWrapper::ComboxWrapper()
     : wxcWidget(ID_WXCOMBOBOX)
 {
     SetPropertyString(_("Common Settings"), "wxComboBox");
-    AddProperty(new MultiStringsProperty(PROP_CB_CHOICES, _("Combobox drop down choices")));
-    AddProperty(new StringProperty(PROP_HINT, "", _("Sets a hint shown in an empty unfocused text control")));
-    AddProperty(new StringProperty(
-        PROP_SELECTION, wxT("-1"),
-        _("The zero-based position of any initially selected string, or -1 if none are to be selected")));
-    AddProperty(new StringProperty(PROP_VALUE, "", _("The combobox initial value")));
+    Add<MultiStringsProperty>(PROP_CB_CHOICES, _("Combobox drop down choices"));
+    Add<StringProperty>(PROP_HINT, "", _("Sets a hint shown in an empty unfocused text control"));
+    Add<StringProperty>(
+        PROP_SELECTION,
+        wxT("-1"),
+        _("The zero-based position of any initially selected string, or -1 if none are to be selected"));
+    Add<StringProperty>(PROP_VALUE, "", _("The combobox initial value"));
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_COMBOBOX_SELECTED"),
                          _("Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is selected. "

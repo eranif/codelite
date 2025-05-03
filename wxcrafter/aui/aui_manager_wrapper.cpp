@@ -28,27 +28,25 @@ AuiManagerWrapper::AuiManagerWrapper()
     // wxAUI_DOCKART_GRADIENT_TYPE
 
     SetPropertyString(_("Common Settings"), "wxAuiManager");
-    AddProperty(new CategoryProperty(_("General")));
-    AddProperty(new StringProperty(PROP_NAME, "", _("wxAuiManager member name")));
-    AddProperty(new ColorProperty(PROP_BG, "<Default>", _("Background Colour")));
-    AddProperty(new IntProperty(PROP_AUI_PANE_BORDER_SIZE, -1, _("Pane border size")));
+    Add<CategoryProperty>(_("General"));
+    Add<StringProperty>(PROP_NAME, "", _("wxAuiManager member name"));
+    Add<ColorProperty>(PROP_BG, "<Default>", _("Background Colour"));
+    Add<IntProperty>(PROP_AUI_PANE_BORDER_SIZE, -1, _("Pane border size"));
 
-    AddProperty(new CategoryProperty(_("Sash")));
-    AddProperty(new ColorProperty(PROP_AUI_SASH_COLOUR, "<Default>", _("Sash colour")));
-    AddProperty(new IntProperty(PROP_AUI_SASH_SIZE, -1, _("Set the wxAUI sash size")));
+    Add<CategoryProperty>(_("Sash"));
+    Add<ColorProperty>(PROP_AUI_SASH_COLOUR, "<Default>", _("Sash colour"));
+    Add<IntProperty>(PROP_AUI_SASH_SIZE, -1, _("Set the wxAUI sash size"));
 
-    AddProperty(new CategoryProperty(_("Caption")));
+    Add<CategoryProperty>(_("Caption"));
     wxArrayString gradientTypes = StdToWX::ToArrayString({"wxAUI_GRADIENT_NONE", "wxAUI_GRADIENT_VERTICAL", "wxAUI_GRADIENT_HORIZONTAL"});
-    AddProperty(new ChoiceProperty(PROP_AUI_GRADIENT_TYPE, gradientTypes, 0, _("Gradient type")));
+    Add<ChoiceProperty>(PROP_AUI_GRADIENT_TYPE, gradientTypes, 0, _("Gradient type"));
 
-    AddProperty(new ColorProperty(PROP_AUI_CAPTION_COLOUR, "<Default>", _("Active caption colour")));
-    AddProperty(new ColorProperty(PROP_AUI_CAPTION_COLOUR_GRADIENT, "<Default>", _("Active caption gradient colour")));
-    AddProperty(new ColorProperty(PROP_AUI_INACTIVE_CAPTION_COLOUR, "<Default>", _("Inactive caption colour")));
-    AddProperty(new ColorProperty(PROP_AUI_INACTIVE_CAPTION_COLOUR_GRADIENT, "<Default>",
-                                  _("Inactive caption gradient colour")));
-    AddProperty(new ColorProperty(PROP_AUI_ACTIVE_CAPTION_TEXT_COLOUR, "<Default>", _("Active caption text colour")));
-    AddProperty(
-        new ColorProperty(PROP_AUI_INACTIVE_CAPTION_TEXT_COLOUR, "<Default>", _("Inactive caption text colour")));
+    Add<ColorProperty>(PROP_AUI_CAPTION_COLOUR, "<Default>", _("Active caption colour"));
+    Add<ColorProperty>(PROP_AUI_CAPTION_COLOUR_GRADIENT, "<Default>", _("Active caption gradient colour"));
+    Add<ColorProperty>(PROP_AUI_INACTIVE_CAPTION_COLOUR, "<Default>", _("Inactive caption colour"));
+    Add<ColorProperty>(PROP_AUI_INACTIVE_CAPTION_COLOUR_GRADIENT, "<Default>", _("Inactive caption gradient colour"));
+    Add<ColorProperty>(PROP_AUI_ACTIVE_CAPTION_TEXT_COLOUR, "<Default>", _("Active caption text colour"));
+    Add<ColorProperty>(PROP_AUI_INACTIVE_CAPTION_TEXT_COLOUR, "<Default>", _("Inactive caption text colour"));
 
     m_styles.Clear();
 

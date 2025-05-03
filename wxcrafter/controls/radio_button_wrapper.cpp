@@ -11,8 +11,8 @@ RadioButtonWrapper::RadioButtonWrapper()
     PREPEND_STYLE(wxRB_SINGLE, false);
 
     SetPropertyString(_("Common Settings"), "wxRadioButton");
-    AddProperty(new StringProperty(PROP_LABEL, _("My RadioButton"), _("Label")));
-    AddProperty(new BoolProperty(PROP_VALUE, true, _("Initial value")));
+    Add<StringProperty>(PROP_LABEL, _("My RadioButton"), _("Label"));
+    Add<BoolProperty>(PROP_VALUE, true, _("Initial value"));
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_RADIOBUTTON_SELECTED"),
                          _("Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked."));

@@ -14,16 +14,15 @@ ImageListWrapper::ImageListWrapper()
     m_sizerFlags.Clear();
 
     SetPropertyString(_("Common Settings"), "wxImageList");
-    AddProperty(new CategoryProperty(_("Inherited C++ Class Properties")));
-    AddProperty(new StringProperty(PROP_NAME, "", _("The generated C++ class name")));
-    AddProperty(new StringProperty(PROP_FILE, "", _("The filenames for the generated files")));
-    AddProperty(
-        new VirtualFolderProperty(PROP_VIRTUAL_FOLDER, "", _("codelite's virtual folder for the generated files")));
-    AddProperty(new StringProperty(PROP_CLASS_DECORATOR, "",
-                                   _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL")));
-    AddProperty(new CategoryProperty(_("wxImageList")));
-    AddProperty(new IntProperty(PROP_BITMAP_SIZE, 16, _("The bitmaps size")));
-    AddProperty(new BoolProperty(PROP_IMGLIST_MASK, true, _("True if masks should be created for all images")));
+    Add<CategoryProperty>(_("Inherited C++ Class Properties"));
+    Add<StringProperty>(PROP_NAME, "", _("The generated C++ class name"));
+    Add<StringProperty>(PROP_FILE, "", _("The filenames for the generated files"));
+    Add<VirtualFolderProperty>(PROP_VIRTUAL_FOLDER, "", _("codelite's virtual folder for the generated files"));
+    Add<StringProperty>(
+        PROP_CLASS_DECORATOR, "", _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL"));
+    Add<CategoryProperty>(_("wxImageList"));
+    Add<IntProperty>(PROP_BITMAP_SIZE, 16, _("The bitmaps size"));
+    Add<BoolProperty>(PROP_IMGLIST_MASK, true, _("True if masks should be created for all images"));
 }
 
 ImageListWrapper::~ImageListWrapper() {}

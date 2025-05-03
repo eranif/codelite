@@ -241,7 +241,12 @@ def get_grep_command(cmd):
     if cmd["icase"] == True:
         command += "-i "
 
-    find_what = cmd["find_what"]
+    find_what: str = cmd["find_what"]
+
+    # Until we support regex, escape "[]-"
+    find_what = find_what.replace("[", "\\[")
+    find_what = find_what.replace("]", "\\]")
+    find_what = find_what.replace("-", "\\-")
 
     command += f"'{find_what}' "
     command += "%FILE%"

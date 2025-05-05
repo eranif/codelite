@@ -1,10 +1,8 @@
 #include "DAPBreakpointsView.h"
 
 #include "DebugAdapterClient.hpp"
-#include "UIBreakpoint.hpp"
 #include "dap/dap.hpp"
 
-#include <algorithm>
 #include <unordered_map>
 #include <wx/msgdlg.h>
 

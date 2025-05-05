@@ -15,20 +15,20 @@ protected:
     wxArrayString m_strings;
     wxString m_fileName;
     wxString m_oldName;
-    bool m_answer;
-    bool m_allowed;
-    int m_lineNumber;
-    bool m_selected;
+    bool m_answer = false;
+    bool m_allowed = true;
+    int m_lineNumber = 0;
+    bool m_selected = false;
     std::string m_stringRaw;
 
 public:
     wxTerminalEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    wxTerminalEvent(const wxTerminalEvent& event);
-    wxTerminalEvent& operator=(const wxTerminalEvent& src);
-    virtual ~wxTerminalEvent();
+    wxTerminalEvent(const wxTerminalEvent&) = default;
+    wxTerminalEvent& operator=(const wxTerminalEvent&) = delete;
+    ~wxTerminalEvent() override = default;
 
-    wxClientData* GetClientObject() const;
-    virtual wxEvent* Clone() const;
+    //wxClientData* GetClientObject() const;
+    wxEvent* Clone() const override;
 
     wxTerminalEvent& SetLineNumber(int lineNumber)
     {
@@ -71,7 +71,7 @@ public:
     void SetStringRaw(const std::string& str) { m_stringRaw = str; }
 };
 
-typedef void (wxEvtHandler::*wxTerminalEventFunction)(wxTerminalEvent&);
+using wxTerminalEventFunction = void (wxEvtHandler::*)(wxTerminalEvent&);
 #define wxTerminalEventHandler(func) wxEVENT_HANDLER_CAST(wxTerminalEventFunction, func)
 
 // The terminal is ready. This event will include the PTS name (e.g. /dev/pts/12).

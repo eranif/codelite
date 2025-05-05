@@ -54,11 +54,11 @@ protected:
 
 public:
     clFileSystemEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clFileSystemEvent(const clFileSystemEvent& event);
-    clFileSystemEvent& operator=(const clFileSystemEvent& src);
+    clFileSystemEvent(const clFileSystemEvent&) = default;
+    clFileSystemEvent& operator=(const clFileSystemEvent&) = delete;
 
-    virtual ~clFileSystemEvent();
-    virtual wxEvent* Clone() const { return new clFileSystemEvent(*this); }
+    ~clFileSystemEvent() override = default;
+    wxEvent* Clone() const override { return new clFileSystemEvent(*this); }
     void SetPath(const wxString& path) { this->m_path = path; }
     const wxString& GetPath() const { return m_path; }
     void SetNewpath(const wxString& newpath) { this->m_newpath = newpath; }
@@ -71,7 +71,7 @@ public:
     bool IsRemoteFile() const { return HasBit(IS_REMOTE); }
 };
 
-typedef void (wxEvtHandler::*clFileSystemEventFunction)(clFileSystemEvent&);
+using clFileSystemEventFunction = void (wxEvtHandler::*)(clFileSystemEvent&);
 #define clFileSystemEventHandler(func) wxEVENT_HANDLER_CAST(clFileSystemEventFunction, func)
 
 #endif // CLFILESYSTEMEVENT_H

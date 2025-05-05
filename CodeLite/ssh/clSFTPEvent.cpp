@@ -8,25 +8,8 @@ wxDEFINE_EVENT(wxEVT_SFTP_SESSION_OPENED, clSFTPEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_SESSION_CLOSED, clSFTPEvent);
 wxDEFINE_EVENT(wxEVT_SFTP_FILE_READ, clSFTPEvent);
 
-clSFTPEvent::~clSFTPEvent() {}
-
-clSFTPEvent::clSFTPEvent(const clSFTPEvent& event) { *this = event; }
-
 clSFTPEvent::clSFTPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {
 }
 
-clSFTPEvent& clSFTPEvent::operator=(const clSFTPEvent& src)
-{
-    clCommandEvent::operator=(src);
-
-    m_account = src.m_account;
-    m_localFile = src.m_localFile;
-    m_remoteFile = src.m_remoteFile;
-    m_newRemoteFile = src.m_newRemoteFile;
-    m_selectionEnd = src.m_selectionEnd;
-    m_selectionStart = src.m_selectionStart;
-    m_content = src.m_content;
-    return *this;
-}

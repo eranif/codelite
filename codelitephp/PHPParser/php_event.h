@@ -33,16 +33,16 @@ class PHPEvent : public clCommandEvent
     wxString      m_oldFilename;
     wxArrayString m_fileList;
     wxString      m_url;
-    bool          m_useDefaultBrowser;
-    int           m_lineNumber;
+    bool          m_useDefaultBrowser = false;
+    int           m_lineNumber = -1;
 
 public:
     PHPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    PHPEvent(const PHPEvent& src);
-    PHPEvent& operator=(const PHPEvent& src);
-    virtual ~PHPEvent();
+    PHPEvent(const PHPEvent&) = default;
+    PHPEvent& operator=(const PHPEvent&) = delete;
+    ~PHPEvent() override = default;
 
-    virtual wxEvent *Clone() const;
+    wxEvent *Clone() const override;
     void SetLineNumber(int lineNumber) {
         this->m_lineNumber = lineNumber;
     }

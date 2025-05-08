@@ -546,11 +546,10 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
     }
 
     // copy back the files to the array
-    std::unordered_set<wxString>::iterator iter = files_set.begin();
     strFiles.Clear();
     strFiles.Alloc(files_set.size());
-    for(; iter != files_set.end(); iter++) {
-        strFiles.Add(*iter);
+    for (const auto& s : files_set) {
+        strFiles.Add(s);
     }
 }
 

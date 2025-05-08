@@ -111,7 +111,7 @@ public:
 	/**
 	* Print the tree to stream (default is stdout).
 	*/
-	void Print(std::ostream& stream = std::cout , int depth = 0);
+	void Print(std::ostream& stream = std::cout , int depth = 0) const;
 
 	/**
 	* Check if this node is root.
@@ -185,10 +185,9 @@ TreeNode<TKey, TData>::TreeNode(const TKey& key, const TData& data, TreeNode* pa
 template <class TKey, class TData>
 TreeNode<TKey, TData>::~TreeNode()
 {
-	typename std::map<TreeNode*, TreeNode*>::iterator iter = m_childs.begin();
-	for(; iter != m_childs.end(); iter++)
+	for (const auto& [_, p] : m_childs)
 	{
-		delete iter->second;
+		delete p;
 	}
 	m_childs.clear();
 }
@@ -237,24 +236,23 @@ TreeNode<TKey, TData>* TreeNode<TKey, TData>::Find(const TKey& key)
 	typename std::map<TreeNode*, TreeNode*>::iterator iter;
 
 	// Scan first the childs of this node
-	for(iter = m_childs.begin(); iter != m_childs.end(); iter++)
+	for (auto& [_, child] : m_childs)
 	{
-		if(((TreeNode*)iter->second)->GetKey() == key)
-			return iter->second;
+		if (child->GetKey() == key)
+			return child;
 	}
 
 	// Scan level below
-	for(iter = m_childs.begin(); iter != m_childs.end(); iter++)
+	for (auto& [_, child] : m_childs)
 	{
-		TreeNode* node = NULL;
-		node = iter->second->Find(key);
-		if(node) return node;
+		TreeNode* node = child->Find(key);
+		if (node) return node;
 	}
 	return NULL;
 }
 
 template <class TKey, class TData>
-void TreeNode<TKey, TData>::Print(std::ostream& stream, int depth)
+void TreeNode<TKey, TData>::Print(std::ostream& stream, int depth) const
 {
 	std::string tab = " ";
 	for(int i=0; i<depth; i++)
@@ -263,9 +261,8 @@ void TreeNode<TKey, TData>::Print(std::ostream& stream, int depth)
 	stream << tab.c_str() << m_key << std::endl;
 	depth++;
 
-	typename std::map<TreeNode*, TreeNode*>::iterator iter = m_childs.begin();
-	for(; iter != m_childs.end(); iter++)
-		iter->second->Print(stream, depth);
+	for (const auto& [_, child] : m_childs)
+		child->Print(stream, depth);
 }
 
 /// Prepare for tree iteration in the current node
@@ -334,11 +331,10 @@ void TreeWalker<TKey, TData>::GetChildren(TreeNode<TKey, TData>* node)
 {
 	if(node == NULL)
 		return;
-	typename std::map<TreeNode<TKey, TData>*, TreeNode<TKey, TData>*>::iterator iter = node->GetChilds().begin();
-	for(; iter != node->GetChilds().end(); iter++)
+	for (auto& [_, child] : node->GetChilds())
 	{
-		m_children.push_back(iter->second);
-		GetChildren(iter->second);
+		m_children.push_back(child);
+		GetChildren(child);
 	}
 }
 

@@ -463,9 +463,8 @@ void PhpPlugin::OnGetWorkspaceFiles(wxCommandEvent& e)
         if(pfiles) {
             wxStringSet_t files;
             PHPWorkspace::Get()->GetWorkspaceFiles(files);
-            wxStringSet_t::iterator iter = files.begin();
-            for(; iter != files.end(); iter++) {
-                pfiles->Add(*iter);
+            for (const auto& file : files) {
+                pfiles->Add(file);
             }
         }
 
@@ -670,13 +669,11 @@ void PhpPlugin::RunXDebugDiagnostics()
         html << "<table>";
 
         html << "<tr valign=\"top\" align=\"left\"><th>What?</th><th>Result</th><th>Description</th></tr>";
-        const XDebugTester::ResultMap_t& result = xdebugTester.GetResults();
-        XDebugTester::ResultMap_t::const_iterator iter = result.begin();
-        for(; iter != result.end(); ++iter) {
+        for (const auto& p : xdebugTester.GetResults()) {
             html << "<tr valign=\"top\" align=\"left\">";
-            html << "<td>" << iter->first << "</td>";
-            html << "<td>" << iter->second.first << "</td>";
-            html << "<td>" << iter->second.second << "</td>";
+            html << "<td>" << p.first << "</td>";
+            html << "<td>" << p.second.first << "</td>";
+            html << "<td>" << p.second.second << "</td>";
             html << "</tr>";
         }
 

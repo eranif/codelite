@@ -622,11 +622,10 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& strin
         return *this;
 
     JSONItem arr = JSONItem::createArray(name);
-    wxStringMap_t::const_iterator iter = stringMap.begin();
-    for (; iter != stringMap.end(); ++iter) {
+    for (const auto& [key, value] : stringMap) {
         JSONItem obj = JSONItem::createObject();
-        obj.addProperty("key", iter->first);
-        obj.addProperty("value", iter->second);
+        obj.addProperty("key", key);
+        obj.addProperty("value", value);
         arr.arrayAppend(obj);
     }
     append(arr);

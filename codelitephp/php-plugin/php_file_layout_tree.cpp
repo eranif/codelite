@@ -179,12 +179,9 @@ void PHPFileLayoutTree::BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Pt
     int imgID = GetImageId(entity);
     wxTreeItemId parent = AppendItem(parentTreeItem, entity->GetDisplayName(), imgID, imgID, new QItemData(entity));
     // dont add the children of the function (i.e. function arguments)
-    if(entity->Is(kEntityTypeFunction)) return;
-    const PHPEntityBase::List_t& children = entity->GetChildren();
-    if(!children.empty()) {
-        PHPEntityBase::List_t::const_iterator iter = children.begin();
-        for(; iter != children.end(); ++iter) {
-            BuildTree(parent, *iter);
-        }
+    if (entity->Is(kEntityTypeFunction)) return;
+
+    for (const auto& child : entity->GetChildren()) {
+        BuildTree(parent, child);
     }
 }

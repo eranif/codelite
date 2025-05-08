@@ -109,11 +109,10 @@ wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath, bool u
     fullMapping.insert(additionalMapping.begin(), additionalMapping.end());
 
     wxString sourceFullPath = fnSource.GetFullPath();
-    wxStringMap_t::const_iterator iter = fullMapping.begin();
-    for(; iter != fullMapping.end(); ++iter) {
-        if(sourceFullPath.StartsWith(iter->first)) {
-            sourceFullPath.Remove(0, iter->first.length());
-            sourceFullPath.Prepend(iter->second + "/");
+    for (const auto& p : fullMapping) {
+        if (sourceFullPath.StartsWith(p.first)) {
+            sourceFullPath.Remove(0, p.first.length());
+            sourceFullPath.Prepend(p.second + "/");
             sourceFullPath.Replace("\\", "/");
             while(sourceFullPath.Replace("//", "/")) {}
 

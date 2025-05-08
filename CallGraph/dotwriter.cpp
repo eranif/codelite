@@ -349,11 +349,11 @@ bool DotWriter::GetOuterTemplate(const wxString& txt, int* start, int* end)
     int cnt = 0;
     int pos = 0;
 
-    for(wxString::const_iterator it = txt.begin(); it != txt.end(); ++it) {
-        if(*it == wxT('<')) {
+    for (auto c : txt) {
+        if (c == wxT('<')) {
             if(cnt == 0) *start = pos;
             cnt++;
-        } else if(*it == wxT('>')) {
+        } else if (c == wxT('>')) {
             cnt--;
             if(cnt == 0) *end = pos;
             return true;

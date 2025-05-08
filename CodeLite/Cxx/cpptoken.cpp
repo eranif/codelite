@@ -78,9 +78,8 @@ void CppTokensMap::addToken(const CppToken& token)
 
 void CppTokensMap::clear()
 {
-    std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.begin();
-    for(; iter != m_tokens.end(); ++iter) {
-        delete iter->second;
+    for (auto& [_, p] : m_tokens) {
+        delete p;
     }
     m_tokens.clear();
 }

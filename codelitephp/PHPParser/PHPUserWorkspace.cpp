@@ -46,12 +46,11 @@ PHPUserWorkspace& PHPUserWorkspace::Save()
     JSON root(cJSON_Object);
     JSONItem json = root.toElement();
     JSONItem bpArr = JSONItem::createArray("m_breakpoints");
-    json.append( bpArr );
-    
-    XDebugBreakpoint::List_t::const_iterator iter = m_breakpoints.begin();
-    for( ; iter != m_breakpoints.end(); ++iter ) {
-        bpArr.arrayAppend( iter->ToJSON() );
+    json.append(bpArr);
+
+    for (const auto& breakpoint : m_breakpoints) {
+        bpArr.arrayAppend(breakpoint.ToJSON());
     }
-    root.save( GetFileName() );
+    root.save(GetFileName());
     return *this;
 }

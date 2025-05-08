@@ -60,7 +60,7 @@ public:
 	bool recursive;
 	int  cycleid;
 	
-	LineParser* Clone();
+	LineParser* Clone() const;
 };
 
 WX_DECLARE_LIST( LineParser, LineParserList );

@@ -86,7 +86,7 @@ void SizerFlagsListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
 
     if(m_wxcWidget->IsTopWindow() || !m_wxcWidget->IsSizerItem()) { return; }
 
-    // Popuplate the sizer flags
+    // Populate the sizer flags
     pg->Append(new wxIntProperty(_("Proportion"), wxPG_LABEL, m_wxcWidget->SizerItem().GetProportion()));
     pg->Append(new wxIntProperty(_("Border"), wxPG_LABEL, m_wxcWidget->SizerItem().GetBorder()));
 

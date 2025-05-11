@@ -32,7 +32,7 @@ clZipReader::~clZipReader() { Close(); }
 
 void clZipReader::Close()
 {
-    // destory them in reverse order of the creation
+    // destroy them in reverse order of the creation
     wxDELETE(m_zip);
     wxDELETE(m_file);
 }

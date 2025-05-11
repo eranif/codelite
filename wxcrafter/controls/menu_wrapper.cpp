@@ -14,7 +14,7 @@ MenuWrapper::MenuWrapper()
 #endif
 
     RegisterEvent("wxEVT_MENU_OPEN", "wxMenuEvent", _("The menu is about to open"));
-    RegisterEvent("wxEVT_MENU_HIGHLIGHT", "wxMenuEvent", _("A particular menu item has been highlit"));
+    RegisterEvent("wxEVT_MENU_HIGHLIGHT", "wxMenuEvent", _("A particular menu item has been highlighted"));
     RegisterEvent("wxEVT_MENU_HIGHLIGHT_ALL", "wxMenuEvent", _("The currently selected menu item has changed"));
     RegisterEvent("wxEVT_MENU_CLOSE", "wxMenuEvent", _("The menu is about to close"));
 

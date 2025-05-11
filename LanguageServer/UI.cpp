@@ -68,7 +68,7 @@ LanguageServerSettingsDlgBase::LanguageServerSettingsDlgBase(wxWindow* parent, w
     boxSizer106->Add(boxSizer108, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_buttonScan = new wxButton(this, wxID_FIND, _("Scan..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_buttonScan->SetToolTip(_("Scan for installed Language Servers insalled"));
+    m_buttonScan->SetToolTip(_("Scan for installed Language Servers"));
 
     boxSizer108->Add(m_buttonScan, 0, wxALL, WXC_FROM_DIP(5));
 

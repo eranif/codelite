@@ -72,6 +72,6 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel(wxWindow* parent, Opt
                                                          colour_value.GetAsString(wxC2S_HTML_SYNTAX));
                     }
                 });
-    AddProperty(_("Find/Find Next clears highlit matching words"), m_options->GetClearHighlitWordsOnFind(),
+    AddProperty(_("Find/Find Next clears highlighted matching words"), m_options->GetClearHighlitWordsOnFind(),
                 UPDATE_BOOL_CB(SetClearHighlitWordsOnFind));
 }

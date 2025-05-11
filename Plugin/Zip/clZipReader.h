@@ -68,7 +68,7 @@ public:
     void ExtractAll(const wxString& directory);
 
     /**
-     * @brief extract all zip entries and constract a map of name:memory-output-stream ptr
+     * @brief extract all zip entries and construct a map of name:memory-output-stream ptr
      */
     void ExtractAll(std::unordered_map<wxString, Entry>& buffers);
 

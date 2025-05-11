@@ -96,8 +96,8 @@ void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
     // Sort the entries by their weight
     wxCodeCompletionBoxEntry::Vec_t& entries = event.GetEntries();
 
-    // We dont want to mess with the default sorting. We just want to place the onse with weight at the top
-    // so we split the list into 2: entries with weight geater than 0 and 0
+    // We don't want to mess with the default sorting. We just want to place the ones with weight at the top
+    // so we split the list into 2: entries with weight greater than 0 and 0
     wxCodeCompletionBoxEntry::Vec_t importantEntries;
     wxCodeCompletionBoxEntry::Vec_t normalEntries;
     wxCodeCompletionBoxEntry::Vec_t::iterator iter = entries.begin();
@@ -116,7 +116,7 @@ void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
     // Step 2: sort the important entries, based on their weight
     std::sort(importantEntries.begin(), importantEntries.end(),
               [&](wxCodeCompletionBoxEntry::Ptr_t a, wxCodeCompletionBoxEntry::Ptr_t b) {
-                  // Sort in desecnding order
+                  // Sort in descending order
                   return a->GetWeight() > b->GetWeight();
               });
 
@@ -139,8 +139,8 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
     // Sort the entries by their weight
     clGotoEntry::Vec_t& entries = event.GetEntries();
     WeightTable_t& T = *m_pGTAWeight;
-    // We dont want to mess with the default sorting. We just want to place the ones with weight at the top
-    // so we split the list into 2: entries with weight geater than 0 and 0
+    // We don't want to mess with the default sorting. We just want to place the ones with weight at the top
+    // so we split the list into 2: entries with weight greater than 0 and 0
     std::vector<std::pair<int, clGotoEntry>> importantEntries;
     clGotoEntry::Vec_t normalEntries;
     for (const clGotoEntry& entry : entries) {
@@ -153,7 +153,7 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
         }
     }
 
-    // the list should now contains all the list *wihtout* weight
+    // the list should now contains all the list *without* weight
     entries.swap(normalEntries);
 
     // Step 2: sort the important entries - the sorting is DESC (lower first)

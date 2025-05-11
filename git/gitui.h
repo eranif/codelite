@@ -42,7 +42,6 @@
 #include <wx/radiobut.h>
 #include <wx/spinctrl.h>
 #include <wx/notebook.h>
-#include "clGenericNotebook.hpp"
 #include "clTerminalViewCtrl.hpp"
 #include <wx/gauge.h>
 #include <wx/checklst.h>
@@ -126,8 +125,11 @@ public:
     wxCheckBox* GetCheckBoxShowBlameInStatusBar() { return m_checkBoxShowBlameInStatusBar; }
     wxPanel* GetPanel236() { return m_panel236; }
     wxTreebook* GetTreebook230() { return m_treebook230; }
-    GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitSettingsDlgBase(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& title = _("Git settings..."),
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitSettingsDlgBase();
 };
@@ -170,8 +172,11 @@ public:
     clThemedSplitterWindow* GetSplitterMain() { return m_splitterMain; }
     wxButton* GetButtonOK() { return m_buttonOK; }
     wxButton* GetButtonCancel() { return m_buttonCancel; }
-    GitCommitDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit"),
-                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitCommitDlgBase(wxWindow* parent,
+                     wxWindowID id = wxID_ANY,
+                     const wxString& title = _("Git commit"),
+                     const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(-1, -1),
                      long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitCommitDlgBase();
 };
@@ -239,8 +244,11 @@ public:
     clThemedSplitterWindow* GetSplitter174() { return m_splitter174; }
     wxButton* GetButtonClose() { return m_buttonClose; }
     wxPanel* GetPanel806() { return m_panel806; }
-    GitCommitListDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Commit List"),
-                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitCommitListDlgBase(wxWindow* parent,
+                         wxWindowID id = wxID_ANY,
+                         const wxString& title = _("Commit List"),
+                         const wxPoint& pos = wxDefaultPosition,
+                         const wxSize& size = wxSize(-1, -1),
                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX);
     virtual ~GitCommitListDlgBase();
 };
@@ -277,8 +285,11 @@ public:
     wxCheckBox* GetCheckIgnoreSpace() { return m_checkIgnoreSpace; }
     wxButton* GetButtonDiffDlg() { return m_buttonDiffDlg; }
     wxButton* GetButton773() { return m_button773; }
-    GitDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Current Diffs"),
-                   const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitDiffDlgBase(wxWindow* parent,
+                   wxWindowID id = wxID_ANY,
+                   const wxString& title = _("Current Diffs"),
+                   const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxSize(-1, -1),
                    long style = wxCAPTION | wxRESIZE_BORDER | wxMAXIMIZE_BOX | wxMINIMIZE_BOX | wxCLOSE_BOX);
     virtual ~GitDiffDlgBase();
 };
@@ -362,9 +373,11 @@ public:
     wxTextCtrl* GetTextSecond() { return m_textSecond; }
     wxStaticText* GetStaticText59821124() { return m_staticText59821124; }
     wxSpinCtrl* GetSpinCtrl2() { return m_spinCtrl2; }
-    GitDiffChooseCommitishDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+    GitDiffChooseCommitishDlgBase(wxWindow* parent,
+                                  wxWindowID id = wxID_ANY,
                                   const wxString& title = _("Select Commits to Diff"),
-                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                  const wxPoint& pos = wxDefaultPosition,
+                                  const wxSize& size = wxSize(-1, -1),
                                   long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitDiffChooseCommitishDlgBase();
 };
@@ -388,8 +401,11 @@ public:
     wxTextCtrl* GetTextCtrlURL() { return m_textCtrlURL; }
     wxStaticText* GetStaticText24() { return m_staticText24; }
     wxDirPickerCtrl* GetDirPickerTargetDir() { return m_dirPickerTargetDir; }
-    gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("git clone.."),
-                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    gitCloneDlgBaseClass(wxWindow* parent,
+                         wxWindowID id = wxID_ANY,
+                         const wxString& title = _("git clone.."),
+                         const wxPoint& pos = wxDefaultPosition,
+                         const wxSize& size = wxSize(-1, -1),
                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~gitCloneDlgBaseClass();
 };
@@ -408,8 +424,11 @@ protected:
 
 public:
     GitCommitEditor* GetEditor() { return m_editor; }
-    GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitFileDiffDlgBase(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& title = _("File diff"),
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitFileDiffDlgBase();
 };
@@ -431,8 +450,11 @@ public:
     wxFilePickerCtrl* GetFilePickerPatchFile() { return m_filePickerPatchFile; }
     wxStaticText* GetStaticText168() { return m_staticText168; }
     wxTextCtrl* GetTextCtrlExtraFlags() { return m_textCtrlExtraFlags; }
-    GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Apply Patch"),
-                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitApplyPatchDlgBase(wxWindow* parent,
+                         wxWindowID id = wxID_ANY,
+                         const wxString& title = _("Git Apply Patch"),
+                         const wxPoint& pos = wxDefaultPosition,
+                         const wxSize& size = wxSize(-1, -1),
                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitApplyPatchDlgBase();
 };
@@ -443,13 +465,13 @@ protected:
     clToolBar* m_toolbar;
     clThemedSplitterWindow* m_splitter733;
     wxPanel* m_splitterPage737;
-    clGenericNotebook* m_notebookChanges;
+    wxNotebook* m_notebookChanges;
     wxPanel* m_panel674;
     clThemedOrderedListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
     clThemedOrderedListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_splitterPage741;
-    clGenericNotebook* m_notebookLog;
+    wxNotebook* m_notebookLog;
     wxPanel* m_panel_log;
     clTerminalViewCtrl* m_dvListCtrlLog;
     wxGauge* m_gauge;
@@ -467,16 +489,19 @@ public:
     wxPanel* GetPanel674() { return m_panel674; }
     clThemedOrderedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
-    clGenericNotebook* GetNotebookChanges() { return m_notebookChanges; }
+    wxNotebook* GetNotebookChanges() { return m_notebookChanges; }
     wxPanel* GetSplitterPage737() { return m_splitterPage737; }
     clTerminalViewCtrl* GetDvListCtrlLog() { return m_dvListCtrlLog; }
     wxPanel* GetPanel_log() { return m_panel_log; }
-    clGenericNotebook* GetNotebookLog() { return m_notebookLog; }
+    wxNotebook* GetNotebookLog() { return m_notebookLog; }
     wxPanel* GetSplitterPage741() { return m_splitterPage741; }
     clThemedSplitterWindow* GetSplitter733() { return m_splitter733; }
     wxGauge* GetGauge() { return m_gauge; }
-    GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    GitConsoleBase(wxWindow* parent,
+                   wxWindowID id = wxID_ANY,
+                   const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxSize(500, 300),
+                   long style = wxTAB_TRAVERSAL);
     virtual ~GitConsoleBase();
 };
 
@@ -493,8 +518,11 @@ protected:
 public:
     wxCheckBox* GetCheckParentCommit() { return m_checkParentCommit; }
     wxCheckBox* GetCheckShowLogControls() { return m_checkShowLogControls; }
-    GitBlameSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Blame Settings"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitBlameSettingsDlgBase(wxWindow* parent,
+                            wxWindowID id = wxID_ANY,
+                            const wxString& title = _("Git Blame Settings"),
+                            const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1),
                             long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~GitBlameSettingsDlgBase();
 };
@@ -524,8 +552,11 @@ public:
     clToolBar* GetClToolbarAdded() { return m_clToolbarAdded; }
     wxCheckListBox* GetCheckListBoxNew() { return m_checkListBoxNew; }
     wxPanel* GetPanel759() { return m_panel759; }
-    GitResetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Reset Files"),
-                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitResetDlgBase(wxWindow* parent,
+                    wxWindowID id = wxID_ANY,
+                    const wxString& title = _("Git Reset Files"),
+                    const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxSize(-1, -1),
                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX);
     virtual ~GitResetDlgBase();
 };
@@ -551,8 +582,11 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText700() { return m_staticText700; }
     wxTextCtrl* GetTextCtrlEmail() { return m_textCtrlEmail; }
-    GitUserEmailDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git User"),
-                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    GitUserEmailDialogBase(wxWindow* parent,
+                           wxWindowID id = wxID_ANY,
+                           const wxString& title = _("Git User"),
+                           const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1),
                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitUserEmailDialogBase();
 };

@@ -12439,11 +12439,11 @@
 													"m_children":	[{
 															"m_type":	4442,
 															"proportion":	1,
-															"border":	2,
+															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
 															"m_styles":	["wxBK_DEFAULT"],
-															"m_sizerFlags":	["wxEXPAND"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -12491,15 +12491,15 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clGenericNotebook"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clGenericNotebook.hpp"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
-																	"m_value":	"kNotebook_FixedWidth"
+																	"m_value":	""
 																}],
 															"m_events":	[],
 															"m_children":	[{
@@ -13129,7 +13129,7 @@
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
 															"m_styles":	["wxBK_DEFAULT"],
-															"m_sizerFlags":	["wxEXPAND"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -13177,15 +13177,15 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clGenericNotebook"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clGenericNotebook.hpp"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
-																	"m_value":	"kNotebook_HideTabBar"
+																	"m_value":	""
 																}],
 															"m_events":	[],
 															"m_children":	[{

@@ -251,7 +251,7 @@ void SQLCommandPanel::ExecuteSql()
                 }
                 m_pDbLayer->CloseResultSet(pResultSet);
 
-                // Popuplate the data
+                // Populate the data
                 m_table->SetData(data);
                 GetSizer()->Layout();
                 Layout();

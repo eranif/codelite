@@ -6929,7 +6929,7 @@ msgstr ""
 "值。不那么透明的背景应该有一个较大的数值。"
 
 #: LiteEditor/editorsettingsbookmarksbasepanel.cpp:125
-msgid "Find/FindNext clears highlit matching words"
+msgid "Find/FindNext clears highlighted matching words"
 msgstr "查找/查找下一个清除高亮匹配词"
 
 #: LiteEditor/editorsettingsbookmarksbasepanel.cpp:127

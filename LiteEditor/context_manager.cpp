@@ -68,7 +68,7 @@ ContextBasePtr ContextManager::NewContextByFileName(clEditor* parent, const wxFi
 
 void ContextManager::Initialize()
 {
-    // Popuplate the contexts available
+    // Populate the contexts available
     m_contextPool.clear();
 
     // register available contexts

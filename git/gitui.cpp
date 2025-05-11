@@ -1623,7 +1623,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
         m_splitterPage737, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage737, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebookChanges->SetName(wxT("m_notebookChanges"));
 
-    boxSizer715->Add(m_notebookChanges, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer715->Add(m_notebookChanges, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_panel674 = new wxPanel(
         m_notebookChanges, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookChanges, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -1673,7 +1673,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
         m_splitterPage741, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage741, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebookLog->SetName(wxT("m_notebookLog"));
 
-    boxSizer743->Add(m_notebookLog, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer743->Add(m_notebookLog, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_panel_log = new wxPanel(
         m_notebookLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookLog, wxSize(-1, -1)), wxTAB_TRAVERSAL);

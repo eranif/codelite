@@ -44,6 +44,6 @@ void wxCrafterpca4kKInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$_Users_eifrah_devl_codelite_git_gitui_git_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$_Users_eifrah_devl_codelite_git_gitui_git_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$C__msys64_home_eran_devl_codelite_git_gitui_git_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$C__msys64_home_eran_devl_codelite_git_gitui_git_bitmaps.xrc"));
 }

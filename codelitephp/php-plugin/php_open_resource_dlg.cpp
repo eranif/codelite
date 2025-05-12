@@ -152,11 +152,11 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
             if(a.displayName == m_lastFilter) {
                 v1.push_back(a); // Exact match
             } else if(a.displayName.Lower() == lcFilter) {
-                v2.push_back(a); // case insenstive exact match
+                v2.push_back(a); // case insensitive exact match
             } else if(a.displayName.StartsWith(m_lastFilter)) {
                 v3.push_back(a); // starts with
             } else if(a.displayName.Lower().StartsWith(lcFilter)) {
-                v4.push_back(a); // case insenstive starts with
+                v4.push_back(a); // case insensitive starts with
             } else {
                 // other
                 v5.push_back(a);

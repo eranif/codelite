@@ -4132,7 +4132,7 @@ msgid "Scan..."
 msgstr "スキャン..."
 
 #: LanguageServer/UI.cpp:64
-msgid "Scan for installed Language Servers insalled"
+msgid "Scan for installed Language Servers"
 msgstr "インストール済みの言語サーバーをスキャン"
 
 #: LanguageServer/UI.cpp:68 LiteEditor/findinfiles_dlg.cpp:324
@@ -6721,7 +6721,7 @@ msgid "Colour"
 msgstr "色"
 
 #: LiteEditor/editorsettingsbookmarkspanel.cpp:75
-msgid "Find/Find Next clears highlit matching words"
+msgid "Find/Find Next clears highlighted matching words"
 msgstr "前/次の検索時に、一致する単語の強調表示を消去"
 
 #: LiteEditor/editorsettingscaret.cpp:31
@@ -22041,7 +22041,7 @@ msgid "The menu is about to open"
 msgstr "メニューが開かれようとしています"
 
 #: wxcrafter/controls/menu_wrapper.cpp:17
-msgid "A particular menu item has been highlit"
+msgid "A particular menu item has been highlighted"
 msgstr "特定のメニュー項目が強調表示されています"
 
 #: wxcrafter/controls/menu_wrapper.cpp:18

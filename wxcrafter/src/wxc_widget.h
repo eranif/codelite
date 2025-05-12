@@ -223,7 +223,7 @@ public:
     static CustomControlTemplateMap_t& GetMsCustomControlsUsed() { return ms_customControlsUsed; }
 
     /**
-     * @brief check whether 'name' is unique accross all children of this wxcWidget
+     * @brief check whether 'name' is unique across all children of this wxcWidget
      */
     virtual bool IsNameUnique(const wxString& name) const;
     wxString PropertyString(const wxString& propname, const wxString& defaultValue = "") const;

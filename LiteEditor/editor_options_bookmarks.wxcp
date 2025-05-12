@@ -1491,7 +1491,7 @@
         }, {
          "type": "string",
          "m_label": "Label:",
-         "m_value": "Find/FindNext clears highlit matching words"
+         "m_value": "Find/FindNext clears highlighted matching words"
         }, {
          "type": "bool",
          "m_label": "Value:",

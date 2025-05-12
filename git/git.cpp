@@ -1482,16 +1482,10 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
     }
 
     const wxBitmap& bmp = clGetManager()->GetStdIcons()->LoadBitmap("git");
+
+    // Update the status bar with the branch name
     clGetManager()->GetStatusBar()->SetSourceControlBitmap(
         bmp, m_currentBranch, "Git", _("Using git\nClick to open the git view"));
-
-    if (!m_currentBranch.IsEmpty()) {
-        GIT_MESSAGE1(wxT("Current branch ") + m_currentBranch);
-        m_mgr->GetDockingManager()
-            ->GetPane(PANE_LEFT_SIDEBAR)
-            .Caption(_("Workspace View [") + m_currentBranch + wxT("]"));
-        m_mgr->GetDockingManager()->Update();
-    }
 }
 
 void GitPlugin::UpdateFileTree()

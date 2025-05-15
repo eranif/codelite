@@ -657,14 +657,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
                          wxEVT_DBG_UI_TOGGLE_BREAKPOINT,
                          clDebugEvent); // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
 
-/// User added breakpoint from the UI
-/// Call event.GetUiBreakpoint()
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_BREAKPOINT_ADDED, clDebugEvent);
-
-/// User deleted breakpoint from the UI
-/// Call event.GetUiBreakpoint()
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_BREAKPOINT_DELETED, clDebugEvent);
-
 // Can CodeLite interact with the debugger? use event.SetAnswer(true);
 // Note: by avoid calling Skip() CodeLite will assume that the plugin is controlling the debug session
 // and it will use the event.IsAnswer() as the answer to the question to : CanDbgInteract()

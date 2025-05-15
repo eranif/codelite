@@ -422,9 +422,8 @@ void XDebugManager::ClearDebuggerMarker()
 {
     IEditor::List_t editors;
     m_plugin->GetManager()->GetAllEditors(editors);
-    IEditor::List_t::iterator iter = editors.begin();
-    for(; iter != editors.end(); ++iter) {
-        (*iter)->GetCtrl()->MarkerDeleteAll(smt_indicator);
+    for (auto* editor : editors) {
+        editor->GetCtrl()->MarkerDeleteAll(smt_indicator);
     }
 }
 
@@ -614,11 +613,9 @@ void XDebugManager::OnDeleteAllBreakpoints(PHPEvent& e)
     e.Skip();
 
     // Delete them from XDebug
-    const XDebugBreakpoint::List_t& bps = m_breakpointsMgr.GetBreakpoints();
-    XDebugBreakpoint::List_t::const_iterator iter = bps.begin();
-    for(; iter != bps.end(); ++iter) {
-        if(iter->IsApplied()) {
-            DoDeleteBreakpoint(iter->GetBreakpointId());
+    for (const auto& bp : m_breakpointsMgr.GetBreakpoints()) {
+        if (bp.IsApplied()) {
+            DoDeleteBreakpoint(bp.GetBreakpointId());
         }
     }
 
@@ -659,9 +656,9 @@ void XDebugManager::OnBreakpointsViewUpdated(XDebugEvent& e)
     e.Skip();
     IEditor::List_t editors;
     m_plugin->GetManager()->GetAllEditors(editors);
-    IEditor::List_t::iterator iter = editors.begin();
-    for(; iter != editors.end(); ++iter) {
-        DoRefreshBreakpointsMarkersForEditor(*iter);
+
+    for (auto* editor : editors) {
+        DoRefreshBreakpointsMarkersForEditor(editor);
     }
 }
 
@@ -672,9 +669,8 @@ void XDebugManager::DoRefreshBreakpointsMarkersForEditor(IEditor* editor)
 
     XDebugBreakpoint::List_t bps;
     m_breakpointsMgr.GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps);
-    XDebugBreakpoint::List_t::const_iterator iter = bps.begin();
-    for(; iter != bps.end(); ++iter) {
-        editor->GetCtrl()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
+    for (const auto& bp : bps) {
+        editor->GetCtrl()->MarkerAdd(bp.GetLine() - 1, smt_breakpoint);
     }
 }
 

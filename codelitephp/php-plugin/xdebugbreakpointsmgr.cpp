@@ -136,13 +136,12 @@ void XDebugBreakpointsMgr::OnEditorChanged(wxCommandEvent& e)
     if(editor) {
         XDebugBreakpoint::List_t bps;
         if(GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps)) {
-            XDebugBreakpoint::List_t::iterator iter = bps.begin();
-            for(; iter != bps.end(); ++iter) {
-                int markerMask = editor->GetCtrl()->MarkerGet(iter->GetLine() - 1);
+            for (const auto& bp : bps) {
+                int markerMask = editor->GetCtrl()->MarkerGet(bp.GetLine() - 1);
                 if(!(markerMask & mmt_breakpoint)) {
                     // No marker on this line yet
                     // add one
-                    editor->GetCtrl()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
+                    editor->GetCtrl()->MarkerAdd(bp.GetLine() - 1, smt_breakpoint);
                 }
             }
         }
@@ -152,10 +151,9 @@ void XDebugBreakpointsMgr::OnEditorChanged(wxCommandEvent& e)
 size_t XDebugBreakpointsMgr::GetBreakpointsForFile(const wxString& filename, XDebugBreakpoint::List_t& bps) const
 {
     bps.clear();
-    XDebugBreakpoint::List_t::const_iterator iter = m_breakpoints.begin();
-    for(; iter != m_breakpoints.end(); ++iter) {
-        if(iter->GetFileName() == filename) {
-            bps.push_back(*iter);
+    for (const auto& breakpoint : m_breakpoints) {
+        if (breakpoint.GetFileName() == filename) {
+            bps.push_back(breakpoint);
         }
     }
     return bps.size();

@@ -123,9 +123,7 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
     wxStringSet_t uniqueEntries;
 
     // search for the old item
-    PHPEntityBase::List_t::const_iterator iter = entries.begin();
-    for(; iter != entries.end(); ++iter) {
-        PHPEntityBase::Ptr_t entry = *iter;
+    for (PHPEntityBase::Ptr_t entry : entries) {
         if(uniqueEntries.count(entry->GetFullName()) == 0) {
             uniqueEntries.insert(entry->GetFullName());
         } else {
@@ -855,12 +853,8 @@ void PHPCodeCompletion::GetMembers(IEditor* editor, PHPEntityBase::List_t& membe
     }
 
     // filter out
-    const PHPEntityBase::List_t& children = parentClass->GetChildren();
-    PHPEntityBase::List_t::const_iterator iter = children.begin();
-
-    for(; iter != children.end(); ++iter) {
-        PHPEntityBase::Ptr_t child = *iter;
-        if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember() &&
+    for (const auto child : parentClass->GetChildren()) {
+        if (child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember() &&
            !child->Cast<PHPEntityVariable>()->IsConst() && !child->Cast<PHPEntityVariable>()->IsStatic()) {
             // a member of a class
             members.push_back(child);

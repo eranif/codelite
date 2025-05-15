@@ -29,7 +29,7 @@
 
 WX_DEFINE_LIST(LineParserList);
 
-LineParser* LineParser::Clone()
+LineParser* LineParser::Clone() const
 {
 	LineParser *newline = new LineParser();
 	

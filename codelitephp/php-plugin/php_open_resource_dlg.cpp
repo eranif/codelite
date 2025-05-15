@@ -49,10 +49,8 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     PHPWorkspace::Get()->GetWorkspaceFiles(files);
     m_table.Open(PHPWorkspace::Get()->GetFilename().GetPath());
     m_allFiles.reserve(files.size());
-    wxStringSet_t::iterator iter = files.begin();
-    for(; iter != files.end(); ++iter) {
-        wxFileName fn((*iter));
-        if(fn.GetFullName() == FOLDER_MARKER) {
+    for (wxFileName fn : files) {
+        if (fn.GetFullName() == FOLDER_MARKER) {
             // fake item
             continue;
         }
@@ -202,11 +200,9 @@ void OpenResourceDlg::DoGetResources(const wxString& filter)
     m_table.LoadAllByFilter(matches, filter);
 
     // Convert the PHP matches into resources
-    PHPEntityBase::List_t::iterator iter = matches.begin();
     m_resources.reserve(matches.size());
-    for(; iter != matches.end(); ++iter) {
-        PHPEntityBase::Ptr_t match = *iter;
-        if(FileUtils::FuzzyMatch(filter, match->GetFullName())) {
+    for (PHPEntityBase::Ptr_t match : matches) {
+        if (FileUtils::FuzzyMatch(filter, match->GetFullName())) {
             ResourceItem resource;
             resource.displayName = match->GetDisplayName();
             resource.filename = match->GetFilename();

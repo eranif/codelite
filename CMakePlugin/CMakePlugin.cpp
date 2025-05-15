@@ -297,12 +297,11 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
     size_t buildPos = 0;
     size_t settingsPos = 0;
     size_t curpos = 0;
-    wxMenuItemList::const_iterator iter = items.begin();
-    for (; iter != items.end(); ++iter) {
-        if ((*iter)->GetId() == XRCID("build_project")) {
+    for (const auto* item: items) {
+        if (item->GetId() == XRCID("build_project")) {
             buildPos = curpos;
         }
-        if ((*iter)->GetId() == XRCID("project_properties")) {
+        if (item->GetId() == XRCID("project_properties")) {
             settingsPos = curpos;
         }
         ++curpos;

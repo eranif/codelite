@@ -77,9 +77,8 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
     // we use the c_str() method to force our own copy of the string and to avoid
     // ref counting which may cause crash when sharing wxString among threads
     m_extFields.clear();
-    wxStringMap_t::const_iterator iter = rhs.m_extFields.begin();
-    for(; iter != rhs.m_extFields.end(); iter++) {
-        m_extFields[iter->first.c_str()] = iter->second.c_str();
+    for (const auto& p : rhs.m_extFields) {
+        m_extFields[p.first.c_str()] = p.second.c_str();
     }
     m_comment = rhs.m_comment;
     return *this;
@@ -177,9 +176,8 @@ void TagEntry::Print()
     std::cout << "Parent:\t\t" << GetParent() << std::endl;
 
     std::cout << " ---- Ext fields: ---- " << std::endl;
-    wxStringMap_t::const_iterator iter = m_extFields.begin();
-    for(; iter != m_extFields.end(); iter++) {
-        std::cout << iter->first << ":\t\t" << iter->second << std::endl;
+    for (const auto& p : m_extFields) {
+        std::cout << p.first << ":\t\t" << p.second << std::endl;
     }
     std::cout << "======================================" << std::endl;
 }

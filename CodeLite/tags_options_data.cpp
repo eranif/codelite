@@ -471,20 +471,18 @@ wxString TagsOptionsData::ToString() const
     }
 
     const wxStringTable_t& tokensMap = GetTokensWxMap();
-    wxStringTable_t::const_iterator iter = tokensMap.begin();
-
-    if(tokensMap.empty() == false) {
-        for(; iter != tokensMap.end(); ++iter) {
-            if(!iter->second.IsEmpty() || (iter->second.IsEmpty() && iter->first.Find("%0") != wxNOT_FOUND)) {
+    if (tokensMap.empty() == false) {
+        for (const auto& p : tokensMap) {
+            if (!p.second.IsEmpty() || (p.second.IsEmpty() && p.first.Find("%0") != wxNOT_FOUND)) {
                 // Key = Value pair. Place this one in the output file
-                file_content << iter->first << "=" << iter->second << "\n";
+                file_content << p.first << "=" << p.second << "\n";
             } else {
 
                 if(options.IsEmpty()) {
                     options = " -I";
                 }
 
-                options << iter->first;
+                options << p.first;
                 options << ",";
             }
         }

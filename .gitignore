@@ -23,6 +23,7 @@ build-Debug*/
 *build-debug*/
 build-*release*/
 build-*debug*/
+.build-*/
 .cache/
 ctags/
 .ctagsd/

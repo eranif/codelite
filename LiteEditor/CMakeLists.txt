@@ -276,14 +276,6 @@ if(NOT APPLE)
             DESTINATION ${CL_RESOURCES_DIR}/templates/projects/dynamic-library-wx-enabled)
     endif()
 
-    if(UNIX)
-        install(
-            DIRECTORY ${CL_SRC_ROOT}/translations/
-            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/locale
-            USE_SOURCE_PERMISSIONS FILES_MATCHING
-            PATTERN "codelite.mo")
-    endif()
-
     if(UNIX AND CL_COPY_WX_LIBS) # If we're packaging with wx2.9
         # We need to deduce the location of the wx libs to be installed
         execute_process(

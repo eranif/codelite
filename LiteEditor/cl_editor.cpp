@@ -5865,10 +5865,10 @@ void clEditor::ToggleLineComment(const wxString& commentSymbol, int commentStyle
 
 void clEditor::CommentBlockSelection(const wxString& commentBlockStart, const wxString& commentBlockEnd)
 {
-    int start = GetSelectionStart();
+    const int start = GetSelectionStart();
     int end = GetSelectionEnd();
     if (LineFromPosition(PositionBefore(end)) != LineFromPosition(end)) {
-        end = PositionBefore(end);
+        end = std::max(start, PositionBefore(end));
     }
     if (start == end)
         return;

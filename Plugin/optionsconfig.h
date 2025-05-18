@@ -171,7 +171,7 @@ public:
 public:
     OptionsConfig() {}
     OptionsConfig(wxXmlNode* node);
-    virtual ~OptionsConfig(void);
+    virtual ~OptionsConfig();
 
     void SetOutputTabsDirection(const wxDirection& outputTabsDirection)
     {

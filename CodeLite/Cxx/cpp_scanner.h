@@ -34,7 +34,7 @@ class WXDLLIMPEXP_CL CppScanner : public flex::yyFlexLexer
 {
 public:
 	CppScanner();
-	~CppScanner(void);
+	~CppScanner();
 
 	/// Override the LexerInput function
 	int LexerInput(char *buf, int max_size);

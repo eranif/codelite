@@ -106,8 +106,8 @@ protected:
     clDebuggerTerminalPOSIX m_debuggerTerminal;
 
 protected:
-    Manager(void);
-    virtual ~Manager(void);
+    Manager();
+    virtual ~Manager();
     void OnHideGdbTooltip(clCommandEvent& event);
 
     //--------------------------- Global State -----------------------------

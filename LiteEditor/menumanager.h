@@ -48,8 +48,8 @@ public:
     MenuEventHandlerPtr GetHandler(int id);
 
 private:
-    MenuManager(void);
-    virtual ~MenuManager(void);
+    MenuManager();
+    virtual ~MenuManager();
 };
 
 #endif // MENUMANAGER_H

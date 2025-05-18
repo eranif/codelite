@@ -786,7 +786,7 @@ clMainFrame::clMainFrame(
     Construct();
 }
 
-clMainFrame::~clMainFrame(void)
+clMainFrame::~clMainFrame()
 {
     wxDELETE(m_singleInstanceThread);
     wxDELETE(m_webUpdate);

@@ -232,7 +232,7 @@ public:
      */
     void SelectBestEnvSet();
 
-    virtual ~clMainFrame(void);
+    virtual ~clMainFrame();
     /**
      * @brief set frame option flag
      * @param set

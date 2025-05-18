@@ -52,7 +52,7 @@ public:
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
 
-    void SetSkipWarnings(const bool& skipWarnings) { this->m_skipWarnings = skipWarnings; }
+    void SetSkipWarnings(bool skipWarnings) { this->m_skipWarnings = skipWarnings; }
     bool IsSkipWarnings() const { return m_skipWarnings; }
 
     // Setters

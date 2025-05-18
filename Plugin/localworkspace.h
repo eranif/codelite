@@ -174,7 +174,7 @@ public:
     void SetAppendLF(bool b) { m_localAppendLF.Set(b); }
     void SetDisplayLineNumbers(bool b) { m_localdisplayLineNumbers.Set(b); }
     void SetShowIndentationGuidelines(bool b) { m_localshowIndentationGuidelines.Set(b); }
-    void SetIndentUsesTabs(const bool& indentUsesTabs) { m_localindentUsesTabs.Set(indentUsesTabs); }
+    void SetIndentUsesTabs(bool indentUsesTabs) { m_localindentUsesTabs.Set(indentUsesTabs); }
     bool GetIndentUsesTabs() const
     {
         if(m_localindentUsesTabs.isValid()) {

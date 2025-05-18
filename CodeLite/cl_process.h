@@ -101,7 +101,7 @@ public:
     bool Write(const wxString& text);
 
     // Getters
-    const bool& GetRedirect() const { return m_redirect; }
+    bool GetRedirect() const { return m_redirect; }
 };
 
 #endif // CODELITE_TAGSPROCESS_H

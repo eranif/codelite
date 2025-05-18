@@ -291,8 +291,8 @@ public:
     }
     const wxString& GetCustomBuildWorkingDir() const { return m_customBuildWorkingDir; }
 
-    void SetPauseWhenExecEnds(const bool& pauseWhenExecEnds) { this->m_pauseWhenExecEnds = pauseWhenExecEnds; }
-    const bool& GetPauseWhenExecEnds() const { return m_pauseWhenExecEnds; }
+    void SetPauseWhenExecEnds(bool pauseWhenExecEnds) { this->m_pauseWhenExecEnds = pauseWhenExecEnds; }
+    bool GetPauseWhenExecEnds() const { return m_pauseWhenExecEnds; }
 
     void SetMakeGenerationCommand(const wxString& makeGenerationCommand)
     {
@@ -324,8 +324,8 @@ public:
     }
     const wxString& GetDebuggerStartupCmds() const { return m_debuggerStartupCmds; }
 
-    void SetIsDbgRemoteTarget(const bool& isDbgRemoteTarget) { this->m_isDbgRemoteTarget = isDbgRemoteTarget; }
-    const bool& GetIsDbgRemoteTarget() const { return m_isDbgRemoteTarget; }
+    void SetIsDbgRemoteTarget(bool isDbgRemoteTarget) { this->m_isDbgRemoteTarget = isDbgRemoteTarget; }
+    bool GetIsDbgRemoteTarget() const { return m_isDbgRemoteTarget; }
 
     void SetDbgHostName(const wxString& dbgHostName) { this->m_dbgHostName = dbgHostName; }
     void SetDbgHostPort(const wxString& dbgHostPort) { this->m_dbgHostPort = dbgHostPort; }
@@ -333,8 +333,8 @@ public:
     const wxString& GetDbgHostName() const { return m_dbgHostName; }
     const wxString& GetDbgHostPort() const { return m_dbgHostPort; }
 
-    void SetIsDbgRemoteExtended(const bool& isDbgRemoteExtended) { this->m_isDbgRemoteExtended = isDbgRemoteExtended; }
-    const bool& GetIsDbgRemoteExtended() const { return m_isDbgRemoteExtended; }
+    void SetIsDbgRemoteExtended(bool isDbgRemoteExtended) { this->m_isDbgRemoteExtended = isDbgRemoteExtended; }
+    bool GetIsDbgRemoteExtended() const { return m_isDbgRemoteExtended; }
 
     void SetCustomTargets(const BuildConfig::StringMap_t& customTargets) { this->m_customTargets = customTargets; }
     const BuildConfig::StringMap_t& GetCustomTargets() const { return m_customTargets; }

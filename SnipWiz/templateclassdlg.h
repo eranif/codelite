@@ -74,9 +74,9 @@ public:
 
     bool SaveBufferToFile(const wxString filename, const wxString buffer, int eolType = 0);
 
-    void SetModified(const bool& modified) { this->m_modified = modified; }
+    void SetModified(bool modified) { this->m_modified = modified; }
     void SetPlugin(SnipWiz* plugin) { this->m_plugin = plugin; }
-    const bool& GetModified() const { return m_modified; }
+    bool GetModified() const { return m_modified; }
     SnipWiz* GetPlugin() { return m_plugin; }
 
     void SetCurEol(const int& curEol) { this->m_curEol = curEol; }

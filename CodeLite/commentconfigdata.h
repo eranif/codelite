@@ -51,7 +51,7 @@ public:
     void SetContinueCppComment(bool continueCppComment) { this->m_continueCppComment = continueCppComment; }
     void SetFunctionPattern(const wxString& functionPattern) { this->m_functionPattern = functionPattern; }
 
-    const bool& GetAddStarOnCComment() const { return m_addStarOnCComment; }
+    bool GetAddStarOnCComment() const { return m_addStarOnCComment; }
     const wxString& GetClassPattern() const { return m_classPattern; }
     bool GetContinueCppComment() const { return m_continueCppComment; }
     const wxString& GetFunctionPattern() const { return m_functionPattern; }

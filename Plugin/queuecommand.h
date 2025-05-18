@@ -57,14 +57,14 @@ public:
     void SetProject(const wxString& project);
     const wxString& GetConfiguration() const;
     const wxString& GetProject() const;
-    void SetProjectOnly(const bool& projectOnly);
-    const bool& GetProjectOnly() const;
+    void SetProjectOnly(bool projectOnly);
+    bool GetProjectOnly() const;
     void SetKind(const int& kind);
     const int& GetKind() const;
-    void SetCleanLog(const bool& cleanLog);
-    const bool& GetCleanLog() const;
-    void SetCheckBuildSuccess(const bool& checkBuildSuccess) { this->m_checkBuildSuccess = checkBuildSuccess; }
-    const bool& GetCheckBuildSuccess() const { return m_checkBuildSuccess; }
+    void SetCleanLog(bool cleanLog);
+    bool GetCleanLog() const;
+    void SetCheckBuildSuccess(bool checkBuildSuccess) { this->m_checkBuildSuccess = checkBuildSuccess; }
+    bool GetCheckBuildSuccess() const { return m_checkBuildSuccess; }
     void SetCustomBuildTarget(const wxString& customBuildTarget) { this->m_customBuildTarget = customBuildTarget; }
     const wxString& GetCustomBuildTarget() const { return m_customBuildTarget; }
 };

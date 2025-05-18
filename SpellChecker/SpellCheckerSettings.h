@@ -79,25 +79,17 @@ public:
     void            SetHunspell( IHunSpell* pHunspell ) {
         this->m_pHunspell = pHunspell;
     }
-    void            SetScanC( const bool& scanC ) {
-        this->m_scanC = scanC;
-    }
-    void            SetScanCPP( const bool& scanCPP ) {
-        this->m_scanCPP = scanCPP;
-    }
-    void            SetScanD1( const bool& scanD1 ) {
-        this->m_scanD1 = scanD1;
-    }
-    void            SetScanD2( const bool& scanD2 ) {
-        this->m_scanD2 = scanD2;
-    }
-    void            SetScanStrings( const bool& scanStrings ) {
-        this->m_scanStrings = scanStrings;
-    }
-    void            SetCaseSensitiveUserDictionary( const bool& caseSensitiveUserDictionary ) {
+    void SetScanC(bool scanC) { this->m_scanC = scanC; }
+    void SetScanCPP(bool scanCPP) { this->m_scanCPP = scanCPP; }
+    void SetScanD1(bool scanD1) { this->m_scanD1 = scanD1; }
+    void SetScanD2(bool scanD2) { this->m_scanD2 = scanD2; }
+    void SetScanStrings(bool scanStrings) { this->m_scanStrings = scanStrings; }
+    void SetCaseSensitiveUserDictionary(bool caseSensitiveUserDictionary)
+    {
         this->m_caseSensitiveUserDictionary = caseSensitiveUserDictionary;
-	}
-    void            SetIgnoreSymbolsInTagsDatabase( const bool& ignoreSymbolsInTagsDatabase ) {
+    }
+    void SetIgnoreSymbolsInTagsDatabase(bool ignoreSymbolsInTagsDatabase)
+    {
         this->m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase;
     }
 

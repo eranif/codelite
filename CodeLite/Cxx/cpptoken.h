@@ -102,10 +102,10 @@ public:
 
     void setName(const wxString& name) { this->name = name; }
 
-    void setOffset(const size_t& offset) { this->offset = offset; }
+    void setOffset(size_t offset) { this->offset = offset; }
 
     const wxString& getName() const { return name; }
-    const size_t& getOffset() const { return offset; }
+    size_t getOffset() const { return offset; }
 
     void setFilename(const wxString& filename) { this->filename = filename; }
 

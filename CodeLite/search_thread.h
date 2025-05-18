@@ -205,9 +205,9 @@ public:
     //------------------------------------------------------
     // Setters/getters
 
-    void SetFlags(const size_t& flags) { this->m_flags = flags; }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
 
-    const size_t& GetFlags() const { return m_flags; }
+    size_t GetFlags() const { return m_flags; }
 
     void SetPattern(const wxString& pat) { m_pattern = pat.c_str(); }
     void SetPosition(int position) { m_position = position; }

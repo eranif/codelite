@@ -123,12 +123,12 @@ public:
     void SetExecutable(const wxString& executable) { this->m_executable = executable; }
     const wxString& GetExecutable() const { return m_executable; }
     void SetExternalDiffViewer(const wxString& externalDiffViewer) { this->m_externalDiffViewer = externalDiffViewer; }
-    void SetFlags(const size_t& flags) { this->m_flags = flags; }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
     void SetIgnoreFilePattern(const wxString& ignoreFilePattern) { this->m_ignoreFilePattern = ignoreFilePattern; }
     void SetSshClient(const wxString& sshClient) { this->m_sshClient = sshClient; }
     void SetSshClientArgs(const wxString& sshClientArgs) { this->m_sshClientArgs = sshClientArgs; }
     const wxString& GetExternalDiffViewer() const { return m_externalDiffViewer; }
-    const size_t& GetFlags() const { return m_flags; }
+    size_t GetFlags() const { return m_flags; }
     const wxString& GetIgnoreFilePattern() const { return m_ignoreFilePattern; }
     const wxString& GetSshClient() const { return m_sshClient; }
     const wxString& GetSshClientArgs() const { return m_sshClientArgs; }

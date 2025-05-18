@@ -159,7 +159,7 @@ public:
 
     const wxStringTable_t& GetTokensWxMap() const;
 
-    const size_t& GetFlags() const { return m_ccFlags; }
+    size_t GetFlags() const { return m_ccFlags; }
     const wxString& GetFileSpec() const { return m_fileSpec; }
 
     // Setters
@@ -176,9 +176,9 @@ public:
      */
     void SyncData();
 
-    void SetCcColourFlags(const size_t& ccColourFlags) { this->m_ccColourFlags = ccColourFlags; }
+    void SetCcColourFlags(size_t ccColourFlags) { this->m_ccColourFlags = ccColourFlags; }
 
-    const size_t& GetCcColourFlags() const { return m_ccColourFlags; }
+    size_t GetCcColourFlags() const { return m_ccColourFlags; }
     void SetParserSearchPaths(const wxArrayString& parserSearchPaths) { this->m_parserSearchPaths = parserSearchPaths; }
     const wxArrayString& GetParserSearchPaths() const { return m_parserSearchPaths; }
     void SetParserExcludePaths(const wxArrayString& parserExcludePaths)

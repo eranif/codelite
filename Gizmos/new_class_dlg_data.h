@@ -54,8 +54,8 @@ public:
     virtual void DeSerialize(Archive& arch);
     virtual void Serialize(Archive& arch);
 
-    void SetFlags(const size_t& flags) { this->m_flags = flags; }
-    const size_t& GetFlags() const { return m_flags; }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
+    size_t GetFlags() const { return m_flags; }
     void EnableFlag(NewClassDlgData::eOptions flag, bool b)
     {
         if(b) {

@@ -59,8 +59,8 @@ public:
     const wxString& GetProject() const;
     void SetProjectOnly(bool projectOnly);
     bool GetProjectOnly() const;
-    void SetKind(const int& kind);
-    const int& GetKind() const;
+    void SetKind(int kind);
+    int GetKind() const;
     void SetCleanLog(bool cleanLog);
     bool GetCleanLog() const;
     void SetCheckBuildSuccess(bool checkBuildSuccess) { this->m_checkBuildSuccess = checkBuildSuccess; }

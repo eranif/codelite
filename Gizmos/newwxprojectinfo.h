@@ -62,7 +62,7 @@ public:
 	void SetFlags(const size_t& flags) {this->m_flags = flags;}
 	void SetName(const wxString& name) {this->m_name = name;}
 	void SetPath(const wxString& path) {this->m_path = path;}
-	void SetType(const int& type) {this->m_type = type;}
+	void SetType(int type) {this->m_type = type;}
 	void SetPrefix(const wxString& prefix) {this->m_prefix = prefix;}
 	void SetVersion(const wxString& version) {this->m_version = version;}
 
@@ -70,7 +70,7 @@ public:
 	const size_t& GetFlags() const {return m_flags;}
 	const wxString& GetName() const {return m_name;}
 	const wxString& GetPath() const {return m_path;}
-	const int& GetType() const {return m_type;}
+	int GetType() const {return m_type;}
 	const wxString& GetPrefix() const {return m_prefix;}
 	const wxString& GetVersion() const {return m_version;}
 	

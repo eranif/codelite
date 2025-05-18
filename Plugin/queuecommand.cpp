@@ -84,9 +84,9 @@ void QueueCommand::SetProjectOnly(bool projectOnly) { this->m_projectOnly = proj
 
 bool QueueCommand::GetProjectOnly() const { return m_projectOnly; }
 
-void QueueCommand::SetKind(const int& kind) { this->m_kind = kind; }
+void QueueCommand::SetKind(int kind) { this->m_kind = kind; }
 
-const int& QueueCommand::GetKind() const { return m_kind; }
+int QueueCommand::GetKind() const { return m_kind; }
 
 void QueueCommand::SetCleanLog(bool cleanLog) { this->m_cleanLog = cleanLog; }
 

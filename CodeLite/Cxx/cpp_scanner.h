@@ -48,11 +48,11 @@ public:
 	///	incase the comment spans over number of lines
 	///	(i.e. /* ... */ comment style)
 
-	const int& LineNo() const { return yylineno; }
+	int LineNo() const { return yylineno; }
 	inline void ClearComment() { m_comment = wxEmptyString; }
 	inline const wxChar* GetComment() const { return m_comment.GetData(); }
-	inline void KeepComment(const int& keep) { m_keepComments = keep; }
-	inline void ReturnWhite(const int& rw) { m_returnWhite = rw; }
+	inline void KeepComment(int keep) { m_keepComments = keep; }
+	inline void ReturnWhite(int rw) { m_returnWhite = rw; }
 
 private:
 	char *m_data;

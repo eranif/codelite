@@ -371,19 +371,19 @@ public:
 
     void SetIndentUsesTabs(bool indentUsesTabs) { this->m_indentUsesTabs = indentUsesTabs; }
     bool GetIndentUsesTabs() const { return m_indentUsesTabs; }
-    void SetIndentWidth(const int& indentWidth) { this->m_indentWidth = indentWidth; }
-    const int& GetIndentWidth() const { return m_indentWidth; }
-    void SetTabWidth(const int& tabWidth) { this->m_tabWidth = tabWidth; }
-    const int& GetTabWidth() const { return m_tabWidth; }
+    void SetIndentWidth(int indentWidth) { this->m_indentWidth = indentWidth; }
+    int GetIndentWidth() const { return m_indentWidth; }
+    void SetTabWidth(int tabWidth) { this->m_tabWidth = tabWidth; }
+    int GetTabWidth() const { return m_tabWidth; }
 
-    void SetIconsSize(const int& iconsSize) { this->m_iconsSize = iconsSize; }
-    const int& GetIconsSize() const { return m_iconsSize; }
+    void SetIconsSize(int iconsSize) { this->m_iconsSize = iconsSize; }
+    int GetIconsSize() const { return m_iconsSize; }
 
     void SetFileFontEncoding(const wxString& strFileFontEncoding);
     wxFontEncoding GetFileFontEncoding() const { return m_fileFontEncoding; }
 
-    void SetShowWhitspaces(const int& showWhitspaces) { this->m_showWhitspaces = showWhitspaces; }
-    const int& GetShowWhitspaces() const { return m_showWhitspaces; }
+    void SetShowWhitspaces(int showWhitspaces) { this->m_showWhitspaces = showWhitspaces; }
+    int GetShowWhitspaces() const { return m_showWhitspaces; }
 
     void SetFoldAtElse(bool foldAtElse) { this->m_foldAtElse = foldAtElse; }
     void SetFoldCompact(bool foldCompact) { this->m_foldCompact = foldCompact; }
@@ -426,10 +426,10 @@ public:
         this->m_autoAdjustHScrollBarWidth = autoAdjustHScrollBarWidth;
     }
     bool GetAutoAdjustHScrollBarWidth() const { return m_autoAdjustHScrollBarWidth; }
-    void SetCaretBlinkPeriod(const int& caretBlinkPeriod) { this->m_caretBlinkPeriod = caretBlinkPeriod; }
-    void SetCaretWidth(const int& caretWidth) { this->m_caretWidth = caretWidth; }
-    const int& GetCaretBlinkPeriod() const { return m_caretBlinkPeriod; }
-    const int& GetCaretWidth() const { return m_caretWidth; }
+    void SetCaretBlinkPeriod(int caretBlinkPeriod) { this->m_caretBlinkPeriod = caretBlinkPeriod; }
+    void SetCaretWidth(int caretWidth) { this->m_caretWidth = caretWidth; }
+    int GetCaretBlinkPeriod() const { return m_caretBlinkPeriod; }
+    int GetCaretWidth() const { return m_caretWidth; }
 
     void SetCopyLineEmptySelection(const bool copyLineEmptySelection)
     {

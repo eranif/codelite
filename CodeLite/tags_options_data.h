@@ -163,9 +163,9 @@ public:
     const wxString& GetFileSpec() const { return m_fileSpec; }
 
     // Setters
-    void SetMinWordLen(const int& minWordLen) { this->m_minWordLen = minWordLen; }
+    void SetMinWordLen(int minWordLen) { this->m_minWordLen = minWordLen; }
     // Getters
-    const int& GetMinWordLen() const { return m_minWordLen; }
+    int GetMinWordLen() const { return m_minWordLen; }
 
     // Serialization API
 

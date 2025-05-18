@@ -79,11 +79,11 @@ public:
     bool GetModified() const { return m_modified; }
     SnipWiz* GetPlugin() { return m_plugin; }
 
-    void SetCurEol(const int& curEol) { this->m_curEol = curEol; }
+    void SetCurEol(int curEol) { this->m_curEol = curEol; }
     void SetConfigPath(const wxString& configPath);
     void SetProjectPath(const wxString& projectPath);
     void SetVirtualFolder(const wxString& virtualFolder) { this->m_virtualFolder = virtualFolder; }
-    const int& GetCurEol() const { return m_curEol; }
+    int GetCurEol() const { return m_curEol; }
     const wxString& GetConfigPath() const { return m_configPath; }
     const wxString& GetProjectPath() const { return m_projectPath; }
     const wxString& GetVirtualFolder() const { return m_virtualFolder; }

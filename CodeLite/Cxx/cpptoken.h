@@ -111,9 +111,9 @@ public:
 
     const wxString& getFilename() const { return filename; }
 
-    void setId(const int& id) { this->m_id = id; }
+    void setId(int id) { this->m_id = id; }
 
-    const int& getId() const { return m_id; }
+    int getId() const { return m_id; }
 
     size_t getLineNumber() const { return lineNumber; }
 

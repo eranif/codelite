@@ -182,7 +182,7 @@ public:
         }
         return false;
     }
-    void SetIndentWidth(const int& indentWidth) { m_localindentWidth.Set(indentWidth); }
+    void SetIndentWidth(int indentWidth) { m_localindentWidth.Set(indentWidth); }
     int GetIndentWidth() const
     {
         if(m_localindentWidth.isValid()) {
@@ -190,7 +190,7 @@ public:
         }
         return wxNOT_FOUND;
     }
-    void SetTabWidth(const int& tabWidth) { m_localtabWidth.Set(tabWidth); }
+    void SetTabWidth(int tabWidth) { m_localtabWidth.Set(tabWidth); }
     int GetTabWidth() const
     {
         if(m_localtabWidth.isValid()) {
@@ -208,7 +208,7 @@ public:
     }
     void SetFileFontEncoding(const wxString& strFileFontEncoding);
 
-    void SetShowWhitespaces(const int& showWhitespaces) { m_localshowWhitspaces.Set(showWhitespaces); }
+    void SetShowWhitespaces(int showWhitespaces) { m_localshowWhitspaces.Set(showWhitespaces); }
     int GetShowWhitespaces() const
     {
         if(m_localshowWhitspaces.isValid()) {

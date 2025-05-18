@@ -48,12 +48,8 @@ public:
 		return m_file;
 	}
 	int GetLastRetaggedTimestamp() const { return m_lastRetaggedTimestamp; }
-	void SetId(const long& id) {
-		this->m_id = id;
-	}
-	const long& GetId() const {
-		return m_id;
-	}
+	void SetId(long id) { this->m_id = id; }
+	long GetId() const { return m_id; }
 };
 using FileEntryPtr = std::unique_ptr<FileEntry>;
 

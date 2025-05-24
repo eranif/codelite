@@ -113,10 +113,17 @@ public:
     bool IsRunning() const { return m_process != nullptr; }
 
     // API
+
     /**
      * @brief find all files on a remote machine from a given directory that matches the extensions list
+     * @extensions a comma/semi colon separate list of patterns to include from the file list (e.g. "*.cpp")
+     * @exclude_extensions a comma/semi colon separate list of patterns to exclude from the file list (e.g. "*.pyc")
+     * @exclude_patterns a comma/semi colon separate list of patterns to exclude from the file list (e.g. "build-debug")
      */
-    void ListFiles(const wxString& root_dir, const wxString& extensions);
+    void ListFiles(const wxString& root_dir,
+                   const wxString& extensions,
+                   const wxString& exclude_extensions,
+                   const wxString& exclude_patterns);
 
     /**
      * @brief list all configured LSPs on the remote machine
@@ -127,14 +134,19 @@ public:
     /**
      * @brief find in files on a remote machine
      */
-    void Search(
-        const wxString& root_dir, const wxString& extensions, const wxString& find_what, bool whole_word, bool icase);
+    void Search(const wxString& root_dir,
+                const wxString& extensions,
+                const wxString& exclude_patterns,
+                const wxString& find_what,
+                bool whole_word,
+                bool icase);
 
     /**
      * @brief replace in file on a remote machine
      */
     void Replace(const wxString& root_dir,
                  const wxString& extensions,
+                 const wxString& exclude_patterns,
                  const wxString& find_what,
                  const wxString& replace_with,
                  bool whole_word,

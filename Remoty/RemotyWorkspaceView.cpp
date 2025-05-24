@@ -53,7 +53,7 @@ RemotyWorkspaceView::~RemotyWorkspaceView()
 void RemotyWorkspaceView::OpenWorkspace(const wxString& path, const wxString& accountName)
 {
     auto account = SSHAccountInfo::LoadAccount(accountName);
-    if(account.GetAccountName().empty()) {
+    if (account.GetAccountName().empty()) {
         clWARNING() << "Failed to open workspace at:" << path << "for account" << accountName << endl;
         clWARNING() << "Account does not exist" << endl;
     }
@@ -71,7 +71,7 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
     CHECK_ITEM_RET(item);
 
     bool isRootItem = (item == m_tree->GetTree()->GetRootItem());
-    if(isRootItem && m_workspace->GetSettings().GetSelectedConfig()) {
+    if (isRootItem && m_workspace->GetSettings().GetSelectedConfig()) {
         auto& settings = m_workspace->GetSettings();
         auto conf = m_workspace->GetSettings().GetSelectedConfig();
         menu->AppendSeparator();
@@ -80,7 +80,7 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
         // ===---
         const auto& targets = settings.GetSelectedConfig()->GetBuildTargets();
         wxMenu* build_menu = new wxMenu;
-        for(const auto& vt : targets) {
+        for (const auto& vt : targets) {
             const wxString& name = vt.first;
             wxString xrcid_str;
             xrcid_str << "wsp-build-" << name;
@@ -101,7 +101,7 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
         wxMenu* select_config_menu = new wxMenu;
         wxArrayString configs = settings.GetConfigs();
         wxString activeConfig = settings.GetSelectedConfig()->GetName();
-        for(auto config : configs) {
+        for (auto config : configs) {
             wxString xrcid_str;
             xrcid_str << "wsp-config-" << config;
             int xrcid = wxXmlResource::GetXRCID(xrcid_str);
@@ -127,7 +127,7 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
             // load the remote workspace settings
             clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame(), &m_workspace->GetSettings());
             dlg.SetUseRemoteBrowsing(true, m_workspace->GetAccount().GetAccountName());
-            if(dlg.ShowModal() != wxID_OK) {
+            if (dlg.ShowModal() != wxID_OK) {
                 return;
             }
             // save workspace settings to the remote server
@@ -170,7 +170,7 @@ void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event) { event.S
 void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
 {
     event.Skip();
-    if(!m_workspace->IsOpened())
+    if (!m_workspace->IsOpened())
         return;
 
     // override the default find in files dialog
@@ -180,20 +180,29 @@ void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
 
     clRemoteFindDialog dlg(EventNotifier::Get()->TopFrame(), m_workspace->GetAccount().GetAccountName(), rootpath);
     auto editor = ::clGetManager()->GetActiveEditor();
-    if(editor && (editor->GetSelectionStart() != editor->GetSelectionEnd())) {
+    if (editor && (editor->GetSelectionStart() != editor->GetSelectionEnd())) {
         dlg.SetFindWhat(editor->GetCtrl()->GetSelectedText());
     }
 
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return;
     }
 
     // start the search
-    if(dlg.IsReplaceAction()) {
-        m_workspace->ReplaceInFiles(dlg.GetWhere(), dlg.GetFileExtensions(), dlg.GetFindWhat(), dlg.GetReplaceWith(),
-                                    dlg.IsWholeWord(), dlg.IsIcase());
+    if (dlg.IsReplaceAction()) {
+        m_workspace->ReplaceInFiles(dlg.GetWhere(),
+                                    dlg.GetFileExtensions(),
+                                    dlg.GetExcludePatterns(),
+                                    dlg.GetFindWhat(),
+                                    dlg.GetReplaceWith(),
+                                    dlg.IsWholeWord(),
+                                    dlg.IsIcase());
     } else {
-        m_workspace->FindInFiles(dlg.GetWhere(), dlg.GetFileExtensions(), dlg.GetFindWhat(), dlg.IsWholeWord(),
+        m_workspace->FindInFiles(dlg.GetWhere(),
+                                 dlg.GetFileExtensions(),
+                                 dlg.GetExcludePatterns(),
+                                 dlg.GetFindWhat(),
+                                 dlg.IsWholeWord(),
                                  dlg.IsIcase());
     }
 }
@@ -201,7 +210,7 @@ void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
 void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
 {
     event.Skip();
-    if(!m_workspace->IsOpened() || event.GetMatches().empty())
+    if (!m_workspace->IsOpened() || event.GetMatches().empty())
         return;
 
     // this is ours to handle
@@ -211,11 +220,11 @@ void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
 
     // if the file is already opened, just show it
     IEditor* editor = clGetManager()->FindEditor(match.file);
-    if(!editor) {
+    if (!editor) {
         editor = clSFTPManager::Get().OpenFile(match.file, m_workspace->GetAccount().GetAccountName());
     }
 
-    if(editor) {
+    if (editor) {
         // sci is 0 based line numbers
         auto callback = [=](IEditor* peditor) {
             int editor_line = loc.line - 1;
@@ -257,7 +266,7 @@ void RemotyWorkspaceView::DoCloseWorkspace()
 void RemotyWorkspaceView::OnRemoteFileSaved(clCommandEvent& event)
 {
     event.Skip();
-    if(!m_workspace->IsOpened())
+    if (!m_workspace->IsOpened())
         return;
 
     clGetManager()->SetStatusMessage(_("Remote file: ") + event.GetFileName() + _(" saved!"));
@@ -269,7 +278,7 @@ void RemotyWorkspaceView::OnRemoteFileSaved(clCommandEvent& event)
     auto cd = editor->GetRemoteData();
     CHECK_PTR_RET(cd);
 
-    if(is_codelite_remote_json && cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
+    if (is_codelite_remote_json && cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
         clGetManager()->SetStatusMessage(
             _("NOTICE: a workspace reload is required in order for the changes to take place"), 3);
     }
@@ -277,15 +286,15 @@ void RemotyWorkspaceView::OnRemoteFileSaved(clCommandEvent& event)
 
 wxString RemotyWorkspaceView::GetRemotePathIsOwnedByWorkspace(IEditor* editor) const
 {
-    if(!m_workspace->IsOpened())
+    if (!m_workspace->IsOpened())
         return wxEmptyString;
 
     auto cd = editor->GetRemoteData();
-    if(!cd) {
+    if (!cd) {
         return wxEmptyString;
     }
 
-    if(cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
+    if (cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
         return cd->GetRemotePath();
     }
     return wxEmptyString;
@@ -293,15 +302,15 @@ wxString RemotyWorkspaceView::GetRemotePathIsOwnedByWorkspace(IEditor* editor) c
 
 size_t RemotyWorkspaceView::GetWorkspaceRemoteFilesOpened(wxArrayString* paths) const
 {
-    if(!paths) {
+    if (!paths) {
         return 0;
     }
 
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
-    for(auto editor : editors) {
+    for (auto editor : editors) {
         wxString remote_path = GetRemotePathIsOwnedByWorkspace(editor);
-        if(remote_path.empty())
+        if (remote_path.empty())
             continue;
         paths->Add(remote_path);
     }

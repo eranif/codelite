@@ -36,6 +36,7 @@ public:
     wxString GetFindWhat() const;
     wxString GetReplaceWith() const;
     wxString GetFileExtensions() const;
+    wxString GetExcludePatterns() const;
     bool IsIcase() const;
     bool IsWholeWord() const;
     bool IsReplaceAction() const { return m_isReplace; }

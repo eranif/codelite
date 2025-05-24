@@ -44,7 +44,7 @@
 bool FindInFilesSession::From(const wxString& content)
 {
     JSON root{ content };
-    if(!root.isOk()) {
+    if (!root.isOk()) {
         return false;
     }
 
@@ -61,6 +61,9 @@ bool FindInFilesSession::From(const wxString& content)
     where_array = json["where_array"].toArrayString();
     where = json["where"].toString(where);
 
+    exclude_patterns_array = json["exclude_patterns_array"].toArrayString();
+    exclude_patterns = json["exclude_patterns"].toString(exclude_patterns);
+
     encoding = json["encoding"].toString(encoding);
     flags = json["flags"].toSize_t(flags);
     files_scanner_flags = json["files_scanner_flags"].toSize_t(files_scanner_flags);
@@ -73,6 +76,8 @@ wxString FindInFilesSession::Save() const
     auto json = root.toElement();
     json.addProperty("find_what_array", find_what_array);
     json.addProperty("find_what", find_what);
+    json.addProperty("exclude_patterns_array", exclude_patterns_array);
+    json.addProperty("exclude_patterns", exclude_patterns);
     json.addProperty("replace_with_array", replace_with_array);
     json.addProperty("replace_with", replace_with);
     json.addProperty("files_array", files_array);
@@ -100,8 +105,8 @@ void SessionEntry::DeSerialize(Archive& arch)
 
     arch.Read(wxT("TabInfoArray"), m_vTabInfoArr);
     // initialize tab info array from m_tabs if in config file wasn't yet tab info array
-    if(m_vTabInfoArr.size() == 0 && m_tabs.GetCount() > 0) {
-        for(size_t i = 0; i < m_tabs.GetCount(); i++) {
+    if (m_vTabInfoArr.size() == 0 && m_tabs.GetCount() > 0) {
+        for (size_t i = 0; i < m_tabs.GetCount(); i++) {
             TabInfo oTabInfo;
             oTabInfo.SetFileName(m_tabs.Item(i));
             oTabInfo.SetFirstVisibleLine(0);
@@ -156,7 +161,7 @@ bool SessionManager::Load(const wxString& fileName)
 {
     m_fileName = wxFileName(fileName);
 
-    if(!m_fileName.FileExists()) {
+    if (!m_fileName.FileExists()) {
         // no such file or directory
         // create an empty one
         wxFFile newFile(fileName, wxT("a+"));
@@ -170,14 +175,14 @@ bool SessionManager::Load(const wxString& fileName)
 
 wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxString& suffix /*=wxT("")*/) const
 {
-    if(defaultSessionName == name) {
+    if (defaultSessionName == name) {
         wxFileName sessionFileName = wxFileName(clStandardPaths::Get().GetUserDataDir(), "Default.session");
         sessionFileName.AppendDir("config");
         return sessionFileName;
 
     } else {
         wxFileName sessionFileName(name);
-        if(suffix != "tabgroup") {
+        if (suffix != "tabgroup") {
             sessionFileName.AppendDir(".codelite");
         }
         sessionFileName.SetExt(suffix.IsEmpty() ? wxString("session") : suffix);
@@ -185,25 +190,27 @@ wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxStri
     }
 }
 
-bool SessionManager::GetSession(const wxString& workspaceFile, SessionEntry& session, const wxString& suffix,
+bool SessionManager::GetSession(const wxString& workspaceFile,
+                                SessionEntry& session,
+                                const wxString& suffix,
                                 const wxChar* Tag)
 {
-    if(!m_doc.GetRoot()) {
+    if (!m_doc.GetRoot()) {
         return false;
     }
 
     wxFileName sessionFileName = GetSessionFileName(workspaceFile, suffix);
     wxXmlDocument doc;
 
-    if(sessionFileName.FileExists()) {
-        if(!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk())
+    if (sessionFileName.FileExists()) {
+        if (!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk())
             return false;
     } else {
         doc.SetRoot(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag));
     }
 
     wxXmlNode* const node = doc.GetRoot();
-    if(!node || node->GetName() != Tag)
+    if (!node || node->GetName() != Tag)
         return false;
 
     Archive arch;
@@ -213,14 +220,16 @@ bool SessionManager::GetSession(const wxString& workspaceFile, SessionEntry& ses
     return true;
 }
 
-bool SessionManager::Save(const wxString& name, SessionEntry& session, const wxString& suffix /*=wxT("")*/,
+bool SessionManager::Save(const wxString& name,
+                          SessionEntry& session,
+                          const wxString& suffix /*=wxT("")*/,
                           const wxChar* Tag /*=sessionTag*/)
 {
-    if(!m_doc.GetRoot()) {
+    if (!m_doc.GetRoot()) {
         return false;
     }
 
-    if(name.empty())
+    if (name.empty())
         return false;
 
     wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag);
@@ -236,7 +245,7 @@ bool SessionManager::Save(const wxString& name, SessionEntry& session, const wxS
     // If we're saving a tabgroup, suffix will be ".tabgroup", not the default ".session"
     wxString content;
     wxStringOutputStream sos(&content);
-    if(!doc.Save(sos)) {
+    if (!doc.Save(sos)) {
         return false;
     }
     const wxFileName& sessionFileName = GetSessionFileName(name, suffix);
@@ -245,13 +254,13 @@ bool SessionManager::Save(const wxString& name, SessionEntry& session, const wxS
 
 void SessionManager::SetLastSession(const wxString& name)
 {
-    if(!m_doc.GetRoot()) {
+    if (!m_doc.GetRoot()) {
         return;
     }
     // first delete the old entry
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
-    while(node) {
-        if(node->GetName() == wxT("LastSession")) {
+    while (node) {
+        if (node->GetName() == wxT("LastSession")) {
             m_doc.GetRoot()->RemoveChild(node);
             delete node;
             break;
@@ -266,7 +275,7 @@ void SessionManager::SetLastSession(const wxString& name)
 
     wxString content;
     wxStringOutputStream sos(&content);
-    if(!m_doc.Save(sos)) {
+    if (!m_doc.Save(sos)) {
         return;
     }
     FileUtils::WriteFileContent(m_fileName, content);
@@ -274,16 +283,16 @@ void SessionManager::SetLastSession(const wxString& name)
 
 wxString SessionManager::GetLastSession()
 {
-    if(!m_doc.GetRoot()) {
+    if (!m_doc.GetRoot()) {
         return defaultSessionName;
     }
     // try to locate the 'LastSession' entry
     // if it does not exist or it exist with value empty return 'Default'
     // otherwise, return its content
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
-    while(node) {
-        if(node->GetName() == wxT("LastSession")) {
-            if(node->GetNodeContent().IsEmpty()) {
+    while (node) {
+        if (node->GetName() == wxT("LastSession")) {
+            if (node->GetNodeContent().IsEmpty()) {
                 return defaultSessionName;
             } else {
                 return node->GetNodeContent();

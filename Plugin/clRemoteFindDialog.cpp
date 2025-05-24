@@ -19,16 +19,16 @@ namespace
 void UpdateComboBox(clComboBox* cb, const wxArrayString& arr, const wxString& str)
 {
     cb->Clear();
-    if(arr.empty()) {
+    if (arr.empty()) {
         return;
     }
     cb->Append(arr);
     size_t where = cb->FindString(str);
-    if(where == wxString::npos) {
+    if (where == wxString::npos) {
         where = cb->Append(str);
     }
 
-    if(where != wxString::npos) { // this shouldn't happen... but better be safe than sorry
+    if (where != wxString::npos) { // this shouldn't happen... but better be safe than sorry
         cb->SetSelection(where);
     }
 }
@@ -42,10 +42,10 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     m_choiceTool->SetSelection(last_tool == "grep" ? 0 : 1);
 
     auto accounts = SSHAccountInfo::Load();
-    if(!accounts.empty()) {
+    if (!accounts.empty()) {
         wxArrayString accounts_arr;
         accounts_arr.reserve(accounts.size());
-        for(const auto& acc : accounts) {
+        for (const auto& acc : accounts) {
             accounts_arr.Add(acc.GetAccountName());
         }
         m_choiceAccounts->Append(accounts_arr);
@@ -55,9 +55,11 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
 
     // read the find what list
     SessionManager::Get().LoadFindInFilesSession(&m_data);
-    if(m_data.where.empty() && clWorkspaceManager::Get().GetWorkspace()) {
+    if (m_data.where.empty() && clWorkspaceManager::Get().GetWorkspace()) {
         m_data.where = clWorkspaceManager::Get().GetWorkspace()->GetFileName().BeforeLast('/');
     }
+
+    m_textExcludePatterns->ChangeValue(m_data.exclude_patterns);
 
     UpdateComboBox(m_comboBoxFindWhat, m_data.find_what_array, m_data.find_what);
     UpdateComboBox(m_comboBoxWhere, m_data.where_array, m_data.where);
@@ -93,12 +95,14 @@ clRemoteFindDialog::~clRemoteFindDialog()
     m_data.files_array = StringUtils::AppendAndMakeUnique(m_comboBoxTypes->GetStrings(), m_comboBoxTypes->GetValue());
     m_data.files = m_comboBoxTypes->GetValue();
     m_data.flags = 0;
-    if(m_checkBoxCase->IsChecked()) {
+    if (m_checkBoxCase->IsChecked()) {
         m_data.flags |= wxFRD_MATCHCASE;
     }
-    if(m_checkBoxWholeWord->IsChecked()) {
+    if (m_checkBoxWholeWord->IsChecked()) {
         m_data.flags |= wxFRD_MATCHWHOLEWORD;
     }
+
+    m_data.exclude_patterns = m_textExcludePatterns->GetValue();
 
     // store the find in files session
     clConfig::Get().Write("remote_find_replace_tool/last_tool", m_choiceTool->GetStringSelection());
@@ -115,6 +119,7 @@ wxString clRemoteFindDialog::GetFindWhat() const { return m_comboBoxFindWhat->Ge
 wxString clRemoteFindDialog::GetReplaceWith() const { return m_comboBoxReplaceWith->GetValue(); }
 
 wxString clRemoteFindDialog::GetFileExtensions() const { return m_comboBoxTypes->GetValue(); }
+wxString clRemoteFindDialog::GetExcludePatterns() const { return m_textExcludePatterns->GetValue(); }
 
 bool clRemoteFindDialog::IsIcase() const { return !m_checkBoxCase->IsChecked(); }
 
@@ -143,7 +148,7 @@ void clRemoteFindDialog::OnReplaceUI(wxUpdateUIEvent& event)
 }
 void clRemoteFindDialog::DoShowControls()
 {
-    switch(m_choiceTool->GetSelection()) {
+    switch (m_choiceTool->GetSelection()) {
     case 1: // sed
         DoShowReplaceControls(true);
         DoShowSearchControls(false);
@@ -167,7 +172,7 @@ void clRemoteFindDialog::OnTool(wxCommandEvent& event)
 void clRemoteFindDialog::DoShowSearchControls(bool show)
 {
     m_buttonFind->Show(show);
-    if(show) {
+    if (show) {
         m_buttonFind->SetDefault();
     }
 }
@@ -177,7 +182,7 @@ void clRemoteFindDialog::DoShowReplaceControls(bool show)
     m_buttonReplace->Show(show);
     m_staticTextReplace->Show(show);
     m_comboBoxReplaceWith->Show(show);
-    if(show) {
+    if (show) {
         m_buttonReplace->SetDefault();
     }
 }

@@ -350,7 +350,10 @@ void clCodeLiteRemoteProcess::ListLSPs()
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListLSPsOutput, nullptr, nullptr });
 }
 
-void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString& extensions)
+void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir,
+                                        const wxString& extensions,
+                                        const wxString& exclude_extensions,
+                                        const wxString& exclude_patterns)
 {
     if (!m_process) {
         return;
@@ -362,6 +365,8 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
     item.addProperty("command", "ls");
     item.addProperty("root_dir", root_dir);
     item.addProperty("file_extensions", ::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK));
+    item.addProperty("exclude_extensions", ::wxStringTokenize(exclude_extensions, ",; |", wxTOKEN_STRTOK));
+    item.addProperty("exclude_patterns", ::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK));
     LOG_IF_TRACE { clDEBUG1() << "ListFiles: sending command:" << item.format(false) << endl; }
     m_process->Write(item.format(false) + "\n");
 
@@ -369,8 +374,12 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListFilesOutput, nullptr, nullptr });
 }
 
-void clCodeLiteRemoteProcess::Search(
-    const wxString& root_dir, const wxString& extensions, const wxString& find_what, bool whole_word, bool icase)
+void clCodeLiteRemoteProcess::Search(const wxString& root_dir,
+                                     const wxString& extensions,
+                                     const wxString& exclude_patterns,
+                                     const wxString& find_what,
+                                     bool whole_word,
+                                     bool icase)
 {
     if (!m_process) {
         return;
@@ -383,6 +392,7 @@ void clCodeLiteRemoteProcess::Search(
     item.addProperty("root_dir", root_dir);
     item.addProperty("find_what", find_what);
     item.addProperty("file_extensions", ::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK));
+    item.addProperty("exclude_patterns", ::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK));
     item.addProperty("icase", icase);
     item.addProperty("whole_word", whole_word);
 
@@ -773,6 +783,7 @@ bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd,
 
 void clCodeLiteRemoteProcess::Replace(const wxString& root_dir,
                                       const wxString& extensions,
+                                      const wxString& exclude_patterns,
                                       const wxString& find_what,
                                       const wxString& replace_with,
                                       bool whole_word,
@@ -790,6 +801,7 @@ void clCodeLiteRemoteProcess::Replace(const wxString& root_dir,
     item.addProperty("find_what", find_what);
     item.addProperty("replace_with", replace_with);
     item.addProperty("file_extensions", ::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK));
+    item.addProperty("exclude_patterns", ::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK));
     item.addProperty("icase", icase);
     item.addProperty("whole_word", whole_word);
 

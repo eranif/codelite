@@ -30,6 +30,7 @@
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include "clThemedComboBox.hpp"
+#include "clThemedTextCtrl.hpp"
 #include "clThemedChoice.h"
 #include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
@@ -77,8 +78,10 @@ public:
     wxButton* GetButtonEdit() { return m_buttonEdit; }
     wxButton* GetButton6() { return m_button6; }
     wxButton* GetButton8() { return m_button8; }
-    SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                             const wxString& title = _("SSH Account Manager"), const wxPoint& pos = wxDefaultPosition,
+    SSHAccountManagerDlgBase(wxWindow* parent,
+                             wxWindowID id = wxID_ANY,
+                             const wxString& title = _("SSH Account Manager"),
+                             const wxPoint& pos = wxDefaultPosition,
                              const wxSize& size = wxSize(-1, -1),
                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SSHAccountManagerDlgBase();
@@ -131,8 +134,11 @@ public:
     wxButton* GetButton51() { return m_button51; }
     wxButton* GetButton27() { return m_button27; }
     wxButton* GetButton25() { return m_button25; }
-    AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add Account"),
-                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    AddSSHAcountDlgBase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxString& title = _("Add Account"),
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~AddSSHAcountDlgBase();
 };
@@ -175,8 +181,11 @@ public:
     wxButton* GetButton59() { return m_button59; }
     wxButton* GetButton61() { return m_button61; }
     wxPanel* GetPanel149() { return m_panel149; }
-    SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Browser"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    SFTPBrowserBaseDlg(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& title = _("SFTP Browser"),
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SFTPBrowserBaseDlg();
 };
@@ -198,6 +207,8 @@ protected:
     clThemedComboBox* m_comboBoxReplaceWith;
     wxStaticText* m_staticText169;
     clThemedComboBox* m_comboBoxWhere;
+    wxStaticText* m_staticText220;
+    clThemedTextCtrl* m_textExcludePatterns;
     wxStaticText* m_staticText175;
     clThemedComboBox* m_comboBoxTypes;
     wxStaticText* m_staticText177;
@@ -224,6 +235,8 @@ public:
     clThemedComboBox* GetComboBoxReplaceWith() { return m_comboBoxReplaceWith; }
     wxStaticText* GetStaticText169() { return m_staticText169; }
     clThemedComboBox* GetComboBoxWhere() { return m_comboBoxWhere; }
+    wxStaticText* GetStaticText220() { return m_staticText220; }
+    clThemedTextCtrl* GetTextExcludePatterns() { return m_textExcludePatterns; }
     wxStaticText* GetStaticText175() { return m_staticText175; }
     clThemedComboBox* GetComboBoxTypes() { return m_comboBoxTypes; }
     wxStaticText* GetStaticText177() { return m_staticText177; }
@@ -233,9 +246,12 @@ public:
     wxButton* GetButtonCancel() { return m_buttonCancel; }
     wxCheckBox* GetCheckBoxWholeWord() { return m_checkBoxWholeWord; }
     wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
-    clRemoteFindDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                           const wxString& title = _("Run tool on remote host"), const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    clRemoteFindDialogBase(wxWindow* parent,
+                           wxWindowID id = wxID_ANY,
+                           const wxString& title = _("Run tool on remote host"),
+                           const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1),
+                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clRemoteFindDialogBase();
 };
 

@@ -195,13 +195,22 @@ public:
     /**
      * @brief perform find in files
      */
-    void FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
-                     bool whole_word, bool icase);
+    void FindInFiles(const wxString& root_dir,
+                     const wxString& file_extensions,
+                     const wxString& exclude_patterns,
+                     const wxString& find_what,
+                     bool whole_word,
+                     bool icase);
     /**
      * @brief perform replace in files
      */
-    void ReplaceInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
-                        const wxString& replace_with, bool whole_word, bool icase);
+    void ReplaceInFiles(const wxString& root_dir,
+                        const wxString& file_extensions,
+                        const wxString& exclude_patterns,
+                        const wxString& find_what,
+                        const wxString& replace_with,
+                        bool whole_word,
+                        bool icase);
 };
 
 #endif // RemoteWorkspace_HPP

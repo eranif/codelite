@@ -20,7 +20,7 @@ clRemoteFinderHelper::~clRemoteFinderHelper() {}
 void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, bool is_completed)
 {
     auto search_tab = GetSearchTab();
-    if(!search_tab) {
+    if (!search_tab) {
         clWARNING() << "clRemoteFinderHelper: search tab is hidden" << endl;
         return;
     }
@@ -29,11 +29,11 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, 
     SearchResultList* resList = nullptr;
     const auto& matches = event.GetMatches();
 
-    if(!matches.empty()) {
+    if (!matches.empty()) {
         resList = new SearchResultList;
-        for(const auto& file_match : matches) {
+        for (const auto& file_match : matches) {
             const wxString& filename = file_match.file;
-            for(const auto& location : file_match.locations) {
+            for (const auto& location : file_match.locations) {
                 SearchResult res;
                 res.SetColumn(location.column_start);
                 res.SetLen(location.column_end - location.column_start);
@@ -46,15 +46,15 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, 
     }
     m_matches_found += (resList ? resList->size() : 0);
 
-    if(resList && !resList->empty()) {
+    if (resList && !resList->empty()) {
         wxCommandEvent matchs_event(wxEVT_SEARCH_THREAD_MATCHFOUND);
         matchs_event.SetClientData(resList);
         search_tab->GetEventHandler()->AddPendingEvent(matchs_event);
-    } else if(resList) {
+    } else if (resList) {
         wxDELETE(resList);
     }
 
-    if(is_completed) {
+    if (is_completed) {
         // stop the clock
         long elapsed_time = m_stopWatch.Time();
         SearchSummary* summary = new SearchSummary;
@@ -72,22 +72,26 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, 
     }
 }
 
-void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions,
-                                  bool whole_word, bool icase)
+void clRemoteFinderHelper::Search(const wxString& root_dir,
+                                  const wxString& excldue_patterns,
+                                  const wxString& findString,
+                                  const wxString& fileExtensions,
+                                  bool whole_word,
+                                  bool icase)
 {
     // start ssh process
-    if(!m_codeliteRemote || !m_codeliteRemote->IsRunning()) {
+    if (!m_codeliteRemote || !m_codeliteRemote->IsRunning()) {
         return;
     }
     m_stopWatch.Start();
     m_matches_found = 0;
 
-    if(!GetSearchTab()) {
+    if (!GetSearchTab()) {
         clWARNING() << "clRemoteFinderHelper: search ignored, search tab is hidden" << endl;
         return;
     }
 
-    m_codeliteRemote->Search(root_dir, fileExtensions, findString, whole_word, icase);
+    m_codeliteRemote->Search(root_dir, fileExtensions, excldue_patterns, findString, whole_word, icase);
 
     SearchData sd;
     sd.SetEncoding("UTF-8");

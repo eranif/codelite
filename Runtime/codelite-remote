@@ -14,9 +14,8 @@ configuration = {}
 # ----------------------------------------------------------------------------------------------------------------------------------
 # Sample usage:
 #
-#   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
-#   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"C:/src/codelite"}
-#   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": false, "icase": true}
+#   {"command":"ls", "file_extensions":["*.cpp","*.hpp","*.h"], "exclude_patterns": ["build-debug"], "exclude_extensions": ["*.o","*.pyc"], "root_dir":"$HOME/devl/codelite"}
+#   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": false, "icase": true, "exclude_patterns": ["build-debug"]}
 #   {"command":"write_file", "path": "/tmp/myfile.txt", "content": "hello world"}
 #   {"command":"exec", "cmd": "/usr/bin/passwd", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
 #   {"command": "locate", "path": "/usr/bin", "name": "clangd", "ext": "", "versions": [15,14,13,12,11,10,9,8,7,6]}
@@ -168,11 +167,18 @@ def on_exec(cmd):
 
 
 def get_list_files_commands(cmd):
+    logging.info(f"Processing request: {cmd}")
     where = cmd["root_dir"]
     extensions = cmd["file_extensions"]
-    exclude_pattern = None
-    if hasattr(cmd, "exclude_patterns"):
-        exclude_pattern = cmd["exclude_patterns"]
+    exclude_extensions = None
+    exclude_patterns = None
+
+    if "exclude_extensions" in cmd:
+        exclude_extensions = cmd["exclude_extensions"]
+
+    if "exclude_patterns" in cmd:
+        exclude_patterns = cmd["exclude_patterns"]
+
     command = f"find {where} -type f "
     first_ext = True
     for ext in extensions:
@@ -182,14 +188,20 @@ def get_list_files_commands(cmd):
             first_ext = False
         command += f'-name "{ext}" '
 
+    # Exclude these file extensions
+    if exclude_extensions and len(exclude_extensions) > 0:
+        for ext in exclude_extensions:
+            command += f'! -name "{ext}"'
+
     # add exclude patterns
-    if exclude_pattern and len(exclude_pattern) > 0:
+    if exclude_patterns and len(exclude_patterns) > 0:
         command += "|"
-        for exclude_pat in exclude_pattern:
+        for exclude_pat in exclude_patterns:
             command += f'grep -v "{exclude_pat}"|'
         # strip the last "|"
         command = command[:-1]
     command += "| sort"
+    logging.info(f"Running command: {command}")
     return command
 
 
@@ -225,7 +237,7 @@ def on_find_files(cmd):
 
     Example command:
 
-    {"command":"ls", "file_extensions":["*.cpp","*.hpp","*.h"], "exclude_patterns": ["*build/*"], "root_dir":"$HOME/devl/codelite"}
+    {"command":"ls", "file_extensions":["*.cpp","*.hpp","*.h"], "exclude_patterns": ["build-debug"], "exclude_extensions": ["*.o","*.pyc"], "root_dir":"$HOME/devl/codelite"}
     """
     # build the find command
     command = get_list_files_commands(cmd)
@@ -456,7 +468,7 @@ def main_loop():
         format="%(asctime)s: {}: %(levelname)s: %(message)s".format(
             args.context.upper()
         ),
-        level=logging.ERROR,
+        level=logging.WARNING,
     )
     logging.info("started")
     logging.info("current working directory is set to: {}".format(curdir))

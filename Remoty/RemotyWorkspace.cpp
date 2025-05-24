@@ -942,6 +942,8 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
 {
     wxString root_dir = GetRemoteWorkingDir();
     wxString file_extensions = GetSettings().GetSelectedConfig()->GetFileExtensions();
+    wxString exclude_file_extensions = GetSettings().GetSelectedConfig()->GetExcludeFilesPattern();
+    wxString exclude_patterns = GetSettings().GetSelectedConfig()->GetExecludePaths();
 
     auto files_exts = ::wxStringTokenize(file_extensions, ";,", wxTOKEN_STRTOK);
     std::unordered_set<wxString> S{ files_exts.begin(), files_exts.end() };
@@ -958,7 +960,7 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
     m_workspaceFiles.clear();
 
     // use the finder codelite-remote
-    m_codeliteRemoteFinder.ListFiles(root_dir, file_extensions);
+    m_codeliteRemoteFinder.ListFiles(root_dir, file_extensions, exclude_file_extensions, exclude_patterns);
 }
 
 void RemotyWorkspace::OnOpenResourceFile(clCommandEvent& event)
@@ -982,6 +984,7 @@ void RemotyWorkspace::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
 void RemotyWorkspace::ReplaceInFiles(const wxString& root_dir,
                                      const wxString& file_extensions,
+                                     const wxString& exclude_patterns,
                                      const wxString& find_what,
                                      const wxString& replace_with,
                                      bool whole_word,
@@ -1000,18 +1003,23 @@ void RemotyWorkspace::ReplaceInFiles(const wxString& root_dir,
         return;
     }
 
-    m_codeliteRemoteFinder.Replace(search_folder, file_extensions, find_what, replace_with, whole_word, icase);
+    m_codeliteRemoteFinder.Replace(
+        search_folder, file_extensions, exclude_patterns, find_what, replace_with, whole_word, icase);
 }
 
-void RemotyWorkspace::FindInFiles(
-    const wxString& root_dir, const wxString& file_extensions, const wxString& find_what, bool whole_word, bool icase)
+void RemotyWorkspace::FindInFiles(const wxString& root_dir,
+                                  const wxString& file_extensions,
+                                  const wxString& exclude_patterns,
+                                  const wxString& find_what,
+                                  bool whole_word,
+                                  bool icase)
 {
     m_remoteFinder.SetCodeLiteRemote(&m_codeliteRemoteFinder);
     wxString search_folder = root_dir;
     if (search_folder == "<Workspace Folder>") {
         search_folder = GetRemoteWorkingDir();
     }
-    m_remoteFinder.Search(search_folder, find_what, file_extensions, whole_word, icase);
+    m_remoteFinder.Search(search_folder, exclude_patterns, find_what, file_extensions, whole_word, icase);
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteReplaceProgress(clFindInFilesEvent& event)

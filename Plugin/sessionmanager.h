@@ -133,6 +133,9 @@ struct WXDLLIMPEXP_SDK FindInFilesSession {
     wxArrayString where_array;
     wxString where = "<Workspace Folder>";
 
+    wxArrayString exclude_patterns_array;
+    wxString exclude_patterns = "build-debug;build-release";
+
     wxString encoding = "ISO-8859-1";
     size_t flags = wxFRD_MATCHCASE | wxFRD_MATCHWHOLEWORD | wxFRD_ENABLE_PIPE_SUPPORT;
     size_t files_scanner_flags = clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS;
@@ -165,9 +168,11 @@ private:
 public:
     static SessionManager& Get();
     bool Load(const wxString& fileName);
-    bool Save(const wxString& name, SessionEntry& session, const wxString& suffix = wxT(""),
-              const wxChar* Tag = sessionTag);
-    bool GetSession(const wxString& workspaceFile, SessionEntry& session, const wxString& suffix = wxT(""),
+    bool
+    Save(const wxString& name, SessionEntry& session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
+    bool GetSession(const wxString& workspaceFile,
+                    SessionEntry& session,
+                    const wxString& suffix = wxT(""),
                     const wxChar* Tag = sessionTag);
     void SetLastSession(const wxString& name);
     wxString GetLastSession();

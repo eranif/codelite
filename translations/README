@@ -1,0 +1,15 @@
+Installing new locale:
+- Create a directory for your translation $(LANG) (change $(LANG) by your own)
+- Run `msginit --input=codelite.pot --locale=$(LANG) --output=$(LANG)/codelite.po`
+- Modify `CMakeList.txt` to add `GETTEXT_PROCESS_PO_FILES` for your language
+
+Collect translatable texts:
+- run
+```
+cd ..
+xgettext --package-name=CodeLite --from-code=UTF-8 --c++ -o translations/codelite.pot --add-location --sort-by-file -k -k_ -kwxPLURAL:1,2 `find . -type f "(" -name "*.cpp" -or -name "*.h" -or -name "*.xrc" ")" -not -wholename "./sdk/*.*" -not -wholename "./submodules/*.*" -not -wholename "./Runtime/*.*"`
+```
+
+Updating translations:
+- Run `msgmerge --update --sort-by-file --no-fuzzy-matching --no-wrap $(LANG)/codelite.po codelite.pot`
+- Update $(LANG)/codelite.po for your language

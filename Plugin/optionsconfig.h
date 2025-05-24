@@ -171,7 +171,7 @@ public:
 public:
     OptionsConfig() {}
     OptionsConfig(wxXmlNode* node);
-    virtual ~OptionsConfig(void);
+    virtual ~OptionsConfig();
 
     void SetOutputTabsDirection(const wxDirection& outputTabsDirection)
     {
@@ -238,89 +238,89 @@ public:
     void SetDisableSemicolonShift(bool disableSemicolonShift) { this->m_disableSemicolonShift = disableSemicolonShift; }
     void SetDisableSmartIndent(bool disableSmartIndent) { this->m_disableSmartIndent = disableSmartIndent; }
     bool GetDisableSmartIndent() const { return m_disableSmartIndent; }
-    void SetTrimLine(const bool& trimLine) { this->m_TrimLine = trimLine; }
-    const bool& GetTrimLine() const { return m_TrimLine; }
-    void SetAppendLF(const bool& appendLF) { this->m_AppendLF = appendLF; }
-    const bool& GetAppendLF() const { return m_AppendLF; }
-    void SetFindBarAtBottom(const bool& findBarAtBottom) { this->m_findBarAtBottom = findBarAtBottom; }
-    const bool& GetFindBarAtBottom() const { return m_findBarAtBottom; }
+    void SetTrimLine(bool trimLine) { this->m_TrimLine = trimLine; }
+    bool GetTrimLine() const { return m_TrimLine; }
+    void SetAppendLF(bool appendLF) { this->m_AppendLF = appendLF; }
+    bool GetAppendLF() const { return m_AppendLF; }
+    void SetFindBarAtBottom(bool findBarAtBottom) { this->m_findBarAtBottom = findBarAtBottom; }
+    bool GetFindBarAtBottom() const { return m_findBarAtBottom; }
     void SetShowReplaceBar(bool show) { m_showReplaceBar = show; }
     bool GetShowReplaceBar() const { return m_showReplaceBar; }
-    void SetHideOutpuPaneOnUserClick(const bool& hideOutpuPaneOnUserClick)
+    void SetHideOutpuPaneOnUserClick(bool hideOutpuPaneOnUserClick)
     {
         this->m_hideOutpuPaneOnUserClick = hideOutpuPaneOnUserClick;
     }
-    const bool& GetHideOutpuPaneOnUserClick() const { return m_hideOutpuPaneOnUserClick; }
-    void SetHideOutputPaneNotIfBuild(const bool& HideOutpuPaneNotIfBuild)
+    bool GetHideOutpuPaneOnUserClick() const { return m_hideOutpuPaneOnUserClick; }
+    void SetHideOutputPaneNotIfBuild(bool HideOutpuPaneNotIfBuild)
     {
         this->m_hideOutputPaneNotIfBuild = HideOutpuPaneNotIfBuild;
     }
-    const bool& GetHideOutputPaneNotIfBuild() const { return m_hideOutputPaneNotIfBuild; }
-    void SetHideOutputPaneNotIfSearch(const bool& HideOutpuPaneNotIfSearch)
+    bool GetHideOutputPaneNotIfBuild() const { return m_hideOutputPaneNotIfBuild; }
+    void SetHideOutputPaneNotIfSearch(bool HideOutpuPaneNotIfSearch)
     {
         this->m_hideOutputPaneNotIfSearch = HideOutpuPaneNotIfSearch;
     }
-    const bool& GetHideOutputPaneNotIfSearch() const { return m_hideOutputPaneNotIfSearch; }
-    void SetHideOutputPaneNotIfReplace(const bool& HideOutpuPaneNotIfReplace)
+    bool GetHideOutputPaneNotIfSearch() const { return m_hideOutputPaneNotIfSearch; }
+    void SetHideOutputPaneNotIfReplace(bool HideOutpuPaneNotIfReplace)
     {
         this->m_hideOutputPaneNotIfReplace = HideOutpuPaneNotIfReplace;
     }
-    const bool& GetHideOutputPaneNotIfReplace() const { return m_hideOutputPaneNotIfReplace; }
-    void SetHideOutputPaneNotIfReferences(const bool& HideOutpuPaneNotIfReferences)
+    bool GetHideOutputPaneNotIfReplace() const { return m_hideOutputPaneNotIfReplace; }
+    void SetHideOutputPaneNotIfReferences(bool HideOutpuPaneNotIfReferences)
     {
         this->m_hideOutputPaneNotIfReferences = HideOutpuPaneNotIfReferences;
     }
-    const bool& GetHideOutputPaneNotIfReferences() const { return m_hideOutputPaneNotIfReferences; }
-    void SetHideOutputPaneNotIfOutput(const bool& HideOutpuPaneNotIfOutput)
+    bool GetHideOutputPaneNotIfReferences() const { return m_hideOutputPaneNotIfReferences; }
+    void SetHideOutputPaneNotIfOutput(bool HideOutpuPaneNotIfOutput)
     {
         this->m_hideOutputPaneNotIfOutput = HideOutpuPaneNotIfOutput;
     }
-    const bool& GetHideOutputPaneNotIfOutput() const { return m_hideOutputPaneNotIfOutput; }
-    void SetHideOutputPaneNotIfTrace(const bool& HideOutpuPaneNotIfTrace)
+    bool GetHideOutputPaneNotIfOutput() const { return m_hideOutputPaneNotIfOutput; }
+    void SetHideOutputPaneNotIfTrace(bool HideOutpuPaneNotIfTrace)
     {
         this->m_hideOutputPaneNotIfTrace = HideOutpuPaneNotIfTrace;
     }
-    const bool& GetHideOutputPaneNotIfTrace() const { return m_hideOutputPaneNotIfTrace; }
-    void SetHideOutputPaneNotIfTasks(const bool& HideOutpuPaneNotIfTasks)
+    bool GetHideOutputPaneNotIfTrace() const { return m_hideOutputPaneNotIfTrace; }
+    void SetHideOutputPaneNotIfTasks(bool HideOutpuPaneNotIfTasks)
     {
         this->m_hideOutputPaneNotIfTasks = HideOutpuPaneNotIfTasks;
     }
-    const bool& GetHideOutputPaneNotIfTasks() const { return m_hideOutputPaneNotIfTasks; }
-    void SetHideOutputPaneNotIfBuildQ(const bool& HideOutpuPaneNotIfBuildQ)
+    bool GetHideOutputPaneNotIfTasks() const { return m_hideOutputPaneNotIfTasks; }
+    void SetHideOutputPaneNotIfBuildQ(bool HideOutpuPaneNotIfBuildQ)
     {
         this->m_hideOutputPaneNotIfBuildQ = HideOutpuPaneNotIfBuildQ;
     }
-    const bool& GetHideOutputPaneNotIfBuildQ() const { return m_hideOutputPaneNotIfBuildQ; }
-    void SetHideOutputPaneNotIfCppCheck(const bool& HideOutpuPaneNotIfCppCheck)
+    bool GetHideOutputPaneNotIfBuildQ() const { return m_hideOutputPaneNotIfBuildQ; }
+    void SetHideOutputPaneNotIfCppCheck(bool HideOutpuPaneNotIfCppCheck)
     {
         this->m_hideOutputPaneNotIfCppCheck = HideOutpuPaneNotIfCppCheck;
     }
-    const bool& GetHideOutputPaneNotIfCppCheck() const { return m_hideOutputPaneNotIfCppCheck; }
-    void SetHideOutputPaneNotIfSvn(const bool& HideOutpuPaneNotIfSvn)
+    bool GetHideOutputPaneNotIfCppCheck() const { return m_hideOutputPaneNotIfCppCheck; }
+    void SetHideOutputPaneNotIfSvn(bool HideOutpuPaneNotIfSvn)
     {
         this->m_hideOutputPaneNotIfSvn = HideOutpuPaneNotIfSvn;
     }
-    const bool& GetHideOutputPaneNotIfSvn() const { return m_hideOutputPaneNotIfSvn; }
-    void SetHideOutputPaneNotIfCscope(const bool& HideOutpuPaneNotIfCscope)
+    bool GetHideOutputPaneNotIfSvn() const { return m_hideOutputPaneNotIfSvn; }
+    void SetHideOutputPaneNotIfCscope(bool HideOutpuPaneNotIfCscope)
     {
         this->m_hideOutputPaneNotIfCscope = HideOutpuPaneNotIfCscope;
     }
-    const bool& GetHideOutputPaneNotIfCscope() const { return m_hideOutputPaneNotIfCscope; }
-    void SetHideOutputPaneNotIfGit(const bool& HideOutpuPaneNotIfGit)
+    bool GetHideOutputPaneNotIfCscope() const { return m_hideOutputPaneNotIfCscope; }
+    void SetHideOutputPaneNotIfGit(bool HideOutpuPaneNotIfGit)
     {
         this->m_hideOutputPaneNotIfGit = HideOutpuPaneNotIfGit;
     }
-    const bool& GetHideOutputPaneNotIfGit() const { return m_hideOutputPaneNotIfGit; }
-    void SetHideOutputPaneNotIfDebug(const bool& HideOutpuPaneNotIfDebug)
+    bool GetHideOutputPaneNotIfGit() const { return m_hideOutputPaneNotIfGit; }
+    void SetHideOutputPaneNotIfDebug(bool HideOutpuPaneNotIfDebug)
     {
         this->m_hideOutputPaneNotIfDebug = HideOutpuPaneNotIfDebug;
     }
-    const bool& GetHideOutputPaneNotIfDebug() const { return m_hideOutputPaneNotIfDebug; }
-    void SetHideOutputPaneNotIfMemCheck(const bool& HideOutpuPaneNotIfMemCheck)
+    bool GetHideOutputPaneNotIfDebug() const { return m_hideOutputPaneNotIfDebug; }
+    void SetHideOutputPaneNotIfMemCheck(bool HideOutpuPaneNotIfMemCheck)
     {
         this->m_hideOutputPaneNotIfMemCheck = HideOutpuPaneNotIfMemCheck;
     }
-    const bool& GetHideOutputPaneNotIfMemCheck() const { return m_hideOutputPaneNotIfMemCheck; }
+    bool GetHideOutputPaneNotIfMemCheck() const { return m_hideOutputPaneNotIfMemCheck; }
 
     void SetTrackChanges(bool b) { this->m_trackEditorChanges = b; }
     bool IsTrackChanges() const { return m_trackEditorChanges; }
@@ -369,28 +369,28 @@ public:
     void SetShowIndentationGuidelines(bool b) { m_showIndentationGuidelines = b; }
     void SetCaretLineColour(wxColour c) { m_caretLineColour = c; }
 
-    void SetIndentUsesTabs(const bool& indentUsesTabs) { this->m_indentUsesTabs = indentUsesTabs; }
-    const bool& GetIndentUsesTabs() const { return m_indentUsesTabs; }
-    void SetIndentWidth(const int& indentWidth) { this->m_indentWidth = indentWidth; }
-    const int& GetIndentWidth() const { return m_indentWidth; }
-    void SetTabWidth(const int& tabWidth) { this->m_tabWidth = tabWidth; }
-    const int& GetTabWidth() const { return m_tabWidth; }
+    void SetIndentUsesTabs(bool indentUsesTabs) { this->m_indentUsesTabs = indentUsesTabs; }
+    bool GetIndentUsesTabs() const { return m_indentUsesTabs; }
+    void SetIndentWidth(int indentWidth) { this->m_indentWidth = indentWidth; }
+    int GetIndentWidth() const { return m_indentWidth; }
+    void SetTabWidth(int tabWidth) { this->m_tabWidth = tabWidth; }
+    int GetTabWidth() const { return m_tabWidth; }
 
-    void SetIconsSize(const int& iconsSize) { this->m_iconsSize = iconsSize; }
-    const int& GetIconsSize() const { return m_iconsSize; }
+    void SetIconsSize(int iconsSize) { this->m_iconsSize = iconsSize; }
+    int GetIconsSize() const { return m_iconsSize; }
 
     void SetFileFontEncoding(const wxString& strFileFontEncoding);
     wxFontEncoding GetFileFontEncoding() const { return m_fileFontEncoding; }
 
-    void SetShowWhitspaces(const int& showWhitspaces) { this->m_showWhitspaces = showWhitspaces; }
-    const int& GetShowWhitspaces() const { return m_showWhitspaces; }
+    void SetShowWhitspaces(int showWhitspaces) { this->m_showWhitspaces = showWhitspaces; }
+    int GetShowWhitspaces() const { return m_showWhitspaces; }
 
-    void SetFoldAtElse(const bool& foldAtElse) { this->m_foldAtElse = foldAtElse; }
-    void SetFoldCompact(const bool& foldCompact) { this->m_foldCompact = foldCompact; }
-    const bool& GetFoldAtElse() const { return m_foldAtElse; }
-    const bool& GetFoldCompact() const { return m_foldCompact; }
-    void SetFoldPreprocessor(const bool& foldPreprocessor) { this->m_foldPreprocessor = foldPreprocessor; }
-    const bool& GetFoldPreprocessor() const { return m_foldPreprocessor; }
+    void SetFoldAtElse(bool foldAtElse) { this->m_foldAtElse = foldAtElse; }
+    void SetFoldCompact(bool foldCompact) { this->m_foldCompact = foldCompact; }
+    bool GetFoldAtElse() const { return m_foldAtElse; }
+    bool GetFoldCompact() const { return m_foldCompact; }
+    void SetFoldPreprocessor(bool foldPreprocessor) { this->m_foldPreprocessor = foldPreprocessor; }
+    bool GetFoldPreprocessor() const { return m_foldPreprocessor; }
 
     void SetShowRightMarginIndicator(bool showRightMarginIndicator)
     {
@@ -399,11 +399,11 @@ public:
     void SetRightMarginColumn(int rightMarginColumn) { this->m_rightMarginColumn = rightMarginColumn; }
     bool IsShowRightMarginIndicator() const { return m_showRightMarginIndicator; }
     int GetRightMarginColumn() const { return m_rightMarginColumn; }
-    void SetHighlightMatchedBraces(const bool& highlightMatchedBraces)
+    void SetHighlightMatchedBraces(bool highlightMatchedBraces)
     {
         this->m_highlightMatchedBraces = highlightMatchedBraces;
     }
-    const bool& GetHighlightMatchedBraces() const { return m_highlightMatchedBraces; }
+    bool GetHighlightMatchedBraces() const { return m_highlightMatchedBraces; }
 
     void SetAutoAddMatchedCurlyBraces(bool autoAddMatchedBraces)
     {
@@ -421,15 +421,15 @@ public:
     bool IsHighlightFoldWhenActive() const { return HasOption(Opt_FoldHighlightActiveBlock); }
     void SetFoldBgColour(const wxColour& foldBgColour) { this->m_foldBgColour = foldBgColour; }
     const wxColour& GetFoldBgColour() const { return m_foldBgColour; }
-    void SetAutoAdjustHScrollBarWidth(const bool& autoAdjustHScrollBarWidth)
+    void SetAutoAdjustHScrollBarWidth(bool autoAdjustHScrollBarWidth)
     {
         this->m_autoAdjustHScrollBarWidth = autoAdjustHScrollBarWidth;
     }
-    const bool& GetAutoAdjustHScrollBarWidth() const { return m_autoAdjustHScrollBarWidth; }
-    void SetCaretBlinkPeriod(const int& caretBlinkPeriod) { this->m_caretBlinkPeriod = caretBlinkPeriod; }
-    void SetCaretWidth(const int& caretWidth) { this->m_caretWidth = caretWidth; }
-    const int& GetCaretBlinkPeriod() const { return m_caretBlinkPeriod; }
-    const int& GetCaretWidth() const { return m_caretWidth; }
+    bool GetAutoAdjustHScrollBarWidth() const { return m_autoAdjustHScrollBarWidth; }
+    void SetCaretBlinkPeriod(int caretBlinkPeriod) { this->m_caretBlinkPeriod = caretBlinkPeriod; }
+    void SetCaretWidth(int caretWidth) { this->m_caretWidth = caretWidth; }
+    int GetCaretBlinkPeriod() const { return m_caretBlinkPeriod; }
+    int GetCaretWidth() const { return m_caretWidth; }
 
     void SetCopyLineEmptySelection(const bool copyLineEmptySelection)
     {

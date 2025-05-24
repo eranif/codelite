@@ -80,14 +80,14 @@ const wxString& QueueCommand::GetConfiguration() const { return m_configuration;
 
 const wxString& QueueCommand::GetProject() const { return m_project; }
 
-void QueueCommand::SetProjectOnly(const bool& projectOnly) { this->m_projectOnly = projectOnly; }
+void QueueCommand::SetProjectOnly(bool projectOnly) { this->m_projectOnly = projectOnly; }
 
-const bool& QueueCommand::GetProjectOnly() const { return m_projectOnly; }
+bool QueueCommand::GetProjectOnly() const { return m_projectOnly; }
 
-void QueueCommand::SetKind(const int& kind) { this->m_kind = kind; }
+void QueueCommand::SetKind(int kind) { this->m_kind = kind; }
 
-const int& QueueCommand::GetKind() const { return m_kind; }
+int QueueCommand::GetKind() const { return m_kind; }
 
-void QueueCommand::SetCleanLog(const bool& cleanLog) { this->m_cleanLog = cleanLog; }
+void QueueCommand::SetCleanLog(bool cleanLog) { this->m_cleanLog = cleanLog; }
 
-const bool& QueueCommand::GetCleanLog() const { return m_cleanLog; }
+bool QueueCommand::GetCleanLog() const { return m_cleanLog; }

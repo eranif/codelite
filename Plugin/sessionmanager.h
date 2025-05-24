@@ -59,7 +59,7 @@ protected:
 
 public:
     // Setters
-    void SetSelectedTab(const int& selectedTab) { this->m_selectedTab = selectedTab; }
+    void SetSelectedTab(int selectedTab) { this->m_selectedTab = selectedTab; }
     // void SetTabs(const wxArrayString& tabs) {this->m_tabs = tabs;}
     void SetWorkspaceName(const wxString& workspaceName) { this->m_workspaceName = workspaceName; }
     void SetTabInfoArr(const std::vector<TabInfo>& _vTabInfoArr) { m_vTabInfoArr = _vTabInfoArr; }
@@ -69,7 +69,7 @@ public:
     }
 
     // Getters
-    const int& GetSelectedTab() const { return m_selectedTab; }
+    int GetSelectedTab() const { return m_selectedTab; }
     // const wxArrayString& GetTabs() const {return m_tabs;}
     const wxString& GetWorkspaceName() const { return m_workspaceName; }
     const std::vector<TabInfo>& GetTabInfoArr() const { return m_vTabInfoArr; }

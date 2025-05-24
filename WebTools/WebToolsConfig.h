@@ -62,7 +62,7 @@ protected:
             flags &= ~flag;
         }
     }
-    bool HasFlag(const size_t& flags, int flag) const { return flags & flag; }
+    bool HasFlag(size_t flags, int flag) const { return flags & flag; }
     WebToolsConfig();
 
 public:

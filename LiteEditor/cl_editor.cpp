@@ -2319,7 +2319,7 @@ void clEditor::BraceMatch(long pos)
     SetHighlightGuide(indentCol);
 }
 
-void clEditor::BraceMatch(const bool& bSelRegion)
+void clEditor::BraceMatch(bool bSelRegion)
 {
     // Check if we have a match
     long endPos = wxStyledTextCtrl::BraceMatch(GetCurrentPos());

@@ -46,9 +46,7 @@ public:
 	void SetExeFilepaths(const wxArrayString& exeFilepaths) {
 		this->m_exeFilepaths = exeFilepaths;
 	}
-	void SetSelectedDbg(const int& selectedDbg) {
-		this->m_selectedDbg = selectedDbg;
-	}
+	void SetSelectedDbg(int selectedDbg) { this->m_selectedDbg = selectedDbg; }
 	void SetWDs(const wxArrayString& wds) {
 		this->m_wds = wds;
 	}
@@ -59,9 +57,7 @@ public:
 	const wxArrayString& GetExeFilepaths() const {
 		return m_exeFilepaths;
 	}
-	const int& GetSelectedDbg() const {
-		return m_selectedDbg;
-	}
+	int GetSelectedDbg() const { return m_selectedDbg; }
 	const wxArrayString& GetWds() const {
 		return m_wds;
 	}

@@ -49,12 +49,8 @@ public:
 	void SetFile(const wxString& file) {
 		this->m_file = file.c_str();
 	}
-	void SetKind(const int& kind) {
-		this->m_kind = kind;
-	}
-	void SetLine(const int& line) {
-		this->m_line = line;
-	}
+	void SetKind(int kind) { this->m_kind = kind; }
+	void SetLine(int line) { this->m_line = line; }
 	void SetPattern(const wxString& pattern) {
 		this->m_pattern = pattern.c_str();
 	}
@@ -65,12 +61,8 @@ public:
 	const wxString& GetFile() const {
 		return m_file;
 	}
-	const int& GetKind() const {
-		return m_kind;
-	}
-	const int& GetLine() const {
-		return m_line;
-	}
+	int GetKind() const { return m_kind; }
+	int GetLine() const { return m_line; }
 	const wxString& GetPattern() const {
 		return m_pattern;
 	}

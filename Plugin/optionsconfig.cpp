@@ -261,7 +261,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     }
 }
 
-OptionsConfig::~OptionsConfig(void) {}
+OptionsConfig::~OptionsConfig() {}
 
 wxXmlNode* OptionsConfig::ToXml() const
 {

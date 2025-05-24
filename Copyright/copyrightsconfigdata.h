@@ -50,9 +50,7 @@ public:
 	void SetTemplateFilename(const wxString& templateFilename) {
 		this->m_templateFilename = templateFilename;
 	}
-	void SetBackupFiles(const bool& backupFiles) {
-		this->m_backupFiles = backupFiles;
-	}
+	void SetBackupFiles(bool backupFiles) { this->m_backupFiles = backupFiles; }
 
 	//Getters
 	const wxString& GetFileMasking() const {
@@ -61,9 +59,7 @@ public:
 	const wxString& GetTemplateFilename() const {
 		return m_templateFilename;
 	}
-	const bool& GetBackupFiles() const {
-		return m_backupFiles;
-	}
+	bool GetBackupFiles() const { return m_backupFiles; }
 	void SetIgnoreString(const wxString& ignoreString) {
 		this->m_ignoreString = ignoreString;
 	}

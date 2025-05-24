@@ -66,17 +66,13 @@ public:
 	
 	swStringDb* GetStringDb() ;
 	
-	void SetModified(const bool& modified) {
-		this->m_modified = modified;
-	}
+	void SetModified(bool modified) { this->m_modified = modified; }
 	
 	void SetPPlugin(SnipWiz* pPlugin) {
 		this->m_pPlugin = pPlugin;
 	}
 	
-	const bool& GetModified() const {
-		return m_modified;
-	}
+	bool GetModified() const { return m_modified; }
 	SnipWiz* GetPPlugin() {
 		return m_pPlugin;
 	}

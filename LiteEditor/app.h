@@ -65,8 +65,8 @@ private: // Methods
     void PrintUsage(const wxCmdLineParser& parser);
 
 public:
-    CodeLiteApp(void);
-    virtual ~CodeLiteApp(void);
+    CodeLiteApp();
+    virtual ~CodeLiteApp();
 
     static void FinalizeShutdown();
     void SetAllowedPlugins(const wxArrayString& allowedPlugins) { this->m_allowedPlugins = allowedPlugins; }

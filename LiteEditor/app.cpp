@@ -259,7 +259,7 @@ IMPLEMENT_APP(CodeLiteApp)
 #endif
 
 extern void InitXmlResource();
-CodeLiteApp::CodeLiteApp(void)
+CodeLiteApp::CodeLiteApp()
     : m_pMainFrame(NULL)
     , m_singleInstance(NULL)
     , m_pluginLoadPolicy(PP_All)
@@ -268,7 +268,7 @@ CodeLiteApp::CodeLiteApp(void)
 {
 }
 
-CodeLiteApp::~CodeLiteApp(void)
+CodeLiteApp::~CodeLiteApp()
 {
     wxImage::CleanUpHandlers();
     if (m_singleInstance) {

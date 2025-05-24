@@ -46,10 +46,10 @@ public:
     void Clear();
 
     // Setters
-    void SetMaxRange(const size_t& maxRange) { this->m_maxRange = maxRange; }
+    void SetMaxRange(size_t maxRange) { this->m_maxRange = maxRange; }
     void SetMsg(const wxString& msg) { this->m_msg = msg; }
     // Getters
-    const size_t& GetMaxRange() const { return m_maxRange; }
+    size_t GetMaxRange() const { return m_maxRange; }
     const wxString& GetMsg() const { return m_msg; }
     void SetFillCol(const wxColour& col) { m_fillCol = col; }
 

@@ -40,17 +40,9 @@ public:
 public:
 	virtual void DeSerialize(Archive &arch);
 	virtual void Serialize(Archive &arch);
-	void SetEnabled(const bool& enabled) {
-		this->m_enabled = enabled;
-	}
-	void SetParallelProcesses(const size_t& parallelProcesses) {
-		this->m_parallelProcesses = parallelProcesses;
-	}
-	const bool& GetEnabled() const {
-		return m_enabled;
-	}
-	const size_t& GetParallelProcesses() const {
-		return m_parallelProcesses;
-	}
+	void SetEnabled(bool enabled) { this->m_enabled = enabled; }
+	void SetParallelProcesses(size_t parallelProcesses) { this->m_parallelProcesses = parallelProcesses; }
+	bool GetEnabled() const { return m_enabled; }
+	size_t GetParallelProcesses() const { return m_parallelProcesses; }
 };
 #endif // __continousbuildconf__

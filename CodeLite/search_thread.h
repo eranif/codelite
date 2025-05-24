@@ -205,35 +205,35 @@ public:
     //------------------------------------------------------
     // Setters/getters
 
-    void SetFlags(const size_t& flags) { this->m_flags = flags; }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
 
-    const size_t& GetFlags() const { return m_flags; }
+    size_t GetFlags() const { return m_flags; }
 
     void SetPattern(const wxString& pat) { m_pattern = pat.c_str(); }
-    void SetPosition(const int& position) { m_position = position; }
-    void SetLineNumber(const int& line) { m_lineNumber = line; }
-    void SetColumn(const int& col) { m_column = col; }
+    void SetPosition(int position) { m_position = position; }
+    void SetLineNumber(int line) { m_lineNumber = line; }
+    void SetColumn(int col) { m_column = col; }
     void SetFileName(const wxString& fileName) { m_fileName = fileName.c_str(); }
 
-    const int& GetPosition() const { return m_position; }
-    const int& GetLineNumber() const { return m_lineNumber; }
-    const int& GetColumn() const { return m_column; }
+    int GetPosition() const { return m_position; }
+    int GetLineNumber() const { return m_lineNumber; }
+    int GetColumn() const { return m_column; }
     const wxString& GetPattern() const { return m_pattern; }
     const wxString& GetFileName() const { return m_fileName; }
 
-    void SetLen(const int& len) { this->m_len = len; }
-    const int& GetLen() const { return m_len; }
+    void SetLen(int len) { this->m_len = len; }
+    int GetLen() const { return m_len; }
 
     // Setters
     void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat.c_str(); }
     // Getters
     const wxString& GetFindWhat() const { return m_findWhat; }
 
-    void SetColumnInChars(const int& col) { this->m_columnInChars = col; }
-    const int& GetColumnInChars() const { return m_columnInChars; }
+    void SetColumnInChars(int col) { this->m_columnInChars = col; }
+    int GetColumnInChars() const { return m_columnInChars; }
 
-    void SetLenInChars(const int& len) { this->m_lenInChars = len; }
-    const int& GetLenInChars() const { return m_lenInChars; }
+    void SetLenInChars(int len) { this->m_lenInChars = len; }
+    int GetLenInChars() const { return m_lenInChars; }
 
     void SetScope(const wxString& scope) { this->m_scope = scope.c_str(); }
     const wxString& GetScope() const { return m_scope; }
@@ -309,8 +309,8 @@ public:
     int GetNumFileScanned() const { return m_fileScanned; }
     int GetNumMatchesFound() const { return m_matchesFound; }
 
-    void SetNumFileScanned(const int& num) { m_fileScanned = num; }
-    void SetNumMatchesFound(const int& num) { m_matchesFound = num; }
+    void SetNumFileScanned(int num) { m_fileScanned = num; }
+    void SetNumMatchesFound(int num) { m_matchesFound = num; }
     void SetElapsedTime(long elapsed) { m_elapsed = elapsed; }
     wxString GetMessage() const
     {

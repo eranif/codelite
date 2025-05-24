@@ -35,7 +35,7 @@ CppScanner::CppScanner()
 	m_comment = wxEmptyString;
 }
 
-CppScanner::~CppScanner(void)
+CppScanner::~CppScanner()
 {
 	free(m_data);
 }

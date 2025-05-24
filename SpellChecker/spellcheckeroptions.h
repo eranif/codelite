@@ -49,14 +49,20 @@ public:
 
 	void            SetDictionaryPath( const wxString& dictionaryPath ) { this->m_dictionaryPath = dictionaryPath; }
 	void            SetDictionaryFileName( const wxString& dictionary ) { this->m_dictionary = dictionary; }
-	void            SetScanC( const bool& scanC ) { this->m_scanC = scanC; }
-	void            SetScanCPP( const bool& scanCPP ) { this->m_scanCPP = scanCPP; }
-	void            SetScanD1( const bool& scanD1 ) { this->m_scanD1 = scanD1; }
-	void            SetScanD2( const bool& scanD2 ) { this->m_scanD2 = scanD2; }
-	void            SetScanStr( const bool& scanStr ) { this->m_scanStr = scanStr; }
-    void            SetCheckContinuous( const bool& checkContinuous ) { this->m_checkContinuous = checkContinuous; }
-    void            SetCaseSensitiveUserDictionary( const bool& caseSensitiveUserDictionary ) { this->m_caseSensitiveUserDictionary = caseSensitiveUserDictionary; }
-    void            SetIgnoreSymbolsInTagsDatabase( const bool& ignoreSymbolsInTagsDatabase ) { this->m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase; }
+    void SetScanC(bool scanC) { this->m_scanC = scanC; }
+    void SetScanCPP(bool scanCPP) { this->m_scanCPP = scanCPP; }
+    void SetScanD1(bool scanD1) { this->m_scanD1 = scanD1; }
+    void SetScanD2(bool scanD2) { this->m_scanD2 = scanD2; }
+    void SetScanStr(bool scanStr) { this->m_scanStr = scanStr; }
+    void SetCheckContinuous(bool checkContinuous) { this->m_checkContinuous = checkContinuous; }
+    void SetCaseSensitiveUserDictionary(bool caseSensitiveUserDictionary)
+    {
+        this->m_caseSensitiveUserDictionary = caseSensitiveUserDictionary;
+    }
+    void SetIgnoreSymbolsInTagsDatabase(bool ignoreSymbolsInTagsDatabase)
+    {
+        this->m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase;
+    }
 	bool            GetScanC() const { return m_scanC; }
 	bool            GetScanCPP() const { return m_scanCPP; }
 	bool            GetScanD1() const { return m_scanD1; }

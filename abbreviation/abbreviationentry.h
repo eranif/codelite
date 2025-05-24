@@ -45,11 +45,11 @@ public:
 
     // Setters
     void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
-    void SetAutoInsert(const bool& autoInsert) { this->m_autoInsert = autoInsert; }
+    void SetAutoInsert(bool autoInsert) { this->m_autoInsert = autoInsert; }
 
     // Getters
     const wxStringMap_t& GetEntries() const { return m_entries; }
-    const bool& GetAutoInsert() const { return m_autoInsert; }
+    bool GetAutoInsert() const { return m_autoInsert; }
 };
 
 class AbbreviationJSONEntry : public clConfigItem

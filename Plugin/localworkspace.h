@@ -86,7 +86,7 @@ public:
                        wxXmlNode* node); // Used for merging local values into the already-found global ones
     LocalOptionsConfig(LocalOptionsConfigPtr opts,
                        wxXmlNode* node); // Used for storing local values in a previously-empty instance
-    virtual ~LocalOptionsConfig(void) {}
+    virtual ~LocalOptionsConfig() {}
 
     bool IsTrackChangesIsValid() const { return m_localTrackChanges.isValid(); }
     bool DisplayFoldMarginIsValid() const { return m_localdisplayFoldMargin.isValid(); }
@@ -174,7 +174,7 @@ public:
     void SetAppendLF(bool b) { m_localAppendLF.Set(b); }
     void SetDisplayLineNumbers(bool b) { m_localdisplayLineNumbers.Set(b); }
     void SetShowIndentationGuidelines(bool b) { m_localshowIndentationGuidelines.Set(b); }
-    void SetIndentUsesTabs(const bool& indentUsesTabs) { m_localindentUsesTabs.Set(indentUsesTabs); }
+    void SetIndentUsesTabs(bool indentUsesTabs) { m_localindentUsesTabs.Set(indentUsesTabs); }
     bool GetIndentUsesTabs() const
     {
         if(m_localindentUsesTabs.isValid()) {
@@ -182,7 +182,7 @@ public:
         }
         return false;
     }
-    void SetIndentWidth(const int& indentWidth) { m_localindentWidth.Set(indentWidth); }
+    void SetIndentWidth(int indentWidth) { m_localindentWidth.Set(indentWidth); }
     int GetIndentWidth() const
     {
         if(m_localindentWidth.isValid()) {
@@ -190,7 +190,7 @@ public:
         }
         return wxNOT_FOUND;
     }
-    void SetTabWidth(const int& tabWidth) { m_localtabWidth.Set(tabWidth); }
+    void SetTabWidth(int tabWidth) { m_localtabWidth.Set(tabWidth); }
     int GetTabWidth() const
     {
         if(m_localtabWidth.isValid()) {
@@ -208,7 +208,7 @@ public:
     }
     void SetFileFontEncoding(const wxString& strFileFontEncoding);
 
-    void SetShowWhitespaces(const int& showWhitespaces) { m_localshowWhitspaces.Set(showWhitespaces); }
+    void SetShowWhitespaces(int showWhitespaces) { m_localshowWhitspaces.Set(showWhitespaces); }
     int GetShowWhitespaces() const
     {
         if(m_localshowWhitspaces.isValid()) {

@@ -46,19 +46,13 @@ public:
     {
         this->m_fileMask = fileMask;
     }
-    void SetFlags(const size_t& flags)
-    {
-        this->m_flags = flags;
-    }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
     // Getters
     const wxString& GetFileMask() const
     {
         return m_fileMask;
     }
-    const size_t& GetFlags() const
-    {
-        return m_flags;
-    }
+    size_t GetFlags() const { return m_flags; }
 
     void SetBaseDir(const wxString& baseDir)
     {

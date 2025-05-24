@@ -64,9 +64,9 @@ public:
     void Serialize(Archive& arch);
 
     // Setters
-    void SetValue(const long& value) { this->m_value = value; }
+    void SetValue(long value) { this->m_value = value; }
     // Getters
-    const long& GetValue() const { return m_value; }
+    long GetValue() const { return m_value; }
 };
 
 class WXDLLIMPEXP_SDK SimpleStringValue : public SerializedObject

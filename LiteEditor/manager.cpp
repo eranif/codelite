@@ -248,7 +248,7 @@ IncludeBlocks: Regroup
 //
 //---------------------------------------------------------------
 
-Manager::Manager(void)
+Manager::Manager()
     : m_shellProcess(NULL)
     , m_programProcess(NULL)
     , m_breakptsmgr(new BreakptMgr)
@@ -291,7 +291,7 @@ Manager::Manager(void)
 #endif
 }
 
-Manager::~Manager(void)
+Manager::~Manager()
 {
     EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
     Unbind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);

@@ -47,8 +47,8 @@ public:
     virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) = 0;
 
     // Setters/Getters
-    const int& GetEventId() const { return m_id; }
-    void SetEventId(const int& id) { m_id = id; }
+    int GetEventId() const { return m_id; }
+    void SetEventId(int id) { m_id = id; }
 };
 
 using MenuEventHandlerPtr = std::shared_ptr<MenuEventHandler>;

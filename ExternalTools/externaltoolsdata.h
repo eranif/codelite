@@ -80,11 +80,11 @@ public:
     const wxString& GetIcon16() const { return m_icon16; }
     const wxString& GetIcon24() const { return m_icon24; }
 
-    void SetCaptureOutput(const bool& captureOutput) { this->m_captureOutput = captureOutput; }
-    const bool& GetCaptureOutput() const { return m_captureOutput; }
+    void SetCaptureOutput(bool captureOutput) { this->m_captureOutput = captureOutput; }
+    bool GetCaptureOutput() const { return m_captureOutput; }
 
-    void SetSaveAllFiles(const bool& saveAllFiles) { this->m_saveAllFiles = saveAllFiles; }
-    const bool& GetSaveAllFiles() const { return m_saveAllFiles; }
+    void SetSaveAllFiles(bool saveAllFiles) { this->m_saveAllFiles = saveAllFiles; }
+    bool GetSaveAllFiles() const { return m_saveAllFiles; }
 
     bool IsCallOnFileSave() const { return (m_flags & kCallOnFileSave); }
     void SetCallOnFileSave(bool b) { EnableFlag(kCallOnFileSave, b); }

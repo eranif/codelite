@@ -281,8 +281,8 @@ public:
     const wxString& GetPreProcessorsWords() const { return m_preProcessorsWords; }
     void SetLineVisible(int lineno);
 
-    void SetReloadingFile(const bool& reloadingFile) { this->m_reloadingFile = reloadingFile; }
-    const bool& GetReloadingFile() const { return m_reloadingFile; }
+    void SetReloadingFile(bool reloadingFile) { this->m_reloadingFile = reloadingFile; }
+    bool GetReloadingFile() const { return m_reloadingFile; }
 
     clEditorTipWindow* GetFunctionTip() { return m_functionTip; }
 
@@ -980,8 +980,8 @@ public:
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------
 
-    void SetIsVisible(const bool& isVisible) { this->m_isVisible = isVisible; }
-    const bool& GetIsVisible() const { return m_isVisible; }
+    void SetIsVisible(bool isVisible) { this->m_isVisible = isVisible; }
+    bool GetIsVisible() const { return m_isVisible; }
 
     wxString GetEolString();
     void HighlightWord(StringHighlightOutput* highlightOutput);
@@ -1055,7 +1055,7 @@ private:
     void SetProperties();
     void DefineMarker(int marker, int markerType, wxColor fore, wxColor back);
     bool SaveToFile(const wxFileName& fileName);
-    void BraceMatch(const bool& bSelRegion);
+    void BraceMatch(bool bSelRegion);
     void BraceMatch(long pos);
     void DoHighlightWord();
     bool IsOpenBrace(int position);

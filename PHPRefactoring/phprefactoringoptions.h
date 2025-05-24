@@ -26,13 +26,13 @@ public:
 
     const wxString& GetPhprefactoringPhar() const { return m_phprefactoringPhar; }
 
-    PHPRefactoringOptions& SetSkipPreview(const bool& SkipPreview)
+    PHPRefactoringOptions& SetSkipPreview(bool SkipPreview)
     {
         this->m_skipPreview = SkipPreview;
         return *this;
     }
 
-    const bool& GetSkipPreview() const { return m_skipPreview; }
+    bool GetSkipPreview() const { return m_skipPreview; }
 };
 
 #endif // PHPREFACTORINGOPTIONS_H

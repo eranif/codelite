@@ -236,17 +236,17 @@ void PHPWorkspace::DeleteProject(const wxString& project)
 
 void PHPWorkspace::SetProjectActive(const wxString& project)
 {
-    PHPProject::Map_t::iterator iter = m_projects.begin();
     PHPProject::Ptr_t activeProject;
-    for(; iter != m_projects.end(); ++iter) {
-        if(iter->first == project) {
-            activeProject = iter->second;
+
+    for (auto& p : m_projects) {
+        if (p.first == project) {
+            activeProject = p.second;
         }
-        bool newState = (iter->first == project);
-        if(iter->second->IsActive() != newState) {
-            iter->second->SetIsActive(newState);
+        bool newState = (p.first == project);
+        if (p.second->IsActive() != newState) {
+            p.second->SetIsActive(newState);
             // Save the change to the file system
-            iter->second->Save();
+            p.second->Save();
         }
     }
 
@@ -261,19 +261,17 @@ void PHPWorkspace::SetProjectActive(const wxString& project)
 
 void PHPWorkspace::GetWorkspaceFiles(wxStringSet_t& workspaceFiles, wxProgressDialog* progress) const
 {
-    PHPProject::Map_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        const wxArrayString& files = iter->second->GetFiles(progress);
+    for (const auto& [_, project] : m_projects) {
+        const wxArrayString& files = project->GetFiles(progress);
         workspaceFiles.insert(files.begin(), files.end());
     }
 }
 
 wxString PHPWorkspace::GetActiveProjectName() const
 {
-    PHPProject::Map_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        if(iter->second->IsActive()) {
-            return iter->second->GetName();
+    for (const auto& [_, project] : m_projects) {
+        if (project->IsActive()) {
+            return project->GetName();
         }
     }
     return "";
@@ -353,9 +351,8 @@ JSONItem PHPWorkspace::ToJSON(JSONItem& e) const
     JSONItem projectsArr = JSONItem::createArray("projects");
     e.append(projectsArr);
 
-    PHPProject::Map_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        wxFileName projectFile = iter->second->GetFilename();
+    for (const auto& [_, project] : m_projects) {
+        wxFileName projectFile = project->GetFilename();
         projectFile.MakeRelativeTo(m_workspaceFile.GetPath());
         projectsArr.arrayAppend(projectFile.GetFullPath(wxPATH_UNIX));
     }
@@ -492,10 +489,9 @@ void PHPWorkspace::RestoreWorkspaceSession()
 
 PHPProject::Ptr_t PHPWorkspace::GetProjectForFile(const wxFileName& filename) const
 {
-    PHPProject::Map_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        if(iter->second->HasFile(filename))
-            return iter->second;
+    for (auto& [_, project] : m_projects) {
+        if (project->HasFile(filename))
+            return project;
     }
     return PHPProject::Ptr_t(NULL);
 }
@@ -542,25 +538,23 @@ bool PHPWorkspace::AddProject(const wxFileName& projectFile, wxString& errmsg)
 bool PHPWorkspace::CanCreateProjectAtPath(const wxFileName& projectFileName, bool prompt) const
 {
     wxString newpath = projectFileName.GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME);
-    const PHPProject::Map_t& projects = GetProjects();
-    PHPProject::Map_t::const_iterator iter = projects.begin();
-    for(; iter != projects.end(); ++iter) {
-        if(newpath.StartsWith(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME))) {
+    for (const auto& [_, project] : GetProjects()) {
+        if (newpath.StartsWith(project->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME))) {
             // The new path is a sub folder of a project
-            if(prompt) {
+            if (prompt) {
                 wxString message;
                 message << _("Unable to create a project at the selected path\n") << _("Path '") << newpath
-                        << _("' is already part of project '") << iter->second->GetName() << "'";
+                        << _("' is already part of project '") << project->GetName() << "'";
                 ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
             }
             return false;
 
-        } else if(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME).StartsWith(newpath)) {
+        } else if (project->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME).StartsWith(newpath)) {
             // The new project is a parent of an existing project
-            if(prompt) {
+            if (prompt) {
                 wxString message;
                 message << _("Unable to create a project at the selected path\n") << _("Project '")
-                        << iter->second->GetName() << _("' is located under this path");
+                        << project->GetName() << _("' is located under this path");
                 ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
             }
             return false;
@@ -619,10 +613,9 @@ void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
     }
 
     if(!m_projects.empty()) {
-        PHPProject::Map_t::const_iterator iter = m_projects.begin();
-        for(; iter != m_projects.end(); ++iter) {
-            m_inSyncProjects.insert(iter->first);
-            iter->second->SyncWithFileSystemAsync(this);
+        for (auto& [projectName, project] : m_projects) {
+            m_inSyncProjects.insert(projectName);
+            project->SyncWithFileSystemAsync(this);
         }
     } else {
         if(owner) {

@@ -90,12 +90,12 @@ bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxStrin
 wxArrayString CxxPreProcessor::GetDefinitions() const
 {
     wxArrayString defs;
-    CxxPreProcessorToken::Map_t::const_iterator iter = m_tokens.begin();
-    for(; iter != m_tokens.end(); ++iter) {
+
+    for (const auto& p : m_tokens) {
         wxString macro;
-        macro = iter->second.name;
-        if(!iter->second.value.IsEmpty()) {
-            macro << "=" << iter->second.value;
+        macro = p.second.name;
+        if (!p.second.value.IsEmpty()) {
+            macro << "=" << p.second.value;
         }
         defs.Add(macro);
     }

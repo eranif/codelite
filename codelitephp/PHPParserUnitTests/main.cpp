@@ -17,9 +17,8 @@
 void PrintMatches(const PHPEntityBase::List_t& matches)
 {
 #if 0
-    PHPEntityBase::List_t::const_iterator iter = matches.begin();
-    for(; iter != matches.end(); ++iter) {
-        (*iter)->PrintStdout(2);
+    for (const auto& match : matches) {
+        match->PrintStdout(2);
     }
 #endif
 }

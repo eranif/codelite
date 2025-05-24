@@ -449,24 +449,25 @@ void PHPWorkspaceView::LoadWorkspaceView()
     // add projects
     wxTreeItemId activeProjectId;
     wxStringSet_t files;
-    PHPProject::Map_t::const_iterator iter_project = projects.begin();
-    for(; iter_project != projects.end(); ++iter_project) {
+    for (const auto& [projectName, project] : projects) {
         data = new ItemData(ItemData::Kind_Project);
-        data->SetProjectName(iter_project->first);
-        data->SetFolderPath(iter_project->second->GetFilename().GetPath());
-        data->SetFile(iter_project->second->GetFilename().GetFullPath());
-        data->SetActive(iter_project->second->IsActive());
+        data->SetProjectName(projectName);
+        data->SetFolderPath(project->GetFilename().GetPath());
+        data->SetFile(project->GetFilename().GetFullPath());
+        data->SetActive(project->IsActive());
 
-        wxTreeItemId projectItemId = m_treeCtrlView->AppendItem(
-            root, iter_project->second->GetName(), bl->GetMimeImageId(FileExtManager::TypeProject),
-            bl->GetMimeImageId(FileExtManager::TypeProjectExpanded), data);
+        wxTreeItemId projectItemId = m_treeCtrlView->AppendItem(root,
+                                                                project->GetName(),
+                                                                bl->GetMimeImageId(FileExtManager::TypeProject),
+                                                                bl->GetMimeImageId(FileExtManager::TypeProjectExpanded),
+                                                                data);
         if(data->IsActive()) {
             m_treeCtrlView->SetItemBold(projectItemId, true);
         }
 
         // The project is also a folder for the project folder
-        m_foldersItems.insert(std::make_pair(iter_project->second->GetFilename().GetPath(), projectItemId));
-        DoBuildProjectNode(projectItemId, iter_project->second);
+        m_foldersItems.insert(std::make_pair(project->GetFilename().GetPath(), projectItemId));
+        DoBuildProjectNode(projectItemId, project);
         if(data->IsActive()) {
             activeProjectId = projectItemId;
         }
@@ -1364,10 +1365,8 @@ void PHPWorkspaceView::DoGetSelectedFolders(wxArrayString& paths)
         } else if(itemData->IsWorkspace()) {
             // If the workspace is included, use the project paths and nothing more
             paths.Clear();
-            const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
-            PHPProject::Map_t::const_iterator iter = projects.begin();
-            for(; iter != projects.end(); ++iter) {
-                paths.Add(iter->second->GetFilename().GetPath());
+            for (const auto& [_, project] : PHPWorkspace::Get()->GetProjects()) {
+                paths.Add(project->GetFilename().GetPath());
             }
             break;
         }

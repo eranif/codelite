@@ -1022,12 +1022,12 @@ bool PHPSourceFile::ReadVariableInitialization(PHPEntityBase::Ptr_t var)
 PHPEntityBase::List_t PHPSourceFile::GetAliases() const
 {
     PHPEntityBase::List_t aliases;
-    std::map<wxString, wxString>::const_iterator iter = m_aliases.begin();
-    for(; iter != m_aliases.end(); ++iter) {
+
+    for (const auto& p : m_aliases) {
         // wrap each alias with class entity
         PHPEntityBase::Ptr_t klass(new PHPEntityClass());
-        klass->SetFullName(iter->second);
-        klass->SetShortName(iter->first);
+        klass->SetFullName(p.second);
+        klass->SetShortName(p.first);
         klass->SetFilename(GetFilename());
         aliases.push_back(klass);
     }

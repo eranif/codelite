@@ -49,12 +49,11 @@ void PHPSettersGettersDialog::DoPopulate(const PHPEntityBase::List_t& members)
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
     wxBitmap memberBmp = bmpLoader->LoadBitmap("cc/16/member_public");
     m_dvListCtrlFunctions->DeleteAllItems();
-    PHPEntityBase::List_t::const_iterator iter = members.begin();
-    for(; iter != members.end(); ++iter) {
+    for (const auto& member : members) {
         wxVector<wxVariant> cols;
         cols.push_back(false);
-        cols.push_back(::MakeIconText((*iter)->GetDisplayName(), memberBmp));
-        m_dvListCtrlFunctions->AppendItem(cols, (wxUIntPtr) new PHPSettersGettersDialogClientData(*iter));
+        cols.push_back(::MakeIconText(member->GetDisplayName(), memberBmp));
+        m_dvListCtrlFunctions->AppendItem(cols, (wxUIntPtr) new PHPSettersGettersDialogClientData(member));
     }
 }
 

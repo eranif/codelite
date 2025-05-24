@@ -73,9 +73,8 @@ void PHPParserThread::ParseFiles(PHPParserThreadRequest* request)
 
     // Convert the set back to array
     wxArrayString allFiles;
-    wxStringSet_t::iterator iter = uniqueFilesSet.begin();
-    for(; iter != uniqueFilesSet.end(); ++iter) {
-        allFiles.Add(*iter);
+    for (const auto file : uniqueFilesSet) {
+        allFiles.Add(file);
     }
 
     // Get list of PHP files under

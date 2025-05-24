@@ -192,15 +192,14 @@ bool Language::VariableFromPattern(const wxString& in, const wxString& name, Var
     auto ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
 
     get_variables(patbuf.data(), li, ignoreTokens, false);
-    VariableList::iterator iter = li.begin();
-    for(; iter != li.end(); iter++) {
-        Variable v = *iter;
+
+    for (Variable v : li) {
         if(name == _U(v.m_name.c_str())) {
-            var = (*iter);
+            var = v;
             var.m_pattern = pattern.mb_str(wxConvUTF8).data();
             return true;
         }
-    } // if(li.size() == 1)
+    }
     return false;
 }
 

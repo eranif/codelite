@@ -169,12 +169,11 @@ bool Archive::Write(const wxString& name, const StringMap& str_map)
     node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    StringMap::const_iterator iter = str_map.begin();
-    for(; iter != str_map.end(); iter++) {
+    for (const auto& [key, value] : str_map) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
-        child->AddAttribute(wxT("Key"), iter->first);
-        child->AddAttribute(wxT("Value"), iter->second);
+        child->AddAttribute(wxT("Key"), key);
+        child->AddAttribute(wxT("Value"), value);
     }
     return true;
 }
@@ -552,12 +551,11 @@ bool Archive::Write(const wxString& name, const wxStringMap_t& strinMap)
     node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    wxStringMap_t::const_iterator iter = strinMap.begin();
-    for(; iter != strinMap.end(); ++iter) {
+    for (const auto& [key, value] : strinMap) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
-        child->AddAttribute(wxT("Key"), iter->first);
-        XmlUtils::SetNodeContent(child, iter->second);
+        child->AddAttribute(wxT("Key"), key);
+        XmlUtils::SetNodeContent(child, value);
     }
     return true;
 }
@@ -623,11 +621,10 @@ bool Archive::Write(const wxString& name, const wxStringSet_t& s)
     node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    wxStringSet_t::const_iterator iter = s.begin();
-    for(; iter != s.end(); ++iter) {
+    for (const auto text : s) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SetEntry"));
         node->AddChild(child);
-        XmlUtils::SetNodeContent(child, *iter);
+        XmlUtils::SetNodeContent(child, text);
     }
     return true;
 }

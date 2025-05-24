@@ -9,13 +9,25 @@
 // Declare the bitmap loading function
 extern void wxCFB13InitBitmapResources();
 
-static bool bBitmapLoaded = false;
+namespace
+{
+// return the wxBORDER_SIMPLE that matches the current application theme
+wxBorder get_border_simple_theme_aware_bit()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // get_border_simple_theme_aware_bit
+bool bBitmapLoaded = false;
+} // namespace
 
-OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
-                                               const wxPoint& pos, const wxSize& size, long style)
+OpenResourceDialogBase::OpenResourceDialogBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCFB13InitBitmapResources();
@@ -25,8 +37,8 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_textCtrlResourceName = new clThemedTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition,
-                                                  wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+    m_textCtrlResourceName = new clThemedTextCtrl(
+        this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_textCtrlResourceName->SetToolTip(_(
         "Type resource name to open.\nYou may use a space delimited list of words to narrow down the list of "
         "choices\ne.g. Typing: 'Open Dialog' will include results that contain both words \"Open\" _and_ \"Dialog\""));
@@ -37,17 +49,17 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
 
     mainSizer->Add(m_textCtrlResourceName, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dataview = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                      wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dataview = new clThemedListCtrl(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxDV_NO_HEADER | wxDV_ROW_LINES);
 
     mainSizer->Add(m_dataview, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dataview->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                 wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Impl"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                 wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Full Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                 wxDATAVIEW_COL_RESIZABLE);
+    m_dataview->AppendTextColumn(
+        _("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dataview->AppendTextColumn(
+        _("Impl"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dataview->AppendTextColumn(
+        _("Full Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
 
     mainSizer->Add(boxSizer19, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -86,10 +98,10 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("OpenResourceDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
@@ -100,10 +112,10 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     m_textCtrlResourceName->Bind(wxEVT_COMMAND_TEXT_ENTER, &OpenResourceDialogBase::OnEnter, this);
     m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &OpenResourceDialogBase::OnEntrySelected, this);
     m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OpenResourceDialogBase::OnEntryActivated, this);
-    m_checkBoxFiles->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &OpenResourceDialogBase::OnCheckboxfilesCheckboxClicked,
-                          this);
-    m_checkBoxShowSymbols->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                &OpenResourceDialogBase::OnCheckboxshowsymbolsCheckboxClicked, this);
+    m_checkBoxFiles->Bind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &OpenResourceDialogBase::OnCheckboxfilesCheckboxClicked, this);
+    m_checkBoxShowSymbols->Bind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &OpenResourceDialogBase::OnCheckboxshowsymbolsCheckboxClicked, this);
     m_buttonOK->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OpenResourceDialogBase::OnOK, this);
     m_buttonOK->Bind(wxEVT_UPDATE_UI, &OpenResourceDialogBase::OnOKUI, this);
 }
@@ -115,10 +127,10 @@ OpenResourceDialogBase::~OpenResourceDialogBase()
     m_textCtrlResourceName->Unbind(wxEVT_COMMAND_TEXT_ENTER, &OpenResourceDialogBase::OnEnter, this);
     m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &OpenResourceDialogBase::OnEntrySelected, this);
     m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OpenResourceDialogBase::OnEntryActivated, this);
-    m_checkBoxFiles->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &OpenResourceDialogBase::OnCheckboxfilesCheckboxClicked,
-                            this);
-    m_checkBoxShowSymbols->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                  &OpenResourceDialogBase::OnCheckboxshowsymbolsCheckboxClicked, this);
+    m_checkBoxFiles->Unbind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &OpenResourceDialogBase::OnCheckboxfilesCheckboxClicked, this);
+    m_checkBoxShowSymbols->Unbind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &OpenResourceDialogBase::OnCheckboxshowsymbolsCheckboxClicked, this);
     m_buttonOK->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OpenResourceDialogBase::OnOK, this);
     m_buttonOK->Unbind(wxEVT_UPDATE_UI, &OpenResourceDialogBase::OnOKUI, this);
 }

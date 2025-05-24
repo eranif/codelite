@@ -92,9 +92,7 @@ void RemotyWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
     files.clear();
     files.reserve(m_workspaceFiles.size());
-    for (const wxString& file : m_workspaceFiles) {
-        files.Add(file);
-    }
+    files.insert(files.end(), m_workspaceFiles.begin(), m_workspaceFiles.end());
 }
 
 wxArrayString RemotyWorkspace::GetWorkspaceProjects() const { return {}; }

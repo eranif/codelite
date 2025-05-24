@@ -233,6 +233,10 @@
 									"m_value":	"0"
 								}, {
 									"type":	"bool",
+									"m_label":	"Enable Spell Checking",
+									"m_value":	false
+								}, {
+									"type":	"bool",
 									"m_label":	"Auto Complete Directories:",
 									"m_value":	false
 								}, {
@@ -266,7 +270,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE"],
+							"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES"],
 							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",

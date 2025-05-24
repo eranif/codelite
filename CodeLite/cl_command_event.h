@@ -28,7 +28,6 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "LSP/CompletionItem.h"
-#include "UIBreakpoint.hpp"
 #include "clDebuggerBreakpoint.hpp"
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"
@@ -465,7 +464,6 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
     clDebuggerBreakpoint::Vec_t m_breakpoints;
     bool m_isSSHDebugging = false;
     wxString m_alternateDebuggerPath; // Holds the path to an alternate debugger executable
-    UIBreakpoint m_uiBreakpoint;
 
 public:
     // Special features not available by all the debuggers
@@ -486,9 +484,6 @@ public:
 
     virtual ~clDebugEvent();
     virtual wxEvent* Clone() const { return new clDebugEvent(*this); };
-
-    void SetUiBreakpoint(const UIBreakpoint& uiBreakpoint) { this->m_uiBreakpoint = uiBreakpoint; }
-    const UIBreakpoint& GetUiBreakpoint() const { return m_uiBreakpoint; }
 
     void SetAlternateDebuggerPath(const wxString& alternateDebuggerPath)
     {

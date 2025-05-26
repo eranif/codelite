@@ -540,7 +540,7 @@ bool Archive::Write(const wxString& name, const wxColour& colour)
 }
 #endif
 
-bool Archive::Write(const wxString& name, const wxStringMap_t& strinMap)
+bool Archive::Write(const wxString& name, const wxStringMap_t& stringMap)
 {
     if(!m_root) {
         return false;
@@ -551,7 +551,7 @@ bool Archive::Write(const wxString& name, const wxStringMap_t& strinMap)
     node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    for (const auto& [key, value] : strinMap) {
+    for (const auto& [key, value] : stringMap) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
         child->AddAttribute(wxT("Key"), key);
@@ -560,7 +560,7 @@ bool Archive::Write(const wxString& name, const wxStringMap_t& strinMap)
     return true;
 }
 
-bool Archive::Read(const wxString& name, wxStringMap_t& strinMap)
+bool Archive::Read(const wxString& name, wxStringMap_t& stringMap)
 {
     if(!m_root) {
         return false;
@@ -569,7 +569,7 @@ bool Archive::Read(const wxString& name, wxStringMap_t& strinMap)
     wxXmlNode* node = XmlUtils::FindNodeByName(m_root, wxT("std_string_map"), name);
     if(node) {
         // fill the output array with the values
-        strinMap.clear();
+        stringMap.clear();
         wxXmlNode* child = node->GetChildren();
         while(child) {
             if(child->GetName() == wxT("MapEntry")) {
@@ -577,7 +577,7 @@ bool Archive::Read(const wxString& name, wxStringMap_t& strinMap)
                 wxString key;
                 key = child->GetAttribute(wxT("Key"), wxEmptyString);
                 value = child->GetNodeContent();
-                strinMap[key] = value;
+                stringMap[key] = value;
             }
             child = child->GetNext();
         }

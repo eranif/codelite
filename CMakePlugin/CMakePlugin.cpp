@@ -297,7 +297,7 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
     size_t buildPos = 0;
     size_t settingsPos = 0;
     size_t curpos = 0;
-    for (const auto* item: items) {
+    for (const auto item: items) {
         if (item->GetId() == XRCID("build_project")) {
             buildPos = curpos;
         }

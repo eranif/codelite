@@ -47,7 +47,7 @@ uicallgraphpanel::uicallgraphpanel(wxWindow* parent, IManager* mgr, const wxStri
 
     // copy lines to local storage
     m_lines.DeleteContents(true);
-    for (const auto* lineParser : *pLines)
+    for (const auto lineParser : *pLines)
         m_lines.Append(lineParser->Clone());
 
     if(m_bmpOrig.LoadFile(m_pathimage, wxBITMAP_TYPE_PNG)) UpdateImage();

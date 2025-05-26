@@ -422,7 +422,7 @@ void XDebugManager::ClearDebuggerMarker()
 {
     IEditor::List_t editors;
     m_plugin->GetManager()->GetAllEditors(editors);
-    for (auto* editor : editors) {
+    for (auto editor : editors) {
         editor->GetCtrl()->MarkerDeleteAll(smt_indicator);
     }
 }
@@ -657,7 +657,7 @@ void XDebugManager::OnBreakpointsViewUpdated(XDebugEvent& e)
     IEditor::List_t editors;
     m_plugin->GetManager()->GetAllEditors(editors);
 
-    for (auto* editor : editors) {
+    for (auto editor : editors) {
         DoRefreshBreakpointsMarkersForEditor(editor);
     }
 }

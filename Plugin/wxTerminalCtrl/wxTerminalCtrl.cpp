@@ -111,6 +111,11 @@ void wxTerminalCtrl::StartShell()
 
     // required to get colours
     env.push_back({ "TERM", "xterm-256color" });
+    // always enable cargo's colouring
+    env.push_back({ "CARGO_TERM_COLOR", "always" });
+    // gcc colours
+    env.push_back({ "GCC_COLORS", wxEmptyString });
+
     LOG_DEBUG(TERM_LOG()) << "Starting shell process:" << shell_exec << endl;
     if (m_shellCommand == "bash") {
         m_shell = ::CreateAsyncProcess(this, shell_exec + " --login -i", IProcessRawOutput, wxEmptyString, &env);

@@ -1003,7 +1003,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
 
     // update script lexer with additional keywords
     if (lexer->GetName() == "script") {
-        AddLexerKeywords(lexer, 0, { "return", "exit", "local", "function" });
+        AddLexerKeywords(lexer, 0, { "return", "exit", "local", "function", "export", "case", "esac" });
     }
 
     if (lexer->GetName() == "text") {

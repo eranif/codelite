@@ -20,8 +20,8 @@ private:
     int fd[2];
 
 public:
-    const inline int read_fd() const { return fd[0]; }
-    const inline int write_fd() const { return fd[1]; }
+    int read_fd() const { return fd[0]; }
+    int write_fd() const { return fd[1]; }
     CPipe() { pipe(fd); }
     void close()
     {

@@ -354,7 +354,7 @@ const wxColour& find_colour_by_number(ColoursMap_t* coloursMap, int num)
 }
 
 /// safely get char at pos. return 0 if out-of-index
-inline wxChar safe_get_char(wxStringView buffer, size_t pos)
+wxChar safe_get_char(wxStringView buffer, size_t pos)
 {
     if(pos < buffer.length()) {
         return buffer[pos];
@@ -543,7 +543,7 @@ struct AnsiControlSequenceValue {
 };
 
 /// read from the buffer until we find code
-inline size_t find_control_code(wxStringView buffer, int code)
+size_t find_control_code(wxStringView buffer, int code)
 {
     size_t skip = 0;
     for(; skip < buffer.length(); ++skip) {
@@ -555,7 +555,7 @@ inline size_t find_control_code(wxStringView buffer, int code)
 }
 
 /// read from the buffer until we find code
-inline size_t find_st(wxStringView buffer, size_t* stlen)
+size_t find_st(wxStringView buffer, size_t* stlen)
 {
     size_t pos = 0;
     for(; pos < buffer.length(); ++pos) {
@@ -571,7 +571,7 @@ inline size_t find_st(wxStringView buffer, size_t* stlen)
 }
 
 /// read from the buffer until we find the first code1 or code2 (whichever comes first)
-inline size_t find_first_control_code(wxStringView buffer, int code1, int code2)
+size_t find_first_control_code(wxStringView buffer, int code1, int code2)
 {
     size_t skip = 0;
     for(; skip < buffer.length(); ++skip) {
@@ -583,7 +583,7 @@ inline size_t find_first_control_code(wxStringView buffer, int code1, int code2)
 }
 
 /// Starting from the start of the buffer, check the ANSI sequence type
-inline AnsiSequenceType ansi_sequence_type(wxStringView buffer)
+AnsiSequenceType ansi_sequence_type(wxStringView buffer)
 {
     wxChar ch0 = buffer[0];
     if(ch0 != AnsiControlCode::ESC) {
@@ -612,7 +612,7 @@ inline AnsiSequenceType ansi_sequence_type(wxStringView buffer)
 }
 
 /// Parse wxStringView -> long
-inline long wxStringViewAtol(wxStringView sv, long default_value)
+long wxStringViewAtol(wxStringView sv, long default_value)
 {
     if(sv.empty()) {
         return default_value;
@@ -627,7 +627,7 @@ inline long wxStringViewAtol(wxStringView sv, long default_value)
 }
 
 /// Parse "n;m" and return a `ColsRows` struct
-inline ColsRows parse_cols_rows(wxStringView s, long default_value)
+ColsRows parse_cols_rows(wxStringView s, long default_value)
 {
     ColsRows res{ default_value, default_value };
     auto where = s.find(';');
@@ -648,7 +648,7 @@ inline ColsRows parse_cols_rows(wxStringView s, long default_value)
 ///                                             |
 ///                                          buffer
 /// Loop until we find the terminator
-inline wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiControlSequenceValue* value)
+wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiControlSequenceValue* value)
 {
     for(size_t i = 0; i < buffer.length(); ++i) {
         switch(buffer[i]) {

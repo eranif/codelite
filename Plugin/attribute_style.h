@@ -67,7 +67,7 @@ public:
     typedef std::vector<StyleProperty> Vec_t;
 
 protected:
-    inline void EnableFlag(eStyleFlags flag, bool b)
+    void EnableFlag(eStyleFlags flag, bool b)
     {
         if (b) {
             m_flags |= flag;
@@ -76,7 +76,7 @@ protected:
         }
     }
 
-    inline bool HasFlag(eStyleFlags flag) const { return m_flags & flag; }
+    bool HasFlag(eStyleFlags flag) const { return m_flags & flag; }
 
 public:
     StyleProperty(int id, const wxString& name, const wxString& fgColour, const wxString& bgColour, const int fontSize,

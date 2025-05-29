@@ -116,7 +116,7 @@ protected:
         kUseCustomTextSelectionFgColour = (1 << 2),
     };
 
-    inline void EnableFlag(eLexerConfFlags flag, bool b)
+    void EnableFlag(eLexerConfFlags flag, bool b)
     {
         if (b) {
             m_flags |= flag;
@@ -125,7 +125,7 @@ protected:
         }
     }
 
-    inline bool HasFlag(eLexerConfFlags flag) const { return m_flags & flag; }
+    bool HasFlag(eLexerConfFlags flag) const { return m_flags & flag; }
 
 public:
     struct FindByNameAndTheme {

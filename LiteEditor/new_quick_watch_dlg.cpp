@@ -57,7 +57,6 @@ static void DoNothing(wxShowEvent& event)
 DisplayVariableDlg::DisplayVariableDlg(wxWindow* parent)
     : clResizableTooltip(parent)
     , m_debugger(NULL)
-    , m_editDlgIsUp(false)
 {
     Hide();
     Centre();
@@ -226,8 +225,6 @@ void DisplayVariableDlg::DoCleanUp()
     m_mainVariableObject = wxT("");
     m_variableName = wxT("");
     m_expression = wxT("");
-    m_itemOldValue.Clear();
-    m_editDlgIsUp = false;
     wxSetCursor(wxNullCursor);
 }
 
@@ -374,14 +371,12 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
     oldPos = ScreenToClient(oldPos);
 #endif
 
-    m_editDlgIsUp = true;
     clDebuggerEditItemDlg dlg(this, oldText);
     // We need to Hide() the tip before running the edit dialog, otherwise the dialog is covered by the tip
     // (and can't be entered or cancelled...
     Hide();
     int res = dlg.ShowModal();
     Show();
-    m_editDlgIsUp = false;
 
 #ifdef __WXGTK__
     wxWindow::WarpPointer(oldPos.x, oldPos.y);

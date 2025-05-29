@@ -45,9 +45,6 @@ public:
     wxString m_mainVariableObject;
     wxString m_variableName;
     wxString m_expression;
-    wxString m_fullpath;
-    wxString m_itemOldValue;
-    bool m_editDlgIsUp;
 
 protected:
     bool IsFakeItem(const wxTreeItemId& item);

@@ -1576,10 +1576,9 @@ void FileViewTree::OnImportDirectory(wxCommandEvent& e)
     filespec = dlg.GetFileMask();
 
     // get list of all files based on the checked directories
-    wxStringBoolMap_t::const_iterator iter = dirs.begin();
-    for (; iter != dirs.end(); ++iter) {
-        int flags = iter->second ? (wxDIR_FILES | wxDIR_DIRS) : (wxDIR_FILES);
-        wxDir::GetAllFiles(iter->first, &all_files, "", flags);
+    for (const auto& p : dirs) {
+        int flags = p.second ? (wxDIR_FILES | wxDIR_DIRS) : (wxDIR_FILES);
+        wxDir::GetAllFiles(p.first, &all_files, "", flags);
     }
 
     DoImportFolder(proj, dlg.GetBaseDir(), all_files, filespec, extlessFiles);
@@ -2520,11 +2519,10 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
             CustomTargetsMgr::Get().SetTargets(projectName, targets);
             const CustomTargetsMgr::Map_t& targetsMap = CustomTargetsMgr::Get().GetTargets();
             // get list of custom targets, and create menu entry for each target
-            CustomTargetsMgr::Map_t::const_iterator iter = targetsMap.begin();
-            for (; iter != targetsMap.end(); ++iter) {
+            for (const auto& p : targetsMap) {
                 item = new wxMenuItem(&menu,
-                                      iter->first,        // Menu ID
-                                      iter->second.first, // Menu Name
+                                      p.first,        // Menu ID
+                                      p.second.first, // Menu Name
                                       wxEmptyString, wxITEM_NORMAL);
                 menu.Append(item);
             }

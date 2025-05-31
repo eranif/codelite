@@ -735,10 +735,7 @@ void CompilerMainPage::InitializeCompilerOptions()
     m_listCompilerOptions->DeleteAllItems();
 
     CHECK_PTR_RET(m_compiler);
-    const Compiler::CmpCmdLineOptions& cmpOptions = m_compiler->GetCompilerOptions();
-    Compiler::CmpCmdLineOptions::const_iterator itCmpOption = cmpOptions.begin();
-    for(; itCmpOption != cmpOptions.end(); ++itCmpOption) {
-        const Compiler::CmpCmdLineOption& cmpOption = itCmpOption->second;
+    for (const auto& [_, cmpOption] : m_compiler->GetCompilerOptions()) {
         long idx = m_listCompilerOptions->InsertItem(m_listCompilerOptions->GetItemCount(), cmpOption.name);
         m_listCompilerOptions->SetItem(idx, 1, cmpOption.help);
     }
@@ -768,10 +765,7 @@ void CompilerMainPage::InitializeLinkerOptions()
     m_listLinkerOptions->DeleteAllItems();
     CHECK_PTR_RET(m_compiler);
 
-    const Compiler::CmpCmdLineOptions& lnkOptions = m_compiler->GetLinkerOptions();
-    Compiler::CmpCmdLineOptions::const_iterator itLnkOption = lnkOptions.begin();
-    for(; itLnkOption != lnkOptions.end(); ++itLnkOption) {
-        const Compiler::CmpCmdLineOption& lnkOption = itLnkOption->second;
+    for (const auto& [_, lnkOption] : m_compiler->GetLinkerOptions()) {
         long idx = m_listLinkerOptions->InsertItem(m_listLinkerOptions->GetItemCount(), lnkOption.name);
         m_listLinkerOptions->SetItem(idx, 1, lnkOption.help);
     }

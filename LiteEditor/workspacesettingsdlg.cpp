@@ -51,11 +51,10 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
     wxString activePage = vars.GetActiveSet();
     m_choiceEnvSets->Clear();
 
-    wxStringMap_t::const_iterator iter = envSets.begin();
     int useActiveSetIndex = m_choiceEnvSets->Append(wxGetTranslation(USE_GLOBAL_SETTINGS));
 
-    for(; iter != envSets.end(); iter++) {
-        m_choiceEnvSets->Append(iter->first);
+    for (const auto& p : envSets) {
+        m_choiceEnvSets->Append(p.first);
     }
 
     // select the current workspace active set name

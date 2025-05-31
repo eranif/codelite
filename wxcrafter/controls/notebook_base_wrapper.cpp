@@ -33,9 +33,8 @@ wxString NotebookBaseWrapper::CppCtorCode() const
 
     xx = -1;
     yy = -1;
-    List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); iter++) {
-        NotebookPageWrapper* page = dynamic_cast<NotebookPageWrapper*>((*iter));
+    for (auto child : m_children) {
+        NotebookPageWrapper* page = dynamic_cast<NotebookPageWrapper*>(child);
         if(page) {
             wxSize sz = page->GetImageSize();
             xx = wxMax(sz.x, xx);
@@ -136,10 +135,9 @@ NotebookPageWrapper* NotebookBaseWrapper::DoGetSelection(NotebookPageWrapper* pa
 int NotebookBaseWrapper::GetPageIndex(const NotebookPageWrapper* page) const
 {
     int count(0);
-    const wxcWidget::List_t& list = GetChildren();
-    wxcWidget::List_t::const_iterator iter = list.begin();
-    for(; iter != list.end(); iter++) {
-        if(DoGetPageIndex((const NotebookPageWrapper*)(*iter), page, count)) {
+
+    for (const auto* child : GetChildren()) {
+        if (DoGetPageIndex(dynamic_cast<const NotebookPageWrapper*>(child), page, count)) {
             return count;
         }
     }

@@ -53,16 +53,14 @@ RenameSymbol::RenameSymbol(wxWindow* parent, const CppToken::Vec_t& candidates, 
     EditorConfigST::Get()->GetLexer("C++")->Apply(m_preview, true);
     m_tokens.clear();
 
-    CppToken::Vec_t::const_iterator iter = candidates.begin();
-    for(; iter != candidates.end(); ++iter) {
-        AddMatch(*iter, true);
-        m_tokens.push_back(*iter);
+    for (const auto& candidate : candidates) {
+        AddMatch(candidate, true);
+        m_tokens.push_back(candidate);
     }
 
-    iter = possCandidates.begin();
-    for(; iter != possCandidates.end(); iter++) {
-        AddMatch(*iter, false);
-        m_tokens.push_back(*iter);
+    for (const auto& candidate : possCandidates) {
+        AddMatch(candidate, false);
+        m_tokens.push_back(candidate);
     }
 
     if(m_tokens.empty() == false) { DoSelectFile(m_tokens.at((size_t)0)); }

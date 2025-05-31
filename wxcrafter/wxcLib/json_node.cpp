@@ -448,11 +448,10 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxStringMap_t&
     if(!_json) return *this;
 
     JSONElement arr = JSONElement::createArray(name);
-    wxStringMap_t::const_iterator iter = stringMap.begin();
-    for(; iter != stringMap.end(); ++iter) {
+    for (const auto& [key, value] : stringMap) {
         JSONElement obj = JSONElement::createObject();
-        obj.addProperty("key", iter->first);
-        obj.addProperty("value", iter->second);
+        obj.addProperty("key", key);
+        obj.addProperty("value", value);
         arr.arrayAppend(obj);
     }
     append(arr);

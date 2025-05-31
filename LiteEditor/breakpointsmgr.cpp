@@ -310,21 +310,20 @@ void BreakptMgr::DoProvideBestBP_Type(clEditor* editor, const std::vector<clDebu
     BreakpointType best = BP_type_none;
     int best_value = 0;
     bool is_disabled = false;
-    std::vector<clDebuggerBreakpoint>::const_iterator iter = li.begin();
-    for (; iter != li.end(); ++iter) {
-        BreakpointType bpt = iter->bp_type;
+    for (const auto& bp : li) {
+        BreakpointType bpt = bp.bp_type;
         if (bpt == BP_type_invalid) {
             continue;
         }
         int val = values[bpt];
-        if (!iter->is_enabled) {
+        if (!bp.is_enabled) {
             val /= 2; // Halving the value for disability means that abled always outranks disabled, without otherwise
                       // interfering with the order
         }
         if (val > best_value) {
             best = bpt;
             best_value = val;
-            is_disabled = !iter->is_enabled; // If the new item wins, store its data
+            is_disabled = !bp.is_enabled; // If the new item wins, store its data
         }
     }
 
@@ -1122,9 +1121,8 @@ void BreakptMgr::DoRemoveDuplicateBreakpoints()
             }
         }
     }
-    std::map<wxString, clDebuggerBreakpoint>::iterator iter = uniqueNormalBreakpoints.begin();
-    for (; iter != uniqueNormalBreakpoints.end(); ++iter) {
-        bps.push_back(iter->second);
+    for (const auto& p : uniqueNormalBreakpoints) {
+        bps.push_back(p.second);
     }
     m_bps.swap(bps);
 }

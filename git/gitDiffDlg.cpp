@@ -120,8 +120,8 @@ void GitDiffDlg::SetDiff(const wxString& diff)
     GitDiffOutputParser diff_parser;
     diff_parser.GetDiffMap(m_commandOutput, m_diffMap);
 
-    for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
-        m_fileListBox->Append((*it).first);
+    for (const auto& p : m_diffMap) {
+        m_fileListBox->Append(p.first);
     }
 
     m_editor->SetReadOnly(false);

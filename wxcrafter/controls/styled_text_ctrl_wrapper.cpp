@@ -348,9 +348,9 @@ void StyledTextCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 wxArrayString StyledTextCtrlWrapper::GetLexers() const
 {
     wxArrayString arr;
-    LexersMap_t::const_iterator iter = m_lexers.begin();
-    for(; iter != m_lexers.end(); ++iter) {
-        arr.Add(iter->first);
+
+    for (const auto& [name, _] : m_lexers) {
+        arr.Add(name);
     }
     return arr;
 }

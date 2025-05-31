@@ -204,11 +204,9 @@ void CustomControlWrapper::DoUpdateEvents()
     if(cct.IsValid() == false)
         return;
 
-    const wxStringMap_t& events = cct.GetEvents();
-    wxStringMap_t::const_iterator iter = events.begin();
-    for(; iter != events.end(); ++iter) {
-        RegisterEvent(iter->first, iter->second, "");
-        // m_controlEvents.Add(ConnectDetails(iter->first, iter->second, "", wxString() << iter->second << "Handler"));
+    for (const auto& [eventName, className] : cct.GetEvents()) {
+        RegisterEvent(eventName, className, "");
+        // m_controlEvents.Add(ConnectDetails(eventName, className, "", wxString() << className << "Handler"));
     }
 }
 

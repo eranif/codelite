@@ -43,9 +43,7 @@ AddOptionCheckDlg::AddOptionCheckDlg(wxWindow* parent, const wxString& title,
     WindowAttrManager::Load(this);
 
     // Fill the list of available options
-    Compiler::CmpCmdLineOptions::const_iterator itOption = m_cmpOptions.begin();
-    for(; itOption != m_cmpOptions.end(); ++itOption) {
-        const Compiler::CmpCmdLineOption& cmpOption = itOption->second;
+    for (const auto& [_, cmpOption] : m_cmpOptions) {
         m_checkListOptions->Append(cmpOption.help + wxT(" [") + cmpOption.name + wxT("]"));
     }
 
@@ -137,12 +135,11 @@ void AddOptionCheckDlg::UpdateCmdLine()
 
     // Update the options textctrl
     wxString value;
-    std::list<wxString>::const_iterator itOption = options.begin();
-    for(; itOption != options.end(); ++itOption) {
-        if(!value.Contains(*itOption + wxT(";"))) {
-            if(!value.empty())
+    for (const auto& option : options) {
+        if (!value.Contains(option + wxT(";"))) {
+            if (!value.empty())
                 value << wxT(";");
-            value << *itOption;
+            value << option;
         }
     }
     m_textCmdLn->SetValue(value);

@@ -55,9 +55,8 @@ void testFuncParser(char *buf)
     std::map<std::string, std::string> ignoreTokens;
     get_functions(buf, li, ignoreTokens);
 //	time_t end = GetTickCount();
-    for (FunctionList::iterator iter = li.begin(); iter != li.end(); iter++) {
+    for (const clFunction& f : li) {
         //test the var parser on the function argument list:
-        clFunction f = (*iter);
         f.Print();
         //testVarParser((char*)f.m_signature.c_str());
         printf("%s\n", f.m_name.c_str());
@@ -102,8 +101,7 @@ void testVarParser(char *buf)
     std::map<std::string, std::string> ignoreTokens;
     get_variables(buf, li, ignoreTokens, true);
 //	time_t end = GetTickCount();
-    for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
-        Variable var = *iter;
+    for (const Variable& var : li) {
         var.Print();
     }
 
@@ -119,8 +117,7 @@ void testTypedefParser(char *buf)
 
     std::map<std::string, std::string> ignoreTokens;
     get_typedefs(buf, li);
-    for (clTypedefList::iterator iter = li.begin(); iter != li.end(); iter++) {
-        clTypedef var = *iter;
+    for (const clTypedef& var : li) {
         var.print();
     }
     printf("matches found: %d\n", (int)li.size());

@@ -228,9 +228,8 @@ void FolderModel::DeleteItems(const wxDataViewItem& parent, const wxDataViewItem
 void FolderModel::Clear()
 {
     wxVector<FolderModel_Item*> roots = m_data;
-    wxVector<FolderModel_Item*>::iterator iter = roots.begin();
-    for(; iter != roots.end(); ++iter) {
-        DeleteItem( wxDataViewItem(*iter) );
+    for (auto item : roots) {
+        DeleteItem(wxDataViewItem(item));
     }
     m_data.clear();
     Cleared();

@@ -228,9 +228,8 @@ void DVTemplatesModel::DeleteItems(const wxDataViewItem& parent, const wxDataVie
 void DVTemplatesModel::Clear()
 {
     wxVector<DVTemplatesModel_Item*> roots = m_data;
-    wxVector<DVTemplatesModel_Item*>::iterator iter = roots.begin();
-    for(; iter != roots.end(); ++iter) {
-        DeleteItem( wxDataViewItem(*iter) );
+    for (auto item : roots) {
+        DeleteItem(wxDataViewItem(item));
     }
     m_data.clear();
     Cleared();

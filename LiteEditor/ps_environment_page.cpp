@@ -54,11 +54,10 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
     ///////////////////////////////////////////////////////////////////////////
     m_choiceEnv->Clear();
     wxStringMap_t envSets = EnvironmentConfig::Instance()->GetSettings().GetEnvVarSets();
-    wxStringMap_t::const_iterator iterI = envSets.begin();
     int useActiveSetIndex = m_choiceEnv->Append(wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET));
 
-    for(; iterI != envSets.end(); iterI++) {
-        m_choiceEnv->Append(iterI->first);
+    for (const auto& p : envSets) {
+        m_choiceEnv->Append(p.first);
     }
     int selEnv = m_choiceEnv->FindString(buildConf->GetEnvVarSet());
     m_choiceEnv->SetSelection(selEnv == wxNOT_FOUND ? useActiveSetIndex : selEnv);
@@ -68,10 +67,8 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
 
     DebuggerSettingsPreDefMap data;
     DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
-    const std::map<wxString, DebuggerPreDefinedTypes>& preDefTypes = data.GePreDefinedTypesMap();
-    std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iterB = preDefTypes.begin();
-    for(; iterB != preDefTypes.end(); iterB++) {
-        m_choiceDbgEnv->Append(iterB->first);
+    for (const auto& p : data.GePreDefinedTypesMap()) {
+        m_choiceDbgEnv->Append(p.first);
     }
 
     int selDbg = m_choiceDbgEnv->FindString(buildConf->GetDbgEnvSet());

@@ -37,16 +37,16 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
     wxArrayString compilers;
     compilers = BuildSettingsConfigST::Get()->GetAllCompilersNames();
     compilers.Insert(SELECT_COMPILER, 0);
-    
-    wxStringSet_t::const_iterator iter = deletedCompilers.begin();
-    for(; iter != deletedCompilers.end(); ++iter ) {
-        m_table.insert( std::make_pair(*iter, SELECT_COMPILER) );
-        wxPGProperty* prop = m_pgMgrCompilers->AppendIn( m_pgPropHeader,  new wxEnumProperty( *iter, wxPG_LABEL, compilers) );
-        m_props.push_back( prop );
-        
+
+    for (const auto& compilerName : deletedCompilers) {
+        m_table.insert(std::make_pair(compilerName, SELECT_COMPILER));
+        wxPGProperty* prop =
+            m_pgMgrCompilers->AppendIn(m_pgPropHeader, new wxEnumProperty(compilerName, wxPG_LABEL, compilers));
+        m_props.push_back(prop);
+
         wxString message;
-        message << _("Create a new compiler named '") << *iter << _("' by cloning an existing compiler");
-        prop->SetHelpString( message );
+        message << _("Create a new compiler named '") << compilerName << _("' by cloning an existing compiler");
+        prop->SetHelpString(message);
     }
     SetName("CompilersModifiedDlg");
     WindowAttrManager::Load(this);
@@ -72,9 +72,8 @@ void CompilersModifiedDlg::OnValueChanged(wxPropertyGridEvent& event)
     m_table[ oldCompiler ] = newCompiler;
     
     m_enableOKButton = true;
-    wxStringMap_t::iterator iter = m_table.begin();
-    for(; iter != m_table.end(); ++iter ) {
-        if ( iter->second == SELECT_COMPILER ) {
+    for (const auto& p : m_table) {
+        if (p.second == SELECT_COMPILER) {
             m_enableOKButton = false;
             break;
         }

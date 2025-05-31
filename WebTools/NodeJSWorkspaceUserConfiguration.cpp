@@ -59,9 +59,8 @@ NodeJSWorkspaceUser& NodeJSWorkspaceUser::Save()
     JSONItem bpArr = JSONItem::createArray("m_breakpoints");
     json.append(bpArr);
 
-    NodeJSBreakpoint::Vec_t::const_iterator iter = m_breakpoints.begin();
-    for(; iter != m_breakpoints.end(); ++iter) {
-        bpArr.arrayAppend(iter->ToJSON(""));
+    for (const auto& breakpoint : m_breakpoints) {
+        bpArr.arrayAppend(breakpoint.ToJSON(""));
     }
     root.save(GetFileName());
     return *this;

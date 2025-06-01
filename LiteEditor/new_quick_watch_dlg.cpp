@@ -27,22 +27,12 @@
 
 #include "clDebuggerEditItemDlg.h"
 #include "debuggerobserver.h"
-#include "editor_config.h"
 #include "frame.h"
 #include "globals.h"
 #include "simpletable.h"
-#include "windowattrmanager.h"
 
-#include <cmath>
-#include <wx/cursor.h>
-#include <wx/log.h>
 #include <wx/menu.h>
-#include <wx/persist/window.h>
-#include <wx/popupwin.h>
-#include <wx/timer.h>
 #include <wx/xrc/xmlres.h>
-
-static wxRect s_Rect;
 
 class QWTreeData : public wxTreeItemData
 {
@@ -67,7 +57,6 @@ static void DoNothing(wxShowEvent& event)
 DisplayVariableDlg::DisplayVariableDlg(wxWindow* parent)
     : clResizableTooltip(parent)
     , m_debugger(NULL)
-    , m_editDlgIsUp(false)
 {
     Hide();
     Centre();
@@ -236,8 +225,6 @@ void DisplayVariableDlg::DoCleanUp()
     m_mainVariableObject = wxT("");
     m_variableName = wxT("");
     m_expression = wxT("");
-    m_itemOldValue.Clear();
-    m_editDlgIsUp = false;
     wxSetCursor(wxNullCursor);
 }
 
@@ -384,14 +371,12 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
     oldPos = ScreenToClient(oldPos);
 #endif
 
-    m_editDlgIsUp = true;
     clDebuggerEditItemDlg dlg(this, oldText);
     // We need to Hide() the tip before running the edit dialog, otherwise the dialog is covered by the tip
     // (and can't be entered or cancelled...
     Hide();
     int res = dlg.ShowModal();
     Show();
-    m_editDlgIsUp = false;
 
 #ifdef __WXGTK__
     wxWindow::WarpPointer(oldPos.x, oldPos.y);
@@ -433,30 +418,6 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
         newExpr.Prepend(typecast);
     }
 
-    s_Rect = GetScreenRect();
     HideDialog();
     m_debugger->CreateVariableObject(newExpr, false, DBG_USERR_QUICKWACTH);
 }
-
-void CLPersistentDebuggerTip::Save() const
-{
-    const wxPopupWindow* const puw = Get();
-    const wxSize size = puw->GetSize();
-    SaveValue("w", size.x);
-    SaveValue("h", size.y);
-}
-
-bool CLPersistentDebuggerTip::Restore()
-{
-    wxPopupWindow* const puw = Get();
-
-    long w(-1), h(-1);
-    const bool hasSize = RestoreValue("w", &w) && RestoreValue("h", &h);
-
-    if(hasSize)
-        puw->SetSize(w, h);
-
-    return hasSize;
-}
-
-inline wxPersistentObject* wxCreatePersistentObject(wxPopupWindow* puw) { return new CLPersistentDebuggerTip(puw); }

@@ -59,7 +59,6 @@ class IManager;
 class wxFindReplaceDialog;
 class CCBox;
 class clEditorTipWindow;
-class DisplayVariableDlg;
 class EditorDeltasHolder;
 
 enum sci_annotation_styles { eAnnotationStyleError = 128, eAnnotationStyleWarning };

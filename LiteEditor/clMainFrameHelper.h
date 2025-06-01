@@ -1,15 +1,13 @@
 #ifndef CLMAINFRAMEHELPER_H
 #define CLMAINFRAMEHELPER_H
 
-#include "codelite_exports.h"
-
 #include <memory>
 #include <wx/event.h>
 
 class clMainFrame;
 class clDockingManager;
 
-class WXDLLIMPEXP_SDK clMainFrameHelper : public wxEvtHandler
+class clMainFrameHelper : public wxEvtHandler
 {
     clMainFrame* m_mainFrame;
     clDockingManager* m_mgr;

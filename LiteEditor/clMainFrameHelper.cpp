@@ -1,6 +1,6 @@
 #include "clMainFrameHelper.h"
 
-#include "../LiteEditor/frame.h" // this is daengrous. Only access inline functions
+#include "frame.h"
 #include "clDockingManager.h"
 #include "clStatusBar.h"
 

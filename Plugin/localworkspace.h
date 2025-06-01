@@ -29,12 +29,9 @@
 #include "VirtualDirectoryColour.h"
 #include "codelite_exports.h"
 #include "optionsconfig.h"
-#include "singleton.h"
 
-#include <list>
-#include <map>
 #include <memory>
-#include <wx/colour.h>
+#include <optional>
 #include <wx/filename.h>
 
 // Denotes whether we're dealing with preferences at a global, workspace, project or (maybe one day) file level
@@ -43,42 +40,22 @@ enum prefsLevel { pLevel_global, pLevel_workspace, pLevel_project, pLevel_file, 
 class LocalOptionsConfig;
 using LocalOptionsConfigPtr = std::shared_ptr<LocalOptionsConfig>;
 
-template <typename T> class validVar
-{
-    bool valid;
-    T datum;
-
-public:
-    validVar()
-        : valid(false)
-    {
-    }
-    void Set(const T info)
-    {
-        datum = info;
-        valid = true;
-    }
-    void Reset() { valid = false; }
-    T GetDatum() const { return datum; }
-    bool isValid() const { return valid; }
-};
-
 class WXDLLIMPEXP_SDK LocalOptionsConfig
 {
-    validVar<bool> m_localdisplayFoldMargin;
-    validVar<bool> m_localdisplayBookmarkMargin;
-    validVar<bool> m_localhighlightCaretLine;
-    validVar<bool> m_localTrimLine;
-    validVar<bool> m_localAppendLF;
-    validVar<bool> m_localdisplayLineNumbers;
-    validVar<bool> m_localshowIndentationGuidelines;
-    validVar<bool> m_localindentUsesTabs;
-    validVar<int> m_localindentWidth;
-    validVar<int> m_localtabWidth;
-    validVar<wxFontEncoding> m_localfileFontEncoding;
-    validVar<int> m_localshowWhitspaces;
-    validVar<wxString> m_localeolMode;
-    validVar<bool> m_localTrackChanges;
+    std::optional<bool> m_localdisplayFoldMargin;
+    std::optional<bool> m_localdisplayBookmarkMargin;
+    std::optional<bool> m_localhighlightCaretLine;
+    std::optional<bool> m_localTrimLine;
+    std::optional<bool> m_localAppendLF;
+    std::optional<bool> m_localdisplayLineNumbers;
+    std::optional<bool> m_localshowIndentationGuidelines;
+    std::optional<bool> m_localindentUsesTabs;
+    std::optional<int> m_localindentWidth;
+    std::optional<int> m_localtabWidth;
+    std::optional<wxFontEncoding> m_localfileFontEncoding;
+    std::optional<int> m_localshowWhitspaces;
+    std::optional<wxString> m_localeolMode;
+    std::optional<bool> m_localTrackChanges;
 
 public:
     LocalOptionsConfig(); // Used for setting local values
@@ -88,20 +65,20 @@ public:
                        wxXmlNode* node); // Used for storing local values in a previously-empty instance
     virtual ~LocalOptionsConfig() {}
 
-    bool IsTrackChangesIsValid() const { return m_localTrackChanges.isValid(); }
-    bool DisplayFoldMarginIsValid() const { return m_localdisplayFoldMargin.isValid(); }
-    bool DisplayBookmarkMarginIsValid() const { return m_localdisplayBookmarkMargin.isValid(); }
-    bool HighlightCaretLineIsValid() const { return m_localhighlightCaretLine.isValid(); }
-    bool TrimLineIsValid() const { return m_localTrimLine.isValid(); }
-    bool AppendLFIsValid() const { return m_localAppendLF.isValid(); }
-    bool DisplayLineNumbersIsValid() const { return m_localdisplayLineNumbers.isValid(); }
-    bool ShowIndentationGuidelinesIsValid() const { return m_localshowIndentationGuidelines.isValid(); }
-    bool IndentUsesTabsIsValid() const { return m_localindentUsesTabs.isValid(); }
-    bool IndentWidthIsValid() const { return m_localindentWidth.isValid(); }
-    bool TabWidthIsValid() const { return m_localtabWidth.isValid(); }
-    bool FileFontEncodingIsValid() const { return m_localfileFontEncoding.isValid(); }
-    bool ShowWhitespacesIsValid() const { return m_localshowWhitspaces.isValid(); }
-    bool EolModeIsValid() const { return m_localeolMode.isValid(); }
+    bool IsTrackChangesIsValid() const { return m_localTrackChanges.has_value(); }
+    bool DisplayFoldMarginIsValid() const { return m_localdisplayFoldMargin.has_value(); }
+    bool DisplayBookmarkMarginIsValid() const { return m_localdisplayBookmarkMargin.has_value(); }
+    bool HighlightCaretLineIsValid() const { return m_localhighlightCaretLine.has_value(); }
+    bool TrimLineIsValid() const { return m_localTrimLine.has_value(); }
+    bool AppendLFIsValid() const { return m_localAppendLF.has_value(); }
+    bool DisplayLineNumbersIsValid() const { return m_localdisplayLineNumbers.has_value(); }
+    bool ShowIndentationGuidelinesIsValid() const { return m_localshowIndentationGuidelines.has_value(); }
+    bool IndentUsesTabsIsValid() const { return m_localindentUsesTabs.has_value(); }
+    bool IndentWidthIsValid() const { return m_localindentWidth.has_value(); }
+    bool TabWidthIsValid() const { return m_localtabWidth.has_value(); }
+    bool FileFontEncodingIsValid() const { return m_localfileFontEncoding.has_value(); }
+    bool ShowWhitespacesIsValid() const { return m_localshowWhitspaces.has_value(); }
+    bool EolModeIsValid() const { return m_localeolMode.has_value(); }
 
     //-------------------------------------
     // Setters/Getters
@@ -109,122 +86,45 @@ public:
 
     bool IsTrackChanges() const
     {
-        if(m_localTrackChanges.isValid()) {
-            return m_localTrackChanges.GetDatum();
-        }
-        return false; // It's invalid anyway, so false will do as well as anything
+        return m_localTrackChanges.value_or(false);
+        // It's invalid anyway, so false will do as well as anything
     }
 
-    bool GetDisplayFoldMargin() const
-    {
-        if(m_localdisplayFoldMargin.isValid()) {
-            return m_localdisplayFoldMargin.GetDatum();
-        }
-        return false;
-    }
+    bool GetDisplayFoldMargin() const { return m_localdisplayFoldMargin.value_or(false); }
+    bool GetDisplayBookmarkMargin() const { return m_localdisplayBookmarkMargin.value_or(false); }
+    bool GetHighlightCaretLine() const { return m_localhighlightCaretLine.value_or(false); }
+    bool GetTrimLine() const { return m_localTrimLine.value_or(false); }
+    bool GetAppendLF() const { return m_localAppendLF.value_or(false); }
+    bool GetDisplayLineNumbers() const { return m_localdisplayLineNumbers.value_or(false); }
+    bool GetShowIndentationGuidelines() const { return m_localshowIndentationGuidelines.value_or(false); }
+    bool GetIndentUsesTabs() const { return m_localindentUsesTabs.value_or(false); }
 
-    bool GetDisplayBookmarkMargin() const
-    {
-        if(m_localdisplayBookmarkMargin.isValid()) {
-            return m_localdisplayBookmarkMargin.GetDatum();
-        }
-        return false;
-    }
-    bool GetHighlightCaretLine() const
-    {
-        if(m_localhighlightCaretLine.isValid()) {
-            return m_localhighlightCaretLine.GetDatum();
-        }
-        return false;
-    }
-    bool GetTrimLine() const
-    {
-        if(m_localTrimLine.isValid()) {
-            return m_localTrimLine.GetDatum();
-        }
-        return false;
-    }
-    bool GetAppendLF() const
-    {
-        if(m_localAppendLF.isValid()) {
-            return m_localAppendLF.GetDatum();
-        }
-        return false;
-    }
-    bool GetDisplayLineNumbers() const
-    {
-        if(m_localdisplayLineNumbers.isValid()) {
-            return m_localdisplayLineNumbers.GetDatum();
-        }
-        return false;
-    }
-    bool GetShowIndentationGuidelines() const
-    {
-        if(m_localshowIndentationGuidelines.isValid()) {
-            return m_localshowIndentationGuidelines.GetDatum();
-        }
-        return false;
-    }
+    void SetTrackChanges(bool b) { m_localTrackChanges = b; }
+    void SetDisplayFoldMargin(bool b) { m_localdisplayFoldMargin = b; }
+    void SetDisplayBookmarkMargin(bool b) { m_localdisplayBookmarkMargin = b; }
+    void SetHighlightCaretLine(bool b) { m_localhighlightCaretLine = b; }
+    void SetTrimLine(bool b) { m_localTrimLine = b; }
+    void SetAppendLF(bool b) { m_localAppendLF = b; }
+    void SetDisplayLineNumbers(bool b) { m_localdisplayLineNumbers = b; }
+    void SetShowIndentationGuidelines(bool b) { m_localshowIndentationGuidelines = b; }
+    void SetIndentUsesTabs(bool indentUsesTabs) { m_localindentUsesTabs = indentUsesTabs; }
 
-    void SetTrackChanges(bool b) { m_localTrackChanges.Set(b); }
-    void SetDisplayFoldMargin(bool b) { m_localdisplayFoldMargin.Set(b); }
-    void SetDisplayBookmarkMargin(bool b) { m_localdisplayBookmarkMargin.Set(b); }
-    void SetHighlightCaretLine(bool b) { m_localhighlightCaretLine.Set(b); }
-    void SetTrimLine(bool b) { m_localTrimLine.Set(b); }
-    void SetAppendLF(bool b) { m_localAppendLF.Set(b); }
-    void SetDisplayLineNumbers(bool b) { m_localdisplayLineNumbers.Set(b); }
-    void SetShowIndentationGuidelines(bool b) { m_localshowIndentationGuidelines.Set(b); }
-    void SetIndentUsesTabs(bool indentUsesTabs) { m_localindentUsesTabs.Set(indentUsesTabs); }
-    bool GetIndentUsesTabs() const
-    {
-        if(m_localindentUsesTabs.isValid()) {
-            return m_localindentUsesTabs.GetDatum();
-        }
-        return false;
-    }
-    void SetIndentWidth(int indentWidth) { m_localindentWidth.Set(indentWidth); }
-    int GetIndentWidth() const
-    {
-        if(m_localindentWidth.isValid()) {
-            return m_localindentWidth.GetDatum();
-        }
-        return wxNOT_FOUND;
-    }
-    void SetTabWidth(int tabWidth) { m_localtabWidth.Set(tabWidth); }
-    int GetTabWidth() const
-    {
-        if(m_localtabWidth.isValid()) {
-            return m_localtabWidth.GetDatum();
-        }
-        return wxNOT_FOUND;
-    }
+    void SetIndentWidth(int indentWidth) { m_localindentWidth = indentWidth; }
+    int GetIndentWidth() const { return m_localindentWidth.value_or(wxNOT_FOUND); }
+    void SetTabWidth(int tabWidth) { m_localtabWidth = tabWidth; }
+    int GetTabWidth() const { return m_localtabWidth.value_or(wxNOT_FOUND); }
 
     wxFontEncoding GetFileFontEncoding() const
     {
-        if(m_localfileFontEncoding.isValid()) {
-            return m_localfileFontEncoding.GetDatum();
-        }
-        return (wxFontEncoding)(wxFONTENCODING_MAX + 1);
+        return m_localfileFontEncoding.value_or(static_cast<wxFontEncoding>(wxFONTENCODING_MAX + 1));
     }
     void SetFileFontEncoding(const wxString& strFileFontEncoding);
 
-    void SetShowWhitespaces(int showWhitespaces) { m_localshowWhitspaces.Set(showWhitespaces); }
-    int GetShowWhitespaces() const
-    {
-        if(m_localshowWhitspaces.isValid()) {
-            return m_localshowWhitspaces.GetDatum();
-        }
-        return wxNOT_FOUND;
-    }
+    void SetShowWhitespaces(int showWhitespaces) { m_localshowWhitspaces = showWhitespaces; }
+    int GetShowWhitespaces() const { return m_localshowWhitspaces.value_or(wxNOT_FOUND); }
 
-    void SetEolMode(const wxString& eolMode) { m_localeolMode.Set(eolMode); }
-    wxString GetEolMode() const
-    {
-        if(m_localeolMode.isValid()) {
-            return m_localeolMode.GetDatum();
-        }
-        return wxT("");
-    }
+    void SetEolMode(const wxString& eolMode) { m_localeolMode = eolMode; }
+    wxString GetEolMode() const { return m_localeolMode.value_or(wxT("")); }
 
     /**
      * Return an XML representation of this object

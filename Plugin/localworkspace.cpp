@@ -171,58 +171,58 @@ wxXmlNode* LocalOptionsConfig::ToXml(wxXmlNode* parent /*=NULL*/, const wxString
     wxXmlNode* n = new wxXmlNode(parent, wxXML_ELEMENT_NODE, nodename);
 
     if(DisplayFoldMarginIsValid()) {
-        n->AddAttribute(wxT("DisplayFoldMargin"), BoolToString(m_localdisplayFoldMargin.GetDatum()));
+        n->AddAttribute(wxT("DisplayFoldMargin"), BoolToString(m_localdisplayFoldMargin.value()));
     }
     if(DisplayBookmarkMarginIsValid()) {
-        n->AddAttribute(wxT("DisplayBookmarkMargin"), BoolToString(m_localdisplayBookmarkMargin.GetDatum()));
+        n->AddAttribute(wxT("DisplayBookmarkMargin"), BoolToString(m_localdisplayBookmarkMargin.value()));
     }
     if(HighlightCaretLineIsValid()) {
-        n->AddAttribute(wxT("HighlightCaretLine"), BoolToString(m_localhighlightCaretLine.GetDatum()));
+        n->AddAttribute(wxT("HighlightCaretLine"), BoolToString(m_localhighlightCaretLine.value()));
     }
     if(TrimLineIsValid()) {
-        n->AddAttribute(wxT("EditorTrimEmptyLines"), BoolToString(m_localTrimLine.GetDatum()));
+        n->AddAttribute(wxT("EditorTrimEmptyLines"), BoolToString(m_localTrimLine.value()));
     }
     if(AppendLFIsValid()) {
-        n->AddAttribute(wxT("EditorAppendLf"), BoolToString(m_localAppendLF.GetDatum()));
+        n->AddAttribute(wxT("EditorAppendLf"), BoolToString(m_localAppendLF.value()));
     }
     if(DisplayLineNumbersIsValid()) {
-        n->AddAttribute(wxT("ShowLineNumber"), BoolToString(m_localdisplayLineNumbers.GetDatum()));
+        n->AddAttribute(wxT("ShowLineNumber"), BoolToString(m_localdisplayLineNumbers.value()));
     }
     if(ShowIndentationGuidelinesIsValid()) {
-        n->AddAttribute(wxT("IndentationGuides"), BoolToString(m_localshowIndentationGuidelines.GetDatum()));
+        n->AddAttribute(wxT("IndentationGuides"), BoolToString(m_localshowIndentationGuidelines.value()));
     }
     if(IndentUsesTabsIsValid()) {
-        n->AddAttribute(wxT("IndentUsesTabs"), BoolToString(m_localindentUsesTabs.GetDatum()));
+        n->AddAttribute(wxT("IndentUsesTabs"), BoolToString(m_localindentUsesTabs.value()));
     }
     if(IsTrackChangesIsValid()) {
-        n->AddAttribute(wxT("TrackEditorChanges"), BoolToString(m_localTrackChanges.GetDatum()));
+        n->AddAttribute(wxT("TrackEditorChanges"), BoolToString(m_localTrackChanges.value()));
     }
 
     if(EolModeIsValid()) {
-        n->AddAttribute(wxT("EOLMode"), m_localeolMode.GetDatum());
+        n->AddAttribute(wxT("EOLMode"), m_localeolMode.value());
     }
 
     wxString tmp;
     if(IndentWidthIsValid()) {
-        tmp << m_localindentWidth.GetDatum();
+        tmp << m_localindentWidth.value();
         n->AddAttribute(wxT("IndentWidth"), tmp);
     }
 
     tmp.clear();
     if(TabWidthIsValid()) {
-        tmp << m_localtabWidth.GetDatum();
+        tmp << m_localtabWidth.value();
         n->AddAttribute(wxT("TabWidth"), tmp);
     }
 
     tmp.clear();
     if(ShowWhitespacesIsValid()) {
-        tmp << m_localshowWhitspaces.GetDatum();
+        tmp << m_localshowWhitspaces.value();
         n->AddAttribute(wxT("ShowWhitespaces"), tmp);
     }
 
     tmp.clear();
     if(FileFontEncodingIsValid()) {
-        tmp = wxFontMapper::GetEncodingName(m_localfileFontEncoding.GetDatum());
+        tmp = wxFontMapper::GetEncodingName(m_localfileFontEncoding.value());
         n->AddAttribute(wxT("FileFontEncoding"), tmp);
     }
 
@@ -231,10 +231,10 @@ wxXmlNode* LocalOptionsConfig::ToXml(wxXmlNode* parent /*=NULL*/, const wxString
 
 void LocalOptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 {
-    m_localfileFontEncoding.Set(wxFontMapper::Get()->CharsetToEncoding(strFileFontEncoding, false));
+    m_localfileFontEncoding = wxFontMapper::Get()->CharsetToEncoding(strFileFontEncoding, false);
 
-    if(wxFONTENCODING_SYSTEM == m_localfileFontEncoding.GetDatum()) {
-        m_localfileFontEncoding.Set(wxFONTENCODING_UTF8);
+    if(wxFONTENCODING_SYSTEM == m_localfileFontEncoding.value()) {
+        m_localfileFontEncoding = wxFONTENCODING_UTF8;
     }
 }
 

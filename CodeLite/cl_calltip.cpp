@@ -255,18 +255,17 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
         }
     }
 
-    std::map<wxString, tagCallTipInfo>::iterator iter = mymap.begin();
     tips.clear();
-    for (; iter != mymap.end(); iter++) {
+    for (const auto& p : mymap) {
         wxString tip;
-        tip << iter->second.sig;
+        tip << p.second.sig;
 
         // Rust & Php have "self" or other variant of it in the argument
         // list, so lets filter it
         tip.Trim().Trim(false);
 
         clTipInfo ti;
-        ti.paramLen = iter->second.paramLen;
+        ti.paramLen = p.second.paramLen;
         ti.str = tip;
         tips.push_back(ti);
     }

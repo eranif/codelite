@@ -101,9 +101,7 @@ void LocalsView::OnLocalsUpdated(XDebugEvent& e)
 
 void LocalsView::AppendVariablesToTree(const wxTreeItemId& parent, const XVariable::List_t& children)
 {
-    XVariable::List_t::const_iterator iter = children.begin();
-    for(; iter != children.end(); ++iter) {
-        const XVariable& var = *iter;
+    for (const XVariable& var : children) {
         wxTreeItemId item =
             m_tree->AppendItem(parent, var.name, wxNOT_FOUND, wxNOT_FOUND, new MyStringData(var.fullname));
         m_tree->SetItemText(item, var.type, 1);

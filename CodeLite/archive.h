@@ -88,7 +88,7 @@ public:
     bool Write(const wxString& name, const StringMap& str_map);
     bool Write(const wxString& name, std::vector<TabInfo>& _vTabInfoArr);
     bool Write(const wxString& name, std::vector<int>& _vInt);
-    bool Write(const wxString& name, const wxStringMap_t& strinMap);
+    bool Write(const wxString& name, const wxStringMap_t& stringMap);
     bool Write(const wxString& name, const wxStringSet_t& s);
     bool WriteCData(const wxString& name, const wxString& value);
 
@@ -112,7 +112,7 @@ public:
     bool Read(const wxString& name, SerializedObject* obj);
     bool Read(const wxString& name, std::vector<TabInfo>& _vTabInfoArr);
     bool Read(const wxString& name, std::vector<int>& _vInt);
-    bool Read(const wxString& name, wxStringMap_t& strinMap);
+    bool Read(const wxString& name, wxStringMap_t& stringMap);
     bool Read(const wxString& name, wxStringSet_t& s);
     bool ReadCData(const wxString& name, wxString& value);
 

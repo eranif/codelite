@@ -228,12 +228,10 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     }
 
     // Now, use the lookup table
-    std::list<PHPExpression::Part>::iterator iter = m_parts.begin();
     PHPEntityBase::Ptr_t currentToken(NULL);
     PHPEntityBase::Ptr_t parentToken(NULL);
-    for(; iter != m_parts.end(); ++iter) {
-        Part& part = *iter;
-        if(!currentToken) {
+    for (Part& part : m_parts) {
+        if (!currentToken) {
             // first token
             // Check locks first
             if(part.m_text.StartsWith("$") && m_sourceFile->CurrentScope()) {
@@ -488,9 +486,8 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
     }
 
     wxString simplified;
-    List_t::iterator iter = m_parts.begin();
-    for(; iter != m_parts.end(); ++iter) {
-        simplified << iter->m_text << iter->m_operatorText;
+    for (const auto& part : m_parts) {
+        simplified << part.m_text << part.m_operatorText;
     }
     return simplified.Trim().Trim(false);
 }
@@ -551,11 +548,8 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
         if(currentScope && (currentScope->Is(kEntityTypeFunction) || currentScope->Is(kEntityTypeNamespace))) {
             // If the current scope is a function
             // add the local variables + function arguments to the current list of matches
-            const PHPEntityBase::List_t& children = currentScope->GetChildren();
-            PHPEntityBase::List_t::const_iterator iter = children.begin();
-            for(; iter != children.end(); ++iter) {
-                PHPEntityBase::Ptr_t child = *iter;
-                if(child->Is(kEntityTypeVariable) && child->GetShortName().Contains(GetFilter()) &&
+            for (const auto& child : currentScope->GetChildren()) {
+                if (child->Is(kEntityTypeVariable) && child->GetShortName().Contains(GetFilter()) &&
                    child->GetShortName() != GetFilter()) {
                     matches.push_back(child);
                 }
@@ -564,11 +558,9 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
 
         {
             // Add aliases
-            PHPEntityBase::List_t aliases = GetSourceFile()->GetAliases();
-            PHPEntityBase::List_t::iterator iter = aliases.begin();
-            for(; iter != aliases.end(); ++iter) {
-                if((*iter)->GetShortName().Contains(GetFilter())) {
-                    matches.push_back(*iter);
+            for (const auto alias : GetSourceFile()->GetAliases()) {
+                if (alias->GetShortName().Contains(GetFilter())) {
+                    matches.push_back(alias);
                 }
             }
         }
@@ -612,10 +604,10 @@ void PHPExpression::DoMakeUnique(PHPEntityBase::List_t& matches)
 {
     std::set<wxString> uniqueNames;
     PHPEntityBase::List_t uniqueList;
-    for(PHPEntityBase::List_t::iterator iter = matches.begin(); iter != matches.end(); ++iter) {
-        if(uniqueNames.count((*iter)->GetFullName()) == 0) {
-            uniqueNames.insert((*iter)->GetFullName());
-            uniqueList.push_back(*iter);
+    for (const auto& match : matches) {
+        if (uniqueNames.count(match->GetFullName()) == 0) {
+            uniqueNames.insert(match->GetFullName());
+            uniqueList.push_back(match);
         }
     }
     matches.swap(uniqueList);

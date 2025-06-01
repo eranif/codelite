@@ -148,13 +148,8 @@ wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
     }
 
     // Use the active project file mapping
-    const PHPProjectSettingsData& settings = pProject->GetSettings();
-    const wxStringMap_t& mapping = settings.GetFileMapping();
-    wxStringMap_t::const_iterator iter = mapping.begin();
-    for(; iter != mapping.end(); ++iter) {
-        const wxString& localFolder = iter->first;
-        const wxString& remoteFolder = iter->second;
-        if(filename.StartsWith(remoteFolder)) {
+    for (const auto& [localFolder, remoteFolder] : pProject->GetSettings().GetFileMapping()) {
+        if (filename.StartsWith(remoteFolder)) {
             filename.Replace(remoteFolder, localFolder);
             return wxFileName(filename).GetFullPath();
         }

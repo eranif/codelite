@@ -160,13 +160,12 @@ void PHPDebugPane::OnRefreshBreakpointsView(XDebugEvent& e)
     e.Skip();
     // Load the breakpoints table
     m_dvListCtrlBreakpoints->DeleteAllItems();
-    const XDebugBreakpoint::List_t& bps = XDebugManager::Get().GetBreakpointsMgr().GetBreakpoints();
-    XDebugBreakpoint::List_t::const_iterator iter = bps.begin();
-    for(; iter != bps.end(); ++iter) {
+
+    for (const auto& bp : XDebugManager::Get().GetBreakpointsMgr().GetBreakpoints()) {
         wxVector<wxVariant> cols;
-        cols.push_back(wxString() << iter->GetBreakpointId());
-        cols.push_back(iter->GetFileName());
-        cols.push_back(wxString() << iter->GetLine());
+        cols.push_back(wxString() << bp.GetBreakpointId());
+        cols.push_back(bp.GetFileName());
+        cols.push_back(wxString() << bp.GetLine());
         m_dvListCtrlBreakpoints->AppendItem(cols);
     }
 }

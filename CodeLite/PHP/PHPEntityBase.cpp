@@ -44,11 +44,10 @@ PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrep
 void PHPEntityBase::StoreRecursive(PHPLookupTable* lookup)
 {
     Store(lookup);
-    
+
     // save the children
-    PHPEntityBase::List_t::iterator iter = m_children.begin();
-    for(; iter != m_children.end(); ++iter) {
-        (*iter)->StoreRecursive(lookup);
+    for (auto& child : m_children) {
+        child->StoreRecursive(lookup);
     }
 }
 
@@ -56,9 +55,8 @@ void PHPEntityBase::SetChildren(const PHPEntityBase::List_t& children)
 {
     m_children.clear();
     m_childrenMap.clear();
-    PHPEntityBase::List_t::const_iterator iter = children.begin();
-    for(; iter != children.end(); ++iter) {
-        AddChild(*iter);
+    for (auto& child : children) {
+        AddChild(child);
     }
 }
 

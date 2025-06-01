@@ -362,11 +362,8 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
         // with their namespace (we either load the namespace from the database or create one)
 
         if(!source.GetDefines().empty()) {
-            const PHPEntityBase::List_t& defines = source.GetDefines();
-            PHPEntityBase::List_t::const_iterator iter = defines.begin();
             PHPEntityBase::Map_t nsMap;
-            for(; iter != defines.end(); ++iter) {
-                PHPEntityBase::Ptr_t pDefine = *iter;
+            for (const auto& pDefine : source.GetDefines()) {
                 PHPEntityBase::Ptr_t pNamespace(NULL);
 
                 wxString nameSpaceName, shortName;
@@ -386,9 +383,8 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
             }
 
             // Now, loop over the namespace map and store all entries
-            PHPEntityBase::Map_t::iterator nsIter = nsMap.begin();
-            for(; nsIter != nsMap.end(); ++nsIter) {
-                nsIter->second->StoreRecursive(this);
+            for (auto& p : nsMap) {
+                p.second->StoreRecursive(this);
             }
         }
 
@@ -625,9 +621,7 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
 
         // Filter out abstract functions
         if(!(flags & kLookupFlags_IncludeAbstractMethods)) {
-            PHPEntityBase::List_t::iterator iter = matches.begin();
-            for(; iter != matches.end(); ++iter) {
-                PHPEntityBase::Ptr_t child = *iter;
+            for (const auto& child : matches) {
                 if(child->Is(kEntityTypeFunction) && child->HasFlag(kFunc_Abstract))
                     continue;
                 matchesNoAbstracts.push_back(child);

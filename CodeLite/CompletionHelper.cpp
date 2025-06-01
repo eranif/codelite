@@ -25,20 +25,19 @@ wxString wrap_lines(const wxString& str)
     wxString wrappedString;
 
     int curLineBytes(0);
-    wxString::const_iterator iter = str.begin();
-    for(; iter != str.end(); iter++) {
-        if(*iter == '\t') {
+    for (const auto c : str) {
+        if (c == '\t') {
             wrappedString << " ";
 
-        } else if(*iter == '\n') {
+        } else if (c == '\n') {
             wrappedString << "\n";
             curLineBytes = 0;
 
-        } else if(*iter == '\r') {
+        } else if (c == '\r') {
             // Skip it
 
         } else {
-            wrappedString << *iter;
+            wrappedString << c;
         }
         curLineBytes++;
 

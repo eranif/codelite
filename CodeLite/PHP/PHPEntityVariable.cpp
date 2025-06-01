@@ -28,9 +28,8 @@ void PHPEntityVariable::PrintStdout(int indent) const
     wxPrintf(", Ln. %d", GetLine());
     wxPrintf("\n");
 
-    PHPEntityBase::List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); ++iter) {
-        (*iter)->PrintStdout(indent + 4);
+    for (const auto& child : m_children) {
+        child->PrintStdout(indent + 4);
     }
 }
 

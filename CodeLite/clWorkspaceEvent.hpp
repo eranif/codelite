@@ -12,9 +12,9 @@ class WXDLLIMPEXP_CL clWorkspaceEvent : public clCommandEvent
 
 public:
     clWorkspaceEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clWorkspaceEvent(const clWorkspaceEvent& event);
-    clWorkspaceEvent& operator=(const clWorkspaceEvent& src);
-    ~clWorkspaceEvent();
+    clWorkspaceEvent(const clWorkspaceEvent&) = default;
+    clWorkspaceEvent& operator=(const clWorkspaceEvent&) = delete;
+    ~clWorkspaceEvent() override = default;
     wxEvent* Clone() const override { return new clWorkspaceEvent(*this); }
 
     // accessors
@@ -27,6 +27,6 @@ public:
     void SetWorkspaceType(const wxString& workspaceType) { this->m_workspaceType = workspaceType; }
     const wxString& GetWorkspaceType() const { return m_workspaceType; }
 };
-typedef void (wxEvtHandler::*clWorkspaceEventFunction)(clWorkspaceEvent&);
+using clWorkspaceEventFunction = void (wxEvtHandler::*)(clWorkspaceEvent&);
 #define clWorkspaceEventHandler(func) wxEVENT_HANDLER_CAST(clWorkspaceEventFunction, func)
 #endif // CLWORKSPACEEVENT_HPP

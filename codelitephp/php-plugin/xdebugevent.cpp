@@ -15,22 +15,5 @@ wxDEFINE_EVENT(wxEVT_XDEBUG_CONNECTED, XDebugEvent);
 
 XDebugEvent::XDebugEvent(wxEventType commandType, int winid)
     : PHPEvent(commandType, winid)
-    , m_evalSucceeded(false)
-    , m_evalReason(wxNOT_FOUND)
 {
-}
-
-XDebugEvent::XDebugEvent(const XDebugEvent& src) { *this = src; }
-
-XDebugEvent::~XDebugEvent() {}
-
-XDebugEvent& XDebugEvent::operator=(const XDebugEvent& src)
-{
-    PHPEvent::operator=(src);
-    m_variables = src.m_variables;
-    m_evalSucceeded = src.m_evalSucceeded;
-    m_errorString = src.m_errorString;
-    m_evaluted = src.m_evaluted;
-    m_evalReason = src.m_evalReason;
-    return *this;
 }

@@ -15,10 +15,10 @@ protected:
 
 public:
     clScrollEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clScrollEvent(const clScrollEvent& event);
-    clScrollEvent& operator=(const clScrollEvent& src);
-    virtual ~clScrollEvent();
-    virtual wxEvent* Clone() const;
+    clScrollEvent(const clScrollEvent&) = default;
+    clScrollEvent& operator=(const clScrollEvent&) = delete;
+    ~clScrollEvent() override = default;
+    wxEvent* Clone() const override;
     void SetPosition(int position) { this->m_position = position; }
     int GetPosition() const { return m_position; }
 };

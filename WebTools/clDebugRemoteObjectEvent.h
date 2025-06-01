@@ -10,15 +10,15 @@ class clDebugRemoteObjectEvent : public clDebugEvent
 
 public:
     clDebugRemoteObjectEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clDebugRemoteObjectEvent(const clDebugRemoteObjectEvent& event);
-    clDebugRemoteObjectEvent& operator=(const clDebugRemoteObjectEvent& src);
-    virtual ~clDebugRemoteObjectEvent();
-    virtual wxEvent* Clone() const { return new clDebugRemoteObjectEvent(*this); }
+    clDebugRemoteObjectEvent(const clDebugRemoteObjectEvent&) = default;
+    clDebugRemoteObjectEvent& operator=(const clDebugRemoteObjectEvent&) = delete;
+    ~clDebugRemoteObjectEvent() override = default;
+    wxEvent* Clone() const override { return new clDebugRemoteObjectEvent(*this); }
     void SetRemoteObject(nSerializableObject::Ptr_t remoteObject) { this->m_remoteObject = remoteObject; }
     nSerializableObject::Ptr_t GetRemoteObject() const { return m_remoteObject; }
 };
 
-typedef void (wxEvtHandler::*clDebugRemoteObjectEventFunction)(clDebugRemoteObjectEvent&);
+using clDebugRemoteObjectEventFunction = void (wxEvtHandler::*)(clDebugRemoteObjectEvent&);
 #define clDebugRemoteObjectEventHandler(func) wxEVENT_HANDLER_CAST(clDebugRemoteObjectEventFunction, func)
 
 #endif // CLDEBUGREMOTEOBJECTEVENT_H

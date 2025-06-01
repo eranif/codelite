@@ -60,22 +60,10 @@
 // clShellProcessEvent
 //-------------------------------------------------------------------
 wxDEFINE_EVENT(wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, clShellProcessEvent);
-clShellProcessEvent::clShellProcessEvent(const clShellProcessEvent& event) { *this = event; }
 
 clShellProcessEvent::clShellProcessEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {
-}
-
-clShellProcessEvent::~clShellProcessEvent() {}
-
-clShellProcessEvent& clShellProcessEvent::operator=(const clShellProcessEvent& src)
-{
-    clCommandEvent::operator=(src);
-    m_pid = src.m_pid;
-    m_exitCode = src.m_exitCode;
-    m_output = src.m_output;
-    return *this;
 }
 
 //-------------------------------------------------------------------

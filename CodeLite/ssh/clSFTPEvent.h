@@ -41,11 +41,11 @@ protected:
 
 public:
     clSFTPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clSFTPEvent(const clSFTPEvent& event);
-    clSFTPEvent& operator=(const clSFTPEvent& src);
+    clSFTPEvent(const clSFTPEvent&) = default;
+    clSFTPEvent& operator=(const clSFTPEvent&) = delete;
 
-    virtual ~clSFTPEvent();
-    virtual wxEvent* Clone() const { return new clSFTPEvent(*this); }
+    ~clSFTPEvent() override = default;
+    wxEvent* Clone() const override { return new clSFTPEvent(*this); }
 
     void SetAccount(const wxString& account) { this->m_account = account; }
     void SetLocalFile(const wxString& localFile) { this->m_localFile = localFile; }
@@ -63,7 +63,7 @@ public:
     const wxString& GetContent() const { return m_content; }
 };
 
-typedef void (wxEvtHandler::*clSFTPEventFunction)(clSFTPEvent&);
+using clSFTPEventFunction = void (wxEvtHandler::*)(clSFTPEvent&);
 #define clSFTPEventHandler(func) wxEVENT_HANDLER_CAST(clSFTPEventFunction, func)
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_SAVE_FILE, clSFTPEvent);

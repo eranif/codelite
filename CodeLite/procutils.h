@@ -60,10 +60,10 @@ class WXDLLIMPEXP_CL clShellProcessEvent : public clCommandEvent
 
 public:
     clShellProcessEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clShellProcessEvent(const clShellProcessEvent& event);
-    clShellProcessEvent& operator=(const clShellProcessEvent& src);
-    virtual ~clShellProcessEvent();
-    virtual wxEvent* Clone() const { return new clShellProcessEvent(*this); }
+    clShellProcessEvent(const clShellProcessEvent&) = default;
+    clShellProcessEvent& operator=(const clShellProcessEvent&) = delete;
+    ~clShellProcessEvent() override = default;
+    wxEvent* Clone() const override { return new clShellProcessEvent(*this); }
 
     void SetOutput(const wxString& output) { this->m_output = output; }
     const wxString& GetOutput() const { return m_output; }
@@ -75,7 +75,7 @@ public:
     int GetExitCode() const { return m_exitCode; }
 };
 
-typedef void (wxEvtHandler::*clShellProcessEventFunction)(clShellProcessEvent&);
+using clShellProcessEventFunction = void (wxEvtHandler::*)(clShellProcessEvent&);
 #define clShellProcessEventHandler(func) wxEVENT_HANDLER_CAST(clShellProcessEventFunction, func)
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, clShellProcessEvent);

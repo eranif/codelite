@@ -37,9 +37,9 @@ protected:
 
 public:
     LSPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    LSPEvent(const LSPEvent& src);
-    LSPEvent& operator=(const LSPEvent& other);
-    virtual ~LSPEvent();
+    LSPEvent(const LSPEvent&) = default;
+    LSPEvent& operator=(const LSPEvent& ) = delete;
+    ~LSPEvent() override = default;
 
     void SetTriggerKind(LSP::CompletionItem::eTriggerKind triggerKind) { this->m_triggerKind = triggerKind; }
     LSP::CompletionItem::eTriggerKind GetTriggerKind() const { return m_triggerKind; }
@@ -63,7 +63,7 @@ public:
     }
     const LSP::Location& GetLocation() const { return m_location; }
     LSP::Location& GetLocation() { return m_location; }
-    wxEvent* Clone() const { return new LSPEvent(*this); }
+    wxEvent* Clone() const override { return new LSPEvent(*this); }
     LSPEvent& SetServerName(const wxString& serverName)
     {
         this->m_serverName = serverName;
@@ -113,7 +113,7 @@ public:
     const std::unordered_map<wxString, std::vector<LSP::TextEdit>>& GetChanges() const { return m_changes; }
 };
 
-typedef void (wxEvtHandler::*LSPEventFunction)(LSPEvent&);
+using LSPEventFunction = void (wxEvtHandler::*)(LSPEvent&);
 #define LSPEventHandler(func) wxEVENT_HANDLER_CAST(LSPEventFunction, func)
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DEFINITION, LSPEvent);

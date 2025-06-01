@@ -4080,7 +4080,7 @@ msgid "Scan..."
 msgstr "扫描..."
 
 #: LanguageServer/UI.cpp:64
-msgid "Scan for installed Language Servers insalled"
+msgid "Scan for installed Language Servers"
 msgstr "扫描已安装的语言服务"
 
 #: LanguageServer/UI.cpp:68 LiteEditor/findinfiles_dlg.cpp:324
@@ -6613,7 +6613,7 @@ msgid "Colour"
 msgstr "颜色"
 
 #: LiteEditor/editorsettingsbookmarkspanel.cpp:75
-msgid "Find/Find Next clears highlit matching words"
+msgid "Find/Find Next clears highlighted matching words"
 msgstr "搜索/搜索下一个清除高亮匹配词"
 
 #: LiteEditor/editorsettingscaret.cpp:31
@@ -21650,7 +21650,7 @@ msgid "The menu is about to open"
 msgstr "菜单即将打开"
 
 #: wxcrafter/controls/menu_wrapper.cpp:17
-msgid "A particular menu item has been highlit"
+msgid "A particular menu item has been highlighted"
 msgstr "突出显示了某个菜单项"
 
 #: wxcrafter/controls/menu_wrapper.cpp:18

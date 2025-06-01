@@ -133,7 +133,7 @@ private:
     bool IsIncludeStatement(const wxString& line, wxString* fileName = NULL, wxString* fileNameUpToCaret = NULL);
     int FindLineToAddInclude();
     /**
-     * @brief add missing implementaions. If line_number is provided
+     * @brief add missing implementations. If line_number is provided
      * then only add the function found on this line number
      */
     void DoAddFunctionImplementation(int line_number = wxNOT_FOUND);

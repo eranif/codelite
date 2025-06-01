@@ -504,7 +504,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	"Scan for installed Language Servers insalled"
+													"m_value":	"Scan for installed Language Servers"
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",

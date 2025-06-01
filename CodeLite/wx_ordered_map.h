@@ -157,16 +157,6 @@ public:
 
     const_iterator begin() const { return m_list.begin(); }
     iterator begin() { return m_list.begin(); }
-
-    void DeleteValues()
-    {
-        typename List_t::iterator iter = m_list.begin();
-        for(; iter != m_list.end(); ++iter) {
-            Value v = (*iter).second;
-            delete v;
-        }
-        Clear();
-    }
 };
 
 #endif // WX_ORDERED_MAP_H

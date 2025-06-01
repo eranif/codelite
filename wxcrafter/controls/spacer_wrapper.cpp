@@ -8,7 +8,7 @@ SpacerWrapper::SpacerWrapper()
     : wxcWidget(ID_WXSPACER)
 {
     m_styles.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
 
     Add<CategoryProperty>(_("Spacer"));
     Add<StringProperty>(PROP_NAME, wxT("Spacer"), wxT(""));

@@ -6,7 +6,7 @@
 InfoBarButtonWrapper::InfoBarButtonWrapper()
     : wxcWidget(ID_WXINFOBARBUTTON)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_styles.Clear();
     m_sizerFlags.Clear();
 

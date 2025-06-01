@@ -10,7 +10,7 @@ TimerWrapper::TimerWrapper()
     : wxcWidget(ID_WXTIMER)
 {
     m_styles.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_sizerFlags.Clear();
 
     SetPropertyString(_("Common Settings"), "wxTimer");

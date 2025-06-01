@@ -139,7 +139,7 @@ wxcWidget::~wxcWidget()
     }
     DeleteAllChildren();
     wxDELETE(m_eventsMenu);
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_controlEvents.Clear();
 }
 
@@ -323,10 +323,10 @@ void wxcWidget::DoClearFlags(MapStyles_t& mp)
     }
 }
 
-void wxcWidget::AddProperty(PropertyBase* prop)
+void wxcWidget::AddProperty(std::unique_ptr<PropertyBase> prop)
 {
-    if(prop) {
-        m_properties.PushBack(prop->GetLabel(), prop);
+    if (prop) {
+        m_properties.PushBack(prop->GetLabel(), std::move(prop));
 
     } else {
         m_properties.PushBack("", NULL);
@@ -2105,7 +2105,7 @@ void wxcWidget::FixPaths(const wxString& cwd)
     MapProperties_t::iterator prop_iter = m_properties.begin();
     for(; prop_iter != m_properties.end(); prop_iter++) {
         if(prop_iter->second) {
-            FilePickerProperty* pb = dynamic_cast<FilePickerProperty*>(prop_iter->second);
+            FilePickerProperty* pb = dynamic_cast<FilePickerProperty*>(prop_iter->second.get());
             if(pb) {
                 pb->FixPaths(cwd);
             }
@@ -2294,17 +2294,14 @@ wxcWidget::Map_t wxcWidget::GetConnectedEventsRecursively() const
 PropertyBase* wxcWidget::GetProperty(const wxString& name)
 {
     if(m_properties.Contains(name)) {
-        return m_properties.Item(name);
+        return m_properties.Item(name).get();
     }
     return NULL;
 }
 
 void wxcWidget::DelProperty(const wxString& name)
 {
-    if(m_properties.Contains(name)) {
-        delete m_properties.Item(name);
-        m_properties.Remove(name);
-    }
+    m_properties.Remove(name);
 }
 
 size_t wxcWidget::SizerFlagsAsInteger() const

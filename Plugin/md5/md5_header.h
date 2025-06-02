@@ -117,15 +117,15 @@ private:
     static void memcpy(uint1* dest, uint1* src, uint4 length);
     static void memset(uint1* start, uint1 val, uint4 length);
 
-    static inline uint4 rotate_left(uint4 x, uint4 n);
-    static inline uint4 F(uint4 x, uint4 y, uint4 z);
-    static inline uint4 G(uint4 x, uint4 y, uint4 z);
-    static inline uint4 H(uint4 x, uint4 y, uint4 z);
-    static inline uint4 I(uint4 x, uint4 y, uint4 z);
-    static inline void FF(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
-    static inline void GG(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
-    static inline void HH(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
-    static inline void II(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
+    static uint4 rotate_left(uint4 x, uint4 n);
+    static uint4 F(uint4 x, uint4 y, uint4 z);
+    static uint4 G(uint4 x, uint4 y, uint4 z);
+    static uint4 H(uint4 x, uint4 y, uint4 z);
+    static uint4 I(uint4 x, uint4 y, uint4 z);
+    static void FF(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
+    static void GG(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
+    static void HH(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
+    static void II(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
 };
 
 #endif // __MD5_H__

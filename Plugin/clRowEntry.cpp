@@ -1146,7 +1146,7 @@ const wxRect& clRowEntry::GetCellButtonRect(size_t col) const
 #ifdef __WXMSW__
 namespace
 {
-inline wxColour MSWGetCheckBoxColour(bool checkmark, const clColours& colours, bool isSelected)
+wxColour MSWGetCheckBoxColour(bool checkmark, const clColours& colours, bool isSelected)
 {
     bool is_light_theme = colours.IsLightTheme();
     if (checkmark) {

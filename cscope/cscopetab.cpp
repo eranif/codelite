@@ -96,17 +96,12 @@ void CscopeTab::BuildTable(CScopeResultTable_t* table)
     m_styler->SetStyles(m_stc);
 
     wxStringSet_t insertedItems;
-    CScopeResultTable_t::iterator iter = m_table->begin();
-    for(; iter != m_table->end(); ++iter) {
-        wxString file = iter->first;
-
+    for (const auto& [file, vec] : *m_table) {
         // Add line for the file
         AddFile(file);
 
         // Add the entries for this file
-        CScopeEntryDataVec_t* vec = iter->second;
-        for(size_t i = 0; i < vec->size(); ++i) {
-            CscopeEntryData entry = vec->at(i);
+        for (const CscopeEntryData& entry : *vec) {
             // Dont insert duplicate entries to the match view
             wxString display_string;
             display_string << _("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ")
@@ -125,10 +120,9 @@ void CscopeTab::BuildTable(CScopeResultTable_t* table)
 void CscopeTab::FreeTable()
 {
     if(m_table) {
-        CScopeResultTable_t::iterator iter = m_table->begin();
-        for(; iter != m_table->end(); iter++) {
+        for (auto& [_, vec] : *m_table) {
             // delete the vector
-            delete iter->second;
+            delete vec;
         }
         m_table->clear();
         wxDELETE(m_table);

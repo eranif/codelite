@@ -93,10 +93,7 @@ void PropertiesListView::Construct(wxcWidget* wb)
     }
 
     // Populate the table
-    const wxcWidget::MapProperties_t& props = wb->GetProperties();
-    wxcWidget::MapProperties_t::const_iterator iter = props.begin();
-    for(; iter != props.end(); ++iter) {
-        PropertyBase* property = iter->second;
+    for (const auto& [_, property] : wb->GetProperties()) {
         if(!property) {
             continue;
         }

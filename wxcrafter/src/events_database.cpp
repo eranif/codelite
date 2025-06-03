@@ -172,18 +172,15 @@ void EventsDatabase::FillCommonEvents()
     // Misc
     m_events.PushBack("wxEVT_IDLE", ConnectDetails("wxEVT_IDLE", "wxIdleEvent", _("Process a wxEVT_IDLE event")));
 
-    MapEvents_t::const_iterator iter = m_events.begin();
-    for(; iter != m_events.end(); iter++) {
-        m_menuIdToName[iter->second.GetMenuItemId()] = iter->second.GetEventName();
+    for (const auto& [_, cd] : m_events) {
+        m_menuIdToName[cd.GetMenuItemId()] = cd.GetEventName();
     }
 }
 
 wxMenu* EventsDatabase::CreateMenu() const
 {
-    MapEvents_t::const_iterator iter = m_events.begin();
     wxMenu* menu = new wxMenu;
-    for(; iter != m_events.end(); iter++) {
-        ConnectDetails cd = iter->second;
+    for (const auto& [_, cd] : m_events) {
         if(cd.GetEventName().IsEmpty()) {
             menu->AppendSeparator();
 

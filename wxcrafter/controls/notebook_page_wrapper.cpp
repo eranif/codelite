@@ -243,19 +243,17 @@ void NotebookPageWrapper::DoTreebookXRC(wxString& text, XRC_TYPE type, int depth
 
     // Loop over the children
     wxString childPageXRC;
-    wxcWidget::List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); iter++) {
+    for (auto child : m_children) {
         wxString xrc;
         // If it is another page, recurse
-        NotebookPageWrapper* page = dynamic_cast<NotebookPageWrapper*>(*iter);
-        if(page) {
+        if (NotebookPageWrapper* page = dynamic_cast<NotebookPageWrapper*>(child)) {
             page->DoTreebookXRC(xrc, type, depth + 1);
             childPageXRC << xrc;
             xrc.Clear();
 
         } else {
-            (*iter)->ToXRC(xrc, type);
-            if((*iter)->IsSizerItem()) { xrc = (*iter)->WrapInSizerXRC(xrc); }
+            child->ToXRC(xrc, type);
+            if (child->IsSizerItem()) { xrc = child->WrapInSizerXRC(xrc); }
         }
         text << xrc;
     }

@@ -99,7 +99,7 @@ void SizerFlagsListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
 
     pg->Append(new wxPropertyCategory(_("Sizer Flags")));
 
-    wxcWidget::MapStyles_t flags = m_wxcWidget->GetSizerFlags();
+    const wxcWidget::MapStyles_t& flags = m_wxcWidget->GetSizerFlags();
     wxcWidget::MapStyles_t::ConstIterator iter = flags.Begin();
 
     wxArrayString styles;

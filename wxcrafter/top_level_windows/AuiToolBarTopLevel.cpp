@@ -10,7 +10,7 @@
 AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
     : TopLevelWinWrapper(ID_WXAUITOOLBARTOPLEVEL)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_sizerFlags.Clear();
 
     SetPropertyString(_("Common Settings"), "wxAuiToolBar");

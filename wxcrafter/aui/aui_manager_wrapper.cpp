@@ -12,7 +12,7 @@ AuiManagerWrapper::AuiManagerWrapper()
     : wxcWidget(ID_WXAUIMANAGER)
 {
     m_sizerFlags.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
 
     // wxAUI_DOCKART_PANE_BORDER_SIZE
     // wxAUI_DOCKART_BACKGROUND_COLOUR

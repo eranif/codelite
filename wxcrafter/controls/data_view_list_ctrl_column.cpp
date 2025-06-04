@@ -14,7 +14,7 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
 {
     m_styles.Clear();
     m_sizerFlags.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
 
     const wxArrayString coltype =
         StdToWX::ToArrayString({ "bitmap", "check", "text", "icontext", "progress", "choice" });

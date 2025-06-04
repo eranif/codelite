@@ -11,7 +11,7 @@
 StdButtonWrapper::StdButtonWrapper()
     : wxcWidget(ID_WXSTDBUTTON)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     const wxArrayString ids = StdToWX::ToArrayString({ "wxID_OK", "wxID_YES", "wxID_SAVE", "wxID_APPLY", "wxID_CLOSE",
                                                        "wxID_NO", "wxID_CANCEL", "wxID_HELP", "wxID_CONTEXT_HELP" });
 

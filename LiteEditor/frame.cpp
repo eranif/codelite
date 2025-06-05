@@ -27,13 +27,10 @@
 
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
-#include "CompilersDetectorManager.h"
 #include "CompilersFoundDlg.h"
-#include "Cxx/cpptoken.h"
 #include "Debugger/DebuggerToolBar.h"
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
-#include "GCCMetadata.hpp"
 #include "Notebook.h"
 #include "NotebookNavigationDlg.h"
 #include "SideBar.hpp"
@@ -43,14 +40,11 @@
 #include "acceltabledlg.h"
 #include "advanced_settings.h"
 #include "app.h"
-#include "async_executable_cmd.h"
 #include "autoversion.h"
 #include "batchbuilddlg.h"
 #include "bitmap_loader.h"
-#include "bookmark_manager.h"
 #include "build_custom_targets_menu_manager.h"
 #include "build_settings_config.h"
-#include "buildtabsettingsdata.h"
 #include "clAboutDialog.h"
 #include "clBootstrapWizard.h"
 #include "clCustomiseToolBarDlg.h"
@@ -58,24 +52,18 @@
 #include "clGotoAnythingManager.h"
 #include "clInfoBar.h"
 #include "clLocaleManager.hpp"
-#include "clMainFrameHelper.h"
 #include "clSTCHelper.hpp"
 #include "clSingleChoiceDialog.h"
 #include "clThemedTreeCtrl.h"
 #include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_dock_art.h"
-#include "cl_aui_tb_are.h"
-#include "cl_aui_tool_stickness.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
-#include "cl_defs.h"
 #include "cl_standard_paths.h"
 #include "cl_unredo.h"
 #include "code_completion_manager.h"
-#include "configuration_manager_dlg.h"
 #include "context_cpp.h"
-#include "cpp_symbol_tree.h"
 #include "debugcoredump.h"
 #include "debuggerconfigtool.h"
 #include "debuggerpane.h"
@@ -88,26 +76,20 @@
 #include "editor_config.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
-#include "exelocator.h"
 #include "file_logger.h"
 #include "filedroptarget.h"
 #include "fileexplorer.h"
 #include "fileutils.h"
-#include "fileview.h"
 #include "findresultstab.h"
-#include "findusagetab.h"
 #include "generalinfo.h"
 #include "globals.h"
 #include "imanager.h"
-#include "language.h"
 #include "localstable.h"
 #include "macros.h"
 #include "manager.h"
-#include "menumanager.h"
 #include "navigationmanager.h"
 #include "newworkspacedlg.h"
 #include "open_resource_dialog.h" // New open resource
-#include "openwindowspanel.h"
 #include "options_dlg2.h"
 #include "plugin.h"
 #include "pluginmanager.h"
@@ -116,34 +98,25 @@
 #include "project.h"
 #include "quickdebugdlg.h"
 #include "quickfindbar.h"
-#include "renamesymboldlg.h"
-#include "replaceinfilespanel.h"
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "singleinstancethreadjob.h"
-#include "symbol_tree.h"
 #include "syntaxhighlightdlg.h"
 #include "tabgroupdlg.h"
 #include "tabgroupmanager.h"
 #include "tabgroupspane.h"
-#include "tags_parser_search_path_dlg.h"
 #include "webupdatethread.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "wxCustomControls.hpp"
 #include "wxCustomStatusBar.h"
 
-#include <algorithm>
-#include <array>
 #include <wx/bookctrl.h>
 #include <wx/busyinfo.h>
-#include <wx/dcbuffer.h>
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>
 #include <wx/settings.h>
-#include <wx/splash.h>
 #include <wx/stc/stc.h>
-#include <wx/wupdlock.h>
 
 #ifdef __WXGTK__
 #include <gtk/gtk.h>
@@ -210,6 +183,18 @@ bool IsDebuggerRunning()
     EventNotifier::Get()->ProcessEvent(eventIsRunning);
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     return (dbgr && dbgr->IsRunning()) || eventIsRunning.IsAnswer();
+}
+
+bool IsCaptionsVisible(clDockingManager& mgr)
+{
+    wxAuiPaneInfoArray& panes = mgr.GetAllPanes();
+    for (size_t i = 0; i < panes.GetCount(); ++i) {
+        const auto& pane = panes.Item(i);
+        if (pane.IsOk() && !pane.IsToolbar() && pane.HasCaption()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool codelite_initialised = false;
@@ -907,8 +892,6 @@ void clMainFrame::Construct()
     long value = EditorConfigST::Get()->GetInteger("highlight_word", 1);
     m_highlightWord = (bool)value;
 
-    // Initialize the frame helper
-    m_frameHelper = std::make_unique<clMainFrameHelper>(this, &m_mgr);
     CreateGUIControls();
 
     ManagerST::Get(); // Dummy call
@@ -3177,7 +3160,7 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
         if (EventNotifier::Get()->ProcessEvent(dbgEvent)) {
 
             // set the debugger features
-            m_frameHelper->SetDebuggerFeatures(dbgEvent.GetFeatures());
+            m_debuggerFeatures = dbgEvent.GetFeatures();
 
             // the event was processed by one of the plugins, there is nothing left to
             // be done here
@@ -3189,7 +3172,7 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
     }
 
     // Enable all features
-    m_frameHelper->SetDebuggerFeatures(clDebugEvent::kAllFeatures);
+    m_debuggerFeatures = clDebugEvent::kAllFeatures;
 
     if (!isBuiltinDebuggerRunning) {
         // Let the plugin know that we are about to start debugging
@@ -5455,7 +5438,7 @@ void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
     clConfig::Get().Write(kConfigShowStatusBar, event.IsChecked());
 }
 
-void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(m_frameHelper->IsStatusBarVisible()); }
+void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetStatusBar()->IsShown()); }
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {
@@ -5464,7 +5447,7 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
     clConfig::Get().Write(kConfigShowToolBar, m_pluginsToolbar->IsShown());
 }
 
-void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event) { event.Check(m_frameHelper->IsToolbarShown()); }
+void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event) { event.Check(GetPluginsToolBar()->IsShown()); }
 
 void clMainFrame::ShowOrHideCaptions()
 {
@@ -5738,19 +5721,19 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
     // Hide the _native_ toolbar
     bool minimalView = clConfig::Get().Read("MinimalView", true);
     if (minimalView) {
-        if (m_frameHelper->IsToolbarShown()) {
+        if (GetPluginsToolBar()->IsShown()) {
             // Hide the toolbar
             DoShowToolbars(false, false);
         }
-        if (m_frameHelper->IsCaptionsVisible()) {
+        if (IsCaptionsVisible(m_mgr)) {
             DoShowCaptions(false);
         }
         DoShowMenuBar(false);
     } else {
-        if (!m_frameHelper->IsToolbarShown()) {
+        if (!GetPluginsToolBar()->IsShown()) {
             DoShowToolbars(true, false);
         }
-        if (!m_frameHelper->IsCaptionsVisible()) {
+        if (!IsCaptionsVisible(m_mgr)) {
             DoShowCaptions(true);
         }
         DoShowMenuBar(true);
@@ -5778,31 +5761,31 @@ void clMainFrame::OnToggleMinimalViewUI(wxUpdateUIEvent& event)
 void clMainFrame::OnDebugStepInstUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(IsDebuggerRunning() && m_frameHelper->GetDebuggerFeatures() & clDebugEvent::kStepInst);
+    e.Enable(IsDebuggerRunning() && (m_debuggerFeatures & clDebugEvent::kStepInst));
 }
 
 void clMainFrame::OnDebugJumpToCursorUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(IsDebuggerRunning() && m_frameHelper->GetDebuggerFeatures() & clDebugEvent::kJumpToCursor);
+    e.Enable(IsDebuggerRunning() && (m_debuggerFeatures & clDebugEvent::kJumpToCursor));
 }
 
 void clMainFrame::OnDebugRunToCursorUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(IsDebuggerRunning() && m_frameHelper->GetDebuggerFeatures() & clDebugEvent::kRunToCursor);
+    e.Enable(IsDebuggerRunning() && (m_debuggerFeatures & clDebugEvent::kRunToCursor));
 }
 
 void clMainFrame::OnDebugInterruptUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(IsDebuggerRunning() && m_frameHelper->GetDebuggerFeatures() & clDebugEvent::kInterrupt);
+    e.Enable(IsDebuggerRunning() && (m_debuggerFeatures & clDebugEvent::kInterrupt));
 }
 
 void clMainFrame::OnDebugShowCursorUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(IsDebuggerRunning() && m_frameHelper->GetDebuggerFeatures() & clDebugEvent::kShowCursor);
+    e.Enable(IsDebuggerRunning() && (m_debuggerFeatures & clDebugEvent::kShowCursor));
 }
 
 void clMainFrame::OnDebugRunToCursor(wxCommandEvent& e)

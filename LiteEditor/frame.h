@@ -32,7 +32,6 @@
 #include "clCaptionBar.hpp"
 #include "clDockingManager.h"
 #include "clInfoBar.h"
-#include "clMainFrameHelper.h"
 #include "clStatusBar.h"
 #include "clToolBar.h"
 #include "cl_command_event.h"
@@ -138,7 +137,7 @@ class clMainFrame : public wxFrame
 
     // Printing
     wxPrintDialogData m_printDlgData;
-    clMainFrameHelper::Ptr_t m_frameHelper;
+    size_t m_debuggerFeatures = clDebugEvent::kAllFeatures;
     WebUpdateJob* m_webUpdate;
     wxToolBar* m_mainToolbar;
     clToolBarGeneric* m_pluginsToolbar;

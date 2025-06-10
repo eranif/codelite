@@ -26,7 +26,6 @@
 #define FIND_IN_FILES_DLG_H
 
 #include "findinfiles_dlg.h"
-#include "findreplacedlg.h"
 #include "macros.h"
 #include "search_thread.h"
 #include "sessionmanager.h"

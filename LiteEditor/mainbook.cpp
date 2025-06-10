@@ -37,7 +37,7 @@
 #include "file_logger.h"
 #include "filechecklist.h"
 #include "frame.h"
-#include "findinfilesdlg.h"
+#include "findreplacedlg.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"

@@ -24,7 +24,7 @@ MenuItemWrapper::MenuItemWrapper()
 
     m_styles.Clear();
     m_sizerFlags.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
 
     SetPropertyString(_("Common Settings"), "wxMenuItem");
     Add<CategoryProperty>(_("Common Settings"));

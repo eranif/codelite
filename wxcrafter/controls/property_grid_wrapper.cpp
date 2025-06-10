@@ -21,7 +21,7 @@
 PropertyGridWrapper::PropertyGridWrapper()
     : wxcWidget(ID_WXPGPROPERTY)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_sizerFlags.Clear();
     m_styles.Clear();
     static int labelCount = 0;

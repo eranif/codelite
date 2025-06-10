@@ -7,7 +7,7 @@ MenuWrapper::MenuWrapper()
     : wxcWidget(ID_WXMENU)
 {
     m_styles.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
 
 #ifdef __WXGTK__
     PREPEND_STYLE_FALSE(wxMENU_TEAROFF);

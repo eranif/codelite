@@ -8,7 +8,7 @@ ListCtrlColumnWrapper::ListCtrlColumnWrapper()
 {
     m_styles.Clear();
     m_sizerFlags.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
 
     SetPropertyString(_("Common Settings"), "wxListCtrlColumn");
     Add<CategoryProperty>(_("wxListCtrl Column"));

@@ -29,7 +29,7 @@ ToolbarBaseWrapper::ToolbarBaseWrapper(int type)
     PREPEND_STYLE_FALSE(wxTB_HORZ_LAYOUT);
     PREPEND_STYLE_FALSE(wxTB_HORZ_TEXT);
 
-    m_properties.DeleteValues();
+    m_properties.Clear();
     Add<CategoryProperty>(_("Common Settings"), "wxToolBar");
     Add<WinIdProperty>();
     Add<StringProperty>(PROP_SIZE,
@@ -206,7 +206,7 @@ AuiToolbarWrapper::AuiToolbarWrapper()
     : wxcWidget(ID_WXAUITOOLBAR)
 {
     m_styles.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
     EnableSizerFlag(wxT("wxEXPAND"), true);
 
     Add<CategoryProperty>(_("Common Settings"));

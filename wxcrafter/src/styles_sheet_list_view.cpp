@@ -35,7 +35,7 @@ void StylesSheetListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
     windowStylesValue = 0;
     controlStylesValue = 0;
 
-    wxcWidget::MapStyles_t flags = wb->GetStyles();
+    const wxcWidget::MapStyles_t& flags = wb->GetStyles();
     wxcWidget::MapStyles_t::ConstIterator iter = flags.Begin();
 
     // The control specific flags will show up first

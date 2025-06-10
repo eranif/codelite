@@ -8,7 +8,7 @@
 RibbonToolSeparator::RibbonToolSeparator()
     : wxcWidget(ID_WXRIBBONTOOLSEPARATOR)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_sizerFlags.Clear();
 
     Add<CategoryProperty>(_("wxRibbonToolBar Separator"));

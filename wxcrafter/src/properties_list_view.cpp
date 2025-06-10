@@ -96,7 +96,7 @@ void PropertiesListView::Construct(wxcWidget* wb)
     const wxcWidget::MapProperties_t& props = wb->GetProperties();
     wxcWidget::MapProperties_t::const_iterator iter = props.begin();
     for(; iter != props.end(); ++iter) {
-        PropertyBase* property = iter->second;
+        PropertyBase* property = iter->second.get();
         if(!property) {
             continue;
         }

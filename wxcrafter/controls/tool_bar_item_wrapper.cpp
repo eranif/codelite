@@ -29,7 +29,7 @@ ToolBarItemWrapper::ToolBarItemWrapper(int type)
 
     m_styles.Clear();
     m_sizerFlags.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
 
     wxCrafter::ResourceLoader bmps;
     Add<CategoryProperty>(_("Common Settings"), "wxToolBarItem");
@@ -365,7 +365,7 @@ bool ToolBarItemWrapper::HasDefaultDropdown() const
 ToolBarItemSeparatorWrapper::ToolBarItemSeparatorWrapper()
     : ToolBarItemWrapper(ID_WXTOOLBARITEM_SEPARATOR)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_sizerFlags.Clear();
 
     wxArrayString kinds;
@@ -393,7 +393,7 @@ wxString ToolBarItemSeparatorWrapper::CppCtorCode() const
 ToolBarItemSpaceWrapper::ToolBarItemSpaceWrapper()
     : ToolBarItemWrapper(ID_WXTOOLBARITEM_STRETCHSPACE)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_sizerFlags.Clear();
 
     wxArrayString kinds;
@@ -419,7 +419,7 @@ wxString ToolBarItemSpaceWrapper::CppCtorCode() const
 AuiToolBarItemNonStretchSpaceWrapper::AuiToolBarItemNonStretchSpaceWrapper()
     : ToolBarItemWrapper(ID_WXAUITOOLBARITEM_SPACE)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_sizerFlags.Clear();
 
     Add<CategoryProperty>(_("AuiToolBar Item Space"));
@@ -448,7 +448,7 @@ void AuiToolBarItemNonStretchSpaceWrapper::ToXRC(wxString& text, XRC_TYPE type) 
 AuiToolBarItemSpaceWrapper::AuiToolBarItemSpaceWrapper()
     : ToolBarItemWrapper(ID_WXAUITOOLBARITEM_STRETCHSPACE)
 {
-    m_properties.DeleteValues();
+    m_properties.Clear();
     m_sizerFlags.Clear();
 
     Add<CategoryProperty>(_("ToolBar Item Space"));
@@ -478,7 +478,7 @@ AuiToolBarLabelWrapper::AuiToolBarLabelWrapper(int type)
 {
     m_styles.Clear();
     m_sizerFlags.Clear();
-    m_properties.DeleteValues();
+    m_properties.Clear();
 
     wxCrafter::ResourceLoader bmps;
     Add<CategoryProperty>(_("wxAuiToolBar Label"));

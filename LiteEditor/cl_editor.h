@@ -32,11 +32,9 @@
 #include "buildtabsettingsdata.h"
 #include "clEditorStateLocker.h"
 #include "cl_calltip.h"
-#include "cl_defs.h"
 #include "cl_unredo.h"
 #include "context_base.h"
 #include "database/entry.h"
-#include "findreplacedlg.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "navigationmanager.h"
@@ -274,7 +272,6 @@ public:
     void CenterLinePreserveSelectionAfter(int line);
 
 public:
-    static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 
     void SetPreProcessorsWords(const wxString& preProcessorsWords) { this->m_preProcessorsWords = preProcessorsWords; }
     const wxString& GetPreProcessorsWords() const { return m_preProcessorsWords; }
@@ -411,9 +408,6 @@ public:
     // Ditto, but asynchronously
     void DelayedSetActive() override;
 
-    // Perform FindNext operation based on the data stored in the FindReplaceData class
-    void FindNext(const FindReplaceData& data);
-
     /**
      * @brief display functions' calltip from the current position of the caret
      */
@@ -547,10 +541,7 @@ public:
     void GetBookmarkTooltip(int lineno, wxString& tip, wxString& title);
 
     // Replace all
-    bool ReplaceAll();
     bool ReplaceAllExactMatch(const wxString& what, const wxString& replaceWith);
-    // mark all occurrences
-    bool MarkAllFinds();
 
     // Folding API
     //-----------------------------------------
@@ -576,8 +567,6 @@ public:
      */
     void StoreCollapsedFoldsToArray(clEditorStateLocker::VecInt_t& folds) const;
 
-    static FindReplaceDialog* GetFindReplaceDialog() { return m_findReplaceDlg; }
-
     // Util function
     int SafeGetChar(int pos);
     wxString PreviousWord(int pos, int& foundPos);
@@ -595,20 +584,15 @@ public:
      */
     void QuickFindAll();
 
-    bool FindAndSelect();
     bool SelectRangeAfter(const LSP::Range& range) override;
     void SelectRange(const LSP::Range& range) override;
     bool SelectLocation(const LSP::Location& range) override;
-    bool FindAndSelect(const FindReplaceData& data);
     bool FindAndSelect(const wxString& pattern, const wxString& name);
     void FindAndSelectV(const wxString& pattern,
                         const wxString& name,
                         int pos = 0,
                         NavMgr* unused = NULL) override; // The same but returns void, so usable with CallAfter()
     void DoFindAndSelectV(const wxArrayString& strings, int pos); // Called with CallAfter()
-
-    bool Replace();
-    bool Replace(const FindReplaceData& data);
 
     void RecalcHorizontalScrollbar();
 
@@ -1060,8 +1044,6 @@ private:
     bool IsOpenBrace(int position);
     bool IsCloseBrace(int position);
     size_t GetCodeNavModifier();
-    // Conevert FindReplaceDialog flags to wxSD flags
-    size_t SearchFlags(const FindReplaceData& data);
 
     void AddDebuggerContextMenu(wxMenu* menu);
     void DoBreakptContextMenu(wxPoint clientPt);
@@ -1096,7 +1078,6 @@ private:
     void OnCallTipClick(wxStyledTextEvent& event);
     void OnScnPainted(wxStyledTextEvent& event);
     void OnSciUpdateUI(wxStyledTextEvent& event);
-    void OnFindDialog(wxCommandEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnKeyUp(wxKeyEvent& event);
@@ -1133,8 +1114,6 @@ private:
     EditorDeltasHolder* m_deltas; // Holds any text position changes, in case they affect FindinFiles results
     std::vector<wxMenuItem*> m_dynItems;
     std::vector<BPtoMarker> m_BPstoMarkers;
-    static FindReplaceDialog* m_findReplaceDlg;
-    static FindReplaceData m_findReplaceData;
     int m_lastMatchPos;
     static std::map<wxString, int> ms_bookmarkShapes;
     bool m_popupIsOn;

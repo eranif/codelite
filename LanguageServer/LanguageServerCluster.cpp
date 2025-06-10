@@ -133,8 +133,8 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerCluster::OnActiveEditorChanged, this);
 
-    EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
-                               &LanguageServerCluster::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LanguageServerCluster::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &LanguageServerCluster::OnWorkspaceScanCompleted, this);
@@ -169,8 +169,8 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerCluster::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_FILES_SCANNED, &LanguageServerCluster::OnWorkspaceScanCompleted, this);
-    EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
-                                 &LanguageServerCluster::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LanguageServerCluster::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
 
     EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
@@ -231,7 +231,6 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
         return;
     }
 
-    // for now, use the first location
     LSP::Location location;
     if (event.GetLocations().size() > 1) {
         // multiple matches
@@ -281,7 +280,8 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
             // try the range
             editor->SelectRangeAfter(location.GetRange());
         }
-        NavMgr::Get()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
+        BrowseRecord current_location{ location };
+        NavMgr::Get()->StoreCurrentLocation(from, current_location);
     };
     clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));
 }
@@ -363,7 +363,8 @@ void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
     CHECK_PTR_RET(editor);
 
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        clGetManager()->GetActiveEditor()->GetCtrl(), items,
+        clGetManager()->GetActiveEditor()->GetCtrl(),
+        items,
         trigger_kind == LSP::CompletionItem::kTriggerUser ? wxCodeCompletionBox::kTriggerUser : 0);
 }
 
@@ -1135,7 +1136,8 @@ void LanguageServerCluster::DiscoverWorkspaceType()
             }
             owner->CallAfter(&LanguageServerCluster::SetWorkspaceType, cur_type);
         },
-        files, this);
+        files,
+        this);
     thr.detach();
 }
 
@@ -1255,7 +1257,9 @@ void LanguageServerCluster::OnCodeActionAvailable(LSPEvent& event)
         wxStringView sv_selection{ selection.data(), selection.length() };
         command_to_apply = M[sv_selection];
     } else {
-        wxRichMessageDialog dlg(wxTheApp->GetTopWindow(), _("A fix is available"), "CodeLite",
+        wxRichMessageDialog dlg(wxTheApp->GetTopWindow(),
+                                _("A fix is available"),
+                                "CodeLite",
                                 wxOK | wxCANCEL | wxOK_DEFAULT | wxCENTER | wxICON_QUESTION);
         dlg.SetExtendedMessage(event.GetCommands()[0].GetTitle());
         dlg.SetOKCancelLabels(_("Fix it!"), _("Cancel"));
@@ -1287,7 +1291,8 @@ void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
 
     // confirm with the user
     if (event.IsAnswer() /* prompt? */ &&
-        ::wxMessageBox(wxString() << "This will update: " << changes.size() << " files. Continue?", "CodeLite",
+        ::wxMessageBox(wxString() << "This will update: " << changes.size() << " files. Continue?",
+                       "CodeLite",
                        wxICON_QUESTION | wxCANCEL | wxYES_NO | wxYES_DEFAULT) != wxYES) {
         return;
     }

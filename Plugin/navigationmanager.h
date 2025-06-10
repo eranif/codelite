@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef NAVIGATIONMANAGER_H
-#define NAVIGATIONMANAGER_H
+#pragma once
 
 #include "browse_record.h"
 #include "clWorkspaceEvent.hpp"
@@ -40,16 +39,6 @@ class IManager;
  */
 class WXDLLIMPEXP_SDK NavMgr : public wxEvtHandler
 {
-    std::stack<BrowseRecord> m_nexts;
-    std::stack<BrowseRecord> m_prevs;
-    BrowseRecord m_currentLocation;
-
-private:
-    NavMgr();
-    virtual ~NavMgr();
-
-    void OnWorkspaceClosed(clWorkspaceEvent& e);
-
 public:
     static NavMgr* Get();
 
@@ -78,5 +67,13 @@ public:
     bool NavigateBackward(IManager* mgr);
     bool NavigateForward(IManager* mgr);
     void Clear();
+
+private:
+    NavMgr();
+    ~NavMgr() override;
+
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
+    std::stack<BrowseRecord> m_nexts;
+    std::stack<BrowseRecord> m_prevs;
+    BrowseRecord m_currentLocation;
 };
-#endif // NAVIGATIONMANAGER_H

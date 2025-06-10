@@ -22,24 +22,24 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef BROWSE_HISTORY_H
-#define BROWSE_HISTORY_H
+#pragma once
+
+#include "LSP/basic_types.h"
+#include "file_logger.h"
 
 #include <wx/string.h>
 
-class BrowseRecord
+class BrowseRecord final
 {
 public:
-    wxString filename;
-    wxString project;
-    int lineno = wxNOT_FOUND;
-    int column = wxNOT_FOUND;
-    int firstLineInView = wxNOT_FOUND;
-    wxString ssh_account;
-
-public:
-    BrowseRecord() {}
-    ~BrowseRecord() {}
+    BrowseRecord() = default;
+    ~BrowseRecord() = default;
+    BrowseRecord(const LSP::Location& location)
+    {
+        filename = location.GetPath();
+        lineno = location.GetRange().GetStart().GetLine();
+        column = location.GetRange().GetStart().GetCharacter();
+    }
 
     bool IsSameAs(const BrowseRecord& other) const
     {
@@ -60,6 +60,27 @@ public:
      * @brief return the ssh account associated with this record
      */
     const wxString& GetSshAccount() const { return ssh_account; }
+
+    inline wxString ToString() const
+    {
+        wxString s;
+        s << this->filename << ":" << this->lineno;
+        return s;
+    }
+
+    wxString filename;
+    wxString project;
+    int lineno = wxNOT_FOUND;
+    int column = wxNOT_FOUND;
+    int firstLineInView = wxNOT_FOUND;
+    wxString ssh_account;
 };
 
-#endif // BROWSE_HISTORY_H
+inline FileLogger& operator<<(FileLogger& logger, const BrowseRecord& obj)
+{
+    if (!FileLogger::CanLog(logger.GetLogEntryVerbosity()))
+        return logger;
+
+    logger << obj.ToString();
+    return logger;
+}

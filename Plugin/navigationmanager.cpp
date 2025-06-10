@@ -31,16 +31,6 @@
 
 #include <wx/stc/stc.h>
 
-namespace
-{
-wxString record_to_string(const BrowseRecord& rec)
-{
-    wxString s;
-    s << rec.filename << ":" << rec.lineno;
-    return s;
-}
-} // namespace
-
 NavMgr::NavMgr() { EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NavMgr::OnWorkspaceClosed, this); }
 
 NavMgr::~NavMgr()
@@ -69,28 +59,28 @@ bool NavMgr::CanPrev() const { return !m_prevs.empty(); }
 
 void NavMgr::StoreCurrentLocation(const BrowseRecord& origin, const BrowseRecord& target)
 {
-    clDEBUG() << "Nav manager storing location: Origin:" << record_to_string(origin)
-              << ", Target:" << record_to_string(target) << endl;
-    if(m_prevs.empty() || !m_prevs.top().IsSameAs(origin)) {
+    clDEBUG() << "Nav manager storing location: Origin:" << origin << ", Target:" << target << endl;
+    if (m_prevs.empty() || !m_prevs.top().IsSameAs(origin)) {
         m_prevs.push(origin);
     }
+    m_nexts = {}; // diverging from the navigation we reset the "forward" action
     m_currentLocation = target;
 }
 
 bool NavMgr::NavigateBackward(IManager* mgr)
 {
-    if(!CanPrev()) {
+    if (!CanPrev()) {
         return false;
     }
 
     auto new_loc = m_prevs.top();
     m_prevs.pop();
-    if(m_currentLocation.IsOk()) {
+    if (m_currentLocation.IsOk()) {
         m_nexts.push(m_currentLocation);
     }
     m_currentLocation = new_loc;
 
-    clDEBUG() << "Nav manager BACKWARD:" << record_to_string(new_loc) << endl;
+    clDEBUG() << "Nav manager BACKWARD:" << new_loc << endl;
     auto callback = [=](IEditor* editor) {
         editor->GetCtrl()->ClearSelections();
         editor->CenterLine(new_loc.lineno, new_loc.column);
@@ -101,18 +91,18 @@ bool NavMgr::NavigateBackward(IManager* mgr)
 
 bool NavMgr::NavigateForward(IManager* mgr)
 {
-    if(!CanNext()) {
+    if (!CanNext()) {
         return false;
     }
 
     auto new_loc = m_nexts.top();
     m_nexts.pop();
-    if(m_currentLocation.IsOk()) {
+    if (m_currentLocation.IsOk()) {
         m_prevs.push(m_currentLocation);
     }
     m_currentLocation = new_loc;
 
-    clDEBUG() << "Nav manager FORWARD:" << record_to_string(new_loc) << endl;
+    clDEBUG() << "Nav manager FORWARD:" << new_loc << endl;
     auto callback = [=](IEditor* editor) {
         editor->GetCtrl()->ClearSelections();
         editor->CenterLine(new_loc.lineno, new_loc.column);

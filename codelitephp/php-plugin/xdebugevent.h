@@ -32,18 +32,18 @@
 class XDebugEvent : public PHPEvent
 {
     XVariable::List_t m_variables;
-    bool m_evalSucceeded;
+    bool m_evalSucceeded = false;
     wxString m_errorString;
     wxString m_evaluted;
-    int m_evalReason;
+    int m_evalReason = wxNOT_FOUND;
 
 public:
     XDebugEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    XDebugEvent(const XDebugEvent& src);
-    XDebugEvent& operator=(const XDebugEvent& src);
-    virtual ~XDebugEvent();
+    XDebugEvent(const XDebugEvent&) = default;
+    XDebugEvent& operator=(const XDebugEvent&) = delete;
+    ~XDebugEvent() override = default;
 
-    virtual wxEvent* Clone() const { return new XDebugEvent(*this); }
+    wxEvent* Clone() const override { return new XDebugEvent(*this); }
     void SetVariables(const XVariable::List_t& variables) { this->m_variables = variables; }
     const XVariable::List_t& GetVariables() const { return m_variables; }
     void SetEvalSucceeded(bool evalSucceeded) { this->m_evalSucceeded = evalSucceeded; }

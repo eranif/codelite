@@ -156,9 +156,7 @@ public:
     /**
      * @brief Save all settings.
      */
-    inline void Save() {
-        SaveProjects();
-    }
+    void Save() { SaveProjects(); }
 
 
     /**
@@ -178,9 +176,7 @@ public:
     /**
      * @brief Load all settings.
      */
-    inline void Load() {
-        LoadProjects();
-    }
+    void Load() { LoadProjects(); }
 
 
     /**

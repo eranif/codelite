@@ -181,8 +181,8 @@ void CMakeHelpTab::ListAll()
         return;
 
     // Foreach data and store names into list
-    for(std::map<wxString, wxString>::const_iterator it = m_data->begin(), ite = m_data->end(); it != ite; ++it) {
-        m_listBoxList->Append(it->first);
+    for (const auto& [name, _] : *m_data) {
+        m_listBoxList->Append(name);
     }
 }
 
@@ -199,10 +199,10 @@ void CMakeHelpTab::ListFiltered(const wxString& search)
         return;
 
     // Foreach data and store names into list
-    for(std::map<wxString, wxString>::const_iterator it = m_data->begin(), ite = m_data->end(); it != ite; ++it) {
+    for (const auto& [name, _] : *m_data) {
         // Store only that starts with given string
-        if(it->first.Matches(searchMatches))
-            m_listBoxList->Append(it->first);
+        if (name.Matches(searchMatches))
+            m_listBoxList->Append(name);
     }
 }
 

@@ -362,9 +362,8 @@ void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
 
 void ContextCpp::RemoveMenuDynamicContent(wxMenu* menu)
 {
-    std::vector<wxMenuItem*>::iterator iter = m_dynItems.begin();
-    for (; iter != m_dynItems.end(); iter++) {
-        menu->Destroy((*iter));
+    for (auto item : m_dynItems) {
+        menu->Destroy(item);
     }
     m_dynItems.clear();
     m_selectedWord.Empty();

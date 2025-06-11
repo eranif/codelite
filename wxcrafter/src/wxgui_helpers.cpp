@@ -826,12 +826,11 @@ wxString wxCrafter::XMLEncode(const wxString& text, bool decode /*=false*/)
         s_xmlEntities[wxT("\\n")] = wxT("&#x0A;");
     }
 
-    std::map<wxString, wxString>::const_iterator iter = s_xmlEntities.begin();
-    for(; iter != s_xmlEntities.end(); iter++) {
-        if(!decode) {
-            str.Replace(iter->first, iter->second);
+    for (const auto& p : s_xmlEntities) {
+        if (!decode) {
+            str.Replace(p.first, p.second);
         } else {
-            str.Replace(iter->second, iter->first);
+            str.Replace(p.second, p.first);
         }
     }
     return str;

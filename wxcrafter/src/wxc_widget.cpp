@@ -149,9 +149,8 @@ void wxcWidget::DeleteAllChildren()
     // this is why we use a temporary list here
     List_t tmpChildren;
     tmpChildren.insert(tmpChildren.end(), m_children.begin(), m_children.end());
-    wxcWidget::List_t::iterator iter = tmpChildren.begin();
-    for(; iter != tmpChildren.end(); ++iter) {
-        delete(*iter);
+    for (auto child : tmpChildren) {
+        delete child;
     }
     m_children.clear();
 }
@@ -197,16 +196,15 @@ wxString wxcWidget::GetWindowParent() const
 
 void wxcWidget::ChildrenXRC(wxString& text, XRC_TYPE type) const
 {
-    wxcWidget::List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); iter++) {
+    for (const auto* child : m_children) {
         wxString xrc;
-        (*iter)->ToXRC(xrc, type);
+        child->ToXRC(xrc, type);
 
-        if((*iter)->IsAuiPane()) {
-            xrc = (*iter)->WrapInAuiPaneXRC(xrc);
+        if (child->IsAuiPane()) {
+            xrc = child->WrapInAuiPaneXRC(xrc);
 
-        } else if((*iter)->IsSizerItem()) {
-            xrc = (*iter)->WrapInSizerXRC(xrc);
+        } else if (child->IsSizerItem()) {
+            xrc = child->WrapInSizerXRC(xrc);
         }
         text << xrc;
     }
@@ -306,9 +304,8 @@ bool wxcWidget::HasMainSizer() const
         return false;
     }
 
-    wxcWidget::List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); iter++) {
-        if((*iter)->IsSizer()) {
+    for (const auto* child : m_children) {
+        if (child->IsSizer()) {
             return true;
         }
     }
@@ -483,18 +480,23 @@ void wxcWidget::DoTraverseAndGenCode(wxArrayString& headers, wxString& ctorCode,
         members << memberCode << "\n";
     }
 
-    List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); iter++) {
-        (*iter)->DoTraverseAndGenCode(headers, ctorCode, members, eventFunctions, eventConnectCode, additionalFiles,
-                                      dtorCode, extraFunctionsImpl, extraFunctionsDecl);
-        if((*iter)->IsSizerItem()) {
-            wxSize minSize = wxCrafter::DecodeSize((*iter)->PropertyString(PROP_MINSIZE));
+    for (const auto* child : m_children) {
+        child->DoTraverseAndGenCode(headers,
+                                    ctorCode,
+                                    members,
+                                    eventFunctions,
+                                    eventConnectCode,
+                                    additionalFiles,
+                                    dtorCode,
+                                    extraFunctionsImpl,
+                                    extraFunctionsDecl);
+        if (child->IsSizerItem()) {
+            wxSize minSize = wxCrafter::DecodeSize(child->PropertyString(PROP_MINSIZE));
             if(minSize != wxDefaultSize) {
                 if(ctorCode.Right(2) == "\n\n") {
                     ctorCode.RemoveLast(); // Otherwise the SetMinSize() feels lonely
                 }
-                ctorCode << (*iter)->GetName() << "->SetMinSize(wxSize(" << wxCrafter::EncodeSize(minSize) << "));\n\n";
-                ;
+                ctorCode << child->GetName() << "->SetMinSize(wxSize(" << wxCrafter::EncodeSize(minSize) << "));\n\n";
             }
         }
     }
@@ -616,10 +618,9 @@ void wxcWidget::Serialize(JSONElement& json) const
     json.addProperty("gbPosition", m_gbPos);
 
     JSONElement styles = JSONElement::createArray("m_styles");
-    MapStyles_t::const_iterator iter = m_styles.begin();
-    for(; iter != m_styles.end(); iter++) {
-        if(iter->second.is_set) {
-            styles.arrayAppend(iter->second.style_name);
+    for (const auto& [_, styleInfo] : m_styles) {
+        if (styleInfo.is_set) {
+            styles.arrayAppend(styleInfo.style_name);
         }
     }
     json.append(styles);
@@ -629,27 +630,24 @@ void wxcWidget::Serialize(JSONElement& json) const
     }
 
     JSONElement sizerFlags = JSONElement::createArray("m_sizerFlags");
-    iter = m_sizerFlags.begin();
-    for(; iter != m_sizerFlags.end(); iter++) {
-        if(iter->second.is_set) {
-            sizerFlags.arrayAppend(iter->second.style_name);
+    for (const auto& [_, styleInfo] : m_sizerFlags) {
+        if (styleInfo.is_set) {
+            sizerFlags.arrayAppend(styleInfo.style_name);
         }
     }
     json.append(sizerFlags);
 
     JSONElement properties = JSONElement::createArray("m_properties");
-    MapProperties_t::const_iterator prop_iter = m_properties.begin();
-    for(; prop_iter != m_properties.end(); prop_iter++) {
-        if(prop_iter->second) {
-            properties.arrayAppend(prop_iter->second->Serialize());
+    for (const auto& [_, property] : m_properties) {
+        if (property) {
+            properties.arrayAppend(property->Serialize());
         }
     }
     json.append(properties);
 
     JSONElement events = JSONElement::createArray("m_events");
-    MapEvents_t::const_iterator events_iter = m_connectedEvents.begin();
-    for(; events_iter != m_connectedEvents.end(); events_iter++) {
-        events.arrayAppend(events_iter->second.ToJSON());
+    for (const auto& p : m_connectedEvents) {
+        events.arrayAppend(p.second.ToJSON());
     }
     json.append(events);
 
@@ -1250,10 +1248,9 @@ void wxcWidget::MoveUp()
 
 void wxcWidget::CopySizerAndAuiInfo(const wxcWidget* source, wxcWidget* target)
 {
-    MapStyles_t::const_iterator sizerIter = source->m_sizerFlags.begin();
-    for(; sizerIter != source->m_sizerFlags.end(); ++sizerIter) {
-        if(target->m_sizerFlags.Contains(sizerIter->first)) {
-            target->m_sizerFlags.Item(sizerIter->first) = sizerIter->second;
+    for (const auto& sizer : source->m_sizerFlags) {
+        if (target->m_sizerFlags.Contains(sizer.first)) {
+            target->m_sizerFlags.Item(sizer.first) = sizer.second;
         }
     }
     target->m_auiPaneInfo = source->m_auiPaneInfo;
@@ -1269,9 +1266,8 @@ void wxcWidget::ReplaceWidget(wxcWidget* oldWidget, wxcWidget* newWidget)
 
     // Use a tmp_children because 'Reparent' will cause the m_children
     // size to change so its not reliable to count on it
-    List_t::iterator iter = tmp_children.begin();
-    for(; iter != tmp_children.end(); ++iter) {
-        (*iter)->Reparent(newWidget);
+    for (auto child : tmp_children) {
+        child->Reparent(newWidget);
     }
 
     // at this point oldWidget->m_children should be empty
@@ -2102,20 +2098,15 @@ void wxcWidget::InsertAfter(wxcWidget* item, wxcWidget* insertAfter)
 }
 void wxcWidget::FixPaths(const wxString& cwd)
 {
-    MapProperties_t::iterator prop_iter = m_properties.begin();
-    for(; prop_iter != m_properties.end(); prop_iter++) {
-        if(prop_iter->second) {
-            FilePickerProperty* pb = dynamic_cast<FilePickerProperty*>(prop_iter->second.get());
-            if(pb) {
-                pb->FixPaths(cwd);
-            }
+    for (auto& prop : m_properties) {
+        if (FilePickerProperty* pb = dynamic_cast<FilePickerProperty*>(prop.second.get())) {
+            pb->FixPaths(cwd);
         }
     }
 
     // Fix the children properties as well
-    List_t::iterator child_iter = m_children.begin();
-    for(; child_iter != m_children.end(); child_iter++) {
-        (*child_iter)->FixPaths(cwd);
+    for (auto child : m_children) {
+        child->FixPaths(cwd);
     }
 }
 
@@ -2150,10 +2141,8 @@ wxcWidget* wxcWidget::GetTopLevel() const
 
 bool wxcWidget::HasMenuBar() const
 {
-    const List_t& children = GetChildren();
-    List_t::const_iterator iter = children.begin();
-    for(; iter != children.end(); ++iter) {
-        if((*iter)->GetType() == ID_WXMENUBAR) {
+    for (const auto* child : GetChildren()) {
+        if (child->GetType() == ID_WXMENUBAR) {
             return true;
         }
     }
@@ -2162,10 +2151,8 @@ bool wxcWidget::HasMenuBar() const
 
 bool wxcWidget::HasStatusBar() const
 {
-    const List_t& children = GetChildren();
-    List_t::const_iterator iter = children.begin();
-    for(; iter != children.end(); ++iter) {
-        if((*iter)->GetType() == ID_WXSTATUSBAR) {
+    for (const auto* child : GetChildren()) {
+        if (child->GetType() == ID_WXSTATUSBAR) {
             return true;
         }
     }
@@ -2174,10 +2161,8 @@ bool wxcWidget::HasStatusBar() const
 
 bool wxcWidget::HasToolBar() const
 {
-    const List_t& children = GetChildren();
-    List_t::const_iterator iter = children.begin();
-    for(; iter != children.end(); ++iter) {
-        if((*iter)->GetType() == ID_WXTOOLBAR) {
+    for (const auto* child : GetChildren()) {
+        if (child->GetType() == ID_WXTOOLBAR) {
             return true;
         }
     }
@@ -2240,9 +2225,8 @@ const wxcWidget* wxcWidget::DoFindByName(const wxcWidget* parent, const wxString
         return parent;
     }
 
-    List_t::const_iterator iter = parent->GetChildren().begin();
-    for(; iter != parent->GetChildren().end(); ++iter) {
-        const wxcWidget* match = DoFindByName(*iter, name);
+    for (const auto child : parent->GetChildren()) {
+        const wxcWidget* match = DoFindByName(child, name);
         if(match) {
             return match;
         }
@@ -2252,10 +2236,9 @@ const wxcWidget* wxcWidget::DoFindByName(const wxcWidget* parent, const wxString
 
 const wxcWidget* wxcWidget::FindFirstDirectChildOfType(int type) const
 {
-    List_t::const_iterator iter = GetChildren().begin();
-    for(; iter != GetChildren().end(); ++iter) {
-        if((*iter)->GetType() == type) {
-            return (*iter);
+    for (const auto* child : GetChildren()) {
+        if (child->GetType() == type) {
+            return child;
         }
     }
     return NULL;
@@ -2270,17 +2253,15 @@ wxSize wxcWidget::GetSize() const
 
 void wxcWidget::DoGetConnectedEventsRecursively(wxcWidget::Map_t& events, const wxcWidget* wb) const
 {
-    wxcWidget::MapEvents_t::const_iterator iter = wb->m_connectedEvents.begin();
-    for(; iter != wb->m_connectedEvents.end(); ++iter) {
-        wxString fooname = iter->second.GetFunctionNameAndSignature().BeforeFirst(wxT('('));
+    for (const auto& p : wb->m_connectedEvents) {
+        wxString fooname = p.second.GetFunctionNameAndSignature().BeforeFirst(wxT('('));
         if(events.count(fooname) == 0) {
-            events.insert(std::make_pair(fooname, iter->second));
+            events.insert(std::make_pair(fooname, p.second));
         }
     }
 
-    wxcWidget::List_t::const_iterator childIter = wb->m_children.begin();
-    for(; childIter != wb->m_children.end(); ++childIter) {
-        DoGetConnectedEventsRecursively(events, *childIter);
+    for (const auto* child : wb->m_children) {
+        DoGetConnectedEventsRecursively(events, child);
     }
 }
 
@@ -2307,10 +2288,9 @@ void wxcWidget::DelProperty(const wxString& name)
 size_t wxcWidget::SizerFlagsAsInteger() const
 {
     size_t flags = 0;
-    MapStyles_t::const_iterator iter = m_sizerFlags.begin();
-    for(; iter != m_sizerFlags.end(); ++iter) {
-        if(iter->second.is_set) {
-            flags |= iter->second.style_bit;
+    for (const auto& [_, styleInfo] : m_sizerFlags) {
+        if (styleInfo.is_set) {
+            flags |= styleInfo.style_bit;
         }
     }
     return flags;
@@ -2318,9 +2298,8 @@ size_t wxcWidget::SizerFlagsAsInteger() const
 
 void wxcWidget::SetStyles(size_t value)
 {
-    MapStyles_t::iterator iter = m_styles.begin();
-    for(; iter != m_styles.end(); ++iter) {
-        EnableStyle(iter->second.style_name, value & iter->second.style_bit);
+    for (const auto& [_, styleInfo] : m_styles) {
+        EnableStyle(styleInfo.style_name, value & styleInfo.style_bit);
     }
 }
 
@@ -2366,10 +2345,9 @@ wxString wxcWidget::WrapInAuiPaneXRC(const wxString& objXRC) const { return m_au
 size_t wxcWidget::StyleFlagsAsInteger() const
 {
     size_t flags = 0;
-    MapStyles_t::const_iterator iter = m_styles.begin();
-    for(; iter != m_styles.end(); ++iter) {
-        if(iter->second.is_set) {
-            flags |= iter->second.style_bit;
+    for (const auto& [_, styleInfo] : m_styles) {
+        if (styleInfo.is_set) {
+            flags |= styleInfo.style_bit;
         }
     }
     return flags;
@@ -2388,9 +2366,8 @@ int wxcWidget::PropertyInt(const wxString& propname, int defval) const
 
 bool wxcWidget::IsAuiManaged() const
 {
-    wxcWidget::List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); ++iter) {
-        if((*iter)->GetType() == ID_WXAUIMANAGER) {
+    for (const auto* child : m_children) {
+        if (child->GetType() == ID_WXAUIMANAGER) {
             return true;
         }
     }
@@ -2408,9 +2385,8 @@ void wxcWidget::DoGetCustomControlsName(const wxcWidget* widget, wxArrayString& 
         }
     }
 
-    wxcWidget::List_t::const_iterator iter = widget->GetChildren().begin();
-    for(; iter != widget->GetChildren().end(); ++iter) {
-        DoGetCustomControlsName(*iter, controls);
+    for (const auto* child : widget->GetChildren()) {
+        DoGetCustomControlsName(child, controls);
     }
 }
 
@@ -2434,10 +2410,8 @@ bool wxcWidget::DoCheckNameUniqueness(const wxString& name, const wxcWidget* wid
         return false;
     }
 
-    const wxcWidget::List_t& children = widget->GetChildren();
-    wxcWidget::List_t::const_iterator iter = children.begin();
-    for(; iter != children.end(); ++iter) {
-        if(!DoCheckNameUniqueness(name, *iter)) {
+    for (const auto* child : widget->GetChildren()) {
+        if (!DoCheckNameUniqueness(name, child)) {
             return false;
         }
     }
@@ -2459,13 +2433,12 @@ wxcWidget* wxcWidget::Copy(enum DuplicatingOptions nametypesToChange, const std:
 void wxcWidget::DoCopyChildren(wxcWidget* widget, enum DuplicatingOptions nametypesToChange,
                                const std::set<wxString>& existingNames) const
 {
-    List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); ++iter) {
-        wxcWidget* child = (*iter)->Clone();
-        child->DoDeepCopy(*(*iter), nametypesToChange, existingNames);
-        widget->AddChild(child);
-        if(!(*iter)->GetChildren().empty()) {
-            (*iter)->DoCopyChildren(child, nametypesToChange, existingNames);
+    for (const auto* child : m_children) {
+        wxcWidget* clone = child->Clone();
+        clone->DoDeepCopy(*child, nametypesToChange, existingNames);
+        widget->AddChild(clone);
+        if (!child->GetChildren().empty()) {
+            child->DoCopyChildren(clone, nametypesToChange, existingNames);
         }
     }
 }
@@ -2474,11 +2447,10 @@ void wxcWidget::DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametyp
                            const std::set<wxString>& existingNames, const wxString& chosenName,
                            const wxString& chosenInheritedName, const wxString& chosenFilename)
 {
-    MapProperties_t::const_iterator propIter = rhs.m_properties.begin();
-    for(; propIter != rhs.m_properties.end(); ++propIter) {
-        if(this->m_properties.Contains(propIter->first)) {
+    for (const auto& prop : rhs.m_properties) {
+        if (this->m_properties.Contains(prop.first)) {
 
-            if(propIter->first == PROP_NAME) {
+            if (prop.first == PROP_NAME) {
                 // The name should be different, unless we're just copying to the clipboard
                 // or (optionally) unless we're duplicating a TLW or pasting into a different TLW
                 wxString newname;
@@ -2486,7 +2458,7 @@ void wxcWidget::DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametyp
                     newname = chosenName;
 
                 } else {
-                    newname << propIter->second->GetValue();
+                    newname << prop.second->GetValue();
                     if(IsTopWindow() || existingNames.count(newname) ||
                        ((nametypesToChange & DO_renameAllChildren) ||
                         (nametypesToChange & DO_renameAllChildrenExceptUsernamed && wxIsdigit(newname.Last())))) {
@@ -2494,15 +2466,15 @@ void wxcWidget::DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametyp
                     }
                 }
 
-                this->m_properties.Item(propIter->first)->SetValue(newname);
+                this->m_properties.Item(prop.first)->SetValue(newname);
 
-            } else if(propIter->first == PROP_FILE) {
+            } else if (prop.first == PROP_FILE) {
 
                 wxString filename;
                 if(!chosenFilename.empty()) { // Always use any supplied name
                     filename = chosenFilename;
                 } else {
-                    filename << propIter->second->GetValue();
+                    filename << prop.second->GetValue();
 
                     if(!filename.empty() && (nametypesToChange != DO_renameNone)) {
                         filename << ++m_copyCounter;
@@ -2510,15 +2482,15 @@ void wxcWidget::DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametyp
                 }
 
                 // update the file name property
-                this->m_properties.Item(propIter->first)->SetValue(filename);
+                this->m_properties.Item(prop.first)->SetValue(filename);
 
-            } else if(propIter->first == PROP_INHERITED_CLASS) {
+            } else if (prop.first == PROP_INHERITED_CLASS) {
 
                 wxString classname;
                 if(!chosenInheritedName.empty()) { // Always use any supplied name
                     classname = chosenInheritedName;
                 } else {
-                    classname << propIter->second->GetValue();
+                    classname << prop.second->GetValue();
 
                     if(!classname.empty() && (nametypesToChange != DO_renameNone)) {
                         // Don't increment here: it's sensible for classname to use the same suffix as filename
@@ -2526,10 +2498,10 @@ void wxcWidget::DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametyp
                     }
                 }
 
-                this->m_properties.Item(propIter->first)->SetValue(classname);
+                this->m_properties.Item(prop.first)->SetValue(classname);
 
             } else {
-                this->m_properties.Item(propIter->first)->SetValue(propIter->second->GetValue());
+                this->m_properties.Item(prop.first)->SetValue(prop.second->GetValue());
             }
         }
     }
@@ -2539,23 +2511,20 @@ void wxcWidget::DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametyp
         // strangely, if ConnectDetails::m_functionNameAndSignature
         // of either duplicate was later changed, that change was shown in *both* controls in their EventsTableListView.
         // The generated code was still correct, though :/
-        MapEvents_t::const_iterator events_iter = rhs.m_connectedEvents.begin();
-        for(; events_iter != rhs.m_connectedEvents.end(); ++events_iter) {
-            AddEvent(events_iter->second);
+        for (const auto& p : rhs.m_connectedEvents) {
+            AddEvent(p.second);
         }
     }
 
-    MapStyles_t::const_iterator styleIter = rhs.m_styles.begin();
-    for(; styleIter != rhs.m_styles.end(); ++styleIter) {
-        if(this->m_styles.Contains(styleIter->first)) {
-            this->m_styles.Item(styleIter->first) = styleIter->second;
+    for (const auto& p : rhs.m_styles) {
+        if (this->m_styles.Contains(p.first)) {
+            this->m_styles.Item(p.first) = p.second;
         }
     }
 
-    MapStyles_t::const_iterator sizerIter = rhs.m_sizerFlags.begin();
-    for(; sizerIter != rhs.m_sizerFlags.end(); ++sizerIter) {
-        if(this->m_sizerFlags.Contains(sizerIter->first)) {
-            this->m_sizerFlags.Item(sizerIter->first) = sizerIter->second;
+    for (const auto& p : rhs.m_sizerFlags) {
+        if (this->m_sizerFlags.Contains(p.first)) {
+            this->m_sizerFlags.Item(p.first) = p.second;
         }
     }
     this->m_auiPaneInfo = rhs.m_auiPaneInfo;
@@ -2609,9 +2578,8 @@ void wxcWidget::StoreNames(std::set<wxString>& store)
 {
     store.insert(GetName());
 
-    List_t::iterator child_iter = m_children.begin();
-    for(; child_iter != m_children.end(); child_iter++) {
-        (*child_iter)->StoreNames(store);
+    for (auto child : m_children) {
+        child->StoreNames(store);
     }
 }
 

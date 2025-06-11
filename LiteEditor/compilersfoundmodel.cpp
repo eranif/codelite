@@ -229,9 +229,8 @@ void CompilersFoundModel::DeleteItems(const wxDataViewItem& parent, const wxData
 void CompilersFoundModel::Clear()
 {
     wxVector<CompilersFoundModel_Item*> roots = m_data;
-    wxVector<CompilersFoundModel_Item*>::iterator iter = roots.begin();
-    for(; iter != roots.end(); ++iter) {
-        DeleteItem(wxDataViewItem(*iter));
+    for (auto item : roots) {
+        DeleteItem(wxDataViewItem(item));
     }
     m_data.clear();
     Cleared();

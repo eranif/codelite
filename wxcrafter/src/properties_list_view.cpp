@@ -93,10 +93,7 @@ void PropertiesListView::Construct(wxcWidget* wb)
     }
 
     // Populate the table
-    const wxcWidget::MapProperties_t& props = wb->GetProperties();
-    wxcWidget::MapProperties_t::const_iterator iter = props.begin();
-    for(; iter != props.end(); ++iter) {
-        PropertyBase* property = iter->second.get();
+    for (const auto& [_, property] : wb->GetProperties()) {
         if(!property) {
             continue;
         }
@@ -109,7 +106,7 @@ void PropertiesListView::Construct(wxcWidget* wb)
             pgProp = AddBoolProp(property->GetLabelForUI(), property->GetValue() == "1", property->GetTooltip());
 
         } else if(property->GetType() == PT_INT) {
-            IntProperty* intProp = dynamic_cast<IntProperty*>(property);
+            IntProperty* intProp = dynamic_cast<IntProperty*>(property.get());
             if(intProp) {
                 if(intProp->IsUninitialized()) {
                     pgProp = AddIntegerProp(property->GetLabelForUI(), property->GetTooltip());
@@ -158,7 +155,7 @@ void PropertiesListView::Construct(wxcWidget* wb)
         }
 
         if(pgProp) {
-            pgProp->SetClientData(property);
+            pgProp->SetClientData(property.get());
         }
     }
     ::wxPGPropertyBooleanUseCheckbox(m_pg);

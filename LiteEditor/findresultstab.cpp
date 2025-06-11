@@ -164,23 +164,22 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
     wxWindowUpdateLocker locker{ m_sci };
     m_indicators.reserve(m_indicators.size() + res->size());
 
-    auto iter = res->begin();
-    for(; iter != res->end(); ++iter) {
-        if(m_matchInfo.empty() || m_matchInfo.rbegin()->second.GetFileName() != iter->GetFileName()) {
+    for (const auto& searchResult : *res) {
+        if (m_matchInfo.empty() || m_matchInfo.rbegin()->second.GetFileName() != searchResult.GetFileName()) {
             if(!m_matchInfo.empty()) {
                 AppendLine("\n", false);
             }
-            AppendLine(iter->GetFileName() + wxT("\n"), false);
+            AppendLine(searchResult.GetFileName() + wxT("\n"), false);
         }
 
         int lineno = m_sci->GetLineCount() - 1;
-        m_matchInfo.insert(std::make_pair(lineno, *iter));
-        wxString text = iter->GetPattern();
+        m_matchInfo.insert(std::make_pair(lineno, searchResult));
+        wxString text = searchResult.GetPattern();
 
-        wxString linenum = wxString::Format(wxT(" %5u: "), iter->GetLineNumber());
+        wxString linenum = wxString::Format(wxT(" %5u: "), searchResult.GetLineNumber());
         AppendLine(linenum + text + wxT("\n"), false);
-        int indicatorStartPos = m_sci->PositionFromLine(lineno) + iter->GetColumn() + linenum.Length();
-        int indicatorLen = iter->GetLen();
+        int indicatorStartPos = m_sci->PositionFromLine(lineno) + searchResult.GetColumn() + linenum.Length();
+        int indicatorLen = searchResult.GetLen();
         m_indicators.emplace_back(indicatorStartPos);
         m_sci->IndicatorFillRange(indicatorStartPos, indicatorLen);
     }

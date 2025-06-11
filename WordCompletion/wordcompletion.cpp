@@ -137,8 +137,7 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
     if(filter.IsEmpty()) {
         filteredSet.swap(words);
     } else {
-        for(wxStringSet_t::iterator iter = words.begin(); iter != words.end(); ++iter) {
-            wxString word = *iter;
+        for (const auto& word : words) {
             wxString lcWord = word.Lower();
             if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
                 if(lcWord.StartsWith(filter) && filter != word) {
@@ -152,8 +151,8 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
         }
     }
     wxCodeCompletionBoxEntry::Vec_t entries;
-    for (wxStringSet_t::iterator iter = filteredSet.begin(); iter != filteredSet.end(); ++iter) {
-        entries.push_back(wxCodeCompletionBoxEntry::New(*iter, sBmp));
+    for (const auto& text : filteredSet) {
+        entries.push_back(wxCodeCompletionBoxEntry::New(text, sBmp));
     }
     event.GetEntries().insert(event.GetEntries().end(), entries.begin(), entries.end());
 }

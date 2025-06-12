@@ -253,25 +253,29 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
         location = event.GetLocations()[0];
     }
 
-    // let someone else try and open this file first, as it might be a remote file
-    LSPEvent open_event(wxEVT_LSP_OPEN_FILE);
-    open_event.SetLocation(location);
-    open_event.SetFileName(location.GetPath());
-    open_event.SetLineNumber(location.GetRange().GetStart().GetLine());
-    if (EventNotifier::Get()->ProcessEvent(open_event)) {
-        return;
-    }
-
-    wxFileName fn(location.GetPath());
-    LSP_DEBUG() << "LSP: Opening file:" << fn << "(" << location.GetRange().GetStart().GetLine() << ":"
-                << location.GetRange().GetStart().GetCharacter() << ")";
-
     // Manage the browser (BACK and FORWARD) ourself
     BrowseRecord from;
     IEditor* oldEditor = clGetManager()->GetActiveEditor();
     if (oldEditor) {
         from = oldEditor->CreateBrowseRecord();
     }
+
+    // let someone else try and open this file first, as it might be a remote file
+    LSPEvent open_event(wxEVT_LSP_OPEN_FILE);
+    open_event.SetLocation(location);
+    open_event.SetFileName(location.GetPath());
+    open_event.SetLineNumber(location.GetRange().GetStart().GetLine());
+    if (EventNotifier::Get()->ProcessEvent(open_event)) {
+        // update the navigation
+        BrowseRecord current_location{ location };
+        current_location.filename = open_event.GetFileName();
+        NavMgr::Get()->StoreCurrentLocation(from, current_location);
+        return;
+    }
+
+    wxFileName fn(location.GetPath());
+    LSP_DEBUG() << "LSP: Opening file:" << fn << "(" << location.GetRange().GetStart().GetLine() << ":"
+                << location.GetRange().GetStart().GetCharacter() << ")";
 
     auto cb = [=](IEditor* editor) {
         editor->GetCtrl()->ClearSelections();
@@ -281,6 +285,8 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
             editor->SelectRangeAfter(location.GetRange());
         }
         BrowseRecord current_location{ location };
+        clDEBUG() << "location:" << location.ToJSON("").format() << endl;
+        clDEBUG() << "Calling StoreCurrentLocation with:" << current_location << endl;
         NavMgr::Get()->StoreCurrentLocation(from, current_location);
     };
     clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));

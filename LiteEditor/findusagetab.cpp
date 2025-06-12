@@ -243,20 +243,22 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     };
 
     if (fn.FileExists()) {
+        // default behaviour
         clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(callback));
-
-    } else {
-        // the file does not exist
-        clCommandEvent open_file_event{ wxEVT_OPEN_FILE };
-        open_file_event.SetFileName(item_data->location->GetPath());
-        if (!EventNotifier::Get()->ProcessEvent(open_file_event)) {
-            ::wxMessageBox(_("Failed to open file: ") + item_data->location->GetPath(), "CodeLite",
-                           wxOK | wxOK_DEFAULT | wxICON_ERROR);
-            event.Veto();
-            return;
-        }
-        clGetManager()->OpenFileAndAsyncExecute(open_file_event.GetFileName(), std::move(callback));
+        return;
     }
+
+    // the file does not exist
+    clCommandEvent open_file_event{ wxEVT_OPEN_FILE };
+    open_file_event.SetFileName(item_data->location->GetPath());
+    if (!EventNotifier::Get()->ProcessEvent(open_file_event)) {
+        ::wxMessageBox(_("Failed to open file: ") + item_data->location->GetPath(),
+                       "CodeLite",
+                       wxOK | wxOK_DEFAULT | wxICON_ERROR);
+        event.Veto();
+        return;
+    }
+    clGetManager()->OpenFileAndAsyncExecute(open_file_event.GetFileName(), std::move(callback));
 }
 
 void FindUsageTab::OnItemExpanding(wxTreeEvent& event)
@@ -312,7 +314,7 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
     while (child.IsOk()) {
 
         FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(child));
-        // incase this was a remote file, update the filepath
+        // in case this was a remote file, update the filepath
         const_cast<LSP::Location*>(item_data->location)->SetPath(filepath);
 
         size_t line_number = item_data->location->GetRange().GetStart().GetLine();

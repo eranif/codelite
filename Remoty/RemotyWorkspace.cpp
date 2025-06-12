@@ -1120,6 +1120,12 @@ void RemotyWorkspace::OnLSPOpenFile(LSPEvent& event)
         return;
     }
     editor->SelectRangeAfter(event.GetLocation().GetRange());
+    if (!editor->GetRemoteData()) {
+        clWARNING() << "Remote file with remote data ??" << endl;
+        return;
+    }
+    // update the event with the path of the local file
+    event.SetFileName(editor->GetRemoteData()->GetLocalPath());
 }
 
 wxString RemotyWorkspace::GetName() const { return wxFileName(m_localWorkspaceFile).GetName(); }

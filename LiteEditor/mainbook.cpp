@@ -416,7 +416,7 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
     m_book->GetAllTabs(tabsInfo);
 
     // Convert into "clTab" array
-    for (const auto& tabInfo: tabsInfo) {
+    for (const auto& tabInfo : tabsInfo) {
         clTab t;
         t.bitmap = tabInfo->GetBitmap();
         t.text = tabInfo->GetLabel();
@@ -1746,6 +1746,21 @@ WelcomePage* MainBook::GetWelcomePage(bool createIfMissing)
 clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(IEditor*)>&& callback)
 {
     wxString real_path = FileUtils::RealPath(file_name, true);
+
+    // The file does not exist
+    if (!wxFileName::Exists(real_path)) {
+        // Try a remote approach
+        clDEBUG() << "The file:" << real_path << "does not exist locally. Trying to remote downloading it" << endl;
+        clCommandEvent event_download{ wxEVT_DOWNLOAD_FILE };
+        event_download.SetFileName(file_name); // we use the original path
+
+        if (EventNotifier::Get()->ProcessEvent(event_download)) {
+            clDEBUG() << "Remote file:" << file_name << "successfully downloaded into:" << event_download.GetFileName()
+                      << endl;
+            real_path = event_download.GetFileName();
+        }
+    }
+
     auto editor = FindEditor(real_path);
     if (editor) {
         push_callback(std::move(callback), real_path);
@@ -1829,4 +1844,3 @@ void MainBook::OnEditorModified(clCommandEvent& event) { event.Skip(); }
 void MainBook::OnEditorSaved(clCommandEvent& event) { event.Skip(); }
 
 void MainBook::OnSessionLoaded(clCommandEvent& event) { event.Skip(); }
-

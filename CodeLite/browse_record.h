@@ -34,6 +34,7 @@ class BrowseRecord final
 public:
     BrowseRecord() = default;
     ~BrowseRecord() = default;
+
     BrowseRecord(const LSP::Location& location)
     {
         filename = location.GetPath();

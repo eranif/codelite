@@ -91,23 +91,17 @@ bool NavMgr::NavigateBackward(IManager* mgr)
 
 bool NavMgr::NavigateForward(IManager* mgr)
 {
-    if (!CanNext()) {
+    auto next_loc = GetNextLocation();
+    if (!next_loc.IsOk()) {
         return false;
     }
 
-    auto new_loc = m_nexts.top();
-    m_nexts.pop();
-    if (m_currentLocation.IsOk()) {
-        m_prevs.push(m_currentLocation);
-    }
-    m_currentLocation = new_loc;
-
-    clDEBUG() << "Nav manager FORWARD:" << new_loc << endl;
-    auto callback = [=](IEditor* editor) {
+    clDEBUG() << "Nav manager FORWARD:" << next_loc << endl;
+    auto callback = [=](IEditor* editor) mutable {
         editor->GetCtrl()->ClearSelections();
-        editor->CenterLine(new_loc.lineno, new_loc.column);
+        editor->CenterLine(next_loc.lineno, next_loc.column);
     };
-    mgr->OpenFileAndAsyncExecute(new_loc.filename, std::move(callback));
+    mgr->OpenFileAndAsyncExecute(next_loc.filename, std::move(callback));
     return true;
 }
 
@@ -115,4 +109,24 @@ void NavMgr::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     Clear();
+}
+
+BrowseRecord NavMgr::GetNextLocation()
+{
+    while (!m_nexts.empty()) {
+        auto new_loc = m_nexts.top();
+        m_nexts.pop();
+
+        if (m_currentLocation.IsOk() && m_currentLocation.IsSameAs(new_loc)) {
+            // Choose another location
+            continue;
+        } else if (m_currentLocation.IsOk()) {
+            m_prevs.push(m_currentLocation);
+        }
+
+        m_currentLocation = new_loc;
+        return new_loc;
+    }
+
+    return {};
 }

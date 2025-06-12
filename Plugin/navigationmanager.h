@@ -71,6 +71,7 @@ public:
 private:
     NavMgr();
     ~NavMgr() override;
+    BrowseRecord GetNextLocation();
 
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     std::stack<BrowseRecord> m_nexts;

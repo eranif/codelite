@@ -1268,9 +1268,8 @@ void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect,
         }
     }
 
-    wxcWidget::List_t::const_iterator iter = wrapper->GetChildren().begin();
-    for (; iter != wrapper->GetChildren().end(); ++iter) {
-        DoBuildTree(itemToSelect, (*iter), item);
+    for (auto child : wrapper->GetChildren()) {
+        DoBuildTree(itemToSelect, child, item);
     }
 }
 
@@ -1343,10 +1342,8 @@ void GUICraftMainPanel::DoMoveToplevelWindow(wxcWidget* tlw, int direction)
 
     // Restore the parent tree item data
     wxTreeItemId dummy;
-    const wxcWidget::List_t& list = tlw->GetChildren();
-    wxcWidget::List_t::const_iterator iter = list.begin();
-    for (; iter != list.end(); ++iter) {
-        DoBuildTree(dummy, *iter, insertedItem);
+    for (auto child : tlw->GetChildren()) {
+        DoBuildTree(dummy, child, insertedItem);
     }
 
     m_treeControls->EnsureVisible(insertedItem);
@@ -1414,10 +1411,8 @@ void GUICraftMainPanel::OnMoveItem(wxCommandEvent& e)
     // Restore the parent tree item data
     wxTreeItemId dummy;
     m_treeControls->SetItemData(treeItemParent, new GUICraftItemData(subTree));
-    const wxcWidget::List_t& list = subTree->GetChildren();
-    wxcWidget::List_t::const_iterator iter = list.begin();
-    for (; iter != list.end(); ++iter) {
-        DoBuildTree(dummy, *iter, treeItemParent);
+    for (auto child : subTree->GetChildren()) {
+        DoBuildTree(dummy, child, treeItemParent);
     }
 
     wxTreeItemId where;
@@ -2450,13 +2445,12 @@ void GUICraftMainPanel::OnBarItemSelected(wxCommandEvent& e)
 
     wxString toolname = e.GetString().AfterFirst(wxT(':'));
     const wxcWidget::List_t& tools = parnt->GetChildren();
-    wxcWidget::List_t::const_iterator menuIter = tools.begin();
-    for (; menuIter != tools.end(); ++menuIter) {
-        if ((*menuIter)->PropertyString(PROP_LABEL) == toolname) {
+    for (auto child : tools) {
+        if (child->PropertyString(PROP_LABEL) == toolname) {
 
             // Select this item
             wxCommandEvent evt(wxEVT_PREVIEW_CTRL_SELECTED);
-            evt.SetString((*menuIter)->GetName());
+            evt.SetString(child->GetName());
             EventNotifier::Get()->AddPendingEvent(evt);
 
             break;
@@ -2684,12 +2678,11 @@ void GUICraftMainPanel::OnNewCustomControlMenu(wxCommandEvent& e)
 {
     wxMenu menu(_("Choose a control"));
     const CustomControlTemplateMap_t& controls = wxcSettings::Get().GetTemplateClasses();
-    CustomControlTemplateMap_t::const_iterator iter = controls.begin();
 
     if (controls.empty() == false) {
-        for (; iter != controls.end(); ++iter) {
-            menu.Append(iter->second.GetControlId(), iter->first);
-            menu.Connect(iter->second.GetControlId(),
+        for (const auto& p : controls) {
+            menu.Append(p.second.GetControlId(), p.first);
+            menu.Connect(p.second.GetControlId(),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(GUICraftMainPanel::OnNewCustomControl),
                          NULL,
@@ -3055,10 +3048,8 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
 
         wxTreeItemId dummy;
         m_treeControls->SetItemData(treeItemParent, new GUICraftItemData(parentWidget));
-        const wxcWidget::List_t& list = parentWidget->GetChildren();
-        wxcWidget::List_t::const_iterator iter = list.begin();
-        for (; iter != list.end(); ++iter) {
-            DoBuildTree(dummy, *iter, treeItemParent);
+        for (auto child : parentWidget->GetChildren()) {
+            DoBuildTree(dummy, child, treeItemParent);
         }
 
         ExpandToItem(widgetName, treeItemParent);
@@ -3258,14 +3249,13 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
     }
 
     if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !additionalFiles.empty()) {
-        wxStringMap_t::const_iterator itr = additionalFiles.begin();
-        for (; itr != additionalFiles.end(); ++itr) {
+        for (const auto& p : additionalFiles) {
             wxFileName additionalFile = wxcProjectMetadata::Get().BaseHeaderFile();
-            additionalFile.SetFullName(itr->first);
+            additionalFile.SetFullName(p.first);
             wxCrafter::MakeAbsToProject(additionalFile);
 
-            if (wxCrafter::IsTheSame(itr->second, additionalFile) == false) {
-                wxCrafter::WriteFile(additionalFile, itr->second, true);
+            if (wxCrafter::IsTheSame(p.second, additionalFile) == false) {
+                wxCrafter::WriteFile(additionalFile, p.second, true);
                 wxCrafter::FormatFile(additionalFile);
                 wxCrafter::NotifyFileSaved(additionalFile);
             }

@@ -384,22 +384,20 @@ void wxcXmlResourceCmp::MakePackagePython(const wxArrayString& flist)
 
 void wxcXmlResourceCmp::OutputGettext()
 {
-    ExtractedStrings str = FindStrings();
-
     wxFFile fout;
     if(m_outputCppFile.empty())
         fout.Attach(stdout);
     else
         fout.Open(m_outputCppFile, wxT("wt"));
 
-    for(ExtractedStrings::const_iterator i = str.begin(); i != str.end(); ++i) {
-        const wxFileName filename(i->filename);
+    for (const auto& extractedString : FindStrings()) {
+        const wxFileName filename(extractedString.filename);
 
         wxString s;
-        s.Printf("#line %d \"%s\"\n", i->lineNo, filename.GetFullPath(wxPATH_UNIX));
+        s.Printf("#line %d \"%s\"\n", extractedString.lineNo, filename.GetFullPath(wxPATH_UNIX));
 
         fout.Write(s);
-        fout.Write("_(\"" + i->str + "\");\n");
+        fout.Write("_(\"" + extractedString.str + "\");\n");
     }
 
     if(!m_outputCppFile)

@@ -3215,12 +3215,11 @@ void Manager::OnBuildStarting(clBuildEvent& event)
     clCxxWorkspaceST::Get()->GetCompilers(usedCompilers);
 
     // Check to see if any of the compilers were deleted
-    wxStringSet_t::iterator iter = usedCompilers.begin();
     wxString strDeletedCompilers;
-    for (; iter != usedCompilers.end(); ++iter) {
-        if (!BuildSettingsConfigST::Get()->IsCompilerExist(*iter)) {
-            deletedCompilers.insert(*iter);
-            strDeletedCompilers << "'" << *iter << "'\n";
+    for (const auto& compilerName : usedCompilers) {
+        if (!BuildSettingsConfigST::Get()->IsCompilerExist(compilerName)) {
+            deletedCompilers.insert(compilerName);
+            strDeletedCompilers << "'" << compilerName << "'\n";
         }
     }
 
@@ -3248,15 +3247,14 @@ void Manager::OnBuildStarting(clBuildEvent& event)
         wxString defaultCompiler;
 
         // Clone each compiler
-        wxStringMap_t::iterator iterTable = table.begin();
-        for (; iterTable != table.end(); ++iterTable) {
+        for (const auto& p : table) {
             // We can't create a compiler without name, so we'll try to adjust the project setting instead
-            if (iterTable->first.IsEmpty()) {
-                defaultCompiler = iterTable->second;
+            if (p.first.IsEmpty()) {
+                defaultCompiler = p.second;
                 continue;
             }
-            CompilerPtr pCompiler = BuildSettingsConfigST::Get()->GetCompiler(iterTable->second);
-            pCompiler->SetName(iterTable->first);
+            CompilerPtr pCompiler = BuildSettingsConfigST::Get()->GetCompiler(p.second);
+            pCompiler->SetName(p.first);
             BuildSettingsConfigST::Get()->SetCompiler(pCompiler);
         }
 

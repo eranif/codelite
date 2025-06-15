@@ -60,9 +60,8 @@ void BreakpointsView::Initialize()
 
     // Store the internal and external ids
     m_ids.clear();
-    std::vector<clDebuggerBreakpoint>::iterator iter = bps.begin();
-    for(; iter != bps.end(); ++iter) {
-        struct bpd_IDs IDs(*iter);
+    for (const auto& bp : bps) {
+        struct bpd_IDs IDs(bp);
         m_ids.push_back(IDs);
     }
 
@@ -165,39 +164,38 @@ void BreakpointsView::OnAdd(wxCommandEvent& e)
 void BreakpointsListctrl::Initialise(std::vector<clDebuggerBreakpoint>& bps)
 {
     DeleteAllItems();
-    std::vector<clDebuggerBreakpoint>::iterator iter = bps.begin();
-    for(; iter != bps.end(); ++iter) {
+    for(const auto& bp : bps) {
 
         // Store the internal and external ids
-        bpd_IDs IDs(*iter);
+        bpd_IDs IDs(bp);
         wxVector<wxVariant> cols;
         cols.push_back(IDs.GetIdAsString());
 
         wxString type;
-        if(iter->is_temp) {
+        if (bp.is_temp) {
             type = _("Temp. ");
         }
-        type += ((iter->bp_type == BP_type_watchpt) ? _("Watchpoint") : _("Breakpoint"));
+        type += ((bp.bp_type == BP_type_watchpt) ? _("Watchpoint") : _("Breakpoint"));
         cols.push_back(type);
 
         wxString disabled;
-        if(!iter->is_enabled) {
+        if (!bp.is_enabled) {
             disabled = _("disabled");
         }
         cols.push_back(disabled);
-        cols.push_back(iter->file);
-        cols.push_back((wxString() << iter->lineno));
-        cols.push_back(iter->function_name);
-        cols.push_back(iter->at);
-        cols.push_back(iter->memory_address);
-        cols.push_back(iter->what);
-        cols.push_back((wxString() << iter->ignore_number));
+        cols.push_back(bp.file);
+        cols.push_back((wxString() << bp.lineno));
+        cols.push_back(bp.function_name);
+        cols.push_back(bp.at);
+        cols.push_back(bp.memory_address);
+        cols.push_back(bp.what);
+        cols.push_back((wxString() << bp.ignore_number));
 
         wxString extras; // Extras are conditions, or a commandlist. If both (unlikely!) just show the condition
-        if(!iter->conditions.IsEmpty()) {
-            extras = iter->conditions;
-        } else if(!iter->commandlist.IsEmpty()) {
-            extras = iter->commandlist;
+        if (!bp.conditions.IsEmpty()) {
+            extras = bp.conditions;
+        } else if (!bp.commandlist.IsEmpty()) {
+            extras = bp.commandlist;
         }
         if(!extras.IsEmpty()) {
             // We don't want to try to display massive commandlist spread over several lines...

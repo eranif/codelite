@@ -346,9 +346,8 @@ IConfigTool* PluginManager::GetConfigTool() { return EditorConfigST::Get(); }
 
 void PluginManager::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-    for (; iter != m_plugins.end(); iter++) {
-        iter->second->HookPopupMenu(menu, type);
+    for (auto& [_, plugin] : m_plugins) {
+        plugin->HookPopupMenu(menu, type);
     }
 }
 
@@ -583,9 +582,8 @@ void PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book,
                                            const wxString& projectName,
                                            const wxString& configName)
 {
-    std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-    for (; iter != m_plugins.end(); iter++) {
-        iter->second->HookProjectSettingsTab(book, projectName, configName);
+    for (auto& [_, plugin] : m_plugins) {
+        plugin->HookProjectSettingsTab(book, projectName, configName);
     }
 }
 
@@ -593,9 +591,8 @@ void PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book,
                                              const wxString& projectName,
                                              const wxString& configName)
 {
-    std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-    for (; iter != m_plugins.end(); iter++) {
-        iter->second->UnHookProjectSettingsTab(book, projectName, configName);
+    for (auto& [_, plugin] : m_plugins) {
+        plugin->UnHookProjectSettingsTab(book, projectName, configName);
     }
 }
 

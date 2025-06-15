@@ -228,9 +228,8 @@ void StaleFilesModel::DeleteItems(const wxDataViewItem& parent, const wxDataView
 void StaleFilesModel::Clear()
 {
     wxVector<StaleFilesModel_Item*> roots = m_data;
-    wxVector<StaleFilesModel_Item*>::iterator iter = roots.begin();
-    for(; iter != roots.end(); ++iter) {
-        DeleteItem( wxDataViewItem(*iter) );
+    for (auto item : roots) {
+        DeleteItem(wxDataViewItem(item));
     }
     m_data.clear();
     Cleared();

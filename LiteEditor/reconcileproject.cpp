@@ -549,15 +549,14 @@ void ReconcileProjectDlg::OnApply(wxCommandEvent& event)
         }
     }
 
-    wxStringSet_t::const_iterator iter = vds.begin();
-    for (; iter != vds.end(); ++iter) {
-        std::pair<StringMultimap_t::iterator, StringMultimap_t::iterator> range = filesToAdd.equal_range(*iter);
+    for (const auto& vd : vds) {
+        auto range = filesToAdd.equal_range(vd);
         StringMultimap_t::iterator from = range.first;
         wxArrayString vdFiles;
         for (; from != range.second; ++from) {
             vdFiles.Add(from->second);
         }
-        wxArrayString additions = AddMissingFiles(vdFiles, *iter);
+        wxArrayString additions = AddMissingFiles(vdFiles, vd);
 
         if (additions.GetCount()) {
             m_projectModified = true;

@@ -533,10 +533,9 @@ public:
 
     void SetSizerFlags(const MapStyles_t& sizerFlags)
     {
-        MapStyles_t::const_iterator iter = sizerFlags.begin();
-        for(; iter != sizerFlags.end(); ++iter) {
-            if(m_sizerFlags.Contains(iter->second.style_name)) {
-                m_sizerFlags.Item(iter->second.style_name).is_set = iter->second.is_set;
+        for (const auto& p : sizerFlags) {
+            if (m_sizerFlags.Contains(p.second.style_name)) {
+                m_sizerFlags.Item(p.second.style_name).is_set = p.second.is_set;
             }
         }
     }
@@ -551,10 +550,9 @@ public:
 
     void SetStyles(const MapStyles_t& styles)
     {
-        MapStyles_t::const_iterator iter = styles.begin();
-        for(; iter != styles.end(); ++iter) {
-            if(m_styles.Contains(iter->second.style_name)) {
-                m_styles.Item(iter->second.style_name).is_set = iter->second.is_set;
+        for (const auto& p : styles) {
+            if (m_styles.Contains(p.second.style_name)) {
+                m_styles.Item(p.second.style_name).is_set = p.second.is_set;
             }
         }
     }

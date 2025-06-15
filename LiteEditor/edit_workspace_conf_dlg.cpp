@@ -95,13 +95,9 @@ void EditWorkspaceConfDlg::FillList()
 {
     m_wspConfList->Clear();
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-    std::list<WorkspaceConfigurationPtr> confs;
 
-    confs = matrix->GetConfigurations();
-    std::list<WorkspaceConfigurationPtr>::iterator iter = confs.begin();
-
-    for(; iter != confs.end(); iter++) {
-        m_wspConfList->Append((*iter)->GetName());
+    for (auto& configuration : matrix->GetConfigurations()) {
+        m_wspConfList->Append(configuration->GetName());
         m_wspConfList->SetSelection(0);
     }
 }

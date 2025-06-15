@@ -71,7 +71,7 @@ public:
      *
      * @param confPath Configuration path.
      */
-    inline explicit CMakeConfiguration(const wxString& confPath)
+    explicit CMakeConfiguration(const wxString& confPath)
         : wxFileConfig(wxEmptyString, wxEmptyString, confPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE)
     {
     }

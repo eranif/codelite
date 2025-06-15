@@ -11,14 +11,14 @@
 struct WXDLLIMPEXP_SDK AnsiColours {
     static bool dark_theme;
     static void SetDarkTheme(bool b) { dark_theme = b; }
-    inline static int OneOf(int light, int dark) { return dark_theme ? dark : light; }
-    inline static int Red() { return OneOf(160, 160); }
-    inline static int Yellow() { return OneOf(220, 214); }
-    inline static int Green() { return OneOf(28, 40); }
-    inline static int NormalText() { return OneOf(0, 255); }
-    inline static int Cyan() { return OneOf(45, 117); }
-    inline static int Magenta() { return OneOf(162, 200); }
-    inline static int Gray() { return OneOf(247, 250); }
+    static int OneOf(int light, int dark) { return dark_theme ? dark : light; }
+    static int Red() { return OneOf(160, 160); }
+    static int Yellow() { return OneOf(220, 214); }
+    static int Green() { return OneOf(28, 40); }
+    static int NormalText() { return OneOf(0, 255); }
+    static int Cyan() { return OneOf(45, 117); }
+    static int Magenta() { return OneOf(162, 200); }
+    static int Gray() { return OneOf(247, 250); }
 };
 
 enum class eColourTheme : int {

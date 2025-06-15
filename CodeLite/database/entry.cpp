@@ -549,8 +549,7 @@ wxString TagEntry::GetLocalType() const { return GetExtField("type"); }
 
 namespace
 {
-inline void enable_function_flag_if_exists(const wxStringSet_t& S, const wxString& propname, const size_t flag,
-                                           size_t& flags)
+void enable_function_flag_if_exists(const wxStringSet_t& S, const wxString& propname, const size_t flag, size_t& flags)
 {
     if(S.count(propname)) {
         flags |= flag;

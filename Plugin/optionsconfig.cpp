@@ -90,7 +90,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_programConsoleCommand(TERMINAL_CMD)
     , m_eolMode(wxT("Default"))
     , m_trackEditorChanges(false)
-    , m_hideOutpuPaneOnUserClick(false)
+    , m_hideOutputPaneOnUserClick(false)
     , m_hideOutputPaneNotIfBuild(false)
     , m_hideOutputPaneNotIfSearch(true)
     , m_hideOutputPaneNotIfReplace(false)
@@ -187,7 +187,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
         m_trackEditorChanges = XmlUtils::ReadBool(node, wxT("TrackEditorChanges"));
         m_scrollBeyondLastLine = XmlUtils::ReadBool(node, wxT("ScrollBeyondLastLine"), m_scrollBeyondLastLine);
-        m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
+        m_hideOutputPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
         m_hideOutputPaneNotIfBuild = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfBuild"));
         m_hideOutputPaneNotIfSearch = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfSearch"));
         m_hideOutputPaneNotIfReplace = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfReplace"));
@@ -292,7 +292,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("AutoAdjustHScrollBarWidth"), BoolToString(m_autoAdjustHScrollBarWidth));
     n->AddAttribute(wxT("TrackEditorChanges"), BoolToString(m_trackEditorChanges));
     n->AddAttribute(wxT("ScrollBeyondLastLine"), BoolToString(m_scrollBeyondLastLine));
-    n->AddAttribute(wxT("HideOutputPaneOnUserClick"), BoolToString(m_hideOutpuPaneOnUserClick));
+    n->AddAttribute(wxT("HideOutputPaneOnUserClick"), BoolToString(m_hideOutputPaneOnUserClick));
     n->AddAttribute(wxT("HideOutputPaneNotIfBuild"), BoolToString(m_hideOutputPaneNotIfBuild));
     n->AddAttribute(wxT("HideOutputPaneNotIfSearch"), BoolToString(m_hideOutputPaneNotIfSearch));
     n->AddAttribute(wxT("HideOutputPaneNotIfReplace"), BoolToString(m_hideOutputPaneNotIfReplace));

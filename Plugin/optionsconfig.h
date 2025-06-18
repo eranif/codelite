@@ -117,7 +117,7 @@ protected:
     wxString m_programConsoleCommand;
     wxString m_eolMode;
     bool m_trackEditorChanges;
-    bool m_hideOutpuPaneOnUserClick;
+    bool m_hideOutputPaneOnUserClick;
     bool m_hideOutputPaneNotIfBuild;
     bool m_hideOutputPaneNotIfSearch;
     bool m_hideOutputPaneNotIfReplace;
@@ -246,79 +246,79 @@ public:
     bool GetFindBarAtBottom() const { return m_findBarAtBottom; }
     void SetShowReplaceBar(bool show) { m_showReplaceBar = show; }
     bool GetShowReplaceBar() const { return m_showReplaceBar; }
-    void SetHideOutpuPaneOnUserClick(bool hideOutpuPaneOnUserClick)
+    void SetHideOutputPaneOnUserClick(bool hideOutputPaneOnUserClick)
     {
-        this->m_hideOutpuPaneOnUserClick = hideOutpuPaneOnUserClick;
+        this->m_hideOutputPaneOnUserClick = hideOutputPaneOnUserClick;
     }
-    bool GetHideOutpuPaneOnUserClick() const { return m_hideOutpuPaneOnUserClick; }
-    void SetHideOutputPaneNotIfBuild(bool HideOutpuPaneNotIfBuild)
+    bool GetHideOutputPaneOnUserClick() const { return m_hideOutputPaneOnUserClick; }
+    void SetHideOutputPaneNotIfBuild(bool HideOutputPaneNotIfBuild)
     {
-        this->m_hideOutputPaneNotIfBuild = HideOutpuPaneNotIfBuild;
+        this->m_hideOutputPaneNotIfBuild = HideOutputPaneNotIfBuild;
     }
     bool GetHideOutputPaneNotIfBuild() const { return m_hideOutputPaneNotIfBuild; }
-    void SetHideOutputPaneNotIfSearch(bool HideOutpuPaneNotIfSearch)
+    void SetHideOutputPaneNotIfSearch(bool HideOutputPaneNotIfSearch)
     {
-        this->m_hideOutputPaneNotIfSearch = HideOutpuPaneNotIfSearch;
+        this->m_hideOutputPaneNotIfSearch = HideOutputPaneNotIfSearch;
     }
     bool GetHideOutputPaneNotIfSearch() const { return m_hideOutputPaneNotIfSearch; }
-    void SetHideOutputPaneNotIfReplace(bool HideOutpuPaneNotIfReplace)
+    void SetHideOutputPaneNotIfReplace(bool HideOutputPaneNotIfReplace)
     {
-        this->m_hideOutputPaneNotIfReplace = HideOutpuPaneNotIfReplace;
+        this->m_hideOutputPaneNotIfReplace = HideOutputPaneNotIfReplace;
     }
     bool GetHideOutputPaneNotIfReplace() const { return m_hideOutputPaneNotIfReplace; }
-    void SetHideOutputPaneNotIfReferences(bool HideOutpuPaneNotIfReferences)
+    void SetHideOutputPaneNotIfReferences(bool HideOutputPaneNotIfReferences)
     {
-        this->m_hideOutputPaneNotIfReferences = HideOutpuPaneNotIfReferences;
+        this->m_hideOutputPaneNotIfReferences = HideOutputPaneNotIfReferences;
     }
     bool GetHideOutputPaneNotIfReferences() const { return m_hideOutputPaneNotIfReferences; }
-    void SetHideOutputPaneNotIfOutput(bool HideOutpuPaneNotIfOutput)
+    void SetHideOutputPaneNotIfOutput(bool HideOutputPaneNotIfOutput)
     {
-        this->m_hideOutputPaneNotIfOutput = HideOutpuPaneNotIfOutput;
+        this->m_hideOutputPaneNotIfOutput = HideOutputPaneNotIfOutput;
     }
     bool GetHideOutputPaneNotIfOutput() const { return m_hideOutputPaneNotIfOutput; }
-    void SetHideOutputPaneNotIfTrace(bool HideOutpuPaneNotIfTrace)
+    void SetHideOutputPaneNotIfTrace(bool HideOutputPaneNotIfTrace)
     {
-        this->m_hideOutputPaneNotIfTrace = HideOutpuPaneNotIfTrace;
+        this->m_hideOutputPaneNotIfTrace = HideOutputPaneNotIfTrace;
     }
     bool GetHideOutputPaneNotIfTrace() const { return m_hideOutputPaneNotIfTrace; }
-    void SetHideOutputPaneNotIfTasks(bool HideOutpuPaneNotIfTasks)
+    void SetHideOutputPaneNotIfTasks(bool HideOutputPaneNotIfTasks)
     {
-        this->m_hideOutputPaneNotIfTasks = HideOutpuPaneNotIfTasks;
+        this->m_hideOutputPaneNotIfTasks = HideOutputPaneNotIfTasks;
     }
     bool GetHideOutputPaneNotIfTasks() const { return m_hideOutputPaneNotIfTasks; }
-    void SetHideOutputPaneNotIfBuildQ(bool HideOutpuPaneNotIfBuildQ)
+    void SetHideOutputPaneNotIfBuildQ(bool HideOutputPaneNotIfBuildQ)
     {
-        this->m_hideOutputPaneNotIfBuildQ = HideOutpuPaneNotIfBuildQ;
+        this->m_hideOutputPaneNotIfBuildQ = HideOutputPaneNotIfBuildQ;
     }
     bool GetHideOutputPaneNotIfBuildQ() const { return m_hideOutputPaneNotIfBuildQ; }
-    void SetHideOutputPaneNotIfCppCheck(bool HideOutpuPaneNotIfCppCheck)
+    void SetHideOutputPaneNotIfCppCheck(bool HideOutputPaneNotIfCppCheck)
     {
-        this->m_hideOutputPaneNotIfCppCheck = HideOutpuPaneNotIfCppCheck;
+        this->m_hideOutputPaneNotIfCppCheck = HideOutputPaneNotIfCppCheck;
     }
     bool GetHideOutputPaneNotIfCppCheck() const { return m_hideOutputPaneNotIfCppCheck; }
-    void SetHideOutputPaneNotIfSvn(bool HideOutpuPaneNotIfSvn)
+    void SetHideOutputPaneNotIfSvn(bool HideOutputPaneNotIfSvn)
     {
-        this->m_hideOutputPaneNotIfSvn = HideOutpuPaneNotIfSvn;
+        this->m_hideOutputPaneNotIfSvn = HideOutputPaneNotIfSvn;
     }
     bool GetHideOutputPaneNotIfSvn() const { return m_hideOutputPaneNotIfSvn; }
-    void SetHideOutputPaneNotIfCscope(bool HideOutpuPaneNotIfCscope)
+    void SetHideOutputPaneNotIfCscope(bool HideOutputPaneNotIfCscope)
     {
-        this->m_hideOutputPaneNotIfCscope = HideOutpuPaneNotIfCscope;
+        this->m_hideOutputPaneNotIfCscope = HideOutputPaneNotIfCscope;
     }
     bool GetHideOutputPaneNotIfCscope() const { return m_hideOutputPaneNotIfCscope; }
-    void SetHideOutputPaneNotIfGit(bool HideOutpuPaneNotIfGit)
+    void SetHideOutputPaneNotIfGit(bool HideOutputPaneNotIfGit)
     {
-        this->m_hideOutputPaneNotIfGit = HideOutpuPaneNotIfGit;
+        this->m_hideOutputPaneNotIfGit = HideOutputPaneNotIfGit;
     }
     bool GetHideOutputPaneNotIfGit() const { return m_hideOutputPaneNotIfGit; }
-    void SetHideOutputPaneNotIfDebug(bool HideOutpuPaneNotIfDebug)
+    void SetHideOutputPaneNotIfDebug(bool HideOutputPaneNotIfDebug)
     {
-        this->m_hideOutputPaneNotIfDebug = HideOutpuPaneNotIfDebug;
+        this->m_hideOutputPaneNotIfDebug = HideOutputPaneNotIfDebug;
     }
     bool GetHideOutputPaneNotIfDebug() const { return m_hideOutputPaneNotIfDebug; }
-    void SetHideOutputPaneNotIfMemCheck(bool HideOutpuPaneNotIfMemCheck)
+    void SetHideOutputPaneNotIfMemCheck(bool HideOutputPaneNotIfMemCheck)
     {
-        this->m_hideOutputPaneNotIfMemCheck = HideOutpuPaneNotIfMemCheck;
+        this->m_hideOutputPaneNotIfMemCheck = HideOutputPaneNotIfMemCheck;
     }
     bool GetHideOutputPaneNotIfMemCheck() const { return m_hideOutputPaneNotIfMemCheck; }
 

@@ -728,7 +728,7 @@ void clEditor::SetProperties()
     SetCaretStyle(options->HasOption(OptionsConfig::Opt_UseBlockCaret) ? wxSTC_CARETSTYLE_BLOCK
                                                                        : wxSTC_CARETSTYLE_LINE);
     SetWrapMode(options->GetWordWrap() ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
-    SetViewWhiteSpace(options->GetShowWhitspaces());
+    SetViewWhiteSpace(options->GetShowWhitespaces());
     SetMouseDwellTime(500);
     SetProperty(wxT("fold"), wxT("1"));
     SetProperty(wxT("fold.html"), wxT("1"));

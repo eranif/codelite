@@ -104,7 +104,7 @@ protected:
     int m_tabWidth;
     int m_iconsSize;
     wxFontEncoding m_fileFontEncoding;
-    int m_showWhitspaces;
+    int m_showWhitespaces;
     bool m_foldCompact;
     bool m_foldAtElse;
     bool m_foldPreprocessor;
@@ -382,8 +382,8 @@ public:
     void SetFileFontEncoding(const wxString& strFileFontEncoding);
     wxFontEncoding GetFileFontEncoding() const { return m_fileFontEncoding; }
 
-    void SetShowWhitspaces(int showWhitspaces) { this->m_showWhitspaces = showWhitspaces; }
-    int GetShowWhitspaces() const { return m_showWhitspaces; }
+    void SetShowWhitespaces(int showWhitespaces) { this->m_showWhitespaces = showWhitespaces; }
+    int GetShowWhitespaces() const { return m_showWhitespaces; }
 
     void SetFoldAtElse(bool foldAtElse) { this->m_foldAtElse = foldAtElse; }
     void SetFoldCompact(bool foldCompact) { this->m_foldCompact = foldCompact; }

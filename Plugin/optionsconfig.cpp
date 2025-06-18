@@ -77,7 +77,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_indentWidth(4)
     , m_tabWidth(4)
     , m_iconsSize(16)
-    , m_showWhitspaces(0 /*wxSCI_WS_INVISIBLE*/)
+    , m_showWhitespaces(0 /*wxSCI_WS_INVISIBLE*/)
     , m_foldCompact(false)
     , m_foldAtElse(false)
     , m_foldPreprocessor(false)
@@ -168,7 +168,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_indentWidth = XmlUtils::ReadLong(node, wxT("IndentWidth"), m_indentWidth);
         m_tabWidth = XmlUtils::ReadLong(node, wxT("TabWidth"), m_tabWidth);
         m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), m_iconsSize);
-        m_showWhitspaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), m_showWhitspaces);
+        m_showWhitespaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), m_showWhitespaces);
         m_foldCompact = XmlUtils::ReadBool(node, wxT("FoldCompact"), m_foldCompact);
         m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"), m_foldAtElse);
         m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"), m_foldPreprocessor);
@@ -349,7 +349,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("ToolbarIconSize"), tmp);
 
     tmp.clear();
-    tmp << m_showWhitspaces;
+    tmp << m_showWhitespaces;
     n->AddAttribute(wxT("ShowWhitespaces"), tmp);
 
     tmp.clear();

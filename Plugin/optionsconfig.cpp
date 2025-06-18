@@ -68,7 +68,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_bookmarkLabels(defaultBookmarkLabels)
     , m_highlightCaretLine(true)
     , m_highlightCaretLineWithColour(true)
-    , m_clearHighlitWordsOnFind(true)
+    , m_clearHighlightedWordsOnFind(true)
     , m_displayLineNumbers(true)
     , m_relativeLineNumbers(false)
     , m_showIndentationGuidelines(true)
@@ -152,7 +152,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
             XmlUtils::ReadString(node, wxT("BookmarkBgColours"), ""); // No default; we'll deal with this later
         m_bookmarkFgColours = XmlUtils::ReadString(node, wxT("BookmarkFgColours"), "");
         m_bookmarkLabels = XmlUtils::ReadString(node, wxT("BookmarkLabels"), defaultBookmarkLabels);
-        m_clearHighlitWordsOnFind = XmlUtils::ReadBool(node, wxT("ClearHighlitWordsOnFind"), m_clearHighlitWordsOnFind);
+        m_clearHighlightedWordsOnFind =
+            XmlUtils::ReadBool(node, wxT("ClearHighlitWordsOnFind"), m_clearHighlightedWordsOnFind);
         m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
         m_highlightCaretLineWithColour =
             XmlUtils::ReadBool(node, "HighlightCaretLineWithColour", m_highlightCaretLineWithColour);
@@ -274,7 +275,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("BookmarkBgColours"), m_bookmarkBgColours);
     n->AddAttribute(wxT("BookmarkFgColours"), m_bookmarkFgColours);
     n->AddAttribute(wxT("BookmarkLabels"), m_bookmarkLabels);
-    n->AddAttribute(wxT("ClearHighlitWordsOnFind"), BoolToString(m_clearHighlitWordsOnFind));
+    n->AddAttribute(wxT("ClearHighlitWordsOnFind"), BoolToString(m_clearHighlightedWordsOnFind));
     n->AddAttribute(wxT("HighlightCaretLine"), BoolToString(m_highlightCaretLine));
     n->AddAttribute(wxT("HighlightCaretLineWithColour"), BoolToString(m_highlightCaretLineWithColour));
     n->AddAttribute(wxT("ShowLineNumber"), BoolToString(m_displayLineNumbers));

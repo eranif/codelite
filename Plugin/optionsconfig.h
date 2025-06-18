@@ -94,7 +94,7 @@ protected:
     wxString m_bookmarkLabels;
     bool m_highlightCaretLine;
     bool m_highlightCaretLineWithColour;
-    bool m_clearHighlitWordsOnFind;
+    bool m_clearHighlightedWordsOnFind;
     bool m_displayLineNumbers;
     bool m_relativeLineNumbers;
     bool m_showIndentationGuidelines;
@@ -338,7 +338,7 @@ public:
 
     wxString GetBookmarkLabel(size_t index) const;
 
-    bool GetClearHighlitWordsOnFind() const { return m_clearHighlitWordsOnFind; }
+    bool GetClearHighlightedWordsOnFind() const { return m_clearHighlightedWordsOnFind; }
 
     bool GetHighlightCaretLine() const { return m_highlightCaretLine; }
     bool IsHighlightCaretLineWithColour() const { return m_highlightCaretLineWithColour; }
@@ -361,7 +361,7 @@ public:
 
     void SetBookmarkLabel(const wxString& label, size_t index);
 
-    void SetClearHighlitWordsOnFind(bool b) { m_clearHighlitWordsOnFind = b; }
+    void SetClearHighlightedWordsOnFind(bool b) { m_clearHighlightedWordsOnFind = b; }
 
     void SetHighlightCaretLine(bool b) { m_highlightCaretLine = b; }
     void SetDisplayLineNumbers(bool b) { m_displayLineNumbers = b; }

@@ -34,12 +34,10 @@
     }
 
 CppCommentCreator::CppCommentCreator(TagEntryPtr tag, wxChar keyPrefix)
-    : CommentCreator(keyPrefix)
+    : m_keyPrefix(keyPrefix)
     , m_tag(tag)
 {
 }
-
-CppCommentCreator::~CppCommentCreator() {}
 
 wxString CppCommentCreator::CreateComment()
 {

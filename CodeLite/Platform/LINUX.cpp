@@ -154,9 +154,9 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     return true;
 }
 
-bool LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath)
+std::optional<wxString> LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions)
 {
-    return PlatformCommon::WhichWithVersion(command, versions, command_fullpath);
+    return PlatformCommon::WhichWithVersion(command, versions);
 }
 
 namespace

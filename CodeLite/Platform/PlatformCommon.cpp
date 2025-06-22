@@ -6,8 +6,7 @@
 #include <algorithm>
 #include <wx/arrstr.h>
 
-bool PlatformCommon::WhichWithVersion(const wxString& command, const std::vector<int>& versions,
-                                      wxString* command_fullpath)
+std::optional<wxString> PlatformCommon::WhichWithVersion(const wxString& command, const std::vector<int>& versions)
 {
     std::vector<int> sorted_versions = versions;
 
@@ -23,11 +22,12 @@ bool PlatformCommon::WhichWithVersion(const wxString& command, const std::vector
         names.Add(wxString() << command << "-" << ver);
     }
     for(const wxString& name : names) {
-        if(Which(name, command_fullpath)) {
-            return true;
+        wxString command_fullpath;
+        if (Which(name, &command_fullpath)) {
+            return command_fullpath;
         }
     }
-    return false;
+    return std::nullopt;
 }
 
 /// Locate rustup bin folder

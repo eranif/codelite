@@ -22,13 +22,13 @@ LSPClangdDetector::~LSPClangdDetector() {}
 
 bool LSPClangdDetector::DoLocate()
 {
-    wxString path;
-    if (!ThePlatform->WhichWithVersion("clangd", { 12, 13, 14, 15, 16, 17, 18, 19, 20 }, &path)) {
+    const auto path = ThePlatform->WhichWithVersion("clangd", { 12, 13, 14, 15, 16, 17, 18, 19, 20 });
+    if (!path) {
         return false;
     }
 
-    LSP_DEBUG() << "Found clangd ==>" << path << endl;
-    ConfigureFile(path);
+    LSP_DEBUG() << "Found clangd ==>" << *path << endl;
+    ConfigureFile(*path);
     return true;
 }
 

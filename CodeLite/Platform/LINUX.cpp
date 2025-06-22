@@ -62,8 +62,7 @@ std::optional<wxString> LINUX::FindHomeDir()
 
 bool LINUX::Which(const wxString& command, wxString* command_fullpath)
 {
-    wxString pathenv;
-    GetPath(&pathenv, m_flags & SEARCH_PATH_ENV);
+    const wxString pathenv = GetPath(m_flags & SEARCH_PATH_ENV).value_or("");
     wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
     for (auto path : paths) {
         path << "/" << command;
@@ -75,7 +74,7 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
     return false;
 }
 
-bool LINUX::GetPath(wxString* value, bool useSystemPath)
+std::optional<wxString> LINUX::GetPath(bool useSystemPath)
 {
     const auto HOME = FindHomeDir();
 
@@ -141,8 +140,7 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     }
 
     paths.swap(unique_paths);
-    *value = wxJoin(paths, ':');
-    return true;
+    return wxJoin(paths, ':');
 }
 
 std::optional<wxString> LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions)

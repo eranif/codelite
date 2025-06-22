@@ -50,7 +50,7 @@ public:
     /**
      * @brief return environment variable value
      */
-    bool GetPath(wxString* value, bool useSystemPath = true) override;
+    std::optional<wxString> GetPath(bool useSystemPath = true) override;
 };
 
 #endif // LINUX_HPP

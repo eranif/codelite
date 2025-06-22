@@ -62,8 +62,11 @@ std::optional<wxString> PlatformCommon::FindRustupToolchainBinDir()
 #endif
 }
 
-bool PlatformCommon::GetPath(wxString* value, bool useSystemPath)
+std::optional<wxString> PlatformCommon::GetPath(bool useSystemPath)
 {
     wxUnusedVar(useSystemPath);
-    return ::wxGetEnv("PATH", value);
+    wxString value;
+    if (::wxGetEnv("PATH", &value))
+        return value;
+    return std::nullopt;
 }

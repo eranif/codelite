@@ -83,6 +83,6 @@ public:
     /**
      * @brief return environment variable value
      */
-    virtual bool GetPath(wxString* value, bool useSystemPath = true);
+    virtual std::optional<wxString> GetPath(bool useSystemPath = true);
 };
 #endif // PLAFORM_COMMON_HPP

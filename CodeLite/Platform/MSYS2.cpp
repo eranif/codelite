@@ -79,8 +79,7 @@ std::optional<wxString> MSYS2::FindHomeDir()
 
 bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
 {
-    wxString path;
-    GetPath(&path, m_flags & SEARCH_PATH_ENV);
+    wxString path = GetPath(m_flags & SEARCH_PATH_ENV).value_or("");
 
     wxArrayString paths_to_try = ::wxStringTokenize(path, ";", wxTOKEN_STRTOK);
     // at the point, the order of search is:
@@ -124,14 +123,14 @@ MSYS2::MSYS2()
     m_chroots.Add(R"(\clang64)");
 }
 
-bool MSYS2::GetPath(wxString* value, bool useSystemPath)
+std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
 {
     const auto msyspath = FindInstallDir();
 
     wxArrayString paths_to_try;
 
     // next in order are is the PATH environment variable
-    if(useSystemPath) {
+    if (useSystemPath) {
         wxString pathenv;
         wxGetEnv("PATH", &pathenv);
         paths_to_try = ::wxStringTokenize(pathenv, ";", wxTOKEN_STRTOK);
@@ -142,7 +141,7 @@ bool MSYS2::GetPath(wxString* value, bool useSystemPath)
 
     // if we have msys2 installed, add the bin folder (we place them at start)
     if (msyspath) {
-        for(const auto& root : m_chroots) {
+        for (const auto& root : m_chroots) {
             paths_to_try.Insert(*msyspath + root + R"(\bin)", 0);
         }
     }
@@ -153,7 +152,7 @@ bool MSYS2::GetPath(wxString* value, bool useSystemPath)
     cargo_msys_bin.AppendDir(::wxGetUserId());
     cargo_msys_bin.AppendDir(".cargo");
     cargo_msys_bin.AppendDir("bin");
-    if(cargo_msys_bin.DirExists()) {
+    if (cargo_msys_bin.DirExists()) {
         paths_to_try.Add(cargo_msys_bin.GetPath());
     }
 
@@ -163,7 +162,7 @@ bool MSYS2::GetPath(wxString* value, bool useSystemPath)
     cargo_bin.AppendDir(".cargo");
     cargo_bin.AppendDir("bin");
 
-    if(cargo_bin.DirExists()) {
+    if (cargo_bin.DirExists()) {
         paths_to_try.Add(cargo_bin.GetPath());
     }
 
@@ -173,9 +172,8 @@ bool MSYS2::GetPath(wxString* value, bool useSystemPath)
     local_bin.AppendDir(".local");
     local_bin.AppendDir("bin");
 
-    if(local_bin.DirExists()) {
+    if (local_bin.DirExists()) {
         paths_to_try.Add(local_bin.GetPath());
     }
-    *value = ::wxJoin(paths_to_try, ';');
-    return true;
+    return ::wxJoin(paths_to_try, ';');
 }

@@ -54,16 +54,15 @@ std::optional<wxString> MSYS2::FindInstallDir()
     return std::nullopt;
 }
 
-bool MSYS2::FindHomeDir(wxString* homedir)
+std::optional<wxString> MSYS2::FindHomeDir()
 {
     const auto msyspath = FindInstallDir();
     if (!msyspath) {
-        return false;
+        return std::nullopt;
     }
 
-    if(m_checked_for_home_dir) {
-        *homedir = m_home_dir;
-        return !m_home_dir.empty();
+    if (m_checked_for_home_dir) {
+        return m_home_dir;
     }
 
     m_checked_for_home_dir = true;
@@ -72,12 +71,10 @@ bool MSYS2::FindHomeDir(wxString* homedir)
     cargo_dir.AppendDir("home");
     cargo_dir.AppendDir(::wxGetUserId());
 
-    if(cargo_dir.DirExists()) {
+    if (cargo_dir.DirExists()) {
         m_home_dir = cargo_dir.GetPath();
     }
-
-    *homedir = m_home_dir;
-    return !m_home_dir.empty();
+    return m_home_dir;
 }
 
 bool MSYS2::Which(const wxString& command, wxString* command_fullpath)

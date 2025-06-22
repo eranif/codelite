@@ -51,14 +51,13 @@ std::optional<wxString> LINUX::FindInstallDir()
     return "/";
 }
 
-bool LINUX::FindHomeDir(wxString* homedir)
+std::optional<wxString> LINUX::FindHomeDir()
 {
 #ifdef __WXMAC__
-    *homedir << "/Users/" << ::wxGetUserId();
+    return wxString() << "/Users/" << ::wxGetUserId();
 #else
-    *homedir << "/home/" << ::wxGetUserId();
+    return wxString() << "/home/" << ::wxGetUserId();
 #endif
-    return true;
 }
 
 bool LINUX::Which(const wxString& command, wxString* command_fullpath)
@@ -78,8 +77,7 @@ bool LINUX::Which(const wxString& command, wxString* command_fullpath)
 
 bool LINUX::GetPath(wxString* value, bool useSystemPath)
 {
-    wxString HOME;
-    FindHomeDir(&HOME);
+    const auto HOME = FindHomeDir();
 
     wxArrayString special_paths;
 
@@ -90,7 +88,7 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
 
 #if defined(__WXGTK__) || defined(__WXMAC__)
     // both macOS and Linux are using this path
-    special_paths.Add(wxString() << HOME << "/.local/bin");
+    special_paths.Add(wxString() << HOME.value_or("") << "/.local/bin");
 #if defined(__WXGTK__)
     // linux also supports homebrew
     if (wxFileName::DirExists("/home/linuxbrew/.linuxbrew/bin")) {
@@ -100,7 +98,7 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
 #endif
 
     // cargo
-    special_paths.Add(wxString() << HOME << "/.cargo/bin");
+    special_paths.Add(wxString() << HOME.value_or("") << "/.cargo/bin");
 
     // rustup
     if (const auto rustup_bin_folder = get_rustup_bin_folder()) {

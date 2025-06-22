@@ -30,7 +30,7 @@ public:
     /**
      * @brief locate the home folder within msys2 (e.g. /home/eran)
      */
-    bool FindHomeDir(wxString* homedir) override;
+    std::optional<wxString> FindHomeDir() override;
 
     /**
      * @brief check if a command "command" is installed and return its fullpath

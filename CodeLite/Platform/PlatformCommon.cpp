@@ -38,12 +38,11 @@ std::optional<wxString> PlatformCommon::FindRustupToolchainBinDir()
 #ifdef __WXMSW__
     return std::nullopt;
 #else
-    wxString homedir;
-    FindHomeDir(&homedir);
+    const auto homedir = FindHomeDir();
 
     wxString rustup_exe;
-    rustup_exe << homedir << "/.cargo/bin/rustup";
-    if(!wxFileName::FileExists(rustup_exe)) {
+    rustup_exe << homedir.value_or("") << "/.cargo/bin/rustup";
+    if (!wxFileName::FileExists(rustup_exe)) {
         return std::nullopt;
     }
 
@@ -57,7 +56,7 @@ std::optional<wxString> PlatformCommon::FindRustupToolchainBinDir()
 
     // build the path
     wxString rustup_bin_dir;
-    rustup_bin_dir << homedir << "/.rustup/toolchains/" << toolchain_name << "/bin";
+    rustup_bin_dir << *homedir << "/.rustup/toolchains/" << toolchain_name << "/bin";
     clDEBUG() << "Rust toolchain path:" << rustup_bin_dir << endl;
     return rustup_bin_dir;
 #endif

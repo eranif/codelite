@@ -9,7 +9,7 @@ class WXDLLIMPEXP_CL MSYS2 : public PlatformCommon
     bool m_checked_for_install_dir = false;
     std::optional<wxString> m_install_dir;
     bool m_checked_for_home_dir = false;
-    wxString m_home_dir;
+    std::optional<wxString> m_home_dir;
     wxArrayString m_chroots;
 
 public:
@@ -26,7 +26,7 @@ public:
     /**
      * @brief locate the home folder within msys2 (e.g. C:/msys2/home/eran)
      */
-    bool FindHomeDir(wxString* homedir) override;
+    std::optional<wxString> FindHomeDir() override;
 
     /**
      * @brief check if a command "command" is installed and return its fullpath

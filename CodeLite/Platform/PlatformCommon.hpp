@@ -73,11 +73,7 @@ public:
     /**
      * @brief locate the home folder within msys2 (e.g. C:/msys2/home/eran)
      */
-    virtual bool FindHomeDir(wxString* homedir)
-    {
-        wxUnusedVar(homedir);
-        return false;
-    }
+    virtual std::optional<wxString> FindHomeDir() { return std::nullopt; }
 
     /**
      * @brief set the chroot folder (on linux, this method is a placeholder)

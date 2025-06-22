@@ -63,7 +63,7 @@ public:
     {
     }
 
-    virtual ~ITagsStorage(){};
+    virtual ~ITagsStorage() = default;
     virtual void SetEnableCaseInsensitive(bool b) { m_enableCaseInsensitive = b; }
     virtual void SetUseCache(bool useCache) { this->m_useCache = useCache; }
 

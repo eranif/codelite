@@ -43,7 +43,7 @@ public:
                   const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
 
     /// destructor
-    virtual ~CppSymbolTree(){};
+    ~CppSymbolTree() override = default;
     
     /**
      * @brief emulate user activated the selected item

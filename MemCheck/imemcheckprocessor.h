@@ -56,9 +56,11 @@ public:
     IMemCheckProcessor(MemCheckSettings* const settings)
         : m_settings(settings)
         , m_outputLogFileName(wxEmptyString)
-        , m_errorList(){};
+        , m_errorList()
+    {
+    }
 
-    virtual ~IMemCheckProcessor() {}
+    virtual ~IMemCheckProcessor() = default;
 
 protected:
     MemCheckSettings* m_settings;

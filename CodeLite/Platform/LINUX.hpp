@@ -9,11 +9,11 @@
 
 class WXDLLIMPEXP_CL LINUX : public PlatformCommon
 {
-    wxString RUST_TOOLCHAIN_BIN;
+    std::optional<wxString> RUST_TOOLCHAIN_BIN;
     bool rust_toolchain_scanned = false;
 
 protected:
-    bool get_rustup_bin_folder(wxString* rustup_bin_dir);
+    std::optional<wxString> get_rustup_bin_folder();
 
 public:
     LINUX() {}

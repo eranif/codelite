@@ -32,7 +32,7 @@ public:
     /**
      * @brief locate rustup bin folder (on platforms that this is available)
      */
-    bool FindRustupToolchainBinDir(wxString* rustup_bin_dir);
+    std::optional<wxString> FindRustupToolchainBinDir();
 
     /// override this in the platform specific code
     virtual bool Which(const wxString& command, wxString* command_fullpath)

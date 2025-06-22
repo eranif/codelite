@@ -37,18 +37,13 @@ bool macos_find_homebrew_opt_formula_dir(const wxString& formula, wxString* inst
 /// Locate rustup bin folder
 /// the path is set to:
 /// $HOME/.rustup/toolchains/TOOLCHAIN-NAME/bin
-bool LINUX::get_rustup_bin_folder(wxString* rustup_bin_dir)
+std::optional<wxString> LINUX::get_rustup_bin_folder()
 {
-    if (rust_toolchain_scanned) {
-        *rustup_bin_dir = RUST_TOOLCHAIN_BIN;
-        return !RUST_TOOLCHAIN_BIN.empty();
+    if (!rust_toolchain_scanned) {
+        RUST_TOOLCHAIN_BIN = FindRustupToolchainBinDir();
+        rust_toolchain_scanned = true;
     }
-
-    FindRustupToolchainBinDir(&RUST_TOOLCHAIN_BIN);
-    rust_toolchain_scanned = true;
-
-    // call this method again, this time rust_toolchain_scanned is set to true
-    return get_rustup_bin_folder(rustup_bin_dir);
+    return RUST_TOOLCHAIN_BIN;
 }
 
 bool LINUX::FindInstallDir(wxString* installpath)
@@ -109,9 +104,8 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     special_paths.Add(wxString() << HOME << "/.cargo/bin");
 
     // rustup
-    wxString rustup_bin_folder;
-    if (get_rustup_bin_folder(&rustup_bin_folder)) {
-        special_paths.Add(rustup_bin_folder);
+    if (const auto rustup_bin_folder = get_rustup_bin_folder()) {
+        special_paths.Add(*rustup_bin_folder);
     }
 
     // /usr/local/bin is not always in the PATH, so add it

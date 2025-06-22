@@ -33,10 +33,10 @@ std::optional<wxString> PlatformCommon::WhichWithVersion(const wxString& command
 /// Locate rustup bin folder
 /// the path is set to:
 /// $HOME/.rustup/TOOLCHAIN-NAME/bin
-bool PlatformCommon::FindRustupToolchainBinDir(wxString* rustup_bin_dir)
+std::optional<wxString> PlatformCommon::FindRustupToolchainBinDir()
 {
 #ifdef __WXMSW__
-    return false;
+    return std::nullopt;
 #else
     wxString homedir;
     FindHomeDir(&homedir);
@@ -44,7 +44,7 @@ bool PlatformCommon::FindRustupToolchainBinDir(wxString* rustup_bin_dir)
     wxString rustup_exe;
     rustup_exe << homedir << "/.cargo/bin/rustup";
     if(!wxFileName::FileExists(rustup_exe)) {
-        return false;
+        return std::nullopt;
     }
 
     // locate the default toolchain
@@ -52,13 +52,14 @@ bool PlatformCommon::FindRustupToolchainBinDir(wxString* rustup_bin_dir)
     toolchain_name = toolchain_name.BeforeLast('(');
     toolchain_name.Trim().Trim(false);
     if(toolchain_name.empty()) {
-        return false;
+        return std::nullopt;
     }
 
     // build the path
-    *rustup_bin_dir << homedir << "/.rustup/toolchains/" << toolchain_name << "/bin";
-    clDEBUG() << "Rust toolchain path:" << *rustup_bin_dir << endl;
-    return true;
+    wxString rustup_bin_dir;
+    rustup_bin_dir << homedir << "/.rustup/toolchains/" << toolchain_name << "/bin";
+    clDEBUG() << "Rust toolchain path:" << rustup_bin_dir << endl;
+    return rustup_bin_dir;
 #endif
 }
 

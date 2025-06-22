@@ -6,7 +6,7 @@ clConsoleAlacritty::clConsoleAlacritty()
 {
 #ifdef __WXMAC__
     // open /Applications/Alacritty.app
-    ThePlatform->MacFindApp("Alacritty", &m_terminal);
+    m_terminal = ThePlatform->MacFindApp("Alacritty").value_or("");
 #else
     ThePlatform->Which("alacritty", &m_terminal);
 #endif

@@ -37,9 +37,9 @@ public:
      */
     bool Which(const wxString& command, wxString* command_fullpath) override;
 
-    /// on macOS, application are usually placed under /Application
-    /// are are opened with the `open` command
-    bool MacFindApp(const wxString& appname, wxString* command_fullpath, bool new_instance = true) override;
+    /// on macOS, applications are usually placed under /Application
+    /// and are opened with the `open` command
+    std::optional<wxString> MacFindApp(const wxString& appname, bool new_instance = true) override;
 
     /**
      * @brief some vendors deliver binaries with "-N" where N is the version number

@@ -159,7 +159,7 @@ thread_local LINUX instance;
 }
 LINUX* LINUX::Get() { return &instance; }
 
-bool LINUX::MacFindApp(const wxString& appname, wxString* command_fullpath, bool new_instance)
+std::optional<wxString> LINUX::MacFindApp(const wxString& appname, bool new_instance)
 {
 #ifdef __WXMAC__
     wxFileName path{ "/Applications", wxEmptyString };
@@ -167,13 +167,14 @@ bool LINUX::MacFindApp(const wxString& appname, wxString* command_fullpath, bool
 
     // search for app name
     if (path.DirExists()) {
-        (*command_fullpath) << "/usr/bin/open ";
+        wxString command_fullpath;
+        command_fullpath << "/usr/bin/open ";
         if (new_instance) {
-            (*command_fullpath) << "-n ";
+            command_fullpath << "-n ";
         }
-        (*command_fullpath) << StringUtils::WrapWithDoubleQuotes(path.GetPath());
-        return true;
+        command_fullpath << StringUtils::WrapWithDoubleQuotes(path.GetPath());
+        return command_fullpath;
     }
 #endif
-    return false;
+    return std::nullopt;
 }

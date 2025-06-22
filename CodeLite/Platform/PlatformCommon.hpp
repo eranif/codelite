@@ -56,14 +56,13 @@ public:
     }
 
     /// override this in the platform specific code
-    /// on macOS, application are usually placed under /Application
-    /// are are opened with the `open` command
-    virtual bool MacFindApp(const wxString& appname, wxString* command_fullpath, bool new_instance = true)
+    /// on macOS, applications are usually placed under /Application
+    /// and are opened with the `open` command
+    virtual std::optional<wxString> MacFindApp(const wxString& appname, bool new_instance = true)
     {
         wxUnusedVar(appname);
-        wxUnusedVar(command_fullpath);
         wxUnusedVar(new_instance);
-        return false;
+        return std::nullopt;
     }
 
     /**

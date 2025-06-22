@@ -1,13 +1,10 @@
 #include "DapLocator.hpp"
 
-#include "AsyncProcess/asyncprocess.h"
-#include "AsyncProcess/processreaderthread.h"
 #include "Platform/Platform.hpp"
+#include "StdToWX.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "procutils.h"
-
-#include <wx/filefn.h>
 
 DapLocator::DapLocator() {}
 
@@ -85,23 +82,21 @@ DapEntry create_entry_stdio(const wxString& name, const std::vector<wxString>& c
 
 void DapLocator::find_lldb_dap(std::vector<DapEntry>* entries)
 {
-    wxArrayString paths;
-    wxString lldb_debugger;
+    // Since LLVM-18, lldb-vscode was renamed to lldb-dap, try to find it as well
+    const wxArrayString names = StdToWX::ToArrayString({ "lldb-dap", "lldb-vscode" });
 
-    wxArrayString names;
-    names.Add("lldb-dap");
-    names.Add("lldb-vscode"); // Since LLVM-18, lldb-vscode was renamed to lldb-dap, try to find it as well
-    if (!ThePlatform->AnyWhich(names, &lldb_debugger)) {
+    const auto lldb_debugger = ThePlatform->AnyWhich(names);
+    if (!lldb_debugger) {
         return;
     }
 
-    wxString entry_name = wxFileName(lldb_debugger).GetName();
+    const wxString entry_name = wxFileName(*lldb_debugger).GetName();
 #ifdef __WXMAC__
-    auto entry = create_entry(entry_name, 12345, { lldb_debugger, "--port", "12345" }, DapLaunchType::LAUNCH);
+    auto entry = create_entry(entry_name, 12345, { *lldb_debugger, "--port", "12345" }, DapLaunchType::LAUNCH);
     entry.SetEnvFormat(dap::EnvFormat::LIST);
     entries->push_back(entry);
 #else
-    auto entry = create_entry_stdio(entry_name, { lldb_debugger }, DapLaunchType::LAUNCH);
+    auto entry = create_entry_stdio(entry_name, { *lldb_debugger }, DapLaunchType::LAUNCH);
     entry.SetEnvFormat(dap::EnvFormat::LIST);
     entries->push_back(entry);
 #endif

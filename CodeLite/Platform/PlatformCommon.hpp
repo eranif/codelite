@@ -42,16 +42,17 @@ public:
         return false;
     }
 
-    /// Find the firs command in the array and return its full path
+    /// Find the first command in the array and return its full path
     /// we stop on the first match
-    bool AnyWhich(const wxArrayString& commands, wxString* command_fullpath)
+    std::optional<wxString> AnyWhich(const wxArrayString& commands)
     {
-        for(const auto& cmd : commands) {
-            if(Which(cmd, command_fullpath)) {
-                return true;
+        for (const auto& cmd : commands) {
+            wxString command_fullpath;
+            if (Which(cmd, &command_fullpath)) {
+                return command_fullpath;
             }
         }
-        return false;
+        return std::nullopt;
     }
 
     /// override this in the platform specific code

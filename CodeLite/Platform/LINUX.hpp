@@ -25,7 +25,7 @@ public:
     /**
      * @brief on linux it is simple "/"
      */
-    bool FindInstallDir(wxString* installpath) override;
+    std::optional<wxString> FindInstallDir() override;
 
     /**
      * @brief locate the home folder within msys2 (e.g. /home/eran)

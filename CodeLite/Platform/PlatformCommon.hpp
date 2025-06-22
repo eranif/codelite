@@ -68,11 +68,7 @@ public:
     /**
      * @brief locate msys2 installation folder (e.g. C:/msys2)
      */
-    virtual bool FindInstallDir(wxString* msyspath)
-    {
-        wxUnusedVar(msyspath);
-        return false;
-    }
+    virtual std::optional<wxString> FindInstallDir() { return std::nullopt; }
 
     /**
      * @brief locate the home folder within msys2 (e.g. C:/msys2/home/eran)

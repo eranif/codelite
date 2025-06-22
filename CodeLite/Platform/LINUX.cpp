@@ -46,10 +46,9 @@ std::optional<wxString> LINUX::get_rustup_bin_folder()
     return RUST_TOOLCHAIN_BIN;
 }
 
-bool LINUX::FindInstallDir(wxString* installpath)
+std::optional<wxString> LINUX::FindInstallDir()
 {
-    *installpath = "/";
-    return true;
+    return "/";
 }
 
 bool LINUX::FindHomeDir(wxString* homedir)

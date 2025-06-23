@@ -430,10 +430,9 @@ void wxTerminalOutputCtrl::DoPatternClicked(const wxString& pattern)
         // if we are running under Windows and the file path is POSIX (e.g. MSYS2)
         // convert it into Windows native path
         if (file.StartsWith("/")) {
-            wxString cygpath;
-            if (ThePlatform->Which("cygpath", &cygpath)) {
+            if (const auto cygpath = ThePlatform->Which("cygpath")) {
                 wxString command;
-                command << StringUtils::WrapWithDoubleQuotes(cygpath) << " -w "
+                command << StringUtils::WrapWithDoubleQuotes(*cygpath) << " -w "
                         << StringUtils::WrapWithDoubleQuotes(file);
                 wxString winpath = ProcUtils::SafeExecuteCommand(command);
                 winpath.Trim().Trim(false);

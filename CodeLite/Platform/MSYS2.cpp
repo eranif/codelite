@@ -77,21 +77,20 @@ std::optional<wxString> MSYS2::FindHomeDir()
     return m_home_dir;
 }
 
-bool MSYS2::Which(const wxString& command, wxString* command_fullpath)
+std::optional<wxString> MSYS2::Which(const wxString& command)
 {
     wxString path = GetPath(m_flags & SEARCH_PATH_ENV).value_or("");
 
     wxArrayString paths_to_try = ::wxStringTokenize(path, ";", wxTOKEN_STRTOK);
     // at the point, the order of search is:
     // MSYS2 -> Executable path -> PATH paths
-    for(auto path : paths_to_try) {
+    for (auto path : paths_to_try) {
         path << "\\" << command << ".exe";
-        if(wxFileName::FileExists(path)) {
-            *command_fullpath = path;
-            return true;
+        if (wxFileName::FileExists(path)) {
+            return path;
         }
     }
-    return false;
+    return std::nullopt;
 }
 
 std::optional<wxString> MSYS2::WhichWithVersion(const wxString& command, const std::vector<int>& versions)

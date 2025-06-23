@@ -8,7 +8,7 @@ clConsoleAlacritty::clConsoleAlacritty()
     // open /Applications/Alacritty.app
     m_terminal = ThePlatform->MacFindApp("Alacritty").value_or("");
 #else
-    ThePlatform->Which("alacritty", &m_terminal);
+    m_terminal = ThePlatform->Which("alacritty").value_or("");
 #endif
 }
 

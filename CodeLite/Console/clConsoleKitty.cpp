@@ -8,7 +8,7 @@ clConsoleKitty::clConsoleKitty()
     // open /Applications/Kitty.app
     m_terminal = ThePlatform->MacFindApp("Kitty").value_or("");
 #else
-    ThePlatform->Which("kitty", &m_terminal);
+    m_terminal = ThePlatform->Which("kitty").value_or("");
 #endif
 }
 

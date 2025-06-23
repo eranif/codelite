@@ -11,10 +11,9 @@ fmtPHPCBF::fmtPHPCBF()
     SetInplaceFormatter(true);
     SetEnabled(false);
 
-    wxString php_exe = "php";
-    bool enabeld = ThePlatform->Which("php", &php_exe);
-    SetCommand({ php_exe, "$(WorkspacePath)/vendor/bin/phpcbf", "-q", R"#("$(CurrentFileRelPath)")#" });
-    SetEnabled(enabeld);
+    const auto php_exe = ThePlatform->Which("php");
+    SetCommand({ php_exe.value_or("php"), "$(WorkspacePath)/vendor/bin/phpcbf", "-q", R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(php_exe.has_value());
 }
 
 fmtPHPCBF::~fmtPHPCBF() {}

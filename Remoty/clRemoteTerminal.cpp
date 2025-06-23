@@ -23,8 +23,8 @@ bool clRemoteTerminal::Start()
     }
 
     // wrap the command in ssh
-    wxString ssh_exe;
-    if(!ThePlatform->Which("ssh", &ssh_exe)) {
+    const auto ssh_exe = ThePlatform->Which("ssh");
+    if (!ssh_exe) {
         clERROR() << "Could not locate ssh executable in your PATH!" << endl;
         return false;
     }

@@ -15,13 +15,13 @@ LSPJdtlsDetector::~LSPJdtlsDetector() {}
 
 bool LSPJdtlsDetector::DoLocate()
 {
-    wxString path;
-    if (!ThePlatform->Which("jdtls", &path)) {
+    const auto path = ThePlatform->Which("jdtls");
+    if (!path) {
         return false;
     }
 
-    LSP_DEBUG() << "Found jdtls ==>" << path << endl;
-    ConfigureFile(path);
+    LSP_DEBUG() << "Found jdtls ==>" << *path << endl;
+    ConfigureFile(*path);
     return true;
 }
 

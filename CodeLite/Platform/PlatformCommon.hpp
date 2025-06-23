@@ -35,11 +35,10 @@ public:
     std::optional<wxString> FindRustupToolchainBinDir();
 
     /// override this in the platform specific code
-    virtual bool Which(const wxString& command, wxString* command_fullpath)
+    virtual std::optional<wxString> Which(const wxString& command)
     {
         wxUnusedVar(command);
-        wxUnusedVar(command_fullpath);
-        return false;
+        return std::nullopt;
     }
 
     /// Find the first command in the array and return its full path
@@ -47,8 +46,7 @@ public:
     std::optional<wxString> AnyWhich(const wxArrayString& commands)
     {
         for (const auto& cmd : commands) {
-            wxString command_fullpath;
-            if (Which(cmd, &command_fullpath)) {
+            if (const auto command_fullpath = Which(cmd)) {
                 return command_fullpath;
             }
         }

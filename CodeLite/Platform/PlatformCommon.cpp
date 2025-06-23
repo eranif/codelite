@@ -21,9 +21,8 @@ std::optional<wxString> PlatformCommon::WhichWithVersion(const wxString& command
     for(auto ver : sorted_versions) {
         names.Add(wxString() << command << "-" << ver);
     }
-    for(const wxString& name : names) {
-        wxString command_fullpath;
-        if (Which(name, &command_fullpath)) {
+    for (const wxString& name : names) {
+        if (const auto command_fullpath = Which(name)) {
             return command_fullpath;
         }
     }

@@ -12,7 +12,7 @@ namespace
 {
 
 std::once_flag cygpath_once;
-wxString cygpath; // contains path to cygpath or empty string if not found
+std::optional<wxString> cygpath; // contains path to cygpath or empty if not found
 
 #ifdef __WXMSW__
 /// helper method:
@@ -127,13 +127,14 @@ wxString clFileName::ToMSYS2(const wxFileName& fullpath)
 wxString clFileName::FromMSYS2(const wxString& fullpath)
 {
     std::call_once(cygpath_once, []() -> void {
-        if(ThePlatform->Which("cygpath", &cygpath)) {
-            cygpath << " -w";
+        cygpath = ThePlatform->Which("cygpath");
+        if (cygpath) {
+            *cygpath << " -w";
         }
     });
 
-    if(cygpath.empty()) {
+    if (!cygpath) {
         return fullpath;
     }
-    return ProcUtils::SafeExecuteCommand(cygpath + " " + StringUtils::WrapWithDoubleQuotes(fullpath));
+    return ProcUtils::SafeExecuteCommand(*cygpath + " " + StringUtils::WrapWithDoubleQuotes(fullpath));
 }

@@ -17,14 +17,14 @@ LSPRustAnalyzerDetector::~LSPRustAnalyzerDetector() {}
 
 bool LSPRustAnalyzerDetector::DoLocate()
 {
-    wxString analyzer_path;
-    if(!ThePlatform->Which("rust-analyzer", &analyzer_path)) {
+    const auto analyzer_path = ThePlatform->Which("rust-analyzer");
+    if (!analyzer_path) {
         return false;
     }
 
     // we check for the binary in both
     wxString command;
-    command << analyzer_path;
+    command << *analyzer_path;
     ::WrapWithQuotes(command);
     SetCommand(command);
 

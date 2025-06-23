@@ -60,18 +60,17 @@ std::optional<wxString> LINUX::FindHomeDir()
 #endif
 }
 
-bool LINUX::Which(const wxString& command, wxString* command_fullpath)
+std::optional<wxString> LINUX::Which(const wxString& command)
 {
     const wxString pathenv = GetPath(m_flags & SEARCH_PATH_ENV).value_or("");
     wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
     for (auto path : paths) {
         path << "/" << command;
         if (wxFileName::FileExists(path)) {
-            *command_fullpath = path;
-            return true;
+            return path;
         }
     }
-    return false;
+    return std::nullopt;
 }
 
 std::optional<wxString> LINUX::GetPath(bool useSystemPath)

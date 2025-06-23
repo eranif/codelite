@@ -31,7 +31,7 @@ public:
     /**
      * @brief check if a command "command" is installed and return its fullpath
      */
-    bool Which(const wxString& command, wxString* command_fullpath) override;
+    std::optional<wxString> Which(const wxString& command) override;
 
     /**
      * @brief set the chroot folder

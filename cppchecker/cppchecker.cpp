@@ -184,8 +184,8 @@ void CppCheckPlugin::DoRun()
 wxString CppCheckPlugin::DoGetCommand()
 {
     // Linux / Mac way: spawn the process and execute the command
-    wxString cppcheck;
-    if (!ThePlatform->Which("cppcheck", &cppcheck)) {
+    const auto cppcheck = ThePlatform->Which("cppcheck");
+    if (!cppcheck) {
         ::wxMessageBox(_("Could not locate \"cppcheck\". Please install it and try again"), "CodeLite",
                        wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCENTRE);
         return wxEmptyString;
@@ -208,7 +208,7 @@ wxString CppCheckPlugin::DoGetCommand()
     }
 
     // replace the place holders
-    command.Replace("${cppcheck}", StringUtils::WrapWithDoubleQuotes(cppcheck));
+    command.Replace("${cppcheck}", StringUtils::WrapWithDoubleQuotes(*cppcheck));
     command.Replace("${WorkspacePath}", StringUtils::WrapWithDoubleQuotes(workspace_path));
     command.Replace("${CurrentFileFullPath}", StringUtils::WrapWithDoubleQuotes(current_file));
 

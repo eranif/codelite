@@ -221,16 +221,16 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
         }
 
         EnvSetter env;
-        wxString cargo_exe;
-        if (!ThePlatform->Which("cargo", &cargo_exe)) {
+        auto cargo_exe = ThePlatform->Which("cargo");
+        if (!cargo_exe) {
             wxMessageBox(_("Could not locate cargo in your PATH"), "CodeLite", wxICON_ERROR | wxCENTRE);
             return;
         }
 
-        ::WrapWithQuotes(cargo_exe);
+        ::WrapWithQuotes(*cargo_exe);
 
         wxString command;
-        command << cargo_exe << " new " << dlg.GetWorkspaceName();
+        command << *cargo_exe << " new " << dlg.GetWorkspaceName();
         IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole,
                                                     dlg.GetWorkspacePath()));
         if (!process) {

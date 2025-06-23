@@ -556,9 +556,9 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     clWorkspaceManager::Get().SetWorkspace(this);
 
     // wrap the command in ssh
-    wxString ssh_exe;
     EnvSetter setter;
-    if (!ThePlatform->Which("ssh", &ssh_exe)) {
+    const auto ssh_exe = ThePlatform->Which("ssh");
+    if (!ssh_exe) {
         ::wxMessageBox(
             _("Could not locate ssh executable in your PATH!\nUpdate your PATH from 'settings -> environment "
               "variables' to a location that contains your 'ssh' executable"),

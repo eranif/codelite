@@ -12,10 +12,9 @@ fmtRustfmt::fmtRustfmt()
     SetConfigFilepath("$(WorkspacePath)/.rustfmt.toml");
 
     // local command
-    wxString rustfmt_exe = "rustfmt";
-    bool enabeld = ThePlatform->Which("rustfmt", &rustfmt_exe);
-    SetCommand({ rustfmt_exe, "--edition", "2021", R"#("$(CurrentFileRelPath)")#" });
-    SetEnabled(enabeld);
+    const auto rustfmt_exe = ThePlatform->Which("rustfmt");
+    SetCommand({ rustfmt_exe.value_or("rustfmt"), "--edition", "2021", R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(rustfmt_exe.has_value());
 }
 
 fmtRustfmt::~fmtRustfmt() {}

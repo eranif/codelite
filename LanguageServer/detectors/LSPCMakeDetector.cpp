@@ -13,12 +13,12 @@ LSPCMakeDetector::~LSPCMakeDetector() {}
 bool LSPCMakeDetector::DoLocate()
 {
     wxString name = "cmake-language-server";
-    wxString fullpath;
-    if(!ThePlatform->Which(name, &fullpath)) {
+    const auto fullpath = ThePlatform->Which(name);
+    if (!fullpath) {
         return false;
     }
 
-    ConfigureFile(fullpath);
+    ConfigureFile(*fullpath);
     return true;
 }
 

@@ -8,10 +8,9 @@ fmtXmlLint::fmtXmlLint()
     SetFileTypes({ FileExtManager::TypeXRC, FileExtManager::TypeXml });
     SetDescription(_("xmllint - command line XML tool"));
     SetShortDescription(_("Xml formatter"));
-    wxString xml_lint_exe = "xmllint";
-    bool enabeld = ThePlatform->Which("xmllint", &xml_lint_exe);
-    SetCommand({ xml_lint_exe, "--format", R"#("$(CurrentFileRelPath)")#" });
-    SetEnabled(enabeld);
+    const auto xml_lint_exe = ThePlatform->Which("xmllint");
+    SetCommand({ xml_lint_exe.value_or("xmllint"), "--format", R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(xml_lint_exe.has_value());
 }
 
 fmtXmlLint::~fmtXmlLint() {}

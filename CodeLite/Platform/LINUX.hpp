@@ -35,7 +35,7 @@ public:
     /**
      * @brief check if a command "command" is installed and return its fullpath
      */
-    bool Which(const wxString& command, wxString* command_fullpath) override;
+    std::optional<wxString> Which(const wxString& command) override;
 
     /// on macOS, applications are usually placed under /Application
     /// and are opened with the `open` command

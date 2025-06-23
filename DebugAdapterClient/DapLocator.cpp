@@ -104,24 +104,21 @@ void DapLocator::find_lldb_dap(std::vector<DapEntry>* entries)
 
 void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
 {
-    // locate pip first
-    wxArrayString paths;
-    wxString python;
-
     // locate python3
-    if (!ThePlatform->Which("python", &python) && !ThePlatform->Which("python3", &python)) {
+    const auto python = ThePlatform->AnyWhich(StdToWX::ToArrayString({"python", "python3"}));
+    if (!python) {
         return;
     }
 
     // we got pip
-    wxString line = ProcUtils::GrepCommandOutput({ python, "-m", "pip", "list" }, "debugpy");
+    wxString line = ProcUtils::GrepCommandOutput({ *python, "-m", "pip", "list" }, "debugpy");
     if (line.empty())
         return;
 
     // we have a match
     auto entry =
         create_entry("debugpy", 12345,
-                     { python, "-m", "debugpy", "--listen", "12345", "--wait-for-client", "$(CurrentFileFullPath)" },
+                     { *python, "-m", "debugpy", "--listen", "12345", "--wait-for-client", "$(CurrentFileFullPath)" },
                      DapLaunchType::ATTACH);
     entry.SetUseNativePath();
     entries->push_back(entry);
@@ -131,21 +128,21 @@ void DapLocator::find_gdb(std::vector<DapEntry>* entries)
 {
     // gdb, since version 14.0, supports the dap protocol
     wxArrayString paths;
-    wxString gdb;
 
-    // locate python3
-    if (!ThePlatform->Which("gdb", &gdb)) {
+    // locate gdb
+    const auto gdb = ThePlatform->Which("gdb");
+    if (!gdb) {
         return;
     }
 
-    clDEBUG() << "Found gdb at:" << gdb << endl;
+    clDEBUG() << "Found gdb at:" << *gdb << endl;
 
     // Check the version. An example version:
     // GNU gdb (Ubuntu 12.1-0ubuntu1~22.04.2) 12.1
     // GNU gdb (GDB) 15.2
     static wxRegEx re_version(R"(GNU gdb \(.*?\) ([0-9\.]+))");
     unsigned long major_version = 0;
-    ProcUtils::GrepCommandOutputWithCallback({ gdb, "-v" }, [&](const wxString& line) {
+    ProcUtils::GrepCommandOutputWithCallback({ *gdb, "-v" }, [&](const wxString& line) {
         clDEBUG() << "Checking line..." << line << endl;
         if (re_version.IsValid() && re_version.Matches(line)) {
             // Got the version line, extract its major version
@@ -161,7 +158,7 @@ void DapLocator::find_gdb(std::vector<DapEntry>* entries)
 
     if (major_version >= 14) {
         // we have a match
-        auto entry = create_entry_stdio("gdb-dap", { gdb, "-i=dap" }, DapLaunchType::LAUNCH);
+        auto entry = create_entry_stdio("gdb-dap", { *gdb, "-i=dap" }, DapLaunchType::LAUNCH);
         entry.SetUseForwardSlash(true);
         entry.SetUseVolume(true);
         entries->push_back(entry);

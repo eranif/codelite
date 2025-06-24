@@ -75,9 +75,7 @@
 #include "wxCodeCompletionBoxManager.h"
 
 #include <algorithm>
-#include <chrono>
 #include <wx/dataobj.h>
-#include <wx/dcmemory.h>
 #include <wx/display.h>
 #include <wx/filedlg.h>
 #include <wx/filefn.h>
@@ -120,8 +118,6 @@ wxDEFINE_EVENT(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, wxCommandEvent);
 wxDEFINE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
 
 // Instantiate statics
-FindReplaceDialog* clEditor::m_findReplaceDlg = NULL;
-FindReplaceData clEditor::m_findReplaceData;
 std::map<wxString, int> clEditor::ms_bookmarkShapes;
 bool clEditor::m_ccShowPrivateMembers = true;
 bool clEditor::m_ccShowItemsComments = true;
@@ -486,12 +482,6 @@ clEditor::clEditor(wxWindow* parent)
     Bind(wxEVT_KILL_FOCUS, &clEditor::OnFocusLost, this);
     Bind(wxEVT_SET_FOCUS, &clEditor::OnFocus, this);
     Bind(wxEVT_STC_DOUBLECLICK, &clEditor::OnLeftDClick, this);
-    Bind(wxEVT_FRD_FIND_NEXT, &clEditor::OnFindDialog, this);
-    Bind(wxEVT_FRD_REPLACE, &clEditor::OnFindDialog, this);
-    Bind(wxEVT_FRD_REPLACEALL, &clEditor::OnFindDialog, this);
-    Bind(wxEVT_FRD_BOOKMARKALL, &clEditor::OnFindDialog, this);
-    Bind(wxEVT_FRD_CLOSE, &clEditor::OnFindDialog, this);
-    Bind(wxEVT_FRD_CLEARBOOKMARKS, &clEditor::OnFindDialog, this);
     Bind(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, &clEditor::OnRemoveMatchInidicator, this);
 
     Bind(wxEVT_STC_ZOOM, &clEditor::OnZoom, this);
@@ -2355,12 +2345,6 @@ void clEditor::SetActive()
 #endif
     DoUpdateTLWTitle(raise);
 
-    // if the find and replace dialog is opened, set ourself
-    // as the event owners
-    if (m_findReplaceDlg) {
-        m_findReplaceDlg->SetEventOwner(GetEventHandler());
-    }
-
     SetFocus();
     SetSTCFocus(true);
 
@@ -2368,135 +2352,6 @@ void clEditor::SetActive()
 
     wxStyledTextEvent dummy;
     OnSciUpdateUI(dummy);
-}
-
-void clEditor::OnFindDialog(wxCommandEvent& event)
-{
-    wxEventType type = event.GetEventType();
-    bool dirDown = !(m_findReplaceDlg->GetData().GetFlags() & wxFRD_SEARCHUP ? true : false);
-
-    if (type == wxEVT_FRD_FIND_NEXT) {
-        FindNext(m_findReplaceDlg->GetData());
-    } else if (type == wxEVT_FRD_REPLACE) {
-        // Perform a "Replace" operation
-        if (!Replace()) {
-            int saved_pos = GetCurrentPos();
-
-            // place the caret at the new position
-            if (dirDown) {
-                SetCaretAt(0);
-            } else {
-                SetCaretAt(GetLength());
-            }
-
-            // replace again
-            if (!Replace()) {
-                // restore the caret
-                SetCaretAt(saved_pos);
-
-                // popup a message
-                wxMessageBox(_("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
-                             _("CodeLite"),
-                             wxICON_WARNING | wxOK);
-            }
-        }
-    } else if (type == wxEVT_FRD_REPLACEALL) {
-        ReplaceAll();
-
-    } else if (type == wxEVT_FRD_BOOKMARKALL) {
-        SetFindBookmarksActive(true);
-        MarkAllFinds();
-
-    } else if (type == wxEVT_FRD_CLEARBOOKMARKS) {
-        DelAllMarkers(smt_find_bookmark);
-        SetFindBookmarksActive(false);
-        clMainFrame::Get()->SelectBestEnvSet();
-    }
-}
-
-void clEditor::FindNext(const FindReplaceData& data)
-{
-    bool dirDown = !(data.GetFlags() & wxFRD_SEARCHUP ? true : false);
-    if (!FindAndSelect(data)) {
-        int saved_pos = GetCurrentPos();
-        if (dirDown) {
-            DoSetCaretAt(0);
-        } else {
-            DoSetCaretAt(GetLength());
-        }
-
-        if (!FindAndSelect(data)) {
-            // restore the caret
-            DoSetCaretAt(saved_pos);
-            // Kill the "...continued from start" statusbar message
-            m_mgr->GetStatusBar()->SetMessage("");
-            ::wxMessageBox(
-                _("Can not find the string '") + data.GetFindString() + wxT("'"), _("CodeLite"), wxOK | wxICON_WARNING);
-        }
-    } else {
-        // The string *was* found, without needing to restart from the top
-        // So cancel any previous statusbar restart message
-        m_mgr->GetStatusBar()->SetMessage("");
-    }
-}
-
-bool clEditor::Replace() { return Replace(m_findReplaceDlg->GetData()); }
-
-bool clEditor::FindAndSelect() { return FindAndSelect(m_findReplaceDlg->GetData()); }
-
-bool clEditor::FindAndSelect(const FindReplaceData& data)
-{
-    wxString findWhat = data.GetFindString();
-    size_t flags = SearchFlags(data);
-    int offset = GetCurrentPos();
-
-    int dummy, dummy_len(0), dummy_c, dummy_len_c(0);
-    if (GetSelectedText().IsEmpty() == false) {
-        if (flags & wxSD_SEARCH_BACKWARD) {
-            // searching up
-            if (StringFindReplacer::Search(GetSelectedText().wc_str(),
-                                           GetSelectedText().Len(),
-                                           findWhat.wc_str(),
-                                           flags,
-                                           dummy,
-                                           dummy_len,
-                                           dummy_c,
-                                           dummy_len_c) &&
-                dummy_len_c == (int)GetSelectedText().Len()) {
-                // place the caret at the start of the selection so the search will skip this selected text
-                int sel_start = GetSelectionStart();
-                int sel_end = GetSelectionEnd();
-                sel_end > sel_start ? offset = sel_start : offset = sel_end;
-            }
-        } else {
-            // searching down
-            if (StringFindReplacer::Search(
-                    GetSelectedText().wc_str(), 0, findWhat.wc_str(), flags, dummy, dummy_len, dummy_c, dummy_len_c) &&
-                dummy_len_c == (int)GetSelectedText().Len()) {
-                // place the caret at the end of the selection so the search will skip this selected text
-                int sel_start = GetSelectionStart();
-                int sel_end = GetSelectionEnd();
-                sel_end > sel_start ? offset = sel_end : offset = sel_start;
-            }
-        }
-    }
-
-    int pos(0);
-    int match_len(0);
-
-    if (StringFindReplacer::Search(GetText().wc_str(), offset, findWhat.wc_str(), flags, pos, match_len)) {
-
-        SetEnsureCaretIsVisible(pos);
-
-        if (flags & wxSD_SEARCH_BACKWARD) {
-            SetSelection(pos + match_len, pos);
-        } else {
-            SetSelection(pos, pos + match_len);
-        }
-
-        return true;
-    }
-    return false;
 }
 
 bool clEditor::FindAndSelect(const wxString& _pattern, const wxString& name)
@@ -2524,40 +2379,6 @@ void clEditor::DoFindAndSelectV(const wxArrayString& strings, int pos) // Called
     wxString _pattern(strings.Item(0));
     wxString name(strings.Item(1));
     DoFindAndSelect(_pattern, name, pos, NavMgr::Get());
-}
-
-bool clEditor::Replace(const FindReplaceData& data)
-{
-    // the string to be replaced should be selected
-    if (GetSelectedText().IsEmpty() == false) {
-        int pos(0);
-        int match_len(0);
-        size_t flags = SearchFlags(data);
-        if (StringFindReplacer::Search(
-                GetSelectedText().wc_str(), 0, data.GetFindString().wc_str(), flags, pos, match_len)) {
-            ReplaceSelection(data.GetReplaceString());
-            m_findReplaceDlg->IncReplacedCount();
-            m_findReplaceDlg->SetReplacementsMessage();
-        }
-    }
-
-    //  and find another match in the document
-    return FindAndSelect();
-}
-
-size_t clEditor::SearchFlags(const FindReplaceData& data)
-{
-    size_t flags = 0;
-    size_t wxflags = data.GetFlags();
-    if (wxflags & wxFRD_MATCHWHOLEWORD)
-        flags |= wxSD_MATCHWHOLEWORD;
-    if (wxflags & wxFRD_MATCHCASE)
-        flags |= wxSD_MATCHCASE;
-    if (wxflags & wxFRD_REGULAREXPRESSION)
-        flags |= wxSD_REGULAREXPRESSION;
-    if (wxflags & wxFRD_SEARCHUP)
-        flags |= wxSD_SEARCH_BACKWARD;
-    return flags;
 }
 
 //----------------------------------------------
@@ -2976,125 +2797,6 @@ void clEditor::FindPrevMarker()
         EnsureVisible(nFoundLine);
         EnsureCaretVisible();
     }
-}
-
-bool clEditor::ReplaceAll()
-{
-    int offset(0);
-
-    wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
-    wxString replaceWith = m_findReplaceDlg->GetData().GetReplaceString();
-    size_t flags = SearchFlags(m_findReplaceDlg->GetData());
-
-    int pos(0);
-    int match_len(0);
-    int posInChars(0);
-    int match_lenInChars(0);
-
-    wxString txt;
-    if (m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY) {
-        txt = GetSelectedText();
-    } else {
-        txt = GetText();
-    }
-
-    bool replaceInSelectionOnly = m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY;
-
-    BeginUndoAction();
-    m_findReplaceDlg->ResetReplacedCount();
-
-    long savedPos = GetCurrentPos();
-    while (StringFindReplacer::Search(
-        txt.wc_str(), offset, findWhat.wc_str(), flags, pos, match_len, posInChars, match_lenInChars)) {
-        // Manipulate the buffer
-        txt.Remove(posInChars, match_lenInChars);
-        txt.insert(posInChars, replaceWith);
-
-        // When not in 'selection only' update the editor buffer as well
-        if (!replaceInSelectionOnly) {
-            SetSelectionStart(pos);
-            SetSelectionEnd(pos + match_len);
-            ReplaceSelection(replaceWith);
-        }
-
-        m_findReplaceDlg->IncReplacedCount();
-        offset = pos + clUTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
-    }
-
-    if (replaceInSelectionOnly) {
-
-        // Prepare the next selection
-        int selStart = GetSelectionStart();
-        int selEnd = selStart + txt.Len();
-
-        // replace the selection
-        ReplaceSelection(txt);
-
-        // Keep the selection
-        SetSelectionStart(selStart);
-        SetSelectionEnd(selEnd);
-
-        // place the caret at the end of the selection
-        EnsureCaretVisible();
-
-    } else {
-        // The editor buffer was already updated
-        // Restore the caret
-        SetCaretAt(savedPos);
-    }
-
-    EndUndoAction();
-    m_findReplaceDlg->SetReplacementsMessage();
-    return m_findReplaceDlg->GetReplacedCount() > 0;
-}
-
-bool clEditor::MarkAllFinds()
-{
-    wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
-
-    if (findWhat.IsEmpty()) {
-        return false;
-    }
-
-    // Save the caret position
-    long savedPos = GetCurrentPos();
-    size_t flags = SearchFlags(m_findReplaceDlg->GetData());
-
-    int pos(0);
-    int match_len(0);
-
-    // remove reverse search
-    flags &= ~wxSD_SEARCH_BACKWARD;
-    int offset(0);
-
-    wxString txt;
-    int fixed_offset(0);
-    if (m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY) {
-        txt = GetSelectedText();
-        fixed_offset = GetSelectionStart();
-    } else {
-        txt = GetText();
-    }
-
-    DelAllMarkers(smt_find_bookmark);
-
-    // set the active indicator to be 1
-    SetIndicatorCurrent(1);
-
-    while (StringFindReplacer::Search(txt.wc_str(), offset, findWhat.wc_str(), flags, pos, match_len)) {
-        MarkerAdd(LineFromPosition(fixed_offset + pos), smt_find_bookmark);
-
-        // add indicator as well
-        IndicatorFillRange(fixed_offset + pos, match_len);
-        offset = pos + match_len;
-    }
-
-    // Restore the caret
-    SetCurrentPos(savedPos);
-    EnsureCaretVisible();
-    clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
-    NotifyMarkerChanged();
-    return true;
 }
 
 int clEditor::GetActiveBookmarkType() const
@@ -5044,10 +4746,6 @@ bool clEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, i
     pattern.Trim();
     if (pattern.IsEmpty())
         return false;
-
-    FindReplaceData data;
-    data.SetFindString(pattern);
-    data.SetFlags(flags);
 
     // keep current position
     long curr_pos = GetCurrentPos();

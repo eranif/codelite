@@ -37,12 +37,12 @@
 #include "file_logger.h"
 #include "filechecklist.h"
 #include "frame.h"
+#include "findreplacedlg.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
 #include "manager.h"
-#include "pluginmanager.h"
 #include "quickfindbar.h"
 
 #include <algorithm>

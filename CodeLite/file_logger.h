@@ -110,14 +110,14 @@ public:
      */
     static void OpenLog(const wxString& fullName, int verbosity);
 
-    inline FileLogger& operator<<(FileLoggerFunction f)
+    FileLogger& operator<<(FileLoggerFunction f)
     {
         Flush();
         return *this;
     }
 
     // special types printing
-    inline FileLogger& operator<<(const std::vector<wxString>& arr)
+    FileLogger& operator<<(const std::vector<wxString>& arr)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -137,7 +137,7 @@ public:
         return *this;
     }
 
-    inline FileLogger& operator<<(const wxStringSet_t& S)
+    FileLogger& operator<<(const wxStringSet_t& S)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -156,7 +156,7 @@ public:
         return *this;
     }
 
-    inline FileLogger& operator<<(const wxStringMap_t& M)
+    FileLogger& operator<<(const wxStringMap_t& M)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -175,7 +175,7 @@ public:
         return *this;
     }
 
-    inline FileLogger& operator<<(const wxArrayString& arr)
+    FileLogger& operator<<(const wxArrayString& arr)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -185,7 +185,7 @@ public:
         return *this;
     }
 
-    inline FileLogger& operator<<(const wxRect& rect)
+    FileLogger& operator<<(const wxRect& rect)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -197,7 +197,7 @@ public:
         return *this;
     }
 
-    inline FileLogger& operator<<(const wxPoint& point)
+    FileLogger& operator<<(const wxPoint& point)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -209,7 +209,7 @@ public:
         return *this;
     }
 
-    inline FileLogger& operator<<(const wxSize& size)
+    FileLogger& operator<<(const wxSize& size)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -221,7 +221,7 @@ public:
         return *this;
     }
 
-    inline FileLogger& operator<<(const wxColour& colour)
+    FileLogger& operator<<(const wxColour& colour)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -236,7 +236,7 @@ public:
      * Without this overload operator, on some compilers, the "clDEBUG()<< wxString" might be "going" to the one
      * that handles wxFileName...
      */
-    inline FileLogger& operator<<(const wxString& str)
+    FileLogger& operator<<(const wxString& str)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
@@ -251,7 +251,7 @@ public:
     /**
      * @brief special wxFileName printing
      */
-    inline FileLogger& operator<<(const wxFileName& fn)
+    FileLogger& operator<<(const wxFileName& fn)
     {
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;

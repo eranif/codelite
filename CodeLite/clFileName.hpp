@@ -34,14 +34,14 @@ public:
     static wxString ToMSYS2(const wxFileName& fullpath);
     static wxString FromMSYS2(const wxString& fullpath);
 
-    inline const wxString& GetAccount() const { return m_account; }
-    inline void SetRemote(const wxString& account)
+    const wxString& GetAccount() const { return m_account; }
+    void SetRemote(const wxString& account)
     {
         m_isRemote = true;
         m_account = account;
     }
 
-    inline bool IsRemote() const { return m_isRemote; }
+    bool IsRemote() const { return m_isRemote; }
 };
 
 #endif // CLFILENAME_HPP

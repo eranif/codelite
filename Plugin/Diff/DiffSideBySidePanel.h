@@ -75,8 +75,8 @@ public:
         {
         }
 
-        inline bool is_remote() const { return !remoteAccount.empty() && !remotePath.empty(); }
-        inline void clear() { *this = {}; }
+        bool is_remote() const { return !remoteAccount.empty() && !remotePath.empty(); }
+        void clear() { *this = {}; }
     };
 
     enum {

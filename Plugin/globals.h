@@ -153,20 +153,6 @@ WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxStr
 WXDLLIMPEXP_SDK bool IsValidCppIdentifier(const wxString& id);
 
 /**
- * \brief copy entire directory content (recursively) from source to target
- * \param src source path
- * \param target target path
- * \return true on success, false otherwise
- */
-WXDLLIMPEXP_SDK bool CopyDir(const wxString& src, const wxString& target);
-
-/**
- * \brief create a directory
- * \param path directory path
- */
-WXDLLIMPEXP_SDK void Mkdir(const wxString& path);
-
-/**
  * \brief write file content with optional backup
  * \param file_name
  * \param content
@@ -190,27 +176,11 @@ WXDLLIMPEXP_SDK bool CopyToClipboard(const wxString& text);
 WXDLLIMPEXP_SDK wxColour MakeColourLighter(wxColour color, float level);
 
 /**
- * @brief return true if filename is readonly false otherwise
- */
-WXDLLIMPEXP_SDK bool IsFileReadOnly(const wxFileName& filename);
-
-/**
  * \brief fill an array with a semi-colon separated string
  * \param arr [out] the array to fill
  * \param str the string to split
  */
 WXDLLIMPEXP_SDK void FillFromSemiColonString(wxArrayString& arr, const wxString& str);
-
-/**
- * \brief Normalize the given path (change all \ by /)
- */
-WXDLLIMPEXP_SDK wxString NormalizePath(const wxString& path);
-
-/**
- * \brief Returns the file modification time in seconds after the epoch.
- */
-WXDLLIMPEXP_SDK time_t GetFileModificationTime(const wxString& filename);
-WXDLLIMPEXP_SDK time_t GetFileModificationTime(const wxFileName& filename);
 
 /**
  * @brief wrap a given command in the shell command (e.g. cmd /c "command")
@@ -241,14 +211,6 @@ WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = "E
  * based on the selected editor theme. This is dont recursively on win
  */
 WXDLLIMPEXP_SDK void MSWSetWindowDarkTheme(wxWindow* win);
-
-/**
- * @brief make relative only if a subpath of reference_path (or is reference_path itself)
- * @brief also, make normalise first, and abolish any symlink
- * @param fn wxFileName to alter
- * @param reference_path the path to which to make relative
- */
-WXDLLIMPEXP_SDK bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
 
 /**
  * @brief joins array element into a string using 'glue' as the array elements
@@ -304,21 +266,6 @@ public:
 WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray,
                                                         const wxString& str,
                                                         const size_t maxsize);
-
-/**
- * @brief return true if filename is a symbolic link
- */
-WXDLLIMPEXP_SDK bool wxIsFileSymlink(const wxFileName& filename);
-
-/**
- * @brief convert filename to the real path if filename is a symbolic link
- */
-WXDLLIMPEXP_SDK wxFileName wxReadLink(const wxFileName& filename);
-
-/**
- * @brief makes-absolute filepath, and dereferences it and any symlinked dirs in the path
- */
-WXDLLIMPEXP_SDK wxString CLRealPath(const wxString& filepath);
 
 /**
  * @brief convert string to integer using range validation and default value
@@ -511,17 +458,6 @@ WXDLLIMPEXP_SDK void clKill(int processID, wxSignal signo, bool kill_whole_group
  * @brief set the new font encoding name for the editors
  */
 WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
-
-/**
- * @brief locate an executable on the system using the PATH environment variable
- * @param name the exe name to locate (you can omit the .exe on Windows, it will be added automatically)
- * @param exepath [output]
- * @param hint list of directories to search
- */
-WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name,
-                                      wxFileName& exepath,
-                                      const wxArrayString& hint = {},
-                                      const wxArrayString& suffix_list = {});
 
 /**
  * @brief given a menu and an item ID, return its position

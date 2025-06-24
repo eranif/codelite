@@ -319,4 +319,64 @@ public:
      */
     static wxString NormaliseFilename(const wxString& str);
 };
+
+/**
+ * \brief copy entire directory content (recursively) from source to target
+ * \param src source path
+ * \param target target path
+ * \return true on success, false otherwise
+ */
+WXDLLIMPEXP_CL bool CopyDir(const wxString& src, const wxString& target);
+
+/**
+ * @brief return true if filename is readonly false otherwise
+ */
+WXDLLIMPEXP_CL bool IsFileReadOnly(const wxFileName& filename);
+
+/**
+ * \brief Normalize the given path (change all \ by /)
+ */
+WXDLLIMPEXP_CL wxString NormalizePath(const wxString& path);
+
+/**
+ * \brief Returns the file modification time in seconds after the epoch.
+ */
+WXDLLIMPEXP_CL time_t GetFileModificationTime(const wxString& filename);
+WXDLLIMPEXP_CL time_t GetFileModificationTime(const wxFileName& filename);
+
+/**
+ * @brief make relative only if a subpath of reference_path (or is reference_path itself)
+ * @brief also, make normalise first, and abolish any symlink
+ * @param fn wxFileName to alter
+ * @param reference_path the path to which to make relative
+ */
+WXDLLIMPEXP_CL bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
+
+/**
+ * @brief return true if filename is a symbolic link
+ */
+WXDLLIMPEXP_CL bool wxIsFileSymlink(const wxFileName& filename);
+
+/**
+ * @brief convert filename to the real path if filename is a symbolic link
+ */
+WXDLLIMPEXP_CL wxFileName wxReadLink(const wxFileName& filename);
+
+/**
+ * @brief makes-absolute filepath, and dereferences it and any symlinked dirs in the path
+ */
+WXDLLIMPEXP_CL wxString CLRealPath(const wxString& filepath);
+
+
+/**
+ * @brief locate an executable on the system using the PATH environment variable
+ * @param name the exe name to locate (you can omit the .exe on Windows, it will be added automatically)
+ * @param exepath [output]
+ * @param hint list of directories to search
+ */
+WXDLLIMPEXP_CL bool clFindExecutable(const wxString& name,
+                                     wxFileName& exepath,
+                                     const wxArrayString& hint = {},
+                                     const wxArrayString& suffix_list = {});
+
 #endif // FILEUTILS_H

@@ -1300,9 +1300,9 @@ void RemotyWorkspace::OnFrameTitle(clCommandEvent& event)
     event.Skip();
     if (IsOpened()) {
         wxString current_title = event.GetString();
-        wxString prefix;
-        prefix << wxT("[ 🖧 ") << GetAccount().GetAccountName() << " ] ";
-        event.SetString(prefix + current_title);
+        wxString new_title;
+        new_title << current_title << wxT(" (🖥 ") << GetAccount().GetAccountName() << ")";
+        event.SetString(new_title);
     }
 }
 

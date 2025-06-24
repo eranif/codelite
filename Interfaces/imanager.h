@@ -54,7 +54,6 @@ class IPlugin;
 class BuildManager;
 class BuildSettingsConfig;
 class NavMgr;
-class IMacroManager;
 class wxAuiManager;
 class clInfoBar;
 class clGenericNotebook;

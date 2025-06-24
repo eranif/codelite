@@ -153,31 +153,6 @@ WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxStr
 WXDLLIMPEXP_SDK bool IsValidCppIdentifier(const wxString& id);
 
 /**
- * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
- * Expand variables to their real value, if expanding fails
- * the return value is same as input. The variable is expanded
- * in the project context
- */
-WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString& expression,
-                                         ProjectPtr proj,
-                                         IEditor* editor,
-                                         const wxString& filename = wxEmptyString);
-
-/**
- * * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
- * \brief accepts expression string and expand all known macros (e.g. $(ProjectName))
- * \param expression expression
- * \param projectName project name (to be used for $(ProjectName) macro)
- * \param fileName file name, to help expand the $(CurrentFile) macro family
- * \return an expanded string. If a macro is unknown it is replaced by empty string
- */
-WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression,
-                                            clCxxWorkspace* workspace,
-                                            const wxString& projectName,
-                                            const wxString& selConf,
-                                            const wxString& fileName);
-
-/**
  * \brief copy entire directory content (recursively) from source to target
  * \param src source path
  * \param target target path

@@ -33,6 +33,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
+#include "macromanager.h"
 #include "progress_dialog.h"
 #include "project.h"
 #include "workspace.h"

@@ -25,7 +25,6 @@
 #include "globals.h"
 
 #include "AsyncProcess/asyncprocess.h"
-#include "ColoursAndFontsManager.h"
 #include "Console/clConsoleBase.h"
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
@@ -35,41 +34,33 @@
 #include "clGetTextFromUserDialog.h"
 #include "clTreeCtrl.h"
 #include "cl_standard_paths.h"
-#include "ctags_manager.h"
 #include "debugger.h"
 #include "dirtraverser.h"
 #include "drawingutils.h"
 #include "editor_config.h"
-#include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "macromanager.h"
 #include "macros.h"
 #include "md5/wxmd5.h"
 #include "precompiled_header.h"
 #include "procutils.h"
 #include "project.h"
-#include "windowattrmanager.h"
 #include "workspace.h"
 
-#include <algorithm>
-#include <set>
 #include <vector>
 #include <wx/app.h>
 #include <wx/aui/auibook.h>
 #include <wx/clipbrd.h>
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
-#include <wx/dcmemory.h>
 #include <wx/dcscreen.h>
 #include <wx/dir.h>
 #include <wx/display.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
-#include <wx/fontmap.h>
 #include <wx/graphics.h>
 #include <wx/icon.h>
 #include <wx/imaglist.h>
@@ -82,7 +73,6 @@
 #include <wx/sstream.h>
 #include <wx/stc/stc.h>
 #include <wx/stdpaths.h>
-#include <wx/tokenzr.h>
 #include <wx/wfstream.h>
 #include <wx/window.h>
 #include <wx/xrc/xmlres.h>
@@ -119,12 +109,6 @@ void MSWSetWindowDarkTheme(wxWindow* win)
 // --------------------------------------------------------
 // Internal handler to handle queuing requests... end
 // --------------------------------------------------------
-
-static wxString DoExpandAllVariables(const wxString& expression,
-                                     clCxxWorkspace* workspace,
-                                     const wxString& projectName,
-                                     const wxString& confToBuild,
-                                     const wxString& fileName);
 
 #if defined(__WXGTK__)
 #include <dirent.h>
@@ -318,194 +302,6 @@ long AppendListCtrlRow(wxListCtrl* list)
     info.SetId(item);
     item = list->InsertItem(info);
     return item;
-}
-
-wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* editor, const wxString& filename)
-{
-    wxString project_name(proj->GetName());
-    wxString file = filename;
-    if (file.IsEmpty() && editor) {
-        file = editor->GetFileName().GetFullPath();
-    }
-    return ExpandAllVariables(expression, clCxxWorkspaceST::Get(), project_name, wxEmptyString, file);
-}
-
-// This functions accepts expression and expand all variables in it
-wxString ExpandAllVariables(const wxString& expression,
-                            clCxxWorkspace* workspace,
-                            const wxString& projectName,
-                            const wxString& selConf,
-                            const wxString& fileName)
-{
-    // add support for backticks commands
-    wxString tmpExp;
-    wxString noBackticksExpression;
-    for (size_t i = 0; i < expression.Length(); i++) {
-        if (expression.GetChar(i) == '`') {
-            // found a backtick, loop over until we found the closing backtick
-            wxString backtick;
-            bool found(false);
-            i++;
-            for (; i < expression.Length(); i++) {
-                if (expression.GetChar(i) == '`') {
-                    found = true;
-                    i++;
-                    break;
-                }
-                backtick << expression.GetChar(i);
-            }
-
-            if (!found) {
-                // dont replace anything
-                clLogMessage("Syntax error in expression: " + expression + ": expecting '`'");
-                return expression;
-            } else {
-                // expand the backtick statement
-                wxString expandedBacktick = DoExpandAllVariables(backtick, workspace, projectName, selConf, fileName);
-
-                // execute the backtick
-                wxArrayString output;
-                ProcUtils::SafeExecuteCommand(expandedBacktick, output);
-
-                // concatenate the array into sAssign To:pace delimited string
-                backtick.Clear();
-                for (size_t xx = 0; xx < output.GetCount(); xx++) {
-                    backtick << output.Item(xx).Trim().Trim(false) << " ";
-                }
-
-                // and finally concatente the result of the backtick command back to the expression
-                tmpExp << backtick;
-            }
-        } else {
-            tmpExp << expression.GetChar(i);
-        }
-    }
-
-    return DoExpandAllVariables(tmpExp, workspace, projectName, selConf, fileName);
-}
-
-wxString DoExpandAllVariables(const wxString& expression,
-                              clCxxWorkspace* workspace,
-                              const wxString& projectName,
-                              const wxString& confToBuild,
-                              const wxString& fileName)
-{
-    wxString errMsg;
-    wxString output(expression);
-
-    size_t retries = 0;
-    wxString dummyname, dummfullname;
-    while ((retries < 5) && MacroManager::Instance()->FindVariable(output, dummyname, dummyname)) {
-        ++retries;
-        DollarEscaper de(output);
-        if (workspace) {
-            output.Replace("$(WorkspaceName)", workspace->GetName());
-            output.Replace("$(WorkspaceConfiguration)",
-                           workspace->GetSelectedConfig() ? workspace->GetSelectedConfig()->GetName() : "");
-            ProjectPtr proj = workspace->FindProjectByName(projectName, errMsg);
-            if (proj) {
-                wxString project_name(proj->GetName());
-
-                // make sure that the project name does not contain any spaces
-                project_name.Replace(" ", "_");
-
-                BuildConfigPtr bldConf = workspace->GetProjBuildConf(proj->GetName(), confToBuild);
-                output.Replace("$(ProjectPath)", proj->GetFileName().GetPath());
-                output.Replace("$(WorkspacePath)", workspace->GetWorkspaceFileName().GetPath());
-                output.Replace("$(ProjectName)", project_name);
-
-                if (bldConf) {
-                    output.Replace("$(ConfigurationName)", bldConf->GetName());
-                    output.Replace("$(OutputDirectory)", bldConf->GetOutputDirectory());
-                    output.Replace("$(OutputFile)", bldConf->GetOutputFileName());
-
-                    // the IntermediateDirectory variable is special, since it can contains
-                    // other variables in it.
-                    wxString id(bldConf->GetIntermediateDirectory());
-
-                    // Substitute all macros from $(IntermediateDirectory)
-                    id.Replace("$(ProjectPath)", proj->GetFileName().GetPath());
-                    id.Replace("$(WorkspacePath)", workspace->GetWorkspaceFileName().GetPath());
-                    id.Replace("$(ProjectName)", project_name);
-                    id.Replace("$(ConfigurationName)", bldConf->GetName());
-
-                    output.Replace("$(IntermediateDirectory)", id);
-                    output.Replace("$(OutDir)", id);
-
-                    // Compiler-related variables
-
-                    wxString cFlags = bldConf->GetCCompileOptions();
-                    cFlags.Replace(";", " ");
-                    output.Replace("$(CC)", bldConf->GetCompiler()->GetTool("CC"));
-                    output.Replace("$(CFLAGS)", cFlags);
-
-                    wxString cxxFlags = bldConf->GetCompileOptions();
-                    cxxFlags.Replace(";", " ");
-                    output.Replace("$(CXX)", bldConf->GetCompiler()->GetTool("CXX"));
-                    output.Replace("$(CXXFLAGS)", cxxFlags);
-
-                    wxString ldFlags = bldConf->GetLinkOptions();
-                    ldFlags.Replace(";", " ");
-                    output.Replace("$(LDFLAGS)", ldFlags);
-
-                    wxString asFlags = bldConf->GetAssmeblerOptions();
-                    asFlags.Replace(";", " ");
-                    output.Replace("$(AS)", bldConf->GetCompiler()->GetTool("AS"));
-                    output.Replace("$(ASFLAGS)", asFlags);
-
-                    wxString resFlags = bldConf->GetResCompileOptions();
-                    resFlags.Replace(";", " ");
-                    output.Replace("$(RES)", bldConf->GetCompiler()->GetTool("ResourceCompiler"));
-                    output.Replace("$(RESFLAGS)", resFlags);
-
-                    output.Replace("$(AR)", bldConf->GetCompiler()->GetTool("AR"));
-
-                    output.Replace("$(MAKE)", bldConf->GetCompiler()->GetTool("MAKE"));
-
-                    output.Replace("$(IncludePath)", bldConf->GetIncludePath());
-                    output.Replace("$(LibraryPath)", bldConf->GetLibPath());
-                    output.Replace("$(ResourcePath)", bldConf->GetResCmpIncludePath());
-                    output.Replace("$(LinkLibraries)", bldConf->GetLibraries());
-                }
-
-                if (output.Find("$(ProjectFiles)") != wxNOT_FOUND) {
-                    output.Replace("$(ProjectFiles)", proj->GetFilesAsString(false));
-                }
-                if (output.Find("$(ProjectFilesAbs)") != wxNOT_FOUND) {
-                    output.Replace("$(ProjectFilesAbs)", proj->GetFilesAsString(true));
-                }
-            }
-        }
-
-        if (fileName.IsEmpty() == false) {
-            wxFileName fn(fileName);
-
-            output.Replace("$(CurrentFileName)", fn.GetName());
-
-            wxString fpath(fn.GetPath());
-            fpath.Replace("\\", "/");
-            output.Replace("$(CurrentFilePath)", fpath);
-            output.Replace("$(CurrentFileExt)", fn.GetExt());
-
-            wxString ffullpath(fn.GetFullPath());
-            ffullpath.Replace("\\", "/");
-            output.Replace("$(CurrentFileFullPath)", ffullpath);
-            output.Replace("$(CurrentFileFullName)", fn.GetFullName());
-        }
-
-        // exapnd common macros
-        wxDateTime now = wxDateTime::Now();
-        output.Replace("$(User)", wxGetUserId());
-        output.Replace("$(Date)", now.FormatDate());
-
-        if (workspace) {
-            output.Replace("$(CodeLitePath)", workspace->GetStartupDir());
-        }
-
-        // call the environment & workspace variables expand function
-        output = EnvironmentConfig::Instance()->ExpandVariables(output, true);
-    }
-    return output;
 }
 
 bool CompareFileWithString(const wxString& filePath, const wxString& str)

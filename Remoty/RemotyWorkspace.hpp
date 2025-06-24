@@ -85,6 +85,7 @@ protected:
 
     void OnSftpSaveError(clCommandEvent& event);
     void OnSftpSaveSuccess(clCommandEvent& event);
+    void OnFrameTitle(clCommandEvent& event);
 
     /// codelite-remote exec handlers
     void DoProcessBuildOutput(const wxString& output, bool is_completed);

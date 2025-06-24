@@ -132,6 +132,8 @@ void RemotyWorkspace::BindEvents()
 
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspace::OnSftpSaveSuccess, this);
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &RemotyWorkspace::OnSftpSaveError, this);
+    EventNotifier::Get()->Bind(wxEVT_CL_FRAME_TITLE, &RemotyWorkspace::OnFrameTitle, this);
+
     // codelite-remote events
 
     // finder
@@ -1290,6 +1292,17 @@ void RemotyWorkspace::OnSftpSaveError(clCommandEvent& event)
         ::wxMessageBox(_("Failed to save file: ") + event.GetFileName() + "\n" + event.GetString(),
                        "CodeLite (Remoty)",
                        wxICON_WARNING | wxOK | wxCENTRE);
+    }
+}
+
+void RemotyWorkspace::OnFrameTitle(clCommandEvent& event)
+{
+    event.Skip();
+    if (IsOpened()) {
+        wxString current_title = event.GetString();
+        wxString prefix;
+        prefix << wxT("[ 🖧 ") << GetAccount().GetAccountName() << " ] ";
+        event.SetString(prefix + current_title);
     }
 }
 

@@ -4211,7 +4211,7 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
     // notify the plugins
     clCommandEvent titleEvent(wxEVT_CL_FRAME_TITLE);
     titleEvent.SetString(title);
-    EventNotifier::Get()->AddPendingEvent(titleEvent);
+    EventNotifier::Get()->ProcessEvent(titleEvent);
 
     // Update the title
     SetTitle(titleEvent.GetString());
@@ -5981,7 +5981,6 @@ void clMainFrame::OnFindPrevious(wxCommandEvent& event)
     }
     find_bar->FindPrevious();
 }
-
 
 void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event)
 {

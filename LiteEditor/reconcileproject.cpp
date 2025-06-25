@@ -711,7 +711,7 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
             path.Prepend(tld);
         }
         // Now fix any symlinks in the path and add to the array
-        excludePaths.Add(CLRealPath(path));
+        excludePaths.Add(FileUtils::RealPath(path));
     }
 
     // While we're here, save the current data

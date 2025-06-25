@@ -266,9 +266,9 @@ public:
     static clEnvList_t CreateEnvironment(const wxString& envstr);
 
     /**
-     * @brief Check if the file 'name' is findable on the user's system
-     * @param name the name of the file to locate
-     * @param exepath will contain its filepath if successfully located
+     * @brief locate an executable on the system using the PATH environment variable
+     * @param name the exe name to locate (you can omit the .exe on Windows, it will be added automatically)
+     * @param exepath [output] will contain its filepath if successfully located
      * @param hint extra paths to search
      * @param list of suffixes. On Linux, some files may have number attached to them like: lldb-10, lldb-9
      * passing suffix_list = {"-10", "-9"...} will also check for these files (in order)
@@ -366,17 +366,5 @@ WXDLLIMPEXP_CL wxFileName wxReadLink(const wxFileName& filename);
  * @brief makes-absolute filepath, and dereferences it and any symlinked dirs in the path
  */
 WXDLLIMPEXP_CL wxString CLRealPath(const wxString& filepath);
-
-
-/**
- * @brief locate an executable on the system using the PATH environment variable
- * @param name the exe name to locate (you can omit the .exe on Windows, it will be added automatically)
- * @param exepath [output]
- * @param hint list of directories to search
- */
-WXDLLIMPEXP_CL bool clFindExecutable(const wxString& name,
-                                     wxFileName& exepath,
-                                     const wxArrayString& hint = {},
-                                     const wxArrayString& suffix_list = {});
 
 #endif // FILEUTILS_H

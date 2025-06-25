@@ -1121,12 +1121,3 @@ wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: i
 {
     return FileUtils::RealPath(filepath);
 }
-
-bool clFindExecutable(const wxString& name,
-                      wxFileName& exepath,
-                      const wxArrayString& hint,
-                      const wxArrayString& suffix_list)
-{
-    return FileUtils::FindExe(name, exepath, hint, suffix_list);
-}
-

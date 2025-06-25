@@ -22,8 +22,12 @@ clDockerSettings::clDockerSettings()
         }
     }
 #endif
-    if(!::clFindExecutable("docker", m_docker, hints)) { m_docker = "docker"; }
-    if(!::clFindExecutable("docker-compose", m_dockerCompose, hints)) { m_dockerCompose = "docker-compose"; }
+    if (!::FileUtils::FindExe("docker", m_docker, hints)) {
+        m_docker = "docker";
+    }
+    if (!::FileUtils::FindExe("docker-compose", m_dockerCompose, hints)) {
+        m_dockerCompose = "docker-compose";
+    }
 }
 
 clDockerSettings::~clDockerSettings() {}

@@ -1087,13 +1087,10 @@ bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
     return false;
 }
 
-
-bool wxIsFileSymlink(const wxFileName& filename) { return FileUtils::IsSymlink(filename); }
-
 wxFileName wxReadLink(const wxFileName& filename)
 {
 #ifndef __WXMSW__
-    if (wxIsFileSymlink(filename)) {
+    if (FileUtils::IsSymlink(filename)) {
 #if defined(__WXGTK__)
         // Use 'realpath' on Linux, otherwise this breaks on relative symlinks, and (untested) on symlinks-to-symlinks
         return wxFileName(FileUtils::RealPath(filename.GetFullPath(), true));

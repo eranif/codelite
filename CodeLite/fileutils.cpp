@@ -483,9 +483,13 @@ bool FileUtils::GetFilePermissions(const wxFileName& filename, mode_t& perm)
 
 time_t FileUtils::GetFileModificationTime(const wxFileName& filename)
 {
-    wxString file = filename.GetFullPath();
+    return GetFileModificationTime(filename.GetFullPath());
+}
+
+time_t FileUtils::GetFileModificationTime(const wxString& filename)
+{
     struct stat buff;
-    const wxCharBuffer cname = file.mb_str(wxConvUTF8);
+    const wxCharBuffer cname = filename.mb_str(wxConvUTF8);
     if (stat(cname.data(), &buff) < 0) {
         return 0;
     }
@@ -1038,18 +1042,6 @@ wxString NormalizePath(const wxString& path)
     normalized_path.Replace("\\", "/");
     while (normalized_path.Replace("//", "/")) {}
     return normalized_path;
-}
-
-time_t GetFileModificationTime(const wxFileName& filename) { return GetFileModificationTime(filename.GetFullPath()); }
-
-time_t GetFileModificationTime(const wxString& filename)
-{
-    struct stat buff;
-    const wxCharBuffer cname = _C(filename);
-    if (stat(cname.data(), &buff) < 0) {
-        return 0;
-    }
-    return buff.st_mtime;
 }
 
 // Make absolute first, including abolishing any symlinks (Normalise only does MSW shortcuts)

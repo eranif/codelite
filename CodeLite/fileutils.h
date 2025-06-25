@@ -213,6 +213,7 @@ public:
      * @brief return the file modification time
      */
     static time_t GetFileModificationTime(const wxFileName& filename);
+    static time_t GetFileModificationTime(const wxString& filename);
 
     /**
      * @brief return the file size, in bytes
@@ -337,12 +338,6 @@ WXDLLIMPEXP_CL bool IsFileReadOnly(const wxFileName& filename);
  * \brief Normalize the given path (change all \ by /)
  */
 WXDLLIMPEXP_CL wxString NormalizePath(const wxString& path);
-
-/**
- * \brief Returns the file modification time in seconds after the epoch.
- */
-WXDLLIMPEXP_CL time_t GetFileModificationTime(const wxString& filename);
-WXDLLIMPEXP_CL time_t GetFileModificationTime(const wxFileName& filename);
 
 /**
  * @brief make relative only if a subpath of reference_path (or is reference_path itself)

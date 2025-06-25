@@ -1810,7 +1810,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     file.Close();
 
     wxFileName symlinkedFile = fileName;
-    if (wxIsFileSymlink(fileName)) {
+    if (FileUtils::IsSymlink(fileName)) {
         symlinkedFile = wxReadLink(fileName);
     }
 

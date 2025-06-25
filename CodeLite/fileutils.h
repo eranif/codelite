@@ -353,11 +353,6 @@ WXDLLIMPEXP_CL time_t GetFileModificationTime(const wxFileName& filename);
 WXDLLIMPEXP_CL bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
 
 /**
- * @brief return true if filename is a symbolic link
- */
-WXDLLIMPEXP_CL bool wxIsFileSymlink(const wxFileName& filename);
-
-/**
  * @brief convert filename to the real path if filename is a symbolic link
  */
 WXDLLIMPEXP_CL wxFileName wxReadLink(const wxFileName& filename);

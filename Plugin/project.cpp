@@ -878,7 +878,7 @@ void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataM
     }
 }
 
-time_t Project::GetFileLastModifiedTime() const { return GetFileModificationTime(GetFileName()); }
+time_t Project::GetFileLastModifiedTime() const { return FileUtils::GetFileModificationTime(GetFileName()); }
 
 void Project::ConvertToUnixFormat(wxXmlNode* parent)
 {

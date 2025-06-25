@@ -595,7 +595,10 @@ clEditor::~clEditor()
     }
 }
 
-time_t clEditor::GetFileLastModifiedTime() const { return GetFileModificationTime(m_fileName.GetFullPath()); }
+time_t clEditor::GetFileLastModifiedTime() const
+{
+    return FileUtils::GetFileModificationTime(m_fileName);
+}
 
 void clEditor::SetSyntaxHighlight(const wxString& lexerName)
 {
@@ -1858,7 +1861,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     }
 
     // update the modification time of the file
-    m_modifyTime = GetFileModificationTime(symlinkedFile.GetFullPath());
+    m_modifyTime = FileUtils::GetFileModificationTime(symlinkedFile);
     SetSavePoint();
 
     // update the tab title (remove the star from the file name)

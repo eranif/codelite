@@ -207,7 +207,7 @@ bool Project::IsFileExist(const wxString& filePath, wxString& fileNameInProject)
     // This function copes with matching a real filePath with its symlinked project equivalent
     // It returns that project equivalent in fileNameInProject
     std::find_if(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
-        if (filePath == CLRealPath(vt.second->GetFilename())) {
+        if (filePath == FileUtils::RealPath(vt.second->GetFilename())) {
             fileNameInProject = vt.second->GetFilename();
             return true;
         }
@@ -1148,7 +1148,7 @@ void Project::SetReconciliationData(const wxString& toplevelDir, const wxString&
     for (size_t n = 0; n < excludePaths.GetCount(); ++n) {
         wxXmlNode* pathnode = new wxXmlNode(excludesnode, wxXML_ELEMENT_NODE, "Path");
         wxFileName fn = wxFileName::DirName(excludePaths.Item(n));
-        fn.MakeRelativeTo(CLRealPath(toplevelDir));
+        fn.MakeRelativeTo(FileUtils::RealPath(toplevelDir));
         XmlUtils::SetNodeContent(pathnode, fn.GetFullPath());
     }
 

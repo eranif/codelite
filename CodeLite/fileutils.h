@@ -362,9 +362,4 @@ WXDLLIMPEXP_CL bool wxIsFileSymlink(const wxFileName& filename);
  */
 WXDLLIMPEXP_CL wxFileName wxReadLink(const wxFileName& filename);
 
-/**
- * @brief makes-absolute filepath, and dereferences it and any symlinked dirs in the path
- */
-WXDLLIMPEXP_CL wxString CLRealPath(const wxString& filepath);
-
 #endif // FILEUTILS_H

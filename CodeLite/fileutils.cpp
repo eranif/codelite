@@ -1115,9 +1115,3 @@ wxFileName wxReadLink(const wxFileName& filename)
     return filename;
 #endif
 }
-
-wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: it also makes-absolute, and dereferences
-                                              // any symlinked dirs in the path
-{
-    return FileUtils::RealPath(filepath);
-}

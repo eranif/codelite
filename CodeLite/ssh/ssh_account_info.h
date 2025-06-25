@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SSHACCOUNTINFO_H
-#define SSHACCOUNTINFO_H
+#pragma once
 
 #include "cl_config.h" // Base class: clConfigItem
 #include "codelite_exports.h"
@@ -34,19 +33,9 @@
 
 class WXDLLIMPEXP_CL SSHAccountInfo : public clConfigItem
 {
-    wxString m_accountName;
-    wxString m_username;
-    wxString m_password;
-    int m_port = wxNOT_FOUND;
-    wxString m_host;
-    wxArrayString m_bookmarks;
-    wxString m_defaultFolder;
-    wxArrayString m_keyFiles;
-
 public:
-    typedef std::vector<SSHAccountInfo> Vect_t;
+    using Vect_t = std::vector<SSHAccountInfo>;
 
-public:
     SSHAccountInfo();
     virtual ~SSHAccountInfo();
     SSHAccountInfo& operator=(const SSHAccountInfo& other);
@@ -69,6 +58,7 @@ public:
     const wxString& GetDefaultFolder() const { return m_defaultFolder; }
     void AddKeyFile(const wxString& filepath);
     const wxArrayString& GetKeyFiles() const { return m_keyFiles; }
+    void ClearKeyFiles() { m_keyFiles.clear(); }
 
     /**
      * @brief read list of accounts from the JSON file
@@ -85,8 +75,16 @@ public:
      */
     static wxString GetSSHClient();
 
-public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
+
+private:
+    wxString m_accountName;
+    wxString m_username;
+    wxString m_password;
+    int m_port = wxNOT_FOUND;
+    wxString m_host;
+    wxArrayString m_bookmarks;
+    wxString m_defaultFolder;
+    wxArrayString m_keyFiles;
 };
-#endif // SSHACCOUNTINFO_H

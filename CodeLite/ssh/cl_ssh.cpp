@@ -79,7 +79,7 @@ clSSH::~clSSH() { Close(); }
 void clSSH::Open(int seconds)
 {
     // Start ssh-agent before we attempt to connect
-    m_sshAgent.reset(new clSSHAgent(m_keyFiles));
+    // m_sshAgent.reset(new clSSHAgent(m_keyFiles));
 
     m_session = ssh_new();
     if (!m_session) {
@@ -122,7 +122,8 @@ void clSSH::Open(int seconds)
     }
 
     if (::wxGetEnv("SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES", &ssh_options_publickey_accepted_types)) {
-        ssh_options_set(m_session, SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES,
+        ssh_options_set(m_session,
+                        SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES,
                         ssh_options_publickey_accepted_types.mb_str(wxConvUTF8).data());
     }
 
@@ -317,6 +318,28 @@ bool clSSH::LoginInteractiveKBD(bool throwExc)
     return false;
 }
 
+namespace
+{
+const char* SshAuthReturnCodeToString(int rc)
+{
+    switch (rc) {
+    case SSH_AUTH_SUCCESS:
+        return "SSH_AUTH_SUCCESS";
+    case SSH_AUTH_DENIED:
+        return "SSH_AUTH_DENIED";
+    case SSH_AUTH_PARTIAL:
+        return "SSH_AUTH_PARTIAL";
+    case SSH_AUTH_INFO:
+        return "SSH_AUTH_PARTIAL";
+    case SSH_AUTH_AGAIN:
+        return "SSH_AUTH_AGAIN";
+    case SSH_AUTH_ERROR:
+        return "SSH_AUTH_ERROR";
+    }
+    return "";
+}
+} // namespace
+
 bool clSSH::LoginPublicKey(bool throwExc)
 {
     if (!m_session) {
@@ -324,11 +347,35 @@ bool clSSH::LoginPublicKey(bool throwExc)
     }
 
     int rc;
-    rc = ssh_userauth_publickey_auto(m_session, nullptr, nullptr);
-    if (rc != SSH_AUTH_SUCCESS) {
-        THROW_OR_FALSE(wxString() << _("Public Key error: ") << ssh_get_error(m_session));
+    if (m_keyFiles.empty()) {
+        rc = ssh_userauth_publickey_auto(m_session, nullptr, nullptr);
+        if (rc != SSH_AUTH_SUCCESS) {
+            THROW_OR_FALSE(wxString() << _("Public Key error: ") << SshAuthReturnCodeToString(rc));
+        }
+        return true;
+    } else {
+        // Try the user provided keys
+        for (const auto& keypath : m_keyFiles) {
+            std::string file = StringUtils::ToStdString(keypath);
+            clDEBUG() << "Trying to login with user key:" << keypath << endl;
+            ssh_key sshkey;
+            if (ssh_pki_import_privkey_file(file.c_str(), nullptr, nullptr, nullptr, &sshkey) != SSH_OK) {
+                clERROR() << "Could not import private key:" << keypath << endl;
+                continue;
+            }
+            clDEBUG() << "Successfully created key from file:" << keypath << endl;
+            rc = ssh_userauth_publickey(m_session, nullptr, sshkey);
+            if (rc != SSH_AUTH_SUCCESS) {
+                clERROR() << "Could not login with user provided key:" << keypath << "."
+                          << SshAuthReturnCodeToString(rc) << endl;
+                continue;
+            }
+            clDEBUG() << "Successfully logged in using key:" << keypath << endl;
+            ssh_key_free(sshkey);
+            return true;
+        }
+        return false;
     }
-    return true;
 }
 
 void clSSH::Close()
@@ -357,29 +404,28 @@ void clSSH::Login()
     int rc;
 
     std::string username = StringUtils::ToStdString(GetUsername());
-    ssh_options_set(m_session, SSH_OPTIONS_USER, username.c_str());
+    if (!username.empty()) {
+        ssh_options_set(m_session, SSH_OPTIONS_USER, username.c_str());
+    }
 
     // Try all the known methods
     std::vector<decltype(&clSSH::LoginPublicKey)> methods;
     methods.reserve(4);
 
+    // The order matters here
     methods.push_back(&clSSH::LoginPublicKey);
     methods.push_back(&clSSH::LoginPassword);
     methods.push_back(&clSSH::LoginInteractiveKBD);
     methods.push_back(&clSSH::LoginAuthNone);
 
     // set the connection to non blocking
-    ssh_set_blocking(m_session, 0);
+    ssh_set_blocking(m_session, 1);
 
     bool authenticated = false;
     for (auto func : methods) {
-        // authenticate with timeout
         auto login_method = [this, func]() -> bool {
-            for (size_t i = 0; i < 10; ++i) {
-                if ((this->*func)(false)) {
-                    return true;
-                }
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            if ((this->*func)(false)) {
+                return true;
             }
             return false;
         };

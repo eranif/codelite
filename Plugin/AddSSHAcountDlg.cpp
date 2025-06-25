@@ -78,6 +78,7 @@ void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
     info.SetAccountName(m_textCtrlName->GetValue());
     info.SetDefaultFolder(m_textCtrlHomeFolder->GetValue());
 
+    info.ClearKeyFiles();
     wxArrayString files = ::wxStringTokenize(m_additionalFiles->GetText(), "\n", wxTOKEN_STRTOK);
     for (auto& file : files) {
         file.Trim().Trim(false);
@@ -92,8 +93,8 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
 {
     SSHAccountInfo account;
     GetAccountInfo(account);
-    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFiles(),
-                               account.GetPort()));
+    clSSH::Ptr_t ssh(new clSSH(
+        account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFiles(), account.GetPort()));
 
     try {
         wxString message;

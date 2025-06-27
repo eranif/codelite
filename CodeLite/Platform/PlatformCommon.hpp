@@ -3,6 +3,7 @@
 
 #include "codelite_exports.h"
 
+#include <optional>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/string.h>
@@ -26,61 +27,51 @@ public:
      * @brief some vendors deliver binaries with "-N" where N is the version number
      * this method attempts to search for command-<N>...command (in this order)
      */
-    bool WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath);
+    std::optional<wxString> WhichWithVersion(const wxString& command, const std::vector<int>& versions);
 
     /**
      * @brief locate rustup bin folder (on platforms that this is available)
      */
-    bool FindRustupToolchainBinDir(wxString* rustup_bin_dir);
+    std::optional<wxString> FindRustupToolchainBinDir();
 
     /// override this in the platform specific code
-    virtual bool Which(const wxString& command, wxString* command_fullpath)
+    virtual std::optional<wxString> Which(const wxString& command)
     {
         wxUnusedVar(command);
-        wxUnusedVar(command_fullpath);
-        return false;
+        return std::nullopt;
     }
 
-    /// Find the firs command in the array and return its full path
+    /// Find the first command in the array and return its full path
     /// we stop on the first match
-    bool AnyWhich(const wxArrayString& commands, wxString* command_fullpath)
+    std::optional<wxString> AnyWhich(const wxArrayString& commands)
     {
-        for(const auto& cmd : commands) {
-            if(Which(cmd, command_fullpath)) {
-                return true;
+        for (const auto& cmd : commands) {
+            if (const auto command_fullpath = Which(cmd)) {
+                return command_fullpath;
             }
         }
-        return false;
+        return std::nullopt;
     }
 
     /// override this in the platform specific code
-    /// on macOS, application are usually placed under /Application
-    /// are are opened with the `open` command
-    virtual bool MacFindApp(const wxString& appname, wxString* command_fullpath, bool new_instance = true)
+    /// on macOS, applications are usually placed under /Application
+    /// and are opened with the `open` command
+    virtual std::optional<wxString> MacFindApp(const wxString& appname, bool new_instance = true)
     {
         wxUnusedVar(appname);
-        wxUnusedVar(command_fullpath);
         wxUnusedVar(new_instance);
-        return false;
+        return std::nullopt;
     }
 
     /**
      * @brief locate msys2 installation folder (e.g. C:/msys2)
      */
-    virtual bool FindInstallDir(wxString* msyspath)
-    {
-        wxUnusedVar(msyspath);
-        return false;
-    }
+    virtual std::optional<wxString> FindInstallDir() { return std::nullopt; }
 
     /**
      * @brief locate the home folder within msys2 (e.g. C:/msys2/home/eran)
      */
-    virtual bool FindHomeDir(wxString* homedir)
-    {
-        wxUnusedVar(homedir);
-        return false;
-    }
+    virtual std::optional<wxString> FindHomeDir() { return std::nullopt; }
 
     /**
      * @brief set the chroot folder (on linux, this method is a placeholder)
@@ -90,6 +81,6 @@ public:
     /**
      * @brief return environment variable value
      */
-    virtual bool GetPath(wxString* value, bool useSystemPath = true);
+    virtual std::optional<wxString> GetPath(bool useSystemPath = true);
 };
 #endif // PLAFORM_COMMON_HPP

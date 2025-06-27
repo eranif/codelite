@@ -7,9 +7,9 @@
 class WXDLLIMPEXP_CL MSYS2 : public PlatformCommon
 {
     bool m_checked_for_install_dir = false;
-    wxString m_install_dir;
+    std::optional<wxString> m_install_dir;
     bool m_checked_for_home_dir = false;
-    wxString m_home_dir;
+    std::optional<wxString> m_home_dir;
     wxArrayString m_chroots;
 
 public:
@@ -22,16 +22,16 @@ public:
     /**
      * @brief locate msys2 installation folder (e.g. C:/msys2)
      */
-    bool FindInstallDir(wxString* msyspath) override;
+    std::optional<wxString> FindInstallDir() override;
     /**
      * @brief locate the home folder within msys2 (e.g. C:/msys2/home/eran)
      */
-    bool FindHomeDir(wxString* homedir) override;
+    std::optional<wxString> FindHomeDir() override;
 
     /**
      * @brief check if a command "command" is installed and return its fullpath
      */
-    bool Which(const wxString& command, wxString* command_fullpath) override;
+    std::optional<wxString> Which(const wxString& command) override;
 
     /**
      * @brief set the chroot folder
@@ -42,12 +42,12 @@ public:
      * @brief some vendors deliver binaries with "-N" where N is the version number
      * this method attempts to search for command-<N>...command (in this order)
      */
-    bool WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath);
+    std::optional<wxString> WhichWithVersion(const wxString& command, const std::vector<int>& versions);
 
     /**
      * @brief return environment variable value
      */
-    bool GetPath(wxString* value, bool useSystemPath = true) override;
+    std::optional<wxString> GetPath(bool useSystemPath = true) override;
 };
 
 #endif // MSYS2_HPP

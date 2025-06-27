@@ -37,55 +37,45 @@ bool macos_find_homebrew_opt_formula_dir(const wxString& formula, wxString* inst
 /// Locate rustup bin folder
 /// the path is set to:
 /// $HOME/.rustup/toolchains/TOOLCHAIN-NAME/bin
-bool LINUX::get_rustup_bin_folder(wxString* rustup_bin_dir)
+std::optional<wxString> LINUX::get_rustup_bin_folder()
 {
-    if (rust_toolchain_scanned) {
-        *rustup_bin_dir = RUST_TOOLCHAIN_BIN;
-        return !RUST_TOOLCHAIN_BIN.empty();
+    if (!rust_toolchain_scanned) {
+        RUST_TOOLCHAIN_BIN = FindRustupToolchainBinDir();
+        rust_toolchain_scanned = true;
     }
-
-    FindRustupToolchainBinDir(&RUST_TOOLCHAIN_BIN);
-    rust_toolchain_scanned = true;
-
-    // call this method again, this time rust_toolchain_scanned is set to true
-    return get_rustup_bin_folder(rustup_bin_dir);
+    return RUST_TOOLCHAIN_BIN;
 }
 
-bool LINUX::FindInstallDir(wxString* installpath)
+std::optional<wxString> LINUX::FindInstallDir()
 {
-    *installpath = "/";
-    return true;
+    return "/";
 }
 
-bool LINUX::FindHomeDir(wxString* homedir)
+std::optional<wxString> LINUX::FindHomeDir()
 {
 #ifdef __WXMAC__
-    *homedir << "/Users/" << ::wxGetUserId();
+    return wxString() << "/Users/" << ::wxGetUserId();
 #else
-    *homedir << "/home/" << ::wxGetUserId();
+    return wxString() << "/home/" << ::wxGetUserId();
 #endif
-    return true;
 }
 
-bool LINUX::Which(const wxString& command, wxString* command_fullpath)
+std::optional<wxString> LINUX::Which(const wxString& command)
 {
-    wxString pathenv;
-    GetPath(&pathenv, m_flags & SEARCH_PATH_ENV);
+    const wxString pathenv = GetPath(m_flags & SEARCH_PATH_ENV).value_or("");
     wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
     for (auto path : paths) {
         path << "/" << command;
         if (wxFileName::FileExists(path)) {
-            *command_fullpath = path;
-            return true;
+            return path;
         }
     }
-    return false;
+    return std::nullopt;
 }
 
-bool LINUX::GetPath(wxString* value, bool useSystemPath)
+std::optional<wxString> LINUX::GetPath(bool useSystemPath)
 {
-    wxString HOME;
-    FindHomeDir(&HOME);
+    const auto HOME = FindHomeDir();
 
     wxArrayString special_paths;
 
@@ -96,7 +86,7 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
 
 #if defined(__WXGTK__) || defined(__WXMAC__)
     // both macOS and Linux are using this path
-    special_paths.Add(wxString() << HOME << "/.local/bin");
+    special_paths.Add(wxString() << HOME.value_or("") << "/.local/bin");
 #if defined(__WXGTK__)
     // linux also supports homebrew
     if (wxFileName::DirExists("/home/linuxbrew/.linuxbrew/bin")) {
@@ -106,12 +96,11 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
 #endif
 
     // cargo
-    special_paths.Add(wxString() << HOME << "/.cargo/bin");
+    special_paths.Add(wxString() << HOME.value_or("") << "/.cargo/bin");
 
     // rustup
-    wxString rustup_bin_folder;
-    if (get_rustup_bin_folder(&rustup_bin_folder)) {
-        special_paths.Add(rustup_bin_folder);
+    if (const auto rustup_bin_folder = get_rustup_bin_folder()) {
+        special_paths.Add(*rustup_bin_folder);
     }
 
     // /usr/local/bin is not always in the PATH, so add it
@@ -150,13 +139,12 @@ bool LINUX::GetPath(wxString* value, bool useSystemPath)
     }
 
     paths.swap(unique_paths);
-    *value = wxJoin(paths, ':');
-    return true;
+    return wxJoin(paths, ':');
 }
 
-bool LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions, wxString* command_fullpath)
+std::optional<wxString> LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions)
 {
-    return PlatformCommon::WhichWithVersion(command, versions, command_fullpath);
+    return PlatformCommon::WhichWithVersion(command, versions);
 }
 
 namespace
@@ -165,7 +153,7 @@ thread_local LINUX instance;
 }
 LINUX* LINUX::Get() { return &instance; }
 
-bool LINUX::MacFindApp(const wxString& appname, wxString* command_fullpath, bool new_instance)
+std::optional<wxString> LINUX::MacFindApp(const wxString& appname, bool new_instance)
 {
 #ifdef __WXMAC__
     wxFileName path{ "/Applications", wxEmptyString };
@@ -173,13 +161,14 @@ bool LINUX::MacFindApp(const wxString& appname, wxString* command_fullpath, bool
 
     // search for app name
     if (path.DirExists()) {
-        (*command_fullpath) << "/usr/bin/open ";
+        wxString command_fullpath;
+        command_fullpath << "/usr/bin/open ";
         if (new_instance) {
-            (*command_fullpath) << "-n ";
+            command_fullpath << "-n ";
         }
-        (*command_fullpath) << StringUtils::WrapWithDoubleQuotes(path.GetPath());
-        return true;
+        command_fullpath << StringUtils::WrapWithDoubleQuotes(path.GetPath());
+        return command_fullpath;
     }
 #endif
-    return false;
+    return std::nullopt;
 }

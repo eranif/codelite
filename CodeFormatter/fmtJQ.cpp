@@ -14,10 +14,9 @@ fmtJQ::fmtJQ()
     SetDescription(_("commandline JSON processor"));
     SetShortDescription(_("jq - a json formatter"));
 
-    wxString jq_exe = "jq";
-    bool enabeld = ThePlatform->Which("jq", &jq_exe);
-    SetCommand({ jq_exe, ".", "-S", R"#("$(CurrentFileRelPath)")#" });
-    SetEnabled(enabeld);
+    const auto jq_exe = ThePlatform->Which("jq");
+    SetCommand({ jq_exe.value_or("jq"), ".", "-S", R"#("$(CurrentFileRelPath)")#" });
+    SetEnabled(jq_exe.has_value());
 }
 
 fmtJQ::~fmtJQ() {}

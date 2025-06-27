@@ -6,8 +6,7 @@
 #include <algorithm>
 #include <wx/arrstr.h>
 
-bool PlatformCommon::WhichWithVersion(const wxString& command, const std::vector<int>& versions,
-                                      wxString* command_fullpath)
+std::optional<wxString> PlatformCommon::WhichWithVersion(const wxString& command, const std::vector<int>& versions)
 {
     std::vector<int> sorted_versions = versions;
 
@@ -22,29 +21,28 @@ bool PlatformCommon::WhichWithVersion(const wxString& command, const std::vector
     for(auto ver : sorted_versions) {
         names.Add(wxString() << command << "-" << ver);
     }
-    for(const wxString& name : names) {
-        if(Which(name, command_fullpath)) {
-            return true;
+    for (const wxString& name : names) {
+        if (const auto command_fullpath = Which(name)) {
+            return command_fullpath;
         }
     }
-    return false;
+    return std::nullopt;
 }
 
 /// Locate rustup bin folder
 /// the path is set to:
 /// $HOME/.rustup/TOOLCHAIN-NAME/bin
-bool PlatformCommon::FindRustupToolchainBinDir(wxString* rustup_bin_dir)
+std::optional<wxString> PlatformCommon::FindRustupToolchainBinDir()
 {
 #ifdef __WXMSW__
-    return false;
+    return std::nullopt;
 #else
-    wxString homedir;
-    FindHomeDir(&homedir);
+    const auto homedir = FindHomeDir();
 
     wxString rustup_exe;
-    rustup_exe << homedir << "/.cargo/bin/rustup";
-    if(!wxFileName::FileExists(rustup_exe)) {
-        return false;
+    rustup_exe << homedir.value_or("") << "/.cargo/bin/rustup";
+    if (!wxFileName::FileExists(rustup_exe)) {
+        return std::nullopt;
     }
 
     // locate the default toolchain
@@ -52,18 +50,22 @@ bool PlatformCommon::FindRustupToolchainBinDir(wxString* rustup_bin_dir)
     toolchain_name = toolchain_name.BeforeLast('(');
     toolchain_name.Trim().Trim(false);
     if(toolchain_name.empty()) {
-        return false;
+        return std::nullopt;
     }
 
     // build the path
-    *rustup_bin_dir << homedir << "/.rustup/toolchains/" << toolchain_name << "/bin";
-    clDEBUG() << "Rust toolchain path:" << *rustup_bin_dir << endl;
-    return true;
+    wxString rustup_bin_dir;
+    rustup_bin_dir << *homedir << "/.rustup/toolchains/" << toolchain_name << "/bin";
+    clDEBUG() << "Rust toolchain path:" << rustup_bin_dir << endl;
+    return rustup_bin_dir;
 #endif
 }
 
-bool PlatformCommon::GetPath(wxString* value, bool useSystemPath)
+std::optional<wxString> PlatformCommon::GetPath(bool useSystemPath)
 {
     wxUnusedVar(useSystemPath);
-    return ::wxGetEnv("PATH", value);
+    wxString value;
+    if (::wxGetEnv("PATH", &value))
+        return value;
+    return std::nullopt;
 }

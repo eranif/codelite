@@ -12,13 +12,13 @@ LSPGoplsDetector::~LSPGoplsDetector() {}
 
 bool LSPGoplsDetector::DoLocate()
 {
-    wxString path;
-    if (!ThePlatform->Which("gopls", &path)) {
+    const auto path = ThePlatform->Which("gopls");
+    if (!path) {
         return false;
     }
 
-    LSP_DEBUG() << "Found gopls ==>" << path << endl;
-    ConfigureFile(path);
+    LSP_DEBUG() << "Found gopls ==>" << *path << endl;
+    ConfigureFile(*path);
     return true;
 }
 void LSPGoplsDetector::ConfigureFile(const wxFileName& gopls)

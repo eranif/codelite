@@ -2,12 +2,9 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "Platform/Platform.hpp"
-#include "file_logger.h"
+#include "StdToWX.h"
 #include "globals.h"
 #include "procutils.h"
-
-#include <cstdlib>
-#include <wx/filename.h>
 
 LSPPythonDetector::LSPPythonDetector()
     : LSPDetector("python")
@@ -18,10 +15,9 @@ LSPPythonDetector::~LSPPythonDetector() {}
 
 bool LSPPythonDetector::DoLocate()
 {
-    wxString python;
-
     // locate python3
-    if (!ThePlatform->Which("python", &python) && !ThePlatform->Which("python3", &python)) {
+    auto python = ThePlatform->AnyWhich(StdToWX::ToArrayString({ "python", "python3" }));
+    if (!python) {
         return false;
     }
 
@@ -29,16 +25,15 @@ bool LSPPythonDetector::DoLocate()
     // On macOS it is common to install pylsp using brew
     // which will not be shown via the `pip list` command
     // so try it first
-    wxString pylsp;
-    if (ThePlatform->Which("pylsp", &pylsp)) {
-        ::WrapWithQuotes(pylsp);
-        ConfigurePylsp(pylsp);
+    if (auto pylsp = ThePlatform->Which("pylsp")) {
+        ::WrapWithQuotes(*pylsp);
+        ConfigurePylsp(*pylsp);
         return true;
     }
 #endif
 
     // Check if python-language-server is installed
-    wxString output = ProcUtils::GrepCommandOutput({ python, "-m", "pip", "list" }, "python-lsp-server");
+    wxString output = ProcUtils::GrepCommandOutput({ *python, "-m", "pip", "list" }, "python-lsp-server");
     if (output.empty()) {
         // Not installed
         return false;
@@ -46,9 +41,9 @@ bool LSPPythonDetector::DoLocate()
 
     // We have it installed
     wxString command;
-    ::WrapWithQuotes(python);
+    ::WrapWithQuotes(*python);
 
-    command << python << " -m pylsp";
+    command << *python << " -m pylsp";
     ConfigurePylsp(command);
     return true;
 }

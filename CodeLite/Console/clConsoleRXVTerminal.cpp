@@ -5,12 +5,11 @@
 
 clConsoleRXVTTerminal::clConsoleRXVTTerminal()
 {
-    wxString executable = "rxvt-unicode";
     const wxArrayString commands = StdToWX::ToArrayString({"rxvt-unicode", "urxvt", "rxvt"});
-    ThePlatform->AnyWhich(commands, &executable);
+    const auto executable = ThePlatform->AnyWhich(commands);
 
-    SetTerminalCommand(executable + " -cd %WD% -e /bin/bash -c '%COMMAND%'");
-    SetEmptyTerminalCommand(executable + " -cd %WD%");
+    SetTerminalCommand(executable.value_or("rxvt-unicode") + " -cd %WD% -e /bin/bash -c '%COMMAND%'");
+    SetEmptyTerminalCommand(executable.value_or("rxvt-unicode") + " -cd %WD%");
 }
 
 clConsoleRXVTTerminal::~clConsoleRXVTTerminal() {}

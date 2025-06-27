@@ -81,12 +81,12 @@ bool CompilerLocatorMSYS2::Locate()
     m_compilers.clear();
 
     // try some defaults
-    wxString gcc_exe;
-    if (!m_msys2.Which("gcc", &gcc_exe)) {
+    const auto gcc_exe = m_msys2.Which("gcc");
+    if (!gcc_exe) {
         return false;
     }
 
-    auto compiler = Locate(wxFileName(gcc_exe).GetPath());
+    auto compiler = Locate(wxFileName(*gcc_exe).GetPath());
     if (compiler) {
         m_compilers.push_back(compiler);
     }

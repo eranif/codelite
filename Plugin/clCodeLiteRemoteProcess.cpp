@@ -177,13 +177,13 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
     }
 
     // wrap the command in ssh
-    wxString ssh_exe;
+    const auto ssh_exe = ThePlatform->Which("ssh");
     EnvSetter setter;
-    if (!ThePlatform->Which("ssh", &ssh_exe)) {
+    if (!ssh_exe) {
         clERROR() << "Could not locate ssh executable in your PATH!" << endl;
         return;
     }
-    std::vector<wxString> command = { ssh_exe, "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
+    std::vector<wxString> command = { *ssh_exe, "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
 
     // If this account has custom key files, use it instead
     if (!m_account.GetKeyFiles().empty()) {

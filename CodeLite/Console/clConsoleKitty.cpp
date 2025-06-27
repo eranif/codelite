@@ -6,9 +6,9 @@ clConsoleKitty::clConsoleKitty()
 {
 #ifdef __WXMAC__
     // open /Applications/Kitty.app
-    ThePlatform->MacFindApp("Kitty", &m_terminal);
+    m_terminal = ThePlatform->MacFindApp("Kitty").value_or("");
 #else
-    ThePlatform->Which("kitty", &m_terminal);
+    m_terminal = ThePlatform->Which("kitty").value_or("");
 #endif
 }
 

@@ -159,13 +159,11 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
     basename = "gcc";
 #endif
 
-    wxString command;
-
     // Common compiler paths - should be placed at top of the include path!
-    if (ThePlatform->Which(basename, &command)) {
+    if (const auto command = ThePlatform->Which(basename)) {
         GCCMetadata md{ basename };
 
-        md.Load(command, wxEmptyString, false);
+        md.Load(*command, wxEmptyString, false);
         m_search_path.insert(m_search_path.end(), md.GetSearchPaths().begin(), md.GetSearchPaths().end());
     }
 }

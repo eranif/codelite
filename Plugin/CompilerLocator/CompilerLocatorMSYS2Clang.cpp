@@ -43,12 +43,12 @@ bool CompilerLocatorMSYS2Clang::Locate()
     m_compilers.clear();
 
     // try some defaults
-    wxString clang_exe;
-    if (!m_msys2.Which("clang", &clang_exe)) {
+    const auto clang_exe = m_msys2.Which("clang");
+    if (!clang_exe) {
         return false;
     }
 
-    auto compiler = Locate(wxFileName(clang_exe).GetPath());
+    auto compiler = Locate(wxFileName(*clang_exe).GetPath());
     if (compiler) {
         m_compilers.push_back(compiler);
     }

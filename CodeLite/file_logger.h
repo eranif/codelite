@@ -42,26 +42,14 @@
 class FileLogger;
 typedef FileLogger& (*FileLoggerFunction)(FileLogger&);
 
-class WXDLLIMPEXP_CL FileLogger
+class WXDLLIMPEXP_CL FileLogger final
 {
 public:
     enum { System = -1, Error = 0, Warning = 1, Dbg = 2, Developer = 3 };
 
-protected:
-    static int m_globalLogVerbosity;
-    static wxString m_logfile;
-    int m_logEntryVerbosity;
-    FILE* m_fp = nullptr;
-    wxString m_buffer;
-    static std::unordered_map<wxThreadIdType, wxString> m_threads;
-    static wxCriticalSection m_cs;
-
-protected:
-    static wxString GetCurrentThreadName();
-
 public:
     // construct a file logger entry with a given verbosity
-    FileLogger(int verbosity);
+    FileLogger(int verbosity, const char* filename = nullptr, int line_number = wxNOT_FOUND);
     ~FileLogger();
 
     FileLogger& SetLogEntryVerbosity(int verbosity)
@@ -283,6 +271,20 @@ public:
      * @brief flush the logger content
      */
     void Flush();
+
+protected:
+    static wxString GetCurrentThreadName();
+
+    static int m_globalLogVerbosity;
+    static wxString m_logfile;
+    int m_logEntryVerbosity;
+    FILE* m_fp = nullptr;
+    wxString m_buffer;
+    static std::unordered_map<wxThreadIdType, wxString> m_threads;
+    static wxCriticalSection m_cs;
+
+    int m_lineNumber = wxNOT_FOUND;
+    wxString m_fileName;
 };
 
 inline FileLogger& clEndl(FileLogger& d)
@@ -307,14 +309,25 @@ FileLogger& operator<<(FileLogger& logger, const T& obj)
     return logger;
 }
 
+namespace
+{
+inline wxString GetLocation(const char* filename, int line)
+{
+    wxFileName fn{ filename };
+    return wxString() << "[" << fn.GetFullName() << ":" << line << "]";
+}
+} // namespace
+
+#define LOCATION() GetLocation(__FILE__, __LINE__)
+
 // New API
-#define clDEBUG() FileLogger(FileLogger::Dbg) << FileLogger::Prefix(FileLogger::Dbg)
-#define clDEBUG1() FileLogger(FileLogger::Developer) << FileLogger::Prefix(FileLogger::Developer)
+#define clDEBUG() FileLogger(FileLogger::Dbg) << FileLogger::Prefix(FileLogger::Dbg) << LOCATION()
+#define clDEBUG1() FileLogger(FileLogger::Developer) << FileLogger::Prefix(FileLogger::Developer) << LOCATION()
 #define clTRACE() clDEBUG1()
 
-#define clERROR() FileLogger(FileLogger::Error) << FileLogger::Prefix(FileLogger::Error)
-#define clWARNING() FileLogger(FileLogger::Warning) << FileLogger::Prefix(FileLogger::Warning)
-#define clSYSTEM() FileLogger(FileLogger::System) << FileLogger::Prefix(FileLogger::System)
+#define clERROR() FileLogger(FileLogger::Error) << FileLogger::Prefix(FileLogger::Error) << LOCATION()
+#define clWARNING() FileLogger(FileLogger::Warning) << FileLogger::Prefix(FileLogger::Warning) << LOCATION()
+#define clSYSTEM() FileLogger(FileLogger::System) << FileLogger::Prefix(FileLogger::System) << LOCATION()
 
 #define LOG_IF_DEBUG if (FileLogger::CanLog(FileLogger::Dbg))
 #define LOG_IF_TRACE if (FileLogger::CanLog(FileLogger::Developer))

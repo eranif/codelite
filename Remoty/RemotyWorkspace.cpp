@@ -1295,13 +1295,22 @@ void RemotyWorkspace::OnSftpSaveError(clCommandEvent& event)
     }
 }
 
+namespace
+{
+#ifdef __WXMSW__
+const wxString NETWORK_SYMBOL = wxT("🖧 ");
+#else
+const wxString NETWORK_SYMBOL = wxT("🖥 ");
+#endif
+} // namespace
+
 void RemotyWorkspace::OnFrameTitle(clCommandEvent& event)
 {
     event.Skip();
     if (IsOpened()) {
         wxString current_title = event.GetString();
         wxString new_title;
-        new_title << current_title << wxT(" (🖥 ") << GetAccount().GetAccountName() << ")";
+        new_title << current_title << " (" << NETWORK_SYMBOL << GetAccount().GetAccountName() << ")";
         event.SetString(new_title);
     }
 }

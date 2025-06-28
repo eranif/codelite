@@ -44,7 +44,7 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
     }
 
     wxFileName ssh;
-    if(!clFindExecutable("ssh", ssh)) {
+    if (!FileUtils::FindExe("ssh", ssh)) {
         wxMessageBox(_("Could not locate ssh executable"), "CodeLite", wxICON_WARNING | wxOK);
         return;
     }

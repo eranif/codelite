@@ -25,18 +25,14 @@
 #include "custombuildrequest.h"
 
 #include "AsyncProcess/asyncprocess.h"
-#include "build_settings_config.h"
-#include "buildmanager.h"
 #include "cl_command_event.h"
-#include "compiler.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "globals.h"
 #include "imanager.h"
+#include "macromanager.h"
 #include "macros.h"
-#include "plugin.h"
 #include "workspace.h"
 
 #include <wx/app.h>

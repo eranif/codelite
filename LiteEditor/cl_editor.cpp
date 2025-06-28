@@ -550,7 +550,7 @@ clEditor::~clEditor()
     // Report file-close event
     if (GetFileName().IsOk() && GetFileName().FileExists()) {
         clCommandEvent eventClose(wxEVT_FILE_CLOSED);
-        eventClose.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+        eventClose.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
         EventNotifier::Get()->AddPendingEvent(eventClose);
     }
     wxDELETE(m_richTooltip);
@@ -584,7 +584,10 @@ clEditor::~clEditor()
     }
 }
 
-time_t clEditor::GetFileLastModifiedTime() const { return GetFileModificationTime(m_fileName.GetFullPath()); }
+time_t clEditor::GetFileLastModifiedTime() const
+{
+    return FileUtils::GetFileModificationTime(m_fileName);
+}
 
 void clEditor::SetSyntaxHighlight(const wxString& lexerName)
 {
@@ -1468,7 +1471,7 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     if (curLine != lastLine) {
         clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
         evtUpdateNavBar.SetLineNumber(curLine);
-        evtUpdateNavBar.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+        evtUpdateNavBar.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
         EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
     }
 
@@ -1793,8 +1796,8 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     file.Close();
 
     wxFileName symlinkedFile = fileName;
-    if (wxIsFileSymlink(fileName)) {
-        symlinkedFile = wxReadLink(fileName);
+    if (FileUtils::IsSymlink(fileName)) {
+        symlinkedFile = FileUtils::wxReadLink(fileName);
     }
 
     // keep the original file permissions
@@ -1841,7 +1844,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     }
 
     // update the modification time of the file
-    m_modifyTime = GetFileModificationTime(symlinkedFile.GetFullPath());
+    m_modifyTime = FileUtils::GetFileModificationTime(symlinkedFile);
     SetSavePoint();
 
     // update the tab title (remove the star from the file name)
@@ -1901,7 +1904,7 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
     if (AutoCompActive())
         return; // Don't clobber the boxes
 
-    wxString fullpath = CLRealPath(GetFileName().GetFullPath());
+    wxString fullpath = FileUtils::RealPath(GetFileName().GetFullPath());
 
     if (triggerKind == LSP::CompletionItem::kTriggerUser) {
         // user hit Ctrl-SPACE
@@ -1960,7 +1963,7 @@ void clEditor::CodeComplete()
     evt.SetPosition(GetCurrentPosition());
     evt.SetTriggerKind(LSP::CompletionItem::kTriggerKindInvoked);
     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-    evt.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+    evt.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
     EventNotifier::Get()->AddPendingEvent(evt);
 }
 
@@ -1972,7 +1975,7 @@ void clEditor::GotoDefinition()
     event.SetWord(word);
     event.SetPosition(GetCurrentPosition());
     event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-    event.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+    event.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
     EventNotifier::Get()->ProcessEvent(event);
 }
 
@@ -2008,7 +2011,7 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         int position = PositionFromPoint(wxPoint(event.GetX(), event.GetY()));
         int line = LineFromPosition(position);
         wxString tooltip, title;
-        wxString fname = CLRealPath(GetFileName().GetFullPath());
+        wxString fname = FileUtils::RealPath(GetFileName().GetFullPath());
 
         if (MarkerGet(line) & mmt_all_breakpoints) {
             ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line + 1, tooltip, title);
@@ -2040,7 +2043,7 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         clCodeCompletionEvent evtTypeinfo(wxEVT_CC_TYPEINFO_TIP, GetId());
         evtTypeinfo.SetPosition(event.GetPosition());
         evtTypeinfo.SetInsideCommentOrString(m_context->IsCommentOrString(event.GetPosition()));
-        evtTypeinfo.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+        evtTypeinfo.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
         if (EventNotifier::Get()->ProcessEvent(evtTypeinfo)) {
             if (!evtTypeinfo.GetTooltip().IsEmpty()) {
                 DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip());
@@ -3093,7 +3096,7 @@ void clEditor::OpenFile()
 
     // Notify that a file has been loaded into the editor
     clCommandEvent fileLoadedEvent(wxEVT_FILE_LOADED);
-    fileLoadedEvent.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+    fileLoadedEvent.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
     EventNotifier::Get()->AddPendingEvent(fileLoadedEvent);
 
     SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
@@ -3457,7 +3460,7 @@ void clEditor::OnRightDown(wxMouseEvent& event)
         clCodeCompletionEvent event(wxEVT_CC_SHOW_QUICK_NAV_MENU);
         event.SetPosition(pos);
         event.SetInsideCommentOrString(m_context->IsCommentOrString(pos));
-        event.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+        event.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
         EventNotifier::Get()->AddPendingEvent(event);
 
     } else {
@@ -3564,7 +3567,7 @@ void clEditor::DoBreakptContextMenu(wxPoint pt)
     menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
 
     clDebuggerBreakpoint& bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(
-        CLRealPath(GetFileName().GetFullPath()), GetCurrentLine() + 1);
+        FileUtils::RealPath(GetFileName().GetFullPath()), GetCurrentLine() + 1);
 
     // What we show depends on whether there's already a bp here (or several)
     if (!bp.IsNull()) {
@@ -3632,7 +3635,7 @@ void clEditor::AddOtherBreakpointType(wxCommandEvent& event)
 
 void clEditor::OnIgnoreBreakpoint()
 {
-    if (ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(CLRealPath(GetFileName().GetFullPath()),
+    if (ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(FileUtils::RealPath(GetFileName().GetFullPath()),
                                                               GetCurrentLine() + 1)) {
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
     }
@@ -3640,7 +3643,7 @@ void clEditor::OnIgnoreBreakpoint()
 
 void clEditor::OnEditBreakpoint()
 {
-    ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(CLRealPath(GetFileName().GetFullPath()),
+    ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(FileUtils::RealPath(GetFileName().GetFullPath()),
                                                                   GetCurrentLine() + 1);
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
@@ -4195,7 +4198,7 @@ void clEditor::ShowFunctionTipFromCurrentPos()
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
         evt.SetPosition(pos);
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(pos));
-        evt.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+        evt.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
         EventNotifier::Get()->ProcessEvent(evt);
     }
 }
@@ -4290,7 +4293,7 @@ void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 
         // Let the plugins handle it first
         clCodeCompletionEvent jump_event(wxEVT_CC_JUMP_HYPER_LINK);
-        jump_event.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+        jump_event.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
         EventNotifier::Get()->ProcessEvent(jump_event);
     }
 
@@ -4560,7 +4563,7 @@ void clEditor::OnChange(wxStyledTextEvent& event)
     // Notify about this editor being changed
     if (GetModify()) {
         clCommandEvent eventMod(wxEVT_EDITOR_MODIFIED);
-        eventMod.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+        eventMod.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
         EventNotifier::Get()->QueueEvent(eventMod.Clone());
     }
 
@@ -4886,7 +4889,7 @@ void clEditor::UpdateOptions()
     EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &m_buildOptions);
 
     clEditorConfigEvent event(wxEVT_EDITOR_CONFIG_LOADING);
-    event.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+    event.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
     if (EventNotifier::Get()->ProcessEvent(event)) {
         m_options->UpdateFromEditorConfig(event.GetEditorConfig());
     }
@@ -5073,7 +5076,7 @@ size_t clEditor::GetCodeNavModifier()
 
 void clEditor::OnFileFormatDone(wxCommandEvent& e)
 {
-    if (e.GetString() != CLRealPath(GetFileName().GetFullPath())) {
+    if (e.GetString() != FileUtils::RealPath(GetFileName().GetFullPath())) {
         // not this file
         e.Skip();
         return;
@@ -5085,7 +5088,7 @@ void clEditor::OnFileFormatDone(wxCommandEvent& e)
 
 void clEditor::OnFileFormatStarting(wxCommandEvent& e)
 {
-    if (e.GetString() != CLRealPath(GetFileName().GetFullPath())) {
+    if (e.GetString() != FileUtils::RealPath(GetFileName().GetFullPath())) {
         // not this file
         e.Skip();
         return;
@@ -5125,7 +5128,7 @@ void clEditor::ToggleBreakpointEnablement()
     int lineno = GetCurrentLine() + 1;
 
     BreakptMgr* bm = ManagerST::Get()->GetBreakpointsMgr();
-    clDebuggerBreakpoint bp = bm->GetBreakpoint(CLRealPath(GetFileName().GetFullPath()), lineno);
+    clDebuggerBreakpoint bp = bm->GetBreakpoint(FileUtils::RealPath(GetFileName().GetFullPath()), lineno);
     if (bp.IsNull())
         return;
 
@@ -5152,7 +5155,7 @@ void clEditor::DoUpdateTLWTitle(bool raise)
         if (IsRemoteFile()) {
             title << GetRemotePath() << "[" << GetRemoteData()->GetAccountName() << "]";
         } else {
-            title << CLRealPath(GetFileName().GetFullPath());
+            title << FileUtils::RealPath(GetFileName().GetFullPath());
         }
         if (GetModify()) {
             title.Prepend(wxT(" \u25CF "));
@@ -5699,7 +5702,7 @@ void clEditor::Print()
 
     wxPrintDialogData printDialogData(*g_printData);
     wxPrinter printer(&printDialogData);
-    clPrintout printout(this, CLRealPath(GetFileName().GetFullPath()));
+    clPrintout printout(this, FileUtils::RealPath(GetFileName().GetFullPath()));
 
     if (!printer.Print(this, &printout, true /*prompt*/)) {
         if (wxPrinter::GetLastError() == wxPRINTER_ERROR) {
@@ -5850,7 +5853,7 @@ void clEditor::NotifyMarkerChanged(int lineNumber)
 {
     // Notify about marker changes
     clCommandEvent eventMarker(wxEVT_MARKER_CHANGED);
-    eventMarker.SetFileName(CLRealPath(GetFileName().GetFullPath()));
+    eventMarker.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
     if (lineNumber != wxNOT_FOUND) {
         eventMarker.SetLineNumber(lineNumber);
     }
@@ -5984,7 +5987,7 @@ wxString clEditor::GetRemotePathOrLocal() const
     if (IsRemoteFile()) {
         return GetRemotePath();
     } else {
-        return CLRealPath(GetFileName().GetFullPath());
+        return FileUtils::RealPath(GetFileName().GetFullPath());
     }
 }
 
@@ -6023,7 +6026,7 @@ void clEditor::SetSemanticTokens(const wxString& classes,
     flatStrMethods.Trim().Trim(false);
 
     // locate the lexer
-    auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(CLRealPath(GetFileName().GetFullPath()));
+    auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(FileUtils::RealPath(GetFileName().GetFullPath()));
     CHECK_PTR_RET(lexer);
 
     SetKeywordLocals(flatStrLocals);

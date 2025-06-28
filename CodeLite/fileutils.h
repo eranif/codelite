@@ -257,11 +257,6 @@ public:
     static bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
 
     /**
-     * @brief convert string into std::string
-     */
-    static std::string ToStdString(const wxString& str);
-
-    /**
      * @brief create an environment list from string in the format of:
      * ...
      * key=value

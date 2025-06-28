@@ -1,14 +1,16 @@
 #include "UnixProcess.h"
 #if defined(__WXGTK__) || defined(__WXOSX__)
+#include "StringUtils.h"
+#include "cl_command_event.h"
+#include "file_logger.h"
+#include "fileutils.h"
+#include "processreaderthread.h"
+
+#include <cstring>
 #include <signal.h>
-#include <string.h>
 #include <sys/select.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
-#include "file_logger.h"
-#include <cl_command_event.h>
-#include <processreaderthread.h>
-#include <fileutils.h>
 
 UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
     : m_owner(owner)
@@ -39,7 +41,7 @@ UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
 
         char** argv = new char*[args.size() + 1];
         for(size_t i = 0; i < args.size(); ++i) {
-            std::string cstr_arg = FileUtils::ToStdString(args[i]);
+            std::string cstr_arg = StringUtils::ToStdString(args[i]);
             argv[i] = new char[cstr_arg.length() + 1];
             strcpy(argv[i], cstr_arg.c_str());
             argv[i][cstr_arg.length()] = 0;

@@ -83,6 +83,29 @@ std::string StringUtils::ToStdString(const wxString& str)
     return res;
 }
 
+unsigned int StringUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
+{
+    constexpr unsigned int SURROGATE_LEAD_FIRST = 0xD800;
+    //constexpr unsigned int SURROGATE_TRAIL_FIRST = 0xDC00;
+    constexpr unsigned int SURROGATE_TRAIL_LAST = 0xDFFF;
+    unsigned int len = 0;
+    for (unsigned int i = 0; i < tlen && uptr[i];) {
+        unsigned int uch = uptr[i];
+        if (uch < 0x80) {
+            len++;
+        } else if (uch < 0x0800) {
+            len += 2;
+        } else if ((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_TRAIL_LAST)) {
+            len += 4;
+            i++;
+        } else {
+            len += 3;
+        }
+        i++;
+    }
+    return len;
+}
+
 #define BUFF_STATE_NORMAL 0
 #define BUFF_STATE_IN_ESC 1
 #define BUFF_STATE_IN_OSC 2

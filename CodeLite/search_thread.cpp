@@ -26,22 +26,16 @@
 
 #include "clFilesCollector.h"
 #include "clWildMatch.hpp"
-#include "dirtraverser.h"
+#include "StringUtils.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "macros.h"
 
-#include <algorithm>
-#include <iostream>
 #include <set>
-#include <wx/dir.h>
 #include <wx/event.h>
 #include <wx/fontmap.h>
-#include <wx/log.h>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
-#include <wx/txtstrm.h>
-#include <wx/wfstream.h>
 
 #if !wxUSE_GUI
 #include "cl_command_event.h" // Needed for the definition of wxCommandEvent
@@ -372,8 +366,8 @@ void SearchThread::DoSearchLineRE(
 
             // Notify our match
             // correct search Pos and Length owing to non plain ASCII multibyte characters
-            iCorrectedCol = FileUtils::UTF8Length(line.c_str(), col);
-            iCorrectedLen = FileUtils::UTF8Length(line.c_str(), col + len) - iCorrectedCol;
+            iCorrectedCol = StringUtils::UTF8Length(line.c_str(), col);
+            iCorrectedLen = StringUtils::UTF8Length(line.c_str(), col + len) - iCorrectedCol;
             SearchResult result;
             result.SetPosition(lineOffset + col);
             result.SetColumnInChars((int)col);
@@ -470,8 +464,8 @@ void SearchThread::DoSearchLine(const wxString& line,
 
             // Notify our match
             // correct search Pos and Length owing to non plain ASCII multibyte characters
-            iCorrectedCol = FileUtils::UTF8Length(line.c_str(), col);
-            iCorrectedLen = FileUtils::UTF8Length(findWhat.c_str(), findWhat.Length());
+            iCorrectedCol = StringUtils::UTF8Length(line.c_str(), col);
+            iCorrectedLen = StringUtils::UTF8Length(findWhat.c_str(), findWhat.Length());
             SearchResult result;
             result.SetPosition(lineOffset + col);
             result.SetColumnInChars(col);

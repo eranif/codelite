@@ -224,8 +224,6 @@ public:
      */
     static bool RemoveFile(const wxString& filename, const wxString& context = "");
 
-    static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
-
     /**
      * @brief convert filename to the real path if filename is a symbolic link
      */

@@ -52,6 +52,8 @@ public:
      */
     static std::string ToStdString(const wxString& str);
 
+    static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
+
     /**
      * @brief remove terminal colours from buffer
      */

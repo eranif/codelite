@@ -509,32 +509,6 @@ bool FileUtils::RemoveFile(const wxString& filename, const wxString& context)
     return ::wxRemoveFile(filename);
 }
 
-unsigned int FileUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
-{
-#define SURROGATE_LEAD_FIRST 0xD800
-#define SURROGATE_TRAIL_FIRST 0xDC00
-#define SURROGATE_TRAIL_LAST 0xDFFF
-    unsigned int len = 0;
-    for (unsigned int i = 0; i < tlen && uptr[i];) {
-        unsigned int uch = uptr[i];
-        if (uch < 0x80) {
-            len++;
-        } else if (uch < 0x800) {
-            len += 2;
-        } else if ((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_TRAIL_LAST)) {
-            len += 4;
-            i++;
-        } else {
-            len += 3;
-        }
-        i++;
-    }
-#undef SURROGATE_LEAD_FIRST
-#undef SURROGATE_TRAIL_FIRST
-#undef SURROGATE_TRAIL_LAST
-    return len;
-}
-
 // This is readlink on steroids: it also makes-absolute, and dereferences any symlinked dirs in the path
 wxString FileUtils::RealPath(const wxString& filepath, bool forced)
 {

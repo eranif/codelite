@@ -524,11 +524,11 @@ wxString BuildConfig::GetPreprocessor() const { return m_commonConfig.GetPreproc
 
 wxString BuildConfig::GetOutputDirectory() const { return GetOutputFileName().BeforeLast('/'); }
 
-wxString BuildConfig::GetOutputFileName() const { return NormalizePath(m_outputFile); }
+wxString BuildConfig::GetOutputFileName() const { return FileUtils::NormalizePath(m_outputFile); }
 
-wxString BuildConfig::GetIntermediateDirectory() const { return NormalizePath(m_intermediateDirectory); }
+wxString BuildConfig::GetIntermediateDirectory() const { return FileUtils::NormalizePath(m_intermediateDirectory); }
 
-wxString BuildConfig::GetWorkingDirectory() const { return NormalizePath(m_workingDirectory); }
+wxString BuildConfig::GetWorkingDirectory() const { return FileUtils::NormalizePath(m_workingDirectory); }
 
 CompilerPtr BuildConfig::GetCompiler() const { return BuildSettingsConfigST::Get()->GetCompiler(GetCompilerType()); }
 

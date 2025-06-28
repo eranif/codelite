@@ -165,6 +165,11 @@ public:
     static wxString EncodeURI(const wxString& uri);
 
     /**
+     * @brief return true if filename is readonly false otherwise
+     */
+    static bool IsFileReadOnly(const wxFileName& filename);
+
+    /**
      * @brief is the file or folder a hidden file?
      */
     static bool IsHidden(const wxFileName& path);
@@ -328,11 +333,6 @@ public:
      */
     static bool CopyDir(const wxString& src, const wxString& target);
 };
-
-/**
- * @brief return true if filename is readonly false otherwise
- */
-WXDLLIMPEXP_CL bool IsFileReadOnly(const wxFileName& filename);
 
 /**
  * \brief Normalize the given path (change all \ by /)

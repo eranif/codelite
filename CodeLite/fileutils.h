@@ -150,16 +150,6 @@ public:
     static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
 
     /**
-     * @brief decode URI using percent encoding
-     */
-    static wxString DecodeURI(const wxString& uri);
-
-    /**
-     * @brief encode URI using percent encoding
-     */
-    static wxString EncodeURI(const wxString& uri);
-
-    /**
      * @brief return true if filename is readonly false otherwise
      */
     static bool IsFileReadOnly(const wxFileName& filename);

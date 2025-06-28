@@ -348,70 +348,6 @@ bool FileUtils::WildMatch(const wxString& mask, const wxString& filename)
     return WildMatch(mask, wxFileName(filename));
 }
 
-wxString FileUtils::DecodeURI(const wxString& uri)
-{
-    static wxStringMap_t T = { { "%20", " " }, { "%21", "!" }, { "%23", "#" }, { "%24", "$" }, { "%26", "&" },
-                               { "%27", "'" }, { "%28", "(" }, { "%29", ")" }, { "%2A", "*" }, { "%2B", "+" },
-                               { "%2C", "," }, { "%3B", ";" }, { "%3D", "=" }, { "%3F", "?" }, { "%40", "@" },
-                               { "%5B", "[" }, { "%5D", "]" } };
-    wxString decodedString;
-    wxString escapeSeq;
-    int state = 0;
-    for (size_t i = 0; i < uri.size(); ++i) {
-        wxChar ch = uri[i];
-        switch (state) {
-        case 0: // Normal
-            switch (ch) {
-            case '%':
-                state = 1;
-                escapeSeq << ch;
-                break;
-            default:
-                decodedString << ch;
-                break;
-            }
-            break;
-        case 1: // Escaping mode
-            escapeSeq << ch;
-            if (escapeSeq.size() == 3) {
-                // Try to decode it
-                wxStringMap_t::iterator iter = T.find(escapeSeq);
-                if (iter != T.end()) {
-                    decodedString << iter->second;
-                } else {
-                    decodedString << escapeSeq;
-                }
-                state = 0;
-                escapeSeq.Clear();
-            }
-            break;
-        }
-    }
-    return decodedString;
-}
-
-wxString FileUtils::EncodeURI(const wxString& uri)
-{
-    static std::unordered_map<int, wxString> sEncodeMap = {
-        { (int)'!', "%21" }, { (int)'#', "%23" }, { (int)'$', "%24" }, { (int)'&', "%26" }, { (int)'\'', "%27" },
-        { (int)'(', "%28" }, { (int)')', "%29" }, { (int)'*', "%2A" }, { (int)'+', "%2B" }, { (int)',', "%2C" },
-        { (int)';', "%3B" }, { (int)'=', "%3D" }, { (int)'?', "%3F" }, { (int)'@', "%40" }, { (int)'[', "%5B" },
-        { (int)']', "%5D" }, { (int)' ', "%20" }
-    };
-
-    wxString encoded;
-    for (size_t i = 0; i < uri.length(); ++i) {
-        wxChar ch = uri[i];
-        std::unordered_map<int, wxString>::iterator iter = sEncodeMap.find((int)ch);
-        if (iter != sEncodeMap.end()) {
-            encoded << iter->second;
-        } else {
-            encoded << ch;
-        }
-    }
-    return encoded;
-}
-
 bool FileUtils::FuzzyMatch(const wxString& needle, const wxString& haystack)
 {
     wxString word;
@@ -816,7 +752,7 @@ wxString FileUtils::FilePathToURI(const wxString& filepath)
         }
         wxString file_part = filepath;
         file_part.Replace("\\", "/");
-        file_part = EncodeURI(file_part);
+        file_part = StringUtils::EncodeURI(file_part);
         uri << file_part;
         return uri;
     }
@@ -836,7 +772,7 @@ wxString FileUtils::FilePathFromURI(const wxString& uri)
             rest.Replace("/", "\\");
         }
 #endif
-        rest = DecodeURI(rest);
+        rest = StringUtils::DecodeURI(rest);
         return rest;
     } else {
         return uri;
@@ -924,7 +860,7 @@ bool cksum(const std::string& file, size_t* checksum)
 
 bool FileUtils::GetChecksum(const wxString& filepath, size_t* checksum)
 {
-    return cksum(ToStdString(filepath), checksum);
+    return cksum(StringUtils::ToStdString(filepath), checksum);
 }
 
 bool FileUtils::IsBinaryExecutable(const wxString& filename)

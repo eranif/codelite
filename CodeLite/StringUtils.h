@@ -75,6 +75,16 @@ public:
     static void DisableMarkdownStyling(wxString& buffer);
 
     /**
+     * @brief decode URI using percent encoding
+     */
+    static wxString DecodeURI(const wxString& uri);
+
+    /**
+     * @brief encode URI using percent encoding
+     */
+    static wxString EncodeURI(const wxString& uri);
+
+    /**
      * @brief build argv out of str
      */
     static char** BuildArgv(const wxString& str, int& argc);

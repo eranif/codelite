@@ -214,6 +214,72 @@ void StringUtils::DisableMarkdownStyling(wxString& buffer)
     buffer.Replace("`", "\\`");
 }
 
+
+wxString StringUtils::DecodeURI(const wxString& uri)
+{
+    static const wxStringMap_t sEncodeMap = { { "%20", " " }, { "%21", "!" }, { "%23", "#" }, { "%24", "$" },
+                                              { "%26", "&" }, { "%27", "'" }, { "%28", "(" }, { "%29", ")" },
+                                              { "%2A", "*" }, { "%2B", "+" }, { "%2C", "," }, { "%3B", ";" },
+                                              { "%3D", "=" }, { "%3F", "?" }, { "%40", "@" }, { "%5B", "[" },
+                                              { "%5D", "]" } };
+    wxString decodedString;
+    wxString escapeSeq;
+    int state = 0;
+    for (size_t i = 0; i < uri.size(); ++i) {
+        wxChar ch = uri[i];
+        switch (state) {
+        case 0: // Normal
+            switch (ch) {
+            case '%':
+                state = 1;
+                escapeSeq << ch;
+                break;
+            default:
+                decodedString << ch;
+                break;
+            }
+            break;
+        case 1: // Escaping mode
+            escapeSeq << ch;
+            if (escapeSeq.size() == 3) {
+                // Try to decode it
+                const auto iter = sEncodeMap.find(escapeSeq);
+                if (iter != sEncodeMap.end()) {
+                    decodedString << iter->second;
+                } else {
+                    decodedString << escapeSeq;
+                }
+                state = 0;
+                escapeSeq.Clear();
+            }
+            break;
+        }
+    }
+    return decodedString;
+}
+
+wxString StringUtils::EncodeURI(const wxString& uri)
+{
+    static const std::unordered_map<int, wxString> sEncodeMap = {
+        { (int)'!', "%21" }, { (int)'#', "%23" }, { (int)'$', "%24" }, { (int)'&', "%26" }, { (int)'\'', "%27" },
+        { (int)'(', "%28" }, { (int)')', "%29" }, { (int)'*', "%2A" }, { (int)'+', "%2B" }, { (int)',', "%2C" },
+        { (int)';', "%3B" }, { (int)'=', "%3D" }, { (int)'?', "%3F" }, { (int)'@', "%40" }, { (int)'[', "%5B" },
+        { (int)']', "%5D" }, { (int)' ', "%20" }
+    };
+
+    wxString encoded;
+    for (size_t i = 0; i < uri.length(); ++i) {
+        wxChar ch = uri[i];
+        const auto iter = sEncodeMap.find((int)ch);
+        if (iter != sEncodeMap.end()) {
+            encoded << iter->second;
+        } else {
+            encoded << ch;
+        }
+    }
+    return encoded;
+}
+
 #define ARGV_STATE_NORMAL 0
 #define ARGV_STATE_DQUOTE 1
 #define ARGV_STATE_SQUOTE 2

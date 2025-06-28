@@ -133,23 +133,6 @@ public:
     static bool FuzzyMatch(const wxString& needle, const wxString& haystack);
 
     /**
-     * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
-     * @code
-     * wxString str = "My String That Requires Tokenize";
-     * wxString word; // The output
-     * size_t offset = 0;
-     * while (NextWord(str, offset, word)) {
-     *      // Do something with "word" here
-     * }
-     * @codeend
-     * @param str the string to tokenize
-     * @param offset used internally, allocate one on the stack and initialise it to 0
-     * @param word [output]
-     * @return true if a word was found
-     */
-    static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
-
-    /**
      * @brief return true if filename is readonly false otherwise
      */
     static bool IsFileReadOnly(const wxFileName& filename);

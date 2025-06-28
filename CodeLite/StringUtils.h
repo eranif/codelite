@@ -87,6 +87,23 @@ public:
     static wxString EncodeURI(const wxString& uri);
 
     /**
+     * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
+     * @code
+     * wxString str = "My String That Requires Tokenize";
+     * wxString word; // The output
+     * size_t offset = 0;
+     * while (StringUtils::NextWord(str, offset, word)) {
+     *      // Do something with "word" here
+     * }
+     * @codeend
+     * @param str the string to tokenize
+     * @param offset used internally, allocate one on the stack and initialise it to 0
+     * @param word [output]
+     * @return true if a word was found
+     */
+    static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
+
+    /**
      * @brief build argv out of str
      */
     static char** BuildArgv(const wxString& str, int& argc);

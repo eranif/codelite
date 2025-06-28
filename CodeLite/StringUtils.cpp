@@ -303,6 +303,37 @@ wxString StringUtils::EncodeURI(const wxString& uri)
     return encoded;
 }
 
+bool StringUtils::NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower)
+{
+    if (offset == str.size()) {
+        return false;
+    }
+    size_t start = wxString::npos;
+    word.Clear();
+    for (; offset < str.size(); ++offset) {
+        wxChar ch = str[offset];
+        bool isWhitespace = ((ch == ' ') || (ch == '\t'));
+        if (isWhitespace && (start != wxString::npos)) {
+            // we found a trailing whitespace
+            break;
+        } else if (isWhitespace && (start == wxString::npos)) {
+            // skip leading whitespace
+            continue;
+        } else if (start == wxString::npos) {
+            start = offset;
+        }
+        if (makeLower) {
+            ch = wxTolower(ch);
+        }
+        word << ch;
+    }
+
+    if ((start != wxString::npos) && (offset > start)) {
+        return true;
+    }
+    return false;
+}
+
 #define ARGV_STATE_NORMAL 0
 #define ARGV_STATE_DQUOTE 1
 #define ARGV_STATE_SQUOTE 2

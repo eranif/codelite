@@ -1046,7 +1046,7 @@ wxString FileUtils::NormalizePath(const wxString& path)
 
 // Make absolute first, including abolishing any symlinks (Normalise only does MSW shortcuts)
 // Then only 'make relative' if it's a subpath of reference_path (or reference_path itself)
-bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
+bool FileUtils::MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
 {
     if (reference_path.IsEmpty() || !fn.IsOk()) {
         return false;

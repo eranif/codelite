@@ -249,6 +249,14 @@ public:
     static void RealPathSetModeResolveSymlinks(bool resolveSymlinks);
 
     /**
+     * @brief make relative only if a subpath of reference_path (or is reference_path itself)
+     * @brief also, make normalise first, and abolish any symlink
+     * @param fn wxFileName to alter
+     * @param reference_path the path to which to make relative
+     */
+    static bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
+
+    /**
      * @brief convert string into std::string
      */
     static std::string ToStdString(const wxString& str);
@@ -338,14 +346,6 @@ public:
      */
     static bool CopyDir(const wxString& src, const wxString& target);
 };
-
-/**
- * @brief make relative only if a subpath of reference_path (or is reference_path itself)
- * @brief also, make normalise first, and abolish any symlink
- * @param fn wxFileName to alter
- * @param reference_path the path to which to make relative
- */
-WXDLLIMPEXP_CL bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
 
 /**
  * @brief convert filename to the real path if filename is a symbolic link

@@ -1035,7 +1035,7 @@ bool FileUtils::IsFileReadOnly(const wxFileName& filename)
 #endif
 }
 
-wxString NormalizePath(const wxString& path)
+wxString FileUtils::NormalizePath(const wxString& path)
 {
     wxString normalized_path(path);
     normalized_path.Trim().Trim(false);

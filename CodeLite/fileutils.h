@@ -226,15 +226,6 @@ public:
     static size_t GetFileSize(const wxFileName& filename);
 
     /**
-     * @brief replace any unwanted characters with underscore
-     * The chars that we replace are:
-     * @-^%&$#@!(){}[]+=;,.
-     * @param name
-     * @return modified name excluding the above chars (will be replaced with _)
-     */
-    static wxString NormaliseName(const wxString& name);
-
-    /**
      * @brief remove a file from the file system
      * @param filename file name to remove
      * @param context unique context string which will be logged to the log file
@@ -326,6 +317,20 @@ public:
     static wxString NormaliseFilename(const wxString& str);
 
     /**
+     * @brief replace any unwanted characters with underscore
+     * The chars that we replace are:
+     * @-^%&$#@!(){}[]+=;,.
+     * @param name
+     * @return modified name excluding the above chars (will be replaced with _)
+     */
+    static wxString NormaliseName(const wxString& name);
+
+    /**
+     * \brief Normalize the given path (change all \ by /)
+     */
+    static wxString NormalizePath(const wxString& path);
+
+    /**
      * \brief copy entire directory content (recursively) from source to target
      * \param src source path
      * \param target target path
@@ -333,11 +338,6 @@ public:
      */
     static bool CopyDir(const wxString& src, const wxString& target);
 };
-
-/**
- * \brief Normalize the given path (change all \ by /)
- */
-WXDLLIMPEXP_CL wxString NormalizePath(const wxString& path);
 
 /**
  * @brief make relative only if a subpath of reference_path (or is reference_path itself)

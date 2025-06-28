@@ -1079,7 +1079,7 @@ bool FileUtils::MakeRelativeIfSensible(wxFileName& fn, const wxString& reference
     return false;
 }
 
-wxFileName wxReadLink(const wxFileName& filename)
+wxFileName FileUtils::wxReadLink(const wxFileName& filename)
 {
 #ifndef __WXMSW__
     if (FileUtils::IsSymlink(filename)) {

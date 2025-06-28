@@ -1814,7 +1814,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
 
     wxFileName symlinkedFile = fileName;
     if (FileUtils::IsSymlink(fileName)) {
-        symlinkedFile = wxReadLink(fileName);
+        symlinkedFile = FileUtils::wxReadLink(fileName);
     }
 
     // keep the original file permissions

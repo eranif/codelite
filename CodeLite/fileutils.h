@@ -242,6 +242,11 @@ public:
     static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
 
     /**
+     * @brief convert filename to the real path if filename is a symbolic link
+     */
+    static wxFileName wxReadLink(const wxFileName& filename);
+
+    /**
      * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
      */
     static wxString RealPath(const wxString& filepath, bool forced=false);
@@ -346,10 +351,5 @@ public:
      */
     static bool CopyDir(const wxString& src, const wxString& target);
 };
-
-/**
- * @brief convert filename to the real path if filename is a symbolic link
- */
-WXDLLIMPEXP_CL wxFileName wxReadLink(const wxFileName& filename);
 
 #endif // FILEUTILS_H

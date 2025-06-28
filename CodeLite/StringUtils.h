@@ -103,6 +103,22 @@ public:
      */
     static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
 
+    /// Join elements of a container into a string using `glue` as the elements separator
+    /// `Container` any container that can be "range looped"
+    template <typename Container>
+    static wxString clJoin(const Container& c, const wxString& glue = "\n")
+    {
+        wxString output;
+        for (const auto& ele : c) {
+            output << ele << glue;
+        }
+
+        if (!output.empty()) {
+            output.RemoveLast(glue.length());
+        }
+        return output;
+    }
+
     /**
      * @brief build argv out of str
      */

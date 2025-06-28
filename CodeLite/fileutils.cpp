@@ -975,7 +975,7 @@ static void Mkdir(const wxString& path)
 #endif
 }
 
-bool CopyDir(const wxString& src, const wxString& target)
+bool FileUtils::CopyDir(const wxString& src, const wxString& target)
 {
     wxString SLASH = wxFileName::GetPathSeparator();
 

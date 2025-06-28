@@ -319,15 +319,15 @@ public:
      * @return
      */
     static wxString NormaliseFilename(const wxString& str);
-};
 
-/**
- * \brief copy entire directory content (recursively) from source to target
- * \param src source path
- * \param target target path
- * \return true on success, false otherwise
- */
-WXDLLIMPEXP_CL bool CopyDir(const wxString& src, const wxString& target);
+    /**
+     * \brief copy entire directory content (recursively) from source to target
+     * \param src source path
+     * \param target target path
+     * \return true on success, false otherwise
+     */
+    static bool CopyDir(const wxString& src, const wxString& target);
+};
 
 /**
  * @brief return true if filename is readonly false otherwise

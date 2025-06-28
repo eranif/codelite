@@ -1020,7 +1020,7 @@ bool FileUtils::CopyDir(const wxString& src, const wxString& target)
     return true;
 }
 
-bool IsFileReadOnly(const wxFileName& filename)
+bool FileUtils::IsFileReadOnly(const wxFileName& filename)
 {
 #ifdef __WXMSW__
     DWORD dwAttrs = GetFileAttributes(filename.GetFullPath().c_str());

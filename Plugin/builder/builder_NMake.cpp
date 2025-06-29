@@ -1263,8 +1263,8 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     text << "ProjectName            =" << proj->GetName() << "\n";
     text << "ConfigurationName      =" << name << "\n";
     text << "WorkspaceConfiguration =" << clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() << "\n";
-    text << "WorkspacePath          =" << ::WrapWithQuotes(workspacePath) << "\n";
-    text << "ProjectPath            =" << ::WrapWithQuotes(projectPath) << "\n";
+    text << "WorkspacePath          =" << StringUtils::WrapWithQuotes(workspacePath) << "\n";
+    text << "ProjectPath            =" << StringUtils::WrapWithQuotes(projectPath) << "\n";
     text << "IntermediateDirectory  =" << intermediateDir << "\n";
     text << "OutDir                 =$(IntermediateDirectory)\n";
     text << "CurrentFileName        =\n"; // TODO:: Need implementation
@@ -1272,7 +1272,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     text << "CurrentFileFullPath    =\n"; // TODO:: Need implementation
     text << "User                   =" << wxGetUserId() << "\n";
     text << "Date                   =" << wxDateTime::Now().FormatDate() << "\n";
-    text << "CodeLitePath           =" << ::WrapWithQuotes(startupDir) << "\n";
+    text << "CodeLitePath           =" << StringUtils::WrapWithQuotes(startupDir) << "\n";
     // replace all occurrence of forward slash with double backslash
     wxString linkerStr(cmp->GetTool("LinkerName"));
     if (OS_WINDOWS) {

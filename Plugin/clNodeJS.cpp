@@ -4,12 +4,12 @@
 #include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "NodeJSLocator.h"
+#include "StringUtils.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
 
-#include <algorithm>
 
 wxDEFINE_EVENT(wxEVT_NODE_COMMAND_TERMINATED, clProcessEvent);
 
@@ -151,7 +151,7 @@ void clNodeJS::LintFile(const wxFileName& filename)
 
     wxString command;
     command << GetNode().GetFullPath();
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
 
     command << " -c " << filename.GetFullName();
     IProcess* process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, wd);
@@ -202,7 +202,7 @@ wxProcess* clNodeJS::RunScript(const wxArrayString& argv, const wxString& workin
     for(const wxString& arg : argv) {
         // Build the command line
         wxString tmp = std::move(arg);
-        ::WrapWithQuotes(tmp);
+        StringUtils::WrapWithQuotes(tmp);
         command << tmp << " ";
     }
 

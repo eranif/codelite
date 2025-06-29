@@ -1,8 +1,7 @@
 #include "LSPCTagsdDetector.hpp"
 
+#include "StringUtils.h"
 #include "cl_standard_paths.h"
-#include "file_logger.h"
-#include "globals.h"
 
 #include <wx/filename.h>
 
@@ -28,7 +27,7 @@ void LSPCTagsdDetector::ConfigureFile(const wxFileName& ctagsd_exe)
     LSP_DEBUG() << "==> Found" << ctagsd_exe << endl;
     wxString command;
     command << ctagsd_exe.GetFullPath();
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
 
     command << " --port 45634 --log-level ERR";
     SetCommand(command);

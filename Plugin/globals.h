@@ -352,11 +352,6 @@ PromptForYesNoDialogWithCheckbox(const wxString& message,
                                  bool checkboxInitialValue = false);
 
 /**
- * @brief wrap string with quotes if needed
- */
-WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString& str);
-
-/**
  * @brief save an xml document to file
  */
 WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename);

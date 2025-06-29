@@ -4,7 +4,7 @@
 #include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "DockerOutputPane.h"
-#include "clDockerEvents.h"
+#include "StringUtils.h"
 #include "clDockerSettings.h"
 #include "clDockerWorkspace.h"
 #include "docker.h"
@@ -13,7 +13,6 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "wxterminal.h"
 
 #include <wx/msgdlg.h>
 
@@ -142,7 +141,7 @@ wxString clDockerDriver::GetDockerExe() const
         return "";
     }
     wxString exepath = dockerCommand.GetFullPath();
-    ::WrapWithQuotes(exepath);
+    StringUtils::WrapWithQuotes(exepath);
     return exepath;
 }
 

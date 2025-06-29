@@ -1,12 +1,15 @@
-#include "ColoursAndFontsManager.h"
 #include "NodeJSDebuggerDlg.h"
+
+#include "ColoursAndFontsManager.h"
 #include "NodeJSWorkspaceUserConfiguration.h"
 #include "NoteJSWorkspace.h"
+#include "StringUtils.h"
+#include "clNodeJS.h"
 #include "cl_config.h"
 #include "globals.h"
 #include "imanager.h"
+
 #include <wx/filename.h>
-#include "clNodeJS.h"
 
 NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     : NodeJSDebuggerDlgBase(parent)
@@ -110,7 +113,7 @@ void NodeJSDebuggerDlg::GetCommand(wxString& command, wxString& command_args)
     wxString script;
     command << m_filePickerNodeJS->GetPath();
     script << m_filePickerScript->GetPath();
-    ::WrapWithQuotes(script);
+    StringUtils::WrapWithQuotes(script);
     wxString sport = m_textCtrlPort->GetValue();
     long port = 5858;
     if(!sport.Trim().ToCLong(&port)) { port = 5858; }
@@ -125,7 +128,7 @@ void NodeJSDebuggerDlg::GetCommand(wxString& command, wxString& command_args)
 
     wxArrayString args = ::wxStringTokenize(m_stcCommandLineArguments->GetText(), "\n", wxTOKEN_STRTOK);
     for(size_t i = 0; i < args.size(); ++i) {
-        command_args << " " << ::WrapWithQuotes(args.Item(i));
+        command_args << " " << StringUtils::WrapWithQuotes(args.Item(i));
     }
 }
 

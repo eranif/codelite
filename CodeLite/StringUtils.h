@@ -167,11 +167,16 @@ public:
     static wxString BuildCommandStringFromArray(const wxArrayString& command_arr,
                                                 size_t flags = BuildCommandFlags::ONE_LINER);
 
+    /**
+     * @brief wrap string with quotes if needed
+     */
+    static wxString& WrapWithQuotes(wxString& str);
+
     /// If string contains space, wrap it with double quotes
-    static wxString WrapWithDoubleQuotes(const wxString& str);
+    [[nodiscard]] static wxString WrapWithDoubleQuotes(const wxString& str);
 
     /// If a string is wrapped with double quotes -> strip them
-    static wxString StripDoubleQuotes(const wxString& str);
+    [[nodiscard]] static wxString StripDoubleQuotes(const wxString& str);
 
     /// Append `str` to `arr`. If the array size exceed the truncation size, shrink it to fit
     static wxArrayString AppendAndMakeUnique(const wxArrayString& arr, const wxString& str, size_t truncate_size = 15);

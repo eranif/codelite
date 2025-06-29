@@ -24,31 +24,19 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "externaltools.h"
 
-#include "AsyncProcess/processreaderthread.h"
 #include "ExternalToolsManager.h"
 #include "ExternalToolsProcessManager.h"
 #include "Keyboard/clKeyboardManager.h"
-#include "async_executable_cmd.h"
-#include "clToolBarButton.h"
-#include "cl_aui_tb_are.h"
+#include "StringUtils.h"
 #include "codelite_events.h"
-#include "dirsaver.h"
-#include "environmentconfig.h"
 #include "event_notifier.h"
 #include "externaltooldlg.h"
-#include "file_logger.h"
 #include "globals.h"
-#include "macromanager.h"
 #include "plugin_version.h"
-#include "workspace.h"
 
 #include <algorithm>
 #include <wx/app.h>
-#include <wx/aui/framemanager.h>
-#include <wx/bitmap.h>
-#include <wx/log.h>
 #include <wx/menu.h>
-#include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
 struct DecSort {
@@ -279,7 +267,7 @@ void ExternalToolsPlugin::OnFileSave(clCommandEvent& event)
             // Run this tool
             ToolInfo ti = tool;
             wxString filename = event.GetFileName();
-            ::WrapWithQuotes(filename);
+            StringUtils::WrapWithQuotes(filename);
             ToolsTaskManager::Instance()->StartTool(ti, filename);
         }
     }

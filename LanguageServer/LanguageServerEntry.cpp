@@ -1,9 +1,7 @@
 #include "LanguageServerEntry.h"
 
 #include "JSON.h"
-#include "LSP/LanguageServerProtocol.h"
 #include "StringUtils.h"
-#include "globals.h"
 
 LanguageServerEntry::LanguageServerEntry()
     : m_connectionString("stdio")
@@ -27,7 +25,7 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     // we no longer are using exepath + args, instead a single "command" is used
     wxString commandDefault = m_exepath;
     if(!commandDefault.IsEmpty()) {
-        ::WrapWithQuotes(commandDefault);
+        StringUtils::WrapWithQuotes(commandDefault);
         if(!m_args.empty()) {
             commandDefault << " " << m_args;
         }

@@ -26,10 +26,8 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "GCCMetadata.hpp"
-#include "ICompilerLocator.h"
-#include "cl_command_event.h"
+#include "StringUtils.h"
 #include "compiler_command_line_parser.h"
-#include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "fileextmanager.h"
@@ -38,16 +36,12 @@
 #include "localworkspace.h"
 #include "macromanager.h"
 #include "macros.h"
-#include "plugin.h"
 #include "workspace.h"
 #include "wxArrayStringAppender.h"
 #include "xmlutils.h"
 
 #include <algorithm>
-#include <wx/app.h>
 #include <wx/arrstr.h>
-#include <wx/ffile.h>
-#include <wx/log.h>
 #include <wx/regex.h>
 #include <wx/sstream.h>
 #include <wx/tokenzr.h>
@@ -1197,7 +1191,7 @@ void ProcessIncludes(const wxArrayString& paths, const wxString& wd, wxStringSet
             fnPath.MakeAbsolute(wd);
         }
         wxString include_path = fnPath.GetPath();
-        //::WrapWithQuotes(include_path);
+        //StringUtils::WrapWithQuotes(include_path);
 
         if (res.count(include_path) == 0) {
             res.insert(include_path);
@@ -1258,7 +1252,7 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
         wxArrayString compilerPaths = ::wxStringTokenize(semiColonSepList, ";", wxTOKEN_STRTOK);
         for (wxString& compilerPath : compilerPaths) {
             if (flags & kWrapIncludesWithSpace) {
-                ::WrapWithQuotes(compilerPath);
+                StringUtils::WrapWithQuotes(compilerPath);
             }
             extraFlags << " -I" << compilerPath;
         }
@@ -1268,7 +1262,7 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     if (compiler->IsGnuCompatibleCompiler()) {
         compilerExe = compiler->GetTool(flags & kCxxFile ? "CXX" : "CC");
     }
-    ::WrapWithQuotes(compilerExe);
+    StringUtils::WrapWithQuotes(compilerExe);
     commandLine << compilerExe << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
 
     // Apply the environment
@@ -1295,7 +1289,7 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
         }
 
         if (flags & kWrapIncludesWithSpace) {
-            ::WrapWithQuotes(incl_path);
+            StringUtils::WrapWithQuotes(incl_path);
         }
         commandLine << "-I" << incl_path << " ";
     }

@@ -2,11 +2,7 @@
 
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
-#include "clWorkspaceManager.h"
 #include "codelite_events.h"
-#include "event_notifier.h"
-#include "globals.h"
-#include "macromanager.h"
 
 #if USE_SFTP
 #include "clSFTPManager.hpp"
@@ -20,7 +16,7 @@ CodeLiteRemoteHelper::CodeLiteRemoteHelper()
     Bind(wxEVT_WORKSPACE_CLOSED, &CodeLiteRemoteHelper::OnWorkspaceClosed, this);
     m_ssh_exe = ThePlatform->Which("ssh").value_or("");
     if (!m_ssh_exe.IsEmpty()) {
-        ::WrapWithQuotes(m_ssh_exe);
+        StringUtils::WrapWithQuotes(m_ssh_exe);
     }
 }
 

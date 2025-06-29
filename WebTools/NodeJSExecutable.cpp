@@ -1,8 +1,8 @@
 #include "NodeJSExecutable.h"
 
 #include "AsyncProcess/asyncprocess.h"
+#include "StringUtils.h"
 #include "clNodeJS.h"
-#include "globals.h"
 
 #define DEFAULT_VERSION 4
 
@@ -26,7 +26,7 @@ int NodeJSExecutable::GetMajorVersion() const
     wxString command;
     wxString version_output;
     command << m_exePath.GetFullPath();
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
     command << " -v";
     IProcess::Ptr_t cmd(::CreateSyncProcess(command, IProcessCreateDefault));
     cmd->WaitForTerminate(version_output);

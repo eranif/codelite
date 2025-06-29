@@ -661,7 +661,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
         wxFileName fn(files.Item(i));
         fn.MakeRelativeTo(workingDir);
         wxString filename = fn.GetFullPath(wxPATH_UNIX);
-        ::WrapWithQuotes(filename);
+        StringUtils::WrapWithQuotes(filename);
         cmd << " " << filename;
     }
 
@@ -697,7 +697,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
         fn.MakeRelativeTo(workingDir);
         wxString filenameEscaped = fn.GetFullPath(wxPATH_UNIX);
 
-        ::WrapWithQuotes(filenameEscaped);
+        StringUtils::WrapWithQuotes(filenameEscaped);
         cmd << filenameEscaped;
 
         // We need to run this command per file
@@ -733,7 +733,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
         wxFileName fn(files.Item(i));
         fn.MakeRelativeTo(workingDir);
         wxString filename = fn.GetFullPath(wxPATH_UNIX);
-        ::WrapWithQuotes(filename);
+        StringUtils::WrapWithQuotes(filename);
         cmd << " " << filename;
     }
 
@@ -1147,7 +1147,7 @@ void GitPlugin::ProcessGitActionQueue()
     switch (ga.action) {
     case gitBlameSummary: {
         wxString filepath = ga.arguments;
-        ::WrapWithQuotes(filepath);
+        StringUtils::WrapWithQuotes(filepath);
         command_args << "--no-pager blame --date=short " << filepath;
     } break;
     case gitStash:
@@ -2190,7 +2190,7 @@ void GitPlugin::DoAddFiles(const wxArrayString& files)
 
     wxString filesToAdd;
     for (wxString file : files) {
-        ::WrapWithQuotes(file);
+        StringUtils::WrapWithQuotes(file);
         filesToAdd << file << " ";
     }
 
@@ -2205,7 +2205,7 @@ void GitPlugin::DoResetFiles(const wxArrayString& files)
 {
     wxString filesToDelete;
     for (wxString file : files) {
-        ::WrapWithQuotes(file);
+        StringUtils::WrapWithQuotes(file);
         filesToDelete << file << " ";
     }
 
@@ -2220,7 +2220,7 @@ void GitPlugin::UndoAddFiles(const wxArrayString& files)
 {
     wxString filesToDelete;
     for (wxString file : files) {
-        ::WrapWithQuotes(file);
+        StringUtils::WrapWithQuotes(file);
         filesToDelete << file << " ";
     }
 
@@ -2587,7 +2587,7 @@ void GitPlugin::DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString&
     wxString command = m_pathGITExecutable;
     // Wrap the executable with quotes if needed
     command.Trim().Trim(false);
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
     command << " --no-pager ";
     m_commandProcessor =
         new clCommandProcessor(command + commands.at(0).baseCommand, workingDir, commands.at(0).processFlags);
@@ -2636,7 +2636,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
             // Add the message
             if (!message.empty()) {
                 wxString messagefile = GetCommitMessageFile();
-                ::WrapWithQuotes(messagefile);
+                StringUtils::WrapWithQuotes(messagefile);
                 commitArgs << "--file=";
                 commitArgs << messagefile << " ";
 
@@ -2663,7 +2663,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
             }
             wxArrayString selectedFiles = dlg.GetSelectedFiles();
             for (unsigned i = 0; i < selectedFiles.GetCount(); ++i)
-                commitArgs << ::WrapWithQuotes(selectedFiles.Item(i)) << wxT(" ");
+                commitArgs << StringUtils::WrapWithQuotes(selectedFiles.Item(i)) << wxT(" ");
 
         } else {
             m_console->AddText(_("error: no commit message given, aborting"));
@@ -2699,7 +2699,7 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandO
         wxString git_command = m_pathGITExecutable;
         // Wrap the executable with quotes if needed
         git_command.Trim().Trim(false);
-        ::WrapWithQuotes(git_command);
+        StringUtils::WrapWithQuotes(git_command);
         git_command << " --no-pager ";
         git_command << command;
 
@@ -3038,7 +3038,7 @@ IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler,
 
         // Wrap the executable with quotes if needed
         command.Trim().Trim(false);
-        ::WrapWithQuotes(command);
+        StringUtils::WrapWithQuotes(command);
 
         command << " " << command_args;
         if (logMessage) {
@@ -3067,7 +3067,7 @@ void GitPlugin::AsyncRunGitWithCallback(const wxString& command_args,
 
         // Wrap the executable with quotes if needed
         command.Trim().Trim(false);
-        ::WrapWithQuotes(command);
+        StringUtils::WrapWithQuotes(command);
 
         command << " " << command_args;
         GIT_MESSAGE_IF(logMessage, command);

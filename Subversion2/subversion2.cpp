@@ -27,11 +27,11 @@
 
 #include "Keyboard/clKeyboardManager.h"
 #include "StdToWX.h"
+#include "StringUtils.h"
 #include "SvnCommitDialog.h"
 #include "SvnLogDialog.h"
 #include "SvnShowFileChangesHandler.h"
 #include "SvnShowRecentChangesDlg.h"
-#include "clGotoAnythingManager.h"
 #include "cl_standard_paths.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
@@ -53,18 +53,14 @@
 
 #include <algorithm>
 #include <wx/app.h>
-#include <wx/dir.h>
 #include <wx/ffile.h>
 #include <wx/fileconf.h>
-#include <wx/filedlg.h>
 #include <wx/filefn.h>
-#include <wx/imaglist.h>
 #include <wx/menu.h>
 #include <wx/menuitem.h>
 #include <wx/msgdlg.h>
 #include <wx/numdlg.h>
 #include <wx/regex.h>
-#include <wx/stdpaths.h>
 #include <wx/textdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
@@ -468,7 +464,7 @@ void Subversion2::OnFolderAdd(wxCommandEvent& event)
         command << GetSvnExeName() << loginString << " add " << m_selectedFile.GetFullName();
     } else {
         wxString folderName = workingDirectory.GetDirs().Last();
-        ::WrapWithQuotes(folderName);
+        StringUtils::WrapWithQuotes(folderName);
 
         workingDirectory.RemoveLastDir();
         command << GetSvnExeName() << loginString << " add " << folderName;
@@ -496,7 +492,7 @@ void Subversion2::OnDeleteFolder(wxCommandEvent& event)
     wxFileName workingDirectory(m_selectedFolder, "");
     if(!m_selectedFile.IsOk()) {
         wxString folderName = workingDirectory.GetDirs().Last();
-        ::WrapWithQuotes(folderName);
+        StringUtils::WrapWithQuotes(folderName);
 
         workingDirectory.RemoveLastDir();
         command << GetSvnExeName() << loginString << " delete --force " << folderName;
@@ -581,12 +577,12 @@ wxString Subversion2::GetSvnExeName()
 
     wxString exeName = ssd.GetExecutable();
     exeName.Trim().Trim(false);
-    ::WrapWithQuotes(exeName);
+    StringUtils::WrapWithQuotes(exeName);
 
     exeName << " --config-dir";
 
     wxString configDir = GetUserConfigDir();
-    ::WrapWithQuotes(configDir);
+    StringUtils::WrapWithQuotes(configDir);
 
     exeName << " " << configDir;
     return exeName;
@@ -1038,7 +1034,7 @@ void Subversion2::OnFileExplorerRenameItem(wxCommandEvent& event)
         if(newname.IsEmpty() || newname == folderName) {
             return;
         }
-        ::WrapWithQuotes(newname);
+        StringUtils::WrapWithQuotes(newname);
         DoRename(workingDirectory.GetPath(), folderName, newname, event);
     } else {
         wxString newname = ::clGetTextFromUser(_("Svn Rename"), _("New name:"), m_selectedFile.GetFullName(),
@@ -1046,7 +1042,7 @@ void Subversion2::OnFileExplorerRenameItem(wxCommandEvent& event)
         if(newname.IsEmpty() || newname == m_selectedFile.GetFullName()) {
             return;
         }
-        ::WrapWithQuotes(newname);
+        StringUtils::WrapWithQuotes(newname);
         DoRename(workingDirectory.GetPath(), m_selectedFile.GetFullName(), newname, event);
     }
 }
@@ -1102,12 +1098,12 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
         }
 
         wxString filepath = tmpFile.GetFullPath();
-        ::WrapWithQuotes(filepath);
+        StringUtils::WrapWithQuotes(filepath);
         command << " --file " << filepath << " ";
 
         // Add the changed files
         for(size_t i = 0; i < actualFiles.GetCount(); ++i) {
-            ::WrapWithQuotes(actualFiles.Item(i));
+            StringUtils::WrapWithQuotes(actualFiles.Item(i));
             command << actualFiles.Item(i) << " ";
         }
         GetConsole()->Execute(command, workingDirectory, new SvnCommitHandler(this, event.GetId(), this));
@@ -1378,7 +1374,7 @@ wxString Subversion2::GetSvnExeNameNoConfigDir()
 {
     SvnSettingsData ssd = GetSettings();
     wxString executable = ssd.GetExecutable();
-    ::WrapWithQuotes(executable);
+    StringUtils::WrapWithQuotes(executable);
     executable << " ";
     return executable;
 }
@@ -1409,7 +1405,7 @@ void Subversion2::OnRevertToRevision(wxCommandEvent& event)
     } else {
         wxString folderName = workingDirectory.GetDirs().Last();
         workingDirectory.RemoveLastDir();
-        ::WrapWithQuotes(folderName);
+        StringUtils::WrapWithQuotes(folderName);
 
         command << GetSvnExeName() << loginString << " merge -r HEAD:" << nRevision << " " << folderName;
         GetConsole()->Execute(command, workingDirectory.GetPath(),
@@ -1561,7 +1557,7 @@ void Subversion2::ShowRecentChanges(const wxString& file)
         return;
     }
     wxString filename(file);
-    ::WrapWithQuotes(filename);
+    StringUtils::WrapWithQuotes(filename);
     long numberOfChanges = wxGetNumberFromUser(_("How many recent changes you want to view?"), "",
                                                _("Svn show recent changes"), 1, 1, 100);
     if(numberOfChanges == wxNOT_FOUND) {

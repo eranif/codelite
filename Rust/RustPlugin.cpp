@@ -34,8 +34,8 @@
 #include "Platform/Platform.hpp"
 #include "Rust/clRustLocator.hpp"
 #include "RustWorkspace.hpp"
+#include "StringUtils.h"
 #include "build_settings_config.h"
-#include "clFilesCollector.h"
 #include "clWorkspaceManager.h"
 #include "cl_standard_paths.h"
 #include "environmentconfig.h"
@@ -47,8 +47,6 @@
 
 #include <wx/dir.h>
 #include <wx/msgdlg.h>
-#include <wx/stdpaths.h>
-#include <wx/utils.h>
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
@@ -131,7 +129,7 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
         clRustLocator rust_locator;
         if (rust_locator.Locate()) {
             cargo_exe = rust_locator.GetRustTool("cargo");
-            ::WrapWithQuotes(cargo_exe);
+            StringUtils::WrapWithQuotes(cargo_exe);
         }
 #endif
 
@@ -227,7 +225,7 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
             return;
         }
 
-        ::WrapWithQuotes(*cargo_exe);
+        StringUtils::WrapWithQuotes(*cargo_exe);
 
         wxString command;
         command << *cargo_exe << " new " << dlg.GetWorkspaceName();

@@ -27,6 +27,7 @@
 
 #include "Diff/DiffSideBySidePanel.h"
 #include "Diff/clDiffFrame.h"
+#include "StringUtils.h"
 #include "SvnInfoDialog.h"
 #include "bitmap_loader.h"
 #include "clSTCHelper.hpp"
@@ -40,8 +41,6 @@
 #include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
-#include "plugin.h"
-#include "procutils.h"
 #include "subversion2.h"
 #include "subversion2_ui.h"
 #include "svn_checkout_dialog.h"
@@ -50,7 +49,6 @@
 #include "svn_copy_dialog.h"
 #include "svn_default_command_handler.h"
 #include "svn_local_properties.h"
-#include "svn_overlay_tool.h"
 #include "svn_props_dialog.h"
 #include "svnsettingsdata.h"
 #include "svnstatushandler.h"
@@ -60,12 +58,9 @@
 
 #include <map>
 #include <wx/app.h>
-#include <wx/aui/auibar.h>
-#include <wx/cmdline.h>
 #include <wx/dirdlg.h>
-#include <wx/filedlg.h>
-#include <wx/imaglist.h>
 #include <wx/menu.h>
+#include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
 
@@ -528,7 +523,7 @@ void SubversionView::OnUpdate(wxCommandEvent& event)
 
     // Concatenate list of files to be updated
     for (size_t i = 0; i < paths.GetCount(); i++) {
-        ::WrapWithQuotes(paths.Item(i));
+        StringUtils::WrapWithQuotes(paths.Item(i));
         command << paths.Item(i) << " ";
     }
     m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(), new SvnUpdateHandler(m_plugin, event.GetId(), this),
@@ -571,7 +566,7 @@ void SubversionView::OnAdd(wxCommandEvent& event)
 
     // Concatenate list of files to be added
     for (size_t i = 0; i < paths.size(); i++) {
-        command << ::WrapWithQuotes(paths.Item(i)) << " ";
+        command << StringUtils::WrapWithQuotes(paths.Item(i)) << " ";
     }
     m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(),
                                     new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
@@ -598,7 +593,7 @@ void SubversionView::OnRevert(wxCommandEvent& event)
     if (event.GetId() == XRCID("svn_file_revert")) {
         // Concatenate list of files to be updated
         for (size_t i = 0; i < paths.GetCount(); i++) {
-            ::WrapWithQuotes(paths.Item(i));
+            StringUtils::WrapWithQuotes(paths.Item(i));
             command << paths.Item(i) << " ";
         }
     } else {
@@ -691,7 +686,7 @@ void SubversionView::OnDelete(wxCommandEvent& event)
     wxArrayString paths;
     DoGetSelectedFiles(paths);
     for (size_t i = 0; i < paths.GetCount(); i++) {
-        ::WrapWithQuotes(paths.Item(i));
+        StringUtils::WrapWithQuotes(paths.Item(i));
         command << paths.Item(i) << " ";
     }
     m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(),
@@ -714,7 +709,7 @@ void SubversionView::OnResolve(wxCommandEvent& event)
 
     // Concatenate list of files to be updated
     for (size_t i = 0; i < paths.GetCount(); i++) {
-        ::WrapWithQuotes(paths.Item(i));
+        StringUtils::WrapWithQuotes(paths.Item(i));
         command << paths.Item(i) << " ";
     }
     m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(),
@@ -758,7 +753,7 @@ void SubversionView::OnDiff(wxCommandEvent& event)
 
         diff_cmd << " -r " << from << to << " ";
         for (size_t i = 0; i < paths.GetCount(); i++) {
-            ::WrapWithQuotes(paths.Item(i));
+            StringUtils::WrapWithQuotes(paths.Item(i));
             diff_cmd << paths.Item(i) << " ";
         }
         m_plugin->GetConsole()->Execute(diff_cmd, DoGetCurRepoPath(), new SvnDiffHandler(m_plugin, event.GetId(), this),
@@ -929,7 +924,7 @@ void SubversionView::OnItemActivated(wxDataViewEvent& event)
         // We dont have proper echo on windows that can be used here, so
         // we provide our own batch script wrapper
         wxString echo = wxFileName(clStandardPaths::Get().GetBinaryFullPath("codelite-echo")).GetFullPath();
-        command << ::WrapWithQuotes(echo);
+        command << StringUtils::WrapWithQuotes(echo);
 
         wxArrayString lines;
         DirSaver ds;

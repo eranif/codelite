@@ -51,49 +51,34 @@
 // Declaration
 #include "CMakePlugin.h"
 
+// CodeLite
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
 #include "CMakeBuilder.h"
 #include "ICompilerLocator.h"
 #include "StdToWX.h"
+#include "StringUtils.h"
+#include "build_config.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "macromanager.h"
+#include "project.h"
+#include "workspace.h"
 
 // wxWidgets
 #include <wx/app.h>
-#include <wx/busyinfo.h>
-#include <wx/dir.h>
 #include <wx/event.h>
 #include <wx/menu.h>
-#include <wx/mimetype.h>
 #include <wx/msgdlg.h>
-#include <wx/stdpaths.h>
+#include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
-
-// CodeLite
-#include "async_executable_cmd.h"
-#include "build_config.h"
-#include "build_settings_config.h"
-#include "build_system.h"
-#include "detachedpanesinfo.h"
-#include "dirsaver.h"
-#include "dockablepane.h"
-#include "environmentconfig.h"
-#include "event_notifier.h"
-#include "file_logger.h"
-#include "globals.h"
-#include "macromanager.h"
-#include "procutils.h"
-#include "project.h"
-#include "workspace.h"
 
 // CMakePlugin
 #include "CMake.h"
 #include "CMakeGenerator.h"
 #include "CMakeHelpTab.h"
-#include "CMakeProjectSettings.h"
 #include "CMakeSettingsDialog.h"
-#include "CMakeSettingsManager.h"
-
-#include <wx/textdlg.h>
 
 /* ************************************************************************ */
 /* VARIABLES                                                                */
@@ -489,12 +474,12 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
 
     // Ensure that the build directory exists
     fnWorkingDirectory.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    ::WrapWithQuotes(cmakeExe);
+    StringUtils::WrapWithQuotes(cmakeExe);
 
     // We run the cmake
     wxString command;
     wxString projectFolder = p->GetFileName().GetPath();
-    ::WrapWithQuotes(projectFolder);
+    StringUtils::WrapWithQuotes(projectFolder);
 
     command << cmakeExe << " " << projectFolder << " " << args;
 

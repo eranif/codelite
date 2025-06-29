@@ -1,17 +1,11 @@
 #include "LSPClangdDetector.hpp"
 
-#include "AsyncProcess/asyncprocess.h"
-#include "CompilerLocator/CompilerLocatorCLANG.h"
 #include "Platform/MSYS2.hpp"
 #include "Platform/Platform.hpp"
-#include "clFilesCollector.h"
-#include "file_logger.h"
-#include "globals.h"
-#include "procutils.h"
+#include "StringUtils.h"
 #include "tags_options_data.h"
 
 #include <wx/filename.h>
-#include <wx/regex.h>
 
 LSPClangdDetector::LSPClangdDetector()
     : LSPDetector("clangd")
@@ -37,7 +31,7 @@ void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
     LSP_DEBUG() << "==> Found" << clangdExe;
     wxString command;
     command << clangdExe.GetFullPath();
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
 
     clConfig ccConfig("code-completion.conf");
     TagsOptionsData tagsOptionsData;

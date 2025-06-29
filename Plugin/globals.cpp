@@ -358,7 +358,7 @@ const wxString& __uname()
             clDEBUG() << "Running `uname -s`..." << endl;
             wxString cmd;
             cmd << uname.GetFullPath();
-            WrapWithQuotes(cmd);
+            StringUtils::WrapWithQuotes(cmd);
             cmd << " -s";
             uname_output = ProcUtils::SafeExecuteCommand(cmd);
             clDEBUG() << uname_output << endl;
@@ -1015,14 +1015,6 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
 {
     return PromptForYesNoCancelDialogWithCheckbox(
         message, dlgId, yesLabel, noLabel, "", checkboxLabel, style, checkboxInitialValue);
-}
-
-wxString& WrapWithQuotes(wxString& str)
-{
-    if (!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
-        str.Prepend("\"").Append("\"");
-    }
-    return str;
 }
 
 bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)

@@ -1,12 +1,7 @@
 #include "LSPRustAnalyzerDetector.hpp"
 
-#include "AsyncProcess/asyncprocess.h"
 #include "Platform/Platform.hpp"
-#include "file_logger.h"
-#include "globals.h"
-#include "macros.h"
-
-#include <wx/tokenzr.h>
+#include "StringUtils.h"
 
 LSPRustAnalyzerDetector::LSPRustAnalyzerDetector()
     : LSPDetector("rust-analyzer")
@@ -25,7 +20,7 @@ bool LSPRustAnalyzerDetector::DoLocate()
     // we check for the binary in both
     wxString command;
     command << *analyzer_path;
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
     SetCommand(command);
 
     // Add support for the languages

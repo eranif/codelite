@@ -22,7 +22,7 @@ wxString join_array(const wxArrayString& arr)
 {
     wxString cmd;
     for (auto c : arr) {
-        cmd << WrapWithQuotes(c) << " ";
+        cmd << StringUtils::WrapWithQuotes(c) << " ";
     }
 
     if (!cmd.IsEmpty()) {

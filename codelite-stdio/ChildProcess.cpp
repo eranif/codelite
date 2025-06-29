@@ -2,7 +2,6 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "StringUtils.h"
-#include "globals.h"
 
 #if !USE_IPROCESS
 #include "UnixProcess.h"
@@ -29,10 +28,10 @@ void ChildProcess::Start(const wxArrayString& args)
     wxString command;
     command << args[0];
 
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
     for(size_t i = 1; i < args.size(); ++i) {
         wxString argument = args[i];
-        ::WrapWithQuotes(argument);
+        StringUtils::WrapWithQuotes(argument);
         command << " " << argument;
     }
 

@@ -1,16 +1,13 @@
 #include "CompileCommandsGenerator.h"
 
 #include "AsyncProcess/processreaderthread.h"
-#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
-#include "JSON.h"
+#include "StringUtils.h"
 #include "cl_config.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "macros.h"
 #include "md5/wxmd5.h"
 #include "workspace.h"
 
@@ -128,10 +125,10 @@ void CompileCommandsGenerator::GenerateCompileCommands()
 
     wxString command;
     command << codeliteMake.GetFullPath();
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
 
     wxString workspaceFile = clCxxWorkspaceST::Get()->GetFileName();
-    ::WrapWithQuotes(workspaceFile);
+    StringUtils::WrapWithQuotes(workspaceFile);
 
     wxString configName =
         clCxxWorkspaceST::Get()->GetSelectedConfig() ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() : "";
@@ -156,7 +153,7 @@ void CompileCommandsGenerator::GenerateCompileCommands()
     wxFileName xmlFile(clStandardPaths::Get().GetUserDataDir(), "build_settings.xml");
     xmlFile.AppendDir("config");
     wxString xmlPath = xmlFile.GetFullPath();
-    ::WrapWithQuotes(xmlPath);
+    StringUtils::WrapWithQuotes(xmlPath);
     command << " --settings=" << xmlPath;
 
     clDEBUG() << "Executing:" << command;

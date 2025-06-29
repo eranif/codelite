@@ -1,6 +1,8 @@
 #include "GitLocator.h"
+
+#include "StringUtils.h"
+
 #include <wx/tokenzr.h>
-#include "globals.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -76,7 +78,7 @@ bool GitLocator::MSWGetGitShellCommand(wxString& bashCommand) const
             gitpath.SetName("bash");
             if(gitpath.Exists()) {
                 bashCommand = gitpath.GetFullPath();
-                ::WrapWithQuotes(bashCommand);
+                StringUtils::WrapWithQuotes(bashCommand);
                 bashCommand << " --login -i";
                 return true;
             }

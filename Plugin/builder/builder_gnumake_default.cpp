@@ -872,7 +872,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBu
 
                 // set the source file we want to compile
                 wxString source_file_to_compile = rel_paths.at(i).GetFullPath(wxPATH_UNIX);
-                ::WrapWithQuotes(source_file_to_compile);
+                StringUtils::WrapWithQuotes(source_file_to_compile);
 
                 wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_UNIX));
                 if (generateDependenciesFiles) {
@@ -1194,8 +1194,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << "ProjectName            :=" << proj->GetName() << "\n";
     text << "ConfigurationName      :=" << name << "\n";
     text << "WorkspaceConfiguration :=" << clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() << "\n";
-    text << "WorkspacePath          :=" << ::WrapWithQuotes(workspacePath) << "\n";
-    text << "ProjectPath            :=" << ::WrapWithQuotes(projectPath) << "\n";
+    text << "WorkspacePath          :=" << StringUtils::WrapWithQuotes(workspacePath) << "\n";
+    text << "ProjectPath            :=" << StringUtils::WrapWithQuotes(projectPath) << "\n";
     text << "IntermediateDirectory  :=" << intermediateDir << "\n";
     text << "OutDir                 :=$(IntermediateDirectory)\n";
     text << "CurrentFileName        :=\n";
@@ -1203,7 +1203,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << "CurrentFileFullPath    :=\n";
     text << "User                   :=" << wxGetUserId() << "\n";
     text << "Date                   :=" << wxDateTime::Now().FormatDate() << "\n";
-    text << "CodeLitePath           :=" << ::WrapWithQuotes(startupDir) << "\n";
+    text << "CodeLitePath           :=" << StringUtils::WrapWithQuotes(startupDir) << "\n";
     text << "MakeDirCommand         :=" << mkdirCommand << "\n";
     text << "LinkerName             :=" << cmp->GetTool("LinkerName") << "\n";
     text << "SharedObjectLinkerName :=" << cmp->GetTool("SharedObjectLinkerName") << "\n";
@@ -1322,7 +1322,7 @@ wxString BuilderGnuMake::ParseIncludePath(const wxString& paths, const wxString&
     while (tkz.HasMoreTokens()) {
         wxString path(tkz.NextToken());
         TrimString(path);
-        ::WrapWithQuotes(path);
+        StringUtils::WrapWithQuotes(path);
         incluedPath << "$(IncludeSwitch)" << path << " ";
     }
     return incluedPath;
@@ -1338,7 +1338,7 @@ wxString BuilderGnuMake::ParseLibPath(const wxString& paths, const wxString& pro
     while (tkz.HasMoreTokens()) {
         wxString path(tkz.NextToken());
         path.Trim().Trim(false);
-        ::WrapWithQuotes(path);
+        StringUtils::WrapWithQuotes(path);
         libPath << "$(LibraryPathSwitch)" << path << " ";
     }
     return libPath;

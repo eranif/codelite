@@ -682,6 +682,14 @@ wxString StringUtils::BuildCommandStringFromArray(const wxArrayString& command_a
     return command;
 }
 
+wxString& StringUtils::WrapWithQuotes(wxString& str)
+{
+    if (!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
+        str.Prepend("\"").Append("\"");
+    }
+    return str;
+}
+
 wxString StringUtils::WrapWithDoubleQuotes(const wxString& str)
 {
     if (str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {

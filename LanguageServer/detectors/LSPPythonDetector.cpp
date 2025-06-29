@@ -1,9 +1,8 @@
 #include "LSPPythonDetector.hpp"
 
-#include "AsyncProcess/asyncprocess.h"
 #include "Platform/Platform.hpp"
 #include "StdToWX.h"
-#include "globals.h"
+#include "StringUtils.h"
 #include "procutils.h"
 
 LSPPythonDetector::LSPPythonDetector()
@@ -26,7 +25,7 @@ bool LSPPythonDetector::DoLocate()
     // which will not be shown via the `pip list` command
     // so try it first
     if (auto pylsp = ThePlatform->Which("pylsp")) {
-        ::WrapWithQuotes(*pylsp);
+        StringUtils::WrapWithQuotes(*pylsp);
         ConfigurePylsp(*pylsp);
         return true;
     }
@@ -41,7 +40,7 @@ bool LSPPythonDetector::DoLocate()
 
     // We have it installed
     wxString command;
-    ::WrapWithQuotes(*python);
+    StringUtils::WrapWithQuotes(*python);
 
     command << *python << " -m pylsp";
     ConfigurePylsp(command);

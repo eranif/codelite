@@ -1,5 +1,6 @@
 #include "clPatch.h"
 
+#include "StringUtils.h"
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
 #include "globals.h"
@@ -32,7 +33,7 @@ void clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirector
     wxString command;
     command << m_patch.GetFullPath();
 
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
 
     if(!args.IsEmpty()) {
         command << " " << args;
@@ -44,7 +45,7 @@ void clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirector
 
     wxString patch = patchFile.GetFullPath();
 
-    command << " " << ::WrapWithQuotes(patch);
+    command << " " << StringUtils::WrapWithQuotes(patch);
     ::WrapInShell(command);
 
     ProcUtils::SafeExecuteCommand(command);

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "outputtabwindow.h"
 
+#include "StringUtils.h"
 #include "clSTCHelper.hpp"
 #include "clToolBar.h"
 #include "cl_config.h"
@@ -35,8 +36,6 @@
 #include "macros.h"
 #include "manager.h"
 #include "output_pane.h"
-#include "pluginmanager.h"
-#include "quickfindbar.h"
 
 #include <wx/xrc/xmlres.h>
 
@@ -239,7 +238,7 @@ void OutputTabWindow::AppendText(const wxString& text, bool toggle_view)
 
     // Strip any terminal escape chars from the buffer
     wxString modText;
-    ::clStripTerminalColouring(text, modText);
+    StringUtils::StripTerminalColouring(text, modText);
 
     // add the text
     m_sci->InsertText(m_sci->GetLength(), modText);

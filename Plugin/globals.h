@@ -421,11 +421,6 @@ WXDLLIMPEXP_SDK IManager* clGetManager();
 WXDLLIMPEXP_SDK void clSetManager(IManager* manager);
 
 /**
- * @brief remove terminal colours from buffer
- */
-WXDLLIMPEXP_SDK void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer);
-
-/**
  * @brief return true if the name is valid
  */
 WXDLLIMPEXP_SDK bool clIsValidProjectName(const wxString& name);

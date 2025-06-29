@@ -2,6 +2,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
+#include "StringUtils.h"
 #include "globals.h"
 #include "json_node.h"
 
@@ -66,7 +67,7 @@ public:
                 if(!buffer.empty()) {
                     if(m_owner) {
                         wxString mod_buffer;
-                        clStripTerminalColouring(buffer, mod_buffer);
+                        StringUtils::StripTerminalColouring(buffer, mod_buffer);
                         clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
                         e.SetProcess(nullptr);
                         e.SetOutput(mod_buffer);

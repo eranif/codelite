@@ -1116,11 +1116,6 @@ static IManager* s_pluginManager = NULL;
 void clSetManager(IManager* manager) { s_pluginManager = manager; }
 IManager* clGetManager() { return s_pluginManager; }
 
-void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
-{
-    StringUtils::StripTerminalColouring(buffer, modbuffer);
-}
-
 bool clIsValidProjectName(const wxString& name)
 {
     return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos;

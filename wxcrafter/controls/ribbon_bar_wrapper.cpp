@@ -93,10 +93,8 @@ wxString RibbonBarWrapper::DoGenerateCppCtorCode_End() const { return wxString()
 
 void RibbonBarWrapper::SetSelection(RibbonPageWrapper* page)
 {
-    wxcWidget::List_t& children = GetChildren();
-    wxcWidget::List_t::iterator iter = children.begin();
-    for(; iter != children.end(); ++iter) {
-        RibbonPageWrapper* p = dynamic_cast<RibbonPageWrapper*>(*iter);
+    for (auto child : GetChildren()) {
+        RibbonPageWrapper* p = dynamic_cast<RibbonPageWrapper*>(child);
         if(p) {
             p->Select(p == page);
         }
@@ -105,10 +103,8 @@ void RibbonBarWrapper::SetSelection(RibbonPageWrapper* page)
 
 RibbonPageWrapper* RibbonBarWrapper::GetSelection() const
 {
-    const wxcWidget::List_t& children = GetChildren();
-    wxcWidget::List_t::const_iterator iter = children.begin();
-    for(; iter != children.end(); ++iter) {
-        RibbonPageWrapper* p = dynamic_cast<RibbonPageWrapper*>(*iter);
+    for (auto child : GetChildren()) {
+        RibbonPageWrapper* p = dynamic_cast<RibbonPageWrapper*>(child);
         if(p && p->IsSelected()) {
             return p;
         }

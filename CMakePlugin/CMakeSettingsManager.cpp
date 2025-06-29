@@ -160,8 +160,8 @@ void CMakeSettingsManager::SaveProjects()
     wxArrayString projects;
     workspace->GetProjectList(projects);
 
-    for(wxArrayString::const_iterator it = projects.begin(), ite = projects.end(); it != ite; ++it) {
-        SaveProject(*it);
+    for (const auto& projectName : projects) {
+        SaveProject(projectName);
     }
 }
 
@@ -189,17 +189,12 @@ void CMakeSettingsManager::SaveProject(const wxString& name)
     JSONItem json = JSONItem::createArray("configurations");
 
     // Foreach settings
-    for(std::map<wxString, CMakeProjectSettings>::const_iterator it = itSettings->second.begin(),
-                                                                 ite = itSettings->second.end();
-        it != ite; ++it) {
-        // Get settings
-        const CMakeProjectSettings& settings = it->second;
-
+    for (const auto& [name, settings] : itSettings->second) {
         // Create item
         JSONItem item = JSONItem::createObject("configuration");
 
         // Store name
-        item.addProperty("name", it->first);
+        item.addProperty("name", name);
 
         // Store settings
         item.addProperty("enabled", settings.enabled);
@@ -231,8 +226,8 @@ void CMakeSettingsManager::LoadProjects()
     wxArrayString projects;
     workspace->GetProjectList(projects);
 
-    for(wxArrayString::const_iterator it = projects.begin(), ite = projects.end(); it != ite; ++it) {
-        LoadProject(*it);
+    for (const auto& projectName : projects) {
+        LoadProject(projectName);
     }
 }
 

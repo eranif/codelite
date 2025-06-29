@@ -228,9 +228,8 @@ void MemCheckDVCErrorsModel::DeleteItems(const wxDataViewItem& parent, const wxD
 void MemCheckDVCErrorsModel::Clear()
 {
     wxVector<MemCheckDVCErrorsModel_Item*> roots = m_data;
-    wxVector<MemCheckDVCErrorsModel_Item*>::iterator iter = roots.begin();
-    for(; iter != roots.end(); ++iter) {
-        DeleteItem( wxDataViewItem(*iter) );
+    for (auto item : roots) {
+        DeleteItem(wxDataViewItem(item));
     }
     m_data.clear();
     Cleared();

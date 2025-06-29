@@ -19,7 +19,7 @@ void clFunction::Reset()
     m_isFinal = false;
 }
 
-void clFunction::Print()
+void clFunction::Print() const
 {
     fprintf(stdout,
             "{m_name=%s, m_isConst=%s, m_lineno=%d, m_scope=%s, m_signature=%s, m_isVirtual=%s, m_isPureVirtual=%s, "

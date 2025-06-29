@@ -85,9 +85,7 @@ void TipTree::BuildTree(TreeNode<wxString, NodeData> *tree)
 	SortTree(m_sortItems);
 	
 	//expand all the root direct children
-	std::list<wxTreeItemId>::iterator iter = rootChilds.begin();
-	for(; iter != rootChilds.end(); iter++){
-		wxTreeItemId item = (*iter);
+	for (auto item : rootChilds) {
 		if(item.IsOk() && ItemHasChildren(item)){
 			Expand(item);
 		}
@@ -98,9 +96,8 @@ void TipTree::BuildTree(TreeNode<wxString, NodeData> *tree)
 
 void TipTree::SortTree(std::map<void*, bool> & nodes)
 {
-	std::map<void*, bool>::iterator iter = nodes.begin();
-	for(; iter != nodes.end(); iter++){
-		wxTreeItemId item = iter->first;
+	for (auto p : nodes) {
+		wxTreeItemId item = p.first;
 		if(item.IsOk()){
 			// Does this node has children?
 			if( GetChildrenCount( item ) == 0 )

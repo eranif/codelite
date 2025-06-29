@@ -58,12 +58,13 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
     }
     text << _("\nCommands starting with the hash sign ('#'), will not be executed");
     m_staticText11->SetLabel(text);
-    BuildCommandList::const_iterator iter = buildCmds.begin();
     m_textCtrlBuildEvents->ClearAll();
-    for(; iter != buildCmds.end(); iter++) {
-        wxString cmdText = iter->GetCommand();
+    for (const auto& buildCommand : buildCmds) {
+        wxString cmdText = buildCommand.GetCommand();
         cmdText.Trim().Trim(false);
-        if(iter->GetEnabled() == false && !cmdText.StartsWith(wxT("#"))) { cmdText.Prepend(wxT("#")); }
+        if (buildCommand.GetEnabled() == false && !cmdText.StartsWith(wxT("#"))) {
+            cmdText.Prepend(wxT("#"));
+        }
         cmdText.Append(wxT("\n"));
         m_textCtrlBuildEvents->AppendText(cmdText);
     }

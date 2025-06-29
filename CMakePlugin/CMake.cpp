@@ -391,9 +391,9 @@ void CMake::StoreIntoDatabase()
         {
             db.ExecuteUpdate("DELETE FROM commands");
             wxSQLite3Statement stmt = db.PrepareStatement("INSERT INTO commands (name, desc) VALUES(?, ?)");
-            for (HelpMap::const_iterator it = m_commands.begin(), ite = m_commands.end(); it != ite; ++it) {
-                stmt.Bind(1, it->first);
-                stmt.Bind(2, it->second);
+            for (const auto& [name, desc] : m_commands) {
+                stmt.Bind(1, name);
+                stmt.Bind(2, desc);
                 stmt.ExecuteUpdate();
             }
         }
@@ -402,9 +402,9 @@ void CMake::StoreIntoDatabase()
         {
             db.ExecuteUpdate("DELETE FROM modules");
             wxSQLite3Statement stmt = db.PrepareStatement("INSERT INTO modules (name, desc) VALUES(?, ?)");
-            for (HelpMap::const_iterator it = m_modules.begin(), ite = m_modules.end(); it != ite; ++it) {
-                stmt.Bind(1, it->first);
-                stmt.Bind(2, it->second);
+            for (const auto& [name, desc] : m_modules) {
+                stmt.Bind(1, name);
+                stmt.Bind(2, desc);
                 stmt.ExecuteUpdate();
             }
         }
@@ -413,9 +413,9 @@ void CMake::StoreIntoDatabase()
         {
             db.ExecuteUpdate("DELETE FROM properties");
             wxSQLite3Statement stmt = db.PrepareStatement("INSERT INTO properties (name, desc) VALUES(?, ?)");
-            for (HelpMap::const_iterator it = m_properties.begin(), ite = m_properties.end(); it != ite; ++it) {
-                stmt.Bind(1, it->first);
-                stmt.Bind(2, it->second);
+            for (const auto& [name, desc] : m_properties) {
+                stmt.Bind(1, name);
+                stmt.Bind(2, desc);
                 stmt.ExecuteUpdate();
             }
         }
@@ -424,9 +424,9 @@ void CMake::StoreIntoDatabase()
         {
             db.ExecuteUpdate("DELETE FROM variables");
             wxSQLite3Statement stmt = db.PrepareStatement("INSERT INTO variables (name, desc) VALUES(?, ?)");
-            for (HelpMap::const_iterator it = m_variables.begin(), ite = m_variables.end(); it != ite; ++it) {
-                stmt.Bind(1, it->first);
-                stmt.Bind(2, it->second);
+            for (const auto& [name, desc] : m_variables) {
+                stmt.Bind(1, name);
+                stmt.Bind(2, desc);
                 stmt.ExecuteUpdate();
             }
         }
@@ -464,7 +464,7 @@ bool CMake::LoadList(const wxString& type, CMake::HelpMap& list, LoadNotifier* n
     int loaded = 0;
 
     // Foreach names
-    for (wxArrayString::const_iterator it = names.begin(), ite = names.end(); it != ite; ++it) {
+    for (wxString name : names) {
 
         if (notifier && notifier->RequestStop()) {
             // Someone called 'wxThread::Delete'
@@ -472,7 +472,6 @@ bool CMake::LoadList(const wxString& type, CMake::HelpMap& list, LoadNotifier* n
         }
 
         // Trim name
-        wxString name = *it;
         name.Trim().Trim(false);
 
         // Export help

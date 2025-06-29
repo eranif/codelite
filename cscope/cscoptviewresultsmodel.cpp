@@ -228,9 +228,8 @@ void CScoptViewResultsModel::DeleteItems(const wxDataViewItem& parent, const wxD
 void CScoptViewResultsModel::Clear()
 {
     wxVector<CScoptViewResultsModel_Item*> roots = m_data;
-    wxVector<CScoptViewResultsModel_Item*>::iterator iter = roots.begin();
-    for(; iter != roots.end(); ++iter) {
-        DeleteItem( wxDataViewItem(*iter) );
+    for (auto* item : roots) {
+        DeleteItem(wxDataViewItem(item));
     }
     m_data.clear();
     Cleared();

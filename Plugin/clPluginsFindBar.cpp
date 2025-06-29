@@ -489,7 +489,7 @@ bool clPluginsFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace
         m_sci->SetIndicatorCurrent(1);
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
 
-        if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
+        if (EditorConfigST::Get()->GetOptions()->GetClearHighlightedWordsOnFind()) {
             m_sci->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
             m_sci->IndicatorClearRange(0, m_sci->GetLength());
         }
@@ -1150,7 +1150,7 @@ bool clPluginsFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what,
     }
 
     // Clear all search markers if desired
-    if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
+    if (EditorConfigST::Get()->GetOptions()->GetClearHighlightedWordsOnFind()) {
         ctrl->SetIndicatorCurrent(INDICATOR_FIND_BAR_WORD_HIGHLIGHT);
         ctrl->IndicatorClearRange(0, ctrl->GetLength());
     }

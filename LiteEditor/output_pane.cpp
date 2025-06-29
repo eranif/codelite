@@ -146,7 +146,7 @@ void OutputPane::CreateGUIControls()
 void OutputPane::OnEditorFocus(wxCommandEvent& e)
 {
     e.Skip();
-    if (EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+    if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneOnUserClick()) {
 
         // Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
         int cursel(m_book->GetSelection());

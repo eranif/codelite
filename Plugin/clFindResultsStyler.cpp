@@ -45,7 +45,7 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     }
 
     // Show/hide whitespace
-    sci->SetViewWhiteSpace(EditorConfigST::Get()->GetOptions()->GetShowWhitspaces());
+    sci->SetViewWhiteSpace(EditorConfigST::Get()->GetOptions()->GetShowWhitespaces());
     auto white_space_prop = lexer->GetProperty(WHITE_SPACE_ATTR_ID);
     auto default_prop = lexer->GetProperty(0);
     auto line_numbers_prop = lexer->GetProperty(33);

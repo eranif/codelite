@@ -45,13 +45,13 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
         options.Add(_("Invisible"));
         options.Add(_("Visible always"));
         options.Add(_("Visible after indentation"));
-        AddProperty(_("Indentation visibility"), options, m_options->GetShowWhitspaces(),
+        AddProperty(_("Indentation visibility"), options, m_options->GetShowWhitespaces(),
                     [this, options](const wxString& label, const wxAny& value) {
                         wxString value_str;
                         if(value.GetAs(&value_str)) {
                             size_t where = options.Index(value_str);
                             if(where != wxString::npos) {
-                                m_options->SetShowWhitspaces(static_cast<int>(where));
+                                m_options->SetShowWhitespaces(static_cast<int>(where));
                             }
                         }
                     });

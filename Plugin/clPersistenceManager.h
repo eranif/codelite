@@ -26,23 +26,24 @@
 #ifndef CLPERSISTENCEMANAGER_H
 #define CLPERSISTENCEMANAGER_H
 
-#include "clIniFile.h"
 #include "codelite_exports.h"
 
+#include <memory>
+#include <wx/fileconf.h>
 #include <wx/persist.h> // Base class: wxPersistenceManager
 
 class WXDLLIMPEXP_SDK clPersistenceManager : public wxPersistenceManager
 {
-    clIniFile* m_iniFile;
+    std::unique_ptr<wxFileConfig> m_fileConfig;
 
 public:
     clPersistenceManager();
-    virtual ~clPersistenceManager();
+    ~clPersistenceManager() override;
 
     /**
      * @brief return the configuration object to use
      */
-    virtual wxConfigBase* GetConfig() const;
+    wxConfigBase* GetConfig() const override;
 };
 
 #endif // CLPERSISTENCEMANAGER_H

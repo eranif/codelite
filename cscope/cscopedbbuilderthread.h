@@ -50,7 +50,7 @@ typedef std::map<wxString, CScopeEntryDataVec_t*> CScopeResultTable_t;
  */
 class CscopeRequest : public ThreadRequest
 {
-    wxEvtHandler* m_owner;
+    wxEvtHandler* m_owner = nullptr;
     wxString m_cmd;
     wxString m_workingDir;
     wxString m_outfile;
@@ -58,8 +58,8 @@ class CscopeRequest : public ThreadRequest
     wxString m_findWhat;
 
 public:
-    CscopeRequest(){};
-    ~CscopeRequest(){};
+    CscopeRequest() = default;
+    ~CscopeRequest() override = default;
 
     // Setters
     void SetCmd(const wxString& cmd) { this->m_cmd = cmd; }

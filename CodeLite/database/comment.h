@@ -51,7 +51,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Comment() {};
+	virtual ~Comment() = default;
 
 	/// assignment operator
 	Comment& operator=(const Comment& rhs);

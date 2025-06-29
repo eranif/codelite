@@ -115,7 +115,7 @@ protected:
     
 public:
     PHPEntityBase();
-    virtual ~PHPEntityBase(){};
+    virtual ~PHPEntityBase() = default;
 
     const PHPEntityBase::List_t& GetChildren() const { return m_children; }
     PHPEntityBase* Parent() const { return m_parent; }

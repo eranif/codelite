@@ -43,8 +43,8 @@ class wxXmlNode;
 class WXDLLIMPEXP_LE_SDK ConfObject
 {
 public:
-    ConfObject(){};
-    virtual ~ConfObject() {}
+    ConfObject() = default;
+    virtual ~ConfObject() = default;
 
     virtual wxXmlNode* ToXml() const = 0;
 };

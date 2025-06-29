@@ -50,9 +50,13 @@ public:
     //---------------------------------------
     ContextGeneric(clEditor* container, const wxString& name);
     ContextGeneric()
-        : ContextBase(wxT("Text")){};
+        : ContextBase(wxT("Text"))
+    {
+    }
     ContextGeneric(const wxString& name)
-        : ContextBase(name){};
+        : ContextBase(name)
+    {
+    }
 
     virtual ~ContextGeneric();
     virtual ContextBase* NewInstance(clEditor* container);

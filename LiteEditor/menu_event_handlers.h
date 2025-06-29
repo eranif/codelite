@@ -38,9 +38,11 @@ protected:
     int m_id;
 
 public:
-    MenuEventHandler(int id)
-        : m_id(id){};
-    virtual ~MenuEventHandler(){};
+    explicit MenuEventHandler(int id)
+        : m_id(id)
+    {
+    }
+    virtual ~MenuEventHandler() = default;
 
     // handle an event
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) = 0;
@@ -63,9 +65,11 @@ using MenuEventHandlerPtr = std::shared_ptr<MenuEventHandler>;
 class EditHandler : public MenuEventHandler
 {
 public:
-    EditHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~EditHandler(){};
+    explicit EditHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~EditHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
@@ -78,9 +82,11 @@ public:
 class BraceMatchHandler : public MenuEventHandler
 {
 public:
-    BraceMatchHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~BraceMatchHandler(){};
+    explicit BraceMatchHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~BraceMatchHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
@@ -88,14 +94,16 @@ public:
 };
 
 //------------------------------------
-// Find / Repalce
+// Find / Replace
 //------------------------------------
 class FindReplaceHandler : public MenuEventHandler
 {
 public:
-    FindReplaceHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~FindReplaceHandler(){};
+    explicit FindReplaceHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~FindReplaceHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
@@ -108,9 +116,11 @@ public:
 class GotoHandler : public MenuEventHandler
 {
 public:
-    GotoHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~GotoHandler(){};
+    explicit GotoHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~GotoHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
@@ -123,9 +133,11 @@ public:
 class BookmarkHandler : public MenuEventHandler
 {
 public:
-    BookmarkHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~BookmarkHandler(){};
+    explicit BookmarkHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~BookmarkHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
@@ -138,9 +150,11 @@ public:
 class GotoDefinitionHandler : public MenuEventHandler
 {
 public:
-    GotoDefinitionHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~GotoDefinitionHandler(){};
+    explicit GotoDefinitionHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~GotoDefinitionHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
@@ -153,9 +167,11 @@ public:
 class WordWrapHandler : public MenuEventHandler
 {
 public:
-    WordWrapHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~WordWrapHandler(){};
+    explicit WordWrapHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~WordWrapHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
@@ -168,9 +184,11 @@ public:
 class FoldHandler : public MenuEventHandler
 {
 public:
-    FoldHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~FoldHandler(){};
+    explicit FoldHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~FoldHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
@@ -183,9 +201,11 @@ public:
 class DebuggerMenuHandler : public MenuEventHandler
 {
 public:
-    DebuggerMenuHandler(int id)
-        : MenuEventHandler(id){};
-    virtual ~DebuggerMenuHandler(){};
+    explicit DebuggerMenuHandler(int id)
+        : MenuEventHandler(id)
+    {
+    }
+    ~DebuggerMenuHandler() override = default;
 
 public:
     virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);

@@ -61,10 +61,12 @@ class MemCheckErrorReferrer: public wxClientData
 {
     MemCheckError & m_error;
 public:
-    MemCheckErrorReferrer(MemCheckError & error) : wxClientData(), m_error(error) {};
-    MemCheckError & Get() {
-        return m_error;
-    };
+    explicit MemCheckErrorReferrer(MemCheckError& error)
+        : wxClientData()
+        , m_error(error)
+    {
+    }
+    MemCheckError& Get() { return m_error; }
 };
 
 /**
@@ -75,12 +77,14 @@ public:
  */
 class MemCheckErrorLocationReferrer: public wxClientData
 {
-    MemCheckErrorLocation & m_location;
+    MemCheckErrorLocation& m_location;
+
 public:
-    MemCheckErrorLocationReferrer(MemCheckErrorLocation & location) : m_location(location) {};
-    MemCheckErrorLocation & Get() {
-        return m_location;
-    };
+    explicit MemCheckErrorLocationReferrer(MemCheckErrorLocation& location)
+        : m_location(location)
+    {
+    }
+    MemCheckErrorLocation& Get() { return m_location; }
 };
 
 

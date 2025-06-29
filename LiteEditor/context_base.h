@@ -116,7 +116,7 @@ public:
     // functions with default implementation:
     virtual bool IsDefaultContext() const { return true; }
     virtual void OnCallTipClick(wxStyledTextEvent& event) { event.Skip(); }
-    virtual void OnCalltipCancel(){};
+    virtual void OnCalltipCancel() {}
     virtual void OnDwellEnd(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnDbgDwellEnd(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnDbgDwellStart(wxStyledTextEvent& event) { event.Skip(); }

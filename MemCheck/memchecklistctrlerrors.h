@@ -45,15 +45,17 @@
 class MemCheckListCtrlErrors: public wxListCtrl
 {
 public:
-    MemCheckListCtrlErrors(wxWindow *parent,
+    MemCheckListCtrlErrors(wxWindow* parent,
                            wxWindowID id,
-                           const wxPoint &pos = wxDefaultPosition,
-                           const wxSize &size = wxDefaultSize,
+                           const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxDefaultSize,
                            long style = wxLC_ICON,
-                           const wxValidator &validator = wxDefaultValidator,
-                           const wxString &name = wxListCtrlNameStr) :
-        wxListCtrl(parent, id, pos, size, style, validator, name) {};
-    virtual ~MemCheckListCtrlErrors() {};
+                           const wxValidator& validator = wxDefaultValidator,
+                           const wxString& name = wxListCtrlNameStr)
+        : wxListCtrl(parent, id, pos, size, style, validator, name)
+    {
+    }
+    ~MemCheckListCtrlErrors() override = default;
 
     virtual wxString OnGetItemText(long item, long column) const {
         return m_data->at(item)->label;

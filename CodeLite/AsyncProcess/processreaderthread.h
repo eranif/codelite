@@ -69,7 +69,7 @@ public:
      * Called when the thread exits
      * whether it terminates normally or is stopped with Delete() (but not when it is Kill()'ed!)
      */
-    virtual void OnExit(){};
+    virtual void OnExit() {}
 
     /**
      * Set the window to be notified when a change was done

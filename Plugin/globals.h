@@ -466,12 +466,6 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
 WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
 
 /**
- * @brief join strings with `\n` or `\r\n` (depends on eol)
- * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
- */
-WXDLLIMPEXP_SDK wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
-
-/**
  * @brief fit the dataview columns width to match their content
  */
 WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);

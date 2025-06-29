@@ -120,6 +120,12 @@ public:
     }
 
     /**
+     * @brief join strings with `\n` or `\r\n` (depends on eol)
+     * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
+     */
+    static wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
+
+    /**
      * @brief build argv out of str
      */
     static char** BuildArgv(const wxString& str, int& argc);

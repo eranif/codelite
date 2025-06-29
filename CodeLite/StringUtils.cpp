@@ -1,6 +1,7 @@
 #include "StringUtils.h"
 
 #include <vector>
+#include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
 
 namespace
@@ -332,6 +333,23 @@ bool StringUtils::NextWord(const wxString& str, size_t& offset, wxString& word, 
         return true;
     }
     return false;
+}
+
+wxString StringUtils::clJoinLinesWithEOL(const wxArrayString& lines, int eol)
+{
+    wxString glue = "\n";
+    switch (eol) {
+    case wxSTC_EOL_CRLF:
+        glue = "\r\n";
+        break;
+    case wxSTC_EOL_CR:
+        glue = "\r";
+        break;
+    default:
+        glue = "\n";
+        break;
+    }
+    return StringUtils::clJoin(lines, glue);
 }
 
 #define ARGV_STATE_NORMAL 0

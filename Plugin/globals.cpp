@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "globals.h"
 
-#include "AsyncProcess/asyncprocess.h"
 #include "Console/clConsoleBase.h"
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
@@ -52,31 +51,21 @@
 
 #include <vector>
 #include <wx/app.h>
-#include <wx/aui/auibook.h>
 #include <wx/clipbrd.h>
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
 #include <wx/dcscreen.h>
 #include <wx/dir.h>
 #include <wx/display.h>
-#include <wx/ffile.h>
 #include <wx/filename.h>
-#include <wx/graphics.h>
 #include <wx/icon.h>
-#include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>
-#include <wx/persist.h>
 #include <wx/regex.h>
 #include <wx/richmsgdlg.h>
 #include <wx/settings.h>
 #include <wx/sstream.h>
-#include <wx/stc/stc.h>
-#include <wx/stdpaths.h>
-#include <wx/wfstream.h>
 #include <wx/window.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/zipstrm.h>
 
 #ifdef __WXMSW__
 #include "MSWDarkMode.hpp"
@@ -1210,23 +1199,6 @@ int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
         }
     }
     return wxNOT_FOUND;
-}
-
-wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
-{
-    wxString glue = "\n";
-    switch (eol) {
-    case wxSTC_EOL_CRLF:
-        glue = "\r\n";
-        break;
-    case wxSTC_EOL_CR:
-        glue = "\r";
-        break;
-    default:
-        glue = "\n";
-        break;
-    }
-    return StringUtils::clJoin(lines, glue);
 }
 
 wxSize clGetDisplaySize()

@@ -5,20 +5,15 @@
 #include "PHP/PHPLookupTable.h"
 #include "PHP/PHPSourceFile.h"
 #include "PHPSettersGettersDialog.h"
-#include "StdToWX.h"
-#include "clEditorStateLocker.h"
-#include "clSTCLineKeeper.h"
+#include "StringUtils.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "editor_config.h"
 #include "event_notifier.h"
-#include "globals.h"
 #include "php_code_completion.h"
 #include "php_utils.h"
-#include "plugin.h"
 
 #include <wx/app.h>
-#include <wx/msgdlg.h>
 #include <wx/regex.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
@@ -294,7 +289,7 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
             }
 
             // Glue the lines back together
-            wxString doxyBlock = ::clJoinLinesWithEOL(lines, ctrl->GetEOLMode());
+            wxString doxyBlock = StringUtils::clJoinLinesWithEOL(lines, ctrl->GetEOLMode());
             doxyBlock << (ctrl->GetEOLMode() == wxSTC_EOL_CRLF ? "\r\n" : "\n");
 
             // Insert the text

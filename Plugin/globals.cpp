@@ -908,53 +908,6 @@ wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
     return v;
 }
 
-wxArrayString SplitString(const wxString& inString, bool trim)
-{
-    wxArrayString lines;
-    wxString curline;
-
-    bool inContinuation = false;
-    for (size_t i = 0; i < inString.length(); ++i) {
-        wxChar ch = inString.GetChar(i);
-        wxChar ch1 = (i + 1 < inString.length()) ? inString.GetChar(i + 1) : wxUniChar(0);
-        wxChar ch2 = (i + 2 < inString.length()) ? inString.GetChar(i + 2) : wxUniChar(0);
-
-        switch (ch) {
-        case '\r':
-            // do nothing
-            curline << ch;
-            break;
-        case '\n':
-            if (inContinuation) {
-                curline << ch;
-
-            } else {
-                lines.Add(trim ? curline.Trim().Trim(false) : curline);
-                curline.clear();
-            }
-            inContinuation = false;
-            break;
-        case '\\':
-            curline << ch;
-            if ((ch1 == '\n') || (ch1 == '\r' && ch2 == '\n')) {
-                inContinuation = true;
-            }
-            break;
-        default:
-            curline << ch;
-            inContinuation = false;
-            break;
-        }
-    }
-
-    // any leftovers?
-    if (curline.IsEmpty() == false) {
-        lines.Add(trim ? curline.Trim().Trim(false) : curline);
-        curline.clear();
-    }
-    return lines;
-}
-
 void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid)
 {
     pid = wxNOT_FOUND;

@@ -126,6 +126,12 @@ public:
     static wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
 
     /**
+     * @brief split lines (using CR|LF as the separator), taking into consideration line continuation
+     * @param trim trim the lines with set to true
+     */
+    static wxArrayString SplitString(const wxString& inString, bool trim = true);
+
+    /**
      * @brief build argv out of str
      */
     static char** BuildArgv(const wxString& str, int& argc);

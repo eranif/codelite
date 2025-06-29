@@ -297,12 +297,6 @@ WXDLLIMPEXP_SDK wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex
 WXDLLIMPEXP_SDK wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex);
 
 /**
- * @brief split lines (using CR|LF as the separator), taking into consideration line continuation
- * @param trim trim the lines with set to true
- */
-WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString& inString, bool trim = true);
-
-/**
  * @brief launch terminal for debugging purposes and return its TTY. This function does nothing under Windows
  */
 WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid);

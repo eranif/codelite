@@ -41,8 +41,8 @@
 class WXDLLIMPEXP_CL ThreadRequest
 {
 public:
-    ThreadRequest(){};
-    virtual ~ThreadRequest(){};
+    ThreadRequest() = default;
+    virtual ~ThreadRequest() = default;
 };
 
 /**
@@ -77,7 +77,7 @@ public:
      * Called when the thread exits
      * whether it terminates normally or is stopped with Delete() (but not when it is Kill()'ed!)
      */
-    virtual void OnExit(){};
+    virtual void OnExit() {}
 
     /**
      * Add a request to the worker thread

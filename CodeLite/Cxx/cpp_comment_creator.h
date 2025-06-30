@@ -26,21 +26,22 @@
 #define CPP_COMMENT_CREATOR_H
 
 #include "codelite_exports.h"
-#include "comment_creator.h"
 #include "database/entry.h"
 
 #include <wx/string.h>
 
-class WXDLLIMPEXP_CL CppCommentCreator : public CommentCreator
+class WXDLLIMPEXP_CL CppCommentCreator
 {
-	TagEntryPtr m_tag;
+    wxChar m_keyPrefix;
+    TagEntryPtr m_tag;
+
 public:
-	CppCommentCreator(TagEntryPtr tag, wxChar keyPrefix);
-	virtual ~CppCommentCreator();
-	virtual wxString CreateComment();
+    CppCommentCreator(TagEntryPtr tag, wxChar keyPrefix);
+    ~CppCommentCreator() = default;
+    wxString CreateComment();
 
 private:
-	wxString FunctionComment();
+    wxString FunctionComment();
 };
 
-#endif //CPP_COMMENT_CREATOR_H
+#endif // CPP_COMMENT_CREATOR_H

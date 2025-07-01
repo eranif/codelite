@@ -72,8 +72,8 @@ public:
     ~EditHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 //------------------------------------
@@ -89,8 +89,8 @@ public:
     ~BraceMatchHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 //------------------------------------
@@ -106,8 +106,8 @@ public:
     ~FindReplaceHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 //------------------------------------
@@ -123,8 +123,8 @@ public:
     ~GotoHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 //------------------------------------
@@ -140,8 +140,8 @@ public:
     ~BookmarkHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 //------------------------------------
@@ -157,8 +157,8 @@ public:
     ~GotoDefinitionHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 //-------------------------------------------------
@@ -174,8 +174,8 @@ public:
     ~WordWrapHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 //-------------------------------------------------
@@ -191,8 +191,8 @@ public:
     ~FoldHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 //-------------------------------------------------
@@ -208,8 +208,8 @@ public:
     ~DebuggerMenuHandler() override = default;
 
 public:
-    virtual void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event);
-    virtual void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event);
+    void ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event) override;
+    void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
 #endif // MENU_EVENT_HANDLERS_H

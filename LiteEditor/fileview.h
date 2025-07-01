@@ -63,7 +63,6 @@ protected:
                                    const ProjectItem& projectItem);
 
     void ExcludeFileFromBuildUI(const wxTreeItemId& item, bool exclude);
-    bool IsItemExcludedFromBuild(const wxTreeItemId& item, const wxString& configName) const;
 
 public:
     /**

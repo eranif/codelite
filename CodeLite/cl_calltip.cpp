@@ -56,7 +56,6 @@ clCallTip& clCallTip::operator=(const clCallTip& rhs)
     return *this;
 }
 
-thread_local wxString empty_tip;
 wxString clCallTip::First()
 {
     m_curr = 0;

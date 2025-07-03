@@ -37,8 +37,6 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
         PROP_DV_COLFLAGS, 0, _("One or more flags of the wxDataViewColumnFlags enumeration"), eColumnKind::kDataView);
 }
 
-DataViewListCtrlColumn::~DataViewListCtrlColumn() {}
-
 wxcWidget* DataViewListCtrlColumn::Clone() const { return new DataViewListCtrlColumn(); }
 
 wxString DataViewListCtrlColumn::CppCtorCode() const

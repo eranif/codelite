@@ -8,14 +8,14 @@ class ListCtrlWrapper : public wxcWidget
 
 public:
     ListCtrlWrapper();
-    virtual ~ListCtrlWrapper();
+    ~ListCtrlWrapper() override = default;
 
 public:
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 #endif // LISTCTRLWRAPPER_H

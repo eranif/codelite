@@ -28,7 +28,7 @@ protected:
 
 public:
     DesignerContainerPanel(wxWindow* parent);
-    virtual ~DesignerContainerPanel();
+    ~DesignerContainerPanel() override;
 
     void AddMainView(wxPanel* panel);
     wxPanel* GetMainPanel() const { return m_mainPanel; }

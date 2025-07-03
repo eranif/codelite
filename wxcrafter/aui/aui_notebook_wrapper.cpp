@@ -54,8 +54,6 @@ AuiNotebookWrapper::AuiNotebookWrapper()
     SetName(GenerateName());
 }
 
-AuiNotebookWrapper::~AuiNotebookWrapper() {}
-
 wxString AuiNotebookWrapper::GetXRCPageClass() const { return wxT("notebookpage"); }
 
 wxcWidget* AuiNotebookWrapper::Clone() const { return new AuiNotebookWrapper(); }

@@ -68,8 +68,6 @@ GLCanvasWrapper::GLCanvasWrapper()
     SetName(GenerateName());
 }
 
-GLCanvasWrapper::~GLCanvasWrapper() {}
-
 wxcWidget* GLCanvasWrapper::Clone() const { return new GLCanvasWrapper(); }
 
 wxString GLCanvasWrapper::CppCtorCode() const

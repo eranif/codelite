@@ -13,8 +13,6 @@ BitmapPickerProperty::BitmapPickerProperty(const wxString& label, const wxString
     SetValue(path);
 }
 
-BitmapPickerProperty::~BitmapPickerProperty() {}
-
 PropertyeType BitmapPickerProperty::GetType() { return PT_BITMAP; }
 
 wxString BitmapPickerProperty::GetValue() const { return m_path; }

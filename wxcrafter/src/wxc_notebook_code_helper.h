@@ -12,8 +12,8 @@ class wxcNotebookCodeHelper
     wxString m_code;
 
 private:
-    wxcNotebookCodeHelper();
-    virtual ~wxcNotebookCodeHelper();
+    wxcNotebookCodeHelper() = default;
+    virtual ~wxcNotebookCodeHelper() = default;
 
 public:
     static wxcNotebookCodeHelper& Get();

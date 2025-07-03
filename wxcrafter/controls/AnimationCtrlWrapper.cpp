@@ -25,8 +25,6 @@ AnimationCtrlWrapper::AnimationCtrlWrapper()
     SetName(GenerateName());
 }
 
-AnimationCtrlWrapper::~AnimationCtrlWrapper() {}
-
 wxcWidget* AnimationCtrlWrapper::Clone() const { return new AnimationCtrlWrapper(); }
 
 wxString AnimationCtrlWrapper::CppCtorCode() const

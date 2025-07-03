@@ -18,8 +18,6 @@ BmpTextSelectorDlg::BmpTextSelectorDlg(wxWindow* parent, const wxString& initial
     WindowAttrManager::Load(this);
 }
 
-BmpTextSelectorDlg::~BmpTextSelectorDlg() {}
-
 void BmpTextSelectorDlg::OnDelete(wxCommandEvent& event)
 {
     wxDataViewItem item = m_dvListCtrl->GetSelection();

@@ -8,24 +8,24 @@ class AuiToolBarTopLevelWrapper : public AuiToolbarWrapperBase, public TopLevelW
 {
 public:
     AuiToolBarTopLevelWrapper();
-    virtual ~AuiToolBarTopLevelWrapper();
+    ~AuiToolBarTopLevelWrapper() override = default;
 
 public:
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual wxString BaseCtorDecl() const;
-    virtual wxString BaseCtorImplPrefix() const;
-    virtual wxString DesignerXRC(bool forPreviewDialog) const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxString DoGenerateClassMember() const;
-    virtual void DoGenerateExtraFunctions(wxString& decl, wxString& impl) const;
-    virtual wxString CreateBaseclassName() const { return GetName(); }
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    wxString BaseCtorDecl() const override;
+    wxString BaseCtorImplPrefix() const override;
+    wxString DesignerXRC(bool forPreviewDialog) const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxString DoGenerateClassMember() const override;
+    void DoGenerateExtraFunctions(wxString& decl, wxString& impl) const override;
+    wxString CreateBaseclassName() const override { return GetName(); }
     // not a real window
-    virtual bool IsWindow() const { return true; }
+    bool IsWindow() const override { return true; }
     // no base class
-    virtual bool WantsSubclass() const { return true; }
+    bool WantsSubclass() const override { return true; }
 };
 
 #endif // AUITOOLBARTOPLEVEL_H

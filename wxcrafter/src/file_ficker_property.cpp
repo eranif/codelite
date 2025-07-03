@@ -20,8 +20,6 @@ FilePickerProperty::FilePickerProperty()
 {
 }
 
-FilePickerProperty::~FilePickerProperty() {}
-
 wxString FilePickerProperty::GetValue() const { return m_path; }
 
 JSONElement FilePickerProperty::Serialize() const

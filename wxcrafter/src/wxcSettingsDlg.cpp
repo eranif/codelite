@@ -15,8 +15,6 @@ wxcSettingsDlg::wxcSettingsDlg(wxWindow* parent)
     m_checkBoxUseTRay->SetValue(wxcSettings::Get().HasFlag(wxcSettings::EXIT_MINIMIZE_TO_TRAY));
 }
 
-wxcSettingsDlg::~wxcSettingsDlg() {}
-
 void wxcSettingsDlg::OnOk(wxCommandEvent& event)
 {
     wxcSettings::Get().EnableFlag(wxcSettings::FORMAT_INHERITED_FILES, m_checkBoxFormatInheritedFiles->IsChecked());

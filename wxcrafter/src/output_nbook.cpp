@@ -19,8 +19,6 @@ OutputNBook::OutputNBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
 {
 }
 
-OutputNBook::~OutputNBook() {}
-
 void OutputNBook::CppPageSelected(wxStyledTextCtrl* cpptext, wxStyledTextCtrl* headertext) const
 {
     wxArrayString headers;

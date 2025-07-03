@@ -14,8 +14,6 @@ wxCollapsiblePanePaneWrapper::wxCollapsiblePanePaneWrapper()
     SetName(GenerateName());
 }
 
-wxCollapsiblePanePaneWrapper::~wxCollapsiblePanePaneWrapper() {}
-
 wxcWidget* wxCollapsiblePanePaneWrapper::Clone() const { return new wxCollapsiblePanePaneWrapper(); }
 
 wxString wxCollapsiblePanePaneWrapper::CppCtorCode() const { return ""; }

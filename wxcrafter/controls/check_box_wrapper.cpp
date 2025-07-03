@@ -24,8 +24,6 @@ CheckBoxWrapper::CheckBoxWrapper()
     SetName(GenerateName());
 }
 
-CheckBoxWrapper::~CheckBoxWrapper() {}
-
 wxcWidget* CheckBoxWrapper::Clone() const { return new CheckBoxWrapper(); }
 wxString CheckBoxWrapper::CppCtorCode() const
 {

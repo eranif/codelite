@@ -8,16 +8,16 @@ class ScrolledWindowWrapper : public wxcWidget
 
 public:
     ScrolledWindowWrapper();
-    virtual ~ScrolledWindowWrapper();
+    ~ScrolledWindowWrapper() override = default;
 
-    wxcWidget* Clone() const;
-    wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual bool IsContainer() const { return true; }
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    bool IsContainer() const override { return true; }
 };
 
 #endif // SCROLLEDWINDOWWRAPPER_H

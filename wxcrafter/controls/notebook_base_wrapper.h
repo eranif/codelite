@@ -9,7 +9,7 @@ class NotebookBaseWrapper : public wxcWidget
 {
 public:
     NotebookBaseWrapper(int id);
-    virtual ~NotebookBaseWrapper();
+    ~NotebookBaseWrapper() override = default;
 
 protected:
     void DoSetSelection(NotebookPageWrapper* page, wxcWidget* pageToSelect);
@@ -20,9 +20,10 @@ protected:
                                                size_t currentlevel) const;
 
 public:
-    virtual wxString CppCtorCode() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
     virtual wxString GetXRCPageClass() const = 0;
+
     void SetSelection(wxcWidget* page);
     NotebookPageWrapper* GetSelection() const;
     wxcWidget* GetChildPageAtDepth(size_t level);

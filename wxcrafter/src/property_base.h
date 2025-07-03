@@ -35,8 +35,8 @@ protected:
     void NotifyChanged();
 
 public:
-    PropertyBase(const wxString& tooltip);
-    virtual ~PropertyBase();
+    explicit PropertyBase(const wxString& tooltip);
+    ~PropertyBase() override = default;
 
     void SetLabel(const wxString& label) { this->m_label = label; }
 

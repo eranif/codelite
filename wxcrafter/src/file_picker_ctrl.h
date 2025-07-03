@@ -19,7 +19,7 @@ protected:
 
 public:
     FilePickerCtrl(wxWindow* parent, const wxString& projectPath, const wxString& value);
-    virtual ~FilePickerCtrl();
+    ~FilePickerCtrl() override;
 };
 
 #endif // FILEPICKERCTRL_H

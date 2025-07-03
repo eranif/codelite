@@ -6,8 +6,6 @@ MyTreeCtrl::MyTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
 {
 }
 
-MyTreeCtrl::~MyTreeCtrl() {}
-
 wxDataViewItem MyTreeCtrl::AddRoot(const wxString& name, int imgId, int expandImgId)
 {
     return AppendContainer(wxDataViewItem(0), name, imgId, expandImgId);

@@ -5,8 +5,6 @@ StringProperty::StringProperty()
 {
 }
 
-StringProperty::~StringProperty() {}
-
 wxString StringProperty::GetValue() const { return m_value; }
 
 void StringProperty::SetValue(const wxString& value) { m_value = value; }

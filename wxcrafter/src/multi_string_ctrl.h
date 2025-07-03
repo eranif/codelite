@@ -22,7 +22,7 @@ public:
     /** Constructor */
     MultiStringCtrl(wxWindow* parent, const wxString& value, const wxString& delim = wxT(";"),
                     const wxString& msg = wxT(""));
-    virtual ~MultiStringCtrl();
+    ~MultiStringCtrl() override;
     void SetTip(const wxString& tooltip) { SetToolTip(tooltip); }
 };
 

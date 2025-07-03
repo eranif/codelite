@@ -22,8 +22,6 @@ wxcCodeGeneratorHelper::wxcCodeGeneratorHelper()
     // m_bmpGenThread.Start();
 }
 
-wxcCodeGeneratorHelper::~wxcCodeGeneratorHelper() {}
-
 wxcCodeGeneratorHelper& wxcCodeGeneratorHelper::Get()
 {
     static wxcCodeGeneratorHelper mgr;

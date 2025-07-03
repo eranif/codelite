@@ -6,19 +6,19 @@
 class StaticTextWrapper : public wxcWidget
 {
 protected:
-    virtual void GetIncludeFile(wxArrayString& headers) const;
+    void GetIncludeFile(wxArrayString& headers) const override;
 
 public:
     StaticTextWrapper();
-    virtual ~StaticTextWrapper();
+    ~StaticTextWrapper() override = default;
 
 public:
-    virtual wxString GetWxClassName() const;
-    virtual wxString CppCtorCode() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual wxcWidget* Clone() const;
+    wxString GetWxClassName() const override;
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    wxcWidget* Clone() const override;
 };
 
 #endif // STATICTEXTWRAPPER_H

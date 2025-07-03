@@ -9,8 +9,6 @@ BitmapTextArrayProperty::BitmapTextArrayProperty(const wxString& label, const wx
     m_value = value;
 }
 
-BitmapTextArrayProperty::~BitmapTextArrayProperty() {}
-
 PropertyeType BitmapTextArrayProperty::GetType() { return PT_BITMAPTEXT_TABLE; }
 
 wxString BitmapTextArrayProperty::GetValue() const { return m_value; }

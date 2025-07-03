@@ -12,7 +12,7 @@ class PreviewDialog : public wxDialog
 
 public:
     PreviewDialog(wxWindow* parent, const DialogWrapper& dw);
-    virtual ~PreviewDialog();
+    ~PreviewDialog() override;
     void OnClosePreview(wxCommandEvent& e);
 };
 

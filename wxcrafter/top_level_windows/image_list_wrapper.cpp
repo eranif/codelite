@@ -25,8 +25,6 @@ ImageListWrapper::ImageListWrapper()
     Add<BoolProperty>(PROP_IMGLIST_MASK, true, _("True if masks should be created for all images"));
 }
 
-ImageListWrapper::~ImageListWrapper() {}
-
 wxcWidget* ImageListWrapper::Clone() const { return new ImageListWrapper(); }
 
 wxString ImageListWrapper::BaseCtorDecl() const

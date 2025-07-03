@@ -11,8 +11,6 @@ PropertiesSheet::PropertiesSheet(wxWindow* parent)
     GetSizer()->Layout();
 }
 
-PropertiesSheet::~PropertiesSheet() {}
-
 void PropertiesSheet::Construct(wxcWidget* wb) { m_table->Construct(wb); }
 
 void PropertiesSheet::ConstructProjectSettings() { m_table->ConstructProjectSettings(); }

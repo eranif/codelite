@@ -11,8 +11,6 @@ RearrangeListWrapper::RearrangeListWrapper()
     SetName(GenerateName());
 }
 
-RearrangeListWrapper::~RearrangeListWrapper() {}
-
 wxcWidget* RearrangeListWrapper::Clone() const { return new RearrangeListWrapper(); }
 
 void RearrangeListWrapper::LoadPropertiesFromXRC(const wxXmlNode* node) { wxUnusedVar(node); }

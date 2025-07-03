@@ -20,8 +20,6 @@ TreeBookWrapper::TreeBookWrapper()
     SetName(GenerateName());
 }
 
-TreeBookWrapper::~TreeBookWrapper() {}
-
 wxString TreeBookWrapper::GetXRCPageClass() const { return wxT("treebookpage"); }
 
 wxcWidget* TreeBookWrapper::Clone() const { return new TreeBookWrapper(); }

@@ -45,8 +45,6 @@ RibbonBarWrapper::RibbonBarWrapper()
     SetName(GenerateName());
 }
 
-RibbonBarWrapper::~RibbonBarWrapper() {}
-
 wxcWidget* RibbonBarWrapper::Clone() const { return new RibbonBarWrapper(); }
 
 wxString RibbonBarWrapper::CppCtorCode() const

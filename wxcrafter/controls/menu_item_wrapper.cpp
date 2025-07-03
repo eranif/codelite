@@ -44,8 +44,6 @@ MenuItemWrapper::MenuItemWrapper()
     Add<BoolProperty>(PROP_CHECKED, false, _("For a checkable menu item, should this be checked"));
 }
 
-MenuItemWrapper::~MenuItemWrapper() {}
-
 wxcWidget* MenuItemWrapper::Clone() const { return new MenuItemWrapper(); }
 
 wxString MenuItemWrapper::CppCtorCode() const

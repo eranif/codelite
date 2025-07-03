@@ -7,17 +7,17 @@
 class PopupWindowWrapper : public TopLevelWinWrapper
 {
 public:
-    virtual wxString BaseCtorDecl() const;
-    virtual wxString BaseCtorImplPrefix() const;
-    virtual wxString DesignerXRC(bool forPreviewDialog) const;
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-
     PopupWindowWrapper();
-    virtual ~PopupWindowWrapper();
+    ~PopupWindowWrapper() override = default;
+
+    wxString BaseCtorDecl() const override;
+    wxString BaseCtorImplPrefix() const override;
+    wxString DesignerXRC(bool forPreviewDialog) const override;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 #endif // POPUPWINDOWWRAPPER_H

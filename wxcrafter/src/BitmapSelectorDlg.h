@@ -6,15 +6,15 @@ class BitmapSelectorDlg : public BitmapSelectorDlgBase
 {
 public:
     BitmapSelectorDlg(wxWindow* parent, const wxString& selection);
-    virtual ~BitmapSelectorDlg();
+    ~BitmapSelectorDlg() override;
     wxString GetBitmapFile() const;
 
 protected:
-    virtual void OnUseRelativePaths(wxCommandEvent& event);
-    virtual void OnUseFilePicker(wxCommandEvent& event);
-    virtual void OnUserArtProvider(wxCommandEvent& event);
-    virtual void OnBrowseFile(wxCommandEvent& event);
-    virtual void OnSelectBitmapUI(wxUpdateUIEvent& event);
-    virtual void OnUserArtPorviderUI(wxUpdateUIEvent& event);
+    void OnUseRelativePaths(wxCommandEvent& event) override;
+    void OnUseFilePicker(wxCommandEvent& event) override;
+    void OnUserArtProvider(wxCommandEvent& event) override;
+    void OnBrowseFile(wxCommandEvent& event) override;
+    void OnSelectBitmapUI(wxUpdateUIEvent& event) override;
+    void OnUserArtPorviderUI(wxUpdateUIEvent& event) override;
 };
 #endif // BITMAPSELECTORDLG_H

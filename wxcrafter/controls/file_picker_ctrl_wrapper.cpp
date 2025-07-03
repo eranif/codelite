@@ -31,8 +31,6 @@ FilePickerCtrlWrapper::FilePickerCtrlWrapper()
     SetName(GenerateName());
 }
 
-FilePickerCtrlWrapper::~FilePickerCtrlWrapper() {}
-
 wxcWidget* FilePickerCtrlWrapper::Clone() const { return new FilePickerCtrlWrapper(); }
 
 wxString FilePickerCtrlWrapper::CppCtorCode() const

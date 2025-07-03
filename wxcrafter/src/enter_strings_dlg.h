@@ -14,7 +14,7 @@ class EnterStringsDlg : public EnterStringsDlgBase
 public:
     /** Constructor */
     EnterStringsDlg(wxWindow* parent, const wxString& value);
-    virtual ~EnterStringsDlg();
+    ~EnterStringsDlg() override = default;
     wxString GetValue() const;
     void SetMessage(const wxString& msg);
 };

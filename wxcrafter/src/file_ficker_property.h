@@ -11,15 +11,16 @@ protected:
 public:
     FilePickerProperty(const wxString& label, const wxString& path, const wxString& tooltip);
     FilePickerProperty();
-    virtual ~FilePickerProperty();
+    ~FilePickerProperty() override = default;
 
 public:
     void FixPaths(const wxString& cwd);
-    virtual wxString GetValue() const;
-    virtual JSONElement Serialize() const;
-    virtual void SetValue(const wxString& value);
-    virtual void UnSerialize(const JSONElement& json);
-    virtual PropertyeType GetType() { return PT_FILE_PICKER; }
+
+    wxString GetValue() const override;
+    JSONElement Serialize() const override;
+    void SetValue(const wxString& value) override;
+    void UnSerialize(const JSONElement& json) override;
+    PropertyeType GetType() override { return PT_FILE_PICKER; }
 };
 
 #endif // FILEFICKERPROPERTY_H

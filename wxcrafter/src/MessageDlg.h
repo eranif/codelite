@@ -7,11 +7,11 @@ class MessageDlg : public MessageDlgBaseClass
 {
 public:
     MessageDlg(wxWindow* parent, const wxString& msg, const wxString& title);
-    virtual ~MessageDlg();
+    ~MessageDlg() override = default;
 
     // Accessors
     void SetMessage(const wxString& msg);
-    void SetTitle(const wxString& title);
+    void SetTitle(const wxString& title) override;
     bool IsDontAnnoyChecked() const;
 };
 #endif // MESSAGEDLG_H

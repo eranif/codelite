@@ -13,9 +13,10 @@ private:
 
 public:
     MyComboBoxXmlHandler();
-    virtual ~MyComboBoxXmlHandler();
-    wxObject* DoCreateResource();
-    bool CanHandle(wxXmlNode* node);
+    ~MyComboBoxXmlHandler() override = default;
+
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 };
 
 #endif // MYCOMBOBOXXMLHANDLER_H

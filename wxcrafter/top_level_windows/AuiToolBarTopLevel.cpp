@@ -63,8 +63,6 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
     SetName(GenerateName());
 }
 
-AuiToolBarTopLevelWrapper::~AuiToolBarTopLevelWrapper() {}
-
 wxString AuiToolBarTopLevelWrapper::BaseCtorDecl() const
 {
     wxString code;

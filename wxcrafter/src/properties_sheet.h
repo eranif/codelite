@@ -11,7 +11,7 @@ class PropertiesSheet : public PropertiesSheetBase
 
 public:
     PropertiesSheet(wxWindow* parent);
-    virtual ~PropertiesSheet();
+    ~PropertiesSheet() override = default;
     void Construct(wxcWidget* wb);
     void ConstructProjectSettings();
 };

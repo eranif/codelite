@@ -50,8 +50,6 @@ ToolBarItemWrapper::ToolBarItemWrapper(int type)
     SetName(GenerateName());
 }
 
-ToolBarItemWrapper::~ToolBarItemWrapper() {}
-
 wxcWidget* ToolBarItemWrapper::Clone() const { return new ToolBarItemWrapper(); }
 
 static wxString GenerateCppCtorCodeRecursively(wxcWidget* widget) // Helper function for CppCtorCode() dropdown menus

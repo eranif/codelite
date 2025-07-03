@@ -25,8 +25,6 @@ ToggleButtonWrapper::ToggleButtonWrapper()
     SetName(GenerateName());
 }
 
-ToggleButtonWrapper::~ToggleButtonWrapper() {}
-
 wxcWidget* ToggleButtonWrapper::Clone() const { return new ToggleButtonWrapper(); }
 
 wxString ToggleButtonWrapper::CppCtorCode() const

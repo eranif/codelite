@@ -8,16 +8,16 @@ class EditCustomControlDlg : public EditCustomControlDlgBaseClass
 
 public:
     EditCustomControlDlg(wxWindow* parent);
-    virtual ~EditCustomControlDlg();
+    ~EditCustomControlDlg() override = default;
 
 protected:
-    virtual void OnEventEditDone(wxDataViewEvent& event);
-    virtual void OnDeleteEventUI(wxUpdateUIEvent& event);
-    virtual void OnDeleteEvent(wxCommandEvent& event);
-    virtual void OnNewEvent(wxCommandEvent& event);
-    virtual void OnControlModified(wxCommandEvent& event);
-    virtual void OnSaveUI(wxUpdateUIEvent& event);
-    virtual void OnSave(wxCommandEvent& event);
-    virtual void OnSelectControl(wxCommandEvent& event);
+    void OnEventEditDone(wxDataViewEvent& event) override;
+    void OnDeleteEventUI(wxUpdateUIEvent& event) override;
+    void OnDeleteEvent(wxCommandEvent& event) override;
+    void OnNewEvent(wxCommandEvent& event) override;
+    void OnControlModified(wxCommandEvent& event) override;
+    void OnSaveUI(wxUpdateUIEvent& event) override;
+    void OnSave(wxCommandEvent& event) override;
+    void OnSelectControl(wxCommandEvent& event) override;
 };
 #endif // EDITCUSTOMCONTROLDLG_H

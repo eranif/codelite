@@ -7,13 +7,13 @@ class TreeBookWrapper : public NotebookBaseWrapper
 {
 public:
     TreeBookWrapper();
-    virtual ~TreeBookWrapper();
+    ~TreeBookWrapper() override = default;
 
 public:
-    virtual wxString GetXRCPageClass() const;
-    wxcWidget* Clone() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
+    wxString GetXRCPageClass() const override;
+    wxcWidget* Clone() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
 };
 
 #endif // TREEBOOKWRAPPER_H

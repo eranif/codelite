@@ -18,8 +18,6 @@ wxcProjectMetadata::wxcProjectMetadata()
     SetGenerateXRC(false);
 }
 
-wxcProjectMetadata::~wxcProjectMetadata() {}
-
 void wxcProjectMetadata::FromJSON(const JSONElement& json)
 {
     m_objCounter = json.namedObject("m_objCounter").toInt();

@@ -9,14 +9,14 @@ class CategoryProperty : public PropertyBase
 
 public:
     CategoryProperty(const wxString& name, const wxString& label = "");
-    virtual ~CategoryProperty();
+    ~CategoryProperty() override = default;
 
 public:
-    virtual PropertyeType GetType();
-    virtual wxString GetValue() const;
-    virtual JSONElement Serialize() const;
-    virtual void SetValue(const wxString& value);
-    virtual void UnSerialize(const JSONElement& json);
+    PropertyeType GetType() override;
+    wxString GetValue() const override;
+    JSONElement Serialize() const override;
+    void SetValue(const wxString& value) override;
+    void UnSerialize(const JSONElement& json) override;
 };
 
 #endif // CATEGORYPROPERTY_H

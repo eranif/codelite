@@ -8,15 +8,16 @@ class NotebookPageWrapper : public wxcWidget
     bool m_selected;
 
 protected:
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+
     void DoTreebookXRC(wxString& text, XRC_TYPE type, int depth) const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
     wxString DoTreebookCppCtorCode() const;
 
 public:
     NotebookPageWrapper();
-    virtual ~NotebookPageWrapper();
-    virtual void SetParent(wxcWidget* parent);
+    ~NotebookPageWrapper() override = default;
+    void SetParent(wxcWidget* parent) override;
 
     bool IsTreebookPage() const;
     bool IsChoicebookPage() const;
@@ -24,14 +25,14 @@ public:
 
     int GetPageIndex() const;
 
-    wxcWidget* Clone() const;
-    wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 
     // This class is a container
-    virtual bool IsContainer() const { return true; }
+    bool IsContainer() const override { return true; }
 
     void SetSelected(bool selected) { this->m_selected = selected; }
     bool IsSelected() const { return m_selected; }

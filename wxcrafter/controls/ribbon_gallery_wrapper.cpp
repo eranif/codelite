@@ -23,8 +23,6 @@ RibbonGalleryWrapper::RibbonGalleryWrapper()
     SetName(GenerateName());
 }
 
-RibbonGalleryWrapper::~RibbonGalleryWrapper() {}
-
 wxcWidget* RibbonGalleryWrapper::Clone() const { return new RibbonGalleryWrapper(); }
 
 wxString RibbonGalleryWrapper::CppCtorCode() const

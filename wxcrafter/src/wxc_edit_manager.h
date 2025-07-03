@@ -43,7 +43,7 @@ public:
 
 private:
     wxcEditManager();
-    virtual ~wxcEditManager();
+    ~wxcEditManager() override = default;
     void SaveState(State::Ptr_t state);
 
     // Events
@@ -52,10 +52,10 @@ private:
     void OnProjectClosed(wxCommandEvent& event);
     void OnProjectMetadataChanged(wxCommandEvent& event);
     void OnPropertyChanged(wxCommandEvent& event);
-    virtual void OnUndoDropdownItem(wxCommandEvent& event);
-    virtual void OnRedoDropdownItem(wxCommandEvent& event);
-    virtual bool DoUndo() { return true; }
-    virtual bool DoRedo() { return true; }
+    void OnUndoDropdownItem(wxCommandEvent& event) override;
+    void OnRedoDropdownItem(wxCommandEvent& event) override;
+    bool DoUndo() override { return true; }
+    bool DoRedo() override { return true; }
 
     // Helpers
     void NotifyProjectModified();
@@ -79,7 +79,7 @@ public:
      */
     void PushState(const wxString& label);
 
-    virtual void DoPopulateUnRedoMenu(wxMenu& menu, bool undoing);
+    void DoPopulateUnRedoMenu(wxMenu& menu, bool undoing) override;
 };
 
 #endif // WXCEDITMANAGER_H

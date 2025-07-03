@@ -23,8 +23,6 @@ BoxSizerWrapper::BoxSizerWrapper()
     SetName(GenerateName());
 }
 
-BoxSizerWrapper::~BoxSizerWrapper() {}
-
 wxString BoxSizerWrapper::GetWxClassName() const { return "wxBoxSizer"; }
 
 wxString BoxSizerWrapper::CppCtorCode() const

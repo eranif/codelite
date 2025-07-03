@@ -27,8 +27,6 @@ InfoBarButtonWrapper::InfoBarButtonWrapper()
     SetName(GenerateName());
 }
 
-InfoBarButtonWrapper::~InfoBarButtonWrapper() {}
-
 wxcWidget* InfoBarButtonWrapper::Clone() const { return new InfoBarButtonWrapper(); }
 
 wxString InfoBarButtonWrapper::CppCtorCode() const

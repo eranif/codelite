@@ -25,8 +25,6 @@ StaticTextWrapper::StaticTextWrapper()
     SetName(GenerateName());
 }
 
-StaticTextWrapper::~StaticTextWrapper() {}
-
 wxString StaticTextWrapper::GetWxClassName() const { return wxT("wxStaticText"); }
 
 wxString StaticTextWrapper::CppCtorCode() const

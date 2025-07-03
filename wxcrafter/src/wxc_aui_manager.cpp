@@ -1,9 +1,5 @@
 #include "wxc_aui_manager.h"
 
-wxcAuiManager::wxcAuiManager() {}
-
-wxcAuiManager::~wxcAuiManager() {}
-
 wxcAuiManager& wxcAuiManager::Get()
 {
     static wxcAuiManager mgr;

@@ -20,7 +20,7 @@ protected:
 
 public:
     CustomControlTemplate();
-    ~CustomControlTemplate();
+    ~CustomControlTemplate() = default;
 
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement& json);
@@ -76,7 +76,7 @@ public:
 
 private:
     wxcSettings();
-    ~wxcSettings();
+    ~wxcSettings() = default;
 
 public:
     void Load();

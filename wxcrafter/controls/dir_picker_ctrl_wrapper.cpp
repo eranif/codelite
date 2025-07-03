@@ -26,8 +26,6 @@ DirPickerCtrlWrapper::DirPickerCtrlWrapper()
     SetName(GenerateName());
 }
 
-DirPickerCtrlWrapper::~DirPickerCtrlWrapper() {}
-
 wxcWidget* DirPickerCtrlWrapper::Clone() const { return new DirPickerCtrlWrapper(); }
 
 wxString DirPickerCtrlWrapper::CppCtorCode() const

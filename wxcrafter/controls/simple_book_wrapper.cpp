@@ -31,8 +31,6 @@ SimpleBookWrapper::SimpleBookWrapper()
     SetName(GenerateName());
 }
 
-SimpleBookWrapper::~SimpleBookWrapper() {}
-
 wxString SimpleBookWrapper::GetXRCPageClass() const { return wxT("simplebookpage"); }
 
 wxcWidget* SimpleBookWrapper::Clone() const { return new SimpleBookWrapper(); }

@@ -12,8 +12,6 @@ BoolProperty::BoolProperty()
 {
 }
 
-BoolProperty::~BoolProperty() {}
-
 wxString BoolProperty::GetValue() const
 {
     if(m_value) {

@@ -15,8 +15,6 @@ ChoiceBookWrapper::ChoiceBookWrapper()
     SetName(GenerateName());
 }
 
-ChoiceBookWrapper::~ChoiceBookWrapper() {}
-
 wxcWidget* ChoiceBookWrapper::Clone() const { return new ChoiceBookWrapper(); }
 
 void ChoiceBookWrapper::GetIncludeFile(wxArrayString& headers) const { headers.Add(wxT("#include <wx/choicebk.h>")); }

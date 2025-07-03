@@ -8,7 +8,7 @@ class PopupWindowPreview : public wxFrame
 {
 public:
     PopupWindowPreview(wxWindow* parent, const PopupWindowWrapper& wrapper);
-    virtual ~PopupWindowPreview();
+    ~PopupWindowPreview() override;
 
     DECLARE_EVENT_TABLE()
     void OnClosePreviewPreviewPanel(wxCommandEvent& e);

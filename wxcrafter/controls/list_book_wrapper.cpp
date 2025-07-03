@@ -21,8 +21,6 @@ ListBookWrapper::ListBookWrapper()
     SetName(GenerateName());
 }
 
-ListBookWrapper::~ListBookWrapper() {}
-
 wxString ListBookWrapper::GetXRCPageClass() const { return wxT("listbookpage"); }
 
 wxcWidget* ListBookWrapper::Clone() const { return new ListBookWrapper(); }

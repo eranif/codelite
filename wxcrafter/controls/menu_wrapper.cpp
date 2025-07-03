@@ -27,8 +27,6 @@ MenuWrapper::MenuWrapper()
     SetName(GenerateName());
 }
 
-MenuWrapper::~MenuWrapper() {}
-
 wxcWidget* MenuWrapper::Clone() const { return new MenuWrapper(); }
 
 wxString MenuWrapper::CppCtorCode() const

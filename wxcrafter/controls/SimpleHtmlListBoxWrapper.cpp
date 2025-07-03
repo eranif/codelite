@@ -32,8 +32,6 @@ SimpleHtmlListBoxWrapper::SimpleHtmlListBoxWrapper()
     SetName(GenerateName());
 }
 
-SimpleHtmlListBoxWrapper::~SimpleHtmlListBoxWrapper() {}
-
 void SimpleHtmlListBoxWrapper::GetIncludeFile(wxArrayString& headers) const { headers.Add("#include <wx/htmllbox.h>"); }
 
 wxString SimpleHtmlListBoxWrapper::CppCtorCode() const

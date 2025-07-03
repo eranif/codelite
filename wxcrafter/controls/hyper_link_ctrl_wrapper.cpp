@@ -39,8 +39,6 @@ HyperLinkCtrlWrapper::HyperLinkCtrlWrapper()
     SetName(GenerateName());
 }
 
-HyperLinkCtrlWrapper::~HyperLinkCtrlWrapper() {}
-
 wxcWidget* HyperLinkCtrlWrapper::Clone() const { return new HyperLinkCtrlWrapper(); }
 
 wxString HyperLinkCtrlWrapper::CppCtorCode() const

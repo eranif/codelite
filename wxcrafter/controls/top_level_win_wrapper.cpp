@@ -83,8 +83,6 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
     DelProperty(PROP_WINDOW_ID);
 }
 
-TopLevelWinWrapper::~TopLevelWinWrapper() {}
-
 wxString TopLevelWinWrapper::FormatCode(const wxString& chunk) const
 {
     // Format the code a bit

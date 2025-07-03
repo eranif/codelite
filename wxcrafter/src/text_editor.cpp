@@ -10,8 +10,6 @@ TextEditor::TextEditor(wxWindow* parent)
     Hide();
 }
 
-TextEditor::~TextEditor() {}
-
 void TextEditor::OnKeyDown(wxKeyEvent& event)
 {
     if(event.GetKeyCode() == WXK_ESCAPE) {

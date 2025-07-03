@@ -14,8 +14,6 @@ ToolBar::ToolBar(wxWindow* parent)
     SetSizer(sz);
 }
 
-ToolBar::~ToolBar() {}
-
 void ToolBar::AddToolbar(wxToolBar* tb)
 {
     GetSizer()->Add(tb, 0, wxEXPAND);

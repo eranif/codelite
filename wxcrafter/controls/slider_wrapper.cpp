@@ -44,8 +44,6 @@ SliderWrapper::SliderWrapper()
     SetName(GenerateName());
 }
 
-SliderWrapper::~SliderWrapper() {}
-
 wxcWidget* SliderWrapper::Clone() const { return new SliderWrapper(); }
 
 wxString SliderWrapper::CppCtorCode() const

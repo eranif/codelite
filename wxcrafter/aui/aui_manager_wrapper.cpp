@@ -6,6 +6,7 @@
 #include "color_property.h"
 #include "int_property.h"
 #include "wxgui_helpers.h"
+
 #include <wx/aui/framemanager.h>
 
 AuiManagerWrapper::AuiManagerWrapper()
@@ -76,8 +77,6 @@ AuiManagerWrapper::AuiManagerWrapper()
     m_namePattern = "m_auimgr";
     SetName(GenerateName());
 }
-
-AuiManagerWrapper::~AuiManagerWrapper() {}
 
 wxcWidget* AuiManagerWrapper::Clone() const { return new AuiManagerWrapper(); }
 

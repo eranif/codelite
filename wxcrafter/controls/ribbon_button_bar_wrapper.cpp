@@ -10,8 +10,6 @@ RibbonButtonBarWrapper::RibbonButtonBarWrapper()
     SetName(GenerateName());
 }
 
-RibbonButtonBarWrapper::~RibbonButtonBarWrapper() {}
-
 wxcWidget* RibbonButtonBarWrapper::Clone() const { return new RibbonButtonBarWrapper(); }
 
 wxString RibbonButtonBarWrapper::CppCtorCode() const

@@ -9,7 +9,7 @@ class PreviewPanel : public wxFrame
 {
 public:
     PreviewPanel(wxWindow* parent, const TopLevelWinWrapper& fw);
-    virtual ~PreviewPanel();
+    ~PreviewPanel() override;
     DECLARE_EVENT_TABLE()
     void OnClosePreviewPreviewPanel(wxCommandEvent& e);
 };

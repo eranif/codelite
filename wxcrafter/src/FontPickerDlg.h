@@ -7,12 +7,12 @@ class FontPickerDlg : public FontPickerDlgBaseClass
     wxString m_fontname;
 
 protected:
-    virtual void OnUseCustomFont(wxCommandEvent& event);
-    virtual void OnUseCustomFontUI(wxUpdateUIEvent& event);
-    virtual void OnUsePreDefinedFontUI(wxUpdateUIEvent& event);
-    virtual void OnSystemFontSelected(wxCommandEvent& event);
-    virtual void OnFontSelected(wxFontPickerEvent& event);
-    virtual void OnUsePreDefinedFont(wxCommandEvent& event);
+    void OnUseCustomFont(wxCommandEvent& event) override;
+    void OnUseCustomFontUI(wxUpdateUIEvent& event) override;
+    void OnUsePreDefinedFontUI(wxUpdateUIEvent& event) override;
+    void OnSystemFontSelected(wxCommandEvent& event) override;
+    void OnFontSelected(wxFontPickerEvent& event) override;
+    void OnUsePreDefinedFont(wxCommandEvent& event) override;
 
 protected:
     void DoUpdateSelectionToPreDefinedFont();
@@ -20,7 +20,7 @@ protected:
 
 public:
     FontPickerDlg(wxWindow* parent, const wxString& font);
-    virtual ~FontPickerDlg();
+    ~FontPickerDlg() override = default;
 
     const wxString& GetFontName() const
     {

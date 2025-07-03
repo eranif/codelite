@@ -8,10 +8,10 @@ class TextEditor : public TextEditorBaseClass
 {
 public:
     TextEditor(wxWindow* parent);
-    virtual ~TextEditor();
-    virtual void OnKeyDown(wxKeyEvent& event);
-    virtual void OnKillFocus(wxFocusEvent& event);
-    virtual void OnTextEnter(wxCommandEvent& event);
+    ~TextEditor() override = default;
+    void OnKeyDown(wxKeyEvent& event) override;
+    void OnKillFocus(wxFocusEvent& event) override;
+    void OnTextEnter(wxCommandEvent& event) override;
 
     void SetValue(const wxString& value);
     void MoveTo(const wxRect& rect);

@@ -10,8 +10,6 @@ CategoryProperty::CategoryProperty(const wxString& name, const wxString& label)
         SetLabel(label);
 }
 
-CategoryProperty::~CategoryProperty() {}
-
 PropertyeType CategoryProperty::GetType() { return PT_CATEGORY; }
 
 wxString CategoryProperty::GetValue() const { return m_value; }

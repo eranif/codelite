@@ -14,14 +14,14 @@ protected:
 public:
     MultiStringsProperty(const wxString& label, const wxString& tooltip, const wxString& delim = wxT(";"),
                          const wxString& msg = wxT(""));
-    virtual ~MultiStringsProperty();
+    ~MultiStringsProperty() override = default;
 
 public:
-    virtual wxString GetValue() const;
-    virtual JSONElement Serialize() const;
-    virtual void SetValue(const wxString& value);
-    virtual void UnSerialize(const JSONElement& json);
-    virtual PropertyeType GetType() { return PT_MUTLI_STRING_PICKER; }
+    wxString GetValue() const override;
+    JSONElement Serialize() const override;
+    void SetValue(const wxString& value) override;
+    void UnSerialize(const JSONElement& json) override;
+    PropertyeType GetType() override { return PT_MUTLI_STRING_PICKER; }
 };
 
 #endif // MULTISTRINGSPROPERTY_H

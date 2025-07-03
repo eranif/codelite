@@ -27,7 +27,7 @@ protected:
 
 public:
     MenuBar(wxWindow* parent, wxMenuBar* mb);
-    virtual ~MenuBar();
+    ~MenuBar() override;
 
     DECLARE_EVENT_TABLE()
     void OnPaint(wxPaintEvent& e);

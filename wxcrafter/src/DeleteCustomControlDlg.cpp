@@ -14,8 +14,6 @@ DeleteCustomControlDlg::DeleteCustomControlDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-DeleteCustomControlDlg::~DeleteCustomControlDlg() {}
-
 void DeleteCustomControlDlg::OnDeleteUI(wxUpdateUIEvent& event) { event.Enable(!m_controlsToDelete.IsEmpty()); }
 
 void DeleteCustomControlDlg::OnDeleteControls(wxCommandEvent& event)

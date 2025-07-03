@@ -16,8 +16,6 @@ IntProperty::IntProperty(const wxString& label, const wxString& tooltip)
     SetLabel(label);
 }
 
-IntProperty::~IntProperty() {}
-
 PropertyeType IntProperty::GetType() { return PT_INT; }
 
 wxString IntProperty::GetValue() const

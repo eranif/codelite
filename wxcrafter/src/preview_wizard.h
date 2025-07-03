@@ -12,7 +12,7 @@ class PreviewWizard : public wxWizard
 
 public:
     PreviewWizard(wxWindow* parent, const WizardWrapper& dw);
-    virtual ~PreviewWizard();
+    ~PreviewWizard() override;
     void OnClosePreview(wxCommandEvent& e);
 
     void Run();

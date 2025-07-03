@@ -17,8 +17,6 @@ PopupWindowWrapper::PopupWindowWrapper()
     SetName(GenerateName());
 }
 
-PopupWindowWrapper::~PopupWindowWrapper() {}
-
 wxcWidget* PopupWindowWrapper::Clone() const { return new PopupWindowWrapper(); }
 
 wxString PopupWindowWrapper::CppCtorCode() const { return ""; }

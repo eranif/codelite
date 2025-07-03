@@ -38,7 +38,7 @@ protected:
 
 private:
     wxcProjectMetadata();
-    virtual ~wxcProjectMetadata();
+    virtual ~wxcProjectMetadata() = default;
     void DoGenerateBitmapFunctionName();
     wxString DoGenerateBitmapsFile() const;
 

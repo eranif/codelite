@@ -51,11 +51,11 @@ class GUICraftItemData : public wxTreeItemData
 public:
     wxcWidget* m_wxcWidget;
 
-    GUICraftItemData(wxcWidget* w)
+    explicit GUICraftItemData(wxcWidget* w)
         : m_wxcWidget(w)
     {
     }
-    virtual ~GUICraftItemData()
+    ~GUICraftItemData() override
     {
         if(m_wxcWidget) {
             delete m_wxcWidget;
@@ -94,13 +94,13 @@ public:
     wxStyledTextCtrl* GetPreviewEditor() const;
 
 protected:
-    virtual void OnSizerFlagsUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnAuiPaneInfoChanged(wxPropertyGridEvent& event);
-    virtual void OnSizerFlagsChanged(wxPropertyGridEvent& event);
-    virtual void OnStylesChanged(wxPropertyGridEvent& event);
+    void OnSizerFlagsUpdateUI(wxUpdateUIEvent& event) override;
+    void OnAuiPaneInfoChanged(wxPropertyGridEvent& event) override;
+    void OnSizerFlagsChanged(wxPropertyGridEvent& event) override;
+    void OnStylesChanged(wxPropertyGridEvent& event) override;
     virtual void OnNewFormUI(wxUpdateUIEvent& event);
-    virtual void OnCppBookPageChanged(wxBookCtrlEvent& event);
-    virtual void OnPageChanged(wxBookCtrlEvent& event);
+    void OnCppBookPageChanged(wxBookCtrlEvent& event) override;
+    void OnPageChanged(wxBookCtrlEvent& event) override;
 
     void DoDismissFindBar();
     bool IsTreeViewSelected() const;
@@ -152,7 +152,7 @@ protected:
 
 public:
     GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clTreeCtrl* treeView);
-    virtual ~GUICraftMainPanel();
+    ~GUICraftMainPanel() override;
     /**
      * @brief batch generate the code for a list of wxC files
      * @param files

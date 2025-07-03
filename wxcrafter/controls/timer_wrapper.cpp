@@ -27,8 +27,6 @@ TimerWrapper::TimerWrapper()
     SetName(GenerateName());
 }
 
-TimerWrapper::~TimerWrapper() {}
-
 wxcWidget* TimerWrapper::Clone() const { return new TimerWrapper(); }
 
 wxString TimerWrapper::CppCtorCode() const

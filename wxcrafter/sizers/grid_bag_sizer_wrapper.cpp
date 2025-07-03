@@ -21,8 +21,6 @@ GridBagSizerWrapper::GridBagSizerWrapper()
     SetName(GenerateName());
 }
 
-GridBagSizerWrapper::~GridBagSizerWrapper() {}
-
 wxString GridBagSizerWrapper::CppCtorCode() const
 {
     wxString code;

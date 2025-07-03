@@ -5,6 +5,5 @@ OpenGLCanvas::OpenGLCanvas(wxWindow* parent)
 {
 }
 
-OpenGLCanvas::~OpenGLCanvas() {}
 void OpenGLCanvas::OnMove(wxMoveEvent& event) { event.Skip(); }
 void OpenGLCanvas::OnSize(wxSizeEvent& event) { event.Skip(); }

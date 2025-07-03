@@ -112,8 +112,6 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
     }
 }
 
-NewFormWizard::~NewFormWizard() {}
-
 void NewFormWizard::OnFormTypeSelected(wxCommandEvent& event) { event.Skip(); }
 
 void NewFormWizard::OnSelectVirtualFolder(wxCommandEvent& event)

@@ -9,12 +9,12 @@ class wxcSettingsDlg : public wxcSettingsDlgBase
 
 public:
     wxcSettingsDlg(wxWindow* parent);
-    virtual ~wxcSettingsDlg();
+    ~wxcSettingsDlg() override = default;
     bool IsRestartRequired() const;
 
 protected:
-    virtual void OnMinimizeToTrayUI(wxUpdateUIEvent& event);
+    void OnMinimizeToTrayUI(wxUpdateUIEvent& event) override;
     virtual void OnUseAsTabUI(wxUpdateUIEvent& event);
-    virtual void OnOk(wxCommandEvent& event);
+    void OnOk(wxCommandEvent& event) override;
 };
 #endif // WXCSETTINGSDLG_H

@@ -22,8 +22,6 @@ StatusBarWrapper::StatusBarWrapper()
     SetName(GenerateName());
 }
 
-StatusBarWrapper::~StatusBarWrapper() {}
-
 wxcWidget* StatusBarWrapper::Clone() const { return new StatusBarWrapper(); }
 
 wxString StatusBarWrapper::CppCtorCode() const

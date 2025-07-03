@@ -7,9 +7,9 @@ class SplitterWindowPage : public PanelWrapper
 {
 public:
     SplitterWindowPage();
-    virtual ~SplitterWindowPage();
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
+    ~SplitterWindowPage() override = default;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
 };
 
 #endif // SPLITTERWINDOWPAGE_H

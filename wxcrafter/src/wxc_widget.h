@@ -114,8 +114,8 @@ class AuiToolbarWrapperBase;
 class wxcSizerItem : public wxSizerItem
 {
 public:
-    wxcSizerItem() {}
-    virtual ~wxcSizerItem() {}
+    wxcSizerItem() = default;
+    ~wxcSizerItem() override = default;
     wxString GetBorderScaled() const;
 };
 
@@ -455,7 +455,7 @@ public:
     virtual bool IsEventHandler() const { return true; }
 
 public:
-    wxcWidget(int type);
+    explicit wxcWidget(int type);
     virtual ~wxcWidget();
 
     void SetGbPos(const wxString& gbPos) { this->m_gbPos = gbPos; }

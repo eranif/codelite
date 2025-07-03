@@ -14,8 +14,6 @@ EnterStringsDlg::EnterStringsDlg(wxWindow* parent, const wxString& value)
     WindowAttrManager::Load(this);
 }
 
-EnterStringsDlg::~EnterStringsDlg() {}
-
 wxString EnterStringsDlg::GetValue() const { return m_stc->GetText(); }
 
 void EnterStringsDlg::SetMessage(const wxString& msg)

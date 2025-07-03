@@ -7,17 +7,16 @@ class SpacerWrapper : public wxcWidget
 {
 public:
     SpacerWrapper();
-    virtual ~SpacerWrapper();
+    ~SpacerWrapper() override = default;
 
-    virtual bool IsEventHandler() const { return false; }
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    void ToXRC(wxString& text, XRC_TYPE type) const;
-
-    bool IsSizer() const { return true; }
+    bool IsEventHandler() const override { return false; }
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    bool IsSizer() const override { return true; }
 };
 
 #endif // SPACERWRAPPER_H

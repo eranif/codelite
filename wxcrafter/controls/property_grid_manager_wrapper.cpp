@@ -70,8 +70,6 @@ PropertyGridManagerWrapper::PropertyGridManagerWrapper()
     SetName(GenerateName());
 }
 
-PropertyGridManagerWrapper::~PropertyGridManagerWrapper() {}
-
 wxcWidget* PropertyGridManagerWrapper::Clone() const { return new PropertyGridManagerWrapper(); }
 
 wxString PropertyGridManagerWrapper::CppCtorCode() const

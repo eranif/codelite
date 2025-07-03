@@ -59,8 +59,6 @@ ToolbarBaseWrapper::ToolbarBaseWrapper(int type)
     SetName(GenerateName());
 }
 
-ToolbarBaseWrapper::~ToolbarBaseWrapper() {}
-
 wxString ToolbarBaseWrapper::CppCtorCode() const
 {
     wxString code;

@@ -7,15 +7,15 @@ class SimpleBookWrapper : public NotebookBaseWrapper
 {
 public:
     SimpleBookWrapper();
-    virtual ~SimpleBookWrapper();
+    ~SimpleBookWrapper() override = default;
 
 public:
-    virtual wxString GetXRCPageClass() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    wxcWidget* Clone() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    virtual wxString CppCtorCode() const;
+    wxString GetXRCPageClass() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxcWidget* Clone() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    wxString CppCtorCode() const override;
 };
 
 #endif // SIMPLEBOOKWRAPPER_H

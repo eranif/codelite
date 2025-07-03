@@ -28,8 +28,6 @@ SpinCtrlWrapper::SpinCtrlWrapper()
     SetName(GenerateName());
 }
 
-SpinCtrlWrapper::~SpinCtrlWrapper() {}
-
 wxcWidget* SpinCtrlWrapper::Clone() const { return new SpinCtrlWrapper(); }
 
 wxString SpinCtrlWrapper::CppCtorCode() const

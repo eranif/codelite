@@ -7,7 +7,7 @@
 class StyledTextCtrlWrapper : public wxcWidget
 {
 public:
-    typedef std::map<wxString, int> LexersMap_t;
+    using LexersMap_t = std::map<wxString, int>;
 
 protected:
     static LexersMap_t m_lexers;
@@ -20,14 +20,14 @@ protected:
 
 public:
     StyledTextCtrlWrapper();
-    virtual ~StyledTextCtrlWrapper();
+    ~StyledTextCtrlWrapper() override = default;
 
 public:
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 #endif // STYLEDTEXTCTRLWRAPPER_H

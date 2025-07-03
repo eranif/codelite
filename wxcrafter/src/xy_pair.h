@@ -12,7 +12,7 @@ protected:
 public:
     XYPair(wxString str, int defaultx = -1, int defaulty = -1);
     XYPair(int x, int y);
-    virtual ~XYPair();
+    virtual ~XYPair() = default;
 
     int GetX() const { return m_x; }
     int GetY() const { return m_y; }

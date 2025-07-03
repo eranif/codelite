@@ -18,8 +18,6 @@ DatePickerCtrl::DatePickerCtrl()
     SetName(GenerateName());
 }
 
-DatePickerCtrl::~DatePickerCtrl() {}
-
 wxcWidget* DatePickerCtrl::Clone() const { return new DatePickerCtrl(); }
 
 wxString DatePickerCtrl::CppCtorCode() const

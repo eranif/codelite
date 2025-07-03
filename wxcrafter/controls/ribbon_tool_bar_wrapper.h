@@ -7,15 +7,15 @@ class RibbonToolBarWrapper : public wxcWidget
 {
 public:
     RibbonToolBarWrapper();
-    virtual ~RibbonToolBarWrapper();
+    ~RibbonToolBarWrapper() override = default;
 
 public:
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxString DoGenerateCppCtorCode_End() const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxString DoGenerateCppCtorCode_End() const override;
 };
 
 #endif // RIBBONTOOLBARWRAPPER_H

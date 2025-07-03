@@ -8,21 +8,21 @@ class DialogWrapper : public TopLevelWinWrapper
 
 public:
     DialogWrapper();
-    virtual ~DialogWrapper();
+    ~DialogWrapper() override = default;
 
 public:
-    virtual bool HasIcon() const;
-    virtual wxString DesignerXRC(bool forPreviewDialog) const;
-    virtual wxString BaseCtorDecl() const;
-    virtual wxString BaseCtorImplPrefix() const;
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
+    bool HasIcon() const override;
+    wxString DesignerXRC(bool forPreviewDialog) const override;
+    wxString BaseCtorDecl() const override;
+    wxString BaseCtorImplPrefix() const override;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 #endif // DIALOGWRAPPER_H

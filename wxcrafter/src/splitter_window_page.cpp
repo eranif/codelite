@@ -9,8 +9,6 @@ SplitterWindowPage::SplitterWindowPage()
     SetName(GenerateName());
 }
 
-SplitterWindowPage::~SplitterWindowPage() {}
-
 wxcWidget* SplitterWindowPage::Clone() const { return new SplitterWindowPage(); }
 
 wxString SplitterWindowPage::CppCtorCode() const

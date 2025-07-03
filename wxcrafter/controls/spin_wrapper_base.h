@@ -6,12 +6,12 @@
 class SpinWrapperBase : public wxcWidget
 {
 public:
-    SpinWrapperBase(int ID);
-    virtual ~SpinWrapperBase();
+    explicit SpinWrapperBase(int ID);
+    ~SpinWrapperBase() override = default;
 
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
 
     void EnsureSaneValues(wxString& min, wxString& max, int& imin, int& imax, int& val) const;
 };

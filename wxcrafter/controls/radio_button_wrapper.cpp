@@ -21,8 +21,6 @@ RadioButtonWrapper::RadioButtonWrapper()
     SetName(GenerateName());
 }
 
-RadioButtonWrapper::~RadioButtonWrapper() {}
-
 wxcWidget* RadioButtonWrapper::Clone() const { return new RadioButtonWrapper(); }
 
 wxString RadioButtonWrapper::CppCtorCode() const

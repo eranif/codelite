@@ -64,8 +64,6 @@ GenericDirCtrlWrapper::GenericDirCtrlWrapper()
     SetName(GenerateName());
 }
 
-GenericDirCtrlWrapper::~GenericDirCtrlWrapper() {}
-
 wxcWidget* GenericDirCtrlWrapper::Clone() const { return new GenericDirCtrlWrapper(); }
 
 wxString GenericDirCtrlWrapper::CppCtorCode() const

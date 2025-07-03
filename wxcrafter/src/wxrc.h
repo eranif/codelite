@@ -155,8 +155,8 @@ class wxcXmlResourceCmp
 
 public:
     // don't use builtin cmd line parsing:
-    virtual bool OnInit() { return true; }
-    virtual int Run(const wxString& inXrcFile, const wxString& outputCppFile, const wxString& functionName);
+    bool OnInit() { return true; }
+    int Run(const wxString& inXrcFile, const wxString& outputCppFile, const wxString& functionName);
 
 private:
     void CompileRes();

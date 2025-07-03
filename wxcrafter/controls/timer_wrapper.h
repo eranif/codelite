@@ -7,20 +7,20 @@ class TimerWrapper : public wxcWidget
 {
 public:
     TimerWrapper();
-    virtual ~TimerWrapper();
+    ~TimerWrapper() override = default;
 
 protected:
-    virtual wxString CppDtorCode() const;
+    wxString CppDtorCode() const override;
 
 public:
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 
-    virtual bool IsValidParent() const { return false; }
-    virtual bool IsWxWindow() const { return false; }
+    bool IsValidParent() const override { return false; }
+    bool IsWxWindow() const override { return false; }
 };
 
 #endif // TIMERWRAPPER_H

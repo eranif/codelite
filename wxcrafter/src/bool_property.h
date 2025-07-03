@@ -10,14 +10,14 @@ class BoolProperty : public PropertyBase
 public:
     BoolProperty(const wxString& label, bool checked, const wxString& tooltip);
     BoolProperty();
-    virtual ~BoolProperty();
+    ~BoolProperty() override = default;
 
 public:
-    virtual wxString GetValue() const;
-    virtual void SetValue(const wxString& value);
-    virtual JSONElement Serialize() const;
-    virtual void UnSerialize(const JSONElement& json);
-    virtual PropertyeType GetType() { return PT_BOOL; }
+    wxString GetValue() const override;
+    void SetValue(const wxString& value) override;
+    JSONElement Serialize() const override;
+    void UnSerialize(const JSONElement& json) override;
+    PropertyeType GetType() override { return PT_BOOL; }
 };
 
 #endif // BOOLPROPERTY_H

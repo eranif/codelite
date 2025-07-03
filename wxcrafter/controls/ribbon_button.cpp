@@ -63,8 +63,6 @@ RibbonButtonBase::RibbonButtonBase(int type)
     SetName(GenerateName());
 }
 
-RibbonButtonBase::~RibbonButtonBase() {}
-
 wxString RibbonButtonBase::CppCtorCode() const
 {
     wxcCodeGeneratorHelper::Get().AddBitmap(PropertyFile(PROP_BITMAP_PATH));
@@ -119,16 +117,12 @@ RibbonButton::RibbonButton()
 {
 }
 
-RibbonButton::~RibbonButton() {}
-
 // ----------------------------------------------
 
 RibbonButtonHybrid::RibbonButtonHybrid()
     : RibbonButtonBase(ID_WXRIBBONHYBRIDBUTTON)
 {
 }
-
-RibbonButtonHybrid::~RibbonButtonHybrid() {}
 
 // -----------------------------------------------
 
@@ -137,8 +131,6 @@ RibbonButtonDropdown::RibbonButtonDropdown()
 {
 }
 
-RibbonButtonDropdown::~RibbonButtonDropdown() {}
-
 // -------------------------------------------
 
 RibbonButtonToggle::RibbonButtonToggle()
@@ -146,15 +138,11 @@ RibbonButtonToggle::RibbonButtonToggle()
 {
 }
 
-RibbonButtonToggle::~RibbonButtonToggle() {}
-
 // -------------------------------------------
 RibbonTool::RibbonTool()
     : RibbonButtonBase(ID_WXRIBBONTOOL)
 {
 }
-
-RibbonTool::~RibbonTool() {}
 
 // -------------------------------------------
 
@@ -163,8 +151,6 @@ RibbonToolToggle::RibbonToolToggle()
 {
 }
 
-RibbonToolToggle::~RibbonToolToggle() {}
-
 // -------------------------------------------
 
 RibbonToolHybrid::RibbonToolHybrid()
@@ -172,13 +158,9 @@ RibbonToolHybrid::RibbonToolHybrid()
 {
 }
 
-RibbonToolHybrid::~RibbonToolHybrid() {}
-
 // -------------------------------------------
 
 RibbonToolDropdown::RibbonToolDropdown()
     : RibbonButtonBase(ID_WXRIBBONDROPDOWNTOOL)
 {
 }
-
-RibbonToolDropdown::~RibbonToolDropdown() {}

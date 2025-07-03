@@ -17,15 +17,15 @@ struct NewFormDetails {
 class NewFormWizard : public NewFormWizardBaseClass
 {
 protected:
-    virtual void OnBrowseWxcpFile(wxCommandEvent& event);
-    virtual void OnSelectVDUI(wxUpdateUIEvent& event);
-    virtual void OnStandloneAppUI(wxUpdateUIEvent& event);
-    virtual void OnInheritedClassNameUI(wxUpdateUIEvent& event);
-    virtual void OnFilenameUI(wxUpdateUIEvent& event);
-    virtual void OnTitleUI(wxUpdateUIEvent& event);
-    virtual void OnNewWxcpProject(wxCommandEvent& event);
-    virtual void OnInheritedNameFocus(wxFocusEvent& event);
-    virtual void OnFilenameFocus(wxFocusEvent& event);
+    void OnBrowseWxcpFile(wxCommandEvent& event) override;
+    void OnSelectVDUI(wxUpdateUIEvent& event) override;
+    void OnStandloneAppUI(wxUpdateUIEvent& event) override;
+    void OnInheritedClassNameUI(wxUpdateUIEvent& event) override;
+    void OnFilenameUI(wxUpdateUIEvent& event) override;
+    void OnTitleUI(wxUpdateUIEvent& event) override;
+    void OnNewWxcpProject(wxCommandEvent& event) override;
+    void OnInheritedNameFocus(wxFocusEvent& event) override;
+    void OnFilenameFocus(wxFocusEvent& event) override;
     IManager* m_mgr;
 
     bool IsAuiToolBar() const;
@@ -37,15 +37,15 @@ protected:
     bool IsWizard() const;
 
 protected:
-    void OnFormTypeSelected(wxCommandEvent& event);
-    void OnSelectVirtualFolder(wxCommandEvent& event);
-    void OnFinishClicked(wxWizardEvent& event);
-    void OnWizardPageChanging(wxWizardEvent& event);
+    void OnFormTypeSelected(wxCommandEvent& event) override;
+    void OnSelectVirtualFolder(wxCommandEvent& event) override;
+    void OnFinishClicked(wxWizardEvent& event) override;
+    void OnWizardPageChanging(wxWizardEvent& event) override;
     void OnMakeSkeletonAppUI(wxUpdateUIEvent& event);
 
 public:
     NewFormWizard(wxWindow* parent, IManager* mgr, int type);
-    virtual ~NewFormWizard();
+    ~NewFormWizard() override = default;
 
     NewFormDetails GetFormDetails() const
     {
@@ -64,7 +64,7 @@ public:
     wxString GetVirtualFolder() const;
     wxString GetGeneratedFileBaseName() const;
     wxString GetClassName() const;
-    wxString GetTitle() const;
+    wxString GetTitle() const override;
     wxString GetWxcpFile() const;
     wxString GetInheritedClassName() const;
 };

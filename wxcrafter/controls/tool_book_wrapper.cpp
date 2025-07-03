@@ -21,8 +21,6 @@ ToolBookWrapper::ToolBookWrapper()
     SetName(GenerateName());
 }
 
-ToolBookWrapper::~ToolBookWrapper() {}
-
 wxcWidget* ToolBookWrapper::Clone() const { return new ToolBookWrapper(); }
 
 void ToolBookWrapper::GetIncludeFile(wxArrayString& headers) const { headers.Add(wxT("#include <wx/toolbook.h>")); }

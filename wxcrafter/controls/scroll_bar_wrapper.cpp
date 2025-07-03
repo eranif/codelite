@@ -43,8 +43,6 @@ ScrollBarWrapper::ScrollBarWrapper()
     SetName(GenerateName());
 }
 
-ScrollBarWrapper::~ScrollBarWrapper() {}
-
 wxcWidget* ScrollBarWrapper::Clone() const { return new ScrollBarWrapper(); }
 
 wxString ScrollBarWrapper::CppCtorCode() const

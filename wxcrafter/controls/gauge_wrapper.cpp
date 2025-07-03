@@ -22,8 +22,6 @@ GaugeWrapper::GaugeWrapper()
     SetName(GenerateName());
 }
 
-GaugeWrapper::~GaugeWrapper() {}
-
 wxcWidget* GaugeWrapper::Clone() const { return new GaugeWrapper(); }
 
 wxString GaugeWrapper::CppCtorCode() const

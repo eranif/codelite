@@ -62,8 +62,6 @@ wxcApp::wxcApp()
 {
 }
 
-wxcApp::~wxcApp() {}
-
 bool wxcApp::OnInit()
 {
     // parse command line

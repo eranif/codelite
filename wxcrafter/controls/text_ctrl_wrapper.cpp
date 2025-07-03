@@ -63,8 +63,6 @@ TextCtrlWrapper::TextCtrlWrapper()
     SetName(GenerateName());
 }
 
-TextCtrlWrapper::~TextCtrlWrapper() {}
-
 void TextCtrlWrapper::GetIncludeFile(wxArrayString& headers) const { headers.Add(wxT("#include <wx/textctrl.h>")); }
 
 wxString TextCtrlWrapper::GetWxClassName() const { return wxT("wxTextCtrl"); }

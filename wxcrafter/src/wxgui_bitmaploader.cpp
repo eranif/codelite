@@ -45,8 +45,6 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
     }
 }
 
-wxCrafter::ResourceLoader::~ResourceLoader() {}
-
 const wxBitmap& wxCrafter::ResourceLoader::Bitmap(const wxString& name) const
 {
     static wxBitmap s_nullBitmap;

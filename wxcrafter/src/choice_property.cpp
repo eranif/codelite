@@ -16,8 +16,6 @@ ChoiceProperty::ChoiceProperty(const wxString& label, const wxArrayString& optio
     SetLabel(label);
 }
 
-ChoiceProperty::~ChoiceProperty() {}
-
 void ChoiceProperty::SetSelection(int selection)
 {
     if(selection < 0 || selection >= (int)m_options.GetCount()) return;

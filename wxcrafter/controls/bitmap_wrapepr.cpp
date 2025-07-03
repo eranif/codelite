@@ -26,8 +26,6 @@ BitmapWrapepr::BitmapWrapepr()
     SetName(GenerateName());
 }
 
-BitmapWrapepr::~BitmapWrapepr() {}
-
 wxcWidget* BitmapWrapepr::Clone() const { return new BitmapWrapepr(); }
 
 wxString BitmapWrapepr::CppCtorCode() const

@@ -7,11 +7,12 @@ class ToolBookWrapper : public NotebookBaseWrapper
 {
 public:
     ToolBookWrapper();
-    virtual ~ToolBookWrapper();
-    wxcWidget* Clone() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    wxString GetXRCPageClass() const;
+    ~ToolBookWrapper() override = default;
+
+    wxcWidget* Clone() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    wxString GetXRCPageClass() const override;
 };
 
 #endif // TOOLBOOKWRAPPER_H

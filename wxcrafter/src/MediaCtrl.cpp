@@ -4,5 +4,3 @@ MediaCtrl::MediaCtrl(wxWindow* parent)
     : MediaCtrlBase(parent)
 {
 }
-
-MediaCtrl::~MediaCtrl() {}

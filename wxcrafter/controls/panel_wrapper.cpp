@@ -12,8 +12,6 @@ PanelWrapper::PanelWrapper()
     SetName(GenerateName());
 }
 
-PanelWrapper::~PanelWrapper() {}
-
 void PanelWrapper::GetIncludeFile(wxArrayString& headers) const { headers.Add(wxT("#include <wx/panel.h>")); }
 
 wxString PanelWrapper::GetWxClassName() const { return wxT("wxPanel"); }

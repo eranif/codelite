@@ -9,8 +9,6 @@ MessageDlg::MessageDlg(wxWindow* parent, const wxString& msg, const wxString& ti
     CentreOnParent();
 }
 
-MessageDlg::~MessageDlg() {}
-
 bool MessageDlg::IsDontAnnoyChecked() const { return m_checkBoxDontAnnoy->IsChecked(); }
 
 void MessageDlg::SetMessage(const wxString& msg) { m_message->SetLabel(msg); }

@@ -15,21 +15,21 @@ class ColHeaderFlagsProperty : public PropertyBase
     int m_initialValue;
 
 public:
-    virtual wxArrayString GetOptions() const;
-    virtual wxArrayInt GetOptionsValues() const;
-    virtual long GetValueLong() const;
+    wxArrayString GetOptions() const override;
+    wxArrayInt GetOptionsValues() const override;
+    long GetValueLong() const override;
 
     ColHeaderFlagsProperty();
     ColHeaderFlagsProperty(const wxString& label, int initialValue, const wxString& tip,
                            eColumnKind kind = eColumnKind::kListCtrl);
-    virtual ~ColHeaderFlagsProperty();
+    ~ColHeaderFlagsProperty() override = default;
 
 public:
-    virtual PropertyeType GetType();
-    virtual wxString GetValue() const;
-    virtual JSONElement Serialize() const;
-    virtual void SetValue(const wxString& value);
-    virtual void UnSerialize(const JSONElement& json);
+    PropertyeType GetType() override;
+    wxString GetValue() const override;
+    JSONElement Serialize() const override;
+    void SetValue(const wxString& value) override;
+    void UnSerialize(const JSONElement& json) override;
 };
 
 #endif // COLHEADERFLAGSPROPERTY_H

@@ -23,8 +23,6 @@ GridColumnWrapper::GridColumnWrapper()
     SetName(GenerateName());
 }
 
-GridColumnWrapper::~GridColumnWrapper() {}
-
 wxcWidget* GridColumnWrapper::Clone() const { return new GridColumnWrapper(); }
 
 wxString GridColumnWrapper::CppCtorCode() const

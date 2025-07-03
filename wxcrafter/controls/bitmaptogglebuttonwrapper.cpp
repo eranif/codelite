@@ -24,8 +24,6 @@ BitmapToggleButtonWrapper::BitmapToggleButtonWrapper()
     SetName(GenerateName());
 }
 
-BitmapToggleButtonWrapper::~BitmapToggleButtonWrapper() {}
-
 wxcWidget* BitmapToggleButtonWrapper::Clone() const { return new BitmapToggleButtonWrapper(); }
 
 wxString BitmapToggleButtonWrapper::CppCtorCode() const

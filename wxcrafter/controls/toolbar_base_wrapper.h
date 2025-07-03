@@ -9,16 +9,17 @@
 class ToolbarBaseWrapper : public wxcWidget
 {
 public:
-    ToolbarBaseWrapper(int type);
-    virtual ~ToolbarBaseWrapper();
+    explicit ToolbarBaseWrapper(int type);
+    ~ToolbarBaseWrapper() override = default;
 
 public:
-    virtual wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+
     virtual wxString DesignerXRC() const;
 };
 
@@ -30,8 +31,8 @@ public:
         : ToolbarBaseWrapper(ID_WXTOOLBAR)
     {
     }
-    virtual ~ToolbarWrapper() {}
-    virtual wxcWidget* Clone() const { return new ToolbarWrapper(); }
+    ~ToolbarWrapper() override = default;
+    wxcWidget* Clone() const override { return new ToolbarWrapper(); }
 };
 
 /// wxAuiToolBar
@@ -39,22 +40,22 @@ class AuiToolbarWrapper : public AuiToolbarWrapperBase, public wxcWidget
 {
 public:
     AuiToolbarWrapper();
-    virtual ~AuiToolbarWrapper() {}
+    ~AuiToolbarWrapper() override = default;
 
-    virtual wxcWidget* Clone() const { return new AuiToolbarWrapper(); }
+    wxcWidget* Clone() const override { return new AuiToolbarWrapper(); }
 
-    wxString DoGenerateClassMember() const;
+    wxString DoGenerateClassMember() const override;
 
-    wxString CppCtorCode() const;
-    wxString CppDtorCode() const;
+    wxString CppCtorCode() const override;
+    wxString CppDtorCode() const override;
 
-    wxString GetWxClassName() const { return wxT("wxAuiToolBar"); }
-    void GetIncludeFile(wxArrayString& headers) const;
+    wxString GetWxClassName() const override { return wxT("wxAuiToolBar"); }
+    void GetIncludeFile(wxArrayString& headers) const override;
 
-    virtual void DoGenerateExtraFunctions(wxString& decl, wxString& impl) const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    void ToXRC(wxString& text, XRC_TYPE type) const;
+    void DoGenerateExtraFunctions(wxString& decl, wxString& impl) const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 #endif // TOOLBARBASEWRAPPER_H

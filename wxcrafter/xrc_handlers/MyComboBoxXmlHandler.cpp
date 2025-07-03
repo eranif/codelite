@@ -15,8 +15,6 @@ MyComboBoxXmlHandler::MyComboBoxXmlHandler()
     AddWindowStyles();
 }
 
-MyComboBoxXmlHandler::~MyComboBoxXmlHandler() {}
-
 wxObject* MyComboBoxXmlHandler::DoCreateResource()
 {
     if(m_class == wxT("wxComboBox")) {

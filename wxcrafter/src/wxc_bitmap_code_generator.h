@@ -28,7 +28,7 @@ protected:
 
 private:
     wxcCodeGeneratorHelper();
-    virtual ~wxcCodeGeneratorHelper();
+    ~wxcCodeGeneratorHelper() override = default;
     wxString GenerateTopLevelWindowIconCode() const;
 
 public:

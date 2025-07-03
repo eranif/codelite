@@ -65,6 +65,4 @@ wxPGWindowList wxcPGChoiceAndButtonEditor::CreateControls(wxPropertyGrid* propGr
     return wxPGWindowList(ch, bt);
 }
 
-wxcPGChoiceAndButtonEditor::~wxcPGChoiceAndButtonEditor() {}
-
 wxString wxcPGChoiceAndButtonEditor::GetName() const { return GetClassInfo()->GetClassName(); }

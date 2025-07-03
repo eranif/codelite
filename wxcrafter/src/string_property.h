@@ -19,15 +19,15 @@ public:
     }
 
     StringProperty();
-    virtual ~StringProperty();
+    ~StringProperty() override = default;
 
-public:
-    virtual wxString GetValue() const;
-    virtual void SetValue(const wxString& value);
-    virtual PropertyeType GetType() { return PT_MUTLI_STRING_PICKER; }
     void operator=(const wxString& src) { m_value = src; }
-    virtual JSONElement Serialize() const;
-    virtual void UnSerialize(const JSONElement& json);
+public:
+    wxString GetValue() const override;
+    void SetValue(const wxString& value) override;
+    PropertyeType GetType() override { return PT_MUTLI_STRING_PICKER; }
+    JSONElement Serialize() const override;
+    void UnSerialize(const JSONElement& json) override;
 };
 
 #endif // STRINGPROPERTY_H

@@ -85,8 +85,6 @@ DataViewTreeListCtrlWrapper::DataViewTreeListCtrlWrapper()
                         "if it also acts a normal item with entries for further columns"));
 }
 
-DataViewTreeListCtrlWrapper::~DataViewTreeListCtrlWrapper() {}
-
 wxcWidget* DataViewTreeListCtrlWrapper::Clone() const { return new DataViewTreeListCtrlWrapper(); }
 
 wxString DataViewTreeListCtrlWrapper::CppCtorCode() const

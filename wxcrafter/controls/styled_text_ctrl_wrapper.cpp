@@ -211,8 +211,6 @@ StyledTextCtrlWrapper::StyledTextCtrlWrapper()
     SetName(GenerateName());
 }
 
-StyledTextCtrlWrapper::~StyledTextCtrlWrapper() {}
-
 wxcWidget* StyledTextCtrlWrapper::Clone() const { return new StyledTextCtrlWrapper(); }
 
 wxString StyledTextCtrlWrapper::CppCtorCode() const

@@ -29,7 +29,7 @@ protected:
 
 public:
     PropertiesListView(wxWindow* win);
-    virtual ~PropertiesListView();
+    ~PropertiesListView() override;
 
     wxPGProperty* AddBoolProp(const wxString& label, bool checked, const wxString& tip);
     wxPGProperty* AddIntegerProp(const wxString& label, int value, const wxString& tip);

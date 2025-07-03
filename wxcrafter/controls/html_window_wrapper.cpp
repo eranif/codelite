@@ -27,8 +27,6 @@ HtmlWindowWrapper::HtmlWindowWrapper()
     SetName(GenerateName());
 }
 
-HtmlWindowWrapper::~HtmlWindowWrapper() {}
-
 wxcWidget* HtmlWindowWrapper::Clone() const { return new HtmlWindowWrapper(); }
 
 wxString HtmlWindowWrapper::CppCtorCode() const

@@ -30,8 +30,6 @@ RibbonPanelWrapper::RibbonPanelWrapper()
     SetName(GenerateName());
 }
 
-RibbonPanelWrapper::~RibbonPanelWrapper() {}
-
 wxcWidget* RibbonPanelWrapper::Clone() const { return new RibbonPanelWrapper(); }
 
 wxString RibbonPanelWrapper::CppCtorCode() const

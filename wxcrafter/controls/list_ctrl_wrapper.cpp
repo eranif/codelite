@@ -62,8 +62,6 @@ ListCtrlWrapper::ListCtrlWrapper()
     SetName(GenerateName());
 }
 
-ListCtrlWrapper::~ListCtrlWrapper() {}
-
 wxcWidget* ListCtrlWrapper::Clone() const { return new ListCtrlWrapper(); }
 
 wxString ListCtrlWrapper::CppCtorCode() const

@@ -23,8 +23,6 @@ wxcEditManager::wxcEditManager()
                                   NULL, this);
 }
 
-wxcEditManager::~wxcEditManager() {}
-
 wxcEditManager& wxcEditManager::Get()
 {
     static wxcEditManager editManager;

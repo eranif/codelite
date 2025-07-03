@@ -4,13 +4,13 @@
 #include <wx/arrstr.h>
 #include <wx/string.h>
 
-class TopLevelWinWrapper;
 class wxcWidget;
+
 class AuiToolbarWrapperBase
 {
 public:
-    AuiToolbarWrapperBase();
-    ~AuiToolbarWrapperBase();
+    AuiToolbarWrapperBase() = default;
+    ~AuiToolbarWrapperBase() = default;
     void GenerateExtraFunctions(const wxcWidget* widget, wxString& decl, wxString& impl) const;
     bool HasDropdownWithMenu(const wxcWidget* widget) const;
     wxString GenerateClassMembers(const wxcWidget* widget) const;

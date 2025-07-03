@@ -39,8 +39,6 @@ CommandLinkButtonWrapper::CommandLinkButtonWrapper()
     SetName(GenerateName());
 }
 
-CommandLinkButtonWrapper::~CommandLinkButtonWrapper() {}
-
 wxcWidget* CommandLinkButtonWrapper::Clone() const { return new CommandLinkButtonWrapper(); }
 
 wxString CommandLinkButtonWrapper::CppCtorCode() const

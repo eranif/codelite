@@ -7,12 +7,12 @@ class NotebookWrapper : public NotebookBaseWrapper
 {
 public:
     NotebookWrapper();
-    virtual ~NotebookWrapper();
+    ~NotebookWrapper() override = default;
 
-    wxcWidget* Clone() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    wxString GetXRCPageClass() const;
+    wxcWidget* Clone() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    wxString GetXRCPageClass() const override;
 };
 
 #endif // NOTEBOOKWRAPPER_H

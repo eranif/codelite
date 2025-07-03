@@ -6,10 +6,6 @@
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
 
-AuiToolbarWrapperBase::AuiToolbarWrapperBase() {}
-
-AuiToolbarWrapperBase::~AuiToolbarWrapperBase() {}
-
 bool AuiToolbarWrapperBase::HasDropdownWithMenu(const wxcWidget* widget) const
 {
     wxcWidget::List_t::const_iterator child_iter = widget->GetChildren().begin();

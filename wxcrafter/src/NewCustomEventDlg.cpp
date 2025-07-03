@@ -8,5 +8,3 @@ NewCustomEventDlg::NewCustomEventDlg(wxWindow* parent)
     SetName("NewCustomEventDlg");
     WindowAttrManager::Load(this);
 }
-
-NewCustomEventDlg::~NewCustomEventDlg() {}

@@ -58,10 +58,9 @@ bool TabgroupManager::FindTabgroup(bool isGlobal, const wxString& tabgroupname, 
 {
     items.Empty();
     vTabGrps& tabgrps = (isGlobal ? m_globalTabgroups : m_tabgroups);
-    vTabGrps::const_iterator iter = tabgrps.begin();
-    for(; iter != tabgrps.end(); ++iter) {
-        if(iter->first == tabgroupname) {
-            items = iter->second;
+    for (const auto& tabGroup : tabgrps) {
+        if (tabGroup.first == tabgroupname) {
+            items = tabGroup.second;
             return true;
         }
     }

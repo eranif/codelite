@@ -252,9 +252,8 @@ void OpenWindowsPanel::SortAlphabetically()
     });
     Clear();
 
-    auto iter = tabs.begin();
-    for(; iter != tabs.end(); ++iter) {
-        AppendEditor(*iter);
+    for(const auto& tab : tabs) {
+        AppendEditor(tab);
     }
 }
 
@@ -267,9 +266,8 @@ void OpenWindowsPanel::SortByEditorOrder()
     // Sort editors
     Clear();
 
-    clTab::Vec_t::iterator iter = tabs.begin();
-    for(; iter != tabs.end(); ++iter) {
-        AppendEditor(*iter);
+    for (const auto& tab : tabs) {
+        AppendEditor(tab);
     }
 }
 

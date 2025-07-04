@@ -228,9 +228,8 @@ void MODEL_NAME::DeleteItems(const wxDataViewItem& parent, const wxDataViewItemA
 void MODEL_NAME::Clear()
 {
     wxVector<MODEL_NAME_Item*> roots = m_data;
-    wxVector<MODEL_NAME_Item*>::iterator iter = roots.begin();
-    for(; iter != roots.end(); ++iter) {
-        DeleteItem( wxDataViewItem(*iter) );
+    for (auto item : roots) {
+        DeleteItem(wxDataViewItem(item));
     }
     m_data.clear();
     Cleared();

@@ -221,11 +221,9 @@ bool CMakeGenerator::Generate(ProjectPtr p)
 
         if(!variables.IsEmpty()) {
             // Split into a list of pairs
-            const wxArrayString list = wxStringTokenize(variables, "\n;");
-
-            for(wxArrayString::const_iterator it = list.begin(), ite = list.end(); it != ite; ++it) {
+            for (const auto& line : wxStringTokenize(variables, "\n;")) {
                 // Split into name, value pair
-                const wxArrayString pair = wxSplit(*it, '=');
+                const wxArrayString pair = wxSplit(line, '=');
                 if(pair.IsEmpty()) {
                     continue;
                 }

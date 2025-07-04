@@ -226,16 +226,14 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
     m_dvListCtrlTargets->AppendItem(cols);
 
     // Initialize the custom build targets
-    std::map<wxString, wxString> targets = buildConf->GetCustomTargets();
-    std::map<wxString, wxString>::iterator titer = targets.begin();
-    for (; titer != targets.end(); ++titer) {
+    for (const auto& p : buildConf->GetCustomTargets()) {
 
-        if (ProjectCustomBuildTragetDlg::IsPredefinedTarget(titer->first))
+        if (ProjectCustomBuildTragetDlg::IsPredefinedTarget(p.first))
             continue;
 
         cols.clear();
-        cols.push_back(titer->first);
-        cols.push_back(titer->second);
+        cols.push_back(p.first);
+        cols.push_back(p.second);
         m_dvListCtrlTargets->AppendItem(cols);
     }
     m_dlg->SetCustomBuildEnabled(m_checkEnableCustomBuild->IsChecked());

@@ -100,31 +100,30 @@ wxString FrameWrapper::DesignerXRC(bool forPreviewDialog) const
     bool bToolBar = false;
     bool bStatusBar = false;
 
-    wxcWidget::List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); ++iter) {
-        if(!bMenuBar && (*iter)->GetType() == ID_WXMENUBAR) {
+    for (auto child : m_children) {
+        if (!bMenuBar && child->GetType() == ID_WXMENUBAR) {
             wxString menuBarXRC;
-            MenuBarWrapper* mb = dynamic_cast<MenuBarWrapper*>(*iter);
+            MenuBarWrapper* mb = dynamic_cast<MenuBarWrapper*>(child);
             if(mb) {
                 menuBarXRC = mb->DesignerXRC();
                 text.Prepend(menuBarXRC);
                 bMenuBar = true;
             }
 
-        } else if(!bToolBar && (*iter)->GetType() == ID_WXTOOLBAR) {
+        } else if (!bToolBar && child->GetType() == ID_WXTOOLBAR) {
 
             wxString toolbarXRC;
-            ToolbarWrapper* tb = dynamic_cast<ToolbarWrapper*>(*iter);
+            ToolbarWrapper* tb = dynamic_cast<ToolbarWrapper*>(child);
             if(tb) {
                 toolbarXRC = tb->DesignerXRC();
                 text.Prepend(toolbarXRC);
                 bToolBar = true;
             }
 
-        } else if(!bStatusBar && (*iter)->GetType() == ID_WXSTATUSBAR) {
+        } else if (!bStatusBar && child->GetType() == ID_WXSTATUSBAR) {
 
             wxString statusBarXRC;
-            StatusBarWrapper* sb = dynamic_cast<StatusBarWrapper*>(*iter);
+            StatusBarWrapper* sb = dynamic_cast<StatusBarWrapper*>(child);
             if(sb) {
                 statusBarXRC = sb->DesignerXRC();
                 text.Prepend(statusBarXRC);

@@ -963,15 +963,14 @@ void GitPlugin::OnListModified(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     wxArrayString choices;
-    std::map<wxString, wxTreeItemId>::const_iterator it;
 
     // First get a map of the filepaths/treeitemids of modified files
     std::map<wxString, wxTreeItemId> modifiedIDs;
     CreateFilesTreeIDsMap(modifiedIDs, true);
 
-    for (it = modifiedIDs.begin(); it != modifiedIDs.end(); ++it) {
-        if (it->second.IsOk())
-            choices.Add(it->first);
+    for (const auto& p : modifiedIDs) {
+        if (p.second.IsOk())
+            choices.Add(p.first);
     }
 
     if (choices.GetCount() == 0)
@@ -1422,14 +1421,13 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
 
         // Now filter using the list of modified files, gitFileList, to find which IDs to colour differently
         wxStringSet_t toColour;
-        wxStringSet_t::const_iterator iter = gitFileSet.begin();
-        for (; iter != gitFileSet.end(); ++iter) {
-            wxTreeItemId id = IDs[(*iter)];
+        for (const auto& filename : gitFileSet) {
+            wxTreeItemId id = IDs[filename];
             if (id.IsOk()) {
                 DoSetTreeItemImage(m_mgr->GetWorkspaceTree(), id, OverlayTool::Bmp_Modified);
 
             } else {
-                toColour.insert(*iter);
+                toColour.insert(filename);
             }
         }
 

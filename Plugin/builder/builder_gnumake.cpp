@@ -240,7 +240,7 @@ bool BuilderGNUMakeClassic::Export(const wxString& project, const wxString& conf
                  << wxT(" ]----------\"\n");
             // make the paths relative, if it's sensible to do so
             wxFileName fn(dependProj->GetFileName());
-            MakeRelativeIfSensible(fn, wspfile.GetPath());
+            FileUtils::MakeRelativeIfSensible(fn, wspfile.GetPath());
 
             bool isPluginGeneratedMakefile =
                 SendBuildEvent(wxEVT_GET_IS_PLUGIN_MAKEFILE, depsArr.Item(i), projectSelConf);
@@ -321,7 +321,7 @@ bool BuilderGNUMakeClassic::Export(const wxString& project, const wxString& conf
 
     // make the paths relative, if it's sensible to do so
     wxFileName projectPath(proj->GetFileName());
-    MakeRelativeIfSensible(projectPath, wspfile.GetPath());
+    FileUtils::MakeRelativeIfSensible(projectPath, wspfile.GetPath());
 
     wxString pname(proj->GetName());
 
@@ -360,7 +360,7 @@ bool BuilderGNUMakeClassic::Export(const wxString& project, const wxString& conf
 
             // make the paths relative
             wxFileName fn(dependProj->GetFileName());
-            MakeRelativeIfSensible(fn, wspfile.GetPath());
+            FileUtils::MakeRelativeIfSensible(fn, wspfile.GetPath());
 
             // if the dependency project is project of type 'Custom Build' - do the custom build instead
             // of the generated makefile

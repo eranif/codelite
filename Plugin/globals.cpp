@@ -334,12 +334,6 @@ bool CopyToClipboard(const wxString& text)
 
 wxColour MakeColourLighter(wxColour color, float level) { return DrawingUtils::LightColour(color, level); }
 
-void FillFromSemiColonString(wxArrayString& arr, const wxString& str)
-{
-    arr.clear();
-    arr = StringUtils::BuildArgv(str);
-}
-
 namespace
 {
 #ifdef __WXMSW__

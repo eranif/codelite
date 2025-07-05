@@ -176,13 +176,6 @@ WXDLLIMPEXP_SDK bool CopyToClipboard(const wxString& text);
 WXDLLIMPEXP_SDK wxColour MakeColourLighter(wxColour color, float level);
 
 /**
- * \brief fill an array with a semi-colon separated string
- * \param arr [out] the array to fill
- * \param str the string to split
- */
-WXDLLIMPEXP_SDK void FillFromSemiColonString(wxArrayString& arr, const wxString& str);
-
-/**
  * @brief wrap a given command in the shell command (e.g. cmd /c "command")
  */
 WXDLLIMPEXP_SDK void WrapInShell(wxString& cmd);

@@ -53,6 +53,11 @@ public:
     static std::string ToStdString(const wxString& str);
 
     /**
+     * @brief convert string to integer using range validation and default value
+     */
+    static int wxStringToInt(const wxString& str, int defval, int min = -1, int max = -1);
+
+    /**
      * @brief convert integer to string
      */
     static wxString wxIntToString(int val);

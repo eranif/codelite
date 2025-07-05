@@ -580,23 +580,6 @@ wxString wxImplode(const wxArrayString& arr, const wxString& glue)
     return str;
 }
 
-int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
-{
-    long v;
-    if (!str.ToLong(&v)) {
-        return defval;
-    }
-
-    if (minval != -1 && v < minval) {
-        return defval;
-    }
-    if (maxval != -1 && v > maxval) {
-        return defval;
-    }
-
-    return v;
-}
-
 ////////////////////////////////////////
 // BOM
 ////////////////////////////////////////

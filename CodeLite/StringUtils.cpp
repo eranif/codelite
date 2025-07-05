@@ -84,6 +84,23 @@ std::string StringUtils::ToStdString(const wxString& str)
     return res;
 }
 
+int StringUtils::wxStringToInt(const wxString& str, int defval, int minval, int maxval)
+{
+    long v;
+    if (!str.ToLong(&v)) {
+        return defval;
+    }
+
+    if (minval != -1 && v < minval) {
+        return defval;
+    }
+    if (maxval != -1 && v > maxval) {
+        return defval;
+    }
+
+    return v;
+}
+
 wxString StringUtils::wxIntToString(int val)
 {
     wxString s;

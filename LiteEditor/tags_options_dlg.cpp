@@ -80,7 +80,7 @@ void CodeCompletionSettingsDialog::CopyData()
     SetFlag(CC_DISP_FUNC_CALLTIP, m_checkDisplayFunctionTip->IsChecked());
     SetFlag(CC_DISP_TYPE_INFO, m_checkDisplayTypeInfo->IsChecked());
     SetFlag(CC_BACKSPACE_TRIGGER, m_checkBoxBackspaceTriggers->IsChecked());
-    m_data.SetCcNumberOfDisplayItems(::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 100));
+    m_data.SetCcNumberOfDisplayItems(StringUtils::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 100));
     clConfig::Get().Write("GenerateCompileCommands", this->m_checkBoxGenCompileCommandsJSON->IsChecked());
 
     //----------------------------------------------------

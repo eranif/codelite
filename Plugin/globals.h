@@ -267,11 +267,6 @@ WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& old
                                                         const wxString& str,
                                                         const size_t maxsize);
 
-/**
- * @brief convert string to integer using range validation and default value
- */
-WXDLLIMPEXP_SDK int wxStringToInt(const wxString& str, int defval, int min = -1, int max = -1);
-
 WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString& expr, const wxString& exprType);
 
 /**

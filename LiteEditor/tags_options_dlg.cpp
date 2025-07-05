@@ -25,25 +25,11 @@
 
 #include "tags_options_dlg.h"
 
-#include "AddOptionsDialog.h"
-#include "ColoursAndFontsManager.h"
-#include "GCCMetadata.hpp"
-#include "ICompilerLocator.h"
-#include "build_settings_config.h"
-#include "clSingleChoiceDialog.h"
+#include "StringUtils.h"
 #include "cl_config.h"
-#include "compiler.h"
-#include "ctags_manager.h"
 #include "globals.h"
-#include "ieditor.h"
-#include "lexer_configuration.h"
-#include "macros.h"
-#include "pluginmanager.h"
 #include "windowattrmanager.h"
 
-#include <wx/dirdlg.h>
-#include <wx/msgdlg.h>
-#include <wx/tokenzr.h>
 //---------------------------------------------------------
 
 CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, const TagsOptionsData& data)
@@ -66,7 +52,7 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     m_checkDisplayTypeInfo->SetValue(m_data.GetFlags() & CC_DISP_TYPE_INFO);
     m_checkBoxBackspaceTriggers->SetValue(m_data.GetFlags() & CC_BACKSPACE_TRIGGER);
 
-    m_spinCtrlNumberOfCCItems->ChangeValue(::wxIntToString(m_data.GetCcNumberOfDisplayItems()));
+    m_spinCtrlNumberOfCCItems->ChangeValue(StringUtils::wxIntToString(m_data.GetCcNumberOfDisplayItems()));
     m_checkBoxGenCompileCommandsJSON->SetValue(genJsonFile);
 
     //----------------------------------------------------

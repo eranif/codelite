@@ -272,11 +272,6 @@ WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& old
  */
 WXDLLIMPEXP_SDK int wxStringToInt(const wxString& str, int defval, int min = -1, int max = -1);
 
-/**
- * @brief convert integer to string
- */
-WXDLLIMPEXP_SDK wxString wxIntToString(int val);
-
 WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString& expr, const wxString& exprType);
 
 /**

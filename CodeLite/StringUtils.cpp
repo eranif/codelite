@@ -84,6 +84,13 @@ std::string StringUtils::ToStdString(const wxString& str)
     return res;
 }
 
+wxString StringUtils::wxIntToString(int val)
+{
+    wxString s;
+    s << val;
+    return s;
+}
+
 unsigned int StringUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
 {
     constexpr unsigned int SURROGATE_LEAD_FIRST = 0xD800;

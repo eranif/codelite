@@ -52,6 +52,11 @@ public:
      */
     static std::string ToStdString(const wxString& str);
 
+    /**
+     * @brief convert integer to string
+     */
+    static wxString wxIntToString(int val);
+
     static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
 
     /**

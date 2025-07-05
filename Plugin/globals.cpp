@@ -597,13 +597,6 @@ int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
     return v;
 }
 
-wxString wxIntToString(int val)
-{
-    wxString s;
-    s << val;
-    return s;
-}
-
 ////////////////////////////////////////
 // BOM
 ////////////////////////////////////////

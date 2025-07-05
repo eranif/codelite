@@ -277,8 +277,6 @@ WXDLLIMPEXP_SDK int wxStringToInt(const wxString& str, int defval, int min = -1,
  */
 WXDLLIMPEXP_SDK wxString wxIntToString(int val);
 
-WXDLLIMPEXP_SDK unsigned int clUTF8Length(const wchar_t* uptr, unsigned int tlen);
-
 WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString& expr, const wxString& exprType);
 
 /**

@@ -690,33 +690,6 @@ void BOM::Clear()
     m_bom.SetDataLen(0);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-// UTF8/16 conversions methods copied from wxScintilla
-///////////////////////////////////////////////////////////////////////////////////////////////
-enum { SURROGATE_LEAD_FIRST = 0xD800 };
-enum { SURROGATE_TRAIL_FIRST = 0xDC00 };
-enum { SURROGATE_TRAIL_LAST = 0xDFFF };
-
-unsigned int clUTF8Length(const wchar_t* uptr, unsigned int tlen)
-{
-    unsigned int len = 0;
-    for (unsigned int i = 0; i < tlen && uptr[i];) {
-        unsigned int uch = uptr[i];
-        if (uch < 0x80) {
-            len++;
-        } else if (uch < 0x800) {
-            len += 2;
-        } else if ((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_TRAIL_LAST)) {
-            len += 4;
-            i++;
-        } else {
-            len += 3;
-        }
-        i++;
-    }
-    return len;
-}
-
 // void UTF8FromUTF16(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned int len)
 //{
 //    int k = 0;

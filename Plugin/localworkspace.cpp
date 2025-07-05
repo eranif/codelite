@@ -91,7 +91,7 @@ LocalOptionsConfig::LocalOptionsConfig(OptionsConfigPtr opts, wxXmlNode* node)
             opts->SetTabWidth(l);
         }
         if(XmlUtils::ReadLongIfExists(node, wxT("ShowWhitespaces"), l)) {
-            opts->SetShowWhitspaces(l);
+            opts->SetShowWhitespaces(l);
         }
         if(XmlUtils::ReadStringIfExists(node, wxT("EOLMode"), str)) {
             opts->SetEolMode(str);

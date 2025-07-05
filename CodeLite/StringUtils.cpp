@@ -376,6 +376,19 @@ wxString StringUtils::clJoinLinesWithEOL(const wxArrayString& lines, int eol)
     return StringUtils::clJoin(lines, glue);
 }
 
+wxString StringUtils::wxImplode(const wxArrayString& arr, const wxString& glue)
+{
+    wxString str, tmp;
+    for (size_t i = 0; i < arr.GetCount(); i++) {
+        str << arr.Item(i) << glue;
+    }
+
+    if (str.EndsWith(glue, &tmp)) {
+        str = tmp;
+    }
+    return str;
+}
+
 wxArrayString StringUtils::SplitString(const wxString& inString, bool trim)
 {
     wxArrayString lines;

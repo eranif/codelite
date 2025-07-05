@@ -7,6 +7,7 @@
 #include "Preview/preview_frame.h"
 #include "Preview/preview_panel.h"
 #include "Preview/preview_wizard.h"
+#include "StringUtils.h"
 #include "UI/PropertiesView/properties_sheet.h"
 #include "UI/ToolBoxPanel.h"
 #include "allocator_mgr.h"
@@ -3346,7 +3347,7 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
     }
     if (!projectsGenerated.IsEmpty()) {
         wxString message;
-        message << _("Generated Code For the following projects:\n") << wxImplode(projectsGenerated, "\n");
+        message << _("Generated Code For the following projects:\n") << StringUtils::wxImplode(projectsGenerated, "\n");
         ::wxMessageBox(message, "wxCrafter");
     }
 }

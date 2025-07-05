@@ -213,12 +213,6 @@ WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = "E
 WXDLLIMPEXP_SDK void MSWSetWindowDarkTheme(wxWindow* win);
 
 /**
- * @brief joins array element into a string using 'glue' as the array elements
- * separator
- */
-WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString& arr, const wxString& glue = "\n");
-
-/**
  * @class StringManager
  * @brief Stores unlocalised strings for serialisation, while managing localised ones in the gui
  */

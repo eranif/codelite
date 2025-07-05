@@ -396,7 +396,7 @@ wxXmlNode* BuildConfig::ToXml() const
     XmlUtils::SetNodeContent(dbgPostConnectCommands, m_debuggerPostRemoteConnectCmds);
 
     wxXmlNode* dbgSearchPaths = new wxXmlNode(debugger, wxXML_ELEMENT_NODE, "DebuggerSearchPaths");
-    XmlUtils::SetNodeContent(dbgSearchPaths, ::wxImplode(m_debuggerSearchPaths, "\n"));
+    XmlUtils::SetNodeContent(dbgSearchPaths, StringUtils::wxImplode(m_debuggerSearchPaths, "\n"));
 
     node->AddChild(debugger);
 

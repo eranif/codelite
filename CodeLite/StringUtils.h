@@ -136,6 +136,12 @@ public:
     static wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
 
     /**
+     * @brief joins array element into a string using 'glue' as the array elements
+     * separator
+     */
+    static wxString wxImplode(const wxArrayString& arr, const wxString& glue = "\n");
+
+    /**
      * @brief split lines (using CR|LF as the separator), taking into consideration line continuation
      * @param trim trim the lines with set to true
      */

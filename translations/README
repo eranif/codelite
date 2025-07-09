@@ -7,7 +7,7 @@ Collect translatable texts:
 - run
 ```
 cd ..
-xgettext --package-name=CodeLite --from-code=UTF-8 --c++ -o translations/codelite.pot --add-location --sort-by-file -k -k_ -kwxPLURAL:1,2 `find . -type f "(" -name "*.cpp" -or -name "*.h" -or -name "*.xrc" ")" -not -wholename "./sdk/*.*" -not -wholename "./submodules/*.*" -not -wholename "./Runtime/*.*"`
+xgettext --package-name=CodeLite --from-code=UTF-8 --c++ -o translations/codelite.pot --add-location --sort-by-file -k -k_ -kwxTRANSLATE -kwxPLURAL:1,2 `find . -type f "(" -name "*.cpp" -or -name "*.h" -or -name "*.xrc" ")" -not -wholename "./sdk/*.*" -not -wholename "./submodules/*.*" -not -wholename "./Runtime/*.*"`
 ```
 
 Updating translations:

@@ -1026,7 +1026,7 @@ else()
     add_subdirectory(ctagsd)
 
     add_subdirectory(LiteEditor)
-    if(NOT APPLE AND UNIX)
+    if(NOT APPLE)
         add_subdirectory(translations)
     endif()
     add_dependencies(databaselayersqlite wxsqlite3)

@@ -74,7 +74,7 @@ void LanguageServerPage::OnSuggestLanguages(wxCommandEvent& event)
     }
 
     wxArrayInt selections;
-    int count = ::wxGetSelectedChoices(selections, _("Select the supported languages by this server:"), _("CodeLite"),
+    int count = ::wxGetSelectedChoices(selections, _("Select the supported languages by this server:"), wxT("CodeLite"),
                                        arrLang, GetParent());
     if (count == wxNOT_FOUND) {
         return;

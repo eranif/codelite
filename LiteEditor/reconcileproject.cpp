@@ -128,7 +128,7 @@ bool ReconcileProjectDlg::LoadData()
     }
 
     if (m_newfiles.empty() && m_stalefiles.empty()) {
-        wxMessageBox(_("No new or stale files found. The project is up-to-date"), _("CodeLite"),
+        wxMessageBox(_("No new or stale files found. The project is up-to-date"), wxT("CodeLite"),
                      wxICON_INFORMATION | wxOK, this);
         return false;
     }
@@ -780,7 +780,7 @@ void ReconcileProjectFiletypesDlg::OnIgnoreRemoveUpdateUI(wxUpdateUIEvent& event
 
 void ReconcileProjectFiletypesDlg::OnIgnoreFileBrowse(wxCommandEvent& WXUNUSED(event))
 {
-    wxString name = wxGetTextFromUser(_("Enter the filename to ignore e.g. foo*.cpp"), _("CodeLite"), "", this);
+    wxString name = wxGetTextFromUser(_("Enter the filename to ignore e.g. foo*.cpp"), wxT("CodeLite"), "", this);
     if (!name.empty()) {
         if (m_listIgnoreFiles->FindString(name) == wxNOT_FOUND) {
             m_listIgnoreFiles->Append(name);

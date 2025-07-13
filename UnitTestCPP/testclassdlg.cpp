@@ -108,7 +108,7 @@ void TestClassDlg::OnButtonOk(wxCommandEvent& e)
 {
     // validate the class name
     if(m_checkListMethods->GetCount() == 0) {
-        wxMessageBox(_("There are no tests to generate"), _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(_("There are no tests to generate"), wxT("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
     EndModal(wxID_OK);
@@ -133,7 +133,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
     if(m_tags.count(m_textCtrlClassName->GetValue()) == 0) {
         if(repportError) {
             wxMessageBox(_("Could not find match for class '") + m_textCtrlClassName->GetValue() + wxT("'"),
-                         _("CodeLite"), wxICON_WARNING | wxOK);
+                         wxT("CodeLite"), wxICON_WARNING | wxOK);
         }
         m_checkListMethods->Clear();
         return;

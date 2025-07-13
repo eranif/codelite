@@ -223,7 +223,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         filename = m_mgr->GetStartupDirectory() + "/templates/gizmos/plugin.cpp.wizard";
         content.Clear();
         if(!ReadFileWithConversion(filename, content)) {
-            wxMessageBox(_("Failed to load wizard's file 'plugin.cpp.wizard'"), _("CodeLite"), wxICON_WARNING | wxOK);
+            wxMessageBox(_("Failed to load wizard's file 'plugin.cpp.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
             return;
         }
 
@@ -250,7 +250,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         filename = m_mgr->GetStartupDirectory() + "/templates/gizmos/plugin.h.wizard";
         content.Clear();
         if(!ReadFileWithConversion(filename, content)) {
-            wxMessageBox(_("Failed to load wizard's file 'plugin.h.wizard'"), _("CodeLite"), wxICON_WARNING | wxOK);
+            wxMessageBox(_("Failed to load wizard's file 'plugin.h.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
             return;
         }
 

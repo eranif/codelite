@@ -252,7 +252,7 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
     action = kNone;
 
     if (m_currentModus == VIM_MODI::COMMAND_MODUS) {
-        if (m_tmpbuf == _(":w") || m_tmpbuf == _(":write")) {
+        if (m_tmpbuf == wxT(":w") || m_tmpbuf == wxT(":write")) {
             action = kSave;
 
             skip_event = false;
@@ -260,21 +260,21 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
             ResetCommand();
             m_currentModus = VIM_MODI::NORMAL_MODUS;
             m_message_ID = MESSAGES_VIM::SAVED_VIM_MSG;
-        } else if (m_tmpbuf == _(":q") || m_tmpbuf == _(":quit")) {
+        } else if (m_tmpbuf == wxT(":q") || m_tmpbuf == wxT(":quit")) {
             action = kClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
             m_currentModus = VIM_MODI::NORMAL_MODUS;
             m_message_ID = MESSAGES_VIM::CLOSED_VIM_MSG;
-        } else if (m_tmpbuf == _(":q!")) {
+        } else if (m_tmpbuf == wxT(":q!")) {
             action = kClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
             m_currentModus = VIM_MODI::NORMAL_MODUS;
             m_message_ID = MESSAGES_VIM::CLOSED_VIM_MSG;
-        } else if (m_tmpbuf == _(":wq")) {
+        } else if (m_tmpbuf == wxT(":wq")) {
             action = kSaveAndClose;
             skip_event = false;
             m_tmpbuf.Clear();

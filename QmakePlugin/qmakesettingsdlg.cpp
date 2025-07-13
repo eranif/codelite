@@ -116,7 +116,7 @@ void QMakeSettingsDlg::OnDelete(wxCommandEvent& event)
         wxString qmakeSettingsName = m_notebook->GetPageText((size_t)m_rightClickTabIdx);
         int answer = wxMessageBox(
             wxString::Format(_("Are you sure you want to delete qmake settings '%s'?"), qmakeSettingsName.c_str()),
-            _("CodeLite"), wxYES_NO | wxCANCEL, this);
+            wxT("CodeLite"), wxYES_NO | wxCANCEL, this);
         if(answer == wxYES) {
             m_notebook->DeletePage((size_t)m_rightClickTabIdx);
         }

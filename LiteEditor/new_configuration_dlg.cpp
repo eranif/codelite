@@ -129,7 +129,7 @@ void NewConfigurationDlg::OnButtonOK(wxCommandEvent& event)
     newConfName = newConfName.Trim();
     newConfName = newConfName.Trim(false);
     if(newConfName.IsEmpty()) {
-        wxMessageBox(_("Configuration Name is empty"), _("CodeLite"), wxOK | wxICON_INFORMATION);
+        wxMessageBox(_("Configuration Name is empty"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
         return;
     }
 

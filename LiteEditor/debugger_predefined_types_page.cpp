@@ -82,7 +82,7 @@ void PreDefinedTypesPage::OnNewShortcut(wxCommandEvent& event)
         for(int i = 0; i < count; i++) {
             wxString existingName = GetColumnText(m_listCtrl1, i, 0);
             if(name == existingName) {
-                wxMessageBox(_("A Debugger type with that name already exists"), _("CodeLite"),
+                wxMessageBox(_("A Debugger type with that name already exists"), wxT("CodeLite"),
                              wxOK | wxICON_INFORMATION);
                 return;
             }

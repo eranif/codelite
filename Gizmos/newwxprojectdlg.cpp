@@ -74,7 +74,7 @@ bool NewWxProjectDlg::ValidateInput()
         wxString msg;
         msg << _("Invalid project name '") << m_textCtrlName->GetValue() << wxT("'\n");
         msg << _("Valid characters for project name are [0-9A-Za-z_]");
-        wxMessageBox(msg, _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(msg, wxT("CodeLite"), wxICON_WARNING | wxOK);
         return false;
     }
 
@@ -84,7 +84,7 @@ bool NewWxProjectDlg::ValidateInput()
         wxString msg;
         msg << _("Invalid project name '") << m_textCtrlName->GetValue() << wxT("'\n");
         msg << _("Valid characters for project name are [0-9A-Za-z_]");
-        wxMessageBox(msg, _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(msg, wxT("CodeLite"), wxICON_WARNING | wxOK);
         return false;
     }
 

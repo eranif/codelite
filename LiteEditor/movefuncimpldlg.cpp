@@ -76,7 +76,7 @@ void MoveFuncImplDlg::OnButtonOK(wxCommandEvent& e)
     wxUnusedVar(e);
     // make sure that the file exist
     if(!wxFileName::FileExists(m_filePicker->GetPath())) {
-        wxMessageBox(_("File: ") + m_filePicker->GetPath() + _(" does not exist"), _("CodeLite"),
+        wxMessageBox(_("File: ") + m_filePicker->GetPath() + _(" does not exist"), wxT("CodeLite"),
                      wxICON_WARNING | wxOK);
         return;
     }

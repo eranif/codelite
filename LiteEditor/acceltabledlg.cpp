@@ -147,7 +147,7 @@ void AccelTableDlg::DoItemActivated()
             }
             if(wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'\nWould you like to replace it?"),
                                              mid.accel.ToString(), who.action),
-                            _("CodeLite"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) != wxYES) {
+                            wxT("CodeLite"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) != wxYES) {
                 return;
             }
 

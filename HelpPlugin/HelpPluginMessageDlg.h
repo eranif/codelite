@@ -25,12 +25,13 @@
 
 #ifndef HELPPLUGINMESSAGEDLG_H
 #define HELPPLUGINMESSAGEDLG_H
+
 #include "HelpPluginUI.h"
 
 class HelpPluginMessageDlg : public HelpPluginMessageBaseDlg
 {
 public:
-    HelpPluginMessageDlg(wxWindow* parent);
-    virtual ~HelpPluginMessageDlg();
+    explicit HelpPluginMessageDlg(wxWindow* parent);
+    ~HelpPluginMessageDlg() override = default;
 };
 #endif // HELPPLUGINMESSAGEDLG_H

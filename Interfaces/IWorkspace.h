@@ -152,6 +152,9 @@ public:
      * @brief return the environment for the workspace
      */
     virtual clEnvList_t GetEnvironment() const { return {}; }
+
+    /// Return the workspace specific indentation width
+    virtual int GetIndentWidth() { return wxNOT_FOUND; }
 };
 
 #endif // IWORKSPACE_H

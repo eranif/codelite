@@ -57,6 +57,7 @@ private:
     wxArrayString m_installedLSPs;
     wxString m_listLspOutput;
     wxStringSet_t m_replaceInFilesModifiedFiles;
+    std::optional<int> m_indentWidth{ std::nullopt };
 
 public:
     RemotyWorkspace();
@@ -212,6 +213,8 @@ public:
                         const wxString& replace_with,
                         bool whole_word,
                         bool icase);
+
+    int GetIndentWidth() override;
 };
 
 #endif // RemoteWorkspace_HPP

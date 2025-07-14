@@ -425,6 +425,17 @@ void GetLineMarginColours(wxStyledTextCtrl* ctrl, wxColour* bg_colour, wxColour*
         *fg_colour = bg_colour->ChangeLightness(70);
     }
 }
+
+/// Check to see if we have a .clang-format file in the workspace folder. If we do, read the
+/// IndentWidth property
+
+int GetWorkspaceIndentWidth()
+{
+    if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        return wxNOT_FOUND;
+    }
+    return clWorkspaceManager::Get().GetWorkspace()->GetIndentWidth();
+}
 } // namespace
 
 //=====================================================================
@@ -1033,6 +1044,12 @@ void clEditor::SetProperties()
 
     size_t indentWidth = options->GetIndentWidth();
     SetIndent(indentWidth);
+
+    int workspace_indent_width = GetWorkspaceIndentWidth();
+    if (workspace_indent_width != wxNOT_FOUND) {
+        SetTabWidth(workspace_indent_width);
+        SetIndent(workspace_indent_width);
+    }
 
     SetIndentationGuides(options->GetShowIndentationGuidelines() ? 3 : 0);
 

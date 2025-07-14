@@ -410,6 +410,7 @@ void clFileSystemWorkspace::DoClear()
 {
     m_filename.Clear();
     m_settings.Clear();
+    m_indentWidth = std::nullopt;
 }
 
 void clFileSystemWorkspace::OnAllEditorsClosed(wxCommandEvent& event)
@@ -1271,4 +1272,25 @@ void clFileSystemWorkspace::CheckForCMakeLists()
         config->SetCompiler(cmpiler_name);
     }
     settings.Save(m_filename.GetFullPath());
+}
+
+int clFileSystemWorkspace::GetIndentWidth()
+{
+    if (!IsOpen()) {
+        return wxNOT_FOUND;
+    }
+
+    if (m_indentWidth.has_value()) {
+        return *m_indentWidth;
+    }
+
+    wxFileName clang_format_config{ GetFileName() };
+    clang_format_config.SetFullName(".clang-format");
+    wxString content;
+    if (!FileUtils::ReadFileContent(clang_format_config, content)) {
+        return wxNOT_FOUND;
+    }
+
+    m_indentWidth = ::GetClangFormatIntProperty(content, "IndentWidth");
+    return *m_indentWidth;
 }

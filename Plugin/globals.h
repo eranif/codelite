@@ -108,8 +108,8 @@ WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void* clientData = NULL);
  * \param rText the text
  * \param imgId image id
  */
-WXDLLIMPEXP_SDK void SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rText,
-                                   int imgId = wxNOT_FOUND);
+WXDLLIMPEXP_SDK void
+SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rText, int imgId = wxNOT_FOUND);
 
 /**
  * \brief return column's text
@@ -134,8 +134,10 @@ WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl* list);
  * \param encoding
  * \return true on success, false otherwise
  */
-WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString& fileName, wxString& content,
-                                            wxFontEncoding encoding = wxFONTENCODING_DEFAULT, BOM* bom = NULL);
+WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString& fileName,
+                                            wxString& content,
+                                            wxFontEncoding encoding = wxFONTENCODING_DEFAULT,
+                                            BOM* bom = NULL);
 
 /**
  * \brief compare a file with a wxString using md5
@@ -156,7 +158,9 @@ WXDLLIMPEXP_SDK bool IsValidCppIdentifier(const wxString& id);
  * the return value is same as input. The variable is expanded
  * in the project context
  */
-WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* editor,
+WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString& expression,
+                                         ProjectPtr proj,
+                                         IEditor* editor,
                                          const wxString& filename = wxEmptyString);
 
 /**
@@ -167,8 +171,10 @@ WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString& expression, ProjectPtr 
  * \param fileName file name, to help expand the $(CurrentFile) macro family
  * \return an expanded string. If a macro is unknown it is replaced by empty string
  */
-WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace,
-                                            const wxString& projectName, const wxString& selConf,
+WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression,
+                                            clCxxWorkspace* workspace,
+                                            const wxString& projectName,
+                                            const wxString& selConf,
                                             const wxString& fileName);
 
 /**
@@ -320,7 +326,8 @@ public:
  * @param maxsize the maximum number of items allowed in the arraystring. 0 means no maximum
  * @return the amended entries
  */
-WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str,
+WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray,
+                                                        const wxString& str,
                                                         const size_t maxsize);
 
 /**
@@ -391,11 +398,15 @@ WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& 
  * @param checkboxInitialValue
  * @return wxRichMessageDialog::ShowModal() return value
  */
-WXDLLIMPEXP_SDK wxStandardID PromptForYesNoCancelDialogWithCheckbox(
-    const wxString& message, const wxString& dlgId, const wxString& yesLabel = _("Yes"),
-    const wxString& noLabel = _("No"), const wxString& cancelLabel = _("Cancel"),
-    const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
-    long style = wxYES_NO | wxCANCEL | wxICON_QUESTION | wxYES_DEFAULT, bool checkboxInitialValue = false);
+WXDLLIMPEXP_SDK wxStandardID
+PromptForYesNoCancelDialogWithCheckbox(const wxString& message,
+                                       const wxString& dlgId,
+                                       const wxString& yesLabel = _("Yes"),
+                                       const wxString& noLabel = _("No"),
+                                       const wxString& cancelLabel = _("Cancel"),
+                                       const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
+                                       long style = wxYES_NO | wxCANCEL | wxICON_QUESTION | wxYES_DEFAULT,
+                                       bool checkboxInitialValue = false);
 
 /**
  * @brief prompt the user with a PromptForYesNoCancelDialogWithCheckbox minus the 'Cancel' button
@@ -409,10 +420,14 @@ WXDLLIMPEXP_SDK wxStandardID PromptForYesNoCancelDialogWithCheckbox(
  * @param checkboxInitialValue
  * @return wxRichMessageDialog::ShowModal() return value
  */
-WXDLLIMPEXP_SDK wxStandardID PromptForYesNoDialogWithCheckbox(
-    const wxString& message, const wxString& dlgId, const wxString& yesLabel = _("Yes"),
-    const wxString& noLabel = _("No"), const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
-    long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT, bool checkboxInitialValue = false);
+WXDLLIMPEXP_SDK wxStandardID
+PromptForYesNoDialogWithCheckbox(const wxString& message,
+                                 const wxString& dlgId,
+                                 const wxString& yesLabel = _("Yes"),
+                                 const wxString& noLabel = _("No"),
+                                 const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
+                                 long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT,
+                                 bool checkboxInitialValue = false);
 
 /**
  * @brief wrap string with quotes if needed
@@ -454,8 +469,10 @@ WXDLLIMPEXP_SDK void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid);
  */
 WXDLLIMPEXP_SDK void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl);
 
-WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title, const wxString& message,
-                                           const wxString& initialValue = "", int charsToSelect = wxNOT_FOUND,
+WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title,
+                                           const wxString& message,
+                                           const wxString& initialValue = "",
+                                           int charsToSelect = wxNOT_FOUND,
                                            wxWindow* parent = NULL);
 
 /**
@@ -526,7 +543,9 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
  * @param exepath [output]
  * @param hint list of directories to search
  */
-WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint = {},
+WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name,
+                                      wxFileName& exepath,
+                                      const wxArrayString& hint = {},
                                       const wxArrayString& suffix_list = {});
 
 /**
@@ -586,8 +605,8 @@ WXDLLIMPEXP_SDK bool clIsWaylandSession();
 /**
  * @brief get list of file types from the user
  */
-WXDLLIMPEXP_SDK bool clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initial_selection,
-                                                   wxArrayString* selected);
+WXDLLIMPEXP_SDK bool
+clShowFileTypeSelectionDialog(wxWindow* parent, const wxArrayString& initial_selection, wxArrayString* selected);
 
 /// Find the best window starting from `win` and give it the focus
 WXDLLIMPEXP_SDK bool SetBestFocus(wxWindow* win);
@@ -621,4 +640,8 @@ wxString clJoin(const Container& c, const wxString& glue = "\n")
 /// visible text is returned (for example, if the selected text contains
 /// ANSI code style hidden - it will be dropped)
 WXDLLIMPEXP_SDK wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl);
+
+/// Parse `clang_format_content` content and return the property's "name" value.
+WXDLLIMPEXP_SDK int GetClangFormatIntProperty(const wxString& clang_format_content, const wxString& name);
+
 #endif // GLOBALS_H

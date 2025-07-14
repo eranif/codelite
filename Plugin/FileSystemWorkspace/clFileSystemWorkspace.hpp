@@ -13,10 +13,8 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "compiler.h"
-#include "macros.h"
 
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 #include <wx/arrstr.h>
 
@@ -39,6 +37,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     int m_execPID = wxNOT_FOUND;
     clBacktickCache::ptr_t m_backtickCache;
     clShellHelper m_shell_helper;
+    std::optional<int> m_indentWidth{ std::nullopt };
 
 protected:
     void CacheFiles(bool force = false);
@@ -47,7 +46,7 @@ protected:
     clEnvList_t GetEnvList();
     CompilerPtr GetCompiler();
     void CheckForCMakeLists();
-    
+
     //===--------------------------
     // Event handlers
     //===--------------------------
@@ -106,6 +105,7 @@ public:
     void SetProjectActive(const wxString& project) override;
     wxString GetDebuggerName() const override;
     clEnvList_t GetEnvironment() const override;
+    int GetIndentWidth() override;
 
     /**
      * @brief return the executable to run + args + working directory

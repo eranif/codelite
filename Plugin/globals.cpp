@@ -1882,3 +1882,23 @@ wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl)
     }
     return res;
 }
+
+int GetClangFormatIntProperty(const wxString& clang_format_content, const wxString& name)
+{
+    auto lines = ::wxStringTokenize(clang_format_content, "\r\n", wxTOKEN_STRTOK);
+    for (auto& line : lines) {
+        auto prop = line.BeforeFirst(':');
+        auto value = line.AfterFirst(':');
+
+        prop.Trim(false).Trim();
+        value.Trim(false).Trim();
+        if (prop == name) {
+            long nValue = wxNOT_FOUND;
+            if (value.ToCLong(&nValue)) {
+                return nValue;
+            }
+            break;
+        }
+    }
+    return wxNOT_FOUND;
+}

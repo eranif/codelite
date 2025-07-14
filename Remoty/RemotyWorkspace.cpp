@@ -238,6 +238,7 @@ void RemotyWorkspace::OnCloseWorkspace(clCommandEvent& event)
     // we don't fire the `XRCID("close_workspace")` event here
     // since this is how we got here in the first place
     DoClose(true);
+    m_indentWidth = std::nullopt;
 }
 
 void RemotyWorkspace::Initialise()
@@ -1325,3 +1326,32 @@ void RemotyWorkspace::OnSftpSaveSuccess(clCommandEvent& event)
 }
 
 wxString RemotyWorkspace::GetSshAccount() const { return GetAccount().GetAccountName(); }
+
+int RemotyWorkspace::GetIndentWidth()
+{
+    if (!IsOpened()) {
+        return wxNOT_FOUND;
+    }
+
+    if (m_indentWidth.has_value()) {
+        return *m_indentWidth;
+    }
+
+    wxString clang_format_file_path = GetFileName().BeforeLast('/');
+    clang_format_file_path << "/.clang-format";
+
+    if (clSFTPManager::Get().IsFileExists(clang_format_file_path, m_account)) {
+        // open this file
+        wxMemoryBuffer membuf;
+        if (!clSFTPManager::Get().AwaitReadFile(clang_format_file_path, m_account.GetAccountName(), &membuf)) {
+            m_indentWidth = wxNOT_FOUND;
+            return wxNOT_FOUND;
+        }
+        wxString content{ (const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen() };
+        m_indentWidth = ::GetClangFormatIntProperty(content, "IndentWidth");
+        return *m_indentWidth;
+    } else {
+        m_indentWidth = wxNOT_FOUND;
+        return *m_indentWidth;
+    }
+}

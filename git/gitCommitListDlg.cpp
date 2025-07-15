@@ -111,8 +111,8 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     GitDiffOutputParser diff_parser;
     diff_parser.GetDiffMap(m_commandOutput, m_diffMap, &commitMessage);
 
-    for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
-        m_fileListBox->Append((*it).first);
+    for (const auto& p : m_diffMap) {
+        m_fileListBox->Append(p.first);
     }
     if(m_diffMap.size() != 0) {
         wxStringMap_t::iterator it = m_diffMap.begin();

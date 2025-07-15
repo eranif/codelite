@@ -208,11 +208,10 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
     wxFFile fp(filename.GetFullPath(), "w+b");
     if(fp.IsOpened()) {
 
-        wxcWidget::List_t::const_iterator iter = topLevelsList.begin();
-        for(; iter != topLevelsList.end(); ++iter) {
+        for (auto widget : topLevelsList) {
             JSONElement obj = JSONElement::createObject();
-            (*iter)->FixPaths(filename.GetPath()); // Fix abs paths to fit the new project file
-            (*iter)->Serialize(obj);
+            widget->FixPaths(filename.GetPath()); // Fix abs paths to fit the new project file
+            widget->Serialize(obj);
             windows.arrayAppend(obj);
         }
 

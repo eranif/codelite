@@ -1429,9 +1429,8 @@ bool VimCommand::Command_call()
         } else {
             int repeat = std::max(1, m_repeat) * std::max(1, m_actions);
             for(int i = 0; i < repeat; ++i) {
-                for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
-                    yanked != this->m_listCopiedStr.end(); ++yanked) {
-                    m_ctrl->AddText(*yanked);
+                for (const auto& yanked : this->m_listCopiedStr) {
+                    m_ctrl->AddText(yanked);
                 }
                 if(this->m_newLineCopy && i < repeat - 1) {
                     m_ctrl->NewLine();
@@ -1492,9 +1491,8 @@ bool VimCommand::Command_call()
             }
             m_ctrl->GotoPos(startPos);
         } else {
-            for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
-                yanked != this->m_listCopiedStr.end(); ++yanked) {
-                m_ctrl->AddText(*yanked);
+            for (const auto& yanked : this->m_listCopiedStr) {
+                m_ctrl->AddText(yanked);
             }
         }
         // FIXME: troppo contorto!
@@ -1533,13 +1531,13 @@ bool VimCommand::Command_call()
         wxString str = m_ctrl->GetTextRange(start, end);
 
         bool replace = false;
-        for(wxString::iterator it = str.begin(); it != str.end(); ++it) {
-            if(wxIslower(*it)) {
+        for (auto&& c : str) {
+            if (wxIslower(c)) {
                 replace = true;
-                *it = wxToupper(*it);
-            } else if(wxIsupper(*it)) {
+                c = wxToupper(c);
+            } else if (wxIsupper(c)) {
                 replace = true;
-                *it = wxTolower(*it);
+                c = wxTolower(c);
             }
         }
         if(replace) {
@@ -1744,13 +1742,13 @@ bool VimCommand::command_call_visual_block_mode()
             if(end >= start) {
                 wxString str = m_ctrl->GetTextRange(start, end);
                 bool replace = false;
-                for(wxString::iterator it = str.begin(); it != str.end(); ++it) {
-                    if(wxIslower(*it)) {
+                for (auto&& c : str) {
+                    if (wxIslower(c)) {
                         replace = true;
-                        *it = wxToupper(*it);
-                    } else if(wxIsupper(*it)) {
+                        c = wxToupper(c);
+                    } else if (wxIsupper(c)) {
                         replace = true;
-                        *it = wxTolower(*it);
+                        c = wxTolower(c);
                     }
                 }
                 if(replace) {

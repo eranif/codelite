@@ -59,13 +59,12 @@ void ToolBoxPanel::OnCustomControl(wxRibbonToolBarEvent& event)
 {
     wxMenu menu;
     const CustomControlTemplateMap_t& controls =  wxcSettings::Get().GetTemplateClasses();
-    CustomControlTemplateMap_t::const_iterator iter = controls.begin();
 
     if ( controls.empty() == false ) {
-        for( ; iter != controls.end(); ++iter ) {
-            menu.Append(iter->second.GetControlId(), iter->first);
-            menu.Connect(iter->second.GetControlId(), wxEVT_COMMAND_MENU_SELECTED,
-wxCommandEventHandler(ToolBoxPanel::OnMenuSelection), NULL, this);
+        for (const auto& p : controls) {
+            menu.Append(p.second.GetControlId(), iter->first);
+            menu.Connect(p.second.GetControlId(), wxEVT_COMMAND_MENU_SELECTED,
+                wxCommandEventHandler(ToolBoxPanel::OnMenuSelection), NULL, this);
         }
         menu.AppendSeparator();
     }

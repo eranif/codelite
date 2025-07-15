@@ -283,11 +283,9 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
                     m_gdb->SetBreakpoints();
 
                     bool hasBreakOnMain = false;
-                    const std::vector<clDebuggerBreakpoint>& bpList = m_gdb->GetBpList();
-                    std::vector<clDebuggerBreakpoint>::const_iterator iter = bpList.begin();
-                    for(; iter != bpList.end(); ++iter) {
-                        wxFileName fn(iter->file);
-                        int lineNo = iter->lineno;
+                    for (const auto& bp : m_gdb->GetBpList()) {
+                        wxFileName fn(bp.file);
+                        int lineNo = bp.lineno;
 
                         wxString bpFile = fn.GetFullPath();
                         wxString gdbLine = curfile.GetFullPath();

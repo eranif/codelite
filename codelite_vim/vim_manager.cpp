@@ -437,10 +437,10 @@ void VimManager::UpdateOldEditorState()
 
     wxString fullpath_name = m_editor->GetFileName().GetFullPath();
 
-    for (auto status_editor = m_editorStates.begin(); status_editor != m_editorStates.end(); ++status_editor) {
+    for (auto status_editor : m_editorStates) {
 
-        if ((*status_editor)->isCurrentEditor(fullpath_name)) {
-            (*status_editor)->setSavedStatus(m_currentCommand);
+        if (status_editor->isCurrentEditor(fullpath_name)) {
+            status_editor->setSavedStatus(m_currentCommand);
             return;
         }
     }
@@ -455,9 +455,9 @@ void VimManager::SaveOldEditorState()
         return;
 
     wxString fullpath_name = m_editor->GetFileName().GetFullPath();
-    for (auto status_editor = m_editorStates.begin(); status_editor != m_editorStates.end(); ++status_editor) {
-        if ((*status_editor)->isCurrentEditor(fullpath_name)) {
-            (*status_editor)->saveCurrentStatus(m_currentCommand);
+    for (auto status_editor : m_editorStates) {
+        if (status_editor->isCurrentEditor(fullpath_name)) {
+            status_editor->saveCurrentStatus(m_currentCommand);
             return;
         }
     }

@@ -57,9 +57,9 @@ wxIMPLEMENT_DYNAMIC_CLASS(MyWxAuiManagerXmlHandler, wxXmlResourceHandler)
 
 wxAuiManager* MyWxAuiManagerXmlHandler::GetAuiManager(wxWindow* managed) const
 {
-    for(Managers::const_iterator it = m_managers.begin(); it != m_managers.end(); ++it) {
-        wxAuiManager* const mgr = *it;
-        if(mgr->GetManagedWindow() == managed) return mgr;
+    for (wxAuiManager* mgr : m_managers) {
+        if (mgr->GetManagedWindow() == managed)
+            return mgr;
     }
 
     return NULL;

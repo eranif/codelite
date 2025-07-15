@@ -2482,9 +2482,7 @@ void clMainFrame::ToggleToolBars(bool std)
     // determine that state based on the first toolbar
     bool currentStateVisible = m_mgr.GetPane((*toolbars.begin())).IsShown();
 
-    wxStringSet_t::iterator iter = toolbars.begin();
-    for (; iter != toolbars.end(); ++iter) {
-        wxString name = *iter;
+    for (const auto& name : toolbars) {
         wxAuiPaneInfo& pane = m_mgr.GetPane(name);
         pane.Show(!currentStateVisible);
     }

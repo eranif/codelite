@@ -55,13 +55,10 @@ void DeleteCustomControlDlg::DoPopulate()
 {
     m_dvListCtrl->DeleteAllItems();
     m_controlsToDelete.Clear();
-    wxArrayString controlsArr;
-    const CustomControlTemplateMap_t& m = wxcSettings::Get().GetTemplateClasses();
-    CustomControlTemplateMap_t::const_iterator iter = m.begin();
-    for(; iter != m.end(); ++iter) {
+    for (const auto& p : wxcSettings::Get().GetTemplateClasses()) {
         wxVector<wxVariant> cols;
         cols.push_back(false); // do not delete
-        cols.push_back(iter->second.GetClassName());
+        cols.push_back(p.second.GetClassName());
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)NULL);
     }
 }

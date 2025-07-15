@@ -62,7 +62,7 @@ void Variable::Reset()
     m_enumInTypeDecl = false;
 }
 
-void Variable::Print()
+void Variable::Print() const
 {
     std::cout << "------------------" << "\n"
               << "m_name           :" << m_name.c_str() << "\n"

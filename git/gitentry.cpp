@@ -171,16 +171,14 @@ JSONItem GitEntry::ToJSON() const
     // Add the git commands array
     JSONItem arrCommands = JSONItem::createArray("Commands");
     json.append(arrCommands);
-    GitCommandsEntriesMap_t::const_iterator iter = m_commandsMap.begin();
-    for (; iter != m_commandsMap.end(); ++iter) {
-        iter->second.ToJSON(arrCommands);
+    for (const auto& p : m_commandsMap) {
+        p.second.ToJSON(arrCommands);
     }
     // and the workspace info
     JSONItem arrWorkspaces = JSONItem::createArray("Workspaces");
     json.append(arrWorkspaces);
-    GitWorkspaceMap_t::const_iterator it = m_workspacesMap.begin();
-    for (; it != m_workspacesMap.end(); ++it) {
-        it->second.ToJSON(arrWorkspaces);
+    for (const auto& p : m_workspacesMap) {
+        p.second.ToJSON(arrWorkspaces);
     }
     json.addProperty("DiffTool", m_difftool);
     return json;
@@ -418,11 +416,10 @@ void GitCommandsEntries::ToJSON(JSONItem& arr) const
     JSONItem commandsArr = JSONItem::createArray("m_commands");
     obj.append(commandsArr);
 
-    vGitLabelCommands_t::const_iterator iter = m_commands.begin();
-    for (; iter != m_commands.end(); ++iter) {
+    for (const auto& command : m_commands) {
         JSONItem e = JSONItem::createObject();
-        e.addProperty("label", iter->label);
-        e.addProperty("command", iter->command);
+        e.addProperty("label", command.label);
+        e.addProperty("command", command.command);
         commandsArr.arrayAppend(e);
     }
     arr.arrayAppend(obj);

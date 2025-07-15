@@ -136,10 +136,9 @@ wxString ToolBarItemWrapper::CppCtorCode() const
                     menu->SetParent(NULL); // Allow menu code to be emitted here; there's code to prevent this if the
                                            // parent's a dropdown
                     wxString menucode;
-                    wxcWidget::List_t::const_iterator iter = menu->GetChildren().begin();
-                    for(; iter != menu->GetChildren().end(); ++iter) {
+                    for (auto child : menu->GetChildren()) {
                         wxString childmenucode =
-                            GenerateCppCtorCodeRecursively(*iter); // Must be recursive here; submenus can nest
+                            GenerateCppCtorCodeRecursively(child); // Must be recursive here; submenus can nest
                         childmenucode.Replace("\n", "\n    ");
                         menucode << childmenucode;
                     }

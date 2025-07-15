@@ -12,9 +12,8 @@ EditCustomControlDlg::EditCustomControlDlg(wxWindow* parent)
     , m_isModified(false)
 {
     const CustomControlTemplateMap_t& c = wxcSettings::Get().GetTemplateClasses();
-    CustomControlTemplateMap_t::const_iterator iter = c.begin();
-    for(; iter != c.end(); ++iter) {
-        m_choiceControls->Append(iter->first);
+    for (const auto& p : c) {
+        m_choiceControls->Append(p.first);
     }
 
     if(c.empty() == false) {
@@ -39,12 +38,10 @@ void EditCustomControlDlg::OnSelectControl(wxCommandEvent& event)
         m_textCtrlXRCClass->ChangeValue(cct.GetXrcPreviewClass());
 
         m_dvListCtrlEvents->DeleteAllItems();
-        const wxStringMap_t& events = cct.GetEvents();
-        wxStringMap_t::const_iterator iter = events.begin();
-        for(; iter != events.end(); ++iter) {
+        for (const auto& p : cct.GetEvents()) {
             wxVector<wxVariant> cols;
-            cols.push_back(iter->first);
-            cols.push_back(iter->second);
+            cols.push_back(p.first);
+            cols.push_back(p.second);
             m_dvListCtrlEvents->AppendItem(cols);
         }
     }

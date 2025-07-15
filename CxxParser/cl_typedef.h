@@ -27,7 +27,7 @@ public:
 	clTypedef()  {}
 	~clTypedef() {}
 	
-	void print() {
+	void print() const {
 		printf("Name: %s\n", m_name.c_str());
 		m_realType.Print();
 	}

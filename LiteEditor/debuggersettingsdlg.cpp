@@ -163,10 +163,9 @@ DbgPagePreDefTypes::DbgPagePreDefTypes(wxWindow* parent)
     DebuggerSettingsPreDefMap data;
     DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
 
-    std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iter = data.GePreDefinedTypesMap().begin();
-    for(; iter != data.GePreDefinedTypesMap().end(); iter++) {
-        m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, iter->second), iter->first,
-                                       iter->second.IsActive());
+    for (const auto& p : data.GePreDefinedTypesMap()) {
+        m_notebookPreDefTypes->AddPage(
+            new PreDefinedTypesPage(m_notebookPreDefTypes, p.second), p.first, p.second.IsActive());
     }
 }
 

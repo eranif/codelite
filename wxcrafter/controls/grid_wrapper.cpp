@@ -292,12 +292,11 @@ void GridWrapper::UnSerialize(const JSONElement& json)
 
 void GridWrapper::GetRowsCols(GridRowWrapper::Vector_t& rows, GridColumnWrapper::Vector_t& cols) const
 {
-    wxcWidget::List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); ++iter) {
-        if((*iter)->GetType() == ID_WXGRIDCOL) {
-            cols.push_back(static_cast<GridColumnWrapper*>((*iter)));
+    for (auto child : m_children) {
+        if (child->GetType() == ID_WXGRIDCOL) {
+            cols.push_back(static_cast<GridColumnWrapper*>(child));
         } else {
-            rows.push_back(static_cast<GridRowWrapper*>((*iter)));
+            rows.push_back(static_cast<GridRowWrapper*>(child));
         }
     }
 }

@@ -55,9 +55,8 @@ void wxcSettings::Save()
     JSONElement arr = JSONElement::createArray("m_templateClasses");
     root.toElement().append(arr);
 
-    CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.begin();
-    for(; iter != m_templateClasses.end(); ++iter) {
-        arr.append(iter->second.ToJSON());
+    for (const auto& p : m_templateClasses) {
+        arr.append(p.second.ToJSON());
     }
     root.save(fn);
 }
@@ -74,10 +73,9 @@ void wxcSettings::RegisterCustomControl(CustomControlTemplate& cct)
 
 CustomControlTemplate wxcSettings::FindByControlId(int controlId) const
 {
-    CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.begin();
-    for(; iter != m_templateClasses.end(); ++iter) {
-        if(iter->second.GetControlId() == controlId) {
-            return iter->second;
+    for (const auto& p : m_templateClasses) {
+        if (p.second.GetControlId() == controlId) {
+            return p.second;
         }
     }
     return CustomControlTemplate();
@@ -123,10 +121,9 @@ void wxcSettings::MergeCustomControl(const JSONElement& arr)
 JSONElement wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) const
 {
     JSONElement arr = JSONElement::createArray("m_templateClasses");
-    CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.begin();
-    for(; iter != m_templateClasses.end(); ++iter) {
-        if(controls.Index(iter->first) != wxNOT_FOUND) {
-            arr.append(iter->second.ToJSON());
+    for (const auto& p : m_templateClasses) {
+        if (controls.Index(p.first) != wxNOT_FOUND) {
+            arr.append(p.second.ToJSON());
         }
     }
     return arr;

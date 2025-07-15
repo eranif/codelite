@@ -54,7 +54,7 @@ public:
     void Reset();
 
     //print the variable to stdout
-    void Print();
+    void Print() const;
 };
 
 typedef std::list<Variable> VariableList;

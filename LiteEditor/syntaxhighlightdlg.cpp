@@ -409,9 +409,8 @@ void SyntaxHighlightDlg::OnFontChanged(wxFontPickerEvent& event)
 
     } else if (obj == m_globalFontPicker) {
         wxFont f = event.GetFont();
-        StyleProperty::Vec_t::iterator iter = properties.begin();
-        for (; iter != properties.end(); ++iter) {
-            DoFontChanged(*iter, f);
+        for (auto& property : properties) {
+            DoFontChanged(property, f);
         }
         // update the style f picker as well
         m_fontPicker->SetSelectedFont(f);
@@ -491,15 +490,14 @@ void SyntaxHighlightDlg::CreateLexerPage()
 {
     CHECK_PTR_RET(m_lexer);
 
-    const StyleProperty::Vec_t& m_propertyList = m_lexer->GetLexerProperties();
-    StyleProperty::Vec_t::const_iterator it = m_propertyList.begin();
+    const StyleProperty::Vec_t& propertyList = m_lexer->GetLexerProperties();
     StyleProperty selTextProperties;
 
-    for (; it != m_propertyList.end(); it++) {
-        if (it->GetId() != SEL_TEXT_ATTR_ID) {
-            m_properties->Append(it->GetName());
+    for (const auto& property : propertyList) {
+        if (property.GetId() != SEL_TEXT_ATTR_ID) {
+            m_properties->Append(property.GetName());
         } else {
-            selTextProperties = *it;
+            selTextProperties = property;
         }
     }
 
@@ -537,7 +535,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
     m_colourPickerSelTextBgColour->SetColour(selTextProperties.GetBgColour());
     m_colourPickerSelTextFgColour->SetColour(selTextProperties.GetFgColour());
 
-    if (m_propertyList.empty()) {
+    if (propertyList.empty()) {
         m_fontPicker->Enable(false);
         m_colourPicker->Enable(false);
     }
@@ -750,13 +748,11 @@ void SyntaxHighlightDlg::OnGlobalFontSelected(wxFontPickerEvent& event)
 
 void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
 {
-    StyleProperty::Vec_t& properties = m_lexer->GetLexerProperties();
-    StyleProperty::Vec_t::iterator iter = properties.begin();
-    for (; iter != properties.end(); ++iter) {
+    for (auto& property : m_lexer->GetLexerProperties()) {
         // Dont change the text selection using the global font picker
-        if (iter->GetName() == wxT("Text Selection"))
+        if (property.GetName() == wxT("Text Selection"))
             continue;
-        iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+        property.SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
     }
 
     // update the style background colour as well

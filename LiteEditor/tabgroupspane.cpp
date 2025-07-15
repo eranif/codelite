@@ -156,9 +156,8 @@ void TabgroupsPane::DisplayTabgroups(bool isGlobal /*=false*/)
 {
     vTabGrps& tabgroups = TabGroupsManager::Get()->GetTabgroups(isGlobal);
     std::sort(tabgroups.begin(), tabgroups.end(), sortfunction);
-    vTabGrps::const_iterator iter = tabgroups.begin();
-    for(; iter != tabgroups.end(); ++iter) {
-        AddTreeItem(isGlobal, iter->first, iter->second);
+    for (const auto& tabGroup : tabgroups) {
+        AddTreeItem(isGlobal, tabGroup.first, tabGroup.second);
     }
     m_tree->Expand(GetRootItemForTabgroup(isGlobal));
     GetSizer()->Layout();

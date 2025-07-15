@@ -48,14 +48,13 @@ bool wxcCodeGeneratorHelper::CreateXRC()
     } else {
         text << "<!-- Handler Generation is OFF -->\n";
     }
-    MapString_t::const_iterator iter = m_bitmapMap.begin();
 
     // Supported hi-res images extension
     const wxArrayString exts = StdToWX::ToArrayString({ "@2x", "@1.25x", "@1.5x" });
 
-    for(; iter != m_bitmapMap.end(); ++iter) {
-        wxFileName fn(iter->second);
-        text << wxT("<object class=\"wxBitmap\" name=\"") << iter->first << wxT("\">") << fn.GetFullPath()
+    for (const auto& p : m_bitmapMap) {
+        wxFileName fn(p.second);
+        text << wxT("<object class=\"wxBitmap\" name=\"") << p.first << wxT("\">") << fn.GetFullPath()
              << wxT("</object>\n");
         // Support for hi-res images
         // The logic:
@@ -67,7 +66,7 @@ bool wxcCodeGeneratorHelper::CreateXRC()
             hiResImage.SetName(hiResImage.GetName() + exts.Item(i));
             if(hiResImage.FileExists()) {
                 fn.SetName(hiResImage.GetName());
-                text << "<object class=\"wxBitmap\" name=\"" << iter->first << exts.Item(i) << "\">" << fn.GetFullPath()
+                text << "<object class=\"wxBitmap\" name=\"" << p.first << exts.Item(i) << "\">" << fn.GetFullPath()
                      << "</object>\n";
             }
         }
@@ -218,9 +217,8 @@ bool wxcCodeGeneratorHelper::IsGenerateNeeded() const
     wxString basepath = wxcProjectMetadata::Get().GetProjectPath();
     time_t xrcModTime = m_xrcFile.GetModificationTime().GetTicks();
 
-    MapString_t::const_iterator iter = m_bitmapMap.begin();
-    for(; iter != m_bitmapMap.end(); ++iter) {
-        wxFileName bmpFile(iter->second);
+    for (const auto& p : m_bitmapMap) {
+        wxFileName bmpFile(p.second);
         if(bmpFile.MakeAbsolute(basepath)) {
             if(bmpFile.FileExists()) {
                 time_t bmpMod = bmpFile.GetModificationTime().GetTicks();
@@ -246,9 +244,8 @@ wxString wxcCodeGeneratorHelper::GenerateWinIdEnum() const
     wxString enumCode;
     enumCode << "public:\n"
              << "    enum {\n";
-    wxStringSet_t::const_iterator iter = m_winIds.begin();
-    for(; iter != m_winIds.end(); ++iter) {
-        enumCode << "        " << *iter << " = " << ++firstId << ",\n";
+    for (const auto& winId : m_winIds) {
+        enumCode << "        " << winId << " = " << ++firstId << ",\n";
     }
     enumCode << "    };\n";
     return enumCode;

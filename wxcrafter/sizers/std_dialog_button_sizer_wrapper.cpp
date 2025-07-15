@@ -52,8 +52,8 @@ void StdDialogButtonSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
         s_buttons.push_back(Pair_t("Close", "wxID_CLOSE"));
     }
 
-    for(Vector_t::iterator iter = s_buttons.begin(); iter != s_buttons.end(); ++iter) {
-        wxString value, buttonname = (*iter).first;
+    for (const auto& [buttonname, id] : s_buttons) {
+        wxString value;
         wxXmlNode* child = node->GetChildren();
         while(child) {
             wxString childname(child->GetName());
@@ -66,7 +66,7 @@ void StdDialogButtonSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
                         wxcWidget* sbwrapper = Allocator::Instance()->Create(ID_WXSTDBUTTON);
                         wxCHECK_RET(sbwrapper, wxT("Failed to create a stdbtnwrapper"));
                         // We've created a button; afaict there're no styles/properties to add to it. Just set its ID
-                        sbwrapper->SetId((*iter).second);
+                        sbwrapper->SetId(id);
                         AddChild(sbwrapper);
                     }
                 }

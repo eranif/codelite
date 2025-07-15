@@ -34,10 +34,8 @@ void EventsTableListView::Construct(EventsEditorPane* dlg, wxcWidget* control, c
     m_eventsDb = const_cast<EventsDatabase*>(&events);
     CHECK_POINTER(control);
     m_control = control;
-    EventsDatabase::MapEvents_t::const_iterator iter = events.GetEvents().begin();
-    for(; iter != events.GetEvents().end(); ++iter) {
-        ConnectDetails cd = iter->second;
 
+    for (const auto& [_, cd] : events.GetEvents()) {
         wxString eventName = cd.GetEventName();
         eventName.Trim().Trim(false);
         if(eventName.IsEmpty())

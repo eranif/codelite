@@ -150,11 +150,10 @@ void ReplaceInFilesPanel::OnMarginClick(wxStyledTextEvent& e)
 
 void ReplaceInFilesPanel::OnMarkAll(wxCommandEvent& e)
 {
-    MatchInfo_t::const_iterator i = m_matchInfo.begin();
-    for(; i != m_matchInfo.end(); ++i) {
-        if(m_sci->MarkerGet(i->first) & 7 << 0x7)
+    for (const auto& p : m_matchInfo) {
+        if (m_sci->MarkerGet(p.first) & 7 << 0x7)
             continue;
-        m_sci->MarkerAdd(i->first, 0x7);
+        m_sci->MarkerAdd(p.first, 0x7);
     }
 }
 
@@ -373,10 +372,9 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     m_replaceWith->SetValue(wxEmptyString);
 
     std::vector<int> itemsToRemove;
-    i = m_matchInfo.begin();
-    for(; i != m_matchInfo.end(); i++) {
-        int line = i->first + delta;
-        if(i->second.GetFileName() != lastFile) {
+    for (const auto& p : m_matchInfo) {
+        int line = p.first + delta;
+        if (p.second.GetFileName() != lastFile) {
             if(lastLine == line - 2) {
                 // previous file's replacements are all done, so remove its filename line
                 m_sci->SetCurrentPos(m_sci->PositionFromLine(lastLine));
@@ -386,7 +384,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
             } else {
                 lastLine = line - 1;
             }
-            lastFile = i->second.GetFileName();
+            lastFile = p.second.GetFileName();
         }
 
         if(m_sci->MarkerGet(line) & 1 << 0x9) {
@@ -398,19 +396,19 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
             m_sci->MarkerDelete(line, 0x9);
             m_sci->SetCurrentPos(m_sci->PositionFromLine(line));
             m_sci->LineDelete();
-            itemsToRemove.push_back(i->first);
+            itemsToRemove.push_back(p.first);
             delta--;
-        } else if(line != i->first) {
+        } else if (line != p.first) {
             // need to adjust line number
-            m_matchInfo[line] = i->second;
-            itemsToRemove.push_back(i->first);
+            m_matchInfo[line] = p.second;
+            itemsToRemove.push_back(p.first);
         }
     }
 
     // update the match info map
-    for(std::vector<int>::size_type i = 0; i < itemsToRemove.size(); i++) {
-        MatchInfo_t::iterator iter = m_matchInfo.find(itemsToRemove.at(i));
-        if(iter != m_matchInfo.end()) {
+    for (const auto itemId : itemsToRemove) {
+        MatchInfo_t::iterator iter = m_matchInfo.find(itemId);
+        if (iter != m_matchInfo.end()) {
             m_matchInfo.erase(iter);
         }
     }
@@ -423,8 +421,8 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 
     // Step 3: Notify user of changes to already opened files, ask to save
     std::vector<std::pair<wxFileName, bool>> filesToSave;
-    for(std::set<wxString>::iterator i = updatedEditors.begin(); i != updatedEditors.end(); i++) {
-        filesToSave.push_back(std::make_pair(wxFileName(*i), true));
+    for (const auto& editorPath : updatedEditors) {
+        filesToSave.push_back(std::make_pair(wxFileName(editorPath), true));
     }
     if(!filesToSave.empty() && clMainFrame::Get()->GetMainBook()->UserSelectFiles(
                                    filesToSave, _("Save Modified Files"),

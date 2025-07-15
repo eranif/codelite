@@ -565,10 +565,7 @@ void WizardsPlugin::DoPopupButtonMenu(wxPoint pt)
     options[MI_NEW_CODELITE_PLUGIN] = ID_MI_NEW_CODELITE_PLUGIN;
     options[MI_NEW_NEW_CLASS] = ID_MI_NEW_NEW_CLASS;
 
-    std::map<wxString, int>::iterator iter = options.begin();
-    for(; iter != options.end(); iter++) {
-        int id = (*iter).second;
-        wxString text = (*iter).first;
+    for (const auto& [text, id] : options) {
         wxMenuItem* item = new wxMenuItem(&popupMenu, id, text, text, wxITEM_NORMAL);
         popupMenu.Append(item);
     }

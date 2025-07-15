@@ -120,7 +120,7 @@ void BreakptMgr::AddBreakpoint()
 
     clEditor* const editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     clDebuggerBreakpoint bp;
-    bp.Create(editor ? CLRealPath(editor->GetFileName().GetFullPath()) : wxString(),
+    bp.Create(editor ? FileUtils::RealPath(editor->GetFileName().GetFullPath()) : wxString(),
               editor ? editor->GetCurrentLine() : -1, GetNextID());
     dlg.EnterBPData(bp);
 
@@ -989,7 +989,7 @@ void BreakptMgr::LoadSession(const SessionEntry& session)
 void BreakptMgr::DragBreakpoint(clEditor* editor, int line, wxBitmap bitmap)
 {
     // See if there's a bp marker under the cursor. If so, let the user drag it
-    clDebuggerBreakpoint& bp = GetBreakpoint(CLRealPath(editor->GetFileName().GetFullPath()), line + 1);
+    clDebuggerBreakpoint& bp = GetBreakpoint(FileUtils::RealPath(editor->GetFileName().GetFullPath()), line + 1);
     if (bp.IsNull()) {
         return;
     }

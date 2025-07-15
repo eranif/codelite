@@ -12,7 +12,7 @@ clPatch::clPatch()
 #ifdef __WXMSW__
     hints.Add(clStandardPaths::Get().GetExecutablePath());
 #endif
-    ::clFindExecutable("patch", m_patch, hints);
+    ::FileUtils::FindExe("patch", m_patch, hints);
 }
 
 clPatch::~clPatch() {}

@@ -792,7 +792,7 @@ bool CodeLiteApp::CopySettings(const wxString& destDir, wxString& installPath)
     // copy new settings from the global installation location which is currently located at
     // /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
     ///////////////////////////////////////////////////////////////////////////////////////////
-    CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
+    FileUtils::CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
     massCopy(installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
     return true;
 }
@@ -968,7 +968,7 @@ void CodeLiteApp::DoCopyGdbPrinters()
     wxLogNull nolog;
     wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "gdb_printers");
     ::wxMkdir(targetDir.GetFullPath());
-    ::CopyDir(printersInstallDir.GetFullPath(), targetDir.GetFullPath());
+    FileUtils::CopyDir(printersInstallDir.GetFullPath(), targetDir.GetFullPath());
 }
 
 void CodeLiteApp::AdjustPathForCygwinIfNeeded()

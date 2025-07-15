@@ -94,11 +94,6 @@ public:
     static void OpenTerminal(const wxString& path, const wxString& user_command = "", bool pause_when_exit = false);
 
     /**
-     * @brief open the built-in terminal
-     */
-    static void OpenBuiltInTerminal(const wxString& wd, const wxString& user_command, bool pause_when_exit = false);
-
-    /**
      * @brief open ssh terminal
      * @param sshClient ssh client to use (putty, ssh etc)
      * @param connectString e.g. eran@host
@@ -165,6 +160,11 @@ public:
     static wxString EncodeURI(const wxString& uri);
 
     /**
+     * @brief return true if filename is readonly false otherwise
+     */
+    static bool IsFileReadOnly(const wxFileName& filename);
+
+    /**
      * @brief is the file or folder a hidden file?
      */
     static bool IsHidden(const wxFileName& path);
@@ -213,20 +213,12 @@ public:
      * @brief return the file modification time
      */
     static time_t GetFileModificationTime(const wxFileName& filename);
+    static time_t GetFileModificationTime(const wxString& filename);
 
     /**
      * @brief return the file size, in bytes
      */
     static size_t GetFileSize(const wxFileName& filename);
-
-    /**
-     * @brief replace any unwanted characters with underscore
-     * The chars that we replace are:
-     * @-^%&$#@!(){}[]+=;,.
-     * @param name
-     * @return modified name excluding the above chars (will be replaced with _)
-     */
-    static wxString NormaliseName(const wxString& name);
 
     /**
      * @brief remove a file from the file system
@@ -245,11 +237,24 @@ public:
     static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
 
     /**
+     * @brief convert filename to the real path if filename is a symbolic link
+     */
+    static wxFileName wxReadLink(const wxFileName& filename);
+
+    /**
      * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
      */
     static wxString RealPath(const wxString& filepath, bool forced=false);
     static bool RealPathGetModeResolveSymlinks();
     static void RealPathSetModeResolveSymlinks(bool resolveSymlinks);
+
+    /**
+     * @brief make relative only if a subpath of reference_path (or is reference_path itself)
+     * @brief also, make normalise first, and abolish any symlink
+     * @param fn wxFileName to alter
+     * @param reference_path the path to which to make relative
+     */
+    static bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
 
     /**
      * @brief convert string into std::string
@@ -266,9 +271,9 @@ public:
     static clEnvList_t CreateEnvironment(const wxString& envstr);
 
     /**
-     * @brief Check if the file 'name' is findable on the user's system
-     * @param name the name of the file to locate
-     * @param exepath will contain its filepath if successfully located
+     * @brief locate an executable on the system using the PATH environment variable
+     * @param name the exe name to locate (you can omit the .exe on Windows, it will be added automatically)
+     * @param exepath [output] will contain its filepath if successfully located
      * @param hint extra paths to search
      * @param list of suffixes. On Linux, some files may have number attached to them like: lldb-10, lldb-9
      * passing suffix_list = {"-10", "-9"...} will also check for these files (in order)
@@ -318,5 +323,28 @@ public:
      * @return
      */
     static wxString NormaliseFilename(const wxString& str);
+
+    /**
+     * @brief replace any unwanted characters with underscore
+     * The chars that we replace are:
+     * @-^%&$#@!(){}[]+=;,.
+     * @param name
+     * @return modified name excluding the above chars (will be replaced with _)
+     */
+    static wxString NormaliseName(const wxString& name);
+
+    /**
+     * \brief Normalize the given path (change all \ by /)
+     */
+    static wxString NormalizePath(const wxString& path);
+
+    /**
+     * \brief copy entire directory content (recursively) from source to target
+     * \param src source path
+     * \param target target path
+     * \return true on success, false otherwise
+     */
+    static bool CopyDir(const wxString& src, const wxString& target);
 };
+
 #endif // FILEUTILS_H

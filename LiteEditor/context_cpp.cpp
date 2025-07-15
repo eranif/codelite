@@ -49,6 +49,7 @@
 #include "frame.h"
 #include "globals.h"
 #include "language.h"
+#include "macromanager.h"
 #include "manager.h"
 #include "movefuncimpldlg.h"
 #include "new_quick_watch_dlg.h"

@@ -17,6 +17,11 @@ jobs:
   linux:
     runs-on: ubuntu-24.04
 
+    strategy:
+      fail-fast: false
+      matrix:
+        wx-version: ['v3.2.8.1']
+
     steps:
     # wxWidgets
     - name: Install dependencies for wxWidgets
@@ -28,7 +33,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: wxWidgets/wxWidgets
-        ref: v3.2.5
+        ref: ${{matrix.wx-version}}
         submodules: recursive
         path: wxWidgets
 
@@ -38,6 +43,7 @@ jobs:
         cd wxWidgets/build-release
         ../configure --disable-debug_flag --with-gtk=3 --enable-stl
         make -j$(nproc) && sudo make install
+        echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib >> $GITHUB_ENV
 
     # CodeLite
     - name: Install CodeLite's dependencies
@@ -47,6 +53,21 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
+
+    - name: Update codelite.pot
+      run: |
+        wxrc -g -o /tmp/resources.cpp `find . -type f -name "*.xrc" -not -wholename "./Runtime/rc/menu.macos.xrc" -not -wholename "./Runtime/templates/*.*" -not -wholename "./submodules/ctags/Units/*"`
+        xgettext --package-name=CodeLite --copyright-holder="Eran Ifrah" --from-code=UTF-8 --c++ -o translations/codelite.pot --add-location --sort-by-file -k -k_ -kwxTRANSLATE -kwxPLURAL:1,2 /tmp/resources.cpp `find . -type f "(" -name "*.cpp" -or -name "*.h" ")" -not -wholename "./submodules/llama.cpp/*.*" -not -wholename "./submodules/wxdap/dbgcli/*.*" -not -wholename "./submodules/wxsf-code/samples/*.*" -not -wholename "./submodules/wxsqlite3/samples/*.*"`
+        sed --in-place -e "s/FIRST AUTHOR <EMAIL@ADDRESS>, YEAR/Eran Ifrah <eran.ifrah@gmail.com>, 2007-2025/" -e "s/Copyright (C) YEAR Eran Ifrah/Copyright (C) Eran Ifrah 2007-2025/" -e "s/SOME DESCRIPTIVE TITLE./CodeLite pot file/" translations/codelite.pot
+        rm /tmp/resources.cpp
+
+    # Upload codelite.pot
+    - name: artifact-pot
+      uses: actions/upload-artifact@v4
+      with:
+        name: codelite-pot-wx-${{matrix.wx-version}}
+        path: |
+          translations/codelite.pot
 
     - name: Build, test and install CodeLite
       run: |

@@ -14,6 +14,7 @@
 #include "codelite_exports.h"
 #include "compiler.h"
 
+#include <optional>
 #include <unordered_map>
 #include <vector>
 #include <wx/arrstr.h>

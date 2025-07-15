@@ -17,6 +17,7 @@
 
 #include <deque>
 #include <functional>
+#include <optional>
 #include <wx/arrstr.h>
 #include <wx/event.h>
 

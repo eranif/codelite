@@ -67,9 +67,6 @@
 #ifndef INSTALL_DIR
 #define INSTALL_DIR "\\share\\codelite"
 #endif
-#ifndef CFGDIR
-#define CFGDIR "\\share\\codelite\\config\\cfg"
-#endif
 #endif
 
 #define CL_USE_NATIVEBOOK 0

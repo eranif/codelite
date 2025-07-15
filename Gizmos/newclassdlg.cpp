@@ -133,7 +133,7 @@ bool NewClassDlg::ValidateInput()
     if(!IsValidCppIdentifier(m_textClassName->GetValue())) {
         wxString msg;
         msg << wxT("'") << m_textClassName->GetValue() << _("' is not a valid C++ qualifier");
-        wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
+        wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
 
@@ -146,7 +146,7 @@ bool NewClassDlg::ValidateInput()
             if(!IsValidCppIdentifier(namespacesList[i])) {
                 wxString msg;
                 msg << wxT("'") << namespacesList[i] << _("' is not a valid C++ qualifier");
-                wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
+                wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
                 return false;
             }
         }
@@ -157,12 +157,12 @@ bool NewClassDlg::ValidateInput()
     if(!wxDir::Exists(path)) {
         wxString msg;
         msg << wxT("'") << path << _("': directory does not exist");
-        wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
+        wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
 
     if(GetClassFile().IsEmpty()) {
-        wxMessageBox(_("Empty file name"), _("CodeLite"), wxOK | wxICON_WARNING);
+        wxMessageBox(_("Empty file name"), wxT("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
 
@@ -171,7 +171,7 @@ bool NewClassDlg::ValidateInput()
     if(wxFileName::FileExists(cpp_file)) {
         if(wxMessageBox(
                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()),
-               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
+               wxT("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
@@ -180,13 +180,13 @@ bool NewClassDlg::ValidateInput()
     if(wxFileName::FileExists(h_file)) {
         if(wxMessageBox(
                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()),
-               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
+               wxT("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
 
     if(!clFileSystemWorkspace::Get().IsOpen() && GetVirtualDirectoryPath().IsEmpty()) {
-        wxMessageBox(_("Please select a virtual directory"), _("CodeLite"), wxOK | wxICON_WARNING);
+        wxMessageBox(_("Please select a virtual directory"), wxT("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
     return true;

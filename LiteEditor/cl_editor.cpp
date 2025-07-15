@@ -332,7 +332,7 @@ bool MSWRemoveROFileAttribute(const wxFileName& fileName)
                                               fileName.GetFullPath(),
                                               _("has the read-only attribute set"),
                                               _("Would you like CodeLite to try and remove it?")),
-                             _("CodeLite"),
+                             wxT("CodeLite"),
                              wxYES_NO | wxICON_QUESTION | wxCENTER) == wxYES) {
                 // try to clear the read-only flag from the file
                 if (SetFileAttributes(fileName.GetFullPath().c_str(), dwAttrs & ~(FILE_ATTRIBUTE_READONLY)) == FALSE) {
@@ -340,7 +340,7 @@ bool MSWRemoveROFileAttribute(const wxFileName& fileName)
                                                   _("Failed to open file"),
                                                   fileName.GetFullPath().c_str(),
                                                   _("for write")),
-                                 _("CodeLite"),
+                                 wxT("CodeLite"),
                                  wxOK | wxCENTER | wxICON_WARNING);
                     return false;
                 }

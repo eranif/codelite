@@ -380,7 +380,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
     wxUnusedVar(event);
     if(m_conf->GetAllConfigurations().IsEmpty()) {
         wxMessageBox(_("There is no qmake defined, please define one from 'Plugins -> Qmake -> Settings'"),
-                     _("CodeLite"), wxOK | wxICON_WARNING | wxCENTER, m_mgr->GetTheApp()->GetTopWindow());
+                     wxT("CodeLite"), wxOK | wxICON_WARNING | wxCENTER, m_mgr->GetTheApp()->GetTopWindow());
         return;
     }
 
@@ -436,7 +436,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
         {
             DirSaver ds;
             if(!wxSetWorkingDirectory(path)) {
-                wxMessageBox(_("Invalid project path!"), _("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
+                wxMessageBox(_("Invalid project path!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
                 return;
             }
 
@@ -448,7 +448,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
             if(!WriteFileWithBackup(name + wxT(".project"), content, false)) {
                 wxMessageBox(wxString::Format(_("Failed to create .project file '%s'"),
                                               wxString(name + wxT(".project")).c_str()),
-                             _("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
+                             wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
                 return;
             }
 

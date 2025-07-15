@@ -1,10 +1,10 @@
 #include "HelpPluginSettingsDlg.h"
-#include "windowattrmanager.h"
+
 #include "HelpPluginSettings.h"
+#include "windowattrmanager.h"
 
 HelpPluginSettingsDlg::HelpPluginSettingsDlg(wxWindow* parent)
     : HelpPluginSettingsDlgBase(parent)
-    , m_modified(false)
 {
     HelpPluginSettings settings;
     settings.Load();
@@ -18,8 +18,6 @@ HelpPluginSettingsDlg::HelpPluginSettingsDlg(wxWindow* parent)
     m_pgPropPHP->SetValue(settings.GetPhpDocset());
     WindowAttrManager::Load(this);
 }
-
-HelpPluginSettingsDlg::~HelpPluginSettingsDlg() {}
 
 void HelpPluginSettingsDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_modified); }
 

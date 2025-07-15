@@ -26,8 +26,8 @@
 #ifndef __HelpPlugin__
 #define __HelpPlugin__
 
-#include "plugin.h"
 #include "cl_command_event.h"
+#include "plugin.h"
 
 class HelpPlugin : public IPlugin
 {
@@ -35,13 +35,13 @@ protected:
     void OnEditorContextMenu(clContextMenuEvent& event);
     void OnHelp(wxCommandEvent& event);
     void OnHelpSettings(wxCommandEvent& event);
-    
+
     void DoHelp(); // A proxy method so we can call the help async
     wxString DoBuildQueryString();
-    
+
 public:
-    HelpPlugin(IManager* manager);
-    ~HelpPlugin() override;
+    explicit HelpPlugin(IManager* manager);
+    ~HelpPlugin() override = default;
 
     //--------------------------------------------
     // Abstract methods

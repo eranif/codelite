@@ -3,23 +3,17 @@
 #include "HelpPluginMessageDlg.h"
 #include "HelpPluginSettings.h"
 #include "HelpPluginSettingsDlg.h"
-#include "Keyboard/clKeyboardManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
 
-#include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
-#include <wx/uri.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new HelpPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new HelpPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -43,9 +37,7 @@ HelpPlugin::HelpPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &HelpPlugin::OnEditorContextMenu, this);
 }
 
-HelpPlugin::~HelpPlugin() {}
-
-void HelpPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
+void HelpPlugin::CreateToolBar(clToolBarGeneric*) { /* Empty */ }
 
 void HelpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -69,16 +61,22 @@ void HelpPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    if(!editor->GetCtrl()->HasSelection()) return;
+    if (!editor->GetCtrl()->HasSelection())
+        return;
     wxString selection = editor->GetCtrl()->GetSelectedText();
     wxString modSelection = selection.BeforeFirst('\n');
     modSelection.Trim().Trim(false);
-    if(modSelection.IsEmpty()) return;
+    if (modSelection.IsEmpty())
+        return;
 
     // Ensure we only use 15 chars of the selected text, otherwise the menu label
     // will overflow
-    if(modSelection.length() > 15) { modSelection = modSelection.Mid(0, 15); }
-    if(selection.Contains("\n")) { modSelection << "..."; }
+    if (modSelection.length() > 15) {
+        modSelection = modSelection.Mid(0, 15);
+    }
+    if (selection.Contains("\n")) {
+        modSelection << "...";
+    }
 
     // Get the context menu
     wxMenu* menu = event.GetMenu();
@@ -103,47 +101,20 @@ wxString HelpPlugin::DoBuildQueryString()
 
     // if no selection is available, just launch the help with an empty query
     // so Zeal will come to front
-    if(!editor->GetCtrl()->HasSelection()) return "dash-plugin://";
+    if (!editor->GetCtrl()->HasSelection())
+        return "dash-plugin://";
 
-    wxString selection = editor->GetCtrl()->GetSelectedText();
+    const wxString selection = editor->GetCtrl()->GetSelectedText();
 
     HelpPluginSettings settings;
     settings.Load();
 
     // Auto detect the language
-    wxString language;
-    wxString label;
-    FileExtManager::FileType type = FileExtManager::GetType(editor->GetFileName().GetFullName());
-    switch(type) {
-    case FileExtManager::TypeCMake:
-        language << settings.GetCmakeDocset();
-        break;
-    case FileExtManager::TypeHeader:
-    case FileExtManager::TypeSourceC:
-    case FileExtManager::TypeSourceCpp:
-        language << settings.GetCxxDocset();
-        break;
-    case FileExtManager::TypeHtml:
-        language << settings.GetHtmlDocset();
-        break;
-    case FileExtManager::TypeCSS:
-        language << settings.GetCssDocset();
-        break;
-    case FileExtManager::TypeJS:
-        language << settings.GetJsDocset();
-        break;
-    case FileExtManager::TypePhp:
-        language << settings.GetPhpDocset();
-        break;
-    case FileExtManager::TypeJava:
-        language << settings.GetJavaDocset();
-        break;
-    default:
-        break;
-    }
+    const FileExtManager::FileType type = FileExtManager::GetType(editor->GetFileName().GetFullName());
+    const wxString language = settings.GetDocset(type);
 
     wxString q;
-    if(!language.IsEmpty()) {
+    if (!language.IsEmpty()) {
         // Build context aware search string
         q << "dash-plugin://keys=" << language << "&query=" << selection;
     } else {
@@ -163,10 +134,11 @@ void HelpPlugin::OnHelpSettings(wxCommandEvent& event)
 void HelpPlugin::DoHelp()
 {
     wxString query = DoBuildQueryString();
-    if(query.IsEmpty()) return;
+    if (query.IsEmpty())
+        return;
 #ifdef __WXGTK__
     wxFileName fnZeal("/usr/bin", "zeal");
-    if(!fnZeal.Exists()) {
+    if (!fnZeal.Exists()) {
         HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
         dlg.ShowModal();
     }
@@ -177,7 +149,7 @@ void HelpPlugin::DoHelp()
     ::wxExecute(command);
 #else
     clDEBUG() << "Help Plugin:" << query << clEndl;
-    if(!::wxLaunchDefaultBrowser(query)) {
+    if (!::wxLaunchDefaultBrowser(query)) {
         HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
         dlg.ShowModal();
     }

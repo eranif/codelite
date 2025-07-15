@@ -1,5 +1,4 @@
 #include "HelpPluginMessageDlg.h"
-#include "windowattrmanager.h"
 
 HelpPluginMessageDlg::HelpPluginMessageDlg(wxWindow* parent)
     : HelpPluginMessageBaseDlg(parent)
@@ -21,5 +20,3 @@ HelpPluginMessageDlg::HelpPluginMessageDlg(wxWindow* parent)
     GetSizer()->Fit(this);
     CentreOnParent();
 }
-
-HelpPluginMessageDlg::~HelpPluginMessageDlg() {}

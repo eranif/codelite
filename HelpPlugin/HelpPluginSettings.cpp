@@ -16,8 +16,6 @@ HelpPluginSettings::HelpPluginSettings()
 {
 }
 
-HelpPluginSettings::~HelpPluginSettings() {}
-
 HelpPluginSettings& HelpPluginSettings::Load()
 {
     clConfig conf("help-plugin.conf");
@@ -53,4 +51,28 @@ JSONItem HelpPluginSettings::ToJSON() const
     json.addProperty("m_jsDocset", m_jsDocset);
     json.addProperty("m_javaDocset", m_javaDocset);
     return json;
+}
+
+wxString HelpPluginSettings::GetDocset(FileExtManager::FileType type) const
+{
+    switch (type) {
+    case FileExtManager::TypeCMake:
+        return GetCmakeDocset();
+    case FileExtManager::TypeHeader:
+    case FileExtManager::TypeSourceC:
+    case FileExtManager::TypeSourceCpp:
+        return GetCxxDocset();
+    case FileExtManager::TypeHtml:
+        return GetHtmlDocset();
+    case FileExtManager::TypeCSS:
+        return GetCssDocset();
+    case FileExtManager::TypeJS:
+        return GetJsDocset();
+    case FileExtManager::TypePhp:
+        return GetPhpDocset();
+    case FileExtManager::TypeJava:
+        return GetJavaDocset();
+    default:
+        return wxEmptyString;
+    }
 }

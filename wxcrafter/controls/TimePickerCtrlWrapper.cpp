@@ -11,8 +11,6 @@ TimePickerCtrlWrapper::TimePickerCtrlWrapper()
     SetName(GenerateName());
 }
 
-TimePickerCtrlWrapper::~TimePickerCtrlWrapper() {}
-
 void TimePickerCtrlWrapper::GetIncludeFile(wxArrayString& headers) const
 {
     headers.Add("#include <wx/timectrl.h>");

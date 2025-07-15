@@ -12,24 +12,24 @@ class ChoiceProperty : public PropertyBase
 public:
     ChoiceProperty(const wxString& label, const wxArrayString& options, int selection, const wxString& tip);
     ChoiceProperty();
-    virtual ~ChoiceProperty();
+    ~ChoiceProperty() override = default;
 
     void SetOptions(const wxArrayString& options) { this->m_options = options; }
     void SetSelection(int selection);
 
-    virtual wxArrayString GetOptions() const { return m_options; }
+    wxArrayString GetOptions() const override { return m_options; }
     int GetSelection() const { return m_selection; }
     bool IsEmpty() const { return m_options.IsEmpty(); }
     void Add(const wxString& value);
 
-    virtual wxString GetValue() const;
-    virtual void SetValue(const wxString& value);
+    wxString GetValue() const override;
+    void SetValue(const wxString& value) override;
 
     // Serialization methods
-    virtual JSONElement Serialize() const;
-    virtual void UnSerialize(const JSONElement& json);
+    JSONElement Serialize() const override;
+    void UnSerialize(const JSONElement& json) override;
 
-    virtual PropertyeType GetType() { return PT_CHOICE; }
+    PropertyeType GetType() override { return PT_CHOICE; }
 };
 
 #endif // CHOICEPROPERTY_H

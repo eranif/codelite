@@ -49,8 +49,6 @@ ButtonWrapper::ButtonWrapper()
     SetName(GenerateName());
 }
 
-ButtonWrapper::~ButtonWrapper() {}
-
 wxString ButtonWrapper::CppCtorCode() const
 {
     wxcCodeGeneratorHelper::Get().AddBitmap(PropertyFile(PROP_BITMAP_PATH));

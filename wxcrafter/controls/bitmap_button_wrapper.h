@@ -6,21 +6,21 @@
 class BitmapButtonWrapper : public wxcWidget
 {
 protected:
-    virtual void GetIncludeFile(wxArrayString& headers) const;
+    void GetIncludeFile(wxArrayString& headers) const override;
 
 public:
     BitmapButtonWrapper();
-    virtual ~BitmapButtonWrapper();
+    ~BitmapButtonWrapper() override = default;
 
 public:
-    virtual wxString GetWxClassName() const;
-    virtual wxString CppCtorCode() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxString GetWxClassName() const override;
+    wxString CppCtorCode() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 
-    virtual wxcWidget* Clone() const { return new BitmapButtonWrapper(); }
+    wxcWidget* Clone() const override { return new BitmapButtonWrapper(); }
 };
 
 #endif // BITMAPBUTTON_H

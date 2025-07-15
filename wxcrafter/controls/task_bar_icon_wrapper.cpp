@@ -34,8 +34,6 @@ TaskBarIconWrapper::TaskBarIconWrapper()
     SetName(GenerateName());
 }
 
-TaskBarIconWrapper::~TaskBarIconWrapper() {}
-
 wxcWidget* TaskBarIconWrapper::Clone() const { return new TaskBarIconWrapper(); }
 
 wxString TaskBarIconWrapper::CppCtorCode() const

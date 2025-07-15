@@ -12,11 +12,11 @@ class CaptionBar : public CaptionBarBase
 
 public:
     CaptionBar(wxWindow* parent, const wxString& caption, const wxString& style, const wxBitmap& icon);
-    virtual ~CaptionBar();
+    ~CaptionBar() override = default;
 
 protected:
-    virtual void OnLeftDown(wxMouseEvent& event);
-    virtual void OnEraseBG(wxEraseEvent& event);
-    virtual void OnPaint(wxPaintEvent& event);
+    void OnLeftDown(wxMouseEvent& event) override;
+    void OnEraseBG(wxEraseEvent& event) override;
+    void OnPaint(wxPaintEvent& event) override;
 };
 #endif // CAPTIONBAR_H

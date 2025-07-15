@@ -9,8 +9,6 @@ MultiStringsProperty::MultiStringsProperty(const wxString& label, const wxString
     SetLabel(label);
 }
 
-MultiStringsProperty::~MultiStringsProperty() {}
-
 wxString MultiStringsProperty::GetValue() const { return m_value; }
 
 JSONElement MultiStringsProperty::Serialize() const

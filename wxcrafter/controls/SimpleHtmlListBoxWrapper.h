@@ -6,15 +6,15 @@
 class SimpleHtmlListBoxWrapper : public wxcWidget
 {
 public:
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual wxString CppCtorCode() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-
-    virtual wxcWidget* Clone() const { return new SimpleHtmlListBoxWrapper(); }
-
     SimpleHtmlListBoxWrapper();
-    virtual ~SimpleHtmlListBoxWrapper();
+    ~SimpleHtmlListBoxWrapper() override = default;
+
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxcWidget* Clone() const override { return new SimpleHtmlListBoxWrapper(); }
+
 };
 
 #endif // SIMPLEHTMLLISTBOXWRAPPER_H

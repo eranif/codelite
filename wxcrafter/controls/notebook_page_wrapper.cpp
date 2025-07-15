@@ -36,8 +36,6 @@ NotebookPageWrapper::NotebookPageWrapper()
     SetName(GenerateName());
 }
 
-NotebookPageWrapper::~NotebookPageWrapper() {}
-
 wxcWidget* NotebookPageWrapper::Clone() const { return new NotebookPageWrapper(); }
 
 wxString NotebookPageWrapper::CppCtorCode() const

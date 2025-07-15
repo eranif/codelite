@@ -8,7 +8,7 @@ class PreviewFrame : public wxFrame
 {
 public:
     PreviewFrame(wxWindow* parent, const TopLevelWinWrapper& fw);
-    virtual ~PreviewFrame();
+    ~PreviewFrame() override;
     DECLARE_EVENT_TABLE()
 
     void OnClosePreview(wxCommandEvent& e);

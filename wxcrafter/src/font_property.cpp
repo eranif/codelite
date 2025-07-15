@@ -9,8 +9,6 @@ FontProperty::FontProperty(const wxString& label, const wxString& font, const wx
     m_value = font;
 }
 
-FontProperty::~FontProperty() {}
-
 wxString FontProperty::GetValue() const { return m_value; }
 
 JSONElement FontProperty::Serialize() const

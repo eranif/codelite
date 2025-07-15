@@ -10,8 +10,6 @@ StdDialogButtonSizerWrapper::StdDialogButtonSizerWrapper()
     SetName(GenerateName());
 }
 
-StdDialogButtonSizerWrapper::~StdDialogButtonSizerWrapper() {}
-
 wxcWidget* StdDialogButtonSizerWrapper::Clone() const { return new StdDialogButtonSizerWrapper(); }
 
 wxString StdDialogButtonSizerWrapper::CppCtorCode() const

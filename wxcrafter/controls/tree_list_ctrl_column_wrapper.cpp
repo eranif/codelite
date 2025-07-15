@@ -35,8 +35,6 @@ TreeListCtrlColumnWrapper::TreeListCtrlColumnWrapper()
           "wxCOL_SORTABLE to allow the user to resort the control contents by clicking on this column"));
 }
 
-TreeListCtrlColumnWrapper::~TreeListCtrlColumnWrapper() {}
-
 wxcWidget* TreeListCtrlColumnWrapper::Clone() const { return new TreeListCtrlColumnWrapper(); }
 
 wxString TreeListCtrlColumnWrapper::CppCtorCode() const

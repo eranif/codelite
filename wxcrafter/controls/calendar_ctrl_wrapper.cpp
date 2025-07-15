@@ -28,8 +28,6 @@ CalendarCtrlWrapper::CalendarCtrlWrapper()
     SetName(GenerateName());
 }
 
-CalendarCtrlWrapper::~CalendarCtrlWrapper() {}
-
 wxcWidget* CalendarCtrlWrapper::Clone() const { return new CalendarCtrlWrapper(); }
 
 wxString CalendarCtrlWrapper::CppCtorCode() const

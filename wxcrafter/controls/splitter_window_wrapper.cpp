@@ -52,8 +52,6 @@ SplitterWindowWrapper::SplitterWindowWrapper()
     SetName(GenerateName());
 }
 
-SplitterWindowWrapper::~SplitterWindowWrapper() {}
-
 wxcWidget* SplitterWindowWrapper::Clone() const { return new SplitterWindowWrapper(); }
 
 wxString SplitterWindowWrapper::CppCtorCode() const

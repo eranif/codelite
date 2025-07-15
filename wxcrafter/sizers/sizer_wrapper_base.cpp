@@ -26,8 +26,6 @@ SizerWrapperBase::SizerWrapperBase()
     m_sizerItem.SetProportion(1);
 }
 
-SizerWrapperBase::~SizerWrapperBase() {}
-
 void SizerWrapperBase::GetIncludeFile(wxArrayString& headers) const { headers.Add(wxT("#include <wx/sizer.h>")); }
 
 bool SizerWrapperBase::IsMainSizer() const { return m_parent && !m_parent->IsSizer(); }

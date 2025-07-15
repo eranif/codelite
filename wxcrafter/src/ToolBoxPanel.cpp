@@ -9,8 +9,6 @@ ToolBoxPanel::ToolBoxPanel(wxWindow* parent, GUICraftMainPanel* mainView)
 {
 }
 
-ToolBoxPanel::~ToolBoxPanel() {}
-
 void ToolBoxPanel::OnControlUI(wxUpdateUIEvent& event)
 {
 

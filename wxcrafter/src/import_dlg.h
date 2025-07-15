@@ -26,15 +26,15 @@ protected:
     bool m_modified;
 
 protected:
-    virtual void OnDestFilePathUpdated(wxCommandEvent& event);
-    virtual void OnFileImportTextUpdated(wxCommandEvent& event);
-    virtual void OnAddToProjectUI(wxUpdateUIEvent& event);
-    virtual void OnAddFileToProjectUI(wxUpdateUIEvent& event);
-    virtual void OnBrowseForVirtualFolder(wxCommandEvent& event);
+    void OnDestFilePathUpdated(wxCommandEvent& event) override;
+    void OnFileImportTextUpdated(wxCommandEvent& event) override;
+    void OnAddToProjectUI(wxUpdateUIEvent& event) override;
+    void OnAddFileToProjectUI(wxUpdateUIEvent& event) override;
+    void OnBrowseForVirtualFolder(wxCommandEvent& event) override;
 
 public:
     ImportDlg(IPD_ProjectType type, wxWindow* parent = NULL, const wxString& sourceFile = "");
-    virtual ~ImportDlg();
+    ~ImportDlg() override = default;
 
     wxString GetFilepath() const { return m_filepathText->GetValue(); }
     const wxString GetOutputFilepath() const { return m_textName->GetValue(); }
@@ -42,8 +42,8 @@ public:
     ImportFileData GetData() const;
 
 protected:
-    virtual void OnBrowseForOutputFolder(wxCommandEvent& event);
+    void OnBrowseForOutputFolder(wxCommandEvent& event) override;
     virtual void OnOKButtonUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnBrowse(wxCommandEvent& event);
+    void OnBrowse(wxCommandEvent& event) override;
 };
 #endif // IMPORTDLG_H

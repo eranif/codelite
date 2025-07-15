@@ -103,8 +103,6 @@ GridWrapper::GridWrapper()
     SetName(GenerateName());
 }
 
-GridWrapper::~GridWrapper() {}
-
 wxcWidget* GridWrapper::Clone() const { return new GridWrapper(); }
 
 wxString GridWrapper::CppCtorCode() const

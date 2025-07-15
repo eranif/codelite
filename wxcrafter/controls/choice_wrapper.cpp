@@ -21,8 +21,6 @@ ChoiceWrapper::ChoiceWrapper()
     SetName(GenerateName());
 }
 
-ChoiceWrapper::~ChoiceWrapper() {}
-
 wxcWidget* ChoiceWrapper::Clone() const { return new ChoiceWrapper(); }
 
 wxString ChoiceWrapper::CppCtorCode() const

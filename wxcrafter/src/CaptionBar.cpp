@@ -23,7 +23,6 @@ CaptionBar::CaptionBar(wxWindow* parent, const wxString& caption, const wxString
     SetSizeHints(-1, (sz.y > 22 ? sz.y : 22));
 }
 
-CaptionBar::~CaptionBar() {}
 void CaptionBar::OnEraseBG(wxEraseEvent& event) { wxUnusedVar(event); }
 
 void CaptionBar::OnPaint(wxPaintEvent& event)

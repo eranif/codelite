@@ -51,8 +51,6 @@ FrameWrapper::FrameWrapper()
     SetName(GenerateName());
 }
 
-FrameWrapper::~FrameWrapper() {}
-
 void FrameWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     if(type != XRC_LIVE) {

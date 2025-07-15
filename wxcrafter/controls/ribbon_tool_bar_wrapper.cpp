@@ -20,8 +20,6 @@ RibbonToolBarWrapper::RibbonToolBarWrapper()
     SetName(GenerateName());
 }
 
-RibbonToolBarWrapper::~RibbonToolBarWrapper() {}
-
 wxcWidget* RibbonToolBarWrapper::Clone() const { return new RibbonToolBarWrapper(); }
 
 wxString RibbonToolBarWrapper::CppCtorCode() const

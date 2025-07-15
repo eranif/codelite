@@ -9,15 +9,15 @@ class RibbonButtonBase : public wxcWidget
 
 public:
     RibbonButtonBase(int type);
-    virtual ~RibbonButtonBase();
+    ~RibbonButtonBase() override = default;
 
 public:
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxString GetCppName() const;
-    virtual bool UseIdInConnect() const { return true; }
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxString GetCppName() const override;
+    bool UseIdInConnect() const override { return true; }
 };
 
 // ------------------------------------ concrete types -------------------------
@@ -25,8 +25,8 @@ class RibbonButton : public RibbonButtonBase
 {
 public:
     RibbonButton();
-    virtual ~RibbonButton();
-    virtual wxcWidget* Clone() const { return new RibbonButton(); }
+    ~RibbonButton() override = default;
+    wxcWidget* Clone() const override { return new RibbonButton(); }
 };
 
 // ------------------------------------ concrete types -------------------------
@@ -34,8 +34,8 @@ class RibbonButtonHybrid : public RibbonButtonBase
 {
 public:
     RibbonButtonHybrid();
-    virtual ~RibbonButtonHybrid();
-    virtual wxcWidget* Clone() const { return new RibbonButtonHybrid(); }
+    ~RibbonButtonHybrid() = default;
+    wxcWidget* Clone() const override { return new RibbonButtonHybrid(); }
 };
 
 // ------------------------------------ concrete types -------------------------
@@ -43,8 +43,8 @@ class RibbonButtonDropdown : public RibbonButtonBase
 {
 public:
     RibbonButtonDropdown();
-    virtual ~RibbonButtonDropdown();
-    virtual wxcWidget* Clone() const { return new RibbonButtonDropdown(); }
+    ~RibbonButtonDropdown() override = default;
+    wxcWidget* Clone() const override { return new RibbonButtonDropdown(); }
 };
 
 // ------------------------------------ concrete types -------------------------
@@ -53,8 +53,8 @@ class RibbonButtonToggle : public RibbonButtonBase
 {
 public:
     RibbonButtonToggle();
-    virtual ~RibbonButtonToggle();
-    virtual wxcWidget* Clone() const { return new RibbonButtonToggle(); }
+    ~RibbonButtonToggle() override = default;
+    wxcWidget* Clone() const override { return new RibbonButtonToggle(); }
 };
 
 // ------------------------------------ concrete types -------------------------
@@ -63,8 +63,8 @@ class RibbonTool : public RibbonButtonBase
 {
 public:
     RibbonTool();
-    virtual ~RibbonTool();
-    virtual wxcWidget* Clone() const { return new RibbonTool(); }
+    ~RibbonTool() override = default;
+    wxcWidget* Clone() const override { return new RibbonTool(); }
 };
 
 // ------------------------------------ concrete types -------------------------
@@ -73,8 +73,8 @@ class RibbonToolToggle : public RibbonButtonBase
 {
 public:
     RibbonToolToggle();
-    virtual ~RibbonToolToggle();
-    virtual wxcWidget* Clone() const { return new RibbonToolToggle(); }
+    ~RibbonToolToggle() override = default;
+    wxcWidget* Clone() const override { return new RibbonToolToggle(); }
 };
 
 // ------------------------------------ concrete types -------------------------
@@ -83,8 +83,8 @@ class RibbonToolHybrid : public RibbonButtonBase
 {
 public:
     RibbonToolHybrid();
-    virtual ~RibbonToolHybrid();
-    virtual wxcWidget* Clone() const { return new RibbonToolHybrid(); }
+    ~RibbonToolHybrid() override = default;
+    wxcWidget* Clone() const override { return new RibbonToolHybrid(); }
 };
 
 // ------------------------------------ concrete types -------------------------
@@ -93,8 +93,8 @@ class RibbonToolDropdown : public RibbonButtonBase
 {
 public:
     RibbonToolDropdown();
-    virtual ~RibbonToolDropdown();
-    virtual wxcWidget* Clone() const { return new RibbonToolDropdown(); }
+    ~RibbonToolDropdown() override = default;
+    wxcWidget* Clone() const override { return new RibbonToolDropdown(); }
 };
 
 #endif // RIBBONBUTTON_H

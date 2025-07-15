@@ -9,14 +9,14 @@ class BitmapPickerProperty : public PropertyBase
 
 public:
     BitmapPickerProperty(const wxString& label, const wxString& path, const wxString& tooltip);
-    virtual ~BitmapPickerProperty();
+    ~BitmapPickerProperty() override = default;
 
 public:
-    virtual PropertyeType GetType();
-    virtual wxString GetValue() const;
-    virtual JSONElement Serialize() const;
-    virtual void SetValue(const wxString& value);
-    virtual void UnSerialize(const JSONElement& json);
+    PropertyeType GetType() override;
+    wxString GetValue() const override;
+    JSONElement Serialize() const override;
+    void SetValue(const wxString& value) override;
+    void UnSerialize(const JSONElement& json) override;
 };
 
 #endif // BITMAPPICKERPROPERTY_H

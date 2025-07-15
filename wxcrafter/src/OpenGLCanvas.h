@@ -6,11 +6,11 @@ class OpenGLCanvas : public OpenGLCanvasBase
 {
 public:
     OpenGLCanvas(wxWindow* parent);
-    virtual ~OpenGLCanvas();
+    ~OpenGLCanvas() override = default;
     wxStaticBitmap* Bitmap() const { return m_staticBitmap657; }
 
 protected:
-    virtual void OnMove(wxMoveEvent& event);
-    virtual void OnSize(wxSizeEvent& event);
+    void OnMove(wxMoveEvent& event) override;
+    void OnSize(wxSizeEvent& event) override;
 };
 #endif // OPENGLCANVAS_H

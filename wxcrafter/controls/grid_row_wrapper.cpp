@@ -18,8 +18,6 @@ GridRowWrapper::GridRowWrapper()
     SetName(GenerateName());
 }
 
-GridRowWrapper::~GridRowWrapper() {}
-
 wxcWidget* GridRowWrapper::Clone() const { return new GridRowWrapper(); }
 
 wxString GridRowWrapper::CppCtorCode() const { return ""; }

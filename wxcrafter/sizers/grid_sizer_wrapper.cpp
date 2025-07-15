@@ -21,8 +21,6 @@ GridSizerWrapper::GridSizerWrapper()
     SetName(GenerateName());
 }
 
-GridSizerWrapper::~GridSizerWrapper() {}
-
 wxString GridSizerWrapper::CppCtorCode() const
 {
     wxString code;

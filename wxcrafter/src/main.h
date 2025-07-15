@@ -20,57 +20,57 @@ protected:
     wxFindReplaceData m_findData;
 
 protected:
-    virtual void OnFileOpen(wxCommandEvent& event);
-    virtual void OnBatchGenerateCode(wxCommandEvent& event);
-    virtual void OnBatchGenerateCodeUI(wxUpdateUIEvent& event);
+    void OnFileOpen(wxCommandEvent& event) override;
+    void OnBatchGenerateCode(wxCommandEvent& event) override;
+    void OnBatchGenerateCodeUI(wxUpdateUIEvent& event) override;
 
 protected:
     virtual void OnFindUI(wxUpdateUIEvent& event);
-    virtual void OnOpenFindDialog(wxCommandEvent& event);
-    virtual void OnGenerateCodeUI(wxUpdateUIEvent& event);
-    virtual void OnGenerateCode(wxCommandEvent& event);
-    virtual void OnDeleteCustomControl(wxCommandEvent& event);
-    virtual void OnEditCustomControl(wxCommandEvent& event);
-    virtual void OnNewCustomControl(wxCommandEvent& event);
+    void OnOpenFindDialog(wxCommandEvent& event) override;
+    void OnGenerateCodeUI(wxUpdateUIEvent& event) override;
+    void OnGenerateCode(wxCommandEvent& event) override;
+    void OnDeleteCustomControl(wxCommandEvent& event) override;
+    void OnEditCustomControl(wxCommandEvent& event) override;
+    void OnNewCustomControl(wxCommandEvent& event) override;
     virtual void OnOpen(wxCommandEvent& event);
     virtual void OnOpenMenu(wxCommandEvent& event);
     virtual void OnNewProject(wxCommandEvent& event);
     virtual void OnOpenUI(wxUpdateUIEvent& event);
     virtual void OnCloseUI(wxUpdateUIEvent& event);
-    virtual void OnSaveUI(wxUpdateUIEvent& event);
-    virtual void OnPasteUI(wxUpdateUIEvent& event);
+    void OnSaveUI(wxUpdateUIEvent& event) override;
+    void OnPasteUI(wxUpdateUIEvent& event) override;
     virtual void OnSwitchToCodeliteUI(wxUpdateUIEvent& event);
-    virtual void OnSettings(wxCommandEvent& event);
+    void OnSettings(wxCommandEvent& event) override;
     virtual void OnProjectClosed(wxCommandEvent& event);
-    virtual void OnHide(wxCommandEvent& event);
-    virtual void OnAbout(wxCommandEvent& event);
-    virtual void OnImportFB(wxCommandEvent& event);
-    virtual void OnImportSmith(wxCommandEvent& event);
-    virtual void OnImportXRC(wxCommandEvent& event);
-    virtual void OnRename(wxCommandEvent& event);
+    void OnHide(wxCommandEvent& event) override;
+    void OnAbout(wxCommandEvent& event) override;
+    void OnImportFB(wxCommandEvent& event) override;
+    void OnImportSmith(wxCommandEvent& event) override;
+    void OnImportXRC(wxCommandEvent& event) override;
+    void OnRename(wxCommandEvent& event) override;
     virtual void OnSwitchToCodelite(wxCommandEvent& event);
-    virtual void OnBuild(wxCommandEvent& event);
-    virtual void OnBuildUI(wxUpdateUIEvent& event);
-    virtual void OnCopy(wxCommandEvent& event);
-    virtual void OnCut(wxCommandEvent& event);
-    virtual void OnPaste(wxCommandEvent& event);
-    virtual void OnRedo(wxCommandEvent& event);
-    virtual void OnRedoUI(wxUpdateUIEvent& event);
-    virtual void OnSelectionUI(wxUpdateUIEvent& event);
-    virtual void OnUndo(wxCommandEvent& event);
-    virtual void OnUndoUI(wxUpdateUIEvent& event);
-    virtual void OnDeleteItem(wxCommandEvent& event);
-    virtual void OnDeleteItemUI(wxUpdateUIEvent& event);
-    virtual void OnPreview(wxCommandEvent& event);
-    virtual void OnPreviewUI(wxUpdateUIEvent& event);
+    void OnBuild(wxCommandEvent& event) override;
+    void OnBuildUI(wxUpdateUIEvent& event) override;
+    void OnCopy(wxCommandEvent& event) override;
+    void OnCut(wxCommandEvent& event) override;
+    void OnPaste(wxCommandEvent& event) override;
+    void OnRedo(wxCommandEvent& event) override;
+    void OnRedoUI(wxUpdateUIEvent& event) override;
+    void OnSelectionUI(wxUpdateUIEvent& event) override;
+    void OnUndo(wxCommandEvent& event) override;
+    void OnUndoUI(wxUpdateUIEvent& event) override;
+    void OnDeleteItem(wxCommandEvent& event) override;
+    void OnDeleteItemUI(wxUpdateUIEvent& event) override;
+    void OnPreview(wxCommandEvent& event) override;
+    void OnPreviewUI(wxUpdateUIEvent& event) override;
     virtual void OnClose(wxCommandEvent& event);
-    virtual void OnSave(wxCommandEvent& event);
+    void OnSave(wxCommandEvent& event) override;
     virtual void OnProjectModified(wxCommandEvent& e);
     virtual void OnProjectSynched(wxCommandEvent& e);
     virtual void OnProjectLoaded(wxCommandEvent& e);
     virtual void OnWorkspaceClosed(clWorkspaceEvent& e);
     virtual void OnCodeLiteGotFocus(wxCommandEvent& e);
-    void OnCodeEditorSelected(wxCommandEvent& e);
+    virtual void OnCodeEditorSelected(wxCommandEvent& e);
 
 protected:
     wxTextCtrl* GetActiveTextCtrl();
@@ -82,7 +82,7 @@ protected:
 
 public:
     MainFrame(wxWindow* parent, bool hidden);
-    virtual ~MainFrame();
+    ~MainFrame() override;
 
     void Add(wxcTreeView* tree);
     void Add(GUICraftMainPanel* view);
@@ -101,7 +101,7 @@ public:
 
 protected:
     // protected event handlers
-    virtual void OnCloseFrame(wxCloseEvent& event);
+    void OnCloseFrame(wxCloseEvent& event) override;
 
     DECLARE_EVENT_TABLE()
     void OnFindDlgClose(wxFindDialogEvent& event);
@@ -122,10 +122,10 @@ class wxcApp : public wxApp
 
 public:
     wxcApp();
-    virtual ~wxcApp();
-    virtual bool OnInit();
-    virtual int OnExit();
-    virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
+    ~wxcApp() override = default;
+    bool OnInit() override;
+    int OnExit() override;
+    bool OnCmdLineParsed(wxCmdLineParser& parser) override;
 };
 
 DECLARE_APP(wxcApp)

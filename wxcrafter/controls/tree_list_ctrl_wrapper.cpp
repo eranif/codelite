@@ -50,8 +50,6 @@ TreeListCtrlWrapper::TreeListCtrlWrapper()
     SetName(GenerateName());
 }
 
-TreeListCtrlWrapper::~TreeListCtrlWrapper() {}
-
 wxcWidget* TreeListCtrlWrapper::Clone() const { return new TreeListCtrlWrapper(); }
 
 wxString TreeListCtrlWrapper::CppCtorCode() const

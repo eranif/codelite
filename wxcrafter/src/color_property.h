@@ -11,14 +11,14 @@ class ColorProperty : public PropertyBase
 
 public:
     ColorProperty(const wxString& label, const wxString& colour = wxT("<Default>"), const wxString& tooltip = "");
-    virtual ~ColorProperty();
+    ~ColorProperty() override = default;
 
 public:
-    virtual wxString GetValue() const;
-    virtual JSONElement Serialize() const;
-    virtual void SetValue(const wxString& value);
-    virtual void UnSerialize(const JSONElement& json);
-    virtual PropertyeType GetType() { return PT_COLOR_PICKER; }
+    wxString GetValue() const override;
+    JSONElement Serialize() const override;
+    void SetValue(const wxString& value) override;
+    void UnSerialize(const JSONElement& json) override;
+    PropertyeType GetType() override { return PT_COLOR_PICKER; }
 };
 
 #endif // COLORPROPERTY_H

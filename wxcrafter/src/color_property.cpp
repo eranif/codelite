@@ -11,8 +11,6 @@ ColorProperty::ColorProperty(const wxString& label, const wxString& colour, cons
     m_colourName = colour;
 }
 
-ColorProperty::~ColorProperty() {}
-
 wxString ColorProperty::GetValue() const { return m_colourName; }
 
 JSONElement ColorProperty::Serialize() const

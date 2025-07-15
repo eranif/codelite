@@ -7,16 +7,16 @@ class PanelWrapper : public wxcWidget
 {
 public:
     PanelWrapper();
-    virtual ~PanelWrapper();
+    ~PanelWrapper() override = default;
 
 public:
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual wxString CppCtorCode() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual bool IsTopWindow() const;
-    virtual wxcWidget* Clone() const { return new PanelWrapper(); }
-    virtual bool IsContainer() const { return true; }
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    bool IsTopWindow() const override;
+    wxcWidget* Clone() const override { return new PanelWrapper(); }
+    bool IsContainer() const override { return true; }
 };
 
 #endif // PANELWRAPPER_H

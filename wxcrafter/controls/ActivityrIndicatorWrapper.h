@@ -7,17 +7,17 @@ class ActivityrIndicatorWrapper : public wxcWidget
 {
 public:
     ActivityrIndicatorWrapper();
-    virtual ~ActivityrIndicatorWrapper();
+    ~ActivityrIndicatorWrapper() override = default;
 
 public:
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    wxString CppCtorCode() const;
-    void LoadPropertiesFromXRC(const wxXmlNode* node);
-    void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    void LoadPropertiesFromwxSmith(const wxXmlNode* node);
-    void ToXRC(wxString& text, XRC_TYPE type) const;
-    wxcWidget* Clone() const { return new ActivityrIndicatorWrapper(); }
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    wxString CppCtorCode() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxcWidget* Clone() const override { return new ActivityrIndicatorWrapper(); }
 };
 
 #endif // ACTIVITYRINDICATORWRAPPER_H

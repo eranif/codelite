@@ -12,14 +12,14 @@ protected:
 
 public:
     FontProperty(const wxString& label, const wxString& font, const wxString& tooltip);
-    virtual ~FontProperty();
+    ~FontProperty() override = default;
 
 public:
-    wxString GetValue() const;
-    JSONElement Serialize() const;
-    void SetValue(const wxString& value);
-    void UnSerialize(const JSONElement& json);
-    virtual PropertyeType GetType() { return PT_FONT_PICKER; }
+    wxString GetValue() const override;
+    JSONElement Serialize() const override;
+    void SetValue(const wxString& value) override;
+    void UnSerialize(const JSONElement& json) override;
+    PropertyeType GetType() override { return PT_FONT_PICKER; }
 };
 
 #endif // FONTPROPERTY_H

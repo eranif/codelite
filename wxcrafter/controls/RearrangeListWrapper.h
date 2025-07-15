@@ -7,17 +7,17 @@ class RearrangeListWrapper : public CheckListBoxWrapper
 {
 public:
     RearrangeListWrapper();
-    virtual ~RearrangeListWrapper();
+    ~RearrangeListWrapper() override = default;
 
 public:
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxcWidget* Clone() const;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxcWidget* Clone() const override;
 };
 
 #endif // REARRANGELISTWRAPPER_H

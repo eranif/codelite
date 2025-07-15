@@ -11,8 +11,6 @@ VirtualFolderProperty::VirtualFolderProperty(const wxString& label, const wxStri
     SetValue(path);
 }
 
-VirtualFolderProperty::~VirtualFolderProperty() {}
-
 wxString VirtualFolderProperty::GetValue() const { return m_path; }
 
 JSONElement VirtualFolderProperty::Serialize() const

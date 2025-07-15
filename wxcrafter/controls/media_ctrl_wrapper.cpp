@@ -47,8 +47,6 @@ MediaCtrlWrapper::MediaCtrlWrapper()
     SetName(GenerateName());
 }
 
-MediaCtrlWrapper::~MediaCtrlWrapper() {}
-
 wxcWidget* MediaCtrlWrapper::Clone() const { return new MediaCtrlWrapper(); }
 
 wxString MediaCtrlWrapper::CppCtorCode() const

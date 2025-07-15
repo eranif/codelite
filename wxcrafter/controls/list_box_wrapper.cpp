@@ -35,8 +35,6 @@ ListBoxWrapper::ListBoxWrapper()
     SetName(GenerateName());
 }
 
-ListBoxWrapper::~ListBoxWrapper() {}
-
 wxcWidget* ListBoxWrapper::Clone() const { return new ListBoxWrapper(); }
 
 wxString ListBoxWrapper::CppCtorCode() const

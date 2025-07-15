@@ -39,8 +39,6 @@ SearchCtrlWrapper::SearchCtrlWrapper()
     SetName(GenerateName());
 }
 
-SearchCtrlWrapper::~SearchCtrlWrapper() {}
-
 wxcWidget* SearchCtrlWrapper::Clone() const { return new SearchCtrlWrapper(); }
 
 wxString SearchCtrlWrapper::CppCtorCode() const

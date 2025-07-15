@@ -34,8 +34,6 @@ BitmapComboxWrapper::BitmapComboxWrapper()
     SetName(GenerateName());
 }
 
-BitmapComboxWrapper::~BitmapComboxWrapper() {}
-
 wxcWidget* BitmapComboxWrapper::Clone() const { return new BitmapComboxWrapper(); }
 
 wxString BitmapComboxWrapper::CppCtorCode() const

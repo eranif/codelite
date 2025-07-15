@@ -21,8 +21,6 @@ StaticBoxSizerWrapper::StaticBoxSizerWrapper()
     SetName(GenerateName());
 }
 
-StaticBoxSizerWrapper::~StaticBoxSizerWrapper() {}
-
 wxcWidget* StaticBoxSizerWrapper::Clone() const { return new StaticBoxSizerWrapper(); }
 
 wxString StaticBoxSizerWrapper::CppCtorCode() const

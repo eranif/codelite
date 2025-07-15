@@ -33,8 +33,6 @@ FontPickerDlg::FontPickerDlg(wxWindow* parent, const wxString& font)
     WindowAttrManager::Load(this);
 }
 
-FontPickerDlg::~FontPickerDlg() {}
-
 void FontPickerDlg::OnUseCustomFont(wxCommandEvent& event)
 {
     m_checkBoxPreDefinedFont->SetValue(false);

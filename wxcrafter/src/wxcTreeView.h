@@ -28,19 +28,19 @@ class wxcTreeView : public wxcTreeViewBaseClass
     bool m_loadingProject;
 
 protected:
-    virtual void OnWxcpComboxTextEnter(wxCommandEvent& event);
-    virtual void OnItemLabelEditEnd(wxTreeEvent& event);
-    virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
-    virtual void OnSashPositionChanged(wxSplitterEvent& event);
-    virtual void OnChar(wxKeyEvent& event);
+    void OnWxcpComboxTextEnter(wxCommandEvent& event) override;
+    void OnItemLabelEditEnd(wxTreeEvent& event) override;
+    void OnWorkspaceOpenUI(wxUpdateUIEvent& event) override;
+    void OnSashPositionChanged(wxSplitterEvent& event) override;
+    void OnChar(wxKeyEvent& event) override;
     void DoRefreshFileList(bool reloadFileList = true);
 
 public:
     wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin);
-    virtual ~wxcTreeView();
+    ~wxcTreeView() override;
 
     clTreeCtrl* GetTree() { return m_treeControls; }
-    virtual void OnItemSelected(wxTreeEvent& event);
+    void OnItemSelected(wxTreeEvent& event) override;
     void LoadProject(const wxFileName& filname);
     void SaveProject();
     void CloseProject(bool saveBeforeClose);
@@ -55,8 +55,8 @@ public:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
 
 protected:
-    virtual void OnRefreshWxcpFiles(wxCommandEvent& event);
-    virtual void OnWxcpFileSelected(wxCommandEvent& event);
+    void OnRefreshWxcpFiles(wxCommandEvent& event) override;
+    void OnWxcpFileSelected(wxCommandEvent& event) override;
 };
 
 #endif // __wxcTreeView__

@@ -8,12 +8,12 @@ class DeleteCustomControlDlg : public DeleteCustomControlDlgBaseClass
 
 public:
     DeleteCustomControlDlg(wxWindow* parent);
-    virtual ~DeleteCustomControlDlg();
+    ~DeleteCustomControlDlg() override = default;
 
 protected:
-    virtual void OnItemValueChanged(wxDataViewEvent& event);
-    virtual void OnDeleteUI(wxUpdateUIEvent& event);
-    virtual void OnDeleteControls(wxCommandEvent& event);
+    void OnItemValueChanged(wxDataViewEvent& event) override;
+    void OnDeleteUI(wxUpdateUIEvent& event) override;
+    void OnDeleteControls(wxCommandEvent& event) override;
 
     void DoPopulate();
 };

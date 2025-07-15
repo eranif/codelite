@@ -21,7 +21,7 @@ protected:
 
 public:
     EventsTableListView(wxWindow* parent);
-    virtual ~EventsTableListView();
+    ~EventsTableListView() override;
 
     void Construct(EventsEditorPane* dlg, wxcWidget* control, const EventsDatabase& events);
     void Save();

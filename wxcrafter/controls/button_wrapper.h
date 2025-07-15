@@ -6,20 +6,20 @@
 class ButtonWrapper : public wxcWidget
 {
 protected:
-    virtual void GetIncludeFile(wxArrayString& headers) const;
+    void GetIncludeFile(wxArrayString& headers) const override;
 
 public:
     ButtonWrapper();
-    virtual ~ButtonWrapper();
+    ~ButtonWrapper() override = default;
 
 public:
-    virtual wxString CppCtorCode() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxString GetWxClassName() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
-    virtual wxcWidget* Clone() const { return new ButtonWrapper(); }
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+    wxcWidget* Clone() const override { return new ButtonWrapper(); }
 
     void SetLabel(const wxString& label) { DoSetPropertyStringValue(PROP_LABEL, label); }
 

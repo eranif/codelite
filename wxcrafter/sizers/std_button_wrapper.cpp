@@ -28,8 +28,6 @@ StdButtonWrapper::StdButtonWrapper()
     SetName(GenerateName());
 }
 
-StdButtonWrapper::~StdButtonWrapper() {}
-
 wxcWidget* StdButtonWrapper::Clone() const { return new StdButtonWrapper(); }
 
 wxString StdButtonWrapper::CppCtorCode() const

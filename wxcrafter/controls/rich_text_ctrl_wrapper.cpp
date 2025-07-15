@@ -64,8 +64,6 @@ RichTextCtrlWrapper::RichTextCtrlWrapper()
     SetName(GenerateName());
 }
 
-RichTextCtrlWrapper::~RichTextCtrlWrapper() {}
-
 wxcWidget* RichTextCtrlWrapper::Clone() const { return new RichTextCtrlWrapper(); }
 
 wxString RichTextCtrlWrapper::CppCtorCode() const

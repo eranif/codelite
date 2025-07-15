@@ -19,8 +19,6 @@ NotebookWrapper::NotebookWrapper()
     SetName(GenerateName());
 }
 
-NotebookWrapper::~NotebookWrapper() {}
-
 wxcWidget* NotebookWrapper::Clone() const { return new NotebookWrapper(); }
 
 void NotebookWrapper::GetIncludeFile(wxArrayString& headers) const { headers.Add(wxT("#include <wx/notebook.h>")); }

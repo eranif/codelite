@@ -127,8 +127,6 @@ WinIdProperty::WinIdProperty()
     }
 }
 
-WinIdProperty::~WinIdProperty() {}
-
 JSONElement WinIdProperty::Serialize() const
 {
     JSONElement json = JSONElement::createObject();

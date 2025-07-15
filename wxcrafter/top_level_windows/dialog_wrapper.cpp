@@ -38,8 +38,6 @@ DialogWrapper::DialogWrapper()
     SetName(GenerateName());
 }
 
-DialogWrapper::~DialogWrapper() {}
-
 wxString DialogWrapper::DesignerXRC(bool forPreviewDialog) const
 {
     wxUnusedVar(forPreviewDialog);

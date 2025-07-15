@@ -6,8 +6,6 @@ PropertyBase::PropertyBase(const wxString& tooltip)
 {
 }
 
-PropertyBase::~PropertyBase() {}
-
 void PropertyBase::DoBaseSerialize(JSONElement& json) const { json.addProperty(wxT("m_label"), m_label); }
 
 void PropertyBase::DoBaseUnSerialize(const JSONElement& json) { m_label = json.namedObject(wxT("m_label")).toString(); }

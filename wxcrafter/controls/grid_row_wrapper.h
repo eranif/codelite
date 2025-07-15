@@ -7,22 +7,22 @@
 class GridRowWrapper : public wxcWidget
 {
 public:
-    typedef std::vector<GridRowWrapper*> Vector_t;
+    using Vector_t = std::vector<GridRowWrapper*>;
 
 public:
     GridRowWrapper();
-    virtual ~GridRowWrapper();
+    ~GridRowWrapper() override = default;
 
 public:
     wxString Code(int rowIndex) const;
 
 public:
     // wxcWidget
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 #endif // GRIDROWWRAPPER_H

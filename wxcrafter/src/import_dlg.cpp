@@ -32,8 +32,6 @@ ImportDlg::ImportDlg(IPD_ProjectType type, wxWindow* parent, const wxString& sou
     WindowAttrManager::Load(this);
 }
 
-ImportDlg::~ImportDlg() {}
-
 void ImportDlg::OnBrowse(wxCommandEvent& event)
 {
     wxUnusedVar(event);

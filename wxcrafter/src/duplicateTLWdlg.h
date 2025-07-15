@@ -6,14 +6,14 @@ class DuplicateTLWDlg : public DuplicateTLWBaseDlg
 {
 public:
     DuplicateTLWDlg(wxWindow* parent);
-    virtual ~DuplicateTLWDlg();
+    ~DuplicateTLWDlg() override = default;
 
     wxString GetBaseName() const { return m_textBasename->GetValue(); }
     wxString GetInheritedName() const { return m_textInheritedName->GetValue(); }
     wxString GetFilename() const { return m_textFilename->GetValue(); }
 
 protected:
-    virtual void OnFilenameFocus(wxFocusEvent& event);
-    virtual void OnInheritedNameFocus(wxFocusEvent& event);
+    void OnFilenameFocus(wxFocusEvent& event) override;
+    void OnInheritedNameFocus(wxFocusEvent& event) override;
 };
 #endif // DUPLICATETLWDLG_H

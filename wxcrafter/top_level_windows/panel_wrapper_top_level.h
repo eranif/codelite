@@ -7,24 +7,24 @@
 class PanelWrapperTopLevel : public TopLevelWinWrapper
 {
 protected:
-    virtual wxString BaseCtorDecl() const;
-    virtual wxString BaseCtorImplPrefix() const;
+    wxString BaseCtorDecl() const override;
+    wxString BaseCtorImplPrefix() const override;
 
 public:
     PanelWrapperTopLevel();
-    virtual ~PanelWrapperTopLevel();
+    ~PanelWrapperTopLevel() override = default;
 
 public:
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
-    virtual wxString CppCtorCode() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxString DesignerXRC(bool forPreviewDialog) const;
-    virtual bool IsTopWindow() const;
-    virtual wxcWidget* Clone() const { return new PanelWrapperTopLevel(); }
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxString DesignerXRC(bool forPreviewDialog) const override;
+    bool IsTopWindow() const override;
+    wxcWidget* Clone() const override { return new PanelWrapperTopLevel(); }
 };
 
 #endif // TOP_PANELWRAPPER_H

@@ -19,8 +19,6 @@ SpacerWrapper::SpacerWrapper()
     SetName(GenerateName());
 }
 
-SpacerWrapper::~SpacerWrapper() {}
-
 wxcWidget* SpacerWrapper::Clone() const { return new SpacerWrapper(); }
 
 wxString SpacerWrapper::CppCtorCode() const

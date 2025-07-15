@@ -18,18 +18,18 @@ public:
 
 public:
     WinIdProperty();
-    virtual ~WinIdProperty();
+    ~WinIdProperty() override = default;
 
-    virtual wxString GetValue() const { return m_winid; }
-    virtual void SetValue(const wxString& value) { m_winid = value; }
+    wxString GetValue() const override { return m_winid; }
+    void SetValue(const wxString& value) override { m_winid = value; }
 
     // Serialization methods
-    virtual JSONElement Serialize() const;
-    virtual void UnSerialize(const JSONElement& json);
+    JSONElement Serialize() const override;
+    void UnSerialize(const JSONElement& json) override;
 
-    virtual PropertyeType GetType() { return PT_COMBOX; }
+    PropertyeType GetType() override { return PT_COMBOX; }
 
-    virtual wxArrayString GetOptions() const { return s_options; }
+    wxArrayString GetOptions() const override { return s_options; }
 };
 
 #endif // COMBOXPROPERTY_H

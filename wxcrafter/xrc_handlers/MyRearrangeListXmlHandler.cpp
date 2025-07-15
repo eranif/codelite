@@ -19,8 +19,6 @@ MyRearrangeListXmlHandler::MyRearrangeListXmlHandler()
     AddWindowStyles();
 }
 
-MyRearrangeListXmlHandler::~MyRearrangeListXmlHandler() {}
-
 bool MyRearrangeListXmlHandler::CanHandle(wxXmlNode* node)
 {
     return (IsOfClass(node, wxT("wxRearrangeList")) || (m_insideBox && node->GetName() == wxT("item")));

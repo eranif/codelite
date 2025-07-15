@@ -11,8 +11,6 @@ DefineCustomControlWizard::DefineCustomControlWizard(wxWindow* parent)
 {
 }
 
-DefineCustomControlWizard::~DefineCustomControlWizard() {}
-
 void DefineCustomControlWizard::OnPageChanging(wxWizardEvent& event)
 {
     if(event.GetDirection()) {

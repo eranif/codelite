@@ -13,8 +13,9 @@ private:
 
 public:
     MyRearrangeListXmlHandler();
-    virtual ~MyRearrangeListXmlHandler();
-    wxObject* DoCreateResource();
-    bool CanHandle(wxXmlNode* node);
+    ~MyRearrangeListXmlHandler() override = default;
+
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 };
 #endif // MYREARRANGELISTXMLHANDLER_H

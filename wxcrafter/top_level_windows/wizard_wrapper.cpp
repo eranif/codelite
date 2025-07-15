@@ -57,8 +57,6 @@ WizardWrapper::WizardWrapper()
     SetName(GenerateName());
 }
 
-WizardWrapper::~WizardWrapper() {}
-
 wxString WizardWrapper::BaseCtorDecl() const
 {
     wxString code;

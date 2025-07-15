@@ -11,8 +11,6 @@ wxcSettings::wxcSettings()
     Load();
 }
 
-wxcSettings::~wxcSettings() {}
-
 wxcSettings& wxcSettings::Get()
 {
     static wxcSettings _settings;
@@ -142,8 +140,6 @@ CustomControlTemplate::CustomControlTemplate()
     : m_controlId(wxNOT_FOUND)
 {
 }
-
-CustomControlTemplate::~CustomControlTemplate() {}
 
 void CustomControlTemplate::FromJSON(const JSONElement& json)
 {

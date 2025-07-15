@@ -7,30 +7,31 @@
 class FrameWrapper : public TopLevelWinWrapper
 {
 protected:
-    void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString BaseCtorImplPrefix() const;
-    virtual wxString BaseCtorDecl() const;
-    virtual wxString CppCtorCode() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString BaseCtorImplPrefix() const override;
+    wxString BaseCtorDecl() const override;
+    wxString CppCtorCode() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
 
 public:
-    virtual wxString GetDerivedClassCtorSignature() const;
-    virtual wxString GetParentCtorInitArgumentList() const;
-    virtual bool HasIcon() const;
     FrameWrapper();
-    virtual ~FrameWrapper();
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
+    ~FrameWrapper() override = default;
+
+    wxString GetDerivedClassCtorSignature() const override;
+    wxString GetParentCtorInitArgumentList() const override;
+    bool HasIcon() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
     /**
      * @brief similar to ToXRC, however
      * we replace the topwindow with a wxPanel
      */
-    virtual wxString DesignerXRC(bool forPreviewDialog) const;
+    wxString DesignerXRC(bool forPreviewDialog) const override;
 
-    wxcWidget* Clone() const { return new FrameWrapper(); }
+    wxcWidget* Clone() const override { return new FrameWrapper(); }
 
-    virtual wxString GetWxClassName() const;
+    wxString GetWxClassName() const override;
 };
 
 #endif // FRAMEWRAPPER_H

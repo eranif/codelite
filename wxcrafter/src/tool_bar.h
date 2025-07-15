@@ -10,8 +10,8 @@ class ToolBar : public wxPanel
     wxToolBar* m_wxtb;
 
 public:
-    ToolBar(wxWindow* parent);
-    virtual ~ToolBar();
+    explicit ToolBar(wxWindow* parent);
+    ~ToolBar() override = default;
 
     void AddToolbar(wxToolBar* tb);
     void OnClick(wxCommandEvent& e);

@@ -24,8 +24,6 @@ FlexGridSizerWrapper::FlexGridSizerWrapper()
     SetName(GenerateName());
 }
 
-FlexGridSizerWrapper::~FlexGridSizerWrapper() {}
-
 wxString FlexGridSizerWrapper::CppCtorCode() const
 {
     wxString code;

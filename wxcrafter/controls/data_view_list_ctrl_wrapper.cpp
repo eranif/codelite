@@ -62,8 +62,6 @@ DataViewListCtrlWrapper::DataViewListCtrlWrapper()
     SetName(GenerateName());
 }
 
-DataViewListCtrlWrapper::~DataViewListCtrlWrapper() {}
-
 wxcWidget* DataViewListCtrlWrapper::Clone() const { return new DataViewListCtrlWrapper(); }
 
 wxString DataViewListCtrlWrapper::CppCtorCode() const

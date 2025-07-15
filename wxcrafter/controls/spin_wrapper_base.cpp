@@ -7,8 +7,6 @@ SpinWrapperBase::SpinWrapperBase(int ID)
 {
 }
 
-SpinWrapperBase::~SpinWrapperBase() {}
-
 void SpinWrapperBase::EnsureSaneValues(wxString& min, wxString& max, int& imin, int& imax, int& val) const
 {
     // Protect against empty range fields, which would otherwise generate code like spin->SetRange(0, );

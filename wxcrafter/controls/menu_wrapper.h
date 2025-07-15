@@ -8,13 +8,13 @@ class MenuWrapper : public wxcWidget
 {
 public:
     MenuWrapper();
-    virtual ~MenuWrapper();
+    ~MenuWrapper() override = default;
 
-    wxcWidget* Clone() const;
-    wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 class SubMenuWrapper : public MenuWrapper
@@ -26,8 +26,8 @@ public:
         SetType(ID_WXSUBMENU);
     }
 
-    virtual ~SubMenuWrapper() {}
-    wxcWidget* Clone() const { return new SubMenuWrapper(); }
+    ~SubMenuWrapper() override = default;
+    wxcWidget* Clone() const override { return new SubMenuWrapper(); }
 };
 
 #endif // MENUWRAPPER_H

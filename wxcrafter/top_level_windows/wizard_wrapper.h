@@ -6,24 +6,24 @@
 class WizardWrapper : public TopLevelWinWrapper
 {
 protected:
-    virtual wxString DoGenerateClassMember() const;
+    wxString DoGenerateClassMember() const override;
 
 public:
-    virtual bool HasIcon() const;
     WizardWrapper();
-    virtual ~WizardWrapper();
+    ~WizardWrapper() override = default;
 
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    wxString BaseCtorDecl() const;
-    wxString BaseCtorImplPrefix() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    wxString DesignerXRC(bool forPreviewDialog) const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString CppCtorCode() const;
-    wxcWidget* Clone() const { return new WizardWrapper(); }
+    bool HasIcon() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxString BaseCtorDecl() const override;
+    wxString BaseCtorImplPrefix() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    wxString DesignerXRC(bool forPreviewDialog) const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString CppCtorCode() const override;
+    wxcWidget* Clone() const override { return new WizardWrapper(); }
 
-    virtual wxString GetWxClassName() const { return wxT("wxWizard"); }
+    wxString GetWxClassName() const override { return wxT("wxWizard"); }
 };
 
 #endif // WIZARDWRAPPER_H

@@ -8,17 +8,17 @@ class StdDialogButtonSizerWrapper : public wxEvtHandler, public wxcWidget
 {
 public:
     StdDialogButtonSizerWrapper();
-    virtual ~StdDialogButtonSizerWrapper();
+    ~StdDialogButtonSizerWrapper() override = default;
 
 public:
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    void ToXRC(wxString& text, XRC_TYPE type) const;
-    void LoadPropertiesFromwxFB(const wxXmlNode* node);
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
 
-    bool IsValidParent() const { return false; }
+    bool IsValidParent() const override { return false; }
 };
 
 #endif // STDDIALOGBUTTONSIZERWRAPPER_H

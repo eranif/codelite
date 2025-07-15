@@ -16,7 +16,7 @@ protected:
 
 public:
     ResourceLoader(const wxString& skin = wxT("wxgui"));
-    virtual ~ResourceLoader();
+    virtual ~ResourceLoader() = default;
 
     const wxBitmap& Bitmap(const wxString& name) const;
     wxString File(const wxString& name) const;

@@ -43,8 +43,6 @@ BannerWindowWrapper::BannerWindowWrapper()
     SetName(GenerateName());
 }
 
-BannerWindowWrapper::~BannerWindowWrapper() {}
-
 wxcWidget* BannerWindowWrapper::Clone() const { return new BannerWindowWrapper(); }
 
 wxString BannerWindowWrapper::CppCtorCode() const

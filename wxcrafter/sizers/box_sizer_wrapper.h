@@ -9,16 +9,17 @@ class BoxSizerWrapper : public SizerWrapperBase
 
 public:
     BoxSizerWrapper();
-    virtual ~BoxSizerWrapper();
+    ~BoxSizerWrapper() override = default;
 
 public:
-    virtual wxString GetWxClassName() const;
-    virtual wxString CppCtorCode() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxcWidget* Clone() const;
+    wxString GetWxClassName() const override;
+    wxString CppCtorCode() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxcWidget* Clone() const override;
+
     void SetOrientation(const wxString& orient);
 };
 

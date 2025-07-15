@@ -19,8 +19,6 @@ NotebookBaseWrapper::NotebookBaseWrapper(int id)
     PREPEND_STYLE_FALSE(wxBK_BOTTOM);
 }
 
-NotebookBaseWrapper::~NotebookBaseWrapper() {}
-
 wxString NotebookBaseWrapper::CppCtorCode() const
 {
     wxString code;

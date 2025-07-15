@@ -9,20 +9,20 @@ class GridWrapper : public wxcWidget
 {
 public:
     GridWrapper();
-    virtual ~GridWrapper();
+    ~GridWrapper() override = default;
 
     // Since version 1.2 we want to change the columns/lines management
-    virtual void UnSerialize(const JSONElement& json);
+    void UnSerialize(const JSONElement& json) override;
 
 protected:
     void GetRowsCols(GridRowWrapper::Vector_t& rows, GridColumnWrapper::Vector_t& cols) const;
 
 public:
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 #endif // GRIDWRAPPER_H

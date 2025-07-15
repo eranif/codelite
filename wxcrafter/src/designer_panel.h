@@ -61,7 +61,7 @@ public:
 public:
     DesignerPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& position = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize, long style = 0);
-    virtual ~DesignerPanel();
+    ~DesignerPanel() override;
 
     DECLARE_EVENT_TABLE()
     void OnUpdatePreview(wxCommandEvent& e);

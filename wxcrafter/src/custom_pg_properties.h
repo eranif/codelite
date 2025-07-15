@@ -28,14 +28,10 @@
 class EnterStringsDlgAdapter : public wxPGEditorDialogAdapter
 {
 public:
-    EnterStringsDlgAdapter()
-        : wxPGEditorDialogAdapter()
-    {
-    }
+    EnterStringsDlgAdapter() = default;
+    ~EnterStringsDlgAdapter() override = default;
 
-    virtual ~EnterStringsDlgAdapter() {}
-
-    virtual bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property)
+    bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
         wxUnusedVar(propGrid);
         wxString delim = ";";
@@ -94,14 +90,10 @@ public:
 class FontPickerDlgAdapter : public wxPGEditorDialogAdapter
 {
 public:
-    FontPickerDlgAdapter()
-        : wxPGEditorDialogAdapter()
-    {
-    }
+    FontPickerDlgAdapter() = default;
+    ~FontPickerDlgAdapter() override = default;
 
-    virtual ~FontPickerDlgAdapter() {}
-
-    virtual bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property)
+    bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
         FontPickerDlg dlg(wxCrafter::TopFrame(), property->GetValueAsString());
         if(dlg.ShowModal() == wxID_OK) {
@@ -120,14 +112,10 @@ public:
 class BitmapPickerDlgAdapter : public wxPGEditorDialogAdapter
 {
 public:
-    BitmapPickerDlgAdapter()
-        : wxPGEditorDialogAdapter()
-    {
-    }
+    BitmapPickerDlgAdapter() = default;
+    ~BitmapPickerDlgAdapter() override = default;
 
-    virtual ~BitmapPickerDlgAdapter() {}
-
-    virtual bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property)
+    bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
         BitmapSelectorDlg dlg(wxCrafter::TopFrame(), property->GetValueAsString());
         if(dlg.ShowModal() == wxID_OK) {
@@ -149,13 +137,13 @@ public:
     {
     }
 
-    virtual ~wxPG_MultiStringProperty() {}
+    ~wxPG_MultiStringProperty() override = default;
 
     // Set editor to have button
-    virtual const wxPGEditor* DoGetEditorClass() const { return wxPGEditor_TextCtrlAndButton; }
+    const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    virtual wxPGEditorDialogAdapter* GetEditorDialog() const { return new EnterStringsDlgAdapter(); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new EnterStringsDlgAdapter(); }
 };
 
 class wxPG_FontProperty : public wxStringProperty
@@ -168,13 +156,13 @@ public:
     {
     }
 
-    virtual ~wxPG_FontProperty() {}
+    ~wxPG_FontProperty() override = default;
 
     // Set editor to have button
-    virtual const wxPGEditor* DoGetEditorClass() const { return wxPGEditor_TextCtrlAndButton; }
+    const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    virtual wxPGEditorDialogAdapter* GetEditorDialog() const { return new FontPickerDlgAdapter(); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new FontPickerDlgAdapter(); }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -191,13 +179,13 @@ public:
     {
     }
 
-    virtual ~wxPG_BitmapProperty() {}
+    ~wxPG_BitmapProperty() override = default;
 
     // Set editor to have button
-    virtual const wxPGEditor* DoGetEditorClass() const { return wxPGEditor_TextCtrlAndButton; }
+    const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    virtual wxPGEditorDialogAdapter* GetEditorDialog() const { return new BitmapPickerDlgAdapter(); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new BitmapPickerDlgAdapter(); }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -216,9 +204,9 @@ public:
     {
     }
 
-    virtual ~FilePickerDlgAdapter() {}
+    ~FilePickerDlgAdapter() override = default;
 
-    virtual bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property)
+    bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
 
         wxString wildcard =
@@ -251,9 +239,9 @@ public:
     {
     }
 
-    virtual ~DirPickerDlgAdapter() {}
+    ~DirPickerDlgAdapter() override = default;
 
-    virtual bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property)
+    bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
         wxString newPath = ::wxDirSelector("Select a folder", wxEmptyString, wxDD_DEFAULT_STYLE, wxDefaultPosition,
                                            wxCrafter::TopFrame());
@@ -282,13 +270,13 @@ public:
     {
     }
 
-    virtual ~wxPG_DirPickerProperty() {}
+    ~wxPG_DirPickerProperty() override = default;
 
     // Set editor to have button
-    virtual const wxPGEditor* DoGetEditorClass() const { return wxPGEditor_TextCtrlAndButton; }
+    const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    virtual wxPGEditorDialogAdapter* GetEditorDialog() const { return new DirPickerDlgAdapter(m_projectPath); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new DirPickerDlgAdapter(m_projectPath); }
 };
 
 class wxPG_FilePickerProperty : public wxStringProperty
@@ -304,13 +292,13 @@ public:
     {
     }
 
-    virtual ~wxPG_FilePickerProperty() {}
+    ~wxPG_FilePickerProperty() override = default;
 
     // Set editor to have button
-    virtual const wxPGEditor* DoGetEditorClass() const { return wxPGEditor_TextCtrlAndButton; }
+    const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    virtual wxPGEditorDialogAdapter* GetEditorDialog() const { return new FilePickerDlgAdapter(m_projectPath); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new FilePickerDlgAdapter(m_projectPath); }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -329,9 +317,9 @@ public:
     {
     }
 
-    virtual ~VDPickerDlgAdapter() {}
+    ~VDPickerDlgAdapter() override = default;
 
-    virtual bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property)
+    bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
 
         VirtualDirectorySelectorDlg selector(wxCrafter::TopFrame(), clCxxWorkspaceST::Get(), m_vdPath);
@@ -352,13 +340,13 @@ public:
     {
     }
 
-    virtual ~wxPG_VDPickerProperty() {}
+    ~wxPG_VDPickerProperty() override = default;
 
     // Set editor to have button
-    virtual const wxPGEditor* DoGetEditorClass() const { return wxPGEditor_TextCtrlAndButton; }
+    const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    virtual wxPGEditorDialogAdapter* GetEditorDialog() const { return new VDPickerDlgAdapter(GetValueAsString()); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new VDPickerDlgAdapter(GetValueAsString()); }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -377,9 +365,9 @@ public:
     {
     }
 
-    virtual ~BmpTextDialogAdapter() {}
+    ~BmpTextDialogAdapter() override = default;
 
-    virtual bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property)
+    bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
         BmpTextSelectorDlg selector(wxCrafter::TopFrame(), m_initialValue);
         if(selector.ShowModal() == wxID_OK) {
@@ -399,13 +387,13 @@ public:
     {
     }
 
-    virtual ~wxPG_BmpTextProperty() {}
+    ~wxPG_BmpTextProperty() override = default;
 
     // Set editor to have button
-    virtual const wxPGEditor* DoGetEditorClass() const { return wxPGEditor_TextCtrlAndButton; }
+    const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    virtual wxPGEditorDialogAdapter* GetEditorDialog() const { return new BmpTextDialogAdapter(GetValueAsString()); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new BmpTextDialogAdapter(GetValueAsString()); }
 };
 
 class wxPG_Colour : public wxSystemColourProperty
@@ -416,20 +404,22 @@ public:
         : wxSystemColourProperty(label, name, value)
     {
     }
-    virtual ~wxPG_Colour() {}
-    virtual bool OnEvent(wxPropertyGrid* propgrid, wxWindow* primary, wxEvent& event);
+    ~wxPG_Colour() override = default;
+    bool OnEvent(wxPropertyGrid* propgrid, wxWindow* primary, wxEvent& event) override;
 };
 
 //////////////////////////////////////////////////////////////////
 class wxcPGChoiceAndButtonEditor : public wxPGChoiceEditor
 {
 public:
-    wxcPGChoiceAndButtonEditor() {}
-    virtual ~wxcPGChoiceAndButtonEditor();
-    virtual wxString GetName() const;
+    wxcPGChoiceAndButtonEditor() = default;
+    ~wxcPGChoiceAndButtonEditor() override = default;
+    wxString GetName() const override;
 
-    virtual wxPGWindowList CreateControls(wxPropertyGrid* propgrid, wxPGProperty* property, const wxPoint& pos,
-                                          const wxSize& size) const;
+    wxPGWindowList CreateControls(wxPropertyGrid* propgrid,
+                                  wxPGProperty* property,
+                                  const wxPoint& pos,
+                                  const wxSize& size) const override;
 };
 
 #endif // CUSTOM_PG_PROPS_H

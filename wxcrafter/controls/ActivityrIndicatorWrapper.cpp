@@ -12,8 +12,6 @@ ActivityrIndicatorWrapper::ActivityrIndicatorWrapper()
     SetName(GenerateName());
 }
 
-ActivityrIndicatorWrapper::~ActivityrIndicatorWrapper() {}
-
 void ActivityrIndicatorWrapper::GetIncludeFile(wxArrayString& headers) const
 {
     headers.Add("#include <wx/activityindicator.h>");

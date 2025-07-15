@@ -1,9 +1,5 @@
 #include "wxc_notebook_code_helper.h"
 
-wxcNotebookCodeHelper::wxcNotebookCodeHelper() {}
-
-wxcNotebookCodeHelper::~wxcNotebookCodeHelper() {}
-
 wxcNotebookCodeHelper& wxcNotebookCodeHelper::Get()
 {
     static wxcNotebookCodeHelper helper;

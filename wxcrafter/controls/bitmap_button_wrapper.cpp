@@ -34,8 +34,6 @@ BitmapButtonWrapper::BitmapButtonWrapper()
     SetName(GenerateName());
 }
 
-BitmapButtonWrapper::~BitmapButtonWrapper() {}
-
 wxString BitmapButtonWrapper::GetWxClassName() const { return wxT("wxBitmapButton"); }
 
 wxString BitmapButtonWrapper::CppCtorCode() const

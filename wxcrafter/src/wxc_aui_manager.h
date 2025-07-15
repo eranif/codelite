@@ -10,8 +10,8 @@ protected:
     std::map<wxWindow*, wxAuiManager*> m_auiMgrMap;
 
 private:
-    wxcAuiManager();
-    virtual ~wxcAuiManager();
+    wxcAuiManager() = default;
+    virtual ~wxcAuiManager() = default;
 
 public:
     static wxcAuiManager& Get();

@@ -15,8 +15,6 @@ StaticLineWrapper::StaticLineWrapper()
     SetName(GenerateName());
 }
 
-StaticLineWrapper::~StaticLineWrapper() {}
-
 wxcWidget* StaticLineWrapper::Clone() const { return new StaticLineWrapper(); }
 
 wxString StaticLineWrapper::CppCtorCode() const

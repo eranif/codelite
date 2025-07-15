@@ -21,8 +21,6 @@ WizardPageWrapper::WizardPageWrapper()
     SetName(GenerateName());
 }
 
-WizardPageWrapper::~WizardPageWrapper() {}
-
 wxcWidget* WizardPageWrapper::Clone() const { return new WizardPageWrapper(); }
 
 wxString WizardPageWrapper::CppCtorCode() const

@@ -10,18 +10,18 @@ class BmpTextSelectorDlg : public BmpTextSelectorDlgBase
 {
 public:
     BmpTextSelectorDlg(wxWindow* parent, const wxString& initialValue);
-    virtual ~BmpTextSelectorDlg();
+    ~BmpTextSelectorDlg() override = default;
 
     static BmpTextVec_t FromString(const wxString& text);
     static wxString ToString(const BmpTextVec_t& vec);
     wxString GetValue();
 
 protected:
-    virtual void OnItemActivated(wxDataViewEvent& event);
-    virtual void OnDeleteUI(wxUpdateUIEvent& event);
-    virtual void OnEditUI(wxUpdateUIEvent& event);
-    virtual void OnDelete(wxCommandEvent& event);
-    virtual void OnEdit(wxCommandEvent& event);
-    virtual void OnNew(wxCommandEvent& event);
+    void OnItemActivated(wxDataViewEvent& event) override;
+    void OnDeleteUI(wxUpdateUIEvent& event) override;
+    void OnEditUI(wxUpdateUIEvent& event) override;
+    void OnDelete(wxCommandEvent& event) override;
+    void OnEdit(wxCommandEvent& event) override;
+    void OnNew(wxCommandEvent& event) override;
 };
 #endif // BMPTEXTSELECTORDLG_H

@@ -16,8 +16,6 @@ StaticBitmapWrapper::StaticBitmapWrapper()
     SetName(GenerateName());
 }
 
-StaticBitmapWrapper::~StaticBitmapWrapper() {}
-
 wxcWidget* StaticBitmapWrapper::Clone() const { return new StaticBitmapWrapper(); }
 
 void StaticBitmapWrapper::GetIncludeFile(wxArrayString& headers) const { headers.Add(wxT("#include <wx/statbmp.h>")); }

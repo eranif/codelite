@@ -5,8 +5,8 @@
 class MediaCtrl : public MediaCtrlBase
 {
 public:
-    MediaCtrl(wxWindow* parent);
-    virtual ~MediaCtrl();
+    explicit MediaCtrl(wxWindow* parent);
+    ~MediaCtrl() override = default;
 
     wxStaticBitmap* Bitmap() const { return m_staticBitmap667; }
 };

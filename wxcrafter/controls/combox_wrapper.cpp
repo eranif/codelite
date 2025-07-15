@@ -37,8 +37,6 @@ ComboxWrapper::ComboxWrapper()
     SetName(GenerateName());
 }
 
-ComboxWrapper::~ComboxWrapper() {}
-
 wxcWidget* ComboxWrapper::Clone() const { return new ComboxWrapper(); }
 
 void ComboxWrapper::GetIncludeFile(wxArrayString& headers) const

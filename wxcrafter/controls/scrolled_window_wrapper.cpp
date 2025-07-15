@@ -36,8 +36,6 @@ ScrolledWindowWrapper::ScrolledWindowWrapper()
     SetName(GenerateName());
 }
 
-ScrolledWindowWrapper::~ScrolledWindowWrapper() {}
-
 wxcWidget* ScrolledWindowWrapper::Clone() const { return new ScrolledWindowWrapper(); }
 
 wxString ScrolledWindowWrapper::CppCtorCode() const

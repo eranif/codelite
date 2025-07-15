@@ -6,16 +6,17 @@
 class PropertyGridWrapper : public wxcWidget
 {
 public:
-    virtual bool IsValidParent() const;
-    virtual bool IsWxWindow() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual wxString DoGenerateCppCtorCode_End() const;
     PropertyGridWrapper();
-    virtual ~PropertyGridWrapper();
+    ~PropertyGridWrapper() override = default;
+
+    bool IsValidParent() const override;
+    bool IsWxWindow() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    wxString DoGenerateCppCtorCode_End() const override;
 };
 
 #endif // PROPERTYGRIDWRAPPER_H

@@ -19,8 +19,6 @@ RibbonPageWrapper::RibbonPageWrapper()
     SetName(GenerateName());
 }
 
-RibbonPageWrapper::~RibbonPageWrapper() {}
-
 wxcWidget* RibbonPageWrapper::Clone() const { return new RibbonPageWrapper(); }
 
 wxString RibbonPageWrapper::CppCtorCode() const

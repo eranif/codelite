@@ -26,8 +26,6 @@ PanelWrapperTopLevel::PanelWrapperTopLevel()
     SetName(GenerateName());
 }
 
-PanelWrapperTopLevel::~PanelWrapperTopLevel() {}
-
 void PanelWrapperTopLevel::GetIncludeFile(wxArrayString& headers) const
 {
     headers.Add(wxT("#include <wx/panel.h>"));

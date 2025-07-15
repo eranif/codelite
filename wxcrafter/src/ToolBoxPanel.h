@@ -15,7 +15,7 @@ protected:
 
 public:
     ToolBoxPanel(wxWindow* parent, GUICraftMainPanel* mainView);
-    virtual ~ToolBoxPanel();
-    void OnControlUI(wxUpdateUIEvent& event);
+    ~ToolBoxPanel() override = default;
+    void OnControlUI(wxUpdateUIEvent& event) override;
 };
 #endif // TOOLBOXPANEL_H

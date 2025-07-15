@@ -26,8 +26,6 @@ SpinButtonWrapper::SpinButtonWrapper()
     SetName(GenerateName());
 }
 
-SpinButtonWrapper::~SpinButtonWrapper() {}
-
 wxcWidget* SpinButtonWrapper::Clone() const { return new SpinButtonWrapper(); }
 
 wxString SpinButtonWrapper::CppCtorCode() const

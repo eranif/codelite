@@ -27,8 +27,6 @@ ColourPickerWrapper::ColourPickerWrapper()
     SetName(GenerateName());
 }
 
-ColourPickerWrapper::~ColourPickerWrapper() {}
-
 wxcWidget* ColourPickerWrapper::Clone() const { return new ColourPickerWrapper(); }
 
 wxString ColourPickerWrapper::CppCtorCode() const

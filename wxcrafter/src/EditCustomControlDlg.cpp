@@ -27,8 +27,6 @@ EditCustomControlDlg::EditCustomControlDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-EditCustomControlDlg::~EditCustomControlDlg() {}
-
 void EditCustomControlDlg::OnSelectControl(wxCommandEvent& event)
 {
     if(m_isModified) { OnSave(event); }

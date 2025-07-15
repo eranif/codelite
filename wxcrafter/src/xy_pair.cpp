@@ -28,8 +28,6 @@ XYPair::XYPair(int x, int y)
 {
 }
 
-XYPair::~XYPair() {}
-
 wxString XYPair::ToString(bool withBraces) const
 {
     wxString str;

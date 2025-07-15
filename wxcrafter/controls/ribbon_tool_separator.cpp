@@ -18,8 +18,6 @@ RibbonToolSeparator::RibbonToolSeparator()
     SetName(GenerateName());
 }
 
-RibbonToolSeparator::~RibbonToolSeparator() {}
-
 wxcWidget* RibbonToolSeparator::Clone() const { return new RibbonToolSeparator(); }
 
 wxString RibbonToolSeparator::CppCtorCode() const

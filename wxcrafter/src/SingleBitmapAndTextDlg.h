@@ -6,10 +6,10 @@ class SingleBitmapAndTextDlg : public SingleBitmapAndTextDlgBase
 {
 public:
     SingleBitmapAndTextDlg(wxWindow* parent, const wxString& bmp, const wxString& text);
-    virtual ~SingleBitmapAndTextDlg();
+    ~SingleBitmapAndTextDlg() override = default;
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event);
-    virtual void OnSelectBitmap(wxCommandEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event) override;
+    void OnSelectBitmap(wxCommandEvent& event) override;
 };
 #endif // SINGLEBITMAPANDTEXTDLG_H

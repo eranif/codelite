@@ -7,18 +7,18 @@ class DataViewTreeListCtrlWrapper : public wxcWidget
 {
 public:
     DataViewTreeListCtrlWrapper();
-    virtual ~DataViewTreeListCtrlWrapper();
+    ~DataViewTreeListCtrlWrapper() override = default;
 
 protected:
-    virtual wxString DoGenerateClassMember() const;
+    wxString DoGenerateClassMember() const override;
 
 public:
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString GetWxClassName() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual void GenerateAdditionalFiles(wxStringMap_t& extraFile) const;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    void GenerateAdditionalFiles(wxStringMap_t& extraFile) const override;
     wxString AssociateModelCode() const;
     wxString GetModelName() const;
 };

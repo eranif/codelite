@@ -6,7 +6,7 @@ class NewCustomEventDlg : public NewCustomEventBaseDlg
 {
 public:
     NewCustomEventDlg(wxWindow* parent);
-    virtual ~NewCustomEventDlg();
+    ~NewCustomEventDlg() override = default;
 
     wxString GetEventClass() const { return m_textCtrlEventClass->GetValue().Trim(); }
 

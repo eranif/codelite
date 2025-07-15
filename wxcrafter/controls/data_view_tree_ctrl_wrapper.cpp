@@ -63,8 +63,6 @@ DataViewTreeCtrlWrapper::DataViewTreeCtrlWrapper()
     SetName(GenerateName());
 }
 
-DataViewTreeCtrlWrapper::~DataViewTreeCtrlWrapper() {}
-
 wxcWidget* DataViewTreeCtrlWrapper::Clone() const { return new DataViewTreeCtrlWrapper(); }
 
 wxString DataViewTreeCtrlWrapper::CppCtorCode() const

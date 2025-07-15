@@ -12,7 +12,7 @@ class MyTreeCtrl : public wxDataViewTreeCtrl
 public:
     MyTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize, long style = wxDV_NO_HEADER | wxDV_SINGLE | wxDV_ROW_LINES);
-    virtual ~MyTreeCtrl();
+    ~MyTreeCtrl() override = default;
 
     wxDataViewItem AddRoot(const wxString& name, int imgId = -1, int expandImgId = -1);
     void SelectItem(const wxDataViewItem& item, bool select);

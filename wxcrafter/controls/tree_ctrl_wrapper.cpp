@@ -63,8 +63,6 @@ TreeCtrlWrapper::TreeCtrlWrapper()
     SetName(GenerateName());
 }
 
-TreeCtrlWrapper::~TreeCtrlWrapper() {}
-
 wxcWidget* TreeCtrlWrapper::Clone() const { return new TreeCtrlWrapper(); }
 
 wxString TreeCtrlWrapper::CppCtorCode() const

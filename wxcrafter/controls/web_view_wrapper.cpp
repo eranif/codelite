@@ -47,8 +47,6 @@ WebViewWrapper::WebViewWrapper()
     SetIfBlockCond("wxUSE_WEBVIEW");
 }
 
-WebViewWrapper::~WebViewWrapper() {}
-
 wxcWidget* WebViewWrapper::Clone() const { return new WebViewWrapper(); }
 
 wxString WebViewWrapper::CppCtorCode() const

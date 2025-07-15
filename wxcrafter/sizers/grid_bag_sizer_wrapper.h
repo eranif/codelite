@@ -11,21 +11,21 @@ protected:
 
 public:
     GridBagSizerWrapper();
-    virtual ~GridBagSizerWrapper();
-    virtual void DoLoadXRCProperties(const wxXmlNode* node); // Shared by LoadPropertiesFromXRC and FromwxSmith
+    ~GridBagSizerWrapper() override = default;
+    void DoLoadXRCProperties(const wxXmlNode* node); // Shared by LoadPropertiesFromXRC and FromwxSmith
 
 protected:
-    virtual wxString DoGenerateCppCtorCode_End() const;
+    wxString DoGenerateCppCtorCode_End() const override;
 
 public:
-    virtual void GetIncludeFile(wxArrayString& headers) const;
-    virtual wxString CppCtorCode() const;
-    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual wxString GetWxClassName() const;
-    virtual void LoadPropertiesFromXRC(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
-    virtual wxcWidget* Clone() const { return new GridBagSizerWrapper(); }
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
+    wxcWidget* Clone() const override { return new GridBagSizerWrapper(); }
 };
 
 #endif // SIZERWRAPPER_H

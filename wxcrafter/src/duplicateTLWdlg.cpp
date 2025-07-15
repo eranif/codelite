@@ -5,8 +5,6 @@ DuplicateTLWDlg::DuplicateTLWDlg(wxWindow* parent)
 {
 }
 
-DuplicateTLWDlg::~DuplicateTLWDlg() {}
-
 void DuplicateTLWDlg::OnInheritedNameFocus(wxFocusEvent& event)
 {
     event.Skip();

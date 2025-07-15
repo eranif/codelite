@@ -11,8 +11,6 @@ InfoBarWrapper::InfoBarWrapper()
     SetName(GenerateName());
 }
 
-InfoBarWrapper::~InfoBarWrapper() {}
-
 wxcWidget* InfoBarWrapper::Clone() const { return new InfoBarWrapper(); }
 
 wxString InfoBarWrapper::CppCtorCode() const

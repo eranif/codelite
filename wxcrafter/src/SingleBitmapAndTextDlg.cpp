@@ -12,8 +12,6 @@ SingleBitmapAndTextDlg::SingleBitmapAndTextDlg(wxWindow* parent, const wxString&
     WindowAttrManager::Load(this);
 }
 
-SingleBitmapAndTextDlg::~SingleBitmapAndTextDlg() {}
-
 void SingleBitmapAndTextDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlBmp->GetValue().IsEmpty() && !m_textCtrlText->GetValue().IsEmpty());

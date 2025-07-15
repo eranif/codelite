@@ -21,8 +21,6 @@ CustomControlWrapper::CustomControlWrapper()
     }
 }
 
-CustomControlWrapper::~CustomControlWrapper() {}
-
 wxcWidget* CustomControlWrapper::Clone() const { return new CustomControlWrapper(); }
 
 wxString CustomControlWrapper::CppCtorCode() const

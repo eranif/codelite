@@ -40,8 +40,6 @@ ColHeaderFlagsProperty::ColHeaderFlagsProperty()
 {
 }
 
-ColHeaderFlagsProperty::~ColHeaderFlagsProperty() {}
-
 PropertyeType ColHeaderFlagsProperty::GetType() { return PT_COL_HEADER_FLAGS; }
 
 wxString ColHeaderFlagsProperty::GetValue() const

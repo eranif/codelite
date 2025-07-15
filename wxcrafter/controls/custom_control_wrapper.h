@@ -13,24 +13,27 @@ protected:
 
 public:
     CustomControlWrapper();
-    virtual ~CustomControlWrapper();
+    ~CustomControlWrapper() override = default;
 
 protected:
-    void DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametypesToChange,
-                    const std::set<wxString>& existingNames, const wxString& chosenName = "",
-                    const wxString& chosenInheritedName = "", const wxString& chosenFilename = "");
+    void DoDeepCopy(const wxcWidget& rhs,
+                    enum DuplicatingOptions nametypesToChange,
+                    const std::set<wxString>& existingNames,
+                    const wxString& chosenName = "",
+                    const wxString& chosenInheritedName = "",
+                    const wxString& chosenFilename = "") override;
 
 public:
-    virtual void Serialize(JSONElement& json) const;
-    virtual void UnSerialize(const JSONElement& json);
-
     void SetTemplInfoName(const wxString& templInfoName);
     const wxString& GetTemplInfoName() const { return m_templInfoName; }
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
-    void ToXRC(wxString& text, XRC_TYPE type) const;
+
+    void Serialize(JSONElement& json) const override;
+    void UnSerialize(const JSONElement& json) override;
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 #endif // CUSTOMCONTROLWRAPPER_H

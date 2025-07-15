@@ -24,8 +24,6 @@ FontPickerCtrlWrapper::FontPickerCtrlWrapper()
     SetName(GenerateName());
 }
 
-FontPickerCtrlWrapper::~FontPickerCtrlWrapper() {}
-
 wxcWidget* FontPickerCtrlWrapper::Clone() const { return new FontPickerCtrlWrapper(); }
 
 wxString FontPickerCtrlWrapper::CppCtorCode() const

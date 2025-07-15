@@ -68,7 +68,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_bookmarkLabels(defaultBookmarkLabels)
     , m_highlightCaretLine(true)
     , m_highlightCaretLineWithColour(true)
-    , m_clearHighlitWordsOnFind(true)
+    , m_clearHighlightedWordsOnFind(true)
     , m_displayLineNumbers(true)
     , m_relativeLineNumbers(false)
     , m_showIndentationGuidelines(true)
@@ -77,7 +77,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_indentWidth(4)
     , m_tabWidth(4)
     , m_iconsSize(16)
-    , m_showWhitspaces(0 /*wxSCI_WS_INVISIBLE*/)
+    , m_showWhitespaces(0 /*wxSCI_WS_INVISIBLE*/)
     , m_foldCompact(false)
     , m_foldAtElse(false)
     , m_foldPreprocessor(false)
@@ -90,7 +90,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_programConsoleCommand(TERMINAL_CMD)
     , m_eolMode(wxT("Default"))
     , m_trackEditorChanges(false)
-    , m_hideOutpuPaneOnUserClick(false)
+    , m_hideOutputPaneOnUserClick(false)
     , m_hideOutputPaneNotIfBuild(false)
     , m_hideOutputPaneNotIfSearch(true)
     , m_hideOutputPaneNotIfReplace(false)
@@ -152,7 +152,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
             XmlUtils::ReadString(node, wxT("BookmarkBgColours"), ""); // No default; we'll deal with this later
         m_bookmarkFgColours = XmlUtils::ReadString(node, wxT("BookmarkFgColours"), "");
         m_bookmarkLabels = XmlUtils::ReadString(node, wxT("BookmarkLabels"), defaultBookmarkLabels);
-        m_clearHighlitWordsOnFind = XmlUtils::ReadBool(node, wxT("ClearHighlitWordsOnFind"), m_clearHighlitWordsOnFind);
+        m_clearHighlightedWordsOnFind =
+            XmlUtils::ReadBool(node, wxT("ClearHighlitWordsOnFind"), m_clearHighlightedWordsOnFind);
         m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
         m_highlightCaretLineWithColour =
             XmlUtils::ReadBool(node, "HighlightCaretLineWithColour", m_highlightCaretLineWithColour);
@@ -167,7 +168,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_indentWidth = XmlUtils::ReadLong(node, wxT("IndentWidth"), m_indentWidth);
         m_tabWidth = XmlUtils::ReadLong(node, wxT("TabWidth"), m_tabWidth);
         m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), m_iconsSize);
-        m_showWhitspaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), m_showWhitspaces);
+        m_showWhitespaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), m_showWhitespaces);
         m_foldCompact = XmlUtils::ReadBool(node, wxT("FoldCompact"), m_foldCompact);
         m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"), m_foldAtElse);
         m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"), m_foldPreprocessor);
@@ -186,7 +187,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
         m_trackEditorChanges = XmlUtils::ReadBool(node, wxT("TrackEditorChanges"));
         m_scrollBeyondLastLine = XmlUtils::ReadBool(node, wxT("ScrollBeyondLastLine"), m_scrollBeyondLastLine);
-        m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
+        m_hideOutputPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
         m_hideOutputPaneNotIfBuild = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfBuild"));
         m_hideOutputPaneNotIfSearch = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfSearch"));
         m_hideOutputPaneNotIfReplace = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfReplace"));
@@ -274,7 +275,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("BookmarkBgColours"), m_bookmarkBgColours);
     n->AddAttribute(wxT("BookmarkFgColours"), m_bookmarkFgColours);
     n->AddAttribute(wxT("BookmarkLabels"), m_bookmarkLabels);
-    n->AddAttribute(wxT("ClearHighlitWordsOnFind"), BoolToString(m_clearHighlitWordsOnFind));
+    n->AddAttribute(wxT("ClearHighlitWordsOnFind"), BoolToString(m_clearHighlightedWordsOnFind));
     n->AddAttribute(wxT("HighlightCaretLine"), BoolToString(m_highlightCaretLine));
     n->AddAttribute(wxT("HighlightCaretLineWithColour"), BoolToString(m_highlightCaretLineWithColour));
     n->AddAttribute(wxT("ShowLineNumber"), BoolToString(m_displayLineNumbers));
@@ -291,7 +292,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("AutoAdjustHScrollBarWidth"), BoolToString(m_autoAdjustHScrollBarWidth));
     n->AddAttribute(wxT("TrackEditorChanges"), BoolToString(m_trackEditorChanges));
     n->AddAttribute(wxT("ScrollBeyondLastLine"), BoolToString(m_scrollBeyondLastLine));
-    n->AddAttribute(wxT("HideOutputPaneOnUserClick"), BoolToString(m_hideOutpuPaneOnUserClick));
+    n->AddAttribute(wxT("HideOutputPaneOnUserClick"), BoolToString(m_hideOutputPaneOnUserClick));
     n->AddAttribute(wxT("HideOutputPaneNotIfBuild"), BoolToString(m_hideOutputPaneNotIfBuild));
     n->AddAttribute(wxT("HideOutputPaneNotIfSearch"), BoolToString(m_hideOutputPaneNotIfSearch));
     n->AddAttribute(wxT("HideOutputPaneNotIfReplace"), BoolToString(m_hideOutputPaneNotIfReplace));
@@ -348,7 +349,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("ToolbarIconSize"), tmp);
 
     tmp.clear();
-    tmp << m_showWhitspaces;
+    tmp << m_showWhitespaces;
     n->AddAttribute(wxT("ShowWhitespaces"), tmp);
 
     tmp.clear();

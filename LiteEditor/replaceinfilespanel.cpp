@@ -469,7 +469,7 @@ void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
         return;
     }
 
-    if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+    if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneOnUserClick()) {
         e.Enable(true);
         e.Check(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReplace());
 

@@ -1679,7 +1679,7 @@ bool clMainFrame::StartSetupWizard(bool firstTime)
             }
             OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
             options->SetIndentUsesTabs(data.useTabs);
-            options->SetShowWhitspaces(data.whitespaceVisibility);
+            options->SetShowWhitespaces(data.whitespaceVisibility);
             EditorConfigST::Get()->SetOptions(options);
             clConfig::Get().Write("CodeLiteAppearance", data.forceDarkAppearance ? 1 : 0 /* system */);
 
@@ -4522,13 +4522,13 @@ void clMainFrame::OnShowWhitespaceUI(wxUpdateUIEvent& e)
     CHECK_SHUTDOWN();
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     if (e.GetId() == XRCID("whitepsace_invisible")) {
-        e.Check(options->GetShowWhitspaces() == 0);
+        e.Check(options->GetShowWhitespaces() == 0);
     } else if (e.GetId() == XRCID("whitepsace_always")) {
-        e.Check(options->GetShowWhitspaces() == 1);
+        e.Check(options->GetShowWhitespaces() == 1);
     } else if (e.GetId() == XRCID("whitespace_visiable_after_indent")) {
-        e.Check(options->GetShowWhitspaces() == 2);
+        e.Check(options->GetShowWhitespaces() == 2);
     } else if (e.GetId() == XRCID("whitespace_indent_only")) {
-        e.Check(options->GetShowWhitspaces() == 3);
+        e.Check(options->GetShowWhitespaces() == 3);
     }
 }
 
@@ -4536,16 +4536,16 @@ void clMainFrame::OnShowWhitespace(wxCommandEvent& e)
 {
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     if (e.GetId() == XRCID("whitepsace_invisible")) {
-        options->SetShowWhitspaces(0);
+        options->SetShowWhitespaces(0);
     } else if (e.GetId() == XRCID("whitepsace_always")) {
-        options->SetShowWhitspaces(1);
+        options->SetShowWhitespaces(1);
     } else if (e.GetId() == XRCID("whitespace_visiable_after_indent")) {
-        options->SetShowWhitspaces(2);
+        options->SetShowWhitespaces(2);
     } else if (e.GetId() == XRCID("whitespace_indent_only")) {
-        options->SetShowWhitspaces(3);
+        options->SetShowWhitespaces(3);
     }
 
-    GetMainBook()->ShowWhitespace(options->GetShowWhitspaces());
+    GetMainBook()->ShowWhitespace(options->GetShowWhitespaces());
 
     // save the settings
     EditorConfigST::Get()->SetOptions(options);

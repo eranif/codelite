@@ -26,7 +26,6 @@
 #include "compilation_database.h"
 
 #include "JSON.h"
-#include "cl_standard_paths.h"
 #include "compiler_command_line_parser.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -35,6 +34,7 @@
 #include "workspace.h"
 
 #include <algorithm>
+#include <queue>
 #include <wx/dir.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>

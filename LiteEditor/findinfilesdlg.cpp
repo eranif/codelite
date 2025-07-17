@@ -271,8 +271,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
                 vd = vd.AfterFirst(':');
                 ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
                 if (p) {
-                    wxArrayString vdFiles;
-                    p->GetFilesByVirtualDir(vd, vdFiles, true);
+                    const wxArrayString vdFiles = p->GetFilesByVirtualDir(vd, true);
                     files.insert(files.end(), vdFiles.begin(), vdFiles.end());
                 }
             }

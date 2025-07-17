@@ -1117,11 +1117,11 @@ if(MINGW)
         mv.exe)
 
     execute_process(
-        COMMAND sh -c 'ls ${WXWIN}/lib/clang_x64_dll/wxmsw*u_clang_custom.dll|tail -1'
+        COMMAND sh -c 'ls ${WXWIN}/*/clang_x64_dll/wxmsw*u_clang_custom.dll|tail -1'
         OUTPUT_VARIABLE WXDLL
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     message(STATUS "Installing wxWidgets DLL ${WXDLL}")
-    list(APPEND WXWIDGETS_DLLS wxmsw330u_clang_custom.dll)
+    list(APPEND WXWIDGETS_DLLS ${WXDLL})
     list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip ${CMAKE_SOURCE_DIR}/LICENSE)
 
     foreach(DLL ${SYSTEM_DLLS})
@@ -1133,7 +1133,7 @@ if(MINGW)
     endforeach()
 
     foreach(DLL ${WXWIDGETS_DLLS})
-        install(FILES "${WXDLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+        install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
     endforeach()
 
     foreach(RESOURCE ${CODELITE_RESOURCES})

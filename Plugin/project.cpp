@@ -41,6 +41,7 @@
 #include "xmlutils.h"
 
 #include <algorithm>
+#include <queue>
 #include <wx/arrstr.h>
 #include <wx/regex.h>
 #include <wx/sstream.h>
@@ -53,15 +54,6 @@
 // Project class
 // ============---------------------
 
-Project::Project()
-    : m_tranActive(false)
-    , m_isModified(false)
-    , m_workspace(NULL)
-{
-    // initialize it with default settings
-    m_settings = std::make_shared<ProjectSettings>(nullptr);
-}
-
 bool Project::Create(const wxString& name, const wxString& description, const wxString& path, const wxString& projType)
 {
     m_fileName = wxFileName(path, name);
@@ -72,28 +64,26 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
     m_fileName.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_projectPath = m_fileName.GetPath();
 
-    wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "CodeLite_Project");
+    wxXmlNode* root = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "CodeLite_Project");
     m_doc.SetRoot(root);
     m_doc.GetRoot()->AddAttribute("Name", name);
     XmlUtils::UpdateProperty(m_doc.GetRoot(), "Version", CURRENT_WORKSPACE_VERSION_STR);
 
-    wxXmlNode* descNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Description");
+    wxXmlNode* descNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Description");
     XmlUtils::SetNodeContent(descNode, description);
     m_doc.GetRoot()->AddChild(descNode);
 
     // Create the default virtual directories
-    wxXmlNode *srcNode = NULL, *headNode = NULL;
-
-    srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
+    wxXmlNode* srcNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "VirtualDirectory");
     srcNode->AddAttribute("Name", "src");
     m_doc.GetRoot()->AddChild(srcNode);
 
-    headNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
+    wxXmlNode* headNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "VirtualDirectory");
     headNode->AddAttribute("Name", "include");
     m_doc.GetRoot()->AddChild(headNode);
 
-    // creae dependencies node
-    wxXmlNode* depNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Dependencies");
+    // create dependencies node
+    wxXmlNode* depNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Dependencies");
     root->AddChild(depNode);
 
     // this will also create settings
@@ -116,9 +106,7 @@ bool Project::Load(const wxString& path)
 
     // Workaround WX bug: load the plugins data (GetAllPluginsData will strip any trailing whitespaces)
     // and then set them back
-    std::map<wxString, wxString> pluginsData;
-    GetAllPluginsData(pluginsData);
-    SetAllPluginsData(pluginsData, false);
+    SetAllPluginsData(GetAllPluginsData(), false);
 
     m_fileName = path;
     m_fileName.MakeAbsolute();
@@ -129,10 +117,7 @@ bool Project::Load(const wxString& path)
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
 
     DoUpdateProjectSettings();
-    bool saveNeeded = false;
-    if (GetVersionNumber() < CURRENT_WORKSPACE_VERSION) {
-        saveNeeded = true;
-    }
+    const bool saveNeeded = (GetVersionNumber() < CURRENT_WORKSPACE_VERSION);
 
     // Make sure that the project version matches the latest version
     XmlUtils::UpdateProperty(m_doc.GetRoot(), "Version", CURRENT_WORKSPACE_VERSION_STR);
@@ -155,8 +140,7 @@ wxXmlNode* Project::GetVirtualDir(const wxString& vdFullPath)
 
 wxXmlNode* Project::CreateVD(const wxString& vdFullPath, bool mkpath)
 {
-    wxXmlNode* oldVd = GetVirtualDir(vdFullPath);
-    if (oldVd) {
+    if (wxXmlNode* oldVd = GetVirtualDir(vdFullPath)) {
         // VD already exist
         return oldVd;
     }
@@ -229,7 +213,10 @@ bool Project::AddFile(const wxString& fileName, const wxString& virtualDirPath)
     return true;
 }
 
-bool Project::CreateVirtualDir(const wxString& vdFullPath, bool mkpath) { return CreateVD(vdFullPath, mkpath) != NULL; }
+bool Project::CreateVirtualDir(const wxString& vdFullPath, bool mkpath)
+{
+    return CreateVD(vdFullPath, mkpath) != nullptr;
+}
 
 bool Project::DeleteVirtualDir(const wxString& vdFullPath)
 {
@@ -359,10 +346,11 @@ void Project::Save()
     }
 }
 
-void Project::GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& files, bool recurse)
+wxArrayString Project::GetFilesByVirtualDir(const wxString& vdFullPath, bool recurse)
 {
-    wxXmlNode* root = GetVirtualDir(vdFullPath);
-    if (root) {
+    wxArrayString files;
+
+    if (wxXmlNode* root = GetVirtualDir(vdFullPath)) {
         std::vector<wxXmlNode*> Q;
         Q.push_back(root);
         while (!Q.empty()) {
@@ -381,6 +369,7 @@ void Project::GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& fi
             }
         }
     }
+    return files;
 }
 
 ProjectSettingsPtr Project::GetSettings() const { return m_settings; }
@@ -433,7 +422,7 @@ wxArrayString Project::GetDependencies() const
 
 void Project::SetModified(bool mod) { m_isModified = mod; }
 
-bool Project::IsModified() { return m_isModified; }
+bool Project::IsModified() const { return m_isModified; }
 
 void Project::CopyTo(const wxString& new_path, const wxString& new_name, const wxString& description)
 {
@@ -456,12 +445,12 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
         doc.GetRoot(), "Version", m_doc.GetRoot()->GetAttribute("Version", DEFAULT_CURRENT_WORKSPACE_VERSION_STR));
 
     // set description
-    wxXmlNode* descNode(NULL);
+    wxXmlNode* descNode(nullptr);
 
     // update the description
     descNode = XmlUtils::FindFirstByTagName(doc.GetRoot(), "Description");
     if (!descNode) {
-        descNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Description");
+        descNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Description");
         doc.GetRoot()->AddChild(descNode);
     }
     XmlUtils::SetNodeContent(descNode, description);
@@ -483,7 +472,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
     }
 
     // add an empty deps node
-    deps = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Dependencies");
+    deps = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Dependencies");
     doc.GetRoot()->AddChild(deps);
 
     // Remove virtual folders
@@ -495,16 +484,16 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
     }
 
     // add all files under this path
-    wxXmlNode* srcNode(NULL);
-    wxXmlNode* headNode(NULL);
-    wxXmlNode* rcNode(NULL);
+    wxXmlNode* srcNode(nullptr);
+    wxXmlNode* headNode(nullptr);
+    wxXmlNode* rcNode(nullptr);
 
     // copy the files to their new location
     for (const auto& p : m_filesTable) {
         wxFileName fn = p.first;
         wxCopyFile(fn.GetFullPath(), new_path + "/" + fn.GetFullName());
 
-        wxXmlNode* file_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "File");
+        wxXmlNode* file_node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "File");
         file_node->AddAttribute("Name", fn.GetFullName());
 
         switch (FileExtManager::GetType(fn.GetFullName())) {
@@ -513,7 +502,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 
             // source file
             if (!srcNode) {
-                srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
+                srcNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "VirtualDirectory");
                 srcNode->AddAttribute("Name", "src");
                 doc.GetRoot()->AddChild(srcNode);
             }
@@ -523,7 +512,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
         case FileExtManager::TypeHeader:
             // header file
             if (!headNode) {
-                headNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
+                headNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "VirtualDirectory");
                 headNode->AddAttribute("Name", "include");
                 doc.GetRoot()->AddChild(headNode);
             }
@@ -533,7 +522,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
         default:
             // resource file
             if (!rcNode) {
-                rcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
+                rcNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "VirtualDirectory");
                 rcNode->AddAttribute("Name", "resources");
                 doc.GetRoot()->AddChild(rcNode);
             }
@@ -706,13 +695,13 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
     }
 
     // create new dependencies node
-    node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Dependencies");
+    node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Dependencies");
     node->AddAttribute("Name", configuration);
     m_doc.GetRoot()->AddChild(node);
 
     // create a node for each dependency in the array
     for (size_t i = 0; i < deps.GetCount(); i++) {
-        wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Project");
+        wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Project");
         child->AddAttribute("Name", deps.Item(i));
         node->AddChild(child);
     }
@@ -780,19 +769,19 @@ wxString Project::GetProjectInternalType() const
     return m_doc.GetRoot()->GetAttribute("InternalType", wxEmptyString);
 }
 
-void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
+std::map<wxString, wxString> Project::GetAllPluginsData() const
 {
     if (!m_doc.IsOk()) {
-        return;
+        return {};
     }
 
     // locate the 'Plugins' node
-    wxXmlNode* plugins = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Plugins");
+    const wxXmlNode* plugins = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Plugins");
     if (!plugins) {
-        return;
+        return {};
     }
-
-    wxXmlNode* child = plugins->GetChildren();
+    std::map<wxString, wxString> pluginsDataMap;
+    const wxXmlNode* child = plugins->GetChildren();
     while (child) {
         if (child->GetName() == "Plugin") {
             // get the content
@@ -803,6 +792,7 @@ void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
         }
         child = child->GetNext();
     }
+    return pluginsDataMap;
 }
 
 wxString Project::GetPluginData(const wxString& pluginName)
@@ -934,8 +924,7 @@ wxString Project::GetBestPathForVD(const wxString& vdPath)
     // Could not find any match for the virtual directory when tested
     // directly under the project path. Try it again using a path from
     // the first file that we could find under the virtual directory
-    wxArrayString files;
-    GetFilesByVirtualDir(vdPath, files);
+    const wxArrayString files = GetFilesByVirtualDir(vdPath);
     if (files.IsEmpty() == false) {
         wxFileName f(files.Item(0));
         if (f.MakeAbsolute(GetFileName().GetPath())) {
@@ -984,7 +973,7 @@ wxArrayString Project::GetIncludePaths()
 
             } else {
                 wxString includePath = projectIncludePathsArr.Item(i);
-                includePath = MacroManager::Instance()->Expand(includePath, NULL, GetName(), buildConf->GetName());
+                includePath = MacroManager::Instance()->Expand(includePath, nullptr, GetName(), buildConf->GetName());
                 fn = includePath;
                 if (fn.IsRelative()) {
                     fn.MakeAbsolute(GetFileName().GetPath());
@@ -1275,7 +1264,7 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     commandLine << compilerExe << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
 
     // Apply the environment
-    EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
+    EnvSetter es(nullptr, nullptr, GetName(), buildConf->GetName());
 
     // Add the macros
     wxArrayString prepArr;
@@ -1348,7 +1337,7 @@ wxString Project::DoExpandBacktick(const wxString& backtick)
         // Expand the backticks into their value
         wxString expandedValue;
         {
-            EnvSetter es(NULL, NULL, GetName(), wxEmptyString);
+            EnvSetter es(nullptr, nullptr, GetName(), wxEmptyString);
             cmpOption = MacroManager::Instance()->Expand(cmpOption, nullptr, GetName(), wxEmptyString);
 
             // Check the cache
@@ -1413,7 +1402,7 @@ BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName) const
 {
     BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
     if (!matrix) {
-        return NULL;
+        return nullptr;
     }
 
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
@@ -1445,7 +1434,7 @@ const clCxxWorkspace* Project::GetWorkspace() const
     }
 }
 
-void Project::GetCompilers(wxStringSet_t& compilers)
+void Project::GetCompilers(wxStringSet_t& compilers) const
 {
     ProjectSettingsPtr pSettings = GetSettings();
     CHECK_PTR_RET(pSettings);
@@ -1487,7 +1476,7 @@ wxArrayString Project::GetPreProcessors(bool clearCache)
     if (buildConf) {
 
         // Apply the environment
-        EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
+        EnvSetter es(nullptr, nullptr, GetName(), buildConf->GetName());
 
         // Get the pre-processors and add them to the array
         wxString projectPPS = buildConf->GetPreprocessor();
@@ -1537,7 +1526,7 @@ wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool clearCache, bo
     if (buildConf && !buildConf->IsCustomBuild()) {
 
         // Apply the environment
-        EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
+        EnvSetter es(nullptr, nullptr, GetName(), buildConf->GetName());
 
         // Get the switches from
         wxString optionsStr = cxxOptions ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
@@ -1604,9 +1593,9 @@ void Project::ProjectRenamed(const wxString& oldname, const wxString& newname)
     }
 }
 
-void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& vars) const
+wxArrayString Project::GetUnresolvedMacros(const wxString& configName) const
 {
-    vars.clear();
+    wxArrayString vars;
     BuildConfigPtr buildConfig = GetBuildConfiguration(configName);
     if (buildConfig) {
         // Check for environment variables
@@ -1656,6 +1645,7 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
         }
         vars.swap(uniqueVars);
     }
+    return vars;
 }
 
 void Project::ClearIncludePathCache() { m_cachedIncludePaths.clear(); }
@@ -1677,15 +1667,17 @@ wxString Project::GetFilesAsString(bool absPath) const
     return str;
 }
 
-void Project::GetFilesAsVector(clProjectFile::Vec_t& files) const
+clProjectFile::Vec_t Project::GetFilesAsVector() const
 {
     if (m_filesTable.empty()) {
-        return;
+        return {};
     }
+    clProjectFile::Vec_t files;
     files.reserve(m_filesTable.size());
     for (const auto& p : m_filesTable) {
         files.push_back(p.second);
     }
+    return files;
 }
 
 void Project::GetFilesAsStringArray(wxArrayString& files, bool absPath) const

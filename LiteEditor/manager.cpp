@@ -605,9 +605,7 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
     proj->SetFiles(data.m_srcProject);
 
     // copy plugins data
-    std::map<wxString, wxString> pluginsData;
-    data.m_srcProject->GetAllPluginsData(pluginsData);
-    proj->SetAllPluginsData(pluginsData);
+    proj->SetAllPluginsData(data.m_srcProject->GetAllPluginsData());
 
     {
         // copy the actual files from the template directory to the new project path
@@ -918,8 +916,7 @@ void Manager::RemoveVirtualDirectory(const wxString& virtualDirFullPath)
 
     // Update symbol tree and database
     wxString vdPath = virtualDirFullPath.AfterFirst(wxT(':'));
-    wxArrayString files;
-    p->GetFilesByVirtualDir(vdPath, files);
+    const wxArrayString files = p->GetFilesByVirtualDir(vdPath);
     wxFileName tagsDb = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
     for (size_t i = 0; i < files.Count(); i++) {
         TagsManagerST::Get()->Delete(tagsDb, files.Item(i));

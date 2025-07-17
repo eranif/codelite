@@ -534,8 +534,7 @@ void BuilderNMake::GenerateMakefile(ProjectPtr proj,
     }
 
     // Load the current project files
-    m_allFiles.clear();
-    proj->GetFilesAsVector(m_allFiles);
+    m_allFiles = proj->GetFilesAsVector();
 
     // generate the selected configuration for this project
     // wxTextOutputStream text(output);

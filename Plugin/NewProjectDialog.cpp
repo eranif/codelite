@@ -45,9 +45,8 @@ wxString CONFIG_LAST_BUILD_SYSTEM = "NewProjectDialog/LastBuildSystem";
 
 NewProjectDialog::NewProjectDialog(wxWindow* parent)
     : NewProjectDialogBase(parent)
+    , m_list(::GetProjectTemplateList())
 {
-    ::GetProjectTemplateList(m_list);
-
     // If we have a workspace, set the project path in the workspace path
     if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
         const wxFileName& fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();

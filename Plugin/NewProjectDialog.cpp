@@ -6,7 +6,6 @@
 #include "buildmanager.h"
 #include "clWorkspaceManager.h"
 #include "cl_config.h"
-#include "globals.h"
 #include "macros.h"
 #include "wxStringHash.h"
 

@@ -3291,7 +3291,7 @@ msgid ""
 "Tags Settings'"
 msgstr ""
 "Nalezeno příliš sledování, zobrazuji %u. Vyberte kratší volby\n"
-"\vZvýšení počtu zobrazovaných položek je možné pomocí menu Nastavení | "
+"Zvýšení počtu zobrazovaných položek je možné pomocí menu Nastavení | "
 "Nastavení značek"
 
 #: LiteEditor/cl_editor.cpp:3928

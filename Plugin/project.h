@@ -31,6 +31,7 @@
 #include "project_settings.h"
 #include "tree.h"
 
+#include <list>
 #include <memory>
 #include <set>
 #include <unordered_map>
@@ -829,5 +830,12 @@ public:
 
     void SetFile(const wxString& file) { m_item.SetFile(file); }
 };
+
+/**
+ * @brief return list of projects available based on the installed templates
+ * @param list list of projects
+ * @param imageMap when provided, returns the image index (set in the lstImages) mapped to the project type
+ */
+WXDLLIMPEXP_SDK void GetProjectTemplateList(std::list<ProjectPtr>& list);
 
 #endif // PROJECT_H

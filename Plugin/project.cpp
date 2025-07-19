@@ -2205,43 +2205,55 @@ namespace
 void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list, bool loadDefaults = true)
 {
     // read all files under this directory
-    if (wxFileName::DirExists(folder)) {
-        DirTraverser dt("*.project");
+    if (!wxFileName::DirExists(folder)) {
+        return;
+    }
+    DirTraverser dt("*.project");
+    const wxDir dir(folder);
+    dir.Traverse(dt);
 
-        wxDir dir(folder);
-        dir.Traverse(dt);
-
-        const auto& files = dt.GetFiles();
-        if (files.GetCount() > 0) {
-            for (size_t i = 0; i < files.GetCount(); i++) {
-                ProjectPtr proj(new Project());
-                if (!proj->Load(files.Item(i))) {
-                    // corrupted xml file?
-                    clWARNING() << "Failed to load template project:" << files.Item(i) << "(corrupted XML?)" << endl;
-                    continue;
-                }
-                list.push_back(proj);
-                clDEBUG() << "Found template project:" << files[i] << "." << proj->GetName() << endl;
-                // load template icon
-                wxFileName fn(files.Item(i));
-                fn.SetFullName("icon.png");
-                if (fn.Exists()) {
-                    wxBitmap bmp = wxBitmap(fn.GetFullPath(), wxBITMAP_TYPE_ANY);
-                    if (bmp.IsOk() && bmp.GetWidth() == 16 && bmp.GetHeight() == 16) {
-                        proj->SetIconPath(fn.GetFullPath());
-                    }
-                }
+    for (const auto& projectPath : dt.GetFiles()) {
+        ProjectPtr proj = std::make_shared<Project>();
+        if (!proj->Load(projectPath)) {
+            // corrupted xml file or outdated system project?
+            clWARNING() << "Failed to load template project:" << projectPath
+                        << "(corrupted XML or outdated system project?)" << endl;
+            continue;
+        }
+        list.push_back(proj);
+        clDEBUG() << "Found template project:" << projectPath << "." << proj->GetName() << endl;
+        // load template icon
+        wxFileName iconFilename(projectPath);
+        iconFilename.SetFullName("icon.png");
+        if (iconFilename.Exists()) {
+            wxBitmap bmp = wxBitmap(iconFilename.GetFullPath(), wxBITMAP_TYPE_ANY);
+            if (bmp.IsOk() && bmp.GetWidth() == 16 && bmp.GetHeight() == 16) {
+                proj->SetIconPath(iconFilename.GetFullPath());
             }
         }
     }
+}
 
-    if (loadDefaults && list.empty()) {
+struct ProjListComparator {
+    bool operator()(const ProjectPtr& p1, const ProjectPtr& p2) const { return p1->GetName() > p2->GetName(); }
+};
+
+} // namespace
+
+std::list<ProjectPtr> GetProjectTemplateList()
+{
+    std::list<ProjectPtr> list;
+    DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetProjectTemplatesDir(), list);
+
+    if (list.empty()) {
         // if we ended up here, it means the installation got screwed up since
         // there should be at least 8 project templates !
         // create 3 default empty projects
-        ProjectPtr exeProj(new Project());
-        ProjectPtr libProj(new Project());
-        ProjectPtr dllProj(new Project());
+        const auto folder = clStandardPaths::Get().GetProjectTemplatesDir();
+        ProjectPtr exeProj = std::make_shared<Project>();
+        ProjectPtr libProj = std::make_shared<Project>();
+        ProjectPtr dllProj = std::make_shared<Project>();
+
         libProj->Create("Static Library", wxEmptyString, folder, PROJECT_TYPE_STATIC_LIBRARY);
         dllProj->Create("Dynamic Library", wxEmptyString, folder, PROJECT_TYPE_DYNAMIC_LIBRARY);
         exeProj->Create("Executable", wxEmptyString, folder, PROJECT_TYPE_EXECUTABLE);
@@ -2249,17 +2261,8 @@ void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectP
         list.push_back(dllProj);
         list.push_back(exeProj);
     }
-}
 
-struct ProjListComparator {
-    bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
-};
-
-} // namespace
-
-void GetProjectTemplateList(std::list<ProjectPtr>& list)
-{
-    DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetProjectTemplatesDir(), list);
-    DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetUserProjectTemplatesDir(), list, false);
+    DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetUserProjectTemplatesDir(), list);
     list.sort(ProjListComparator());
+    return list;
 }

@@ -75,7 +75,7 @@ public:
 		return formattedName;
 	}
 	
-	/*! \brief Retrun column name */
+	/*! \brief Return column name */
 	wxString GetName() { return this->m_name; }
 	/*! \brief Set column name */
 	void SetName(const wxString& name) { this->m_name = name; }

@@ -113,7 +113,7 @@ void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
     m_executable = json["executable"].toString();
     wxArrayString last_execs = json["last_executables"].toArrayString();
 
-    // calling SetLastExecutables ensures that we dont add empty paths
+    // calling SetLastExecutables ensures that we don't add empty paths
     SetLastExecutables(last_execs);
 
     m_args = json["arguments"].toString();
@@ -322,7 +322,7 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     }
 
     // Loop over the local configs and keep them in a map
-    // this is because the number of confiugration entires in
+    // this is because the number of configuration entires in
     // the local workspace does not match to the shared one
     // this can happen when loading the workspace on different
     // machines (when the shared version is kept in SCM)

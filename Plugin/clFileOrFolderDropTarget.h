@@ -34,7 +34,7 @@
 /**
  * @class clFileOrFolderDropTarget
  * @brief a drop target class for files or folder
- * This class translates the "OnDrop" function into codelite events:
+ * This class translates the "OnDrop" function into CodeLite events:
  * wxEVT_DND_FOLDER_DROPPED and wxEVT_DND_FILE_DROPPED that will be sent to the eventSink object
  * The list of files or folders is set in the event.GetString() method
  * of the event

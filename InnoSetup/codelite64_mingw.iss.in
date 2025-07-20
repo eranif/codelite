@@ -156,7 +156,7 @@ var
 begin
     if GetCodeLiteInstallPath() <> '' then
     BEGIN
-        // Uninstall codelite 6.X
+        // Uninstall CodeLite 6.X
         sCodeLitePath := GetCodeLiteInstallPath()
 
         // Delete the following folders:

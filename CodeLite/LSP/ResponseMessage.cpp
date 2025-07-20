@@ -17,7 +17,7 @@ std::string LSP::ResponseMessage::ToString() const
     return StringUtils::ToStdString(m_json->toElement().format(false));
 }
 
-// we dont really serialise response messages
+// we don't really serialise response messages
 JSONItem LSP::ResponseMessage::ToJSON(const wxString& name) const { return JSONItem(nullptr); }
 
 void LSP::ResponseMessage::FromJSON(const JSONItem& json)

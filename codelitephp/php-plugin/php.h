@@ -103,7 +103,7 @@ public:
     void OnShowQuickOutline(clCodeCompletionEvent& e);
 
     //////////////////////////////////////////////
-    // Other common codelite events
+    // Other common CodeLite events
     //////////////////////////////////////////////
     void OnNewWorkspace(clCommandEvent& e);
     void OnIsWorkspaceOpen(clCommandEvent& e);

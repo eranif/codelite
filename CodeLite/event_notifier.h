@@ -55,7 +55,7 @@ public:
     // --------------------------------------------------------
     // About the following functions:
     // the below functions are meant to provide an easy
-    // way to fire codelite's plugins events without the need
+    // way to fire CodeLite's plugins events without the need
     // to create the event on the stack.
     // Post* are meant as Async event ("AddPendingEvent")
     // While Notify* are synchronous event ("ProcessEvent")

@@ -322,7 +322,7 @@ void PhpPlugin::OnCloseWorkspace(clCommandEvent& e)
         PHPWorkspace::Get()->Close(true, true);
         m_workspaceView->UnLoadWorkspaceView();
 
-        // notify codelite to close the currently opened workspace
+        // notify CodeLite to close the currently opened workspace
         wxCommandEvent eventClose(wxEVT_COMMAND_MENU_SELECTED, wxID_CLOSE_ALL);
         eventClose.SetEventObject(FRAME);
         FRAME->GetEventHandler()->ProcessEvent(eventClose);
@@ -367,7 +367,7 @@ void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
 
 void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing, bool createProjectFromSources)
 {
-    // notify codelite to close the currently opened workspace
+    // notify CodeLite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
     eventClose.SetEventObject(FRAME);
     FRAME->GetEventHandler()->ProcessEvent(eventClose);

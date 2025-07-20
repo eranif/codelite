@@ -15,7 +15,7 @@ public:
     virtual ~clPatch() = default;
 
     /**
-     * @brief apply patch sepcified by 'pathFile' onto filename file
+     * @brief apply patch specified by 'pathFile' onto filename file
      * @param filename
      * @param workingDirectory execute the patch command from this folder
      * @throws clException on error

@@ -331,7 +331,7 @@ void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
     for (size_t i = 0; i < tabs.size(); ++i) {
         const wxString& label = tabs.Item(i);
         if ((m_book->GetPageIndex(label) != wxNOT_FOUND)) {
-            // Tab is visible, dont show it
+            // Tab is visible, don't show it
             continue;
         }
 

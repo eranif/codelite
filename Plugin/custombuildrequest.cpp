@@ -181,7 +181,7 @@ void CustomBuildRequest::Process(IManager* manager)
     bool bCommandAltered = DoUpdateCommand(manager, cmd, proj, bldConf, isClean);
 
 #ifdef __WXMSW__
-    // Windows CD command requires the paths to be backslashe
+    // Windows CD command requires the paths to use backslash
     if(cmd.Find(wxT("cd ")) != wxNOT_FOUND)
         cmd.Replace(wxT("/"), wxT("\\"));
 #endif
@@ -191,7 +191,7 @@ void CustomBuildRequest::Process(IManager* manager)
     // cd SOMEWHERE && make && ...
 
     size_t processFlags = IProcessCreateDefault;
-    // Dont wrap the command if it was altered previously
+    // Don't wrap the command if it was altered previously
     if(!bCommandAltered) {
         processFlags |= IProcessWrapInShell;
     }

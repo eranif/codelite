@@ -816,7 +816,7 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
                 break;
             }
             if(tk.is_keyword()) {
-                // dont pick keywords
+                // don't pick keywords
                 continue;
             }
             if(tk.is_builtin_type()) {
@@ -1341,7 +1341,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, st
                                   &global_scopes_members);
 
     // sort the matches:
-    sort_tags(locals, sorted_locals, true, {});               // locals are accepted, so dont pass list of files
+    sort_tags(locals, sorted_locals, true, {});               // locals are accepted, so don't pass list of files
     sort_tags(scope_members, sorted_scope_members, true, {}); // members are all accepted
     sort_tags(other_scopes_members, sorted_other_scopes_members, true, visible_files);
     sort_tags(global_scopes_members, sorted_global_scopes_members, true, visible_files);

@@ -20,7 +20,7 @@ LexerConf::Ptr_t ThemeImporterMarkdown::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "markdown", wxSTC_LEX_MARKDOWN);
     CHECK_PTR_RET_NULL(lexer);
 
-    // Covnert to codelite's XML properties
+    // Convert to CodeLite's XML properties
     AddProperty(lexer, wxSTC_MARKDOWN_DEFAULT, "Default", m_editor);
     AddProperty(lexer, wxSTC_MARKDOWN_LINE_BEGIN, "Start of line", m_editor);
     AddProperty(lexer, wxSTC_MARKDOWN_STRONG1, "Strong 1", m_editor);

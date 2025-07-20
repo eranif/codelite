@@ -90,7 +90,7 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
         case STATE_NORMAL:
             if(accessor.match("#", i)) {
 
-                if(i == 0 ||                      // satrt of document
+                if(i == 0 ||                      // start of document
                    accessor.match("\n", i - 1)) { // we are at start of line
                     state = STATE_PRE_PROCESSING;
                 }
@@ -113,7 +113,7 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 
             } else if(accessor.match("\"", i)) {
 
-                // dbouble quoted string
+                // double quoted string
                 state = STATE_DQ_STRING;
 
             } else if(accessor.isWordChar(ch)) {
@@ -130,7 +130,7 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
                     if((int)token.getName().at(0) >= 48 && (int)token.getName().at(0) <= 57) {
                         token.reset();
                     } else {
-                        // dont add C++ key words
+                        // don't add C++ key words
                         wxString tmpName(token.getName());
 
                         if(m_keywords.count(tmpName) == 0) {

@@ -101,7 +101,7 @@ void NewWorkspaceDlg::OnButtonCreate(wxCommandEvent& event)
     wxFileName fn(m_workspacePath);
 
     if(m_checkBoxCreateSeparateDir->IsChecked()) {
-        // dont test the result
+        // don't test the result
         fn.Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
     }
 

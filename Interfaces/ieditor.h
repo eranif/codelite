@@ -333,7 +333,7 @@ public:
     virtual int GetLexerId() = 0;
 
     /**
-     * @brief display codelite calltip at the current position
+     * @brief display CodeLite calltip at the current position
      * @param tip tip to display
      */
     virtual void ShowCalltip(clCallTipPtr tip) = 0;

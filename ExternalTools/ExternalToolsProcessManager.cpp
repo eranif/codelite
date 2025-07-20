@@ -74,7 +74,7 @@ void ToolsTaskManager::OnProcessEnd(clProcessEvent& event)
     ProcessTerminated(proc->GetPid());
     delete proc;
 
-    // Notify codelite to test for any modified bufferes
+    // Notify CodeLite to test for any modified buffers
     EventNotifier::Get()->PostReloadExternallyModifiedEvent();
 }
 

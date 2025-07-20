@@ -792,7 +792,7 @@ void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
         if (child->GetName() == "Plugin") {
             // get the content
             wxString content = child->GetNodeContent();
-            // overcome bug in WX where CDATA content comes out with extra \n and 4xspaces
+            // overcome bug in WX where CDATA content comes out with extra \n and 4 spaces
             content.Trim().Trim(false);
             pluginsDataMap[child->GetAttribute("Name", wxEmptyString)] = content;
         }
@@ -1332,7 +1332,7 @@ wxString Project::DoExpandBacktick(const wxString& backtick)
     wxString cmpOption = backtick;
     cmpOption.Trim().Trim(false);
 
-    // Expand backticks / $(shell ...) syntax supported by codelite
+    // Expand backticks / $(shell ...) syntax supported by CodeLite
     if (cmpOption.StartsWith("$(shell ", &tmp) || cmpOption.StartsWith("`", &tmp)) {
         cmpOption = tmp;
         tmp.Clear();
@@ -2105,7 +2105,7 @@ clProjectFile::Ptr_t clProjectFolder::AddFile(Project* project, const wxString& 
     wxFileName tmp(fullpath);
     tmp.MakeRelativeTo(project->m_fileName.GetPath());
 
-    // Create the XML ndoe
+    // Create the XML node
     wxXmlNode* node = new wxXmlNode(m_xmlNode, wxXML_ELEMENT_NODE, "File");
     node->AddAttribute("Name", tmp.GetFullPath(wxPATH_UNIX));
 
@@ -2115,7 +2115,7 @@ clProjectFile::Ptr_t clProjectFolder::AddFile(Project* project, const wxString& 
     file->SetXmlNode(node);
     file->SetVirtualFolder(GetFullpath());
 
-    // Add thie file to the cache
+    // Add this file to the cache
     project->m_filesTable.insert({fullpath, file});
     m_files.insert(fullpath);
     return file;

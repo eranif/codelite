@@ -226,7 +226,7 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
                     mymap[key] = cti;
                 }
 
-                // make sure we dont add duplicates
+                // make sure we don't add duplicates
                 if (mymap.find(key) == mymap.end()) {
                     // add it
                     mymap[key] = cti;

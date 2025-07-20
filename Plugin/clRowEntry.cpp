@@ -178,7 +178,7 @@ clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex,
     , m_model(tree ? &tree->GetModel() : nullptr)
 {
     if (m_tree) {
-        // Fill the verctor with items constructed using the _non_ default constructor
+        // Fill the vector with items constructed using the _non_ default constructor
         // to makes sure that IsOk() returns TRUE
         m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
                        clCellValue("", -1, -1)); // at least one column
@@ -191,7 +191,7 @@ clRowEntry::clRowEntry(clTreeCtrl* tree, bool checked, const wxString& label, in
     : m_tree(tree)
     , m_model(tree ? &tree->GetModel() : nullptr)
 {
-    // Fill the verctor with items constructed using the _non_ default constructor
+    // Fill the vector with items constructed using the _non_ default constructor
     // to makes sure that IsOk() returns TRUE
     if (m_tree) {
         m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
@@ -495,8 +495,8 @@ std::vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
             }
         }
 
-        // do we have text to redner?
-        // if we dont and we have a header, use the header's label
+        // do we have text to render?
+        // if we don't and we have a header, use the header's label
         wxString label = cell.GetValueString();
         if (label.empty() && m_tree->GetHeader() && m_tree->GetHeader()->size() >= i) {
             label = m_tree->GetHeader()->Item(i).GetLabel();
@@ -743,7 +743,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             textXOffset += X_SPACER;
 
         } else if (cell.IsButton()) {
-            // the centire cell is a button
+            // the entire cell is a button
             wxRect button_rect = cellRect;
             button_rect.Deflate(1);
             button_rect = button_rect.CenterIn(cellRect);

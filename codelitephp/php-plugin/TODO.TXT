@@ -14,7 +14,7 @@ Code Completion / Code Generation
     }
     
 - code completion: better comment for ctor/dtor functions
-- code completion: add ctor function calltip... (its annoying!) NOTE: __constuct is not called by default. Only the child __construct should be called
+- code completion: add ctor function calltip... (its annoying!) NOTE: __construct is not called by default. Only the child __construct should be called
 - When typing inside 'require{_once}' auto complete file names
 - SFTP: add a per file destination folder to allow overriding the global settings
 - Better parsing for functions' return value

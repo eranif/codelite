@@ -500,12 +500,12 @@ void wxCrafterPlugin::OnPageClosing(wxNotifyEvent& e)
 void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
 {
     if (wxcProjectMetadata::Get().GetGenerateCPPCode()) {
-        // First, notify codelite to reload all modified files that are opened (so codelite will not prompt us about
+        // First, notify CodeLite to reload all modified files that are opened (so CodeLite will not prompt us about
         // them)
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
 
-        // Next, compile a list of all generated files and add them to codelite
+        // Next, compile a list of all generated files and add them to CodeLite
         wxFileName bitmapSourceFile(e.GetString());
         wxCrafter::MakeAbsToProject(bitmapSourceFile);
 
@@ -530,7 +530,7 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
             wxCrafter::MakeAbsToProject(xrcFile);
         }
 
-        // Notify codelite to retagg the workspace
+        // Notify CodeLite to retag the workspace
         std::vector<wxFileName> filesToRetag;
         filesToRetag.push_back(headerFile);
         filesToRetag.push_back(sourceFile);
@@ -695,7 +695,7 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
 wxMenu* wxCrafterPlugin::DoCreateFolderMenu()
 {
     // Create the popup menu for the file explorer
-    // The only menu that we are interseted is the file explorer menu
+    // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
@@ -1118,7 +1118,7 @@ void wxCrafterPlugin::DoLoadAfterImport(ImportDlg::ImportFileData& data)
         m_treeView->LoadProject(data.wxcpFilename);
     }
 
-    // do it using event, orelse the main framw will steal the focus
+    // do it using event, or else the main frame will steal the focus
     wxCommandEvent evtShowDesigner(wxEVT_SHOW_WXCRAFTER_DESIGNER);
     EventNotifier::Get()->AddPendingEvent(evtShowDesigner);
 }

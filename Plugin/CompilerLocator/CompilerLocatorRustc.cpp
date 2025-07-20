@@ -5,7 +5,7 @@
 
 bool CompilerLocatorRustc::Locate()
 {
-    // This is a dummy compiler, we dont really need it
+    // This is a dummy compiler, we don't really need it
     // we only need the patterns
 
     wxString error_pattern = R"re1(^error\[.*?\]:(.*?)$)re1";

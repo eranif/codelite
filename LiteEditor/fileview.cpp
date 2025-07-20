@@ -1793,7 +1793,7 @@ void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem& item)
     proj->CreateVirtualDir(item.virtualDir, true);
 
     // add the file.
-    // For performance reasons, we dont go through the Workspace API
+    // For performance reasons, we don't go through the Workspace API
     // but directly through the project API
     proj->FastAddFile(item.fullpath, item.virtualDir);
 }

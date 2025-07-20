@@ -101,7 +101,7 @@ public:
 public:
     // Handle process exit code. This is done this way this
     // under Linux / Mac the exit code is returned only after the signal child has been
-    // handled by codelite
+    // handled by CodeLite
     static void SetProcessExitCode(int pid, int exitCode);
     static bool GetProcessExitCode(int pid, int& exitCode);
 

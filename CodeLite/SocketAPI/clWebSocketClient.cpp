@@ -191,7 +191,7 @@ void clWebSocketClient::OnHelperThreadExit()
 
 void clWebSocketClient::DoInit()
 {
-    // Dont initialise again
+    // Don't initialise again
     if (m_client) {
         return;
     }

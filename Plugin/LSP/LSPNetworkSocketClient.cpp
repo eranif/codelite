@@ -35,7 +35,7 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
             throw clException(wxString() << "Failed to execute process: " << cmd);
         }
 
-        m_lspServer->Detach(); // we dont want events
+        m_lspServer->Detach(); // we don't want events
         m_pid = m_lspServer->GetPid();
     } else {
         m_pid = wxNOT_FOUND;

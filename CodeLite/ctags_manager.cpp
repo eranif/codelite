@@ -146,7 +146,7 @@ void TagsManager::Delete(const wxFileName& path, const wxString& fileName)
 
 void TagsManager::FindSymbol(const wxString& name, std::vector<TagEntryPtr>& tags)
 {
-    // since we dont get a scope, we better user a search that only uses the
+    // since we don't get a scope, we better user a search that only uses the
     // name (GetTagsByScopeAndName) is optimized to search the global tags table
     GetDatabase()->GetTagsByName(name, tags, true);
 }
@@ -270,7 +270,7 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
                 wxString possibleScope(wxT("<global>"));
 
                 // if the 'inherits' already contains a scope
-                // dont attempt to fix it
+                // don't attempt to fix it
                 if(inherits.Contains(wxT("::")) == false) {
 
                     // Correct the type/scope

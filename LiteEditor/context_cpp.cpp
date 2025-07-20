@@ -741,7 +741,7 @@ bool ContextCpp::TryOpenFile(const wxFileName& fileName, bool lookInEntireWorksp
     }
 
     // ok, the file does not exist in the current directory, try to find elsewhere
-    // whithin the workspace files
+    // within the workspace files
     std::vector<wxFileName> files;
     ManagerST::Get()->GetWorkspaceFiles(files, true);
 
@@ -847,7 +847,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     if (!tags.empty()) {
         // the last tag is our function
         TagEntryPtr t = tags.at(tags.size() - 1);
-        // get doxygen comment based on file and line
+        // get Doxygen comment based on file and line
         DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, keyPrefix);
         // do we have a comment?
         if (dc.comment.IsEmpty()) {
@@ -1045,7 +1045,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
         return;
     }
 
-    // We disply the tooltip only if the control key is down
+    // We display the tooltip only if the control key is down
     DebuggerInformation info;
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -1072,7 +1072,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
 
         end = ctrl.WordEndPosition(pos, true);
 
-        // if thers is no selected text, use the word calculated from the caret position
+        // if there is no selected text, use the word calculated from the caret position
         if (!ctrl.GetSelectedText().IsEmpty()) {
             // selection is not empty, use it
             sel_start = ctrl.GetSelectionStart();
@@ -1102,7 +1102,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
     if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
         if (ManagerST::Get()->GetDebuggerTip()->IsShown() && ManagerST::Get()->GetDebuggerTip()->m_expression == word) {
             // a 'Quick Show dialog' is already shown for this word
-            // dont show another tip
+            // don't show another tip
             return;
 
         } else {
@@ -1572,7 +1572,7 @@ void ContextCpp::AutoAddComment()
     case wxSTC_C_COMMENTLINEDOC: {
         if (text.StartsWith("//")) {
             // try to parse the comment text and indentation
-            unsigned i = (text.Length() > 2 && text[2] == '!') ? 3 : 2; // support "//!" for doxygen
+            unsigned i = (text.Length() > 2 && text[2] == '!') ? 3 : 2; // support "//!" for Doxygen
             i = text.find_first_not_of('/', i);
             i = text.find_first_not_of(" \t", i);
             if (i == wxString::npos) {
@@ -1611,7 +1611,7 @@ void ContextCpp::AutoAddComment()
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
             if (((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert() && !IsJavaScript()) {
 
-                // Let the plugins/codelite check if they can provide a doxy comment
+                // Let the plugins/CodeLite check if they can provide a doxy comment
                 // for the current entry
                 wxCommandEvent dummy;
                 // Parse the source file
@@ -1621,7 +1621,7 @@ void ContextCpp::AutoAddComment()
                     TagEntryPtr t = tags[0];
 
                     wxChar keyPrefix = (textTyped == "/*!") ? '\\' : '@';
-                    // get doxygen comment based on file and line
+                    // get Doxygen comment based on file and line
                     DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, keyPrefix);
                     // do we have a comment?
                     if (dc.comment.IsEmpty()) {
@@ -1870,7 +1870,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
 
         switch (ch) {
         case ';':
-            // dont include this token
+            // don't include this token
             at = ctrl->PositionAfter(at);
             cont = false;
             break;
@@ -1882,7 +1882,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
                 depth--;
             } else {
                 if (depth <= 0) {
-                    // dont include this token
+                    // don't include this token
                     at = ctrl->PositionAfter(at);
                     cont = false;
                 }
@@ -1906,7 +1906,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         case '=':
             prevGt = false;
             cont = false;
-            // dont include this token
+            // don't include this token
             at = ctrl->PositionAfter(at);
             break;
         case '(':
@@ -1914,7 +1914,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
             depth--;
             prevGt = false;
             if (depth < 0) {
-                // dont include this token
+                // don't include this token
                 at = ctrl->PositionAfter(at);
                 cont = false;
             }
@@ -1932,7 +1932,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         case '/':
             prevGt = false;
             if (depth <= 0) {
-                // dont include this token
+                // don't include this token
                 at = ctrl->PositionAfter(at);
                 cont = false;
             }
@@ -1946,7 +1946,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
             depth--;
             if (depth < 0) {
 
-                // dont include this token
+                // don't include this token
                 at = ctrl->PositionAfter(at);
                 cont = false;
             }

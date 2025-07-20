@@ -688,7 +688,7 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
     req->As<LSP::InitializeRequest>()->SetInitOptions(m_initOptions);
     LSP_DEBUG() << GetLogPrefix() << "Sending initialize request...";
 
-    // Temporarly set the state to "kInitialized" so we can send out the "initialize" request
+    // Temporarily set the state to "kInitialized" so we can send out the "initialize" request
     m_state = kInitialized;
     QueueMessage(req);
     m_state = kUnInitialized;
@@ -855,7 +855,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
         event.Skip(false);
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE |
                                     LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
-        // dont wait for the response, but fire an event to load the dialog
+        // don't wait for the response, but fire an event to load the dialog
         LSPEvent show_quick_outline_dlg_event(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG);
         m_cluster->AddPendingEvent(show_quick_outline_dlg_event);
     }

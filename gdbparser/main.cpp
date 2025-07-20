@@ -156,7 +156,7 @@ void MakeTree()
             break;
         }
 
-        // remove quoates from the name value
+        // remove quotes from the name value
         GDB_STRIP_QUOATES(currentToken);
 
         displayLine += currentToken;
@@ -177,7 +177,7 @@ void MakeTree()
             break;
         }
 
-        // remove the quoates from the value
+        // remove the quotes from the value
         GDB_STRIP_QUOATES(currentToken);
 
         if (currentToken.at(0) == '{') {
@@ -185,7 +185,7 @@ void MakeTree()
                 //open a new node for the tree
                 printNode(displayLine);
 
-                // since we dont want a dummy <unnamed> node, we remove the false
+                // since we don't want a dummy <unnamed> node, we remove the false
                 // open brace
                 std::string tmp(currentToken);
                 tmp = tmp.substr(1);

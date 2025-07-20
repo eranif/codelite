@@ -574,7 +574,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
         allocated_text_rect.SetWidth(allocated_text_rect.GetWidth() - allocated_text_rect.GetHeight());
     }
 
-    // draw the bimap
+    // draw the bitmap
     if (bmp.IsOk()) {
         // draw the bitmap
         wxRect bmp_rect(0, 0, bmp.GetScaledWidth(), bmp.GetScaledHeight());
@@ -889,7 +889,7 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     wxColour fixed_picker_colour = pickerColour.IsOk() ? pickerColour : *wxBLACK;
     wxString label = fixed_picker_colour.GetAsString(wxC2S_HTML_SYNTAX);
 
-    // set the dont
+    // set the font
     wxDCFontChanger font_changer(dc);
     wxFont f = GetDefaultGuiFont();
     dc.SetFont(f);

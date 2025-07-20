@@ -358,7 +358,7 @@ protected:
     void RegisterEvent(const wxString& eventName, const wxString& className, const wxString& description,
                        const wxString& handlerName = "", const wxString& functionNameAndSig = "", bool noBody = false);
     /**
-     * @brief acroynm for RegisterEvent(eventName, "wxCommandEvent", "wxCommandEventHandler")
+     * @brief acronym for RegisterEvent(eventName, "wxCommandEvent", "wxCommandEventHandler")
      */
     void RegisterEventCommand(const wxString& eventName, const wxString& description)
     {

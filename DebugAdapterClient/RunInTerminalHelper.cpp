@@ -11,11 +11,11 @@ RunInTerminalHelper::RunInTerminalHelper(clModuleLogger& log)
 
 RunInTerminalHelper::~RunInTerminalHelper()
 {
-    // dont accept events anymore
+    // don't accept events anymore
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RunInTerminalHelper::OnProcessTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &RunInTerminalHelper::OnDebugEnded, this);
     if(m_process) {
-        // dont send us events
+        // don't send us events
         m_process->Detach();
         wxDELETE(m_process);
     }

@@ -53,7 +53,7 @@ desktop-file-install  --delete-original                            \
 * Sat Feb 21 2009 Jess Portnoy <kernel01@gmail.com> 1.0.2781-1
 - Reworked the rpm package to satisfy Fedora Core conventions.
 * Wed Jan 27 2010 Jess Portnoy <kernel01@gmail.com>
-- Reomved obsolete switch (--copy-generic-name-to-name)
+- Removed obsolete switch (--copy-generic-name-to-name)
   updated version number to 2.2.0
   updated version number to 2.5.0
 

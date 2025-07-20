@@ -15,7 +15,7 @@ extern WXDLLIMPEXP_CL ExpressionResult &parse_expression(const std::string &in);
 extern WXDLLIMPEXP_CL bool              setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreTokens);
 extern WXDLLIMPEXP_CL void              cl_scope_lex_clean();
 
-// We dont use WXDLLIMPEXP_CL intentionally to avoid people using these members/functions
+// We don't use WXDLLIMPEXP_CL intentionally to avoid people using these members/functions
 // directly
 extern int cl_scope_lex();
 extern int cl_scope_lineno;

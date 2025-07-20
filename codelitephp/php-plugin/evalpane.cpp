@@ -57,7 +57,7 @@ void EvalPane::OnExpressionEvaluate(XDebugEvent& e)
         } else {
             str << e.GetString() << " = \n";
             wxString evaluated = e.GetEvaluted();
-            // Reomve extra escapes
+            // Remove extra escapes
             evaluated.Replace("\\n", "\n");
             evaluated.Replace("\\t", "\t");
             evaluated.Replace("\\r", "\r");

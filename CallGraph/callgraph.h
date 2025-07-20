@@ -72,7 +72,7 @@ public:
      */
     void CreateToolBar(clToolBarGeneric* toolbar) override;
     /**
-     * @brief Function create plugin menu for Call graph used in menu Plugins of Codelite.
+     * @brief Function create plugin menu for Call graph used in menu Plugins of CodeLite.
      * @param pluginsMenu
      */
     void CreatePluginMenu(wxMenu* pluginsMenu) override;

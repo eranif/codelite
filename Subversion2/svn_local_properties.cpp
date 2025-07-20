@@ -124,7 +124,7 @@ void SubversionLocalProperties::ReadProperties()
             value.Trim().Trim(false);
 
             if(group.IsEmpty()) {
-                // we dont have group yet - discard this entry
+                // we don't have group yet - discard this entry
                 continue;
             }
 

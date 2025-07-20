@@ -602,8 +602,8 @@ public:
     void SetModified(bool mod);
 
     // Transaction support to reduce overhead of disk writing
-    void BeginTranscation() { m_tranActive = true; }
-    void CommitTranscation() { Save(); }
+    void BeginTransaction() { m_tranActive = true; }
+    void CommitTransaction() { Save(); }
     bool InTransaction() const { return m_tranActive; }
 
     wxString GetVDByFileName(const wxString& file);

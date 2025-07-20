@@ -490,7 +490,7 @@ void ReconcileProjectDlg::OnDeleteStaleFiles(wxCommandEvent& event)
         m_dataviewStaleFilesModel->GetChildren(wxDataViewItem(0), items);
     }
 
-    proj->BeginTranscation();
+    proj->BeginTransaction();
     for (size_t i = 0; i < items.GetCount(); ++i) {
         ReconcileFileItemData* data =
             dynamic_cast<ReconcileFileItemData*>(m_dataviewStaleFilesModel->GetClientObject(items.Item(i)));
@@ -499,7 +499,7 @@ void ReconcileProjectDlg::OnDeleteStaleFiles(wxCommandEvent& event)
         }
         m_projectModified = true;
     }
-    proj->CommitTranscation();
+    proj->CommitTransaction();
     m_dataviewStaleFilesModel->DeleteItems(wxDataViewItem(0), items);
 }
 

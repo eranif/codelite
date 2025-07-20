@@ -1469,7 +1469,7 @@ void Project::DoUpdateProjectSettings()
     m_settings = std::make_shared<ProjectSettings>(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Settings"));
 }
 
-wxArrayString Project::GetPreProcessors(bool clearCache)
+wxArrayString Project::GetPreProcessors()
 {
     wxArrayString pps;
     BuildConfigPtr buildConf = GetBuildConfiguration();
@@ -1509,17 +1509,17 @@ wxArrayString Project::GetPreProcessors(bool clearCache)
     return pps;
 }
 
-wxArrayString Project::GetCXXCompilerOptions(bool clearCache, bool noDefines, bool noIncludePaths)
+wxArrayString Project::GetCXXCompilerOptions(bool noDefines, bool noIncludePaths)
 {
-    return DoGetCompilerOptions(true, clearCache, noDefines, noIncludePaths);
+    return DoGetCompilerOptions(true, noDefines, noIncludePaths);
 }
 
-wxArrayString Project::GetCCompilerOptions(bool clearCache, bool noDefines, bool noIncludePaths)
+wxArrayString Project::GetCCompilerOptions(bool noDefines, bool noIncludePaths)
 {
-    return DoGetCompilerOptions(false, clearCache, noDefines, noIncludePaths);
+    return DoGetCompilerOptions(false, noDefines, noIncludePaths);
 }
 
-wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool clearCache, bool noDefines, bool noIncludePaths)
+wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool noDefines, bool noIncludePaths)
 {
     wxArrayString options;
     BuildConfigPtr buildConf = GetBuildConfiguration();

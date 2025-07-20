@@ -309,8 +309,7 @@ private:
     void DoUpdateProjectSettings();
     void DoBuildCacheFromXml();
     clProjectFile::Ptr_t FileFromXml(wxXmlNode* node, const wxString& vd);
-    wxArrayString
-    DoGetCompilerOptions(bool cxxOptions, bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    wxArrayString DoGetCompilerOptions(bool cxxOptions, bool noDefines, bool noIncludePaths);
 
     clProjectFolder::Ptr_t GetRootFolder();
 
@@ -681,17 +680,17 @@ public:
      * The PreProcessors returned are from the build configuration
      * that matches the current workspace configuration
      */
-    wxArrayString GetPreProcessors(bool clearCache = false);
+    wxArrayString GetPreProcessors();
 
     /**
      * @brief return the compiler. Optionally omit the defines/include paths
      */
-    wxArrayString GetCXXCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    wxArrayString GetCXXCompilerOptions(bool noDefines = true, bool noIncludePaths = true);
 
     /**
      * @brief return the C compiler. Optionally omit the defines/include paths
      */
-    wxArrayString GetCCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    wxArrayString GetCCompilerOptions(bool noDefines = true, bool noIncludePaths = true);
 
     /**
      * @brief return the compilation line for a C++ file in the project. This function returns the same

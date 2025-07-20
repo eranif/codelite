@@ -396,7 +396,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
 
     // Add preprocessor definitions
     {
-        wxArrayString defines = project->GetPreProcessors(false);
+        wxArrayString defines = project->GetPreProcessors();
         if(!defines.IsEmpty()) {
             content << "add_definitions(\n";
             for(size_t i = 0; i < defines.GetCount(); ++i) {

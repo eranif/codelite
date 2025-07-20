@@ -131,7 +131,7 @@ void clGotoAnythingManager::Initialise()
                 entry.SetResourceID(menuItem->GetId());
                 entry.SetBitmap(menuItem->GetBitmap().IsOk() ? menuItem->GetBitmap() : defaultBitmap);
                 if(!entry.GetDesc().IsEmpty()) {
-                    // Dont add empty entries
+                    // Don't add empty entries
                     m_actions[entry.GetDesc()] = entry;
                 }
             }

@@ -201,7 +201,7 @@ WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = "E
 
 /**
  * @brief under Windows 10 and later, enable dark mode controls (where it is implemented)
- * based on the selected editor theme. This is dont recursively on win
+ * based on the selected editor theme. This is don't recursively on win
  */
 WXDLLIMPEXP_SDK void MSWSetWindowDarkTheme(wxWindow* win);
 
@@ -280,7 +280,7 @@ WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& 
  * @brief prompt the user with a wxRichMessageDialog with a checkbox "Don't show this message again"
  * @param message the message to show to the user
  * @param checkboxLabel the message to display next to the checkbox
- * @param dlgId a unique string ID which will be used for storing the user value in case he checks the 'dont annoy me
+ * @param dlgId a unique string ID which will be used for storing the user value in case he checks the don't annoy me
  * again' checkbox
  * @param yesLabel set a different label to the "Yes" button
  * @param noLabel set a different label to the "No" button
@@ -303,7 +303,7 @@ PromptForYesNoCancelDialogWithCheckbox(const wxString& message,
  * @brief prompt the user with a PromptForYesNoCancelDialogWithCheckbox minus the 'Cancel' button
  * @param message the message to show to the user
  * @param checkboxLabel the message to display next to the checkbox
- * @param dlgId a unique string ID which will be used for storing the user value in case he checks the 'dont annoy me
+ * @param dlgId a unique string ID which will be used for storing the user value in case he checks the don't annoy me
  * again' checkbox
  * @param yesLabel set a different label to the "Yes" button
  * @param noLabel set a different label to the "No" button

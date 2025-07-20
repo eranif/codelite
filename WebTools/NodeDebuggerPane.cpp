@@ -196,14 +196,14 @@ void NodeDebuggerPane::OnInteract(clDebugEvent& event)
 
 void NodeDebuggerPane::OnRunTerminalCommand(clCommandEvent& event)
 {
-    // Dont call event.Skip() here
+    // Don't call event.Skip() here
     wxString command = event.GetString();
     NodeJSWorkspace::Get()->GetDebugger()->SendToDebuggee(command);
 }
 
 void NodeDebuggerPane::OnConsoleOutput(clDebugEvent& event)
 {
-    // Dont call event.Skip() here
+    // Don't call event.Skip() here
     m_terminal->AddTextRaw(event.GetString());
 }
 
@@ -315,7 +315,7 @@ void NodeDebuggerPane::DoUpdateLocalsView(CallFrame* callFrame)
         if(scope->GetRemoteObject().IsObject() && !objectId.IsEmpty()) {
             m_treeCtrlLocals->AppendItem(scopeItemId, "Loading...");
 
-            // Dont expand the "global" scope
+            // Don't expand the "global" scope
             if(name != "global") {
                 m_treeCtrlLocals->Expand(scopeItemId);
             }

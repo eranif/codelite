@@ -862,7 +862,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
         DocumentSymbols(editor,
                         LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE |
                             LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
-        // dont wait for the response, but fire an event to load the dialog
+        // don't wait for the response, but fire an event to load the dialog
         LSPEvent show_quick_outline_dlg_event(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG);
         m_cluster->AddPendingEvent(show_quick_outline_dlg_event);
     }

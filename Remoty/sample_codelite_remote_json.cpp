@@ -8,7 +8,8 @@ const wxString DEFAULT_CODELITE_REMOTE_JSON = R"EOF({
           "clangd",
           "--limit-results=500",
           "--header-insertion-decorators=0",
-          "--compile-commands-dir=$(WorkspacePath)"
+          "--compile-commands-dir=$(WorkspacePath)",
+          "--background-index"
         ],
         "env": [],
         "name": "clangd",
@@ -49,6 +50,16 @@ const wxString DEFAULT_CODELITE_REMOTE_JSON = R"EOF({
           "$(CurrentFileRelPath)"
         ],
         "name": "jq",
+        "working_directory": "$(WorkspacePath)"
+      },
+      {
+        "command": [
+          "black",
+          "--line-length",
+          "80",
+          "$(CurrentFileRelPath)"
+        ],
+        "name": "black",
         "working_directory": "$(WorkspacePath)"
       },
       {

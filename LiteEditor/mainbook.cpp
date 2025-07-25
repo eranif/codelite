@@ -1187,7 +1187,7 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
         return;
     }
 
-    bool readOnly = (!editor->IsEditable()) || ::IsFileReadOnly(editor->GetFileName());
+    bool readOnly = (!editor->IsEditable()) || FileUtils::IsFileReadOnly(editor->GetFileName());
     if (readOnly && editor->GetModify()) {
         // an attempt to mark a modified file as read-only
         // ask the user to save his changes before

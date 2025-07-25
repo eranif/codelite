@@ -1004,10 +1004,10 @@ wxString GitPlugin::GetEditorRelativeFilepath() const // Called by OnGitBlame or
         return "";
     }
 
-    // We need to be symlink-aware here on Linux, so use CLRealPath
-    wxString realfilepath = CLRealPath(current->GetFileName().GetFullPath());
+    // We need to be symlink-aware here on Linux, so use FileUtils::RealPath
+    wxString realfilepath = FileUtils::RealPath(current->GetFileName().GetFullPath());
     wxFileName fn(realfilepath);
-    fn.MakeRelativeTo(CLRealPath(m_repositoryDirectory));
+    fn.MakeRelativeTo(FileUtils::RealPath(m_repositoryDirectory));
 
     return fn.GetFullPath();
 }
@@ -2818,10 +2818,10 @@ void GitPlugin::OnFileGitBlame(wxCommandEvent& event)
     if (m_filesSelected.IsEmpty() || m_repositoryDirectory.empty())
         return;
 
-    // We need to be symlink-aware here on Linux, so use CLRealPath
-    wxString realfilepath = CLRealPath(m_filesSelected.Item(0));
+    // We need to be symlink-aware here on Linux, so use FileUtils::RealPath
+    wxString realfilepath = FileUtils::RealPath(m_filesSelected.Item(0));
     wxFileName fn(realfilepath);
-    fn.MakeRelativeTo(CLRealPath(m_repositoryDirectory));
+    fn.MakeRelativeTo(FileUtils::RealPath(m_repositoryDirectory));
 
     DoGitBlame(fn.GetFullPath());
 }
@@ -2832,10 +2832,10 @@ void GitPlugin::OnFileCommitListSelected(wxCommandEvent& e)
     if (m_filesSelected.IsEmpty() || m_repositoryDirectory.empty())
         return;
 
-    // We need to be symlink-aware here on Linux, so use CLRealPath
-    wxString realfilepath = CLRealPath(m_filesSelected.Item(0));
+    // We need to be symlink-aware here on Linux, so use FileUtils::RealPath
+    wxString realfilepath = FileUtils::RealPath(m_filesSelected.Item(0));
     wxFileName fn(realfilepath);
-    fn.MakeRelativeTo(CLRealPath(m_repositoryDirectory));
+    fn.MakeRelativeTo(FileUtils::RealPath(m_repositoryDirectory));
 
     if (!m_commitListDlg) {
         m_commitListDlg = new GitCommitListDlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory, this);
@@ -3110,7 +3110,7 @@ wxString GitPlugin::FindRepositoryRoot(const wxString& starting_dir) const
         wxFileName gitdir(fp.GetPath(), wxEmptyString);
         gitdir.AppendDir(".git");
         if (wxFileName::DirExists(gitdir.GetPath())) {
-            wxString realfilepath = CLRealPath(gitdir.GetPath());
+            wxString realfilepath = FileUtils::RealPath(gitdir.GetPath());
             if (realfilepath != gitdir.GetPath() && wxFileName::DirExists(realfilepath)) {
                 return realfilepath.BeforeLast('.');
             }

@@ -23,45 +23,39 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "AsyncProcess/asyncprocess.h"
+#include "fileutils.h"
+
 #include "Console/clConsoleBase.h"
 #include "StringUtils.h"
-#include "cl_config.h"
-#include "cl_standard_paths.h"
-#include "dirsaver.h"
 #include "file_logger.h"
-#include "fileutils.h"
 #include "macros.h"
+#include "precompiled_header.h"
 #include "procutils.h"
-#include "wxStringHash.h"
 
 #include <cstdint>
-#include <string>
-#include <algorithm>
+#include <cstring> // strerror
 #include <fstream>
-#include <map>
+#include <string>
+#include <wx/dir.h>
 #include <wx/ffile.h>
 #include <wx/file.h>
+#include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/regex.h>
+#include <wx/strconv.h>
 #include <wx/string.h>
+#include <wx/tokenzr.h>
 #include <wx/uri.h>
+#include <wx/utils.h>
+
 #if wxUSE_GUI
 #include <wx/msgdlg.h>
 #endif
-#include <string.h> // strerror
-#include <wx/strconv.h>
-#include <wx/tokenzr.h>
-#include <wx/utils.h>
 #ifdef __WXGTK__
 #include <signal.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #endif
-#include <cstring>
-#include <functional>
-#include <memory>
-#include <wx/filename.h>
 
 static bool bRealPathModeResolveSymlinks = true;
 
@@ -489,9 +483,13 @@ bool FileUtils::GetFilePermissions(const wxFileName& filename, mode_t& perm)
 
 time_t FileUtils::GetFileModificationTime(const wxFileName& filename)
 {
-    wxString file = filename.GetFullPath();
+    return GetFileModificationTime(filename.GetFullPath());
+}
+
+time_t FileUtils::GetFileModificationTime(const wxString& filename)
+{
     struct stat buff;
-    const wxCharBuffer cname = file.mb_str(wxConvUTF8);
+    const wxCharBuffer cname = filename.mb_str(wxConvUTF8);
     if (stat(cname.data(), &buff) < 0) {
         return 0;
     }
@@ -966,4 +964,143 @@ wxString FileUtils::NormaliseFilename(const wxString& str)
         fixed[i] = '_';
     }
     return fixed;
+}
+
+static void Mkdir(const wxString& path)
+{
+#ifdef __WXMSW__
+    wxMkDir(path.GetData());
+#else
+    wxMkDir(path.ToAscii(), 0777);
+#endif
+}
+
+bool FileUtils::CopyDir(const wxString& src, const wxString& target)
+{
+    wxString SLASH = wxFileName::GetPathSeparator();
+
+    wxString from(src);
+    wxString to(target);
+
+    // append a slash if there is not one (for easier parsing)
+    // because who knows what people will pass to the function.
+    if (to.EndsWith(SLASH) == false) {
+        to << SLASH;
+    }
+
+    // for both dirs
+    if (from.EndsWith(SLASH) == false) {
+        from << SLASH;
+    }
+
+    // first make sure that the source dir exists
+    if (!wxDir::Exists(from)) {
+        Mkdir(from);
+        return false;
+    }
+
+    if (!wxDir::Exists(to)) {
+        Mkdir(to);
+    }
+
+    wxDir dir(from);
+    wxString filename;
+    bool bla = dir.GetFirst(&filename);
+    if (bla) {
+        do {
+            if (wxDirExists(from + filename)) {
+                Mkdir(to + filename);
+                CopyDir(from + filename, to + filename);
+            } else {
+                // change the umask for files only
+                wxCopyFile(from + filename, to + filename);
+            }
+        } while (dir.GetNext(&filename));
+    }
+    return true;
+}
+
+bool FileUtils::IsFileReadOnly(const wxFileName& filename)
+{
+#ifdef __WXMSW__
+    DWORD dwAttrs = GetFileAttributes(filename.GetFullPath().c_str());
+    if (dwAttrs != INVALID_FILE_ATTRIBUTES && (dwAttrs & FILE_ATTRIBUTE_READONLY)) {
+        return true;
+    } else {
+        return false;
+    }
+#else
+    // try to open the file with 'write permission'
+    return !filename.IsFileWritable();
+#endif
+}
+
+wxString FileUtils::NormalizePath(const wxString& path)
+{
+    wxString normalized_path(path);
+    normalized_path.Trim().Trim(false);
+    normalized_path.Replace("\\", "/");
+    while (normalized_path.Replace("//", "/")) {}
+    return normalized_path;
+}
+
+// Make absolute first, including abolishing any symlinks (Normalise only does MSW shortcuts)
+// Then only 'make relative' if it's a subpath of reference_path (or reference_path itself)
+bool FileUtils::MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
+{
+    if (reference_path.IsEmpty() || !fn.IsOk()) {
+        return false;
+    }
+
+#if defined(__WXGTK__)
+    // Normalize() doesn't account for symlinks in wxGTK
+    wxStructStat statstruct;
+    int error = wxLstat(fn.GetFullPath(), &statstruct);
+
+    if (!error && S_ISLNK(statstruct.st_mode)) { // If it's a symlink
+        char buf[4096];
+        int len = readlink(fn.GetFullPath().mb_str(wxConvUTF8), buf, WXSIZEOF(buf) - sizeof(char));
+        if (len != -1) {
+            buf[len] = '\0'; // readlink() doesn't NULL-terminate the buffer
+            fn.Assign(wxString(buf, wxConvUTF8, len));
+        }
+    }
+#endif
+
+    fn.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_TILDE | wxPATH_NORM_SHORTCUT);
+
+    // Now see if fn is in or under 'reference_path'
+    wxString fnPath = fn.GetPath();
+    if ((fnPath.Len() >= reference_path.Len()) && (fnPath.compare(0, reference_path.Len(), reference_path) == 0)) {
+        fn.MakeRelativeTo(reference_path);
+        return true;
+    }
+
+    return false;
+}
+
+wxFileName FileUtils::wxReadLink(const wxFileName& filename)
+{
+#ifndef __WXMSW__
+    if (FileUtils::IsSymlink(filename)) {
+#if defined(__WXGTK__)
+        // Use 'realpath' on Linux, otherwise this breaks on relative symlinks, and (untested) on symlinks-to-symlinks
+        return wxFileName(FileUtils::RealPath(filename.GetFullPath(), true));
+
+#else  // OSX
+        wxFileName realFileName;
+        char _tmp[512];
+        memset(_tmp, 0, sizeof(_tmp));
+        int len = readlink(filename.GetFullPath().mb_str(wxConvUTF8).data(), _tmp, sizeof(_tmp));
+        if (len != -1) {
+            realFileName = wxFileName(wxString(_tmp, wxConvUTF8, len));
+            return realFileName;
+        }
+#endif // !OSX
+    }
+    return filename;
+
+#else
+    return filename;
+#endif
 }

@@ -53,21 +53,21 @@ void LintOptions::FromJSON(const JSONItem& json)
     // Find an installed version of phpcs
     if(m_phpcsPhar.IsEmpty()) {
         wxFileName phpcsFile;
-        ::clFindExecutable("phpcs", phpcsFile);
+        ::FileUtils::FindExe("phpcs", phpcsFile);
         SetPhpcsPhar(phpcsFile);
     }
 
     // Find an installed version of phpmd
     if(m_phpmdPhar.IsEmpty()) {
         wxFileName phpmdFile;
-        ::clFindExecutable("phpmd", phpmdFile);
+        ::FileUtils::FindExe("phpmd", phpmdFile);
         SetPhpmdPhar(phpmdFile);
     }
 
     // Find an installed version of phpstan
     if(m_phpstanPhar.IsEmpty()) {
         wxFileName phpstanFile;
-        ::clFindExecutable("phpstan", phpstanFile);
+        ::FileUtils::FindExe("phpstan", phpstanFile);
         SetPhpstanPhar(phpstanFile);
     }
 #endif

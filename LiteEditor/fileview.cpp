@@ -1470,7 +1470,7 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& projectHTI, const wxStri
     wxString vdFullPath = proj->GetVDByFileName(fileName);
 
 #if defined(__WXGTK__)
-    wxString realpathItem = CLRealPath(fileName);
+    wxString realpathItem = FileUtils::RealPath(fileName);
 #endif
 
     wxTreeItemId curItem = projectHTI;
@@ -1513,7 +1513,7 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& projectHTI, const wxStri
             }
 #if defined(__WXGTK__)
             else { // Try again, dereferencing fn
-                wxString fdest = CLRealPath(fn.GetFullPath());
+                wxString fdest = FileUtils::RealPath(fn.GetFullPath());
                 if (fdest.CmpNoCase(realpathItem) == 0) {
                     return child;
                 }

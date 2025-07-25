@@ -193,7 +193,7 @@ void DatabaseExplorer::OnAbout(wxCommandEvent& e)
     info.SetName(_("DatabaseExplorer"));
     info.SetVersion(version);
     info.SetDescription(desc);
-    info.SetCopyright(_("2011 - 2015 (C) Tomas Bata University, Zlin, Czech Republic"));
+    info.SetCopyright(wxT("2011 - 2015 (C) Tomas Bata University, Zlin, Czech Republic"));
     info.SetWebSite(_("http://www.fai.utb.cz"));
     info.AddDeveloper("Peter Janků");
     info.AddDeveloper("Michal Bližňák");

@@ -117,7 +117,7 @@ void EditWorkspaceConfDlg::OnDelete(wxCommandEvent& event)
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
     wxString msg;
     msg << _("Remove workspace configuration '") << delMe << wxT("' ?");
-    if(wxMessageBox(msg, _("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL) == wxYES) {
+    if (wxMessageBox(msg, wxT("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL) == wxYES) {
         matrix->RemoveConfiguration(delMe);
         // apply changes
         ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);

@@ -26,8 +26,8 @@
 #ifndef HELPPLUGINSETTINGS_H
 #define HELPPLUGINSETTINGS_H
 
-#include "JSON.h"
 #include "cl_config.h"
+#include "fileextmanager.h"
 
 class HelpPluginSettings : public clConfigItem
 {
@@ -40,11 +40,11 @@ class HelpPluginSettings : public clConfigItem
     wxString m_javaDocset;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     HelpPluginSettings();
-    virtual ~HelpPluginSettings();
+    ~HelpPluginSettings() override = default;
 
     HelpPluginSettings& Load();
     HelpPluginSettings& Save();
@@ -63,6 +63,8 @@ public:
     const wxString& GetJavaDocset() const { return m_javaDocset; }
     const wxString& GetJsDocset() const { return m_jsDocset; }
     const wxString& GetPhpDocset() const { return m_phpDocset; }
+
+    wxString GetDocset(FileExtManager::FileType type) const;
 };
 
 #endif // HELPPLUGINSETTINGS_H

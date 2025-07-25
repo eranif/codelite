@@ -4985,7 +4985,7 @@ void clMainFrame::DoSuggestRestart()
     ::wxMessageBox(
         _("A restart is required for changes to take effect"), "CodeLite", wxICON_INFORMATION | wxOK | wxCENTER);
 #else
-    if (::wxMessageBox(_("A restart is required for changes to take effect\rContinue with restart?"),
+    if (::wxMessageBox(_("A restart is required for changes to take effect\nContinue with restart?"),
                        "CodeLite",
                        wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION,
                        this) != wxYES) {

@@ -379,7 +379,7 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
 
 wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxString& path)
 {
-    // If we already have this folder opened, dont re-add it
+    // If we already have this folder opened, don't re-add it
     wxArrayString topFolders;
     wxArrayTreeItemIds topFoldersItems;
     GetTopLevelFolders(topFolders, topFoldersItems);
@@ -1117,7 +1117,7 @@ void clTreeCtrlPanel::RefreshNonTopLevelFolder(const wxTreeItemId& item)
     CHECK_PTR_RET(cd);
     CHECK_COND_RET(cd->IsFolder());
 
-    // Collpase the item if needed
+    // Collapse the item if needed
     bool expandItem = GetTreeCtrl()->IsExpanded(item);
     if (expandItem) {
         GetTreeCtrl()->Collapse(item);

@@ -24,7 +24,7 @@ struct DCFontLocker {
 
 void clMarkdownRenderer::UpdateFont(wxDC& dc, const mdparser::Style& style)
 {
-    // we always use code font, so we dont change it
+    // we always use code font, so we don't change it
     wxFont f = dc.GetFont();
     double point_size = f.GetPointSize();
     switch(style.font_size) {

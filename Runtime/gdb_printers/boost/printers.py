@@ -189,7 +189,7 @@ def _conditionally_register_printer(condition):
 ### Relevant fields:
 ###
 ### - 'printer_name' : Subprinter name used by gdb. (Required.) If it contains
-###     regex operators, they must be escaped when refering to it from gdb.
+###     regex operators, they must be escaped when referring to it from gdb.
 ### - 'version' : Appended to the subprinter name. (Required.)
 ### - 'supports(GDB_Value_Wrapper)' classmethod : If it exists, it is used to
 ###     determine if the Printer supports the given object.

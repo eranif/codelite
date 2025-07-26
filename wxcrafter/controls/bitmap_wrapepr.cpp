@@ -35,7 +35,7 @@ wxString BitmapWrapepr::CppCtorCode() const
     wxFileName fn(bmpPath);
     // Support for hi-res images
     // The logic:
-    // If we find files with the following perfixes: @2x, @1.5x, @1.25x
+    // If we find files with the following prefixes: @2x, @1.5x, @1.25x
     // add them to the resource files as well
     for(size_t i = 0; i < exts.size(); ++i) {
         wxFileName hiResImage = fn;

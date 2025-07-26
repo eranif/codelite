@@ -3,11 +3,11 @@
 #include "HelpPluginMessageDlg.h"
 #include "HelpPluginSettings.h"
 #include "HelpPluginSettingsDlg.h"
+#include "StringUtils.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
-#include "fileutils.h"
 
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
@@ -120,7 +120,7 @@ wxString HelpPlugin::DoBuildQueryString()
     } else {
         q << "dash-plugin://query=" << selection;
     }
-    q = FileUtils::EncodeURI(q);
+    q = StringUtils::EncodeURI(q);
     return q;
 }
 

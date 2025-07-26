@@ -25,7 +25,7 @@
 
 #include "sftp_settings.h"
 
-#include "fileutils.h"
+#include "StringUtils.h"
 
 #include <algorithm>
 #ifdef __WXMSW__
@@ -138,7 +138,7 @@ void SFTPSettings::MSWImportPuTTYAccounts()
                     rk.QueryValue("PortNumber", &port);
                     if(!hostname.IsEmpty() && port != wxNOT_FOUND) {
                         SSHAccountInfo acc;
-                        acc.SetAccountName(FileUtils::DecodeURI(strKeyName));
+                        acc.SetAccountName(StringUtils::DecodeURI(strKeyName));
                         acc.SetHost(hostname);
                         acc.SetPort(port);
                         acc.SetUsername(username);
@@ -173,7 +173,7 @@ void SFTPSettings::MSWImportPuTTYAccounts()
                     rk.QueryValue("PortNumber", &port);
                     if(!hostname.IsEmpty() && port != wxNOT_FOUND) {
                         SSHAccountInfo acc;
-                        acc.SetAccountName(FileUtils::DecodeURI(strKeyName));
+                        acc.SetAccountName(StringUtils::DecodeURI(strKeyName));
                         acc.SetHost(hostname);
                         acc.SetPort(port);
                         acc.SetUsername(username);

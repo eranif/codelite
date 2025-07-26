@@ -1,9 +1,8 @@
 #include "ChildProcess.h"
-#include <asyncprocess.h>
-#include "file_logger.h"
-#include "fileutils.h"
-#include "processreaderthread.h"
-#include <globals.h>
+
+#include "AsyncProcess/asyncprocess.h"
+#include "StringUtils.h"
+#include "globals.h"
 
 #if !USE_IPROCESS
 #include "UnixProcess.h"
@@ -44,13 +43,13 @@ void ChildProcess::Start(const wxArrayString& args)
 #endif
 }
 
-void ChildProcess::Write(const wxString& message) { Write(FileUtils::ToStdString(message)); }
+void ChildProcess::Write(const wxString& message) { Write(StringUtils::ToStdString(message)); }
 
 void ChildProcess::Write(const std::string& message)
 {
 #if USE_IPROCESS
     m_process->WriteRaw(message);
 #else
-    m_childProcess->Write(FileUtils::ToStdString(message));
+    m_childProcess->Write(StringUtils::ToStdString(message));
 #endif
 }

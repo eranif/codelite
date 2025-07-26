@@ -16,9 +16,7 @@ protected:
     PHPSourceFile& m_sourceFile;
     const wxString& m_comment;
     PHPDocProperty::Tuple_t m_params;
-    
-    bool NextWord(const wxString& str, size_t &offset, wxString& word);
-    
+
 public:
     PHPDocProperty(PHPSourceFile& sourceFile, const wxString& comment);
     ~PHPDocProperty();

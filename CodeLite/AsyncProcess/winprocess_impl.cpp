@@ -38,6 +38,7 @@
 
 #include "winprocess_impl.h"
 
+#include "StringUtils.h"
 #include "clDirChanger.hpp"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -45,8 +46,6 @@
 #include "procutils.h"
 
 #include <atomic>
-#include <memory>
-#include <wincon.h>
 #include <wx/filefn.h>
 #include <wx/msgqueue.h>
 #include <wx/string.h>
@@ -644,12 +643,12 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr, std::string& raw_bu
 bool WinProcessImpl::Write(const wxString& buff)
 {
     // Sanity
-    return Write(FileUtils::ToStdString(buff));
+    return Write(StringUtils::ToStdString(buff));
 }
 
 bool WinProcessImpl::Write(const std::string& buff) { return WriteRaw(buff + "\r\n"); }
 
-bool WinProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(FileUtils::ToStdString(buff)); }
+bool WinProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(StringUtils::ToStdString(buff)); }
 
 bool WinProcessImpl::WriteRaw(const std::string& buff)
 {

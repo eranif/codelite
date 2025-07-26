@@ -269,9 +269,9 @@ bool do_write(int fd, const wxMemoryBuffer& buffer)
 
 bool UnixProcessImpl::Write(const std::string& buff) { return WriteRaw(buff + "\n"); }
 
-bool UnixProcessImpl::Write(const wxString& buff) { return Write(FileUtils::ToStdString(buff)); }
+bool UnixProcessImpl::Write(const wxString& buff) { return Write(StringUtils::ToStdString(buff)); }
 
-bool UnixProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(FileUtils::ToStdString(buff)); }
+bool UnixProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(StringUtils::ToStdString(buff)); }
 bool UnixProcessImpl::WriteRaw(const std::string& buff)
 {
     int fd = GetWriteHandle();

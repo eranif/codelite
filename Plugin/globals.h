@@ -531,22 +531,6 @@ WXDLLIMPEXP_SDK bool IsChildOf(wxWindow* child, wxWindow* parent);
 /// Return a random colour suited for the current theme
 WXDLLIMPEXP_SDK wxColour GetRandomColour();
 
-/// Join elements of a container into a string using `glue` as the elements separator
-/// `Container` any container that can be "range looped"
-template <typename Container>
-wxString clJoin(const Container& c, const wxString& glue = "\n")
-{
-    wxString output;
-    for (const auto& ele : c) {
-        output << ele << glue;
-    }
-
-    if (!output.empty()) {
-        output.RemoveLast(glue.length());
-    }
-    return output;
-}
-
 /// Return the selected text in a wxSTC. This function ensures that only
 /// visible text is returned (for example, if the selected text contains
 /// ANSI code style hidden - it will be dropped)

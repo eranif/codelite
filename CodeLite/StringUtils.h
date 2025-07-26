@@ -52,6 +52,8 @@ public:
      */
     static std::string ToStdString(const wxString& str);
 
+    static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
+
     /**
      * @brief remove terminal colours from buffer
      */
@@ -73,6 +75,49 @@ public:
      * @brief add backslash to markdown styling characters
      */
     static void DisableMarkdownStyling(wxString& buffer);
+
+    /**
+     * @brief decode URI using percent encoding
+     */
+    static wxString DecodeURI(const wxString& uri);
+
+    /**
+     * @brief encode URI using percent encoding
+     */
+    static wxString EncodeURI(const wxString& uri);
+
+    /**
+     * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
+     * @code
+     * wxString str = "My String That Requires Tokenize";
+     * wxString word; // The output
+     * size_t offset = 0;
+     * while (StringUtils::NextWord(str, offset, word)) {
+     *      // Do something with "word" here
+     * }
+     * @codeend
+     * @param str the string to tokenize
+     * @param offset used internally, allocate one on the stack and initialise it to 0
+     * @param word [output]
+     * @return true if a word was found
+     */
+    static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
+
+    /// Join elements of a container into a string using `glue` as the elements separator
+    /// `Container` any container that can be "range looped"
+    template <typename Container>
+    static wxString clJoin(const Container& c, const wxString& glue = "\n")
+    {
+        wxString output;
+        for (const auto& ele : c) {
+            output << ele << glue;
+        }
+
+        if (!output.empty()) {
+            output.RemoveLast(glue.length());
+        }
+        return output;
+    }
 
     /**
      * @brief build argv out of str

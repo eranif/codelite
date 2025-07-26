@@ -1,8 +1,8 @@
 #include "ChildProcess.h"
 
+#include "StringUtils.h"
 #include "asyncprocess.h"
 #include "cl_exception.h"
-#include "fileutils.h"
 
 #if !USE_IPROCESS
 #include "UnixProcess.h"
@@ -61,7 +61,7 @@ void ChildProcess::Start(const wxArrayString& args)
 #endif
 }
 
-void ChildProcess::Write(const wxString& message) { Write(FileUtils::ToStdString(message)); }
+void ChildProcess::Write(const wxString& message) { Write(StringUtils::ToStdString(message)); }
 
 void ChildProcess::Write(const std::string& message)
 {

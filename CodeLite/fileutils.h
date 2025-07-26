@@ -133,33 +133,6 @@ public:
     static bool FuzzyMatch(const wxString& needle, const wxString& haystack);
 
     /**
-     * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
-     * @code
-     * wxString str = "My String That Requires Tokenize";
-     * wxString word; // The output
-     * size_t offset = 0;
-     * while (NextWord(str, offset, word)) {
-     *      // Do something with "word" here
-     * }
-     * @codeend
-     * @param str the string to tokenize
-     * @param offset used internally, allocate one on the stack and initialise it to 0
-     * @param word [output]
-     * @return true if a word was found
-     */
-    static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
-
-    /**
-     * @brief decode URI using percent encoding
-     */
-    static wxString DecodeURI(const wxString& uri);
-
-    /**
-     * @brief encode URI using percent encoding
-     */
-    static wxString EncodeURI(const wxString& uri);
-
-    /**
      * @brief return true if filename is readonly false otherwise
      */
     static bool IsFileReadOnly(const wxFileName& filename);
@@ -234,8 +207,6 @@ public:
      */
     static bool RemoveFile(const wxString& filename, const wxString& context = "");
 
-    static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
-
     /**
      * @brief convert filename to the real path if filename is a symbolic link
      */
@@ -255,11 +226,6 @@ public:
      * @param reference_path the path to which to make relative
      */
     static bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
-
-    /**
-     * @brief convert string into std::string
-     */
-    static std::string ToStdString(const wxString& str);
 
     /**
      * @brief create an environment list from string in the format of:

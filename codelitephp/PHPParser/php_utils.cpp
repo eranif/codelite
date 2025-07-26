@@ -1,21 +1,14 @@
 #include "php_utils.h"
 
-#include "JSON.h"
 #include "PHP/PHPSourceFile.h"
-#include "editor_config.h"
-#include "file_logger.h"
+#include "StringUtils.h"
 #include "fileextmanager.h"
-#include "fileutils.h"
-#include "lexer_configuration.h"
 #include "php_project.h"
 #include "php_workspace.h"
 
-#include <map>
 #include <wx/base64.h>
 #include <wx/filename.h>
 #include <wx/stc/stc.h>
-#include <wx/tokenzr.h>
-#include <wx/treectrl.h>
 #include <wx/uri.h>
 
 bool IsPHPCommentOrString(int styleAtPos)
@@ -90,7 +83,7 @@ wxString URIToFileName(const wxString& uriFileName)
     return wxFileName(filename).GetFullPath();
 }
 
-static wxString URIEncode(const wxString& inputStr) { return FileUtils::EncodeURI(inputStr); }
+static wxString URIEncode(const wxString& inputStr) { return StringUtils::EncodeURI(inputStr); }
 
 wxString FileNameToURI(const wxString& filename)
 {
@@ -112,7 +105,7 @@ wxString Base64Encode(const wxString& str)
     return encodedString;
 }
 
-static void DecodeFileName(wxString& filename) { filename = FileUtils::DecodeURI(filename); }
+static void DecodeFileName(wxString& filename) { filename = StringUtils::DecodeURI(filename); }
 
 wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
 {

@@ -83,6 +83,29 @@ std::string StringUtils::ToStdString(const wxString& str)
     return res;
 }
 
+unsigned int StringUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
+{
+    constexpr unsigned int SURROGATE_LEAD_FIRST = 0xD800;
+    //constexpr unsigned int SURROGATE_TRAIL_FIRST = 0xDC00;
+    constexpr unsigned int SURROGATE_TRAIL_LAST = 0xDFFF;
+    unsigned int len = 0;
+    for (unsigned int i = 0; i < tlen && uptr[i];) {
+        unsigned int uch = uptr[i];
+        if (uch < 0x80) {
+            len++;
+        } else if (uch < 0x0800) {
+            len += 2;
+        } else if ((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_TRAIL_LAST)) {
+            len += 4;
+            i++;
+        } else {
+            len += 3;
+        }
+        i++;
+    }
+    return len;
+}
+
 #define BUFF_STATE_NORMAL 0
 #define BUFF_STATE_IN_ESC 1
 #define BUFF_STATE_IN_OSC 2
@@ -212,6 +235,103 @@ void StringUtils::DisableMarkdownStyling(wxString& buffer)
     buffer.Replace("*", "\\*");
     buffer.Replace("~", "\\~");
     buffer.Replace("`", "\\`");
+}
+
+
+wxString StringUtils::DecodeURI(const wxString& uri)
+{
+    static const wxStringMap_t sEncodeMap = { { "%20", " " }, { "%21", "!" }, { "%23", "#" }, { "%24", "$" },
+                                              { "%26", "&" }, { "%27", "'" }, { "%28", "(" }, { "%29", ")" },
+                                              { "%2A", "*" }, { "%2B", "+" }, { "%2C", "," }, { "%3B", ";" },
+                                              { "%3D", "=" }, { "%3F", "?" }, { "%40", "@" }, { "%5B", "[" },
+                                              { "%5D", "]" } };
+    wxString decodedString;
+    wxString escapeSeq;
+    int state = 0;
+    for (size_t i = 0; i < uri.size(); ++i) {
+        wxChar ch = uri[i];
+        switch (state) {
+        case 0: // Normal
+            switch (ch) {
+            case '%':
+                state = 1;
+                escapeSeq << ch;
+                break;
+            default:
+                decodedString << ch;
+                break;
+            }
+            break;
+        case 1: // Escaping mode
+            escapeSeq << ch;
+            if (escapeSeq.size() == 3) {
+                // Try to decode it
+                const auto iter = sEncodeMap.find(escapeSeq);
+                if (iter != sEncodeMap.end()) {
+                    decodedString << iter->second;
+                } else {
+                    decodedString << escapeSeq;
+                }
+                state = 0;
+                escapeSeq.Clear();
+            }
+            break;
+        }
+    }
+    return decodedString;
+}
+
+wxString StringUtils::EncodeURI(const wxString& uri)
+{
+    static const std::unordered_map<int, wxString> sEncodeMap = {
+        { (int)'!', "%21" }, { (int)'#', "%23" }, { (int)'$', "%24" }, { (int)'&', "%26" }, { (int)'\'', "%27" },
+        { (int)'(', "%28" }, { (int)')', "%29" }, { (int)'*', "%2A" }, { (int)'+', "%2B" }, { (int)',', "%2C" },
+        { (int)';', "%3B" }, { (int)'=', "%3D" }, { (int)'?', "%3F" }, { (int)'@', "%40" }, { (int)'[', "%5B" },
+        { (int)']', "%5D" }, { (int)' ', "%20" }
+    };
+
+    wxString encoded;
+    for (size_t i = 0; i < uri.length(); ++i) {
+        wxChar ch = uri[i];
+        const auto iter = sEncodeMap.find((int)ch);
+        if (iter != sEncodeMap.end()) {
+            encoded << iter->second;
+        } else {
+            encoded << ch;
+        }
+    }
+    return encoded;
+}
+
+bool StringUtils::NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower)
+{
+    if (offset == str.size()) {
+        return false;
+    }
+    size_t start = wxString::npos;
+    word.Clear();
+    for (; offset < str.size(); ++offset) {
+        wxChar ch = str[offset];
+        bool isWhitespace = ((ch == ' ') || (ch == '\t'));
+        if (isWhitespace && (start != wxString::npos)) {
+            // we found a trailing whitespace
+            break;
+        } else if (isWhitespace && (start == wxString::npos)) {
+            // skip leading whitespace
+            continue;
+        } else if (start == wxString::npos) {
+            start = offset;
+        }
+        if (makeLower) {
+            ch = wxTolower(ch);
+        }
+        word << ch;
+    }
+
+    if ((start != wxString::npos) && (offset > start)) {
+        return true;
+    }
+    return false;
 }
 
 #define ARGV_STATE_NORMAL 0

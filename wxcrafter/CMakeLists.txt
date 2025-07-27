@@ -62,6 +62,8 @@ file(
     GLOB
     SRCS
     "Properties/*.cpp"
+    "UI/PropertiesView/*.cpp"
+    "UI/*.cpp"
     "aui/*.cpp"
     "controls/*.cpp"
     "controls/Grid/*.cpp"

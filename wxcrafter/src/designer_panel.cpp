@@ -1,5 +1,6 @@
 #include "designer_panel.h"
 
+#include "UI/wxcTreeView.h"
 #include "allocator_mgr.h"
 #include "clDirChanger.hpp"
 #include "designer_container_panel.h"
@@ -9,7 +10,6 @@
 #include "menu_bar.h"
 #include "tool_bar.h"
 #include "wxc_project_metadata.h"
-#include "wxcTreeView.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 

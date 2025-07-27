@@ -1,9 +1,9 @@
 #include "designer_container_panel.h"
 
 #include "CaptionBar.h"
+#include "UI/wxcTreeView.h"
 #include "allocator_mgr.h"
 #include "event_notifier.h"
-#include "wxcTreeView.h"
 #include "wxguicraft_main_view.h"
 
 #include <wx/settings.h>

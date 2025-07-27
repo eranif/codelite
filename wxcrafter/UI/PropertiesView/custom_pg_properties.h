@@ -3,7 +3,7 @@
 
 #include "BitmapSelectorDlg.h"
 #include "BmpTextSelectorDlg.h"
-#include "FontPickerDlg.h"
+#include "UI/FontPickerDlg.h"
 #include "VirtualDirectorySelectorDlg.h"
 #include "enter_strings_dlg.h"
 #include "workspace.h"

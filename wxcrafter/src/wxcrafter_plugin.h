@@ -1,7 +1,7 @@
 #ifndef __wxcrafter_plugin__
 #define __wxcrafter_plugin__
 
-#include "NewFormWizard.h"
+#include "UI/NewFormWizard.h"
 #include "cl_command_event.h" // clDebugEvent
 #include "import_dlg.h"
 #include "main.h"

@@ -1,7 +1,8 @@
 #include "wxguicraft_main_view.h"
 
 #include "AuiToolBarTopLevel.h"
-#include "ToolBoxPanel.h"
+#include "UI/PropertiesView/properties_sheet.h"
+#include "UI/ToolBoxPanel.h"
 #include "allocator_mgr.h"
 #include "cl_command_event.h"
 #include "controls/RibbonBar/ribbon_bar_wrapper.h"
@@ -25,7 +26,6 @@
 #include "preview_frame.h"
 #include "preview_panel.h"
 #include "preview_wizard.h"
-#include "properties_sheet.h"
 #include "tool_bar_item_wrapper.h"
 #include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"

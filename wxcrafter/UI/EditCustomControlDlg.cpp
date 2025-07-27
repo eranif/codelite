@@ -5,8 +5,6 @@
 #include "wxc_settings.h"
 #include "wxgui_helpers.h"
 
-#include <wx/app.h>
-
 EditCustomControlDlg::EditCustomControlDlg(wxWindow* parent)
     : EditCustomControlDlgBaseClass(parent)
     , m_isModified(false)

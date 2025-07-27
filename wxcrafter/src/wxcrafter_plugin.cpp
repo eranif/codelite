@@ -2,14 +2,15 @@
 
 #include "AboutDlg.h"
 #include "ColoursAndFontsManager.h"
-#include "DefineCustomControlWizard.h"
-#include "DeleteCustomControlDlg.h"
-#include "EditCustomControlDlg.h"
 #include "MyComboBoxXmlHandler.h"
 #include "MyRearrangeListXmlHandler.h"
-#include "NewFormWizard.h"
+#include "UI/DefineCustomControlWizard.h"
+#include "UI/DeleteCustomControlDlg.h"
+#include "UI/EditCustomControlDlg.h"
+#include "UI/NewFormWizard.h"
+#include "UI/wxcSettingsDlg.h"
+#include "UI/wxcTreeView.h"
 #include "allocator_mgr.h"
-#include "clStatusBar.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "ctags_manager.h"
@@ -49,8 +50,6 @@
 #include "plugin.h"
 #include "project.h"
 #include "workspace.h"
-#include "wxcSettingsDlg.h"
-#include "wxcTreeView.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
 #include "wxc_settings.h"
@@ -59,10 +58,7 @@
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 
-#include <wx/choicdlg.h>
-#include <wx/dataview.h>
 #include <wx/msgdlg.h>
-#include <wx/propgrid/propgrid.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 

@@ -64,6 +64,7 @@ file(
     "aui/*.cpp"
     "controls/*.cpp"
     "controls/Grid/*.cpp"
+    "controls/PropertyGrid/*.cpp"
     "sizers/*.cpp"
     "src/*.cpp"
     "top_level_windows/*.cpp"

@@ -4,6 +4,8 @@
 #include "ToolBoxPanel.h"
 #include "allocator_mgr.h"
 #include "cl_command_event.h"
+#include "controls/RibbonBar/ribbon_bar_wrapper.h"
+#include "controls/RibbonBar/ribbon_page_wrapper.h"
 #include "custom_control_wrapper.h"
 #include "dialog_wrapper.h"
 #include "duplicateTLWdlg.h"
@@ -24,8 +26,6 @@
 #include "preview_panel.h"
 #include "preview_wizard.h"
 #include "properties_sheet.h"
-#include "ribbon_bar_wrapper.h"
-#include "ribbon_page_wrapper.h"
 #include "tool_bar_item_wrapper.h"
 #include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
@@ -48,6 +48,7 @@
 #include <wx/utils.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+
 #if defined(__WXOSX__)
 #include <wx/osx/tooltip.h>
 #endif

@@ -1,16 +1,14 @@
 #include "toolbar_base_wrapper.h"
 
+#include "Properties/category_property.h"
+#include "Properties/string_property.h"
+#include "Properties/winid_property.h"
 #include "allocator_mgr.h"
-#include "tool_bar_item_wrapper.h"
-#include "top_level_win_wrapper.h"
-#include "winid_property.h"
 #include "wxgui_defs.h"
-#include "wxgui_helpers.h"
 #include "xmlutils.h"
 #include "xy_pair.h"
 
 #include <wx/aui/auibar.h>
-#include <wx/pen.h>
 #include <wx/toolbar.h>
 
 ToolbarBaseWrapper::ToolbarBaseWrapper(int type)

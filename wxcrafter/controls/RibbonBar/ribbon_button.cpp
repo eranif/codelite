@@ -1,9 +1,10 @@
 #include "ribbon_button.h"
 
+#include "Properties/bitmap_picker_property.h"
+#include "Properties/choice_property.h"
+#include "Properties/string_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "bitmap_picker_property.h"
-#include "choice_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"

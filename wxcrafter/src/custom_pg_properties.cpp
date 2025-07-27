@@ -1,6 +1,6 @@
 #include "custom_pg_properties.h"
 
-#include "color_property.h"
+#include "Properties/color_property.h"
 #include "event_notifier.h"
 #include "wxguicraft_main_view.h"
 

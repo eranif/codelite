@@ -1,7 +1,8 @@
 #include "radio_button_wrapper.h"
+
+#include "Properties/bool_property.h"
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
-#include "bool_property.h"
-#include "string_property.h"
 #include "xmlutils.h"
 
 RadioButtonWrapper::RadioButtonWrapper()

@@ -1,5 +1,7 @@
 #include "property_grid_manager_wrapper.h"
 
+#include "Properties/bool_property.h"
+#include "Properties/int_property.h"
 #include "allocator_mgr.h"
 
 PropertyGridManagerWrapper::PropertyGridManagerWrapper()

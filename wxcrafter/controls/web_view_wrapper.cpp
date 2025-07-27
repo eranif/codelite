@@ -1,5 +1,6 @@
 #include "web_view_wrapper.h"
 
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 

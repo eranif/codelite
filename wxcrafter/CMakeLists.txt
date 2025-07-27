@@ -61,6 +61,7 @@ configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in ${CMAKE_BINARY_DIR}/ge
 file(
     GLOB
     SRCS
+    "Properties/*.cpp"
     "aui/*.cpp"
     "controls/*.cpp"
     "controls/Grid/*.cpp"

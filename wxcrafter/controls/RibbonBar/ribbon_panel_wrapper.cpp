@@ -1,8 +1,8 @@
 #include "ribbon_panel_wrapper.h"
 
+#include "Properties/bitmap_picker_property.h"
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
-#include "bitmap_picker_property.h"
-#include "string_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
 

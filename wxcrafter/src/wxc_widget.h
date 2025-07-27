@@ -1,14 +1,10 @@
 #ifndef WRAPPERBASE_H
 #define WRAPPERBASE_H
 
+#include "Properties/property_base.h"
 #include "aui_pane_info.h"
-#include "bool_property.h"
-#include "category_property.h"
 #include "events_database.h"
-#include "int_property.h"
 #include "json_node.h"
-#include "property_base.h"
-#include "string_property.h"
 #include "wx_ordered_map.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"

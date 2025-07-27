@@ -1,11 +1,11 @@
 #include "combox_wrapper.h"
+
+#include "Properties/multi_strings_property.h"
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
 #include "import_from_wxFB.h"
-#include "multi_strings_property.h"
-#include "string_property.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
-#include <wx/textctrl.h>
 
 ComboxWrapper::ComboxWrapper()
     : wxcWidget(ID_WXCOMBOBOX)

@@ -1,5 +1,6 @@
 #include "custom_control_wrapper.h"
 
+#include "Properties/category_property.h"
 #include "allocator_mgr.h"
 #include "file_logger.h"
 #include "macromanager.h"

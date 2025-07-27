@@ -1,9 +1,11 @@
 #include "font_picker_ctrl_wrapper.h"
+
+#include "Properties/font_property.h"
 #include "allocator_mgr.h"
-#include "font_property.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
 #include <wx/fontpicker.h>
 
 FontPickerCtrlWrapper::FontPickerCtrlWrapper()

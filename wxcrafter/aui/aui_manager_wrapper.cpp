@@ -1,10 +1,12 @@
 #include "aui_manager_wrapper.h"
 
+#include "Properties/category_property.h"
+#include "Properties/choice_property.h"
+#include "Properties/color_property.h"
+#include "Properties/int_property.h"
+#include "Properties/string_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "choice_property.h"
-#include "color_property.h"
-#include "int_property.h"
 #include "wxgui_helpers.h"
 
 #include <wx/aui/framemanager.h>

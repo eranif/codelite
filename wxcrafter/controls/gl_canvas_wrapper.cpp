@@ -1,5 +1,7 @@
 #include "gl_canvas_wrapper.h"
 
+#include "Properties/category_property.h"
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
 
 GLCanvasWrapper::GLCanvasWrapper()

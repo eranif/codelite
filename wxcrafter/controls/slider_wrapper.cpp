@@ -1,6 +1,9 @@
 #include "slider_wrapper.h"
+
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
 #include "xmlutils.h"
+
 #include <wx/slider.h>
 
 SliderWrapper::SliderWrapper()

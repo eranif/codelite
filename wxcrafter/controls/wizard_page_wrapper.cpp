@@ -1,7 +1,7 @@
 #include "wizard_page_wrapper.h"
 
+#include "Properties/bitmap_picker_property.h"
 #include "allocator_mgr.h"
-#include "bitmap_picker_property.h"
 #include "import_from_wxFB.h"
 #include "import_from_xrc.h"
 #include "wizard_wrapper.h"

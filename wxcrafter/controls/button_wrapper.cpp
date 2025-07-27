@@ -1,10 +1,11 @@
 #include "button_wrapper.h"
 
+#include "Properties/bitmap_picker_property.h"
+#include "Properties/bool_property.h"
+#include "Properties/choice_property.h"
+#include "Properties/string_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "bitmap_picker_property.h"
-#include "bool_property.h"
-#include "choice_property.h"
 #include "import_from_wxFB.h"
 #include "import_from_xrc.h"
 #include "wxc_bitmap_code_generator.h"
@@ -12,8 +13,6 @@
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 #include "xy_pair.h"
-
-#include <wx/button.h>
 
 ButtonWrapper::ButtonWrapper()
     : wxcWidget(ID_WXBUTTON)

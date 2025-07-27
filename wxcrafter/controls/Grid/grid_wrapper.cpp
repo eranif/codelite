@@ -1,9 +1,11 @@
 #include "grid_wrapper.h"
 
+#include "Properties/bool_property.h"
+#include "Properties/category_property.h"
+#include "Properties/choice_property.h"
+#include "Properties/int_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "bool_property.h"
-#include "choice_property.h"
 #include "grid_column_wrapper.h"
 #include "grid_row_wrapper.h"
 #include "wxgui_defs.h"

@@ -1,9 +1,9 @@
 #include "static_box_sizer_wrapper.h"
 
+#include "Properties/choice_property.h"
+#include "Properties/string_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "choice_property.h"
-#include "string_property.h"
 #include "xmlutils.h"
 
 StaticBoxSizerWrapper::StaticBoxSizerWrapper()

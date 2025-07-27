@@ -1,9 +1,10 @@
 #include "frame_wrapper.h"
 
+#include "Properties/bitmap_picker_property.h"
+#include "Properties/category_property.h"
+#include "Properties/choice_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "bitmap_picker_property.h"
-#include "choice_property.h"
 #include "menu_bar_wrapper.h"
 #include "status_bar_wrapper.h"
 #include "toolbar_base_wrapper.h"

@@ -1,4 +1,8 @@
 #include "grid_row_wrapper.h"
+
+#include "Properties/category_property.h"
+#include "Properties/int_property.h"
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 

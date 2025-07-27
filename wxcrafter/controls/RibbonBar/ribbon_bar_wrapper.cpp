@@ -1,8 +1,9 @@
 #include "ribbon_bar_wrapper.h"
 
+#include "Properties/category_property.h"
+#include "Properties/choice_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "choice_property.h"
 #include "ribbon_page_wrapper.h"
 
 #include <wx/ribbon/bar.h>

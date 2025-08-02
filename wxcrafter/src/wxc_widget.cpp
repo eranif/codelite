@@ -1,5 +1,6 @@
 #include "wxc_widget.h"
 
+#include "Importer/import_from_wxFB.h"
 #include "Properties/bool_property.h"
 #include "Properties/category_property.h"
 #include "Properties/color_property.h"
@@ -14,7 +15,6 @@
 #include "controls/Containers/notebook_page_wrapper.h"
 #include "controls/Containers/wx_collapsible_pane_pane_wrapper.h"
 #include "custom_control_wrapper.h"
-#include "import_from_wxFB.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"

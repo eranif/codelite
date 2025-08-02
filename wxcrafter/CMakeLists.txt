@@ -61,6 +61,7 @@ configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in ${CMAKE_BINARY_DIR}/ge
 file(
     GLOB
     SRCS
+    "Importer/*.cpp"
     "Preview/*.cpp"
     "Properties/*.cpp"
     "UI/PropertiesView/*.cpp"

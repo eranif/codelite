@@ -1,9 +1,9 @@
 #include "wizard_page_wrapper.h"
 
+#include "Importer/import_from_wxFB.h"
+#include "Importer/import_from_xrc.h"
 #include "Properties/bitmap_picker_property.h"
 #include "allocator_mgr.h"
-#include "import_from_wxFB.h"
-#include "import_from_xrc.h"
 #include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"

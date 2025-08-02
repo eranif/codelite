@@ -1,9 +1,9 @@
 #include "list_box_wrapper.h"
 
+#include "Importer/import_from_wxFB.h"
 #include "Properties/multi_strings_property.h"
 #include "Properties/string_property.h"
 #include "allocator_mgr.h"
-#include "import_from_wxFB.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"

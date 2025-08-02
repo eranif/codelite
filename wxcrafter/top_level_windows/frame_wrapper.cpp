@@ -4,20 +4,16 @@
 #include "Properties/category_property.h"
 #include "Properties/choice_property.h"
 #include "StdToWX.h"
+#include "controls/menu_toolbar/menu_bar_wrapper.h"
+#include "controls/menu_toolbar/status_bar_wrapper.h"
+#include "controls/menu_toolbar/toolbar_base_wrapper.h"
 #include "allocator_mgr.h"
-#include "menu_bar_wrapper.h"
-#include "status_bar_wrapper.h"
-#include "toolbar_base_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 
-#include <wx/docview.h>
-#include <wx/ffile.h>
-#include <wx/filename.h>
 #include <wx/frame.h>
-#include <wx/msgdlg.h>
 #include <wx/toplevel.h>
 
 FrameWrapper::FrameWrapper()

@@ -71,6 +71,7 @@ file(
     "controls/Grid/*.cpp"
     "controls/PropertyGrid/*.cpp"
     "controls/RibbonBar/*.cpp"
+    "controls/menu_toolbar/*.cpp"
     "sizers/*.cpp"
     "src/*.cpp"
     "top_level_windows/*.cpp"

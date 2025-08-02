@@ -67,6 +67,7 @@ file(
     "UI/*.cpp"
     "aui/*.cpp"
     "controls/*.cpp"
+    "controls/Containers/*.cpp"
     "controls/Grid/*.cpp"
     "controls/PropertyGrid/*.cpp"
     "controls/RibbonBar/*.cpp"

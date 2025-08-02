@@ -1,7 +1,7 @@
 #ifndef SPLITTERWINDOWPAGE_H
 #define SPLITTERWINDOWPAGE_H
 
-#include "panel_wrapper.h" // Base class: PanelWrapper
+#include "controls/Containers/panel_wrapper.h" // Base class: PanelWrapper
 
 class SplitterWindowPage : public PanelWrapper
 {

@@ -1,7 +1,6 @@
 #include "sizer_flags_list_view.h"
 
 #include "event_notifier.h"
-#include "notebook_page_wrapper.h"
 #include "wxc_widget.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"

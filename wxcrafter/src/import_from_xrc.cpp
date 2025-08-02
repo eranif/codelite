@@ -1,10 +1,9 @@
 #include "import_from_xrc.h"
 
 #include "allocator_mgr.h"
-#include "file_logger.h"
+#include "controls/Containers/notebook_base_wrapper.h"
+#include "controls/Containers/notebook_page_wrapper.h"
 #include "import_dlg.h"
-#include "notebook_base_wrapper.h"
-#include "notebook_page_wrapper.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"

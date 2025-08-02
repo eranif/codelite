@@ -36,7 +36,7 @@
 #include <wx/treectrl.h>
 #include "clTreeCtrl.h"
 #include <wx/stc/stc.h>
-#include "events_table_list_view.h"
+#include "UI/events_table_list_view.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>

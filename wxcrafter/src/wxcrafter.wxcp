@@ -12,7 +12,7 @@
 		"m_useUnderscoreMacro":	true,
 		"m_addHandlers":	true,
 		"m_templateClasses":	[{
-				"m_includeFile":	"#include \"events_table_list_view.h\"",
+				"m_includeFile":	"#include \"UI/events_table_list_view.h\"",
 				"m_allocationLine":	"$name = new EventsTableListView($parent);",
 				"m_className":	"EventsTableListView",
 				"m_xrcPreviewClass":	"wxListBox",
